@@ -28,6 +28,14 @@
 class MemcacheEngine extends CacheEngine {
 
 /**
+ * Contains the compiled group names
+ * (prefixed witht the global configuration prefix)
+ *
+ * @var array
+ **/
+	protected $_compiledGroupNames = array();
+
+/**
  * Memcache wrapper.
  *
  * @var Memcache
@@ -235,4 +243,47 @@ class MemcacheEngine extends CacheEngine {
 		return true;
 	}
 
+/**
+ * Returns the `group value` for each of the configured groups
+ * If the group initial value was not found, then it initializes
+ * the group accordingly.
+ *
+ * @return array
+ **/
+	public function groups() {
+		if (empty($this->_compiledGroupNames)) {
+			foreach ($this->settings['groups'] as $group) {
+				$this->_compiledGroupNames[] = $this->settings['prefix'] . $group;
+			}
+		}
+
+		$groups = $this->_Memcache->get($this->_compiledGroupNames);
+		if (count($groups) !== count($this->settings['groups'])) {
+			foreach ($this->_compiledGroupNames as $group) {
+				if (!isset($groups[$group])) {
+					$this->_Memcache->set($group, 1, false, 0);
+					$groups[$group] = 1;
+				}
+			}
+			ksort($groups);
+		}
+
+		$result = array();
+		$groups = array_values($groups);
+		foreach ($this->settings['groups'] as $i => $group) {
+			$result[] = $group . $groups[$i];
+		}
+
+		return $result;
+	}
+
+/**
+ * Increments the group value to simulate deletion of all keys under a group
+ * old values will remain in storage until they expire.
+ *
+ * @return boolean success
+ **/
+	public function clearGroup($group) {
+		return (bool) $this->_Memcache->increment($this->settings['prefix'] . $group);
+	}
 }

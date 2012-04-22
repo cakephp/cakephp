@@ -82,6 +82,9 @@ class FileEngine extends CacheEngine {
 		if (substr($this->settings['path'], -1) !== DS) {
 			$this->settings['path'] .= DS;
 		}
+		if (!empty($this->groupPrefix)) {
+			$this->groupPrefix = str_replace('_', DS, $this->groupPrefix);
+		}
 		return $this->_active();
 	}
 
@@ -285,7 +288,17 @@ class FileEngine extends CacheEngine {
  * @return boolean true if the cache key could be set, false otherwise
  */
 	protected function _setKey($key, $createKey = false) {
-		$path = new SplFileInfo($this->settings['path'] . $key);
+
+		$groups = null;
+		if (!empty($this->groupPrefix)) {
+			$groups = vsprintf($this->groupPrefix, $this->groups());
+		}
+		$dir = $this->settings['path'] . $groups;
+
+		if (!is_dir($dir)) {
+			mkdir($dir, 0777, true);
+		}
+		$path = new SplFileInfo($dir . $key);
 
 		if (!$createKey && !$path->isFile()) {
 			return false;
@@ -324,4 +337,35 @@ class FileEngine extends CacheEngine {
 		return true;
 	}
 
+/**
+ * Generates a safe key for use with cache engine storage engines.
+ *
+ * @param string $key the key passed over
+ * @return mixed string $key or false
+ */
+	public function key($key) {
+		if (empty($key)) {
+			return false;
+		}
+
+		$key = Inflector::underscore(str_replace(array(DS, '/', '.'), '_', strval($key)));
+		return $key;
+	}
+
+/**
+ * Recursively deletes all files under any directory named as $group
+ *
+ * @return boolean success
+ **/
+	public function clearGroup($group) {
+		$directoryIterator = new RecursiveDirectoryIterator($this->settings['path']);
+		$contents = new RecursiveIteratorIterator($directoryIterator, RecursiveIteratorIterator::CHILD_FIRST);
+		foreach ($contents as $object) {
+			$containsGroup = strpos($object->getPathName(), DS . $group . DS) !== false;
+			if ($object->isFile() && $containsGroup) {
+				unlink($object->getPathName());
+			}
+		}
+		return true;
+	}
 }
