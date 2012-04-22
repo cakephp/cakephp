@@ -407,7 +407,7 @@ function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
 			}
 		}
 	} elseif (is_writable(dirname($filename))) {
-		@file_put_contents($filename, $data);
+		@file_put_contents($filename, $data, LOCK_EX);
 	}
 	return $data;
 }
