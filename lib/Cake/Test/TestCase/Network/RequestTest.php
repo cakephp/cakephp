@@ -603,7 +603,11 @@ class RequestTest extends TestCase {
 		$_SERVER['HTTP_CLIENT_IP'] = '192.168.1.2';
 		$_SERVER['REMOTE_ADDR'] = '192.168.1.3';
 		$request = new Request('some/path');
-		$this->assertEquals('192.168.1.5', $request->clientIp(false));
+
+		$request->trustProxy = true;
+		$this->assertEquals('192.168.1.5', $request->clientIp());
+	
+		$request->trustProxy = false;
 		$this->assertEquals('192.168.1.2', $request->clientIp());
 
 		unset($_SERVER['HTTP_X_FORWARDED_FOR']);
@@ -651,7 +655,11 @@ class RequestTest extends TestCase {
 
 		$_SERVER['HTTP_X_FORWARDED_HOST'] = 'cakephp.org';
 		$result = $request->referer();
-		$this->assertSame($result, 'cakephp.org');
+		$this->assertSame(FULL_BASE_URL . '/recipes/add', $result);
+
+		$request->trustProxy = true;
+		$result = $request->referer();
+		$this->assertSame('cakephp.org', $result);
 	}
 
 /**
@@ -719,6 +727,9 @@ class RequestTest extends TestCase {
 
 		$_SERVER['SERVER_PORT'] = '443';
 		$_SERVER['HTTP_X_FORWARDED_PORT'] = 80;
+		$this->assertEquals('443', $request->port());
+
+		$request->trustProxy = true;
 		$this->assertEquals('80', $request->port());
 	}
 

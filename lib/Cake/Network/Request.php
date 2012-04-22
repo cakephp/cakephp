@@ -16,10 +16,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network;
+
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Utility\Hash;
-use Cake\Utility\Set;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -90,6 +90,15 @@ class Request implements \ArrayAccess {
  * @var string
  */
 	public $here = null;
+
+/**
+ * Whether or not to trust HTTP_X headers set by most load balancers.
+ * Only set to true if your application runs behind load balancers/proxies 
+ * that you control.
+ *
+ * @param boolean
+ */
+	public $trustProxy = false;
 
 /**
  * The built in detectors used with `is()` can be modified with `addDetector()`.
@@ -355,12 +364,10 @@ class Request implements \ArrayAccess {
 /**
  * Get the IP the client is using, or says they are using.
  *
- * @param boolean $safe Use safe = false when you think the user might manipulate their HTTP_CLIENT_IP
- *   header.  Setting $safe = false will will also look at HTTP_X_FORWARDED_FOR
  * @return string The client IP.
  */
-	public function clientIp($safe = true) {
-		if (!$safe && env('HTTP_X_FORWARDED_FOR') != null) {
+	public function clientIp() {
+		if ($this->trustProxy && env('HTTP_X_FORWARDED_FOR') != null) {
 			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
 		} else {
 			if (env('HTTP_CLIENT_IP') != null) {
@@ -388,9 +395,8 @@ class Request implements \ArrayAccess {
  */
 	public function referer($local = false) {
 		$ref = env('HTTP_REFERER');
-		$forwarded = env('HTTP_X_FORWARDED_HOST');
-		if ($forwarded) {
-			$ref = $forwarded;
+		if ($this->trustProxy && env('HTTP_X_FORWARDED_HOST')) {
+			$ref = env('HTTP_X_FORWARDED_HOST');
 		}
 
 		$base = '';
@@ -630,9 +636,8 @@ class Request implements \ArrayAccess {
  * @return string
  */
 	public function port() {
-		$forwarded = env('HTTP_X_FORWARDED_PORT');
-		if ($forwarded) {
-			return $forwarded;
+		if ($this->trustProxy && env('HTTP_X_FORWARDED_PORT')) {
+			return env('HTTP_X_FORWARDED_PORT');
 		}
 		return env('SERVER_PORT');
 	}
