@@ -716,6 +716,10 @@ class RequestTest extends TestCase {
 		$request = new Request('some/path', false);
 
 		$this->assertEquals('80', $request->port());
+
+		$_SERVER['SERVER_PORT'] = '443';
+		$_SERVER['HTTP_X_FORWARDED_PORT'] = 80;
+		$this->assertEquals('80', $request->port());
 	}
 
 /**

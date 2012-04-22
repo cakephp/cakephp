@@ -630,6 +630,10 @@ class Request implements \ArrayAccess {
  * @return string
  */
 	public function port() {
+		$forwarded = env('HTTP_X_FORWARDED_PORT');
+		if ($forwarded) {
+			return $forwarded;
+		}
 		return env('SERVER_PORT');
 	}
 
