@@ -3189,6 +3189,11 @@ class Model extends Object implements CakeEventListener {
 						if (is_array($validator['rule']) && $args === null) {
 							$args = array_slice($ruleSet[$index]['rule'], 1);
 						}
+						if (!empty($args)) {
+							foreach ($args as $k => $arg) {
+								$args[$k] = __d($validationDomain, $arg);
+							}
+						}
 						$message = __d($validationDomain, $message, $args);
 					} elseif (is_string($index)) {
 						if (is_array($validator['rule'])) {

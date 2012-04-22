@@ -762,6 +762,44 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
+ * Test validation message translation
+ *
+ * @return void
+ */
+	public function testValidationMessageTranslation() {
+		$lang = Configure::read('Config.language');
+		Configure::write('Config.language', 'en');
+		App::build(array(
+			'Locale' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS),
+		), App::RESET);
+
+		$TestModel = new ValidationTest1();
+		$TestModel->validationDomain = 'validation_messages';
+		$TestModel->validate = array(
+			'title' => array(
+				array(
+					'rule' => array('customValidationMethod', 'arg1'),
+					'required' => true,
+					'message' => 'Validation failed: %s'
+				)
+			)
+		);
+
+		$TestModel->create();
+		$TestModel->invalidFields();
+		$expected = array(
+			'title' => array(
+				'Translated validation failed: Translated arg1',
+			)
+		);
+		$this->assertEquals($expected, $TestModel->validationErrors);
+
+		$TestModel->validationDomain = 'default';
+		Configure::write('Config.language', $lang);
+		App::build();
+	}
+
+/**
  * Test for 'on' => [create|update] in validation rules.
  *
  * @return void
