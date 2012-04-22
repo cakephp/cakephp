@@ -81,5 +81,6 @@ abstract class DispatcherFilter implements CakeEventListener {
  *	keys in the data property.
  * @return mixed boolean to stop the event dispatching or null to continue
  **/
-	public function afterDispatch($event) {}
+	public function afterDispatch($event) {
+	}
 }

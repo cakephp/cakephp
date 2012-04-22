@@ -1291,7 +1291,8 @@ class DispatcherTest extends CakeTestCase {
 		$response = $this->getMock('CakeResponse', array('send'));
 		$dispatcher->dispatch($request, $response);
 		$this->assertEmpty($dispatcher->controller);
-		$this->assertEquals(array('controller' => null, 'action' => null, 'plugin' => null), $request->params);
+		$expected = array('controller' => null, 'action' => null, 'plugin' => null, 'named' => array(), 'pass' => array());
+		$this->assertEquals($expected, $request->params);
 
 		$dispatcher = new TestDispatcher();
 		Configure::write('Dispatcher.filters', array(
