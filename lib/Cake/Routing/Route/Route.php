@@ -343,19 +343,32 @@ class Route {
  * This method handles the reverse routing or conversion of url arrays into string urls.
  *
  * @param array $url An array of parameters to check matching with.
+ * @param array $context An array of the current request context.
+ *   Contains information such as the current host, scheme, port, and base
+ *   directory.
  * @return mixed Either a string url for the parameters if they match or false.
  */
-	public function match($url) {
+	public function match($url, $context = array()) {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
 		$defaults = $this->defaults;
 
+		$hostOptions = array_intersect_key($url, $context);
+		if (!empty($hostOptions)) {
+			$hostOptions += $context;
+
+			if ($hostOptions['_port'] == $context['_port']) {
+				unset($hostOptions['_port']);
+			}
+		}
+		unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base']);
+
 		if (isset($defaults['prefix'])) {
 			$url['prefix'] = $defaults['prefix'];
 		}
 
-		//check that all the key names are in the url
+		// check that all the key names are in the url
 		$keyNames = array_flip($this->keys);
 		if (array_intersect_key($keyNames, $url) !== $keyNames) {
 			return false;
@@ -411,7 +424,7 @@ class Route {
 				}
 			}
 		}
-		return $this->_writeUrl($url, $pass);
+		return $this->_writeUrl($url, $pass, $hostOptions);
 	}
 
 /**
@@ -422,7 +435,7 @@ class Route {
  * @param array $pass The additional passed arguments.
  * @return string Composed route string.
  */
-	protected function _writeUrl($params, $pass = array()) {
+	protected function _writeUrl($params, $pass = array(), $hostOptions = array()) {
 		if (isset($params['prefix'], $params['action'])) {
 			$params['action'] = str_replace($params['prefix'] . '_', '', $params['action']);
 			unset($params['prefix']);
@@ -448,6 +461,21 @@ class Route {
 			$out = str_replace('*', $pass, $out);
 		}
 		$out = str_replace('//', '/', $out);
+		if (!empty($hostOptions)) {
+			$host = $hostOptions['_host'];
+
+			// append the port if it exists.
+			if (isset($hostOptions['_port'])) {
+				$host .= ':' . $hostOptions['_port'];
+			}
+			$out = sprintf(
+				'%s://%s%s%s',
+				$hostOptions['_scheme'],
+				$host,
+				$hostOptions['_base'],
+				$out
+			);
+		}
 		return $out;
 	}
 

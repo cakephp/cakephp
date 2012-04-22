@@ -239,7 +239,7 @@ class RouteTest extends TestCase {
  * test that routes match their pattern.
  *
  * @return void
- **/
+ */
 	public function testMatchBasic() {
 		$route = new Route('/:controller/:action/:id', array('plugin' => null));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null));
@@ -313,6 +313,55 @@ class RouteTest extends TestCase {
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit_admin_e/1';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test match() with _host and other keys.
+ */
+	public function testMatchWithHostKeys() {
+		$context = array(
+			'_host' => 'foo.com',
+			'_scheme' => 'http',
+			'_port' => 80,
+			'_base' => ''
+		);
+		$route = new Route('/:controller/:action');
+		$result = $route->match(
+			array('controller' => 'posts', 'action' => 'index', '_host' => 'example.com'),
+			$context
+		);
+		$this->assertEquals('http://example.com/posts/index', $result);
+
+		$result = $route->match(
+			array('controller' => 'posts', 'action' => 'index', '_scheme' => 'webcal'),
+			$context
+		);
+		$this->assertEquals('webcal://foo.com/posts/index', $result);
+
+		$result = $route->match(
+			array('controller' => 'posts', 'action' => 'index', '_port' => '8080'),
+			$context
+		);
+		$this->assertEquals('http://foo.com:8080/posts/index', $result);
+
+		$result = $route->match(
+			array('controller' => 'posts', 'action' => 'index', '_base' => '/dir'),
+			$context
+		);
+		$this->assertEquals('http://foo.com/dir/posts/index', $result);
+
+		$result = $route->match(
+			array(
+				'controller' => 'posts',
+				'action' => 'index',
+				'_port' => '8080',
+				'_host' => 'example.com',
+				'_scheme' => 'https',
+				'_base' => '/dir'
+			),
+			$context
+		);
+		$this->assertEquals('https://example.com:8080/dir/posts/index', $result);
 	}
 
 /**
