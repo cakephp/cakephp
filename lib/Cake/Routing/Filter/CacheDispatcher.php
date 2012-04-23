@@ -45,7 +45,7 @@ class CacheDispatcher extends DispatcherFilter {
 			return;
 		}
 
-		$path = $event->data['request']->here();		
+		$path = $event->data['request']->here();
 		if ($path == '/') {
 			$path = 'home';
 		}
