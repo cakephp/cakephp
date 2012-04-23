@@ -155,6 +155,16 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 	}
 
+/**
+ * See CakeTestSuiteDispatcher::date()
+ *
+ * @param string $format format to be used.
+ * @return string
+ */
+	public static function date($format = 'Y-m-d H:i:s') {
+		return CakeTestSuiteDispatcher::date($format);
+	}
+
 // @codingStandardsIgnoreStart PHPUnit overrides don't match CakePHP
 
 /**
