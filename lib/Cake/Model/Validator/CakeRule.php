@@ -14,8 +14,8 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
- * @since         CakePHP(tm) v 3.0.0
+ * @package       Cake.Model.Validator
+ * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('ModelValidator', 'Model');
@@ -23,129 +23,129 @@ App::uses('CakeField', 'Model/Validator');
 App::uses('Validation', 'Utility');
 
 /**
- * ValidationRule object.
+ * CakeRule object.
  *
- * @package       Cake.Model
+ * @package       Cake.Model.Validator
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
 class CakeRule {
 
 /**
  * Holds a reference to the parent field
- * 
- * @var ModelField
+ *
+ * @var CakeField
  */
 	protected $_field = null;
 
 /**
  * Has the required check failed?
- * 
+ *
  * @var boolean
  */
 	protected $_requiredFail = null;
 
 /**
  * The 'valid' value
- * 
+ *
  * @var mixed
  */
 	protected $_valid = true;
 
 /**
- * Holds the index under which the Vaildator was attached
- * 
+ * Holds the index under which the Validator was attached
+ *
  * @var mixed
  */
 	protected $_index = null;
 
 /**
  * Create or Update transaction?
- * 
+ *
  * @var boolean
  */
 	protected $_modelExists = null;
 
 /**
  * The parsed rule
- * 
+ *
  * @var mixed
  */
 	protected $_rule = null;
 
 /**
  * The parsed rule parameters
- * 
+ *
  * @var array
  */
 	protected $_ruleParams = array();
 
 /**
  * The errorMessage
- * 
+ *
  * @var string
  */
 	protected $_errorMessage = null;
 
 /**
  * Holds passed in options
- * 
+ *
  * @var array
  */
 	protected $_passedOptions = array();
 
 /**
  * Flag indicating wether the allowEmpty check has failed
- * 
- * @var boolean 
+ *
+ * @var boolean
  */
 	protected $_emptyFail = null;
 
 /**
  * The 'rule' key
- * 
+ *
  * @var mixed
  */
 	public $rule = 'blank';
 
 /**
  * The 'required' key
- * 
+ *
  * @var mixed
  */
 	public $required = null;
 
 /**
  * The 'allowEmpty' key
- * 
+ *
  * @var boolean
  */
 	public $allowEmpty = false;
 
 /**
  * The 'on' key
- * 
+ *
  * @var string
  */
 	public $on = null;
 
 /**
  * The 'last' key
- * 
+ *
  * @var boolean
  */
 	public $last = true;
 
 /**
  * The 'message' key
- * 
+ *
  * @var string
  */
 	public $message = null;
 
 /**
  * Constructor
- * 
- * @param ModelField $field
+ *
+ * @param CakeField $field
  * @param array $validator [optional] The validator properties
  * @param mixed $index [optional]
  */
@@ -168,11 +168,11 @@ class CakeRule {
 
 /**
  * Checks if the rule is valid
- * 
+ *
  * @return boolean
  */
 	public function isValid() {
-		if (!$this->_valid || (is_string($this->_valid) && strlen($this->_valid) > 0)) {
+		if (!$this->_valid || (is_string($this->_valid) && !empty($this->_valid))) {
 			return false;
 		}
 
@@ -181,11 +181,11 @@ class CakeRule {
 
 /**
  * Checks if the field is required by the 'required' value
- * 
+ *
  * @return boolean
  */
 	public function isRequired() {
-		if ($this->required === true || $this->required === false) {
+		if (is_bool($this->required)) {
 			return $this->required;
 		}
 
@@ -200,7 +200,7 @@ class CakeRule {
 
 /**
  * Checks if the field failed the required validation
- * 
+ *
  * @return boolean
  */
 	public function checkRequired() {
@@ -219,7 +219,7 @@ class CakeRule {
 
 /**
  * Checks if the allowEmpty key applies
- * 
+ *
  * @return boolean
  */
 	public function checkEmpty() {
@@ -236,8 +236,8 @@ class CakeRule {
 
 /**
  * Checks if the Validation rule can be skipped
- * 
- * @return boolean True if the ValidaitonRule can be skipped
+ *
+ * @return boolean True if the ValidationRule can be skipped
  */
 	public function skip() {
 		if (!empty($this->on)) {
@@ -250,7 +250,7 @@ class CakeRule {
 
 /**
  * Checks if the 'last' key is true
- * 
+ *
  * @return boolean
  */
 	public function isLast() {
@@ -259,7 +259,7 @@ class CakeRule {
 
 /**
  * Gets the validation error message
- * 
+ *
  * @return string
  */
 	public function getMessage() {
@@ -268,8 +268,8 @@ class CakeRule {
 
 /**
  * Gets the parent field
- * 
- * @return ModelField
+ *
+ * @return CakeField
  */
 	public function getField() {
 		return $this->_field;
@@ -277,7 +277,7 @@ class CakeRule {
 
 /**
  * Gets an array with the rule properties
- * 
+ *
  * @return array
  */
 	public function getPropertiesArray() {
@@ -293,7 +293,7 @@ class CakeRule {
 
 /**
  * Dispatches the validation rule to the given validator method
- * 
+ *
  * @return boolean True if the rule could be dispatched, false otherwise
  */
 	public function dispatchValidation() {
@@ -326,7 +326,7 @@ class CakeRule {
 
 /**
  * Fetches the correct error message for a failed validation
- * 
+ *
  * @return string
  */
 	protected function _processValidationResponse() {
@@ -345,10 +345,20 @@ class CakeRule {
 			if (is_array($this->rule) && $args === null) {
 				$args = array_slice($this->getField()->ruleSet[$this->_index]['rule'], 1);
 			}
+			if (!empty($args)) {
+				foreach ($args as $k => $arg) {
+					$args[$k] = __d($validationDomain, $arg);
+				}
+			}
 			$this->_errorMessage = __d($validationDomain, $this->_errorMessage, $args);
 		} elseif (is_string($this->_index)) {
 			if (is_array($this->rule)) {
 				$args = array_slice($this->getField()->ruleSet[$this->_index]['rule'], 1);
+				if (!empty($args)) {
+					foreach ($args as $k => $arg) {
+						$args[$k] = __d($validationDomain, $arg);
+					}
+				}
 				$this->_errorMessage = __d($validationDomain, $this->_index, $args);
 			} else {
 				$this->_errorMessage = __d($validationDomain, $this->_index);
@@ -365,7 +375,7 @@ class CakeRule {
 
 /**
  * Sets the rule properties from the rule entry in validate
- * 
+ *
  * @param array $validator [optional]
  * @return void
  */
@@ -387,7 +397,7 @@ class CakeRule {
 
 /**
  * Parses the rule and sets the rule and ruleParams
- * 
+ *
  * @return void
  */
 	protected function _parseRule() {

@@ -15,7 +15,7 @@
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model
- * @since         CakePHP(tm) v 0.10.0.0
+ * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeField', 'Model/Validator');
@@ -72,7 +72,7 @@ class ModelValidator {
 	public $options = array();
 
 /**
- * Holds the ModelFields
+ * Holds the CakeField objects array
  *
  * @var array
  */
@@ -345,17 +345,19 @@ class ModelValidator {
  * Gets all fields if $name is null (default), or the field for fieldname $name if it's found.
  *
  * @param string $name [optional] The fieldname to fetch. Defaults to null.
- * @return array|ModelField Either the fields array or the ModelField for fieldname $name
+ * @return mixed Either array of CakeField objects , single object for $name or false when $name not present in fields
  */
 	public function getFields($name = null) {
 		if ($name !== null && !empty($this->_fields[$name])) {
 			return $this->_fields[$name];
+		} elseif ($name !==null) {
+			return false;
 		}
 		return $this->_fields;
 	}
 
 /**
- * Sets the ModelField isntances from the Model::$validate property after processing the fieldList and whiteList.
+ * Sets the CakeField isntances from the Model::$validate property after processing the fieldList and whiteList.
  * If Model::$validate is not set or empty, this method returns false. True otherwise.
  *
  * @param boolean $reset If true will reset the Validator $validate array to the Model's default

@@ -979,7 +979,8 @@ class Model extends Object implements CakeEventListener {
 
 						if (strpos($assoc, '.') !== false) {
 							list($plugin, $assoc) = pluginSplit($assoc, true);
-							$this->{$type}[$assoc] = array('className' => $plugin . $assoc);						} else {
+							$this->{$type}[$assoc] = array('className' => $plugin . $assoc);
+						} else {
 							$this->{$type}[$assoc] = $value;
 						}
 					}
