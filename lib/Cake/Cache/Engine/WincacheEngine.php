@@ -186,5 +186,4 @@ class WincacheEngine extends CacheEngine {
 		return $success;
 	}
 
-
 }

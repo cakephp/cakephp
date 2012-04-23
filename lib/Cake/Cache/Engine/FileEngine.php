@@ -82,8 +82,8 @@ class FileEngine extends CacheEngine {
 		if (substr($this->settings['path'], -1) !== DS) {
 			$this->settings['path'] .= DS;
 		}
-		if (!empty($this->groupPrefix)) {
-			$this->groupPrefix = str_replace('_', DS, $this->groupPrefix);
+		if (!empty($this->_groupPrefix)) {
+			$this->_groupPrefix = str_replace('_', DS, $this->_groupPrefix);
 		}
 		return $this->_active();
 	}
@@ -288,10 +288,9 @@ class FileEngine extends CacheEngine {
  * @return boolean true if the cache key could be set, false otherwise
  */
 	protected function _setKey($key, $createKey = false) {
-
 		$groups = null;
-		if (!empty($this->groupPrefix)) {
-			$groups = vsprintf($this->groupPrefix, $this->groups());
+		if (!empty($this->_groupPrefix)) {
+			$groups = vsprintf($this->_groupPrefix, $this->groups());
 		}
 		$dir = $this->settings['path'] . $groups;
 

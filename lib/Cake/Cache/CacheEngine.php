@@ -33,7 +33,7 @@ abstract class CacheEngine {
  *
  * @var string
  **/
-	protected $groupPrefix = null;
+	protected $_groupPrefix = null;
 
 /**
  * Initialize the cache engine
@@ -51,7 +51,7 @@ abstract class CacheEngine {
 		);
 		if (!empty($this->settings['groups'])) {
 			sort($this->settings['groups']);
-			$this->groupPrefix = str_repeat('%s_', count($this->settings['groups']));
+			$this->_groupPrefix = str_repeat('%s_', count($this->settings['groups']));
 		}
 		if (!is_numeric($this->settings['duration'])) {
 			$this->settings['duration'] = strtotime($this->settings['duration']) - time();
@@ -166,8 +166,8 @@ abstract class CacheEngine {
 		}
 
 		$prefix = '';
-		if (!empty($this->groupPrefix)) {
-			$prefix = vsprintf($this->groupPrefix, $this->groups());
+		if (!empty($this->_groupPrefix)) {
+			$prefix = vsprintf($this->_groupPrefix, $this->groups());
 		}
 
 		$key = Inflector::underscore(str_replace(array(DS, '/', '.'), '_', strval($key)));

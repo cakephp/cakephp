@@ -284,6 +284,6 @@ class MemcacheEngine extends CacheEngine {
  * @return boolean success
  **/
 	public function clearGroup($group) {
-		return (bool) $this->_Memcache->increment($this->settings['prefix'] . $group);
+		return (bool)$this->_Memcache->increment($this->settings['prefix'] . $group);
 	}
 }

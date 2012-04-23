@@ -164,7 +164,7 @@ class XcacheEngine extends CacheEngine {
  * @return boolean success
  **/
 	public function clearGroup($group) {
-		return (bool) xcache_inc($this->settings['prefix'] . $group, 1);
+		return (bool)xcache_inc($this->settings['prefix'] . $group, 1);
 	}
 
 /**
