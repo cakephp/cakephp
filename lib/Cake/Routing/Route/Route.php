@@ -355,12 +355,24 @@ class Route {
 		$defaults = $this->defaults;
 
 		$hostOptions = array_intersect_key($url, $context);
-		if (!empty($hostOptions)) {
+
+		// Check for properties that will cause and
+		// absoulte url. Copy the other properties over.
+		if (
+			isset($hostOptions['_scheme']) ||
+			isset($hostOptions['_port']) ||
+			isset($hostOptions['_host'])
+		) {
 			$hostOptions += $context;
 
 			if ($hostOptions['_port'] == $context['_port']) {
 				unset($hostOptions['_port']);
 			}
+		}
+	
+		// If no base is set, copy one in.
+		if (!isset($hostOptions['_base']) && isset($context['_base'])) {
+			$hostOptions['_base'] = $context['_base'];
 		}
 		unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base']);
 
@@ -460,7 +472,15 @@ class Route {
 		if (strpos($this->template, '*')) {
 			$out = str_replace('*', $pass, $out);
 		}
+
+		// add base url if applicable.
+		if (isset($hostOptions['_base'])) {
+			$out = $hostOptions['_base'] . $out;
+			unset($hostOptions['_base']);
+		}
+	
 		$out = str_replace('//', '/', $out);
+
 		if (!empty($hostOptions)) {
 			$host = $hostOptions['_host'];
 
@@ -469,10 +489,9 @@ class Route {
 				$host .= ':' . $hostOptions['_port'];
 			}
 			$out = sprintf(
-				'%s://%s%s%s',
+				'%s://%s%s',
 				$hostOptions['_scheme'],
 				$host,
-				$hostOptions['_base'],
 				$out
 			);
 		}

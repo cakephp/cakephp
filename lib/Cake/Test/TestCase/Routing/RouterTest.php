@@ -70,8 +70,8 @@ class RouterTest extends TestCase {
 		}
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
-		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('full_base' => true)));
-		$this->assertSame(FULL_BASE_URL . '/', Router::url(array('full_base' => true)));
+		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('_full' => true)));
+		$this->assertSame(FULL_BASE_URL . '/', Router::url(array('_full' => true)));
 	}
 
 /**
@@ -1440,7 +1440,7 @@ class RouterTest extends TestCase {
 		$expected = '/base/my_controller/my_action';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(array('controller' => 'my_controller', 'action' => 'my_action', 'base' => false));
+		$result = Router::url(array('controller' => 'my_controller', 'action' => 'my_action', '_base' => false));
 		$expected = '/my_controller/my_action';
 		$this->assertEquals($expected, $result);
 	}
@@ -1834,7 +1834,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testGetParams() {
-		$paths = array('base' => '/', 'here' => '/products/display/5', 'webroot' => '/webroot');
+		$paths = array('base' => '', 'here' => '/products/display/5', 'webroot' => '/webroot');
 		$params = array('param1' => '1', 'param2' => '2');
 		Router::setRequestInfo(array($params, $paths));
 
@@ -2079,11 +2079,11 @@ class RouterTest extends TestCase {
 		Router::setRequestInfo($firstRequest);
 		Router::setRequestInfo($secondRequest);
 
-		$result = Router::url(array('base' => false));
+		$result = Router::url(array('_base' => false));
 		$this->assertEquals('/comments/listing', $result, 'with second requests, the last should win.');
 
 		Router::popRequest();
-		$result = Router::url(array('base' => false));
+		$result = Router::url(array('_base' => false));
 		$this->assertEquals('/posts', $result, 'with second requests, the last should win.');
 	}
 

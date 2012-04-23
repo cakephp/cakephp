@@ -97,9 +97,10 @@ class RedirectRoute extends Route {
  * There is no reverse routing redirection routes
  *
  * @param array $url Array of parameters to convert to a string.
+ * @param array $context Array of request context parameters.
  * @return mixed either false or a string url.
  */
-	public function match($url) {
+	public function match($url, $context = array()) {
 		return false;
 	}
 

@@ -46,12 +46,12 @@ class PluginShortRoute extends Route {
  * @param array $url Array of parameters to convert to a string.
  * @return mixed either false or a string url.
  */
-	public function match($url) {
+	public function match($url, $context = array()) {
 		if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] != $url['controller']) {
 			return false;
 		}
 		$this->defaults['controller'] = $url['controller'];
-		$result = parent::match($url);
+		$result = parent::match($url, $context);
 		unset($this->defaults['controller']);
 		return $result;
 	}

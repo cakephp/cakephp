@@ -46,17 +46,17 @@ class RouteCollection {
  * @return void
  * @TODO Remove persistent params?  Are they even useful?
  */
-	public function match($url, $requestContext = null) {
+	public function match($url, $currentParams = array(), $requestContext = array()) {
 		$names = $this->_getNames($url);
 		foreach ($names as $name) {
 			if (isset($this->_routeTable[$name])) {
-				$output = $this->_matchRoutes($this->_routeTable[$name], $url, $requestContext);
+				$output = $this->_matchRoutes($this->_routeTable[$name], $url, $currentParams, $requestContext);
 				if ($output) {
 					return $output;
 				}
 			}
 		}
-		return $this->_matchRoutes($this->_routes, $url, $requestContext);
+		return $this->_matchRoutes($this->_routes, $url, $currentParams, $requestContext);
 	}
 
 /**
@@ -67,17 +67,17 @@ class RouteCollection {
  * @param array $requestContext The current request parameters, used for persistent parameters.
  * @return mixed Either false on failure, or a string on success.
  */
-	protected function _matchRoutes($routes, $url, $requestContext) {
+	protected function _matchRoutes($routes, $url, $currentParams, $requestContext) {
 		$output = false;
 		for ($i = 0, $len = count($routes); $i < $len; $i++) {
 			$originalUrl = $url;
 			$route =& $routes[$i];
 
-			if (isset($route->options['persist'], $requestContext)) {
-				$url = $route->persistParams($url, $requestContext);
+			if (isset($route->options['persist'], $currentParams)) {
+				$url = $route->persistParams($url, $currentParams);
 			}
 
-			if ($match = $route->match($url)) {
+			if ($match = $route->match($url, $requestContext)) {
 				$output = trim($match, '/');
 				break;
 			}
