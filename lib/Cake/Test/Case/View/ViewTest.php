@@ -798,6 +798,20 @@ class ViewTest extends CakeTestCase {
 		$this->assertInstanceOf('FormHelper', $View->Form, 'Object type is wrong.');
 	}
 
+
+/**
+ * test lazy loading helpers
+ *
+ * @return void
+ */
+	public function testLazyLoadHelpers() {
+		$View = new View($this->PostsController);
+
+		$View->helpers = array();
+		$this->assertInstanceOf('HtmlHelper', $View->Html, 'Object type is wrong.');
+		$this->assertInstanceOf('FormHelper', $View->Form, 'Object type is wrong.');
+	}
+
 /**
  * test the correct triggering of helper callbacks
  *

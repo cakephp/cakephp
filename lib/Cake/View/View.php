@@ -784,9 +784,6 @@ class View extends Object {
  * @return mixed
  */
 	public function __get($name) {
-		if (isset($this->Helpers->{$name})) {
-			return $this->Helpers->{$name};
-		}
 		switch ($name) {
 			case 'base':
 			case 'here':
@@ -799,9 +796,12 @@ class View extends Object {
 				return $this->request;
 			case 'output':
 				return $this->Blocks->get('content');
-			default:
-				return $this->{$name};
 		}
+		if (isset($this->Helpers->{$name})) {
+			$this->{$name} = $this->Helpers->{$name};
+			return $this->Helpers->{$name};
+		}
+		return $this->{$name};
 	}
 
 /**
