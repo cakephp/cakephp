@@ -44,11 +44,13 @@ abstract class CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
-		$this->settings = array_merge(
-			array('prefix' => 'cake_', 'duration' => 3600, 'probability' => 100, 'groups' => array()),
-			$this->settings,
-			$settings
+		$settings += $this->settings + array(
+			'prefix' => 'cake_',
+			'duration' => 3600,
+			'probability' => 100,
+			'groups' => array()
 		);
+		$this->settings = $settings;
 		if (!empty($this->settings['groups'])) {
 			sort($this->settings['groups']);
 			$this->_groupPrefix = str_repeat('%s_', count($this->settings['groups']));
