@@ -44,7 +44,7 @@ class Dispatcher implements CakeEventListener {
  * Event manager, used to handle dispatcher filters
  *
  * @var CakeEventMaanger
- **/
+ */
 	protected $_eventManager;
 
 /**
@@ -63,7 +63,7 @@ class Dispatcher implements CakeEventListener {
  * creted. Attaches the default listeners and filters
  *
  * @return CakeEventmanger
- **/
+ */
 	public function getEventManager() {
 		if (!$this->_eventManager) {
 			$this->_eventManager = new CakeEventManager();
@@ -77,7 +77,7 @@ class Dispatcher implements CakeEventListener {
  * Returns the list of events this object listents to.
  *
  * @return array
- **/
+ */
 	public function implementedEvents() {
 		return array('Dispatcher.beforeDispatch' => 'parseParams');
 	}
@@ -88,7 +88,8 @@ class Dispatcher implements CakeEventListener {
  *
  * @param CakeEventManager $manager
  * @return void
- **/
+ * @throws MissingDispatcherFilterException
+ */
 	protected function _attachFilters($manager) {
 		$filters = Configure::read('Dispatcher.filters');
 		if (empty($filters)) {

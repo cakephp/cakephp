@@ -50,7 +50,9 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
  *
  * @param string $helper The helper name to be loaded
  * @return boolean wheter the helper could be loaded or not
- **/
+ * @throws MissingHelperException When a helper could not be found.
+ *    App helpers are searched, and then plugin helpers.
+ */
 	public function __isset($helper) {
 		if (parent::__isset($helper)) {
 			return true;

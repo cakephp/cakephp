@@ -34,17 +34,6 @@ class Postgres extends DboSource {
 	public $description = "PostgreSQL DBO Driver";
 
 /**
- * Index of basic SQL commands
- *
- * @var array
- */
-	protected $_commands = array(
-		'begin'    => 'BEGIN',
-		'commit'   => 'COMMIT',
-		'rollback' => 'ROLLBACK'
-	);
-
-/**
  * Base driver configuration settings.  Merged with user settings.
  *
  * @var array
@@ -904,6 +893,15 @@ class Postgres extends DboSource {
  */
 	public function getSchemaName() {
 		return $this->config['schema'];
+	}
+
+/**
+ * Check if the server support nested transactions
+ *
+ * @return boolean
+ */
+	public function supportNestedTransaction() {
+		return $this->nestedTransaction && version_compare($this->getVersion(), '8.0', '>=');
 	}
 
 }

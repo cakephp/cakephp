@@ -868,4 +868,22 @@ HTMLBLOC;
 		$this->assertNotRegExp('/Message-ID:/', $result);
 	}
 
+/**
+ * Make sure from/to are not double encoded when UTF-8 is present
+ */
+	public function testEncodingFrom() {
+		$this->Controller->EmailTest->to = 'Teßt <test@example.com>';
+		$this->Controller->EmailTest->from = 'Teßt <test@example.com>';
+		$this->Controller->EmailTest->subject = 'Cake Debug Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+
+		$this->Controller->EmailTest->delivery = 'DebugComp';
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$result = DebugCompTransport::$lastEmail;
+
+		$this->assertContains('From: =?UTF-8?B?VGXDn3Qg?= <test@example.com>', $result);
+		$this->assertContains('To: =?UTF-8?B?VGXDn3Qg?= <test@example.com>', $result);
+	}
+
 }

@@ -115,7 +115,7 @@ class RedisEngine extends CacheEngine {
 	public function read($key) {
 		$value = $this->_Redis->get($key);
 		if (ctype_digit($value)) {
-			$value = (int) $value;
+			$value = (int)$value;
 		}
 		if ($value !== false && is_string($value)) {
 			$value = unserialize($value);
@@ -132,7 +132,7 @@ class RedisEngine extends CacheEngine {
  * @throws CacheException when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
-		return (int) $this->_Redis->incrBy($key, $offset);
+		return (int)$this->_Redis->incrBy($key, $offset);
 	}
 
 /**
@@ -144,7 +144,7 @@ class RedisEngine extends CacheEngine {
  * @throws CacheException when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
-		return (int) $this->_Redis->decrBy($key, $offset);
+		return (int)$this->_Redis->decrBy($key, $offset);
 	}
 
 /**
