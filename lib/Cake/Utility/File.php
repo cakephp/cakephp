@@ -110,9 +110,7 @@ class File {
 	public function create() {
 		$dir = $this->Folder->pwd();
 		if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
-			$old = umask(0);
 			if (touch($this->path)) {
-				umask($old);
 				return true;
 			}
 		}

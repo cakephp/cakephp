@@ -53,6 +53,9 @@ class FileTest extends CakeTestCase {
 		parent::tearDown();
 		$this->File->close();
 		unset($this->File);
+
+		$Folder = new Folder();
+		$Folder->delete(TMP . 'tests' . DS . 'permissions');
 	}
 
 /**
@@ -117,12 +120,52 @@ class FileTest extends CakeTestCase {
 
 		$result = $this->File->Folder();
 		$this->assertInstanceOf('Folder', $result);
+	}
 
+/**
+ * testPermission method
+ */
+	public function testPermission() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows.');
 
-		$result = $this->File->perms();
-		$expecting = decoct(0644 & ~umask());
+		$dir = TMP . 'tests' . DS . 'permissions' . DS;
+		$Folder = new Folder($dir);
+
+		$old = umask();
+
+		umask(0002);
+		$file = $dir . 'permission_' . uniqid();
+		$expecting = decoct(0664 & ~umask());
+		$File = new File($file, true);
+		$result = $File->perms();
 		$this->assertEquals($expecting, $result);
+		$File->delete();
+
+		umask(0022);
+		$file = $dir . 'permission_' . uniqid();
+		$expecting = decoct(0644 & ~umask());
+		$File = new File($file, true);
+		$result = $File->perms();
+		$this->assertEquals($expecting, $result);
+		$File->delete();
+
+		umask(0422);
+		$file = $dir . 'permission_' . uniqid();
+		$expecting = decoct(0244 & ~umask());
+		$File = new File($file, true);
+		$result = $File->perms();
+		$this->assertEquals($expecting, $result);
+		$File->delete();
+
+		umask(0444);
+		$file = $dir . 'permission_' . uniqid();
+		$expecting = decoct(0222 & ~umask());
+		$File = new File($file, true);
+		$result = $File->perms();
+		$this->assertEquals($expecting, $result);
+		$File->delete();
+
+		umask($old);
 	}
 
 /**
