@@ -129,7 +129,7 @@ abstract class CacheEngine {
  *
  * @param string $groups name of the group to be cleared
  * @return boolean
- **/
+ */
 	public function clearGroup($group) {
 		return false;
 	}
@@ -140,10 +140,10 @@ abstract class CacheEngine {
  * the token representing each group in the cache key
  *
  * @return array
- **/
- 	public function groups() {
- 		return $this->settings['groups'];
- 	}
+ */
+	public function groups() {
+		return $this->settings['groups'];
+	}
 
 /**
  * Cache Engine settings

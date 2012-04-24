@@ -220,7 +220,6 @@ class RegisEngineTest extends CakeTestCase {
 		$this->assertEquals(3, $result);
 	}
 
-
 /**
  * test clearing redis.
  *

@@ -410,7 +410,7 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertTrue(Cache::write('test_groups3', 'value3', 'file_groups'));
 	}
 
-	/**
+/**
  * Tests that deleteing from a groups-enabled config is possible
  *
  * @return void
