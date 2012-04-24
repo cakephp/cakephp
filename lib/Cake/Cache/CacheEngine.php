@@ -170,7 +170,7 @@ abstract class CacheEngine {
 			$prefix = vsprintf($this->_groupPrefix, $this->groups());
 		}
 
-		$key = Inflector::underscore(str_replace(array(DS, '/', '.'), '_', strval($key)));
+		$key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace(array(DS, '/', '.'), '_', strval($key)))));
 		return $prefix . $key;
 	}
 

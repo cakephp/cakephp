@@ -68,13 +68,16 @@ class FileEngine extends CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
-		parent::init(array_merge(
-			array(
-				'engine' => 'File', 'path' => CACHE, 'prefix' => 'cake_', 'lock' => true,
-				'serialize' => true, 'isWindows' => false, 'mask' => 0664
-			),
-			$settings
-		));
+		$settings += array(
+			'engine' => 'File',
+			'path' => CACHE,
+			'prefix' => 'cake_',
+			'lock' => true,
+			'serialize' => true,
+			'isWindows' => false,
+			'mask' => 0664
+		);
+		parent::init($settings);
 
 		if (DS === '\\') {
 			$this->settings['isWindows'] = true;

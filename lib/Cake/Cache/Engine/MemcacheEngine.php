@@ -66,19 +66,21 @@ class MemcacheEngine extends CacheEngine {
 		if (!class_exists('Memcache')) {
 			return false;
 		}
-		parent::init(array_merge(array(
+		if (!isset($settings['prefix'])) {
+			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
+		}
+		$settings += array(
 			'engine' => 'Memcache',
-			'prefix' => Inflector::slug(APP_DIR) . '_',
 			'servers' => array('127.0.0.1'),
 			'compress' => false,
 			'persistent' => true
-			), $settings)
 		);
+		parent::init($settings);
 
 		if ($this->settings['compress']) {
 			$this->settings['compress'] = MEMCACHE_COMPRESSED;
 		}
-		if (!is_array($this->settings['servers'])) {
+		if (is_string($this->settings['servers'])) {
 			$this->settings['servers'] = array($this->settings['servers']);
 		}
 		if (!isset($this->_Memcache)) {

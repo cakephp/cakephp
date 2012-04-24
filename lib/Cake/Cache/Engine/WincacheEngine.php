@@ -45,10 +45,11 @@ class WincacheEngine extends CacheEngine {
  * @see CacheEngine::__defaults
  */
 	public function init($settings = array()) {
-		parent::init(array_merge(array(
-			'engine' => 'Wincache',
-			'prefix' => Inflector::slug(APP_DIR) . '_'),
-		$settings));
+		if (!isset($settings['prefix'])) {
+			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
+		}
+		$settings += array('engine' => 'Wincache');
+		parent::init($settings);
 		return function_exists('wincache_ucache_info');
 	}
 

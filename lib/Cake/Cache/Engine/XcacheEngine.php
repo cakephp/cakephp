@@ -45,13 +45,15 @@ class XcacheEngine extends CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
-		parent::init(array_merge(array(
+		if (!isset($settings['prefix'])) {
+			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
+		}
+		$settings += array(
 			'engine' => 'Xcache',
-			'prefix' => Inflector::slug(APP_DIR) . '_',
 			'PHP_AUTH_USER' => 'user',
 			'PHP_AUTH_PW' => 'password'
-			), $settings)
 		);
+		parent::init($settings);
 		return function_exists('xcache_info');
 	}
 
