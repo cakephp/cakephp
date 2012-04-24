@@ -134,7 +134,7 @@ class TemplateTaskTest extends CakeTestCase {
 
 		$result = $this->Task->generate('classes', 'test_object', array('test' => 'foo'));
 		$expected = "I got rendered\nfoo";
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
