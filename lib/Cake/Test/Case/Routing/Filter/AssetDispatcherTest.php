@@ -1,14 +1,10 @@
 <?php
 /**
- * RouterTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
- *	Licensed under The Open Group Test Suite License
- *	Redistributions of files must retain the above copyright notice.
+ * Licensed under The Open Group Test Suite License
+ * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
@@ -41,7 +37,7 @@ class AssetDispatcherTest extends CakeTestCase {
 		$filter = new AssetDispatcher();
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
 		Configure::write('Asset.filter', array(
-			'js' => '',		
+			'js' => '',
 			'css' => ''
 		));
 		App::build(array(
@@ -85,11 +81,11 @@ class AssetDispatcherTest extends CakeTestCase {
  * file dispatching
  *
  * @return void
- **/
+ */
 	public function testNotModified() {
 		$filter = new AssetDispatcher();
 		Configure::write('Asset.filter', array(
-			'js' => '',		
+			'js' => '',
 			'css' => ''
 		));
 		App::build(array(

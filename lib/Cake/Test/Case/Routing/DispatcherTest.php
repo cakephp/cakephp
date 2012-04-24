@@ -48,7 +48,7 @@ class TestDispatcher extends Dispatcher {
  * Controller instance, made publicly available for testing
  *
  * @var Controller
- **/
+ */
 	public $controller;
 
 /**
@@ -68,7 +68,7 @@ class TestDispatcher extends Dispatcher {
  *
  * @param CakeEvent
  * @return void
- **/
+ */
 	public function filterTest($event) {
 		$event->data['request']->params['eventName'] = $event->name();
 	}
@@ -78,7 +78,7 @@ class TestDispatcher extends Dispatcher {
  *
  * @param CakeEvent
  * @return void
- **/
+ */
 	public function filterTest2($event) {
 		$event->stopPropagation();
 		return $event->data['response'];
@@ -783,7 +783,6 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
 	}
 
-
 /**
  * testDispatch method
  *
@@ -1194,7 +1193,7 @@ class DispatcherTest extends CakeTestCase {
  * Tests that it is possible to attach filter classes to the dispatch cycle
  *
  * @return void
- **/
+ */
 	public function testDispatcherFilterSuscriber() {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
@@ -1234,7 +1233,7 @@ class DispatcherTest extends CakeTestCase {
  *
  * @expectedException MissingDispatcherFilterException
  * @return void
- **/
+ */
 	public function testDispatcherFilterSuscriberMissing() {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
@@ -1250,12 +1249,11 @@ class DispatcherTest extends CakeTestCase {
 		$dispatcher->dispatch($request, $response);
 	}
 
-
 /**
  * Tests it is possible to attach single callables as filters
  *
  * @return void
- **/
+ */
 	public function testDispatcherFilterCallable() {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
@@ -1512,7 +1510,6 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->dispatch($request, $response);
 		$this->assertEquals('404', $response->statusCode());
 	}
-
 
 /**
  * Data provider for cached actions.
