@@ -219,7 +219,7 @@ class CakeTime {
  * 	If null it tries to get timezone from 'Config.timezone' config var
  * @return DateTimeZone Timezone object
  */
-	public function timezone($timezone = null) {
+	public static function timezone($timezone = null) {
 		static $tz = null;
 
 		if (is_object($timezone)) {
