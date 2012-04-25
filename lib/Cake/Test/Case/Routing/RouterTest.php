@@ -1582,6 +1582,10 @@ class RouterTest extends CakeTestCase {
 		$expected = '/protected/images/add';
 		$this->assertEquals($expected, $result);
 
+		$result = Router::url(array('controller' => 'images', 'action' => 'add_protected_test', 'protected' => true));
+		$expected = '/protected/images/add_protected_test';
+		$this->assertEquals($expected, $result);
+
 		$result = Router::url(array('action' => 'edit', 1));
 		$expected = '/images/edit/1';
 		$this->assertEquals($expected, $result);
