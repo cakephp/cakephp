@@ -45,7 +45,7 @@ class MysqlTest extends CakeTestCase {
 	public $fixtures = array(
 		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment',
 		'core.sample', 'core.tag', 'core.user', 'core.post', 'core.author', 'core.data_test',
-		'core.binary_test'
+		'core.binary_test', 'core.inno'
 	);
 
 /**
@@ -3586,10 +3586,15 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testNestedTransaction() {
-		$this->skipIf($this->Dbo->supportNestedTransaction() === false, 'The MySQL server do not support nested transaction');
+		$nested = $this->Dbo->nestedTransaction;
+		$this->Dbo->nestedTransaction = true;
+		if ($this->Dbo->supportNestedTransaction() === false) {
+			$this->Dbo->nestedTransaction = $nested;
+			$this->skipIf(true, 'The MySQL server do not support nested transaction');
+		}
 
-		$this->loadFixtures('Article');
-		$model = ClassRegistry::init('Article');
+		$this->loadFixtures('Inno');
+		$model = ClassRegistry::init('Inno');
 		$model->hasOne = $model->hasMany = $model->belongsTo = $model->hasAndBelongsToMany = array();
 		$model->cacheQueries = false;
 		$this->Dbo->cacheMethods = false;
@@ -3611,6 +3616,8 @@ class MysqlTest extends CakeTestCase {
 
 		$this->assertTrue($this->Dbo->rollback());
 		$this->assertNotEmpty($model->read(null, 1));
+
+		$this->Dbo->nestedTransaction = $nested;
 	}
 
 }
