@@ -4799,7 +4799,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 		$this->assertNotRegExp('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
-	
+
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('value' => false));
 		$this->assertTags($result, $expected);
 		$this->assertNotRegExp('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);

@@ -798,7 +798,6 @@ class ViewTest extends CakeTestCase {
 		$this->assertInstanceOf('FormHelper', $View->Form, 'Object type is wrong.');
 	}
 
-
 /**
  * test lazy loading helpers
  *
