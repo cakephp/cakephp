@@ -35,7 +35,7 @@ class MockDataSource extends DataSource {
 
 class DboTestSource extends DboSource {
 
-	public static $nested = true;
+	public $nestedSupport = false;
 
 	public function connect($config = array()) {
 		$this->connected = true;
@@ -54,7 +54,7 @@ class DboTestSource extends DboSource {
 	}
 
 	public function supportNestedTransaction() {
-		return $this->nestedTransaction && self::$nested;
+		return $this->nestedTransaction && $this->nestedSupport;
 	}
 
 }
@@ -849,7 +849,8 @@ class DboSourceTest extends CakeTestCase {
 		$conn = $this->getMock('MockPDO');
 		$db = new DboTestSource();
 		$db->setConnection($conn);
-		DboTestSource::$nested = true;
+		$db->nestedTransaction = true;
+		$db->nestedSupport = true;
 
 		$conn->expects($this->at(0))->method('beginTransaction')->will($this->returnValue(true));
 		$conn->expects($this->at(1))->method('exec')->with($this->equalTo('SAVEPOINT LEVEL1'))->will($this->returnValue(true));
@@ -870,8 +871,8 @@ class DboSourceTest extends CakeTestCase {
 		$conn = $this->getMock('MockPDO');
 		$db = new DboTestSource();
 		$db->setConnection($conn);
-		$db->nestedTransaction = false;
-		DboTestSource::$nested = true;
+		$db->nestedTransaction = true;
+		$db->nestedSupport = false;
 
 		$conn->expects($this->once())->method('beginTransaction')->will($this->returnValue(true));
 		$conn->expects($this->never())->method('exec');
@@ -889,7 +890,8 @@ class DboSourceTest extends CakeTestCase {
 		$conn = $this->getMock('MockPDO');
 		$db = new DboTestSource();
 		$db->setConnection($conn);
-		DboTestSource::$nested = false;
+		$db->nestedTransaction = false;
+		$db->nestedSupport = true;
 
 		$conn->expects($this->once())->method('beginTransaction')->will($this->returnValue(true));
 		$conn->expects($this->never())->method('exec');
