@@ -434,20 +434,26 @@ class RouterTest extends TestCase {
 	public function testUrlGenerationWithQueryStrings() {
 		Router::connect('/:controller/:action/*');
 
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
+		$result = Router::url(array(
+			'controller' => 'posts',
+			'0',
+			'?' => array('var' => 'test', 'var2' => 'test2')
+		));
 		$expected = '/posts/index/0?var=test&var2=test2';
-		$this->assertEquals($expected, $result);
-
-		$result = Router::url(array('controller' => 'posts', '0', '?' => 'var=test&var2=test2'));
-		$this->assertEquals($expected, $result);
-
-		$result = Router::url(array('controller' => 'posts', '0', '?' => array('var' => 'test', 'var2' => 'test2')));
 		$this->assertEquals($expected, $result);
 
 		$result = Router::url(array('controller' => 'posts', '0', '?' => array('var' => null)));
 		$this->assertEquals('/posts/index/0', $result);
 
-		$result = Router::url(array('controller' => 'posts', '0', '?' => 'var=test&var2=test2', '#' => 'unencoded string %'));
+		$result = Router::url(array(
+			'controller' => 'posts',
+			'0',
+			'?' => array(
+				'var' => 'test',
+				'var2' => 'test2'
+			),
+			'#' => 'unencoded string %'
+		));
 		$expected = '/posts/index/0?var=test&var2=test2#unencoded string %';
 		$this->assertEquals($expected, $result);
 	}
@@ -1225,37 +1231,6 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * testQuerystringGeneration method
- *
- * @return void
- */
-	public function testQuerystringGeneration() {
-		Router::connect('/:controller/:action/*');
-
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
-		$expected = '/posts/index/0?var=test&var2=test2';
-		$this->assertEquals($expected, $result);
-
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => array('var' => 'test', 'var2' => 'test2')));
-		$this->assertEquals($expected, $result);
-
-		$expected .= '&more=test+data';
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
-		$this->assertEquals($expected, $result);
-
-		// Test bug #4614
-		$restore = ini_get('arg_separator.output');
-		ini_set('arg_separator.output', '&amp;');
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
-		$this->assertEquals($expected, $result);
-		ini_set('arg_separator.output', $restore);
-
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => array('var' => 'test', 'var2' => 'test2')), array('escape' => true));
-		$expected = '/posts/index/0?var=test&amp;var2=test2';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * test newer style automatically generated prefix routes.
  *
  * @return void
@@ -1826,38 +1801,6 @@ class RouterTest extends TestCase {
 		Router::parse('/government');
 		$route = Router::requestRoute();
 		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
-	}
-
-/**
- * testGetParams
- *
- * @return void
- */
-	public function testGetParams() {
-		$paths = array('base' => '', 'here' => '/products/display/5', 'webroot' => '/webroot');
-		$params = array('param1' => '1', 'param2' => '2');
-		Router::setRequestInfo(array($params, $paths));
-
-		$expected = array(
-			'plugin' => null, 'controller' => false, 'action' => false,
-			'named' => array(), 'pass' => array(),
-			'param1' => '1', 'param2' => '2',
-		);
-		$this->assertEquals(Router::getParams(), $expected);
-		$this->assertEquals(Router::getParam('controller'), false);
-		$this->assertEquals(Router::getParam('param1'), '1');
-		$this->assertEquals(Router::getParam('param2'), '2');
-
-		Router::reload();
-
-		$params = array('controller' => 'pages', 'action' => 'display');
-		Router::setRequestInfo(array($params, $paths));
-		$expected = array(
-			'plugin' => null, 'controller' => 'pages', 'action' => 'display',
-			'named' => array(), 'pass' => array(),
-		);
-		$this->assertEquals(Router::getParams(), $expected);
-		$this->assertEquals(Router::getParams(true), $expected);
 	}
 
 /**
