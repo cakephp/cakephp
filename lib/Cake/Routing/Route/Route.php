@@ -439,7 +439,8 @@ class Route {
 				}
 			}
 		}
-		return $this->_writeUrl($url, $pass, $hostOptions, $query);
+		$url += $hostOptions;
+		return $this->_writeUrl($url, $pass, $query);
 	}
 
 /**
@@ -450,7 +451,7 @@ class Route {
  * @param array $pass The additional passed arguments.
  * @return string Composed route string.
  */
-	protected function _writeUrl($params, $pass = array(), $hostOptions = array(), $query = array()) {
+	protected function _writeUrl($params, $pass = array(), $query = array()) {
 		if (isset($params['prefix'], $params['action'])) {
 			$params['action'] = str_replace($params['prefix'] . '_', '', $params['action']);
 			unset($params['prefix']);
@@ -477,23 +478,27 @@ class Route {
 		}
 
 		// add base url if applicable.
-		if (isset($hostOptions['_base'])) {
-			$out = $hostOptions['_base'] . $out;
-			unset($hostOptions['_base']);
+		if (isset($params['_base'])) {
+			$out = $params['_base'] . $out;
+			unset($params['_base']);
 		}
 	
 		$out = str_replace('//', '/', $out);
 
-		if (!empty($hostOptions)) {
-			$host = $hostOptions['_host'];
+		if (
+			isset($params['_scheme']) ||
+			isset($params['_host']) ||
+			isset($params['_port'])
+		) {
+			$host = $params['_host'];
 
 			// append the port if it exists.
-			if (isset($hostOptions['_port'])) {
-				$host .= ':' . $hostOptions['_port'];
+			if (isset($params['_port'])) {
+				$host .= ':' . $params['_port'];
 			}
 			$out = sprintf(
 				'%s://%s%s',
-				$hostOptions['_scheme'],
+				$params['_scheme'],
 				$host,
 				$out
 			);
