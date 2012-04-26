@@ -629,81 +629,6 @@ class DispatcherTest extends TestCase {
 	}
 
 /**
- * testParseParamsWithSingleZero method
- *
- * @return void
- */
-	public function testParseParamsWithSingleZero() {
-		$Dispatcher = new Dispatcher();
-		$test = new Request("/testcontroller/testaction/1/0/23");
-		$event = new Event(__CLASS__, $Dispatcher, array('request' => $test));
-		$Dispatcher->parseParams($event);
-
-		$this->assertSame($test['controller'], 'testcontroller');
-		$this->assertSame($test['action'], 'testaction');
-		$this->assertSame($test['pass'][0], '1');
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][1]);
-		$this->assertSame($test['pass'][2], '23');
-	}
-
-/**
- * testParseParamsWithManySingleZeros method
- *
- * @return void
- */
-	public function testParseParamsWithManySingleZeros() {
-		$Dispatcher = new Dispatcher();
-		$test = new Request("/testcontroller/testaction/0/0/0/0/0/0");
-		$event = new Event(__CLASS__, $Dispatcher, array('request' => $test));
-		$Dispatcher->parseParams($event);
-
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][0]);
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][1]);
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][2]);
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][3]);
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][4]);
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][5]);
-	}
-
-/**
- * testParseParamsWithManyZerosInEachSectionOfUrl method
- *
- * @return void
- */
-	public function testParseParamsWithManyZerosInEachSectionOfUrl() {
-		$Dispatcher = new Dispatcher();
-		$test = new Request("/testcontroller/testaction/000/0000/00000/000000/000000/0000000");
-		$event = new Event(__CLASS__, $Dispatcher, array('request' => $test));
-		$Dispatcher->parseParams($event);
-
-		$this->assertRegExp('/\\A(?:000)\\z/', $test['pass'][0]);
-		$this->assertRegExp('/\\A(?:0000)\\z/', $test['pass'][1]);
-		$this->assertRegExp('/\\A(?:00000)\\z/', $test['pass'][2]);
-		$this->assertRegExp('/\\A(?:000000)\\z/', $test['pass'][3]);
-		$this->assertRegExp('/\\A(?:000000)\\z/', $test['pass'][4]);
-		$this->assertRegExp('/\\A(?:0000000)\\z/', $test['pass'][5]);
-	}
-
-/**
- * testParseParamsWithMixedOneToManyZerosInEachSectionOfUrl method
- *
- * @return void
- */
-	public function testParseParamsWithMixedOneToManyZerosInEachSectionOfUrl() {
-		$Dispatcher = new Dispatcher();
-		$test = new Request("/testcontroller/testaction/01/0403/04010/000002/000030/0000400");
-		$event = new Event(__CLASS__, $Dispatcher, array('request' => $test));
-		$Dispatcher->parseParams($event);
-
-		$this->assertRegExp('/\\A(?:01)\\z/', $test['pass'][0]);
-		$this->assertRegExp('/\\A(?:0403)\\z/', $test['pass'][1]);
-		$this->assertRegExp('/\\A(?:04010)\\z/', $test['pass'][2]);
-		$this->assertRegExp('/\\A(?:000002)\\z/', $test['pass'][3]);
-		$this->assertRegExp('/\\A(?:000030)\\z/', $test['pass'][4]);
-		$this->assertRegExp('/\\A(?:0000400)\\z/', $test['pass'][5]);
-	}
-
-/**
  * testQueryStringOnRoot method
  *
  * @return void
@@ -1186,9 +1111,9 @@ class DispatcherTest extends TestCase {
 		$url = new Request('/test_plugin/tests/index');
 		$response = $this->getMock('Cake\Network\Response');
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertTrue(class_exists('TestsController'));
-		$this->assertTrue(class_exists('TestPluginAppController'));
-		$this->assertTrue(class_exists('PluginsComponent'));
+		$this->assertTrue(class_exists('TestPlugin\Controller\TestsController'));
+		$this->assertTrue(class_exists('TestPlugin\Controller\TestPluginAppController'));
+		$this->assertTrue(class_exists('TestPlugin\Controller\Component\PluginsComponent'));
 
 		$this->assertEquals('tests', $Dispatcher->controller->params['controller']);
 		$this->assertEquals('test_plugin', $Dispatcher->controller->params['plugin']);
