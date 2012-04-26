@@ -269,13 +269,13 @@ class RouteTest extends TestCase {
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view'));
 		$this->assertEquals('/blog/view', $result);
 
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'id' => 2));
+		$this->assertEquals('/blog/view?id=2', $result);
+
 		$result = $route->match(array('controller' => 'nodes', 'action' => 'view'));
 		$this->assertFalse($result);
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1));
-		$this->assertFalse($result);
-
-		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'id' => 2));
 		$this->assertFalse($result);
 
 		$route = new Route('/foo/:controller/:action', array('action' => 'index'));
@@ -348,7 +348,7 @@ class RouteTest extends TestCase {
 			array('controller' => 'posts', 'action' => 'index', '_base' => '/dir'),
 			$context
 		);
-		$this->assertEquals('http://foo.com/dir/posts/index', $result);
+		$this->assertEquals('/dir/posts/index', $result);
 
 		$result = $route->match(
 			array(
@@ -376,17 +376,6 @@ class RouteTest extends TestCase {
 
 		$route = new Route('/:controller/:action', array('plugin' => null));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'test'));
-		$this->assertFalse($result);
-	}
-
-/**
- * test that non-greedy routes fail with extra passed args
- *
- * @return void
- */
-	public function testGreedyRouteFailureNamedParam() {
-		$route = new Route('/:controller/:action', array('plugin' => null));
-		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'page' => 1));
 		$this->assertFalse($result);
 	}
 
@@ -452,6 +441,38 @@ class RouteTest extends TestCase {
 
 		$result = $route->match(array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 'a99'));
 		$this->assertFalse($result);
+	}
+
+/**
+ * Test that match() pulls out extra arguments as query string params.
+ *
+ * @return void
+ */
+	public function testMatchExtractQueryStringArgs() {
+		$route = new Route('/:controller/:action/*');
+		$result = $route->match(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'page' => 1
+		));
+		$this->assertEquals('/posts/index?page=1', $result);
+
+		$result = $route->match(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'page' => 0
+		));
+		$this->assertEquals('/posts/index?page=0', $result);
+
+		$result = $route->match(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			1,
+			'page' => 1,
+			'dir' => 'desc',
+			'order' => 'title'
+		));
+		$this->assertEquals('/posts/index/1?page=1&dir=desc&order=title', $result);
 	}
 
 /**

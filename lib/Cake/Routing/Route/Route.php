@@ -369,7 +369,7 @@ class Route {
 				unset($hostOptions['_port']);
 			}
 		}
-	
+
 		// If no base is set, copy one in.
 		if (!isset($hostOptions['_base']) && isset($context['_base'])) {
 			$hostOptions['_base'] = $context['_base'];
@@ -390,17 +390,19 @@ class Route {
 		if (array_diff_key($defaults, $url) !== array()) {
 			return false;
 		}
+
+		// Defaults with different values are a fail.
+		if (array_intersect_key($url, $defaults) !== $defaults) {
+			return false;
+		}
+
 		$prefixes = Router::prefixes();
 		$pass = array();
+		$query = array();
 
 		foreach ($url as $key => $value) {
 			// keys that exist in the defaults and have different values is a match failure.
 			$defaultExists = array_key_exists($key, $defaults);
-			if ($defaultExists && $defaults[$key] != $value) {
-				return false;
-			} elseif ($defaultExists) {
-				continue;
-			}
 
 			// If the key is a routed key, its not different yet.
 			if (array_key_exists($key, $keyNames)) {
@@ -418,12 +420,13 @@ class Route {
 			}
 
 			// keys that don't exist are different.
-			if (!$defaultExists && !empty($value)) {
-				return false;
+			if (!$defaultExists && ($value !== null && $value !== false && $value !== '')) {
+				$query[$key] = $value;
+				unset($url[$key]);
 			}
 		}
 
-		//if a not a greedy route, no extra params are allowed.
+		// if not a greedy route, no extra params are allowed.
 		if (!$this->_greedy && !empty($pass)) {
 			return false;
 		}
@@ -431,12 +434,12 @@ class Route {
 		//check patterns for routed params
 		if (!empty($this->options)) {
 			foreach ($this->options as $key => $pattern) {
-				if (array_key_exists($key, $url) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
+				if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
 					return false;
 				}
 			}
 		}
-		return $this->_writeUrl($url, $pass, $hostOptions);
+		return $this->_writeUrl($url, $pass, $hostOptions, $query);
 	}
 
 /**
@@ -447,7 +450,7 @@ class Route {
  * @param array $pass The additional passed arguments.
  * @return string Composed route string.
  */
-	protected function _writeUrl($params, $pass = array(), $hostOptions = array()) {
+	protected function _writeUrl($params, $pass = array(), $hostOptions = array(), $query = array()) {
 		if (isset($params['prefix'], $params['action'])) {
 			$params['action'] = str_replace($params['prefix'] . '_', '', $params['action']);
 			unset($params['prefix']);
@@ -494,6 +497,10 @@ class Route {
 				$host,
 				$out
 			);
+		}
+		if (!empty($query)) {
+			$out = rtrim($out, '/');
+			$out .= '?' . http_build_query($query);
 		}
 		return $out;
 	}
