@@ -222,11 +222,20 @@ class RouterTest extends TestCase {
 	public function testGenerateUrlResourceRoute() {
 		Router::mapResources('Posts');
 
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '[method]' => 'GET'));
+		$result = Router::url(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'[method]' => 'GET'
+		));
 		$expected = '/posts';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(array('controller' => 'posts', 'action' => 'view', '[method]' => 'GET', 'id' => 10));
+		$result = Router::url(array(
+			'controller' => 'posts',
+			'action' => 'view',
+			'[method]' => 'GET',
+			'id' => 10
+		));
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 

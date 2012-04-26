@@ -476,6 +476,30 @@ class RouteTest extends TestCase {
 	}
 
 /**
+ * Test separartor.
+ *
+ * @return void
+ */
+	public function testQueryStringGeneration() {
+		$route = new Route('/:controller/:action/*');
+
+		$restore = ini_get('arg_separator.output');
+		ini_set('arg_separator.output', '&amp;');
+	
+		$result = $route->match(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			0,
+			'test' => 'var',
+			'var2' => 'test2',
+			'more' => 'test data'
+		));
+		$expected = '/posts/index/0?test=var&amp;var2=test2&amp;more=test+data';
+		$this->assertEquals($expected, $result);
+		ini_set('arg_separator.output', $restore);
+	}
+
+/**
  * test persistParams ability to persist parameters from $params and remove params.
  *
  * @return void

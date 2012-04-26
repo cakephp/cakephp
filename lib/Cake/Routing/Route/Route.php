@@ -392,7 +392,7 @@ class Route {
 		}
 
 		// Defaults with different values are a fail.
-		if (array_intersect_key($url, $defaults) !== $defaults) {
+		if (array_intersect_key($url, $defaults) != $defaults) {
 			return false;
 		}
 
