@@ -76,7 +76,7 @@ class DboSource extends DataSource {
  *
  * @var boolean
  */
-	public $nestedTransaction = false;
+	public $useNestedTransactions = false;
 
 /**
  * Print full query debug info?

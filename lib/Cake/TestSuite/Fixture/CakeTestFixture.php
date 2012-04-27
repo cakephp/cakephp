@@ -241,10 +241,10 @@ class CakeTestFixture {
 					$fields = array_keys($record);
 					$values[] = array_values(array_merge($default, $record));
 				}
-				$nested = $db->nestedTransaction;
-				$db->nestedTransaction = false;
+				$nested = $db->useNestedTransactions;
+				$db->useNestedTransactions = false;
 				$result = $db->insertMulti($this->table, $fields, $values);
-				$db->nestedTransaction = $nested;
+				$db->useNestedTransactions = $nested;
 				return $result;
 			}
 			return true;

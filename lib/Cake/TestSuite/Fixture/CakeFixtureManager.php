@@ -193,8 +193,8 @@ class CakeFixtureManager {
 			return;
 		}
 
-		$nested = $test->db->nestedTransaction;
-		$test->db->nestedTransaction = false;
+		$nested = $test->db->useNestedTransactions;
+		$test->db->useNestedTransactions = false;
 		$test->db->begin();
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
@@ -205,7 +205,7 @@ class CakeFixtureManager {
 			}
 		}
 		$test->db->commit();
-		$test->db->nestedTransaction = $nested;
+		$test->db->useNestedTransactions = $nested;
 	}
 
 /**

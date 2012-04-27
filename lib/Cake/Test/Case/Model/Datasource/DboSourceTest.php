@@ -54,7 +54,7 @@ class DboTestSource extends DboSource {
 	}
 
 	public function nestedTransactionSupported() {
-		return $this->nestedTransaction && $this->nestedSupport;
+		return $this->useNestedTransactions && $this->nestedSupport;
 	}
 
 }
@@ -849,7 +849,7 @@ class DboSourceTest extends CakeTestCase {
 		$conn = $this->getMock('MockPDO');
 		$db = new DboTestSource();
 		$db->setConnection($conn);
-		$db->nestedTransaction = true;
+		$db->useNestedTransactions = true;
 		$db->nestedSupport = true;
 
 		$conn->expects($this->at(0))->method('beginTransaction')->will($this->returnValue(true));
@@ -871,7 +871,7 @@ class DboSourceTest extends CakeTestCase {
 		$conn = $this->getMock('MockPDO');
 		$db = new DboTestSource();
 		$db->setConnection($conn);
-		$db->nestedTransaction = true;
+		$db->useNestedTransactions = true;
 		$db->nestedSupport = false;
 
 		$conn->expects($this->once())->method('beginTransaction')->will($this->returnValue(true));
@@ -890,7 +890,7 @@ class DboSourceTest extends CakeTestCase {
 		$conn = $this->getMock('MockPDO');
 		$db = new DboTestSource();
 		$db->setConnection($conn);
-		$db->nestedTransaction = false;
+		$db->useNestedTransactions = false;
 		$db->nestedSupport = true;
 
 		$conn->expects($this->once())->method('beginTransaction')->will($this->returnValue(true));
