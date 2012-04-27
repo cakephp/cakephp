@@ -3588,7 +3588,7 @@ class MysqlTest extends CakeTestCase {
 	public function testNestedTransaction() {
 		$nested = $this->Dbo->nestedTransaction;
 		$this->Dbo->nestedTransaction = true;
-		if ($this->Dbo->supportNestedTransaction() === false) {
+		if ($this->Dbo->nestedTransactionSupported() === false) {
 			$this->Dbo->nestedTransaction = $nested;
 			$this->skipIf(true, 'The MySQL server do not support nested transaction');
 		}

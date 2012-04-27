@@ -915,7 +915,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testNestedTransaction() {
-		$this->skipIf($this->Dbo->supportNestedTransaction() === false, 'The Postgres server do not support nested transaction');
+		$this->skipIf($this->Dbo->nestedTransactionSupported() === false, 'The Postgres server do not support nested transaction');
 
 		$this->loadFixtures('Article');
 		$model = new Article();

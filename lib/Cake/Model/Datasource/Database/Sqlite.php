@@ -564,7 +564,7 @@ class Sqlite extends DboSource {
  *
  * @return boolean
  */
-	public function supportNestedTransaction() {
+	public function nestedTransactionSupported() {
 		return $this->nestedTransaction && version_compare($this->getVersion(), '3.6.8', '>=');
 	}
 
