@@ -157,7 +157,7 @@ class Router {
  *
  * @var string
  */
-    protected static $_routeClass = 'CakeRoute';
+	protected static $_routeClass = 'CakeRoute';
 
 /**
  * Set the default route class to use or return the current one
