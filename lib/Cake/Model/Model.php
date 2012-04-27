@@ -3191,7 +3191,9 @@ class Model extends Object implements CakeEventListener {
 						}
 						if (!empty($args)) {
 							foreach ($args as $k => $arg) {
-								$args[$k] = __d($validationDomain, $arg);
+								if (is_string($arg)) {
+									$args[$k] = __d($validationDomain, $arg);
+								}
 							}
 						}
 						$message = __d($validationDomain, $message, $args);
