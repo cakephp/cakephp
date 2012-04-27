@@ -157,7 +157,7 @@ class Router {
  *
  * @var string
  */
-    protected static $_routeClass = 'CakeRoute';
+	protected static $_routeClass = 'CakeRoute';
 
 /**
  * Set the default route class to use or return the current one
@@ -893,8 +893,9 @@ class Router {
 
 		list($args, $named) = array(Hash::filter($args), Hash::filter($named));
 		foreach (self::$_prefixes as $prefix) {
-			if (!empty($url[$prefix])) {
-				$url['action'] = str_replace($prefix . '_', '', $url['action']);
+			$prefixed = $prefix . '_';
+			if (!empty($url[$prefix]) && strpos($url['action'], $prefixed) === 0) {
+				$url['action'] = substr($url['action'], strlen($prefixed) * -1);
 				break;
 			}
 		}

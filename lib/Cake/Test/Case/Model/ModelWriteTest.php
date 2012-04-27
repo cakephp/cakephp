@@ -3304,8 +3304,8 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'Article' => true,
 			'Comment' => array(
-                true,
-                true
+				true,
+				true
 			)
 		);
 		$this->assertSame($expected, $result);
@@ -3323,8 +3323,8 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'Article' => true,
 			'Comment' => array(
-                false,
-                true
+				false,
+				true
 			)
 		);
 		$this->assertSame($expected, $result);
@@ -3363,8 +3363,8 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'Article' => true,
 			'Comment' => array(
-                true,
-                true
+				true,
+				true
 			)
 		);
 		$this->assertSame($expected, $result);
@@ -3381,8 +3381,8 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'Article' => true,
 			'Comment' => array(
-                true,
-                false
+				true,
+				false
 			)
 		);
 		$this->assertSame($expected, $result);
@@ -3730,8 +3730,8 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'Article' => true,
 			'Comment' => array(
-                true,
-                true
+				true,
+				true
 			)
 		);
 		$this->assertSame($expected, $result);
@@ -3759,8 +3759,8 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'Article' => true,
 			'Comment' => array(
-                true,
-                true
+				true,
+				true
 			)
 		);
 		$this->assertSame($expected, $result);
