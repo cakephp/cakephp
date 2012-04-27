@@ -2537,15 +2537,15 @@ class NumberTree extends CakeTestModel {
  * @param mixed $currentLevel
  * @param mixed $parent_id
  * @param string $prefix
- * @param bool $hierachial
+ * @param bool $hierarchal
  * @return void
  */
-	public function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parentId = null, $prefix = '1', $hierachial = true) {
+	public function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parentId = null, $prefix = '1', $hierarchal = true) {
 		if (!$parentId) {
 			$db = ConnectionManager::getDataSource($this->useDbConfig);
 			$db->truncate($this->table);
 			$this->save(array($this->name => array('name' => '1. Root')));
-			$this->initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierachial);
+			$this->initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierarchal);
 			$this->create(array());
 		}
 
@@ -2558,7 +2558,7 @@ class NumberTree extends CakeTestModel {
 			$data = array($this->name => array('name' => $name));
 			$this->create($data);
 
-			if ($hierachial) {
+			if ($hierarchal) {
 				if ($this->name == 'UnconventionalTree') {
 					$data[$this->name]['join'] = $parentId;
 				} else {
@@ -2566,7 +2566,7 @@ class NumberTree extends CakeTestModel {
 				}
 			}
 			$this->save($data);
-			$this->initialize($levelLimit, $childLimit, $currentLevel + 1, $this->id, $name, $hierachial);
+			$this->initialize($levelLimit, $childLimit, $currentLevel + 1, $this->id, $name, $hierarchal);
 		}
 	}
 

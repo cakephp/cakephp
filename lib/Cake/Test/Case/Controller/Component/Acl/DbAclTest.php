@@ -343,14 +343,14 @@ class DbAclTest extends CakeTestCase {
  * @return void
  */
 	public function testCheckMissingPermission() {
-		$this->Acl->check('users', 'NonExistant', 'read');
+		$this->Acl->check('users', 'NonExistent', 'read');
 	}
 
 /**
  * testDbAclCascadingDeny function
  *
  * Setup the acl permissions such that Bobs inherits from admin.
- * deny Admin delete access to a specific resource, check the permisssions are inherited.
+ * deny Admin delete access to a specific resource, check the permissions are inherited.
  *
  * @return void
  */
@@ -477,7 +477,7 @@ class DbAclTest extends CakeTestCase {
 /**
  * debug function - to help editing/creating test cases for the ACL component
  *
- * To check the overal ACL status at any time call $this->__debug();
+ * To check the overall ACL status at any time call $this->__debug();
  * Generates a list of the current aro and aco structures and a grid dump of the permissions that are defined
  * Only designed to work with the db based ACL
  *
