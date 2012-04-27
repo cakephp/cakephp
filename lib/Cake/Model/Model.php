@@ -3491,7 +3491,7 @@ class Model extends Object implements CakeEventListener {
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
  * @return mixed true if the operation should continue, false if it should abort; or, modified
  *               $queryData to continue with new $queryData
- * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeFind-1049
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforefind
  */
 	public function beforeFind($queryData) {
 		return true;
@@ -3504,7 +3504,7 @@ class Model extends Object implements CakeEventListener {
  * @param mixed $results The results of the find operation
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed Result of the find operation
- * @link http://book.cakephp.org/view/1048/Callback-Methods#afterFind-1050
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#afterfind
  */
 	public function afterFind($results, $primary = false) {
 		return $results;
@@ -3516,7 +3516,7 @@ class Model extends Object implements CakeEventListener {
  *
  * @param array $options
  * @return boolean True if the operation should continue, false if it should abort
- * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeSave-1052
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforesave
  */
 	public function beforeSave($options = array()) {
 		return true;
@@ -3527,7 +3527,7 @@ class Model extends Object implements CakeEventListener {
  *
  * @param boolean $created True if this save created a new record
  * @return void
- * @link http://book.cakephp.org/view/1048/Callback-Methods#afterSave-1053
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#aftersave
  */
 	public function afterSave($created) {
 	}
@@ -3537,7 +3537,7 @@ class Model extends Object implements CakeEventListener {
  *
  * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return boolean True if the operation should continue, false if it should abort
- * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeDelete-1054
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforedelete
  */
 	public function beforeDelete($cascade = true) {
 		return true;
@@ -3547,7 +3547,7 @@ class Model extends Object implements CakeEventListener {
  * Called after every deletion operation.
  *
  * @return void
- * @link http://book.cakephp.org/view/1048/Callback-Methods#afterDelete-1055
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#afterdelete
  */
 	public function afterDelete() {
 	}
@@ -3558,7 +3558,7 @@ class Model extends Object implements CakeEventListener {
  *
  * @param array $options Options passed from model::save(), see $options of model::save().
  * @return boolean True if validate operation should continue, false to abort
- * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeValidate-1051
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforevalidate
  */
 	public function beforeValidate($options = array()) {
 		return true;
@@ -3568,7 +3568,7 @@ class Model extends Object implements CakeEventListener {
  * Called when a DataSource-level error occurs.
  *
  * @return void
- * @link http://book.cakephp.org/view/1048/Callback-Methods#onError-1056
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#onerror
  */
 	public function onError() {
 	}
