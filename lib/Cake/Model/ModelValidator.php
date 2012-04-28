@@ -30,13 +30,6 @@ App::uses('CakeRule', 'Model/Validator');
 class ModelValidator {
 
 /**
- * The default ModelValidator class name
- *
- * @var string
- */
-	const DEFAULT_VALIDATOR = 'ModelValidator';
-
-/**
  * The default validation domain
  *
  * @var string

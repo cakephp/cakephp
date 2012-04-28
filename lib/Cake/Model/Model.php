@@ -1454,7 +1454,7 @@ class Model extends Object implements CakeEventListener {
 		$defaults = array();
 		$this->id = false;
 		$this->data = array();
-		$this->validationErrors = $this->getValidator()->validationErrors = array();
+		$this->validationErrors = $this->validator()->validationErrors = array();
 
 		if ($data !== null && $data !== false) {
 			foreach ($this->schema() as $field => $properties) {
@@ -2117,7 +2117,7 @@ class Model extends Object implements CakeEventListener {
  *    depending on whether each record validated successfully.
  */
 	public function validateMany($data, $options = array()) {
-		return $this->getValidator()->validateMany($data, $options);
+		return $this->validator()->validateMany($data, $options);
 	}
 
 /**
@@ -2292,7 +2292,7 @@ class Model extends Object implements CakeEventListener {
  *    depending on whether each record validated successfully.
  */
 	public function validateAssociated($data, $options = array()) {
-		return $this->getValidator()->validateAssociated($data, $options);
+		return $this->validator()->validateAssociated($data, $options);
 	}
 
 /**
@@ -2979,7 +2979,7 @@ class Model extends Object implements CakeEventListener {
  * @return boolean True if there are no errors
  */
 	public function validates($options = array()) {
-		return $this->getValidator()->validates($options);
+		return $this->validator()->validates($options);
 	}
 
 /**
@@ -2990,7 +2990,7 @@ class Model extends Object implements CakeEventListener {
  * @see Model::validates()
  */
 	public function invalidFields($options = array()) {
-		return $this->getValidator()->invalidFields($options);
+		return $this->validator()->invalidFields($options);
 	}
 
 /**
@@ -3003,7 +3003,7 @@ class Model extends Object implements CakeEventListener {
  * @return void
  */
 	public function invalidate($field, $value = true) {
-		$this->getValidator()->invalidate($field, $value);
+		$this->validator()->invalidate($field, $value);
 	}
 
 /**
@@ -3351,77 +3351,20 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Creates a ModelValidator instance from Model::validatorClass
- *
- * @return void
- * @throws MissingValidatorException
- * @throws InvalidValidatorException
- */
-	public function setValidator($validator = null) {
-		if (is_object($validator) && $this->_isValidValidator($validator)) {
-			$this->_validator = $validator;
-			return $this;
-		}
-
-		if (is_null($validator) && is_null($this->validatorClass)) {
-			$this->validatorClass = ModelValidator::DEFAULT_VALIDATOR;
-		} elseif (is_string($validator)) {
-			$this->validatorClass = $validator;
-		}
-
-		if (!$this->_loadValidator($this->validatorClass)) {
-			throw new MissingValidatorException(array($this->validatorClass));
-		}
-
-		if (!$this->_isValidValidator($this->_validator)) {
-			$this->_validator = null;
-			throw new InvalidValidatorException(array($this->validatorClass, ModelValidator::DEFAULT_VALIDATOR));
-		}
-
-		return $this;
-	}
-
-/**
- * Returns the currently set ModelValidator instance
+ * Retunrs an instance of a model validator for this class
  *
  * @return ModelValidator
  */
-	public function getValidator() {
+	public function validator($instance = null) {
+		if ($validator instanceof ModelValidator) {
+			return $this->_validator = $validator;
+		}
+
+		if (is_null($validator) && is_null($this->validatorClass)) {
+			$this->_validator = new ModelValidator($this);
+		}
+
 		return $this->_validator;
-	}
-
-/**
- * Tries to load a validator and returns true if the class could be found, false otherwise.
- *
- * @param string $validatorClass The class to be loaded
- * @return boolean True if the class was found, false otherwise
- */
-	protected function _loadValidator($validatorClass) {
-		list($plugin, $class) = pluginSplit($validatorClass, true);
-		unset($validatorClass);
-
-		$location = $plugin . 'Model';
-		App::uses($class, $location);
-
-		if (!class_exists($class, true)) {
-			return false;
-		}
-		$this->_validator = new $class($this);
-
-		return true;
-	}
-
-/**
- * Checks if the passed in validator instance is either an instance or subclass of ModelValidator.
- *
- * @param $validator
- * @return boolean True if the instance is valid, false otherwise
- */
-	protected function _isValidValidator($validator) {
-		if (!($validator instanceof ModelValidator) && !is_subclass_of($validator, ModelValidator::DEFAULT_VALIDATOR)) {
-			return false;
-		}
-		return true;
 	}
 
 }
