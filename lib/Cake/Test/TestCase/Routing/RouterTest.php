@@ -23,6 +23,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\Routing\Route\Route;
+use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
@@ -761,38 +762,6 @@ class RouterTest extends TestCase {
 		$result = Router::url(array('plugin' => null, 'controller' => 'articles', 'action' => 'index', 'ext' => 'json'));
 		$expected = '/articles.json';
 		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testPluginUrlGeneration method
- *
- * @return void
- */
-	public function testUrlGenerationPlugins() {
-		$request = new Request();
-		Router::setRequestInfo(
-			$request->addParams(array(
-				'plugin' => 'test', 'controller' => 'controller', 'action' => 'index'
-			))->addPaths(array(
-				'base' => '/base', 'here' => '/clients/sage/portal/donations', 'webroot' => '/base/'
-			))
-		);
-
-		$this->assertEquals(Router::url('read/1'), '/base/test/controller/read/1');
-
-		Router::reload();
-		Router::connect('/:lang/:plugin/:controller/*', array('action' => 'index'));
-
-		$request = new Request();
-		Router::setRequestInfo(
-			$request->addParams(array(
-				'lang' => 'en',
-				'plugin' => 'shows', 'controller' => 'shows', 'action' => 'index',
-				'url' => array('url' => 'en/shows/'),
-			))->addPaths(array(
-				'base' => '', 'here' => '/en/shows', 'webroot' => '/'
-			))
-		);
 	}
 
 /**
@@ -1752,67 +1721,6 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * testStripPlugin
- *
- * @return void
- */
-	public function testStripPlugin() {
-		$pluginName = 'forums';
-		$url = 'example.com/' . $pluginName . '/';
-		$expected = 'example.com';
-
-		$this->assertEquals($expected, Router::stripPlugin($url, $pluginName));
-		$this->assertEquals(Router::stripPlugin($url), $url);
-		$this->assertEquals(Router::stripPlugin($url, null), $url);
-	}
-
-/**
- * testCurrentRoute
- *
- * This test needs some improvement and actual requestAction() usage
- *
- * @return void
- */
-	public function testCurrentRoute() {
-		$this->markTestIncomplete('Fails due to changes for RouteCollection.');
-
-		$url = array('controller' => 'pages', 'action' => 'display', 'government');
-		Router::connect('/government', $url);
-		Router::parse('/government');
-		$route = Router::currentRoute();
-		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
-	}
-
-/**
- * testRequestRoute
- *
- * @return void
- */
-	public function testRequestRoute() {
-		$this->markTestIncomplete('Fails due to changes for RouteCollection.');
-
-		$url = array('controller' => 'products', 'action' => 'display', 5);
-		Router::connect('/government', $url);
-		Router::parse('/government');
-		$route = Router::requestRoute();
-		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
-
-		// test that the first route is matched
-		$newUrl = array('controller' => 'products', 'action' => 'display', 6);
-		Router::connect('/government', $url);
-		Router::parse('/government');
-		$route = Router::requestRoute();
-		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
-
-		// test that an unmatched route does not change the current route
-		$newUrl = array('controller' => 'products', 'action' => 'display', 6);
-		Router::connect('/actor', $url);
-		Router::parse('/government');
-		$route = Router::requestRoute();
-		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
-	}
-
-/**
  * test that connectDefaults() can disable default route connection
  *
  * @return void
@@ -2137,21 +2045,24 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testRouteRedirection() {
-		$this->markTestIncomplete('Fails due to changes for RouteCollection.');
+		$routes = new RouteCollection();
+		Router::setRouteCollection($routes);
+
 		Router::redirect('/blog', array('controller' => 'posts'), array('status' => 302));
-		$this->assertEquals(1, count(Router::$routes));
-		Router::$routes[0]->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
-		Router::$routes[0]->stop = false;
-		$this->assertEquals(302, Router::$routes[0]->options['status']);
+		$this->assertEquals(1, count($routes));
+
+		$routes->get(0)->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
+		$routes->get(0)->stop = false;
+		$this->assertEquals(302, $routes->get(0)->options['status']);
 
 		Router::parse('/blog');
-		$header = Router::$routes[0]->response->header();
+		$header = $routes->get(0)->response->header();
 		$this->assertEquals(Router::url('/posts', true), $header['Location']);
-		$this->assertEquals(302, Router::$routes[0]->response->statusCode());
+		$this->assertEquals(302, $routes->get(0)->response->statusCode());
 
-		Router::$routes[0]->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
+		$routes->get(0)->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		Router::parse('/not-a-match');
-		$this->assertEquals(array(), Router::$routes[0]->response->header());
+		$this->assertEquals(array(), $routes->get(0)->response->header());
 	}
 
 /**

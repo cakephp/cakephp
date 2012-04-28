@@ -3,7 +3,7 @@ namespace Cake\Routing;
 
 use Cake\Routing\Route\Route;
 
-class RouteCollection {
+class RouteCollection implements \Countable {
 
 /**
  * A hash table of routes indexed by route names.
@@ -165,4 +165,22 @@ class RouteCollection {
 		return true;
 	}
 
+/**
+ * Get a route out of the collection.
+ *
+ * @param int $index The index of the route you want.
+ * @return mixed Either the route object or null.
+ */
+	public function get($index) {
+		return isset($this->_routes[$index]) ? $this->_routes[$index] : null;
+	}
+
+/**
+ * Part of the countable interface.
+ *
+ * @return integer The number of connected routes.
+ */
+	public function count() {
+		return count($this->_routes);
+	}
 }
