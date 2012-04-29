@@ -241,17 +241,18 @@ class ModelValidator {
 		if (!$this->propagateBeforeValidate($options)) {
 			return false;
 		}
+		$model = $this->getModel();
 		$this->data = array();
 
 		$this->setOptions($options);
 
 		if (!$this->setFields()) {
-			return $this->getModel()->validationErrors = $this->validationErrors;
+			return $model->validationErrors = $this->validationErrors;
 		}
 
 		$this->getData();
 		$this->getMethods();
-		$this->setValidationDomain();
+		$this->setValidationDomain($model->validationDomain);
 
 		foreach ($this->_fields as $field) {
 			$field->validate();
@@ -350,7 +351,7 @@ class ModelValidator {
 	}
 
 /**
- * Sets the CakeField isntances from the Model::$validate property after processing the fieldList and whiteList.
+ * Sets the CakeField instances from the Model::$validate property after processing the fieldList and whiteList.
  * If Model::$validate is not set or empty, this method returns false. True otherwise.
  *
  * @param boolean $reset If true will reset the Validator $validate array to the Model's default
@@ -413,10 +414,10 @@ class ModelValidator {
  * @param string $name The options name to look up
  * @return mixed Either null or the option value
  */
-	public function getOptions($name = NULL) {
-		if (NULL !== $name) {
+	public function getOptions($name = null) {
+		if ($name !== null) {
 			if (!isset($this->options[$name])) {
-				return NULL;
+				return null;
 			}
 			return $this->options[$name];
 		}
@@ -432,8 +433,6 @@ class ModelValidator {
 	public function setValidationDomain($validationDomain = null) {
 		if ($validationDomain !== null) {
 			$this->validationDomain = $validationDomain;
-		} elseif ($this->_model->validationDomain !== null) {
-			$this->validationDomain = $this->_model->validationDomain;
 		} else {
 			$this->validationDomain = ModelValidator::DEFAULT_DOMAIN;
 		}
@@ -471,7 +470,7 @@ class ModelValidator {
 		if (!empty($whitelist)) {
 			$this->validationErrors = array();
 			$validate = array();
-			foreach ((array) $whitelist as $f) {
+			foreach ((array)$whitelist as $f) {
 				if (!empty($this->_validate[$f])) {
 					$validate[$f] = $this->_validate[$f];
 				}
