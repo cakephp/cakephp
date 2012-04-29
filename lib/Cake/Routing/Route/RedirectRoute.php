@@ -87,7 +87,9 @@ class RedirectRoute extends Route {
 		if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
 			$status = $this->options['status'];
 		}
-		$this->response->header(array('Location' => Router::url($redirect, true)));
+		$this->response->header(array(
+			'Location' => Router::url($redirect, true)
+		));
 		$this->response->statusCode($status);
 		$this->response->send();
 		$this->_stop();
