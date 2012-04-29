@@ -584,12 +584,12 @@ class Router {
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
  *
- * - `base` - Set to false to remove the base path from the generated url. If your application
+ * - `_base` - Set to false to remove the base path from the generated url. If your application
  *   is not in the root directory, this can be used to generate urls that are 'cake relative'.
  *   cake relative urls are required when using requestAction.
- * - `?` - Takes an array of query string parameters. (Deprecated)
+ * - `_full` - If true the `FULL_BASE_URL` constant will be prepended to generated urls.
  * - `#` - Allows you to set url hash fragments.
- * - `full_base` - If true the `FULL_BASE_URL` constant will be prepended to generated urls.
+ * - `ssl` - Set to true to convert the generated url to https, or false to force http.
  *
  * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  *   or an array specifying any of the following: 'controller', 'action',
@@ -623,7 +623,7 @@ class Router {
 			$here = null;
 		}
 
-		$extension = $output = $q = $frag = null;
+		$extension = $output = $frag = null;
 
 		if (empty($url)) {
 			$output = isset($here) ? $here : '/';
@@ -649,6 +649,10 @@ class Router {
 			if (isset($url['ext'])) {
 				$extension = '.' . $url['ext'];
 				unset($url['ext']);
+			}
+			if (isset($url['ssl'])) {
+				$url['_scheme'] = ($url['ssl'] == true) ? 'https' : 'http';
+				unset($url['ssl']);
 			}
 
 			// Copy the current action if the controller is the current one.

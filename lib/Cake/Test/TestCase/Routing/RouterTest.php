@@ -1275,6 +1275,71 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test that the ssl option works.
+ *
+ * @return void
+ */
+	public function testGenerationWithSslOption() {
+		Router::connect('/:controller/:action/*');
+		$_SERVER['HTTP_HOST'] = 'localhost';
+
+		$request = new Request();
+		Router::pushRequest(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'images', 'action' => 'index'
+			))->addPaths(array(
+				'base' => '',
+				'here' => '/images/index',
+				'webroot' => '/',
+			))
+		);
+
+		$result = Router::url(array(
+			'ssl' => true
+		));
+		$this->assertEquals('https://localhost/images/index', $result);
+
+		$result = Router::url(array(
+			'ssl' => false
+		));
+		$this->assertEquals('http://localhost/images/index', $result);
+	}
+
+/**
+ * Test ssl option when the current request is ssl.
+ *
+ * @return void
+ */
+	public function testGenerateWithSslInSsl() {
+		Router::connect('/:controller/:action/*');
+		$_SERVER['HTTP_HOST'] = 'localhost';
+		$_SERVER['HTTPS'] = 'on';
+
+		$request = new Request();
+		Router::pushRequest(
+			$request->addParams(array(
+				'plugin' => null,
+				'controller' => 'images',
+				'action' => 'index'
+			))->addPaths(array(
+				'base' => '',
+				'here' => '/images/index',
+				'webroot' => '/',
+			))
+		);
+
+		$result = Router::url(array(
+			'ssl' => false
+		));
+		$this->assertEquals('http://localhost/images/index', $result);
+
+		$result = Router::url(array(
+			'ssl' => true
+		));
+		$this->assertEquals('https://localhost/images/index', $result);
+	}
+
+/**
  * test that auto-generated prefix routes persist
  *
  * @return void
