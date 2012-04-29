@@ -261,21 +261,16 @@ class CakeRule {
 
 		$validator = $this->getPropertiesArray();
 		$rule = strtolower($this->_rule);
-
-		if (in_array(strtolower($this->_rule), $methods['model'])) {
+		if (isset($methods[$rule])) {
 			$this->_ruleParams[] = array_merge($validator, $this->_passedOptions);
-			$this->_ruleParams[0] = array($this->getField()->field => $this->_ruleParams[0]);
-			$this->_valid = $Model->dispatchMethod($this->_rule, $this->_ruleParams);
-		} elseif (in_array($this->_rule, $methods['behaviors']) || in_array(strtolower($this->_rule), $methods['behaviors'])) {
-			$this->_ruleParams[] = array_merge($validator, $this->_passedOptions);
-			$this->_ruleParams[0] = array($this->getField()->field => $this->_ruleParams[0]);
-			$this->_valid = $Model->Behaviors->dispatchMethod($Model, $this->_rule, $this->_ruleParams);
-		} elseif (method_exists('Validation', $this->_rule)) {
+			$this->_ruleParams[0] = array($this->_field => $this->_ruleParams[0]);
+			$this->_valid =  call_user_func_array($methods[$rule], $this->_ruleParams);
+		} elseif (class_exists('Validation') && method_exists('Validation', $this->_rule)) {
 			$this->_valid = call_user_func_array(array('Validation', $this->_rule), $this->_ruleParams);
 		} elseif (!is_array($validator['rule'])) {
-			$this->_valid = preg_match($this->_rule, $this->data[$this->getField()->field]);
+			$this->_valid = preg_match($this->_rule, $data[$this->_field]);
 		} elseif (Configure::read('debug') > 0) {
-			trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $this->_rule, $this->_field->field), E_USER_WARNING);
+			trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $this->_rule, $this->_field), E_USER_WARNING);
 			return false;
 		}
 

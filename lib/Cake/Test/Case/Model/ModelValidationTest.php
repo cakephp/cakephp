@@ -1768,36 +1768,6 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
- * testGetData method
- *
- * @return void
- */
-	public function testGetData() {
-		$this->loadFixtures('Article', 'Comment');
-		$TestModel = new Article();
-		$data = array(
-			'Article' => array(
-				'id' =>1, 'title' => 'first title'
-			),
-			'Comment' => array(
-				array('id' => 1, 'article_id' => 1, 'title' => 'first comment'),
-				array('id' => 2, 'article_id' => 1, 'title' => 'second comment')
-			)
-		);
-		$Validator = new ModelValidator($TestModel);
-		$TestModel->set($data);
-		$result = $Validator->getData(null, true);
-		$this->assertEquals($data, $result);
-
-		$Validator->data = array();
-		$result = $Validator->getData();
-		$this->assertEquals($data['Article'], $result);
-
-		$result = $Validator->getData('title');
-		$this->assertEquals($data['Article']['title'], $result);
-	}
-
-/**
  * testGetMethods method
  *
  * @return void
@@ -1812,51 +1782,6 @@ class ModelValidationTest extends BaseModelTest {
 
 		$expected = array_map('strtolower', get_class_methods('Article'));
 		$this->assertEquals($expected, $result['model']);
-	}
-
-/**
- * testGetFields method
- *
- * @return void
- */
-	public function testGetFields() {
-		$this->loadFixtures('Article', 'Comment');
-		$TestModel = new Article();
-		$Validator = $TestModel->validator();
-
-		$result = $Validator->getFields();
-		$this->assertSame(array(), $result);
-
-		$Validator->setFields();
-		$result = $Validator->getFields();
-		$this->assertEquals(array('user_id', 'title','body'), array_keys($result));
-
-		$result = $Validator->getFields('title');
-		$this->assertInstanceOf('CakeField', $result);
-	}
-
-/**
- * testSetFields method
- *
- * @return void
- */
-	public function testSetFields() {
-		$this->loadFixtures('Article', 'Comment');
-		$TestModel = new Article();
-		$TestModel->whitelist = array('title', 'body');
-		$Validator = $TestModel->validator();
-
-		$result = $Validator->setFields();
-		$this->assertTrue($result);
-
-		$result = $Validator->getFields();
-		$this->assertEquals(array('title','body'), array_keys($result));
-
-		$result = $Validator->getFields('user_id');
-		$this->assertFalse($result);
-
-		$result = $Validator->getFields('body');
-		$this->assertEquals(array('notEmpty'), $result->ruleSet);
 	}
 
 /**
@@ -1912,15 +1837,11 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel = new Article();
 		$Validator = $TestModel->validator();
 
-		$result = $Validator->setValidationDomain();
-		$this->assertEquals('default', $result->validationDomain);
-
-		$TestModel->validationDomain = 'validation_messages';
-		$result = $Validator->setValidationDomain();
-		$this->assertEquals('validation_messages', $result->validationDomain);
+		$result = $Validator->setValidationDomain('default');
+		$this->assertEquals('default', $TestModel->validationDomain);
 
 		$result = $Validator->setValidationDomain('other');
-		$this->assertEquals('other', $result->validationDomain);
+		$this->assertEquals('other', $TestModel->validationDomain);
 	}
 
 /**

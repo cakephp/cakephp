@@ -90,7 +90,6 @@ class ModelValidator {
  * @return boolean True if there are no errors
  */
 	public function validates($options = array()) {
-		$this->validationErrors = array();
 		$errors = $this->invalidFields($options);
 		if (empty($errors) && $errors !== false) {
 			$errors = $this->_validateWithModels($options);
@@ -117,12 +116,12 @@ class ModelValidator {
  *    depending on whether each record validated successfully.
  */
 	public function validateAssociated($data, $options = array()) {
-		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
 		$model = $this->getModel();
 
-		$this->validationErrors = $model->validationErrors = $return = array();
-		if (!($model->create($data) && $this->validates($options))) {
-			$this->validationErrors = array($model->alias => $this->validationErrors);
+		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
+		$model->validationErrors = $validationErrors = $return = array();
+		if (!($model->create($data) && $model->validates($options))) {
+			$validationErrors[$model->alias] = $model->validationErrors;
 			$return[$model->alias] = false;
 		} else {
 			$return[$model->alias] = true;
@@ -133,9 +132,9 @@ class ModelValidator {
 			if (isset($associations[$association])) {
 				if (in_array($associations[$association], array('belongsTo', 'hasOne'))) {
 					if ($options['deep']) {
-						$validates = $model->{$association}->validator()->validateAssociated($values, $options);
+						$validates = $model->{$association}->validateAssociated($values, $options);
 					} else {
-						$validates = $model->{$association}->create($values) !== null && $model->{$association}->validator()->validates($options);
+						$validates = $model->{$association}->create($values) !== null && $model->{$association}->validates($options);
 					}
 					if (is_array($validates)) {
 						if (in_array(false, $validates, true)) {
@@ -146,23 +145,23 @@ class ModelValidator {
 					}
 					$return[$association] = $validates;
 				} elseif ($associations[$association] === 'hasMany') {
-					$validates = $model->{$association}->validator()->validateMany($values, $options);
+					$validates = $model->{$association}->validateMany($values, $options);
 					$return[$association] = $validates;
 				}
 				if (!$validates || (is_array($validates) && in_array(false, $validates, true))) {
-					$this->validationErrors[$association] = $model->{$association}->validator()->validationErrors;
+					$validationErrors[$association] = $model->{$association}->validationErrors;
 				}
 			}
 		}
 
-		if (isset($this->validationErrors[$model->alias])) {
-			$this->validationErrors = $this->validationErrors[$model->alias];
+		$model->validationErrors = $validationErrors;
+		if (isset($validationErrors[$model->alias])) {
+			$model->validationErrors = $validationErrors[$model->alias];
 		}
-		$model->validationErrors = $this->validationErrors;
 		if (!$options['atomic']) {
 			return $return;
 		}
-		if ($return[$model->alias] === false || !empty($this->validationErrors)) {
+		if ($return[$model->alias] === false || !empty($model->validationErrors)) {
 			return false;
 		}
 		return true;
@@ -185,29 +184,28 @@ class ModelValidator {
  *    depending on whether each record validated successfully.
  */
 	public function validateMany($data, $options = array()) {
-		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
 		$model = $this->getModel();
-
-		$this->validationErrors = $validationErrors = $model->validationErrors = $return = array();
+		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
+		$model->validationErrors = $validationErrors = $return = array();
 		foreach ($data as $key => $record) {
 			if ($options['deep']) {
-				$validates = $this->validateAssociated($record, $options);
+				$validates = $model->validateAssociated($record, $options);
 			} else {
-				$validates = $model->create($record) && $this->validates($options);
+				$validates = $model->create($record) && $model->validates($options);
 			}
 			if ($validates === false || (is_array($validates) && in_array(false, $validates, true))) {
-				$validationErrors[$key] = $this->validationErrors;
+				$validationErrors[$key] = $model->validationErrors;
 				$validates = false;
 			} else {
 				$validates = true;
 			}
 			$return[$key] = $validates;
 		}
-		$this->validationErrors = $model->validationErrors = $validationErrors;
+		$model->validationErrors = $validationErrors;
 		if (!$options['atomic']) {
 			return $return;
 		}
-		if (empty($this->validationErrors)) {
+		if (empty($model->validationErrors)) {
 			return true;
 		}
 		return false;
@@ -228,7 +226,7 @@ class ModelValidator {
 		$this->setOptions($options);
 
 		if (!$this->_parseRules()) {
-			return $model->validationErrors = $this->validationErrors;
+			return $model->validationErrors;
 		}
 
 		$exists = $model->exists();
@@ -236,13 +234,14 @@ class ModelValidator {
 		foreach ($this->_fields as $field) {
 			$field->setMethods($methods);
 			$field->setValidationDomain($model->validationDomain);
-			$errors = $field->validate($model->data, $exists);
+			$data = isset($model->data[$model->alias]) ? $model->data[$model->alias] : array();
+			$errors = $field->validate($data, $exists);
 			foreach ($errors as $error) {
 				$this->invalidate($field->field, $error);
 			}
 		}
 
-		return $model->validationErrors = $this->validationErrors;
+		return $model->validationErrors;
 	}
 
 /**
@@ -258,35 +257,30 @@ class ModelValidator {
 		if (!is_array($this->validationErrors)) {
 			$this->validationErrors = array();
 		}
-		$this->validationErrors[$field][] = $this->getModel()->validationErrors[$field][] = $value;
+		$this->getModel()->validationErrors[$field][] = $value;
 	}
 
 /**
  * Gets all possible custom methods from the Model, Behaviors and the Validator.
- * If $type is null (default) gets all methods. If $type is one of 'model', 'behaviors' or 'validator',
  * gets the corresponding methods.
  *
- * @param string $type [optional] The methods type to get. Defaults to null
  * @return array The requested methods
  */
-	public function getMethods($type = null) {
+	public function getMethods() {
 		if (!empty($this->_methods)) {
-			if ($type !== null && !empty($this->_methods[$type])) {
-				return $this->_methods[$type];
-			}
 			return $this->_methods;
 		}
 
-		$this->_methods['model'] = array_map('strtolower', get_class_methods($this->_model));
-		$this->_methods['behaviors'] = array_keys($this->_model->Behaviors->methods());
-		$this->_methods['validator'] = get_class_methods($this);
-
-		if ($type !== null && !empty($this->_methods[$type])) {
-			return $this->_methods[$type];
+		$methods = array();
+		foreach (get_class_methods($this->_model) as $method); {
+			$methods[strtolower($method)] = array($this->_model, $method);
 		}
-		unset($type);
 
-		return $this->_methods;
+		foreach (array_keys($this->_model->Behaviors->methods()) as $mthod) {
+			$methods += array(strtolower($method) => array($this->_model, $method));
+		}
+
+		return $this->_methods = $methods;
 	}
 
 /**
