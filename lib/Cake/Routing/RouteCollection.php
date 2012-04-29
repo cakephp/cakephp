@@ -2,6 +2,7 @@
 namespace Cake\Routing;
 
 use Cake\Routing\Route\Route;
+use Cake\Network\Request;
 
 class RouteCollection implements \Countable {
 
@@ -20,6 +21,19 @@ class RouteCollection implements \Countable {
  * @var array
  */
 	protected $_routes = array();
+
+/**
+ * The top most request's context. Updated whenever
+ * requests are pushed/popped off the stack in Router.
+ *
+ * @var array
+ */
+	protected $_requestContext = array(
+		'_base' => '',
+		'_port' => 80,
+		'_scheme' => 'http',
+		'_host' => 'localhost',
+	);
 
 /**
  * Add a route to the collection.
@@ -42,21 +56,21 @@ class RouteCollection implements \Countable {
  * Returns either the string URL generate by the route, or false on failure.
  *
  * @param array $url The url to match.
- * @param array $requestContext The current request parameters, used for persistent parameters.
+ * @param array $currentParams The current request parameters, used for persistent parameters.
  * @return void
  * @TODO Remove persistent params?  Are they even useful?
  */
-	public function match($url, $currentParams = array(), $requestContext = array()) {
+	public function match($url, $currentParams = array()) {
 		$names = $this->_getNames($url);
 		foreach ($names as $name) {
 			if (isset($this->_routeTable[$name])) {
-				$output = $this->_matchRoutes($this->_routeTable[$name], $url, $currentParams, $requestContext);
+				$output = $this->_matchRoutes($this->_routeTable[$name], $url, $currentParams);
 				if ($output) {
 					return $output;
 				}
 			}
 		}
-		return $this->_matchRoutes($this->_routes, $url, $currentParams, $requestContext);
+		return $this->_matchRoutes($this->_routes, $url, $currentParams);
 	}
 
 /**
@@ -67,7 +81,7 @@ class RouteCollection implements \Countable {
  * @param array $requestContext The current request parameters, used for persistent parameters.
  * @return mixed Either false on failure, or a string on success.
  */
-	protected function _matchRoutes($routes, $url, $currentParams, $requestContext) {
+	protected function _matchRoutes($routes, $url, $currentParams) {
 		$output = false;
 		for ($i = 0, $len = count($routes); $i < $len; $i++) {
 			$originalUrl = $url;
@@ -77,7 +91,7 @@ class RouteCollection implements \Countable {
 				$url = $route->persistParams($url, $currentParams);
 			}
 
-			if ($match = $route->match($url, $requestContext)) {
+			if ($match = $route->match($url, $this->_requestContext)) {
 				$output = trim($match, '/');
 				break;
 			}
@@ -183,4 +197,21 @@ class RouteCollection implements \Countable {
 	public function count() {
 		return count($this->_routes);
 	}
+
+/**
+ * Populate the request context used to generate URL's
+ * Generally set to the last/most recent request.
+ *
+ * @param Cake\Network\Request $request
+ * @return void
+ */
+	public function setContext(Request $request) {
+		$this->_requestContext = array(
+			'_base' => $request->base,
+			'_port' => $request->port(),
+			'_scheme' => $request->scheme(),
+			'_host' => $request->host()
+		);
+	}
+
 }
