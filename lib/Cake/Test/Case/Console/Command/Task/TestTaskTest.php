@@ -488,6 +488,69 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test baking component test files,
+ *
+ * @return void
+ */
+	public function testBakeComponentTest() {
+		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
+
+		$result = $this->Task->bake('Component', 'Example');
+
+		$this->assertContains("App::uses('ExampleComponent', 'Controller/Component')", $result);
+		$this->assertContains('class ExampleComponentTest extends CakeTestCase', $result);
+
+		$this->assertContains('function setUp()', $result);
+		$this->assertContains("\$Collection = new ComponentCollection()", $result);
+		$this->assertContains("\$this->Example = new ExampleComponent(\$Collection)", $result);
+
+		$this->assertContains('function tearDown()', $result);
+		$this->assertContains('unset($this->Example)', $result);
+	}
+
+/**
+ * test baking behavior test files,
+ *
+ * @return void
+ */
+	public function testBakeBehaviorTest() {
+		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
+
+		$result = $this->Task->bake('Behavior', 'Example');
+
+		$this->assertContains("App::uses('ExampleBehavior', 'Model/Behavior')", $result);
+		$this->assertContains('class ExampleBehaviorTest extends CakeTestCase', $result);
+
+		$this->assertContains('function setUp()', $result);
+		$this->assertContains("\$this->Example = new ExampleBehavior()", $result);
+
+		$this->assertContains('function tearDown()', $result);
+		$this->assertContains('unset($this->Example)', $result);
+	}
+
+/**
+ * test baking helper test files,
+ *
+ * @return void
+ */
+	public function testBakeHelperTest() {
+		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
+
+		$result = $this->Task->bake('Helper', 'Example');
+
+		$this->assertContains("App::uses('ExampleHelper', 'View/Helper')", $result);
+		$this->assertContains('class ExampleHelperTest extends CakeTestCase', $result);
+
+		$this->assertContains('function setUp()', $result);
+		$this->assertContains("\$View = new View()", $result);
+		$this->assertContains("\$this->Example = new ExampleHelper(\$View)", $result);
+
+		$this->assertContains('function tearDown()', $result);
+		$this->assertContains('unset($this->Example)', $result);
+	}
+
+
+/**
  * test Constructor generation ensure that constructClasses is called for controllers
  *
  * @return void
