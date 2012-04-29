@@ -602,6 +602,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testValidatesWithModelsAndSaveAll() {
+		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
 		$data = array(
 			'Something' => array(
 				'id' => 5,
@@ -627,13 +628,11 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals($expectedError, $JoinThing->validationErrors);
 		$result = $Something->validator()->validateAssociated($data);
 		$this->assertFalse($result);
-		$this->assertEquals($expectedError, $JoinThing->validator()->validationErrors);
 
 		$Something->create();
 		$result = $Something->saveAll($data, array('validate' => 'first'));
 		$this->assertFalse($result);
 		$this->assertEquals($expectedError, $JoinThing->validationErrors);
-		$this->assertEquals($expectedError, $JoinThing->validator()->validationErrors);
 
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
 		$this->assertSame($count, 0);
