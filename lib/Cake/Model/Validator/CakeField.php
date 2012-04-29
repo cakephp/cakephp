@@ -85,7 +85,7 @@ class CakeField {
 		}
 
 		foreach ($ruleSet as $index => $validateProp) {
-			$this->_rules[$index] = new CakeRule($this->field, $validateProp, $index);
+			$this->_rules[$index] = new CakeRule($index, $validateProp);
 		}
 		$this->ruleSet = $ruleSet;
 	}
@@ -122,17 +122,16 @@ class CakeField {
 				continue;
 			}
 
-			$checkRequired = $rule->checkRequired($data);
+			$checkRequired = $rule->checkRequired($this->field, $data);
 			if (!$checkRequired && array_key_exists($this->field, $data)) {
-				if ($rule->checkEmpty($data)) {
+				if ($rule->checkEmpty($this->field, $data)) {
 					break;
 				}
-				$rule->dispatchValidation($data, $this->_methods);
+				$rule->dispatchValidation($this->field, $data, $this->_methods);
 			}
 
-			if ($checkRequired || !$rule->isValid($data)) {
+			if ($checkRequired || !$rule->isValid()) {
 				$errors[] = $this->_processValidationResponse($rule);
-
 				if ($rule->isLast()) {
 					break;
 				}
@@ -234,8 +233,6 @@ class CakeField {
 			} else {
 				$message = __d($this->_validationDomain, $name);
 			}
-		//} elseif (!$rule->checkRequired() && is_numeric($name) && count($this->ruleSet) > 1) {
-		//	$this->_errorMessage = $this->_index + 1;
 		} else {
 			$message = __d('cake_dev', 'This field cannot be left blank');
 		}

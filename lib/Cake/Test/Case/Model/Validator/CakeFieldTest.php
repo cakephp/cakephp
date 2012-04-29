@@ -17,14 +17,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once dirname(dirname(__FILE__)) . DS . 'ModelTestBase.php';
+App::uses('CakeField', 'Model/Validator');
 
 /**
  * CakeFieldTest
  *
  * @package       Cake.Test.Case.Model.Validator
  */
-class CakeFieldTest extends BaseModelTest {
+class CakeFieldTest extends CakeTestModel {
 
 /**
  * setUp method
@@ -32,11 +32,7 @@ class CakeFieldTest extends BaseModelTest {
  * @return void
  */
 	public function setUp() {
-		$this->skipIf(true);
 		parent::setUp();
-		$this->Article = new Article();
-		$this->Article->set(array('title' => '', 'body' => 'no title'));
-		$this->Validator = new ModelValidator($this->Article);
 	}
 
 /**
@@ -45,20 +41,26 @@ class CakeFieldTest extends BaseModelTest {
  * @return void
  */
 	public function testValidate() {
-		$Field = new CakeField($this->Validator, 'title', 'notEmpty');
+		$Field = new CakeField('title', 'notEmpty');
+		$data = array(
+			'title' => '',
+			'body' => 'a body'
+		);
 
-		$result = $Field->validate();
-		$this->assertFalse($result);
+		$result = $Field->validate($data);
+		$expected = array('This field cannot be left blank');
+		$this->assertEquals($expected, $result);
 
-		$Field = new CakeField($this->Validator, 'body', 'notEmpty');
+		$Field = new CakeField('body', 'notEmpty');
 
-		$result = $Field->validate();
-		$this->assertTrue($result);
+		$result = $Field->validate($data);
+		$this->assertEmpty($result);
 
-		$Field = new CakeField($this->Validator, 'nothere', array('notEmpty' => array('rule' => 'notEmpty', 'required' => true)));
+		$Field = new CakeField('nothere', array('notEmpty' => array('rule' => 'notEmpty', 'required' => true)));
 
-		$result = $Field->validate();
-		$this->assertFalse($result);
+		$result = $Field->validate($data);
+		$expected = array('notEmpty');
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -68,7 +70,11 @@ class CakeFieldTest extends BaseModelTest {
  */
 	public function testGetRule() {
 		$rules = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
-		$Field = new CakeField($this->Validator, 'title', $rules);
+		$Field = new CakeField('title', $rules);
+		$data = array(
+			'title' => '',
+			'body' => 'a body'
+		);
 
 		$result = $Field->getRule('notEmpty');
 		$this->assertInstanceOf('CakeRule', $result);
@@ -78,7 +84,6 @@ class CakeFieldTest extends BaseModelTest {
 		$this->assertEquals(null, $result->on);
 		$this->assertEquals(true, $result->last);
 		$this->assertEquals('Can not be empty', $result->message);
-		$this->assertEquals(array('title' => '', 'body' => 'no title'), $result->data);
 	}
 
 /**
@@ -88,7 +93,7 @@ class CakeFieldTest extends BaseModelTest {
  */
 	public function testGetRules() {
 		$rules = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
-		$Field = new CakeField($this->Validator, 'title', $rules);
+		$Field = new CakeField('title', $rules);
 
 		$result = $Field->getRules();
 		$this->assertEquals(array('notEmpty'), array_keys($result));
@@ -102,19 +107,19 @@ class CakeFieldTest extends BaseModelTest {
  */
 	public function testSetRule() {
 		$rules = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
-		$Field = new CakeField($this->Validator, 'title', $rules);
-		$Rule = new CakeRule($Field, $rules['notEmpty'], 'notEmpty');
+		$Field = new CakeField('title', $rules);
+		$Rule = new CakeRule('notEmpty', $rules['notEmpty']);
 
 		$this->assertEquals($Rule, $Field->getRule('notEmpty'));
 
 		$rules = array('validEmail' => array('rule' => 'email', 'message' => 'Invalid email'));
-		$Rule = new CakeRule($Field, $rules['validEmail'], 'validEmail');
+		$Rule = new CakeRule('validEmail', $rules['validEmail']);
 		$Field->setRule('validEmail', $Rule);
 		$result = $Field->getRules();
 		$this->assertEquals(array('notEmpty', 'validEmail'), array_keys($result));
 
 		$rules = array('validEmail' => array('rule' => 'email', 'message' => 'Other message'));
-		$Rule = new CakeRule($Field, $rules['validEmail'], 'validEmail');
+		$Rule = new CakeRule('validEmail', $rules['validEmail']);
 		$Field->setRule('validEmail', $Rule);
 		$result = $Field->getRules();
 		$this->assertEquals(array('notEmpty', 'validEmail'), array_keys($result));
@@ -126,7 +131,6 @@ class CakeFieldTest extends BaseModelTest {
 		$this->assertEquals(null, $result->on);
 		$this->assertEquals(true, $result->last);
 		$this->assertEquals('Other message', $result->message);
-		$this->assertEquals(array('title' => '', 'body' => 'no title'), $result->data);
 	}
 
 /**
@@ -136,11 +140,11 @@ class CakeFieldTest extends BaseModelTest {
  */
 	public function testSetRules() {
 		$rule = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
-		$Field = new CakeField($this->Validator, 'title', $rule);
-		$RuleEmpty = new CakeRule($Field, $rule['notEmpty'], 'notEmpty');
+		$Field = new CakeField('title', $rule);
+		$RuleEmpty = new CakeRule('title', $rule['notEmpty'], 'notEmpty');
 
 		$rule = array('validEmail' => array('rule' => 'email', 'message' => 'Invalid email'));
-		$RuleEmail = new CakeRule($Field, $rule['validEmail'], 'validEmail');
+		$RuleEmail = new CakeRule('email', $rule['validEmail'], 'validEmail');
 
 		$rules = array('validEmail' => $RuleEmail);
 		$Field->setRules($rules, false);
@@ -151,18 +155,6 @@ class CakeFieldTest extends BaseModelTest {
 		$Field->setRules($rules, true);
 		$result = $Field->getRules();
 		$this->assertEquals(array('validEmail', 'notEmpty'), array_keys($result));
-	}
-
-/**
- * testGetValidator method
- *
- * @return void
- */
-	public function testGetValidator() {
-		$rule = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
-		$Field = new CakeField($this->Validator, 'title', $rule);
-		$result = $Field->getValidator();
-		$this->assertInstanceOf('ModelValidator', $result);
 	}
 
 }

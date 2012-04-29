@@ -1660,10 +1660,9 @@ class ModelValidationTest extends BaseModelTest {
 		$Validator = $TestModel->validator();
 
 		$result = $Validator->getMethods();
-		$this->assertEquals(array('model', 'behaviors', 'validator'), array_keys($result));
 
 		$expected = array_map('strtolower', get_class_methods('Article'));
-		$this->assertEquals($expected, $result['model']);
+		$this->assertEquals($expected, array_keys($result));
 	}
 
 /**

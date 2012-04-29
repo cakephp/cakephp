@@ -17,14 +17,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once dirname(dirname(__FILE__)) . DS . 'ModelTestBase.php';
+App::uses('CakeRule', 'Model/Validator');
 
 /**
  * CakeRuleTest
  *
  * @package       Cake.Test.Case.Model.Validator
  */
-class CakeRuleTest extends BaseModelTest {
+class CakeRuleTest extends CakeTestModel {
 
 /**
  * setUp method
@@ -33,12 +33,6 @@ class CakeRuleTest extends BaseModelTest {
  */
 	public function setUp() {
 		parent::setUp();
-		$Article = new Article();
-		$Article->set(array('title' => '', 'body' => 'no title'));
-		$this->Validator = new ModelValidator($Article);
-		$this->Validator->getData();
-		$rule = array('notEmpty' => array('rule' => 'notEmpty', 'required' => true, 'last' => false));
-		$this->Field = new CakeField($this->Validator, 'body', $rule);
 	}
 
 /**

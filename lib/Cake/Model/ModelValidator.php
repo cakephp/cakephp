@@ -376,8 +376,11 @@ class ModelValidator {
  * @param string $validationDomain [optional] The validation domain to be used.
  * @return ModelValidator
  */
-	public function setValidationDomain($validationDomain) {
-		$model->validationDomain = $validationDomain;
+	public function setValidationDomain($validationDomain = null) {
+		if (empty($validationDomain)) {
+			$validationDomain = 'default';
+		}
+		$this->getModel()->validationDomain = $validationDomain;
 		return $this;
 	}
 

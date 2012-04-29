@@ -31,13 +31,6 @@ App::uses('Validation', 'Utility');
 class CakeRule {
 
 /**
- * Holds a reference to the parent field
- *
- * @var CakeField
- */
-	protected $_field = null;
-
-/**
  * The 'valid' value
  *
  * @var mixed
@@ -127,8 +120,7 @@ class CakeRule {
  * @param array $validator [optional] The validator properties
  * @param mixed $index [optional]
  */
-	public function __construct($field, $validator = array(), $index = null) {
-		$this->_field = $field;
+	public function __construct($index = null, $validator = array()) {
 		$this->_index = $index;
 		$this->_addValidatorProps($validator);
 	}
@@ -170,12 +162,12 @@ class CakeRule {
  * @param array $data data to check rule against
  * @return boolean
  */
-	public function checkRequired(&$data) {
+	public function checkRequired($field, &$data) {
 		return (
-			(!isset($data[$this->_field]) && $this->isRequired() === true) ||
+			(!isset($data[$field]) && $this->isRequired() === true) ||
 			(
-				isset($data[$this->_field]) && (empty($data[$this->_field]) &&
-				!is_numeric($data[$this->_field])) && $this->allowEmpty === false
+				isset($data[$field]) && (empty($data[$field]) &&
+				!is_numeric($data[$field])) && $this->allowEmpty === false
 			)
 		);
 	}
@@ -186,8 +178,8 @@ class CakeRule {
  * @param array $data data to check rule against
  * @return boolean
  */
-	public function checkEmpty(&$data) {
-		if (empty($data[$this->_field]) && $data[$this->_field] != '0' && $this->allowEmpty === true) {
+	public function checkEmpty($field, &$data) {
+		if (empty($data[$field]) && $data[$field] != '0' && $this->allowEmpty === true) {
 			return true;
 		}
 		return false;
@@ -261,21 +253,21 @@ class CakeRule {
  *
  * @return boolean True if the rule could be dispatched, false otherwise
  */
-	public function dispatchValidation(&$data, &$methods) {
-		$this->_parseRule($data);
+	public function dispatchValidation($field, &$data, &$methods) {
+		$this->_parseRule($field, $data);
 
 		$validator = $this->getPropertiesArray();
 		$rule = strtolower($this->_rule);
 		if (isset($methods[$rule])) {
 			$this->_ruleParams[] = array_merge($validator, $this->_passedOptions);
-			$this->_ruleParams[0] = array($this->_field => $this->_ruleParams[0]);
+			$this->_ruleParams[0] = array($field => $this->_ruleParams[0]);
 			$this->_valid =  call_user_func_array($methods[$rule], $this->_ruleParams);
 		} elseif (class_exists('Validation') && method_exists('Validation', $this->_rule)) {
 			$this->_valid = call_user_func_array(array('Validation', $this->_rule), $this->_ruleParams);
 		} elseif (is_string($validator['rule'])) {
-			$this->_valid = preg_match($this->_rule, $data[$this->_field]);
+			$this->_valid = preg_match($this->_rule, $data[$field]);
 		} elseif (Configure::read('debug') > 0) {
-			trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $this->_rule, $this->_field), E_USER_WARNING);
+			trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $this->_rule, $field), E_USER_WARNING);
 			return false;
 		}
 
@@ -319,13 +311,13 @@ class CakeRule {
  *
  * @return void
  */
-	protected function _parseRule(&$data) {
+	protected function _parseRule($field, &$data) {
 		if (is_array($this->rule)) {
 			$this->_rule = $this->rule[0];
-			$this->_ruleParams = array_merge(array($data[$this->_field]), array_values(array_slice($this->rule, 1)));
+			$this->_ruleParams = array_merge(array($data[$field]), array_values(array_slice($this->rule, 1)));
 		} else {
 			$this->_rule = $this->rule;
-			$this->_ruleParams = array($data[$this->_field]);
+			$this->_ruleParams = array($data[$field]);
 		}
 	}
 
