@@ -77,7 +77,7 @@ class TestTask extends BakeTask {
 		}
 
 		if (count($this->args) > 1) {
-			$type = Inflector::underscore($this->args[0]);
+			$type = Inflector::classify($this->args[0]);
 			if ($this->bake($type, $this->args[1])) {
 				$this->out('<success>Done</success>');
 			}
