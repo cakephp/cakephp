@@ -30,18 +30,25 @@ App::uses('CakeRule', 'Model/Validator');
 class CakeField {
 
 /**
- * Holds the parent Validator instance
- *
- * @var ModelValidator
- */
-	protected $_validator = null;
-
-/**
  * Holds the ValidationRule objects
  *
  * @var array
  */
 	protected $_rules = array();
+
+/**
+ * Set of methods available for validation
+ *
+ * @var array
+ **/
+	protected $_methods = array();
+
+/**
+ * I18n domain for validation messages.
+ *
+ * @var string
+ **/
+	protected $_validationDomain = null;
 
 /**
  * If the validation is stopped
@@ -67,13 +74,10 @@ class CakeField {
 /**
  * Constructor
  *
- * @param ModelValidator $validator The parent ModelValidator
  * @param string $fieldName The fieldname
- * @param
+ * @param array $ruleset
  */
-	public function __construct(ModelValidator $validator, $fieldName, $ruleSet) {
-		$this->_validator = $validator;
-		$this->data = &$this->getValidator()->data;
+	public function __construct($fieldName, $ruleSet) {
 		$this->field = $fieldName;
 
 		if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
@@ -81,41 +85,61 @@ class CakeField {
 		}
 
 		foreach ($ruleSet as $index => $validateProp) {
-			$this->_rules[$index] = new CakeRule($this, $validateProp, $index);
+			$this->_rules[$index] = new CakeRule($this->field, $validateProp, $index);
 		}
 		$this->ruleSet = $ruleSet;
-		unset($ruleSet, $validateProp);
+	}
+
+/**
+ * Sets the list of methods to use for validation
+ *
+ * @return void
+ **/
+	public function setMethods(&$methods) {
+		$this->_methods =& $methods;
+	}
+
+/**
+ * Sets the I18n domain for validation messages.
+ *
+ * @param string $validationDomain The validation domain to be used.
+ * @return void
+ */
+	public function setValidationDomain($validationDomain) {
+		$this->_validationDomain = $validationDomain;
 	}
 
 /**
  * Validates a ModelField
  *
- * @return mixed
+ * @return array list of validation errors for this field
  */
-	public function validate() {
+	public function validate($data, $isUpdate = false) {
+		$errors = array();
 		foreach ($this->getRules() as $rule) {
+			$rule->isUpdate($isUpdate);
 			if ($rule->skip()) {
 				continue;
 			}
-			$rule->isRequired();
 
-			if (!$rule->checkRequired() && array_key_exists($this->field, $this->data)) {
-				if ($rule->checkEmpty()) {
+			$checkRequired = $rule->checkRequired($data);
+			if (!$checkRequired && array_key_exists($this->field, $data)) {
+				if ($rule->checkEmpty($data)) {
 					break;
 				}
-				$rule->dispatchValidation();
+				$rule->dispatchValidation($data, $this->_methods);
 			}
 
-			if ($rule->checkRequired() || !$rule->isValid()) {
-				$this->getValidator()->invalidate($this->field, $rule->getMessage());
+			if ($checkRequired || !$rule->isValid($data)) {
+				$errors[] = $this->_processValidationResponse($rule);
 
 				if ($rule->isLast()) {
-					return false;
+					break;
 				}
 			}
 		}
 
-		return true;
+		return $errors;
 	}
 
 /**
@@ -168,21 +192,54 @@ class CakeField {
 	}
 
 /**
- * Gets the validator this field is atached to
+ * Fetches the correct error message for a failed validation
  *
- * @return ModelValidator The parent ModelValidator instance
+ * @return string
  */
-	public function getValidator() {
-		return $this->_validator;
-	}
+	protected function _processValidationResponse($rule) {
+		$message = $rule->getValidationResult();
+		$name = $rule->getName();
+		if (is_string($message)) {
+			return $message;
+		}
+		$message = $rule->message;
 
-/**
- * Magic isset
- *
- * @return true if the field exists in data, false otherwise
- */
-	public function __isset($fieldName) {
-		return array_key_exists($fieldName, $this->getValidator()->getData());
+		if ($message !== null && !is_string($message)) {
+			$args = null;
+			if (is_array($message)) {
+				$result = $message[0];
+				$args = array_slice($message, 1);
+			} else {
+				$result = $message;
+			}
+			if (is_array($rule->rule) && $args === null) {
+				$args = array_slice($rule->rule, 1);
+			}
+			if (!empty($args)) {
+				foreach ($args as $k => $arg) {
+					$args[$k] = __d($this->_validationDomain, $arg);
+				}
+			}
+			$message = __d($this->_validationDomain, $result, $args);
+		} elseif (is_string($name)) {
+			if (is_array($rule->rule)) {
+				$args = array_slice($rule->rule, 1);
+				if (!empty($args)) {
+					foreach ($args as $k => $arg) {
+						$args[$k] = __d($this->_validationDomain, $arg);
+					}
+				}
+				$message = __d($this->_validationDomain, $name, $args);
+			} else {
+				$message = __d($this->_validationDomain, $name);
+			}
+		//} elseif (!$rule->checkRequired() && is_numeric($name) && count($this->ruleSet) > 1) {
+		//	$this->_errorMessage = $this->_index + 1;
+		} else {
+			$message = __d('cake_dev', 'This field cannot be left blank');
+		}
+
+		return $message;
 	}
 
 }

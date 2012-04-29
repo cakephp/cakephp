@@ -30,27 +30,6 @@ App::uses('CakeRule', 'Model/Validator');
 class ModelValidator {
 
 /**
- * The default validation domain
- *
- * @var string
- */
-	const DEFAULT_DOMAIN = 'default';
-
-/**
- * Holds the data array from the Model
- *
- * @var array
- */
-	public $data = array();
-
-/**
- * The default ValidationDomain
- *
- * @var string
- */
-	public $validationDomain = 'default';
-
-/**
  * Holds the validationErrors
  *
  * @var array
@@ -139,22 +118,24 @@ class ModelValidator {
  */
 	public function validateAssociated($data, $options = array()) {
 		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
-		$this->validationErrors = $this->getModel()->validationErrors = $return = array();
-		if (!($this->getModel()->create($data) && $this->validates($options))) {
-			$this->validationErrors = array($this->getModel()->alias => $this->validationErrors);
-			$return[$this->getModel()->alias] = false;
+		$model = $this->getModel();
+
+		$this->validationErrors = $model->validationErrors = $return = array();
+		if (!($model->create($data) && $this->validates($options))) {
+			$this->validationErrors = array($model->alias => $this->validationErrors);
+			$return[$model->alias] = false;
 		} else {
-			$return[$this->getModel()->alias] = true;
+			$return[$model->alias] = true;
 		}
-		$associations = $this->getModel()->getAssociated();
+		$associations = $model->getAssociated();
 		foreach ($data as $association => $values) {
 			$validates = true;
 			if (isset($associations[$association])) {
 				if (in_array($associations[$association], array('belongsTo', 'hasOne'))) {
 					if ($options['deep']) {
-						$validates = $this->getModel()->{$association}->validator()->validateAssociated($values, $options);
+						$validates = $model->{$association}->validator()->validateAssociated($values, $options);
 					} else {
-						$validates = $this->getModel()->{$association}->create($values) !== null && $this->getModel()->{$association}->validator()->validates($options);
+						$validates = $model->{$association}->create($values) !== null && $model->{$association}->validator()->validates($options);
 					}
 					if (is_array($validates)) {
 						if (in_array(false, $validates, true)) {
@@ -165,23 +146,23 @@ class ModelValidator {
 					}
 					$return[$association] = $validates;
 				} elseif ($associations[$association] === 'hasMany') {
-					$validates = $this->getModel()->{$association}->validator()->validateMany($values, $options);
+					$validates = $model->{$association}->validator()->validateMany($values, $options);
 					$return[$association] = $validates;
 				}
 				if (!$validates || (is_array($validates) && in_array(false, $validates, true))) {
-					$this->validationErrors[$association] = $this->getModel()->{$association}->validator()->validationErrors;
+					$this->validationErrors[$association] = $model->{$association}->validator()->validationErrors;
 				}
 			}
 		}
 
-		if (isset($this->validationErrors[$this->getModel()->alias])) {
-			$this->validationErrors = $this->validationErrors[$this->getModel()->alias];
+		if (isset($this->validationErrors[$model->alias])) {
+			$this->validationErrors = $this->validationErrors[$model->alias];
 		}
-		$this->getModel()->validationErrors = $this->validationErrors;
+		$model->validationErrors = $this->validationErrors;
 		if (!$options['atomic']) {
 			return $return;
 		}
-		if ($return[$this->getModel()->alias] === false || !empty($this->validationErrors)) {
+		if ($return[$model->alias] === false || !empty($this->validationErrors)) {
 			return false;
 		}
 		return true;
@@ -205,12 +186,14 @@ class ModelValidator {
  */
 	public function validateMany($data, $options = array()) {
 		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
-		$this->validationErrors = $validationErrors = $this->getModel()->validationErrors = $return = array();
+		$model = $this->getModel();
+
+		$this->validationErrors = $validationErrors = $model->validationErrors = $return = array();
 		foreach ($data as $key => $record) {
 			if ($options['deep']) {
 				$validates = $this->validateAssociated($record, $options);
 			} else {
-				$validates = $this->getModel()->create($record) && $this->validates($options);
+				$validates = $model->create($record) && $this->validates($options);
 			}
 			if ($validates === false || (is_array($validates) && in_array(false, $validates, true))) {
 				$validationErrors[$key] = $this->validationErrors;
@@ -220,7 +203,7 @@ class ModelValidator {
 			}
 			$return[$key] = $validates;
 		}
-		$this->validationErrors = $this->getModel()->validationErrors = $validationErrors;
+		$this->validationErrors = $model->validationErrors = $validationErrors;
 		if (!$options['atomic']) {
 			return $return;
 		}
@@ -242,25 +225,24 @@ class ModelValidator {
 			return false;
 		}
 		$model = $this->getModel();
-		$this->data = array();
-
 		$this->setOptions($options);
 
-		if (!$this->setFields()) {
+		if (!$this->_parseRules()) {
 			return $model->validationErrors = $this->validationErrors;
 		}
 
-		$this->getData();
-		$this->getMethods();
-		$this->setValidationDomain($model->validationDomain);
-
+		$exists = $model->exists();
+		$methods = $this->getMethods();
 		foreach ($this->_fields as $field) {
-			$field->validate();
+			$field->setMethods($methods);
+			$field->setValidationDomain($model->validationDomain);
+			$errors = $field->validate($model->data, $exists);
+			foreach ($errors as $error) {
+				$this->invalidate($field->field, $error);
+			}
 		}
 
-		$this->setFields(true);
-
-		return $this->getModel()->validationErrors = $this->validationErrors;
+		return $model->validationErrors = $this->validationErrors;
 	}
 
 /**
@@ -277,34 +259,6 @@ class ModelValidator {
 			$this->validationErrors = array();
 		}
 		$this->validationErrors[$field][] = $this->getModel()->validationErrors[$field][] = $value;
-	}
-
-/**
- * Gets the current data from the model and sets it to $this->data
- *
- * @param string $field [optional]
- * @return array The data
- */
-	public function getData($field = null, $all = false) {
-		if (!empty($this->data)) {
-			if ($field !== null && isset($this->data[$field])) {
-				return $this->data[$field];
-			}
-			return $this->data;
-		}
-
-		$this->data = $this->_model->data;
-		if (FALSE === $all && isset($this->data[$this->_model->alias])) {
-			$this->data = $this->data[$this->_model->alias];
-		} elseif (!is_array($this->data)) {
-			$this->data = array();
-		}
-
-		if ($field !== null && isset($this->data[$field])) {
-			return $this->data[$field];
-		}
-
-		return $this->data;
 	}
 
 /**
@@ -354,28 +308,27 @@ class ModelValidator {
  * Sets the CakeField instances from the Model::$validate property after processing the fieldList and whiteList.
  * If Model::$validate is not set or empty, this method returns false. True otherwise.
  *
- * @param boolean $reset If true will reset the Validator $validate array to the Model's default
  * @return boolean True if Model::$validate was processed, false otherwise
  */
-	public function setFields($reset = false) {
-		if (!isset($this->_model->validate) || empty($this->_model->validate)) {
+	protected function _parseRules() {
+		if (empty($this->_model->validate)) {
 			$this->_validate = array();
+			$this->_fields = array();
 			return false;
 		}
 
-		$this->_validate = $this->_model->validate;
-
-		if ($reset === true) {
+		if (!empty($this->_validate) && $this->_validate === $this->_model->validate) {
 			return true;
 		}
 
+		$this->_validate = $this->_model->validate;
 		$this->_processWhitelist();
 
 		$this->_fields = array();
+		$methods = $this->getMethods();
 		foreach ($this->_validate as $fieldName => $ruleSet) {
-			$this->_fields[$fieldName] = new CakeField($this, $fieldName, $ruleSet);
+			$this->_fields[$fieldName] = new CakeField($fieldName, $ruleSet, $methods);
 		}
-		unset($fieldName, $ruleSet);
 		return true;
 	}
 
@@ -427,16 +380,11 @@ class ModelValidator {
 /**
  * Sets the I18n domain for validation messages. This method is chainable.
  *
- * @param string $validationDomain [optional] The validation domain to be used. If none is given, uses Model::$validationDomain
+ * @param string $validationDomain [optional] The validation domain to be used.
  * @return ModelValidator
  */
-	public function setValidationDomain($validationDomain = null) {
-		if ($validationDomain !== null) {
-			$this->validationDomain = $validationDomain;
-		} else {
-			$this->validationDomain = ModelValidator::DEFAULT_DOMAIN;
-		}
-
+	public function setValidationDomain($validationDomain) {
+		$model->validationDomain = $validationDomain;
 		return $this;
 	}
 
@@ -455,12 +403,13 @@ class ModelValidator {
  * @return void
  */
 	protected function _processWhitelist() {
-		$whitelist = $this->getModel()->whitelist;
+		$model = $this->getModel();
+		$whitelist = $model->whitelist;
 		$fieldList = $this->getOptions('fieldList');
 
 		if (!empty($fieldList)) {
-			if (!empty($fieldList[$this->getModel()->alias]) && is_array($fieldList[$this->getModel()->alias])) {
-				$whitelist = $fieldList[$this->getModel()->alias];
+			if (!empty($fieldList[$model->alias]) && is_array($fieldList[$model->alias])) {
+				$whitelist = $fieldList[$model->alias];
 			} else {
 				$whitelist = $fieldList;
 			}
@@ -489,20 +438,20 @@ class ModelValidator {
  */
 	protected function _validateWithModels($options) {
 		$valid = true;
-		$this->getData(null, true);
+		$model = $this->getModel();
 
-		foreach ($this->getModel()->hasAndBelongsToMany as $assoc => $association) {
-			if (empty($association['with']) || !isset($this->data[$assoc])) {
+		foreach ($model->hasAndBelongsToMany as $assoc => $association) {
+			if (empty($association['with']) || !isset($model->data[$assoc])) {
 				continue;
 			}
-			list($join) = $this->getModel()->joinModel($this->getModel()->hasAndBelongsToMany[$assoc]['with']);
-			$data = $this->data[$assoc];
+			list($join) = $model->joinModel($model->hasAndBelongsToMany[$assoc]['with']);
+			$data = $model->data[$assoc];
 
 			$newData = array();
 			foreach ((array)$data as $row) {
-				if (isset($row[$this->getModel()->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
+				if (isset($row[$model->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 					$newData[] = $row;
-				} elseif (isset($row[$join]) && isset($row[$join][$this->getModel()->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
+				} elseif (isset($row[$join]) && isset($row[$join][$model->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 					$newData[] = $row[$join];
 				}
 			}
@@ -510,9 +459,9 @@ class ModelValidator {
 				continue;
 			}
 			foreach ($newData as $data) {
-				$data[$this->getModel()->hasAndBelongsToMany[$assoc]['foreignKey']] = $this->getModel()->id;
-				$this->getModel()->{$join}->create($data);
-				$valid = ($valid && $this->getModel()->{$join}->validator()->validates($options));
+				$data[$model->hasAndBelongsToMany[$assoc]['foreignKey']] = $model->id;
+				$model->{$join}->create($data);
+				$valid = ($valid && $model->{$join}->validator()->validates($options));
 			}
 		}
 		return $valid;
@@ -525,9 +474,10 @@ class ModelValidator {
  * @return boolean
  */
 	public function propagateBeforeValidate($options = array()) {
-		$event = new CakeEvent('Model.beforeValidate', $this->getModel(), array($options));
+		$model = $this->getModel();
+		$event = new CakeEvent('Model.beforeValidate', $model, array($options));
 		list($event->break, $event->breakOn) = array(true, false);
-		$this->getModel()->getEventManager()->dispatch($event);
+		$model->getEventManager()->dispatch($event);
 		if ($event->isStopped()) {
 			return false;
 		}

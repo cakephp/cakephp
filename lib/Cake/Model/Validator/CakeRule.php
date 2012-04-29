@@ -38,13 +38,6 @@ class CakeRule {
 	protected $_field = null;
 
 /**
- * Has the required check failed?
- *
- * @var boolean
- */
-	protected $_requiredFail = null;
-
-/**
  * The 'valid' value
  *
  * @var mixed
@@ -63,7 +56,7 @@ class CakeRule {
  *
  * @var boolean
  */
-	protected $_modelExists = null;
+	protected $_recordExists = false;
 
 /**
  * The parsed rule
@@ -80,25 +73,11 @@ class CakeRule {
 	protected $_ruleParams = array();
 
 /**
- * The errorMessage
- *
- * @var string
- */
-	protected $_errorMessage = null;
-
-/**
  * Holds passed in options
  *
  * @var array
  */
 	protected $_passedOptions = array();
-
-/**
- * Flag indicating wether the allowEmpty check has failed
- *
- * @var boolean
- */
-	protected $_emptyFail = null;
 
 /**
  * The 'rule' key
@@ -145,25 +124,13 @@ class CakeRule {
 /**
  * Constructor
  *
- * @param CakeField $field
  * @param array $validator [optional] The validator properties
  * @param mixed $index [optional]
  */
-	public function __construct(CakeField $field, $validator = array(), $index = null) {
+	public function __construct($field, $validator = array(), $index = null) {
 		$this->_field = $field;
 		$this->_index = $index;
-		unset($field, $index);
-
-		$this->data = &$this->getField()
-				->data;
-
-		$this->_modelExists = $this->getField()
-				->getValidator()
-				->getModel()
-				->exists();
-
 		$this->_addValidatorProps($validator);
-		unset($validator);
 	}
 
 /**
@@ -188,9 +155,8 @@ class CakeRule {
 		if (is_bool($this->required)) {
 			return $this->required;
 		}
-
 		if (in_array($this->required, array('create', 'update'), true)) {
-			if ($this->required === 'create' && !$this->_modelExists || $this->required === 'update' && $this->_modelExists) {
+			if ($this->required === 'create' && !$this->_recordExists || $this->required === 'update' && $this->_recordExists) {
 				$this->required = true;
 			}
 		}
@@ -201,37 +167,29 @@ class CakeRule {
 /**
  * Checks if the field failed the required validation
  *
+ * @param array $data data to check rule against
  * @return boolean
  */
-	public function checkRequired() {
-		if ($this->_requiredFail !== null) {
-			return $this->_requiredFail;
-		}
-		$this->_requiredFail = (
-			(!isset($this->data[$this->getField()->field]) && $this->required === true) ||
-			(
-				isset($this->data[$this->getField()->field]) && (empty($this->data[$this->getField()->field]) &&
-				!is_numeric($this->data[$this->getField()->field])) && $this->allowEmpty === false
-			)
+	public function checkRequired(&$data) {
+		$required = !isset($data[$this->_field]) && $this->required === true;
+		$required = $required || (
+			isset($this->data[$this->_field]) && (empty($data[$this->_field]) &&
+			!is_numeric($data[$this->_field])) && $this->allowEmpty === false
 		);
-		return $this->_requiredFail;
+		return $required;
 	}
 
 /**
  * Checks if the allowEmpty key applies
  *
+ * @param array $data data to check rule against
  * @return boolean
  */
-	public function checkEmpty() {
-		if ($this->_emptyFail !== null) {
-			return $this->_emptyFail;
+	public function checkEmpty(&$data) {
+		if (empty($data[$this->_field]) && $data[$this->_field] != '0' && $this->allowEmpty === true) {
+			return true;
 		}
-		$this->_emptyFail = false;
-
-		if (empty($this->data[$this->getField()->field]) && $this->data[$this->getField()->field] != '0' && $this->allowEmpty === true) {
-			$this->_emptyFail = true;
-		}
-		return $this->_emptyFail;
+		return false;
 	}
 
 /**
@@ -241,7 +199,7 @@ class CakeRule {
  */
 	public function skip() {
 		if (!empty($this->on)) {
-			if ($this->on == 'create' && $this->_modelExists || $this->on == 'update' && !$this->_modelExists) {
+			if ($this->on == 'create' && $this->_recordExists || $this->on == 'update' && !$this->_recordExists) {
 				return true;
 			}
 		}
@@ -262,17 +220,8 @@ class CakeRule {
  *
  * @return string
  */
-	public function getMessage() {
-		return $this->_processValidationResponse();
-	}
-
-/**
- * Gets the parent field
- *
- * @return CakeField
- */
-	public function getField() {
-		return $this->_field;
+	public function getValidationResult() {
+		return $this->_valid;
 	}
 
 /**
@@ -292,16 +241,26 @@ class CakeRule {
 	}
 
 /**
+ * Sets the recordExists configuration value for this rule,
+ * ir refers to wheter the model record it is validating exists
+ * exists in the collection or not (create or update operation)
+ *
+ * @return void 
+ **/
+	public function isUpdate($exists = false) {
+		$this->_recordExists = $exists;
+	}
+
+/**
  * Dispatches the validation rule to the given validator method
  *
  * @return boolean True if the rule could be dispatched, false otherwise
  */
-	public function dispatchValidation() {
-		$this->_parseRule();
+	public function dispatchValidation(&$data, &$methods) {
+		$this->_parseRule($data);
 
 		$validator = $this->getPropertiesArray();
-		$methods = $this->getField()->getValidator()->getMethods();
-		$Model = $this->getField()->getValidator()->getModel();
+		$rule = strtolower($this->_rule);
 
 		if (in_array(strtolower($this->_rule), $methods['model'])) {
 			$this->_ruleParams[] = array_merge($validator, $this->_passedOptions);
@@ -319,58 +278,19 @@ class CakeRule {
 			trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $this->_rule, $this->_field->field), E_USER_WARNING);
 			return false;
 		}
-		unset($validator, $methods, $Model);
 
 		return true;
 	}
 
-/**
- * Fetches the correct error message for a failed validation
- *
- * @return string
- */
-	protected function _processValidationResponse() {
-		$validationDomain = $this->_field->getValidator()->validationDomain;
-
-		if (is_string($this->_valid)) {
-			$this->_errorMessage = $this->_valid;
-		} elseif ($this->message !== null) {
-			$args = null;
-			if (is_array($this->message)) {
-				$this->_errorMessage = $this->message[0];
-				$args = array_slice($this->message, 1);
-			} else {
-				$this->_errorMessage = $this->message;
-			}
-			if (is_array($this->rule) && $args === null) {
-				$args = array_slice($this->getField()->ruleSet[$this->_index]['rule'], 1);
-			}
-			if (!empty($args)) {
-				foreach ($args as $k => $arg) {
-					$args[$k] = __d($validationDomain, $arg);
-				}
-			}
-			$this->_errorMessage = __d($validationDomain, $this->_errorMessage, $args);
-		} elseif (is_string($this->_index)) {
-			if (is_array($this->rule)) {
-				$args = array_slice($this->getField()->ruleSet[$this->_index]['rule'], 1);
-				if (!empty($args)) {
-					foreach ($args as $k => $arg) {
-						$args[$k] = __d($validationDomain, $arg);
-					}
-				}
-				$this->_errorMessage = __d($validationDomain, $this->_index, $args);
-			} else {
-				$this->_errorMessage = __d($validationDomain, $this->_index);
-			}
-		} elseif (!$this->checkRequired() && is_numeric($this->_index) && count($this->getField()->ruleSet) > 1) {
-			$this->_errorMessage = $this->_index + 1;
-		} else {
-			$this->_errorMessage = __d('cake_dev', 'This field cannot be left blank');
+	public function getOptions($key) {
+		if (!isset($this->_passedOptions[$key])) {
+			return null;
 		}
-		unset($validationDomain);
+		return $this->_passedOptions[$key];
+	}
 
-		return $this->_errorMessage;
+	public function getName() {
+		return $this->_index;
 	}
 
 /**
@@ -386,13 +306,12 @@ class CakeRule {
 		foreach ($validator as $key => $value) {
 			if (isset($value) || !empty($value)) {
 				if (in_array($key, array('rule', 'required', 'allowEmpty', 'on', 'message', 'last'))) {
-					$this->$key = $validator[$key];
+					$this->{$key} = $validator[$key];
 				} else {
 					$this->_passedOptions[$key] = $value;
 				}
 			}
 		}
-		unset($validator);
 	}
 
 /**
@@ -400,14 +319,14 @@ class CakeRule {
  *
  * @return void
  */
-	protected function _parseRule() {
+	protected function _parseRule(&$data) {
 		if (is_array($this->rule)) {
 			$this->_rule = $this->rule[0];
 			unset($this->rule[0]);
-			$this->_ruleParams = array_merge(array($this->data[$this->getField()->field]), array_values($this->rule));
+			$this->_ruleParams = array_merge(array($data[$this->_field]), array_values($this->rule));
 		} else {
 			$this->_rule = $this->rule;
-			$this->_ruleParams = array($this->data[$this->getField()->field]);
+			$this->_ruleParams = array($data[$this->_field]);
 		}
 	}
 
