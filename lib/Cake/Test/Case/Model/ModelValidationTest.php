@@ -346,8 +346,6 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals($data, $result);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
-		$result = $Validator->validates();
-		$this->assertTrue($result);
 
 		$data = array('TestValidate' => array(
 			'user_id' => '1',
@@ -517,8 +515,6 @@ class ModelValidationTest extends BaseModelTest {
 			'title' => array('tooShort')
 		);
 		$this->assertEquals($expected, $result);
-		$result = $Validator->validates();
-		$this->assertFalse($result);
 
 		$TestModel->validate = array(
 			'title' => array(
@@ -540,8 +536,6 @@ class ModelValidationTest extends BaseModelTest {
 			'title' => array('tooShort', 'onlyLetters')
 		);
 		$this->assertEquals($expected, $result);
-		$result = $Validator->validates();
-		$this->assertFalse($result);
 		$result = $TestModel->validationErrors;
 		$this->assertEquals($expected, $result);
 	}

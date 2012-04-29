@@ -311,13 +311,12 @@ class ModelValidator {
 			return false;
 		}
 
-		if (!empty($this->_validate) && $this->_validate === $this->_model->validate) {
+		if ($this->_validate === $this->_model->validate) {
 			return true;
 		}
 
 		$this->_validate = $this->_model->validate;
 		$this->_processWhitelist();
-
 		$this->_fields = array();
 		$methods = $this->getMethods();
 		foreach ($this->_validate as $fieldName => $ruleSet) {

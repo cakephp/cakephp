@@ -171,12 +171,13 @@ class CakeRule {
  * @return boolean
  */
 	public function checkRequired(&$data) {
-		$required = !isset($data[$this->_field]) && $this->required === true;
-		$required = $required || (
-			isset($this->data[$this->_field]) && (empty($data[$this->_field]) &&
-			!is_numeric($data[$this->_field])) && $this->allowEmpty === false
+		return (
+			(!isset($data[$this->_field]) && $this->required === true) ||
+			(
+				isset($data[$this->_field]) && (empty($data[$this->_field]) &&
+				!is_numeric($data[$this->_field])) && $this->allowEmpty === false
+			)
 		);
-		return $required;
 	}
 
 /**
