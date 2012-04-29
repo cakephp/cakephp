@@ -190,7 +190,7 @@ class ModelValidationTest extends BaseModelTest {
  */
 	public function testInvalidFieldsWhitelist() {
 		$TestModel = new ValidationTest1();
-		$Validator = $TestModel->getValidator();
+		$Validator = $TestModel->validator();
 		$TestModel->validate = array(
 			'title' => array(
 				'rule' => 'alphaNumeric',
@@ -648,7 +648,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$Something = new Something();
 		$JoinThing = $Something->JoinThing;
-		$Validator = $Something->JoinThing->getValidator();
+		$Validator = $Something->JoinThing->validator();
 
 		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
 
@@ -713,15 +713,15 @@ class ModelValidationTest extends BaseModelTest {
 		$result = $Something->validateAssociated($data);
 		$this->assertFalse($result);
 		$this->assertEquals($expectedError, $JoinThing->validationErrors);
-		$result = $Something->getValidator()->validateAssociated($data);
+		$result = $Something->validator()->validateAssociated($data);
 		$this->assertFalse($result);
-		$this->assertEquals($expectedError, $JoinThing->getValidator()->validationErrors);
+		$this->assertEquals($expectedError, $JoinThing->validator()->validationErrors);
 
 		$Something->create();
 		$result = $Something->saveAll($data, array('validate' => 'first'));
 		$this->assertFalse($result);
 		$this->assertEquals($expectedError, $JoinThing->validationErrors);
-		$this->assertEquals($expectedError, $JoinThing->getValidator()->validationErrors);
+		$this->assertEquals($expectedError, $JoinThing->validator()->validationErrors);
 
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
 		$this->assertSame($count, 0);
@@ -760,7 +760,7 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertTrue($result);
 		$result = $Author->validateAssociated($data);
 		$this->assertTrue($result);
-		$result = $Author->getValidator()->validateAssociated($data);
+		$result = $Author->validator()->validateAssociated($data);
 		$this->assertTrue($result);
 
 		$Author->create();
@@ -816,8 +816,8 @@ class ModelValidationTest extends BaseModelTest {
 		);
 		$TestModel->invalidFields(array('fieldList' => array('title')));
 		$this->assertEquals(array(), $TestModel->validationErrors);
-		$TestModel->getValidator()->invalidFields(array('fieldList' => array('title')));
-		$this->assertEquals(array(), $TestModel->getValidator()->validationErrors);
+		$TestModel->validator()->invalidFields(array('fieldList' => array('title')));
+		$this->assertEquals(array(), $TestModel->validator()->validationErrors);
 	}
 
 /**
@@ -851,9 +851,9 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel->invalidFields();
 		$this->assertEquals($expected, $TestModel->validationErrors);
 
-		$TestModel->getValidator()->validationErrors = array();
-		$TestModel->getValidator()->invalidFields();
-		$this->assertEquals($expected, $TestModel->getValidator()->validationErrors);
+		$TestModel->validator()->validationErrors = array();
+		$TestModel->validator()->invalidFields();
+		$this->assertEquals($expected, $TestModel->validator()->validationErrors);
 
 		$TestModel->create(array('title' => 'foo'));
 		$expected = array(
@@ -865,9 +865,9 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel->invalidFields();
 		$this->assertEquals($expected, $TestModel->validationErrors);
 
-		$TestModel->getValidator()->validationErrors = array();
-		$TestModel->getValidator()->invalidFields();
-		$this->assertEquals($expected, $TestModel->getValidator()->validationErrors);
+		$TestModel->validator()->validationErrors = array();
+		$TestModel->validator()->invalidFields();
+		$this->assertEquals($expected, $TestModel->validator()->validationErrors);
 	}
 
 /**
@@ -903,9 +903,9 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel->invalidFields();
 		$this->assertEquals($expected, $TestModel->validationErrors);
 
-		$TestModel->getValidator()->validationErrors = array();
-		$TestModel->getValidator()->invalidFields();
-		$this->assertEquals($expected, $TestModel->getValidator()->validationErrors);
+		$TestModel->validator()->validationErrors = array();
+		$TestModel->validator()->invalidFields();
+		$this->assertEquals($expected, $TestModel->validator()->validationErrors);
 
 		$TestModel->validationDomain = 'default';
 		Configure::write('Config.language', $lang);
@@ -940,13 +940,13 @@ class ModelValidationTest extends BaseModelTest {
 
 		$Article->create($data);
 		$this->assertFalse($Article->validates());
-		$this->assertFalse($Article->getValidator()->validates());
+		$this->assertFalse($Article->validator()->validates());
 
 		$Article->save(null, array('validate' => false));
 		$data['Article']['id'] = $Article->id;
 		$Article->set($data);
 		$this->assertTrue($Article->validates());
-		$this->assertTrue($Article->getValidator()->validates());
+		$this->assertTrue($Article->validator()->validates());
 
 		unset($data['Article']['id']);
 		$Article->validate = array(
@@ -960,13 +960,13 @@ class ModelValidationTest extends BaseModelTest {
 
 		$Article->create($data);
 		$this->assertTrue($Article->validates());
-		$this->assertTrue($Article->getValidator()->validates());
+		$this->assertTrue($Article->validator()->validates());
 
 		$Article->save(null, array('validate' => false));
 		$data['Article']['id'] = $Article->id;
 		$Article->set($data);
 		$this->assertFalse($Article->validates());
-		$this->assertFalse($Article->getValidator()->validates());
+		$this->assertFalse($Article->validator()->validates());
 	}
 
 /**
@@ -997,13 +997,13 @@ class ModelValidationTest extends BaseModelTest {
 
 		$Article->create($data);
 		$this->assertFalse($Article->validates());
-		$this->assertFalse($Article->getValidator()->validates());
+		$this->assertFalse($Article->validator()->validates());
 
 		$Article->save(null, array('validate' => false));
 		$data['Article']['id'] = $Article->id;
 		$Article->set($data);
 		$this->assertTrue($Article->validates());
-		$this->assertTrue($Article->getValidator()->validates());
+		$this->assertTrue($Article->validator()->validates());
 
 		unset($data['Article']['id']);
 		$Article->validate = array(
@@ -1017,13 +1017,13 @@ class ModelValidationTest extends BaseModelTest {
 
 		$Article->create($data);
 		$this->assertTrue($Article->validates());
-		$this->assertTrue($Article->getValidator()->validates());
+		$this->assertTrue($Article->validator()->validates());
 
 		$Article->save(null, array('validate' => false));
 		$data['Article']['id'] = $Article->id;
 		$Article->set($data);
 		$this->assertFalse($Article->validates());
-		$this->assertFalse($Article->getValidator()->validates());
+		$this->assertFalse($Article->validator()->validates());
 	}
 
 /**
@@ -1175,7 +1175,7 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertTrue($result);
 		$result = $TestModel->validateAssociated($data, array('deep' => true));
 		$this->assertTrue($result);
-		$result = $TestModel->getValidator()->validateAssociated($data, array('deep' => true));
+		$result = $TestModel->validator()->validateAssociated($data, array('deep' => true));
 		$this->assertTrue($result);
 
 		$data = array(
@@ -1189,7 +1189,7 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertFalse($result);
 		$result = $TestModel->validateAssociated($data, array('deep' => true));
 		$this->assertFalse($result);
-		$result = $TestModel->getValidator()->validateAssociated($data, array('deep' => true));
+		$result = $TestModel->validator()->validateAssociated($data, array('deep' => true));
 		$this->assertFalse($result);
 
 		$data = array(
@@ -1210,7 +1210,7 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertSame($expected, $result);
 		$result = $TestModel->validateAssociated($data, array('atomic' => false, 'deep' => true));
 		$this->assertSame($expected, $result);
-		$result = $TestModel->getValidator()->validateAssociated($data, array('atomic' => false, 'deep' => true));
+		$result = $TestModel->validator()->validateAssociated($data, array('atomic' => false, 'deep' => true));
 		$this->assertSame($expected, $result);
 
 		$data = array(
@@ -1805,7 +1805,7 @@ class ModelValidationTest extends BaseModelTest {
 	public function testGetMethods() {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
-		$Validator = $TestModel->getValidator();
+		$Validator = $TestModel->validator();
 
 		$result = $Validator->getMethods();
 		$this->assertEquals(array('model', 'behaviors', 'validator'), array_keys($result));
@@ -1822,7 +1822,7 @@ class ModelValidationTest extends BaseModelTest {
 	public function testGetFields() {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
-		$Validator = $TestModel->getValidator();
+		$Validator = $TestModel->validator();
 
 		$result = $Validator->getFields();
 		$this->assertSame(array(), $result);
@@ -1844,7 +1844,7 @@ class ModelValidationTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
 		$TestModel->whitelist = array('title', 'body');
-		$Validator = $TestModel->getValidator();
+		$Validator = $TestModel->validator();
 
 		$result = $Validator->setFields();
 		$this->assertTrue($result);
@@ -1867,7 +1867,7 @@ class ModelValidationTest extends BaseModelTest {
 	public function testSetOptions() {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
-		$Validator = $TestModel->getValidator();
+		$Validator = $TestModel->validator();
 
 		$options = array('atomic' => false, 'validate' => true);
 		$Validator->setOptions($options);
@@ -1891,7 +1891,7 @@ class ModelValidationTest extends BaseModelTest {
 	public function testGetOptions() {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
-		$Validator = $TestModel->getValidator();
+		$Validator = $TestModel->validator();
 		$options = array('atomic' => false, 'validate' => true);
 		$Validator->setOptions($options);
 
@@ -1910,7 +1910,7 @@ class ModelValidationTest extends BaseModelTest {
 	public function testSetValidationDomain() {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
-		$Validator = $TestModel->getValidator();
+		$Validator = $TestModel->validator();
 
 		$result = $Validator->setValidationDomain();
 		$this->assertEquals('default', $result->validationDomain);
@@ -1931,7 +1931,7 @@ class ModelValidationTest extends BaseModelTest {
 	public function testGetModel() {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
-		$Validator = $TestModel->getValidator();
+		$Validator = $TestModel->validator();
 
 		$result = $Validator->getModel();
 		$this->assertInstanceOf('Article', $result);

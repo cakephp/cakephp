@@ -152,9 +152,9 @@ class ModelValidator {
 			if (isset($associations[$association])) {
 				if (in_array($associations[$association], array('belongsTo', 'hasOne'))) {
 					if ($options['deep']) {
-						$validates = $this->getModel()->{$association}->getValidator()->validateAssociated($values, $options);
+						$validates = $this->getModel()->{$association}->validator()->validateAssociated($values, $options);
 					} else {
-						$validates = $this->getModel()->{$association}->create($values) !== null && $this->getModel()->{$association}->getValidator()->validates($options);
+						$validates = $this->getModel()->{$association}->create($values) !== null && $this->getModel()->{$association}->validator()->validates($options);
 					}
 					if (is_array($validates)) {
 						if (in_array(false, $validates, true)) {
@@ -165,11 +165,11 @@ class ModelValidator {
 					}
 					$return[$association] = $validates;
 				} elseif ($associations[$association] === 'hasMany') {
-					$validates = $this->getModel()->{$association}->getValidator()->validateMany($values, $options);
+					$validates = $this->getModel()->{$association}->validator()->validateMany($values, $options);
 					$return[$association] = $validates;
 				}
 				if (!$validates || (is_array($validates) && in_array(false, $validates, true))) {
-					$this->validationErrors[$association] = $this->getModel()->{$association}->getValidator()->validationErrors;
+					$this->validationErrors[$association] = $this->getModel()->{$association}->validator()->validationErrors;
 				}
 			}
 		}
@@ -512,7 +512,7 @@ class ModelValidator {
 			foreach ($newData as $data) {
 				$data[$this->getModel()->hasAndBelongsToMany[$assoc]['foreignKey']] = $this->getModel()->id;
 				$this->getModel()->{$join}->create($data);
-				$valid = ($valid && $this->getModel()->{$join}->getValidator()->validates($options));
+				$valid = ($valid && $this->getModel()->{$join}->validator()->validates($options));
 			}
 		}
 		return $valid;
