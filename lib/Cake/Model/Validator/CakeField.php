@@ -204,7 +204,7 @@ class CakeField {
 		}
 		$message = $rule->message;
 
-		if ($message !== null && !is_string($message)) {
+		if ($message !== null) {
 			$args = null;
 			if (is_array($message)) {
 				$result = $message[0];
@@ -220,6 +220,7 @@ class CakeField {
 					$args[$k] = __d($this->_validationDomain, $arg);
 				}
 			}
+
 			$message = __d($this->_validationDomain, $result, $args);
 		} elseif (is_string($name)) {
 			if (is_array($rule->rule)) {

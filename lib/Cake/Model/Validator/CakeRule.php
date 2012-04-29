@@ -231,8 +231,12 @@ class CakeRule {
  * @return array
  */
 	public function getPropertiesArray() {
+		$rule = $this->rule;
+		if (!is_string($rule)) {
+			unset($rule[0]);
+		}
 		return array(
-			'rule' => $this->rule,
+			'rule' => $rule,
 			'required' => $this->required,
 			'allowEmpty' => $this->allowEmpty,
 			'on' => $this->on,
@@ -318,8 +322,7 @@ class CakeRule {
 	protected function _parseRule(&$data) {
 		if (is_array($this->rule)) {
 			$this->_rule = $this->rule[0];
-			unset($this->rule[0]);
-			$this->_ruleParams = array_merge(array($data[$this->_field]), array_values($this->rule));
+			$this->_ruleParams = array_merge(array($data[$this->_field]), array_values(array_slice($this->rule, 1)));
 		} else {
 			$this->_rule = $this->rule;
 			$this->_ruleParams = array($data[$this->_field]);
