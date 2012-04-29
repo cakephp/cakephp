@@ -32,7 +32,6 @@ class ModelValidationTest extends BaseModelTest {
  */
 	public function testValidationParams() {
 		$TestModel = new ValidationTest1();
-		$Validator = new ModelValidator($TestModel);
 		$TestModel->validate['title'] = array(
 			'rule' => 'customValidatorWithParams',
 			'required' => true
@@ -56,8 +55,6 @@ class ModelValidationTest extends BaseModelTest {
 			'ignoreOnSame' => 'id'
 		);
 		$this->assertEquals($expected, $TestModel->validatorParams);
-		$Validator->invalidFields();
-		$this->assertEquals($expected, $TestModel->validatorParams);
 
 		$TestModel->validate['title'] = array(
 			'rule' => 'customValidatorWithMessage',
@@ -68,7 +65,6 @@ class ModelValidationTest extends BaseModelTest {
 		);
 
 		$this->assertEquals($expected, $TestModel->invalidFields());
-		$this->assertEquals($expected, $Validator->invalidFields());
 
 		$TestModel->validate['title'] = array(
 			'rule' => array('customValidatorWithSixParams', 'one', 'two', null, 'four'),
@@ -95,8 +91,6 @@ class ModelValidationTest extends BaseModelTest {
 			'six' => 6
 		);
 		$this->assertEquals($expected, $TestModel->validatorParams);
-		$Validator->invalidFields();
-		$this->assertEquals($expected, $TestModel->validatorParams);
 
 		$TestModel->validate['title'] = array(
 			'rule' => array('customValidatorWithSixParams', 'one', array('two'), null, 'four', array('five' => 5)),
@@ -122,8 +116,6 @@ class ModelValidationTest extends BaseModelTest {
 				'message' => null
 			)
 		);
-		$this->assertEquals($expected, $TestModel->validatorParams);
-		$Validator->invalidFields();
 		$this->assertEquals($expected, $TestModel->validatorParams);
 	}
 

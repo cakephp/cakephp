@@ -272,7 +272,7 @@ class ModelValidator {
 		}
 
 		$methods = array();
-		foreach (get_class_methods($this->_model) as $method); {
+		foreach (get_class_methods($this->_model) as $method) {
 			$methods[strtolower($method)] = array($this->_model, $method);
 		}
 
