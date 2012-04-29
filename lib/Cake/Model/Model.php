@@ -731,7 +731,6 @@ class Model extends Object implements CakeEventListener {
 
 		$this->_createLinks();
 		$this->Behaviors->init($this->alias, $this->actsAs);
-		$this->setValidator();
 	}
 
 /**
