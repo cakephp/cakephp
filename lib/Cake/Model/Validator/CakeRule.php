@@ -148,8 +148,10 @@ class CakeRule {
 			return $this->required;
 		}
 		if (in_array($this->required, array('create', 'update'), true)) {
-			if ($this->required === 'create' && !$this->_recordExists || $this->required === 'update' && $this->_recordExists) {
+			if ($this->required === 'create' && !$this->isUpdate() || $this->required === 'update' && $this->isUpdate()) {
 				$this->required = true;
+			} else {
+				$this->required = false;
 			}
 		}
 
@@ -192,7 +194,7 @@ class CakeRule {
  */
 	public function skip() {
 		if (!empty($this->on)) {
-			if ($this->on == 'create' && $this->_recordExists || $this->on == 'update' && !$this->_recordExists) {
+			if ($this->on == 'create' && $this->isUpdate() || $this->on == 'update' && !$this->isUpdate()) {
 				return true;
 			}
 		}
@@ -242,10 +244,16 @@ class CakeRule {
  * ir refers to wheter the model record it is validating exists
  * exists in the collection or not (create or update operation)
  *
- * @return void 
+ * If called with no parameters it will return whether this rule
+ * is configured for update operations or not.
+ *
+ * @return boolean 
  **/
-	public function isUpdate($exists = false) {
-		$this->_recordExists = $exists;
+	public function isUpdate($exists = null) {
+		if ($exists === null) {
+			return $this->_recordExists;
+		}
+		return $this->_recordExists = $exists;
 	}
 
 /**
@@ -253,7 +261,7 @@ class CakeRule {
  *
  * @return boolean True if the rule could be dispatched, false otherwise
  */
-	public function dispatchValidation($field, &$data, &$methods) {
+	public function process($field, &$data, &$methods) {
 		$this->_parseRule($field, $data);
 
 		$validator = $this->getPropertiesArray();

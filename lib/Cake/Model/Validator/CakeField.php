@@ -127,7 +127,7 @@ class CakeField {
 				if ($rule->checkEmpty($this->field, $data)) {
 					break;
 				}
-				$rule->dispatchValidation($this->field, $data, $this->_methods);
+				$rule->process($this->field, $data, $this->_methods);
 			}
 
 			if ($checkRequired || !$rule->isValid()) {
