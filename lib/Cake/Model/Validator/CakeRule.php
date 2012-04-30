@@ -144,14 +144,11 @@ class CakeRule {
  * @return boolean
  */
 	public function isRequired() {
-		if (is_bool($this->required)) {
-			return $this->required;
-		}
 		if (in_array($this->required, array('create', 'update'), true)) {
 			if ($this->required === 'create' && !$this->isUpdate() || $this->required === 'update' && $this->isUpdate()) {
-				$this->required = true;
+				return true;
 			} else {
-				$this->required = false;
+				return false;
 			}
 		}
 
