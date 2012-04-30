@@ -117,7 +117,7 @@ class AuthComponent extends Component {
  * You can also use AuthComponent::ALL instead of the string 'all'
  *
  * @var mixed
- * @link http://book.cakephp.org/view/1275/authorize
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#authorization
  */
 	public $authorize = false;
 
