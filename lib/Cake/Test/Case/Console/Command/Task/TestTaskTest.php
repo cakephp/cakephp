@@ -549,7 +549,6 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertContains('unset($this->Example)', $result);
 	}
 
-
 /**
  * test Constructor generation ensure that constructClasses is called for controllers
  *
