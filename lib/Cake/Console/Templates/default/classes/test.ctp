@@ -29,6 +29,7 @@ App::uses('<?php echo $dependency[0]; ?>', '<?php echo $dependency[1]; ?>');
  *
  */
 class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
+
 /**
  * Auto render
  *
@@ -55,13 +56,16 @@ class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
  *
  */
 class <?php echo $fullClassName; ?>Test extends CakeTestCase {
+
 <?php if (!empty($fixtures)): ?>
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array('<?php echo join("', '", $fixtures); ?>');
+	public $fixtures = array(
+		'<?php echo join("',\n\t\t'", $fixtures); ?>'
+	);
 
 <?php endif; ?>
 /**
@@ -96,5 +100,6 @@ class <?php echo $fullClassName; ?>Test extends CakeTestCase {
 	public function test<?php echo Inflector::camelize($method); ?>() {
 
 	}
+
 <?php endforeach;?>
 }
