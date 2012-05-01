@@ -217,6 +217,8 @@ abstract class ControllerTestCase extends CakeTestCase {
 			'return' => 'result'
 		), $options);
 
+		$restore = array('get' => $_GET, 'post' => $_POST);
+
 		$_SERVER['REQUEST_METHOD'] = strtoupper($options['method']);
 		if (is_array($options['data'])) {
 			if (strtoupper($options['method']) == 'GET') {
@@ -272,6 +274,10 @@ abstract class ControllerTestCase extends CakeTestCase {
 		}
 		$this->__dirtyController = true;
 		$this->headers = $Dispatch->response->header();
+
+		$_GET = $restore['get'];
+		$_POST = $restore['post'];
+
 		return $this->{$options['return']};
 	}
 
