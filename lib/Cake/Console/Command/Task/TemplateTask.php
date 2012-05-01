@@ -61,7 +61,7 @@ class TemplateTask extends AppShell {
  */
 	protected function _findThemes() {
 		$paths = App::path('Console');
-		
+
 		$plugins = App::objects('plugin');
 		foreach ($plugins as $plugin) {
 			$paths[] = $this->_pluginPath($plugin) . 'Console' . DS;
