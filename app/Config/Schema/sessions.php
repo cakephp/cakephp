@@ -1,6 +1,4 @@
 <?php
-/*Sessions schema generated on: 2007-11-25 07:11:54 : 1196004714*/
-
 /**
  * This is Sessions Schema file
  *
@@ -39,10 +37,10 @@ class SessionsSchema extends CakeSchema {
 	}
 
 	public $cake_sessions = array(
-			'id' => array('type'=>'string', 'null' => false, 'key' => 'primary'),
-			'data' => array('type'=>'text', 'null' => true, 'default' => NULL),
-			'expires' => array('type'=>'integer', 'null' => true, 'default' => NULL),
-			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
-		);
+		'id' => array('type' => 'string', 'null' => false, 'key' => 'primary'),
+		'data' => array('type' => 'text', 'null' => true, 'default' => null),
+		'expires' => array('type' => 'integer', 'null' => true, 'default' => null),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
+	);
 
 }
