@@ -48,6 +48,7 @@ class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
 	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
+
 }
 
 <?php endif; ?>
