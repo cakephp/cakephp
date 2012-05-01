@@ -577,6 +577,9 @@ class CakeSchema extends Object {
 					$vals[] = "'{$key}' => array('" . implode("', '",  $val) . "')";
 				} elseif (!is_numeric($key)) {
 					$val = var_export($val, true);
+					if ($val === 'NULL') {
+						$val = 'null';
+					}
 					$vals[] = "'{$key}' => {$val}";
 				}
 			}
