@@ -128,6 +128,7 @@ class IniReader implements ConfigReaderInterface {
 			if ($value === '') {
 				$value = false;
 			}
+			unset($values[$key]);
 			if (strpos($key, '.') !== false) {
 				$values = Hash::insert($values, $key, $value);
 			} else {
@@ -153,11 +154,31 @@ class IniReader implements ConfigReaderInterface {
 			if (is_array($value)) {
 				$keyValues = Hash::flatten($value, '.');
 				foreach ($keyValues as $k => $v) {
-					$result[] = "$k = " . trim(var_export($v, true), "'");
+					$result[] = "$k = " . $this->_value($v);
 				}
 			}
 		}
 		$contents = join("\n", $result);
 		return file_put_contents($this->_path . $filename, $contents);
 	}
+
+/**
+ * Converts a value into the ini equivalent
+ *
+ * @param mixed $value to export.
+ * @return string String value for ini file.
+ */
+	protected function _value($val) {
+		if ($val === null) {
+			return 'null';
+		}
+		if ($val === true) {
+			return 'true';
+		}
+		if ($val === false) {
+			return 'false';
+		}
+		return (string)$val;
+	}
+
 }

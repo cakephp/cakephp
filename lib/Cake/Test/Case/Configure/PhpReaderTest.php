@@ -21,6 +21,26 @@ App::uses('PhpReader', 'Configure');
 class PhpReaderTest extends CakeTestCase {
 
 /**
+ * Test data to serialize and unserialize.
+ *
+ * @var array
+ */
+	public $testData = array(
+		'One' => array(
+			'two' => 'value',
+			'three' => array(
+				'four' => 'value four'
+			),
+			'is_null' => null,
+			'bool_false' => false,
+			'bool_true' => true,
+		),
+		'Asset' => array(
+			'timestamp' => 'force'
+		),
+	);
+
+/**
  * setup
  *
  * @return void
@@ -103,20 +123,8 @@ class PhpReaderTest extends CakeTestCase {
  * @return void
  */
 	public function testDump() {
-		$reader = new PhpReader($this->path);
-		$data = array(
-			'One' => array(
-				'two' => 'value',
-				'three' => array(
-					'four' => 'value four'
-				),
-				'null' => null
-			),
-			'Asset' => array(
-				'timestamp' => 'force'
-			),
-		);
-		$result = $reader->dump('test.php', $data);
+		$reader = new PhpReader(TMP);
+		$result = $reader->dump('test.php', $this->testData);
 		$this->assertTrue($result > 0);
 		$expected = <<<PHP
 <?php
@@ -128,7 +136,9 @@ class PhpReaderTest extends CakeTestCase {
     array (
       'four' => 'value four',
     ),
-    'null' => NULL,
+    'is_null' => NULL,
+    'bool_false' => false,
+    'bool_true' => true,
   ),
   'Asset' => 
   array (
@@ -136,11 +146,25 @@ class PhpReaderTest extends CakeTestCase {
   ),
 );
 PHP;
-		$file = $this->path . 'test.php';
+		$file = TMP . 'test.php';
 		$contents = file_get_contents($file);
 
 		unlink($file);
-		$this->assertEquals($expected, $contents);
+		$this->assertTextEquals($expected, $contents);
+	}
+
+/**
+ * Test that dump() makes files read() can read.
+ *
+ * @return void
+ */
+	public function testDumpRead() {
+		$reader = new PhpReader(TMP);
+		$reader->dump('test.php', $this->testData);
+		$result = $reader->read('test.php');
+		unlink(TMP . 'test.php');
+
+		$this->assertTextEquals($this->testData, $result);
 	}
 
 }
