@@ -138,7 +138,8 @@ class PhpReaderTest extends CakeTestCase {
 PHP;
 		$file = $this->path . 'test.php';
 		$contents = file_get_contents($file);
-		@unlink($contents);
+
+		unlink($file);
 		$this->assertEquals($expected, $contents);
 	}
 
