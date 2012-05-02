@@ -164,7 +164,7 @@ PHP;
 		$result = $reader->read('test.php');
 		unlink(TMP . 'test.php');
 
-		$this->assertTextEquals($this->testData, $result);
+		$this->assertEquals($this->testData, $result);
 	}
 
 }
