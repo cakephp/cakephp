@@ -362,4 +362,47 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertNull(Configure::read('debug'));
 		$this->assertNull(Configure::read('test'));
 	}
+
+/**
+ * @expectedException ConfigureException
+ */
+	public function testDumpNoAdapter() {
+		Configure::dump(TMP . 'test.php', 'does_not_exist');
+	}
+
+/**
+ * test dump integrated with the PhpReader.
+ *
+ * @return void
+ */
+	public function testDump() {
+		Configure::config('test_reader', new PhpReader(TMP));
+
+		$result = Configure::dump('config_test.php', 'test_reader');
+		$this->assertTrue($result > 0);
+		$result = file_get_contents(TMP . 'config_test.php');
+		$this->assertContains('<?php', $result);
+		$this->assertContains('$config = ', $result);
+		@unlink(TMP . 'config_test.php');
+	}
+
+/**
+ * Test dumping only some of the data.
+ *
+ * @return
+ */
+	public function testDumpPartial() {
+		Configure::config('test_reader', new PhpReader(TMP));
+
+		$result = Configure::dump('config_test.php', 'test_reader', array('Error'));
+		$this->assertTrue($result > 0);
+		$result = file_get_contents(TMP . 'config_test.php');
+		$this->assertContains('<?php', $result);
+		$this->assertContains('$config = ', $result);
+		$this->assertContains('Error', $result);
+		$this->assertNotContains('debug', $result);
+
+		@unlink(TMP . 'config_test.php');
+	}
+
 }
