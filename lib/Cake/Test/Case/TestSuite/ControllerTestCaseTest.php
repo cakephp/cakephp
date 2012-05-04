@@ -542,4 +542,23 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$this->assertSame($this->Case->controller->request, $this->Case->controller->RequestHandler->request);
 	}
 
+/**
+ * Test that testAction() doesn't destroy data in GET & POST
+ *
+ * @return void
+ */
+	public function testRestoreGetPost() {
+		$restored = array('new' => 'value');
+
+		$_GET = $restored;
+		$_POST = $restored;
+
+		$this->Case->generate('TestsApps');
+		$options = array('method' => 'get');
+		$this->Case->testAction('/tests_apps/index', $options);
+
+		$this->assertEquals($restored, $_GET);
+		$this->assertEquals($restored, $_POST);
+	}
+
 }
