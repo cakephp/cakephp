@@ -323,6 +323,43 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * Test non-sequential keys in list types.
+ *
+ * @return void
+ */
+	public function testFromArrayNonSequentialKeys() {
+		$xmlArray = array(
+			'Event' => array(
+				array(
+					'id' => '235',
+					'Attribute' => array(
+						0 => array(
+							'id' => '9646',
+						),
+						2 => array(
+							'id' => '9647',
+						)
+					)
+				)
+			)
+		);
+		$obj = Xml::fromArray($xmlArray);
+		$expected = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<Event>
+	<id>235</id>
+	<Attribute>
+		<id>9646</id>
+	</Attribute>
+	<Attribute>
+		<id>9647</id>
+	</Attribute>
+</Event>
+XML;
+		$this->assertXmlStringEqualsXmlString($expected, $obj->asXML());
+	}
+
+/**
  * data provider for fromArray() failures
  *
  * @return array
