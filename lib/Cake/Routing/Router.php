@@ -587,6 +587,10 @@ class Router {
  * - `_base` - Set to false to remove the base path from the generated url. If your application
  *   is not in the root directory, this can be used to generate urls that are 'cake relative'.
  *   cake relative urls are required when using requestAction.
+ * - `_scheme` - Set to create links on different schemes like `webcal` or `ftp`. Defaults
+ *   to the current scheme.
+ * - `_host` - Set the host to use for the link.  Defaults to the current host.
+ * - `_port` - Set the port if you need to create links on non-standard ports.
  * - `_full` - If true the `FULL_BASE_URL` constant will be prepended to generated urls.
  * - `#` - Allows you to set url hash fragments.
  * - `ssl` - Set to true to convert the generated url to https, or false to force http.
