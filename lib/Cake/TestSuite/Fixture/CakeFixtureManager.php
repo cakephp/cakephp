@@ -158,7 +158,7 @@ class CakeFixtureManager {
 	protected function _setupTable($fixture, $db = null, $drop = true) {
 		if (!$db) {
 			if (!empty($fixture->useDbConfig)) {
-				$db = ClassRegistry::getDataSource($fixture->useDbConfig);
+				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
 			} else {
 				$db = $this->_db;
 			}
