@@ -417,6 +417,14 @@ class DataSource extends Object {
 	}
 
 /**
+ * Close the connection to the datasource.
+ *
+ * @return void
+ */
+	public function close() {
+	}
+
+/**
  * Closes the current datasource.
  *
  */
