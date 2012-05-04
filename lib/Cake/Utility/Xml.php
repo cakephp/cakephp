@@ -230,7 +230,7 @@ class Xml {
 					if ($key[0] === '@') {
 						throw new XmlException(__d('cake_dev', 'Invalid array'));
 					}
-					if (is_numeric(implode(array_keys($value), ''))) { // List
+					if (is_numeric(implode('', array_keys($value)))) { // List
 						foreach ($value as $item) {
 							$itemData = compact('dom', 'node', 'key', 'format');
 							$itemData['value'] = $item;
