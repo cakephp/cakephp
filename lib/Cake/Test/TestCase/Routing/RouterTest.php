@@ -765,6 +765,41 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test url generation using compact route names.
+ *
+ * @return void
+ */
+	public function testUrlGenerationWithCompactForm() {
+		Router::connect('/:plugin/:controller/:action/*');
+		Router::connect('/:controller/:action/*');
+
+		$url = Router::url('posts:index');
+		$this->assertEquals('/posts/index', $url);
+
+		$url = Router::url('posts:view', array(2));
+		$this->assertEquals('/posts/view/2', $url);
+
+		$url = Router::url('posts:index', array('page' => 1, 'dir' => 'asc'));
+		$this->assertEquals('/posts/index?page=1&dir=asc', $url);
+
+		$url = Router::url('asset_compress.posts:view', array(2));
+		$this->assertEquals('/asset_compress/posts/view/2', $url);
+	}
+
+/**
+ * Test url generation with named routes.
+ */
+	public function testUrlGenerationNamedRoute() {
+		Router::connect(
+			'/users/:name',
+			array('controller' => 'users', 'action' => 'view'),
+			array('_name' => 'test')
+		);
+		$url = Router::url('test', array('name' => 'mark'));
+		$this->assertEquals('/users/mark', $url);
+	}
+
+/**
  * test that you can leave active plugin routes with plugin = null
  *
  * @return void

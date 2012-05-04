@@ -575,12 +575,16 @@ class Router {
 /**
  * Finds URL for specified action.
  *
- * Returns an URL pointing to a combination of controller and action. Param
- * $url can be:
+ * Returns an URL pointing to a combination of controller and action.
  *
- * - Empty - the method will find address to actual controller/action.
- * - '/' - the method will find base URL of application.
- * - A combination of controller/action - the method will find url for it.
+ * ### Usage
+ *
+ * - `Router::url('/posts/edit/1');` Returns the string with the base dir prepended.
+ *   This usage does not use reverser routing.
+ * - `Router::url(array('controller' => 'posts', 'action' => 'edit'));` Returns a url
+ *   generated through reverse routing.
+ * - `Router::url('Posts:index', array(...));` Returns a url generated through reverse
+ *   routing.  This form allows you to leverage named routes.
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
  *
@@ -596,20 +600,24 @@ class Router {
  * - `ssl` - Set to true to convert the generated url to https, or false to force http.
  *
  * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
- *   or an array specifying any of the following: 'controller', 'action',
- *   and/or 'plugin'.
- *   and standard URL arguments (indexed array elements)
- * @param bool|array $full If (bool) true, the full base URL will be prepended to the result.
- *   If an array accepts the following keys
- *    - escape - used when making urls embedded in html escapes query string '&'
- *    - full - if true the full base URL will be prepended.
+ *   or an array specifying any of the following: 'controller', 'action', 'plugin'
+ *   additionally, you can provide routed elements or query string parameters.
+ * @param bool|array $options If (bool) true, the full base URL will be prepended to the result.
+ *   If an array accepts the following keys.  If used with a named route you can provide
+ *   a list of query string parameters.
  * @return string Full translated URL with base path.
  */
-	public static function url($url = null, $full = false) {
-		if (is_bool($full)) {
-			$escape = false;
-		} else {
-			extract($full + array('escape' => false, '_full' => false));
+	public static function url($url = null, $options = false) {
+		$full = false;
+		if (is_bool($options)) {
+			$full = $options;
+		}
+		if (
+			is_string($url) &&
+			strpos($url, ':') !== false &&
+			strpos($url, '/') === false
+		) {
+			$url = self::_splitName($url, $options);
 		}
 
 		// TODO refactor so there is less overhead
@@ -721,6 +729,28 @@ class Router {
 			}
 		}
 		return $output . $extension . $frag;
+	}
+
+/**
+ * Splits a named route into the component parts.
+ *
+ * @param string $url The named route to split.
+ * @param array $options The array of parameter to merge with.
+ * @return array
+ */
+	protected static function _splitName($url, $options) {
+		$plugin = null;
+		list($controller, $action) = explode(':', $url);
+		if (strpos($controller, '.') !== false) {
+			list($plugin, $controller) = explode('.', $controller);
+		}
+		$params = array(
+			'plugin' => $plugin,
+			'controller' => $controller,
+			'action' => $action,
+			'_name' => $url
+		);
+		return (array)$options + $params;
 	}
 
 /**

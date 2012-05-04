@@ -62,6 +62,7 @@ class RouteCollection implements \Countable {
  */
 	public function match($url, $currentParams = array()) {
 		$names = $this->_getNames($url);
+		unset($url['_name']);
 		foreach ($names as $name) {
 			if (isset($this->_routeTable[$name])) {
 				$output = $this->_matchRoutes($this->_routeTable[$name], $url, $currentParams);
