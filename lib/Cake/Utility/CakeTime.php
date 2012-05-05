@@ -646,6 +646,11 @@ class CakeTime {
  */
 	public static function timeAgoInWords($dateTime, $options = array()) {
 		$timezone = null;
+		$format = self::$wordFormat;
+		$end = self::$wordEnd;
+                $element = false;
+                $accuracy = self::$wordAccuracy;
+                
 		if (is_array($options)) {
 			if (isset($options['userOffset'])) {
 				$timezone = $options['userOffset'];
@@ -654,28 +659,13 @@ class CakeTime {
 			}
 
 			if (isset($options['accuracy'])) {
-				$accuracy = array_merge(self::$wordAccuracy, $options['accuracy']);
-			} else {
-				$accuracy = self::$wordAccuracy;
+				$accuracy = array_merge($accuracy, $options['accuracy']);
 			}
 
 			if (isset($options['element'])) {
 				$element = $options['element'];
-			} else {
-				$element = false;
-                        }
-		}
+			}
 
-		extract($accuracy, EXTR_PREFIX_ALL, 'format');
-
-		$now = self::fromString(time(), $timezone);
-		$inSeconds = self::fromString($dateTime, $timezone);
-		$backwards = ($inSeconds > $now);
-
-		$format = self::$wordFormat;
-		$end = self::$wordEnd;
-
-		if (is_array($options)) {
 			if (isset($options['format'])) {
 				$format = $options['format'];
 				unset($options['format']);
@@ -685,8 +675,14 @@ class CakeTime {
 				unset($options['end']);
 			}
 		} else {
-			$format = $options;
-		}
+                    $format = $options;
+                }
+
+		extract($accuracy, EXTR_PREFIX_ALL, 'format');
+
+		$now = self::fromString(time(), $timezone);
+		$inSeconds = self::fromString($dateTime, $timezone);
+		$backwards = ($inSeconds > $now);
 
 		if ($backwards) {
 			$futureTime = $inSeconds;
