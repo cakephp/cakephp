@@ -141,22 +141,4 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 		return $this->_model->deleteAll(array($this->_model->alias . ".expires <" => $expires), false, false);
 	}
 
-/**
- * Writes and closes a session
- * 
- * @return void 
- */
-	protected function _writeSession() {
-		session_write_close();
-	}
-
-/**
- * Closes the session before the objects handling it become unavailable
- *
- * @return void
- */
-	public function __destruct() {
-		$this->_writeSession();
-	}
-
 }

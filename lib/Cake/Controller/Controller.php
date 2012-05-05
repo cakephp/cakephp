@@ -766,10 +766,6 @@ class Controller extends Object implements CakeEventListener {
 		$response = $event->result;
 		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
 
-		if (function_exists('session_write_close')) {
-			session_write_close();
-		}
-
 		if ($url !== null) {
 			$this->response->header('Location', Router::url($url, true));
 		}
