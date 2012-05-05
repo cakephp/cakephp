@@ -497,7 +497,7 @@ class CakeRoute {
 			$named = array();
 			foreach ($params['named'] as $key => $value) {
 				if (is_array($value)) {
-					$flat = Set::flatten($value, '][');
+					$flat = Hash::flatten($value, '][');
 					foreach ($flat as $namedKey => $namedValue) {
 						$named[] = $key . "[$namedKey]" . $separator . rawurlencode($namedValue);
 					}

@@ -363,10 +363,10 @@ class TreeBehavior extends ModelBehavior {
 		}
 
 		if ($valuePath == null) {
-			$valuePath = array('{0}{1}', '{n}.tree_prefix', '{n}.' . $Model->alias . '.' . $Model->displayField);
+			$valuePath = array('%s%s', '{n}.tree_prefix', '{n}.' . $Model->alias . '.' . $Model->displayField);
 
 		} elseif (is_string($valuePath)) {
-			$valuePath = array('{0}{1}', '{n}.tree_prefix', $valuePath);
+			$valuePath = array('%s%s', '{n}.tree_prefix', $valuePath);
 
 		} else {
 			$valuePath[0] = '{' . (count($valuePath) - 1) . '}' . $valuePath[0];
@@ -386,7 +386,7 @@ class TreeBehavior extends ModelBehavior {
 		if (empty($results)) {
 			return array();
 		}
-		return Set::combine($results, $keyPath, $valuePath);
+		return Hash::combine($results, $keyPath, $valuePath);
 	}
 
 /**

@@ -411,7 +411,7 @@ class ModelWriteTest extends BaseModelTest {
 		$Category = new CategoryThread();
 		$Category->belongsTo['ParentCategory']['counterCache'] = 'child_count';
 		$Category->updateCounterCache(array('parent_id' => 5));
-		$result = Set::extract($Category->find('all', array('conditions' => array('CategoryThread.id' => 5))), '{n}.CategoryThread.child_count');
+		$result = Hash::extract($Category->find('all', array('conditions' => array('CategoryThread.id' => 5))), '{n}.CategoryThread.child_count');
 		$expected = array(1);
 		$this->assertEquals($expected, $result);
 	}
@@ -632,11 +632,11 @@ class ModelWriteTest extends BaseModelTest {
 		$Node = new Node();
 		$Node->set('id', 1);
 		$result = $Node->read();
-		$this->assertEquals(array('Second'), Set::extract('/ParentNode/name', $result));
+		$this->assertEquals(array('Second'), Hash::extract($result, 'ParentNode.{n}.name'));
 
 		$Node->saveField('state', 10);
 		$result = $Node->read();
-		$this->assertEquals(array('Second'), Set::extract('/ParentNode/name', $result));
+		$this->assertEquals(array('Second'), Hash::extract($result, 'ParentNode.{n}.name'));
 	}
 
 /**
@@ -1570,9 +1570,9 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->save($data);
 		$result = $TestModel->read(null, 1);
 		$expected = array(4, 5);
-		$this->assertEquals($expected, Set::extract('/JoinC/JoinAsJoinC/id', $result));
+		$this->assertEquals($expected, Hash::extract($result, 'JoinC.{n}.JoinAsJoinC.id'));
 		$expected = array('new record', 'new record');
-		$this->assertEquals($expected, Set::extract('/JoinC/JoinAsJoinC/other', $result));
+		$this->assertEquals($expected, Hash::extract($result, 'JoinC.{n}.JoinAsJoinC.other'));
 	}
 
 /**
@@ -1679,7 +1679,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->id = 2;
 		$TestModel->save($data);
 		$result = $TestModel->findById(2);
-		$result['Item'] = Set::sort($result['Item'], '{n}.id', 'asc');
+		$result['Item'] = Hash::sort($result['Item'], '{n}.id', 'asc');
 		$expected = array(
 			'Portfolio' => array(
 				'id' => 2,
@@ -2132,7 +2132,6 @@ class ModelWriteTest extends BaseModelTest {
 				'id' => 3,
 				'title' => 'Third Article'
 		)));
-
 		$this->assertEquals($expected, $articles);
 
 		$comments = $Comment->find('all', array(
@@ -2400,12 +2399,12 @@ class ModelWriteTest extends BaseModelTest {
 	public function testUpdateMultiple() {
 		$this->loadFixtures('Comment', 'Article', 'User', 'CategoryThread');
 		$TestModel = new Comment();
-		$result = Set::extract($TestModel->find('all'), '{n}.Comment.user_id');
+		$result = Hash::extract($TestModel->find('all'), '{n}.Comment.user_id');
 		$expected = array('2', '4', '1', '1', '1', '2');
 		$this->assertEquals($expected, $result);
 
 		$TestModel->updateAll(array('Comment.user_id' => 5), array('Comment.user_id' => 2));
-		$result = Set::combine($TestModel->find('all'), '{n}.Comment.id', '{n}.Comment.user_id');
+		$result = Hash::combine($TestModel->find('all'), '{n}.Comment.id', '{n}.Comment.user_id');
 		$expected = array(1 => 5, 2 => 4, 3 => 1, 4 => 1, 5 => 1, 6 => 5);
 		$this->assertEquals($expected, $result);
 
@@ -2414,7 +2413,7 @@ class ModelWriteTest extends BaseModelTest {
 			array('Comment.user_id' => 5)
 		);
 		$this->assertFalse(empty($result));
-		$result = Set::extract(
+		$result = Hash::extract(
 			$TestModel->find('all', array(
 				'conditions' => array(
 					'Comment.user_id' => 5
@@ -3071,7 +3070,7 @@ class ModelWriteTest extends BaseModelTest {
 			'First new comment',
 			'Second new comment'
 		);
-		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$result = Hash::extract(Hash::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->Comment->User->field('id', array('user' => 'newuser', 'password' => 'newuserpass'));
@@ -3094,7 +3093,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Third new comment',
 			'Fourth new comment'
 		);
-		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$result = Hash::extract(Hash::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->Comment->Attachment->field('id', array('attachment' => 'deepsaved'));
@@ -3846,7 +3845,7 @@ class ModelWriteTest extends BaseModelTest {
 			'First new comment',
 			'Second new comment'
 		);
-		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$result = Hash::extract(Hash::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->saveAll(
@@ -3870,7 +3869,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Second new comment',
 			'Third new comment'
 		);
-		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$result = Hash::extract(Hash::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
 		$this->assertEquals($expected, $result);
 
 		$TestModel->beforeSaveReturn = false;
@@ -3895,7 +3894,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Second new comment',
 			'Third new comment'
 		);
-		$result = Set::extract(Set::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
+		$result = Hash::extract(Hash::sort($result['Comment'], '{n}.id', 'ASC'), '{n}.comment');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -4485,7 +4484,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAllValidateFirst() {
-		$this->loadFixtures('Article', 'Comment', 'Attachment');
+		$this->loadFixtures('Article', 'Comment', 'Attachment', 'User', 'ArticlesTag', 'Tag');
 		$model = new Article();
 		$model->deleteAll(true);
 
@@ -4532,7 +4531,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $model->Comment->find('all');
 		$this->assertSame(count($result), 1);
-		$result = Set::extract('/Comment/article_id', $result);
+		$result = Hash::extract($result, '{n}.Comment.article_id');
 		$this->assertEquals(4, $result[0]);
 
 		$model->deleteAll(true);
@@ -4563,6 +4562,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAllValidateFirstAtomicFalse() {
+		$this->loadFixtures('Something');
 		$Something = new Something();
 		$invalidData = array(
 			array(
@@ -5165,7 +5165,7 @@ class ModelWriteTest extends BaseModelTest {
 			'First new comment',
 			'Second new comment'
 		);
-		$this->assertEquals($expected, Set::extract($result['Comment'], '{n}.comment'));
+		$this->assertEquals($expected, Hash::extract($result['Comment'], '{n}.comment'));
 
 		$result = $TestModel->saveAssociated(
 			array(
@@ -5188,7 +5188,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Second new comment',
 			'Third new comment'
 		);
-		$this->assertEquals($expected, Set::extract($result['Comment'], '{n}.comment'));
+		$this->assertEquals($expected, Hash::extract($result['Comment'], '{n}.comment'));
 
 		$TestModel->beforeSaveReturn = false;
 		$result = $TestModel->saveAssociated(
@@ -5212,7 +5212,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Second new comment',
 			'Third new comment'
 		);
-		$this->assertEquals($expected, Set::extract($result['Comment'], '{n}.comment'));
+		$this->assertEquals($expected, Hash::extract($result['Comment'], '{n}.comment'));
 	}
 
 /**
@@ -5857,7 +5857,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $model->Comment->find('all');
 		$this->assertSame(count($result), 1);
-		$result = Set::extract('/Comment/article_id', $result);
+		$result = Hash::extract($result, '{n}.Comment.article_id');
 		$this->assertEquals(4, $result[0]);
 
 		$model->deleteAll(true);
@@ -6083,15 +6083,15 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertFalse(empty($result));
 
-		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
+		$result = Hash::extract($model->find('all', array('fields' => 'count')), '{n}.DataTest.count');
 		$this->assertEquals(array(5, 3, 4, 1), $result);
 
 		$this->assertTrue($model->updateAll(array('count' => 'count + 2')));
-		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
+		$result = Hash::extract($model->find('all', array('fields' => 'count')), '{n}.DataTest.count');
 		$this->assertEquals(array(7, 5, 6, 3), $result);
 
 		$this->assertTrue($model->updateAll(array('DataTest.count' => 'DataTest.count - 1')));
-		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
+		$result = Hash::extract($model->find('all', array('fields' => 'count')), '{n}.DataTest.count');
 		$this->assertEquals(array(6, 4, 5, 2), $result);
 	}
 
@@ -6354,7 +6354,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel = new Post();
 
 		$result = $TestModel->find('all');
-		$this->assertCount(3, $result);
+		$this->assertEquals(3, count($result));
 		$this->assertFalse(isset($result[3]));
 
 		// test belongsTo
@@ -6394,7 +6394,7 @@ class ModelWriteTest extends BaseModelTest {
 			),
 		);
 		$this->assertEquals($expected, $result[3]);
-		$this->assertCount(4, $result);
+		$this->assertEquals(4, count($result));
 		$this->assertEquals('', $result[3]['Post']['body']);
 		$this->assertEquals('working', $result[3]['Author']['test']);
 
@@ -6524,7 +6524,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->recursive = 2;
 
 		$result = $TestModel->find('all');
-		$this->assertCount(3, $result);
+		$this->assertEquals(3, count($result));
 		$this->assertFalse(isset($result[3]));
 
 		// test belongsTo

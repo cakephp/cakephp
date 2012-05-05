@@ -439,6 +439,17 @@ class MissingPluginException extends CakeException {
 }
 
 /**
+ * Exception raised when a Dispatcher filter could not be found
+ *
+ * @package       Cake.Error
+ */
+class MissingDispatcherFilterException extends CakeException {
+
+	protected $_messageTemplate = 'Dispatcher filter %s could not be found.';
+
+}
+
+/**
  * Exception class for AclComponent and Interface implementations. 
  *
  * @package       Cake.Error
@@ -516,4 +527,46 @@ class XmlException extends CakeException {
  * @package       Cake.Error
  */
 class ConsoleException extends CakeException {
+}
+
+/**
+ * Represents a fatal error
+ *
+ * @package       Cake.Error
+ */
+class FatalErrorException extends CakeException {
+
+/**
+ * Constructor
+ *
+ * @param string $message
+ * @param integer $code
+ * @param string $file
+ * @param integer $line
+ */
+	public function __construct($message, $code = 500, $file = null, $line = null) {
+		parent::__construct($message, $code);
+		if ($file) {
+			$this->file = $file;
+		}
+		if ($line) {
+			$this->line = $line;
+		}
+	}
+
+}
+
+/**
+ * Not Implemented Exception - used when an API method is not implemented
+ *
+ * @package       Cake.Error
+ */
+class NotImplementedException extends CakeException {
+
+	protected $_messageTemplate = '%s is not implemented.';
+
+	public function __construct($message, $code = 501) {
+		parent::__construct($message, $code);
+	}
+
 }

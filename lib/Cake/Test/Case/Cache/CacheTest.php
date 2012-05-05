@@ -32,6 +32,7 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 
@@ -45,6 +46,7 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default', $this->_defaultCacheConfig['settings']);
 	}
@@ -215,7 +217,8 @@ class CacheTest extends CakeTestCase {
 			'probability' => 100,
 			'engine' => 'File',
 			'isWindows' => DIRECTORY_SEPARATOR == '\\',
-			'mask' => 0664
+			'mask' => 0664,
+			'groups' => array()
 		);
 		$this->assertEquals($expected, Cache::settings('sessions'));
 

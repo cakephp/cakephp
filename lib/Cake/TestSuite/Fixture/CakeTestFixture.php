@@ -142,7 +142,7 @@ class CakeTestFixture {
 				$records = $db->fetchAll($db->buildStatement($query, $model), false, $model->alias);
 
 				if ($records !== false && !empty($records)) {
-					$this->records = Set::extract($records, '{n}.' . $model->alias);
+					$this->records = Hash::extract($records, '{n}.' . $model->alias);
 				}
 			}
 		}
@@ -241,7 +241,11 @@ class CakeTestFixture {
 					$fields = array_keys($record);
 					$values[] = array_values(array_merge($default, $record));
 				}
-				return $db->insertMulti($this->table, $fields, $values);
+				$nested = $db->useNestedTransactions;
+				$db->useNestedTransactions = false;
+				$result = $db->insertMulti($this->table, $fields, $values);
+				$db->useNestedTransactions = $nested;
+				return $result;
 			}
 			return true;
 		}

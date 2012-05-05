@@ -60,11 +60,8 @@ class AclComponent extends Component {
 		$name = Configure::read('Acl.classname');
 		if (!class_exists($name)) {
 			list($plugin, $name) = pluginSplit($name, true);
-			App::uses($name . 'Component', $plugin . 'Controller/Component');
-			App::uses($name, 'Controller/Component/Acl');
-			if (class_exists($name . 'Component')) {
-				$name .= 'Component';
-			} elseif (!class_exists($name)) {
+			App::uses($name, $plugin . 'Controller/Component/Acl');
+			if (!class_exists($name)) {
 				throw new CakeException(__d('cake_dev', 'Could not find %s.', $name));
 			}
 		}

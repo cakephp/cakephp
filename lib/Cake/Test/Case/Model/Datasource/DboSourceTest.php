@@ -35,6 +35,8 @@ class MockDataSource extends DataSource {
 
 class DboTestSource extends DboSource {
 
+	public $nestedSupport = false;
+
 	public function connect($config = array()) {
 		$this->connected = true;
 	}
@@ -49,6 +51,10 @@ class DboTestSource extends DboSource {
 
 	public function setConnection($conn) {
 		$this->_connection = $conn;
+	}
+
+	public function nestedTransactionSupported() {
+		return $this->useNestedTransactions && $this->nestedSupport;
 	}
 
 }
@@ -610,7 +616,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->logQuery('Query 2');
 
 		$log = $this->testDb->getLog(false, false);
-		$result = Set::extract($log['log'], '/query');
+		$result = Hash::extract($log['log'], '{n}.query');
 		$expected = array('Query 1', 'Query 2');
 		$this->assertEquals($expected, $result);
 
@@ -835,6 +841,103 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test nested transaction calls
+ *
+ * @return void
+ */
+	public function testTransactionNested() {
+		$conn = $this->getMock('MockPDO');
+		$db = new DboTestSource();
+		$db->setConnection($conn);
+		$db->useNestedTransactions = true;
+		$db->nestedSupport = true;
+
+		$conn->expects($this->at(0))->method('beginTransaction')->will($this->returnValue(true));
+		$conn->expects($this->at(1))->method('exec')->with($this->equalTo('SAVEPOINT LEVEL1'))->will($this->returnValue(true));
+		$conn->expects($this->at(2))->method('exec')->with($this->equalTo('RELEASE SAVEPOINT LEVEL1'))->will($this->returnValue(true));
+		$conn->expects($this->at(3))->method('exec')->with($this->equalTo('SAVEPOINT LEVEL1'))->will($this->returnValue(true));
+		$conn->expects($this->at(4))->method('exec')->with($this->equalTo('ROLLBACK TO SAVEPOINT LEVEL1'))->will($this->returnValue(true));
+		$conn->expects($this->at(5))->method('commit')->will($this->returnValue(true));
+
+		$this->_runTransactions($db);
+	}
+
+/**
+ * Test nested transaction calls without support
+ *
+ * @return void
+ */
+	public function testTransactionNestedWithoutSupport() {
+		$conn = $this->getMock('MockPDO');
+		$db = new DboTestSource();
+		$db->setConnection($conn);
+		$db->useNestedTransactions = true;
+		$db->nestedSupport = false;
+
+		$conn->expects($this->once())->method('beginTransaction')->will($this->returnValue(true));
+		$conn->expects($this->never())->method('exec');
+		$conn->expects($this->once())->method('commit')->will($this->returnValue(true));
+
+		$this->_runTransactions($db);
+	}
+
+/**
+ * Test nested transaction disabled
+ *
+ * @return void
+ */
+	public function testTransactionNestedDisabled() {
+		$conn = $this->getMock('MockPDO');
+		$db = new DboTestSource();
+		$db->setConnection($conn);
+		$db->useNestedTransactions = false;
+		$db->nestedSupport = true;
+
+		$conn->expects($this->once())->method('beginTransaction')->will($this->returnValue(true));
+		$conn->expects($this->never())->method('exec');
+		$conn->expects($this->once())->method('commit')->will($this->returnValue(true));
+
+		$this->_runTransactions($db);
+	}
+
+/**
+ * Nested transaction calls
+ *
+ * @param DboTestSource $db
+ * @return void
+ */
+	protected function _runTransactions($db) {
+		$db->begin();
+		$db->begin();
+		$db->commit();
+		$db->begin();
+		$db->rollback();
+		$db->commit();
+	}
+
+/**
+ * Test build statement with some fields missing
+ *
+ * @return void
+ */
+	public function testBuildStatementDefaults() {
+		$conn = $this->getMock('MockPDO');
+		$db = new DboTestSource;
+		$db->setConnection($conn);
+		$subQuery = $db->buildStatement(
+			array(
+				'fields' => array('DISTINCT(AssetsTag.asset_id)'),
+				'table' => "assets_tags",
+				'alias' => "AssetsTag",
+				'conditions' => array("Tag.name" => 'foo bar'),
+				'limit' => null,
+				'group' => "AssetsTag.asset_id"
+			),
+			$this->Model
+		);
+	}
+
+/**
  * data provider for testBuildJoinStatement
  *
  * @return array
@@ -871,4 +974,5 @@ class DboSourceTest extends CakeTestCase {
 		$result = $db->buildJoinStatement($join);
 		$this->assertEquals($expected, $result);
 	}
+
 }

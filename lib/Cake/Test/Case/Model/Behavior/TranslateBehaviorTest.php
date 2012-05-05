@@ -50,15 +50,6 @@ class TranslateBehaviorTest extends CakeTestCase {
 	);
 
 /**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		ClassRegistry::flush();
-	}
-
-/**
  * Test that count queries with conditions get the correct joins
  *
  * @return void
@@ -73,7 +64,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'I18n__content.locale' => 'eng'
 			)
 		));
-		$this->assertEqual(3, $result);
+		$this->assertEquals(3, $result);
 	}
 
 /**
@@ -631,8 +622,8 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$translations = array('title' => 'Title', 'content' => 'Content');
 		$TestModel->bindTranslation($translations, false);
 		$result = $TestModel->read(null, 1);
-		$result['Title'] = Set::sort($result['Title'], '{n}.id', 'asc');
-		$result['Content'] = Set::sort($result['Content'], '{n}.id', 'asc');
+		$result['Title'] = Hash::sort($result['Title'], '{n}.id', 'asc');
+		$result['Content'] = Hash::sort($result['Content'], '{n}.id', 'asc');
 		$expected = array(
 			'TranslatedItem' => array('id' => 1, 'slug' => 'first_translated', 'locale' => 'cze', 'title' => 'Titulek #1', 'content' => 'Upraveny obsah #1'),
 			'Title' => array(

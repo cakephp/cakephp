@@ -27,6 +27,14 @@
 class WincacheEngine extends CacheEngine {
 
 /**
+ * Contains the compiled group names
+ * (prefixed witht the global configuration prefix)
+ *
+ * @var array
+ **/
+	protected $_compiledGroupNames = array();
+
+/**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
@@ -37,10 +45,11 @@ class WincacheEngine extends CacheEngine {
  * @see CacheEngine::__defaults
  */
 	public function init($settings = array()) {
-		parent::init(array_merge(array(
-			'engine' => 'Wincache',
-			'prefix' => Inflector::slug(APP_DIR) . '_'),
-		$settings));
+		if (!isset($settings['prefix'])) {
+			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
+		}
+		$settings += array('engine' => 'Wincache');
+		parent::init($settings);
 		return function_exists('wincache_ucache_info');
 	}
 
@@ -132,6 +141,50 @@ class WincacheEngine extends CacheEngine {
 			}
 		}
 		return true;
+	}
+
+/**
+ * Returns the `group value` for each of the configured groups
+ * If the group initial value was not found, then it initializes
+ * the group accordingly.
+ *
+ * @return array
+ **/
+	public function groups() {
+		if (empty($this->_compiledGroupNames)) {
+			foreach ($this->settings['groups'] as $group) {
+				$this->_compiledGroupNames[] = $this->settings['prefix'] . $group;
+			}
+		}
+
+		$groups = wincache_ucache_get($this->_compiledGroupNames);
+		if (count($groups) !== count($this->settings['groups'])) {
+			foreach ($this->_compiledGroupNames as $group) {
+				if (!isset($groups[$group])) {
+					wincache_ucache_set($group, 1);
+					$groups[$group] = 1;
+				}
+			}
+			ksort($groups);
+		}
+
+		$result = array();
+		$groups = array_values($groups);
+		foreach ($this->settings['groups'] as $i => $group) {
+			$result[] = $group . $groups[$i];
+		}
+		return $result;
+	}
+
+/**
+ * Increments the group value to simulate deletion of all keys under a group
+ * old values will remain in storage until they expire.
+ *
+ * @return boolean success
+ **/
+	public function clearGroup($group) {
+		wincache_ucache_inc($this->settings['prefix'] . $group, 1, $success);
+		return $success;
 	}
 
 }

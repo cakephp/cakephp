@@ -174,10 +174,10 @@ class ExceptionRendererTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}
-		parent::tearDown();
 	}
 
 /**
@@ -639,7 +639,7 @@ class ExceptionRendererTest extends CakeTestCase {
 			->with('missingHelper')
 			->will($this->throwException($exception));
 
-		$ExceptionRenderer->controller->expects($this->at(4))
+		$ExceptionRenderer->controller->expects($this->at(5))
 			->method('render')
 			->with('error500')
 			->will($this->returnValue(true));
@@ -671,7 +671,7 @@ class ExceptionRendererTest extends CakeTestCase {
 			->with('error400')
 			->will($this->throwException($exception));
 
-		$ExceptionRenderer->controller->expects($this->at(3))
+		$ExceptionRenderer->controller->expects($this->at(4))
 			->method('render')
 			->with('error500')
 			->will($this->returnValue(true));

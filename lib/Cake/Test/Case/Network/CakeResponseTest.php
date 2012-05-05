@@ -118,8 +118,9 @@ class CakeResponseTest extends CakeTestCase {
 		$this->assertEquals('application/vnd.wap.xhtml+xml', $response->type('xhtml-mobile'));
 		$this->assertEquals('text/csv', $response->type('csv'));
 
-		$response->type(array('keynote' => 'application/keynote'));
+		$response->type(array('keynote' => 'application/keynote', 'bat' => 'application/bat'));
 		$this->assertEquals('application/keynote', $response->type('keynote'));
+		$this->assertEquals('application/bat', $response->type('bat'));
 
 		$this->assertFalse($response->type('wackytype'));
 	}
@@ -925,7 +926,7 @@ class CakeResponseTest extends CakeTestCase {
 
 /**
  * Test cookie setting
- * 
+ *
  * @return void
  */
 	public function testCookieSettings() {
@@ -943,7 +944,7 @@ class CakeResponseTest extends CakeTestCase {
 			'secure' => false,
 			'httpOnly' => false);
 		$result = $response->cookie('CakeTestCookie[Testing]');
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$cookie = array(
 			'name' => 'CakeTestCookie[Testing2]',
@@ -975,7 +976,7 @@ class CakeResponseTest extends CakeTestCase {
 		);
 
 		$result = $response->cookie();
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$cookie = $expected['CakeTestCookie[Testing]'];
 		$cookie['value'] = 'test';
@@ -1002,7 +1003,7 @@ class CakeResponseTest extends CakeTestCase {
 		);
 
 		$result = $response->cookie();
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 }

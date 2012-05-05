@@ -78,7 +78,7 @@ class CakeTestSuiteTest extends CakeTestCase {
 
 		$Folder->delete();
 	}
-	
+
 /**
  * testAddTestDirectoryRecursiveWithNonPhp
  * 

@@ -19,6 +19,7 @@
 App::uses('AppShell', 'Console/Command');
 App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
+App::uses('Hash', 'Utility');
 
 /**
  * Language string extractor
@@ -431,7 +432,7 @@ class ExtractTask extends AppShell {
 			return;
 		}
 
-		$dims = Set::countDim($rules);
+		$dims = Hash::dimensions($rules);
 		if ($dims == 1 || ($dims == 2 && isset($rules['message']))) {
 			$rules = array($rules);
 		}

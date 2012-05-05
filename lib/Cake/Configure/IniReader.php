@@ -16,13 +16,15 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('Hash', 'Utility');
 
 /**
- * Ini file configuration parser.  Since IniReader uses parse_ini_file underneath,
- * you should be aware that this class shares the same behavior, especially with
- * regards to boolean and null values.
+ * Ini file configuration engine.
  *
- * In addition to the native parse_ini_file features, IniReader also allows you
+ * Since IniReader uses parse_ini_file underneath, you should be aware that this
+ * class shares the same behavior, especially with regards to boolean and null values.
+ *
+ * In addition to the native `parse_ini_file` features, IniReader also allows you
  * to create nested array structures through usage of `.` delimited names.  This allows
  * you to create nested arrays structures in an ini config file. For example:
  *
@@ -126,13 +128,57 @@ class IniReader implements ConfigReaderInterface {
 			if ($value === '') {
 				$value = false;
 			}
+			unset($values[$key]);
 			if (strpos($key, '.') !== false) {
-				$values = Set::insert($values, $key, $value);
+				$values = Hash::insert($values, $key, $value);
 			} else {
 				$values[$key] = $value;
 			}
 		}
 		return $values;
+	}
+
+/**
+ * Dumps the state of Configure data into an ini formatted string.
+ *
+ * @param string $filename The filename on $this->_path to save into.
+ * @param array $data The data to convert to ini file.
+ * @return int Bytes saved.
+ */
+	public function dump($filename, $data) {
+		$result = array();
+		foreach ($data as $key => $value) {
+			if ($key[0] != '[') {
+				$result[] = "[$key]";
+			}
+			if (is_array($value)) {
+				$keyValues = Hash::flatten($value, '.');
+				foreach ($keyValues as $k => $v) {
+					$result[] = "$k = " . $this->_value($v);
+				}
+			}
+		}
+		$contents = join("\n", $result);
+		return file_put_contents($this->_path . $filename, $contents);
+	}
+
+/**
+ * Converts a value into the ini equivalent
+ *
+ * @param mixed $value to export.
+ * @return string String value for ini file.
+ */
+	protected function _value($val) {
+		if ($val === null) {
+			return 'null';
+		}
+		if ($val === true) {
+			return 'true';
+		}
+		if ($val === false) {
+			return 'false';
+		}
+		return (string)$val;
 	}
 
 }

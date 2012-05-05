@@ -14,6 +14,7 @@
  */
 App::uses('ClassRegistry', 'Utility');
 App::uses('AppHelper', 'View/Helper');
+App::uses('Hash', 'Utility');
 
 /**
  * Form helper library.
@@ -248,14 +249,15 @@ class FormHelper extends AppHelper {
 			return true;
 		} elseif (is_array($validateProperties)) {
 
-			$dims = Set::countDim($validateProperties);
+			$dims = Hash::dimensions($validateProperties);
 			if ($dims == 1 || ($dims == 2 && isset($validateProperties['rule']))) {
 				$validateProperties = array($validateProperties);
 			}
 
 			foreach ($validateProperties as $rule => $validateProp) {
-				if (isset($validateProp['allowEmpty']) && $validateProp['allowEmpty'] === true) {
-					return false;
+				$isRequired = $this->_isRequiredRule($validateProp);
+				if ($isRequired === false) {
+					continue;
 				}
 				$rule = isset($validateProp['rule']) ? $validateProp['rule'] : false;
 				$required = $rule || empty($validateProp);
@@ -265,6 +267,34 @@ class FormHelper extends AppHelper {
 			}
 		}
 		return $required;
+	}
+
+/**
+ * Checks if the field is required by the 'on' key in validation properties.
+ * If no 'on' key is present in validation props, this method returns true.
+ *
+ * @param array $validateProp
+ * @return mixed. Boolean for required
+ */
+	protected function _isRequiredRule($validateProp) {
+		if (isset($validateProp['on'])) {
+			if (
+				($validateProp['on'] == 'create' && $this->requestType != 'post') ||
+				($validateProp['on'] == 'update' && $this->requestType != 'put')
+			) {
+				return false;
+			}
+		}
+		if (
+			isset($validateProp['allowEmpty']) &&
+			$validateProp['allowEmpty'] === true
+		) {
+			return false;
+		}
+		if (isset($validateProp['required']) && empty($validateProp['required'])) {
+			return false;
+		}
+		return true;
 	}
 
 /**
@@ -288,7 +318,7 @@ class FormHelper extends AppHelper {
 		if (empty($errors)) {
 			return false;
 		}
-		$errors = Set::classicExtract($errors, join('.', $entity));
+		$errors = Hash::get($errors, join('.', $entity));
 		return $errors === null ? false : $errors;
 	}
 
@@ -600,7 +630,7 @@ class FormHelper extends AppHelper {
 		if (!$field) {
 			$field = $this->entity();
 		} elseif (is_string($field)) {
-			$field = Set::filter(explode('.', $field), true);
+			$field = Hash::filter(explode('.', $field));
 		}
 
 		foreach ($this->_unlockedFields as $unlockField) {
@@ -1320,6 +1350,8 @@ class FormHelper extends AppHelper {
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
  *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
  * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
+ * - `empty` - Set to `true` to create a input with the value '' as the first option.  When `true`
+ *   the radio label will be 'empty'.  Set this option to a string to control the label value.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
@@ -1329,6 +1361,13 @@ class FormHelper extends AppHelper {
  */
 	public function radio($fieldName, $options = array(), $attributes = array()) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
+
+		$showEmpty = $this->_extractOption('empty', $attributes);
+		if ($showEmpty) {
+			$showEmpty = ($showEmpty === true) ? __('empty') : $showEmpty;
+			$options = array('' => $showEmpty) + $options;
+		}
+		unset($attributes['empty']);
 
 		$legend = false;
 		if (isset($attributes['legend'])) {
@@ -1862,9 +1901,7 @@ class FormHelper extends AppHelper {
 
 		if ($emptyMulti) {
 			$showEmpty = ($showEmpty === true) ? '' : $showEmpty;
-			$options = array_reverse($options, true);
-			$options[''] = $showEmpty;
-			$options = array_reverse($options, true);
+			$options = array('' => $showEmpty) + $options;
 		}
 
 		if (!$id) {

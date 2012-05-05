@@ -485,7 +485,7 @@ class Helper extends Object {
 		if ($setScope === true) {
 			$this->_modelScope = $entity;
 		}
-		$parts = array_values(Set::filter(explode('.', $entity), true));
+		$parts = array_values(Hash::filter(explode('.', $entity)));
 		if (empty($parts)) {
 			return;
 		}
@@ -687,7 +687,7 @@ class Helper extends Object {
 
 		$entity = $this->entity();
 		if (!empty($data) && !empty($entity)) {
-			$result = Set::extract(implode('.', $entity), $data);
+			$result = Hash::get($data, implode('.', $entity));
 		}
 
 		$habtmKey = $this->field();

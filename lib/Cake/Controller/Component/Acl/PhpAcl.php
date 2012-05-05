@@ -494,7 +494,7 @@ class PhpAro {
 					// detect cycles
 					$roles = $this->roles($dependency);
 
-					if (in_array($role, Set::flatten($roles))) {
+					if (in_array($role, Hash::flatten($roles))) {
 						$path = '';
 
 						foreach ($roles as $roleDependencies) {

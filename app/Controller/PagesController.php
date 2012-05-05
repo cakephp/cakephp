@@ -39,13 +39,6 @@ class PagesController extends AppController {
 	public $name = 'Pages';
 
 /**
- * Default helper
- *
- * @var array
- */
-	public $helpers = array('Html', 'Session');
-
-/**
  * This controller does not use a model
  *
  * @var array

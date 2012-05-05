@@ -43,8 +43,8 @@ class JsonViewTest extends CakeTestCase {
 		$View = new JsonView($Controller);
 		$output = $View->render(false);
 
-		$this->assertIdentical(json_encode($data), $output);
-		$this->assertIdentical('application/json', $Response->type());
+		$this->assertSame(json_encode($data), $output);
+		$this->assertSame('application/json', $Response->type());
 	}
 
 /**
@@ -62,8 +62,8 @@ class JsonViewTest extends CakeTestCase {
 		$View = new JsonView($Controller);
 		$output = $View->render(false);
 
-		$this->assertIdentical(json_encode(array('no' => $data['no'], 'user' => $data['user'])), $output);
-		$this->assertIdentical('application/json', $Response->type());
+		$this->assertSame(json_encode(array('no' => $data['no'], 'user' => $data['user'])), $output);
+		$this->assertSame('application/json', $Response->type());
 	}
 
 /**
@@ -94,8 +94,8 @@ class JsonViewTest extends CakeTestCase {
 		$output = $View->render('index');
 
 		$expected = json_encode(array('user' => 'fake', 'list' => array('item1', 'item2')));
-		$this->assertIdentical($expected, $output);
-		$this->assertIdentical('application/json', $Response->type());
+		$this->assertSame($expected, $output);
+		$this->assertSame('application/json', $Response->type());
 	}
 
 }

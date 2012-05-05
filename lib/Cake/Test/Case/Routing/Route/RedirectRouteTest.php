@@ -26,7 +26,7 @@ App::uses('Router', 'Routing');
  *
  * @package       Cake.Test.Case.Routing.Route
  */
-class RedirectRouteTestCase extends  CakeTestCase {
+class RedirectRouteTest extends  CakeTestCase {
 
 /**
  * setUp method

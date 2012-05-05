@@ -87,7 +87,7 @@ class CakeNumberTest extends CakeTestCase {
 			'before'	=> '',
 		));
 		$expected = '5&nbsp;199&nbsp;100&amp;001';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$value = 1000.45;
 		$result = $this->Number->format($value, array(
@@ -96,7 +96,7 @@ class CakeNumberTest extends CakeTestCase {
 			'escape'	=> false,
 		));
 		$expected = '$1,,000.a45';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$value = 519919827593784.00;
 		$this->Number->addFormat('RUR', array(

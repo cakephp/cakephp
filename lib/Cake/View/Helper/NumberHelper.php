@@ -53,7 +53,7 @@ class NumberHelper extends AppHelper {
  * @throws CakeException When the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
-		$settings = Set::merge(array('engine' => 'CakeNumber'), $settings);
+		$settings = Hash::merge(array('engine' => 'CakeNumber'), $settings);
 		parent::__construct($View, $settings);
 		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
 		App::uses($engineClass, $plugin . 'Utility');

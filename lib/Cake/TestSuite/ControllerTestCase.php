@@ -23,6 +23,7 @@ App::uses('Router', 'Routing');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 App::uses('Helper', 'View');
+App::uses('CakeEvent', 'Event');
 
 /**
  * ControllerTestDispatcher class
@@ -217,6 +218,8 @@ abstract class ControllerTestCase extends CakeTestCase {
 			'return' => 'result'
 		), $options);
 
+		$restore = array('get' => $_GET, 'post' => $_POST);
+
 		$_SERVER['REQUEST_METHOD'] = strtoupper($options['method']);
 		if (is_array($options['data'])) {
 			if (strtoupper($options['method']) == 'GET') {
@@ -242,7 +245,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			}
 		}
 		$Dispatch->loadRoutes = $this->loadRoutes;
-		$request = $Dispatch->parseParams($request);
+		$Dispatch->parseParams(new CakeEvent('ControllerTestCase', $Dispatch, array('request' => $request)));
 		if (!isset($request->params['controller'])) {
 			$this->headers = Router::currentRoute()->response->header();
 			return;
@@ -272,6 +275,10 @@ abstract class ControllerTestCase extends CakeTestCase {
 		}
 		$this->__dirtyController = true;
 		$this->headers = $Dispatch->response->header();
+
+		$_GET = $restore['get'];
+		$_POST = $restore['post'];
+
 		return $this->{$options['return']};
 	}
 

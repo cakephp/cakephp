@@ -22,7 +22,7 @@
 App::uses('ClassRegistry', 'Utility');
 App::uses('Validation', 'Utility');
 App::uses('String', 'Utility');
-App::uses('Set', 'Utility');
+App::uses('Hash', 'Utility');
 App::uses('BehaviorCollection', 'Model');
 App::uses('ModelBehavior', 'Model');
 App::uses('ConnectionManager', 'Model');
@@ -59,7 +59,7 @@ class Model extends Object implements CakeEventListener {
  * Custom database table name, or null/false if no table association is desired.
  *
  * @var string
- * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#useTable
+ * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#usetable
  */
 	public $useTable = null;
 
@@ -69,7 +69,7 @@ class Model extends Object implements CakeEventListener {
  * This field is also used in `find('list')` when called with no extra parameters in the fields list
  *
  * @var string
- * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#displayField
+ * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#displayfield
  */
 	public $displayField = null;
 
@@ -261,7 +261,7 @@ class Model extends Object implements CakeEventListener {
  * caching only, the results are not stored beyond the current request.
  *
  * @var boolean
- * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#cacheQueries
+ * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#cachequeries
  */
 	public $cacheQueries = false;
 
@@ -1730,7 +1730,7 @@ class Model extends Object implements CakeEventListener {
 				$this->getEventManager()->dispatch($event);
 			}
 			if (!empty($this->data)) {
-				$success = Set::merge($success, $this->data);
+				$success = Hash::merge($success, $this->data);
 			}
 			$this->data = false;
 			$this->_clearCache();
@@ -1821,7 +1821,7 @@ class Model extends Object implements CakeEventListener {
 						'fields' => $associationForeignKey,
 					));
 
-					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
+					$oldLinks = Hash::extract($links, "{n}.{$associationForeignKey}");
 					if (!empty($oldLinks)) {
 						if ($keepExisting && !empty($newJoins)) {
 							$conditions[$associationForeignKey] = array_diff($oldLinks, $newJoins);
@@ -1995,7 +1995,7 @@ class Model extends Object implements CakeEventListener {
  */
 	public function saveAll($data = null, $options = array()) {
 		$options = array_merge(array('validate' => 'first'), $options);
-		if (Set::numeric(array_keys($data))) {
+		if (Hash::numeric(array_keys($data))) {
 			if ($options['validate'] === 'only') {
 				return $this->validateMany($data, $options);
 			}
@@ -2524,7 +2524,7 @@ class Model extends Object implements CakeEventListener {
 				return false;
 			}
 
-			$ids = Set::extract($ids, "{n}.{$this->alias}.{$this->primaryKey}");
+			$ids = Hash::extract($ids, "{n}.{$this->alias}.{$this->primaryKey}");
 			if (empty($ids)) {
 				return true;
 			}
@@ -2757,10 +2757,19 @@ class Model extends Object implements CakeEventListener {
  */
 	protected function _findCount($state, $query, $results = array()) {
 		if ($state === 'before') {
+			if (!empty($query['type']) && isset($this->findMethods[$query['type']]) && $query['type'] !== 'count' ) {
+				$query['operation'] = 'count';
+				$query = $this->{'_find' . ucfirst($query['type'])}('before', $query);
+			}
 			$db = $this->getDataSource();
 			$query['order'] = false;
 			if (!method_exists($db, 'calculate')) {
 				return $query;
+			}
+			if (!empty($query['fields']) && is_array($query['fields'])) {
+				if (!preg_match('/^count/i', current($query['fields']))) {
+					unset($query['fields']);
+				}
 			}
 			if (empty($query['fields'])) {
 				$query['fields'] = $db->calculate($this, 'count');
@@ -2838,7 +2847,7 @@ class Model extends Object implements CakeEventListener {
 				return array();
 			}
 			$lst = $query['list'];
-			return Set::combine($results, $lst['keyPath'], $lst['valuePath'], $lst['groupPath']);
+			return Hash::combine($results, $lst['keyPath'], $lst['valuePath'], $lst['groupPath']);
 		}
 	}
 
@@ -2874,8 +2883,8 @@ class Model extends Object implements CakeEventListener {
 			unset($query['conditions'][$field . ' <']);
 			$return = array();
 			if (isset($results[0])) {
-				$prevVal = Set::extract('/' . str_replace('.', '/', $field), $results[0]);
-				$query['conditions'][$field . ' >='] = $prevVal[0];
+				$prevVal = Hash::get($results[0], $field);
+				$query['conditions'][$field . ' >='] = $prevVal;
 				$query['conditions'][$field . ' !='] = $value;
 				$query['limit'] = 2;
 			} else {
@@ -2884,14 +2893,14 @@ class Model extends Object implements CakeEventListener {
 				$query['limit'] = 1;
 			}
 			$query['order'] = $field . ' ASC';
-			$return2 = $this->find('all', $query);
+			$neighbors = $this->find('all', $query);
 			if (!array_key_exists('prev', $return)) {
-				$return['prev'] = $return2[0];
+				$return['prev'] = $neighbors[0];
 			}
-			if (count($return2) === 2) {
-				$return['next'] = $return2[1];
-			} elseif (count($return2) === 1 && !$return['prev']) {
-				$return['next'] = $return2[0];
+			if (count($neighbors) === 2) {
+				$return['next'] = $neighbors[1];
+			} elseif (count($neighbors) === 1 && !$return['prev']) {
+				$return['next'] = $neighbors[0];
 			} else {
 				$return['next'] = null;
 			}
@@ -2916,9 +2925,9 @@ class Model extends Object implements CakeEventListener {
 			if (isset($query['parent'])) {
 				$parent = $query['parent'];
 			}
-			return Set::nest($results, array(
-				'idPath' => '/' . $this->alias . '/' . $this->primaryKey,
-				'parentPath' => '/' . $this->alias . '/' . $parent
+			return Hash::nest($results, array(
+				'idPath' => '{n}.' . $this->alias . '.' . $this->primaryKey,
+				'parentPath' => '{n}.' . $this->alias . '.' . $parent
 			));
 		}
 	}
@@ -3179,6 +3188,13 @@ class Model extends Object implements CakeEventListener {
 						}
 						if (is_array($validator['rule']) && $args === null) {
 							$args = array_slice($ruleSet[$index]['rule'], 1);
+						}
+						if (!empty($args)) {
+							foreach ($args as $k => $arg) {
+								if (is_string($arg)) {
+									$args[$k] = __d($validationDomain, $arg);
+								}
+							}
 						}
 						$message = __d($validationDomain, $message, $args);
 					} elseif (is_string($index)) {

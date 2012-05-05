@@ -12,8 +12,8 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('Security', 'Utility');
+App::uses('Hash', 'Utility');
 
 /**
  * Base Authentication class with common methods and properties.
@@ -58,7 +58,7 @@ abstract class BaseAuthenticate {
  */
 	public function __construct(ComponentCollection $collection, $settings) {
 		$this->_Collection = $collection;
-		$this->settings = Set::merge($this->settings, $settings);
+		$this->settings = Hash::merge($this->settings, $settings);
 	}
 
 /**

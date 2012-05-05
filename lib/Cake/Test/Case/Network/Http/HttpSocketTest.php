@@ -531,13 +531,13 @@ class HttpSocketTest extends CakeTestCase {
 		foreach ($tests as $i => $test) {
 			if (strpos($i, 'reset') === 0) {
 				foreach ($test as $path => $val) {
-					$expectation = Set::insert($expectation, $path, $val);
+					$expectation = Hash::insert($expectation, $path, $val);
 				}
 				continue;
 			}
 
 			if (isset($test['expectation'])) {
-				$expectation = Set::merge($expectation, $test['expectation']);
+				$expectation = Hash::merge($expectation, $test['expectation']);
 			}
 			$this->Socket->request($test['request']);
 

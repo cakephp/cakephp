@@ -30,6 +30,7 @@ class AppTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		CakePlugin::unload();
 	}
 

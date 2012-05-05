@@ -70,6 +70,15 @@ class DboSource extends DataSource {
 	public $cacheMethods = true;
 
 /**
+ * Flag to support nested transactions. If it is set to false, you will be able to use
+ * the transaction methods (begin/commit/rollback), but just the global transaction will
+ * be executed.
+ *
+ * @var boolean
+ */
+	public $useNestedTransactions = false;
+
+/**
  * Print full query debug info?
  *
  * @var boolean
@@ -184,14 +193,20 @@ class DboSource extends DataSource {
 	protected $_transactionNesting = 0;
 
 /**
- * Index of basic SQL commands
+ * Default fields that are used by the DBO
  *
  * @var array
  */
-	protected $_commands = array(
-		'begin' => 'BEGIN',
-		'commit' => 'COMMIT',
-		'rollback' => 'ROLLBACK'
+	protected $_queryDefaults = array(
+		'conditions' => array(),
+		'fields' => null,
+		'table' => null,
+		'alias' => null,
+		'order' => null,
+		'limit' => null,
+		'joins' => array(),
+		'group' => null,
+		'offset' => null
 	);
 
 /**
@@ -277,10 +292,19 @@ class DboSource extends DataSource {
 /**
  * Get the underlying connection object.
  *
- * @return PDOConnection
+ * @return PDO
  */
 	public function getConnection() {
 		return $this->_connection;
+	}
+
+/**
+ * Gets the version string of the database server
+ *
+ * @return string The database version
+ */
+	public function getVersion() {
+		return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
 	}
 
 /**
@@ -1151,7 +1175,7 @@ class DboSource extends DataSource {
  * @return mixed
  * @throws CakeException when results cannot be created.
  */
-	public function queryAssociation(Model $model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
+	public function queryAssociation(Model $model, &$linkModel, $type, $association, $assocData, &$queryData, $external, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!is_array($resultSet)) {
 				throw new CakeException(__d('cake_dev', 'Error in Model %s', get_class($model)));
@@ -1337,7 +1361,7 @@ class DboSource extends DataSource {
 					}
 				}
 			}
-			$result = Set::pushDiff($result, array($association => $merged));
+			$result = Hash::mergeDiff($result, array($association => $merged));
 		}
 	}
 
@@ -1392,7 +1416,7 @@ class DboSource extends DataSource {
 						if ($mergeKeys[0] === $dataKeys[0] || $mergeKeys === $dataKeys) {
 							$data[$association][$association] = $merge[0][$association];
 						} else {
-							$diff = Set::diff($dataAssocTmp, $mergeAssocTmp);
+							$diff = Hash::diff($dataAssocTmp, $mergeAssocTmp);
 							$data[$association] = array_merge($merge[0][$association], $diff);
 						}
 					} elseif ($selfJoin && array_key_exists($association, $merge[0])) {
@@ -1436,7 +1460,7 @@ class DboSource extends DataSource {
  * @param array $resultSet
  * @return mixed
  */
-	public function generateAssociationQuery(Model $model, $linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
+	public function generateAssociationQuery(Model $model, $linkModel, $type, $association, $assocData, &$queryData, $external, &$resultSet) {
 		$queryData = $this->_scrubQueryData($queryData);
 		$assocData = $this->_scrubQueryData($assocData);
 		$modelAlias = $model->alias;
@@ -1666,7 +1690,7 @@ class DboSource extends DataSource {
  * @see DboSource::renderStatement()
  */
 	public function buildStatement($query, $model) {
-		$query = array_merge(array('offset' => null, 'joins' => array()), $query);
+		$query = array_merge($this->_queryDefaults, $query);
 		if (!empty($query['joins'])) {
 			$count = count($query['joins']);
 			for ($i = 0; $i < $count; $i++) {
@@ -1918,7 +1942,7 @@ class DboSource extends DataSource {
 				return false;
 			}
 			$conditions = $this->conditions(array(
-				$model->primaryKey => Set::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
+				$model->primaryKey => Hash::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
 			));
 		}
 		return $conditions;
@@ -2003,6 +2027,15 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Check if the server support nested transactions
+ *
+ * @return boolean
+ */
+	public function nestedTransactionSupported() {
+		return false;
+	}
+
+/**
  * Begin a transaction
  *
  * @return boolean True on success, false on fail
@@ -2010,15 +2043,33 @@ class DboSource extends DataSource {
  * or a transaction has not started).
  */
 	public function begin() {
-		if ($this->_transactionStarted || $this->_connection->beginTransaction()) {
-			if ($this->fullDebug && empty($this->_transactionNesting)) {
-				$this->logQuery('BEGIN');
+		if ($this->_transactionStarted) {
+			if ($this->nestedTransactionSupported()) {
+				return $this->_beginNested();
 			}
-			$this->_transactionStarted = true;
 			$this->_transactionNesting++;
-			return true;
+			return $this->_transactionStarted;
 		}
-		return false;
+
+		$this->_transactionNesting = 0;
+		if ($this->fullDebug) {
+			$this->logQuery('BEGIN');
+		}
+		return $this->_transactionStarted = $this->_connection->beginTransaction();
+	}
+
+/**
+ * Begin a nested transaction
+ *
+ * @return boolean
+ */
+	protected function _beginNested() {
+		$query = 'SAVEPOINT LEVEL' . ++$this->_transactionNesting;
+		if ($this->fullDebug) {
+			$this->logQuery($query);
+		}
+		$this->_connection->exec($query);
+		return true;
 	}
 
 /**
@@ -2029,19 +2080,38 @@ class DboSource extends DataSource {
  * or a transaction has not started).
  */
 	public function commit() {
-		if ($this->_transactionStarted) {
-			$this->_transactionNesting--;
-			if ($this->_transactionNesting <= 0) {
-				$this->_transactionStarted = false;
-				$this->_transactionNesting = 0;
-				if ($this->fullDebug) {
-					$this->logQuery('COMMIT');
-				}
-				return $this->_connection->commit();
-			}
-			return true;
+		if (!$this->_transactionStarted) {
+			return false;
 		}
-		return false;
+
+		if ($this->_transactionNesting === 0) {
+			if ($this->fullDebug) {
+				$this->logQuery('COMMIT');
+			}
+			$this->_transactionStarted = false;
+			return $this->_connection->commit();
+		}
+
+		if ($this->nestedTransactionSupported()) {
+			return $this->_commitNested();
+		}
+
+		$this->_transactionNesting--;
+		return true;
+	}
+
+/**
+ * Commit a nested transaction
+ *
+ * @return boolean
+ */
+	protected function _commitNested() {
+		$query = 'RELEASE SAVEPOINT LEVEL' . $this->_transactionNesting--;
+		if ($this->fullDebug) {
+			$this->logQuery($query);
+		}
+		$this->_connection->exec($query);
+		return true;
 	}
 
 /**
@@ -2052,15 +2122,38 @@ class DboSource extends DataSource {
  * or a transaction has not started).
  */
 	public function rollback() {
-		if ($this->_transactionStarted && $this->_connection->rollBack()) {
+		if (!$this->_transactionStarted) {
+			return false;
+		}
+
+		if ($this->_transactionNesting === 0) {
 			if ($this->fullDebug) {
 				$this->logQuery('ROLLBACK');
 			}
 			$this->_transactionStarted = false;
-			$this->_transactionNesting = 0;
-			return true;
+			return $this->_connection->rollBack();
 		}
-		return false;
+
+		if ($this->nestedTransactionSupported()) {
+			return $this->_rollbackNested();
+		}
+
+		$this->_transactionNesting--;
+		return true;
+	}
+
+/**
+ * Rollback a nested transaction
+ *
+ * @return boolean
+ */
+	protected function _rollbackNested() {
+		$query = 'ROLLBACK TO SAVEPOINT LEVEL' . $this->_transactionNesting--;
+		if ($this->fullDebug) {
+			$this->logQuery($query);
+		}
+		$this->_connection->exec($query);
+		return true;
 	}
 
 /**
@@ -2240,7 +2333,7 @@ class DboSource extends DataSource {
 					} else {
 						if (strpos($fields[$i], ',') === false) {
 							$build = explode('.', $fields[$i]);
-							if (!Set::numeric($build)) {
+							if (!Hash::numeric($build)) {
 								$fields[$i] = $this->name(implode('.', $build));
 							}
 						}
@@ -2252,7 +2345,7 @@ class DboSource extends DataSource {
 							$field[1] = $this->name($alias . '.' . $field[1]);
 						} else {
 							$field[0] = explode('.', $field[1]);
-							if (!Set::numeric($field[0])) {
+							if (!Hash::numeric($field[0])) {
 								$field[0] = implode('.', array_map(array(&$this, 'name'), $field[0]));
 								$fields[$i] = preg_replace('/\(' . $field[1] . '\)/', '(' . $field[0] . ')', $fields[$i], 1);
 							}

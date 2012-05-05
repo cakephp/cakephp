@@ -141,6 +141,14 @@ class CakeEmail {
 	protected $_messageId = true;
 
 /**
+ * Domain for messageId generation.
+ * Needs to be manually set for CLI mailing as env('HTTP_HOST') is empty
+ *
+ * @var string
+ */
+	protected $_domain = null;
+
+/**
  * The subject of the email
  *
  * @var string
@@ -182,6 +190,13 @@ class CakeEmail {
  * @var array
  */
 	protected $_viewVars = array();
+
+/**
+ * Theme for the View
+ *
+ * @var array
+ */
+	protected $_theme = null;
 
 /**
  * Helpers to be used in the render
@@ -301,6 +316,11 @@ class CakeEmail {
 		if ($this->_appCharset !== null) {
 			$this->charset = $this->_appCharset;
 		}
+		$this->_domain = env('HTTP_HOST');
+		if (empty($this->_domain)) {
+			$this->_domain = php_uname('n');
+		}
+
 		if ($config) {
 			$this->config($config);
 		}
@@ -457,6 +477,36 @@ class CakeEmail {
  */
 	public function addBcc($email, $name = null) {
 		return $this->_addEmail('_bcc', $email, $name);
+	}
+
+/**
+ * Charset setter/getter
+ *
+ * @param string $charset
+ * @return string $this->charset
+ */
+	public function charset($charset = null) {
+		if ($charset === null) {
+			return $this->charset;
+		}
+		$this->charset = $charset;
+		if (empty($this->headerCharset)) {
+			$this->headerCharset = $charset;
+		}
+		return $this->charset;
+	}
+
+/**
+ * HeaderCharset setter/getter
+ *
+ * @param string $charset
+ * @return string $this->charset
+ */
+	public function headerCharset($charset = null) {
+		if ($charset === null) {
+			return $this->headerCharset;
+		}
+		return $this->headerCharset = $charset;
 	}
 
 /**
@@ -652,7 +702,7 @@ class CakeEmail {
 		}
 		if ($this->_messageId !== false) {
 			if ($this->_messageId === true) {
-				$headers['Message-ID'] = '<' . str_replace('-', '', String::UUID()) . '@' . env('HTTP_HOST') . '>';
+				$headers['Message-ID'] = '<' . str_replace('-', '', String::UUID()) . '@' . $this->_domain . '>';
 			} else {
 				$headers['Message-ID'] = $this->_messageId;
 			}
@@ -746,6 +796,20 @@ class CakeEmail {
 	}
 
 /**
+ * Theme to use when rendering
+ *
+ * @param string $theme
+ * @return mixed
+ */
+	public function theme($theme = null) {
+		if ($theme === null) {
+			return $this->_theme;
+		}
+		$this->_theme = $theme;
+		return $this;
+	}
+
+/**
  * Helpers to be used in render
  *
  * @param array $helpers
@@ -833,6 +897,20 @@ class CakeEmail {
 			}
 			$this->_messageId = $message;
 		}
+		return $this;
+	}
+
+/**
+ * Domain as top level (the part after @)
+ *
+ * @param string $domain Manually set the domain for CLI mailing
+ * @return mixed
+ */
+	public function domain($domain = null) {
+		if ($domain === null) {
+			return $this->_domain;
+		}
+		$this->_domain = $domain;
 		return $this;
 	}
 
@@ -1046,8 +1124,8 @@ class CakeEmail {
 		}
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
-			'messageId', 'subject', 'viewRender', 'viewVars', 'attachments',
-			'transport', 'emailFormat'
+			'messageId', 'domain', 'subject', 'viewRender', 'viewVars', 'attachments',
+			'transport', 'emailFormat', 'theme',
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
@@ -1092,6 +1170,7 @@ class CakeEmail {
 		$this->_template = '';
 		$this->_viewRender = 'View';
 		$this->_viewVars = array();
+		$this->_theme = null;
 		$this->_helpers = array('Html');
 		$this->_textMessage = '';
 		$this->_htmlMessage = '';
@@ -1099,6 +1178,8 @@ class CakeEmail {
 		$this->_emailFormat = 'text';
 		$this->_transportName = 'Mail';
 		$this->_transportClass = null;
+		$this->charset = 'utf-8';
+		$this->headerCharset = null;
 		$this->_attachments = array();
 		$this->_config = array();
 		return $this;
@@ -1115,6 +1196,9 @@ class CakeEmail {
 		if ($internalEncoding) {
 			$restore = mb_internal_encoding();
 			mb_internal_encoding($this->_appCharset);
+		}
+		if (empty($this->headerCharset)) {
+			$this->headerCharset = $this->charset;
 		}
 		$return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
 		if ($internalEncoding) {
@@ -1329,7 +1413,7 @@ class CakeEmail {
 
 		$msg = array();
 
-		$contentIds = array_filter((array)Set::classicExtract($this->_attachments, '{s}.contentId'));
+		$contentIds = array_filter((array)Hash::extract($this->_attachments, '{s}.contentId'));
 		$hasInlineAttachments = count($contentIds) > 0;
 		$hasAttachments = !empty($this->_attachments);
 		$hasMultipleTypes = count($rendered) > 1;
@@ -1448,6 +1532,9 @@ class CakeEmail {
 			$View->plugin = $templatePlugin;
 		} elseif ($layoutPlugin) {
 			$View->plugin = $layoutPlugin;
+		}
+		if ($this->_theme) {
+			$View->theme = $this->_theme;
 		}
 
 		foreach ($types as $type) {
