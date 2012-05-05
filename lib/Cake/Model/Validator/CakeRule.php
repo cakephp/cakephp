@@ -38,13 +38,6 @@ class CakeRule {
 	protected $_valid = true;
 
 /**
- * Holds the index under which the Validator was attached
- *
- * @var mixed
- */
-	protected $_index = null;
-
-/**
  * Create or Update transaction?
  *
  * @var boolean
@@ -118,10 +111,8 @@ class CakeRule {
  * Constructor
  *
  * @param array $validator [optional] The validator properties
- * @param mixed $index [optional]
  */
-	public function __construct($index = null, $validator = array()) {
-		$this->_index = $index;
+	public function __construct($validator = array()) {
 		$this->_addValidatorProps($validator);
 	}
 
@@ -284,10 +275,6 @@ class CakeRule {
 			return null;
 		}
 		return $this->_passedOptions[$key];
-	}
-
-	public function getName() {
-		return $this->_index;
 	}
 
 /**

@@ -74,7 +74,7 @@ class CakeRuleTest extends CakeTestCase {
 		);
 		$methods = array();
 
-		$Rule = new CakeRule('notEmpty', $def);
+		$Rule = new CakeRule($def);
 		$Rule->process('fieldName', $data, $methods);
 		$this->assertFalse($Rule->isValid());
 
@@ -94,7 +94,7 @@ class CakeRuleTest extends CakeTestCase {
 		);
 		$methods = array('mytestrule' => array($this, 'myTestRule'));
 
-		$Rule = new CakeRule('custom', $def);
+		$Rule = new CakeRule($def);
 		$Rule->process('fieldName', $data, $methods);
 		$this->assertFalse($Rule->isValid());
 
@@ -114,19 +114,19 @@ class CakeRuleTest extends CakeTestCase {
  */
 	public function testIsRequired() {
 		$def = array('rule' => 'notEmpty', 'required' => true);
-		$Rule = new CakeRule('required', $def);
+		$Rule = new CakeRule($def);
 		$this->assertTrue($Rule->isRequired());
 
 		$def = array('rule' => 'notEmpty', 'required' => false);
-		$Rule = new CakeRule('required', $def);
+		$Rule = new CakeRule($def);
 		$this->assertFalse($Rule->isRequired());
 
 		$def = array('rule' => 'notEmpty', 'required' => 'create');
-		$Rule = new CakeRule('required', $def);
+		$Rule = new CakeRule($def);
 		$this->assertTrue($Rule->isRequired());
 
 		$def = array('rule' => 'notEmpty', 'required' => 'update');
-		$Rule = new CakeRule('required', $def);
+		$Rule = new CakeRule($def);
 		$this->assertFalse($Rule->isRequired());
 
 		$Rule->isUpdate(true);

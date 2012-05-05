@@ -85,7 +85,7 @@ class CakeValidationSet {
 		}
 
 		foreach ($ruleSet as $index => $validateProp) {
-			$this->_rules[$index] = new CakeRule($index, $validateProp);
+			$this->_rules[$index] = new CakeRule($validateProp);
 		}
 		$this->ruleSet = $ruleSet;
 	}
@@ -116,7 +116,7 @@ class CakeValidationSet {
  */
 	public function validate($data, $isUpdate = false) {
 		$errors = array();
-		foreach ($this->getRules() as $rule) {
+		foreach ($this->getRules() as $name => $rule) {
 			$rule->isUpdate($isUpdate);
 			if ($rule->skip()) {
 				continue;
@@ -131,7 +131,7 @@ class CakeValidationSet {
 			}
 
 			if ($checkRequired || !$rule->isValid()) {
-				$errors[] = $this->_processValidationResponse($rule);
+				$errors[] = $this->_processValidationResponse($name, $rule);
 				if ($rule->isLast()) {
 					break;
 				}
@@ -193,11 +193,12 @@ class CakeValidationSet {
 /**
  * Fetches the correct error message for a failed validation
  *
+ * @param string $name the name of the rule as it was configured
+ * @param CakeRule $rule the object containing validation information
  * @return string
  */
-	protected function _processValidationResponse($rule) {
+	protected function _processValidationResponse($name, $rule) {
 		$message = $rule->getValidationResult();
-		$name = $rule->getName();
 		if (is_string($message)) {
 			return $message;
 		}
