@@ -1688,7 +1688,6 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testGetModel() {
-		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
 		$Validator = $TestModel->validator();
 
@@ -1702,7 +1701,6 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testArrayAccessGet() {
-		$this->loadFixtures('Article');
 		$TestModel = new Article();
 		$Validator = $TestModel->validator();
 
@@ -1731,7 +1729,6 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testArrayAccessExists() {
-		$this->loadFixtures('Article');
 		$TestModel = new Article();
 		$Validator = $TestModel->validator();
 
@@ -1747,7 +1744,6 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testArrayAccessSet() {
-		$this->loadFixtures('Article');
 		$TestModel = new Article();
 		$Validator = $TestModel->validator();
 
@@ -1780,7 +1776,6 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testArrayAccessUset() {
-		$this->loadFixtures('Article');
 		$TestModel = new Article();
 		$Validator = $TestModel->validator();
 
@@ -1795,7 +1790,6 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testIterator() {
-		$this->loadFixtures('Article');
 		$TestModel = new Article();
 		$Validator = $TestModel->validator();
 
@@ -1814,6 +1808,29 @@ class ModelValidationTest extends BaseModelTest {
 			$i++;
 		}
 		$this->assertEquals(3, $i);
+	}
+
+/**
+ * Tests countable interface in ModelValidator
+ *
+ * @return void
+ */
+	public function testCount() {
+		$TestModel = new Article();
+		$Validator = $TestModel->validator();
+		$this->assertCount(3, $Validator);
+
+		$set = array(
+			'numeric' => array('rule' => 'numeric', 'allowEmpty' => false),
+			'range' => array('rule' => array('between', 1, 5), 'allowEmpty' => false),
+		);
+		$Validator['other'] = $set;
+		$this->assertCount(4, $Validator);
+
+		unset($Validator['title']);
+		$this->assertCount(3, $Validator);
+		unset($Validator['body']);
+		$this->assertCount(2, $Validator);
 	}
 
 }

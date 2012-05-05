@@ -27,7 +27,7 @@ App::uses('CakeValidationSet', 'Model/Validator');
  * @package       Cake.Model
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
-class ModelValidator implements ArrayAccess, IteratorAggregate {
+class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 
 /**
  * Holds the CakeValidationSet objects array
@@ -479,4 +479,15 @@ class ModelValidator implements ArrayAccess, IteratorAggregate {
 		$this->_parseRules();
 		return new ArrayIterator($this->_fields);
 	}
+
+/**
+ * Returns the numbers of fields having validation rules
+ *
+ * @return int
+ **/
+	public function count() {
+		$this->_parseRules();
+		return count($this->_fields);
+	}
+
 }
