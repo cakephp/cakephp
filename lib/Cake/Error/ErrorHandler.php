@@ -204,7 +204,10 @@ class ErrorHandler {
 			return false;
 		}
 
-		ob_clean();
+		if (ob_get_level()) {
+			ob_clean();
+		}
+
 		if (Configure::read('debug')) {
 			call_user_func($exceptionHandler, new FatalErrorException($description, 500, $file, $line));
 		} else {

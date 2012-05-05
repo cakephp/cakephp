@@ -147,8 +147,12 @@ class ExceptionRenderer {
 		}
 		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
 		try {
-			$controller = new CakeErrorController($request, $response);
+			if (class_exists('AppController')) {
+				$controller = new CakeErrorController($request, $response);
+			}
 		} catch (Exception $e) {
+		}
+		if (empty($controller)) {
 			$controller = new Controller($request, $response);
 			$controller->viewPath = 'Errors';
 		}
