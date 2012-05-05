@@ -1696,4 +1696,97 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertInstanceOf('Article', $result);
 	}
 
+/**
+ * Tests it is possible to get validation sets for a field using an array inteface
+ *
+ * @return void
+ */
+	public function testArrayAccessGet() {
+		$this->loadFixtures('Article');
+		$TestModel = new Article();
+		$Validator = $TestModel->validator();
+
+		$titleValidator = $Validator['title'];
+		$this->assertEquals('title', $titleValidator->field);
+		$this->assertCount(1, $titleValidator->getRules());
+		$rule = current($titleValidator->getRules());
+		$this->assertEquals('notEmpty', $rule->rule);
+
+		$titleValidator = $Validator['body'];
+		$this->assertEquals('body', $titleValidator->field);
+		$this->assertCount(1, $titleValidator->getRules());
+		$rule = current($titleValidator->getRules());
+		$this->assertEquals('notEmpty', $rule->rule);
+
+		$titleValidator = $Validator['user_id'];
+		$this->assertEquals('user_id', $titleValidator->field);
+		$this->assertCount(1, $titleValidator->getRules());
+		$rule = current($titleValidator->getRules());
+		$this->assertEquals('numeric', $rule->rule);
+	}
+
+/**
+ * Tests it is possible to check for validation sets for a field using an array inteface
+ *
+ * @return void
+ */
+	public function testArrayAccessExists() {
+		$this->loadFixtures('Article');
+		$TestModel = new Article();
+		$Validator = $TestModel->validator();
+
+		$this->assertTrue(isset($Validator['title']));
+		$this->assertTrue(isset($Validator['body']));
+		$this->assertTrue(isset($Validator['user_id']));
+		$this->assertFalse(isset($Validator['other']));
+	}
+
+/**
+ * Tests it is possible to set validation rules for a field using an array inteface
+ *
+ * @return void
+ */
+	public function testArrayAccessSet() {
+		$this->loadFixtures('Article');
+		$TestModel = new Article();
+		$Validator = $TestModel->validator();
+
+		$set = array(
+			'numeric' => array('rule' => 'numeric', 'allowEmpty' => false),
+			'range' => array('rule' => array('between', 1, 5), 'allowEmpty' => false),
+		);
+		$Validator['other'] = $set;
+		$rules = $Validator['other'];
+		$this->assertEquals('other', $rules->field);
+
+		$validators = $rules->getRules();
+		$this->assertCount(2, $validators);
+		$this->assertEquals('numeric', $validators['numeric']->rule);
+		$this->assertEquals(array('between', 1, 5), $validators['range']->rule);
+
+		$Validator['new'] = new CakeValidationSet('new', $set, array());
+		$rules = $Validator['new'];
+		$this->assertEquals('new', $rules->field);
+
+		$validators = $rules->getRules();
+		$this->assertCount(2, $validators);
+		$this->assertEquals('numeric', $validators['numeric']->rule);
+		$this->assertEquals(array('between', 1, 5), $validators['range']->rule);
+	}
+
+/**
+ * Tests it is possible to unset validation rules
+ *
+ * @return void
+ */
+	public function testArrayAccessUset() {
+		$this->loadFixtures('Article');
+		$TestModel = new Article();
+		$Validator = $TestModel->validator();
+
+		$this->assertTrue(isset($Validator['title']));
+		unset($Validator['title']);
+		$this->assertFalse(isset($Validator['title']));
+	}
+
 }

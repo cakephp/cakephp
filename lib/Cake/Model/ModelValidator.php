@@ -18,8 +18,8 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('CakeValidationSet', 'Model/Validator');
-App::uses('CakeRule', 'Model/Validator');
 
 /**
  * ModelValidator object.
@@ -27,7 +27,7 @@ App::uses('CakeRule', 'Model/Validator');
  * @package       Cake.Model
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
-class ModelValidator {
+class ModelValidator implements ArrayAccess {
 
 /**
  * Holds the CakeValidationSet objects array
@@ -290,14 +290,14 @@ class ModelValidator {
  * @return boolean True if Model::$validate was processed, false otherwise
  */
 	protected function _parseRules() {
+		if ($this->_validate === $this->_model->validate) {
+			return true;
+		}
+
 		if (empty($this->_model->validate)) {
 			$this->_validate = array();
 			$this->_fields = array();
 			return false;
-		}
-
-		if ($this->_validate === $this->_model->validate) {
-			return true;
 		}
 
 		$this->_validate = $this->_model->validate;
@@ -421,6 +421,53 @@ class ModelValidator {
 			return false;
 		}
 		return true;
+	}
+
+/**
+ * Returns wheter a rule set is defined for a field or not
+ *
+ * @param string $field name of the field to check
+ * @return boolean
+ **/
+	public function offsetExists($field) {
+		$this->_parseRules();
+		return isset($this->_fields[$field]);
+	}
+
+/**
+ * Returns the rule set for a field
+ *
+ * @param string $field name of the field to check
+ * @return CakeValidationSet
+ **/
+	public function offsetGet($field) {
+		$this->_parseRules();
+		return $this->_fields[$field];
+	}
+
+/**
+ * Sets the rule set for a field
+ *
+ * @param string $field name of the field to set
+ * @param array|CakeValidationSet $rules set of rules to apply to field
+ * @return void
+ **/
+	public function offsetSet($field, $rules) {
+		$this->_parseRules();
+		if (!$rules instanceof CakeValidationSet) {
+			$rules = new CakeValidationSet($field, $rules, $this->getMethods());
+		}
+		$this->_fields[$field] = $rules;
+	}
+
+/**
+ * Unsets the rulset for a field
+ *
+ * @param string $field name of the field to unset
+ * @return void
+ **/
+	public function offsetUnset($field) {
+		unset($this->_fields[$field]);
 	}
 
 }
