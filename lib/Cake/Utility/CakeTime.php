@@ -57,14 +57,14 @@ class CakeTime {
  * @see CakeTime::timeAgoInWords()
  */
 	public static $wordAccuracy = array(
-			'year' =>   "day",
-			'month' =>  "day",
-			'week' =>   "day",
-			'day' =>    "hour",
-			'hour' =>   "minute",
-			'minute' => "minute",
-			'second' => "second",
-                );
+		'year' =>   "day",
+		'month' =>  "day",
+		'week' =>   "day",
+		'day' =>    "hour",
+		'hour' =>   "minute",
+		'minute' => "minute",
+		'second' => "second",
+	);
         
 /**
  * The end of relative time telling
@@ -648,8 +648,8 @@ class CakeTime {
 		$timezone = null;
 		$format = self::$wordFormat;
 		$end = self::$wordEnd;
-                $element = false;
-                $accuracy = self::$wordAccuracy;
+		$element = false;
+		$accuracy = self::$wordAccuracy;
                 
 		if (is_array($options)) {
 			if (isset($options['userOffset'])) {
@@ -675,8 +675,8 @@ class CakeTime {
 				unset($options['end']);
 			}
 		} else {
-                    $format = $options;
-                }
+			$format = $options;
+		}
 
 		extract($accuracy, EXTR_PREFIX_ALL, 'format');
 
