@@ -1666,49 +1666,6 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
- * testSetOptions method
- *
- * @return void
- */
-	public function testSetOptions() {
-		$this->loadFixtures('Article', 'Comment');
-		$TestModel = new Article();
-		$Validator = $TestModel->validator();
-
-		$options = array('atomic' => false, 'validate' => true);
-		$Validator->setOptions($options);
-		$this->assertEquals($options, $Validator->options);
-
-		$options = array('callbacks' => false);
-		$Validator->setOptions($options);
-		$this->assertEquals($options, $Validator->options);
-
-		$options = array('atomic' => true);
-		$expected = array_merge($Validator->options, $options);
-		$Validator->setOptions($options, true);
-		$this->assertEquals($expected, $Validator->options);
-	}
-
-/**
- * testGetOptions method
- *
- * @return void
- */
-	public function testGetOptions() {
-		$this->loadFixtures('Article', 'Comment');
-		$TestModel = new Article();
-		$Validator = $TestModel->validator();
-		$options = array('atomic' => false, 'validate' => true);
-		$Validator->setOptions($options);
-
-		$result = $Validator->getOptions();
-		$this->assertEquals($options, $result);
-
-		$result = $Validator->getOptions('atomic');
-		$this->assertFalse($result);
-	}
-
-/**
  * testSetValidationDomain method
  *
  * @return void

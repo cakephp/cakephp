@@ -37,13 +37,6 @@ class ModelValidator {
 	public $validationErrors = array();
 
 /**
- * Holds the options
- *
- * @var array
- */
-	public $options = array();
-
-/**
  * Holds the CakeField objects array
  *
  * @var array
@@ -90,7 +83,7 @@ class ModelValidator {
  * @return boolean True if there are no errors
  */
 	public function validates($options = array()) {
-		$errors = $this->invalidFields($options);
+		$errors = $this->errors($options);
 		if (empty($errors) && $errors !== false) {
 			$errors = $this->_validateWithModels($options);
 		}
@@ -218,20 +211,22 @@ class ModelValidator {
  * @return array Array of invalid fields
  * @see Model::validates()
  */
-	public function invalidFields($options = array()) {
-		if (!$this->propagateBeforeValidate($options)) {
+	public function errors($options = array()) {
+		if (!$this->_triggerBeforeValidate($options)) {
 			return false;
 		}
 		$model = $this->getModel();
-		$this->setOptions($options);
 
 		if (!$this->_parseRules()) {
 			return $model->validationErrors;
 		}
 
+		$fieldList = isset($options['fieldList']) ? $options['fieldList'] : array();
 		$exists = $model->exists();
 		$methods = $this->getMethods();
-		foreach ($this->_fields as $field) {
+		$fields = $this->_validationList($fieldList);
+
+		foreach ($fields as $field) {
 			$field->setMethods($methods);
 			$field->setValidationDomain($model->validationDomain);
 			$data = isset($model->data[$model->alias]) ? $model->data[$model->alias] : array();
@@ -249,14 +244,11 @@ class ModelValidator {
  * rule (in case of multiple validation for field) that was broken.
  *
  * @param string $field The name of the field to invalidate
- * @param mixed $value Name of validation rule that was not failed, or validation message to
+ * @param string $value Name of validation rule that failed, or validation message to
  *    be returned. If no validation key is provided, defaults to true.
  * @return void
  */
 	public function invalidate($field, $value = true) {
-		if (!is_array($this->validationErrors)) {
-			$this->validationErrors = array();
-		}
 		$this->getModel()->validationErrors[$field][] = $value;
 	}
 
@@ -316,58 +308,12 @@ class ModelValidator {
 		}
 
 		$this->_validate = $this->_model->validate;
-		$this->_processWhitelist();
 		$this->_fields = array();
 		$methods = $this->getMethods();
 		foreach ($this->_validate as $fieldName => $ruleSet) {
 			$this->_fields[$fieldName] = new CakeField($fieldName, $ruleSet, $methods);
 		}
 		return true;
-	}
-
-/**
- * Sets an options array. If $mergeVars is true, the options will be merged with the existing ones.
- * Otherwise they will get replaced. The default is merging the vars.
- *
- * @param array $options [optional] The options to be set
- * @param boolean $mergeVars [optional] If true, the options will be merged, otherwise they get replaced
- * @return ModelValidator
- */
-	public function setOptions($options = array(), $mergeVars = false) {
-		if ($mergeVars === false) {
-			$this->options = $options;
-		} else {
-			$this->options = array_merge($this->options, $options);
-		}
-		return $this;
-	}
-
-/**
- * Sets an option $name with $value. This method is chainable
- *
- * @param string $name The options name to be set
- * @param mixed $value [optional] The value to be set. Defaults to null.
- * @return ModelValidator
- */
-	public function setOption($name, $value = null) {
-		$this->options[$name] = $value;
-		return $this;
-	}
-
-/**
- * Gets an options value by $name. If $name is not set or no option has been found, returns null.
- *
- * @param string $name The options name to look up
- * @return mixed Either null or the option value
- */
-	public function getOptions($name = null) {
-		if ($name !== null) {
-			if (!isset($this->options[$name])) {
-				return null;
-			}
-			return $this->options[$name];
-		}
-		return $this->options;
 	}
 
 /**
@@ -394,14 +340,14 @@ class ModelValidator {
 	}
 
 /**
- * Processes the Model's whitelist and adjusts the validate array accordingly
+ * Processes the Model's whitelist and returns the list of fields
+ * to be validated
  *
- * @return void
+ * @return array List of validation rules to be applied
  */
-	protected function _processWhitelist() {
+	protected function _validationList($fieldList = array()) {
 		$model = $this->getModel();
 		$whitelist = $model->whitelist;
-		$fieldList = $this->getOptions('fieldList');
 
 		if (!empty($fieldList)) {
 			if (!empty($fieldList[$model->alias]) && is_array($fieldList[$model->alias])) {
@@ -412,16 +358,20 @@ class ModelValidator {
 		}
 		unset($fieldList);
 
+		$validateList = array();
 		if (!empty($whitelist)) {
 			$this->validationErrors = array();
-			$validate = array();
+
 			foreach ((array)$whitelist as $f) {
-				if (!empty($this->_validate[$f])) {
-					$validate[$f] = $this->_validate[$f];
+				if (!empty($this->_fields[$f])) {
+					$validateList[$f] = $this->_fields[$f];
 				}
 			}
-			$this->_validate = $validate;
+		} else {
+			return $this->_fields;
 		}
+
+		return $validateList;
 	}
 
 /**
@@ -469,7 +419,7 @@ class ModelValidator {
  * @param array $options
  * @return boolean
  */
-	public function propagateBeforeValidate($options = array()) {
+	protected function _triggerBeforeValidate($options = array()) {
 		$model = $this->getModel();
 		$event = new CakeEvent('Model.beforeValidate', $model, array($options));
 		list($event->break, $event->breakOn) = array(true, false);

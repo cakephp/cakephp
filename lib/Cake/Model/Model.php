@@ -2989,7 +2989,7 @@ class Model extends Object implements CakeEventListener {
  * @see Model::validates()
  */
 	public function invalidFields($options = array()) {
-		return $this->validator()->invalidFields($options);
+		return $this->validator()->errors($options);
 	}
 
 /**
