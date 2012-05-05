@@ -1789,4 +1789,31 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertFalse(isset($Validator['title']));
 	}
 
+/**
+ * Tests it is possible to iterate a validation object
+ *
+ * @return void
+ */
+	public function testIterator() {
+		$this->loadFixtures('Article');
+		$TestModel = new Article();
+		$Validator = $TestModel->validator();
+
+		$i = 0;
+		foreach ($Validator as $field => $rules) {
+			if ($i === 0) {
+				$this->assertEquals('user_id', $field);
+			}
+			if ($i === 1) {
+				$this->assertEquals('title', $field);
+			}
+			if ($i === 2) {
+				$this->assertEquals('body', $field);
+			}
+			$this->assertInstanceOf('CakeValidationSet', $rules);
+			$i++;
+		}
+		$this->assertEquals(3, $i);
+	}
+
 }

@@ -27,7 +27,7 @@ App::uses('CakeValidationSet', 'Model/Validator');
  * @package       Cake.Model
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
-class ModelValidator implements ArrayAccess {
+class ModelValidator implements ArrayAccess, IteratorAggregate {
 
 /**
  * Holds the CakeValidationSet objects array
@@ -470,4 +470,13 @@ class ModelValidator implements ArrayAccess {
 		unset($this->_fields[$field]);
 	}
 
+/**
+ * Returns an iterator for each of the fields to be validated
+ *
+ * @return ArrayIterator
+ **/
+	public function getIterator() {
+		$this->_parseRules();
+		return new ArrayIterator($this->_fields);
+	}
 }
