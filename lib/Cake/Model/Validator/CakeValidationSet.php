@@ -22,12 +22,12 @@ App::uses('ModelValidator', 'Model');
 App::uses('CakeRule', 'Model/Validator');
 
 /**
- * CakeField object.
+ * CakeValidationSet object.
  *
  * @package       Cake.Model.Validator
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
-class CakeField {
+class CakeValidationSet {
 
 /**
  * Holds the ValidationRule objects

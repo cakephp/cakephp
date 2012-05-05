@@ -19,7 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('ModelValidator', 'Model');
-App::uses('CakeField', 'Model/Validator');
+App::uses('CakeValidationSet', 'Model/Validator');
 App::uses('Validation', 'Utility');
 
 /**

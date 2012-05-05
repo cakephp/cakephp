@@ -34,7 +34,7 @@ class ModelTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new PHPUnit_Framework_TestSuite('All Model related class tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Validator' . DS .'CakeFieldTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Validator' . DS .'CakeValidationSetTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Validator' . DS .'CakeRuleTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelReadTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelWriteTest.php');

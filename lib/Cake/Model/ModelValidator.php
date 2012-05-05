@@ -18,7 +18,7 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('CakeField', 'Model/Validator');
+App::uses('CakeValidationSet', 'Model/Validator');
 App::uses('CakeRule', 'Model/Validator');
 
 /**
@@ -30,14 +30,7 @@ App::uses('CakeRule', 'Model/Validator');
 class ModelValidator {
 
 /**
- * Holds the validationErrors
- *
- * @var array
- */
-	public $validationErrors = array();
-
-/**
- * Holds the CakeField objects array
+ * Holds the CakeValidationSet objects array
  *
  * @var array
  */
@@ -279,7 +272,7 @@ class ModelValidator {
  * Gets all fields if $name is null (default), or the field for fieldname $name if it's found.
  *
  * @param string $name [optional] The fieldname to fetch. Defaults to null.
- * @return mixed Either array of CakeField objects , single object for $name or false when $name not present in fields
+ * @return mixed Either array of CakeValidationSet objects , single object for $name or false when $name not present in fields
  */
 	public function getFields($name = null) {
 		if ($name !== null && !empty($this->_fields[$name])) {
@@ -291,7 +284,7 @@ class ModelValidator {
 	}
 
 /**
- * Sets the CakeField instances from the Model::$validate property after processing the fieldList and whiteList.
+ * Sets the CakeValidationSet instances from the Model::$validate property after processing the fieldList and whiteList.
  * If Model::$validate is not set or empty, this method returns false. True otherwise.
  *
  * @return boolean True if Model::$validate was processed, false otherwise
@@ -311,7 +304,7 @@ class ModelValidator {
 		$this->_fields = array();
 		$methods = $this->getMethods();
 		foreach ($this->_validate as $fieldName => $ruleSet) {
-			$this->_fields[$fieldName] = new CakeField($fieldName, $ruleSet, $methods);
+			$this->_fields[$fieldName] = new CakeValidationSet($fieldName, $ruleSet, $methods);
 		}
 		return true;
 	}
