@@ -30,7 +30,7 @@ App::uses('Multibyte', 'I18n');
 class CakeTime {
 
 /**
- * The format to use when formatting a time using `TimeHelper::nice()`
+ * The format to use when formatting a time using `CakeTime::nice()`
  *
  * The format should use the locale strings as defined in the PHP docs under
  * `strftime` (http://php.net/manual/en/function.strftime.php)
@@ -39,6 +39,40 @@ class CakeTime {
  * @see CakeTime::format()
  */
 	public static $niceFormat = '%a, %b %eS %Y, %H:%M';
+        
+/**
+ * The format to use when formatting a time using `CakeTime::timeAgoInWords()`
+ * and the difference is more than `CakeTime::$wordEnd`
+ *
+ * @var string
+ * @see CakeTime::timeAgoInWords()
+ */
+	public static $wordFormat = 'j/n/y';
+        
+/**
+ * The format to use when formatting a time using `CakeTime::timeAgoInWords()`
+ * and the difference is less than `CakeTime::$wordEnd`
+ *
+ * @var array
+ * @see CakeTime::timeAgoInWords()
+ */
+	public static $wordAccuracy = array(
+		'year' =>   "day",
+		'month' =>  "day",
+		'week' =>   "day",
+		'day' =>    "hour",
+		'hour' =>   "minute",
+		'minute' => "minute",
+		'second' => "second",
+	);
+        
+/**
+ * The end of relative time telling
+ *
+ * @var string
+ * @see CakeTime::timeAgoInWords()
+ */
+	public static $wordEnd = '+1 month';
 
 /**
  * Temporary variable containing timestamp value, used internally convertSpecifiers()
@@ -317,7 +351,9 @@ class CakeTime {
  * Returns a formatted descriptive date string for given datetime string.
  *
  * If the given date is today, the returned string could be "Today, 16:54".
+ * If the given date is tomorrow, the returned string could be "Tomorrow, 16:54".
  * If the given date was yesterday, the returned string could be "Yesterday, 16:54".
+ * If the given date is within next or last week, the returned string could be "On Thursday, 16:54".
  * If $dateString's year is the current year, the returned string does not
  * include mention of the year.
  *
@@ -330,11 +366,21 @@ class CakeTime {
 		$date = $dateString ? self::fromString($dateString, $timezone) : time();
 
 		$y = self::isThisYear($date) ? '' : ' %Y';
+		
+		$d =  self::_strftime("%w", $date);
+		$day = array(__d('cake', 'Sunday'), __d('cake', 'Monday'), __d('cake', 'Tuesday'), 
+			__d('cake', 'Wednesday'), __d('cake', 'Thursday'), __d('cake', 'Friday'), __d('cake', 'Saturday'));
 
 		if (self::isToday($dateString, $timezone)) {
 			$ret = __d('cake', 'Today, %s', self::_strftime("%H:%M", $date));
 		} elseif (self::wasYesterday($dateString, $timezone)) {
 			$ret = __d('cake', 'Yesterday, %s', self::_strftime("%H:%M", $date));
+		} elseif (self::isTomorrow($dateString, $timezone)) {
+			$ret = __d('cake', 'Tomorrow, %s', self::_strftime("%H:%M", $date));
+		} elseif (self::wasWithinLast('7 days', $dateString, $timezone)) {
+			$ret = sprintf('%s, %s', $day[$d], self::_strftime("%H:%M", $date));
+		} elseif (self::isWithinNext('7 days', $dateString, $timezone)) {
+			$ret = __d('cake', 'On %s, %s', $day[$d], self::_strftime("%H:%M", $date));
 		} else {
 			$format = self::convertSpecifiers("%b %eS{$y}, %H:%M", $date);
 			$ret = self::_strftime($format, $date);
@@ -576,8 +622,17 @@ class CakeTime {
  * ### Options:
  *
  * - `format` => a fall back format if the relative time is longer than the duration specified by end
+ * - `accuracy` => Specifies how accurate the date should be described (array)
+ *    - year =>   The format if years > 0   (default "day")
+ *    - month =>  The format if months > 0  (default "day")
+ *    - week =>   The format if weeks > 0   (default "day")
+ *    - day =>    The format if weeks > 0   (default "hour")
+ *    - hour =>   The format if hours > 0   (default "minute")
+ *    - minute => The format if minutes > 0 (default "minute")
+ *    - second => The format if seconds > 0 (default "second")
  * - `end` => The end of relative time telling
  * - `userOffset` => Users offset from GMT (in hours)
+ * - `element` => A wrapping HTML element (e.g. span or div)
  *
  * Relative dates look something like this:
  *	3 weeks, 4 days ago
@@ -595,21 +650,26 @@ class CakeTime {
  */
 	public static function timeAgoInWords($dateTime, $options = array()) {
 		$timezone = null;
+		$format = self::$wordFormat;
+		$end = self::$wordEnd;
+		$element = false;
+		$accuracy = self::$wordAccuracy;
+                
 		if (is_array($options)) {
 			if (isset($options['userOffset'])) {
 				$timezone = $options['userOffset'];
 			} elseif (isset($options['timezone'])) {
 				$timezone = $options['timezone'];
 			}
-		}
-		$now = self::fromString(time(), $timezone);
-		$inSeconds = self::fromString($dateTime, $timezone);
-		$backwards = ($inSeconds > $now);
 
-		$format = 'j/n/y';
-		$end = '+1 month';
+			if (isset($options['accuracy'])) {
+				$accuracy = array_merge($accuracy, $options['accuracy']);
+			}
 
-		if (is_array($options)) {
+			if (isset($options['element'])) {
+				$element = $options['element'];
+			}
+
 			if (isset($options['format'])) {
 				$format = $options['format'];
 				unset($options['format']);
@@ -621,6 +681,12 @@ class CakeTime {
 		} else {
 			$format = $options;
 		}
+
+		extract($accuracy, EXTR_PREFIX_ALL, 'format');
+
+		$now = self::fromString(time(), $timezone);
+		$inSeconds = self::fromString($dateTime, $timezone);
+		$backwards = ($inSeconds > $now);
 
 		if ($backwards) {
 			$futureTime = $inSeconds;
@@ -710,40 +776,46 @@ class CakeTime {
 			$relativeDate = __d('cake', 'on %s', date($format, $inSeconds));
 		} else {
 			if ($years > 0) {
-				// years and months and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d year', '%d years', $years, $years);
-				$relativeDate .= $months > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d month', '%d months', $months, $months) : '';
-				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d week', '%d weeks', $weeks, $weeks) : '';
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days) : '';
+				$f = $format_year;
 			} elseif (abs($months) > 0) {
-				// months, weeks and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d month', '%d months', $months, $months);
-				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d week', '%d weeks', $weeks, $weeks) : '';
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days) : '';
+				$f = $format_month;
 			} elseif (abs($weeks) > 0) {
-				// weeks and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d week', '%d weeks', $weeks, $weeks);
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days) : '';
+				$f = $format_week;
 			} elseif (abs($days) > 0) {
-				// days and hours
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days);
-				$relativeDate .= $hours > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d hour', '%d hours', $hours, $hours) : '';
+				$f = $format_day;
 			} elseif (abs($hours) > 0) {
-				// hours and minutes
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d hour', '%d hours', $hours, $hours);
-				$relativeDate .= $minutes > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d minute', '%d minutes', $minutes, $minutes) : '';
+				$f = $format_hour;
 			} elseif (abs($minutes) > 0) {
-				// minutes only
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d minute', '%d minutes', $minutes, $minutes);
+				$f = $format_minute;
 			} else {
-				// seconds only
-				$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d second', '%d seconds', $seconds, $seconds);
+				$f = $format_second;
 			}
+
+			$f = str_replace(array('year', 'month', 'week', 'day', 'hour', 'minute', 'second'), array(1, 2, 3, 4, 5, 6, 7), $f);
+
+			$relativeDate .= $f >= 1 && $years > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d year', '%d years', $years, $years) : '';
+			$relativeDate .= $f >= 2 && $months > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d month', '%d months', $months, $months) : '';
+			$relativeDate .= $f >= 3 && $weeks > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d week', '%d weeks', $weeks, $weeks) : '';
+			$relativeDate .= $f >= 4 && $days > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days) : '';
+			$relativeDate .= $f >= 5 && $hours > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d hour', '%d hours', $hours, $hours) : '';
+			$relativeDate .= $f >= 6 && $minutes > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d minute', '%d minutes', $minutes, $minutes) : '';
+			$relativeDate .= $f >= 7 && $seconds > 0 ? ($relativeDate ? ', ' : '') . __dn('cake', '%d second', '%d seconds', $seconds, $seconds) : '';
 
 			if (!$backwards) {
 				$relativeDate = __d('cake', '%s ago', $relativeDate);
 			}
 		}
+
+		// If within the last or next 7 days
+		if (self::wasWithinLast('7 days', $dateTime, $timezone) || self::isWithinNext('7 days', $dateTime, $timezone)) {
+			$relativeDate = self::niceShort($dateTime , $timezone);
+		}
+
+		// Apply HTML element
+		if ($element) {
+			$relativeDate = '<' . $element . ' title="' . $dateTime . '" class="' . $element . '-date">' . $relativeDate . '</' . $element . '>';
+		}
+
 		return $relativeDate;
 	}
 
@@ -767,6 +839,32 @@ class CakeTime {
 		$interval = self::fromString('-' . $timeInterval);
 
 		if ($date >= $interval && $date <= time()) {
+			return true;
+		}
+
+		return false;
+	}
+        
+/**
+ * Returns true if specified datetime is within the interval specified, else false.
+ *
+ * @param mixed $timeInterval the numeric value with space then time type.
+ *    Example of valid types: 6 hours, 2 days, 1 minute.
+ * @param mixed $dateString the datestring or unix timestamp to compare
+ * @param mixed $timezone Timezone string or DateTimeZone object
+ * @return boolean
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
+ */
+	public static function isWithinNext($timeInterval, $dateString, $timezone = null) {
+		$tmp = str_replace(' ', '', $timeInterval);
+		if (is_numeric($tmp)) {
+			$timeInterval = $tmp . ' ' . __d('cake', 'days');
+		}
+
+		$date = self::fromString($dateString, $timezone);
+		$interval = self::fromString('+' . $timeInterval);
+
+		if ($date <= $interval && $date >= time()) {
 			return true;
 		}
 
