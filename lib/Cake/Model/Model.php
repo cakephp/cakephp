@@ -59,7 +59,7 @@ class Model extends Object implements CakeEventListener {
  * Custom database table name, or null/false if no table association is desired.
  *
  * @var string
- * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#useTable
+ * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#usetable
  */
 	public $useTable = null;
 
@@ -69,7 +69,7 @@ class Model extends Object implements CakeEventListener {
  * This field is also used in `find('list')` when called with no extra parameters in the fields list
  *
  * @var string
- * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#displayField
+ * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#displayfield
  */
 	public $displayField = null;
 
@@ -261,7 +261,7 @@ class Model extends Object implements CakeEventListener {
  * caching only, the results are not stored beyond the current request.
  *
  * @var boolean
- * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#cacheQueries
+ * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#cachequeries
  */
 	public $cacheQueries = false;
 
