@@ -774,13 +774,14 @@ class Controller extends Object implements CakeEventListener {
 			$this->response->header('Location', Router::url($url, true));
 		}
 
-		if (!empty($status)) {
-			if (is_string($status)) {
-				$codes = array_flip($this->response->httpCodes());
-				if (isset($codes[$status])) {
-					$status = $codes[$status];
-				}
+		if (is_string($status)) {
+			$codes = array_flip($this->response->httpCodes());
+			if (isset($codes[$status])) {
+				$status = $codes[$status];
 			}
+		}
+
+		if ($status) {
 			$this->response->statusCode($status);
 		}
 
