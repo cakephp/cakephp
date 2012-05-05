@@ -531,7 +531,7 @@ class Controller extends Object implements CakeEventListener {
 	}
 
 /**
- * Merge components, helpers, and uses vars from 
+ * Merge components, helpers, and uses vars from
  * Controller::$_mergeParent and PluginAppController.
  *
  * @return void
@@ -770,18 +770,18 @@ class Controller extends Object implements CakeEventListener {
 			session_write_close();
 		}
 
-		if (!empty($status) && is_string($status)) {
+		if ($url !== null) {
+			$this->response->header('Location', Router::url($url, true));
+		}
+
+		if (is_string($status)) {
 			$codes = array_flip($this->response->httpCodes());
 			if (isset($codes[$status])) {
 				$status = $codes[$status];
 			}
 		}
 
-		if ($url !== null) {
-			$this->response->header('Location', Router::url($url, true));
-		}
-
-		if (!empty($status) && ($status >= 300 && $status < 400)) {
+		if ($status) {
 			$this->response->statusCode($status);
 		}
 
