@@ -27,7 +27,7 @@ App::uses('CakeRule', 'Model/Validator');
  * @package       Cake.Model.Validator
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
-class CakeValidationSet implements ArrayAccess {
+class CakeValidationSet implements ArrayAccess, IteratorAggregate {
 
 /**
  * Holds the ValidationRule objects
@@ -282,6 +282,15 @@ class CakeValidationSet implements ArrayAccess {
  **/
 	public function offsetUnset($index) {
 		unset($this->_rules[$index]);
+	}
+
+/**
+ * Returns an iterator for each of the rules to be applied
+ *
+ * @return ArrayIterator
+ **/
+	public function getIterator() {
+		return new ArrayIterator($this->_rules);
 	}
 
 }

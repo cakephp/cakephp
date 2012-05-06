@@ -244,4 +244,34 @@ class CakeValidationSetTest  extends CakeTestCase {
 		unset($Set['other']);
 		$this->assertFalse(isset($Set['notEmpty']));
 	}
+
+/**
+ * Tests it is possible to iterate a validation set object
+ *
+ * @return void
+ */
+	public function testIterator() {
+		$Set = new CakeValidationSet('title', array(
+			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'numeric' => array('rule' => 'numeric'),
+			'other' => array('rule' => array('other', 1)),
+		));
+
+		$i = 0;
+		foreach ($Set as $name => $rule) {
+			if ($i === 0) {
+				$this->assertEquals('notEmpty', $name);
+			}
+			if ($i === 1) {
+				$this->assertEquals('numeric', $name);
+			}
+			if ($i === 2) {
+				$this->assertEquals('other', $name);
+			}
+			$this->assertInstanceOf('CakeRule', $rule);
+			$i++;
+		}
+		$this->assertEquals(3, $i);
+	}
+
 }
