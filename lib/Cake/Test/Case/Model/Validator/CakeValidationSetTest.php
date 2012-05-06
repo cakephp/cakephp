@@ -24,7 +24,7 @@ App::uses('CakeValidationSet', 'Model/Validator');
  *
  * @package       Cake.Test.Case.Model.Validator
  */
-class CakeValidationSetTest extends CakeTestModel {
+class CakeValidationSetTest  extends CakeTestCase {
 
 /**
  * setUp method
@@ -157,4 +157,91 @@ class CakeValidationSetTest extends CakeTestModel {
 		$this->assertEquals(array('validEmail', 'notEmpty'), array_keys($result));
 	}
 
+/**
+ * Tests getting a rule from the set using array access
+ *
+ * @return void
+ */
+	public function testArrayAccessGet() {
+		$Set = new CakeValidationSet('title', array(
+			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'numeric' => array('rule' => 'numeric'),
+			'other' => array('rule' => array('other', 1)),
+		));
+
+		$rule = $Set['notEmpty'];
+		$this->assertInstanceOf('CakeRule', $rule);
+		$this->assertEquals('notEmpty', $rule->rule);
+
+		$rule = $Set['numeric'];
+		$this->assertInstanceOf('CakeRule', $rule);
+		$this->assertEquals('numeric', $rule->rule);
+
+		$rule = $Set['other'];
+		$this->assertInstanceOf('CakeRule', $rule);
+		$this->assertEquals(array('other', 1), $rule->rule);
+	}
+
+/**
+ * Tests checking a rule from the set using array access
+ *
+ * @return void
+ */
+	public function testArrayAccessExists() {
+		$Set = new CakeValidationSet('title', array(
+			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'numeric' => array('rule' => 'numeric'),
+			'other' => array('rule' => array('other', 1)),
+		));
+
+		$this->assertTrue(isset($Set['notEmpty']));
+		$this->assertTrue(isset($Set['numeric']));
+		$this->assertTrue(isset($Set['other']));
+		$this->assertFalse(isset($Set['fail']));
+	}
+
+/**
+ * Tests setting a rule in the set using array access
+ *
+ * @return void
+ */
+	public function testArrayAccessSet() {
+		$Set = new CakeValidationSet('title', array(
+			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+		));
+
+		$this->assertFalse(isset($Set['other']));
+		$Set['other'] = array('rule' => array('other', 1));
+		$rule = $Set['other'];
+		$this->assertInstanceOf('CakeRule', $rule);
+		$this->assertEquals(array('other', 1), $rule->rule);
+
+		$this->assertFalse(isset($Set['numeric']));
+		$Set['numeric'] = new CakeRule(array('rule' => 'numeric'));
+		$rule = $Set['numeric'];
+		$this->assertInstanceOf('CakeRule', $rule);
+		$this->assertEquals('numeric', $rule->rule);
+	}
+
+/**
+ * Tests unseting a rule from the set using array access
+ *
+ * @return void
+ */
+	public function testArrayAccessUnset() {
+		$Set = new CakeValidationSet('title', array(
+			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'numeric' => array('rule' => 'numeric'),
+			'other' => array('rule' => array('other', 1)),
+		));
+
+		unset($Set['notEmpty']);
+		$this->assertFalse(isset($Set['notEmpty']));
+
+		unset($Set['numeric']);
+		$this->assertFalse(isset($Set['notEmpty']));
+
+		unset($Set['other']);
+		$this->assertFalse(isset($Set['notEmpty']));
+	}
 }

@@ -467,6 +467,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @return void
  **/
 	public function offsetUnset($field) {
+		$this->_parseRules();
 		unset($this->_fields[$field]);
 	}
 

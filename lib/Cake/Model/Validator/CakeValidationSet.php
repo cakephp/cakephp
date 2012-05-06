@@ -1,6 +1,6 @@
 <?php
 /**
- * ModelValidator.
+ * CakeValidationSet.
  *
  * Provides the Model validation logic.
  *
@@ -27,7 +27,7 @@ App::uses('CakeRule', 'Model/Validator');
  * @package       Cake.Model.Validator
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
-class CakeValidationSet {
+class CakeValidationSet implements ArrayAccess {
 
 /**
  * Holds the ValidationRule objects
@@ -166,10 +166,13 @@ class CakeValidationSet {
  * Sets a ValidationRule $rule for key $key
  *
  * @param mixed $key The key under which the rule should be set
- * @param ValidationRule $rule The ValidationRule to be set
+ * @param CakeRule|array $rule The validation rule to be set
  * @return ModelField
  */
-	public function setRule($key, CakeRule $rule) {
+	public function setRule($key, $rule) {
+		if (!$rule instanceof CakeRule) {
+			$rule = new CakeRule($rule);
+		}
 		$this->_rules[$key] = $rule;
 		return $this;
 	}
@@ -239,6 +242,46 @@ class CakeValidationSet {
 		}
 
 		return $message;
+	}
+
+/**
+ * Returns wheter an index exists in the rule set
+ *
+ * @param string $index name of the rule
+ * @return boolean
+ **/
+	public function offsetExists($index) {
+		return isset($this->_rules[$index]);
+	}
+
+/**
+ * Returns a rule object by its index
+ *
+ * @param string $index name of the rule
+ * @return CakeRule
+ **/
+	public function offsetGet($index) {
+		return $this->_rules[$index];
+	}
+
+/**
+ * Sets or replace a validation rule
+ *
+ * @param string $index name of the rule
+ * @param CakeRule|array rule to add to $index
+ **/
+	public function offsetSet($index, $rule) {
+		$this->setRule($index, $rule);
+	}
+
+/**
+ * Unsets a validation rule
+ *
+ * @param string $index name of the rule
+ * @return void
+ **/
+	public function offsetUnset($index) {
+		unset($this->_rules[$index]);
 	}
 
 }
