@@ -482,7 +482,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Returns the numbers of fields having validation rules
+ * Returns the number of fields having validation rules
  *
  * @return int
  **/

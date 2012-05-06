@@ -274,4 +274,21 @@ class CakeValidationSetTest  extends CakeTestCase {
 		$this->assertEquals(3, $i);
 	}
 
+/**
+ * Tests countable interface
+ *
+ * @return void
+ */
+	public function testCount() {
+		$Set = new CakeValidationSet('title', array(
+			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'numeric' => array('rule' => 'numeric'),
+			'other' => array('rule' => array('other', 1)),
+		));
+		$this->assertCount(3, $Set);
+
+		unset($Set['other']);
+		$this->assertCount(2, $Set);
+	}
+
 }
