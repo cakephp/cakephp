@@ -261,7 +261,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 			$methods[strtolower($method)] = array($this->_model, $method);
 		}
 
-		foreach (array_keys($this->_model->Behaviors->methods()) as $mthod) {
+		foreach (array_keys($this->_model->Behaviors->methods()) as $method) {
 			$methods += array(strtolower($method) => array($this->_model, $method));
 		}
 
