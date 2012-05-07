@@ -310,8 +310,35 @@ class TranslateBehavior extends ModelBehavior {
  * @return boolean
  */
 	public function beforeValidate(Model $model) {
+		unset($this->runtime[$model->alias]['beforeSave']);
+		$this->_setRuntimeData($model);
+		return true;
+	}
+
+/**
+ * beforeSave callback.
+ *
+ * @param Model $model Model save was called on.
+ * @return boolean true.
+ */
+	public function beforeSave(Model $model) {
+		$this->_setRuntimeData($model);
+		return true;
+	}
+
+/**
+ * Sets the runtime data.
+ *
+ * Used from beforeValidate() and beforeSave() for compatibility issues,
+ * and to allow translations to be persisted even when validation
+ * is disabled.
+ *
+ * @param Model $model
+ * @return void
+ */
+	protected function _setRuntimeData(Model $model) {
 		$locale = $this->_getLocale($model);
-		if (empty($locale)) {
+		if (empty($locale) || isset($this->runtime[$model->alias]['beforeSave'])) {
 			return true;
 		}
 		$fields = array_merge($this->settings[$model->alias], $this->runtime[$model->alias]['fields']);
@@ -333,7 +360,6 @@ class TranslateBehavior extends ModelBehavior {
 			}
 		}
 		$this->runtime[$model->alias]['beforeSave'] = $tempData;
-		return true;
 	}
 
 /**

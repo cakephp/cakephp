@@ -3119,7 +3119,7 @@ class TranslatedItem2 extends CakeTestModel {
 /**
  * translateModel property
  *
- * @var string 'TranslateTestModel'
+ * @var string 
  */
 	public $translateModel = 'TranslateWithPrefix';
 
@@ -3163,7 +3163,7 @@ class TranslatedItemWithTable extends CakeTestModel {
 /**
  * translateModel property
  *
- * @var string 'TranslateTestModel'
+ * @var string
  */
 	public $translateModel = 'TranslateTestModel';
 
@@ -3247,6 +3247,13 @@ class TranslatedArticle extends CakeTestModel {
  * @var array
  */
 	public $belongsTo = array('User');
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $hasMany = array('TranslatedItem');
 
 }
 
