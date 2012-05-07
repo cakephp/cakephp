@@ -221,7 +221,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$email->subject('Testing SMTP');
 		$date = date(DATE_RFC2822);
 		$email->setHeaders(array('X-Mailer' => SmtpCakeEmail::EMAIL_CLIENT, 'Date' => $date));
-		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '')));
+		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
 
 		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
 		$data .= "Return-Path: CakePHP Return <pleasereply@cakephp.org>\r\n";
@@ -237,6 +237,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$data .= "\r\n";
 		$data .= "First Line\r\n";
 		$data .= "Second Line\r\n";
+		$data .= "..Third Line\r\n"; // RFC5321 4.5.2.Transparency
 		$data .= "\r\n";
 		$data .= "\r\n\r\n.\r\n";
 
