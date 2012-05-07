@@ -229,6 +229,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 			}
 		}
 
+		$model->getEventManager()->dispatch(new CakeEvent('Model.afterValidate', $model));
 		return $model->validationErrors;
 	}
 

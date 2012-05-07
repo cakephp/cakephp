@@ -744,6 +744,7 @@ class Model extends Object implements CakeEventListener {
 			'Model.beforeFind' => array('callable' => 'beforeFind', 'passParams' => true),
 			'Model.afterFind' => array('callable' => 'afterFind', 'passParams' => true),
 			'Model.beforeValidate' => array('callable' => 'beforeValidate', 'passParams' => true),
+			'Model.afterValidate' => array('callable' => 'afterValidate'),
 			'Model.beforeSave' => array('callable' => 'beforeSave', 'passParams' => true),
 			'Model.afterSave' => array('callable' => 'afterSave', 'passParams' => true),
 			'Model.beforeDelete' => array('callable' => 'beforeDelete', 'passParams' => true),
@@ -3309,6 +3310,14 @@ class Model extends Object implements CakeEventListener {
  */
 	public function beforeValidate($options = array()) {
 		return true;
+	}
+
+/**
+ * Called after data has been checked for errors
+ *
+ * @return void
+ */
+	public function afterValidate() {
 	}
 
 /**

@@ -1880,4 +1880,19 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertFalse(isset($Validator['other']['numeric']));
 		$this->assertTrue(isset($Validator['other']['range']));
 	}
+
+/**
+ * Tests validation callbacks are triggered
+ *
+ * @return void
+ */
+	public function testValidateCallbacks() {
+		$TestModel = $this->getMock('Article', array('beforeValidate', 'afterValidate'));
+		$TestModel->expects($this->once())->method('beforeValidate');
+		$TestModel->expects($this->once())->method('afterValidate');
+
+		$TestModel->set(array('title' => '', 'body' => 'body'));
+		$TestModel->validates();
+	}
+
 }
