@@ -1833,4 +1833,51 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertCount(2, $Validator);
 	}
 
+/**
+ * Tests it is possible to add validation rules
+ *
+ * @return void
+ */
+	public function testAddRule() {
+		$TestModel = new Article();
+		$Validator = $TestModel->validator();
+
+		$set = array(
+			'numeric' => array('rule' => 'numeric', 'allowEmpty' => false),
+			'range' => array('rule' => array('between', 1, 5), 'allowEmpty' => false),
+		);
+
+		$Validator->add('other', 'numeric', array('rule' => 'numeric', 'allowEmpty' => false));
+		$Validator->add('other', 'range', array('rule' => array('between', 1, 5), 'allowEmpty' => false));
+		$rules = $Validator['other'];
+		$this->assertEquals('other', $rules->field);
+
+		$validators = $rules->getRules();
+		$this->assertCount(2, $validators);
+		$this->assertEquals('numeric', $validators['numeric']->rule);
+		$this->assertEquals(array('between', 1, 5), $validators['range']->rule);
+	}
+
+/**
+ * Tests it is possible to remove validation rules
+ *
+ * @return void
+ */
+	public function testRemoveRule() {
+		$TestModel = new Article();
+		$Validator = $TestModel->validator();
+
+		$this->assertTrue(isset($Validator['title']));
+		$Validator->remove('title');
+		$this->assertFalse(isset($Validator['title']));
+
+		$Validator->add('other', 'numeric', array('rule' => 'numeric', 'allowEmpty' => false));
+		$Validator->add('other', 'range', array('rule' => array('between', 1, 5), 'allowEmpty' => false));
+		$this->assertTrue(isset($Validator['other']));
+
+		$Validator->remove('other', 'numeric');
+		$this->assertTrue(isset($Validator['other']));
+		$this->assertFalse(isset($Validator['other']['numeric']));
+		$this->assertTrue(isset($Validator['other']['range']));
+	}
 }

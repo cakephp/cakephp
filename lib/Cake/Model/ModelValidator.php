@@ -491,4 +491,38 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 		return count($this->_fields);
 	}
 
+/**
+ * Adds a new rule to a field's rule set
+ *
+ * @param string $field The name of the field from wich the rule will be removed
+ * @param array|CakeRule $rule the rule to be added to the field's rule set
+ * @return ModelValidator this instance
+ **/
+	public function add($field, $name, $rule) {
+		$this->_parseRules();
+		if (!isset($this->_fields[$field])) {
+			$rule = array($name => $rule);
+			$this->_fields[$field] = new CakeValidationSet($field, $rule, $this->getMethods());
+		} else {
+			$this->_fields[$field]->setRule($name, $rule);
+		}
+		return $this;
+	}
+
+/**
+ * Removes a rule from the set by its name
+ *
+ * @param string $field The name of the field from wich the rule will be removed
+ * @param string $rule the name of the rule to be removed
+ * @return ModelValidator this instance
+ **/
+	public function remove($field, $rule = null) {
+		$this->_parseRules();
+		if ($rule === null) {
+			unset($this->_fields[$field]);
+		} else {
+			$this->_fields[$field]->removeRule($rule);
+		}
+		return $this;
+	}
 }
