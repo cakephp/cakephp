@@ -48,6 +48,15 @@ class CakeTime {
  * @see CakeTime::timeAgoInWords()
  */
 	public static $wordFormat = 'j/n/y';
+	
+/**
+ * The format to use when formatting a time using `CakeTime::niceShort()`
+ * and the difference is between 3 and 7 days
+ *
+ * @var string
+ * @see CakeTime::niceShort()
+ */
+	public static $niceShortFormat = '%d/%m, %H:%M';
         
 /**
  * The format to use when formatting a time using `CakeTime::timeAgoInWords()`
@@ -378,9 +387,9 @@ class CakeTime {
 		} elseif (self::isTomorrow($dateString, $timezone)) {
 			$ret = __d('cake', 'Tomorrow, %s', self::_strftime("%H:%M", $date));
 		} elseif (self::wasWithinLast('7 days', $dateString, $timezone)) {
-			$ret = sprintf('%s, %s', $day[$d], self::_strftime("%H:%M", $date));
+			$ret = sprintf('%s %s', $day[$d], self::_strftime(self::$niceShortFormat, $date));
 		} elseif (self::isWithinNext('7 days', $dateString, $timezone)) {
-			$ret = __d('cake', 'On %s, %s', $day[$d], self::_strftime("%H:%M", $date));
+			$ret = __d('cake', 'On %s %s', $day[$d], self::_strftime(self::$niceShortFormat, $date));
 		} else {
 			$format = self::convertSpecifiers("%b %eS{$y}, %H:%M", $date);
 			$ret = self::_strftime($format, $date);
@@ -632,7 +641,10 @@ class CakeTime {
  *    - second => The format if seconds > 0 (default "second")
  * - `end` => The end of relative time telling
  * - `userOffset` => Users offset from GMT (in hours)
- * - `element` => A wrapping HTML element (e.g. span or div)
+ * - `element` => A wrapping HTML element (array, default null)
+ *    - tag =>    The tag to wrap the time in (default "span")
+ *    - class =>  The CSS class to put on the wrapping element (default "timeAgoInWords")
+ *    - title =>  The title of the element (default null = the input date)
  *
  * Relative dates look something like this:
  *	3 weeks, 4 days ago
@@ -643,6 +655,8 @@ class CakeTime {
  * The returned string includes 'ago' or 'on' and assumes you'll properly add a word
  * like 'Posted ' before the function output.
  *
+ * NOTE: If the difference is one week or more, the lowest level of accuracy is day
+ *
  * @param string $dateTime Datetime string or Unix timestamp
  * @param array $options Default format if timestamp is used in $dateString
  * @return string Relative time string.
@@ -652,7 +666,7 @@ class CakeTime {
 		$timezone = null;
 		$format = self::$wordFormat;
 		$end = self::$wordEnd;
-		$element = false;
+		$element = null;
 		$accuracy = self::$wordAccuracy;
                 
 		if (is_array($options)) {
@@ -663,11 +677,31 @@ class CakeTime {
 			}
 
 			if (isset($options['accuracy'])) {
-				$accuracy = array_merge($accuracy, $options['accuracy']);
+				if (is_array($options['accuracy'])) {
+					$accuracy = array_merge($accuracy, $options['accuracy']);
+				} else {
+					foreach ($accuracy as $key => $level) {
+						$accuracy[$key] = $options['accuracy'];
+					}
+				}
 			}
 
 			if (isset($options['element'])) {
-				$element = $options['element'];
+				$element_options = array(
+					'tag' => 'span',
+					'class' => 'timeAgoInWords',
+					'title' => $dateTime
+				);
+				if (is_array($options['element'])) {
+					$element = array_merge($element_options, $options['element']);
+				} else {
+					if ($options['element']) {
+						$element = $element_options;
+						$element['tag'] = $options['element'];
+					} else {
+						$element = null;
+					}
+				}
 			}
 
 			if (isset($options['format'])) {
@@ -810,10 +844,17 @@ class CakeTime {
 		if (self::wasWithinLast('7 days', $dateTime, $timezone) || self::isWithinNext('7 days', $dateTime, $timezone)) {
 			$relativeDate = self::niceShort($dateTime , $timezone);
 		}
+		
+		// If now
+		if ($diff == 0) {
+			$relativeDate = __d('cake', 'just now', 'just now');
+		}
 
 		// Apply HTML element
 		if ($element) {
-			$relativeDate = '<' . $element . ' title="' . $dateTime . '" class="' . $element . '-date">' . $relativeDate . '</' . $element . '>';
+			$title = isset($element['title']) ? ' title="'.$element['title'].'"' : '';
+			$class = isset($element['class']) ? ' class="'.$element['class'].'"' : '';
+			$relativeDate = '<'.$element['tag'].''.$title.$class.'>'.$relativeDate.'</'.$element['tag'].'>';
 		}
 
 		return $relativeDate;
