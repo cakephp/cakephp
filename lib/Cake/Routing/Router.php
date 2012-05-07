@@ -957,12 +957,19 @@ class Router {
 		$out = '';
 
 		if (is_array($q)) {
-			$q = array_merge($extra, $q);
+			$q = array_merge($q, $extra);
 		} else {
 			$out = $q;
 			$q = $extra;
 		}
-		$out .= http_build_query($q, null, $join);
+		$addition = http_build_query($q, null, $join);
+
+		if ($out && $addition) {
+			$out .= $join;
+		}
+
+		$out .= $addition;
+
 		if (isset($out[0]) && $out[0] != '?') {
 			$out = '?' . $out;
 		}
