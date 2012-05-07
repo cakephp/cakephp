@@ -531,7 +531,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 			'slug' => 'fourth_translated',
 			'title' => 'Leyenda #4',
 			'content' => 'Contenido #4',
-			'translated_article_id' => null
+			'translated_article_id' => 1,
 		);
 		$TestModel->create($data);
 		$TestModel->save();
@@ -724,10 +724,12 @@ class TranslateBehaviorTest extends CakeTestCase {
 			),
 			'TranslatedItem' => array(
 				array(
+					'slug' => '',
 					'title' => 'Nuevo leyenda #1',
 					'content' => 'Upraveny obsah #1'
 				),
 				array(
+					'slug' => '',
 					'title' => 'New Title #2',
 					'content' => 'New Content #2'
 				),
