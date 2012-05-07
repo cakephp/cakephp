@@ -3502,6 +3502,14 @@ class TranslatedArticle extends CakeTestModel {
  * @access public
  */
 	var $belongsTo = array('User');
+
+/**
+ * hasMany property
+ *
+ * @var array
+ * @access public
+ */
+	var $hasMany = array('TranslatedItem');
 }
 
 class CounterCacheUser extends CakeTestModel {

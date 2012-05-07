@@ -42,6 +42,7 @@ class TranslatedItemFixture extends CakeTestFixture {
  */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'translated_article_id' => array('type' => 'integer'),
 		'slug' => array('type' => 'string', 'null' => false)
 	);
 
@@ -52,8 +53,8 @@ class TranslatedItemFixture extends CakeTestFixture {
  * @access public
  */
 	var $records = array(
-		array('slug' => 'first_translated'),
-		array('slug' => 'second_translated'),
-		array('slug' => 'third_translated')
+		array('translated_article_id' => 1, 'slug' => 'first_translated'),
+		array('translated_article_id' => 1, 'slug' => 'second_translated'),
+		array('translated_article_id' => 1, 'slug' => 'third_translated')
 	);
 }
