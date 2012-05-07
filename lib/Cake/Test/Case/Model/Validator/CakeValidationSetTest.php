@@ -291,4 +291,26 @@ class CakeValidationSetTest  extends CakeTestCase {
 		$this->assertCount(2, $Set);
 	}
 
+/**
+ * Test removeRule method
+ *
+ * @return void
+ */
+	public function testRemoveRule() {
+		$Set = new CakeValidationSet('title', array(
+			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'numeric' => array('rule' => 'numeric'),
+			'other' => array('rule' => array('other', 1)),
+		));
+
+		$Set->removeRule('notEmpty');
+		$this->assertFalse(isset($Set['notEmpty']));
+
+		$Set->removeRule('numeric');
+		$this->assertFalse(isset($Set['numeric']));
+
+		$Set->removeRule('other');
+		$this->assertFalse(isset($Set['other']));
+	}
+
 }

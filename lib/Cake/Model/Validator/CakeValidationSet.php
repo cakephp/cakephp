@@ -167,13 +167,24 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param mixed $key The key under which the rule should be set
  * @param CakeRule|array $rule The validation rule to be set
- * @return ModelField
+ * @return CakeValidationSet this instance
  */
 	public function setRule($key, $rule) {
 		if (!$rule instanceof CakeRule) {
 			$rule = new CakeRule($rule);
 		}
 		$this->_rules[$key] = $rule;
+		return $this;
+	}
+
+/**
+ * Removes a validation rule from the set
+ *
+ * @param mixed $key The key under which the rule should be unset
+ * @return CakeValidationSet this instance
+ */
+	public function removeRule($key) {
+		unset($this->_rules[$key]);
 		return $this;
 	}
 
