@@ -111,6 +111,13 @@ class Shell extends Object {
 	public $uses = array();
 
 /**
+ * This shell's primary model class name, the first model in the $uses property
+ *
+ * @var string
+ */
+	public $modelClass = null;
+
+/**
  * Task Collection for the command, used to create Tasks.
  *
  * @var TaskCollection
@@ -176,8 +183,10 @@ class Shell extends Object {
 		if ($this->tasks !== null && $this->tasks !== false) {
 			$this->_mergeVars(array('tasks'), $parent, true);
 		}
-		if ($this->uses !== null && $this->uses !== false) {
+		if (!empty($this->uses)) {
 			$this->_mergeVars(array('uses'), $parent, false);
+			list($plugin, $modelClass) = pluginSplit($this->uses[0], true);
+			$this->modelClass = $modelClass;
 		}
 	}
 
@@ -222,35 +231,69 @@ class Shell extends Object {
 	}
 
 /**
- * If $uses = true
- * Loads AppModel file and constructs AppModel class
- * makes $this->AppModel available to subclasses
- * If public $uses is an array of models will load those models
+ * If $uses is an array load each of the models in the array
  *
  * @return boolean
  */
 	protected function _loadModels() {
-		if ($this->uses === null || $this->uses === false) {
-			return;
-		}
-		App::uses('ClassRegistry', 'Utility');
-
-		if ($this->uses !== true && !empty($this->uses)) {
-			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
-
-			$modelClassName = $uses[0];
-			if (strpos($uses[0], '.') !== false) {
-				list($plugin, $modelClassName) = explode('.', $uses[0]);
-			}
-			$this->modelClass = $modelClassName;
-
-			foreach ($uses as $modelClass) {
-				list($plugin, $modelClass) = pluginSplit($modelClass, true);
-				$this->{$modelClass} = ClassRegistry::init($plugin . $modelClass);
+		if (is_array($this->uses)) {
+			$this->modelClass = null;
+			foreach ($this->uses as $modelClass) {
+				$this->loadModel($modelClass);
 			}
 			return true;
 		}
 		return false;
+	}
+
+/**
+ * Lazy loads models using the loadModel() method if declared in $uses
+ *
+ * @param string $name
+ * @return void
+ */
+	public function __isset($name) {
+		if (is_array($this->uses)) {
+			foreach ($this->uses as $modelClass) {
+				list($plugin, $class) = pluginSplit($modelClass, true);
+				if ($name === $class) {
+					return $this->loadModel($modelClass);
+				}
+			}
+		}
+		return false;
+	}
+
+/**
+ * Loads and instantiates models required by this shell.
+ *
+ * @param string $modelClass Name of model class to load
+ * @param mixed $id Initial ID the instanced model class should have
+ * @return mixed true when single model found and instance created, error returned if model not found.
+ * @throws MissingModelException if the model class cannot be found.
+ */
+	public function loadModel($modelClass = null, $id = null) {
+		if ($modelClass === null) {
+			return false;
+		}
+
+		$this->uses = ($this->uses) ? (array)$this->uses : array();
+		if (!in_array($modelClass, $this->uses)) {
+			$this->uses[] = $modelClass;
+		}
+
+		list($plugin, $modelClass) = pluginSplit($modelClass, true);
+		if (!isset($this->modelClass)) {
+			$this->modelClass = $modelClass;
+		}
+
+		$this->{$modelClass} = ClassRegistry::init(array(
+			'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
+		));
+		if (!$this->{$modelClass}) {
+			throw new MissingModelException($modelClass);
+		}
+		return true;
 	}
 
 /**
