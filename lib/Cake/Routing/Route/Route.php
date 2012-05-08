@@ -376,6 +376,13 @@ class Route {
 		}
 		unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base']);
 
+		// Move extension into the hostOptions so its not part of
+		// reverse matches.
+		if (isset($url['_ext'])) {
+			$hostOptions['_ext'] = $url['_ext'];
+			unset($url['_ext']);
+		}
+
 		if (isset($defaults['prefix'])) {
 			$url['prefix'] = $defaults['prefix'];
 		}
@@ -502,6 +509,9 @@ class Route {
 				$host,
 				$out
 			);
+		}
+		if (!empty($params['_ext'])) {
+			$out .= '.' . $params['_ext'];
 		}
 		if (!empty($query)) {
 			$out = rtrim($out, '/');
