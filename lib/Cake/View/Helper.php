@@ -564,17 +564,17 @@ class Helper extends Object {
 
 /**
  * Gets the currently-used model field of the rendering context.
- * Strips off field suffixes such as year, month, day, hour, min, meridian
- * when the current entity is longer than 2 elements.
+ * Strips off field suffixes such as year, month, day, hour, min, meridian and numbers.
  *
  * @return string
  */
 	public function field() {
 		$entity = $this->entity();
-		$count = count($entity);
-		$last = $entity[$count - 1];
-		if ($count > 2 && in_array($last, $this->_fieldSuffixes)) {
-			$last = isset($entity[$count - 2]) ? $entity[$count - 2] : null;
+		for ($i = count($entity) - 1; $i >= 0; $i--) {
+			if (!is_numeric($entity[$i]) && !in_array($entity[$i], $this->_fieldSuffixes)) {
+				$last = $entity[$i];
+				break;
+			}
 		}
 		return $last;
 	}
