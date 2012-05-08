@@ -1263,7 +1263,8 @@ class Model extends Object implements CakeEventListener {
 
 				$result = str_replace(array_keys($date), array_values($date), $format);
 
-				if (isset($columnTypes['formatter'])) {
+				// Don't trigger on date()
+				if (isset($columnTypes['formatter']) && $columnTypes['formatter'] !== 'date') {
 					$result = call_user_func($columnTypes['formatter'], $format, $result);
 				}
 
