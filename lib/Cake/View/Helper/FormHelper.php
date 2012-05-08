@@ -81,6 +81,13 @@ class FormHelper extends AppHelper {
 	protected $_inputDefaults = array();
 
 /**
+ * Persistent default options used by label(). Set by FormHelper::create().
+ *
+ * @var array
+ */
+	protected $_labelDefaults = array();
+
+/**
  * An array of field names that have been excluded from
  * the Token hash used by SecurityComponent's validatePost method
  *
@@ -388,10 +395,13 @@ class FormHelper extends AppHelper {
 			'url' => null,
 			'default' => true,
 			'encoding' => strtolower(Configure::read('App.encoding')),
-			'inputDefaults' => array()),
+			'inputDefaults' => array(),
+			'labelDefaults' => array()),
 		$options);
 		$this->_inputDefaults = $options['inputDefaults'];
+		$this->_labelDefaults = $options['labelDefaults'];
 		unset($options['inputDefaults']);
+		unset($options['labelDefaults']);
 
 		if (!isset($options['id'])) {
 			$domId = isset($options['action']) ? $options['action'] : $this->request['action'];
@@ -829,6 +839,14 @@ class FormHelper extends AppHelper {
 
 		if (is_string($options)) {
 			$options = array('class' => $options);
+		}
+
+		if(isset($this->_labelDefaults)) {
+			if(is_string($this->_labelDefaults) && !isset($options['class'])) {
+				$options['class'] = $this->_labelDefaults;
+			} else {
+				$options = array_merge($this->_labelDefaults, $options);
+			}
 		}
 
 		if (isset($options['for'])) {
