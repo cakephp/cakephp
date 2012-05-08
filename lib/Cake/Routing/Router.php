@@ -636,6 +636,13 @@ class Router {
 		}
 
 		$output = $frag = null;
+		$hasColonSlash = false;
+		$hasLeadingSlash = false;
+
+		if (is_string($url)) {
+			$hasColonSlash = strpos($url, '://') !== false;
+			$hasLeadingSlash = isset($url[0]) ? $url[0] === '/' : false;
+		}
 
 		if (empty($url)) {
 			$output = isset($here) ? $here : '/';
@@ -693,32 +700,21 @@ class Router {
 				'plugin' => $params['plugin']
 			);
 			$output = self::$_routes->match($url, $params);
-		// } elseif (is_string($url) && $url[0] !== '/') {
+		} elseif (is_string($url) && !$hasLeadingSlash && !$hasColonSlash) {
 			// named route.
 
 		} else {
 			// String urls.
 			if (
-				(strpos($url, '://') !== false ||
+				($hasColonSlash ||
 				(strpos($url, 'javascript:') === 0) ||
 				(strpos($url, 'mailto:') === 0)) ||
 				(!strncmp($url, '#', 1))
 			) {
 				return $url;
 			}
-			if (substr($url, 0, 1) === '/') {
+			if ($hasLeadingSlash) {
 				$output = substr($url, 1);
-			} else {
-				foreach (static::$_prefixes as $prefix) {
-					if (isset($params[$prefix])) {
-						$output .= $prefix . '/';
-						break;
-					}
-				}
-				if (!empty($params['plugin']) && $params['plugin'] !== $params['controller']) {
-					$output .= Inflector::underscore($params['plugin']) . '/';
-				}
-				$output .= Inflector::underscore($params['controller']) . '/' . $url;
 			}
 		}
 		$protocol = preg_match('#^[a-z][a-z0-9+-.]*\://#i', $output);
