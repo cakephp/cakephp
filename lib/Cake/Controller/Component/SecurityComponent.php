@@ -367,7 +367,7 @@ class SecurityComponent extends Component {
  * @return boolean true if authentication required
  */
 	protected function _authRequired($controller) {
-		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($this->request->data)) {
+		if (is_array($this->requireAuth) && !empty($this->requireAuth)) {
 			$requireAuth = $this->requireAuth;
 
 			if (in_array($this->request->params['action'], $requireAuth) || $this->requireAuth == array('*')) {
