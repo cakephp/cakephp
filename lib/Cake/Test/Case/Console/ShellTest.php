@@ -45,6 +45,13 @@ class ShellTestShell extends Shell {
 	public $stopped;
 
 /**
+ * testMessage property
+ *
+ * @var string
+ */
+	public $testMessage = 'all your base are belong to us';
+
+/**
  * stop method
  *
  * @param integer $status
@@ -62,6 +69,10 @@ class ShellTestShell extends Shell {
 	}
 
 	protected function no_access() {
+	}
+
+	public function log_something() {
+		$this->log($this->testMessage);
 	}
 	//@codingStandardsIgnoreEnd
 
@@ -797,6 +808,36 @@ TEXT;
 		$parser = $this->Shell->getOptionParser();
 
 		$this->assertEquals('plugin.test', $parser->command());
+	}
+
+/**
+ * Test file and console and logging
+ */
+	public function testFileAndConsoleLogging() {
+		// file logging
+		$this->Shell->log_something();
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+
+		unlink(LOGS . 'error.log');
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+
+		// both file and console logging
+		require_once CORE_TEST_CASES . DS . 'Log' . DS . 'Engine' . DS . 'ConsoleLogTest.php';
+		$mock = $this->getMock('ConsoleLog', array('write'), array(
+			array('types' => 'error'),
+			));
+		TestCakeLog::config('console', array(
+			'engine' => 'ConsoleLog',
+			'stream' => 'php://stderr',
+			));
+		TestCakeLog::replace('console', $mock);
+		$mock->expects($this->once())
+			->method('write')
+			->with('error', $this->Shell->testMessage);
+		$this->Shell->log_something();
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+		$contents = file_get_contents(LOGS . 'error.log');
+		$this->assertContains($this->Shell->testMessage, $contents);
 	}
 
 }
