@@ -717,6 +717,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 		$data = array(
 			'TranslatedArticle' => array(
+				'id' => 4,
 				'user_id' => 1,
 				'published' => 'Y',
 				'title' => 'Title (eng) #1',
