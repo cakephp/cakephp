@@ -51,7 +51,7 @@ class DebugTransportTest extends CakeTestCase {
 		$email->subject('Testing Message');
 		$date = date(DATE_RFC2822);
 		$email->setHeaders(array('X-Mailer' => DebugCakeEmail::EMAIL_CLIENT, 'Date' => $date));
-		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '')));
+		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
 
 		$headers = "From: CakePHP Test <noreply@cakephp.org>\r\n";
 		$headers .= "To: CakePHP <cake@cakephp.org>\r\n";
@@ -66,6 +66,7 @@ class DebugTransportTest extends CakeTestCase {
 
 		$data = "First Line\r\n";
 		$data .= "Second Line\r\n";
+		$data .= ".Third Line\r\n"; // Not use 'RFC5321 4.5.2.Transparency' in DebugTransport.
 
 		$result = $this->DebugTransport->send($email);
 

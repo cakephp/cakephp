@@ -168,7 +168,16 @@ class SmtpTransport extends AbstractTransport {
 
 		$headers = $this->_cakeEmail->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject'));
 		$headers = $this->_headersToString($headers);
-		$message = implode("\r\n", $this->_cakeEmail->message());
+		$lines = $this->_cakeEmail->message();
+		$messages = array();
+		foreach ($lines as $line) {
+			if ((!empty($line)) && ($line[0] === '.')) {
+				$messages[] = '.' . $line;
+			} else {
+				$messages[] = $line;
+			}
+		}
+		$message = implode("\r\n", $messages);
 		$this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
 		$this->_content = array('headers' => $headers, 'message' => $message);
 	}
