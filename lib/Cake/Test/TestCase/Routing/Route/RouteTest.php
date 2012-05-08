@@ -424,6 +424,21 @@ class RouteTest extends TestCase {
 	}
 
 /**
+ * Test that extensions work.
+ *
+ * @return void
+ */
+	public function testMatchWithExtension() {
+		$route = new Route('/:controller/:action');
+		$result = $route->match(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'_ext' => 'json'
+		));
+		$this->assertEquals('/posts/index.json', $result);
+	}
+
+/**
  * test that match with patterns works.
  *
  * @return void
