@@ -274,7 +274,11 @@ class CakeLog {
 		}
 		foreach (self::$_Collection->enabled() as $streamName) {
 			$logger = self::$_Collection->{$streamName};
-			$logger->write($type, $message);
+			$config = $logger->config();
+			$types = $config['types'];
+			if (empty($types) || in_array($type, $types)) {
+				$logger->write($type, $message);
+			}
 		}
 		return true;
 	}
