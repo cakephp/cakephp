@@ -21,7 +21,7 @@ define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'Case');
 define('APP_TEST_CASES', TESTS . 'Case');
 
 App::uses('CakeTestSuiteCommand', 'TestSuite');
-
+App::uses('Router', 'Routing');
 /**
  * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
  *
@@ -93,6 +93,8 @@ class CakeTestSuiteDispatcher {
 	public function dispatch() {
 		$this->_checkPHPUnit();
 		$this->_parseParams();
+
+		Router::setRequestInfo($this->params);
 
 		if ($this->params['case']) {
 			$value = $this->_runTestCase();
