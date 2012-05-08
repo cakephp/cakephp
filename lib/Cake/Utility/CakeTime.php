@@ -651,6 +651,8 @@ class CakeTime {
  * The returned string includes 'ago' or 'on' and assumes you'll properly add a word
  * like 'Posted ' before the function output.
  *
+ * NOTE: If the difference is one week or more, the lowest level of accuracy is day
+ *
  * @param string $dateTime Datetime string or Unix timestamp
  * @param array $options Default format if timestamp is used in $dateString
  * @return string Relative time string.
@@ -671,7 +673,13 @@ class CakeTime {
 			}
 
 			if (isset($options['accuracy'])) {
-				$accuracy = array_merge($accuracy, $options['accuracy']);
+				if (is_array($options['accuracy'])) {
+					$accuracy = array_merge($accuracy, $options['accuracy']);
+				} else {
+					foreach ($accuracy as $key => $level) {
+						$accuracy[$key] = $options['accuracy'];
+					}
+				}
 			}
 
 			if (isset($options['element'])) {
