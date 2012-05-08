@@ -733,6 +733,8 @@ class TranslateBehaviorTest extends CakeTestCase {
 			'conditions' => array('translated_article_id' => $Model->id)
 		));
 		$this->assertCount(2, $result);
+		$this->assertEquals($data['TranslatedItem'][0]['title'], $result[0]['TranslatedItem']['title']);
+		$this->assertEquals($data['TranslatedItem'][1]['title'], $result[1]['TranslatedItem']['title']);
 	}
 
 /**
