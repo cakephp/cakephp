@@ -16,8 +16,12 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class TestPluginLog implements CakeLogInterface {
+
+App::uses('BaseLog', 'Log/Engine');
+
+class TestPluginLog extends BaseLog {
 
 	public function write($type, $message) {
 	}
+
 }
