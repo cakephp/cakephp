@@ -79,6 +79,28 @@ class CakeLogTest extends CakeTestCase {
 	}
 
 /**
+ * test config() with valid key name
+ *
+ * @return void
+ */
+	public function testValidKeyName() {
+		CakeLog::config('valid', array('engine' => 'FileLog'));
+		$stream = CakeLog::stream('valid');
+		$this->assertInstanceOf('FileLog', $stream);
+		CakeLog::drop('valid');
+	}
+
+/**
+ * test config() with invalid key name
+ *
+ * @expectedException CakeLogException
+ * @return void
+ */
+	public function testInvalidKeyName() {
+		CakeLog::config('1nv', array('engine' => 'FileLog'));
+	}
+
+/**
  * test that loggers have to implement the correct interface.
  *
  * @expectedException CakeLogException
@@ -102,7 +124,7 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 
 		$result = CakeLog::configured();
-		$this->assertEquals(array('default'), $result);
+		$this->assertEquals(array('error'), $result);
 		unlink(LOGS . 'error.log');
 	}
 
@@ -168,6 +190,95 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 1/', $result);
 		$this->assertRegExp('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 2$/', $result);
 		unlink(LOGS . 'error.log');
+	}
+
+/**
+ * test selective logging
+ */
+	public function testSelectiveLogging() {
+		if (file_exists(LOGS . 'spam.log')) {
+			unlink(LOGS . 'spam.log');
+		}
+		if (file_exists(LOGS . 'eggs.log')) {
+			unlink(LOGS . 'eggs.log');
+		}
+		CakeLog::config('spam', array(
+			'engine' => 'FileLog',
+			'types' => 'info',
+			'file' => 'spam',
+		));
+		CakeLog::config('eggs', array(
+			'engine' => 'FileLog',
+			'types' => array('eggs', 'info', 'error', 'warning'),
+			'file' => 'eggs',
+		));
+
+		$testMessage = 'selective logging';
+		CakeLog::write(LOG_WARNING, $testMessage);
+
+		$this->assertTrue(file_exists(LOGS . 'eggs.log'));
+		$this->assertFalse(file_exists(LOGS . 'spam.log'));
+
+		CakeLog::write(LOG_INFO, $testMessage);
+		$this->assertTrue(file_exists(LOGS . 'spam.log'));
+
+		$contents = file_get_contents(LOGS . 'spam.log');
+		$this->assertContains('Info: ' . $testMessage, $contents);
+		$contents = file_get_contents(LOGS . 'eggs.log');
+		$this->assertContains('Info: ' . $testMessage, $contents);
+
+		if (file_exists(LOGS . 'spam.log')) {
+			unlink(LOGS . 'spam.log');
+		}
+		if (file_exists(LOGS . 'eggs.log')) {
+			unlink(LOGS . 'eggs.log');
+		}
+	}
+
+/**
+ * test enable
+ * @expectedException CakeLogException
+ */
+	public function testStreamEnable() {
+		CakeLog::config('spam', array(
+			'engine' => 'FileLog',
+			'file' => 'spam',
+			));
+		$this->assertTrue(CakeLog::enabled('spam'));
+		CakeLog::drop('spam');
+		CakeLog::enable('bogus_stream');
+	}
+
+/**
+ * test disable
+ * @expectedException CakeLogException
+ */
+	public function testStreamDisable() {
+		CakeLog::config('spam', array(
+			'engine' => 'FileLog',
+			'file' => 'spam',
+			));
+		$this->assertTrue(CakeLog::enabled('spam'));
+		CakeLog::disable('spam');
+		$this->assertFalse(CakeLog::enabled('spam'));
+		CakeLog::drop('spam');
+		CakeLog::enable('bogus_stream');
+	}
+
+/**
+ * test enabled() invalid stream
+ * @expectedException CakeLogException
+ */
+	public function testStreamEnabledInvalid() {
+		CakeLog::enabled('bogus_stream');
+	}
+
+/**
+ * test disable invalid stream
+ * @expectedException CakeLogException
+ */
+	public function testStreamDisableInvalid() {
+		CakeLog::disable('bogus_stream');
 	}
 
 }
