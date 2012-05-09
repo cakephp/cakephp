@@ -666,7 +666,6 @@ class CakeTime {
 		$timezone = null;
 		$format = self::$wordFormat;
 		$end = self::$wordEnd;
-		$element = null;
 		$accuracy = self::$wordAccuracy;
                 
 		if (is_array($options)) {
@@ -682,24 +681,6 @@ class CakeTime {
 				} else {
 					foreach ($accuracy as $key => $level) {
 						$accuracy[$key] = $options['accuracy'];
-					}
-				}
-			}
-
-			if (isset($options['element'])) {
-				$element_options = array(
-					'tag' => 'span',
-					'class' => 'timeAgoInWords',
-					'title' => $dateTime
-				);
-				if (is_array($options['element'])) {
-					$element = array_merge($element_options, $options['element']);
-				} else {
-					if ($options['element']) {
-						$element = $element_options;
-						$element['tag'] = $options['element'];
-					} else {
-						$element = null;
 					}
 				}
 			}
@@ -848,13 +829,6 @@ class CakeTime {
 		// If now
 		if ($diff == 0) {
 			$relativeDate = __d('cake', 'just now', 'just now');
-		}
-
-		// Apply HTML element
-		if ($element) {
-			$title = isset($element['title']) ? ' title="'.$element['title'].'"' : '';
-			$class = isset($element['class']) ? ' class="'.$element['class'].'"' : '';
-			$relativeDate = '<'.$element['tag'].''.$title.$class.'>'.$relativeDate.'</'.$element['tag'].'>';
 		}
 
 		return $relativeDate;
