@@ -45,12 +45,14 @@ class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
  */
 	public $useDbConfig = '<?php echo $useDbConfig; ?>';
 
-<?php endif;?>
-<?php if ($useTable && $useTable !== Inflector::tableize($name)):
-	$table = "'$useTable'";
-	echo "/**\n * Use table\n *\n * @var mixed False or table name\n */\n";
-	echo "\tpublic \$useTable = $table;\n\n";
+<?php endif;
+
+if ($useTable && $useTable !== Inflector::tableize($name)):
+    $table = "'$useTable'";
+    echo "/**\n * Use table\n *\n * @var mixed False or table name\n */\n";
+    echo "\tpublic \$useTable = $table;\n\n";
 endif;
+
 if ($primaryKey !== 'id'): ?>
 /**
  * Primary key field
@@ -60,6 +62,7 @@ if ($primaryKey !== 'id'): ?>
 	public $primaryKey = '<?php echo $primaryKey; ?>';
 
 <?php endif;
+
 if ($displayField): ?>
 /**
  * Display field
