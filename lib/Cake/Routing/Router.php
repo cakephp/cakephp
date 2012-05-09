@@ -607,7 +607,7 @@ class Router {
  *   a list of query string parameters.
  * @return string Full translated URL with base path.
  */
-	public static function url($url = null, $options = false) {
+	public static function url($url = null, $options = array()) {
 		$full = false;
 		if (is_bool($options)) {
 			$full = $options;
@@ -714,7 +714,9 @@ class Router {
 					$url
 				));
 			}
-			$url = $options + $route->defaults + array('_name' => $url);
+			$url = $options +
+				$route->defaults +
+				array('_name' => $url);
 			$output = self::$_routes->match($url, $params);
 		} else {
 			// String urls.

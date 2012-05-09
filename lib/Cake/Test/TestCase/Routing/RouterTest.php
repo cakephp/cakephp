@@ -791,6 +791,11 @@ class RouterTest extends TestCase {
  */
 	public function testUrlGenerationNamedRoute() {
 		Router::connect(
+			'/users',
+			array('controller' => 'users', 'action' => 'index'),
+			array('_name' => 'users-index')
+		);
+		Router::connect(
 			'/users/:name',
 			array('controller' => 'users', 'action' => 'view'),
 			array('_name' => 'test')
@@ -800,6 +805,9 @@ class RouterTest extends TestCase {
 
 		$url = Router::url('test', array('name' => 'mark', 'page' => 1, 'sort' => 'title', 'dir' => 'desc'));
 		$this->assertEquals('/users/mark?page=1&sort=title&dir=desc', $url);
+
+		$url = Router::url('users-index');
+		$this->assertEquals('/users', $url);
 	}
 
 /**
