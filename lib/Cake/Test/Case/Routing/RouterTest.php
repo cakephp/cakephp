@@ -2626,5 +2626,13 @@ class RouterTest extends CakeTestCase {
 		$result = Router::queryString('foo=bar', array('php' => 'nut', 'jose' => 'zap'), true);
 		$expected = '?foo=bar&amp;php=nut&amp;jose=zap';
 		$this->assertEquals($expected, $result);
+
+		$result = Router::queryString('foo=bar&amp;', array('php' => 'nut', 'jose' => 'zap'), true);
+		$expected = '?foo=bar&amp;php=nut&amp;jose=zap';
+		$this->assertEquals($expected, $result);
+
+		$result = Router::queryString('foo=bar&', array('php' => 'nut', 'jose' => 'zap'));
+		$expected = '?foo=bar&php=nut&jose=zap';
+		$this->assertEquals($expected, $result);
 	}
 }
