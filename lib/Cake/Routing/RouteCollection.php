@@ -181,12 +181,22 @@ class RouteCollection implements \Countable {
 	}
 
 /**
- * Get a route out of the collection.
+ * Get route(s) out of the collection.
  *
- * @param int $index The index of the route you want.
+ * If a string argument is provided, the first matching
+ * route for the provided name will be returned.
+ *
+ * If an integer argument is provided, the route
+ * with that index will be returned.
+ *
+ * @param mixed $index The index or name of the route you want.
  * @return mixed Either the route object or null.
  */
 	public function get($index) {
+		if (is_string($index)) {
+			$routes = isset($this->_routeTable[$index]) ? $this->_routeTable[$index] : array(null);
+			return $routes[0];
+		}
 		return isset($this->_routes[$index]) ? $this->_routes[$index] : null;
 	}
 

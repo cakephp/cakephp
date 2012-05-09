@@ -700,9 +700,22 @@ class Router {
 				'plugin' => $params['plugin']
 			);
 			$output = self::$_routes->match($url, $params);
-		} elseif (is_string($url) && !$hasLeadingSlash && !$hasColonSlash) {
+		} elseif (
+			is_string($url) &&
+			!$hasLeadingSlash &&
+			!$hasColonSlash
+		) {
 			// named route.
-
+			$route = self::$_routes->get($url);
+			if (!$route) {
+				throw new Error\Exception(__d(
+					'cake_dev',
+					'No route matching the name "%s" was found.',
+					$url
+				));
+			}
+			$url = $options + $route->defaults + array('_name' => $url);
+			$output = self::$_routes->match($url, $params);
 		} else {
 			// String urls.
 			if (

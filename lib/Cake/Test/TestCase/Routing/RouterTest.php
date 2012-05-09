@@ -797,6 +797,24 @@ class RouterTest extends TestCase {
 		);
 		$url = Router::url('test', array('name' => 'mark'));
 		$this->assertEquals('/users/mark', $url);
+
+		$url = Router::url('test', array('name' => 'mark', 'page' => 1, 'sort' => 'title', 'dir' => 'desc'));
+		$this->assertEquals('/users/mark?page=1&sort=title&dir=desc', $url);
+	}
+
+/**
+ * Test that using invalid names causes exceptions.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testNamedRouteException() {
+		Router::connect(
+			'/users/:name',
+			array('controller' => 'users', 'action' => 'view'),
+			array('_name' => 'test')
+		);
+		$url = Router::url('junk', array('name' => 'mark'));
 	}
 
 /**
