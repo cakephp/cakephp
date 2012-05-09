@@ -2117,6 +2117,7 @@ class Model extends Object implements CakeEventListener {
 			} else {
 				$validates = $this->create($record) && $this->validates($options);
 			}
+			$data[$key] = $this->data;
 			if ($validates === false || (is_array($validates) && in_array(false, $validates, true))) {
 				$validationErrors[$key] = $this->validationErrors;
 				$validates = false;
@@ -2125,6 +2126,7 @@ class Model extends Object implements CakeEventListener {
 			}
 			$return[$key] = $validates;
 		}
+		$this->data = $data;
 		$this->validationErrors = $validationErrors;
 		if (!$options['atomic']) {
 			return $return;
