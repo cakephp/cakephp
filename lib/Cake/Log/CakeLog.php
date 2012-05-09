@@ -37,6 +37,8 @@ if (!defined('LOG_INFO')) {
 	define('LOG_INFO', 6);
 }
 
+App::uses('LogEngineCollection', 'Log');
+
 /**
  * Logs messages to configured Log adapters.  One or more adapters can be configured
  * using CakeLogs's methods.  If you don't configure any adapters, and write to the logs
@@ -60,12 +62,20 @@ if (!defined('LOG_INFO')) {
 class CakeLog {
 
 /**
- * An array of connected streams.
- * Each stream represents a callable that will be called when write() is called.
+ * LogEngineCollection class
  *
- * @var array
+ * @var LogEngineCollection
  */
-	protected static $_streams = array();
+	protected static $_Collection;
+
+/**
+ * initialize ObjectCollection
+ *
+ * @return void
+ */
+	protected static function _init() {
+		self::$_Collection = new LogEngineCollection();
+	}
 
 /**
  * Configure and add a new logging stream to CakeLog
@@ -90,38 +100,17 @@ class CakeLog {
  * @throws CakeLogException
  */
 	public static function config($key, $config) {
+		if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $key)) {
+			throw new CakeLogException(__d('cake_dev', 'Invalid key name'));
+		}
 		if (empty($config['engine'])) {
 			throw new CakeLogException(__d('cake_dev', 'Missing logger classname'));
 		}
-		$loggerName = $config['engine'];
-		unset($config['engine']);
-		$className = self::_getLogger($loggerName);
-		$logger = new $className($config);
-		if (!$logger instanceof CakeLogInterface) {
-			throw new CakeLogException(sprintf(
-				__d('cake_dev', 'logger class %s does not implement a write method.'), $loggerName
-			));
+		if (empty(self::$_Collection)) {
+			self::_init();
 		}
-		self::$_streams[$key] = $logger;
+		self::$_Collection->load($key, $config);
 		return true;
-	}
-
-/**
- * Attempts to import a logger class from the various paths it could be on.
- * Checks that the logger class implements a write method as well.
- *
- * @param string $loggerName the plugin.className of the logger class you want to build.
- * @return mixed boolean false on any failures, string of classname to use if search was successful.
- * @throws CakeLogException
- */
-	protected static function _getLogger($loggerName) {
-		list($plugin, $loggerName) = pluginSplit($loggerName, true);
-
-		App::uses($loggerName, $plugin . 'Log/Engine');
-		if (!class_exists($loggerName)) {
-			throw new CakeLogException(__d('cake_dev', 'Could not load class %s', $loggerName));
-		}
-		return $loggerName;
 	}
 
 /**
@@ -130,7 +119,10 @@ class CakeLog {
  * @return array Array of configured log streams.
  */
 	public static function configured() {
-		return array_keys(self::$_streams);
+		if (empty(self::$_Collection)) {
+			self::_init();
+		}
+		return self::$_Collection->attached();
 	}
 
 /**
@@ -141,7 +133,78 @@ class CakeLog {
  * @return void
  */
 	public static function drop($streamName) {
-		unset(self::$_streams[$streamName]);
+		if (empty(self::$_Collection)) {
+			self::_init();
+		}
+		self::$_Collection->unload($streamName);
+	}
+
+/**
+ * Checks wether $streamName is enabled
+ *
+ * @param string $streamName to check
+ * @return bool
+ * @throws CakeLogException
+ */
+	public static function enabled($streamName) {
+		if (empty(self::$_Collection)) {
+			self::_init();
+		}
+		if (!isset(self::$_Collection->{$streamName})) {
+			throw new CakeLogException(__d('cake_dev', 'Stream %s not found', $streamName));
+		}
+		return self::$_Collection->enabled($streamName);
+	}
+
+/**
+ * Enable stream
+ *
+ * @param string $streamName to enable
+ * @return void
+ * @throws CakeLogException
+ */
+	public static function enable($streamName) {
+		if (empty(self::$_Collection)) {
+			self::_init();
+		}
+		if (!isset(self::$_Collection->{$streamName})) {
+			throw new CakeLogException(__d('cake_dev', 'Stream %s not found', $streamName));
+		}
+		self::$_Collection->enable($streamName);
+	}
+
+/**
+ * Disable stream
+ *
+ * @param string $streamName to disable
+ * @return void
+ * @throws CakeLogException
+ */
+	public static function disable($streamName) {
+		if (empty(self::$_Collection)) {
+			self::_init();
+		}
+		if (!isset(self::$_Collection->{$streamName})) {
+			throw new CakeLogException(__d('cake_dev', 'Stream %s not found', $streamName));
+		}
+		self::$_Collection->disable($streamName);
+	}
+
+/**
+ * Gets the logging engine from the active streams.
+ *
+ * @see BaseLog
+ * @param string $streamName Key name of a configured stream to get.
+ * @return $mixed instance of BaseLog or false if not found
+ */
+	public static function stream($streamName) {
+		if (empty(self::$_Collection)) {
+			self::_init();
+		}
+		if (!empty(self::$_Collection->{$streamName})) {
+			return self::$_Collection->{$streamName};
+		}
+		return false;
 	}
 
 /**
@@ -150,8 +213,14 @@ class CakeLog {
  * @return void
  */
 	protected static function _autoConfig() {
-		self::_getLogger('FileLog');
-		self::$_streams['default'] = new FileLog(array('path' => LOGS));
+		if (empty(self::$_Collection)) {
+			self::_init();
+		}
+		self::$_Collection->load('error', array(
+			'engine' => 'FileLog',
+			'types' => array('error', 'warning'),
+			'path' => LOGS,
+		));
 	}
 
 /**
@@ -179,6 +248,9 @@ class CakeLog {
  * @return boolean Success
  */
 	public static function write($type, $message) {
+		if (empty(self::$_Collection)) {
+			self::_init();
+		}
 		if (!defined('LOG_ERROR')) {
 			define('LOG_ERROR', 2);
 		}
@@ -200,7 +272,8 @@ class CakeLog {
 		if (empty(self::$_streams)) {
 			self::_autoConfig();
 		}
-		foreach (self::$_streams as $logger) {
+		foreach (self::$_Collection->enabled() as $streamName) {
+			$logger = self::$_Collection->{$streamName};
 			$logger->write($type, $message);
 		}
 		return true;
