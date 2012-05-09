@@ -165,9 +165,19 @@ class Shell extends Object {
 		if ($this->stdout == null) {
 			$this->stdout = new ConsoleOutput('php://stdout');
 		}
+		CakeLog::config('stdout', array(
+			'engine' => 'ConsoleLog',
+			'types' => array('notice', 'info'),
+			'stream' => $this->stdout,
+		));
 		if ($this->stderr == null) {
 			$this->stderr = new ConsoleOutput('php://stderr');
 		}
+		CakeLog::config('stderr', array(
+			'engine' => 'ConsoleLog',
+			'types' => array('error', 'warning'),
+			'stream' => $this->stderr,
+		));
 		if ($this->stdin == null) {
 			$this->stdin = new ConsoleInput('php://stdin');
 		}
