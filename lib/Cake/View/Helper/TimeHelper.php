@@ -349,7 +349,39 @@ class TimeHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function timeAgoInWords($dateTime, $options = array()) {
-		return $this->_engine->timeAgoInWords($dateTime, $options);
+		$element = null;
+
+		$stringDate = '';
+
+		if (isset($options['element'])) {
+			$element_options = array(
+				'tag' => 'span',
+				'class' => 'time-ago-in-words',
+				'title' => $dateTime
+			);
+			
+			if (is_array($options['element'])) {
+				$element = array_merge($element_options, $options['element']);
+			} else {
+				if ($options['element']) {
+					$element = $element_options;
+					$element['tag'] = $options['element'];
+				} else {
+					$element = null;
+				}
+			}
+		}
+
+		$relativeDate = $this->_engine->timeAgoInWords($dateTime, $options);
+
+		// Apply HTML element
+		if ($element) {
+			$title = isset($element['title']) ? ' title="'.$element['title'].'"' : '';
+			$class = isset($element['class']) ? ' class="'.$element['class'].'"' : '';
+			$relativeDate = '<'.$element['tag'].$title.$class.'>'.$relativeDate.'</'.$element['tag'].'>';
+		}
+
+		return $relativeDate;
 	}
 
 /**
@@ -364,6 +396,20 @@ class TimeHelper extends AppHelper {
  */
 	public function wasWithinLast($timeInterval, $dateString, $timezone = null) {
 		return $this->_engine->wasWithinLast($timeInterval, $dateString, $timezone);
+	}
+        
+/**
+ * @see CakeTime::isWithinLast()
+ *
+ * @param mixed $timeInterval the numeric value with space then time type.
+ *    Example of valid types: 6 hours, 2 days, 1 minute.
+ * @param mixed $dateString the datestring or unix timestamp to compare
+ * @param mixed $timezone User's timezone string or DateTimeZone object
+ * @return boolean
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
+ */
+	public function isWithinNext($timeInterval, $dateString, $timezone = null) {
+		return $this->_engine->isWithinNext($timeInterval, $dateString, $timezone);
 	}
 
 /**
