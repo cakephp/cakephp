@@ -4277,7 +4277,7 @@ class ModelWriteTest extends BaseModelTest {
 					'author_id' => '3',
 					'title' => 'Just update the title',
 					'body' => 'Second Post Body',
-					'published' => 'Y',
+					'published' => 'N',
 					'created' => '2007-03-18 10:41:23'
 			)),
 			array(
@@ -4366,7 +4366,7 @@ class ModelWriteTest extends BaseModelTest {
 					'author_id' => '3',
 					'title' => 'Just update the title',
 					'body' => 'Second Post Body',
-					'published' => 'Y',
+					'published' => 'N',
 					'created' => '2007-03-18 10:41:23'
 				)
 			),
@@ -5631,7 +5631,7 @@ class ModelWriteTest extends BaseModelTest {
 					'author_id' => '3',
 					'title' => 'Just update the title',
 					'body' => 'Second Post Body',
-					'published' => 'Y',
+					'published' => 'N',
 					'created' => '2007-03-18 10:41:23'
 				)
 			),
@@ -5727,7 +5727,7 @@ class ModelWriteTest extends BaseModelTest {
 					'author_id' => '3',
 					'title' => 'Just update the title',
 					'body' => 'Second Post Body',
-					'published' => 'Y',
+					'published' => 'N',
 			)),
 			array(
 				'Post' => array(
@@ -5779,24 +5779,24 @@ class ModelWriteTest extends BaseModelTest {
 	public function testValidateMany() {
 		$TestModel = new Article();
 		$TestModel->validate = array('title' => 'notEmpty');
-		$result = $TestModel->validateMany(
-			array(
+		$data = array(
 				0 => array('title' => ''),
 				1 => array('title' => 'title 1'),
 				2 => array('title' => 'title 2'),
-		));
+		);
+		$result = $TestModel->validateMany($data);
 		$this->assertFalse($result);
 		$expected = array(
 			0 => array('title' => array('This field cannot be left blank')),
 		);
 		$this->assertEquals($expected, $TestModel->validationErrors);
 
-		$result = $TestModel->validateMany(
-			array(
+		$data = array(
 				0 => array('title' => 'title 0'),
 				1 => array('title' => ''),
 				2 => array('title' => 'title 2'),
-		));
+		);
+		$result = $TestModel->validateMany($data);
 		$this->assertFalse($result);
 		$expected = array(
 			1 => array('title' => array('This field cannot be left blank')),
@@ -5966,47 +5966,46 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
 		$TestModel->Comment->validate = array('comment' => 'notEmpty');
 
-		$result = $TestModel->validateAssociated(
-			array(
-				'Article' => array('id' => 2),
-				'Comment' => array(
-					array(
-						'id' => 1,
-						'comment' => '',
-						'published' => 'Y',
-						'user_id' => 1),
-					array(
-						'id' => 2,
-						'comment' =>
-						'comment',
-						'published' => 'Y',
-						'user_id' => 1
-		))));
+		$data = array(
+			'Article' => array('id' => 2),
+			'Comment' => array(
+				array(
+					'id' => 1,
+					'comment' => '',
+					'published' => 'Y',
+					'user_id' => 1),
+				array(
+					'id' => 2,
+					'comment' =>
+					'comment',
+					'published' => 'Y',
+					'user_id' => 1
+		)));
+		$result = $TestModel->validateAssociated($data);
 		$this->assertFalse($result);
 
-		$result = $TestModel->validateAssociated(
-			array(
-				'Article' => array('id' => 2),
-				'Comment' => array(
-					array(
-						'id' => 1,
-						'comment' => '',
-						'published' => 'Y',
-						'user_id' => 1
-					),
-					array(
-						'id' => 2,
-						'comment' => 'comment',
-						'published' => 'Y',
-						'user_id' => 1
-					),
-					array(
-						'id' => 3,
-						'comment' => '',
-						'published' => 'Y',
-						'user_id' => 1
-			))),
-			array(
+		$data = array(
+			'Article' => array('id' => 2),
+			'Comment' => array(
+				array(
+					'id' => 1,
+					'comment' => '',
+					'published' => 'Y',
+					'user_id' => 1
+				),
+				array(
+					'id' => 2,
+					'comment' => 'comment',
+					'published' => 'Y',
+					'user_id' => 1
+				),
+				array(
+					'id' => 3,
+					'comment' => '',
+					'published' => 'Y',
+					'user_id' => 1
+		)));
+		$result = $TestModel->validateAssociated($data, array(
 				'atomic' => false
 		));
 		$expected = array(

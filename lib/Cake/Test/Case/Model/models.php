@@ -4949,6 +4949,13 @@ class CustomArticle extends AppModel {
 	public $findMethods = array('unPublished' => true);
 
 /**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array('User');
+
+/**
  * _findUnPublished custom find
  *
  * @return array
@@ -4959,6 +4966,15 @@ class CustomArticle extends AppModel {
 			return $query;
 		}
 		return $results;
+	}
+
+/**
+ * Alters title data
+ *
+ * @return void
+ **/
+	public function beforeValidate() {
+		$this->data[$this->alias]['title'] = 'foo';
 	}
 
 }
