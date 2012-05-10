@@ -1029,4 +1029,83 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertFalse($Article->validates());
 	}
 
+/**
+ * Tests that altering data in a beforeValidate callback will lead to saving those
+ * values in database
+ *
+ * @return void
+ */
+	public function testValidateFirstWithBeforeValidate() {
+		$this->loadFixtures('Article', 'User');
+		$model = new CustomArticle();
+		$model->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => true,
+					'allowEmpty' => false
+				)
+			)
+		);
+		$data = array(
+			'CustomArticle' => array(
+				'body' => 'foo0'
+			)
+		);
+		$result = $model->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$title = $model->field('title', array('body' => 'foo0'));
+		$this->assertEquals('foo', $title);
+
+		$data = array(
+			array('body' => 'foo1'),
+			array('body' => 'foo2'),
+			array('body' => 'foo3')
+		);
+
+		$result = $model->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo1')));
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo2')));
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo3')));
+	}
+
+/**
+ * Tests that altering data in a beforeValidate callback will lead to saving those
+ * values in database
+ *
+ * @return void
+ */
+	public function testValidateAssociatedWithBeforeValidate() {
+		$this->loadFixtures('Article', 'User');
+		$model = new CustomArticle();
+		$model->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => true
+				)
+			)
+		);
+		$articles = array(
+			array('body' => 'foo1'),
+			array('body' => 'foo2'),
+			array('body' => 'foo3')
+		);
+		$user = new User();
+		$user->hasMany['CustomArticle'] = array('foreignKey' => 'user_id');
+		$data = array(
+			'User' => array('user' => 'foo', 'password' => 'bar'),
+			'CustomArticle' => $articles
+		);
+		$result = $user->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo1')));
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo2')));
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo3')));
+	}
+
 }
