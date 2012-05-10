@@ -24,6 +24,12 @@
  * system.
  *
  */
+if (!defined('LOG_ERROR')) {
+	define('LOG_ERROR', 2);
+}
+if (!defined('LOG_ERR')) {
+	define('LOG_ERR', LOG_ERROR);
+}
 if (!defined('LOG_WARNING')) {
 	define('LOG_WARNING', 3);
 }
@@ -251,19 +257,13 @@ class CakeLog {
 		if (empty(self::$_Collection)) {
 			self::_init();
 		}
-		if (!defined('LOG_ERROR')) {
-			define('LOG_ERROR', 2);
-		}
-		if (!defined('LOG_ERR')) {
-			define('LOG_ERR', LOG_ERROR);
-		}
 		$levels = array(
+			LOG_ERROR => 'error',
+			LOG_ERR => 'error',
 			LOG_WARNING => 'warning',
 			LOG_NOTICE => 'notice',
-			LOG_INFO => 'info',
 			LOG_DEBUG => 'debug',
-			LOG_ERR => 'error',
-			LOG_ERROR => 'error'
+			LOG_INFO => 'info',
 		);
 
 		if (is_int($type) && isset($levels[$type])) {
