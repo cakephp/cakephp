@@ -50,6 +50,7 @@ class ConsoleLog extends BaseLog {
 		$config = Set::merge(array(
 			'stream' => 'php://stderr',
 			'types' => null,
+			'scopes' => array(),
 			'outputAs' => ConsoleOutput::COLOR,
 			), $this->_config);
 		$config = $this->config($config);

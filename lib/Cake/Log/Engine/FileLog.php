@@ -49,6 +49,7 @@ class FileLog extends BaseLog {
 			'path' => LOGS,
 			'file' => null,
 			'types' => null,
+			'scopes' => array(),
 			), $this->_config);
 		$config = $this->config($config);
 		$this->_path = $config['path'];
@@ -74,6 +75,8 @@ class FileLog extends BaseLog {
 			$filename = $this->_path . 'error.log';
 		} elseif (in_array($type, $debugTypes)) {
 			$filename = $this->_path . 'debug.log';
+		} elseif (in_array($type, $this->_config['scopes'])) {
+			$filename = $this->_path . $this->_file;
 		} else {
 			$filename = $this->_path . $type . '.log';
 		}

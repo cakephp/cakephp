@@ -281,4 +281,152 @@ class CakeLogTest extends CakeTestCase {
 		CakeLog::disable('bogus_stream');
 	}
 
+	protected function _deleteLogs() {
+		@unlink(LOGS . 'shops.log');
+		@unlink(LOGS . 'error.log');
+		@unlink(LOGS . 'debug.log');
+	}
+
+/**
+ * test backward compatible scoped logging
+ */
+	public function testScopedLoggingBC() {
+		if (file_exists(LOGS . 'shops.log')) {
+			unlink(LOGS . 'shops.log');
+		}
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
+		if (file_exists(LOGS . 'debug.log')) {
+			unlink(LOGS . 'debug.log');
+		}
+
+		CakeLog::config('debug', array(
+			'engine' => 'FileLog',
+			'types' => array('notice', 'info', 'debug'),
+			'file' => 'debug',
+		));
+		CakeLog::config('error', array(
+			'engine' => 'FileLog',
+			'types' => array('error', 'warning'),
+			'file' => 'error',
+		));
+		CakeLog::config('shops', array(
+			'engine' => 'FileLog',
+			'types' => array('info', 'notice', 'warning'),
+			'scopes' => array('transactions', 'orders'),
+			'file' => 'shops',
+			));
+
+		CakeLog::write('info', 'info message');
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->assertTrue(file_exists(LOGS . 'shops.log'));
+		$this->assertTrue(file_exists(LOGS . 'debug.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::write('transactions', 'transaction message');
+		$this->assertTrue(file_exists(LOGS . 'shops.log'));
+		$this->assertFalse(file_exists(LOGS . 'transactions.log'));
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::write('error', 'error message');
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+		$this->assertFalse(file_exists(LOGS . 'shops.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::write('orders', 'order message');
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+		$this->assertFalse(file_exists(LOGS . 'orders.log'));
+		$this->assertTrue(file_exists(LOGS . 'shops.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::write('warning', 'warning message');
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+		$this->assertTrue(file_exists(LOGS . 'shops.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::drop('shops');
+	}
+
+/**
+ * test scoped logging
+ */
+	public function testScopedLogging() {
+		if (file_exists(LOGS . 'shops.log')) {
+			unlink(LOGS . 'shops.log');
+		}
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
+		if (file_exists(LOGS . 'debug.log')) {
+			unlink(LOGS . 'debug.log');
+		}
+
+		CakeLog::config('debug', array(
+			'engine' => 'FileLog',
+			'types' => array('notice', 'info', 'debug'),
+			'file' => 'debug',
+		));
+		CakeLog::config('error', array(
+			'engine' => 'FileLog',
+			'types' => array('error', 'warning'),
+			'file' => 'error',
+		));
+		CakeLog::config('shops', array(
+			'engine' => 'FileLog',
+			'types' => array('info', 'notice', 'warning'),
+			'scopes' => array('transactions', 'orders'),
+			'file' => 'shops',
+			));
+
+		CakeLog::write('info', 'info message', 'transactions');
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->assertTrue(file_exists(LOGS . 'shops.log'));
+		$this->assertTrue(file_exists(LOGS . 'debug.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::write('transactions', 'transaction message', 'orders');
+		$this->assertTrue(file_exists(LOGS . 'shops.log'));
+		$this->assertFalse(file_exists(LOGS . 'transactions.log'));
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::write('error', 'error message', 'orders');
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+		$this->assertFalse(file_exists(LOGS . 'shops.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::write('orders', 'order message', 'transactions');
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+		$this->assertFalse(file_exists(LOGS . 'orders.log'));
+		$this->assertTrue(file_exists(LOGS . 'shops.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::write('warning', 'warning message', 'orders');
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+		$this->assertTrue(file_exists(LOGS . 'shops.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::drop('shops');
+	}
+
 }

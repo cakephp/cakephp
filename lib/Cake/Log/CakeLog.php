@@ -249,11 +249,14 @@ class CakeLog {
  *
  * `CakeLog::write('warning', 'Stuff is broken here');`
  *
- * @param string $type Type of message being written
+ * @param mixed $type Type of message being written. When value is an integer
+ *                    or a string matching the recognized levels, then it will
+ *                    be treated log levels. Otherwise it's treated as scope.
  * @param string $message Message content to log
+ * @param mixed $scope string or array
  * @return boolean Success
  */
-	public static function write($type, $message) {
+	public static function write($type, $message, $scope = array()) {
 		if (empty(self::$_Collection)) {
 			self::_init();
 		}
@@ -269,6 +272,9 @@ class CakeLog {
 		if (is_int($type) && isset($levels[$type])) {
 			$type = $levels[$type];
 		}
+		if (is_string($type) && empty($scope) && !in_array($type, $levels)) {
+			$scope = $type;
+		}
 		if (empty(self::$_streams)) {
 			self::_autoConfig();
 		}
@@ -276,7 +282,14 @@ class CakeLog {
 			$logger = self::$_Collection->{$streamName};
 			$config = $logger->config();
 			$types = $config['types'];
-			if (empty($types) || in_array($type, $types)) {
+			$scopes = $config['scopes'];
+			if (is_string($scope)) {
+				$inScope = in_array($scope, $scopes);
+			} else {
+				$intersect = array_intersect($scope, $scopes);
+				$inScope = !empty($intersect);
+			}
+			if (empty($types) || in_array($type, $types) || in_array($type, $scopes) && $inScope) {
 				$logger->write($type, $message);
 			}
 		}
