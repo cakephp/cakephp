@@ -56,7 +56,11 @@ class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
  * <?php echo $fullClassName; ?> Test Case
  *
  */
-class <?php echo $fullClassName; ?>Test extends CakeTestCase {
+<?php if ($mock and strtolower($type) == 'controller'): ?>
+class <?php echo $fullClassName; ?>TestCase extends ControllerTestCase {
+<?php else: ?>
+class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
+<?php endif; ?>
 
 <?php if (!empty($fixtures)): ?>
 /**
