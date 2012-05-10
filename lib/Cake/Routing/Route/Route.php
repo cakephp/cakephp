@@ -196,21 +196,21 @@ class Route {
 		}
 		$name = '';
 		if (isset($this->defaults['plugin'])) {
-			$name = strtolower($this->defaults['plugin']) . '.';
+			$name = $this->defaults['plugin'] . '.';
 		}
 		foreach (array('controller', 'action') as $key) {
 			if ($key === 'action') {
 				$name .= ':';
 			}
 			if (isset($this->defaults[$key])) {
-				$name .= strtolower($this->defaults[$key]);
+				$name .= $this->defaults[$key];
 			}
 			$var = ':' . $key;
 			if (strpos($this->template, $var) !== false) {
 				$name .= '_' . $key;
 			}
 		}
-		return $this->_name = $name;
+		return $this->_name = strtolower($name);
 	}
 
 /**
