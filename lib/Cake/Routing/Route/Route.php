@@ -387,12 +387,6 @@ class Route {
 			$url['prefix'] = $defaults['prefix'];
 		}
 
-		// check that all the key names are in the url
-		$keyNames = array_flip($this->keys);
-		if (array_intersect_key($keyNames, $url) !== $keyNames) {
-			return false;
-		}
-
 		// Missing defaults is a fail.
 		if (array_diff_key($defaults, $url) !== array()) {
 			return false;
@@ -400,6 +394,12 @@ class Route {
 
 		// Defaults with different values are a fail.
 		if (array_intersect_key($url, $defaults) != $defaults) {
+			return false;
+		}
+
+		// check that all the key names are in the url
+		$keyNames = array_flip($this->keys);
+		if (array_intersect_key($keyNames, $url) !== $keyNames) {
 			return false;
 		}
 
