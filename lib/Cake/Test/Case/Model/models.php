@@ -4973,7 +4973,7 @@ class CustomArticle extends AppModel {
  *
  * @return void
  **/
-	public function beforeValidate() {
+	public function beforeValidate($options = array()) {
 		$this->data[$this->alias]['title'] = 'foo';
 	}
 
