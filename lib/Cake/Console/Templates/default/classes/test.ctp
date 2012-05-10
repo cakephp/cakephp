@@ -23,7 +23,7 @@ echo "<?php\n";
 App::uses('<?php echo $dependency[0]; ?>', '<?php echo $dependency[1]; ?>');
 <?php endforeach; ?>
 
-<?php if ($mock and strtolower($type) == 'controller'): ?>
+<?php if ($mock && strtolower($type) === 'controller'): ?>
 /**
  * Test<?php echo $fullClassName; ?>
  *
@@ -99,7 +99,6 @@ class <?php echo $fullClassName; ?>Test extends CakeTestCase {
  * @return void
  */
 	public function test<?php echo Inflector::camelize($method); ?>() {
-
 	}
 
 <?php endforeach;?>
