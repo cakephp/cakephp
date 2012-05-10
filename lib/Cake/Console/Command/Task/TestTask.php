@@ -241,6 +241,12 @@ class TestTask extends BakeTask {
  */
 	public function isLoadableClass($package, $class) {
 		App::uses($class, $package);
+		list($plugin, $ns) = pluginSplit($package);
+		if ($plugin) {
+			App::uses("{$plugin}AppController", $package);
+			App::uses("{$plugin}AppModel", $package);
+			App::uses("{$plugin}AppHelper", $package);
+		}
 		return class_exists($class);
 	}
 
