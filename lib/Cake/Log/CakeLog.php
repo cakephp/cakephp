@@ -296,4 +296,49 @@ class CakeLog {
 		return true;
 	}
 
+/**
+ * Convenience method to log error messages
+ *
+ * @return boolean Success
+ */
+	public static function error($message) {
+		return self::write(LOG_ERROR, $message);
+	}
+
+/**
+ * Convenience method to log warning messages
+ *
+ * @return boolean Success
+ */
+	public static function warning($message) {
+		return self::write(LOG_WARNING, $message);
+	}
+
+/**
+ * Convenience method to log notice messages
+ *
+ * @return boolean Success
+ */
+	public static function notice($message) {
+		return self::write(LOG_NOTICE, $message);
+	}
+
+/**
+ * Convenience method to log debug messages
+ *
+ * @return boolean Success
+ */
+	public static function debug($message) {
+		return self::write(LOG_DEBUG, $message);
+	}
+
+/**
+ * Convenience method to log info messages
+ *
+ * @return boolean Success
+ */
+	public static function info($message) {
+		return self::write(LOG_INFO, $message);
+	}
+
 }

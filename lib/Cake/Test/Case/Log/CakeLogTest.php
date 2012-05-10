@@ -429,4 +429,58 @@ class CakeLogTest extends CakeTestCase {
 		CakeLog::drop('shops');
 	}
 
+/**
+ * test convenience methods
+ */
+	public function testConvenienceMethods() {
+		@unlink(LOGS . 'error.log');
+		@unlink(LOGS . 'debug.log');
+
+		CakeLog::config('debug', array(
+			'engine' => 'FileLog',
+			'types' => array('notice', 'info', 'debug'),
+			'file' => 'debug',
+		));
+		CakeLog::config('error', array(
+			'engine' => 'FileLog',
+			'types' => array('error', 'warning'),
+			'file' => 'error',
+		));
+
+		$testMessage = 'error message';
+		CakeLog::error($testMessage);
+		$contents = file_get_contents(LOGS . 'error.log');
+		$this->assertContains($testMessage, $contents);
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+		$this->_deleteLogs();
+
+		$testMessage = 'warning message';
+		CakeLog::warning($testMessage);
+		$contents = file_get_contents(LOGS . 'error.log');
+		$this->assertContains($testMessage, $contents);
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+		$this->_deleteLogs();
+
+		$testMessage = 'info message';
+		CakeLog::info($testMessage);
+		$contents = file_get_contents(LOGS . 'debug.log');
+		$this->assertContains($testMessage, $contents);
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->_deleteLogs();
+
+		$testMessage = 'debug message';
+		CakeLog::debug($testMessage);
+		$contents = file_get_contents(LOGS . 'debug.log');
+		$this->assertContains($testMessage, $contents);
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->_deleteLogs();
+
+		$testMessage = 'notice message';
+		CakeLog::notice($testMessage);
+		$contents = file_get_contents(LOGS . 'debug.log');
+		$this->assertContains($testMessage, $contents);
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->_deleteLogs();
+	}
+
 }
