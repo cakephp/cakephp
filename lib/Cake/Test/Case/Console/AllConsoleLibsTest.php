@@ -38,7 +38,10 @@ class AllConsoleLibsTest extends PHPUnit_Framework_TestSuite {
 			if (!$file->isFile() || strpos($file, 'All') === 0) {
 				continue;
 			}
-			$suite->addTestFile($file->getRealPath());
+			$fileName = $file->getRealPath();
+			if (substr($fileName, -4) === '.php') {
+				$suite->addTestFile($file->getRealPath());
+			}
 		}
 		return $suite;
 	}
