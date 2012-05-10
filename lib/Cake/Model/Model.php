@@ -2326,7 +2326,7 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		if (empty($options['deep'])) {
-			$data[$this->alias] = $this->data[$this->alias];
+			$data = $this->data;
 		} else {
 			$modelData = $this->data;
 			$recordData = $modelData[$this->alias];
