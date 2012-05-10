@@ -2041,6 +2041,22 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * test get request.
+ *
+ * @return void
+ */
+	public function testGetRequest() {
+		$requestA = new Request('/', false);
+		$requestB = new Request('/posts', false);
+
+		Router::pushRequest($requestA);
+		Router::pushRequest($requestB);
+
+		$this->assertSame($requestA, Router::getRequest(false));
+		$this->assertSame($requestB, Router::getRequest(true));
+	}
+
+/**
  * Test that Router::url() uses the first request
  */
 	public function testUrlWithRequestAction() {
