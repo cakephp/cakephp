@@ -249,7 +249,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @return void
  */
 	public function invalidate($field, $message = true) {
-		$this->getModel()->validationErrors[$field][] = $value;
+		$this->getModel()->validationErrors[$field][] = $message;
 	}
 
 /**
@@ -286,7 +286,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 		if ($name !== null && !empty($this->_fields[$name])) {
 			return $this->_fields[$name];
 		} elseif ($name !==null) {
-			return null
+			return null;
 		}
 		return $this->_fields;
 	}
