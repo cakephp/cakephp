@@ -7,12 +7,12 @@
  * PHP versions 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Validator
  * @since         CakePHP(tm) v 2.2.0
@@ -23,7 +23,8 @@ App::uses('CakeValidationSet', 'Model/Validator');
 App::uses('Validation', 'Utility');
 
 /**
- * CakeValidationRule object.
+ * CakeValidationRule object. Represents a validation method, error message and
+ * rules for applying such method to a field.
  *
  * @package       Cake.Model.Validator
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
@@ -31,28 +32,28 @@ App::uses('Validation', 'Utility');
 class CakeValidationRule {
 
 /**
- * The 'valid' value
+ * Whether the field passed this validation rule
  *
  * @var mixed
  */
 	protected $_valid = true;
 
 /**
- * Create or Update transaction?
+ * Holds whether the record being validated exists in datasource or not
  *
  * @var boolean
  */
 	protected $_recordExists = false;
 
 /**
- * The parsed rule
+ * Validation method
  *
  * @var mixed
  */
 	protected $_rule = null;
 
 /**
- * The parsed rule parameters
+ * Validation method arguments
  *
  * @var array
  */
@@ -130,7 +131,7 @@ class CakeValidationRule {
 	}
 
 /**
- * Checks if the field is required by the 'required' value
+ * Checks if the field is required according to the `required` property
  *
  * @return boolean
  */
@@ -147,7 +148,7 @@ class CakeValidationRule {
 	}
 
 /**
- * Checks if the field failed the required validation
+ * Checks whether the field failed the `field should be present` validation
  *
  * @param array $data data to check rule against
  * @return boolean
@@ -176,7 +177,7 @@ class CakeValidationRule {
 	}
 
 /**
- * Checks if the Validation rule can be skipped
+ * Checks if the validation rule should be skipped
  *
  * @return boolean True if the ValidationRule can be skipped
  */
@@ -190,7 +191,8 @@ class CakeValidationRule {
 	}
 
 /**
- * Checks if the 'last' key is true
+ * Returns whethere this rule should break validation process for associated field
+ * after it fails
  *
  * @return boolean
  */
@@ -212,7 +214,7 @@ class CakeValidationRule {
  *
  * @return array
  */
-	public function getPropertiesArray() {
+	protected function _getPropertiesArray() {
 		$rule = $this->rule;
 		if (!is_string($rule)) {
 			unset($rule[0]);
@@ -250,9 +252,10 @@ class CakeValidationRule {
  * @return boolean True if the rule could be dispatched, false otherwise
  */
 	public function process($field, &$data, &$methods) {
+		$this->_valid = true;
 		$this->_parseRule($field, $data);
 
-		$validator = $this->getPropertiesArray();
+		$validator = $this->_getPropertiesArray();
 		$rule = strtolower($this->_rule);
 		if (isset($methods[$rule])) {
 			$this->_ruleParams[] = array_merge($validator, $this->_passedOptions);
@@ -270,6 +273,11 @@ class CakeValidationRule {
 		return true;
 	}
 
+/**
+ * Returns passed options for this rule
+ *
+ * @return array
+ **/
 	public function getOptions($key) {
 		if (!isset($this->_passedOptions[$key])) {
 			return null;
