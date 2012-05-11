@@ -375,6 +375,8 @@ class CakeResponse {
 		$this->_setContentLength();
 		$this->_setContentType();
 		foreach ($this->_headers as $header => $value) {
+			if (is_array($value))
+				$value = $value[$this->_status];
 			$this->_sendHeader($header, $value);
 		}
 		$this->_sendContent($this->_body);
