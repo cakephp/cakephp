@@ -24,23 +24,32 @@
  * system.
  *
  */
-if (!defined('LOG_ERROR')) {
-	define('LOG_ERROR', 2);
+if (!defined('LOG_EMERG')) {
+	define('LOG_EMERG', 0);
+}
+if (!defined('LOG_ALERT')) {
+	define('LOG_ALERT', 1);
+}
+if (!defined('LOG_CRIT')) {
+	define('LOG_CRIT', 2);
 }
 if (!defined('LOG_ERR')) {
-	define('LOG_ERR', LOG_ERROR);
+	define('LOG_ERR', 3);
+}
+if (!defined('LOG_ERROR')) {
+	define('LOG_ERROR', LOG_ERR);
 }
 if (!defined('LOG_WARNING')) {
-	define('LOG_WARNING', 3);
+	define('LOG_WARNING', 4);
 }
 if (!defined('LOG_NOTICE')) {
-	define('LOG_NOTICE', 4);
-}
-if (!defined('LOG_DEBUG')) {
-	define('LOG_DEBUG', 5);
+	define('LOG_NOTICE', 5);
 }
 if (!defined('LOG_INFO')) {
 	define('LOG_INFO', 6);
+}
+if (!defined('LOG_DEBUG')) {
+	define('LOG_DEBUG', 7);
 }
 
 App::uses('LogEngineCollection', 'Log');
@@ -75,11 +84,37 @@ class CakeLog {
 	protected static $_Collection;
 
 /**
+ * Default log levels as detailed in RFC 5424
+ * http://tools.ietf.org/html/rfc5424
+ */
+	protected static $_defaultLevels = array(
+		LOG_EMERG => 'emergency',
+		LOG_ALERT => 'alert',
+		LOG_CRIT => 'critical',
+		LOG_ERR => 'error',
+		LOG_WARNING => 'warning',
+		LOG_NOTICE => 'notice',
+		LOG_INFO => 'info',
+		LOG_DEBUG => 'debug',
+	);
+
+/**
+ * Active log levels for this instance.
+ */
+	protected static $_levels;
+
+/**
+ * Mapped log levels
+ */
+	protected static $_levelMap;
+
+/**
  * initialize ObjectCollection
  *
  * @return void
  */
 	protected static function _init() {
+		self::$_levels = self::defaultLevels();
 		self::$_Collection = new LogEngineCollection();
 	}
 
@@ -129,6 +164,70 @@ class CakeLog {
 			self::_init();
 		}
 		return self::$_Collection->attached();
+	}
+
+/**
+ * Gets/sets log levels
+ *
+ * Call this method without arguments, eg: `CakeLog::levels()` to obtain current
+ * level configuration.
+ *
+ * To append additional level 'user0' and 'user1' to to default log levels:
+ *
+ *     `CakeLog::levels(array('user0, 'user1'))` or
+ *     `CakeLog::levels(array('user0, 'user1'), true)`
+ *
+ * will result in:
+ *
+ * array(
+ *     0 => 'emergency',
+ *     1 => 'alert',
+ *     ...
+ *     8 => 'user0',
+ *     9 => 'user1',
+ * );
+ *
+ * To set/replace existing configuration, pass an array with the second argument
+ * set to false.
+ *
+ *     `CakeLog::levels(array('user0, 'user1'), false);
+ *
+ * will result in:
+ * array(
+ *      0 => 'user0',
+ *      1 => 'user1',
+ * );
+ *
+ * @param mixed $levels array
+ * @param bool $append true to append, false to replace
+ * @return array active log levels
+ */
+	public static function levels($levels = array(), $append = true) {
+		if (empty(self::$_Collection)) {
+			self::_init();
+		}
+		if (empty($levels)) {
+			return self::$_levels;
+		}
+		$levels = array_values($levels);
+		if ($append) {
+			self::$_levels = array_merge(self::$_levels, $levels);
+		} else {
+			self::$_levels = $levels;
+		}
+		self::$_levelMap = array_flip(self::$_levels);
+		return self::$_levels;
+	}
+
+/**
+ * Reset log levels to the original value
+ *
+ * @return array default log levels
+ */
+	public static function defaultLevels() {
+		self::$_levels = self::$_defaultLevels;
+		self::$_levelMap = array_flip(self::$_levels);
+		return self::$_levels;
 	}
 
 /**
@@ -221,7 +320,7 @@ class CakeLog {
 	protected static function _autoConfig() {
 		self::$_Collection->load('error', array(
 			'engine' => 'FileLog',
-			'types' => array('error', 'warning'),
+			'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 			'path' => LOGS,
 		));
 	}
@@ -233,12 +332,14 @@ class CakeLog {
  *
  * ### Types:
  *
+ * -  LOG_EMERG => 'emergency',
+ * -  LOG_ALERT => 'alert',
+ * -  LOG_CRIT => 'critical',
+ * - `LOG_ERR` => 'error',
  * - `LOG_WARNING` => 'warning',
  * - `LOG_NOTICE` => 'notice',
  * - `LOG_INFO` => 'info',
  * - `LOG_DEBUG` => 'debug',
- * - `LOG_ERR` => 'error',
- * - `LOG_ERROR` => 'error'
  *
  * ### Usage:
  *
@@ -257,19 +358,11 @@ class CakeLog {
 		if (empty(self::$_Collection)) {
 			self::_init();
 		}
-		$levels = array(
-			LOG_ERROR => 'error',
-			LOG_ERR => 'error',
-			LOG_WARNING => 'warning',
-			LOG_NOTICE => 'notice',
-			LOG_DEBUG => 'debug',
-			LOG_INFO => 'info',
-		);
 
-		if (is_int($type) && isset($levels[$type])) {
-			$type = $levels[$type];
+		if (is_int($type) && isset(self::$_levels[$type])) {
+			$type = self::$_levels[$type];
 		}
-		if (is_string($type) && empty($scope) && !in_array($type, $levels)) {
+		if (is_string($type) && empty($scope) && !in_array($type, self::$_levels)) {
 			$scope = $type;
 		}
 		if (!self::$_Collection->attached()) {
@@ -298,48 +391,91 @@ class CakeLog {
 	}
 
 /**
- * Convenience method to log error messages
+ * Convenience method to log emergency messages
  *
+ * @param string $message log message
+ * @param mixed $scope string or array of scopes
  * @return boolean Success
  */
-	public static function error($message) {
-		return self::write(LOG_ERROR, $message);
+	public static function emergency($message, $scope = array()) {
+		return self::write(self::$_levelMap['emergency'], $message, $scope);
+	}
+
+/**
+ * Convenience method to log alert messages
+ *
+ * @param string $message log message
+ * @param mixed $scope string or array of scopes
+ * @return boolean Success
+ */
+	public static function alert($message, $scope = array()) {
+		return self::write(self::$_levelMap['alert'], $message, $scope);
+	}
+
+/**
+ * Convenience method to log critical messages
+ *
+ * @param string $message log message
+ * @param mixed $scope string or array of scopes
+ * @return boolean Success
+ */
+	public static function critical($message, $scope = array()) {
+		return self::write(self::$_levelMap['critical'], $message, $scope);
+	}
+
+/**
+ * Convenience method to log error messages
+ *
+ * @param string $message log message
+ * @param mixed $scope string or array of scopes
+ * @return boolean Success
+ */
+	public static function error($message, $scope = array()) {
+		return self::write(self::$_levelMap['error'], $message, $scope);
 	}
 
 /**
  * Convenience method to log warning messages
  *
+ * @param string $message log message
+ * @param mixed $scope string or array of scopes
  * @return boolean Success
  */
-	public static function warning($message) {
-		return self::write(LOG_WARNING, $message);
+	public static function warning($message, $scope = array()) {
+		return self::write(self::$_levelMap['warning'], $message, $scope);
 	}
 
 /**
  * Convenience method to log notice messages
  *
+ * @param string $message log message
+ * @param mixed $scope string or array of scopes
  * @return boolean Success
  */
-	public static function notice($message) {
-		return self::write(LOG_NOTICE, $message);
+	public static function notice($message, $scope = array()) {
+		return self::write(self::$_levelMap['notice'], $message, $scope);
 	}
 
 /**
  * Convenience method to log debug messages
  *
+ * @param string $message log message
+ * @param mixed $scope string or array of scopes
  * @return boolean Success
  */
-	public static function debug($message) {
-		return self::write(LOG_DEBUG, $message);
+	public static function debug($message, $scope = array()) {
+		return self::write(self::$_levelMap['debug'], $message, $scope);
 	}
 
 /**
  * Convenience method to log info messages
  *
+ * @param string $message log message
+ * @param mixed $scope string or array of scopes
  * @return boolean Success
  */
-	public static function info($message) {
-		return self::write(LOG_INFO, $message);
+	public static function info($message, $scope = array()) {
+		return self::write(self::$_levelMap['info'], $message, $scope);
 	}
 
 }

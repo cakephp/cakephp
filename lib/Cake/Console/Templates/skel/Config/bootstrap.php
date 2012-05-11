@@ -103,6 +103,6 @@ CakeLog::config('debug', array(
 ));
 CakeLog::config('error', array(
 	'engine' => 'FileLog',
-	'scopes' => array('error', 'warning'),
+	'scopes' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 	'file' => 'error',
 ));
