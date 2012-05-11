@@ -149,7 +149,6 @@ class Dispatcher implements CakeEventListener {
 			return;
 		}
 
-		Router::setRequestInfo($request);
 		$controller = $this->_getController($request, $response);
 
 		if (!($controller instanceof Controller)) {
@@ -209,6 +208,7 @@ class Dispatcher implements CakeEventListener {
  */
 	public function parseParams($event) {
 		$request = $event->data['request'];
+		Router::setRequestInfo($request);
 		if (count(Router::$routes) == 0) {
 			$namedExpressions = Router::getNamedExpressions();
 			extract($namedExpressions);
