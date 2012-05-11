@@ -101,15 +101,18 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * - fieldList: Equivalent to the $fieldList parameter in Model::save()
  * - deep: If set to true, not only directly associated data , but deeper nested associated data is validated as well.
  *
+ * Warning: This method could potentially change the passed argument `$data`,
+ * If you do not want this to happen, make a copy of `$data` before passing it
+ * to this method
+ *
  * @param array $data Record data to validate. This should be an array indexed by association name.
  * @param array $options Options to use when validating record data (see above), See also $options of validates().
  * @return array|boolean If atomic: True on success, or false on failure.
  *    Otherwise: array similar to the $data array passed, but values are set to true/false
  *    depending on whether each record validated successfully.
  */
-	public function validateAssociated($data, $options = array()) {
+	public function validateAssociated(&$data, $options = array()) {
 		$model = $this->getModel();
-
 		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
 		$model->validationErrors = $validationErrors = $return = array();
 		if (!($model->create($data) && $model->validates($options))) {
@@ -118,8 +121,18 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 		} else {
 			$return[$model->alias] = true;
 		}
+
+		if (empty($options['deep'])) {
+			$data = $model->data;
+		} else {
+			$modelData = $model->data;
+			$recordData = $modelData[$model->alias];
+			unset($modelData[$model->alias]);
+			$data = $modelData + array_merge($data, $recordData);
+		}
+
 		$associations = $model->getAssociated();
-		foreach ($data as $association => $values) {
+		foreach ($data as $association => &$values) {
 			$validates = true;
 			if (isset($associations[$association])) {
 				if (in_array($associations[$association], array('belongsTo', 'hasOne'))) {
@@ -168,6 +181,10 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * - fieldList: Equivalent to the $fieldList parameter in Model::save()
  * - deep: If set to true, all associated data will be validated as well.
  *
+ * Warning: This method could potentially change the passed argument `$data`,
+ * If you do not want this to happen, make a copy of `$data` before passing it
+ * to this method
+ *
  * @param array $data Record data to validate. This should be a numerically-indexed array
  * @param array $options Options to use when validating record data (see above), See also $options of validates().
  * @return boolean True on success, or false on failure.
@@ -175,15 +192,16 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *    Otherwise: array similar to the $data array passed, but values are set to true/false
  *    depending on whether each record validated successfully.
  */
-	public function validateMany($data, $options = array()) {
+	public function validateMany(&$data, $options = array()) {
 		$model = $this->getModel();
 		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
 		$model->validationErrors = $validationErrors = $return = array();
-		foreach ($data as $key => $record) {
+		foreach ($data as $key => &$record) {
 			if ($options['deep']) {
 				$validates = $model->validateAssociated($record, $options);
 			} else {
 				$validates = $model->create($record) && $model->validates($options);
+				$data[$key] = $model->data;
 			}
 			if ($validates === false || (is_array($validates) && in_array(false, $validates, true))) {
 				$validationErrors[$key] = $model->validationErrors;
