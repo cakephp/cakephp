@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeRule.
+ * CakeValidationRule.
  *
  * Provides the Model validation logic.
  *
@@ -23,12 +23,12 @@ App::uses('CakeValidationSet', 'Model/Validator');
 App::uses('Validation', 'Utility');
 
 /**
- * CakeRule object.
+ * CakeValidationRule object.
  *
  * @package       Cake.Model.Validator
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
-class CakeRule {
+class CakeValidationRule {
 
 /**
  * The 'valid' value

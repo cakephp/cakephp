@@ -19,7 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('ModelValidator', 'Model');
-App::uses('CakeRule', 'Model/Validator');
+App::uses('CakeValidationRule', 'Model/Validator');
 
 /**
  * CakeValidationSet object.
@@ -85,7 +85,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 		}
 
 		foreach ($ruleSet as $index => $validateProp) {
-			$this->_rules[$index] = new CakeRule($validateProp);
+			$this->_rules[$index] = new CakeValidationRule($validateProp);
 		}
 		$this->ruleSet = $ruleSet;
 	}
@@ -166,12 +166,12 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * Sets a ValidationRule $rule for key $key
  *
  * @param mixed $key The key under which the rule should be set
- * @param CakeRule|array $rule The validation rule to be set
+ * @param CakeValidationRule|array $rule The validation rule to be set
  * @return CakeValidationSet this instance
  */
 	public function setRule($key, $rule) {
-		if (!$rule instanceof CakeRule) {
-			$rule = new CakeRule($rule);
+		if (!$rule instanceof CakeValidationRule) {
+			$rule = new CakeValidationRule($rule);
 		}
 		$this->_rules[$key] = $rule;
 		return $this;
@@ -208,7 +208,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * Fetches the correct error message for a failed validation
  *
  * @param string $name the name of the rule as it was configured
- * @param CakeRule $rule the object containing validation information
+ * @param CakeValidationRule $rule the object containing validation information
  * @return string
  */
 	protected function _processValidationResponse($name, $rule) {
@@ -269,7 +269,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * Returns a rule object by its index
  *
  * @param string $index name of the rule
- * @return CakeRule
+ * @return CakeValidationRule
  **/
 	public function offsetGet($index) {
 		return $this->_rules[$index];
@@ -279,7 +279,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * Sets or replace a validation rule
  *
  * @param string $index name of the rule
- * @param CakeRule|array rule to add to $index
+ * @param CakeValidationRule|array rule to add to $index
  **/
 	public function offsetSet($index, $rule) {
 		$this->setRule($index, $rule);
