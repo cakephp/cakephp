@@ -4709,6 +4709,30 @@ class ModelWriteTest extends BaseModelTest {
 		$model = new ProductUpdateAll();
 		$result = $model->saveAll(array());
 		$this->assertFalse($result);
+}
+
+/**
+ * test that saveAll behaves like plain save() without argument
+ *
+ * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
+ * @return void
+ */
+	public function testSaveAllWithoutArgument() {
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+
+		$this->loadFixtures('Article', 'ProductUpdateAll', 'Comment', 'Attachment');
+		$model = new Comment();
+		$model->set(array(
+			'Comment' => array(
+				'article_id' => 2,
+				'user_id' => 2,
+				'comment' => 'New comment with attachment',
+				'published' => 'Y'
+			)
+		));
+		$model->set(array());
+		$result = $model->saveAll();
+		$this->assertTrue($result);
 	}
 
 /**
