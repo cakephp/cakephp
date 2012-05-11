@@ -77,7 +77,7 @@ class ConsoleLogTest extends CakeTestCase {
 		$message = 'Test error message';
 		$mock->expects($this->once())
 			->method('write');
-		TestCakeLog::write(LOG_ERROR, $message);
+		TestCakeLog::write(LOG_ERR, $message);
 	}
 
 /**
@@ -96,7 +96,7 @@ class ConsoleLogTest extends CakeTestCase {
 		$message = 'Test error message';
 		$mock->expects($this->once())
 			->method('write');
-		TestCakeLog::write(LOG_ERROR, $message);
+		TestCakeLog::write(LOG_ERR, $message);
 		$this->assertTrue(file_exists(LOGS . 'error.log'), 'error.log missing');
 		$logOutput = file_get_contents(LOGS . 'error.log');
 		$this->assertContains($message, $logOutput);

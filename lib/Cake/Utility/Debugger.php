@@ -227,7 +227,7 @@ class Debugger {
 			case E_COMPILE_ERROR:
 			case E_USER_ERROR:
 				$error = 'Fatal Error';
-				$level = LOG_ERROR;
+				$level = LOG_ERR;
 			break;
 			case E_WARNING:
 			case E_USER_WARNING:
