@@ -1993,7 +1993,7 @@ class Model extends Object implements CakeEventListener {
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-saveassociated-array-data-null-array-options-array
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-saveall-array-data-null-array-options-array
  */
-	public function saveAll($data = null, $options = array()) {
+	public function saveAll($data, $options = array()) {
 		$options = array_merge(array('validate' => 'first'), $options);
 		if (Hash::numeric(array_keys($data))) {
 			if ($options['validate'] === 'only') {
