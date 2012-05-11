@@ -39,6 +39,8 @@ class ConsoleLog extends BaseLog {
  *
  * Config
  *
+ * - `types` string or array, levels the engine is interested in
+ * - `scopes` string or array, scopes the engine is interested in
  * - `stream` the path to save logs on.
  * - `outputAs` integer or ConsoleOutput::[RAW|PLAIN|COLOR]
  *
@@ -47,7 +49,7 @@ class ConsoleLog extends BaseLog {
  */
 	public function __construct($config = array()) {
 		parent::__construct($config);
-		$config = Set::merge(array(
+		$config = Hash::merge(array(
 			'stream' => 'php://stderr',
 			'types' => null,
 			'scopes' => array(),

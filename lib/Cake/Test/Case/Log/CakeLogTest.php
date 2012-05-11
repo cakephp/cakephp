@@ -281,10 +281,29 @@ class CakeLogTest extends CakeTestCase {
 		CakeLog::disable('bogus_stream');
 	}
 
+	protected function _resetLogConfig() {
+		CakeLog::config('debug', array(
+			'engine' => 'FileLog',
+			'types' => array('notice', 'info', 'debug'),
+			'file' => 'debug',
+		));
+		CakeLog::config('error', array(
+			'engine' => 'FileLog',
+			'types' => array('error', 'warning'),
+			'file' => 'error',
+		));
+	}
+
 	protected function _deleteLogs() {
-		@unlink(LOGS . 'shops.log');
-		@unlink(LOGS . 'error.log');
-		@unlink(LOGS . 'debug.log');
+		if (file_exists(LOGS . 'shops.log')) {
+			unlink(LOGS . 'shops.log');
+		}
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
+		if (file_exists(LOGS . 'debug.log')) {
+			unlink(LOGS . 'debug.log');
+		}
 	}
 
 /**
@@ -301,16 +320,7 @@ class CakeLogTest extends CakeTestCase {
 			unlink(LOGS . 'debug.log');
 		}
 
-		CakeLog::config('debug', array(
-			'engine' => 'FileLog',
-			'types' => array('notice', 'info', 'debug'),
-			'file' => 'debug',
-		));
-		CakeLog::config('error', array(
-			'engine' => 'FileLog',
-			'types' => array('error', 'warning'),
-			'file' => 'error',
-		));
+		$this->_resetLogConfig();
 		CakeLog::config('shops', array(
 			'engine' => 'FileLog',
 			'types' => array('info', 'notice', 'warning'),
@@ -372,16 +382,7 @@ class CakeLogTest extends CakeTestCase {
 			unlink(LOGS . 'debug.log');
 		}
 
-		CakeLog::config('debug', array(
-			'engine' => 'FileLog',
-			'types' => array('notice', 'info', 'debug'),
-			'file' => 'debug',
-		));
-		CakeLog::config('error', array(
-			'engine' => 'FileLog',
-			'types' => array('error', 'warning'),
-			'file' => 'error',
-		));
+		$this->_resetLogConfig();
 		CakeLog::config('shops', array(
 			'engine' => 'FileLog',
 			'types' => array('info', 'notice', 'warning'),
@@ -433,8 +434,7 @@ class CakeLogTest extends CakeTestCase {
  * test convenience methods
  */
 	public function testConvenienceMethods() {
-		@unlink(LOGS . 'error.log');
-		@unlink(LOGS . 'debug.log');
+		$this->_deleteLogs();
 
 		CakeLog::config('debug', array(
 			'engine' => 'FileLog',

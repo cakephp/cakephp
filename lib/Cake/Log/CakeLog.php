@@ -219,9 +219,6 @@ class CakeLog {
  * @return void
  */
 	protected static function _autoConfig() {
-		if (empty(self::$_Collection)) {
-			self::_init();
-		}
 		self::$_Collection->load('error', array(
 			'engine' => 'FileLog',
 			'types' => array('error', 'warning'),
@@ -275,14 +272,18 @@ class CakeLog {
 		if (is_string($type) && empty($scope) && !in_array($type, $levels)) {
 			$scope = $type;
 		}
-		if (empty(self::$_streams)) {
+		if (!self::$_Collection->attached()) {
 			self::_autoConfig();
 		}
 		foreach (self::$_Collection->enabled() as $streamName) {
 			$logger = self::$_Collection->{$streamName};
-			$config = $logger->config();
-			$types = $config['types'];
-			$scopes = $config['scopes'];
+			$types = null;
+			$scopes = array();
+			if ($logger instanceof BaseLog) {
+				$config = $logger->config();
+				$types = $config['types'];
+				$scopes = $config['scopes'];
+			}
 			if (is_string($scope)) {
 				$inScope = in_array($scope, $scopes);
 			} else {
