@@ -30,14 +30,14 @@ App::uses('CakeValidationRule', 'Model/Validator');
 class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 
 /**
- * Holds the ValidationRule objects
+ * Holds the CakeValidationRule objects
  *
  * @var array
  */
 	protected $_rules = array();
 
 /**
- * Set of methods available for validation
+ * List of methods available for validation
  *
  * @var array
  **/
@@ -51,7 +51,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 	protected $_validationDomain = null;
 
 /**
- * If the validation is stopped
+ * Whether the validation is stopped
  *
  * @var boolean
  */
@@ -110,7 +110,8 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Validates a ModelField
+ * Runs all validation rules in this set and returns a list of
+ * validation errors
  *
  * @return array list of validation errors for this field
  */
@@ -142,19 +143,19 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Gets a rule for a certain index
+ * Gets a rule for a given name if exists
  *
- * @param mixed index
- * @return ValidationRule
+ * @param string $name
+ * @return CakeValidationRule
  */
-	public function getRule($index) {
-		if (!empty($this->_rules[$index])) {
-			return $this->_rules[$index];
+	public function getRule($name) {
+		if (!empty($this->_rules[$name])) {
+			return $this->_rules[$name];
 		}
 	}
 
 /**
- * Gets all rules for this ModelField
+ * Returns all rules for this validation set
  *
  * @return array
  */
@@ -163,33 +164,58 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Sets a ValidationRule $rule for key $key
+ * Sets a CakeValidationRule $rule with a $name
  *
- * @param mixed $key The key under which the rule should be set
+ * ## Example:
+ *
+ * {{{
+ *		$set
+ *			->setRule('required', array('rule' => 'notEmpty', 'required' => true))
+ *			->setRule('inRange', array('rule' => array('between', 4, 10))
+ * }}}
+ *
+ * @param mixed $name The name under which the rule should be set
  * @param CakeValidationRule|array $rule The validation rule to be set
  * @return CakeValidationSet this instance
  */
-	public function setRule($key, $rule) {
+	public function setRule($name, $rule) {
 		if (!$rule instanceof CakeValidationRule) {
 			$rule = new CakeValidationRule($rule);
 		}
-		$this->_rules[$key] = $rule;
+		$this->_rules[$name] = $rule;
 		return $this;
 	}
 
 /**
  * Removes a validation rule from the set
  *
- * @param mixed $key The key under which the rule should be unset
+ * ## Example:
+ *
+ * {{{
+ *		$set
+ *			->removeRule('required')
+ *			->removeRule('inRange')
+ * }}}
+ *
+ * @param mixed $name The name under which the rule should be unset
  * @return CakeValidationSet this instance
  */
-	public function removeRule($key) {
-		unset($this->_rules[$key]);
+	public function removeRule($name) {
+		unset($this->_rules[$name]);
 		return $this;
 	}
 
 /**
  * Sets the rules for a given field
+ *
+ * ## Example:
+ *
+ * {{{
+ *		$set->setRules(array(
+ *			'required' => array('rule' => 'notEmpty', 'required' => true),
+ *			'inRange' => array('rule' => array('between', 4, 10)
+ * 		));
+ * }}}
  *
  * @param array $rules The rules to be set
  * @param bolean $mergeVars [optional] If true, merges vars instead of replace. Defaults to true.
