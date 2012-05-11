@@ -28,9 +28,9 @@ App::uses('<?php echo $dependency[0]; ?>', '<?php echo $dependency[1]; ?>');
  *
  */
 <?php if ($type === 'Controller'): ?>
-class <?php echo $fullClassName; ?>TestCase extends ControllerTestCase {
+class <?php echo $fullClassName; ?>Test extends ControllerTestCase {
 <?php else: ?>
-class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
+class <?php echo $fullClassName; ?>Test extends CakeTestCase {
 <?php endif; ?>
 
 <?php if (!empty($fixtures)): ?>
