@@ -909,7 +909,7 @@ class App {
 		}
 
 		list(, $log) = ErrorHandler::mapErrorCode($lastError['type']);
-		if ($log !== LOG_ERROR) {
+		if ($log !== LOG_ERR) {
 			return;
 		}
 
