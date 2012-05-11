@@ -48,6 +48,9 @@ class ErrorHandlerTest extends CakeTestCase {
 		$request->base = '';
 		Router::setRequestInfo($request);
 		Configure::write('debug', 2);
+
+		CakeLog::disable('stdout');
+		CakeLog::disable('stderr');
 	}
 
 /**
@@ -60,6 +63,8 @@ class ErrorHandlerTest extends CakeTestCase {
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}
+		CakeLog::enable('stdout');
+		CakeLog::enable('stderr');
 	}
 
 /**
@@ -221,7 +226,7 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testLoadPluginHanlder() {
+	public function testLoadPluginHandler() {
 		App::build(array(
 			'Plugin' => array(
 				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
