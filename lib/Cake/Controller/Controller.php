@@ -100,6 +100,7 @@ class Controller extends Object implements CakeEventListener {
  * additional information about the request.
  *
  * @var CakeRequest
+ * @link http://book.cakephp.org/2.0/en/controllers/request-response.html#cakerequest
  */
 	public $request;
 
@@ -107,6 +108,7 @@ class Controller extends Object implements CakeEventListener {
  * An instance of a CakeResponse object that contains information about the impending response
  *
  * @var CakeResponse
+ * @link http://book.cakephp.org/2.0/en/controllers/request-response.html#cakeresponse
  */
 	public $response;
 
@@ -184,7 +186,7 @@ class Controller extends Object implements CakeEventListener {
  * Example: `public $components = array('Session', 'RequestHandler', 'Acl');`
  *
  * @var array
- * @link http://book.cakephp.org/view/961/components-helpers-and-uses
+ * @link http://book.cakephp.org/2.0/en/controllers/components.html
  */
 	public $components = array('Session');
 
@@ -196,7 +198,8 @@ class Controller extends Object implements CakeEventListener {
 	public $viewClass = 'View';
 
 /**
- * Instance of the View created during rendering. Won't be set until after Controller::render() is called.
+ * Instance of the View created during rendering. Won't be set until after
+ * Controller::render() is called.
  *
  * @var View
  */
@@ -234,7 +237,7 @@ class Controller extends Object implements CakeEventListener {
  * marks all the actions in the controller for view caching.
  *
  * @var mixed
- * @link http://book.cakephp.org/view/1380/Caching-in-the-Controller
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html#additional-configuration-options
  */
 	public $cacheAction = false;
 
@@ -249,13 +252,13 @@ class Controller extends Object implements CakeEventListener {
  * Triggers Scaffolding
  *
  * @var mixed
- * @link http://book.cakephp.org/view/1103/Scaffolding
+ * @link http://book.cakephp.org/2.0/en/controllers/scaffolding.html
  */
 	public $scaffold = false;
 
 /**
- * Holds current methods of the controller.  This is a list of all the methods reachable
- * via url.  Modifying this array, will allow you to change which methods can be reached.
+ * Holds current methods of the controller. This is a list of all the methods reachable
+ * via url. Modifying this array, will allow you to change which methods can be reached.
  *
  * @var array
  */
@@ -767,18 +770,18 @@ class Controller extends Object implements CakeEventListener {
 			session_write_close();
 		}
 
-		if (!empty($status) && is_string($status)) {
+		if ($url !== null) {
+			$this->response->header('Location', Router::url($url, true));
+		}
+
+		if (is_string($status)) {
 			$codes = array_flip($this->response->httpCodes());
 			if (isset($codes[$status])) {
 				$status = $codes[$status];
 			}
 		}
 
-		if ($url !== null) {
-			$this->response->header('Location', Router::url($url, true));
-		}
-
-		if (!empty($status) && ($status >= 300 && $status < 400)) {
+		if ($status) {
 			$this->response->statusCode($status);
 		}
 

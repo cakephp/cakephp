@@ -80,6 +80,10 @@ class CakeResponse {
  * @var array
  */
 	protected $_mimeTypes = array(
+		'html' => array('text/html', '*/*'),
+		'json' => 'application/json',
+		'xml' => array('application/xml', 'text/xml'),
+		'rss' => 'application/rss+xml',
 		'ai' => 'application/postscript',
 		'bcpio' => 'application/x-bcpio',
 		'bin' => 'application/octet-stream',
@@ -206,7 +210,6 @@ class CakeResponse {
 		'f90' => 'text/plain',
 		'h' => 'text/plain',
 		'hh' => 'text/plain',
-		'html' => array('text/html', '*/*'),
 		'htm' => array('text/html', '*/*'),
 		'ics' => 'text/calendar',
 		'm' => 'text/plain',
@@ -218,7 +221,6 @@ class CakeResponse {
 		'tpl' => 'text/template',
 		'txt' => 'text/plain',
 		'text' => 'text/plain',
-		'xml' => array('application/xml', 'text/xml'),
 		'avi' => 'video/x-msvideo',
 		'fli' => 'video/x-fli',
 		'mov' => 'video/quicktime',
@@ -261,12 +263,10 @@ class CakeResponse {
 		'pdb' => 'chemical/x-pdb',
 		'xyz' => 'chemical/x-pdb',
 		'javascript' => 'text/javascript',
-		'json' => 'application/json',
 		'form' => 'application/x-www-form-urlencoded',
 		'file' => 'multipart/form-data',
 		'xhtml'	=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
 		'xhtml-mobile'	=> 'application/vnd.wap.xhtml+xml',
-		'rss' => 'application/rss+xml',
 		'atom' => 'application/atom+xml',
 		'amf' => 'application/x-amf',
 		'wap' => array('text/vnd.wap.wml', 'text/vnd.wap.wmlscript', 'image/vnd.wap.wbmp'),
@@ -328,7 +328,7 @@ class CakeResponse {
 
 /**
  * Holds cookies to be sent to the client
- * 
+ *
  * @var array
  */
 	protected $_cookies = array();
@@ -384,7 +384,7 @@ class CakeResponse {
  * Sets the cookies that have been added via static method CakeResponse::addCookie()
  * before any other output is sent to the client.
  * Will set the cookies in the order they have been set.
- * 
+ *
  * @return void
  */
 	protected function _setCookies() {
@@ -595,7 +595,7 @@ class CakeResponse {
  * Sets the response content type. It can be either a file extension
  * which will be mapped internally to a mime-type or a string representing a mime-type
  * if $contentType is null the current content type is returned
- * if $contentType is an associative array, it will be stored as a content type definition
+ * if $contentType is an associative array, content type definitions will be stored/replaced
  *
  * ### Setting the content type
  *
@@ -605,9 +605,9 @@ class CakeResponse {
  *
  * e.g `type();`
  *
- * ### Storing a content type definition
+ * ### Storing content type definitions
  *
- * e.g `type(array('keynote' => 'application/keynote'));`
+ * e.g `type(array('keynote' => 'application/keynote', 'bat' => 'application/bat'));`
  *
  * ### Replacing a content type definition
  *
@@ -621,9 +621,9 @@ class CakeResponse {
 			return $this->_contentType;
 		}
 		if (is_array($contentType)) {
-			$type = key($contentType);
-			$defitition = current($contentType);
-			$this->_mimeTypes[$type] = $defitition;
+			foreach ($contentType as $type => $definition) {
+				$this->_mimeTypes[$type] = $definition;
+			}
 			return $this->_contentType;
 		}
 		if (isset($this->_mimeTypes[$contentType])) {
@@ -800,12 +800,12 @@ class CakeResponse {
 
 /**
  * Sets the Cache-Control must-revalidate directive.
- * must-revalidate indicates that the response should not be served 
- * stale by a cache under any cirumstance without first revalidating 
+ * must-revalidate indicates that the response should not be served
+ * stale by a cache under any cirumstance without first revalidating
  * with the origin.
  * If called with no parameters, this function will return wheter must-revalidate is present.
  *
- * @param int $seconds if null, the method will return the current 
+ * @param int $seconds if null, the method will return the current
  * must-revalidate value
  * @return boolean
  */
@@ -886,8 +886,8 @@ class CakeResponse {
 	}
 
 /**
- * Sets the response as Not Modified by removing any body contents 
- * setting the status code to "304 Not Modified" and removing all 
+ * Sets the response as Not Modified by removing any body contents
+ * setting the status code to "304 Not Modified" and removing all
  * conflicting headers
  *
  * @return void
@@ -911,11 +911,11 @@ class CakeResponse {
 
 /**
  * Sets the Vary header for the response, if an array is passed,
- * values will be imploded into a comma separated string. If no 
- * parameters are passed, then an array with the current Vary header 
+ * values will be imploded into a comma separated string. If no
+ * parameters are passed, then an array with the current Vary header
  * value is returned
  *
- * @param string|array $cacheVariances a single Vary string or a array 
+ * @param string|array $cacheVariances a single Vary string or a array
  * containig the list for variances.
  * @return array
  **/
@@ -932,22 +932,22 @@ class CakeResponse {
 
 /**
  * Sets the response Etag, Etags are a strong indicative that a response
- * can be cached by a HTTP client. A bad way of generaing Etags is 
- * creating a hash of the response output, instead generate a unique 
- * hash of the unique components that identifies a request, such as a 
- * modification time, a resource Id, and anything else you consider it 
+ * can be cached by a HTTP client. A bad way of generaing Etags is
+ * creating a hash of the response output, instead generate a unique
+ * hash of the unique components that identifies a request, such as a
+ * modification time, a resource Id, and anything else you consider it
  * makes it unique.
  *
- * Second parameter is used to instuct clients that the content has 
- * changed, but sematicallly, it can be used as the same thing. Think 
- * for instance of a page with a hit counter, two different page views 
- * are equivalent, but they differ by a few bytes. This leaves off to 
+ * Second parameter is used to instuct clients that the content has
+ * changed, but sematicallly, it can be used as the same thing. Think
+ * for instance of a page with a hit counter, two different page views
+ * are equivalent, but they differ by a few bytes. This leaves off to
  * the Client the decision of using or not the cached page.
  *
  * If no parameters are passed, current Etag header is returned.
  *
  * @param string $hash the unique has that identifies this resposnse
- * @param boolean $weak whether the response is semantically the same as 
+ * @param boolean $weak whether the response is semantically the same as
  * other with th same hash or not
  * @return string
  **/
@@ -965,7 +965,7 @@ class CakeResponse {
  * Returns a DateTime object initialized at the $time param and using UTC
  * as timezone
  *
- * @param string|int|DateTime $time 
+ * @param string|int|DateTime $time
  * @return DateTime
  */
 	protected function _getUTCDate($time = null) {
@@ -1043,16 +1043,16 @@ class CakeResponse {
 	}
 
 /**
- * Checks whether a response has not been modified according to the 'If-None-Match' 
- * (Etags) and 'If-Modified-Since' (last modification date) request 
- * headers headers. If the response is detected to be not modified, it 
+ * Checks whether a response has not been modified according to the 'If-None-Match'
+ * (Etags) and 'If-Modified-Since' (last modification date) request
+ * headers headers. If the response is detected to be not modified, it
  * is marked as so accordingly so the client can be informed of that.
  *
- * In order to mark a response as not modified, you need to set at least 
- * the Last-Modified response header or a response etag to be compared 
+ * In order to mark a response as not modified, you need to set at least
+ * the Last-Modified response header or a response etag to be compared
  * with the request itself
  *
- * @return boolean whether the response was marked as not modified or 
+ * @return boolean whether the response was marked as not modified or
  * not
  **/
 	public function checkNotModified(CakeRequest $request) {
@@ -1087,19 +1087,19 @@ class CakeResponse {
 
 /**
  * Getter/Setter for cookie configs
- * 
+ *
  * This method acts as a setter/getter depending on the type of the argument.
  * If the method is called with no arguments, it returns all configurations.
- * 
+ *
  * If the method is called with a string as argument, it returns either the
  * given configuration if it is set, or null, if it's not set.
- * 
+ *
  * If the method is called with an array as argument, it will set the cookie
  * configuration to the cookie container.
- * 
+ *
  * @param $options Either null to get all cookies, string for a specific cookie
  *  or array to set cookie.
- *  
+ *
  * ### Options (when setting a configuration)
  *  - name: The Cookie name
  *  - value: Value of the cookie
@@ -1108,21 +1108,21 @@ class CakeResponse {
  *  - domain: Domain the cookie is for.
  *  - secure: Is the cookie https?
  *  - httpOnly: Is the cookie available in the client?
- * 
+ *
  * ## Examples
- * 
+ *
  * ### Getting all cookies
- * 
+ *
  * `$this->cookie()`
- * 
+ *
  * ### Getting a certain cookie configuration
- * 
+ *
  * `$this->cookie('MyCookie')`
- * 
+ *
  * ### Setting a cookie configuration
- * 
+ *
  * `$this->cookie((array) $options)`
- * 
+ *
  * @return mixed
  */
 	public function cookie($options = null) {

@@ -389,7 +389,7 @@ class SqliteTest extends CakeTestCase {
  * @return void
  */
 	public function testNestedTransaction() {
-		$this->skipIf($this->Dbo->supportNestedTransaction() === false, 'The Sqlite version do not support nested transaction');
+		$this->skipIf($this->Dbo->nestedTransactionSupported() === false, 'The Sqlite version do not support nested transaction');
 
 		$this->loadFixtures('User');
 		$model = new User();

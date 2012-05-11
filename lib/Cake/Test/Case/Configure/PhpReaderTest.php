@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Configure
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -19,6 +19,26 @@
 App::uses('PhpReader', 'Configure');
 
 class PhpReaderTest extends CakeTestCase {
+
+/**
+ * Test data to serialize and unserialize.
+ *
+ * @var array
+ */
+	public $testData = array(
+		'One' => array(
+			'two' => 'value',
+			'three' => array(
+				'four' => 'value four'
+			),
+			'is_null' => null,
+			'bool_false' => false,
+			'bool_true' => true,
+		),
+		'Asset' => array(
+			'timestamp' => 'force'
+		),
+	);
 
 /**
  * setup
@@ -96,4 +116,55 @@ class PhpReaderTest extends CakeTestCase {
 		$this->assertTrue(isset($result['plugin_load']));
 		CakePlugin::unload();
 	}
+
+/**
+ * Test dumping data to PHP format.
+ *
+ * @return void
+ */
+	public function testDump() {
+		$reader = new PhpReader(TMP);
+		$result = $reader->dump('test.php', $this->testData);
+		$this->assertTrue($result > 0);
+		$expected = <<<PHP
+<?php
+\$config = array (
+  'One' => 
+  array (
+    'two' => 'value',
+    'three' => 
+    array (
+      'four' => 'value four',
+    ),
+    'is_null' => NULL,
+    'bool_false' => false,
+    'bool_true' => true,
+  ),
+  'Asset' => 
+  array (
+    'timestamp' => 'force',
+  ),
+);
+PHP;
+		$file = TMP . 'test.php';
+		$contents = file_get_contents($file);
+
+		unlink($file);
+		$this->assertTextEquals($expected, $contents);
+	}
+
+/**
+ * Test that dump() makes files read() can read.
+ *
+ * @return void
+ */
+	public function testDumpRead() {
+		$reader = new PhpReader(TMP);
+		$reader->dump('test.php', $this->testData);
+		$result = $reader->read('test.php');
+		unlink(TMP . 'test.php');
+
+		$this->assertEquals($this->testData, $result);
+	}
+
 }

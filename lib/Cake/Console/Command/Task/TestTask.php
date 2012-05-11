@@ -77,7 +77,7 @@ class TestTask extends BakeTask {
 		}
 
 		if (count($this->args) > 1) {
-			$type = Inflector::underscore($this->args[0]);
+			$type = Inflector::classify($this->args[0]);
 			if ($this->bake($type, $this->args[1])) {
 				$this->out('<success>Done</success>');
 			}
@@ -139,7 +139,7 @@ class TestTask extends BakeTask {
 			$methods = $this->getTestableMethods($fullClassName);
 		}
 		$mock = $this->hasMockClass($type, $fullClassName);
-		list($preConstruct, $construction, $postConstruct) = $this->generateConstructor($type, $fullClassName);
+		list($preConstruct, $construction, $postConstruct) = $this->generateConstructor($type, $fullClassName, $plugin);
 		$uses = $this->generateUses($type, $realType, $fullClassName);
 
 		$this->out("\n" . __d('cake_console', 'Baking test case for %s %s ...', $className, $type), 1, Shell::QUIET);
@@ -241,6 +241,12 @@ class TestTask extends BakeTask {
  */
 	public function isLoadableClass($package, $class) {
 		App::uses($class, $package);
+		list($plugin, $ns) = pluginSplit($package);
+		if ($plugin) {
+			App::uses("{$plugin}AppController", $package);
+			App::uses("{$plugin}AppModel", $package);
+			App::uses("{$plugin}AppHelper", $package);
+		}
 		return class_exists($class);
 	}
 
@@ -440,13 +446,14 @@ class TestTask extends BakeTask {
  *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $fullClassName The Classname of the class the test is being generated for.
+ * @param string $plugin The plugin name.
  * @return array Constructor snippets for the thing you are building.
  */
-	public function generateConstructor($type, $fullClassName) {
+	public function generateConstructor($type, $fullClassName, $plugin) {
 		$type = strtolower($type);
 		$pre = $post = '';
 		if ($type == 'model') {
-			$construct = "ClassRegistry::init('$fullClassName');\n";
+			$construct = "ClassRegistry::init('{$plugin}$fullClassName');\n";
 		}
 		if ($type == 'behavior') {
 			$construct = "new $fullClassName();\n";

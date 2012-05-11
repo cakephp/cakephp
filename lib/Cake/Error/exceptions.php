@@ -12,7 +12,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html
  * @package       Cake.Error
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -552,6 +552,21 @@ class FatalErrorException extends CakeException {
 		if ($line) {
 			$this->line = $line;
 		}
+	}
+
+}
+
+/**
+ * Not Implemented Exception - used when an API method is not implemented
+ *
+ * @package       Cake.Error
+ */
+class NotImplementedException extends CakeException {
+
+	protected $_messageTemplate = '%s is not implemented.';
+
+	public function __construct($message, $code = 501) {
+		parent::__construct($message, $code);
 	}
 
 }

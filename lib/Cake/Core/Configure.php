@@ -279,6 +279,45 @@ class Configure {
 	}
 
 /**
+ * Dump data currently in Configure into $filename.  The serialization format
+ * is decided by the config reader attached as $config.  For example, if the
+ * 'default' adapter is a PhpReader, the generated file will be a PHP 
+ * configuration file loadable by the PhpReader.
+ *
+ * ## Usage
+ *
+ * Given that the 'default' reader is an instance of PhpReader.
+ * Save all data in Configure to the file `my_config.php`:
+ *
+ * `Configure::dump('my_config.php', 'default');`
+ *
+ * Save only the error handling configuration:
+ *
+ * `Configure::dump('error.php', 'default', array('Error', 'Exception');`
+ *
+ * @param string $key The identifier to create in the config adapter.
+ *   This could be a filename or a cache key depending on the adapter being used.
+ * @param string $config The name of the configured adapter to dump data with.
+ * @param array $keys The name of the top-level keys you want to dump. 
+ *   This allows you save only some data stored in Configure.
+ * @return boolean success
+ * @throws ConfigureException if the adapter does not implement a `dump` method.
+ */
+	public static function dump($key, $config = 'default', $keys = array()) {
+		if (empty(self::$_readers[$config])) {
+			throw new ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
+		}
+		if (!method_exists(self::$_readers[$config], 'dump')) {
+			throw new ConfigureException(__d('cake', 'The "%s" adapter, does not have a dump() method.', $config));
+		}
+		$values = self::$_values;
+		if (!empty($keys) && is_array($keys)) {
+			$values = array_intersect_key($values, array_flip($keys));
+		}
+		return (bool)self::$_readers[$config]->dump($key, $values);
+	}
+
+/**
  * Used to determine the current version of CakePHP.
  *
  * Usage `Configure::version();`

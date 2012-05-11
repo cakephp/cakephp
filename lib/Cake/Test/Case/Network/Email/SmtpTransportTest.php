@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Network.Email
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -221,7 +221,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$email->subject('Testing SMTP');
 		$date = date(DATE_RFC2822);
 		$email->setHeaders(array('X-Mailer' => SmtpCakeEmail::EMAIL_CLIENT, 'Date' => $date));
-		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '')));
+		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
 
 		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
 		$data .= "Return-Path: CakePHP Return <pleasereply@cakephp.org>\r\n";
@@ -237,6 +237,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$data .= "\r\n";
 		$data .= "First Line\r\n";
 		$data .= "Second Line\r\n";
+		$data .= "..Third Line\r\n"; // RFC5321 4.5.2.Transparency
 		$data .= "\r\n";
 		$data .= "\r\n\r\n.\r\n";
 

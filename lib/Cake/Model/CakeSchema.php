@@ -414,12 +414,12 @@ class CakeSchema extends Object {
 					unset($value['type']);
 					$col .= join(', ',  $this->_values($value));
 				} elseif ($field == 'indexes') {
-					$col = "\t\t'indexes' => array(";
+					$col = "\t\t'indexes' => array(\n\t\t\t";
 					$props = array();
 					foreach ((array)$value as $key => $index) {
 						$props[] = "'{$key}' => array(" . join(', ',  $this->_values($index)) . ")";
 					}
-					$col .= join(', ', $props);
+					$col .= join(",\n\t\t\t", $props) . "\n\t\t";
 				} elseif ($field == 'tableParameters') {
 					$col = "\t\t'tableParameters' => array(";
 					$props = array();
@@ -577,6 +577,9 @@ class CakeSchema extends Object {
 					$vals[] = "'{$key}' => array('" . implode("', '",  $val) . "')";
 				} elseif (!is_numeric($key)) {
 					$val = var_export($val, true);
+					if ($val === 'NULL') {
+						$val = 'null';
+					}
 					$vals[] = "'{$key}' => {$val}";
 				}
 			}

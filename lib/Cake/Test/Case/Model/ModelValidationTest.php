@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -316,12 +316,16 @@ class ModelValidationTest extends BaseModelTest {
 		$data = array('TestValidate' => array('modified' => ''));
 		$result = $TestModel->create($data);
 		$this->assertEquals($data, $result);
+		$result = $TestModel->validates();
+		$this->assertFalse($result);
 
 		$data = array('TestValidate' => array(
 			'modified' => '2007-05-01'
 		));
 		$result = $TestModel->create($data);
 		$this->assertEquals($data, $result);
+		$result = $TestModel->validates();
+		$this->assertTrue($result);
 
 		$TestModel->validate['slug'] = array('allowEmpty' => false, 'rule' => array('maxLength', 45));
 
@@ -1894,5 +1898,85 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel->set(array('title' => '', 'body' => 'body'));
 		$TestModel->validates();
 	}
+
+/**
+ * Tests that altering data in a beforeValidate callback will lead to saving those
+ * values in database
+ *
+ * @return void
+ */
+	public function testValidateFirstWithBeforeValidate() {
+		$this->loadFixtures('Article', 'User');
+		$model = new CustomArticle();
+		$model->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => true,
+					'allowEmpty' => false
+				)
+			)
+		);
+		$data = array(
+			'CustomArticle' => array(
+				'body' => 'foo0'
+			)
+		);
+		$result = $model->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$title = $model->field('title', array('body' => 'foo0'));
+		$this->assertEquals('foo', $title);
+
+		$data = array(
+			array('body' => 'foo1'),
+			array('body' => 'foo2'),
+			array('body' => 'foo3')
+		);
+
+		$result = $model->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo1')));
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo2')));
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo3')));
+	}
+
+/**
+ * Tests that altering data in a beforeValidate callback will lead to saving those
+ * values in database
+ *
+ * @return void
+ */
+	public function testValidateAssociatedWithBeforeValidate() {
+		$this->loadFixtures('Article', 'User');
+		$model = new CustomArticle();
+		$model->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => true
+				)
+			)
+		);
+		$articles = array(
+			array('body' => 'foo1'),
+			array('body' => 'foo2'),
+			array('body' => 'foo3')
+		);
+		$user = new User();
+		$user->hasMany['CustomArticle'] = array('foreignKey' => 'user_id');
+		$data = array(
+			'User' => array('user' => 'foo', 'password' => 'bar'),
+			'CustomArticle' => $articles
+		);
+		$result = $user->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo1')));
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo2')));
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo3')));
+	}
+
 
 }

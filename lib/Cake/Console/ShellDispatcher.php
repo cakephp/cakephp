@@ -160,9 +160,11 @@ class ShellDispatcher {
 		$errorHandler = new ConsoleErrorHandler();
 		if (empty($error['consoleHandler'])) {
 			$error['consoleHandler'] = array($errorHandler, 'handleError');
+			Configure::write('error', $error);
 		}
 		if (empty($exception['consoleHandler'])) {
 			$exception['consoleHandler'] = array($errorHandler, 'handleException');
+			Configure::write('exception', $exception);
 		}
 		set_exception_handler($exception['consoleHandler']);
 		set_error_handler($error['consoleHandler'], Configure::read('Error.level'));

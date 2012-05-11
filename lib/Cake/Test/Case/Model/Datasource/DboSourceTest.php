@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *	Licensed under The Open Group Test Suite License
  *	Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model.Datasource
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -53,8 +53,8 @@ class DboTestSource extends DboSource {
 		$this->_connection = $conn;
 	}
 
-	public function supportNestedTransaction() {
-		return $this->nestedTransaction && $this->nestedSupport;
+	public function nestedTransactionSupported() {
+		return $this->useNestedTransactions && $this->nestedSupport;
 	}
 
 }
@@ -849,7 +849,7 @@ class DboSourceTest extends CakeTestCase {
 		$conn = $this->getMock('MockPDO');
 		$db = new DboTestSource();
 		$db->setConnection($conn);
-		$db->nestedTransaction = true;
+		$db->useNestedTransactions = true;
 		$db->nestedSupport = true;
 
 		$conn->expects($this->at(0))->method('beginTransaction')->will($this->returnValue(true));
@@ -871,7 +871,7 @@ class DboSourceTest extends CakeTestCase {
 		$conn = $this->getMock('MockPDO');
 		$db = new DboTestSource();
 		$db->setConnection($conn);
-		$db->nestedTransaction = true;
+		$db->useNestedTransactions = true;
 		$db->nestedSupport = false;
 
 		$conn->expects($this->once())->method('beginTransaction')->will($this->returnValue(true));
@@ -890,7 +890,7 @@ class DboSourceTest extends CakeTestCase {
 		$conn = $this->getMock('MockPDO');
 		$db = new DboTestSource();
 		$db->setConnection($conn);
-		$db->nestedTransaction = false;
+		$db->useNestedTransactions = false;
 		$db->nestedSupport = true;
 
 		$conn->expects($this->once())->method('beginTransaction')->will($this->returnValue(true));

@@ -6,14 +6,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Core
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -362,4 +362,47 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertNull(Configure::read('debug'));
 		$this->assertNull(Configure::read('test'));
 	}
+
+/**
+ * @expectedException ConfigureException
+ */
+	public function testDumpNoAdapter() {
+		Configure::dump(TMP . 'test.php', 'does_not_exist');
+	}
+
+/**
+ * test dump integrated with the PhpReader.
+ *
+ * @return void
+ */
+	public function testDump() {
+		Configure::config('test_reader', new PhpReader(TMP));
+
+		$result = Configure::dump('config_test.php', 'test_reader');
+		$this->assertTrue($result > 0);
+		$result = file_get_contents(TMP . 'config_test.php');
+		$this->assertContains('<?php', $result);
+		$this->assertContains('$config = ', $result);
+		@unlink(TMP . 'config_test.php');
+	}
+
+/**
+ * Test dumping only some of the data.
+ *
+ * @return
+ */
+	public function testDumpPartial() {
+		Configure::config('test_reader', new PhpReader(TMP));
+
+		$result = Configure::dump('config_test.php', 'test_reader', array('Error'));
+		$this->assertTrue($result > 0);
+		$result = file_get_contents(TMP . 'config_test.php');
+		$this->assertContains('<?php', $result);
+		$this->assertContains('$config = ', $result);
+		$this->assertContains('Error', $result);
+		$this->assertNotContains('debug', $result);
+
+		@unlink(TMP . 'config_test.php');
+	}
+
 }

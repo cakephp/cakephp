@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Network.Email
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -51,7 +51,7 @@ class DebugTransportTest extends CakeTestCase {
 		$email->subject('Testing Message');
 		$date = date(DATE_RFC2822);
 		$email->setHeaders(array('X-Mailer' => DebugCakeEmail::EMAIL_CLIENT, 'Date' => $date));
-		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '')));
+		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
 
 		$headers = "From: CakePHP Test <noreply@cakephp.org>\r\n";
 		$headers .= "To: CakePHP <cake@cakephp.org>\r\n";
@@ -66,6 +66,7 @@ class DebugTransportTest extends CakeTestCase {
 
 		$data = "First Line\r\n";
 		$data .= "Second Line\r\n";
+		$data .= ".Third Line\r\n"; // Not use 'RFC5321 4.5.2.Transparency' in DebugTransport.
 
 		$result = $this->DebugTransport->send($email);
 

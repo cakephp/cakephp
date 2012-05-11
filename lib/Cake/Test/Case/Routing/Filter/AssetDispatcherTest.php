@@ -93,7 +93,7 @@ class AssetDispatcherTest extends CakeTestCase {
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 		$time = filemtime(App::themePath('TestTheme') . 'webroot' . DS . 'img' . DS . 'cake.power.gif');
-		$time = new DateTime(date('Y-m-d H:i:s', $time), new DateTimeZone('UTC'));
+		$time = new DateTime('@' . $time);
 
 		$response = $this->getMock('CakeResponse', array('send', 'checkNotModified'));
 		$request = new CakeRequest('theme/test_theme/img/cake.power.gif');

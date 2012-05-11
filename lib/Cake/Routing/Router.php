@@ -157,7 +157,7 @@ class Router {
  *
  * @var string
  */
-    protected static $_routeClass = 'CakeRoute';
+	protected static $_routeClass = 'CakeRoute';
 
 /**
  * Set the default route class to use or return the current one
@@ -893,8 +893,9 @@ class Router {
 
 		list($args, $named) = array(Hash::filter($args), Hash::filter($named));
 		foreach (self::$_prefixes as $prefix) {
-			if (!empty($url[$prefix])) {
-				$url['action'] = str_replace($prefix . '_', '', $url['action']);
+			$prefixed = $prefix . '_';
+			if (!empty($url[$prefix]) && strpos($url['action'], $prefixed) === 0) {
+				$url['action'] = substr($url['action'], strlen($prefixed) * -1);
 				break;
 			}
 		}
@@ -956,12 +957,19 @@ class Router {
 		$out = '';
 
 		if (is_array($q)) {
-			$q = array_merge($extra, $q);
+			$q = array_merge($q, $extra);
 		} else {
 			$out = $q;
 			$q = $extra;
 		}
-		$out .= http_build_query($q, null, $join);
+		$addition = http_build_query($q, null, $join);
+
+		if ($out && $addition && substr($out, strlen($join) * -1, strlen($join)) != $join) {
+			$out .= $join;
+		}
+
+		$out .= $addition;
+
 		if (isset($out[0]) && $out[0] != '?') {
 			$out = '?' . $out;
 		}

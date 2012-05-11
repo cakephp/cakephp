@@ -930,6 +930,22 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test parsing accept with a confusing accept value.
+ *
+ * @return void
+ */
+	public function testParseAcceptNoQValues() {
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/plain, */*';
+
+		$request = new CakeRequest('/', false);
+		$result = $request->parseAccept();
+		$expected = array(
+			'1.0' => array('application/json', 'text/plain', '*/*'),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testBaseUrlAndWebrootWithModRewrite method
  *
  * @return void

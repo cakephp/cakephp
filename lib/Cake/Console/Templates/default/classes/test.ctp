@@ -23,12 +23,13 @@ echo "<?php\n";
 App::uses('<?php echo $dependency[0]; ?>', '<?php echo $dependency[1]; ?>');
 <?php endforeach; ?>
 
-<?php if ($mock and strtolower($type) == 'controller'): ?>
+<?php if ($mock && strtolower($type) === 'controller'): ?>
 /**
  * Test<?php echo $fullClassName; ?>
  *
  */
 class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
+
 /**
  * Auto render
  *
@@ -47,6 +48,7 @@ class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
 	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
+
 }
 
 <?php endif; ?>
@@ -55,13 +57,16 @@ class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
  *
  */
 class <?php echo $fullClassName; ?>Test extends CakeTestCase {
+
 <?php if (!empty($fixtures)): ?>
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array('<?php echo join("', '", $fixtures); ?>');
+	public $fixtures = array(
+		'<?php echo join("',\n\t\t'", $fixtures); ?>'
+	);
 
 <?php endif; ?>
 /**
@@ -94,7 +99,7 @@ class <?php echo $fullClassName; ?>Test extends CakeTestCase {
  * @return void
  */
 	public function test<?php echo Inflector::camelize($method); ?>() {
-
 	}
+
 <?php endforeach;?>
 }

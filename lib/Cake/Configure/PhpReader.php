@@ -4,7 +4,6 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -86,6 +85,19 @@ class PhpReader implements ConfigReaderInterface {
 			);
 		}
 		return $config;
+	}
+
+/**
+ * Converts the provided $data into a string of PHP code that can
+ * be used saved into a file and loaded later.
+ *
+ * @param string $filename The filename to create on $this->_path.
+ * @param array $data Data to dump.
+ * @return int Bytes saved.
+ */
+	public function dump($filename, $data) {
+		$contents = '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';
+		return file_put_contents($this->_path . $filename, $contents);
 	}
 
 }

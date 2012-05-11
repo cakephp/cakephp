@@ -728,7 +728,8 @@ class ControllerTest extends CakeTestCase {
 			array(303, "See Other"),
 			array(304, "Not Modified"),
 			array(305, "Use Proxy"),
-			array(307, "Temporary Redirect")
+			array(307, "Temporary Redirect"),
+			array(403, "Forbidden"),
 		);
 	}
 

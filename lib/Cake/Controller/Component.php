@@ -35,7 +35,7 @@ App::uses('ComponentCollection', 'Controller');
  * - `beforeRedirect()` - Fired before a redirect() is done.
  *
  * @package       Cake.Controller
- * @link          http://book.cakephp.org/view/993/Components
+ * @link          http://book.cakephp.org/2.0/en/controllers/components.html
  * @see Controller::$components
  */
 class Component extends Object {

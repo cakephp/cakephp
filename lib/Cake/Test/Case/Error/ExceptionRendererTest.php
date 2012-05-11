@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Error
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -639,7 +639,7 @@ class ExceptionRendererTest extends CakeTestCase {
 			->with('missingHelper')
 			->will($this->throwException($exception));
 
-		$ExceptionRenderer->controller->expects($this->at(4))
+		$ExceptionRenderer->controller->expects($this->at(5))
 			->method('render')
 			->with('error500')
 			->will($this->returnValue(true));
@@ -671,7 +671,7 @@ class ExceptionRendererTest extends CakeTestCase {
 			->with('error400')
 			->will($this->throwException($exception));
 
-		$ExceptionRenderer->controller->expects($this->at(3))
+		$ExceptionRenderer->controller->expects($this->at(4))
 			->method('render')
 			->with('error500')
 			->will($this->returnValue(true));

@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -810,7 +810,7 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->i18nFormat($time, '%c');
-		$expected = 'jue 14 ene 2010 13:59:28 ' . strftime('%Z', $time);
+		$expected = 'jue 14 ene 2010 13:59:28 ' . utf8_encode(strftime('%Z', $time));
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->i18nFormat($time, 'Time is %r, and date is %x');
@@ -824,7 +824,7 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->i18nFormat($time, '%c');
-		$expected = 'mié 13 ene 2010 13:59:28 ' . strftime('%Z', $time);
+		$expected = 'mié 13 ene 2010 13:59:28 ' . utf8_encode(strftime('%Z', $time));
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->i18nFormat($time, 'Time is %r, and date is %x');

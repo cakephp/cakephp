@@ -913,7 +913,11 @@ class App {
 			return;
 		}
 
-		$errorHandler = Configure::read('Error.handler');
+		if (PHP_SAPI === 'cli') {
+			$errorHandler = Configure::read('Error.consoleHandler');
+		} else {
+			$errorHandler = Configure::read('Error.handler');
+		}
 		if (!is_callable($errorHandler)) {
 			return;
 		}
