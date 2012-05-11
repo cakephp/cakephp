@@ -460,7 +460,7 @@ class TestTask extends BakeTask {
 		}
 		if ($type == 'controller') {
 			$className = substr($fullClassName, 0, -10);
-			$construct = "new Test$fullClassName();\n";
+			$construct = "new $fullClassName();\n";
 			$post = "\$this->{$className}->constructClasses();\n";
 		}
 		if ($type == 'helper') {
