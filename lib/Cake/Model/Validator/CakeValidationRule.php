@@ -131,6 +131,15 @@ class CakeValidationRule {
 	}
 
 /**
+ * Returns whether the field can be left blank according to this rule
+ *
+ * @return boolean
+ */
+	public function isEmptyAllowed() {
+		return $this->skip() || $this->allowEmpty === true;
+	}
+
+/**
  * Checks if the field is required according to the `required` property
  *
  * @return boolean

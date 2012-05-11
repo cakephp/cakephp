@@ -132,4 +132,33 @@ class CakeValidationRuleTest extends CakeTestCase {
 		$Rule->isUpdate(true);
 		$this->assertTrue($Rule->isRequired());
 	}
+
+/**
+ * Test isEmptyAllowed method
+ *
+ * @return void
+ */
+	public function testIsEmplyAllowed() {
+		$def = array('rule' => 'aRule', 'allowEmpty' => true);
+		$Rule = new CakeValidationRule($def);
+		$this->assertTrue($Rule->isEmptyAllowed());
+
+		$def = array('rule' => 'aRule', 'allowEmpty' => false);
+		$Rule = new CakeValidationRule($def);
+		$this->assertFalse($Rule->isEmptyAllowed());
+
+		$def = array('rule' => 'notEmpty', 'allowEmpty' => false, 'on' => 'update');
+		$Rule = new CakeValidationRule($def);
+		$this->assertTrue($Rule->isEmptyAllowed());
+
+		$Rule->isUpdate(true);
+		$this->assertFalse($Rule->isEmptyAllowed());
+
+		$def = array('rule' => 'notEmpty', 'allowEmpty' => false, 'on' => 'create');
+		$Rule = new CakeValidationRule($def);
+		$this->assertFalse($Rule->isEmptyAllowed());
+
+		$Rule->isUpdate(true);
+		$this->assertTrue($Rule->isEmptyAllowed());
+	}
 }
