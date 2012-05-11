@@ -23,40 +23,15 @@ echo "<?php\n";
 App::uses('<?php echo $dependency[0]; ?>', '<?php echo $dependency[1]; ?>');
 <?php endforeach; ?>
 
-<?php if ($mock && strtolower($type) === 'controller'): ?>
-/**
- * Test<?php echo $fullClassName; ?>
- *
- */
-class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
-
-/**
- * Auto render
- *
- * @var boolean
- */
-	public $autoRender = false;
-
-/**
- * Redirect action
- *
- * @param mixed $url
- * @param mixed $status
- * @param boolean $exit
- * @return void
- */
-	public function redirect($url, $status = null, $exit = true) {
-		$this->redirectUrl = $url;
-	}
-
-}
-
-<?php endif; ?>
 /**
  * <?php echo $fullClassName; ?> Test Case
  *
  */
+<?php if ($type === 'Controller'): ?>
+class <?php echo $fullClassName; ?>Test extends ControllerTestCase {
+<?php else: ?>
 class <?php echo $fullClassName; ?>Test extends CakeTestCase {
+<?php endif; ?>
 
 <?php if (!empty($fixtures)): ?>
 /**
