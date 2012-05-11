@@ -361,10 +361,10 @@ TEXT;
 		$this->assertRegExp('/DebuggerTest\:\:testLog/i', $result);
 		$this->assertRegExp("/'cool'/", $result);
 
-		unlink(TMP . 'logs' . DS . 'debug.log');
+		unlink(LOGS . 'debug.log');
 
 		Debugger::log(array('whatever', 'here'));
-		$result = file_get_contents(TMP . 'logs' . DS . 'debug.log');
+		$result = file_get_contents(LOGS . 'debug.log');
 		$this->assertRegExp('/DebuggerTest\:\:testLog/i', $result);
 		$this->assertRegExp('/\[main\]/', $result);
 		$this->assertRegExp('/array/', $result);
