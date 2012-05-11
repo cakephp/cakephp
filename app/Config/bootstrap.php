@@ -163,6 +163,6 @@ CakeLog::config('debug', array(
 ));
 CakeLog::config('error', array(
 	'engine' => 'FileLog',
-	'types' => array('error', 'warning'),
+	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 	'file' => 'error',
 ));
