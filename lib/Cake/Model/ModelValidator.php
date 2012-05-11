@@ -7,12 +7,12 @@
  * PHP versions 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model
  * @since         CakePHP(tm) v 2.2.0
@@ -22,7 +22,11 @@
 App::uses('CakeValidationSet', 'Model/Validator');
 
 /**
- * ModelValidator object.
+ * ModelValidator object encapsulates all methods related to data validations for a model
+ * It also provides an API to dynamically change validation rules for each model field.
+ *
+ * Implements ArrayAccess to easily modify rules as usually done with `Model::$validate`
+ * definition array
  *
  * @package       Cake.Model
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
@@ -37,21 +41,23 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	protected $_fields = array();
 
 /**
- * Holds the reference to the model the Validator is attached to
+ * Holds the reference to the model this Validator is attached to
  *
  * @var Model
  */
 	protected $_model = array();
 
 /**
- * The validators $validate property
+ * The validators $validate property, used for checking wheter validation
+ * rules definition changed in the model and should be refreshed in this class
  *
  * @var array
  */
 	protected $_validate = array();
 
 /**
- * Holds the available custom callback methods
+ * Holds the available custom callback methods, usually taken from model methods
+ * and behavior methods
  *
  * @var array
  */
@@ -68,9 +74,9 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 
 /**
  * Returns true if all fields pass validation. Will validate hasAndBelongsToMany associations
- * that use the 'with' key as well. Since _saveMulti is incapable of exiting a save operation.
+ * that use the 'with' key as well. Since `Model::_saveMulti` is incapable of exiting a save operation.
  *
- * Will validate the currently set data.  Use Model::set() or Model::create() to set the active data.
+ * Will validate the currently set data.  Use `Model::set()` or `Model::create()` to set the active data.
  *
  * @param array $options An optional array of custom options to be made available in the beforeValidate callback
  * @return boolean True if there are no errors
@@ -198,11 +204,12 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Returns an array of fields that have failed validation. On the current model.
+ * Returns an array of fields that have failed validation. On the current model. This method will
+ * actually run validation rules over data, not just return the messages.
  *
  * @param string $options An optional array of custom options to be made available in the beforeValidate callback
  * @return array Array of invalid fields
- * @see Model::validates()
+ * @see ModelValidator::validates()
  */
 	public function errors($options = array()) {
 		if (!$this->_triggerBeforeValidate($options)) {
@@ -234,23 +241,22 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Marks a field as invalid, optionally setting the name of validation
- * rule (in case of multiple validation for field) that was broken.
+ * Marks a field as invalid, optionally setting a message explaining
+ * why the rule failed
  *
  * @param string $field The name of the field to invalidate
- * @param string $value Name of validation rule that failed, or validation message to
- *    be returned. If no validation key is provided, defaults to true.
+ * @param string $message Validation message explaining why the rule failed, defaults to true.
  * @return void
  */
-	public function invalidate($field, $value = true) {
+	public function invalidate($field, $message = true) {
 		$this->getModel()->validationErrors[$field][] = $value;
 	}
 
 /**
- * Gets all possible custom methods from the Model, Behaviors and the Validator.
- * gets the corresponding methods.
+ * Gets all possible custom methods from the Model and attached Behaviors
+ * to be used as validators
  *
- * @return array The requested methods
+ * @return array List of callables to be used as validation methods
  */
 	public function getMethods() {
 		if (!empty($this->_methods)) {
@@ -270,25 +276,26 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Gets all fields if $name is null (default), or the field for fieldname $name if it's found.
+ * Returns a CakeValidationSet object containing all validation rules for a field, if no
+ * params are passed then it returns an array with all CakeValidationSet objects for each field
  *
  * @param string $name [optional] The fieldname to fetch. Defaults to null.
- * @return mixed Either array of CakeValidationSet objects , single object for $name or false when $name not present in fields
+ * @return CakeValidationSet|array
  */
-	public function getFields($name = null) {
+	public function getField($name = null) {
 		if ($name !== null && !empty($this->_fields[$name])) {
 			return $this->_fields[$name];
 		} elseif ($name !==null) {
-			return false;
+			return null
 		}
 		return $this->_fields;
 	}
 
 /**
- * Sets the CakeValidationSet instances from the Model::$validate property after processing the fieldList and whiteList.
- * If Model::$validate is not set or empty, this method returns false. True otherwise.
+ * Sets the CakeValidationSet objects from the `Model::$validate` property
+ * If `Model::$validate` is not set or empty, this method returns false. True otherwise.
  *
- * @return boolean True if Model::$validate was processed, false otherwise
+ * @return boolean true if `Model::$validate` was processed, false otherwise
  */
 	protected function _parseRules() {
 		if ($this->_validate === $this->_model->validate) {
@@ -325,7 +332,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Gets the parent Model
+ * Gets the model related to this validator
  *
  * @return Model
  */
@@ -334,9 +341,10 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Processes the Model's whitelist and returns the list of fields
+ * Processes the Model's whitelist or passed fieldList and returns the list of fields
  * to be validated
  *
+ * @param array $fieldList list of fields to be used for validation
  * @return array List of validation rules to be applied
  */
 	protected function _validationList($fieldList = array()) {
@@ -370,7 +378,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 
 /**
  * Runs validation for hasAndBelongsToMany associations that have 'with' keys
- * set. And data in the set() data set.
+ * set and data in the data set.
  *
  * @param array $options Array of options to use on Validation of with models
  * @return boolean Failure of validation on with models.
@@ -408,7 +416,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Propagates the beforeValidate event
+ * Propagates beforeValidate event
  *
  * @param array $options
  * @return boolean
@@ -495,6 +503,14 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Adds a new rule to a field's rule set
  *
+ * ## Example:
+ *
+ * {{{
+ *		$validator
+ *			->add('title', 'required', array('rule' => 'notEmpty', 'required' => true))
+ *			->add('user_id', 'valid', array('rule' => 'numeric', 'message' => 'Invalid User'))
+ * }}}
+ *
  * @param string $field The name of the field from wich the rule will be removed
  * @param array|CakeValidationRule $rule the rule to be added to the field's rule set
  * @return ModelValidator this instance
@@ -512,6 +528,14 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 
 /**
  * Removes a rule from the set by its name
+ *
+ * ## Example:
+ *
+ * {{{
+ *		$validator
+ *			->remove('title', 'required')
+ *			->remove('user_id')
+ * }}}
  *
  * @param string $field The name of the field from wich the rule will be removed
  * @param string $rule the name of the rule to be removed
