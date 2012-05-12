@@ -455,9 +455,7 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
- * test baking controller test files, ensure that the stub class is generated.
- * Conditional assertion is known to fail on PHP4 as classnames are all lower case
- * causing issues with inflection of path name from classname.
+ * test baking controller test files
  *
  * @return void
  */
@@ -468,14 +466,10 @@ class TestTaskTest extends CakeTestCase {
 		$result = $this->Task->bake('Controller', 'TestTaskComments');
 
 		$this->assertContains("App::uses('TestTaskCommentsController', 'Controller')", $result);
-		$this->assertContains('class TestTaskCommentsControllerTest extends CakeTestCase', $result);
-
-		$this->assertContains('class TestTestTaskCommentsController extends TestTaskCommentsController', $result);
-		$this->assertContains('public $autoRender = false', $result);
-		$this->assertContains('function redirect($url, $status = null, $exit = true)', $result);
+		$this->assertContains('class TestTaskCommentsControllerTest extends ControllerTestCase', $result);
 
 		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$this->TestTaskComments = new TestTestTaskCommentsController()", $result);
+		$this->assertContains("\$this->TestTaskComments = new TestTaskCommentsController()", $result);
 		$this->assertContains("\$this->TestTaskComments->constructClasses()", $result);
 
 		$this->assertContains('function tearDown()', $result);
@@ -556,7 +550,7 @@ class TestTaskTest extends CakeTestCase {
  */
 	public function testGenerateConstructor() {
 		$result = $this->Task->generateConstructor('controller', 'PostsController', null);
-		$expected = array('', "new TestPostsController();\n", "\$this->Posts->constructClasses();\n");
+		$expected = array('', "new PostsController();\n", "\$this->Posts->constructClasses();\n");
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->generateConstructor('model', 'Post', null);
