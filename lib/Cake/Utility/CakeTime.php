@@ -560,7 +560,7 @@ class CakeTime {
 
 /**
  * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
- * 
+ *
  * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return integer Unix timestamp
@@ -970,6 +970,59 @@ class CakeTime {
 		}
 		$format = self::convertSpecifiers($format, $date);
 		return self::_strftime($format, $date);
+	}
+
+/**
+ * Get list of timezone identifiers
+ *
+ * @param int|string $filter A regex to filter identifer
+ * 	Or one of DateTimeZone class constants (PHP 5.3 and above)
+ * @param string $country A two-letter ISO 3166-1 compatible country code.
+ * 	This option is only used when $filter is set to DateTimeZone::PER_COUNTRY (available only in PHP 5.3 and above)
+ * @param boolean $group If true (default value) groups the identifiers list by primary region
+ * @return array List of timezone identifiers
+ * @since 2.2
+ */
+	public static function listTimezones($filter = null, $country = null, $group = true) {
+		$regex = null;
+		if (is_string($filter)) {
+			$regex = $filter;
+			$filter = null;
+		}
+		if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+			if ($regex === null) {
+				$regex = '#^(Africa|America|Antartica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific|UTC)/#';
+			}
+			$identifiers = DateTimeZone::listIdentifiers();
+		} else {
+			if ($filter === null) {
+				$filter = DateTimeZone::ALL;
+			}
+			$identifiers = DateTimeZone::listIdentifiers($filter, $country);
+		}
+
+		if ($regex) {
+			foreach ($identifiers as $key => $tz) {
+				if (!preg_match($regex, $tz)) {
+					unset($identifiers[$key]);
+				}
+			}
+		}
+
+		if ($group) {
+			$return = array();
+			foreach ($identifiers as $key => $tz) {
+				$item = explode('/', $tz, 2);
+				if (isset($item[1])) {
+					$return[$item[0]][$tz] = $item[1];
+				} else {
+					$return[$item[0]] = array($tz => $item[0]);
+				}
+			}
+			return $return;
+		} else {
+			return array_combine($identifiers, $identifiers);
+		}
 	}
 
 /**
