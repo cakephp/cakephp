@@ -320,8 +320,8 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params, false);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-			   isset($result[0][$this->db->fullTableName('articles', false, false)])
-			|| isset($result[0][0])
+			isset($result[0][$this->db->fullTableName('articles', false, false)]) ||
+			isset($result[0][0])
 		);
 		$result = $this->db->getQueryCache($query, $params);
 		$this->assertTrue(empty($result));
@@ -334,8 +334,8 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-			   isset($result[0][$this->db->fullTableName('articles', false, false)]['title'])
-			|| isset($result[0][0]['title'])
+			isset($result[0][$this->db->fullTableName('articles', false, false)]['title']) ||
+			isset($result[0][0]['title'])
 		);
 
 		//related to ticket #5035

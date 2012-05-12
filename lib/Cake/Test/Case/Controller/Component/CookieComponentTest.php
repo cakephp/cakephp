@@ -514,9 +514,9 @@ class CookieComponentTest extends CakeTestCase {
  */
 	public function testReadEmpty() {
 		$_COOKIE['CakeTestCookie'] = array(
-		  'JSON' => '{"name":"value"}',
-		  'Empty' => '',
-		  'String' => '{"somewhat:"broken"}'
+			'JSON' => '{"name":"value"}',
+			'Empty' => '',
+			'String' => '{"somewhat:"broken"}'
 		);
 		$this->assertEquals(array('name' => 'value'), $this->Cookie->read('JSON'));
 		$this->assertEquals('value', $this->Cookie->read('JSON.name'));
