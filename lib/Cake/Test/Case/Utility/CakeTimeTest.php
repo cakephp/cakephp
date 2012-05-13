@@ -26,12 +26,20 @@ App::uses('CakeTime', 'Utility');
 class CakeTimeTest extends CakeTestCase {
 
 /**
+ * Default system timezone identifier
+ *
+ * @var string
+ */
+	protected $_systemTimezoneIdentifier = null;
+
+/**
  * setUp method
  *
  * @return void
  */
 	public function setUp() {
 		$this->Time = new CakeTime();
+		$this->_systemTimezoneIdentifier = date_default_timezone_get();
 	}
 
 /**
@@ -41,8 +49,18 @@ class CakeTimeTest extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this->Time);
+		$this->_restoreSystemTimezone();
 	}
 
+/**
+ * Restored the original system timezone
+ *
+ * @param string $timezoneIdentifier Timezone string
+ * @return void
+ */
+	protected function _restoreSystemTimezone() {
+		date_default_timezone_set($this->_systemTimezoneIdentifier);
+	}
 /**
  * testToQuarter method
  *
@@ -323,6 +341,13 @@ class CakeTimeTest extends CakeTestCase {
 		CakeTime::$niceFormat = '%Y-%d-%m %H:%M:%S';
 		$this->assertEquals(date('Y-d-m H:i:s', $time), $this->Time->nice($time));
 		$this->assertEquals('%Y-%d-%m %H:%M:%S', $this->Time->niceFormat);
+
+		date_default_timezone_set('UTC');
+		$result = $this->Time->nice(null, 'America/New_York');
+		$expected = $this->Time->nice(time(), 'America/New_York');
+		$this->assertEqual($expected, $result);
+
+		$this->_restoreSystemTimezone();
 	}
 
 /**
@@ -340,12 +365,16 @@ class CakeTimeTest extends CakeTestCase {
 		$time = time() + DAY;
 		$this->assertEquals('Tomorrow, ' . date('H:i', $time), $this->Time->niceShort($time));
 
-		$oldTimezone = date_default_timezone_get();
 		date_default_timezone_set('Europe/London');
-
 		$result = $this->Time->niceShort('2005-01-15 10:00:00', new DateTimeZone('Europe/Brussels'));
 		$this->assertEqual('Jan 15th 2005, 11:00', $result);
-		date_default_timezone_set($oldTimezone);
+
+		date_default_timezone_set('UTC');
+		$result = $this->Time->niceShort(null, 'America/New_York');
+		$expected = $this->Time->niceShort(time(), 'America/New_York');
+		$this->assertEqual($expected, $result);
+
+		$this->_restoreSystemTimezone();
 	}
 
 /**
@@ -393,9 +422,8 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function testToServer() {
-		$tzBackup = date_default_timezone_get();
-
 		date_default_timezone_set('UTC');
+
 		$serverTime = new DateTime('now');
 
 		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
@@ -405,7 +433,7 @@ class CakeTimeTest extends CakeTestCase {
 			$this->assertEquals($serverTime->format('U'), $result + $tz->getOffset($serverTime));
 		}
 
-		date_default_timezone_set($tzBackup);
+		$this->_restoreSystemTimezone();
 	}
 
 /**
