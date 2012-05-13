@@ -632,7 +632,7 @@ class CakeTime {
 /**
  * Returns either a relative date or a formatted date depending
  * on the difference between the current time and given datetime.
- * $datetime should be in a <i>strtotime</i> - parsable format, like MySQL's datetime datatype.
+ * $datetime should be in a *strtotime* - parsable format, like MySQL's datetime datatype.
  *
  * ### Options:
  *
@@ -646,15 +646,13 @@ class CakeTime {
  *    - minute => The format if minutes > 0 (default "minute")
  *    - second => The format if seconds > 0 (default "second")
  * - `end` => The end of relative time telling
- * - `userOffset` => Users offset from GMT (in hours)
- * - `element` => A wrapping HTML element (array, default null)
- *    - tag =>    The tag to wrap the time in (default "span")
- *    - class =>  The CSS class to put on the wrapping element (default "timeAgoInWords")
- *    - title =>  The title of the element (default null = the input date)
+ * - `userOffset` => Users offset from GMT (in hours) *Deprecated* use timezone intead.
+ * - `timezone` => The user timezone the timestamp should be formatted in.
  *
  * Relative dates look something like this:
- *	3 weeks, 4 days ago
- *	15 seconds ago
+ *
+ * - 3 weeks, 4 days ago
+ * - 15 seconds ago
  *
  * Default date formatting is d/m/yy e.g: on 18/2/09
  *
@@ -725,25 +723,15 @@ class CakeTime {
 			list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));
 			$years = $months = $weeks = $days = $hours = $minutes = $seconds = 0;
 
-			if ($future['Y'] == $past['Y'] && $future['m'] == $past['m']) {
-				$months = 0;
-				$years = 0;
-			} else {
-				if ($future['Y'] == $past['Y']) {
-					$months = $future['m'] - $past['m'];
-				} else {
-					$years = $future['Y'] - $past['Y'];
-					$months = $future['m'] + ((12 * $years) - $past['m']);
+			$years = $future['Y'] - $past['Y'];
+			$months = $future['m'] + ((12 * $years) - $past['m']);
 
-					if ($months >= 12) {
-						$years = floor($months / 12);
-						$months = $months - ($years * 12);
-					}
-
-					if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] == 1) {
-						$years--;
-					}
-				}
+			if ($months >= 12) {
+				$years = floor($months / 12);
+				$months = $months - ($years * 12);
+			}
+			if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] == 1) {
+				$years--;
 			}
 
 			if ($future['d'] >= $past['d']) {
