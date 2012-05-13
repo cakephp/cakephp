@@ -344,11 +344,11 @@ class CakeTime {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public static function nice($dateString = null, $timezone = null, $format = null) {
-		if ($dateString != null) {
-			$date = self::fromString($dateString, $timezone);
-		} else {
-			$date = time();
+		if (!$dateString) {
+			$dateString = time();
 		}
+		$date = self::fromString($dateString, $timezone);
+
 		if (!$format) {
 			$format = self::$niceFormat;
 		}
@@ -372,7 +372,10 @@ class CakeTime {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public static function niceShort($dateString = null, $timezone = null) {
-		$date = $dateString ? self::fromString($dateString, $timezone) : time();
+		if (!$dateString) {
+			$dateString = time();
+		}
+		$date = self::fromString($dateString, $timezone);
 
 		$y = self::isThisYear($date) ? '' : ' %Y';
 
