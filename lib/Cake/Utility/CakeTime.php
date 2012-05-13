@@ -376,7 +376,7 @@ class CakeTime {
 
 		$y = self::isThisYear($date) ? '' : ' %Y';
 
-		$d =  self::_strftime("%w", $date);
+		$d = self::_strftime("%w", $date);
 		$day = array(
 			__d('cake', 'Sunday'),
 			__d('cake', 'Monday'),
@@ -701,8 +701,6 @@ class CakeTime {
 			$format = $options;
 		}
 
-		extract($accuracy, EXTR_PREFIX_ALL, 'format');
-
 		$now = self::fromString(time(), $timezone);
 		$inSeconds = self::fromString($dateTime, $timezone);
 		$backwards = ($inSeconds > $now);
@@ -785,19 +783,19 @@ class CakeTime {
 			$relativeDate = __d('cake', 'on %s', date($format, $inSeconds));
 		} else {
 			if ($years > 0) {
-				$f = $format_year;
+				$f = $accuracy['year'];
 			} elseif (abs($months) > 0) {
-				$f = $format_month;
+				$f = $accuracy['month'];
 			} elseif (abs($weeks) > 0) {
-				$f = $format_week;
+				$f = $accuracy['week'];
 			} elseif (abs($days) > 0) {
-				$f = $format_day;
+				$f = $accuracy['day'];
 			} elseif (abs($hours) > 0) {
-				$f = $format_hour;
+				$f = $accuracy['hour'];
 			} elseif (abs($minutes) > 0) {
-				$f = $format_minute;
+				$f = $accuracy['minute'];
 			} else {
-				$f = $format_second;
+				$f = $accuracy['second'];
 			}
 
 			$f = str_replace(array('year', 'month', 'week', 'day', 'hour', 'minute', 'second'), array(1, 2, 3, 4, 5, 6, 7), $f);
