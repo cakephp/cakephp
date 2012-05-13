@@ -143,11 +143,12 @@ class CakeTimeTest extends CakeTestCase {
 		);
 		$this->assertEquals('1 month ago', $result);
 
+		$timestamp = strtotime('-1 years -2 weeks -3 days');
 		$result = $this->Time->timeAgoInWords(
-			strtotime('-1 years -2 weeks -3 days'),
+			$timestamp,
 			array('accuracy' => array('year' => 'year'))
 		);
-		$expected = 'on 25/4/11';
+		$expected = 'on ' . date('j/n/y', $timestamp);
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->timeAgoInWords(
