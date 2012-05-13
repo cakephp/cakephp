@@ -486,6 +486,7 @@ class CakeSession {
 		if (!empty($sessionConfig['handler']) && !isset($sessionConfig['handler']['engine'])) {
 			call_user_func_array('session_set_save_handler', $sessionConfig['handler']);
 		}
+		Configure::write('Session', $sessionConfig);
 		if (!empty($sessionConfig['handler']['engine'])) {
 			$handler = self::_getHandler($sessionConfig['handler']['engine']);
 			session_set_save_handler(
@@ -497,7 +498,6 @@ class CakeSession {
 				array($handler, 'gc')
 			);
 		}
-		Configure::write('Session', $sessionConfig);
 		self::$sessionTime = self::$time + ($sessionConfig['timeout'] * 60);
 	}
 
