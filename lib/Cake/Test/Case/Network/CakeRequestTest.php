@@ -30,10 +30,6 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->_server = $_SERVER;
-		$this->_get = $_GET;
-		$this->_post = $_POST;
-		$this->_files = $_FILES;
 		$this->_app = Configure::read('App');
 		$this->_case = null;
 		if (isset($_GET['case'])) {
@@ -51,10 +47,6 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		$_SERVER = $this->_server;
-		$_GET = $this->_get;
-		$_POST = $this->_post;
-		$_FILES = $this->_files;
 		if (!empty($this->_case)) {
 			$_GET['case'] = $this->_case;
 		}
@@ -217,94 +209,106 @@ class CakeRequestTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFILESParsing() {
-		$_FILES = array('data' => array('name' => array(
-			'File' => array(
-					array('data' => 'cake_sqlserver_patch.patch'),
-					array('data' => 'controller.diff'),
-					array('data' => ''),
-					array('data' => ''),
+	public function testFilesParsing() {
+		$_FILES = array(
+			'data' => array(
+				'name' => array(
+					'File' => array(
+							array('data' => 'cake_sqlserver_patch.patch'),
+							array('data' => 'controller.diff'),
+							array('data' => ''),
+							array('data' => ''),
+						),
+						'Post' => array('attachment' => 'jquery-1.2.1.js'),
+					),
+				'type' => array(
+					'File' => array(
+						array('data' => ''),
+						array('data' => ''),
+						array('data' => ''),
+						array('data' => ''),
+					),
+					'Post' => array('attachment' => 'application/x-javascript'),
 				),
-				'Post' => array('attachment' => 'jquery-1.2.1.js'),
-			),
-			'type' => array(
-				'File' => array(
-					array('data' => ''),
-					array('data' => ''),
-					array('data' => ''),
-					array('data' => ''),
+				'tmp_name' => array(
+					'File' => array(
+						array('data' => '/private/var/tmp/phpy05Ywj'),
+						array('data' => '/private/var/tmp/php7MBztY'),
+						array('data' => ''),
+						array('data' => ''),
+					),
+					'Post' => array('attachment' => '/private/var/tmp/phpEwlrIo'),
 				),
-				'Post' => array('attachment' => 'application/x-javascript'),
-			),
-			'tmp_name' => array(
-				'File' => array(
-					array('data' => '/private/var/tmp/phpy05Ywj'),
-					array('data' => '/private/var/tmp/php7MBztY'),
-					array('data' => ''),
-					array('data' => ''),
+				'error' => array(
+					'File' => array(
+						array('data' => 0),
+						array('data' => 0),
+						array('data' => 4),
+						array('data' => 4)
+					),
+					'Post' => array('attachment' => 0)
 				),
-				'Post' => array('attachment' => '/private/var/tmp/phpEwlrIo'),
-			),
-			'error' => array(
-				'File' => array(
-					array('data' => 0),
-					array('data' => 0),
-					array('data' => 4),
-					array('data' => 4)
+				'size' => array(
+					'File' => array(
+						array('data' => 6271),
+						array('data' => 350),
+						array('data' => 0),
+						array('data' => 0),
+					),
+					'Post' => array('attachment' => 80469)
 				),
-				'Post' => array('attachment' => 0)
-			),
-			'size' => array(
-				'File' => array(
-					array('data' => 6271),
-					array('data' => 350),
-					array('data' => 0),
-					array('data' => 0),
-				),
-				'Post' => array('attachment' => 80469)
-			),
-		));
+			)
+		);
 
 		$request = new CakeRequest('some/path');
 		$expected = array(
 			'File' => array(
-				array('data' => array(
-					'name' => 'cake_sqlserver_patch.patch',
-					'type' => '',
-					'tmp_name' => '/private/var/tmp/phpy05Ywj',
-					'error' => 0,
-					'size' => 6271,
-				)),
 				array(
 					'data' => array(
-					'name' => 'controller.diff',
-					'type' => '',
-					'tmp_name' => '/private/var/tmp/php7MBztY',
-					'error' => 0,
-					'size' => 350,
-				)),
-				array('data' => array(
-					'name' => '',
-					'type' => '',
-					'tmp_name' => '',
-					'error' => 4,
-					'size' => 0,
-				)),
-				array('data' => array(
-					'name' => '',
-					'type' => '',
-					'tmp_name' => '',
-					'error' => 4,
-					'size' => 0,
-				)),
+						'name' => 'cake_sqlserver_patch.patch',
+						'type' => '',
+						'tmp_name' => '/private/var/tmp/phpy05Ywj',
+						'error' => 0,
+						'size' => 6271,
+					)
+				),
+				array(
+					'data' => array(
+						'name' => 'controller.diff',
+						'type' => '',
+						'tmp_name' => '/private/var/tmp/php7MBztY',
+						'error' => 0,
+						'size' => 350,
+					)
+				),
+				array(
+					'data' => array(
+						'name' => '',
+						'type' => '',
+						'tmp_name' => '',
+						'error' => 4,
+						'size' => 0,
+					)
+				),
+				array(
+					'data' => array(
+						'name' => '',
+						'type' => '',
+						'tmp_name' => '',
+						'error' => 4,
+						'size' => 0,
+					)
+				),
 			),
-			'Post' => array('attachment' => array(
-				'name' => 'jquery-1.2.1.js',
-				'type' => 'application/x-javascript',
-				'tmp_name' => '/private/var/tmp/phpEwlrIo',
-				'error' => 0,
-				'size' => 80469,
-			))
+			'Post' => array(
+				'attachment' => array(
+					'name' => 'jquery-1.2.1.js',
+					'type' => 'application/x-javascript',
+					'tmp_name' => '/private/var/tmp/phpEwlrIo',
+					'error' => 0,
+					'size' => 80469,
+				)
+			)
 		);
 		$this->assertEquals($expected, $request->data);
 
@@ -343,12 +347,12 @@ class CakeRequestTest extends CakeTestCase {
 						1 => array(
 							'birth_cert' => '/private/var/tmp/phpbsUWfH',
 							'passport' => '/private/var/tmp/php7f5zLt',
- 							'drivers_license' => '/private/var/tmp/phpMXpZgT',
+							'drivers_license' => '/private/var/tmp/phpMXpZgT',
 						),
 						2 => array(
 							'birth_cert' => '/private/var/tmp/php5kHZt0',
- 							'passport' => '/private/var/tmp/phpnYkOuM',
- 							'drivers_license' => '/private/var/tmp/php9Rq0P3',
+							'passport' => '/private/var/tmp/phpnYkOuM',
+							'drivers_license' => '/private/var/tmp/php9Rq0P3',
 						)
 					)
 				),
@@ -357,12 +361,12 @@ class CakeRequestTest extends CakeTestCase {
 						1 => array(
 							'birth_cert' => 0,
 							'passport' => 0,
- 							'drivers_license' => 0,
+							'drivers_license' => 0,
 						),
 						2 => array(
 							'birth_cert' => 0,
- 							'passport' => 0,
- 							'drivers_license' => 0,
+							'passport' => 0,
+							'drivers_license' => 0,
 						)
 					)
 				),
@@ -371,12 +375,12 @@ class CakeRequestTest extends CakeTestCase {
 						1 => array(
 							'birth_cert' => 123,
 							'passport' => 458,
- 							'drivers_license' => 875,
+							'drivers_license' => 875,
 						),
 						2 => array(
 							'birth_cert' => 876,
- 							'passport' => 976,
- 							'drivers_license' => 9783,
+							'passport' => 976,
+							'drivers_license' => 9783,
 						)
 					)
 				)
@@ -921,6 +925,22 @@ class CakeRequestTest extends CakeTestCase {
 			'1.0' => array('application/xml', 'image/png'),
 			'0.8' => array('text/html'),
 			'0.7' => array('application/json'),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test parsing accept with a confusing accept value.
+ *
+ * @return void
+ */
+	public function testParseAcceptNoQValues() {
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/plain, */*';
+
+		$request = new CakeRequest('/', false);
+		$result = $request->parseAccept();
+		$expected = array(
+			'1.0' => array('application/json', 'text/plain', '*/*'),
 		);
 		$this->assertEquals($expected, $result);
 	}

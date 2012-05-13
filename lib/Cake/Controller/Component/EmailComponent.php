@@ -421,31 +421,6 @@ class EmailComponent extends Component {
 	}
 
 /**
- * Encode the specified string using the current charset
- *
- * @param string $subject String to encode
- * @return string Encoded string
- */
-	protected function _encode($subject) {
-		$subject = $this->_strip($subject);
-
-		$nl = "\r\n";
-		if ($this->delivery == 'mail') {
-			$nl = '';
-		}
-		$internalEncoding = function_exists('mb_internal_encoding');
-		if ($internalEncoding) {
-			$restore = mb_internal_encoding();
-			mb_internal_encoding($this->charset);
-		}
-		$return = mb_encode_mimeheader($subject, $this->charset, 'B', $nl);
-		if ($internalEncoding) {
-			mb_internal_encoding($restore);
-		}
-		return $return;
-	}
-
-/**
  * Format addresses to be an array with email as key and alias as value
  *
  * @param array $addresses
@@ -455,7 +430,7 @@ class EmailComponent extends Component {
 		$formatted = array();
 		foreach ($addresses as $address) {
 			if (preg_match('/((.*))?\s?<(.+)>/', $address, $matches) && !empty($matches[2])) {
-				$formatted[$this->_strip($matches[3])] = $this->_encode($matches[2]);
+				$formatted[$this->_strip($matches[3])] = $matches[2];
 			} else {
 				$address = $this->_strip($address);
 				$formatted[$address] = $address;

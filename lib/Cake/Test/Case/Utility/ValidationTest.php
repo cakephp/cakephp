@@ -4,14 +4,14 @@
  *
  * PHP Version 5.x
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -103,6 +103,8 @@ class ValidationTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->_appEncoding = Configure::read('App.encoding');
+		$this->_appLocale = setlocale(LC_ALL, "0");
+		setlocale(LC_ALL, 'en_US');
 	}
 
 /**
@@ -113,6 +115,7 @@ class ValidationTest extends CakeTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Configure::write('App.encoding', $this->_appEncoding);
+		setlocale(LC_ALL, $this->_appLocale);
 	}
 
 /**
@@ -1490,10 +1493,16 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::decimal('+0123.45e6'));
 		$this->assertTrue(Validation::decimal('-0123.45e6'));
 		$this->assertTrue(Validation::decimal('0123.45e6'));
+		$this->assertTrue(Validation::decimal('1234'));
+		$this->assertTrue(Validation::decimal('-1234'));
+		$this->assertTrue(Validation::decimal('+1234'));
+		$this->assertTrue(Validation::decimal(1234.56));
+		$this->assertTrue(Validation::decimal(1234.00));
+		$this->assertTrue(Validation::decimal(.0));
+		$this->assertTrue(Validation::decimal(.00));
+		$this->assertTrue(Validation::decimal(.01));
+
 		$this->assertFalse(Validation::decimal('string'));
-		$this->assertFalse(Validation::decimal('1234'));
-		$this->assertFalse(Validation::decimal('-1234'));
-		$this->assertFalse(Validation::decimal('+1234'));
 	}
 
 /**

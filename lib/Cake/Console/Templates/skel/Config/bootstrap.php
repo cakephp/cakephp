@@ -30,17 +30,24 @@ Cache::config('default', array('engine' => 'File'));
  * The settings below can be used to set additional paths to models, views and controllers.
  *
  * App::build(array(
- *     'Plugin' => array('/full/path/to/plugins/', '/next/full/path/to/plugins/'),
- *     'Model' =>  array('/full/path/to/models/', '/next/full/path/to/models/'),
- *     'View' => array('/full/path/to/views/', '/next/full/path/to/views/'),
- *     'Controller' => array('/full/path/to/controllers/', '/next/full/path/to/controllers/'),
- *     'Model/Datasource' => array('/full/path/to/datasources/', '/next/full/path/to/datasources/'),
- *     'Model/Behavior' => array('/full/path/to/behaviors/', '/next/full/path/to/behaviors/'),
- *     'Controller/Component' => array('/full/path/to/components/', '/next/full/path/to/components/'),
- *     'View/Helper' => array('/full/path/to/helpers/', '/next/full/path/to/helpers/'),
- *     'Vendor' => array('/full/path/to/vendors/', '/next/full/path/to/vendors/'),
- *     'Console/Command' => array('/full/path/to/shells/', '/next/full/path/to/shells/'),
- *     'Locale' => array('/full/path/to/locale/', '/next/full/path/to/locale/')
+ *     'Model'                     => array('/path/to/models', '/next/path/to/models'),
+ *     'Model/Behavior'            => array('/path/to/behaviors', '/next/path/to/behaviors'),
+ *     'Model/Datasource'          => array('/path/to/datasources', '/next/path/to/datasources'),
+ *     'Model/Datasource/Database' => array('/path/to/databases', '/next/path/to/database'),
+ *     'Model/Datasource/Session'  => array('/path/to/sessions', '/next/path/to/sessions'),
+ *     'Controller'                => array('/path/to/controllers', '/next/path/to/controllers'),
+ *     'Controller/Component'      => array('/path/to/components', '/next/path/to/components'),
+ *     'Controller/Component/Auth' => array('/path/to/auths', '/next/path/to/auths'),
+ *     'Controller/Component/Acl'  => array('/path/to/acls', '/next/path/to/acls'),
+ *     'View'                      => array('/path/to/views', '/next/path/to/views'),
+ *     'View/Helper'               => array('/path/to/helpers', '/next/path/to/helpers'),
+ *     'Console'                   => array('/path/to/consoles', '/next/path/to/consoles'),
+ *     'Console/Command'           => array('/path/to/commands', '/next/path/to/commands'),
+ *     'Console/Command/Task'      => array('/path/to/tasks', '/next/path/to/tasks'),
+ *     'Lib'                       => array('/path/to/libs', '/next/path/to/libs'),
+ *     'Locale'                    => array('/path/to/locales', '/next/path/to/locales'),
+ *     'Vendor'                    => array('/path/to/vendors', '/next/path/to/vendors'),
+ *     'Plugin'                    => array('/path/to/plugins', '/next/path/to/plugins'),
  * ));
  *
  */

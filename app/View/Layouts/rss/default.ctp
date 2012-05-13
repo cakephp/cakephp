@@ -8,7 +8,7 @@ if (!isset($channel['title'])) {
 
 echo $this->Rss->document(
 	$this->Rss->channel(
-		array(), $channel, $content_for_layout
+		array(), $channel, $this->fetch('content')
 	)
 );
 ?>

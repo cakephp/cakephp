@@ -13,7 +13,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       Open Group Test Suite License (http://www.opensource.org/licenses/opengroup.php)
@@ -108,6 +108,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::singularize('cafes'), 'cafe');
 		$this->assertEquals(Inflector::singularize('roofs'), 'roof');
 		$this->assertEquals(Inflector::singularize('foes'), 'foe');
+		$this->assertEquals(Inflector::singularize('databases'), 'database');
 
 		$this->assertEquals(Inflector::singularize(''), '');
 	}

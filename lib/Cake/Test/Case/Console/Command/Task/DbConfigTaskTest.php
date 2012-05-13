@@ -49,7 +49,7 @@ class DbConfigTaskTest extends CakeTestCase {
 	}
 
 /**
- * endTest method
+ * tearDown method
  *
  * @return void
  */

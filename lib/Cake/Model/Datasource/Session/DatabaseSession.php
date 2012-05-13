@@ -18,6 +18,7 @@
  */
 
 App::uses('CakeSessionHandlerInterface', 'Model/Datasource/Session');
+App::uses('ClassRegistry', 'Utility');
 
 /**
  * DatabaseSession provides methods to be used with CakeSession.

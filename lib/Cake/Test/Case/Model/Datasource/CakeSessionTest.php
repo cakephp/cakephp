@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model.Datasource
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -684,21 +684,21 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::destroy();
 		TestCakeSession::write('Test', 'some value');
 
-		$this->assertEquals(time() + $timeoutSeconds, CakeSession::$sessionTime);
+		$this->assertWithinMargin(time() + $timeoutSeconds, CakeSession::$sessionTime, 1);
 		$this->assertEquals(10, $_SESSION['Config']['countdown']);
-		$this->assertEquals(CakeSession::$sessionTime, $_SESSION['Config']['time']);
-		$this->assertEquals(time(), CakeSession::$time);
-		$this->assertEquals(time() + $timeoutSeconds, $_SESSION['Config']['time']);
+		$this->assertWithinMargin(CakeSession::$sessionTime, $_SESSION['Config']['time'], 1);
+		$this->assertWithinMargin(time(), CakeSession::$time, 1);
+		$this->assertWithinMargin(time() + $timeoutSeconds, $_SESSION['Config']['time'], 1);
 
 		Configure::write('Session.harden', true);
 		TestCakeSession::destroy();
 
 		TestCakeSession::write('Test', 'some value');
-		$this->assertEquals(time() + $timeoutSeconds, CakeSession::$sessionTime);
+		$this->assertWithinMargin(time() + $timeoutSeconds, CakeSession::$sessionTime, 1);
 		$this->assertEquals(10, $_SESSION['Config']['countdown']);
-		$this->assertEquals(CakeSession::$sessionTime, $_SESSION['Config']['time']);
-		$this->assertEquals(time(), CakeSession::$time);
-		$this->assertEquals(CakeSession::$time + $timeoutSeconds, $_SESSION['Config']['time']);
+		$this->assertWithinMargin(CakeSession::$sessionTime, $_SESSION['Config']['time'], 1);
+		$this->assertWithinMargin(time(), CakeSession::$time, 1);
+		$this->assertWithinMargin(CakeSession::$time + $timeoutSeconds, $_SESSION['Config']['time'], 1);
 	}
 
 /**

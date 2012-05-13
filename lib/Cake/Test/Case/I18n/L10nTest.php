@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.I18n
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -34,8 +34,9 @@ class L10nTest extends CakeTestCase {
 		$localize = new L10n();
 
 		// Catalog Entry
-		$localize->get('en');
+		$lang = $localize->get('en');
 
+		$this->assertEquals('en', $lang);
 		$this->assertEquals('English', $localize->language);
 		$this->assertEquals(array('eng', 'eng'), $localize->languagePath);
 		$this->assertEquals('eng', $localize->locale);
@@ -57,8 +58,9 @@ class L10nTest extends CakeTestCase {
 		// Default Entry
 		define('DEFAULT_LANGUAGE', 'en-us');
 
-		$localize->get('use_default');
+		$lang = $localize->get('use_default');
 
+		$this->assertEquals('en-us', $lang);
 		$this->assertEquals('English (United States)', $localize->language);
 		$this->assertEquals(array('en_us', 'eng'), $localize->languagePath);
 		$this->assertEquals('en_us', $localize->locale);
@@ -86,15 +88,17 @@ class L10nTest extends CakeTestCase {
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
 
 		$localize = new L10n();
-		$localize->get();
+		$lang = $localize->get();
 
+		$this->assertEquals('en-ca', $lang);
 		$this->assertEquals('English (Canadian)', $localize->language);
 		$this->assertEquals(array('en_ca', 'eng', 'eng'), $localize->languagePath);
 		$this->assertEquals('en_ca', $localize->locale);
 
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx';
-		$localize->get();
+		$lang = $localize->get();
 
+		$this->assertEquals('es-mx', $lang);
 		$this->assertEquals('Spanish (Mexican)', $localize->language);
 		$this->assertEquals(array('es_mx', 'spa', 'eng'), $localize->languagePath);
 		$this->assertEquals('es_mx', $localize->locale);

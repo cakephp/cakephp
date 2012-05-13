@@ -157,7 +157,7 @@ class Router {
  *
  * @var string
  */
-    protected static $_routeClass = 'CakeRoute';
+	protected static $_routeClass = 'CakeRoute';
 
 /**
  * Set the default route class to use or return the current one
@@ -320,7 +320,7 @@ class Router {
  *
  * Examples:
  *
- * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view', array('persist' => true));`
+ * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view', array('persist' => true)));`
  *
  * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the
  * redirect destination allows you to use other routes to define where a url string should be redirected to.
@@ -617,7 +617,8 @@ class Router {
  */
 	public static function getRequest($current = false) {
 		if ($current) {
-			return self::$_requests[count(self::$_requests) - 1];
+			$i = count(self::$_requests) - 1;
+			return isset(self::$_requests[$i]) ? self::$_requests[$i] : null;
 		}
 		return isset(self::$_requests[0]) ? self::$_requests[0] : null;
 	}
@@ -777,7 +778,7 @@ class Router {
 				unset($url['?']);
 			}
 			if (isset($url['#'])) {
-				$frag = '#' . urlencode($url['#']);
+				$frag = '#' . $url['#'];
 				unset($url['#']);
 			}
 			if (isset($url['ext'])) {
@@ -892,8 +893,9 @@ class Router {
 
 		list($args, $named) = array(Set::filter($args, true), Set::filter($named, true));
 		foreach (self::$_prefixes as $prefix) {
-			if (!empty($url[$prefix])) {
-				$url['action'] = str_replace($prefix . '_', '', $url['action']);
+			$prefixed = $prefix . '_';
+			if (!empty($url[$prefix]) && strpos($url['action'], $prefixed) === 0) {
+				$url['action'] = substr($url['action'], strlen($prefixed) * -1);
 				break;
 			}
 		}
@@ -955,12 +957,19 @@ class Router {
 		$out = '';
 
 		if (is_array($q)) {
-			$q = array_merge($extra, $q);
+			$q = array_merge($q, $extra);
 		} else {
 			$out = $q;
 			$q = $extra;
 		}
-		$out .= http_build_query($q, null, $join);
+		$addition = http_build_query($q, null, $join);
+
+		if ($out && $addition && substr($out, strlen($join) * -1, strlen($join)) != $join) {
+			$out .= $join;
+		}
+
+		$out .= $addition;
+
 		if (isset($out[0]) && $out[0] != '?') {
 			$out = '?' . $out;
 		}
@@ -1013,7 +1022,8 @@ class Router {
 	public static function normalize($url = '/') {
 		if (is_array($url)) {
 			$url = Router::url($url);
-		} elseif (preg_match('/^[a-z\-]+:\/\//', $url)) {
+		}
+		if (preg_match('/^[a-z\-]+:\/\//', $url)) {
 			return $url;
 		}
 		$request = Router::getRequest();

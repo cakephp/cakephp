@@ -12,7 +12,7 @@
  * @since       CakePHP(tm) v 0.10.0.1076
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
+App::uses('ClassRegistry', 'Utility');
 App::uses('AppHelper', 'View/Helper');
 
 /**
@@ -143,6 +143,11 @@ class FormHelper extends AppHelper {
 				'class' => $plugin . $this->request->params['models'][$model]['className'],
 				'alias' => $model
 			));
+		} elseif (ClassRegistry::isKeySet($this->defaultModel)) {
+			$defaultObject = ClassRegistry::getObject($this->defaultModel);
+			if (in_array($model, array_keys($defaultObject->getAssociated()), true) && isset($defaultObject->{$model})) {
+				$object = $defaultObject->{$model};
+			}
 		} else {
 			$object = ClassRegistry::init($model, true);
 		}
@@ -319,12 +324,13 @@ class FormHelper extends AppHelper {
 			$options = $model;
 			$model = null;
 		}
+
 		if (empty($model) && $model !== false && !empty($this->request->params['models'])) {
 			$model = key($this->request->params['models']);
-			$this->defaultModel = $model;
 		} elseif (empty($model) && empty($this->request->params['models'])) {
 			$model = false;
 		}
+		$this->defaultModel = $model;
 
 		$key = null;
 		if ($model !== false) {
@@ -366,7 +372,7 @@ class FormHelper extends AppHelper {
 			$options['action'] = $this->request->here(false);
 		} elseif (empty($options['url']) || is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
-				if (!empty($model) && $model != $this->defaultModel) {
+				if (!empty($model)) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
 				} elseif (!empty($this->request->params['controller'])) {
 					$options['url']['controller'] = Inflector::underscore($this->request->params['controller']);
@@ -1545,7 +1551,7 @@ class FormHelper extends AppHelper {
 /**
  * Create a `<button>` tag with a surrounding `<form>` that submits via POST.
  *
- * This method creates a `<form>` element. So do not use this method in some opened form.
+ * This method creates a `<form>` element. So do not use this method in an already opened form.
  * Instead use FormHelper::submit() or FormHelper::button() to create buttons inside opened forms.
  *
  * ### Options:
@@ -1560,7 +1566,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postButton
  */
 	public function postButton($title, $url, $options = array()) {
-		$out = $this->create(false, array('id' => false, 'url' => $url, 'style' => 'display:none;'));
+		$out = $this->create(false, array('id' => false, 'url' => $url));
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
 				$out .= $this->hidden($key, array('value' => $value, 'id' => false));

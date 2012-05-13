@@ -39,6 +39,8 @@ class CakeRequest implements ArrayAccess {
 		'plugin' => null,
 		'controller' => null,
 		'action' => null,
+		'named' => array(),
+		'pass' => array(),
 	);
 
 /**
@@ -318,21 +320,31 @@ class CakeRequest implements ArrayAccess {
 
 		if (isset($_FILES['data'])) {
 			foreach ($_FILES['data'] as $key => $data) {
-				foreach ($data as $model => $fields) {
-					if (is_array($fields)) {
-						foreach ($fields as $field => $value) {
-							if (is_array($value)) {
-								foreach ($value as $k => $v) {
-									$this->data[$model][$field][$k][$key] = $v;
-								}
-							} else {
-								$this->data[$model][$field][$key] = $value;
-							}
-						}
-					} else {
-						$this->data[$model][$key] = $fields;
-					}
-				}
+				$this->_processFileData('', $data, $key);
+			}
+		}
+	}
+
+/**
+ * Recursively walks the FILES array restructuring the data
+ * into something sane and useable.
+ *
+ * @param string $path The dot separated path to insert $data into.
+ * @param array $data The data to traverse/insert.
+ * @param string $field The terminal field name, which is the top level key in $_FILES.
+ * @return void
+ */
+	protected function _processFileData($path, $data, $field) {
+		foreach ($data as $key => $fields) {
+			$newPath = $key;
+			if (!empty($path)) {
+				$newPath = $path . '.' . $key;
+			}
+			if (is_array($fields)) {
+				$this->_processFileData($newPath, $fields, $field);
+			} else {
+				$newPath .= '.' . $field;
+				$this->data = Set::insert($this->data, $newPath, $fields);
 			}
 		}
 	}

@@ -54,14 +54,16 @@ class ShellTestShell extends Shell {
 		$this->stopped = $status;
 	}
 
-	public function do_something() {
+	protected function _secret() {
 	}
 
-	protected function _secret() {
+	//@codingStandardsIgnoreStart
+	public function do_something() {
 	}
 
 	protected function no_access() {
 	}
+	//@codingStandardsIgnoreEnd
 
 	public function mergeVars($properties, $class, $normalize = true) {
 		return $this->_mergeVars($properties, $class, $normalize);
@@ -523,7 +525,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateFileNonInteractive() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Not supported on Windows.');
+		$eol = PHP_EOL;
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
@@ -532,7 +534,7 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->interactive = false;
 
-		$contents = "<?php\necho 'test';\n\$te = 'st';\n";
+		$contents = "<?php{$eol}echo 'test';${eol}\$te = 'st';{$eol}";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -551,7 +553,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateFileInteractive() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Not supported on Windows.');
+		$eol = PHP_EOL;
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
@@ -567,7 +569,7 @@ class ShellTest extends CakeTestCase {
 			->method('read')
 			->will($this->returnValue('y'));
 
-		$contents = "<?php\necho 'yet another test';\n\$te = 'st';\n";
+		$contents = "<?php{$eol}echo 'yet another test';{$eol}\$te = 'st';{$eol}";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -605,81 +607,6 @@ class ShellTest extends CakeTestCase {
 
 		chmod($path, 0744);
 		rmdir($path);
-	}
-
-/**
- * testCreateFileWindows method
- *
- * @return void
- */
-	public function testCreateFileWindowsNonInteractive() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '/', 'testCreateFileWindowsNonInteractive supported on Windows only.');
-
-		$path = TMP . 'shell_test';
-		$file = $path . DS . 'file1.php';
-
-		$Folder = new Folder($path, true);
-
-		$this->Shell->interactive = false;
-
-		$contents = "<?php\r\necho 'test';\r\n\$te = 'st';\r\n";
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertTrue($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertEquals(file_get_contents($file), $contents);
-
-		$contents = "<?php\r\necho 'another test';\r\n\$te = 'st';\r\n";
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertTrue($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertEquals(file_get_contents($file), $contents);
-
-		$Folder = new Folder($path);
-		$Folder->delete();
-	}
-
-/**
- * test createFile on windows with interactive on.
- *
- * @return void
- */
-	public function testCreateFileWindowsInteractive() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '/', 'testCreateFileWindowsInteractive supported on Windows only.');
-		$path = TMP . 'shell_test';
-		$file = $path . DS . 'file1.php';
-		$Folder = new Folder($path, true);
-
-		$this->Shell->interactive = true;
-
-		$this->Shell->stdin->expects($this->at(0))
-			->method('read')
-			->will($this->returnValue('n'));
-
-		$this->Shell->stdin->expects($this->at(1))
-			->method('read')
-			->will($this->returnValue('y'));
-
-		$contents = "<?php\r\necho 'yet another test';\r\n\$te = 'st';\r\n";
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertTrue($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertEquals(file_get_contents($file), $contents);
-
-		// no overwrite
-		$contents = 'new contents';
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertFalse($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertNotEquals($contents, file_get_contents($file));
-
-		// overwrite
-		$contents = 'more new contents';
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertTrue($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertEquals($contents, file_get_contents($file));
-
-		$Folder->delete();
 	}
 
 /**

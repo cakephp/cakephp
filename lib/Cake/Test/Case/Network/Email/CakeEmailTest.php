@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Network.Email
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -1196,7 +1196,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains('Content-Type: text/html; charset=UTF-8', $message);
 
 		// UTF-8 is 8bit
-		$this->assertTrue($this->checkContentTransferEncoding($message, '8bit'));
+		$this->assertTrue($this->_checkContentTransferEncoding($message, '8bit'));
 
 		$this->CakeEmail->charset = 'ISO-2022-JP';
 		$this->CakeEmail->send();
@@ -1205,7 +1205,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains('Content-Type: text/html; charset=ISO-2022-JP', $message);
 
 		// ISO-2022-JP is 7bit
-		$this->assertTrue($this->checkContentTransferEncoding($message, '7bit'));
+		$this->assertTrue($this->_checkContentTransferEncoding($message, '7bit'));
 	}
 
 /**
@@ -1451,7 +1451,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains(mb_convert_encoding('ってテーブルを作ってやってたらう','ISO-2022-JP'), $result['message']);
 	}
 
-	private function checkContentTransferEncoding($message, $charset) {
+	protected function _checkContentTransferEncoding($message, $charset) {
 		$boundary = '--alt-' . $this->CakeEmail->getBoundary();
 		$result['text'] = false;
 		$result['html'] = false;
@@ -1480,6 +1480,7 @@ class CakeEmailTest extends CakeTestCase {
 /**
  * Test CakeEmail::_encode function
  *
+ * @return void
  */
 	public function testEncode() {
 		$this->skipIf(!function_exists('mb_convert_encoding'));

@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -150,6 +150,16 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		if (isset($_GET['debug']) && $_GET['debug']) {
 			ob_flush();
 		}
+	}
+
+/**
+ * See CakeTestSuiteDispatcher::date()
+ *
+ * @param string $format format to be used.
+ * @return string
+ */
+	public static function date($format = 'Y-m-d H:i:s') {
+		return CakeTestSuiteDispatcher::date($format);
 	}
 
 // @codingStandardsIgnoreStart PHPUnit overrides don't match CakePHP

@@ -305,11 +305,11 @@ class Scaffold {
 				throw new NotFoundException(__d('cake', 'Invalid %s', Inflector::humanize($this->modelClass)));
 			}
 			if ($this->ScaffoldModel->delete()) {
-				$message = __d('cake', 'The %1$s with id: %2$d has been deleted.', Inflector::humanize($this->modelClass), $id);
+				$message = __d('cake', 'The %1$s with id: %2$s has been deleted.', Inflector::humanize($this->modelClass), $id);
 				return $this->_sendMessage($message);
 			} else {
 				$message = __d('cake',
-					'There was an error deleting the %1$s with id: %2$d',
+					'There was an error deleting the %1$s with id: %2$s',
 					Inflector::humanize($this->modelClass),
 					$id
 				);

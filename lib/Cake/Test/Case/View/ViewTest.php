@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -991,6 +991,23 @@ class ViewTest extends CakeTestCase {
 		$this->assertEquals('cache_form', $View->view);
 		$result = $View->render();
 		$this->assertRegExp('/Add User/', $result);
+	}
+
+/**
+ * Test render()ing a file in a subdir from a custom viewPath
+ * in a plugin.
+ *
+ * @return void
+ */
+	public function testGetViewFileNameSubdirWithPluginAndViewPath() {
+		$this->PostsController->plugin = 'TestPlugin';
+		$this->PostsController->viewPath = 'Elements';
+		$this->PostsController->name = 'Posts';
+		$View = new TestView($this->PostsController);
+
+		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' .
+			DS . 'View' . DS . 'Elements' . DS . 'sub_dir' . DS . 'sub_element.ctp';
+		$this->assertEquals($expected, $View->getViewFileName('sub_dir/sub_element'));
 	}
 
 /**

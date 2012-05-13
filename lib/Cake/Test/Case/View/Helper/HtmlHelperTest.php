@@ -4,14 +4,14 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -355,6 +355,9 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->image('/test/view/1.gif');
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
 
+		$result = $this->Html->image('test.gif?one=two&three=four');
+		$this->assertTags($result, array('img' => array('src' => 'img/test.gif?one=two&amp;three=four', 'alt' => '')));
+
 		$result = $this->Html->image('test.gif', array('fullBase' => true));
 		$here = $this->Html->url('/', true);
 		$this->assertTags($result, array('img' => array('src' => $here . 'img/test.gif', 'alt' => '')));
@@ -513,6 +516,10 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->css('screen.css?1234');
 		$expected['link']['href'] = 'preg:/.*css\/screen\.css\?1234/';
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('screen.css?with=param&other=param');
+		$expected['link']['href'] = 'css/screen.css?with=param&amp;other=param';
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->css('http://whatever.com/screen.css?1234');
@@ -784,6 +791,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->script('test.json.js?foo=bar');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js?foo=bar')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('test.json.js?foo=bar&other=test');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js?foo=bar&amp;other=test')
 		);
 		$this->assertTags($result, $expected);
 
@@ -1250,33 +1263,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, null);
-		$expected = array(
-			'<ul',
-			'<li', 'Item 1', '/li',
-			'<li', 'Item 2',
-			'<ul', '<li', 'Item 2.1', '/li', '/ul',
-			'/li',
-			'<li', 'Item 3', '/li',
-			'<li', 'Item 4',
-			'<ul',
-			'<li', 'Item 4.1', '/li',
-			'<li', 'Item 4.2', '/li',
-			'<li', 'Item 4.3',
-			'<ul',
-			'<li', 'Item 4.3.1', '/li',
-			'<li', 'Item 4.3.2', '/li',
-			'/ul',
-			'/li',
-			'/ul',
-			'/li',
-			'<li', 'Item 5',
-			'<ul',
-			'<li', 'Item 5.1', '/li',
-			'<li', 'Item 5.2', '/li',
-			'/ul',
-			'/li',
-			'/ul'
-		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array(), array(), 'ol');
@@ -1310,33 +1296,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, 'ol');
-		$expected = array(
-			'<ol',
-			'<li', 'Item 1', '/li',
-			'<li', 'Item 2',
-			'<ol', '<li', 'Item 2.1', '/li', '/ol',
-			'/li',
-			'<li', 'Item 3', '/li',
-			'<li', 'Item 4',
-			'<ol',
-			'<li', 'Item 4.1', '/li',
-			'<li', 'Item 4.2', '/li',
-			'<li', 'Item 4.3',
-			'<ol',
-			'<li', 'Item 4.3.1', '/li',
-			'<li', 'Item 4.3.2', '/li',
-			'/ol',
-			'/li',
-			'/ol',
-			'/li',
-			'<li', 'Item 5',
-			'<ol',
-			'<li', 'Item 5.1', '/li',
-			'<li', 'Item 5.2', '/li',
-			'/ol',
-			'/li',
-			'/ol'
-		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array('class' => 'list'));

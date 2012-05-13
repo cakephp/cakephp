@@ -192,19 +192,30 @@ class CakeNumber {
  *
  * ### Options
  *
- * - `before` - The currency symbol to place before whole numbers ie. '$'
- * - `after` - The currency symbol to place after decimal numbers ie. 'c'. Set to boolean false to
- *    use no decimal symbol.  eg. 0.35 => $0.35.
- * - `zero` - The text to use for zero values, can be a string or a number. ie. 0, 'Free!'
+ * - `wholeSymbol` - The currency symbol to use for whole numbers,
+ *   greater than 1, or less than -1.
+ * - `wholePosition` - The position the whole symbol should be placed
+ *   valid options are 'before' & 'after'.
+ * - `fractionSymbol` - The currency symbol to use for fractional numbers.
+ * - `fractionPosition` - The position the fraction symbol should be placed
+ *   valid options are 'before' & 'after'.
+ * - `before` - The currency symbol to place before whole numbers
+ *   ie. '$'. `before` is an alias for `wholeSymbol`.
+ * - `after` - The currency symbol to place after decimal numbers
+ *   ie. 'c'. Set to boolean false to use no decimal symbol.
+ *   eg. 0.35 => $0.35.  `after` is an alias for `fractionSymbol`
+ * - `zero` - The text to use for zero values, can be a
+ *   string or a number. ie. 0, 'Free!'
  * - `places` - Number of decimal places to use. ie. 2
  * - `thousands` - Thousands separator ie. ','
  * - `decimals` - Decimal separator symbol ie. '.'
- * - `negative` - Symbol for negative numbers. If equal to '()', the number will be wrapped with ( and )
+ * - `negative` - Symbol for negative numbers. If equal to '()',
+ *   the number will be wrapped with ( and )
  * - `escape` - Should the output be htmlentity escaped? Defaults to true
  *
  * @param float $number
- * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
- *   set at least 'before' and 'after' options.
+ * @param string $currency Shortcut to default options. Valid values are
+ *   'USD', 'EUR', 'GBP', otherwise set at least 'before' and 'after' options.
  * @param array $options
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
@@ -269,14 +280,8 @@ class CakeNumber {
  *
  * {{{ $number->currency($value, 'NOK'); }}}
  *
- * Added formats are merged with the following defaults.
- *
- * {{{
- *	array(
- *		'before' => '$', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => ',',
- *		'decimals' => '.', 'negative' => '()', 'escape' => true
- *	)
- * }}}
+ * Added formats are merged with the defaults defined in CakeNumber::$_currencyDefaults
+ * See CakeNumber::currency() for more information on the various options and their function.
  *
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
