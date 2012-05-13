@@ -64,6 +64,8 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertEquals(CakeLog::configured(), array('libtest', 'plugintest'));
 
+		CakeLog::write(LOG_INFO, 'TestPluginLog is not a BaseLog descendant');
+
 		App::build();
 		CakePlugin::unload();
 	}

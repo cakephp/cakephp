@@ -374,8 +374,12 @@ class CakeLog {
 			$scopes = array();
 			if ($logger instanceof BaseLog) {
 				$config = $logger->config();
-				$types = $config['types'];
-				$scopes = $config['scopes'];
+				if (isset($config['types'])) {
+					$types = $config['types'];
+				}
+				if (isset($config['scopes'])) {
+					$scopes = $config['scopes'];
+				}
 			}
 			if (is_string($scope)) {
 				$inScope = in_array($scope, $scopes);
