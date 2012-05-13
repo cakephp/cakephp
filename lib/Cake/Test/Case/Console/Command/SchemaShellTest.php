@@ -135,7 +135,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->assertTrue(isset($this->Shell->Schema));
 		$this->assertTrue(is_a($this->Shell->Schema, 'CakeSchema'));
-		$this->assertEquals(strtolower(APP_DIR), strtolower($this->Shell->Schema->name));
+		$this->assertEquals(Inflector::camelize(Inflector::slug(APP_DIR)), $this->Shell->Schema->name);
 		$this->assertEquals('schema.php', $this->Shell->Schema->file);
 
 		$this->Shell->Schema = null;
@@ -155,7 +155,7 @@ class SchemaShellTest extends CakeTestCase {
 			'path' => '/test/path'
 		);
 		$this->Shell->startup();
-		$this->assertEquals(strtolower(APP_DIR), strtolower($this->Shell->Schema->name));
+		$this->assertEquals(Inflector::camelize(Inflector::slug(APP_DIR)), $this->Shell->Schema->name);
 		$this->assertEquals('other_file.php', $this->Shell->Schema->file);
 		$this->assertEquals('test', $this->Shell->Schema->connection);
 		$this->assertEquals('/test/path', $this->Shell->Schema->path);
