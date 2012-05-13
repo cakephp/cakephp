@@ -633,7 +633,7 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
 		$this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
 	}
-	
+
 /**
  * testWasWithinLast method
  *
@@ -677,7 +677,7 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertFalse($this->Time->isWithinNext('1   ', '-1 hour'));
 		$this->assertFalse($this->Time->isWithinNext('1   ', '-1 minute'));
 		$this->assertFalse($this->Time->isWithinNext('1   ', '-23 hours -59 minutes -59 seconds'));
-		
+
 		$this->assertTrue($this->Time->isWithinNext('7 days', '6 days, 23 hours, 59 minutes, 59 seconds'));
 		$this->assertFalse($this->Time->isWithinNext('7 days', '6 days, 23 hours, 59 minutes, 61 seconds'));
 	}

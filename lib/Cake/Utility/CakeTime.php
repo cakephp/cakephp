@@ -39,7 +39,7 @@ class CakeTime {
  * @see CakeTime::format()
  */
 	public static $niceFormat = '%a, %b %eS %Y, %H:%M';
-        
+
 /**
  * The format to use when formatting a time using `CakeTime::timeAgoInWords()`
  * and the difference is more than `CakeTime::$wordEnd`
@@ -48,7 +48,7 @@ class CakeTime {
  * @see CakeTime::timeAgoInWords()
  */
 	public static $wordFormat = 'j/n/y';
-	
+
 /**
  * The format to use when formatting a time using `CakeTime::niceShort()`
  * and the difference is between 3 and 7 days
@@ -57,7 +57,7 @@ class CakeTime {
  * @see CakeTime::niceShort()
  */
 	public static $niceShortFormat = '%d/%m, %H:%M';
-        
+
 /**
  * The format to use when formatting a time using `CakeTime::timeAgoInWords()`
  * and the difference is less than `CakeTime::$wordEnd`
@@ -66,15 +66,15 @@ class CakeTime {
  * @see CakeTime::timeAgoInWords()
  */
 	public static $wordAccuracy = array(
-		'year' =>   "day",
-		'month' =>  "day",
-		'week' =>   "day",
-		'day' =>    "hour",
-		'hour' =>   "minute",
+		'year' => "day",
+		'month' => "day",
+		'week' => "day",
+		'day' => "hour",
+		'hour' => "minute",
 		'minute' => "minute",
 		'second' => "second",
 	);
-        
+
 /**
  * The end of relative time telling
  *
@@ -375,10 +375,17 @@ class CakeTime {
 		$date = $dateString ? self::fromString($dateString, $timezone) : time();
 
 		$y = self::isThisYear($date) ? '' : ' %Y';
-		
+
 		$d =  self::_strftime("%w", $date);
-		$day = array(__d('cake', 'Sunday'), __d('cake', 'Monday'), __d('cake', 'Tuesday'), 
-			__d('cake', 'Wednesday'), __d('cake', 'Thursday'), __d('cake', 'Friday'), __d('cake', 'Saturday'));
+		$day = array(
+			__d('cake', 'Sunday'),
+			__d('cake', 'Monday'),
+			__d('cake', 'Tuesday'),
+			__d('cake', 'Wednesday'),
+			__d('cake', 'Thursday'),
+			__d('cake', 'Friday'),
+			__d('cake', 'Saturday')
+		);
 
 		if (self::isToday($dateString, $timezone)) {
 			$ret = __d('cake', 'Today, %s', self::_strftime("%H:%M", $date));
@@ -394,7 +401,6 @@ class CakeTime {
 			$format = self::convertSpecifiers("%b %eS{$y}, %H:%M", $date);
 			$ret = self::_strftime($format, $date);
 		}
-
 		return $ret;
 	}
 
@@ -667,7 +673,7 @@ class CakeTime {
 		$format = self::$wordFormat;
 		$end = self::$wordEnd;
 		$accuracy = self::$wordAccuracy;
-                
+
 		if (is_array($options)) {
 			if (isset($options['userOffset'])) {
 				$timezone = $options['userOffset'];
@@ -735,7 +741,7 @@ class CakeTime {
 					}
 
 					if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] == 1) {
-						$years --;
+						$years--;
 					}
 				}
 			}
@@ -753,13 +759,13 @@ class CakeTime {
 				}
 
 				if ($future['m'] != $past['m']) {
-					$months --;
+					$months--;
 				}
 			}
 
 			if ($months == 0 && $years >= 1 && $diff < ($years * 31536000)) {
 				$months = 11;
-				$years --;
+				$years--;
 			}
 
 			if ($months >= 12) {
@@ -825,12 +831,11 @@ class CakeTime {
 		if (self::wasWithinLast('7 days', $dateTime, $timezone) || self::isWithinNext('7 days', $dateTime, $timezone)) {
 			$relativeDate = self::niceShort($dateTime , $timezone);
 		}
-		
+
 		// If now
 		if ($diff == 0) {
 			$relativeDate = __d('cake', 'just now', 'just now');
 		}
-
 		return $relativeDate;
 	}
 
@@ -856,10 +861,9 @@ class CakeTime {
 		if ($date >= $interval && $date <= time()) {
 			return true;
 		}
-
 		return false;
 	}
-        
+
 /**
  * Returns true if specified datetime is within the interval specified, else false.
  *
@@ -882,7 +886,6 @@ class CakeTime {
 		if ($date <= $interval && $date >= time()) {
 			return true;
 		}
-
 		return false;
 	}
 
@@ -905,7 +908,6 @@ class CakeTime {
 		$month = intval(date("n", $string));
 		$day = intval(date("j", $string));
 		$year = intval(date("Y", $string));
-
 		return gmmktime($hour, $minute, $second, $month, $day, $year);
 	}
 
