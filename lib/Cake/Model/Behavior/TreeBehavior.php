@@ -244,7 +244,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function childCount(Model $Model, $id = null, $direct = false) {
 		if (is_array($id)) {
-			extract (array_merge(array('id' => null), $id));
+			extract(array_merge(array('id' => null), $id));
 		}
 		if ($id === null && $Model->id) {
 			$id = $Model->id;
@@ -290,7 +290,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function children(Model $Model, $id = null, $direct = false, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
 		if (is_array($id)) {
-			extract (array_merge(array('id' => null), $id));
+			extract(array_merge(array('id' => null), $id));
 		}
 		$overrideRecursive = $recursive;
 
@@ -403,7 +403,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function getParentNode(Model $Model, $id = null, $fields = null, $recursive = null) {
 		if (is_array($id)) {
-			extract (array_merge(array('id' => null), $id));
+			extract(array_merge(array('id' => null), $id));
 		}
 		$overrideRecursive = $recursive;
 		if (empty ($id)) {
@@ -436,7 +436,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function getPath(Model $Model, $id = null, $fields = null, $recursive = null) {
 		if (is_array($id)) {
-			extract (array_merge(array('id' => null), $id));
+			extract(array_merge(array('id' => null), $id));
 		}
 		$overrideRecursive = $recursive;
 		if (empty ($id)) {
@@ -473,7 +473,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function moveDown(Model $Model, $id = null, $number = 1) {
 		if (is_array($id)) {
-			extract (array_merge(array('id' => null), $id));
+			extract(array_merge(array('id' => null), $id));
 		}
 		if (!$number) {
 			return false;
@@ -531,7 +531,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function moveUp(Model $Model, $id = null, $number = 1) {
 		if (is_array($id)) {
-			extract (array_merge(array('id' => null), $id));
+			extract(array_merge(array('id' => null), $id));
 		}
 		if (!$number) {
 			return false;
@@ -595,7 +595,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function recover(Model $Model, $mode = 'parent', $missingParentAction = null) {
 		if (is_array($mode)) {
-			extract (array_merge(array('mode' => 'parent'), $mode));
+			extract(array_merge(array('mode' => 'parent'), $mode));
 		}
 		extract($this->settings[$Model->alias]);
 		$Model->recursive = $recursive;
@@ -713,7 +713,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function removeFromTree(Model $Model, $id = null, $delete = false) {
 		if (is_array($id)) {
-			extract (array_merge(array('id' => null), $id));
+			extract(array_merge(array('id' => null), $id));
 		}
 		extract($this->settings[$Model->alias]);
 
