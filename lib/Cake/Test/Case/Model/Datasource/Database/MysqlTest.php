@@ -1051,7 +1051,7 @@ class MysqlTest extends CakeTestCase {
 /**
  * buildRelatedModels method
  *
- * @param mixed $model
+ * @param Model $model
  * @return void
  */
 	protected function _buildRelatedModels(Model $model) {
@@ -1071,9 +1071,9 @@ class MysqlTest extends CakeTestCase {
 /**
  * &_prepareAssociationQuery method
  *
- * @param mixed $model
- * @param mixed $queryData
- * @param mixed $binding
+ * @param Model $model
+ * @param array $queryData
+ * @param array $binding
  * @return void
  */
 	protected function &_prepareAssociationQuery(Model $model, &$queryData, $binding) {

@@ -249,7 +249,7 @@ class CakeLog {
  * );
  * }}}
  *
- * @param mixed $levels array
+ * @param array $levels array
  * @param bool $append true to append, false to replace
  * @return array active log levels
  */
@@ -397,7 +397,7 @@ class CakeLog {
  *
  * `CakeLog::write('warning', 'Stuff is broken here');`
  *
- * @param mixed $type Type of message being written. When value is an integer
+ * @param integer|string $type Type of message being written. When value is an integer
  *    or a string matching the recognized levels, then it will
  *    be treated log levels. Otherwise it's treated as scope.
  * @param string $message Message content to log

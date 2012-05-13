@@ -351,7 +351,7 @@ class CakeSession {
 /**
  * Returns given session variable, or all of them, if no parameters given.
  *
- * @param mixed $name The name of the session variable (or a path as sent to Set.extract)
+ * @param string|array $name The name of the session variable (or a path as sent to Set.extract)
  * @return mixed The value of the session variable
  */
 	public static function read($name = null) {
@@ -389,7 +389,7 @@ class CakeSession {
 /**
  * Writes value to given session variable name.
  *
- * @param mixed $name Name of variable
+ * @param string|array $name Name of variable
  * @param string $value Value to write
  * @return boolean True if the write was successful, false if the write failed
  */

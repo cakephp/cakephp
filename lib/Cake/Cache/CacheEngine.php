@@ -77,7 +77,7 @@ abstract class CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param mixed $duration How long to cache for.
+ * @param integer $duration How long to cache for.
  * @return boolean True if the data was successfully cached, false on failure
  */
 	abstract public function write($key, $value, $duration);

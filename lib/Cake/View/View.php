@@ -762,8 +762,8 @@ class View extends Object {
  * Allows a template or element to set a variable that will be available in
  * a layout or other element. Analogous to Controller::set().
  *
- * @param mixed $one A string or an array of data.
- * @param mixed $two Value in case $one is a string (which then works as the key).
+ * @param string|array $one A string or an array of data.
+ * @param string|array $two Value in case $one is a string (which then works as the key).
  *    Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
  */

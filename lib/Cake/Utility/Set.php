@@ -68,8 +68,8 @@ class Set {
 /**
  * Pushes the differences in $array2 onto the end of $array
  *
- * @param mixed $array Original array
- * @param mixed $array2 Differences to push
+ * @param array $array Original array
+ * @param array $array2 Differences to push
  * @return array Combined array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::pushDiff
  */
@@ -203,8 +203,8 @@ class Set {
  *
  * $list defaults to 0 = no 1 = yes if param is not passed
  *
- * @param mixed $select Key in $list to return
- * @param mixed $list can be an array or a comma-separated list.
+ * @param array $select Key in $list to return
+ * @param array|string $list can be an array or a comma-separated list.
  * @return string the value of the array key or null if no match
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::enum
  */
@@ -455,7 +455,7 @@ class Set {
 /**
  * This function can be used to see if a single item or a given xpath match certain conditions.
  *
- * @param mixed $conditions An array of condition strings or an XPath expression
+ * @param string|array $conditions An array of condition strings or an XPath expression
  * @param array $data  An array of data to execute the match on
  * @param integer $i Optional: The 'nth'-number of the item being matched.
  * @param integer $length
@@ -532,7 +532,7 @@ class Set {
  * a regular expression.
  *
  * @param array $data Array from where to extract
- * @param mixed $path As an array, or as a dot-separated string.
+ * @param string|array $path As an array, or as a dot-separated string.
  * @return array Extracted data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::classicExtract
  */
@@ -618,8 +618,8 @@ class Set {
 /**
  * Inserts $data into an array as defined by $path.
  *
- * @param mixed $list Where to insert into
- * @param mixed $path A dot-separated string.
+ * @param array $list Where to insert into
+ * @param string $path A dot-separated string.
  * @param array $data Data to insert
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::insert
@@ -631,8 +631,8 @@ class Set {
 /**
  * Removes an element from a Set or array as defined by $path.
  *
- * @param mixed $list From where to remove
- * @param mixed $path A dot-separated string.
+ * @param array $list From where to remove
+ * @param string $path A dot-separated string.
  * @return array Array with $path removed from its value
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::remove
  */
@@ -643,8 +643,8 @@ class Set {
 /**
  * Checks if a particular path is set in an array
  *
- * @param mixed $data Data to check on
- * @param mixed $path A dot-separated string.
+ * @param string|array $data Data to check on
+ * @param string|array $path A dot-separated string.
  * @return boolean true if path is found, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::check
  */
@@ -787,9 +787,9 @@ class Set {
  * to null (useful for Set::merge). You can optionally group the values by what is obtained when
  * following the path specified in $groupPath.
  *
- * @param mixed $data Array or object from where to extract keys and values
- * @param mixed $path1 As an array, or as a dot-separated string.
- * @param mixed $path2 As an array, or as a dot-separated string.
+ * @param array|object $data Array or object from where to extract keys and values
+ * @param string|array $path1 As an array, or as a dot-separated string.
+ * @param string|array $path2 As an array, or as a dot-separated string.
  * @param string $groupPath As an array, or as a dot-separated string.
  * @return array Combined array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::combine
@@ -1088,8 +1088,8 @@ class Set {
 /**
  * Return the value at the specified position
  *
- * @param mixed $input an array
- * @param mixed $path string or array of array keys
+ * @param array $input an array
+ * @param string|array $path string or array of array keys
  * @return the value at the specified position or null if it doesn't exist
  */
 	public static function get($input, $path = null) {

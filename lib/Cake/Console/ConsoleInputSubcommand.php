@@ -49,9 +49,9 @@ class ConsoleInputSubcommand {
 /**
  * Make a new Subcommand
  *
- * @param mixed $name The long name of the subcommand, or an array with all the properties.
+ * @param string|array $name The long name of the subcommand, or an array with all the properties.
  * @param string $help The help text for this option
- * @param mixed $parser A parser for this subcommand. Either a ConsoleOptionParser, or an array that can be
+ * @param ConsoleOptionParser|array $parser A parser for this subcommand. Either a ConsoleOptionParser, or an array that can be
  *   used with ConsoleOptionParser::buildFromArray()
  */
 	public function __construct($name, $help = '', $parser = null) {

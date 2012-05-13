@@ -211,7 +211,7 @@ abstract class ObjectCollection {
  * @param string|array $name CamelCased name of the object(s) to enable (string or array)
  * 	If string the second param $priority is used else it should be an associative array
  * 	with keys as object names and values as priorities to set.
- * @param int|null Integer priority to set or null for default
+ * @param integer|null Integer priority to set or null for default
  * @return void
  */
 	public function setPriority($name, $priority = null) {

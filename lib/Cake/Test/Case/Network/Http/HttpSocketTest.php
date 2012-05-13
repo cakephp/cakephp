@@ -84,7 +84,7 @@ class TestHttpSocket extends HttpSocket {
 /**
  * Convenience method for testing protected method
  *
- * @param mixed $uri URI (see {@link _parseUri()})
+ * @param string|array $uri URI (see {@link _parseUri()})
  * @return array Current configuration settings
  */
 	public function configUri($uri = null) {
@@ -94,8 +94,8 @@ class TestHttpSocket extends HttpSocket {
 /**
  * Convenience method for testing protected method
  *
- * @param string $uri URI to parse
- * @param mixed $base If true use default URI config, otherwise indexed array to set 'scheme', 'host', 'port', etc.
+ * @param string|array $uri URI to parse
+ * @param boolean|array $base If true use default URI config, otherwise indexed array to set 'scheme', 'host', 'port', etc.
  * @return array Parsed URI
  */
 	public function parseUri($uri = null, $base = array()) {
@@ -126,7 +126,7 @@ class TestHttpSocket extends HttpSocket {
 /**
  * Convenience method for testing protected method
  *
- * @param mixed $query A query string to parse into an array or an array to return directly "as is"
+ * @param string|array $query A query string to parse into an array or an array to return directly "as is"
  * @return array The $query parsed into a possibly multi-level array. If an empty $query is given, an empty array is returned.
  */
 	public function parseQuery($query) {

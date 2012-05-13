@@ -589,7 +589,7 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * encrypt method
  *
- * @param mixed $value
+ * @param array|string $value
  * @return string
  */
 	protected function __encrypt($value) {

@@ -589,7 +589,7 @@ class Controller extends Object implements CakeEventListener {
  * Merges the elements not already in $this->uses into
  * $this->uses.
  *
- * @param mixed $merge The data to merge in.
+ * @param array $merge The data to merge in.
  * @return void
  */
 	protected function _mergeUses($merge) {
@@ -687,7 +687,7 @@ class Controller extends Object implements CakeEventListener {
 /**
  * Queries & sets valid HTTP response codes & messages.
  *
- * @param mixed $code If $code is an integer, then the corresponding code/message is
+ * @param integer|array $code If $code is an integer, then the corresponding code/message is
  *        returned if it exists, null if it does not exist. If $code is an array,
  *        then the 'code' and 'message' keys of each nested array are added to the default
  *        HTTP codes. Example:
@@ -699,7 +699,7 @@ class Controller extends Object implements CakeEventListener {
  *            800 => 'Unexpected Minotaur'
  *        )); // sets these new values, and returns true
  *
- * @return mixed Associative array of the HTTP codes as keys, and the message
+ * @return array Associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
  * @deprecated Use CakeResponse::httpCodes();
  */
@@ -713,7 +713,7 @@ class Controller extends Object implements CakeEventListener {
  * dynamic models for the time being.
  *
  * @param string $modelClass Name of model class to load
- * @param mixed $id Initial ID the instanced model class should have
+ * @param integer|string $id Initial ID the instanced model class should have
  * @return mixed true when single model found and instance created, error returned if model not found.
  * @throws MissingModelException if the model class cannot be found.
  */
@@ -742,7 +742,7 @@ class Controller extends Object implements CakeEventListener {
  * Redirects to given $url, after turning off $this->autoRender.
  * Script execution is halted after the redirect.
  *
- * @param mixed $url A string or array-based URL pointing to another location within the app,
+ * @param string|array $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
@@ -795,7 +795,7 @@ class Controller extends Object implements CakeEventListener {
  * Parse beforeRedirect Response
  *
  * @param mixed $response Response from beforeRedirect callback
- * @param mixed $url The same value of beforeRedirect
+ * @param string|array $url The same value of beforeRedirect
  * @param integer $status The same value of beforeRedirect
  * @param boolean $exit The same value of beforeRedirect
  * @return array Array with keys url, status and exit
@@ -827,8 +827,8 @@ class Controller extends Object implements CakeEventListener {
 /**
  * Saves a variable for use inside a view template.
  *
- * @param mixed $one A string or an array of data.
- * @param mixed $two Value in case $one is a string (which then works as the key).
+ * @param string|array $one A string or an array of data.
+ * @param string|array $two Value in case $one is a string (which then works as the key).
  *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#interacting-with-views
@@ -996,7 +996,7 @@ class Controller extends Object implements CakeEventListener {
  * Does not work if the current debug level is higher than 0.
  *
  * @param string $message Message to display to the user
- * @param mixed $url Relative string or array-based URL to redirect to after the time expires
+ * @param string|array $url Relative string or array-based URL to redirect to after the time expires
  * @param integer $pause Time to show the message
  * @param string $layout Layout you want to use, defaults to 'flash'
  * @return void Renders flash layout
@@ -1015,7 +1015,7 @@ class Controller extends Object implements CakeEventListener {
  * Converts POST'ed form data to a model conditions array, suitable for use in a Model::find() call.
  *
  * @param array $data POST'ed data organized by model and field
- * @param mixed $op A string containing an SQL comparison operator, or an array matching operators
+ * @param string|array $op A string containing an SQL comparison operator, or an array matching operators
  *        to fields
  * @param string $bool SQL boolean operator: AND, OR, XOR, etc.
  * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be
@@ -1073,8 +1073,8 @@ class Controller extends Object implements CakeEventListener {
 /**
  * Handles automatic pagination of model records.
  *
- * @param mixed $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
- * @param mixed $scope Conditions to use while paginating
+ * @param Model|string $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
+ * @param string|array $scope Conditions to use while paginating
  * @param array $whitelist List of allowed options for paging
  * @return array Model query results
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::paginate
@@ -1111,7 +1111,7 @@ class Controller extends Object implements CakeEventListener {
  * return a string which will be interpreted as the url to redirect to or return associative array with
  * key 'url' and optionally 'status' and 'exit'.
  *
- * @param mixed $url A string or array-based URL pointing to another location within the app,
+ * @param string|array $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect

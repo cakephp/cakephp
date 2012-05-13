@@ -156,7 +156,7 @@ class ConsoleOutput {
  * Outputs a single or multiple messages to stdout. If no parameters
  * are passed, outputs just a newline.
  *
- * @param mixed $message A string or a an array of strings to output
+ * @param string|array $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
  * @return integer Returns the number of bytes returned from writing to stdout.
  */
@@ -244,7 +244,7 @@ class ConsoleOutput {
  * `$this->output->styles('annoy', false);`
  *
  * @param string $style The style to get or create.
- * @param mixed $definition The array definition of the style to change or create a style
+ * @param array $definition The array definition of the style to change or create a style
  *   or false to remove a style.
  * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
  *   styles true will be returned.

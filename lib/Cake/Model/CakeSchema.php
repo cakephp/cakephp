@@ -338,7 +338,7 @@ class CakeSchema extends Object {
 /**
  * Writes schema file from object or options
  *
- * @param mixed $object schema object or options array
+ * @param array|object $object schema object or options array
  * @param array $options schema object properties to override object
  * @return mixed false or string written to file
  */
@@ -440,8 +440,8 @@ class CakeSchema extends Object {
 /**
  * Compares two sets of schemas
  *
- * @param mixed $old Schema object or array
- * @param mixed $new Schema object or array
+ * @param array|object $old Schema object or array
+ * @param array|object $new Schema object or array
  * @return array Tables (that are added, dropped, or changed)
  */
 	public function compare($old, $new = null) {

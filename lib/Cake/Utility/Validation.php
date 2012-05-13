@@ -56,7 +56,7 @@ class Validation {
  * $check can be passed as an array:
  * array('check' => 'valueToCheck');
  *
- * @param mixed $check Value to check
+ * @param string|array $check Value to check
  * @return boolean Success
  */
 	public static function notEmpty($check) {
@@ -78,7 +78,7 @@ class Validation {
  * $check can be passed as an array:
  * array('check' => 'valueToCheck');
  *
- * @param mixed $check Value to check
+ * @param string|array $check Value to check
  * @return boolean Success
  */
 	public static function alphaNumeric($check) {
@@ -114,7 +114,7 @@ class Validation {
  * $check can be passed as an array:
  * array('check' => 'valueToCheck');
  *
- * @param mixed $check Value to check
+ * @param string|array $check Value to check
  * @return boolean Success
  */
 	public static function blank($check) {
@@ -128,8 +128,8 @@ class Validation {
  * Validation of credit card numbers.
  * Returns true if $check is in the proper credit card format.
  *
- * @param mixed $check credit card number to validate
- * @param mixed $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
+ * @param string|array $check credit card number to validate
+ * @param string|array $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
  *    if an array is used only the values of the array are checked.
  *    Example: array('amex', 'bankcard', 'maestro')
  * @param boolean $deep set to true this will check the Luhn algorithm of the credit card.
@@ -200,7 +200,7 @@ class Validation {
 /**
  * Used to compare 2 numeric values.
  *
- * @param mixed $check1 if string is passed for a string must also be passed for $check2
+ * @param string|array $check1 if string is passed for a string must also be passed for $check2
  *    used as an array it must be passed as array('check1' => value, 'operator' => 'value', 'check2' -> value)
  * @param string $operator Can be either a word or operand
  *    is greater >, is less <, greater or equal >=
@@ -261,7 +261,7 @@ class Validation {
 /**
  * Used when a custom regular expression is needed.
  *
- * @param mixed $check When used as a string, $regex must also be a valid regular expression.
+ * @param string|array $check When used as a string, $regex must also be a valid regular expression.
  *								As and array: array('check' => value, 'regex' => 'valid regular expression')
  * @param string $regex If $check is passed as a string, $regex must also be set to valid regular expression
  * @return boolean Success
@@ -282,7 +282,7 @@ class Validation {
  * keys that expect full month, day and year will validate leap years
  *
  * @param string $check a valid date string
- * @param mixed $format Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)
+ * @param string|array $format Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)
  * 	      Keys: dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
  * 	            mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
  * 	            ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
@@ -320,7 +320,7 @@ class Validation {
  * All values matching the "date" core validation rule, and the "time" one will be valid
  *
  * @param array $check Value to check
- * @param mixed $dateFormat Format of the date part
+ * @param string|array $dateFormat Format of the date part
  * Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)
  * ## Keys:
  *
@@ -440,7 +440,7 @@ class Validation {
 /**
  * Check that value has a valid file extension.
  *
- * @param mixed $check Value to check
+ * @param string|array $check Value to check
  * @param array $extensions file extensions to allow
  * @return boolean Success
  */
@@ -525,8 +525,8 @@ class Validation {
  * - max => maximum number of non-zero choices that can be made
  * - min => minimum number of non-zero choices that can be made
  *
- * @param mixed $check Value to check
- * @param mixed $options Options for the check.
+ * @param array $check Value to check
+ * @param array $options Options for the check.
  * @param boolean $strict Defaults to true, set to false to disable strict type check
  * @return boolean Success
  */
@@ -566,7 +566,7 @@ class Validation {
 /**
  * Check that a value is a valid phone number.
  *
- * @param mixed $check Value to check (string or array)
+ * @param string|array $check Value to check (string or array)
  * @param string $regex Regular expression to use
  * @param string $country Country code (defaults to 'all')
  * @return boolean Success
@@ -596,7 +596,7 @@ class Validation {
 /**
  * Checks that a given value is a valid postal code.
  *
- * @param mixed $check Value to check
+ * @param string|array $check Value to check
  * @param string $regex Regular expression to use
  * @param string $country Country to use for formatting
  * @return boolean Success
@@ -655,7 +655,7 @@ class Validation {
 /**
  * Checks that a value is a valid Social Security Number.
  *
- * @param mixed $check Value to check
+ * @param string|array $check Value to check
  * @param string $regex Regular expression to use
  * @param string $country Country
  * @return boolean Success
@@ -727,7 +727,7 @@ class Validation {
 /**
  * Runs an user-defined validation.
  *
- * @param mixed $check value that will be validated in user-defined methods.
+ * @param string|array $check value that will be validated in user-defined methods.
  * @param object $object class that holds validation method
  * @param string $method class method name for validation to run
  * @param array $args arguments to send to method
@@ -775,7 +775,7 @@ class Validation {
 /**
  * Runs a regular expression match.
  *
- * @param mixed $check Value to check against the $regex expression
+ * @param string $check Value to check against the $regex expression
  * @param string $regex Regular expression
  * @return boolean Success of match
  */

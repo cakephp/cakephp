@@ -634,8 +634,8 @@ class UpgradeShell extends AppShell {
  * Find all php files in the folder (honoring recursive) and determine where cake expects the file to be
  * If the file is not exactly where cake expects it - move it.
  *
- * @param mixed $path
- * @param mixed $options array(recursive, checkFolder)
+ * @param string $path
+ * @param array $options array(recursive, checkFolder)
  * @return void
  */
 	protected function _movePhpFiles($path, $options) {
