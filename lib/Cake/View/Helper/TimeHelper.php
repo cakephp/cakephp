@@ -350,7 +350,6 @@ class TimeHelper extends AppHelper {
  */
 	public function timeAgoInWords($dateTime, $options = array()) {
 		$element = null;
-
 		$stringDate = '';
 
 		if (!empty($options['element'])) {
@@ -359,7 +358,7 @@ class TimeHelper extends AppHelper {
 				'class' => 'time-ago-in-words',
 				'title' => $dateTime
 			);
-			
+
 			if (is_array($options['element'])) {
 				$element = array_merge($element, $options['element']);
 			} else {
@@ -394,7 +393,7 @@ class TimeHelper extends AppHelper {
 	public function wasWithinLast($timeInterval, $dateString, $timezone = null) {
 		return $this->_engine->wasWithinLast($timeInterval, $dateString, $timezone);
 	}
-        
+
 /**
  * @see CakeTime::isWithinLast()
  *
