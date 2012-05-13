@@ -345,7 +345,7 @@ class CakeTimeTest extends CakeTestCase {
 		date_default_timezone_set('UTC');
 		$result = $this->Time->nice(null, 'America/New_York');
 		$expected = $this->Time->nice(time(), 'America/New_York');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$this->_restoreSystemTimezone();
 	}
@@ -367,12 +367,12 @@ class CakeTimeTest extends CakeTestCase {
 
 		date_default_timezone_set('Europe/London');
 		$result = $this->Time->niceShort('2005-01-15 10:00:00', new DateTimeZone('Europe/Brussels'));
-		$this->assertEqual('Jan 15th 2005, 11:00', $result);
+		$this->assertEquals('Jan 15th 2005, 11:00', $result);
 
 		date_default_timezone_set('UTC');
 		$result = $this->Time->niceShort(null, 'America/New_York');
 		$expected = $this->Time->niceShort(time(), 'America/New_York');
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$this->_restoreSystemTimezone();
 	}
@@ -422,6 +422,54 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function testToServer() {
+		date_default_timezone_set('Europe/Paris');
+
+		$time = time();
+		$this->assertEquals(date('Y-m-d H:i:s', $time), $this->Time->toServer($time));
+
+		date_default_timezone_set('America/New_York');
+		$time = time();
+		date_default_timezone_set('Europe/Paris');
+		$result = $this->Time->toServer($time, 'America/New_York');
+		$this->assertEquals(date('Y-m-d H:i:s', $time), $result);
+
+		date_default_timezone_set('Europe/Paris');
+		$time = '2005-10-25 10:00:00';
+		$result = $this->Time->toServer($time);
+		$date = new DateTime($time, new DateTimeZone('UTC'));
+		$date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+		$expected = $date->format('Y-m-d H:i:s');
+		$this->assertEquals($expected, $result);
+
+		$time = '2002-01-01 05:15:30';
+		$result = $this->Time->toServer($time, 'America/New_York');
+		$date = new DateTime($time, new DateTimeZone('America/New_York'));
+		$date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+		$expected = $date->format('Y-m-d H:i:s');
+		$this->assertEquals($expected, $result);
+
+		$time = '2010-01-28T15:00:00+10:00';
+		$result = $this->Time->toServer($time, 'America/New_York');
+		$date = new DateTime($time);
+		$date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+		$expected = $date->format('Y-m-d H:i:s');
+		$this->assertEquals($expected, $result);
+
+		$date = new DateTime(null, new DateTimeZone('America/New_York'));
+		$result = $this->Time->toServer($date, 'Pacific/Tahiti');
+		$date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+		$expected = $date->format('Y-m-d H:i:s');
+		$this->assertEquals($expected, $result);
+
+		$this->_restoreSystemTimezone();
+
+		$time = time();
+		$result = $this->Time->toServer($time, null, 'l jS \of F Y h:i:s A');
+		$expected = date('l jS \of F Y h:i:s A', $time);
+		$this->assertEquals($expected, $result);
+
+		$this->assertFalse($this->Time->toServer(time(), new Object()));
+
 		date_default_timezone_set('UTC');
 
 		$serverTime = new DateTime('now');
@@ -432,6 +480,14 @@ class CakeTimeTest extends CakeTestCase {
 			$tz = new DateTimeZone($timezone);
 			$this->assertEquals($serverTime->format('U'), $result + $tz->getOffset($serverTime));
 		}
+
+		date_default_timezone_set('UTC');
+		$date = new DateTime('now', new DateTimeZone('America/New_York'));
+
+		$result = $this->Time->toServer($date, null, 'Y-m-d H:i:s');
+		$date->setTimezone($this->Time->timezone());
+		$expected = $date->format('Y-m-d H:i:s');
+		$this->assertEquals($expected, $result);
 
 		$this->_restoreSystemTimezone();
 	}
@@ -754,6 +810,32 @@ class CakeTimeTest extends CakeTestCase {
 		$result = $this->Time->fromString('+1 hour', $timezone);
 		$expected = $this->Time->convert(strtotime('+1 hour'), $timezone);
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test fromString() with a DateTime object as the dateString
+ *
+ * @return void
+ */
+	public function testFromStringWithDateTime() {
+		date_default_timezone_set('UTC');
+
+		$date = new DateTime('+1 hour', new DateTimeZone('America/New_York'));
+		$result = $this->Time->fromString($date, 'UTC');
+		$date->setTimezone(new DateTimeZone('UTC'));
+		$expected = $date->format('U') + $date->getOffset();
+
+		$this->assertEquals($expected, $result);
+
+		date_default_timezone_set('Australia/Melbourne');
+
+		$date = new DateTime('+1 hour', new DateTimeZone('America/New_York'));
+		$result = $this->Time->fromString($date, 'Asia/Kuwait');
+		$date->setTimezone(new DateTimeZone('Asia/Kuwait'));
+		$expected = $date->format('U') + $date->getOffset();
+		$this->assertEquals($expected, $result);
+
+		$this->_restoreSystemTimezone();
 	}
 
 /**

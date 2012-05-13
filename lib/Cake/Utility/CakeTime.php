@@ -238,7 +238,7 @@ class CakeTime {
  * Converts given time (in server's time zone) to user's local time, given his/her timezone.
  *
  * @param string $serverTime UNIX timestamp
- * @param mixed $timezone User's timezone string or DateTimeZone object
+ * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
  * @return integer UNIX timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
@@ -262,7 +262,7 @@ class CakeTime {
 /**
  * Returns a timezone object from a string or the user's timezone object
  *
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * 	If null it tries to get timezone from 'Config.timezone' config var
  * @return DateTimeZone Timezone object
  */
@@ -302,8 +302,8 @@ class CakeTime {
 /**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
  *
- * @param string $dateString Datetime string
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Parsed timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
@@ -314,6 +314,9 @@ class CakeTime {
 
 		if (is_integer($dateString) || is_numeric($dateString)) {
 			$date = intval($dateString);
+		} elseif (is_object($dateString) && $dateString instanceof DateTime) {
+			$dateString->setTimezone(new DateTimeZone(date_default_timezone_get()));
+			$date = (int)$dateString->format('U') + $dateString->getOffset();
 		} else {
 			$date = strtotime($dateString);
 		}
@@ -337,8 +340,8 @@ class CakeTime {
  * See http://php.net/manual/en/function.strftime.php for information on formatting
  * using locale strings.
  *
- * @param string $dateString Datetime string or Unix timestamp
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @param string $format The format to use. If null, `TimeHelper::$niceFormat` is used
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
@@ -366,8 +369,8 @@ class CakeTime {
  * If $dateString's year is the current year, the returned string does not
  * include mention of the year.
  *
- * @param string $dateString Datetime string or Unix timestamp
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Described, relative date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
@@ -410,10 +413,10 @@ class CakeTime {
 /**
  * Returns a partial SQL string to search for all records between two dates.
  *
- * @param string $begin Datetime string or Unix timestamp
- * @param string $end Datetime string or Unix timestamp
+ * @param int|string|DateTime $begin UNIX timestamp, strtotime() valid string or DateTime object
+ * @param int|string|DateTime $end UNIX timestamp, strtotime() valid string or DateTime object
  * @param string $fieldName Name of database field to compare with
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Partial SQL string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
@@ -430,9 +433,9 @@ class CakeTime {
  * Returns a partial SQL string to search for all records between two times
  * occurring on the same day.
  *
- * @param string $dateString Datetime string or Unix timestamp
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string $fieldName Name of database field to compare with
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Partial SQL string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
@@ -443,8 +446,8 @@ class CakeTime {
 /**
  * Returns true if given datetime string is today.
  *
- * @param string $dateString Datetime string or Unix timestamp
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return boolean True if datetime string is today
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
@@ -456,8 +459,8 @@ class CakeTime {
 /**
  * Returns true if given datetime string is within this week.
  *
- * @param string $dateString
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return boolean True if datetime string is within current week
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
@@ -468,8 +471,8 @@ class CakeTime {
 
 /**
  * Returns true if given datetime string is within this month
- * @param string $dateString
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return boolean True if datetime string is within current month
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
@@ -481,8 +484,8 @@ class CakeTime {
 /**
  * Returns true if given datetime string is within current year.
  *
- * @param string $dateString Datetime string or Unix timestamp
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return boolean True if datetime string is within current year
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
@@ -494,8 +497,8 @@ class CakeTime {
 /**
  * Returns true if given datetime string was yesterday.
  *
- * @param string $dateString Datetime string or Unix timestamp
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return boolean True if datetime string was yesterday
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  *
@@ -508,8 +511,8 @@ class CakeTime {
 /**
  * Returns true if given datetime string is tomorrow.
  *
- * @param string $dateString Datetime string or Unix timestamp
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return boolean True if datetime string was yesterday
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
@@ -521,7 +524,7 @@ class CakeTime {
 /**
  * Returns the quarter
  *
- * @param string $dateString
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param boolean $range if true returns a range in Y-m-d format
  * @return mixed 1, 2, 3, or 4 quarter of year or array if $range true
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
@@ -557,9 +560,9 @@ class CakeTime {
 
 /**
  * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
- *
- * @param string $dateString Datetime string to be represented as a Unix timestamp
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * 
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return integer Unix timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
@@ -570,26 +573,46 @@ class CakeTime {
 /**
  * Returns a formatted date in server's timezone.
  *
- * @param string $dateString Datetime string
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * If a DateTime object is given or the dateString has a timezone
+ * segment, the timezone parameter will be ignored.
+ *
+ * If no timezone parameter is given and no DateTime object, the passed $dateString will be
+ * considered to be in the UTC timezone.
+ *
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @param string $format date format string
  * @return mixed Formatted date
  */
 	public static function toServer($dateString, $timezone = null, $format = 'Y-m-d H:i:s') {
-		$timezone = self::timezone($timezone);
-		$time = new DateTime($dateString, $timezone);
-		$serverTimezone = date_default_timezone_get();
-		if ($serverTimezone !== $timezone->getName()) {
-			$time->setTimezone(new DateTimeZone($serverTimezone));
+		if ($timezone === null) {
+			$timezone = new DateTimeZone('UTC');
+		} elseif (is_string($timezone)) {
+			$timezone = new DateTimeZone($timezone);
+		} elseif (!($timezone instanceof DateTimeZone)) {
+			return false;
 		}
-		return $time->format($format);
+
+		if ($dateString instanceof DateTime) {
+			$date = $dateString;
+		} elseif (is_integer($dateString) || is_numeric($dateString)) {
+			$dateString = (int)$dateString;
+
+			$date = new DateTime('@' . $dateString);
+			$date->setTimezone($timezone);
+		} else {
+			$date = new DateTime($dateString, $timezone);
+		}
+
+		$date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+		return $date->format($format);
 	}
 
 /**
  * Returns a date formatted for Atom RSS feeds.
  *
  * @param string $dateString Datetime string or Unix timestamp
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
@@ -601,8 +624,8 @@ class CakeTime {
 /**
  * Formats date for RSS feeds
  *
- * @param string $dateString Datetime string or Unix timestamp
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
@@ -664,7 +687,7 @@ class CakeTime {
  *
  * NOTE: If the difference is one week or more, the lowest level of accuracy is day
  *
- * @param string $dateTime Datetime string or Unix timestamp
+ * @param int|string|DateTime $dateTime Datetime UNIX timestamp, strtotime() valid string or DateTime object
  * @param array $options Default format if timestamp is used in $dateString
  * @return string Relative time string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
@@ -833,8 +856,8 @@ class CakeTime {
  *
  * @param mixed $timeInterval the numeric value with space then time type.
  *    Example of valid types: 6 hours, 2 days, 1 minute.
- * @param mixed $dateString the datestring or unix timestamp to compare
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return boolean
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
@@ -858,8 +881,8 @@ class CakeTime {
  *
  * @param mixed $timeInterval the numeric value with space then time type.
  *    Example of valid types: 6 hours, 2 days, 1 minute.
- * @param mixed $dateString the datestring or unix timestamp to compare
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return boolean
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
@@ -881,22 +904,22 @@ class CakeTime {
 /**
  * Returns gmt as a UNIX timestamp.
  *
- * @param string $string UNIX timestamp or a valid strtotime() date string
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @return integer UNIX timestamp
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public static function gmt($string = null) {
-		if ($string != null) {
-			$string = self::fromString($string);
+	public static function gmt($dateString = null) {
+		if ($dateString != null) {
+			$time = self::fromString($dateString);
 		} else {
-			$string = time();
+			$time = time();
 		}
-		$hour = intval(date("G", $string));
-		$minute = intval(date("i", $string));
-		$second = intval(date("s", $string));
-		$month = intval(date("n", $string));
-		$day = intval(date("j", $string));
-		$year = intval(date("Y", $string));
+		$hour = intval(date("G", $time));
+		$minute = intval(date("i", $time));
+		$second = intval(date("s", $time));
+		$month = intval(date("n", $time));
+		$day = intval(date("j", $time));
+		$year = intval(date("Y", $time));
 		return gmmktime($hour, $minute, $second, $month, $day, $year);
 	}
 
@@ -905,10 +928,10 @@ class CakeTime {
  * This function also accepts a time string and a format string as first and second parameters.
  * In that case this function behaves as a wrapper for TimeHelper::i18nFormat()
  *
- * @param string $format date format string (or a DateTime string)
- * @param string $date Datetime string (or a date format string)
+ * @param int|string|DateTime $format date format string (or UNIX timestamp, strtotime() valid string or DateTime object)
+ * @param int|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)
  * @param boolean $invalid flag to ignore results of fromString == false
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
@@ -930,10 +953,10 @@ class CakeTime {
  * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
  * It take in account the default date format for the current language if a LC_TIME file is used.
  *
- * @param string $date Datetime string
+ * @param int|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
  * @param string $format strftime format string.
  * @param boolean $invalid flag to ignore results of fromString == false
- * @param mixed $timezone Timezone string or DateTimeZone object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Formatted and translated date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
