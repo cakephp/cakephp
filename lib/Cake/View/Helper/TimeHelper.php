@@ -343,6 +343,14 @@ class TimeHelper extends AppHelper {
 /**
  * @see CakeTime::timeAgoInWords()
  *
+ * ## Addition options
+ *
+ * - `element` - The element to wrap the formatted time in.
+ *   Has a few additional options:
+ *   - `tag` - The tag to use, defaults to 'span'.
+ *   - `class` - The classname to use, defaults to `time-ago-in-words`.
+ *   - `title` - Defaults to the $dateTime input.
+ *
  * @param string $dateTime Datetime string or Unix timestamp
  * @param array $options Default format if timestamp is used in $dateString
  * @return string Relative time string.
