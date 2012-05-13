@@ -1859,7 +1859,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div',
 		);
 		$this->assertTags($result, $expected);
-
+		
 		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
@@ -1873,7 +1873,83 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->input('Contact.email', array('id' => 'custom', 'label' => 'Email address'));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'custom'),
+			'Email address',
+			'/label',
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][email]',
+				'id' => 'custom', 'maxlength' => 255
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		
+		$model = ClassRegistry::getObject('Contact');
+		$model->label['email'] = 'Default label for email address';
+		$result = $this->Form->input('Contact.email', array('id' => 'custom', 'label' => array('class' => 'css-class')));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'custom', 'class' => 'css-class'),
+			'Default label for email address',
+			'/label',
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][email]',
+				'id' => 'custom', 'maxlength' => 255
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		
+		$model = ClassRegistry::getObject('Contact');
+		$model->label['email'] = 'Default label for email address';
+		$result = $this->Form->input('Contact.email', array('id' => 'custom', 'label' => array('class' => 'css-class', 'text' => 'Overwriting label for email address')));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'custom', 'class' => 'css-class'),
+			'Overwriting label for email address',
+			'/label',
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][email]',
+				'id' => 'custom', 'maxlength' => 255
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		
+		$model = ClassRegistry::getObject('Contact');
+		$model->label['email'] = 'Default label for email address';
+		$result = $this->Form->input('Contact.email', array('id' => 'custom', 'label' => null));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'custom'),
+			'Default label for email address',
+			'/label',
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][email]',
+				'id' => 'custom', 'maxlength' => 255
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		
+		$model = ClassRegistry::getObject('Contact');
+		$model->label['email'] = 'Default label for email address';
+		$result = $this->Form->input('Contact.email', array('id' => 'custom', 'label' => false));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][email]',
+				'id' => 'custom', 'maxlength' => 255
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
+		unset($model->label['email']);
 		$result = $this->Form->input('Contact.email', array('div' => array('class' => false)));
 		$expected = array(
 			'<div',

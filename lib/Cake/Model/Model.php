@@ -113,6 +113,31 @@ class Model extends Object implements CakeEventListener {
 	public $primaryKey = null;
 
 /**
+ * Field-by-field label. This will be the default label on model inputs. It can, for 
+ * example, be specified as below:
+ * 
+ * {{{
+ * public $label = array(
+ *     // 'field-name' => 'Label',
+ *     'id' => '#',
+ *     'title' => 'Title',
+ *     'content' => 'Article content',
+ * );
+ * }}}
+ * 
+ * Or like so, in the constructor for the model:
+ * 
+ * {{{
+ * function TestModel() {
+ *     $this->label['title'] = __('Title');
+ * }
+ * }}}
+ *
+ * @var array
+ */
+	public $label = null;
+
+/**
  * Field-by-field table metadata.
  *
  * @var array
@@ -3400,6 +3425,16 @@ class Model extends Object implements CakeEventListener {
  */
 	public function getAffectedRows() {
 		return $this->getDataSource()->lastAffected();
+	}
+
+/**
+ * Returns the label, if set, for the specified field.
+ *
+ * @param string $fieldName Field name to get label for
+ * @return string Label text
+ */
+	public function getLabelForField($fieldName, $default = null) {
+		return isset($this->label) && isset($this->label[$fieldName]) ? $this->label[$fieldName] : $default;
 	}
 
 /**

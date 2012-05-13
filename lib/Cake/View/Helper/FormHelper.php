@@ -815,16 +815,20 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($text === null) {
-			if (strpos($fieldName, '.') !== false) {
-				$fieldElements = explode('.', $fieldName);
-				$text = array_pop($fieldElements);
-			} else {
-				$text = $fieldName;
+			$text = $this->_getLabelForCurrentField();
+			
+			if ($text === null) {
+				if (strpos($fieldName, '.') !== false) {
+					$fieldElements = explode('.', $fieldName);
+					$text = array_pop($fieldElements);
+				} else {
+					$text = $fieldName;
+				}
+				if (substr($text, -3) == '_id') {
+					$text = substr($text, 0, -3);
+				}
+				$text = __(Inflector::humanize(Inflector::underscore($text)));
 			}
-			if (substr($text, -3) == '_id') {
-				$text = substr($text, 0, -3);
-			}
-			$text = __(Inflector::humanize(Inflector::underscore($text)));
 		}
 
 		if (is_string($options)) {
@@ -839,6 +843,34 @@ class FormHelper extends AppHelper {
 		}
 
 		return $this->Html->useTag('label', $labelFor, $options, $text);
+	}
+	
+/**
+ * Gets the default label for the current field, as specified on the model.
+ *
+ * @return string The default label for the current field.
+ */
+	protected function _getLabelForCurrentField () {
+		$entity = $this->entity();
+		
+		$modelKey = $entity[0];
+		$fieldName = $entity[count($entity) - 1];
+
+		if (empty($modelKey)) {
+			return null;
+		}
+
+		if (empty($this->_models[$modelKey])) {
+			return null;
+		}
+		
+		$model =& $this->_models[$modelKey];
+
+		if ( is_object( $model ) ) {
+			return $model->getLabelForField( $fieldName , null ) ;
+		} else {
+			return null;
+		}
 	}
 
 /**
@@ -1081,6 +1113,13 @@ class FormHelper extends AppHelper {
 		if (isset($options['label']) && $options['type'] !== 'radio') {
 			$label = $options['label'];
 			unset($options['label']);
+			
+			if (is_array($label) && !isset($label['text'])) {
+				$label['text'] =  $this->_getLabelForCurrentField();
+			}
+			
+		} else {
+			$label =  $this->_getLabelForCurrentField();
 		}
 
 		if ($options['type'] === 'radio') {
