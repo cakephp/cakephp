@@ -19,39 +19,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Set up error level constants to be used within the framework if they are not defined within the
- * system.
- *
- */
-if (!defined('LOG_EMERG')) {
-	define('LOG_EMERG', 0);
-}
-if (!defined('LOG_ALERT')) {
-	define('LOG_ALERT', 1);
-}
-if (!defined('LOG_CRIT')) {
-	define('LOG_CRIT', 2);
-}
-if (!defined('LOG_ERR')) {
-	define('LOG_ERR', 3);
-}
-if (!defined('LOG_ERROR')) {
-	define('LOG_ERROR', LOG_ERR);
-}
-if (!defined('LOG_WARNING')) {
-	define('LOG_WARNING', 4);
-}
-if (!defined('LOG_NOTICE')) {
-	define('LOG_NOTICE', 5);
-}
-if (!defined('LOG_INFO')) {
-	define('LOG_INFO', 6);
-}
-if (!defined('LOG_DEBUG')) {
-	define('LOG_DEBUG', 7);
-}
-
 App::uses('LogEngineCollection', 'Log');
 
 /**
