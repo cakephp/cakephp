@@ -360,7 +360,7 @@ class TimeHelper extends AppHelper {
 		$element = null;
 		$stringDate = '';
 
-		if (!empty($options['element'])) {
+		if (is_array($options) && !empty($options['element'])) {
 			$element = array(
 				'tag' => 'span',
 				'class' => 'time-ago-in-words',
