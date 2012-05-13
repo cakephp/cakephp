@@ -353,34 +353,31 @@ class TimeHelper extends AppHelper {
 
 		$stringDate = '';
 
-		if (isset($options['element'])) {
-			$element_options = array(
+		if (!empty($options['element'])) {
+			$element = array(
 				'tag' => 'span',
 				'class' => 'time-ago-in-words',
 				'title' => $dateTime
 			);
 			
 			if (is_array($options['element'])) {
-				$element = array_merge($element_options, $options['element']);
+				$element = array_merge($element, $options['element']);
 			} else {
-				if ($options['element']) {
-					$element = $element_options;
-					$element['tag'] = $options['element'];
-				} else {
-					$element = null;
-				}
+				$element['tag'] = $options['element'];
 			}
+			unset($options['element']);
 		}
-
 		$relativeDate = $this->_engine->timeAgoInWords($dateTime, $options);
 
-		// Apply HTML element
 		if ($element) {
-			$title = isset($element['title']) ? ' title="'.$element['title'].'"' : '';
-			$class = isset($element['class']) ? ' class="'.$element['class'].'"' : '';
-			$relativeDate = '<'.$element['tag'].$title.$class.'>'.$relativeDate.'</'.$element['tag'].'>';
+			$relativeDate = sprintf(
+				'<%s%s>%s</%s>',
+				$element['tag'],
+				$this->_parseAttributes($element, array('tag')),
+				$relativeDate,
+				$element['tag']
+			);
 		}
-
 		return $relativeDate;
 	}
 

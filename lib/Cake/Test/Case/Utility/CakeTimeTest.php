@@ -196,7 +196,7 @@ class CakeTimeTest extends CakeTestCase {
 			$seconds = round($i + ($i * $i));
 			$time = strtotime('+' . $seconds . ' seconds');
 			$result = $this->Time->timeAgoInWords($time);
-			
+
 			if ($time == time()) {
 				$expected = 'just now';
 				$this->assertEquals($expected, $result);

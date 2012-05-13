@@ -119,14 +119,32 @@ class TimeHelperTest extends CakeTestCase {
 	public function testTimeAgoInWords() {
 		$Time = new TimeHelper($this->View);
 		$timestamp = strtotime('+8 years, +4 months +2 weeks +3 days');
-		$result = $Time->timeAgoInWords(
-			$timestamp,
-			array('end' => '1 years', 'element' => 'span')
-		);
+		$result = $Time->timeAgoInWords($timestamp, array(
+			'end' => '1 years',
+			'element' => 'span'
+		));
 		$expected = array(
 			'span' => array(
 				'title' => $timestamp,
 				'class' => 'time-ago-in-words'
+			),
+			'on ' . date('j/n/y', $timestamp),
+			'/span'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $Time->timeAgoInWords($timestamp, array(
+			'end' => '1 years',
+			'element' => array(
+				'title' => 'testing',
+				'rel' => 'test'
+			)
+		));
+		$expected = array(
+			'span' => array(
+				'title' => 'testing',
+				'class' => 'time-ago-in-words',
+				'rel' => 'test'
 			),
 			'on ' . date('j/n/y', $timestamp),
 			'/span'
