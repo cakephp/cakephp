@@ -200,7 +200,11 @@ class CakeTime {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public static function convert($serverTime, $timezone) {
-		$serverOffset = self::serverOffset();
+		static $serverTimezone = null;
+		if (is_null($serverTimezone) || (date_default_timezone_get() !== $serverTimezone->getName())) {
+			$serverTimezone = new DateTimeZone(date_default_timezone_get());
+		}
+		$serverOffset = $serverTimezone->getOffset(new DateTime('@' . $serverTime));
 		$gmtTime = $serverTime - $serverOffset;
 		if (is_numeric($timezone)) {
 			$userOffset = $timezone * (60 * 60);

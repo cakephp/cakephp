@@ -353,6 +353,13 @@ class CakeTimeTest extends CakeTestCase {
 
 		$time = time() - DAY;
 		$this->assertEquals('Yesterday, ' . date('H:i', $time), $this->Time->niceShort($time));
+
+		$oldTimezone = date_default_timezone_get();
+		date_default_timezone_set('Europe/London');
+
+		$result = $this->Time->niceShort('2005-01-15 10:00:00', new DateTimeZone('Europe/Brussels'));
+		$this->assertEqual('Jan 15th 2005, 11:00', $result);
+		date_default_timezone_set($oldTimezone);
 	}
 
 /**
