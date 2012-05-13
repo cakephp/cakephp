@@ -275,6 +275,46 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 	}
 
 /**
+ * Sets settings for a specific behavior for a specific Model alias.
+ *
+ * @param string $alias Model alais for which the behavior settings should be set
+ * @param string $behavior The Behavior name
+ * @param array $settings Configuration settings for $model
+ * @param boolean $mergeVars If true, merges the config with the existing settings. Defaults to TRUE.
+ * @return array The new settings array
+ * @access public
+ */
+	public function settings($alias, $behavior, $settings = array(), $mergeVars = true) {
+		if (!$alias || !is_string($alias)) {
+			return null;
+		}
+
+		try {
+			$behavior = $this->{$behavior};
+		} catch (Exception $e) {
+			return null;
+		}
+
+		if (null === $behavior) {
+			return null;
+		}
+		if (!isset($behavior->settings[$alias])) {
+			$behavior->settings[$alias] = array();
+		}
+		if (!empty($settings)) {
+			if (true === $mergeVars) {
+				$settings = array_merge(
+					$behavior->settings[$alias],
+					$settings
+				);
+			}
+			$behavior->settings[$alias] = $settings;
+			unset($settings);
+		}
+		return $behavior->settings[$alias];
+	}
+
+/**
  * Returns the implemented events that will get routed to the trigger function
  * in order to dispatch them separately on each behavior
  *

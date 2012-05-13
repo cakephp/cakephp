@@ -4978,3 +4978,26 @@ class CustomArticle extends AppModel {
 	}
 
 }
+
+/**
+ * BehaviorTestModel class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class BehaviorTest extends AppModel {
+
+/**
+ * useTable property
+ *
+ * @var string
+ */
+	public $useTable = false;
+
+/**
+ * actsAs property
+ *
+ * @var array
+ */
+	public $actsAs = array('Tree');
+
+}

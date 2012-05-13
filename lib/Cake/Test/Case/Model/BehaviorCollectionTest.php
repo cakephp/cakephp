@@ -1138,4 +1138,50 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Tests that BehaviorCollection::settings() works as expected
+ * 
+ * @return void
+ * @access public
+ */
+	public function testBehaviorSettings() {
+		$model = new BehaviorTest();
+		$this->assertEqual(null, $model->Behaviors->settings('BehaviorTest', 'Dafuq?'));
+		$this->assertEqual(null, $model->Behaviors->settings(null, 'Dafuq?'));
+		$this->assertEqual(null, $model->Behaviors->settings(1234, 'Dafuq?'));
+
+		$expected = array(
+			'parent' => 'parent_id',
+			'left' => 'lft',
+			'right' => 'rght',
+			'scope' => '1 = 1',
+			'type' => 'nested',
+			'__parentChange' => false,
+			'recursive' => -1
+		);
+		$result = $model->Behaviors->settings('BehaviorTest', 'Tree');
+		$this->assertEqual($expected, $result);
+
+		$new = array(
+			'left' => 'right',
+			'right' => 'left',
+		);
+		$expected = array(
+			'parent' => 'parent_id',
+			'left' => 'right',
+			'right' => 'left',
+			'scope' => '1 = 1',
+			'type' => 'nested',
+			'__parentChange' => false,
+			'recursive' => -1
+		);
+		$this->assertEqual($expected, $model->Behaviors->settings('BehaviorTest', 'Tree', $new));
+		$new = array(
+			'left' => 'left',
+			'right' => 'right',
+		);
+		$this->assertEqual($new, $model->Behaviors->settings('BehaviorTest', 'Tree', $new, false));
+
+	}
+
 }
