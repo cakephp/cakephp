@@ -4277,7 +4277,7 @@ class ModelWriteTest extends BaseModelTest {
 					'author_id' => '3',
 					'title' => 'Just update the title',
 					'body' => 'Second Post Body',
-					'published' => 'N',
+					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23'
 			)),
 			array(
@@ -4366,7 +4366,7 @@ class ModelWriteTest extends BaseModelTest {
 					'author_id' => '3',
 					'title' => 'Just update the title',
 					'body' => 'Second Post Body',
-					'published' => 'N',
+					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23'
 				)
 			),
@@ -4734,7 +4734,7 @@ class ModelWriteTest extends BaseModelTest {
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf90'
 		)));
 
-		$result = $TestModel->find('all');
+		$result = $TestModel->find('all', array('order' => array('Post.id ' => 'ASC')));
 		$expected = array(
 			'Post' => array(
 				'id' => '4',
@@ -5631,7 +5631,7 @@ class ModelWriteTest extends BaseModelTest {
 					'author_id' => '3',
 					'title' => 'Just update the title',
 					'body' => 'Second Post Body',
-					'published' => 'N',
+					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23'
 				)
 			),
@@ -5727,7 +5727,7 @@ class ModelWriteTest extends BaseModelTest {
 					'author_id' => '3',
 					'title' => 'Just update the title',
 					'body' => 'Second Post Body',
-					'published' => 'N',
+					'published' => 'Y',
 			)),
 			array(
 				'Post' => array(
