@@ -416,9 +416,7 @@ class CakeLog {
 		if (is_string($type) && empty($scope) && !in_array($type, self::$_levels)) {
 			$scope = $type;
 		}
-		if (!self::$_Collection->attached()) {
-			self::_autoConfig();
-		}
+		$logged = false;
 		foreach (self::$_Collection->enabled() as $streamName) {
 			$logger = self::$_Collection->{$streamName};
 			$types = null;
@@ -440,7 +438,12 @@ class CakeLog {
 			}
 			if (empty($types) || in_array($type, $types) || in_array($type, $scopes) && $inScope) {
 				$logger->write($type, $message);
+				$logged = true;
 			}
+		}
+		if (!$logged) {
+			self::_autoConfig();
+			self::stream('default')->write($type, $message);
 		}
 		return true;
 	}

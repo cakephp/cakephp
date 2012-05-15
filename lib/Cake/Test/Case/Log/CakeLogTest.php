@@ -318,21 +318,22 @@ class CakeLogTest extends CakeTestCase {
 		if (file_exists(LOGS . 'debug.log')) {
 			unlink(LOGS . 'debug.log');
 		}
+		if (file_exists(LOGS . 'bogus.log')) {
+			unlink(LOGS . 'bogus.log');
+		}
+		if (file_exists(LOGS . 'spam.log')) {
+			unlink(LOGS . 'spam.log');
+		}
+		if (file_exists(LOGS . 'eggs.log')) {
+			unlink(LOGS . 'eggs.log');
+		}
 	}
 
 /**
  * test backward compatible scoped logging
  */
 	public function testScopedLoggingBC() {
-		if (file_exists(LOGS . 'shops.log')) {
-			unlink(LOGS . 'shops.log');
-		}
-		if (file_exists(LOGS . 'error.log')) {
-			unlink(LOGS . 'error.log');
-		}
-		if (file_exists(LOGS . 'debug.log')) {
-			unlink(LOGS . 'debug.log');
-		}
+		$this->_deleteLogs();
 
 		$this->_resetLogConfig();
 		CakeLog::config('shops', array(
@@ -444,6 +445,33 @@ class CakeLogTest extends CakeTestCase {
 		$this->_deleteLogs();
 
 		CakeLog::drop('shops');
+	}
+
+/**
+ * test bogus type and scope
+ *
+ */
+	public function testBogusTypeAndScope() {
+		$this->_resetLogConfig();
+		$this->_deleteLogs();
+
+		CakeLog::write('bogus', 'bogus message');
+		$this->assertTrue(file_exists(LOGS . 'bogus.log'));
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+		$this->_deleteLogs();
+
+		CakeLog::write('bogus', 'bogus message', 'bogus');
+		$this->assertTrue(file_exists(LOGS . 'bogus.log'));
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+		$this->_deleteLogs();
+
+		CakeLog::write('error', 'bogus message', 'bogus');
+		$this->assertFalse(file_exists(LOGS . 'bogus.log'));
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+		$this->assertFalse(file_exists(LOGS . 'debug.log'));
+		$this->_deleteLogs();
 	}
 
 /**
@@ -641,6 +669,8 @@ class CakeLogTest extends CakeTestCase {
 
 		CakeLog::drop('spam');
 		CakeLog::drop('eggs');
+
+		$this->_deleteLogs();
 	}
 
 }
