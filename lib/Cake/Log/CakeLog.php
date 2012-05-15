@@ -285,9 +285,8 @@ class CakeLog {
  * @return void
  */
 	protected static function _autoConfig() {
-		self::$_Collection->load('error', array(
+		self::$_Collection->load('default', array(
 			'engine' => 'FileLog',
-			'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 			'path' => LOGS,
 		));
 	}

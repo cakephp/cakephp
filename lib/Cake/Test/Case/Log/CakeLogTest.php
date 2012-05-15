@@ -126,8 +126,14 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 
 		$result = CakeLog::configured();
-		$this->assertEquals(array('error'), $result);
+		$this->assertEquals(array('default'), $result);
+
+		$testMessage = 'custom message';
+		CakeLog::write('custom', $testMessage);
+		$content = file_get_contents(LOGS . 'custom.log');
+		$this->assertContains($testMessage, $content);
 		unlink(LOGS . 'error.log');
+		unlink(LOGS . 'custom.log');
 	}
 
 /**
