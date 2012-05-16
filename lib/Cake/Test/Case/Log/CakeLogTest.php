@@ -201,9 +201,11 @@ class CakeLogTest extends CakeTestCase {
 	}
 
 /**
- * test selective logging
+ * test selective logging by level/type
+ *
+ * @return void
  */
-	public function testSelectiveLogging() {
+	public function testSelectiveLoggingByLevel() {
 		if (file_exists(LOGS . 'spam.log')) {
 			unlink(LOGS . 'spam.log');
 		}
@@ -245,6 +247,7 @@ class CakeLogTest extends CakeTestCase {
 
 /**
  * test enable
+ *
  * @expectedException CakeLogException
  */
 	public function testStreamEnable() {
@@ -259,6 +262,7 @@ class CakeLogTest extends CakeTestCase {
 
 /**
  * test disable
+ *
  * @expectedException CakeLogException
  */
 	public function testStreamDisable() {
@@ -275,6 +279,7 @@ class CakeLogTest extends CakeTestCase {
 
 /**
  * test enabled() invalid stream
+ *
  * @expectedException CakeLogException
  */
 	public function testStreamEnabledInvalid() {
@@ -283,6 +288,7 @@ class CakeLogTest extends CakeTestCase {
 
 /**
  * test disable invalid stream
+ *
  * @expectedException CakeLogException
  */
 	public function testStreamDisableInvalid() {
@@ -378,6 +384,8 @@ class CakeLogTest extends CakeTestCase {
 
 /**
  * test scoped logging
+ *
+ * @return void
  */
 	public function testScopedLogging() {
 		if (file_exists(LOGS . 'shops.log')) {
