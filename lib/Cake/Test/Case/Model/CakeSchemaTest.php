@@ -510,11 +510,23 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function testSchemaName() {
 		$Schema = new CakeSchema();
-		$this->assertEquals(strtolower(APP_DIR), strtolower($Schema->name));
+		$this->assertEquals(Inflector::camelize(Inflector::slug(APP_DIR)), $Schema->name);
 
 		Configure::write('App.dir', 'Some.name.with.dots');
 		$Schema = new CakeSchema();
 		$this->assertEquals('SomeNameWithDots', $Schema->name);
+
+		Configure::write('App.dir', 'Some-name-with-dashes');
+		$Schema = new CakeSchema();
+		$this->assertEquals('SomeNameWithDashes', $Schema->name);
+
+		Configure::write('App.dir', 'Some name with spaces');
+		$Schema = new CakeSchema();
+		$this->assertEquals('SomeNameWithSpaces', $Schema->name);
+
+		Configure::write('App.dir', 'Some,name;with&weird=characters');
+		$Schema = new CakeSchema();
+		$this->assertEquals('SomeNameWithWeirdCharacters', $Schema->name);
 
 		Configure::write('App.dir', 'app');
 	}
