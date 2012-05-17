@@ -332,8 +332,10 @@ class View extends Object {
  * @return CakeEventManager
  */
 	public function getEventManager() {
-		if (empty($this->_eventManager) || !$this->_eventManagerConfigured) {
+		if (empty($this->_eventManager)) {
 			$this->_eventManager = new CakeEventManager();
+		}
+		if (!$this->_eventManagerConfigured) {
 			$this->_eventManager->attach($this->Helpers);
 			$this->_eventManagerConfigured = true;
 		}
