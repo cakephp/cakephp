@@ -914,7 +914,7 @@ class CakeTime {
  */
 	public static function format($format, $date = null, $invalid = false, $timezone = null) {
 		$time = self::fromString($date, $timezone);
-		$_time = self::fromString($format, $timezone);
+		$_time = is_numeric($time) ? false : self::fromString($format, $timezone);
 
 		if (is_numeric($_time) && $time === false) {
 			$format = $date;

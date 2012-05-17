@@ -472,9 +472,11 @@ class CakeTimeTest extends CakeTestCase {
  */
 	public function testFormat() {
 		$format = 'D-M-Y';
+		$tz = date_default_timezone_get();
 		$arr = array(time(), strtotime('+1 days'), strtotime('+1 days'), strtotime('+0 days'));
 		foreach ($arr as $val) {
 			$this->assertEquals(date($format, $val), $this->Time->format($format, $val));
+			$this->assertEquals(date($format, $val), $this->Time->format($format, $val, false, $tz));
 		}
 
 		$result = $this->Time->format('Y-m-d', null, 'never');
