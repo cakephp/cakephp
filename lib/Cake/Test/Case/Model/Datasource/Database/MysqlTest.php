@@ -2371,10 +2371,10 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testConditionsOptionalArguments() {
-		$result = $this->Dbo->conditions( array('Member.name' => 'Mariano'), true, false);
+		$result = $this->Dbo->conditions(array('Member.name' => 'Mariano'), true, false);
 		$this->assertRegExp('/^\s*`Member`.`name`\s*=\s*\'Mariano\'\s*$/', $result);
 
-		$result = $this->Dbo->conditions( array(), true, false);
+		$result = $this->Dbo->conditions(array(), true, false);
 		$this->assertRegExp('/^\s*1\s*=\s*1\s*$/', $result);
 	}
 

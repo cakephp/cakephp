@@ -52,7 +52,7 @@ class <?php echo $model; ?>Fixture extends CakeTestFixture {
  */
 	public $fields = <?php echo $schema; ?>;
 
-<?php endif;?>
+<?php endif; ?>
 <?php if ($records): ?>
 /**
  * Records
@@ -61,5 +61,5 @@ class <?php echo $model; ?>Fixture extends CakeTestFixture {
  */
 	public $records = <?php echo $records; ?>;
 
-<?php endif;?>
+<?php endif; ?>
 }
