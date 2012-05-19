@@ -62,7 +62,7 @@ class <?php echo $fullClassName; ?>Test extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this-><?php echo $className;?>);
+		unset($this-><?php echo $className; ?>);
 
 		parent::tearDown();
 	}
@@ -76,5 +76,5 @@ class <?php echo $fullClassName; ?>Test extends CakeTestCase {
 	public function test<?php echo Inflector::camelize($method); ?>() {
 	}
 
-<?php endforeach;?>
+<?php endforeach; ?>
 }

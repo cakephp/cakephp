@@ -26,10 +26,10 @@
 </p>
 <pre>
 &lt;?php
-class <?php echo $controller;?> extends AppController {
+class <?php echo $controller; ?> extends AppController {
 
 <strong>
-	public function <?php echo $action;?>() {
+	public function <?php echo $action; ?>() {
 
 	}
 </strong>

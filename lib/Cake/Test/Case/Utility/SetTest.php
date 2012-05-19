@@ -1445,7 +1445,7 @@ class SetTest extends CakeTestCase {
 		);
 
 		$result = Set::extract($a, '{n}.Article.id');
-		$expected = array( 1, 2, 3 );
+		$expected = array(1, 2, 3);
 		$this->assertEquals($expected, $result);
 
 		$result = Set::extract($a, '{n}.Article.title');
