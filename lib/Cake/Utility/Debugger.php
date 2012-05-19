@@ -63,11 +63,13 @@ class Debugger {
 			'trace' => '<pre class="stack-trace">{:trace}</pre>',
 			'code' => '',
 			'context' => '',
-			'links' => array()
+			'links' => array(),
+			'escapeContext' => true,
 		),
 		'html' => array(
 			'trace' => '<pre class="cake-error trace"><b>Trace</b> <p>{:trace}</p></pre>',
-			'context' => '<pre class="cake-error context"><b>Context</b> <p>{:context}</p></pre>'
+			'context' => '<pre class="cake-error context"><b>Context</b> <p>{:context}</p></pre>',
+			'escapeContext' => true,
 		),
 		'txt' => array(
 			'error' => "{:error}: {:code} :: {:description} on line {:line} of {:path}\n{:info}",
@@ -716,7 +718,7 @@ class Debugger {
 		$info = '';
 
 		foreach ((array)$data['context'] as $var => $value) {
-			$context[] = "\${$var}\t=\t" . $this->exportVar($value, 1);
+			$context[] = "\${$var} = " . $this->exportVar($value, 1);
 		}
 
 		switch ($this->_outputFormat) {
@@ -731,30 +733,29 @@ class Debugger {
 		$data['trace'] = $trace;
 		$data['id'] = 'cakeErr' . uniqid();
 		$tpl = array_merge($this->_templates['base'], $this->_templates[$this->_outputFormat]);
-		$insert = array('context' => join("\n", $context)) + $data;
-
-		$detect = array('context');
 
 		if (isset($tpl['links'])) {
 			foreach ($tpl['links'] as $key => $val) {
-				if (in_array($key, $detect) && empty($insert[$key])) {
-					continue;
-				}
-				$links[$key] = String::insert($val, $insert, $insertOpts);
+				$links[$key] = String::insert($val, $data, $insertOpts);
 			}
 		}
 
-		foreach (array('code', 'context', 'trace') as $key) {
-			if (empty($$key) || !isset($tpl[$key])) {
+		if (!empty($tpl['escapeContext'])) {
+			$context = h($context);
+		}
+
+		$infoData = compact('code', 'context', 'trace');
+		foreach ($infoData as $key => $value) {
+			if (empty($value) || !isset($tpl[$key])) {
 				continue;
 			}
-			if (is_array($$key)) {
-				$$key = join("\n", $$key);
+			if (is_array($value)) {
+				$value = join("\n", $value);
 			}
-			$info .= String::insert($tpl[$key], compact($key) + $insert, $insertOpts);
+			$info .= String::insert($tpl[$key], array($key => $value) + $data, $insertOpts);
 		}
 		$links = join(' ', $links);
-		unset($data['context']);
+
 		if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
 			return call_user_func($tpl['callback'], $data, compact('links', 'info'));
 		}

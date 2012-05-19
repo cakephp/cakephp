@@ -7868,7 +7868,7 @@ class ModelReadTest extends BaseModelTest {
 		$Article = new CustomArticle();
 		$data = array('user_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
 		$Article->create($data);
-		$Article->save();
+		$Article->save(null, false);
 		$this->assertEquals(4, $Article->id);
 
 		$result = $Article->find('published');

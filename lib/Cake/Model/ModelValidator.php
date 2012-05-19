@@ -115,21 +115,14 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 		$model = $this->getModel();
 		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
 		$model->validationErrors = $validationErrors = $return = array();
-		if (!($model->create($data) && $model->validates($options))) {
+		$model->create(null);
+		if (!($model->set($data) && $model->validates($options))) {
 			$validationErrors[$model->alias] = $model->validationErrors;
 			$return[$model->alias] = false;
 		} else {
 			$return[$model->alias] = true;
 		}
-
-		if (empty($options['deep'])) {
-			$data = $model->data;
-		} else {
-			$modelData = $model->data;
-			$recordData = $modelData[$model->alias];
-			unset($modelData[$model->alias]);
-			$data = $modelData + array_merge($data, $recordData);
-		}
+		$data = $model->data;
 
 		$associations = $model->getAssociated();
 		foreach ($data as $association => &$values) {
@@ -200,7 +193,8 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 			if ($options['deep']) {
 				$validates = $model->validateAssociated($record, $options);
 			} else {
-				$validates = $model->create($record) && $model->validates($options);
+				$model->create(null);
+				$validates = $model->set($record) && $model->validates($options);
 				$data[$key] = $model->data;
 			}
 			if ($validates === false || (is_array($validates) && in_array(false, $validates, true))) {

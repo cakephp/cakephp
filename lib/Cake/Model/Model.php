@@ -1138,9 +1138,7 @@ class Model extends Object implements CakeEventListener {
 		if (is_array($one)) {
 			$data = $one;
 			if (empty($one[$this->alias])) {
-				if ($this->getAssociated(key($one)) === null) {
-					$data = array($this->alias => $one);
-				}
+				$data = $this->_setAliasData($one);
 			}
 		} else {
 			$data = array($this->alias => array($one => $two));
@@ -1164,6 +1162,24 @@ class Model extends Object implements CakeEventListener {
 					}
 					$this->data[$modelName][$fieldName] = $fieldValue;
 				}
+			}
+		}
+		return $data;
+	}
+
+/**
+ * Move values to alias
+ *
+ * @param array $data
+ * @return array
+ */
+	protected function _setAliasData($data) {
+		$models = array_keys($this->getAssociated());
+		$schema = array_keys($this->schema());
+		foreach ($data as $field => $value) {
+			if (in_array($field, $schema) || !in_array($field, $models)) {
+				$data[$this->alias][$field] = $value;
+				unset($data[$field]);
 			}
 		}
 		return $data;
@@ -2177,6 +2193,7 @@ class Model extends Object implements CakeEventListener {
 			$db = $this->getDataSource();
 			$transactionBegun = $db->begin();
 		}
+
 		$associations = $this->getAssociated();
 		$return = array();
 		$validates = true;
