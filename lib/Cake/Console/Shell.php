@@ -680,12 +680,14 @@ class Shell extends Object {
  * @return boolean Success
  */
 	protected function _checkUnitTest() {
-		if (App::import('Vendor', 'phpunit', array('file' => 'PHPUnit' . DS . 'Autoload.php'))) {
+		if (class_exists('PHPUnit_Framework_TestCase')) {
+			return true;
+		} elseif (@include 'PHPUnit' . DS . 'Autoload.php') {
+			return true;
+		} elseif (App::import('Vendor', 'phpunit', array('file' => 'PHPUnit' . DS . 'Autoload.php'))) {
 			return true;
 		}
-		if (@include 'PHPUnit' . DS . 'Autoload.php') {
-			return true;
-		}
+
 		$prompt = __d('cake_console', 'PHPUnit is not installed. Do you want to bake unit test files anyway?');
 		$unitTest = $this->in($prompt, array('y', 'n'), 'y');
 		$result = strtolower($unitTest) == 'y' || strtolower($unitTest) == 'yes';
