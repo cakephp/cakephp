@@ -228,7 +228,7 @@ class CakeNumberTest extends CakeTestCase {
 		$this->Number->addFormat('Other2', array('before' => '$ ', 'after' => false));
 		$result = $this->Number->currency(0.22, 'Other2');
 		$expected = '$ 0.22';
-		$this->assertEquals($expected,$result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

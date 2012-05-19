@@ -1196,7 +1196,7 @@ class HashTest extends CakeTestCase {
 		$expected = array(
 			'Some' => array(
 				'string' => array(
-					'value' => array( 'values')
+					'value' => array('values')
 				)
 			)
 		);

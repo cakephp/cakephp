@@ -581,7 +581,7 @@ class PaginatorHelperTest extends CakeTestCase {
 
 		Router::parse('/');
 
-		Router::setRequestInfo( array(
+		Router::setRequestInfo(array(
 			array('controller' => 'posts', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
 			array('base' => '', 'here' => 'posts/index', 'webroot' => '/')
 		));

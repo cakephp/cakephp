@@ -212,7 +212,7 @@ class CakeTimeTest extends CakeTestCase {
 			if ($time == time()) {
 				$expected = 'just now';
 				$this->assertEquals($expected, $result);
-			} else if (date("Y-m-d", $time) == date("Y-m-d")) {
+			} elseif (date("Y-m-d", $time) == date("Y-m-d")) {
 				$expected = 'Today, ' . date("H:i", $time);
 				$this->assertEquals($expected, $result);
 			}
