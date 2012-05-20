@@ -98,13 +98,6 @@ class Router {
 	);
 
 /**
- * The route matching the URL of the current request
- *
- * @var array
- */
-	protected static $_currentRoute = array();
-
-/**
  * Default HTTP request method => controller action map.
  *
  * @var array
@@ -141,6 +134,14 @@ class Router {
  * @var array
  */
 	protected static $_initialState = array();
+
+/**
+ * The stack of URL processors to apply against routing urls before passing the
+ * parameters to the route collection.
+ *
+ * @var array
+ */
+	protected static $_urlProcessors = array();
 
 /**
  * Default route class to use
@@ -566,6 +567,39 @@ class Router {
  */
 	public static function promote($which = null) {
 		return static::$_routes->promote($which);
+	}
+
+/**
+ * Add a processor to Router.
+ *
+ * Processor functions are applied to every array $url provided to
+ * Router::url() before the urls are sent to the route collection. 
+ *
+ * Callback functions should expect the following parameters:
+ *
+ * - `$params` The url params being processed.
+ * - `$request` The current request.
+ *
+ * The processor function should *always* return the params even if unmodified.
+ *
+ * ### Usage
+ *
+ * Processors allow you to easily implement features like persistent parameters.
+ *
+ * {{{
+ * Router::addProcessor(function ($params, $request) {
+ *  if (isset($request->params['lang']) && !isset($params['lang']) {
+ *    $params['lang'] = $request->params['lang'];
+ *  }
+ *  return $params;
+ * });
+ * }}}
+ *
+ * @param callable $function The function to add
+ * @return void
+ */
+	public static addProcessor($function) {
+
 	}
 
 /**
