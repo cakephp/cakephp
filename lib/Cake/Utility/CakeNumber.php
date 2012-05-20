@@ -124,6 +124,7 @@ class CakeNumber {
  */
 	public static function format($number, $options = false) {
 		$places = 0;
+		$signed = false;
 		if (is_int($options)) {
 			$places = $options;
 		}
@@ -145,11 +146,11 @@ class CakeNumber {
 
 		$escape = true;
 		if (is_array($options)) {
-			$options = array_merge(array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.'), $options);
+			$options = array_merge(array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'signed'=>false), $options);
 			extract($options);
 		}
 
-		$out = $before . self::_numberFormat($number, $places, $decimals, $thousands) . $after;
+		$out = $before . self::_numberFormat($number, $places, $decimals, $thousands, $signed) . $after;
 
 		if ($escape) {
 			return h($out);
@@ -166,12 +167,16 @@ class CakeNumber {
  * @param string $thousands
  * @return string
  */
-	protected static function _numberFormat($number, $places = 0, $decimals = '.', $thousands = ',') {
+	protected static function _numberFormat($number, $places = 0, $decimals = '.', $thousands = ',', $signed = false) {
 		if (!isset(self::$_numberFormatSupport)) {
 			self::$_numberFormatSupport = version_compare(PHP_VERSION, '5.4.0', '>=');
 		}
+		$sign = '';
+		if ($number > 0 && $signed) {
+			$sign = '+';
+		}
 		if (self::$_numberFormatSupport) {
-			return number_format($number, $places, $decimals, $thousands);
+			return $sign . number_format($number, $places, $decimals, $thousands);
 		}
 		$number = number_format($number, $places, '.', '');
 		$after = '';
@@ -184,7 +189,7 @@ class CakeNumber {
 			$number = $foundThousand;
 		}
 		$number .= $after;
-		return strtr($number, array(' ' => $thousands, '.' => $decimals));
+		return $sign . strtr($number, array(' ' => $thousands, '.' => $decimals));
 	}
 
 /**
