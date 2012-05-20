@@ -146,7 +146,8 @@ class CakeNumber {
 
 		$escape = true;
 		if (is_array($options)) {
-			$options = array_merge(array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'signed'=>false), $options);
+			$defaults = array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'signed' => false);
+			$options = array_merge($defaults, $options);
 			extract($options);
 		}
 

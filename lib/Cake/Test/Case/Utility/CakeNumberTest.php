@@ -71,15 +71,15 @@ class CakeNumberTest extends CakeTestCase {
 		$expected = '100-100-100';
 		$this->assertEquals($expected, $result);
 		
-		$result = $this->Number->format($value, array('signed'=>true, 'before'=>'', 'after'=>''));
+		$result = $this->Number->format($value, array('signed' => true, 'before' => '', 'after' => ''));
 		$expected = '+100,100,100.00';
 		$this->assertEquals($expected, $result);
 		
-		$result = $this->Number->format($value, array('signed'=>true, 'before'=>'[', 'after'=>']'));
+		$result = $this->Number->format($value, array('signed' => true, 'before' => '[', 'after' => ']'));
 		$expected = '[+100,100,100.00]';
 		$this->assertEquals($expected, $result);
 		
-		$result = $this->Number->format(-$value, array('signed'=>true, 'before'=>'[', 'after'=>']'));
+		$result = $this->Number->format(-$value, array('signed' => true, 'before' => '[', 'after' => ']'));
 		$expected = '[-100,100,100.00]';
 		$this->assertEquals($expected, $result);
 	}
