@@ -2588,17 +2588,13 @@ class FormHelper extends AppHelper {
  *
  * @param array $defaults New default values
  * @param boolean Merge with current defaults
- * @return mixed array|void Current inputDefaults
+ * @return array inputDefaults
  */
 	public function inputDefaults($defaults = null, $merge = false) {
-		if (is_null($defaults)) {
-			return $this->_inputDefaults;
+		if (!is_null($defaults)) {
+			$this->_inputDefaults = array_merge($merge ? $this->_inputDefaults : array(), (array)$defaults);
 		}
-		if ($merge) {
-			$this->_inputDefaults = array_merge($this->_inputDefaults, (array)$defaults);
-		} else {
-			$this->_inputDefaults = (array)$defaults;
-		}
+		return $this->_inputDefaults;
 	}
 
 }
