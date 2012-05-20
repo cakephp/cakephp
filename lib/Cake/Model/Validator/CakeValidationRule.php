@@ -206,7 +206,7 @@ class CakeValidationRule {
  * @return boolean
  */
 	public function isLast() {
-		return (bool) $this->last;
+		return (bool)$this->last;
 	}
 
 /**
@@ -269,7 +269,7 @@ class CakeValidationRule {
 		if (isset($methods[$rule])) {
 			$this->_ruleParams[] = array_merge($validator, $this->_passedOptions);
 			$this->_ruleParams[0] = array($field => $this->_ruleParams[0]);
-			$this->_valid =  call_user_func_array($methods[$rule], $this->_ruleParams);
+			$this->_valid = call_user_func_array($methods[$rule], $this->_ruleParams);
 		} elseif (class_exists('Validation') && method_exists('Validation', $this->_rule)) {
 			$this->_valid = call_user_func_array(array('Validation', $this->_rule), $this->_ruleParams);
 		} elseif (is_string($validator['rule'])) {

@@ -302,7 +302,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	public function getField($name = null) {
 		if ($name !== null && !empty($this->_fields[$name])) {
 			return $this->_fields[$name];
-		} elseif ($name !==null) {
+		} elseif ($name !== null) {
 			return null;
 		}
 		return $this->_fields;
