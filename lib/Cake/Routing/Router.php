@@ -247,9 +247,6 @@ class Router {
  *
  * - `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
  *   parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
- * - `persist` is used to define which route parameters should be automatically included when generating
- *   new urls. You can override persistent parameters by redefining them in a url or remove them by
- *   setting the parameter to `false`.  Ex. `'persist' => array('lang')`
  * - `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
  *   via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
  * - `_name` Used to define a specific name for routes.  This can be used to optimize reverse routing lookups.
@@ -305,7 +302,7 @@ class Router {
  *
  * Examples:
  *
- * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view', array('persist' => true)));`
+ * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view'));`
  *
  * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the
  * redirect destination allows you to use other routes to define where a url string should be redirected to.
@@ -700,7 +697,7 @@ class Router {
 				'controller' => $params['controller'],
 				'plugin' => $params['plugin']
 			);
-			$output = self::$_routes->match($url, $params);
+			$output = self::$_routes->match($url);
 		} elseif (
 			$urlType === 'string' &&
 			!$hasLeadingSlash &&

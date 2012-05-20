@@ -320,24 +320,6 @@ class Route {
 	}
 
 /**
- * Apply persistent parameters to a url array. Persistent parameters are a special
- * key used during route creation to force route parameters to persist when omitted from
- * a url array.
- *
- * @param array $url The array to apply persistent parameters to.
- * @param array $params An array of persistent values to replace persistent ones.
- * @return array An array with persistent parameters applied.
- */
-	public function persistParams($url, $params) {
-		foreach ($this->options['persist'] as $persistKey) {
-			if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
-				$url[$persistKey] = $params[$persistKey];
-			}
-		}
-		return $url;
-	}
-
-/**
  * Attempt to match a url array.  If the url matches the route parameters and settings, then
  * return a generated string url.  If the url doesn't match the route parameters, false will be returned.
  * This method handles the reverse routing or conversion of url arrays into string urls.

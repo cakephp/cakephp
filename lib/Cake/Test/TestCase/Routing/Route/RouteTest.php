@@ -515,30 +515,6 @@ class RouteTest extends TestCase {
 	}
 
 /**
- * test persistParams ability to persist parameters from $params and remove params.
- *
- * @return void
- */
-	public function testPersistParams() {
-		$route = new Route(
-			'/:lang/:color/blog/:action',
-			array('controller' => 'posts'),
-			array('persist' => array('lang', 'color'))
-		);
-		$url = array('controller' => 'posts', 'action' => 'index');
-		$params = array('lang' => 'en', 'color' => 'blue');
-		$result = $route->persistParams($url, $params);
-		$this->assertEquals('en', $result['lang']);
-		$this->assertEquals('blue', $result['color']);
-
-		$url = array('controller' => 'posts', 'action' => 'index', 'color' => 'red');
-		$params = array('lang' => 'en', 'color' => 'blue');
-		$result = $route->persistParams($url, $params);
-		$this->assertEquals('en', $result['lang']);
-		$this->assertEquals('red', $result['color']);
-	}
-
-/**
  * test the parse method of Route.
  *
  * @return void
