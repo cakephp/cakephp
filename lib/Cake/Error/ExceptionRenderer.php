@@ -20,6 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Error;
+
 use Cake\Controller\Controller;
 use Cake\Controller\ErrorController;
 use Cake\Core\Configure;
