@@ -218,7 +218,7 @@ class FormHelper extends AppHelper {
 		if ($key === 'validates' && !isset($this->fieldset[$model]['validates'])) {
 			$validates = array();
 			if (!empty($object->validate)) {
-				foreach ($object->validate as $validateField => $validateProperties) {
+				foreach ($object->validator() as $validateField => $validateProperties) {
 					if ($this->_isRequiredField($validateProperties)) {
 						$validates[$validateField] = true;
 					}
@@ -240,61 +240,17 @@ class FormHelper extends AppHelper {
 /**
  * Returns if a field is required to be filled based on validation properties from the validating object.
  *
- * @param array $validateProperties
+ * @param CakeValidationSet $validationRules
  * @return boolean true if field is required to be filled, false otherwise
  */
-	protected function _isRequiredField($validateProperties) {
-		$required = false;
-		if (is_string($validateProperties)) {
-			return true;
-		} elseif (is_array($validateProperties)) {
-
-			$dims = Hash::dimensions($validateProperties);
-			if ($dims == 1 || ($dims == 2 && isset($validateProperties['rule']))) {
-				$validateProperties = array($validateProperties);
-			}
-
-			foreach ($validateProperties as $rule => $validateProp) {
-				$isRequired = $this->_isRequiredRule($validateProp);
-				if ($isRequired === false) {
-					continue;
-				}
-				$rule = isset($validateProp['rule']) ? $validateProp['rule'] : false;
-				$required = $rule || empty($validateProp);
-				if ($required) {
-					break;
-				}
+	protected function _isRequiredField($validationRules) {
+		foreach ($validationRules as $rule) {
+			$rule->isUpdate($this->requestType === 'put');
+			if (!$rule->isEmptyAllowed()) {
+				return true;
 			}
 		}
-		return $required;
-	}
-
-/**
- * Checks if the field is required by the 'on' key in validation properties.
- * If no 'on' key is present in validation props, this method returns true.
- *
- * @param array $validateProp
- * @return mixed. Boolean for required
- */
-	protected function _isRequiredRule($validateProp) {
-		if (isset($validateProp['on'])) {
-			if (
-				($validateProp['on'] == 'create' && $this->requestType != 'post') ||
-				($validateProp['on'] == 'update' && $this->requestType != 'put')
-			) {
-				return false;
-			}
-		}
-		if (
-			isset($validateProp['allowEmpty']) &&
-			$validateProp['allowEmpty'] === true
-		) {
-			return false;
-		}
-		if (isset($validateProp['required']) && empty($validateProp['required'])) {
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 /**
