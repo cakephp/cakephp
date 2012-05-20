@@ -2343,6 +2343,11 @@ class Model extends Object implements CakeEventListener {
 			$return[$this->alias] = true;
 		}
 		$data = $this->data;
+		if (!empty($options['deep']) && isset($data[$this->alias])) {
+			$recordData = $data[$this->alias];
+			unset($data[$this->alias]);
+			$data = array_merge($data, $recordData);
+		}
 
 		$associations = $this->getAssociated();
 		foreach ($data as $association => &$values) {
