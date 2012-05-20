@@ -1847,11 +1847,6 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel = new Article();
 		$Validator = $TestModel->validator();
 
-		$set = array(
-			'numeric' => array('rule' => 'numeric', 'allowEmpty' => false),
-			'range' => array('rule' => array('between', 1, 5), 'allowEmpty' => false),
-		);
-
 		$Validator->add('other', 'numeric', array('rule' => 'numeric', 'allowEmpty' => false));
 		$Validator->add('other', 'range', array('rule' => array('between', 1, 5), 'allowEmpty' => false));
 		$rules = $Validator['other'];
@@ -2033,6 +2028,33 @@ class ModelValidationTest extends BaseModelTest {
 		$expected['Article']['title'] = 'First Article (modified)';
 		unset($result['Article']['updated']);
 		$this->assertEquals($expected['Article'], $result['Article']);
+	}
+
+	public function testAddMultipleRules() {
+		$TestModel = new Article();
+		$Validator = $TestModel->validator();
+
+		$set = array(
+			'numeric' => array('rule' => 'numeric', 'allowEmpty' => false),
+			'range' => array('rule' => array('between', 1, 5), 'allowEmpty' => false),
+		);
+
+		$Validator->add('other', $set);
+		$rules = $Validator['other'];
+		$this->assertEquals('other', $rules->field);
+
+		$validators = $rules->getRules();
+		$this->assertCount(2, $validators);
+		$this->assertEquals('numeric', $validators['numeric']->rule);
+		$this->assertEquals(array('between', 1, 5), $validators['range']->rule);
+
+		$set = new CakeValidationSet('other', array(
+			'a' => array('rule' => 'numeric', 'allowEmpty' => false),
+			'b' => array('rule' => array('between', 1, 5), 'allowEmpty' => false),
+		));
+
+		$Validator->add('other', $set);
+		$this->assertSame($set, $Validator->getField('other'));
 	}
 
 }

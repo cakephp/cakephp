@@ -518,7 +518,9 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Adds a new rule to a field's rule set
+ * Adds a new rule to a field's rule set. If second argumet is an array or instance of
+ * CakeValidationSet then rules list for the field will be replaced with second argument and
+ * third argument will be ignored.
  *
  * ## Example:
  *
@@ -526,19 +528,34 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *		$validator
  *			->add('title', 'required', array('rule' => 'notEmpty', 'required' => true))
  *			->add('user_id', 'valid', array('rule' => 'numeric', 'message' => 'Invalid User'))
+ *
+ *		$validator->add('password', array(
+ *			'size' => array('rule' => array('between', 8, 20)),
+ *			'hasSpecialCharacter' => array('rule' => 'validateSpecialchar', 'message' => 'not valid')
+ *		));
  * }}}
  *
  * @param string $field The name of the field from wich the rule will be removed
- * @param array|CakeValidationRule $rule the rule to be added to the field's rule set
+ * @param string|array|CakeValidationSet $name name of the rule to be added or list of rules for the field
+ * @param array|CakeValidationRule $rule or list of rules to be added to the field's rule set
  * @return ModelValidator this instance
  **/
-	public function add($field, $name, $rule) {
+	public function add($field, $name, $rule = null) {
 		$this->_parseRules();
+		if ($name instanceof CakeValidationSet) {
+			$this->_fields[$field] = $name;
+			return $this;
+		}
+
 		if (!isset($this->_fields[$field])) {
-			$rule = array($name => $rule);
+			$rule = (is_string($name)) ? array($name => $rule) : $name;
 			$this->_fields[$field] = new CakeValidationSet($field, $rule, $this->getMethods());
 		} else {
-			$this->_fields[$field]->setRule($name, $rule);
+			if (is_string($name)) {
+				$this->_fields[$field]->setRule($name, $rule);
+			} else {
+				$this->_fields[$field]->setRules($name);
+			}
 		}
 		return $this;
 	}
