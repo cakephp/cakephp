@@ -136,12 +136,12 @@ class Router {
 	protected static $_initialState = array();
 
 /**
- * The stack of URL processors to apply against routing urls before passing the
+ * The stack of URL filters to apply against routing urls before passing the
  * parameters to the route collection.
  *
  * @var array
  */
-	protected static $_urlProcessors = array();
+	protected static $_urlFilters = array();
 
 /**
  * Default route class to use
@@ -570,9 +570,9 @@ class Router {
 	}
 
 /**
- * Add a processor to Router.
+ * Add a url filter to Router.
  *
- * Processor functions are applied to every array $url provided to
+ * Url filter functions are applied to every array $url provided to
  * Router::url() before the urls are sent to the route collection. 
  *
  * Callback functions should expect the following parameters:
@@ -580,14 +580,14 @@ class Router {
  * - `$params` The url params being processed.
  * - `$request` The current request.
  *
- * The processor function should *always* return the params even if unmodified.
+ * The url filter function should *always* return the params even if unmodified.
  *
  * ### Usage
  *
- * Processors allow you to easily implement features like persistent parameters.
+ * Url filters allow you to easily implement features like persistent parameters.
  *
  * {{{
- * Router::addProcessor(function ($params, $request) {
+ * Router::addUrlFilter(function ($params, $request) {
  *  if (isset($request->params['lang']) && !isset($params['lang']) {
  *    $params['lang'] = $request->params['lang'];
  *  }
@@ -598,8 +598,24 @@ class Router {
  * @param callable $function The function to add
  * @return void
  */
-	public static addProcessor($function) {
+	public static function addUrlFilter($function) {
+		self::$_urlFilters[] = $function;
+	}
 
+/**
+ * Applies all the connected url filters to the url.
+ *
+ * @param array $url The url array being modified.
+ * @return array The modified url.
+ * @see Router::url()
+ * @see Router::addUrlFilter()
+ */
+	protected static function _applyUrlFilters($url) {
+		$request = self::getRequest(true);
+		foreach (self::$_urlFilters as $filter) {
+			$url = $filter($url, $request);
+		}
+		return $url;
 	}
 
 /**
@@ -731,6 +747,7 @@ class Router {
 				'controller' => $params['controller'],
 				'plugin' => $params['plugin']
 			);
+			$url = self::_applyUrlFilters($url);
 			$output = self::$_routes->match($url);
 		} elseif (
 			$urlType === 'string' &&
@@ -749,7 +766,8 @@ class Router {
 			$url = $options +
 				$route->defaults +
 				array('_name' => $url);
-			$output = self::$_routes->match($url, $params);
+			$url = self::_applyUrlFilters($url);
+			$output = self::$_routes->match($url);
 		} else {
 			// String urls.
 			if (

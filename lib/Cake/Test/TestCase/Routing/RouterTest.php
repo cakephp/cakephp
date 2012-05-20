@@ -826,6 +826,40 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test that url filters are applied to url params.
+ *
+ * @return void
+ */
+	public function testUrlGenerationWithUrlFilter() {
+		Router::connect('/:lang/:controller/:action/*');
+		$request = new Request();
+		$request->addParams(array(
+			'lang' => 'en',
+			'controller' => 'posts',
+			'action' => 'index'
+		))->addPaths(array(
+			'base' => '',
+			'here' => '/'
+		));
+		Router::pushRequest($request);
+
+		$calledCount = 0;
+		Router::addUrlFilter(function ($url, $request) use (&$calledCount) {
+			$calledCount++;
+			$url['lang'] = $request->lang;
+			return $url;
+		});
+		Router::addUrlFilter(function ($url, $request) use (&$calledCount) {
+			$calledCount++;
+			$url[] = '1234';
+			return $url;
+		});
+		$result = Router::url(array('controller' => 'tasks', 'action' => 'edit'));
+		$this->assertEquals('/en/tasks/edit/1234', $result);
+		$this->assertEquals(2, $calledCount);
+	}
+
+/**
  * test that you can leave active plugin routes with plugin = null
  *
  * @return void
