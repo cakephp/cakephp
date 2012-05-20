@@ -492,7 +492,6 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testAdminDispatch() {
-		$_POST = array();
 		$Dispatcher = new TestDispatcher();
 		Configure::write('Routing.prefixes', array('admin'));
 		Configure::write('App.baseUrl','/cake/repo/branches/1.2.x.x/index.php');
@@ -500,11 +499,12 @@ class DispatcherTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
+
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
 
 		$this->assertEquals('TestDispatchPages', $Dispatcher->controller->name);
 
-		$this->assertSame($Dispatcher->controller->passedArgs, array('param' => 'value', 'param2' => 'value2'));
 		$this->assertTrue($Dispatcher->controller->params['admin']);
 
 		$expected = '/cake/repo/branches/1.2.x.x/index.php/admin/test_dispatch_pages/index/param:value/param2:value2';
@@ -547,7 +547,6 @@ class DispatcherTest extends TestCase {
 		$this->assertSame($Dispatcher->controller->plugin, 'MyPlugin');
 		$this->assertSame($Dispatcher->controller->name, 'SomePages');
 		$this->assertSame($Dispatcher->controller->params['controller'], 'some_pages');
-		$this->assertSame($Dispatcher->controller->passedArgs, array('0' => 'home', 'param' => 'value', 'param2' => 'value2'));
 	}
 
 /**
@@ -575,7 +574,6 @@ class DispatcherTest extends TestCase {
 		$this->assertSame($Dispatcher->controller->plugin, 'MyPlugin');
 		$this->assertSame($Dispatcher->controller->name, 'OtherPages');
 		$this->assertSame($Dispatcher->controller->action, 'index');
-		$this->assertSame($Dispatcher->controller->passedArgs, array('param' => 'value', 'param2' => 'value2'));
 
 		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/other_pages/index/param:value/param2:value2';
 		$this->assertSame($expected, $url->here);
@@ -651,7 +649,6 @@ class DispatcherTest extends TestCase {
 		$this->assertSame($Dispatcher->controller->action, 'admin_add');
 
 		$expected = array(0 => 5, 'param' => 'value', 'param2' => 'value2');
-		$this->assertEquals($expected, $Dispatcher->controller->passedArgs);
 
 		Configure::write('Routing.prefixes', array('admin'));
 		Plugin::load('ArticlesTest', array('path' => '/fake/path'));
@@ -746,41 +743,6 @@ class DispatcherTest extends TestCase {
 		$this->assertEquals('some_param', $Dispatcher->controller->params['pass'][0]);
 
 		App::build();
-	}
-
-/**
- * testAutomaticPluginControllerMissingActionDispatch method
- *
- * @expectedException Cake\Error\MissingActionException
- * @expectedExceptionMessage Action MyPluginController::not_here() could not be found.
- * @return void
- */
-	public function testAutomaticPluginControllerMissingActionDispatch() {
-		Router::reload();
-		$Dispatcher = new TestDispatcher();
-
-		$url = new Request('my_plugin/not_here/param:value/param2:value2');
-		$response = $this->getMock('Cake\Network\Response');
-
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
-	}
-
-/**
- * testAutomaticPluginControllerMissingActionDispatch method
- *
- * @expectedException Cake\Error\MissingActionException
- * @expectedExceptionMessage Action MyPluginController::param:value() could not be found.
- * @return void
- */
-
-	public function testAutomaticPluginControllerIndexMissingAction() {
-		Router::reload();
-		$Dispatcher = new TestDispatcher();
-
-		$url = new Request('my_plugin/param:value/param2:value2');
-		$response = $this->getMock('Cake\Network\Response');
-
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
 	}
 
 /**
