@@ -290,6 +290,11 @@ class View extends Object {
 	protected $_eventManager = null;
 
 /**
+ * The view file to be rendered, only used inside _execute()
+ */
+	private $__viewFileName = null;
+
+/**
  * Whether the event manager was already configured for this object
  *
  * @var boolean
@@ -897,17 +902,19 @@ class View extends Object {
 /**
  * Sandbox method to evaluate a template / view script in.
  *
- * @param string $___viewFn Filename of the view
+ * @param string $viewFn Filename of the view
  * @param array $___dataForView Data to include in rendered view.
  *    If empty the current View::$viewVars will be used.
  * @return string Rendered output
  */
-	protected function _evaluate($___viewFn, $___dataForView) {
-		extract($___dataForView, EXTR_SKIP);
+	protected function _evaluate($viewFile, $dataForView) {
+		$this->__viewFile = $viewFile;
+		extract($dataForView);
 		ob_start();
 
-		include $___viewFn;
+		include $this->__viewFile;
 
+		unset($this->_viewFile);
 		return ob_get_clean();
 	}
 
