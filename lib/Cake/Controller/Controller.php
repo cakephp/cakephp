@@ -462,8 +462,8 @@ class Controller extends Object implements EventListener {
 		$this->request = $request;
 		$this->plugin = isset($request->params['plugin']) ? Inflector::camelize($request->params['plugin']) : null;
 		$this->view = isset($request->params['action']) ? $request->params['action'] : null;
-		if (isset($request->params['pass']) && isset($request->params['named'])) {
-			$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
+		if (isset($request->params['pass'])) {
+			$this->passedArgs = $request->params['pass'];
 		}
 
 		if (array_key_exists('return', $request->params) && $request->params['return'] == 1) {
