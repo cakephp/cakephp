@@ -1054,22 +1054,34 @@ class ModelValidationTest extends BaseModelTest {
 		);
 		$result = $model->saveAll($data, array('validate' => 'first'));
 		$this->assertTrue($result);
+		$this->assertFalse($model->findMethods['unPublished'], 'beforeValidate was run twice');
 
-		$title = $model->field('title', array('body' => 'foo0'));
+		$model->findMethods['unPublished'] = true;
+		$data = array(
+			'CustomArticle' => array(
+				'body' => 'foo1'
+			)
+		);
+		$result = $model->saveAll($data, array('validate' => 'first', 'deep' => true));
+		$this->assertTrue($result);
+		$title = $model->field('title', array('body' => 'foo1'));
 		$this->assertEquals('foo', $title);
+		$this->assertFalse($model->findMethods['unPublished'], 'beforeValidate was run twice');
 
 		$data = array(
-			array('body' => 'foo1'),
 			array('body' => 'foo2'),
-			array('body' => 'foo3')
+			array('body' => 'foo3'),
+			array('body' => 'foo4')
 		);
 
 		$result = $model->saveAll($data, array('validate' => 'first'));
 		$this->assertTrue($result);
+		$result = $model->saveAll($data, array('validate' => 'first', 'deep' => true));
+		$this->assertTrue($result);
 
-		$this->assertEquals('foo', $model->field('title', array('body' => 'foo1')));
 		$this->assertEquals('foo', $model->field('title', array('body' => 'foo2')));
 		$this->assertEquals('foo', $model->field('title', array('body' => 'foo3')));
+		$this->assertEquals('foo', $model->field('title', array('body' => 'foo4')));
 	}
 
 /**
@@ -1078,7 +1090,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	public function testValidateAssociatedWithBeforeValidate() {
+	public function testValidateFirstAssociatedWithBeforeValidate() {
 		$this->loadFixtures('Article', 'User');
 		$model = new CustomArticle();
 		$model->validate = array(
@@ -1106,6 +1118,51 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals('foo', $model->field('title', array('body' => 'foo1')));
 		$this->assertEquals('foo', $model->field('title', array('body' => 'foo2')));
 		$this->assertEquals('foo', $model->field('title', array('body' => 'foo3')));
+	}
+
+/**
+ * testValidateFirstWithDefaults method
+ *
+ * return @void
+ */
+	public function testFirstWithDefaults() {
+		$this->loadFixtures('Article', 'Tag', 'Comment', 'User', 'ArticlesTag');
+		$TestModel = new Article();
+
+		$result = $TestModel->find('first', array(
+			'conditions' => array('Article.id' => 1)
+		));
+		$expected = array(
+			'Article' => array(
+				'id' => 1,
+				'user_id' => 1,
+				'title' => 'First Article',
+				'body' => 'First Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:39:23'
+			),
+		);
+		unset($result['Article']['updated']);
+		$this->assertEquals($expected['Article'], $result['Article']);
+
+		$data = array(
+			'Article' => array(
+				'id' => 1,
+				'title' => 'First Article (modified)'
+			),
+			'Comment' => array(
+				array('comment' => 'Article comment', 'user_id' => 1)
+			)
+		);
+		$result = $TestModel->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$result = $TestModel->find('first', array(
+			'conditions' => array('Article.id' => 1)
+		));
+		$expected['Article']['title'] = 'First Article (modified)';
+		unset($result['Article']['updated']);
+		$this->assertEquals($expected['Article'], $result['Article']);
 	}
 
 }

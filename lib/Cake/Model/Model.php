@@ -1129,9 +1129,7 @@ class Model extends Object implements CakeEventListener {
 		if (is_array($one)) {
 			$data = $one;
 			if (empty($one[$this->alias])) {
-				if ($this->getAssociated(key($one)) === null) {
-					$data = array($this->alias => $one);
-				}
+				$data = $this->_setAliasData($one);
 			}
 		} else {
 			$data = array($this->alias => array($one => $two));
@@ -1155,6 +1153,24 @@ class Model extends Object implements CakeEventListener {
 					}
 					$this->data[$modelName][$fieldName] = $fieldValue;
 				}
+			}
+		}
+		return $data;
+	}
+
+/**
+ * Move values to alias
+ *
+ * @param array $data
+ * @return array
+ */
+	protected function _setAliasData($data) {
+		$models = array_keys($this->getAssociated());
+		$schema = array_keys($this->schema());
+		foreach ($data as $field => $value) {
+			if (in_array($field, $schema) || !in_array($field, $models)) {
+				$data[$this->alias][$field] = $value;
+				unset($data[$field]);
 			}
 		}
 		return $data;
@@ -2118,7 +2134,8 @@ class Model extends Object implements CakeEventListener {
 			if ($options['deep']) {
 				$validates = $this->validateAssociated($record, $options);
 			} else {
-				$validates = $this->create($record) && $this->validates($options);
+				$this->create(null);
+				$validates = $this->set($record) && $this->validates($options);
 				$data[$key] = $this->data;
 			}
 			if ($validates === false || (is_array($validates) && in_array(false, $validates, true))) {
@@ -2318,20 +2335,18 @@ class Model extends Object implements CakeEventListener {
 	public function validateAssociated(&$data, $options = array()) {
 		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
 		$this->validationErrors = $validationErrors = $return = array();
-		if (!($this->create($data) && $this->validates($options))) {
+		$this->create(null);
+		if (!($this->set($data) && $this->validates($options))) {
 			$validationErrors[$this->alias] = $this->validationErrors;
 			$return[$this->alias] = false;
 		} else {
 			$return[$this->alias] = true;
 		}
-
-		if (empty($options['deep'])) {
-			$data = $this->data;
-		} else {
-			$modelData = $this->data;
-			$recordData = $modelData[$this->alias];
-			unset($modelData[$this->alias]);
-			$data = $modelData + array_merge($data, $recordData);
+		$data = $this->data;
+		if (!empty($options['deep']) && isset($data[$this->alias])) {
+			$recordData = $data[$this->alias];
+			unset($data[$this->alias]);
+			$data = array_merge($data, $recordData);
 		}
 
 		$associations = $this->getAssociated();

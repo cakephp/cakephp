@@ -3119,7 +3119,7 @@ class TranslatedItem2 extends CakeTestModel {
 /**
  * translateModel property
  *
- * @var string 
+ * @var string
  */
 	public $translateModel = 'TranslateWithPrefix';
 
@@ -4975,6 +4975,11 @@ class CustomArticle extends AppModel {
  **/
 	public function beforeValidate($options = array()) {
 		$this->data[$this->alias]['title'] = 'foo';
+		if ($this->findMethods['unPublished'] === true) {
+			$this->findMethods['unPublished'] = false;
+		} else {
+			$this->findMethods['unPublished'] = 'true again';
+		}
 	}
 
 }
