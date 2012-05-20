@@ -25,13 +25,11 @@
 	<p>PHPUnit can be installed with pear, using the pear installer.</p>
 	<p>To install with the PEAR installer run the following commands:</p>
 	<ul>
-		<li><code>pear channel-discover pear.phpunit.de</code></li>
-		<li><code>pear channel-discover components.ez.no</code></li>
-		<li><code>pear channel-discover pear.symfony-project.com</code></li>
-		<li><code>pear install phpunit/PHPUnit-3.6.4</code></li>
+		<li><code>pear config-set auto_discover 1</code></li>
+		<li><code>pear install pear.phpunit.de/PHPUnit</code></li>
 	</ul>
 	<p>Once PHPUnit is installed make sure its located on PHP's <code>include_path</code> by checking your php.ini</p>
-	<p>For full instructions on how to <a href="http://www.phpunit.de/manual/current/en/installation.html">install PHPUnit, see the PHPUnit installation guide</a>.</p>
+	<p>For full instructions on how to <a href="http://www.phpunit.de/manual/current/en/installation.html" target="_blank">install PHPUnit, see the PHPUnit installation guide</a>.</p>
 	<p><a href="http://github.com/sebastianbergmann/phpunit" target="_blank">Download PHPUnit</a></p>
 </div>
 <?php
