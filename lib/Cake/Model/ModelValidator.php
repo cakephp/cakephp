@@ -123,6 +123,11 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 			$return[$model->alias] = true;
 		}
 		$data = $model->data;
+		if (!empty($options['deep']) && isset($data[$model->alias])) {
+			$recordData = $data[$model->alias];
+			unset($data[$model->alias]);
+			$data = array_merge($data, $recordData);
+		}
 
 		$associations = $model->getAssociated();
 		foreach ($data as $association => &$values) {
