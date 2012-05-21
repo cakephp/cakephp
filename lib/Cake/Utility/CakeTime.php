@@ -991,7 +991,7 @@ class CakeTime {
 		}
 		if (version_compare(PHP_VERSION, '5.3.0', '<')) {
 			if ($regex === null) {
-				$regex = '#^(Africa|America|Antartica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific|UTC)/#';
+				$regex = '#^((Africa|America|Antartica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific)/|UTC)#';
 			}
 			$identifiers = DateTimeZone::listIdentifiers();
 		} else {
