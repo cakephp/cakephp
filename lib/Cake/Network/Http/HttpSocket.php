@@ -768,9 +768,6 @@ class HttpSocket extends CakeSocket {
 			return $query;
 		}
 
-		if (is_array($query)) {
-			return $query;
-		}
 		$parsedQuery = array();
 
 		if (is_string($query) && !empty($query)) {
