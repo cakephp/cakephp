@@ -564,6 +564,19 @@ class Validation {
 	}
 
 /**
+ * Checks if a value is a natural value.
+ *
+ * @param string $check Value to check
+ * @param boolean $allowZero Set true to allow zero, defaults to false
+ * @return boolean Success
+ * @see http://en.wikipedia.org/wiki/Natural_number
+ */
+	public static function naturalNumber($check, $allowZero = false) {
+		$regex = $allowZero ? '/^(?:0|[1-9][0-9]*)$/' : '/^[1-9][0-9]*$/';
+		return self::_check($check, $regex);
+	}
+
+/**
  * Check that a value is a valid phone number.
  *
  * @param mixed $check Value to check (string or array)

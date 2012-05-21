@@ -1961,6 +1961,26 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
+ * testNaturalNumber method
+ *
+ * @return void
+ */
+	public function testNaturalNumber() {
+		$this->assertFalse(Validation::naturalNumber('teststring'));
+		$this->assertFalse(Validation::naturalNumber('5.4'));
+		$this->assertFalse(Validation::naturalNumber(99.004));
+		$this->assertFalse(Validation::naturalNumber('0,05'));
+		$this->assertFalse(Validation::naturalNumber('-2'));
+		$this->assertFalse(Validation::naturalNumber(-2));
+		$this->assertFalse(Validation::naturalNumber('0'));
+
+		$this->assertTrue(Validation::naturalNumber('2'));
+		$this->assertTrue(Validation::naturalNumber(49));
+		$this->assertTrue(Validation::naturalNumber('0', true));
+		$this->assertTrue(Validation::naturalNumber(0, true));
+	}
+
+/**
  * testPhone method
  *
  * @return void
