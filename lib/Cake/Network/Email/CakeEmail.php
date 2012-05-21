@@ -307,6 +307,14 @@ class CakeEmail {
 	protected $_charset8bit = array('UTF-8', 'SHIFT_JIS');
 
 /**
+ * define Content-Type charset name
+ *
+ * @var array
+ */
+	protected $_contentTypeCharset = array('ISO-2022-JP-MS' => 'ISO-2022-JP');
+
+
+/**
  * Constructor
  * @param mixed $config Array of configs, or string to load configs from email.php
  *
@@ -716,9 +724,9 @@ class CakeEmail {
 		if (!empty($this->_attachments) || $this->_emailFormat === 'both') {
 			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
 		} elseif ($this->_emailFormat === 'text') {
-			$headers['Content-Type'] = 'text/plain; charset=' . $this->charset;
+			$headers['Content-Type'] = 'text/plain; charset=' . $this->_getContentTypeCharset();
 		} elseif ($this->_emailFormat === 'html') {
-			$headers['Content-Type'] = 'text/html; charset=' . $this->charset;
+			$headers['Content-Type'] = 'text/html; charset=' . $this->_getContentTypeCharset();
 		}
 		$headers['Content-Transfer-Encoding'] = $this->_getContentTransferEncoding();
 
@@ -1434,7 +1442,7 @@ class CakeEmail {
 		if (isset($rendered['text'])) {
 			if ($textBoundary !== $boundary || $hasAttachments) {
 				$msg[] = '--' . $textBoundary;
-				$msg[] = 'Content-Type: text/plain; charset=' . $this->charset;
+				$msg[] = 'Content-Type: text/plain; charset=' . $this->_getContentTypeCharset();
 				$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
 				$msg[] = '';
 			}
@@ -1447,7 +1455,7 @@ class CakeEmail {
 		if (isset($rendered['html'])) {
 			if ($textBoundary !== $boundary || $hasAttachments) {
 				$msg[] = '--' . $textBoundary;
-				$msg[] = 'Content-Type: text/html; charset=' . $this->charset;
+				$msg[] = 'Content-Type: text/html; charset=' . $this->_getContentTypeCharset();
 				$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
 				$msg[] = '';
 			}
@@ -1559,4 +1567,17 @@ class CakeEmail {
 		return '7bit';
 	}
 
+/**
+ * Return charset value for Content-Type
+ *
+ * @return string
+ */
+	protected function _getContentTypeCharset() {
+		$charset = strtoupper($this->charset);
+		if (array_key_exists($charset, $this->_contentTypeCharset)) {
+			return strtoupper($this->_contentTypeCharset[$charset]);
+		} else {
+			return strtoupper($this->charset);
+		}
+	}
 }
