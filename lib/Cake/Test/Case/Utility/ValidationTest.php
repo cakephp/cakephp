@@ -1973,6 +1973,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::naturalNumber('-2'));
 		$this->assertFalse(Validation::naturalNumber(-2));
 		$this->assertFalse(Validation::naturalNumber('0'));
+		$this->assertFalse(Validation::naturalNumber('050'));
 
 		$this->assertTrue(Validation::naturalNumber('2'));
 		$this->assertTrue(Validation::naturalNumber(49));
