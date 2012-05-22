@@ -1591,7 +1591,6 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains(mb_convert_encoding('①㈱','ISO-2022-JP-MS'), $result['message']);
 	}
 
-
 	protected function _checkContentTransferEncoding($message, $charset) {
 		$boundary = '--alt-' . $this->CakeEmail->getBoundary();
 		$result['text'] = false;

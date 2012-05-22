@@ -307,12 +307,13 @@ class CakeEmail {
 	protected $_charset8bit = array('UTF-8', 'SHIFT_JIS');
 
 /**
- * define Content-Type charset name
+ * Define Content-Type charset name
  *
  * @var array
  */
-	protected $_contentTypeCharset = array('ISO-2022-JP-MS' => 'ISO-2022-JP');
-
+	protected $_contentTypeCharset = array(
+		'ISO-2022-JP-MS' => 'ISO-2022-JP'
+	);
 
 /**
  * Constructor
@@ -1568,7 +1569,10 @@ class CakeEmail {
 	}
 
 /**
- * Return charset value for Content-Type
+ * Return charset value for Content-Type.
+ *
+ * Checks fallback/compatibility types which include workarounds
+ * for legacy japanese character sets.
  *
  * @return string
  */
@@ -1580,4 +1584,5 @@ class CakeEmail {
 			return strtoupper($this->charset);
 		}
 	}
+
 }
