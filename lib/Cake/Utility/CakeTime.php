@@ -974,7 +974,7 @@ class CakeTime {
 /**
  * Get list of timezone identifiers
  *
- * @param int|string $filter A regex to filter identifer
+ * @param integer|string $filter A regex to filter identifer
  * 	Or one of DateTimeZone class constants (PHP 5.3 and above)
  * @param string $country A two-letter ISO 3166-1 compatible country code.
  * 	This option is only used when $filter is set to DateTimeZone::PER_COUNTRY (available only in PHP 5.3 and above)
