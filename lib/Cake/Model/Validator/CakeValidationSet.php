@@ -175,7 +175,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *			->setRule('inRange', array('rule' => array('between', 4, 10))
  * }}}
  *
- * @param mixed $name The name under which the rule should be set
+ * @param string $name The name under which the rule should be set
  * @param CakeValidationRule|array $rule The validation rule to be set
  * @return CakeValidationSet this instance
  */
@@ -198,7 +198,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *			->removeRule('inRange')
  * }}}
  *
- * @param mixed $name The name under which the rule should be unset
+ * @param string $name The name under which the rule should be unset
  * @return CakeValidationSet this instance
  */
 	public function removeRule($name) {

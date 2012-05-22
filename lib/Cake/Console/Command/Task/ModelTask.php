@@ -765,8 +765,8 @@ class ModelTask extends BakeTask {
 /**
  * Assembles and writes a Model file.
  *
- * @param mixed $name Model name or object
- * @param mixed $data if array and $name is not an object assume bake data, otherwise boolean.
+ * @param string|object $name Model name or object
+ * @param array|boolean $data if array and $name is not an object assume bake data, otherwise boolean.
  * @return string
  */
 	public function bake($name, $data = array()) {

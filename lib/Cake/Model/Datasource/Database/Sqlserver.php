@@ -690,7 +690,7 @@ class Sqlserver extends DboSource {
 /**
  * Makes sure it will return the primary key
  *
- * @param mixed $model Model instance of table name
+ * @param Model|string $model Model instance of table name
  * @return string
  */
 	protected function _getPrimaryKey($model) {

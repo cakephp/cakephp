@@ -55,7 +55,7 @@ class ConsoleInputArgument {
 /**
  * Make a new Input Argument
  *
- * @param mixed $name The long name of the option, or an array with all the properties.
+ * @param string|array $name The long name of the option, or an array with all the properties.
  * @param string $help The help text for this option
  * @param boolean $required Whether this argument is required. Missing required args will trigger exceptions
  * @param array $choices Valid choices for this option.

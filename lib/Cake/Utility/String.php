@@ -330,7 +330,7 @@ class String {
  * - `indentAt` 0 based index to start indenting at. Defaults to 0.
  *
  * @param string $text Text the text to format.
- * @param mixed $options Array of options to use, or an integer to wrap the text to.
+ * @param array|integer $options Array of options to use, or an integer to wrap the text to.
  * @return string Formatted text.
  */
 	public static function wrap($text, $options = array()) {

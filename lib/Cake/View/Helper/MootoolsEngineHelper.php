@@ -229,7 +229,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * Requires `Request`.  If you wish to use 'update' key you must have ```Request.HTML```
  * if you wish to do Json requests you will need ```JSON``` and ```Request.JSON```.
  *
- * @param mixed $url
+ * @param string|array $url
  * @param array $options
  * @return string The completed ajax call.
  */

@@ -188,7 +188,7 @@ class DbAroUserTest extends CakeTestModel {
 /**
  * bindNode method
  *
- * @param mixed $ref
+ * @param string|array|Model $ref
  * @return void
  */
 	public function bindNode($ref = null) {

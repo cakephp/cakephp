@@ -178,7 +178,7 @@ class AuthTestController extends Controller {
 /**
  * redirect method
  *
- * @param mixed $url
+ * @param string|array $url
  * @param mixed $status
  * @param mixed $exit
  * @return void
@@ -258,7 +258,7 @@ class AjaxAuthController extends Controller {
 /**
  * redirect method
  *
- * @param mixed $url
+ * @param string|array $url
  * @param mixed $status
  * @param mixed $exit
  * @return void

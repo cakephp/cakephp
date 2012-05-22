@@ -534,7 +534,7 @@ class DbAclTest extends CakeTestCase {
  * Used by debug to format strings used in the data dump
  *
  * @param string $string
- * @param int $len
+ * @param integer $len
  * @return void
  */
 	protected function __pad($string = '', $len = 14) {

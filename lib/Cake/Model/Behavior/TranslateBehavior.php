@@ -207,7 +207,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param array $query The query array to append a join to.
  * @param string $field The field name being joined.
  * @param string $aliasField The aliased field name being joined.
- * @param mixed $locale The locale(s) having joins added.
+ * @param string|array $locale The locale(s) having joins added.
  * @param boolean $addField Whether or not to add a field.
  * @return array The modfied query
  */
@@ -572,7 +572,7 @@ class TranslateBehavior extends ModelBehavior {
  * fake field
  *
  * @param Model $model instance of model
- * @param mixed $fields string with field, or array(field1, field2=>AssocName, field3), or null for
+ * @param string|array $fields string with field, or array(field1, field2=>AssocName, field3), or null for
  *    unbind all original translations
  * @return boolean
  */

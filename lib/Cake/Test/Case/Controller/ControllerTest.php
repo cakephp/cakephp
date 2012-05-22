@@ -97,7 +97,7 @@ class ControllerPost extends CakeTestModel {
 /**
  * find method
  *
- * @param mixed $type
+ * @param string $type
  * @param array $options
  * @return void
  */

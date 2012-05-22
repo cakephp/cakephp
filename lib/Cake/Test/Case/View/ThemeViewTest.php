@@ -62,7 +62,7 @@ class TestTheme2View extends ThemeView {
 /**
  * renderElement method
  *
- * @param mixed $name
+ * @param string $name
  * @param array $params
  * @return void
  */
@@ -73,7 +73,7 @@ class TestTheme2View extends ThemeView {
 /**
  * getViewFileName method
  *
- * @param mixed $name
+ * @param string $name
  * @return void
  */
 	public function getViewFileName($name = null) {
@@ -83,7 +83,7 @@ class TestTheme2View extends ThemeView {
 /**
  * getLayoutFileName method
  *
- * @param mixed $name
+ * @param string $name
  * @return void
  */
 	public function getLayoutFileName($name = null) {
