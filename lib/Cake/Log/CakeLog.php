@@ -313,7 +313,8 @@ class CakeLog {
 	}
 
 /**
- * Enable stream
+ * Enable stream.  Streams that were previously disabled
+ * can be re-enabled with this method.
  *
  * @param string $streamName to enable
  * @return void
@@ -330,7 +331,9 @@ class CakeLog {
 	}
 
 /**
- * Disable stream
+ * Disable stream.  Disabling a stream will
+ * prevent that log stream from receiving any messages until
+ * its re-enabled.
  *
  * @param string $streamName to disable
  * @return void
