@@ -76,7 +76,7 @@ class Xml {
  * - `return` Can be 'simplexml' to return object of SimpleXMLElement or 'domdocument' to return DOMDocument.
  * - If using array as input, you can pass `options` from Xml::fromArray.
  *
- * @param mixed $input XML string, a path to a file, an URL or an array
+ * @param string|array $input XML string, a path to a file, an URL or an array
  * @param array $options The options to use
  * @return SimpleXMLElement|DOMDocument SimpleXMLElement or DOMDocument
  * @throws XmlException

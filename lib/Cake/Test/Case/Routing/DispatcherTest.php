@@ -54,8 +54,9 @@ class TestDispatcher extends Dispatcher {
 /**
  * invoke method
  *
- * @param mixed $controller
- * @param mixed $request
+ * @param Controller $controller
+ * @param CakeRequest $request
+ * @param CakeResponse $response
  * @return void
  */
 	protected function _invoke(Controller $controller, CakeRequest $request, CakeResponse $response) {
@@ -66,7 +67,7 @@ class TestDispatcher extends Dispatcher {
 /**
  * Helper function to test single method attaching for dispatcher filters
  *
- * @param CakeEvent
+ * @param CakeEvent $event
  * @return void
  */
 	public function filterTest($event) {
@@ -181,7 +182,7 @@ class SomePagesController extends AppController {
 /**
  * display method
  *
- * @param mixed $page
+ * @param string $page
  * @return void
  */
 	public function display($page = null) {
@@ -232,7 +233,7 @@ class OtherPagesController extends MyPluginAppController {
 /**
  * display method
  *
- * @param mixed $page
+ * @param string $page
  * @return void
  */
 	public function display($page = null) {
@@ -1691,7 +1692,7 @@ class DispatcherTest extends CakeTestCase {
 /**
  * loadEnvironment method
  *
- * @param mixed $env
+ * @param array $env
  * @return void
  */
 	protected function __loadEnvironment($env) {
@@ -1725,7 +1726,7 @@ class DispatcherTest extends CakeTestCase {
 /**
  * cachePath method
  *
- * @param mixed $her
+ * @param string $here
  * @return string
  */
 	protected function __cachePath($here) {

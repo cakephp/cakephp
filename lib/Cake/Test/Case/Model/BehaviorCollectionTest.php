@@ -39,7 +39,7 @@ class TestBehavior extends ModelBehavior {
 /**
  * setup method
  *
- * @param mixed $model
+ * @param Model $model
  * @param array $config
  * @return void
  */
@@ -54,8 +54,8 @@ class TestBehavior extends ModelBehavior {
 /**
  * beforeFind method
  *
- * @param mixed $model
- * @param mixed $query
+ * @param Model $model
+ * @param array $query
  * @return void
  */
 	public function beforeFind(Model $model, $query) {
@@ -81,9 +81,9 @@ class TestBehavior extends ModelBehavior {
 /**
  * afterFind method
  *
- * @param mixed $model
- * @param mixed $results
- * @param mixed $primary
+ * @param Model $model
+ * @param array $results
+ * @param boolean $primary
  * @return void
  */
 	public function afterFind(Model $model, $results, $primary) {
@@ -110,7 +110,7 @@ class TestBehavior extends ModelBehavior {
 /**
  * beforeSave method
  *
- * @param mixed $model
+ * @param Model $model
  * @return void
  */
 	public function beforeSave(Model $model) {
@@ -135,8 +135,8 @@ class TestBehavior extends ModelBehavior {
 /**
  * afterSave method
  *
- * @param mixed $model
- * @param mixed $created
+ * @param Model $model
+ * @param boolean $created
  * @return void
  */
 	public function afterSave(Model $model, $created) {
@@ -167,7 +167,7 @@ class TestBehavior extends ModelBehavior {
 /**
  * beforeValidate method
  *
- * @param mixed $model
+ * @param Model $model
  * @return void
  */
 	public function beforeValidate(Model $model) {
@@ -197,7 +197,7 @@ class TestBehavior extends ModelBehavior {
 /**
  * beforeDelete method
  *
- * @param mixed $model
+ * @param Model $model
  * @param bool $cascade
  * @return void
  */
@@ -226,7 +226,7 @@ class TestBehavior extends ModelBehavior {
 /**
  * afterDelete method
  *
- * @param mixed $model
+ * @param Model $model
  * @return void
  */
 	public function afterDelete(Model $model) {
@@ -244,7 +244,7 @@ class TestBehavior extends ModelBehavior {
 /**
  * onError method
  *
- * @param mixed $model
+ * @param Model $model
  * @return void
  */
 	public function onError(Model $model, $error) {
@@ -258,7 +258,7 @@ class TestBehavior extends ModelBehavior {
 /**
  * beforeTest method
  *
- * @param mixed $model
+ * @param Model $model
  * @return void
  */
 	public function beforeTest(Model $model) {
@@ -272,7 +272,7 @@ class TestBehavior extends ModelBehavior {
 /**
  * testMethod method
  *
- * @param mixed $model
+ * @param Model $model
  * @param bool $param
  * @return void
  */
@@ -285,7 +285,7 @@ class TestBehavior extends ModelBehavior {
 /**
  * testData method
  *
- * @param mixed $model
+ * @param Model $model
  * @return void
  */
 	public function testData(Model $model) {
@@ -299,8 +299,8 @@ class TestBehavior extends ModelBehavior {
 /**
  * validateField method
  *
- * @param mixed $model
- * @param mixed $field
+ * @param Model $model
+ * @param string|array $field
  * @return void
  */
 	public function validateField(Model $model, $field) {
@@ -310,9 +310,9 @@ class TestBehavior extends ModelBehavior {
 /**
  * speakEnglish method
  *
- * @param mixed $model
- * @param mixed $method
- * @param mixed $query
+ * @param Model $model
+ * @param string $method
+ * @param string $query
  * @return void
  */
 	public function speakEnglish(Model $model, $method, $query) {

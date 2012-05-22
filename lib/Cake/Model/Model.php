@@ -654,7 +654,7 @@ class Model extends Object implements CakeEventListener {
  * Would create a model attached to the posts table on connection2.  Dynamic model creation is useful
  * when you want a model object that contains no associations or attached behaviors.
  *
- * @param mixed $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param integer|string|array $id Set this ID for this model on startup, can also be an array of options, see above.
  * @param string $table Name of database table to use.
  * @param string $ds DataSource connection name.
  */
@@ -1118,7 +1118,7 @@ class Model extends Object implements CakeEventListener {
  * (Alternative indata: two strings, which are mangled to
  * a one-item, two-dimensional array using $one for a key and $two as its value.)
  *
- * @param mixed $one Array or string of data
+ * @param string|array|SimpleXmlElement|DomNode $one Array or string of data
  * @param string $two Value string for the alternative indata method
  * @return array Data with all of $one's keys and values
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
@@ -1209,7 +1209,7 @@ class Model extends Object implements CakeEventListener {
  * Deconstructs a complex data type (array or object) into a single field value.
  *
  * @param string $field The name of the field to be deconstructed
- * @param mixed $data An array or object to be deconstructed into a field
+ * @param array|object $data An array or object to be deconstructed into a field
  * @return mixed The resulting data that should be assigned to a field
  */
 	public function deconstruct($field, $data) {
@@ -1293,7 +1293,7 @@ class Model extends Object implements CakeEventListener {
  * Returns an array of table metadata (column names and types) from the database.
  * $field => keys(type, null, default, key, length, extra)
  *
- * @param mixed $field Set to true to reload schema, or a string to return a specific field
+ * @param boolean|string $field Set to true to reload schema, or a string to return a specific field
  * @return array Array of table metadata
  */
 	public function schema($field = false) {
@@ -1363,7 +1363,7 @@ class Model extends Object implements CakeEventListener {
 /**
  * Returns true if the supplied field exists in the model's database table.
  *
- * @param mixed $name Name of field to look for, or an array of names
+ * @param string|array $name Name of field to look for, or an array of names
  * @param boolean $checkVirtual checks if the field is declared as virtual
  * @return mixed If $name is a string, returns a boolean indicating whether the field exists.
  *               If $name is an array of field names, returns the first field that exists,
@@ -1460,7 +1460,7 @@ class Model extends Object implements CakeEventListener {
  * for those fields that are not defined in $data, and clearing previous validation errors.
  * Especially helpful for saving data in loops.
  *
- * @param mixed $data Optional data array to assign to the model after it is created.  If null or false,
+ * @param boolean|array $data Optional data array to assign to the model after it is created.  If null or false,
  *   schema data defaults are not merged.
  * @param boolean $filterKey If true, overwrites any primary key input with an empty value
  * @return array The current Model::data; after merging $data and/or defaults from database
@@ -1491,8 +1491,8 @@ class Model extends Object implements CakeEventListener {
  * Returns a list of fields from the database, and sets the current model
  * data (Model::$data) with the record found.
  *
- * @param mixed $fields String of single field name, or an array of field names.
- * @param mixed $id The ID of the record to read
+ * @param string|array $fields String of single field name, or an array of field names.
+ * @param integer|string $id The ID of the record to read
  * @return array Array of database fields, or false if not found
  * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html#model-read
  */
@@ -1587,7 +1587,7 @@ class Model extends Object implements CakeEventListener {
  * default, validation occurs before save.
  *
  * @param array $data Data to save.
- * @param mixed $validate Either a boolean, or an array.
+ * @param boolean|array $validate Either a boolean, or an array.
  *   If a boolean, indicates whether or not to validate before saving.
  *   If an array, allows control of validate, callbacks, and fieldList
  * @param array $fieldList List of fields to allow to be written
@@ -1769,7 +1769,7 @@ class Model extends Object implements CakeEventListener {
  * Saves model hasAndBelongsToMany data to the database.
  *
  * @param array $joined Data to save
- * @param mixed $id ID of record in this model
+ * @param integer|string $id ID of record in this model
  * @param DataSource $db
  * @return void
  */
@@ -2336,7 +2336,7 @@ class Model extends Object implements CakeEventListener {
 /**
  * Removes record for given ID. If no ID is given, the current ID is used. Returns true on success.
  *
- * @param mixed $id ID of record to delete
+ * @param integer|string $id ID of record to delete
  * @param boolean $cascade Set to true to delete records that depend on this record
  * @return boolean True on success
  * @link http://book.cakephp.org/2.0/en/models/deleting-data.html
@@ -2538,7 +2538,7 @@ class Model extends Object implements CakeEventListener {
  * and then performs a Model::find('count') on the currently configured datasource
  * to ascertain the existence of the record in persistent storage.
  *
- * @param mixed $id ID of record to check for existence
+ * @param integer|string $id ID of record to check for existence
  * @return boolean True if such a record exists
  */
 	public function exists($id = null) {
@@ -2821,7 +2821,7 @@ class Model extends Object implements CakeEventListener {
  * rows and return them.
  *
  * @param string $state Either "before" or "after"
- * @param mixed $query
+ * @param array $query
  * @param array $results
  * @return array
  */
@@ -2877,7 +2877,7 @@ class Model extends Object implements CakeEventListener {
  * In the event of ambiguous results returned (multiple top level results, with different parent_ids)
  * top level results with different parent_ids to the first result will be dropped
  *
- * @param mixed $state
+ * @param string $state
  * @param mixed $query
  * @param array $results
  * @return array Threaded results
@@ -3114,7 +3114,7 @@ class Model extends Object implements CakeEventListener {
 /**
  * Sets the ID of the last record this model inserted
  *
- * @param mixed $id Last inserted ID
+ * @param integer|string $id Last inserted ID
  * @return void
  */
 	public function setInsertID($id) {

@@ -549,7 +549,7 @@ class AclShell extends AppShell {
  * or an array of properties to use in AcoNode::node()
  *
  * @param string $class Class type you want (Aro/Aco)
- * @param mixed $identifier A mixed identifier for finding the node.
+ * @param string|array $identifier A mixed identifier for finding the node.
  * @return integer Integer of NodeId. Will trigger an error if nothing is found.
  */
 	protected function _getNodeId($class, $identifier) {

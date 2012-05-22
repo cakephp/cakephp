@@ -38,7 +38,7 @@ interface CakeSessionHandlerInterface {
 /**
  * Method used to read from a session.
  *
- * @param mixed $id The key of the value to read
+ * @param string $id The key of the value to read
  * @return mixed The value of the key or false if it does not exist
  */
 	public function read($id);

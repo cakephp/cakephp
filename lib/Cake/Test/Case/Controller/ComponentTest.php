@@ -89,7 +89,7 @@ class AppleComponent extends Component {
 /**
  * startup method
  *
- * @param mixed $controller
+ * @param Controller $controller
  * @return void
  */
 	public function startup(Controller $controller) {
@@ -115,7 +115,7 @@ class OrangeComponent extends Component {
 /**
  * initialize method
  *
- * @param mixed $controller
+ * @param Controller $controller
  * @return void
  */
 	public function initialize(Controller $controller) {

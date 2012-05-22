@@ -69,7 +69,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * Redirects to a URL.  Creates a window.location modification snippet
  * that can be used to trigger 'redirects' from Javascript.
  *
- * @param mixed $url
+ * @param string|array $url
  * @param array  $options
  * @return string completed redirect in javascript
  */
@@ -366,7 +366,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * - `dataExpression` - Should the `data` key be treated as a callback.  Useful for supplying `$options['data']` as
  *    another Javascript expression.
  *
- * @param mixed $url Array or String URL to target with the request.
+ * @param string|array $url Array or String URL to target with the request.
  * @param array $options Array of options. See above for cross library supported options
  * @return string XHR request.
  */

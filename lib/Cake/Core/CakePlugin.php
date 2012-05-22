@@ -61,7 +61,7 @@ class CakePlugin {
  *
  * Will only load the bootstrap for ApiGenerator and only the routes for DebugKit
  *
- * @param mixed $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
+ * @param string|array $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
  * @param array $config configuration options for the plugin
  * @throws MissingPluginException if the folder for the plugin to be loaded is not found
  * @return void

@@ -108,7 +108,7 @@ class TemplateTask extends AppShell {
  * Set variable values to the template scope
  *
  * @param string|array $one A string or an array of data.
- * @param mixed $two Value in case $one is a string (which then works as the key).
+ * @param string|array $two Value in case $one is a string (which then works as the key).
  *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
  */

@@ -207,7 +207,7 @@ class SmtpTransport extends AbstractTransport {
  * Protected method for sending data to SMTP connection
  *
  * @param string $data data to be sent to SMTP server
- * @param mixed $checkCode code to check for in server response, false to skip
+ * @param string|boolean $checkCode code to check for in server response, false to skip
  * @return void
  * @throws SocketException
  */

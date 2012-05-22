@@ -33,7 +33,7 @@ class TestScaffoldView extends ScaffoldView {
 /**
  * testGetFilename method
  *
- * @param mixed $action
+ * @param string $action
  * @return void
  */
 	public function testGetFilename($action) {

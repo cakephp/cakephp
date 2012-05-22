@@ -116,8 +116,8 @@ class RssHelper extends AppHelper {
  * Returns an RSS `<channel />` element
  *
  * @param array $attrib `<channel />` tag attributes
- * @param mixed $elements Named array elements which are converted to tags
- * @param mixed $content Content (`<item />`'s belonging to this channel
+ * @param array $elements Named array elements which are converted to tags
+ * @param string $content Content (`<item />`'s belonging to this channel
  * @return string An RSS `<channel />`
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::channel
  */
@@ -161,7 +161,7 @@ class RssHelper extends AppHelper {
  * of `<item />` tags
  *
  * @param array $items The list of items to be mapped
- * @param mixed $callback A string function name, or array containing an object
+ * @param string|array $callback A string function name, or array containing an object
  *     and a string method name
  * @return string A set of RSS `<item />` elements
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::items
@@ -271,7 +271,7 @@ class RssHelper extends AppHelper {
 /**
  * Converts a time in any format to an RSS time
  *
- * @param mixed $time
+ * @param integer|string|DateTime $time
  * @return string An RSS-formatted timestamp
  * @see TimeHelper::toRSS
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::time
@@ -285,7 +285,7 @@ class RssHelper extends AppHelper {
  *
  * @param string $name The name of the XML element
  * @param array $attrib The attributes of the XML element
- * @param mixed $content XML element content
+ * @param string|array $content XML element content
  * @param boolean $endTag Whether the end tag of the element should be printed
  * @return string XML
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::elem

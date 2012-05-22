@@ -494,10 +494,10 @@ class CakeResponse {
  *  e.g `header('WWW-Authenticate: Negotiate'); header('WWW-Authenticate: Not-Negotiate');`
  * will have the same effect as only doing `header('WWW-Authenticate: Not-Negotiate');`
  *
- * @param mixed $header. An array of header strings or a single header string
+ * @param string|array $header. An array of header strings or a single header string
  *	- an associative array of "header name" => "header value" is also accepted
  *	- an array of string headers is also accepted
- * @param mixed $value. The header value.
+ * @param string $value. The header value.
  * @return array list of headers to be sent
  */
 	public function header($header = null, $value = null) {
@@ -560,7 +560,7 @@ class CakeResponse {
 /**
  * Queries & sets valid HTTP response codes & messages.
  *
- * @param mixed $code If $code is an integer, then the corresponding code/message is
+ * @param integer|array $code If $code is an integer, then the corresponding code/message is
  *        returned if it exists, null if it does not exist. If $code is an array,
  *        then the 'code' and 'message' keys of each nested array are added to the default
  *        HTTP codes. Example:
@@ -656,7 +656,7 @@ class CakeResponse {
  *
  * e.g `mapType('application/pdf'); // returns 'pdf'`
  *
- * @param mixed $ctype Either a string content type to map, or an array of types.
+ * @param string|array $ctype Either a string content type to map, or an array of types.
  * @return mixed Aliases for the types provided.
  */
 	public function mapType($ctype) {
@@ -729,7 +729,7 @@ class CakeResponse {
  * @param boolean $public  if set to true, the Cache-Control header will be set as public
  * if set to false, the response will be set to private
  * if no value is provided, it will return whether the response is sharable or not
- * @param int $time time in seconds after which the response should no longer be considered fresh
+ * @param integer $time time in seconds after which the response should no longer be considered fresh
  * @return boolean
  */
 	public function sharable($public = null, $time = null) {
@@ -764,7 +764,7 @@ class CakeResponse {
  * a good candidate to be fetched from a shared cache (like in a proxy server).
  * If called with no parameters, this function will return the current max-age value if any
  *
- * @param int $seconds if null, the method will return the current s-maxage value
+ * @param integer $seconds if null, the method will return the current s-maxage value
  * @return int
  */
 	public function sharedMaxAge($seconds = null) {
@@ -784,7 +784,7 @@ class CakeResponse {
  * a good candidate to be fetched from the local (client) cache.
  * If called with no parameters, this function will return the current max-age value if any
  *
- * @param int $seconds if null, the method will return the current max-age value
+ * @param integer $seconds if null, the method will return the current max-age value
  * @return int
  */
 	public function maxAge($seconds = null) {
@@ -805,7 +805,7 @@ class CakeResponse {
  * with the origin.
  * If called with no parameters, this function will return wheter must-revalidate is present.
  *
- * @param int $seconds if null, the method will return the current
+ * @param integer $seconds if null, the method will return the current
  * must-revalidate value
  * @return boolean
  */
@@ -965,7 +965,7 @@ class CakeResponse {
  * Returns a DateTime object initialized at the $time param and using UTC
  * as timezone
  *
- * @param string|int|DateTime $time
+ * @param string|integer|DateTime $time
  * @return DateTime
  */
 	protected function _getUTCDate($time = null) {

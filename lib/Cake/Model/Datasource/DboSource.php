@@ -937,7 +937,7 @@ class DboSource extends DataSource {
 /**
  * Gets full table name including prefix
  *
- * @param mixed $model Either a Model object or a string table name.
+ * @param Model|string $model Either a Model object or a string table name.
  * @param boolean $quote Whether you want the table name quoted.
  * @param boolean $schema Whether you want the schema name included.
  * @return string Full quoted table name
@@ -2019,7 +2019,7 @@ class DboSource extends DataSource {
  * Deletes all the records in a table and resets the count of the auto-incrementing
  * primary key, where applicable.
  *
- * @param mixed $table A string or model class representing the table to be truncated
+ * @param Model|string $table A string or model class representing the table to be truncated
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table) {
@@ -2172,7 +2172,7 @@ class DboSource extends DataSource {
  * were provided either null or false will be returned based on what was input.
  *
  * @param Model $model
- * @param mixed $conditions Array of conditions, conditions string, null or false. If an array of conditions,
+ * @param string|array|boolean $conditions Array of conditions, conditions string, null or false. If an array of conditions,
  *   or string conditions those conditions will be returned.  With other values the model's existence will be checked.
  *   If the model doesn't exist a null or false will be returned depending on the input value.
  * @param boolean $useAlias Use model aliases rather than table names when generating conditions
@@ -2233,7 +2233,7 @@ class DboSource extends DataSource {
  *
  * @param Model $model
  * @param string $alias Alias table name
- * @param mixed $fields virtual fields to be used on query
+ * @param array $fields virtual fields to be used on query
  * @return array
  */
 	protected function _constructVirtualFields(Model $model, $alias, $fields) {

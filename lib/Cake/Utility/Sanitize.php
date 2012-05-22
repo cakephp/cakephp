@@ -203,8 +203,8 @@ class Sanitize {
  * - backslash -
  * - remove_html - Strip HTML with strip_tags. `encode` must be true for this option to work.
  *
- * @param mixed $data Data to sanitize
- * @param mixed $options If string, DB connection being used, otherwise set of options
+ * @param string|array $data Data to sanitize
+ * @param string|array $options If string, DB connection being used, otherwise set of options
  * @return mixed Sanitized data
  */
 	public static function clean($data, $options = array()) {

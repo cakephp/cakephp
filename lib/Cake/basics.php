@@ -154,7 +154,7 @@ if (!function_exists('sortByKey')) {
 /**
  * Convenience method for htmlspecialchars.
  *
- * @param mixed $text Text to wrap through htmlspecialchars.  Also works with arrays, and objects.
+ * @param string|array|object $text Text to wrap through htmlspecialchars.  Also works with arrays, and objects.
  *    Arrays will be mapped and have all their elements escaped.  Objects will be string cast if they
  *    implement a `__toString` method.  Otherwise the class name will be used.
  * @param boolean $double Encode existing html entities
@@ -415,7 +415,7 @@ function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
 /**
  * Used to delete files in the cache directories, or clear contents of cache directories
  *
- * @param mixed $params As String name to be searched for deletion, if name is a directory all files in
+ * @param string|array $params As String name to be searched for deletion, if name is a directory all files in
  *   directory will be deleted. If array, names to be searched for deletion. If clearCache() without params,
  *   all files in app/tmp/cache/views will be deleted
  * @param string $type Directory in tmp/cache defaults to view directory

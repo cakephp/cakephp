@@ -143,7 +143,7 @@ class HttpSocket extends CakeSocket {
  *
  * See HttpSocket::$config for options that can be used.
  *
- * @param mixed $config Configuration information, either a string url or an array of options.
+ * @param string|array $config Configuration information, either a string url or an array of options.
  */
 	public function __construct($config = array()) {
 		if (is_string($config)) {
@@ -185,7 +185,7 @@ class HttpSocket extends CakeSocket {
  * `$http->configAuth();`
  *
  * @param string $method Authentication method (ie. Basic, Digest). If empty, disable authentication
- * @param mixed $user Username for authentication. Can be an array with settings to authentication class
+ * @param string|array $user Username for authentication. Can be an array with settings to authentication class
  * @param string $pass Password for authentication
  * @return void
  */
@@ -204,7 +204,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Set proxy settings
  *
- * @param mixed $host Proxy host. Can be an array with settings to authentication class
+ * @param string|array $host Proxy host. Can be an array with settings to authentication class
  * @param integer $port Port. Default 3128.
  * @param string $method Proxy method (ie, Basic, Digest). If empty, disable proxy authentication
  * @param string $user Username if your proxy need authentication
@@ -226,7 +226,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Set the resource to receive the request content. This resource must support fwrite.
  *
- * @param mixed $resource Resource or false to disable the resource use
+ * @param resource|boolean $resource Resource or false to disable the resource use
  * @return void
  * @throws SocketException
  */
@@ -245,7 +245,7 @@ class HttpSocket extends CakeSocket {
  * Issue the specified request. HttpSocket::get() and HttpSocket::post() wrap this
  * method and provide a more granular interface.
  *
- * @param mixed $request Either an URI string, or an array defining host/uri
+ * @param string|array $request Either an URI string, or an array defining host/uri
  * @return mixed false on error, HttpResponse on success
  * @throws SocketException
  */
@@ -429,7 +429,7 @@ class HttpSocket extends CakeSocket {
  * );
  * }}}
  *
- * @param mixed $uri URI to request. Either a string uri, or a uri array, see HttpSocket::_parseUri()
+ * @param string|array $uri URI to request. Either a string uri, or a uri array, see HttpSocket::_parseUri()
  * @param array $query Querystring parameters to append to URI
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request, either false on failure or the response to the request.
@@ -461,7 +461,7 @@ class HttpSocket extends CakeSocket {
  * ));
  * }}}
  *
- * @param mixed $uri URI to request. See HttpSocket::_parseUri()
+ * @param string|array $uri URI to request. See HttpSocket::_parseUri()
  * @param array $data Array of POST data keys and values.
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request, either false on failure or the response to the request.
@@ -474,7 +474,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Issues a PUT request to the specified URI, query, and request.
  *
- * @param mixed $uri URI to request, See HttpSocket::_parseUri()
+ * @param string|array $uri URI to request, See HttpSocket::_parseUri()
  * @param array $data Array of PUT data keys and values.
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
@@ -487,7 +487,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Issues a DELETE request to the specified URI, query, and request.
  *
- * @param mixed $uri URI to request (see {@link _parseUri()})
+ * @param string|array $uri URI to request (see {@link _parseUri()})
  * @param array $data Query to append to URI
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
@@ -520,7 +520,7 @@ class HttpSocket extends CakeSocket {
  *
  * Would return `/search?q=socket`.
  *
- * @param mixed $url Either a string or array of url options to create a url with.
+ * @param string|array Either a string or array of url options to create a url with.
  * @param string $uriTemplate A template string to use for url formatting.
  * @return mixed Either false on failure or a string containing the composed url.
  */
@@ -616,7 +616,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Parses and sets the specified URI into current request configuration.
  *
- * @param mixed $uri URI, See HttpSocket::_parseUri()
+ * @param string|array $uri URI, See HttpSocket::_parseUri()
  * @return boolean If uri has merged in config
  */
 	protected function _configUri($uri = null) {
@@ -646,7 +646,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Takes a $uri array and turns it into a fully qualified URL string
  *
- * @param mixed $uri Either A $uri array, or a request string. Will use $this->config if left empty.
+ * @param string|array $uri Either A $uri array, or a request string. Will use $this->config if left empty.
  * @param string $uriTemplate The Uri template/format to use.
  * @return mixed A fully qualified URL formatted according to $uriTemplate, or false on failure
  */
@@ -694,8 +694,8 @@ class HttpSocket extends CakeSocket {
  * Parses the given URI and breaks it down into pieces as an indexed array with elements
  * such as 'scheme', 'port', 'query'.
  *
- * @param string $uri URI to parse
- * @param mixed $base If true use default URI config, otherwise indexed array to set 'scheme', 'host', 'port', etc.
+ * @param string|array $uri URI to parse
+ * @param boolean|array $base If true use default URI config, otherwise indexed array to set 'scheme', 'host', 'port', etc.
  * @return array Parsed URI
  */
 	protected function _parseUri($uri = null, $base = array()) {
@@ -759,7 +759,7 @@ class HttpSocket extends CakeSocket {
  * A leading '?' mark in $query is optional and does not effect the outcome of this function.
  * For the complete capabilities of this implementation take a look at HttpSocketTest::testparseQuery()
  *
- * @param mixed $query A query string to parse into an array or an array to return directly "as is"
+ * @param string|array $query A query string to parse into an array or an array to return directly "as is"
  * @return array The $query parsed into a possibly multi-level array. If an empty $query is
  *     given, an empty array is returned.
  */
