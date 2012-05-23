@@ -615,7 +615,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the host that the request was handled on.
  *
- * @return void
+ * @return string
  */
 	public function host() {
 		return env('HTTP_HOST');
