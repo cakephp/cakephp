@@ -2248,48 +2248,40 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Tests generating well-formed querystrings
+ * Test that the compatibility method for incoming urls works.
  *
  * @return void
  */
-	public function testQueryString() {
-		$result = Router::queryString(array('var' => 'foo bar'));
-		$expected = '?var=foo+bar';
-		$this->assertEquals($expected, $result);
+	public function testParseNamedParameters() {
+		$request = new Request();
+		$request->addParams(array(
+			'controller' => 'posts',
+			'action' => 'index',
+		));
+		$result = Router::parseNamedParams($request);
+		$this->assertEquals(array(), $result->params['named']);
 
-		$result = Router::queryString(false, array('some' => 'param', 'foo' => 'bar'));
-		$expected = '?some=param&foo=bar';
-		$this->assertEquals($expected, $result);
-
-		$existing = array('apple' => 'red', 'pear' => 'green');
-		$result = Router::queryString($existing, array('some' => 'param', 'foo' => 'bar'));
-		$expected = '?apple=red&pear=green&some=param&foo=bar';
-		$this->assertEquals($expected, $result);
-
-		$existing = 'apple=red&pear=green';
-		$result = Router::queryString($existing, array('some' => 'param', 'foo' => 'bar'));
-		$expected = '?apple=red&pear=green&some=param&foo=bar';
-		$this->assertEquals($expected, $result);
-
-		$existing = '?apple=red&pear=green';
-		$result = Router::queryString($existing, array('some' => 'param', 'foo' => 'bar'));
-		$expected = '?apple=red&pear=green&some=param&foo=bar';
-		$this->assertEquals($expected, $result);
-
-		$result = Router::queryString('apple=red&pear=green');
-		$expected = '?apple=red&pear=green';
-		$this->assertEquals($expected, $result);
-
-		$result = Router::queryString('foo=bar', array('php' => 'nut', 'jose' => 'zap'), true);
-		$expected = '?foo=bar&amp;php=nut&amp;jose=zap';
-		$this->assertEquals($expected, $result);
-
-		$result = Router::queryString('foo=bar&amp;', array('php' => 'nut', 'jose' => 'zap'), true);
-		$expected = '?foo=bar&amp;php=nut&amp;jose=zap';
-		$this->assertEquals($expected, $result);
-
-		$result = Router::queryString('foo=bar&', array('php' => 'nut', 'jose' => 'zap'));
-		$expected = '?foo=bar&php=nut&jose=zap';
-		$this->assertEquals($expected, $result);
+		$request = new Request();
+		$request->addParams(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => array('home', 'one:two', 'three:four', 'five[nested][0]:six', 'five[nested][1]:seven')
+		));
+		Router::parseNamedParams($request);
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => array('home'),
+			'named' => array(
+				'one' => 'two',
+				'three' => 'four',
+				'five' => array(
+					'nested' => array('six', 'seven')
+				)
+			)
+		);
+		$this->assertEquals($expected, $request->params);
 	}
+
 }

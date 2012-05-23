@@ -936,6 +936,58 @@ class Router {
 		return static::$_validExtensions = array_merge(static::$_validExtensions, $extensions);
 	}
 
+/**
+ * Provides legacy support for named parameters on incoming URLs.
+ *
+ * Checks the passed parameters for elements containing `$options['separator']`
+ * Those parameters are split and parsed as if they were old style named parameters.
+ *
+ * The parsed parameters will be moved from params['pass'] to params['named'].
+ *
+ * ### Options
+ *
+ * - `separator` The string to use as a separator.  Defaults to `:`.
+ *
+ * @param Request $request The request object to modify.
+ * @param array $options The array of options.
+ * @return The modified request
+ */
+	public static function parseNamedParams(Request $request, $options = array()) {
+		$options += array('separator' => ':');
+		if (empty($request->params['pass'])) {
+			$request->params['named'] = array();
+			return $request;
+		}
+		$named = array();
+		foreach ($request->params['pass'] as $key => $value) {
+			if (strpos($value, $options['separator']) === false) {
+				continue;
+			}
+			unset($request->params['pass'][$key]);
+			list($key, $value) = explode($options['separator'], $value, 2);
+
+			if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
+				$matches = array_reverse($matches);
+				$parts = explode('[', $key);
+				$key = array_shift($parts);
+				$arr = $value;
+				foreach ($matches as $match) {
+					if (empty($match[1])) {
+						$arr = array($arr);
+					} else {
+						$arr = array(
+							$match[1] => $arr
+						);
+					}
+				}
+				$value = $arr;
+			}
+			$named = array_merge_recursive($named, array($key => $value));
+		}
+		$request->params['named'] = $named;
+		return $request;
+	}
+
 }
 
 //Save the initial state
