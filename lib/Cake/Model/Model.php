@@ -2555,7 +2555,7 @@ class Model extends Object implements CakeEventListener {
 				'fields' => "{$this->alias}.{$this->primaryKey}",
 				'recursive' => 0), compact('conditions'))
 			);
-			if ($ids === false) {
+			if ($ids === false || (empty($ids) && $callbacks)) {
 				return false;
 			}
 
