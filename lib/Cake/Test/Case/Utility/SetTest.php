@@ -1658,6 +1658,20 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * test classicExtract with keys that exceed 32bit max int.
+ *
+ * @return void
+ */
+	public function testClassicExtractMaxInt() {
+		$data = array(
+			'Data' => array(
+				'13376924712' => 'abc'
+			)
+		);
+		$this->assertEquals('abc', Set::classicExtract($data, 'Data.13376924712'));
+	}
+
+/**
  * testInsert method
  *
  * @return void
