@@ -356,7 +356,7 @@ class CakeRequest implements ArrayAccess {
  *   header.  Setting $safe = false will will also look at HTTP_X_FORWARDED_FOR
  * @return string The client IP.
  */
-	public function clientIp($safe = true) {
+	public static function clientIp($safe = true) {
 		if (!$safe && env('HTTP_X_FORWARDED_FOR') != null) {
 			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
 		} else {
@@ -608,16 +608,16 @@ class CakeRequest implements ArrayAccess {
  *
  * @return string The name of the HTTP method used.
  */
-	public function method() {
+	public static function method() {
 		return env('REQUEST_METHOD');
 	}
 
 /**
  * Get the host that the request was handled on.
  *
- * @return void
+ * @return string
  */
-	public function host() {
+	public static function host() {
 		return env('HTTP_HOST');
 	}
 
@@ -628,8 +628,8 @@ class CakeRequest implements ArrayAccess {
  *   While `example.co.uk` contains 2.
  * @return string Domain name without subdomains.
  */
-	public function domain($tldLength = 1) {
-		$segments = explode('.', $this->host());
+	public static function domain($tldLength = 1) {
+		$segments = explode('.', self::host());
 		$domain = array_slice($segments, -1 * ($tldLength + 1));
 		return implode('.', $domain);
 	}
@@ -641,8 +641,8 @@ class CakeRequest implements ArrayAccess {
  *   While `example.co.uk` contains 2.
  * @return array of subdomains.
  */
-	public function subdomains($tldLength = 1) {
-		$segments = explode('.', $this->host());
+	public static function subdomains($tldLength = 1) {
+		$segments = explode('.', self::host());
 		return array_slice($segments, 0, -1 * ($tldLength + 1));
 	}
 
@@ -665,8 +665,8 @@ class CakeRequest implements ArrayAccess {
  * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
  *   provided type.
  */
-	public function accepts($type = null) {
-		$raw = $this->parseAccept();
+	public static function accepts($type = null) {
+		$raw = self::parseAccept();
 		$accept = array();
 		foreach ($raw as $value => $types) {
 			$accept = array_merge($accept, $types);
@@ -686,9 +686,9 @@ class CakeRequest implements ArrayAccess {
  *
  * @return array An array of prefValue => array(content/types)
  */
-	public function parseAccept() {
+	public static function parseAccept() {
 		$accept = array();
-		$header = explode(',', $this->header('accept'));
+		$header = explode(',', self::header('accept'));
 		foreach (array_filter($header) as $value) {
 			$prefPos = strpos($value, ';');
 			if ($prefPos !== false) {
