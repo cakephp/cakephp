@@ -33,7 +33,7 @@
 				<li style="padding-top: 10px">
 					<span  style="font-size: 18px"><?php echo $plugin; ?></span>
 					<ul>
-						<li><a href='<?php echo $cases; ?>&amp;plugin=<?php echo $plugin; ?>'>Tests</a></li>
+						<li><?php printf('<a href="%s&amp;plugin=%s">Tests</a>', $cases, $plugin); ?></li>
 					</ul>
 				</li>
 			</ul>
