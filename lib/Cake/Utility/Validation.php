@@ -564,7 +564,7 @@ class Validation {
 	}
 
 /**
- * Checks if a value is a natural value.
+ * Checks if a value is a natural number.
  *
  * @param string $check Value to check
  * @param boolean $allowZero Set true to allow zero, defaults to false
