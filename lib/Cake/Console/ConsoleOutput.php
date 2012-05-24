@@ -128,9 +128,13 @@ class ConsoleOutput {
  * @var array
  */
 	protected static $_styles = array(
+		'emergency' => array('text' => 'red', 'underline' => true),
+		'alert' => array('text' => 'red', 'underline' => true),
+		'critical' => array('text' => 'red', 'underline' => true),
 		'error' => array('text' => 'red', 'underline' => true),
 		'warning' => array('text' => 'yellow'),
 		'info' => array('text' => 'cyan'),
+		'debug' => array('text' => 'yellow'),
 		'success' => array('text' => 'green'),
 		'comment' => array('text' => 'blue'),
 		'question' => array('text' => "magenta"),

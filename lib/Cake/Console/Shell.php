@@ -175,7 +175,7 @@ class Shell extends Object {
 		}
 		CakeLog::config('stderr', array(
 			'engine' => 'ConsoleLog',
-			'types' => array('error', 'warning'),
+			'types' => array('emergency', 'alert', 'critical', 'error', 'warning', 'debug'),
 			'stream' => $this->stderr,
 		));
 		if ($this->stdin == null) {
