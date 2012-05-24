@@ -256,21 +256,13 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 			if (is_array($rule->rule) && $args === null) {
 				$args = array_slice($rule->rule, 1);
 			}
-			if (!empty($args)) {
-				foreach ($args as $k => $arg) {
-					$args[$k] = __d($this->_validationDomain, $arg);
-				}
-			}
+			$args = $this->_translateArgs($args);
 
 			$message = __d($this->_validationDomain, $result, $args);
 		} elseif (is_string($name)) {
 			if (is_array($rule->rule)) {
 				$args = array_slice($rule->rule, 1);
-				if (!empty($args)) {
-					foreach ($args as $k => $arg) {
-						$args[$k] = __d($this->_validationDomain, $arg);
-					}
-				}
+				$args = $this->_translateArgs($args);
 				$message = __d($this->_validationDomain, $name, $args);
 			} else {
 				$message = __d($this->_validationDomain, $name);
@@ -280,6 +272,21 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 		}
 
 		return $message;
+	}
+
+/**
+ * Applies translations to validator arguments.
+ *
+ * @param array $args The args to translate
+ * @return array Translated args.
+ */
+	protected function _translateArgs($args) {
+		foreach ((array)$args as $k => $arg) {
+			if (is_string($arg)) {
+				$args[$k] = __d($this->_validationDomain, $arg);
+			}
+		}
+		return $args;
 	}
 
 /**

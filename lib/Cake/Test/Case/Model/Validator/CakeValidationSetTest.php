@@ -56,10 +56,24 @@ class CakeValidationSetTest  extends CakeTestCase {
 		$result = $Field->validate($data);
 		$this->assertEmpty($result);
 
-		$Field = new CakeValidationSet('nothere', array('notEmpty' => array('rule' => 'notEmpty', 'required' => true)));
+		$Field = new CakeValidationSet('nothere', array(
+			'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'required' => true
+			)
+		));
 
 		$result = $Field->validate($data);
 		$expected = array('notEmpty');
+		$this->assertEquals($expected, $result);
+
+		$Field = new CakeValidationSet('body', array(
+			'inList' => array(
+				'rule' => array('inList', array('test'))
+			)
+		));
+		$result = $Field->validate($data);
+		$expected = array('inList');
 		$this->assertEquals($expected, $result);
 	}
 
