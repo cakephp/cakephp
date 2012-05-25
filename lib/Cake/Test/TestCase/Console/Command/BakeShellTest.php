@@ -17,24 +17,19 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Console\Command;
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\BakeShellShell,
+	Cake\Controller\Controller,
+	Cake\Core\App;
 
-App::uses('ShellDispatcher', 'Console');
-App::uses('Shell', 'Console');
-App::uses('BakeShell', 'Console/Command');
-App::uses('ModelTask', 'Console/Command/Task');
-App::uses('ControllerTask', 'Console/Command/Task');
-App::uses('DbConfigTask', 'Console/Command/Task');
-App::uses('Controller', 'Controller');
+class UsersController extends Controller {
 
-if (!class_exists('UsersController')) {
-	class UsersController extends Controller {
+	public $name = 'Users';
 
-		public $name = 'Users';
-
-	}
 }
 
-class BakeShellTest extends CakeTestCase {
+class BakeShellTest extends TestCase {
 
 /**
  * fixtures
@@ -50,11 +45,11 @@ class BakeShellTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$this->Shell = $this->getMock(
-			'BakeShell',
+			'Cake\Console\Command\BakeShell',
 			array('in', 'out', 'hr', 'err', 'createFile', '_stop', '_checkUnitTest'),
 			array($out, $out, $in)
 		);
@@ -76,14 +71,13 @@ class BakeShellTest extends CakeTestCase {
  * @return void
  */
 	public function testAllWithModelName() {
-		App::uses('User', 'Model');
-		$userExists = class_exists('User');
+		$userExists = App::classname('User', 'Model');
 		$this->skipIf($userExists, 'User class exists, cannot test `bake all [param]`.');
 
-		$this->Shell->Model = $this->getMock('ModelTask', array(), array(&$this->Dispatcher));
-		$this->Shell->Controller = $this->getMock('ControllerTask', array(), array(&$this->Dispatcher));
-		$this->Shell->View = $this->getMock('ModelTask', array(), array(&$this->Dispatcher));
-		$this->Shell->DbConfig = $this->getMock('DbConfigTask', array(), array(&$this->Dispatcher));
+		$this->Shell->Model = $this->getMock('Cake\Console\Command\Task\ModelTask', array(), array(&$this->Dispatcher));
+		$this->Shell->Controller = $this->getMock('Cake\Console\Command\Task\ControllerTask', array(), array(&$this->Dispatcher));
+		$this->Shell->View = $this->getMock('Cake\Console\Command\Task\ModelTask', array(), array(&$this->Dispatcher));
+		$this->Shell->DbConfig = $this->getMock('Cake\Console\Command\Task\DbConfigTask', array(), array(&$this->Dispatcher));
 
 		$this->Shell->DbConfig->expects($this->once())
 			->method('getConfig')

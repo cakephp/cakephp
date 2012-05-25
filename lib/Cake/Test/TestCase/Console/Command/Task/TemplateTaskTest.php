@@ -19,18 +19,17 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('ShellDispatcher', 'Console');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('Shell', 'Console');
-App::uses('TemplateTask', 'Console/Command/Task');
+namespace Cake\Test\TestCase\Console\Command\Task;
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\Task\TemplateTask,
+	Cake\Core\App;
 
 /**
  * TemplateTaskTest class
  *
  * @package       Cake.Test.Case.Console.Command.Task
  */
-class TemplateTaskTest extends CakeTestCase {
+class TemplateTaskTest extends TestCase {
 
 /**
  * setUp method
@@ -39,10 +38,10 @@ class TemplateTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('TemplateTask',
+		$this->Task = $this->getMock('Cake\Console\Command\Task\TemplateTask',
 			array('in', 'err', 'createFile', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
@@ -126,7 +125,7 @@ class TemplateTaskTest extends CakeTestCase {
 	public function testGenerate() {
 		App::build(array(
 			'Console' => array(
-				CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS
+				CAKE . 'Test' . DS . 'TestApp' . DS . 'Console' . DS
 			)
 		));
 		$this->Task->initialize();
@@ -146,7 +145,7 @@ class TemplateTaskTest extends CakeTestCase {
 	public function testGenerateWithTemplateFallbacks() {
 		App::build(array(
 			'Console' => array(
-				CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS,
+				CAKE . 'Test' . DS . 'TestApp' . DS . 'Console' . DS,
 				CAKE_CORE_INCLUDE_PATH . DS . 'console' . DS
 			)
 		));
@@ -160,6 +159,6 @@ class TemplateTaskTest extends CakeTestCase {
 			'schema' => ''
 		));
 		$result = $this->Task->generate('classes', 'fixture');
-		$this->assertRegExp('/ArticleFixture extends CakeTestFixture/', $result);
+		$this->assertRegExp('/ArticleFixture extends .*TestFixture/', $result);
 	}
 }

@@ -16,11 +16,13 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Console;
+use Cake\TestSuite\TestCase,
+	Cake\Console\TaskCollection,
+	Cake\Core\App,
+	Cake\Core\Plugin;
 
-App::uses('TaskCollection', 'Console');
-App::uses('Shell', 'Console');
-
-class TaskCollectionTest extends CakeTestCase {
+class TaskCollectionTest extends TestCase {
 
 /**
  * setUp
@@ -29,8 +31,8 @@ class TaskCollectionTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$shell = $this->getMock('Shell', array(), array(), '', false);
-		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
+		$shell = $this->getMock('Cake\Console\Shell', array(), array(), '', false);
+		$dispatcher = $this->getMock('Cake\Console\ShellDispatcher', array(), array(), '', false);
 		$this->Tasks = new TaskCollection($shell, $dispatcher);
 	}
 
@@ -51,8 +53,8 @@ class TaskCollectionTest extends CakeTestCase {
  */
 	public function testLoad() {
 		$result = $this->Tasks->load('DbConfig');
-		$this->assertInstanceOf('DbConfigTask', $result);
-		$this->assertInstanceOf('DbConfigTask', $this->Tasks->DbConfig);
+		$this->assertInstanceOf('Cake\Console\Command\Task\DbConfigTask', $result);
+		$this->assertInstanceOf('Cake\Console\Command\Task\DbConfigTask', $this->Tasks->DbConfig);
 
 		$result = $this->Tasks->attached();
 		$this->assertEquals(array('DbConfig'), $result, 'attached() results are wrong.');
@@ -65,8 +67,8 @@ class TaskCollectionTest extends CakeTestCase {
  */
 	public function testLoadWithEnableFalse() {
 		$result = $this->Tasks->load('DbConfig', array('enabled' => false));
-		$this->assertInstanceOf('DbConfigTask', $result);
-		$this->assertInstanceOf('DbConfigTask', $this->Tasks->DbConfig);
+		$this->assertInstanceOf('Cake\Console\Command\Task\DbConfigTask', $result);
+		$this->assertInstanceOf('Cake\Console\Command\Task\DbConfigTask', $this->Tasks->DbConfig);
 
 		$this->assertFalse($this->Tasks->enabled('DbConfig'), 'DbConfigTask should be disabled');
 	}
@@ -74,7 +76,7 @@ class TaskCollectionTest extends CakeTestCase {
 /**
  * test missingtask exception
  *
- * @expectedException MissingTaskException
+ * @expectedException Cake\Error\MissingTaskException
  * @return void
  */
 	public function testLoadMissingTask() {
@@ -87,18 +89,18 @@ class TaskCollectionTest extends CakeTestCase {
  * @return void
  */
 	public function testLoadPluginTask() {
-		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
-		$shell = $this->getMock('Shell', array(), array(), '', false);
+		$dispatcher = $this->getMock('Cake\Console\ShellDispatcher', array(), array(), '', false);
+		$shell = $this->getMock('Cake\Console\Shell', array(), array(), '', false);
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		));
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 		$this->Tasks = new TaskCollection($shell, $dispatcher);
 
 		$result = $this->Tasks->load('TestPlugin.OtherTask');
-		$this->assertInstanceOf('OtherTaskTask', $result, 'Task class is wrong.');
-		$this->assertInstanceOf('OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
-		CakePlugin::unload();
+		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $result, 'Task class is wrong.');
+		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
+		Plugin::unload();
 	}
 
 /**

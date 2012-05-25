@@ -18,21 +18,21 @@
  * @since         CakePHP v 1.2.6
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ShellDispatcher', 'Console');
-App::uses('Shell', 'Console');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('FixtureTask', 'Console/Command/Task');
-App::uses('TemplateTask', 'Console/Command/Task');
-App::uses('ModelTask', 'Console/Command/Task');
+namespace Cake\Test\TestCase\Console\Command\Task;
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\Task\ModelTask,
+	Cake\Console\Command\Task\TemplateTask,
+	Cake\Model\Model,
+	Cake\Core\Plugin,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Inflector;
 
 /**
  * ModelTaskTest class
  *
  * @package	   Cake.Test.Case.Console.Command.Task
  */
-class ModelTaskTest extends CakeTestCase {
+class ModelTaskTest extends TestCase {
 
 /**
  * fixtures
@@ -51,10 +51,10 @@ class ModelTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('ModelTask',
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'err', 'createFile', '_stop', '_checkUnitTest'),
 			array($out, $out, $in)
 		);
@@ -67,10 +67,10 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	protected function _useMockedOut() {
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('ModelTask',
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
 			array($out, $out, $in)
 		);
@@ -83,11 +83,11 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	protected function _setupOtherMocks() {
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
-		$this->Task->Fixture = $this->getMock('FixtureTask', array(), array($out, $out, $in));
-		$this->Task->Test = $this->getMock('FixtureTask', array(), array($out, $out, $in));
+		$this->Task->Fixture = $this->getMock('Cake\Console\Command\Task\FixtureTask', array(), array($out, $out, $in));
+		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\FixtureTask', array(), array($out, $out, $in));
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 
 		$this->Task->name = 'Model';
@@ -206,9 +206,9 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetTableOddTableInteractive() {
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ModelTask',
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables'),
 			array($out, $out, $in)
 		);
@@ -239,9 +239,9 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetTableOddTable() {
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ModelTask',
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables'),
 			array($out, $out, $in)
 		);
@@ -365,7 +365,7 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testNonInteractiveDoValidation() {
-		$Model = $this->getMock('Model');
+		$Model = $this->getMock('Cake\Model\Model');
 		$Model->primaryKey = 'id';
 		$Model->expects($this->any())->method('schema')->will($this->returnValue(array(
 			'id' => array(
@@ -431,7 +431,7 @@ class ModelTaskTest extends CakeTestCase {
 			'two' => array(),
 			'key' => array('key' => 'primary')
 		);
-		$anything = new PHPUnit_Framework_Constraint_IsAnything();
+		$anything = new \PHPUnit_Framework_Constraint_IsAnything();
 		$this->Task->expects($this->once())->method('in')
 			->with($anything, null, 'key')
 			->will($this->returnValue('my_field'));
@@ -823,7 +823,7 @@ STRINGEND;
 		$this->Task->plugin = 'ControllerTest';
 
 		//fake plugin path
-		CakePlugin::load('ControllerTest', array('path' => APP . 'Plugin' . DS . 'ControllerTest' . DS));
+		Plugin::load('ControllerTest', array('path' =>  APP . 'Plugin' . DS . 'ControllerTest' . DS));
 		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'Model' . DS . 'BakeArticle.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, $this->stringContains('BakeArticle extends ControllerTestAppModel'));
@@ -962,10 +962,10 @@ STRINGEND;
  *
  * @return void
  */
-	public function testExecuteIntoAllOddTables() {
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ModelTask',
+    public function testExecuteIntoAllOddTables() {
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'bake', 'bakeFixture'),
 			array($out, $out, $in)
 		);
@@ -983,9 +983,9 @@ STRINGEND;
 
 		$this->Task->execute();
 
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ModelTask',
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'createFile'),
 			array($out, $out, $in)
 		);
@@ -1017,10 +1017,10 @@ STRINGEND;
  *
  * @return void
  */
-	public function testExecuteIntoBakeOddTables() {
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ModelTask',
+    public function testExecuteIntoBakeOddTables() {
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'bake', 'bakeFixture'),
 			array($out, $out, $in)
 		);
@@ -1038,9 +1038,9 @@ STRINGEND;
 
 		$this->Task->execute();
 
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ModelTask',
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'createFile'),
 			array($out, $out, $in)
 		);

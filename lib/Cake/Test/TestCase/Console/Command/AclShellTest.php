@@ -16,18 +16,21 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Console\Command;
 
-App::uses('ShellDispatcher', 'Console');
-App::uses('Shell', 'Console');
-App::uses('AclShell', 'Console/Command');
-App::uses('ComponentCollection', 'Controller');
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\AclShell,
+	Cake\Controller\Component\AclComponent,
+	Cake\Controller\ComponentCollection,
+	Cake\Core\Configure,
+	Cake\Utility\ClassRegistry;
 
 /**
  * AclShellTest class
  *
  * @package       Cake.Test.Case.Console.Command
  */
-class AclShellTest extends CakeTestCase {
+class AclShellTest extends TestCase {
 
 /**
  * Fixtures
@@ -44,13 +47,13 @@ class AclShellTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Acl.database', 'test');
-		Configure::write('Acl.classname', 'DbAcl');
+		Configure::write('Acl.classname', 'Cake\Controller\Component\Acl\DbAcl');
 
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$this->Task = $this->getMock(
-			'AclShell',
+			'Cake\Console\Command\AclShell',
 			array('in', 'out', 'hr', 'createFile', 'error', 'err', 'clear', 'dispatchShell'),
 			array($out, $out, $in)
 		);

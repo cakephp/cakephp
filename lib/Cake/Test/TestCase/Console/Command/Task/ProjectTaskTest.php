@@ -18,21 +18,19 @@
  * @since         CakePHP v 1.3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ShellDispatcher', 'Console');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('Shell', 'Console');
-App::uses('ProjectTask', 'Console/Command/Task');
-App::uses('Folder', 'Utility');
-App::uses('File', 'Utility');
+namespace Cake\Test\TestCase\Console\Command\Task;
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\Task\ProjectTask,
+	Cake\Core\Configure,
+	Cake\Utility\File,
+	Cake\Utility\Folder;
 
 /**
  * ProjectTask Test class
  *
  * @package       Cake.Test.Case.Console.Command.Task
  */
-class ProjectTaskTest extends CakeTestCase {
+class ProjectTaskTest extends TestCase {
 
 /**
  * setUp method
@@ -41,10 +39,10 @@ class ProjectTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('ProjectTask',
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ProjectTask',
 			array('in', 'err', 'createFile', '_stop'),
 			array($out, $out, $in)
 		);
@@ -100,11 +98,11 @@ class ProjectTaskTest extends CakeTestCase {
 			'Model' . DS . 'Datasource',
 			'Plugin',
 			'Test',
-			'Test' . DS . 'Case',
-			'Test' . DS . 'Case' . DS . 'Controller',
-			'Test' . DS . 'Case' . DS . 'Controller' . DS . 'Component',
-			'Test' . DS . 'Case' . DS . 'Model',
-			'Test' . DS . 'Case' . DS . 'Model' . DS . 'Behavior',
+			'Test' . DS . 'TestCase',
+			'Test' . DS . 'TestCase' . DS . 'Controller',
+			'Test' . DS . 'TestCase' . DS . 'Controller' . DS . 'Component',
+			'Test' . DS . 'TestCase' . DS . 'Model',
+			'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'Behavior',
 			'Test' . DS . 'Fixture',
 			'Vendor',
 			'View',
@@ -193,9 +191,9 @@ class ProjectTaskTest extends CakeTestCase {
 			'Model' . DS . 'Behavior' => 'empty',
 			'Model' . DS . 'Datasource' => 'empty',
 			'Plugin' => 'empty',
-			'Test' . DS . 'Case' . DS . 'Model' . DS . 'Behavior' => 'empty',
-			'Test' . DS . 'Case' . DS . 'Controller' . DS . 'Component' => 'empty',
-			'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' => 'empty',
+			'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'Behavior' => 'empty',
+			'Test' . DS . 'TestCase' . DS . 'Controller' . DS . 'Component' => 'empty',
+			'Test' . DS . 'TestCase' . DS . 'View' . DS . 'Helper' => 'empty',
 			'Test' . DS . 'Fixture' => 'empty',
 			'Vendor' => 'empty',
 			'View' . DS . 'Elements' => 'empty',
@@ -346,7 +344,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path . DS . 'View'), 'No views dir');
 		$this->assertTrue(is_dir($path . DS . 'View' . DS . 'Helper'), 'No helpers dir');
 		$this->assertTrue(is_dir($path . DS . 'Test'), 'No tests dir');
-		$this->assertTrue(is_dir($path . DS . 'Test' . DS . 'Case'), 'No cases dir');
+		$this->assertTrue(is_dir($path . DS . 'Test' . DS . 'TestCase'), 'No cases dir');
 		$this->assertTrue(is_dir($path . DS . 'Test' . DS . 'Fixture'), 'No fixtures dir');
 	}
 

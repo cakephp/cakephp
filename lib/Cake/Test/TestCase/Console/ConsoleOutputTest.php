@@ -16,10 +16,11 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Console;
+use Cake\TestSuite\TestCase,
+	Cake\Console\ConsoleOutput;
 
-App::uses('ConsoleOutput', 'Console');
-
-class ConsoleOutputTest extends CakeTestCase {
+class ConsoleOutputTest extends TestCase {
 
 /**
  * setup
@@ -28,7 +29,7 @@ class ConsoleOutputTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->output = $this->getMock('ConsoleOutput', array('_write'));
+		$this->output = $this->getMock('Cake\Console\ConsoleOutput', array('_write'));
 		$this->output->outputAs(ConsoleOutput::COLOR);
 	}
 

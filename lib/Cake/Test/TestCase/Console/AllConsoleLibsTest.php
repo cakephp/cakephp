@@ -16,6 +16,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Console;
+use Cake\TestSuite\TestSuite;
 
 /**
  * AllConsoleLibsTest class
@@ -24,7 +26,7 @@
  *
  * @package       Cake.Test.Case.Console
  */
-class AllConsoleLibsTest extends PHPUnit_Framework_TestSuite {
+class AllConsoleLibsTest extends \PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,9 +34,9 @@ class AllConsoleLibsTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All console lib classes');
+		$suite = new TestSuite('All console lib classes');
 
-		foreach (new DirectoryIterator(dirname(__FILE__)) as $file) {
+		foreach (new \DirectoryIterator(dirname(__FILE__)) as $file) {
 			if (!$file->isFile() || strpos($file, 'All') === 0) {
 				continue;
 			}

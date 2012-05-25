@@ -18,18 +18,19 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Folder', 'Utility');
-App::uses('ShellDispatcher', 'Console');
-App::uses('Shell', 'Console');
-App::uses('ExtractTask', 'Console/Command/Task');
+namespace Cake\Test\TestCase\Console\Command\Task;
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\Task\ExtractTask,
+	Cake\Core\App,
+	Cake\Core\Plugin,
+	Cake\Utility\Folder;
 
 /**
  * ExtractTaskTest class
  *
  * @package       Cake.Test.Case.Console.Command.Task
  */
-class ExtractTaskTest extends CakeTestCase {
+class ExtractTaskTest extends TestCase {
 
 /**
  * setUp method
@@ -38,11 +39,11 @@ class ExtractTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$this->Task = $this->getMock(
-			'ExtractTask',
+			'Cake\Console\Command\Task\ExtractTask',
 			array('in', 'out', 'err', '_stop'),
 			array($out, $out, $in)
 		);
@@ -61,7 +62,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$Folder = new Folder($this->path);
 		$Folder->delete();
-		CakePlugin::unload();
+		Plugin::unload();
 	}
 
 /**
@@ -72,7 +73,7 @@ class ExtractTaskTest extends CakeTestCase {
 	public function testExecute() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages';
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->any())->method('in')
@@ -177,7 +178,7 @@ class ExtractTaskTest extends CakeTestCase {
 	public function testExtractWithExclude() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View';
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS . 'View';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude'] = 'Pages,Layouts';
 
@@ -204,8 +205,8 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] =
-			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages,' .
-			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Posts';
+			CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Pages,' .
+			CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Posts';
 
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->expects($this->never())->method('err');
@@ -225,17 +226,17 @@ class ExtractTaskTest extends CakeTestCase {
  */
 	public function testExtractExcludePlugins() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		));
-		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ExtractTask',
+		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
 			array('_isExtractingApp', '_extractValidationMessages', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
 		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS;
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude-plugins'] = true;
 
@@ -251,12 +252,12 @@ class ExtractTaskTest extends CakeTestCase {
  */
 	public function testExtractPlugin() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		));
 
-		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ExtractTask',
+		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
 			array('_isExtractingApp', '_extractValidationMessages', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
@@ -278,18 +279,18 @@ class ExtractTaskTest extends CakeTestCase {
  */
 	public function testExtractModelValidation() {
 		App::build(array(
-			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
-		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ExtractTask',
+		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
 			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
 		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS;
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude-plugins'] = true;
 		$this->Task->params['ignore-model-validation'] = false;
@@ -324,17 +325,17 @@ class ExtractTaskTest extends CakeTestCase {
  */
 	public function testExtractModelValidationWithDomainInModel() {
 		App::build(array(
-			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Model' . DS)
+			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Model' . DS)
 		));
-		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ExtractTask',
+		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
 			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
 		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS;
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude-plugins'] = true;
 		$this->Task->params['ignore-model-validation'] = false;
@@ -365,11 +366,11 @@ class ExtractTaskTest extends CakeTestCase {
  */
 	public function testExtractModelValidationInPlugin() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		));
-		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ExtractTask',
+		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
 			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);

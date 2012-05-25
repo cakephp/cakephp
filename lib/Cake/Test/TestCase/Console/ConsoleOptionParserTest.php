@@ -16,10 +16,14 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Console;
+use Cake\TestSuite\TestCase,
+	Cake\Console\ConsoleOptionParser,
+	Cake\Console\ConsoleInputOption,
+	Cake\Console\ConsoleInputArgument,
+	Cake\Console\ConsoleInputSubcommand;
 
-App::uses('ConsoleOptionParser', 'Console');
-
-class ConsoleOptionParserTest extends CakeTestCase {
+class ConsoleOptionParserTest extends TestCase {
 
 /**
  * test setting the console description
@@ -143,7 +147,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
  * Test that adding an option using a two letter short value causes an exception.
  * As they will not parse correctly.
  *
- * @expectedException ConsoleException
+ * @expectedException Cake\Error\ConsoleException
  * @return void
  */
 	public function testAddOptionShortOneLetter() {
@@ -241,7 +245,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test parsing options that do not exist.
  *
- * @expectedException ConsoleException
+ * @expectedException Cake\Error\ConsoleException
  */
 	public function testOptionThatDoesNotExist() {
 		$parser = new ConsoleOptionParser('test', false);
@@ -253,7 +257,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test parsing short options that do not exist.
  *
- * @expectedException ConsoleException
+ * @expectedException Cake\Error\ConsoleException
  */
 	public function testShortOptionThatDoesNotExist() {
 		$parser = new ConsoleOptionParser('test', false);
@@ -265,7 +269,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test that options with choices enforce them.
  *
- * @expectedException ConsoleException
+ * @expectedException Cake\Error\ConsoleException
  * @return void
  */
 	public function testOptionWithChoices() {
@@ -335,7 +339,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test parsing arguments.
  *
- * @expectedException ConsoleException
+ * @expectedException Cake\Error\ConsoleException
  * @return void
  */
 	public function testParseArgumentTooMany() {
@@ -366,7 +370,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test that when there are not enough arguments an exception is raised
  *
- * @expectedException ConsoleException
+ * @expectedException Cake\Error\ConsoleException
  * @return void
  */
 	public function testPositionalArgNotEnough() {
@@ -380,7 +384,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 /**
  * test that arguments with choices enforce them.
  *
- * @expectedException ConsoleException
+ * @expectedException Cake\Error\ConsoleException
  * @return void
  */
 	public function testPositionalArgWithChoices() {
@@ -544,7 +548,7 @@ TEXT;
  */
 	public function testCreateFactory() {
 		$parser = ConsoleOptionParser::create('factory', false);
-		$this->assertInstanceOf('ConsoleOptionParser', $parser);
+		$this->assertInstanceOf('Cake\Console\ConsoleOptionParser', $parser);
 		$this->assertEquals('factory', $parser->command());
 	}
 

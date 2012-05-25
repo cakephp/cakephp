@@ -16,9 +16,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ShellDispatcher', 'Console');
-App::uses('TestShell', 'Console/Command');
+namespace Cake\Test\TestCase\Console\Command;
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\TestShell;
 
 class TestTestShell extends TestShell {
 
@@ -32,7 +32,7 @@ class TestTestShell extends TestShell {
 
 }
 
-class TestShellTest extends CakeTestCase {
+class TestShellTest extends TestCase {
 
 /**
  * setUp test case
@@ -41,15 +41,15 @@ class TestShellTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$this->Shell = $this->getMock(
-			'TestTestShell',
+			__NAMESPACE__ . '\TestTestShell',
 			array('in', 'out', 'hr', 'help', 'error', 'err', '_stop', 'initialize', '_run', 'clear'),
 			array($out, $out, $in)
 		);
-		$this->Shell->OptionParser = $this->getMock('ConsoleOptionParser', array(), array(null, false));
+		$this->Shell->OptionParser = $this->getMock('Cake\Console\ConsoleOptionParser', array(), array(null, false));
 	}
 
 /**
@@ -168,13 +168,13 @@ class TestShellTest extends CakeTestCase {
 	public function testMapCoreTestToCategory() {
 		$this->Shell->startup();
 
-		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/Case/BasicsTest.php');
+		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/TestCase/BasicsTest.php');
 		$this->assertSame('core', $return);
 
-		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/Case/BasicsTest.php');
+		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/TestCase/BasicsTest.php');
 		$this->assertSame('core', $return);
 
-		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/Case/Some/Deeply/Nested/StructureTest.php');
+		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/TestCase/Some/Deeply/Nested/StructureTest.php');
 		$this->assertSame('core', $return);
 	}
 
@@ -188,13 +188,13 @@ class TestShellTest extends CakeTestCase {
 	public function testMapCoreTestToCase() {
 		$this->Shell->startup();
 
-		$return = $this->Shell->mapFileToCase('lib/Cake/Test/Case/BasicsTest.php', 'core');
+		$return = $this->Shell->mapFileToCase('lib/Cake/Test/TestCase/BasicsTest.php', 'core');
 		$this->assertSame('Basics', $return);
 
-		$return = $this->Shell->mapFileToCase('lib/Cake/Test/Case/Core/AppTest.php', 'core');
+		$return = $this->Shell->mapFileToCase('lib/Cake/Test/TestCase/Core/AppTest.php', 'core');
 		$this->assertSame('Core/App', $return);
 
-		$return = $this->Shell->mapFileToCase('lib/Cake/Test/Case/Some/Deeply/Nested/StructureTest.php', 'core', false);
+		$return = $this->Shell->mapFileToCase('lib/Cake/Test/TestCase/Some/Deeply/Nested/StructureTest.php', 'core', false);
 		$this->assertSame('Some/Deeply/Nested/Structure', $return);
 	}
 
@@ -206,10 +206,10 @@ class TestShellTest extends CakeTestCase {
 	public function testMapAppTestToCategory() {
 		$this->Shell->startup();
 
-		$return = $this->Shell->mapFileToCategory(APP . 'Test/Case/Controller/ExampleControllerTest.php');
+		$return = $this->Shell->mapFileToCategory(APP . 'Test/TestCase/Controller/ExampleControllerTest.php');
 		$this->assertSame('app', $return);
 
-		$return = $this->Shell->mapFileToCategory(APP . 'Test/Case/My/File/Is/HereTest.php');
+		$return = $this->Shell->mapFileToCategory(APP . 'Test/TestCase/My/File/Is/HereTest.php');
 		$this->assertSame('app', $return);
 	}
 
@@ -221,10 +221,10 @@ class TestShellTest extends CakeTestCase {
 	public function testMapAppTestToCase() {
 		$this->Shell->startup();
 
-		$return = $this->Shell->mapFileToCase(APP . 'Test/Case/Controller/ExampleControllerTest.php', 'app', false);
+		$return = $this->Shell->mapFileToCase(APP . 'Test/TestCase/Controller/ExampleControllerTest.php', 'app', false);
 		$this->assertSame('Controller/ExampleController', $return);
 
-		$return = $this->Shell->mapFileToCase(APP . 'Test/Case/My/File/Is/HereTest.php', 'app', false);
+		$return = $this->Shell->mapFileToCase(APP . 'Test/TestCase/My/File/Is/HereTest.php', 'app', false);
 		$this->assertSame('My/File/Is/Here', $return);
 	}
 
@@ -236,10 +236,10 @@ class TestShellTest extends CakeTestCase {
 	public function testMapPluginTestToCategory() {
 		$this->Shell->startup();
 
-		$return = $this->Shell->mapFileToCategory(APP . 'Plugin/awesome/Test/Case/Controller/ExampleControllerTest.php');
+		$return = $this->Shell->mapFileToCategory(APP . 'Plugin/awesome/Test/TestCase/Controller/ExampleControllerTest.php');
 		$this->assertSame('awesome', $return);
 
-		$return = $this->Shell->mapFileToCategory(dirname(CAKE) . 'plugins/awesome/Test/Case/Controller/ExampleControllerTest.php');
+		$return = $this->Shell->mapFileToCategory(dirname(CAKE) . 'plugins/awesome/Test/TestCase/Controller/ExampleControllerTest.php');
 		$this->assertSame('awesome', $return);
 	}
 
@@ -251,10 +251,10 @@ class TestShellTest extends CakeTestCase {
 	public function testMapPluginTestToCase() {
 		$this->Shell->startup();
 
-		$return = $this->Shell->mapFileToCase(APP . 'Plugin/awesome/Test/Case/Controller/ExampleControllerTest.php', 'awesome', false);
+		$return = $this->Shell->mapFileToCase(APP . 'Plugin/awesome/Test/TestCase/Controller/ExampleControllerTest.php', 'awesome', false);
 		$this->assertSame('Controller/ExampleController', $return);
 
-		$return = $this->Shell->mapFileToCase(dirname(CAKE) . 'plugins/awesome/Test/Case/Controller/ExampleControllerTest.php', 'awesome', false);
+		$return = $this->Shell->mapFileToCase(dirname(CAKE) . 'plugins/awesome/Test/TestCase/Controller/ExampleControllerTest.php', 'awesome', false);
 		$this->assertSame('Controller/ExampleController', $return);
 	}
 
@@ -266,10 +266,10 @@ class TestShellTest extends CakeTestCase {
 	public function testMapNotTestToNothing() {
 		$this->Shell->startup();
 
-		$return = $this->Shell->mapFileToCategory(APP . 'Test/Case/NotATestFile.php');
+		$return = $this->Shell->mapFileToCategory(APP . 'Test/TestCase/NotATestFile.php');
 		$this->assertSame('app', $return);
 
-		$return = $this->Shell->mapFileToCase(APP . 'Test/Case/NotATestFile.php', false, false);
+		$return = $this->Shell->mapFileToCase(APP . 'Test/TestCase/NotATestFile.php', false, false);
 		$this->assertFalse($return);
 
 		$return = $this->Shell->mapFileToCategory(APP . 'Test/Fixture/SomeTest.php');

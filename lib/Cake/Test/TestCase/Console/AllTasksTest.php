@@ -16,6 +16,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Console;
+use Cake\TestSuite\TestSuite;
 
 /**
  * AllTasksTest class
@@ -24,7 +26,7 @@
  *
  * @package       Cake.Test.Case.Console
  */
-class AllTasksTest extends PHPUnit_Framework_TestSuite {
+class AllTasksTest extends \PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,7 +34,7 @@ class AllTasksTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All Tasks tests');
+		$suite = new TestSuite('All Tasks tests');
 
 		$path = CORE_TEST_CASES . DS . 'Console' . DS . 'Command' . DS . 'Task' . DS;
 		$suite->addTestDirectory($path);

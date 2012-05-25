@@ -18,22 +18,19 @@
  * @since         CakePHP v 1.3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ShellDispatcher', 'Console');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('Shell', 'Console');
-App::uses('PluginTask', 'Console/Command/Task');
-App::uses('ModelTask', 'Console/Command/Task');
-App::uses('Folder', 'Utility');
-App::uses('File', 'Utility');
+namespace Cake\Test\TestCase\Console\Command\Task;
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\Task\DbConfigTask,
+	Cake\Core\App,
+	Cake\Core\Plugin,
+	Cake\Utility\Folder;
 
 /**
  * PluginTaskPlugin class
  *
  * @package       Cake.Test.Case.Console.Command.Task
  */
-class PluginTaskTest extends CakeTestCase {
+class PluginTaskTest extends TestCase {
 
 /**
  * setUp method
@@ -42,10 +39,10 @@ class PluginTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('PluginTask',
+		$this->Task = $this->getMock('Cake\Console\Command\Task\PluginTask',
 			array('in', 'err', 'createFile', '_stop', 'clear'),
 			array($this->out, $this->out, $this->in)
 		);
@@ -74,11 +71,11 @@ class PluginTaskTest extends CakeTestCase {
 
 		$file = $path . DS . 'Controller' . DS . 'BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(2))->method('createFile')
-			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$file = $path . DS . 'Model' . DS . 'BakeTestPluginAppModel.php';
 		$this->Task->expects($this->at(3))->method('createFile')
-			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$this->Task->bake('BakeTestPlugin');
 
@@ -122,11 +119,11 @@ class PluginTaskTest extends CakeTestCase {
 		$file = $path . DS . 'Controller' . DS . 'TestPluginAppController.php';
 
 		$this->Task->expects($this->at(3))->method('createFile')
-			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$file = $path . DS . 'Model' . DS . 'TestPluginAppModel.php';
 		$this->Task->expects($this->at(4))->method('createFile')
-			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$this->Task->args = array();
 		$this->Task->execute();
@@ -149,12 +146,12 @@ class PluginTaskTest extends CakeTestCase {
 		$path = $this->Task->path . 'BakeTestPlugin';
 		$file = $path . DS . 'Controller' . DS . 'BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(2))->method('createFile')
-			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$path = $this->Task->path . 'BakeTestPlugin';
 		$file = $path . DS . 'Model' . DS . 'BakeTestPluginAppModel.php';
 		$this->Task->expects($this->at(3))->method('createFile')
-			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$this->Task->args = array('BakeTestPlugin');
 
@@ -174,7 +171,7 @@ class PluginTaskTest extends CakeTestCase {
 		$last = count($paths);
 		$paths[] = '/fake/path';
 
-		$this->Task = $this->getMock('PluginTask',
+		$this->Task = $this->getMock('Cake\Console\Command\Task\PluginTask',
 			array('in', 'out', 'err', 'createFile', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);

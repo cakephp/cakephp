@@ -16,17 +16,16 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ShellDispatcher', 'Console');
-App::uses('Shell', 'Console');
-App::uses('ApiShell', 'Console/Command');
+namespace Cake\Test\TestCase\Console\Command;
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\ApiShellShell;
 
 /**
  * ApiShellTest class
  *
  * @package       Cake.Test.Case.Console.Command
  */
-class ApiShellTest extends CakeTestCase {
+class ApiShellTest extends TestCase {
 
 /**
  * setUp method
@@ -35,11 +34,11 @@ class ApiShellTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$this->Shell = $this->getMock(
-			'ApiShell',
+			'Cake\Console\Command\ApiShell',
 			array('in', 'out', 'createFile', 'hr', '_stop'),
 			array(	$out, $out, $in)
 		);

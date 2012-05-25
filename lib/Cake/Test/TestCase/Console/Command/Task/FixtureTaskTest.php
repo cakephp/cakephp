@@ -16,22 +16,21 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Console\Command\Task;
 
-App::uses('ShellDispatcher', 'Console');
-App::uses('Shell', 'Console');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('ModelTask', 'Console/Command/Task');
-App::uses('FixtureTask', 'Console/Command/Task');
-App::uses('TemplateTask', 'Console/Command/Task');
-App::uses('DbConfigTask', 'Console/Command/Task');
+use Cake\TestSuite\TestCase,
+	Cake\Core\Plugin,
+	Cake\Model\ConnectionManager,
+	Cake\Console\Command\Task\FixtureTask,
+	Cake\Console\Command\Task\TemplateTask,
+	Cake\Utility\ClassRegistry;
 
 /**
  * FixtureTaskTest class
  *
  * @package       Cake.Test.Case.Console.Command.Task
  */
-class FixtureTaskTest extends CakeTestCase {
+class FixtureTaskTest extends TestCase {
 
 /**
  * fixtures
@@ -54,19 +53,19 @@ class FixtureTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('FixtureTask',
+		$this->Task = $this->getMock('Cake\Console\Command\Task\FixtureTask',
 			array('in', 'err', 'createFile', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
-		$this->Task->Model = $this->getMock('ModelTask',
+		$this->Task->Model = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'out', 'err', 'createFile', 'getName', 'getTable', 'listAll'),
 			array($out, $out, $in)
 		);
 		$this->Task->Template = new TemplateTask($out, $out, $in);
-		$this->Task->DbConfig = $this->getMock('DbConfigTask', array(), array($out, $out, $in));
+		$this->Task->DbConfig = $this->getMock('Cake\Console\Command\Task\DbConfigTask', array(), array($out, $out, $in));
 		$this->Task->Template->initialize();
 	}
 
@@ -86,8 +85,8 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testConstruct() {
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$Task = new FixtureTask($out, $out, $in);
 		$this->assertEquals(APP . 'Test' . DS . 'Fixture' . DS, $Task->path);
@@ -377,12 +376,12 @@ class FixtureTaskTest extends CakeTestCase {
 		$filename = APP . 'Plugin' . DS . 'TestFixture' . DS . 'Test' . DS . 'Fixture' . DS . 'ArticleFixture.php';
 
 		//fake plugin path
-		CakePlugin::load('TestFixture', array('path' => APP . 'Plugin' . DS . 'TestFixture' . DS));
+		Plugin::load('TestFixture', array('path' => APP . 'Plugin' . DS . 'TestFixture' . DS));
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with($filename, $this->stringContains('class Article'));
 
 		$result = $this->Task->generateFixtureFile('Article', array());
-		CakePlugin::unload();
+		Plugin::unload();
 	}
 
 }

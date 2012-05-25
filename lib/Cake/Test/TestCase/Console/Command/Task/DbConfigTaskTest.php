@@ -16,19 +16,16 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ShellDispatcher', 'Console');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('Shell', 'Console');
-App::uses('DbConfigTask', 'Console/Command/Task');
+namespace Cake\Test\TestCase\Console\Command\Task;
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\Task\DbConfigTask;
 
 /**
  * DbConfigTest class
  *
  * @package       Cake.Test.Case.Console.Command.Task
  */
-class DbConfigTaskTest extends CakeTestCase {
+class DbConfigTaskTest extends TestCase {
 
 /**
  * setUp method
@@ -37,10 +34,10 @@ class DbConfigTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
-		$this->Task = $this->getMock('DbConfigTask',
+		$this->Task = $this->getMock('Cake\Console\Command\Task\DbConfigTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest', '_verify'),
 			array($out, $out, $in)
 		);
@@ -91,10 +88,10 @@ class DbConfigTaskTest extends CakeTestCase {
 	public function testExecuteIntoInteractive() {
 		$this->Task->initialize();
 
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock(
-			'DbConfigTask',
+			'Cake\Console\Command\Task\DbConfigTask',
 			array('in', '_stop', 'createFile', 'bake'), array($out, $out, $in)
 		);
 

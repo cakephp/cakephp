@@ -16,11 +16,12 @@
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('CommandListShell', 'Console/Command');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('Shell', 'Console');
+namespace Cake\Test\TestCase\Console\Command;
+use Cake\TestSuite\TestCase,
+	Cake\Console\Command\CommandListShell,
+	Cake\Console\ConsoleOutput,
+	Cake\Core\App,
+	Cake\Core\Plugin;
 
 
 class TestStringOutput extends ConsoleOutput {
@@ -33,7 +34,7 @@ class TestStringOutput extends ConsoleOutput {
 
 }
 
-class CommandListShellTest extends CakeTestCase {
+class CommandListShellTest extends TestCase {
 
 /**
  * setUp method
@@ -44,19 +45,19 @@ class CommandListShellTest extends CakeTestCase {
 		parent::setUp();
 		App::build(array(
 			'Plugin' => array(
-				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
+				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
 			),
 			'Console/Command' => array(
-				CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
+				CAKE . 'Test' . DS . 'TestApp' . DS . 'Console' . DS . 'Command' . DS
 			)
 		), App::RESET);
-		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
+		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$out = new TestStringOutput();
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$this->Shell = $this->getMock(
-			'CommandListShell',
+			'Cake\Console\Command\CommandListShell',
 			array('in', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
@@ -70,7 +71,7 @@ class CommandListShellTest extends CakeTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Shell);
-		CakePlugin::unload();
+		Plugin::unload();
 	}
 
 /**

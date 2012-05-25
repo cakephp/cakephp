@@ -16,6 +16,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Console;
+use Cake\TestSuite\TestSuite;
 
 /**
  * AllShellsTest class
@@ -24,7 +26,7 @@
  *
  * @package       Cake.Test.Case.Console
  */
-class AllShellsTest extends PHPUnit_Framework_TestSuite {
+class AllShellsTest extends \PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,7 +34,7 @@ class AllShellsTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All shell classes');
+		$suite = new TestSuite('All shell classes');
 
 		$path = CORE_TEST_CASES . DS . 'Console' . DS . 'Command' . DS;
 

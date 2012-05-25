@@ -16,15 +16,17 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ConsoleErrorHandler', 'Console');
+namespace Cake\Test\TestCase\Console;
+use Cake\TestSuite\TestCase,
+	Cake\Console\ConsoleErrorHandler,
+	Cake\Error;
 
 /**
  * ConsoleErrorHandler Test case.
  *
  * @package       Cake.Test.Case.Console
  */
-class ConsoleErrorHandlerTest extends CakeTestCase {
+class ConsoleErrorHandlerTest extends TestCase {
 
 /**
  * setup, create mocks
@@ -33,8 +35,8 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Error = $this->getMock('ConsoleErrorHandler', array('_stop'));
-		ConsoleErrorHandler::$stderr = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$this->Error = $this->getMock('Cake\Console\ConsoleErrorHandler', array('_stop'));
+		ConsoleErrorHandler::$stderr = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 	}
 
 /**
@@ -48,7 +50,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
- * test that the console error handler can deal with CakeExceptions.
+ * test that the console error handler can deal with Exceptions.
  *
  * @return void
  */
@@ -61,12 +63,12 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
- * test that the console error handler can deal with CakeExceptions.
+ * test that the console error handler can deal with Exceptions.
  *
  * @return void
  */
 	public function testCakeErrors() {
-		$exception = new MissingActionException('Missing action');
+		$exception = new Error\MissingActionException('Missing action');
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Missing action'));
 
@@ -78,12 +80,12 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
- * test a non CakeException exception.
+ * test a non Cake Exception exception.
  *
  * @return void
  */
 	public function testNonCakeExceptions() {
-		$exception = new InvalidArgumentException('Too many parameters.');
+		$exception = new \InvalidArgumentException('Too many parameters.');
 
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Too many parameters.'));
@@ -101,7 +103,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	public function testError404Exception() {
-		$exception = new NotFoundException('dont use me in cli.');
+		$exception = new Error\NotFoundException('dont use me in cli.');
 
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
@@ -119,7 +121,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	public function testError500Exception() {
-		$exception = new InternalErrorException('dont use me in cli.');
+		$exception = new Error\InternalErrorException('dont use me in cli.');
 
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));

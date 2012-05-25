@@ -16,11 +16,13 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Console;
+use Cake\TestSuite\TestCase,
+	Cake\Console\ConsoleOptionParser,
+	Cake\Console\HelpFormatter,
+	\DOMDocument as DomDocument;
 
-App::uses('ConsoleOptionParser', 'Console');
-App::uses('HelpFormatter', 'Console');
-
-class HelpFormatterTest extends CakeTestCase {
+class HelpFormatterTest extends TestCase {
 
 /**
  * test that the console max width is respected when generating help.
