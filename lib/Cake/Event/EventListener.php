@@ -15,6 +15,7 @@
  * @since		  CakePHP(tm) v 2.1
  * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Event;
 
 /**
  * Objects implementing this interface should declare the `implementedEvents` function
@@ -22,7 +23,7 @@
  *
  * @package Cake.Event
  */
-interface CakeEventListener  {
+interface EventListener  {
 
 /**
  * Returns a list of events this object is implementing, when the class is registered
