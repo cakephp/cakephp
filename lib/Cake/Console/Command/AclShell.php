@@ -15,13 +15,14 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Console\Command;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('Controller', 'Controller');
-App::uses('ComponentCollection', 'Controller');
-App::uses('AclComponent', 'Controller/Component');
-App::uses('DbAcl', 'Model');
-App::uses('Hash', 'Utility');
+use Cake\Console\Shell,
+	Cake\Core\Configure,
+	Cake\Controller\ComponentCollection,
+	Cake\Controller\Component\AclComponent,
+	Cake\Utility\Hash,
+	Cake\Utility\Set;
 
 /**
  * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode
@@ -29,7 +30,7 @@ App::uses('Hash', 'Utility');
  *
  * @package       Cake.Console.Command
  */
-class AclShell extends AppShell {
+class AclShell extends Shell {
 
 /**
  * Contains instance of AclComponent
@@ -70,7 +71,8 @@ class AclShell extends AppShell {
 			$this->connection = $this->params['connection'];
 		}
 
-		if (!in_array(Configure::read('Acl.classname'), array('DbAcl', 'DB_ACL'))) {
+		$aclClass = Configure::read('Acl.classname');
+		if (strpos($aclClass, 'DbAcl') === false) {
 			$out = "--------------------------------------------------\n";
 			$out .= __d('cake_console', 'Error: Your current Cake configuration is set to an ACL implementation other than DB.') . "\n";
 			$out .= __d('cake_console', 'Please change your core config to reflect your decision to use DbAcl before attempting to use this script') . "\n";

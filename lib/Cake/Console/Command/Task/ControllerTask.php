@@ -15,10 +15,11 @@
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppShell', 'Console/Command');
-App::uses('BakeTask', 'Console/Command/Task');
-App::uses('AppModel', 'Model');
+namespace Cake\Console\Command\Task;
+use Cake\Core\App,
+	Cake\Console\Shell,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating controller files.
@@ -108,8 +109,8 @@ class ControllerTask extends BakeTask {
 		foreach ($this->__tables as $table) {
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
-			App::uses($model, 'Model');
-			if (class_exists($model)) {
+			$classname = App::classname($model, 'Model');
+			if ($classname) {
 				$actions = $this->bakeActions($controller);
 				if ($this->bake($controller, $actions) && $unitTestExists) {
 					$this->bakeTest($controller);
@@ -275,7 +276,7 @@ class ControllerTask extends BakeTask {
 		if ($plugin) {
 			$plugin .= '.';
 		}
-		App::uses($modelImport, $plugin . 'Model');
+		$classname = App::classname($plugin . $modelImport, 'Model');
 		if (!class_exists($modelImport)) {
 			$this->err(__d('cake_console', 'You must have a model for this class to build basic methods. Please try again.'));
 			$this->_stop();

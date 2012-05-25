@@ -19,9 +19,11 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppShell', 'Console/Command');
-App::uses('Model', 'Model');
+namespace Cake\Console\Command;
+use Cake\Console\Shell,
+	Cake\Model\Model,
+	Cake\Core\App,
+	Cake\Utility\Inflector;
 
 /**
  * Command-line code generation utility to automate programmer chores.
@@ -33,7 +35,7 @@ App::uses('Model', 'Model');
  * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/2.0/en/console-and-shells/code-generation-with-bake.html
  */
-class BakeShell extends AppShell {
+class BakeShell extends Shell {
 
 /**
  * Contains tasks to load and instantiate
@@ -161,8 +163,7 @@ class BakeShell extends AppShell {
 		$modelExists = false;
 		$model = $this->_modelName($name);
 
-		App::uses('AppModel', 'Model');
-		App::uses($model, 'Model');
+		$model = App::classname($model, 'Model');
 		if (class_exists($model)) {
 			$object = new $model();
 			$modelExists = true;
@@ -187,8 +188,8 @@ class BakeShell extends AppShell {
 					$this->Controller->bakeTest($controller);
 				}
 			}
-			App::uses($controller . 'Controller', 'Controller');
-			if (class_exists($controller . 'Controller')) {
+			$controller = App::classname($controller, 'Controller', 'Controller');
+			if ($controller) {
 				$this->View->args = array($name);
 				$this->View->execute();
 			}

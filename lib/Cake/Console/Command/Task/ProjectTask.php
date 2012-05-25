@@ -16,19 +16,21 @@
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppShell', 'Console/Command');
-App::uses('File', 'Utility');
-App::uses('Folder', 'Utility');
-App::uses('String', 'Utility');
-App::uses('Security', 'Utility');
+namespace Cake\Console\Command\Task;
+use Cake\Console\Shell,
+	Cake\Core\Configure,
+	Cake\Core\App,
+	Cake\Utility\String,
+	Cake\Utility\Security,
+	Cake\Utility\File,
+	Cake\Utility\Folder;
 
 /**
  * Task class for creating new project apps and plugins
  *
  * @package       Cake.Console.Command.Task
  */
-class ProjectTask extends AppShell {
+class ProjectTask extends Shell {
 
 /**
  * configs path (used in testing).
@@ -266,7 +268,6 @@ class ProjectTask extends AppShell {
 		$File = new File($path . 'Config' . DS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('/([\s]*Configure::write\(\'Security.cipherSeed\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
-			App::uses('Security', 'Utility');
 			$string = substr(bin2hex(Security::generateAuthKey()), 0, 30);
 			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.cipherSeed\', \'' . $string . '\');', $contents);
 			if ($File->write($result)) {

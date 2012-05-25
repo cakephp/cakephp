@@ -11,15 +11,18 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppShell', 'Console/Command');
+namespace Cake\Console\Command;
+use Cake\Console\Shell,
+	Cake\Core\Plugin,
+	Cake\Routing\Dispatcher,
+	Cake\Routing\Router;
 
 /**
  * Provides a very basic 'interactive' console for CakePHP apps.
  *
  * @package       Cake.Console.Command
  */
-class ConsoleShell extends AppShell {
+class ConsoleShell extends Shell {
 
 /**
  * Available binding types
@@ -48,7 +51,6 @@ class ConsoleShell extends AppShell {
  * @return void
  */
 	public function startup() {
-		App::uses('Dispatcher', 'Routing');
 		$this->Dispatcher = new Dispatcher();
 		$this->models = App::objects('Model');
 
@@ -342,7 +344,7 @@ class ConsoleShell extends AppShell {
 		if (!@include APP . 'Config' . DS . 'routes.php') {
 			return false;
 		}
-		CakePlugin::routes();
+		Plugin::routes();
 
 		Router::parse('/');
 

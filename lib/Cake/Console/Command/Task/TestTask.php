@@ -15,10 +15,13 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Console\Command\Task;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('BakeTask', 'Console/Command/Task');
-App::uses('ClassRegistry', 'Utility');
+use Cake\Core\App,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Inflector,
+	Cake\Console\Shell,
+	Cake\Error;
 
 /**
  * Task class for creating and updating test files.
@@ -132,7 +135,7 @@ class TestTask extends BakeTask {
 		} elseif ($this->interactive) {
 			$this->getUserFixtures();
 		}
-		App::uses($fullClassName, $realType);
+		$fullClassName = App::className($fullClassName, $realType);
 
 		$methods = array();
 		if (class_exists($fullClassName)) {
@@ -258,9 +261,8 @@ class TestTask extends BakeTask {
  * @param string $class the Classname of the class the test is being generated for.
  * @return object And instance of the class that is going to be tested.
  */
-	public function &buildTestSubject($type, $class) {
+	public function buildTestSubject($type, $class) {
 		ClassRegistry::flush();
-		App::import($type, $class);
 		$class = $this->getRealClassName($type, $class);
 		if (strtolower($type) == 'model') {
 			$instance = ClassRegistry::init($class);
@@ -297,12 +299,12 @@ class TestTask extends BakeTask {
  * @param string $type The type of thing having a test generated.
  * @param string $plugin The plugin name.
  * @return string
- * @throws CakeException When invalid object types are requested.
+ * @throws Cake\Error\Exception When invalid object types are requested.
  */
 	public function mapType($type, $plugin) {
 		$type = ucfirst($type);
 		if (empty($this->classTypes[$type])) {
-			throw new CakeException(__d('cake_dev', 'Invalid object type.'));
+			throw new Error\Exception(__d('cake_dev', 'Invalid object type.'));
 		}
 		$real = $this->classTypes[$type];
 		if ($plugin) {

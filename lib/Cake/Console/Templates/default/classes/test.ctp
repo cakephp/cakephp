@@ -17,6 +17,8 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+use Cake\Utility\Inflector;
+
 echo "<?php\n";
 ?>
 <?php foreach ($uses as $dependency): ?>
@@ -28,9 +30,9 @@ App::uses('<?php echo $dependency[0]; ?>', '<?php echo $dependency[1]; ?>');
  *
  */
 <?php if ($type === 'Controller'): ?>
-class <?php echo $fullClassName; ?>Test extends ControllerTestCase {
+class <?php echo $fullClassName; ?>Test extends \Cake\TestSuite\ControllerTestCase {
 <?php else: ?>
-class <?php echo $fullClassName; ?>Test extends CakeTestCase {
+class <?php echo $fullClassName; ?>Test extends \Cake\TestSuite\TestCase {
 <?php endif; ?>
 
 <?php if (!empty($fixtures)): ?>

@@ -15,6 +15,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Console;
 
 /**
  * An object to represent a single subcommand used in the command line.
@@ -111,7 +112,7 @@ class ConsoleInputSubcommand {
  * @param SimpleXmlElement $parent The parent element.
  * @return SimpleXmlElement The parent with this subcommand appended.
  */
-	public function xml(SimpleXmlElement $parent) {
+	public function xml(\SimpleXmlElement $parent) {
 		$command = $parent->addChild('command');
 		$command->addAttribute('name', $this->_name);
 		$command->addAttribute('help', $this->_help);

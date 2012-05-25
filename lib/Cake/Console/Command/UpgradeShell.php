@@ -16,16 +16,19 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppShell', 'Console/Command');
-App::uses('Folder', 'Utility');
+namespace Cake\Console\Command;
+use Cake\Console\Shell,
+	Cake\Core\App,
+	Cake\Core\Plugin,
+	Cake\Utility\Folder,
+	Cake\Utility\Inflector;
 
 /**
  * A shell class to help developers upgrade applications to CakePHP 2.0
  *
  * @package       Cake.Console.Command
  */
-class UpgradeShell extends AppShell {
+class UpgradeShell extends Shell {
 
 /**
  * Files
@@ -107,9 +110,9 @@ class UpgradeShell extends AppShell {
 		}
 		$patterns = array(
 			array(
-				'*TestCase extends CakeTestCase to *Test extends CakeTestCase',
-				'/([a-zA-Z]*Test)Case extends CakeTestCase/',
-				'\1 extends CakeTestCase'
+				'*TestCase extends \Cake\TestSuite\TestCase to *Test extends \Cake\TestSuite\TestCase',
+				'/([a-zA-Z]*Test)Case extends \Cake\TestSuite\TestCase/',
+				'\1 extends \Cake\TestSuite\TestCase'
 			),
 		);
 
@@ -184,7 +187,7 @@ class UpgradeShell extends AppShell {
 			'models',
 			'Model',
 			'tests',
-			'Test' => array('regex' => '@class (\S*Test) extends CakeTestCase@'),
+			'Test' => array('regex' => '@class (\S*Test) extends \\Cake\\TestSuite\\TestCase@'),
 			'views',
 			'View',
 			'vendors/shells',
@@ -227,7 +230,7 @@ class UpgradeShell extends AppShell {
 		$plugins = App::objects('plugin');
 		$pluginHelpers = array();
 		foreach ($plugins as $plugin) {
-			CakePlugin::load($plugin);
+			Plugin::load($plugin);
 			$pluginHelpers = array_merge(
 				$pluginHelpers,
 				App::objects('helper', App::pluginPath($plugin) . DS . 'views' . DS . 'helpers' . DS, false)
@@ -343,7 +346,7 @@ class UpgradeShell extends AppShell {
 	}
 
 /**
- * Update the properties moved to CakeRequest.
+ * Update the properties moved to \Cake\Network\Request.
  *
  * @return void
  */
@@ -746,9 +749,9 @@ class UpgradeShell extends AppShell {
 				continue;
 			}
 			$Iterator = new RegexIterator(
-				new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)),
+				new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path)),
 				'/^.+\.(' . $extensions . ')$/i',
-				RegexIterator::MATCH
+				\RegexIterator::MATCH
 			);
 			foreach ($Iterator as $file) {
 				if ($file->isFile()) {

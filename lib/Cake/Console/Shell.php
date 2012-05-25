@@ -15,13 +15,17 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('TaskCollection', 'Console');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('ConsoleInputSubcommand', 'Console');
-App::uses('ConsoleOptionParser', 'Console');
-App::uses('File', 'Utility');
+namespace Cake\Console;
+use Cake\Core\Configure,
+	Cake\Core\Plugin,
+	Cake\Core\App,
+	Cake\Core\Object,
+	Cake\Log\Log,
+	Cake\Utility\Inflector,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\File,
+	Cake\Utility\String,
+	Cake\Error;
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -155,7 +159,8 @@ class Shell extends Object {
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		if ($this->name == null) {
-			$this->name = Inflector::camelize(str_replace(array('Shell', 'Task'), '', get_class($this)));
+			list(, $class) = namespaceSplit(get_class($this));
+			$this->name = str_replace(array('Shell', 'Task'), '', $class);
 		}
 		$this->Tasks = new TaskCollection($this);
 
@@ -165,16 +170,16 @@ class Shell extends Object {
 		if ($this->stdout == null) {
 			$this->stdout = new ConsoleOutput('php://stdout');
 		}
-		CakeLog::config('stdout', array(
-			'engine' => 'ConsoleLog',
+		Log::config('stdout', array(
+			'engine' => 'Cake\Log\Engine\ConsoleLog',
 			'types' => array('notice', 'info'),
 			'stream' => $this->stdout,
 		));
 		if ($this->stderr == null) {
 			$this->stderr = new ConsoleOutput('php://stderr');
 		}
-		CakeLog::config('stderr', array(
-			'engine' => 'ConsoleLog',
+		Log::config('stderr', array(
+			'engine' => 'Cake\Log\Engine\ConsoleLog',
 			'types' => array('error', 'warning'),
 			'stream' => $this->stderr,
 		));
@@ -243,20 +248,19 @@ class Shell extends Object {
 		if ($this->uses === null || $this->uses === false) {
 			return;
 		}
-		App::uses('ClassRegistry', 'Utility');
 
 		if ($this->uses !== true && !empty($this->uses)) {
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 
-			$modelClassName = $uses[0];
-			if (strpos($uses[0], '.') !== false) {
-				list($plugin, $modelClassName) = explode('.', $uses[0]);
-			}
-			$this->modelClass = $modelClassName;
+			$modelClass = $uses[0];
+			$className = App::className($modelClass, 'Model');
+			list(, $modelClass) = namespaceSplit($className);
+			$this->modelClass = $modelClass;
 
 			foreach ($uses as $modelClass) {
-				list($plugin, $modelClass) = pluginSplit($modelClass, true);
-				$this->{$modelClass} = ClassRegistry::init($plugin . $modelClass);
+				$className = App::className($modelClass, 'Model');
+				list(, $modelClass) = namespaceSplit($className);
+				$this->{$modelClass} = ClassRegistry::init($className);
 			}
 			return true;
 		}
@@ -299,15 +303,15 @@ class Shell extends Object {
  */
 	public function hasMethod($name) {
 		try {
-			$method = new ReflectionMethod($this, $name);
+			$method = new \ReflectionMethod($this, $name);
 			if (!$method->isPublic() || substr($name, 0, 1) === '_') {
 				return false;
 			}
-			if ($method->getDeclaringClass()->name == 'Shell') {
+			if ($method->getDeclaringClass()->name == 'Cake\Console\Shell') {
 				return false;
 			}
 			return true;
-		} catch (ReflectionException $e) {
+		} catch (\ReflectionException $e) {
 			return false;
 		}
 	}
@@ -374,7 +378,7 @@ class Shell extends Object {
 		try {
 			$this->OptionParser = $this->getOptionParser();
 			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
-		} catch (ConsoleException $e) {
+		} catch (Error\ConsoleException $e) {
 			$this->out($this->OptionParser->help($command));
 			return false;
 		}
@@ -819,8 +823,8 @@ class Shell extends Object {
  * @return string $path path to the correct plugin.
  */
 	protected function _pluginPath($pluginName) {
-		if (CakePlugin::loaded($pluginName)) {
-			return CakePlugin::path($pluginName);
+		if (Plugin::loaded($pluginName)) {
+			return Plugin::path($pluginName);
 		}
 		return current(App::path('plugins')) . $pluginName . DS;
 	}

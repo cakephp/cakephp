@@ -15,9 +15,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('ErrorHandler', 'Error');
-App::uses('ConsoleOutput', 'Console');
-App::uses('CakeLog', 'Log');
+namespace Cake\Console;
+use Cake\Error\ErrorHandler,
+	Cake\Core\Configure;
 
 /**
  * Error Handler for Cake console. Does simple printing of the
@@ -52,7 +52,7 @@ class ConsoleErrorHandler {
  * @param Exception $exception The exception to handle
  * @return void
  */
-	public function handleException(Exception $exception) {
+	public function handleException(\Exception $exception) {
 		$stderr = self::getStderr();
 		$stderr->write(__d('cake_console', "<error>Error:</error> %s\n%s",
 			$exception->getMessage(),
@@ -82,7 +82,7 @@ class ConsoleErrorHandler {
 		$stderr->write(__d('cake_console', "<error>%s Error:</error> %s\n", $name, $message));
 
 		if (Configure::read('debug') == 0) {
-			CakeLog::write($log, $message);
+			Log::write($log, $message);
 		}
 	}
 

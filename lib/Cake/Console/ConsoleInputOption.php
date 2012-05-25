@@ -15,6 +15,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Console;
+use Cake\Error;
 
 /**
  * An object to represent a single option used in the command line.
@@ -92,7 +94,7 @@ class ConsoleInputOption {
 			$this->_choices = $choices;
 		}
 		if (strlen($this->_short) > 1) {
-			throw new ConsoleException(
+			throw new Error\ConsoleException(
 				__d('cake_console', 'Short options must be one letter.')
 			);
 		}
@@ -187,7 +189,7 @@ class ConsoleInputOption {
 			return true;
 		}
 		if (!in_array($value, $this->_choices)) {
-			throw new ConsoleException(
+			throw new Error\ConsoleException(
 				__d('cake_console', '"%s" is not a valid value for --%s. Please use one of "%s"',
 				$value, $this->_name, implode(', ', $this->_choices)
 			));
@@ -201,7 +203,7 @@ class ConsoleInputOption {
  * @param SimpleXmlElement $parent The parent element.
  * @return SimpleXmlElement The parent with this option appended.
  */
-	public function xml(SimpleXmlElement $parent) {
+	public function xml(\SimpleXmlElement $parent) {
 		$option = $parent->addChild('option');
 		$option->addAttribute('name', '--' . $this->_name);
 		$short = '';

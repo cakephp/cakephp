@@ -15,12 +15,13 @@
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppShell', 'Console/Command');
-App::uses('BakeTask', 'Console/Command/Task');
-App::uses('ConnectionManager', 'Model');
-App::uses('Model', 'Model');
-App::uses('Validation', 'Utility');
+namespace Cake\Console\Command\Task;
+use Cake\Core\App,
+	Cake\Console\Shell,
+	Cake\Model\Model,
+	Cake\Model\ConnectionManager,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating model files.
@@ -218,7 +219,7 @@ class ModelTask extends BakeTask {
 		try {
 			$fields = $tempModel->schema(true);
 			$knownToExist = true;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$fields = array($tempModel->primaryKey);
 		}
 		if (!array_key_exists('id', $fields)) {

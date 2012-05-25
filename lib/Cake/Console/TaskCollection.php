@@ -14,8 +14,10 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ObjectCollection', 'Utility');
+namespace Cake\Console;
+use Cake\Utility\ObjectCollection,
+	Cake\Core\App,
+	Cake\Error;
 
 /**
  * Collection object for Tasks.  Provides features
@@ -63,14 +65,11 @@ class TaskCollection extends ObjectCollection {
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
-		$taskClass = $name . 'Task';
-		App::uses($taskClass, $plugin . 'Console/Command/Task');
-		if (!class_exists($taskClass)) {
-			if (!class_exists($taskClass)) {
-				throw new MissingTaskException(array(
-					'class' => $taskClass
-				));
-			}
+		$taskClass = App::classname($task, 'Console/Command/Task', 'Task');
+		if (!$taskClass) {
+			throw new Error\MissingTaskException(array(
+				'class' => $name
+			));
 		}
 
 		$this->_loaded[$name] = new $taskClass(

@@ -15,10 +15,11 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppShell', 'Console/Command');
-App::uses('BakeTask', 'Console/Command/Task');
-App::uses('Model', 'Model');
+namespace Cake\Console\Command\Task;
+use Cake\Model\Schema,
+	Cake\Model\Model,
+	Cake\Console\Shell,
+	Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating fixtures files.
@@ -44,7 +45,7 @@ class FixtureTask extends BakeTask {
 /**
  * Schema instance
  *
- * @var CakeSchema
+ * @var Cake\Model\Schema
  */
 	protected $_Schema = null;
 
@@ -184,7 +185,6 @@ class FixtureTask extends BakeTask {
  * @return string Baked fixture content
  */
 	public function bake($model, $useTable = false, $importOptions = array()) {
-		App::uses('CakeSchema', 'Model');
 		$table = $schema = $records = $import = $modelImport = null;
 		$importBits = array();
 
@@ -210,7 +210,7 @@ class FixtureTask extends BakeTask {
 			}
 		}
 
-		$this->_Schema = new CakeSchema();
+		$this->_Schema = new Schema();
 		$data = $this->_Schema->read(array('models' => false, 'connection' => $this->connection));
 		if (!isset($data['tables'][$useTable])) {
 			$this->err('Could not find your selected table ' . $useTable);

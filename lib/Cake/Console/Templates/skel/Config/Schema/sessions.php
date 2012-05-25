@@ -27,7 +27,7 @@
  * cake schema run create Sessions
  *
  */
-class SessionsSchema extends CakeSchema {
+class SessionsSchema extends Schema {
 
 	public $name = 'Sessions';
 

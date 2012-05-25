@@ -17,12 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('TestShell', 'Console/Command');
-App::uses('AppShell', 'Console/Command');
-App::uses('CakeTestSuiteDispatcher', 'TestSuite');
-App::uses('CakeTestSuiteCommand', 'TestSuite');
-App::uses('CakeTestLoader', 'TestSuite');
+namespace Cake\Console\Command;
+use Cake\Console\ConsoleOptionParser;
 
 /**
  * Provides a CakePHP wrapper around PHPUnit.

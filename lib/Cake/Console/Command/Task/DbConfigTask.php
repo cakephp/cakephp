@@ -15,15 +15,16 @@
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppShell', 'Console/Command');
+namespace Cake\Console\Command\Task;
+use Cake\Console\Shell,
+	Cake\Model\ConnectionManager;
 
 /**
  * Task class for creating and updating the database configuration file.
  *
  * @package       Cake.Console.Command.Task
  */
-class DbConfigTask extends AppShell {
+class DbConfigTask extends Shell {
 
 /**
  * path to CONFIG directory
@@ -354,7 +355,6 @@ class DbConfigTask extends AppShell {
  * @return void
  */
 	public function getConfig() {
-		App::uses('ConnectionManager', 'Model');
 		$configs = ConnectionManager::enumConnectionObjects();
 
 		$useDbConfig = key($configs);

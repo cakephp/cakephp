@@ -15,6 +15,11 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Console;
+use Cake\Core\Configure,
+	Cake\Core\App,
+	Cake\Utility\Inflector,
+	Cake\Error;
 
 /**
  * Shell dispatcher handles dispatching cli commands.
@@ -95,12 +100,12 @@ class ShellDispatcher {
  * Defines current working environment.
  *
  * @return void
- * @throws CakeException
+ * @throws Cake\Error\Exception
  */
 	protected function _initEnvironment() {
 		if (!$this->_bootstrap()) {
 			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'lib' . DS . 'Cake exists in ' . CAKE_CORE_INCLUDE_PATH;
-			throw new CakeException($message);
+			throw new Error\Exception($message);
 		}
 
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
@@ -108,7 +113,7 @@ class ShellDispatcher {
 				"Please make sure that " . DS . 'lib' . DS . 'Cake' . DS . "Console is in your system path,\n" .
 				"and check the cookbook for the correct usage of this command.\n" .
 				"(http://book.cakephp.org/)";
-			throw new CakeException($message);
+			throw new Error\Exception($message);
 		}
 
 		$this->shiftArgs();
@@ -153,7 +158,6 @@ class ShellDispatcher {
  * @return void
  */
 	public function setErrorHandlers() {
-		App::uses('ConsoleErrorHandler', 'Console');
 		$error = Configure::read('Error');
 		$exception = Configure::read('Exception');
 
@@ -200,7 +204,7 @@ class ShellDispatcher {
 			$Shell->loadTasks();
 			return $Shell->runCommand($command, $this->args);
 		}
-		$methods = array_diff(get_class_methods($Shell), get_class_methods('Shell'));
+		$methods = array_diff(get_class_methods($Shell), get_class_methods('Cake\Console\Shell'));
 		$added = in_array($command, $methods);
 		$private = $command[0] == '_' && method_exists($Shell, $command);
 
@@ -215,7 +219,7 @@ class ShellDispatcher {
 				return $Shell->main();
 			}
 		}
-		throw new MissingShellMethodException(array('shell' => $shell, 'method' => $arg));
+		throw new Error\MissingShellMethodException(array('shell' => $shell, 'method' => $arg));
 	}
 
 /**
@@ -228,17 +232,17 @@ class ShellDispatcher {
  * @throws MissingShellException when errors are encountered.
  */
 	protected function _getShell($shell) {
-		list($plugin, $shell) = pluginSplit($shell, true);
+		list($plugin, $shell) = pluginSplit($shell);
 
 		$plugin = Inflector::camelize($plugin);
-		$class = Inflector::camelize($shell) . 'Shell';
-
-		App::uses('Shell', 'Console');
-		App::uses('AppShell', 'Console/Command');
-		App::uses($class, $plugin . 'Console/Command');
+		$class = Inflector::camelize($shell);
+		if ($plugin) {
+			$class = $plugin . '.' . $class;
+		}
+		$class = App::classname($class, 'Console/Command', 'Shell');
 
 		if (!class_exists($class)) {
-			throw new MissingShellException(array(
+			throw new Error\MissingShellException(array(
 				'class' => $class
 			));
 		}
@@ -257,7 +261,7 @@ class ShellDispatcher {
 		$this->_parsePaths($args);
 
 		$defaults = array(
-			'app' => 'app',
+			'app' => 'App',
 			'root' => dirname(dirname(dirname(dirname(__FILE__)))),
 			'working' => null,
 			'webroot' => 'webroot'

@@ -24,7 +24,7 @@
  * <?php echo $model; ?>Fixture
  *
  */
-class <?php echo $model; ?>Fixture extends CakeTestFixture {
+class <?php echo $model; ?>Fixture extends \Cake\TestSuite\Fixture\TestFixture {
 
 <?php if ($table): ?>
 /**

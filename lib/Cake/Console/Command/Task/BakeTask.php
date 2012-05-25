@@ -15,15 +15,16 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppShell', 'Console/Command');
+namespace Cake\Console\Command\Task;
+use Cake\Console\Shell,
+	Cake\Core\Configure;
 
 /**
  * Base class for Bake Tasks.
  *
  * @package       Cake.Console.Command.Task
  */
-class BakeTask extends AppShell {
+class BakeTask extends Shell {
 
 /**
  * Name of plugin

@@ -27,7 +27,7 @@
  * cake schema run create i18n
  *
  */
-class i18nSchema extends CakeSchema {
+class i18nSchema extends Schema {
 
 	public $name = 'i18n';
 

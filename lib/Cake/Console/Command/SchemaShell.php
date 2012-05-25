@@ -18,11 +18,14 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppShell', 'Console/Command');
-App::uses('File', 'Utility');
-App::uses('Folder', 'Utility');
-App::uses('CakeSchema', 'Model');
+namespace Cake\Console\Command;
+use Cake\Console\Shell,
+	Cake\Core\Configure,
+	Cake\Model\Schema,
+	Cake\Model\ConnectionManager,
+	Cake\Utility\File,
+	Cake\Utility\Folder,
+	Cake\Utility\Inflector;
 
 /**
  * Schema is a command-line database management utility for automating programmer chores.
@@ -33,12 +36,12 @@ App::uses('CakeSchema', 'Model');
  * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html
  */
-class SchemaShell extends AppShell {
+class SchemaShell extends Shell {
 
 /**
  * Schema class being used.
  *
- * @var CakeSchema
+ * @var Cake\Model\Schema
  */
 	public $Schema;
 
@@ -96,7 +99,7 @@ class SchemaShell extends AppShell {
 				$name = $plugin;
 			}
 		}
-		$this->Schema = new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
+		$this->Schema = new Schema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
 /**
@@ -302,7 +305,7 @@ class SchemaShell extends AppShell {
  * Create database from Schema object
  * Should be called via the run method
  *
- * @param CakeSchema $Schema
+ * @param Cake\Model\Schema $Schema
  * @param string $table
  * @return void
  */
@@ -347,7 +350,7 @@ class SchemaShell extends AppShell {
  * Update database with Schema object
  * Should be called via the run method
  *
- * @param CakeSchema $Schema
+ * @param Cake\Model\Schema $Schema
  * @param string $table
  * @return void
  */
@@ -393,7 +396,7 @@ class SchemaShell extends AppShell {
  *
  * @param array $contents
  * @param string $event
- * @param CakeSchema $Schema
+ * @param Cake\Model\Schema $Schema
  * @return void
  */
 	protected function _run($contents, $event, &$Schema) {

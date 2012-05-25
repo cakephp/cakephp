@@ -23,6 +23,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+use Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Core\Plugin,
+	Cake\Cache\Cache,
+	Cake\Log\Log,
+	Cake\Utility\Inflector;
+
 // Setup a 'default' cache configuration for use in the application.
 Cache::config('default', array('engine' => 'File'));
 
@@ -63,11 +70,11 @@ Cache::config('default', array('engine' => 'File'));
 
 /**
  * Plugins need to be loaded manually, you can either load them one by one or all of them in a single call
- * Uncomment one of the lines below, as you need. make sure you read the documentation on CakePlugin to use more
+ * Uncomment one of the lines below, as you need. make sure you read the documentation on Plugin to use more
  * advanced ways of loading plugins
  *
- * CakePlugin::loadAll(); // Loads all plugins at once
- * CakePlugin::load('DebugKit'); //Loads a single plugin named DebugKit
+ * Plugin::loadAll(); // Loads all plugins at once
+ * Plugin::load('DebugKit'); //Loads a single plugin named DebugKit
  *
  */
 
@@ -95,14 +102,13 @@ Configure::write('Dispatcher.filters', array(
 /**
  * Configures default file logging options
  */
-App::uses('CakeLog', 'Log');
-CakeLog::config('debug', array(
-	'engine' => 'FileLog',
+Log::config('debug', array(
+	'engine' => 'Cake\Log\Engine\FileLog',
 	'scopes' => array('notice', 'info', 'debug'),
 	'file' => 'debug',
 ));
-CakeLog::config('error', array(
-	'engine' => 'FileLog',
+Log::config('error', array(
+	'engine' => 'Cake\Log\Engine\FileLog',
 	'scopes' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 	'file' => 'error',
 ));

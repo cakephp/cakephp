@@ -15,10 +15,17 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+use Cake\Core\Configure,
+	Cake\Cache\Cache,
+	Cake\Model\ConnectionManager,
+	Cake\Error\NotFoundException,
+	Cake\Utility\Debugger,
+	Cake\Utility\Validation;
+
 if (Configure::read('debug') == 0):
 	throw new NotFoundException();
 endif;
-App::uses('Debugger', 'Utility');
 ?>
 <iframe src="http://cakephp.org/bake-banner" width="830" height="160" style="overflow:hidden; border:none;">
 	<p>For updates and important announcements, visit http://cakefest.org</p>
@@ -94,10 +101,9 @@ endif;
 </p>
 <?php
 if (isset($filePresent)):
-	App::uses('ConnectionManager', 'Model');
 	try {
 		$connected = ConnectionManager::getDataSource('default');
-	} catch (Exception $connectionError) {
+	} catch (\Exception $connectionError) {
 		$connected = false;
 	}
 ?>
@@ -118,7 +124,6 @@ if (isset($filePresent)):
 </p>
 <?php endif; ?>
 <?php
-	App::uses('Validation', 'Utility');
 	if (!Validation::alphaNumeric('cakephp')) {
 		echo '<p><span class="notice">';
 			echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');

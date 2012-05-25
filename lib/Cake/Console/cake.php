@@ -38,4 +38,4 @@ if (!include $dispatcher) {
 }
 unset($paths, $path, $found, $dispatcher, $root, $ds);
 
-return ShellDispatcher::run($argv);
+return Cake\Console\ShellDispatcher::run($argv);

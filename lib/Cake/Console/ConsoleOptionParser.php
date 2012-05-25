@@ -15,15 +15,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('TaskCollection', 'Console');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('ConsoleInputSubcommand', 'Console');
-App::uses('ConsoleInputOption', 'Console');
-App::uses('ConsoleInputArgument', 'Console');
-App::uses('ConsoleOptionParser', 'Console');
-App::uses('HelpFormatter', 'Console');
+namespace Cake\Console;
+use Cake\Utility\Inflector,
+	Cake\Error;
 
 /**
  * Handles parsing the ARGV in the command line and provides support
@@ -459,7 +453,7 @@ class ConsoleOptionParser {
  * @param string $command The subcommand to use.  If this parameter is a subcommand, that has a parser,
  *    That parser will be used to parse $argv instead.
  * @return Array array($params, $args)
- * @throws ConsoleException When an invalid parameter is encountered.
+ * @throws Cake\Error\ConsoleException When an invalid parameter is encountered.
  */
 	public function parse($argv, $command = null) {
 		if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
@@ -478,7 +472,7 @@ class ConsoleOptionParser {
 		}
 		foreach ($this->_args as $i => $arg) {
 			if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
-				throw new ConsoleException(
+				throw new Error\ConsoleException(
 					__d('cake_console', 'Missing required arguments. %s is required.', $arg->name())
 				);
 			}
@@ -551,7 +545,7 @@ class ConsoleOptionParser {
  * @param string $option The option to parse.
  * @param array $params The params to append the parsed value into
  * @return array Params with $option added in.
- * @throws ConsoleException When unknown short options are encountered.
+ * @throws Cake\Error\ConsoleException When unknown short options are encountered.
  */
 	protected function _parseShortOption($option, $params) {
 		$key = substr($option, 1);
@@ -563,7 +557,7 @@ class ConsoleOptionParser {
 			}
 		}
 		if (!isset($this->_shortOptions[$key])) {
-			throw new ConsoleException(__d('cake_console', 'Unknown short option `%s`', $key));
+			throw new Error\ConsoleException(__d('cake_console', 'Unknown short option `%s`', $key));
 		}
 		$name = $this->_shortOptions[$key];
 		return $this->_parseOption($name, $params);
@@ -575,11 +569,11 @@ class ConsoleOptionParser {
  * @param string $name The name to parse.
  * @param array $params The params to append the parsed value into
  * @return array Params with $option added in.
- * @throws ConsoleException
+ * @throws Cake\Error\ConsoleException
  */
 	protected function _parseOption($name, $params) {
 		if (!isset($this->_options[$name])) {
-			throw new ConsoleException(__d('cake_console', 'Unknown option `%s`', $name));
+			throw new Error\ConsoleException(__d('cake_console', 'Unknown option `%s`', $name));
 		}
 		$option = $this->_options[$name];
 		$isBoolean = $option->isBoolean();
@@ -621,7 +615,7 @@ class ConsoleOptionParser {
  * @param string $argument The argument to append
  * @param array $args The array of parsed args to append to.
  * @return array Args
- * @throws ConsoleException
+ * @throws Cake\Error\ConsoleException
  */
 	protected function _parseArg($argument, $args) {
 		if (empty($this->_args)) {
@@ -630,7 +624,7 @@ class ConsoleOptionParser {
 		}
 		$next = count($args);
 		if (!isset($this->_args[$next])) {
-			throw new ConsoleException(__d('cake_console', 'Too many arguments.'));
+			throw new Error\ConsoleException(__d('cake_console', 'Too many arguments.'));
 		}
 
 		if ($this->_args[$next]->validChoice($argument)) {

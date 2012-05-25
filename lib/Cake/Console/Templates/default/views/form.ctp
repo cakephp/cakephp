@@ -15,6 +15,7 @@
  * @since         CakePHP(tm) v 1.2.0.5234
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+use Cake\Utility\Inflector;
 ?>
 <div class="<?php echo $pluralVar; ?> form">
 <?php echo "<?php echo \$this->Form->create('{$modelClass}'); ?>\n"; ?>

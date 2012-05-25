@@ -18,6 +18,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+use Cake\Utility\Inflector;
 
 echo "<?php\n";
 echo "App::uses('{$plugin}AppModel', '{$pluginPath}Model');\n";

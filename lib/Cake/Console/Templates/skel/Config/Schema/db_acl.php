@@ -27,7 +27,7 @@
  * cake schema run create DbAcl
  *
  */
-class DbAclSchema extends CakeSchema {
+class DbAclSchema extends Schema {
 
 	public $name = 'DbAcl';
 
