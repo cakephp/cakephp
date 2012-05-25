@@ -16,9 +16,16 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Routing;
 
-App::uses('CakeRequest', 'Network');
-App::uses('CakeRoute', 'Routing/Route');
+use Cake\Core\Configure,
+	Cake\Network\Request,
+	Cake\Network\Response,
+	Cake\Routing\Route\Route,
+	Cake\Utility\Set,
+	Cake\Utility\Hash,
+	Cake\Utility\Inflector,
+	Cake\Error;
 
 /**
  * Parses the request URL into controller, action, and parameters.  Uses the connected routes
@@ -157,7 +164,7 @@ class Router {
  *
  * @var string
  */
-	protected static $_routeClass = 'CakeRoute';
+	protected static $_routeClass = 'Cake\Routing\Route\Route';
 
 /**
  * Set the default route class to use or return the current one
@@ -175,15 +182,15 @@ class Router {
 	}
 
 /**
- * Validates that the passed route class exists and is a subclass of CakeRoute
+ * Validates that the passed route class exists and is a subclass of Cake Route
  *
  * @param $routeClass
  * @return string
  * @throws RouterException
  */
 	protected static function _validateRouteClass($routeClass) {
-		if (!class_exists($routeClass) || !is_subclass_of($routeClass, 'CakeRoute')) {
-			throw new RouterException(__d('cake_dev', 'Route classes must extend CakeRoute'));
+		if (!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route')) {
+			throw new Error\RouterException(__d('cake_dev', 'Route classes must extend Cake\Routing\Route\Route'));
 		}
 		return $routeClass;
 	}
@@ -304,7 +311,7 @@ class Router {
 			$routeClass = self::_validateRouteClass($options['routeClass']);
 			unset($options['routeClass']);
 		}
-		if ($routeClass == 'RedirectRoute' && isset($defaults['redirect'])) {
+		if ($routeClass === 'Cake\Routing\Route\RedirectRoute' && isset($defaults['redirect'])) {
 			$defaults = $defaults['redirect'];
 		}
 		self::$routes[] = new $routeClass($route, $defaults, $options);
@@ -344,8 +351,7 @@ class Router {
  * @return array Array of routes
  */
 	public static function redirect($route, $url, $options = array()) {
-		App::uses('RedirectRoute', 'Routing/Route');
-		$options['routeClass'] = 'RedirectRoute';
+		$options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
 		if (is_string($url)) {
 			$url = array('redirect' => $url);
 		}
@@ -580,17 +586,17 @@ class Router {
  * Nested requests will create a stack of requests.  You can remove requests using
  * Router::popRequest().  This is done automatically when using Object::requestAction().
  *
- * Will accept either a CakeRequest object or an array of arrays. Support for
+ * Will accept either a Cake\Network\Request object or an array of arrays. Support for
  * accepting arrays may be removed in the future.
  *
- * @param CakeRequest|array $request Parameters and path information or a CakeRequest object.
+ * @param Cake\Network\Request|array $request Parameters and path information or a Cake\Network\Request object.
  * @return void
  */
 	public static function setRequestInfo($request) {
-		if ($request instanceof CakeRequest) {
+		if ($request instanceof Request) {
 			self::$_requests[] = $request;
 		} else {
-			$requestObj = new CakeRequest();
+			$requestObj = new Request();
 			$request += array(array(), array());
 			$request[0] += array('controller' => false, 'action' => false, 'plugin' => null);
 			$requestObj->addParams($request[0])->addPaths($request[1]);
@@ -601,7 +607,7 @@ class Router {
 /**
  * Pops a request off of the request stack.  Used when doing requestAction
  *
- * @return CakeRequest The request removed from the stack.
+ * @return Cake\Network\Request The request removed from the stack.
  * @see Router::setRequestInfo()
  * @see Object::requestAction()
  */
@@ -613,7 +619,7 @@ class Router {
  * Get the either the current request object, or the first one.
  *
  * @param boolean $current Whether you want the request from the top of the stack or the first one.
- * @return CakeRequest or null.
+ * @return Cake\Network\Request or null.
  */
 	public static function getRequest($current = false) {
 		if ($current) {
@@ -678,7 +684,7 @@ class Router {
  */
 	public static function reload() {
 		if (empty(self::$_initialState)) {
-			self::$_initialState = get_class_vars('Router');
+			self::$_initialState = get_class_vars(get_called_class());
 			self::_setPrefixes();
 			return;
 		}
@@ -984,13 +990,13 @@ class Router {
  * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
  * are used for CakePHP internals and should not normally be part of an output url.
  *
- * @param CakeRequest|array $params The params array or CakeRequest object that needs to be reversed.
+ * @param Cake\Network\Request|array $params The params array or Cake\Network\Request object that needs to be reversed.
  * @param boolean $full Set to true to include the full url including the protocol when reversing
  *     the url.
  * @return string The string that is the reversed result of the array
  */
 	public static function reverse($params, $full = false) {
-		if ($params instanceof CakeRequest) {
+		if ($params instanceof Request) {
 			$url = $params->query;
 			$params = $params->params;
 		} else {
@@ -1047,7 +1053,7 @@ class Router {
 /**
  * Returns the route matching the current request URL.
  *
- * @return CakeRoute Matching route object.
+ * @return Cake\Routing\Route\Route Matching route object.
  */
 	public static function &requestRoute() {
 		return self::$_currentRoute[0];
@@ -1056,7 +1062,7 @@ class Router {
 /**
  * Returns the route matching the current request (useful for requestAction traces)
  *
- * @return CakeRoute Matching route object.
+ * @return Cake\Routing\Route\Route Matching route object.
  */
 	public static function &currentRoute() {
 		return self::$_currentRoute[count(self::$_currentRoute) - 1];
@@ -1090,7 +1096,7 @@ class Router {
  * `$this->params['ext']`, and is used by the RequestHandler component to
  * automatically switch to alternate layouts and templates, and load helpers
  * corresponding to the given content, i.e. RssHelper. Switching layouts and helpers
- * requires that the chosen extension has a defined mime type in `CakeResponse`
+ * requires that the chosen extension has a defined mime type in `Cake\Network\Response`
  *
  * A list of valid extension can be passed to this method, i.e. Router::parseExtensions('rss', 'xml');
  * If no parameters are given, anything after the first . (dot) after the last / in the URL will be

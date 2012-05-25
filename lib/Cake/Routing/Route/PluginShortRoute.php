@@ -11,8 +11,9 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Routing\Route;
 
-App::uses('CakeRoute', 'Routing/Route');
+use Cake\Routing\Route\Route;
 
 /**
  * Plugin short route, that copies the plugin param to the controller parameters
@@ -20,7 +21,7 @@ App::uses('CakeRoute', 'Routing/Route');
  *
  * @package Cake.Routing.Route
  */
-class PluginShortRoute extends CakeRoute {
+class PluginShortRoute extends Route {
 
 /**
  * Parses a string url into an array. If a plugin key is found, it will be copied to the

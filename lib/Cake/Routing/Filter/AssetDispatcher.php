@@ -16,7 +16,13 @@
  * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('DispatcherFilter', 'Routing');
+namespace Cake\Routing\Filter;
+use Cake\Routing\DispatcherFilter;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Network\Response;
+use Cake\Utility\Inflector;
 
 /**
  * Filters a request and tests whether it is a file in the webroot folder or not and
@@ -37,8 +43,8 @@ class AssetDispatcher extends DispatcherFilter {
 /**
  * Checks if a requested asset exists and sends it to the browser
  *
- * @param CakeEvent $event containing the request and response object
- * @return CakeResponse if the client is requesting a recognized asset, null otherwise
+ * @param Cake\Event\Event $event containing the request and response object
+ * @return Cake\Network\Response if the client is requesting a recognized asset, null otherwise
  */
 	public function beforeDispatch($event) {
 		$url = $event->data['request']->url;
@@ -68,10 +74,10 @@ class AssetDispatcher extends DispatcherFilter {
 			}
 		} else {
 			$plugin = Inflector::camelize($parts[0]);
-			if (CakePlugin::loaded($plugin)) {
+			if (Plugin::loaded($plugin)) {
 				unset($parts[0]);
 				$fileFragment = urldecode(implode(DS, $parts));
-				$pluginWebroot = CakePlugin::path($plugin) . 'webroot' . DS;
+				$pluginWebroot = Plugin::path($plugin) . 'webroot' . DS;
 				if (file_exists($pluginWebroot . $fileFragment)) {
 					$assetFile = $pluginWebroot . $fileFragment;
 				}
@@ -92,8 +98,8 @@ class AssetDispatcher extends DispatcherFilter {
  * Checks if the client is requeting a filtered asset and runs the corresponding
  * filter if any is configured
  *
- * @param CakeEvent $event containing the request and response object
- * @return CakeResponse if the client is requesting a recognized asset, null otherwise
+ * @param Cake\Event\Event $event containing the request and response object
+ * @return Cake\Network\Response if the client is requesting a recognized asset, null otherwise
  */
 	protected function _filterAsset($event) {
 		$url = $event->data['request']->url;
@@ -123,12 +129,12 @@ class AssetDispatcher extends DispatcherFilter {
 /**
  * Sends an asset file to the client
  *
- * @param CakeResponse $response The response object to use.
+ * @param Cake\Network\Response $response The response object to use.
  * @param string $assetFile Path to the asset file in the file system
  * @param string $ext The extension of the file to determine its mime type
  * @return void
  */
-	protected function _deliverAsset(CakeResponse $response, $assetFile, $ext) {
+	protected function _deliverAsset(Response $response, $assetFile, $ext) {
 		ob_start();
 		$compressionEnabled = Configure::read('Asset.compress') && $response->compress();
 		if ($response->type($ext) == $ext) {

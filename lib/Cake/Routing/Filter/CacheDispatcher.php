@@ -12,7 +12,11 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('DispatcherFilter', 'Routing');
+namespace Cake\Routing\Filter;
+use Cake\Routing\DispatcherFilter;
+use Cake\Core\Configure;
+use Cake\Utility\Inflector;
+use Cake\View\View;
 
 /**
  * This filter will check wheter the response was previously cached in the file system
@@ -33,8 +37,8 @@ class CacheDispatcher extends DispatcherFilter {
 /**
  * Checks whether the response was cached and set the body accordingly.
  *
- * @param CakeEvent $event containing the request and response object
- * @return CakeResponse with cached content if found, null otherwise
+ * @param Cake\Event\Event $event containing the request and response object
+ * @return Cake\NetworkResponse with cached content if found, null otherwise
  */
 	public function beforeDispatch($event) {
 		if (Configure::read('Cache.check') !== true) {

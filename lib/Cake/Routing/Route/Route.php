@@ -11,8 +11,10 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Routing\Route;
 
-App::uses('Set', 'Utility');
+use Cake\Routing\Router,
+	Cake\Utility\Hash;
 
 /**
  * A single Route used by the Router to connect requests to
@@ -23,7 +25,7 @@ App::uses('Set', 'Utility');
  *
  * @package Cake.Routing.Route
  */
-class CakeRoute {
+class Route {
 
 /**
  * An array of named segments in a Route.
