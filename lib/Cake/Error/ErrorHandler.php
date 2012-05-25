@@ -18,11 +18,11 @@
  * @since         CakePHP(tm) v 0.10.5.1732
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Debugger', 'Utility');
-App::uses('CakeLog', 'Log');
-App::uses('ExceptionRenderer', 'Error');
-App::uses('AppController', 'Controller');
+namespace Cake\Error;
+use Cake\Core\Configure,
+	Cake\Core\App,
+	Cake\Utility\Debugger,
+	Cake\Log\Log;
 
 /**
  *
@@ -31,7 +31,7 @@ App::uses('AppController', 'Controller');
  *
  * ### Uncaught exceptions
  *
- * When debug < 1 a CakeException will render 404 or  500 errors.  If an uncaught exception is thrown
+ * When debug < 1 a Cake\Error\Exception will render 404 or  500 errors.  If an uncaught exception is thrown
  * and it is a type that ErrorHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception handling
@@ -69,13 +69,13 @@ App::uses('AppController', 'Controller');
  *
  * Using the built-in exception handling, you can log all the exceptions
  * that are dealt with by ErrorHandler by setting `Exception.log` to true in your core.php.
- * Enabling this will log every exception to CakeLog and the configured loggers.
+ * Enabling this will log every exception to Log and the configured loggers.
  *
  * ### PHP errors
  *
  * Error handler also provides the built in features for handling php errors (trigger_error).
  * While in debug mode, errors will be output to the screen using debugger.  While in production mode,
- * errors will be logged to CakeLog.  You can control which errors are logged by setting
+ * errors will be logged to Log.  You can control which errors are logged by setting
  * `Error.level` in your core.php.
  *
  * #### Logging errors
@@ -103,11 +103,11 @@ class ErrorHandler {
  * This will either use custom exception renderer class if configured,
  * or use the default ExceptionRenderer.
  *
- * @param Exception $exception
+ * @param \Exception $exception
  * @return void
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */
-	public static function handleException(Exception $exception) {
+	public static function handleException(\Exception $exception) {
 		$config = Configure::read('Exception');
 		if (!empty($config['log'])) {
 			$message = sprintf("[%s] %s\n%s",
@@ -115,17 +115,16 @@ class ErrorHandler {
 				$exception->getMessage(),
 				$exception->getTraceAsString()
 			);
-			CakeLog::write(LOG_ERR, $message);
+			Log::write(LOG_ERR, $message);
 		}
-		$renderer = $config['renderer'];
-		if ($renderer !== 'ExceptionRenderer') {
-			list($plugin, $renderer) = pluginSplit($renderer, true);
-			App::uses($renderer, $plugin . 'Error');
-		}
+		$renderer = App::classname($config['renderer'], 'Error');
 		try {
+			if (!$renderer) {
+				throw new \Exception("{$config['renderer']} is an invalid class.");
+			}
 			$error = new $renderer($exception);
 			$error->render();
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			set_error_handler(Configure::read('Error.handler')); // Should be using configured ErrorHandler
 			Configure::write('Error.trace', false); // trace is useless here since it's internal
 			$message = sprintf("[%s] %s\n%s", // Keeping same message format
@@ -140,7 +139,7 @@ class ErrorHandler {
 /**
  * Set as the default error handler by CakePHP. Use Configure::write('Error.handler', $callback), to use your own
  * error handling methods.  This function will use Debugger to display errors when debug > 0.  And
- * will log errors to CakeLog, when debug == 0.
+ * will log errors to Log, when debug == 0.
  *
  * You can use Configure::write('Error.level', $value); to set what type of errors will be handled here.
  * Stack traces for errors can be enabled with Configure::write('Error.trace', true);
@@ -182,7 +181,7 @@ class ErrorHandler {
 				$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
 				$message .= "\nTrace:\n" . $trace . "\n";
 			}
-			return CakeLog::write($log, $message);
+			return Log::write($log, $message);
 		}
 	}
 
@@ -197,7 +196,7 @@ class ErrorHandler {
  */
 	public static function handleFatalError($code, $description, $file, $line) {
 		$logMessage = 'Fatal Error (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
-		CakeLog::write(LOG_ERR, $logMessage);
+		Log::write(LOG_ERR, $logMessage);
 
 		$exceptionHandler = Configure::read('Exception.handler');
 		if (!is_callable($exceptionHandler)) {
