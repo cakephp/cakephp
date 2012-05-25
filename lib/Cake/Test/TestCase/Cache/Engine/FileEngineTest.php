@@ -16,15 +16,18 @@
  * @since         CakePHP(tm) v 1.2.0.5434
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Cache', 'Cache');
+namespace Cake\Test\TestCase\Cache\Engine;
+use Cake\TestSuite\TestCase,
+	Cake\Cache\Cache,
+	Cake\Cache\Engine\FileEngine,
+	Cake\Core\Configure;
 
 /**
  * FileEngineTest class
  *
  * @package       Cake.Test.Case.Cache.Engine
  */
-class FileEngineTest extends CakeTestCase {
+class FileEngineTest extends TestCase {
 
 /**
  * config property

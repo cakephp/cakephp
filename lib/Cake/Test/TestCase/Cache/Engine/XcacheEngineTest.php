@@ -16,15 +16,17 @@
  * @since         CakePHP(tm) v 1.2.0.5434
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Cache', 'Cache');
+namespace Cake\Test\TestCase\Cache\Engine;
+use Cake\TestSuite\TestCase,
+	Cake\Cache\Cache,
+	Cake\Core\Configure;
 
 /**
  * XcacheEngineTest class
  *
  * @package       Cake.Test.Case.Cache.Engine
  */
-class XcacheEngineTest extends CakeTestCase {
+class XcacheEngineTest extends TestCase {
 
 /**
  * setUp method

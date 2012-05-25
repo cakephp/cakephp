@@ -16,15 +16,19 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Cache', 'Cache');
+namespace Cake\Test\TestCase\Cache;
+use Cake\TestSuite\TestCase,
+	Cake\Core\Configure,
+	Cake\Core\App,
+	Cake\Core\Plugin,
+	Cake\Cache\Cache;
 
 /**
  * CacheTest class
  *
  * @package       Cake.Test.Case.Cache
  */
-class CacheTest extends CakeTestCase {
+class CacheTest extends TestCase {
 
 /**
  * setUp method
@@ -88,10 +92,11 @@ class CacheTest extends CakeTestCase {
  */
 	public function testConfigWithLibAndPluginEngines() {
 		App::build(array(
-			'Lib' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Lib' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Lib' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
-		CakePlugin::load('TestPlugin');
+		Configure::write('App.namespace', 'TestApp');
+		Plugin::load('TestPlugin');
 
 		$settings = array('engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_');
 		$result = Cache::config('libEngine', $settings);
@@ -105,7 +110,7 @@ class CacheTest extends CakeTestCase {
 		Cache::drop('pluginLibEngine');
 
 		App::build();
-		CakePlugin::unload();
+		Plugin::unload();
 	}
 
 /**
@@ -143,13 +148,13 @@ class CacheTest extends CakeTestCase {
 /**
  * test that trying to configure classes that don't extend CacheEngine fail.
  *
- * @expectedException CacheException
+ * @expectedException Cake\Error\CacheException
  * @return void
  */
 	public function testAttemptingToConfigureANonCacheEngineClass() {
 		$this->getMock('StdClass', array(), array(), 'RubbishEngine');
 		Cache::config('Garbage', array(
-			'engine' => 'Rubbish'
+			'engine' => __NAMESPACE__ . '\Rubbish'
 		));
 	}
 
@@ -260,8 +265,8 @@ class CacheTest extends CakeTestCase {
  */
 	public function testDrop() {
 		App::build(array(
-			'Lib' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Lib' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Lib' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
 
 		$result = Cache::drop('some_config_that_does_not_exist');
@@ -312,15 +317,16 @@ class CacheTest extends CakeTestCase {
  */
 	public function testWriteTriggerError() {
 		App::build(array(
-			'Lib' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Lib' . DS),
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Lib' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Lib' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
+		Configure::write('App.namespace', 'TestApp');
 
 		Cache::config('test_trigger', array('engine' => 'TestAppCache', 'prefix' => ''));
 		try {
 			Cache::write('fail', 'value', 'test_trigger');
 			$this->fail('No exception thrown');
-		} catch (PHPUnit_Framework_Error $e) {
+		} catch (\PHPUnit_Framework_Error $e) {
 			$this->assertTrue(true);
 		}
 		Cache::drop('test_trigger');

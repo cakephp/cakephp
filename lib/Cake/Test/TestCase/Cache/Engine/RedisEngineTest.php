@@ -17,15 +17,18 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Cache', 'Cache');
-App::uses('RedisEngine', 'Cache/Engine');
+namespace Cake\Test\TestCase\Cache\Engine;
+use Cake\TestSuite\TestCase;
+use Cake\Cache\Engine\RedisEngine;
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
 
 /**
  * RedisEngineTest class
  *
  * @package       Cake.Test.Case.Cache.Engine
  */
-class RegisEngineTest extends CakeTestCase {
+class RegisEngineTest extends TestCase {
 
 /**
  * setUp method
@@ -38,7 +41,7 @@ class RegisEngineTest extends CakeTestCase {
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('redis', array(
-			'engine' => 'Redis',
+			'engine' => 'Cake\Cache\Redis',
 			'prefix' => 'cake_',
 			'duration' => 3600
 		));

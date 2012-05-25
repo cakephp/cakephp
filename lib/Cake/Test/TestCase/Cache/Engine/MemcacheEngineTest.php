@@ -16,9 +16,11 @@
  * @since         CakePHP(tm) v 1.2.0.5434
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Cache', 'Cache');
-App::uses('MemcacheEngine', 'Cache/Engine');
+namespace Cake\Test\TestCase\Cache\Engine;
+use Cake\TestSuite\TestCase,
+	Cake\Cache\Cache,
+	Cake\Cache\Engine\MemcacheEngine,
+	Cake\Core\Configure;
 
 class TestMemcacheEngine extends MemcacheEngine {
 
@@ -43,7 +45,7 @@ class TestMemcacheEngine extends MemcacheEngine {
  *
  * @package       Cake.Test.Case.Cache.Engine
  */
-class MemcacheEngineTest extends CakeTestCase {
+class MemcacheEngineTest extends TestCase {
 
 /**
  * setUp method
@@ -107,7 +109,7 @@ class MemcacheEngineTest extends CakeTestCase {
 	public function testMultipleServers() {
 		$servers = array('127.0.0.1:11211', '127.0.0.1:11222');
 		$available = true;
-		$Memcache = new Memcache();
+		$Memcache = new \Memcache();
 
 		foreach ($servers as $server) {
 			list($host, $port) = explode(':', $server);
