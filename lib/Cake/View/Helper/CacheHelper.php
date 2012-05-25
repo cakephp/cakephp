@@ -16,8 +16,10 @@
  * @since         CakePHP(tm) v 1.0.0.2277
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppHelper', 'View/Helper');
+namespace Cake\View\Helper;
+use Cake\View\Helper,
+	Cake\Core\Configure,
+	Cake\Utility\Inflector;
 
 /**
  * CacheHelper helps create full page view caching.
@@ -28,7 +30,7 @@ App::uses('AppHelper', 'View/Helper');
  * @package       Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
  */
-class CacheHelper extends AppHelper {
+class CacheHelper extends Helper {
 
 /**
  * Array of strings replaced in cached views.
@@ -292,7 +294,7 @@ class CacheHelper extends AppHelper {
 
 		$file .= '
 				$request = unserialize(base64_decode(\'' . base64_encode(serialize($this->request)) . '\'));
-				$response = new CakeResponse(array("charset" => Configure::read("App.encoding")));
+				$response = new \Cake\Network\Response(array("charset" => Configure::read("App.encoding")));
 				$controller = new ' . $this->_View->name . 'Controller($request, $response);
 				$controller->plugin = $this->plugin = \'' . $this->_View->plugin . '\';
 				$controller->helpers = $this->helpers = unserialize(base64_decode(\'' . base64_encode(serialize($this->_View->helpers)) . '\'));

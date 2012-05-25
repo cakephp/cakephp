@@ -18,8 +18,12 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppHelper', 'View/Helper');
+namespace Cake\View\Helper;
+use Cake\View\Helper,
+	Cake\View\View,
+	Cake\Core\App,
+	Cake\Utility\Hash,
+	Cake\Error;
 
 /**
  * Text helper library.
@@ -31,7 +35,7 @@ App::uses('AppHelper', 'View/Helper');
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html
  * @see String
  */
-class TextHelper extends AppHelper {
+class TextHelper extends Helper {
 
 /**
  * helpers
@@ -66,14 +70,13 @@ class TextHelper extends AppHelper {
  * @throws CakeException when the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'String'), $settings);
+		$settings = Hash::merge(array('engine' => 'Cake\Utility\String'), $settings);
 		parent::__construct($View, $settings);
-		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
-		App::uses($engineClass, $plugin . 'Utility');
-		if (class_exists($engineClass)) {
+		$engineClass = App::classname($settings['engine'], 'Utility');
+		if ($engineClass) {
 			$this->_engine = new $engineClass($settings);
 		} else {
-			throw new CakeException(__d('cake_dev', '%s could not be found', $engineClass));
+			throw new Error\Exception(__d('cake_dev', 'Class for %s could not be found', $settings['engine']));
 		}
 	}
 

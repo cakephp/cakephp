@@ -16,8 +16,12 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppHelper', 'View/Helper');
+namespace Cake\View\Helper;
+use Cake\View\Helper,
+	Cake\View\View,
+	Cake\Utility\Inflector,
+	Cake\Core\App,
+	Cake\Error;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
@@ -28,7 +32,7 @@ App::uses('AppHelper', 'View/Helper');
  * @property      HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html
  */
-class PaginatorHelper extends AppHelper {
+class PaginatorHelper extends Helper {
 
 /**
  * Helper dependencies
@@ -85,16 +89,16 @@ class PaginatorHelper extends AppHelper {
  *
  * @param View $View the view object the helper is attached to.
  * @param array $settings Array of settings.
- * @throws CakeException When the AjaxProvider helper does not implement a link method.
+ * @throws Cake\Error\Exception When the AjaxProvider helper does not implement a link method.
  */
 	public function __construct(View $View, $settings = array()) {
 		$ajaxProvider = isset($settings['ajax']) ? $settings['ajax'] : 'Js';
 		$this->helpers[] = $ajaxProvider;
 		$this->_ajaxHelperClass = $ajaxProvider;
-		App::uses($ajaxProvider . 'Helper', 'View/Helper');
-		$classname = $ajaxProvider . 'Helper';
-		if (!class_exists($classname) || !method_exists($classname, 'link')) {
-			throw new CakeException(sprintf(
+
+		$classname = App::classname($ajaxProvider, 'View/Helper', 'Helper');
+		if (!$classname || !method_exists($classname, 'link')) {
+			throw new Error\Exception(sprintf(
 				__d('cake_dev', '%s does not implement a link() method, it is incompatible with PaginatorHelper'), $classname
 			));
 		}

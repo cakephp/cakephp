@@ -22,9 +22,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppHelper', 'View/Helper');
-App::uses('JsBaseEngineHelper', 'View/Helper');
+namespace Cake\View\Helper;
 
 /**
  * jQuery Engine Helper for JsHelper

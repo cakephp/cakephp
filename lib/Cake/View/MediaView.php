@@ -16,9 +16,10 @@
  * @since         CakePHP(tm) v 1.2.0.5714
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('View', 'View');
-App::uses('CakeRequest', 'Network');
+namespace Cake\View;
+use Cake\Network\Response,
+	Cake\Core\Configure,
+	Cake\Error;
 
 /**
  * Media View provides a custom view implementation for sending files to visitors.  Its great
@@ -34,7 +35,7 @@ App::uses('CakeRequest', 'Network');
  * - `extension` The extension of the file being served. This is used to set the mimetype.
  * 	If not provided its extracted from filename provided as `id`.
  * - `path` The absolute path, including the trailing / on the server's filesystem to `id`.
- * - `mimeType` The mime type of the file if CakeResponse doesn't know about it.
+ * - `mimeType` The mime type of the file if Response doesn't know about it.
  * 	Must be an associative array with extension as key and mime type as value eg. array('ini' => 'text/plain')
  *
  * ### Usage
@@ -86,9 +87,9 @@ class MediaView extends View {
 
 		if (!is_file($path)) {
 			if (Configure::read('debug')) {
-				throw new NotFoundException(sprintf('The requested file %s was not found', $path));
+				throw new Error\NotFoundException(sprintf('The requested file %s was not found', $path));
 			}
-			throw new NotFoundException('The requested file was not found');
+			throw new Error\NotFoundException('The requested file was not found');
 		}
 
 		if (is_array($mimeType)) {

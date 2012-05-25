@@ -16,9 +16,15 @@
  * @since         CakePHP(tm) v 0.9.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\View\Helper;
 
-App::uses('AppHelper', 'View/Helper');
-App::uses('CakeResponse', 'Network');
+use Cake\View\Helper,
+	Cake\View\View,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Network\Response,
+	Cake\Utility\Inflector,
+	Cake\Error;
 
 /**
  * Html Helper class for easy use of HTML widgets.
@@ -28,12 +34,12 @@ App::uses('CakeResponse', 'Network');
  * @package       Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html
  */
-class HtmlHelper extends AppHelper {
+class HtmlHelper extends Helper {
 
 /**
  * Reference to the Response object
  *
- * @var CakeResponse
+ * @var Cake\Network\Response
  */
 	public $response;
 
@@ -159,7 +165,7 @@ class HtmlHelper extends AppHelper {
 		if (is_object($this->_View->response)) {
 			$this->response = $this->_View->response;
 		} else {
-			$this->response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+			$this->response = new Response(array('charset' => Configure::read('App.encoding')));
 		}
 		if (!empty($settings['configFile'])) {
 			$this->loadConfig($settings['configFile']);
@@ -1176,13 +1182,12 @@ class HtmlHelper extends AppHelper {
 				$reader = $configFile[1];
 			}
 		} else {
-			throw new ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Wrong "configFile" configuration.'));
+			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Wrong "configFile" configuration.'));
 		}
 
-		$readerClass = Inflector::camelize($reader) . 'Reader';
-		App::uses($readerClass, 'Configure');
-		if (!class_exists($readerClass)) {
-			throw new ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Unknown reader.'));
+		$readerClass = App::classname(Inflector::camelize($reader), 'Configure', 'Reader');
+		if (!$readerClass) {
+			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Unknown reader.'));
 		}
 
 		$readerObj = new $readerClass($path);

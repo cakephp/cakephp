@@ -17,9 +17,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('CakeTime', 'Utility');
-App::uses('Multibyte', 'I18n');
-App::uses('AppHelper', 'View/Helper');
+namespace Cake\View\Helper;
+use Cake\View\Helper,
+	Cake\View\View,
+	Cake\I18n\Multibyte,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Utility\Hash,
+	Cake\Error;
 
 /**
  * Time Helper class for easy use of time data.
@@ -30,7 +35,7 @@ App::uses('AppHelper', 'View/Helper');
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html
  * @see CakeTime
  */
-class TimeHelper extends AppHelper {
+class TimeHelper extends Helper {
 
 /**
  * CakeTime instance
@@ -50,14 +55,13 @@ class TimeHelper extends AppHelper {
  * @throws CakeException When the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'CakeTime'), $settings);
+		$settings = Hash::merge(array('engine' => 'Cake\Utility\Time'), $settings);
 		parent::__construct($View, $settings);
-		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
-		App::uses($engineClass, $plugin . 'Utility');
-		if (class_exists($engineClass)) {
+		$engineClass = App::classname($settings['engine'], 'Utility');
+		if ($engineClass) {
 			$this->_engine = new $engineClass($settings);
 		} else {
-			throw new CakeException(__d('cake_dev', '%s could not be found', $engineClass));
+			throw new Error\Exception(__d('cake_dev', 'Class for %s could not be found', $settings['engine']));
 		}
 	}
 

@@ -16,10 +16,10 @@
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\View\Helper;
 
-App::uses('AppHelper', 'View/Helper');
-App::uses('JsBaseEngineHelper', 'View/Helper');
-App::uses('Multibyte', 'I18n');
+use Cake\View\Helper,
+	Cake\View\View;
 
 /**
  * Javascript Generator helper class for easy use of JavaScript.
@@ -31,7 +31,7 @@ App::uses('Multibyte', 'I18n');
  * @property      HtmlHelper $Html
  * @property      FormHelper $Form
  */
-class JsHelper extends AppHelper {
+class JsHelper extends Helper {
 
 /**
  * Whether or not you want scripts to be buffered or output.

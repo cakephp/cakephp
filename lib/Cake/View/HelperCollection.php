@@ -15,9 +15,14 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\View;
 
-App::uses('ObjectCollection', 'Utility');
-App::uses('CakeEventListener', 'Event');
+use Cake\Utility\ObjectCollection,
+	Cake\Core\App,
+	Cake\View\View,
+	Cake\Event\Event,
+	Cake\Event\EventListener,
+	Cake\Error;
 
 /**
  * Helpers collection is used as a registry for loaded helpers and handles loading
@@ -25,7 +30,7 @@ App::uses('CakeEventListener', 'Event');
  *
  * @package       Cake.View
  */
-class HelperCollection extends ObjectCollection implements CakeEventListener {
+class HelperCollection extends ObjectCollection implements EventListener {
 
 /**
  * View object to use when making helpers.
@@ -100,7 +105,7 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
  * {{{
  * public $helpers = array(
  *   'Html' => array(
- *     'className' => 'AliasedHtml'
+ *     'className' => '\App\View\Helper\AliasedHtmlHelper'
  *   );
  * );
  * }}}
@@ -112,37 +117,33 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
  * @throws MissingHelperException when the helper could not be found
  */
 	public function load($helper, $settings = array()) {
+		list($plugin, $name) = pluginSplit($helper);
+		if (isset($this->_loaded[$name])) {
+			return $this->_loaded[$name];
+		}
 		if (is_array($settings) && isset($settings['className'])) {
-			$alias = $helper;
-			$helper = $settings['className'];
+			$helperClass = App::classname($settings['className'], 'View/Helper', 'Helper');
 		}
-		list($plugin, $name) = pluginSplit($helper, true);
-		if (!isset($alias)) {
-			$alias = $name;
+		if (!isset($helperClass)) {
+			$helperClass = App::classname($helper, 'View/Helper', 'Helper');
 		}
-
-		if (isset($this->_loaded[$alias])) {
-			return $this->_loaded[$alias];
-		}
-		$helperClass = $name . 'Helper';
-		App::uses($helperClass, $plugin . 'View/Helper');
-		if (!class_exists($helperClass)) {
-			throw new MissingHelperException(array(
-				'class' => $helperClass,
+		if (!$helperClass) {
+			throw new Error\MissingHelperException(array(
+				'class' => $helper,
 				'plugin' => substr($plugin, 0, -1)
 			));
 		}
-		$this->_loaded[$alias] = new $helperClass($this->_View, $settings);
+		$this->_loaded[$name] = new $helperClass($this->_View, $settings);
 
 		$vars = array('request', 'theme', 'plugin');
 		foreach ($vars as $var) {
-			$this->_loaded[$alias]->{$var} = $this->_View->{$var};
+			$this->_loaded[$name]->{$var} = $this->_View->{$var};
 		}
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable) {
-			$this->enable($alias);
+			$this->enable($name);
 		}
-		return $this->_loaded[$alias];
+		return $this->_loaded[$name];
 	}
 
 /**
@@ -184,8 +185,8 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
  *    Defaults to false.
  *
  *
- * @param string $callback|CakeEvent Method to fire on all the objects. Its assumed all the objects implement
- *   the method you are calling. If an instance of CakeEvent is provided, then then Event name will parsed to
+ * @param string|Cake\Event\Event $callback Method to fire on all the objects. Its assumed all the objects implement
+ *   the method you are calling. If an instance of Cake\Event\Event is provided, then then Event name will parsed to
  *   get the callback name. This is done by getting the last word after any dot in the event name
  *   (eg. `Model.afterSave` event will trigger the `afterSave` callback)
  * @param array $params Array of parameters for the triggered callback.
@@ -194,7 +195,7 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
  * @throws CakeException when modParams is used with an index that does not exist.
  */
 	public function trigger($callback, $params = array(), $options = array()) {
-		if ($callback instanceof CakeEvent) {
+		if ($callback instanceof Event) {
 			$callback->omitSubject = true;
 		}
 		return parent::trigger($callback, $params, $options);

@@ -12,8 +12,17 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\View;
 
-App::uses('Router', 'Routing');
+use Cake\Core\Object,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Core\Plugin,
+	Cake\Routing\Router,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Inflector,
+	Cake\Utility\Hash,
+	Cake\Utility\ObjectCollection;
 
 /**
  * Abstract base class for all other Helpers in CakePHP.
@@ -47,7 +56,7 @@ class Helper extends Object {
 /**
  * Request object
  *
- * @var CakeRequest
+ * @var Cake\Network\Request
  */
 	public $request = null;
 
@@ -345,9 +354,9 @@ class Helper extends Object {
 				return $path . '?' . @filemtime($themePath);
 			} else {
 				$plugin = Inflector::camelize($segments[0]);
-				if (CakePlugin::loaded($plugin)) {
+				if (Plugin::loaded($plugin)) {
 					unset($segments[0]);
-					$pluginPath = CakePlugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
+					$pluginPath = Plugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
 					return $path . '?' . @filemtime($pluginPath);
 				}
 			}
@@ -601,7 +610,7 @@ class Helper extends Object {
 
 		$entity = $this->entity();
 		$model = array_shift($entity);
-		$dom = $model . join('', array_map(array('Inflector', 'camelize'), $entity));
+		$dom = $model . join('', array_map(array('Cake\Utility\Inflector', 'camelize'), $entity));
 
 		if (is_array($options) && !array_key_exists($id, $options)) {
 			$options[$id] = $dom;

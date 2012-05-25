@@ -16,9 +16,10 @@
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\View\Helper;
 
-App::uses('AppHelper', 'View/Helper');
-App::uses('Xml', 'Utility');
+use Cake\View\Helper,
+	Cake\Utility\Xml;
 
 /**
  * RSS Helper class for easy output RSS structures.
@@ -27,7 +28,7 @@ App::uses('Xml', 'Utility');
  * @property      TimeHelper $Time
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html
  */
-class RssHelper extends AppHelper {
+class RssHelper extends Helper {
 
 /**
  * Helpers used by RSS Helper

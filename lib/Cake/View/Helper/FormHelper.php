@@ -12,9 +12,16 @@
  * @since       CakePHP(tm) v 0.10.0.1076
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('ClassRegistry', 'Utility');
-App::uses('AppHelper', 'View/Helper');
-App::uses('Hash', 'Utility');
+
+namespace Cake\View\Helper;
+use Cake\View\Helper,
+	Cake\View\View,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Inflector,
+	Cake\Utility\Security,
+	Cake\Utility\Hash,
+	Cake\Core\Configure,
+	Cake\Error;
 
 /**
  * Form helper library.
@@ -25,7 +32,7 @@ App::uses('Hash', 'Utility');
  * @property      HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html
  */
-class FormHelper extends AppHelper {
+class FormHelper extends Helper {
 
 /**
  * Other helpers used by FormHelper
@@ -1426,12 +1433,12 @@ class FormHelper extends AppHelper {
  * @param string $method Method name / input type to make.
  * @param array $params Parameters for the method call
  * @return string Formatted input method.
- * @throws CakeException When there are no params for the method call.
+ * @throws Cake\Error\Exception When there are no params for the method call.
  */
 	public function __call($method, $params) {
 		$options = array();
 		if (empty($params)) {
-			throw new CakeException(__d('cake_dev', 'Missing field name for FormHelper::%s', $method));
+			throw new Error\Exception(__d('cake_dev', 'Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];

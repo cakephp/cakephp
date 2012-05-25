@@ -12,8 +12,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppHelper', 'View/Helper');
+namespace Cake\View\Helper;
+use Cake\View\Helper,
+	Cake\I18n\Multibyte;
 
 /**
  * JsEngineBaseClass
@@ -22,7 +23,7 @@ App::uses('AppHelper', 'View/Helper');
  *
  * @package       Cake.View.Helper
  */
-abstract class JsBaseEngineHelper extends AppHelper {
+abstract class JsBaseEngineHelper extends Helper {
 
 /**
  * The js snippet for the current selection.

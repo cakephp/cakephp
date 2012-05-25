@@ -15,6 +15,7 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+use Cake\Utility\Inflector;
 ?>
 <h2><?php echo __d('cake_dev', 'Missing View'); ?></h2>
 <p class="error">

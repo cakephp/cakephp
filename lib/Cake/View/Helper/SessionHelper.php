@@ -16,9 +16,9 @@
  * @since         CakePHP(tm) v 1.1.7.3328
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppHelper', 'View/Helper');
-App::uses('CakeSession', 'Model/Datasource');
+namespace Cake\View\Helper;
+use Cake\View\Helper,
+	Cake\Model\Datasource\Session;
 
 /**
  * Session Helper.
@@ -28,7 +28,7 @@ App::uses('CakeSession', 'Model/Datasource');
  * @package       Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html
  */
-class SessionHelper extends AppHelper {
+class SessionHelper extends Helper {
 
 /**
  * Used to read a session values set in a controller for a key or return values for all keys.
@@ -41,7 +41,7 @@ class SessionHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::read
  */
 	public function read($name = null) {
-		return CakeSession::read($name);
+		return Session::read($name);
 	}
 
 /**
@@ -54,7 +54,7 @@ class SessionHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::check
  */
 	public function check($name) {
-		return CakeSession::check($name);
+		return Session::check($name);
 	}
 
 /**
@@ -66,7 +66,7 @@ class SessionHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#displaying-notifcations-or-flash-messages
  */
 	public function error() {
-		return CakeSession::error();
+		return Session::error();
 	}
 
 /**
@@ -119,8 +119,8 @@ class SessionHelper extends AppHelper {
 	public function flash($key = 'flash', $attrs = array()) {
 		$out = false;
 
-		if (CakeSession::check('Message.' . $key)) {
-			$flash = CakeSession::read('Message.' . $key);
+		if (Session::check('Message.' . $key)) {
+			$flash = Session::read('Message.' . $key);
 			$message = $flash['message'];
 			unset($flash['message']);
 
@@ -145,7 +145,7 @@ class SessionHelper extends AppHelper {
 				$tmpVars['message'] = $message;
 				$out = $this->_View->element($flash['element'], $tmpVars, $options);
 			}
-			CakeSession::delete('Message.' . $key);
+			Session::delete('Message.' . $key);
 		}
 		return $out;
 	}
@@ -157,7 +157,7 @@ class SessionHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::valid
  */
 	public function valid() {
-		return CakeSession::valid();
+		return Session::valid();
 	}
 
 }

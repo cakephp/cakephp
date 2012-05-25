@@ -27,7 +27,7 @@
 </p>
 <pre>
 &lt;?php
-CakePlugin::load('<?php echo $plugin?>');
+Plugin::load('<?php echo $plugin?>');
 
 </pre>
 <p class="notice">
@@ -35,7 +35,7 @@ CakePlugin::load('<?php echo $plugin?>');
 	<?php echo __d('cake_dev', 'If you wish to load all plugins at once, use the following line in your ' . APP_DIR . DS . 'Config' . DS . 'bootstrap.php file'); ?>
 </p>
 <pre>
-CakePlugin::loadAll();
+Plugin::loadAll();
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
