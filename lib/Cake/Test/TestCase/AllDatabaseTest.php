@@ -16,6 +16,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase;
+use Cake\TestSuite\TestSuite;
 
 /**
  * AllDatabaseTest class
@@ -24,7 +26,7 @@
  *
  * @package       Cake.Test.Case
  */
-class AllDatabaseTest extends PHPUnit_Framework_TestSuite {
+class AllDatabaseTest extends \PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,7 +34,7 @@ class AllDatabaseTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('Datasources, Schema and DbAcl tests');
+		$suite = new \PHPUnit_Framework_TestSuite('Datasources, Schema and DbAcl tests');
 
 		$path = CORE_TEST_CASES . DS . 'Model' . DS;
 		$tasks = array(

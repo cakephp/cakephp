@@ -16,6 +16,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase;
+use Cake\TestSuite\TestSuite;
 
 /**
  * HelpersGroupTest class
@@ -24,7 +26,7 @@
  *
  * @package       Cake.Test.Case
  */
-class AllHelpersTest extends PHPUnit_Framework_TestSuite {
+class AllHelpersTest extends \PHPUnit_Framework_TestSuite {
 
 /**
  * suite declares tests to run
@@ -32,7 +34,7 @@ class AllHelpersTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All Helper tests');
+		$suite = new TestSuite('All Helper tests');
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'View' . DS . 'HelperTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'View' . DS . 'HelperCollectionTest.php');

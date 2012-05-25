@@ -16,6 +16,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase;
+use Cake\TestSuite\TestSuite;
 
 /**
  * AllTestSuiteTest class
@@ -24,7 +26,7 @@
  *
  * @package       Cake.Test.Case
  */
-class AllTestSuiteTest extends PHPUnit_Framework_TestSuite {
+class AllTestSuiteTest extends \PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -32,7 +34,7 @@ class AllTestSuiteTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All Test Suite classes tests');
+		$suite = new TestSuite('All Test Suite classes tests');
 
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'TestSuite');
 		return $suite;

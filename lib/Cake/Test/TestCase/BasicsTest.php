@@ -16,17 +16,22 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase;
+use Cake\TestSuite\TestCase,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Log\Log,
+	Cake\Network\Response,
+	Cake\Utility\Folder;
 
 require_once CAKE . 'basics.php';
-App::uses('Folder', 'Utility');
-App::uses('CakeResponse', 'Network');
 
 /**
  * BasicsTest class
  *
  * @package       Cake.Test.Case
  */
-class BasicsTest extends CakeTestCase {
+class BasicsTest extends TestCase {
 
 /**
  * setUp method
@@ -36,7 +41,7 @@ class BasicsTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		App::build(array(
-			'Locale' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
+			'Locale' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Locale' . DS)
 		));
 	}
 
@@ -226,11 +231,11 @@ class BasicsTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$obj = new stdClass();
+		$obj = new \stdClass();
 		$result = h($obj);
 		$this->assertEquals('(object)stdClass', $result);
 
-		$obj = new CakeResponse(array('body' => 'Body content'));
+		$obj = new Response(array('body' => 'Body content'));
 		$result = h($obj);
 		$this->assertEquals('Body content', $result);
 	}
@@ -597,12 +602,12 @@ class BasicsTest extends CakeTestCase {
 		@unlink(LOGS . 'error.log');
 
 		// disable stderr output for this test
-		CakeLog::disable('stderr');
+		Log::disable('stderr');
 
 		LogError('Testing LogError() basic function');
 		LogError("Testing with\nmulti-line\nstring");
 
-		CakeLog::enable('stderr');
+		Log::enable('stderr');
 
 		$result = file_get_contents(LOGS . 'error.log');
 		$this->assertRegExp('/Error: Testing LogError\(\) basic function/', $result);
@@ -933,5 +938,24 @@ EXPECTED;
 
 		$result = pluginSplit('Blog.Post', false, 'Ultimate');
 		$this->assertEquals(array('Blog', 'Post'), $result);
+	}
+
+/**
+ * test namespaceSplit
+ *
+ * @return void
+ */
+	public function testNamespaceSplit() {
+		$result = namespaceSplit('Something');
+		$this->assertEquals(array('', 'Something'), $result);
+
+		$result = namespaceSplit('\Something');
+		$this->assertEquals(array('', 'Something'), $result);
+
+		$result = namespaceSplit('Cake\Something');
+		$this->assertEquals(array('Cake', 'Something'), $result);
+
+		$result = namespaceSplit('Cake\Test\Something');
+		$this->assertEquals(array('Cake\Test', 'Something'), $result);
 	}
 }

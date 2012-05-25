@@ -16,6 +16,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase;
+use Cake\TestSuite\TestSuite;
+
 /**
  * AllBehaviorsTest class
  *
@@ -23,7 +26,7 @@
  *
  * @package       Cake.Test.Case
  */
-class AllBehaviorsTest extends PHPUnit_Framework_TestSuite {
+class AllBehaviorsTest extends \PHPUnit_Framework_TestSuite {
 
 /**
  * Suite define the tests for this suite
@@ -31,7 +34,7 @@ class AllBehaviorsTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('Model Behavior and all behaviors');
+		$suite = new TestSuite('Model Behavior and all behaviors');
 
 		$path = CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS;
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'BehaviorCollectionTest.php');
