@@ -20,13 +20,6 @@
  */
 define('TIME_START', microtime(true));
 
-if (!defined('E_DEPRECATED')) {
-	define('E_DEPRECATED', 8192);
-}
-
-if (!defined('E_USER_DEPRECATED')) {
-	define('E_USER_DEPRECATED', E_USER_NOTICE);
-}
 error_reporting(E_ALL & ~E_DEPRECATED);
 
 if (!defined('CAKE_CORE_INCLUDE_PATH')) {
@@ -127,18 +120,15 @@ if (!defined('JS_URL')) {
 
 
 require CAKE . 'basics.php';
-require CAKE . 'Core' . DS . 'App.php';
+require CAKE . 'Core' . DS . 'ClassLoader.php';
+$loader = new \Cake\Core\ClassLoader('Cake', CORE_PATH);
+$loader->register();
 require CAKE . 'Error' . DS . 'exceptions.php';
 
-spl_autoload_register(array('App', 'load'));
+use Cake\Core\App,
+	Cake\Core\Configure;
 
-App::uses('ErrorHandler', 'Error');
-App::uses('Configure', 'Core');
-App::uses('CakePlugin', 'Core');
-App::uses('Cache', 'Cache');
-App::uses('Object', 'Core');
 App::$bootstrapping = true;
-
 Configure::bootstrap(isset($boot) ? $boot : true);
 
 

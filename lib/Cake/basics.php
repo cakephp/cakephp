@@ -18,6 +18,10 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+use Cake\Core\Configure,
+	Cake\Utility\Debugger,
+	Cake\I18n\I18n,
+	Cake\Log\Log;
 
 /**
  * Basic defines for timing functions.
@@ -71,7 +75,6 @@ function config() {
  */
 function debug($var = false, $showHtml = null, $showFrom = true) {
 	if (Configure::read('debug') > 0) {
-		App::uses('Debugger', 'Utility');
 		$file = '';
 		$line = '';
 		$lineInfo = '';
@@ -211,6 +214,22 @@ function pluginSplit($name, $dotAppend = false, $plugin = null) {
 		return $parts;
 	}
 	return array($plugin, $name);
+}
+
+/**
+ * Split the namespace from the classname.
+ *
+ * Commonly used like `list($namespace, $classname) = namespaceSplit($class);`
+ *
+ * @param string $class The full class name, ie `Cake\Core\App`
+ * @return array Array with 2 indexes. 0 => namespace, 1 => classname
+ */
+function namespaceSplit($class) {
+	$pos = strrpos($class, '\\');
+	if ($pos === false) {
+		return array('', $class);
+	}
+	return array(substr($class, 0, $pos), substr($class, $pos + 1));
 }
 
 /**
@@ -505,7 +524,6 @@ function __($singular, $args = null) {
 		return;
 	}
 
-	App::uses('I18n', 'I18n');
 	$translated = I18n::translate($singular);
 	if ($args === null) {
 		return $translated;
@@ -531,7 +549,6 @@ function __n($singular, $plural, $count, $args = null) {
 		return;
 	}
 
-	App::uses('I18n', 'I18n');
 	$translated = I18n::translate($singular, $plural, null, 6, $count);
 	if ($args === null) {
 		return $translated;
@@ -554,7 +571,7 @@ function __d($domain, $msg, $args = null) {
 	if (!$msg) {
 		return;
 	}
-	App::uses('I18n', 'I18n');
+
 	$translated = I18n::translate($msg, null, $domain);
 	if ($args === null) {
 		return $translated;
@@ -581,7 +598,7 @@ function __dn($domain, $singular, $plural, $count, $args = null) {
 	if (!$singular) {
 		return;
 	}
-	App::uses('I18n', 'I18n');
+
 	$translated = I18n::translate($singular, $plural, $domain, 6, $count);
 	if ($args === null) {
 		return $translated;
@@ -619,7 +636,7 @@ function __dc($domain, $msg, $category, $args = null) {
 	if (!$msg) {
 		return;
 	}
-	App::uses('I18n', 'I18n');
+
 	$translated = I18n::translate($msg, null, $domain, $category);
 	if ($args === null) {
 		return $translated;
@@ -661,7 +678,7 @@ function __dcn($domain, $singular, $plural, $count, $category, $args = null) {
 	if (!$singular) {
 		return;
 	}
-	App::uses('I18n', 'I18n');
+
 	$translated = I18n::translate($singular, $plural, $domain, $category, $count);
 	if ($args === null) {
 		return $translated;
@@ -695,7 +712,7 @@ function __c($msg, $category, $args = null) {
 	if (!$msg) {
 		return;
 	}
-	App::uses('I18n', 'I18n');
+
 	$translated = I18n::translate($msg, null, null, $category);
 	if ($args === null) {
 		return $translated;
@@ -713,10 +730,9 @@ function __c($msg, $category, $args = null) {
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#LogError
  */
 function LogError($message) {
-	App::uses('CakeLog', 'Log');
 	$bad = array("\n", "\r", "\t");
 	$good = ' ';
-	CakeLog::write('error', str_replace($bad, $good, $message));
+	Log::write('error', str_replace($bad, $good, $message));
 }
 
 /**
