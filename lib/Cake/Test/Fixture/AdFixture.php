@@ -17,13 +17,15 @@
  * @since         1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\Fixture;
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * AdFixture class
  *
  * @package       Cake.Test.Fixture
  */
-class AdFixture extends CakeTestFixture {
+class AdFixture extends TestFixture {
 
 /**
  * name property

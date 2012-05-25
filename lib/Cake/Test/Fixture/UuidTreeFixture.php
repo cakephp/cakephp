@@ -16,14 +16,16 @@
  * @since         CakePHP(tm) v 1.2.0.7984
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\Fixture;
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * UuidTreeFixture class
  *
- * @uses          CakeTestFixture
+ * @uses          TestFixture
  * @package       Cake.Test.Fixture
  */
-class UuidTreeFixture extends CakeTestFixture {
+class UuidTreeFixture extends TestFixture {
 
 /**
  * name property

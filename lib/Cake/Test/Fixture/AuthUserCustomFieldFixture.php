@@ -16,13 +16,15 @@
  * @since         CakePHP(tm) v 1.2.1.8013
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\Fixture;
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
  *
  * @package       Cake.Test.Fixture
  */
-class AuthUserCustomFieldFixture extends CakeTestFixture {
+class AuthUserCustomFieldFixture extends TestFixture {
 
 /**
  * name property

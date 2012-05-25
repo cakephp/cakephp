@@ -16,13 +16,15 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\Fixture;
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * BakeCommentFixture fixture for testing bake
  *
  * @package       Cake.Test.Fixture
  */
-class BakeCommentFixture extends CakeTestFixture {
+class BakeCommentFixture extends TestFixture {
 
 /**
  * name property

@@ -16,13 +16,15 @@
  * @since         CakePHP(tm) v 1.2.0.6317
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\Fixture;
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
  *
  * @package       Cake.Test.Fixture
  */
-class JoinACFixture extends CakeTestFixture {
+class JoinACFixture extends TestFixture {
 
 /**
  * name property

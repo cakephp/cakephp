@@ -18,6 +18,8 @@
  * @since         CakePHP(tm) v 1.2.0.5331
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\Fixture;
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Number Tree Test Fixture
@@ -26,7 +28,7 @@
  *
  * @package       Cake.Test.Fixture
  */
-class NumberTreeTwoFixture extends CakeTestFixture {
+class NumberTreeTwoFixture extends TestFixture {
 
 /**
  * name property

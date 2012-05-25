@@ -1,10 +1,14 @@
 <?php
+
+namespace Cake\Test\Fixture;
+use Cake\TestSuite\TestCase;
+
 /**
  * This class helpes in indirectly testing the functionaliteies of CakeTestCase::assertTags
  *
  * @package       Cake.Test.Fixture
  */
-class AssertTagsTestCase extends CakeTestCase {
+class AssertTagsTestCase extends TestCase {
 
 /**
  * test that assertTags knows how to handle correct quoting.

@@ -16,13 +16,15 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\Fixture;
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * UnderscoreFieldFixture class
  *
  * @package       Cake.Test.Fixture
  */
-class UnderscoreFieldFixture extends CakeTestFixture {
+class UnderscoreFieldFixture extends TestFixture {
 
 /**
  * name property

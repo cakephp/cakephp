@@ -17,6 +17,8 @@
  * @since         CakePHP(tm) v 2.1
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+namespace Cake\Test\Fixture;
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
@@ -24,7 +26,7 @@
  * @package       cake
  * @subpackage    cake.tests.fixtures
  */
-class SiteFixture extends CakeTestFixture {
+class SiteFixture extends TestFixture {
 
 /**
  * name property
