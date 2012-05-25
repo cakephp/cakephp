@@ -16,8 +16,12 @@
  * @since         CakePHP(tm) v 0.10.5.1790
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('DboSource', 'Model/Datasource');
+namespace Cake\Model\Datasource\Database;
+use Cake\Model\Datasource\DboSource,
+	Cake\Model\Model,
+	Cake\Model\Schema,
+	Cake\Error,
+	\PDO;
 
 /**
  * MySQL DBO driver object
@@ -148,8 +152,8 @@ class Mysql extends DboSource {
 				$flags
 			);
 			$this->connected = true;
-		} catch (PDOException $e) {
-			throw new MissingConnectionException(array('class' => $e->getMessage()));
+		} catch (\PDOException $e) {
+			throw new Error\MissingConnectionException(array('class' => $e->getMessage()));
 		}
 
 		$this->_useAlias = (bool)version_compare($this->getVersion(), "4.1", ">=");
@@ -274,7 +278,7 @@ class Mysql extends DboSource {
  *
  * @param Model|string $model Name of database table to inspect or model instance
  * @return array Fields in table. Keys are name and type
- * @throws CakeException
+ * @throws Cake\Error\Exception
  */
 	public function describe($model) {
 		$key = $this->fullTableName($model, false);
@@ -287,7 +291,7 @@ class Mysql extends DboSource {
 		$fields = false;
 		$cols = $this->_execute('SHOW FULL COLUMNS FROM ' . $table);
 		if (!$cols) {
-			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
+			throw new Error\Exception(__d('cake_dev', 'Could not describe table for %s', $table));
 		}
 
 		while ($column = $cols->fetch(PDO::FETCH_OBJ)) {
@@ -450,7 +454,7 @@ class Mysql extends DboSource {
 /**
  * Generate a MySQL Alter Table syntax for the given Schema comparison
  *
- * @param array $compare Result of a CakeSchema::compare()
+ * @param array $compare Result of a Cake\Model\Schema::compare()
  * @param string $table
  * @return array Array of alter statements to make.
  */
@@ -511,12 +515,12 @@ class Mysql extends DboSource {
 /**
  * Generate a MySQL "drop table" statement for the given Schema object
  *
- * @param CakeSchema $schema An instance of a subclass of CakeSchema
+ * @param Cake\Model\Schema $schema An instance of a subclass of Cake\Model\Schema
  * @param string $table Optional.  If specified only the table name given will be generated.
  *                      Otherwise, all tables defined in the schema are generated.
  * @return string
  */
-	public function dropSchema(CakeSchema $schema, $table = null) {
+	public function dropSchema(Schema $schema, $table = null) {
 		$out = '';
 		foreach ($schema->tables as $curTable => $columns) {
 			if (!$table || $table === $curTable) {

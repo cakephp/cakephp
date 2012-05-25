@@ -16,8 +16,10 @@
  * @since         CakePHP(tm) v 0.10.5.1790
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('DboSource', 'Model/Datasource');
+namespace Cake\Model\Datasource\Database;
+use Cake\Model\Datasource\DboSource,
+	Cake\Error,
+	\PDO;
 
 /**
  * Dbo driver for SQLServer
@@ -128,8 +130,8 @@ class Sqlserver extends DboSource {
 				$flags
 			);
 			$this->connected = true;
-		} catch (PDOException $e) {
-			throw new MissingConnectionException(array('class' => $e->getMessage()));
+		} catch (\PDOException $e) {
+			throw new Error\MissingConnectionException(array('class' => $e->getMessage()));
 		}
 
 		return $this->connected;
@@ -178,7 +180,7 @@ class Sqlserver extends DboSource {
  *
  * @param Model|string $model Model object to describe, or a string table name.
  * @return array Fields in table. Keys are name and type
- * @throws CakeException
+ * @throws Cake\Error\Exception
  */
 	public function describe($model) {
 		$table = $this->fullTableName($model, false);
@@ -201,7 +203,7 @@ class Sqlserver extends DboSource {
 			WHERE TABLE_NAME = '" . $table . "'"
 		);
 		if (!$cols) {
-			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
+			throw new Error\Exception(__d('cake_dev', 'Could not describe table for %s', $table));
 		}
 
 		while ($column = $cols->fetch(PDO::FETCH_OBJ)) {
@@ -756,12 +758,12 @@ class Sqlserver extends DboSource {
 /**
  * Generate a "drop table" statement for the given Schema object
  *
- * @param CakeSchema $schema An instance of a subclass of CakeSchema
+ * @param Cake\Model\Schema $schema An instance of a subclass of Cake\Model\Schema
  * @param string $table Optional.  If specified only the table name given will be generated.
  *   Otherwise, all tables defined in the schema are generated.
  * @return string
  */
-	public function dropSchema(CakeSchema $schema, $table = null) {
+	public function dropSchema(Schema $schema, $table = null) {
 		$out = '';
 		foreach ($schema->tables as $curTable => $columns) {
 			if (!$table || $table == $curTable) {

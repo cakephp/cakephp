@@ -18,8 +18,12 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('AclNode', 'Model');
-App::uses('Hash', 'Utility');
+
+namespace Cake\Model\Behavior;
+use Cake\Model\ModelBehavior,
+	Cake\Model\Model,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Hash;
 
 /**
  * ACL behavior

@@ -16,10 +16,18 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('DataSource', 'Model/Datasource');
-App::uses('String', 'Utility');
-App::uses('View', 'View');
+namespace Cake\Model\Datasource;
+use Cake\Core\Configure,
+	Cake\Model\ConnectionManager,
+	Cake\Model\Schema,
+	Cake\Model\Model,
+	Cake\Utility\Inflector,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Hash,
+	Cake\Utility\String,
+	Cake\Cache\Cache,
+	\PDO,
+	Cake\Error;
 
 /**
  * DboSource
@@ -252,7 +260,7 @@ class DboSource extends DataSource {
 		parent::__construct($config);
 		$this->fullDebug = Configure::read('debug') > 1;
 		if (!$this->enabled()) {
-			throw new MissingConnectionException(array(
+			throw new Error\MissingConnectionException(array(
 				'class' => get_class($this)
 			));
 		}
@@ -281,7 +289,7 @@ class DboSource extends DataSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	public function disconnect() {
-		if ($this->_result instanceof PDOStatement) {
+		if ($this->_result instanceof \PDOStatement) {
 			$this->_result->closeCursor();
 		}
 		unset($this->_connection);
@@ -374,7 +382,7 @@ class DboSource extends DataSource {
  * @return stdClass An object representing a database identifier to be used in a query
  */
 	public function identifier($identifier) {
-		$obj = new stdClass();
+		$obj = new \stdClass();
 		$obj->type = 'identifier';
 		$obj->value = $identifier;
 		return $obj;
@@ -388,7 +396,7 @@ class DboSource extends DataSource {
  * @return stdClass An object representing a database expression to be used in a query
  */
 	public function expression($expression) {
-		$obj = new stdClass();
+		$obj = new \stdClass();
 		$obj->type = 'expression';
 		$obj->value = $expression;
 		return $obj;
@@ -470,7 +478,7 @@ class DboSource extends DataSource {
 				}
 			}
 			return $query;
-		} catch (PDOException $e) {
+		} catch (\PDOException $e) {
 			if (isset($query->queryString)) {
 				$e->queryString = $query->queryString;
 			} else {
@@ -486,7 +494,7 @@ class DboSource extends DataSource {
  * @param PDOStatement $query the query to extract the error from if any
  * @return string Error message with error number
  */
-	public function lastError(PDOStatement $query = null) {
+	public function lastError(\PDOStatement $query = null) {
 		if ($query) {
 			$error = $query->errorInfo();
 		} else {
@@ -1178,7 +1186,7 @@ class DboSource extends DataSource {
 	public function queryAssociation(Model $model, &$linkModel, $type, $association, $assocData, &$queryData, $external, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!is_array($resultSet)) {
-				throw new CakeException(__d('cake_dev', 'Error in Model %s', get_class($model)));
+				throw new Error\Exception(__d('cake_dev', 'Error in Model %s', get_class($model)));
 			}
 			if ($type === 'hasMany' && empty($assocData['limit']) && !empty($assocData['foreignKey'])) {
 				$ins = $fetch = array();
@@ -2916,13 +2924,13 @@ class DboSource extends DataSource {
 /**
  * Generate a database-native schema for the given Schema object
  *
- * @param Model $schema An instance of a subclass of CakeSchema
+ * @param Model $schema An instance of a subclass of Cake\Model\Schema
  * @param string $tableName Optional.  If specified only the table name given will be generated.
  *   Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	public function createSchema($schema, $tableName = null) {
-		if (!is_a($schema, 'CakeSchema')) {
+		if (!is_a($schema, 'Cake\Model\Schema')) {
 			trigger_error(__d('cake_dev', 'Invalid schema object'), E_USER_WARNING);
 			return null;
 		}
@@ -2965,7 +2973,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Generate a alter syntax from	CakeSchema::compare()
+ * Generate a alter syntax from	Cake\Model\Schema::compare()
  *
  * @param mixed $compare
  * @param string $table
@@ -2978,12 +2986,12 @@ class DboSource extends DataSource {
 /**
  * Generate a "drop table" statement for the given Schema object
  *
- * @param CakeSchema $schema An instance of a subclass of CakeSchema
+ * @param Cake\Model\Schema $schema An instance of a subclass of Cake\Model\Schema
  * @param string $table Optional.  If specified only the table name given will be generated.
  *   Otherwise, all tables defined in the schema are generated.
  * @return string
  */
-	public function dropSchema(CakeSchema $schema, $table = null) {
+	public function dropSchema(Schema $schema, $table = null) {
 		$out = '';
 
 		foreach ($schema->tables as $curTable => $columns) {

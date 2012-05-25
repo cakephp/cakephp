@@ -16,7 +16,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Model', 'Model');
+namespace Cake\Model;
+use Cake\Core\Configure,
+	Cake\Utility\Inflector,
+	Cake\Utility\ClassRegistry;
 
 /**
  * ACL Node
@@ -56,7 +59,7 @@ class AclNode extends Model {
  *
  * @param string|array|Model $ref Array with 'model' and 'foreign_key', model object, or string value
  * @return array Node found in database
- * @throws CakeException when binding to a model that doesn't exist.
+ * @throws Cake\Error\Exception when binding to a model that doesn't exist.
  */
 	public function node($ref = null) {
 		$db = $this->getDataSource();

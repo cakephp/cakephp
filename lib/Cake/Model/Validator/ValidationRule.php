@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeValidationRule.
+ * ValidationRule.
  *
  * Provides the Model validation logic.
  *
@@ -18,18 +18,17 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('ModelValidator', 'Model');
-App::uses('CakeValidationSet', 'Model/Validator');
-App::uses('Validation', 'Utility');
+
+namespace Cake\Model\Validator;
 
 /**
- * CakeValidationRule object. Represents a validation method, error message and
+ * ValidationRule object. Represents a validation method, error message and
  * rules for applying such method to a field.
  *
  * @package       Cake.Model.Validator
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
-class CakeValidationRule {
+class ValidationRule {
 
 /**
  * Whether the field passed this validation rule
@@ -270,8 +269,8 @@ class CakeValidationRule {
 			$this->_ruleParams[] = array_merge($validator, $this->_passedOptions);
 			$this->_ruleParams[0] = array($field => $this->_ruleParams[0]);
 			$this->_valid = call_user_func_array($methods[$rule], $this->_ruleParams);
-		} elseif (class_exists('Validation') && method_exists('Validation', $this->_rule)) {
-			$this->_valid = call_user_func_array(array('Validation', $this->_rule), $this->_ruleParams);
+		} elseif (method_exists('Cake\Utility\Validation', $this->_rule)) {
+			$this->_valid = call_user_func_array(array('Cake\Utility\Validation', $this->_rule), $this->_ruleParams);
 		} elseif (is_string($validator['rule'])) {
 			$this->_valid = preg_match($this->_rule, $data[$field]);
 		} elseif (Configure::read('debug') > 0) {

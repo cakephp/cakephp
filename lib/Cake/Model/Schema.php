@@ -17,17 +17,22 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Model', 'Model');
-App::uses('AppModel', 'Model');
-App::uses('ConnectionManager', 'Model');
-App::uses('File', 'Utility');
+namespace Cake\Model;
+use Cake\Core\Object,
+	Cake\Core\Configure,
+	Cake\Core\Plugin,
+	Cake\Core\App,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Inflector,
+	Cake\Utility\File,
+	Cake\Error;
 
 /**
  * Base Class for Schema management
  *
  * @package       Cake.Model
  */
-class CakeSchema extends Object {
+class Schema extends Object {
 
 /**
  * Name of the schema
@@ -125,7 +130,7 @@ class CakeSchema extends Object {
 		if (file_exists($this->path . DS . $file) && is_file($this->path . DS . $file)) {
 			$this->file = $file;
 		} elseif (!empty($this->plugin)) {
-			$this->path = CakePlugin::path($this->plugin) . 'Config' . DS . 'Schema';
+			$this->path = Plugin::path($this->plugin) . 'Config' . DS . 'Schema';
 		}
 	}
 
@@ -202,10 +207,6 @@ class CakeSchema extends Object {
 		));
 		$db = ConnectionManager::getDataSource($connection);
 
-		if (isset($this->plugin)) {
-			App::uses($this->plugin . 'AppModel', $this->plugin . '.Model');
-		}
-
 		$tables = array();
 		$currentTables = (array)$db->listSources();
 
@@ -238,7 +239,7 @@ class CakeSchema extends Object {
 					$plugin = $this->plugin . '.';
 				}
 
-				App::uses($importModel, $plugin . 'Model');
+				$importModel = App::classname($plugin . $importModel, 'Model');
 				if (!class_exists($importModel)) {
 					continue;
 				}
@@ -250,7 +251,7 @@ class CakeSchema extends Object {
 
 				try {
 					$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
-				} catch (CakeException $e) {
+				} catch (Error\Exception $e) {
 					continue;
 				}
 
@@ -305,7 +306,8 @@ class CakeSchema extends Object {
 					}
 					$table = $this->_noPrefixTable($prefix, $table);
 				}
-				$Object = new AppModel(array(
+				$modelClass = App::classname('Model', 'Model');
+				$Object = new $modelClass(array(
 					'name' => Inflector::classify($table), 'table' => $table, 'ds' => $connection
 				));
 
@@ -357,7 +359,7 @@ class CakeSchema extends Object {
 			get_object_vars($this), $options
 		));
 
-		$out = "class {$name}Schema extends CakeSchema {\n\n";
+		$out = "class {$name}Schema extends Schema {\n\n";
 
 		if ($path !== $this->path) {
 			$out .= "\tpublic \$path = '{$path}';\n\n";

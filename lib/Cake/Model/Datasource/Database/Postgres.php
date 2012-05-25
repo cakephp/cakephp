@@ -16,8 +16,10 @@
  * @since         CakePHP(tm) v 0.9.1.114
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('DboSource', 'Model/Datasource');
+namespace Cake\Model\Datasource\Database;
+use Cake\Model\Datasource\DboSource,
+	Cake\Error,
+	\PDO;
 
 /**
  * PostgreSQL layer for DBO.
@@ -120,8 +122,8 @@ class Postgres extends DboSource {
 			if (!empty($config['schema'])) {
 				 $this->_execute('SET search_path TO ' . $config['schema']);
 			}
-		} catch (PDOException $e) {
-			throw new MissingConnectionException(array('class' => $e->getMessage()));
+		} catch (\PDOException $e) {
+			throw new Error\MissingConnectionException(array('class' => $e->getMessage()));
 		}
 
 		return $this->connected;
@@ -458,7 +460,7 @@ class Postgres extends DboSource {
 /**
  * Alter the Schema of a table.
  *
- * @param array $compare Results of CakeSchema::compare()
+ * @param array $compare Results of Cake\Model\Schema::compare()
  * @param string $table name of the table
  * @return array
  */

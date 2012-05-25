@@ -19,7 +19,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('CakeValidationSet', 'Model/Validator');
+namespace Cake\Model;
+use Cake\Model\Validator\ValidationSet;
+use Cake\Event\Event;
 
 /**
  * ModelValidator object encapsulates all methods related to data validations for a model
@@ -31,10 +33,10 @@ App::uses('CakeValidationSet', 'Model/Validator');
  * @package       Cake.Model
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
-class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
+class ModelValidator implements \ArrayAccess, \IteratorAggregate, \Countable {
 
 /**
- * Holds the CakeValidationSet objects array
+ * Holds the ValidationSet objects array
  *
  * @var array
  */
@@ -253,7 +255,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 			}
 		}
 
-		$model->getEventManager()->dispatch(new CakeEvent('Model.afterValidate', $model));
+		$model->getEventManager()->dispatch(new Event('Model.afterValidate', $model));
 		return $model->validationErrors;
 	}
 
@@ -293,11 +295,11 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Returns a CakeValidationSet object containing all validation rules for a field, if no
- * params are passed then it returns an array with all CakeValidationSet objects for each field
+ * Returns a Cake ValidationSet object containing all validation rules for a field, if no
+ * params are passed then it returns an array with all Cake ValidationSet objects for each field
  *
  * @param string $name [optional] The fieldname to fetch. Defaults to null.
- * @return CakeValidationSet|array
+ * @return Cake\Model\Validator\ValidationSet|array
  */
 	public function getField($name = null) {
 		if ($name !== null && !empty($this->_fields[$name])) {
@@ -309,7 +311,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Sets the CakeValidationSet objects from the `Model::$validate` property
+ * Sets the Cake ValidationSet objects from the `Model::$validate` property
  * If `Model::$validate` is not set or empty, this method returns false. True otherwise.
  *
  * @return boolean true if `Model::$validate` was processed, false otherwise
@@ -329,7 +331,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 		$this->_fields = array();
 		$methods = $this->getMethods();
 		foreach ($this->_validate as $fieldName => $ruleSet) {
-			$this->_fields[$fieldName] = new CakeValidationSet($fieldName, $ruleSet, $methods);
+			$this->_fields[$fieldName] = new ValidationSet($fieldName, $ruleSet, $methods);
 		}
 		return true;
 	}
@@ -440,7 +442,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  */
 	protected function _triggerBeforeValidate($options = array()) {
 		$model = $this->getModel();
-		$event = new CakeEvent('Model.beforeValidate', $model, array($options));
+		$event = new Event('Model.beforeValidate', $model, array($options));
 		list($event->break, $event->breakOn) = array(true, false);
 		$model->getEventManager()->dispatch($event);
 		if ($event->isStopped()) {
@@ -464,7 +466,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * Returns the rule set for a field
  *
  * @param string $field name of the field to check
- * @return CakeValidationSet
+ * @return Cake\Model\Validator\ValidationSet
  **/
 	public function offsetGet($field) {
 		$this->_parseRules();
@@ -475,13 +477,13 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * Sets the rule set for a field
  *
  * @param string $field name of the field to set
- * @param array|CakeValidationSet $rules set of rules to apply to field
+ * @param array|Cake\Model\Validator\ValidationSet $rules set of rules to apply to field
  * @return void
  **/
 	public function offsetSet($field, $rules) {
 		$this->_parseRules();
-		if (!$rules instanceof CakeValidationSet) {
-			$rules = new CakeValidationSet($field, $rules, $this->getMethods());
+		if (!$rules instanceof ValidationSet) {
+			$rules = new ValidationSet($field, $rules, $this->getMethods());
 		}
 		$this->_fields[$field] = $rules;
 	}
@@ -504,7 +506,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  **/
 	public function getIterator() {
 		$this->_parseRules();
-		return new ArrayIterator($this->_fields);
+		return new \ArrayIterator($this->_fields);
 	}
 
 /**
@@ -519,7 +521,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 
 /**
  * Adds a new rule to a field's rule set. If second argumet is an array or instance of
- * CakeValidationSet then rules list for the field will be replaced with second argument and
+ * Cake\Model\Validator\ValidationSet then rules list for the field will be replaced with second argument and
  * third argument will be ignored.
  *
  * ## Example:
@@ -536,20 +538,20 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * }}}
  *
  * @param string $field The name of the field from wich the rule will be removed
- * @param string|array|CakeValidationSet $name name of the rule to be added or list of rules for the field
- * @param array|CakeValidationRule $rule or list of rules to be added to the field's rule set
+ * @param string|array|Cake\Model\Validator\ValidationSet $name name of the rule to be added or list of rules for the field
+ * @param array|Cake\Model\Validator\ValidationRule $rule or list of rules to be added to the field's rule set
  * @return ModelValidator this instance
  **/
 	public function add($field, $name, $rule = null) {
 		$this->_parseRules();
-		if ($name instanceof CakeValidationSet) {
+		if ($name instanceof ValidationSet) {
 			$this->_fields[$field] = $name;
 			return $this;
 		}
 
 		if (!isset($this->_fields[$field])) {
 			$rule = (is_string($name)) ? array($name => $rule) : $name;
-			$this->_fields[$field] = new CakeValidationSet($field, $rule, $this->getMethods());
+			$this->_fields[$field] = new ValidationSet($field, $rule, $this->getMethods());
 		} else {
 			if (is_string($name)) {
 				$this->_fields[$field]->setRule($name, $rule);

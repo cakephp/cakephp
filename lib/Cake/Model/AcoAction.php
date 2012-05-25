@@ -15,15 +15,14 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('AppModel', 'Model');
+namespace Cake\Model;
 
 /**
  * Action for Access Control Object
  *
  * @package       Cake.Model
  */
-class AcoAction extends AppModel {
+class AcoAction extends Model {
 
 /**
  * Model name

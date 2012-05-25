@@ -18,6 +18,10 @@
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Model\Behavior;
+use Cake\Model\ModelBehavior,
+	Cake\Model\Model,
+	Cake\Utility\Set;
 
 /**
  * Behavior to allow for dynamic and atomic manipulation of a Model's associations 

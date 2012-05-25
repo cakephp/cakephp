@@ -18,6 +18,10 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Model\Behavior;
+use Cake\Model\ModelBehavior,
+	Cake\Model\Model,
+	Cake\Model\ConnectionManager;
 
 /**
  * Tree Behavior.

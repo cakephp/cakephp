@@ -18,9 +18,12 @@
  * @since         CakePHP(tm) v 1.2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ObjectCollection', 'Utility');
-App::uses('CakeEventListener', 'Event');
+namespace Cake\Model;
+use Cake\Utility\ObjectCollection,
+	Cake\Utility\ClassRegistry,
+	Cake\Core\App,
+	Cake\Event\EventListener,
+	Cake\Error;
 
 /**
  * Model behavior collection class.
@@ -29,7 +32,7 @@ App::uses('CakeEventListener', 'Event');
  *
  * @package       Cake.Model
  */
-class BehaviorCollection extends ObjectCollection implements CakeEventListener {
+class BehaviorCollection extends ObjectCollection implements EventListener {
 
 /**
  * Stores a reference to the attached name
@@ -114,13 +117,10 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 		if (!isset($alias)) {
 			$alias = $name;
 		}
-
-		$class = $name . 'Behavior';
-
-		App::uses($class, $plugin . 'Model/Behavior');
-		if (!class_exists($class)) {
-			throw new MissingBehaviorException(array(
-				'class' => $class,
+		$class = App::classname($behavior, 'Model/Behavior', 'Behavior');
+		if (!$class) {
+			throw new Error\MissingBehaviorException(array(
+				'class' => $name . 'Behavior',
 				'plugin' => substr($plugin, 0, -1)
 			));
 		}
@@ -151,7 +151,8 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 			$this->_mappedMethods[$method] = array($alias, $methodAlias);
 		}
 		$methods = get_class_methods($this->_loaded[$alias]);
-		$parentMethods = array_flip(get_class_methods('ModelBehavior'));
+		$x = new \Cake\Model\ModelBehavior();
+		$parentMethods = array_flip(get_class_methods('Cake\Model\ModelBehavior'));
 		$callbacks = array(
 			'setup', 'cleanup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave',
 			'beforeDelete', 'afterDelete', 'onError'

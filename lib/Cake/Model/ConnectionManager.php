@@ -18,8 +18,10 @@
  * @since         CakePHP(tm) v 0.10.x.1402
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('DataSource', 'Model/Datasource');
+namespace Cake\Model;
+use Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Error;
 
 /**
  * Manages loaded instances of DataSource objects
@@ -66,8 +68,9 @@ class ConnectionManager {
  */
 	protected static function _init() {
 		include_once APP . 'Config' . DS . 'database.php';
-		if (class_exists('DATABASE_CONFIG')) {
-			self::$config = new DATABASE_CONFIG();
+		$class = Configure::read('App.namespace') . '\Config\DATABASE_CONFIG';
+		if (class_exists($class)) {
+			self::$config = new $class();
 		}
 		self::$_init = true;
 	}
@@ -94,10 +97,7 @@ class ConnectionManager {
 			self::_getConnectionObject($name);
 		}
 
-		self::loadDataSource($name);
-		$conn = self::$_connectionsEnum[$name];
-		$class = $conn['classname'];
-
+		$class = self::loadDataSource($name);
 		self::$_dataSources[$name] = new $class(self::$config->{$name});
 		self::$_dataSources[$name]->configKeyName = $name;
 
@@ -143,8 +143,8 @@ class ConnectionManager {
  * @param string|array $connName A string name of the connection, as defined in app/Config/database.php,
  *                        or an array containing the filename (without extension) and class name of the object,
  *                        to be found in app/Model/Datasource/ or lib/Cake/Model/Datasource/.
- * @return boolean True on success, null on failure or false if the class is already loaded
- * @throws MissingDatasourceException
+ * @return string
+ * @throws Cake\Error\MissingDatasourceException
  */
 	public static function loadDataSource($connName) {
 		if (empty(self::$_init)) {
@@ -158,7 +158,7 @@ class ConnectionManager {
 		}
 
 		if (class_exists($conn['classname'], false)) {
-			return false;
+			return $conn['classname'];
 		}
 
 		$plugin = $package = null;
@@ -169,14 +169,14 @@ class ConnectionManager {
 			$package = '/' . $conn['package'];
 		}
 
-		App::uses($conn['classname'], $plugin . 'Model/Datasource' . $package);
-		if (!class_exists($conn['classname'])) {
-			throw new MissingDatasourceException(array(
+		$class = App::classname($plugin . $conn['classname'], 'Model/Datasource' . $package);
+		if (!class_exists($class)) {
+			throw new Error\MissingDatasourceException(array(
 				'class' => $conn['classname'],
 				'plugin' => substr($plugin, 0, -1)
 			));
 		}
-		return true;
+		return $class;
 	}
 
 /**
@@ -242,7 +242,7 @@ class ConnectionManager {
 		if (!empty(self::$config->{$name})) {
 			self::$_connectionsEnum[$name] = self::_connectionData(self::$config->{$name});
 		} else {
-			throw new MissingDatasourceConfigException(array('config' => $name));
+			throw new Error\MissingDatasourceConfigException(array('config' => $name));
 		}
 	}
 

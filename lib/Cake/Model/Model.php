@@ -19,18 +19,19 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('ClassRegistry', 'Utility');
-App::uses('Validation', 'Utility');
-App::uses('String', 'Utility');
-App::uses('Hash', 'Utility');
-App::uses('BehaviorCollection', 'Model');
-App::uses('ModelBehavior', 'Model');
-App::uses('ModelValidator', 'Model');
-App::uses('ConnectionManager', 'Model');
-App::uses('Xml', 'Utility');
-App::uses('CakeEvent', 'Event');
-App::uses('CakeEventListener', 'Event');
-App::uses('CakeEventManager', 'Event');
+namespace Cake\Model;
+use Cake\Core\Object,
+	Cake\Core\Configure,
+	Cake\Core\App,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Inflector,
+	Cake\Utility\Xml,
+	Cake\Utility\Set,
+	Cake\Utility\Hash,
+	Cake\Event\EventListener,
+	Cake\Event\EventManager,
+	Cake\Event\Event,
+	Cake\Error;
 
 /**
  * Object-relational mapper.
@@ -43,7 +44,7 @@ App::uses('CakeEventManager', 'Event');
  * @package       Cake.Model
  * @link          http://book.cakephp.org/2.0/en/models.html
  */
-class Model extends Object implements CakeEventListener {
+class Model extends Object implements EventListener {
 
 /**
  * The name of the DataSource connection that this Model uses
@@ -612,10 +613,10 @@ class Model extends Object implements CakeEventListener {
 	);
 
 /**
- * Instance of the CakeEventManager this model is using
+ * Instance of the Cake\Event\EventManager this model is using
  * to dispatch inner events.
  *
- * @var CakeEventManager
+ * @var Cake\Event\EventManager
  */
 	protected $_eventManager = null;
 
@@ -672,7 +673,11 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		if ($this->name === null) {
-			$this->name = (isset($name) ? $name : get_class($this));
+			if (isset($name)) {
+				$this->name = $name;
+			} else {
+				list(, $this->name) = namespaceSplit(get_class($this));
+			}
 		}
 
 		if ($this->alias === null) {
@@ -698,13 +703,14 @@ class Model extends Object implements CakeEventListener {
 			$this->useDbConfig = $ds;
 		}
 
-		if (is_subclass_of($this, 'AppModel')) {
+		$appModelClass = App::classname('Model', 'Model');
+		if (is_subclass_of($this, $appModelClass)) {
 			$merge = array('actsAs', 'findMethods');
 			$parentClass = get_parent_class($this);
-			if ($parentClass !== 'AppModel') {
+			if ($parentClass !== $appModelClass) {
 				$this->_mergeVars($merge, $parentClass);
 			}
-			$this->_mergeVars($merge, 'AppModel');
+			$this->_mergeVars($merge, $appModelClass);
 		}
 		$this->_mergeVars(array('findMethods'), 'Model');
 
@@ -753,15 +759,15 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Returns the CakeEventManager manager instance that is handling any callbacks.
+ * Returns the Cake\Event\EventManager manager instance that is handling any callbacks.
  * You can use this instance to register any new listeners or callbacks to the
  * model events, or create your own events and trigger them at will.
  *
- * @return CakeEventManager
+ * @return Cake\Event\EventManager
  */
 	public function getEventManager() {
 		if (empty($this->_eventManager)) {
-			$this->_eventManager = new CakeEventManager();
+			$this->_eventManager = new EventManager();
 			$this->_eventManager->attach($this->Behaviors);
 			$this->_eventManager->attach($this);
 		}
@@ -833,7 +839,8 @@ class Model extends Object implements CakeEventListener {
 		list($plugin, $className) = pluginSplit($className);
 
 		if (!ClassRegistry::isKeySet($className) && !empty($dynamic)) {
-			$this->{$className} = new AppModel(array(
+			$appModelClass = App::classname('Model', 'Model');
+			$this->{$className} = new $appModelClass(array(
 				'name' => $className,
 				'table' => $this->hasAndBelongsToMany[$assocKey]['joinTable'],
 				'ds' => $this->useDbConfig
@@ -1096,7 +1103,7 @@ class Model extends Object implements CakeEventListener {
 		if (method_exists($db, 'listSources')) {
 			$sources = $db->listSources();
 			if (is_array($sources) && !in_array(strtolower($this->tablePrefix . $tableName), array_map('strtolower', $sources))) {
-				throw new MissingTableException(array(
+				throw new Error\MissingTableException(array(
 					'table' => $this->tablePrefix . $tableName,
 					'class' => $this->alias,
 					'ds' => $this->useDbConfig,
@@ -1128,7 +1135,7 @@ class Model extends Object implements CakeEventListener {
 			return;
 		}
 		if (is_object($one)) {
-			if ($one instanceof SimpleXMLElement || $one instanceof DOMNode) {
+			if ($one instanceof \SimpleXMLElement || $one instanceof \DOMNode) {
 				$one = $this->_normalizeXmlData(Xml::toArray($one));
 			} else {
 				$one = Set::reverse($one);
@@ -1664,7 +1671,7 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		if ($options['callbacks'] === true || $options['callbacks'] === 'before') {
-			$event = new CakeEvent('Model.beforeSave', $this, array($options));
+			$event = new Event('Model.beforeSave', $this, array($options));
 			list($event->break, $event->breakOn) = array(true, array(false, null));
 			$this->getEventManager()->dispatch($event);
 			if (!$event->result) {
@@ -1751,7 +1758,7 @@ class Model extends Object implements CakeEventListener {
 				}
 			}
 			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
-				$event = new CakeEvent('Model.afterSave', $this, array($created, $options));
+				$event = new Event('Model.afterSave', $this, array($created, $options));
 				$this->getEventManager()->dispatch($event);
 			}
 			if (!empty($this->data)) {
@@ -2347,7 +2354,7 @@ class Model extends Object implements CakeEventListener {
 		}
 		$id = $this->id;
 
-		$event = new CakeEvent('Model.beforeDelete', $this, array($cascade));
+		$event = new Event('Model.beforeDelete', $this, array($cascade));
 		list($event->break, $event->breakOn) = array(true, array(false, null));
 		$this->getEventManager()->dispatch($event);
 		if (!$event->isStopped()) {
@@ -2381,7 +2388,7 @@ class Model extends Object implements CakeEventListener {
 				if ($updateCounterCache) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}
-				$this->getEventManager()->dispatch(new CakeEvent('Model.afterDelete', $this));
+				$this->getEventManager()->dispatch(new Event('Model.afterDelete', $this));
 				$this->_clearCache();
 				$this->id = false;
 				return true;
@@ -2678,7 +2685,7 @@ class Model extends Object implements CakeEventListener {
 		$query['order'] = array($query['order']);
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
-			$event = new CakeEvent('Model.beforeFind', $this, array($query));
+			$event = new Event('Model.beforeFind', $this, array($query));
 			list($event->break, $event->breakOn, $event->modParams) = array(true, array(false, null), 0);
 			$this->getEventManager()->dispatch($event);
 			if ($event->isStopped()) {
@@ -2905,7 +2912,7 @@ class Model extends Object implements CakeEventListener {
  * @return array Set of filtered results
  */
 	protected function _filterResults($results, $primary = true) {
-		$event = new CakeEvent('Model.afterFind', $this, array($results, $primary));
+		$event = new Event('Model.afterFind', $this, array($results, $primary));
 		$event->modParams = 0;
 		$this->getEventManager()->dispatch($event);
 		return $event->result;
@@ -3166,7 +3173,7 @@ class Model extends Object implements CakeEventListener {
 		$this->schemaName = $db->getSchemaName();
 
 		if (empty($db) || !is_object($db)) {
-			throw new MissingConnectionException(array('class' => $this->name));
+			throw new Error\MissingConnectionException(array('class' => $this->name));
 		}
 	}
 
