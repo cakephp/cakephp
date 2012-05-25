@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeTestCase file
+ * Cake TestCase file
  *
  * PHP 5
  *
@@ -16,20 +16,24 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('CakeFixtureManager', 'TestSuite/Fixture');
-App::uses('CakeTestFixture', 'TestSuite/Fixture');
+namespace Cake\TestSuite;
+
+use Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Routing\Router,
+	Cake\Utility\ClassRegistry;
 
 /**
- * CakeTestCase class
+ * Cake TestCase class
  *
  * @package       Cake.TestSuite
  */
-abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
+abstract class TestCase extends \PHPUnit_Framework_TestCase {
 
 /**
  * The class responsible for managing the creation, loading and removing of fixtures
  *
- * @var CakeFixtureManager
+ * @var Cake\TestSuite\Fixture\FixtureManager
  */
 	public $fixtureManager = null;
 
@@ -71,7 +75,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return PHPUnit_Framework_TestResult
  * @throws InvalidArgumentException
  */
-	public function run(PHPUnit_Framework_TestResult $result = null) {
+	public function run(\PHPUnit_Framework_TestResult $result = null) {
 		if (!empty($this->fixtureManager)) {
 			$this->fixtureManager->load($this);
 		}
@@ -130,7 +134,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		if (empty($this->_pathRestore)) {
 			$this->_pathRestore = App::paths();
 		}
-		if (class_exists('Router', false)) {
+		if (class_exists('Cake\Routing\Router', false)) {
 			Router::reload();
 		}
 	}
@@ -143,7 +147,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		App::build($this->_pathRestore, App::RESET);
-		if (class_exists('ClassRegistry', false)) {
+		if (class_exists('Cake\Utility\ClassRegistry', false)) {
 			ClassRegistry::flush();
 		}
 		if (!empty($this->_configure)) {
@@ -197,12 +201,12 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $fixture Each parameter is a model name that corresponds to a
  *                        fixture, i.e. 'Post', 'Author', etc.
  * @return void
- * @see CakeTestCase::$autoFixtures
- * @throws Exception when no fixture manager is available.
+ * @see Cake\TestSuite\TestCase::$autoFixtures
+ * @throws \Exception when no fixture manager is available.
  */
 	public function loadFixtures() {
 		if (empty($this->fixtureManager)) {
-			throw new Exception(__d('cake_dev', 'No fixture manager to load the test fixture'));
+			throw new \Exception(__d('cake_dev', 'No fixture manager to load the test fixture'));
 		}
 		$args = func_get_args();
 		foreach ($args as $class) {

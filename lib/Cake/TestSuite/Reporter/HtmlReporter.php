@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeHtmlReporter
+ * HtmlReporter
  *
  * PHP 5
  *
@@ -15,15 +15,18 @@
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('CakeBaseReporter', 'TestSuite/Reporter');
+namespace Cake\TestSuite\Reporter;
+use Cake\Core\App,
+	Cake\TestSuite\Coverage\HtmlCoverageReport,
+	Cake\Utility\Inflector;
 
 /**
- * CakeHtmlReporter Reports Results of TestSuites and Test Cases
+ * HtmlReporter Reports Results of TestSuites and Test Cases
  * in an HTML format / context.
  *
  * @package       Cake.TestSuite.Reporter
  */
-class CakeHtmlReporter extends CakeBaseReporter {
+class HtmlReporter extends BaseReporter {
 
 /**
  * Paints the top of the web page setting the
@@ -172,8 +175,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintCoverage(array $coverage) {
-		App::uses('HtmlCoverageReport', 'TestSuite/Coverage');
-
 		$reporter = new HtmlCoverageReport($coverage, $this);
 		echo $reporter->report();
 	}
@@ -265,7 +266,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param float $time time spent to run the test method
  * @return void
  */
-	public function paintPass(PHPUnit_Framework_Test $test, $time = null) {
+	public function paintPass(\PHPUnit_Framework_Test $test, $time = null) {
 		if (isset($this->params['showPasses']) && $this->params['showPasses']) {
 			echo "<li class='pass'>\n";
 			echo "<span>Passed</span> ";
@@ -334,7 +335,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param Exception $e Exception to get a stack trace for.
  * @return string Generated stack trace.
  */
-	protected function _getStackTrace(Exception $e) {
+	protected function _getStackTrace(\Exception $e) {
 		$trace = $e->getTrace();
 		$out = array();
 		foreach ($trace as $frame) {
@@ -354,7 +355,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param  PHPUnit_Framework_TestSuite $suite
  */
-	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+	public function startTestSuite(\PHPUnit_Framework_TestSuite $suite) {
 		if (!$this->_headerSent) {
 			echo $this->paintHeader();
 		}

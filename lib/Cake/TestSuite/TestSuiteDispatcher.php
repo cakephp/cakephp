@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeTestSuiteDispatcher controls dispatching TestSuite web based requests.
+ * TestSuiteDispatcher controls dispatching TestSuite web based requests.
  *
  * PHP 5
  *
@@ -16,18 +16,19 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\TestSuite;
+use Cake\Core\App,
+	Cake\Error;
 
-define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'Case');
-define('APP_TEST_CASES', TESTS . 'Case');
-
-App::uses('CakeTestSuiteCommand', 'TestSuite');
+define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'TestCase');
+define('APP_TEST_CASES', TESTS . 'TestCase');
 
 /**
- * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
+ * TestSuiteDispatcher handles web requests to the test suite and runs the correct action.
  *
  * @package       Cake.TestSuite
  */
-class CakeTestSuiteDispatcher {
+class TestSuiteDispatcher {
 
 /**
  * 'Request' parameters
@@ -71,7 +72,7 @@ class CakeTestSuiteDispatcher {
 /**
  * reporter instance used for the request
  *
- * @var CakeBaseReporter
+ * @var Cake\TestSuite\Reporter\BaseReporter
  */
 	protected static $_Reporter = null;
 
@@ -112,7 +113,7 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	public static function run() {
-		$dispatcher = new CakeTestSuiteDispatcher();
+		$dispatcher = new TestSuiteDispatcher();
 		$dispatcher->dispatch();
 	}
 
@@ -176,7 +177,7 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	protected function _testCaseList() {
-		$command = new CakeTestSuiteCommand('', $this->params);
+		$command = new TestSuiteCommand('', $this->params);
 		$Reporter = $command->handleReporter($this->params['output']);
 		$Reporter->paintDocumentStart();
 		$Reporter->paintTestMenu();
@@ -248,9 +249,9 @@ class CakeTestSuiteDispatcher {
 
 		try {
 			self::time();
-			$command = new CakeTestSuiteCommand('CakeTestLoader', $commandArgs);
+			$command = new TestSuiteCommand('Cake\TestSuite\TestLoader', $commandArgs);
 			$result = $command->run($options);
-		} catch (MissingConnectionException $exception) {
+		} catch (Error\MissingConnectionException $exception) {
 			ob_end_clean();
 			$baseDir = $this->_baseDir;
 			include CAKE . 'TestSuite' . DS . 'templates' . DS . 'missing_connection.php';

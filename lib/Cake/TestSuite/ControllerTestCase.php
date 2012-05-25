@@ -16,14 +16,15 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Dispatcher', 'Routing');
-App::uses('CakeTestCase', 'TestSuite');
-App::uses('Router', 'Routing');
-App::uses('CakeRequest', 'Network');
-App::uses('CakeResponse', 'Network');
-App::uses('Helper', 'View');
-App::uses('CakeEvent', 'Event');
+namespace Cake\TestSuite;
+use Cake\Routing\Dispatcher,
+	Cake\Routing\Router,
+	Cake\View\Helper,
+	Cake\Event\Event,
+	Cake\Utility\Inflector,
+	Cake\Utility\ClassRegistry,
+	Cake\Core\App,
+	Cake\Error;
 
 /**
  * ControllerTestDispatcher class
@@ -55,7 +56,8 @@ class ControllerTestDispatcher extends Dispatcher {
 		if ($this->testController === null) {
 			$this->testController = parent::_getController($request, $response);
 		}
-		$this->testController->helpers = array_merge(array('InterceptContent'), $this->testController->helpers);
+		$default = array('InterceptContent' => array('className' => 'Cake\TestSuite\InterceptContentHelper'));
+		$this->testController->helpers = array_merge($default, $this->testController->helpers);
 		$this->testController->setRequest($request);
 		$this->testController->response = $this->response;
 		foreach ($this->testController->Components->attached() as $component) {
@@ -108,7 +110,7 @@ class InterceptContentHelper extends Helper {
  *
  * @package       Cake.TestSuite
  */
-abstract class ControllerTestCase extends CakeTestCase {
+abstract class ControllerTestCase extends TestCase {
 
 /**
  * The controller to test in testAction
@@ -230,7 +232,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 				$_GET = array();
 			}
 		}
-		$request = $this->getMock('CakeRequest', array('_readInput'), array($url));
+		$request = $this->getMock('Cake\Network\Request', array('_readInput'), array($url));
 
 		if (is_string($options['data'])) {
 			$request->expects($this->any())
@@ -241,11 +243,11 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$Dispatch = new ControllerTestDispatcher();
 		foreach (Router::$routes as $route) {
 			if ($route instanceof RedirectRoute) {
-				$route->response = $this->getMock('CakeResponse', array('send'));
+				$route->response = $this->getMock('Cake\Network\Response', array('send'));
 			}
 		}
 		$Dispatch->loadRoutes = $this->loadRoutes;
-		$Dispatch->parseParams(new CakeEvent('ControllerTestCase', $Dispatch, array('request' => $request)));
+		$Dispatch->parseParams(new Event('ControllerTestCase', $Dispatch, array('request' => $request)));
 		if (!isset($request->params['controller'])) {
 			$this->headers = Router::currentRoute()->response->header();
 			return;
@@ -265,7 +267,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$params['requested'] = 1;
 		}
 		$Dispatch->testController = $this->controller;
-		$Dispatch->response = $this->getMock('CakeResponse', array('send'));
+		$Dispatch->response = $this->getMock('Cake\Network\Response', array('send'));
 		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
 		$this->controller = $Dispatch->testController;
 		$this->vars = $this->controller->viewVars;
@@ -304,16 +306,12 @@ abstract class ControllerTestCase extends CakeTestCase {
  * @throws MissingComponentException When components could not be created.
  */
 	public function generate($controller, $mocks = array()) {
-		list($plugin, $controller) = pluginSplit($controller);
-		if ($plugin) {
-			App::uses($plugin . 'AppController', $plugin . '.Controller');
-			$plugin .= '.';
-		}
-		App::uses($controller . 'Controller', $plugin . 'Controller');
-		if (!class_exists($controller . 'Controller')) {
-			throw new MissingControllerException(array(
+		$classname = App::classname($controller, 'Controller', 'Controller');
+		if (!$classname) {
+			list($plugin, $controller) = pluginSplit($controller);
+			throw new Error\MissingControllerException(array(
 				'class' => $controller . 'Controller',
-				'plugin' => substr($plugin, 0, -1)
+				'plugin' => $plugin
 			));
 		}
 		ClassRegistry::flush();
@@ -324,11 +322,11 @@ abstract class ControllerTestCase extends CakeTestCase {
 			'components' => array()
 		), (array)$mocks);
 
-		list($plugin, $name) = pluginSplit($controller);
-		$_controller = $this->getMock($name . 'Controller', $mocks['methods'], array(), '', false);
-		$_controller->name = $name;
-		$request = $this->getMock('CakeRequest');
-		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$_controller = $this->getMock($classname, $mocks['methods'], array(), '', false);
+		list(, $controllerName) = namespaceSplit($classname);
+		$_controller->name = substr($controllerName, 0, -10);
+		$request = $this->getMock('Cake\Network\Request');
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$_controller->__construct($request, $response);
 
 		$config = ClassRegistry::config('Model');
@@ -340,12 +338,13 @@ abstract class ControllerTestCase extends CakeTestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
-			ClassRegistry::init($model);
-			list($plugin, $name) = pluginSplit($model);
+			;
+			$modelClass = get_class(ClassRegistry::init($model));
+			list(, $modelName) = namespaceSplit($modelClass);
 			$config = array_merge((array)$config, array('name' => $model));
-			$_model = $this->getMock($name, $methods, array($config));
-			ClassRegistry::removeObject($name);
-			ClassRegistry::addObject($name, $_model);
+			$_model = $this->getMock($modelClass, $methods, array($config));
+			ClassRegistry::removeObject($modelName);
+			ClassRegistry::addObject($modelName, $_model);
 		}
 
 		foreach ($mocks['components'] as $component => $methods) {
@@ -356,12 +355,11 @@ abstract class ControllerTestCase extends CakeTestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
-			list($plugin, $name) = pluginSplit($component, true);
-			$componentClass = $name . 'Component';
-			App::uses($componentClass, $plugin . 'Controller/Component');
-			if (!class_exists($componentClass)) {
-				throw new MissingComponentException(array(
-					'class' => $componentClass
+			$componentClass = App::classname($component, 'Controller/Component', 'Component');
+			list(, $name) = pluginSplit($component, true);
+			if (!$componentClass) {
+				throw new Error\MissingComponentException(array(
+					'class' => $name . 'Component'
 				));
 			}
 			$_component = $this->getMock($componentClass, $methods, array(), '', false);

@@ -17,6 +17,10 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\TestSuite\Coverage;
+use Cake\TestSuite\Reporter\BaseReporter,
+	Cake\Core\App,
+	Cake\Utility\Inflector;
 
 /**
  * Abstract class for common CoverageReport methods.
@@ -59,10 +63,10 @@ abstract class BaseCoverageReport {
  * Constructor
  *
  * @param array $coverage Array of coverage data from PHPUnit_Test_Result
- * @param CakeBaseReporter $reporter A reporter to use for the coverage report.
+ * @param Cake\TestSuite\Reporter\BaseReporter $reporter A reporter to use for the coverage report.
  * @return void
  */
-	public function __construct($coverage, CakeBaseReporter $reporter) {
+	public function __construct($coverage, BaseReporter $reporter) {
 		$this->_rawCoverage = $coverage;
 		$this->_setParams($reporter);
 	}
@@ -70,10 +74,10 @@ abstract class BaseCoverageReport {
 /**
  * Pulls params out of the reporter.
  *
- * @param CakeBaseReporter $reporter Reporter to suck params out of.
+ * @param Cake\TestSuite\Reporter\BaseReporter $reporter Reporter to suck params out of.
  * @return void
  */
-	protected function _setParams(CakeBaseReporter $reporter) {
+	protected function setParams(BaseReporter $reporter) {
 		if ($reporter->params['app']) {
 			$this->appTest = true;
 		}

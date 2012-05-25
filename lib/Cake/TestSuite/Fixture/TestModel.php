@@ -12,15 +12,15 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Model', 'Model');
+namespace Cake\TestSuite\Fixture;
+use Cake\Model\Model;
 
 /**
  * A model to extend from to help you during testing.
  *
  * @package       Cake.TestSuite.Fixture
  */
-class CakeTestModel extends Model {
+class TestModel extends Model {
 
 	public $useDbConfig = 'test';
 
@@ -63,7 +63,7 @@ class CakeTestModel extends Model {
 
 	public function save($data = null, $validate = true, $fieldList = array()) {
 		$db = $this->getDataSource();
-		$db->columns['datetime']['formatter'] = 'CakeTestSuiteDispatcher::date';
+		$db->columns['datetime']['formatter'] = 'Cake\TestSuite\TestSuiteDispatcher::date';
 		return parent::save($data, $validate, $fieldList);
 	}
 

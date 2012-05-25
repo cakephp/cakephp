@@ -16,16 +16,21 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ConnectionManager', 'Model');
-App::uses('ClassRegistry', 'Utility');
+namespace Cake\TestSuite\Fixture;
+use Cake\Model\ConnectionManager,
+	Cake\Core\Plugin,
+	Cake\Core\Configure,
+	Cake\Core\App,
+	Cake\TestSuite\TestCase,
+	Cake\Utility\ClassRegistry,
+	Cake\Utility\Inflector;
 
 /**
  * A factory class to manage the life cycle of test fixtures
  *
  * @package       Cake.TestSuite.Fixture
  */
-class CakeFixtureManager {
+class FixtureManager {
 
 /**
  * Was this class already initialized?
@@ -58,7 +63,7 @@ class CakeFixtureManager {
 /**
  * Inspects the test to look for unloaded fixtures and loads them
  *
- * @param CakeTestCase $test the test case to inspect
+ * @param Cake\TestSuite\TestCase $test the test case to inspect
  * @return void
  */
 	public function fixturize($test) {
@@ -111,38 +116,23 @@ class CakeFixtureManager {
 			}
 
 			if (strpos($fixture, 'core.') === 0) {
-				$fixture = substr($fixture, strlen('core.'));
-				$fixturePaths[] = CAKE . 'Test' . DS . 'Fixture';
+				list($core, $base) = explode('.', $fixture, 2);
+				$baseNamespace = 'Cake';
 			} elseif (strpos($fixture, 'app.') === 0) {
-				$fixture = substr($fixture, strlen('app.'));
-				$fixturePaths = array(
-					TESTS . 'Fixture'
-				);
+				list($app, $base) = explode('.', $fixture, 2);
+				$baseNamespace = Configure::read('App.namespace');
 			} elseif (strpos($fixture, 'plugin.') === 0) {
-				$parts = explode('.', $fixture, 3);
-				$pluginName = $parts[1];
-				$fixture = $parts[2];
-				$fixturePaths = array(
-					CakePlugin::path(Inflector::camelize($pluginName)) . 'Test' . DS . 'Fixture',
-					TESTS . 'Fixture'
-				);
+				list($p, $plugin, $base) = explode('.', $fixture);
+				$baseNamespace = Plugin::getNamespace($plugin);
 			} else {
-				$fixturePaths = array(
-					TESTS . 'Fixture',
-					CAKE . 'Test' . DS . 'Fixture'
-				);
+				$base = $fixture;
 			}
+			$base = Inflector::camelize($base);
+			$className = implode('\\', array($baseNamespace, 'Test\Fixture', $base . 'Fixture'));
 
-			foreach ($fixturePaths as $path) {
-				$className = Inflector::camelize($fixture);
-				if (is_readable($path . DS . $className . 'Fixture.php')) {
-					$fixtureFile = $path . DS . $className . 'Fixture.php';
-					require_once $fixtureFile;
-					$fixtureClass = $className . 'Fixture';
-					$this->_loaded[$fixtureIndex] = new $fixtureClass();
-					$this->_fixtureMap[$fixtureClass] = $this->_loaded[$fixtureIndex];
-					break;
-				}
+			if ($className) {
+				$this->_loaded[$fixture] = new $className();
+				$this->_fixtureMap[$base] = $this->_loaded[$fixture];
 			}
 		}
 	}
@@ -150,7 +140,7 @@ class CakeFixtureManager {
 /**
  * Runs the drop and create commands on the fixtures if necessary.
  *
- * @param CakeTestFixture $fixture the fixture object to create
+ * @param Cake\TestSuite\Fixture\TestFixture $fixture the fixture object to create
  * @param DataSource $db the datasource instance to use
  * @param boolean $drop whether drop the fixture if it is already created or not
  * @return void
@@ -181,10 +171,10 @@ class CakeFixtureManager {
 /**
  * Creates the fixtures tables and inserts data on them.
  *
- * @param CakeTestCase $test the test to inspect for fixture loading
+ * @param Cake\TestSuite\TestCase $test the test to inspect for fixture loading
  * @return void
  */
-	public function load(CakeTestCase $test) {
+	public function load(TestCase $test) {
 		if (empty($test->fixtures)) {
 			return;
 		}
@@ -211,10 +201,10 @@ class CakeFixtureManager {
 /**
  * Truncates the fixtures tables
  *
- * @param CakeTestCase $test the test to inspect for fixture unloading
+ * @param Cake\TestSuite\TestCase $test the test to inspect for fixture unloading
  * @return void
  */
-	public function unload(CakeTestCase $test) {
+	public function unload(TestCase $test) {
 		$fixtures = !empty($test->fixtures) ? $test->fixtures : array();
 		foreach (array_reverse($fixtures) as $f) {
 			if (isset($this->_loaded[$f])) {
@@ -238,7 +228,7 @@ class CakeFixtureManager {
  * @throws UnexpectedValueException if $name is not a previously loaded class
  */
 	public function loadSingle($name, $db = null) {
-		$name .= 'Fixture';
+		$name = Inflector::camelize($name);
 		if (isset($this->_fixtureMap[$name])) {
 			$fixture = $this->_fixtureMap[$name];
 			if (!$db) {
@@ -248,7 +238,7 @@ class CakeFixtureManager {
 			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
-			throw new UnexpectedValueException(__d('cake_dev', 'Referenced fixture class %s not found', $name));
+			throw new \UnexpectedValueException(__d('cake_dev', 'Referenced fixture class %s not found', $name));
 		}
 	}
 
