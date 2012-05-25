@@ -17,7 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('BaseLog', 'Log/Engine');
+namespace Cake\Log\Engine;
+use Cake\Log\Engine\BaseLog;
+use Cake\Utility\Hash;
 
 /**
  * File Storage stream for Logging.  Writes logs to different files

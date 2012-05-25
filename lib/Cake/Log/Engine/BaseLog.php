@@ -17,14 +17,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('CakeLogInterface', 'Log');
+namespace Cake\Log\Engine;
+use Cake\Log\LogInterface;
 
 /**
  * Base log engine class.
  *
  * @package       Cake.Log.Engine
  */
-abstract class BaseLog implements CakeLogInterface {
+abstract class BaseLog implements LogInterface {
 
 /**
  * Engine config
