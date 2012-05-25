@@ -12,8 +12,11 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('BaseAuthorize', 'Controller/Component/Auth');
+namespace Cake\Controller\Component\Auth;
+use Cake\Controller\ComponentCollection,
+	Cake\Controller\Controller,
+	Cake\Network\Request,
+	Cake\Error;
 
 /**
  * An authorization adapter for AuthComponent.  Provides the ability to authorize using a controller callback.
@@ -42,12 +45,12 @@ class ControllerAuthorize extends BaseAuthorize {
  *
  * @param Controller $controller null to get, a controller to set.
  * @return mixed
- * @throws CakeException
+ * @throws Cake\Error\Exception
  */
 	public function controller(Controller $controller = null) {
 		if ($controller) {
 			if (!method_exists($controller, 'isAuthorized')) {
-				throw new CakeException(__d('cake_dev', '$controller does not implement an isAuthorized() method.'));
+				throw new Error\Exception(__d('cake_dev', '$controller does not implement an isAuthorized() method.'));
 			}
 		}
 		return parent::controller($controller);
@@ -57,10 +60,10 @@ class ControllerAuthorize extends BaseAuthorize {
  * Checks user authorization using a controller callback.
  *
  * @param array $user Active user data
- * @param CakeRequest $request
+ * @param Cake\Network\Request $request
  * @return boolean
  */
-	public function authorize($user, CakeRequest $request) {
+	public function authorize($user, Request $request) {
 		return (bool)$this->_Controller->isAuthorized($user);
 	}
 

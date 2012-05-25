@@ -16,11 +16,16 @@
  * @since         CakePHP(tm) v 0.10.8.2156
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Component', 'Controller');
-App::uses('String', 'Utility');
-App::uses('Hash', 'Utility');
-App::uses('Security', 'Utility');
+namespace Cake\Controller\Component;
+use Cake\Controller\Component,
+	Cake\Controller\ComponentCollection,
+	Cake\Controller\Controller,
+	Cake\Network\Request,
+	Cake\Utility\Hash,
+	Cake\Utility\Security,
+	Cake\Utility\Set,
+	Cake\Core\Configure,
+	Cake\Error;
 
 /**
  * The Security Component creates an easy way to integrate tighter security in 
@@ -195,7 +200,7 @@ class SecurityComponent extends Component {
 /**
  * Request object
  *
- * @var CakeRequest
+ * @var Cake\Network\Request
  */
 	public $request;
 
@@ -310,7 +315,7 @@ class SecurityComponent extends Component {
  */
 	public function blackHole(Controller $controller, $error = '') {
 		if ($this->blackHoleCallback == null) {
-			throw new BadRequestException(__d('cake_dev', 'The request has been black-holed'));
+			throw new Error\BadRequestException(__d('cake_dev', 'The request has been black-holed'));
 		} else {
 			return $this->_callback($controller, $this->blackHoleCallback, array($error));
 		}
@@ -496,10 +501,10 @@ class SecurityComponent extends Component {
 /**
  * Manually add CSRF token information into the provided request object.
  *
- * @param CakeRequest $request The request object to add into.
+ * @param Cake\Network\Request $request The request object to add into.
  * @return boolean
  */
-	public function generateToken(CakeRequest $request) {
+	public function generateToken(Request $request) {
 		if (isset($request->params['requested']) && $request->params['requested'] === 1) {
 			if ($this->Session->check('_Token')) {
 				$request->params['_Token'] = $this->Session->read('_Token');

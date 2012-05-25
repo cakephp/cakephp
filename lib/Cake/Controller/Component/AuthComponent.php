@@ -19,14 +19,21 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Component', 'Controller');
-App::uses('Router', 'Routing');
-App::uses('Security', 'Utility');
-App::uses('Debugger', 'Utility');
-App::uses('Hash', 'Utility');
-App::uses('CakeSession', 'Model/Datasource');
-App::uses('BaseAuthorize', 'Controller/Component/Auth');
-App::uses('BaseAuthenticate', 'Controller/Component/Auth');
+namespace Cake\Controller\Component;
+use Cake\Controller\Component,
+	Cake\Controller\ComponentCollection,
+	Cake\Controller\Controller,
+	Cake\Model\Datasource\Session,
+	Cake\Routing\Router,
+	Cake\Network\Request,
+	Cake\Network\Response,
+	Cake\Utility\Debugger,
+	Cake\Utility\Set,
+	Cake\Utility\Security,
+	Cake\Utility\Hash,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Error;
 
 /**
  * Authentication control component class
@@ -222,14 +229,14 @@ class AuthComponent extends Component {
 /**
  * Request object
  *
- * @var CakeRequest
+ * @var Cake\Network\Request
  */
 	public $request;
 
 /**
  * Response object
  *
- * @var CakeResponse
+ * @var Cake\Network\Response
  */
 	public $response;
 
@@ -264,7 +271,7 @@ class AuthComponent extends Component {
  * @return boolean
  */
 	public function startup(Controller $controller) {
-		if ($controller->name == 'CakeError') {
+		if ($controller->name == 'Error') {
 			return true;
 		}
 
@@ -364,7 +371,7 @@ class AuthComponent extends Component {
  * be authorized for the request.
  *
  * @param array $user The user to check the authorization of. If empty the user in the session will be used.
- * @param CakeRequest $request The request to authenticate for.  If empty, the current request will be used.
+ * @param Cake\Network\Request $request The request to authenticate for.  If empty, the current request will be used.
  * @return boolean True if $user is authorized, otherwise false
  */
 	public function isAuthorized($user = null, $request = null) {
@@ -391,7 +398,7 @@ class AuthComponent extends Component {
  * Loads the authorization objects configured.
  *
  * @return mixed Either null when authorize is empty, or the loaded authorization objects.
- * @throws CakeException
+ * @throws Cake\Error\Exception
  */
 	public function constructAuthorize() {
 		if (empty($this->authorize)) {
@@ -405,14 +412,12 @@ class AuthComponent extends Component {
 			unset($config[AuthComponent::ALL]);
 		}
 		foreach ($config as $class => $settings) {
-			list($plugin, $class) = pluginSplit($class, true);
-			$className = $class . 'Authorize';
-			App::uses($className, $plugin . 'Controller/Component/Auth');
+			$className = App::classname($class, 'Controller/Component/Auth', 'Authorize');
 			if (!class_exists($className)) {
-				throw new CakeException(__d('cake_dev', 'Authorization adapter "%s" was not found.', $class));
+				throw new Error\Exception(__d('cake_dev', 'Authorization adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authorize')) {
-				throw new CakeException(__d('cake_dev', 'Authorization objects must implement an authorize method.'));
+				throw new Error\Exception(__d('cake_dev', 'Authorization objects must implement an authorize method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
 			$this->_authorizeObjects[] = new $className($this->_Collection, $settings);
@@ -558,13 +563,13 @@ class AuthComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
  */
 	public static function user($key = null) {
-		if (empty(self::$_user) && !CakeSession::check(self::$sessionKey)) {
+		if (empty(self::$_user) && !Session::check(self::$sessionKey)) {
 			return null;
 		}
 		if (!empty(self::$_user)) {
 			$user = self::$_user;
 		} else {
-			$user = CakeSession::read(self::$sessionKey);
+			$user = Session::read(self::$sessionKey);
 		}
 		if ($key === null) {
 			return $user;
@@ -628,11 +633,11 @@ class AuthComponent extends Component {
  * Use the configured authentication adapters, and attempt to identify the user
  * by credentials contained in $request.
  *
- * @param CakeRequest $request The request that contains authentication data.
- * @param CakeResponse $response The response
+ * @param Cake\Network\Request $request The request that contains authentication data.
+ * @param Cake\Network\Response $response The response
  * @return array User record data, or false, if the user could not be identified.
  */
-	public function identify(CakeRequest $request, CakeResponse $response) {
+	public function identify(Request $request, Response $response) {
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
@@ -649,7 +654,7 @@ class AuthComponent extends Component {
  * loads the configured authentication objects.
  *
  * @return mixed either null on empty authenticate value, or an array of loaded objects.
- * @throws CakeException
+ * @throws Cake\Error\Exception
  */
 	public function constructAuthenticate() {
 		if (empty($this->authenticate)) {
@@ -663,14 +668,12 @@ class AuthComponent extends Component {
 			unset($config[AuthComponent::ALL]);
 		}
 		foreach ($config as $class => $settings) {
-			list($plugin, $class) = pluginSplit($class, true);
-			$className = $class . 'Authenticate';
-			App::uses($className, $plugin . 'Controller/Component/Auth');
+			$className = App::classname($class, 'Controller/Component/Auth', 'Authenticate');
 			if (!class_exists($className)) {
-				throw new CakeException(__d('cake_dev', 'Authentication adapter "%s" was not found.', $class));
+				throw new Error\Exception(__d('cake_dev', 'Authentication adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authenticate')) {
-				throw new CakeException(__d('cake_dev', 'Authentication objects must implement an authenticate method.'));
+				throw new Error\Exception(__d('cake_dev', 'Authentication objects must implement an authenticate method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
 			$this->_authenticateObjects[] = new $className($this->_Collection, $settings);

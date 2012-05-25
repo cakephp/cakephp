@@ -12,8 +12,10 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('BaseAuthenticate', 'Controller/Component/Auth');
+namespace Cake\Controller\Component\Auth;
+use Cake\Controller\ComponentCollection,
+	Cake\Network\Request,
+	Cake\Network\Response;
 
 /**
  * Basic Authentication adapter for AuthComponent.
@@ -84,11 +86,11 @@ class BasicAuthenticate extends BaseAuthenticate {
  * Authenticate a user using basic HTTP auth.  Will use the configured User model and attempt a
  * login using basic HTTP auth.
  *
- * @param CakeRequest $request The request to authenticate with.
- * @param CakeResponse $response The response to add headers to.
+ * @param Cake\Network\Request $request The request to authenticate with.
+ * @param Cake\Network\Response $response The response to add headers to.
  * @return mixed Either false on failure, or an array of user data on success.
  */
-	public function authenticate(CakeRequest $request, CakeResponse $response) {
+	public function authenticate(Request $request, Response $response) {
 		$result = $this->getUser($request);
 
 		if (empty($result)) {
@@ -103,7 +105,7 @@ class BasicAuthenticate extends BaseAuthenticate {
 /**
  * Get a user based on information in the request.  Used by cookie-less auth for stateless clients.
  *
- * @param CakeRequest $request Request object.
+ * @param Cake\Network\Request $request Request object.
  * @return mixed Either false or an array of user information
  */
 	public function getUser($request) {

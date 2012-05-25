@@ -18,6 +18,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Controller;
+use Cake\Routing\Router;
 
 /**
  * Error Handling Controller
@@ -26,7 +28,7 @@
  *
  * @package       Cake.Controller
  */
-class CakeErrorController extends AppController {
+class ErrorController extends Controller {
 
 /**
  * Controller name
@@ -45,8 +47,8 @@ class CakeErrorController extends AppController {
 /**
  * __construct
  *
- * @param CakeRequest $request
- * @param CakeResponse $response
+ * @param Cake\Network\Request $request
+ * @param Cake\Network\Response $response
  */
 	public function __construct($request = null, $response = null) {
 		parent::__construct($request, $response);

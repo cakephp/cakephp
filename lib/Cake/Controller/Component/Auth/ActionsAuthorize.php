@@ -12,8 +12,8 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('BaseAuthorize', 'Controller/Component/Auth');
+namespace Cake\Controller\Component\Auth;
+use Cake\Network\Request;
 
 /**
  * An authorization adapter for AuthComponent.  Provides the ability to authorize using the AclComponent,
@@ -30,10 +30,10 @@ class ActionsAuthorize extends BaseAuthorize {
  * Authorize a user using the AclComponent.
  *
  * @param array $user The user to authorize
- * @param CakeRequest $request The request needing authorization.
+ * @param Cake\Network\Request $request The request needing authorization.
  * @return boolean
  */
-	public function authorize($user, CakeRequest $request) {
+	public function authorize($user, Request $request) {
 		$Acl = $this->_Collection->load('Acl');
 		$user = array($this->settings['userModel'] => $user);
 		return $Acl->check($user, $this->action($request));

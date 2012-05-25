@@ -17,6 +17,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+namespace Cake\Controller\Component\Acl;
+use Cake\Core\Object,
+	Cake\Controller\Component,
+	Cake\Configure\PhpReader,
+	Cake\Utility\Inflector,
+	Cake\Error;
+
 /**
  * PhpAcl implements an access control system using a plain PHP configuration file. 
  * An example file can be found in app/Config/acl.php
@@ -74,7 +81,6 @@ class PhpAcl extends Object implements AclInterface {
 			$this->options = array_merge($this->options, $Component->settings['adapter']);
 		}
 
-		App::uses('PhpReader', 'Configure');
 		$Reader = new PhpReader(dirname($this->options['config']) . DS);
 		$config = $Reader->read(basename($this->options['config']));
 		$this->build($config);
@@ -91,11 +97,11 @@ class PhpAcl extends Object implements AclInterface {
  */
 	public function build(array $config) {
 		if (empty($config['roles'])) {
-			throw new AclException(__d('cake_dev','"roles" section not found in configuration.'));
+			throw new Error\AclException(__d('cake_dev','"roles" section not found in configuration.'));
 		}
 
 		if (empty($config['rules']['allow']) && empty($config['rules']['deny'])) {
-			throw new AclException(__d('cake_dev','Neither "allow" nor "deny" rules were provided in configuration.'));
+			throw new Error\AclException(__d('cake_dev','Neither "allow" nor "deny" rules were provided in configuration.'));
 		}
 
 		$rules['allow'] = !empty($config['rules']['allow']) ? $config['rules']['allow'] : array();

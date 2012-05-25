@@ -18,8 +18,16 @@
  * @since         CakePHP(tm) v 0.10.4.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Xml', 'Utility');
+namespace Cake\Controller\Component;
+use Cake\Controller\Component,
+	Cake\Controller\ComponentCollection,
+	Cake\Controller\Controller,
+	Cake\Routing\Router,
+	Cake\Core\Configure,
+	Cake\Core\App,
+	Cake\Utility\Inflector,
+	Cake\Utility\Xml,
+	Cake\Error;
 
 /**
  * Request object for handling alternative HTTP requests
@@ -52,14 +60,14 @@ class RequestHandlerComponent extends Component {
 /**
  * Holds the reference to Controller::$request
  *
- * @var CakeRequest
+ * @var Cake\Network\Request
  */
 	public $request;
 
 /**
  * Holds the reference to Controller::$response
  *
- * @var CakeResponse
+ * @var Cake\Network\Response
  */
 	public $response;
 
@@ -161,8 +169,8 @@ class RequestHandlerComponent extends Component {
  *   is requested, the view path becomes `app/View/Controller/xml/action.ctp`. Also if
  *   `controller/action` is requested with `Accept-Type: application/xml` in the headers
  *   the view path will become `app/View/Controller/xml/action.ctp`.  Layout and template
- *   types will only switch to mime-types recognized by CakeResponse.  If you need to declare
- *   additional mime-types, you can do so using CakeResponse::type() in your controllers beforeFilter()
+ *   types will only switch to mime-types recognized by Cake\Network\Response.  If you need to declare
+ *   additional mime-types, you can do so using Cake\Network\Response::type() in your controllers beforeFilter()
  *   method.
  * - If a helper with the same name as the extension exists, it is added to the controller.
  * - If the extension is of a type that RequestHandler understands, it will set that
@@ -210,7 +218,7 @@ class RequestHandlerComponent extends Component {
 				return Xml::toArray($xml->data);
 			}
 			return Xml::toArray($xml);
-		} catch (XmlException $e) {
+		} catch (Error\XmlException $e) {
 			return array();
 		}
 	}
@@ -429,7 +437,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Determines which content types the client accepts.  Acceptance is based on
  * the file extension parsed by the Router (if present), and by the HTTP_ACCEPT
- * header. Unlike CakeRequest::accepts() this method deals entirely with mapped content types.
+ * header. Unlike Cake\Network\Request::accepts() this method deals entirely with mapped content types.
  *
  * Usage:
  *
@@ -580,13 +588,11 @@ class RequestHandlerComponent extends Component {
 		}
 		$controller->ext = '.ctp';
 
-		$viewClass = Inflector::classify($type);
-		$viewName = $viewClass . 'View';
-		if (!class_exists($viewName)) {
-			App::uses($viewName, 'View');
-		}
-		if (class_exists($viewName)) {
-			$controller->viewClass = $viewClass;
+		$view = Inflector::classify($type);
+		$viewClass = App::classname($view, 'View', 'View');
+
+		if ($viewClass) {
+			$controller->viewClass = $view;
 		} elseif (empty($this->_renderType)) {
 			$controller->viewPath .= DS . $type;
 		} else {
@@ -607,9 +613,8 @@ class RequestHandlerComponent extends Component {
 		);
 
 		if (!$isAdded) {
-			App::uses('AppHelper', 'View/Helper');
-			App::uses($helper . 'Helper', 'View/Helper');
-			if (class_exists($helper . 'Helper')) {
+			$helperClass = App::classname($helper, 'View/Helper', 'Helper');
+			if ($helperClass) {
 				$controller->helpers[] = $helper;
 			}
 		}
@@ -617,7 +622,7 @@ class RequestHandlerComponent extends Component {
 
 /**
  * Sets the response header based on type map index name.  This wraps several methods
- * available on CakeResponse. It also allows you to use Content-Type aliases.
+ * available on Cake\Network\Response. It also allows you to use Content-Type aliases.
  *
  * @param string|array $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
  *    like 'application/x-shockwave'.
@@ -718,11 +723,11 @@ class RequestHandlerComponent extends Component {
  *    be the handling callback, all other arguments should be additional parameters
  *    for the handler.
  * @return void
- * @throws CakeException
+ * @throws Cake\Error\Exception
  */
 	public function addInputType($type, $handler) {
 		if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
-			throw new CakeException(__d('cake_dev', 'You must give a handler callback.'));
+			throw new Error\Exception(__d('cake_dev', 'You must give a handler callback.'));
 		}
 		$this->_inputTypeMap[$type] = $handler;
 	}

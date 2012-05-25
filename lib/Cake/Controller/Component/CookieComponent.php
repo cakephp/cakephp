@@ -17,9 +17,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Component', 'Controller');
-App::uses('Security', 'Utility');
-App::uses('Hash', 'Utility');
+namespace Cake\Controller\Component;
+use Cake\Controller\Component,
+	Cake\Controller\ComponentCollection,
+	Cake\Core\Configure,
+	Cake\Network\Response,
+	Cake\Utility\Hash,
+	Cake\Utility\Set,
+	Cake\Utility\Security;
 
 /**
  * Cookie Component.
@@ -155,9 +160,9 @@ class CookieComponent extends Component {
 	protected $_expires = 0;
 
 /**
- * A reference to the Controller's CakeResponse object
+ * A reference to the Controller's Cake\Network\Response object
  * 
- * @var CakeResponse
+ * @var Cake\Network\Response
  */
 	protected $_response = null;
 
@@ -178,7 +183,7 @@ class CookieComponent extends Component {
 		if ($controller && isset($controller->response)) {
 			$this->_response = $controller->response;
 		} else {
-			$this->_response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+			$this->_response = new Response(array('charset' => Configure::read('App.encoding')));
 		}
 	}
 
