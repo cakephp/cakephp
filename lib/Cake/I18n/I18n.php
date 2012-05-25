@@ -16,13 +16,13 @@
  * @since         CakePHP(tm) v 1.2.0.4116
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-/**
- * Included libraries.
- */
-App::uses('CakePlugin', 'Core');
-App::uses('L10n', 'I18n');
-App::uses('Multibyte', 'I18n');
+namespace Cake\I18n;
+use Cake\Core\Configure,
+	Cake\Core\Plugin,
+	Cake\Core\App,
+	Cake\Cache\Cache,
+	Cake\Utility\Hash,
+	Cake\Utility\Inflector;
 
 if (function_exists('mb_internal_encoding')) {
 	$encoding = Configure::read('App.encoding');
@@ -304,13 +304,13 @@ class I18n {
 		$core = true;
 		$merge = array();
 		$searchPaths = App::path('locales');
-		$plugins = CakePlugin::loaded();
+		$plugins = Plugin::loaded();
 
 		if (!empty($plugins)) {
 			foreach ($plugins as $plugin) {
 				$pluginDomain = Inflector::underscore($plugin);
 				if ($pluginDomain === $domain) {
-					$searchPaths[] = CakePlugin::path($plugin) . 'Locale' . DS;
+					$searchPaths[] = Plugin::path($plugin) . 'Locale' . DS;
 					$searchPaths = array_reverse($searchPaths);
 					break;
 				}

@@ -17,6 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.6833
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace {
+use Cake\I18n\Multibyte;
 
 if (!function_exists('mb_stripos')) {
 
@@ -273,6 +275,12 @@ if (!function_exists('mb_encode_mimeheader')) {
 
 }
 
+}
+
+namespace Cake\I18n {
+use Cake\Configure\PhpReader,
+	Cake\Core\Configure;
+
 /**
  * Multibyte handling methods.
  *
@@ -395,9 +403,7 @@ class Multibyte {
  * @return integer|boolean The portion of $haystack, or false if $needle is not found.
  */
 	public static function stristr($haystack, $needle, $part = false) {
-		$php = (PHP_VERSION < 5.3);
-
-		if (($php && $part) || Multibyte::checkMultibyte($haystack)) {
+		if (Multibyte::checkMultibyte($haystack)) {
 			$check = Multibyte::strtoupper($haystack);
 			$check = Multibyte::utf8($check);
 			$found = false;
@@ -438,10 +444,7 @@ class Multibyte {
 			return false;
 		}
 
-		if (!$php) {
-			return stristr($haystack, $needle, $part);
-		}
-		return stristr($haystack, $needle);
+		return stristr($haystack, $needle, $part);
 	}
 
 /**
@@ -735,9 +738,7 @@ class Multibyte {
  * @return string|boolean The portion of $haystack, or true if $needle is not found.
  */
 	public static function strstr($haystack, $needle, $part = false) {
-		$php = (PHP_VERSION < 5.3);
-
-		if (($php && $part) || Multibyte::checkMultibyte($haystack)) {
+		if (Multibyte::checkMultibyte($haystack)) {
 			$check = Multibyte::utf8($haystack);
 			$found = false;
 
@@ -776,10 +777,7 @@ class Multibyte {
 			return false;
 		}
 
-		if (!$php) {
-			return strstr($haystack, $needle, $part);
-		}
-		return strstr($haystack, $needle);
+		return strstr($haystack, $needle, $part);
 	}
 
 /**
@@ -1090,7 +1088,6 @@ class Multibyte {
 				return null;
 			}
 			if (!Configure::configured('_cake_core_')) {
-				App::uses('PhpReader', 'Configure');
 				Configure::config('_cake_core_', new PhpReader(CAKE . 'Config' . DS));
 			}
 			Configure::load('unicode' . DS . 'casefolding' . DS . $range, '_cake_core_');
@@ -1130,5 +1127,7 @@ class Multibyte {
 		}
 		return false;
 	}
+
+}
 
 }
