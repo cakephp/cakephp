@@ -20,6 +20,8 @@
  */
 
 App::uses('Folder', 'Utility');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
 App::uses('ShellDispatcher', 'Console');
 App::uses('Shell', 'Console');
 App::uses('ExtractTask', 'Console/Command/Task');
