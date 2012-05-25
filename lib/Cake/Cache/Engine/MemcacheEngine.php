@@ -17,6 +17,10 @@
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Cache\Engine;
+use Cake\Cache\CacheEngine,
+	Cake\Utility\Inflector,
+	Cake\Error;
 
 /**
  * Memcache storage engine for cache.  Memcache has some limitations in the amount of
@@ -63,14 +67,14 @@ class MemcacheEngine extends CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
-		if (!class_exists('Memcache')) {
+		if (!class_exists('\Memcache')) {
 			return false;
 		}
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
 		$settings += array(
-			'engine' => 'Memcache',
+			'engine' => __CLASS__,
 			'servers' => array('127.0.0.1'),
 			'compress' => false,
 			'persistent' => true
@@ -85,7 +89,7 @@ class MemcacheEngine extends CacheEngine {
 		}
 		if (!isset($this->_Memcache)) {
 			$return = false;
-			$this->_Memcache = new Memcache();
+			$this->_Memcache = new \Memcache();
 			foreach ($this->settings['servers'] as $server) {
 				list($host, $port) = $this->_parseServerString($server);
 				if ($this->_Memcache->addServer($host, $port, $this->settings['persistent'])) {
@@ -163,7 +167,7 @@ class MemcacheEngine extends CacheEngine {
  */
 	public function increment($key, $offset = 1) {
 		if ($this->settings['compress']) {
-			throw new CacheException(
+			throw new Error\CacheException(
 				__d('cake_dev', 'Method increment() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}
@@ -180,7 +184,7 @@ class MemcacheEngine extends CacheEngine {
  */
 	public function decrement($key, $offset = 1) {
 		if ($this->settings['compress']) {
-			throw new CacheException(
+			throw new Error\CacheException(
 				__d('cake_dev', 'Method decrement() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}

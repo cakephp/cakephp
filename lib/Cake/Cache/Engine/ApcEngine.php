@@ -17,6 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Cache\Engine;
+use Cake\Cache\CacheEngine,
+	Cake\Utility\Inflector;
 
 /**
  * APC storage engine for cache
@@ -47,7 +50,7 @@ class ApcEngine extends CacheEngine {
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
-		$settings += array('engine' => 'Apc');
+		$settings += array('engine' => __CLASS__);
 		parent::init($settings);
 		return function_exists('apc_dec');
 	}

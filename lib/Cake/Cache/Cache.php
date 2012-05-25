@@ -12,9 +12,11 @@
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Inflector', 'Utility');
-App::uses('CacheEngine', 'Cache');
+namespace Cake\Cache;
+use Cake\Core\Configure,
+	Cake\Core\App,
+	Cake\Utility\Inflector,
+	Cake\Error;
 
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you
@@ -27,7 +29,7 @@ App::uses('CacheEngine', 'Cache');
  *
  * {{{
  *	Cache::config('shared', array(
- *		'engine' => 'Apc',
+ *		'engine' => 'Cake\Cache\Engine\ApcEngine',
  *		'prefix' => 'my_app_'
  *  ));
  * }}}
@@ -150,15 +152,12 @@ class Cache {
 	protected static function _buildEngine($name) {
 		$config = self::$_config[$name];
 
-		list($plugin, $class) = pluginSplit($config['engine'], true);
-		$cacheClass = $class . 'Engine';
-		App::uses($cacheClass, $plugin . 'Cache/Engine');
-		if (!class_exists($cacheClass)) {
+		$cacheClass = App::classname($config['engine'], 'Cache/Engine', 'Engine');
+		if (!$cacheClass) {
 			return false;
 		}
-		$cacheClass = $class . 'Engine';
-		if (!is_subclass_of($cacheClass, 'CacheEngine')) {
-			throw new CacheException(__d('cake_dev', 'Cache engines must use CacheEngine as a base class.'));
+		if (!is_subclass_of($cacheClass, 'Cake\Cache\CacheEngine')) {
+			throw new Error\CacheException(__d('cake_dev', 'Cache engines must use Cake\Cache\CacheEngine as a base class.'));
 		}
 		self::$_engines[$name] = new $cacheClass();
 		if (self::$_engines[$name]->init($config)) {

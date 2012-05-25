@@ -18,6 +18,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+namespace Cake\Cache\Engine;
+use Cake\Cache\CacheEngine;
+
 /**
  * Redis storage engine for cache.
  *
@@ -55,7 +58,7 @@ class RedisEngine extends CacheEngine {
 			return false;
 		}
 		parent::init(array_merge(array(
-			'engine' => 'Redis',
+			'engine' => __CLASS__,
 			'prefix' => null,
 			'server' => '127.0.0.1',
 			'port' => null,
@@ -75,7 +78,7 @@ class RedisEngine extends CacheEngine {
 	protected function _connect() {
 		$return = false;
 		try {
-			$this->_Redis = new Redis();
+			$this->_Redis = new \Redis();
 			if (empty($this->settings['persistent'])) {
 				$return = $this->_Redis->connect($this->settings['server']);
 			} else {

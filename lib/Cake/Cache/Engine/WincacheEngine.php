@@ -18,6 +18,8 @@
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Cache\Engine;
+use Cake\Cache\CacheEngine;
 
 /**
  * Wincache storage engine for cache
@@ -48,7 +50,7 @@ class WincacheEngine extends CacheEngine {
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
-		$settings += array('engine' => 'Wincache');
+		$settings += array('engine' => __CLASS__);
 		parent::init($settings);
 		return function_exists('wincache_ucache_info');
 	}
