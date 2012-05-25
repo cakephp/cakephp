@@ -19,6 +19,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+namespace Cake\Utility;
+
 /**
  * Number helper library.
  *
@@ -27,7 +29,7 @@
  * @package       Cake.Utility
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html
  */
-class CakeNumber {
+class Number {
 
 /**
  * Currencies supported by the helper.  You can add additional currency formats

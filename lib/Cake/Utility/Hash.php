@@ -13,7 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('String', 'Utility');
+namespace Cake\Utility;
 
 /**
  * Library of array functions for manipulating and extracting data

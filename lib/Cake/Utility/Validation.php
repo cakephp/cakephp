@@ -16,11 +16,12 @@
  * @since         CakePHP(tm) v 1.2.0.3830
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Utility;
+use Cake\Core\App;
 
-App::uses('Multibyte', 'I18n');
 // Load multibyte if the extension is missing.
 if (!function_exists('mb_strlen')) {
-	class_exists('Multibyte');
+	class_exists('Cake\I18n\Multibyte');
 }
 
 /**
@@ -759,9 +760,9 @@ class Validation {
  * @return mixed Return of Passed method, false on failure
  */
 	protected static function _pass($method, $check, $classPrefix) {
-		$className = ucwords($classPrefix) . 'Validation';
-		if (!class_exists($className)) {
-			trigger_error(__d('cake_dev', 'Could not find %s class, unable to complete validation.', $className), E_USER_WARNING);
+		$className = App::classname($classPrefix, 'Utility', 'Validation');
+		if (!$className) {
+			trigger_error(__d('cake_dev', 'Could not find class for validation, unable to complete validation.'), E_USER_WARNING);
 			return false;
 		}
 		if (!method_exists($className, $method)) {

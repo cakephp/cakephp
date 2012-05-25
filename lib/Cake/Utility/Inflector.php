@@ -12,6 +12,7 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Utility;
 
 /**
  * Pluralize and singularize English words.
@@ -265,7 +266,7 @@ class Inflector {
  */
 	public static function reset() {
 		if (empty(self::$_initialState)) {
-			self::$_initialState = get_class_vars('Inflector');
+			self::$_initialState = get_class_vars(__CLASS__);
 			return;
 		}
 		foreach (self::$_initialState as $key => $val) {

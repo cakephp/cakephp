@@ -12,13 +12,11 @@
  * @since         CakePHP(tm) v 0.9.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-/**
- * Included libraries.
- */
-App::uses('Model', 'Model');
-App::uses('AppModel', 'Model');
-App::uses('ConnectionManager', 'Model');
+namespace Cake\Utility;
+use Cake\Model\ConnectionManager,
+	Cake\Core\App,
+	Cake\Model\Model,
+	Cake\Error;
 
 /**
  * Class Collections.
@@ -90,7 +88,7 @@ class ClassRegistry {
  * @param boolean $strict if set to true it will return false if the class was not found instead
  *	of trying to create an AppModel
  * @return object instance of ClassName.
- * @throws CakeException when you try to construct an interface or abstract class.
+ * @throws Cake\Error\Exception when you try to construct an interface or abstract class.
  */
 	public static function init($class, $strict = false) {
 		$_this = ClassRegistry::getInstance();
@@ -130,13 +128,11 @@ class ClassRegistry {
 					return $model;
 				}
 
-				App::uses($plugin . 'AppModel', $pluginPath . 'Model');
-				App::uses($class, $pluginPath . 'Model');
-
-				if (class_exists($class) || interface_exists($class)) {
-					$reflection = new ReflectionClass($class);
+				$classname = App::classname($pluginPath . $class, 'Model');
+				if (class_exists($classname) || interface_exists($classname)) {
+					$reflection = new \ReflectionClass($classname);
 					if ($reflection->isAbstract() || $reflection->isInterface()) {
-						throw new CakeException(__d('cake_dev', 'Cannot create instance of %s, as it is abstract or is an interface', $class));
+						throw new Error\Exception(__d('cake_dev', 'Cannot create instance of %s, as it is abstract or is an interface', $class));
 					}
 					$testing = isset($settings['testing']) ? $settings['testing'] : false;
 					if ($testing) {
@@ -164,20 +160,14 @@ class ClassRegistry {
 				if (!isset($instance)) {
 					if ($strict) {
 						return false;
-					} elseif ($plugin && class_exists($plugin . 'AppModel')) {
-						$appModel = $plugin . 'AppModel';
-					} else {
-						$appModel = 'AppModel';
 					}
-					if (!empty($appModel)) {
-						$settings['name'] = $class;
-						$instance = new $appModel($settings);
+					if (!$appModel = App::classname($pluginPath . 'AppModel', 'Model')) {
+						if (!$appModel = App::classname('AppModel', 'Model')) {
+							$appModel = 'Cake\Model\Model';
+						}
 					}
-
-					if (!isset($instance)) {
-						trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
-						return $false;
-					}
+					$settings['name'] = $class;
+					$instance = new $appModel($settings);
 				}
 				$_this->map($alias, $class);
 			} elseif (is_numeric($settings)) {

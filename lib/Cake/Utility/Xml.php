@@ -18,6 +18,9 @@
  * @since         CakePHP v .0.10.3.1400
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Utility;
+use Cake\Core\Configure,
+	Cake\Error;
 
 /**
  * XML handling for Cake.
@@ -94,22 +97,22 @@ class Xml {
 			return self::fromArray((array)$input, $options);
 		} elseif (strpos($input, '<') !== false) {
 			if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-				return new SimpleXMLElement($input, LIBXML_NOCDATA);
+				return new \SimpleXMLElement($input, LIBXML_NOCDATA);
 			}
-			$dom = new DOMDocument();
+			$dom = new \DOMDocument();
 			$dom->loadXML($input);
 			return $dom;
 		} elseif (file_exists($input) || strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
 			if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-				return new SimpleXMLElement($input, LIBXML_NOCDATA, true);
+				return new \SimpleXMLElement($input, LIBXML_NOCDATA, true);
 			}
-			$dom = new DOMDocument();
+			$dom = new \DOMDocument();
 			$dom->load($input);
 			return $dom;
 		} elseif (!is_string($input)) {
-			throw new XmlException(__d('cake_dev', 'Invalid input.'));
+			throw new Error\XmlException(__d('cake_dev', 'Invalid input.'));
 		}
-		throw new XmlException(__d('cake_dev', 'XML cannot be read.'));
+		throw new Error\XmlException(__d('cake_dev', 'XML cannot be read.'));
 	}
 
 /**
@@ -151,11 +154,11 @@ class Xml {
  */
 	public static function fromArray($input, $options = array()) {
 		if (!is_array($input) || count($input) !== 1) {
-			throw new XmlException(__d('cake_dev', 'Invalid input.'));
+			throw new Error\XmlException(__d('cake_dev', 'Invalid input.'));
 		}
 		$key = key($input);
 		if (is_integer($key)) {
-			throw new XmlException(__d('cake_dev', 'The key of input must be alphanumeric'));
+			throw new Error\XmlException(__d('cake_dev', 'The key of input must be alphanumeric'));
 		}
 
 		if (!is_array($options)) {
@@ -169,12 +172,12 @@ class Xml {
 		);
 		$options = array_merge($defaults, $options);
 
-		$dom = new DOMDocument($options['version'], $options['encoding']);
+		$dom = new \DOMDocument($options['version'], $options['encoding']);
 		self::_fromArray($dom, $dom, $input, $options['format']);
 
 		$options['return'] = strtolower($options['return']);
 		if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-			return new SimpleXMLElement($dom->saveXML());
+			return new \SimpleXMLElement($dom->saveXML());
 		}
 		return $dom;
 	}
@@ -213,7 +216,7 @@ class Xml {
 							// http://www.w3.org/TR/REC-xml/#syntax
 							// https://bugs.php.net/bug.php?id=36795
 							$child = $dom->createElement($key, '');
-							$child->appendChild(new DOMText($value));
+							$child->appendChild(new \DOMText($value));
 						} else {
 							$child = $dom->createElement($key, $value);
 						}
@@ -228,7 +231,7 @@ class Xml {
 					}
 				} else {
 					if ($key[0] === '@') {
-						throw new XmlException(__d('cake_dev', 'Invalid array'));
+						throw new Error\XmlException(__d('cake_dev', 'Invalid array'));
 					}
 					if (is_numeric(implode('', array_keys($value)))) { // List
 						foreach ($value as $item) {
@@ -241,7 +244,7 @@ class Xml {
 					}
 				}
 			} else {
-				throw new XmlException(__d('cake_dev', 'Invalid array'));
+				throw new Error\XmlException(__d('cake_dev', 'Invalid array'));
 			}
 		}
 	}
@@ -289,11 +292,11 @@ class Xml {
  * @throws XmlException
  */
 	public static function toArray($obj) {
-		if ($obj instanceof DOMNode) {
+		if ($obj instanceof \DOMNode) {
 			$obj = simplexml_import_dom($obj);
 		}
-		if (!($obj instanceof SimpleXMLElement)) {
-			throw new XmlException(__d('cake_dev', 'The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.'));
+		if (!($obj instanceof \SimpleXMLElement)) {
+			throw new Error\XmlException(__d('cake_dev', 'The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.'));
 		}
 		$result = array();
 		$namespaces = array_merge(array('' => ''), $obj->getNamespaces(true));
