@@ -12,8 +12,14 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Set', 'Utility');
+namespace Cake\Core;
+use Cake\Network\Request,
+	Cake\Network\Response,
+	Cake\Routing\Dispatcher,
+	Cake\Routing\Router,
+	Cake\Log\Log,
+	Cake\Utility\Set,
+	Cake\Utility\Hash;
 
 /**
  * Object class provides a few generic methods used in several subclasses.
@@ -67,7 +73,6 @@ class Object {
 		if (empty($url)) {
 			return false;
 		}
-		App::uses('Dispatcher', 'Routing');
 		if (($index = array_search('return', $extra)) !== false) {
 			$extra['return'] = 0;
 			$extra['autoRender'] = 1;
@@ -84,17 +89,17 @@ class Object {
 			$url = Router::normalize(str_replace(FULL_BASE_URL, '', $url));
 		}
 		if (is_string($url)) {
-			$request = new CakeRequest($url);
+			$request = new Request($url);
 		} elseif (is_array($url)) {
 			$params = $url + array('pass' => array(), 'named' => array(), 'base' => false);
 			$params = array_merge($params, $extra);
-			$request = new CakeRequest(Router::reverse($params), false);
+			$request = new Request(Router::reverse($params), false);
 		}
 		if (isset($data)) {
 			$request->data = $data;
 		}
 		$dispatcher = new Dispatcher();
-		$result = $dispatcher->dispatch($request, new CakeResponse(), $extra);
+		$result = $dispatcher->dispatch($request, new Response(), $extra);
 		Router::popRequest();
 		return $result;
 	}
@@ -139,7 +144,7 @@ class Object {
 	}
 
 /**
- * Convenience method to write a message to CakeLog.  See CakeLog::write()
+ * Convenience method to write a message to Log. See Log::write()
  * for more information on writing to logs.
  *
  * @param string $msg Log message
@@ -147,11 +152,10 @@ class Object {
  * @return boolean Success of log write
  */
 	public function log($msg, $type = LOG_ERR) {
-		App::uses('CakeLog', 'Log');
 		if (!is_string($msg)) {
 			$msg = print_r($msg, true);
 		}
-		return CakeLog::write($type, $msg);
+		return Log::write($type, $msg);
 	}
 
 /**

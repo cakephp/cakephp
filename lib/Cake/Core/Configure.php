@@ -13,12 +13,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Hash', 'Utility');
-App::uses('ConfigReaderInterface', 'Configure');
-/**
- * Compatibility with 2.1, which expects Configure to load Set.
- */
-App::uses('Set', 'Utility');
+namespace Cake\Core;
+use Cake\Cache\Cache,
+	Cake\Utility\Set,
+	Cake\Utility\Hash,
+	Cake\Configure\ConfigReaderInterface,
+	Cake\Configure\PhpReader,
+	Cake\Error;
 
 /**
  * Configuration class. Used for managing runtime configuration information.
@@ -81,10 +82,10 @@ class Configure {
 			App::build();
 
 			$exception = array(
-				'handler' => 'ErrorHandler::handleException',
+				'handler' => 'Cake\Error\ErrorHandler::handleException',
 			);
 			$error = array(
-				'handler' => 'ErrorHandler::handleError',
+				'handler' => 'Cake\Error\ErrorHandler::handleError',
 				'level' => E_ALL & ~E_DEPRECATED,
 			);
 			self::_setErrorHandlers($error, $exception);
@@ -253,12 +254,11 @@ class Configure {
  * @param string $config Name of the configured reader to use to read the resource identified by $key.
  * @param boolean $merge if config files should be merged instead of simply overridden
  * @return mixed false if file not found, void if load successful.
- * @throws ConfigureException Will throw any exceptions the reader raises.
+ * @throws Cake\Error\ConfigureException Will throw any exceptions the reader raises.
  */
 	public static function load($key, $config = 'default', $merge = true) {
 		if (!isset(self::$_readers[$config])) {
 			if ($config === 'default') {
-				App::uses('PhpReader', 'Configure');
 				self::$_readers[$config] = new PhpReader();
 			} else {
 				return false;
@@ -301,14 +301,14 @@ class Configure {
  * @param array $keys The name of the top-level keys you want to dump. 
  *   This allows you save only some data stored in Configure.
  * @return boolean success
- * @throws ConfigureException if the adapter does not implement a `dump` method.
+ * @throws Cake\Error\ConfigureException if the adapter does not implement a `dump` method.
  */
 	public static function dump($key, $config = 'default', $keys = array()) {
 		if (empty(self::$_readers[$config])) {
-			throw new ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
+			throw new Error\ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
 		}
 		if (!method_exists(self::$_readers[$config], 'dump')) {
-			throw new ConfigureException(__d('cake', 'The "%s" adapter, does not have a dump() method.', $config));
+			throw new Error\ConfigureException(__d('cake', 'The "%s" adapter, does not have a dump() method.', $config));
 		}
 		$values = self::$_values;
 		if (!empty($keys) && is_array($keys)) {
