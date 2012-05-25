@@ -16,9 +16,13 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('PhpReader', 'Configure');
+namespace Cake\Test\TestCase\Configure;
+use Cake\TestSuite\TestCase,
+	Cake\Core\App,
+	Cake\Core\Plugin,
+	Cake\Configure\PhpReader;
 
-class PhpReaderTest extends CakeTestCase {
+class PhpReaderTest extends TestCase {
 
 /**
  * Test data to serialize and unserialize.
@@ -47,7 +51,7 @@ class PhpReaderTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->path = CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS;
+		$this->path = CAKE . 'Test' . DS . 'TestApp' . DS . 'Config'. DS;
 	}
 
 /**
@@ -68,7 +72,7 @@ class PhpReaderTest extends CakeTestCase {
 /**
  * Test an exception is thrown by reading files that don't exist.
  *
- * @expectedException ConfigureException
+ * @expectedException Cake\Error\ConfigureException
  * @return void
  */
 	public function testReadWithNonExistantFile() {
@@ -90,7 +94,7 @@ class PhpReaderTest extends CakeTestCase {
 /**
  * test reading keys with ../ doesn't work
  *
- * @expectedException ConfigureException
+ * @expectedException Cake\Error\ConfigureException
  * @return void
  */
 	public function testReadWithDots() {
@@ -105,16 +109,16 @@ class PhpReaderTest extends CakeTestCase {
  */
 	public function testReadPluginValue() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 		$reader = new PhpReader($this->path);
 		$result = $reader->read('TestPlugin.load');
 		$this->assertTrue(isset($result['plugin_load']));
 
 		$result = $reader->read('TestPlugin.load.php');
 		$this->assertTrue(isset($result['plugin_load']));
-		CakePlugin::unload();
+		Plugin::unload();
 	}
 
 /**
