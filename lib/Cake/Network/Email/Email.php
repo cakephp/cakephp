@@ -16,13 +16,13 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Validation', 'Utility');
-App::uses('Multibyte', 'I18n');
-App::uses('AbstractTransport', 'Network/Email');
-App::uses('String', 'Utility');
-App::uses('View', 'View');
-App::import('I18n', 'Multibyte');
+namespace Cake\Network\Email;
+use Cake\Log\Log,
+	Cake\Utility\Validation,
+	Cake\Utility\String,
+	Cake\Core\Configure,
+	Cake\Core\App,
+	Cake\Error;
 
 /**
  * Cake e-mail class.
@@ -32,7 +32,7 @@ App::import('I18n', 'Multibyte');
  *
  * @package       Cake.Network.Email
  */
-class CakeEmail {
+class Email {
 /**
  * Default X-Mailer
  *
@@ -432,7 +432,7 @@ class CakeEmail {
  *
  * @param string|array $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return CakeEmail $this
+ * @return Cake\Network\Email\Email $this
  */
 	public function addTo($email, $name = null) {
 		return $this->_addEmail('_to', $email, $name);
@@ -457,7 +457,7 @@ class CakeEmail {
  *
  * @param string|array $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return CakeEmail $this
+ * @return Cake\Network\Email\Email $this
  */
 	public function addCc($email, $name = null) {
 		return $this->_addEmail('_cc', $email, $name);
@@ -482,7 +482,7 @@ class CakeEmail {
  *
  * @param string|array $email String with email, Array with email as key, name as value or email as value (without name)
  * @param string $name
- * @return CakeEmail $this
+ * @return Cake\Network\Email\Email $this
  */
 	public function addBcc($email, $name = null) {
 		return $this->_addEmail('_bcc', $email, $name);
@@ -524,13 +524,13 @@ class CakeEmail {
  * @param string $varName
  * @param string|array $email
  * @param string $name
- * @return CakeEmail $this
+ * @return Cake\Network\Email\Email $this
  * @throws SocketException
  */
 	protected function _setEmail($varName, $email, $name) {
 		if (!is_array($email)) {
 			if (!Validation::email($email)) {
-				throw new SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
+				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
 			}
 			if ($name === null) {
 				$name = $email;
@@ -544,7 +544,7 @@ class CakeEmail {
 				$key = $value;
 			}
 			if (!Validation::email($key)) {
-				throw new SocketException(__d('cake_dev', 'Invalid email: "%s"', $key));
+				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $key));
 			}
 			$list[$key] = $value;
 		}
@@ -559,15 +559,15 @@ class CakeEmail {
  * @param string|array $email
  * @param string $name
  * @param string $throwMessage
- * @return CakeEmail $this
- * @throws SocketException
+ * @return Cake\Network\Email\Email $this
+ * @throws Cake\Error\SocketException
  */
 	protected function _setEmailSingle($varName, $email, $name, $throwMessage) {
 		$current = $this->{$varName};
 		$this->_setEmail($varName, $email, $name);
 		if (count($this->{$varName}) !== 1) {
 			$this->{$varName} = $current;
-			throw new SocketException($throwMessage);
+			throw new Error\SocketException($throwMessage);
 		}
 		return $this;
 	}
@@ -578,13 +578,13 @@ class CakeEmail {
  * @param string $varName
  * @param string|array $email
  * @param string $name
- * @return CakeEmail $this
- * @throws SocketException
+ * @return Cake\Network\Email\Email $this
+ * @throws Cake\Error\SocketException
  */
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
 			if (!Validation::email($email)) {
-				throw new SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
+				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
 			}
 			if ($name === null) {
 				$name = $email;
@@ -598,7 +598,7 @@ class CakeEmail {
 				$key = $value;
 			}
 			if (!Validation::email($key)) {
-				throw new SocketException(__d('cake_dev', 'Invalid email: "%s"', $key));
+				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $key));
 			}
 			$list[$key] = $value;
 		}
@@ -624,12 +624,12 @@ class CakeEmail {
  * Sets headers for the message
  *
  * @param array $headers Associative array containing headers to be set.
- * @return CakeEmail $this
+ * @return Cake\Network\Email\Email $this
  * @throws SocketException
  */
 	public function setHeaders($headers) {
 		if (!is_array($headers)) {
-			throw new SocketException(__d('cake_dev', '$headers should be an array.'));
+			throw new Error\SocketException(__d('cake_dev', '$headers should be an array.'));
 		}
 		$this->_headers = $headers;
 		return $this;
@@ -644,7 +644,7 @@ class CakeEmail {
  */
 	public function addHeaders($headers) {
 		if (!is_array($headers)) {
-			throw new SocketException(__d('cake_dev', '$headers should be an array.'));
+			throw new Error\SocketException(__d('cake_dev', '$headers should be an array.'));
 		}
 		$this->_headers = array_merge($this->_headers, $headers);
 		return $this;
@@ -844,7 +844,7 @@ class CakeEmail {
 			return $this->_emailFormat;
 		}
 		if (!in_array($format, $this->_emailFormatAvailable)) {
-			throw new SocketException(__d('cake_dev', 'Format not available.'));
+			throw new Error\SocketException(__d('cake_dev', 'Format not available.'));
 		}
 		$this->_emailFormat = $format;
 		return $this;
@@ -868,20 +868,18 @@ class CakeEmail {
 /**
  * Return the transport class
  *
- * @return CakeEmail
+ * @return Cake\Network\Email\Email
  * @throws SocketException
  */
 	public function transportClass() {
 		if ($this->_transportClass) {
 			return $this->_transportClass;
 		}
-		list($plugin, $transportClassname) = pluginSplit($this->_transportName, true);
-		$transportClassname .= 'Transport';
-		App::uses($transportClassname, $plugin . 'Network/Email');
-		if (!class_exists($transportClassname)) {
-			throw new SocketException(__d('cake_dev', 'Class "%s" not found.', $transportClassname));
+		$transportClassname = App::classname($this->_transportName, 'Network/Email', 'Transport');
+		if (!$transportClassname) {
+			throw new Error\SocketException(__d('cake_dev', 'Class "%s" not found.', $this->_transportName));
 		} elseif (!method_exists($transportClassname, 'send')) {
-			throw new SocketException(__d('cake_dev', 'The "%s" do not have send method.', $transportClassname));
+			throw new Error\SocketException(__d('cake_dev', 'The "%s" do not have send method.', $transportClassname));
 		}
 
 		return $this->_transportClass = new $transportClassname();
@@ -902,7 +900,7 @@ class CakeEmail {
 			$this->_messageId = $message;
 		} else {
 			if (!preg_match('/^\<.+@.+\>$/', $message)) {
-				throw new SocketException(__d('cake_dev', 'Invalid format for Message-ID. The text should be something like "<uuid@server.com>"'));
+				throw new Error\SocketException(__d('cake_dev', 'Invalid format to Message-ID. The text should be something like "<uuid@server.com>"'));
 			}
 			$this->_messageId = $message;
 		}
@@ -967,11 +965,11 @@ class CakeEmail {
 				$fileInfo = array('file' => $fileInfo);
 			}
 			if (!isset($fileInfo['file'])) {
-				throw new SocketException(__d('cake_dev', 'File not specified.'));
+				throw new Error\SocketException(__d('cake_dev', 'File not specified.'));
 			}
 			$fileInfo['file'] = realpath($fileInfo['file']);
 			if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
-				throw new SocketException(__d('cake_dev', 'File not found: "%s"', $fileInfo['file']));
+				throw new Error\SocketException(__d('cake_dev', 'File not found: "%s"', $fileInfo['file']));
 			}
 			if (is_int($name)) {
 				$name = basename($fileInfo['file']);
@@ -989,7 +987,7 @@ class CakeEmail {
  * Add attachments
  *
  * @param string|array $attachments String with the filename or array with filenames
- * @return CakeEmail $this
+ * @return Cake\Network\Email\Email $this
  * @throws SocketException
  */
 	public function addAttachments($attachments) {
@@ -1042,10 +1040,10 @@ class CakeEmail {
  */
 	public function send($content = null) {
 		if (empty($this->_from)) {
-			throw new SocketException(__d('cake_dev', 'From is not specified.'));
+			throw new Error\SocketException(__d('cake_dev', 'From is not specified.'));
 		}
 		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
-			throw new SocketException(__d('cake_dev', 'You need to specify at least one destination for to, cc or bcc.'));
+			throw new Error\SocketException(__d('cake_dev', 'You need specify one destination on to, cc or bcc.'));
 		}
 
 		if (is_array($content)) {
@@ -1062,20 +1060,20 @@ class CakeEmail {
 			if ($this->_config['log'] !== true) {
 				$level = $this->_config['log'];
 			}
-			CakeLog::write($level, PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message']);
+			Log::write($level, PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message']);
 		}
 		return $contents;
 	}
 
 /**
- * Static method to fast create an instance of CakeEmail
+ * Static method to fast create an instance of \Cake\Network\Email\Email
  *
  * @param string|array $to Address to send (see CakeEmail::to()). If null, will try to use 'to' from transport config
  * @param string $subject String of subject or null to use 'subject' from transport config
  * @param string|array $message String with message or array with variables to be used in render
  * @param string|array $transportConfig String to use config from EmailConfig or array with configs
  * @param boolean $send Send the email or just return the instance pre-configured
- * @return CakeEmail Instance of CakeEmail
+ * @return Cake\Network\Email\Email Instance of Cake\Network\Email\Email
  * @throws SocketException
  */
 	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
@@ -1104,7 +1102,6 @@ class CakeEmail {
 /**
  * Apply the config to an instance
  *
- * @param CakeEmail $obj CakeEmail
  * @param array $config
  * @return void
  * @throws ConfigureException When configuration file cannot be found, or is missing
@@ -1113,11 +1110,11 @@ class CakeEmail {
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
 			if (!class_exists('EmailConfig') && !config('email')) {
-				throw new ConfigureException(__d('cake_dev', '%s not found.', APP . 'Config' . DS . 'email.php'));
+				throw new Error\ConfigureException(__d('cake_dev', '%s not found.', APP . 'Config' . DS . 'email.php'));
 			}
 			$configs = new EmailConfig();
 			if (!isset($configs->{$config})) {
-				throw new ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $config));
+				throw new Error\ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $config));
 			}
 			$config = $configs->{$config};
 		}
@@ -1161,7 +1158,7 @@ class CakeEmail {
 /**
  * Reset all EmailComponent internal variables to be able to send out a new email.
  *
- * @return CakeEmail $this
+ * @return Cake\Network\Email\Email $this
  */
 	public function reset() {
 		$this->_to = array();

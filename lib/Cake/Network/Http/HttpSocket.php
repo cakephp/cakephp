@@ -16,8 +16,12 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('CakeSocket', 'Network');
-App::uses('Router', 'Routing');
+namespace Cake\Network\Http;
+use Cake\Network\Socket,
+	Cake\Utility\Set,
+	Cake\Utility\Inflector,
+	Cake\Core\App,
+	Cake\Error;
 
 /**
  * Cake network socket connection class.
@@ -27,7 +31,7 @@ App::uses('Router', 'Routing');
  *
  * @package       Cake.Network.Http
  */
-class HttpSocket extends CakeSocket {
+class HttpSocket extends Socket {
 
 /**
  * When one activates the $quirksMode by setting it to true, all checks meant to
@@ -236,7 +240,7 @@ class HttpSocket extends CakeSocket {
 			return;
 		}
 		if (!is_resource($resource)) {
-			throw new SocketException(__d('cake_dev', 'Invalid resource.'));
+			throw new Error\SocketException(__d('cake_dev', 'Invalid resource.'));
 		}
 		$this->_contentResource = $resource;
 	}
@@ -389,10 +393,9 @@ class HttpSocket extends CakeSocket {
 			$this->disconnect();
 		}
 
-		list($plugin, $responseClass) = pluginSplit($this->responseClass, true);
-		App::uses($responseClass, $plugin . 'Network/Http');
-		if (!class_exists($responseClass)) {
-			throw new SocketException(__d('cake_dev', 'Class %s not found.', $this->responseClass));
+		$responseClass = App::classname($this->responseClass, 'Network/Http');
+		if (!$responseClass) {
+			throw new Error\SocketException(__d('cake_dev', 'Class %s not found.', $this->responseClass));
 		}
 		$this->response = new $responseClass($response);
 		if (!empty($this->response->cookies)) {
@@ -571,15 +574,13 @@ class HttpSocket extends CakeSocket {
 			return;
 		}
 		$method = key($this->_auth);
-		list($plugin, $authClass) = pluginSplit($method, true);
-		$authClass = Inflector::camelize($authClass) . 'Authentication';
-		App::uses($authClass, $plugin . 'Network/Http');
 
-		if (!class_exists($authClass)) {
-			throw new SocketException(__d('cake_dev', 'Unknown authentication method.'));
+		$authClass = App::classname($method, 'Network/Http', 'Authentication');
+		if (!$authClass) {
+			throw new Error\SocketException(__d('cake_dev', 'Unknown authentication method.'));
 		}
 		if (!method_exists($authClass, 'authentication')) {
-			throw new SocketException(sprintf(__d('cake_dev', 'The %s do not support authentication.'), $authClass));
+			throw new Error\SocketException(sprintf(__d('cake_dev', 'The %s do not support authentication.'), $authClass));
 		}
 		call_user_func_array("$authClass::authentication", array($this, &$this->_auth[$method]));
 	}
@@ -600,15 +601,13 @@ class HttpSocket extends CakeSocket {
 		if (empty($this->_proxy['method']) || !isset($this->_proxy['user'], $this->_proxy['pass'])) {
 			return;
 		}
-		list($plugin, $authClass) = pluginSplit($this->_proxy['method'], true);
-		$authClass = Inflector::camelize($authClass) . 'Authentication';
-		App::uses($authClass, $plugin . 'Network/Http');
 
-		if (!class_exists($authClass)) {
-			throw new SocketException(__d('cake_dev', 'Unknown authentication method for proxy.'));
+		$authClass = App::classname($this->_proxy['method'], 'Network/Http', 'Authentication');
+		if (!$authClass) {
+			throw new Error\SocketException(__d('cake_dev', 'Unknown authentication method for proxy.'));
 		}
 		if (!method_exists($authClass, 'proxyAuthentication')) {
-			throw new SocketException(sprintf(__d('cake_dev', 'The %s do not support proxy authentication.'), $authClass));
+			throw new Error\SocketException(sprintf(__d('cake_dev', 'The %s do not support proxy authentication.'), $authClass));
 		}
 		call_user_func_array("$authClass::proxyAuthentication", array($this, &$this->_proxy));
 	}
@@ -833,7 +832,7 @@ class HttpSocket extends CakeSocket {
 		if (is_string($request)) {
 			$isValid = preg_match("/(.+) (.+) (.+)\r\n/U", $request, $match);
 			if (!$this->quirksMode && (!$isValid || ($match[2] == '*' && !in_array($match[3], $asteriskMethods)))) {
-				throw new SocketException(__d('cake_dev', 'HttpSocket::_buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this.'));
+				throw new Error\SocketException(__d('cake_dev', 'HttpSocket::_buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this.'));
 			}
 			return $request;
 		} elseif (!is_array($request)) {
@@ -851,7 +850,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		if (!$this->quirksMode && $request['uri'] === '*' && !in_array($request['method'], $asteriskMethods)) {
-			throw new SocketException(__d('cake_dev', 'HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.', implode(',', $asteriskMethods)));
+			throw new Error\SocketException(__d('cake_dev', 'HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.', implode(',', $asteriskMethods)));
 		}
 		return $request['method'] . ' ' . $request['uri'] . ' ' . $versionToken . "\r\n";
 	}

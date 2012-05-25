@@ -16,13 +16,16 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Network\Http;
+use Cake\Utility\Inflector,
+	Cake\Error;
 
 /**
  * HTTP Response from HttpSocket.
  *
  * @package       Cake.Network.Http
  */
-class HttpResponse implements ArrayAccess {
+class HttpResponse implements \ArrayAccess {
 
 /**
  * Body content
@@ -142,11 +145,11 @@ class HttpResponse implements ArrayAccess {
  */
 	public function parseResponse($message) {
 		if (!is_string($message)) {
-			throw new SocketException(__d('cake_dev', 'Invalid response.'));
+			throw new Error\SocketException(__d('cake_dev', 'Invalid response.'));
 		}
 
 		if (!preg_match("/^(.+\r\n)(.*)(?<=\r\n)\r\n/Us", $message, $match)) {
-			throw new SocketException(__d('cake_dev', 'Invalid HTTP response.'));
+			throw new Error\SocketException(__d('cake_dev', 'Invalid HTTP response.'));
 		}
 
 		list(, $statusLine, $header) = $match;
@@ -214,7 +217,7 @@ class HttpResponse implements ArrayAccess {
 
 		while ($chunkLength !== 0) {
 			if (!preg_match('/^([0-9a-f]+) *(?:;(.+)=(.+))?(?:\r\n|\n)/iU', $body, $match)) {
-				throw new SocketException(__d('cake_dev', 'HttpSocket::_decodeChunkedBody - Could not parse malformed chunk.'));
+				throw new Error\SocketException(__d('cake_dev', 'HttpSocket::_decodeChunkedBody - Could not parse malformed chunk.'));
 			}
 
 			$chunkSize = 0;

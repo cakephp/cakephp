@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeRequest
+ * Cake Request
  *
  * PHP 5
  *
@@ -15,8 +15,10 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Set', 'Utility');
+namespace Cake\Network;
+use Cake\Core\Configure,
+	Cake\Utility\Hash,
+	Cake\Error;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -28,7 +30,7 @@ App::uses('Set', 'Utility');
  *
  * @package       Cake.Network
  */
-class CakeRequest implements ArrayAccess {
+class Request implements \ArrayAccess {
 
 /**
  * Array of parameters parsed from the url.
@@ -91,7 +93,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * The built in detectors used with `is()` can be modified with `addDetector()`.
  *
- * There are several ways to specify a detector, see CakeRequest::addDetector() for the
+ * There are several ways to specify a detector, see Cake\Network\Request::addDetector() for the
  * various formats and ways to define detectors.
  *
  * @var array
@@ -270,7 +272,7 @@ class CakeRequest implements ArrayAccess {
 			if ($webroot === 'webroot' && $webroot === basename($base)) {
 				$base = dirname($base);
 			}
-			if ($dir === 'app' && $dir === basename($base)) {
+			if ($dir === 'App' && $dir === basename($base)) {
 				$base = dirname($base);
 			}
 
@@ -414,14 +416,14 @@ class CakeRequest implements ArrayAccess {
  * @param string $name The method called
  * @param array $params Array of parameters for the method call
  * @return mixed
- * @throws CakeException when an invalid method is called.
+ * @throws Cake\Error\Exception when an invalid method is called.
  */
 	public function __call($name, $params) {
 		if (strpos($name, 'is') === 0) {
 			$type = strtolower(substr($name, 2));
 			return $this->is($type);
 		}
-		throw new CakeException(__d('cake_dev', 'Method %s does not exist', $name));
+		throw new Error\Exception(__d('cake_dev', 'Method %s does not exist', $name));
 	}
 
 /**
@@ -452,7 +454,7 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Check whether or not a Request is a certain type.  Uses the built in detection rules
- * as well as additional rules defined with CakeRequest::addDetector().  Any detector can be called
+ * as well as additional rules defined with Cake\Network\Request::addDetector().  Any detector can be called
  * as `is($type)` or `is$Type()`.
  *
  * @param string $type The type of request you want to check.
@@ -553,7 +555,7 @@ class CakeRequest implements ArrayAccess {
  * Provides an easy way to modify, here, webroot and base.
  *
  * @param array $paths Array of paths to merge in
- * @return CakeRequest the current object, you can chain this method.
+ * @return Cake\Network\Request the current object, you can chain this method.
  */
 	public function addPaths($paths) {
 		foreach (array('webroot', 'here', 'base') as $element) {
@@ -681,7 +683,7 @@ class CakeRequest implements ArrayAccess {
  * Parse the HTTP_ACCEPT header and return a sorted array with content types
  * as the keys, and pref values as the values.
  *
- * Generally you want to use CakeRequest::accept() to get a simple list
+ * Generally you want to use Cake\Network\Request::accept() to get a simple list
  * of the accepted content types.
  *
  * @return array An array of prefValue => array(content/types)
@@ -714,11 +716,11 @@ class CakeRequest implements ArrayAccess {
  *
  * Get the list of accepted languages:
  *
- * {{{ CakeRequest::acceptLanguage(); }}}
+ * {{{ \Cake\Network\Request::acceptLanguage(); }}}
  *
  * Check if a specific language is accepted:
  *
- * {{{ CakeRequest::acceptLanguage('es-es'); }}}
+ * {{{ \Cake\Network\Request::acceptLanguage('es-es'); }}}
  *
  * @param string $language The language to test.
  * @return If a $language is provided, a boolean. Otherwise the array of accepted languages.
@@ -739,7 +741,7 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Provides a read/write accessor for `$this->data`.  Allows you
- * to use a syntax similar to `CakeSession` for reading post data.
+ * to use a syntax similar to `Cake\Model\Datasource\Session` for reading post data.
  *
  * ## Reading values.
  *

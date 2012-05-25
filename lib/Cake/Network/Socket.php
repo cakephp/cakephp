@@ -16,8 +16,9 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Validation', 'Utility');
+namespace Cake\Network;
+use Cake\Utility\Validation,
+	Cake\Error;
 
 /**
  * Cake network socket connection class.
@@ -26,7 +27,7 @@ App::uses('Validation', 'Utility');
  *
  * @package       Cake.Network
  */
-class CakeSocket {
+class Socket {
 
 /**
  * Object description
@@ -63,7 +64,7 @@ class CakeSocket {
 	public $connection = null;
 
 /**
- * This boolean contains the current state of the CakeSocket class
+ * This boolean contains the current state of the Socket class
  *
  * @var boolean
  */
@@ -80,7 +81,7 @@ class CakeSocket {
  * Constructor.
  *
  * @param array $config Socket configuration, which will be merged with the base configuration
- * @see CakeSocket::$_baseConfig
+ * @see Socket::$_baseConfig
  */
 	public function __construct($config = array()) {
 		$this->config = array_merge($this->_baseConfig, $config);
@@ -113,7 +114,7 @@ class CakeSocket {
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errNum, $errStr);
-			throw new SocketException($errStr, $errNum);
+			throw new Error\SocketException($errStr, $errNum);
 		}
 
 		$this->connected = is_resource($this->connection);
