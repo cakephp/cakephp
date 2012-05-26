@@ -16,14 +16,16 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('FileLog', 'Log/Engine');
+namespace Cake\Test\TestCase\Log\Engine;
+use Cake\TestSuite\TestCase,
+	Cake\Log\Engine\FileLog;
 
 /**
  * CakeLogTest class
  *
  * @package       Cake.Test.Case.Log.Engine
  */
-class FileLogTest extends CakeTestCase {
+class FileLogTest extends TestCase {
 
 /**
  * testLogFileWriting method

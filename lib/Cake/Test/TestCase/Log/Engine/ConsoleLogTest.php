@@ -16,13 +16,17 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('ConsoleLog', 'Log/Engine');
+
+namespace Cake\Test\TestCase\Log\Engine;
+use Cake\TestSuite\TestCase;
+use Cake\Log\Engine\ConsoleLog;
+use Cake\Log\Log;
 
 class TestConsoleLog extends ConsoleLog {
 
 }
 
-class TestCakeLog extends CakeLog {
+class TestCakeLog extends Log {
 
 	public static function replace($key, &$engine) {
 		self::$_Collection->{$key} = $engine;
@@ -35,17 +39,17 @@ class TestCakeLog extends CakeLog {
  *
  * @package       Cake.Test.Case.Log.Engine
  */
-class ConsoleLogTest extends CakeTestCase {
+class ConsoleLogTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		CakeLog::config('debug', array(
-			'engine' => 'FileLog',
+		Log::config('debug', array(
+			'engine' => 'Cake\Log\Engine\FileLog',
 			'types' => array('notice', 'info', 'debug'),
 			'file' => 'debug',
 		));
-		CakeLog::config('error', array(
-			'engine' => 'FileLog',
+		Log::config('error', array(
+			'engine' => 'Cake\Log\Engine\FileLog',
 			'types' => array('error', 'warning'),
 			'file' => 'error',
 		));
@@ -66,10 +70,10 @@ class ConsoleLogTest extends CakeTestCase {
  */
 	public function testConsoleOutputWrites() {
 		TestCakeLog::config('test_console_log', array(
-			'engine' => 'TestConsoleLog',
+			'engine' => __NAMESPACE__ . '\TestConsoleLog',
 			));
 
-		$mock = $this->getMock('TestConsoleLog', array('write'), array(
+		$mock = $this->getMock(__NAMESPACE__ . '\TestConsoleLog', array('write'), array(
 			array('types' => 'error'),
 			));
 		TestCakeLog::replace('test_console_log', $mock);
@@ -85,9 +89,9 @@ class ConsoleLogTest extends CakeTestCase {
  */
 	public function testCombinedLogWriting() {
 		TestCakeLog::config('test_console_log', array(
-			'engine' => 'TestConsoleLog',
+			'engine' => __NAMESPACE__ . '\TestConsoleLog',
 			));
-		$mock = $this->getMock('TestConsoleLog', array('write'), array(
+		$mock = $this->getMock(__NAMESPACE__ . '\TestConsoleLog', array('write'), array(
 			array('types' => 'error'),
 			));
 		TestCakeLog::replace('test_console_log', $mock);
