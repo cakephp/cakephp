@@ -16,12 +16,19 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Controller', 'Controller');
-App::uses('Scaffold', 'Controller');
-App::uses('ScaffoldView', 'View');
-App::uses('AppModel', 'Model');
+namespace Cake\Test\TestCase\View;
+use Cake\TestSuite\TestCase,
+	Cake\View\ScaffoldView,
+	Cake\Controller\Controller,
+	Cake\Controller\Scaffold,
+	Cake\Network\Request,
+	Cake\Routing\Router,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Core\Plugin;
 
 require_once dirname(dirname(__FILE__)) . DS . 'Model' . DS . 'models.php';
+class_alias('Cake\Test\TestCase\Model\ScaffoldMock', 'Cake\Model\ScaffoldMock');
 
 /**
  * TestScaffoldView class
@@ -69,7 +76,7 @@ class ScaffoldViewMockController extends Controller {
  *
  * @package       Cake.Test.Case.Controller
  */
-class ScaffoldViewTest extends CakeTestCase {
+class ScaffoldViewTest extends TestCase {
 
 /**
  * fixtures property
@@ -85,15 +92,15 @@ class ScaffoldViewTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->request = new CakeRequest(null, false);
+		$this->request = new Request(null, false);
 		$this->Controller = new ScaffoldViewMockController($this->request);
-		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		));
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 	}
 
 /**
@@ -160,11 +167,11 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		$ScaffoldView = new TestScaffoldView($Controller);
 		$result = $ScaffoldView->testGetFilename('admin_edit');
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Posts' . DS . 'scaffold.form.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Posts' . DS . 'scaffold.form.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('edit');
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Posts' . DS . 'scaffold.form.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Posts' . DS . 'scaffold.form.ctp';
 		$this->assertEquals($expected, $result);
 
 		$Controller = new ScaffoldViewMockController($this->request);
@@ -179,12 +186,12 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		$ScaffoldView = new TestScaffoldView($Controller);
 		$result = $ScaffoldView->testGetFilename('admin_add');
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' .
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' .
 			DS . 'TestPlugin' . DS . 'View' . DS . 'Tests' . DS . 'scaffold.form.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('add');
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' .
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' .
 			DS . 'TestPlugin' . DS . 'View' . DS . 'Tests' . DS . 'scaffold.form.ctp';
 		$this->assertEquals($expected, $result);
 
@@ -203,7 +210,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$ScaffoldView = new TestScaffoldView($this->Controller);
 
 		$result = $ScaffoldView->testGetFilename('index');
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS .
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS .
 			'Themed' . DS . 'TestTheme' . DS . 'Posts' . DS . 'scaffold.index.ctp';
 		$this->assertEquals($expected, $result);
 	}

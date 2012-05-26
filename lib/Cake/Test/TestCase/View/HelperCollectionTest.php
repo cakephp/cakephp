@@ -16,10 +16,14 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\View;
 
-App::uses('HelperCollection', 'View');
-App::uses('HtmlHelper', 'View/Helper');
-App::uses('View', 'View');
+use Cake\TestSuite\TestCase,
+	Cake\View\HelperCollection,
+	Cake\View\View,
+	Cake\View\Helper\HtmlHelper,
+	Cake\Core\App,
+	Cake\Core\Plugin;
 
 /**
  * Extended HtmlHelper
@@ -27,7 +31,7 @@ App::uses('View', 'View');
 class HtmlAliasHelper extends HtmlHelper {
 }
 
-class HelperCollectionTest extends CakeTestCase {
+class HelperCollectionTest extends TestCase {
 
 /**
  * setUp
@@ -36,7 +40,7 @@ class HelperCollectionTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = $this->getMock('View', array(), array(null));
+		$this->View = $this->getMock('Cake\View\View', array(), array(null));
 		$this->Helpers = new HelperCollection($this->View);
 	}
 
@@ -46,7 +50,7 @@ class HelperCollectionTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		CakePlugin::unload();
+		Plugin::unload();
 		unset($this->Helpers, $this->View);
 		parent::tearDown();
 	}
@@ -58,8 +62,8 @@ class HelperCollectionTest extends CakeTestCase {
  */
 	public function testLoad() {
 		$result = $this->Helpers->load('Html');
-		$this->assertInstanceOf('HtmlHelper', $result);
-		$this->assertInstanceOf('HtmlHelper', $this->Helpers->Html);
+		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $result);
+		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $this->Helpers->Html);
 
 		$result = $this->Helpers->attached();
 		$this->assertEquals(array('Html'), $result, 'attached() results are wrong.');
@@ -74,22 +78,22 @@ class HelperCollectionTest extends CakeTestCase {
  */
 	public function testLazyLoad() {
 		$result = $this->Helpers->Html;
-		$this->assertInstanceOf('HtmlHelper', $result);
+		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $result);
 
 		$result = $this->Helpers->Form;
-		$this->assertInstanceOf('FormHelper', $result);
+		$this->assertInstanceOf('Cake\View\Helper\FormHelper', $result);
 
-		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)));
+		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)));
 		$this->View->plugin = 'TestPlugin';
-		CakePlugin::load(array('TestPlugin'));
+		Plugin::load(array('TestPlugin'));
 		$result = $this->Helpers->OtherHelper;
-		$this->assertInstanceOf('OtherHelperHelper', $result);
+		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
 	}
 
 /**
  * test lazy loading of helpers
  *
- * @expectedException MissingHelperException
+ * @expectedException Cake\Error\MissingHelperException
  * @return void
  */
 	public function testLazyLoadException() {
@@ -102,9 +106,9 @@ class HelperCollectionTest extends CakeTestCase {
  * @return void
  */
 	public function testLoadWithAlias() {
-		$result = $this->Helpers->load('Html', array('className' => 'HtmlAlias'));
-		$this->assertInstanceOf('HtmlAliasHelper', $result);
-		$this->assertInstanceOf('HtmlAliasHelper', $this->Helpers->Html);
+		$result = $this->Helpers->load('Html', array('className' => __NAMESPACE__ . '\HtmlAliasHelper'));
+		$this->assertInstanceOf(__NAMESPACE__ . '\HtmlAliasHelper', $result);
+		$this->assertInstanceOf(__NAMESPACE__ . '\HtmlAliasHelper', $this->Helpers->Html);
 
 		$result = $this->Helpers->attached();
 		$this->assertEquals(array('Html'), $result, 'attached() results are wrong.');
@@ -112,13 +116,13 @@ class HelperCollectionTest extends CakeTestCase {
 		$this->assertTrue($this->Helpers->enabled('Html'));
 
 		$result = $this->Helpers->load('Html');
-		$this->assertInstanceOf('HtmlAliasHelper', $result);
+		$this->assertInstanceOf(__NAMESPACE__ . '\HtmlAliasHelper', $result);
 
-		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)));
-		CakePlugin::load(array('TestPlugin'));
+		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)));
+		Plugin::load(array('TestPlugin'));
 		$result = $this->Helpers->load('SomeOther', array('className' => 'TestPlugin.OtherHelper'));
-		$this->assertInstanceOf('OtherHelperHelper', $result);
-		$this->assertInstanceOf('OtherHelperHelper', $this->Helpers->SomeOther);
+		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
+		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $this->Helpers->SomeOther);
 
 		$result = $this->Helpers->attached();
 		$this->assertEquals(array('Html', 'SomeOther'), $result, 'attached() results are wrong.');
@@ -132,8 +136,8 @@ class HelperCollectionTest extends CakeTestCase {
  */
 	public function testLoadWithEnabledFalse() {
 		$result = $this->Helpers->load('Html', array('enabled' => false));
-		$this->assertInstanceOf('HtmlHelper', $result);
-		$this->assertInstanceOf('HtmlHelper', $this->Helpers->Html);
+		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $result);
+		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $this->Helpers->Html);
 
 		$this->assertFalse($this->Helpers->enabled('Html'), 'Html should be disabled');
 	}
@@ -141,7 +145,7 @@ class HelperCollectionTest extends CakeTestCase {
 /**
  * test missinghelper exception
  *
- * @expectedException MissingHelperException
+ * @expectedException Cake\Error\MissingHelperException
  * @return void
  */
 	public function testLoadMissingHelper() {
@@ -155,12 +159,13 @@ class HelperCollectionTest extends CakeTestCase {
  */
 	public function testLoadPluginHelper() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
 		));
-		CakePlugin::load(array('TestPlugin'));
+		Plugin::load(array('TestPlugin'));
+
 		$result = $this->Helpers->load('TestPlugin.OtherHelper');
-		$this->assertInstanceOf('OtherHelperHelper', $result, 'Helper class is wrong.');
-		$this->assertInstanceOf('OtherHelperHelper', $this->Helpers->OtherHelper, 'Class is wrong');
+		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result, 'Helper class is wrong.');
+		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $this->Helpers->OtherHelper, 'Class is wrong');
 
 		App::build();
 	}

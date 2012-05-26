@@ -16,11 +16,16 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('View', 'View');
-App::uses('HtmlHelper', 'View/Helper');
-App::uses('JsHelper', 'View/Helper');
-App::uses('PaginatorHelper', 'View/Helper');
-App::uses('FormHelper', 'View/Helper');
+namespace Cake\Test\TestCase\View\Helper;
+use Cake\TestSuite\TestCase,
+	Cake\View\Helper\PaginatorHelper,
+	Cake\View\Helper\HtmlHelper,
+	Cake\View\Helper\FormHelper,
+	Cake\View\Helper\JsHelper,
+	Cake\View\View,
+	Cake\Network\Request,
+	Cake\Core\Configure,
+	Cake\Routing\Router;
 
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');
@@ -31,7 +36,7 @@ if (!defined('FULL_BASE_URL')) {
  *
  * @package       Cake.Test.Case.View.Helper
  */
-class PaginatorHelperTest extends CakeTestCase {
+class PaginatorHelperTest extends TestCase {
 
 /**
  * setUp method
@@ -42,8 +47,8 @@ class PaginatorHelperTest extends CakeTestCase {
 		$controller = null;
 		$this->View = new View($controller);
 		$this->Paginator = new PaginatorHelper($this->View);
-		$this->Paginator->Js = $this->getMock('PaginatorHelper', array(), array($this->View));
-		$this->Paginator->request = new CakeRequest(null, false);
+		$this->Paginator->Js = $this->getMock('Cake\View\Helper\PaginatorHelper', array(), array($this->View));
+		$this->Paginator->request = new Request(null, false);
 		$this->Paginator->request->addParams(array(
 			'paging' => array(
 				'Article' => array(
@@ -2335,11 +2340,11 @@ class PaginatorHelperTest extends CakeTestCase {
 /**
  * test that mock classes injected into paginatorHelper are called when using link()
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testMockAjaxProviderClassInjection() {
-		$mock = $this->getMock('PaginatorHelper', array(), array($this->View), 'PaginatorMockJsHelper');
+		$mock = $this->getMock('Cake\View\Helper\PaginatorHelper', array(), array($this->View), 'PaginatorMockJsHelper');
 		$Paginator = new PaginatorHelper($this->View, array('ajax' => 'PaginatorMockJs'));
 		$Paginator->request->params['paging'] = array(
 			'Article' => array(
@@ -2442,7 +2447,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testNoDefaultModel() {
-		$this->Paginator->request = new CakeRequest(null, false);
+		$this->Paginator->request = new Request(null, false);
 		$this->assertNull($this->Paginator->defaultModel());
 	}
 

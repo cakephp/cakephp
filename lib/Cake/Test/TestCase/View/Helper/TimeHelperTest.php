@@ -16,16 +16,20 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('TimeHelper', 'View/Helper');
-App::uses('View', 'View');
-App::uses('CakeTime', 'Utility');
+namespace Cake\Test\TestCase\View\Helper;
+use Cake\TestSuite\TestCase,
+	Cake\View\Helper\TimeHelper,
+	Cake\View\View,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Core\Plugin;
 
 /**
  * TimeHelperTestObject class
  */
 class TimeHelperTestObject extends TimeHelper {
 
-	public function attach(CakeTimeMock $cakeTime) {
+	public function attach(TimeMock $cakeTime) {
 		$this->_engine = $cakeTime;
 	}
 
@@ -36,9 +40,9 @@ class TimeHelperTestObject extends TimeHelper {
 }
 
 /**
- * CakeTimeMock class
+ * TimeMock class
  */
-class CakeTimeMock {
+class TimeMock {
 }
 
 /**
@@ -46,7 +50,7 @@ class CakeTimeMock {
  *
  * @package       Cake.Test.Case.View.Helper
  */
-class TimeHelperTest extends CakeTestCase {
+class TimeHelperTest extends TestCase {
 
 	public $Time = null;
 
@@ -60,6 +64,9 @@ class TimeHelperTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->View = new View(null);
+
+		$this->_appNamespace = Configure::read('App.namespace');
+		Configure::write('App.namespace', 'TestApp');
 	}
 
 /**
@@ -69,6 +76,7 @@ class TimeHelperTest extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this->View);
+		Configure::write('App.namespace', $this->_appNamespace);
 		parent::tearDown();
 	}
 
@@ -83,8 +91,8 @@ class TimeHelperTest extends CakeTestCase {
 			'isTomorrow', 'toQuarter', 'toUnix', 'toAtom', 'toRSS',
 			'timeAgoInWords', 'wasWithinLast', 'gmt', 'format', 'i18nFormat',
 		);
-		$CakeTime = $this->getMock('CakeTimeMock', $methods);
-		$Time = new TimeHelperTestObject($this->View, array('engine' => 'CakeTimeMock'));
+		$CakeTime = $this->getMock(__NAMESPACE__ . '\TimeMock', $methods);
+		$Time = new TimeHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\TimeMock'));
 		$Time->attach($CakeTime);
 		foreach ($methods as $method) {
 			$CakeTime->expects($this->at(0))->method($method);
@@ -97,18 +105,18 @@ class TimeHelperTest extends CakeTestCase {
  */
 	public function testEngineOverride() {
 		App::build(array(
-			'Utility' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Utility' . DS)
+			'Utility' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Utility' . DS)
 		), App::REGISTER);
 		$Time = new TimeHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
-		$this->assertInstanceOf('TestAppEngine', $Time->engine());
+		$this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Time->engine());
 
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		));
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 		$Time = new TimeHelperTestObject($this->View, array('engine' => 'TestPlugin.TestPluginEngine'));
-		$this->assertInstanceOf('TestPluginEngine', $Time->engine());
-		CakePlugin::unload('TestPlugin');
+		$this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Time->engine());
+		Plugin::unload('TestPlugin');
 	}
 
 /**

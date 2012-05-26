@@ -16,13 +16,18 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\View;
 
-App::uses('View', 'View');
-App::uses('Helper', 'View');
-App::uses('Controller', 'Controller');
-App::uses('CacheHelper', 'View/Helper');
-App::uses('ErrorHandler', 'Error');
-
+use Cake\TestSuite\TestCase,
+	Cake\View\View,
+	Cake\View\Helper,
+	Cake\Controller\Controller,
+	Cake\Cache\Cache,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Core\Plugin,
+	Cake\Network\Request,
+	Cake\Utility\ClassRegistry;
 
 /**
  * ViewPostsController class
@@ -229,7 +234,7 @@ class TestAfterHelper extends Helper {
  *
  * @package       Cake.Test.Case.View
  */
-class ViewTest extends CakeTestCase {
+class ViewTest extends TestCase {
 
 /**
  * Fixtures used in this test.
@@ -246,14 +251,14 @@ class ViewTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$request = $this->getMock('CakeRequest');
+		$request = $this->getMock('Cake\Network\Request');
 		$this->Controller = new Controller($request);
 		$this->PostsController = new ViewPostsController($request);
 		$this->PostsController->viewPath = 'Posts';
 		$this->PostsController->index();
 		$this->View = new View($this->PostsController);
 
-		$themeRequest = new CakeRequest('posts/index');
+		$themeRequest = new Request('posts/index');
 		$this->ThemeController = new Controller($themeRequest);
 		$this->ThemePostsController = new ThemePostsController($themeRequest);
 		$this->ThemePostsController->viewPath = 'posts';
@@ -261,12 +266,12 @@ class ViewTest extends CakeTestCase {
 		$this->ThemeView = new View($this->ThemePostsController);
 
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		), App::RESET);
 		App::objects('plugins', null, false);
 
-		CakePlugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
+		Plugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
 		Configure::write('debug', 2);
 	}
 
@@ -277,7 +282,7 @@ class ViewTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		CakePlugin::unload();
+		Plugin::unload();
 		unset($this->View);
 		unset($this->PostsController);
 		unset($this->Controller);
@@ -300,25 +305,25 @@ class ViewTest extends CakeTestCase {
 
 		$ThemeView = new TestThemeView($this->Controller);
 		$ThemeView->theme = 'TestTheme';
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages' . DS . 'home.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS .'Pages' . DS . 'home.ctp';
 		$result = $ThemeView->getViewFileName('home');
 		$this->assertEquals($expected, $result);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Posts' . DS . 'index.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Posts' . DS . 'index.ctp';
 		$result = $ThemeView->getViewFileName('/Posts/index');
 		$this->assertEquals($expected, $result);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Layouts' . DS . 'default.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Layouts' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEquals($expected, $result);
 
 		$ThemeView->layoutPath = 'rss';
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS . 'rss' . DS . 'default.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Layouts' . DS . 'rss' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEquals($expected, $result);
 
 		$ThemeView->layoutPath = 'Emails' . DS . 'html';
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS . 'Emails' . DS . 'html' . DS . 'default.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Layouts' . DS . 'Emails' . DS . 'html' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEquals($expected, $result);
 	}
@@ -336,11 +341,11 @@ class ViewTest extends CakeTestCase {
 
 		$View = new TestView($this->Controller);
 
-		$expected = CakePlugin::path('TestPlugin') . 'View' . DS . 'Tests' . DS . 'index.ctp';
+		$expected = Plugin::path('TestPlugin') . 'View' . DS .'Tests' . DS . 'index.ctp';
 		$result = $View->getViewFileName('index');
 		$this->assertEquals($expected, $result);
 
-		$expected = CakePlugin::path('TestPlugin') . 'View' . DS . 'Layouts' . DS . 'default.ctp';
+		$expected = Plugin::path('TestPlugin') . 'View' . DS . 'Layouts' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEquals($expected, $result);
 	}
@@ -358,15 +363,15 @@ class ViewTest extends CakeTestCase {
 		$this->Controller->theme = 'TestTheme';
 
 		$ThemeView = new TestThemeView($this->Controller);
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Tests' . DS . 'index.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
 		$this->assertEquals($expected, $result);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Layouts' . DS . 'plugin_default.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Layouts' . DS . 'plugin_default.ctp';
 		$result = $ThemeView->getLayoutFileName('plugin_default');
 		$this->assertEquals($expected, $result);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Layouts' . DS . 'default.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Layouts' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName('default');
 		$this->assertEquals($expected, $result);
 	}
@@ -388,11 +393,11 @@ class ViewTest extends CakeTestCase {
 		$this->assertEquals($expected, $paths);
 
 		$paths = $View->paths('TestPlugin');
-		$pluginPath = CakePlugin::path('TestPlugin');
+		$pluginPath = Plugin::path('TestPlugin');
 		$expected = array(
-			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+			CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
 			$pluginPath . 'View' . DS,
-			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS,
+			CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS,
 			CAKE . 'View' . DS,
 			CAKE . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'View' . DS
 		);
@@ -412,12 +417,12 @@ class ViewTest extends CakeTestCase {
 
 		$View = new TestView($this->Controller);
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		));
 
-		$pluginPath = CakePlugin::path('TestPlugin');
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Tests' . DS . 'index.ctp';
+		$pluginPath = Plugin::path('TestPlugin');
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS .'TestPlugin' . DS . 'View' . DS .'Tests' . DS . 'index.ctp';
 		$result = $View->getViewFileName('index');
 		$this->assertEquals($expected, $result);
 
@@ -440,29 +445,29 @@ class ViewTest extends CakeTestCase {
 
 		$View = new TestView($this->Controller);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages' . DS . 'home.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS .'Pages' . DS . 'home.ctp';
 		$result = $View->getViewFileName('home');
 		$this->assertEquals($expected, $result);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Posts' . DS . 'index.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS .'Posts' . DS . 'index.ctp';
 		$result = $View->getViewFileName('/Posts/index');
 		$this->assertEquals($expected, $result);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Posts' . DS . 'index.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS .'Posts' . DS . 'index.ctp';
 		$result = $View->getViewFileName('../Posts/index');
 		$this->assertEquals($expected, $result);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages' . DS . 'page.home.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS .'Pages' . DS . 'page.home.ctp';
 		$result = $View->getViewFileName('page.home');
 		$this->assertEquals($expected, $result, 'Should not ruin files with dots.');
 
-		CakePlugin::load('TestPlugin');
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages' . DS . 'home.ctp';
+		Plugin::load('TestPlugin');
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS .'Pages' . DS . 'home.ctp';
 		$result = $View->getViewFileName('TestPlugin.home');
 		$this->assertEquals($expected, $result, 'Plugin is missing the view, cascade to app.');
 
 		$View->viewPath = 'Tests';
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Tests' . DS . 'index.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $View->getViewFileName('TestPlugin.index');
 		$this->assertEquals($expected, $result);
 	}
@@ -480,17 +485,17 @@ class ViewTest extends CakeTestCase {
 
 		$View = new TestView($this->Controller);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS . 'default.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Layouts' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEquals($expected, $result);
 
 		$View->layoutPath = 'rss';
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS . 'rss' . DS . 'default.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Layouts' . DS . 'rss' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEquals($expected, $result);
 
 		$View->layoutPath = 'Emails' . DS . 'html';
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Layouts' . DS . 'Emails' . DS . 'html' . DS . 'default.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Layouts' . DS . 'Emails' . DS . 'html' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEquals($expected, $result);
 	}
@@ -507,14 +512,14 @@ class ViewTest extends CakeTestCase {
 		$this->Controller->action = 'display';
 
 		$View = new TestView($this->Controller);
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Layouts' . DS . 'default.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Layouts' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName('TestPlugin.default');
 		$this->assertEquals($expected, $result);
 
 		$View->plugin = 'TestPlugin';
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Layouts' . DS . 'default.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Layouts' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName('default');
 		$this->assertEquals($expected, $result);
 	}
@@ -522,7 +527,7 @@ class ViewTest extends CakeTestCase {
 /**
  * testMissingView method
  *
- * @expectedException MissingViewException
+ * @expectedException Cake\Error\MissingViewException
  * @return void
  */
 	public function testMissingView() {
@@ -555,7 +560,7 @@ class ViewTest extends CakeTestCase {
 /**
  * testMissingLayout method
  *
- * @expectedException MissingLayoutException
+ * @expectedException Cake\Error\MissingLayoutException
  * @return void
  */
 	public function testMissingLayout() {
@@ -661,8 +666,10 @@ class ViewTest extends CakeTestCase {
  *
  */
 	public function testElementCallbacks() {
-		$this->getMock('HtmlHelper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');
-		$this->View->helpers = array('ElementCallbackMockHtml');
+		$this->getMock('Cake\View\Helper\HtmlHelper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');
+		$this->View->helpers = array(
+			'ElementCallbackMockHtml' => array('className' => '\ElementCallbackMockHtmlHelper')
+		);
 		$this->View->loadHelpers();
 
 		$this->View->ElementCallbackMockHtml->expects($this->at(0))->method('beforeRender');
@@ -765,7 +772,7 @@ class ViewTest extends CakeTestCase {
 	public function testMagicGet() {
 		$View = new View($this->PostsController);
 		$View->loadHelper('Html');
-		$this->assertInstanceOf('HtmlHelper', $View->Html);
+		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
 	}
 
 /**
@@ -794,8 +801,8 @@ class ViewTest extends CakeTestCase {
 		$View->helpers = array('Html', 'Form');
 		$View->loadHelpers();
 
-		$this->assertInstanceOf('HtmlHelper', $View->Html, 'Object type is wrong.');
-		$this->assertInstanceOf('FormHelper', $View->Form, 'Object type is wrong.');
+		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
+		$this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
 	}
 
 /**
@@ -807,8 +814,8 @@ class ViewTest extends CakeTestCase {
 		$View = new View($this->PostsController);
 
 		$View->helpers = array();
-		$this->assertInstanceOf('HtmlHelper', $View->Html, 'Object type is wrong.');
-		$this->assertInstanceOf('FormHelper', $View->Form, 'Object type is wrong.');
+		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
+		$this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
 	}
 
 /**
@@ -819,12 +826,12 @@ class ViewTest extends CakeTestCase {
 	public function testHelperCallbackTriggering() {
 		$View = new View($this->PostsController);
 		$View->helpers = array();
-		$View->Helpers = $this->getMock('HelperCollection', array('trigger'), array($View));
+		$View->Helpers = $this->getMock('Cake\View\HelperCollection', array('trigger'), array($View));
 
 		$View->Helpers->expects($this->at(0))->method('trigger')
 			->with(
 				$this->logicalAnd(
-					$this->isInstanceOf('CakeEvent'),
+					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'View.beforeRender'),
 					$this->attributeEqualTo('_subject', $View)
 				)
@@ -832,7 +839,7 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers->expects($this->at(1))->method('trigger')
 			->with(
 				$this->logicalAnd(
-					$this->isInstanceOf('CakeEvent'),
+					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'View.beforeRenderFile'),
 					$this->attributeEqualTo('_subject', $View)
 				)
@@ -841,7 +848,7 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers->expects($this->at(2))->method('trigger')
 			->with(
 				$this->logicalAnd(
-					$this->isInstanceOf('CakeEvent'),
+					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'View.afterRenderFile'),
 					$this->attributeEqualTo('_subject', $View)
 				)
@@ -849,7 +856,7 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers->expects($this->at(3))->method('trigger')
 			->with(
 				$this->logicalAnd(
-					$this->isInstanceOf('CakeEvent'),
+					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'View.afterRender'),
 					$this->attributeEqualTo('_subject', $View)
 				)
@@ -858,7 +865,7 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers->expects($this->at(4))->method('trigger')
 			->with(
 				$this->logicalAnd(
-					$this->isInstanceOf('CakeEvent'),
+					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'View.beforeLayout'),
 					$this->attributeEqualTo('_subject', $View)
 				)
@@ -867,7 +874,7 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers->expects($this->at(5))->method('trigger')
 			->with(
 				$this->logicalAnd(
-					$this->isInstanceOf('CakeEvent'),
+					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'View.beforeRenderFile'),
 					$this->attributeEqualTo('_subject', $View)
 				)
@@ -876,7 +883,7 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers->expects($this->at(6))->method('trigger')
 			->with(
 				$this->logicalAnd(
-					$this->isInstanceOf('CakeEvent'),
+					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'View.afterRenderFile'),
 					$this->attributeEqualTo('_subject', $View)
 				)
@@ -885,7 +892,7 @@ class ViewTest extends CakeTestCase {
 		$View->Helpers->expects($this->at(7))->method('trigger')
 			->with(
 				$this->logicalAnd(
-					$this->isInstanceOf('CakeEvent'),
+					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'View.afterLayout'),
 					$this->attributeEqualTo('_subject', $View)
 				)
@@ -900,7 +907,11 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testBeforeLayout() {
-		$this->PostsController->helpers = array('Session', 'TestAfter', 'Html');
+		$this->PostsController->helpers = array(
+			'Session', 
+			'TestAfter' => array('className' => __NAMESPACE__ . '\TestAfterHelper'),
+			'Html'
+		);
 		$View = new View($this->PostsController);
 		$View->render('index');
 		$this->assertEquals('Valuation', $View->Helpers->TestAfter->property);
@@ -912,7 +923,11 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testAfterLayout() {
-		$this->PostsController->helpers = array('Session', 'TestAfter', 'Html');
+		$this->PostsController->helpers = array(
+			'Session',
+			'TestAfter' => array('className' => __NAMESPACE__ . '\TestAfterHelper'),
+			'Html'
+		);
 		$this->PostsController->set('variable', 'values');
 
 		$View = new View($this->PostsController);
@@ -1019,7 +1034,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->name = 'Posts';
 		$View = new TestView($this->PostsController);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' .
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' .
 			DS . 'View' . DS . 'Elements' . DS . 'sub_dir' . DS . 'sub_element.ctp';
 		$this->assertEquals($expected, $View->getViewFileName('sub_dir/sub_element'));
 	}
@@ -1064,7 +1079,7 @@ class ViewTest extends CakeTestCase {
 		$result = $View->getViewFileName('../Themed/TestTheme/Posts/index');
 		$this->assertRegExp('/Themed(\/|\\\)TestTheme(\/|\\\)Posts(\/|\\\)index.ctp/', $result);
 
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Posts' . DS . 'index.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS .'Posts' . DS . 'index.ctp';
 		$result = $View->getViewFileName('../Posts/index');
 		$this->assertEquals($expected, $result);
 	}
@@ -1167,7 +1182,7 @@ class ViewTest extends CakeTestCase {
 /**
  * testBadExt method
  *
- * @expectedException MissingViewException
+ * @expectedException Cake\Error\MissingViewException
  * @return void
  */
 	public function testBadExt() {
@@ -1193,7 +1208,7 @@ class ViewTest extends CakeTestCase {
 /**
  * testAltBadExt method
  *
- * @expectedException MissingViewException
+ * @expectedException Cake\Error\MissingViewException
  * @return void
  */
 	public function testAltBadExt() {
@@ -1271,7 +1286,7 @@ class ViewTest extends CakeTestCase {
 /**
  * setting an array should cause an exception.
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testBlockSetArrayException() {
@@ -1281,7 +1296,7 @@ class ViewTest extends CakeTestCase {
 /**
  * Appending an array should cause an exception.
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testBlockAppendArrayException() {
@@ -1322,7 +1337,7 @@ class ViewTest extends CakeTestCase {
  * Test that an exception gets thrown when you leave a block open at the end
  * of a view.
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testExceptionOnOpenBlock() {

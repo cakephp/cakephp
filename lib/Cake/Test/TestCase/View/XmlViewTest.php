@@ -16,18 +16,21 @@
  * @since         CakePHP(tm) v 2.1.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Controller', 'Controller');
-App::uses('CakeRequest', 'Network');
-App::uses('CakeResponse', 'Network');
-App::uses('XmlView', 'View');
+namespace Cake\Test\TestCase\View;
+use Cake\TestSuite\TestCase,
+	Cake\View\XmlView,
+	Cake\Network\Request,
+	Cake\Network\Response,
+	Cake\Controller\Controller,
+	Cake\Core\App,
+	Cake\Utility\Xml;
 
 /**
  * XmlViewTest
  *
  * @package       Cake.Test.Case.View
  */
-class XmlViewTest extends CakeTestCase {
+class XmlViewTest extends TestCase {
 
 /**
  * testRenderWithoutView method
@@ -35,8 +38,8 @@ class XmlViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderWithoutView() {
-		$Request = new CakeRequest();
-		$Response = new CakeResponse();
+		$Request = new Request();
+		$Response = new Response();
 		$Controller = new Controller($Request, $Response);
 		$data = array('users' => array('user' => array('user1', 'user2')));
 		$Controller->set(array('users' => $data, '_serialize' => 'users'));
@@ -54,8 +57,8 @@ class XmlViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderWithoutViewMultiple() {
-		$Request = new CakeRequest();
-		$Response = new CakeResponse();
+		$Request = new Request();
+		$Response = new Response();
 		$Controller = new Controller($Request, $Response);
 		$data = array('no' => 'nope', 'user' => 'fake', 'list' => array('item1', 'item2'));
 		$Controller->set($data);
@@ -77,10 +80,10 @@ class XmlViewTest extends CakeTestCase {
  */
 	public function testRenderWithView() {
 		App::build(array('View' => array(
-			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS
+			CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS
 		)));
-		$Request = new CakeRequest();
-		$Response = new CakeResponse();
+		$Request = new Request();
+		$Response = new Response();
 		$Controller = new Controller($Request, $Response);
 		$Controller->name = $Controller->viewPath = 'Posts';
 
@@ -103,7 +106,7 @@ class XmlViewTest extends CakeTestCase {
 		$expected = '<?xml version="1.0" encoding="UTF-8"?><users><user>user1</user><user>user2</user></users>';
 		$this->assertSame($expected, str_replace(array("\r", "\n"), '', $output));
 		$this->assertSame('application/xml', $Response->type());
-		$this->assertInstanceOf('HelperCollection', $View->Helpers);
+		$this->assertInstanceOf('Cake\View\HelperCollection', $View->Helpers);
 	}
 
 }

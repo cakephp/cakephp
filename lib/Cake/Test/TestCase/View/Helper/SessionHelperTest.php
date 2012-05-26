@@ -16,17 +16,21 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Controller', 'Controller');
-App::uses('View', 'View');
-App::uses('SessionHelper', 'View/Helper');
+namespace Cake\Test\TestCase\View\Helper;
+use Cake\TestSuite\TestCase,
+	Cake\View\Helper\SessionHelper,
+	Cake\View\View,
+	Cake\Controller\Controller,
+	Cake\Model\Datasource\Session,
+	Cake\Core\Plugin,
+	Cake\Core\App;
 
 /**
  * SessionHelperTest class
  *
  * @package       Cake.Test.Case.View.Helper
  */
-class SessionHelperTest extends CakeTestCase {
+class SessionHelperTest extends TestCase {
 
 /**
  * setUp method
@@ -38,10 +42,10 @@ class SessionHelperTest extends CakeTestCase {
 		$controller = null;
 		$this->View = new View($controller);
 		$this->Session = new SessionHelper($this->View);
-		CakeSession::start();
+		Session::start();
 
-		if (!CakeSession::started()) {
-			CakeSession::start();
+		if (!Session::started()) {
+			Session::start();
 		}
 
 		$_SESSION = array(
@@ -80,7 +84,7 @@ class SessionHelperTest extends CakeTestCase {
 	public function tearDown() {
 		$_SESSION = array();
 		unset($this->View, $this->Session);
-		CakePlugin::unload();
+		Plugin::unload();
 		parent::tearDown();
 	}
 
@@ -128,7 +132,7 @@ class SessionHelperTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		));
 		$result = $this->Session->flash('notification');
 		$result = str_replace("\r\n", "\n", $result);
@@ -161,7 +165,7 @@ class SessionHelperTest extends CakeTestCase {
  */
 	public function testFlashElementInAttrs() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		));
 		$result = $this->Session->flash('flash', array(
 			'element' => 'session_helper',
@@ -178,9 +182,9 @@ class SessionHelperTest extends CakeTestCase {
  */
 	public function testFlashWithPluginElement() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		));
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 
 		$result = $this->Session->flash('flash', array(
 			'element' => 'plugin_element',

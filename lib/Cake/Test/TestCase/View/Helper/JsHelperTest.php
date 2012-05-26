@@ -18,12 +18,17 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('HtmlHelper', 'View/Helper');
-App::uses('JsHelper', 'View/Helper');
-App::uses('JsBaseEngineHelper', 'View/Helper');
-App::uses('FormHelper', 'View/Helper');
-App::uses('View', 'View');
-App::uses('ClassRegistry', 'Utility');
+namespace Cake\Test\TestCase\View\Helper;
+
+use Cake\TestSuite\TestCase,
+	Cake\View\Helper\HtmlHelper,
+	Cake\View\Helper\JsHelper,
+	Cake\View\Helper\JsBaseEngineHelper,
+	Cake\View\Helper\FormHelper,
+	Cake\View\View,
+	Cake\Utility\ClassRegistry,
+	Cake\Network\Request,
+	Cake\Core\Configure;
 
 class JsEncodingObject {
 
@@ -101,7 +106,7 @@ class OptionEngineHelper extends JsBaseEngineHelper {
  *
  * @package       Cake.Test.Case.View.Helper
  */
-class JsHelperTest extends CakeTestCase {
+class JsHelperTest extends TestCase {
 
 /**
  * Regexp for CDATA start block
@@ -127,9 +132,9 @@ class JsHelperTest extends CakeTestCase {
 		Configure::write('Asset.timestamp', false);
 
 		$controller = null;
-		$this->View = $this->getMock('View', array('append'), array(&$controller));
+		$this->View = $this->getMock('Cake\View\View', array('append'), array(&$controller));
 		$this->Js = new JsHelper($this->View, 'Option');
-		$request = new CakeRequest(null, false);
+		$request = new Request(null, false);
 		$this->Js->request = $request;
 		$this->Js->Html = new HtmlHelper($this->View);
 		$this->Js->Html->request = $request;
@@ -156,14 +161,14 @@ class JsHelperTest extends CakeTestCase {
  * @return void
  */
 	protected function _useMock() {
-		$request = new CakeRequest(null, false);
+		$request = new Request(null, false);
 
 		if (!class_exists('TestJsEngineHelper', false)) {
-			$this->getMock('JsBaseEngineHelper', array(), array($this->View), 'TestJsEngineHelper');
+			$this->getMock('Cake\View\Helper\JsBaseEngineHelper', array(), array($this->View), 'TestJsEngineHelper');
 		}
 
 		$this->Js = new JsHelper($this->View, array('TestJs'));
-		$this->Js->TestJsEngine = new TestJsEngineHelper($this->View);
+		$this->Js->TestJsEngine = new \TestJsEngineHelper($this->View);
 		$this->mockObjects[] = $this->Js->TestJsEngine;
 		$this->Js->request = $request;
 		$this->Js->Html = new HtmlHelper($this->View);
@@ -208,7 +213,7 @@ class JsHelperTest extends CakeTestCase {
 
 		$this->Js->event('click', 'callback');
 
-		$this->Js->TestJsEngine = new StdClass();
+		$this->Js->TestJsEngine = new \StdClass();
 		$this->Js->someMethodThatSurelyDoesntExist();
 	}
 
@@ -352,7 +357,7 @@ class JsHelperTest extends CakeTestCase {
 		$this->skipIf(!is_writable(JS), 'webroot/js is not Writable, script caching test has been skipped.');
 
 		$this->Js->request->webroot = '/';
-		$this->Js->JsBaseEngine = new TestJsEngineHelper($this->View);
+		$this->Js->JsBaseEngine = new \TestJsEngineHelper($this->View);
 		$this->Js->buffer('one = 1;');
 		$this->Js->buffer('two = 2;');
 		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'cache' => true));
@@ -722,7 +727,7 @@ class JsHelperTest extends CakeTestCase {
  *
  * @package       Cake.Test.Case.View.Helper
  */
-class JsBaseEngineTest extends CakeTestCase {
+class JsBaseEngineTest extends TestCase {
 
 /**
  * setUp method

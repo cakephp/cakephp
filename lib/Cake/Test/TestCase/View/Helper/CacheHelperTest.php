@@ -16,11 +16,17 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\View\Helper;
 
-App::uses('Controller', 'Controller');
-App::uses('Model', 'Model');
-App::uses('View', 'View');
-App::uses('CacheHelper', 'View/Helper');
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Controller,
+	Cake\Model\Model,
+	Cake\View\View,
+	Cake\View\Helper\CacheHelper,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Routing\Router,
+	Cake\Network\Request;
 
 /**
  * CacheTestController class
@@ -57,7 +63,7 @@ class CacheTestController extends Controller {
  *
  * @package       Cake.Test.Case.View.Helper
  */
-class CacheHelperTest extends CakeTestCase {
+class CacheHelperTest extends TestCase {
 
 /**
  * Checks if TMP/views is writable, and skips the case if it is not.
@@ -78,14 +84,14 @@ class CacheHelperTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$_GET = array();
-		$request = new CakeRequest();
+		$request = new Request();
 		$this->Controller = new CacheTestController($request);
 		$View = new View($this->Controller);
 		$this->Cache = new CacheHelper($View);
 		Configure::write('Cache.check', true);
 		Configure::write('Cache.disable', false);
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		), App::RESET);
 	}
 
@@ -555,7 +561,7 @@ class CacheHelperTest extends CakeTestCase {
 		$View->cacheAction = '+1 day';
 		$View->output = 'test';
 
-		$Cache = $this->getMock('CacheHelper', array('_parseContent'), array($View));
+		$Cache = $this->getMock('Cake\View\Helper\CacheHelper', array('_parseContent'), array($View));
 		$Cache->expects($this->once())
 			->method('_parseContent')
 			->with('posts/index', 'content')
@@ -582,7 +588,7 @@ class CacheHelperTest extends CakeTestCase {
 		$View->cacheAction = '+1 day';
 		$View->output = 'test';
 
-		$Cache = $this->getMock('CacheHelper', array('cache'), array($View));
+		$Cache = $this->getMock('Cake\View\Helper\CacheHelper', array('cache'), array($View));
 		$Cache->expects($this->once())
 			->method('cache')
 			->with('posts/index', $View->output)

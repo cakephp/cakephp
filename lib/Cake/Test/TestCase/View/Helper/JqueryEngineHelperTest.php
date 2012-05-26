@@ -15,13 +15,15 @@
  * @package       Cake.Test.Case.View.Helper
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\View\Helper;
 
-App::uses('HtmlHelper', 'View/Helper');
-App::uses('JsHelper', 'View/Helper');
-App::uses('JqueryEngineHelper', 'View/Helper');
-App::uses('View', 'View');
+use Cake\TestSuite\TestCase,
+	Cake\View\Helper\HtmlHelper,
+	Cake\View\Helper\JsHelper,
+	Cake\View\Helper\JqueryEngineHelper,
+	Cake\View\View;
 
-class JqueryEngineHelperTest extends CakeTestCase {
+class JqueryEngineHelperTest extends TestCase {
 
 /**
  * setUp
@@ -31,7 +33,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$controller = null;
-		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
+		$this->View = $this->getMock('Cake\View\View', array('addScript'), array(&$controller));
 		$this->Jquery = new JqueryEngineHelper($this->View);
 	}
 

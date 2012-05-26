@@ -16,17 +16,21 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('View', 'View');
-App::uses('RssHelper', 'View/Helper');
-App::uses('TimeHelper', 'View/Helper');
-App::uses('File', 'Utility');
+namespace Cake\Test\TestCase\View\Helper;
+
+use Cake\TestSuite\TestCase,
+	Cake\View\Helper\RssHelper,
+	Cake\View\Helper\TimeHelper,
+	Cake\View\View,
+	Cake\Utility\Folder,
+	Cake\Utility\File;
 
 /**
  * RssHelperTest class
  *
  * @package       Cake.Test.Case.View.Helper
  */
-class RssHelperTest extends CakeTestCase {
+class RssHelperTest extends TestCase {
 
 /**
  * setUp method

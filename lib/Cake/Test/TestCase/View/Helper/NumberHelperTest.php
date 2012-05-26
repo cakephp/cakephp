@@ -16,16 +16,21 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\View\Helper;
 
-App::uses('View', 'View');
-App::uses('NumberHelper', 'View/Helper');
+use Cake\TestSuite\TestCase,
+	Cake\View\Helper\NumberHelper,
+	Cake\View\View,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Core\Plugin;
 
 /**
  * NumberHelperTestObject class
  */
 class NumberHelperTestObject extends NumberHelper {
 
-	public function attach(CakeNumberMock $cakeNumber) {
+	public function attach(NumberMock $cakeNumber) {
 		$this->_engine = $cakeNumber;
 	}
 
@@ -36,9 +41,9 @@ class NumberHelperTestObject extends NumberHelper {
 }
 
 /**
- * CakeNumberMock class
+ * NumberMock class
  */
-class CakeNumberMock {
+class NumberMock {
 }
 
 /**
@@ -46,7 +51,7 @@ class CakeNumberMock {
  *
  * @package       Cake.Test.Case.View.Helper
  */
-class NumberHelperTest extends CakeTestCase {
+class NumberHelperTest extends TestCase {
 
 /**
  * setUp method
@@ -56,6 +61,9 @@ class NumberHelperTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->View = new View(null);
+
+		$this->_appNamespace = Configure::read('App.namespace');
+		Configure::write('App.namespace', 'TestApp');
 	}
 
 /**
@@ -65,6 +73,7 @@ class NumberHelperTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
+		Configure::write('App.namespace', $this->_appNamespace);
 		unset($this->View);
 	}
 
@@ -76,8 +85,8 @@ class NumberHelperTest extends CakeTestCase {
 			'precision', 'toReadableSize', 'toPercentage', 'format',
 			'currency', 'addFormat',
 			);
-		$CakeNumber = $this->getMock('CakeNumberMock', $methods);
-		$Number = new NumberHelperTestObject($this->View, array('engine' => 'CakeNumberMock'));
+		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', $methods);
+		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
 		$Number->attach($CakeNumber);
 		foreach ($methods as $method) {
 			$CakeNumber->expects($this->at(0))->method($method);
@@ -90,18 +99,18 @@ class NumberHelperTest extends CakeTestCase {
  */
 	public function testEngineOverride() {
 		App::build(array(
-			'Utility' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Utility' . DS)
+			'Utility' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Utility' . DS)
 		), App::REGISTER);
 		$Number = new NumberHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
-		$this->assertInstanceOf('TestAppEngine', $Number->engine());
+		$this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Number->engine());
 
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		));
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 		$Number = new NumberHelperTestObject($this->View, array('engine' => 'TestPlugin.TestPluginEngine'));
-		$this->assertInstanceOf('TestPluginEngine', $Number->engine());
-		CakePlugin::unload('TestPlugin');
+		$this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Number->engine());
+		Plugin::unload('TestPlugin');
 	}
 
 }

@@ -16,18 +16,20 @@
  * @since         CakePHP(tm) v 2.1.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Controller', 'Controller');
-App::uses('CakeRequest', 'Network');
-App::uses('CakeResponse', 'Network');
-App::uses('JsonView', 'View');
+namespace Cake\Test\TestCase\View;
+use Cake\TestSuite\TestCase,
+	Cake\View\JsonView,
+	Cake\Controller\Controller,
+	Cake\Network\Request,
+	Cake\Network\Response,
+	Cake\Core\App;
 
 /**
  * JsonViewTest
  *
  * @package       Cake.Test.Case.View
  */
-class JsonViewTest extends CakeTestCase {
+class JsonViewTest extends TestCase {
 
 /**
  * testRenderWithoutView method
@@ -35,8 +37,8 @@ class JsonViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderWithoutView() {
-		$Request = new CakeRequest();
-		$Response = new CakeResponse();
+		$Request = new Request();
+		$Response = new Response();
 		$Controller = new Controller($Request, $Response);
 		$data = array('user' => 'fake', 'list' => array('item1', 'item2'));
 		$Controller->set(array('data' => $data, '_serialize' => 'data'));
@@ -53,8 +55,8 @@ class JsonViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderWithoutViewMultiple() {
-		$Request = new CakeRequest();
-		$Response = new CakeResponse();
+		$Request = new Request();
+		$Response = new Response();
 		$Controller = new Controller($Request, $Response);
 		$data = array('no' => 'nope', 'user' => 'fake', 'list' => array('item1', 'item2'));
 		$Controller->set($data);
@@ -73,10 +75,10 @@ class JsonViewTest extends CakeTestCase {
  */
 	public function testRenderWithView() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		));
-		$Request = new CakeRequest();
-		$Response = new CakeResponse();
+		$Request = new Request();
+		$Response = new Response();
 		$Controller = new Controller($Request, $Response);
 		$Controller->name = $Controller->viewPath = 'Posts';
 
