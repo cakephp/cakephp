@@ -1,5 +1,6 @@
 <?php
-App::uses('DataSource', 'Model/Datasource');
+namespace TestPlugin\Model\Datasource;
+use Cake\Model\Datasource\DataSource;
 
 class TestSource extends DataSource {
 

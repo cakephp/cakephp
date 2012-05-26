@@ -11,12 +11,13 @@
  *
  * @copyright	  Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link		  http://cakephp.org CakePHP(tm) Project
- * @package		  Cake.Test.test_app.Routing.Filter
+ * @package		  Cake.Test.TestApp.Routing.Filter
  * @since		  CakePHP(tm) v 2.2
  * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('DispatcherFilter', 'Routing');
+namespace TestPlugin\Routing\Filter;
+use Cake\Routing\DispatcherFilter;
 
 class TestDispatcherFilter extends DispatcherFilter {
 

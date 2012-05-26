@@ -12,10 +12,13 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.test_app.Plugin.TestPlugin.View.Helper
+ * @package       Cake.Test.TestApp.Plugin.TestPlugin.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('AppHelper', 'View/Helper');
-class OtherHelperHelper extends AppHelper {
+
+namespace TestPlugin\View\Helper;
+use Cake\View\Helper;
+
+class OtherHelperHelper extends Helper {
 }

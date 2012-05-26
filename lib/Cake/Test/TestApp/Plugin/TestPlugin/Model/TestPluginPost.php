@@ -14,10 +14,12 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.test_app.Plugin.TestPlugin.Model
+ * @package       Cake.Test.TestApp.Plugin.TestPlugin.Model
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace TestPlugin\Model;
+
 class TestPluginPost extends TestPluginAppModel {
 
 /**

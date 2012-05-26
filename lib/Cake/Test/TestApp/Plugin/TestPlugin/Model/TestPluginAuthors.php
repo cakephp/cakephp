@@ -12,13 +12,15 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package       Cake.Test.test_app.Plugin.TestPlugin.Model
+ * @package       Cake.Test.TestApp.Plugin.TestPlugin.Model
  * @since         CakePHP v 1.2.0.7726
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+namespace TestPlugin\Model;
+
 class TestPluginAuthors extends TestPluginAppModel {
 
 	public $useTable = 'authors';

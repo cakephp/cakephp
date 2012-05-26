@@ -1,9 +1,6 @@
 <?php
 /**
- * Exception Renderer
- *
- * Provides Exception rendering features.  Which allow exceptions to be rendered
- * as HTML pages.
+ * MergePostsController
  *
  * PHP 5
  *
@@ -15,21 +12,30 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.TestApp.Plugin.TestPlugin.Lib.Error
- * @since         CakePHP(tm) v 2.0
+ * @package       Cake.Controller
+ * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace TestPlugin\Error;
-use Cake\Error\ExceptionRenderer;
-
-class TestPluginExceptionRenderer extends ExceptionRenderer {
+namespace MergeVar\Controller;
 
 /**
- * Renders the response for the exception.
+ * MergePostsController
  *
- * @return void
+ * @package       Cake.Test.Case.Controller
  */
-	public function render() {
-		echo 'Rendered by test plugin';
-	}
+class MergePostsController extends Controller {
+
+/**
+ * name
+ *
+ * @var string
+ */
+	public $name = 'MergePosts';
+
+/**
+ * uses
+ *
+ * @var array
+ */
+	public $uses = array();
 }

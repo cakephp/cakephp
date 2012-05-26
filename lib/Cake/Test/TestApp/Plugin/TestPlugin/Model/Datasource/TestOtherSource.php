@@ -1,4 +1,7 @@
 <?php
+namespace TestPlugin\Model\Datasource;
+use Cake\Model\Datasource\DataSource;
+
 class TestOtherSource extends DataSource {
 
 	public function describe($model) {
