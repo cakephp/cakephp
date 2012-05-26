@@ -611,7 +611,7 @@ class MysqlTest extends CakeTestCase {
 	public function testBlobSaving() {
 		$this->loadFixtures('BinaryTest');
 		$this->Dbo->cacheSources = false;
-		$data = file_get_contents(CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif');
+		$data = file_get_contents(CAKE . 'Test' . DS . 'TestApp' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif');
 
 		$model = new CakeTestModel(array('name' => 'BinaryTest', 'ds' => 'test'));
 		$model->save(compact('data'));

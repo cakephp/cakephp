@@ -460,7 +460,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$this->assertEquals('working', $Apple->testMethod(true));
 		$this->assertEquals('working', $Apple->Behaviors->dispatchMethod($Apple, 'testMethod'));
 
-		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)));
+		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)));
 		CakePlugin::load('TestPlugin');
 		$this->assertTrue($Apple->Behaviors->load('SomeOther', array('className' => 'TestPlugin.TestPluginPersisterOne')));
 		$this->assertInstanceOf('TestPluginPersisterOneBehavior', $Apple->Behaviors->SomeOther);

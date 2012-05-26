@@ -17,8 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Model', 'Model');
-App::uses('DataSource', 'Model/Datasource');
+namespace Cake\Test\TestCase\Model\Datasource;
+use Cake\TestSuite\TestCase,
+	Cake\Model\Model,
+	Cake\Model\ConnectionManager,
+	Cake\Model\Datasource\DataSource;
 
 /**
  * TestSource
@@ -94,7 +97,7 @@ class TestSource extends DataSource {
  *
  * @package       Cake.Test.Case.Model.Datasource
  */
-class DataSourceTest extends CakeTestCase {
+class DataSourceTest extends TestCase {
 
 /**
  * Name of test source
@@ -111,7 +114,7 @@ class DataSourceTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Source = $this->getMock(
-			'TestSource',
+			__NAMESPACE__ . '\TestSource',
 			array('create', 'read', 'update', 'delete')
 		);
 		ConnectionManager::create($this->sourceName, array(
@@ -119,7 +122,7 @@ class DataSourceTest extends CakeTestCase {
 			'apiKey' => '1234abcd',
 		));
 		$this->Model = $this->getMock(
-			'Model',
+			'Cake\Model\Model',
 			array('getDataSource'),
 			array(array('ds' => $this->sourceName))
 		);

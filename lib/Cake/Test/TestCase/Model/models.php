@@ -18,7 +18,10 @@
  * @since         CakePHP(tm) v 1.2.0.6464
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Model', 'Model');
+namespace Cake\Test\TestCase\Model;
+use Cake\TestSuite\Fixture\TestModel as CakeTestModel,
+	Cake\Model\Model;
+
 /**
  * AppModel class
  *
@@ -615,7 +618,7 @@ class AgainModifiedComment extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Model
  */
-class MergeVarPluginAppModel extends AppModel {
+class MergeVarPluginAppModel extends Model {
 
 /**
  * actsAs parameter
@@ -4752,7 +4755,7 @@ class ScaffoldMock extends CakeTestModel {
  */
 	public $belongsTo = array(
 		'User' => array(
-			'className' => 'ScaffoldUser',
+			'className' => 'Cake\Test\TestCase\Model\ScaffoldUser',
 			'foreignKey' => 'user_id',
 		)
 	);
@@ -4764,7 +4767,7 @@ class ScaffoldMock extends CakeTestModel {
  */
 	public $hasMany = array(
 		'Comment' => array(
-			'className' => 'ScaffoldComment',
+			'className' => 'Cake\Test\TestCase\Model\ScaffoldComment',
 			'foreignKey' => 'article_id',
 		)
 	);
@@ -4776,7 +4779,7 @@ class ScaffoldMock extends CakeTestModel {
  */
 	public $hasAndBelongsToMany = array(
 		'ScaffoldTag' => array(
-			'className' => 'ScaffoldTag',
+			'className' => 'Cake\Test\TestCase\Model\ScaffoldTag',
 			'foreignKey' => 'something_id',
 			'associationForeignKey' => 'something_else_id',
 			'joinTable' => 'join_things'
@@ -4806,7 +4809,7 @@ class ScaffoldUser extends CakeTestModel {
  */
 	public $hasMany = array(
 		'Article' => array(
-			'className' => 'ScaffoldMock',
+			'className' => 'Cake\Test\TestCase\Model\ScaffoldMock',
 			'foreignKey' => 'article_id',
 		)
 	);
@@ -4833,7 +4836,7 @@ class ScaffoldComment extends CakeTestModel {
  */
 	public $belongsTo = array(
 		'Article' => array(
-			'className' => 'ScaffoldMock',
+			'className' => 'Cake\Test\TestCase\Model\ScaffoldMock',
 			'foreignKey' => 'article_id',
 		)
 	);
