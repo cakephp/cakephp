@@ -17,11 +17,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('ComponentCollection', 'Controller');
-App::uses('AclComponent', 'Controller/Component');
-App::uses('DbAcl', 'Controller/Component/Acl');
-App::uses('AclNode', 'Model');
-App::uses('Permission', 'Model');
+namespace Cake\Test\TestCase\Controller\Component\Acl;
+use Cake\TestSuite\TestCase,
+	Cake\TestSuite\Fixture\TestModel,
+	Cake\Controller\Component\AclComponent,
+	Cake\Controller\Component\Acl\DbAcl,
+	Cake\Controller\ComponentCollection,
+	Cake\Model\AclNode,
+	Cake\Core\Configure;
+
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'Model' . DS . 'models.php';
 
 /**
@@ -72,7 +76,10 @@ class AroTwoTest extends AclNodeTwoTestBase {
  *
  * @var array
  */
-	public $hasAndBelongsToMany = array('AcoTwoTest' => array('with' => 'PermissionTwoTest'));
+	public $hasAndBelongsToMany = array('AcoTwoTest' => array(
+		'with' => 'PermissionTwoTest',
+		'className' => 'Cake\Test\TestCase\Controller\Component\AcoTwoTest'
+	));
 }
 
 /**
@@ -101,7 +108,10 @@ class AcoTwoTest extends AclNodeTwoTestBase {
  *
  * @var array
  */
-	public $hasAndBelongsToMany = array('AroTwoTest' => array('with' => 'PermissionTwoTest'));
+	public $hasAndBelongsToMany = array('AroTwoTest' => array(
+		'with' => 'PermissionTwoTest',
+		'className' => 'Cake\Test\TestCase\Controller\Component\AroTwoTest'
+	));
 }
 
 /**
@@ -137,7 +147,16 @@ class PermissionTwoTest extends Permission {
  *
  * @var array
  */
-	public $belongsTo = array('AroTwoTest' => array('foreignKey' => 'aro_id'), 'AcoTwoTest' => array('foreignKey' => 'aco_id'));
+	public $belongsTo = array(
+		'AroTwoTest' => array(
+			'foreignKey' => 'aro_id',
+			'className' => 'Cake\Test\TestCase\Controller\Component\AroTwoTest'
+		),
+		'AcoTwoTest' => array(
+			'foreignKey' => 'aco_id',
+			'className' => 'Cake\Test\TestCase\Controller\Component\AcoTwoTest'
+		)
+	);
 
 /**
  * actsAs property
@@ -177,7 +196,7 @@ class DbAclTwoTest extends DbAcl {
  *
  * @package       Cake.Test.Case.Controller.Component.Acl
  */
-class DbAclTest extends CakeTestCase {
+class DbAclTest extends TestCase {
 
 /**
  * fixtures property
@@ -193,7 +212,7 @@ class DbAclTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		Configure::write('Acl.classname', 'DbAclTwoTest');
+		Configure::write('Acl.classname', __NAMESPACE__ . '\DbAclTwoTest');
 		Configure::write('Acl.database', 'test');
 		$Collection = new ComponentCollection();
 		$this->Acl = new AclComponent($Collection);

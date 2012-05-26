@@ -18,11 +18,13 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Controller', 'Controller');
-App::uses('PaginatorComponent', 'Controller/Component');
-App::uses('CakeRequest', 'Network');
-App::uses('CakeResponse', 'Network');
+namespace Cake\Test\TestCase\Controller\Component;
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Component\PaginatorComponent,
+	Cake\Controller\Controller,
+	Cake\Core\Configure,
+	Cake\Network\Request,
+	Cake\Utility\Set;
 
 /**
  * PaginatorTestController class
@@ -46,277 +48,7 @@ class PaginatorTestController extends Controller {
 	public $components = array('Paginator');
 }
 
-/**
- * PaginatorControllerPost class
- *
- * @package       Cake.Test.Case.Controller.Component
- */
-class PaginatorControllerPost extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string 'PaginatorControllerPost'
- */
-	public $name = 'PaginatorControllerPost';
-
-/**
- * useTable property
- *
- * @var string 'posts'
- */
-	public $useTable = 'posts';
-
-/**
- * invalidFields property
- *
- * @var array
- */
-	public $invalidFields = array('name' => 'error_msg');
-
-/**
- * lastQueries property
- *
- * @var array
- */
-	public $lastQueries = array();
-
-/**
- * belongsTo property
- *
- * @var array
- */
-	public $belongsTo = array('PaginatorAuthor' => array('foreignKey' => 'author_id'));
-
-/**
- * beforeFind method
- *
- * @param mixed $query
- * @return void
- */
-	public function beforeFind($query) {
-		array_unshift($this->lastQueries, $query);
-	}
-
-/**
- * find method
- *
- * @param mixed $type
- * @param array $options
- * @return void
- */
-	public function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
-		if ($conditions == 'popular') {
-			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
-			$options = Hash::merge($fields, compact('conditions'));
-			return parent::find('all', $options);
-		}
-		return parent::find($conditions, $fields);
-	}
-
-}
-
-/**
- * ControllerPaginateModel class
- *
- * @package       Cake.Test.Case.Controller.Component
- */
-class ControllerPaginateModel extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string 'ControllerPaginateModel'
- */
-	public $name = 'ControllerPaginateModel';
-
-/**
- * useTable property
- *
- * @var string 'comments'
- */
-	public $useTable = 'comments';
-
-/**
- * paginate method
- *
- * @return void
- */
-	public function paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra) {
-		$this->extra = $extra;
-	}
-
-/**
- * paginateCount
- *
- * @return void
- */
-	public function paginateCount($conditions, $recursive, $extra) {
-		$this->extraCount = $extra;
-	}
-
-}
-
-/**
- * PaginatorControllerComment class
- *
- * @package       Cake.Test.Case.Controller.Component
- */
-class PaginatorControllerComment extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string 'Comment'
- */
-	public $name = 'Comment';
-
-/**
- * useTable property
- *
- * @var string 'comments'
- */
-	public $useTable = 'comments';
-
-/**
- * alias property
- *
- * @var string 'PaginatorControllerComment'
- */
-	public $alias = 'PaginatorControllerComment';
-}
-
-/**
- * PaginatorAuthor class
- *
- * @package       Cake.Test.Case.Controller.Component
- */
-class PaginatorAuthor extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string 'PaginatorAuthor'
- */
-	public $name = 'PaginatorAuthor';
-
-/**
- * useTable property
- *
- * @var string 'authors'
- */
-	public $useTable = 'authors';
-
-/**
- * alias property
- *
- * @var string 'PaginatorAuthor'
- */
-	public $alias = 'PaginatorAuthor';
-
-/**
- * alias property
- *
- * @var string 'PaginatorAuthor'
- */
-	public $virtualFields = array(
-			'joined_offset' => 'PaginatorAuthor.id + 1'
-		);
-
-}
-
-/**
- * PaginatorCustomPost class
- *
- * @package       Cake.Test.Case.Controller.Component
- */
-class PaginatorCustomPost extends CakeTestModel {
-
-/**
- * useTable property
- *
- * @var string
- */
-	public $useTable = 'posts';
-
-/**
- * belongsTo property
- *
- * @var string
- */
-	public $belongsTo = array('Author');
-
-/**
- * findMethods property
- *
- * @var array
- */
-	public $findMethods = array(
-		'published' => true,
-		'totals' => true,
-		'totalsOperation' => true
-	);
-
-/**
- * _findPublished custom find
- *
- * @return array
- */
-	protected function _findPublished($state, $query, $results = array()) {
-		if ($state === 'before') {
-			$query['conditions']['published'] = 'Y';
-			return $query;
-		}
-		return $results;
-	}
-
-/**
- * _findTotals custom find
- *
- * @return array
- */
-	protected function _findTotals($state, $query, $results = array()) {
-		if ($state == 'before') {
-			$query['fields'] = array('author_id');
-			$this->virtualFields['total_posts'] = "COUNT({$this->alias}.id)";
-			$query['fields'][] = 'total_posts';
-			$query['group'] = array('author_id');
-			$query['order'] = array('author_id' => 'ASC');
-			return $query;
-		}
-		$this->virtualFields = array();
-		return $results;
-	}
-
-/**
- * _findTotalsOperation custom find
- *
- * @return array
- */
-	protected function _findTotalsOperation($state, $query, $results = array()) {
-		if ($state == 'before') {
-			if (!empty($query['operation']) && $query['operation'] === 'count') {
-				unset($query['limit']);
-				$query['recursive'] = -1;
-				$query['fields'] = array('COUNT(DISTINCT author_id) AS count');
-				return $query;
-			}
-			$query['recursive'] = 0;
-			$query['callbacks'] = 'before';
-			$query['fields'] = array('author_id', 'Author.user');
-			$this->virtualFields['total_posts'] = "COUNT({$this->alias}.id)";
-			$query['fields'][] = 'total_posts';
-			$query['group'] = array('author_id', 'Author.user');
-			$query['order'] = array('author_id' => 'ASC');
-			return $query;
-		}
-		$this->virtualFields = array();
-		return $results;
-	}
-
-}
-
-class PaginatorComponentTest extends CakeTestCase {
+class PaginatorComponentTest extends TestCase {
 
 /**
  * fixtures property
@@ -332,13 +64,26 @@ class PaginatorComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->request = new CakeRequest('controller_posts/index');
+		$this->_ns = Configure::read('App.namespace');
+		Configure::write('App.namespace', 'TestApp');
+
+		$this->request = new Request('controller_posts/index');
 		$this->request->params['pass'] = $this->request->params['named'] = array();
 		$this->Controller = new Controller($this->request);
-		$this->Paginator = new PaginatorComponent($this->getMock('ComponentCollection'), array());
+		$this->Paginator = new PaginatorComponent($this->getMock('Cake\Controller\ComponentCollection'), array());
 		$this->Paginator->Controller = $this->Controller;
-		$this->Controller->Post = $this->getMock('Model');
+		$this->Controller->Post = $this->getMock('Cake\Model\Model');
 		$this->Controller->Post->alias = 'Post';
+	}
+
+/**
+ * tearDown
+ *
+ * @return void
+ */
+	public function tearDown() {
+		Configure::write('App.namespace', $this->_ns);
+		parent::tearDown();
 	}
 
 /**
@@ -655,7 +400,7 @@ class PaginatorComponentTest extends CakeTestCase {
 /**
  * Tests for missing models
  *
- * @expectedException MissingModelException
+ * @expectedException Cake\Error\MissingModelException
  */
 	public function testPaginateMissingModel() {
 		$Controller = new PaginatorTestController($this->request);
@@ -794,7 +539,7 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testValidateSortInvalidDirection() {
-		$model = $this->getMock('Model');
+		$model = $this->getMock('Cake\Model\Model');
 		$model->alias = 'model';
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -810,7 +555,7 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testValidateSortWhitelistFailure() {
-		$model = $this->getMock('Model');
+		$model = $this->getMock('Cake\Model\Model');
 		$model->alias = 'model';
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -826,7 +571,7 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testValidateSortVirtualField() {
-		$model = $this->getMock('Model');
+		$model = $this->getMock('Cake\Model\Model');
 		$model->alias = 'model';
 
 		$model->expects($this->at(0))
@@ -851,7 +596,7 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testValidateSortMultiple() {
-		$model = $this->getMock('Model');
+		$model = $this->getMock('Cake\Model\Model');
 		$model->alias = 'model';
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 

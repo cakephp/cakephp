@@ -16,15 +16,19 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('PagesController', 'Controller');
+namespace Cake\Test\TestCase\Controller;
+use Cake\TestSuite\TestCase,
+	Cake\Network\Request,
+	Cake\Network\Response,
+	Cake\Core\App,
+	\App\Controller\PagesController;
 
 /**
  * PagesControllerTest class
  *
  * @package       Cake.Test.Case.Controller
  */
-class PagesControllerTest extends CakeTestCase {
+class PagesControllerTest extends TestCase {
 
 /**
  * testDisplay method
@@ -34,10 +38,10 @@ class PagesControllerTest extends CakeTestCase {
 	public function testDisplay() {
 		App::build(array(
 			'View' => array(
-				CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS
+				CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS
 			)
 		));
-		$Pages = new PagesController(new CakeRequest(null, false), new CakeResponse());
+		$Pages = new PagesController(new Request(null, false), new Response());
 
 		$Pages->viewPath = 'Posts';
 		$Pages->display('index');

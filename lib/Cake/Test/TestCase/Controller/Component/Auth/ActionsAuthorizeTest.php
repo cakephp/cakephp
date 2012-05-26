@@ -16,14 +16,12 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Controller\Component\Auth;
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Component\Auth\ActionsAuthorize,
+	Cake\Network\Request;
 
-App::uses('ActionsAuthorize', 'Controller/Component/Auth');
-App::uses('ComponentCollection', 'Controller');
-App::uses('AclComponent', 'Controller/Component');
-App::uses('CakeRequest', 'Network');
-App::uses('CakeResponse', 'Network');
-
-class ActionsAuthorizeTest extends CakeTestCase {
+class ActionsAuthorizeTest extends TestCase {
 
 /**
  * setUp
@@ -32,9 +30,9 @@ class ActionsAuthorizeTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->controller = $this->getMock('Controller', array(), array(), '', false);
-		$this->Acl = $this->getMock('AclComponent', array(), array(), '', false);
-		$this->Collection = $this->getMock('ComponentCollection');
+		$this->controller = $this->getMock('Cake\Controller\Controller', array(), array(), '', false);
+		$this->Acl = $this->getMock('Cake\Controller\Component\AclComponent', array(), array(), '', false);
+		$this->Collection = $this->getMock('Cake\Controller\ComponentCollection');
 
 		$this->auth = new ActionsAuthorize($this->Collection);
 		$this->auth->settings['actionPath'] = '/controllers';
@@ -64,7 +62,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
 				'user' => 'mariano'
 			)
 		);
-		$request = new CakeRequest('/posts/index', false);
+		$request = new Request('/posts/index', false);
 		$request->addParams(array(
 			'plugin' => null,
 			'controller' => 'posts',
@@ -93,7 +91,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
 				'user' => 'mariano'
 			)
 		);
-		$request = new CakeRequest('/posts/index', false);
+		$request = new Request('/posts/index', false);
 		$request->addParams(array(
 			'plugin' => null,
 			'controller' => 'posts',
@@ -116,7 +114,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
  * @return void
  */
 	public function testAuthorizeSettings() {
-		$request = new CakeRequest('/posts/index', false);
+		$request = new Request('/posts/index', false);
 		$request->addParams(array(
 			'plugin' => null,
 			'controller' => 'posts',
@@ -146,7 +144,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
  * @return void
  */
 	public function testActionMethod() {
-		$request = new CakeRequest('/posts/index', false);
+		$request = new Request('/posts/index', false);
 		$request->addParams(array(
 			'plugin' => null,
 			'controller' => 'posts',
@@ -179,7 +177,7 @@ class ActionsAuthorizeTest extends CakeTestCase {
  * @return void
  */
 	public function testActionWithPlugin() {
-		$request = new CakeRequest('/debug_kit/posts/index', false);
+		$request = new Request('/debug_kit/posts/index', false);
 		$request->addParams(array(
 			'plugin' => 'debug_kit',
 			'controller' => 'posts',

@@ -16,14 +16,17 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('IniAcl', 'Controller/Component/Acl');
+namespace Cake\Test\TestCase\Controller\Component;
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Component\AclComponent,
+	Cake\Controller\Component\Acl\IniAcl;
 
 /**
  * Test case for the IniAcl implementation
  *
  * @package       Cake.Test.Case.Controller.Component.Acl
  */
-class IniAclTest extends CakeTestCase {
+class IniAclTest extends TestCase {
 
 /**
  * testIniCheck method
@@ -31,7 +34,7 @@ class IniAclTest extends CakeTestCase {
  * @return void
  */
 	public function testCheck() {
-		$iniFile = CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'acl.ini.php';
+		$iniFile = CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS . 'acl.ini.php';
 
 		$Ini = new IniAcl();
 		$Ini->config = $Ini->readConfigFile($iniFile);
@@ -54,7 +57,7 @@ class IniAclTest extends CakeTestCase {
  * @return void
  */
 	public function testCheckArray() {
-		$iniFile = CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS . 'acl.ini.php';
+		$iniFile = CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS . 'acl.ini.php';
 
 		$Ini = new IniAcl();
 		$Ini->config = $Ini->readConfigFile($iniFile);

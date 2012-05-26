@@ -16,10 +16,14 @@
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Component', 'Controller');
-App::uses('Controller', 'Controller');
-App::uses('CookieComponent', 'Controller/Component');
+namespace Cake\Test\TestCase\Controller\Component;
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Component\CookieComponent,
+	Cake\Controller\Controller,
+	Cake\Controller\ComponentCollection,
+	Cake\Network\Request,
+	Cake\Network\Response,
+	Cake\Utility\Security;
 
 
 /**
@@ -57,7 +61,7 @@ class CookieComponentTestController extends Controller {
  *
  * @package       Cake.Test.Case.Controller.Component
  */
-class CookieComponentTest extends CakeTestCase {
+class CookieComponentTest extends TestCase {
 
 /**
  * Controller property
@@ -73,7 +77,7 @@ class CookieComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		$_COOKIE = array();
-		$this->Controller = new CookieComponentTestController(new CakeRequest(), new CakeResponse());
+		$this->Controller = new CookieComponentTestController(new Request(), new Response());
 		$this->Controller->constructClasses();
 		$this->Cookie = $this->Controller->Cookie;
 

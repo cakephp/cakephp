@@ -4,215 +4,36 @@
  *
  * PHP 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Controller', 'Controller');
-App::uses('Component', 'Controller');
-
-/**
- * ParamTestComponent
- *
- * @package       Cake.Test.Case.Controller
- */
-class ParamTestComponent extends Component {
-
-/**
- * name property
- *
- * @var string 'ParamTest'
- */
-	public $name = 'ParamTest';
-
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('Banana' => array('config' => 'value'));
-}
-
-/**
- * ComponentTestController class
- *
- * @package       Cake.Test.Case.Controller
- */
-class ComponentTestController extends Controller {
-
-/**
- * name property
- *
- * @var string 'ComponentTest'
- */
-	public $name = 'ComponentTest';
-
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = array();
-
-}
-
-/**
- * AppleComponent class
- *
- * @package       Cake.Test.Case.Controller
- */
-class AppleComponent extends Component {
-
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('Orange');
-
-/**
- * testName property
- *
- * @var mixed null
- */
-	public $testName = null;
-
-/**
- * startup method
- *
- * @param Controller $controller
- * @return void
- */
-	public function startup(Controller $controller) {
-		$this->testName = $controller->name;
-	}
-
-}
-
-/**
- * OrangeComponent class
- *
- * @package       Cake.Test.Case.Controller
- */
-class OrangeComponent extends Component {
-
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('Banana');
-
-/**
- * initialize method
- *
- * @param Controller $controller
- * @return void
- */
-	public function initialize(Controller $controller) {
-		$this->Controller = $controller;
-		$this->Banana->testField = 'OrangeField';
-	}
-
-/**
- * startup method
- *
- * @param Controller $controller
- * @return string
- */
-	public function startup(Controller $controller) {
-		$controller->foo = 'pass';
-	}
-
-}
-
-/**
- * BananaComponent class
- *
- * @package       Cake.Test.Case.Controller
- */
-class BananaComponent extends Component {
-
-/**
- * testField property
- *
- * @var string 'BananaField'
- */
-	public $testField = 'BananaField';
-
-/**
- * startup method
- *
- * @param Controller $controller
- * @return string
- */
-	public function startup(Controller $controller) {
-		$controller->bar = 'fail';
-	}
-
-}
-
-/**
- * MutuallyReferencingOneComponent class
- *
- * @package       Cake.Test.Case.Controller
- */
-class MutuallyReferencingOneComponent extends Component {
-
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('MutuallyReferencingTwo');
-}
-
-/**
- * MutuallyReferencingTwoComponent class
- *
- * @package       Cake.Test.Case.Controller
- */
-class MutuallyReferencingTwoComponent extends Component {
-
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('MutuallyReferencingOne');
-}
-
-/**
- * SomethingWithEmailComponent class
- *
- * @package       Cake.Test.Case.Controller
- */
-class SomethingWithEmailComponent extends Component {
-
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('Email');
-}
-
+namespace Cake\Test\TestCase\Controller;
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Controller,
+	Cake\Controller\Component,
+	Cake\Controller\ComponentCollection,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Utility\ClassRegistry,
+	TestApp\Controller\Component\AppleComponent,
+	TestApp\Controller\Component\OrangeComponent,
+	TestApp\Controller\ComponentTestController;
 
 /**
  * ComponentTest class
  *
  * @package       Cake.Test.Case.Controller
  */
-class ComponentTest extends CakeTestCase {
+class ComponentTest extends TestCase {
 
 /**
  * setUp method
@@ -221,9 +42,11 @@ class ComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		Configure::write('App.namespace', 'TestApp');
+
 		$this->_pluginPaths = App::path('plugins');
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		));
 	}
 
@@ -236,7 +59,7 @@ class ComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Component = new AppleComponent($Collection);
 
-		$this->assertInstanceOf('OrangeComponent', $Component->Orange, 'class is wrong');
+		$this->assertInstanceOf('TestApp\Controller\Component\OrangeComponent', $Component->Orange, 'class is wrong');
 	}
 
 /**
@@ -248,8 +71,8 @@ class ComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Apple = new AppleComponent($Collection);
 
-		$this->assertInstanceOf('OrangeComponent', $Apple->Orange, 'class is wrong');
-		$this->assertInstanceOf('BananaComponent', $Apple->Orange->Banana, 'class is wrong');
+		$this->assertInstanceOf('TestApp\Controller\Component\OrangeComponent', $Apple->Orange, 'class is wrong');
+		$this->assertInstanceOf('TestApp\Controller\Component\BananaComponent', $Apple->Orange->Banana, 'class is wrong');
 		$this->assertTrue(empty($Apple->Session));
 		$this->assertTrue(empty($Apple->Orange->Session));
 	}
@@ -263,7 +86,7 @@ class ComponentTest extends CakeTestCase {
 		$Collection = new ComponentCollection();
 		$Apple = $Collection->load('Apple');
 
-		$this->assertInstanceOf('OrangeComponent', $Apple->Orange, 'class is wrong');
+		$this->assertInstanceOf('TestApp\Controller\Component\OrangeComponent', $Apple->Orange, 'class is wrong');
 		$result = $Collection->enabled();
 		$this->assertEquals(array('Apple'), $result, 'Too many components enabled.');
 	}
@@ -289,17 +112,17 @@ class ComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testSomethingReferencingEmailComponent() {
+	public function testSomethingReferencingCookieComponent() {
 		$Controller = new ComponentTestController();
-		$Controller->components = array('SomethingWithEmail');
+		$Controller->components = array('SomethingWithCookie');
 		$Controller->uses = false;
 		$Controller->constructClasses();
 		$Controller->Components->trigger('initialize', array(&$Controller));
 		$Controller->beforeFilter();
 		$Controller->Components->trigger('startup', array(&$Controller));
 
-		$this->assertInstanceOf('SomethingWithEmailComponent', $Controller->SomethingWithEmail);
-		$this->assertInstanceOf('EmailComponent', $Controller->SomethingWithEmail->Email);
+		$this->assertInstanceOf('TestApp\Controller\Component\SomethingWithCookieComponent', $Controller->SomethingWithCookie);
+		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $Controller->SomethingWithCookie->Cookie);
 	}
 
 }

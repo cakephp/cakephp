@@ -16,13 +16,16 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Router', 'Routing');
-App::uses('Controller', 'Controller');
-App::uses('Scaffold', 'Controller');
-App::uses('ScaffoldView', 'View');
-App::uses('AppModel', 'Model');
+namespace Cake\Test\TestCase\Controller;
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Scaffold,
+	Cake\Controller\Controller,
+	Cake\Routing\Router,
+	Cake\Network\Request,
+	Cake\Core\Plugin;
 
 require_once dirname(dirname(__FILE__)) . DS . 'Model' . DS . 'models.php';
+class_alias('Cake\Test\TestCase\Model\ScaffoldMock', 'Cake\Model\ScaffoldMock');
 
 /**
  * ScaffoldMockController class
@@ -91,7 +94,7 @@ class TestScaffoldMock extends Scaffold {
  *
  * @param unknown_type $params
  */
-	protected function _scaffold(CakeRequest $request) {
+	protected function _scaffold(Request $request) {
 		$this->_params = $request;
 	}
 
@@ -111,7 +114,7 @@ class TestScaffoldMock extends Scaffold {
  *
  * @package       Cake.Test.Case.Controller
  */
-class ScaffoldTest extends CakeTestCase {
+class ScaffoldTest extends TestCase {
 
 /**
  * Controller property
@@ -134,9 +137,9 @@ class ScaffoldTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$request = new CakeRequest(null, false);
+		$request = new Request(null, false);
 		$this->Controller = new ScaffoldMockController($request);
-		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 	}
 
 /**
@@ -280,7 +283,7 @@ class ScaffoldTest extends CakeTestCase {
  * @return void
  */
 	public function testHabtmFieldAdditionWithScaffoldForm() {
-		CakePlugin::unload();
+		Plugin::unload();
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
@@ -316,9 +319,9 @@ class ScaffoldTest extends CakeTestCase {
  * @return void
  */
 	public function testEditScaffoldWithScaffoldFields() {
-		$request = new CakeRequest(null, false);
+		$request = new Request(null, false);
 		$this->Controller = new ScaffoldMockControllerWithFields($request);
-		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 
 		$params = array(
 			'plugin' => null,

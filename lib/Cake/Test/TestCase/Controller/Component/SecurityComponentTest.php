@@ -16,9 +16,13 @@
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('SecurityComponent', 'Controller/Component');
-App::uses('Controller', 'Controller');
+namespace Cake\Test\TestCase\Controller\Component;
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Component\SecurityComponent,
+	Cake\Controller\Controller,
+	Cake\Core\Configure,
+	Cake\Utility\Security,
+	Cake\Network\Request;
 
 /**
  * TestSecurityComponent
@@ -58,7 +62,10 @@ class SecurityTestController extends Controller {
  *
  * @var array
  */
-	public $components = array('Session', 'TestSecurity');
+	public $components = array(
+		'Session',
+		'TestSecurity' => array('className' => 'Cake\Test\TestCase\Controller\Component\TestSecurityComponent')
+	);
 
 /**
  * failed property
@@ -112,7 +119,7 @@ class SecurityTestController extends Controller {
  *
  * @package       Cake.Test.Case.Controller.Component
  */
-class SecurityComponentTest extends CakeTestCase {
+class SecurityComponentTest extends TestCase {
 
 /**
  * Controller property
@@ -136,7 +143,7 @@ class SecurityComponentTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$request = new CakeRequest('posts/index', false);
+		$request = new Request('posts/index', false);
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
 		$this->Controller = new SecurityTestController($request);
 		$this->Controller->Components->init($this->Controller);
@@ -1143,7 +1150,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
 
-		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
+		$this->Controller->request = $this->getMock('Cake\Network\Request', array('is'));
 		$this->Controller->request->expects($this->once())->method('is')
 			->with('post')
 			->will($this->returnValue(true));
@@ -1195,7 +1202,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
 
-		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
+		$this->Controller->request = $this->getMock('Cake\Network\Request', array('is'));
 		$this->Controller->request->expects($this->once())->method('is')
 			->with('post')
 			->will($this->returnValue(true));
@@ -1225,7 +1232,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('-5 minutes')));
 
-		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
+		$this->Controller->request = $this->getMock('Cake\Network\Request', array('is'));
 		$this->Controller->request->expects($this->once())->method('is')
 			->with('post')
 			->will($this->returnValue(true));
@@ -1281,7 +1288,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
 
-		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
+		$this->Controller->request = $this->getMock('Cake\Network\Request', array('is'));
 		$this->Controller->request->expects($this->once())->method('is')
 			->with('post')
 			->will($this->returnValue(true));

@@ -16,65 +16,22 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Controller', 'Controller');
-App::uses('SessionComponent', 'Controller/Component');
 
-/**
- * SessionTestController class
- *
- * @package       Cake.Test.Case.Controller.Component
- */
-class SessionTestController extends Controller {
-
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = array();
-
-/**
- * sessionId method
- *
- * @return string
- */
-	public function sessionId() {
-		return $this->Session->id();
-	}
-
-}
-
-/**
- * OrangeSessionTestController class
- *
- * @package       Cake.Test.Case.Controller.Component
- */
-class OrangeSessionTestController extends Controller {
-
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = array();
-
-/**
- * sessionId method
- *
- * @return string
- */
-	public function sessionId() {
-		return $this->Session->id();
-	}
-
-}
+namespace Cake\Test\TestCase\Controller\Component;
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Component\SessionComponent,
+	Cake\Controller\Controller,
+	Cake\Controller\ComponentCollection,
+	Cake\Model\Datasource\Session,
+	Cake\Core\Configure,
+	Cake\Core\Object;
 
 /**
  * SessionComponentTest class
  *
  * @package       Cake.Test.Case.Controller.Component
  */
-class SessionComponentTest extends CakeTestCase {
+class SessionComponentTest extends TestCase {
 
 	protected static $_sessionBackup;
 
@@ -116,6 +73,7 @@ class SessionComponentTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$_SESSION = null;
+		Configure::write('App.namespace', 'TestApp');
 		$this->ComponentCollection = new ComponentCollection();
 	}
 
@@ -126,7 +84,7 @@ class SessionComponentTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		CakeSession::destroy();
+		Session::destroy();
 	}
 
 /**

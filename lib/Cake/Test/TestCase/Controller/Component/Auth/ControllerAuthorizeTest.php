@@ -16,13 +16,13 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Controller\Component\Auth;
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Component\Auth\ControllerAuthorize,
+	Cake\Controller\Controller,
+	Cake\Network\Request;
 
-App::uses('Controller', 'Controller');
-App::uses('ControllerAuthorize', 'Controller/Component/Auth');
-App::uses('CakeRequest', 'Network');
-App::uses('CakeResponse', 'Network');
-
-class ControllerAuthorizeTest extends CakeTestCase {
+class ControllerAuthorizeTest extends TestCase {
 
 /**
  * setup
@@ -31,8 +31,8 @@ class ControllerAuthorizeTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->controller = $this->getMock('Controller', array('isAuthorized'), array(), '', false);
-		$this->components = $this->getMock('ComponentCollection');
+		$this->controller = $this->getMock('Cake\Controller\Controller', array('isAuthorized'), array(), '', false);
+		$this->components = $this->getMock('Cake\Controller\ComponentCollection');
 		$this->components->expects($this->any())
 			->method('getController')
 			->will($this->returnValue($this->controller));
@@ -41,14 +41,14 @@ class ControllerAuthorizeTest extends CakeTestCase {
 	}
 
 /**
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException \PHPUnit_Framework_Error
  */
 	public function testControllerTypeError() {
-		$this->auth->controller(new StdClass());
+		$this->auth->controller(new \StdClass());
 	}
 
 /**
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  */
 	public function testControllerErrorOnMissingMethod() {
 		$this->auth->controller(new Controller());
@@ -61,7 +61,7 @@ class ControllerAuthorizeTest extends CakeTestCase {
  */
 	public function testAuthorizeFailure() {
 		$user = array();
-		$request = new CakeRequest('/posts/index', false);
+		$request = new Request('/posts/index', false);
 		$this->assertFalse($this->auth->authorize($user, $request));
 	}
 
@@ -72,7 +72,7 @@ class ControllerAuthorizeTest extends CakeTestCase {
  */
 	public function testAuthorizeSuccess() {
 		$user = array('User' => array('username' => 'mark'));
-		$request = new CakeRequest('/posts/index', false);
+		$request = new Request('/posts/index', false);
 
 		$this->controller->expects($this->once())
 			->method('isAuthorized')
