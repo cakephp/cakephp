@@ -18,14 +18,15 @@
  * @since         CakePHP v 2.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('CakeEvent', 'Event');
+namespace Cake\Test\TestCase\Event;
+use Cake\TestSuite\TestCase,
+	Cake\Event\Event;
 
 /**
- * Tests the CakeEvent class functionality
+ * Tests the Cake\Event\Event class functionality
  *
  */
-class CakeEventTest extends CakeTestCase {
+class EventTest extends TestCase {
 
 /**
  * Tests the name() method
@@ -33,7 +34,7 @@ class CakeEventTest extends CakeTestCase {
  * @return void
  */
 	public function testName() {
-		$event = new CakeEvent('fake.event');
+		$event = new Event('fake.event');
 		$this->assertEquals('fake.event', $event->name());
 	}
 
@@ -43,10 +44,10 @@ class CakeEventTest extends CakeTestCase {
  * @return void
  */
 	public function testSubject() {
-		$event = new CakeEvent('fake.event', $this);
+		$event = new Event('fake.event', $this);
 		$this->assertSame($this, $event->subject());
 
-		$event = new CakeEvent('fake.event');
+		$event = new Event('fake.event');
 		$this->assertNull($event->subject());
 	}
 
@@ -56,7 +57,7 @@ class CakeEventTest extends CakeTestCase {
  * @return void
  */
 	public function testPropagation() {
-		$event = new CakeEvent('fake.event');
+		$event = new Event('fake.event');
 		$this->assertFalse($event->isStopped());
 		$event->stopPropagation();
 		$this->assertTrue($event->isStopped());
@@ -68,7 +69,7 @@ class CakeEventTest extends CakeTestCase {
  * @return void
  */
 	public function testEventData() {
-		$event = new CakeEvent('fake.event', $this, array('some' => 'data'));
+		$event = new Event('fake.event', $this, array('some' => 'data'));
 		$this->assertEquals(array('some' => 'data'), $event->data);
 	}
 
@@ -78,7 +79,7 @@ class CakeEventTest extends CakeTestCase {
  * @return void
  */
 	public function testEventDirectPropertyAccess() {
-		$event = new CakeEvent('fake.event', $this);
+		$event = new Event('fake.event', $this);
 		$this->assertEquals($this, $event->subject);
 		$this->assertEquals('fake.event', $event->name);
 	}
