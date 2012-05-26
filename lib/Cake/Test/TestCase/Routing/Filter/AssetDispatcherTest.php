@@ -13,11 +13,16 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('AssetDispatcher', 'Routing/Filter');
-App::uses('CakeEvent', 'Event');
-App::uses('CakeResponse', 'Network');
+namespace Cake\Test\TestCase\Routing\Filter;
+use Cake\TestSuite\TestCase;
+use Cake\Routing\Filter\AssetDispatcher;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Event\Event;
+use Cake\Network\Request;
+use Cake\Network\Response;
 
-class AssetDispatcherTest extends CakeTestCase {
+class AssetDispatcherTest extends TestCase {
 
 /**
  * tearDown method
@@ -35,43 +40,43 @@ class AssetDispatcherTest extends CakeTestCase {
  */
 	public function testAssetFilterForThemeAndPlugins() {
 		$filter = new AssetDispatcher();
-		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		Configure::write('Asset.filter', array(
 			'js' => '',
 			'css' => ''
 		));
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		), APP::RESET);
 
-		$request = new CakeRequest('theme/test_theme/ccss/cake.generic.css');
-		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$request = new Request('theme/test_theme/ccss/cake.generic.css');
+		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertTrue($event->isStopped());
 
-		$request = new CakeRequest('theme/test_theme/cjs/debug_kit.js');
-		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$request = new Request('theme/test_theme/cjs/debug_kit.js');
+		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertTrue($event->isStopped());
 
-		$request = new CakeRequest('test_plugin/ccss/cake.generic.css');
-		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$request = new Request('test_plugin/ccss/cake.generic.css');
+		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertTrue($event->isStopped());
 
-		$request = new CakeRequest('test_plugin/cjs/debug_kit.js');
-		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$request = new Request('test_plugin/cjs/debug_kit.js');
+		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertTrue($event->isStopped());
 
-		$request = new CakeRequest('css/ccss/debug_kit.css');
-		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$request = new Request('css/ccss/debug_kit.css');
+		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertNull($filter->beforeDispatch($event));
 		$this->assertFalse($event->isStopped());
 
-		$request = new CakeRequest('js/cjs/debug_kit.js');
-		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$request = new Request('js/cjs/debug_kit.js');
+		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertNull($filter->beforeDispatch($event));
 		$this->assertFalse($event->isStopped());
 	}
@@ -89,19 +94,19 @@ class AssetDispatcherTest extends CakeTestCase {
 			'css' => ''
 		));
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		));
 		$time = filemtime(App::themePath('TestTheme') . 'webroot' . DS . 'img' . DS . 'cake.power.gif');
-		$time = new DateTime('@' . $time);
+		$time = new \DateTime('@' . $time);
 
-		$response = $this->getMock('CakeResponse', array('send', 'checkNotModified'));
-		$request = new CakeRequest('theme/test_theme/img/cake.power.gif');
+		$response = $this->getMock('Cake\Network\Response', array('send', 'checkNotModified'));
+		$request = new Request('theme/test_theme/img/cake.power.gif');
 
 		$response->expects($this->once())->method('checkNotModified')
 			->with($request)
 			->will($this->returnValue(true));
-		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
 
 		ob_start();
 		$this->assertSame($response, $filter->beforeDispatch($event));
@@ -109,14 +114,14 @@ class AssetDispatcherTest extends CakeTestCase {
 		$this->assertEquals(200, $response->statusCode());
 		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
 
-		$response = $this->getMock('CakeResponse', array('_sendHeader', 'checkNotModified'));
-		$request = new CakeRequest('theme/test_theme/img/cake.power.gif');
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', 'checkNotModified'));
+		$request = new Request('theme/test_theme/img/cake.power.gif');
 
 		$response->expects($this->once())->method('checkNotModified')
 			->with($request)
 			->will($this->returnValue(true));
 		$response->expects($this->never())->method('send');
-		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
 
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
