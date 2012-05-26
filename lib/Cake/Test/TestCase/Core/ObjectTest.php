@@ -17,126 +17,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Object', 'Core');
-App::uses('Router', 'Routing');
-App::uses('Controller', 'Controller');
-App::uses('Model', 'Model');
-
-/**
- * RequestActionPost class
- *
- * @package       Cake.Test.Case.Core
- */
-class RequestActionPost extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string 'ControllerPost'
- */
-	public $name = 'RequestActionPost';
-
-/**
- * useTable property
- *
- * @var string 'posts'
- */
-	public $useTable = 'posts';
-}
-
-/**
- * RequestActionController class
- *
- * @package       Cake.Test.Case.Core
- */
-class RequestActionController extends Controller {
-
-/**
- * uses property
- *
- * @var array
- * @access public
- */
-	public $uses = array('RequestActionPost');
-
-/**
- * test_request_action method
- *
- * @access public
- * @return void
- */
-	public function test_request_action() {
-		return 'This is a test';
-	}
-
-/**
- * another_ra_test method
- *
- * @param mixed $id
- * @param mixed $other
- * @access public
- * @return void
- */
-	public function another_ra_test($id, $other) {
-		return $id + $other;
-	}
-
-/**
- * normal_request_action method
- *
- * @return void
- */
-	public function normal_request_action() {
-		return 'Hello World';
-	}
-
-/**
- * returns $this->here
- *
- * @return void
- */
-	public function return_here() {
-		return $this->here;
-	}
-
-/**
- * paginate_request_action method
- *
- * @return void
- */
-	public function paginate_request_action() {
-		$data = $this->paginate();
-		return true;
-	}
-
-/**
- * post pass, testing post passing
- *
- * @return array
- */
-	public function post_pass() {
-		return $this->request->data;
-	}
-
-/**
- * test param passing and parsing.
- *
- * @return array
- */
-	public function params_pass() {
-		return $this->request;
-	}
-
-	public function param_check() {
-		$this->autoRender = false;
-		$content = '';
-		if (isset($this->request->params[0])) {
-			$content = 'return found';
-		}
-		$this->response->body($content);
-	}
-
-}
+namespace Cake\Test\TestCase\Core;
+use Cake\TestSuite\TestCase,
+	Cake\TestSuite\Fixture\TestModel,
+	Cake\Core\Object,
+	Cake\Core\App,
+	Cake\Core\Configure,
+	Cake\Core\Plugin,
+	Cake\Routing\Router;
 
 /**
  * TestObject class
@@ -277,7 +165,7 @@ class TestObject extends Object {
  *
  * @package       Cake.Test.Case.Core
  */
-class ObjectTestModel extends CakeTestModel {
+class ObjectTestModel extends TestModel {
 
 	public $useTable = false;
 
@@ -290,7 +178,7 @@ class ObjectTestModel extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Core
  */
-class ObjectTest extends CakeTestCase {
+class ObjectTest extends TestCase {
 
 /**
  * fixtures
@@ -307,6 +195,7 @@ class ObjectTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->object = new TestObject();
+		Configure::write('App.namespace', 'TestApp');
 	}
 
 /**
@@ -316,7 +205,7 @@ class ObjectTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		CakePlugin::unload();
+		Plugin::unload();
 		unset($this->object);
 	}
 
@@ -377,7 +266,7 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testToString() {
 		$result = strtolower($this->object->toString());
-		$this->assertEquals('testobject', $result);
+		$this->assertEquals(strtolower(__NAMESPACE__) . '\testobject', $result);
 	}
 
 /**
@@ -453,9 +342,9 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testRequestAction() {
 		App::build(array(
-			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-			'Controller' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS)
+			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS),
+			'Controller' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Controller' . DS)
 		), App::RESET);
 		$this->assertNull(Router::getRequest(), 'request stack should be empty.');
 
@@ -499,9 +388,9 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testRequestActionPlugins() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
 		), App::RESET);
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 		Router::reload();
 
 		$result = $this->object->requestAction('/test_plugin/tests/index', array('return'));
@@ -536,12 +425,12 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testRequestActionArray() {
 		App::build(array(
-			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
-			'Controller' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS),
+			'Controller' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Controller' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
-		CakePlugin::load(array('TestPlugin'));
+		Plugin::load(array('TestPlugin'));
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'test_request_action')

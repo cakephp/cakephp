@@ -18,14 +18,20 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('PhpReader', 'Configure');
+namespace Cake\Test\TestCase\Core;
+use Cake\TestSuite\TestCase,
+	Cake\Core\Configure,
+	Cake\Core\App,
+	Cake\Core\Plugin,
+	Cake\Cache\Cache,
+	Cake\Configure\PhpReader;
 
 /**
  * ConfigureTest
  *
  * @package       Cake.Test.Case.Core
  */
-class ConfigureTest extends CakeTestCase {
+class ConfigureTest extends TestCase {
 
 /**
  * setUp method
@@ -196,7 +202,7 @@ class ConfigureTest extends CakeTestCase {
 	public function testLoadDefaultConfig() {
 		try {
 			Configure::load('non_existing_configuration_file');
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$result = Configure::configured('default');
 			$this->assertTrue($result);
 		}
@@ -208,7 +214,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	public function testLoadWithMerge() {
-		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS));
+		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -231,7 +237,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	public function testLoadNoMerge() {
-		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS));
+		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -253,10 +259,10 @@ class ConfigureTest extends CakeTestCase {
  */
 	public function testLoadPlugin() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
 		Configure::config('test', new PhpReader());
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 		$result = Configure::load('TestPlugin.load', 'test');
 		$this->assertTrue($result);
 		$expected = '/test_app/plugins/test_plugin/config/load.php';
@@ -268,7 +274,7 @@ class ConfigureTest extends CakeTestCase {
 		$expected = '/test_app/plugins/test_plugin/config/more.load.php';
 		$config = Configure::read('plugin_more_load');
 		$this->assertEquals($expected, $config);
-		CakePlugin::unload();
+		Plugin::unload();
 	}
 
 /**
@@ -347,7 +353,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	public function testReaderExceptionOnIncorrectClass() {
-		$reader = new StdClass();
+		$reader = new \StdClass();
 		Configure::config('test', $reader);
 	}
 
@@ -364,7 +370,7 @@ class ConfigureTest extends CakeTestCase {
 	}
 
 /**
- * @expectedException ConfigureException
+ * @expectedException Cake\Error\ConfigureException
  */
 	public function testDumpNoAdapter() {
 		Configure::dump(TMP . 'test.php', 'does_not_exist');
