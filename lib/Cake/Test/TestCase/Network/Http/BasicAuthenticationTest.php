@@ -16,16 +16,17 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('HttpSocket', 'Network/Http');
-App::uses('BasicAuthentication', 'Network/Http');
+namespace Cake\Test\TestCase\Network\Http;
+use Cake\TestSuite\TestCase,
+	Cake\Network\Http\HttpSocket,
+	Cake\Network\Http\BasicAuthentication;
 
 /**
  * BasicMethodTest class
  *
  * @package       Cake.Test.Case.Network.Http
  */
-class BasicAuthenticationTest extends CakeTestCase {
+class BasicAuthenticationTest extends TestCase {
 
 /**
  * testAuthentication method

@@ -16,9 +16,10 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('HttpSocket', 'Network/Http');
-App::uses('DigestAuthentication', 'Network/Http');
+namespace Cake\Test\TestCase\Network\Http;
+use Cake\TestSuite\TestCase,
+	Cake\Network\Http\HttpSocket,
+	Cake\Network\Http\DigestAuthentication;
 
 class DigestHttpSocket extends HttpSocket {
 
@@ -52,7 +53,7 @@ class DigestHttpSocket extends HttpSocket {
  *
  * @package       Cake.Test.Case.Network.Http
  */
-class DigestAuthenticationTest extends CakeTestCase {
+class DigestAuthenticationTest extends TestCase {
 
 /**
  * Socket property

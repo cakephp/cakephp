@@ -16,9 +16,11 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('CakeEmail', 'Network/Email');
-App::uses('AbstractTransport', 'Network/Email');
-App::uses('SmtpTransport', 'Network/Email');
+namespace Cake\Test\TestCase\Network\Email;
+use Cake\TestSuite\TestCase,
+	Cake\Network\Email\Email,
+	Cake\Network\Email\SmtpTransport,
+	Cake\Network\Socket;
 
 /**
  * Help to test SmtpTransport
@@ -32,7 +34,7 @@ class SmtpTestTransport extends SmtpTransport {
  * @param object $socket
  * @return void
  */
-	public function setSocket(CakeSocket $socket) {
+	public function setSocket(Socket $socket) {
 		$this->_socket = $socket;
 	}
 
@@ -72,7 +74,7 @@ class SmtpTestTransport extends SmtpTransport {
  * Test case
  *
  */
-class SmtpTransportTest extends CakeTestCase {
+class SmtpTransportTest extends TestCase {
 
 /**
  * Setup
@@ -81,9 +83,9 @@ class SmtpTransportTest extends CakeTestCase {
  */
 	public function setUp() {
 		if (!class_exists('MockSocket')) {
-			$this->getMock('CakeSocket', array('read', 'write', 'connect'), array(), 'MockSocket');
+			$this->getMock('Cake\Network\Socket', array('read', 'write', 'connect'), array(), 'MockSocket');
 		}
-		$this->socket = new MockSocket();
+		$this->socket = new \MockSocket();
 
 		$this->SmtpTransport = new SmtpTestTransport();
 		$this->SmtpTransport->setSocket($this->socket);
@@ -126,7 +128,7 @@ class SmtpTransportTest extends CakeTestCase {
 /**
  * testConnectFail method
  *
- * @expectedException SocketException
+ * @expectedException Cake\Error\SocketException
  * @return void
  */
 	public function testConnectFail() {
@@ -178,7 +180,7 @@ class SmtpTransportTest extends CakeTestCase {
  * @return void
  */
 	public function testRcpt() {
-		$email = new CakeEmail();
+		$email = new Email();
 		$email->from('noreply@cakephp.org', 'CakePHP Test');
 		$email->to('cake@cakephp.org', 'CakePHP');
 		$email->bcc('phpnut@cakephp.org');
@@ -210,8 +212,8 @@ class SmtpTransportTest extends CakeTestCase {
  * @return void
  */
 	public function testSendData() {
-		$this->getMock('CakeEmail', array('message'), array(), 'SmtpCakeEmail');
-		$email = new SmtpCakeEmail();
+		$this->getMock('Cake\Network\Email\Email', array('message'), array(), 'SmtpCakeEmail');
+		$email = new \SmtpCakeEmail();
 		$email->from('noreply@cakephp.org', 'CakePHP Test');
 		$email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
 		$email->to('cake@cakephp.org', 'CakePHP');
