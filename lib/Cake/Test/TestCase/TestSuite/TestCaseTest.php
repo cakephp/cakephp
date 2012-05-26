@@ -1,8 +1,8 @@
 <?php
 /**
- * CakeTestCaseTest file
+ * TestCaseTest file
  *
- * Test Case for CakeTestCase class
+ * Test Case for TestCase class
  *
  * PHP version 5
  *
@@ -18,21 +18,18 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Controller', 'Controller');
-App::uses('CakeHtmlReporter', 'TestSuite/Reporter');
+namespace Cake\Test\TestCase\TestSuite;
+use Cake\TestSuite\TestCase,
+	Cake\Controller\Controller,
+	Cake\Test\Fixture\AssertTagsTestCase,
+	Cake\Test\Fixture\FixturizedTestCase;
 
 /**
- * CakeTestCaseTest
+ * TestCaseTest
  *
  * @package       Cake.Test.Case.TestSuite
  */
-class CakeTestCaseTest extends CakeTestCase {
-
-	public static function setUpBeforeClass() {
-		require_once CAKE . 'Test' . DS . 'Fixture' . DS . 'AssertTagsTestCase.php';
-		require_once CAKE . 'Test' . DS . 'Fixture' . DS . 'FixturizedTestCase.php';
-	}
+class TestCaseTest extends TestCase {
 
 /**
  * setUp
@@ -41,7 +38,7 @@ class CakeTestCaseTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Reporter = $this->getMock('CakeHtmlReporter');
+		$this->Reporter = $this->getMock('Cake\TestSuite\Reporter\HtmlReporter');
 	}
 
 /**
@@ -151,7 +148,7 @@ class CakeTestCaseTest extends CakeTestCase {
  */
 	public function testLoadFixtures() {
 		$test = new FixturizedTestCase('testFixturePresent');
-		$manager = $this->getMock('CakeFixtureManager');
+		$manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
 		$manager->fixturize($test);
 		$test->fixtureManager = $manager;
 		$manager->expects($this->once())->method('load');
@@ -170,7 +167,7 @@ class CakeTestCaseTest extends CakeTestCase {
 	public function testLoadFixturesOnDemand() {
 		$test = new FixturizedTestCase('testFixtureLoadOnDemand');
 		$test->autoFixtures = false;
-		$manager = $this->getMock('CakeFixtureManager');
+		$manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
 		$manager->fixturize($test);
 		$test->fixtureManager = $manager;
 		$manager->expects($this->once())->method('loadSingle');
@@ -186,7 +183,7 @@ class CakeTestCaseTest extends CakeTestCase {
 	public function testUnoadFixturesAfterFailure() {
 		$test = new FixturizedTestCase('testFixtureLoadOnDemand');
 		$test->autoFixtures = false;
-		$manager = $this->getMock('CakeFixtureManager');
+		$manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
 		$manager->fixturize($test);
 		$test->fixtureManager = $manager;
 		$manager->expects($this->once())->method('loadSingle');
@@ -202,7 +199,7 @@ class CakeTestCaseTest extends CakeTestCase {
 	public function testThrowException() {
 		$test = new FixturizedTestCase('testThrowException');
 		$test->autoFixtures = false;
-		$manager = $this->getMock('CakeFixtureManager');
+		$manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
 		$manager->fixturize($test);
 		$test->fixtureManager = $manager;
 		$manager->expects($this->once())->method('unload');
@@ -226,7 +223,7 @@ class CakeTestCaseTest extends CakeTestCase {
 	}
 
 /**
- * Test that CakeTestCase::setUp() backs up values.
+ * Test that TestCase::setUp() backs up values.
  *
  * @return void
  */

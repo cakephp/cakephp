@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeTestFixture file
+ * TestFixture file
  *
  * PHP 5
  *
@@ -16,16 +16,19 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('DboSource', 'Model/Datasource');
-App::uses('Model', 'Model');
-App::uses('CakeTestFixture', 'TestSuite/Fixture');
+namespace Cake\Test\TestCase\TestSuite;
+use Cake\TestSuite\Fixture\TestFixture,
+	Cake\TestSuite\TestCase,
+	Cake\Model\Model,
+	Cake\Model\ConnectionManager,
+	Cake\Utility\ClassRegistry;
 
 /**
- * CakeTestFixtureTestFixture class
+ * TestFixtureTestFixture class
  *
  * @package       Cake.Test.Case.TestSuite
  */
-class CakeTestFixtureTestFixture extends CakeTestFixture {
+class TestFixtureTestFixture extends TestFixture {
 
 /**
  * Name property
@@ -70,7 +73,7 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
  * @package       Cake.Test.Case.TestSuite
  * @subpackage    cake.cake.tests.cases.libs
  */
-class StringsTestFixture extends CakeTestFixture {
+class StringsTestFixture extends TestFixture {
 
 /**
  * Name property
@@ -112,11 +115,11 @@ class StringsTestFixture extends CakeTestFixture {
 
 
 /**
- * CakeTestFixtureImportFixture class
+ * TestFixtureImportFixture class
  *
  * @package       Cake.Test.Case.TestSuite
  */
-class CakeTestFixtureImportFixture extends CakeTestFixture {
+class TestFixtureImportFixture extends TestFixture {
 
 /**
  * Name property
@@ -134,11 +137,11 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
 }
 
 /**
- * CakeTestFixtureDefaultImportFixture class
+ * TestFixtureDefaultImportFixture class
  *
  * @package       Cake.Test.Case.TestSuite
  */
-class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
+class TestFixtureDefaultImportFixture extends TestFixture {
 
 /**
  * Name property
@@ -177,11 +180,11 @@ class FixturePrefixTest extends Model {
 
 
 /**
- * Test case for CakeTestFixture
+ * Test case for TestFixture
  *
  * @package       Cake.Test.Case.TestSuite
  */
-class CakeTestFixtureTest extends CakeTestCase {
+class TestFixtureTest extends TestCase {
 
 /**
  * setUp method
@@ -189,10 +192,10 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$methods = array_diff(get_class_methods('DboSource'), array('enabled'));
+		$methods = array_diff(get_class_methods('Cake\Model\Datasource\DboSource'), array('enabled'));
 		$methods[] = 'connect';
 
-		$this->criticDb = $this->getMock('DboSource', $methods);
+		$this->criticDb = $this->getMock('Cake\Model\Datasource\DboSource', $methods);
 		$this->criticDb->fullDebug = true;
 		$this->db = ConnectionManager::getDataSource('test');
 		$this->_backupConfig = $this->db->config;
@@ -214,13 +217,13 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function testInit() {
-		$Fixture = new CakeTestFixtureTestFixture();
+		$Fixture = new TestFixtureTestFixture();
 		unset($Fixture->table);
 		$Fixture->init();
 		$this->assertEquals('fixture_tests', $Fixture->table);
 		$this->assertEquals('id', $Fixture->primaryKey);
 
-		$Fixture = new CakeTestFixtureTestFixture();
+		$Fixture = new TestFixtureTestFixture();
 		$Fixture->primaryKey = 'my_random_key';
 		$Fixture->init();
 		$this->assertEquals('my_random_key', $Fixture->primaryKey);
@@ -235,12 +238,12 @@ class CakeTestFixtureTest extends CakeTestCase {
 	public function testInitDbPrefix() {
 		$this->skipIf($this->db instanceof Sqlite, 'Cannot open 2 connections to Sqlite');
 		$db = ConnectionManager::getDataSource('test');
-		$Source = new CakeTestFixtureTestFixture();
+		$Source = new TestFixtureTestFixture();
 		$Source->drop($db);
 		$Source->create($db);
 		$Source->insert($db);
 
-		$Fixture = new CakeTestFixtureTestFixture();
+		$Fixture = new TestFixtureTestFixture();
 		$expected = array('id', 'name', 'created');
 		$this->assertEquals($expected, array_keys($Fixture->fields));
 
@@ -254,7 +257,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->assertEquals(count($Fixture->records), count($Source->records));
 		$Fixture->create(ConnectionManager::getDataSource('fixture_test_suite'));
 
-		$Fixture = new CakeTestFixtureImportFixture();
+		$Fixture = new TestFixtureImportFixture();
 		$Fixture->fields = $Fixture->records = $Fixture->table = null;
 		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test');
 		$Fixture->init();
@@ -282,11 +285,11 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$newDb = ConnectionManager::getDataSource('fixture_test_suite');
 		$newDb->config['prefix'] = 'cake_fixture_test_';
 
-		$Source = new CakeTestFixtureTestFixture();
+		$Source = new TestFixtureTestFixture();
 		$Source->create($db);
 		$Source->insert($db);
 
-		$Fixture = new CakeTestFixtureImportFixture();
+		$Fixture = new TestFixtureImportFixture();
 		$Fixture->fields = $Fixture->records = $Fixture->table = null;
 		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test');
 
@@ -307,11 +310,11 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->skipIf($this->db instanceof Sqlite, 'Cannot open 2 connections to Sqlite');
 		$this->skipIf(!empty($this->db->config['prefix']), 'Cannot run this test, you have a database connection prefix.');
 
-		$Source = new CakeTestFixtureTestFixture();
+		$Source = new TestFixtureTestFixture();
 		$Source->create($this->db);
 		$Source->insert($this->db);
 
-		$Fixture = new CakeTestFixtureTestFixture();
+		$Fixture = new TestFixtureTestFixture();
 		unset($Fixture->table);
 		$Fixture->fields = $Fixture->records = null;
 		$Fixture->import = array('model' => 'FixturePrefixTest', 'connection' => 'test', 'records' => false);
@@ -335,11 +338,11 @@ class CakeTestFixtureTest extends CakeTestCase {
 		ConnectionManager::create('new_test_suite', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
 		$newTestSuiteDb = ConnectionManager::getDataSource('new_test_suite');
 
-		$Source = new CakeTestFixtureTestFixture();
+		$Source = new TestFixtureTestFixture();
 		$Source->create($newTestSuiteDb);
 		$Source->insert($newTestSuiteDb);
 
-		$Fixture = new CakeTestFixtureDefaultImportFixture();
+		$Fixture = new TestFixtureDefaultImportFixture();
 		$Fixture->fields = $Fixture->records = null;
 		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'new_test_suite');
 		$Fixture->init();
@@ -363,11 +366,11 @@ class CakeTestFixtureTest extends CakeTestCase {
 		ConnectionManager::create('new_test_suite', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
 		$newTestSuiteDb = ConnectionManager::getDataSource('new_test_suite');
 
-		$Source = new CakeTestFixtureTestFixture();
+		$Source = new TestFixtureTestFixture();
 		$Source->create($newTestSuiteDb);
 		$Source->insert($newTestSuiteDb);
 
-		$Fixture = new CakeTestFixtureDefaultImportFixture();
+		$Fixture = new TestFixtureDefaultImportFixture();
 		$Fixture->fields = $Fixture->records = null;
 		$Fixture->import = array(
 			'model' => 'FixtureImportTestModel', 'connection' => 'new_test_suite', 'records' => true
@@ -386,7 +389,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function testCreate() {
-		$Fixture = new CakeTestFixtureTestFixture();
+		$Fixture = new TestFixtureTestFixture();
 		$this->criticDb->expects($this->atLeastOnce())->method('execute');
 		$this->criticDb->expects($this->atLeastOnce())->method('createSchema');
 		$return = $Fixture->create($this->criticDb);
@@ -404,7 +407,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function testInsert() {
-		$Fixture = new CakeTestFixtureTestFixture();
+		$Fixture = new TestFixtureTestFixture();
 		$this->criticDb->expects($this->atLeastOnce())
 			->method('insertMulti')
 			->will($this->returnCallback(array($this, 'insertCallback')));
@@ -468,7 +471,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function testDrop() {
-		$Fixture = new CakeTestFixtureTestFixture();
+		$Fixture = new TestFixtureTestFixture();
 		$this->criticDb->expects($this->at(1))->method('execute')->will($this->returnValue(true));
 		$this->criticDb->expects($this->at(3))->method('execute')->will($this->returnValue(false));
 		$this->criticDb->expects($this->exactly(2))->method('dropSchema');
@@ -491,7 +494,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	public function testTruncate() {
-		$Fixture = new CakeTestFixtureTestFixture();
+		$Fixture = new TestFixtureTestFixture();
 		$this->criticDb->expects($this->atLeastOnce())->method('truncate');
 		$Fixture->truncate($this->criticDb);
 		$this->assertTrue($this->criticDb->fullDebug);

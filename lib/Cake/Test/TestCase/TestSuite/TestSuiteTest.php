@@ -12,13 +12,16 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\TestSuite;
+use Cake\TestSuite\TestCase,
+	Cake\Utility\Folder;
 
 /**
- * CakeTestSuiteTest
+ * TestSuiteTest
  *
  * @package       Cake.Test.Case.TestSuite
  */
-class CakeTestSuiteTest extends CakeTestCase {
+class TestSuiteTest extends TestCase {
 
 /**
  * testAddTestDirectory
@@ -29,7 +32,7 @@ class CakeTestSuiteTest extends CakeTestCase {
 		$testFolder = CORE_TEST_CASES . DS . 'TestSuite';
 		$count = count(glob($testFolder . DS . '*Test.php'));
 
-		$suite = $this->getMock('CakeTestSuite', array('addTestFile'));
+		$suite = $this->getMock('Cake\TestSuite\TestSuite', array('addTestFile'));
 		$suite
 			->expects($this->exactly($count))
 			->method('addTestFile');
@@ -47,7 +50,7 @@ class CakeTestSuiteTest extends CakeTestCase {
 		$count = count(glob($testFolder . DS . '*Test.php'));
 		$count += count(glob($testFolder . DS . 'Engine' . DS . '*Test.php'));
 
-		$suite = $this->getMock('CakeTestSuite', array('addTestFile'));
+		$suite = $this->getMock('Cake\TestSuite\TestSuite', array('addTestFile'));
 		$suite
 			->expects($this->exactly($count))
 			->method('addTestFile');
@@ -69,7 +72,7 @@ class CakeTestSuiteTest extends CakeTestCase {
 		touch($Folder->path . DS . 'NotHiddenTest.php');
 		touch($Folder->path . DS . '.HiddenTest.php');
 
-		$suite = $this->getMock('CakeTestSuite', array('addTestFile'));
+		$suite = $this->getMock('Cake\TestSuite\TestSuite', array('addTestFile'));
 		$suite
 			->expects($this->exactly(1))
 			->method('addTestFile');
