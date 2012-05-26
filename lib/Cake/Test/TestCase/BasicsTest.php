@@ -602,12 +602,16 @@ class BasicsTest extends TestCase {
 		@unlink(LOGS . 'error.log');
 
 		// disable stderr output for this test
-		Log::disable('stderr');
+		if (Log::stream('stderr')) {
+			Log::disable('stderr');
+		}
 
 		LogError('Testing LogError() basic function');
 		LogError("Testing with\nmulti-line\nstring");
 
-		Log::enable('stderr');
+		if (Log::stream('stderr')) {
+			Log::enable('stderr');
+		}
 
 		$result = file_get_contents(LOGS . 'error.log');
 		$this->assertRegExp('/Error: Testing LogError\(\) basic function/', $result);

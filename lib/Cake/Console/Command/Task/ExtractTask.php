@@ -307,6 +307,11 @@ class ExtractTask extends Shell {
 			->addOption('exclude', array(
 				'help' => __d('cake_console', 'Comma separated list of directories to exclude.' .
 					' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
+			))
+			->addOption('overwrite', array(
+				'boolean' => true,
+				'default' => false,
+				'help' => __d('cake_console', 'Always overwrite existing .pot files.')
 			));
 	}
 
@@ -540,6 +545,10 @@ class ExtractTask extends Shell {
  */
 	protected function _writeFiles() {
 		$overwriteAll = false;
+		if (!empty($this->params['overwrite'])) {
+			$overwriteAll = true;
+		}
+
 		foreach ($this->_storage as $domain => $sentences) {
 			$output = $this->_writeHeader();
 			foreach ($sentences as $sentence => $header) {

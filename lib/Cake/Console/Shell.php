@@ -180,7 +180,7 @@ class Shell extends Object {
 		}
 		Log::config('stderr', array(
 			'engine' => 'Cake\Log\Engine\ConsoleLog',
-			'types' => array('error', 'warning'),
+			'types' => array('emergency', 'alert', 'critical', 'error', 'warning', 'debug'),
 			'stream' => $this->stderr,
 		));
 		if ($this->stdin == null) {

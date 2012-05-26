@@ -16,6 +16,7 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 namespace Cake\Test\TestCase\Console\Command;
 use Cake\TestSuite\TestCase,
 	Cake\Console\Command\ApiShellShell;

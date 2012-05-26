@@ -23,12 +23,6 @@ use Cake\TestSuite\TestCase,
 	Cake\Controller\Controller,
 	Cake\Core\App;
 
-class UsersController extends Controller {
-
-	public $name = 'Users';
-
-}
-
 class BakeShellTest extends TestCase {
 
 /**

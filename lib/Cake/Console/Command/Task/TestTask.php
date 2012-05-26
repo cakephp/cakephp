@@ -392,6 +392,7 @@ class TestTask extends BakeTask {
 			$models = $subject->uses;
 		}
 		foreach ($models as $model) {
+			list($plugin, $model) = pluginSplit($model);
 			$this->_processModel($subject->{$model});
 		}
 	}

@@ -18,6 +18,7 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 namespace Cake\Test\TestCase\Console\Command\Task;
 use Cake\TestSuite\TestCase,
 	Cake\Console\Command\Task\ExtractTask,
@@ -399,5 +400,27 @@ class ExtractTaskTest extends TestCase {
 
 		$pattern = '#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#';
 		$this->assertNotRegExp($pattern, $result);
+	}
+
+
+/**
+ *  Test that the extract shell overwrites existing files with the overwrite parameter
+ *
+ * @return void
+ */
+	public function testExtractOverwrite() {
+		$this->Task->interactive = false;
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS;
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['overwrite'] = true;
+
+		file_put_contents($this->path . DS . 'default.pot', 'will be overwritten');
+		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+		$original = file_get_contents($this->path . DS . 'default.pot');
+
+		$this->Task->execute();
+		$result = file_get_contents($this->path . DS . 'default.pot');
+		$this->assertNotEquals($original, $result);
 	}
 }
