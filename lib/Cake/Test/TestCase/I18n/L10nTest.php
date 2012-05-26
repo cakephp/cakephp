@@ -16,14 +16,16 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('L10n', 'I18n');
+namespace Cake\Test\TestCase\I18n;
+use Cake\TestSuite\TestCase,
+	Cake\I18n\L10n;
 
 /**
  * L10nTest class
  *
  * @package       Cake.Test.Case.I18n
  */
-class L10nTest extends CakeTestCase {
+class L10nTest extends TestCase {
 
 /**
  * testGet method

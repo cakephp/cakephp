@@ -16,14 +16,16 @@
  * @since         CakePHP(tm) v 1.2.0.6833
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Multibyte', 'I18n');
+namespace Cake\Test\TestCase\I18n;
+use Cake\TestSuite\TestCase,
+	Cake\I18n\Multibyte;
 
 /**
  * MultibyteTest class
  *
  * @package       Cake.Test.Case.I18n
  */
-class MultibyteTest extends CakeTestCase {
+class MultibyteTest extends TestCase {
 
 /**
  * testUtf8 method
