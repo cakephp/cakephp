@@ -1,8 +1,6 @@
 <?php
 /**
- * Test App Comment Model
- *
- *
+ * PaginatorControllerComment
  *
  * PHP 5
  *
@@ -15,16 +13,36 @@
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.TestApp.Model
- * @since         CakePHP v 1.2.0.7726
+ * @since         CakePHP v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Model;
+use Cake\TestSuite\Fixture\TestModel;
 
-class PersisterTwo extends AppModel {
-	public $useTable = 'posts';
-	public $name = 'PersisterTwo';
+/**
+ * PaginatorControllerCommentclass
+ *
+ */
+class PaginatorControllerComment extends TestModel {
 
-	public $actsAs = array('PersisterOneBehavior', 'TestPlugin.TestPluginPersisterOne');
+/**
+ * name property
+ *
+ * @var string 'Comment'
+ */
+	public $name = 'Comment';
 
-	public $hasMany = array('Comment', 'TestPlugin.TestPluginComment');
+/**
+ * useTable property
+ *
+ * @var string 'comments'
+ */
+	public $useTable = 'comments';
+
+/**
+ * alias property
+ *
+ * @var string 'PaginatorControllerComment'
+ */
+	public $alias = 'PaginatorControllerComment';
 }

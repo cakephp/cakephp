@@ -15,7 +15,11 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Debugger', 'Utility');
+use Cake\Routing\Dispatcher,
+	Cake\Cache\Cache,
+	Cake\Model\ConnectionManager,
+	Cake\Utility\Validation,
+	Cake\Core\Configure;
 ?>
 <h2><?php echo __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
 <a href="http://cakephp.org/changelogs/1.3.6"><?php echo __d('cake_dev', 'Read the changelog'); ?> </a>
@@ -65,7 +69,6 @@ App::uses('Debugger', 'Utility');
 </p>
 <?php
 if (isset($filePresent)):
-	App::uses('ConnectionManager', 'Model');
 	try {
 		$connected = ConnectionManager::getDataSource('default');
 	} catch (Exception $e) {
@@ -87,7 +90,6 @@ if (isset($filePresent)):
 </p>
 <?php endif; ?>
 <?php
-	App::uses('Validation', 'Utility');
 	if (!Validation::alphaNumeric('cakephp')) {
 		echo '<p><span class="notice">';
 		__('PCRE has not been compiled with Unicode support.');

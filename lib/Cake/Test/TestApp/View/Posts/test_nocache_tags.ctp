@@ -15,6 +15,9 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+use Cake\Cache\Cache,
+	Cake\Model\ConnectionManager,
+	Cake\Core\Configure;
 ?>
 <p>
 	<!--nocache-->
@@ -78,7 +81,6 @@
 </p>
 <?php
 if (!empty($filePresent)):
-	App::uses('ConnectionManager', 'Model');
  	$connected = ConnectionManager::getDataSource('default');
 ?>
 <p>

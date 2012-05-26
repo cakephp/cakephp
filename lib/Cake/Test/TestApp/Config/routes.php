@@ -14,10 +14,12 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.test_app.Config
+ * @package       Cake.Test.TestApp.Config
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace TestApp\Config;
+use Cake\Routing\Router;
 
 Router::parseExtensions('json');
 Router::connect('/some_alias', array('controller' => 'tests_apps', 'action' => 'some_method'));

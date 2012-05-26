@@ -1,12 +1,12 @@
 <?php
+namespace TestApp\Model\Datasource\Session;
+use Cake\Model\Datasource\Session\SessionHandlerInterface;
+
 /**
  * Test suite app/Model/Datasource/Session session handler
  *
  */
-
-App::uses('CakeSessionHandlerInterface', 'Model/Datasource/Session');
-
-class TestAppLibSession implements CakeSessionHandlerInterface {
+class TestAppLibSession implements SessionHandlerInterface {
 
 	public function open() {
 		return true;
