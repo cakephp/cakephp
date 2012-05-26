@@ -15,10 +15,15 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+use Cake\Core\Configure,
+	Cake\Utility\Debugger,
+	Cake\Cache\Cache,
+	Cake\Model\ConnectionManager,
+	Cake\Utility\Validation,
+	Cake\Error;
 if (Configure::read('debug') == 0):
-	throw new NotFoundException();
+	throw new Error\NotFoundException();
 endif;
-App::uses('Debugger', 'Utility');
 ?>
 <iframe src="http://cakephp.org/bake-banner" width="830" height="160" style="overflow:hidden; border:none;">
 	<p>For updates and important announcements, visit http://cakefest.org</p>
@@ -37,13 +42,13 @@ endif;
 </p>
 <p>
 <?php
-	if (version_compare(PHP_VERSION, '5.2.8', '>=')):
+	if (version_compare(PHP_VERSION, '5.3.3', '>=')):
 		echo '<span class="notice success">';
-			echo __d('cake_dev', 'Your version of PHP is 5.2.8 or higher.');
+			echo __d('cake_dev', 'Your version of PHP is 5.3.3 or higher.');
 		echo '</span>';
 	else:
 		echo '<span class="notice">';
-			echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.2.8 or higher to use CakePHP.');
+			echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.3.3 or higher to use CakePHP.');
 		echo '</span>';
 	endif;
 ?>
@@ -94,7 +99,6 @@ endif;
 </p>
 <?php
 if (isset($filePresent)):
-	App::uses('ConnectionManager', 'Model');
 	try {
 		$connected = ConnectionManager::getDataSource('default');
 	} catch (Exception $connectionError) {
@@ -118,7 +122,6 @@ if (isset($filePresent)):
 </p>
 <?php endif;?>
 <?php
-	App::uses('Validation', 'Utility');
 	if (!Validation::alphaNumeric('cakephp')) {
 		echo '<p><span class="notice">';
 			echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');

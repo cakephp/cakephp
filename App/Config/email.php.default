@@ -18,6 +18,8 @@
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace App\Config;
+
 /**
  * In this file you set up your send email details.
  *
@@ -37,7 +39,7 @@
  * where 'Your' is the name of the transport.
  *
  * from =>
- * The origin email. See CakeEmail::from() about the valid values
+ * The origin email. See Cake\Network\Email\Email::from() about the valid values
  *
  */
 class EmailConfig {

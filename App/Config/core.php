@@ -18,6 +18,9 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace App\Config;
+use Cake\Core\Configure,
+	Cake\Cache\Cache;
 
 /**
  * CakePHP Debug Level:
@@ -37,7 +40,7 @@
 /**
  * Configure the Error handler used to handle errors for your application.  By default
  * ErrorHandler::handleError() is used.  It will display errors using Debugger, when debug > 0
- * and log errors with CakeLog when debug = 0.
+ * and log errors with Cake Log when debug = 0.
  *
  * Options:
  *
@@ -49,7 +52,7 @@
  * @see ErrorHandler for more information on error handling and configuration.
  */
 	Configure::write('Error', array(
-		'handler' => 'ErrorHandler::handleError',
+		'handler' => 'Cake\Error\ErrorHandler::handleError',
 		'level' => E_ALL & ~E_DEPRECATED,
 		'trace' => true
 	));
@@ -71,10 +74,15 @@
  * @see ErrorHandler for more information on exception handling and configuration.
  */
 	Configure::write('Exception', array(
-		'handler' => 'ErrorHandler::handleException',
-		'renderer' => 'ExceptionRenderer',
+		'handler' => 'Cake\Error\ErrorHandler::handleException',
+		'renderer' => 'Cake\Error\ExceptionRenderer',
 		'log' => true
 	));
+
+/**
+ * Application namespace
+ */
+	Configure::write('App.namespace', 'App');
 
 /**
  * Application wide charset encoding
@@ -155,7 +163,7 @@
  *    that can be used with `session_save_handler`.  Using this option will automatically add `session.save_handler`
  *    to the ini array.
  * - `Session.autoRegenerate` - Enabling this setting, turns on automatic renewal of sessions, and
- *    sessionids that change frequently. See CakeSession::$requestCountdown.
+ *    sessionids that change frequently. See Cake\Model\Datasource\Session::$requestCountdown.
  * - `Session.ini` - An associative array of additional ini values to set.
  *
  * The built in defaults are:
@@ -166,7 +174,7 @@
  * - 'cache' - Use the Cache class to save sessions.
  *
  * To define a custom session handler, save it at /app/Model/Datasource/Session/<name>.php.
- * Make sure the class implements `CakeSessionHandlerInterface` and set Session.handler to <name>
+ * Make sure the class implements `Cake\Model\Datasource\Session\SessionHandlerInterface` and set Session.handler to <name>
  *
  * To use database sessions, run the app/Config/Schema/sessions.php schema using
  * the cake shell command: cake schema create Sessions

@@ -1,5 +1,5 @@
-/app/Config
-/app/tmp
+/App/Config
+/App/tmp
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendors

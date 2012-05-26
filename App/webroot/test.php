@@ -83,10 +83,11 @@ if (!empty($failed)) {
 	trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
 
+use Cake\Core\Configure,
+	Cake\TestSuite\TestSuiteDispatcher;
+
 if (Configure::read('debug') < 1) {
 	die(__d('cake_dev', 'Debug setting does not allow access to this url.'));
 }
 
-require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';
-
-CakeTestSuiteDispatcher::run();
+TestSuiteDispatcher::run();

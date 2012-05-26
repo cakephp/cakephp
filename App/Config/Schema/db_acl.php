@@ -18,6 +18,8 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace App\Config\Schema;
+use Cake\Model\Schema;
 
 /*
  *
@@ -25,7 +27,7 @@
  * cake schema run create DbAcl
  *
  */
-class DbAclSchema extends CakeSchema {
+class DbAclSchema extends Schema {
 
 	public $name = 'DbAcl';
 
