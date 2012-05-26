@@ -18,19 +18,16 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       Open Group Test Suite License (http://www.opensource.org/licenses/opengroup.php)
  */
-
-/**
- * Included libraries.
- *
- */
-App::uses('Inflector', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\Utility\Inflector;
 
 /**
  * Short description for class.
  *
  * @package       Cake.Test.Case.Utility
  */
-class InflectorTest extends CakeTestCase {
+class InflectorTest extends TestCase {
 
 /**
  * tearDown

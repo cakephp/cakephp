@@ -16,14 +16,17 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Security', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\Core\Configure,
+	Cake\Utility\Security;
 
 /**
  * SecurityTest class
  *
  * @package       Cake.Test.Case.Utility
  */
-class SecurityTest extends CakeTestCase {
+class SecurityTest extends TestCase {
 
 /**
  * sut property

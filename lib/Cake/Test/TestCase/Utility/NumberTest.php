@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeNumberTest file
+ * NumberTest file
  *
  * PHP 5
  *
@@ -17,15 +17,16 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('View', 'View');
-App::uses('CakeNumber', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\Utility\Number;
 
 /**
- * CakeNumberTest class
+ * NumberTest class
  *
  * @package       Cake.Test.Case.Utility
  */
-class CakeNumberTest extends CakeTestCase {
+class NumberTest extends TestCase {
 
 /**
  * setUp method
@@ -34,7 +35,7 @@ class CakeNumberTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Number = new CakeNumber();
+		$this->Number = new Number();
 	}
 
 /**
@@ -111,7 +112,7 @@ class CakeNumberTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$value = '13371337.1337';
-		$result = CakeNumber::format($value, array(
+		$result = Number::format($value, array(
 			'thousands'	=> '- |-| /-\ >< () |2 -',
 			'decimals'	=> '- £€€† -',
 			'before'	=> ''

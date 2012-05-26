@@ -16,14 +16,16 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('String', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\Utility\String;
 
 /**
  * StringTest class
  *
  * @package       Cake.Test.Case.Utility
  */
-class StringTest extends CakeTestCase {
+class StringTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

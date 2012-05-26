@@ -16,9 +16,11 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('ObjectCollection', 'Utility');
-App::uses('CakeEvent', 'Event');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\Event\Event,
+	Cake\Utility\ObjectCollection,
+	Cake\Core\Object;
 
 /**
  * A generic object class
@@ -89,6 +91,9 @@ class GenericObjectCollection extends ObjectCollection {
 			return $this->_loaded[$name];
 		}
 		$objectClass = $name . 'GenericObject';
+		if (strpos($objectClass, 'Mock') === false) {
+			$objectClass = __NAMESPACE__ . '\\' . $objectClass;
+		}
 		$this->_loaded[$name] = new $objectClass($this, $settings);
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable === true) {
@@ -99,7 +104,7 @@ class GenericObjectCollection extends ObjectCollection {
 
 }
 
-class ObjectCollectionTest extends CakeTestCase {
+class ObjectCollectionTest extends TestCase {
 
 /**
  * setUp
@@ -128,8 +133,8 @@ class ObjectCollectionTest extends CakeTestCase {
  */
 	public function testLoad() {
 		$result = $this->Objects->load('First');
-		$this->assertInstanceOf('FirstGenericObject', $result);
-		$this->assertInstanceOf('FirstGenericObject', $this->Objects->First);
+		$this->assertInstanceOf(__NAMESPACE__ . '\FirstGenericObject', $result);
+		$this->assertInstanceOf(__NAMESPACE__ . '\FirstGenericObject', $this->Objects->First);
 
 		$result = $this->Objects->attached();
 		$this->assertEquals(array('First'), $result, 'attached() results are wrong.');
@@ -175,10 +180,10 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->assertEquals(array('First'), $result, 'loaded objects are wrong');
 
 		$result = $this->Objects->set('First', new SecondGenericObject($this->Objects));
-		$this->assertInstanceOf('SecondGenericObject', $result['First'], 'set failed');
+		$this->assertInstanceOf(__NAMESPACE__ . '\SecondGenericObject', $result['First'], 'set failed');
 
 		$result = $this->Objects->set('Second', new SecondGenericObject($this->Objects));
-		$this->assertInstanceOf('SecondGenericObject', $result['Second'], 'set failed');
+		$this->assertInstanceOf(__NAMESPACE__ . '\SecondGenericObject', $result['Second'], 'set failed');
 
 		$this->assertEquals(2, count($result));
 	}
@@ -190,13 +195,13 @@ class ObjectCollectionTest extends CakeTestCase {
  */
 	protected function _makeMockClasses() {
 		if (!class_exists('TriggerMockFirstGenericObject')) {
-			$this->getMock('FirstGenericObject', array(), array(), 'TriggerMockFirstGenericObject', false);
+			$this->getMock(__NAMESPACE__ . '\FirstGenericObject', array(), array(), 'TriggerMockFirstGenericObject', false);
 		}
 		if (!class_exists('TriggerMockSecondGenericObject')) {
-			$this->getMock('SecondGenericObject', array(), array(), 'TriggerMockSecondGenericObject', false);
+			$this->getMock(__NAMESPACE__ . '\SecondGenericObject', array(), array(), 'TriggerMockSecondGenericObject', false);
 		}
 		if (!class_exists('TriggerMockThirdGenericObject')) {
-			$this->getMock('ThirdGenericObject', array(), array(), 'TriggerMockThirdGenericObject', false);
+			$this->getMock(__NAMESPACE__ . '\ThirdGenericObject', array(), array(), 'TriggerMockThirdGenericObject', false);
 		}
 	}
 
@@ -337,7 +342,7 @@ class ObjectCollectionTest extends CakeTestCase {
 /**
  * test that setting modParams to an index that doesn't exist doesn't cause errors.
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testTriggerModParamsInvalidIndex() {
@@ -537,7 +542,7 @@ class ObjectCollectionTest extends CakeTestCase {
 	}
 
 /**
- * tests that passing an instance of CakeEvent to trigger will prepend the subject to the list of arguments
+ * tests that passing an instance of Cake\Event\Event to trigger will prepend the subject to the list of arguments
  *
  * @return void
  */
@@ -559,12 +564,12 @@ class ObjectCollectionTest extends CakeTestCase {
 			->with($subjectClass, 'first argument')
 			->will($this->returnValue(true));
 
-		$event = new CakeEvent('callback', $subjectClass, array('first argument'));
+		$event = new Event('callback', $subjectClass, array('first argument'));
 		$this->assertTrue($this->Objects->trigger($event));
 	}
 
 /**
- * tests that passing an instance of CakeEvent to trigger with omitSubject property
+ * tests that passing an instance of Cake\Event\Event to trigger with omitSubject property
  * will NOT prepend the subject to the list of arguments
  *
  * @return void
@@ -587,7 +592,7 @@ class ObjectCollectionTest extends CakeTestCase {
 			->with('first argument')
 			->will($this->returnValue(true));
 
-		$event = new CakeEvent('callback', $subjectClass, array('first argument'));
+		$event = new Event('callback', $subjectClass, array('first argument'));
 		$event->omitSubject = true;
 		$this->assertTrue($this->Objects->trigger($event));
 	}

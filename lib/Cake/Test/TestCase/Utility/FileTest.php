@@ -16,15 +16,17 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('File', 'Utility');
-App::uses('Folder', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\Utility\File,
+	Cake\Utility\Folder;
 
 /**
  * FileTest class
  *
  * @package       Cake.Test.Case.Utility
  */
-class FileTest extends CakeTestCase {
+class FileTest extends TestCase {
 
 /**
  * File property
@@ -119,7 +121,7 @@ class FileTest extends CakeTestCase {
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->Folder();
-		$this->assertInstanceOf('Folder', $result);
+		$this->assertInstanceOf('Cake\Utility\Folder', $result);
 	}
 
 /**
@@ -522,7 +524,7 @@ class FileTest extends CakeTestCase {
  */
 	public function testMime() {
 		$this->skipIf(!function_exists('finfo_open') && !function_exists('mime_content_type'), 'Not able to read mime type');
-		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$path = CAKE . 'Test' . DS . 'TestApp' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
 		$file = new File($path);
 		$expected = 'image/gif';
 		if (function_exists('mime_content_type') && false === mime_content_type($file->pwd())) {

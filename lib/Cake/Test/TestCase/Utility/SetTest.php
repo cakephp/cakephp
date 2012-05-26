@@ -16,15 +16,18 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Set', 'Utility');
-App::uses('Model', 'Model');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\Utility\Set,
+	Cake\Utility\Xml,
+	Cake\Model\Model;
 
 /**
  * SetTest class
  *
  * @package       Cake.Test.Case.Utility
  */
-class SetTest extends CakeTestCase {
+class SetTest extends TestCase {
 
 /**
  * testNumericKeyExtraction method
@@ -1579,7 +1582,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('dot.test' => array(array('name' => 'jippi')));
 		$this->assertEquals($expected, $result);
 
-		$a = new stdClass();
+		$a = new \stdClass();
 		$a->articles = array(
 			array('Article' => array('id' => 1, 'title' => 'Article 1')),
 			array('Article' => array('id' => 2, 'title' => 'Article 2')),
@@ -1594,7 +1597,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('Article 1', 'Article 2', 'Article 3');
 		$this->assertEquals($expected, $result);
 
-		$a = new ArrayObject();
+		$a = new \ArrayObject();
 		$a['articles'] = array(
 			array('Article' => array('id' => 1, 'title' => 'Article 1')),
 			array('Article' => array('id' => 2, 'title' => 'Article 2')),
@@ -1909,7 +1912,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('2: mariano.iglesias' => 'Mariano Iglesias', '14: phpnut' => 'Larry E. Masters', '25: gwoo' => 'The Gwoo');
 		$this->assertEquals($expected, $result);
 
-		$b = new stdClass();
+		$b = new \stdClass();
 		$b->users = array(
 			array('User' => array('id' => 2, 'group_id' => 1,
 				'Data' => array('user' => 'mariano.iglesias','name' => 'Mariano Iglesias'))),
@@ -2039,21 +2042,21 @@ class SetTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$expected = array('User' => array('psword' => 'whatever', 'Icon' => array('id' => 851)));
-		$class = new stdClass;
-		$class->User = new stdClass;
+		$class = new \stdClass;
+		$class->User = new \stdClass;
 		$class->User->psword = 'whatever';
-		$class->User->Icon = new stdClass;
+		$class->User->Icon = new \stdClass;
 		$class->User->Icon->id = 851;
 		$result = Set::reverse($class);
 		$this->assertEquals($expected, $result);
 
 		$expected = array('User' => array('psword' => 'whatever', 'Icon' => array('id' => 851), 'Profile' => array('name' => 'Some Name', 'address' => 'Some Address')));
-		$class = new stdClass;
-		$class->User = new stdClass;
+		$class = new \stdClass;
+		$class->User = new \stdClass;
 		$class->User->psword = 'whatever';
-		$class->User->Icon = new stdClass;
+		$class->User->Icon = new \stdClass;
 		$class->User->Icon->id = 851;
-		$class->User->Profile = new stdClass;
+		$class->User->Profile = new \stdClass;
 		$class->User->Profile->name = 'Some Name';
 		$class->User->Profile->address = 'Some Address';
 
@@ -2067,16 +2070,16 @@ class SetTest extends CakeTestCase {
 								array('id' => 1, 'article_id' => 1, 'user_id' => 1, 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
 								array('id' => 2, 'article_id' => 1, 'user_id' => 2, 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
 
-		$class = new stdClass;
-		$class->User = new stdClass;
+		$class = new \stdClass;
+		$class->User = new \stdClass;
 		$class->User->psword = 'whatever';
-		$class->User->Icon = new stdClass;
+		$class->User->Icon = new \stdClass;
 		$class->User->Icon->id = 851;
-		$class->User->Profile = new stdClass;
+		$class->User->Profile = new \stdClass;
 		$class->User->Profile->name = 'Some Name';
 		$class->User->Profile->address = 'Some Address';
-		$class->User->Comment = new stdClass;
-		$class->User->Comment->{'0'} = new stdClass;
+		$class->User->Comment = new \stdClass;
+		$class->User->Comment->{'0'} = new \stdClass;
 		$class->User->Comment->{'0'}->id = 1;
 		$class->User->Comment->{'0'}->article_id = 1;
 		$class->User->Comment->{'0'}->user_id = 1;
@@ -2084,7 +2087,7 @@ class SetTest extends CakeTestCase {
 		$class->User->Comment->{'0'}->published = 'Y';
 		$class->User->Comment->{'0'}->created = '2007-03-18 10:47:23';
 		$class->User->Comment->{'0'}->updated = '2007-03-18 10:49:31';
-		$class->User->Comment->{'1'} = new stdClass;
+		$class->User->Comment->{'1'} = new \stdClass;
 		$class->User->Comment->{'1'}->id = 2;
 		$class->User->Comment->{'1'}->article_id = 1;
 		$class->User->Comment->{'1'}->user_id = 2;
@@ -2104,16 +2107,16 @@ class SetTest extends CakeTestCase {
 								array('id' => 2, 'article_id' => 1, 'user_id' => 2, 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
 
 		// @codingStandardsIgnoreStart
-		$class = new stdClass;
-		$class->User = new stdClass;
+		$class = new \stdClass;
+		$class->User = new \stdClass;
 		$class->User->psword = 'whatever';
-		$class->User->Icon = new stdClass;
+		$class->User->Icon = new \stdClass;
 		$class->User->Icon->id = 851;
-		$class->User->Profile = new stdClass;
+		$class->User->Profile = new \stdClass;
 		$class->User->Profile->name = 'Some Name';
 		$class->User->Profile->address = 'Some Address';
 		$class->User->Comment = array();
-		$comment = new stdClass;
+		$comment = new \stdClass;
 		$comment->id = 1;
 		$comment->article_id = 1;
 		$comment->user_id = 1;
@@ -2121,7 +2124,7 @@ class SetTest extends CakeTestCase {
 		$comment->published = 'Y';
 		$comment->created = '2007-03-18 10:47:23';
 		$comment->updated = '2007-03-18 10:49:31';
-		$comment2 = new stdClass;
+		$comment2 = new \stdClass;
 		$comment2->id = 2;
 		$comment2->article_id = 1;
 		$comment2->user_id = 2;
@@ -2134,11 +2137,11 @@ class SetTest extends CakeTestCase {
 		$result = Set::reverse($class);
 		$this->assertEquals($expected, $result);
 
-		$class = new stdClass;
-		$class->User = new stdClass;
+		$class = new \stdClass;
+		$class->User = new \stdClass;
 		$class->User->id = 100;
 		$class->someString = 'this is some string';
-		$class->Profile = new stdClass;
+		$class->Profile = new \stdClass;
 		$class->Profile->name = 'Joe Mamma';
 
 		$result = Set::reverse($class);
@@ -2150,11 +2153,11 @@ class SetTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		// @codingStandardsIgnoreStart
-		$class = new stdClass;
-		$class->User = new stdClass;
+		$class = new \stdClass;
+		$class->User = new \stdClass;
 		$class->User->id = 100;
 		$class->User->_name_ = 'User';
-		$class->Profile = new stdClass;
+		$class->Profile = new \stdClass;
 		$class->Profile->name = 'Joe Mamma';
 		$class->Profile->_name_ = 'Profile';
 		// @codingStandardsIgnoreEnd
@@ -2387,7 +2390,7 @@ class SetTest extends CakeTestCase {
 		$mapped = Set::map($data);
 
 		// @codingStandardsIgnoreStart
-		$expected = new stdClass();
+		$expected = new \stdClass();
 		$expected->_name_ = 'IndexedPage';
 		$expected->id = 2;
 		$expected->url = 'http://blah.com/';
@@ -2429,7 +2432,7 @@ class SetTest extends CakeTestCase {
 			));
 
 		// @codingStandardsIgnoreStart
-		$expected = new stdClass;
+		$expected = new \stdClass;
 		$expected->_name_ = 'Post';
 		$expected->id = '1';
 		$expected->author_id = '1';
@@ -2439,7 +2442,7 @@ class SetTest extends CakeTestCase {
 		$expected->created = "2007-03-18 10:39:23";
 		$expected->updated = "2007-03-18 10:41:31";
 
-		$expected->Author = new stdClass;
+		$expected->Author = new \stdClass;
 		$expected->Author->id = '1';
 		$expected->Author->user = 'mariano';
 		$expected->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
@@ -2448,7 +2451,7 @@ class SetTest extends CakeTestCase {
 		$expected->Author->test = "working";
 		$expected->Author->_name_ = 'Author';
 
-		$expected2 = new stdClass;
+		$expected2 = new \stdClass;
 		$expected2->_name_ = 'Post';
 		$expected2->id = '2';
 		$expected2->author_id = '3';
@@ -2458,7 +2461,7 @@ class SetTest extends CakeTestCase {
 		$expected2->created = "2007-03-18 10:41:23";
 		$expected2->updated = "2007-03-18 10:43:31";
 
-		$expected2->Author = new stdClass;
+		$expected2->Author = new \stdClass;
 		$expected2->Author->id = '3';
 		$expected2->Author->user = 'larry';
 		$expected2->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
@@ -2481,7 +2484,7 @@ class SetTest extends CakeTestCase {
 			)
 		);
 		// @codingStandardsIgnoreStart
-		$expected = new stdClass;
+		$expected = new \stdClass;
 		$expected->_name_ = 'Post';
 		$expected->id = '1';
 		$expected->author_id = '1';
@@ -2491,7 +2494,7 @@ class SetTest extends CakeTestCase {
 		$expected->created = "2007-03-18 10:39:23";
 		$expected->updated = "2007-03-18 10:41:31";
 
-		$expected->Author = new stdClass;
+		$expected->Author = new \stdClass;
 		$expected->Author->id = '1';
 		$expected->Author->user = 'mariano';
 		$expected->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
@@ -2541,19 +2544,19 @@ class SetTest extends CakeTestCase {
 		$result = Set::map($data);
 
 		// @codingStandardsIgnoreStart
-		$expected = new stdClass();
+		$expected = new \stdClass();
 		$expected->_name_ = 'User';
 		$expected->id = 1;
 		$expected->email = 'user@example.com';
 		$expected->first_name = 'John';
 		$expected->last_name = 'Smith';
 
-		$piece = new stdClass();
+		$piece = new \stdClass();
 		$piece->id = 1;
 		$piece->title = 'Moonlight Sonata';
 		$piece->composer = 'Ludwig van Beethoven';
 
-		$piece->PiecesUser = new stdClass();
+		$piece->PiecesUser = new \stdClass();
 		$piece->PiecesUser->id = 1;
 		$piece->PiecesUser->created = '2008-01-01 00:00:00';
 		$piece->PiecesUser->modified = '2008-01-01 00:00:00';
@@ -2563,12 +2566,12 @@ class SetTest extends CakeTestCase {
 
 		$piece->_name_ = 'Piece';
 
-		$piece2 = new stdClass();
+		$piece2 = new \stdClass();
 		$piece2->id = 2;
 		$piece2->title = 'Moonlight Sonata 2';
 		$piece2->composer = 'Ludwig van Beethoven';
 
-		$piece2->PiecesUser = new stdClass();
+		$piece2->PiecesUser = new \stdClass();
 		$piece2->PiecesUser->id = 2;
 		$piece2->PiecesUser->created = '2008-01-01 00:00:00';
 		$piece2->PiecesUser->modified = '2008-01-01 00:00:00';
@@ -2627,19 +2630,19 @@ class SetTest extends CakeTestCase {
 		$result = Set::map($data);
 
 		// @codingStandardsIgnoreStart
-		$expected = new stdClass();
+		$expected = new \stdClass();
 		$expected->_name_ = 'FooUser';
 		$expected->id = 1;
 		$expected->email = 'user@example.com';
 		$expected->first_name = 'John';
 		$expected->last_name = 'Smith';
 
-		$piece = new stdClass();
+		$piece = new \stdClass();
 		$piece->id = 1;
 		$piece->title = 'Moonlight Sonata';
 		$piece->composer = 'Ludwig van Beethoven';
 		$piece->_name_ = 'FooPiece';
-		$piece->PiecesUser = new stdClass();
+		$piece->PiecesUser = new \stdClass();
 		$piece->PiecesUser->id = 1;
 		$piece->PiecesUser->created = '2008-01-01 00:00:00';
 		$piece->PiecesUser->modified = '2008-01-01 00:00:00';
@@ -2647,12 +2650,12 @@ class SetTest extends CakeTestCase {
 		$piece->PiecesUser->user_id = 2;
 		$piece->PiecesUser->_name_ = 'FooPiecesUser';
 
-		$piece2 = new stdClass();
+		$piece2 = new \stdClass();
 		$piece2->id = 2;
 		$piece2->title = 'Moonlight Sonata 2';
 		$piece2->composer = 'Ludwig van Beethoven';
 		$piece2->_name_ = 'FooPiece';
-		$piece2->PiecesUser = new stdClass();
+		$piece2->PiecesUser = new \stdClass();
 		$piece2->PiecesUser->id = 2;
 		$piece2->PiecesUser->created = '2008-01-01 00:00:00';
 		$piece2->PiecesUser->modified = '2008-01-01 00:00:00';
@@ -2739,7 +2742,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('MOVIE 3', 'MOVIE 1', 'MOVIE 2');
 		$this->assertEquals($expected, $result);
 
-		$result = Set::apply('/Movie/rating', $data, array('SetTest', 'method'), array('type' => 'reduce'));
+		$result = Set::apply('/Movie/rating', $data, array(__CLASS__, 'method'), array('type' => 'reduce'));
 		$expected = 9;
 		$this->assertEquals($expected, $result);
 
@@ -2764,8 +2767,6 @@ class SetTest extends CakeTestCase {
  * @return void
  */
 	public function testXmlSetReverse() {
-		App::uses('Xml', 'Utility');
-
 		$string = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 		<rss version="2.0">
 			<channel>

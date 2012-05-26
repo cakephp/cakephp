@@ -16,7 +16,10 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Validation', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\Core\Configure,
+	Cake\Utility\Validation;
 
 /**
  * CustomValidator class
@@ -93,7 +96,7 @@ class TestDeValidation {
  *
  * @package       Cake.Test.Case.Utility
  */
-class ValidationTest extends CakeTestCase {
+class ValidationTest extends TestCase {
 
 /**
  * setUp method
@@ -2049,9 +2052,9 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	public function testPhonePostalSsnPass() {
-		$this->assertTrue(Validation::postal('text', null, 'testNl'));
-		$this->assertTrue(Validation::phone('text', null, 'testDe'));
-		$this->assertTrue(Validation::ssn('text', null, 'testNl'));
+		$this->assertTrue(Validation::postal('text', null,  __NAMESPACE__ . '\TestNlValidation'));
+		$this->assertTrue(Validation::phone('text', null, __NAMESPACE__ . '\TestDeValidation'));
+		$this->assertTrue(Validation::ssn('text', null, __NAMESPACE__ . '\TestNlValidation'));
 	}
 
 /**
@@ -2061,7 +2064,7 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	public function testPassThroughMethodFailure() {
-		Validation::phone('text', null, 'testNl');
+		Validation::phone('text', null, __NAMESPACE__ . '\TestNlValidation');
 	}
 
 /**
@@ -2080,7 +2083,7 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	public function testPassThroughMethod() {
-		$this->assertTrue(Validation::postal('text', null, 'testNl'));
+		$this->assertTrue(Validation::postal('text', null, __NAMESPACE__ . '\TestNlValidation'));
 	}
 
 /**

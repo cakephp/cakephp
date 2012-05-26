@@ -16,15 +16,18 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Xml', 'Utility');
-App::uses('CakeTestModel', 'TestSuite/Fixture');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\TestSuite\Fixture\TestModel,
+	Cake\Utility\Xml,
+	Cake\Core\Configure;
 
 /**
  * Article class
  *
  * @package       Cake.Test.Case.Utility
  */
-class XmlArticle extends CakeTestModel {
+class XmlArticle extends TestModel {
 
 /**
  * name property
@@ -51,7 +54,7 @@ class XmlArticle extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Utility
  */
-class XmlUser extends CakeTestModel {
+class XmlUser extends TestModel {
 
 /**
  * name property
@@ -77,7 +80,7 @@ class XmlUser extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Utility
  */
-class XmlTest extends CakeTestCase {
+class XmlTest extends TestCase {
 
 /**
  * autoFixtures property
@@ -123,7 +126,7 @@ class XmlTest extends CakeTestCase {
 	public function testBuild() {
 		$xml = '<tag>value</tag>';
 		$obj = Xml::build($xml);
-		$this->assertTrue($obj instanceof SimpleXMLElement);
+		$this->assertTrue($obj instanceof \SimpleXMLElement);
 		$this->assertEquals('tag', (string)$obj->getName());
 		$this->assertEquals('value', (string)$obj);
 
@@ -131,7 +134,7 @@ class XmlTest extends CakeTestCase {
 		$this->assertEquals($obj, Xml::build($xml));
 
 		$obj = Xml::build($xml, array('return' => 'domdocument'));
-		$this->assertTrue($obj instanceof DOMDocument);
+		$this->assertTrue($obj instanceof \DOMDocument);
 		$this->assertEquals('tag', $obj->firstChild->nodeName);
 		$this->assertEquals('value', $obj->firstChild->nodeValue);
 
@@ -184,7 +187,7 @@ class XmlTest extends CakeTestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidDataProvider
- * @expectedException XmlException
+ * @expectedException Cake\Error\XmlException
  * return void
  */
 	public function testBuildInvalidData($value) {
@@ -200,7 +203,7 @@ class XmlTest extends CakeTestCase {
 		try {
 			Xml::build('<tag>');
 			$this->fail('No exception');
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$this->assertTrue(true, 'An exception was raised');
 		}
 	}
@@ -241,7 +244,7 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$obj = Xml::fromArray($xml, 'attributes');
-		$this->assertTrue($obj instanceof SimpleXMLElement);
+		$this->assertTrue($obj instanceof \SimpleXMLElement);
 		$this->assertEquals('tags', $obj->getName());
 		$this->assertEquals(2, count($obj));
 		$xmlText = <<<XML
@@ -254,7 +257,7 @@ XML;
 		$this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
 
 		$obj = Xml::fromArray($xml);
-		$this->assertTrue($obj instanceof SimpleXMLElement);
+		$this->assertTrue($obj instanceof \SimpleXMLElement);
 		$this->assertEquals('tags', $obj->getName());
 		$this->assertEquals(2, count($obj));
 		$xmlText = <<<XML
@@ -439,7 +442,7 @@ XML;
 					)
 				)
 			)),
-			array(new DateTime())
+			array(new \DateTime())
 		);
 	}
 
@@ -452,7 +455,7 @@ XML;
 		try {
 			Xml::fromArray($value);
 			$this->fail('No exception.');
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$this->assertTrue(true, 'Caught exception.');
 		}
 	}
@@ -962,7 +965,7 @@ XML;
  */
 	public static function invalidToArrayDataProvider() {
 		return array(
-			array(new DateTime()),
+			array(new \DateTime()),
 			array(array())
 		);
 	}
@@ -971,7 +974,7 @@ XML;
  * testToArrayFail method
  *
  * @dataProvider invalidToArrayDataProvider
- * @expectedException XmlException
+ * @expectedException Cake\Error\XmlException
  */
 	public function testToArrayFail($value) {
 		Xml::toArray($value);

@@ -12,9 +12,11 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Hash', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\Utility\Hash;
 
-class HashTest extends CakeTestCase {
+class HashTest extends TestCase {
 
 	public static function articleData() {
 		return array(

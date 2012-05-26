@@ -16,14 +16,19 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('ClassRegistry', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\Fixture\TestModel,
+	Cake\TestSuite\TestCase,
+	Cake\Core\Plugin,
+	Cake\Model\ConnectionManager,
+	Cake\Utility\ClassRegistry;
 
 /**
  * ClassRegisterModel class
  *
  * @package       Cake.Test.Case.Utility
  */
-class ClassRegisterModel extends CakeTestModel {
+class ClassRegisterModel extends TestModel {
 
 /**
  * useTable property
@@ -160,7 +165,7 @@ interface ClassRegistryInterfaceTest {
  *
  * @package       Cake.Test.Case.Utility
  */
-class ClassRegistryTest extends CakeTestCase {
+class ClassRegistryTest extends TestCase {
 
 /**
  * testAddModel method
@@ -285,7 +290,7 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertFalse($TestRegistryPluginModel);
 
 		//Faking a plugin
-		CakePlugin::load('RegistryPlugin', array('path' => '/fake/path'));
+		Plugin::load('RegistryPlugin', array('path' => '/fake/path'));
 		$TestRegistryPluginModel = ClassRegistry::init('RegistryPlugin.TestRegistryPluginModel');
 		$this->assertTrue(is_a($TestRegistryPluginModel, 'TestRegistryPluginModel'));
 
@@ -297,7 +302,7 @@ class ClassRegistryTest extends CakeTestCase {
 		$PluginUserCopy = ClassRegistry::getObject('RegistryPluginUser');
 		$this->assertTrue(is_a($PluginUserCopy, 'RegistryPluginAppModel'));
 		$this->assertSame($PluginUser, $PluginUserCopy);
-		CakePlugin::unload();
+		Plugin::unload();
 	}
 
 /**
@@ -330,7 +335,7 @@ class ClassRegistryTest extends CakeTestCase {
 /**
  * Test that you cannot init() an abstract class. An exception will be raised.
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testInitAbstractClass() {
@@ -340,7 +345,7 @@ class ClassRegistryTest extends CakeTestCase {
 /**
  * Test that you cannot init() an abstract class. A exception will be raised.
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testInitInterface() {

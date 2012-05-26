@@ -16,15 +16,17 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Folder', 'Utility');
-App::uses('File', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\Utility\File,
+	Cake\Utility\Folder;
 
 /**
  * FolderTest class
  *
  * @package       Cake.Test.Case.Utility
  */
-class FolderTest extends CakeTestCase {
+class FolderTest extends TestCase {
 
 	protected static $_tmp = array();
 
@@ -60,8 +62,8 @@ class FolderTest extends CakeTestCase {
 		$exclude = array_merge(self::$_tmp, array('.', '..'));
 		foreach (scandir(TMP) as $dir) {
 			if (is_dir(TMP . $dir) && !in_array($dir, $exclude)) {
-				$iterator = new RecursiveDirectoryIterator(TMP . $dir);
-				foreach (new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::CHILD_FIRST) as $file) {
+				$iterator = new \RecursiveDirectoryIterator(TMP . $dir);
+				foreach (new \RecursiveIteratorIterator($iterator, \RecursiveIteratorIterator::CHILD_FIRST) as $file) {
 					if ($file->isFile() || $file->isLink()) {
 						unlink($file->getPathname());
 					} elseif ($file->isDir() && !in_array($file->getFilename(), array('.', '..'))) {
@@ -180,7 +182,7 @@ class FolderTest extends CakeTestCase {
 			$Folder = new Folder($path);
 			$result = $Folder->create($path . DS . 'two' . DS . 'three');
 			$this->assertFalse($result);
-		} catch (PHPUnit_Framework_Error $e) {
+		} catch (\PHPUnit_Framework_Error $e) {
 			$this->assertTrue(true);
 		}
 

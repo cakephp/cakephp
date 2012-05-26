@@ -16,14 +16,18 @@
  * @since         CakePHP(tm) v 1.2.0.5428
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Sanitize', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\TestSuite\TestCase,
+	Cake\TestSuite\Fixture\TestModel,
+	Cake\Utility\Sanitize;
+
 
 /**
  * DataTest class
  *
  * @package       Cake.Test.Case.Utility
  */
-class SanitizeDataTest extends CakeTestModel {
+class SanitizeDataTest extends TestModel {
 
 /**
  * name property
@@ -45,7 +49,7 @@ class SanitizeDataTest extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Utility
  */
-class SanitizeArticle extends CakeTestModel {
+class SanitizeArticle extends TestModel {
 
 /**
  * name property
@@ -67,7 +71,7 @@ class SanitizeArticle extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Utility
  */
-class SanitizeTest extends CakeTestCase {
+class SanitizeTest extends TestCase {
 
 /**
  * autoFixtures property

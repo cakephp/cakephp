@@ -16,7 +16,12 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Debugger', 'Utility');
+namespace Cake\Test\TestCase\Utility;
+use Cake\Utility\Debugger,
+	Cake\TestSuite\TestCase,
+	Cake\Core\Configure,
+	Cake\Controller\Controller,
+	Cake\View\View;
 
 /**
  * DebugggerTestCaseDebuggger class
@@ -34,7 +39,7 @@ class DebuggerTestCaseDebugger extends Debugger {
  *
  * @package       Cake.Test.Case.Utility
  */
-class DebuggerTest extends CakeTestCase {
+class DebuggerTest extends TestCase {
 
 	protected $_restoreError = false;
 
@@ -102,7 +107,7 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	public function testOutput() {
-		set_error_handler('Debugger::showError');
+		set_error_handler('Cake\Utility\Debugger::showError');
 		$this->_restoreError = true;
 
 		$result = Debugger::output(false);
@@ -158,7 +163,7 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	public function testChangeOutputFormats() {
-		set_error_handler('Debugger::showError');
+		set_error_handler('Cake\Utility\Debugger::showError');
 		$this->_restoreError = true;
 
 		Debugger::output('js', array(
@@ -204,7 +209,7 @@ class DebuggerTest extends CakeTestCase {
 /**
  * Test that choosing a non-existent format causes an exception
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testOutputAsException() {
@@ -217,7 +222,7 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	public function testAddFormat() {
-		set_error_handler('Debugger::showError');
+		set_error_handler('Cake\Utility\Debugger::showError');
 		$this->_restoreError = true;
 
 		Debugger::addFormat('js', array(
@@ -256,7 +261,7 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	public function testAddFormatCallback() {
-		set_error_handler('Debugger::showError');
+		set_error_handler('Cake\Utility\Debugger::showError');
 		$this->_restoreError = true;
 
 		Debugger::addFormat('callback', array('callback' => array($this, 'customFormat')));
@@ -292,7 +297,6 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	public function testExportVar() {
-		App::uses('Controller', 'Controller');
 		$Controller = new Controller();
 		$Controller->helpers = array('Html', 'Form');
 		$View = new View($Controller);
@@ -301,9 +305,9 @@ class DebuggerTest extends CakeTestCase {
 
 		$result = Debugger::exportVar($View);
 		$expected = <<<TEXT
-object(View) {
-	Helpers => object(HelperCollection) {}
-	Blocks => object(ViewBlock) {}
+object(Cake\View\View) {
+	Helpers => object(Cake\View\HelperCollection) {}
+	Blocks => object(Cake\View\ViewBlock) {}
 	plugin => null
 	name => ''
 	passedArgs => array()
@@ -325,7 +329,7 @@ object(View) {
 	hasRendered => false
 	uuids => array()
 	request => null
-	response => object(CakeResponse) {}
+	response => object(Cake\Network\Response) {}
 	elementCache => 'default'
 	int => (int) 2
 	float => (float) 1.333
@@ -414,16 +418,16 @@ TEXT;
  */
 	public function testGetInstance() {
 		$result = Debugger::getInstance();
-		$this->assertInstanceOf('Debugger', $result);
+		$this->assertInstanceOf('Cake\Utility\Debugger', $result);
 
-		$result = Debugger::getInstance('DebuggerTestCaseDebugger');
-		$this->assertInstanceOf('DebuggerTestCaseDebugger', $result);
+		$result = Debugger::getInstance(__NAMESPACE__ . '\DebuggerTestCaseDebugger');
+		$this->assertInstanceOf(__NAMESPACE__ . '\DebuggerTestCaseDebugger', $result);
 
 		$result = Debugger::getInstance();
-		$this->assertInstanceOf('DebuggerTestCaseDebugger', $result);
+		$this->assertInstanceOf(__NAMESPACE__ . '\DebuggerTestCaseDebugger', $result);
 
-		$result = Debugger::getInstance('Debugger');
-		$this->assertInstanceOf('Debugger', $result);
+		$result = Debugger::getInstance('Cake\Utility\Debugger');
+		$this->assertInstanceOf('Cake\Utility\Debugger', $result);
 	}
 
 /**
@@ -468,11 +472,11 @@ TEXT;
  */
 	public function testTraceExclude() {
 		$result = Debugger::trace();
-		$this->assertRegExp('/^DebuggerTest::testTraceExclude/', $result);
+		$this->assertRegExp('/^Cake\\\Test\\\TestCase\\\Utility\\\DebuggerTest::testTraceExclude/', $result);
 
 		$result = Debugger::trace(array(
-			'exclude' => array('DebuggerTest::testTraceExclude')
+			'exclude' => array('Cake\Test\TestCase\Utility\DebuggerTest::testTraceExclude')
 		));
-		$this->assertNotRegExp('/^DebuggerTest::testTraceExclude/', $result);
+		$this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Utility\\\DebuggerTest::testTraceExclude/', $result);
 	}
 }
