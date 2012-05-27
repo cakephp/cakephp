@@ -194,8 +194,10 @@ class HtmlHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		Router::reload();
+		Router::connect('/:controller', array('action' => 'index'));
+		Router::connect('/:controller/:action/*');
 
-		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', 'full_base' => true));
+		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', '_full' => true));
 		$expected = array('a' => array('href' => FULL_BASE_URL . '/posts'), 'Posts', '/a');
 		$this->assertTags($result, $expected);
 
@@ -332,6 +334,9 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testImageTag() {
+		Router::connect('/:controller', array('action' => 'index'));
+		Router::connect('/:controller/:action/*');
+
 		$this->Html->request->webroot = '';
 
 		$result = $this->Html->image('test.gif');
@@ -1412,6 +1417,8 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testMeta() {
+		Router::connect('/:controller', array('action' => 'index'));
+
 		$result = $this->Html->meta('this is an rss feed', array('controller' => 'posts', 'ext' => 'rss'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed')));
 
