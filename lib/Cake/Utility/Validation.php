@@ -872,9 +872,9 @@ class Validation {
 		}
 
 		$File = new File($check);
-		$info = $File->info();
+		$mime = $File->mime();
 
-		return in_array($info['mime'], $mimeTypes);
+		return in_array($mime, $mimeTypes);
 	}
 
 /**
