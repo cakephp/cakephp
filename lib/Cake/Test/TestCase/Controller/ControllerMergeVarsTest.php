@@ -19,14 +19,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Controller,
-	Cake\Core\App,
-	Cake\Core\Object,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	TestApp\Controller\MergeVariablesController,
-	MergeVar\Controller\MergePostsController;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+use MergeVar\Controller\MergePostsController;
+use TestApp\Controller\MergeVariablesController;
 
 /**
  * Test Case for Controller Merging of Vars.

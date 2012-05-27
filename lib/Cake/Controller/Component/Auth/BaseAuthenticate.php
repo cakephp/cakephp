@@ -14,13 +14,13 @@
  */
 
 namespace Cake\Controller\Component\Auth;
-use Cake\Controller\ComponentCollection,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Set,
-	Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Utility\Hash,
-	Cake\Utility\Security;
+use Cake\Controller\ComponentCollection;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Hash;
+use Cake\Utility\Security;
+use Cake\Utility\Set;
 
 /**
  * Base Authentication class with common methods and properties.

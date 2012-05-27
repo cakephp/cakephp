@@ -14,20 +14,20 @@
  */
 
 namespace Cake\Controller;
-use Cake\Core\Object,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Core\App,
-	Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Utility\Inflector,
-	Cake\Error,
-	Cake\Routing\Router,
-	Cake\Event\EventListener,
-	Cake\Event\Event,
-	Cake\Event\EventManager,
-	Cake\View\View,
-	Cake\Utility\ClassRegistry;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Core\Plugin;
+use Cake\Error;
+use Cake\Event\Event;
+use Cake\Event\EventListener;
+use Cake\Event\EventManager;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Routing\Router;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
+use Cake\View\View;
 
 /**
  * Application controller class for organization of business logic.

@@ -20,11 +20,11 @@
  */
 
 namespace Cake\View\Helper;
-use Cake\View\Helper,
-	Cake\View\View,
-	Cake\Core\App,
-	Cake\Utility\Hash,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Utility\Hash;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Number helper library.

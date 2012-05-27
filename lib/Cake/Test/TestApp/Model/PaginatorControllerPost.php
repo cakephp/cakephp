@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Model;
-use Cake\TestSuite\Fixture\TestModel,
-	Cake\Utility\Set;
+use Cake\TestSuite\Fixture\TestModel;
+use Cake\Utility\Set;
 
 /**
  * PaginatorControllerPost class

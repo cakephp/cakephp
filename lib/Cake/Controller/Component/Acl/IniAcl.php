@@ -14,10 +14,10 @@
  */
 
 namespace Cake\Controller\Component\Acl;
-use Cake\Core\Object,
-	Cake\Controller\Component,
-	Cake\Utility\Set,
-	Cake\Configure\IniReader;
+use Cake\Configure\IniReader;
+use Cake\Controller\Component;
+use Cake\Core\Object;
+use Cake\Utility\Set;
 
 /**
  * IniAcl implements an access control system using an INI file.  An example

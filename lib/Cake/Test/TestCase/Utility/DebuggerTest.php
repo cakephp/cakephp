@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
-use Cake\Utility\Debugger,
-	Cake\TestSuite\TestCase,
-	Cake\Core\Configure,
-	Cake\Controller\Controller,
-	Cake\View\View;
+use Cake\Controller\Controller;
+use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Debugger;
+use Cake\View\View;
 
 /**
  * DebugggerTestCaseDebuggger class

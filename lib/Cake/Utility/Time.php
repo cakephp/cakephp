@@ -19,8 +19,8 @@
 
 namespace Cake\Utility;
 
-use Cake\Core\Configure,
-	Cake\I18n\Multibyte;
+use Cake\Core\Configure;
+use Cake\I18n\Multibyte;
 
 /**
  * Time Helper class for easy use of time data.

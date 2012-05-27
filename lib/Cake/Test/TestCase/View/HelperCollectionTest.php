@@ -18,12 +18,12 @@
  */
 namespace Cake\Test\TestCase\View;
 
-use Cake\TestSuite\TestCase,
-	Cake\View\HelperCollection,
-	Cake\View\View,
-	Cake\View\Helper\HtmlHelper,
-	Cake\Core\App,
-	Cake\Core\Plugin;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+use Cake\View\HelperCollection;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\View;
 
 /**
  * Extended HtmlHelper

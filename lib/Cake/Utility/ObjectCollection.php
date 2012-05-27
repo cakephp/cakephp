@@ -11,8 +11,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Utility;
-use Cake\Event\Event,
-	Cake\Error;
+use Cake\Error;
+use Cake\Event\Event;
 
 /**
  * Deals with Collections of objects.  Keeping registries of those objects,

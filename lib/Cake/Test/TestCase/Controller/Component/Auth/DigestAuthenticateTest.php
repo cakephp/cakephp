@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\Auth\DigestAuthenticate,
-	Cake\Network\Request,
-	Cake\Utility\ClassRegistry;
+use Cake\Controller\Component\Auth\DigestAuthenticate;
+use Cake\Network\Request;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
 
 require_once CAKE . 'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'models.php';
 

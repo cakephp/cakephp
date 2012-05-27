@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\ComponentCollection,
-	Cake\Controller\Component\CookieComponent,
-	Cake\Core\App,
-	Cake\Core\Plugin;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\CookieComponent;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
 
 /**
  * Extended CookieComponent

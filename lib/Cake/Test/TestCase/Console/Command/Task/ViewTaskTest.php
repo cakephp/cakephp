@@ -20,13 +20,13 @@
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
 
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\Task\ViewTask,
-	Cake\Console\Command\Task\TemplateTask,
-	Cake\Model\Model,
-	Cake\Controller\Controller,
-	Cake\Core\Plugin,
-	Cake\Core\Configure;
+use Cake\Console\Command\Task\TemplateTask;
+use Cake\Console\Command\Task\ViewTask;
+use Cake\Controller\Controller;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Model\Model;
+use Cake\TestSuite\TestCase;
 
 /**
  * Test View Task Comment Model

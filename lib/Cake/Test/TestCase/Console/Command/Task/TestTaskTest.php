@@ -20,14 +20,14 @@
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
 
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\Task\TestTask,
-	Cake\Console\Command\Task\TemplateTask,
-	Cake\Model\Model,
-	Cake\Controller\Controller,
-	Cake\Core\Plugin,
-	Cake\Core\App,
-	Cake\Utility\ClassRegistry;
+use Cake\Console\Command\Task\TemplateTask;
+use Cake\Console\Command\Task\TestTask;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\Model\Model;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
 
 /**
  * Test Article model

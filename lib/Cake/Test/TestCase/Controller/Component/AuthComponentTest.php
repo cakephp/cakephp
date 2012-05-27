@@ -18,22 +18,22 @@
  */
 
 namespace Cake\Test\TestCase\Controller\Component;
-use Cake\TestSuite\TestCase,
-	Cake\TestSuite\Fixture\TestModel,
-	Cake\Controller\Component\AuthComponent,
-	Cake\Controller\Controller,
-	Cake\Controller\ComponentCollection,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Routing\Router,
-	Cake\Routing\Dispatcher,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Security,
-	TestApp\Controller\Component\TestAuthComponent,
-	TestApp\Controller\AuthTestController,
-	TestApp\Model\AuthUser;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\AuthComponent;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Routing\Dispatcher;
+use Cake\Routing\Router;
+use Cake\TestSuite\Fixture\TestModel;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Security;
+use TestApp\Controller\AuthTestController;
+use TestApp\Controller\Component\TestAuthComponent;
+use TestApp\Model\AuthUser;
 
 /**
 * AuthComponentTest class

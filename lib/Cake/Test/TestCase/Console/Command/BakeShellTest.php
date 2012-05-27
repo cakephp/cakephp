@@ -18,10 +18,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command;
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\BakeShellShell,
-	Cake\Controller\Controller,
-	Cake\Core\App;
+use Cake\Console\Command\BakeShellShell;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\TestSuite\TestCase;
 
 class BakeShellTest extends TestCase {
 

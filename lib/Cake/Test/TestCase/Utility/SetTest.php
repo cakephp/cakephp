@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
-use Cake\TestSuite\TestCase,
-	Cake\Utility\Set,
-	Cake\Utility\Xml,
-	Cake\Model\Model;
+use Cake\Model\Model;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Set;
+use Cake\Utility\Xml;
 
 /**
  * SetTest class

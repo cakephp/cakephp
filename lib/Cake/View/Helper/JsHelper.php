@@ -18,8 +18,8 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\View\Helper,
-	Cake\View\View;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Javascript Generator helper class for easy use of JavaScript.

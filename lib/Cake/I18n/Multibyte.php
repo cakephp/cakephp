@@ -278,8 +278,8 @@ if (!function_exists('mb_encode_mimeheader')) {
 }
 
 namespace Cake\I18n {
-use Cake\Configure\PhpReader,
-	Cake\Core\Configure;
+use Cake\Configure\PhpReader;
+use Cake\Core\Configure;
 
 /**
  * Multibyte handling methods.

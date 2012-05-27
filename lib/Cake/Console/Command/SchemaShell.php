@@ -19,13 +19,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command;
-use Cake\Console\Shell,
-	Cake\Core\Configure,
-	Cake\Model\Schema,
-	Cake\Model\ConnectionManager,
-	Cake\Utility\File,
-	Cake\Utility\Folder,
-	Cake\Utility\Inflector;
+use Cake\Console\Shell;
+use Cake\Core\Configure;
+use Cake\Model\ConnectionManager;
+use Cake\Model\Schema;
+use Cake\Utility\File;
+use Cake\Utility\Folder;
+use Cake\Utility\Inflector;
 
 /**
  * Schema is a command-line database management utility for automating programmer chores.

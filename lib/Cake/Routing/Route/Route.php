@@ -13,8 +13,8 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Routing\Router,
-	Cake\Utility\Hash;
+use Cake\Routing\Router;
+use Cake\Utility\Hash;
 
 /**
  * A single Route used by the Router to connect requests to

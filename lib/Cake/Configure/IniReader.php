@@ -18,8 +18,8 @@
  */
 
 namespace Cake\Configure;
-use Cake\Utility\Hash,
-	Cake\Error;
+use Cake\Error;
+use Cake\Utility\Hash;
 
 /**
  * Ini file configuration engine.

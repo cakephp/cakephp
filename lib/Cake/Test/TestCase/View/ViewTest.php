@@ -18,16 +18,16 @@
  */
 namespace Cake\Test\TestCase\View;
 
-use Cake\TestSuite\TestCase,
-	Cake\View\View,
-	Cake\View\Helper,
-	Cake\Controller\Controller,
-	Cake\Cache\Cache,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Network\Request,
-	Cake\Utility\ClassRegistry;
+use Cake\Cache\Cache;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Network\Request;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * ViewPostsController class

@@ -17,9 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View;
-use Cake\Network\Response,
-	Cake\Core\Configure,
-	Cake\Error;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Network\Response;
 
 /**
  * Media View provides a custom view implementation for sending files to visitors.  Its great

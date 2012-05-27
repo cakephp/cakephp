@@ -18,12 +18,12 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\TestSuite\TestCase,
-	Cake\View\Helper\RssHelper,
-	Cake\View\Helper\TimeHelper,
-	Cake\View\View,
-	Cake\Utility\Folder,
-	Cake\Utility\File;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\File;
+use Cake\Utility\Folder;
+use Cake\View\Helper\RssHelper;
+use Cake\View\Helper\TimeHelper;
+use Cake\View\View;
 
 /**
  * RssHelperTest class

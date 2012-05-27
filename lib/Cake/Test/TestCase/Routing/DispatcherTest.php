@@ -18,17 +18,17 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\TestSuite\TestCase,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Routing\Dispatcher,
-	Cake\Routing\Router,
-	Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Event\Event,
-	Cake\Controller\Controller,
-	Cake\Utility\Inflector;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Event\Event;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Routing\Dispatcher;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Inflector;
 
 /**
  * A testing stub that doesn't send headers.

@@ -86,10 +86,10 @@ if (!empty($failed)) {
 	trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
 
-use Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Routing\Dispatcher,
-	Cake\Core\Configure;
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Routing\Dispatcher;
 
 $Dispatcher = new Dispatcher();
 $Dispatcher->dispatch(new Request(), new Response(array('charset' => Configure::read('App.encoding'))));

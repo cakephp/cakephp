@@ -19,8 +19,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Utility;
-use Cake\Core\Configure,
-	Cake\Error;
+use Cake\Core\Configure;
+use Cake\Error;
 
 /**
  * XML handling for Cake.

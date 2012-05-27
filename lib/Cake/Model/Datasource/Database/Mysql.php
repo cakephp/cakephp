@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model\Datasource\Database;
-use Cake\Model\Datasource\DboSource,
-	Cake\Model\Model,
-	Cake\Model\Schema,
-	Cake\Error,
-	\PDO;
+use Cake\Error;
+use Cake\Model\Datasource\DboSource;
+use Cake\Model\Model;
+use Cake\Model\Schema;
+use \PDO;
 
 /**
  * MySQL DBO driver object

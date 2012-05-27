@@ -14,12 +14,12 @@
  */
 
 namespace Cake\Core;
-use Cake\Cache\Cache,
-	Cake\Utility\Set,
-	Cake\Utility\Hash,
-	Cake\Configure\ConfigReaderInterface,
-	Cake\Configure\PhpReader,
-	Cake\Error;
+use Cake\Cache\Cache;
+use Cake\Configure\ConfigReaderInterface;
+use Cake\Configure\PhpReader;
+use Cake\Error;
+use Cake\Utility\Hash;
+use Cake\Utility\Set;
 
 /**
  * Configuration class. Used for managing runtime configuration information.

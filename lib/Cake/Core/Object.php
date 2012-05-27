@@ -13,13 +13,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Core;
-use Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Routing\Dispatcher,
-	Cake\Routing\Router,
-	Cake\Log\Log,
-	Cake\Utility\Set,
-	Cake\Utility\Hash;
+use Cake\Log\Log;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Routing\Dispatcher;
+use Cake\Routing\Router;
+use Cake\Utility\Hash;
+use Cake\Utility\Set;
 
 /**
  * Object class provides a few generic methods used in several subclasses.

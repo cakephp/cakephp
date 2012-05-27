@@ -18,14 +18,14 @@
  */
 namespace Cake\Routing;
 
-use Cake\Core\Configure,
-	Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Routing\Route\Route,
-	Cake\Utility\Set,
-	Cake\Utility\Hash,
-	Cake\Utility\Inflector,
-	Cake\Error;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Routing\Route\Route;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+use Cake\Utility\Set;
 
 /**
  * Parses the request URL into controller, action, and parameters.  Uses the connected routes

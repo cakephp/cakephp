@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
-use Cake\TestSuite\Fixture\TestModel,
-	Cake\TestSuite\TestCase,
-	Cake\Core\Plugin,
-	Cake\Model\ConnectionManager,
-	Cake\Utility\ClassRegistry;
+use Cake\Core\Plugin;
+use Cake\Model\ConnectionManager;
+use Cake\TestSuite\Fixture\TestModel;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
 
 /**
  * ClassRegisterModel class

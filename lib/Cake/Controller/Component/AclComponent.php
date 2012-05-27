@@ -13,17 +13,17 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component;
-use Cake\Controller\Component,
-	Cake\Controller\ComponentCollection,
-	Cake\Controller\Component\Acl\AclInterface,
-	Cake\Core\Object,
-	Cake\Core\Configure,
-	Cake\Core\App,
-	Cake\Configure\IniReader,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Inflector,
-	Cake\Utility\Set,
-	Cake\Error;
+use Cake\Configure\IniReader;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\Acl\AclInterface;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Error;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
+use Cake\Utility\Set;
 
 /**
  * Access Control List factory class.

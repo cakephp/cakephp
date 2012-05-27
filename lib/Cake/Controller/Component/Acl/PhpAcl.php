@@ -18,11 +18,11 @@
  */
 
 namespace Cake\Controller\Component\Acl;
-use Cake\Core\Object,
-	Cake\Controller\Component,
-	Cake\Configure\PhpReader,
-	Cake\Utility\Inflector,
-	Cake\Error;
+use Cake\Configure\PhpReader;
+use Cake\Controller\Component;
+use Cake\Core\Object;
+use Cake\Error;
+use Cake\Utility\Inflector;
 
 /**
  * PhpAcl implements an access control system using a plain PHP configuration file. 

@@ -11,9 +11,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View;
-use Cake\Controller\Controller,
-	Cake\Network\Response,
-	Cake\Utility\Xml;
+use Cake\Controller\Controller;
+use Cake\Network\Response;
+use Cake\Utility\Xml;
 
 /**
  * A view class that is used for creating XML responses.

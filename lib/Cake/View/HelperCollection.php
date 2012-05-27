@@ -17,12 +17,12 @@
  */
 namespace Cake\View;
 
-use Cake\Utility\ObjectCollection,
-	Cake\Core\App,
-	Cake\View\View,
-	Cake\Event\Event,
-	Cake\Event\EventListener,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Event\Event;
+use Cake\Event\EventListener;
+use Cake\Utility\ObjectCollection;
+use Cake\View\View;
 
 /**
  * Helpers collection is used as a registry for loaded helpers and handles loading

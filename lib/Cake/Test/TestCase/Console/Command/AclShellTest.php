@@ -18,12 +18,12 @@
  */
 namespace Cake\Test\TestCase\Console\Command;
 
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\AclShell,
-	Cake\Controller\Component\AclComponent,
-	Cake\Controller\ComponentCollection,
-	Cake\Core\Configure,
-	Cake\Utility\ClassRegistry;
+use Cake\Console\Command\AclShell;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\AclComponent;
+use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
 
 /**
  * AclShellTest class

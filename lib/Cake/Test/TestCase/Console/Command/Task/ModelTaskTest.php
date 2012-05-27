@@ -19,13 +19,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\Task\ModelTask,
-	Cake\Console\Command\Task\TemplateTask,
-	Cake\Model\Model,
-	Cake\Core\Plugin,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Inflector;
+use Cake\Console\Command\Task\ModelTask;
+use Cake\Console\Command\Task\TemplateTask;
+use Cake\Core\Plugin;
+use Cake\Model\Model;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * ModelTaskTest class

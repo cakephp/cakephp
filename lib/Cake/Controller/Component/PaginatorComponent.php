@@ -18,11 +18,11 @@
  */
 
 namespace Cake\Controller\Component;
-use Cake\Controller\Component,
-	Cake\Controller\ComponentCollection,
-	Cake\Utility\Set,
-	Cake\Utility\Hash,
-	Cake\Error;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentCollection;
+use Cake\Error;
+use Cake\Utility\Hash;
+use Cake\Utility\Set;
 
 /**
  * This component is used to handle automatic model data pagination.  The primary way to use this

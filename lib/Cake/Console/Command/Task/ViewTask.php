@@ -17,10 +17,10 @@
  */
 namespace Cake\Console\Command\Task;
 
-use Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Console\Shell,
-	Cake\Utility\Inflector;
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating view files.

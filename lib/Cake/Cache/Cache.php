@@ -13,10 +13,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Cache;
-use Cake\Core\Configure,
-	Cake\Core\App,
-	Cake\Utility\Inflector,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Utility\Inflector;
 
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you

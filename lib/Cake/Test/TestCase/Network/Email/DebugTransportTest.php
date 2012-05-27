@@ -17,9 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Network\Email;
-use Cake\TestSuite\TestCase,
-	Cake\Network\Email\Email,
-	Cake\Network\Email\DebugTransport;
+use Cake\Network\Email\DebugTransport;
+use Cake\Network\Email\Email;
+use Cake\TestSuite\TestCase;
 
 /**
  * Test case

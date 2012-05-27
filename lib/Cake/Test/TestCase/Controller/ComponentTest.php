@@ -17,16 +17,16 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Controller,
-	Cake\Controller\Component,
-	Cake\Controller\ComponentCollection,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Utility\ClassRegistry,
-	TestApp\Controller\Component\AppleComponent,
-	TestApp\Controller\Component\OrangeComponent,
-	TestApp\Controller\ComponentTestController;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use TestApp\Controller\ComponentTestController;
+use TestApp\Controller\Component\AppleComponent;
+use TestApp\Controller\Component\OrangeComponent;
 
 /**
  * ComponentTest class

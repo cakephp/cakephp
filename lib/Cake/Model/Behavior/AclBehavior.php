@@ -20,10 +20,10 @@
  */
 
 namespace Cake\Model\Behavior;
-use Cake\Model\ModelBehavior,
-	Cake\Model\Model,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Hash;
+use Cake\Model\Model;
+use Cake\Model\ModelBehavior;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Hash;
 
 /**
  * ACL behavior

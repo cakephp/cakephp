@@ -17,13 +17,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller\Component;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\CookieComponent,
-	Cake\Controller\Controller,
-	Cake\Controller\ComponentCollection,
-	Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Utility\Security;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\CookieComponent;
+use Cake\Controller\Controller;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 
 /**

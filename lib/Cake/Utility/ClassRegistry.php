@@ -13,10 +13,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Utility;
-use Cake\Model\ConnectionManager,
-	Cake\Core\App,
-	Cake\Model\Model,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Model\ConnectionManager;
+use Cake\Model\Model;
 
 /**
  * Class Collections.

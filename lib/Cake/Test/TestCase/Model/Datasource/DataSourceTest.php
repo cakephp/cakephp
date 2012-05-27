@@ -18,10 +18,10 @@
  */
 
 namespace Cake\Test\TestCase\Model\Datasource;
-use Cake\TestSuite\TestCase,
-	Cake\Model\Model,
-	Cake\Model\ConnectionManager,
-	Cake\Model\Datasource\DataSource;
+use Cake\Model\ConnectionManager;
+use Cake\Model\Datasource\DataSource;
+use Cake\Model\Model;
+use Cake\TestSuite\TestCase;
 
 /**
  * TestSource

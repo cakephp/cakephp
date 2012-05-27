@@ -18,12 +18,12 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\TestSuite\TestCase,
-	Cake\View\Helper\NumberHelper,
-	Cake\View\View,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+use Cake\View\Helper\NumberHelper;
+use Cake\View\View;
 
 /**
  * NumberHelperTestObject class

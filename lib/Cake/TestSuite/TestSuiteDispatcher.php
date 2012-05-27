@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite;
-use Cake\Core\App,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Error;
 
 define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'TestCase');
 define('APP_TEST_CASES', TESTS . 'TestCase');

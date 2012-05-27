@@ -18,8 +18,8 @@
  */
 
 namespace Cake\Test\TestCase\Utility;
-use Cake\TestSuite\TestCase,
-	Cake\Utility\Number;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Number;
 
 /**
  * NumberTest class

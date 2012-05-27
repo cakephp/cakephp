@@ -18,13 +18,13 @@
  */
 
 namespace Cake\Test\TestCase\Core;
-use Cake\TestSuite\TestCase,
-	Cake\TestSuite\Fixture\TestModel,
-	Cake\Core\Object,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Routing\Router;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Core\Plugin;
+use Cake\Routing\Router;
+use Cake\TestSuite\Fixture\TestModel;
+use Cake\TestSuite\TestCase;
 
 /**
  * TestObject class

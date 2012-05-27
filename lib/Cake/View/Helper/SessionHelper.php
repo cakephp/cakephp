@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View\Helper;
-use Cake\View\Helper,
-	Cake\Model\Datasource\Session;
+use Cake\Model\Datasource\Session;
+use Cake\View\Helper;
 
 /**
  * Session Helper.

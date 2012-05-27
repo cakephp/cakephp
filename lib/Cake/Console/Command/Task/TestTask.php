@@ -17,11 +17,11 @@
  */
 namespace Cake\Console\Command\Task;
 
-use Cake\Core\App,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Inflector,
-	Cake\Console\Shell,
-	Cake\Error;
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating test files.

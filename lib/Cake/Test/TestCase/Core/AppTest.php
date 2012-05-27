@@ -17,9 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Core;
-use Cake\TestSuite\TestCase,
-	Cake\Core\App,
-	Cake\Core\Plugin;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
 
 /**
  * AppTest class

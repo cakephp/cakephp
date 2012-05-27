@@ -19,9 +19,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View;
-use Cake\Core\Configure,
-	Cake\Utility\Inflector,
-	Cake\Error;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Utility\Inflector;
 
 /**
  * ScaffoldView provides specific view file loading features for scaffolded views.

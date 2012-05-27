@@ -17,11 +17,11 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\TestSuite\TestCase,
-	Cake\View\Helper\HtmlHelper,
-	Cake\View\Helper\JsHelper,
-	Cake\View\Helper\JqueryEngineHelper,
-	Cake\View\View;
+use Cake\TestSuite\TestCase;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\Helper\JqueryEngineHelper;
+use Cake\View\Helper\JsHelper;
+use Cake\View\View;
 
 class JqueryEngineHelperTest extends TestCase {
 

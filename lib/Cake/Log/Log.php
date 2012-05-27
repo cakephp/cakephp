@@ -20,9 +20,9 @@
  */
 
 namespace Cake\Log;
-use Cake\Error,
-	Cake\Log\Engine\FileLog,
-	Cake\Core\App;
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Log\Engine\FileLog;
 
 /**
  * Logs messages to configured Log adapters.  One or more adapters

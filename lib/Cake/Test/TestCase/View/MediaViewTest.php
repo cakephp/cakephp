@@ -17,9 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View;
-use Cake\TestSuite\TestCase,
-	Cake\View\MediaView,
-	Cake\Controller\Controller;
+use Cake\Controller\Controller;
+use Cake\TestSuite\TestCase;
+use Cake\View\MediaView;
 
 /**
  * MediaViewTest class

@@ -16,9 +16,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network;
-use Cake\Core\Configure,
-	Cake\Utility\Hash,
-	Cake\Error;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Utility\Hash;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.

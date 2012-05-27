@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\I18n;
-use Cake\TestSuite\TestCase,
-	Cake\I18n\Multibyte;
+use Cake\I18n\Multibyte;
+use Cake\TestSuite\TestCase;
 
 /**
  * MultibyteTest class

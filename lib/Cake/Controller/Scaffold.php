@@ -19,11 +19,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller;
-use Cake\Network\Request,
-	Cake\Core\Configure,
-	Cake\Model\ConnectionManager,
-	Cake\Utility\Inflector,
-	Cake\Error;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Model\ConnectionManager;
+use Cake\Network\Request;
+use Cake\Utility\Inflector;
 
 /**
  * Scaffolding is a set of automatic actions for starting web development work faster.

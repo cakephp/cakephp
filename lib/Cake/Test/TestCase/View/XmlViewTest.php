@@ -17,13 +17,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View;
-use Cake\TestSuite\TestCase,
-	Cake\View\XmlView,
-	Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Controller\Controller,
-	Cake\Core\App,
-	Cake\Utility\Xml;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Xml;
+use Cake\View\XmlView;
 
 /**
  * XmlViewTest

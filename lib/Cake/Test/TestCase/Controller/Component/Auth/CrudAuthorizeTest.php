@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\Auth\CrudAuthorize,
-	Cake\Core\Configure,
-	Cake\Network\Request,
-	Cake\Routing\Router;
+use Cake\Controller\Component\Auth\CrudAuthorize;
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
 
 class CrudAuthorizeTest extends TestCase {
 

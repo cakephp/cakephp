@@ -16,10 +16,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller;
-use Cake\Utility\ObjectCollection,
-	Cake\Core\App,
-	Cake\Event\EventListener,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Event\EventListener;
+use Cake\Utility\ObjectCollection;
 
 /**
  * Components collection is used as a registry for loaded components and handles loading

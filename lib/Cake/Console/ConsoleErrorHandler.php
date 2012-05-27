@@ -16,8 +16,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console;
-use Cake\Error\ErrorHandler,
-	Cake\Core\Configure;
+use Cake\Core\Configure;
+use Cake\Error\ErrorHandler;
 
 /**
  * Error Handler for Cake console. Does simple printing of the

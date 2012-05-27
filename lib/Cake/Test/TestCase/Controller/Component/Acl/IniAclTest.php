@@ -17,9 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller\Component;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\AclComponent,
-	Cake\Controller\Component\Acl\IniAcl;
+use Cake\Controller\Component\AclComponent;
+use Cake\Controller\Component\Acl\IniAcl;
+use Cake\TestSuite\TestCase;
 
 /**
  * Test case for the IniAcl implementation

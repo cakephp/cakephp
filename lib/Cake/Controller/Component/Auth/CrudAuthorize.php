@@ -13,9 +13,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component\Auth;
-use Cake\Controller\ComponentCollection,
-	Cake\Routing\Router,
-	Cake\Network\Request;
+use Cake\Controller\ComponentCollection;
+use Cake\Network\Request;
+use Cake\Routing\Router;
 
 /**
  * An authorization adapter for AuthComponent.  Provides the ability to authorize using CRUD mappings.

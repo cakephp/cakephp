@@ -125,8 +125,8 @@ $loader = new \Cake\Core\ClassLoader('Cake', CORE_PATH);
 $loader->register();
 require CAKE . 'Error' . DS . 'exceptions.php';
 
-use Cake\Core\App,
-	Cake\Core\Configure;
+use Cake\Core\App;
+use Cake\Core\Configure;
 
 App::$bootstrapping = true;
 Configure::bootstrap(isset($boot) ? $boot : true);

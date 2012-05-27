@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Network;
-use Cake\TestSuite\TestCase,
-	Cake\Network\Socket;
+use Cake\Network\Socket;
+use Cake\TestSuite\TestCase;
 
 /**
  * SocketTest class

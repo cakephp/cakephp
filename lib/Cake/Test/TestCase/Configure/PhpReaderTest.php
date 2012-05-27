@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Configure;
-use Cake\TestSuite\TestCase,
-	Cake\Core\App,
-	Cake\Core\Plugin,
-	Cake\Configure\PhpReader;
+use Cake\Configure\PhpReader;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
 
 class PhpReaderTest extends TestCase {
 

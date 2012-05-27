@@ -18,8 +18,8 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\View\Helper,
-	Cake\Utility\Xml;
+use Cake\Utility\Xml;
+use Cake\View\Helper;
 
 /**
  * RSS Helper class for easy output RSS structures.

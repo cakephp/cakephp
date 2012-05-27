@@ -16,9 +16,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite\Reporter;
-use Cake\Core\App,
-	Cake\TestSuite\Coverage\HtmlCoverageReport,
-	Cake\Utility\Inflector;
+use Cake\Core\App;
+use Cake\TestSuite\Coverage\HtmlCoverageReport;
+use Cake\Utility\Inflector;
 
 /**
  * HtmlReporter Reports Results of TestSuites and Test Cases

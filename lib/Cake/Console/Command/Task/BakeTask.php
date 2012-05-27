@@ -16,8 +16,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command\Task;
-use Cake\Console\Shell,
-	Cake\Core\Configure;
+use Cake\Console\Shell;
+use Cake\Core\Configure;
 
 /**
  * Base class for Bake Tasks.

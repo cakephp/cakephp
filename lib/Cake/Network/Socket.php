@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network;
-use Cake\Utility\Validation,
-	Cake\Error;
+use Cake\Error;
+use Cake\Utility\Validation;
 
 /**
  * Cake network socket connection class.

@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Configure;
-use Cake\TestSuite\TestCase,
-	Cake\Configure\IniReader;
+use Cake\Configure\IniReader;
+use Cake\TestSuite\TestCase;
 
 class IniReaderTest extends TestCase {
 

@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Cache;
-use Cake\TestSuite\TestCase,
-	Cake\Core\Configure,
-	Cake\Core\App,
-	Cake\Core\Plugin,
-	Cake\Cache\Cache;
+use Cake\Cache\Cache;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
 
 /**
  * CacheTest class

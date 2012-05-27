@@ -16,10 +16,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command\Task;
-use Cake\Model\Schema,
-	Cake\Model\Model,
-	Cake\Console\Shell,
-	Cake\Utility\Inflector;
+use Cake\Console\Shell;
+use Cake\Model\Model;
+use Cake\Model\Schema;
+use Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating fixtures files.

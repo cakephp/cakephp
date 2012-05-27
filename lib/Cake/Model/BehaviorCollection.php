@@ -19,11 +19,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model;
-use Cake\Utility\ObjectCollection,
-	Cake\Utility\ClassRegistry,
-	Cake\Core\App,
-	Cake\Event\EventListener,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Event\EventListener;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\ObjectCollection;
 
 /**
  * Model behavior collection class.

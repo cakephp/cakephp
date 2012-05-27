@@ -19,15 +19,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component;
-use Cake\Controller\Component,
-	Cake\Controller\ComponentCollection,
-	Cake\Controller\Controller,
-	Cake\Routing\Router,
-	Cake\Core\Configure,
-	Cake\Core\App,
-	Cake\Utility\Inflector,
-	Cake\Utility\Xml,
-	Cake\Error;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Routing\Router;
+use Cake\Utility\Inflector;
+use Cake\Utility\Xml;
 
 /**
  * Request object for handling alternative HTTP requests

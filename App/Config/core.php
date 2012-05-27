@@ -19,8 +19,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace App\Config;
-use Cake\Core\Configure,
-	Cake\Cache\Cache;
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
 
 /**
  * CakePHP Debug Level:

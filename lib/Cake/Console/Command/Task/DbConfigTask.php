@@ -16,8 +16,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command\Task;
-use Cake\Console\Shell,
-	Cake\Model\ConnectionManager;
+use Cake\Console\Shell;
+use Cake\Model\ConnectionManager;
 
 /**
  * Task class for creating and updating the database configuration file.

@@ -18,11 +18,11 @@
  */
 namespace Cake\Test\TestCase\Routing\Route;
 
-use Cake\TestSuite\TestCase,
-	Cake\Routing\Route\PluginShortRoute,
-	Cake\Routing\Router,
-	Cake\Core\Configure,
-	Cake\Core\App;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Routing\Route\PluginShortRoute;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
 
 /**
  * test case for PluginShortRoute

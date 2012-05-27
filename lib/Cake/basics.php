@@ -18,10 +18,10 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-use Cake\Core\Configure,
-	Cake\Utility\Debugger,
-	Cake\I18n\I18n,
-	Cake\Log\Log;
+use Cake\Core\Configure;
+use Cake\I18n\I18n;
+use Cake\Log\Log;
+use Cake\Utility\Debugger;
 
 /**
  * Basic defines for timing functions.

@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller\Component;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\AclComponent,
-	Cake\Controller\ComponentCollection,
-	Cake\Core\Configure;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\AclComponent;
+use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
 
 /**
  * Test Case for AclComponent

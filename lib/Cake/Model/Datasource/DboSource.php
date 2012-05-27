@@ -17,17 +17,17 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model\Datasource;
-use Cake\Core\Configure,
-	Cake\Model\ConnectionManager,
-	Cake\Model\Schema,
-	Cake\Model\Model,
-	Cake\Utility\Inflector,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Hash,
-	Cake\Utility\String,
-	Cake\Cache\Cache,
-	\PDO,
-	Cake\Error;
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Model\ConnectionManager;
+use Cake\Model\Model;
+use Cake\Model\Schema;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+use Cake\Utility\String;
+use \PDO;
 
 /**
  * DboSource

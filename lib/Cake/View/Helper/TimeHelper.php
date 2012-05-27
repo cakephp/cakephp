@@ -18,13 +18,13 @@
  */
 
 namespace Cake\View\Helper;
-use Cake\View\Helper,
-	Cake\View\View,
-	Cake\I18n\Multibyte,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Utility\Hash,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\I18n\Multibyte;
+use Cake\Utility\Hash;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Time Helper class for easy use of time data.

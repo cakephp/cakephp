@@ -14,14 +14,14 @@
  */
 
 namespace Cake\View\Helper;
-use Cake\View\Helper,
-	Cake\View\View,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Inflector,
-	Cake\Utility\Security,
-	Cake\Utility\Hash,
-	Cake\Core\Configure,
-	Cake\Error;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+use Cake\Utility\Security;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Form helper library.

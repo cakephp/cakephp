@@ -17,12 +17,12 @@
  */
 namespace Cake\Console\Command;
 
-use Cake\Console\Shell,
-	Cake\Core\Configure,
-	Cake\Controller\ComponentCollection,
-	Cake\Controller\Component\AclComponent,
-	Cake\Utility\Hash,
-	Cake\Utility\Set;
+use Cake\Console\Shell;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\AclComponent;
+use Cake\Core\Configure;
+use Cake\Utility\Hash;
+use Cake\Utility\Set;
 
 /**
  * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode

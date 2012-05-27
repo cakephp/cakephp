@@ -17,9 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
-use Cake\TestSuite\TestCase,
-	Cake\TestSuite\Fixture\TestModel,
-	Cake\Utility\Sanitize;
+use Cake\TestSuite\Fixture\TestModel;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Sanitize;
 
 
 /**

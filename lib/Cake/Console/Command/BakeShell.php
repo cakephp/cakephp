@@ -20,10 +20,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command;
-use Cake\Console\Shell,
-	Cake\Model\Model,
-	Cake\Core\App,
-	Cake\Utility\Inflector;
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Model\Model;
+use Cake\Utility\Inflector;
 
 /**
  * Command-line code generation utility to automate programmer chores.

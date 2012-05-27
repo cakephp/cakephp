@@ -18,11 +18,11 @@
  */
 
 namespace Cake\Test\TestSuite\Network;
-use Cake\TestSuite\TestCase,
-	Cake\Routing\Dispatcher,
-	Cake\Utility\Xml,
-	Cake\Network\Request,
-	Cake\Core\Configure;
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\Routing\Dispatcher;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Xml;
 
 class RequestTest extends TestCase {
 

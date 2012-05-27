@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Core;
-use Cake\TestSuite\TestCase,
-	Cake\Core\Plugin,
-	Cake\Core\Configure,
-	Cake\Core\App;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
 
 /**
  * PluginTest class

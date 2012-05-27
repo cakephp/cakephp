@@ -17,8 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Email;
-use Cake\Network\Socket,
-	Cake\Error;
+use Cake\Error;
+use Cake\Network\Socket;
 
 /**
  * Send mail using SMTP protocol

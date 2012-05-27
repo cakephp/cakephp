@@ -18,11 +18,11 @@
  */
 
 namespace Cake\Test\TestCase\TestSuite;
-use Cake\TestSuite\TestCase,
-	Cake\TestSuite\Coverage\HtmlCoverageReport,
-	Cake\TestSuite\Reporter\BaseReporter,
-	Cake\Core\App,
-	Cake\Core\Plugin;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\Coverage\HtmlCoverageReport;
+use Cake\TestSuite\Reporter\BaseReporter;
+use Cake\TestSuite\TestCase;
 
 class HtmlCoverageReportTest extends TestCase {
 

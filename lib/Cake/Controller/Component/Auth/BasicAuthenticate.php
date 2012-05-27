@@ -13,9 +13,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component\Auth;
-use Cake\Controller\ComponentCollection,
-	Cake\Network\Request,
-	Cake\Network\Response;
+use Cake\Controller\ComponentCollection;
+use Cake\Network\Request;
+use Cake\Network\Response;
 
 /**
  * Basic Authentication adapter for AuthComponent.

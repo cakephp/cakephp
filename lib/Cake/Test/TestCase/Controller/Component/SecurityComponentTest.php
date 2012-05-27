@@ -17,12 +17,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller\Component;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\SecurityComponent,
-	Cake\Controller\Controller,
-	Cake\Core\Configure,
-	Cake\Utility\Security,
-	Cake\Network\Request;
+use Cake\Controller\Component\SecurityComponent;
+use Cake\Controller\Controller;
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 /**
  * TestSecurityComponent

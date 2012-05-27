@@ -21,8 +21,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace App\Config;
-use Cake\Routing\Router,
-	Cake\Core\Plugin;
+use Cake\Core\Plugin;
+use Cake\Routing\Router;
 
 /**
  * Here, we are connecting '/' (base path) to controller called 'Pages',

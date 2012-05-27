@@ -23,8 +23,8 @@
  */
 
 namespace Cake\Model\Datasource;
-use Cake\Core\Configure,
-	Cake\Utility\Hash;
+use Cake\Core\Configure;
+use Cake\Utility\Hash;
 
 /**
  * Session class for Cake.

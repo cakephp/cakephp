@@ -18,13 +18,13 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\View\Helper,
-	Cake\View\View,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Network\Response,
-	Cake\Utility\Inflector,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Network\Response;
+use Cake\Utility\Inflector;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Html Helper class for easy use of HTML widgets.

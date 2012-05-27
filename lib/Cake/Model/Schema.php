@@ -18,14 +18,14 @@
  */
 
 namespace Cake\Model;
-use Cake\Core\Object,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Core\App,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Inflector,
-	Cake\Utility\File,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Core\Plugin;
+use Cake\Error;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\File;
+use Cake\Utility\Inflector;
 
 /**
  * Base Class for Schema management

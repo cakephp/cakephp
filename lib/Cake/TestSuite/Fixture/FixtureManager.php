@@ -17,13 +17,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite\Fixture;
-use Cake\Model\ConnectionManager,
-	Cake\Core\Plugin,
-	Cake\Core\Configure,
-	Cake\Core\App,
-	Cake\TestSuite\TestCase,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Inflector;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Model\ConnectionManager;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * A factory class to manage the life cycle of test fixtures

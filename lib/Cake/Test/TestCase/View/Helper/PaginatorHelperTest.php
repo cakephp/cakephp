@@ -17,15 +17,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View\Helper;
-use Cake\TestSuite\TestCase,
-	Cake\View\Helper\PaginatorHelper,
-	Cake\View\Helper\HtmlHelper,
-	Cake\View\Helper\FormHelper,
-	Cake\View\Helper\JsHelper,
-	Cake\View\View,
-	Cake\Network\Request,
-	Cake\Core\Configure,
-	Cake\Routing\Router;
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
+use Cake\View\Helper\FormHelper;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\Helper\JsHelper;
+use Cake\View\Helper\PaginatorHelper;
+use Cake\View\View;
 
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');

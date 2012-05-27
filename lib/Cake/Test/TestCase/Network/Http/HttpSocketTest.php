@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Network\Http;
-use Cake\TestSuite\TestCase,
-	Cake\Network\Http\HttpSocket,
-	Cake\Network\Http\HttpResponse,
-	Cake\Utility\Set;
+use Cake\Network\Http\HttpResponse;
+use Cake\Network\Http\HttpSocket;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Set;
 
 /**
  * TestAuthentication class

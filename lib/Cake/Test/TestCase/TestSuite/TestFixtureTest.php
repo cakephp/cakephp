@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\TestSuite;
-use Cake\TestSuite\Fixture\TestFixture,
-	Cake\TestSuite\TestCase,
-	Cake\Model\Model,
-	Cake\Model\ConnectionManager,
-	Cake\Utility\ClassRegistry;
+use Cake\Model\ConnectionManager;
+use Cake\Model\Model;
+use Cake\TestSuite\Fixture\TestFixture;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
 
 /**
  * TestFixtureTestFixture class

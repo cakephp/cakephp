@@ -20,9 +20,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\Task\TemplateTask,
-	Cake\Core\App;
+use Cake\Console\Command\Task\TemplateTask;
+use Cake\Core\App;
+use Cake\TestSuite\TestCase;
 
 /**
  * TemplateTaskTest class

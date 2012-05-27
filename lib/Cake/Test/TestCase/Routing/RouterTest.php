@@ -18,13 +18,13 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\TestSuite\TestCase,
-	Cake\Routing\Router,
-	Cake\Routing\Route\Route,
-	Cake\Network\Request,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Network\Request;
+use Cake\Routing\Route\Route;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
 
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');

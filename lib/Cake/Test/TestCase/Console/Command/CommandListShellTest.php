@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command;
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\CommandListShell,
-	Cake\Console\ConsoleOutput,
-	Cake\Core\App,
-	Cake\Core\Plugin;
+use Cake\Console\Command\CommandListShell;
+use Cake\Console\ConsoleOutput;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
 
 
 class TestStringOutput extends ConsoleOutput {

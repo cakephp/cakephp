@@ -17,12 +17,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\I18n;
-use Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Core\App,
-	Cake\Cache\Cache,
-	Cake\Utility\Hash,
-	Cake\Utility\Inflector;
+use Cake\Cache\Cache;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 if (function_exists('mb_internal_encoding')) {
 	$encoding = Configure::read('App.encoding');

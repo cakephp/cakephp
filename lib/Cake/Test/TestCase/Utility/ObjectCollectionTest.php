@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
-use Cake\TestSuite\TestCase,
-	Cake\Event\Event,
-	Cake\Utility\ObjectCollection,
-	Cake\Core\Object;
+use Cake\Core\Object;
+use Cake\Event\Event;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ObjectCollection;
 
 /**
  * A generic object class

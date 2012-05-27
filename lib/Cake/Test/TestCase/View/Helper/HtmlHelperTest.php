@@ -18,20 +18,20 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\TestSuite\TestCase,
-	Cake\Model\Model,
-	Cake\Controller\Controller,
-	Cake\Routing\Router,
-	Cake\View\View,
-	Cake\View\Helper\FormHelper,
-	Cake\View\Helper\HtmlHelper,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Network\Request,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\File,
-	Cake\Utility\Folder;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Model\Model;
+use Cake\Network\Request;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\File;
+use Cake\Utility\Folder;
+use Cake\View\Helper\FormHelper;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\View;
 
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');

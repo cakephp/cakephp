@@ -17,9 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Core;
-use Cake\Cache\Cache,
-	Cake\Utility\Inflector,
-	Cake\Error\ErrorHandler;
+use Cake\Cache\Cache;
+use Cake\Error\ErrorHandler;
+use Cake\Utility\Inflector;
 
 /**
  * App is responsible for path management, class location and class loading.

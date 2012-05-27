@@ -18,9 +18,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command;
-use Cake\Console\Shell,
-	Cake\Core\App,
-	Cake\Utility\Inflector;
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Utility\Inflector;
 
 /**
  * API shell to show method signatures of CakePHP core classes.

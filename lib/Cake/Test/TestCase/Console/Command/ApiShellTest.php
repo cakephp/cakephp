@@ -18,8 +18,8 @@
  */
 
 namespace Cake\Test\TestCase\Console\Command;
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\ApiShellShell;
+use Cake\Console\Command\ApiShellShell;
+use Cake\TestSuite\TestCase;
 
 /**
  * ApiShellTest class

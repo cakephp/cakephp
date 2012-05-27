@@ -17,12 +17,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestSuite\Log;
-use Cake\TestSuite\TestCase,
-	Cake\Log\Log,
-	Cake\Log\Engine\FileLog,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Log\Engine\FileLog;
+use Cake\Log\Log;
+use Cake\TestSuite\TestCase;
 
 /**
  * LogTest class

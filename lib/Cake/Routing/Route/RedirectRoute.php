@@ -14,9 +14,9 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Routing\Router,
-	Cake\Routing\Route\Route,
-	Cake\Network\Response;
+use Cake\Network\Response;
+use Cake\Routing\Route\Route;
+use Cake\Routing\Router;
 
 /**
  * Redirect route will perform an immediate redirect. Redirect routes

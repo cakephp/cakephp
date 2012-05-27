@@ -18,11 +18,11 @@
  */
 namespace Cake\Test\TestCase\Routing\Route;
 
-use Cake\TestSuite\TestCase,
-	Cake\Routing\Route\Route,
-	Cake\Routing\Router,
-	Cake\Core\Configure,
-	Cake\Core\App;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Routing\Route\Route;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
 
 /**
  * Test case for Route

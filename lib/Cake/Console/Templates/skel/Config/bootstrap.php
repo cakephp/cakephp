@@ -23,12 +23,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-use Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Cache\Cache,
-	Cake\Log\Log,
-	Cake\Utility\Inflector;
+use Cake\Cache\Cache;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Log\Log;
+use Cake\Utility\Inflector;
 
 // Setup a 'default' cache configuration for use in the application.
 Cache::config('default', array('engine' => 'File'));

@@ -19,10 +19,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\TestSuite;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Controller,
-	Cake\Test\Fixture\AssertTagsTestCase,
-	Cake\Test\Fixture\FixturizedTestCase;
+use Cake\Controller\Controller;
+use Cake\TestSuite\TestCase;
+use Cake\Test\Fixture\AssertTagsTestCase;
+use Cake\Test\Fixture\FixturizedTestCase;
 
 /**
  * TestCaseTest

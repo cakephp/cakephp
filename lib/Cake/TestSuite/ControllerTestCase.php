@@ -17,14 +17,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite;
-use Cake\Routing\Dispatcher,
-	Cake\Routing\Router,
-	Cake\View\Helper,
-	Cake\Event\Event,
-	Cake\Utility\Inflector,
-	Cake\Utility\ClassRegistry,
-	Cake\Core\App,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Event\Event;
+use Cake\Routing\Dispatcher;
+use Cake\Routing\Router;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
+use Cake\View\Helper;
 
 /**
  * ControllerTestDispatcher class

@@ -18,8 +18,8 @@
  */
 
 namespace Cake\Utility;
-use Cake\Utility\String,
-	Cake\Utility\Hash;
+use Cake\Utility\Hash;
+use Cake\Utility\String;
 
 /**
  * Class used for manipulation of arrays.

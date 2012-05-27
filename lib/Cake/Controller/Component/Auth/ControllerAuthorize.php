@@ -13,10 +13,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component\Auth;
-use Cake\Controller\ComponentCollection,
-	Cake\Controller\Controller,
-	Cake\Network\Request,
-	Cake\Error;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Controller;
+use Cake\Error;
+use Cake\Network\Request;
 
 /**
  * An authorization adapter for AuthComponent.  Provides the ability to authorize using a controller callback.

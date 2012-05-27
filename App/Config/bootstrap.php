@@ -23,12 +23,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace App\Config;
-use Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Cache\Cache,
-	Cake\Log\Log,
-	Cake\Utility\Inflector;
+use Cake\Cache\Cache;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Log\Log;
+use Cake\Utility\Inflector;
 
 /**
  * Cache Engine Configuration

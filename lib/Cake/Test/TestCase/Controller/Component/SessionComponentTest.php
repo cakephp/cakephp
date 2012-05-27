@@ -18,13 +18,13 @@
  */
 
 namespace Cake\Test\TestCase\Controller\Component;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\SessionComponent,
-	Cake\Controller\Controller,
-	Cake\Controller\ComponentCollection,
-	Cake\Model\Datasource\Session,
-	Cake\Core\Configure,
-	Cake\Core\Object;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\SessionComponent;
+use Cake\Controller\Controller;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Model\Datasource\Session;
+use Cake\TestSuite\TestCase;
 
 /**
  * SessionComponentTest class

@@ -16,10 +16,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command\Task;
-use Cake\Core\App,
-	Cake\Console\Shell,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Inflector;
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating controller files.

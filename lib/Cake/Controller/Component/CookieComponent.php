@@ -18,13 +18,13 @@
  */
 
 namespace Cake\Controller\Component;
-use Cake\Controller\Component,
-	Cake\Controller\ComponentCollection,
-	Cake\Core\Configure,
-	Cake\Network\Response,
-	Cake\Utility\Hash,
-	Cake\Utility\Set,
-	Cake\Utility\Security;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentCollection;
+use Cake\Core\Configure;
+use Cake\Network\Response;
+use Cake\Utility\Hash;
+use Cake\Utility\Security;
+use Cake\Utility\Set;
 
 /**
  * Cookie Component.

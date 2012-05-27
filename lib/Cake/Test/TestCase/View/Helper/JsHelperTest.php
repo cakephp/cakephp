@@ -20,15 +20,15 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\TestSuite\TestCase,
-	Cake\View\Helper\HtmlHelper,
-	Cake\View\Helper\JsHelper,
-	Cake\View\Helper\JsBaseEngineHelper,
-	Cake\View\Helper\FormHelper,
-	Cake\View\View,
-	Cake\Utility\ClassRegistry,
-	Cake\Network\Request,
-	Cake\Core\Configure;
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use Cake\View\Helper\FormHelper;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\Helper\JsBaseEngineHelper;
+use Cake\View\Helper\JsHelper;
+use Cake\View\View;
 
 class JsEncodingObject {
 

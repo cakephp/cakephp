@@ -16,9 +16,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-use Cake\Routing\Router,
-	Cake\Core\Plugin,
-	Cake\Utility\Inflector;
+use Cake\Core\Plugin;
+use Cake\Routing\Router;
+use Cake\Utility\Inflector;
 
 /**
  * Connects the default, built-in routes, including prefix and plugin routes. The following routes are created

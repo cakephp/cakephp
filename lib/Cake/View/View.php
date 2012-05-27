@@ -18,19 +18,19 @@
  */
 namespace Cake\View;
 
-use Cake\Core\Object,
-	Cake\Core\App,
-	Cake\Core\Plugin,
-	Cake\Core\Configure,
-	Cake\Controller\Controller,
-	Cake\Utility\ObjectCollection,
-	Cake\Utility\Inflector,
-	Cake\Routing\Router,
-	Cake\Network\Response,
-	Cake\Cache\Cache,
-	Cake\Event\Event,
-	Cake\Event\EventManager,
-	Cake\Error;
+use Cake\Cache\Cache;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Core\Plugin;
+use Cake\Error;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
+use Cake\Network\Response;
+use Cake\Routing\Router;
+use Cake\Utility\Inflector;
+use Cake\Utility\ObjectCollection;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed

@@ -19,11 +19,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\Task\ProjectTask,
-	Cake\Core\Configure,
-	Cake\Utility\File,
-	Cake\Utility\Folder;
+use Cake\Console\Command\Task\ProjectTask;
+use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\File;
+use Cake\Utility\Folder;
 
 /**
  * ProjectTask Test class

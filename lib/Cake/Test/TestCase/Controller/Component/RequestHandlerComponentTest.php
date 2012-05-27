@@ -18,16 +18,16 @@
  */
 
 namespace Cake\Test\TestCase\Controller\Component;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\RequestHandlerComponent,
-	Cake\Controller\Controller,
-	Cake\Controller\ComponentCollection,
-	Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Routing\Router,
-	TestApp\Controller\RequestHandlerTestController;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\RequestHandlerComponent;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
+use TestApp\Controller\RequestHandlerTestController;
 
 /**
  * RequestHandlerComponentTest class

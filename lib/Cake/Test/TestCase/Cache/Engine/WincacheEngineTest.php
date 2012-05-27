@@ -17,9 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Cache\Engine;
-use Cake\TestSuite\TestCase,
-	Cake\Cache\Cache,
-	Cake\Core\Configure;
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
 
 /**
  * WincacheEngineTest class

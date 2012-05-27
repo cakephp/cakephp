@@ -16,11 +16,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command\Task;
-use Cake\Console\Shell,
-	Cake\Core\App,
-	Cake\Utility\Inflector,
-	Cake\Utility\Folder,
-	Cake\Utility\File;
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Utility\File;
+use Cake\Utility\Folder;
+use Cake\Utility\Inflector;
 
 /**
  * The Plugin Task handles creating an empty plugin, ready to be used

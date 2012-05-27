@@ -17,13 +17,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View\Helper;
-use Cake\TestSuite\TestCase,
-	Cake\View\Helper\SessionHelper,
-	Cake\View\View,
-	Cake\Controller\Controller,
-	Cake\Model\Datasource\Session,
-	Cake\Core\Plugin,
-	Cake\Core\App;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\Model\Datasource\Session;
+use Cake\TestSuite\TestCase;
+use Cake\View\Helper\SessionHelper;
+use Cake\View\View;
 
 /**
  * SessionHelperTest class

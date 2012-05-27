@@ -16,8 +16,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console;
-use Cake\Utility\Inflector,
-	Cake\Error;
+use Cake\Error;
+use Cake\Utility\Inflector;
 
 /**
  * Handles parsing the ARGV in the command line and provides support

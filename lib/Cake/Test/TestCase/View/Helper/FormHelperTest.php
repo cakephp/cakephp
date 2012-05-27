@@ -18,20 +18,20 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\TestSuite\TestCase,
-	Cake\TestSuite\Fixture\TestModel,
-	Cake\Controller\Controller,
-	Cake\Model\Model,
-	Cake\View\View,
-	Cake\View\Helper\FormHelper,
-	Cake\View\Helper\HtmlHelper,
-	Cake\Core\App,
-	Cake\Core\Plugin,
-	Cake\Core\Configure,
-	Cake\Routing\Router,
-	Cake\Network\Request,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Security;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Model\Model;
+use Cake\Network\Request;
+use Cake\Routing\Router;
+use Cake\TestSuite\Fixture\TestModel;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Security;
+use Cake\View\Helper\FormHelper;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\View;
 
 /**
  * ContactTestController class

@@ -19,12 +19,12 @@
 
 namespace Cake\Test\TestCase\Routing\Route;
 
-use Cake\TestSuite\TestCase,
-	Cake\Routing\Route\RedirectRoute,
-	Cake\Routing\Router,
-	Cake\Network\Response,
-	Cake\Core\Configure,
-	Cake\Core\App;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Network\Response;
+use Cake\Routing\Route\RedirectRoute;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
 
 /**
  * test case for RedirectRoute

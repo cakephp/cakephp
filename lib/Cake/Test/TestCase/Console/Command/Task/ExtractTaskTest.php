@@ -20,11 +20,11 @@
  */
 
 namespace Cake\Test\TestCase\Console\Command\Task;
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\Task\ExtractTask,
-	Cake\Core\App,
-	Cake\Core\Plugin,
-	Cake\Utility\Folder;
+use Cake\Console\Command\Task\ExtractTask;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Folder;
 
 /**
  * ExtractTaskTest class

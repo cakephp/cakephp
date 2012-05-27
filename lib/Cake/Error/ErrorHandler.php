@@ -19,10 +19,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Error;
-use Cake\Core\Configure,
-	Cake\Core\App,
-	Cake\Utility\Debugger,
-	Cake\Log\Log;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Log\Log;
+use Cake\Utility\Debugger;
 
 /**
  *

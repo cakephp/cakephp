@@ -20,18 +20,18 @@
  */
 
 namespace Cake\Model;
-use Cake\Core\Object,
-	Cake\Core\Configure,
-	Cake\Core\App,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Inflector,
-	Cake\Utility\Xml,
-	Cake\Utility\Set,
-	Cake\Utility\Hash,
-	Cake\Event\EventListener,
-	Cake\Event\EventManager,
-	Cake\Event\Event,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Error;
+use Cake\Event\Event;
+use Cake\Event\EventListener;
+use Cake\Event\EventManager;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+use Cake\Utility\Set;
+use Cake\Utility\Xml;
 
 /**
  * Object-relational mapper.

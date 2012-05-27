@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View\Helper;
-use Cake\View\Helper,
-	Cake\View\View,
-	Cake\Utility\Inflector,
-	Cake\Core\App,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Utility\Inflector;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Pagination Helper class for easy generation of pagination links.

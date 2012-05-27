@@ -17,9 +17,9 @@
  */
 
 namespace Cake\Model;
-use Cake\Core\Configure,
-	Cake\Utility\Inflector,
-	Cake\Utility\ClassRegistry;
+use Cake\Core\Configure;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * ACL Node

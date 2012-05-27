@@ -18,11 +18,11 @@
  */
 
 namespace Cake\Test\TestCase\Utility;
-use Cake\TestSuite\TestCase,
-	Cake\Utility\Time,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Object;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Time;
 
 /**
  * TimeTest class

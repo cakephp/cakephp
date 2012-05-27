@@ -18,8 +18,8 @@
  */
 
 namespace Cake\Model\Datasource\Session;
-use Cake\Core\Configure,
-	Cake\Utility\ClassRegistry;
+use Cake\Core\Configure;
+use Cake\Utility\ClassRegistry;
 
 /**
  * DatabaseSession provides methods to be used with Session.

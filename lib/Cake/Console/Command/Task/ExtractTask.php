@@ -17,14 +17,14 @@
  */
 
 namespace Cake\Console\Command\Task;
-use Cake\Console\Shell,
-	Cake\Core\Plugin,
-	Cake\Core\App,
-	Cake\Utility\Set,
-	Cake\Utility\Hash,
-	Cake\Utility\Inflector,
-	Cake\Utility\Folder,
-	Cake\Utility\File;
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\Utility\File;
+use Cake\Utility\Folder;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+use Cake\Utility\Set;
 
 /**
  * Language string extractor

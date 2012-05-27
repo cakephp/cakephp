@@ -13,12 +13,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model\Behavior;
-use Cake\Model\ModelBehavior,
-	Cake\Model\Model,
-	Cake\Model\ConnectionManager,
-	Cake\I18n\I18n,
-	Cake\Core\Configure,
-	Cake\Utility\ClassRegistry;
+use Cake\Core\Configure;
+use Cake\I18n\I18n;
+use Cake\Model\ConnectionManager;
+use Cake\Model\Model;
+use Cake\Model\ModelBehavior;
+use Cake\Utility\ClassRegistry;
 
 /**
  * Translate behavior

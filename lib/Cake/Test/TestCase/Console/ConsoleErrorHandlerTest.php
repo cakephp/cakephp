@@ -17,9 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console;
-use Cake\TestSuite\TestCase,
-	Cake\Console\ConsoleErrorHandler,
-	Cake\Error;
+use Cake\Console\ConsoleErrorHandler;
+use Cake\Error;
+use Cake\TestSuite\TestCase;
 
 /**
  * ConsoleErrorHandler Test case.

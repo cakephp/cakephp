@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Network\Email;
-use Cake\TestSuite\TestCase,
-	Cake\Network\Email\Email,
-	Cake\Core\App,
-	Cake\Core\Plugin;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\Network\Email\Email;
+use Cake\TestSuite\TestCase;
 
 /**
  * Help to test CakeEmail

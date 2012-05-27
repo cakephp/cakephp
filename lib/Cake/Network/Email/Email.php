@@ -17,12 +17,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Email;
-use Cake\Log\Log,
-	Cake\Utility\Validation,
-	Cake\Utility\String,
-	Cake\Core\Configure,
-	Cake\Core\App,
-	Cake\Error;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Log\Log;
+use Cake\Utility\String;
+use Cake\Utility\Validation;
 
 /**
  * Cake e-mail class.

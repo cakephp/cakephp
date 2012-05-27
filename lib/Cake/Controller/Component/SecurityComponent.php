@@ -17,15 +17,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component;
-use Cake\Controller\Component,
-	Cake\Controller\ComponentCollection,
-	Cake\Controller\Controller,
-	Cake\Network\Request,
-	Cake\Utility\Hash,
-	Cake\Utility\Security,
-	Cake\Utility\Set,
-	Cake\Core\Configure,
-	Cake\Error;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Controller;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Network\Request;
+use Cake\Utility\Hash;
+use Cake\Utility\Security;
+use Cake\Utility\Set;
 
 /**
  * The Security Component creates an easy way to integrate tighter security in 

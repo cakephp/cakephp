@@ -14,14 +14,14 @@
  */
 
 namespace Cake\Controller\Component\Auth;
-use Cake\Controller\ComponentCollection,
-	Cake\Controller\Controller,
-	Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Utility\Set,
-	Cake\Utility\Inflector,
-	Cake\Utility\Hash,
-	Cake\Error;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Controller;
+use Cake\Error;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+use Cake\Utility\Set;
 
 /**
  * Abstract base authorization adapter for AuthComponent.

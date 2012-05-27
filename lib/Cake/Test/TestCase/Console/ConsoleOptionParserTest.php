@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console;
-use Cake\TestSuite\TestCase,
-	Cake\Console\ConsoleOptionParser,
-	Cake\Console\ConsoleInputOption,
-	Cake\Console\ConsoleInputArgument,
-	Cake\Console\ConsoleInputSubcommand;
+use Cake\Console\ConsoleInputArgument;
+use Cake\Console\ConsoleInputOption;
+use Cake\Console\ConsoleInputSubcommand;
+use Cake\Console\ConsoleOptionParser;
+use Cake\TestSuite\TestCase;
 
 class ConsoleOptionParserTest extends TestCase {
 

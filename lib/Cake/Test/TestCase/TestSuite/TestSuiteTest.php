@@ -13,8 +13,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\TestSuite;
-use Cake\TestSuite\TestCase,
-	Cake\Utility\Folder;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Folder;
 
 /**
  * TestSuiteTest

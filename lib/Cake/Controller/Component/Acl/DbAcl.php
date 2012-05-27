@@ -14,12 +14,12 @@
  */
 
 namespace Cake\Controller\Component\Acl;
-use Cake\Core\Object,
-	Cake\Controller\Component,
-	Cake\Utility\ClassRegistry,
-	Cake\Controller\Component\Acl\AclInterface,
-	Cake\Utility\Hash,
-	Cake\Utility\Set;
+use Cake\Controller\Component;
+use Cake\Controller\Component\Acl\AclInterface;
+use Cake\Core\Object;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Hash;
+use Cake\Utility\Set;
 
 /**
  * DbAcl implements an ACL control system in the database.  ARO's and ACO's are

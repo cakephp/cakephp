@@ -17,16 +17,16 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Error;
-use Cake\TestSuite\TestCase,
-	Cake\Error\ErrorHandler,
-	Cake\Controller\Controller,
-	Cake\Routing\Router,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Log\Log,
-	Cake\Network\Request,
-	Cake\Error;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Error;
+use Cake\Error\ErrorHandler;
+use Cake\Log\Log;
+use Cake\Network\Request;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
 
 /**
  * ErrorHandlerTest class

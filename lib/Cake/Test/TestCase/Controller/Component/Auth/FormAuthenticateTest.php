@@ -18,15 +18,15 @@
  */
 
 namespace Cake\Test\TestCase\Controller\Component\Auth;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\Auth\FormAuthenticate,
-	Cake\Network\Request,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin,
-	Cake\Cache\Cache,
-	Cake\Utility\ClassRegistry,
-	Cake\Utility\Security;
+use Cake\Cache\Cache;
+use Cake\Controller\Component\Auth\FormAuthenticate;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Network\Request;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Security;
 
 require_once CAKE . 'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'models.php';
 

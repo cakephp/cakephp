@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\Auth\ControllerAuthorize,
-	Cake\Controller\Controller,
-	Cake\Network\Request;
+use Cake\Controller\Component\Auth\ControllerAuthorize;
+use Cake\Controller\Controller;
+use Cake\Network\Request;
+use Cake\TestSuite\TestCase;
 
 class ControllerAuthorizeTest extends TestCase {
 

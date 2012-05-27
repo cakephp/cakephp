@@ -18,8 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Cache\Engine;
-use Cake\Cache\CacheEngine,
-	Cake\Utility\Inflector;
+use Cake\Cache\CacheEngine;
+use Cake\Utility\Inflector;
 
 /**
  * APC storage engine for cache

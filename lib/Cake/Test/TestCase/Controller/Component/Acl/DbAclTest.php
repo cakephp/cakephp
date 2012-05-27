@@ -18,13 +18,13 @@
  */
 
 namespace Cake\Test\TestCase\Controller\Component\Acl;
-use Cake\TestSuite\TestCase,
-	Cake\TestSuite\Fixture\TestModel,
-	Cake\Controller\Component\AclComponent,
-	Cake\Controller\Component\Acl\DbAcl,
-	Cake\Controller\ComponentCollection,
-	Cake\Model\AclNode,
-	Cake\Core\Configure;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\AclComponent;
+use Cake\Controller\Component\Acl\DbAcl;
+use Cake\Core\Configure;
+use Cake\Model\AclNode;
+use Cake\TestSuite\Fixture\TestModel;
+use Cake\TestSuite\TestCase;
 
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'Model' . DS . 'models.php';
 

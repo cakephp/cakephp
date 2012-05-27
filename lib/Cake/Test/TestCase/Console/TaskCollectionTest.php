@@ -17,10 +17,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console;
-use Cake\TestSuite\TestCase,
-	Cake\Console\TaskCollection,
-	Cake\Core\App,
-	Cake\Core\Plugin;
+use Cake\Console\TaskCollection;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
 
 class TaskCollectionTest extends TestCase {
 

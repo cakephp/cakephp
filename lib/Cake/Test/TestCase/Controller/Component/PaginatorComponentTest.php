@@ -19,12 +19,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller\Component;
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Component\PaginatorComponent,
-	Cake\Controller\Controller,
-	Cake\Core\Configure,
-	Cake\Network\Request,
-	Cake\Utility\Set;
+use Cake\Controller\Component\PaginatorComponent;
+use Cake\Controller\Controller;
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Set;
 
 /**
  * PaginatorTestController class

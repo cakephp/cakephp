@@ -18,11 +18,11 @@
 
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\TestSuite\TestCase,
-	Cake\View\View,
-	Cake\View\Helper\HtmlHelper,
-	Cake\View\Helper\JsHelper,
-	Cake\View\Helper\MootoolsEngineHelper;
+use Cake\TestSuite\TestCase;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\Helper\JsHelper;
+use Cake\View\Helper\MootoolsEngineHelper;
+use Cake\View\View;
 
 class MootoolsEngineHelperTest extends TestCase {
 

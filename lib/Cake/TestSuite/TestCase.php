@@ -18,10 +18,10 @@
  */
 namespace Cake\TestSuite;
 
-use Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Routing\Router,
-	Cake\Utility\ClassRegistry;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Routing\Router;
+use Cake\Utility\ClassRegistry;
 
 /**
  * Cake TestCase class

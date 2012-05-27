@@ -20,20 +20,20 @@
  */
 
 namespace Cake\Controller\Component;
-use Cake\Controller\Component,
-	Cake\Controller\ComponentCollection,
-	Cake\Controller\Controller,
-	Cake\Model\Datasource\Session,
-	Cake\Routing\Router,
-	Cake\Network\Request,
-	Cake\Network\Response,
-	Cake\Utility\Debugger,
-	Cake\Utility\Set,
-	Cake\Utility\Security,
-	Cake\Utility\Hash,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Error;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Model\Datasource\Session;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Routing\Router;
+use Cake\Utility\Debugger;
+use Cake\Utility\Hash;
+use Cake\Utility\Security;
+use Cake\Utility\Set;
 
 /**
  * Authentication control component class

@@ -18,15 +18,15 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\TestSuite\TestCase,
-	Cake\Controller\Controller,
-	Cake\Model\Model,
-	Cake\View\View,
-	Cake\View\Helper\CacheHelper,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Routing\Router,
-	Cake\Network\Request;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Model\Model;
+use Cake\Network\Request;
+use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
+use Cake\View\Helper\CacheHelper;
+use Cake\View\View;
 
 /**
  * CacheTestController class

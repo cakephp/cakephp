@@ -18,16 +18,16 @@
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
 
-use Cake\TestSuite\TestCase,
-	Cake\Console\Command\Task\ControllerTask,
-	Cake\Console\Command\Task\TemplateTask,
-	Cake\Console\Shell,
-	Cake\Model\Model,
-	Cake\Model\Schema,
-	Cake\View\Helper,
-	Cake\Core\Plugin,
-	Cake\Core\App,
-	Cake\Utility\ClassRegistry;
+use Cake\Console\Command\Task\ControllerTask;
+use Cake\Console\Command\Task\TemplateTask;
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\Model\Model;
+use Cake\Model\Schema;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use Cake\View\Helper;
 
 class BakeArticle extends Model {
 

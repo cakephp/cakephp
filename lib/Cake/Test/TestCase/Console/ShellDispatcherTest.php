@@ -17,11 +17,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console;
-use Cake\TestSuite\TestCase,
-	Cake\Console\ShellDispatcher,
-	Cake\Core\App,
-	Cake\Core\Configure,
-	Cake\Core\Plugin;
+use Cake\Console\ShellDispatcher;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
 
 /**
  * TestShellDispatcher class
