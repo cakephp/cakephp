@@ -551,8 +551,10 @@ class App {
 			$paths[] = $pluginPath . 'Lib' . DS . $package . DS;
 			$paths[] = $pluginPath . $package . DS;
 		}
+
+		$normalizedClassName = str_replace('\\', DS, $className);
 		foreach ($paths as $path) {
-			$file = $path . $className . '.php';
+			$file = $path . $normalizedClassName . '.php';
 			if (file_exists($file)) {
 				self::_map($file, $className, $plugin);
 				return include $file;
