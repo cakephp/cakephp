@@ -127,10 +127,10 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::notEmpty('abcdefg'));
 		$this->assertTrue(Validation::notEmpty('fasdf '));
 		$this->assertTrue(Validation::notEmpty('fooo' . chr(243) . 'blabla'));
-		$this->assertTrue(Validation::notEmpty('abçďĕʑʘπй'));
-		$this->assertTrue(Validation::notEmpty('José'));
-		$this->assertTrue(Validation::notEmpty('é'));
-		$this->assertTrue(Validation::notEmpty('π'));
+		$this->assertTrue(Validation::notEmpty('abÃ§Ä�Ä•Ê‘Ê˜Ï€Ð¹'));
+		$this->assertTrue(Validation::notEmpty('JosÃ©'));
+		$this->assertTrue(Validation::notEmpty('Ã©'));
+		$this->assertTrue(Validation::notEmpty('Ï€'));
 		$this->assertFalse(Validation::notEmpty("\t "));
 		$this->assertFalse(Validation::notEmpty(""));
 	}
@@ -145,9 +145,9 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::notEmpty('abcdefg'));
 		$this->assertTrue(Validation::notEmpty('fasdf '));
 		$this->assertTrue(Validation::notEmpty('fooo' . chr(243) . 'blabla'));
-		$this->assertTrue(Validation::notEmpty('abçďĕʑʘπй'));
-		$this->assertTrue(Validation::notEmpty('José'));
-		$this->assertTrue(Validation::notEmpty(utf8_decode('José')));
+		$this->assertTrue(Validation::notEmpty('abÃ§Ä�Ä•Ê‘Ê˜Ï€Ð¹'));
+		$this->assertTrue(Validation::notEmpty('JosÃ©'));
+		$this->assertTrue(Validation::notEmpty(utf8_decode('JosÃ©')));
 		$this->assertFalse(Validation::notEmpty("\t "));
 		$this->assertFalse(Validation::notEmpty(""));
 	}
@@ -162,11 +162,11 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::alphaNumeric('12234'));
 		$this->assertTrue(Validation::alphaNumeric('1w2e2r3t4y'));
 		$this->assertTrue(Validation::alphaNumeric('0'));
-		$this->assertTrue(Validation::alphaNumeric('abçďĕʑʘπй'));
-		$this->assertTrue(Validation::alphaNumeric('ˇˆๆゞ'));
-		$this->assertTrue(Validation::alphaNumeric('אกあアꀀ豈'));
-		$this->assertTrue(Validation::alphaNumeric('ǅᾈᾨ'));
-		$this->assertTrue(Validation::alphaNumeric('ÆΔΩЖÇ'));
+		$this->assertTrue(Validation::alphaNumeric('abÃ§Ä�Ä•Ê‘Ê˜Ï€Ð¹'));
+		$this->assertTrue(Validation::alphaNumeric('Ë‡Ë†à¹†ã‚ž'));
+		$this->assertTrue(Validation::alphaNumeric('×�à¸�ã�‚ã‚¢ê€€è±ˆ'));
+		$this->assertTrue(Validation::alphaNumeric('Ç…á¾ˆá¾¨'));
+		$this->assertTrue(Validation::alphaNumeric('Ã†Î”Î©Ð–Ã‡'));
 
 		$this->assertFalse(Validation::alphaNumeric('12 234'));
 		$this->assertFalse(Validation::alphaNumeric('dfd 234'));
@@ -204,10 +204,10 @@ class ValidationTest extends CakeTestCase {
 	public function testBetween() {
 		$this->assertTrue(Validation::between('abcdefg', 1, 7));
 		$this->assertTrue(Validation::between('', 0, 7));
-		$this->assertTrue(Validation::between('אกあアꀀ豈', 1, 7));
+		$this->assertTrue(Validation::between('×�à¸�ã�‚ã‚¢ê€€è±ˆ', 1, 7));
 
 		$this->assertFalse(Validation::between('abcdefg', 1, 6));
-		$this->assertFalse(Validation::between('ÆΔΩЖÇ', 1, 3));
+		$this->assertFalse(Validation::between('Ã†Î”Î©Ð–Ã‡', 1, 3));
 	}
 
 /**
@@ -1609,7 +1609,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::email("abc@sub'example.com"));
 		$this->assertFalse(Validation::email('abc@sub/example.com'));
 		$this->assertFalse(Validation::email('abc@yahoo!.com'));
-		$this->assertFalse(Validation::email("Nyrée.surname@example.com"));
+		$this->assertFalse(Validation::email("NyrÃ©e.surname@example.com"));
 		$this->assertFalse(Validation::email('abc@example_underscored.com'));
 		$this->assertFalse(Validation::email('raw@test.ra.ru....com'));
 	}
@@ -1712,10 +1712,10 @@ class ValidationTest extends CakeTestCase {
 	public function testMaxLength() {
 		$this->assertTrue(Validation::maxLength('ab', 3));
 		$this->assertTrue(Validation::maxLength('abc', 3));
-		$this->assertTrue(Validation::maxLength('ÆΔΩЖÇ', 10));
+		$this->assertTrue(Validation::maxLength('Ã†Î”Î©Ð–Ã‡', 10));
 
 		$this->assertFalse(Validation::maxLength('abcd', 3));
-		$this->assertFalse(Validation::maxLength('ÆΔΩЖÇ', 3));
+		$this->assertFalse(Validation::maxLength('Ã†Î”Î©Ð–Ã‡', 3));
 	}
 
 /**
@@ -1725,11 +1725,11 @@ class ValidationTest extends CakeTestCase {
  */
 	public function testMinLength() {
 		$this->assertFalse(Validation::minLength('ab', 3));
-		$this->assertFalse(Validation::minLength('ÆΔΩЖÇ', 10));
+		$this->assertFalse(Validation::minLength('Ã†Î”Î©Ð–Ã‡', 10));
 
 		$this->assertTrue(Validation::minLength('abc', 3));
 		$this->assertTrue(Validation::minLength('abcd', 3));
-		$this->assertTrue(Validation::minLength('ÆΔΩЖÇ', 2));
+		$this->assertTrue(Validation::minLength('Ã†Î”Î©Ð–Ã‡', 2));
 	}
 
 /**
@@ -1779,7 +1779,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::url('http://example.com/~userdir/subdir/index.html'));
 		$this->assertTrue(Validation::url('http://www.zwischenraume.de'));
 		$this->assertTrue(Validation::url('http://www.zwischenraume.cz'));
-		$this->assertTrue(Validation::url('http://www.last.fm/music/浜崎あゆみ'), 'utf8 path failed');
+		$this->assertTrue(Validation::url('http://www.last.fm/music/æµœå´Žã�‚ã‚†ã�¿'), 'utf8 path failed');
 		$this->assertTrue(Validation::url('http://www.electrohome.ro/images/239537750-284232-215_300[1].jpg'));
 
 		$this->assertTrue(Validation::url('http://cakephp.org:80'));
@@ -1889,17 +1889,17 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::money('100.1$', 'right'));
 		$this->assertFalse(Validation::money('100.1111$', 'right'));
 
-		$this->assertTrue(Validation::money('€100'));
-		$this->assertTrue(Validation::money('€100.11'));
-		$this->assertTrue(Validation::money('€100.112'));
-		$this->assertFalse(Validation::money('€100.1'));
-		$this->assertFalse(Validation::money('€100.1111'));
+		$this->assertTrue(Validation::money('â‚¬100'));
+		$this->assertTrue(Validation::money('â‚¬100.11'));
+		$this->assertTrue(Validation::money('â‚¬100.112'));
+		$this->assertFalse(Validation::money('â‚¬100.1'));
+		$this->assertFalse(Validation::money('â‚¬100.1111'));
 
 		$this->assertTrue(Validation::money('100', 'right'));
-		$this->assertTrue(Validation::money('100.11€', 'right'));
-		$this->assertTrue(Validation::money('100.112€', 'right'));
-		$this->assertFalse(Validation::money('100.1€', 'right'));
-		$this->assertFalse(Validation::money('100.1111€', 'right'));
+		$this->assertTrue(Validation::money('100.11â‚¬', 'right'));
+		$this->assertTrue(Validation::money('100.112â‚¬', 'right'));
+		$this->assertFalse(Validation::money('100.1â‚¬', 'right'));
+		$this->assertFalse(Validation::money('100.1111â‚¬', 'right'));
 	}
 
 /**
@@ -2166,4 +2166,30 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::datetime('31 11 2006 1:00pm', 'dmy'));
 	}
 
+/**
+ * testMimeType method
+ *
+ * @return void
+ */
+	public function testMimeType() {
+		$file = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$this->assertTrue(Validation::mimeType($file, array('image/gif')));
+		$this->assertTrue(Validation::mimeType(array('tmp_name' => $file), array('image/gif')));
+
+		$this->assertFalse(Validation::mimeType($file, array('image/png')));
+		$this->assertFalse(Validation::mimeType(array('tmp_name' => $file), array('image/png')));
+	}
+
+/**
+ * testMimeType method
+ *
+ * @return void
+ */
+	public function testUploadError() {
+		$this->assertTrue(Validation::uploadError(0));
+		$this->assertTrue(Validation::uploadError(array('error' => 0)));
+
+		$this->assertFalse(Validation::uploadError(2));
+		$this->assertFalse(Validation::uploadError(array('error' => 2)));
+	}
 }
