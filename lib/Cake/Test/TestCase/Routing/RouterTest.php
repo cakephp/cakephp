@@ -860,11 +860,11 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test that strings starting with mailto: etc are handled correctly.
+ * Test that plain strings urls work
  *
  * @return void
  */
-	public function testUrlGenerationMailtoAndJavascript() {
+	public function testUrlGenerationPlainString() {
 		$mailto = 'mailto:mark@example.com';
 		$result = Router::url($mailto);
 		$this->assertEquals($mailto, $result);
@@ -872,6 +872,10 @@ class RouterTest extends TestCase {
 		$js = 'javascript:alert("hi")';
 		$result = Router::url($js);
 		$this->assertEquals($js, $result);
+
+		$hash = '#first';
+		$result = Router::url($hash);
+		$this->assertEquals($hash, $result);
 	}
 
 /**
