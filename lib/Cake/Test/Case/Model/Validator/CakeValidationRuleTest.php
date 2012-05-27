@@ -120,7 +120,7 @@ class CakeValidationRuleTest extends CakeTestCase {
 		$Rule = new CakeValidationRule($def);
 		$this->assertFalse($Rule->isRequired());
 
-		$Rule->isUpdate(true);
+		$Rule->setIsUpdate(true);
 		$this->assertTrue($Rule->isRequired());
 	}
 
@@ -142,14 +142,31 @@ class CakeValidationRuleTest extends CakeTestCase {
 		$Rule = new CakeValidationRule($def);
 		$this->assertTrue($Rule->isEmptyAllowed());
 
-		$Rule->isUpdate(true);
+		$Rule->setIsUpdate(true);
 		$this->assertFalse($Rule->isEmptyAllowed());
 
 		$def = array('rule' => 'notEmpty', 'allowEmpty' => false, 'on' => 'create');
 		$Rule = new CakeValidationRule($def);
 		$this->assertFalse($Rule->isEmptyAllowed());
 
-		$Rule->isUpdate(true);
+		$Rule->setIsUpdate(true);
 		$this->assertTrue($Rule->isEmptyAllowed());
 	}
+
+/**
+ * Tests if passing of custom options succeeds
+ * 
+ * @return void
+ */
+	public function testPassedOptions() {
+		$def = array('rule' => 'aRule', 'allowEmpty' => true, 'foo' => true, 'bar' => 'brrrrap');
+		$Rule = new CakeValidationRule($def);
+		$expected = array(
+			'foo' => true, 'bar' => 'brrrrap'
+		);
+		$this->assertEqual($Rule->getOptions(), $expected);
+		$this->assertEqual($Rule->getOption('bar'), 'brrrrap');
+		$this->assertEqual($Rule->getOption('nonexistant'), null);
+	}
+
 }

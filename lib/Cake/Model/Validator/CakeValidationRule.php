@@ -146,7 +146,7 @@ class CakeValidationRule {
  */
 	public function isRequired() {
 		if (in_array($this->required, array('create', 'update'), true)) {
-			if ($this->required === 'create' && !$this->isUpdate() || $this->required === 'update' && $this->isUpdate()) {
+			if ($this->required === 'create' && !$this->getIsUpdate() || $this->required === 'update' && $this->getIsUpdate()) {
 				return true;
 			} else {
 				return false;
@@ -192,7 +192,7 @@ class CakeValidationRule {
  */
 	public function skip() {
 		if (!empty($this->on)) {
-			if ($this->on == 'create' && $this->isUpdate() || $this->on == 'update' && !$this->isUpdate()) {
+			if ($this->on == 'create' && $this->getIsUpdate() || $this->on == 'update' && !$this->getIsUpdate()) {
 				return true;
 			}
 		}
@@ -239,20 +239,27 @@ class CakeValidationRule {
 	}
 
 /**
+ * Gets the recordExists configuration value for this rule.
+ * 
+ * @return boolean
+ */
+	public function getIsUpdate() {
+		return $this->_recordExists;
+	}
+
+/**
  * Sets the recordExists configuration value for this rule,
  * ir refers to wheter the model record it is validating exists
  * exists in the collection or not (create or update operation)
  *
  * If called with no parameters it will return whether this rule
  * is configured for update operations or not.
- *
+ * 
+ * @param boolean $exists Indicating wether this is an update or not.
  * @return boolean 
  **/
-	public function isUpdate($exists = null) {
-		if ($exists === null) {
-			return $this->_recordExists;
-		}
-		return $this->_recordExists = $exists;
+	public function setIsUpdate($exists) {
+		return $this->_recordExists = (bool)$exists;
 	}
 
 /**
@@ -283,17 +290,25 @@ class CakeValidationRule {
 	}
 
 /**
- * Returns passed options for this rule
- *
+ * Returns custom passed options for this rule
+ * 
  * @return array
  **/
-	public function getOptions($key) {
-		if (!isset($this->_passedOptions[$key])) {
-			return null;
-		}
-		return $this->_passedOptions[$key];
+	public function getOptions() {
+		return $this->_passedOptions;
 	}
 
+/**
+ * Returns the custom option value for $key
+ * 
+ * @param string $key The key to be looked up
+ * @return mixed The value for option $key or NULL if $key does not exist
+ */
+	public function getOption($key) {
+		if (isset($this->_passedOptions[$key])) {
+			return $this->_passedOptions[$key];
+		}
+	}
 /**
  * Sets the rule properties from the rule entry in validate
  *
@@ -305,12 +320,10 @@ class CakeValidationRule {
 			$validator = array('rule' => $validator);
 		}
 		foreach ($validator as $key => $value) {
-			if (isset($value) || !empty($value)) {
-				if (in_array($key, array('rule', 'required', 'allowEmpty', 'on', 'message', 'last'))) {
-					$this->{$key} = $validator[$key];
-				} else {
-					$this->_passedOptions[$key] = $value;
-				}
+			if (in_array($key, array('rule', 'required', 'allowEmpty', 'on', 'message', 'last'))) {
+				$this->{$key} = $validator[$key];
+			} else {
+				$this->_passedOptions[$key] = $value;
 			}
 		}
 	}

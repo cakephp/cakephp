@@ -119,7 +119,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 	public function validate($data, $isUpdate = false) {
 		$errors = array();
 		foreach ($this->getRules() as $name => $rule) {
-			$rule->isUpdate($isUpdate);
+			$rule->setIsUpdate($isUpdate);
 			if ($rule->skip()) {
 				continue;
 			}
