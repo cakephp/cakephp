@@ -27,15 +27,6 @@ App::uses('CakeValidationSet', 'Model/Validator');
 class CakeValidationSetTest  extends CakeTestCase {
 
 /**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-	}
-
-/**
  * testValidate method
  *
  * @return void

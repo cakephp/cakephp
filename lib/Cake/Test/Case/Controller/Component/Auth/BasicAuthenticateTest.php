@@ -57,15 +57,6 @@ class BasicAuthenticateTest extends CakeTestCase {
 	}
 
 /**
- * tearDown
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-	}
-
-/**
  * test applying settings in the constructor
  *
  * @return void
