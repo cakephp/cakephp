@@ -471,6 +471,9 @@ class Session {
 		if (!empty($sessionConfig['handler'])) {
 			$sessionConfig['ini']['session.save_handler'] = 'user';
 		}
+		if (!isset($sessionConfig['ini']['session.gc_maxlifetime'])) {
+			$sessionConfig['ini']['session.gc_maxlifetime'] = $sessionConfig['timeout'] * 60;
+		}
 
 		if (empty($_SESSION)) {
 			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {

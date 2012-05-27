@@ -737,6 +737,8 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::start();
 		$this->assertEquals(400, Configure::read('Session.cookieTimeout'));
 		$this->assertEquals(400, Configure::read('Session.timeout'));
+		$this->assertEquals(400 * 60, ini_get('session.cookie_lifetime'));
+		$this->assertEquals(400 * 60, ini_get('session.gc_maxlifetime'));
 
 		$_SESSION = null;
 		Configure::write('Session', array(

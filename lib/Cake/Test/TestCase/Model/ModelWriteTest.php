@@ -241,7 +241,7 @@ class ModelWriteTest extends BaseModelTest {
 		$data = array(
 			'OverallFavorite' => array(
 				'id' => 22,
-		 		'model_type' => '8-track',
+				'model_type' => '8-track',
 				'model_id' => '3',
 				'priority' => '1'
 			)

@@ -402,7 +402,6 @@ class ExtractTaskTest extends TestCase {
 		$this->assertNotRegExp($pattern, $result);
 	}
 
-
 /**
  *  Test that the extract shell overwrites existing files with the overwrite parameter
  *
