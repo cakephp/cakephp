@@ -12,9 +12,10 @@ abstract class Driver {
 /**
  * Establishes a conenction to the databse server
  *
+ * @param array $config configuretion to be used for creating connection
  * @return boolean true con success
  **/
-	public abstract function connect($config = array());
+	public abstract function connect(array $config);
 
 /**
  * Returns wheter php is able to use this driver for connecting to database
