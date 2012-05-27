@@ -24,7 +24,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Set;
+use Cake\Utility\Hash;
 
 /**
  * PaginatorTestController class

@@ -35,7 +35,7 @@ class ErrorController extends Controller {
  *
  * @var string
  */
-	public $name = 'CakeError';
+	public $name = 'Error';
 
 /**
  * Uses Property

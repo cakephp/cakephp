@@ -17,16 +17,20 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('AclComponent', 'Controller/Component');
-App::uses('PhpAcl', 'Controller/Component/Acl');
-class_exists('AclComponent');
+namespace Cake\Test\TestCase\Controller\Component;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\AclComponent;
+use Cake\Controller\Component\Acl\PhpAcl;
+use Cake\Controller\Component\Acl\PhpAro;
+use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
 
 /**
  * Test case for the PhpAcl implementation
  *
  * @package       Cake.Test.Case.Controller.Component.Acl
  */
-class PhpAclTest extends CakeTestCase {
+class PhpAclTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

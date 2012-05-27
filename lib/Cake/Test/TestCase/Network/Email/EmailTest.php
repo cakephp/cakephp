@@ -19,8 +19,10 @@
 namespace Cake\Test\TestCase\Network\Email;
 use Cake\Core\App;
 use Cake\Core\Plugin;
+use Cake\Log\Log;
 use Cake\Network\Email\Email;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\File;
 
 /**
  * Help to test CakeEmail
@@ -944,11 +946,11 @@ class CakeEmailTest extends TestCase {
  */
 	public function testSendWithLog() {
 		$path = CAKE . 'Test' . DS . 'TestApp' . DS . 'tmp' . DS;
-		CakeLog::config('email', array(
+		Log::config('email', array(
 			'engine' => 'FileLog',
 			'path' => TMP
 		));
-		CakeLog::drop('default');
+		Log::drop('default');
 		$this->CakeEmail->transport('Debug');
 		$this->CakeEmail->to('me@cakephp.org');
 		$this->CakeEmail->from('cake@cakephp.org');
@@ -956,13 +958,12 @@ class CakeEmailTest extends TestCase {
 		$this->CakeEmail->config(array('log' => 'cake_test_emails'));
 		$result = $this->CakeEmail->send("Logging This");
 
-		App::uses('File', 'Utility');
 		$File = new File(TMP . 'cake_test_emails.log');
 		$log = $File->read();
 		$this->assertTrue(strpos($log, $result['headers']) !== false);
 		$this->assertTrue(strpos($log, $result['message']) !== false);
 		$File->delete();
-		CakeLog::drop('email');
+		Log::drop('email');
 	}
 
 /**

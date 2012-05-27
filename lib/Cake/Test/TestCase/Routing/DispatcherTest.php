@@ -83,7 +83,7 @@ class TestDispatcher extends Dispatcher {
 /**
  * Helper function to test single method attaching for dispatcher filters
  *
- * @param CakeEvent
+ * @param Cake\Event\Event
  * @return void
  */
 	public function filterTest2($event) {

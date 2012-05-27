@@ -179,9 +179,9 @@ class TestShell extends Shell {
 	}
 
 /**
- * Parse the CLI options into an array CakeTestDispatcher can use.
+ * Parse the CLI options into an array Cake\TestSuite\TestDispatcher can use.
  *
- * @return array Array of params for CakeTestDispatcher
+ * @return array Array of params for Cake\TestSuite\TestDispatcher
  */
 	protected function _parseArgs() {
 		if (empty($this->args)) {
@@ -218,7 +218,7 @@ class TestShell extends Shell {
 /**
  * Converts the options passed to the shell as options for the PHPUnit cli runner
  *
- * @return array Array of params for CakeTestDispatcher
+ * @return array Array of params for Cake\TestSuite\TestDispatcher
  */
 	protected function _runnerOptions() {
 		$options = array();

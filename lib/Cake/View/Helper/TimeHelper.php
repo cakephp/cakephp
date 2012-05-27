@@ -33,12 +33,12 @@ use Cake\View\View;
  *
  * @package       Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html
- * @see CakeTime
+ * @see Cake\Utility\Time
  */
 class TimeHelper extends Helper {
 
 /**
- * CakeTime instance
+ * Cake\Utility\Time instance
  */
 	protected $_engine = null;
 
@@ -47,7 +47,7 @@ class TimeHelper extends Helper {
  *
  * ### Settings:
  *
- * - `engine` Class name to use to replace CakeTime functionality
+ * - `engine` Class name to use to replace Cake\Utility\Time functionality
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
@@ -118,14 +118,14 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * Call methods from CakeTime utility class
+ * Call methods from Cake\Utility\Time utility class
  */
 	public function __call($method, $params) {
 		return call_user_func_array(array($this->_engine, $method), $params);
 	}
 
 /**
- * @see CakeTime::convertSpecifiers()
+ * @see Cake\Utility\Time::convertSpecifiers()
  *
  * @param string $format Format with specifiers for strftime function.
  *    Accepts the special specifier %S which mimics the modifier S for date()
@@ -138,7 +138,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::convert()
+ * @see Cake\Utility\Time::convert()
  *
  * @param string $serverTime UNIX timestamp
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -150,7 +150,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::serverOffset()
+ * @see Cake\Utility\Time::serverOffset()
  *
  * @return integer Offset
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
@@ -160,7 +160,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::fromString()
+ * @see Cake\Utility\Time::fromString()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -172,7 +172,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::nice()
+ * @see Cake\Utility\Time::nice()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -185,7 +185,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::niceShort()
+ * @see Cake\Utility\Time::niceShort()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime objectp
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -197,7 +197,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::daysAsSql()
+ * @see Cake\Utility\Time::daysAsSql()
  *
  * @param integer|string|DateTime $begin UNIX timestamp, strtotime() valid string or DateTime object
  * @param integer|string|DateTime $end UNIX timestamp, strtotime() valid string or DateTime object
@@ -211,7 +211,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::dayAsSql()
+ * @see Cake\Utility\Time::dayAsSql()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string $fieldName Name of database field to compare with
@@ -224,7 +224,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::isToday()
+ * @see Cake\Utility\Time::isToday()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -236,7 +236,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::isThisWeek()
+ * @see Cake\Utility\Time::isThisWeek()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -248,7 +248,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::isThisMonth()
+ * @see Cake\Utility\Time::isThisMonth()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -260,7 +260,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::isThisYear()
+ * @see Cake\Utility\Time::isThisYear()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -272,7 +272,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::wasYesterday()
+ * @see Cake\Utility\Time::wasYesterday()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -285,7 +285,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::isTomorrow()
+ * @see Cake\Utility\Time::isTomorrow()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -297,7 +297,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::toQuarter()
+ * @see Cake\Utility\Time::toQuarter()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param boolean $range if true returns a range in Y-m-d format
@@ -309,7 +309,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::toUnix()
+ * @see Cake\Utility\Time::toUnix()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -321,7 +321,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::toAtom()
+ * @see Cake\Utility\Time::toAtom()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -333,7 +333,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::toRSS()
+ * @see Cake\Utility\Time::toRSS()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
@@ -345,7 +345,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::timeAgoInWords()
+ * @see Cake\Utility\Time::timeAgoInWords()
  *
  * ## Addition options
  *
@@ -393,7 +393,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::wasWithinLast()
+ * @see Cake\Utility\Time::wasWithinLast()
  *
  * @param string|integer $timeInterval the numeric value with space then time type.
  *    Example of valid types: 6 hours, 2 days, 1 minute.
@@ -407,7 +407,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::isWithinLast()
+ * @see Cake\Utility\Time::isWithinLast()
  *
  * @param string|integer $timeInterval the numeric value with space then time type.
  *    Example of valid types: 6 hours, 2 days, 1 minute.
@@ -421,7 +421,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::gmt()
+ * @see Cake\Utility\Time::gmt()
  *
  * @param integer|string|DateTime $string UNIX timestamp, strtotime() valid string or DateTime object
  * @return integer UNIX timestamp
@@ -432,7 +432,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::format()
+ * @see Cake\Utility\Time::format()
  *
  * @param integer|string|DateTime $format date format string (or a UNIX timestamp, strtotime() valid string or DateTime object)
  * @param integer|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)
@@ -446,7 +446,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * @see CakeTime::i18nFormat()
+ * @see Cake\Utility\Time::i18nFormat()
  *
  * @param integer|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
  * @param string $format strftime format string.

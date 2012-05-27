@@ -2566,7 +2566,7 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test that route classes must extend CakeRoute
+ * Test that route classes must extend Cake\Routing\Route\Route
  *
  * @expectedException Cake\Error\RouterException
  * @return void
@@ -2577,7 +2577,7 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test that route classes must extend CakeRoute
+ * Test that route classes must extend Cake\Routing\Route\Route
  *
  * @expectedException Cake\Error\RouterException
  * @return void

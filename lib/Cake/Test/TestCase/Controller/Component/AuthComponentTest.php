@@ -126,7 +126,7 @@ class AuthComponentTest extends TestCase {
 	public function testIsErrorOrTests() {
 		$this->Controller->Auth->initialize($this->Controller);
 
-		$this->Controller->name = 'CakeError';
+		$this->Controller->name = 'Error';
 		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
 
 		$this->Controller->name = 'Post';

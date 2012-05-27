@@ -19,6 +19,7 @@ namespace Cake\Network;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Utility\Hash;
+use Cake\Utility\Set;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.

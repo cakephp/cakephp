@@ -24,6 +24,7 @@ use Cake\Model\ConnectionManager;
 use Cake\Model\Schema;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
+use Cake\Utility\Inflector;
 
 /**
  * Test for Schema database management

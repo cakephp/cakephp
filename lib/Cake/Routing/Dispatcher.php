@@ -46,7 +46,7 @@ class Dispatcher implements EventListener {
 /**
  * Event manager, used to handle dispatcher filters
  *
- * @var CakeEventMaanger
+ * @var Cake\Event\EventMaanger
  */
 	protected $_eventManager;
 

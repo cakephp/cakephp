@@ -35,7 +35,7 @@ class LogEngineCollection extends ObjectCollection {
  * @param string $name instance identifier
  * @param array $options Setting for the Log Engine
  * @return BaseLog BaseLog engine instance
- * @throws CakeLogException when logger class does not implement a write method
+ * @throws Cake\Error\LogException when logger class does not implement a write method
  */
 	public function load($name, $options = array()) {
 		$enable = isset($options['enabled']) ? $options['enabled'] : true;

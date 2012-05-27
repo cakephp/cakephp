@@ -20,6 +20,7 @@ namespace Cake\Test\TestCase\Network\Http;
 use Cake\Network\Http\HttpResponse;
 use Cake\Network\Http\HttpSocket;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Hash;
 use Cake\Utility\Set;
 
 /**

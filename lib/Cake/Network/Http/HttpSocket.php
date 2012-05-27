@@ -20,6 +20,7 @@ namespace Cake\Network\Http;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Network\Socket;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\Set;
 

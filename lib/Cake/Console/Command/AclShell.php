@@ -18,6 +18,7 @@
 namespace Cake\Console\Command;
 
 use Cake\Console\Shell;
+use Cake\Controller\Controller;
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Component\AclComponent;
 use Cake\Core\Configure;

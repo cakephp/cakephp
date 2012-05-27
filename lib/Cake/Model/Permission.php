@@ -17,6 +17,7 @@
  */
 namespace Cake\Model;
 use Cake\Core\Configure;
+use Cake\Utility\Hash;
 
 /**
  * Permissions linking AROs with ACOs

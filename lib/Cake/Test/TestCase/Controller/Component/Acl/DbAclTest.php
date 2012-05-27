@@ -23,6 +23,7 @@ use Cake\Controller\Component\AclComponent;
 use Cake\Controller\Component\Acl\DbAcl;
 use Cake\Core\Configure;
 use Cake\Model\AclNode;
+use Cake\Model\Permission;
 use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
 
