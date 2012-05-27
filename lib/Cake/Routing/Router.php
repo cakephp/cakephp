@@ -660,10 +660,21 @@ class Router {
 			$options = array();
 		}
 		$urlType = gettype($url);
+		$hasColonSlash = $hasLeadingSlash = $isJavascript = $isMailto = false;
+
+		if ($urlType === 'string') {
+			$isJavascript = strpos($url, 'javascript:') === 0;
+			$isMailto = strpos($url, 'mailto:') === 0;
+			$hasColonSlash = strpos($url, '://') !== false;
+			$hasLeadingSlash = isset($url[0]) ? $url[0] === '/' : false;
+		}
+
 		if (
 			$urlType === 'string' &&
 			strpos($url, ':') !== false &&
-			strpos($url, '/') === false
+			strpos($url, '/') === false &&
+			!$isMailto &&
+			!$isJavascript
 		) {
 			$url = self::_splitName($url, $options);
 			$urlType = 'array';
@@ -685,12 +696,6 @@ class Router {
 		}
 
 		$output = $frag = null;
-		$hasColonSlash = $hasLeadingSlash = false;
-
-		if ($urlType === 'string') {
-			$hasColonSlash = strpos($url, '://') !== false;
-			$hasLeadingSlash = isset($url[0]) ? $url[0] === '/' : false;
-		}
 
 		if (empty($url)) {
 			$output = isset($here) ? $here : '/';
@@ -752,7 +757,9 @@ class Router {
 		} elseif (
 			$urlType === 'string' &&
 			!$hasLeadingSlash &&
-			!$hasColonSlash
+			!$hasColonSlash &&
+			!$isMailto &&
+			!$isJavascript
 		) {
 			// named route.
 			$route = self::$_routes->get($url);
@@ -771,9 +778,7 @@ class Router {
 		} else {
 			// String urls.
 			if (
-				($hasColonSlash ||
-				(strpos($url, 'javascript:') === 0) ||
-				(strpos($url, 'mailto:') === 0)) ||
+				($hasColonSlash || $isJavascript || $isMailto) ||
 				(!strncmp($url, '#', 1))
 			) {
 				return $url;

@@ -860,6 +860,21 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test that strings starting with mailto: etc are handled correctly.
+ *
+ * @return void
+ */
+	public function testUrlGenerationMailtoAndJavascript() {
+		$mailto = 'mailto:mark@example.com';
+		$result = Router::url($mailto);
+		$this->assertEquals($mailto, $result);
+
+		$js = 'javascript:alert("hi")';
+		$result = Router::url($js);
+		$this->assertEquals($js, $result);
+	}
+
+/**
  * test that you can leave active plugin routes with plugin = null
  *
  * @return void
@@ -1900,7 +1915,7 @@ class RouterTest extends TestCase {
  *
  * @return void
  */
-	public function testRouterReverse() {
+	public function testReverse() {
 		Router::connect('/:controller/:action/*');
 		$params = array(
 			'controller' => 'posts',
@@ -1916,6 +1931,7 @@ class RouterTest extends TestCase {
 		$result = Router::reverse($params);
 		$this->assertEquals('/posts/view/1', $result);
 
+		Router::reload();
 		Router::connect('/:lang/:controller/:action/*', array(), array('lang' => '[a-z]{3}'));
 		$params = array(
 			'lang' => 'eng',
