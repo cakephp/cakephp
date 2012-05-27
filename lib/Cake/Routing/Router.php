@@ -656,8 +656,7 @@ class Router {
 	public static function url($url = null, $options = array()) {
 		$full = false;
 		if (is_bool($options)) {
-			$full = $options;
-			$options = array();
+			list($full, $options) = array($options, array());
 		}
 		$urlType = gettype($url);
 		$hasColonSlash = $hasLeadingSlash = $plainString = false;
