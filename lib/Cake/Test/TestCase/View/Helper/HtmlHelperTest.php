@@ -37,28 +37,6 @@ if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');
 }
 
-/**
- * TheHtmlTestController class
- *
- * @package       Cake.Test.Case.View.Helper
- */
-class TheHtmlTestController extends Controller {
-
-/**
- * name property
- *
- * @var string 'TheTest'
- */
-	public $name = 'TheTest';
-
-/**
- * uses property
- *
- * @var mixed null
- */
-	public $uses = null;
-}
-
 class TestHtmlHelper extends HtmlHelper {
 
 /**
@@ -153,7 +131,8 @@ class HtmlHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = $this->getMock('Cake\View\View', array('append'), array(new TheHtmlTestController()));
+		$controller = $this->getMock('Cake\Controller\Controller');
+		$this->View = $this->getMock('Cake\View\View', array('append'), array($controller));
 		$this->Html = new TestHtmlHelper($this->View);
 		$this->Html->request = new Request(null, false);
 		$this->Html->request->webroot = '';
