@@ -245,7 +245,7 @@ class FormHelper extends AppHelper {
  */
 	protected function _isRequiredField($validationRules) {
 		foreach ($validationRules as $rule) {
-			$rule->isUpdate($this->requestType === 'put');
+			$rule->setIsUpdate($this->requestType === 'put');
 			if (!$rule->isEmptyAllowed()) {
 				return true;
 			}
