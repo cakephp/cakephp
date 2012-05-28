@@ -2166,4 +2166,30 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::datetime('31 11 2006 1:00pm', 'dmy'));
 	}
 
+/**
+ * testMimeType method
+ *
+ * @return void
+ */
+	public function testMimeType() {
+		$file = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$this->assertTrue(Validation::mimeType($file, array('image/gif')));
+		$this->assertTrue(Validation::mimeType(array('tmp_name' => $file), array('image/gif')));
+
+		$this->assertFalse(Validation::mimeType($file, array('image/png')));
+		$this->assertFalse(Validation::mimeType(array('tmp_name' => $file), array('image/png')));
+	}
+
+/**
+ * testMimeType method
+ *
+ * @return void
+ */
+	public function testUploadError() {
+		$this->assertTrue(Validation::uploadError(0));
+		$this->assertTrue(Validation::uploadError(array('error' => 0)));
+
+		$this->assertFalse(Validation::uploadError(2));
+		$this->assertFalse(Validation::uploadError(array('error' => 2)));
+	}
 }
