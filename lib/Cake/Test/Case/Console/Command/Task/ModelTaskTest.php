@@ -315,7 +315,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
 		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('22', 'y', '17', 'n'));
+			->will($this->onConsecutiveCalls('23', 'y', '17', 'n'));
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('notempty' => 'notempty', 'maxlength' => 'maxlength');
@@ -333,7 +333,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->interactive = true;
 
 		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('999999', '22', 'n'));
+			->will($this->onConsecutiveCalls('999999', '23', 'n'));
 
 		$this->Task->expects($this->at(7))->method('out')
 			->with($this->stringContains('make a valid'));
