@@ -18,6 +18,7 @@
  */
 namespace Cake\Utility;
 use Cake\Core\App;
+use Cake\Utility\File;
 
 // Load multibyte if the extension is missing.
 if (!function_exists('mb_strlen')) {
@@ -857,6 +858,39 @@ class Validation {
 		}
 
 		return ($sum % 10 == 0);
+	}
+
+/**
+ * Checks the mime type of a file
+ *
+ * @param string|array $check
+ * @param array $mimeTypes to check for
+ * @return boolean Success
+ */
+	public static function mimeType($check, $mimeTypes = array()) {
+		if (is_array($check) && isset($check['tmp_name'])) {
+			$check = $check['tmp_name'];
+		}
+
+		$File = new File($check);
+		$mime = $File->mime();
+
+		return in_array($mime, $mimeTypes);
+	}
+
+/**
+ * Checking for upload errors
+ *
+ * @param string|array $check
+ * @retrun boolean
+ * @see http://www.php.net/manual/en/features.file-upload.errors.php
+ */
+	public static function uploadError($check) {
+		if (is_array($check) && isset($check['error'])) {
+			$check = $check['error'];
+		}
+
+		return $check === UPLOAD_ERR_OK;
 	}
 
 /**
