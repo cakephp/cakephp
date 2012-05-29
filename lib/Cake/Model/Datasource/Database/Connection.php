@@ -3,7 +3,8 @@
 namespace Cake\Model\Datasource\Database;
 
 use PDOException,
-	Exception;
+	Cake\Model\Datasource\Database\Exception\MissingDriverException,
+	Cake\Model\Datasource\Database\Exception\MissingExtensionException;
 
 /**
  * Represents a conection with a database server
@@ -27,7 +28,7 @@ class Connection {
 	protected $_driver;
 
 /**
- * Whether connection was stablished or not
+ * Whether connection was established or not
  *
  * @var boolean
  **/
@@ -37,10 +38,20 @@ class Connection {
  * Constructor
  *
  * @param array $config configuration for conencting to database
+ * @throws \Cake\Model\Datasource\Database\Exception\MissingDriverException if driver class can not be found
+ * @throws  \Cake\Model\Datasource\Database\Exception\MissingExtensionException if driver cannot be used
  * @return void
  **/
 	public function __construct($config) {
+		$this->_config = $config;
+		if (!class_exists($config['datasource'])) {
+			throw new MissingDriverException(array('driver' => $config['datasource']));
+		}
+		$this->_driver = new $config['datasource'];
 
+		if (!$this->_driver->enabled()) {
+			throw new MissingExtensionException(array('driver' => get_class($this->_driver)));
+		}
 	}
 
 /**
@@ -49,7 +60,10 @@ class Connection {
  * @return boolean true on success or false if already connected
  **/
 	public function connect() {
-
+		if ($this->_connected) {
+			return false;
+		}
+		return $this->_connected = $this->_driver->connect($this->_config);
 	}
 
 /**
@@ -58,7 +72,8 @@ class Connection {
  * @return void
  **/
 	public function disconnect() {
-
+		$this->_driver->disconnect();
+		$this->_connected = false;
 	}
 
 /**

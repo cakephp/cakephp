@@ -18,10 +18,25 @@ abstract class Driver {
 	public abstract function connect(array $config);
 
 /**
+ * Disconnects from database server
+ *
+ * @return void
+ **/
+	public abstract function disconnect();
+
+/**
  * Returns wheter php is able to use this driver for connecting to database
  *
  * @return boolean true if it is valid to use this driver
  **/
 	public abstract function enabled();
+
+/**
+ * Prepares a sql statement to be executed
+ *
+ * @param string $sql
+ * @return Cake\Model\Datasource\Database\Statement
+ **/
+	public abstract function prepare($sql);
 
 }
