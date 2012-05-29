@@ -997,7 +997,7 @@ class FolderTest extends CakeTestCase {
 	 * - file3.php
 	 * $folderFour: folder_test/folder2/folder4/
 	 * - file4.php
-	 * $folderFive: folder_test/folder4/
+	 * $folderFive: folder_test/folder5/
 	 */
 	function testCopyWithOverwrite() {
 		$path = TMP . 'folder_test';
