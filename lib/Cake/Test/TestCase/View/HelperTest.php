@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -609,6 +610,8 @@ class HelperTest extends TestCase {
  * @return void
  */
 	public function testAssetUrl() {
+		Router::connect('/:controller/:action/*');
+
 		$this->Helper->webroot = '';
 		$result = $this->Helper->assetUrl(array(
 				'controller' => 'js',

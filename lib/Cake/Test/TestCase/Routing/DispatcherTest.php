@@ -437,7 +437,7 @@ class DispatcherTest extends TestCase {
 		$this->assertEquals($expected, $Dispatcher->controller->name);
 
 		$expected = array('0' => 'home');
-		$this->assertSame($expected, $controller->request->params['pass']);
+		$this->assertSame($expected, $Dispatcher->controller->request->params['pass']);
 
 		Configure::write('App.baseUrl', '/pages/index.php');
 
@@ -687,7 +687,7 @@ class DispatcherTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response', array('send'));
 		$dispatcher->dispatch($request, $response);
 		$this->assertEmpty($dispatcher->controller);
-		$expected = array('controller' => null, 'action' => null, 'plugin' => null, 'named' => array(), 'pass' => array());
+		$expected = array('controller' => null, 'action' => null, 'plugin' => null, 'pass' => array());
 		$this->assertEquals($expected, $request->params);
 
 		$dispatcher = new TestDispatcher();
