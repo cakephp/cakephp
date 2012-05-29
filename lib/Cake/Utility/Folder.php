@@ -618,7 +618,7 @@ class Folder {
  * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
  * - `mode` The mode to copy the files/directories with.
  * - `skip` Files/directories to skip.
- * - `schema` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
+ * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
  *
  * @param mixed $options Either an array of options (see above) or a string of the destination directory.
  * @return boolean Success
@@ -633,7 +633,7 @@ class Folder {
 			$to = $options;
 			$options = array();
 		}
-		$options = array_merge(array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array(), 'scheme'=>Folder::MERGE), $options);
+		$options = array_merge(array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array(), 'scheme' => Folder::MERGE), $options);
 
 		$fromDir = $options['from'];
 		$toDir = $options['to'];
@@ -687,7 +687,7 @@ class Folder {
 							$this->_errors[] = __d('cake_dev', '%s not created', $to);
 						}
 					} elseif (is_dir($from) && $options['scheme'] == Folder::MERGE) {
-						$options = array_merge($options, array('to'=> $to, 'from'=> $from));
+						$options = array_merge($options, array('to' => $to, 'from' => $from));
 						$this->copy($options);
 					}
 				}
@@ -712,9 +712,9 @@ class Folder {
  * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
  * - `chmod` The mode to copy the files/directories with.
  * - `skip` Files/directories to skip.
- * - `schema` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
+ * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
  *
- * @param array $options (to, from, chmod, skip, schema)
+ * @param array $options (to, from, chmod, skip, scheme)
  * @return boolean Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::move
  */

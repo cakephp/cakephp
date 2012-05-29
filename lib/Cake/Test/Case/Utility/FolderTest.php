@@ -820,7 +820,7 @@ class FolderTest extends CakeTestCase {
 	 * - file3.php
 	 * $folderFour: folder_test/folder2/folder4/
 	 * - file4.php
-	 * $folderFive: folder_test/folder4/
+	 * $folderFive: folder_test/folder5/
 	 */
 	public function testCopy() {
 		$path = TMP . 'folder_test';
@@ -880,7 +880,7 @@ class FolderTest extends CakeTestCase {
 	 * - file3.php
 	 * $folderFour: folder_test/folder2/folder4/
 	 * - file4.php
-	 * $folderFive: folder_test/folder4/
+	 * $folderFive: folder_test/folder5/
 	 */
 	public function testCopyWithMerge() {
 		$path = TMP . 'folder_test';
@@ -914,7 +914,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertTrue(file_exists($folderFive . DS . 'folder3' . DS . 'file3.php'));
 		
 		$Folder = new Folder($folderTwo);
-		$result = $Folder->copy(array('to'=>$folderFive, 'scheme'=>Folder::MERGE));
+		$result = $Folder->copy(array('to' => $folderFive, 'scheme' => Folder::MERGE));
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($folderFive . DS . 'file1.php'));
 		$this->assertTrue(file_exists($folderFive . DS . 'file2.php'));
@@ -951,7 +951,7 @@ class FolderTest extends CakeTestCase {
 		touch($fileTwo);
 
 		$Folder = new Folder($folderOne);
-		$result = $Folder->copy(array('to'=>$folderThree, 'scheme'=>Folder::SKIP));
+		$result = $Folder->copy(array('to' => $folderThree, 'scheme' => Folder::SKIP));
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
 		$this->assertTrue(file_exists($folderThree . DS . 'folder2' . DS . 'file2.php'));
@@ -960,7 +960,7 @@ class FolderTest extends CakeTestCase {
 		$Folder->delete();
 
 		$Folder = new Folder($folderOne);
-		$result = $Folder->copy(array('to'=>$folderThree, 'scheme'=>Folder::SKIP));
+		$result = $Folder->copy(array('to' => $folderThree, 'scheme' => Folder::SKIP));
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
 		$this->assertTrue(file_exists($folderThree . DS . 'folder2' . DS . 'file2.php'));
@@ -973,7 +973,7 @@ class FolderTest extends CakeTestCase {
 		file_put_contents($folderThree . DS . 'folder2' . DS . 'file2.php', 'untouched');
 
 		$Folder = new Folder($folderOne);
-		$result = $Folder->copy(array('to'=>$folderThree, 'scheme'=>Folder::SKIP));
+		$result = $Folder->copy(array('to' => $folderThree, 'scheme' => Folder::SKIP));
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
 		$this->assertEquals('untouched', file_get_contents($folderThree . DS . 'folder2' . DS . 'file2.php'));
@@ -1023,14 +1023,14 @@ class FolderTest extends CakeTestCase {
 		touch($file4);
 		
 		$Folder = new Folder($folderOne);
-		$result = $Folder->copy(array('to'=>$folderFive, 'scheme'=>Folder::OVERWRITE));
+		$result = $Folder->copy(array('to' => $folderFive, 'scheme' => Folder::OVERWRITE));
 		
 		
 		$this->assertTrue(file_exists($folderFive . DS . 'file1.php'));
 		$this->assertTrue(file_exists($folderFive . DS . 'folder' . DS . 'file3.php'));
 		
 		$Folder = new Folder($folderTwo);
-		$result = $Folder->copy(array('to'=>$folderFive, 'scheme'=>Folder::OVERWRITE));
+		$result = $Folder->copy(array('to' => $folderFive, 'scheme' => Folder::OVERWRITE));
 		$this->assertTrue($result);
 		
 		$this->assertTrue(file_exists($folderFive . DS . 'file1.php'));
@@ -1147,7 +1147,7 @@ class FolderTest extends CakeTestCase {
 		touch($fileTwo);
 
 		$Folder = new Folder($folderOne);
-		$result = $Folder->move(array('to'=>$folderThree, 'scheme'=>Folder::SKIP));
+		$result = $Folder->move(array('to' => $folderThree, 'scheme' => Folder::SKIP));
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
 		$this->assertTrue(is_dir($folderThree . DS . 'folder2'));
@@ -1165,7 +1165,7 @@ class FolderTest extends CakeTestCase {
 		touch($fileTwo);
 
 		$Folder = new Folder($folderOne);
-		$result = $Folder->move(array('to'=>$folderThree, 'scheme'=>Folder::SKIP));
+		$result = $Folder->move(array('to' => $folderThree, 'scheme' => Folder::SKIP));
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
 		$this->assertTrue(is_dir($folderThree . DS . 'folder2'));
@@ -1186,7 +1186,7 @@ class FolderTest extends CakeTestCase {
 		file_put_contents($folderThree . DS . 'folder2' . DS . 'file2.php', 'untouched');
 
 		$Folder = new Folder($folderOne);
-		$result = $Folder->move(array('to'=>$folderThree, 'scheme'=>Folder::SKIP));
+		$result = $Folder->move(array('to' => $folderThree, 'scheme' => Folder::SKIP));
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
 		$this->assertEquals('untouched', file_get_contents($folderThree . DS . 'folder2' . DS . 'file2.php'));
