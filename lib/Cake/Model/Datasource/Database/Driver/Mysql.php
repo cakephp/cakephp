@@ -2,9 +2,10 @@
 
 namespace Cake\Model\Datasource\Database\Driver;
 
-use PDO;
+use PDO,
+	Cake\Model\Datasource\Database\Statement;
 
-class Mysql extends Cake\Model\Datasource\Database\Driver {
+class Mysql extends \Cake\Model\Datasource\Database\Driver {
 
 /**
  * Base configuration settings for MySQL driver
@@ -16,7 +17,7 @@ class Mysql extends Cake\Model\Datasource\Database\Driver {
 		'host' => 'localhost',
 		'login' => 'root',
 		'password' => '',
-		'database' => '',
+		'database' => 'cake',
 		'port' => '3306',
 		'flags' => array(),
 		'encoding' => 'utf8'
@@ -58,6 +59,15 @@ class Mysql extends Cake\Model\Datasource\Database\Driver {
 		);
 
 		return true;
+	}
+
+/**
+ * Disconnects from database server
+ *
+ * @return void
+ **/
+	public function disconnect() {
+		$this->_connection = null;
 	}
 
 /**
