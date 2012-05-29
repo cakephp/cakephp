@@ -436,6 +436,22 @@ class RouteTest extends TestCase {
 			'_ext' => 'json'
 		));
 		$this->assertEquals('/posts/index.json', $result);
+
+		$route = new Route('/:controller/:action/*');
+		$result = $route->match(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'_ext' => 'json',
+		));
+		$this->assertEquals('/posts/index.json', $result);
+
+		$result = $route->match(array(
+			'controller' => 'posts',
+			'action' => 'view',
+			1,
+			'_ext' => 'json',
+		));
+		$this->assertEquals('/posts/view/1.json', $result);
 	}
 
 /**

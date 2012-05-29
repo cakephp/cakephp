@@ -495,11 +495,13 @@ class Route {
 				$out
 			);
 		}
+		if (!empty($params['_ext']) || !empty($query)) {
+			$out = rtrim($out, '/');
+		}
 		if (!empty($params['_ext'])) {
 			$out .= '.' . $params['_ext'];
 		}
 		if (!empty($query)) {
-			$out = rtrim($out, '/');
 			$out .= '?' . http_build_query($query);
 		}
 		return $out;
