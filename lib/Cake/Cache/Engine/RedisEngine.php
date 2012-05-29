@@ -36,6 +36,9 @@ class RedisEngine extends CacheEngine {
  * Settings
  *
  *  - server = string url or ip to the Redis server host
+ *  - port = integer port number to the Redis server (default: 6379)
+ *  - timeout = float timeout in seconds (default: 0)
+ *  - persistent = bool Connects to the Redis server with a persistent connection (default: true)
  *
  * @var array
  */
@@ -58,9 +61,9 @@ class RedisEngine extends CacheEngine {
 			'engine' => 'Redis',
 			'prefix' => null,
 			'server' => '127.0.0.1',
-			'port' => null,
-			'persistent' => true,
-			'serialize' => true
+			'port' => 6379,
+			'timeout' => 0,
+			'persistent' => true
 			), $settings)
 		);
 
@@ -77,9 +80,9 @@ class RedisEngine extends CacheEngine {
 		try {
 			$this->_Redis = new Redis();
 			if (empty($this->settings['persistent'])) {
-				$return = $this->_Redis->connect($this->settings['server']);
+				$return = $this->_Redis->connect($this->settings['server'], $this->settings['port'], $this->settings['timeout']);
 			} else {
-				$return = $this->_Redis->pconnect($this->settings['server']);
+				$return = $this->_Redis->pconnect($this->settings['server'], $this->settings['port'], $this->settings['timeout']);
 			}
 		} catch (RedisException $e) {
 			return false;

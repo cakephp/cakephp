@@ -64,15 +64,15 @@ class RegisEngineTest extends CakeTestCase {
  */
 	public function testSettings() {
 		$settings = Cache::settings('redis');
-		unset($settings['serialize'], $settings['path']);
 		$expecting = array(
-			'port' => null,
 			'prefix' => 'cake_',
 			'duration' => 3600,
 			'probability' => 100,
 			'groups' => array(),
 			'engine' => 'Redis',
 			'server' => '127.0.0.1',
+			'port' => 6379,
+			'timeout' => 0,
 			'persistent' => true
 		);
 		$this->assertEquals($expecting, $settings);
