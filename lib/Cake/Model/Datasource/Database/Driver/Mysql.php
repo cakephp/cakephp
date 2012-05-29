@@ -80,4 +80,15 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 		return in_array('mysql', PDO::getAvailableDrivers());
 	}
 
+/**
+ * Prepares a sql statement to be executed
+ *
+ * @param string $sql
+ * @return Cake\Model\Datasource\Database\Statement
+ **/
+	public  function prepare($sql) {
+		$statement = $this->_connection->prepare($sql);
+		return new Statement($statement, $this);
+	}
+
 }

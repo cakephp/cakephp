@@ -82,17 +82,18 @@ class Connection {
  * @return boolean
  **/
 	public function isConnected() {
-
+		return $this->_connected;
 	}
 
 /**
- * Prepares a sql statement to be used multiple times
+ * Prepares a sql statement to be executed
  *
  * @param string $sql
  * @return Cake\Model\Datasource\Database\Statement
  **/
 	public function prepare($sql) {
-
+		$this->connect();
+		return $this->_driver->prepare($sql);
 	}
 
 /**
@@ -105,7 +106,15 @@ class Connection {
  * @return Cake\Model\Datasource\Database\Statement executed statament
  **/
 	public function execute($query, array $params = array(), array $types = array()) {
-
+		$this->connect();
+		if ($params) {
+			$statement = $this->prepare($query);
+			$this->_bindValues($statement, $params, $types);
+			$result = $statement->execute();
+		} else {
+			$result = $this->query($query);
+		}
+		return $statement;
 	}
 
 /**
@@ -220,6 +229,28 @@ class Connection {
  **/
 	public function charset($collation) {
 
+	}
+
+/**
+ * Binds values to statement object with corresponding type
+ *
+ * @param \Cake\Model\Datasource\Database\Statement The statement objet to bind values to
+ * @param array $params list of values to be bound
+ * @param array $types list of types to be used, kesy should match those in $params
+ * @return void
+ **/
+	protected function _bindValues($statement, $params, $types) {
+		$offset = 1;
+		if (!empty($types) && is_int(key($types))) {
+			$params = array_values($params);
+		}
+		foreach ($params as $index => $value) {
+			if (isset($types[$index])) {
+				$statement->bindValue($index + $offset, $value, $type);
+			} else {
+				$statement->bindValue($index + $offset, $value);
+			}
+		}
 	}
 
 }
