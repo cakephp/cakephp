@@ -65,6 +65,17 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that connecting with invalid credentials or database name throws an exception
+ *
+ * @expectedException \Cake\Model\Datasource\Database\Exception\MissingConnectionException
+ * @return void
+ **/
+	public function testWrongCredentials() {
+		$connection = new Connection(array('database' => 'foobar') + Configure::read('Connections.test'));
+		$connection->connect();
+	}
+
+/**
  * Tests disconnecting from database
  *
  * @return void
@@ -88,6 +99,11 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($sql, $result->queryString);
 	}
 
+/**
+ * Tests executing a simple query using bound values
+ *
+ * @return void
+ **/
 	public function testExecuteWithArguments() {
 		$sql = 'SELECT 1 + ?';
 		$statement = $this->connection->execute($sql, array(1));

@@ -4,7 +4,8 @@ namespace Cake\Model\Datasource\Database;
 
 use PDOException,
 	Cake\Model\Datasource\Database\Exception\MissingDriverException,
-	Cake\Model\Datasource\Database\Exception\MissingExtensionException;
+	Cake\Model\Datasource\Database\Exception\MissingExtensionException,
+	Cake\Model\Datasource\Database\Exception\MissingConnectionException;
 
 /**
  * Represents a conection with a database server
@@ -57,13 +58,18 @@ class Connection {
 /**
  * Connects to the configured databatase
  *
+ * @throws \Cake\Model\Datasource\Database\Exception\MissingConnectionException if credentials are invalid
  * @return boolean true on success or false if already connected
  **/
 	public function connect() {
 		if ($this->_connected) {
 			return false;
 		}
-		return $this->_connected = $this->_driver->connect($this->_config);
+		try {
+			return $this->_connected = $this->_driver->connect($this->_config);
+		} catch(\Exception $e) {
+			throw new MissingConnectionException(array('reason' => $e->getMessage()));
+		}
 	}
 
 /**
