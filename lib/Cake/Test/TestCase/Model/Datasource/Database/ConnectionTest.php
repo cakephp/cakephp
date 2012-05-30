@@ -153,5 +153,17 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$statement = $this->connection->execute($sql, array(new \DateTime('2012-01-01')), array('bar'));
 	}
 
+/**
+ * Tests executing a qury with no params also works
+ *
+ * @return void
+ **/
+	public function testExecuteWithNoParams() {
+		$sql = 'SELECT 1';
+		$statement = $this->connection->execute($sql);
+		$result = $statement->fetch();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array(1), $result);
+	}
 
 }

@@ -118,7 +118,7 @@ class Connection {
 			$this->_bindValues($statement, $params, $types);
 			$result = $statement->execute();
 		} else {
-			$result = $this->query($query);
+			$statement = $this->query($query);
 		}
 		return $statement;
 	}
@@ -129,7 +129,10 @@ class Connection {
  * @return Cake\Model\Datasource\Database\Statement
  **/
 	public function query($sql) {
-
+		$this->connect();
+		$statement = $this->prepare($sql);
+		$statement->execute();
+		return $statement;
 	}
 
 /**
