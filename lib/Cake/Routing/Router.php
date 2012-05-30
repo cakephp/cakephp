@@ -1102,18 +1102,37 @@ class Router {
 	public static function parseExtensions() {
 		self::$_parseExtensions = true;
 		if (func_num_args() > 0) {
-			self::$_validExtensions = func_get_args();
+			self::setExtensions(func_get_args(), false);
 		}
 	}
 
 /**
- * Get the list of extensions that can be parsed by Router.  To add more
- * extensions use Router::parseExtensions()
+ * Get the list of extensions that can be parsed by Router.
+ * To initially set extensions use `Router::parseExtensions()`
+ * To add more see `setExtensions()`
  *
  * @return array Array of extensions Router is configured to parse.
  */
 	public static function extensions() {
 		return self::$_validExtensions;
+	}
+
+/**
+ * Set/add valid extensions.
+ * To have the extensions parsed you still need to call `Router::parseExtensions()`
+ *
+ * @param array $extensions List of extensions to be added as valid extension
+ * @param boolean $merge Default true will merge extensions. Set to false to override current extensions
+ * @return array
+ */
+	public static function setExtensions($extensions, $merge = true) {
+		if (!is_array($extensions)) {
+			return self::$_validExtensions;
+		}
+		if (!$merge) {
+			return self::$_validExtensions = $extensions;
+		}
+		return self::$_validExtensions = array_merge(self::$_validExtensions, $extensions);
 	}
 
 }

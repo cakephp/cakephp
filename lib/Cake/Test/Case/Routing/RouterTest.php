@@ -1235,15 +1235,46 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * testExtensionParsingSetting method
+ * testParseExtensions method
  *
  * @return void
  */
-	public function testExtensionParsingSetting() {
+	public function testParseExtensions() {
 		$this->assertEquals(array(), Router::extensions());
 
 		Router::parseExtensions('rss');
-		$this->assertEquals(Router::extensions(), array('rss'));
+		$this->assertEquals(array('rss'), Router::extensions());
+	}
+
+/**
+ * testSetExtensions method
+ *
+ * @return void
+ */
+	public function testSetExtensions() {
+		Router::setExtensions(array('rss'));
+		$this->assertEquals(array('rss'), Router::extensions());
+
+		require CAKE . 'Config' . DS . 'routes.php';
+		$result = Router::parse('/posts.rss');
+		$this->assertFalse(isset($result['ext']));
+
+		Router::parseExtensions();
+		$result = Router::parse('/posts.rss');
+		$this->assertEquals('rss', $result['ext']);
+
+		$result = Router::parse('/posts.xml');
+		$this->assertFalse(isset($result['ext']));
+
+		Router::setExtensions(array('xml'));
+		$result = Router::extensions();
+		$this->assertEquals(array('rss', 'xml'), $result);
+
+		$result = Router::parse('/posts.xml');
+		$this->assertEquals('xml', $result['ext']);
+
+		$result = Router::setExtensions(array('pdf'), false);
+		$this->assertEquals(array('pdf'), $result);
 	}
 
 /**
