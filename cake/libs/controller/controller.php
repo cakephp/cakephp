@@ -661,6 +661,11 @@ class Controller extends Object {
  * Redirects to given $url, after turning off $this->autoRender.
  * Script execution is halted after the redirect.
  *
+ * Components will run through their beforeRedirect callbacks. The last
+ * applicable overwriting of ($url, $status and $exit) will win --
+ * except if a "false" is returned from any component, which will trump
+ * all other responses [see Component::beforeRedirect()].
+ *
  * @param mixed $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
@@ -675,15 +680,18 @@ class Controller extends Object {
 		if (is_array($status)) {
 			extract($status, EXTR_OVERWRITE);
 		}
-		$response = $this->Component->beforeRedirect($this, $url, $status, $exit);
 
+		$response = $this->Component->beforeRedirect($this, $url, $status, $exit);
 		if ($response === false) {
 			return;
 		}
 		if (is_array($response)) {
 			foreach ($response as $resp) {
-				if (is_array($resp) && isset($resp['url'])) {
-					extract($resp, EXTR_OVERWRITE);
+				if (is_array($resp)) {
+					if (isset($resp['url'])) {
+						// (1) overwrite: $url -- (2) also overwrite if able: $status, $exit
+						extract($resp, EXTR_OVERWRITE);
+					}
 				} elseif ($resp !== null) {
 					$url = $resp;
 				}
