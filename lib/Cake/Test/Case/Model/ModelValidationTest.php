@@ -1972,7 +1972,7 @@ class ModelValidationTest extends BaseModelTest {
 			array('body' => 'foo3')
 		);
 		$user = new User();
-		$user->hasMany['CustomArticle'] = array('foreignKey' => 'user_id');
+		$user->bindModel(array('hasMany' => array('CustomArticle')));
 		$data = array(
 			'User' => array('user' => 'foo', 'password' => 'bar'),
 			'CustomArticle' => $articles
