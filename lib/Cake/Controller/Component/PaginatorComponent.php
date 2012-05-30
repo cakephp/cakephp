@@ -16,13 +16,12 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Controller\Component;
+
 use Cake\Controller\Component;
 use Cake\Controller\ComponentCollection;
 use Cake\Error;
 use Cake\Utility\Hash;
-use Cake\Utility\Set;
 
 /**
  * This component is used to handle automatic model data pagination.  The primary way to use this
@@ -68,9 +67,6 @@ class PaginatorComponent extends Component {
  * - `maxLimit` The maximum limit users can choose to view. Defaults to 100
  * - `limit` The initial number of items per page.  Defaults to 20.
  * - `page` The starting page, defaults to 1.
- * - `paramType` What type of parameters you want pagination to use?
- *      - `named` Use named parameters / routed parameters.
- *      - `querystring` Use query string parameters.
  *
  * @var array
  */
@@ -78,7 +74,6 @@ class PaginatorComponent extends Component {
 		'page' => 1,
 		'limit' => 20,
 		'maxLimit' => 100,
-		'paramType' => 'named'
 	);
 
 /**
@@ -203,7 +198,6 @@ class PaginatorComponent extends Component {
 			'order' => $order,
 			'limit' => $limit,
 			'options' => Hash::diff($options, $defaults),
-			'paramType' => $options['paramType']
 		);
 		if (!isset($this->Controller->request['paging'])) {
 			$this->Controller->request['paging'] = array();
@@ -285,14 +279,7 @@ class PaginatorComponent extends Component {
  */
 	public function mergeOptions($alias) {
 		$defaults = $this->getDefaults($alias);
-		switch ($defaults['paramType']) {
-			case 'named':
-				$request = $this->Controller->request->params['named'];
-				break;
-			case 'querystring':
-				$request = $this->Controller->request->query;
-				break;
-		}
+		$request = $this->Controller->request->query;
 		$request = array_intersect_key($request, array_flip($this->whitelist));
 		return array_merge($defaults, $request);
 	}
@@ -311,7 +298,7 @@ class PaginatorComponent extends Component {
 			$defaults = $this->settings;
 		}
 		return array_merge(
-			array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named'),
+			array('page' => 1, 'limit' => 20, 'maxLimit' => 100),
 			$defaults
 		);
 	}

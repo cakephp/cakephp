@@ -163,6 +163,8 @@ class JqueryEngineHelperTest extends TestCase {
  * @return void
  */
 	public function testRequest() {
+		Router::connect('/:controller/:action/*');
+
 		$result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = '$.ajax({url:"\\/posts\\/view\\/1"});';
 		$this->assertEquals($expected, $result);
