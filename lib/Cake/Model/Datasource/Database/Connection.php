@@ -246,15 +246,24 @@ class Connection {
  * @return void
  **/
 	protected function _bindValues($statement, $params, $types) {
-		$offset = 1;
-		if (!empty($types) && is_int(key($types))) {
+		if (empty($params)) {
+			return;
+		}
+
+		if (!empty($types) && ctype_digit(key($types))) {
 			$params = array_values($params);
 		}
+
+		$annonymousParams = is_int(key($params)) ? true : false;
+		$offset = 1;
 		foreach ($params as $index => $value) {
+			if ($annonymousParams) {
+				$index += $offset;
+			}
 			if (isset($types[$index])) {
-				$statement->bindValue($index + $offset, $value, $type);
+				$statement->bindValue($index, $value, $type);
 			} else {
-				$statement->bindValue($index + $offset, $value);
+				$statement->bindValue($index, $value);
 			}
 		}
 	}

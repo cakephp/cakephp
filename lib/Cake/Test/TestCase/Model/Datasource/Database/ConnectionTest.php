@@ -116,6 +116,12 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch('assoc');
 		$this->assertEquals(array('total' => 6), $result);
+
+		$sql = 'SELECT 1 + :one + :two AS total';
+		$statement = $this->connection->execute($sql, array('one' => 2, 'two' => 3));
+		$this->assertCount(1, $statement);
+		$result = $statement->fetch('assoc');
+		$this->assertEquals(array('total' => 6), $result);
 	}
 
 }
