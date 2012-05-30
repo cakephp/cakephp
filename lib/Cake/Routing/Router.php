@@ -423,13 +423,7 @@ class Router {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
 
-<<<<<<< HEAD
-		extract(static::_parseExtension($url));
-
 		$out = static::$_routes->parse($url);
-=======
-		$out = self::$_routes->parse($url);
->>>>>>> Move extension parsing.
 
 		if (isset($out['prefix'])) {
 			$out['action'] = $out['prefix'] . '_' . $out['action'];
@@ -439,38 +433,6 @@ class Router {
 	}
 
 /**
-<<<<<<< HEAD
- * Parses a file extension out of a URL, if Router::parseExtensions() is enabled.
- *
- * @param string $url
- * @return array Returns an array containing the altered URL and the parsed extension.
- */
-	protected static function _parseExtension($url) {
-		$ext = null;
-
-		if (static::$_parseExtensions) {
-			if (preg_match('/\.[0-9a-zA-Z]*$/', $url, $match) === 1) {
-				$match = substr($match[0], 1);
-				if (empty(static::$_validExtensions)) {
-					$url = substr($url, 0, strpos($url, '.' . $match));
-					$ext = $match;
-				} else {
-					foreach (static::$_validExtensions as $name) {
-						if (strcasecmp($name, $match) === 0) {
-							$url = substr($url, 0, strpos($url, '.' . $name));
-							$ext = $match;
-							break;
-						}
-					}
-				}
-			}
-		}
-		return compact('ext', 'url');
-	}
-
-/**
-=======
->>>>>>> Move extension parsing.
  * Set the route collection object Router should use.
  *
  * @param Cake\Routing\RouteCollection $routes
@@ -913,7 +875,7 @@ class Router {
  * A list of valid extension can be passed to this method, i.e. Router::parseExtensions('rss', 'xml');
  * If no parameters are given, anything after the first . (dot) after the last / in the URL will be
  * parsed, excluding querystring parameters (i.e. ?q=...).
- *
+*
  * @return void
  * @see RequestHandler::startup()
  */
@@ -922,6 +884,24 @@ class Router {
 		if (func_num_args() > 0) {
 			static::setExtensions(func_get_args(), false);
 		}
+	}
+
+/**
+ * Set/add valid extensions.
+ * To have the extensions parsed you still need to call `Router::parseExtensions()`
+ *
+ * @param array $extensions List of extensions to be added as valid extension
+ * @param boolean $merge Default true will merge extensions. Set to false to override current extensions
+ * @return array
+ */
+	public static function setExtensions($extensions, $merge = true) {
+		if (!is_array($extensions)) {
+			return static::$_validExtensions;
+		}
+		if (!$merge) {
+			return static::$_validExtensions = $extensions;
+		}
+		return static::$_validExtensions = array_merge(static::$_validExtensions, $extensions);
 	}
 
 /**
