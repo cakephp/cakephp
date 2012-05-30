@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View\Helper;
+
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Utility\Inflector;
@@ -67,10 +68,6 @@ class PaginatorHelper extends Helper {
  * - `escape` Defines if the title field for the link should be escaped (default: true).
  * - `update` DOM id of the element updated with the results of the AJAX call.
  *     If this key isn't specified Paginator will use plain HTML links.
- * - `paging['paramType']` The type of parameters to use when creating links.  Valid options are
- *     'querystring' and 'named'.  See PaginatorComponent::$settings for more information.
- * - `convertKeys` - A list of keys in url arrays that should be converted to querysting params
- *    if paramType == 'querystring'.
  *
  * @var array
  */
@@ -406,35 +403,11 @@ class PaginatorHelper extends Helper {
 			unset($url['order']);
 			$url = array_merge($url, compact('sort', 'direction'));
 		}
-		$url = $this->_convertUrlKeys($url, $paging['paramType']);
 
 		if ($asArray) {
 			return $url;
 		}
 		return parent::url($url);
-	}
-
-/**
- * Converts the keys being used into the format set by options.paramType
- *
- * @param array $url Array of url params to convert
- * @param string $type
- * @return array converted url params.
- */
-	protected function _convertUrlKeys($url, $type) {
-		if ($type == 'named') {
-			return $url;
-		}
-		if (!isset($url['?'])) {
-			$url['?'] = array();
-		}
-		foreach ($this->options['convertKeys'] as $key) {
-			if (isset($url[$key])) {
-				$url['?'][$key] = $url[$key];
-				unset($url[$key]);
-			}
-		}
-		return $url;
 	}
 
 /**
