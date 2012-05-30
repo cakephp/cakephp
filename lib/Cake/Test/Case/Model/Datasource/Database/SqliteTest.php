@@ -353,7 +353,7 @@ class SqliteTest extends CakeTestCase {
 	public function testVirtualFieldWithFunction() {
 		$this->loadFixtures('User');
 		$User = ClassRegistry::init('User');
-		$User->virtualFields = array('name' => 'SUBSTR(User.user, 5)');
+		$User->virtualFields = array('name' => 'SUBSTR(User.user, 5, LENGTH(User.user) - 4)');
 
 		$result = $User->find('first', array(
 			'conditions' => array('User.user' => 'garrett')
@@ -381,6 +381,39 @@ class SqliteTest extends CakeTestCase {
 
 		$this->assertEquals($data['title'], $result['Uuid']['title']);
 		$this->assertTrue(Validation::uuid($result['Uuid']['id']), 'Not a uuid');
+	}
+
+/**
+ * Test nested transaction
+ *
+ * @return void
+ */
+	public function testNestedTransaction() {
+		$this->skipIf($this->Dbo->nestedTransactionSupported() === false, 'The Sqlite version do not support nested transaction');
+
+		$this->loadFixtures('User');
+		$model = new User();
+		$model->hasOne = $model->hasMany = $model->belongsTo = $model->hasAndBelongsToMany = array();
+		$model->cacheQueries = false;
+		$this->Dbo->cacheMethods = false;
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertNotEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertTrue($model->delete(1));
+		$this->assertEmpty($model->read(null, 1));
+		$this->assertTrue($this->Dbo->rollback());
+		$this->assertNotEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertTrue($model->delete(1));
+		$this->assertEmpty($model->read(null, 1));
+		$this->assertTrue($this->Dbo->commit());
+		$this->assertEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->rollback());
+		$this->assertNotEmpty($model->read(null, 1));
 	}
 
 }

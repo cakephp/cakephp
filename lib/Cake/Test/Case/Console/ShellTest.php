@@ -45,6 +45,13 @@ class ShellTestShell extends Shell {
 	public $stopped;
 
 /**
+ * testMessage property
+ *
+ * @var string
+ */
+	public $testMessage = 'all your base are belong to us';
+
+/**
  * stop method
  *
  * @param integer $status
@@ -62,6 +69,10 @@ class ShellTestShell extends Shell {
 	}
 
 	protected function no_access() {
+	}
+
+	public function log_something() {
+		$this->log($this->testMessage);
 	}
 	//@codingStandardsIgnoreEnd
 
@@ -163,7 +174,7 @@ class ShellTest extends CakeTestCase {
 		$this->assertEquals($expected, $this->Shell->tasks);
 
 		$expected = array('Fixture' => null, 'DbConfig' => array('one', 'two'));
-		$this->assertEquals($expected, Set::normalize($this->Shell->tasks), 'Normalized results are wrong.');
+		$this->assertEquals($expected, Hash::normalize($this->Shell->tasks), 'Normalized results are wrong.');
 		$this->assertEquals(array('Comment', 'Posts'), $this->Shell->uses, 'Merged models are wrong.');
 	}
 
@@ -544,7 +555,7 @@ class ShellTest extends CakeTestCase {
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
-		$this->assertEquals(file_get_contents($file), $contents);
+		$this->assertTextEquals(file_get_contents($file), $contents);
 	}
 
 /**
@@ -596,10 +607,14 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateFileNoPermissions() {
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Cant perform operations using permissions on windows.');
+
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'no_perms';
 
-		mkdir($path);
+		if (!is_dir($path)) {
+			mkdir($path);
+		}
 		chmod($path, 0444);
 
 		$this->Shell->createFile($file, 'testing');
@@ -759,7 +774,7 @@ This is the song that never ends.
 This is the song that never ends.
 This is the song that never ends.
 TEXT;
-		$this->assertEquals($expected, $result, 'Text not wrapped.');
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 
 		$result = $this->Shell->wrapText($text, array('indent' => '  ', 'width' => 33));
 		$expected = <<<TEXT
@@ -767,7 +782,7 @@ TEXT;
   This is the song that never ends.
   This is the song that never ends.
 TEXT;
-		$this->assertEquals($expected, $result, 'Text not wrapped.');
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 	}
 
 /**
@@ -793,6 +808,36 @@ TEXT;
 		$parser = $this->Shell->getOptionParser();
 
 		$this->assertEquals('plugin.test', $parser->command());
+	}
+
+/**
+ * Test file and console and logging
+ */
+	public function testFileAndConsoleLogging() {
+		// file logging
+		$this->Shell->log_something();
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+
+		unlink(LOGS . 'error.log');
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
+
+		// both file and console logging
+		require_once CORE_TEST_CASES . DS . 'Log' . DS . 'Engine' . DS . 'ConsoleLogTest.php';
+		$mock = $this->getMock('ConsoleLog', array('write'), array(
+			array('types' => 'error'),
+			));
+		TestCakeLog::config('console', array(
+			'engine' => 'ConsoleLog',
+			'stream' => 'php://stderr',
+			));
+		TestCakeLog::replace('console', $mock);
+		$mock->expects($this->once())
+			->method('write')
+			->with('error', $this->Shell->testMessage);
+		$this->Shell->log_something();
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+		$contents = file_get_contents(LOGS . 'error.log');
+		$this->assertContains($this->Shell->testMessage, $contents);
 	}
 
 }

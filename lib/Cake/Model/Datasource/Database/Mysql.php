@@ -78,17 +78,6 @@ class Mysql extends DboSource {
 	protected $_useAlias = true;
 
 /**
- * Index of basic SQL commands
- *
- * @var array
- */
-	protected $_commands = array(
-		'begin'    => 'START TRANSACTION',
-		'commit'   => 'COMMIT',
-		'rollback' => 'ROLLBACK'
-	);
-
-/**
  * List of engine specific additional field parameters used on table creating
  *
  * @var array
@@ -260,15 +249,6 @@ class Mysql extends DboSource {
  */
 	public function getEncoding() {
 		return $this->_execute('SHOW VARIABLES LIKE ?', array('character_set_client'))->fetchObject()->Value;
-	}
-
-/**
- * Gets the version string of the database server
- *
- * @return string The database encoding
- */
-	public function getVersion() {
-		return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
 	}
 
 /**
@@ -694,6 +674,15 @@ class Mysql extends DboSource {
  */
 	public function getSchemaName() {
 		return $this->config['database'];
+	}
+
+/**
+ * Check if the server support nested transactions
+ *
+ * @return boolean
+ */
+	public function nestedTransactionSupported() {
+		return $this->useNestedTransactions && version_compare($this->getVersion(), '4.1', '>=');
 	}
 
 }

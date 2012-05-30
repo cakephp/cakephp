@@ -53,18 +53,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$password = Security::hash('password', null, true);
 		$User = ClassRegistry::init('User');
 		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
-		$this->server = $_SERVER;
 		$this->response = $this->getMock('CakeResponse');
-	}
-
-/**
- * tearDown
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		$_SERVER = $this->server;
 	}
 
 /**

@@ -19,6 +19,7 @@
 
 App::uses('Component', 'Controller');
 App::uses('Security', 'Utility');
+App::uses('Hash', 'Utility');
 
 /**
  * Cookie Component.
@@ -208,10 +209,10 @@ class CookieComponent extends Component {
  * You must use this method before any output is sent to the browser.
  * Failure to do so will result in header already sent errors.
  *
- * @param mixed $key Key for the value
+ * @param string|array $key Key for the value
  * @param mixed $value Value
  * @param boolean $encrypt Set to true to encrypt value, false otherwise
- * @param string $expires Can be either Unix timestamp, or date string
+ * @param integer|string $expires Can be either Unix timestamp, or date string
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
  */
@@ -239,7 +240,7 @@ class CookieComponent extends Component {
 				if (!isset($this->_values[$this->name][$names[0]])) {
 					$this->_values[$this->name][$names[0]] = array();
 				}
-				$this->_values[$this->name][$names[0]] = Set::insert($this->_values[$this->name][$names[0]], $names[1], $value);
+				$this->_values[$this->name][$names[0]] = Hash::insert($this->_values[$this->name][$names[0]], $names[1], $value);
 				$this->_write('[' . implode('][', $names) . ']', $value);
 			}
 		}
@@ -252,7 +253,7 @@ class CookieComponent extends Component {
  * Optional [Name.], required key
  * $this->Cookie->read(Name.key);
  *
- * @param mixed $key Key of the value to be obtained. If none specified, obtain map key => values
+ * @param string $key Key of the value to be obtained. If none specified, obtain map key => values
  * @return string or null, value for specified key
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
@@ -276,7 +277,7 @@ class CookieComponent extends Component {
 		}
 
 		if (!empty($names[1])) {
-			return Set::extract($this->_values[$this->name][$key], $names[1]);
+			return Hash::get($this->_values[$this->name][$key], $names[1]);
 		}
 		return $this->_values[$this->name][$key];
 	}
@@ -310,7 +311,7 @@ class CookieComponent extends Component {
 		}
 		$names = explode('.', $key, 2);
 		if (isset($this->_values[$this->name][$names[0]])) {
-			$this->_values[$this->name][$names[0]] = Set::remove($this->_values[$this->name][$names[0]], $names[1]);
+			$this->_values[$this->name][$names[0]] = Hash::remove($this->_values[$this->name][$names[0]], $names[1]);
 		}
 		$this->_delete('[' . implode('][', $names) . ']');
 	}
@@ -362,7 +363,7 @@ class CookieComponent extends Component {
  * CookieComponent::write(string, string, boolean, 8400);
  * CookieComponent::write(string, string, boolean, '5 Days');
  *
- * @param mixed $expires Can be either Unix timestamp, or date string
+ * @param integer|string $expires Can be either Unix timestamp, or date string
  * @return integer Unix timestamp
  */
 	protected function _expire($expires = null) {

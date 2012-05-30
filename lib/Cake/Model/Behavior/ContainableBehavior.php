@@ -321,7 +321,7 @@ class ContainableBehavior extends ModelBehavior {
 					$key = $option;
 					$optionKey = true;
 					if (!empty($newChildren)) {
-						$children = Set::merge($children, $newChildren);
+						$children = Hash::merge($children, $newChildren);
 					}
 				}
 				if ($optionKey && isset($children[$key])) {
@@ -362,7 +362,7 @@ class ContainableBehavior extends ModelBehavior {
  *
  * @param Model $Model Model
  * @param array $map Map of relations for given model
- * @param mixed $fields If array, fields to initially load, if false use $Model as primary model
+ * @param array|boolean $fields If array, fields to initially load, if false use $Model as primary model
  * @return array Fields
  */
 	public function fieldDependencies(Model $Model, $map, $fields = array()) {

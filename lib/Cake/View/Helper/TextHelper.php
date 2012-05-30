@@ -66,7 +66,7 @@ class TextHelper extends AppHelper {
  * @throws CakeException when the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
-		$settings = Set::merge(array('engine' => 'String'), $settings);
+		$settings = Hash::merge(array('engine' => 'String'), $settings);
 		parent::__construct($View, $settings);
 		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
 		App::uses($engineClass, $plugin . 'Utility');

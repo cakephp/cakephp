@@ -20,11 +20,11 @@
 
 <html>
 <head>
-	<title><?php echo $title_for_layout;?></title>
+	<title><?php echo $title_for_layout; ?></title>
 </head>
 
 <body>
-	<?php echo $content_for_layout;?>
+	<?php echo $content_for_layout; ?>
 
 	<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>
 </body>

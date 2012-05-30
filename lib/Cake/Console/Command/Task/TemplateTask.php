@@ -55,11 +55,18 @@ class TemplateTask extends AppShell {
  * Find the paths to all the installed shell themes in the app.
  *
  * Bake themes are directories not named `skel` inside a `Console/Templates` path.
- *
+ * They are listed in this order: app -> plugin -> default
+ * 
  * @return array Array of bake themes that are installed.
  */
 	protected function _findThemes() {
-		$paths = array();
+		$paths = App::path('Console');
+
+		$plugins = App::objects('plugin');
+		foreach ($plugins as $plugin) {
+			$paths[] = $this->_pluginPath($plugin) . 'Console' . DS;
+		}
+
 		$core = current(App::core('Console'));
 		$separator = DS === '/' ? '/' : '\\\\';
 		$core = preg_replace('#shells' . $separator . '$#', '', $core);
@@ -69,13 +76,7 @@ class TemplateTask extends AppShell {
 		$contents = $Folder->read();
 		$themeFolders = $contents[0];
 
-		$plugins = App::objects('plugin');
 		$paths[] = $core;
-		foreach ($plugins as $plugin) {
-			$paths[] = $this->_pluginPath($plugin) . 'Console' . DS;
-		}
-
-		$paths = array_merge($paths, App::path('Console'));
 
 		// TEMPORARY TODO remove when all paths are DS terminated
 		foreach ($paths as $i => $path) {
@@ -107,7 +108,7 @@ class TemplateTask extends AppShell {
  * Set variable values to the template scope
  *
  * @param string|array $one A string or an array of data.
- * @param mixed $two Value in case $one is a string (which then works as the key).
+ * @param string|array $two Value in case $one is a string (which then works as the key).
  *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
  */

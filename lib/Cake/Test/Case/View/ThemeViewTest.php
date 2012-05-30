@@ -43,10 +43,11 @@ class ThemePosts2Controller extends Controller {
  * @return void
  */
 	public function index() {
-		$this->set('testData', 'Some test data');
-		$test2 = 'more data';
-		$test3 = 'even more data';
-		$this->set(compact('test2', 'test3'));
+		$this->set(array(
+			'testData' => 'Some test data',
+			'test2' => 'more data',
+			'test3' => 'even more data',
+		));
 	}
 
 }
@@ -61,7 +62,7 @@ class TestTheme2View extends ThemeView {
 /**
  * renderElement method
  *
- * @param mixed $name
+ * @param string $name
  * @param array $params
  * @return void
  */
@@ -72,7 +73,7 @@ class TestTheme2View extends ThemeView {
 /**
  * getViewFileName method
  *
- * @param mixed $name
+ * @param string $name
  * @return void
  */
 	public function getViewFileName($name = null) {
@@ -82,7 +83,7 @@ class TestTheme2View extends ThemeView {
 /**
  * getLayoutFileName method
  *
- * @param mixed $name
+ * @param string $name
  * @return void
  */
 	public function getLayoutFileName($name = null) {

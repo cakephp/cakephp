@@ -221,7 +221,7 @@ class Sqlite extends DboSource {
  * Deletes all the records in a table and resets the count of the auto-incrementing
  * primary key, where applicable.
  *
- * @param mixed $table A string or model class representing the table to be truncated
+ * @param string|Model $table A string or model class representing the table to be truncated
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table) {
@@ -557,6 +557,15 @@ class Sqlite extends DboSource {
  */
 	public function getSchemaName() {
 		return "main"; // Sqlite Datasource does not support multidb
+	}
+
+/**
+ * Check if the server support nested transactions
+ *
+ * @return boolean
+ */
+	public function nestedTransactionSupported() {
+		return $this->useNestedTransactions && version_compare($this->getVersion(), '3.6.8', '>=');
 	}
 
 }

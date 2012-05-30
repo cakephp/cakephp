@@ -417,11 +417,13 @@ class DataSource extends Object {
 	}
 
 /**
- * Close the connection to the datasource.
- *
- * @return void
+ * Closes a connection. Override in subclasses
+ * 
+ * @return boolean
+ * @access public
  */
 	public function close() {
+		return $this->connected = false;
 	}
 
 /**

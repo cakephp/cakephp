@@ -2487,7 +2487,7 @@ class RouterTest extends CakeTestCase {
  */
 	public function testResourceMap() {
 		$default = Router::resourceMap();
-		$exepcted = array(
+		$expected = array(
 			array('action' => 'index',	'method' => 'GET',		'id' => false),
 			array('action' => 'view',	'method' => 'GET',		'id' => true),
 			array('action' => 'add',	'method' => 'POST',		'id' => false),
@@ -2495,7 +2495,7 @@ class RouterTest extends CakeTestCase {
 			array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
 			array('action' => 'edit',	'method' => 'POST', 	'id' => true)
 		);
-		$this->assertEquals($default, $exepcted);
+		$this->assertEquals($default, $expected);
 
 		$custom = array(
 			array('action' => 'index',	'method' => 'GET',		'id' => false),
@@ -2555,8 +2555,8 @@ class RouterTest extends CakeTestCase {
 		$routeClass = 'TestDefaultRouteClass';
 		Router::defaultRouteClass($routeClass);
 
-		$this->assertEqual($routeClass, Router::defaultRouteClass());
-		$this->assertEqual($routeClass, Router::defaultRouteClass(null));
+		$this->assertEquals($routeClass, Router::defaultRouteClass());
+		$this->assertEquals($routeClass, Router::defaultRouteClass(null));
 	}
 
 /**

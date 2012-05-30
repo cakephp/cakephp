@@ -34,20 +34,10 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		App::build(array(
 			'Locale' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
 		));
-		$this->_language = Configure::read('Config.language');
-	}
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		App::build();
-		Configure::write('Config.language', $this->_language);
 	}
 
 /**
@@ -606,8 +596,17 @@ class BasicsTest extends CakeTestCase {
 	public function testLogError() {
 		@unlink(LOGS . 'error.log');
 
+		// disable stderr output for this test
+		if (CakeLog::stream('stderr')) {
+			CakeLog::disable('stderr');
+		}
+
 		LogError('Testing LogError() basic function');
 		LogError("Testing with\nmulti-line\nstring");
+
+		if (CakeLog::stream('stderr')) {
+			CakeLog::enable('stderr');
+		}
 
 		$result = file_get_contents(LOGS . 'error.log');
 		$this->assertRegExp('/Error: Testing LogError\(\) basic function/', $result);

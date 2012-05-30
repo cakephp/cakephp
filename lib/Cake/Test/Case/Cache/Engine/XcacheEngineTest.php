@@ -32,6 +32,7 @@ class XcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		if (!function_exists('xcache_set')) {
 			$this->markTestSkipped('Xcache is not installed or configured properly');
 		}
@@ -46,7 +47,10 @@ class XcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		Configure::write('Cache.disable', $this->_cacheDisable);
+		Cache::drop('xcache');
+		Cache::drop('xcache_groups');
 		Cache::config('default');
 	}
 
@@ -195,5 +199,74 @@ class XcacheEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test_increment');
 		$this->assertEquals(8, $result);
+	}
+
+/**
+ * Tests that configuring groups for stored keys return the correct values when read/written
+ * Shows that altering the group value is equivalent to deleting all keys under the same
+ * group
+ *
+ * @return void
+ */
+	public function testGroupsReadWrite() {
+		Cache::config('xcache_groups', array(
+			'engine' => 'Xcache',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
+		$this->assertTrue(Cache::write('test_groups', 'value', 'xcache_groups'));
+		$this->assertEquals('value', Cache::read('test_groups', 'xcache_groups'));
+
+		xcache_inc('test_group_a', 1);
+		$this->assertFalse(Cache::read('test_groups', 'xcache_groups'));
+		$this->assertTrue(Cache::write('test_groups', 'value2', 'xcache_groups'));
+		$this->assertEquals('value2', Cache::read('test_groups', 'xcache_groups'));
+
+		xcache_inc('test_group_b', 1);
+		$this->assertFalse(Cache::read('test_groups', 'xcache_groups'));
+		$this->assertTrue(Cache::write('test_groups', 'value3', 'xcache_groups'));
+		$this->assertEquals('value3', Cache::read('test_groups', 'xcache_groups'));
+	}
+
+/**
+ * Tests that deleteing from a groups-enabled config is possible
+ *
+ * @return void
+ */
+	public function testGroupDelete() {
+		Cache::config('xcache_groups', array(
+			'engine' => 'Xcache',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
+		$this->assertTrue(Cache::write('test_groups', 'value', 'xcache_groups'));
+		$this->assertEquals('value', Cache::read('test_groups', 'xcache_groups'));
+		$this->assertTrue(Cache::delete('test_groups', 'xcache_groups'));
+
+		$this->assertFalse(Cache::read('test_groups', 'xcache_groups'));
+	}
+
+/**
+ * Test clearing a cache group
+ *
+ * @return void
+ **/
+	public function testGroupClear() {
+		Cache::config('xcache_groups', array(
+			'engine' => 'Xcache',
+			'duration' => 0,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
+
+		$this->assertTrue(Cache::write('test_groups', 'value', 'xcache_groups'));
+		$this->assertTrue(Cache::clearGroup('group_a', 'xcache_groups'));
+		$this->assertFalse(Cache::read('test_groups', 'xcache_groups'));
+
+		$this->assertTrue(Cache::write('test_groups', 'value2', 'xcache_groups'));
+		$this->assertTrue(Cache::clearGroup('group_b', 'xcache_groups'));
+		$this->assertFalse(Cache::read('test_groups', 'xcache_groups'));
 	}
 }

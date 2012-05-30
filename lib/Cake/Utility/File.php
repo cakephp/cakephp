@@ -183,7 +183,7 @@ class File {
 /**
  * Sets or gets the offset for the currently opened file.
  *
- * @param mixed $offset The $offset in bytes to seek. If set to false then the current offset is returned.
+ * @param integer|boolean $offset The $offset in bytes to seek. If set to false then the current offset is returned.
  * @param integer $seek PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
  * @return mixed True on success, false on failure (set mode), false on failure or integer offset on success (get mode)
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::offset
@@ -366,13 +366,13 @@ class File {
 		if (!$ext) {
 			$ext = $this->ext();
 		}
-		return preg_replace( "/(?:[^\w\.-]+)/", "_", basename($name, $ext));
+		return preg_replace("/(?:[^\w\.-]+)/", "_", basename($name, $ext));
 	}
 
 /**
  * Get md5 Checksum of file with previous check of Filesize
  *
- * @param mixed $maxsize in MB or true to force
+ * @param integer|boolean $maxsize in MB or true to force
  * @return string md5 Checksum {@link http://php.net/md5_file See md5_file()}
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::md5
  */

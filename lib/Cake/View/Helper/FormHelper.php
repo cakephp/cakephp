@@ -14,6 +14,7 @@
  */
 App::uses('ClassRegistry', 'Utility');
 App::uses('AppHelper', 'View/Helper');
+App::uses('Hash', 'Utility');
 
 /**
  * Form helper library.
@@ -217,7 +218,7 @@ class FormHelper extends AppHelper {
 		if ($key === 'validates' && !isset($this->fieldset[$model]['validates'])) {
 			$validates = array();
 			if (!empty($object->validate)) {
-				foreach ($object->validate as $validateField => $validateProperties) {
+				foreach ($object->validator() as $validateField => $validateProperties) {
 					if ($this->_isRequiredField($validateProperties)) {
 						$validates[$validateField] = true;
 					}
@@ -239,32 +240,17 @@ class FormHelper extends AppHelper {
 /**
  * Returns if a field is required to be filled based on validation properties from the validating object.
  *
- * @param array $validateProperties
+ * @param CakeValidationSet $validationRules
  * @return boolean true if field is required to be filled, false otherwise
  */
-	protected function _isRequiredField($validateProperties) {
-		$required = false;
-		if (is_string($validateProperties)) {
-			return true;
-		} elseif (is_array($validateProperties)) {
-
-			$dims = Set::countDim($validateProperties);
-			if ($dims == 1 || ($dims == 2 && isset($validateProperties['rule']))) {
-				$validateProperties = array($validateProperties);
-			}
-
-			foreach ($validateProperties as $rule => $validateProp) {
-				if (isset($validateProp['allowEmpty']) && $validateProp['allowEmpty'] === true) {
-					return false;
-				}
-				$rule = isset($validateProp['rule']) ? $validateProp['rule'] : false;
-				$required = $rule || empty($validateProp);
-				if ($required) {
-					break;
-				}
+	protected function _isRequiredField($validationRules) {
+		foreach ($validationRules as $rule) {
+			$rule->isUpdate($this->requestType === 'put');
+			if (!$rule->isEmptyAllowed()) {
+				return true;
 			}
 		}
-		return $required;
+		return false;
 	}
 
 /**
@@ -288,7 +274,7 @@ class FormHelper extends AppHelper {
 		if (empty($errors)) {
 			return false;
 		}
-		$errors = Set::classicExtract($errors, join('.', $entity));
+		$errors = Hash::get($errors, join('.', $entity));
 		return $errors === null ? false : $errors;
 	}
 
@@ -360,7 +346,7 @@ class FormHelper extends AppHelper {
 			'encoding' => strtolower(Configure::read('App.encoding')),
 			'inputDefaults' => array()),
 		$options);
-		$this->_inputDefaults = $options['inputDefaults'];
+		$this->inputDefaults($options['inputDefaults']);
 		unset($options['inputDefaults']);
 
 		if (!isset($options['id'])) {
@@ -489,7 +475,7 @@ class FormHelper extends AppHelper {
  * array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')); <div class="good"> value="save" name="Whatever"
  * }}}
  *
- * @param mixed $options as a string will use $options as the value of button,
+ * @param string|array $options as a string will use $options as the value of button,
  * @return string a closing FORM tag optional submit button.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#closing-the-form
  */
@@ -592,7 +578,7 @@ class FormHelper extends AppHelper {
  *
  * @param boolean $lock Whether this field should be part of the validation
  *     or excluded as part of the unlockedFields.
- * @param mixed $field Reference to field to be secured.  Should be dot separated to indicate nesting.
+ * @param string|array $field Reference to field to be secured.  Should be dot separated to indicate nesting.
  * @param mixed $value Field value, if value should not be tampered with.
  * @return void
  */
@@ -600,7 +586,7 @@ class FormHelper extends AppHelper {
 		if (!$field) {
 			$field = $this->entity();
 		} elseif (is_string($field)) {
-			$field = Set::filter(explode('.', $field), true);
+			$field = Hash::filter(explode('.', $field));
 		}
 
 		foreach ($this->_unlockedFields as $unlockField) {
@@ -648,7 +634,7 @@ class FormHelper extends AppHelper {
  * - `class` string  The classname for the error message
  *
  * @param string $field A field name, like "Modelname.fieldname"
- * @param mixed $text Error message as string or array of messages.
+ * @param string|array $text Error message as string or array of messages.
  * If array contains `attributes` key it will be used as options for error container
  * @param array $options Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
@@ -775,7 +761,7 @@ class FormHelper extends AppHelper {
  * @param string $text Text that will appear in the label field.  If
  *   $text is left undefined the text will be inflected from the
  *   fieldName.
- * @param mixed $options An array of HTML attributes, or a string, to be used as a class name.
+ * @param array|string $options An array of HTML attributes, or a string, to be used as a class name.
  * @return string The formatted LABEL element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::label
  */
@@ -833,7 +819,7 @@ class FormHelper extends AppHelper {
  * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
  *	to customize the legend text.
  *
- * @param mixed $fields An array of fields to generate inputs for, or null.
+ * @param array $fields An array of fields to generate inputs for, or null.
  * @param array $blacklist a simple array of fields to not create inputs for.
  * @return string Completed form inputs.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::inputs
@@ -1320,6 +1306,8 @@ class FormHelper extends AppHelper {
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
  *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
  * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
+ * - `empty` - Set to `true` to create a input with the value '' as the first option.  When `true`
+ *   the radio label will be 'empty'.  Set this option to a string to control the label value.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
@@ -1329,6 +1317,13 @@ class FormHelper extends AppHelper {
  */
 	public function radio($fieldName, $options = array(), $attributes = array()) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
+
+		$showEmpty = $this->_extractOption('empty', $attributes);
+		if ($showEmpty) {
+			$showEmpty = ($showEmpty === true) ? __('empty') : $showEmpty;
+			$options = array('' => $showEmpty) + $options;
+		}
+		unset($attributes['empty']);
 
 		$legend = false;
 		if (isset($attributes['legend'])) {
@@ -1560,7 +1555,7 @@ class FormHelper extends AppHelper {
  * - Other options is the same of button method.
  *
  * @param string $title The button's caption. Not automatically HTML encoded
- * @param mixed $url URL as string or array
+ * @param string|array $url URL as string or array
  * @param array $options Array of options and HTML attributes.
  * @return string A HTML button tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postButton
@@ -1593,7 +1588,7 @@ class FormHelper extends AppHelper {
  * - The option `onclick` will be replaced.
  *
  * @param string $title The content to be wrapped by <a> tags.
- * @param mixed $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
+ * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param array $options Array of HTML attributes.
  * @param string $confirmMessage JavaScript confirmation message.
  * @return string An `<a />` element.
@@ -1862,9 +1857,7 @@ class FormHelper extends AppHelper {
 
 		if ($emptyMulti) {
 			$showEmpty = ($showEmpty === true) ? '' : $showEmpty;
-			$options = array_reverse($options, true);
-			$options[''] = $showEmpty;
-			$options = array_reverse($options, true);
+			$options = array('' => $showEmpty) + $options;
 		}
 
 		if (!$id) {
@@ -2588,6 +2581,24 @@ class FormHelper extends AppHelper {
 
 		$this->_secure($secure, $fieldName);
 		return $result;
+	}
+
+/**
+ * Set/Get inputDefaults for form elements
+ *
+ * @param array $defaults New default values
+ * @param boolean Merge with current defaults
+ * @return array inputDefaults
+ */
+	public function inputDefaults($defaults = null, $merge = false) {
+		if (!is_null($defaults)) {
+			if ($merge) {
+				$this->_inputDefaults = array_merge($this->_inputDefaults, (array)$defaults);
+			} else {
+				$this->_inputDefaults = (array)$defaults;
+			}
+		}
+		return $this->_inputDefaults;
 	}
 
 }

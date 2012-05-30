@@ -300,7 +300,7 @@ class ConsoleShell extends AppShell {
 				break;
 				case (preg_match("/^routes\s+show/i", $command, $tmp) == true):
 					$router = Router::getInstance();
-					$this->out(implode("\n", Set::extract($router->routes, '{n}.0')));
+					$this->out(implode("\n", Hash::extract($router->routes, '{n}.0')));
 				break;
 				case (preg_match("/^route\s+(\(.*\))$/i", $command, $tmp) == true):
 					if ($url = eval('return array' . $tmp[1] . ';')) {

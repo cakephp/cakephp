@@ -23,6 +23,7 @@ App::uses('Router', 'Routing');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 App::uses('Helper', 'View');
+App::uses('CakeEvent', 'Event');
 
 /**
  * ControllerTestDispatcher class
@@ -244,7 +245,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			}
 		}
 		$Dispatch->loadRoutes = $this->loadRoutes;
-		$request = $Dispatch->parseParams($request);
+		$Dispatch->parseParams(new CakeEvent('ControllerTestCase', $Dispatch, array('request' => $request)));
 		if (!isset($request->params['controller'])) {
 			$this->headers = Router::currentRoute()->response->header();
 			return;

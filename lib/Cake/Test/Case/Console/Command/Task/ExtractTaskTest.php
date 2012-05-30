@@ -20,6 +20,8 @@
  */
 
 App::uses('Folder', 'Utility');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
 App::uses('ShellDispatcher', 'Console');
 App::uses('Shell', 'Console');
 App::uses('ExtractTask', 'Console/Command/Task');
@@ -398,5 +400,26 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$pattern = '#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#';
 		$this->assertNotRegExp($pattern, $result);
+	}
+
+/**
+ *  Test that the extract shell overwrites existing files with the overwrite parameter
+ *
+ * @return void
+ */
+	public function testExtractOverwrite() {
+		$this->Task->interactive = false;
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['overwrite'] = true;
+
+		file_put_contents($this->path . DS . 'default.pot', 'will be overwritten');
+		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+		$original = file_get_contents($this->path . DS . 'default.pot');
+
+		$this->Task->execute();
+		$result = file_get_contents($this->path . DS . 'default.pot');
+		$this->assertNotEquals($original, $result);
 	}
 }

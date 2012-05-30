@@ -155,7 +155,7 @@ class CakeRequest implements ArrayAccess {
  * into a single array. Variables prefixed with `data` will overwrite those without.
  *
  * If you have mixed POST values be careful not to make any top level keys numeric
- * containing arrays. Set::merge() is used to merge data, and it has possibly
+ * containing arrays. Hash::merge() is used to merge data, and it has possibly
  * unexpected behavior in this situation.
  *
  * @return void
@@ -183,7 +183,7 @@ class CakeRequest implements ArrayAccess {
 				$this->data = $data;
 			} else {
 				unset($this->data['data']);
-				$this->data = Set::merge($this->data, $data);
+				$this->data = Hash::merge($this->data, $data);
 			}
 		}
 	}
@@ -531,7 +531,7 @@ class CakeRequest implements ArrayAccess {
 	public function addDetector($name, $options) {
 		$name = strtolower($name);
 		if (isset($this->_detectors[$name]) && isset($options['options'])) {
-			$options = Set::merge($this->_detectors[$name], $options);
+			$options = Hash::merge($this->_detectors[$name], $options);
 		}
 		$this->_detectors[$name] = $options;
 	}
@@ -615,7 +615,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the host that the request was handled on.
  *
- * @return void
+ * @return string
  */
 	public function host() {
 		return env('HTTP_HOST');
@@ -760,10 +760,10 @@ class CakeRequest implements ArrayAccess {
 	public function data($name) {
 		$args = func_get_args();
 		if (count($args) == 2) {
-			$this->data = Set::insert($this->data, $name, $args[1]);
+			$this->data = Hash::insert($this->data, $name, $args[1]);
 			return $this;
 		}
-		return Set::classicExtract($this->data, $name);
+		return Hash::get($this->data, $name);
 	}
 
 /**

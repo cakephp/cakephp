@@ -12,8 +12,8 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('Security', 'Utility');
+App::uses('Hash', 'Utility');
 
 /**
  * Base Authentication class with common methods and properties.
@@ -30,6 +30,7 @@ abstract class BaseAuthenticate {
  * - `scope` Additional conditions to use when looking up and authenticating users,
  *    i.e. `array('User.is_active' => 1).`
  * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
+ * - `contain` Extra models to contain and store in session.
  *
  * @var array
  */
@@ -40,7 +41,8 @@ abstract class BaseAuthenticate {
 		),
 		'userModel' => 'User',
 		'scope' => array(),
-		'recursive' => 0
+		'recursive' => 0,
+		'contain' => null,
 	);
 
 /**
@@ -58,7 +60,7 @@ abstract class BaseAuthenticate {
  */
 	public function __construct(ComponentCollection $collection, $settings) {
 		$this->_Collection = $collection;
-		$this->settings = Set::merge($this->settings, $settings);
+		$this->settings = Hash::merge($this->settings, $settings);
 	}
 
 /**
@@ -82,13 +84,16 @@ abstract class BaseAuthenticate {
 		}
 		$result = ClassRegistry::init($userModel)->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => (int)$this->settings['recursive']
+			'recursive' => (int)$this->settings['recursive'],
+			'contain' => $this->settings['contain'],
 		));
 		if (empty($result) || empty($result[$model])) {
 			return false;
 		}
-		unset($result[$model][$fields['password']]);
-		return $result[$model];
+		$user = $result[$model];
+		unset($user[$fields['password']]);
+		unset($result[$model]);
+		return array_merge($user, $result);
 	}
 
 /**

@@ -25,6 +25,7 @@
  *
  */
 class <?php echo $model; ?>Fixture extends CakeTestFixture {
+
 <?php if ($table): ?>
 /**
  * Table name
@@ -32,6 +33,7 @@ class <?php echo $model; ?>Fixture extends CakeTestFixture {
  * @var string
  */
 	public $table = '<?php echo $table; ?>';
+
 <?php endif; ?>
 <?php if ($import): ?>
 /**
@@ -40,8 +42,8 @@ class <?php echo $model; ?>Fixture extends CakeTestFixture {
  * @var array
  */
 	public $import = <?php echo $import; ?>;
-<?php endif; ?>
 
+<?php endif; ?>
 <?php if ($schema): ?>
 /**
  * Fields
@@ -49,8 +51,8 @@ class <?php echo $model; ?>Fixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = <?php echo $schema; ?>;
-<?php endif;?>
 
+<?php endif; ?>
 <?php if ($records): ?>
 /**
  * Records
@@ -58,5 +60,6 @@ class <?php echo $model; ?>Fixture extends CakeTestFixture {
  * @var array
  */
 	public $records = <?php echo $records; ?>;
-<?php endif;?>
+
+<?php endif; ?>
 }

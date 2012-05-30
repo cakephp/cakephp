@@ -51,6 +51,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->skipIf(!class_exists('Memcache'), 'Memcache is not installed or configured properly.');
 
 		$this->_cacheDisable = Configure::read('Cache.disable');
@@ -68,8 +69,11 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::drop('memcache');
+		Cache::drop('memcache_groups');
+		Cache::drop('memcache_helper');
 		Cache::config('default');
 	}
 
@@ -90,6 +94,7 @@ class MemcacheEngineTest extends CakeTestCase {
 			'compress' => false,
 			'engine' => 'Memcache',
 			'persistent' => true,
+			'groups' => array()
 		);
 		$this->assertEquals($expecting, $settings);
 	}
@@ -376,7 +381,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		Cache::config('memcache', array('duration' => 0));
 		$result = Cache::write('test_key', 'written!', 'memcache');
 
-		$this->assertTrue('Could not write with duration 0', $result);
+		$this->assertTrue($result);
 		$result = Cache::read('test_key', 'memcache');
 		$this->assertEquals('written!', $result);
 	}
@@ -400,4 +405,75 @@ class MemcacheEngineTest extends CakeTestCase {
 		$memcache->write('key', $value, 50 * DAY);
 	}
 
+/**
+ * Tests that configuring groups for stored keys return the correct values when read/written
+ * Shows that altering the group value is equivalent to deleting all keys under the same
+ * group
+ *
+ * @return void
+ */
+	public function testGroupReadWrite() {
+		Cache::config('memcache_groups', array(
+			'engine' => 'Memcache',
+			'duration' => 3600,
+			'groups' => array('group_a', 'group_b'),
+			'prefix' => 'test_'
+		));
+		Cache::config('memcache_helper', array(
+			'engine' => 'Memcache',
+			'duration' => 3600,
+			'prefix' => 'test_'
+		));
+		$this->assertTrue(Cache::write('test_groups', 'value', 'memcache_groups'));
+		$this->assertEquals('value', Cache::read('test_groups', 'memcache_groups'));
+
+		Cache::increment('group_a', 1, 'memcache_helper');
+		$this->assertFalse(Cache::read('test_groups', 'memcache_groups'));
+		$this->assertTrue(Cache::write('test_groups', 'value2', 'memcache_groups'));
+		$this->assertEquals('value2', Cache::read('test_groups', 'memcache_groups'));
+
+		Cache::increment('group_b', 1, 'memcache_helper');
+		$this->assertFalse(Cache::read('test_groups', 'memcache_groups'));
+		$this->assertTrue(Cache::write('test_groups', 'value3', 'memcache_groups'));
+		$this->assertEquals('value3', Cache::read('test_groups', 'memcache_groups'));
+	}
+
+/**
+ * Tests that deleteing from a groups-enabled config is possible
+ *
+ * @return void
+ */
+	public function testGroupDelete() {
+		Cache::config('memcache_groups', array(
+			'engine' => 'Memcache',
+			'duration' => 3600,
+			'groups' => array('group_a', 'group_b')
+		));
+		$this->assertTrue(Cache::write('test_groups', 'value', 'memcache_groups'));
+		$this->assertEquals('value', Cache::read('test_groups', 'memcache_groups'));
+		$this->assertTrue(Cache::delete('test_groups', 'memcache_groups'));
+
+		$this->assertFalse(Cache::read('test_groups', 'memcache_groups'));
+	}
+
+/**
+ * Test clearing a cache group
+ *
+ * @return void
+ **/
+	public function testGroupClear() {
+		Cache::config('memcache_groups', array(
+			'engine' => 'Memcache',
+			'duration' => 3600,
+			'groups' => array('group_a', 'group_b')
+		));
+
+		$this->assertTrue(Cache::write('test_groups', 'value', 'memcache_groups'));
+		$this->assertTrue(Cache::clearGroup('group_a', 'memcache_groups'));
+		$this->assertFalse(Cache::read('test_groups', 'memcache_groups'));
+
+		$this->assertTrue(Cache::write('test_groups', 'value2', 'memcache_groups'));
+		$this->assertTrue(Cache::clearGroup('group_b', 'memcache_groups'));
+		$this->assertFalse(Cache::read('test_groups', 'memcache_groups'));
+	}
 }

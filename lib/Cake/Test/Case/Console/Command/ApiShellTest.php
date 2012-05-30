@@ -17,6 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
 App::uses('ShellDispatcher', 'Console');
 App::uses('Shell', 'Console');
 App::uses('ApiShell', 'Console/Command');

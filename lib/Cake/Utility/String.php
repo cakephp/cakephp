@@ -330,7 +330,7 @@ class String {
  * - `indentAt` 0 based index to start indenting at. Defaults to 0.
  *
  * @param string $text Text the text to format.
- * @param mixed $options Array of options to use, or an integer to wrap the text to.
+ * @param array|integer $options Array of options to use, or an integer to wrap the text to.
  * @return string Formatted text.
  */
 	public static function wrap($text, $options = array()) {
@@ -361,6 +361,7 @@ class String {
  *
  * - `format` The piece of html with that the phrase will be highlighted
  * - `html` If true, will ignore any HTML tags, ensuring that only the correct text is highlighted
+ * - `regex` a custom regex rule that is ued to match words, default is '|$tag|iu'
  *
  * @param string $text Text to search the phrase in
  * @param string $phrase The phrase that will be searched
@@ -375,7 +376,8 @@ class String {
 
 		$default = array(
 			'format' => '<span class="highlight">\1</span>',
-			'html' => false
+			'html' => false,
+			'regex' => "|%s|iu"
 		);
 		$options = array_merge($default, $options);
 		extract($options);
@@ -391,7 +393,7 @@ class String {
 				}
 
 				$with[] = (is_array($format)) ? $format[$key] : $format;
-				$replace[] = "|$segment|iu";
+				$replace[] = sprintf($options['regex'], $segment);
 			}
 
 			return preg_replace($replace, $with, $text);
@@ -401,7 +403,7 @@ class String {
 				$phrase = "(?![^<]+>)$phrase(?![^<]+>)";
 			}
 
-			return preg_replace("|$phrase|iu", $format, $text);
+			return preg_replace(sprintf($options['regex'], $phrase), $format, $text);
 		}
 	}
 

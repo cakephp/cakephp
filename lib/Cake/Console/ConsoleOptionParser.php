@@ -232,7 +232,7 @@ class ConsoleOptionParser {
 /**
  * Get or set the description text for shell/task.
  *
- * @param mixed $text The text to set, or null if you want to read. If an array the
+ * @param string|array $text The text to set, or null if you want to read. If an array the
  *   text will be imploded with "\n"
  * @return mixed If reading, the value of the description. If setting $this will be returned
  */
@@ -251,7 +251,7 @@ class ConsoleOptionParser {
  * Get or set an epilog to the parser.  The epilog is added to the end of
  * the options and arguments listing when help is generated.
  *
- * @param mixed $text Text when setting or null when reading. If an array the text will be imploded with "\n"
+ * @param string|array $text Text when setting or null when reading. If an array the text will be imploded with "\n"
  * @return mixed If reading, the value of the epilog. If setting $this will be returned.
  */
 	public function epilog($text = null) {
@@ -282,7 +282,7 @@ class ConsoleOptionParser {
  * - `choices` A list of valid choices for this option.  If left empty all values are valid..
  *   An exception will be raised when parse() encounters an invalid value.
  *
- * @param mixed $name The long name you want to the value to be parsed out as when options are parsed.
+ * @param ConsoleInputOption|string $name The long name you want to the value to be parsed out as when options are parsed.
  *   Will also accept an instance of ConsoleInputOption
  * @param array $options An array of parameters that define the behavior of the option
  * @return ConsoleOptionParser $this.
@@ -323,7 +323,7 @@ class ConsoleOptionParser {
  * - `choices` A list of valid choices for this argument.  If left empty all values are valid..
  *   An exception will be raised when parse() encounters an invalid value.
  *
- * @param mixed $name The name of the argument.  Will also accept an instance of ConsoleInputArgument
+ * @param ConsoleInputArgument|string $name The name of the argument.  Will also accept an instance of ConsoleInputArgument
  * @param array $params Parameters for the argument, see above.
  * @return ConsoleOptionParser $this.
  */
@@ -389,7 +389,7 @@ class ConsoleOptionParser {
  *    specific option parsers.  When help is generated for a subcommand, if a parser is present
  *    it will be used.
  *
- * @param mixed $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
+ * @param ConsoleInputSubcommand|string $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
  * @param array $options Array of params, see above.
  * @return ConsoleOptionParser $this.
  */

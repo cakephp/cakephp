@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AclNode', 'Model');
+App::uses('Hash', 'Utility');
 
 /**
  * ACL behavior
@@ -69,7 +70,7 @@ class AclBehavior extends ModelBehavior {
  * Retrieves the Aro/Aco node for this model
  *
  * @param Model $model
- * @param mixed $ref
+ * @param string|array|Model $ref Array with 'model' and 'foreign_key', model object, or string value
  * @param string $type Only needed when Acl is set up as 'both', specify 'Aro' or 'Aco' to get the correct node
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/acl.html#node
@@ -131,7 +132,7 @@ class AclBehavior extends ModelBehavior {
 			$types = array($types);
 		}
 		foreach ($types as $type) {
-			$node = Set::extract($this->node($model, null, $type), "0.{$type}.id");
+			$node = Hash::extract($this->node($model, null, $type), "0.{$type}.id");
 			if (!empty($node)) {
 				$model->{$type}->delete($node);
 			}

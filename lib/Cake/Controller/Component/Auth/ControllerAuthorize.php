@@ -40,7 +40,7 @@ class ControllerAuthorize extends BaseAuthorize {
 /**
  * Get/set the controller this authorize object will be working with.  Also checks that isAuthorized is implemented.
  *
- * @param mixed $controller null to get, a controller to set.
+ * @param Controller $controller null to get, a controller to set.
  * @return mixed
  * @throws CakeException
  */

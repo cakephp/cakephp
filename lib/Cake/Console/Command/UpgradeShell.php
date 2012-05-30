@@ -137,10 +137,12 @@ class UpgradeShell extends AppShell {
 			list($plugins) = $Folder->read();
 			foreach ($plugins as $plugin) {
 				chdir($cwd . DS . 'plugins' . DS . $plugin);
+				$this->out(__d('cake_console', 'Upgrading locations for plugin %s', $plugin));
 				$this->locations();
 			}
 			$this->_files = array();
 			chdir($cwd);
+			$this->out(__d('cake_console', 'Upgrading locations for app directory'));
 		}
 		$moves = array(
 			'config' => 'Config',
@@ -632,8 +634,8 @@ class UpgradeShell extends AppShell {
  * Find all php files in the folder (honoring recursive) and determine where cake expects the file to be
  * If the file is not exactly where cake expects it - move it.
  *
- * @param mixed $path
- * @param mixed $options array(recursive, checkFolder)
+ * @param string $path
+ * @param array $options array(recursive, checkFolder)
  * @return void
  */
 	protected function _movePhpFiles($path, $options) {

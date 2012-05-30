@@ -87,7 +87,7 @@ class CakeEventManager {
  * method will be called on the object to register the declared events individually as methods to be managed by this class.
  * It is possible to define multiple event handlers per event name.
  *
- * @param mixed $eventKey The event unique identifier name to with the callback will be associated. If $callable
+ * @param string $eventKey The event unique identifier name to with the callback will be associated. If $callable
  * is an instance of CakeEventListener this argument will be ignored
  *
  * @param array $options used to set the `priority` and `passParams` flags to the listener.
@@ -220,7 +220,7 @@ class CakeEventManager {
 /**
  * Dispatches a new event to all configured listeners
  *
- * @param mixed $event the event key name or instance of CakeEvent
+ * @param string|CakeEvent $event the event key name or instance of CakeEvent
  * @return void
  */
 	public function dispatch($event) {

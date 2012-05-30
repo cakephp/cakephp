@@ -1748,7 +1748,7 @@ XML;
 /**
  * loadEnvironment method
  *
- * @param mixed $env
+ * @param array $env
  * @return void
  */
 	protected function __loadEnvironment($env) {

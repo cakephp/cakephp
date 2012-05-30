@@ -385,7 +385,7 @@ class I18n {
 				$this->_domains[$domain][$this->_lang][$this->category]["%plural-c"] = $switch;
 				unset($this->_domains[$domain][$this->_lang][$this->category]["%po-header"]);
 			}
-			$this->_domains = Set::pushDiff($this->_domains, $merge);
+			$this->_domains = Hash::mergeDiff($this->_domains, $merge);
 
 			if (isset($this->_domains[$domain][$this->_lang][$this->category][null])) {
 				unset($this->_domains[$domain][$this->_lang][$this->category][null]);
