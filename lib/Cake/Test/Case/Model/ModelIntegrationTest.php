@@ -1167,13 +1167,49 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
+ * Test that custom date formatting methods will convert timestamps to the requested format.
+ *
+ * @return void
+ */
+	public function testDeconstructFormatterDateTime() {
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+
+		$this->loadFixtures('Apple');
+		$TestModel = new Apple();
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '08';
+		$data['Apple']['created']['day'] = '20';
+		$data['Apple']['created']['hour'] = '10';
+		$data['Apple']['created']['min'] = '12';
+		$data['Apple']['created']['sec'] = '09';
+
+		$timestamp = mktime(10, 12, 9, 8, 20, 2007);
+
+		// Test with formatter
+		$TestModel->getDataSource()->columns['datetime']['formatter'] = 'dateFormatter';
+		$TestModel->data = null;
+		$TestModel->set($data);
+		$expected = array('Apple' => array('created' => $timestamp));
+		$this->assertEquals($expected, $TestModel->data);
+
+		// Remove the formatter and try again
+		$TestModel->getDataSource()->columns['datetime']['formatter'] = '';
+		$TestModel->data = null;
+		$TestModel->set($data);
+		$expected = array('Apple' => array('created' => '2007-08-20 10:12:09'));
+		$this->assertEquals($expected, $TestModel->data);
+	}
+
+/**
  * testTablePrefixSwitching method
  *
  * @return void
  */
 	public function testTablePrefixSwitching() {
 		ConnectionManager::create('database1',
-				array_merge($this->db->config, array('prefix' => 'aaa_')
+			array_merge($this->db->config, array('prefix' => 'aaa_')
 		));
 		ConnectionManager::create('database2',
 			array_merge($this->db->config, array('prefix' => 'bbb_')
@@ -2423,4 +2459,19 @@ class ModelIntegrationTest extends BaseModelTest {
 		$model->expects($this->never())->method('getDataSource');
 		$this->assertEmpty($model->schema());
 	}
+}
+
+/**
+ * Global function used for datetime formatting during Model::deconstruct() and defined in the Datasource.
+ *
+ * @param string $format
+ * @param int $time
+ * @return int
+ */
+function dateFormatter($format, $time) {
+	if (is_string($time)) {
+		return strtotime($time);
+	}
+
+	return (int) $time;
 }

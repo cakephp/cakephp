@@ -277,10 +277,19 @@ class CakeTestSuiteDispatcher {
  * This method is being used as formatter for created, modified and updated fields in Model::save()
  *
  * @param string $format format to be used.
+ * @param mixed $time the timestamp to use
  * @return string formatted date
  */
-	public static function date($format) {
-		return date($format, self::time());
+	public static function date($format, $time = null) {
+		if (!$time) {
+			$time = self::time();
+		}
+
+		if (is_string($time)) {
+			$time = strtotime($time);
+		}
+
+		return date($format, $time);
 	}
 
 }
