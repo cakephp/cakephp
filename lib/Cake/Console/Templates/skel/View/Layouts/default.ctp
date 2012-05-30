@@ -55,5 +55,6 @@
 		</div>
 	</div>
 	<?php echo $this->element('sql_dump'); ?>
+	<?php echo $this->element('cache_dump'); ?>
 </body>
 </html>
