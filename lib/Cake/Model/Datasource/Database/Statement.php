@@ -43,6 +43,7 @@ class Statement implements \IteratorAggregate, \Countable {
  **/
 	public function __construct($statement = null, $driver = null) {
 		$this->_statement = $statement;
+		$this->_driver = $driver;
 	}
 
 /**
