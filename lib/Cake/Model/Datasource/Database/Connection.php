@@ -250,21 +250,17 @@ class Connection {
 			return;
 		}
 
-		if (!empty($types) && ctype_digit(key($types))) {
-			$params = array_values($params);
-		}
-
 		$annonymousParams = is_int(key($params)) ? true : false;
 		$offset = 1;
 		foreach ($params as $index => $value) {
+			$type = null;
+			if (isset($types[$index])) {
+				$type = $types[$index];
+			}
 			if ($annonymousParams) {
 				$index += $offset;
 			}
-			if (isset($types[$index])) {
-				$statement->bindValue($index, $value, $type);
-			} else {
-				$statement->bindValue($index, $value);
-			}
+			$statement->bindValue($index, $value, $type);
 		}
 	}
 

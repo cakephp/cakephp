@@ -124,4 +124,34 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(array('total' => 6), $result);
 	}
 
+/**
+ * Tests executing a query with params and associated types
+ *
+ * @return void
+ **/
+	public function testExecuteWithArgumentsAndTypes() {
+		$sql = 'SELECT ?';
+		$statement = $this->connection->execute($sql, array(new \DateTime('2012-01-01')), array('date'));
+		$result = $statement->fetch();
+		$this->assertEquals('2012-01-01', $result[0]);
+
+		$sql = 'SELECT ?, ?, ?';
+		$params = array(new \DateTime('2012-01-01 10:10:10'), '2000-01-01 10:10:10', 1.1);
+		$statement = $this->connection->execute($sql, $params, array('date', 'string', 'float'));
+		$result = $statement->fetch();
+		$this->assertEquals(array('2012-01-01', '2000-01-01 10:10:10', 1.1), $result);
+	}
+
+/**
+ * Tests that passing a unknown value to a query throws an exception
+ *
+ * @expectedException \InvalidArgumentException
+ * @return void
+ **/
+	public function testExecuteWithMissingType() {
+		$sql = 'SELECT ?';
+		$statement = $this->connection->execute($sql, array(new \DateTime('2012-01-01')), array('bar'));
+	}
+
+
 }
