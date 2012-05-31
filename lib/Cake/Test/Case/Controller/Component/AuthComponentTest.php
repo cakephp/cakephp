@@ -1254,4 +1254,37 @@ class AuthComponentTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * testUser method
+ *
+ * @return void
+ */
+	public function testUser() {
+		$data = array(
+			'User' => array(
+				'id' => '2',
+				'username' => 'mark',
+				'group_id' => 1,
+				'Group' => array(
+					'id' => '1',
+					'name' => 'Members'
+				),
+		));
+		$this->Auth->Session->write('Auth', $data);
+
+		$result = $this->Auth->user();
+		$this->assertEquals($data['User'], $result);
+
+		$result = $this->Auth->user('username');
+		$this->assertEquals($data['User']['username'], $result);
+
+		$result = $this->Auth->user('Group.name');
+		$this->assertEquals($data['User']['Group']['name'], $result);
+
+		$result = $this->Auth->user('invalid');
+		$this->assertEquals(null, $result);
+
+		$result = $this->Auth->user('Company.invalid');
+		$this->assertEquals(null, $result);
+	}
 }
