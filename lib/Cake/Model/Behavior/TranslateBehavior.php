@@ -484,7 +484,8 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $model instance of model
  * @param string|array $fields string with field or array(field1, field2=>AssocName, field3)
- * @param boolean $reset
+ * @param boolean $reset Leave true to have the fields only modified for the next operation.
+ *   if false the field will be added for all future queries.
  * @return boolean
  * @throws CakeException when attempting to bind a translating called name.  This is not allowed
  *   as it shadows Model::$name.
@@ -511,7 +512,7 @@ class TranslateBehavior extends ModelBehavior {
 				);
 			}
 
-			$this->_updateSettings($model, $field);
+			$this->_removeField($model, $field);
 
 			if (is_null($association)) {
 				if ($reset) {
@@ -553,17 +554,17 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param string $field The field to update.
  */
-	protected function _updateSettings(Model $model, $field) {
+	protected function _removeField(Model $model, $field) {
 		if (array_key_exists($field, $this->settings[$model->alias])) {
 			unset($this->settings[$model->alias][$field]);
 		} elseif (in_array($field, $this->settings[$model->alias])) {
-			$this->settings[$model->alias] = array_merge(array_diff_assoc($this->settings[$model->alias], array($field)));
+			$this->settings[$model->alias] = array_merge(array_diff($this->settings[$model->alias], array($field)));
 		}
 
 		if (array_key_exists($field, $this->runtime[$model->alias]['fields'])) {
 			unset($this->runtime[$model->alias]['fields'][$field]);
 		} elseif (in_array($field, $this->runtime[$model->alias]['fields'])) {
-			$this->runtime[$model->alias]['fields'] = array_merge(array_diff_assoc($this->runtime[$model->alias]['fields'], array($field)));
+			$this->runtime[$model->alias]['fields'] = array_merge(array_diff($this->runtime[$model->alias]['fields'], array($field)));
 		}
 	}
 
@@ -599,7 +600,7 @@ class TranslateBehavior extends ModelBehavior {
 				$association = $value;
 			}
 
-			$this->_updateSettings($model, $field);
+			$this->_removeField($model, $field);
 
 			if (!is_null($association) && (isset($model->hasMany[$association]) || isset($model->__backAssociation['hasMany'][$association]))) {
 				$associations[] = $association;
