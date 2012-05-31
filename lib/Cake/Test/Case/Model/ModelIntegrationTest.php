@@ -1188,7 +1188,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$timestamp = mktime(10, 12, 9, 8, 20, 2007);
 
 		// Test with formatter
-		$TestModel->getDataSource()->columns['datetime']['formatter'] = 'dateFormatter';
+		$TestModel->getDataSource()->columns['datetime']['formatter'] = 'ModelIntegrationTest::dateFormatter';
 		$TestModel->data = null;
 		$TestModel->set($data);
 		$expected = array('Apple' => array('created' => $timestamp));
@@ -2459,7 +2459,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$model->expects($this->never())->method('getDataSource');
 		$this->assertEmpty($model->schema());
 	}
-}
 
 /**
  * Global function used for datetime formatting during Model::deconstruct() and defined in the Datasource.
@@ -2468,10 +2467,12 @@ class ModelIntegrationTest extends BaseModelTest {
  * @param int $time
  * @return int
  */
-function dateFormatter($format, $time) {
-	if (is_string($time)) {
-		return strtotime($time);
+	public static function dateFormatter($format, $time) {
+		if (is_string($time)) {
+			return strtotime($time);
+		}
+
+		return (int) $time;
 	}
 
-	return (int) $time;
 }
