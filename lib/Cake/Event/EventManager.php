@@ -69,14 +69,14 @@ class EventManager {
  */
 	public static function instance($manager = null) {
 		if ($manager instanceof EventManager) {
-			self::$_generalManager = $manager;
+			static::$_generalManager = $manager;
 		}
-		if (empty(self::$_generalManager)) {
-			self::$_generalManager = new EventManager;
+		if (empty(static::$_generalManager)) {
+			static::$_generalManager = new EventManager;
 		}
 
-		self::$_generalManager->_isGlobal = true;
-		return self::$_generalManager;
+		static::$_generalManager->_isGlobal = true;
+		return static::$_generalManager;
 	}
 
 /**
@@ -107,7 +107,7 @@ class EventManager {
 			$this->_attachSubscriber($callable);
 			return;
 		}
-		$options = $options + array('priority' => self::$defaultPriority, 'passParams' => false);
+		$options = $options + array('priority' => static::$defaultPriority, 'passParams' => false);
 		$this->_listeners[$eventKey][$options['priority']][] = array(
 			'callable' => $callable,
 			'passParams' => $options['passParams'],
@@ -229,7 +229,7 @@ class EventManager {
 		}
 
 		if (!$this->_isGlobal) {
-			self::instance()->dispatch($event);
+			static::instance()->dispatch($event);
 		}
 
 		if (empty($this->_listeners[$event->name()])) {

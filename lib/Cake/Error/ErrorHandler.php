@@ -156,9 +156,9 @@ class ErrorHandler {
 			return false;
 		}
 		$errorConfig = Configure::read('Error');
-		list($error, $log) = self::mapErrorCode($code);
+		list($error, $log) = static::mapErrorCode($code);
 		if ($log === LOG_ERR) {
-			return self::handleFatalError($code, $description, $file, $line);
+			return static::handleFatalError($code, $description, $file, $line);
 		}
 
 		$debug = Configure::read('debug');

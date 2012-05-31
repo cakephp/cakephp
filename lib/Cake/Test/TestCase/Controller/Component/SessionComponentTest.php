@@ -48,7 +48,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public static function setupBeforeClass() {
-		self::$_sessionBackup = Configure::read('Session');
+		static::$_sessionBackup = Configure::read('Session');
 		Configure::write('Session', array(
 			'defaults' => 'php',
 			'timeout' => 100,
@@ -62,7 +62,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public static function teardownAfterClass() {
-		Configure::write('Session', self::$_sessionBackup);
+		Configure::write('Session', static::$_sessionBackup);
 	}
 
 /**

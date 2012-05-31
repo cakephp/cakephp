@@ -704,7 +704,7 @@ class Email {
 
 		$headers += $this->_headers;
 		if (!isset($headers['X-Mailer'])) {
-			$headers['X-Mailer'] = self::EMAIL_CLIENT;
+			$headers['X-Mailer'] = static::EMAIL_CLIENT;
 		}
 		if (!isset($headers['Date'])) {
 			$headers['Date'] = date(DATE_RFC2822);
@@ -1005,9 +1005,9 @@ class Email {
  */
 	public function message($type = null) {
 		switch ($type) {
-			case self::MESSAGE_HTML:
+			case static::MESSAGE_HTML:
 				return $this->_htmlMessage;
-			case self::MESSAGE_TEXT:
+			case static::MESSAGE_TEXT:
 				return $this->_textMessage;
 		}
 		return $this->_message;
@@ -1245,7 +1245,7 @@ class Email {
 				continue;
 			}
 			if (!preg_match('/\<[a-z]/i', $line)) {
-				$formatted = array_merge($formatted, explode("\n", wordwrap($line, self::LINE_LENGTH_SHOULD, "\n")));
+				$formatted = array_merge($formatted, explode("\n", wordwrap($line, static::LINE_LENGTH_SHOULD, "\n")));
 				continue;
 			}
 
@@ -1258,7 +1258,7 @@ class Email {
 					$tag .= $char;
 					if ($char === '>') {
 						$tagLength = strlen($tag);
-						if ($tagLength + $tmpLineLength < self::LINE_LENGTH_SHOULD) {
+						if ($tagLength + $tmpLineLength < static::LINE_LENGTH_SHOULD) {
 							$tmpLine .= $tag;
 							$tmpLineLength += $tagLength;
 						} else {
@@ -1267,7 +1267,7 @@ class Email {
 								$tmpLine = '';
 								$tmpLineLength = 0;
 							}
-							if ($tagLength > self::LINE_LENGTH_SHOULD) {
+							if ($tagLength > static::LINE_LENGTH_SHOULD) {
 								$formatted[] = $tag;
 							} else {
 								$tmpLine = $tag;
@@ -1284,14 +1284,14 @@ class Email {
 					$tag = '<';
 					continue;
 				}
-				if ($char === ' ' && $tmpLineLength >= self::LINE_LENGTH_SHOULD) {
+				if ($char === ' ' && $tmpLineLength >= static::LINE_LENGTH_SHOULD) {
 					$formatted[] = $tmpLine;
 					$tmpLineLength = 0;
 					continue;
 				}
 				$tmpLine .= $char;
 				$tmpLineLength++;
-				if ($tmpLineLength === self::LINE_LENGTH_SHOULD) {
+				if ($tmpLineLength === static::LINE_LENGTH_SHOULD) {
 					$nextChar = $line[$i + 1];
 					if ($nextChar === ' ' || $nextChar === '<') {
 						$formatted[] = trim($tmpLine);

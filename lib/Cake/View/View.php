@@ -422,7 +422,7 @@ class View extends Object {
 				$this->getEventManager()->dispatch(new Event('View.beforeRender', $this, array($file)));
 			}
 
-			$this->_currentType = self::TYPE_ELEMENT;
+			$this->_currentType = static::TYPE_ELEMENT;
 			$element = $this->_render($file, array_merge($this->viewVars, $data));
 
 			if ($callbacks) {
@@ -472,7 +472,7 @@ class View extends Object {
 		$this->Blocks->set('content', '');
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
-			$this->_currentType = self::TYPE_VIEW;
+			$this->_currentType = static::TYPE_VIEW;
 			$this->getEventManager()->dispatch(new Event('View.beforeRender', $this, array($viewFileName)));
 			$this->Blocks->set('content', $this->_render($viewFileName));
 			$this->getEventManager()->dispatch(new Event('View.afterRender', $this, array($viewFileName)));
@@ -537,7 +537,7 @@ class View extends Object {
 			$this->viewVars['title_for_layout'] = Inflector::humanize($this->viewPath);
 		}
 
-		$this->_currentType = self::TYPE_LAYOUT;
+		$this->_currentType = static::TYPE_LAYOUT;
 		$this->Blocks->set('content', $this->_render($layoutFileName));
 
 		$this->getEventManager()->dispatch(new Event('View.afterLayout', $this, array($layoutFileName)));
@@ -691,11 +691,11 @@ class View extends Object {
  * @throws LogicException when you extend an element which doesn't exist
  */
 	public function extend($name) {
-		if ($name[0] === '/' || $this->_currentType === self::TYPE_VIEW) {
+		if ($name[0] === '/' || $this->_currentType === static::TYPE_VIEW) {
 			$parent = $this->_getViewFileName($name);
 		} else {
 			switch ($this->_currentType) {
-				case self::TYPE_ELEMENT:
+				case static::TYPE_ELEMENT:
 					$parent = $this->_getElementFileName($name);
 					if (!$parent) {
 						list($plugin, $name) = $this->pluginSplit($name);
@@ -708,7 +708,7 @@ class View extends Object {
 						));
 					}
 					break;
-				case self::TYPE_LAYOUT:
+				case static::TYPE_LAYOUT:
 					$parent = $this->_getLayoutFileName($name);
 					break;
 				default:

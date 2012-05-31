@@ -177,7 +177,7 @@ class Debugger {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::dump
  */
 	public static function dump($var) {
-		pr(self::exportVar($var));
+		pr(static::exportVar($var));
 	}
 
 /**
@@ -190,8 +190,8 @@ class Debugger {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::log
  */
 	public static function log($var, $level = LOG_DEBUG) {
-		$source = self::trace(array('start' => 1)) . "\n";
-		Log::write($level, "\n" . $source . self::exportVar($var));
+		$source = static::trace(array('start' => 1)) . "\n";
+		Log::write($level, "\n" . $source . static::exportVar($var));
 	}
 
 /**
@@ -214,7 +214,7 @@ class Debugger {
 		if (empty($line)) {
 			$line = '??';
 		}
-		$path = self::trimPath($file);
+		$path = static::trimPath($file);
 
 		$info = compact('code', 'description', 'file', 'line');
 		if (!in_array($info, $self->errors)) {
@@ -338,7 +338,7 @@ class Debugger {
 				} else {
 					$tpl = $self->_templates['base']['traceLine'];
 				}
-				$trace['path'] = self::trimPath($trace['file']);
+				$trace['path'] = static::trimPath($trace['file']);
 				$trace['reference'] = $reference;
 				unset($trace['object'], $trace['args']);
 				$back[] = String::insert($tpl, $trace, array('before' => '{:', 'after' => '}'));
@@ -410,7 +410,7 @@ class Debugger {
 			if (!isset($data[$i])) {
 				continue;
 			}
-			$string = str_replace(array("\r\n", "\n"), "", self::_highlight($data[$i]));
+			$string = str_replace(array("\r\n", "\n"), "", static::_highlight($data[$i]));
 			if ($i == $line) {
 				$lines[] = '<span class="code-highlight">' . $string . '</span>';
 			} else {
@@ -460,7 +460,7 @@ class Debugger {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::exportVar
  */
 	public static function exportVar($var, $depth = 3) {
-		return self::_export($var, $depth, 0);
+		return static::_export($var, $depth, 0);
 	}
 
 /**
@@ -472,7 +472,7 @@ class Debugger {
  * @return string The dumped variable.
  */
 	protected static function _export($var, $depth, $indent) {
-		switch (self::getType($var)) {
+		switch (static::getType($var)) {
 			case 'boolean':
 				return ($var) ? 'true' : 'false';
 			break;
@@ -488,7 +488,7 @@ class Debugger {
 				return "'" . $var . "'";
 			break;
 			case 'array':
-				return self::_array($var, $depth - 1, $indent + 1);
+				return static::_array($var, $depth - 1, $indent + 1);
 			break;
 			case 'resource':
 				return strtolower(gettype($var));
@@ -496,7 +496,7 @@ class Debugger {
 			case 'null':
 				return 'null';
 			default:
-				return self::_object($var, $depth - 1, $indent + 1);
+				return static::_object($var, $depth - 1, $indent + 1);
 			break;
 		}
 	}
@@ -543,9 +543,9 @@ class Debugger {
 
 		if ($depth >= 0) {
 			foreach ($var as $key => $val) {
-				$vars[] = $break . self::exportVar($key) .
+				$vars[] = $break . static::exportVar($key) .
 					' => ' .
-					self::_export($val, $depth - 1, $indent);
+					static::_export($val, $depth - 1, $indent);
 			}
 		}
 		return $out . implode(',', $vars) . $end . ')';
@@ -572,7 +572,7 @@ class Debugger {
 			$break = "\n" . str_repeat("\t", $indent);
 			$objectVars = get_object_vars($var);
 			foreach ($objectVars as $key => $value) {
-				$value = self::_export($value, $depth - 1, $indent);
+				$value = static::_export($value, $depth - 1, $indent);
 				$props[] = "$key => " . $value;
 			}
 			$out .= $break . implode($break, $props) . $end;

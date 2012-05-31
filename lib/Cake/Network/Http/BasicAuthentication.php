@@ -35,7 +35,7 @@ class BasicAuthentication {
  */
 	public static function authentication(HttpSocket $http, &$authInfo) {
 		if (isset($authInfo['user'], $authInfo['pass'])) {
-			$http->request['header']['Authorization'] = self::_generateHeader($authInfo['user'], $authInfo['pass']);
+			$http->request['header']['Authorization'] = static::_generateHeader($authInfo['user'], $authInfo['pass']);
 		}
 	}
 
@@ -49,7 +49,7 @@ class BasicAuthentication {
  */
 	public static function proxyAuthentication(HttpSocket $http, &$proxyInfo) {
 		if (isset($proxyInfo['user'], $proxyInfo['pass'])) {
-			$http->request['header']['Proxy-Authorization'] = self::_generateHeader($proxyInfo['user'], $proxyInfo['pass']);
+			$http->request['header']['Proxy-Authorization'] = static::_generateHeader($proxyInfo['user'], $proxyInfo['pass']);
 		}
 	}
 

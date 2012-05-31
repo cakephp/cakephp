@@ -94,7 +94,7 @@ class Xml {
 		$options = array_merge($defaults, $options);
 
 		if (is_array($input) || is_object($input)) {
-			return self::fromArray((array)$input, $options);
+			return static::fromArray((array)$input, $options);
 		} elseif (strpos($input, '<') !== false) {
 			if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
 				return new \SimpleXMLElement($input, LIBXML_NOCDATA);
@@ -173,7 +173,7 @@ class Xml {
 		$options = array_merge($defaults, $options);
 
 		$dom = new \DOMDocument($options['version'], $options['encoding']);
-		self::_fromArray($dom, $dom, $input, $options['format']);
+		static::_fromArray($dom, $dom, $input, $options['format']);
 
 		$options['return'] = strtolower($options['return']);
 		if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
@@ -237,10 +237,10 @@ class Xml {
 						foreach ($value as $item) {
 							$itemData = compact('dom', 'node', 'key', 'format');
 							$itemData['value'] = $item;
-							self::_createChild($itemData);
+							static::_createChild($itemData);
 						}
 					} else { // Struct
-						self::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
+						static::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
 					}
 				}
 			} else {
@@ -280,7 +280,7 @@ class Xml {
 			$child->setAttribute('xmlns', $childNS);
 		}
 
-		self::_fromArray($dom, $child, $value, $format);
+		static::_fromArray($dom, $child, $value, $format);
 		$node->appendChild($child);
 	}
 
@@ -300,7 +300,7 @@ class Xml {
 		}
 		$result = array();
 		$namespaces = array_merge(array('' => ''), $obj->getNamespaces(true));
-		self::_toArray($obj, $result, '', array_keys($namespaces));
+		static::_toArray($obj, $result, '', array_keys($namespaces));
 		return $result;
 	}
 
@@ -325,7 +325,7 @@ class Xml {
 			}
 
 			foreach ($xml->children($namespace, true) as $child) {
-				self::_toArray($child, $data, $namespace, $namespaces);
+				static::_toArray($child, $data, $namespace, $namespaces);
 			}
 		}
 

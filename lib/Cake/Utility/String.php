@@ -556,7 +556,7 @@ class String {
  */
 	public static function excerpt($text, $phrase, $radius = 100, $ending = '...') {
 		if (empty($text) || empty($phrase)) {
-			return self::truncate($text, $radius * 2, array('ending' => $ending));
+			return static::truncate($text, $radius * 2, array('ending' => $ending));
 		}
 
 		$append = $prepend = $ending;

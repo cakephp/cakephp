@@ -47,7 +47,7 @@ class TestRunner extends \PHPUnit_TextUI_TestRunner {
  */
 	public function doRun(\PHPUnit_Framework_Test $suite, array $arguments = array()) {
 		if (isset($arguments['printer'])) {
-			self::$versionStringPrinted = true;
+			static::$versionStringPrinted = true;
 		}
 
 		$autoloader = new ClassLoader('TestApp', dirname(__DIR__) . '/Test');

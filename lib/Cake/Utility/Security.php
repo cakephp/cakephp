@@ -93,7 +93,7 @@ class Security {
 		}
 
 		if (empty($type)) {
-			$type = self::$hashType;
+			$type = static::$hashType;
 		}
 		$type = strtolower($type);
 
@@ -124,7 +124,7 @@ class Security {
  * @see Security::hash()
  */
 	public static function setHash($hash) {
-		self::$hashType = $hash;
+		static::$hashType = $hash;
 	}
 
 /**

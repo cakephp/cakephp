@@ -248,7 +248,7 @@ class TestSuiteDispatcher {
 		restore_error_handler();
 
 		try {
-			self::time();
+			static::time();
 			$command = new TestSuiteCommand('Cake\TestSuite\TestLoader', $commandArgs);
 			$result = $command->run($options);
 		} catch (Error\MissingConnectionException $exception) {
@@ -281,7 +281,7 @@ class TestSuiteDispatcher {
  * @return string formatted date
  */
 	public static function date($format) {
-		return date($format, self::time());
+		return date($format, static::time());
 	}
 
 }

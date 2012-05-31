@@ -162,7 +162,7 @@ class I18n {
 		}
 
 		if (is_null($domain)) {
-			$domain = self::$defaultDomain;
+			$domain = static::$defaultDomain;
 		}
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
@@ -321,9 +321,9 @@ class I18n {
 			foreach ($this->l10n->languagePath as $lang) {
 				$localeDef = $directory . $lang . DS . $this->category;
 				if (is_file($localeDef)) {
-					$definitions = self::loadLocaleDefinition($localeDef);
+					$definitions = static::loadLocaleDefinition($localeDef);
 					if ($definitions !== false) {
-						$this->_domains[$domain][$this->_lang][$this->category] = self::loadLocaleDefinition($localeDef);
+						$this->_domains[$domain][$this->_lang][$this->category] = static::loadLocaleDefinition($localeDef);
 						$this->_noLocale = false;
 						return $domain;
 					}
@@ -334,10 +334,10 @@ class I18n {
 					$translations = false;
 
 					if (is_file($app . '.mo')) {
-						$translations = self::loadMo($app . '.mo');
+						$translations = static::loadMo($app . '.mo');
 					}
 					if ($translations === false && is_file($app . '.po')) {
-						$translations = self::loadPo($app . '.po');
+						$translations = static::loadPo($app . '.po');
 					}
 
 					if ($translations !== false) {
@@ -352,10 +352,10 @@ class I18n {
 				$translations = false;
 
 				if (is_file($file . '.mo')) {
-					$translations = self::loadMo($file . '.mo');
+					$translations = static::loadMo($file . '.mo');
 				}
 				if ($translations === false && is_file($file . '.po')) {
-					$translations = self::loadPo($file . '.po');
+					$translations = static::loadPo($file . '.po');
 				}
 
 				if ($translations !== false) {

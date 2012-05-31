@@ -93,7 +93,7 @@ class Hash {
 
 		// Simple paths.
 		if (!preg_match('/[{\[]/', $path)) {
-			return (array)self::get($data, $path);
+			return (array)static::get($data, $path);
 		}
 
 		if (strpos('[', $path) === false) {
@@ -119,7 +119,7 @@ class Hash {
 
 			foreach ($context[$_key] as $item) {
 				foreach ($item as $k => $v) {
-					if (self::_matchToken($k, $token)) {
+					if (static::_matchToken($k, $token)) {
 						$next[] = $v;
 					}
 				}
@@ -129,7 +129,7 @@ class Hash {
 			if ($conditions) {
 				$filter = array();
 				foreach ($next as $item) {
-					if (self::_matches($item, $conditions)) {
+					if (static::_matches($item, $conditions)) {
 						$filter[] = $item;
 					}
 				}
@@ -230,14 +230,14 @@ class Hash {
 	public static function insert(array $data, $path, $values = null) {
 		$tokens = explode('.', $path);
 		if (strpos($path, '{') === false) {
-			return self::_simpleOp('insert', $data, $tokens, $values);
+			return static::_simpleOp('insert', $data, $tokens, $values);
 		}
 
 		$token = array_shift($tokens);
 		$nextPath = implode('.', $tokens);
 		foreach ($data as $k => $v) {
-			if (self::_matchToken($k, $token)) {
-				$data[$k] = self::insert($v, $nextPath, $values);
+			if (static::_matchToken($k, $token)) {
+				$data[$k] = static::insert($v, $nextPath, $values);
 			}
 		}
 		return $data;
@@ -298,15 +298,15 @@ class Hash {
 	public static function remove(array $data, $path) {
 		$tokens = explode('.', $path);
 		if (strpos($path, '{') === false) {
-			return self::_simpleOp('remove', $data, $tokens);
+			return static::_simpleOp('remove', $data, $tokens);
 		}
 
 		$token = array_shift($tokens);
 		$nextPath = implode('.', $tokens);
 		foreach ($data as $k => $v) {
-			$match = self::_matchToken($k, $token);
+			$match = static::_matchToken($k, $token);
 			if ($match && is_array($v)) {
-				$data[$k] = self::remove($v, $nextPath);
+				$data[$k] = static::remove($v, $nextPath);
 			} elseif ($match) {
 				unset($data[$k]);
 			}
@@ -334,9 +334,9 @@ class Hash {
 
 		if (is_array($keyPath)) {
 			$format = array_shift($keyPath);
-			$keys = self::format($data, $keyPath, $format);
+			$keys = static::format($data, $keyPath, $format);
 		} else {
-			$keys = self::extract($data, $keyPath);
+			$keys = static::extract($data, $keyPath);
 		}
 		if (empty($keys)) {
 			return array();
@@ -344,9 +344,9 @@ class Hash {
 
 		if (!empty($valuePath) && is_array($valuePath)) {
 			$format = array_shift($valuePath);
-			$vals = self::format($data, $valuePath, $format);
+			$vals = static::format($data, $valuePath, $format);
 		} elseif (!empty($valuePath)) {
-			$vals = self::extract($data, $valuePath);
+			$vals = static::extract($data, $valuePath);
 		}
 
 		$count = count($keys);
@@ -355,7 +355,7 @@ class Hash {
 		}
 
 		if ($groupPath !== null) {
-			$group = self::extract($data, $groupPath);
+			$group = static::extract($data, $groupPath);
 			if (!empty($group)) {
 				$c = count($keys);
 				for ($i = 0; $i < $c; $i++) {
@@ -405,7 +405,7 @@ class Hash {
 		}
 
 		for ($i = 0; $i < $count; $i++) {
-			$extracted[] = self::extract($data, $paths[$i]);
+			$extracted[] = static::extract($data, $paths[$i]);
 		}
 		$out = array();
 		$data = $extracted;
@@ -475,7 +475,7 @@ class Hash {
  * @see Hash::extract()
  */
 	public static function check(array $data, $path) {
-		$results = self::extract($data, $path);
+		$results = static::extract($data, $path);
 		if (!is_array($results)) {
 			return false;
 		}
@@ -487,14 +487,14 @@ class Hash {
  *
  * @param array $data Either an array to filter, or value when in callback
  * @param callable $callback A function to filter the data with.  Defaults to
- *   `self::_filter()` Which strips out all non-zero empty values.
+ *   `static::_filter()` Which strips out all non-zero empty values.
  * @return array Filtered array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::filter
  */
 	public static function filter(array $data, $callback = array('self', '_filter')) {
 		foreach ($data as $k => $v) {
 			if (is_array($v)) {
-				$data[$k] = self::filter($v, $callback);
+				$data[$k] = static::filter($v, $callback);
 			}
 		}
 		return array_filter($data, $callback);
@@ -576,7 +576,7 @@ class Hash {
 					$k => $child
 				);
 			}
-			$result = self::merge($result, $child);
+			$result = static::merge($result, $child);
 		}
 		return $result;
 	}
@@ -602,7 +602,7 @@ class Hash {
 		while (($arg = next($args)) !== false) {
 			foreach ((array)$arg as $key => $val) {
 				if (!empty($return[$key]) && is_array($return[$key]) && is_array($val)) {
-					$return[$key] = self::merge($return[$key], $val);
+					$return[$key] = static::merge($return[$key], $val);
 				} elseif (is_int($key)) {
 					$return[] = $val;
 				} else {
@@ -669,7 +669,7 @@ class Hash {
 		$depth = array();
 		if (is_array($data) && reset($data) !== false) {
 			foreach ($data as $value) {
-				$depth[] = self::dimensions((array)$value) + 1;
+				$depth[] = static::dimensions((array)$value) + 1;
 			}
 		}
 		return max($depth);
@@ -685,7 +685,7 @@ class Hash {
  * @return array An array of the modified values.
  */
 	public static function map(array $data, $path, $function) {
-		$values = (array)self::extract($data, $path);
+		$values = (array)static::extract($data, $path);
 		return array_map($function, $values);
 	}
 
@@ -697,7 +697,7 @@ class Hash {
  * @return mixed The reduced value.
  */
 	public static function reduce(array $data, $path, $function) {
-		$values = (array)self::extract($data, $path);
+		$values = (array)static::extract($data, $path);
 		return array_reduce($values, $function);
 	}
 
@@ -710,7 +710,7 @@ class Hash {
  * @return mixed The results of the applied method.
  */
 	public static function apply(array $data, $path, $function) {
-		$values = (array)self::extract($data, $path);
+		$values = (array)static::extract($data, $path);
 		return call_user_func($function, $values);
 	}
 
@@ -742,7 +742,7 @@ class Hash {
 		if ($numeric) {
 			$data = array_values($data);
 		}
-		$sortValues = self::extract($data, $path);
+		$sortValues = static::extract($data, $path);
 		$sortCount = count($sortValues);
 		$dataCount = count($data);
 
@@ -751,9 +751,9 @@ class Hash {
 		if ($sortCount < $dataCount) {
 			$sortValues = array_pad($sortValues, $dataCount, null);
 		}
-		$result = self::_squash($sortValues);
-		$keys = self::extract($result, '{n}.id');
-		$values = self::extract($result, '{n}.value');
+		$result = static::_squash($sortValues);
+		$keys = static::extract($result, '{n}.id');
+		$values = static::extract($result, '{n}.value');
 
 		$dir = strtolower($dir);
 		$type = strtolower($type);
@@ -808,7 +808,7 @@ class Hash {
 				$id = $key;
 			}
 			if (is_array($r) && !empty($r)) {
-				$stack = array_merge($stack, self::_squash($r, $id));
+				$stack = array_merge($stack, static::_squash($r, $id));
 			} else {
 				$stack[] = array('id' => $id, 'value' => $r);
 			}
@@ -863,7 +863,7 @@ class Hash {
 			if (!array_key_exists($key, $data)) {
 				$data[$key] = $value;
 			} elseif (is_array($value)) {
-				$data[$key] = self::mergeDiff($data[$key], $compare[$key]);
+				$data[$key] = static::mergeDiff($data[$key], $compare[$key]);
 			}
 		}
 		return $data;
@@ -935,7 +935,7 @@ class Hash {
 		);
 
 		$return = $idMap = array();
-		$ids = self::extract($data, $options['idPath']);
+		$ids = static::extract($data, $options['idPath']);
 
 		$idKeys = explode('.', $options['idPath']);
 		array_shift($idKeys);
@@ -946,8 +946,8 @@ class Hash {
 		foreach ($data as $result) {
 			$result[$options['children']] = array();
 
-			$id = self::get($result, $idKeys);
-			$parentId = self::get($result, $parentKeys);
+			$id = static::get($result, $idKeys);
+			$parentId = static::get($result, $parentKeys);
 
 			if (isset($idMap[$id][$options['children']])) {
 				$idMap[$id] = array_merge($result, (array)$idMap[$id]);
@@ -964,12 +964,12 @@ class Hash {
 		if ($options['root']) {
 			$root = $options['root'];
 		} else {
-			$root = self::get($return[0], $parentKeys);
+			$root = static::get($return[0], $parentKeys);
 		}
 
 		foreach ($return as $i => $result) {
-			$id = self::get($result, $idKeys);
-			$parentId = self::get($result, $parentKeys);
+			$id = static::get($result, $idKeys);
+			$parentId = static::get($result, $parentKeys);
 			if ($id !== $root && $parentId != $root) {
 				unset($return[$i]);
 			}

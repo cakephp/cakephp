@@ -42,7 +42,7 @@ class TestAuthComponent extends AuthComponent {
 	}
 
 	public static function clearUser() {
-		self::$_user = array();
+		static::$_user = array();
 	}
 
 }

@@ -120,8 +120,8 @@ class Log {
  * @return void
  */
 	protected static function _init() {
-		self::$_levels = self::defaultLevels();
-		self::$_Collection = new LogEngineCollection();
+		static::$_levels = static::defaultLevels();
+		static::$_Collection = new LogEngineCollection();
 	}
 
 /**
@@ -190,10 +190,10 @@ class Log {
 		if (empty($config['engine'])) {
 			throw new Error\LogException(__d('cake_dev', 'Missing logger classname'));
 		}
-		if (empty(self::$_Collection)) {
-			self::_init();
+		if (empty(static::$_Collection)) {
+			static::_init();
 		}
-		self::$_Collection->load($key, $config);
+		static::$_Collection->load($key, $config);
 		return true;
 	}
 
@@ -203,10 +203,10 @@ class Log {
  * @return array Array of configured log streams.
  */
 	public static function configured() {
-		if (empty(self::$_Collection)) {
-			self::_init();
+		if (empty(static::$_Collection)) {
+			static::_init();
 		}
-		return self::$_Collection->attached();
+		return static::$_Collection->attached();
 	}
 
 /**
@@ -256,20 +256,20 @@ class Log {
  * @return array active log levels
  */
 	public static function levels($levels = array(), $append = true) {
-		if (empty(self::$_Collection)) {
-			self::_init();
+		if (empty(static::$_Collection)) {
+			static::_init();
 		}
 		if (empty($levels)) {
-			return self::$_levels;
+			return static::$_levels;
 		}
 		$levels = array_values($levels);
 		if ($append) {
-			self::$_levels = array_merge(self::$_levels, $levels);
+			static::$_levels = array_merge(static::$_levels, $levels);
 		} else {
-			self::$_levels = $levels;
+			static::$_levels = $levels;
 		}
-		self::$_levelMap = array_flip(self::$_levels);
-		return self::$_levels;
+		static::$_levelMap = array_flip(static::$_levels);
+		return static::$_levels;
 	}
 
 /**
@@ -278,9 +278,9 @@ class Log {
  * @return array default log levels
  */
 	public static function defaultLevels() {
-		self::$_levels = self::$_defaultLevels;
-		self::$_levelMap = array_flip(self::$_levels);
-		return self::$_levels;
+		static::$_levels = static::$_defaultLevels;
+		static::$_levelMap = array_flip(static::$_levels);
+		return static::$_levels;
 	}
 
 /**
@@ -291,10 +291,10 @@ class Log {
  * @return void
  */
 	public static function drop($streamName) {
-		if (empty(self::$_Collection)) {
-			self::_init();
+		if (empty(static::$_Collection)) {
+			static::_init();
 		}
-		self::$_Collection->unload($streamName);
+		static::$_Collection->unload($streamName);
 	}
 
 /**
@@ -305,13 +305,13 @@ class Log {
  * @throws Cake\Error\LogException
  */
 	public static function enabled($streamName) {
-		if (empty(self::$_Collection)) {
-			self::_init();
+		if (empty(static::$_Collection)) {
+			static::_init();
 		}
-		if (!isset(self::$_Collection->{$streamName})) {
+		if (!isset(static::$_Collection->{$streamName})) {
 			throw new Error\LogException(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
-		return self::$_Collection->enabled($streamName);
+		return static::$_Collection->enabled($streamName);
 	}
 
 /**
@@ -323,13 +323,13 @@ class Log {
  * @throws Cake\Error\LogException
  */
 	public static function enable($streamName) {
-		if (empty(self::$_Collection)) {
-			self::_init();
+		if (empty(static::$_Collection)) {
+			static::_init();
 		}
-		if (!isset(self::$_Collection->{$streamName})) {
+		if (!isset(static::$_Collection->{$streamName})) {
 			throw new Error\LogException(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
-		self::$_Collection->enable($streamName);
+		static::$_Collection->enable($streamName);
 	}
 
 /**
@@ -342,13 +342,13 @@ class Log {
  * @throws Cake\Error\LogException
  */
 	public static function disable($streamName) {
-		if (empty(self::$_Collection)) {
-			self::_init();
+		if (empty(static::$_Collection)) {
+			static::_init();
 		}
-		if (!isset(self::$_Collection->{$streamName})) {
+		if (!isset(static::$_Collection->{$streamName})) {
 			throw new Error\LogException(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
-		self::$_Collection->disable($streamName);
+		static::$_Collection->disable($streamName);
 	}
 
 /**
@@ -359,11 +359,11 @@ class Log {
  * @return $mixed instance of BaseLog or false if not found
  */
 	public static function stream($streamName) {
-		if (empty(self::$_Collection)) {
-			self::_init();
+		if (empty(static::$_Collection)) {
+			static::_init();
 		}
-		if (!empty(self::$_Collection->{$streamName})) {
-			return self::$_Collection->{$streamName};
+		if (!empty(static::$_Collection->{$streamName})) {
+			return static::$_Collection->{$streamName};
 		}
 		return false;
 	}
@@ -374,7 +374,7 @@ class Log {
  * @return void
  */
 	protected static function _autoConfig() {
-		self::$_Collection->load('default', array(
+		static::$_Collection->load('default', array(
 			'engine' => 'Cake\Log\Engine\FileLog',
 			'path' => LOGS,
 		));
@@ -411,19 +411,19 @@ class Log {
  * @return boolean Success
  */
 	public static function write($type, $message, $scope = array()) {
-		if (empty(self::$_Collection)) {
-			self::_init();
+		if (empty(static::$_Collection)) {
+			static::_init();
 		}
 
-		if (is_int($type) && isset(self::$_levels[$type])) {
-			$type = self::$_levels[$type];
+		if (is_int($type) && isset(static::$_levels[$type])) {
+			$type = static::$_levels[$type];
 		}
-		if (is_string($type) && empty($scope) && !in_array($type, self::$_levels)) {
+		if (is_string($type) && empty($scope) && !in_array($type, static::$_levels)) {
 			$scope = $type;
 		}
 		$logged = false;
-		foreach (self::$_Collection->enabled() as $streamName) {
-			$logger = self::$_Collection->{$streamName};
+		foreach (static::$_Collection->enabled() as $streamName) {
+			$logger = static::$_Collection->{$streamName};
 			$types = null;
 			$scopes = array();
 			if ($logger instanceof BaseLog) {
@@ -447,8 +447,8 @@ class Log {
 			}
 		}
 		if (!$logged) {
-			self::_autoConfig();
-			self::stream('default')->write($type, $message);
+			static::_autoConfig();
+			static::stream('default')->write($type, $message);
 		}
 		return true;
 	}
@@ -462,7 +462,7 @@ class Log {
  * @return boolean Success
  */
 	public static function emergency($message, $scope = array()) {
-		return self::write(self::$_levelMap['emergency'], $message, $scope);
+		return static::write(static::$_levelMap['emergency'], $message, $scope);
 	}
 
 /**
@@ -474,7 +474,7 @@ class Log {
  * @return boolean Success
  */
 	public static function alert($message, $scope = array()) {
-		return self::write(self::$_levelMap['alert'], $message, $scope);
+		return static::write(static::$_levelMap['alert'], $message, $scope);
 	}
 
 /**
@@ -486,7 +486,7 @@ class Log {
  * @return boolean Success
  */
 	public static function critical($message, $scope = array()) {
-		return self::write(self::$_levelMap['critical'], $message, $scope);
+		return static::write(static::$_levelMap['critical'], $message, $scope);
 	}
 
 /**
@@ -498,7 +498,7 @@ class Log {
  * @return boolean Success
  */
 	public static function error($message, $scope = array()) {
-		return self::write(self::$_levelMap['error'], $message, $scope);
+		return static::write(static::$_levelMap['error'], $message, $scope);
 	}
 
 /**
@@ -510,7 +510,7 @@ class Log {
  * @return boolean Success
  */
 	public static function warning($message, $scope = array()) {
-		return self::write(self::$_levelMap['warning'], $message, $scope);
+		return static::write(static::$_levelMap['warning'], $message, $scope);
 	}
 
 /**
@@ -522,7 +522,7 @@ class Log {
  * @return boolean Success
  */
 	public static function notice($message, $scope = array()) {
-		return self::write(self::$_levelMap['notice'], $message, $scope);
+		return static::write(static::$_levelMap['notice'], $message, $scope);
 	}
 
 /**
@@ -534,7 +534,7 @@ class Log {
  * @return boolean Success
  */
 	public static function debug($message, $scope = array()) {
-		return self::write(self::$_levelMap['debug'], $message, $scope);
+		return static::write(static::$_levelMap['debug'], $message, $scope);
 	}
 
 /**
@@ -546,7 +546,7 @@ class Log {
  * @return boolean Success
  */
 	public static function info($message, $scope = array()) {
-		return self::write(self::$_levelMap['info'], $message, $scope);
+		return static::write(static::$_levelMap['info'], $message, $scope);
 	}
 
 }

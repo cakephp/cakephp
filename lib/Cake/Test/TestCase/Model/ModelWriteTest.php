@@ -1626,7 +1626,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Second Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => self::date()
+				'updated' => static::date()
 			),
 			'Tag' => array(
 				array(
@@ -2565,23 +2565,23 @@ class ModelWriteTest extends BaseModelTest {
 			'JoinA' => array(
 				'id' => '1',
 				'name' => 'New name for Join A 1',
-				'updated' => self::date()
+				'updated' => static::date()
 			),
 			'JoinB' => array(
 				array(
 					'id' => 1,
 					'join_b_id' => 2,
 					'other' => 'New data for Join A 1 Join B 2',
-					'created' => self::date(),
-					'updated' => self::date()
+					'created' => static::date(),
+					'updated' => static::date()
 			)),
 			'JoinC' => array(
 				array(
 					'id' => 1,
 					'join_c_id' => 2,
 					'other' => 'New data for Join A 1 Join C 2',
-					'created' => self::date(),
-					'updated' => self::date()
+					'created' => static::date(),
+					'updated' => static::date()
 		)));
 
 		$TestModel->set($data);
@@ -2594,7 +2594,7 @@ class ModelWriteTest extends BaseModelTest {
 				'name' => 'New name for Join A 1',
 				'body' => 'Join A 1 Body',
 				'created' => '2008-01-03 10:54:23',
-				'updated' => self::date()
+				'updated' => static::date()
 			),
 			'JoinB' => array(
 				0 => array(
@@ -2607,8 +2607,8 @@ class ModelWriteTest extends BaseModelTest {
 						'join_a_id' => 1,
 						'join_b_id' => 2,
 						'other' => 'New data for Join A 1 Join B 2',
-						'created' => self::date(),
-						'updated' => self::date()
+						'created' => static::date(),
+						'updated' => static::date()
 			))),
 			'JoinC' => array(
 				0 => array(
@@ -2621,8 +2621,8 @@ class ModelWriteTest extends BaseModelTest {
 						'join_a_id' => 1,
 						'join_c_id' => 2,
 						'other' => 'New data for Join A 1 Join C 2',
-						'created' => self::date(),
-						'updated' => self::date()
+						'created' => static::date(),
+						'updated' => static::date()
 		))));
 
 		$this->assertEquals($expected, $result);
@@ -2666,10 +2666,10 @@ class ModelWriteTest extends BaseModelTest {
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf90',
 				'test' => 'working'
 		));
-		$this->assertEquals(self::date(), $result[3]['Post']['created']);
-		$this->assertEquals(self::date(), $result[3]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[3]['Author']['created']);
-		$this->assertEquals(self::date(), $result[3]['Author']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['created']);
+		$this->assertEquals(static::date(), $result[3]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Author']['created']);
+		$this->assertEquals(static::date(), $result[3]['Author']['updated']);
 		unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
 		unset($result[3]['Author']['created'], $result[3]['Author']['updated']);
 		$this->assertEquals($expected, $result[3]);
@@ -2714,10 +2714,10 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => 'Second multi-record post',
 					'published' => 'N'
 		)));
-		$this->assertEquals(self::date(), $result[0]['Post']['created']);
-		$this->assertEquals(self::date(), $result[0]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[1]['Post']['created']);
-		$this->assertEquals(self::date(), $result[1]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[0]['Post']['created']);
+		$this->assertEquals(static::date(), $result[0]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[1]['Post']['created']);
+		$this->assertEquals(static::date(), $result[1]['Post']['updated']);
 		unset($result[0]['Post']['created'], $result[0]['Post']['updated']);
 		unset($result[1]['Post']['created'], $result[1]['Post']['updated']);
 		$this->assertEquals($expected, $result);
@@ -2743,8 +2743,8 @@ class ModelWriteTest extends BaseModelTest {
 			'comment' => 'New comment with attachment',
 			'published' => 'Y'
 		);
-		$this->assertEquals(self::date(), $result[6]['Comment']['created']);
-		$this->assertEquals(self::date(), $result[6]['Comment']['updated']);
+		$this->assertEquals(static::date(), $result[6]['Comment']['created']);
+		$this->assertEquals(static::date(), $result[6]['Comment']['updated']);
 		unset($result[6]['Comment']['created'], $result[6]['Comment']['updated']);
 		$this->assertEquals($expected, $result[6]['Comment']);
 
@@ -2753,8 +2753,8 @@ class ModelWriteTest extends BaseModelTest {
 			'comment_id' => '7',
 			'attachment' => 'some_file.tgz'
 		);
-		$this->assertEquals(self::date(), $result[6]['Attachment']['created']);
-		$this->assertEquals(self::date(), $result[6]['Attachment']['updated']);
+		$this->assertEquals(static::date(), $result[6]['Attachment']['created']);
+		$this->assertEquals(static::date(), $result[6]['Attachment']['updated']);
 		unset($result[6]['Attachment']['created'], $result[6]['Attachment']['updated']);
 		$this->assertEquals($expected, $result[6]['Attachment']);
 	}
@@ -4083,8 +4083,8 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'New Fourth Post',
 					'body' => null,
 					'published' => 'N',
-					'created' => self::date(),
-					'updated' => self::date()
+					'created' => static::date(),
+					'updated' => static::date()
 			));
 
 			$expected[] = array(
@@ -4094,8 +4094,8 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'New Fifth Post',
 					'body' => null,
 					'published' => 'N',
-					'created' => self::date(),
-					'updated' => self::date()
+					'created' => static::date(),
+					'updated' => static::date()
 			));
 
 			$this->assertEquals($expected, $result);
@@ -4151,8 +4151,8 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'New Fourth Post',
 					'body' => 'Third Post Body',
 					'published' => 'N',
-					'created' => self::date(),
-					'updated' => self::date()
+					'created' => static::date(),
+					'updated' => static::date()
 			));
 
 			$expected[] = array(
@@ -4162,8 +4162,8 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'Third Post',
 					'body' => 'Third Post Body',
 					'published' => 'N',
-					'created' => self::date(),
-					'updated' => self::date()
+					'created' => static::date(),
+					'updated' => static::date()
 			));
 		}
 		$this->assertEquals($expected, $result);
@@ -4288,10 +4288,10 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => 'Fourth post body',
 					'published' => 'N'
 		)));
-		$this->assertEquals(self::date(), $result[0]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[1]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[3]['Post']['created']);
-		$this->assertEquals(self::date(), $result[3]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[0]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[1]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['created']);
+		$this->assertEquals(static::date(), $result[3]['Post']['updated']);
 		unset($result[0]['Post']['updated'], $result[1]['Post']['updated']);
 		unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
 		$this->assertEquals($expected, $result);
@@ -4382,10 +4382,10 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 
-		$this->assertEquals(self::date(), $result[0]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[1]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[3]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[3]['Post']['created']);
+		$this->assertEquals(static::date(), $result[0]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[1]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['created']);
 		unset(
 			$result[0]['Post']['updated'], $result[1]['Post']['updated'],
 			$result[3]['Post']['updated'], $result[3]['Post']['created']
@@ -4740,10 +4740,10 @@ class ModelWriteTest extends BaseModelTest {
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf90',
 				'test' => 'working'
 		));
-		$this->assertEquals(self::date(), $result[3]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[3]['Post']['created']);
-		$this->assertEquals(self::date(), $result[3]['Author']['created']);
-		$this->assertEquals(self::date(), $result[3]['Author']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['created']);
+		$this->assertEquals(static::date(), $result[3]['Author']['created']);
+		$this->assertEquals(static::date(), $result[3]['Author']['updated']);
 		unset(
 			$result[3]['Post']['updated'], $result[3]['Post']['created'],
 			$result[3]['Author']['updated'], $result[3]['Author']['created']
@@ -4772,8 +4772,8 @@ class ModelWriteTest extends BaseModelTest {
 			'comment' => 'New comment with attachment',
 			'published' => 'Y'
 		);
-		$this->assertEquals(self::date(), $result[6]['Comment']['updated']);
-		$this->assertEquals(self::date(), $result[6]['Comment']['created']);
+		$this->assertEquals(static::date(), $result[6]['Comment']['updated']);
+		$this->assertEquals(static::date(), $result[6]['Comment']['created']);
 		unset($result[6]['Comment']['updated'], $result[6]['Comment']['created']);
 		$this->assertEquals($expected, $result[6]['Comment']);
 
@@ -4782,8 +4782,8 @@ class ModelWriteTest extends BaseModelTest {
 			'comment_id' => '7',
 			'attachment' => 'some_file.tgz'
 		);
-		$this->assertEquals(self::date(), $result[6]['Attachment']['updated']);
-		$this->assertEquals(self::date(), $result[6]['Attachment']['created']);
+		$this->assertEquals(static::date(), $result[6]['Attachment']['updated']);
+		$this->assertEquals(static::date(), $result[6]['Attachment']['created']);
 		unset($result[6]['Attachment']['updated'], $result[6]['Attachment']['created']);
 		$this->assertEquals($expected, $result[6]['Attachment']);
 	}
@@ -4838,10 +4838,10 @@ class ModelWriteTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEquals(self::date(), $result[0]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[0]['Post']['created']);
-		$this->assertEquals(self::date(), $result[1]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[1]['Post']['created']);
+		$this->assertEquals(static::date(), $result[0]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[0]['Post']['created']);
+		$this->assertEquals(static::date(), $result[1]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[1]['Post']['created']);
 		unset($result[0]['Post']['updated'], $result[0]['Post']['created']);
 		unset($result[1]['Post']['updated'], $result[1]['Post']['created']);
 		$this->assertEquals($expected, $result);
@@ -5445,10 +5445,10 @@ class ModelWriteTest extends BaseModelTest {
 					'published' => 'N',
 			));
 
-			$this->assertEquals(self::date(), $result[3]['Post']['created']);
-			$this->assertEquals(self::date(), $result[3]['Post']['updated']);
-			$this->assertEquals(self::date(), $result[4]['Post']['created']);
-			$this->assertEquals(self::date(), $result[4]['Post']['updated']);
+			$this->assertEquals(static::date(), $result[3]['Post']['created']);
+			$this->assertEquals(static::date(), $result[3]['Post']['updated']);
+			$this->assertEquals(static::date(), $result[4]['Post']['created']);
+			$this->assertEquals(static::date(), $result[4]['Post']['updated']);
 			unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
 			unset($result[4]['Post']['created'], $result[4]['Post']['updated']);
 			$this->assertEquals($expected, $result);
@@ -5514,10 +5514,10 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'N'
 			));
-			$this->assertEquals(self::date(), $result[3]['Post']['created']);
-			$this->assertEquals(self::date(), $result[3]['Post']['updated']);
-			$this->assertEquals(self::date(), $result[4]['Post']['created']);
-			$this->assertEquals(self::date(), $result[4]['Post']['updated']);
+			$this->assertEquals(static::date(), $result[3]['Post']['created']);
+			$this->assertEquals(static::date(), $result[3]['Post']['updated']);
+			$this->assertEquals(static::date(), $result[4]['Post']['created']);
+			$this->assertEquals(static::date(), $result[4]['Post']['updated']);
 			unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
 			unset($result[4]['Post']['created'], $result[4]['Post']['updated']);
 		}
@@ -5648,10 +5648,10 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 
-		$this->assertEquals(self::date(), $result[0]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[1]['Post']['updated']);
-		$this->assertEquals(self::date(), $result[3]['Post']['created']);
-		$this->assertEquals(self::date(), $result[3]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[0]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[1]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['created']);
+		$this->assertEquals(static::date(), $result[3]['Post']['updated']);
 		unset($result[0]['Post']['updated'], $result[1]['Post']['updated']);
 		unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
 		$this->assertEquals($expected, $result);
@@ -6372,15 +6372,15 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'Post without body',
 				'body' => null,
 				'published' => 'N',
-				'created' => self::date(),
-				'updated' => self::date(),
+				'created' => static::date(),
+				'updated' => static::date(),
 			),
 			'Author' => array (
 				'id' => '5',
 				'user' => 'bob',
 				'password' => null,
-				'created' => self::date(),
-				'updated' => self::date(),
+				'created' => static::date(),
+				'updated' => static::date(),
 				'test' => 'working',
 			),
 		);
@@ -6417,8 +6417,8 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'Multi-record post 1',
 					'body' => '',
 					'published' => 'N',
-					'created' => self::date(),
-					'updated' => self::date()
+					'created' => static::date(),
+					'updated' => static::date()
 				)
 			),
 			array(
@@ -6428,8 +6428,8 @@ class ModelWriteTest extends BaseModelTest {
 					'title' => 'Multi-record post 2',
 					'body' => '',
 					'published' => 'N',
-					'created' => self::date(),
-					'updated' => self::date()
+					'created' => static::date(),
+					'updated' => static::date()
 				)
 			)
 		);

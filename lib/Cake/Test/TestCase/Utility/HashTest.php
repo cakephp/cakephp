@@ -172,7 +172,7 @@ class HashTest extends TestCase {
  * return void
  */
 	public function testGet() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::get(array(), '1.Article.title');
 		$this->assertNull($result);
@@ -637,7 +637,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testExtractBasic() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::extract($data, '');
 		$this->assertEquals($data, $result);
@@ -655,7 +655,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testExtractNumericKey() {
-		$data = self::articleData();
+		$data = static::articleData();
 		$result = Hash::extract($data, '{n}.Article.title');
 		$expected = array(
 			'First Article', 'Second Article',
@@ -734,7 +734,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testExtractStringKey() {
-		$data = self::articleData();
+		$data = static::articleData();
 		$result = Hash::extract($data, '{n}.{s}.user');
 		$expected = array(
 			'mariano',
@@ -755,7 +755,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testExtractAttributePresence() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::extract($data, '{n}.Article[published]');
 		$expected = array($data[1]['Article']);
@@ -772,7 +772,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testExtractAttributeEquality() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::extract($data, '{n}.Article[id=3]');
 		$expected = array($data[2]['Article']);
@@ -795,7 +795,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testExtractAttributeComparison() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2]');
 		$expected = array($data[0]['Comment'][1]);
@@ -824,7 +824,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testExtractAttributeMultiple() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2][id=1]');
 		$this->assertEmpty($result);
@@ -841,7 +841,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testExtractAttributePattern() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::extract($data, '{n}.Article[title=/^First/]');
 		$expected = array($data[0]['Article']);
@@ -1195,7 +1195,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testInsertMulti() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::insert($data, '{n}.Article.insert', 'value');
 		$this->assertEquals('value', $result[0]['Article']['insert']);
@@ -1275,7 +1275,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testRemoveMulti() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::remove($data, '{n}.Article.title');
 		$this->assertFalse(isset($result[0]['Article']['title']));
@@ -1326,7 +1326,7 @@ class HashTest extends TestCase {
 		$result = Hash::combine(array(), '{n}.User.id', '{n}.User.Data');
 		$this->assertTrue(empty($result));
 
-		$a = self::userData();
+		$a = static::userData();
 
 		$result = Hash::combine($a, '{n}.User.id');
 		$expected = array(2 => null, 14 => null, 25 => null);
@@ -1357,7 +1357,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testCombineWithGroupPath() {
-		$a = self::userData();
+		$a = static::userData();
 
 		$result = Hash::combine($a, '{n}.User.id', '{n}.User.Data', '{n}.User.group_id');
 		$expected = array(
@@ -1414,7 +1414,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testCombineWithFormatting() {
-		$a = self::userData();
+		$a = static::userData();
 
 		$result = Hash::combine(
 			$a,
@@ -1480,7 +1480,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testFormat() {
-		$data = self::userData();
+		$data = static::userData();
 
 		$result = Hash::format(
 			$data,
@@ -1540,7 +1540,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testMap() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::map($data, '{n}.Article.id', array($this, 'mapCallback'));
 		$expected = array(2, 4, 6, 8, 10);
@@ -1548,7 +1548,7 @@ class HashTest extends TestCase {
 	}
 
 	public function testApply() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::apply($data, '{n}.Article.id', 'array_sum');
 		$this->assertEquals(15, $result);
@@ -1560,7 +1560,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testReduce() {
-		$data = self::articleData();
+		$data = static::articleData();
 
 		$result = Hash::reduce($data, '{n}.Article.id', array($this, 'reduceCallback'));
 		$this->assertEquals(15, $result);

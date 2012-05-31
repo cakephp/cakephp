@@ -727,7 +727,7 @@ class Request implements \ArrayAccess {
  * @return If a $language is provided, a boolean. Otherwise the array of accepted languages.
  */
 	public static function acceptLanguage($language = null) {
-		$accepts = preg_split('/[;,]/', self::header('Accept-Language'));
+		$accepts = preg_split('/[;,]/', static::header('Accept-Language'));
 		foreach ($accepts as &$accept) {
 			$accept = strtolower($accept);
 			if (strpos($accept, '_') !== false) {
