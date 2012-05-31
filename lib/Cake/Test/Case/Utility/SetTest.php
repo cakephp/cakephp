@@ -1388,6 +1388,33 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * Test that extract() + matching can hit null things.
+ */
+	public function testExtractMatchesNull() {
+		$data = array(
+			'Country' => array(
+				array('name' => 'Canada'),
+				array('name' => 'Australia'),
+				array('name' => null),
+			)
+		);
+		$result = Set::extract('/Country[name=/Canada|^$/]', $data);
+		$expected = array(
+			array(
+				'Country' => array(
+					'name' => 'Canada',
+				),
+			),
+			array(
+				'Country' => array(
+					'name' => null,
+				),
+			),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testMatches method
  *
  * @return void

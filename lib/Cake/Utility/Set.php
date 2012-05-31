@@ -536,7 +536,7 @@ class Set {
 				continue;
 			}
 			list(, $key, $op, $expected) = $match;
-			if (!isset($data[$key])) {
+			if (!(isset($data[$key]) || array_key_exists($key, $data))) {
 				return false;
 			}
 
