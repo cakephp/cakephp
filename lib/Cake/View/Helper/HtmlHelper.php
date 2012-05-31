@@ -787,7 +787,8 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a row of formatted and named TABLE headers.
  *
- * @param array $names Array of tablenames.
+ * @param array $names Array of tablenames. Each tablename also can be a key that points to an array with a set
+ *     of attributes to its specific tag
  * @param array $trOptions HTML options for TR elements.
  * @param array $thOptions HTML options for TH elements.
  * @return string Completed table headers
@@ -796,7 +797,11 @@ class HtmlHelper extends AppHelper {
 	public function tableHeaders($names, $trOptions = null, $thOptions = null) {
 		$out = array();
 		foreach ($names as $arg) {
-			$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
+			if (!is_array($arg)) {
+				$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
+			} else {
+				$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes(current($arg)), key($arg));
+			}
 		}
 		return sprintf($this->_tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
 	}
