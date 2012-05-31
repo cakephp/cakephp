@@ -847,6 +847,29 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
+ * Test that extract() + matching can hit null things.
+ */
+	public function testExtractMatchesNull() {
+		$data = array(
+			'Country' => array(
+				array('name' => 'Canada'),
+				array('name' => 'Australia'),
+				array('name' => null),
+			)
+		);
+		$result = Hash::extract($data, 'Country.{n}[name=/Canada|^$/]');
+		$expected = array(
+			array(
+				'name' => 'Canada',
+			),
+			array(
+				'name' => null,
+			),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test that uneven keys are handled correctly.
  *
  * @return void
