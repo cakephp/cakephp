@@ -192,7 +192,7 @@ class Hash {
 			}
 
 			// Empty attribute = fail.
-			if (!isset($data[$attr])) {
+			if (!(isset($data[$attr]) || array_key_exists($attr, $data))) {
 				return false;
 			}
 
