@@ -53,6 +53,30 @@ class DboTestSource extends DboSource {
 
 }
 
+class DboSecondTestSource extends DboSource {
+
+	public $startQuote = '_';
+
+	public $endQuote = '_';
+
+	public function connect($config = array()) {
+		$this->connected = true;
+	}
+
+	public function mergeAssociation(&$data, &$merge, $association, $type, $selfJoin = false) {
+		return parent::_mergeAssociation($data, $merge, $association, $type, $selfJoin);
+	}
+
+	public function setConfig($config = array()) {
+		$this->config = $config;
+	}
+
+	public function setConnection($conn) {
+		$this->_connection = $conn;
+	}
+
+}
+
 /**
  * DboSourceTest class
  *
@@ -788,6 +812,37 @@ class DboSourceTest extends CakeTestCase {
 		$Article = ClassRegistry::init('Article');
 		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
 		$this->assertTrue(empty(DboTestSource::$methodCache['fields']), 'Cache not empty');
+	}
+
+
+/**
+ * test that fields() method cache detects datasource changes
+ *
+ * @return void
+ */
+	public function testFieldsCacheKeyWithDatasourceChange() {
+		ConnectionManager::create('firstschema', array(
+			'datasource' => 'DboTestSource'
+		));
+		ConnectionManager::create('secondschema', array(
+			'datasource' => 'DboSecondTestSource'
+		));
+		Cache::delete('method_cache', '_cake_core_');
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+
+		$Article->setDataSource('firstschema');
+		$ds = $Article->getDataSource();
+		$ds->cacheMethods = true;
+		$first = $ds->fields($Article, null, array('title', 'body', 'published'));
+
+		$Article->setDataSource('secondschema');
+		$ds = $Article->getDataSource();
+		$ds->cacheMethods = true;
+		$second = $ds->fields($Article, null, array('title', 'body', 'published'));
+
+		$this->assertNotEquals($first, $second);
+		$this->assertEquals(2, count(DboTestSource::$methodCache['fields']));
 	}
 
 /**
