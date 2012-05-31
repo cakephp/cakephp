@@ -130,11 +130,10 @@ class CookieComponent extends Component {
 /**
  * Type of encryption to use.
  *
- * Currently only one method is available
+ * Currently two methods are available: cipher and rijndael
  * Defaults to Security::cipher();
  *
  * @var string
- * @todo add additional encryption methods
  */
 	protected $_type = 'cipher';
 
@@ -343,14 +342,23 @@ class CookieComponent extends Component {
 	}
 
 /**
- * Will allow overriding default encryption method.
+ * Will allow overriding default encryption method. Use this method
+ * in ex: AppController::beforeFilter() before you have read or
+ * written any cookies.
  *
  * @param string $type Encryption method
  * @return void
- * @todo NOT IMPLEMENTED
  */
 	public function type($type = 'cipher') {
-		$this->_type = 'cipher';
+		$availableTypes = array(
+			'cipher',
+			'rijndael'
+		);
+		if (!in_array($type, $availableTypes)) {
+			trigger_error(__d('cake_dev', 'You must use cipher or rijndael for cookie encryption type'), E_USER_WARNING);
+			$type = 'cipher';
+		}
+		$this->_type = $type;
 	}
 
 /**
@@ -439,7 +447,7 @@ class CookieComponent extends Component {
 
 		if ($this->_encrypted === true) {
 			$type = $this->_type;
-			$value = "Q2FrZQ==." . base64_encode(Security::$type($value, $this->key));
+			$value = "Q2FrZQ==." . base64_encode(Security::$type($value, $this->key, 'encrypt'));
 		}
 		return $value;
 	}
@@ -462,7 +470,7 @@ class CookieComponent extends Component {
 
 					if ($pos !== false) {
 						$val = substr($val, 8);
-						$decrypted[$name][$key] = $this->_explode(Security::$type(base64_decode($val), $this->key));
+						$decrypted[$name][$key] = $this->_explode(Security::$type(base64_decode($val), $this->key, 'decrypt'));
 					}
 				}
 			} else {
@@ -471,7 +479,7 @@ class CookieComponent extends Component {
 
 				if ($pos !== false) {
 					$value = substr($value, 8);
-					$decrypted[$name] = $this->_explode(Security::$type(base64_decode($value), $this->key));
+					$decrypted[$name] = $this->_explode(Security::$type(base64_decode($value), $this->key, 'decrypt'));
 				}
 			}
 		}

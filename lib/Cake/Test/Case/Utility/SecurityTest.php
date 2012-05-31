@@ -157,4 +157,51 @@ class SecurityTest extends CakeTestCase {
 		$key = '';
 		$result = Security::cipher($txt, $key);
 	}
+
+/**
+ * testRijndael method
+ *
+ * @return void
+ */
+	public function testRijndael() {
+		$txt = 'The quick brown fox jumped over the lazy dog.';
+		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
+
+		$result = Security::rijndael($txt, $key, 'encrypt');
+		$this->assertEquals($txt, Security::rijndael($result, $key, 'decrypt'));
+
+		$result = Security::rijndael($key, $txt, 'encrypt');
+		$this->assertEquals($key, Security::rijndael($result, $txt, 'decrypt'));
+
+		$result = Security::rijndael('', $key, 'encrypt');
+		$this->assertEquals('', Security::rijndael($result, $key, 'decrypt'));
+
+		$result = Security::rijndael($txt, $key = 'this is my key of over 32 chars, yes it is', 'encrypt');
+		$this->assertEquals($txt, Security::rijndael($result, $key, 'decrypt'));
+	}
+
+/**
+ * testRijndaelInvalidOperation method
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testRijndaelInvalidOperation() {
+		$txt = 'The quick brown fox jumped over the lazy dog.';
+		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
+		$result = Security::rijndael($txt, $key, 'foo');
+	}
+
+/**
+ * testRijndaelInvalidKey method
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testRijndaelInvalidKey() {
+		$txt = 'The quick brown fox jumped over the lazy dog.';
+		$key = 'too small';
+		$result = Security::rijndael($txt, $key, 'encrypt');
+	}
+
 }
