@@ -74,36 +74,29 @@ class Plugin {
 		if (is_array($plugin)) {
 			foreach ($plugin as $name => $conf) {
 				list($name, $conf) = (is_numeric($name)) ? array($conf, $config) : array($name, $conf);
-				self::load($name, $conf);
+				static::load($name, $conf);
 			}
 			return;
 		}
 		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin);
 		if (empty($config['path'])) {
-			foreach (App::path('plugins') as $path) {
+			foreach (App::path('Plugin') as $path) {
 				if (is_dir($path . $plugin)) {
-					self::$_plugins[$plugin] = $config + array('path' => $path . $plugin . DS);
-					break;
-				}
-
-				//Backwards compatibility to make easier to migrate to 2.0
-				$underscored = Inflector::underscore($plugin);
-				if (is_dir($path . $underscored)) {
-					self::$_plugins[$plugin] = $config + array('path' => $path . $underscored . DS);
+					static::$_plugins[$plugin] = $config + array('path' => $path . $plugin . DS);
 					break;
 				}
 			}
 		} else {
-			self::$_plugins[$plugin] = $config;
+			static::$_plugins[$plugin] = $config;
 		}
 
-		if (empty(self::$_plugins[$plugin]['path'])) {
+		if (empty(static::$_plugins[$plugin]['path'])) {
 			throw new Error\MissingPluginException(array('plugin' => $plugin));
 		}
-		$loader = new ClassLoader($plugin, dirname(self::$_plugins[$plugin]['path']));
+		$loader = new ClassLoader($plugin, dirname(static::$_plugins[$plugin]['path']));
 		$loader->register();
-		if (!empty(self::$_plugins[$plugin]['bootstrap'])) {
-			self::bootstrap($plugin);
+		if (!empty(static::$_plugins[$plugin]['bootstrap'])) {
+			static::bootstrap($plugin);
 		}
 	}
 
@@ -126,13 +119,13 @@ class Plugin {
  * @return void
  */
 	public static function loadAll($options = array()) {
-		$plugins = App::objects('plugins');
+		$plugins = App::objects('Plugin');
 		foreach ($plugins as $p) {
 			$opts = isset($options[$p]) ? $options[$p] : null;
 			if ($opts === null && isset($options[0])) {
 				$opts = $options[0];
 			}
-			self::load($p, (array)$opts);
+			static::load($p, (array)$opts);
 		}
 	}
 
@@ -144,10 +137,10 @@ class Plugin {
  * @throws MissingPluginException if the folder for plugin was not found or plugin has not been loaded
  */
 	public static function path($plugin) {
-		if (empty(self::$_plugins[$plugin])) {
+		if (empty(static::$_plugins[$plugin])) {
 			throw new Error\MissingPluginException(array('plugin' => $plugin));
 		}
-		return self::$_plugins[$plugin]['path'];
+		return static::$_plugins[$plugin]['path'];
 	}
 
 /**
@@ -158,10 +151,10 @@ class Plugin {
  * @throws MissingPluginException if the namespace for plugin was not found or plugin has not been loaded
  */
 	public static function getNamespace($plugin) {
-		if (empty(self::$_plugins[$plugin])) {
+		if (empty(static::$_plugins[$plugin])) {
 			throw new Error\MissingPluginException(array('plugin' => $plugin));
 		}
-		return self::$_plugins[$plugin]['namespace'];
+		return static::$_plugins[$plugin]['namespace'];
 	}
 
 /**
@@ -172,7 +165,7 @@ class Plugin {
  * @see Plugin::load() for examples of bootstrap configuration
  */
 	public static function bootstrap($plugin) {
-		$config = self::$_plugins[$plugin];
+		$config = static::$_plugins[$plugin];
 		if ($config['bootstrap'] === false) {
 			return false;
 		}
@@ -180,7 +173,7 @@ class Plugin {
 			return call_user_func_array($config['bootstrap'], array($plugin, $config));
 		}
 
-		$path = self::path($plugin);
+		$path = static::path($plugin);
 		if ($config['bootstrap'] === true) {
 			return include $path . 'Config' . DS . 'bootstrap.php';
 		}
@@ -202,16 +195,16 @@ class Plugin {
  */
 	public static function routes($plugin = null) {
 		if ($plugin === null) {
-			foreach (self::loaded() as $p) {
-				self::routes($p);
+			foreach (static::loaded() as $p) {
+				static::routes($p);
 			}
 			return true;
 		}
-		$config = self::$_plugins[$plugin];
+		$config = static::$_plugins[$plugin];
 		if ($config['routes'] === false) {
 			return false;
 		}
-		return (bool)include self::path($plugin) . 'Config' . DS . 'routes.php';
+		return (bool)include static::path($plugin) . 'Config' . DS . 'routes.php';
 	}
 
 /**
@@ -224,9 +217,9 @@ class Plugin {
  */
 	public static function loaded($plugin = null) {
 		if ($plugin) {
-			return isset(self::$_plugins[$plugin]);
+			return isset(static::$_plugins[$plugin]);
 		}
-		$return = array_keys(self::$_plugins);
+		$return = array_keys(static::$_plugins);
 		sort($return);
 		return $return;
 	}
@@ -239,9 +232,9 @@ class Plugin {
  */
 	public static function unload($plugin = null) {
 		if (is_null($plugin)) {
-			self::$_plugins = array();
+			static::$_plugins = array();
 		} else {
-			unset(self::$_plugins[$plugin]);
+			unset(static::$_plugins[$plugin]);
 		}
 	}
 

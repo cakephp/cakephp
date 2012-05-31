@@ -826,7 +826,7 @@ class Shell extends Object {
 		if (Plugin::loaded($pluginName)) {
 			return Plugin::path($pluginName);
 		}
-		return current(App::path('plugins')) . $pluginName . DS;
+		return current(App::path('Plugin')) . $pluginName . DS;
 	}
 
 }

@@ -42,7 +42,7 @@ class ConfigureTest extends TestCase {
 		parent::setUp();
 		Configure::write('Cache.disable', true);
 		App::build();
-		App::objects('plugin', null, true);
+		App::objects('Plugin', null, true);
 	}
 
 /**

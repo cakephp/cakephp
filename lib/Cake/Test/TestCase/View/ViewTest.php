@@ -269,7 +269,7 @@ class ViewTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		), App::RESET);
-		App::objects('plugins', null, false);
+		App::objects('Plugin', null, false);
 
 		Plugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
 		Configure::write('debug', 2);

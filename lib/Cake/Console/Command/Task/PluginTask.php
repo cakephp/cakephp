@@ -42,7 +42,7 @@ class PluginTask extends Shell {
  * @return void
  */
 	public function initialize() {
-		$this->path = current(App::path('plugins'));
+		$this->path = current(App::path('Plugin'));
 	}
 
 /**
@@ -88,7 +88,7 @@ class PluginTask extends Shell {
  * @return boolean
  */
 	public function bake($plugin) {
-		$pathOptions = App::path('plugins');
+		$pathOptions = App::path('Plugin');
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}

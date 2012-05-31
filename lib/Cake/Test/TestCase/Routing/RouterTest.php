@@ -1182,9 +1182,9 @@ class RouterTest extends TestCase {
  */
 	public function testPrefixRoutingAndPlugins() {
 		Configure::write('Routing.prefixes', array('admin'));
-		$paths = App::path('plugins');
+		$paths = App::path('Plugin');
 		App::build(array(
-			'plugins' =>  array(
+			'Plugin' =>  array(
 				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
 			)
 		), App::RESET);
@@ -1237,7 +1237,7 @@ class RouterTest extends TestCase {
 		$expected = '/admin/test_plugin/show_tickets';
 		$this->assertEquals($expected, $result);
 
-		App::build(array('plugins' => $paths));
+		App::build(array('Plugin' => $paths));
 	}
 
 /**
@@ -2237,7 +2237,7 @@ class RouterTest extends TestCase {
  */
 	public function testConnectDefaultRoutes() {
 		App::build(array(
-			'plugins' =>  array(
+			'Plugin' =>  array(
 				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
 			)
 		), App::RESET);

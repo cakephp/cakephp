@@ -45,8 +45,7 @@ class Object {
  * @return string The name of this class
  */
 	public function toString() {
-		$class = get_class($this);
-		return $class;
+		return get_class($this);
 	}
 
 /**

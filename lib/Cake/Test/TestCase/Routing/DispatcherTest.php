@@ -573,7 +573,7 @@ class DispatcherTest extends TestCase {
 		$this->_debug = Configure::read('debug');
 
 		App::build();
-		App::objects('plugin', null, false);
+		App::objects('Plugin', null, false);
 	}
 
 /**
@@ -976,7 +976,7 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testAutomaticPluginControllerDispatch() {
-		$plugins = App::objects('plugin');
+		$plugins = App::objects('Plugin');
 		$plugins[] = 'MyPlugin';
 		$plugins[] = 'ArticlesTest';
 

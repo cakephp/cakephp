@@ -48,14 +48,14 @@ class PluginTaskTest extends TestCase {
 		);
 		$this->Task->path = TMP . 'tests' . DS;
 
-		$this->_paths = $paths = App::path('plugins');
+		$this->_paths = $paths = App::path('Plugin');
 		foreach ($paths as $i => $p) {
 			if (!is_dir($p)) {
 				array_splice($paths, $i, 1);
 			}
 		}
 		$this->_testPath = array_push($paths, TMP . 'tests' . DS);
-		App::build(array('plugins' => $paths));
+		App::build(array('Plugin' => $paths));
 	}
 
 /**
@@ -167,7 +167,7 @@ class PluginTaskTest extends TestCase {
  * @return void
  */
 	public function testFindPathNonExistant() {
-		$paths = App::path('plugins');
+		$paths = App::path('Plugin');
 		$last = count($paths);
 		$paths[] = '/fake/path';
 

@@ -168,7 +168,7 @@ class ExtractTask extends Shell {
 		}
 
 		if (!empty($this->params['exclude-plugins']) && $this->_isExtractingApp()) {
-			$this->_exclude = array_merge($this->_exclude, App::path('plugins'));
+			$this->_exclude = array_merge($this->_exclude, App::path('Plugin'));
 		}
 
 		if (!empty($this->params['ignore-model-validation']) || (!$this->_isExtractingApp() && empty($plugin))) {

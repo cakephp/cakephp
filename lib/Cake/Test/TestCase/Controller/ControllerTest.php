@@ -422,7 +422,7 @@ class ControllerTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		App::objects('plugin', null, false);
+		App::objects('Plugin', null, false);
 		App::build();
 		Router::reload();
 	}
