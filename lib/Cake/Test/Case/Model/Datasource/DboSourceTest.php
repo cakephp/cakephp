@@ -599,6 +599,21 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertNull($result);
 	}
 
+
+/**
+ * Test that rare collisions do not happen with method caching
+ *
+ * @return void
+ */
+	public function testNameMethodCacheCollisions() {
+		$this->testDb->cacheMethods = true;
+		$this->testDb->flushMethodCache();
+		$this->testDb->name('Model.fieldlbqndkezcoapfgirmjsh');
+		$result = $this->testDb->name('Model.fieldkhdfjmelarbqnzsogcpi');
+		$expected = '`Model`.`fieldkhdfjmelarbqnzsogcpi`';
+		$this->assertEquals($expected, $result);
+	}
+
 /**
  * testLog method
  *

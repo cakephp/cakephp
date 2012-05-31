@@ -53,9 +53,8 @@ class DboSource extends DataSource {
 
 /**
  * Caches result from query parsing operations.  Cached results for both DboSource::name() and
- * DboSource::conditions() will be stored here.  Method caching uses `crc32()` which is
- * fast but can collisions more easily than other hashing algorithms.  If you have problems
- * with collisions, set DboSource::$cacheMethods to false.
+ * DboSource::conditions() will be stored here.  Method caching uses `md5()`. If you have
+ * problems with collisions, set DboSource::$cacheMethods to false.
  *
  * @var array
  */
@@ -767,7 +766,7 @@ class DboSource extends DataSource {
  * Strips fields out of SQL functions before quoting.
  *
  * Results of this method are stored in a memory cache.  This improves performance, but
- * because the method uses a simple hashing algorithm it can infrequently have collisions.
+ * because the method uses a hashing algorithm it can have collisions.
  * Setting DboSource::$cacheMethods to false will disable the memory cache.
  *
  * @param mixed $data Either a string with a column to quote. An array of columns to quote or an
@@ -787,7 +786,7 @@ class DboSource extends DataSource {
 			}
 			return $data;
 		}
-		$cacheKey = crc32($this->startQuote . $data . $this->endQuote);
+		$cacheKey = md5($this->startQuote . $data . $this->endQuote);
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
@@ -2273,7 +2272,7 @@ class DboSource extends DataSource {
  * is given it will be integer cast as condition.  Null will return 1 = 1.
  *
  * Results of this method are stored in a memory cache.  This improves performance, but
- * because the method uses a simple hashing algorithm it can infrequently have collisions.
+ * because the method uses a hashing algorithm it can have collisions.
  * Setting DboSource::$cacheMethods to false will disable the memory cache.
  *
  * @param mixed $conditions Array or string of conditions, or any value.
