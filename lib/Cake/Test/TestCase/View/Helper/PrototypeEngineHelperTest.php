@@ -17,8 +17,8 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\TestSuite\TestCase;
 use Cake\Routing\Router;
+use Cake\TestSuite\TestCase;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\Helper\JsHelper;
 use Cake\View\Helper\PrototypeEngineHelper;
