@@ -423,7 +423,7 @@ class HtmlHelper extends AppHelper {
 			return;
 		}
 
-		if (strpos($path, '//') !== false) {
+		if (strpos($path, '//') !== false || substr($path, 0, 1) == '/') {
 			$url = $path;
 		} else {
 			$url = $this->assetUrl($path, $options + array('pathPrefix' => CSS_URL, 'ext' => '.css'));
@@ -518,8 +518,7 @@ class HtmlHelper extends AppHelper {
 			return null;
 		}
 		$this->_includedScripts[$url] = true;
-
-		if (strpos($url, '//') === false) {
+		if (strpos($url, '//') === false && substr($url, 0, 1) != '/') {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => JS_URL, 'ext' => '.js'));
 
 			if (Configure::read('Asset.filter.js')) {
