@@ -15,12 +15,12 @@ before_script:
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
-  - chmod -R 777 ./app/tmp
+  - chmod -R 777 ./App/tmp
   - echo "var net = require('net');
     var server = net.createServer();
     server.listen(80, 'localhost');
-    console.log('TCP server listening on port 80 at localhost.');" > app/tmp/socket.js
-  - sudo node ./app/tmp/socket.js &
+    console.log('TCP server listening on port 80 at localhost.');" > App/tmp/socket.js
+  - sudo node ./App/tmp/socket.js &
   - set +H
   - echo "<?php
     class DATABASE_CONFIG {
@@ -100,7 +100,7 @@ before_script:
         \$this->{\$source} = \$config;
       }
     }
-    }" > app/Config/database.php
+    }" > App/Config/database.php
 
 script:
   - ./lib/Cake/Console/cake test core AllTests --stderr
