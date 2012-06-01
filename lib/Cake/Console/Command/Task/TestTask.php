@@ -403,11 +403,10 @@ class TestTask extends BakeTask {
  * @return void
  */
 	protected function _addFixture($name) {
-		$parent = get_parent_class($name);
-		$prefix = 'app.';
-		if (strtolower($parent) != 'appmodel' && strtolower(substr($parent, -8)) == 'appmodel') {
-			$pluginName = substr($parent, 0, -8);
-			$prefix = 'plugin.' . Inflector::underscore($pluginName) . '.';
+		if ($this->plugin) {
+			$prefix = 'plugin.' . Inflector::underscore($this->plugin) . '.';
+		} else {
+			$prefix = 'app.';
 		}
 		$fixture = $prefix . Inflector::underscore($name);
 		$this->_fixtures[$name] = $fixture;
