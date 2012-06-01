@@ -1166,7 +1166,7 @@ class Model extends Object implements CakeEventListener {
  */
 	protected function _setAliasData($data) {
 		$models = array_keys($this->getAssociated());
-		$schema = array_keys($this->schema());
+		$schema = array_keys((array)$this->schema());
 		foreach ($data as $field => $value) {
 			if (in_array($field, $schema) || !in_array($field, $models)) {
 				$data[$this->alias][$field] = $value;
