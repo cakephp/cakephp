@@ -278,6 +278,49 @@ class ExceptionRendererTest extends CakeTestCase {
 	}
 
 /**
+ * test that helpers in custom CakeErrorController are not lost
+ */
+	public function testCakeErrorHelpersNotLost() {
+		$testApp = CAKE . 'Test' . DS . 'test_app' . DS;
+		App::build(array(
+			'Controller' => array(
+				$testApp . 'Controller' . DS
+			),
+			'View/Helper' => array(
+				$testApp . 'View' . DS . 'Helper' . DS
+			),
+			'View/Layouts' => array(
+				$testApp . 'View' . DS . 'Layouts' . DS
+			),
+			'Error' => array(
+				$testApp . 'Error' . DS
+			),
+		), App::RESET);
+		Configure::write('Error', array(
+			'handler' => 'TestAppsErrorHandler::handleError',
+			'level' => E_ALL & ~E_DEPRECATED,
+			'trace' => true
+		));
+
+		Configure::write('Exception', array(
+			'handler' => 'TestAppsErrorHandler::handleException',
+			'renderer' => 'TestAppsExceptionRenderer',
+			'log' => true
+		));
+
+		App::uses('TestAppsErrorController', 'Controller');
+		App::uses('TestAppsExceptionRenderer', 'Error');
+
+		$exception = new SocketException('socket exception');
+		$renderer = new TestAppsExceptionRenderer($exception);
+
+		ob_start();
+		$renderer->render();
+		$result = ob_get_clean();
+		$this->assertContains('<b>peeled</b>', $result);
+	}
+
+/**
  * test that unknown exception types with valid status codes are treated correctly.
  *
  * @return void

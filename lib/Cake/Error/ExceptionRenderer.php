@@ -267,6 +267,12 @@ class ExceptionRenderer {
 			$this->controller->render($template);
 			$this->controller->afterFilter();
 			$this->controller->response->send();
+		} catch (MissingViewException $e) {
+			try {
+				$this->_outputMessage('error500');
+			} catch (Exception $e) {
+				$this->_outputMessageSafe('error500');
+			}
 		} catch (Exception $e) {
 			$this->controller->set(array(
 				'error' => $e,
