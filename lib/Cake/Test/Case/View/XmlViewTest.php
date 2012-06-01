@@ -119,7 +119,7 @@ class XmlViewTest extends CakeTestCase {
 		$output = $View->render('index');
 
 		$expected = array(
-			'users'=> array('user'=> array('user1', 'user2'))
+			'users' => array('user' => array('user1', 'user2'))
 		);
 		$expected = Xml::build($expected)->asXML();
 		$this->assertSame($expected, $output);

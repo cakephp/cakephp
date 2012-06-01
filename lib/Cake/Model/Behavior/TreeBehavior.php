@@ -377,10 +377,12 @@ class TreeBehavior extends ModelBehavior {
 		$stack = array();
 
 		foreach ($results as $i => $result) {
-			while ($stack && ($stack[count($stack) - 1] < $result[$Model->alias][$right])) {
+			$count = count($stack);
+			while ($stack && ($stack[$count - 1] < $result[$Model->alias][$right])) {
 				array_pop($stack);
+				$count--;
 			}
-			$results[$i]['tree_prefix'] = str_repeat($spacer, count($stack));
+			$results[$i]['tree_prefix'] = str_repeat($spacer, $count);
 			$stack[] = $result[$Model->alias][$right];
 		}
 		if (empty($results)) {
