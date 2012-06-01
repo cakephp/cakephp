@@ -40,18 +40,18 @@ class AllTests extends \PHPUnit_Framework_TestSuite {
 
 		$suite->addTestFile($path . 'BasicsTest.php');
 		$suite->addTestFile($path . 'AllConsoleTest.php');
-		$suite->addTestFile($path . 'AllBehaviorsTest.php');
+		//$suite->addTestFile($path . 'AllBehaviorsTest.php');
 		$suite->addTestFile($path . 'AllCacheTest.php');
 		$suite->addTestFile($path . 'AllComponentsTest.php');
 		$suite->addTestFile($path . 'AllConfigureTest.php');
 		$suite->addTestFile($path . 'AllCoreTest.php');
 		$suite->addTestFile($path . 'AllControllerTest.php');
-		$suite->addTestFile($path . 'AllDatabaseTest.php');
+		//$suite->addTestFile($path . 'AllDatabaseTest.php');
 		$suite->addTestFile($path . 'AllErrorTest.php');
 		$suite->addTestFile($path . 'AllEventTest.php');
 		$suite->addTestFile($path . 'AllHelpersTest.php');
 		$suite->addTestFile($path . 'AllLogTest.php');
-		$suite->addTestFile($path . 'Model' . DS . 'ModelTest.php');
+		//$suite->addTestFile($path . 'Model' . DS . 'ModelTest.php');
 		$suite->addTestFile($path . 'AllRoutingTest.php');
 		$suite->addTestFile($path . 'AllNetworkTest.php');
 		$suite->addTestFile($path . 'AllTestSuiteTest.php');
