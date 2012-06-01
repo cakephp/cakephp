@@ -20,6 +20,7 @@
 namespace Cake\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentCollection;
+use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
