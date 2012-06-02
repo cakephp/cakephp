@@ -16,8 +16,8 @@
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\Controller\Component;
+
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\Controller;
@@ -111,7 +111,7 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testInitializeCallback() {
 		$this->assertNull($this->RequestHandler->ext);
-		$this->Controller->request->params['ext'] = 'rss';
+		$this->Controller->request->params['_ext'] = 'rss';
 		$this->RequestHandler->initialize($this->Controller);
 		$this->assertEquals('rss', $this->RequestHandler->ext);
 	}
