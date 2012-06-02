@@ -218,20 +218,23 @@ class Router {
 /**
  * Connects a new Route in the router.
  *
- * Routes are a way of connecting request urls to objects in your application.  At their core routes
- * are a set or regular expressions that are used to match requests to destinations.
+ * Routes are a way of connecting request urls to objects in your application.
+ * At their core routes are a set or regular expressions that are used to
+ * match requests to destinations.
  *
  * Examples:
  *
  * `Router::connect('/:controller/:action/*');`
  *
- * The first parameter will be used as a controller name while the second is used as the action name.
- * the '/*' syntax makes this route greedy in that it will match requests like `/posts/index` as well as requests
+ * The first parameter will be used as a controller name while the second is
+ * used as the action name. The '/*' syntax makes this route greedy in that
+ * it will match requests like `/posts/index` as well as requests
  * like `/posts/edit/1/foo/bar`.
  *
  * `Router::connect('/home-page', array('controller' => 'pages', 'action' => 'display', 'home'));`
  *
- * The above shows the use of route parameter defaults. And providing routing parameters for a static route.
+ * The above shows the use of route parameter defaults. And providing routing
+ * parameters for a static route.
  *
  * {{{
  * Router::connect(
@@ -241,17 +244,22 @@ class Router {
  * );
  * }}}
  *
- * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
- * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
+ * Shows connecting a route with custom route parameters as well as
+ * providing patterns for those parameters. Patterns for routing parameters
+ * do not need capturing groups, as one will be added for each route params.
  *
- * $options offers several 'special' keys that have special meaning in the $options array.
+ * $options offers several 'special' keys that have special meaning 
+ * in the $options array.
  *
- * - `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
- *   parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
- * - `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
- *   via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
- * - `_name` Used to define a specific name for routes.  This can be used to optimize reverse routing lookups.
- *   If undefined a name will be generated for each connected route.
+ * - `pass` is used to define which of the routed parameters should be shifted
+ *   into the pass array.  Adding a parameter to pass will remove it from the
+ *   regular route array. Ex. `'pass' => array('slug')`.
+ * - `routeClass` is used to extend and change how individual routes parse requests
+ *   and handle reverse routing, via a custom routing class.
+ *   Ex. `'routeClass' => 'SlugRoute'`
+ * - `_name` Used to define a specific name for routes.  This can be used to optimize
+ *   reverse routing lookups. If undefined a name will be generated for each
+ *   connected route.
  *
  * @param string $route A string describing the template of the route
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default
@@ -282,6 +290,9 @@ class Router {
 		$defaults += array('plugin' => null);
 		if (empty($options['action'])) {
 			$defaults += array('action' => 'index');
+		}
+		if (empty($options['_ext'])) {
+			$options['_ext'] = self::$_validExtensions;
 		}
 		$routeClass = static::$_routeClass;
 		if (isset($options['routeClass'])) {
@@ -412,21 +423,23 @@ class Router {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
 
+<<<<<<< HEAD
 		extract(static::_parseExtension($url));
 
 		$out = static::$_routes->parse($url);
+=======
+		$out = self::$_routes->parse($url);
+>>>>>>> Move extension parsing.
 
 		if (isset($out['prefix'])) {
 			$out['action'] = $out['prefix'] . '_' . $out['action'];
 		}
 
-		if (!empty($ext) && !isset($out['ext'])) {
-			$out['ext'] = $ext;
-		}
 		return $out;
 	}
 
 /**
+<<<<<<< HEAD
  * Parses a file extension out of a URL, if Router::parseExtensions() is enabled.
  *
  * @param string $url
@@ -456,6 +469,8 @@ class Router {
 	}
 
 /**
+=======
+>>>>>>> Move extension parsing.
  * Set the route collection object Router should use.
  *
  * @param Cake\Routing\RouteCollection $routes
@@ -890,7 +905,7 @@ class Router {
  * Instructs the router to parse out file extensions from the URL. For example,
  * http://example.com/posts.rss would yield an file extension of "rss".
  * The file extension itself is made available in the controller as
- * `$this->params['ext']`, and is used by the RequestHandler component to
+ * `$this->params['_ext']`, and is used by the RequestHandler component to
  * automatically switch to alternate layouts and templates, and load helpers
  * corresponding to the given content, i.e. RssHelper. Switching layouts and helpers
  * requires that the chosen extension has a defined mime type in `Cake\Network\Response`

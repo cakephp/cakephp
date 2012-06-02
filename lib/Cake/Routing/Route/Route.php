@@ -89,10 +89,21 @@ class Route {
 	);
 
 /**
+ * List of connected extensions for this route.
+ *
+ * @var array
+ */
+	protected $_extensions = array();
+
+/**
  * Constructor for a Route
  *
- * Using $options['_name'] a specific name can be given to a route.
- * Otherwise a route name will be generated.
+ * ### Options
+ *
+ * - `_name` - By using $options['_name'] a specific name can be
+ *   given to a route. Otherwise a route name will be generated.
+ * - `_ext` - Defines the extensions used for this route.
+ * - `pass` - Copies the listed parameters into params['pass'].
  *
  * @param string $template Template string with parameter placeholders
  * @param array $defaults Array of defaults for the route.
@@ -104,6 +115,9 @@ class Route {
 		$this->options = (array)$options;
 		if (isset($this->options['_name'])) {
 			$this->_name = $this->options['_name'];
+		}
+		if (isset($this->options['_ext'])) {
+			$this->_extensions = $this->options['_ext'];
 		}
 	}
 
@@ -225,6 +239,8 @@ class Route {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
+		list($url, $ext) = $this->_parseExtension($url);
+
 		if (!preg_match($this->_compiledRoute, $url, $route)) {
 			return false;
 		}
@@ -287,6 +303,10 @@ class Route {
 			unset($route['_trailing_']);
 		}
 
+		if ($ext && empty($route['_ext'])) {
+			$route['_ext'] = $ext;
+		}
+
 		// restructure 'pass' key route params
 		if (isset($this->options['pass'])) {
 			$j = count($this->options['pass']);
@@ -297,6 +317,32 @@ class Route {
 			}
 		}
 		return $route;
+	}
+
+/**
+ * Removes the extension if the $url contains a known extension.
+ * If there are no known extensions all extensions are supported.
+ *
+ * @param string $url The url to parse.
+ * @return array containing url, extension
+ */
+	protected function _parseExtension($url) {
+		if (empty($this->_extensions)) {
+			return array($url, null);
+		}
+		preg_match('/\.([0-9a-z]*)$/', $url, $match);
+		if (empty($match[1])) {
+			return array($url, null);
+		}
+		$ext = strtolower($match[1]);
+		$len = strlen($match[1]);
+		foreach ($this->_extensions as $name) {
+			if (strtolower($name) === $ext) {
+				$url = substr($url, 0, ($len + 1) * -1);
+				return array($url, $ext);
+			}
+		}
+		return array($url, null);
 	}
 
 /**

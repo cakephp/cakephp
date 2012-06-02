@@ -93,6 +93,31 @@ class RouteTest extends TestCase {
 	}
 
 /**
+ * Test parsing routes with extensions.
+ *
+ * @return void
+ */
+	public function testRouteParsingWithExtensions() {
+		$route = new Route(
+			'/:controller/:action/*',
+			array(),
+			array('_ext' => array('json', 'xml'))
+		);
+
+		$result = $route->parse('/posts/index');
+		$this->assertFalse(isset($result['_ext']));
+
+		$result = $route->parse('/posts/index.pdf');
+		$this->assertFalse(isset($result['_ext']));
+
+		$result = $route->parse('/posts/index.json');
+		$this->assertEquals('json', $result['_ext']);
+
+		$result = $route->parse('/posts/index.xml');
+		$this->assertEquals('xml', $result['_ext']);
+	}
+
+/**
  * test that route parameters that overlap don't cause errors.
  *
  * @return void
