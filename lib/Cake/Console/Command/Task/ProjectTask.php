@@ -47,11 +47,18 @@ class ProjectTask extends AppShell {
 		$project = null;
 		if (isset($this->args[0])) {
 			$project = $this->args[0];
+		} else {
+			$appContents = array_diff(scandir(APP), array('.', '..'));
+			if (empty($appContents)) {
+				$suggestedPath = rtrim(APP, DS);
+			} else {
+				$suggestedPath = APP . 'myapp';
+			}
 		}
 
 		while (!$project) {
 			$prompt = __d('cake_console', "What is the path to the project you want to bake?");
-			$project = $this->in($prompt, null, APP . 'myapp');
+			$project = $this->in($prompt, null, $suggestedPath);
 		}
 
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
