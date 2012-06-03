@@ -184,6 +184,7 @@ class PaginatorComponent extends Component {
 			$count = $object->find('count', array_merge($parameters, $extra));
 		}
 		$pageCount = intval(ceil($count / $limit));
+		$page = min($page, $pageCount);
 
 		$paging = array(
 			'page' => $page,
