@@ -122,6 +122,16 @@ class Route {
 	}
 
 /**
+ * Sets the supported extensions for this route.
+ *
+ * @param array $extensions The extensions to set.
+ * @return void
+ */
+	public function setExtensions(array $extensions) {
+		$this->_extensions = $extensions;
+	}
+
+/**
  * Check if a Route has been compiled into a regular expression.
  *
  * @return boolean

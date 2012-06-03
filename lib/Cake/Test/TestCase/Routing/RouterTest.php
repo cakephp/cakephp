@@ -1185,22 +1185,19 @@ class RouterTest extends TestCase {
 		$this->assertEquals(array('rss'), Router::extensions());
 
 		require CAKE . 'Config' . DS . 'routes.php';
-		$result = Router::parse('/posts.rss');
-		$this->assertFalse(isset($result['ext']));
 
-		Router::parseExtensions();
 		$result = Router::parse('/posts.rss');
-		$this->assertEquals('rss', $result['ext']);
+		$this->assertEquals('rss', $result['_ext']);
 
 		$result = Router::parse('/posts.xml');
-		$this->assertFalse(isset($result['ext']));
+		$this->assertFalse(isset($result['_ext']));
 
 		Router::setExtensions(array('xml'));
 		$result = Router::extensions();
 		$this->assertEquals(array('rss', 'xml'), $result);
 
 		$result = Router::parse('/posts.xml');
-		$this->assertEquals('xml', $result['ext']);
+		$this->assertEquals('xml', $result['_ext']);
 
 		$result = Router::setExtensions(array('pdf'), false);
 		$this->assertEquals(array('pdf'), $result);

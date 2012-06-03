@@ -110,6 +110,10 @@ class RouteTest extends TestCase {
 		$result = $route->parse('/posts/index.pdf');
 		$this->assertFalse(isset($result['_ext']));
 
+		$route->setExtensions(array('pdf', 'json', 'xml'));
+		$result = $route->parse('/posts/index.pdf');
+		$this->assertEquals('pdf', $result['_ext']);
+
 		$result = $route->parse('/posts/index.json');
 		$this->assertEquals('json', $result['_ext']);
 

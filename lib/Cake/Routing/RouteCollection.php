@@ -139,10 +139,8 @@ class RouteCollection implements \Countable {
  */
 	public function parse($url) {
 		$out = array();
-		for ($i = 0, $len = count($this->_routes); $i < $len; $i++) {
-			$route = $this->_routes[$i];
-
-			if (($r = $route->parse($url)) !== false) {
+		for ($i = 0, $len = count($this); $i < $len; $i++) {
+			if (($r = $this->_routes[$i]->parse($url)) !== false) {
 				$out = $r;
 				break;
 			}
@@ -216,6 +214,18 @@ class RouteCollection implements \Countable {
 			'_scheme' => $request->scheme(),
 			'_host' => $request->host()
 		);
+	}
+
+/**
+ * Sets which extensions routes will use.
+ *
+ * @param array $extensions The extensions for routes to use.
+ * @return void
+ */
+	public function setExtensions(array $extensions) {
+		foreach ($this->_routes as $route) {
+			$route->setExtensions($extensions);
+		}
 	}
 
 }

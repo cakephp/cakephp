@@ -59,13 +59,6 @@ class Router {
 	protected static $_prefixes = array();
 
 /**
- * Directive for Router to parse out file extensions for mapping to Content-types.
- *
- * @var boolean
- */
-	protected static $_parseExtensions = false;
-
-/**
  * List of valid extensions to parse from a URL.  If null, any extension is allowed.
  *
  * @var array
@@ -292,7 +285,7 @@ class Router {
 			$defaults += array('action' => 'index');
 		}
 		if (empty($options['_ext'])) {
-			$options['_ext'] = self::$_validExtensions;
+			$options['_ext'] = static::$_validExtensions;
 		}
 		$routeClass = static::$_routeClass;
 		if (isset($options['routeClass'])) {
@@ -439,7 +432,7 @@ class Router {
  * @return void
  */
 	public static function setRouteCollection(RouteCollection $routes) {
-		self::$_routes = $routes;
+		static::$_routes = $routes;
 	}
 
 /**
@@ -481,8 +474,8 @@ class Router {
  * @return void
  */
 	public static function pushRequest(Request $request) {
-		self::$_requests[] = $request;
-		self::$_routes->setContext($request);
+		static::$_requests[] = $request;
+		static::$_routes->setContext($request);
 	}
 
 /**
@@ -575,8 +568,8 @@ class Router {
  * @param callable $function The function to add
  * @return void
  */
-	public static function addUrlFilter($function) {
-		self::$_urlFilters[] = $function;
+	public static function addUrlFilter(callable $function) {
+		static::$_urlFilters[] = $function;
 	}
 
 /**
@@ -588,8 +581,8 @@ class Router {
  * @see Router::addUrlFilter()
  */
 	protected static function _applyUrlFilters($url) {
-		$request = self::getRequest(true);
-		foreach (self::$_urlFilters as $filter) {
+		$request = static::getRequest(true);
+		foreach (static::$_urlFilters as $filter) {
 			$url = $filter($url, $request);
 		}
 		return $url;
@@ -654,7 +647,7 @@ class Router {
 			strpos($url, '/') === false &&
 			!$plainString
 		) {
-			$url = self::_splitName($url, $options);
+			$url = static::_splitName($url, $options);
 			$urlType = 'array';
 		}
 
@@ -730,8 +723,8 @@ class Router {
 				'controller' => $params['controller'],
 				'plugin' => $params['plugin']
 			);
-			$url = self::_applyUrlFilters($url);
-			$output = self::$_routes->match($url);
+			$url = static::_applyUrlFilters($url);
+			$output = static::$_routes->match($url);
 		} elseif (
 			$urlType === 'string' &&
 			!$hasLeadingSlash &&
@@ -739,7 +732,7 @@ class Router {
 			!$plainString
 		) {
 			// named route.
-			$route = self::$_routes->get($url);
+			$route = static::$_routes->get($url);
 			if (!$route) {
 				throw new Error\Exception(__d(
 					'cake_dev',
@@ -750,8 +743,8 @@ class Router {
 			$url = $options +
 				$route->defaults +
 				array('_name' => $url);
-			$url = self::_applyUrlFilters($url);
-			$output = self::$_routes->match($url);
+			$url = static::_applyUrlFilters($url);
+			$output = static::$_routes->match($url);
 		} else {
 			// String urls.
 			if ($hasColonSlash || $plainString) {
@@ -766,9 +759,6 @@ class Router {
 			$output = str_replace('//', '/', '/' . $output);
 			if ($full && defined('FULL_BASE_URL')) {
 				$output = FULL_BASE_URL . $output;
-			}
-			if (!empty($extension)) {
-				$output = rtrim($output, '/');
 			}
 		}
 		return $output . $frag;
@@ -880,7 +870,6 @@ class Router {
  * @see RequestHandler::startup()
  */
 	public static function parseExtensions() {
-		static::$_parseExtensions = true;
 		if (func_num_args() > 0) {
 			static::setExtensions(func_get_args(), false);
 		}
@@ -898,10 +887,11 @@ class Router {
 		if (!is_array($extensions)) {
 			return static::$_validExtensions;
 		}
-		if (!$merge) {
-			return static::$_validExtensions = $extensions;
+		if ($merge) {
+			$extensions = array_merge(static::$_validExtensions, $extensions);
 		}
-		return static::$_validExtensions = array_merge(static::$_validExtensions, $extensions);
+		static::$_routes->setExtensions($extensions);
+		return static::$_validExtensions = $extensions;
 	}
 
 /**
@@ -913,24 +903,6 @@ class Router {
  */
 	public static function extensions() {
 		return static::$_validExtensions;
-	}
-
-/**
- * Set/add valid extensions.
- * To have the extensions parsed you still need to call `Router::parseExtensions()`
- *
- * @param array $extensions List of extensions to be added as valid extension
- * @param boolean $merge Default true will merge extensions. Set to false to override current extensions
- * @return array
- */
-	public static function setExtensions($extensions, $merge = true) {
-		if (!is_array($extensions)) {
-			return static::$_validExtensions;
-		}
-		if (!$merge) {
-			return static::$_validExtensions = $extensions;
-		}
-		return static::$_validExtensions = array_merge(static::$_validExtensions, $extensions);
 	}
 
 /**
