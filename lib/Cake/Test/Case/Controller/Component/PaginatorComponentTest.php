@@ -725,7 +725,21 @@ class PaginatorComponentTest extends CakeTestCase {
 		$Controller->constructClasses();
 		$Controller->PaginatorControllerPost->recursive = 0;
 		$Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertEquals(1, $Controller->request->params['paging']['PaginatorControllerPost']['page']);
+		$this->assertEquals(
+			1,
+			$Controller->request->params['paging']['PaginatorControllerPost']['page'],
+			'Super big page number should be capped to max number of pages'
+		);
+
+		$Controller->paginate = array(
+			'conditions' => array('PaginatorControllerPost.id >' => 100)
+		);
+		$Controller->Paginator->paginate('PaginatorControllerPost');
+		$this->assertEquals(
+			1,
+			$Controller->request->params['paging']['PaginatorControllerPost']['page'],
+			'Page number should not be 0'
+		);
 	}
 
 /**
