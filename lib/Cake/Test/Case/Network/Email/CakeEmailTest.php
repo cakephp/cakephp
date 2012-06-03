@@ -1029,6 +1029,38 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendRenderWithImage method
+ *
+ * @return void
+ */
+	public function testSendRenderWithImage() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('Debug');
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->template('image');
+		$this->CakeEmail->emailFormat('html');
+
+		$View = new View();
+		$View->request = new CakeRequest('/', true);
+		$View->request->base = '';
+		$View->request->webroot = '/';
+		$View->request->here = '/';
+		$View->Helpers->load('Html');
+
+		$expected = $View->Html->image('image.gif', array(
+			'fullBase' => true, 'alt' => 'cool image',
+			'width' => 100, 'height' => 100,
+			));
+
+		$result = $this->CakeEmail->send();
+		$this->assertContains($expected, $result['message']);
+	}
+
+/**
  * testSendRenderPlugin method
  *
  * @return void
