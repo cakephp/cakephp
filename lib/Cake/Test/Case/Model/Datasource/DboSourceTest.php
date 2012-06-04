@@ -629,7 +629,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertNull($result);
 	}
 
-
 /**
  * Test that rare collisions do not happen with method caching
  *
@@ -875,7 +874,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
 		$this->assertTrue(empty(DboTestSource::$methodCache['fields']), 'Cache not empty');
 	}
-
 
 /**
  * test that fields() method cache detects datasource changes
