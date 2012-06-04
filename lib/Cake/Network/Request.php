@@ -159,7 +159,9 @@ class Request implements \ArrayAccess {
  * @param array $config An array of request data to create a request with.
  */
 	public function __construct($config = array()) {
-		$config = (array)$config;
+		if (is_string($config)) {
+			$config = array('url' => $config);
+		}
 		$config += array(
 			'params' => $this->params,
 			'query' => array(),

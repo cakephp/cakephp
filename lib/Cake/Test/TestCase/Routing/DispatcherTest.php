@@ -315,21 +315,6 @@ class DispatcherTest extends TestCase {
 	}
 
 /**
- * testParseParamsReturnsPostedData method
- *
- * @return void
- */
-	public function testParseParamsReturnsPostedData() {
-		$_POST['testdata'] = "My Posted Content";
-		$Dispatcher = new Dispatcher();
-		$request = new Request("/");
-		$event = new Event(__CLASS__, $Dispatcher, array('request' => $request));
-		$Dispatcher->parseParams($event);
-		$test = $Dispatcher->parseParams($event);
-		$this->assertEquals("My Posted Content", $request['data']['testdata']);
-	}
-
-/**
  * testQueryStringOnRoot method
  *
  * @return void
@@ -494,7 +479,6 @@ class DispatcherTest extends TestCase {
 	public function testAdminDispatch() {
 		$Dispatcher = new TestDispatcher();
 		Configure::write('Routing.prefixes', array('admin'));
-		Configure::write('App.baseUrl','/cake/repo/branches/1.2.x.x/index.php');
 		$url = new Request('admin/test_dispatch_pages/index/param:value/param2:value2');
 		$response = $this->getMock('Cake\Network\Response');
 
@@ -507,11 +491,8 @@ class DispatcherTest extends TestCase {
 
 		$this->assertTrue($Dispatcher->controller->params['admin']);
 
-		$expected = '/cake/repo/branches/1.2.x.x/index.php/admin/test_dispatch_pages/index/param:value/param2:value2';
+		$expected = '/admin/test_dispatch_pages/index/param:value/param2:value2';
 		$this->assertSame($expected, $Dispatcher->controller->here);
-
-		$expected = '/cake/repo/branches/1.2.x.x/index.php';
-		$this->assertSame($expected, $Dispatcher->controller->base);
 	}
 
 /**
@@ -1038,9 +1019,10 @@ class DispatcherTest extends TestCase {
 			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
 		}
 
-		$_POST['_method'] = 'PUT';
-
-		$request = new Request('/posts/5');
+		$request = new Request(array(
+			'url' => '/posts/5',
+			'post' => array('_method' => 'PUT')
+		));
 		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
 		$dispatcher->parseParams($event);
 		$expected = array(
@@ -1055,12 +1037,16 @@ class DispatcherTest extends TestCase {
 			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
 		}
 
-		$_POST['_method'] = 'POST';
-		$_POST['data'] = array('Post' => array('title' => 'New Post'));
-		$_POST['extra'] = 'data';
 		$_SERVER = array();
 
-		$request = new Request('/posts');
+		$request = new Request(array(
+			'url' => '/posts',
+			'post' => array(
+				'_method' => 'POST',
+				'Post' => array('title' => 'New Post'),
+				'extra' => 'data'
+			),
+		));
 		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
 		$dispatcher->parseParams($event);
 		$expected = array(
@@ -1074,8 +1060,6 @@ class DispatcherTest extends TestCase {
 		foreach ($expected as $key => $value) {
 			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
 		}
-
-		unset($_POST['_method']);
 	}
 
 /**
