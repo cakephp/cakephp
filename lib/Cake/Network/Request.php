@@ -135,72 +135,93 @@ class Request implements \ArrayAccess {
 	protected $_input = '';
 
 /**
- * Constructor
+ * Wrapper method to create a new request from PHP superglobals.
  *
- * @param string $url Trimmed url string to use.  Should not contain the application base path.
- * @param boolean $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
+ * @return Cake\Network\Request
  */
-	public function __construct($url = null, $parseEnvironment = true) {
-		$this->_base();
-		if (empty($url)) {
-			$url = $this->_url();
-		}
-		if ($url[0] == '/') {
-			$url = substr($url, 1);
-		}
-		$this->url = $url;
-
-		if ($parseEnvironment) {
-			$this->_processPost();
-			$this->_processGet();
-			$this->_processFiles();
-		}
-		$this->here = $this->base . '/' . $this->url;
+	public static function createFromGlobals() {
+		list($base, $webroot) = static::_base();
+		$config = array(
+			'query' => $_GET,
+			'post' => $_POST,
+			'files' => $_FILES,
+			'cookies' => $_COOKIE,
+			'base' => $base,
+			'webroot' => $webroot,
+		);
+		$config['url'] = static::_url($config);
+		return new static($config);
 	}
 
 /**
- * process the post data and set what is there into the object.
- * processed data is available at `$this->data`
+ * Constructor
  *
- * Will merge POST vars prefixed with `data`, and ones without
- * into a single array. Variables prefixed with `data` will overwrite those without.
+ * @param array $config An array of request data to create a request with.
+ */
+	public function __construct($config = array()) {
+		$config = (array)$config;
+		$config += array(
+			'params' => $this->params,
+			'query' => array(),
+			'post' => array(),
+			'files' => array(),
+			'cookies' => array(),
+			'url' => '',
+			'base' => '',
+			'webroot' => '',
+		);
+		$this->_setConfig($config);
+	}
+
+/**
+ * Process the config/settings data into properties.
  *
- * If you have mixed POST values be careful not to make any top level keys numeric
- * containing arrays. Hash::merge() is used to merge data, and it has possibly
- * unexpected behavior in this situation.
- *
+ * @param array $config The config data to use.
  * @return void
  */
-	protected function _processPost() {
-		if ($_POST) {
-			$this->data = $_POST;
-		} elseif ($this->is('put') || $this->is('delete')) {
-			$this->data = $this->_readInput();
+	protected function _setConfig($config) {
+		if (!empty($config['url']) && $config['url'][0] == '/') {
+			$config['url'] = substr($config['url'], 1);
+		}
+
+		$this->url = $config['url'];
+		$this->base = $config['base'];
+		$this->cookies = $config['cookies'];
+		$this->here = $this->base . '/' . $this->url;
+		$this->webroot = $config['webroot'];
+
+		$config['post'] = $this->_processPost($config['post']);
+		$this->data = $this->_processFiles($config['post'], $config['files']);
+		$this->query = $this->_processGet($config['query']);
+		$this->params = $config['params'];
+	}
+
+/**
+ * Sets the env('REQUEST_METHOD') based on the simulated _method HTTP override
+ * value.
+ *
+ * @param array $data Array of post data.
+ * @return array
+ */
+	protected function _processPost($data) {
+		if ($this->is('put')) {
+			$data = $this->_readInput();
 			if (env('CONTENT_TYPE') === 'application/x-www-form-urlencoded') {
-				parse_str($this->data, $this->data);
+				parse_str($data, $data);
 			}
 		}
 		if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
-			$this->data['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
+			$data['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
 		}
-		if (isset($this->data['_method'])) {
+		if (isset($data['_method'])) {
 			if (!empty($_SERVER)) {
-				$_SERVER['REQUEST_METHOD'] = $this->data['_method'];
+				$_SERVER['REQUEST_METHOD'] = $data['_method'];
 			} else {
-				$_ENV['REQUEST_METHOD'] = $this->data['_method'];
+				$_ENV['REQUEST_METHOD'] = $data['_method'];
 			}
-			unset($this->data['_method']);
+			unset($data['_method']);
 		}
-
-		if (isset($this->data['data'])) {
-			$data = $this->data['data'];
-			if (count($this->data) <= 1) {
-				$this->data = $data;
-			} else {
-				unset($this->data['data']);
-				$this->data = Hash::merge($this->data, $data);
-			}
-		}
+		return $data;
 	}
 
 /**
@@ -208,19 +229,14 @@ class Request implements \ArrayAccess {
  *
  * @return void
  */
-	protected function _processGet() {
-		$query = $_GET;
-
+	protected function _processGet($query) {
 		unset($query['/' . str_replace('.', '_', urldecode($this->url))]);
 		if (strpos($this->url, '?') !== false) {
 			list(, $querystr) = explode('?', $this->url);
 			parse_str($querystr, $queryArgs);
 			$query += $queryArgs;
 		}
-		if (isset($this->params['url'])) {
-			$query = array_merge($this->params['url'], $query);
-		}
-		$this->query = $query;
+		return $query;
 	}
 
 /**
@@ -230,7 +246,7 @@ class Request implements \ArrayAccess {
  *
  * @return string URI The CakePHP request path that is being accessed.
  */
-	protected function _url() {
+	protected static function _url($config) {
 		if (!empty($_SERVER['PATH_INFO'])) {
 			return $_SERVER['PATH_INFO'];
 		} elseif (isset($_SERVER['REQUEST_URI'])) {
@@ -243,7 +259,7 @@ class Request implements \ArrayAccess {
 			$uri = $var[0];
 		}
 
-		$base = $this->base;
+		$base = $config['base'];
 
 		if (strlen($base) > 0 && strpos($uri, $base) === 0) {
 			$uri = substr($uri, strlen($base));
@@ -260,9 +276,9 @@ class Request implements \ArrayAccess {
 /**
  * Returns a base URL and sets the proper webroot
  *
- * @return string Base URL
+ * @return array Base URL, webroot dir ending in /
  */
-	protected function _base() {
+	protected static function _base() {
 		$dir = $webroot = null;
 		$config = Configure::read('App');
 		extract($config);
@@ -271,8 +287,7 @@ class Request implements \ArrayAccess {
 			$base = $this->base;
 		}
 		if ($base !== false) {
-			$this->webroot = $base . '/';
-			return $this->base = $base;
+			return array($base, $base . '/');
 		}
 
 		if (!$baseUrl) {
@@ -288,9 +303,7 @@ class Request implements \ArrayAccess {
 			if ($base === DS || $base === '.') {
 				$base = '';
 			}
-
-			$this->webroot = $base . '/';
-			return $this->base = $base;
+			return array($base, $base . '/');
 		}
 
 		$file = '/' . basename($baseUrl);
@@ -299,41 +312,36 @@ class Request implements \ArrayAccess {
 		if ($base === DS || $base === '.') {
 			$base = '';
 		}
-		$this->webroot = $base . '/';
+		$webrootDir = $base . '/';
 
 		$docRoot = env('DOCUMENT_ROOT');
 		$docRootContainsWebroot = strpos($docRoot, $dir . '/' . $webroot);
 
 		if (!empty($base) || !$docRootContainsWebroot) {
-			if (strpos($this->webroot, '/' . $dir . '/') === false) {
-				$this->webroot .= $dir . '/';
+			if (strpos($webrootDir, '/' . $dir . '/') === false) {
+				$webrootDir .= $dir . '/';
 			}
-			if (strpos($this->webroot, '/' . $webroot . '/') === false) {
-				$this->webroot .= $webroot . '/';
+			if (strpos($webrootDir, '/' . $webroot . '/') === false) {
+				$webrootDir .= $webroot . '/';
 			}
 		}
-		return $this->base = $base . $file;
+		return array($base . $file, $webrootDir);
 	}
 
 /**
- * Process $_FILES and move things into the object.
+ * Process uploaded files and move things onto the post data.
  *
- * @return void
+ * @param array $data Post data to merge files onto.
+ * @param array $files Uploaded files to merge in.
+ * @return array merged post + file data.
  */
-	protected function _processFiles() {
-		if (isset($_FILES) && is_array($_FILES)) {
-			foreach ($_FILES as $name => $data) {
-				if ($name != 'data') {
-					$this->params['form'][$name] = $data;
-				}
+	protected function _processFiles($post, $files) {
+		if (isset($files) && is_array($files)) {
+			foreach ($files as $key => $data) {
+				$this->_processFileData($post, '', $data, $key);
 			}
 		}
-
-		if (isset($_FILES['data'])) {
-			foreach ($_FILES['data'] as $key => $data) {
-				$this->_processFileData('', $data, $key);
-			}
-		}
+		return $post;
 	}
 
 /**
@@ -343,19 +351,20 @@ class Request implements \ArrayAccess {
  * @param string $path The dot separated path to insert $data into.
  * @param array $data The data to traverse/insert.
  * @param string $field The terminal field name, which is the top level key in $_FILES.
+ * @param array $post The post data having files inserted into
  * @return void
  */
-	protected function _processFileData($path, $data, $field) {
+	protected function _processFileData(&$post, $path, $data, $field) {
 		foreach ($data as $key => $fields) {
 			$newPath = $key;
 			if (!empty($path)) {
 				$newPath = $path . '.' . $key;
 			}
 			if (is_array($fields)) {
-				$this->_processFileData($newPath, $fields, $field);
+				$this->_processFileData($post, $newPath, $fields, $field);
 			} else {
 				$newPath .= '.' . $field;
-				$this->data = Set::insert($this->data, $newPath, $fields);
+				$post = Hash::insert($post, $newPath, $fields);
 			}
 		}
 	}
