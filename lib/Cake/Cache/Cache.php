@@ -65,6 +65,13 @@ class Cache {
 	protected static $_engines = array();
 
 /**
+ * Cache query log entries mapped on cache config name
+ *
+ * @var array
+ */
+	protected static $_logEntries = array();
+
+/**
  * Set the cache configuration to use.  config() can
  * both create new configurations, return the settings for already configured
  * configurations.
@@ -81,7 +88,7 @@ class Cache {
  * There are 5 built-in caching engines:
  *
  * - `FileEngine` - Uses simple files to store content. Poor performance, but good for
- *    storing large objects, or things that are not IO sensitive.
+ *	storing large objects, or things that are not IO sensitive.
  * - `ApcEngine` - Uses the APC object cache, one of the fastest caching engines.
  * - `MemcacheEngine` - Uses the PECL::Memcache extension and Memcached for storage.
  *   Fast reads/writes, and benefits from memcache being distributed.
@@ -92,9 +99,9 @@ class Cache {
  *
  * - `duration` Specify how long items in this cache configuration last.
  * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
- *    with either another cache config or another application.
+ *	with either another cache config or another application.
  * - `probability` Probability of hitting a cache gc cleanup.  Setting to 0 will disable
- *    cache::gc from ever being called automatically.
+ *	cache::gc from ever being called automatically.
  * - `servers' Used by memcache. Give the address of the memcached servers to use.
  * - `compress` Used by memcache.  Enables memcache's compressed format.
  * - `serialize` Used by FileCache.  Should cache objects be serialized first.
@@ -136,6 +143,50 @@ class Cache {
 			self::$_config[$name] = $settings;
 		}
 		return compact('engine', 'settings');
+	}
+
+/**
+ * Add cache query log entry to log list
+ *
+ * Any log entry is expected to have following keys:
+ *
+ * - `error` String describing error, that happened, or null, to indicate success.
+ * - `time` How long query took (SHALL be float)
+ * - `action` Name of method performed (i.e. 'write', 'decrement', etc.)
+ * - `key` Key being accessed/modified (non-transformed, i.e. as supplied by developer)
+ * - `value` Value being set/read
+ * - `config` Name of cache config used for operation
+ *
+ * @param array $log Cache query log entry
+ * @return void
+ * @throws CacheException
+ */
+	protected static function _logAction(array $log) {
+		$defaults = array('error' => null, 'time' => 0, 'key' => null, 'value' => null);
+		$log = array_merge($defaults, $log);
+		if (!isset(self::$_logEntries[$log['config']])) {
+			self::$_logEntries[$log['config']] = array(
+				'count' => 0,
+				'time'  => 0,
+				'logs'  => array(),
+			);
+		}
+		++self::$_logEntries[$log['config']]['count'];
+		if ($log['time'] > 0 && $log['time'] < 1000000) {
+			self::$_logEntries[$log['config']]['time'] += $log['time'];
+		}
+		self::$_logEntries[$log['config']]['logs'][] = $log;
+	}
+
+/**
+ * Returns cache log entries
+ *
+ * @return array
+ * @throws CacheException
+ */
+	public static function getLog()
+	{
+		return self::$_logEntries;
 	}
 
 /**
@@ -280,21 +331,33 @@ class Cache {
 	public static function write($key, $value, $config = 'default') {
 		$settings = self::settings($config);
 
+		$logEntry = compact('key', 'value', 'config');
+		$logEntry['action'] = __FUNCTION__;
+
 		if (empty($settings)) {
+			$logEntry['error'] = 'Settings for config not present';
+			self::_logAction($logEntry);
 			return false;
 		}
 		if (!self::isInitialized($config)) {
+			$logEntry['error'] = 'Engine not initialized';
+			self::_logAction($logEntry);
 			return false;
 		}
 		$key = self::$_engines[$config]->key($key);
 
 		if (!$key || is_resource($value)) {
+			$logEntry['error'] = 'Invalid key/value';
+			self::_logAction($logEntry);
 			return false;
 		}
 
+		$logEntry['time'] = microtime(true);
 		$success = self::$_engines[$config]->write($settings['prefix'] . $key, $value, $settings['duration']);
+		$logEntry['time'] = microtime(true) - $logEntry['time'];
 		self::set(null, $config);
 		if ($success === false && $value !== '') {
+			self::_logAction(($logEntry['error'] = 'Write failed'));
 			trigger_error(
 				__d('cake_dev',
 					"%s cache was unable to write '%s' to %s cache",
@@ -304,6 +367,8 @@ class Cache {
 				),
 				E_USER_WARNING
 			);
+		} else {
+			self::_logAction($logEntry);
 		}
 		return $success;
 	}
@@ -330,17 +395,32 @@ class Cache {
 	public static function read($key, $config = 'default') {
 		$settings = self::settings($config);
 
+		$logEntry = compact('key', 'config');
+		$logEntry['action'] = __FUNCTION__;
+
 		if (empty($settings)) {
+			$logEntry['error'] = 'Settings for config not present';
+			self::_logAction($logEntry);
 			return false;
 		}
 		if (!self::isInitialized($config)) {
+			$logEntry['error'] = 'Engine not initialized';
+			self::_logAction($logEntry);
 			return false;
 		}
 		$key = self::$_engines[$config]->key($key);
 		if (!$key) {
+			$logEntry['error'] = 'Failed to transform key';
+			self::_logAction($logEntry);
 			return false;
 		}
-		return self::$_engines[$config]->read($settings['prefix'] . $key);
+
+		$logEntry['time'] = microtime(true);
+		$value = self::$_engines[$config]->read($settings['prefix'] . $key);
+		$logEntry['time'] = microtime(true) - $logEntry['time'];
+		$logEntry['value'] = $value;
+		self::_logAction($logEntry);
+		return $value;
 	}
 
 /**
@@ -350,23 +430,39 @@ class Cache {
  * @param integer $offset How much to add
  * @param string $config Optional string configuration name. Defaults to 'default'
  * @return mixed new value, or false if the data doesn't exist, is not integer,
- *    or if there was an error fetching it.
+ *	or if there was an error fetching it.
  */
 	public static function increment($key, $offset = 1, $config = 'default') {
 		$settings = self::settings($config);
 
+		$logEntry = compact('key', 'config');
+		$logEntry['value']  = $offset;
+		$logEntry['action'] = __FUNCTION__;
+
 		if (empty($settings)) {
+			$logEntry['error'] = 'Settings for config not present';
+			self::_logAction($logEntry);
 			return false;
 		}
 		if (!self::isInitialized($config)) {
+			$logEntry['error'] = 'Engine not initialized';
+			self::_logAction($logEntry);
 			return false;
 		}
 		$key = self::$_engines[$config]->key($key);
 
 		if (!$key || !is_integer($offset) || $offset < 0) {
+			$logEntry['error'] = 'Invalid key/offset';
+			self::_logAction($logEntry);
 			return false;
 		}
+		$logEntry['time'] = microtime(true);
 		$success = self::$_engines[$config]->increment($settings['prefix'] . $key, $offset);
+		$logEntry['time'] = microtime(true) - $logEntry['time'];
+		if (!$success) {
+			$logEntry['error'] = 'Increment operation failed';
+		}
+		self::_logAction($logEntry);
 		self::set(null, $config);
 		return $success;
 	}
@@ -383,18 +479,34 @@ class Cache {
 	public static function decrement($key, $offset = 1, $config = 'default') {
 		$settings = self::settings($config);
 
+		$logEntry = compact('key', 'config');
+		$logEntry['value']  = $offset;
+		$logEntry['action'] = __FUNCTION__;
+
 		if (empty($settings)) {
+			$logEntry['error'] = 'Settings for config not present';
+			self::_logAction($logEntry);
 			return false;
 		}
 		if (!self::isInitialized($config)) {
+			$logEntry['error'] = 'Engine not initialized';
+			self::_logAction($logEntry);
 			return false;
 		}
 		$key = self::$_engines[$config]->key($key);
 
 		if (!$key || !is_integer($offset) || $offset < 0) {
+			$logEntry['error'] = 'Invalid key/offset';
+			self::_logAction($logEntry);
 			return false;
 		}
+		$logEntry['time'] = microtime(true);
 		$success = self::$_engines[$config]->decrement($settings['prefix'] . $key, $offset);
+		$logEntry['time'] = microtime(true) - $logEntry['time'];
+		if (!$success) {
+			$logEntry['error'] = 'Decrement operation failed';
+		}
+		self::_logAction($logEntry);
 		self::set(null, $config);
 		return $success;
 	}
@@ -419,18 +531,33 @@ class Cache {
 	public static function delete($key, $config = 'default') {
 		$settings = self::settings($config);
 
+		$logEntry = compact('key', 'config');
+		$logEntry['action'] = __FUNCTION__;
+
 		if (empty($settings)) {
+			$logEntry['error'] = 'Settings for config not present';
+			self::_logAction($logEntry);
 			return false;
 		}
 		if (!self::isInitialized($config)) {
+			$logEntry['error'] = 'Engine not initialized';
+			self::_logAction($logEntry);
 			return false;
 		}
 		$key = self::$_engines[$config]->key($key);
 		if (!$key) {
+			$logEntry['error'] = 'Invalid key';
+			self::_logAction($logEntry);
 			return false;
 		}
 
+		$logEntry['time'] = microtime(true);
 		$success = self::$_engines[$config]->delete($settings['prefix'] . $key);
+		$logEntry['time'] = microtime(true) - $logEntry['time'];
+		if (!$success) {
+			$logEntry['error'] = 'Delete operation failed';
+		}
+		self::_logAction($logEntry);
 		self::set(null, $config);
 		return $success;
 	}
@@ -443,10 +570,22 @@ class Cache {
  * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public static function clear($check = false, $config = 'default') {
+		$logEntry = compact('config');
+		$logEntry['value'] = $check;
+		$logEntry['action'] = __FUNCTION__;
+
 		if (!self::isInitialized($config)) {
+			$logEntry['error'] = 'Engine not initialized';
+			self::_logAction($logEntry);
 			return false;
 		}
+		$logEntry['time'] = microtime(true);
 		$success = self::$_engines[$config]->clear($check);
+		$logEntry['time'] = microtime(true) - $logEntry['time'];
+		if (!$success) {
+			$logEntry['error'] = 'Clear operation failed';
+		}
+		self::_logAction($logEntry);
 		self::set(null, $config);
 		return $success;
 	}
