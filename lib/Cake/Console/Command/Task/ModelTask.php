@@ -169,7 +169,7 @@ class ModelTask extends BakeTask {
 		$valid = false;
 		$max = count($options);
 		while (!$valid) {
-			$len = strlen((count($options)+1).'');
+			$len = strlen((count($options)+1));
 			foreach ($options as $i => $option) {
 				$this->out(sprintf("%${len}d. %s", $i+1, $option));
 			}
@@ -846,7 +846,7 @@ class ModelTask extends BakeTask {
 		}
 		if ($this->interactive === true) {
 			$this->out(__d('cake_console', 'Possible Models based on your current database:'));
-			$len = strlen(($count+1).'');
+			$len = strlen(($count+1));
 			for ($i = 0; $i < $count; $i++) {
 				$this->out(sprintf("%${len}d. %s", $i+1, $this->_modelNames[$i]));
 			}
