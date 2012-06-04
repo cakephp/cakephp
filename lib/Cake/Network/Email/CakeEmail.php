@@ -1441,12 +1441,6 @@ class CakeEmail {
 		$View = new $viewClass(null);
 		$View->viewVars = $this->_viewVars;
 		$View->helpers = $this->_helpers;
-		if (!$request = Router::getRequest(true)) {
-			$request = new CakeRequest('/', false);
-			$request->base = '';
-			$request->here = $request->webroot = '/';
-		}
-		$View->request = $request;
 
 		list($templatePlugin, $template) = pluginSplit($this->_template);
 		list($layoutPlugin, $layout) = pluginSplit($this->_layout);
