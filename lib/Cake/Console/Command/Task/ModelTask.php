@@ -171,7 +171,7 @@ class ModelTask extends BakeTask {
 		while (!$valid) {
 			$len = strlen((count($options)+1));
 			foreach ($options as $i => $option) {
-				$this->out(sprintf("%${len}d. %s", $i+1, $option));
+				$this->out(sprintf("%${len}d. %s", $i + 1, $option));
 			}
 			if (empty($prompt)) {
 				$prompt = __d('cake_console', 'Make a selection from the choices above');
@@ -410,11 +410,11 @@ class ModelTask extends BakeTask {
 				$this->out(__d('cake_console', 'Please select one of the following validation options:'));
 				$this->hr();
 
-				for ($i = 1, $m=$defaultChoice/2; $i < $m; $i++) {
-						$str_aux = sprintf("%2d. %s", $i, $this->_validations[$i]);
-						$str_aux = $str_aux.str_repeat(" ", 31 - strlen($str_aux));
-						$str_aux .= sprintf("%2d. %s", $m+$i, $this->_validations[$m+$i]);
-						$this->out($str_aux);
+				for ($i = 1, $m = $defaultChoice / 2; $i < $m; $i++) {
+						$strAux = sprintf("%2d. %s", $i, $this->_validations[$i]);
+						$strAux = $strAux.str_repeat(" ", 31 - strlen($strAux));
+						$strAux .= sprintf("%2d. %s", $m + $i, $this->_validations[$m + $i]);
+						$this->out($strAux);
 					}
 					$this->out(__d('cake_console', "%s - Do not do any validation on this field.", $defaultChoice));
 					$this->hr();
@@ -846,9 +846,9 @@ class ModelTask extends BakeTask {
 		}
 		if ($this->interactive === true) {
 			$this->out(__d('cake_console', 'Possible Models based on your current database:'));
-			$len = strlen(($count+1));
+			$len = strlen(($count + 1));
 			for ($i = 0; $i < $count; $i++) {
-				$this->out(sprintf("%${len}d. %s", $i+1, $this->_modelNames[$i]));
+				$this->out(sprintf("%${len}d. %s", $i + 1, $this->_modelNames[$i]));
 			}
 		}
 		return $this->_tables;
