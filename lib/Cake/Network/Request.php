@@ -154,9 +154,21 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Constructor
+ * Create a new request object.
  *
- * @param array $config An array of request data to create a request with.
+ * You can supply the data as either an array or as a string.  If you use
+ * a string you can only supply the url for the request.  Using an array will
+ * let you provide the following keys:
+ *
+ * - `post` POST data or non query string data
+ * - `query` Additional data from the query string.
+ * - `files` Uploaded file data formatted like $_FILES
+ * - `cookies` Cookies for this request.
+ * - `url` The url without the base path for the request.
+ * - `base` The base url for the request.
+ * - `webroot` The webroot directory for the request.
+ *
+ * @param string|array $config An array of request data to create a request with.
  */
 	public function __construct($config = array()) {
 		if (is_string($config)) {
