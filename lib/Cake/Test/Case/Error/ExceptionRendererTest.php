@@ -296,21 +296,8 @@ class ExceptionRendererTest extends CakeTestCase {
 				$testApp . 'Error' . DS
 			),
 		), App::RESET);
-		Configure::write('Error', array(
-			'handler' => 'TestAppsErrorHandler::handleError',
-			'level' => E_ALL & ~E_DEPRECATED,
-			'trace' => true
-		));
 
-		Configure::write('Exception', array(
-			'handler' => 'TestAppsErrorHandler::handleException',
-			'renderer' => 'TestAppsExceptionRenderer',
-			'log' => true
-		));
-
-		App::uses('TestAppsErrorController', 'Controller');
 		App::uses('TestAppsExceptionRenderer', 'Error');
-
 		$exception = new SocketException('socket exception');
 		$renderer = new TestAppsExceptionRenderer($exception);
 
