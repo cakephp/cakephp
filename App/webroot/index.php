@@ -92,4 +92,4 @@ use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
 
 $Dispatcher = new Dispatcher();
-$Dispatcher->dispatch(new Request(), new Response(array('charset' => Configure::read('App.encoding'))));
+$Dispatcher->dispatch(Request::createFromGlobals(), new Response(array('charset' => Configure::read('App.encoding'))));

@@ -137,7 +137,7 @@ class ScaffoldTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$request = new Request(null, false);
+		$request = new Request();
 		$this->Controller = new ScaffoldMockController($request);
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 	}
@@ -319,7 +319,7 @@ class ScaffoldTest extends TestCase {
  * @return void
  */
 	public function testEditScaffoldWithScaffoldFields() {
-		$request = new Request(null, false);
+		$request = new Request();
 		$this->Controller = new ScaffoldMockControllerWithFields($request);
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 

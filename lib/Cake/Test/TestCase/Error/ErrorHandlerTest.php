@@ -51,7 +51,7 @@ class ErrorHandlerTest extends TestCase {
 		), App::RESET);
 		Router::reload();
 
-		$request = new Request(null, false);
+		$request = new Request();
 		$request->base = '';
 		Router::setRequestInfo($request);
 		Configure::write('debug', 2);

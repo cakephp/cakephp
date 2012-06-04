@@ -62,7 +62,7 @@ class ActionsAuthorizeTest extends TestCase {
 				'user' => 'mariano'
 			)
 		);
-		$request = new Request('/posts/index', false);
+		$request = new Request('/posts/index');
 		$request->addParams(array(
 			'plugin' => null,
 			'controller' => 'posts',
@@ -91,7 +91,7 @@ class ActionsAuthorizeTest extends TestCase {
 				'user' => 'mariano'
 			)
 		);
-		$request = new Request('/posts/index', false);
+		$request = new Request('/posts/index');
 		$request->addParams(array(
 			'plugin' => null,
 			'controller' => 'posts',
@@ -114,7 +114,7 @@ class ActionsAuthorizeTest extends TestCase {
  * @return void
  */
 	public function testAuthorizeSettings() {
-		$request = new Request('/posts/index', false);
+		$request = new Request('/posts/index');
 		$request->addParams(array(
 			'plugin' => null,
 			'controller' => 'posts',
@@ -144,7 +144,7 @@ class ActionsAuthorizeTest extends TestCase {
  * @return void
  */
 	public function testActionMethod() {
-		$request = new Request('/posts/index', false);
+		$request = new Request('/posts/index');
 		$request->addParams(array(
 			'plugin' => null,
 			'controller' => 'posts',
@@ -177,7 +177,7 @@ class ActionsAuthorizeTest extends TestCase {
  * @return void
  */
 	public function testActionWithPlugin() {
-		$request = new Request('/debug_kit/posts/index', false);
+		$request = new Request('/debug_kit/posts/index');
 		$request->addParams(array(
 			'plugin' => 'debug_kit',
 			'controller' => 'posts',

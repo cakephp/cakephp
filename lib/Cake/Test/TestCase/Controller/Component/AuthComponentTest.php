@@ -75,7 +75,7 @@ class AuthComponentTest extends TestCase {
 		Configure::write('Security.cipherSeed', 770011223369876);
 		Configure::write('App.namespace', 'TestApp');
 
-		$request = new Request(null, false);
+		$request = new Request();
 
 		$this->Controller = new AuthTestController($request, $this->getMock('Cake\Network\Response'));
 
@@ -841,7 +841,7 @@ class AuthComponentTest extends TestCase {
  * @return void
  */
 	public function testComponentSettings() {
-		$request = new Request(null, false);
+		$request = new Request();
 		$this->Controller = new AuthTestController($request, $this->getMock('Cake\Network\Response'));
 
 		$this->Controller->components = array(
@@ -921,7 +921,7 @@ class AuthComponentTest extends TestCase {
 	public function testLoginWithRequestData() {
 		$this->getMock('Cake\Controller\Component\Auth\FormAuthenticate', array(), array(), 'RequestLoginMockAuthenticate', false);
 		class_alias('RequestLoginMockAuthenticate', 'Cake\Controller\Component\Auth\RequestLoginMockAuthenticate');
-		$request = new Request('users/login', false);
+		$request = new Request('users/login');
 		$user = array('username' => 'mark', 'role' => 'admin');
 
 		$this->Auth->request = $request;

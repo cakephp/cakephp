@@ -551,7 +551,7 @@ class RequestTest extends TestCase {
 		$_SERVER['HTTP_X_FORWARDED_FOR'] = '192.168.1.5, 10.0.1.1, proxy.com';
 		$_SERVER['HTTP_CLIENT_IP'] = '192.168.1.2';
 		$_SERVER['REMOTE_ADDR'] = '192.168.1.3';
-		$request = new Request('some/path');
+		$request = new Request();
 
 		$request->trustProxy = true;
 		$this->assertEquals('192.168.1.5', $request->clientIp());
@@ -575,7 +575,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testReferer() {
-		$request = new Request('some/path');
+		$request = new Request();
 		$request->webroot = '/';
 
 		$_SERVER['HTTP_REFERER'] = 'http://cakephp.org';
@@ -617,7 +617,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testIsHttpMethods() {
-		$request = new Request('some/path');
+		$request = new Request();
 
 		$this->assertFalse($request->is('undefined-behavior'));
 
@@ -646,7 +646,7 @@ class RequestTest extends TestCase {
  */
 	public function testMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'delete';
-		$request = new Request('some/path');
+		$request = new Request();
 
 		$this->assertEquals('delete', $request->method());
 	}
@@ -658,7 +658,7 @@ class RequestTest extends TestCase {
  */
 	public function testHost() {
 		$_SERVER['HTTP_HOST'] = 'localhost';
-		$request = new Request('some/path');
+		$request = new Request();
 
 		$this->assertEquals('localhost', $request->host());
 	}
@@ -670,7 +670,7 @@ class RequestTest extends TestCase {
  */
 	public function testPort() {
 		$_SERVER['SERVER_PORT'] = '80';
-		$request = new Request('some/path', false);
+		$request = new Request();
 
 		$this->assertEquals('80', $request->port());
 
@@ -689,7 +689,7 @@ class RequestTest extends TestCase {
  */
 	public function testDomain() {
 		$_SERVER['HTTP_HOST'] = 'something.example.com';
-		$request = new Request('some/path');
+		$request = new Request();
 
 		$this->assertEquals('example.com', $request->domain());
 
@@ -704,7 +704,7 @@ class RequestTest extends TestCase {
  */
 	public function testScheme() {
 		$_SERVER['HTTPS'] = 'on';
-		$request = new Request('some/path', false);
+		$request = new Request();
 
 		$this->assertEquals('https', $request->scheme());
 
@@ -719,7 +719,7 @@ class RequestTest extends TestCase {
  */
 	public function testSubdomain() {
 		$_SERVER['HTTP_HOST'] = 'something.example.com';
-		$request = new Request('some/path');
+		$request = new Request();
 
 		$this->assertEquals(array('something'), $request->subdomains());
 
@@ -739,7 +739,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testisAjaxFlashAndFriends() {
-		$request = new Request('some/path');
+		$request = new Request();
 
 		$_SERVER['HTTP_USER_AGENT'] = 'Shockwave Flash';
 		$this->assertTrue($request->is('flash'));
@@ -774,7 +774,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testMagicCallExceptionOnUnknownMethod() {
-		$request = new Request('some/path');
+		$request = new Request();
 		$request->IamABanana();
 	}
 
@@ -784,7 +784,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testIsSsl() {
-		$request = new Request('some/path');
+		$request = new Request();
 
 		$_SERVER['HTTPS'] = 1;
 		$this->assertTrue($request->is('ssl'));
@@ -817,7 +817,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testMagicget() {
-		$request = new Request('some/path');
+		$request = new Request();
 		$request->params = array('controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs');
 
 		$this->assertEquals('posts', $request->controller);
@@ -832,7 +832,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testMagicisset() {
-		$request = new Request('some/path');
+		$request = new Request();
 		$request->params = array(
 			'controller' => 'posts',
 			'action' => 'view',
@@ -883,7 +883,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testAddDetector() {
-		$request = new Request('some/path');
+		$request = new Request();
 		$request->addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
 
 		$_SERVER['TEST_VAR'] = 'something';
@@ -944,7 +944,7 @@ class RequestTest extends TestCase {
 	public function testHeader() {
 		$_SERVER['HTTP_HOST'] = 'localhost';
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16';
-		$request = new Request('/', false);
+		$request = new Request();
 
 		$this->assertEquals($_SERVER['HTTP_HOST'], $request->header('host'));
 		$this->assertEquals($_SERVER['HTTP_USER_AGENT'], $request->header('User-Agent'));
@@ -957,7 +957,7 @@ class RequestTest extends TestCase {
  */
 	public function testAccepts() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml;q=0.9,application/xhtml+xml,text/html,text/plain,image/png';
-		$request = new Request('/', false);
+		$request = new Request();
 
 		$result = $request->accepts();
 		$expected = array(
@@ -979,7 +979,7 @@ class RequestTest extends TestCase {
  */
 	public function testAcceptWithWhitespace() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml  ,  text/html ,  text/plain,image/png';
-		$request = new Request('/', false);
+		$request = new Request();
 		$result = $request->accepts();
 		$expected = array(
 			'text/xml', 'text/html', 'text/plain', 'image/png'
@@ -996,7 +996,7 @@ class RequestTest extends TestCase {
  */
 	public function testAcceptWithQvalueSorting() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0';
-		$request = new Request('/', false);
+		$request = new Request();
 		$result = $request->accepts();
 		$expected = array('application/xml', 'text/html', 'application/json');
 		$this->assertEquals($expected, $result);
@@ -1009,7 +1009,7 @@ class RequestTest extends TestCase {
  */
 	public function testParseAcceptWithQValue() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0,image/png';
-		$request = new Request('/', false);
+		$request = new Request();
 		$result = $request->parseAccept();
 		$expected = array(
 			'1.0' => array('application/xml', 'image/png'),
@@ -1027,7 +1027,7 @@ class RequestTest extends TestCase {
 	public function testParseAcceptNoQValues() {
 		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/plain, */*';
 
-		$request = new Request('/', false);
+		$request = new Request();
 		$result = $request->parseAccept();
 		$expected = array(
 			'1.0' => array('application/json', 'text/plain', '*/*'),
@@ -1679,7 +1679,7 @@ class RequestTest extends TestCase {
 				'field' => 'value'
 			)
 		);
-		$request = new Request('posts/index');
+		$request = new Request();
 		$result = $request->data('Model.new_value', 'new value');
 		$this->assertSame($result, $request, 'Return was not $this');
 
@@ -1696,7 +1696,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testDataWritingFalsey() {
-		$request = new Request('posts/index');
+		$request = new Request();
 
 		$request->data('Post.null', null);
 		$this->assertNull($request->data['Post']['null']);
@@ -1823,7 +1823,7 @@ XML;
  * @return void
  */
 	public function testIsRequested() {
-		$request = new Request('/posts/index');
+		$request = new Request();
 		$request->addParams(array(
 			'controller' => 'posts',
 			'action' => 'index',
@@ -1833,7 +1833,7 @@ XML;
 		$this->assertTrue($request->is('requested'));
 		$this->assertTrue($request->isRequested());
 
-		$request = new Request('/posts/index');
+		$request = new Request();
 		$request->addParams(array(
 			'controller' => 'posts',
 			'action' => 'index',

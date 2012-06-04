@@ -92,7 +92,7 @@ class Object {
 		} elseif (is_array($url)) {
 			$params = $url + array('pass' => array(), 'named' => array(), 'base' => false);
 			$params = array_merge($params, $extra);
-			$request = new Request(Router::reverse($params), false);
+			$request = new Request(Router::reverse($params));
 		}
 		if (isset($data)) {
 			$request->data = $data;

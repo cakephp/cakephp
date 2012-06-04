@@ -95,6 +95,6 @@ use Cake\Routing\Dispatcher;
 
 $Dispatcher = new Dispatcher();
 $Dispatcher->dispatch(
-	new Request(),
+	Request::createFromGlobals(),
 	new Response(array('charset' => Configure::read('App.encoding')))
 );

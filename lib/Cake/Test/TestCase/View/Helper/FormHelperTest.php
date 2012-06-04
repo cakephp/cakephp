@@ -665,7 +665,7 @@ class FormHelperTest extends TestCase {
 
 		$this->Form = new FormHelper($this->View);
 		$this->Form->Html = new HtmlHelper($this->View);
-		$this->Form->request = new Request('contacts/add', false);
+		$this->Form->request = new Request('contacts/add');
 		$this->Form->request->here = '/contacts/add';
 		$this->Form->request['action'] = 'add';
 		$this->Form->request->webroot = '';

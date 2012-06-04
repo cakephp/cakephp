@@ -360,7 +360,7 @@ class DispatcherTest extends TestCase {
 
 		$Dispatcher = new TestDispatcher();
 		Configure::write('App.baseUrl', '/index.php');
-		$url = new Request('some_controller/home/param:value/param2:value2');
+		$url = new Request('some_controller/home');
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
@@ -479,7 +479,7 @@ class DispatcherTest extends TestCase {
 	public function testAdminDispatch() {
 		$Dispatcher = new TestDispatcher();
 		Configure::write('Routing.prefixes', array('admin'));
-		$url = new Request('admin/test_dispatch_pages/index/param:value/param2:value2');
+		$url = new Request('admin/test_dispatch_pages/index');
 		$response = $this->getMock('Cake\Network\Response');
 
 		Router::reload();

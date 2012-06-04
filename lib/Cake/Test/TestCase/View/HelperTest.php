@@ -207,7 +207,7 @@ class HelperTest extends TestCase {
 		$null = null;
 		$this->View = new View($null);
 		$this->Helper = new Helper($this->View);
-		$this->Helper->request = new Request(null, false);
+		$this->Helper->request = new Request();
 
 		ClassRegistry::addObject('HelperTestPost', new HelperTestPost());
 		ClassRegistry::addObject('HelperTestComment', new HelperTestComment());

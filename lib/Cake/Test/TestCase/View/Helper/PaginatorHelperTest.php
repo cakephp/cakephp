@@ -50,7 +50,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->View = new View($controller);
 		$this->Paginator = new PaginatorHelper($this->View);
 		$this->Paginator->Js = $this->getMock('Cake\View\Helper\PaginatorHelper', array(), array($this->View));
-		$this->Paginator->request = new Request(null, false);
+		$this->Paginator->request = new Request();
 		$this->Paginator->request->addParams(array(
 			'paging' => array(
 				'Article' => array(
@@ -2310,7 +2310,7 @@ class PaginatorHelperTest extends TestCase {
  * @return void
  */
 	public function testNoDefaultModel() {
-		$this->Paginator->request = new Request(null, false);
+		$this->Paginator->request = new Request();
 		$this->assertNull($this->Paginator->defaultModel());
 	}
 

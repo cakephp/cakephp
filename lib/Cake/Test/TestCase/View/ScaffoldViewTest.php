@@ -94,7 +94,7 @@ class ScaffoldViewTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->request = new Request(null, false);
+		$this->request = new Request();
 		$this->Controller = new ScaffoldViewMockController($this->request);
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 

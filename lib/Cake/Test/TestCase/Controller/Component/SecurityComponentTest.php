@@ -143,7 +143,7 @@ class SecurityComponentTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$request = new Request('posts/index', false);
+		$request = new Request('posts/index');
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
 		$this->Controller = new SecurityTestController($request);
 		$this->Controller->Components->init($this->Controller);

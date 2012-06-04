@@ -1260,7 +1260,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testPropertyBackwardsCompatibility() {
-		$request = new Request('posts/index', null);
+		$request = new Request('posts/index');
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
 		$request->data = array('Post' => array('id' => 1));
 		$request->here = '/posts/index';

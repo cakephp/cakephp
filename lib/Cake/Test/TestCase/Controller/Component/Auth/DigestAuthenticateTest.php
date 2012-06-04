@@ -91,7 +91,7 @@ class DigestAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateNoData() {
-		$request = new Request('posts/index', false);
+		$request = new Request('posts/index');
 
 		$this->response->expects($this->once())
 			->method('header')
@@ -106,7 +106,7 @@ class DigestAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateWrongUsername() {
-		$request = new Request('posts/index', false);
+		$request = new Request('posts/index');
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
 		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
@@ -141,7 +141,7 @@ DIGEST;
  * @return void
  */
 	public function testAuthenticateChallenge() {
-		$request = new Request('posts/index', false);
+		$request = new Request('posts/index');
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
 		$this->response->expects($this->at(0))
@@ -165,7 +165,7 @@ DIGEST;
  * @return void
  */
 	public function testAuthenticateSuccess() {
-		$request = new Request('posts/index', false);
+		$request = new Request('posts/index');
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
 		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
@@ -197,7 +197,7 @@ DIGEST;
  */
 	public function testAuthenticateFailReChallenge() {
 		$this->auth->settings['scope'] = array('user' => 'nate');
-		$request = new Request('posts/index', false);
+		$request = new Request('posts/index');
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
 		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST

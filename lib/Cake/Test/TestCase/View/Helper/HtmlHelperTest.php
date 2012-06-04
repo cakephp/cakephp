@@ -134,7 +134,7 @@ class HtmlHelperTest extends TestCase {
 		$controller = $this->getMock('Cake\Controller\Controller');
 		$this->View = $this->getMock('Cake\View\View', array('append'), array($controller));
 		$this->Html = new TestHtmlHelper($this->View);
-		$this->Html->request = new Request(null, false);
+		$this->Html->request = new Request();
 		$this->Html->request->webroot = '';
 
 		App::build(array(

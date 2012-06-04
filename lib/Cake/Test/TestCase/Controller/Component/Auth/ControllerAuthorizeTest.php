@@ -61,7 +61,7 @@ class ControllerAuthorizeTest extends TestCase {
  */
 	public function testAuthorizeFailure() {
 		$user = array();
-		$request = new Request('/posts/index', false);
+		$request = new Request('/posts/index');
 		$this->assertFalse($this->auth->authorize($user, $request));
 	}
 
@@ -72,7 +72,7 @@ class ControllerAuthorizeTest extends TestCase {
  */
 	public function testAuthorizeSuccess() {
 		$user = array('User' => array('username' => 'mark'));
-		$request = new Request('/posts/index', false);
+		$request = new Request('/posts/index');
 
 		$this->controller->expects($this->once())
 			->method('isAuthorized')
