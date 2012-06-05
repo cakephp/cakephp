@@ -141,6 +141,11 @@ App::$bootstrapping = true;
 
 Configure::bootstrap(isset($boot) ? $boot : true);
 
+CakeLog::config('_cake_cache_hits_', array(
+	'engine' => 'CountingFileLog',
+	'file'   => '_cake_cache_hits_counter_',
+));
+
 
 /**
  *  Full url prefix

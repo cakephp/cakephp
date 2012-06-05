@@ -373,6 +373,7 @@ class Cache {
 		} else {
 			self::_logAction($logEntry);
 		}
+		CakeLog::write('_cake_cache_hits_', $config . '.write', array('performance'));
 		return $success;
 	}
 
@@ -420,6 +421,11 @@ class Cache {
 		$logEntry['time'] = microtime(true);
 		$value = self::$_engines[$config]->read($settings['prefix'] . $key);
 		$logEntry['time'] = microtime(true) - $logEntry['time'];
+		if (!$value) {
+			CakeLog::write('_cake_cache_hits_', $config . '.miss', array('performance'));
+		} else {
+			CakeLog::write('_cake_cache_hits_', $config . '.hit', array('performance'));
+		}
 		$logEntry['value'] = $value;
 		self::_logAction($logEntry);
 		return $value;
