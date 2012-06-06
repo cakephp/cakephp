@@ -459,11 +459,6 @@ class TestTask extends BakeTask {
 		if ($type == 'behavior') {
 			$construct = "new $fullClassName();\n";
 		}
-		if ($type == 'controller') {
-			$className = substr($fullClassName, 0, -10);
-			$construct = "new $fullClassName();\n";
-			$post = "\$this->{$className}->constructClasses();\n";
-		}
 		if ($type == 'helper') {
 			$pre = "\$View = new View();\n";
 			$construct = "new {$fullClassName}(\$View);\n";
