@@ -26,7 +26,7 @@ while [ -h "$LIB" ]; do
 done
 
 LIB=$(dirname -- "$LIB")/
-APP=`pwd`
+APP=$(dirname $(cd $(dirname $0) && pwd))
 
 exec php -q "$LIB"cake.php -working "$APP" "$@"
 
