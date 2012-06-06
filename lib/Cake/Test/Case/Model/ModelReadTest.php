@@ -7878,4 +7878,43 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals(1, count($result));
 	}
 
+/**
+ * test Model::get() method
+ *
+ * @retun void
+ */
+	public function testGet() {
+		$this->loadFixtures('User');
+		$User = new User();
+
+		$User->id = 1;
+		$User->read();
+
+		$this->assertEqual($User->get('user'), $User->data['User']['user']);
+		$this->assertEqual($User->get('User.user'), $User->data['User']['user']);
+		$this->assertEqual($User->get('id'), $User->id);
+		$this->assertEqual($User->get('User.id'), $User->id);
+	}
+
+/**
+ * test Model::check() method
+ *
+ * @return void
+ */
+	public function testCheck(){
+		$this->loadFixtures('User');
+		$User = new User();
+
+		$User->id = 1;
+		$User->read();
+
+		$User->set('user', '');
+
+		$this->assertFalse($User->check('user'));
+		$this->assertFalse($User->check('User.user'));
+		$this->assertTrue($User->check('id'));
+		$this->assertTrue($User->check('User.id'));
+	}
+
+
 }
