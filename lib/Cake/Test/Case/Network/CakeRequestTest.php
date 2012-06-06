@@ -23,8 +23,6 @@ App::uses('CakeRequest', 'Network');
 
 class TestCakeRequest extends CakeRequest {
 
-	public $input;
-
 	public function reConstruct($url = 'some/path', $parseEnvironment = true) {
 		$this->_base();
 		if (empty($url)) {
@@ -41,10 +39,6 @@ class TestCakeRequest extends CakeRequest {
 			$this->_processFiles();
 		}
 		$this->here = $this->base . '/' . $this->url;
-	}
-
-	protected function _readInput() {
-		return $this->input;
 	}
 
 }
