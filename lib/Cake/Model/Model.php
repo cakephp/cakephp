@@ -3400,4 +3400,37 @@ class Model extends Object implements CakeEventListener {
 		return $this->_validator;
 	}
 
+/**
+ * Extract from model->data the value of a field or field path (ie: User.name)
+ * @param string $field indicates the path to the value
+ * @param mixed $defaultValue indicates the default value to be returned in case of $fieldPath was not found
+ * @return mixed
+ */
+	public function get($field, $defaultValue = null){
+		if (empty($this->data)) {
+			trigger_error(__d('cake_dev', 'Data is empty'), E_USER_WARNING);
+		}
+
+		if (strpos($field, '.') === false) {
+			$field = "{$this->alias}.{$field}";
+		}
+
+		$value = Hash::get($this->data, $field);
+		if ($value === null) {
+			$value = $default;
+		}
+
+		return $value;
+	}
+
+/**
+ * Checks if a value of model->data is not empty
+ * @param type $field
+ * @return boolean true if has value, false otherwise
+ */
+	public function check($field) {
+		$v = $this->get($field);
+		return !empty($v);
+	}
+
 }
