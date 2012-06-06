@@ -2357,7 +2357,9 @@ class Model extends Object implements CakeEventListener {
 					if ($options['deep']) {
 						$validates = $this->{$association}->validateAssociated($values, $options);
 					} else {
-						$validates = $this->{$association}->create($values) !== null && $this->{$association}->validates($options);
+						$this->{$association}->create(null);
+						$validates = $this->{$association}->set($values) && $this->{$association}->validates($options);
+						$data[$association] = $this->{$association}->data[$this->{$association}->alias];
 					}
 					if (is_array($validates)) {
 						if (in_array(false, $validates, true)) {

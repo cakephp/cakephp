@@ -5947,6 +5947,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testValidateAssociated() {
+		$this->loadFixtures('Attachment', 'Article', 'Comment');
 		$TestModel = new Comment();
 		$TestModel->Attachment->validate = array('attachment' => 'notEmpty');
 

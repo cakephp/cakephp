@@ -1127,4 +1127,34 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals($expected['Article'], $result['Article']);
 	}
 
+/**
+ * Tests that altering data in a beforeValidate callback will lead to saving those
+ * values in database, this time with belongsTo associations
+ *
+ * @return void
+ */
+	public function testValidateFirstAssociatedWithBeforeValidate2() {
+		$this->loadFixtures('Article', 'User');
+		$model = new CustomArticle();
+		$model->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => true
+				)
+			)
+		);
+
+		$data = array(
+			'User' => array('user' => 'foo', 'password' => 'bar'),
+			'CustomArticle' => array(
+				'body' => 'a test'
+			)
+		);
+		$result = $model->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$this->assertEquals('foo', $model->field('title', array('body' => 'a test')));
+	}
+
 }
