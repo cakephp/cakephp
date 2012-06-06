@@ -468,12 +468,12 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertContains("App::uses('TestTaskCommentsController', 'Controller')", $result);
 		$this->assertContains('class TestTaskCommentsControllerTest extends ControllerTestCase', $result);
 
-		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$this->TestTaskComments = new TestTaskCommentsController()", $result);
-		$this->assertContains("\$this->TestTaskComments->constructClasses()", $result);
+		$this->assertNotContains('function setUp()', $result);
+		$this->assertNotContains("\$this->TestTaskComments = new TestTaskCommentsController()", $result);
+		$this->assertNotContains("\$this->TestTaskComments->constructClasses()", $result);
 
-		$this->assertContains('function tearDown()', $result);
-		$this->assertContains('unset($this->TestTaskComments)', $result);
+		$this->assertNotContains('function tearDown()', $result);
+		$this->assertNotContains('unset($this->TestTaskComments)', $result);
 
 		$this->assertContains("'app.test_task_article'", $result);
 		$this->assertContains("'plugin.test_task.test_task_comment'", $result);
@@ -550,7 +550,7 @@ class TestTaskTest extends CakeTestCase {
  */
 	public function testGenerateConstructor() {
 		$result = $this->Task->generateConstructor('controller', 'PostsController', null);
-		$expected = array('', "new PostsController();\n", "\$this->Posts->constructClasses();\n");
+		$expected = array('', '', '');
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->generateConstructor('model', 'Post', null);
