@@ -7878,4 +7878,82 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals(1, count($result));
 	}
 
+/**
+ * test Model::get() method
+ *
+ * @retun void
+ */
+	public function testGet() {
+		$this->loadFixtures('User');
+		$User = new User();
+
+		$User->id = 1;
+		$User->read();
+
+		$this->assertEqual($User->get('user'), $User->data['User']['user']);
+		$this->assertEqual($User->get('User.user'), $User->data['User']['user']);
+		$this->assertEqual($User->get('id'), $User->id);
+		$this->assertEqual($User->get('User.id'), $User->id);
+
+		$User->set('user', null);
+		$this->assertEqual($User->get('user', 'John'), 'John');
+
+		$User->set('user', '');
+		$this->assertEqual($User->get('user', 'John'), '');
+
+
+		$User->create(array(
+			'User' => array(
+				'name' => 'John',
+			),
+			'RelatedModel' => array(
+				'relatedValue' => '1234',
+			),
+		));
+
+		$this->assertEqual($User->get('User.name'), 'John');
+		$this->assertEqual($User->get('User.name'), $User->data['User']['name']);
+
+		$this->assertEqual($User->get('RelatedModel.relatedValue'), '1234');
+		$this->assertEqual($User->get('RelatedModel.relatedValue'), $User->data['RelatedModel']['relatedValue']);
+
+	}
+
+/**
+ * test Model::check() method
+ *
+ * @return void
+ */
+	public function testCheck(){
+		$this->loadFixtures('User');
+		$User = new User();
+
+		$User->id = 1;
+		$User->read();
+
+		$User->set('user', '');
+
+		$this->assertFalse($User->check('user'));
+		$this->assertFalse($User->check('User.user'));
+		$this->assertTrue($User->check('id'));
+		$this->assertTrue($User->check('User.id'));
+
+
+		$User->create(array(
+			'User' => array(
+				'name' => 'John',
+			),
+			'RelatedModel' => array(
+				'relatedValue' => '1234',
+			),
+		));
+
+		$this->assertTrue($User->check('name'));
+		$this->assertTrue($User->check('User.name'));
+		$this->assertTrue($User->check('RelatedModel.relatedValue'));
+		$this->assertFalse($User->check('RelatedModel.otherValue'));
+
+	}
+
+
 }
