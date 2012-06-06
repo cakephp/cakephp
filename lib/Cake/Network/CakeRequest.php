@@ -161,7 +161,14 @@ class CakeRequest implements ArrayAccess {
  * @return void
  */
 	protected function _processPost() {
-		$this->data = $_POST;
+		if ($_POST) {
+			$this->data = $_POST;
+		} elseif ($this->is('put')) {
+			$this->data = $this->_readInput();
+			if (env('CONTENT_TYPE') === 'application/x-www-form-urlencoded') {
+				parse_str($this->data, $this->data);
+			}
+		}
 		if (ini_get('magic_quotes_gpc') === '1') {
 			$this->data = stripslashes_deep($this->data);
 		}
