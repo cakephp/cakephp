@@ -3417,7 +3417,7 @@ class Model extends Object implements CakeEventListener {
 
 		$value = Hash::get($this->data, $field);
 		if ($value === null) {
-			$value = $default;
+			$value = $defaultValue;
 		}
 
 		return $value;

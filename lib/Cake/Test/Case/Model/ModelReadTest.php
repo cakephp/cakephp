@@ -7894,6 +7894,29 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual($User->get('User.user'), $User->data['User']['user']);
 		$this->assertEqual($User->get('id'), $User->id);
 		$this->assertEqual($User->get('User.id'), $User->id);
+
+		$User->set('user', null);
+		$this->assertEqual($User->get('user', 'John'), 'John');
+
+		$User->set('user', '');
+		$this->assertEqual($User->get('user', 'John'), '');
+
+
+		$User->create(array(
+			'User' => array(
+				'name' => 'John',
+			),
+			'RelatedModel' => array(
+				'relatedValue' => '1234',
+			),
+		));
+
+		$this->assertEqual($User->get('User.name'), 'John');
+		$this->assertEqual($User->get('User.name'), $User->data['User']['name']);
+
+		$this->assertEqual($User->get('RelatedModel.relatedValue'), '1234');
+		$this->assertEqual($User->get('RelatedModel.relatedValue'), $User->data['RelatedModel']['relatedValue']);
+
 	}
 
 /**
@@ -7914,6 +7937,22 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertFalse($User->check('User.user'));
 		$this->assertTrue($User->check('id'));
 		$this->assertTrue($User->check('User.id'));
+
+
+		$User->create(array(
+			'User' => array(
+				'name' => 'John',
+			),
+			'RelatedModel' => array(
+				'relatedValue' => '1234',
+			),
+		));
+
+		$this->assertTrue($User->check('name'));
+		$this->assertTrue($User->check('User.name'));
+		$this->assertTrue($User->check('RelatedModel.relatedValue'));
+		$this->assertFalse($User->check('RelatedModel.otherValue'));
+
 	}
 
 
