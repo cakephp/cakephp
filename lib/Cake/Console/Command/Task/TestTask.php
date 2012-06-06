@@ -452,7 +452,7 @@ class TestTask extends BakeTask {
  */
 	public function generateConstructor($type, $fullClassName, $plugin) {
 		$type = strtolower($type);
-		$pre = $post = '';
+		$pre = $construct = $post = '';
 		if ($type == 'model') {
 			$construct = "ClassRegistry::init('{$plugin}$fullClassName');\n";
 		}
