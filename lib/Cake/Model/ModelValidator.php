@@ -137,7 +137,9 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 					if ($options['deep']) {
 						$validates = $model->{$association}->validateAssociated($values, $options);
 					} else {
-						$validates = $model->{$association}->create($values) !== null && $model->{$association}->validates($options);
+						$model->{$association}->create(null);
+						$validates = $model->{$association}->set($values) && $model->{$association}->validates($options);
+						$data[$association] = $model->{$association}->data[$model->{$association}->alias];
 					}
 					if (is_array($validates)) {
 						if (in_array(false, $validates, true)) {

@@ -324,7 +324,7 @@ object(View) {
 	validationErrors => array()
 	hasRendered => false
 	uuids => array()
-	request => null
+	request => object(CakeRequest) {}
 	response => object(CakeResponse) {}
 	elementCache => 'default'
 	int => (int) 2
