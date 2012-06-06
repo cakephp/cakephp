@@ -7910,8 +7910,6 @@ class ModelReadTest extends BaseModelTest {
 
 		$User->set('user', '');
 
-		debug($User->data);
-
 		$this->assertFalse($User->check('user'));
 		$this->assertFalse($User->check('User.user'));
 		$this->assertTrue($User->check('id'));
