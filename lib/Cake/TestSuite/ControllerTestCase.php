@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite;
+
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\Event;
@@ -196,10 +197,12 @@ abstract class ControllerTestCase extends TestCase {
  *
  * ### Options:
  *
- * - `data` Will be used as the request data.  If the `method` is GET,
- *   data will be used a GET params.  If the `method` is POST, it will be used
- *   as POST data. By setting `$options['data']` to a string, you can simulate XML or JSON
- *   payloads to your controllers allowing you to test REST webservices.
+ * - `data` The data to use for POST or PUT requests.  If `method` is GET
+ *   and `query` is empty, the data key will be used as GET parameters. By setting
+ *   `data to a string you can simulate XML or JSON payloads allowing you to test
+ *   REST webservices.
+ * - `query` The query string parameters to set.
+ * - `cookies` The cookie data to use for the request.
  * - `method` POST or GET. Defaults to POST.
  * - `return` Specify the return type you want.  Choose from:
  *     - `vars` Get the set view variables.
@@ -215,24 +218,34 @@ abstract class ControllerTestCase extends TestCase {
 		$this->vars = $this->result = $this->view = $this->contents = $this->headers = null;
 
 		$options = array_merge(array(
+			'query' => array(),
 			'data' => array(),
+			'cookies' => array(),
 			'method' => 'POST',
 			'return' => 'result'
 		), $options);
 
-		$restore = array('get' => $_GET, 'post' => $_POST);
+		$method = strtoupper($options['method']);
+		$_SERVER['REQUEST_METHOD'] = $method;
 
-		$_SERVER['REQUEST_METHOD'] = strtoupper($options['method']);
-		if (is_array($options['data'])) {
-			if (strtoupper($options['method']) == 'GET') {
-				$_GET = $options['data'];
-				$_POST = array();
-			} else {
-				$_POST = $options['data'];
-				$_GET = array();
-			}
+		if ($method === 'GET' && is_array($options['data']) && empty($options['query'])) {
+			$options['query'] = $options['data'];
+			$options['data'] = array();
 		}
-		$request = $this->getMock('Cake\Network\Request', array('_readInput'), array($url));
+		$requestData = array(
+			'url' => $url,
+			'cookies' => $options['cookies'],
+			'query' => $options['query'],
+		);
+		if (is_array($options['data'])) {
+			$requestData['post'] = $options['data'];
+		}
+
+		$request = $this->getMock(
+			'Cake\Network\Request',
+			array('_readInput'),
+			array($requestData)
+		);
 
 		if (is_string($options['data'])) {
 			$request->expects($this->any())
@@ -241,15 +254,12 @@ abstract class ControllerTestCase extends TestCase {
 		}
 
 		$Dispatch = new ControllerTestDispatcher();
-		foreach (Router::$routes as $route) {
-			if ($route instanceof RedirectRoute) {
-				$route->response = $this->getMock('Cake\Network\Response', array('send'));
-			}
-		}
 		$Dispatch->loadRoutes = $this->loadRoutes;
 		$Dispatch->parseParams(new Event('ControllerTestCase', $Dispatch, array('request' => $request)));
+
 		if (!isset($request->params['controller'])) {
-			$this->headers = Router::currentRoute()->response->header();
+			// TODO fix this somehow.
+			// $this->headers = Router::currentRoute()->response->header();
 			return;
 		}
 		if ($this->__dirtyController) {
@@ -277,9 +287,6 @@ abstract class ControllerTestCase extends TestCase {
 		}
 		$this->__dirtyController = true;
 		$this->headers = $Dispatch->response->header();
-
-		$_GET = $restore['get'];
-		$_POST = $restore['post'];
 
 		return $this->{$options['return']};
 	}
@@ -322,12 +329,15 @@ abstract class ControllerTestCase extends TestCase {
 			'components' => array()
 		), (array)$mocks);
 
-		$_controller = $this->getMock($classname, $mocks['methods'], array(), '', false);
-		list(, $controllerName) = namespaceSplit($classname);
-		$_controller->name = substr($controllerName, 0, -10);
 		$request = $this->getMock('Cake\Network\Request');
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
-		$_controller->__construct($request, $response);
+		$controller = $this->getMock(
+			$classname,
+			$mocks['methods'],
+			array($request, $response)
+		);
+		list(, $controllerName) = namespaceSplit($classname);
+		$controller->name = substr($controllerName, 0, -10);
 
 		$config = ClassRegistry::config('Model');
 		foreach ($mocks['models'] as $model => $methods) {
@@ -338,13 +348,12 @@ abstract class ControllerTestCase extends TestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
-			;
 			$modelClass = get_class(ClassRegistry::init($model));
 			list(, $modelName) = namespaceSplit($modelClass);
 			$config = array_merge((array)$config, array('name' => $model));
-			$_model = $this->getMock($modelClass, $methods, array($config));
+			$model = $this->getMock($modelClass, $methods, array($config));
 			ClassRegistry::removeObject($modelName);
-			ClassRegistry::addObject($modelName, $_model);
+			ClassRegistry::addObject($modelName, $model);
 		}
 
 		foreach ($mocks['components'] as $component => $methods) {
@@ -362,14 +371,14 @@ abstract class ControllerTestCase extends TestCase {
 					'class' => $name . 'Component'
 				));
 			}
-			$_component = $this->getMock($componentClass, $methods, array(), '', false);
-			$_controller->Components->set($name, $_component);
+			$component = $this->getMock($componentClass, $methods, array(), '', false);
+			$controller->Components->set($name, $component);
 		}
 
-		$_controller->constructClasses();
+		$controller->constructClasses();
 		$this->__dirtyController = false;
 
-		$this->controller = $_controller;
+		$this->controller = $controller;
 		return $this->controller;
 	}
 
