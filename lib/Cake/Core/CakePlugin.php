@@ -18,7 +18,7 @@
  */
 
 /**
- * CakePlugin is responsible for loading and unloading plugins. It also can
+ * CakePlugin is responsible for loading and unloading plugins. It also can 
  * retrieve plugin paths and load their bootstrap and routes files.
  *
  * @package       Cake.Core
@@ -90,7 +90,7 @@ class CakePlugin {
 				}
 			}
 		} else {
-			self::$_plugins[$plugin] = rtrim($config, DS) . DS;
+			self::$_plugins[$plugin] = $config;
 		}
 
 		if (empty(self::$_plugins[$plugin]['path'])) {
