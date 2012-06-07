@@ -355,8 +355,6 @@ class PaginatorComponent extends Component {
 					$order[$field] = $value;
 				} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field, true)) {
 					$order[$alias . '.' . $field] = $value;
-				} else {
-					$order[$field] = $value;
 				}
 			}
 			$options['order'] = $order;
