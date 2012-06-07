@@ -76,6 +76,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages';
 		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['extract-core'] = 'no';
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->any())->method('in')
 			->will($this->returnValue('y'));
@@ -84,6 +85,8 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
 		$result = file_get_contents($this->path . DS . 'default.pot');
+
+		$this->assertFalse(file_exists($this->path . DS . 'cake.pot'));
 
 		$pattern = '/"Content-Type\: text\/plain; charset\=utf-8/';
 		$this->assertRegExp($pattern, $result);
@@ -182,6 +185,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude'] = 'Pages,Layouts';
+		$this->Task->params['extract-core'] = 'no';
 
 		$this->Task->expects($this->any())->method('in')
 			->will($this->returnValue('y'));
@@ -210,6 +214,7 @@ class ExtractTaskTest extends CakeTestCase {
 			CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Posts';
 
 		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['extract-core'] = 'no';
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->never())->method('_stop');
 		$this->Task->execute();
@@ -293,6 +298,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
 		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['exclude-plugins'] = true;
 		$this->Task->params['ignore-model-validation'] = false;
 
@@ -338,6 +344,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
 		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['exclude-plugins'] = true;
 		$this->Task->params['ignore-model-validation'] = false;
 
@@ -412,6 +419,7 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
 		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['overwrite'] = true;
 
 		file_put_contents($this->path . DS . 'default.pot', 'will be overwritten');
@@ -421,5 +429,34 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
 		$this->assertNotEquals($original, $result);
+	}
+
+/**
+ *  Test that the extract shell scans the core libs
+ *
+ * @return void
+ */
+	public function testExtractCore() {
+		$this->Task->interactive = false;
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS;
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['extract-core'] = 'yes';
+
+		$this->Task->execute();
+		$this->assertTrue(file_exists($this->path . DS . 'cake.pot'));
+		$result = file_get_contents($this->path . DS . 'cake.pot');
+
+		$pattern = '/msgid "Yesterday, %s"\nmsgstr ""\n/';
+		$this->assertRegExp($pattern, $result);
+
+		$this->assertTrue(file_exists($this->path . DS . 'cake_dev.pot'));
+		$result = file_get_contents($this->path . DS . 'cake_dev.pot');
+
+		$pattern = '/#: Console\/Templates\//';
+		$this->assertNotRegExp($pattern, $result);
+
+		$pattern = '/#: Test\//';
+		$this->assertNotRegExp($pattern, $result);
 	}
 }
