@@ -1,9 +1,5 @@
 <?php
 /**
- * Request Test case file.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,8 +12,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestSuite\Network;
+
 use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Routing\Dispatcher;
@@ -1841,6 +1837,24 @@ XML;
 		));
 		$this->assertFalse($request->is('requested'));
 		$this->assertFalse($request->isRequested());
+	}
+
+/**
+ * Test the cookie() method.
+ *
+ * @return void
+ */
+	public function testReadCookie() {
+		$request = new Request(array(
+			'cookies' => array(
+				'testing' => 'A value in the cookie'
+			)
+		));
+		$result = $request->cookie('testing');
+		$this->assertEquals('A value in the cookie', $result);
+	
+		$result = $request->cookie('not there');
+		$this->assertNull($result);
 	}
 
 /**

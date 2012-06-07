@@ -1,9 +1,5 @@
 <?php
 /**
- * Cake Request
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -848,6 +844,19 @@ class Request implements \ArrayAccess {
 			return call_user_func_array($callback, $args);
 		}
 		return $input;
+	}
+
+/**
+ * Read cookie data from the request's cookie data.
+ *
+ * @param string $key The key you want to read.
+ * @return null|string Either the cookie value, or null if the value doesn't exist.
+ */
+	public function cookie($key) {
+		if (isset($this->cookies[$key])) {
+			return $this->cookies[$key];
+		}
+		return null;
 	}
 
 /**
