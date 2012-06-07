@@ -151,14 +151,13 @@ class PluginTask extends AppShell {
 			$bootstrap = new File(APP . 'Config' . DS . 'bootstrap.php', false);
 			$contents = $bootstrap->read();
 			if (!preg_match("@\n\s*CakePlugin::loadAll@", $contents)) {
-				$bootstrap->append("CakePlugin::load('$plugin', array('bootstrap' => false, 'routes' => false));");
-				$this->out('', 1, Shell::VERBOSE);
-				$this->out(__d('cake_dev', '%s modified', APP . 'Config' . DS . 'bootstrap.php', 1, Shell::VERBOSE));
+				$bootstrap->append("\nCakePlugin::load('$plugin', array('bootstrap' => false, 'routes' => false));\n");
+				$this->out('');
+				$this->out(__d('cake_dev', '%s modified', APP . 'Config' . DS . 'bootstrap.php'));
 			}
 
 			$this->hr();
 			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $plugin), 2);
-
 		}
 
 		return true;
