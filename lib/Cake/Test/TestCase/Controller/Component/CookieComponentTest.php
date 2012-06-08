@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller\Component;
+
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
@@ -24,37 +25,6 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
-
-
-/**
- * CookieComponentTestController class
- *
- * @package       Cake.Test.Case.Controller.Component
- */
-class CookieComponentTestController extends Controller {
-
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('Cookie');
-
-/**
- * beforeFilter method
- *
- * @return void
- */
-	public function beforeFilter() {
-		$this->Cookie->name = 'CakeTestCookie';
-		$this->Cookie->time = 10;
-		$this->Cookie->path = '/';
-		$this->Cookie->domain = '';
-		$this->Cookie->secure = false;
-		$this->Cookie->key = 'somerandomhaskey';
-	}
-
-}
 
 /**
  * CookieComponentTest class
@@ -77,9 +47,15 @@ class CookieComponentTest extends TestCase {
  */
 	public function setUp() {
 		$_COOKIE = array();
-		$this->Controller = new CookieComponentTestController(new Request(), new Response());
-		$this->Controller->constructClasses();
-		$this->Cookie = $this->Controller->Cookie;
+		$controller = $this->getMock(
+			'Cake\Controller\Controller',
+			array('redirect'),
+			array(new Request(), new Response())
+		);
+		$controller->components = array('Cookie');
+		$controller->constructClasses();
+		$this->Controller = $controller;
+		$this->Cookie = $controller->Cookie;
 
 		$this->Cookie->name = 'CakeTestCookie';
 		$this->Cookie->time = 10;
@@ -424,8 +400,6 @@ class CookieComponentTest extends TestCase {
 						'name' => 'CakePHP',
 						'version' => '1.2.0.x',
 						'tag' => 'CakePHP Rocks!'));
-
-		$this->Cookie->startup(new CookieComponentTestController());
 
 		$data = $this->Cookie->read('Encrytped_array');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
