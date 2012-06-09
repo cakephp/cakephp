@@ -321,15 +321,16 @@ class CakeTime {
 			$date = strtotime($dateString);
 		}
 
+		if ($date === -1 || empty($date)) {
+			return false;
+		}
+
 		if ($timezone === null) {
 			$timezone = Configure::read('Config.timezone');
 		}
 
 		if ($timezone !== null) {
 			return self::convert($date, $timezone);
-		}
-		if ($date === -1) {
-			return false;
 		}
 		return $date;
 	}
@@ -927,25 +928,25 @@ class CakeTime {
  * This function also accepts a time string and a format string as first and second parameters.
  * In that case this function behaves as a wrapper for TimeHelper::i18nFormat()
  *
- * @param integer|string|DateTime $format date format string (or UNIX timestamp, strtotime() valid string or DateTime object)
  * @param integer|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)
+ * @param integer|string|DateTime $format date format string (or UNIX timestamp, strtotime() valid string or DateTime object)
  * @param boolean $invalid flag to ignore results of fromString == false
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public static function format($format, $date = null, $invalid = false, $timezone = null) {
-		$time = self::fromString($date, $timezone);
-		$_time = is_numeric($time) ? false : self::fromString($format, $timezone);
+	public static function format($date, $format = null, $invalid = false, $timezone = null) {
+		//Backwards compatible params order
+		$time = self::fromString($format, $timezone);
+		$_time = is_numeric($time) ? false : self::fromString($date, $timezone);
 
 		if (is_numeric($_time) && $time === false) {
-			$format = $date;
 			return self::i18nFormat($_time, $format, $invalid, $timezone);
 		}
 		if ($time === false && $invalid !== false) {
 			return $invalid;
 		}
-		return date($format, $time);
+		return date($date, $time);
 	}
 
 /**
