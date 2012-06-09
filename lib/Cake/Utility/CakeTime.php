@@ -949,10 +949,10 @@ class CakeTime {
 		$_time = is_numeric($time) ? false : self::fromString($date, $timezone);
 
 		if (is_numeric($_time) && $time === false) {
-			return self::i18nFormat($_time, $format, $invalid, $timezone);
+			return self::i18nFormat($_time, $format, $default, $timezone);
 		}
-		if ($time === false && $invalid !== false) {
-			return $invalid;
+		if ($time === false && $default !== false) {
+			return $default;
 		}
 		return date($date, $time);
 	}
