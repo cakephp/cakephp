@@ -970,8 +970,8 @@ class CakeTime {
  */
 	public static function i18nFormat($date, $format = null, $default = false, $timezone = null) {
 		$date = self::fromString($date, $timezone);
-		if ($date === false && $invalid !== false) {
-			return $invalid;
+		if ($date === false && $default !== false) {
+			return $default;
 		}
 		if (empty($format)) {
 			$format = '%x';
