@@ -291,8 +291,8 @@ class ExceptionRenderer {
  * @return void
  */
 	protected function _outputMessageSafe($template) {
-		$this->controller->layoutPath = '';
-		$this->controller->subDir = '';
+		$this->controller->layoutPath = null;
+		$this->controller->subDir = null;
 		$this->controller->viewPath = 'Errors/';
 		$this->controller->viewClass = 'View';
 		$this->controller->layout = 'error';
