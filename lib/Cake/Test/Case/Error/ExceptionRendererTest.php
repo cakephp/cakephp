@@ -669,7 +669,7 @@ class ExceptionRendererTest extends CakeTestCase {
 			->with('missingHelper')
 			->will($this->throwException($exception));
 
-		$ExceptionRenderer->controller->expects($this->at(5))
+		$ExceptionRenderer->controller->expects($this->at(4))
 			->method('render')
 			->with('error500')
 			->will($this->returnValue(true));
@@ -701,7 +701,7 @@ class ExceptionRendererTest extends CakeTestCase {
 			->with('error400')
 			->will($this->throwException($exception));
 
-		$ExceptionRenderer->controller->expects($this->at(4))
+		$ExceptionRenderer->controller->expects($this->at(3))
 			->method('render')
 			->with('error500')
 			->will($this->returnValue(true));

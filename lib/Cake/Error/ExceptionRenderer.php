@@ -274,11 +274,6 @@ class ExceptionRenderer {
 				$this->_outputMessageSafe('error500');
 			}
 		} catch (Exception $e) {
-			$this->controller->set(array(
-				'error' => $e,
-				'name' => $e->getMessage(),
-				'code' => $e->getCode(),
-			));
 			$this->_outputMessageSafe('error500');
 		}
 	}
