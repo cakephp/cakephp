@@ -335,7 +335,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('in')
 			->will($this->onConsecutiveCalls('999999', '23', 'n'));
 
-		$this->Task->expects($this->at(7))->method('out')
+		$this->Task->expects($this->at(10))->method('out')
 			->with($this->stringContains('make a valid'));
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
