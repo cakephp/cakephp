@@ -544,8 +544,10 @@ class Debugger {
 			foreach ($var as $key => $val) {
 				$vars[] = $break . self::exportVar($key) .
 					' => ' .
-					self::_export($val, $depth - 1, $indent);
+					self::_export($val, $depth, $indent);
 			}
+		} else {
+			$vars[] = $break . '[maximum depth reached]';
 		}
 		return $out . implode(',', $vars) . $end . ')';
 	}

@@ -468,12 +468,12 @@ class Validation {
  */
 	public static function ip($check, $type = 'both') {
 		$type = strtolower($type);
-		$flags = array();
+		$flags = null;
 		if ($type === 'ipv4' || $type === 'both') {
-			$flags[] = FILTER_FLAG_IPV4;
+			$flags |= FILTER_FLAG_IPV4;
 		}
 		if ($type === 'ipv6' || $type === 'both') {
-			$flags[] = FILTER_FLAG_IPV6;
+			$flags |= FILTER_FLAG_IPV6;
 		}
 		return (boolean)filter_var($check, FILTER_VALIDATE_IP, array('flags' => $flags));
 	}
