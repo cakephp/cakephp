@@ -467,7 +467,7 @@ class Validation {
  */
 	public static function ip($check, $type = 'both') {
 		$type = strtolower($type);
-		$flags = null;
+		$flags = 0;
 		if ($type === 'ipv4' || $type === 'both') {
 			$flags |= FILTER_FLAG_IPV4;
 		}
