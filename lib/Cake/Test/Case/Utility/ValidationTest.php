@@ -1657,7 +1657,7 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	public function testIpV4() {
-		$this->assertTrue(Validation::ip('0.0.0.0'));
+		$this->assertTrue(Validation::ip('0.0.0.0', 'ipv4'));
 		$this->assertTrue(Validation::ip('192.168.1.156'));
 		$this->assertTrue(Validation::ip('255.255.255.255'));
 		$this->assertFalse(Validation::ip('127.0.0'));
