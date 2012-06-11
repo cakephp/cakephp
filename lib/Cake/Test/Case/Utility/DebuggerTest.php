@@ -345,6 +345,21 @@ array(
 )
 TEXT;
 		$this->assertTextEquals($expected, $result);
+
+		$data = array(
+			'key' => array(
+				'value'
+			)
+		);
+		$result = Debugger::exportVar($data, 1);
+		$expected = <<<TEXT
+array(
+	'key' => array(
+		[maximum depth reached]
+	)
+)
+TEXT;
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -398,8 +413,14 @@ TEXT;
 <pre>array(
 	'People' => array(
 		(int) 0 => array(
+			'name' => 'joeseph',
+			'coat' => 'technicolor',
+			'hair_color' => 'brown'
 		),
 		(int) 1 => array(
+			'name' => 'Shaft',
+			'coat' => 'black',
+			'hair' => 'black'
 		)
 	)
 )</pre>
