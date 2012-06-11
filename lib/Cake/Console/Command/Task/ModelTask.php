@@ -169,8 +169,9 @@ class ModelTask extends BakeTask {
 		$valid = false;
 		$max = count($options);
 		while (!$valid) {
+			$len = strlen(count($options) + 1);
 			foreach ($options as $i => $option) {
-				$this->out($i + 1 . '. ' . $option);
+				$this->out(sprintf("%${len}d. %s", $i + 1, $option));
 			}
 			if (empty($prompt)) {
 				$prompt = __d('cake_console', 'Make a selection from the choices above');
@@ -403,20 +404,24 @@ class ModelTask extends BakeTask {
 		while ($anotherValidator == 'y') {
 			if ($this->interactive) {
 				$this->out();
-				$this->out(__d('cake_console', 'Field: %s', $fieldName));
-				$this->out(__d('cake_console', 'Type: %s', $metaData['type']));
+				$this->out(__d('cake_console', 'Field: <info>%s</info>', $fieldName));
+				$this->out(__d('cake_console', 'Type: <info>%s</info>', $metaData['type']));
 				$this->hr();
 				$this->out(__d('cake_console', 'Please select one of the following validation options:'));
 				$this->hr();
+
+				$optionText = '';
+				for ($i = 1, $m = $defaultChoice / 2; $i < $m; $i++) {
+					$line = sprintf("%2d. %s", $i, $this->_validations[$i]);
+					$optionText .= $line . str_repeat(" ", 31 - strlen($line));
+					$optionText .= sprintf("%2d. %s", $m + $i, $this->_validations[$m + $i]);
+				}
+				$this->out($optionText);
+				$this->out(__d('cake_console', "%s - Do not do any validation on this field.", $defaultChoice));
+				$this->hr();
 			}
 
-			$prompt = '';
-			for ($i = 1; $i < $defaultChoice; $i++) {
-				$prompt .= $i . ' - ' . $this->_validations[$i] . "\n";
-			}
-			$prompt .= __d('cake_console', "%s - Do not do any validation on this field.\n", $defaultChoice);
-			$prompt .= __d('cake_console', "... or enter in a valid regex validation string.\n");
-
+			$prompt = __d('cake_console', "... or enter in a valid regex validation string.\n");
 			$methods = array_flip($this->_validations);
 			$guess = $defaultChoice;
 			if ($metaData['null'] != 1 && !in_array($fieldName, array($primaryKey, 'created', 'modified', 'updated'))) {
@@ -436,6 +441,8 @@ class ModelTask extends BakeTask {
 					$guess = $methods['date'];
 				} elseif ($metaData['type'] == 'time') {
 					$guess = $methods['time'];
+				} elseif ($metaData['type'] == 'datetime') {
+					$guess = $methods['datetime'];
 				} elseif ($metaData['type'] == 'inet') {
 					$guess = $methods['ip'];
 				}
@@ -842,8 +849,9 @@ class ModelTask extends BakeTask {
 		}
 		if ($this->interactive === true) {
 			$this->out(__d('cake_console', 'Possible Models based on your current database:'));
+			$len = strlen($count + 1);
 			for ($i = 0; $i < $count; $i++) {
-				$this->out($i + 1 . ". " . $this->_modelNames[$i]);
+				$this->out(sprintf("%${len}d. %s", $i + 1, $this->_modelNames[$i]));
 			}
 		}
 		return $this->_tables;
