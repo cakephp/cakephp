@@ -331,7 +331,8 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 		$this->_fields = array();
 		$methods = $this->getMethods();
 		foreach ($this->_validate as $fieldName => $ruleSet) {
-			$this->_fields[$fieldName] = new CakeValidationSet($fieldName, $ruleSet, $methods);
+			$this->_fields[$fieldName] = new CakeValidationSet($fieldName, $ruleSet);
+			$this->_fields[$fieldName]->setMethods($methods);
 		}
 		return true;
 	}
@@ -483,7 +484,9 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	public function offsetSet($field, $rules) {
 		$this->_parseRules();
 		if (!$rules instanceof CakeValidationSet) {
-			$rules = new CakeValidationSet($field, $rules, $this->getMethods());
+			$rules = new CakeValidationSet($field, $rules);
+			$methods = $this->getMethods();
+			$rules->setMethods($methods);
 		}
 		$this->_fields[$field] = $rules;
 	}
@@ -551,7 +554,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 
 		if (!isset($this->_fields[$field])) {
 			$rule = (is_string($name)) ? array($name => $rule) : $name;
-			$this->_fields[$field] = new CakeValidationSet($field, $rule, $this->getMethods());
+			$this->_fields[$field] = new CakeValidationSet($field, $rule);
 		} else {
 			if (is_string($name)) {
 				$this->_fields[$field]->setRule($name, $rule);
@@ -559,6 +562,10 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 				$this->_fields[$field]->setRules($name);
 			}
 		}
+
+		$methods = $this->getMethods();
+		$this->_fields[$field]->setMethods($methods);
+
 		return $this;
 	}
 
