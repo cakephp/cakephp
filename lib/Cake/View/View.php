@@ -27,6 +27,7 @@ use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -325,6 +326,11 @@ class View extends Object {
 				$this->{$var} = $controller->{$var};
 			}
 			$this->_eventManager = $controller->getEventManager();
+		}
+		if (empty($this->request) && !($this->request = Router::getRequest(true))) {
+			$this->request = new Request(null, false);
+			$this->request->base = '';
+			$this->request->here = $this->request->webroot = '/';
 		}
 		if (is_object($controller) && isset($controller->response)) {
 			$this->response = $controller->response;

@@ -454,17 +454,12 @@ class TestTask extends BakeTask {
  */
 	public function generateConstructor($type, $fullClassName, $plugin) {
 		$type = strtolower($type);
-		$pre = $post = '';
+		$pre = $construct = $post = '';
 		if ($type == 'model') {
 			$construct = "ClassRegistry::init('{$plugin}$fullClassName');\n";
 		}
 		if ($type == 'behavior') {
 			$construct = "new $fullClassName();\n";
-		}
-		if ($type == 'controller') {
-			$className = substr($fullClassName, 0, -10);
-			$construct = "new $fullClassName();\n";
-			$post = "\$this->{$className}->constructClasses();\n";
 		}
 		if ($type == 'helper') {
 			$pre = "\$View = new View();\n";

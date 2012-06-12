@@ -155,4 +155,38 @@ class Security {
 		return $out;
 	}
 
+/**
+ * Encrypts/Decrypts a text using the given key using rijndael method.
+ *
+ * @param string $text Encrypted string to decrypt, normal string to encrypt
+ * @param string $key Key to use
+ * @param string $operation Operation to perform, encrypt or decrypt
+ * @return string Encrypted/Descrypted string
+ */
+	public static function rijndael($text, $key, $operation) {
+		if (empty($key)) {
+			trigger_error(__d('cake_dev', 'You cannot use an empty key for Security::rijndael()'), E_USER_WARNING);
+			return '';
+		}
+		if (empty($operation) || !in_array($operation, array('encrypt', 'decrypt'))) {
+			trigger_error(__d('cake_dev', 'You must specify the operation for Security::rijndael(), either encrypt or decrypt'), E_USER_WARNING);
+			return '';
+		}
+		if (strlen($key) < 32) {
+			trigger_error(__d('cake_dev', 'You must use a key larger than 32 bytes for Security::rijndael()'), E_USER_WARNING);
+			return '';
+		}
+		$algorithm = 'rijndael-256';
+		$mode = 'cbc';
+		$cryptKey = substr($key, 0, 32);
+		$iv = substr($key, strlen($key) - 32, 32);
+		$out = '';
+		if ($operation === 'encrypt') {
+			$out .= mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
+		} elseif ($operation === 'decrypt') {
+			$out .= rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
+		}
+		return $out;
+	}
+
 }

@@ -111,6 +111,13 @@ class ExtractTask extends Shell {
 	protected $_validationDomain = 'default';
 
 /**
+ * Holds whether this call should extract the CakePHP Lib messages
+ *
+ * @var boolean
+ */
+	protected $_extractCore = false;
+
+/**
  * Method to interact with the User and get path selections.
  *
  * @return void
@@ -142,6 +149,7 @@ class ExtractTask extends Shell {
 			$this->out();
 		}
 	}
+
 /**
  * Execution method always used for tasks
  *
@@ -165,6 +173,21 @@ class ExtractTask extends Shell {
 			$this->params['plugin'] = $plugin;
 		} else {
 			$this->_getPaths();
+		}
+
+		if (isset($this->params['extract-core'])) {
+			$this->_extractCore = !(strtolower($this->params['extract-core']) === 'no');
+		} else {
+			$response = $this->in(__d('cake_console', 'Would you like to extract the messages from the CakePHP core?'), array('y', 'n'), 'n');
+			$this->_extractCore = strtolower($response) === 'y';
+		}
+
+		if ($this->_extractCore) {
+			$this->_paths[] = CAKE;
+			$this->_exclude = array_merge($this->_exclude, array(
+				CAKE . 'Test',
+				CAKE . 'Console' . DS . 'Templates'
+			));
 		}
 
 		if (!empty($this->params['exclude-plugins']) && $this->_isExtractingApp()) {
@@ -312,6 +335,10 @@ class ExtractTask extends Shell {
 				'boolean' => true,
 				'default' => false,
 				'help' => __d('cake_console', 'Always overwrite existing .pot files.')
+			))
+			->addOption('extract-core', array(
+				'help' => __d('cake_console', 'Extract messages from the CakePHP core libs.'),
+				'choices' => array('yes', 'no')
 			));
 	}
 

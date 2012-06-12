@@ -55,8 +55,9 @@ class PluginTask extends Shell {
 			$plugin = Inflector::camelize($this->args[0]);
 			$pluginPath = $this->_pluginPath($plugin);
 			if (is_dir($pluginPath)) {
-				$this->out(__d('cake_console', 'Plugin: %s', $plugin));
+				$this->out(__d('cake_console', 'Plugin: %s already exists, no action taken', $plugin));
 				$this->out(__d('cake_console', 'Path: %s', $pluginPath));
+				return false;
 			} else {
 				$this->_interactive($plugin);
 			}
@@ -129,6 +130,9 @@ class PluginTask extends Shell {
 
 			$errors = $Folder->errors();
 			if (!empty($errors)) {
+				foreach ($errors as $message) {
+					$this->error($message);
+				}
 				return false;
 			}
 
@@ -145,6 +149,14 @@ class PluginTask extends Shell {
 			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
 			$out .= "}\n\n";
 			$this->createFile($this->path . $plugin . DS . 'Model' . DS . $modelFileName, $out);
+
+			$bootstrap = new File(APP . 'Config' . DS . 'bootstrap.php', false);
+			$contents = $bootstrap->read();
+			if (!preg_match("@\n\s*CakePlugin::loadAll@", $contents)) {
+				$bootstrap->append("\nCakePlugin::load('$plugin', array('bootstrap' => false, 'routes' => false));\n");
+				$this->out('');
+				$this->out(__d('cake_dev', '%s modified', APP . 'Config' . DS . 'bootstrap.php'));
+			}
 
 			$this->hr();
 			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $plugin), 2);
@@ -172,7 +184,7 @@ class PluginTask extends Shell {
 				$this->out($i + 1 . '. ' . $option);
 			}
 			$prompt = __d('cake_console', 'Choose a plugin path from the paths above.');
-			$choice = $this->in($prompt);
+			$choice = $this->in($prompt, null, 1);
 			if (intval($choice) > 0 && intval($choice) <= $max) {
 				$valid = true;
 			}

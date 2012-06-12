@@ -268,12 +268,13 @@ class ExceptionRenderer {
 			$this->controller->render($template);
 			$this->controller->afterFilter();
 			$this->controller->response->send();
+		} catch (MissingViewException $e) {
+			try {
+				$this->_outputMessage('error500');
+			} catch (\Exception $e) {
+				$this->_outputMessageSafe('error500');
+			}
 		} catch (\Exception $e) {
-			$this->controller->set(array(
-				'error' => $e,
-				'name' => $e->getMessage(),
-				'code' => $e->getCode(),
-			));
 			$this->_outputMessageSafe('error500');
 		}
 	}
@@ -286,8 +287,8 @@ class ExceptionRenderer {
  * @return void
  */
 	protected function _outputMessageSafe($template) {
-		$this->controller->layoutPath = '';
-		$this->controller->subDir = '';
+		$this->controller->layoutPath = null;
+		$this->controller->subDir = null;
 		$this->controller->viewPath = 'Errors/';
 		$this->controller->viewClass = 'View';
 		$this->controller->layout = 'error';

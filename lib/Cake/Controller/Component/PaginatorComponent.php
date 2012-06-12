@@ -191,6 +191,7 @@ class PaginatorComponent extends Component {
 			$count = $object->find('count', array_merge($parameters, $extra));
 		}
 		$pageCount = intval(ceil($count / $limit));
+		$page = max(min($page, $pageCount), 1);
 
 		$paging = array(
 			'page' => $page,
@@ -381,7 +382,7 @@ class PaginatorComponent extends Component {
 		if (empty($options['limit']) || $options['limit'] < 1) {
 			$options['limit'] = 1;
 		}
-		$options['limit'] = min((int)$options['limit'], $options['maxLimit']);
+		$options['limit'] = min($options['limit'], $options['maxLimit']);
 		return $options;
 	}
 

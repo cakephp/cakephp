@@ -46,6 +46,7 @@ class <?php echo $fullClassName; ?>Test extends \Cake\TestSuite\TestCase {
 	);
 
 <?php endif; ?>
+<?php if (!empty($construction)): ?>
 /**
  * setUp method
  *
@@ -69,6 +70,7 @@ class <?php echo $fullClassName; ?>Test extends \Cake\TestSuite\TestCase {
 		parent::tearDown();
 	}
 
+<?php endif; ?>
 <?php foreach ($methods as $method): ?>
 /**
  * test<?php echo Inflector::camelize($method); ?> method

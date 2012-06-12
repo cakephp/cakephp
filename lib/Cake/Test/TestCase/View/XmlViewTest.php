@@ -65,7 +65,7 @@ class XmlViewTest extends TestCase {
 		$View = new XmlView($Controller);
 		$output = $View->render(false);
 
-		$expected = Xml::build(array('response'=> array('users'=> $data)))->asXML();
+		$expected = Xml::build(array('response' => array('users' => $data)))->asXML();
 		$this->assertSame($expected, $output);
 	}
 
@@ -122,7 +122,7 @@ class XmlViewTest extends TestCase {
 		$output = $View->render('index');
 
 		$expected = array(
-			'users'=> array('user'=> array('user1', 'user2'))
+			'users' => array('user' => array('user1', 'user2'))
 		);
 		$expected = Xml::build($expected)->asXML();
 		$this->assertSame($expected, $output);

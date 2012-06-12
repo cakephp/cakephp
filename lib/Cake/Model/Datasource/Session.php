@@ -123,7 +123,7 @@ class Session {
 	public static $requestCountdown = 10;
 
 /**
- * Constructor.
+ * Pseudo constructor.
  *
  * @param string $base The base path for the Session
  * @return void
@@ -137,6 +137,8 @@ class Session {
 		}
 		static::_setPath($base);
 		static::_setHost(env('HTTP_HOST'));
+
+		register_shutdown_function('session_write_close');
 	}
 
 /**

@@ -2057,4 +2057,53 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertSame($set, $Validator->getField('other'));
 	}
 
+/**
+ * Tests that altering data in a beforeValidate callback will lead to saving those
+ * values in database, this time with belongsTo associations
+ *
+ * @return void
+ */
+	public function testValidateFirstAssociatedWithBeforeValidate2() {
+		$this->loadFixtures('Article', 'User');
+		$model = new CustomArticle();
+		$model->validate = array(
+			'title' => array(
+				'notempty' => array(
+					'rule' => 'notEmpty',
+					'required' => true
+				)
+			)
+		);
+
+		$data = array(
+			'User' => array('user' => 'foo', 'password' => 'bar'),
+			'CustomArticle' => array(
+				'body' => 'a test'
+			)
+		);
+		$result = $model->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$this->assertEquals('foo', $model->field('title', array('body' => 'a test')));
+	}
+
+/**
+ * Testing you can dynamically add rules to a field, added this to dispel doubts
+ * after a presentation made to show off this new feature
+ *
+ * @return void
+ **/
+	public function testDynamicValidationRuleBuilding() {
+		$model = new Article;
+		$validator = $model->validator();
+		$validator->add('body', 'isSpecial', array('rule' => 'special'));
+		$rules = $validator['body']->getRules();
+		$this->assertCount(2, $rules);
+		$this->assertEquals('special', $rules['isSpecial']->rule);
+		$validator['body']->setRule('isAwesome', array('rule' => 'awesome'));
+		$rules = $validator['body']->getRules();
+		$this->assertCount(3, $rules);
+		$this->assertEquals('awesome', $rules['isAwesome']->rule);
+	}
+
 }
