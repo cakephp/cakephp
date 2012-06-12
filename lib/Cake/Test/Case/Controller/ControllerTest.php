@@ -415,7 +415,9 @@ class ControllerTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		App::objects('plugin', null, false);
-		App::build();
+		App::build(array(
+			'View/Helper' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Helper' . DS),
+		), App::RESET);
 		Router::reload();
 	}
 
@@ -670,10 +672,8 @@ class ControllerTest extends CakeTestCase {
  */
 	public function testComponentBeforeRenderChangingViewClass() {
 		App::build(array(
-			'View' => array(
-				CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS
-			)
-		), true);
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		), App::RESET);
 		$Controller = new Controller($this->getMock('CakeRequest'), new CakeResponse());
 		$Controller->uses = array();
 		$Controller->components = array('Test');

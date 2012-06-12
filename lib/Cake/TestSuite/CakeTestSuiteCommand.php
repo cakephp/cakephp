@@ -48,6 +48,14 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 		$this->arguments['testFile'] = $params;
 		$this->_params = $params;
 
+		if ($params['core']) {
+			App::build(array(
+				'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS),
+				'View/Helper' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Helper' . DS),
+				'Controller' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS),
+			), App::RESET);
+		}
+
 		$this->longOptions['fixture='] = 'handleFixture';
 		$this->longOptions['output='] = 'handleReporter';
 	}

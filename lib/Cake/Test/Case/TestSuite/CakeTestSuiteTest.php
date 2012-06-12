@@ -21,6 +21,25 @@
 class CakeTestSuiteTest extends CakeTestCase {
 
 /**
+ * testCoreTestAppsLocations
+ *
+ * @return void
+ */
+	public function testCoreTestAppsLocations() {
+		$result = App::path('Model');
+		$expected = array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS);
+		$this->assertEquals($expected, $result);
+
+		$result = App::path('Controller');
+		$expected = array(CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS);
+		$this->assertEquals($expected, $result);
+
+		$result = App::path('View/Helper');
+		$expected = array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Helper' . DS);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testAddTestDirectory
  * 
  * @return void

@@ -40,6 +40,8 @@ class AppTest extends CakeTestCase {
  * @return void
  */
 	public function testBuild() {
+		App::build();
+
 		$old = App::path('Model');
 		$expected = array(
 			APP . 'Model' . DS
@@ -101,6 +103,8 @@ class AppTest extends CakeTestCase {
  * @return void
  */
 	public function testCompatibleBuild() {
+		App::build();
+
 		$old = App::path('models');
 		$expected = array(
 			APP . 'Model' . DS
@@ -251,6 +255,8 @@ class AppTest extends CakeTestCase {
  * @return void
  */
 	public function testBuildWithReset() {
+		App::build();
+
 		$old = App::path('Model');
 		$expected = array(
 			APP . 'Model' . DS
