@@ -449,7 +449,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertContains('function testDoSomethingElse()', $result);
 
 		$this->assertContains("'app.test_task_article'", $result);
-		$this->assertContains("'plugin.test_task.test_task_comment'", $result);
+		$this->assertContains("'app.test_task_comment'", $result);
 		$this->assertContains("'app.test_task_tag'", $result);
 		$this->assertContains("'app.articles_tag'", $result);
 	}
@@ -476,7 +476,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertNotContains('unset($this->TestTaskComments)', $result);
 
 		$this->assertContains("'app.test_task_article'", $result);
-		$this->assertContains("'plugin.test_task.test_task_comment'", $result);
+		$this->assertContains("'app.test_task_comment'", $result);
 		$this->assertContains("'app.test_task_tag'", $result);
 		$this->assertContains("'app.articles_tag'", $result);
 	}
