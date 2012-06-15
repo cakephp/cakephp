@@ -43,9 +43,8 @@ class Request implements \ArrayAccess {
 
 /**
  * Array of POST data.  Will contain form data as well as uploaded files.
- * Inputs prefixed with 'data' will have the data prefix removed.  If there is
- * overlap between an input prefixed with data and one without, the 'data' prefixed
- * value will take precedence.
+ * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
+ * data.
  *
  * @var array
  */
@@ -133,6 +132,9 @@ class Request implements \ArrayAccess {
 /**
  * Wrapper method to create a new request from PHP superglobals.
  *
+ * Uses the $_GET, $_POST, $_FILES, $_COOKIE and php://input data to construct
+ * the request.
+ *
  * @return Cake\Network\Request
  */
 	public static function createFromGlobals() {
@@ -163,6 +165,8 @@ class Request implements \ArrayAccess {
  * - `url` The url without the base path for the request.
  * - `base` The base url for the request.
  * - `webroot` The webroot directory for the request.
+ * - `input` The data that would come from php://input this is useful for simulating
+ *   requests with put, patch or delete data.
  *
  * @param string|array $config An array of request data to create a request with.
  */
@@ -179,6 +183,7 @@ class Request implements \ArrayAccess {
 			'url' => '',
 			'base' => '',
 			'webroot' => '',
+			'input' => null,
 		);
 		$this->_setConfig($config);
 	}
@@ -200,6 +205,9 @@ class Request implements \ArrayAccess {
 		$this->here = $this->base . '/' . $this->url;
 		$this->webroot = $config['webroot'];
 
+		if (isset($config['input'])) {
+			$this->_input = $config['input'];
+		}
 		$config['post'] = $this->_processPost($config['post']);
 		$this->data = $this->_processFiles($config['post'], $config['files']);
 		$this->query = $this->_processGet($config['query']);
@@ -214,11 +222,12 @@ class Request implements \ArrayAccess {
  * @return array
  */
 	protected function _processPost($data) {
-		if ($this->is('put')) {
-			$data = $this->_readInput();
-			if (env('CONTENT_TYPE') === 'application/x-www-form-urlencoded') {
-				parse_str($data, $data);
-			}
+		if (
+			in_array(env('REQUEST_METHOD'), array('PUT', 'DELETE', 'PATCH')) &&
+			env('CONTENT_TYPE') === 'application/x-www-form-urlencoded'
+		) {
+			$data = $this->input();
+			parse_str($data, $data);
 		}
 		if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
 			$data['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
