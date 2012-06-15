@@ -337,6 +337,12 @@ class MissingConnectionException extends CakeException {
 
 	protected $_messageTemplate = 'Database connection "%s" is missing, or could not be created.';
 
+	public function __construct($message, $code = 500) {
+		if (is_array($message)) {
+			$message += array('enabled' => true);
+		}
+		parent::__construct($message, $code);
+	}
 }
 
 /**
@@ -439,7 +445,7 @@ class MissingPluginException extends CakeException {
 }
 
 /**
- * Exception class for AclComponent and Interface implementations. 
+ * Exception class for AclComponent and Interface implementations.
  *
  * @package       Cake.Error
  */
