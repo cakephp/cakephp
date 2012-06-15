@@ -17,6 +17,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('File', 'Utility');
+
 /**
  * CakeResponse is responsible for managing the response text, status and headers of a HTTP response.
  *
@@ -332,6 +334,13 @@ class CakeResponse {
 	protected $_body = null;
 
 /**
+ * File object for file to be read out as response
+ *
+ * @var File
+ */
+	protected $_file = null;
+
+/**
  * The charset the response body is encoded with
  *
  * @var string
@@ -397,7 +406,12 @@ class CakeResponse {
 		foreach ($this->_headers as $header => $value) {
 			$this->_sendHeader($header, $value);
 		}
-		$this->_sendContent($this->_body);
+		if ($this->_file) {
+			$this->_sendFile($this->_file);
+			$this->_file = null;
+		} else {
+			$this->_sendContent($this->_body);
+		}
 	}
 
 /**
@@ -1169,6 +1183,140 @@ class CakeResponse {
 		$options += $defaults;
 
 		$this->_cookies[$options['name']] = $options;
+	}
+
+/**
+ * Setup for display or download the given file
+ *
+ * @param string $path Path to file
+ * @param array $options Options
+ *	### Options keys
+ *	- name: Alternate download name
+ *	- download: If `true` sets download header and forces file to be downloaded rather than displayed in browser
+ * @return void
+ * @throws NotFoundException
+ */
+	public function file($path, $options = array()) {
+		$options += array(
+			'name' => null,
+			'download' => null
+		);
+
+		if (!is_file($path)) {
+			$path = APP . $path;
+		}
+
+		$file = new File($path);
+		if (!$file->exists() || !$file->readable()) {
+			if (Configure::read('debug')) {
+				throw new NotFoundException(__d('cake_dev', 'The requested file %s was not found or not readable', $path));
+			}
+			throw new NotFoundException(__d('cake', 'The requested file was not found'));
+		}
+
+		$extension = strtolower($file->ext());
+		$download = $options['download'];
+		if ((!$extension || $this->type($extension) === false) && is_null($download)) {
+			$download = true;
+		}
+
+		$fileSize = $file->size();
+		if ($download) {
+			$agent = env('HTTP_USER_AGENT');
+
+			if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
+				$contentType = 'application/octetstream';
+			} elseif (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+				$contentType = 'application/force-download';
+			}
+
+			if (!empty($contentType)) {
+				$this->type($contentType);
+			}
+			if (is_null($options['name'])) {
+				$name = $file->name;
+			} else {
+				$name = $options['name'];
+			}
+			$this->download($name);
+			$this->header('Accept-Ranges', 'bytes');
+
+			$httpRange = env('HTTP_RANGE');
+			if (isset($httpRange)) {
+				list($toss, $range) = explode('=', $httpRange);
+
+				$size = $fileSize - 1;
+				$length = $fileSize - $range;
+
+				$this->header(array(
+					'Content-Length' => $length,
+					'Content-Range' => 'bytes ' . $range . $size . '/' . $fileSize
+				));
+
+				$this->statusCode(206);
+				$file->open('rb', true);
+				$file->offset($range);
+			} else {
+				$this->header('Content-Length', $fileSize);
+			}
+		} else {
+			$this->header('Content-Length', $fileSize);
+		}
+		$this->_clearBuffer();
+
+		$this->_file = $file;
+	}
+
+/**
+ * Reads out a file, and echos the content to the client.
+ *
+ * @param File $file File object
+ * @return boolean True is whole file is echoed successfully or false if client connection is lost in between
+ */
+	protected function _sendFile($file) {
+		$compress = $this->outputCompressed();
+		$file->open('rb');
+		while (!feof($file->handle)) {
+			if (!$this->_isActive()) {
+				$file->close();
+				return false;
+			}
+			set_time_limit(0);
+			echo fread($file->handle, 8192);
+			if (!$compress) {
+				$this->_flushBuffer();
+			}
+		}
+		$file->close();
+		return true;
+	}
+
+/**
+ * Returns true if connection is still active
+ *
+ * @return boolean
+ */
+	protected function _isActive() {
+		return connection_status() === CONNECTION_NORMAL && !connection_aborted();
+	}
+
+/**
+ * Clears the contents of the topmost output buffer and discards them
+ *
+ * @return boolean
+ */
+	protected function _clearBuffer() {
+		return @ob_end_clean();
+	}
+
+/**
+ * Flushes the contents of the output buffer
+ *
+ * @return void
+ */
+	protected function _flushBuffer() {
+		@flush();
+		@ob_flush();
 	}
 
 }
