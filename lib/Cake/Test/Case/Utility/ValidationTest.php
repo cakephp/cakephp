@@ -2174,12 +2174,27 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	public function testMimeType() {
-		$file = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
-		$this->assertTrue(Validation::mimeType($file, array('image/gif')));
-		$this->assertTrue(Validation::mimeType(array('tmp_name' => $file), array('image/gif')));
+		$image = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$File = new File($image, false);
+		$this->skipIf(!$File->mime(), 'Cannot determine mimeType');
+		$this->assertTrue(Validation::mimeType($image, array('image/gif')));
+		$this->assertTrue(Validation::mimeType(array('tmp_name' => $image), array('image/gif')));
 
-		$this->assertFalse(Validation::mimeType($file, array('image/png')));
-		$this->assertFalse(Validation::mimeType(array('tmp_name' => $file), array('image/png')));
+		$this->assertFalse(Validation::mimeType($image, array('image/png')));
+		$this->assertFalse(Validation::mimeType(array('tmp_name' => $image), array('image/png')));
+	}
+
+/**
+ * testMimeTypeFalse method
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testMimeTypeFalse() {
+		$image = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$File = new File($image, false);
+		$this->skipIf($File->mime(), 'mimeType can be determined, no Exception will be thrown');
+		Validation::mimeType($image, array('image/gif'));
 	}
 
 /**
