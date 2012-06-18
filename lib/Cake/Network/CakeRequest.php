@@ -163,7 +163,7 @@ class CakeRequest implements ArrayAccess {
 	protected function _processPost() {
 		if ($_POST) {
 			$this->data = $_POST;
-		} elseif ($this->is('put')) {
+		} elseif ($this->is('put') || $this->is('delete')) {
 			$this->data = $this->_readInput();
 			if (env('CONTENT_TYPE') === 'application/x-www-form-urlencoded') {
 				parse_str($this->data, $this->data);

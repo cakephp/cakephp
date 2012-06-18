@@ -268,6 +268,7 @@ class CakeRequestTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $request->data);
 
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
 		$data = array('data' => array(
 			'Article' => array('title'),
 			'Tag' => array('Tag' => array(1, 2))
