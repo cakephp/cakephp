@@ -18,6 +18,7 @@
  */
 namespace Cake\Utility;
 use Cake\Core\App;
+use Cake\Error\Exception;
 use Cake\Utility\File;
 
 // Load multibyte if the extension is missing.
@@ -866,6 +867,7 @@ class Validation {
  * @param string|array $check
  * @param array $mimeTypes to check for
  * @return boolean Success
+ * @throws Cake\Error\Exception when mime type can not be determined.
  */
 	public static function mimeType($check, $mimeTypes = array()) {
 		if (is_array($check) && isset($check['tmp_name'])) {
@@ -875,6 +877,9 @@ class Validation {
 		$File = new File($check);
 		$mime = $File->mime();
 
+		if ($mime === false) {
+			throw new Exception(__d('cake_dev', 'Can not determine the mimetype.'));
+		}
 		return in_array($mime, $mimeTypes);
 	}
 

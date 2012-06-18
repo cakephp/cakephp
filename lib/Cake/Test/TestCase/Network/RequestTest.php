@@ -271,6 +271,7 @@ class RequestTest extends TestCase {
 		);
 		$this->assertEquals($expected, $request->data);
 
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
 		$data = array('data' => array(
 			'Article' => array('title'),
 			'Tag' => array('Tag' => array(1, 2))

@@ -2106,4 +2106,28 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals('awesome', $rules['isAwesome']->rule);
 	}
 
+/**
+ * Test to ensure custom validation methods work with CakeValidationSet
+ *
+ * @return void
+ */
+	public function testCustomMethodsWithCakeValidationSet() {
+		$TestModel = new TestValidate();
+		$Validator = $TestModel->validator();
+
+		$Validator->add('title', 'validateTitle', array(
+			'rule' => 'validateTitle',
+			'message' => 'That aint right',
+		));
+		$data = array('title' => 'notatitle');
+		$result = $Validator->getField('title')->validate($data);
+		$expected = array(0 => 'That aint right');
+		$this->assertEquals($expected, $result);
+
+		$data = array('title' => 'title-is-good');
+		$result = $Validator->getField('title')->validate($data);
+		$expected = array();
+		$this->assertEquals($expected, $result);
+	}
+
 }

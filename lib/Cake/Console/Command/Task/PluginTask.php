@@ -37,12 +37,20 @@ class PluginTask extends Shell {
 	public $path = null;
 
 /**
+ * Path to the bootstrap file. Changed in tests.
+ *
+ * @var string
+ */
+	public $bootstrap = null;
+
+/**
  * initialize
  *
  * @return void
  */
 	public function initialize() {
 		$this->path = current(App::path('Plugin'));
+		$this->bootstrap = APP . 'Config' . DS . 'bootstrap.php';
 	}
 
 /**
@@ -150,19 +158,28 @@ class PluginTask extends Shell {
 			$out .= "}\n\n";
 			$this->createFile($this->path . $plugin . DS . 'Model' . DS . $modelFileName, $out);
 
-			$bootstrap = new File(APP . 'Config' . DS . 'bootstrap.php', false);
-			$contents = $bootstrap->read();
-			if (!preg_match("@\n\s*CakePlugin::loadAll@", $contents)) {
-				$bootstrap->append("\nCakePlugin::load('$plugin', array('bootstrap' => false, 'routes' => false));\n");
-				$this->out('');
-				$this->out(__d('cake_dev', '%s modified', APP . 'Config' . DS . 'bootstrap.php'));
-			}
+			$this->_modifyBootstrap($plugin);
 
 			$this->hr();
 			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $plugin), 2);
 		}
 
 		return true;
+	}
+
+/**
+ * Update the app's bootstrap.php file.
+ *
+ * @return void
+ */
+	protected function _modifyBootstrap($plugin) {
+		$bootstrap = new File($this->bootstrap, false);
+		$contents = $bootstrap->read();
+		if (!preg_match("@\n\s*CakePlugin::loadAll@", $contents)) {
+			$bootstrap->append("\nCakePlugin::load('$plugin', array('bootstrap' => false, 'routes' => false));\n");
+			$this->out('');
+			$this->out(__d('cake_dev', '%s modified', APP . 'Config' . DS . 'bootstrap.php'));
+		}
 	}
 
 /**

@@ -137,24 +137,14 @@ class TestSuiteDispatcher {
  * @return boolean true if found, false otherwise
  */
 	public function loadTestFramework() {
-		$found = $path = null;
-
-		if (@include 'PHPUnit' . DS . 'Autoload.php') {
-			$found = true;
-		}
-
-		if (!$found) {
-			foreach (App::path('vendors') as $vendor) {
-				if (is_dir($vendor . 'PHPUnit')) {
-					$path = $vendor;
-				}
-			}
-
-			if ($path && ini_set('include_path', $path . PATH_SEPARATOR . ini_get('include_path'))) {
-				$found = include 'PHPUnit' . DS . 'Autoload.php';
+		foreach (App::path('Vendor') as $vendor) {
+			if (is_dir($vendor . 'PHPUnit')) {
+				ini_set('include_path', $vendor . PATH_SEPARATOR . ini_get('include_path'));
+				break;
 			}
 		}
-		return $found;
+
+		return include 'PHPUnit' . DS . 'Autoload.php';
 	}
 
 /**
