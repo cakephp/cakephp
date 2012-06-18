@@ -405,7 +405,10 @@ class ControllerTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.post', 'core.comment', 'core.name');
+	public $fixtures = array(
+		'core.post',
+		'core.comment'
+	);
 
 /**
  * reset environment.
