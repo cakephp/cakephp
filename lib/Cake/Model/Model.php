@@ -2281,6 +2281,8 @@ class Model extends Object implements CakeEventListener {
 
 		if (isset($validationErrors[$this->alias])) {
 			$this->validationErrors = $validationErrors[$this->alias];
+			unset($validationErrors[$this->alias]);
+			$this->validationErrors = array_merge($this->validationErrors, $validationErrors);
 		}
 
 		if (!$options['atomic']) {

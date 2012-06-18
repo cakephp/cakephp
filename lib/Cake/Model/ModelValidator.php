@@ -162,6 +162,8 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 		$model->validationErrors = $validationErrors;
 		if (isset($validationErrors[$model->alias])) {
 			$model->validationErrors = $validationErrors[$model->alias];
+			unset($validationErrors[$model->alias]);
+			$model->validationErrors = array_merge($model->validationErrors, $validationErrors);
 		}
 		if (!$options['atomic']) {
 			return $return;
