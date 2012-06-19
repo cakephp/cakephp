@@ -147,8 +147,8 @@ class MysqlTest extends CakeTestCase {
 	public function testLocalizedFloats() {
 		$this->skipIf(DS === '\\', 'The locale is not supported in Windows and affect the others tests.');
 
-		$restore = setlocale(LC_ALL, 0);
-		setlocale(LC_ALL, 'de_DE');
+		$restore = setlocale(LC_NUMERIC, 0);
+		setlocale(LC_NUMERIC, 'de_DE');
 
 		$result = $this->Dbo->value(3.141593);
 		$this->assertEquals('3.141593', $result);
@@ -171,7 +171,7 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->db->value(2.2E-54);
 		$this->assertEquals('2.2E-54', (string)$result);
 
-		setlocale(LC_ALL, $restore);
+		setlocale(LC_NUMERIC, $restore);
 	}
 
 /**

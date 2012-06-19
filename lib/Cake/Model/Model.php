@@ -2370,13 +2370,14 @@ class Model extends Object implements CakeEventListener {
 						break;
 					}
 				}
-
-				$keys = $this->find('first', array(
-					'fields' => $this->_collectForeignKeys(),
-					'conditions' => array($this->alias . '.' . $this->primaryKey => $id),
-					'recursive' => -1,
-					'callbacks' => false
-				));
+				if ($updateCounterCache) {
+					$keys = $this->find('first', array(
+						'fields' => $this->_collectForeignKeys(),
+						'conditions' => array($this->alias . '.' . $this->primaryKey => $id),
+						'recursive' => -1,
+						'callbacks' => false
+					));
+				}
 			}
 
 			if ($db->delete($this, array($this->alias . '.' . $this->primaryKey => $id))) {
