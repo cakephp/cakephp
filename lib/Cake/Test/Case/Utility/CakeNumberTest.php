@@ -493,10 +493,10 @@ class CakeNumberTest extends CakeTestCase {
 		$restore = setlocale(LC_ALL, 0);
 		setlocale(LC_ALL, 'de_DE');
 		$result = $this->Number->toReadableSize(1321205);
-		$this->assertEquals('1,26 MB', $result);
+		$this->assertRegExp('/1[,.]26 MB/', $result);
 
 		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 512);
-		$this->assertEquals('512,00 GB', $result);
+		$this->assertRegExp('/512[,.]00 GB/', $result);
 		setlocale(LC_ALL, $restore);
 	}
 
