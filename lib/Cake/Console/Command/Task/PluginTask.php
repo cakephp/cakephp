@@ -176,7 +176,7 @@ class PluginTask extends AppShell {
 		if (!preg_match("@\n\s*CakePlugin::loadAll@", $contents)) {
 			$bootstrap->append("\nCakePlugin::load('$plugin', array('bootstrap' => false, 'routes' => false));\n");
 			$this->out('');
-			$this->out(__d('cake_dev', '%s modified', APP . 'Config' . DS . 'bootstrap.php'));
+			$this->out(__d('cake_dev', '%s modified', $this->bootstrap));
 		}
 	}
 
