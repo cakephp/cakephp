@@ -205,10 +205,6 @@ class SecurityComponent extends Component {
  * @return void
  */
 	public function startup(Controller $controller) {
-		if ($controller->name == 'CakeError') {
-			return true;
-		}
-
 		$this->request = $controller->request;
 		$this->_action = $this->request->params['action'];
 		$this->_methodsRequired($controller);
