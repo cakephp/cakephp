@@ -1277,13 +1277,23 @@ class Model extends Object implements CakeEventListener {
 			}
 
 			if ($useNewDate && !empty($date)) {
-				$format = $this->getDataSource()->columns[$type]['format'];
+				$columnTypes = $this->getDataSource()->columns[$type];
+				$format = $columnTypes['format'];
+
 				foreach (array('m', 'd', 'H', 'i', 's') as $index) {
 					if (isset($date[$index])) {
 						$date[$index] = sprintf('%02d', $date[$index]);
 					}
 				}
-				return str_replace(array_keys($date), array_values($date), $format);
+
+				$result = str_replace(array_keys($date), array_values($date), $format);
+
+				// Don't trigger on date()
+				if (!empty($columnTypes['formatter']) && $columnTypes['formatter'] !== 'date') {
+					$result = call_user_func($columnTypes['formatter'], $format, $result);
+				}
+
+				return $result;
 			}
 		}
 		return $data;
