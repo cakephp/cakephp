@@ -347,8 +347,8 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testLocalizedFloats() {
-		$restore = setlocale(LC_ALL, 0);
-		setlocale(LC_ALL, 'de_DE');
+		$restore = setlocale(LC_NUMERIC, 0);
+		setlocale(LC_NUMERIC, 'de_DE');
 
 		$result = $this->db->value(3.141593, 'float');
 		$this->assertEquals("3.141593", $result);
@@ -356,7 +356,7 @@ class PostgresTest extends CakeTestCase {
 		$result = $this->db->value(3.14);
 		$this->assertEquals("3.140000", $result);
 
-		setlocale(LC_ALL, $restore);
+		setlocale(LC_NUMERIC, $restore);
 	}
 
 /**
@@ -784,7 +784,7 @@ class PostgresTest extends CakeTestCase {
 	}
 
 /**
- * Test it is possible to do a SELECT COUNT(DISTINCT Model.field) 
+ * Test it is possible to do a SELECT COUNT(DISTINCT Model.field)
  * query in postgres and it gets correctly quoted
  *
  * @return void
