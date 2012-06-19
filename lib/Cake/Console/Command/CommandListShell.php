@@ -55,7 +55,7 @@ class CommandListShell extends AppShell {
 		}
 
 		$shellList = $this->_getShellList();
-		if(empty($shellList)) {
+		if (empty($shellList)) {
 			return;
 		}
 
@@ -136,7 +136,7 @@ class CommandListShell extends AppShell {
 		$plugins = CakePlugin::loaded();
 		$shells = new SimpleXmlElement('<shells></shells>');
 		foreach ($shellList as $plugin => $commands) {
-			foreach($commands as $command) {
+			foreach ($commands as $command) {
 				$callable = $command;
 				if (in_array($plugin, $plugins)) {
 					$callable = Inflector::camelize($plugin) . '.' . $command;
