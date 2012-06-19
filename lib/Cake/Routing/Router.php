@@ -599,7 +599,7 @@ class Router {
  *   This usage does not use reverser routing.
  * - `Router::url(array('controller' => 'posts', 'action' => 'edit'));` Returns a url
  *   generated through reverse routing.
- * - `Router::url('Posts:index', array(...));` Returns a url generated through reverse
+ * - `Router::url('custom-name', array(...));` Returns a url generated through reverse
  *   routing.  This form allows you to leverage named routes.
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
@@ -639,16 +639,6 @@ class Router {
 			);
 			$hasColonSlash = strpos($url, '://') !== false;
 			$hasLeadingSlash = isset($url[0]) ? $url[0] === '/' : false;
-		}
-
-		if (
-			$urlType === 'string' &&
-			strpos($url, ':') !== false &&
-			strpos($url, '/') === false &&
-			!$plainString
-		) {
-			$url = static::_splitName($url, $options);
-			$urlType = 'array';
 		}
 
 		// TODO refactor so there is less overhead
@@ -762,28 +752,6 @@ class Router {
 			}
 		}
 		return $output . $frag;
-	}
-
-/**
- * Splits a named route into the component parts.
- *
- * @param string $url The named route to split.
- * @param array $options The array of parameter to merge with.
- * @return array
- */
-	protected static function _splitName($url, $options) {
-		$plugin = null;
-		list($controller, $action) = explode(':', $url);
-		if (strpos($controller, '.') !== false) {
-			list($plugin, $controller) = explode('.', $controller);
-		}
-		$params = array(
-			'plugin' => $plugin,
-			'controller' => $controller,
-			'action' => $action,
-			'_name' => $url
-		);
-		return (array)$options + $params;
 	}
 
 /**

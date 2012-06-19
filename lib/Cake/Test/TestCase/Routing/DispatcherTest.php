@@ -491,7 +491,7 @@ class DispatcherTest extends TestCase {
 
 		$this->assertTrue($Dispatcher->controller->params['admin']);
 
-		$expected = '/admin/test_dispatch_pages/index/param:value/param2:value2';
+		$expected = '/admin/test_dispatch_pages/index';
 		$this->assertSame($expected, $Dispatcher->controller->here);
 	}
 
