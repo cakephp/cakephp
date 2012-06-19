@@ -124,6 +124,7 @@ class ClassRegistry {
 				list($plugin, $class) = pluginSplit($class);
 				if ($plugin) {
 					$pluginPath = $plugin . '.';
+					$settings['plugin'] = $plugin;
 				}
 
 				if (empty($settings['alias'])) {

@@ -1667,6 +1667,14 @@ class ModelIntegrationTest extends BaseModelTest {
 		$result = $TestModel->alias;
 		$expected = 'AnotherTest';
 		$this->assertEquals($expected, $result);
+
+		$TestModel = ClassRegistry::init('Test');
+		$expected = null;
+		$this->assertEquals($expected, $TestModel->plugin);
+
+		$TestModel = ClassRegistry::init('TestPlugin.TestPluginComment');
+		$expected = 'TestPlugin';
+		$this->assertEquals($expected, $TestModel->plugin);
 	}
 
 /**
