@@ -491,7 +491,7 @@ class CakeNumberTest extends CakeTestCase {
  */
 	public function testReadableSizeLocalized() {
 		$restore = setlocale(LC_NUMERIC, 0);
-		setlocale(LC_NUMERIC, 'nl_NL');
+		setlocale(LC_NUMERIC, 'de_DE');
 		$result = $this->Number->toReadableSize(1321205);
 		$this->assertEquals('1,26 MB', $result);
 
