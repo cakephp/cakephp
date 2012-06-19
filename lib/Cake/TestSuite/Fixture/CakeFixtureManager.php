@@ -101,6 +101,7 @@ class CakeFixtureManager {
  *
  * @param array $fixtures the fixture names to load using the notation {type}.{name}
  * @return void
+ * @throws UnexpectedValueException when a referenced fixture does not exist.
  */
 	protected function _loadFixtures($fixtures) {
 		foreach ($fixtures as $index => $fixture) {
