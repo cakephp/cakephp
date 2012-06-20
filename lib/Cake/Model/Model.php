@@ -3396,7 +3396,7 @@ class Model extends Object implements CakeEventListener {
 			return $this->_validator = $instance;
 		}
 
-		if (is_null($instance)) {
+		if (empty($this->_validator) && is_null($instance)) {
 			$this->_validator = new ModelValidator($this);
 		}
 
