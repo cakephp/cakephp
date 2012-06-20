@@ -2088,6 +2088,24 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
+ * Test that rules are parsed correctly when calling getField()
+ *
+ * @return void
+ */
+	public function testValidator() {
+		$TestModel = new Article();
+		$Validator = $TestModel->validator();
+
+		$result = $Validator->getField();
+		$expected = array('user_id', 'title', 'body');
+		$this->assertEquals($expected, array_keys($result));
+		$this->assertTrue($result['user_id'] instanceof CakeValidationSet);
+
+		$result = $TestModel->validator()->getField('title');
+		$this->assertTrue($result instanceof CakeValidationSet);
+	}
+
+/**
  * Tests that altering data in a beforeValidate callback will lead to saving those
  * values in database, this time with belongsTo associations
  *
