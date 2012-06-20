@@ -1280,7 +1280,10 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array(
 			'Comment' => array(
 				'Article' => array(
-					'body' => array('This field cannot be left blank')
+					'body' => array('This field cannot be left blank'),
+					'User' => array(
+						'user' => array('This field cannot be left blank')
+					)
 				)
 			)
 		);
@@ -1304,7 +1307,13 @@ class ModelValidationTest extends BaseModelTest {
 		$result = $TestModel->Comment->Attachment->validationErrors;
 		$expected = array(
 			'Comment' => array(
-				'comment' => array('This field cannot be left blank')
+				'comment' => array('This field cannot be left blank'),
+				'Article' => array(
+					'body' => array('This field cannot be left blank'),
+					'User' => array(
+						'user' => array('This field cannot be left blank')
+					)
+				)
 			)
 		);
 		$this->assertSame($expected, $result);
@@ -1325,11 +1334,30 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertFalse($result);
 
 		$result = $TestModel->Comment->Attachment->validationErrors;
-		$expected = array('attachment' => array('This field cannot be left blank'));
+		$expected = array(
+			'attachment' => array('This field cannot be left blank'),
+			'Comment' => array(
+				'comment' => array('This field cannot be left blank'),
+				'Article' => array(
+					'body' => array('This field cannot be left blank'),
+					'User' => array(
+						'user' => array('This field cannot be left blank')
+					)
+				)
+			)
+		);
 		$this->assertSame($expected, $result);
 
 		$result = $TestModel->Comment->validationErrors;
-		$expected = array('comment' => array('This field cannot be left blank'));
+		$expected = array(
+			'comment' => array('This field cannot be left blank'),
+			'Article' => array(
+					'body' => array('This field cannot be left blank'),
+					'User' => array(
+						'user' => array('This field cannot be left blank')
+					)
+				)
+		);
 		$this->assertSame($expected, $result);
 
 		$expected = array(
@@ -1598,8 +1626,10 @@ class ModelValidationTest extends BaseModelTest {
 		$model->Attachment->validate = array('attachment' => 'notEmpty');
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')));
 		$expected = array(
-			'Comment' => array('comment' => array('This field cannot be left blank')),
-			'Attachment' => array('attachment' => array('This field cannot be left blank'))
+			'comment' => array('This field cannot be left blank'),
+			'Attachment' => array(
+				'attachment' => array('This field cannot be left blank')
+			)
 		);
 
 		$data = array(
@@ -1610,7 +1640,7 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertFalse($result);
 		$result = $model->validateAssociated($data);
 		$this->assertFalse($result);
-		$this->assertEquals($expected['Comment'], $model->validationErrors);
+		$this->assertEquals($expected, $model->validationErrors);
 		$this->assertEquals($expected['Attachment'], $model->Attachment->validationErrors);
 	}
 

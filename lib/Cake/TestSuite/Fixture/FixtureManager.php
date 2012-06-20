@@ -106,6 +106,7 @@ class FixtureManager {
  *
  * @param array $fixtures the fixture names to load using the notation {type}.{name}
  * @return void
+ * @throws UnexpectedValueException when a referenced fixture does not exist.
  */
 	protected function _loadFixtures($fixtures) {
 		foreach ($fixtures as $index => $fixture) {
@@ -130,9 +131,11 @@ class FixtureManager {
 			$base = Inflector::camelize($base);
 			$className = implode('\\', array($baseNamespace, 'Test\Fixture', $base . 'Fixture'));
 
-			if ($className) {
+			if (class_exists($className)) {
 				$this->_loaded[$fixture] = new $className();
 				$this->_fixtureMap[$base] = $this->_loaded[$fixture];
+			} else {
+				throw new \UnexpectedValueException(__d('cake_dev', 'Referenced fixture class %s not found', $className));
 			}
 		}
 	}

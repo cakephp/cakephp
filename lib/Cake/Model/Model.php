@@ -2288,6 +2288,8 @@ class Model extends Object implements EventListener {
 
 		if (isset($validationErrors[$this->alias])) {
 			$this->validationErrors = $validationErrors[$this->alias];
+			unset($validationErrors[$this->alias]);
+			$this->validationErrors = array_merge($this->validationErrors, $validationErrors);
 		}
 
 		if (!$options['atomic']) {
@@ -2375,13 +2377,14 @@ class Model extends Object implements EventListener {
 						break;
 					}
 				}
-
-				$keys = $this->find('first', array(
-					'fields' => $this->_collectForeignKeys(),
-					'conditions' => array($this->alias . '.' . $this->primaryKey => $id),
-					'recursive' => -1,
-					'callbacks' => false
-				));
+				if ($updateCounterCache) {
+					$keys = $this->find('first', array(
+						'fields' => $this->_collectForeignKeys(),
+						'conditions' => array($this->alias . '.' . $this->primaryKey => $id),
+						'recursive' => -1,
+						'callbacks' => false
+					));
+				}
 			}
 
 			if ($db->delete($this, array($this->alias . '.' . $this->primaryKey => $id))) {

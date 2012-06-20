@@ -2953,10 +2953,12 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEquals(false, $result);
 		$expected = array(
-			'Comment' => array('comment' => array('This field cannot be left blank')),
-			'Attachment' => array('attachment' => array('This field cannot be left blank'))
+			'comment' => array('This field cannot be left blank'),
+			'Attachment' => array(
+				'attachment' => array('This field cannot be left blank')
+			)
 		);
-		$this->assertEquals($expected['Comment'], $model->validationErrors);
+		$this->assertEquals($expected, $model->validationErrors);
 		$this->assertEquals($expected['Attachment'], $model->Attachment->validationErrors);
 	}
 
@@ -3207,7 +3209,15 @@ class ModelWriteTest extends BaseModelTest {
 
 		$expected = array(
 			0 => array(
-				'body' => array('This field cannot be left blank')
+				'body' => array('This field cannot be left blank'),
+				'Comment' => array(
+					0 => array(
+						'comment' => array('This field cannot be left blank'),
+						'User' => array(
+							'user' => array('This field cannot be left blank')
+						)
+					)
+				)
 			),
 			1 => array(
 				'Comment' => array(
@@ -3468,7 +3478,10 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'Comment' => array(
 				'Article' => array(
-					'body' => array('This field cannot be left blank')
+					'body' => array('This field cannot be left blank'),
+					'User' => array(
+						'user' => array('This field cannot be left blank')
+					)
 				)
 			)
 		);
@@ -3488,7 +3501,13 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->Comment->Attachment->validationErrors;
 		$expected = array(
 			'Comment' => array(
-				'comment' => array('This field cannot be left blank')
+				'comment' => array('This field cannot be left blank'),
+				'Article' => array(
+					'body' => array('This field cannot be left blank'),
+					'User' => array(
+						'user' => array('This field cannot be left blank')
+					)
+				)
 			)
 		);
 		$this->assertSame($expected, $result);
@@ -3505,11 +3524,30 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse($result);
 
 		$result = $TestModel->Comment->Attachment->validationErrors;
-		$expected = array('attachment' => array('This field cannot be left blank'));
+		$expected = array(
+			'attachment' => array('This field cannot be left blank'),
+			'Comment' => array(
+				'comment' => array('This field cannot be left blank'),
+				'Article' => array(
+					'body' => array('This field cannot be left blank'),
+					'User' => array(
+						'user' => array('This field cannot be left blank')
+					)
+				)
+			)
+		);
 		$this->assertSame($expected, $result);
 
 		$result = $TestModel->Comment->validationErrors;
-		$expected = array('comment' => array('This field cannot be left blank'));
+		$expected = array(
+			'comment' => array('This field cannot be left blank'),
+			'Article' => array(
+				'body' => array('This field cannot be left blank'),
+				'User' => array(
+					'user' => array('This field cannot be left blank')
+				)
+			)
+		);
 		$this->assertSame($expected, $result);
 
 		$result = $TestModel->Comment->Attachment->saveAll($data, array('validate' => 'only', 'atomic' => false, 'deep' => true));
@@ -5040,10 +5078,16 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertFalse($result);
 		$expected = array(
-			'Comment' => array('comment' => array('This field cannot be left blank')),
-			'Attachment' => array('attachment' => array('This field cannot be left blank'))
+			'comment' => array(
+				'This field cannot be left blank'
+			),
+			'Attachment' => array(
+				'attachment' => array(
+					'This field cannot be left blank'
+				)
+			)
 		);
-		$this->assertEquals($expected['Comment'], $model->validationErrors);
+		$this->assertEquals($expected, $model->validationErrors);
 		$this->assertEquals($expected['Attachment'], $model->Attachment->validationErrors);
 	}
 
@@ -6305,8 +6349,8 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testWriteFloatAsGerman() {
-		$restore = setlocale(LC_ALL, 0);
-		setlocale(LC_ALL, 'de_DE');
+		$restore = setlocale(LC_NUMERIC, 0);
+		setlocale(LC_NUMERIC, 'de_DE');
 
 		$model = new DataTest();
 		$result = $model->save(array(
@@ -6314,7 +6358,7 @@ class ModelWriteTest extends BaseModelTest {
 			'float' => 3.14593
 		));
 		$this->assertTrue((bool)$result);
-		setlocale(LC_ALL, $restore);
+		setlocale(LC_NUMERIC, $restore);
 	}
 
 /**

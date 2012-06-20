@@ -56,12 +56,15 @@ class ErrorController extends Controller {
 			$this->components[] = 'RequestHandler';
 		}
 		$this->constructClasses();
+		if ($this->Components->enabled('Auth')) {
+			$this->Components->disable('Auth');
+		}
+		if ($this->Components->enabled('Security')) {
+			$this->Components->disable('Security');
+		}
 		$this->startupProcess();
 
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'Errors'));
-		if (isset($this->RequestHandler)) {
-			$this->RequestHandler->startup($this);
-		}
 	}
 
 /**

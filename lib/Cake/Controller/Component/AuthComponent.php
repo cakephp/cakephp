@@ -271,10 +271,6 @@ class AuthComponent extends Component {
  * @return boolean
  */
 	public function startup(Controller $controller) {
-		if ($controller->name == 'Error') {
-			return true;
-		}
-
 		$methods = array_flip(array_map('strtolower', $controller->methods));
 		$action = strtolower($controller->request->params['action']);
 

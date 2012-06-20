@@ -413,7 +413,10 @@ class ControllerTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.post', 'core.comment');
+	public $fixtures = array(
+		'core.post',
+		'core.comment'
+	);
 
 /**
  * reset environment.

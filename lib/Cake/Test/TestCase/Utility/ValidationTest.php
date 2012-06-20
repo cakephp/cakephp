@@ -106,8 +106,11 @@ class ValidationTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->_appEncoding = Configure::read('App.encoding');
-		$this->_appLocale = setlocale(LC_ALL, "0");
-		setlocale(LC_ALL, 'en_US');
+		$this->_appLocale = array();
+		foreach (array(LC_MONETARY, LC_NUMERIC, LC_TIME) as $category) {
+			$this->_appLocale[$category] = setlocale($category, 0);
+			setlocale($category, 'en_US');
+		}
 	}
 
 /**
@@ -118,7 +121,9 @@ class ValidationTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Configure::write('App.encoding', $this->_appEncoding);
-		setlocale(LC_ALL, $this->_appLocale);
+		foreach ($this->_appLocale as $category => $locale) {
+			setlocale($category, $locale);
+		}
 	}
 
 /**
