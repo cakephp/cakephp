@@ -98,7 +98,6 @@ class XmlView extends View {
 				}
 			}
 			$content = Xml::fromArray($data)->asXML();
-			$this->Blocks->set('content', $content);
 			return $content;
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
