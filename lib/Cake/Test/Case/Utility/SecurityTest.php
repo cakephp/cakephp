@@ -204,4 +204,101 @@ class SecurityTest extends CakeTestCase {
 		$result = Security::rijndael($txt, $key, 'encrypt');
 	}
 
+/**
+ * testSalt method
+ *
+ * @return void
+ */
+	public function testSalt() {
+		$regex = "/[\.\/0-9A-Za-z]";
+
+		$length = 22;
+		$result = Security::salt($length);
+		$this->assertEquals($length, strlen($result));
+		$regexLen = $regex . "{" . $length . "}/";
+		$this->assertEquals(1, preg_match($regexLen, $result));
+
+		$length = 16;
+		$result = Security::salt($length);
+		$this->assertEquals($length, strlen($result));
+		$regexLen = $regex . "{" . $length . "}/";
+		$this->assertEquals(1, preg_match($regexLen, $result));
+	}
+
+/**
+ * testInvalidBlowfishCost setting
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testInvalidBlowfishCost() {
+		$options = array(
+			'cryptType' => 'CRYPT_BLOWFISH',
+			'cost' => 1,
+		);
+		$result = Security::crypt('somepassword', false, $options);
+	}
+
+/**
+ * testInvalidSha512Cost setting
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testInvalidSha512Cost() {
+		$options = array(
+			'cryptType' => 'CRYPT_SHA512',
+			'cost' => 1,
+		);
+		$result = Security::crypt('somepassword', false, $options);
+	}
+
+/**
+ * testCrypt method
+ *
+ * @return void
+ */
+	public function testCrypt() {
+		$pass = '!@#$%^&*()-_=+,./;\':"[]\\{}|';
+		$result = Security::crypt($pass, false);
+		$this->assertEquals($result, Security::crypt($pass, $result));
+
+		$pass = '123456789 123456789 123456789 123456789 123456789 123456789 123456789';
+		$result = Security::crypt($pass, false);
+		$this->assertEquals($result, Security::crypt($pass, $result));
+
+		$pass = 'パスワード';
+		$result = Security::crypt($pass, false);
+		$this->assertEquals($result, Security::crypt($pass, $result));
+
+		$pass = 'كلمة السر';
+		$result = Security::crypt($pass, false);
+		$this->assertEquals($result, Security::crypt($pass, $result));
+	}
+
+/**
+ * testCryptSHA512 method
+ *
+ * @return void
+ */
+	public function testCryptSHA512() {
+		$options = array(
+			'cryptType' => 'CRYPT_SHA512'
+		);
+		$pass = '!@#$%^&*()-_=+,./;\':"[]\\{}|';
+		$result = Security::crypt($pass, false, $options);
+		$this->assertEquals($result, Security::crypt($pass, $result, $options));
+
+		$pass = '123456789 123456789 123456789 123456789 123456789 123456789 123456789';
+		$result = Security::crypt($pass, false, $options);
+		$this->assertEquals($result, Security::crypt($pass, $result, $options));
+
+		$pass = 'パスワード';
+		$result = Security::crypt($pass, false, $options);
+		$this->assertEquals($result, Security::crypt($pass, $result, $options));
+
+		$pass = 'كلمة السر';
+		$result = Security::crypt($pass, false, $options);
+		$this->assertEquals($result, Security::crypt($pass, $result, $options));
+	}
 }
