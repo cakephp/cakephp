@@ -236,6 +236,13 @@ class Model extends Object implements CakeEventListener {
 	public $tablePrefix = null;
 
 /**
+ * Plugin model belongs to.
+ *
+ * @var string
+ */
+	public $plugin = null;
+
+/**
  * Name of the model.
  *
  * @var string
@@ -665,10 +672,14 @@ class Model extends Object implements CakeEventListener {
 			extract(array_merge(
 				array(
 					'id' => $this->id, 'table' => $this->useTable, 'ds' => $this->useDbConfig,
-					'name' => $this->name, 'alias' => $this->alias
+					'name' => $this->name, 'alias' => $this->alias, 'plugin' => $this->plugin
 				),
 				$id
 			));
+		}
+
+		if ($this->plugin === null) {
+			$this->plugin = (isset($plugin) ? $plugin : $this->plugin);
 		}
 
 		if ($this->name === null) {
