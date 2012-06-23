@@ -161,6 +161,10 @@ class CommandListShell extends AppShell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(__d('cake_console', 'Get the list of available shells for this CakePHP application.'))
+			->addOption('sort', array(
+				'help' => __d('cake_console', 'Does nothing (deprecated)'),
+				'boolean' => true
+			))
 			->addOption('xml', array(
 				'help' => __d('cake_console', 'Get the listing as XML.'),
 				'boolean' => true
