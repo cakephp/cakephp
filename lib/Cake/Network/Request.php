@@ -172,9 +172,6 @@ class Request implements \ArrayAccess {
 				parse_str($this->data, $this->data);
 			}
 		}
-		if (ini_get('magic_quotes_gpc') === '1') {
-			$this->data = stripslashes_deep($this->data);
-		}
 		if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
 			$this->data['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
 		}
@@ -204,11 +201,7 @@ class Request implements \ArrayAccess {
  * @return void
  */
 	protected function _processGet() {
-		if (ini_get('magic_quotes_gpc') === '1') {
-			$query = stripslashes_deep($_GET);
-		} else {
-			$query = $_GET;
-		}
+		$query = $_GET;
 
 		unset($query['/' . str_replace('.', '_', urldecode($this->url))]);
 		if (strpos($this->url, '?') !== false) {

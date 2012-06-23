@@ -612,11 +612,7 @@ class RssHelperTest extends TestCase {
 
 		$this->assertTrue($File->write('123'), 'Could not write to ' . $tmpFile);
 
-		if (50300 <= PHP_VERSION_ID) {
-			clearstatcache(true, $tmpFile);
-		} else {
-			clearstatcache();
-		}
+		clearstatcache();
 
 		$item = array(
 			'title' => array(

@@ -1035,15 +1035,13 @@ class TimeTest extends TestCase {
 		$this->assertTrue(isset($return['America/Argentina/Buenos_Aires']));
 		$this->assertTrue(isset($return['Pacific/Tahiti']));
 
-		if (!$this->skipIf(version_compare(PHP_VERSION, '5.3.0', '<'))) {
-			$return = Time::listTimezones(\DateTimeZone::ASIA);
-			$this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
-			$this->assertFalse(isset($return['Pacific']));
+		$return = Time::listTimezones(\DateTimeZone::ASIA);
+		$this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
+		$this->assertFalse(isset($return['Pacific']));
 
-			$return = Time::listTimezones(\DateTimeZone::PER_COUNTRY, 'US', false);
-			$this->assertTrue(isset($return['Pacific/Honolulu']));
-			$this->assertFalse(isset($return['Asia/Bangkok']));
-		}
+		$return = Time::listTimezones(\DateTimeZone::PER_COUNTRY, 'US', false);
+		$this->assertTrue(isset($return['Pacific/Honolulu']));
+		$this->assertFalse(isset($return['Asia/Bangkok']));
 	}
 
 }

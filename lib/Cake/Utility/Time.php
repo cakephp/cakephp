@@ -1000,17 +1000,10 @@ class Time {
 			$regex = $filter;
 			$filter = null;
 		}
-		if (version_compare(PHP_VERSION, '5.3.0', '<')) {
-			if ($regex === null) {
-				$regex = '#^((Africa|America|Antartica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific)/|UTC)#';
-			}
-			$identifiers = \DateTimeZone::listIdentifiers();
-		} else {
-			if ($filter === null) {
-				$filter = \DateTimeZone::ALL;
-			}
-			$identifiers = \DateTimeZone::listIdentifiers($filter, $country);
+		if ($filter === null) {
+			$filter = \DateTimeZone::ALL;
 		}
+		$identifiers = \DateTimeZone::listIdentifiers($filter, $country);
 
 		if ($regex) {
 			foreach ($identifiers as $key => $tz) {

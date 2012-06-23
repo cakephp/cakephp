@@ -63,13 +63,6 @@ class Number {
 	);
 
 /**
- * If native number_format() should be used. If >= PHP5.4
- *
- * @var boolean
- */
-	protected static $_numberFormatSupport = null;
-
-/**
  * Formats a number with a level of precision.
  *
  * @param float $number A floating point number.
@@ -151,42 +144,12 @@ class Number {
 			extract($options);
 		}
 
-		$out = $before . static::_numberFormat($number, $places, $decimals, $thousands) . $after;
+		$out = $before . number_format($number, $places, $decimals, $thousands) . $after;
 
 		if ($escape) {
 			return h($out);
 		}
 		return $out;
-	}
-
-/**
- * Alternative number_format() to accommodate multibyte decimals and thousands < PHP 5.4
- *
- * @param float $number
- * @param integer $places
- * @param string $decimals
- * @param string $thousands
- * @return string
- */
-	protected static function _numberFormat($number, $places = 0, $decimals = '.', $thousands = ',') {
-		if (!isset(static::$_numberFormatSupport)) {
-			static::$_numberFormatSupport = version_compare(PHP_VERSION, '5.4.0', '>=');
-		}
-		if (static::$_numberFormatSupport) {
-			return number_format($number, $places, $decimals, $thousands);
-		}
-		$number = number_format($number, $places, '.', '');
-		$after = '';
-		$foundDecimal = strpos($number, '.');
-		if ($foundDecimal !== false) {
-			$after = substr($number, $foundDecimal);
-			$number = substr($number, 0, $foundDecimal);
-		}
-		while (($foundThousand = preg_replace('/(\d+)(\d\d\d)/', '\1 \2', $number)) != $number) {
-			$number = $foundThousand;
-		}
-		$number .= $after;
-		return strtr($number, array(' ' => $thousands, '.' => $decimals));
 	}
 
 /**

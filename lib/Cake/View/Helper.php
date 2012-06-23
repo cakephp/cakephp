@@ -892,12 +892,7 @@ class Helper extends Object {
  * @return void
  */
 	protected function _clean() {
-		if (get_magic_quotes_gpc()) {
-			$this->_cleaned = stripslashes($this->_tainted);
-		} else {
-			$this->_cleaned = $this->_tainted;
-		}
-
+		$this->_cleaned = $this->_tainted;
 		$this->_cleaned = str_replace(array("&amp;", "&lt;", "&gt;"), array("&amp;amp;", "&amp;lt;", "&amp;gt;"), $this->_cleaned);
 		$this->_cleaned = preg_replace('#(&\#*\w+)[\x00-\x20]+;#u', "$1;", $this->_cleaned);
 		$this->_cleaned = preg_replace('#(&\#x*)([0-9A-F]+);*#iu', "$1$2;", $this->_cleaned);
