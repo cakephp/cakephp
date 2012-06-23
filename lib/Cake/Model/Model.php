@@ -3167,10 +3167,6 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$this->schemaName = $db->getSchemaName();
-
-		if (empty($db) || !is_object($db)) {
-			throw new MissingConnectionException(array('class' => $this->name));
-		}
 	}
 
 /**
