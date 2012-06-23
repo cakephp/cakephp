@@ -60,7 +60,9 @@ class CakeTimeTest extends CakeTestCase {
  */
 	protected function _restoreSystemTimezone() {
 		date_default_timezone_set($this->_systemTimezoneIdentifier);
+		Configure::delete('Config.timezone');
 	}
+	
 /**
  * testToQuarter method
  *
