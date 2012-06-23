@@ -19,6 +19,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+
 /**
  * CakePHP Debug Level:
  *
@@ -49,7 +52,7 @@
  * @see ErrorHandler for more information on error handling and configuration.
  */
 	Configure::write('Error', array(
-		'handler' => 'ErrorHandler::handleError',
+		'handler' => 'Cake\Error\ErrorHandler::handleError',
 		'level' => E_ALL & ~E_DEPRECATED,
 		'trace' => true
 	));
@@ -71,10 +74,15 @@
  * @see ErrorHandler for more information on exception handling and configuration.
  */
 	Configure::write('Exception', array(
-		'handler' => 'ErrorHandler::handleException',
-		'renderer' => 'ExceptionRenderer',
+		'handler' => 'Cake\Error\ErrorHandler::handleException',
+		'renderer' => 'Cake\Error\ExceptionRenderer',
 		'log' => true
 	));
+
+/**
+ * Application namespace
+ */
+	Configure::write('App.namespace', 'App');
 
 /**
  * Application wide charset encoding
