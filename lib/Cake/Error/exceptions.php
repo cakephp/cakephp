@@ -343,6 +343,7 @@ class MissingConnectionException extends CakeException {
 		}
 		parent::__construct($message, $code);
 	}
+
 }
 
 /**
