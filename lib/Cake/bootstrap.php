@@ -127,9 +127,7 @@ $loader->register();
 use Cake\Core\App;
 use Cake\Core\Configure;
 
-App::$bootstrapping = true;
 Configure::bootstrap(isset($boot) ? $boot : true);
-
 
 /**
  *  Full url prefix

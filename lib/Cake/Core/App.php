@@ -158,14 +158,6 @@ class App {
 	protected static $_objectCacheChange = false;
 
 /**
- * Indicates the the Application is in the bootstrapping process. Used to better cache
- * loaded classes while the cache libraries have not been yet initialized
- *
- * @var boolean
- */
-	public static $bootstrapping = false;
-
-/**
  * Return the classname namespaced. This method check if the class is defined on the
  * application/plugin, otherwise try to load from the CakePHP core
  *
@@ -430,7 +422,7 @@ class App {
 		}
 
 		if (empty(static::$_objects) && $cache === true) {
-			static::$_objects = Cache::read('object_map', '_cake_core_');
+			static::$_objects = (array)Cache::read('object_map', '_cake_core_');
 		}
 
 		$cacheLocation = empty($plugin) ? 'app' : $plugin;
@@ -492,6 +484,9 @@ class App {
 		if (!isset(static::$_classMap[$className])) {
 			return false;
 		}
+		if (empty(static::$_map)) {
+			static::$_map = (array)Cache::read('file_map', '_cake_core_');
+		}
 
 		$parts = explode('.', static::$_classMap[$className], 2);
 		list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
@@ -539,7 +534,7 @@ class App {
 	}
 
 /**
- * Initializes the cache for App, registers a shutdown function.
+ * Initializes the App, registers a shutdown function.
  *
  * @return void
  */
@@ -547,8 +542,6 @@ class App {
 		$loader = new ClassLoader(Configure::read('App.namespace'), dirname(APP));
 		$loader->register();
 
-		static::$_map += (array)Cache::read('file_map', '_cake_core_');
-		static::$_objects += (array)Cache::read('object_map', '_cake_core_');
 		register_shutdown_function(array(__CLASS__, 'shutdown'));
 	}
 
@@ -570,9 +563,6 @@ class App {
 		}
 		if (!$plugin && empty(static::$_map['plugin.' . $name])) {
 			static::$_map[$key] = $file;
-		}
-		if (!static::$bootstrapping) {
-			static::$_cacheChange = true;
 		}
 	}
 
