@@ -18,6 +18,7 @@
  */
 namespace Cake\Test\TestCase\Core;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -36,6 +37,49 @@ class AppTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload();
+	}
+
+/**
+ * testClassname method
+ *
+ * @return void
+ */
+	public function testClassname() {
+		$currentApp = Configure::read('App.namespace');
+		Configure::write('App.namespace', 'TestApp');
+
+		// Test core
+		$this->assertEquals('Cake\Core\App', App::classname('App', 'Core'));
+		$this->assertFalse(App::classname('App', 'Core', 'Suffix'));
+
+		// Assert prefix
+		$this->assertFalse(App::classname('Auth', 'Controller/Component'));
+		$this->assertEquals('Cake\Controller\Component\AuthComponent', App::classname('Auth', 'Controller/Component', 'Component'));
+
+		// Test app
+		$this->assertEquals('TestApp\Controller\PagesController', App::classname('Pages', 'Controller', 'Controller'));
+		$this->assertFalse(App::classname('Unknown', 'Controller', 'Controller'));
+
+		// Test plugin
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+		), App::RESET);
+		Plugin::load('TestPlugin');
+		$this->assertEquals('TestPlugin\Utility\TestPluginEngine', App::classname('TestPlugin.TestPlugin', 'Utility', 'Engine'));
+		$this->assertFalse(App::classname('TestPlugin.Unknown', 'Utility'));
+
+		Plugin::unload('TestPlugin');
+		Configure::write('App.namespace', $currentApp);
+	}
+
+/**
+ * testClassnameUnknownPlugin method
+ *
+ * @expectedException Cake\Error\MissingPluginException
+ * @return void
+ */
+	public function testClassnameUnknownPlugin() {
+		App::classname('UnknownPlugin.Classname', 'Utility');
 	}
 
 /**
