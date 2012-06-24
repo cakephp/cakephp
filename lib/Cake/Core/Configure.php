@@ -99,12 +99,6 @@ class Configure {
 				static::$_values['Error'],
 				static::$_values['Exception']
 			);
-
-			// Preload Debugger + String in case of E_STRICT errors when loading files.
-			if (self::$_values['debug'] > 0) {
-				class_exists('Cake\Utility\Debugger');
-				class_exists('Cake\Utility\String');
-			}
 		}
 	}
 
