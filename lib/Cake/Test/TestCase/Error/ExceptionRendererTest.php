@@ -302,9 +302,8 @@ class ExceptionRendererTest extends TestCase {
 			),
 		), App::RESET);
 
-		App::uses('TestAppsExceptionRenderer', 'Error');
-		$exception = new SocketException('socket exception');
-		$renderer = new TestAppsExceptionRenderer($exception);
+		$exception = new Error\SocketException('socket exception');
+		$renderer = new \TestApp\Error\TestAppsExceptionRenderer($exception);
 
 		ob_start();
 		$renderer->render();
