@@ -315,8 +315,9 @@ class CakeTime {
 		if (is_integer($dateString) || is_numeric($dateString)) {
 			$date = intval($dateString);
 		} elseif (is_object($dateString) && $dateString instanceof DateTime) {
-			$dateString->setTimezone(new DateTimeZone(date_default_timezone_get()));
-			$date = (int)$dateString->format('U') + $dateString->getOffset();
+			$clone = clone $dateString;
+			$clone->setTimezone(new DateTimeZone(date_default_timezone_get()));
+			$date = (int)$clone->format('U') + $clone->getOffset();
 		} else {
 			$date = strtotime($dateString);
 		}
