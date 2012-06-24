@@ -52,6 +52,26 @@ class PluginTest extends TestCase {
 	}
 
 /**
+ * Test the plugin namespace
+ *
+ * @return void
+ */
+	public function testGetNamespace() {
+		Plugin::load('TestPlugin');
+		$this->assertEquals('TestPlugin', Plugin::getNamespace('TestPlugin'));
+
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin2' . DS)
+		), App::RESET);
+
+		Plugin::load('TestPluginThree', array('namespace' => 'Company\TestPluginThree'));
+		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('TestPluginThree'));
+
+		Plugin::load('CustomPlugin', array('namespace' => 'Company\TestPluginThree'));
+		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('CustomPlugin'));
+	}
+
+/**
  * Tests loading a single plugin
  *
  * @return void

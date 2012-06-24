@@ -80,9 +80,14 @@ class Plugin {
 		}
 		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin);
 		if (empty($config['path'])) {
+			$namespacePath = str_replace('\\', DS, $config['namespace']);
 			foreach (App::path('Plugin') as $path) {
 				if (is_dir($path . $plugin)) {
 					static::$_plugins[$plugin] = $config + array('path' => $path . $plugin . DS);
+					break;
+				}
+				if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {
+					static::$_plugins[$plugin] = $config + array('path' => $path . $namespacePath . DS);
 					break;
 				}
 			}
