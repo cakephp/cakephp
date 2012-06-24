@@ -189,21 +189,12 @@ class App {
 		}
 		$base = rtrim($base, '\\');
 
-		if ($type === 'Lib') {
-			$fullname = '\\' . $name . $suffix;
-			if (class_exists($base . $fullname)) {
-				return $base . $fullname;
-			}
-		}
 		$fullname = '\\' . str_replace('/', '\\', $type) . '\\' . $name . $suffix;
 		if (class_exists($base . $fullname)) {
 			return $base . $fullname;
 		}
 
 		if ($checkCore) {
-			if ($type === 'Lib') {
-				$fullname = '\\' . $name . $suffix;
-			}
 			if (class_exists('Cake' . $fullname)) {
 				return 'Cake' . $fullname;
 			}
