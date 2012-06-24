@@ -47,7 +47,7 @@ class Hash {
 		} else {
 			$parts = $path;
 		}
-		while (($key = array_shift($parts)) !== null) {
+		foreach ($parts as $key) {
 			if (is_array($data) && isset($data[$key])) {
 				$data =& $data[$key];
 			} else {
@@ -106,8 +106,7 @@ class Hash {
 
 		$context = array($_key => array($data));
 
-		do {
-			$token = array_shift($tokens);
+		foreach ($tokens as $token) {
 			$next = array();
 
 			$conditions = false;
@@ -137,7 +136,7 @@ class Hash {
 			}
 			$context = array($_key => $next);
 
-		} while (!empty($tokens));
+		}
 		return $context[$_key];
 	}
 
@@ -176,12 +175,7 @@ class Hash {
 			PREG_SET_ORDER
 		);
 
-		$ok = true;
-		while ($ok) {
-			if (empty($conditions)) {
-				break;
-			}
-			$cond = array_shift($conditions);
+		foreach ($conditions as $cond) {
 			$attr = $cond['attr'];
 			$op = isset($cond['op']) ? $cond['op'] : null;
 			$val = isset($cond['val']) ? $cond['val'] : null;

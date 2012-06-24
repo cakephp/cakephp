@@ -306,6 +306,7 @@ class ModelValidator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @return Cake\Model\Validator\ValidationSet|array
  */
 	public function getField($name = null) {
+		$this->_parseRules();
 		if ($name !== null && !empty($this->_fields[$name])) {
 			return $this->_fields[$name];
 		} elseif ($name !== null) {

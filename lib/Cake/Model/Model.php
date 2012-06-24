@@ -3174,10 +3174,6 @@ class Model extends Object implements EventListener {
 		}
 
 		$this->schemaName = $db->getSchemaName();
-
-		if (empty($db) || !is_object($db)) {
-			throw new Error\MissingConnectionException(array('class' => $this->name));
-		}
 	}
 
 /**
@@ -3403,7 +3399,7 @@ class Model extends Object implements EventListener {
 			return $this->_validator = $instance;
 		}
 
-		if (is_null($instance)) {
+		if (empty($this->_validator) && is_null($instance)) {
 			$this->_validator = new ModelValidator($this);
 		}
 

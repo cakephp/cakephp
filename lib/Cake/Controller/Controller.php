@@ -809,7 +809,7 @@ class Controller extends Object implements EventListener {
  * @return array Array with keys url, status and exit
  */
 	protected function _parseBeforeRedirect($response, $url, $status, $exit) {
-		if (is_array($response)) {
+		if (is_array($response) && isset($response[0])) {
 			foreach ($response as $resp) {
 				if (is_array($resp) && isset($resp['url'])) {
 					extract($resp, EXTR_OVERWRITE);
@@ -817,6 +817,8 @@ class Controller extends Object implements EventListener {
 					$url = $resp;
 				}
 			}
+		} elseif (is_array($response)) {
+			extract($response, EXTR_OVERWRITE);
 		}
 		return compact('url', 'status', 'exit');
 	}

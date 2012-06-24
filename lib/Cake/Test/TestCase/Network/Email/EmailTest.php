@@ -88,6 +88,7 @@ class EmailConfig {
 		'subject' => 'Test mail subject',
 		'transport' => 'Debug',
 		'theme' => 'TestTheme',
+		'helpers' => array('Html', 'Form'),
 	);
 
 }
@@ -739,6 +740,9 @@ class CakeEmailTest extends TestCase {
 
 		$result = $this->CakeEmail->transportClass();
 		$this->assertInstanceOf('DebugTransport', $result);
+
+		$result = $this->CakeEmail->helpers();
+		$this->assertEquals($configs->test['helpers'], $result);
 	}
 
 /**

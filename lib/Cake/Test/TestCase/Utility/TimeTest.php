@@ -544,7 +544,7 @@ class TimeTest extends TestCase {
 		$result = $this->Time->format('Y-m-d', null, 'never');
 		$this->assertEquals('never', $result);
 
-		$result = $this->Time->format('2012-01-13', '%d-%m-%Y', 'invalid', 'UTC');
+		$result = $this->Time->format('2012-01-13', '%d-%m-%Y', 'invalid');
 		$this->assertEquals('13-01-2012', $result);
 
 		$result = $this->Time->format('nonsense', '%d-%m-%Y', 'invalid', 'UTC');
@@ -822,6 +822,13 @@ class TimeTest extends TestCase {
 		$result = $this->Time->fromString('+1 hour', $timezone);
 		$expected = $this->Time->convert(strtotime('+1 hour'), $timezone);
 		$this->assertEquals($expected, $result);
+
+		date_default_timezone_set('UTC');
+		$date = new \DateTime('now', new \DateTimeZone('Europe/London'));
+		$this->Time->fromString($date);
+		$this->assertEquals('Europe/London', $date->getTimeZone()->getName());
+
+		$this->_restoreSystemTimezone();
 	}
 
 /**

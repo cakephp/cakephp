@@ -564,6 +564,15 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
+				new Error\MissingConnectionException(array('class' => 'Mysql', 'enabled' => false)),
+				array(
+					'/<h2>Missing Database Connection<\/h2>/',
+					'/Mysql requires a database connection/',
+					'/Mysql driver is NOT enabled/'
+				),
+				500
+			),
+			array(
 				new Error\MissingDatasourceConfigException(array('config' => 'default')),
 				array(
 					'/<h2>Missing Datasource Configuration<\/h2>/',

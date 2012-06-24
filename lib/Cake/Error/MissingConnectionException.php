@@ -27,4 +27,11 @@ class MissingConnectionException extends Exception {
 
 	protected $_messageTemplate = 'Database connection "%s" is missing, or could not be created.';
 
+	public function __construct($message, $code = 500) {
+		if (is_array($message)) {
+			$message += array('enabled' => true);
+		}
+		parent::__construct($message, $code);
+	}
+
 }
