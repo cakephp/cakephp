@@ -40,6 +40,13 @@ class ClassLoader {
 	protected $namespace;
 
 	/**
+	 * Store the namespace length for performance
+	 *
+	 * @var integer
+	 */
+	protected $namespaceLength;
+
+	/**
 	 * Path with the classes
 	 *
 	 * @var string
@@ -60,6 +67,7 @@ class ClassLoader {
 	 */
 	public function __construct($ns = null, $includePath = null) {
 		$this->namespace = rtrim($ns, $this->namespaceSeparator) . $this->namespaceSeparator;
+		$this->namespaceLength = strlen($this->namespace);
 		$this->includePath = $includePath;
 	}
 
@@ -145,7 +153,7 @@ class ClassLoader {
 	 * @return boolean
 	 */
 	public function loadClass($className) {
-		if (strpos($className, $this->namespace) === 0) {
+		if (substr($className, 0, $this->namespaceLength) === $this->namespace) {
 			$path = $this->includePath . DS . str_replace($this->namespaceSeparator, DS, $className) . $this->fileExtension;
 			if (!file_exists($path)) {
 				return false;
