@@ -538,7 +538,7 @@ class CakeTimeTest extends CakeTestCase {
 		$result = $this->Time->format('Y-m-d', null, 'never');
 		$this->assertEquals('never', $result);
 
-		$result = $this->Time->format('2012-01-13', '%d-%m-%Y', 'invalid', 'UTC');
+		$result = $this->Time->format('2012-01-13', '%d-%m-%Y', 'invalid');
 		$this->assertEquals('13-01-2012', $result);
 
 		$result = $this->Time->format('nonsense', '%d-%m-%Y', 'invalid', 'UTC');
