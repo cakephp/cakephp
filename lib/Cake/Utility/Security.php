@@ -34,6 +34,50 @@ class Security {
 	public static $hashType = null;
 
 /**
+ * BLOWFISH encryption method
+ *
+ * @const BLOWFISH
+ */
+	const BLOWFISH = 'CRYPT_BLOWFISH';
+
+/**
+ * SHA512 encryption method
+ *
+ * @const SHA512
+ */
+	const SHA512 = 'CRYPT_SHA512';
+
+/**
+ * Crypt settings.
+ *
+ * @var array
+ */
+	public static $cryptSettings = array(
+		'cryptType' => self::BLOWFISH,
+		'cost' => 10,
+	);
+
+/**
+ * Salt properties.
+ *
+ * @var array
+ */
+	protected static $_saltProperties = array(
+		'saltFormat' => array(
+			self::BLOWFISH => '$2a$%s$%s$',
+			self::SHA512 => '$6$rounds=%s$%s$'
+		),
+		'saltLength' => array(
+			self::BLOWFISH => 22,
+			self::SHA512 => 16
+		),
+		'costLimits' => array(
+			self::BLOWFISH => array(4, 31),
+			self::SHA512 => array(1000, 999999999)
+		)
+	);
+
+/**
  * Get allowed minutes of inactivity based on security level.
  *
  * @return integer Allowed inactivity in minutes
@@ -187,6 +231,71 @@ class Security {
 			$out .= rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
 		}
 		return $out;
+	}
+
+/**
+ * Generates a psuedo random salt suitable for use with php's crypt() function.
+ * The salt length should not exceed 27. The salt will be composed of
+ * [./0-9A-Za-z]{$length}.
+ *
+ * @param integer $length The length of the returned salt
+ * @return string The generated salt
+ */
+	public static function salt($length = 22) {
+		return substr(str_replace('+', '.', base64_encode(sha1(uniqid(Configure::read('Security.salt'), true), true))), 0, $length);
+	}
+
+/**
+ * One way encryption using php's crypt() function.
+ *
+ * ### Options that can be passed to $options.
+ *
+ * - cryptType - The encryption type to use for this function call,
+ *   CRYPT_BLOWFISH or CRYPT_SHA512.
+ * - cost - The cost to compute the hash. Higher cost increases security but
+ *   also increases time taken to complete the encryption.
+ *
+ * @param string $password The string to be encrypted.
+ * @param string $salt False to generate new salt. Optionally pass the complete
+ * 	(from db etc) encrpted password as salt.
+ * @param array $options Array of options to override default settings, see above.
+ */
+	public static function crypt($password, $salt = false, $options = array()) {
+		if (isset($options['cryptType']) && $options['cryptType'] === self::SHA512 && !isset($options['cost'])) {
+			$options['cost'] = 5000;
+		}
+		$options = array_merge(self::$cryptSettings, $options, self::$_saltProperties);
+		extract($options);
+		if ($salt === false) {
+			if (isset($costLimits[$cryptType]) && ($cost < $costLimits[$cryptType][0] || $cost > $costLimits[$cryptType][1])) {
+				trigger_error(sprintf(
+					__d(
+						'cake_dev',
+						'When using %s you must specify a cost between %s and %s',
+						array(
+							$cryptType,
+							$costLimits[$cryptType][0],
+							$costLimits[$cryptType][1]
+						)
+					),
+					E_USER_WARNING
+				));
+				return '';
+			}
+			$vspArgs = array();
+			$salt = self::salt($saltLength[$cryptType]);
+			if ($cryptType === self::BLOWFISH) {
+				$bfCost = chr(ord('0') + $cost / 10);
+				$bfCost .= chr(ord('0') + $cost % 10);
+				$vspArgs[] = $bfCost;
+			}
+			if ($cryptType === self::SHA512) {
+				$vspArgs[] = $cost;
+			}
+			$vspArgs[] = $salt;
+			$salt = vsprintf($saltFormat[$cryptType], $vspArgs);
+		}
+		return crypt($password, $salt);
 	}
 
 }
