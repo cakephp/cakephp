@@ -28,7 +28,9 @@ use Cake\TestSuite\TestCase;
 use Cake\View\ScaffoldView;
 
 require_once dirname(dirname(__FILE__)) . DS . 'Model' . DS . 'models.php';
-class_alias('Cake\Test\TestCase\Model\ScaffoldMock', 'Cake\Model\ScaffoldMock');
+if (!class_exists('Cake\Model\ScaffoldMock')) {
+	class_alias('Cake\Test\TestCase\Model\ScaffoldMock', 'Cake\Model\ScaffoldMock');
+}
 
 /**
  * TestScaffoldView class

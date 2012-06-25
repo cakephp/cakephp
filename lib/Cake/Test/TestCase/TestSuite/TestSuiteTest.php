@@ -95,7 +95,7 @@ class TestSuiteTest extends TestCase {
 		touch($Folder->path . DS . 'SomeNotesTest.txt');
 		touch($Folder->path . DS . 'NotHiddenTest.php');
 
-		$suite = $this->getMock('CakeTestSuite', array('addTestFile'));
+		$suite = $this->getMock('Cake\TestSuite\TestSuite', array('addTestFile'));
 		$suite
 			->expects($this->exactly(1))
 			->method('addTestFile');

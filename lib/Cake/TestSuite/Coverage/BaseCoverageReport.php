@@ -77,7 +77,7 @@ abstract class BaseCoverageReport {
  * @param Cake\TestSuite\Reporter\BaseReporter $reporter Reporter to suck params out of.
  * @return void
  */
-	protected function setParams(BaseReporter $reporter) {
+	protected function _setParams(BaseReporter $reporter) {
 		if ($reporter->params['app']) {
 			$this->appTest = true;
 		}

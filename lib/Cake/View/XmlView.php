@@ -13,6 +13,7 @@
 namespace Cake\View;
 use Cake\Controller\Controller;
 use Cake\Network\Response;
+use Cake\Utility\Set;
 use Cake\Utility\Xml;
 
 /**

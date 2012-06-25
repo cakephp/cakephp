@@ -17,6 +17,7 @@
  */
 namespace Cake\TestSuite\Reporter;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\TestSuite\Coverage\HtmlCoverageReport;
 use Cake\Utility\Inflector;
 

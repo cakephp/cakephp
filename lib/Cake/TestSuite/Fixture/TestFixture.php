@@ -19,6 +19,7 @@ use Cake\Model\ConnectionManager;
 use Cake\Model\Model;
 use Cake\Model\Schema;
 use Cake\Utility\ClassRegistry;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\Set;
 

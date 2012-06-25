@@ -19,6 +19,7 @@
 namespace Cake\Test\TestCase\Utility;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\File;
 use Cake\Utility\Validation;
 
 /**
