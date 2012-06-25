@@ -700,10 +700,10 @@ class CakeTime {
 		$accuracy = self::$wordAccuracy;
 
 		if (is_array($options)) {
-			if (isset($options['userOffset'])) {
-				$timezone = $options['userOffset'];
-			} elseif (isset($options['timezone'])) {
+			if (isset($options['timezone'])) {
 				$timezone = $options['timezone'];
+			} elseif (isset($options['userOffset'])) {
+				$timezone = $options['userOffset'];
 			}
 
 			if (isset($options['accuracy'])) {
@@ -718,12 +718,11 @@ class CakeTime {
 
 			if (isset($options['format'])) {
 				$format = $options['format'];
-				unset($options['format']);
 			}
 			if (isset($options['end'])) {
 				$end = $options['end'];
-				unset($options['end']);
 			}
+			unset($options['end'], $options['format']);
 		} else {
 			$format = $options;
 		}
@@ -838,11 +837,6 @@ class CakeTime {
 			if (!$backwards) {
 				$relativeDate = __d('cake', '%s ago', $relativeDate);
 			}
-		}
-
-		// If within the last or next 7 days
-		if (self::wasWithinLast('7 days', $dateTime, $timezone) || self::isWithinNext('7 days', $dateTime, $timezone)) {
-			$relativeDate = self::niceShort($dateTime , $timezone);
 		}
 
 		// If now
