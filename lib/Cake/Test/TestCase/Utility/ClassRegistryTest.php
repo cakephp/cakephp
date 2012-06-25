@@ -173,17 +173,17 @@ class ClassRegistryTest extends TestCase {
  * @return void
  */
 	public function testAddModel() {
-		$Tag = ClassRegistry::init('RegisterArticleTag');
-		$this->assertTrue(is_a($Tag, 'RegisterArticleTag'));
+		$Tag = ClassRegistry::init(__NAMESPACE__ . '\RegisterArticleTag');
+		$this->assertInstanceOf(__NAMESPACE__ . '\RegisterArticleTag', $Tag);
 
-		$TagCopy = ClassRegistry::isKeySet('RegisterArticleTag');
+		$TagCopy = ClassRegistry::isKeySet(__NAMESPACE__ . '\RegisterArticleTag');
 		$this->assertTrue($TagCopy);
 
 		$Tag->name = 'SomeNewName';
 
-		$TagCopy = ClassRegistry::getObject('RegisterArticleTag');
+		$TagCopy = ClassRegistry::getObject(__NAMESPACE__ . '\RegisterArticleTag');
 
-		$this->assertTrue(is_a($TagCopy, 'RegisterArticleTag'));
+		$this->assertInstanceOf(__NAMESPACE__ . '\RegisterArticleTag', $TagCopy);
 		$this->assertSame($Tag, $TagCopy);
 
 		$NewTag = ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
@@ -311,16 +311,16 @@ class ClassRegistryTest extends TestCase {
  */
 	public function testPrefixedTestDatasource() {
 		ClassRegistry::config(array('testing' => true));
-		$Model = ClassRegistry::init('RegisterPrefixedDs');
+		$Model = ClassRegistry::init(__NAMESPACE__ . '\RegisterPrefixedDs');
 		$this->assertEquals('test', $Model->useDbConfig);
-		ClassRegistry::removeObject('RegisterPrefixedDs');
+		ClassRegistry::removeObject(__NAMESPACE__ . '\RegisterPrefixedDs');
 
 		$testConfig = ConnectionManager::getDataSource('test')->config;
 		ConnectionManager::create('test_doesnotexist', $testConfig);
 
-		$Model = ClassRegistry::init('RegisterArticle');
+		$Model = ClassRegistry::init(__NAMESPACE__ . '\RegisterArticle');
 		$this->assertEquals('test', $Model->useDbConfig);
-		$Model = ClassRegistry::init('RegisterPrefixedDs');
+		$Model = ClassRegistry::init(__NAMESPACE__ . '\RegisterPrefixedDs');
 		$this->assertEquals('test_doesnotexist', $Model->useDbConfig);
 	}
 
@@ -339,7 +339,7 @@ class ClassRegistryTest extends TestCase {
  * @return void
  */
 	public function testInitAbstractClass() {
-		ClassRegistry::init('ClassRegistryAbstractModel');
+		ClassRegistry::init(__NAMESPACE__ . '\ClassRegistryAbstractModel');
 	}
 
 /**
@@ -349,6 +349,6 @@ class ClassRegistryTest extends TestCase {
  * @return void
  */
 	public function testInitInterface() {
-		ClassRegistry::init('ClassRegistryInterfaceTest');
+		ClassRegistry::init(__NAMESPACE__ . '\ClassRegistryInterfaceTest');
 	}
 }

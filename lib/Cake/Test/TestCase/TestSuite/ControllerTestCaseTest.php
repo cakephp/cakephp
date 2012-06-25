@@ -143,9 +143,6 @@ class ControllerTestCaseTest extends TestCase {
  * Test that ControllerTestCase::generate() creates mock objects correctly
  */
 	public function testGenerate() {
-		if (defined('APP_CONTROLLER_EXISTS')) {
-			$this->markTestSkipped('AppController exists, cannot run.');
-		}
 		$Posts = $this->Case->generate(__NAMESPACE__ . '\PostsController');
 		$this->assertEquals('Posts', $Posts->name);
 		$this->assertEquals('Post', $Posts->modelClass);
@@ -221,7 +218,7 @@ class ControllerTestCaseTest extends TestCase {
 		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
 		$this->assertInstanceOf('TestPlugin\Model\TestPluginComment', $result);
 
-		$Tests = $this->Case->generate(__NAMESPACE__ . '\ControllerTestCaseTest', array(
+		$Tests = $this->Case->generate(__NAMESPACE__ . '\ControllerTestCaseTestController', array(
 			'models' => array(
 				'TestPlugin.TestPluginComment' => array('save')
 			)

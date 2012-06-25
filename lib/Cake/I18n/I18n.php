@@ -303,7 +303,7 @@ class I18n {
 		$this->_noLocale = true;
 		$core = true;
 		$merge = array();
-		$searchPaths = App::path('locales');
+		$searchPaths = App::path('Locale');
 		$plugins = Plugin::loaded();
 
 		if (!empty($plugins)) {

@@ -925,7 +925,7 @@ class HelperTest extends TestCase {
 	public function testThatHelperHelpersAreNotAttached() {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
-		));
+		), App::RESET);
 		Plugin::loadAll();
 
 		$Helper = new TestHelper($this->View);

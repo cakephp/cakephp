@@ -65,7 +65,7 @@ class HelperCollection extends ObjectCollection implements EventListener {
 
 		try {
 			$this->load($helper);
-		} catch (MissingHelperException $exception) {
+		} catch (Error\MissingHelperException $exception) {
 			if ($this->_View->plugin) {
 				$this->load($this->_View->plugin . '.' . $helper);
 				return true;
