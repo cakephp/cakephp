@@ -334,6 +334,16 @@ class CakeResponse {
 	protected $_cookies = array();
 
 /**
+ * A mapping between extensions and serializers for response bodies of that type.
+ * By default only JSON and XML are mapped, use CakeResponse::addSerializeType()
+ *
+ * @var array
+ */
+	protected $_serializeTypeMap = array(
+		'json' => 'json_encode'
+	);
+
+/**
  * Class constructor
  *
  * @param array $options list of parameters to setup the response. Possible values are:
@@ -355,6 +365,7 @@ class CakeResponse {
 		if (isset($options['charset'])) {
 			$this->charset($options['charset']);
 		}
+		$this->addSerializeType('xml', array($this, 'serializeXml'));
 	}
 
 /**
@@ -1151,4 +1162,49 @@ class CakeResponse {
 		$this->_cookies[$options['name']] = $options;
 	}
 
+/**
+ * Add a new mapped serialize type. Mapped types will automatically
+ * serialize during render if `$_serialize` view var is set
+ *
+ * @param string $type The type alias being converted, ie. json
+ * @param array $handler The handler array for the type.  The first index should
+ *    be the handling callback, all other arguments should be additional parameters
+ *    for the handler.
+ * @return void
+ */
+	public function addSerializeType($type, $handler) {
+		if (is_callable($handler)) {
+			$this->_serializeTypeMap[$type] = $handler;
+		}
+	}
+
+/**
+ * Helper method to serialize xml data, due to lack of anonymous functions
+ * this lives here.
+ *
+ * @param array $data Data to be serialized
+ * @return string Xml data
+ */
+	public function serializeXml($data) {
+		return Xml::fromArray($data)->asXML();
+	}
+
+/**
+ * Get serializer for type or all when not passing type
+ *
+ * @return array
+ */
+	public function serializeTypeMap($type = null) {
+		if (!$type) {
+			return $this->_serializeTypeMap;
+		}
+		if (!empty($this->_serializeTypeMap[$type])) {
+			return $this->_serializeTypeMap[$type];
+		}
+	}
+
+	public function serialize($type, $data = null) {
+		$handler = $this->serializeTypeMap($type);
+		return call_user_func($handler, $data);
+	}
 }

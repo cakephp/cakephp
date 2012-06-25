@@ -97,8 +97,7 @@ class XmlView extends View {
 					$data = array('response' => array($serialize => $data));
 				}
 			}
-			$content = Xml::fromArray($data)->asXML();
-			return $content;
+			return $this->response->serialize('xml', $data);
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
 			if (!$this->_helpersLoaded) {
