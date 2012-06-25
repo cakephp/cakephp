@@ -101,7 +101,7 @@ if (!defined('TMP')) {
  * Path to the vendors directory.
  */
 if (!defined('VENDORS')) {
-	define('VENDORS', ROOT . DS . 'vendors' . DS);
+	define('VENDORS', ROOT . DS . 'Vendor' . DS);
 }
 
 /**
