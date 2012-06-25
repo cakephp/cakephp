@@ -442,17 +442,16 @@ class Validation {
  * Check that value has a valid file extension.
  *
  * @param string|array $check Value to check
- * @param array $extensions file extensions to allow
+ * @param array $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
  * @return boolean Success
  */
 	public static function extension($check, $extensions = array('gif', 'jpeg', 'png', 'jpg')) {
 		if (is_array($check)) {
 			return self::extension(array_shift($check), $extensions);
 		}
-		$pathSegments = explode('.', $check);
-		$extension = strtolower(array_pop($pathSegments));
+		$extension = strtolower(pathinfo($check, PATHINFO_EXTENSION));
 		foreach ($extensions as $value) {
-			if ($extension == strtolower($value)) {
+			if ($extension === strtolower($value)) {
 				return true;
 			}
 		}
