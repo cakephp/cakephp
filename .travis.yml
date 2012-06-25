@@ -23,6 +23,7 @@ before_script:
   - sudo node ./App/tmp/socket.js &
   - set +H
   - echo "<?php
+    namespace App\Config;
     class DATABASE_CONFIG {
     private \$identities = array(
       'mysql' => array(
