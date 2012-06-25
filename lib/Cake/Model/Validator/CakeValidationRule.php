@@ -85,7 +85,7 @@ class CakeValidationRule {
  *
  * @var boolean
  */
-	public $allowEmpty = false;
+	public $allowEmpty = null;
 
 /**
  * The 'on' key

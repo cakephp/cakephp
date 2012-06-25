@@ -273,7 +273,11 @@ class Article extends CakeTestModel {
  *
  * @var array
  */
-	public $validate = array('user_id' => 'numeric', 'title' => array('allowEmpty' => false, 'rule' => 'notEmpty'), 'body' => 'notEmpty');
+	public $validate = array(
+		'user_id' => 'numeric',
+		'title' => array('required' => false, 'rule' => 'notEmpty'),
+		'body' => 'notEmpty',
+	);
 
 /**
  * beforeSaveReturn property
