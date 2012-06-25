@@ -523,4 +523,43 @@ class CakeNumberTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * testFromReadableSize
+ *
+ * @dataProvider filesizes
+ * @return void
+ */
+	public function testFromReadableSize($size, $expected) {
+		$result = $this->Number->fromReadableSize($size);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testFromReadableSize
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testFromReadableSizeException() {
+		$result = $this->Number->fromReadableSize('bogus');
+	}
+
+/**
+ * filesizes dataprovider
+ *
+ * @return array
+ */
+	public function filesizes() {
+		return array(
+			array('512B', 512),
+			array('1KB', 1024),
+			array('1.5KB', 1536),
+			array('1MB', 1048576),
+			array('1.5MB', 1572864),
+			array('1GB', 1073741824),
+			array('1.5GB', 1610612736),
+			array('512', 512),
+		);
+	}
+
 }
