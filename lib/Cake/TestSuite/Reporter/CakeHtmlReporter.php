@@ -258,10 +258,13 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->toString());
 
 		if ((is_string($actualMsg) && is_string($expectedMsg)) || (is_array($actualMsg) && is_array($expectedMsg))) {
-		  echo "<br/>Actual: ";
-		  print_r($actualMsg);
-		  echo "<br/>Expected: ";
+		  echo "<br/>--- Expected <br/>+++ Actual";
+		  echo "<br/>@@ @@<br/>";
+		  echo "- '";
 		  print_r($expectedMsg);
+		  echo "'<br/>+ '";
+		  print_r($actualMsg);
+		  echo "'";
 		}
 
 		echo "</pre></div>\n";
