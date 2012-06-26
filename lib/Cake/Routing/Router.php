@@ -266,20 +266,14 @@ class Router {
  * @throws RouterException
  */
 	public static function connect($route, $defaults = array(), $options = array()) {
-		foreach (static::$_prefixes as $prefix) {
-			if (isset($defaults[$prefix])) {
-				if ($defaults[$prefix]) {
-					$defaults['prefix'] = $prefix;
-				} else {
-					unset($defaults[$prefix]);
-				}
-				break;
-			}
-		}
-		if (isset($defaults['prefix'])) {
+		if (!empty($defaults['prefix'])) {
 			static::$_prefixes[] = $defaults['prefix'];
 			static::$_prefixes = array_keys(array_flip(static::$_prefixes));
 		}
+		if (empty($defaults['prefix'])) {
+			unset($defaults['prefix']);
+		}
+
 		$defaults += array('plugin' => null);
 		if (empty($options['action'])) {
 			$defaults += array('action' => 'index');
@@ -416,13 +410,7 @@ class Router {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
 
-		$out = static::$_routes->parse($url);
-
-		if (isset($out['prefix'])) {
-			$out['action'] = $out['prefix'] . '_' . $out['action'];
-		}
-
-		return $out;
+		return static::$_routes->parse($url);
 	}
 
 /**
@@ -689,29 +677,25 @@ class Router {
 			}
 
 			// Copy the current action if the controller is the current one.
-			if (empty($url['action'])) {
-				if (empty($url['controller']) || $params['controller'] === $url['controller']) {
-					$url['action'] = $params['action'];
-				} else {
-					$url['action'] = 'index';
-				}
+			if (
+				empty($url['action']) &&
+				(empty($url['controller']) || $params['controller'] === $url['controller'])
+			) {
+				$url['action'] = $params['action'];
 			}
 
-			$prefixExists = (array_intersect_key($url, array_flip(static::$_prefixes)));
-			foreach (static::$_prefixes as $prefix) {
-				if (!empty($params[$prefix]) && !$prefixExists) {
-					$url[$prefix] = true;
-				} elseif (isset($url[$prefix]) && !$url[$prefix]) {
-					unset($url[$prefix]);
-				}
-				if (isset($url[$prefix]) && strpos($url['action'], $prefix . '_') === 0) {
-					$url['action'] = substr($url['action'], strlen($prefix) + 1);
-				}
+			// Keep the current prefix around, or remove it if its falsey
+			if (!empty($params['prefix']) && !isset($url['prefix'])) {
+				$url['prefix'] = $params['prefix'];
+			}
+			if (empty($url['prefix'])) {
+				unset($url['prefix']);
 			}
 
 			$url += array(
 				'controller' => $params['controller'],
-				'plugin' => $params['plugin']
+				'plugin' => $params['plugin'],
+				'action' => 'index'
 			);
 			$url = static::_applyUrlFilters($url);
 			$output = static::$_routes->match($url);

@@ -222,16 +222,18 @@ class Route {
 		if (isset($this->defaults['plugin'])) {
 			$name = $this->defaults['plugin'] . '.';
 		}
+		if (strpos($this->template, ':plugin') !== false) {
+			$name = '_plugin.';
+		}
 		foreach (array('controller', 'action') as $key) {
 			if ($key === 'action') {
 				$name .= ':';
 			}
-			if (isset($this->defaults[$key])) {
-				$name .= $this->defaults[$key];
-			}
 			$var = ':' . $key;
 			if (strpos($this->template, $var) !== false) {
 				$name .= '_' . $key;
+			} elseif (isset($this->defaults[$key])) {
+				$name .= $this->defaults[$key];
 			}
 		}
 		return $this->_name = strtolower($name);
@@ -421,10 +423,6 @@ class Route {
 			unset($url['_ext']);
 		}
 
-		if (isset($defaults['prefix'])) {
-			$url['prefix'] = $defaults['prefix'];
-		}
-
 		// Missing defaults is a fail.
 		if (array_diff_key($defaults, $url) !== array()) {
 			return false;
@@ -497,14 +495,6 @@ class Route {
  * @return string Composed route string.
  */
 	protected function _writeUrl($params, $pass = array(), $query = array()) {
-		if (isset($params['prefix'])) {
-			$prefixed = $params['prefix'] . '_';
-		}
-		if (isset($prefixed, $params['action']) && strpos($params['action'], $prefixed) === 0) {
-			$params['action'] = substr($params['action'], strlen($prefixed) * -1);
-			unset($params['prefix']);
-		}
-
 		$pass = implode('/', array_map('rawurlencode', $pass));
 		$out = $this->template;
 

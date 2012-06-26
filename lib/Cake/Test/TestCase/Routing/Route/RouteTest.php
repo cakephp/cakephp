@@ -325,17 +325,17 @@ class RouteTest extends TestCase {
 		$this->assertFalse($result);
 
 		$route = new Route('/admin/subscriptions/:action/*', array(
-			'controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'
+			'controller' => 'subscribe', 'prefix' => 'admin'
 		));
 
-		$url = array('controller' => 'subscribe', 'admin' => true, 'action' => 'edit', 1);
+		$url = array('controller' => 'subscribe', 'prefix' =>  'admin', 'action' => 'edit', 1);
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit/1';
 		$this->assertEquals($expected, $result);
 
 		$url = array(
 			'controller' => 'subscribe',
-			'admin' => true,
+			'prefix' => 'admin',
 			'action' => 'edit_admin_e',
 			1
 		);
@@ -756,6 +756,9 @@ class RouteTest extends TestCase {
 
 		$route = new Route('/articles/list', array('controller' => 'posts', 'action' => 'index'));
 		$this->assertEquals('posts:index', $route->getName());
+
+		$route = new Route('/:controller/:action', array('action' => 'index'));
+		$this->assertEquals('_controller:_action', $route->getName());
 	}
 
 /**

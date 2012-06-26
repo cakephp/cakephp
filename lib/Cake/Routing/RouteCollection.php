@@ -113,13 +113,18 @@ class RouteCollection implements \Countable {
 		$fallbacks = array(
 			'%2$s:%3$s',
 			'%2$s:_action',
+			'_controller:%3$s',
 			'_controller:_action'
 		);
 		if ($plugin) {
 			$fallbacks = array(
 				'%1$s.%2$s:%3$s',
 				'%1$s.%2$s:_action',
-				'_controller:_action'
+				'%1$s._controller:%3$s',
+				'%1$s._controller:_action',
+				'_plugin._controller:%3$s',
+				'_plugin._controller:_action',
+				'_controller:_action',
 			);
 		}
 		foreach ($fallbacks as $i => $template) {

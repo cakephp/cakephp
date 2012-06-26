@@ -252,18 +252,19 @@ class Dispatcher implements EventListener {
  */
 	protected function _loadController($request) {
 		$pluginName = $pluginPath = $controller = null;
+		$namespace = 'Controller';
 		if (!empty($request->params['plugin'])) {
-			$pluginName = $controller = Inflector::camelize($request->params['plugin']);
+			$pluginName = Inflector::camelize($request->params['plugin']);
 			$pluginPath = $pluginName . '.';
 		}
 		if (!empty($request->params['controller'])) {
 			$controller = Inflector::camelize($request->params['controller']);
 		}
+		if (!empty($request->params['prefix'])) {
+			$namespace .= '/' . Inflector::camelize($request->params['prefix']);
+		}
 		if ($pluginPath . $controller) {
-			$controller = App::classname($pluginPath . $controller, 'Controller', 'Controller');
-			if ($controller) {
-				return $controller;
-			}
+			return App::classname($pluginPath . $controller, $namespace, 'Controller');
 		}
 		return false;
 	}

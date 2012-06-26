@@ -472,27 +472,64 @@ class DispatcherTest extends TestCase {
 	}
 
 /**
- * testAdminDispatch method
+ * testPrefixDispatch method
  *
  * @return void
  */
-	public function testAdminDispatch() {
+	public function testPrefixDispatch() {
 		$Dispatcher = new TestDispatcher();
 		Configure::write('Routing.prefixes', array('admin'));
-		$url = new Request('admin/test_dispatch_pages/index');
+		$request = new Request('admin/posts/index');
 		$response = $this->getMock('Cake\Network\Response');
 
 		Router::reload();
 		require CAKE . 'Config' . DS . 'routes.php';
 
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
+		$Dispatcher->dispatch($request, $response, array('return' => 1));
 
-		$this->assertEquals('TestDispatchPages', $Dispatcher->controller->name);
+		$this->assertInstanceOf(
+			'TestApp\Controller\Admin\PostsController',
+			$Dispatcher->controller
+		);
+		$this->assertEquals('admin', $request->params['prefix']);
+		$this->assertEquals('posts', $request->params['controller']);
+		$this->assertEquals('index', $request->params['action']);
 
-		$this->assertTrue($Dispatcher->controller->params['admin']);
+		$expected = '/admin/posts/index';
+		$this->assertSame($expected, $request->here);
+	}
 
-		$expected = '/admin/test_dispatch_pages/index';
-		$this->assertSame($expected, $Dispatcher->controller->here);
+/**
+ * test prefix dispatching in a plugin.
+ *
+ * @return void
+ */
+	public function testPrefixDispatchPlugin() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+		), App::RESET);
+		Configure::write('Routing.prefixes', array('admin'));
+		Plugin::load('TestPlugin');
+
+		$request = new Request('admin/posts/index');
+		$response = $this->getMock('Cake\Network\Response');
+
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
+
+		$Dispatcher = new TestDispatcher();
+		$Dispatcher->dispatch($request, $response, array('return' => 1));
+
+		$this->assertInstanceOf(
+			'TestApp\Controller\Admin\PostsController',
+			$Dispatcher->controller
+		);
+		$this->assertEquals('admin', $request->params['prefix']);
+		$this->assertEquals('posts', $request->params['controller']);
+		$this->assertEquals('index', $request->params['action']);
+
+		$expected = '/admin/posts/index';
+		$this->assertSame($expected, $request->here);
 	}
 
 /**
