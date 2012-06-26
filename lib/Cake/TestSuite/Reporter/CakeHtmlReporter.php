@@ -248,6 +248,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$testName = get_class($test) . '(' . $test->getName() . ')';
 
 		$failure = $message->getComparisonFailure();
+		$actualMsg = NULL;
+		$expectedMsg = NULL;
 		if (is_object($failure)) {
 		  $actualMsg   = $message->getComparisonFailure()->getActualAsString();
 		  $expectedMsg = $message->getComparisonFailure()->getExpectedAsString();
