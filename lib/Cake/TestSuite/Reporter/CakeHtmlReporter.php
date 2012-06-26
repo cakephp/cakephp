@@ -257,7 +257,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<span>Failed</span>";
 		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->toString());
 
-
 		if ((is_string($actualMsg) && is_string($expectedMsg)) || (is_array($actualMsg) && is_array($expectedMsg))) {
 		  echo "<br />". PHPUnit_Util_Diff::diff($expectedMsg, $actualMsg);
 		}
