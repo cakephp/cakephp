@@ -248,19 +248,19 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$trace = $this->_getStackTrace($message);
 		$testName = get_class($test) . '(' . $test->getName() . ')';
 
+		$actualMsg = $expectedMsg = null;
 		$failure = $message->getComparisonFailure();
 		if (is_object($failure)) {
-		  $actualMsg   = $message->getComparisonFailure()->getActualAsString();
-		  $expectedMsg = $message->getComparisonFailure()->getExpectedAsString();
+			$actualMsg = $message->getComparisonFailure()->getActualAsString();
+			$expectedMsg = $message->getComparisonFailure()->getExpectedAsString();
 		}
 
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
 		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->toString());
 
-
 		if ((is_string($actualMsg) && is_string($expectedMsg)) || (is_array($actualMsg) && is_array($expectedMsg))) {
-		  echo "<br />" . PHPUnit_Util_Diff::diff($expectedMsg, $actualMsg);
+			echo "<br />" . PHPUnit_Util_Diff::diff($expectedMsg, $actualMsg);
 		}
 
 		echo "</pre></div>\n";
