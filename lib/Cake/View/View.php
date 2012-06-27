@@ -331,7 +331,7 @@ class View extends Object {
 		} else {
 			$this->response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
 		}
-		if (!isset($this->viewVars['_serialize']) || (is_object($controller) && $controller instanceof CakeErrorController)) {
+		if (!isset($this->viewVars['_serialize']) || $controller instanceof CakeErrorController) {
 			$this->Helpers = new HelperCollection($this);
 			$this->Blocks = new ViewBlock();
 		}

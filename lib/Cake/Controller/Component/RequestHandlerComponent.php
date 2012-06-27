@@ -580,6 +580,9 @@ class RequestHandlerComponent extends Component {
 		}
 		$controller->ext = '.ctp';
 
+		if (isset($this->settings['viewClass'][$type])) {
+			$viewClass = $this->settings['viewClass'][$type];
+		}
 		$viewClass = Inflector::classify($type);
 		$viewName = $viewClass . 'View';
 		if (!class_exists($viewName)) {
