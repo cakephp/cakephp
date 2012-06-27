@@ -457,6 +457,8 @@ class Router {
  *    integer values and UUIDs.
  * - 'prefix' - URL prefix to use for the generated routes.  Defaults to '/'.
  *
+ * For any configured Routing.prefixes you can set extra option key with boolean value
+ *
  * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
  * @return array Array of mapped resources
