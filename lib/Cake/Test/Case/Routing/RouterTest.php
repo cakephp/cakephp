@@ -124,6 +124,24 @@ class RouterTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$result = Router::parse('/posts/name');
 		$this->assertEquals(array('pass' => array('name'), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => 'name', '[method]' => 'PUT'), $result);
+
+		Configure::write('Routing.prefixes', array('admin'));
+		Router::reload();
+		Router::mapResources('Posts', array('admin' => true));
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$result = Router::parse('/posts');
+		$this->assertEquals(array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'admin_add', '[method]' => 'POST', 'prefix' => 'admin', 'admin' => true), $result);
+
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$result = Router::parse('/posts/1');
+		$this->assertEquals(array('pass' => array('1'), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'admin_edit', 'id' => '1', '[method]' => 'PUT', 'prefix' => 'admin', 'admin' => true), $result);
+
+		Router::reload();
+		Router::mapResources('Posts', array('manager' => true));
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$result = Router::parse('/posts');
+		$this->assertEquals(array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST'), $result);
 	}
 
 /**
@@ -164,6 +182,25 @@ class RouterTest extends CakeTestCase {
 			'[method]' => 'GET'
 		);
 		$this->assertEquals($expected, $result);
+
+		Configure::write('Routing.prefixes', array('admin'));
+		Router::reload();
+		$resources = Router::mapResources('TestPlugin.TestPlugin', array('admin' => true));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = Router::parse('/test_plugin/test_plugin');
+		$expected = array(
+			'pass' => array(),
+			'named' => array(),
+			'plugin' => 'test_plugin',
+			'controller' => 'test_plugin',
+			'action' => 'admin_index',
+			'[method]' => 'GET',
+			'admin' => true,
+			'prefix' => 'admin'
+		);
+		$this->assertEquals($expected, $result);
+		$this->assertEquals(array('test_plugin'), $resources);
 	}
 
 /**
@@ -191,6 +228,24 @@ class RouterTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 		$this->assertEquals(array('test_plugin'), $resources);
+
+		Configure::write('Routing.prefixes', array('admin'));
+		Router::reload();
+		Router::mapResources('TestPlugin.TestPlugin', array('prefix' => '/api/', 'admin' => true));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = Router::parse('/api/test_plugin');
+		$expected = array(
+			'pass' => array(),
+			'named' => array(),
+			'plugin' => 'test_plugin',
+			'controller' => 'test_plugin',
+			'action' => 'admin_index',
+			'[method]' => 'GET',
+			'prefix' => 'admin',
+			'admin' => true
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
