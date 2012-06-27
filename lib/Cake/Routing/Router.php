@@ -486,7 +486,8 @@ class Router {
 						'plugin' => $plugin,
 						'controller' => $urlName,
 						'action' => $params['action'],
-						'[method]' => $params['method']
+						'[method]' => $params['method'],
+						'prefix' => $params['prefix']
 					),
 					array('id' => $options['id'], 'pass' => array('id'))
 				);
