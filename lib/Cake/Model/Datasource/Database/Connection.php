@@ -169,7 +169,7 @@ class Connection {
 	public function update($table, array $data, array $conditions = array(), $types = array()) {
 		$this->connect();
 		$keys = array_keys($data);
-		$conditionsKeys = array_keys($data);
+		$conditionsKeys = array_keys($conditions);
 		$sql = 'UPDATE %s SET %s %s';
 		list($conditions, $params) = $this->_parseConditions($conditions);
 		$sql = sprintf(
