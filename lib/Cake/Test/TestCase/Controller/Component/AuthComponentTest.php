@@ -571,19 +571,6 @@ class AuthComponentTest extends TestCase {
 		$expected = Router::normalize('/admin');
 		$this->assertEquals($expected, $this->Auth->redirect());
 
-		// Ticket #4750
-		// Named Parameters
-		$this->Controller->request = $this->Auth->request;
-		$this->Auth->Session->delete('Auth');
-		$url = '/posts/index/year:2008/month:feb';
-		$this->Auth->request->addParams(Router::parse($url));
-		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
-		$this->Auth->initialize($this->Controller);
-		$this->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
-		$this->Auth->startup($this->Controller);
-		$expected = Router::normalize('posts/index/year:2008/month:feb');
-		$this->assertEquals($expected, $this->Auth->Session->read('Auth.redirect'));
-
 		// Passed Arguments
 		$this->Auth->Session->delete('Auth');
 		$url = '/posts/view/1';

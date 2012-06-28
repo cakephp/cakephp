@@ -100,13 +100,13 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testQueryStringAndNamedParams() {
-		$_SERVER['REQUEST_URI'] = '/tasks/index/page:1?ts=123456';
+		$_SERVER['REQUEST_URI'] = '/tasks/index?ts=123456';
 		$request = Request::createFromGlobals();
-		$this->assertEquals('tasks/index/page:1', $request->url);
+		$this->assertEquals('tasks/index', $request->url);
 
-		$_SERVER['REQUEST_URI'] = '/tasks/index/page:1/?ts=123456';
+		$_SERVER['REQUEST_URI'] = '/tasks/index/?ts=123456';
 		$request = Request::createFromGlobals();
-		$this->assertEquals('tasks/index/page:1/', $request->url);
+		$this->assertEquals('tasks/index/', $request->url);
 	}
 
 /**
@@ -781,13 +781,11 @@ class RequestTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'view',
 			'plugin' => 'blogs',
-			'named' => array()
 		);
 
 		$this->assertTrue(isset($request->controller));
 		$this->assertFalse(isset($request->notthere));
 		$this->assertFalse(empty($request->controller));
-		$this->assertTrue(empty($request->named));
 	}
 
 /**

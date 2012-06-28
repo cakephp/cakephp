@@ -125,7 +125,7 @@ class BasicAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateInjection() {
 		$request = new Request('posts/index');
-		$request->addParams(array('pass' => array(), 'named' => array()));
+		$request->addParams(array('pass' => array()));
 
 		$_SERVER['PHP_AUTH_USER'] = '> 1';
 		$_SERVER['PHP_AUTH_PW'] = "' OR 1 = 1";
@@ -140,7 +140,7 @@ class BasicAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateChallenge() {
 		$request = new Request('posts/index');
-		$request->addParams(array('pass' => array(), 'named' => array()));
+		$request->addParams(array('pass' => array()));
 
 		$this->response->expects($this->at(0))
 			->method('header')
@@ -160,7 +160,7 @@ class BasicAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateSuccess() {
 		$request = new Request('posts/index');
-		$request->addParams(array('pass' => array(), 'named' => array()));
+		$request->addParams(array('pass' => array()));
 
 		$_SERVER['PHP_AUTH_USER'] = 'mariano';
 		$_SERVER['PHP_AUTH_PW'] = 'password';
@@ -183,7 +183,7 @@ class BasicAuthenticateTest extends TestCase {
 	public function testAuthenticateFailReChallenge() {
 		$this->auth->settings['scope'] = array('user' => 'nate');
 		$request = new Request('posts/index');
-		$request->addParams(array('pass' => array(), 'named' => array()));
+		$request->addParams(array('pass' => array()));
 
 		$_SERVER['PHP_AUTH_USER'] = 'mariano';
 		$_SERVER['PHP_AUTH_PW'] = 'password';

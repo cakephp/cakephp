@@ -732,8 +732,7 @@ class PaginatorHelperTest extends TestCase {
 		);
 
 		$this->Paginator->request->params['pass'] = array(2);
-		$this->Paginator->request->params['named'] = array('foo' => 'bar');
-		$this->Paginator->request->query = array('x' => 'y');
+		$this->Paginator->request->query = array('foo' => 'bar', 'x' => 'y');
 		$this->Paginator->beforeRender('posts/index');
 
 		$result = $this->Paginator->sort('title');
@@ -2160,9 +2159,9 @@ class PaginatorHelperTest extends TestCase {
 	public function testWithPlugin() {
 		Router::setRequestInfo(array(
 			array(
-				'pass' => array(), 'named' => array(), 'prefix' => null, 'form' => array(),
+				'pass' => array(), 'prefix' => null,
 				'controller' => 'magazines', 'plugin' => 'my_plugin', 'action' => 'index',
-				'url' => array('ext' => 'html', 'url' => 'my_plugin/magazines')),
+			),
 			array('base' => '', 'here' => '/my_plugin/magazines', 'webroot' => '/')
 		));
 

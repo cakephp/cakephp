@@ -517,9 +517,7 @@ class PaginatorComponentTest extends TestCase {
 	public function testOutOfRangePageNumberGetsClamped() {
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
-		$Controller->params['named'] = array(
-			'page' => 3000,
-		);
+		$Controller->query['page'] = 3000;
 		$Controller->constructClasses();
 		$Controller->PaginatorControllerPost->recursive = 0;
 		$Controller->Paginator->paginate('PaginatorControllerPost');

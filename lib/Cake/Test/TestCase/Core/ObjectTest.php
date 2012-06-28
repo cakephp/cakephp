@@ -468,7 +468,7 @@ class ObjectTest extends TestCase {
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'paginate_request_action'),
-			array('pass' => array(5), 'named' => array('param' => 'value'))
+			array('pass' => array(5))
 		);
 		$this->assertTrue($result);
 	}
@@ -496,16 +496,6 @@ class ObjectTest extends TestCase {
 		$this->assertEquals('request_action', $result['controller']);
 		$this->assertEquals('params_pass', $result['action']);
 		$this->assertEquals(null, $result['plugin']);
-
-		$result = $this->object->requestAction('/request_action/params_pass/sort:desc/limit:5');
-		$expected = array('sort' => 'desc', 'limit' => 5,);
-		$this->assertEquals($expected, $result['named']);
-
-		$result = $this->object->requestAction(
-			array('controller' => 'request_action', 'action' => 'params_pass'),
-			array('named' => array('sort' => 'desc', 'limit' => 5))
-		);
-		$this->assertEquals($expected, $result['named']);
 	}
 
 /**

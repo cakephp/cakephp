@@ -1302,7 +1302,7 @@ class ControllerTest extends TestCase {
  */
 	public function testPaginateBackwardsCompatibility() {
 		$request = new Request('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
+		$request->params['pass'] = array();
 		$response = $this->getMock('Cake\Network\Response', array('httpCodes'));
 
 		$Controller = new Controller($request, $response);
@@ -1310,7 +1310,7 @@ class ControllerTest extends TestCase {
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
-		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named');
+		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100);
 		$this->assertEquals($expected, $Controller->paginate);
 
 		$results = Hash::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');

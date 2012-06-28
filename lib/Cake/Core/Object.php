@@ -62,9 +62,9 @@ class Object {
  * GET data.  The `$extra['data']` parameter allows POST data simulation.
  *
  * @param string|array $url String or array-based url.  Unlike other url arrays in CakePHP, this
- *    url will not automatically handle passed and named arguments in the $url parameter.
+ *    url will not automatically handle passed arguments in the $url parameter.
  * @param array $extra if array includes the key "return" it sets the AutoRender to true.  Can
- *    also be used to submit GET/POST data, and named/passed arguments.
+ *    also be used to submit GET/POST data, and passed arguments.
  * @return mixed Boolean true or false on success/failure, or contents
  *    of rendered action if 'return' is set in $extra.
  */
@@ -90,7 +90,7 @@ class Object {
 		if (is_string($url)) {
 			$request = new Request($url);
 		} elseif (is_array($url)) {
-			$params = $url + array('pass' => array(), 'named' => array(), 'base' => false);
+			$params = $url + array('pass' => array(), 'base' => false);
 			$params = array_merge($params, $extra);
 			$request = new Request(Router::reverse($params));
 		}

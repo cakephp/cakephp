@@ -250,7 +250,7 @@ class Controller extends Object implements EventListener {
 	public $cacheAction = false;
 
 /**
- * Holds all params passed and named.
+ * Holds all passed params.
  *
  * @var mixed
  */

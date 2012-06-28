@@ -107,7 +107,7 @@ class DigestAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateWrongUsername() {
 		$request = new Request('posts/index');
-		$request->addParams(array('pass' => array(), 'named' => array()));
+		$request->addParams(array('pass' => array()));
 
 		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
 Digest username="incorrect_user",
@@ -142,7 +142,7 @@ DIGEST;
  */
 	public function testAuthenticateChallenge() {
 		$request = new Request('posts/index');
-		$request->addParams(array('pass' => array(), 'named' => array()));
+		$request->addParams(array('pass' => array()));
 
 		$this->response->expects($this->at(0))
 			->method('header')
@@ -166,7 +166,7 @@ DIGEST;
  */
 	public function testAuthenticateSuccess() {
 		$request = new Request('posts/index');
-		$request->addParams(array('pass' => array(), 'named' => array()));
+		$request->addParams(array('pass' => array()));
 
 		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
 Digest username="mariano",
@@ -198,7 +198,7 @@ DIGEST;
 	public function testAuthenticateFailReChallenge() {
 		$this->auth->settings['scope'] = array('user' => 'nate');
 		$request = new Request('posts/index');
-		$request->addParams(array('pass' => array(), 'named' => array()));
+		$request->addParams(array('pass' => array()));
 
 		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
 Digest username="mariano",

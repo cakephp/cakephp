@@ -117,7 +117,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
-			'named' => array()
 		));
 		$this->Controller->cacheAction = 21600;
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
@@ -150,7 +149,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array('風街ろまん'),
-			'named' => array()
 		));
 		$this->Controller->cacheAction = 21600;
 		$this->Controller->request->here = '/posts/view/風街ろまん';
@@ -176,7 +174,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
-			'named' => array()
 		));
 		$this->Controller->cacheAction = 21600;
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
@@ -210,7 +207,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
-			'named' => array()
 		));
 		$this->Controller->cacheAction = 21600;
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
@@ -241,7 +237,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_complex',
 			'pass' => array(),
-			'named' => array()
 		));
 		$this->Controller->cacheAction = array('cache_complex' => 21600);
 		$this->Controller->request->here = '/cacheTest/cache_complex';
@@ -301,7 +296,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
-			'named' => array()
 		));
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->cacheAction = 21600;
@@ -332,7 +326,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
-			'named' => array()
 		));
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => array(
@@ -366,7 +359,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
-			'named' => array()
 		));
 		$this->Controller->request->here = '/cache_test/cache_parsing';
 		$this->Controller->cacheAction = array(
@@ -396,7 +388,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
-			'named' => array()
 		));
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
@@ -428,10 +419,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(1, 2),
-			'named' => array(
-				'name' => 'mark',
-				'ice' => 'cream'
-			)
 		));
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
@@ -462,7 +449,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
-			'named' => array()
 		));
 		$this->Controller->request->query = array('q' => 'cakephp');
 		$this->Controller->cacheAction = array(
@@ -496,7 +482,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
-			'named' => array()
 		));
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
@@ -533,7 +518,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cacheTest',
 			'action' => 'cache_name',
 			'pass' => array(),
-			'named' => array()
 		);
 		$this->Controller->here = '/cache/cacheTest/cache_name';
 		$this->Controller->action = 'cache_name';
@@ -617,7 +601,6 @@ class CacheHelperTest extends TestCase {
 			'controller' => 'cacheTest',
 			'action' => 'cache_empty_sections',
 			'pass' => array(),
-			'named' => array()
 		);
 		$this->Controller->cacheAction = array('cache_empty_sections' => 21600);
 		$this->Controller->here = '/cacheTest/cache_empty_sections';

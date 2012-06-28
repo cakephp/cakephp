@@ -162,9 +162,6 @@ class ScaffoldTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
-			'form' => array(),
-			'named' => array(),
-			'url' => array('url' => 'admin/scaffold_mock/edit'),
 			'controller' => 'scaffold_mock',
 			'action' => 'admin_edit',
 			'admin' => true,
@@ -192,9 +189,6 @@ class ScaffoldTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
-			'form' => array(),
-			'named' => array(),
-			'url' => array('url' => 'admin/scaffold_mock/edit'),
 			'controller' => 'scaffold_mock',
 			'action' => 'admin_edit',
 			'admin' => true,
@@ -246,8 +240,6 @@ class ScaffoldTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
-			'form' => array(),
-			'named' => array(),
 			'url' => array('url' => 'scaffold_mock'),
 			'controller' => 'scaffold_mock',
 			'action' => 'edit',
@@ -287,8 +279,6 @@ class ScaffoldTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
-			'form' => array(),
-			'named' => array(),
 			'url' => array('url' => 'scaffold_mock'),
 			'controller' => 'scaffold_mock',
 			'action' => 'edit',
@@ -326,8 +316,6 @@ class ScaffoldTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
-			'form' => array(),
-			'named' => array(),
 			'url' => array('url' => 'scaffold_mock/edit'),
 			'controller' => 'scaffold_mock',
 			'action' => 'edit',

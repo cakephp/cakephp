@@ -731,7 +731,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 
 		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'named' => array(), 'form' => array(), 'url' => array('url' => 'accounts/')),
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array()),
 			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
 		));
 

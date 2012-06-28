@@ -910,7 +910,6 @@ class DispatcherTest extends TestCase {
 			array('test_cached_pages/test_nocache_tags'),
 			array('TestCachedPages/test_nocache_tags'),
 			array('test_cached_pages/view/param/param'),
-			array('test_cached_pages/view/foo:bar/value:goo'),
 			array('test_cached_pages/view?q=cakephp'),
 			array('test_cached_pages/themed'),
 		);
