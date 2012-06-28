@@ -31,6 +31,10 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->connection = new Connection(Configure::read('Connections.test'));
 	}
 
+	public function tearDown() {
+		$this->connection->execute('DROP TABLE IF EXISTS things');
+	}
+
 /**
  * Tests connecting to database
  *
@@ -164,6 +168,95 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$result = $statement->fetch();
 		$this->assertCount(1, $result);
 		$this->assertEquals(array(1), $result);
+	}
+
+/**
+ * Tests it is possible to insert data into a table using matching types by key name
+ *
+ * @return void
+ **/
+	public function testInsertWithMatchingTypes() {
+		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
+		$this->connection->execute($table);
+		$data = array('id' => '1', 'title' =>  'a title', 'body' =>  'a body');
+		$result = $this->connection->insert(
+			'things',
+			$data,
+			array('id' => 'integer', 'title' => 'string', 'body' => 'string')
+		);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$result = $this->connection->execute('SELECT * from things');
+		$this->assertCount(1, $result);
+		$row = $result->fetch('assoc');
+		$this->assertEquals($data, $row);
+	}
+
+/**
+ * Tests it is possible to insert data into a table using matching types by array position
+ *
+ * @return void
+ **/
+	public function testInsertWithPositionalTypes() {
+		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
+		$this->connection->execute($table);
+		$data = array('id' => '1', 'title' =>  'a title', 'body' =>  'a body');
+		$result = $this->connection->insert(
+			'things',
+			$data,
+			array('integer', 'string', 'string')
+		);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$result = $this->connection->execute('SELECT * from things');
+		$this->assertCount(1, $result);
+		$row = $result->fetch('assoc');
+		$this->assertEquals($data, $row);
+	}
+
+	protected function _insertTwoRecords() {
+		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
+		$this->connection->execute($table);
+		$data = array('id' => '1', 'title' =>  'a title', 'body' =>  'a body');
+		$result = $this->connection->insert(
+			'things',
+			$data,
+			array('id' => 'integer', 'title' => 'string', 'body' => 'string')
+		);
+
+		$result->bindValue(1, '2', 'integer');
+		$result->bindValue(2, 'another title');
+		$result->bindValue(3, 'another body');
+		$result->execute();
+	}
+
+/**
+ * Tests an statement class can be reused for multiple executions
+ *
+ * @return void
+ **/
+	public function testStatementReusing() {
+		$this->_insertTwoRecords();
+
+		$total = $this->connection->execute('SELECT COUNT(*) AS total FROM things');
+		$total = $total->fetch('assoc');
+		$this->assertEquals(2, $total['total']);
+
+		$result =  $this->connection->execute('SELECT title, body  FROM things');
+		$row = $result->fetch('assoc');
+		$this->assertEquals('a title', $row['title']);
+		$this->assertEquals('a body', $row['body']);
+
+		$row = $result->fetch('assoc');
+		$this->assertEquals('another title', $row['title']);
+		$this->assertEquals('another body', $row['body']);
+	}
+
+	public function testUpdateWithoutConditionsNorTypes() {
+		$this->_insertTwoRecords();
+		$title = 'changed the title!';
+		$body = 'changed the body!';
+		$this->connection->update('things', array('title' => $title, 'body' => $body));
+		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', array($title, $body));
+		$this->assertCount(2, $result);
 	}
 
 }
