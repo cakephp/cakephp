@@ -169,6 +169,7 @@ class Connection {
 	public function update($table, array $data, array $conditions = array(), $types = array()) {
 		$this->connect();
 		$keys = array_keys($data);
+		$conditionsKeys = array_keys($data);
 		$sql = 'UPDATE %s SET %s %s';
 		list($conditions, $params) = $this->_parseConditions($conditions);
 		$sql = sprintf(
@@ -177,8 +178,9 @@ class Connection {
 			implode(', ', array_map(function($k) {return $k . ' = ?';}, $keys)),
 			$conditions
 		);
-		if (!empty($type)) {
+		if (!empty($types)) {
 			$types = $this->_mapTypes($keys, $types);
+			$types = array_merge($types,  $this->_mapTypes($conditionsKeys, $types));
 		}
 		return $this->execute($sql, array_merge(array_values($data), $params), $types);
 	}
@@ -293,6 +295,7 @@ class Connection {
 	protected function _mapTypes($columns, $types) {
 		if (!is_int(key($types))) {
 			$positons = array_intersect_key(array_flip($columns), $types);
+			$types = array_intersect_key($types, $positons);
 			$types = array_combine($positons, $types);
 		}
 		return $types;
