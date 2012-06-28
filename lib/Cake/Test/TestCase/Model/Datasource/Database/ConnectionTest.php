@@ -333,4 +333,36 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('2012-01-01', $row['body']);
 	}
 
+/**
+ * Tests delete from table with no conditions
+ *
+ * @return void
+ **/
+	public function testDeleteNoConditions() {
+		$this->_insertTwoRecords();
+		$this->connection->delete('things');
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(0, $result);
+	}
+
+
+/**
+ * Tests delete from table with conditions
+ * @return void
+ **/
+	public function testDeleteWithConditions() {
+		$this->_insertTwoRecords();
+		$this->connection->delete('things', array('id' => '1-rest-is-ommited'), array('id' => 'integer'));
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+
+		$this->connection->delete('things', array('id' => '1-rest-is-ommited'), array('id' => 'integer'));
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+
+		$this->connection->delete('things', array('id' => '2-rest-is-ommited'), array('id' => 'integer'));
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(0, $result);
+	}
+
 }

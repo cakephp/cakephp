@@ -190,10 +190,23 @@ class Connection {
  *
  * @param string $table the table to delete rows from
  * @param array $conditions conditions to be set for delete statement
+ * @param array $types list of associative array containing the types to be used for casting
  * @return Cake\Model\Datasource\Database\Statement
  **/
-	public function delete($table, $conditions = array()) {
-
+	public function delete($table, $conditions = array(), $types = array()) {
+		$this->connect();
+		$conditionsKeys = array_keys($conditions);
+		$sql = 'DELETE FROM %s %s';
+		list($conditions, $params) = $this->_parseConditions($conditions);
+		$sql = sprintf(
+			$sql,
+			$table,
+			$conditions
+		);
+		if (!empty($types)) {
+			$types = $this->_mapTypes($conditionsKeys, $types);
+		}
+		return $this->execute($sql, $params, $types);
 	}
 
 /**
