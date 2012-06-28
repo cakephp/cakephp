@@ -174,13 +174,13 @@ class Connection {
 		$sql = sprintf(
 			$sql,
 			$table,
-			rtrim(',', implode(' = ?,', $keys)),
+			implode(', ', array_map(function($k) {return $k . ' = ?';}, $keys)),
 			$conditions
 		);
 		if (!empty($type)) {
 			$types = $this->_mapTypes($keys, $types);
 		}
-		return $this->execute($sql, array_values($data), $types);
+		return $this->execute($sql, array_merge(array_values($data), $params), $types);
 	}
 
 /**
@@ -298,6 +298,13 @@ class Connection {
 		return $types;
 	}
 
+/**
+ * Simple condtions parser joind by AND
+ *
+ * @param array conditions key value array or list of conditions to be joined
+ * to construct a WHERE clause
+ * @return string
+ **/
 	protected function _parseConditions($conditions) {
 		$params = array();
 		if (empty($conditions)) {
@@ -310,8 +317,10 @@ class Connection {
 				$conds[] = $value;
 				continue;
 			}
-			$conds[] = $key . ' = ';
+			$conds[] = $key . ' = ?';
+			$params[] = $value;
 		}
+		return array(sprintf($sql, implode(' AND ', $conds)), $params);
 	}
 
 }

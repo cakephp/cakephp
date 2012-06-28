@@ -212,6 +212,11 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($data, $row);
 	}
 
+/**
+ * Auxiliary function to insert a couple rows in a newly creted table
+ *
+ * @return void
+ **/
 	protected function _insertTwoRecords() {
 		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
 		$this->connection->execute($table);
@@ -250,6 +255,11 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('another body', $row['body']);
 	}
 
+/**
+ * Tests rows can be updated without specifying any coditions nor types
+ *
+ * @return void
+ **/
 	public function testUpdateWithoutConditionsNorTypes() {
 		$this->_insertTwoRecords();
 		$title = 'changed the title!';
@@ -257,6 +267,34 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->connection->update('things', array('title' => $title, 'body' => $body));
 		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', array($title, $body));
 		$this->assertCount(2, $result);
+	}
+
+/**
+ * Tests it is possible to use key => value conditions for update
+ *
+ * @return void
+ **/
+	public function testUpdateWithConditionsNoTypes() {
+		$this->_insertTwoRecords();
+		$title = 'changed the title!';
+		$body = 'changed the body!';
+		$this->connection->update('things', array('title' => $title, 'body' => $body), array('id' => 2));
+		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', array($title, $body));
+		$this->assertCount(1, $result);
+	}
+
+/**
+ * Tests it is possible to use key => value and stirng conditions for update
+ *
+ * @return void
+ **/
+	public function testUpdateWithConditionsCombinedNoTypes() {
+		$this->_insertTwoRecords();
+		$title = 'changed the title!';
+		$body = 'changed the body!';
+		$this->connection->update('things', array('title' => $title, 'body' => $body), array('id' => 2, 'body is not null'));
+		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', array($title, $body));
+		$this->assertCount(1, $result);
 	}
 
 }
