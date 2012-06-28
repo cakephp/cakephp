@@ -144,7 +144,17 @@ class Connection {
  * @return Cake\Model\Datasource\Database\Statement
  **/
 	public function insert($table, array $data, array $types = array()) {
-
+		$this->connect();
+		$keys = array_keys($data);
+		$sql = 'INSERT INTO %s (%s) VALUES (%s)';
+		$sql = sprintf(
+			$sql,
+			$table,
+			implode(',', $keys),
+			implode(',', array_fill(0, count($data), '?'))
+		);
+		$types = $this->_mapTypes($keys, $types);
+		return $this->execute($sql, array_values($data), $types);
 	}
 
 /**
@@ -157,7 +167,20 @@ class Connection {
  * @return Cake\Model\Datasource\Database\Statement
  **/
 	public function update($table, array $data, array $conditions = array(), $types = array()) {
-
+		$this->connect();
+		$keys = array_keys($data);
+		$sql = 'UPDATE %s SET %s %s';
+		list($conditions, $params) = $this->_parseConditions($conditions);
+		$sql = sprintf(
+			$sql,
+			$table,
+			rtrim(',', implode(' = ?,', $keys)),
+			$conditions
+		);
+		if (!empty($type)) {
+			$types = $this->_mapTypes($keys, $types);
+		}
+		return $this->execute($sql, array_values($data), $types);
 	}
 
 /**
@@ -264,6 +287,30 @@ class Connection {
 				$index += $offset;
 			}
 			$statement->bindValue($index, $value, $type);
+		}
+	}
+
+	protected function _mapTypes($columns, $types) {
+		if (!is_int(key($types))) {
+			$positons = array_intersect_key(array_flip($columns), $types);
+			$types = array_combine($positons, $types);
+		}
+		return $types;
+	}
+
+	protected function _parseConditions($conditions) {
+		$params = array();
+		if (empty($conditions)) {
+			return array('', $params);
+		}
+		$sql = 'WHERE %s';
+		$conds = array();
+		foreach ($conditions as $key => $value) {
+			if (is_numeric($key)) {
+				$conds[] = $value;
+				continue;
+			}
+			$conds[] = $key . ' = ';
 		}
 	}
 
