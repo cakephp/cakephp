@@ -292,6 +292,16 @@ class Connection {
 		}
 	}
 
+/**
+ * Auxiliary method to map columns to corresponding types
+ *
+ * Both $columns and $types should either be numeric based or string key based at
+ * the same time.
+ *
+ * @param array $columns list or associative array of columns and parameters to be bound with types
+ * @param array $types list or associative array of types
+ * @return array
+ **/
 	protected function _mapTypes($columns, $types) {
 		if (!is_int(key($types))) {
 			$positons = array_intersect_key(array_flip($columns), $types);
