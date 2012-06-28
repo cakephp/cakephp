@@ -297,4 +297,40 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(1, $result);
 	}
 
+/**
+ * Tests you can bind types to update values
+ *
+ * @return void
+ **/
+	public function testUpdateWithTypes() {
+		$this->_insertTwoRecords();
+		$title = 'changed the title!';
+		$body = new \DateTime('2012-01-01');
+		$values = compact('title', 'body');
+		$this->connection->update('things', $values, array(), array('body' =>  'date'));
+		$result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, array('body' => 'date'));
+		$this->assertCount(2, $result);
+		$row = $result->fetch('assoc');
+		$this->assertEquals('2012-01-01', $row['body']);
+		$row = $result->fetch('assoc');
+		$this->assertEquals('2012-01-01', $row['body']);
+	}
+
+/**
+ * Tests you can bind types to update values
+ *
+ * @return void
+ **/
+	public function testUpdateWithConditionsAndTypes() {
+		$this->_insertTwoRecords();
+		$title = 'changed the title!';
+		$body = new \DateTime('2012-01-01');
+		$values = compact('title', 'body');
+		$this->connection->update('things', $values, array('id' => '1-string-parsed-as-int'), array('body' =>  'date', 'id' => 'integer'));
+		$result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, array('body' => 'date'));
+		$this->assertCount(1, $result);
+		$row = $result->fetch('assoc');
+		$this->assertEquals('2012-01-01', $row['body']);
+	}
+
 }
