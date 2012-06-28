@@ -329,7 +329,11 @@ class Controller extends Object implements EventListener {
 		}
 
 		if ($this->viewPath == null) {
-			$this->viewPath = $this->name;
+			$viewPath = $this->name;
+			if (isset($request->params['prefix'])) {
+				$viewPath = Inflector::camelize($request->params['prefix']) . DS . $viewPath;
+			}
+			$this->viewPath = $viewPath;
 		}
 		if ($this->_mergeParent === null) {
 			$this->_mergeParent = Configure::read('App.namespace') . '\Controller\Controller';

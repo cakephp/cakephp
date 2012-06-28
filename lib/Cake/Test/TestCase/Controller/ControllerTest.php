@@ -1444,4 +1444,23 @@ class ControllerTest extends TestCase {
 		$this->assertEquals('I am from the controller.', $result);
 	}
 
+/**
+ * test that a classes namespace is used in the viewPath.
+ *
+ * @return void
+ */
+	public function testViewPathConventions() {
+		$request = new Request('admin/posts');
+		$request->addParams(array(
+			'prefix' => 'admin'
+		));
+		$response = $this->getMock('Cake\Network\Response');
+		$Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
+		$this->assertEquals('Admin/Posts', $Controller->viewPath);
+
+		$request = new Request('pages/home');
+		$Controller = new \TestApp\Controller\PagesController($request, $response);
+		$this->assertEquals('Pages', $Controller->viewPath);
+	}
+
 }
