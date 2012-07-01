@@ -177,12 +177,15 @@ class CakeFixtureManager {
 
 		$sources = $db->listSources();
 		$table = $db->config['prefix'] . $fixture->table;
+		$exists = in_array($table, $sources);
 
-		if ($drop && in_array($table, $sources)) {
+		if ($drop && $exists) {
 			$fixture->drop($db);
 			$fixture->create($db);
-		} elseif (!in_array($table, $sources)) {
+		} elseif (!$exists) {
 			$fixture->create($db);
+		} else {
+			$fixture->created[] = $db->configKeyName;
 		}
 	}
 
