@@ -3002,23 +3002,6 @@ class ModelWriteTest extends BaseModelTest {
 		), array('atomic' => false));
 		$this->assertSame($result, array(true, true, true));
 
-		$TestModel->validate = array('title' => 'notEmpty', 'author_id' => 'numeric');
-		$result = $TestModel->saveAll(array(
-			array(
-				'id' => '1',
-				'title' => 'Un-Baleeted First Post',
-				'body' => 'Not Baleeted!',
-				'published' => 'Y'
-			),
-			array(
-				'id' => '2',
-				'title' => '',
-				'body' => 'Trying to get away with an empty title'
-			)
-		), array('validate' => true, 'atomic' => false));
-
-		$this->assertSame(array(true, false), $result);
-
 		$result = $TestModel->saveAll(array(
 			'Article' => array('id' => 2),
 			'Comment' => array(
@@ -3034,6 +3017,25 @@ class ModelWriteTest extends BaseModelTest {
 			))
 		), array('validate' => true, 'atomic' => false));
 		$this->assertSame($result, array('Article' => true, 'Comment' => array(true, true)));
+
+		$TestModel->validate = array(
+			'title' => 'notEmpty',
+			'author_id' => 'numeric'
+		);
+		$result = $TestModel->saveAll(array(
+			array(
+				'id' => '1',
+				'title' => 'Un-Baleeted First Post',
+				'body' => 'Not Baleeted!',
+				'published' => 'Y'
+			),
+			array(
+				'id' => '2',
+				'title' => '',
+				'body' => 'Trying to get away with an empty title'
+			)
+		), array('validate' => true, 'atomic' => false));
+		$this->assertSame(array(true, false), $result);
 	}
 
 /**
@@ -3189,6 +3191,25 @@ class ModelWriteTest extends BaseModelTest {
 
 		$data = array(
 			array(
+				'Article' => array('id' => 1),
+				'Comment' => array(
+					array('comment' => 'First comment deepsaved article 1', 'published' => 'Y', 'User' => array('user' => 'savemany', 'password' => 'manysaved')),
+					array('comment' => 'Second comment deepsaved article 1', 'published' => 'Y', 'user_id' => 2)
+				)
+			),
+			array(
+				'Article' => array('id' => 2),
+				'Comment' => array(
+					array('comment' => 'First comment deepsaved article 2', 'published' => 'Y', 'User' => array('user' => 'savemore', 'password' => 'moresaved')),
+					array('comment' => 'Second comment deepsaved article 2', 'published' => 'Y', 'user_id' => 2)
+				)
+			)
+		);
+		$result = $TestModel->saveAll($data, array('deep' => true));
+		$this->assertTrue($result);
+
+		$data = array(
+			array(
 				'id' => 1, 'body' => '',
 				'Comment' => array(
 					array('comment' => '', 'published' => 'Y', 'User' => array('user' => '', 'password' => 'manysaved')),
@@ -3220,6 +3241,7 @@ class ModelWriteTest extends BaseModelTest {
 				)
 			),
 			1 => array(
+				'body' => array('This field cannot be left blank'),
 				'Comment' => array(
 					0 => array(
 						'User' => array(
@@ -3234,25 +3256,6 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$result = $TestModel->validationErrors;
 		$this->assertSame($expected, $result);
-
-		$data = array(
-			array(
-				'Article' => array('id' => 1),
-				'Comment' => array(
-					array('comment' => 'First comment deepsaved article 1', 'published' => 'Y', 'User' => array('user' => 'savemany', 'password' => 'manysaved')),
-					array('comment' => 'Second comment deepsaved article 1', 'published' => 'Y', 'user_id' => 2)
-				)
-			),
-			array(
-				'Article' => array('id' => 2),
-				'Comment' => array(
-					array('comment' => 'First comment deepsaved article 2', 'published' => 'Y', 'User' => array('user' => 'savemore', 'password' => 'moresaved')),
-					array('comment' => 'Second comment deepsaved article 2', 'published' => 'Y', 'user_id' => 2)
-				)
-			)
-		);
-		$result = $TestModel->saveAll($data, array('deep' => true));
-		$this->assertTrue($result);
 	}
 /**
  * testSaveAllDeepValidateOnly
@@ -3661,7 +3664,8 @@ class ModelWriteTest extends BaseModelTest {
 
 		$data = array(
 			array(
-				'id' => 1, 'body' => '',
+				'id' => 1,
+				'body' => '',
 				'Comment' => array(
 					array('comment' => '', 'published' => 'Y', 'User' => array('user' => '', 'password' => 'manysaved')),
 					array('comment' => 'Second comment deepsaved article 1', 'published' => 'Y', 'user_id' => 2)
@@ -3681,6 +3685,9 @@ class ModelWriteTest extends BaseModelTest {
 
 		$expected = array(
 			0 => array(
+				'body' => array('This field cannot be left blank')
+			),
+			1 => array(
 				'body' => array('This field cannot be left blank')
 			)
 		);

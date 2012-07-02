@@ -2178,4 +2178,24 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+	public function testCustomMethodWithEmptyValue() {
+		$this->loadFixtures('Article');
+
+		$model = $this->getMock('Article', array('isLegit'));
+		$model->validate = array(
+			'title' => array(
+				'custom' => array(
+					'rule' => array('isLegit'),
+					'message' => 'is no good'
+				)
+			)
+		);
+		$model->expects($this->once())
+			->method('isLegit')
+			->will($this->returnValue(false));
+
+		$model->set(array('title' => ''));
+		$this->assertFalse($model->validates());
+	}
+
 }

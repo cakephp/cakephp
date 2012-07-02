@@ -94,7 +94,7 @@ class Time {
 /**
  * Magic set method for backward compatibility.
  *
- * Used by TimeHelper to modify static variables in Cake Time
+ * Used by TimeHelper to modify static variables in this class
  */
 	public function __set($name, $value) {
 		switch ($name) {
@@ -703,10 +703,10 @@ class Time {
 		$accuracy = static::$wordAccuracy;
 
 		if (is_array($options)) {
-			if (isset($options['userOffset'])) {
-				$timezone = $options['userOffset'];
-			} elseif (isset($options['timezone'])) {
+			if (isset($options['timezone'])) {
 				$timezone = $options['timezone'];
+			} elseif (isset($options['userOffset'])) {
+				$timezone = $options['userOffset'];
 			}
 
 			if (isset($options['accuracy'])) {
@@ -721,12 +721,11 @@ class Time {
 
 			if (isset($options['format'])) {
 				$format = $options['format'];
-				unset($options['format']);
 			}
 			if (isset($options['end'])) {
 				$end = $options['end'];
-				unset($options['end']);
 			}
+			unset($options['end'], $options['format']);
 		} else {
 			$format = $options;
 		}
@@ -841,11 +840,6 @@ class Time {
 			if (!$backwards) {
 				$relativeDate = __d('cake', '%s ago', $relativeDate);
 			}
-		}
-
-		// If within the last or next 7 days
-		if (static::wasWithinLast('7 days', $dateTime, $timezone) || static::isWithinNext('7 days', $dateTime, $timezone)) {
-			$relativeDate = static::niceShort($dateTime , $timezone);
 		}
 
 		// If now
@@ -1001,10 +995,17 @@ class Time {
 			$regex = $filter;
 			$filter = null;
 		}
-		if ($filter === null) {
-			$filter = \DateTimeZone::ALL;
+		if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+			if ($regex === null) {
+				$regex = '#^((Africa|America|Antartica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific)/|UTC)#';
+			}
+			$identifiers = \DateTimeZone::listIdentifiers();
+		} else {
+			if ($filter === null) {
+				$filter = \DateTimeZone::ALL;
+			}
+			$identifiers = \DateTimeZone::listIdentifiers($filter, $country);
 		}
-		$identifiers = \DateTimeZone::listIdentifiers($filter, $country);
 
 		if ($regex) {
 			foreach ($identifiers as $key => $tz) {

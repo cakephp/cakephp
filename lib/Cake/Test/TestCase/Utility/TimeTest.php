@@ -67,6 +67,7 @@ class TimeTest extends TestCase {
 	protected function _restoreSystemTimezone() {
 		date_default_timezone_set($this->_systemTimezoneIdentifier);
 	}
+
 /**
  * testToQuarter method
  *
@@ -96,85 +97,103 @@ class TimeTest extends TestCase {
 	}
 
 /**
+ * provider for timeAgoInWords() tests
+ *
+ * @return array
+ */
+	public static function timeAgoProvider() {
+		return array(
+			array('-12 seconds', '12 seconds ago'),
+			array('-12 minutes', '12 minutes ago'),
+			array('-2 hours', '2 hours ago'),
+			array('-1 day', '1 day ago'),
+			array('-2 days', '2 days ago'),
+			array('-2 days -3 hours', '2 days, 3 hours ago'),
+			array('-1 week', '1 week ago'),
+			array('-2 weeks -2 days', '2 weeks, 2 days ago'),
+			array('+1 week', '1 week'),
+			array('+1 week 1 day', '1 week, 1 day'),
+			array('+2 weeks 2 day', '2 weeks, 2 days'),
+			array('2007-9-24', 'on 24/9/07'),
+			array('now', 'just now'),
+		);
+	}
+
+/**
  * testTimeAgoInWords method
+ *
+ * @dataProvider timeAgoProvider
+ * @return void
+ */
+	public function testTimeAgoInWords($input, $expected) {
+		$result = $this->Time->timeAgoInWords($input);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * provider for timeAgo with an end date.
  *
  * @return void
  */
-	public function testTimeAgoInWords() {
-		$result = $this->Time->timeAgoInWords('-1 week');
-		$this->assertEquals(date('l d/m, H:i', strtotime('-1 week')), $result);
-
-		$result = $this->Time->timeAgoInWords('+1 week');
-		$this->assertEquals('On ' . date('l d/m, H:i', strtotime('+1 week')), $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+4 months +2 weeks +3 days'),
-			array('end' => '8 years')
+	public function timeAgoEndProvider() {
+		return array(
+			array(
+				'+4 months +2 weeks +3 days',
+				'4 months, 2 weeks, 3 days',
+				'8 years'
+			),
+			array(
+				'+4 months +2 weeks +1 day',
+				'4 months, 2 weeks, 1 day',
+				'8 years'
+			),
+			array(
+				'+3 months +2 weeks',
+				'3 months, 2 weeks',
+				'8 years'
+			),
+			array(
+				'+3 months +2 weeks +1 day',
+				'3 months, 2 weeks, 1 day',
+				'8 years'
+			),
+			array(
+				'+1 months +1 week +1 day',
+				'1 month, 1 week, 1 day',
+				'8 years'
+			),
+			array(
+				'+2 months +2 days',
+				'2 months, 2 days',
+				'on ' . date('j/n/y', strtotime('+2 months +2 days'))
+			),
+			array(
+				'+2 months +12 days',
+				'2 months, 1 week, 5 days',
+				'3 months'
+			),
 		);
-		$this->assertEquals('4 months, 2 weeks, 3 days', $result);
+	}
 
+/**
+ * test the end option for timeAgoInWords
+ *
+ * @dataProvider timeAgoEndProvider
+ * @return void
+ */
+	public function testTimeAgoInWordsEnd($input, $expected, $end) {
 		$result = $this->Time->timeAgoInWords(
-			strtotime('+4 months +2 weeks +2 days'),
-			array('end' => '8 years')
+			$input, array('end' => $end)
 		);
-		$this->assertEquals('4 months, 2 weeks, 2 days', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+4 months +2 weeks +1 day'),
-			array('end' => '8 years')
-		);
-		$this->assertEquals('4 months, 2 weeks, 1 day', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+3 months +2 weeks +1 day'),
-			array('end' => '8 years')
-		);
-		$this->assertEquals('3 months, 2 weeks, 1 day', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+3 months +2 weeks'),
-			array('end' => '8 years')
-		);
-		$this->assertEquals('3 months, 2 weeks', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+3 months +1 week +6 days'),
-			array('end' => '8 years')
-		);
-		$this->assertEquals('3 months, 1 week, 6 days', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+2 months +2 weeks +1 day'),
-			array('end' => '8 years')
-		);
-		$this->assertEquals('2 months, 2 weeks, 1 day', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+2 months +2 weeks'),
-			array('end' => '8 years')
-		);
-		$this->assertEquals('2 months, 2 weeks', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+2 months +1 week +6 days'),
-			array('end' => '8 years')
-		);
-		$this->assertEquals('2 months, 1 week, 6 days', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('-1 month -1 week -6 days'),
-			array('end' => '1 year', 'accuracy' => array('month' => 'month'))
-		);
-		$this->assertEquals('1 month ago', $result);
-
-		$timestamp = strtotime('-1 years -2 weeks -3 days');
-		$result = $this->Time->timeAgoInWords(
-			$timestamp,
-			array('accuracy' => array('year' => 'year'))
-		);
-		$expected = 'on ' . date('j/n/y', $timestamp);
 		$this->assertEquals($expected, $result);
+	}
 
+/**
+ * Test the accuracy option for timeAgoInWords()
+ *
+ * @return void
+ */
+	public function testTimeAgoInWordsAccuracy() {
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+8 years +4 months +2 weeks +3 days'),
 			array('accuracy' => array('year' => 'year'), 'end' => '+10 years')
@@ -209,41 +228,19 @@ class TimeTest extends TestCase {
 		);
 		$expected = '1 year';
 		$this->assertEquals($expected, $result);
+	}
 
-		for ($i = 0; $i > -200; $i--) {
-			$seconds = round($i + ($i * $i));
-			$time = strtotime('+' . $seconds . ' seconds');
-			$result = $this->Time->timeAgoInWords($time);
-
-			if ($time == time()) {
-				$expected = 'just now';
-				$this->assertEquals($expected, $result);
-			} elseif (date("Y-m-d", $time) == date("Y-m-d")) {
-				$expected = 'Today, ' . date("H:i", $time);
-				$this->assertEquals($expected, $result);
-			}
-		}
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('-2 years -5 months -2 days'),
-			array('end' => '3 years')
-		);
-		$this->assertEquals('2 years, 5 months, 2 days ago', $result);
-
-		$result = $this->Time->timeAgoInWords('2007-9-25');
-		$this->assertEquals('on 25/9/07', $result);
-
+/**
+ * Test the format option of timeAgoInWords()
+ *
+ * @return void
+ */
+	public function testTimeAgoInWordsWithFormat() {
 		$result = $this->Time->timeAgoInWords('2007-9-25', 'Y-m-d');
 		$this->assertEquals('on 2007-09-25', $result);
 
 		$result = $this->Time->timeAgoInWords('2007-9-25', 'Y-m-d');
 		$this->assertEquals('on 2007-09-25', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('-2 weeks -2 days'),
-			'Y-m-d'
-		);
-		$this->assertEquals('2 weeks, 2 days ago', $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+2 weeks +2 days'),
@@ -253,60 +250,65 @@ class TimeTest extends TestCase {
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+2 months +2 days'),
-			array('end' => '1 month')
-		);
-		$this->assertEquals(
-			'on ' . date('j/n/y', strtotime('+2 months +2 days')),
-			$result
-		);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+2 months +2 days'),
-			array('end' => '3 month')
-		);
-		$this->assertRegExp('/2 months/', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+2 months +12 days'),
-			array('end' => '3 month')
-		);
-		$this->assertRegExp('/2 months, 1 week/', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+3 months +5 days'),
-			array('end' => '4 month')
-		);
-		$this->assertEquals('3 months, 5 days', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('-2 months -2 days'),
-			array('end' => '3 month')
-		);
-		$this->assertEquals('2 months, 2 days ago', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('-2 months -2 days'),
-			array('end' => '3 month')
-		);
-		$this->assertEquals('2 months, 2 days ago', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+2 months +2 days'),
-			array('end' => '3 month')
-		);
-		$this->assertRegExp('/2 months/', $result);
-
-		$result = $this->Time->timeAgoInWords(
-			strtotime('+2 months +2 days'),
 			array('end' => '1 month', 'format' => 'Y-m-d')
 		);
 		$this->assertEquals('on ' . date('Y-m-d', strtotime('+2 months +2 days')), $result);
+	}
+
+/**
+ * test timeAgoInWords() with negative values.
+ *
+ * @return void
+ */
+	public function testTimeAgoInWordsNegativeValues() {
+		$result = $this->Time->timeAgoInWords(
+			strtotime('-2 months -2 days'),
+			array('end' => '3 month')
+		);
+		$this->assertEquals('2 months, 2 days ago', $result);
+
+		$result = $this->Time->timeAgoInWords(
+			strtotime('-2 months -2 days'),
+			array('end' => '3 month')
+		);
+		$this->assertEquals('2 months, 2 days ago', $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('-2 months -2 days'),
 			array('end' => '1 month', 'format' => 'Y-m-d')
 		);
 		$this->assertEquals('on ' . date('Y-m-d', strtotime('-2 months -2 days')), $result);
+
+		$result = $this->Time->timeAgoInWords(
+			strtotime('-2 years -5 months -2 days'),
+			array('end' => '3 years')
+		);
+		$this->assertEquals('2 years, 5 months, 2 days ago', $result);
+
+		$result = $this->Time->timeAgoInWords(
+			strtotime('-2 weeks -2 days'),
+			'Y-m-d'
+		);
+		$this->assertEquals('2 weeks, 2 days ago', $result);
+
+		$time = strtotime('-3 years -12 months');
+		$result = $this->Time->timeAgoInWords($time);
+		$expected = 'on ' . date('j/n/y', $time);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Time->timeAgoInWords(
+			strtotime('-1 month -1 week -6 days'),
+			array('end' => '1 year', 'accuracy' => array('month' => 'month'))
+		);
+		$this->assertEquals('1 month ago', $result);
+
+		$timestamp = strtotime('-1 years -2 weeks -3 days');
+		$result = $this->Time->timeAgoInWords(
+			$timestamp,
+			array('accuracy' => array('year' => 'year'))
+		);
+		$expected = 'on ' . date('j/n/y', $timestamp);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('-13 months -5 days'),

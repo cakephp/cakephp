@@ -659,7 +659,7 @@ class Request implements \ArrayAccess {
  *
  * #### Check for a single type:
  *
- * `$this->request->accepts('json');`
+ * `$this->request->accepts('application/json');`
  *
  * This method will order the returned content types by the preference values indicated
  * by the client.

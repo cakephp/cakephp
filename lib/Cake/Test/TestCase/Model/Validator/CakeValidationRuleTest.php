@@ -129,7 +129,7 @@ class CakeValidationRuleTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testIsEmplyAllowed() {
+	public function testIsEmptyAllowed() {
 		$def = array('rule' => 'aRule', 'allowEmpty' => true);
 		$Rule = new CakeValidationRule($def);
 		$this->assertTrue($Rule->isEmptyAllowed());
