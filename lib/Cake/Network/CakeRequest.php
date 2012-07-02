@@ -175,7 +175,7 @@ class CakeRequest implements ArrayAccess {
 		if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
 			$this->data['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
 		}
-		if (isset($this->data['_method'])) {
+		if (is_array($this->data) && array_key_exists('_method', $this->data)) {
 			if (!empty($_SERVER)) {
 				$_SERVER['REQUEST_METHOD'] = $this->data['_method'];
 			} else {
@@ -184,7 +184,7 @@ class CakeRequest implements ArrayAccess {
 			unset($this->data['_method']);
 		}
 
-		if (isset($this->data['data'])) {
+		if (is_array($this->data) && array_key_exists('data', $this->data)) {
 			$data = $this->data['data'];
 			if (count($this->data) <= 1) {
 				$this->data = $data;
