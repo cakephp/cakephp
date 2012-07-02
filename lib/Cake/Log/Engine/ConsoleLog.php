@@ -49,11 +49,16 @@ class ConsoleLog extends BaseLog {
  */
 	public function __construct($config = array()) {
 		parent::__construct($config);
+		if (DS == '\\' && !(bool)env('ANSICON')) {
+			$outputAs = ConsoleOutput::PLAIN;
+		} else {
+			$outputAs = ConsoleOutput::COLOR;
+		}
 		$config = Hash::merge(array(
 			'stream' => 'php://stderr',
 			'types' => null,
 			'scopes' => array(),
-			'outputAs' => ConsoleOutput::COLOR,
+			'outputAs' => $outputAs,
 			), $this->_config);
 		$config = $this->config($config);
 		if ($config['stream'] instanceof ConsoleOutput) {

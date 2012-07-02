@@ -116,4 +116,21 @@ class ConsoleLogTest extends CakeTestCase {
 		$this->assertContains($message, $logOutput);
 	}
 
+/**
+ * test default value of stream 'outputAs'
+ */
+	public function testDefaultOutputAs() {
+		TestCakeLog::config('test_console_log', array(
+			'engine' => 'TestConsoleLog',
+			));
+		if (DS == '\\' && !(bool)env('ANSICON')) {
+			$expected = ConsoleOutput::PLAIN;
+		} else {
+			$expected = ConsoleOutput::COLOR;
+		}
+		$stream = TestCakeLog::stream('test_console_log');
+		$config = $stream->config();
+		$this->assertEquals($expected, $config['outputAs']);
+	}
+
 }
