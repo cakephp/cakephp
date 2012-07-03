@@ -262,6 +262,9 @@ class Configure {
  */
 	public static function load($key, $config = 'default', $merge = true) {
 		$reader = self::_getReader($config);
+		if (!$reader) {
+			return false;
+		}
 		$values = $reader->read($key);
 
 		if ($merge) {
@@ -303,6 +306,9 @@ class Configure {
  */
 	public static function dump($key, $config = 'default', $keys = array()) {
 		$reader = self::_getReader($config);
+		if (!$reader) {
+			throw new ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
+		}
 		if (!method_exists($reader, 'dump')) {
 			throw new ConfigureException(__d('cake', 'The "%s" adapter, does not have a dump() method.', $config));
 		}
@@ -318,13 +324,12 @@ class Configure {
  * Will create new PhpReader for default if not configured yet.
  *
  * @param string $config The name of the configured adapter
- * @return boolean success
- * @throws ConfigureException if the adapter is not configured
+ * @return mixed Reader instance or false
  */
 	protected static function _getReader($config) {
 		if (!isset(self::$_readers[$config])) {
 			if ($config !== 'default') {
-				throw new ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
+				return false;
 			}
 			App::uses('PhpReader', 'Configure');
 			self::config($config, new PhpReader());
