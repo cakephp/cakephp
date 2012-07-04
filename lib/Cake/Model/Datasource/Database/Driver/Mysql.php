@@ -102,4 +102,13 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 		return $this->_connection->commit();
 	}
 
+/**
+ * Rollsback a transaction
+ *
+ * @return boolean true on success, false otherwise
+ **/
+	public function rollbackTransaction() {
+		return $this->_connection->rollback();
+	}
+
 }
