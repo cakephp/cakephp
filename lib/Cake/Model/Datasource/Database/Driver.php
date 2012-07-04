@@ -53,6 +53,14 @@ abstract class Driver {
  **/
 	public abstract function commitTransaction();
 
+/**
+ * Rollsback a transaction
+ *
+ * @return boolean true on success, false otherwise
+ **/
+	public abstract function rollbackTransaction();
+
+
 
 /**
  * Returns whether this driver supports save points for nested transactions
