@@ -96,12 +96,12 @@ class Router {
  * @var array
  */
 	protected static $_resourceMap = array(
-		array('action' => 'index',	'method' => 'GET',		'id' => false),
-		array('action' => 'view',	'method' => 'GET',		'id' => true),
-		array('action' => 'add',	'method' => 'POST',		'id' => false),
-		array('action' => 'edit',	'method' => 'PUT', 		'id' => true),
-		array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
-		array('action' => 'edit',	'method' => 'POST', 	'id' => true)
+		array('action' => 'index', 'method' => 'GET', 'id' => false),
+		array('action' => 'view', 'method' => 'GET', 'id' => true),
+		array('action' => 'add', 'method' => 'POST', 'id' => false),
+		array('action' => 'edit', 'method' => 'PUT', 'id' => true),
+		array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
+		array('action' => 'edit', 'method' => 'POST', 'id' => true)
 	);
 
 /**
@@ -341,7 +341,8 @@ class Router {
  *
  * - 'id' - The regular expression fragment to use when matching IDs.  By default, matches
  *    integer values and UUIDs.
- * - 'prefix' - URL prefix to use for the generated routes.  Defaults to '/'.
+ * - 'prefix' - Routing prefix to use for the generated routes.  Defaults to ''.
+ *   Using this option will create prefixed routes, similar to using Routing.prefixes.
  *
  * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
@@ -350,34 +351,39 @@ class Router {
 	public static function mapResources($controller, $options = array()) {
 		$hasPrefix = isset($options['prefix']);
 		$options = array_merge(array(
-			'prefix' => '/',
 			'id' => static::ID . '|' . static::UUID
 		), $options);
 
-		$prefix = $options['prefix'];
 
 		foreach ((array)$controller as $name) {
 			list($plugin, $name) = pluginSplit($name);
 			$urlName = Inflector::underscore($name);
+
 			if ($plugin) {
 				$plugin = Inflector::underscore($plugin);
 			}
-			if ($plugin && !$hasPrefix) {
-				$prefix = '/' . $plugin . '/';
+			$prefix = '';
+			if (!empty($options['prefix'])) {
+				$prefix = $options['prefix'];
 			}
 
 			foreach (static::$_resourceMap as $params) {
-				$url = $prefix . $urlName . (($params['id']) ? '/:id' : '');
-
-				Router::connect($url,
-					array(
-						'plugin' => $plugin,
-						'controller' => $urlName,
-						'action' => $params['action'],
-						'[method]' => $params['method']
-					),
-					array('id' => $options['id'], 'pass' => array('id'))
+				$id = $params['id'] ? ':id' : '';
+				$url = '/' . implode('/', array_filter(array($prefix, $plugin, $urlName, $id)));
+				$params = array(
+					'plugin' => $plugin,
+					'controller' => $urlName,
+					'action' => $params['action'],
+					'[method]' => $params['method'],
 				);
+				if ($prefix) {
+					$params['prefix'] = $prefix;
+				}
+				$options = array(
+					'id' => $options['id'],
+					'pass' => array('id')
+				);
+				Router::connect($url, $params, $options);
 			}
 			static::$_resourceMapped[] = $urlName;
 		}
