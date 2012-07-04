@@ -196,6 +196,8 @@ class ObjectTest extends TestCase {
 		parent::setUp();
 		$this->object = new TestObject();
 		Configure::write('App.namespace', 'TestApp');
+		Configure::write('Security.salt', 'not-the-default');
+		Configure::write('Security.cipherSeed', '123456');
 	}
 
 /**
@@ -431,6 +433,8 @@ class ObjectTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
 		Plugin::load(array('TestPlugin'));
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'test_request_action')
@@ -505,27 +509,22 @@ class ObjectTest extends TestCase {
  * @return void
  */
 	public function testRequestActionNoPostPassing() {
-		$_tmp = $_POST;
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 
-		$_POST = array('data' => array(
+		$_POST = array(
 			'item' => 'value'
-		));
+		);
 		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass'));
 		$expected = null;
 		$this->assertEmpty($result);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'post_pass'),
-			array('data' => $_POST['data'])
+			array('post' => $_POST)
 		);
-		$expected = $_POST['data'];
+		$expected = $_POST;
 		$this->assertEquals($expected, $result);
-
-		$result = $this->object->requestAction('/request_action/post_pass');
-		$expected = $_POST['data'];
-		$this->assertEquals($expected, $result);
-
-		$_POST = $_tmp;
 	}
 
 /**
@@ -534,19 +533,23 @@ class ObjectTest extends TestCase {
  * @return void
  */
 	public function testRequestActionPostWithData() {
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
+
 		$data = array(
 			'Post' => array('id' => 2)
 		);
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'post_pass'),
-			array('data' => $data)
+			array('post' => $data)
 		);
 		$this->assertEquals($data, $result);
 
 		$result = $this->object->requestAction(
 			'/request_action/post_pass',
-			array('data' => $data)
+			array('post' => $data)
 		);
 		$this->assertEquals($data, $result);
 	}
+
 }

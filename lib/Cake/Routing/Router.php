@@ -482,8 +482,10 @@ class Router {
 	public static function popRequest() {
 		$removed = array_pop(static::$_requests);
 		$last = end(static::$_requests);
-		static::$_routes->setContext($last);
-		reset(static::$_requests);
+		if ($last) {
+			static::$_routes->setContext($last);
+			reset(static::$_requests);
+		}
 		return $removed;
 	}
 
@@ -758,10 +760,11 @@ class Router {
  * @return string The string that is the reversed result of the array
  */
 	public static function reverse($params, $full = false) {
+		$url = array();
 		if ($params instanceof Request) {
 			$url = $params->query;
 			$params = $params->params;
-		} else {
+		} elseif (isset($params['url'])) {
 			$url = $params['url'];
 		}
 		$pass = isset($params['pass']) ? $params['pass'] : array();

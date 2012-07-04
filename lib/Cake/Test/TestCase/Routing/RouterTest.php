@@ -2091,6 +2091,9 @@ class RouterTest extends TestCase {
 		Router::popRequest();
 		$result = Router::url(array('_base' => false));
 		$this->assertEquals('/posts', $result, 'with second requests, the last should win.');
+
+		// Make sure that popping an empty request doesn't fail.
+		Router::popRequest();
 	}
 
 /**

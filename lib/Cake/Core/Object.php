@@ -58,8 +58,8 @@ class Object {
  *
  * #### Passing POST and GET data
  *
- * POST and GET data can be simulated in requestAction.  Use `$extra['url']` for
- * GET data.  The `$extra['data']` parameter allows POST data simulation.
+ * POST and GET data can be simulated in requestAction.  Use `$extra['query']` for
+ * GET data.  The `$extra['post']` parameter allows POST data simulation.
  *
  * @param string|array $url String or array-based url.  Unlike other url arrays in CakePHP, this
  *    url will not automatically handle passed arguments in the $url parameter.
@@ -77,26 +77,27 @@ class Object {
 			$extra['autoRender'] = 1;
 			unset($extra[$index]);
 		}
-		if (is_array($url) && !isset($extra['url'])) {
-			$extra['url'] = array();
-		}
 		$extra = array_merge(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
-		$data = isset($extra['data']) ? $extra['data'] : null;
-		unset($extra['data']);
+		$data = isset($extra['post']) ? $extra['post'] : null;
+		unset($extra['post']);
 
 		if (is_string($url) && strpos($url, FULL_BASE_URL) === 0) {
 			$url = Router::normalize(str_replace(FULL_BASE_URL, '', $url));
 		}
 		if (is_string($url)) {
-			$request = new Request($url);
+			$params = array(
+				'url' => $url
+			);
 		} elseif (is_array($url)) {
-			$params = $url + array('pass' => array(), 'base' => false);
-			$params = array_merge($params, $extra);
-			$request = new Request(Router::reverse($params));
+			$url += array('pass' => array(), 'base' => false);
+			$params = array(
+				'url' => Router::reverse($url)
+			);
 		}
 		if (isset($data)) {
-			$request->data = $data;
+			$params['post'] = $data;
 		}
+		$request = new Request($params);
 		$dispatcher = new Dispatcher();
 		$result = $dispatcher->dispatch($request, new Response(), $extra);
 		Router::popRequest();
