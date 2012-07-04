@@ -156,7 +156,7 @@ class Statement implements \IteratorAggregate, \Countable {
  * Rows can be fetched to contain columns as names or positions. If no
  * rows are left in result set, this method will return false
  *
- * * ## Example:
+ * ## Example:
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
@@ -177,6 +177,20 @@ class Statement implements \IteratorAggregate, \Countable {
 		}
 	}
 
+/**
+ * Returns an array with all rows resulting from executing this statement
+ *
+ * ## Example:
+ *
+ * {{{
+ *	$statement = $connection->prepare('SELECT id, title from articles');
+ *	$stamement->execute();
+ *	print_r($stamement->fetchAll('assoc')); // will show array(0 => array('id' => 1, 'title' => 'a title'))
+ * }}}
+ *
+ * @param string $type num for fetching columns as positional keys or assoc for column names as keys
+ * @return array list of all results from database for this statement
+ **/
 	public function fetchAll($type = 'num') {
 		switch ($type) {
 			case 'num':
@@ -186,18 +200,61 @@ class Statement implements \IteratorAggregate, \Countable {
 		}
 	}
 
+/**
+ * Returns the number of rows affected by this SQL statement
+ *
+ * ## Example:
+ *
+ * {{{
+ *	$statement = $connection->prepare('SELECT id, title from articles');
+ *	$stamement->execute();
+ *	print_r($stamement->rowCout()); // will show 1
+ * }}}
+ *
+ * @return int
+ **/
 	public function rowCount() {
 		return $this->_statement->rowCount();
 	}
 
+/**
+ * Statements are iterable as arrays, this method will return
+ * the iterator object for traversing all items in the result.
+ *
+ * ## Example:
+ *
+ * {{{
+ *	$statement = $connection->prepare('SELECT id, title from articles');
+ *	$stamement->execute();
+ *	foreach ($statement as $row) {
+ *		//do stuff
+ *	}
+ * }}}
+ *
+ * @return Iterator
+ **/
 	public function getIterator() {
 		return $this->_statement;
 	}
 
+/**
+ * Statements can be passed as argument for count()
+ * to return the number for affected rows from last execution
+ *
+ * @return int
+ **/
 	public function count() {
 		return $this->rowCount();
 	}
 
+/**
+ * Auxiliary function to convert values to database type
+ * and return relevant internal statement type
+ *
+ * @param mixed value
+ * @param string $type
+ * @return array list containing converted value and internal type
+ **/
 	protected function _cast($value, $type) {
 		if (is_string($type)) {
 			$type = Type::build($type);
