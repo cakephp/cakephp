@@ -495,7 +495,9 @@ class Controller extends Object implements EventListener {
 			if ($this->_isPrivateAction($method, $request)) {
 				throw new Error\PrivateActionException(array(
 					'controller' => $this->name . "Controller",
-					'action' => $request->params['action']
+					'action' => $request->params['action'],
+					'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
+					'plugin' => $request->params['plugin'],
 				));
 			}
 			return $method->invokeArgs($this, $request->params['pass']);
@@ -506,7 +508,9 @@ class Controller extends Object implements EventListener {
 			}
 			throw new Error\MissingActionException(array(
 				'controller' => $this->name . "Controller",
-				'action' => $request->params['action']
+				'action' => $request->params['action'],
+				'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
+				'plugin' => $request->params['plugin'],
 			));
 		}
 	}

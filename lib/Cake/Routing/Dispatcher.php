@@ -156,7 +156,8 @@ class Dispatcher implements EventListener {
 		if (!($controller instanceof Controller)) {
 			throw new Error\MissingControllerException(array(
 				'class' => Inflector::camelize($request->params['controller']),
-				'plugin' => empty($request->params['plugin']) ? null : Inflector::camelize($request->params['plugin'])
+				'plugin' => empty($request->params['plugin']) ? null : Inflector::camelize($request->params['plugin']),
+				'prefix' => empty($request->params['prefix']) ? null : Inflector::camelize($request->params['prefix']),
 			));
 		}
 
