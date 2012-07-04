@@ -42,7 +42,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 	protected $_originalMap = array();
 
 /**
- * Backsup original Type class state
+ * Backup original Type class state
  *
  * @return void
  **/
@@ -73,7 +73,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * provides a basics type list to be used as data proviced for a test
+ * provides a basics type list to be used as data provided for a test
  *
  * @return void
  **/
@@ -87,7 +87,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests trying to build an uknown type throws exception
+ * Tests trying to build an unknown type throws exception
  *
  * @expectedException InvalidArgumentException
  * @return void
@@ -129,7 +129,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests clear function in conjuntion with map
+ * Tests clear function in conjunction with map
  *
  * @return void
  **/

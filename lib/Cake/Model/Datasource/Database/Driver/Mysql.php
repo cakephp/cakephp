@@ -26,7 +26,7 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 /**
  * Establishes a connection to the databse server
  *
- * @param array $config configuretion to be used for creating connection
+ * @param array $config configuration to be used for creating connection
  * @return boolean true on success
  **/
 	public function connect(array $config) {
@@ -64,7 +64,7 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 	}
 
 /**
- * Returns wheter php is able to use this driver for connecting to database
+ * Returns whether php is able to use this driver for connecting to database
  *
  * @return boolean true if it is valid to use this driver
  **/

@@ -158,7 +158,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests executing a qury with no params also works
+ * Tests executing a query with no params also works
  *
  * @return void
  **/
@@ -213,7 +213,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Auxiliary function to insert a couple rows in a newly creted table
+ * Auxiliary function to insert a couple rows in a newly created table
  *
  * @return void
  **/
@@ -256,7 +256,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests rows can be updated without specifying any coditions nor types
+ * Tests rows can be updated without specifying any conditions nor types
  *
  * @return void
  **/
@@ -284,7 +284,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests it is possible to use key => value and stirng conditions for update
+ * Tests it is possible to use key => value and string conditions for update
  *
  * @return void
  **/
