@@ -8,7 +8,7 @@ use PDOException,
 	Cake\Model\Datasource\Database\Exception\MissingConnectionException;
 
 /**
- * Represents a conection with a database server
+ * Represents a connection with a database server
  *
  **/
 class Connection {
@@ -22,7 +22,7 @@ class Connection {
 
 /**
  * Driver object, responsible for creating the real connection
- * and provide specific SQL dialact
+ * and provide specific SQL dialect
  *
  * @var Cake\Model\Datasource\Database\Driver
  **/
@@ -60,7 +60,7 @@ class Connection {
 /**
  * Constructor
  *
- * @param array $config configuration for conencting to database
+ * @param array $config configuration for connecting to database
  * @throws \Cake\Model\Datasource\Database\Exception\MissingDriverException if driver class can not be found
  * @throws  \Cake\Model\Datasource\Database\Exception\MissingExtensionException if driver cannot be used
  * @return void
@@ -78,7 +78,7 @@ class Connection {
 	}
 
 /**
- * Connects to the configured databatase
+ * Connects to the configured database
  *
  * @throws \Cake\Model\Datasource\Database\Exception\MissingConnectionException if credentials are invalid
  * @return boolean true on success or false if already connected
@@ -105,7 +105,7 @@ class Connection {
 	}
 
 /**
- * Returns wheter connection to database server was already stablished
+ * Returns whether connection to database server was already stablished
  *
  * @return boolean
  **/
@@ -131,7 +131,7 @@ class Connection {
  * @param string $query SQL to be executed and interpolated with $params
  * @param array $params list or associative array of params to be interpolated in $query as values
  * @param array $types list or associative array of types to be used for casting values in query
- * @return Cake\Model\Datasource\Database\Statement executed statament
+ * @return Cake\Model\Datasource\Database\Statement executed statement
  **/
 	public function execute($query, array $params = array(), array $types = array()) {
 		$this->connect();
@@ -146,7 +146,7 @@ class Connection {
 	}
 
 /**
- * Executes a SQL statament and returns the Statement object as result
+ * Executes a SQL statement and returns the Statement object as result
  *
  * @return Cake\Model\Datasource\Database\Statement
  **/
@@ -274,7 +274,7 @@ class Connection {
 	}
 
 /**
- * Rollsback current transaction
+ * Rollback current transaction
  *
  * @return void
  **/
@@ -360,7 +360,7 @@ class Connection {
  *
  * @param mixed $value
  * @param Type to be used for determining kind of quoting to perform
- * @return mixed queted value
+ * @return mixed quoted value
  **/
 	public function quote($value, $type = null) {
 
@@ -380,7 +380,7 @@ class Connection {
 /**
  * Returns last id generated for a table or sequence in database
  *
- * @param strin $table table name or sequence to get last insert value from
+ * @param string $table table name or sequence to get last insert value from
  * @return string|integer
  **/
 	public function lastInsertId($table) {
@@ -401,7 +401,7 @@ class Connection {
  *
  * @param \Cake\Model\Datasource\Database\Statement The statement objet to bind values to
  * @param array $params list of values to be bound
- * @param array $types list of types to be used, kesy should match those in $params
+ * @param array $types list of types to be used, keys should match those in $params
  * @return void
  **/
 	protected function _bindValues($statement, $params, $types) {
@@ -443,7 +443,7 @@ class Connection {
 	}
 
 /**
- * Simple condtions parser joind by AND
+ * Simple conditions parser joined by AND
  *
  * @param array conditions key value array or list of conditions to be joined
  * to construct a WHERE clause

@@ -7,13 +7,13 @@ use PDO,
 	Cake\Model\Datasource\Database\Driver;
 
 /**
- * Encapsultes all conversion functions for values coming from database into PHP and
+ * Encapsulates all conversion functions for values coming from database into PHP and
  * going from PHP into database.
  **/
 class Type {
 
 /**
- * List of supported database types . A humand readable
+ * List of supported database types. A human readable
  * identifier is used as key and a complete namespaced class name as value
  * representing the class that will do actual type conversions.
  *
@@ -28,7 +28,7 @@ class Type {
 	);
 
 /**
- * List of mbasic type mappings, used to avoid having to instantiate a class
+ * List of basic type mappings, used to avoid having to instantiate a class
  * for doing conversion on these
  *
  * @var array
@@ -65,7 +65,7 @@ class Type {
 	}
 
 /**
- * Returns a Type object capable of converting a type identifyed by $name
+ * Returns a Type object capable of converting a type identified by $name
  *
  * @param string $name type identifier
  * @return Type
@@ -86,7 +86,7 @@ class Type {
 /**
  * Registers a new type identifier and maps it to a fully namespaced classname,
  * If called with no arguments it will return current types map array
- * If $className is ommited it will return mapped class for $type
+ * If $className is omitted it will return mapped class for $type
  *
  * @param string|array $type if string name of type to map, if array list of arrays to be mapped
  * @param string $className
@@ -108,7 +108,7 @@ class Type {
 	}
 
 /**
- * Clears out all created intences and mapped types classes, useful for testing
+ * Clears out all created instances and mapped types classes, useful for testing
  *
  * @return void
  **/
