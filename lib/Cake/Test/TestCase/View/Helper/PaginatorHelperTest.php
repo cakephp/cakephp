@@ -532,9 +532,9 @@ class PaginatorHelperTest extends TestCase {
 	public function testSortAdminLinks() {
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
-		Router::connect('/admin/:controller/:action/*', array('admin' => true, 'prefix' => 'admin'));
+		Router::connect('/admin/:controller/:action/*', array('prefix' => 'admin'));
 		Router::setRequestInfo(array(
-			array('controller' => 'users', 'plugin' => null, 'action' => 'admin_index', 'prefix' => 'admin', 'admin' => true),
+			array('controller' => 'users', 'plugin' => null, 'action' => 'index', 'prefix' => 'admin'),
 			array('base' => '', 'here' => '/admin/users', 'webroot' => '/')
 		));
 		$this->Paginator->request->params['paging']['Article']['page'] = 1;
@@ -606,7 +606,7 @@ class PaginatorHelperTest extends TestCase {
 	public function testUrlGenerationWithPrefixes() {
 		Configure::write('Routing.prefixes', array('members'));
 		Router::reload();
-		Router::connect('/members/:controller/:action/*', array('prefix' => 'members', 'members' => true));
+		Router::connect('/members/:controller/:action/*', array('prefix' => 'members'));
 		Router::connect('/:controller/:action/*');
 
 		Router::setRequestInfo(array(
@@ -617,7 +617,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Article']['options']['page'] = 2;
 		$this->Paginator->request->params['paging']['Article']['page'] = 2;
 		$this->Paginator->request->params['paging']['Article']['prevPage'] = true;
-		$options = array('members' => true);
+		$options = array('prefix' => 'members');
 
 		$result = $this->Paginator->url($options);
 		$expected = '/members/posts/index?page=2';
@@ -651,7 +651,7 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$options = array('members' => true, 'controller' => 'posts', 'order' => array('name' => 'desc'));
+		$options = array('prefix' => 'members', 'controller' => 'posts', 'order' => array('name' => 'desc'));
 		$result = $this->Paginator->url($options);
 		$expected = '/members/posts/index?page=2&amp;sort=name&amp;direction=desc';
 		$this->assertEquals($expected, $result);
@@ -737,7 +737,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('title');
 		$expected = array(
-			'a' => array('href' => '/articles/index/2?page=1&amp;foo=bar&amp;sort=title&amp;direction=asc&amp;x=y'),
+			'a' => array('href' => '/articles/index/2?page=1&amp;sort=title&amp;direction=asc&amp;foo=bar&amp;x=y'),
 			'Title',
 			'/a'
 		);
