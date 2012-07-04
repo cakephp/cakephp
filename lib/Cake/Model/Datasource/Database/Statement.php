@@ -109,11 +109,11 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
- *	$stamement->execute();
- *	echo $stamement->columnCount(); // outputs 2
+ *	$statement->execute();
+ *	echo $statement->columnCount(); // outputs 2
  * }}}
  *
- * @return int
+ * @return integer
  **/
 	public function columnCount() {
 		return $this->_statement->columnCount();
@@ -122,14 +122,14 @@ class Statement implements \IteratorAggregate, \Countable {
 /**
  * Returns the error code for the last error that occurred when executing this statement
  *
- * @return int|string
+ * @return integer|string
  **/
 	public function errorCode() {
 		return $this->_statement->errorCode();
 	}
 
 /**
- * Returens the error information for the last error that occurred when executing
+ * Returns the error information for the last error that occurred when executing
  * this statement
  *
  * @return array
@@ -144,7 +144,7 @@ class Statement implements \IteratorAggregate, \Countable {
  * that binding parameters from this method will not perform any custom type conversion
  * as it would normally happen when calling `bindValue`
  *
- * $param array $params lsit of values to be bound to query
+ * $param array $params list of values to be bound to query
  * @return boolean true on success, false otherwise
  **/
 	public function execute($params = null) {
@@ -160,11 +160,11 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
- *	$stamement->execute();
- *	print_r($stamement->fetch('assoc')); // will show array('id' => 1, 'title' => 'a title')
+ *	$statement->execute();
+ *	print_r($statement->fetch('assoc')); // will show array('id' => 1, 'title' => 'a title')
  * }}}
  *
- * @param string $type 'num' for positional columns, assoc for named calumns
+ * @param string $type 'num' for positional columns, assoc for named columns
  * @return mixed|boolean result array containing columns and values or false if no results
  * are left
  **/
@@ -184,8 +184,8 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
- *	$stamement->execute();
- *	print_r($stamement->fetchAll('assoc')); // will show array(0 => array('id' => 1, 'title' => 'a title'))
+ *	$statement->execute();
+ *	print_r($statement->fetchAll('assoc')); // will show array(0 => array('id' => 1, 'title' => 'a title'))
  * }}}
  *
  * @param string $type num for fetching columns as positional keys or assoc for column names as keys
@@ -207,11 +207,11 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
- *	$stamement->execute();
- *	print_r($stamement->rowCout()); // will show 1
+ *	$statement->execute();
+ *	print_r($statement->rowCount()); // will show 1
  * }}}
  *
- * @return int
+ * @return integer
  **/
 	public function rowCount() {
 		return $this->_statement->rowCount();
@@ -225,7 +225,7 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
- *	$stamement->execute();
+ *	$statement->execute();
  *	foreach ($statement as $row) {
  *		//do stuff
  *	}
@@ -241,7 +241,7 @@ class Statement implements \IteratorAggregate, \Countable {
  * Statements can be passed as argument for count()
  * to return the number for affected rows from last execution
  *
- * @return int
+ * @return integer
  **/
 	public function count() {
 		return $this->rowCount();
