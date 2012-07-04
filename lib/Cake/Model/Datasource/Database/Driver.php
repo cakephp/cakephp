@@ -39,4 +39,29 @@ abstract class Driver {
  **/
 	public abstract function prepare($sql);
 
+/**
+ * Starts a transaction
+ *
+ * @return boolean true on success, false otherwise
+ **/
+	public abstract function beginTransaction();
+
+/**
+ * Returns whether this driver supports save points for nested transactions
+ *
+ * @return boolean true if save points are supported, false otherwise
+ **/
+	public function supportsSavePoints() {
+		true;
+	}
+
+/**
+ * Returns whether this driver supports save points for nested transactions
+ *
+ * @return boolean true if save points are supported, false otherwise
+ **/
+	public function savePointSQL($name) {
+		return 'SAVEPOINT LEVEL ' . $name;
+	}
+
 }

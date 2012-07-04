@@ -36,6 +36,21 @@ class Connection {
 	protected $_connected = false;
 
 /**
+ * Contains how many nested transactions have been started
+ *
+ * @var int
+ **/
+	protected $_transactionLevel = 0;
+
+/**
+ * Whether this connection can and should use savepoints for nested
+ * transactions
+ *
+ * @var boolean
+ **/
+	protected $_useSavePoints = false;
+
+/**
  * Constructor
  *
  * @param array $config configuration for conencting to database
@@ -215,7 +230,14 @@ class Connection {
  * @return void
  **/
 	public function begin() {
-
+		$this->connect();
+		if (!$this->_transactionLevel) {
+			$this->_driver->beginTransaction();
+		}
+		$this->_transactionLevel++;
+		if ($this->_transactionLevel > 1 && $this->useSavePoints()) {
+			$this->createSavePoint($this->_transactionLevel);
+		}
 	}
 
 /**
@@ -225,7 +247,7 @@ class Connection {
  **/
 
 	public function commit() {
-
+		
 	}
 
 /**
@@ -235,6 +257,43 @@ class Connection {
  **/
 	public function rollback() {
 
+	}
+
+/**
+ * Returns whether this connection is using savepoints for nested transactions
+ * If a boolean is passed as argument it will enable/disable the usage of savepoints
+ * only if driver the allows it.
+ *
+ * If you are trying to enable this feature, make sure you check the return value of this
+ * function to verify it was enabled successfuly
+ *
+ * ## Example:
+ *
+ * `$connection->useSavePoints(true)` Returns true if drivers supports save points, false otherwise
+ * `$connection->useSavePoints(false)` Disables usage of savepoints and returns false
+ * `$connection->useSavePoints()` Returns current status
+ *
+ * @return boolean true if enabled, false otherwise
+ **/
+	public function useSavePoints($enable = null) {
+		if ($enable === null) {
+			return $this->_useSavePoints;
+		}
+		if ($enable === false) {
+			return $this->_useSavePoints = false;
+		}
+
+		return $this->_useSavePoints = $this->_driver->supportsSavePoints();
+	}
+
+/**
+ * Creates a new save point for nested transactions
+ *
+ * @return void
+ **/
+	public function createSavePoint($name) {
+		$this->connect();
+		$this->execute($this->_driver->savePointSQL($name));
 	}
 
 /**

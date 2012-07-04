@@ -24,14 +24,7 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 	);
 
 /**
- * PDO instance associated to this connection
- *
- * @var PDO
- **/
-	protected $_conenction;
-
-/**
- * Establishes a conenction to the databse server
+ * Establishes a connection to the databse server
  *
  * @param array $config configuretion to be used for creating connection
  * @return boolean true on success
@@ -89,6 +82,15 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 	public  function prepare($sql) {
 		$statement = $this->_connection->prepare($sql);
 		return new Statement($statement, $this);
+	}
+
+/**
+ * Starts a transaction
+ *
+ * @return boolean true on success, false otherwise
+ **/
+	public function beginTransaction() {
+		return $this->_connection->beginTransaction();
 	}
 
 }
