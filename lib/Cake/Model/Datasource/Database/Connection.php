@@ -43,6 +43,13 @@ class Connection {
 	protected $_transactionLevel = 0;
 
 /**
+ * Whether a transaction is active in this connection
+ *
+ * @var int
+ **/
+	protected $_transactionStarted = false;
+
+/**
  * Whether this connection can and should use savepoints for nested
  * transactions
  *
@@ -231,32 +238,64 @@ class Connection {
  **/
 	public function begin() {
 		$this->connect();
-		if (!$this->_transactionLevel) {
+		if (!$this->_transactionStarted) {
 			$this->_driver->beginTransaction();
+			$this->_transactionLevel = 0;
+			$this->_transactionStarted = true;
+			return;
 		}
-		$this->_transactionLevel++;
-		if ($this->_transactionLevel > 1 && $this->useSavePoints()) {
-			$this->createSavePoint($this->_transactionLevel);
+
+		if ($this->useSavePoints()) {
+			$this->createSavePoint(++$this->_transactionLevel);
 		}
 	}
 
 /**
  * Commits current transaction
  *
- * @return void
+ * @return boolean true on success, false otherwise
  **/
-
 	public function commit() {
-		
+		if (!$this->_transactionStarted) {
+			return false;
+		}
+		$this->connect();
+
+		if ($this->_transactionLevel === 0) {
+			$this->_transactionStarted = false;
+			return $this->_driver->commitTransaction();
+		}
+		if ($this->useSavePoints()) {
+			$this->releaseSavePoint($this->_transactionLevel);
+		}
+
+		$this->_transactionLevel--;
+		return true;
 	}
 
 /**
- * Rollsabck current transaction
+ * Rollsback current transaction
  *
  * @return void
  **/
 	public function rollback() {
+		if (!$this->_transactionStarted) {
+			return false;
+		}
+		$this->connect();
 
+		$useSavePoint = $this->useSavePoints();
+		if ($this->_transactionLevel === 0 || !$useSavePoint) {
+			$this->_transactionLevel = 0;
+			$this->_transactionStarted = false;
+			$this->_driver->rollbackTransaction();
+			return true;
+		}
+
+		if ($useSavePoint) {
+			$this->rollbackSavepoint($this->_transactionLevel--);
+		}
+		return true;
 	}
 
 /**
@@ -294,6 +333,26 @@ class Connection {
 	public function createSavePoint($name) {
 		$this->connect();
 		$this->execute($this->_driver->savePointSQL($name));
+	}
+
+/**
+ * Releases a save point by its name
+ *
+ * @return void
+ **/
+	public function releaseSavePoint($name) {
+		$this->connect();
+		$this->execute($this->_driver->releaseSavePointSQL($name));
+	}
+
+/**
+ * Rollsback a save point by its name
+ *
+ * @return void
+ **/
+	public function rollbackSavepoint($name) {
+		$this->connect();
+		$this->execute($this->_driver->rollbackSavePointSQL($name));
 	}
 
 /**
