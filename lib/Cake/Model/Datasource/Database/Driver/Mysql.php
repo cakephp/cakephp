@@ -93,4 +93,13 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 		return $this->_connection->beginTransaction();
 	}
 
+/**
+ * Commits a transaction
+ *
+ * @return boolean true on success, false otherwise
+ **/
+	public function commitTransaction() {
+		return $this->_connection->commit();
+	}
+
 }

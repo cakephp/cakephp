@@ -47,6 +47,14 @@ abstract class Driver {
 	public abstract function beginTransaction();
 
 /**
+ * Commits a transaction
+ *
+ * @return boolean true on success, false otherwise
+ **/
+	public abstract function commitTransaction();
+
+
+/**
  * Returns whether this driver supports save points for nested transactions
  *
  * @return boolean true if save points are supported, false otherwise
@@ -56,12 +64,33 @@ abstract class Driver {
 	}
 
 /**
- * Returns whether this driver supports save points for nested transactions
+ * Returns a SQL snippet for creating a new transaction savepoint
  *
- * @return boolean true if save points are supported, false otherwise
+ * @param string save point name
+ * @return string
  **/
 	public function savePointSQL($name) {
-		return 'SAVEPOINT LEVEL ' . $name;
+		return 'SAVEPOINT LEVEL' . $name;
+	}
+
+/**
+ * Returns a SQL snippet for releasing a previously created save point
+ *
+ * @param string save point name
+ * @return string
+ **/
+	public function releaseSavePointSQL($name) {
+		return 'RELEASE SAVEPOINT LEVEL' . $name;
+	}
+
+/**
+ * Returns a SQL snippet for rollbacking a previously created save point
+ *
+ * @param string save point name
+ * @return string
+ **/
+	public function rollbackSavePointSQL($name) {
+		return 'ROLLBACK TO SAVEPOINT LEVEL' . $name;
 	}
 
 }
