@@ -33,10 +33,10 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * @var array
  **/
-	protected $_fetchMap = array(
+	protected $_fetchMap = [
 		'num' => PDO::FETCH_NUM,
 		'assoc' => PDO::FETCH_ASSOC
-	);
+	];
 
 /**
  * Constructor
@@ -185,7 +185,7 @@ class Statement implements \IteratorAggregate, \Countable {
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
  *	$statement->execute();
- *	print_r($statement->fetchAll('assoc')); // will show array(0 => array('id' => 1, 'title' => 'a title'))
+ *	print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
  * }}}
  *
  * @param string $type num for fetching columns as positional keys or assoc for column names as keys
@@ -263,7 +263,7 @@ class Statement implements \IteratorAggregate, \Countable {
 			$value = $type->toDatabase($value, $this->_driver);
 			$type = $type->toStatement($value, $this->_driver);
 		}
-		return array($value, $type);
+		return [$value, $type];
 	}
 
 }

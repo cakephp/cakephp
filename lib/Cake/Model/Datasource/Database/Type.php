@@ -19,13 +19,13 @@ class Type {
  *
  * @var array
  **/
-	protected static $_types = array(
+	protected static $_types = [
 		'boolean' => '\Cake\Model\Datasource\Database\Type\BooleanType',
 		'binary' => '\Cake\Model\Datasource\Database\Type\BinaryType',
 		'date' => '\Cake\Model\Datasource\Database\Type\DateType',
 		'datetime' => '\Cake\Model\Datasource\Database\Type\DateTimeType',
 		'time' => '\Cake\Model\Datasource\Database\Type\TimeType'
-	);
+	];
 
 /**
  * List of basic type mappings, used to avoid having to instantiate a class
@@ -33,19 +33,19 @@ class Type {
  *
  * @var array
  **/
-	protected static $_basicTypes = array(
-		'float' => array('php' => 'floatval'),
-		'integer' => array('php' => 'intval', 'pdo' => PDO::PARAM_INT),
-		'string' => array('php' => 'strval'),
-		'text' => array('php' => 'strval'),
-	);
+	protected static $_basicTypes = [
+		'float' => ['php' => 'floatval'],
+		'integer' => ['php' => 'intval', 'pdo' => PDO::PARAM_INT],
+		'string' => ['php' => 'strval'],
+		'text' => ['php' => 'strval'],
+	];
 
 /**
  * Contains a map of type object instances to be reused if needed
  *
  * @var array
  **/
-	protected static $_builtTypes = array();
+	protected static $_builtTypes = [];
 
 /**
  * Identifier name for this type
@@ -113,8 +113,8 @@ class Type {
  * @return void
  **/
 	public static function clear() {
-		self::$_types = array();
-		self::$_builtTypes = array();
+		self::$_types = [];
+		self::$_builtTypes = [];
 	}
 
 /**
