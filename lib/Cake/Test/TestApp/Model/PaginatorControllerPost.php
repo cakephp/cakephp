@@ -18,7 +18,7 @@
  */
 namespace TestApp\Model;
 use Cake\TestSuite\Fixture\TestModel;
-use Cake\Utility\Set;
+use Cake\Utility\Hash;
 
 /**
  * PaginatorControllerPost class
@@ -81,7 +81,7 @@ class PaginatorControllerPost extends TestModel {
 	public function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
 		if ($conditions == 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey .' > ' => '1');
-			$options = Set::merge($fields, compact('conditions'));
+			$options = Hash::merge($fields, compact('conditions'));
 			return parent::find('all', $options);
 		}
 		return parent::find($conditions, $fields);

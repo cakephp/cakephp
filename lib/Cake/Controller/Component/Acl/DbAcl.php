@@ -19,7 +19,6 @@ use Cake\Controller\Component\Acl\AclInterface;
 use Cake\Core\Object;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
-use Cake\Utility\Set;
 
 /**
  * DbAcl implements an ACL control system in the database.  ARO's and ACO's are

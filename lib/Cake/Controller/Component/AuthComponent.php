@@ -33,7 +33,6 @@ use Cake\Routing\Router;
 use Cake\Utility\Debugger;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
-use Cake\Utility\Set;
 
 /**
  * Authentication control component class

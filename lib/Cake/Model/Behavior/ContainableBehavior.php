@@ -21,7 +21,7 @@
 namespace Cake\Model\Behavior;
 use Cake\Model\Model;
 use Cake\Model\ModelBehavior;
-use Cake\Utility\Set;
+use Cake\Utility\Hash;
 
 /**
  * Behavior to allow for dynamic and atomic manipulation of a Model's associations 

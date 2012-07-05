@@ -25,7 +25,6 @@ use Cake\Core\Configure;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
-use Cake\Utility\Set;
 
 /**
  * Cookie Component.

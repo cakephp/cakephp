@@ -23,7 +23,6 @@ use Cake\Core\Object;
 use Cake\Error;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
-use Cake\Utility\Set;
 
 /**
  * Access Control List factory class.

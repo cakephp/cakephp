@@ -25,7 +25,6 @@ use Cake\Network\Response;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use Cake\Utility\Set;
 
 /**
  * Parses the request URL into controller, action, and parameters.  Uses the connected routes

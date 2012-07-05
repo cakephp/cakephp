@@ -19,7 +19,6 @@ use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
-use Cake\Utility\Set;
 
 /**
  * Object class provides a few generic methods used in several subclasses.
