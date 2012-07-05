@@ -144,7 +144,7 @@ class Type {
  * @param Driver $driver object from which database preferences and configuration will be extracted
  * @return mixed
  **/
-	public function toPHP($value, $driver) {
+	public function toPHP($value, Driver $driver) {
 		if (!empty(self::$_basicTypes[$this->_name])) {
 			$typeInfo = self::$_basicTypes[$this->_name];
 			$value = ($value === null) ? null : $value;
@@ -162,7 +162,7 @@ class Type {
  * @param Driver $driver object from which database preferences and configuration will be extracted
  * @return mixed
  **/
-	public function toStatement($value, $driver) {
+	public function toStatement($value, Driver $driver) {
 		if (!empty(self::$_basicTypes[$this->_name])) {
 			$typeInfo = self::$_basicTypes[$this->_name];
 			return isset($typeInfo['pdo']) ? $typeInfo['pdo'] : PDO::PARAM_STR;

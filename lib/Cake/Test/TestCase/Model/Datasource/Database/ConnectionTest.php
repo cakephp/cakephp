@@ -54,7 +54,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testMissingDriver() {
-		$connection = new Connection(array('datasource' =>  '\Foo\InvalidDriver'));
+		$connection = new Connection(['datasource' =>  '\Foo\InvalidDriver']);
 	}
 
 /**
@@ -64,8 +64,8 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testDisabledDriver() {
-		$mock = $this->getMock('\Cake\Model\Datasource\Database\Connection\Driver', array('enabled'), array(), 'DriverMock');
-		$connection = new Connection(array('datasource' => get_class($mock)));
+		$mock = $this->getMock('\Cake\Model\Datasource\Database\Connection\Driver', ['enabled'], [], 'DriverMock');
+		$connection = new Connection(['datasource' => get_class($mock)]);
 	}
 
 /**
@@ -75,7 +75,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testWrongCredentials() {
-		$connection = new Connection(array('database' => 'foobar') + Configure::read('Connections.test'));
+		$connection = new Connection(['database' => 'foobar'] + Configure::read('Connections.test'));
 		$connection->connect();
 	}
 
@@ -110,22 +110,22 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  **/
 	public function testExecuteWithArguments() {
 		$sql = 'SELECT 1 + ?';
-		$statement = $this->connection->execute($sql, array(1));
+		$statement = $this->connection->execute($sql, [1]);
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch();
-		$this->assertEquals(array(2), $result);
+		$this->assertEquals([2], $result);
 
 		$sql = 'SELECT 1 + ? + ? AS total';
-		$statement = $this->connection->execute($sql, array(2, 3));
+		$statement = $this->connection->execute($sql, [2, 3]);
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch('assoc');
-		$this->assertEquals(array('total' => 6), $result);
+		$this->assertEquals(['total' => 6], $result);
 
 		$sql = 'SELECT 1 + :one + :two AS total';
-		$statement = $this->connection->execute($sql, array('one' => 2, 'two' => 3));
+		$statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3]);
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch('assoc');
-		$this->assertEquals(array('total' => 6), $result);
+		$this->assertEquals(['total' => 6], $result);
 	}
 
 /**
@@ -135,15 +135,15 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  **/
 	public function testExecuteWithArgumentsAndTypes() {
 		$sql = 'SELECT ?';
-		$statement = $this->connection->execute($sql, array(new \DateTime('2012-01-01')), array('date'));
+		$statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['date']);
 		$result = $statement->fetch();
 		$this->assertEquals('2012-01-01', $result[0]);
 
 		$sql = 'SELECT ?, ?, ?';
-		$params = array(new \DateTime('2012-01-01 10:10:10'), '2000-01-01 10:10:10', 1.1);
-		$statement = $this->connection->execute($sql, $params, array('date', 'string', 'float'));
+		$params = [new \DateTime('2012-01-01 10:10:10'), '2000-01-01 10:10:10', 1.1];
+		$statement = $this->connection->execute($sql, $params, ['date', 'string', 'float']);
 		$result = $statement->fetch();
-		$this->assertEquals(array('2012-01-01', '2000-01-01 10:10:10', 1.1), $result);
+		$this->assertEquals(['2012-01-01', '2000-01-01 10:10:10', 1.1], $result);
 	}
 
 /**
@@ -154,7 +154,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  **/
 	public function testExecuteWithMissingType() {
 		$sql = 'SELECT ?';
-		$statement = $this->connection->execute($sql, array(new \DateTime('2012-01-01')), array('bar'));
+		$statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['bar']);
 	}
 
 /**
@@ -167,7 +167,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$statement = $this->connection->execute($sql);
 		$result = $statement->fetch();
 		$this->assertCount(1, $result);
-		$this->assertEquals(array(1), $result);
+		$this->assertEquals([1], $result);
 	}
 
 /**
@@ -178,11 +178,11 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	public function testInsertWithMatchingTypes() {
 		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
 		$this->connection->execute($table);
-		$data = array('id' => '1', 'title' =>  'a title', 'body' =>  'a body');
+		$data = ['id' => '1', 'title' =>  'a title', 'body' =>  'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
-			array('id' => 'integer', 'title' => 'string', 'body' => 'string')
+			['id' => 'integer', 'title' => 'string', 'body' => 'string']
 		);
 		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
 		$result = $this->connection->execute('SELECT * from things');
@@ -199,11 +199,11 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	public function testInsertWithPositionalTypes() {
 		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
 		$this->connection->execute($table);
-		$data = array('id' => '1', 'title' =>  'a title', 'body' =>  'a body');
+		$data = ['id' => '1', 'title' =>  'a title', 'body' =>  'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
-			array('integer', 'string', 'string')
+			['integer', 'string', 'string']
 		);
 		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
 		$result = $this->connection->execute('SELECT * from things');
@@ -220,11 +220,11 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	protected function _insertTwoRecords() {
 		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
 		$this->connection->execute($table);
-		$data = array('id' => '1', 'title' =>  'a title', 'body' =>  'a body');
+		$data = ['id' => '1', 'title' =>  'a title', 'body' =>  'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
-			array('id' => 'integer', 'title' => 'string', 'body' => 'string')
+			['id' => 'integer', 'title' => 'string', 'body' => 'string']
 		);
 
 		$result->bindValue(1, '2', 'integer');
@@ -264,8 +264,8 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = 'changed the body!';
-		$this->connection->update('things', array('title' => $title, 'body' => $body));
-		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', array($title, $body));
+		$this->connection->update('things', ['title' => $title, 'body' => $body]);
+		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
 		$this->assertCount(2, $result);
 	}
 
@@ -278,8 +278,8 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = 'changed the body!';
-		$this->connection->update('things', array('title' => $title, 'body' => $body), array('id' => 2));
-		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', array($title, $body));
+		$this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2]);
+		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
 		$this->assertCount(1, $result);
 	}
 
@@ -292,8 +292,8 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = 'changed the body!';
-		$this->connection->update('things', array('title' => $title, 'body' => $body), array('id' => 2, 'body is not null'));
-		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', array($title, $body));
+		$this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2, 'body is not null']);
+		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
 		$this->assertCount(1, $result);
 	}
 
@@ -307,8 +307,8 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$title = 'changed the title!';
 		$body = new \DateTime('2012-01-01');
 		$values = compact('title', 'body');
-		$this->connection->update('things', $values, array(), array('body' =>  'date'));
-		$result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, array('body' => 'date'));
+		$this->connection->update('things', $values, [], ['body' =>  'date']);
+		$result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
 		$this->assertCount(2, $result);
 		$row = $result->fetch('assoc');
 		$this->assertEquals('2012-01-01', $row['body']);
@@ -326,8 +326,8 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$title = 'changed the title!';
 		$body = new \DateTime('2012-01-01');
 		$values = compact('title', 'body');
-		$this->connection->update('things', $values, array('id' => '1-string-parsed-as-int'), array('body' =>  'date', 'id' => 'integer'));
-		$result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, array('body' => 'date'));
+		$this->connection->update('things', $values, ['id' => '1-string-parsed-as-int'], ['body' =>  'date', 'id' => 'integer']);
+		$result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
 		$this->assertEquals('2012-01-01', $row['body']);
@@ -352,15 +352,15 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  **/
 	public function testDeleteWithConditions() {
 		$this->_insertTwoRecords();
-		$this->connection->delete('things', array('id' => '1-rest-is-ommited'), array('id' => 'integer'));
+		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(1, $result);
 
-		$this->connection->delete('things', array('id' => '1-rest-is-ommited'), array('id' => 'integer'));
+		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(1, $result);
 
-		$this->connection->delete('things', array('id' => '2-rest-is-ommited'), array('id' => 'integer'));
+		$this->connection->delete('things', ['id' => '2-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(0, $result);
 	}
