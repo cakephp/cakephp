@@ -19,7 +19,6 @@ use Cake\Configure\ConfigReaderInterface;
 use Cake\Configure\PhpReader;
 use Cake\Error;
 use Cake\Utility\Hash;
-use Cake\Utility\Set;
 
 /**
  * Configuration class. Used for managing runtime configuration information.

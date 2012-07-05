@@ -23,7 +23,6 @@ use Cake\Controller\ComponentCollection;
 use Cake\Controller\Component\AclComponent;
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
-use Cake\Utility\Set;
 
 /**
  * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode

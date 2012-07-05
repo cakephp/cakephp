@@ -19,7 +19,6 @@ namespace Cake\Network;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Utility\Hash;
-use Cake\Utility\Set;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -347,7 +346,7 @@ class Request implements \ArrayAccess {
 				$this->_processFileData($newPath, $fields, $field);
 			} else {
 				$newPath .= '.' . $field;
-				$this->data = Set::insert($this->data, $newPath, $fields);
+				$this->data = Hash::insert($this->data, $newPath, $fields);
 			}
 		}
 	}

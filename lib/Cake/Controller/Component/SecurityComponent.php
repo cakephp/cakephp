@@ -25,7 +25,6 @@ use Cake\Error;
 use Cake\Network\Request;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
-use Cake\Utility\Set;
 
 /**
  * The Security Component creates an easy way to integrate tighter security in 

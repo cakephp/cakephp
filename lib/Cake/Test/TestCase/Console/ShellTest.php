@@ -25,7 +25,6 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Folder;
 use Cake\Utility\Hash;
-use Cake\Utility\Set;
 
 /**
  * ShellTestShell class
