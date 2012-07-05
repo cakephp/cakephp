@@ -22,7 +22,6 @@ use Cake\Error;
 use Cake\Network\Socket;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use Cake\Utility\Set;
 
 /**
  * Cake network socket connection class.

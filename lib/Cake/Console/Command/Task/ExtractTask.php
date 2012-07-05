@@ -24,7 +24,6 @@ use Cake\Utility\File;
 use Cake\Utility\Folder;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use Cake\Utility\Set;
 
 /**
  * Language string extractor

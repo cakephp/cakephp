@@ -20,7 +20,6 @@ use Cake\Network\Response;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
-use Cake\Utility\Set;
 
 /**
  * Base Authentication class with common methods and properties.

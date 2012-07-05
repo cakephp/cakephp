@@ -21,7 +21,6 @@ use Cake\Model\Schema;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use Cake\Utility\Set;
 
 /**
  * TestFixture is responsible for building and destroying tables to be used 

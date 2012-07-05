@@ -24,7 +24,6 @@ use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
-use Cake\Utility\Set;
 use TestPlugin\Controller\TestPluginController;
 
 /**
