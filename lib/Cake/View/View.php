@@ -394,7 +394,7 @@ class View extends Object {
 		}
 
 		if (isset($options['cache'])) {
-			$contents = $this->_elementCache($name, $plugin, $options);
+			$contents = $this->_elementCache($name, $plugin, $data, $options);
 			if ($contents !== false) {
 				return $contents;
 			}
@@ -1107,7 +1107,7 @@ class View extends Object {
  * @param string $plugin Plugin name
  * @param array $options Element options
  */
-	protected function _elementCache($name, $plugin, $options) {
+	protected function _elementCache($name, $plugin, $data, $options) {
 		$underscored = null;
 		if ($plugin) {
 			$underscored = Inflector::underscore($plugin);
@@ -1124,8 +1124,8 @@ class View extends Object {
 			);
 			$this->elementCacheSettings = array_merge($defaults, $options['cache']);
 		}
-		$key = 'element_' . $this->elementCacheSettings['key'];
-		return = Cache::read($key, $this->elementCacheSettings['config']);
+		$this->elementCacheSettings['key'] = 'element_' . $this->elementCacheSettings['key'];
+		return Cache::read($this->elementCacheSettings['key'], $this->elementCacheSettings['config']);
 	}
 
 /**
@@ -1140,7 +1140,7 @@ class View extends Object {
 		if (!$this->_helpersLoaded) {
 			$this->loadHelpers();
 		}
-		if ($callbacks) {
+		if ($options['callbacks']) {
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
 		}
 
@@ -1151,7 +1151,7 @@ class View extends Object {
 			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
 		}
 		if (isset($options['cache'])) {
-			Cache::write($key, $element, $this->elementCacheSettings['config']);
+			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);
 		}
 		return $element;
 	}
