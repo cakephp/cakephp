@@ -2,10 +2,10 @@
 
 namespace Cake\Model\Datasource\Database;
 
-use PDOException,
-	Cake\Model\Datasource\Database\Exception\MissingDriverException,
-	Cake\Model\Datasource\Database\Exception\MissingExtensionException,
-	Cake\Model\Datasource\Database\Exception\MissingConnectionException;
+use Cake\Model\Datasource\Database\Exception\MissingConnectionException;
+use Cake\Model\Datasource\Database\Exception\MissingDriverException;
+use Cake\Model\Datasource\Database\Exception\MissingExtensionException;
+use PDOException;
 
 /**
  * Represents a connection with a database server

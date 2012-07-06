@@ -2,9 +2,9 @@
 
 namespace Cake\Model\Datasource\Database;
 
-use PDO,
-	Exception,
-	Cake\Model\Datasource\Database\Driver;
+use Cake\Model\Datasource\Database\Driver;
+use Exception;
+use PDO;
 
 /**
  * Encapsulates all conversion functions for values coming from database into PHP and

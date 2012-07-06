@@ -2,8 +2,8 @@
 
 namespace Cake\Model\Datasource\Database\Driver;
 
-use PDO,
-	Cake\Model\Datasource\Database\Statement;
+use Cake\Model\Datasource\Database\Statement;
+use PDO;
 
 class Mysql extends \Cake\Model\Datasource\Database\Driver {
 

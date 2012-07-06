@@ -17,8 +17,8 @@
  */
 namespace Cake\Test\TestCase\Model\Datasource\Database;
 
-use Cake\Model\Datasource\Database\Connection,
-	Cake\Core\Configure;
+use Cake\Core\Configure;
+use Cake\Model\Datasource\Database\Connection;
 
 /**
  * Tests Connection class
