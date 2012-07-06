@@ -394,7 +394,7 @@ class View extends Object {
 		}
 
 		if (isset($options['cache'])) {
-			$contents = $this->_elementCache($name, $plugin, $data, $options);
+			$contents = $this->_elementCache($name, $data, $options);
 			if ($contents !== false) {
 				return $contents;
 			}
@@ -1107,7 +1107,10 @@ class View extends Object {
  * @param string $plugin Plugin name
  * @param array $options Element options
  */
-	protected function _elementCache($name, $plugin, $data, $options) {
+	protected function _elementCache($name, $data, $options) {
+		$plugin = null;
+		list($plugin, $name) = $this->pluginSplit($name);
+
 		$underscored = null;
 		if ($plugin) {
 			$underscored = Inflector::underscore($plugin);
