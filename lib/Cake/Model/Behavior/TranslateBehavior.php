@@ -392,6 +392,16 @@ class TranslateBehavior extends ModelBehavior {
 		unset($this->runtime[$model->alias]['beforeValidate'], $this->runtime[$model->alias]['beforeSave']);
 		$conditions = array('model' => $model->alias, 'foreign_key' => $model->id);
 		$RuntimeModel = $this->translateModel($model);
+	
+		$fields = array_merge($this->settings[$model->alias], $this->runtime[$model->alias]['fields']);
+		if ($created) {
+			foreach ($fields as $field) {
+				if (!isset($tempData[$field])) {
+					//set the field value to an empty string
+					$tempData[$field] = '';
+				}
+			}
+		}
 
 		foreach ($tempData as $field => $value) {
 			unset($conditions['content']);
