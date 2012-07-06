@@ -80,6 +80,10 @@ class ShellTestShell extends Shell {
 		return $this->_mergeVars($properties, $class, $normalize);
 	}
 
+	public function useLogger($enable = true) {
+		$this->_useLogger($enable);
+	}
+
 }
 
 /**
@@ -825,7 +829,7 @@ TEXT;
 		require_once CORE_TEST_CASES . DS . 'Log' . DS . 'Engine' . DS . 'ConsoleLogTest.php';
 		$mock = $this->getMock('ConsoleLog', array('write'), array(
 			array('types' => 'error'),
-			));
+		));
 		TestCakeLog::config('console', array(
 			'engine' => 'ConsoleLog',
 			'stream' => 'php://stderr',
@@ -838,6 +842,34 @@ TEXT;
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 		$contents = file_get_contents(LOGS . 'error.log');
 		$this->assertContains($this->Shell->testMessage, $contents);
+	}
+
+/**
+ * Tests that _useLogger works properly
+ *
+ * @return void
+ **/
+	public function testProtectedUseLogger() {
+		CakeLog::drop('stdout');
+		CakeLog::drop('stderr');
+		$this->Shell->useLogger(true);
+		$this->assertNotEmpty(CakeLog::stream('stdout'));
+		$this->assertNotEmpty(CakeLog::stream('stderr'));
+		$this->Shell->useLogger(false);
+		$this->assertFalse(CakeLog::stream('stdout'));
+		$this->assertFalse(CakeLog::stream('stderr'));
+	}
+
+/**
+ * Test file and console and logging quiet output
+ */
+	public function testQuietLog() {
+		$output = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$error = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Shell = $this->getMock('ShellTestShell', array('_useLogger'), array($output, $error, $in));
+		$this->Shell->expects($this->once())->method('_useLogger')->with(false);
+		$this->Shell->runCommand('foo', array('--quiet'));
 	}
 
 }
