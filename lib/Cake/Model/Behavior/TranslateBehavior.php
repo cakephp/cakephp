@@ -396,7 +396,7 @@ class TranslateBehavior extends ModelBehavior {
 		$fields = array_merge($this->settings[$model->alias], $this->runtime[$model->alias]['fields']);
 		if ($created) {
 			foreach ($fields as $field) {
-				if (isset($tempData[$field])) {
+				if (!isset($tempData[$field])) {
 					//set the field value to an empty string
 					$tempData[$field] = '';
 				}
