@@ -17,8 +17,8 @@
  */
 namespace Cake\Test\TestCase\Model\Datasource\Database;
 
-use Cake\Model\Datasource\Database\Type,
-	PDO;
+use Cake\Model\Datasource\Database\Type;
+use PDO;
 
 /**
  * Mock class for testing type registering
