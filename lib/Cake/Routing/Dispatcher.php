@@ -43,7 +43,7 @@ class Dispatcher implements CakeEventListener {
 /**
  * Event manager, used to handle dispatcher filters
  *
- * @var CakeEventMaanger
+ * @var CakeEventManager
  */
 	protected $_eventManager;
 
@@ -62,7 +62,7 @@ class Dispatcher implements CakeEventListener {
  * Returns the CakeEventManager instance or creates one if none was
  * creted. Attaches the default listeners and filters
  *
- * @return CakeEventmanger
+ * @return CakeEventManager
  */
 	public function getEventManager() {
 		if (!$this->_eventManager) {
