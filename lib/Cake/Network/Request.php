@@ -69,7 +69,7 @@ class Request implements \ArrayAccess {
  *
  * @var string
  */
-	public $base = false;
+	public $base;
 
 /**
  * webroot path segment for the request.
@@ -83,7 +83,7 @@ class Request implements \ArrayAccess {
  *
  * @var string
  */
-	public $here = null;
+	public $here;
 
 /**
  * Whether or not to trust HTTP_X headers set by most load balancers.
@@ -298,14 +298,11 @@ class Request implements \ArrayAccess {
  * @return array Base URL, webroot dir ending in /
  */
 	protected static function _base() {
-		$dir = $webroot = null;
+		$base = $dir = $webroot = null;
 		$config = Configure::read('App');
 		extract($config);
 
-		if (!isset($base)) {
-			$base = $this->base;
-		}
-		if ($base !== false) {
+		if ($base !== false && $base !== null) {
 			return array($base, $base . '/');
 		}
 
@@ -677,6 +674,9 @@ class Request implements \ArrayAccess {
  * @return string The scheme used for the request.
  */
 	public function scheme() {
+		if ($this->trustProxy && env('HTTP_X_FORWARDED_PROTO')) {
+			return env('HTTP_X_FORWARDED_PROTO');
+		}
 		return env('HTTPS') ? 'https' : 'http';
 	}
 

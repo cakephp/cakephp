@@ -649,11 +649,14 @@ class RequestTest extends TestCase {
 	public function testScheme() {
 		$_SERVER['HTTPS'] = 'on';
 		$request = new Request();
-
 		$this->assertEquals('https', $request->scheme());
 
 		unset($_SERVER['HTTPS']);
 		$this->assertEquals('http', $request->scheme());
+
+		$_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
+		$request->trustProxy = true;
+		$this->assertEquals('https', $request->scheme());
 	}
 
 /**
