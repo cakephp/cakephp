@@ -13,6 +13,8 @@ use PDO;
  **/
 class Statement implements \IteratorAggregate, \Countable {
 
+	use TypeConverter;
+
 /**
  * Statement instance implementation, such as PDOStatement
  * or any other custom implementation
@@ -86,7 +88,7 @@ class Statement implements \IteratorAggregate, \Countable {
  **/
 	public function bindValue($column, $value, $type = null) {
 		if ($type !== null && !ctype_digit($type)) {
-			list($value, $type) = $this->_cast($value, $type);
+			list($value, $type) = $this->cast($value, $type);
 		}
 		$this->_statement->bindValue($column, $value, $type);
 	}
@@ -248,22 +250,29 @@ class Statement implements \IteratorAggregate, \Countable {
 	}
 
 /**
- * Auxiliary function to convert values to database type
- * and return relevant internal statement type
+ * Binds a set of values to statement object with corresponding type
  *
- * @param mixed value
- * @param string $type
- * @return array list containing converted value and internal type
+ * @param array $params list of values to be bound
+ * @param array $types list of types to be used, keys should match those in $params
+ * @return void
  **/
-	protected function _cast($value, $type) {
-		if (is_string($type)) {
-			$type = Type::build($type);
+	public function bind($params, $types) {
+		if (empty($params)) {
+			return;
 		}
-		if ($type instanceof Type) {
-			$value = $type->toDatabase($value, $this->_driver);
-			$type = $type->toStatement($value, $this->_driver);
+
+		$annonymousParams = is_int(key($params)) ? true : false;
+		$offset = 1;
+		foreach ($params as $index => $value) {
+			$type = null;
+			if (isset($types[$index])) {
+				$type = $types[$index];
+			}
+			if ($annonymousParams) {
+				$index += $offset;
+			}
+			$this->bindValue($index, $value, $type);
 		}
-		return [$value, $type];
 	}
 
 }
