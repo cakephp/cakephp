@@ -111,4 +111,13 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 		return $this->_connection->rollback();
 	}
 
+/**
+ * Returns a value in a safe representation to be used in a query string
+ *
+ * @return string
+ **/
+	public function quote($value, $type) {
+		return $this->_connection->quote($value, $type);
+	}
+
 }

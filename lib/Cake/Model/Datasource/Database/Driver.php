@@ -61,7 +61,6 @@ abstract class Driver {
 	public abstract function rollbackTransaction();
 
 
-
 /**
  * Returns whether this driver supports save points for nested transactions
  *
@@ -101,4 +100,10 @@ abstract class Driver {
 		return 'ROLLBACK TO SAVEPOINT LEVEL' . $name;
 	}
 
+/**
+ * Returns a value in a safe representation to be used in a query string
+ *
+ * @return string
+ **/
+	public abstract function quote($value, $type);
 }

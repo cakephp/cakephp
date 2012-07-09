@@ -13,6 +13,8 @@ use PDOException;
  **/
 class Connection {
 
+	use TypeConverter;
+
 /**
  * Contains the configuration params for this connection
  *
@@ -378,7 +380,9 @@ class Connection {
  * @return mixed quoted value
  **/
 	public function quote($value, $type = null) {
-
+		$this->connect();
+		list($value, $type) = $this->cast($value, $type);
+		return $this->_driver->quote($value, $type);
 	}
 
 /**
