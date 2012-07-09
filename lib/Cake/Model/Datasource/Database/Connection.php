@@ -70,11 +70,25 @@ class Connection {
 		if (!class_exists($config['datasource'])) {
 			throw new MissingDriverException(array('driver' => $config['datasource']));
 		}
-		$this->_driver = new $config['datasource'];
 
+		$this->setDriver($config['datasource']);
 		if (!$this->_driver->enabled()) {
 			throw new MissingExtensionException(array('driver' => get_class($this->_driver)));
 		}
+	}
+
+/**
+ * Sets the driver instance. If an string is passed it will be treated
+ * as a class name and will be instantiated
+ *
+ * @param string|Driver $driver
+ * @return void
+ **/
+	public function setDriver($driver) {
+		if (is_string($driver)) {
+			$driver = new $driver;
+		}
+		$this->_driver = $driver;
 	}
 
 /**
@@ -137,7 +151,7 @@ class Connection {
 		$this->connect();
 		if ($params) {
 			$statement = $this->prepare($query);
-			$this->_bindValues($statement, $params, $types);
+			$statement->bind($params, $types);
 			$result = $statement->execute();
 		} else {
 			$statement = $this->query($query);
@@ -175,7 +189,7 @@ class Connection {
 			implode(',', $keys),
 			implode(',', array_fill(0, count($data), '?'))
 		);
-		$types = $this->_mapTypes($keys, $types);
+		$types = $this->matchTypes($keys, $types);
 		return $this->execute($sql, array_values($data), $types);
 	}
 
@@ -201,8 +215,8 @@ class Connection {
 			$conditions
 		);
 		if (!empty($types)) {
-			$types = $this->_mapTypes($keys, $types);
-			$types = array_merge($types,  $this->_mapTypes($conditionsKeys, $types));
+			$types = $this->matchTypes($keys, $types);
+			$types = array_merge($types,  $this->matchTypes($conditionsKeys, $types));
 		}
 		return $this->execute($sql, array_merge(array_values($data), $params), $types);
 	}
@@ -226,7 +240,7 @@ class Connection {
 			$conditions
 		);
 		if (!empty($types)) {
-			$types = $this->_mapTypes($conditionsKeys, $types);
+			$types = $this->matchTypes($conditionsKeys, $types);
 		}
 		return $this->execute($sql, $params, $types);
 	}
@@ -395,52 +409,6 @@ class Connection {
  **/
 	public function charset($collation) {
 
-	}
-
-/**
- * Binds values to statement object with corresponding type
- *
- * @param \Cake\Model\Datasource\Database\Statement The statement objet to bind values to
- * @param array $params list of values to be bound
- * @param array $types list of types to be used, keys should match those in $params
- * @return void
- **/
-	protected function _bindValues($statement, $params, $types) {
-		if (empty($params)) {
-			return;
-		}
-
-		$annonymousParams = is_int(key($params)) ? true : false;
-		$offset = 1;
-		foreach ($params as $index => $value) {
-			$type = null;
-			if (isset($types[$index])) {
-				$type = $types[$index];
-			}
-			if ($annonymousParams) {
-				$index += $offset;
-			}
-			$statement->bindValue($index, $value, $type);
-		}
-	}
-
-/**
- * Auxiliary method to map columns to corresponding types
- *
- * Both $columns and $types should either be numeric based or string key based at
- * the same time.
- *
- * @param array $columns list or associative array of columns and parameters to be bound with types
- * @param array $types list or associative array of types
- * @return array
- **/
-	protected function _mapTypes($columns, $types) {
-		if (!is_int(key($types))) {
-			$positons = array_intersect_key(array_flip($columns), $types);
-			$types = array_intersect_key($types, $positons);
-			$types = array_combine($positons, $types);
-		}
-		return $types;
 	}
 
 /**
