@@ -517,4 +517,24 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(1, $result);
 	}
+
+/**
+ * Tests connection can quote values to be safely used in query strings
+ *
+ * @return void
+ **/
+	public function testQuote() {
+		$expected = "'2012-01-01'";
+		$result =$this->connection->quote(new \DateTime('2012-01-01'), 'date');
+		$this->assertEquals($expected, $result);
+
+		$expected = "'1'";
+		$result =$this->connection->quote(1, 'string');
+		$this->assertEquals($expected, $result);
+
+		$expected = "'hello'";
+		$result =$this->connection->quote('hello', 'string');
+		$this->assertEquals($expected, $result);
+	}
+
 }
