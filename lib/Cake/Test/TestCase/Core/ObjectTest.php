@@ -528,6 +528,29 @@ class ObjectTest extends TestCase {
 	}
 
 /**
+ * test that requestAction() can get query data from the query string and
+ * query option.
+ *
+ * @return void
+ */
+	public function testRequestActionWithQueryString() {
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
+		$query = ['page' => 1, 'sort' => 'title'];
+		$result = $this->object->requestAction(
+			['controller' => 'request_action', 'action' => 'query_pass'],
+			['query' => $query]
+		);
+		$this->assertEquals($query, $result);
+
+		$result = $this->object->requestAction(
+			'/request_action/query_pass?page=3&sort=body'
+		);
+		$expected = ['page' => 3, 'sort' => 'body'];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test requestAction with post data.
  *
  * @return void

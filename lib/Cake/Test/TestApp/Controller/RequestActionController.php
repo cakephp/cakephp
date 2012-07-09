@@ -92,6 +92,15 @@ class RequestActionController extends AppController {
 	}
 
 /**
+ * query pass, testing query passing
+ *
+ * @return array
+ */
+	public function query_pass() {
+		return $this->request->query;
+	}
+
+/**
  * test param passing and parsing.
  *
  * @return array

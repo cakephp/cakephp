@@ -218,8 +218,10 @@ class Dispatcher implements EventListener {
 			$this->_loadRoutes();
 		}
 
-		$params = Router::parse($request->url);
-		$request->addParams($params);
+		if (empty($request->params['controller'])) {
+			$params = Router::parse($request->url);
+			$request->addParams($params);
+		}
 
 		if (!empty($event->data['additionalParams'])) {
 			$request->addParams($event->data['additionalParams']);
