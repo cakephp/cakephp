@@ -365,4 +365,156 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(0, $result);
 	}
 
+/**
+ * Tests that it is possible to use simple database transactions
+ *
+ * @return void
+ **/
+	public function testSimpleTransactions() {
+		$this->_insertTwoRecords();
+		$this->connection->begin();
+		$this->connection->delete('things', ['id' => 1]);
+		$this->connection->rollback();
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(2, $result);
+
+		$this->connection->begin();
+		$this->connection->delete('things', ['id' => 1]);
+		$this->connection->commit();
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+	}
+
+/**
+ * Tests that it is possible to use virtualized nested transaction
+ * with early rollback algorithm
+ *
+ * @return void
+ **/
+	public function testVirtualNestedTrasanction() {
+		$this->_insertTwoRecords();
+
+		//starting 3 virtual transaction
+		$this->connection->begin();
+		$this->connection->begin();
+		$this->connection->begin();
+
+		$this->connection->delete('things', ['id' => 1]);
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+		
+		$this->connection->commit();
+		$this->connection->rollback();
+
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(2, $result);
+	}
+
+/**
+ * Tests that it is possible to use virtualized nested transaction
+ * with early rollback algorithm
+ *
+ * @return void
+ **/
+	public function testVirtualNestedTrasanction2() {
+		$this->_insertTwoRecords();
+
+		//starting 3 virtual transaction
+		$this->connection->begin();
+		$this->connection->begin();
+		$this->connection->begin();
+
+		$this->connection->delete('things', ['id' => 1]);
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+		$this->connection->rollback();
+
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(2, $result);
+	}
+
+/**
+ * Tests that it is possible to use virtualized nested transaction
+ * with early rollback algorithm
+ *
+ * @return void
+ **/
+
+	public function testVirtualNestedTrasanction3() {
+		$this->_insertTwoRecords();
+
+		//starting 3 virtual transaction
+		$this->connection->begin();
+		$this->connection->begin();
+		$this->connection->begin();
+
+		$this->connection->delete('things', ['id' => 1]);
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+		$this->connection->commit();
+		$this->connection->commit();
+		$this->connection->commit();
+
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+	}
+
+/**
+ * Tests that it is possible to real use  nested transactions
+ *
+ * @return void
+ **/
+	public function testSavePoints() {
+		$this->skipIf(!$this->connection->useSavePoints(true));
+		$this->_insertTwoRecords();
+
+		$this->connection->begin();
+		$this->connection->delete('things', ['id' => 1]);
+
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+
+		$this->connection->begin();
+		$this->connection->delete('things', ['id' => 2]);
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(0, $result);
+
+		$this->connection->rollback();
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+
+		$this->connection->rollback();
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(2, $result);
+	}
+
+/**
+ * Tests that it is possible to real use  nested transactions
+ *
+ * @return void
+ **/
+
+	public function testSavePoints2() {
+		$this->skipIf(!$this->connection->useSavePoints(true));
+		$this->_insertTwoRecords();
+
+		$this->connection->begin();
+		$this->connection->delete('things', ['id' => 1]);
+
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+
+		$this->connection->begin();
+		$this->connection->delete('things', ['id' => 2]);
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(0, $result);
+
+		$this->connection->rollback();
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+
+		$this->connection->commit();
+		$result = $this->connection->execute('SELECT * FROM things');
+		$this->assertCount(1, $result);
+	}
 }

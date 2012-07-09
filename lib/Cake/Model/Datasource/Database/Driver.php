@@ -68,7 +68,7 @@ abstract class Driver {
  * @return boolean true if save points are supported, false otherwise
  **/
 	public function supportsSavePoints() {
-		true;
+		return true;
 	}
 
 /**

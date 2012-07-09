@@ -245,8 +245,9 @@ class Connection {
 			return;
 		}
 
+		$this->_transactionLevel++;
 		if ($this->useSavePoints()) {
-			$this->createSavePoint(++$this->_transactionLevel);
+			$this->createSavePoint($this->_transactionLevel);
 		}
 	}
 
