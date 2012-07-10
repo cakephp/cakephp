@@ -164,4 +164,14 @@ abstract class Driver {
 		return $identifier;
 	}
 
+/**
+ * Returns last id generated for a table or sequence in database
+ *
+ * @param string $table table name or sequence to get last insert value from
+ * @return string|integer
+ **/
+	public function lastInsertId($table = null) {
+		return $this->_connection->lastInsertId($table);
+	}
+
 }

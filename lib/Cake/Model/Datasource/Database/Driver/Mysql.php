@@ -35,11 +35,10 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . $config['encoding']
 		] + $config['flags'];
 
 		if (empty($config['unix_socket'])) {
-			$dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
+			$dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['encoding']}";
 		} else {
 			$dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
 		}
@@ -118,6 +117,16 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
  **/
 	public function quote($value, $type) {
 		return $this->_connection->quote($value, $type);
+	}
+
+/**
+ * Returns last id generated for a table or sequence in database
+ *
+ * @param string $table table name or sequence to get last insert value from
+ * @return string|integer
+ **/
+	public function lastInsertId($table = null) {
+		return $this->_connection->lastInsertId();
 	}
 
 }
