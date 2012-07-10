@@ -10,6 +10,20 @@ namespace Cake\Model\Datasource\Database;
 abstract class Driver {
 
 /**
+ *  String used to start a database identifier quoting to make it safe
+ *
+ * @var string
+ **/
+	public $startQuote = '"';
+
+/**
+ * String used to end a database identifier quoting to make it safe
+ *
+ * @var string
+ **/
+	public $endQuote = '"';
+
+/**
  * Establishes a connection to the database server
  *
  * @param array $config configuration to be used for creating connection
@@ -106,4 +120,48 @@ abstract class Driver {
  * @return string
  **/
 	public abstract function quote($value, $type);
+
+/**
+ * Quotes a database identifier (a column name, table name, etc..) to
+ * be used safely in queries without the risk of using reserver words
+ *
+ * @param string $identifier
+ * @return string
+ **/
+	public function quoteIdentifier($identifier) {
+		$identifier = trim($identifier);
+
+		if ($identifier === '*') {
+			return '*';
+		}
+
+		if (preg_match('/^[\w-]+(?:\.[^ \*]*)*$/', $identifier)) { // string, string.string
+			if (strpos($identifier, '.') === false) { // string
+				return $this->startQuote . $identifier . $this->endQuote;
+			}
+			$items = explode('.', $identifier);
+			return $this->startQuote . implode($this->endQuote . '.' . $this->startQuote, $items) . $this->endQuote;
+		}
+
+		if (preg_match('/^[\w-]+\.\*$/', $identifier)) { // string.*
+			return $this->startQuote . str_replace('.*', $this->endQuote . '.*', $identifier);
+		}
+
+		if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) { // Functions
+			return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
+		}
+
+		if (preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
+			return preg_replace(
+				'/\s{2,}/', ' ', $this->quoteIdentifier($matches[1]) . ' AS  ' . $this->quoteIdentifier($matches[3])
+			);
+		}
+
+		if (preg_match('/^[\w-_\s]*[\w-_]+/', $identifier)) {
+			return $this->startQuote . $identifier . $this->endQuote;
+		}
+
+		return $identifier;
+	}
+
 }

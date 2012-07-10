@@ -73,7 +73,7 @@ class Connection {
 			throw new MissingDriverException(array('driver' => $config['datasource']));
 		}
 
-		$this->setDriver($config['datasource']);
+		$this->driver($config['datasource']);
 		if (!$this->_driver->enabled()) {
 			throw new MissingExtensionException(array('driver' => get_class($this->_driver)));
 		}
@@ -81,16 +81,21 @@ class Connection {
 
 /**
  * Sets the driver instance. If an string is passed it will be treated
- * as a class name and will be instantiated
+ * as a class name and will be instantiated.
+ *
+ * If no params are passed it will return the current driver instance
  *
  * @param string|Driver $driver
- * @return void
+ * @return Driver
  **/
-	public function setDriver($driver) {
+	public function driver($driver = null) {
+		if ($driver === null) {
+			return $this->_driver;
+		}
 		if (is_string($driver)) {
 			$driver = new $driver;
 		}
-		$this->_driver = $driver;
+		return $this->_driver = $driver;
 	}
 
 /**
@@ -393,7 +398,7 @@ class Connection {
  * @return string
  **/
 	public function quoteIdentifier($identifier) {
-
+		return $this->_driver->quoteIdentifier($identifier);
 	}
 
 /**
