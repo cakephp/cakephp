@@ -185,3 +185,10 @@ Log::config('error', array(
 	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 	'file' => 'error',
 ));
+
+
+Configure::write('Connections', array(
+	'test' => array(
+		'datasource' => '\Cake\Model\Datasource\Database\Driver\Mysql'
+	)
+));

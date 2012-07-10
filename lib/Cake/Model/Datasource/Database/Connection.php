@@ -408,16 +408,8 @@ class Connection {
  * @return string|integer
  **/
 	public function lastInsertId($table) {
-
-	}
-
-/**
- * Sets database charset for this connection
- *
- * @param string $collection the charset name
- **/
-	public function charset($collation) {
-
+		$this->connect();
+		return $this->_driver->lastInsertId($table);
 	}
 
 /**
