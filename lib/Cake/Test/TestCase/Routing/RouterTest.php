@@ -1922,7 +1922,7 @@ class RouterTest extends TestCase {
 /**
  * test that route classes must extend \Cake\Routing\Route\Route
  *
- * @expectedException Cake\Error\RouterException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testCustomRouteException() {
@@ -2257,7 +2257,7 @@ class RouterTest extends TestCase {
 /**
  * Test that route classes must extend Cake\Routing\Route\Route
  *
- * @expectedException Cake\Error\RouterException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testDefaultRouteException() {
@@ -2268,7 +2268,7 @@ class RouterTest extends TestCase {
 /**
  * Test that route classes must extend Cake\Routing\Route\Route
  *
- * @expectedException Cake\Error\RouterException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testSettingInvalidDefaultRouteException() {
@@ -2278,7 +2278,7 @@ class RouterTest extends TestCase {
 /**
  * Test that class must exist
  *
- * @expectedException Cake\Error\RouterException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testSettingNonExistentDefaultRouteException() {
