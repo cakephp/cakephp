@@ -1,9 +1,29 @@
 <?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       Cake.Routing
+ * @since         CakePHP(tm) v 3.0.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 namespace Cake\Routing;
 
 use Cake\Routing\Route\Route;
 use Cake\Network\Request;
 
+/**
+ * RouteCollection is used to operate on a set of routes.
+ * It stores routes both in a linear list in order of connection, as well
+ * as storing them in a hash-table indexed by a routes' name.
+ *
+ * @package Cake.Routing
+ */
 class RouteCollection implements \Countable {
 
 /**
