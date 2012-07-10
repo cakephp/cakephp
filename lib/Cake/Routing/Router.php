@@ -1,9 +1,5 @@
 <?php
 /**
- * Parses the request URL into controller, action, and parameters.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -148,7 +144,7 @@ class Router {
  *
  * @param string $routeClass to set as default
  * @return mixed void|string
- * @throws RouterException
+ * @throws Cake\Error\Exception
  */
 	public static function defaultRouteClass($routeClass = null) {
 		if (is_null($routeClass)) {
@@ -163,11 +159,11 @@ class Router {
  *
  * @param $routeClass
  * @return string
- * @throws RouterException
+ * @throws Cake\Error\Exception
  */
 	protected static function _validateRouteClass($routeClass) {
 		if (!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route')) {
-			throw new Error\RouterException(__d('cake_dev', 'Route classes must extend Cake\Routing\Route\Route'));
+			throw new Error\Exception(__d('cake_dev', 'Route classes must extend Cake\Routing\Route\Route'));
 		}
 		return $routeClass;
 	}
@@ -185,7 +181,7 @@ class Router {
 	}
 
 /**
- * Gets the named route elements for use in app/Config/routes.php
+ * Gets the named route patterns for use in app/Config/routes.php
  *
  * @return array Named route elements
  * @see Router::$_namedExpressions
@@ -196,6 +192,9 @@ class Router {
 
 /**
  * Resource map getter & setter.
+ *
+ * Allows you to define the default route configuration for REST routing and 
+ * Router::mapResources()
  *
  * @param array $resourceMap Resource map
  * @return mixed
@@ -263,7 +262,7 @@ class Router {
  *   custom routing class.
  * @see routes
  * @return void
- * @throws RouterException
+ * @throws Cake\Error\Exception
  */
 	public static function connect($route, $defaults = array(), $options = array()) {
 		if (!empty($defaults['prefix'])) {
@@ -333,9 +332,35 @@ class Router {
 	}
 
 /**
- * Creates REST resource routes for the given controller(s).  When creating resource routes
- * for a plugin, by default the prefix will be changed to the lower_underscore version of the plugin
- * name.  By providing a prefix you can override this behavior.
+ * Creates REST resource routes for the given controller(s).
+ *
+ * ### Usage
+ *
+ * Connect resource routes for an app controller:
+ *
+ * {{{
+ * Router::mapResources('Posts');
+ * }}}
+ *
+ * Connect resource routes for the Comment controller in the
+ * Comments plugin:
+ *
+ * {{{
+ * Router::mapResources('Comments.Comment');
+ * }}}
+ *
+ * Plugins will create lower_case underscored resource routes. e.g
+ * `/comments/comment`
+ *
+ * Connect resource routes for the Posts controller in the 
+ * Admin prefix:
+ *
+ * {{{
+ * Router::mapResources('Posts', ['prefix' => 'admin']);
+ * }}}
+ *
+ * Prefixes will create lower_case underscored resource routes. e.g
+ * `/admin/posts`
  *
  * ### Options:
  *
@@ -353,7 +378,6 @@ class Router {
 		$options = array_merge(array(
 			'id' => static::ID . '|' . static::UUID
 		), $options);
-
 
 		foreach ((array)$controller as $name) {
 			list($plugin, $name) = pluginSplit($name);
@@ -637,8 +661,6 @@ class Router {
 			$hasLeadingSlash = isset($url[0]) ? $url[0] === '/' : false;
 		}
 
-		// TODO refactor so there is less overhead
-		// incurred on each URL generated.
 		$request = static::getRequest(true);
 		if ($request) {
 			$params = $request->params;
@@ -754,9 +776,10 @@ class Router {
  * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
  * are used for CakePHP internals and should not normally be part of an output url.
  *
- * @param Cake\Network\Request|array $params The params array or Cake\Network\Request object that needs to be reversed.
- * @param boolean $full Set to true to include the full url including the protocol when reversing
- *     the url.
+ * @param Cake\Network\Request|array $params The params array or
+ *     Cake\Network\Request object that needs to be reversed.
+ * @param boolean $full Set to true to include the full url including the 
+ *     protocol when reversing the url.
  * @return string The string that is the reversed result of the array
  */
 	public static function reverse($params, $full = false) {
