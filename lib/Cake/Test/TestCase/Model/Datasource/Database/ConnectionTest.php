@@ -537,4 +537,74 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Tests identifier quoting
+ *
+ * @return void
+ */
+	public function testQuoteIdentifier() {
+		$driver = $this->connection->driver();
+		$driver->startQuote = '"';
+		$driver->endQuote = '"';
+
+		$result = $this->connection->quoteIdentifier('name');
+		$expected = '"name"';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('Model.*');
+		$expected = '"Model".*';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('MTD()');
+		$expected = 'MTD()';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('(sm)');
+		$expected = '(sm)';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('name AS x');
+		$expected = '"name" AS "x"';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('Model.name AS x');
+		$expected = '"Model"."name" AS "x"';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('Function(Something.foo)');
+		$expected = 'Function("Something"."foo")';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('Function(SubFunction(Something.foo))');
+		$expected = 'Function(SubFunction("Something"."foo"))';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('Function(Something.foo) AS x');
+		$expected = 'Function("Something"."foo") AS "x"';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('name-with-minus');
+		$expected = '"name-with-minus"';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('my-name');
+		$expected = '"my-name"';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('Foo-Model.*');
+		$expected = '"Foo-Model".*';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('Team.P%');
+		$expected = '"Team"."P%"';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->connection->quoteIdentifier('Team.G/G');
+		$expected = '"Team"."G/G"';
+
+		$result = $this->connection->quoteIdentifier('Model.name as y');
+		$expected = '"Model"."name" AS "y"';
+		$this->assertEquals($expected, $result);
+	}
+
 }
