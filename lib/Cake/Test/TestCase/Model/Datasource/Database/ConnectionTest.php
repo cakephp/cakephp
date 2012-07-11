@@ -77,6 +77,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	public function testWrongCredentials() {
 		$connection = new Connection(['database' => 'foobar'] + Configure::read('Connections.test'));
 		$connection->connect();
+		$this->skipIf($connection->driver() instanceof \Cake\Model\Datasource\Database\Driver\Sqlite);
 	}
 
 /**

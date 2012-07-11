@@ -2,26 +2,23 @@
 
 namespace Cake\Model\Datasource\Database\Driver;
 
+use Cake\Model\Datasource\Database\Statement;
 use PDO;
 
-class Mysql extends \Cake\Model\Datasource\Database\Driver {
+class Sqlite extends \Cake\Model\Datasource\Database\Driver {
 
 	use PDODriver { connect as protected _connect; }
 
 /**
- * Base configuration settings for MySQL driver
+ * Base configuration settings for Sqlite driver
  *
  * @var array
  */
 	protected $_baseConfig = [
-		'persistent' => true,
-		'host' => 'localhost',
-		'login' => 'root',
-		'password' => '',
-		'database' => 'cake',
-		'port' => '3306',
-		'flags' => array(),
+		'persistent' => false,
+		'database' => ':memory:',
 		'encoding' => 'utf8',
+		'flags' => array(),
 		'dsn' => null
 	];
 
@@ -32,19 +29,14 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
  * @return boolean true on success
  **/
 	public function connect(array $config) {
-		$config += $this->_baseConfig;
+		$config = $this->_baseConfig + array('login' => null, 'password' => null);
 		$config['flags'] += [
 			PDO::ATTR_PERSISTENT => $config['persistent'],
-			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		];
 
 		if (empty($config['dsn'])) {
-			if (empty($config['unix_socket'])) {
-				$config['dsn'] = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['encoding']}";
-			} else {
-				$config['dsn'] = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
-			}
+			$config['dsn'] = "sqlite:{$config['database']}";
 		}
 
 		return $this->_connect($config);
@@ -57,8 +49,7 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
  **/
 
 	public function enabled() {
-		return in_array('mysql', PDO::getAvailableDrivers());
+		return in_array('sqlite', PDO::getAvailableDrivers());
 	}
-
 
 }

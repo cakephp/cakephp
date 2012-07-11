@@ -39,6 +39,15 @@ abstract class Driver {
 	public abstract function disconnect();
 
 /**
+ * Returns correct connection resource or object that is internally used
+ * If first argument is passed, it will set internal conenction object or
+ * result to the value passed
+ *
+ * @return mixed connection object used internally
+ **/
+	public abstract function connection($connection = null);
+
+/**
  * Returns whether php is able to use this driver for connecting to database
  *
  * @return boolean true if it is valid to use this driver
