@@ -467,7 +467,7 @@ class DboOracle extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-		$sql = 'SELECT view_name AS name FROM all_views UNION SELECT table_name AS name FROM all_tables';
+		$sql = 'SELECT view_name AS name FROM user_views UNION SELECT table_name AS name FROM user_tables';
 
 		if (!$this->execute($sql)) {
 			return false;
