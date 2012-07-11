@@ -285,6 +285,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 			'Model.beforeFind' => 'trigger',
 			'Model.afterFind' => 'trigger',
 			'Model.beforeValidate' => 'trigger',
+			'Model.afterValidate' => 'trigger',
 			'Model.beforeSave' => 'trigger',
 			'Model.afterSave' => 'trigger',
 			'Model.beforeDelete' => 'trigger',
