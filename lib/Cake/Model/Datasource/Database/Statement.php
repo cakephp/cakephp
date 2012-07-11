@@ -86,8 +86,8 @@ class Statement implements \IteratorAggregate, \Countable {
  * @param string|integer $type PDO type or name of configured Type class
  * @return void
  **/
-	public function bindValue($column, $value, $type = null) {
-		if ($type !== null && !ctype_digit($type)) {
+	public function bindValue($column, $value, $type = 'string') {
+		if (!ctype_digit($type)) {
 			list($value, $type) = $this->cast($value, $type);
 		}
 		$this->_statement->bindValue($column, $value, $type);
@@ -196,9 +196,9 @@ class Statement implements \IteratorAggregate, \Countable {
 	public function fetchAll($type = 'num') {
 		switch ($type) {
 			case 'num':
-				return $this->_statement->fetch(PDO::FETCH_NUM);
+				return $this->_statement->fetchAll(PDO::FETCH_NUM);
 			case 'assoc':
-				return $this->_statement->fetch(PDO::FETCH_ASSOC);
+				return $this->_statement->fetchAll(PDO::FETCH_ASSOC);
 		}
 	}
 
