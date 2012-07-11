@@ -222,8 +222,13 @@ class Connection {
 			$conditions
 		);
 		if (!empty($types)) {
+			$originalTypes = $types;
 			$types = $this->matchTypes($keys, $types);
-			$types = array_merge($types,  $this->matchTypes($conditionsKeys, $types));
+			$paramTypes = $this->matchTypes($conditionsKeys, $originalTypes);
+			$total = count($types);
+			foreach ($paramTypes as $i => $t) {
+				$types[$total + $i + 1] = $t;
+			}
 		}
 		return $this->execute($sql, array_merge(array_values($data), $params), $types);
 	}

@@ -87,6 +87,9 @@ class Statement implements \IteratorAggregate, \Countable {
  * @return void
  **/
 	public function bindValue($column, $value, $type = 'string') {
+		if ($type === null) {
+			$type = 'string';
+		}
 		if (!ctype_digit($type)) {
 			list($value, $type) = $this->cast($value, $type);
 		}
