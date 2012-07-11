@@ -2,7 +2,7 @@
 
 namespace Cake\Model\Datasource\Database\Driver;
 
-use Cake\Model\Datasource\Database\Statement;
+use Cake\Model\Datasource\Database\Statement\BufferedStatement;
 use PDO;
 
 class Sqlite extends \Cake\Model\Datasource\Database\Driver {
@@ -50,6 +50,17 @@ class Sqlite extends \Cake\Model\Datasource\Database\Driver {
 
 	public function enabled() {
 		return in_array('sqlite', PDO::getAvailableDrivers());
+	}
+
+/**
+ * Prepares a sql statement to be executed
+ *
+ * @param string $sql
+ * @return Cake\Model\Datasource\Database\Statement
+ **/
+	public  function prepare($sql) {
+		$statement = $this->connection()->prepare($sql);
+		return new BufferedStatement($statement, $this);
 	}
 
 }
