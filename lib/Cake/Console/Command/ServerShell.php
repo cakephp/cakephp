@@ -88,7 +88,7 @@ class ServerShell extends AppShell {
 
 		// for windows
 		if (substr($this->_documentRoot, -1, 1) == DIRECTORY_SEPARATOR) {
-			$this->_documentRoot = substr($this->_documentRoot, 0, strlen($this->_documentRoot) -1);
+			$this->_documentRoot = substr($this->_documentRoot, 0, strlen($this->_documentRoot) - 1);
 		}
 		if (preg_match("/^([a-z]:)[\\\]+(.+)$/i", $this->_documentRoot, $m)) {
 			$this->_documentRoot = $m[1].'\\'.$m[2];
@@ -157,7 +157,7 @@ class ServerShell extends AppShell {
 
 		$parser->description(array(
 			__d('cake_console', 'PHP Built-in Server for CakePHP'),
-			__d('cake_console', '<warning>Don\'t use this at the production environment</warning>'),
+			__d('cake_console', '<warning>[WARN] Don\'t use this at the production environment</warning>'),
 		));
 
 		return $parser;
