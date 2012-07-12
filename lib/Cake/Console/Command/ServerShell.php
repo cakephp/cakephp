@@ -129,7 +129,6 @@ class ServerShell extends AppShell {
 			$this->_documentRoot
 		);
 
-		$this->out(__d('cake_console', '<warning>[WARNING] Don\'t use this at the production environment</warning>'));
 		$port = ($this->_port == self::DEFAULT_PORT) ? '' : ':'.$this->_port;
 		$this->out(__d('cake_console', 'built-in server is running in http://%s%s/', $this->_host, $port));
 		$ret = system($command);
@@ -156,7 +155,10 @@ class ServerShell extends AppShell {
 			'help' => __d('cake_console', 'DocumentRoot')
 		));
 
-		$parser->description(__d('cake_console', 'PHP Built-in Server for CakePHP'));
+		$parser->description(array(
+			__d('cake_console', 'PHP Built-in Server for CakePHP'),
+			__d('cake_console', '<warning>Don\'t use this at the production environment</warning>'),
+		));
 
 		return $parser;
 	}
