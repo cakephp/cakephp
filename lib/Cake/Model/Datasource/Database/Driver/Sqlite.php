@@ -29,7 +29,7 @@ class Sqlite extends \Cake\Model\Datasource\Database\Driver {
  * @return boolean true on success
  **/
 	public function connect(array $config) {
-		$config = $this->_baseConfig + array('login' => null, 'password' => null);
+		$config += $this->_baseConfig + array('login' => null, 'password' => null);
 		$config['flags'] += [
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION

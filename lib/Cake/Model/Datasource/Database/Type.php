@@ -34,10 +34,10 @@ class Type {
  * @var array
  **/
 	protected static $_basicTypes = [
-		'float' => ['php' => 'floatval'],
-		'integer' => ['php' => 'intval', 'pdo' => PDO::PARAM_INT],
-		'string' => ['php' => 'strval'],
-		'text' => ['php' => 'strval'],
+		'float' => ['callback' => 'floatval'],
+		'integer' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
+		'string' => ['callback' => 'strval'],
+		'text' => ['callback' => 'strval'],
 	];
 
 /**
@@ -134,7 +134,7 @@ class Type {
  * @return mixed
  **/
 	public function toDatabase($value, Driver $driver) {
-		return $value;
+		return $this->_basicTypeCast($value, $driver);
 	}
 
 /**
@@ -145,11 +145,22 @@ class Type {
  * @return mixed
  **/
 	public function toPHP($value, Driver $driver) {
+		return $this->_basicTypeCast($value, $driver);
+	}
+
+/**
+ * Checks whether this type is a basic one and can be converted using a callback
+ * If it is, returns converted value
+ *
+ * @param mixed $value value to be converted to PHP equivalent
+ * @param Driver $driver object from which database preferences and configuration will be extracted
+ * @return mixed
+ **/
+	protected function _basicTypeCast($value, Driver $driver) {
 		if (!empty(self::$_basicTypes[$this->_name])) {
 			$typeInfo = self::$_basicTypes[$this->_name];
-			$value = ($value === null) ? null : $value;
-			if (isset($typeInfo['php'])) {
-				return $typeInfo['php']($value);
+			if (isset($typeInfo['callback'])) {
+				return $typeInfo['callback']($value);
 			}
 		}
 		return $value;
