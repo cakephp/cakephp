@@ -135,16 +135,16 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testExecuteWithArgumentsAndTypes() {
-		$sql = 'SELECT ?';
+		$sql = "SELECT ? = '2012-01-01'";
 		$statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['date']);
 		$result = $statement->fetch();
-		$this->assertEquals('2012-01-01', $result[0]);
+		$this->assertTrue((bool)$result[0]);
 
-		$sql = 'SELECT ?, ?, ?';
+		$sql = "SELECT ? = '2012-01-01', ? = '2000-01-01 10:10:10', ? = 1.1";
 		$params = [new \DateTime('2012-01-01 10:10:10'), '2000-01-01 10:10:10', 1.1];
 		$statement = $this->connection->execute($sql, $params, ['date', 'string', 'float']);
 		$result = $statement->fetch();
-		$this->assertEquals(['2012-01-01', '2000-01-01 10:10:10', 1.1], $result);
+		$this->assertEquals($result, array_filter($result));
 	}
 
 /**
