@@ -2322,4 +2322,22 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $request->params);
 	}
 
+/**
+ * Test promote()
+ *
+ * @return void
+ */
+	public function testPromote() {
+		Router::connect('/:controller/:action/*');
+		Router::connect('/:lang/:controller/:action/*');
+
+		$result = Router::url(['controller' => 'posts', 'action' => 'index', 'lang' => 'en']);
+		$this->assertEquals('/posts/index?lang=en', $result, 'First route should match');
+
+		Router::promote();
+
+		$result = Router::url(['controller' => 'posts', 'action' => 'index', 'lang' => 'en']);
+		$this->assertEquals('/en/posts/index', $result, 'promote() should move 2nd route ahead.');
+	}
+
 }

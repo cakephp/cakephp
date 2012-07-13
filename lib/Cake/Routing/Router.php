@@ -430,16 +430,12 @@ class Router {
  * @return array Parsed elements from URL
  */
 	public static function parse($url) {
-		$ext = null;
-		$out = array();
-
 		if ($url && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
 		if (strpos($url, '?') !== false) {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
-
 		return static::$_routes->parse($url);
 	}
 
