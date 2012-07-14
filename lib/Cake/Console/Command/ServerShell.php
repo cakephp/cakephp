@@ -91,7 +91,7 @@ class ServerShell extends AppShell {
 			$this->_documentRoot = substr($this->_documentRoot, 0, strlen($this->_documentRoot) - 1);
 		}
 		if (preg_match("/^([a-z]:)[\\\]+(.+)$/i", $this->_documentRoot, $m)) {
-			$this->_documentRoot = $m[1].'\\'.$m[2];
+			$this->_documentRoot = $m[1] . '\\' . $m[2];
 		}
 
 		parent::startup();
@@ -129,7 +129,7 @@ class ServerShell extends AppShell {
 			$this->_documentRoot
 		);
 
-		$port = ($this->_port == self::DEFAULT_PORT) ? '' : ':'.$this->_port;
+		$port = ($this->_port == self::DEFAULT_PORT) ? '' : ':' . $this->_port;
 		$this->out(__d('cake_console', 'built-in server is running in http://%s%s/', $this->_host, $port));
 		$ret = system($command);
 	}
