@@ -1056,7 +1056,7 @@ XML;
 		try {
 			$result = Xml::build($xml);
 			$this->assertEquals('', (string)$result->xxe);
-		} catch (PHPUnit_Framework_Error_Warning $e) {
+		} catch (Exception $e) {
 			$this->assertTrue(true, 'A warning was raised meaning external entities were not loaded');
 		}
 	}
