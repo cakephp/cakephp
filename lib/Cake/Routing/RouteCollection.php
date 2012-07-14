@@ -175,8 +175,8 @@ class RouteCollection implements \Countable {
 
 /**
  * Promote a route (by default, the last one added) to the beginning of the list.
- * Also promotes the route to the head of its named slice in the route
- * hashtable.
+ * Also promotes the route to the head of its named slice in the named route
+ * table.
  *
  * @param integer $which A zero-based array index representing
  *    the route to move. For example,
@@ -197,11 +197,7 @@ class RouteCollection implements \Countable {
 
 		$name = $route->getName();
 		$routes = $this->_routeTable[$name];
-		foreach ($routes as $i => $otherRoute) {
-			if ($route == $otherRoute) {
-				$index = $i;
-			}
-		}
+		$index = array_search($route, $routes, true);
 		unset($this->_routeTable[$name][$index]);
 		array_unshift($this->_routeTable[$name], $route);
 		return true;
