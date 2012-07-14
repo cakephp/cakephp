@@ -124,11 +124,13 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function beforeDelete(Model $Model, $cascade = true) {
 		extract($this->settings[$Model->alias]);
-		$data = current($Model->find('first', array(
+		$data = $Model->find('first', array(
 			'conditions' => array($Model->alias . '.' . $Model->primaryKey => $Model->id),
 			'fields' => array($Model->alias . '.' . $left, $Model->alias . '.' . $right),
-			'recursive' => -1)));
-		$this->_deletedRow = $data;
+			'recursive' => -1));
+		if ($data) {
+			$this->_deletedRow = current($data);
+		}
 		return true;
 	}
 
