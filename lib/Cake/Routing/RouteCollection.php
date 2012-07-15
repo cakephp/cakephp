@@ -165,9 +165,9 @@ class RouteCollection implements \Countable {
 	public function parse($url) {
 		$out = array();
 		for ($i = 0, $len = count($this); $i < $len; $i++) {
-			if (($r = $this->_routes[$i]->parse($url)) !== false) {
-				$out = $r;
-				break;
+			$r = $this->_routes[$i]->parse($url);
+			if ($r !== false) {
+				return $r;
 			}
 		}
 		return $out;
