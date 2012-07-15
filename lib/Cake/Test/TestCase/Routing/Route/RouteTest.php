@@ -634,9 +634,75 @@ class RouteTest extends TestCase {
  */
 	public function testParseWithHttpHeaderConditions() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$route = new Route('/sample', array('controller' => 'posts', 'action' => 'index', '[method]' => 'POST'));
-
+		$route = new Route('/sample', ['controller' => 'posts', 'action' => 'index', '[method]' => 'POST']);
 		$this->assertFalse($route->parse('/sample'));
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$expected = [
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => [],
+			'[method]' => 'POST',
+		];
+		$this->assertEquals($expected, $route->parse('/sample'));
+
+	}
+
+/**
+ * test that http header conditions can cause route failures.
+ *
+ * @return void
+ */
+	public function testParseWithMultipleHttpMethodConditions() {
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$route = new Route('/sample', [
+			'controller' => 'posts',
+			'action' => 'index',
+			'[method]' => ['PUT', 'POST']
+		]);
+		$this->assertFalse($route->parse('/sample'));
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$expected = [
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => [],
+			'[method]' => ['PUT', 'POST'],
+		];
+		$this->assertEquals($expected, $route->parse('/sample'));
+	}
+
+
+/**
+ * Test that the [type] condition works.
+ *
+ * @return void
+ */
+	public function testParseWithContentTypeCondition() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		unset($_SERVER['CONTENT_TYPE']);
+		$route = new Route('/sample', [
+			'controller' => 'posts',
+			'action' => 'index',
+			'[method]' => 'POST',
+			'[type]' => 'application/xml'
+		]);
+		$this->assertFalse($route->parse('/sample'), 'No content type set.');
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+		$this->assertFalse($route->parse('/sample'), 'Wrong content type set.');
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$_SERVER['CONTENT_TYPE'] = 'application/xml';
+		$expected = [
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => [],
+			'[method]' => 'POST',
+			'[type]' => 'application/xml',
+		];
+		$this->assertEquals($expected, $route->parse('/sample'));
 	}
 
 /**
