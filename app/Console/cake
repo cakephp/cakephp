@@ -17,7 +17,8 @@
 # @license      MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
 ################################################################################
-LIB=$(cd -P -- "$(dirname -- "$0")" && pwd -P) && LIB=$LIB/$(basename -- "$0")
+ME=$(readlink -f $0)
+LIB=$(cd -P -- "$(dirname -- "$ME")" && pwd -P) && LIB=$LIB/$(basename -- "$ME")
 
 while [ -h "$LIB" ]; do
 	DIR=$(dirname -- "$LIB")
@@ -26,8 +27,9 @@ while [ -h "$LIB" ]; do
 done
 
 LIB=$(dirname -- "$LIB")/
-APP=$(dirname $(cd $(dirname $0) && pwd))
+APP=$(dirname $(cd $(dirname $ME) && pwd))
 
+echo $APP
 exec php -q "$LIB"cake.php -working "$APP" "$@"
 
 exit;
