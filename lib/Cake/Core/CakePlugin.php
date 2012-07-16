@@ -162,7 +162,7 @@ class CakePlugin {
 
 		$path = self::path($plugin);
 		if ($config['bootstrap'] === true) {
-			return include $path . 'Config' . DS . 'bootstrap.php';
+			return @include $path . 'Config' . DS . 'bootstrap.php';
 		}
 
 		$bootstrap = (array)$config['bootstrap'];
@@ -191,7 +191,7 @@ class CakePlugin {
 		if ($config['routes'] === false) {
 			return false;
 		}
-		return (bool)include self::path($plugin) . 'Config' . DS . 'routes.php';
+		return (bool)@include self::path($plugin) . 'Config' . DS . 'routes.php';
 	}
 
 /**
