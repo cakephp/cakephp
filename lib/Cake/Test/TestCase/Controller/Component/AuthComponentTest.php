@@ -16,8 +16,8 @@
  * @since         CakePHP(tm) v 1.2.0.5347
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\Controller\Component;
+
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Controller;
@@ -654,7 +654,7 @@ class AuthComponentTest extends TestCase {
 
 		$response = new Response();
 		$Controller = $this->getMock(
-			'Controller',
+			'Cake\Controller\Controller',
 			array('on', 'redirect'),
 			array($Request, $response)
 		);
@@ -721,7 +721,7 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->initialize($this->Controller);
 
 		$this->Auth->loginAction = array(
-			'admin' => true, 'controller' => 'auth_test', 'action' => 'login'
+			'prefix' => 'admin', 'controller' => 'auth_test', 'action' => 'login'
 		);
 
 		$this->Auth->startup($this->Controller);
@@ -756,32 +756,35 @@ class AuthComponentTest extends TestCase {
  * @return void
  */
 	public function testLoginActionRedirect() {
-		$admin = Configure::read('Routing.prefixes');
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 		require CAKE . 'Config' . DS . 'routes.php';
 
 		$url = '/admin/auth_test/login';
-		$this->Auth->request->addParams(Router::parse($url));
-		$this->Auth->request->url = ltrim($url, '/');
-		Router::setRequestInfo(array(
-			array(
-				'pass' => array(), 'action' => 'admin_login', 'plugin' => null, 'controller' => 'auth_test',
-				'admin' => true,
-			),
-			array(
-				'base' => null, 'here' => $url,
-				'webroot' => '/', 'passedArgs' => array(),
-			)
-		));
+		$request = $this->Auth->request;
+		$request->addParams([
+			'plugin' => null,
+			'controller' => 'auth_test',
+			'action' => 'login',
+			'prefix' => 'admin',
+			'pass' => [],
+		])->addPaths([
+			'base' => null,
+			'here' => $url,
+			'webroot' => '/',
+		]);
+		$request->url = ltrim($url, '/');
+		Router::setRequestInfo($request);
 
 		$this->Auth->initialize($this->Controller);
-		$this->Auth->loginAction = array('admin' => true, 'controller' => 'auth_test', 'action' => 'login');
+		$this->Auth->loginAction = [
+			'prefix' => 'admin',
+			'controller' => 'auth_test',
+			'action' => 'login'
+		];
 		$this->Auth->startup($this->Controller);
 
 		$this->assertNull($this->Controller->testUrl);
-
-		Configure::write('Routing.prefixes', $admin);
 	}
 
 /**

@@ -102,14 +102,10 @@ class RouteCollection implements \Countable {
 	protected function _matchRoutes($routes, $url) {
 		$output = false;
 		for ($i = 0, $len = count($routes); $i < $len; $i++) {
-			$originalUrl = $url;
-			$route =& $routes[$i];
-
-			if ($match = $route->match($url, $this->_requestContext)) {
+			if ($match = $routes[$i]->match($url, $this->_requestContext)) {
 				$output = trim($match, '/');
 				break;
 			}
-			$url = $originalUrl;
 		}
 		return $output;
 	}

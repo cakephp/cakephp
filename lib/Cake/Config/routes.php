@@ -75,7 +75,7 @@ if ($plugins = Plugin::loaded()) {
 }
 
 foreach ($prefixes as $prefix) {
-	$params = array('prefix' => $prefix, $prefix => true);
+	$params = array('prefix' => $prefix);
 	$indexParams = $params + array('action' => 'index');
 	Router::connect("/{$prefix}/:controller", $indexParams);
 	Router::connect("/{$prefix}/:controller/:action/*", $params);
