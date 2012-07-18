@@ -580,14 +580,14 @@ class Shell extends Object {
 	}
 
 /**
- * Returns a single or multiple linefeeds sequences.
+ * Outputs a single or multiple linefeeds sequences to the standard output.
  *
  * @param integer $multiplier Number of times the linefeed sequence should be repeated
- * @return string
+ * @return void
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::nl
  */
 	public function nl($multiplier = 1) {
-		return str_repeat(ConsoleOutput::LF, $multiplier);
+	    $this->out(null, $multiplier);
 	}
 
 /**
