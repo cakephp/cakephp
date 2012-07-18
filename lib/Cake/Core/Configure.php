@@ -286,7 +286,7 @@ class Configure {
 /**
  * Dump data currently in Configure into $filename.  The serialization format
  * is decided by the config reader attached as $config.  For example, if the
- * 'default' adapter is a PhpReader, the generated file will be a PHP 
+ * 'default' adapter is a PhpReader, the generated file will be a PHP
  * configuration file loadable by the PhpReader.
  *
  * ## Usage
@@ -303,7 +303,7 @@ class Configure {
  * @param string $key The identifier to create in the config adapter.
  *   This could be a filename or a cache key depending on the adapter being used.
  * @param string $config The name of the configured adapter to dump data with.
- * @param array $keys The name of the top-level keys you want to dump. 
+ * @param array $keys The name of the top-level keys you want to dump.
  *   This allows you save only some data stored in Configure.
  * @return boolean success
  * @throws ConfigureException if the adapter does not implement a `dump` method.
@@ -381,7 +381,7 @@ class Configure {
 	}
 /**
  * Set the error and exception handlers.
- * 
+ *
  * @param array $error The Error handling configuration.
  * @param array $exception The exception handling configuration.
  * @return void

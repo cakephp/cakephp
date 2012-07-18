@@ -155,7 +155,7 @@ class CookieComponent extends Component {
 
 /**
  * A reference to the Controller's CakeResponse object
- * 
+ *
  * @var CakeResponse
  */
 	protected $_response = null;
