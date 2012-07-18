@@ -143,7 +143,7 @@ class IniAcl extends Object implements AclInterface {
 	}
 
 /**
- * Parses an INI file and returns an array that reflects the 
+ * Parses an INI file and returns an array that reflects the
  * INI file's section structure. Double-quote friendly.
  *
  * @param string $filename File

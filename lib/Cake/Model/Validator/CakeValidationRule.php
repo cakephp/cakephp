@@ -246,7 +246,7 @@ class CakeValidationRule {
  * If called with no parameters it will return whether this rule
  * is configured for update operations or not.
  *
- * @return boolean 
+ * @return boolean
  **/
 	public function isUpdate($exists = null) {
 		if ($exists === null) {

@@ -127,7 +127,7 @@
 			div.code-coverage-results span.result-bad { color: #a00; }
 			div.code-coverage-results span.result-ok { color: #fa0; }
 			div.code-coverage-results span.result-good { color: #0a0; }
-			
+
 			div#version {
 				padding-top: 2px;
 				float: right;

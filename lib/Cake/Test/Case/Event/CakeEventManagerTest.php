@@ -53,7 +53,7 @@ class CakeEventTestListener {
 /**
  * Auxiliary function to help in stopPropagation testing
  *
- * @param CakeEvent $event 
+ * @param CakeEvent $event
  * @return void
  */
 	public function stopListener($event) {
