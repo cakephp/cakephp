@@ -371,8 +371,7 @@ class TreeBehavior extends ModelBehavior {
 			$valuePath = array('%s%s', '{n}.tree_prefix', $valuePath);
 
 		} else {
-			$valuePath[0] = '{' . (count($valuePath) - 1) . '}' . $valuePath[0];
-			$valuePath[] = '{n}.tree_prefix';
+			array_unshift($valuePath, '%s' . $valuePath[0], '{n}.tree_prefix');
 		}
 		$order = $Model->alias . '.' . $left . ' asc';
 		$results = $Model->find('all', compact('conditions', 'fields', 'order', 'recursive'));

@@ -1282,6 +1282,26 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 	}
 
 /**
+ * Test the formatting options of generateTreeList()
+ *
+ * @return void
+ */
+	public function testGenerateTreeListFormatting() {
+		extract($this->settings);
+		$this->Tree = new $modelClass();
+		$this->Tree->initialize(2, 2);
+
+		$result = $this->Tree->generateTreeList(
+			null,
+			"{n}.$modelClass.id",
+			array('%s - %s', "{n}.$modelClass.id", "{n}.$modelClass.name")
+		);
+		$this->assertEquals('1 - 1. Root', $result[1]);
+		$this->assertEquals('_2 - 1.1', $result[2]);
+		$this->assertEquals('__3 - 1.1.1', $result[3]);
+	}
+
+/**
  * testArraySyntax method
  *
  * @return void
