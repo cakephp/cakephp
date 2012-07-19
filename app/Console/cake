@@ -29,7 +29,6 @@ done
 LIB=$(dirname -- "$LIB")/
 APP=$(dirname $(cd $(dirname $ME) && pwd))
 
-echo $APP
 exec php -q "$LIB"cake.php -working "$APP" "$@"
 
 exit;
