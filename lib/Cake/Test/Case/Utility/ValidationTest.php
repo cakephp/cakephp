@@ -1782,6 +1782,10 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::url('www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
+		$this->assertTrue(Validation::url('http://underscore_subdomain.example.org'));
+		$this->assertTrue(Validation::url('http://_jabber._tcp.gmail.com'));
+		$this->assertFalse(Validation::url('http://www.underscore_domain.org'));
+		$this->assertFalse(Validation::url('http://_jabber._tcp.g_mail.com'));		
 
 		$this->assertTrue(Validation::url('http://example.com/~userdir/subdir/index.html'));
 		$this->assertTrue(Validation::url('http://www.zwischenraume.de'));
