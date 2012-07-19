@@ -1034,7 +1034,7 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testPaginateCustomFind() {
-		$Controller =& new Controller($this->request);
+		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorCustomPost');
 		$Controller->constructClasses();
 		$data = array('author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
@@ -1074,7 +1074,7 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testPaginateCustomFindFieldsArray() {
-		$Controller =& new Controller($this->request);
+		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorCustomPost');
 		$Controller->constructClasses();
 		$data = array('author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
@@ -1106,7 +1106,7 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testPaginateCustomFindWithCustomFindKey() {
-		$Controller =& new Controller($this->request);
+		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorCustomPost');
 		$Controller->constructClasses();
 		$data = array('author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
@@ -1139,7 +1139,7 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testPaginateCustomFindGroupBy() {
-		$Controller =& new Controller($this->request);
+		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorCustomPost');
 		$Controller->constructClasses();
 		$data = array('author_id' => 2, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
@@ -1204,7 +1204,7 @@ class PaginatorComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testPaginateCustomFindCount() {
-		$Controller =& new Controller($this->request);
+		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorCustomPost');
 		$Controller->constructClasses();
 		$data = array('author_id' => 2, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
