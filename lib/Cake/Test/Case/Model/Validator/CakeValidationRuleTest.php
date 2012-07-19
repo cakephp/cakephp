@@ -73,6 +73,7 @@ class CakeValidationRuleTest extends CakeTestCase {
 		$Rule->process('fieldName', $data, $methods);
 		$this->assertTrue($Rule->isValid());
 	}
+
 /**
  * tests that passing custom validation methods work
  *
@@ -96,6 +97,24 @@ class CakeValidationRuleTest extends CakeTestCase {
 		$methods = array('mytestrule' => array($this, 'myTestRule3'));
 		$Rule->process('fieldName', $data, $methods);
 		$this->assertFalse($Rule->isValid());
+	}
+
+/**
+ * Make sure errors are triggered when validation is missing.
+ *
+ * @expectedException PHPUnit_Framework_Error_Warning
+ * @expectedExceptionMessage Could not find validation handler totallyMissing for fieldName
+ * @return void
+ */
+	public function testCustomMethodMissingError() {
+		$def = array('rule' => array('totallyMissing'));
+		$data = array(
+			'fieldName' => 'some data'
+		);
+		$methods = array('mytestrule' => array($this, 'myTestRule'));
+
+		$Rule = new CakeValidationRule($def);
+		$Rule->process('fieldName', $data, $methods);
 	}
 
 /**

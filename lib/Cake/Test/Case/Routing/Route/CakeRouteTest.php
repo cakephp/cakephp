@@ -798,7 +798,7 @@ class CakeRouteTest extends CakeTestCase {
 			)
 		);
 		$result = $route->match($url);
-		$expected = '/posts/index/filter[0]:one/filter[model]:value';
+		$expected = '/posts/index/filter%5B0%5D:one/filter%5Bmodel%5D:value';
 		$this->assertEquals($expected, $result);
 
 		$url = array(
@@ -813,7 +813,7 @@ class CakeRouteTest extends CakeTestCase {
 			)
 		);
 		$result = $route->match($url);
-		$expected = '/posts/index/filter[0]:one/filter[model][0]:two/filter[model][order]:field';
+		$expected = '/posts/index/filter%5B0%5D:one/filter%5Bmodel%5D%5B0%5D:two/filter%5Bmodel%5D%5Border%5D:field';
 		$this->assertEquals($expected, $result);
 	}
 

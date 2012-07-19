@@ -165,23 +165,13 @@ class Shell extends Object {
 		if ($this->stdout == null) {
 			$this->stdout = new ConsoleOutput('php://stdout');
 		}
-		CakeLog::config('stdout', array(
-			'engine' => 'ConsoleLog',
-			'types' => array('notice', 'info'),
-			'stream' => $this->stdout,
-		));
 		if ($this->stderr == null) {
 			$this->stderr = new ConsoleOutput('php://stderr');
 		}
-		CakeLog::config('stderr', array(
-			'engine' => 'ConsoleLog',
-			'types' => array('emergency', 'alert', 'critical', 'error', 'warning', 'debug'),
-			'stream' => $this->stderr,
-		));
 		if ($this->stdin == null) {
 			$this->stdin = new ConsoleInput('php://stdin');
 		}
-
+		$this->_useLogger();
 		$parent = get_parent_class($this);
 		if ($this->tasks !== null && $this->tasks !== false) {
 			$this->_mergeVars(array('tasks'), $parent, true);
@@ -377,6 +367,10 @@ class Shell extends Object {
 		} catch (ConsoleException $e) {
 			$this->out($this->OptionParser->help($command));
 			return false;
+		}
+
+		if (!empty($this->params['quiet'])) {
+			$this->_useLogger(false);
 		}
 
 		$this->command = $command;
@@ -825,4 +819,29 @@ class Shell extends Object {
 		return current(App::path('plugins')) . $pluginName . DS;
 	}
 
+/**
+ * Used to enable or disable logging stream output to stdout and stderr
+ * If you don't wish to see in your stdout or stderr everything that is logged
+ * through CakeLog, call this function with first param as false
+ *
+ * @param boolean $enable wheter to enable CakeLog output or not
+ * @return void
+ **/
+	protected function _useLogger($enable = true) {
+		if (!$enable) {
+			CakeLog::drop('stdout');
+			CakeLog::drop('stderr');
+			return;
+		}
+		CakeLog::config('stdout', array(
+			'engine' => 'ConsoleLog',
+			'types' => array('notice', 'info'),
+			'stream' => $this->stdout,
+		));
+		CakeLog::config('stderr', array(
+			'engine' => 'ConsoleLog',
+			'types' => array('emergency', 'alert', 'critical', 'error', 'warning', 'debug'),
+			'stream' => $this->stderr,
+		));
+	}
 }

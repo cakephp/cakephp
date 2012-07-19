@@ -194,6 +194,14 @@ class CakeTestFixture {
 			$db->execute($db->createSchema($this->Schema), array('log' => false));
 			$this->created[] = $db->configKeyName;
 		} catch (Exception $e) {
+			$msg = __d(
+				'cake_dev',
+				'Fixture creation for "%s" failed "%s"',
+				$this->table,
+				$e->getMessage()
+			);
+			CakeLog::error($msg);
+			trigger_error($msg, E_USER_WARNING);
 			return false;
 		}
 		return true;

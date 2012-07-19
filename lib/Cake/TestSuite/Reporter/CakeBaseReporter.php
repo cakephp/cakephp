@@ -201,6 +201,9 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  */
 	public function endTest(PHPUnit_Framework_Test $test, $time) {
 		$this->numAssertions += $test->getNumAssertions();
+		if ($test->hasFailed()) {
+			return;
+		}
 		$this->paintPass($test, $time);
 	}
 

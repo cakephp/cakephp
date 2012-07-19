@@ -414,7 +414,7 @@ class ModelTask extends BakeTask {
 				for ($i = 1, $m = $defaultChoice / 2; $i < $m; $i++) {
 					$line = sprintf("%2d. %s", $i, $this->_validations[$i]);
 					$optionText .= $line . str_repeat(" ", 31 - strlen($line));
-					$optionText .= sprintf("%2d. %s", $m + $i, $this->_validations[$m + $i]);
+					$optionText .= sprintf("%2d. %s\n", $m + $i, $this->_validations[$m + $i]);
 				}
 				$this->out($optionText);
 				$this->out(__d('cake_console', "%s - Do not do any validation on this field.", $defaultChoice));

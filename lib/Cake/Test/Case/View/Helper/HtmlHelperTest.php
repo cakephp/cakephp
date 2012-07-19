@@ -361,10 +361,26 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('test.gif?one=two&three=four');
 		$this->assertTags($result, array('img' => array('src' => 'img/test.gif?one=two&amp;three=four', 'alt' => '')));
+	}
 
+/**
+ * Test that image() works with fullBase and a webroot not equal to /
+ *
+ * @return void
+ */
+	public function testImageWithFullBase() {
 		$result = $this->Html->image('test.gif', array('fullBase' => true));
 		$here = $this->Html->url('/', true);
 		$this->assertTags($result, array('img' => array('src' => $here . 'img/test.gif', 'alt' => '')));
+
+		$result = $this->Html->image('sub/test.gif', array('fullBase' => true));
+		$here = $this->Html->url('/', true);
+		$this->assertTags($result, array('img' => array('src' => $here . 'img/sub/test.gif', 'alt' => '')));
+
+		$request = $this->Html->request;
+		$request->webroot = '/myproject/';
+		$request->base = '/myproject';
+		Router::setRequestInfo($request);
 
 		$result = $this->Html->image('sub/test.gif', array('fullBase' => true));
 		$here = $this->Html->url('/', true);

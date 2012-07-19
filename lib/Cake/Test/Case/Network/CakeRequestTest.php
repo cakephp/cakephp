@@ -301,6 +301,22 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * test parsing json PUT data into the object.
+ *
+ * @return void
+ */
+	public function testPutParsingJSON() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+
+		$request = $this->getMock('TestCakeRequest', array('_readInput'));
+		$request->expects($this->at(0))->method('_readInput')
+			->will($this->returnValue('{Article":["title"]}'));
+		$request->reConstruct();
+		$this->assertEquals('{Article":["title"]}', $request->data);
+	}
+
+/**
  * test parsing of FILES array
  *
  * @return void
