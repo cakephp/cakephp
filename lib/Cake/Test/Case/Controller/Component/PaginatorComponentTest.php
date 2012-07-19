@@ -711,6 +711,28 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test mergeOptions with customFind key
+ *
+ * @return void
+ */
+	public function testMergeOptionsCustomFindKey() {
+		$this->request->params['named'] = array(
+			'page' => 10,
+			'limit' => 10
+		);
+		$this->Paginator->settings = array(
+			'page' => 1,
+			'limit' => 20,
+			'maxLimit' => 100,
+			'paramType' => 'named',
+			'findType' => 'myCustomFind'
+		);
+		$result = $this->Paginator->mergeOptions('Post');
+		$expected = array('page' => 10, 'limit' => 10, 'maxLimit' => 100, 'paramType' => 'named', 'findType' => 'myCustomFind');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test merging options from the querystring.
  *
  * @return void
@@ -1063,6 +1085,38 @@ class PaginatorComponentTest extends CakeTestCase {
 		$Controller->paginate = array(
 			'list',
 			'conditions' => array('PaginatorCustomPost.published' => 'Y'),
+			'limit' => 2
+		);
+		$result = $Controller->paginate();
+		$expected = array(
+			1 => 'First Post',
+			2 => 'Second Post',
+		);
+		$this->assertEquals($expected, $result);
+		$result = $Controller->params['paging']['PaginatorCustomPost'];
+		$this->assertEquals(2, $result['current']);
+		$this->assertEquals(3, $result['count']);
+		$this->assertEquals(2, $result['pageCount']);
+		$this->assertTrue($result['nextPage']);
+		$this->assertFalse($result['prevPage']);
+	}
+/**
+ * test paginate() and custom find with customFind key, to make sure the correct count is returned.
+ *
+ * @return void
+ */
+	public function testPaginateCustomFindWithCustomFindKey() {
+		$Controller =& new Controller($this->request);
+		$Controller->uses = array('PaginatorCustomPost');
+		$Controller->constructClasses();
+		$data = array('author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
+		$Controller->PaginatorCustomPost->create($data);
+		$result = $Controller->PaginatorCustomPost->save();
+		$this->assertTrue(!empty($result));
+
+		$Controller->paginate = array(
+			'conditions' => array('PaginatorCustomPost.published' => 'Y'),
+			'findType' => 'list',
 			'limit' => 2
 		);
 		$result = $Controller->paginate();
