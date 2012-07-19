@@ -152,6 +152,12 @@ class PaginatorComponent extends Component {
 		$extra = array_diff_key($options, compact(
 			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
 		));
+
+		if (!empty($extra['findType'])) {
+			$type = $extra['findType'];
+			unset($extra['findType']);
+		}
+
 		if ($type !== 'all') {
 			$extra['type'] = $type;
 		}
