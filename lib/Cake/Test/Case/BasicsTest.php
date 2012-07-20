@@ -225,6 +225,15 @@ class BasicsTest extends CakeTestCase {
 			'n' => '&nbsp;'
 		);
 		$this->assertEquals($expected, $result);
+		
+		// Test that boolean values are not converted to strings
+		$result = h(false);
+		$this->assertFalse($result);
+
+		$arr = array('foo' => false, 'bar' => true);
+		$result = h($arr);
+		$this->assertFalse($result['foo']);
+		$this->assertTrue($result['bar']);
 
 		$obj = new stdClass();
 		$result = h($obj);
