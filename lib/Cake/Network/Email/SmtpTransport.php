@@ -79,7 +79,8 @@ class SmtpTransport extends AbstractTransport {
 			'timeout' => 30,
 			'username' => null,
 			'password' => null,
-			'client' => null
+			'client' => null,
+			'tls' => false
 		);
 		$this->_config = $config + $default;
 	}
@@ -107,7 +108,15 @@ class SmtpTransport extends AbstractTransport {
 
 		try {
 			$this->_smtpSend("EHLO {$host}", '250');
+			if ($this->_config['tls']) {
+				$this->_smtpSend("STARTTLS", '220');
+				$this->_socket->enableCrypto('tls');
+				$this->_smtpSend("EHLO {$host}", '250');
+			}
 		} catch (SocketException $e) {
+			if ($this->_config['tls']) {
+				throw new SocketException(__d('cake_dev', 'SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.'));
+			}
 			try {
 				$this->_smtpSend("HELO {$host}", '250');
 			} catch (SocketException $e2) {
@@ -132,6 +141,8 @@ class SmtpTransport extends AbstractTransport {
 				if (!$this->_smtpSend(base64_encode($this->_config['password']), '235')) {
 					throw new SocketException(__d('cake_dev', 'SMTP server did not accept the password.'));
 				}
+			} elseif ($authRequired == '504') {
+				throw new SocketException(__d('cake_dev', 'SMTP authentication method not allowed, check if SMTP server requires TLS'));
 			} elseif ($authRequired != '503') {
 				throw new SocketException(__d('cake_dev', 'SMTP does not require authentication.'));
 			}
