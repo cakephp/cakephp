@@ -13,7 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('ModelBehavior', 'Model/Behavior');
+App::uses('ModelBehavior', 'Model');
 App::uses('I18n', 'I18n');
 App::uses('I18nModel', 'Model');
 
