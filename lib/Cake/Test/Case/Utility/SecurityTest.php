@@ -68,6 +68,46 @@ class SecurityTest extends CakeTestCase {
 	}
 
 /**
+ * testHashInvalidSalt method
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testHashInvalidSalt() {
+		$result = Security::hash('someKey', 'blowfish', true);
+	}
+
+/**
+ * testHashAnotherInvalidSalt
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testHashAnotherInvalidSalt() {
+		$result = Security::hash('someKey', 'blowfish', '$1$lksdjoijfaoijs');
+	}
+
+/**
+ * testHashYetAnotherInvalidSalt
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testHashYetAnotherInvalidSalt() {
+		$result = Security::hash('someKey', 'blowfish', '$2a$10$123');
+	}
+
+/**
+ * testHashInvalidCost method
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testHashInvalidCost() {
+		Security::setCost(1000);
+		$result = Security::hash('somekey', 'blowfish', false);
+	}
+/**
  * testHash method
  *
  * @return void
@@ -111,6 +151,22 @@ class SecurityTest extends CakeTestCase {
 			$this->assertSame(strlen(Security::hash($key, 'sha256', false)), 64);
 			$this->assertSame(strlen(Security::hash($key, 'sha256', true)), 64);
 		}
+
+		$hashType = 'blowfish';
+		Security::setHash($hashType);
+		Security::setCost(10); // ensure default cost
+		$this->assertSame(Security::$hashType, $hashType);
+		$this->assertSame(strlen(Security::hash($key, null, false)), 60);
+
+		$password = $submittedPassword = $key;
+		$storedPassword = Security::hash($password);
+
+		$hashedPassword = Security::hash($submittedPassword, null, $storedPassword);
+		$this->assertSame($storedPassword, $hashedPassword);
+
+		$submittedPassword = 'someOtherKey';
+		$hashedPassword = Security::hash($submittedPassword, null, $storedPassword);
+		$this->assertNotSame($storedPassword, $hashedPassword);
 
 		Security::setHash($_hashType);
 	}
