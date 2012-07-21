@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Component', 'Controller/Component');
 App::uses('Xml', 'Utility');
 
 /**
