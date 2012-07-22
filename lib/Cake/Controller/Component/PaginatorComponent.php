@@ -51,6 +51,20 @@ App::uses('Hash', 'Utility');
  *
  * This would allow you to have different pagination settings for `Comment` and `Post` models.
  *
+ * #### Paginating with custom finders
+ *
+ * You can paginate with any find type defined on your model using the `findType` option.
+ *
+ * {{{
+ * $this->Paginator->settings = array(
+ *		'Post' => array(
+ *			'findType' => 'popular'
+ *		)
+ * );
+ * }}}
+ *
+ * Would paginate using the `find('popular')` method.
+ *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/pagination.html
  */
