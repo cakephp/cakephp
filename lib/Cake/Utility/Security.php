@@ -34,6 +34,13 @@ class Security {
 	public static $hashType = null;
 
 /**
+ * Default cost
+ *
+ * @var string
+ */
+	public static $hashCost = '10';
+
+/**
  * Get allowed minutes of inactivity based on security level.
  *
  * @return integer Allowed inactivity in minutes
@@ -76,14 +83,26 @@ class Security {
 /**
  * Create a hash from string using given method.
  * Fallback on next available method.
+ * If you are using blowfish, for comparisons simply pass the originally hashed
+ * string as the salt (the salt is prepended to the hash and php handles the
+ * parsing automagically. Do NOT use a constant salt for blowfish.
  *
  * @param string $string String to hash
  * @param string $type Method to use (sha1/sha256/md5)
- * @param boolean $salt If true, automatically appends the application's salt
- *     value to $string (Security.salt)
+ * @param mixed $salt If true, automatically appends the application's salt
+ *     value to $string (Security.salt). If you are using blowfish the salt
+ *     must be false or a previously generated salt.
  * @return string Hash
  */
 	public static function hash($string, $type = null, $salt = false) {
+		if (empty($type)) {
+			$type = self::$hashType;
+		}
+		$type = strtolower($type);
+
+		if ($type === 'blowfish') {
+			return self::_crypt($string, $type, $salt);
+		}
 		if ($salt) {
 			if (is_string($salt)) {
 				$string = $salt . $string;
@@ -91,11 +110,6 @@ class Security {
 				$string = Configure::read('Security.salt') . $string;
 			}
 		}
-
-		if (empty($type)) {
-			$type = self::$hashType;
-		}
-		$type = strtolower($type);
 
 		if ($type == 'sha1' || $type == null) {
 			if (function_exists('sha1')) {
@@ -119,12 +133,22 @@ class Security {
  * Sets the default hash method for the Security object.  This affects all objects using
  * Security::hash().
  *
- * @param string $hash Method to use (sha1/sha256/md5)
+ * @param string $hash Method to use (sha1/sha256/md5/blowfish)
  * @return void
  * @see Security::hash()
  */
 	public static function setHash($hash) {
 		self::$hashType = $hash;
+	}
+
+/**
+ * Sets the cost for they blowfish hash method.
+ *
+ * @param integer $cost Valid values are 4-31
+ * @return void
+ */
+	public static function setCost($cost) {
+		self::$hashCost = $cost;
 	}
 
 /**
@@ -187,6 +211,77 @@ class Security {
 			$out .= rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
 		}
 		return $out;
+	}
+
+/**
+ * Generates a pseudo random salt suitable for use with php's crypt() function.
+ * The salt length should not exceed 27. The salt will be composed of
+ * [./0-9A-Za-z]{$length}.
+ *
+ * @param integer $length The length of the returned salt
+ * @return string The generated salt
+ */
+	public static function salt($length = 22) {
+		return substr(str_replace('+', '.', base64_encode(sha1(uniqid(Configure::read('Security.salt'), true), true))), 0, $length);
+	}
+
+/**
+ * One way encryption using php's crypt() function.
+ *
+ * @param string $password The string to be encrypted.
+ * @param string $type The encryption method to use (blowfish)
+ * @param mixed $salt false to generate a new salt or an existing salt.
+ */
+	protected static function _crypt($password, $type = null, $salt = false) {
+		$options = array(
+			'saltFormat' => array(
+				'blowfish' => '$2a$%s$%s',
+			),
+			'saltLength' => array(
+				'blowfish' => 22,
+			),
+			'costLimits' => array(
+				'blowfish' => array(4, 31),
+			)
+		);
+		extract($options);
+		if ($type === null) {
+			$hashType = self::$hashType;
+		} else {
+			$hashType = $type;
+		}
+		$cost = self::$hashCost;
+		if ($salt === false) {
+			if (isset($costLimits[$hashType]) && ($cost < $costLimits[$hashType][0] || $cost > $costLimits[$hashType][1])) {
+				trigger_error(__d(
+					'cake_dev',
+					'When using %s you must specify a cost between %s and %s',
+					array(
+						$hashType,
+						$costLimits[$hashType][0],
+						$costLimits[$hashType][1]
+					)
+				), E_USER_WARNING);
+				return '';
+			}
+			$vspArgs = array();
+			$salt = self::salt($saltLength[$hashType]);
+			if ($hashType === 'blowfish') {
+				$bfCost = chr(ord('0') + $cost / 10);
+				$bfCost .= chr(ord('0') + $cost % 10);
+				$vspArgs[] = $bfCost;
+			}
+			$vspArgs[] = $salt;
+			$salt = vsprintf($saltFormat[$hashType], $vspArgs);
+		} elseif ($salt === true || strpos($salt, '$2a$') !== 0 || strlen($salt) < 29) {
+			trigger_error(__d(
+				'cake_dev',
+				'Invalid salt: %s for %s Please visit http://www.php.net/crypt and read the appropriate section for building %s salts.',
+				array($salt, $hashType, $hashType)
+			), E_USER_WARNING);
+			return '';
+		}
+		return crypt($password, $salt);
 	}
 
 }
