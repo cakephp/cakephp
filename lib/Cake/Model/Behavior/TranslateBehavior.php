@@ -71,8 +71,8 @@ class TranslateBehavior extends ModelBehavior {
 			);
 			return false;
 		}
-        
-        $this->settings[$Model->alias] = array();
+		
+		$this->settings[$Model->alias] = array();
 		$this->runtime[$Model->alias] = array('fields' => array());
 		$this->translateModel($Model);
 		return $this->bindTranslation($Model, $config, false);
@@ -212,16 +212,14 @@ class TranslateBehavior extends ModelBehavior {
  */
 	protected function _addJoin(Model $Model, $query, $field, $aliasField, $locale) {
 		$db = ConnectionManager::getDataSource($Model->useDbConfig);
-
 		$RuntimeModel = $this->_runtimeModel;
 		$joinTable = $this->_joinTable;
-
-        $aliasVirtual = "i18n_{$field}";
-        $alias = "I18n__{$field}";
+	        $aliasVirtual = "i18n_{$field}";
+	        $alias = "I18n__{$field}";
 		if (is_array($locale)) {
 			foreach ($locale as $_locale) {
-                $aliasVirtualLocale = "{$aliasVirtual}_{$_locale}";
-                $aliasLocale = "{$alias}__{$_locale}";
+		                $aliasVirtualLocale = "{$aliasVirtual}_{$_locale}";
+		                $aliasLocale = "{$alias}__{$_locale}";
 				$Model->virtualFields[$aliasVirtualLocale] = "{$aliasLocale}.content";
 				if (!empty($query['fields']) && is_array($query['fields'])) {
 					$query['fields'][] = $aliasVirtualLocale;
@@ -280,10 +278,10 @@ class TranslateBehavior extends ModelBehavior {
 			$results[$key][$Model->alias]['locale'] = (is_array($locale)) ? current($locale) : $locale;
 			foreach ($beforeFind as $_f => $field) {
 				$aliasField = is_numeric($_f) ? $field : $_f;
-                $aliasVirtual = "i18n_{$field}";
+                		$aliasVirtual = "i18n_{$field}";
 				if (is_array($locale)) {
 					foreach ($locale as $_locale) {
-                        $aliasVirtualLocale = "{$aliasVirtual}_{$_locale}";
+                        			$aliasVirtualLocale = "{$aliasVirtual}_{$_locale}";
 						if (!isset($row[$Model->alias][$aliasField]) && !empty($row[$Model->alias][$aliasVirtualLocale])) {
 							$row[$Model->alias][$aliasField] = $row[$Model->alias][$aliasVirtualLocale];
 							$row[$Model->alias]['locale'] = $_locale;
