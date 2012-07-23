@@ -1064,8 +1064,8 @@ class App extends Object {
 		}
 		if (file_exists($file)) {
 			if (!$this->return) {
-				require($file);
 				$this->__loaded[$file] = true;
+				require($file);
 			}
 			return true;
 		}
