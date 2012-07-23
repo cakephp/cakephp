@@ -1801,7 +1801,8 @@ class FormHelper extends AppHelper {
 			'secure' => true,
 			'empty' => '',
 			'showParents' => false,
-			'hiddenField' => true
+			'hiddenField' => true,
+			'disabled' => false
 		);
 
 		$escapeOptions = $this->_extractOption('escape', $attributes);
@@ -1874,7 +1875,8 @@ class FormHelper extends AppHelper {
 				'name' => $attributes['name'],
 				'value' => $attributes['value'],
 				'class' => $attributes['class'],
-				'id' => $attributes['id']
+				'id' => $attributes['id'],
+				'disabled' => $attributes['disabled'],
 			)
 		));
 
@@ -2427,6 +2429,16 @@ class FormHelper extends AppHelper {
 
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;
+						
+						if (!empty($attributes['disabled'])) {
+							if (is_array($attributes['disabled'])) {
+								if (in_array($htmlOptions['value'], $attributes['disabled'])) {
+									$htmlOptions['disabled'] = 'disabled';
+								}
+							} else {
+								$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
+							}
+						}
 
 						$tagName = $attributes['id'] . Inflector::camelize(Inflector::slug($name));
 						$htmlOptions['id'] = $tagName;
