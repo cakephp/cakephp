@@ -2340,6 +2340,78 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test generating checkboxes with disabled elements.
+ *
+ * @return void
+ */
+	public function testInputCheckboxWithDisabledElements() {
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three');
+		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => 'disabled', 'options' => $options));
+		
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => "ContactMultiple")),
+			'Multiple',
+			'/label',
+			array('input' => array('type' => 'hidden', 'name' => "data[Contact][multiple]", 'value' => '', 'id' => "ContactMultiple")),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => "data[Contact][multiple][]", 'value' => 1, 'disabled' => 'disabled', 'id' => "ContactMultiple1")),
+			array('label' => array('for' => "ContactMultiple1")),
+			'One',
+			'/label',
+			'/div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => "data[Contact][multiple][]", 'value' => 2, 'disabled' => 'disabled', 'id' => "ContactMultiple2")),
+			array('label' => array('for' => "ContactMultiple2")),
+			'Two',
+			'/label',
+			'/div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => "data[Contact][multiple][]", 'value' => 3, 'disabled' => 'disabled', 'id' => "ContactMultiple3")),
+			array('label' => array('for' => "ContactMultiple3")),
+			'Three',
+			'/label',
+			'/div',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	
+		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => true, 'options' => $options));
+		$this->assertTags($result, $expected);
+	
+		$disabled = array('2', 3);
+	
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => "ContactMultiple")),
+			'Multiple',
+			'/label',
+			array('input' => array('type' => 'hidden', 'name' => "data[Contact][multiple]", 'value' => '', 'id' => "ContactMultiple")),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => "data[Contact][multiple][]", 'value' => 1, 'id' => "ContactMultiple1")),
+			array('label' => array('for' => "ContactMultiple1")),
+			'One',
+			'/label',
+			'/div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => "data[Contact][multiple][]", 'value' => 2, 'disabled' => 'disabled', 'id' => "ContactMultiple2")),
+			array('label' => array('for' => "ContactMultiple2")),
+			'Two',
+			'/label',
+			'/div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => "data[Contact][multiple][]", 'value' => 3, 'disabled' => 'disabled', 'id' => "ContactMultiple3")),
+			array('label' => array('for' => "ContactMultiple3")),
+			'Three',
+			'/label',
+			'/div',
+			'/div'
+		);
+		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => $disabled, 'options' => $options));
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test input name with leading integer, ensure attributes are generated correctly.
  *
  * @return void
