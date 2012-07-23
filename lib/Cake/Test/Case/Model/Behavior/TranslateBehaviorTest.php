@@ -1,9 +1,5 @@
 <?php
 /**
- * TranslateBehaviorTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -1056,6 +1051,38 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$Model->unbindTranslation('slug');
 		$result = $Model->Behaviors->Translate->settings['TranslatedItem'];
 		$this->assertNotContains('slug', $result);
+	}
+
+/**
+ * Test that additional records are not inserted for associated translations.
+ *
+ * @return void
+ */
+	public function testNoExtraRowsForAssociatedTranslations() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+		$TestModel = new TranslatedItem();
+		$TestModel->locale = 'spa';
+		$TestModel->unbindTranslation();
+		$TestModel->bindTranslation(array('name' => 'nameTranslate'));
+
+		$data = array(
+			'TranslatedItem' => array(
+				'slug' => 'spanish-name',
+				'name' => 'Spanish name',
+			),
+		);
+		$TestModel->create($data);
+		$TestModel->save();
+
+		$Translate = $TestModel->translateModel();
+		$results = $Translate->find('all', array(
+			'conditions' => array(
+				'locale' => $TestModel->locale,
+				'foreign_key' => $TestModel->id
+			)
+		));
+		$this->assertCount(1, $results, 'Only one field should be saved');
+		$this->assertEquals('name', $results[0]['TranslateTestModel']['field']);
 	}
 
 }
