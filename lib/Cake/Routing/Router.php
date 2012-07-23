@@ -374,7 +374,6 @@ class Router {
  * @return array Array of mapped resources
  */
 	public static function mapResources($controller, $options = array()) {
-		$hasPrefix = isset($options['prefix']);
 		$options = array_merge(array(
 			'id' => static::ID . '|' . static::UUID
 		), $options);
