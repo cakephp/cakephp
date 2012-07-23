@@ -13,6 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('ModelBehavior', 'Model');
 App::uses('I18n', 'I18n');
 App::uses('I18nModel', 'Model');
 
@@ -395,9 +396,12 @@ class TranslateBehavior extends ModelBehavior {
 
 		$fields = array_merge($this->settings[$model->alias], $this->runtime[$model->alias]['fields']);
 		if ($created) {
-			foreach ($fields as $field) {
+			// set each field value to an empty string
+			foreach ($fields as $key => $field) {
+				if (!is_numeric($key)) {
+					$field = $key;
+				}
 				if (!isset($tempData[$field])) {
-					//set the field value to an empty string
 					$tempData[$field] = '';
 				}
 			}

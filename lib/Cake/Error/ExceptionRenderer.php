@@ -23,6 +23,7 @@
 App::uses('Sanitize', 'Utility');
 App::uses('Router', 'Routing');
 App::uses('CakeResponse', 'Network');
+App::uses('Controller', 'Controller');
 
 /**
  * Exception Renderer.
