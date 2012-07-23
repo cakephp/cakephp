@@ -235,7 +235,7 @@ class Security {
 	protected static function _crypt($password, $type = null, $salt = false) {
 		$options = array(
 			'saltFormat' => array(
-				'blowfish' => '$2a$%s$%s',
+				'blowfish' => '$2a$%02d$%s',
 			),
 			'saltLength' => array(
 				'blowfish' => 22,
@@ -264,14 +264,11 @@ class Security {
 				), E_USER_WARNING);
 				return '';
 			}
-			$vspArgs = array();
 			$salt = self::salt($saltLength[$hashType]);
-			if ($hashType === 'blowfish') {
-				$bfCost = chr(ord('0') + $cost / 10);
-				$bfCost .= chr(ord('0') + $cost % 10);
-				$vspArgs[] = $bfCost;
-			}
-			$vspArgs[] = $salt;
+			$vspArgs = array(
+				$cost,
+				$salt,
+			);
 			$salt = vsprintf($saltFormat[$hashType], $vspArgs);
 		} elseif ($salt === true || strpos($salt, '$2a$') !== 0 || strlen($salt) < 29) {
 			trigger_error(__d(
