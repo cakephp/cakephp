@@ -491,6 +491,8 @@ class TestTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Component', 'Example');
 
+		$this->assertContains("App::uses('Component', 'Controller')", $result);
+		$this->assertContains("App::uses('ComponentCollection', 'Controller')", $result);
 		$this->assertContains("App::uses('ExampleComponent', 'Controller/Component')", $result);
 		$this->assertContains('class ExampleComponentTest extends CakeTestCase', $result);
 
