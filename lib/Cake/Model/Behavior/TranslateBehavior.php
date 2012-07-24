@@ -71,7 +71,7 @@ class TranslateBehavior extends ModelBehavior {
 			);
 			return false;
 		}
-		
+
 		$this->settings[$Model->alias] = array();
 		$this->runtime[$Model->alias] = array('fields' => array());
 		$this->translateModel($Model);
