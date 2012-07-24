@@ -131,6 +131,7 @@ class SmtpTransportTest extends CakeTestCase {
 /**
  * testConnectEhloTlsOnNonTlsServer method
  *
+ * @expectedException SocketException
  * @return void
  */
 	public function testConnectEhloTlsOnNonTlsServer() {
@@ -144,13 +145,13 @@ class SmtpTransportTest extends CakeTestCase {
 		$this->socket->expects($this->at(5))->method('write')->with("STARTTLS\r\n");
 		$this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue("500 5.3.3 Unrecognized command\r\n"));
-		$this->setExpectedException('SocketException');
 		$this->SmtpTransport->connect();
 	}
 	
 /**
  * testConnectEhloNoTlsOnRequiredTlsServer method
  *
+ * @expectedException SocketException
  * @return void
  */
 	public function testConnectEhloNoTlsOnRequiredTlsServer() {
@@ -164,7 +165,6 @@ class SmtpTransportTest extends CakeTestCase {
 		$this->socket->expects($this->at(5))->method('read')->with("AUTH LOGIN\r\n");
 		$this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue("504 5.7.4 Unrecognized authentication type\r\n"));
-		$this->setExpectedException('SocketException');
 		$this->SmtpTransport->connect();
 		$this->SmtpTransport->auth();
 	}

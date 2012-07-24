@@ -218,6 +218,7 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * testEncrypt
  * 
+ * @expectedException SocketException
  * @return void
  */	
 	public function testEnableCryptoSocketExceptionNoSsl() {
@@ -226,13 +227,13 @@ class CakeSocketTest extends CakeTestCase {
 		// testing exception on no ssl socket server for ssl and tls methods
 		$this->Socket = new CakeSocket($configNoSslOrTls);
 		$this->Socket->connect();
-		$this->setExpectedException('SocketException');
 		$this->Socket->enableCrypto('sslv3', 'client');
 	}
 
 /**
  * testEnableCryptoSocketExceptionNoTls
  * 
+ * @expectedException SocketException
  * @return void
  */	
 	public function testEnableCryptoSocketExceptionNoTls() {
@@ -241,7 +242,6 @@ class CakeSocketTest extends CakeTestCase {
 		// testing exception on no ssl socket server for ssl and tls methods
 		$this->Socket = new CakeSocket($configNoSslOrTls);
 		$this->Socket->connect();
-		$this->setExpectedException('SocketException');
 		$this->Socket->enableCrypto('tls', 'client');
 	}
 
@@ -259,12 +259,12 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * testEnableCryptoBadMode
  * 
+ * @expectedException InvalidArgumentException
  * @return void
  */	
 	public function testEnableCryptoBadMode() {
 		// testing wrong encryption mode
 		$this->_connectSocketToSslTls();
-		$this->setExpectedException('InvalidArgumentException');
 		$this->Socket->enableCrypto('doesntExistMode', 'server');
 		$this->Socket->disconnect();
 	}
@@ -289,25 +289,25 @@ class CakeSocketTest extends CakeTestCase {
 /**
  * testEnableCryptoExceptionEnableTwice
  * 
+ * @expectedException SocketException
  * @return void
  */	
 	public function testEnableCryptoExceptionEnableTwice() {
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->Socket->enableCrypto('tls', 'client');
-		$this->setExpectedException('SocketException');
 		$this->Socket->enableCrypto('tls', 'client');
 	}
 
 /**
  * testEnableCryptoExceptionDisableTwice
  * 
+ * @expectedException SocketException
  * @return void
  */	
 	public function testEnableCryptoExceptionDisableTwice() {
 		// testing on tls server
 		$this->_connectSocketToSslTls();
-		$this->setExpectedException('SocketException');
 		$this->Socket->enableCrypto('tls', 'client', false);
 	}	
 
