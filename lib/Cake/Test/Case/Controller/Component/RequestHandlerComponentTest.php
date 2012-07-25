@@ -178,7 +178,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testInitializeContentTypeWithjQueryAccept() {
-		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/javascript, */*; q=0.01';
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, application/javascript, */*; q=0.01';
 		$this->assertNull($this->RequestHandler->ext);
 		Router::parseExtensions('json');
 
@@ -193,7 +193,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testInitializeContentTypeWithjQueryAcceptAndMultiplesExtensions() {
-		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/javascript, */*; q=0.01';
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, application/javascript, */*; q=0.01';
 		$this->assertNull($this->RequestHandler->ext);
 		Router::parseExtensions('rss', 'json');
 
@@ -221,7 +221,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testInitializeNoContentTypeWithMultipleAcceptedTypes() {
-		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/javascript, application/xml, */*; q=0.01';
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, application/javascript, application/xml, */*; q=0.01';
 		$this->assertNull($this->RequestHandler->ext);
 		Router::parseExtensions('xml', 'json');
 
@@ -630,7 +630,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEquals('text/vnd.wap.wml', $result);
 
 		$result = $this->RequestHandler->mapAlias(array('xml', 'js', 'json'));
-		$expected = array('application/xml', 'text/javascript', 'application/json');
+		$expected = array('application/xml', 'application/javascript', 'application/json');
 		$this->assertEquals($expected, $result);
 	}
 
