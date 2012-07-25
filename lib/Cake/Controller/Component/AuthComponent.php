@@ -565,10 +565,7 @@ class AuthComponent extends Component {
 		if ($key === null) {
 			return $user;
 		}
-		if ($value = Hash::get($user, $key)) {
-			return $value;
-		}
-		return null;
+		return Hash::get($user, $key);
 	}
 
 /**
