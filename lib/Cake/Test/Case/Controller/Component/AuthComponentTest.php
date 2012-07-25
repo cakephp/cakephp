@@ -1269,6 +1269,7 @@ class AuthComponentTest extends CakeTestCase {
 					'id' => '1',
 					'name' => 'Members'
 				),
+				'is_admin' => false,
 		));
 		$this->Auth->Session->write('Auth', $data);
 
@@ -1286,5 +1287,8 @@ class AuthComponentTest extends CakeTestCase {
 
 		$result = $this->Auth->user('Company.invalid');
 		$this->assertEquals(null, $result);
+
+		$result = $this->Auth->user('is_admin');
+		$this->assertFalse($result);
 	}
 }
