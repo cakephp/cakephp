@@ -726,7 +726,7 @@ class Debugger {
 		$info = '';
 
 		foreach ((array)$data['context'] as $var => $value) {
-			$context[] = "\${$var} = " . $this->exportVar($value, 1);
+			$context[] = "\${$var} = " . $this->exportVar($value, 3);
 		}
 
 		switch ($this->_outputFormat) {
