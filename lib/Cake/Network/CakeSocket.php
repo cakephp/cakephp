@@ -310,7 +310,7 @@ class CakeSocket {
  */
 	public function enableCrypto($type, $clientOrServer = 'client', $enable = true) {
 		if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
-			throw new InvalidArgumentException(__('Invalid encryption scheme chosen'));
+			throw new InvalidArgumentException(__d('cake_dev', 'Invalid encryption scheme chosen'));
 		}
 		$enableCryptoResult = false;
 		try {
@@ -323,7 +323,7 @@ class CakeSocket {
 			$this->encrypted = $enable;
 			return true;
 		} else {
-			$errorMessage = __('Unable to perform enableCrypto operation on CakeSocket');
+			$errorMessage = __d('cake_dev', 'Unable to perform enableCrypto operation on CakeSocket');
 			$this->setLastError(null, $errorMessage);
 			throw new SocketException($errorMessage);
 		}
