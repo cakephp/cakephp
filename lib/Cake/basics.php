@@ -175,6 +175,8 @@ function h($text, $double = true, $charset = null) {
 		} else {
 			$text = '(object)' . get_class($text);
 		}
+	} elseif (is_bool($text)) {
+		return $text;
 	}
 
 	static $defaultCharset = false;
