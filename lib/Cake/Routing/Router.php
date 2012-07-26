@@ -182,7 +182,10 @@ class Router {
  * @throws RouterException
  */
 	protected static function _validateRouteClass($routeClass) {
-		if (!class_exists($routeClass) || !is_subclass_of($routeClass, 'CakeRoute')) {
+		if (
+			$routeClass != 'CakeRoute' &&
+			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'CakeRoute'))
+		) {
 			throw new RouterException(__d('cake_dev', 'Route classes must extend CakeRoute'));
 		}
 		return $routeClass;
