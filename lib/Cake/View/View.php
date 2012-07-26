@@ -366,9 +366,10 @@ class View extends Object {
  * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
  * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
  *
- * @param string $name Name of template file in the/app/View/Elements/ folder,
+ * @param mixed $name string Name of template file in the/app/View/Elements/ folder,
  *   or `MyPlugin.template` to use the template element from MyPlugin.  If the element
  *   is not found in the plugin, the normal view path cascade will be searched.
+ *   ;or array of a list of Names.
  * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
  * @param array $options Array of options. Possible keys are:
  * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
@@ -384,6 +385,14 @@ class View extends Object {
  */
 	public function element($name, $data = array(), $options = array()) {
 		$file = $plugin = null;
+
+		if(is_array($name) && !empty($name)) {
+			$multiContents = '';
+			foreach($name as $someName){
+				$multiContents .= $this->element($someName, $data, $options);
+			}
+			return $multiContents;
+		}
 
 		if (isset($options['plugin'])) {
 			$name = Inflector::camelize($options['plugin']) . '.' . $name;
