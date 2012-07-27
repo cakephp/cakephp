@@ -386,10 +386,10 @@ class View extends Object {
 	public function element($name, $data = array(), $options = array()) {
 		$file = $plugin = null;
 
-		if(is_array($name) && !empty($name)) {
+		if (is_array($name) && !empty($name)) {
 			$multiContents = '';
-			foreach($name as $someName){
-				$multiContents .= $this->element($someName, $data, $options);
+			foreach ($name as $currentName) {
+				$multiContents .= $this->element($currentName, $data, $options);
 			}
 			return $multiContents;
 		}
