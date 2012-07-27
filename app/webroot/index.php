@@ -72,7 +72,7 @@ if (!defined('WWW_ROOT')) {
 
 // for built-in server
 if (php_sapi_name() == 'cli-server') {
-	$_SERVER['PHP_SELF'] = '/'.basename(__FILE__);
+	$_SERVER['PHP_SELF'] = '/' . basename(__FILE__);
 }
 
 if (!defined('CAKE_CORE_INCLUDE_PATH')) {
