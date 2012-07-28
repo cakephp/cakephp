@@ -2953,11 +2953,24 @@ class DboSource extends DataSource {
 				$primary = null;
 				$table = $this->fullTableName($curTable);
 
+				$primaryCount = 0;
+				foreach ($columns as $col) {
+					if (isset($col['key']) && $col['key'] === 'primary') {
+						$primaryCount++;
+					}
+				}
+
 				foreach ($columns as $name => $col) {
 					if (is_string($col)) {
 						$col = array('type' => $col);
 					}
-					if (isset($col['key']) && $col['key'] === 'primary') {
+					$isPrimary = isset($col['key']) && $col['key'] === 'primary';
+					// Multi-column primary keys are not supported.
+					if ($isPrimary && $primaryCount > 1) {
+						unset($col['key']);
+						$isPrimary = false;
+					}
+					if ($isPrimary) {
 						$primary = $name;
 					}
 					if ($name !== 'indexes' && $name !== 'tableParameters') {
