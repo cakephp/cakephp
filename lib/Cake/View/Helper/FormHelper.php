@@ -2259,6 +2259,17 @@ class FormHelper extends AppHelper {
 			}
 		}
 
+		if (is_array($attributes['empty'])) {
+			$attributes['empty'] += array(
+				'month' => true, 'year' => true, 'day' => true,
+				'hour' => true, 'minute' => true, 'meridian' => true
+			);
+			foreach ($elements as $element) {
+				$selectAttrName = 'select' . $element . 'Attr';
+				${$selectAttrName}['empty'] = $attributes['empty'][strtolower($element)];
+			}
+		}
+
 		$selects = array();
 		foreach (preg_split('//', $dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
 			switch ($char) {

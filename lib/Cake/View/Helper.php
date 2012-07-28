@@ -691,7 +691,7 @@ class Helper extends Object {
 		$data = $this->request->data;
 
 		$entity = $this->entity();
-		if (!empty($data) && !empty($entity)) {
+		if (!empty($data) && is_array($data) && !empty($entity)) {
 			$result = Hash::get($data, implode('.', $entity));
 		}
 

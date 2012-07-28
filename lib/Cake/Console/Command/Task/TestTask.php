@@ -479,6 +479,7 @@ class TestTask extends BakeTask {
  */
 	public function generateUses($type, $realType, $className) {
 		$uses = array();
+		$type = strtolower($type);
 		if ($type == 'component') {
 			$uses[] = array('ComponentCollection', 'Controller');
 			$uses[] = array('Component', 'Controller');
