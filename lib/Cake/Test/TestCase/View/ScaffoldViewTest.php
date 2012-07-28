@@ -94,7 +94,7 @@ class ScaffoldViewTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->request = new Request(null, false);
+		$this->request = new Request();
 		$this->Controller = new ScaffoldViewMockController($this->request);
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 
@@ -226,9 +226,6 @@ class ScaffoldViewTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
-			'form' => array(),
-			'named' => array(),
-			'url' => array('url' => 'scaffold_mock'),
 			'controller' => 'scaffold_mock',
 			'action' => 'index',
 		);
@@ -268,9 +265,6 @@ class ScaffoldViewTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
-			'form' => array(),
-			'named' => array(),
-			'url' => array('url' => 'scaffold_mock/view/1'),
 			'controller' => 'scaffold_mock',
 			'action' => 'view',
 		);
@@ -311,9 +305,6 @@ class ScaffoldViewTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
-			'form' => array(),
-			'named' => array(),
-			'url' => array('url' => 'scaffold_mock'),
 			'controller' => 'scaffold_mock',
 			'action' => 'edit',
 		);
@@ -352,10 +343,7 @@ class ScaffoldViewTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
-			'form' => array(),
-			'named' => array(),
 			'prefix' => 'admin',
-			'url' => array('url' => 'admin/scaffold_mock'),
 			'controller' => 'scaffold_mock',
 			'action' => 'admin_index',
 			'admin' => 1,
@@ -395,10 +383,7 @@ class ScaffoldViewTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
-			'form' => array(),
-			'named' => array(),
 			'prefix' => 'admin',
-			'url' => array('url' => 'admin/scaffold_mock/edit/1'),
 			'controller' => 'scaffold_mock',
 			'action' => 'admin_edit',
 			'admin' => 1,
@@ -436,10 +421,7 @@ class ScaffoldViewTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
-			'form' => array(),
-			'named' => array(),
 			'prefix' => 'member',
-			'url' => array('url' => 'member/scaffold_mock'),
 			'controller' => 'scaffold_mock',
 			'action' => 'member_index',
 			'member' => 1,

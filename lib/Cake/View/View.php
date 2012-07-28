@@ -328,7 +328,7 @@ class View extends Object {
 			$this->_eventManager = $controller->getEventManager();
 		}
 		if (empty($this->request) && !($this->request = Router::getRequest(true))) {
-			$this->request = new Request(null, false);
+			$this->request = new Request();
 			$this->request->base = '';
 			$this->request->here = $this->request->webroot = '/';
 		}

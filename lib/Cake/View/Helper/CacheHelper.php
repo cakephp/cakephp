@@ -280,15 +280,19 @@ class CacheHelper extends Helper {
 		}
 		$cache = $cache . '.php';
 		$file = '<!--cachetime:' . $cacheTime . '--><?php';
+		$file .= "
+			use Cake\\Core\\Configure;
+			use Cake\\Routing\\Router;
+		";
+		$namespace = Configure::read('App.namespace');
 
 		if (empty($this->_View->plugin)) {
 			$file .= "
-			App::uses('{$this->_View->name}Controller', 'Controller');
+			use $namespace\\Controller\\{$this->_View->name}Controller;
 			";
 		} else {
 			$file .= "
-			App::uses('{$this->_View->plugin}AppController', '{$this->_View->plugin}.Controller');
-			App::uses('{$this->_View->name}Controller', '{$this->_View->plugin}.Controller');
+			use {$this->_View->plugin}\\Controller\\{$this->_View->name}Controller;
 			";
 		}
 

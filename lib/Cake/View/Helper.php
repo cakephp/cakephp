@@ -625,7 +625,7 @@ class Helper extends Object {
 
 /**
  * Gets the input field name for the current tag. Creates input name attributes
- * using CakePHP's data[Model][field] formatting.
+ * using CakePHP's `Model[field]` formatting.
  *
  * @param array|string $options If an array, should be an array of attributes that $key needs to be added to.
  *   If a string or null, will be used as the View entity.
@@ -656,7 +656,9 @@ class Helper extends Object {
 				$name = $field;
 			break;
 			default:
-				$name = 'data[' . implode('][', $this->entity()) . ']';
+				$entity = $this->entity();
+				$first = array_shift($entity);
+				$name = $first . ($entity ? '[' . implode('][', $entity) . ']' : '');
 			break;
 		}
 

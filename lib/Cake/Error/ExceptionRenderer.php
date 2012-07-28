@@ -20,6 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Error;
+
 use Cake\Controller\Controller;
 use Cake\Controller\ErrorController;
 use Cake\Core\Configure;
@@ -148,7 +149,7 @@ class ExceptionRenderer {
  */
 	protected function _getController($exception) {
 		if (!$request = Router::getRequest(true)) {
-			$request = new Request();
+			$request = Request::createFromGlobals();
 		}
 		$response = new Response(array('charset' => Configure::read('App.encoding')));
 		try {

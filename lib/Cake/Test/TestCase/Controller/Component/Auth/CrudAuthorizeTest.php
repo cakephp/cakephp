@@ -59,7 +59,7 @@ class CrudAuthorizeTest extends TestCase {
  * @return void
  */
 	public function testAuthorizeNoMappedAction() {
-		$request = new Request('/posts/foobar', false);
+		$request = new Request('/posts/foobar');
 		$request->addParams(array(
 			'controller' => 'posts',
 			'action' => 'foobar'
@@ -75,7 +75,7 @@ class CrudAuthorizeTest extends TestCase {
  * @return void
  */
 	public function testAuthorizeCheckSuccess() {
-		$request = new Request('posts/index', false);
+		$request = new Request('posts/index');
 		$request->addParams(array(
 			'controller' => 'posts',
 			'action' => 'index'
@@ -97,7 +97,7 @@ class CrudAuthorizeTest extends TestCase {
  * @return void
  */
 	public function testAuthorizeCheckFailure() {
-		$request = new Request('posts/index', false);
+		$request = new Request('posts/index');
 		$request->addParams(array(
 			'controller' => 'posts',
 			'action' => 'index'

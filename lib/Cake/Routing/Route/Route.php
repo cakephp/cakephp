@@ -14,7 +14,6 @@
 namespace Cake\Routing\Route;
 
 use Cake\Routing\Router;
-use Cake\Utility\Hash;
 
 /**
  * A single Route used by the Router to connect requests to
@@ -72,6 +71,13 @@ class Route {
 	protected $_compiledRoute = null;
 
 /**
+ * The name for a route.  Fetch with Route::getName();
+ *
+ * @var string
+ */
+	protected $_name = null;
+
+/**
  * HTTP header shortcut map.  Used for evaluating header-based route expressions.
  *
  * @var array
@@ -83,7 +89,21 @@ class Route {
 	);
 
 /**
+ * List of connected extensions for this route.
+ *
+ * @var array
+ */
+	protected $_extensions = array();
+
+/**
  * Constructor for a Route
+ *
+ * ### Options
+ *
+ * - `_name` - By using $options['_name'] a specific name can be
+ *   given to a route. Otherwise a route name will be generated.
+ * - `_ext` - Defines the extensions used for this route.
+ * - `pass` - Copies the listed parameters into params['pass'].
  *
  * @param string $template Template string with parameter placeholders
  * @param array $defaults Array of defaults for the route.
@@ -93,6 +113,22 @@ class Route {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
 		$this->options = (array)$options;
+		if (isset($this->options['_name'])) {
+			$this->_name = $this->options['_name'];
+		}
+		if (isset($this->options['_ext'])) {
+			$this->_extensions = $this->options['_ext'];
+		}
+	}
+
+/**
+ * Sets the supported extensions for this route.
+ *
+ * @param array $extensions The extensions to set.
+ * @return void
+ */
+	public function setExtensions(array $extensions) {
+		$this->_extensions = $extensions;
 	}
 
 /**
@@ -105,8 +141,8 @@ class Route {
 	}
 
 /**
- * Compiles the route's regular expression.  Modifies defaults property so all necessary keys are set
- * and populates $this->names with the named routing elements.
+ * Compiles the route's regular expression.  Modifies defaults property so all necessary 
+ * keys are set and populates $this->names with the named routing elements.
  *
  * @return array Returns a string regular expression of the compiled route.
  */
@@ -165,10 +201,42 @@ class Route {
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
 
-		//remove defaults that are also keys. They can cause match failures
+		// remove defaults that are also keys. They can cause match failures
 		foreach ($this->keys as $key) {
 			unset($this->defaults[$key]);
 		}
+	}
+
+/**
+ * Get the standardized plugin.controller:action name
+ * for a route. This will compile a route if it has not
+ * already been compiled.
+ *
+ * @return string.
+ */
+	public function getName() {
+		if (!empty($this->_name)) {
+			return $this->_name;
+		}
+		$name = '';
+		if (isset($this->defaults['plugin'])) {
+			$name = $this->defaults['plugin'] . '.';
+		}
+		if (strpos($this->template, ':plugin') !== false) {
+			$name = '_plugin.';
+		}
+		foreach (array('controller', 'action') as $key) {
+			if ($key === 'action') {
+				$name .= ':';
+			}
+			$var = ':' . $key;
+			if (strpos($this->template, $var) !== false) {
+				$name .= '_' . $key;
+			} elseif (isset($this->defaults[$key])) {
+				$name .= $this->defaults[$key];
+			}
+		}
+		return $this->_name = strtolower($name);
 	}
 
 /**
@@ -183,6 +251,8 @@ class Route {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
+		list($url, $ext) = $this->_parseExtension($url);
+
 		if (!preg_match($this->_compiledRoute, $url, $route)) {
 			return false;
 		}
@@ -214,7 +284,7 @@ class Route {
 		for ($i = 0; $i <= $count; $i++) {
 			unset($route[$i]);
 		}
-		$route['pass'] = $route['named'] = array();
+		$route['pass'] = array();
 
 		// Assign defaults, set passed args to pass
 		foreach ($this->defaults as $key => $value) {
@@ -235,15 +305,18 @@ class Route {
 		}
 
 		if (isset($route['_args_'])) {
-			list($pass, $named) = $this->_parseArgs($route['_args_'], $route);
+			$pass = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
-			$route['named'] = $named;
 			unset($route['_args_']);
 		}
 
 		if (isset($route['_trailing_'])) {
 			$route['pass'][] = rawurldecode($route['_trailing_']);
 			unset($route['_trailing_']);
+		}
+
+		if ($ext && empty($route['_ext'])) {
+			$route['_ext'] = $ext;
 		}
 
 		// restructure 'pass' key route params
@@ -259,124 +332,49 @@ class Route {
 	}
 
 /**
- * Parse passed and Named parameters into a list of passed args, and a hash of named parameters.
- * The local and global configuration for named parameters will be used.
+ * Removes the extension if the $url contains a known extension.
+ * If there are no known extensions all extensions are supported.
  *
- * @param string $args A string with the passed & named params.  eg. /1/page:2
- * @param string $context The current route context, which should contain controller/action keys.
- * @return array Array of ($pass, $named)
+ * @param string $url The url to parse.
+ * @return array containing url, extension
  */
-	protected function _parseArgs($args, $context) {
-		$pass = $named = array();
-		$args = explode('/', $args);
-
-		$namedConfig = Router::namedConfig();
-		$greedy = $namedConfig['greedyNamed'];
-		$rules = $namedConfig['rules'];
-		if (!empty($this->options['named'])) {
-			$greedy = isset($this->options['greedyNamed']) && $this->options['greedyNamed'] === true;
-			foreach ((array)$this->options['named'] as $key => $val) {
-				if (is_numeric($key)) {
-					$rules[$val] = true;
-					continue;
-				}
-				$rules[$key] = $val;
+	protected function _parseExtension($url) {
+		if (empty($this->_extensions)) {
+			return array($url, null);
+		}
+		preg_match('/\.([0-9a-z]*)$/', $url, $match);
+		if (empty($match[1])) {
+			return array($url, null);
+		}
+		$ext = strtolower($match[1]);
+		$len = strlen($match[1]);
+		foreach ($this->_extensions as $name) {
+			if (strtolower($name) === $ext) {
+				$url = substr($url, 0, ($len + 1) * -1);
+				return array($url, $ext);
 			}
 		}
+		return array($url, null);
+	}
+
+/**
+ * Parse passed parameters into a list of passed args.
+ *
+ * @param string $args A string with the passed params.  eg. /1/foo
+ * @param string $context The current route context, which should contain controller/action keys.
+ * @return array Array of passed args.
+ */
+	protected function _parseArgs($args, $context) {
+		$pass = array();
+		$args = explode('/', $args);
 
 		foreach ($args as $param) {
 			if (empty($param) && $param !== '0' && $param !== 0) {
 				continue;
 			}
-
-			$separatorIsPresent = strpos($param, $namedConfig['separator']) !== false;
-			if ((!isset($this->options['named']) || !empty($this->options['named'])) && $separatorIsPresent) {
-				list($key, $val) = explode($namedConfig['separator'], $param, 2);
-				$key = rawurldecode($key);
-				$val = rawurldecode($val);
-				$hasRule = isset($rules[$key]);
-				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$this->_matchNamed($val, $rules[$key], $context));
-				if ($passIt) {
-					$pass[] = rawurldecode($param);
-				} else {
-					if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
-						$matches = array_reverse($matches);
-						$parts = explode('[', $key);
-						$key = array_shift($parts);
-						$arr = $val;
-						foreach ($matches as $match) {
-							if (empty($match[1])) {
-								$arr = array($arr);
-							} else {
-								$arr = array(
-									$match[1] => $arr
-								);
-							}
-						}
-						$val = $arr;
-					}
-					$named = array_merge_recursive($named, array($key => $val));
-				}
-			} else {
-				$pass[] = rawurldecode($param);
-			}
+			$pass[] = rawurldecode($param);
 		}
-		return array($pass, $named);
-	}
-
-/**
- * Return true if a given named $param's $val matches a given $rule depending on $context. Currently implemented
- * rule types are controller, action and match that can be combined with each other.
- *
- * @param string $val The value of the named parameter
- * @param array $rule The rule(s) to apply, can also be a match string
- * @param string $context An array with additional context information (controller / action)
- * @return boolean
- */
-	protected function _matchNamed($val, $rule, $context) {
-		if ($rule === true || $rule === false) {
-			return $rule;
-		}
-		if (is_string($rule)) {
-			$rule = array('match' => $rule);
-		}
-		if (!is_array($rule)) {
-			return false;
-		}
-
-		$controllerMatches = (
-			!isset($rule['controller'], $context['controller']) ||
-			in_array($context['controller'], (array)$rule['controller'])
-		);
-		if (!$controllerMatches) {
-			return false;
-		}
-		$actionMatches = (
-			!isset($rule['action'], $context['action']) ||
-			in_array($context['action'], (array)$rule['action'])
-		);
-		if (!$actionMatches) {
-			return false;
-		}
-		return (!isset($rule['match']) || preg_match('/' . $rule['match'] . '/', $val));
-	}
-
-/**
- * Apply persistent parameters to a url array. Persistent parameters are a special
- * key used during route creation to force route parameters to persist when omitted from
- * a url array.
- *
- * @param array $url The array to apply persistent parameters to.
- * @param array $params An array of persistent values to replace persistent ones.
- * @return array An array with persistent parameters applied.
- */
-	public function persistParams($url, $params) {
-		foreach ($this->options['persist'] as $persistKey) {
-			if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
-				$url[$persistKey] = $params[$persistKey];
-			}
-		}
-		return $url;
+		return $pass;
 	}
 
 /**
@@ -385,22 +383,44 @@ class Route {
  * This method handles the reverse routing or conversion of url arrays into string urls.
  *
  * @param array $url An array of parameters to check matching with.
+ * @param array $context An array of the current request context.
+ *   Contains information such as the current host, scheme, port, and base
+ *   directory.
  * @return mixed Either a string url for the parameters if they match or false.
  */
-	public function match($url) {
+	public function match($url, $context = array()) {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
 		$defaults = $this->defaults;
 
-		if (isset($defaults['prefix'])) {
-			$url['prefix'] = $defaults['prefix'];
+		$hostOptions = array_intersect_key($url, $context);
+
+		// Check for properties that will cause and
+		// absoulte url. Copy the other properties over.
+		if (
+			isset($hostOptions['_scheme']) ||
+			isset($hostOptions['_port']) ||
+			isset($hostOptions['_host'])
+		) {
+			$hostOptions += $context;
+
+			if ($hostOptions['_port'] == $context['_port']) {
+				unset($hostOptions['_port']);
+			}
 		}
 
-		//check that all the key names are in the url
-		$keyNames = array_flip($this->keys);
-		if (array_intersect_key($keyNames, $url) !== $keyNames) {
-			return false;
+		// If no base is set, copy one in.
+		if (!isset($hostOptions['_base']) && isset($context['_base'])) {
+			$hostOptions['_base'] = $context['_base'];
+		}
+		unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base']);
+
+		// Move extension into the hostOptions so its not part of
+		// reverse matches.
+		if (isset($url['_ext'])) {
+			$hostOptions['_ext'] = $url['_ext'];
+			unset($url['_ext']);
 		}
 
 		// Missing defaults is a fail.
@@ -408,22 +428,24 @@ class Route {
 			return false;
 		}
 
-		$namedConfig = Router::namedConfig();
-		$prefixes = Router::prefixes();
-		$greedyNamed = $namedConfig['greedyNamed'];
-		$allowedNamedParams = $namedConfig['rules'];
+		// Defaults with different values are a fail.
+		if (array_intersect_key($url, $defaults) != $defaults) {
+			return false;
+		}
 
-		$named = $pass = array();
+		// check that all the key names are in the url
+		$keyNames = array_flip($this->keys);
+		if (array_intersect_key($keyNames, $url) !== $keyNames) {
+			return false;
+		}
+
+		$prefixes = Router::prefixes();
+		$pass = array();
+		$query = array();
 
 		foreach ($url as $key => $value) {
-
 			// keys that exist in the defaults and have different values is a match failure.
 			$defaultExists = array_key_exists($key, $defaults);
-			if ($defaultExists && $defaults[$key] != $value) {
-				return false;
-			} elseif ($defaultExists) {
-				continue;
-			}
 
 			// If the key is a routed key, its not different yet.
 			if (array_key_exists($key, $keyNames)) {
@@ -440,36 +462,28 @@ class Route {
 				continue;
 			}
 
-			// pull out named params if named params are greedy or a rule exists.
-			if (
-				($greedyNamed || isset($allowedNamedParams[$key])) &&
-				($value !== false && $value !== null) &&
-				(!in_array($key, $prefixes))
-			) {
-				$named[$key] = $value;
-				continue;
-			}
-
 			// keys that don't exist are different.
-			if (!$defaultExists && !empty($value)) {
-				return false;
+			if (!$defaultExists && ($value !== null && $value !== false && $value !== '')) {
+				$query[$key] = $value;
+				unset($url[$key]);
 			}
 		}
 
-		//if a not a greedy route, no extra params are allowed.
-		if (!$this->_greedy && (!empty($pass) || !empty($named))) {
+		// if not a greedy route, no extra params are allowed.
+		if (!$this->_greedy && !empty($pass)) {
 			return false;
 		}
 
 		//check patterns for routed params
 		if (!empty($this->options)) {
 			foreach ($this->options as $key => $pattern) {
-				if (array_key_exists($key, $url) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
+				if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
 					return false;
 				}
 			}
 		}
-		return $this->_writeUrl(array_merge($url, compact('pass', 'named')));
+		$url += $hostOptions;
+		return $this->_writeUrl($url, $pass, $query);
 	}
 
 /**
@@ -477,38 +491,11 @@ class Route {
  * used to create the route.
  *
  * @param array $params The params to convert to a string url.
+ * @param array $pass The additional passed arguments.
  * @return string Composed route string.
  */
-	protected function _writeUrl($params) {
-		if (isset($params['prefix'])) {
-			$prefixed = $params['prefix'] . '_';
-		}
-		if (isset($prefixed, $params['action']) && strpos($params['action'], $prefixed) === 0) {
-			$params['action'] = substr($params['action'], strlen($prefixed) * -1);
-			unset($params['prefix']);
-		}
-
-		if (is_array($params['pass'])) {
-			$params['pass'] = implode('/', array_map('rawurlencode', $params['pass']));
-		}
-
-		$namedConfig = Router::namedConfig();
-		$separator = $namedConfig['separator'];
-
-		if (!empty($params['named']) && is_array($params['named'])) {
-			$named = array();
-			foreach ($params['named'] as $key => $value) {
-				if (is_array($value)) {
-					$flat = Hash::flatten($value, '][');
-					foreach ($flat as $namedKey => $namedValue) {
-						$named[] = $key . "[$namedKey]" . $separator . rawurlencode($namedValue);
-					}
-				} else {
-					$named[] = $key . $separator . rawurlencode($value);
-				}
-			}
-			$params['pass'] = $params['pass'] . '/' . implode('/', $named);
-		}
+	protected function _writeUrl($params, $pass = array(), $query = array()) {
+		$pass = implode('/', array_map('rawurlencode', $pass));
 		$out = $this->template;
 
 		$search = $replace = array();
@@ -525,9 +512,44 @@ class Route {
 		$out = str_replace($search, $replace, $out);
 
 		if (strpos($this->template, '*')) {
-			$out = str_replace('*', $params['pass'], $out);
+			$out = str_replace('*', $pass, $out);
 		}
+
+		// add base url if applicable.
+		if (isset($params['_base'])) {
+			$out = $params['_base'] . $out;
+			unset($params['_base']);
+		}
+	
 		$out = str_replace('//', '/', $out);
+
+		if (
+			isset($params['_scheme']) ||
+			isset($params['_host']) ||
+			isset($params['_port'])
+		) {
+			$host = $params['_host'];
+
+			// append the port if it exists.
+			if (isset($params['_port'])) {
+				$host .= ':' . $params['_port'];
+			}
+			$out = sprintf(
+				'%s://%s%s',
+				$params['_scheme'],
+				$host,
+				$out
+			);
+		}
+		if (!empty($params['_ext']) || !empty($query)) {
+			$out = rtrim($out, '/');
+		}
+		if (!empty($params['_ext'])) {
+			$out .= '.' . $params['_ext'];
+		}
+		if (!empty($query)) {
+			$out .= '?' . http_build_query($query);
+		}
 		return $out;
 	}
 

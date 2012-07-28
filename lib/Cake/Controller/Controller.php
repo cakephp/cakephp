@@ -250,7 +250,7 @@ class Controller extends Object implements EventListener {
 	public $cacheAction = false;
 
 /**
- * Holds all params passed and named.
+ * Holds all passed params.
  *
  * @var mixed
  */
@@ -329,7 +329,11 @@ class Controller extends Object implements EventListener {
 		}
 
 		if ($this->viewPath == null) {
-			$this->viewPath = $this->name;
+			$viewPath = $this->name;
+			if (isset($request->params['prefix'])) {
+				$viewPath = Inflector::camelize($request->params['prefix']) . DS . $viewPath;
+			}
+			$this->viewPath = $viewPath;
 		}
 		if ($this->_mergeParent === null) {
 			$this->_mergeParent = Configure::read('App.namespace') . '\Controller\Controller';
@@ -462,8 +466,8 @@ class Controller extends Object implements EventListener {
 		$this->request = $request;
 		$this->plugin = isset($request->params['plugin']) ? Inflector::camelize($request->params['plugin']) : null;
 		$this->view = isset($request->params['action']) ? $request->params['action'] : null;
-		if (isset($request->params['pass']) && isset($request->params['named'])) {
-			$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
+		if (isset($request->params['pass'])) {
+			$this->passedArgs = $request->params['pass'];
 		}
 
 		if (array_key_exists('return', $request->params) && $request->params['return'] == 1) {
@@ -491,7 +495,9 @@ class Controller extends Object implements EventListener {
 			if ($this->_isPrivateAction($method, $request)) {
 				throw new Error\PrivateActionException(array(
 					'controller' => $this->name . "Controller",
-					'action' => $request->params['action']
+					'action' => $request->params['action'],
+					'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
+					'plugin' => $request->params['plugin'],
 				));
 			}
 			return $method->invokeArgs($this, $request->params['pass']);
@@ -502,7 +508,9 @@ class Controller extends Object implements EventListener {
 			}
 			throw new Error\MissingActionException(array(
 				'controller' => $this->name . "Controller",
-				'action' => $request->params['action']
+				'action' => $request->params['action'],
+				'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
+				'plugin' => $request->params['plugin'],
 			));
 		}
 	}

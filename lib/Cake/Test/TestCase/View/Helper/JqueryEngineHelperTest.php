@@ -17,6 +17,7 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\Helper\JqueryEngineHelper;
@@ -163,6 +164,8 @@ class JqueryEngineHelperTest extends TestCase {
  * @return void
  */
 	public function testRequest() {
+		Router::connect('/:controller/:action/*');
+
 		$result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = '$.ajax({url:"\\/posts\\/view\\/1"});';
 		$this->assertEquals($expected, $result);

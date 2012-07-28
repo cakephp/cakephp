@@ -1259,7 +1259,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testPropertyBackwardsCompatibility() {
-		$request = new Request('posts/index', null);
+		$request = new Request('posts/index');
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
 		$request->data = array('Post' => array('id' => 1));
 		$request->here = '/posts/index';
@@ -1301,7 +1301,7 @@ class ControllerTest extends TestCase {
  */
 	public function testPaginateBackwardsCompatibility() {
 		$request = new Request('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
+		$request->params['pass'] = array();
 		$response = $this->getMock('Cake\Network\Response', array('httpCodes'));
 
 		$Controller = new Controller($request, $response);
@@ -1309,7 +1309,7 @@ class ControllerTest extends TestCase {
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
-		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named');
+		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100);
 		$this->assertEquals($expected, $Controller->paginate);
 
 		$results = Hash::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
@@ -1441,6 +1441,25 @@ class ControllerTest extends TestCase {
 		$Controller = new TestController($url, $response);
 		$result = $Controller->invokeAction($url);
 		$this->assertEquals('I am from the controller.', $result);
+	}
+
+/**
+ * test that a classes namespace is used in the viewPath.
+ *
+ * @return void
+ */
+	public function testViewPathConventions() {
+		$request = new Request('admin/posts');
+		$request->addParams(array(
+			'prefix' => 'admin'
+		));
+		$response = $this->getMock('Cake\Network\Response');
+		$Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
+		$this->assertEquals('Admin/Posts', $Controller->viewPath);
+
+		$request = new Request('pages/home');
+		$Controller = new \TestApp\Controller\PagesController($request, $response);
+		$this->assertEquals('Pages', $Controller->viewPath);
 	}
 
 }

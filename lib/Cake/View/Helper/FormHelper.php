@@ -1425,7 +1425,7 @@ class FormHelper extends Helper {
  *
  * Will make an input like:
  *
- * `<input type="search" id="UserQuery" name="data[User][query]" value="test" />`
+ * `<input type="search" id="UserQuery" name="User[query]" value="test" />`
  *
  * The first argument to an input type should always be the fieldname, in `Model.field` format.
  * The second argument should always be an array of attributes for the input.
@@ -2580,10 +2580,7 @@ class FormHelper extends Helper {
 
 		$fieldName = null;
 		if (!empty($options['name'])) {
-			preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
-			if (isset($matches[1])) {
-				$fieldName = $matches[1];
-			}
+			$fieldName = str_replace(array('[', ']'), array('.', ''), $options['name']);
 		}
 
 		$this->_secure($secure, $fieldName);

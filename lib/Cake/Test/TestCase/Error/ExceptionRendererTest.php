@@ -167,7 +167,7 @@ class ExceptionRendererTest extends TestCase {
 		), App::RESET);
 		Router::reload();
 
-		$request = new Request(null, false);
+		$request = new Request();
 		$request->base = '';
 		Router::setRequestInfo($request);
 		Configure::write('debug', 2);
@@ -403,7 +403,7 @@ class ExceptionRendererTest extends TestCase {
 	public function testError400() {
 		Router::reload();
 
-		$request = new Request('posts/view/1000', false);
+		$request = new Request('posts/view/1000');
 		Router::setRequestInfo($request);
 
 		$exception = new Error\NotFoundException('Custom message');
@@ -452,7 +452,7 @@ class ExceptionRendererTest extends TestCase {
 	public function testError400NoInjection() {
 		Router::reload();
 
-		$request = new Request('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>', false);
+		$request = new Request('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>');
 		Router::setRequestInfo($request);
 
 		$exception = new Error\NotFoundException('Custom message');

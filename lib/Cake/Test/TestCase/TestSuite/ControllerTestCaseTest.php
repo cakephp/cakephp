@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\TestSuite;
+
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -120,7 +121,6 @@ class ControllerTestCaseTest extends TestCase {
 			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		), App::RESET);
-		$this->_ns = Configure::read('App.namespace');
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 		$this->Case = $this->getMockForAbstractClass('Cake\TestSuite\ControllerTestCase');
@@ -134,7 +134,6 @@ class ControllerTestCaseTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Configure::write('App.namespace', $this->_ns);
 		Plugin::unload();
 		$this->Case->controller = null;
 	}
@@ -145,28 +144,28 @@ class ControllerTestCaseTest extends TestCase {
 	public function testGenerate() {
 		$Posts = $this->Case->generate(__NAMESPACE__ . '\PostsController');
 		$this->assertEquals('Posts', $Posts->name);
-		$this->assertEquals('Post', $Posts->modelClass);
+		$this->assertEquals('ControllerPost', $Posts->modelClass);
 		$this->assertNull($Posts->response->send());
 
-		$Posts = $this->Case->generate('Posts', array(
+		$Posts = $this->Case->generate(__NAMESPACE__ . '\PostsController', array(
 			'methods' => array(
 				'render'
 			)
 		));
 		$this->assertNull($Posts->render('index'));
 
-		$Posts = $this->Case->generate('Posts', array(
+		$Posts = $this->Case->generate(__NAMESPACE__ . '\PostsController', array(
 			'models' => array('Post'),
 			'components' => array('RequestHandler')
 		));
 
-		$this->assertInstanceOf('Post', $Posts->Post);
+		$this->assertInstanceOf(__NAMESPACE__ . '\ControllerPost', $Posts->Post);
 		$this->assertNull($Posts->Post->save(array()));
 		$this->assertNull($Posts->Post->find('all'));
 		$this->assertEquals('posts', $Posts->Post->useTable);
 		$this->assertNull($Posts->RequestHandler->isAjax());
 
-		$Posts = $this->Case->generate('Posts', array(
+		$Posts = $this->Case->generate(__NAMESPACE__ . '\PostsController', array(
 			'models' => array(
 				'Post' => true
 			)
@@ -217,21 +216,6 @@ class ControllerTestCaseTest extends TestCase {
 
 		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
 		$this->assertInstanceOf('TestPlugin\Model\TestPluginComment', $result);
-
-		$Tests = $this->Case->generate(__NAMESPACE__ . '\ControllerTestCaseTestController', array(
-			'models' => array(
-				'TestPlugin.TestPluginComment' => array('save')
-			)
-		));
-		$this->assertInstanceOf('TestPlugin\Model\TestPluginComment', $Tests->TestPluginComment);
-		$Tests->TestPluginComment->expects($this->at(0))
-			->method('save')
-			->will($this->returnValue(true));
-		$Tests->TestPluginComment->expects($this->at(1))
-			->method('save')
-			->will($this->returnValue(false));
-		$this->assertTrue($Tests->TestPluginComment->save(array()));
-		$this->assertFalse($Tests->TestPluginComment->save(array()));
 	}
 
 /**
@@ -352,15 +336,6 @@ class ControllerTestCaseTest extends TestCase {
 		$this->assertEquals($this->Case->controller->viewVars['data'], $data);
 		$this->assertEquals($this->Case->controller->data, $data);
 
-		$this->Case->testAction('/tests_apps_posts/post_var/named:param', array(
-			'data' => $data
-		));
-		$expected = array(
-			'named' => 'param'
-		);
-		$this->assertEquals($expected, $this->Case->controller->request->named);
-		$this->assertEquals($this->Case->controller->data, $data);
-
 		$result = $this->Case->testAction('/tests_apps_posts/post_var', array(
 			'return' => 'vars',
 			'method' => 'post',
@@ -392,12 +367,6 @@ class ControllerTestCaseTest extends TestCase {
 		));
 		$this->assertEquals('var', $this->Case->controller->request->query['some']);
 		$this->assertEquals('creativity', $this->Case->controller->request->query['lackof']);
-
-		$result = $this->Case->testAction('/tests_apps_posts/url_var/var1:value1/var2:val2', array(
-			'return' => 'vars',
-			'method' => 'get',
-		));
-		$this->assertEquals(array('var1', 'var2'), array_keys($result['params']['named']));
 
 		$result = $this->Case->testAction('/tests_apps_posts/url_var/gogo/val2', array(
 			'return' => 'vars',

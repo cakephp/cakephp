@@ -137,7 +137,7 @@ class ScaffoldTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$request = new Request(null, false);
+		$request = new Request();
 		$this->Controller = new ScaffoldMockController($request);
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 	}
@@ -162,9 +162,6 @@ class ScaffoldTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
-			'form' => array(),
-			'named' => array(),
-			'url' => array('url' => 'admin/scaffold_mock/edit'),
 			'controller' => 'scaffold_mock',
 			'action' => 'admin_edit',
 			'admin' => true,
@@ -192,9 +189,6 @@ class ScaffoldTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
-			'form' => array(),
-			'named' => array(),
-			'url' => array('url' => 'admin/scaffold_mock/edit'),
 			'controller' => 'scaffold_mock',
 			'action' => 'admin_edit',
 			'admin' => true,
@@ -246,8 +240,6 @@ class ScaffoldTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
-			'form' => array(),
-			'named' => array(),
 			'url' => array('url' => 'scaffold_mock'),
 			'controller' => 'scaffold_mock',
 			'action' => 'edit',
@@ -287,8 +279,6 @@ class ScaffoldTest extends TestCase {
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
-			'form' => array(),
-			'named' => array(),
 			'url' => array('url' => 'scaffold_mock'),
 			'controller' => 'scaffold_mock',
 			'action' => 'edit',
@@ -319,15 +309,13 @@ class ScaffoldTest extends TestCase {
  * @return void
  */
 	public function testEditScaffoldWithScaffoldFields() {
-		$request = new Request(null, false);
+		$request = new Request();
 		$this->Controller = new ScaffoldMockControllerWithFields($request);
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
-			'form' => array(),
-			'named' => array(),
 			'url' => array('url' => 'scaffold_mock/edit'),
 			'controller' => 'scaffold_mock',
 			'action' => 'edit',

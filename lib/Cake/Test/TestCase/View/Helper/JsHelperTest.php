@@ -134,7 +134,7 @@ class JsHelperTest extends TestCase {
 		$controller = null;
 		$this->View = $this->getMock('Cake\View\View', array('append'), array(&$controller));
 		$this->Js = new JsHelper($this->View, 'Option');
-		$request = new Request(null, false);
+		$request = new Request();
 		$this->Js->request = $request;
 		$this->Js->Html = new HtmlHelper($this->View);
 		$this->Js->Html->request = $request;
@@ -161,7 +161,7 @@ class JsHelperTest extends TestCase {
  * @return void
  */
 	protected function _useMock() {
-		$request = new Request(null, false);
+		$request = new Request();
 
 		if (!class_exists('TestJsEngineHelper', false)) {
 			$this->getMock('Cake\View\Helper\JsBaseEngineHelper', array(), array($this->View), 'TestJsEngineHelper');

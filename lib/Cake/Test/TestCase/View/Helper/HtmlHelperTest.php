@@ -37,28 +37,6 @@ if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');
 }
 
-/**
- * TheHtmlTestController class
- *
- * @package       Cake.Test.Case.View.Helper
- */
-class TheHtmlTestController extends Controller {
-
-/**
- * name property
- *
- * @var string 'TheTest'
- */
-	public $name = 'TheTest';
-
-/**
- * uses property
- *
- * @var mixed null
- */
-	public $uses = null;
-}
-
 class TestHtmlHelper extends HtmlHelper {
 
 /**
@@ -153,9 +131,10 @@ class HtmlHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = $this->getMock('Cake\View\View', array('append'), array(new TheHtmlTestController()));
+		$controller = $this->getMock('Cake\Controller\Controller');
+		$this->View = $this->getMock('Cake\View\View', array('append'), array($controller));
 		$this->Html = new TestHtmlHelper($this->View);
-		$this->Html->request = new Request(null, false);
+		$this->Html->request = new Request();
 		$this->Html->request->webroot = '';
 
 		App::build(array(
@@ -215,8 +194,10 @@ class HtmlHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		Router::reload();
+		Router::connect('/:controller', array('action' => 'index'));
+		Router::connect('/:controller/:action/*');
 
-		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', 'full_base' => true));
+		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', '_full' => true));
 		$expected = array('a' => array('href' => FULL_BASE_URL . '/posts'), 'Posts', '/a');
 		$this->assertTags($result, $expected);
 
@@ -353,6 +334,9 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testImageTag() {
+		Router::connect('/:controller', array('action' => 'index'));
+		Router::connect('/:controller/:action/*');
+
 		$this->Html->request->webroot = '';
 
 		$result = $this->Html->image('test.gif');
@@ -1433,6 +1417,8 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testMeta() {
+		Router::connect('/:controller', array('action' => 'index'));
+
 		$result = $this->Html->meta('this is an rss feed', array('controller' => 'posts', 'ext' => 'rss'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed')));
 

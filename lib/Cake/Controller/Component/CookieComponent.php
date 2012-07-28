@@ -16,12 +16,13 @@
  * @since         CakePHP(tm) v 1.2.0.4213
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Controller\Component;
+
 use Cake\Controller\Component;
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -160,10 +161,17 @@ class CookieComponent extends Component {
 
 /**
  * A reference to the Controller's Cake\Network\Response object
- * 
+ *
  * @var Cake\Network\Response
  */
 	protected $_response = null;
+
+/**
+ * The request from the controller.
+ *
+ * @var Cake\Network\Request
+ */
+	protected $_request;
 
 /**
  * Constructor
@@ -179,6 +187,12 @@ class CookieComponent extends Component {
 		}
 
 		$controller = $collection->getController();
+		if ($controller && isset($controller->request)) {
+			$this->_request = $controller->request;
+		} else {
+			$this->_request = Request::createFromGlobals();
+		}
+
 		if ($controller && isset($controller->response)) {
 			$this->_response = $controller->response;
 		} else {
@@ -196,8 +210,9 @@ class CookieComponent extends Component {
 		$this->_expire($this->time);
 
 		$this->_values[$this->name] = array();
-		if (isset($_COOKIE[$this->name])) {
-			$this->_values[$this->name] = $this->_decrypt($_COOKIE[$this->name]);
+		$values = $this->_request->cookie($this->name);
+		if ($values) {
+			$this->_values[$this->name] = $this->_decrypt($values);
 		}
 	}
 
@@ -262,8 +277,9 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
 	public function read($key = null) {
-		if (empty($this->_values[$this->name]) && isset($_COOKIE[$this->name])) {
-			$this->_values[$this->name] = $this->_decrypt($_COOKIE[$this->name]);
+		$values = $this->_request->cookie($this->name);
+		if (empty($this->_values[$this->name]) && $values) {
+			$this->_values[$this->name] = $this->_decrypt($values);
 		}
 		if (empty($this->_values[$this->name])) {
 			$this->_values[$this->name] = array();
@@ -330,8 +346,8 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::destroy
  */
 	public function destroy() {
-		if (isset($_COOKIE[$this->name])) {
-			$this->_values[$this->name] = $this->_decrypt($_COOKIE[$this->name]);
+		if (empty($this->_values[$this->name])) {
+			$this->read();
 		}
 
 		foreach ($this->_values[$this->name] as $name => $value) {

@@ -80,14 +80,16 @@ class RedirectRoute extends Route {
 			$redirect = $this->redirect[0];
 		}
 		if (isset($this->options['persist']) && is_array($redirect)) {
-			$redirect += array('named' => $params['named'], 'pass' => $params['pass'], 'url' => array());
+			$redirect += array('pass' => $params['pass'], 'url' => array());
 			$redirect = Router::reverse($redirect);
 		}
 		$status = 301;
 		if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
 			$status = $this->options['status'];
 		}
-		$this->response->header(array('Location' => Router::url($redirect, true)));
+		$this->response->header(array(
+			'Location' => Router::url($redirect, true)
+		));
 		$this->response->statusCode($status);
 		$this->response->send();
 		$this->_stop();
@@ -97,9 +99,10 @@ class RedirectRoute extends Route {
  * There is no reverse routing redirection routes
  *
  * @param array $url Array of parameters to convert to a string.
+ * @param array $context Array of request context parameters.
  * @return mixed either false or a string url.
  */
-	public function match($url) {
+	public function match($url, $context = array()) {
 		return false;
 	}
 

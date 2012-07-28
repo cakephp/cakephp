@@ -1,8 +1,5 @@
 <?php
 /**
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,8 +13,26 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 use Cake\Core\Plugin;
+use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
+$namespace = Configure::read('App.namespace');
+$prefixNs = '';
+
+if (!empty($prefix)) {
+	$prefix = Inflector::camelize($prefix);
+	$prefixNs = '\\' . $prefix;
+}
+if (!empty($plugin)) {
+	$namespace = $plugin;
+}
+if (empty($plugin)) {
+	$path = APP_DIR . DS . 'Controller' . DS . $prefix . DS . $class . '.php' ;
+} else {
+	$path = Plugin::path($plugin) . 'Controller' . DS . $prefix . DS . $class . '.php';
+}
+
 ?>
 <h2><?php echo __d('cake_dev', 'Missing Controller'); ?></h2>
 <p class="error">
@@ -26,10 +41,14 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . $class . '</em>', (empty($plugin) ? APP_DIR . DS : Plugin::path($plugin)) . 'Controller' . DS . $class . '.php'); ?>
+	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . $class . '</em>', $path); ?>
 </p>
 <pre>
 &lt;?php
+namespace <?= $namespace; ?>\Controller<?= $prefixNs; ?>;
+
+use <?= $namespace; ?>\Controller\AppController;
+
 class <?php echo $class . ' extends ' . $plugin; ?>AppController {
 
 }

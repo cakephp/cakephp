@@ -18,6 +18,7 @@
 
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\Helper\JsHelper;
@@ -168,6 +169,8 @@ class MootoolsEngineHelperTest extends TestCase {
  * @return void
  */
 	public function testRequest() {
+		Router::connect('/:controller/:action/*');
+
 		$result = $this->Moo->request(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = 'var jsRequest = new Request({url:"\\/posts\\/view\\/1"}).send();';
 		$this->assertEquals($expected, $result);

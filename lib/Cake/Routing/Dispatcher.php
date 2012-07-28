@@ -156,7 +156,8 @@ class Dispatcher implements EventListener {
 		if (!($controller instanceof Controller)) {
 			throw new Error\MissingControllerException(array(
 				'class' => Inflector::camelize($request->params['controller']),
-				'plugin' => empty($request->params['plugin']) ? null : Inflector::camelize($request->params['plugin'])
+				'plugin' => empty($request->params['plugin']) ? null : Inflector::camelize($request->params['plugin']),
+				'prefix' => empty($request->params['prefix']) ? null : Inflector::camelize($request->params['prefix']),
 			));
 		}
 
@@ -211,14 +212,16 @@ class Dispatcher implements EventListener {
 	public function parseParams($event) {
 		$request = $event->data['request'];
 		Router::setRequestInfo($request);
-		if (count(Router::$routes) == 0) {
+		if (Router::getRequest(false) === $request) {
 			$namedExpressions = Router::getNamedExpressions();
 			extract($namedExpressions);
 			$this->_loadRoutes();
 		}
 
-		$params = Router::parse($request->url);
-		$request->addParams($params);
+		if (empty($request->params['controller'])) {
+			$params = Router::parse($request->url);
+			$request->addParams($params);
+		}
 
 		if (!empty($event->data['additionalParams'])) {
 			$request->addParams($event->data['additionalParams']);
@@ -252,18 +255,19 @@ class Dispatcher implements EventListener {
  */
 	protected function _loadController($request) {
 		$pluginName = $pluginPath = $controller = null;
+		$namespace = 'Controller';
 		if (!empty($request->params['plugin'])) {
-			$pluginName = $controller = Inflector::camelize($request->params['plugin']);
+			$pluginName = Inflector::camelize($request->params['plugin']);
 			$pluginPath = $pluginName . '.';
 		}
 		if (!empty($request->params['controller'])) {
 			$controller = Inflector::camelize($request->params['controller']);
 		}
+		if (!empty($request->params['prefix'])) {
+			$namespace .= '/' . Inflector::camelize($request->params['prefix']);
+		}
 		if ($pluginPath . $controller) {
-			$controller = App::classname($pluginPath . $controller, 'Controller', 'Controller');
-			if ($controller) {
-				return $controller;
-			}
+			return App::classname($pluginPath . $controller, $namespace, 'Controller');
 		}
 		return false;
 	}

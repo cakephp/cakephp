@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component;
+
 use Cake\Controller\Component;
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Controller;
@@ -124,8 +125,8 @@ class RequestHandlerComponent extends Component {
  * @see Router::parseExtensions()
  */
 	public function initialize(Controller $controller, $settings = array()) {
-		if (isset($this->request->params['ext'])) {
-			$this->ext = $this->request->params['ext'];
+		if (isset($this->request->params['_ext'])) {
+			$this->ext = $this->request->params['_ext'];
 		}
 		if (empty($this->ext) || $this->ext == 'html') {
 			$this->_setExtension();

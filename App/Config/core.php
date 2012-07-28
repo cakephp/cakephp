@@ -114,8 +114,8 @@ use Cake\Core\Configure;
  * 	Routing.prefixes = array('admin', 'manager');
  *
  * Enables:
- *	`admin_index()` and `/admin/controller/index`
- *	`manager_index()` and `/manager/controller/index`
+ *  `App\Controller\Admin` and `/admin/controller/index`
+ *  `App\Controller\Manager` and `/manager/controller/index`
  *
  */
 	//Configure::write('Routing.prefixes', array('admin'));

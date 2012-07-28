@@ -196,6 +196,8 @@ class ObjectTest extends TestCase {
 		parent::setUp();
 		$this->object = new TestObject();
 		Configure::write('App.namespace', 'TestApp');
+		Configure::write('Security.salt', 'not-the-default');
+		Configure::write('Security.cipherSeed', '123456');
 	}
 
 /**
@@ -431,6 +433,8 @@ class ObjectTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
 		Plugin::load(array('TestPlugin'));
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'test_request_action')
@@ -468,7 +472,7 @@ class ObjectTest extends TestCase {
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'paginate_request_action'),
-			array('pass' => array(5), 'named' => array('param' => 'value'))
+			array('pass' => array(5))
 		);
 		$this->assertTrue($result);
 	}
@@ -496,16 +500,6 @@ class ObjectTest extends TestCase {
 		$this->assertEquals('request_action', $result['controller']);
 		$this->assertEquals('params_pass', $result['action']);
 		$this->assertEquals(null, $result['plugin']);
-
-		$result = $this->object->requestAction('/request_action/params_pass/sort:desc/limit:5');
-		$expected = array('sort' => 'desc', 'limit' => 5,);
-		$this->assertEquals($expected, $result['named']);
-
-		$result = $this->object->requestAction(
-			array('controller' => 'request_action', 'action' => 'params_pass'),
-			array('named' => array('sort' => 'desc', 'limit' => 5))
-		);
-		$this->assertEquals($expected, $result['named']);
 	}
 
 /**
@@ -515,27 +509,45 @@ class ObjectTest extends TestCase {
  * @return void
  */
 	public function testRequestActionNoPostPassing() {
-		$_tmp = $_POST;
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
 
-		$_POST = array('data' => array(
+		$_POST = array(
 			'item' => 'value'
-		));
+		);
 		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass'));
 		$expected = null;
 		$this->assertEmpty($result);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'post_pass'),
-			array('data' => $_POST['data'])
+			array('post' => $_POST)
 		);
-		$expected = $_POST['data'];
+		$expected = $_POST;
 		$this->assertEquals($expected, $result);
+	}
 
-		$result = $this->object->requestAction('/request_action/post_pass');
-		$expected = $_POST['data'];
+/**
+ * test that requestAction() can get query data from the query string and
+ * query option.
+ *
+ * @return void
+ */
+	public function testRequestActionWithQueryString() {
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
+		$query = ['page' => 1, 'sort' => 'title'];
+		$result = $this->object->requestAction(
+			['controller' => 'request_action', 'action' => 'query_pass'],
+			['query' => $query]
+		);
+		$this->assertEquals($query, $result);
+
+		$result = $this->object->requestAction(
+			'/request_action/query_pass?page=3&sort=body'
+		);
+		$expected = ['page' => 3, 'sort' => 'body'];
 		$this->assertEquals($expected, $result);
-
-		$_POST = $_tmp;
 	}
 
 /**
@@ -544,19 +556,23 @@ class ObjectTest extends TestCase {
  * @return void
  */
 	public function testRequestActionPostWithData() {
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
+
 		$data = array(
 			'Post' => array('id' => 2)
 		);
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'post_pass'),
-			array('data' => $data)
+			array('post' => $data)
 		);
 		$this->assertEquals($data, $result);
 
 		$result = $this->object->requestAction(
 			'/request_action/post_pass',
-			array('data' => $data)
+			array('post' => $data)
 		);
 		$this->assertEquals($data, $result);
 	}
+
 }

@@ -665,7 +665,7 @@ class FormHelperTest extends TestCase {
 
 		$this->Form = new FormHelper($this->View);
 		$this->Form->Html = new HtmlHelper($this->View);
-		$this->Form->request = new Request('contacts/add', false);
+		$this->Form->request = new Request('contacts/add');
 		$this->Form->request->here = '/contacts/add';
 		$this->Form->request['action'] = 'add';
 		$this->Form->request->webroot = '';
@@ -679,8 +679,6 @@ class FormHelperTest extends TestCase {
 		ClassRegistry::addObject('ValidateUser', new ValidateUser());
 		ClassRegistry::addObject('ValidateProfile', new ValidateProfile());
 
-		$this->oldSalt = Configure::read('Security.salt');
-
 		$this->dateRegex = array(
 			'daysRegex' => 'preg:/(?:<option value="0?([\d]+)">\\1<\/option>[\r\n]*)*/',
 			'monthsRegex' => 'preg:/(?:<option value="[\d]+">[\w]+<\/option>[\r\n]*)*/',
@@ -691,6 +689,8 @@ class FormHelperTest extends TestCase {
 		);
 
 		Configure::write('Security.salt', 'foo!');
+		Router::connect('/:controller', array('action' => 'index'));
+		Router::connect('/:controller/:action/*');
 	}
 
 /**
@@ -701,7 +701,6 @@ class FormHelperTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
-		Configure::write('Security.salt', $this->oldSalt);
 	}
 
 /**
@@ -720,7 +719,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][key]', 'value' => 'testKey', 'id'
+				'type' => 'hidden', 'name' => '_Token[key]', 'value' => 'testKey', 'id'
 			)),
 			'/div'
 		);
@@ -767,18 +766,18 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('ValidateUser.name');
 		$this->assertEquals(array('ValidateUser', 'name'), $this->Form->entity());
-		$this->assertRegExp('/name="data\[ValidateUser\]\[name\]"/', $result);
-		$this->assertRegExp('/type="text"/', $result);
+		$this->assertContains('name="ValidateUser[name]"', $result);
+		$this->assertContains('type="text"', $result);
 
 		$result = $this->Form->input('ValidateItem.name');
 		$this->assertEquals(array('ValidateItem', 'name'), $this->Form->entity());
-		$this->assertRegExp('/name="data\[ValidateItem\]\[name\]"/', $result);
-		$this->assertRegExp('/<textarea/', $result);
+		$this->assertContains('name="ValidateItem[name]"', $result);
+		$this->assertContains('<textarea', $result);
 
 		$result = $this->Form->input('name');
 		$this->assertEquals(array('ValidateUser', 'name'), $this->Form->entity());
-		$this->assertRegExp('/name="data\[ValidateUser\]\[name\]"/', $result);
-		$this->assertRegExp('/type="text"/', $result);
+		$this->assertContains('name="ValidateUser[name]"', $result);
+		$this->assertContains('type="text"', $result);
 	}
 
 /**
@@ -814,11 +813,11 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][fields]',
+				'type' => 'hidden', 'name' => '_Token[fields]',
 				'value' => urlencode($expected), 'id' => 'preg:/TokenFields\d+/'
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'type' => 'hidden', 'name' => '_Token[unlocked]',
 				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
 			)),
 			'/div'
@@ -849,7 +848,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			array('input' => array(
 				'type' => 'number',
-				'name' => 'data[Contact][foo]',
+				'name' => 'Contact[foo]',
 				'id' => 'ContactFoo',
 				'step' => 'any'
 			)),
@@ -865,7 +864,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			array('input' => array(
 				'type' => 'number',
-				'name' => 'data[Contact][foo]',
+				'name' => 'Contact[foo]',
 				'id' => 'ContactFoo',
 				'step' => '0.5'
 			)),
@@ -897,7 +896,7 @@ class FormHelperTest extends TestCase {
 			'Foo',
 			'/label',
 			array('input' => array(
-				'type' => 'number', 'name' => 'data[Contact][foo]',
+				'type' => 'number', 'name' => 'Contact[foo]',
 				'id' => 'ContactFoo'
 			)),
 			'/div'
@@ -929,11 +928,11 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][fields]',
+				'type' => 'hidden', 'name' => '_Token[fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'type' => 'hidden', 'name' => '_Token[unlocked]',
 				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
 			)),
 			'/div'
@@ -975,11 +974,11 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][fields]',
+				'type' => 'hidden', 'name' => '_Token[fields]',
 				'value' => 'preg:/.+/', 'id' => 'preg:/TokenFields\d+/'
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'type' => 'hidden', 'name' => '_Token[unlocked]',
 				'value' => 'cancel%7Csave', 'id' => 'preg:/TokenUnlocked\d+/'
 			)),
 			'/div'
@@ -1095,11 +1094,11 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][fields]',
+				'type' => 'hidden', 'name' => '_Token[fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'type' => 'hidden', 'name' => '_Token[unlocked]',
 				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
 			)),
 			'/div'
@@ -1160,11 +1159,11 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][fields]',
+				'type' => 'hidden', 'name' => '_Token[fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'type' => 'hidden', 'name' => '_Token[unlocked]',
 				'value' => 'address%7Cfirst_name', 'id' => 'preg:/TokenUnlocked\d+/'
 			)),
 			'/div'
@@ -1209,11 +1208,11 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][fields]',
+				'type' => 'hidden', 'name' => '_Token[fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'type' => 'hidden', 'name' => '_Token[unlocked]',
 				'value' => 'address%7Cfirst_name', 'id' => 'preg:/TokenUnlocked\d+/'
 			)),
 			'/div'
@@ -1229,10 +1228,10 @@ class FormHelperTest extends TestCase {
 	public function testFormSecureWithCustomNameAttribute() {
 		$this->Form->request->params['_Token']['key'] = 'testKey';
 
-		$this->Form->text('UserForm.published', array('name' => 'data[User][custom]'));
+		$this->Form->text('UserForm.published', array('name' => 'User[custom]'));
 		$this->assertEquals('User.custom', $this->Form->fields[0]);
 
-		$this->Form->text('UserForm.published', array('name' => 'data[User][custom][another][value]'));
+		$this->Form->text('UserForm.published', array('name' => 'User[custom][another][value]'));
 		$this->assertEquals('User.custom.another.value', $this->Form->fields[1]);
 	}
 
@@ -1253,7 +1252,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][key]',
+				'type' => 'hidden', 'name' => '_Token[key]',
 				'value' => 'testKey', 'id' => 'preg:/Token\d+/'
 			)),
 			'/div'
@@ -1267,7 +1266,7 @@ class FormHelperTest extends TestCase {
 			'Published',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[UserForm][published]',
+				'type' => 'text', 'name' => 'UserForm[published]',
 				'id' => 'UserFormPublished'
 			)),
 			'/div'
@@ -1281,7 +1280,7 @@ class FormHelperTest extends TestCase {
 			'Other',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[UserForm][other]',
+				'type' => 'text', 'name' => 'UserForm[other]',
 				'id' => 'UserFormOther'
 			)),
 			'/div'
@@ -1290,14 +1289,14 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->hidden('UserForm.stuff');
 		$expected = array('input' => array(
-				'type' => 'hidden', 'name' => 'data[UserForm][stuff]',
+				'type' => 'hidden', 'name' => 'UserForm[stuff]',
 				'id' => 'UserFormStuff'
 		));
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->hidden('UserForm.hidden', array('value' => '0'));
 		$expected = array('input' => array(
-			'type' => 'hidden', 'name' => 'data[UserForm][hidden]',
+			'type' => 'hidden', 'name' => 'UserForm[hidden]',
 			'value' => '0', 'id' => 'UserFormHidden'
 		));
 		$this->assertTags($result, $expected);
@@ -1306,11 +1305,11 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[UserForm][something]',
+				'type' => 'hidden', 'name' => 'UserForm[something]',
 				'value' => '0', 'id' => 'UserFormSomething_'
 			)),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[UserForm][something]',
+				'type' => 'checkbox', 'name' => 'UserForm[something]',
 				'value' => '1', 'id' => 'UserFormSomething'
 			)),
 			'label' => array('for' => 'UserFormSomething'),
@@ -1333,11 +1332,11 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][fields]',
+				'type' => 'hidden', 'name' => '_Token[fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'type' => 'hidden', 'name' => '_Token[unlocked]',
 				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
 			)),
 			'/div'
@@ -1534,7 +1533,7 @@ class FormHelperTest extends TestCase {
 			'Password',
 			'/label',
 			'input' => array(
-				'type' => 'password', 'name' => 'data[Contact][password]',
+				'type' => 'password', 'name' => 'Contact[password]',
 				'id' => 'ContactPassword', 'class' => 'form-error'
 			),
 			array('div' => array('class' => 'error-message')),
@@ -1562,7 +1561,7 @@ class FormHelperTest extends TestCase {
 			'Password',
 			'/label',
 			'input' => array(
-				'type' => 'password', 'name' => 'data[Contact][password]',
+				'type' => 'password', 'name' => 'Contact[password]',
 				'id' => 'ContactPassword', 'class' => 'form-error'
 			),
 			array('div' => array('class' => 'error-message')),
@@ -1590,7 +1589,7 @@ class FormHelperTest extends TestCase {
 			'Password',
 			'/label',
 			'input' => array(
-				'type' => 'password', 'name' => 'data[Contact][password]',
+				'type' => 'password', 'name' => 'Contact[password]',
 				'id' => 'ContactPassword', 'class' => 'form-error'
 			),
 			array('div' => array('class' => 'error-message')),
@@ -1769,7 +1768,7 @@ class FormHelperTest extends TestCase {
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][2][name]', 'id' => 'Contact2Name',
+				'type' => 'text', 'name' => 'Contact[2][name]', 'id' => 'Contact2Name',
 				'class' => 'form-error', 'maxlength' => 255
 			),
 			array('div' => array('class' => 'error-message')),
@@ -1883,7 +1882,7 @@ class FormHelperTest extends TestCase {
 			'Email',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][email]',
+				'type' => 'text', 'name' => 'Contact[email]',
 				'id' => 'custom', 'maxlength' => 255
 			)),
 			'/div'
@@ -1897,7 +1896,7 @@ class FormHelperTest extends TestCase {
 			'Email',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][email]',
+				'type' => 'text', 'name' => 'Contact[email]',
 				'id' => 'ContactEmail', 'maxlength' => 255
 			)),
 			'/div'
@@ -1906,7 +1905,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->hidden('Contact.idontexist');
 		$expected = array('input' => array(
-				'type' => 'hidden', 'name' => 'data[Contact][idontexist]',
+				'type' => 'hidden', 'name' => 'Contact[idontexist]',
 				'id' => 'ContactIdontexist'
 		));
 		$this->assertTags($result, $expected);
@@ -1918,7 +1917,7 @@ class FormHelperTest extends TestCase {
 			'Email',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][email]',
+				'type' => 'text', 'name' => 'Contact[email]',
 				'id' => 'ContactEmail'
 			)),
 			'/div'
@@ -1932,7 +1931,7 @@ class FormHelperTest extends TestCase {
 			'Email',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][5][email]',
+				'type' => 'text', 'name' => 'Contact[5][email]',
 				'id' => 'Contact5Email'
 			)),
 			'/div'
@@ -1946,7 +1945,7 @@ class FormHelperTest extends TestCase {
 			'Password',
 			'/label',
 			array('input' => array(
-				'type' => 'password', 'name' => 'data[Contact][password]',
+				'type' => 'password', 'name' => 'Contact[password]',
 				'id' => 'ContactPassword'
 			)),
 			'/div'
@@ -1962,7 +1961,7 @@ class FormHelperTest extends TestCase {
 			'Email',
 			'/label',
 			array('input' => array(
-				'type' => 'file', 'name' => 'data[Contact][email]', 'class' => 'textbox',
+				'type' => 'file', 'name' => 'Contact[email]', 'class' => 'textbox',
 				'id' => 'ContactEmail'
 			)),
 			'/div'
@@ -1977,7 +1976,7 @@ class FormHelperTest extends TestCase {
 			'Phone',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][phone]',
+				'type' => 'text', 'name' => 'Contact[phone]',
 				'value' => 'Hello &amp; World &gt; weird chars',
 				'id' => 'ContactPhone', 'maxlength' => 255
 			)),
@@ -1993,7 +1992,7 @@ class FormHelperTest extends TestCase {
 			'Field',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Model][0][OtherModel][field]',
+				'type' => 'text', 'name' => 'Model[0][OtherModel][field]',
 				'value' => 'My value', 'id' => 'myId'
 			),
 			'/div'
@@ -2011,7 +2010,7 @@ class FormHelperTest extends TestCase {
 			'Field',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][field]',
+				'type' => 'text', 'name' => 'Contact[field]',
 				'id' => 'ContactField', 'class' => 'form-error'
 			),
 			array('div' => array('class' => 'error-message')),
@@ -2029,7 +2028,7 @@ class FormHelperTest extends TestCase {
 			'Field',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][field]',
+				'type' => 'text', 'name' => 'Contact[field]',
 				'id' => 'ContactField', 'class' => 'form-error'
 			),
 			array('span' => array('class' => 'error-message')),
@@ -2047,7 +2046,7 @@ class FormHelperTest extends TestCase {
 			'Field',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][field]',
+				'type' => 'text', 'name' => 'Contact[field]',
 				'id' => 'ContactField', 'class' => 'form-error'
 			),
 			array('div' => array('class' => 'error')),
@@ -2065,7 +2064,7 @@ class FormHelperTest extends TestCase {
 			'Field',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][field]',
+				'type' => 'text', 'name' => 'Contact[field]',
 				'id' => 'ContactField', 'class' => 'form-error'
 			),
 			'Badness!',
@@ -2080,7 +2079,7 @@ class FormHelperTest extends TestCase {
 			'Field',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][field]',
+				'type' => 'text', 'name' => 'Contact[field]',
 				'id' => 'ContactField', 'class' => 'form-error'
 			),
 			'A message to you, Rudy',
@@ -2101,7 +2100,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ContactField'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'data[Contact][field]', 'id' => 'ContactField', 'class' => 'form-error'),
+			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'ContactField', 'class' => 'form-error'),
 			'A message to you, Rudy',
 			'/div'
 		);
@@ -2113,7 +2112,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ObjectField'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'data[Object][field]', 'id' => 'ObjectField'),
+			'input' => array('type' => 'text', 'name' => 'Object[field]', 'id' => 'ObjectField'),
 			'A message to you, Rudy',
 			'/div'
 		);
@@ -2131,7 +2130,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ContactField'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'data[Contact][field]', 'id' => 'ContactField', 'class' => 'form-error'),
+			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'ContactField', 'class' => 'form-error'),
 			array('div' => array('class' => 'error-message')),
 			'Le login doit contenir au moins 2 caractères',
 			'/div',
@@ -2152,7 +2151,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ContactField'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'data[Contact][field]', 'id' => 'ContactField', 'class' => 'form-error'),
+			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'ContactField', 'class' => 'form-error'),
 			array('span' => array('class' => 'error-message', 'rel' => 'fake')),
 			'login too large',
 			'/span',
@@ -2170,8 +2169,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => true));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'data[User][active]', 'value' => '0', 'id' => 'UserActive_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[User][active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
+			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0', 'id' => 'UserActive_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2179,8 +2178,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => 1));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'data[User][active]', 'value' => '0', 'id' => 'UserActive_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[User][active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
+			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0', 'id' => 'UserActive_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2188,8 +2187,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => '1'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'data[User][active]', 'value' => '0', 'id' => 'UserActive_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[User][active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
+			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0', 'id' => 'UserActive_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2302,15 +2301,15 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ContactCreatedMonth'),
 			'Created',
 			'/label',
-			array('select' => array('name' => 'data[Contact][created][month]', 'id' => 'ContactCreatedMonth')),
+			array('select' => array('name' => 'Contact[created][month]', 'id' => 'ContactCreatedMonth')),
 			array('option' => array('value' => '')), 'Date Unknown', '/option',
 			$monthsRegex,
 			'/select', '-',
-			array('select' => array('name' => 'data[Contact][created][day]', 'id' => 'ContactCreatedDay')),
+			array('select' => array('name' => 'Contact[created][day]', 'id' => 'ContactCreatedDay')),
 			array('option' => array('value' => '')), 'Date Unknown', '/option',
 			$daysRegex,
 			'/select', '-',
-			array('select' => array('name' => 'data[Contact][created][year]', 'id' => 'ContactCreatedYear')),
+			array('select' => array('name' => 'Contact[created][year]', 'id' => 'ContactCreatedYear')),
 			array('option' => array('value' => '')), 'Date Unknown', '/option',
 			$yearsRegex,
 			'/select',
@@ -2344,8 +2343,8 @@ class FormHelperTest extends TestCase {
 			$result = $this->Form->input("Contact.{$i}.email", array('type' => 'checkbox', 'value' => $i));
 			$expected = array(
 				'div' => array('class' => 'input checkbox'),
-				'input' => array('type' => 'hidden', 'name' => "data[Contact][{$i}][email]", 'value' => '0', 'id' => "Contact{$i}Email_"),
-				array('input' => array('type' => 'checkbox', 'name' => "data[Contact][{$i}][email]", 'value' => $i, 'id' => "Contact{$i}Email")),
+				'input' => array('type' => 'hidden', 'name' => "Contact[{$i}][email]", 'value' => '0', 'id' => "Contact{$i}Email_"),
+				array('input' => array('type' => 'checkbox', 'name' => "Contact[{$i}][email]", 'value' => $i, 'id' => "Contact{$i}Email")),
 				'label' => array('for' => "Contact{$i}Email"),
 				'Email',
 				'/label',
@@ -2363,7 +2362,7 @@ class FormHelperTest extends TestCase {
 	public function testInputWithLeadingInteger() {
 		$result = $this->Form->text('0.Node.title');
 		$expected = array(
-			'input' => array('name' => 'data[0][Node][title]', 'id' => '0NodeTitle', 'type' => 'text')
+			'input' => array('name' => '0[Node][title]', 'id' => '0NodeTitle', 'type' => 'text')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -2382,7 +2381,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'email'),
 			'Email',
 			'/label',
-			array('select' => array('name' => 'data[email]', 'id' => 'email')),
+			array('select' => array('name' => 'email', 'id' => 'email')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'è')),
@@ -2404,7 +2403,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'email'),
 			'Email',
 			'/label',
-			array('select' => array('name' => 'data[email]', 'id' => 'email')),
+			array('select' => array('name' => 'email', 'id' => 'email')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '0')),
@@ -2427,7 +2426,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ModelUserId'),
 			'User',
 			'/label',
-			'select' => array('name' => 'data[Model][user_id]', 'id' => 'ModelUserId'),
+			'select' => array('name' => 'Model[user_id]', 'id' => 'ModelUserId'),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'value', 'selected' => 'selected')),
@@ -2449,7 +2448,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ThingUserId'),
 			'User',
 			'/label',
-			'select' => array('name' => 'data[Thing][user_id]', 'id' => 'ThingUserId'),
+			'select' => array('name' => 'Thing[user_id]', 'id' => 'ThingUserId'),
 			array('option' => array('value' => '')),
 			'Some Empty',
 			'/option',
@@ -2472,7 +2471,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ThingUserId'),
 			'User',
 			'/label',
-			'select' => array('name' => 'data[Thing][user_id]', 'id' => 'ThingUserId'),
+			'select' => array('name' => 'Thing[user_id]', 'id' => 'ThingUserId'),
 			array('option' => array('value' => '')),
 			'Some Empty',
 			'/option',
@@ -2495,8 +2494,8 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'UserUser'),
 			'User',
 			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'data[User][User]', 'value' => '', 'id' => 'UserUser_'),
-			'select' => array('name' => 'data[User][User][]', 'id' => 'UserUser', 'multiple' => 'multiple'),
+			'input' => array('type' => 'hidden', 'name' => 'User[User]', 'value' => '', 'id' => 'UserUser_'),
+			'select' => array('name' => 'User[User][]', 'id' => 'UserUser', 'multiple' => 'multiple'),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'value', 'selected' => 'selected')),
@@ -2522,15 +2521,15 @@ class FormHelperTest extends TestCase {
 				array('label' => array('for' => 'PublisherId')),
 				'Publisher',
 				'/label',
-				'input' => array('type' => 'hidden', 'name' => 'data[Publisher][id]', 'value' => '', 'id' => 'PublisherId'),
+				'input' => array('type' => 'hidden', 'name' => 'Publisher[id]', 'value' => '', 'id' => 'PublisherId'),
 				array('div' => array('class' => 'checkbox')),
-				array('input' => array('type' => 'checkbox', 'name' => 'data[Publisher][id][]', 'value' => 'Value 1', 'id' => 'PublisherIdValue1')),
+				array('input' => array('type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 1', 'id' => 'PublisherIdValue1')),
 				array('label' => array('for' => 'PublisherIdValue1')),
 				'Label 1',
 				'/label',
 				'/div',
 				array('div' => array('class' => 'checkbox')),
-				array('input' => array('type' => 'checkbox', 'name' => 'data[Publisher][id][]', 'value' => 'Value 2', 'id' => 'PublisherIdValue2')),
+				array('input' => array('type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 2', 'id' => 'PublisherIdValue2')),
 				array('label' => array('for' => 'PublisherIdValue2')),
 				'Label 2',
 				'/label',
@@ -2558,7 +2557,7 @@ class FormHelperTest extends TestCase {
 		);
 		$result = $this->Form->input('model_id');
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[User][model_id]', 'id' => 'UserModelId'),
+			'input' => array('type' => 'hidden', 'name' => 'User[model_id]', 'id' => 'UserModelId'),
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -2574,7 +2573,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ModelUserId'), 'User', '/label',
-			'input' => array('name' => 'data[Model][user_id]', 'type' => 'text', 'id' => 'ModelUserId'),
+			'input' => array('name' => 'Model[user_id]', 'type' => 'text', 'id' => 'ModelUserId'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2585,7 +2584,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input select'),
 			'label' => array('for' => 'ModelType'), 'Type', '/label',
-			'select' => array('name' => 'data[Model][type]', 'id' => 'ModelType'),
+			'select' => array('name' => 'Model[type]', 'id' => 'ModelType'),
 			array('option' => array('value' => 'value')), 'good', '/option',
 			array('option' => array('value' => 'other')), 'bad', '/option',
 			'/select',
@@ -2626,7 +2625,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'UserUser'), 'User', '/label',
-			'input' => array('name' => 'data[User][User]', 'type' => 'text', 'id' => 'UserUser', 'value' => 'ABC, Inc.'),
+			'input' => array('name' => 'User[User]', 'type' => 'text', 'id' => 'UserUser', 'value' => 'ABC, Inc.'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2677,7 +2676,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->create('Contact');
 		$result = $this->Form->inputs(false);
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
 			array('div' => array('class' => 'input text')),
@@ -2702,7 +2701,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->create('Contact');
 		$result = $this->Form->inputs(array('fieldset' => false, 'legend' => false));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
 			array('div' => array('class' => 'input text')),
@@ -2728,7 +2727,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->inputs(array('fieldset' => true, 'legend' => false));
 		$expected = array(
 			'fieldset' => array(),
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
 			array('div' => array('class' => 'input text')),
@@ -2754,7 +2753,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->create('Contact');
 		$result = $this->Form->inputs(array('fieldset' => false, 'legend' => 'Hello'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
 			array('div' => array('class' => 'input text')),
@@ -2783,7 +2782,7 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Hello',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
 			array('div' => array('class' => 'input text')),
@@ -2813,7 +2812,7 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Hello',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
 			array('div' => array('class' => 'input text')),
@@ -2847,21 +2846,21 @@ class FormHelperTest extends TestCase {
 	public function testSelectAsCheckbox() {
 		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array('multiple' => 'checkbox', 'value' => array(0, 1)));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'checked' => 'checked', 'value' => '0', 'id' => 'ModelMultiField0')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'checked' => 'checked', 'value' => '0', 'id' => 'ModelMultiField0')),
 			array('label' => array('for' => 'ModelMultiField0', 'class' => 'selected')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'checked' => 'checked', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'checked' => 'checked', 'value' => '1', 'id' => 'ModelMultiField1')),
 			array('label' => array('for' => 'ModelMultiField1', 'class' => 'selected')),
 			'second',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
 			array('label' => array('for' => 'ModelMultiField2')),
 			'third',
 			'/label',
@@ -2871,9 +2870,9 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->select('Model.multi_field', array('1/2' => 'half'), array('multiple' => 'checkbox'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1/2', 'id' => 'ModelMultiField12')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1/2', 'id' => 'ModelMultiField12')),
 			array('label' => array('for' => 'ModelMultiField12')),
 			'half',
 			'/label',
@@ -2926,28 +2925,28 @@ class FormHelperTest extends TestCase {
  */
 	public function testTextbox() {
 		$result = $this->Form->text('Model.field');
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][field]', 'id' => 'ModelField')));
+		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'id' => 'ModelField')));
 
 		$result = $this->Form->text('Model.field', array('type' => 'password'));
-		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'data[Model][field]', 'id' => 'ModelField')));
+		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Model[field]', 'id' => 'ModelField')));
 
 		$result = $this->Form->text('Model.field', array('id' => 'theID'));
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][field]', 'id' => 'theID')));
+		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'id' => 'theID')));
 
 		$this->Form->request->data['Model']['text'] = 'test <strong>HTML</strong> values';
 		$result = $this->Form->text('Model.text');
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][text]', 'value' => 'test &lt;strong&gt;HTML&lt;/strong&gt; values', 'id' => 'ModelText')));
+		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[text]', 'value' => 'test &lt;strong&gt;HTML&lt;/strong&gt; values', 'id' => 'ModelText')));
 
 		$Contact = ClassRegistry::getObject('Contact');
 		$Contact->validationErrors['text'] = array(true);
 		$this->Form->request->data['Contact']['text'] = 'test';
 		$result = $this->Form->text('Contact.text', array('id' => 'theID'));
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Contact][text]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
+		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Contact[text]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
 
 		$this->Form->request->data['Model']['0']['OtherModel']['field'] = 'My value';
 		$result = $this->Form->text('Model.0.OtherModel.field', array('id' => 'myId'));
 		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'data[Model][0][OtherModel][field]', 'value' => 'My value', 'id' => 'myId')
+			'input' => array('type' => 'text', 'name' => 'Model[0][OtherModel][field]', 'value' => 'My value', 'id' => 'myId')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -2962,11 +2961,11 @@ class FormHelperTest extends TestCase {
 	public function testDefaultValue() {
 		$this->Form->request->data['Model']['field'] = 'test';
 		$result = $this->Form->text('Model.field', array('default' => 'default value'));
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value' => 'test', 'id' => 'ModelField')));
+		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'value' => 'test', 'id' => 'ModelField')));
 
 		unset($this->Form->request->data['Model']['field']);
 		$result = $this->Form->text('Model.field', array('default' => 'default value'));
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value' => 'default value', 'id' => 'ModelField')));
+		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'value' => 'default value', 'id' => 'ModelField')));
 	}
 
 /**
@@ -2979,19 +2978,19 @@ class FormHelperTest extends TestCase {
 	public function testCheckboxDefaultValue() {
 		$this->Form->request->data['Model']['field'] = false;
 		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField')));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField')));
 
 		unset($this->Form->request->data['Model']['field']);
 		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked')));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked')));
 
 		$this->Form->request->data['Model']['field'] = true;
 		$result = $this->Form->checkbox('Model.field', array('default' => false, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked')));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked')));
 
 		unset($this->Form->request->data['Model']['field']);
 		$result = $this->Form->checkbox('Model.field', array('default' => false, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField')));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField')));
 	}
 
 /**
@@ -3125,12 +3124,12 @@ class FormHelperTest extends TestCase {
 	public function testPassword() {
 		$Contact = ClassRegistry::getObject('Contact');
 		$result = $this->Form->password('Contact.field');
-		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'data[Contact][field]', 'id' => 'ContactField')));
+		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Contact[field]', 'id' => 'ContactField')));
 
 		$Contact->validationErrors['passwd'] = 1;
 		$this->Form->request->data['Contact']['passwd'] = 'test';
 		$result = $this->Form->password('Contact.passwd', array('id' => 'theID'));
-		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'data[Contact][passwd]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
+		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Contact[passwd]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
 	}
 
 /**
@@ -3143,8 +3142,8 @@ class FormHelperTest extends TestCase {
 	public function testRadio() {
 		$result = $this->Form->radio('Model.field', array('option A'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0')),
 			'label' => array('for' => 'ModelField0'),
 			'option A',
 			'/label'
@@ -3153,8 +3152,8 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->radio('Model.field', array('1/2' => 'half'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1/2', 'id' => 'ModelField12')),
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1/2', 'id' => 'ModelField12')),
 			'label' => array('for' => 'ModelField12'),
 			'half',
 			'/label'
@@ -3167,12 +3166,12 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0')),
 			array('label' => array('for' => 'ModelField0')),
 			'option A',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'option B',
 			'/label',
@@ -3186,13 +3185,13 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0')),
 			array('label' => array('for' => 'ModelField0')),
 			'option A',
 			'/label',
 			'br' => array(),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'option B',
 			'/label',
@@ -3206,11 +3205,11 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1', 'checked' => 'checked')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1', 'checked' => 'checked')),
 			array('label' => array('for' => 'ModelField1')),
 			'Yes',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0')),
 			array('label' => array('for' => 'ModelField0')),
 			'No',
 			'/label',
@@ -3224,11 +3223,11 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'Yes',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0', 'checked' => 'checked')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0', 'checked' => 'checked')),
 			array('label' => array('for' => 'ModelField0')),
 			'No',
 			'/label',
@@ -3242,12 +3241,12 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'Yes',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0')),
 			array('label' => array('for' => 'ModelField0')),
 			'No',
 			'/label',
@@ -3261,12 +3260,12 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'Yes',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0')),
 			array('label' => array('for' => 'ModelField0')),
 			'No',
 			'/label',
@@ -3281,12 +3280,12 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Legend title',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Newsletter][subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
+			'input' => array('type' => 'hidden', 'name' => 'Newsletter[subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
+			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
 			array('label' => array('for' => 'NewsletterSubscribe0')),
 			'Unsubscribe',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
+			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
 			array('label' => array('for' => 'NewsletterSubscribe1')),
 			'Subscribe',
 			'/label',
@@ -3298,12 +3297,12 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
 		$expected = array(
 			'div' => array('class' => 'input radio'),
-			'input' => array('type' => 'hidden', 'name' => 'data[Newsletter][subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
+			'input' => array('type' => 'hidden', 'name' => 'Newsletter[subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
+			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
 			array('label' => array('for' => 'NewsletterSubscribe0')),
 			'Unsubscribe',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
+			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
 			array('label' => array('for' => 'NewsletterSubscribe1')),
 			'Subscribe',
 			'/label',
@@ -3318,10 +3317,10 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Legend title',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Newsletter][subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
+			'input' => array('type' => 'hidden', 'name' => 'Newsletter[subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
+			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
 			'Unsubscribe',
-			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
+			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
 			'Subscribe',
 			'/fieldset',
 			'/div'
@@ -3331,10 +3330,10 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'label' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
 		$expected = array(
 			'div' => array('class' => 'input radio'),
-			'input' => array('type' => 'hidden', 'name' => 'data[Newsletter][subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
+			'input' => array('type' => 'hidden', 'name' => 'Newsletter[subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
+			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
 			'Unsubscribe',
-			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
+			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
 			'Subscribe',
 			'/div'
 		);
@@ -3343,9 +3342,9 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'label' => false, 'type' => 'radio', 'value' => '1', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
 		$expected = array(
 			'div' => array('class' => 'input radio'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
+			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
 			'Unsubscribe',
-			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1', 'checked' => 'checked')),
+			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1', 'checked' => 'checked')),
 			'Subscribe',
 			'/div'
 		);
@@ -3357,12 +3356,12 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Gender',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Employee][gender]', 'value' => '', 'id' => 'EmployeeGender_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Employee][gender]', 'value' => 'male', 'id' => 'EmployeeGenderMale')),
+			'input' => array('type' => 'hidden', 'name' => 'Employee[gender]', 'value' => '', 'id' => 'EmployeeGender_'),
+			array('input' => array('type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male', 'id' => 'EmployeeGenderMale')),
 			array('label' => array('for' => 'EmployeeGenderMale')),
 			'Male',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Employee][gender]', 'value' => 'female', 'id' => 'EmployeeGenderFemale')),
+			array('input' => array('type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female', 'id' => 'EmployeeGenderFemale')),
 			array('label' => array('for' => 'EmployeeGenderFemale')),
 			'Female',
 			'/label',
@@ -3376,12 +3375,12 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Gender',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Officer][gender]', 'value' => '', 'id' => 'OfficerGender_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Officer][gender]', 'value' => 'male', 'id' => 'OfficerGenderMale')),
+			'input' => array('type' => 'hidden', 'name' => 'Officer[gender]', 'value' => '', 'id' => 'OfficerGender_'),
+			array('input' => array('type' => 'radio', 'name' => 'Officer[gender]', 'value' => 'male', 'id' => 'OfficerGenderMale')),
 			array('label' => array('for' => 'OfficerGenderMale')),
 			'Male',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Officer][gender]', 'value' => 'female', 'id' => 'OfficerGenderFemale')),
+			array('input' => array('type' => 'radio', 'name' => 'Officer[gender]', 'value' => 'female', 'id' => 'OfficerGenderFemale')),
 			array('label' => array('for' => 'OfficerGenderFemale')),
 			'Female',
 			'/label',
@@ -3391,8 +3390,8 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->radio('Contact.1.imrequired', array('option A'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][1][imrequired]', 'value' => '', 'id' => 'Contact1Imrequired_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Contact][1][imrequired]', 'value' => '0', 'id' => 'Contact1Imrequired0')),
+			'input' => array('type' => 'hidden', 'name' => 'Contact[1][imrequired]', 'value' => '', 'id' => 'Contact1Imrequired_'),
+			array('input' => array('type' => 'radio', 'name' => 'Contact[1][imrequired]', 'value' => '0', 'id' => 'Contact1Imrequired0')),
 			'label' => array('for' => 'Contact1Imrequired0'),
 			'option A',
 			'/label'
@@ -3401,26 +3400,26 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->radio('Model.1.field', array('option A'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][1][field]', 'value' => '', 'id' => 'Model1Field_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0')),
+			'input' => array('type' => 'hidden', 'name' => 'Model[1][field]', 'value' => '', 'id' => 'Model1Field_'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'Model1Field0')),
 			'label' => array('for' => 'Model1Field0'),
 			'option A',
 			'/label'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('name' => 'data[Model][custom]'));
+		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('name' => 'Model[custom]'));
 		$expected = array(
 			'fieldset' => array(),
 			'legend' => array(),
 			'Field',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][custom]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][custom]', 'value' => '0', 'id' => 'ModelField0')),
+			'input' => array('type' => 'hidden', 'name' => 'Model[custom]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[custom]', 'value' => '0', 'id' => 'ModelField0')),
 			array('label' => array('for' => 'ModelField0')),
 			'option A',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][custom]', 'value' => '1', 'id' => 'ModelField1')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[custom]', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'option B',
 			'/label',
@@ -3440,18 +3439,18 @@ class FormHelperTest extends TestCase {
 			'/legend',
 			'I am between',
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][field]',
+				'type' => 'hidden', 'name' => 'Model[field]',
 				'value' => '', 'id' => 'ModelField_'
 			),
 			array('input' => array(
-				'type' => 'radio', 'name' => 'data[Model][field]',
+				'type' => 'radio', 'name' => 'Model[field]',
 				'value' => '0', 'id' => 'ModelField0'
 			)),
 			array('label' => array('for' => 'ModelField0')),
 			'option A',
 			'/label',
 			array('input' => array(
-				'type' => 'radio', 'name' => 'data[Model][field]',
+				'type' => 'radio', 'name' => 'Model[field]',
 				'value' => '1', 'id' => 'ModelField1'
 			)),
 			array('label' => array('for' => 'ModelField1')),
@@ -3478,11 +3477,11 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0', 'disabled' => 'disabled', 'checked' => 'checked')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0', 'disabled' => 'disabled', 'checked' => 'checked')),
 			array('label' => array('for' => 'ModelField0')),
 			'option A',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'option B',
 			'/label',
@@ -3500,11 +3499,11 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0', 'disabled' => 'disabled', 'checked' => 'checked')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0', 'disabled' => 'disabled', 'checked' => 'checked')),
 			array('label' => array('for' => 'ModelField0')),
 			'option A',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1', 'disabled' => 'disabled')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1', 'disabled' => 'disabled')),
 			array('label' => array('for' => 'ModelField1')),
 			'option B',
 			'/label',
@@ -3522,11 +3521,11 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0', 'disabled' => 'disabled', 'checked' => 'checked')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0', 'disabled' => 'disabled', 'checked' => 'checked')),
 			array('label' => array('for' => 'ModelField0')),
 			'option A',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1', 'disabled' => 'disabled')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1', 'disabled' => 'disabled')),
 			array('label' => array('for' => 'ModelField1')),
 			'option B',
 			'/label',
@@ -3549,7 +3548,7 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			'div' => array('class' => 'input radio'),
-			'input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0'),
+			'input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'Model1Field0'),
 			'label' => array('for' => 'Model1Field0'),
 			'option A',
 			'/label',
@@ -3559,7 +3558,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->radio('Model.1.field', array('option A'), array('hiddenField' => false));
 		$expected = array(
-			'input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0'),
+			'input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'Model1Field0'),
 			'label' => array('for' => 'Model1Field0'),
 			'option A',
 			'/label'
@@ -3585,11 +3584,11 @@ class FormHelperTest extends TestCase {
 					'legend' => array(),
 						'Field',
 					'/legend',
-					array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '', 'id' => 'Model1Field')),
+					array('input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '', 'id' => 'Model1Field')),
 					array('label' => array('for' => 'Model1Field')),
 						__('empty'),
 					'/label',
-					array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0')),
+					array('input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'Model1Field0')),
 					array('label' => array('for' => 'Model1Field0')),
 						'option A',
 					'/label',
@@ -3610,11 +3609,11 @@ class FormHelperTest extends TestCase {
 					'legend' => array(),
 						'Field',
 					'/legend',
-					array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '', 'id' => 'Model1Field')),
+					array('input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '', 'id' => 'Model1Field')),
 					array('label' => array('for' => 'Model1Field')),
 						'CustomEmptyLabel',
 					'/label',
-					array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0')),
+					array('input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'Model1Field0')),
 					array('label' => array('for' => 'Model1Field0')),
 						'option A',
 					'/label',
@@ -3642,7 +3641,7 @@ class FormHelperTest extends TestCase {
 	public function testSelect() {
 		$result = $this->Form->select('Model.field', array());
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			array('option' => array('value' => '')),
 			'/option',
 			'/select'
@@ -3652,7 +3651,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data = array('Model' => array('field' => 'value'));
 		$result = $this->Form->select('Model.field', array('value' => 'good', 'other' => 'bad'));
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'value', 'selected' => 'selected')),
@@ -3668,7 +3667,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data = array();
 		$result = $this->Form->select('Model.field', array('value' => 'good', 'other' => 'bad'));
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'value')),
@@ -3686,7 +3685,7 @@ class FormHelperTest extends TestCase {
 			array('empty' => false)
 		);
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			array('option' => array('value' => 'first')),
 			'first &quot;html&quot; &lt;chars&gt;',
 			'/option',
@@ -3703,7 +3702,7 @@ class FormHelperTest extends TestCase {
 			array('escape' => false, 'empty' => false)
 		);
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			array('option' => array('value' => 'first')),
 			'first "html" <chars>',
 			'/option',
@@ -3724,7 +3723,7 @@ class FormHelperTest extends TestCase {
 			array('escape' => false, 'empty' => false)
 		);
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			array('option' => array('value' => 'first')),
 			'First',
 			'/option',
@@ -3743,7 +3742,7 @@ class FormHelperTest extends TestCase {
 		);
 
 		$expected = array(
-			'select' => array('name' => 'data[Model][contact_id]', 'id' => 'ModelContactId'),
+			'select' => array('name' => 'Model[contact_id]', 'id' => 'ModelContactId'),
 			array('option' => array('value' => '')), 'pick something', '/option',
 			array('option' => array('value' => '228', 'selected' => 'selected')), '228 value', '/option',
 			array('option' => array('value' => '228-1')), '228-1 value', '/option',
@@ -3755,7 +3754,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = 0;
 		$result = $this->Form->select('Model.field', array('0' => 'No', '1' => 'Yes'));
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			array('option' => array('value' => '')), '/option',
 			array('option' => array('value' => '0', 'selected' => 'selected')), 'No', '/option',
 			array('option' => array('value' => '1')), 'Yes', '/option',
@@ -3778,7 +3777,7 @@ class FormHelperTest extends TestCase {
 		);
 		$result = $this->Form->select('Model.field', $options, array('empty' => false));
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			'optgroup' => array('label' => '&gt;&lt; Key'),
 			array('option' => array('value' => '1')), 'One', '/option',
 			array('option' => array('value' => '2')), 'Two', '/option',
@@ -3795,7 +3794,7 @@ class FormHelperTest extends TestCase {
 		);
 		$result = $this->Form->select('Model.field', $options, array('empty' => false, 'escape' => false));
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			'optgroup' => array('label' => '>< Key'),
 			array('option' => array('value' => '1')), 'One', '/option',
 			array('option' => array('value' => '2')), 'Two', '/option',
@@ -3813,7 +3812,7 @@ class FormHelperTest extends TestCase {
 	public function testSelectWithNullAttributes() {
 		$result = $this->Form->select('Model.field', array('first', 'second'), array('empty' => false));
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			array('option' => array('value' => '0')),
 			'first',
 			'/option',
@@ -3840,7 +3839,7 @@ class FormHelperTest extends TestCase {
 			)), array('empty' => false)
 		);
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]',
+			'select' => array('name' => 'Model[field]',
 					'id' => 'ModelField'),
 					array('option' => array('value' => 1)),
 					'One',
@@ -3867,7 +3866,7 @@ class FormHelperTest extends TestCase {
 		);
 
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 				array('option' => array('value' => 1)),
 				'One',
 				'/option',
@@ -3901,10 +3900,10 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
+				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
 			),
 			'select' => array(
-				'name' => 'data[Model][multi_field][]',
+				'name' => 'Model[multi_field][]',
 				'id' => 'ModelMultiField', 'multiple' => 'multiple'
 			),
 			array('option' => array('value' => '0')),
@@ -3925,10 +3924,10 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
+				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
 			),
 			'select' => array(
-				'name' => 'data[Model][multi_field][]',
+				'name' => 'Model[multi_field][]',
 				'id' => 'ModelMultiField', 'multiple' => 'multiple'
 			),
 			array('option' => array('value' => '0')),
@@ -3949,10 +3948,10 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
+				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
 			),
 			'select' => array(
-				'name' => 'data[Model][multi_field][]', 'id' => 'ModelMultiField',
+				'name' => 'Model[multi_field][]', 'id' => 'ModelMultiField',
 				'multiple' => 'multiple'
 			),
 			array('option' => array('value' => '0', 'selected' => 'selected')),
@@ -3973,7 +3972,7 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			'select' => array(
-				'name' => 'data[Model][multi_field]', 'id' => 'ModelMultiField'
+				'name' => 'Model[multi_field]', 'id' => 'ModelMultiField'
 			),
 			array('option' => array('value' => '0', 'selected' => 'selected')),
 			'first',
@@ -4017,10 +4016,10 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('ContactTag', array('div' => false, 'label' => false));
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[ContactTag][ContactTag]', 'value' => '', 'id' => 'ContactTagContactTag_'
+				'type' => 'hidden', 'name' => 'ContactTag[ContactTag]', 'value' => '', 'id' => 'ContactTagContactTag_'
 			),
 			'select' => array(
-				'name' => 'data[ContactTag][ContactTag][]', 'id' => 'ContactTagContactTag',
+				'name' => 'ContactTag[ContactTag][]', 'id' => 'ContactTagContactTag',
 				'multiple' => 'multiple'
 			),
 			array('option' => array('value' => '1', 'selected' => 'selected')),
@@ -4051,11 +4050,11 @@ class FormHelperTest extends TestCase {
 
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'
+				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'
 			),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => '0', 'id' => 'ModelMultiField0'
 			)),
 			array('label' => array('for' => 'ModelMultiField0')),
@@ -4064,7 +4063,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => '1', 'id' => 'ModelMultiField1'
 			)),
 			array('label' => array('for' => 'ModelMultiField1')),
@@ -4073,7 +4072,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => '2', 'id' => 'ModelMultiField2'
 			)),
 			array('label' => array('for' => 'ModelMultiField2')),
@@ -4090,11 +4089,11 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'
+				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'
 			),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => 'a', 'id' => 'ModelMultiFieldA'
 			)),
 			array('label' => array('for' => 'ModelMultiFieldA')),
@@ -4103,7 +4102,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => 'b', 'id' => 'ModelMultiFieldB'
 			)),
 			array('label' => array('for' => 'ModelMultiFieldB')),
@@ -4112,7 +4111,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => 'c', 'id' => 'ModelMultiFieldC'
 			)),
 			array('label' => array('for' => 'ModelMultiFieldC')),
@@ -4127,11 +4126,11 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'
+				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'
 			),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => '1', 'id' => 'ModelMultiField1'
 			)),
 			array('label' => array('for' => 'ModelMultiField1')),
@@ -4147,11 +4146,11 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'
+				'type' => 'hidden', 'name' => 'Model[tags]', 'value' => '', 'id' => 'ModelTags'
 			),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
+				'type' => 'checkbox', 'name' => 'Model[tags][]',
 				'value' => '1', 'id' => 'ModelTags1', 'checked' => 'checked'
 			)),
 			array('label' => array('for' => 'ModelTags1', 'class' => 'selected')),
@@ -4161,7 +4160,7 @@ class FormHelperTest extends TestCase {
 
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
+				'type' => 'checkbox', 'name' => 'Model[tags][]',
 				'value' => 'Array', 'id' => 'ModelTagsArray'
 			)),
 			array('label' => array('for' => 'ModelTagsArray')),
@@ -4185,11 +4184,11 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'
+				'type' => 'hidden', 'name' => 'Model[tags]', 'value' => '', 'id' => 'ModelTags'
 			),
 			array('div' => array('class' => 'my-class')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
+				'type' => 'checkbox', 'name' => 'Model[tags][]',
 				'value' => '0', 'id' => 'ModelTags0'
 			)),
 			array('label' => array('for' => 'ModelTags0')), 'first', '/label',
@@ -4197,7 +4196,7 @@ class FormHelperTest extends TestCase {
 
 			array('div' => array('class' => 'my-class')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
+				'type' => 'checkbox', 'name' => 'Model[tags][]',
 				'value' => '1', 'id' => 'ModelTags1'
 			)),
 			array('label' => array('for' => 'ModelTags1')), 'second', '/label',
@@ -4223,9 +4222,9 @@ class FormHelperTest extends TestCase {
 			'div' => false
 		));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Contact][tags]', 'value' => '', 'id' => 'ContactTags'),
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[tags]', 'value' => '', 'id' => 'ContactTags'),
 			array('div' => array('class' => 'checkbox form-error')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][tags][]', 'value' => '0', 'id' => 'ContactTags0')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Contact[tags][]', 'value' => '0', 'id' => 'ContactTags0')),
 			array('label' => array('for' => 'ContactTags0')),
 			'one',
 			'/label',
@@ -4241,9 +4240,9 @@ class FormHelperTest extends TestCase {
 			'div' => false
 		));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Contact][tags]', 'value' => '', 'id' => 'ContactTags'),
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[tags]', 'value' => '', 'id' => 'ContactTags'),
 			array('div' => array('class' => 'mycheckbox form-error')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][tags][]', 'value' => '0', 'id' => 'ContactTags0')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Contact[tags][]', 'value' => '0', 'id' => 'ContactTags0')),
 			array('label' => array('for' => 'ContactTags0')),
 			'one',
 			'/label',
@@ -4289,21 +4288,21 @@ class FormHelperTest extends TestCase {
 			array('label' => array('for' => 'ModelMultiField')),
 			'Multi Field',
 			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
 			array('label' => array('for' => 'ModelMultiField0')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
 			array('label' => array('for' => 'ModelMultiField1')),
 			'second',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
 			array('label' => array('for' => 'ModelMultiField2')),
 			'third',
 			'/label',
@@ -4321,21 +4320,21 @@ class FormHelperTest extends TestCase {
 			array('label' => array('for' => 'ModelMultiField')),
 			'Multi Field',
 			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => 'a', 'id' => 'ModelMultiFieldA')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'a', 'id' => 'ModelMultiFieldA')),
 			array('label' => array('for' => 'ModelMultiFieldA')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => 'b', 'id' => 'ModelMultiFieldB')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'b', 'id' => 'ModelMultiFieldB')),
 			array('label' => array('for' => 'ModelMultiFieldB')),
 			'second',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => 'c', 'id' => 'ModelMultiFieldC')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'c', 'id' => 'ModelMultiFieldC')),
 			array('label' => array('for' => 'ModelMultiFieldC')),
 			'third',
 			'/label',
@@ -4351,9 +4350,9 @@ class FormHelperTest extends TestCase {
 			'div' => false
 		));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
 			array('label' => array('for' => 'ModelMultiField1')),
 			'first',
 			'/label',
@@ -4368,9 +4367,9 @@ class FormHelperTest extends TestCase {
 			'div' => false
 		));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
 			array('label' => array('for' => 'ModelMultiField2')),
 			'second',
 			'/label',
@@ -4393,13 +4392,13 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
 			array('label' => array('for' => 'ModelMultiField0')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
 			array('label' => array('for' => 'ModelMultiField1')),
 			'second',
 			'/label',
@@ -4418,13 +4417,13 @@ class FormHelperTest extends TestCase {
 			'Multi Field',
 			'/label',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
 			array('label' => array('for' => 'ModelMultiField0')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
 			array('label' => array('for' => 'ModelMultiField1')),
 			'second',
 			'/label',
@@ -4443,19 +4442,19 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('category', array(
 			'type' => 'select',
 			'multiple' => 'checkbox',
-			'name' => 'data[fish]',
+			'name' => 'fish',
 			'options' => array('1', '2'),
 			'div' => false,
 			'label' => false,
 		));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[fish]', 'value' => '', 'id' => 'category'),
+			'input' => array('type' => 'hidden', 'name' => 'fish', 'value' => '', 'id' => 'category'),
 			array('div' => array('class' => 'checkbox')),
-				array('input' => array('type' => 'checkbox', 'name' => 'data[fish][]', 'value' => '0', 'id' => 'Category0')),
+				array('input' => array('type' => 'checkbox', 'name' => 'fish[]', 'value' => '0', 'id' => 'Category0')),
 				array('label' => array('for' => 'Category0')), '1', '/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-				array('input' => array('type' => 'checkbox', 'name' => 'data[fish][]', 'value' => '1', 'id' => 'Category1')),
+				array('input' => array('type' => 'checkbox', 'name' => 'fish[]', 'value' => '1', 'id' => 'Category1')),
 				array('label' => array('for' => 'Category1')), '2', '/label',
 			'/div'
 		);
@@ -4476,11 +4475,11 @@ class FormHelperTest extends TestCase {
 
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'CustomId'
+				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'CustomId'
 			),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => '0', 'id' => 'CustomId0'
 			)),
 			array('label' => array('for' => 'CustomId0')),
@@ -4489,7 +4488,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => '1', 'id' => 'CustomId1'
 			)),
 			array('label' => array('for' => 'CustomId1')),
@@ -4498,7 +4497,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => '2', 'id' => 'CustomId2'
 			)),
 			array('label' => array('for' => 'CustomId2')),
@@ -4519,15 +4518,15 @@ class FormHelperTest extends TestCase {
 	public function testCheckbox() {
 		$result = $this->Form->checkbox('Model.field');
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField'))
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.field', array('id' => 'theID', 'value' => 'myvalue'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'theID_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => 'myvalue', 'id' => 'theID'))
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'theID_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => 'myvalue', 'id' => 'theID'))
 		);
 		$this->assertTags($result, $expected);
 
@@ -4536,14 +4535,14 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['field'] = 'myvalue';
 		$result = $this->Form->checkbox('Contact.field', array('id' => 'theID', 'value' => 'myvalue'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Contact][field]', 'value' => '0', 'id' => 'theID_'),
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[field]', 'value' => '0', 'id' => 'theID_'),
 			array('input' => array('preg:/[^<]+/', 'value' => 'myvalue', 'id' => 'theID', 'checked' => 'checked', 'class' => 'form-error'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Contact.field', array('value' => 'myvalue'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Contact][field]', 'value' => '0', 'id' => 'ContactField_'),
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[field]', 'value' => '0', 'id' => 'ContactField_'),
 			array('input' => array('preg:/[^<]+/', 'value' => 'myvalue', 'id' => 'ContactField', 'checked' => 'checked', 'class' => 'form-error'))
 		);
 		$this->assertTags($result, $expected);
@@ -4551,46 +4550,46 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['field'] = '';
 		$result = $this->Form->checkbox('Contact.field', array('id' => 'theID'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Contact][field]', 'value' => '0', 'id' => 'theID_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][field]', 'value' => '1', 'id' => 'theID', 'class' => 'form-error'))
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[field]', 'value' => '0', 'id' => 'theID_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Contact[field]', 'value' => '1', 'id' => 'theID', 'class' => 'form-error'))
 		);
 		$this->assertTags($result, $expected);
 
 		$Contact->validationErrors = array();
 		$result = $this->Form->checkbox('Contact.field', array('value' => 'myvalue'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][field]', 'value' => '0', 'id' => 'ContactField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][field]', 'value' => 'myvalue', 'id' => 'ContactField'))
+			'input' => array('type' => 'hidden', 'name' => 'Contact[field]', 'value' => '0', 'id' => 'ContactField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Contact[field]', 'value' => 'myvalue', 'id' => 'ContactField'))
 		);
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = 1;
 		$result = $this->Form->checkbox('Contact.published', array('id' => 'theID'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][published]', 'value' => '0', 'id' => 'theID_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][published]', 'value' => '1', 'id' => 'theID', 'checked' => 'checked'))
+			'input' => array('type' => 'hidden', 'name' => 'Contact[published]', 'value' => '0', 'id' => 'theID_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Contact[published]', 'value' => '1', 'id' => 'theID', 'checked' => 'checked'))
 		);
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = 0;
 		$result = $this->Form->checkbox('Contact.published', array('id' => 'theID'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Contact][published]', 'value' => '0', 'id' => 'theID_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][published]', 'value' => '1', 'id' => 'theID'))
+			'input' => array('type' => 'hidden', 'name' => 'Contact[published]', 'value' => '0', 'id' => 'theID_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Contact[published]', 'value' => '1', 'id' => 'theID'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.CustomField.1.value');
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][CustomField][1][value]', 'value' => '0', 'id' => 'ModelCustomField1Value_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][CustomField][1][value]', 'value' => '1', 'id' => 'ModelCustomField1Value'))
+			'input' => array('type' => 'hidden', 'name' => 'Model[CustomField][1][value]', 'value' => '0', 'id' => 'ModelCustomField1Value_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[CustomField][1][value]', 'value' => '1', 'id' => 'ModelCustomField1Value'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('CustomField.1.value');
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[CustomField][1][value]', 'value' => '0', 'id' => 'CustomField1Value_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[CustomField][1][value]', 'value' => '1', 'id' => 'CustomField1Value'))
+			'input' => array('type' => 'hidden', 'name' => 'CustomField[1][value]', 'value' => '0', 'id' => 'CustomField1Value_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'CustomField[1][value]', 'value' => '1', 'id' => 'CustomField1Value'))
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -4617,37 +4616,37 @@ class FormHelperTest extends TestCase {
 	public function testCheckboxCheckedOption() {
 		$result = $this->Form->checkbox('Model.field', array('checked' => 'checked'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked'))
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.field', array('checked' => 1));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked'))
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.field', array('checked' => true));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked'))
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.field', array('checked' => false));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField'))
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField'))
 		);
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = 1;
 		$result = $this->Form->checkbox('Model.field', array('checked' => false));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField'))
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField'))
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -4660,15 +4659,15 @@ class FormHelperTest extends TestCase {
 	public function testCheckboxDisabling() {
 		$result = $this->Form->checkbox('Account.show_name', array('disabled' => 'disabled'));
 		$expected = array(
-			array('input' => array('type' => 'hidden', 'name' => 'data[Account][show_name]', 'value' => '0', 'id' => 'AccountShowName_', 'disabled' => 'disabled')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Account][show_name]', 'value' => '1', 'id' => 'AccountShowName', 'disabled' => 'disabled'))
+			array('input' => array('type' => 'hidden', 'name' => 'Account[show_name]', 'value' => '0', 'id' => 'AccountShowName_', 'disabled' => 'disabled')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Account[show_name]', 'value' => '1', 'id' => 'AccountShowName', 'disabled' => 'disabled'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Account.show_name', array('disabled' => false));
 		$expected = array(
-			array('input' => array('type' => 'hidden', 'name' => 'data[Account][show_name]', 'value' => '0', 'id' => 'AccountShowName_')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Account][show_name]', 'value' => '1', 'id' => 'AccountShowName'))
+			array('input' => array('type' => 'hidden', 'name' => 'Account[show_name]', 'value' => '0', 'id' => 'AccountShowName_')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Account[show_name]', 'value' => '1', 'id' => 'AccountShowName'))
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -4687,7 +4686,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[UserForm][something]',
+				'type' => 'checkbox', 'name' => 'UserForm[something]',
 				'value' => '1', 'id' => 'UserFormSomething'
 			)),
 			'label' => array('for' => 'UserFormSomething'),
@@ -4705,11 +4704,11 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[UserForm][something]',
+				'type' => 'hidden', 'name' => 'UserForm[something]',
 				'value' => 'N', 'id' => 'UserFormSomething_'
 			)),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[UserForm][something]',
+				'type' => 'checkbox', 'name' => 'UserForm[something]',
 				'value' => 'Y', 'id' => 'UserFormSomething'
 			)),
 			'label' => array('for' => 'UserFormSomething'),
@@ -4733,41 +4732,41 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('empty' => false));
 		$now = strtotime('now');
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			array('select' => array('name' => 'Contact[date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
 			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
 			date('j', $now),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			array('select' => array('name' => 'Contact[date][month]', 'id' => 'ContactDateMonth')),
 			$monthsRegex,
 			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
 			date('F', $now),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			array('select' => array('name' => 'Contact[date][year]', 'id' => 'ContactDateYear')),
 			$yearsRegex,
 			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
 			date('Y', $now),
 			'/option',
 			'*/select',
-			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			array('select' => array('name' => 'Contact[date][hour]', 'id' => 'ContactDateHour')),
 			$hoursRegex,
 			array('option' => array('value' => date('h', $now), 'selected' => 'selected')),
 			date('g', $now),
 			'/option',
 			'*/select',
 			':',
-			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			array('select' => array('name' => 'Contact[date][min]', 'id' => 'ContactDateMin')),
 			$minutesRegex,
 			array('option' => array('value' => date('i', $now), 'selected' => 'selected')),
 			date('i', $now),
 			'/option',
 			'*/select',
 			' ',
-			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			array('select' => array('name' => 'Contact[date][meridian]', 'id' => 'ContactDateMeridian')),
 			$meridianRegex,
 			array('option' => array('value' => date('a', $now), 'selected' => 'selected')),
 			date('a', $now),
@@ -4778,36 +4777,36 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			array('select' => array('name' => 'Contact[date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			array('select' => array('name' => 'Contact[date][month]', 'id' => 'ContactDateMonth')),
 			$monthsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			array('select' => array('name' => 'Contact[date][year]', 'id' => 'ContactDateYear')),
 			$yearsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
-			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			array('select' => array('name' => 'Contact[date][hour]', 'id' => 'ContactDateHour')),
 			$hoursRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			':',
-			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			array('select' => array('name' => 'Contact[date][min]', 'id' => 'ContactDateMin')),
 			$minutesRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			' ',
-			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			array('select' => array('name' => 'Contact[date][meridian]', 'id' => 'ContactDateMeridian')),
 			$meridianRegex,
 			array('option' => array('value' => '')),
 			'/option',
@@ -4826,30 +4825,30 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 5, 'value' => ''));
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			array('select' => array('name' => 'Contact[date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			array('select' => array('name' => 'Contact[date][month]', 'id' => 'ContactDateMonth')),
 			$monthsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			array('select' => array('name' => 'Contact[date][year]', 'id' => 'ContactDateYear')),
 			$yearsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
-			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			array('select' => array('name' => 'Contact[date][hour]', 'id' => 'ContactDateHour')),
 			$hoursRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			':',
-			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			array('select' => array('name' => 'Contact[date][min]', 'id' => 'ContactDateMin')),
 			$minutesRegex,
 			array('option' => array('value' => '')),
 			'/option',
@@ -4864,7 +4863,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'*/select',
 			' ',
-			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			array('select' => array('name' => 'Contact[date][meridian]', 'id' => 'ContactDateMeridian')),
 			$meridianRegex,
 			array('option' => array('value' => '')),
 			'/option',
@@ -4879,36 +4878,36 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['data'] = null;
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			array('select' => array('name' => 'Contact[date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			array('select' => array('name' => 'Contact[date][month]', 'id' => 'ContactDateMonth')),
 			$monthsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			array('select' => array('name' => 'Contact[date][year]', 'id' => 'ContactDateYear')),
 			$yearsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
-			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			array('select' => array('name' => 'Contact[date][hour]', 'id' => 'ContactDateHour')),
 			$hoursRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			':',
-			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			array('select' => array('name' => 'Contact[date][min]', 'id' => 'ContactDateMin')),
 			$minutesRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			' ',
-			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			array('select' => array('name' => 'Contact[date][meridian]', 'id' => 'ContactDateMeridian')),
 			$meridianRegex,
 			array('option' => array('value' => '')),
 			'/option',
@@ -4921,41 +4920,41 @@ class FormHelperTest extends TestCase {
 		$now = strtotime($this->Form->data['Model']['field']);
 		$result = $this->Form->dateTime('Model.field', 'DMY', '12', array('empty' => false));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('select' => array('name' => 'Model[field][day]', 'id' => 'ModelFieldDay')),
 			$daysRegex,
 			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
 			date('j', $now),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
+			array('select' => array('name' => 'Model[field][month]', 'id' => 'ModelFieldMonth')),
 			$monthsRegex,
 			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
 			date('F', $now),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Model][field][year]', 'id' => 'ModelFieldYear')),
+			array('select' => array('name' => 'Model[field][year]', 'id' => 'ModelFieldYear')),
 			$yearsRegex,
 			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
 			date('Y', $now),
 			'/option',
 			'*/select',
-			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
 			$hoursRegex,
 			array('option' => array('value' => date('h', $now), 'selected' => 'selected')),
 			date('g', $now),
 			'/option',
 			'*/select',
 			':',
-			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			array('select' => array('name' => 'Model[field][min]', 'id' => 'ModelFieldMin')),
 			$minutesRegex,
 			array('option' => array('value' => date('i', $now), 'selected' => 'selected')),
 			date('i', $now),
 			'/option',
 			'*/select',
 			' ',
-			array('select' => array('name' => 'data[Model][field][meridian]', 'id' => 'ModelFieldMeridian')),
+			array('select' => array('name' => 'Model[field][meridian]', 'id' => 'ModelFieldMeridian')),
 			$meridianRegex,
 			array('option' => array('value' => date('a', $now), 'selected' => 'selected')),
 			date('a', $now),
@@ -4981,21 +4980,21 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ContactPublishedMonth'),
 			'Published',
 			'/label',
-			array('select' => array('name' => 'data[Contact][published][month]', 'id' => 'ContactPublishedMonth')),
+			array('select' => array('name' => 'Contact[published][month]', 'id' => 'ContactPublishedMonth')),
 			$monthsRegex,
 			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
 			date('F', $now),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][published][day]', 'id' => 'ContactPublishedDay')),
+			array('select' => array('name' => 'Contact[published][day]', 'id' => 'ContactPublishedDay')),
 			$daysRegex,
 			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
 			date('j', $now),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
 			$yearsRegex,
 			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
 			date('Y', $now),
@@ -5012,21 +5011,21 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ContactPublished2Month'),
 			'Published2',
 			'/label',
-			array('select' => array('name' => 'data[Contact][published2][month]', 'id' => 'ContactPublished2Month')),
+			array('select' => array('name' => 'Contact[published2][month]', 'id' => 'ContactPublished2Month')),
 			$monthsRegex,
 			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
 			date('F', $now),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][published2][day]', 'id' => 'ContactPublished2Day')),
+			array('select' => array('name' => 'Contact[published2][day]', 'id' => 'ContactPublished2Day')),
 			$daysRegex,
 			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
 			date('j', $now),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][published2][year]', 'id' => 'ContactPublished2Year')),
+			array('select' => array('name' => 'Contact[published2][year]', 'id' => 'ContactPublished2Year')),
 			$yearsRegex,
 			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
 			date('Y', $now),
@@ -5044,21 +5043,21 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ContactPublishedMonth'),
 			'Published',
 			'/label',
-			array('select' => array('name' => 'data[Contact][published][month]', 'id' => 'ContactPublishedMonth')),
+			array('select' => array('name' => 'Contact[published][month]', 'id' => 'ContactPublishedMonth')),
 			'preg:/(?:<option value="([\d])+">[\d]+<\/option>[\r\n]*)*/',
 			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
 			date('m', $now),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][published][day]', 'id' => 'ContactPublishedDay')),
+			array('select' => array('name' => 'Contact[published][day]', 'id' => 'ContactPublishedDay')),
 			$daysRegex,
 			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
 			date('j', $now),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
 			$yearsRegex,
 			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
 			date('Y', $now),
@@ -5075,7 +5074,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ContactPublishedHour'),
 			'Published',
 			'/label',
-			array('select' => array('name' => 'data[Contact][published][hour]', 'id' => 'ContactPublishedHour')),
+			array('select' => array('name' => 'Contact[published][hour]', 'id' => 'ContactPublishedHour')),
 			'preg:/(?:<option value="([\d])+">[\d]+<\/option>[\r\n]*)*/',
 			array('option' => array('value' => date('h', $now), 'selected' => 'selected')),
 			date('g', $now),
@@ -5152,36 +5151,36 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->dateTime('Contact.1.updated');
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][1][updated][day]', 'id' => 'Contact1UpdatedDay')),
+			array('select' => array('name' => 'Contact[1][updated][day]', 'id' => 'Contact1UpdatedDay')),
 			$daysRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][1][updated][month]', 'id' => 'Contact1UpdatedMonth')),
+			array('select' => array('name' => 'Contact[1][updated][month]', 'id' => 'Contact1UpdatedMonth')),
 			$monthsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][1][updated][year]', 'id' => 'Contact1UpdatedYear')),
+			array('select' => array('name' => 'Contact[1][updated][year]', 'id' => 'Contact1UpdatedYear')),
 			$yearsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
-			array('select' => array('name' => 'data[Contact][1][updated][hour]', 'id' => 'Contact1UpdatedHour')),
+			array('select' => array('name' => 'Contact[1][updated][hour]', 'id' => 'Contact1UpdatedHour')),
 			$hoursRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			':',
-			array('select' => array('name' => 'data[Contact][1][updated][min]', 'id' => 'Contact1UpdatedMin')),
+			array('select' => array('name' => 'Contact[1][updated][min]', 'id' => 'Contact1UpdatedMin')),
 			$minutesRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			' ',
-			array('select' => array('name' => 'data[Contact][1][updated][meridian]', 'id' => 'Contact1UpdatedMeridian')),
+			array('select' => array('name' => 'Contact[1][updated][meridian]', 'id' => 'Contact1UpdatedMeridian')),
 			$meridianRegex,
 			array('option' => array('value' => '')),
 			'/option',
@@ -5191,36 +5190,36 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->dateTime('Contact.2.updated');
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][2][updated][day]', 'id' => 'Contact2UpdatedDay')),
+			array('select' => array('name' => 'Contact[2][updated][day]', 'id' => 'Contact2UpdatedDay')),
 			$daysRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][2][updated][month]', 'id' => 'Contact2UpdatedMonth')),
+			array('select' => array('name' => 'Contact[2][updated][month]', 'id' => 'Contact2UpdatedMonth')),
 			$monthsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'data[Contact][2][updated][year]', 'id' => 'Contact2UpdatedYear')),
+			array('select' => array('name' => 'Contact[2][updated][year]', 'id' => 'Contact2UpdatedYear')),
 			$yearsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
-			array('select' => array('name' => 'data[Contact][2][updated][hour]', 'id' => 'Contact2UpdatedHour')),
+			array('select' => array('name' => 'Contact[2][updated][hour]', 'id' => 'Contact2UpdatedHour')),
 			$hoursRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			':',
-			array('select' => array('name' => 'data[Contact][2][updated][min]', 'id' => 'Contact2UpdatedMin')),
+			array('select' => array('name' => 'Contact[2][updated][min]', 'id' => 'Contact2UpdatedMin')),
 			$minutesRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			' ',
-			array('select' => array('name' => 'data[Contact][2][updated][meridian]', 'id' => 'Contact2UpdatedMeridian')),
+			array('select' => array('name' => 'Contact[2][updated][meridian]', 'id' => 'Contact2UpdatedMeridian')),
 			$meridianRegex,
 			array('option' => array('value' => '')),
 			'/option',
@@ -5254,7 +5253,7 @@ class FormHelperTest extends TestCase {
 	public function testMonth() {
 		$result = $this->Form->month('Model.field');
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
+			array('select' => array('name' => 'Model[field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5269,7 +5268,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->month('Model.field', array('empty' => true));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
+			array('select' => array('name' => 'Model[field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5284,7 +5283,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->month('Model.field', array('monthNames' => false));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
+			array('select' => array('name' => 'Model[field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5302,7 +5301,7 @@ class FormHelperTest extends TestCase {
 			'07' => 'Jul', '08' => 'Aug', '09' => 'Sep', '10' => 'Oct', '11' => 'Nov', '12' => 'Dec');
 		$result = $this->Form->month('Model.field', array('monthNames' => $monthNames));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
+			array('select' => array('name' => 'Model[field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5326,7 +5325,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->day('Model.field', array('value' => false));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('select' => array('name' => 'Model[field][day]', 'id' => 'ModelFieldDay')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5343,7 +5342,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2006-10-10 23:12:32';
 		$result = $this->Form->day('Model.field');
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('select' => array('name' => 'Model[field][day]', 'id' => 'ModelFieldDay')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5364,7 +5363,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->day('Model.field', array('value' => '10'));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('select' => array('name' => 'Model[field][day]', 'id' => 'ModelFieldDay')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5385,7 +5384,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2006-10-10 23:12:32';
 		$result = $this->Form->day('Model.field', array('value' => true));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('select' => array('name' => 'Model[field][day]', 'id' => 'ModelFieldDay')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5414,7 +5413,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->minute('Model.field');
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			array('select' => array('name' => 'Model[field][min]', 'id' => 'ModelFieldMin')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),
@@ -5434,7 +5433,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->minute('Model.field');
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			array('select' => array('name' => 'Model[field][min]', 'id' => 'ModelFieldMin')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),
@@ -5458,7 +5457,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->minute('Model.field', array('interval' => 5));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			array('select' => array('name' => 'Model[field][min]', 'id' => 'ModelFieldMin')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),
@@ -5478,7 +5477,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:10:32';
 		$result = $this->Form->minute('Model.field', array('interval' => 5));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			array('select' => array('name' => 'Model[field][min]', 'id' => 'ModelFieldMin')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),
@@ -5506,7 +5505,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->hour('Model.field', false);
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5523,7 +5522,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->hour('Model.field', false);
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5543,7 +5542,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->hour('Model.field', true, array('value' => '23'));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),
@@ -5566,7 +5565,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->hour('Model.field', true);
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00', 'selected' => 'selected')),
@@ -5598,7 +5597,7 @@ class FormHelperTest extends TestCase {
 	public function testYear() {
 		$result = $this->Form->year('Model.field', 2006, 2007);
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][year]', 'id' => 'ModelFieldYear')),
+			array('select' => array('name' => 'Model[field][year]', 'id' => 'ModelFieldYear')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '2007')),
@@ -5613,7 +5612,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->year('Model.field', 2006, 2007, array('orderYear' => 'asc'));
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][year]', 'id' => 'ModelFieldYear')),
+			array('select' => array('name' => 'Model[field][year]', 'id' => 'ModelFieldYear')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '2006')),
@@ -5629,7 +5628,7 @@ class FormHelperTest extends TestCase {
 		$this->request->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2007, array('class' => 'year'));
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear', 'class' => 'year')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear', 'class' => 'year')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '2007')),
@@ -5645,7 +5644,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false));
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2007')),
 			'2007',
 			'/option',
@@ -5659,7 +5658,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2007, array('value' => false));
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '2007')),
@@ -5675,7 +5674,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false, 'value' => false));
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2007')),
 			'2007',
 			'/option',
@@ -5689,7 +5688,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2007, array('value' => 2007));
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '2007', 'selected' => 'selected')),
@@ -5705,7 +5704,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false, 'value' => 2007));
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2007', 'selected' => 'selected')),
 			'2007',
 			'/option',
@@ -5719,7 +5718,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2008, array('empty' => false, 'value' => 2007));
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2008')),
 			'2008',
 			'/option',
@@ -5736,7 +5735,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2008, array('empty' => false));
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2008')),
 			'2008',
 			'/option',
@@ -5754,7 +5753,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->create('Contact');
 		$result = $this->Form->year('published', 2006, 2008, array('empty' => false));
 		$expected = array(
-			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2008')),
 			'2008',
 			'/option',
@@ -5769,7 +5768,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->year('published', array(), array(), array('empty' => false));
-		$this->assertContains('data[Contact][published][year]', $result);
+		$this->assertContains('Contact[published][year]', $result);
 	}
 
 /**
@@ -5781,7 +5780,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data = array('Model' => array('field' => 'some test data'));
 		$result = $this->Form->textarea('Model.field');
 		$expected = array(
-			'textarea' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'textarea' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			'some test data',
 			'/textarea',
 		);
@@ -5789,7 +5788,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->textarea('Model.tmp');
 		$expected = array(
-			'textarea' => array('name' => 'data[Model][tmp]', 'id' => 'ModelTmp'),
+			'textarea' => array('name' => 'Model[tmp]', 'id' => 'ModelTmp'),
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
@@ -5797,7 +5796,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data = array('Model' => array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
 		$result = $this->Form->textarea('Model.field');
 		$expected = array(
-			'textarea' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'textarea' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			htmlentities('some <strong>test</strong> data with <a href="#">HTML</a> chars'),
 			'/textarea',
 		);
@@ -5806,7 +5805,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data = array('Model' => array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
 		$result = $this->Form->textarea('Model.field', array('escape' => false));
 		$expected = array(
-			'textarea' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'textarea' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 			'some <strong>test</strong> data with <a href="#">HTML</a> chars',
 			'/textarea',
 		);
@@ -5815,7 +5814,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['0']['OtherModel']['field'] = null;
 		$result = $this->Form->textarea('Model.0.OtherModel.field');
 		$expected = array(
-			'textarea' => array('name' => 'data[Model][0][OtherModel][field]', 'id' => 'Model0OtherModelField'),
+			'textarea' => array('name' => 'Model[0][OtherModel][field]', 'id' => 'Model0OtherModelField'),
 			'/textarea'
 		);
 		$this->assertTags($result, $expected);
@@ -5838,7 +5837,7 @@ class FormHelperTest extends TestCase {
 				'label' => array('for' => 'PostContent'),
 					'Current Text',
 				'/label',
-				'textarea' => array('name' => 'data[Post][content]', 'id' => 'PostContent', 'rows' => '15', 'cols' => '75'),
+				'textarea' => array('name' => 'Post[content]', 'id' => 'PostContent', 'rows' => '15', 'cols' => '75'),
 				'GREAT®',
 				'/textarea',
 			'/div'
@@ -5857,7 +5856,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['field'] = 'test';
 		$result = $this->Form->hidden('Contact.field', array('id' => 'theID'));
 		$this->assertTags($result, array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Contact][field]', 'id' => 'theID', 'value' => 'test'))
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[field]', 'id' => 'theID', 'value' => 'test'))
 		);
 	}
 
@@ -5868,7 +5867,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testFileUploadField() {
 		$result = $this->Form->file('Model.upload');
-		$this->assertTags($result, array('input' => array('type' => 'file', 'name' => 'data[Model][upload]', 'id' => 'ModelUpload')));
+		$this->assertTags($result, array('input' => array('type' => 'file', 'name' => 'Model[upload]', 'id' => 'ModelUpload')));
 
 		$this->Form->request->data['Model.upload'] = array("name" => "", "type" => "", "tmp_name" => "", "error" => 4, "size" => 0);
 		$result = $this->Form->input('Model.upload', array('type' => 'file'));
@@ -5877,7 +5876,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ModelUpload'),
 			'Upload',
 			'/label',
-			'input' => array('type' => 'file', 'name' => 'data[Model][upload]', 'id' => 'ModelUpload'),
+			'input' => array('type' => 'file', 'name' => 'Model[upload]', 'id' => 'ModelUpload'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -5892,7 +5891,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->create('ValidateUser', array('type' => 'file'));
 		$result = $this->Form->file('ValidateProfile.city');
 		$expected = array(
-			'input' => array('type' => 'file', 'name' => 'data[ValidateProfile][city]', 'id' => 'ValidateProfileCity')
+			'input' => array('type' => 'file', 'name' => 'ValidateProfile[city]', 'id' => 'ValidateProfileCity')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -5955,7 +5954,7 @@ class FormHelperTest extends TestCase {
 		));
 
 		$result = $this->Form->postButton('Send', '/', array('data' => array('extra' => 'value')));
-		$this->assertTrue(strpos($result, '<input type="hidden" name="data[extra]" value="value"/>') !== false);
+		$this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"/>') !== false);
 	}
 
 /**
@@ -5973,14 +5972,14 @@ class FormHelperTest extends TestCase {
 			),
 			array('div' => array('style' => 'display:none;')),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][key]', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[key]', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
 			'/div',
 			'button' => array('type' => 'submit'),
 			'Delete',
 			'/button',
 			array('div' => array('style' => 'display:none;')),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
 			'/div',
 			'/form',
 		);
@@ -6020,7 +6019,7 @@ class FormHelperTest extends TestCase {
 		));
 
 		$result = $this->Form->postLink('Delete', '/posts/delete', array('data' => array('id' => 1)));
-		$this->assertContains('<input type="hidden" name="data[id]" value="1"/>', $result);
+		$this->assertContains('<input type="hidden" name="id" value="1"/>', $result);
 	}
 
 /**
@@ -6038,10 +6037,10 @@ class FormHelperTest extends TestCase {
 				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][key]', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[key]', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
 			'div' => array('style' => 'display:none;'),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
 			'/div',
 			'/form',
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
@@ -6484,28 +6483,13 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateAutoUrl() {
-		Router::setRequestInfo(array(array(), array('base' => '/base_url')));
-		$this->Form->request->here = '/base_url/contacts/add/Contact:1';
-		$this->Form->request->base = '/base_url';
-		$result = $this->Form->create('Contact');
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/base_url/contacts/add/Contact:1',
-				'accept-charset' => 'utf-8'
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
 		$this->Form->request['action'] = 'delete';
-		$this->Form->request->here = '/base_url/contacts/delete/10/User:42';
-		$this->Form->request->base = '/base_url';
+		$this->Form->request->here = '/contacts/delete/10';
+		$this->Form->request->base = '';
 		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactDeleteForm', 'method' => 'post', 'action' => '/base_url/contacts/delete/10/User:42',
+				'id' => 'ContactDeleteForm', 'method' => 'post', 'action' => '/contacts/delete/10',
 				'accept-charset' => 'utf-8'
 			),
 			'div' => array('style' => 'display:none;'),
@@ -6553,7 +6537,7 @@ class FormHelperTest extends TestCase {
 		));
 		$result = $this->Form->input('username');
 		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername')
+			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername')
 		);
 		$this->assertTags($result, $expected);
 
@@ -6561,14 +6545,14 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'UserUsername'), 'username', '/label',
-			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername'),
+			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('username', array('label' => 'Username', 'format' => array('input', 'label')));
 		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername'),
+			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
 			'label' => array('for' => 'UserUsername'), 'Username', '/label',
 		);
 		$this->assertTags($result, $expected);
@@ -6583,7 +6567,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'changed', 'class' => 'nice'), 'Username', '/label',
-			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername'),
+			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -6811,9 +6795,9 @@ class FormHelperTest extends TestCase {
 		$this->Form->create();
 		$result = $this->Form->select('People.People', $options, array('multiple' => true));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[People][People]', 'value' => '', 'id' => 'PeoplePeople_'),
+			'input' => array('type' => 'hidden', 'name' => 'People[People]', 'value' => '', 'id' => 'PeoplePeople_'),
 			'select' => array(
-				'name' => 'data[People][People][]', 'multiple' => 'multiple', 'id' => 'PeoplePeople'
+				'name' => 'People[People][]', 'multiple' => 'multiple', 'id' => 'PeoplePeople'
 			),
 			array('option' => array('value' => 1)), 'Nate', '/option',
 			array('option' => array('value' => 2)), 'Garrett', '/option',
@@ -6838,7 +6822,7 @@ class FormHelperTest extends TestCase {
 			'Non Existing',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][non_existing]',
+				'type' => 'text', 'name' => 'Contact[non_existing]',
 				'id' => 'ContactNonExisting'
 			),
 			'/div'
@@ -6852,7 +6836,7 @@ class FormHelperTest extends TestCase {
 			'Imrequired',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imrequired]',
+				'type' => 'text', 'name' => 'Contact[imrequired]',
 				'id' => 'ContactImrequired'
 			),
 			'/div'
@@ -6866,7 +6850,7 @@ class FormHelperTest extends TestCase {
 			'Imalsorequired',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imalsorequired]',
+				'type' => 'text', 'name' => 'Contact[imalsorequired]',
 				'id' => 'ContactImalsorequired'
 			),
 			'/div'
@@ -6880,7 +6864,7 @@ class FormHelperTest extends TestCase {
 			'Imrequiredtoo',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imrequiredtoo]',
+				'type' => 'text', 'name' => 'Contact[imrequiredtoo]',
 				'id' => 'ContactImrequiredtoo'
 			),
 			'/div'
@@ -6894,7 +6878,7 @@ class FormHelperTest extends TestCase {
 			'Required One',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][required_one]',
+				'type' => 'text', 'name' => 'Contact[required_one]',
 				'id' => 'ContactRequiredOne'
 			),
 			'/div'
@@ -6908,7 +6892,7 @@ class FormHelperTest extends TestCase {
 			'String Required',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][string_required]',
+				'type' => 'text', 'name' => 'Contact[string_required]',
 				'id' => 'ContactStringRequired'
 			),
 			'/div'
@@ -6922,7 +6906,7 @@ class FormHelperTest extends TestCase {
 			'Imnotrequired',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imnotrequired]',
+				'type' => 'text', 'name' => 'Contact[imnotrequired]',
 				'id' => 'ContactImnotrequired'
 			),
 			'/div'
@@ -6936,7 +6920,7 @@ class FormHelperTest extends TestCase {
 			'Imalsonotrequired',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imalsonotrequired]',
+				'type' => 'text', 'name' => 'Contact[imalsonotrequired]',
 				'id' => 'ContactImalsonotrequired'
 			),
 			'/div'
@@ -6950,7 +6934,7 @@ class FormHelperTest extends TestCase {
 			'Imnotrequiredeither',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imnotrequiredeither]',
+				'type' => 'text', 'name' => 'Contact[imnotrequiredeither]',
 				'id' => 'ContactImnotrequiredeither'
 			),
 			'/div'
@@ -6984,7 +6968,7 @@ class FormHelperTest extends TestCase {
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][name]',
+				'type' => 'text', 'name' => 'Contact[name]',
 				'id' => 'ContactName', 'maxlength' => '255'
 			),
 			'/div'
@@ -6998,7 +6982,7 @@ class FormHelperTest extends TestCase {
 			'Non Existing Field In Contact Model',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][non_existing_field_in_contact_model]',
+				'type' => 'text', 'name' => 'Contact[non_existing_field_in_contact_model]',
 				'id' => 'ContactNonExistingFieldInContactModel'
 			),
 			'/div'
@@ -7012,7 +6996,7 @@ class FormHelperTest extends TestCase {
 			'Street',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Address][street]',
+				'type' => 'text', 'name' => 'Address[street]',
 				'id' => 'AddressStreet'
 			),
 			'/div'
@@ -7026,7 +7010,7 @@ class FormHelperTest extends TestCase {
 			'Non Existing Field In Model',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Address][non_existing_field_in_model]',
+				'type' => 'text', 'name' => 'Address[non_existing_field_in_model]',
 				'id' => 'AddressNonExistingFieldInModel'
 			),
 			'/div'
@@ -7039,7 +7023,7 @@ class FormHelperTest extends TestCase {
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][name]',
+				'type' => 'text', 'name' => 'Contact[name]',
 				'id' => 'ContactName', 'maxlength' => '255'
 			)
 		);
@@ -7054,7 +7038,7 @@ class FormHelperTest extends TestCase {
 			'Published',
 			'/label',
 			array('select' => array(
-				'name' => 'data[Contact][published][month]', 'id' => 'ContactPublishedMonth'
+				'name' => 'Contact[published][month]', 'id' => 'ContactPublishedMonth'
 			)),
 			$monthsRegex,
 			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
@@ -7063,7 +7047,7 @@ class FormHelperTest extends TestCase {
 			'*/select',
 			'-',
 			array('select' => array(
-				'name' => 'data[Contact][published][day]', 'id' => 'ContactPublishedDay'
+				'name' => 'Contact[published][day]', 'id' => 'ContactPublishedDay'
 			)),
 			$daysRegex,
 			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
@@ -7072,7 +7056,7 @@ class FormHelperTest extends TestCase {
 			'*/select',
 			'-',
 			array('select' => array(
-				'name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear'
+				'name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear'
 			)),
 			$yearsRegex,
 			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
@@ -7087,7 +7071,7 @@ class FormHelperTest extends TestCase {
 			'Updated',
 			'/label',
 			array('select' => array(
-				'name' => 'data[Contact][updated][month]', 'id' => 'ContactUpdatedMonth'
+				'name' => 'Contact[updated][month]', 'id' => 'ContactUpdatedMonth'
 			)),
 			$monthsRegex,
 			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
@@ -7096,7 +7080,7 @@ class FormHelperTest extends TestCase {
 			'*/select',
 			'-',
 			array('select' => array(
-				'name' => 'data[Contact][updated][day]', 'id' => 'ContactUpdatedDay'
+				'name' => 'Contact[updated][day]', 'id' => 'ContactUpdatedDay'
 			)),
 			$daysRegex,
 			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
@@ -7105,7 +7089,7 @@ class FormHelperTest extends TestCase {
 			'*/select',
 			'-',
 			array('select' => array(
-				'name' => 'data[Contact][updated][year]', 'id' => 'ContactUpdatedYear'
+				'name' => 'Contact[updated][year]', 'id' => 'ContactUpdatedYear'
 			)),
 			$yearsRegex,
 			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
@@ -7121,7 +7105,7 @@ class FormHelperTest extends TestCase {
 			'Stuff',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[UserForm][stuff]',
+				'type' => 'text', 'name' => 'UserForm[stuff]',
 				'id' => 'UserFormStuff', 'maxlength' => 10
 			),
 			'/div'
@@ -7154,7 +7138,7 @@ class FormHelperTest extends TestCase {
 			'Non Existing Nor Validated',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][non_existing_nor_validated]',
+				'type' => 'text', 'name' => 'Contact[non_existing_nor_validated]',
 				'id' => 'ContactNonExistingNorValidated'
 			)
 		);
@@ -7168,7 +7152,7 @@ class FormHelperTest extends TestCase {
 			'Non Existing Nor Validated',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][non_existing_nor_validated]',
+				'type' => 'text', 'name' => 'Contact[non_existing_nor_validated]',
 				'value' => 'my value', 'id' => 'ContactNonExistingNorValidated'
 			)
 		);
@@ -7183,7 +7167,7 @@ class FormHelperTest extends TestCase {
 			'Non Existing Nor Validated',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][non_existing_nor_validated]',
+				'type' => 'text', 'name' => 'Contact[non_existing_nor_validated]',
 				'value' => 'CakePHP magic', 'id' => 'ContactNonExistingNorValidated'
 			)
 		);
@@ -7211,7 +7195,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => false));
 		$this->assertTags($result, array('input' => array(
-			'name' => 'data[Contact][name]', 'type' => 'text',
+			'name' => 'Contact[name]', 'type' => 'text',
 			'id' => 'ContactName', 'maxlength' => '255')
 		));
 
@@ -7221,7 +7205,7 @@ class FormHelperTest extends TestCase {
 			'My label',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][name]',
+				'type' => 'text', 'name' => 'Contact[name]',
 				'id' => 'ContactName', 'maxlength' => '255'
 			)
 		);
@@ -7235,7 +7219,7 @@ class FormHelperTest extends TestCase {
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][name]',
+				'type' => 'text', 'name' => 'Contact[name]',
 				'id' => 'ContactName', 'maxlength' => '255'
 			)
 		);
@@ -7249,7 +7233,7 @@ class FormHelperTest extends TestCase {
 			'My label',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][name]',
+				'type' => 'text', 'name' => 'Contact[name]',
 				'id' => 'ContactName', 'maxlength' => '255'
 			)
 		);
@@ -7263,7 +7247,7 @@ class FormHelperTest extends TestCase {
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][name]',
+				'type' => 'text', 'name' => 'Contact[name]',
 				'id' => 'my_id', 'maxlength' => '255'
 			)
 		);
@@ -7271,7 +7255,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('1.id');
 		$this->assertTags($result, array('input' => array(
-			'type' => 'hidden', 'name' => 'data[Contact][1][id]',
+			'type' => 'hidden', 'name' => 'Contact[1][id]',
 			'id' => 'Contact1Id'
 		)));
 
@@ -7282,7 +7266,7 @@ class FormHelperTest extends TestCase {
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][1][name]',
+				'type' => 'text', 'name' => 'Contact[1][name]',
 				'id' => 'Contact1Name', 'maxlength' => '255'
 			),
 			'/div'
@@ -7292,7 +7276,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Contact.1.id');
 		$this->assertTags($result, array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Contact][1][id]',
+				'type' => 'hidden', 'name' => 'Contact[1][id]',
 				'id' => 'Contact1Id'
 			)
 		));
@@ -7304,7 +7288,7 @@ class FormHelperTest extends TestCase {
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Model][1][name]',
+				'type' => 'text', 'name' => 'Model[1][name]',
 				'id' => 'Model1Name'
 			),
 			'/div'
@@ -7405,18 +7389,18 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('id');
 		$this->assertTags($result, array('input' => array(
-			'type' => 'hidden', 'name' => 'data[UserForm][id]', 'id' => 'UserFormId'
+			'type' => 'hidden', 'name' => 'UserForm[id]', 'id' => 'UserFormId'
 		)));
 
 		$result = $this->Form->input('ValidateItem.id');
 		$this->assertTags($result, array('input' => array(
-			'type' => 'hidden', 'name' => 'data[ValidateItem][id]',
+			'type' => 'hidden', 'name' => 'ValidateItem[id]',
 			'id' => 'ValidateItemId'
 		)));
 
 		$result = $this->Form->input('ValidateUser.id');
 		$this->assertTags($result, array('input' => array(
-			'type' => 'hidden', 'name' => 'data[ValidateUser][id]',
+			'type' => 'hidden', 'name' => 'ValidateUser[id]',
 			'id' => 'ValidateUserId'
 		)));
 	}
@@ -7436,7 +7420,7 @@ class FormHelperTest extends TestCase {
 			'Name',
 			'/label',
 			'input' => array(
-				'name' => 'data[TestMail][name]', 'type' => 'text',
+				'name' => 'TestMail[name]', 'type' => 'text',
 				'id' => 'TestMailName'
 			),
 			'/div'
@@ -7452,7 +7436,7 @@ class FormHelperTest extends TestCase {
 			'Name',
 			'/label',
 			'input' => array(
-				'name' => 'data[TestMail][name]', 'type' => 'text',
+				'name' => 'TestMail[name]', 'type' => 'text',
 				'id' => 'TestMailName'
 			),
 			'/div'
@@ -7485,7 +7469,7 @@ class FormHelperTest extends TestCase {
 		);
 
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 				array('optgroup' => array('label' => 'Fred')),
 					array('option' => array('value' => 'freds_son_1')),
 						'Fred',
@@ -7523,7 +7507,7 @@ class FormHelperTest extends TestCase {
 		);
 
 		$expected = array(
-			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
 				array('option' => array('value' => 1)),
 					'One',
 				'/option',
@@ -7562,7 +7546,7 @@ class FormHelperTest extends TestCase {
 				'/label',
 				'textarea' => array(
 					'id' => 'ValidateProfile1ValidateItem2Name',
-					'name' => 'data[ValidateProfile][1][ValidateItem][2][name]',
+					'name' => 'ValidateProfile[1][ValidateItem][2][name]',
 					'cols' => 30,
 					'rows' => 6
 				),
@@ -7579,7 +7563,7 @@ class FormHelperTest extends TestCase {
 			'Created',
 			'/label',
 			array('select' => array(
-				'name' => 'data[ValidateProfile][1][ValidateItem][2][created][month]',
+				'name' => 'ValidateProfile[1][ValidateItem][2][created][month]',
 				'id' => 'ValidateProfile1ValidateItem2CreatedMonth'
 				)
 			),
@@ -7587,7 +7571,7 @@ class FormHelperTest extends TestCase {
 			$this->dateRegex['monthsRegex'],
 			'/select', '-',
 			array('select' => array(
-				'name' => 'data[ValidateProfile][1][ValidateItem][2][created][day]',
+				'name' => 'ValidateProfile[1][ValidateItem][2][created][day]',
 				'id' => 'ValidateProfile1ValidateItem2CreatedDay'
 				)
 			),
@@ -7595,7 +7579,7 @@ class FormHelperTest extends TestCase {
 			$this->dateRegex['daysRegex'],
 			'/select', '-',
 			array('select' => array(
-				'name' => 'data[ValidateProfile][1][ValidateItem][2][created][year]',
+				'name' => 'ValidateProfile[1][ValidateItem][2][created][year]',
 				'id' => 'ValidateProfile1ValidateItem2CreatedYear'
 				)
 			),
@@ -7616,7 +7600,7 @@ class FormHelperTest extends TestCase {
 			'Profile',
 			'/label',
 			'select' => array(
-				'name' => 'data[ValidateProfile][1][ValidateItem][2][profile_id]',
+				'name' => 'ValidateProfile[1][ValidateItem][2][profile_id]',
 				'id' => 'ValidateProfile1ValidateItem2ProfileId',
 				'class' => 'form-error'
 			),
@@ -7661,7 +7645,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input text'),
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][email]',
+				'type' => 'text', 'name' => 'Contact[email]',
 				'id' => 'ContactEmail'
 			),
 			'/div'
@@ -7675,7 +7659,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input text'),
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][email]',
+				'type' => 'text', 'name' => 'Contact[email]',
 				'id' => 'ContactEmail'
 			)),
 			'label' => array('for' => 'ContactEmail'),
@@ -7695,7 +7679,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input text'),
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][email]',
+				'type' => 'text', 'name' => 'Contact[email]',
 				'id' => 'ContactEmail'
 			)),
 			array('div' => array()),
@@ -7724,18 +7708,18 @@ class FormHelperTest extends TestCase {
 			'/legend',
 			'I am between',
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Contact][method]',
+				'type' => 'hidden', 'name' => 'Contact[method]',
 				'value' => '', 'id' => 'ContactMethod_'
 			),
 			array('input' => array(
-				'type' => 'radio', 'name' => 'data[Contact][method]',
+				'type' => 'radio', 'name' => 'Contact[method]',
 				'value' => 'email', 'id' => 'ContactMethodEmail'
 			)),
 			array('label' => array('for' => 'ContactMethodEmail')),
 			'Email',
 			'/label',
 			array('input' => array(
-				'type' => 'radio', 'name' => 'data[Contact][method]',
+				'type' => 'radio', 'name' => 'Contact[method]',
 				'value' => 'pigeon', 'id' => 'ContactMethodPigeon'
 			)),
 			array('label' => array('for' => 'ContactMethodPigeon')),
@@ -7755,31 +7739,31 @@ class FormHelperTest extends TestCase {
 	public function testHtml5Inputs() {
 		$result = $this->Form->email('User.email');
 		$expected = array(
-			'input' => array('type' => 'email', 'name' => 'data[User][email]', 'id' => 'UserEmail')
+			'input' => array('type' => 'email', 'name' => 'User[email]', 'id' => 'UserEmail')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->search('User.query');
 		$expected = array(
-			'input' => array('type' => 'search', 'name' => 'data[User][query]', 'id' => 'UserQuery')
+			'input' => array('type' => 'search', 'name' => 'User[query]', 'id' => 'UserQuery')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->search('User.query', array('value' => 'test'));
 		$expected = array(
-			'input' => array('type' => 'search', 'name' => 'data[User][query]', 'id' => 'UserQuery', 'value' => 'test')
+			'input' => array('type' => 'search', 'name' => 'User[query]', 'id' => 'UserQuery', 'value' => 'test')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->search('User.query', array('type' => 'text', 'value' => 'test'));
 		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'data[User][query]', 'id' => 'UserQuery', 'value' => 'test')
+			'input' => array('type' => 'text', 'name' => 'User[query]', 'id' => 'UserQuery', 'value' => 'test')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('User.website', array('type' => 'url', 'value' => 'http://domain.tld', 'div' => false, 'label' => false));
 		$expected = array(
-			'input' => array('type' => 'url', 'name' => 'data[User][website]', 'id' => 'UserWebsite', 'value' => 'http://domain.tld')
+			'input' => array('type' => 'url', 'name' => 'User[website]', 'id' => 'UserWebsite', 'value' => 'http://domain.tld')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -7846,7 +7830,7 @@ class FormHelperTest extends TestCase {
 			'Imrequiredonupdate',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imrequiredonupdate]',
+				'type' => 'text', 'name' => 'Contact[imrequiredonupdate]',
 				'id' => 'ContactImrequiredonupdate'
 			),
 			'/div'
@@ -7860,7 +7844,7 @@ class FormHelperTest extends TestCase {
 			'Imrequiredoncreate',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imrequiredoncreate]',
+				'type' => 'text', 'name' => 'Contact[imrequiredoncreate]',
 				'id' => 'ContactImrequiredoncreate'
 			),
 			'/div'
@@ -7874,7 +7858,7 @@ class FormHelperTest extends TestCase {
 			'Imrequiredonboth',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imrequiredonboth]',
+				'type' => 'text', 'name' => 'Contact[imrequiredonboth]',
 				'id' => 'ContactImrequiredonboth'
 			),
 			'/div'
@@ -7888,7 +7872,7 @@ class FormHelperTest extends TestCase {
 			'Imrequired',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imrequired]',
+				'type' => 'text', 'name' => 'Contact[imrequired]',
 				'id' => 'ContactImrequired'
 			),
 			'/div'
@@ -7912,7 +7896,7 @@ class FormHelperTest extends TestCase {
 			'Imrequiredonupdate',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imrequiredonupdate]',
+				'type' => 'text', 'name' => 'Contact[imrequiredonupdate]',
 				'id' => 'ContactImrequiredonupdate'
 			),
 			'/div'
@@ -7925,7 +7909,7 @@ class FormHelperTest extends TestCase {
 			'Imrequiredoncreate',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imrequiredoncreate]',
+				'type' => 'text', 'name' => 'Contact[imrequiredoncreate]',
 				'id' => 'ContactImrequiredoncreate'
 			),
 			'/div'
@@ -7939,7 +7923,7 @@ class FormHelperTest extends TestCase {
 			'Imrequiredonboth',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imrequiredonboth]',
+				'type' => 'text', 'name' => 'Contact[imrequiredonboth]',
 				'id' => 'ContactImrequiredonboth'
 			),
 			'/div'
@@ -7953,7 +7937,7 @@ class FormHelperTest extends TestCase {
 			'Imrequired',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imrequired]',
+				'type' => 'text', 'name' => 'Contact[imrequired]',
 				'id' => 'ContactImrequired'
 			),
 			'/div'
@@ -7979,7 +7963,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input text', 'style' => 'color: #000;'),
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][field1]',
+				'type' => 'text', 'name' => 'Contact[field1]',
 				'id' => 'ContactField1'
 			),
 			'/div'
@@ -7996,7 +7980,7 @@ class FormHelperTest extends TestCase {
 			'Label',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][field1]',
+				'type' => 'text', 'name' => 'Contact[field1]',
 				'id' => 'ContactField1'
 			),
 		);
@@ -8008,7 +7992,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Contact.field1');
 		$expected = array(
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][field1]',
+				'type' => 'text', 'name' => 'Contact[field1]',
 				'id' => 'ContactField1'
 			),
 		);
