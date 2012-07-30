@@ -742,7 +742,8 @@ class RssHelperTest extends CakeTestCase {
 	public function testElementNamespaceWithPrefix() {
 		$item = array(
 				'title'   => 'Title',
-				'creator' => 'Alex'
+				'dc:creator' => 'Alex',
+				'xy:description' => 'descriptive words'
 			);
 		$attributes = array(
 				'namespace' => array(
@@ -760,11 +761,16 @@ class RssHelperTest extends CakeTestCase {
 			),
 			'Title',
 			'/title',
-			'creator' => array(
+			'dc:creator' => array(
 					'xmlns:dc' => 'http://link.com'
 			),
 			'Alex',
-			'/creator',
+			'/dc:creator',
+			'description' => array(
+					'xmlns:dc' => 'http://link.com'
+			),
+			'descriptive words',
+			'/description',
 			'/item'
 		);
 		$this->assertTags($result, $expected, true);
