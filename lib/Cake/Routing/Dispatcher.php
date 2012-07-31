@@ -143,9 +143,9 @@ class Dispatcher implements CakeEventListener {
 		$request = $beforeEvent->data['request'];
 		if ($beforeEvent->result instanceof CakeResponse) {
 			if (isset($request->params['return'])) {
-				return $response->body();
+				return $beforeEvent->result->body();
 			}
-			$response->send();
+			$beforeEvent->result->send();
 			return;
 		}
 
