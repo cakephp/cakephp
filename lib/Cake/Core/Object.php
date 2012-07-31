@@ -197,6 +197,14 @@ class Object {
 					$classProperties[$var] = Hash::normalize($classProperties[$var]);
 					$this->{$var} = Hash::normalize($this->{$var});
 				}
+				foreach ($this->{$var} as $key => $value) {
+					if ($value !== null) {
+						continue;
+					}
+					if (isset($classProperties[$var][$key]) && is_array($classProperties[$var][$key])) {
+						$this->{$var}[$key] = array();
+					}
+				}
 				$this->{$var} = Hash::merge($classProperties[$var], $this->{$var});
 			}
 		}
