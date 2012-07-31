@@ -212,8 +212,8 @@ class ControllerMergeVarsTest extends CakeTestCase {
  *
  * @return void
  */
- 	public function testHelperDisabledMerge() {
- 		$Controller = new MergeVariablesController();
+	public function testHelperDisabledMerge() {
+		$Controller = new MergeVariablesController();
 		$Controller->helpers = array('Html' => false, 'Custom', 'Foo' => array('something'));
 		$Controller->constructClasses();
 
