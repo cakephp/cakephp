@@ -208,6 +208,25 @@ class ControllerMergeVarsTest extends CakeTestCase {
 	}
 
 /**
+ * Test that merging can be disabled using `'HelperName' => false`
+ *
+ * @return void
+ */
+ 	public function testHelperDisabledMerge() {
+ 		$Controller = new MergeVariablesController();
+		$Controller->helpers = array('Html' => false, 'Custom', 'Foo' => array('something'));
+		$Controller->constructClasses();
+
+		$expected = array(
+			'Html' => false,
+			'MergeVar' => array('format' => 'html', 'terse'),
+			'Custom' => null,
+			'Foo' => array('something')
+		);
+		$this->assertSame($expected, $Controller->helpers, 'Order is incorrect.');
+	}
+
+/**
  * test merging of vars with plugin
  *
  * @return void
