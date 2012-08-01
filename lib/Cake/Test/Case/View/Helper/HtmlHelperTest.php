@@ -338,6 +338,10 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array('a' => array('href' => 'http://www.example.org?param1=value1&amp;param2=value2'), 'http://www.example.org?param1=value1&amp;param2=value2', '/a');
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->link('alert', 'javascript:alert(\'cakephp\');');
+		$expected = array('a' => array('href' => 'javascript:alert(&#039;cakephp&#039;);'), 'alert', '/a');
+		$this->assertTags($result, $expected);
+
 		$result = $this->Html->link('write me', 'mailto:example@cakephp.org');
 		$expected = array('a' => array('href' => 'mailto:example@cakephp.org'), 'write me', '/a');
 		$this->assertTags($result, $expected);
