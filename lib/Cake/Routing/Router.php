@@ -829,14 +829,7 @@ class Router {
 				$output = self::_handleNoRoute($url);
 			}
 		} else {
-			if (
-				(strpos($url, '://') !== false ||
-				(strpos($url, 'javascript:') === 0) ||
-				(strpos($url, 'mailto:') === 0) ||
-				(strpos($url, 'tel:') === 0) ||
-				(strpos($url, 'sms:') === 0)) ||
-				(!strncmp($url, '#', 1))
-			) {
+			if (preg_match('/:\/\/|^(javascript|mailto|tel|sms):|\#/i', $url)) {
 				return $url;
 			}
 			if (substr($url, 0, 1) === '/') {
