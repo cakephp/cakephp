@@ -144,6 +144,13 @@ class Router {
 	protected static $_requests = array();
 
 /**
+ * Maintains the response object
+ *
+ * @var CakeResponse
+ */
+	protected static $_response = null;
+
+/**
  * Initial state is populated the first time reload() is called which is at the bottom
  * of this file.  This is a cheat as get_class_vars() returns the value of static vars even if they
  * have changed.
@@ -599,6 +606,28 @@ class Router {
 			$requestObj->addParams($request[0])->addPaths($request[1]);
 			self::$_requests[] = $requestObj;
 		}
+	}
+
+/**
+ * Sets the response object
+ *
+ * @param CakeResponse $response CakeResponse object
+ * @return void
+ */
+	public static function setResponseInfo($response) {
+		if (!$response instanceof CakeResponse && empty(self::$_response)) {
+			$response = new CakeResponse();
+		}
+		self::$_response = $response;
+	}
+
+/**
+ * Gets the response object
+ *
+ * @return type CakeResponse
+ */
+	public static function getResponse() {
+		return !empty(self::$_response) ? self::$_response : null;
 	}
 
 /**
