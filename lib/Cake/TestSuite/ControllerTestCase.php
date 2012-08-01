@@ -57,7 +57,7 @@ class ControllerTestDispatcher extends Dispatcher {
 		}
 		$this->testController->helpers = array_merge(array('InterceptContent'), $this->testController->helpers);
 		$this->testController->setRequest($request);
-		$this->testController->response = $this->response;
+		$this->testController->response = $response;
 		foreach ($this->testController->Components->attached() as $component) {
 			$object = $this->testController->Components->{$component};
 			if (isset($object->response)) {
@@ -231,6 +231,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			}
 		}
 		$request = $this->getMock('CakeRequest', array('_readInput'), array($url));
+		$response = $this->getMock('CakeResponse');
 
 		if (is_string($options['data'])) {
 			$request->expects($this->any())
@@ -245,7 +246,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			}
 		}
 		$Dispatch->loadRoutes = $this->loadRoutes;
-		$Dispatch->parseParams(new CakeEvent('ControllerTestCase', $Dispatch, array('request' => $request)));
+		$Dispatch->parseParams(new CakeEvent('ControllerTestCase', $Dispatch, compact('request', 'response')));
 		if (!isset($request->params['controller'])) {
 			$this->headers = Router::currentRoute()->response->header();
 			return;
@@ -265,8 +266,8 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$params['requested'] = 1;
 		}
 		$Dispatch->testController = $this->controller;
-		$Dispatch->response = $this->getMock('CakeResponse', array('send'));
-		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
+		$response = $this->getMock('CakeResponse', array('send'));
+		$this->result = $Dispatch->dispatch($request, $response, $params);
 		$this->controller = $Dispatch->testController;
 		$this->vars = $this->controller->viewVars;
 		$this->contents = $this->controller->response->body();
@@ -274,7 +275,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$this->view = $this->controller->View->fetch('__view_no_layout__');
 		}
 		$this->__dirtyController = true;
-		$this->headers = $Dispatch->response->header();
+		$this->headers = $response->header();
 
 		$_GET = $restore['get'];
 		$_POST = $restore['post'];

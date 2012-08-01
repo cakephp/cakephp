@@ -596,7 +596,8 @@ class DispatcherTest extends CakeTestCase {
 	public function testParseParamsWithoutZerosAndEmptyPost() {
 		$Dispatcher = new Dispatcher();
 		$request = new CakeRequest("/testcontroller/testaction/params1/params2/params3");
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $request));
+		$response = $this->getMock('CakeResponse');
+		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
 		$Dispatcher->parseParams($event);
 		$this->assertSame($request['controller'], 'testcontroller');
 		$this->assertSame($request['action'], 'testaction');
@@ -615,9 +616,9 @@ class DispatcherTest extends CakeTestCase {
 		$_POST['testdata'] = "My Posted Content";
 		$Dispatcher = new Dispatcher();
 		$request = new CakeRequest("/");
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $request));
+		$response = $this->getMock('CakeResponse');
+		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
 		$Dispatcher->parseParams($event);
-		$test = $Dispatcher->parseParams($event);
 		$this->assertEquals("My Posted Content", $request['data']['testdata']);
 	}
 
@@ -628,15 +629,16 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testParseParamsWithSingleZero() {
 		$Dispatcher = new Dispatcher();
-		$test = new CakeRequest("/testcontroller/testaction/1/0/23");
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $test));
+		$request = new CakeRequest("/testcontroller/testaction/1/0/23");
+		$response = $this->getMock('CakeResponse');
+		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
 		$Dispatcher->parseParams($event);
 
-		$this->assertSame($test['controller'], 'testcontroller');
-		$this->assertSame($test['action'], 'testaction');
-		$this->assertSame($test['pass'][0], '1');
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][1]);
-		$this->assertSame($test['pass'][2], '23');
+		$this->assertSame($request['controller'], 'testcontroller');
+		$this->assertSame($request['action'], 'testaction');
+		$this->assertSame($request['pass'][0], '1');
+		$this->assertRegExp('/\\A(?:0)\\z/', $request['pass'][1]);
+		$this->assertSame($request['pass'][2], '23');
 	}
 
 /**
@@ -646,16 +648,17 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testParseParamsWithManySingleZeros() {
 		$Dispatcher = new Dispatcher();
-		$test = new CakeRequest("/testcontroller/testaction/0/0/0/0/0/0");
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $test));
+		$request = new CakeRequest("/testcontroller/testaction/0/0/0/0/0/0");
+		$response = $this->getMock('CakeResponse');
+		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
 		$Dispatcher->parseParams($event);
 
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][0]);
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][1]);
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][2]);
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][3]);
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][4]);
-		$this->assertRegExp('/\\A(?:0)\\z/', $test['pass'][5]);
+		$this->assertRegExp('/\\A(?:0)\\z/', $request['pass'][0]);
+		$this->assertRegExp('/\\A(?:0)\\z/', $request['pass'][1]);
+		$this->assertRegExp('/\\A(?:0)\\z/', $request['pass'][2]);
+		$this->assertRegExp('/\\A(?:0)\\z/', $request['pass'][3]);
+		$this->assertRegExp('/\\A(?:0)\\z/', $request['pass'][4]);
+		$this->assertRegExp('/\\A(?:0)\\z/', $request['pass'][5]);
 	}
 
 /**
@@ -665,16 +668,17 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testParseParamsWithManyZerosInEachSectionOfUrl() {
 		$Dispatcher = new Dispatcher();
-		$test = new CakeRequest("/testcontroller/testaction/000/0000/00000/000000/000000/0000000");
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $test));
+		$request = new CakeRequest("/testcontroller/testaction/000/0000/00000/000000/000000/0000000");
+		$response = $this->getMock('CakeResponse');
+		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
 		$Dispatcher->parseParams($event);
 
-		$this->assertRegExp('/\\A(?:000)\\z/', $test['pass'][0]);
-		$this->assertRegExp('/\\A(?:0000)\\z/', $test['pass'][1]);
-		$this->assertRegExp('/\\A(?:00000)\\z/', $test['pass'][2]);
-		$this->assertRegExp('/\\A(?:000000)\\z/', $test['pass'][3]);
-		$this->assertRegExp('/\\A(?:000000)\\z/', $test['pass'][4]);
-		$this->assertRegExp('/\\A(?:0000000)\\z/', $test['pass'][5]);
+		$this->assertRegExp('/\\A(?:000)\\z/', $request['pass'][0]);
+		$this->assertRegExp('/\\A(?:0000)\\z/', $request['pass'][1]);
+		$this->assertRegExp('/\\A(?:00000)\\z/', $request['pass'][2]);
+		$this->assertRegExp('/\\A(?:000000)\\z/', $request['pass'][3]);
+		$this->assertRegExp('/\\A(?:000000)\\z/', $request['pass'][4]);
+		$this->assertRegExp('/\\A(?:0000000)\\z/', $request['pass'][5]);
 	}
 
 /**
@@ -684,16 +688,17 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testParseParamsWithMixedOneToManyZerosInEachSectionOfUrl() {
 		$Dispatcher = new Dispatcher();
-		$test = new CakeRequest("/testcontroller/testaction/01/0403/04010/000002/000030/0000400");
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $test));
+		$request = new CakeRequest("/testcontroller/testaction/01/0403/04010/000002/000030/0000400");
+		$response = $this->getMock('CakeResponse');
+		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
 		$Dispatcher->parseParams($event);
 
-		$this->assertRegExp('/\\A(?:01)\\z/', $test['pass'][0]);
-		$this->assertRegExp('/\\A(?:0403)\\z/', $test['pass'][1]);
-		$this->assertRegExp('/\\A(?:04010)\\z/', $test['pass'][2]);
-		$this->assertRegExp('/\\A(?:000002)\\z/', $test['pass'][3]);
-		$this->assertRegExp('/\\A(?:000030)\\z/', $test['pass'][4]);
-		$this->assertRegExp('/\\A(?:0000400)\\z/', $test['pass'][5]);
+		$this->assertRegExp('/\\A(?:01)\\z/', $request['pass'][0]);
+		$this->assertRegExp('/\\A(?:0403)\\z/', $request['pass'][1]);
+		$this->assertRegExp('/\\A(?:04010)\\z/', $request['pass'][2]);
+		$this->assertRegExp('/\\A(?:000002)\\z/', $request['pass'][3]);
+		$this->assertRegExp('/\\A(?:000030)\\z/', $request['pass'][4]);
+		$this->assertRegExp('/\\A(?:0000400)\\z/', $request['pass'][5]);
 	}
 
 /**
@@ -710,7 +715,8 @@ class DispatcherTest extends CakeTestCase {
 		$_GET = array('coffee' => 'life', 'sleep' => 'sissies');
 		$Dispatcher = new Dispatcher();
 		$request = new CakeRequest('posts/home/?coffee=life&sleep=sissies');
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $request));
+		$response = $this->getMock('CakeResponse');
+		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
 		$Dispatcher->parseParams($event);
 
 		$this->assertRegExp('/posts/', $request['controller']);
@@ -721,7 +727,7 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher = new Dispatcher();
 		$request = new CakeRequest('/?coffee=life&sleep=sissy');
 
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $request));
+		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
 		$Dispatcher->parseParams($event);
 		$this->assertRegExp('/pages/', $request['controller']);
 		$this->assertRegExp('/display/', $request['action']);
@@ -908,11 +914,11 @@ class DispatcherTest extends CakeTestCase {
 			array('plugin' => 'my_plugin', 'controller' => 'pages', 'action' => 'display')
 		);
 
-		$url = new CakeRequest('my_plugin/some_pages/home/param:value/param2:value2');
+		$request = new CakeRequest('my_plugin/some_pages/home/param:value/param2:value2');
 		$response = $this->getMock('CakeResponse');
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
+		$Dispatcher->dispatch($request, $response, array('return' => 1));
 
-		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $url));
+		$event = new CakeEvent('DispatcherTest', $Dispatcher, compact('request', 'response'));
 		$Dispatcher->parseParams($event);
 		$expected = array(
 			'pass' => array('home'),
@@ -920,7 +926,7 @@ class DispatcherTest extends CakeTestCase {
 			'controller' => 'some_pages', 'action' => 'display'
 		);
 		foreach ($expected as $key => $value) {
-			$this->assertEquals($value, $url[$key], 'Value mismatch ' . $key . ' %');
+			$this->assertEquals($value, $request[$key], 'Value mismatch ' . $key . ' %');
 		}
 
 		$this->assertSame($Dispatcher->controller->plugin, 'MyPlugin');
@@ -1591,7 +1597,8 @@ class DispatcherTest extends CakeTestCase {
 		$dispatcher = new Dispatcher();
 
 		$request = new CakeRequest('/posts');
-		$event = new CakeEvent('DispatcherTest', $dispatcher, array('request' => $request));
+		$response = $this->getMock('CakeResponse');
+		$event = new CakeEvent('DispatcherTest', $dispatcher, compact('request', 'response'));
 		$dispatcher->parseParams($event);
 		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST');
 		foreach ($expected as $key => $value) {
@@ -1602,7 +1609,7 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'PUT';
 
 		$request = new CakeRequest('/posts/5');
-		$event = new CakeEvent('DispatcherTest', $dispatcher, array('request' => $request));
+		$event = new CakeEvent('DispatcherTest', $dispatcher, compact('request', 'response'));
 		$dispatcher->parseParams($event);
 		$expected = array(
 			'pass' => array('5'),
@@ -1621,7 +1628,7 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 
 		$request = new CakeRequest('/posts/5');
-		$event = new CakeEvent('DispatcherTest', $dispatcher, array('request' => $request));
+		$event = new CakeEvent('DispatcherTest', $dispatcher, compact('request', 'response'));
 		$dispatcher->parseParams($event);
 		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '[method]' => 'GET');
 		foreach ($expected as $key => $value) {
@@ -1631,7 +1638,7 @@ class DispatcherTest extends CakeTestCase {
 		$_POST['_method'] = 'PUT';
 
 		$request = new CakeRequest('/posts/5');
-		$event = new CakeEvent('DispatcherTest', $dispatcher, array('request' => $request));
+		$event = new CakeEvent('DispatcherTest', $dispatcher, compact('request', 'response'));
 		$dispatcher->parseParams($event);
 		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT');
 		foreach ($expected as $key => $value) {
@@ -1644,7 +1651,7 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER = array();
 
 		$request = new CakeRequest('/posts');
-		$event = new CakeEvent('DispatcherTest', $dispatcher, array('request' => $request));
+		$event = new CakeEvent('DispatcherTest', $dispatcher, compact('request', 'response'));
 		$dispatcher->parseParams($event);
 		$expected = array(
 			'pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add',

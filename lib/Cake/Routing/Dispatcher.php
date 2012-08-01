@@ -209,6 +209,7 @@ class Dispatcher implements CakeEventListener {
 	public function parseParams($event) {
 		$request = $event->data['request'];
 		Router::setRequestInfo($request);
+		Router::setResponseInfo($event->data['response']);
 		if (count(Router::$routes) == 0) {
 			$namedExpressions = Router::getNamedExpressions();
 			extract($namedExpressions);
