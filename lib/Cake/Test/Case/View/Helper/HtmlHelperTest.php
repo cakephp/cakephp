@@ -349,6 +349,14 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->link('call me on 0123465-798', 'tel:0123465-798');
 		$expected = array('a' => array('href' => 'tel:0123465-798'), 'call me on 0123465-798', '/a');
 		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('text me on 0123465-798', 'sms:0123465-798');
+		$expected = array('a' => array('href' => 'sms:0123465-798'), 'text me on 0123465-798', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('say hello to 0123465-798', 'sms:0123465-798?body=hello there');
+		$expected = array('a' => array('href' => 'sms:0123465-798?body=hello there'), 'say hello to 0123465-798', '/a');
+		$this->assertTags($result, $expected);
 	}
 
 /**

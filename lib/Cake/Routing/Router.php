@@ -833,7 +833,8 @@ class Router {
 				(strpos($url, '://') !== false ||
 				(strpos($url, 'javascript:') === 0) ||
 				(strpos($url, 'mailto:') === 0) ||
-				(strpos($url, 'tel:') === 0)) ||
+				(strpos($url, 'tel:') === 0) ||
+				(strpos($url, 'sms:') === 0)) ||
 				(!strncmp($url, '#', 1))
 			) {
 				return $url;
