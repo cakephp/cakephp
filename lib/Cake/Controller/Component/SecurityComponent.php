@@ -179,6 +179,13 @@ class SecurityComponent extends Component {
 	public $csrfLimit = 100;
 
 /**
+ * List of actions to disable security checks
+ *
+ * @var array
+*/
+	public $disabledActions = array();
+
+/**
  * Other components used by the Security component
  *
  * @var array
@@ -218,13 +225,11 @@ class SecurityComponent extends Component {
 			$controller->request->params['requested'] != 1
 		);
 
-		if ($isPost && $isNotRequestAction && $this->validatePost) {
-			if ($this->_validatePost($controller) === false) {
+		if (!in_array($this->_action, (array)$this->disabledActions) && $isPost && $isNotRequestAction) {
+			if ($this->validatePost && $this->_validatePost($controller) === false) {
 				return $this->blackHole($controller, 'auth');
 			}
-		}
-		if ($isPost && $isNotRequestAction && $this->csrfCheck) {
-			if ($this->_validateCsrf($controller) === false) {
+			if ($this->csrfCheck && $this->_validateCsrf($controller) === false) {
 				return $this->blackHole($controller, 'csrf');
 			}
 		}
