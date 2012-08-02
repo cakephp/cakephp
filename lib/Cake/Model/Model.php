@@ -2863,7 +2863,7 @@ class Model extends Object implements CakeEventListener {
 			$query['order'] = $field . ' ASC';
 			$neighbors = $this->find('all', $query);
 			if (!array_key_exists('prev', $return)) {
-				$return['prev'] = $neighbors[0];
+				$return['prev'] = isset($neighbors[0]) ? $neighbors[0] : null;
 			}
 			if (count($neighbors) === 2) {
 				$return['next'] = $neighbors[1];
