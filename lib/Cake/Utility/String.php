@@ -419,6 +419,46 @@ class String {
 	}
 
 /**
+ * Truncates text starting from the end.
+ *
+ * Cuts a string to the length of $length and replaces the first characters
+ * with the beginning if the text is longer than length.
+ *
+ * ### Options:
+ *
+ * - `beginning` Will be used as Beginning and prepended to the trimmed string
+ * - `exact` If false, $text will not be cut mid-word
+ *
+ * @param string $text String to truncate.
+ * @param integer $length Length of returned string, including ellipsis.
+ * @param array $options An array of html attributes and options.
+ * @return string Trimmed string.
+ */
+	public static function tail($text, $length = 100, $options = array()) {
+		$default = array(
+			'beginning' => '...', 'exact' => true
+		);
+		$options = array_merge($default, $options);
+		extract($options);
+
+		if (!function_exists('mb_strlen')) {
+			class_exists('Multibyte');
+		}
+
+		if (mb_strlen($text) <= $length) {
+			return $text;
+		} else {
+			$truncate = mb_substr($text, mb_strlen($text) - $length + mb_strlen($beginning));
+		}
+		if (!$exact) {
+			$spacepos = mb_strpos($truncate, ' ');
+			$truncate = $spacepos === false ? '' : trim(mb_substr($truncate, $spacepos));
+		}
+
+		return $beginning . $truncate;
+	}
+
+/**
  * Truncates text.
  *
  * Cuts a string to the length of $length and replaces the last characters

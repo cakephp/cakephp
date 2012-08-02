@@ -444,6 +444,46 @@ podeís adquirirla.</span></p>
 	}
 
 /**
+ * testTail method
+ *
+ * @return void
+ */
+	public function testTail() {
+		$text1 = 'The quick brown fox jumps over the lazy dog';
+		$text2 = 'Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung';
+		$text3 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
+		$text4 = 'Vive la R' . chr(195) . chr(169) . 'publique de France';
+		$text5 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
+
+		$result = $this->Text->tail($text1, 13);
+		$this->assertEquals('...e lazy dog', $result);
+
+		$result = $this->Text->tail($text1, 13, array('exact' => false));
+		$this->assertEquals('...lazy dog', $result);
+
+		$result = $this->Text->tail($text1, 100);
+		$this->assertEquals('The quick brown fox jumps over the lazy dog', $result);
+
+		$result = $this->Text->tail($text2, 10);
+		$this->assertEquals('...;mpfung', $result);
+
+		$result = $this->Text->tail($text2, 10, array('exact' => false));
+		$this->assertEquals('...', $result);
+
+		$result = $this->Text->tail($text3, 255);
+		$this->assertEquals($text3, $result);
+
+		$result = $this->Text->tail($text3, 21);
+		$this->assertEquals('...á dicho la verdad?', $result);
+
+		$result = $this->Text->tail($text4, 25);
+		$this->assertEquals('...a R' . chr(195) . chr(169) . 'publique de France', $result);
+
+		$result = $this->Text->tail($text5, 10);
+		$this->assertEquals('...цчшщъыь', $result);
+	}
+
+/**
  * testHighlight method
  *
  * @return void
