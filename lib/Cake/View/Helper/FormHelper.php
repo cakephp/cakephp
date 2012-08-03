@@ -2429,15 +2429,21 @@ class FormHelper extends AppHelper {
 
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;
-						
-						if (!empty($attributes['disabled'])) {
-							if (is_array($attributes['disabled'])) {
-								if (in_array($htmlOptions['value'], $attributes['disabled'])) {
-									$htmlOptions['disabled'] = 'disabled';
-								}
-							} else {
-								$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
-							}
+
+						$disabledType = null;
+						$hasDisabled = !empty($attributes['disabled']);
+						if ($hasDisabled) {
+							$disabledType = gettype($attributes['disabled']);
+						}
+						if (
+							$hasDisabled &&
+							$disabledType === 'array' &&
+							in_array($htmlOptions['value'], $attributes['disabled'])
+						) {
+							$htmlOptions['disabled'] = 'disabled';
+						}
+						if ($hasDisabled && $disabledType !== 'array') {
+							$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
 						}
 
 						$tagName = $attributes['id'] . Inflector::camelize(Inflector::slug($name));
