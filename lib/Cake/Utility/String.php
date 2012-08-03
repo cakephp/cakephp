@@ -431,7 +431,7 @@ class String {
  *
  * @param string $text String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
- * @param array $options An array of html attributes and options.
+ * @param array $options An array of options.
  * @return string Trimmed string.
  */
 	public static function tail($text, $length = 100, $options = array()) {
