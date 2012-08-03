@@ -325,7 +325,7 @@ object(View) {
 	elementCacheSettings => array()
 	int => (int) 2
 	float => (float) 1.333
-	[protected] "_passedVars" => array(
+	[protected] _passedVars => array(
 		(int) 0 => 'viewVars',
 		(int) 1 => 'autoLayout',
 		(int) 2 => 'ext',
@@ -341,16 +341,16 @@ object(View) {
 		(int) 12 => 'passedArgs',
 		(int) 13 => 'cacheAction'
 	)
-	[protected] "_scripts" => array()
-	[protected] "_paths" => array()
-	[protected] "_helpersLoaded" => false
-	[protected] "_parents" => array()
-	[protected] "_current" => null
-	[protected] "_currentType" => ''
-	[protected] "_stack" => array()
-	[protected] "_eventManager" => object(CakeEventManager) {}
-	[protected] "_eventManagerConfigured" => false
-	[private] "__viewFileName" => null
+	[protected] _scripts => array()
+	[protected] _paths => array()
+	[protected] _helpersLoaded => false
+	[protected] _parents => array()
+	[protected] _current => null
+	[protected] _currentType => ''
+	[protected] _stack => array()
+	[protected] _eventManager => object(CakeEventManager) {}
+	[protected] _eventManagerConfigured => false
+	[private] __viewFileName => null
 }
 TEXT;
 		$this->assertTextEquals($expected, $result);

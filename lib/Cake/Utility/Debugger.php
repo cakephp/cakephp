@@ -585,7 +585,7 @@ class Debugger {
 				$property = $reflectionProperty->getValue($var);
 
 				$value = self::_export($property, $depth - 1, $indent);
-				$key = '"' . $reflectionProperty->name . '"';
+				$key = $reflectionProperty->name;
 				$props[] = "[protected] $key => " . $value;
 			}
 
@@ -597,7 +597,7 @@ class Debugger {
 				$property = $reflectionProperty->getValue($var);
 
 				$value = self::_export($property, $depth - 1, $indent);
-				$key = '"'.$reflectionProperty->name . '"';
+				$key = $reflectionProperty->name;
 				$props[] = "[private] $key => " . $value;
 			}
 
