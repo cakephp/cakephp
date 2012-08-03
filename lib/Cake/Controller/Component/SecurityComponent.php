@@ -130,6 +130,13 @@ class SecurityComponent extends Component {
 	public $unlockedFields = array();
 
 /**
+ * Actions to exclude from any security checks
+ *
+ * @var array
+ */
+	public $unlockedActions = array();
+
+/**
  * Whether to validate POST data.  Set to false to disable for data coming from 3rd party
  * services, etc.
  *
@@ -179,13 +186,6 @@ class SecurityComponent extends Component {
 	public $csrfLimit = 100;
 
 /**
- * List of actions to disable security checks
- *
- * @var array
-*/
-	public $disabledActions = array();
-
-/**
  * Other components used by the Security component
  *
  * @var array
@@ -225,7 +225,7 @@ class SecurityComponent extends Component {
 			$controller->request->params['requested'] != 1
 		);
 
-		if (!in_array($this->_action, (array)$this->disabledActions) && $isPost && $isNotRequestAction) {
+		if (!in_array($this->_action, (array)$this->unlockedActions) && $isPost && $isNotRequestAction) {
 			if ($this->validatePost && $this->_validatePost($controller) === false) {
 				return $this->blackHole($controller, 'auth');
 			}

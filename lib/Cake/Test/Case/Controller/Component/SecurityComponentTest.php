@@ -1374,14 +1374,14 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
- * Test disabled actions
+ * Test unlocked actions
  *
  * @return void
  */
-	public function testDisabledActions() {
+	public function testUnlockedActions() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request->data = array('data');
-		$this->Controller->Security->disabledActions = 'index';
+		$this->Controller->Security->unlockedActions = 'index';
 		$this->Controller->Security->blackHoleCallback = null;
 		$result = $this->Controller->Security->startup($this->Controller);
 		$this->assertNull($result);
