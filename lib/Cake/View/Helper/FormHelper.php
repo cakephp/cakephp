@@ -1749,6 +1749,9 @@ class FormHelper extends AppHelper {
  * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
  * - `value` The selected value of the input.
  * - `class` - When using multiple = checkbox the classname to apply to the divs. Defaults to 'checkbox'.
+ * - `disabled` - Control the disabled attribute.  When creating a select box, set to true to disable the
+ *   select box.  When creating checkboxes, `true` will disable all checkboxes. You can also set disabled
+ *   to a list of values you want to disable when creating checkboxes.
  *
  * ### Using options
  *
@@ -1762,11 +1765,11 @@ class FormHelper extends AppHelper {
  * While a nested options array will create optgroups with options inside them.
  * {{{
  * $options = array(
- *	1 => 'bill',
- *	'fred' => array(
- *		2 => 'fred',
- *		3 => 'fred jr.'
- *	 )
+ *  1 => 'bill',
+ *  'fred' => array(
+ *     2 => 'fred',
+ *     3 => 'fred jr.'
+ *  )
  * );
  * $this->Form->select('Model.field', $options);
  * }}}
@@ -1779,8 +1782,8 @@ class FormHelper extends AppHelper {
  *
  * {{{
  * $options = array(
- *		array('name' => 'United states', 'value' => 'USA'),
- *		array('name' => 'USA', 'value' => 'USA'),
+ *  array('name' => 'United states', 'value' => 'USA'),
+ *  array('name' => 'USA', 'value' => 'USA'),
  * );
  * }}}
  *
