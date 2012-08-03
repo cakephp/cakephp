@@ -353,7 +353,6 @@ object(View) {
 	[private] "__viewFileName" => null
 }
 TEXT;
-debug($result); ob_flush();
 		$this->assertTextEquals($expected, $result);
 
 		$data = array(
