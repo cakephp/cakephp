@@ -578,8 +578,8 @@ class Debugger {
 			}
 
 			$ref = new ReflectionObject($var);
-			$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PROTECTED);
 
+			$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PROTECTED);
 			foreach ($reflectionProperties as $reflectionProperty) {
 				$reflectionProperty->setAccessible(true);
 				$property = $reflectionProperty->getValue($var);
@@ -589,9 +589,7 @@ class Debugger {
 				$props[] = "[protected] $key => " . $value;
 			}
 
-			$ref = new ReflectionObject($var);
 			$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PRIVATE);
-
 			foreach ($reflectionProperties as $reflectionProperty) {
 				$reflectionProperty->setAccessible(true);
 				$property = $reflectionProperty->getValue($var);
