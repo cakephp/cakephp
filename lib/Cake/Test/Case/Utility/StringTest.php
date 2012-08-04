@@ -379,7 +379,7 @@ TEXT;
 		$this->assertSame($this->Text->truncate($text2, 10, array('exact' => false)), '...');
 		$this->assertSame($this->Text->truncate($text3, 20), '<b>&copy; 2005-20...');
 		$this->assertSame($this->Text->truncate($text4, 15), '<img src="my...');
-		$this->assertSame($this->Text->truncate($text5, 6, array('ending' => '')), '0<b>1<');
+		$this->assertSame($this->Text->truncate($text5, 6, array('ellipsis' => '')), '0<b>1<');
 		$this->assertSame($this->Text->truncate($text1, 15, array('html' => true)), 'The quick br...');
 		$this->assertSame($this->Text->truncate($text1, 15, array('exact' => false, 'html' => true)), 'The quick...');
 		$this->assertSame($this->Text->truncate($text2, 10, array('html' => true)), 'Heiz&ouml;lr...');
@@ -388,8 +388,8 @@ TEXT;
 		$this->assertSame($this->Text->truncate($text4, 15, array('html' => true)), '<img src="mypic.jpg"> This image ...');
 		$this->assertSame($this->Text->truncate($text4, 45, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But t...</b>');
 		$this->assertSame($this->Text->truncate($text4, 90, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Grea...');
-		$this->assertSame($this->Text->truncate($text5, 6, array('ending' => '', 'html' => true)), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
-		$this->assertSame($this->Text->truncate($text5, 20, array('ending' => '', 'html' => true)), $text5);
+		$this->assertSame($this->Text->truncate($text5, 6, array('ellipsis' => '', 'html' => true)), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
+		$this->assertSame($this->Text->truncate($text5, 20, array('ellipsis' => '', 'html' => true)), $text5);
 		$this->assertSame($this->Text->truncate($text6, 57, array('exact' => false, 'html' => true)), "<p><strong>Extra dates have been announced for this year's...</strong></p>");
 		$this->assertSame($this->Text->truncate($text7, 255), $text7);
 		$this->assertSame($this->Text->truncate($text7, 15), 'El moño está...');
@@ -399,7 +399,7 @@ TEXT;
 
 		$text = '<p><span style="font-size: medium;"><a>Iamatestwithnospacesandhtml</a></span></p>';
 		$result = $this->Text->truncate($text, 10, array(
-			'ending' => '...',
+			'ellipsis' => '...',
 			'exact' => false,
 			'html' => true
 		));
@@ -422,7 +422,7 @@ podeís adquirirla.</span></p>
 <p><span style="font-size: medium;"><a>http://www.amazon.com/Steve-
 Jobs-Walter-Isaacson/dp/1451648537</a></span></p>';
 		$result = $this->Text->truncate($text, 500, array(
-			'ending' => '... ',
+			'ellipsis' => '... ',
 			'exact' => false,
 			'html' => true
 		));
@@ -440,6 +440,22 @@ Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
 Isaacson</strong>", aquí os dejamos la dirección de amazon donde
 podeís adquirirla.</span></p>
 <p><span style="font-size: medium;"><a>... </a></span></p>';
+		$this->assertEquals($expected, $result);
+
+		// test deprecated `ending` (`ellipsis` taking precedence if both are defined)
+		$result = $this->Text->truncate($text1, 31, array(
+			'ending' => '.',
+			'exact' => false,
+		));
+		$expected = 'The quick brown fox jumps.';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Text->truncate($text1, 31, array(
+			'ellipsis' => '..',
+			'ending' => '.',
+			'exact' => false,
+		));
+		$expected = 'The quick brown fox jumps..';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -481,6 +497,9 @@ podeís adquirirla.</span></p>
 
 		$result = $this->Text->tail($text5, 10);
 		$this->assertEquals('...цчшщъыь', $result);
+
+		$result = $this->Text->tail($text5, 6, array('ellipsis' => ''));
+		$this->assertEquals('чшщъыь', $result);
 	}
 
 /**
