@@ -385,7 +385,6 @@ class TranslateBehavior extends ModelBehavior {
 		if (!isset($this->runtime[$Model->alias]['beforeValidate']) && !isset($this->runtime[$Model->alias]['beforeSave'])) {
 			return true;
 		}
-		$locale = $this->_getLocale($Model);
 		if (isset($this->runtime[$Model->alias]['beforeValidate'])) {
 			$tempData = $this->runtime[$Model->alias]['beforeValidate'];
 		} else {
@@ -396,18 +395,10 @@ class TranslateBehavior extends ModelBehavior {
 		$conditions = array('model' => $Model->alias, 'foreign_key' => $Model->id);
 		$RuntimeModel = $this->translateModel($Model);
 
-		$fields = array_merge($this->settings[$Model->alias], $this->runtime[$Model->alias]['fields']);
 		if ($created) {
-			// set each field value to an empty string
-			foreach ($fields as $key => $field) {
-				if (!is_numeric($key)) {
-					$field = $key;
-				}
-				if (!isset($tempData[$field])) {
-					$tempData[$field] = '';
-				}
-			}
+			$tempData = $this->_prepareTranslations($Model, $tempData);
 		}
+		$locale = $this->_getLocale($Model);
 
 		foreach ($tempData as $field => $value) {
 			unset($conditions['content']);
@@ -422,7 +413,13 @@ class TranslateBehavior extends ModelBehavior {
 					$value = array($locale => $value);
 				}
 			}
-			$translations = $RuntimeModel->find('list', array('conditions' => $conditions, 'fields' => array($RuntimeModel->alias . '.locale', $RuntimeModel->alias . '.id')));
+			$translations = $RuntimeModel->find('list', array(
+				'conditions' => $conditions,
+				'fields' => array(
+					$RuntimeModel->alias . '.locale',
+					$RuntimeModel->alias . '.id'
+				)
+			));
 			foreach ($value as $_locale => $_value) {
 				$RuntimeModel->create();
 				$conditions['locale'] = $_locale;
@@ -434,6 +431,37 @@ class TranslateBehavior extends ModelBehavior {
 				}
 			}
 		}
+	}
+
+/**
+ * Prepares the data to be saved for translated records.
+ * Add blank fields, and populates data for multi-locale saves.
+ *
+ * @param array $data The sparse data that was provided.
+ * @return array The fully populated data to save.
+ */
+	protected function _prepareTranslations(Model $Model, $data) {
+		$fields = array_merge($this->settings[$Model->alias], $this->runtime[$Model->alias]['fields']);
+		$locales = array();
+		foreach ($data as $key => $value) {
+			if (is_array($value)) {
+				$locales = array_merge($locales, array_keys($value));
+			}
+		}
+		$locales = array_unique($locales);
+		$hasLocales = count($locales) > 0;
+
+		foreach ($fields as $key => $field) {
+			if (!is_numeric($key)) {
+				$field = $key;
+			}
+			if ($hasLocales && !isset($data[$field])) {
+				$data[$field] = array_fill_keys($locales, '');
+			} elseif (!isset($data[$field])) {
+				$data[$field] = '';
+			}
+		}
+		return $data;
 	}
 
 /**

@@ -552,7 +552,17 @@ class TranslateBehaviorTest extends CakeTestCase {
 			) + $data
 		);
 		$this->assertEquals($expected, $result);
-		
+	}
+
+/**
+ * Test that all fields are create with partial data + multiple locales.
+ *
+ * @return void
+ */
+	public function testSavePartialFieldMultipleLocales() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel = new TranslatedItem();
 		$TestModel->locale = 'eng';
 		$data = array(
 			'slug' => 'fifth_translated',
@@ -561,60 +571,57 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$TestModel->create($data);
 		$TestModel->save();
 		$TestModel->unbindTranslation();
+
 		$translations = array('title' => 'Title', 'content' => 'Content');
 		$TestModel->bindTranslation($translations, false);
 		$result = $TestModel->read(null, $TestModel->id);
 		$expected = array(
 			'TranslatedItem' => array(
-				'id' => '5',
+				'id' => '4',
 				'translated_article_id' => null,
 				'slug' => 'fifth_translated',
 				'locale' => 'eng',
-				'title' => '',
+				'title' => 'Title #5',
 				'content' => ''
-			),
-			0 => array(
-				'TranslatedItem__i18n_Title' => 'Title #5',
-				'TranslatedItem__i18n_Content' => ''
 			),
 			'Title' => array(
 				0 => array(
-					'id' => '21',
+					'id' => '19',
 					'locale' => 'eng',
 					'model' => 'TranslatedItem',
-					'foreign_key' => '5',
+					'foreign_key' => '4',
 					'field' => 'title',
 					'content' => 'Title #5'
 				),
 				1 => array(
-					'id' => '22',
+					'id' => '20',
 					'locale' => 'spa',
 					'model' => 'TranslatedItem',
-					'foreign_key' => '5',
+					'foreign_key' => '4',
 					'field' => 'title',
 					'content' => 'Leyenda #5'
 				)
 			),
 			'Content' => array(
 				0 => array(
-					'id' => '23',
+					'id' => '21',
 					'locale' => 'eng',
 					'model' => 'TranslatedItem',
-					'foreign_key' => '5',
+					'foreign_key' => '4',
 					'field' => 'content',
 					'content' => ''
 				),
 				1 => array(
-					'id' => '24',
+					'id' => '22',
 					'locale' => 'spa',
 					'model' => 'TranslatedItem',
-					'foreign_key' => '5',
+					'foreign_key' => '4',
 					'field' => 'content',
 					'content' => ''
 				)
 			)
 		);
-		$this->assertEquals($expected, $result);		
+		$this->assertEquals($expected, $result);
 	}
 
 /**
