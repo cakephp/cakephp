@@ -325,6 +325,10 @@ object(View) {
 	elementCacheSettings => array()
 	int => (int) 2
 	float => (float) 1.333
+
+TEXT;
+		if (strnatcmp(phpversion(),'5.3.0') >= 0) {
+			$expected .= <<<TEXT
 	[protected] _passedVars => array(
 		(int) 0 => 'viewVars',
 		(int) 1 => 'autoLayout',
@@ -351,8 +355,13 @@ object(View) {
 	[protected] _eventManager => object(CakeEventManager) {}
 	[protected] _eventManagerConfigured => false
 	[private] __viewFileName => null
+
+TEXT;
+		}
+		$expected .= <<<TEXT
 }
 TEXT;
+
 		$this->assertTextEquals($expected, $result);
 
 		$data = array(

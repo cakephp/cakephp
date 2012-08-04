@@ -577,26 +577,28 @@ class Debugger {
 				$props[] = "$key => " . $value;
 			}
 
-			$ref = new ReflectionObject($var);
+			if (strnatcmp(phpversion(),'5.3.0') >= 0) {
+				$ref = new ReflectionObject($var);
 
-			$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PROTECTED);
-			foreach ($reflectionProperties as $reflectionProperty) {
-				$reflectionProperty->setAccessible(true);
-				$property = $reflectionProperty->getValue($var);
+				$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PROTECTED);
+				foreach ($reflectionProperties as $reflectionProperty) {
+					$reflectionProperty->setAccessible(true);
+					$property = $reflectionProperty->getValue($var);
 
-				$value = self::_export($property, $depth - 1, $indent);
-				$key = $reflectionProperty->name;
-				$props[] = "[protected] $key => " . $value;
-			}
+					$value = self::_export($property, $depth - 1, $indent);
+					$key = $reflectionProperty->name;
+					$props[] = "[protected] $key => " . $value;
+				}
 
-			$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PRIVATE);
-			foreach ($reflectionProperties as $reflectionProperty) {
-				$reflectionProperty->setAccessible(true);
-				$property = $reflectionProperty->getValue($var);
+				$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PRIVATE);
+				foreach ($reflectionProperties as $reflectionProperty) {
+					$reflectionProperty->setAccessible(true);
+					$property = $reflectionProperty->getValue($var);
 
-				$value = self::_export($property, $depth - 1, $indent);
-				$key = $reflectionProperty->name;
-				$props[] = "[private] $key => " . $value;
+					$value = self::_export($property, $depth - 1, $indent);
+					$key = $reflectionProperty->name;
+					$props[] = "[private] $key => " . $value;
+				}
 			}
 
 			$out .= $break . implode($break, $props) . $end;
