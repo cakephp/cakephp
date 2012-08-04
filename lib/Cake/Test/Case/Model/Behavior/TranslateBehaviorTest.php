@@ -552,6 +552,69 @@ class TranslateBehaviorTest extends CakeTestCase {
 			) + $data
 		);
 		$this->assertEquals($expected, $result);
+		
+		$TestModel->locale = 'eng';
+		$data = array(
+			'slug' => 'fifth_translated',
+			'title' => array('eng' => 'Title #5', 'spa' => 'Leyenda #5'),
+		);
+		$TestModel->create($data);
+		$TestModel->save();
+		$TestModel->unbindTranslation();
+		$translations = array('title' => 'Title', 'content' => 'Content');
+		$TestModel->bindTranslation($translations, false);
+		$result = $TestModel->read(null, $TestModel->id);
+		$expected = array(
+			'TranslatedItem' => array(
+				'id' => '5',
+				'translated_article_id' => null,
+				'slug' => 'fifth_translated',
+				'locale' => 'eng',
+				'title' => '',
+				'content' => ''
+			),
+			0 => array(
+				'TranslatedItem__i18n_Title' => 'Title #5',
+				'TranslatedItem__i18n_Content' => ''
+			),
+			'Title' => array(
+				0 => array(
+					'id' => '21',
+					'locale' => 'eng',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '5',
+					'field' => 'title',
+					'content' => 'Title #5'
+				),
+				1 => array(
+					'id' => '22',
+					'locale' => 'spa',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '5',
+					'field' => 'title',
+					'content' => 'Leyenda #5'
+				)
+			),
+			'Content' => array(
+				0 => array(
+					'id' => '23',
+					'locale' => 'eng',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '5',
+					'field' => 'content',
+					'content' => ''
+				),
+				1 => array(
+					'id' => '24',
+					'locale' => 'spa',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '5',
+					'field' => 'content',
+					'content' => ''
+				)
+			)
+		);
+		$this->assertEquals($expected, $result);		
 	}
 
 /**
