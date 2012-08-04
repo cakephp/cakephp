@@ -2347,7 +2347,7 @@ class FormHelperTest extends CakeTestCase {
 	public function testInputCheckboxWithDisabledElements() {
 		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three');
 		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => 'disabled', 'options' => $options));
-		
+
 		$expected = array(
 			array('div' => array('class' => 'input select')),
 			array('label' => array('for' => "ContactMultiple")),
@@ -2375,12 +2375,12 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-	
+
 		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => true, 'options' => $options));
 		$this->assertTags($result, $expected);
-	
+
 		$disabled = array('2', 3);
-	
+
 		$expected = array(
 			array('div' => array('class' => 'input select')),
 			array('label' => array('for' => "ContactMultiple")),
