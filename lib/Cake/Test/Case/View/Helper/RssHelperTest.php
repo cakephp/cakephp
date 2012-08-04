@@ -717,4 +717,62 @@ class RssHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 
+	public function testElementNamespaceWithoutPrefix() {
+		$item = array(
+				'creator' => 'Alex',
+			);
+		$attributes = array(
+				'namespace' => 'http://link.com'
+		);
+		$result = $this->Rss->item($attributes, $item);
+		$expected = array(
+			'item' => array(
+					'xmlns' => 'http://link.com'
+			),
+			'creator' => array(
+					'xmlns' => 'http://link.com'
+			),
+			'Alex',
+			'/creator',
+			'/item'
+		);
+		$this->assertTags($result, $expected, true);
+	}
+
+	public function testElementNamespaceWithPrefix() {
+		$item = array(
+				'title'   => 'Title',
+				'dc:creator' => 'Alex',
+				'xy:description' => 'descriptive words'
+			);
+		$attributes = array(
+				'namespace' => array(
+						'prefix' => 'dc',
+						'url' => 'http://link.com'
+				)
+		);
+		$result = $this->Rss->item($attributes, $item);
+		$expected = array(
+			'item' => array(
+					'xmlns:dc' => 'http://link.com'
+			),
+			'title' => array(
+					'xmlns:dc' => 'http://link.com'
+			),
+			'Title',
+			'/title',
+			'dc:creator' => array(
+					'xmlns:dc' => 'http://link.com'
+			),
+			'Alex',
+			'/dc:creator',
+			'description' => array(
+					'xmlns:dc' => 'http://link.com'
+			),
+			'descriptive words',
+			'/description',
+			'/item'
+		);
+		$this->assertTags($result, $expected, true);
+	}
 }
