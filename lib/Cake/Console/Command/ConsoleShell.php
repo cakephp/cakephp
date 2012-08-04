@@ -64,7 +64,14 @@ class ConsoleShell extends AppShell {
 		foreach ($this->models as $model) {
 			$this->out(" - {$model}");
 		}
-		$this->_loadRoutes();
+
+		if (!$this->_loadRoutes()) {
+			$message = __d(
+				'cake_console',
+				'There was an error loading the routes config. Please check that the file exists and contains no errors.'
+			);
+			$this->err($message);
+		}
 	}
 
 /**
@@ -291,16 +298,14 @@ class ConsoleShell extends AppShell {
 					}
 				break;
 				case (preg_match("/^routes\s+reload/i", $command, $tmp) == true):
-					$router = Router::getInstance();
 					if (!$this->_loadRoutes()) {
-						$this->out(__d('cake_console', "There was an error loading the routes config. Please check that the file exists and is free of parse errors."));
+						$this->err(__d('cake_console', "There was an error loading the routes config. Please check that the file exists and is free of parse errors."));
 						break;
 					}
-					$this->out(__d('cake_console', "Routes configuration reloaded, %d routes connected", count($router->routes)));
+					$this->out(__d('cake_console', "Routes configuration reloaded, %d routes connected", count(Router::$routes)));
 				break;
 				case (preg_match("/^routes\s+show/i", $command, $tmp) == true):
-					$router = Router::getInstance();
-					$this->out(implode("\n", Hash::extract($router->routes, '{n}.0')));
+					$this->out(print_r(Hash::combine(Router::$routes, '{n}.template', '{n}.defaults'), true));
 				break;
 				case (preg_match("/^route\s+(\(.*\))$/i", $command, $tmp) == true):
 					if ($url = eval('return array' . $tmp[1] . ';')) {
@@ -345,14 +350,6 @@ class ConsoleShell extends AppShell {
 		CakePlugin::routes();
 
 		Router::parse('/');
-
-		foreach (array_keys(Router::getNamedExpressions()) as $var) {
-			unset(${$var});
-		}
-
-		foreach (Router::$routes as $route) {
-			$route->compile();
-		}
 		return true;
 	}
 
