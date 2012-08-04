@@ -327,7 +327,7 @@ object(View) {
 	float => (float) 1.333
 
 TEXT;
-		if (strnatcmp(phpversion(),'5.3.0') >= 0) {
+		if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
 			$expected .= <<<TEXT
 	[protected] _passedVars => array(
 		(int) 0 => 'viewVars',

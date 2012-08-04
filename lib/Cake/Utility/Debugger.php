@@ -577,7 +577,7 @@ class Debugger {
 				$props[] = "$key => " . $value;
 			}
 
-			if (strnatcmp(phpversion(),'5.3.0') >= 0) {
+			if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
 				$ref = new ReflectionObject($var);
 
 				$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PROTECTED);
