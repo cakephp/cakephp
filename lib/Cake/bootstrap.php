@@ -90,12 +90,16 @@ if (!defined('TMP')) {
 /**
  * Path to the logs directory.
  */
+if (!defined('LOGS')) {
 	define('LOGS', TMP . 'logs' . DS);
+}
 
 /**
  * Path to the cache files directory. It can be shared between hosts in a multi-server setup.
  */
+if (!defined('CACHE')) {
 	define('CACHE', TMP . 'cache' . DS);
+}
 
 /**
  * Path to the vendors directory.
