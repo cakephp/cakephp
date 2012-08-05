@@ -12,6 +12,8 @@ use Cake\Core\Configure;
  *
  * - `handler` - callback - The callback to handle errors. You can set this to any callable type,
  *    including anonymous functions.
+ * - `consoleHandler` - callback - The callback to handle errors. You can set this to any callable type,
+ *    including anonymous functions.
  * - `level` - int - The level of errors you are interested in capturing.
  * - `trace` - boolean - Include stack traces for errors in log files.
  *
@@ -19,6 +21,7 @@ use Cake\Core\Configure;
  */
 	$error = array(
 		'handler' => 'Cake\Error\ErrorHandler::handleError',
+		'consoleHandler' => 'Cake\Console\ConsoleErrorHandler::handleError',
 		'level' => E_ALL & ~E_DEPRECATED,
 		'trace' => true
 	);
@@ -41,6 +44,7 @@ use Cake\Core\Configure;
  */
 	$exception = array(
 		'handler' => 'Cake\Error\ErrorHandler::handleException',
+		'consoleHandler' => 'Cake\Console\ConsoleErrorHandler::handleException',
 		'renderer' => 'Cake\Error\ExceptionRenderer',
 		'log' => true
 	);
