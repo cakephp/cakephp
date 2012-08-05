@@ -17,11 +17,11 @@ use Cake\Core\Configure;
  *
  * @see ErrorHandler for more information on error handling and configuration.
  */
-	Configure::write('Error', array(
+	$error = array(
 		'handler' => 'Cake\Error\ErrorHandler::handleError',
 		'level' => E_ALL & ~E_DEPRECATED,
 		'trace' => true
-	));
+	);
 
 /**
  * Configure the Exception handler used for uncaught exceptions.  By default,
@@ -39,10 +39,15 @@ use Cake\Core\Configure;
  *
  * @see ErrorHandler for more information on exception handling and configuration.
  */
-	Configure::write('Exception', array(
+	$exception = array(
 		'handler' => 'Cake\Error\ErrorHandler::handleException',
 		'renderer' => 'Cake\Error\ExceptionRenderer',
 		'log' => true
-	));
+	);
 
-	Configure::setErrorHandlers();
+	Configure::setErrorHandlers(
+		$error,
+		$exception
+	);
+
+	unset($error, $exception);

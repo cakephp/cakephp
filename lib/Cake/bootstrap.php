@@ -27,6 +27,13 @@ require CAKE . 'Core/ClassLoader.php';
 $loader = new \Cake\Core\ClassLoader('Cake', CORE_PATH);
 $loader->register();
 
+
+use Cake\Core\App;
+use Cake\Core\Configure;
+
+App::init();
+App::build();
+
 /**
  *  Full url prefix
  */

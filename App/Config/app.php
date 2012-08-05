@@ -2,6 +2,7 @@
 namespace App\Config;
 
 use Cake\Core\Configure;
+use Cake\Core\ClassLoader;
 
 /**
  * CakePHP Debug Level:
@@ -17,6 +18,12 @@ use Cake\Core\Configure;
  * In development mode, you need to click the flash message to continue.
  */
 	Configure::write('debug', 2);
+
+/**
+ * The root namespace your application uses.  This should match
+ * the top level directory.
+ */
+	$namespace = 'App';
 
 /**
  * Configure basic information about the application.
@@ -36,12 +43,16 @@ use Cake\Core\Configure;
  * - www_root - The file path to webroot.
  */
 	Configure::write('App', array(
-		'namespace' => 'App',
+		'namespace' => $namespace,
 		'encoding' => 'UTF-8',
+		'base' => false,
 		'baseUrl' => false,
 		//'baseUrl' => env('SCRIPT_NAME'),
-		'base' => false,
 		'dir' => APP_DIR,
 		'webroot' => WEBROOT_DIR,
 		'www_root' => WWW_ROOT,
 	));
+
+	$loader = new ClassLoader($namespace, dirname(APP));
+	$loader->register();
+	unset($loader, $namespace);

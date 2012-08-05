@@ -23,7 +23,7 @@ define('APP_DIR', basename(dirname(dirname(__FILE__))));
 /**
  * The name of the webroot dir.  Defaults to 'webroot'
  */
-define('WEBROOT_DIR', basename(dirname(__FILE__)));
+define('WEBROOT_DIR', 'webroot');
 
 /**
  * File path to the webroot directory.

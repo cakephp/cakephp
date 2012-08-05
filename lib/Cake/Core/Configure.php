@@ -50,36 +50,6 @@ class Configure {
 	protected static $_readers = array();
 
 /**
- * Initializes configure and runs the bootstrap process.
- * Bootstrapping includes the following steps:
- *
- * - Setup App array in Configure.
- * - Include app/Config/core.php.
- * - Configure core cache configurations.
- * - Load App cache files.
- * - Include app/Config/bootstrap.php.
- * - Setup error/exception handlers.
- *
- * @param boolean $boot
- * @return void
- */
-	public static function bootstrap($boot = true) {
-		if ($boot) {
-			static::write('App', array(
-				'base' => false,
-				'baseUrl' => false,
-				'dir' => APP_DIR,
-				'webroot' => WEBROOT_DIR,
-				'www_root' => WWW_ROOT
-			));
-
-			App::init();
-			App::build();
-
-		}
-	}
-
-/**
  * Used to store a dynamic variable in Configure.
  *
  * Usage:
@@ -385,13 +355,7 @@ class Configure {
  * @param array $exception The exception handling configuration.
  * @return void
  */
-	public static function setErrorHandlers($error = null, $exception = null) {
-		if (!$error) {
-			$error = self::$_values['Error'];
-		}
-		if (!$exception) {
-			$exception = self::$_values['Exception'];
-		}
+	public static function setErrorHandlers($error, $exception) {
 		$level = -1;
 		if (isset($error['level'])) {
 			error_reporting($error['level']);
