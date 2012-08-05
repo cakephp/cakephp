@@ -18,4 +18,5 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 include dirname(__DIR__) . '/Config/bootstrap.php';
+
 return Cake\Console\ShellDispatcher::run($argv);

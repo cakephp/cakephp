@@ -29,7 +29,6 @@ $loader->register();
 
 
 use Cake\Core\App;
-use Cake\Core\Configure;
 
 App::init();
 App::build();
