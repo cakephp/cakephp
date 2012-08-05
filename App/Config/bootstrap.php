@@ -1,15 +1,5 @@
 <?php
 /**
- * This file is loaded automatically by the app/webroot/index.php file after core.php
- *
- * This file should load/create any application wide configuration settings, such as 
- * Caching, Logging, loading additional configuration files.
- *
- * You should also use this file to include any files that provide global functions/constants
- * that your application uses.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -23,87 +13,59 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace App\Config;
-use Cake\Cache\Cache;
+
+/**
+ * Configure paths required to find CakePHP + general filepath
+ * constants
+ */
+require __DIR__ . '/paths.php';
+
+/**
+ * Bootstrap CakePHP.
+ *
+ * Does the various bits of setup that CakePHP needs to do.
+ * This includes:
+ *
+ * - Registering the CakePHP autoloader.
+ * - Setting the default application paths.
+ */
+require CORE_PATH . 'Cake/bootstrap.php';
+
+/**
+ * Configure the App and debug values.
+ */
+require __DIR__ . '/app.php';
+
+/**
+ * Load caching configuration.
+ */
+require __DIR__ . '/cache.php';
+
+/**
+ * Load error handler configuration.
+ */
+require __DIR__ . '/error.php';
+
+/**
+ * Load datasource connections.
+ */
+require __DIR__ . '/datasources.php';
+
+/**
+ * Load logging configuration.
+ */
+require __DIR__ . '/logging.php';
+
+/**
+ * Load session configuration.
+ */
+require __DIR__ . '/session.php';
+
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Log\Log;
 use Cake\Utility\Inflector;
-
-/**
- * Cache Engine Configuration
- * Default settings provided below
- *
- * File storage engine.
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'File', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
- * 		'path' => CACHE, //[optional] use system tmp directory - remember to use absolute path
- * 		'prefix' => 'cake_', //[optional]  prefix every cache file with this string
- * 		'lock' => false, //[optional]  use file locking
- * 		'serialize' => true, // [optional]
- * 		'mask' => 0666, // [optional] permission mask to use when creating cache files
- *	));
- *
- * APC (http://pecl.php.net/package/APC)
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'Apc', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
- * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
- *	));
- *
- * Xcache (http://xcache.lighttpd.net/)
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'Xcache', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
- *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional] prefix every cache file with this string
- *		'user' => 'user', //user from xcache.admin.user settings
- *		'password' => 'password', //plaintext password (xcache.admin.pass)
- *	));
- *
- * Memcache (http://memcached.org/)
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'Memcache', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
- * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
- * 		'servers' => array(
- * 			'127.0.0.1:11211' // localhost, default port 11211
- * 		), //[optional]
- * 		'persistent' => true, // [optional] set this to false for non-persistent connections
- * 		'compress' => false, // [optional] compress data in Memcache (slower, but uses less memory)
- *	));
- *
- *  Wincache (http://php.net/wincache)
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'Wincache', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
- *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
- *	));
- *
- * Redis (http://http://redis.io/)
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'Redis', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
- *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
- *		'server' => '127.0.0.1' // localhost
- *		'port' => 6379 // default port 6379
- *		'timeout' => 0 // timeout in seconds, 0 = unlimited
- *		'persistent' => true, // [optional] set this to false for non-persistent connections
- *	));
- */
-Cache::config('default', array('engine' => 'File'));
 
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
@@ -172,16 +134,3 @@ Configure::write('Dispatcher.filters', array(
 	'CacheDispatcher'
 ));
 
-/**
- * Configures default file logging options
- */
-Log::config('debug', array(
-	'engine' => 'Cake\Log\Engine\FileLog',
-	'types' => array('notice', 'info', 'debug'),
-	'file' => 'debug',
-));
-Log::config('error', array(
-	'engine' => 'Cake\Log\Engine\FileLog',
-	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
-	'file' => 'error',
-));

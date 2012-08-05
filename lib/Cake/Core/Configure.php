@@ -73,30 +73,9 @@ class Configure {
 				'www_root' => WWW_ROOT
 			));
 
-			if (!include APP . 'Config/core.php') {
-				trigger_error(__d('cake_dev', "Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
-			}
 			App::init();
 			App::build();
 
-			$exception = array(
-				'handler' => 'Cake\Error\ErrorHandler::handleException',
-			);
-			$error = array(
-				'handler' => 'Cake\Error\ErrorHandler::handleError',
-				'level' => E_ALL & ~E_DEPRECATED,
-			);
-			static::_setErrorHandlers($error, $exception);
-
-			if (!include APP . 'Config/bootstrap.php') {
-				trigger_error(__d('cake_dev', "Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
-			}
-			restore_error_handler();
-
-			static::_setErrorHandlers(
-				static::$_values['Error'],
-				static::$_values['Exception']
-			);
 		}
 	}
 
@@ -406,7 +385,13 @@ class Configure {
  * @param array $exception The exception handling configuration.
  * @return void
  */
-	protected static function _setErrorHandlers($error, $exception) {
+	public static function setErrorHandlers($error = null, $exception = null) {
+		if (!$error) {
+			$error = self::$_values['Error'];
+		}
+		if (!$exception) {
+			$exception = self::$_values['Exception'];
+		}
 		$level = -1;
 		if (isset($error['level'])) {
 			error_reporting($error['level']);
