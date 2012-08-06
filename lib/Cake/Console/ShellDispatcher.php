@@ -82,7 +82,7 @@ class ShellDispatcher {
 		}
 
 		if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-			if(!defined('DS')) {
+			if (!defined('DS')) {
 				define('DS', DIRECTORY_SEPARATOR);
 			}
 
