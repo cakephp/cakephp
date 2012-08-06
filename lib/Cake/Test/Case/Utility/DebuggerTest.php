@@ -325,8 +325,43 @@ object(View) {
 	elementCacheSettings => array()
 	int => (int) 2
 	float => (float) 1.333
+
+TEXT;
+		if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+			$expected .= <<<TEXT
+	[protected] _passedVars => array(
+		(int) 0 => 'viewVars',
+		(int) 1 => 'autoLayout',
+		(int) 2 => 'ext',
+		(int) 3 => 'helpers',
+		(int) 4 => 'view',
+		(int) 5 => 'layout',
+		(int) 6 => 'name',
+		(int) 7 => 'theme',
+		(int) 8 => 'layoutPath',
+		(int) 9 => 'viewPath',
+		(int) 10 => 'request',
+		(int) 11 => 'plugin',
+		(int) 12 => 'passedArgs',
+		(int) 13 => 'cacheAction'
+	)
+	[protected] _scripts => array()
+	[protected] _paths => array()
+	[protected] _helpersLoaded => false
+	[protected] _parents => array()
+	[protected] _current => null
+	[protected] _currentType => ''
+	[protected] _stack => array()
+	[protected] _eventManager => object(CakeEventManager) {}
+	[protected] _eventManagerConfigured => false
+	[private] __viewFileName => null
+
+TEXT;
+		}
+		$expected .= <<<TEXT
 }
 TEXT;
+
 		$this->assertTextEquals($expected, $result);
 
 		$data = array(
