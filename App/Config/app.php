@@ -42,7 +42,7 @@ use Cake\Core\ClassLoader;
  * - webroot - The webroot directory.
  * - www_root - The file path to webroot.
  */
-	Configure::write('App', array(
+	Configure::write('App', [
 		'namespace' => $namespace,
 		'encoding' => 'UTF-8',
 		'base' => false,
@@ -51,8 +51,49 @@ use Cake\Core\ClassLoader;
 		'dir' => APP_DIR,
 		'webroot' => WEBROOT_DIR,
 		'www_root' => WWW_ROOT,
-	));
+	]);
 
+/**
+ * Uncomment this line and correct your server timezone to fix 
+ * any date & time related errors.
+ */
+	//date_default_timezone_set('UTC');
+
+/**
+ * Setup Security and hashing related values.
+ * The level of CakePHP security.
+ *
+ * - salt - A random string used in security hashing methods.
+ * - cipherSeed - A random numeric string (digits only) used to seed 
+ *   the xor cipher functions in Security.
+ */
+	Configure::write('Security', [
+		'salt' => 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi',
+		'cipherSeed' => '76859309657453542496749683645',
+	]);
+
+/**
+ * Apply timestamps with the last modified time to static assets (js, css, images).
+ * Will append a querystring parameter containing the time the file was modified. This is
+ * useful for invalidating browser caches.
+ *
+ * Set to `true` to apply timestamps when debug > 0. Set to 'force' to always enable
+ * timestamping regardless of debug value.
+ */
+	//Configure::write('Asset.timestamp', true);
+
+/**
+ * The classname and database used in CakePHP's
+ * access control lists.
+ */
+	Configure::write('Acl', [
+		'database' => 'default',
+		'classname', 'DbAcl',
+	]);
+
+/**
+ * Configure an autoloader for the App namespace.
+ */
 	$loader = new ClassLoader($namespace, dirname(APP));
 	$loader->register();
 	unset($loader, $namespace);

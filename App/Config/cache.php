@@ -12,6 +12,23 @@ namespace App\Config;
 use Cake\Core\Configure;
 use Cake\Cache\Cache;
 
+/**
+ * Turn off all caching application-wide.
+ *
+ */
+	//Configure::write('Cache.disable', true);
+
+/**
+ * Enable cache checking.
+ *
+ * If set to true, for view caching you must still use the controller
+ * public $cacheAction inside your controllers to define caching settings.
+ * You can either set it controller-wide by setting public $cacheAction = true,
+ * or in each action using $this->cacheAction = true.
+ *
+ */
+	//Configure::write('Cache.check', true);
+
 // In development mode, caches should expire quickly.
 $duration = '+999 days';
 if (Configure::read('debug') >= 1) {
