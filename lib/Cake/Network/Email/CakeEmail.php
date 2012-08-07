@@ -332,6 +332,8 @@ class CakeEmail {
 
 		if ($config) {
 			$this->config($config);
+		} else {
+			$this->config('default');
 		}
 		if (empty($this->headerCharset)) {
 			$this->headerCharset = $this->charset;
