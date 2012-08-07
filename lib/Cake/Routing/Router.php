@@ -914,7 +914,7 @@ class Router {
             //router::url(array('plugin'=>'FileUpload','controller'=>'FileUpload','action'=>'upload',)) return
             // /FileUpload/FileUpload/upload ,then cakephp will lookfor FileUpload controller FileUpload action
             $_plugin = Inflector::underscore($url['plugin']);
-			array_unshift($urlOut, $url['plugin']);
+			array_unshift($urlOut, $_plugin);
 		}
 
 		foreach (self::$_prefixes as $prefix) {
