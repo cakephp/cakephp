@@ -33,6 +33,9 @@ require CORE_PATH . 'Cake/bootstrap.php';
 
 /**
  * Configure the App and debug values.
+ *
+ * You won't be able to load application classes
+ * until after the autoloader is configured in app.php
  */
 require __DIR__ . '/app.php';
 
@@ -47,9 +50,24 @@ require __DIR__ . '/cache.php';
 require __DIR__ . '/error.php';
 
 /**
- * Load datasource connections.
+ * Load email configuration.
+ *
+ * Create and uncomment this file to use pre-configured
+ * email defaults.
+ *
+ * See App/Config/email.default.php for a template
  */
-require __DIR__ . '/datasources.php';
+// require __DIR__ . '/email.php';
+
+/**
+ * Load datasource connections.
+ *
+ * Create and uncomment this file to use datasource
+ * connections.
+ *
+ * See App/Config/datasources.default.php for a template.
+ */
+// require __DIR__ . '/datasources.php';
 
 /**
  * Load logging configuration.
