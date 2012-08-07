@@ -17,13 +17,13 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-define('DS', DIRECTORY_SEPARATOR);
-$dispatcher = 'Cake' . DS . 'Console' . DS . 'ShellDispatcher.php';
+$ds = DIRECTORY_SEPARATOR;
+$dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 $found = false;
 $paths = explode(PATH_SEPARATOR, ini_get('include_path'));
 
 foreach ($paths as $path) {
-	if (file_exists($path . DS . $dispatcher)) {
+	if (file_exists($path . $ds . $dispatcher)) {
 		$found = $path;
 		break;
 	}
@@ -31,13 +31,13 @@ foreach ($paths as $path) {
 
 if (!$found) {
 	$root = dirname(dirname(dirname(__FILE__)));
-	if (!include $root . DS . $dispatcher) {
+	if (!include $root . $ds . $dispatcher) {
 		trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 	}
 } else {
-	include $found . DS . $dispatcher;
+	include $found . $ds . $dispatcher;
 }
 
-unset($paths, $path, $found, $dispatcher, $root);
+unset($paths, $path, $found, $dispatcher, $root, $ds);
 
 return ShellDispatcher::run($argv);
