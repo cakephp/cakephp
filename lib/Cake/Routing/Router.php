@@ -910,6 +910,10 @@ class Router {
 		$urlOut = array_filter(array($url['controller'], $url['action']));
 
 		if (isset($url['plugin'])) {
+            //XXX bug plugin name in url are not underscore
+            //router::url(array('plugin'=>'FileUpload','controller'=>'FileUpload','action'=>'upload',)) return
+            // /FileUpload/FileUpload/upload ,then cakephp will lookfor FileUpload controller FileUpload action
+            $_plugin = Inflector::underscore($url['plugin']);
 			array_unshift($urlOut, $url['plugin']);
 		}
 
