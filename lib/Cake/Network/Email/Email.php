@@ -182,7 +182,7 @@ class Email {
  *
  * @var string
  */
-	protected $_viewRender = 'View';
+	protected $_viewRender = 'Cake\View\View';
 
 /**
  * Vars to sent to render
@@ -1179,7 +1179,7 @@ class Email {
 		$this->_headers = array();
 		$this->_layout = 'default';
 		$this->_template = '';
-		$this->_viewRender = 'View';
+		$this->_viewRender = 'Cake\View\View';
 		$this->_viewVars = array();
 		$this->_theme = null;
 		$this->_helpers = array('Html');

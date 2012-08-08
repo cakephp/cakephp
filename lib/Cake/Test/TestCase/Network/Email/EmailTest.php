@@ -1530,13 +1530,13 @@ class CakeEmailTest extends TestCase {
  */
 	public function testViewRender() {
 		$result = $this->CakeEmail->viewRender();
-		$this->assertEquals('View', $result);
+		$this->assertEquals('Cake\View\View', $result);
 
-		$result = $this->CakeEmail->viewRender('Theme');
-		$this->assertInstanceOf('CakeEmail', $result);
+		$result = $this->CakeEmail->viewRender('Cake\View\ThemeView');
+		$this->assertInstanceOf('Cake\Network\Email\Email', $result);
 
 		$result = $this->CakeEmail->viewRender();
-		$this->assertEquals('Theme', $result);
+		$this->assertEquals('Cake\View\ThemeView', $result);
 	}
 
 /**
