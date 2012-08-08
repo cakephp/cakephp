@@ -635,7 +635,9 @@ class Controller extends Object implements CakeEventListener {
 		$this->Components->init($this);
 		if ($this->uses) {
 			$this->uses = (array)$this->uses;
-			list(, $this->modelClass) = pluginSplit(current($this->uses));
+            if (!in_array($this->modelClass, $this->uses)) {
+                list(, $this->modelClass) = pluginSplit(current($this->uses));
+            }
 		}
 		return true;
 	}
