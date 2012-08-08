@@ -254,44 +254,48 @@ class CakeSchema extends Object {
 					continue;
 				}
 
-				$db = $Object->getDataSource();
-				if (is_object($Object) && $Object->useTable !== false) {
-					$fulltable = $table = $db->fullTableName($Object, false, false);
-					if ($prefix && strpos($table, $prefix) !== 0) {
+				$fulltable = $table = $db->fullTableName($Object, false, false);
+				if ($prefix && strpos($table, $prefix) !== 0) {
+					continue;
+				}
+				if (!is_object($Object) || $Object->useTable === false) {
+					continue;
+				}
+				if (!in_array($fulltable, $currentTables)) {
+					continue;
+				}
+
+				$table = $this->_noPrefixTable($prefix, $table);
+
+				$key = array_search($fulltable, $currentTables);
+				if (empty($tables[$table])) {
+					$tables[$table] = $this->_columns($Object);
+					$tables[$table]['indexes'] = $db->index($Object);
+					$tables[$table]['tableParameters'] = $db->readTableParameters($fulltable);
+					unset($currentTables[$key]);
+				}
+				if (empty($Object->hasAndBelongsToMany)) {
+					continue;
+				}
+				foreach ($Object->hasAndBelongsToMany as $Assoc => $assocData) {
+					if (isset($assocData['with'])) {
+						$class = $assocData['with'];
+					}
+					if (!is_object($Object->$class)) {
 						continue;
 					}
-					$table = $this->_noPrefixTable($prefix, $table);
+					$withTable = $db->fullTableName($Object->$class, false, false);
+					if ($prefix && strpos($withTable, $prefix) !== 0) {
+						continue;
+					}
+					if (in_array($withTable, $currentTables)) {
+						$key = array_search($withTable, $currentTables);
+						$noPrefixWith = $this->_noPrefixTable($prefix, $withTable);
 
-					if (in_array($fulltable, $currentTables)) {
-						$key = array_search($fulltable, $currentTables);
-						if (empty($tables[$table])) {
-							$tables[$table] = $this->_columns($Object);
-							$tables[$table]['indexes'] = $db->index($Object);
-							$tables[$table]['tableParameters'] = $db->readTableParameters($fulltable);
-							unset($currentTables[$key]);
-						}
-						if (!empty($Object->hasAndBelongsToMany)) {
-							foreach ($Object->hasAndBelongsToMany as $Assoc => $assocData) {
-								if (isset($assocData['with'])) {
-									$class = $assocData['with'];
-								}
-								if (is_object($Object->$class)) {
-									$withTable = $db->fullTableName($Object->$class, false, false);
-									if ($prefix && strpos($withTable, $prefix) !== 0) {
-										continue;
-									}
-									if (in_array($withTable, $currentTables)) {
-										$key = array_search($withTable, $currentTables);
-										$noPrefixWith = $this->_noPrefixTable($prefix, $withTable);
-
-										$tables[$noPrefixWith] = $this->_columns($Object->$class);
-										$tables[$noPrefixWith]['indexes'] = $db->index($Object->$class);
-										$tables[$noPrefixWith]['tableParameters'] = $db->readTableParameters($withTable);
-										unset($currentTables[$key]);
-									}
-								}
-							}
-						}
+						$tables[$noPrefixWith] = $this->_columns($Object->$class);
+						$tables[$noPrefixWith]['indexes'] = $db->index($Object->$class);
+						$tables[$noPrefixWith]['tableParameters'] = $db->readTableParameters($withTable);
+						unset($currentTables[$key]);
 					}
 				}
 			}
