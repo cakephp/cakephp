@@ -499,6 +499,35 @@ class SchemaShellTest extends CakeTestCase {
 	}
 
 /**
+ * test that underscored names also result in CamelCased class names
+ *
+ * @return void
+ */
+	public function testName() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestPlugin');
+		$this->Shell->params = array(
+			'plugin' => 'TestPlugin',
+			'connection' => 'test',
+			'name' => 'custom_name',
+			'force' => false,
+			'overwrite' => true,
+		);
+		$this->Shell->startup();
+		if (file_exists($this->Shell->Schema->path . DS . 'custom_name.php')) {
+			unlink($this->Shell->Schema->path . DS . 'custom_name.php');
+		}
+		$this->Shell->generate();
+
+		$contents = file_get_contents($this->Shell->Schema->path . DS . 'custom_name.php');
+		$this->assertRegExp('/class CustomNameSchema/', $contents);
+		unlink($this->Shell->Schema->path . DS . 'custom_name.php');
+		CakePlugin::unload();
+	}
+
+/**
  * test that using Plugin.name with write.
  *
  * @return void
