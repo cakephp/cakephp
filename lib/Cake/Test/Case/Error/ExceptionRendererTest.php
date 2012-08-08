@@ -481,6 +481,27 @@ class ExceptionRendererTest extends CakeTestCase {
 	}
 
 /**
+ * testExceptionResponseHeader method
+ *
+ * @return void
+ */
+	public function testExceptionResponseHeader() {
+		$exception = new MethodNotAllowedException('Only allowing POST and DELETE');
+		$exception->responseHeader(array('Allow: POST, DELETE'));
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+
+		//Replace response object with mocked object add back the original headers which had been set in ExceptionRenderer constructor
+		$headers = $ExceptionRenderer->controller->response->header();
+		$ExceptionRenderer->controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$ExceptionRenderer->controller->response->header($headers);
+
+		$ExceptionRenderer->controller->response->expects($this->at(1))->method('_sendHeader')->with('Allow', 'POST, DELETE');
+		ob_start();
+		$ExceptionRenderer->render();
+		$result = ob_get_clean();
+	}
+
+/**
  * testMissingController method
  *
  * @return void

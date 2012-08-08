@@ -147,6 +147,11 @@ class ExceptionRenderer {
 			$request = new CakeRequest();
 		}
 		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+
+		if (method_exists($exception, 'responseHeader')) {
+			$response->header($exception->responseHeader());
+		}
+
 		try {
 			if (class_exists('AppController')) {
 				$controller = new CakeErrorController($request, $response);
