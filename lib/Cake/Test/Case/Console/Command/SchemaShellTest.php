@@ -363,6 +363,41 @@ class SchemaShellTest extends CakeTestCase {
 	}
 
 /**
+ * test generate with specific models
+ *
+ * @return void
+ */
+	public function testGenerateModels() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		), App::RESET);
+		CakePlugin::load('TestPlugin');
+
+		$this->db->cacheSources = false;
+		$this->Shell->params = array(
+			'plugin' => 'TestPlugin',
+			'connection' => 'test',
+			'models' => 'TestPluginComment',
+			'force' => false,
+			'overwrite' => true
+		);
+		$this->Shell->startup();
+		$this->Shell->Schema->path = TMP . 'tests' . DS;
+
+		$this->Shell->generate();
+		$this->file = new File(TMP . 'tests' . DS . 'schema.php');
+		$contents = $this->file->read();
+
+		$this->assertRegExp('/class TestPluginSchema/', $contents);
+		$this->assertRegExp('/public \$test_plugin_comments/', $contents);
+		$this->assertNotRegExp('/public \$authors/', $contents);
+		$this->assertNotRegExp('/public \$auth_users/', $contents);
+		$this->assertNotRegExp('/public \$posts/', $contents);
+		CakePlugin::unload();
+	}
+
+
+/**
  * Test schema run create with no table args.
  *
  * @return void
