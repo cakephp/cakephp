@@ -254,11 +254,12 @@ class CakeSchema extends Object {
 					continue;
 				}
 
-				$fulltable = $table = $db->fullTableName($Object, false, false);
-				if ($prefix && strpos($table, $prefix) !== 0) {
+				if (!is_object($Object) || $Object->useTable === false) {
 					continue;
 				}
-				if (!is_object($Object) || $Object->useTable === false) {
+
+				$fulltable = $table = $db->fullTableName($Object, false, false);
+				if ($prefix && strpos($table, $prefix) !== 0) {
 					continue;
 				}
 				if (!in_array($fulltable, $currentTables)) {
