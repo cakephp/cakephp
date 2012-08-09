@@ -542,10 +542,11 @@ class Debugger {
 
 		if ($depth >= 0) {
 			foreach ($var as $key => $val) {
-				if ($val != $var) {
-					$val = self::_export($val, $depth, $indent);
-				} else {
+				// Sniff for globals as !== explodes in < 5.4
+				if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
 					$val = '[recursion]';
+				} else if ($val !== $var) {
+					$val = self::_export($val, $depth, $indent);
 				}
 				$vars[] = $break . self::exportVar($key) .
 					' => ' .
