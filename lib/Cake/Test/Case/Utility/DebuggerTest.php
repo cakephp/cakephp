@@ -478,6 +478,16 @@ TEXT;
 	}
 
 /**
+ * Test that exportVar() doesn't loop through recursive structures.
+ *
+ * @return void
+ */
+	public function testExportVarRecursion() {
+		$output = Debugger::exportVar($GLOBALS);
+		$this->assertContains("'GLOBALS' => [recursion]", $output);
+	}
+
+/**
  * test trace exclude
  *
  * @return void

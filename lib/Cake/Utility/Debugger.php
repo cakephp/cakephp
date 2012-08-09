@@ -542,9 +542,14 @@ class Debugger {
 
 		if ($depth >= 0) {
 			foreach ($var as $key => $val) {
+				if ($val !== $var) {
+					$val = self::_export($val, $depth, $indent);
+				} else {
+					$val = '[recursion]';
+				}
 				$vars[] = $break . self::exportVar($key) .
 					' => ' .
-					self::_export($val, $depth, $indent);
+					$val;
 			}
 		} else {
 			$vars[] = $break . '[maximum depth reached]';
