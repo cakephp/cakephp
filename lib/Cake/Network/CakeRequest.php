@@ -804,6 +804,38 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Only allow certain HTTP request methods, if the request method does not match
+ * a 405 error will be shown and the required "Allow" response header will be set.
+ *
+ * Example:
+ *
+ * $this->request->onlyAllow('post', 'delete');
+ * or
+ * $this->request->onlyAllow(array('post', 'delete'));
+ *
+ * If the request would be GET, response header "Allow: POST, DELETE" will be set
+ * and a 405 error will be returned
+ *
+ * @param string|array $methods Allowed HTTP request methods
+ * @return boolean true
+ * @throws MethodNotAllowedException
+ */
+	public function onlyAllow($methods) {
+		if (!is_array($methods)) {
+			$methods = func_get_args();
+		}
+		foreach ($methods as $method) {
+			if ($this->is($method)) {
+				return true;
+			}
+		}
+		$allowed = strtoupper(implode(', ', $methods));
+		$e = new MethodNotAllowedException();
+		$e->responseHeader('Allow', $allowed);
+		throw $e;
+	}
+
+/**
  * Read data from php://input, mocked in tests.
  *
  * @return string contents of php://input
