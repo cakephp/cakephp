@@ -317,7 +317,9 @@ class View extends Object {
 				$var = $this->_passedVars[$j];
 				$this->{$var} = $controller->{$var};
 			}
-			$this->_eventManager = $controller->getEventManager();
+			if (!isset($this->viewVars['_serialize'])) {
+				$this->_eventManager = $controller->getEventManager();
+			}
 		}
 		if (empty($this->request) && !($this->request = Router::getRequest(true))) {
 			$this->request = new CakeRequest(null, false);
@@ -329,8 +331,10 @@ class View extends Object {
 		} else {
 			$this->response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
 		}
-		$this->Helpers = new HelperCollection($this);
-		$this->Blocks = new ViewBlock();
+		if (!isset($this->viewVars['_serialize']) || $controller instanceof CakeErrorController) {
+			$this->Helpers = new HelperCollection($this);
+			$this->Blocks = new ViewBlock();
+		}
 		parent::__construct();
 	}
 
