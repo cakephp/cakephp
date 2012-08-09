@@ -77,6 +77,27 @@ class CakeSocket {
 	public $lastError = array();
 
 /**
+ * True if the socket stream is encrypted after a CakeSocket::enableCrypto() call
+ * @var type 
+ */	
+	public $encrypted = false;
+	
+/**
+ * Contains all the encryption methods available
+ * @var array 
+ */
+	protected $_encryptMethods = array(
+		'sslv2_client' => STREAM_CRYPTO_METHOD_SSLv2_CLIENT,
+		'sslv3_client' => STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
+		'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
+		'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
+		'sslv2_server' => STREAM_CRYPTO_METHOD_SSLv2_SERVER,
+		'sslv3_server' => STREAM_CRYPTO_METHOD_SSLv3_SERVER,
+		'sslv23_server' => STREAM_CRYPTO_METHOD_SSLv23_SERVER,
+		'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER
+	);
+
+/**
  * Constructor.
  *
  * @param array $config Socket configuration, which will be merged with the base configuration
@@ -277,4 +298,34 @@ class CakeSocket {
 		return true;
 	}
 
+/**
+ * Encrypts current stream socket, using one of the defined encryption methods
+ * 
+ * @param string $type can be one of 'ssl2', 'ssl3', 'ssl23' or 'tls'
+ * @param string $clientOrServer can be one of 'client', 'server'. Default is 'client'
+ * @param boolean $enable enable or disable encryption. Default is true (enable)
+ * @return boolean True on success
+ * @throws SocketException
+ * @see stream_socket_enable_crypto  
+ */
+	public function enableCrypto($type, $clientOrServer = 'client', $enable = true) {
+		if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
+			throw new InvalidArgumentException(__d('cake_dev', 'Invalid encryption scheme chosen'));
+		}
+		$enableCryptoResult = false;
+		try {
+			$enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $this->_encryptMethods[$type . '_' . $clientOrServer]);
+		} catch (Exception $e) {
+			$this->setLastError(null, $e->getMessage());
+			throw new SocketException($e->getMessage());
+		}
+		if ($enableCryptoResult === true) {
+			$this->encrypted = $enable;
+			return true;
+		} else {
+			$errorMessage = __d('cake_dev', 'Unable to perform enableCrypto operation on CakeSocket');
+			$this->setLastError(null, $errorMessage);
+			throw new SocketException($errorMessage);
+		}
+	}	
 }
