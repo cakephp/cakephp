@@ -147,7 +147,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue("500 5.3.3 Unrecognized command\r\n"));
 		$this->SmtpTransport->connect();
 	}
-	
+
 /**
  * testConnectEhloNoTlsOnRequiredTlsServer method
  *
@@ -168,7 +168,7 @@ class SmtpTransportTest extends CakeTestCase {
 		$this->SmtpTransport->connect();
 		$this->SmtpTransport->auth();
 	}
-	
+
 /**
  * testConnectHelo method
  *

@@ -41,11 +41,11 @@ class CakeSocket {
  * @var array
  */
 	protected $_baseConfig = array(
-		'persistent'	=> false,
-		'host'			=> 'localhost',
-		'protocol'		=> 'tcp',
-		'port'			=> 80,
-		'timeout'		=> 30
+		'persistent' => false,
+		'host' => 'localhost',
+		'protocol' => 'tcp',
+		'port' => 80,
+		'timeout' => 30
 	);
 
 /**
@@ -78,13 +78,15 @@ class CakeSocket {
 
 /**
  * True if the socket stream is encrypted after a CakeSocket::enableCrypto() call
- * @var type 
- */	
+ *
+ * @var boolean
+ */
 	public $encrypted = false;
-	
+
 /**
  * Contains all the encryption methods available
- * @var array 
+ *
+ * @var array
  */
 	protected $_encryptMethods = array(
 		'sslv2_client' => STREAM_CRYPTO_METHOD_SSLv2_CLIENT,
@@ -300,13 +302,14 @@ class CakeSocket {
 
 /**
  * Encrypts current stream socket, using one of the defined encryption methods
- * 
+ *
  * @param string $type can be one of 'ssl2', 'ssl3', 'ssl23' or 'tls'
  * @param string $clientOrServer can be one of 'client', 'server'. Default is 'client'
  * @param boolean $enable enable or disable encryption. Default is true (enable)
  * @return boolean True on success
- * @throws SocketException
- * @see stream_socket_enable_crypto  
+ * @throws InvalidArgumentException When an invalid encryption scheme is chosen.
+ * @throws SocketException When attempting to enable SSL/TLS fails
+ * @see stream_socket_enable_crypto
  */
 	public function enableCrypto($type, $clientOrServer = 'client', $enable = true) {
 		if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
@@ -327,5 +330,6 @@ class CakeSocket {
 			$this->setLastError(null, $errorMessage);
 			throw new SocketException($errorMessage);
 		}
-	}	
+	}
+
 }
