@@ -72,10 +72,10 @@ class PhpReader implements ConfigReaderInterface {
 		} else {
 			$file = $this->_path . $key;
 		}
-		$file .= '.php';
 		if (!is_file($file)) {
-			if (!is_file(substr($file, 0, -4))) {
-				throw new ConfigureException(__d('cake_dev', 'Could not load configuration files: %s or %s', $file, substr($file, 0, -4)));
+			$file .= '.php';
+			if (!is_file($file)) {
+				throw new ConfigureException(__d('cake_dev', 'Could not load configuration files: %s or %s', substr($file, 0, -4), $file));
 			}
 		}
 		include $file;
