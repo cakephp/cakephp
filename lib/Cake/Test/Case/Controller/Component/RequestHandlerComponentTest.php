@@ -21,6 +21,7 @@ App::uses('RequestHandlerComponent', 'Controller/Component');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 App::uses('Router', 'Routing');
+App::uses('JsonView', 'View');
 
 /**
  * RequestHandlerTestController class
@@ -70,6 +71,15 @@ class RequestHandlerTestController extends Controller {
 
 }
 
+class CustomJsonView extends JsonView {
+
+/**
+ * Test method for viewClassMap and overriding _serialize()
+ */
+	protected function _serialize($serialize) {
+		return json_encode(array('return' => 'ok'));
+	}
+}
 
 /**
  * RequestHandlerComponentTest class
@@ -137,12 +147,14 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testConstructorSettings() {
 		$settings = array(
-			'ajaxLayout' => 'test_ajax'
+			'ajaxLayout' => 'test_ajax',
+			'viewClassMap' => array('json' => 'MyPlugin.MyJson')
 		);
 		$Collection = new ComponentCollection();
 		$Collection->init($this->Controller);
 		$RequestHandler = new RequestHandlerComponent($Collection, $settings);
 		$this->assertEquals('test_ajax', $RequestHandler->ajaxLayout);
+		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $RequestHandler->settings['viewClassMap']);
 	}
 
 /**
@@ -262,6 +274,33 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertNull($this->RequestHandler->ext);
 
 		call_user_func_array(array('Router', 'parseExtensions'), $extensions);
+	}
+
+/**
+ * testViewClassMap method
+ *
+ * @return void
+ */
+	public function testViewClassMap() {
+		$settings = array('viewClassMap' => array('json' => 'CustomJson'));
+		$this->RequestHandler->initialize($this->Controller, $settings);
+		$result = $this->RequestHandler->viewClassMap();
+		$expected = array(
+			'json' => 'CustomJson',
+			'xml' => 'Xml'
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->RequestHandler->viewClassMap('xls', 'Excel.Excel');
+		$expected = array(
+			'json' => 'CustomJson',
+			'xml' => 'Xml',
+			'xls' => 'Excel.Excel'
+		);
+		$this->assertEquals($expected, $result);
+
+		$this->RequestHandler->renderAs($this->Controller, 'json');
+		$this->assertEquals('CustomJson', $this->Controller->viewClass);
 	}
 
 /**
