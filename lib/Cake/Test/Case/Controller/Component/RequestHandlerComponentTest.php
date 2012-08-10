@@ -71,15 +71,12 @@ class RequestHandlerTestController extends Controller {
 
 }
 
-class CustomJsonView extends JsonView {
-
 /**
- * Test method for viewClassMap and overriding _serialize()
+ * CustomJsonView class
+ *
+ * @package       Cake.Test.Case.Controller.Component
  */
-	protected function _serialize($serialize) {
-		return json_encode(array('return' => 'ok'));
-	}
-}
+class CustomJsonView extends JsonView {}
 
 /**
  * RequestHandlerComponentTest class
