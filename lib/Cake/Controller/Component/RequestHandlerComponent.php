@@ -90,6 +90,17 @@ class RequestHandlerComponent extends Component {
 	);
 
 /**
+ * A mapping between type and viewClass
+ * By default only JSON and XML are mapped, use RequestHandlerComponent::viewClassMap()
+ *
+ * @var array
+ */
+	protected $_viewClassMap = array(
+		'json' => 'Json',
+		'xml' => 'Xml'
+	);
+
+/**
  * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
  *
  * @param ComponentCollection $collection ComponentCollection object.
@@ -125,6 +136,9 @@ class RequestHandlerComponent extends Component {
 		}
 		$this->params = $controller->params;
 		$this->_set($settings);
+		if (!empty($settings['viewClassMap'])) {
+			$this->viewClassMap($settings['viewClassMap']);
+		}
 	}
 
 /**
@@ -581,10 +595,16 @@ class RequestHandlerComponent extends Component {
 		}
 		$controller->ext = '.ctp';
 
-		$viewClass = Inflector::classify($type);
+		$pluginDot = null;
+		$viewClassMap = $this->viewClassMap();
+		if (array_key_exists($type, $viewClassMap)) {
+			list($pluginDot, $viewClass) = pluginSplit($viewClassMap[$type], true);
+		} else {
+			$viewClass = Inflector::classify($type);
+		}
 		$viewName = $viewClass . 'View';
 		if (!class_exists($viewName)) {
-			App::uses($viewName, 'View');
+			App::uses($viewName, $pluginDot . 'View');
 		}
 		if (class_exists($viewName)) {
 			$controller->viewClass = $viewClass;
@@ -726,6 +746,26 @@ class RequestHandlerComponent extends Component {
 			throw new CakeException(__d('cake_dev', 'You must give a handler callback.'));
 		}
 		$this->_inputTypeMap[$type] = $handler;
+	}
+
+/**
+ * Getter/setter for viewClassMap
+ *
+ * @param array|string $type The type string or array with format `array('type' => 'viewClass')` to map one or more
+ * @param array $viewClass The viewClass to be used for the type without `View` appended
+ * @return array]string Returns viewClass when only string $type is set, else array with viewClassMap
+ */
+	public function viewClassMap($type = null, $viewClass = null) {
+		if (!$viewClass && is_string($type) && isset($this->_viewClassMap[$type])) {
+			return $this->_viewClassMap[$type];
+		} elseif (is_string($type)) {
+			$this->_viewClassMap[$type] = $viewClass;
+		} elseif (is_array($type)) {
+			foreach ($type as $key => $value) {
+				$this->viewClassMap($key, $value);
+			}
+		}
+		return $this->_viewClassMap;
 	}
 
 }
