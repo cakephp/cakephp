@@ -89,6 +89,7 @@ class CakeSocket {
  * @var array
  */
 	protected $_encryptMethods = array(
+		// @codingStandardsIgnoreStart
 		'sslv2_client' => STREAM_CRYPTO_METHOD_SSLv2_CLIENT,
 		'sslv3_client' => STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
 		'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
@@ -97,6 +98,7 @@ class CakeSocket {
 		'sslv3_server' => STREAM_CRYPTO_METHOD_SSLv3_SERVER,
 		'sslv23_server' => STREAM_CRYPTO_METHOD_SSLv23_SERVER,
 		'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER
+		// @codingStandardsIgnoreEnd
 	);
 
 /**
