@@ -125,7 +125,6 @@ class JsHelperTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->_asset = Configure::read('Asset.timestamp');
 		Configure::write('Asset.timestamp', false);
 
 		$controller = null;
@@ -148,7 +147,7 @@ class JsHelperTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		Configure::write('Asset.timestamp', $this->_asset);
+		parent::tearDown();
 		unset($this->Js);
 	}
 
