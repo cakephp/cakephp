@@ -257,6 +257,7 @@ class CakeSchema extends Object {
 				if (!is_object($Object) || $Object->useTable === false) {
 					continue;
 				}
+				$db = $Object->getDataSource();
 
 				$fulltable = $table = $db->fullTableName($Object, false, false);
 				if ($prefix && strpos($table, $prefix) !== 0) {
