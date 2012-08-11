@@ -76,7 +76,9 @@ class RequestHandlerTestController extends Controller {
  *
  * @package       Cake.Test.Case.Controller.Component
  */
-class CustomJsonView extends JsonView {}
+class CustomJsonView extends JsonView {
+
+}
 
 /**
  * RequestHandlerComponentTest class

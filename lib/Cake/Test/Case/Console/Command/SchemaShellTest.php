@@ -396,7 +396,6 @@ class SchemaShellTest extends CakeTestCase {
 		CakePlugin::unload();
 	}
 
-
 /**
  * Test schema run create with no table args.
  *
