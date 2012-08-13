@@ -1,0 +1,13 @@
+<?php
+$config = array(
+	'Read' => 'value3',
+	'Deep' => array(
+		'Third' => array(
+			'ThirdDeepest' => 'buried3'
+		)
+	),
+	'TestAcl' => array(
+		'classname' => 'Overwrite',
+		'custom' => 'one'
+	)
+);

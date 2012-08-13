@@ -63,6 +63,13 @@ class PhpReaderTest extends CakeTestCase {
 
 		$values = $reader->read('var_test.php');
 		$this->assertEquals('value', $values['Read']);
+
+		try {
+			$reader->read('var_test3');
+			$this->fail('No exception');
+		} catch (ConfigureException $e) {
+			$this->assertTrue(true, 'ConfigureException raised');
+		}
 	}
 
 /**
