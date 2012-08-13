@@ -171,7 +171,7 @@ class ContainableBehavior extends ModelBehavior {
 		}
 
 		if ($this->settings[$Model->alias]['recursive']) {
-			$query['recursive'] = (isset($query['recursive'])) ? $query['recursive'] : $containments['depth'];
+			$query['recursive'] = (isset($query['recursive'])) ? max($query['recursive'], $containments['depth']) : $containments['depth'];
 		}
 
 		$autoFields = ($this->settings[$Model->alias]['autoFields']
