@@ -149,12 +149,34 @@ class CakeNumber {
 			extract($options);
 		}
 
-		$out = $before . self::_numberFormat($number, $places, $decimals, $thousands) . $after;
+		$value = self::_numberFormat($number, $places, '.', '');
+		$out = $before . self::_numberFormat($value, $places, $decimals, $thousands) . $after;
 
 		if ($escape) {
 			return h($out);
 		}
 		return $out;
+	}
+
+/**
+ * Formats a number into a currency format to show differences.
+ *
+ * @param float $number A floating point number
+ * @param integer $options if int then places, if string then before, if (,.-) then use it
+ *   or array with places and before keys
+ * @return string formatted difference
+ */
+	public static function formatDifference($value, $options = array()) {
+		$places = isset($options['places']) ? $options['places'] : 0;
+		$value = self::_numberFormat($value, $places, '.', '');
+		$sign = $value > 0 ? '+' : '';
+		$options = (array)$options;
+		if (isset($options['before'])) {
+			$options['before'] .= $sign;
+		} else {
+			$options['before'] = $sign;
+		}
+		return self::format($value, $options);
 	}
 
 /**

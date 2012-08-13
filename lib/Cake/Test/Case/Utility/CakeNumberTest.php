@@ -70,6 +70,47 @@ class CakeNumberTest extends CakeTestCase {
 		$result = $this->Number->format($value, '-');
 		$expected = '100-100-100';
 		$this->assertEquals($expected, $result);
+
+		$value = 0.00001;
+		$result = $this->Number->format($value, array('places' => 1));
+		$expected = '$0.0';
+		$this->assertEquals($expected, $result);
+
+		$value = -0.00001;
+		$result = $this->Number->format($value, array('places' => 1));
+		$expected = '$0.0';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testFormatDifference method
+ *
+ * @return void
+ */
+	public function testFormatDifference() {
+		$value = '100100100';
+
+		$result = $this->Number->formatDifference($value, array('before' => '', 'after' => ''));
+		$expected = '+100,100,100.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->formatDifference($value, array('before' => '[', 'after' => ']'));
+		$expected = '[+100,100,100.00]';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->formatDifference(-$value, array('before' => '[', 'after' => ']'));
+		$expected = '[-100,100,100.00]';
+		$this->assertEquals($expected, $result);
+
+		$value = 0;
+		$result = $this->Number->formatDifference($value, array('places' => 1, 'before' => '[', 'after' => ']'));
+		$expected = '[0.0]';
+		$this->assertEquals($expected, $result);
+
+		$value = 0.0001;
+		$result = $this->Number->formatDifference($value, array('places' => 1, 'before' => '[', 'after' => ']'));
+		$expected = '[0.0]';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
