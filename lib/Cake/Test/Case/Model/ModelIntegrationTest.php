@@ -2424,3 +2424,45 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEmpty($model->schema());
 	}
 }
+
+/**
+ * Test to ensure Model::create() clears all previous validation data
+ *
+ * @return	void
+ **/
+	public function testValidationClearsOnModelCreate() {
+
+		$model = $this->getMock('Article', array('getDataSource'));
+		$model->useTable = false;
+
+		$model->validator()
+			->add(
+				'field1',
+				'required',
+				array(
+					'rule' => 'notEmpty',
+					'required' => true
+				)
+			)->add(
+				'field2',
+				'required',
+				array(
+					'rule' => 'notEmpty',
+					'required' => false
+				)
+			);
+
+		// save some invalid data to see it fail
+		$result = $model->save(array('field1' => '', 'field2' => ''));
+
+		$this->assertFalse($result, "Invalid fields should both fail validation");
+
+		// call create(). we're expecting this to clear all validation fails from before
+		$model->create(null);
+
+		// attempt to re-save new data with a previously invalidated field, but not required, removed
+		$result = $model->save(array('field1' => 'Hi'));
+
+		$this->assertTrue($result, "Previously invalidated field, which we are no longer validating, should no longer invalidate");
+
+	}
