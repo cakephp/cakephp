@@ -233,7 +233,7 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function testPutParsing() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
+		$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded; charset=UTF-8';
 
 		$data = array('data' => array(
 			'Article' => array('title')
