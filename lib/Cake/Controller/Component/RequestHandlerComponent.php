@@ -217,6 +217,7 @@ class RequestHandlerComponent extends Component {
 
 /**
  * Handles (fakes) redirects for Ajax requests using requestAction()
+ * Modifies the $_POST and $_SERVER['REQUEST_METHOD'] to simulate a new GET request.
  *
  * @param Controller $controller A reference to the controller
  * @param string|array $url A string or array containing the redirect location
@@ -228,6 +229,7 @@ class RequestHandlerComponent extends Component {
 		if (!$this->request->is('ajax')) {
 			return;
 		}
+		$_SERVER['REQUEST_METHOD'] = 'GET';
 		foreach ($_POST as $key => $val) {
 			unset($_POST[$key]);
 		}
