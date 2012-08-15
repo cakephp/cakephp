@@ -92,11 +92,16 @@ class PhpReader implements ConfigReaderInterface {
  * be used saved into a file and loaded later.
  *
  * @param string $filename The filename to create on $this->_path.
+ * 	Extension ".php" will be automatically appended if not included in filename.
  * @param array $data Data to dump.
  * @return int Bytes saved.
  */
 	public function dump($filename, $data) {
 		$contents = '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';
+
+		if (substr($filename, -4) !== '.php') {
+			$filename .= '.php';
+		}
 		return file_put_contents($this->_path . $filename, $contents);
 	}
 

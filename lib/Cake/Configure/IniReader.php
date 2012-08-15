@@ -142,6 +142,7 @@ class IniReader implements ConfigReaderInterface {
  * Dumps the state of Configure data into an ini formatted string.
  *
  * @param string $filename The filename on $this->_path to save into.
+ * 	Extension ".ini" will be automatically appended if not included in filename.
  * @param array $data The data to convert to ini file.
  * @return int Bytes saved.
  */
@@ -159,6 +160,10 @@ class IniReader implements ConfigReaderInterface {
 			}
 		}
 		$contents = join("\n", $result);
+
+		if (substr($filename, -4) !== '.ini') {
+			$filename .= '.ini';
+		}
 		return file_put_contents($this->_path . $filename, $contents);
 	}
 
