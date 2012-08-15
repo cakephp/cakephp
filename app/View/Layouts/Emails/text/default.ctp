@@ -16,6 +16,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<?php echo $content_for_layout;?>
+<?php echo $this->fetch('content');?>
 
 This email was sent using the CakePHP Framework, http://cakephp.org.
