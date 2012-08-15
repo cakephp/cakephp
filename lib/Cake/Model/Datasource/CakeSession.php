@@ -457,6 +457,10 @@ class CakeSession {
 				$sessionConfig = Hash::merge($defaults, $sessionConfig);
 			}
 		}
+
+		if (!isset($sessionConfig['ini']['session.save_path'])) {
+			$sessionConfig['ini']['session.save_path'] = TMP.'session';
+		}
 		if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS')) {
 			$sessionConfig['ini']['session.cookie_secure'] = 1;
 		}
