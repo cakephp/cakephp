@@ -88,9 +88,10 @@ class JsonView extends View {
 			if (!$this->_helpersLoaded) {
 				$this->loadHelpers();
 			}
-			$content = $this->_render($viewFileName);
-			$this->Blocks->set('content', $content);
-			return $content;
+			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($viewFileName)));
+			$this->Blocks->set('content', $this->_render($viewFileName));
+			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($viewFileName)));
+			return $this->Blocks->get('content');
 		}
 	}
 
