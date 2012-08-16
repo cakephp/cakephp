@@ -151,6 +151,13 @@ PHP;
 
 		unlink($file);
 		$this->assertTextEquals($expected, $contents);
+
+		$result = $reader->dump('test', $this->testData);
+		$this->assertTrue($result > 0);
+
+		$contents = file_get_contents($file);
+		$this->assertTextEquals($expected, $contents);
+		unlink($file);
 	}
 
 /**
