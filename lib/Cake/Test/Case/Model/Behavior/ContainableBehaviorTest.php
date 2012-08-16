@@ -276,7 +276,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Article->find('list', array('fields'=>array('Article.id', 'User.id'), 'contain'=>array('User')));
+		$result = $this->Article->find('list', array('fields' => array('Article.id', 'User.id'), 'contain' => array('User')));
 		$expected = array(
 			1 => '1',
 			2 => '3',
