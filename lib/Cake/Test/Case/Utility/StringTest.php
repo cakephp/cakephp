@@ -460,6 +460,27 @@ podeís adquirirla.</span></p>
 	}
 
 /**
+ * testTruncate method with non utf8 sites
+ *
+ * @return void
+ */
+	public function testTruncateLegacy() {
+		Configure::write('App.encoding', 'ISO-8859-1');
+		$text = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
+		$result = $this->Text->truncate($text, 31, array(
+			'exact' => false,
+		));
+		$expected = '<b>&copy; 2005-2007, Cake...';
+		$this->assertEquals($expected, $result);
+		
+		$result = $this->Text->truncate($text, 31, array(
+			'exact' => true,
+		));
+		$expected = '<b>&copy; 2005-2007, Cake So...';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testTail method
  *
  * @return void
