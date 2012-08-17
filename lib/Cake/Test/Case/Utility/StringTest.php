@@ -468,15 +468,17 @@ podeís adquirirla.</span></p>
 		Configure::write('App.encoding', 'ISO-8859-1');
 		$text = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
 		$result = $this->Text->truncate($text, 31, array(
+			'html' => true,
 			'exact' => false,
 		));
-		$expected = '<b>&copy; 2005-2007, Cake...';
+		$expected = '<b>&copy; 2005-2007, Cake Software...</b>';
 		$this->assertEquals($expected, $result);
 		
 		$result = $this->Text->truncate($text, 31, array(
+			'html' => true,
 			'exact' => true,
 		));
-		$expected = '<b>&copy; 2005-2007, Cake So...';
+		$expected = '<b>&copy; 2005-2007, Cake Software F...</b>';
 		$this->assertEquals($expected, $result);
 	}
 
