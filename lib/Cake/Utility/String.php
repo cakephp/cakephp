@@ -480,6 +480,9 @@ class String {
 		$default = array(
 			'ellipsis' => '...', 'exact' => true, 'html' => false
 		);
+		if (!empty($options['html'])) {
+			$default['ellipsis'] = chr(226);
+		}
 		if (isset($options['ending'])) {
 			$default['ellipsis'] = $options['ending'];
 		}
