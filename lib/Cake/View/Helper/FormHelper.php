@@ -1627,8 +1627,8 @@ class FormHelper extends AppHelper {
 		}
 		$options['onclick'] .= ' event.returnValue = false; return false;';
 
-		$out .= $this->Html->link($title, $url, $options);
-		return $out;
+		$this->_View->buffer($out);
+		return $this->Html->link($title, $url, $options);
 	}
 
 /**

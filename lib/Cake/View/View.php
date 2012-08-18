@@ -288,6 +288,13 @@ class View extends Object {
 	protected $_stack = array();
 
 /**
+ * Content buffer
+ *
+ * @var array
+ */
+	protected $_buffer = array();
+
+/**
  * Instance of the CakeEventManager this View object is using
  * to dispatch inner events. Usually the manager is shared with
  * the controller, so it it possible to register view events in
@@ -495,6 +502,10 @@ class View extends Object {
 		if (empty($content)) {
 			$content = $this->Blocks->get('content');
 		}
+		if (!empty($this->_buffer)) {
+			$content .= "\n\t". implode("\n\t", $this->_buffer);
+			$this->_buffer = array();
+		}
 		$this->getEventManager()->dispatch(new CakeEvent('View.beforeLayout', $this, array($layoutFileName)));
 
 		$scripts = implode("\n\t", $this->_scripts);
@@ -695,6 +706,22 @@ class View extends Object {
 			throw new LogicException(__d('cake_dev', 'You cannot have views extend in a loop.'));
 		}
 		$this->_parents[$this->_current] = $parent;
+	}
+
+/**
+ * Write to the buffer.
+ *
+ * @param string $html Content string to add to the buffer.
+ * @param boolean $top If true the content will be added to the top of the
+ *   buffer array.  If false the bottom.
+ * @return void
+ */
+	public function buffer($html, $top = false) {
+		if ($top) {
+			array_unshift($this->_buffer, $html);
+		} else {
+			$this->_buffer[] = $html;
+		}
 	}
 
 /**
