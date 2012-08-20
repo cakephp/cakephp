@@ -918,6 +918,13 @@ class CakeRequestTest extends CakeTestCase {
 
 		$_SERVER['TEST_VAR'] = 'foo';
 		$this->assertTrue($request->is('compareCamelCase'), 'Value match failed.');
+		$this->assertTrue($request->is('comparecamelcase'), 'detectors should be case insensitive');
+		$this->assertTrue($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
+
+		$_SERVER['TEST_VAR'] = 'not foo';
+		$this->assertFalse($request->is('compareCamelCase'), 'Value match failed.');
+		$this->assertFalse($request->is('comparecamelcase'), 'detectors should be case insensitive');
+		$this->assertFalse($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
 		$request->addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
 		$_SERVER['TEST_VAR'] = 'banana';
