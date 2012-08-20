@@ -66,22 +66,21 @@ class PhpReader implements ConfigReaderInterface {
 			$key = substr($key, 0, -4);
 		}
 		list($plugin, $key) = pluginSplit($key);
+		$key .= '.php';
 
 		if ($plugin) {
 			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
 		} else {
 			$file = $this->_path . $key;
 		}
-		$file .= '.php';
 		if (!is_file($file)) {
-			if (!is_file(substr($file, 0, -4))) {
-				throw new ConfigureException(__d('cake_dev', 'Could not load configuration files: %s or %s', $file, substr($file, 0, -4)));
-			}
+			throw new ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
 		}
+
 		include $file;
 		if (!isset($config)) {
 			throw new ConfigureException(
-				sprintf(__d('cake_dev', 'No variable $config found in %s.php'), $file)
+				sprintf(__d('cake_dev', 'No variable $config found in %s'), $file)
 			);
 		}
 		return $config;
