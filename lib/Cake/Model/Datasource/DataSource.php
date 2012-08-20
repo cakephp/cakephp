@@ -197,9 +197,10 @@ class DataSource extends Object {
  *
  * @param Model $model The model being read.
  * @param array $queryData An array of query data used to find the data you want
+ * @param integer $recursive Number of levels of association
  * @return mixed
  */
-	public function read(Model $model, $queryData = array()) {
+	public function read(Model $model, $queryData = array(), $recursive = null) {
 		return false;
 	}
 
@@ -211,9 +212,10 @@ class DataSource extends Object {
  * @param Model $model Instance of the model class being updated
  * @param array $fields Array of fields to be updated
  * @param array $values Array of values to be update $fields to.
+ * @param mixed $conditions
  * @return boolean Success
  */
-	public function update(Model $model, $fields = null, $values = null) {
+	public function update(Model $model, $fields = null, $values = null, $conditions = null) {
 		return false;
 	}
 
