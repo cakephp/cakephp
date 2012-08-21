@@ -142,7 +142,7 @@ class JsHelper extends AppHelper {
 				$this->buffer($out);
 				return null;
 			}
-			if (is_object($out) && is_a($out, 'JsBaseEngineHelper')) {
+			if (is_object($out) && $out instanceof JsBaseEngineHelper) {
 				return $this;
 			}
 			return $out;
