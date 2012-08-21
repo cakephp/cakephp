@@ -922,6 +922,45 @@ class ViewTest extends CakeTestCase {
 		$result = $View->renderLayout($content, 'default');
 		$this->assertRegExp('/modified in the afterlife/', $result);
 		$this->assertRegExp('/This is my view output/', $result);
+		
+		$content = 'This is my other view output';
+		$result = $View->renderLayout($content);
+		$this->assertRegExp('/modified in the afterlife/', $result);
+		$this->assertRegExp('/This is my other view output/', $result);
+	}
+
+/**
+ * testBuffer method
+ *
+ * @return void
+ */
+	public function testBuffer() {
+		$this->PostsController->helpers = array('Form', 'Html');
+		$this->PostsController->set('variable', 'values');
+
+		$View = new View($this->PostsController);
+		
+		$content = 'This is my post test output <span class="buttonContainer">';
+		$content .= $View->Form->postLink('postlink', '/', array());
+		$content .= '</span>';
+		
+		$result = $View->renderLayout($content, 'ajax');
+		$this->assertRegExp('/This is my post test output/', $result);
+		$expected = '/\<span class="buttonContainer"\>\<a href="#" onclick="document.post_(.*?).submit\(\); event.returnValue = false; return false;"\>postlink\<\/a\>\<\/span\>/';
+		$this->assertRegExp($expected, $result);
+		$expected = '/\<form action="\/" name="post_(.*?)" id="post_(.*?)" style="display:none;" method="post"\>\<input type="hidden" name="_method" value="POST"\/\>\<\/form\>/';
+		$this->assertRegExp($expected, $result);
+
+		$content = 'This is my post test output <span class="buttonContainer">';
+		$content .= $View->Form->postLink('postlink2', '/', array());
+		$content .= '</span>';
+		
+		$result = $View->renderLayout($content, 'default');
+		$this->assertRegExp('/This is my post test output/', $result);
+		$expected = '/\<span class="buttonContainer"\>\<a href="#" onclick="document.post_(.*?).submit\(\); event.returnValue = false; return false;"\>postlink2\<\/a\>\<\/span\>/';
+		$this->assertRegExp($expected, $result);
+		$expected = '/\<form action="\/" name="post_(.*?)" id="post_(.*?)" style="display:none;" method="post"\>\<input type="hidden" name="_method" value="POST"\/\>\<\/form\>/';
+		$this->assertRegExp($expected, $result);		
 	}
 
 /**

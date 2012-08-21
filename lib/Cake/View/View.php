@@ -492,19 +492,18 @@ class View extends Object {
  */
 	public function renderLayout($content, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
-		if (empty($layoutFileName)) {
-			return $this->Blocks->get('content');
-		}
-
-		if (!$this->_helpersLoaded) {
-			$this->loadHelpers();
-		}
 		if (empty($content)) {
 			$content = $this->Blocks->get('content');
 		}
 		if (!empty($this->_buffer)) {
 			$content .= "\n\t". implode("\n\t", $this->_buffer);
 			$this->_buffer = array();
+		}
+		if (empty($layoutFileName)) {
+			return $content;
+		}
+		if (!$this->_helpersLoaded) {
+			$this->loadHelpers();
 		}
 		$this->getEventManager()->dispatch(new CakeEvent('View.beforeLayout', $this, array($layoutFileName)));
 
