@@ -331,13 +331,14 @@ class TestTask extends BakeTask {
 /**
  * Get the base class and package name for a given type.
  *
- * @param string $package The package the class having a test
- *   generated for is in.
+ * @param string $type The type of class having a test
+ *   generated is in.
  * @return array Array of class, type)
+ * @throws CakeException on invalid types.
  */
 	public function getBaseType($type) {
 		if (empty($this->baseTypes[$type])) {
-			throw new CakeException(__d('cake_dev', 'Invalid package name'));
+			throw new CakeException(__d('cake_dev', 'Invalid type name'));
 		}
 		return $this->baseTypes[$type];
 	}
