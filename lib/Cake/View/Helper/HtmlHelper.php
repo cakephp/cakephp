@@ -397,6 +397,7 @@ class HtmlHelper extends AppHelper {
  * - `block` Set the name of the block link/style tag will be appended to.  This overrides the `inline`
  *   option.
  * - `plugin` False value will prevent parsing path as a plugin
+ * - `ext` Set Extension style sheet file ['.css','.less']
  *
  * @param string|array $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
@@ -407,7 +408,7 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::css
  */
 	public function css($path, $rel = null, $options = array()) {
-		$options += array('block' => null, 'inline' => true);
+		$options += array('block' => null, 'inline' => true, 'ext' => '.css');
 		if (!$options['inline'] && empty($options['block'])) {
 			$options['block'] = __FUNCTION__;
 		}
@@ -427,8 +428,8 @@ class HtmlHelper extends AppHelper {
 		if (strpos($path, '//') !== false) {
 			$url = $path;
 		} else {
-			$url = $this->assetUrl($path, $options + array('pathPrefix' => CSS_URL, 'ext' => '.css'));
-
+			$url = $this->assetUrl($path, $options + array('pathPrefix' => CSS_URL));
+			unset($options['ext']);
 			if (Configure::read('Asset.filter.css')) {
 				$pos = strpos($url, CSS_URL);
 				if ($pos !== false) {
