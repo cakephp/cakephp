@@ -88,12 +88,7 @@ class XmlView extends View {
 			return $this->_serialize($this->viewVars['_serialize']);
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
-			if (!$this->_helpersLoaded) {
-				$this->loadHelpers();
-			}
-			$content = $this->_render($viewFileName);
-			$this->Blocks->set('content', (string)$content);
-			return $content;
+			return parent::render($view, false);
 		}
 	}
 
