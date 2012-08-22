@@ -1865,6 +1865,40 @@ XML;
 	}
 
 /**
+ * TestOnlyAllow
+ *
+ * @return void
+ */
+	public function testOnlyAllow() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$request = new CakeRequest('/posts/edit/1');
+
+		$this->assertTrue($request->onlyAllow(array('put')));
+
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$this->assertTrue($request->onlyAllow('post', 'delete'));
+	}
+
+/**
+ * TestOnlyAllow throwing exception
+ *
+ */
+	public function testOnlyAllowException() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$request = new CakeRequest('/posts/edit/1');
+
+		try {
+			$request->onlyAllow('POST', 'DELETE');
+			$this->fail('An expected exception has not been raised.');
+		} catch (MethodNotAllowedException $e) {
+			$this->assertEquals(array('Allow' => 'POST, DELETE'), $e->responseHeader());
+		}
+
+		$this->setExpectedException('MethodNotAllowedException');
+		$request->onlyAllow('POST');
+	}
+
+/**
  * loadEnvironment method
  *
  * @param array $env
