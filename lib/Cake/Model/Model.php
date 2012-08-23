@@ -1755,7 +1755,7 @@ class Model extends Object implements CakeEventListener {
 				$this->getEventManager()->dispatch($event);
 			}
 			if (!empty($this->data)) {
-				$success = array_merge($success, $this->data);
+				$success = Hash::merge($success, $this->data);
 			}
 			$this->data = false;
 			$this->_clearCache();
