@@ -54,7 +54,7 @@ class Model extends Object implements CakeEventListener {
  * @var string
  * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#usedbconfig
  */
-	public $useDbConfig = 'default';
+	public $useDbConfig = 'development';
 
 /**
  * Custom database table name, or null/false if no table association is desired.
@@ -661,6 +661,10 @@ class Model extends Object implements CakeEventListener {
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct();
 
+		if(Configure::read('debug') == 0) {
+			$this->useDbConfig = 'production';
+		}
+		
 		if (is_array($id)) {
 			extract(array_merge(
 				array(
