@@ -99,6 +99,7 @@ class SchemaShell extends Shell {
 				$name = $plugin;
 			}
 		}
+		$name = Inflector::classify($name);
 		$this->Schema = new Schema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
@@ -130,7 +131,9 @@ class SchemaShell extends Shell {
 		$this->out(__d('cake_console', 'Generating Schema...'));
 		$options = array();
 		if ($this->params['force']) {
-			$options = array('models' => false);
+			$options['models'] = false;
+		} elseif (!empty($this->params['models'])) {
+			$options['models'] = String::tokenize($this->params['models']);
 		}
 
 		$snapshot = false;
@@ -467,6 +470,10 @@ class SchemaShell extends Shell {
 			'short' => 's',
 			'help' => __d('cake_console', 'Snapshot number to use/make.')
 		);
+		$models = array(
+			'short' => 'm',
+			'help' => __d('cake_console', 'Specify models as comma separated list.'),
+		);
 		$dry = array(
 			'help' => __d('cake_console', 'Perform a dry run on create and update commands. Queries will be output instead of run.'),
 			'boolean' => true
@@ -492,7 +499,7 @@ class SchemaShell extends Shell {
 		))->addSubcommand('generate', array(
 			'help' => __d('cake_console', 'Reads from --connection and writes to --path. Generate snapshots with -s'),
 			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force'),
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force', 'models'),
 				'arguments' => array(
 					'snapshot' => array('help' => __d('cake_console', 'Generate a snapshot.'))
 				)

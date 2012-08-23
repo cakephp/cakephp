@@ -21,8 +21,8 @@ use Cake\Controller\Component;
 use Cake\Model\Datasource\Session;
 
 /**
- * The CakePHP SessionComponent provides a way to persist client data between 
- * page requests. It acts as a wrapper for the `$_SESSION` as well as providing 
+ * The CakePHP SessionComponent provides a way to persist client data between
+ * page requests. It acts as a wrapper for the `$_SESSION` as well as providing
  * convenience methods for several `$_SESSION` related functions.
  *
  * @package       Cake.Controller.Component

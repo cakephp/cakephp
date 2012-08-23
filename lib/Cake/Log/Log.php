@@ -90,14 +90,14 @@ class Log {
  * @var array
  */
 	protected static $_defaultLevels = array(
-		LOG_EMERG => 'emergency',
-		LOG_ALERT => 'alert',
-		LOG_CRIT => 'critical',
-		LOG_ERR => 'error',
-		LOG_WARNING => 'warning',
-		LOG_NOTICE => 'notice',
-		LOG_INFO => 'info',
-		LOG_DEBUG => 'debug',
+		'emergency' => LOG_EMERG,
+		'alert' => LOG_ALERT,
+		'critical' => LOG_CRIT,
+		'error' => LOG_ERR,
+		'warning' => LOG_WARNING,
+		'notice' => LOG_NOTICE,
+		'info' => LOG_INFO,
+		'debug' => LOG_DEBUG,
 	);
 
 /**
@@ -278,8 +278,8 @@ class Log {
  * @return array default log levels
  */
 	public static function defaultLevels() {
-		static::$_levels = static::$_defaultLevels;
-		static::$_levelMap = array_flip(static::$_levels);
+		static::$_levelMap = static::$_defaultLevels;
+		static::$_levels = array_flip(static::$_levelMap);
 		return static::$_levels;
 	}
 

@@ -322,10 +322,12 @@ class Helper extends Object {
 			$path = h($this->assetTimestamp($this->webroot($path)));
 
 			if (!empty($options['fullBase'])) {
-				if ($path[0] == '/') {
-					$path = substr($path, 1);
+				$base = $this->url('/', true);
+				$len = strlen($this->request->webroot);
+				if ($len) {
+					$base = substr($base, 0, -$len);
 				}
-				$path = $this->url('/', true) . $path;
+				$path = $base . $path;
 			}
 		}
 
@@ -700,7 +702,7 @@ class Helper extends Object {
 		$data = $this->request->data;
 
 		$entity = $this->entity();
-		if (!empty($data) && !empty($entity)) {
+		if (!empty($data) && is_array($data) && !empty($entity)) {
 			$result = Hash::get($data, implode('.', $entity));
 		}
 

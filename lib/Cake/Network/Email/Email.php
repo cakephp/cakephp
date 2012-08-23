@@ -944,12 +944,16 @@ class Email {
  * $email->attachments(array('custom_name.png' => array(
  *		'file' => 'path/to/file',
  *		'mimetype' => 'image/png',
- *		'contentId' => 'abc123'
+ *		'contentId' => 'abc123',
+ *		'contentDisposition' => false
  * ));
  * }}}
  *
  * The `contentId` key allows you to specify an inline attachment. In your email text, you
  * can use `<img src="cid:abc123" />` to display the image inline.
+ *
+ * The `contentDisposition` key allows you to disable the `Content-Disposition` header, this can improve
+ * attachment compatibility with outlook email clients.
  *
  * @param string|array $attachments String with the filename or array with filenames
  * @return array|Cake\Network\Email\Email Either the array of attachments when getting or $this when setting.
@@ -989,6 +993,7 @@ class Email {
  * @param string|array $attachments String with the filename or array with filenames
  * @return Cake\Network\Email\Email $this
  * @throws SocketException
+ * @see Cake\Network\Email\Email::attachments()
  */
 	public function addAttachments($attachments) {
 		$current = $this->_attachments;
@@ -1033,7 +1038,7 @@ class Email {
 
 /**
  * Send an email using the specified content, template and layout
- * 
+ *
  * @param string|array $content String with message or array with messages
  * @return array
  * @throws SocketException
@@ -1334,7 +1339,7 @@ class Email {
 /**
  * Attach non-embedded files by adding file contents inside boundaries.
  *
- * @param string $boundary Boundary to use. If null, will default to $this->_boundary 
+ * @param string $boundary Boundary to use. If null, will default to $this->_boundary
  * @return array An array of lines to add to the message
  */
 	protected function _attachFiles($boundary = null) {
@@ -1352,7 +1357,12 @@ class Email {
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$msg[] = 'Content-Transfer-Encoding: base64';
-			$msg[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
+			if (
+				!isset($fileInfo['contentDisposition']) ||
+				$fileInfo['contentDisposition']
+			) {
+				$msg[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
+			}
 			$msg[] = '';
 			$msg[] = $data;
 			$msg[] = '';
@@ -1377,7 +1387,7 @@ class Email {
 /**
  * Attach inline/embedded files to the message.
  *
- * @param string $boundary Boundary to use. If null, will default to $this->_boundary 
+ * @param string $boundary Boundary to use. If null, will default to $this->_boundary
  * @return array An array of lines to add to the message
  */
 	protected function _attachInlineFiles($boundary = null) {

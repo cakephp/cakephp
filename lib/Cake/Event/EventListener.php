@@ -19,15 +19,15 @@ namespace Cake\Event;
 
 /**
  * Objects implementing this interface should declare the `implementedEvents` function
- * to hint the event manager what methods should be called when an event is triggered.
+ * to notify the event manager what methods should be called when an event is triggered.
  *
  * @package Cake.Event
  */
 interface EventListener  {
 
 /**
- * Returns a list of events this object is implementing, when the class is registered
- * in an event manager, each individual method will be associated to the respective event.
+ * Returns a list of events this object is implementing. When the class is registered
+ * in an event manager, each individual method will be associated with the respective event.
  *
  * ## Example:
  *

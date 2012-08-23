@@ -18,9 +18,10 @@
  */
 
 namespace Cake\Test\TestCase\Log\Engine;
-use Cake\TestSuite\TestCase;
+use Cake\Console\ConsoleOutput;
 use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Log;
+use Cake\TestSuite\TestCase;
 
 class TestConsoleLog extends ConsoleLog {
 
@@ -118,6 +119,23 @@ class ConsoleLogTest extends TestCase {
 		$this->assertNotContains($message, $logOutput);
 		$logOutput = file_get_contents(LOGS . 'debug.log');
 		$this->assertContains($message, $logOutput);
+	}
+
+/**
+ * test default value of stream 'outputAs'
+ */
+	public function testDefaultOutputAs() {
+		TestCakeLog::config('test_console_log', array(
+			'engine' => __NAMESPACE__ . '\TestConsoleLog',
+			));
+		if (DS == '\\' && !(bool)env('ANSICON')) {
+			$expected = ConsoleOutput::PLAIN;
+		} else {
+			$expected = ConsoleOutput::COLOR;
+		}
+		$stream = TestCakeLog::stream('test_console_log');
+		$config = $stream->config();
+		$this->assertEquals($expected, $config['outputAs']);
 	}
 
 }

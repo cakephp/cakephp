@@ -254,14 +254,11 @@ class Configure {
  * @throws Cake\Error\ConfigureException Will throw any exceptions the reader raises.
  */
 	public static function load($key, $config = 'default', $merge = true) {
-		if (!isset(static::$_readers[$config])) {
-			if ($config === 'default') {
-				static::$_readers[$config] = new PhpReader();
-			} else {
-				return false;
-			}
+		$reader = static::_getReader($config);
+		if (!$reader) {
+			return false;
 		}
-		$values = static::$_readers[$config]->read($key);
+		$values = $reader->read($key);
 
 		if ($merge) {
 			$keys = array_keys($values);
@@ -278,7 +275,7 @@ class Configure {
 /**
  * Dump data currently in Configure into $filename.  The serialization format
  * is decided by the config reader attached as $config.  For example, if the
- * 'default' adapter is a PhpReader, the generated file will be a PHP 
+ * 'default' adapter is a PhpReader, the generated file will be a PHP
  * configuration file loadable by the PhpReader.
  *
  * ## Usage
@@ -295,23 +292,41 @@ class Configure {
  * @param string $key The identifier to create in the config adapter.
  *   This could be a filename or a cache key depending on the adapter being used.
  * @param string $config The name of the configured adapter to dump data with.
- * @param array $keys The name of the top-level keys you want to dump. 
+ * @param array $keys The name of the top-level keys you want to dump.
  *   This allows you save only some data stored in Configure.
  * @return boolean success
  * @throws Cake\Error\ConfigureException if the adapter does not implement a `dump` method.
  */
 	public static function dump($key, $config = 'default', $keys = array()) {
-		if (empty(static::$_readers[$config])) {
+		$reader = static::_getReader($config);
+		if (!$reader) {
 			throw new Error\ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
 		}
-		if (!method_exists(static::$_readers[$config], 'dump')) {
+		if (!method_exists($reader, 'dump')) {
 			throw new Error\ConfigureException(__d('cake', 'The "%s" adapter, does not have a dump() method.', $config));
 		}
 		$values = static::$_values;
 		if (!empty($keys) && is_array($keys)) {
 			$values = array_intersect_key($values, array_flip($keys));
 		}
-		return (bool)static::$_readers[$config]->dump($key, $values);
+		return (bool)$reader->dump($key, $values);
+	}
+
+/**
+ * Get the configured reader. Internally used by `Configure::load()` and `Configure::dump()`
+ * Will create new PhpReader for default if not configured yet.
+ *
+ * @param string $config The name of the configured adapter
+ * @return mixed Reader instance or false
+ */
+	protected static function _getReader($config) {
+		if (!isset(static::$_readers[$config])) {
+			if ($config !== 'default') {
+				return false;
+			}
+			static::config($config, new PhpReader());
+		}
+		return static::$_readers[$config];
 	}
 
 /**
@@ -373,7 +388,7 @@ class Configure {
 	}
 /**
  * Set the error and exception handlers.
- * 
+ *
  * @param array $error The Error handling configuration.
  * @param array $exception The exception handling configuration.
  * @return void

@@ -2340,6 +2340,15 @@ class RouterTest extends TestCase {
 
 		$url = '://example.com';
 		$this->assertEquals($url, Router::url($url));
+
+		$url = 'javascript:void(0)';
+		$this->assertEquals($url, Router::url($url));
+
+		$url = 'tel:012345-678';
+		$this->assertEquals($url, Router::url($url));
+
+		$url = 'sms:012345-678';
+		$this->assertEquals($url, Router::url($url));
 	}
 
 /**

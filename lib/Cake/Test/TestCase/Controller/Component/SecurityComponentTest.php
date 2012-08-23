@@ -114,6 +114,20 @@ class SecurityTestController extends Controller {
 
 }
 
+class BrokenCallbackController extends Controller {
+
+	public $name = 'UncallableCallback';
+
+	public $components = array('Session', 'TestSecurity');
+
+	public function index() {
+	}
+
+	protected function _fail() {
+	}
+
+}
+
 /**
  * SecurityComponentTest class
  *
@@ -166,6 +180,25 @@ class SecurityComponentTest extends TestCase {
 		unset($this->Controller->Security);
 		unset($this->Controller->Component);
 		unset($this->Controller);
+	}
+
+/**
+ * Test that requests are still blackholed when controller has incorrect
+ * visibility keyword in the blackhole callback
+ *
+ * @expectedException Cake\Error\BadRequestException
+ */
+	public function testBlackholeWithBrokenCallback() {
+		$request = new Request('posts/index', false);
+		$request->addParams(array(
+			'controller' => 'posts', 'action' => 'index')
+		);
+		$this->Controller = new BrokenCallbackController($request);
+		$this->Controller->Components->init($this->Controller);
+		$this->Controller->Security = $this->Controller->TestSecurity;
+		$this->Controller->Security->blackHoleCallback = '_fail';
+		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->blackHole($this->Controller, 'csrf');
 	}
 
 /**
@@ -1345,5 +1378,19 @@ class SecurityComponentTest extends TestCase {
 		$this->assertFalse(isset($result['3']));
 		$this->assertTrue(isset($result['4']));
 		$this->assertTrue(isset($result['5']));
+	}
+
+/**
+ * Test unlocked actions
+ *
+ * @return void
+ */
+	public function testUnlockedActions() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$this->Controller->request->data = array('data');
+		$this->Controller->Security->unlockedActions = 'index';
+		$this->Controller->Security->blackHoleCallback = null;
+		$result = $this->Controller->Security->startup($this->Controller);
+		$this->assertNull($result);
 	}
 }

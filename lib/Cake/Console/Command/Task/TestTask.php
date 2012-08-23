@@ -58,6 +58,21 @@ class TestTask extends BakeTask {
 	);
 
 /**
+ * Mapping between packages, and their baseclass + package.
+ * This is used to generate App::uses() call to autoload base
+ * classes if a developer has forgotten to do so.
+ *
+ * @var array
+ */
+	public $baseTypes = array(
+		'Model' => array('Model', 'Model'),
+		'Behavior' => array('ModelBehavior', 'Model'),
+		'Controller' => array('Controller', 'Controller'),
+		'Component' => array('Component', 'Controller'),
+		'Helper' => array('Helper', 'View')
+	);
+
+/**
  * Internal list of fixtures that have been added so far.
  *
  * @var array
@@ -314,6 +329,21 @@ class TestTask extends BakeTask {
 	}
 
 /**
+ * Get the base class and package name for a given type.
+ *
+ * @param string $type The type of class having a test
+ *   generated is in.
+ * @return array Array of class, type)
+ * @throws Cake\Error\Exception on invalid types.
+ */
+	public function getBaseType($type) {
+		if (empty($this->baseTypes[$type])) {
+			throw new Error\Exception(__d('cake_dev', 'Invalid type name'));
+		}
+		return $this->baseTypes[$type];
+	}
+
+/**
  * Get methods declared in the class given.
  * No parent methods will be returned
  *
@@ -481,6 +511,7 @@ class TestTask extends BakeTask {
  */
 	public function generateUses($type, $realType, $className) {
 		$uses = array();
+		$type = strtolower($type);
 		if ($type == 'component') {
 			$uses[] = array('ComponentCollection', 'Controller');
 			$uses[] = array('Component', 'Controller');

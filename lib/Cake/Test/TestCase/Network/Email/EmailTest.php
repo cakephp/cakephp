@@ -646,13 +646,20 @@ class CakeEmailTest extends TestCase {
  */
 	public function testAttachments() {
 		$this->CakeEmail->attachments(CAKE . 'basics.php');
-		$expected = array('basics.php' => array('file' => CAKE . 'basics.php', 'mimetype' => 'application/octet-stream'));
+		$expected = array(
+			'basics.php' => array(
+				'file' => CAKE . 'basics.php',
+				'mimetype' => 'application/octet-stream'
+			)
+		);
 		$this->assertSame($this->CakeEmail->attachments(), $expected);
 
 		$this->CakeEmail->attachments(array());
 		$this->assertSame($this->CakeEmail->attachments(), array());
 
-		$this->CakeEmail->attachments(array(array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain')));
+		$this->CakeEmail->attachments(array(
+			array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain')
+		));
 		$this->CakeEmail->addAttachments(CAKE . 'bootstrap.php');
 		$this->CakeEmail->addAttachments(array(CAKE . 'bootstrap.php'));
 		$this->CakeEmail->addAttachments(array('other.txt' => CAKE . 'bootstrap.php', 'license' => CAKE . 'LICENSE.txt'));
@@ -944,6 +951,43 @@ class CakeEmailTest extends TestCase {
 	}
 
 /**
+ * Test disabling content-disposition.
+ *
+ * @return void
+ */
+	public function testSendWithNoContentDispositionAttachments() {
+		$this->CakeEmail->transport('debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->emailFormat('text');
+		$this->CakeEmail->attachments(array(
+			'cake.png' => array(
+				'file' => CAKE . 'VERSION.txt',
+				'contentDisposition' => false
+			)
+		));
+		$result = $this->CakeEmail->send('Hello');
+
+		$boundary = $this->CakeEmail->getBoundary();
+		$this->assertContains('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+		$expected = "--$boundary\r\n" .
+			"Content-Type: text/plain; charset=UTF-8\r\n" .
+			"Content-Transfer-Encoding: 8bit\r\n" .
+			"\r\n" .
+			"Hello" .
+			"\r\n" .
+			"\r\n" .
+			"\r\n" .
+			"--{$boundary}\r\n" .
+			"Content-Type: application/octet-stream\r\n" .
+			"Content-Transfer-Encoding: base64\r\n" .
+			"\r\n";
+
+		$this->assertContains($expected, $result['message']);
+		$this->assertContains('--' . $boundary . '--', $result['message']);
+	}
+/**
  * testSendWithLog method
  *
  * @return void
@@ -1124,7 +1168,8 @@ class CakeEmailTest extends TestCase {
 		$this->CakeEmail->template('image');
 		$this->CakeEmail->emailFormat('html');
 
-		$expected = '<img src="http://localhost/img/image.gif" alt="cool image" width="100" height="100" />';
+		$server = env('SERVER_NAME') ? env('SERVER_NAME') : 'localhost';
+		$expected = '<img src="http://' . $server . '/img/image.gif" alt="cool image" width="100" height="100" />';
 		$result = $this->CakeEmail->send();
 		$this->assertContains($expected, $result['message']);
 	}

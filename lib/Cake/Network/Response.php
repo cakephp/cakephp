@@ -17,7 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network;
+use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Utility\File;
 
 /**
  * Cake Response is responsible for managing the response text, status and headers of a HTTP response.
@@ -116,10 +118,10 @@ class Response {
 		'7z' => 'application/x-7z-compressed',
 		'hdf' => 'application/x-hdf',
 		'hqx' => 'application/mac-binhex40',
-		'ico' => 'image/vnd.microsoft.icon',
+		'ico' => 'image/x-icon',
 		'ips' => 'application/x-ipscript',
 		'ipx' => 'application/x-ipix',
-		'js' => 'text/javascript',
+		'js' => 'application/javascript',
 		'latex' => 'application/x-latex',
 		'lha' => 'application/octet-stream',
 		'lsp' => 'application/x-lisp',
@@ -133,10 +135,10 @@ class Response {
 		'otf' => 'font/otf',
 		'pdf' => 'application/pdf',
 		'pgn' => 'application/x-chess-pgn',
-		'pot' => 'application/mspowerpoint',
-		'pps' => 'application/mspowerpoint',
-		'ppt' => 'application/mspowerpoint',
-		'ppz' => 'application/mspowerpoint',
+		'pot' => 'application/vnd.ms-powerpoint',
+		'pps' => 'application/vnd.ms-powerpoint',
+		'ppt' => 'application/vnd.ms-powerpoint',
+		'ppz' => 'application/vnd.ms-powerpoint',
 		'pre' => 'application/x-freelance',
 		'prt' => 'application/pro_eng',
 		'ps' => 'application/postscript',
@@ -171,6 +173,7 @@ class Response {
 		'texinfo' => 'application/x-texinfo',
 		'tr' => 'application/x-troff',
 		'tsp' => 'application/dsptype',
+		'ttc' => 'font/ttf',
 		'ttf' => 'font/ttf',
 		'unv' => 'application/i-deas',
 		'ustar' => 'application/x-ustar',
@@ -236,6 +239,12 @@ class Response {
 		'ogv' => 'video/ogg',
 		'webm' => 'video/webm',
 		'mp4' => 'video/mp4',
+		'm4v' => 'video/mp4',
+		'f4v' => 'video/mp4',
+		'f4p' => 'video/mp4',
+		'm4a' => 'audio/mp4',
+		'f4a' => 'audio/mp4',
+		'f4b' => 'audio/mp4',
 		'gif' => 'image/gif',
 		'ief' => 'image/ief',
 		'jpe' => 'image/jpeg',
@@ -264,7 +273,7 @@ class Response {
 		'mime' => 'www/mime',
 		'pdb' => 'chemical/x-pdb',
 		'xyz' => 'chemical/x-pdb',
-		'javascript' => 'text/javascript',
+		'javascript' => 'application/javascript',
 		'form' => 'application/x-www-form-urlencoded',
 		'file' => 'multipart/form-data',
 		'xhtml'	=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
@@ -275,6 +284,19 @@ class Response {
 		'wml' => 'text/vnd.wap.wml',
 		'wmlscript' => 'text/vnd.wap.wmlscript',
 		'wbmp' => 'image/vnd.wap.wbmp',
+		'woff' => 'application/x-font-woff',
+		'webp' => 'image/webp',
+		'appcache' => 'text/cache-manifest',
+		'manifest' => 'text/cache-manifest',
+		'htc' => 'text/x-component',
+		'rdf' => 'application/xml',
+		'crx' => 'application/x-chrome-extension',
+		'oex' => 'application/x-opera-extension',
+		'xpi' => 'application/x-xpinstall',
+		'safariextz' => 'application/octet-stream',
+		'webapp' => 'application/x-web-app-manifest+json',
+		'vcf' => 'text/x-vcard',
+		'vtt' => 'text/vtt',
 	);
 
 /**
@@ -312,6 +334,13 @@ class Response {
  * @var string
  */
 	protected $_body = null;
+
+/**
+ * File object for file to be read out as response
+ *
+ * @var File
+ */
+	protected $_file = null;
 
 /**
  * The charset the response body is encoded with
@@ -379,7 +408,12 @@ class Response {
 		foreach ($this->_headers as $header => $value) {
 			$this->_sendHeader($header, $value);
 		}
-		$this->_sendContent($this->_body);
+		if ($this->_file) {
+			$this->_sendFile($this->_file);
+			$this->_file = null;
+		} else {
+			$this->_sendContent($this->_body);
+		}
 	}
 
 /**
@@ -1151,6 +1185,140 @@ class Response {
 		$options += $defaults;
 
 		$this->_cookies[$options['name']] = $options;
+	}
+
+/**
+ * Setup for display or download the given file
+ *
+ * @param string $path Path to file
+ * @param array $options Options
+ *	### Options keys
+ *	- name: Alternate download name
+ *	- download: If `true` sets download header and forces file to be downloaded rather than displayed in browser
+ * @return void
+ * @throws Cake\Error\NotFoundException
+ */
+	public function file($path, $options = array()) {
+		$options += array(
+			'name' => null,
+			'download' => null
+		);
+
+		if (!is_file($path)) {
+			$path = APP . $path;
+		}
+
+		$file = new File($path);
+		if (!$file->exists() || !$file->readable()) {
+			if (Configure::read('debug')) {
+				throw new Error\NotFoundException(__d('cake_dev', 'The requested file %s was not found or not readable', $path));
+			}
+			throw new Error\NotFoundException(__d('cake', 'The requested file was not found'));
+		}
+
+		$extension = strtolower($file->ext());
+		$download = $options['download'];
+		if ((!$extension || $this->type($extension) === false) && is_null($download)) {
+			$download = true;
+		}
+
+		$fileSize = $file->size();
+		if ($download) {
+			$agent = env('HTTP_USER_AGENT');
+
+			if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
+				$contentType = 'application/octetstream';
+			} elseif (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+				$contentType = 'application/force-download';
+			}
+
+			if (!empty($contentType)) {
+				$this->type($contentType);
+			}
+			if (is_null($options['name'])) {
+				$name = $file->name;
+			} else {
+				$name = $options['name'];
+			}
+			$this->download($name);
+			$this->header('Accept-Ranges', 'bytes');
+
+			$httpRange = env('HTTP_RANGE');
+			if (isset($httpRange)) {
+				list($toss, $range) = explode('=', $httpRange);
+
+				$size = $fileSize - 1;
+				$length = $fileSize - $range;
+
+				$this->header(array(
+					'Content-Length' => $length,
+					'Content-Range' => 'bytes ' . $range . $size . '/' . $fileSize
+				));
+
+				$this->statusCode(206);
+				$file->open('rb', true);
+				$file->offset($range);
+			} else {
+				$this->header('Content-Length', $fileSize);
+			}
+		} else {
+			$this->header('Content-Length', $fileSize);
+		}
+		$this->_clearBuffer();
+
+		$this->_file = $file;
+	}
+
+/**
+ * Reads out a file, and echos the content to the client.
+ *
+ * @param File $file File object
+ * @return boolean True is whole file is echoed successfully or false if client connection is lost in between
+ */
+	protected function _sendFile($file) {
+		$compress = $this->outputCompressed();
+		$file->open('rb');
+		while (!feof($file->handle)) {
+			if (!$this->_isActive()) {
+				$file->close();
+				return false;
+			}
+			set_time_limit(0);
+			echo fread($file->handle, 8192);
+			if (!$compress) {
+				$this->_flushBuffer();
+			}
+		}
+		$file->close();
+		return true;
+	}
+
+/**
+ * Returns true if connection is still active
+ *
+ * @return boolean
+ */
+	protected function _isActive() {
+		return connection_status() === CONNECTION_NORMAL && !connection_aborted();
+	}
+
+/**
+ * Clears the contents of the topmost output buffer and discards them
+ *
+ * @return boolean
+ */
+	protected function _clearBuffer() {
+		return @ob_end_clean();
+	}
+
+/**
+ * Flushes the contents of the output buffer
+ *
+ * @return void
+ */
+	protected function _flushBuffer() {
+		@flush();
+		@ob_flush();
 	}
 
 }

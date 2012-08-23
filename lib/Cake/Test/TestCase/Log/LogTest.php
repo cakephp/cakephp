@@ -219,12 +219,12 @@ class LogTest extends TestCase {
 		}
 		Log::config('spam', array(
 			'engine' => 'FileLog',
-			'types' => 'info',
+			'types' => 'debug',
 			'file' => 'spam',
 		));
 		Log::config('eggs', array(
 			'engine' => 'FileLog',
-			'types' => array('eggs', 'info', 'error', 'warning'),
+			'types' => array('eggs', 'debug', 'error', 'warning'),
 			'file' => 'eggs',
 		));
 
@@ -234,13 +234,13 @@ class LogTest extends TestCase {
 		$this->assertTrue(file_exists(LOGS . 'eggs.log'));
 		$this->assertFalse(file_exists(LOGS . 'spam.log'));
 
-		Log::write(LOG_INFO, $testMessage);
+		Log::write(LOG_DEBUG, $testMessage);
 		$this->assertTrue(file_exists(LOGS . 'spam.log'));
 
 		$contents = file_get_contents(LOGS . 'spam.log');
-		$this->assertContains('Info: ' . $testMessage, $contents);
+		$this->assertContains('Debug: ' . $testMessage, $contents);
 		$contents = file_get_contents(LOGS . 'eggs.log');
-		$this->assertContains('Info: ' . $testMessage, $contents);
+		$this->assertContains('Debug: ' . $testMessage, $contents);
 
 		if (file_exists(LOGS . 'spam.log')) {
 			unlink(LOGS . 'spam.log');
@@ -496,10 +496,10 @@ class LogTest extends TestCase {
 		$this->_resetLogConfig();
 		Log::config('shops', array(
 			'engine' => 'FileLog',
-			'types' => array('info', 'notice', 'warning'),
+			'types' => array('info', 'debug', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops',
-			));
+		));
 
 		Log::info('info message', 'transactions');
 		$this->assertFalse(file_exists(LOGS . 'error.log'));
@@ -545,14 +545,14 @@ class LogTest extends TestCase {
 		$testMessage = 'emergency message';
 		Log::emergency($testMessage);
 		$contents = file_get_contents(LOGS . 'error.log');
-		$this->assertContains('Emergency: ' . $testMessage, $contents);
+		$this->assertRegExp('/(Emergency|Critical): ' . $testMessage . '/', $contents);
 		$this->assertFalse(file_exists(LOGS . 'debug.log'));
 		$this->_deleteLogs();
 
 		$testMessage = 'alert message';
 		Log::alert($testMessage);
 		$contents = file_get_contents(LOGS . 'error.log');
-		$this->assertContains('Alert: ' . $testMessage, $contents);
+		$this->assertRegExp('/(Alert|Critical): ' . $testMessage . '/', $contents);
 		$this->assertFalse(file_exists(LOGS . 'debug.log'));
 		$this->_deleteLogs();
 
@@ -580,14 +580,14 @@ class LogTest extends TestCase {
 		$testMessage = 'notice message';
 		Log::notice($testMessage);
 		$contents = file_get_contents(LOGS . 'debug.log');
-		$this->assertContains('Notice: ' . $testMessage, $contents);
+		$this->assertRegExp('/(Notice|Debug): ' . $testMessage . '/', $contents);
 		$this->assertFalse(file_exists(LOGS . 'error.log'));
 		$this->_deleteLogs();
 
 		$testMessage = 'info message';
 		Log::info($testMessage);
 		$contents = file_get_contents(LOGS . 'debug.log');
-		$this->assertContains('Info: ' . $testMessage, $contents);
+		$this->assertRegExp('/(Info|Debug): ' . $testMessage . '/', $contents);
 		$this->assertFalse(file_exists(LOGS . 'error.log'));
 		$this->_deleteLogs();
 

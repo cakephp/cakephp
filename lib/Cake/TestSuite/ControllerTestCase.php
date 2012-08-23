@@ -184,12 +184,14 @@ abstract class ControllerTestCase extends TestCase {
  *
  * @param string $name The name of the function
  * @param array $arguments Array of arguments
- * @return Function
+ * @return the return of _testAction
+ * @throws Cake\Error\BadMethodCallException when you call methods that don't exist.
  */
 	public function __call($name, $arguments) {
 		if ($name == 'testAction') {
 			return call_user_func_array(array($this, '_testAction'), $arguments);
 		}
+		throw new Error\BadMethodCallException("Method '{$name}' does not exist.");
 	}
 
 /**
@@ -256,10 +258,8 @@ abstract class ControllerTestCase extends TestCase {
 		$Dispatch = new ControllerTestDispatcher();
 		$Dispatch->loadRoutes = $this->loadRoutes;
 		$Dispatch->parseParams(new Event('ControllerTestCase', $Dispatch, array('request' => $request)));
-
-		if (!isset($request->params['controller'])) {
-			// TODO fix this somehow.
-			// $this->headers = Router::currentRoute()->response->header();
+		if (!isset($request->params['controller']) && Router::currentRoute()) {
+			$this->headers = Router::currentRoute()->response->header();
 			return;
 		}
 		if ($this->__dirtyController) {

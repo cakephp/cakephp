@@ -24,7 +24,7 @@ namespace Cake\Error;
  *
  * @package       Cake.Error
  */
-class Exception extends \RuntimeException {
+class Exception extends BaseException {
 
 /**
  * Array of attributes that are passed in from the constructor, and

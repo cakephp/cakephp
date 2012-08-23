@@ -543,9 +543,15 @@ class Debugger {
 
 		if ($depth >= 0) {
 			foreach ($var as $key => $val) {
+				// Sniff for globals as !== explodes in < 5.4
+				if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
+					$val = '[recursion]';
+				} else if ($val !== $var) {
+					$val = static::_export($val, $depth, $indent);
+				}
 				$vars[] = $break . static::exportVar($key) .
 					' => ' .
-					static::_export($val, $depth, $indent);
+					$val;
 			}
 		} else {
 			$vars[] = $break . '[maximum depth reached]';
@@ -577,6 +583,29 @@ class Debugger {
 				$value = static::_export($value, $depth - 1, $indent);
 				$props[] = "$key => " . $value;
 			}
+
+			$ref = new \ReflectionObject($var);
+
+			$reflectionProperties = $ref->getProperties(\ReflectionProperty::IS_PROTECTED);
+			foreach ($reflectionProperties as $reflectionProperty) {
+				$reflectionProperty->setAccessible(true);
+				$property = $reflectionProperty->getValue($var);
+
+				$value = static::_export($property, $depth - 1, $indent);
+				$key = $reflectionProperty->name;
+				$props[] = "[protected] $key => " . $value;
+			}
+
+			$reflectionProperties = $ref->getProperties(\ReflectionProperty::IS_PRIVATE);
+			foreach ($reflectionProperties as $reflectionProperty) {
+				$reflectionProperty->setAccessible(true);
+				$property = $reflectionProperty->getValue($var);
+
+				$value = static::_export($property, $depth - 1, $indent);
+				$key = $reflectionProperty->name;
+				$props[] = "[private] $key => " . $value;
+			}
+
 			$out .= $break . implode($break, $props) . $end;
 		}
 		$out .= '}';
@@ -711,8 +740,14 @@ class Debugger {
 
 		$files = $this->trace(array('start' => $data['start'], 'format' => 'points'));
 		$code = '';
-		if (isset($files[1]['file'])) {
-			$code = $this->excerpt($files[1]['file'], $files[1]['line'] - 1, 1);
+		$file = null;
+		if (isset($files[0]['file'])) {
+			$file = $files[0];
+		} elseif (isset($files[1]['file'])) {
+			$file = $files[1];
+		}
+		if ($file) {
+			$code = $this->excerpt($file['file'], $file['line'] - 1, 1);
 		}
 		$trace = $this->trace(array('start' => $data['start'], 'depth' => '20'));
 		$insertOpts = array('before' => '{:', 'after' => '}');
@@ -721,7 +756,7 @@ class Debugger {
 		$info = '';
 
 		foreach ((array)$data['context'] as $var => $value) {
-			$context[] = "\${$var} = " . $this->exportVar($value, 1);
+			$context[] = "\${$var} = " . $this->exportVar($value, 3);
 		}
 
 		switch ($this->_outputFormat) {

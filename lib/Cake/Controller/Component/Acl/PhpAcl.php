@@ -25,7 +25,7 @@ use Cake\Error;
 use Cake\Utility\Inflector;
 
 /**
- * PhpAcl implements an access control system using a plain PHP configuration file. 
+ * PhpAcl implements an access control system using a plain PHP configuration file.
  * An example file can be found in app/Config/acl.php
  *
  * @package Cake.Controller.Component.Acl
@@ -53,7 +53,7 @@ class PhpAcl extends Object implements AclInterface {
 
 /**
  * Aco Object
- * 
+ *
  * @var PhpAco
  */
 	public $Aco = null;
@@ -72,8 +72,8 @@ class PhpAcl extends Object implements AclInterface {
 
 /**
  * Initialize method
- * 
- * @param AclComponent $Component Component instance 
+ *
+ * @param AclComponent $Component Component instance
  * @return void
  */
 	public function initialize(Component $Component) {
@@ -205,7 +205,7 @@ class PhpAco {
 
 /**
  * map modifiers for ACO paths to their respective PCRE pattern
- * 
+ *
  * @var array
  */
 	public static $modifiers = array(
@@ -269,7 +269,7 @@ class PhpAco {
 /**
  * allow/deny ARO access to ARO
  *
- * @return void 
+ * @return void
  */
 	public function access($aro, $aco, $action, $type = 'deny') {
 		$aco = $this->resolve($aco);
@@ -321,7 +321,7 @@ class PhpAco {
  *
  * @param array $allow ACO allow rules
  * @param array $deny ACO deny rules
- * @return void 
+ * @return void
  */
 	public function build(array $allow, array $deny = array()) {
 		$stack = array();
@@ -355,7 +355,7 @@ class PhpAco {
 class PhpAro {
 
 /**
- * role to resolve to when a provided ARO is not listed in 
+ * role to resolve to when a provided ARO is not listed in
  * the internal tree
  *
  * @var string
@@ -365,12 +365,12 @@ class PhpAro {
 /**
  * map external identifiers. E.g. if
  *
- * array('User' => array('username' => 'jeff', 'role' => 'editor')) 
+ * array('User' => array('username' => 'jeff', 'role' => 'editor'))
  *
- * is passed as an ARO to one of the methods of AclComponent, PhpAcl 
+ * is passed as an ARO to one of the methods of AclComponent, PhpAcl
  * will check if it can be resolved to an User or a Role defined in the
- * configuration file. 
- * 
+ * configuration file.
+ *
  * @var array
  * @see app/Config/acl.php
  */
@@ -381,7 +381,7 @@ class PhpAro {
 
 /**
  * aliases to map
- * 
+ *
  * @var array
  */
 	public $aliases = array();
@@ -406,9 +406,9 @@ class PhpAro {
  * From the perspective of the given ARO, walk down the tree and
  * collect all inherited AROs levelwise such that AROs from different
  * branches with equal distance to the requested ARO will be collected at the same
- * index. The resulting array will contain a prioritized list of (list of) roles ordered from 
+ * index. The resulting array will contain a prioritized list of (list of) roles ordered from
  * the most distant AROs to the requested one itself.
- * 
+ *
  * @param string|array $aro An ARO identifier
  * @return array prioritized AROs
  */
@@ -433,7 +433,7 @@ class PhpAro {
 
 /**
  * resolve an ARO identifier to an internal ARO string using
- * the internal mapping information. 
+ * the internal mapping information.
  *
  * @param string|array $aro ARO identifier (User.jeff, array('User' => ...), etc)
  * @return string internal aro string (e.g. User/jeff, Role/default)
@@ -535,7 +535,7 @@ class PhpAro {
  * build an ARO tree structure for internal processing
  *
  * @param array $aros array of AROs as key and their inherited AROs as values
- * @return void 
+ * @return void
  */
 	public function build(array $aros) {
 		$this->_tree = array();

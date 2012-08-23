@@ -12,6 +12,7 @@
  * @since         CakePHP(tm) v 1.2.0.4525
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('AppModel', 'Model');
 
 /**
  * A model used by TranslateBehavior to access the translation tables.
