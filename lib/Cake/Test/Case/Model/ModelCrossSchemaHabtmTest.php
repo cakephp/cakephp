@@ -213,7 +213,6 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
 			'Armor' => array(
 				'Armor' => array(
 					1, 2, 3, 4,
-					1, 2, 3, 4,
 				),
 			),
 		);

@@ -1170,6 +1170,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 		$result = $TestModel->save();
 		$this->assertFalse(empty($result));
+		$this->assertEquals($data['Tag'], $result['Tag']);
 
 		$TestModel->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
 		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
