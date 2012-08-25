@@ -64,6 +64,20 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	protected $_methods = array();
 
 /**
+ * Holds the available custom callback methods from the model
+ *
+ * @var array
+ */
+	protected $_modelMethods = array();
+
+/**
+ * Holds the list of behavior names that were attached when this object was created
+ *
+ * @var array
+ */
+	protected $_behaviors = array();
+
+/**
  * Constructor
  *
  * @param Model $Model A reference to the Model the Validator is attached to
@@ -280,15 +294,19 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @return array List of callables to be used as validation methods
  */
 	public function getMethods() {
-		if (!empty($this->_methods)) {
+		$behaviors = $this->_model->Behaviors->enabled();
+		if (!empty($this->_methods) && $behaviors === $this->_behaviors) {
 			return $this->_methods;
 		}
+		$this->_behaviors = $behaviors;
 
-		$methods = array();
-		foreach (get_class_methods($this->_model) as $method) {
-			$methods[strtolower($method)] = array($this->_model, $method);
+		if (empty($this->_modelMethods)) {
+			foreach (get_class_methods($this->_model) as $method) {
+				$this->_modelMethods[strtolower($method)] = array($this->_model, $method);
+			}
 		}
 
+		$methods = $this->_modelMethods;
 		foreach (array_keys($this->_model->Behaviors->methods()) as $method) {
 			$methods += array(strtolower($method) => array($this->_model, $method));
 		}
