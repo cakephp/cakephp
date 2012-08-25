@@ -303,10 +303,7 @@ class ProjectTask extends AppShell {
 		$contents = $File->read();
 		if (preg_match('/(\$prefix = \'myapp_\';)/', $contents, $match)) {
 			$result = str_replace($match[0], '$prefix = \'' . $app . '_\';', $contents);
-			if ($File->write($result)) {
-				return true;
-			}
-			return false;
+			return $File->write($result);
 		}
 		return false;
 	}
