@@ -1083,12 +1083,11 @@ class CakeResponse {
  * is marked as so accordingly so the client can be informed of that.
  *
  * In order to mark a response as not modified, you need to set at least
- * the Last-Modified response header or a response etag to be compared
- * with the request itself
+ * the Last-Modified etag response header before calling this method.  Otherwise
+ * a comparison will not be possible.
  *
- * @return boolean whether the response was marked as not modified or
- * not
- **/
+ * @return boolean whether the response was marked as not modified or not.
+ */
 	public function checkNotModified(CakeRequest $request) {
 		$etags = preg_split('/\s*,\s*/', $request->header('If-None-Match'), null, PREG_SPLIT_NO_EMPTY);
 		$modifiedSince = $request->header('If-Modified-Since');
