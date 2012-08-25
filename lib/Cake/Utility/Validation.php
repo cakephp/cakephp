@@ -381,11 +381,14 @@ class Validation {
  * @return boolean Success
  */
 	public static function decimal($check, $places = null, $regex = null) {
+		if (is_float($check) && floor($check) === $check) {
+			$check = sprintf("%.1f", $check);
+		}
 		if (is_null($regex)) {
 			if (is_null($places)) {
-				$regex = '/^[-+]?[0-9]*(\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?)?$/';
+				$regex = '/^[-+]?[0-9]*\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?$/';
 			} else {
-				$regex = '/^[-+]?[0-9]*(\\.{1}[0-9]{' . $places . '})?$/';
+				$regex = '/^[-+]?[0-9]*\\.{1}[0-9]{' . $places . '}$/';
 			}
 		}
 		return self::_check($check, $regex);
