@@ -276,7 +276,7 @@ class Article extends CakeTestModel {
 	public $validate = array(
 		'user_id' => 'numeric',
 		'title' => array('required' => false, 'rule' => 'notEmpty'),
-		'body' => 'notEmpty',
+		'body' => array('required' => false, 'rule' => 'notEmpty'),
 	);
 
 /**

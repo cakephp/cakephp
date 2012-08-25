@@ -283,6 +283,17 @@ class CakeValidationRule {
 	}
 
 /**
+ * Resets interal state for this rule, by default it will become valid
+ * and it will set isUpdate() to false
+ *
+ * @return void
+ **/
+	public function reset() {
+		$this->_valid = true;
+		$this->_recordExists = false;
+	}
+
+/**
  * Returns passed options for this rule
  *
  * @return array
