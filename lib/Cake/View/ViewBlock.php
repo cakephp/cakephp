@@ -119,13 +119,18 @@ class ViewBlock {
  * Get the content for a block.
  *
  * @param string $name Name of the block
+ * @param boolean $clear Whether or not to clear the block after retrieval (default false)
  * @return The block content or '' if the block does not exist.
  */
-	public function get($name) {
+	public function get($name, $clear = false) {
 		if (!isset($this->_blocks[$name])) {
 			return '';
 		}
-		return $this->_blocks[$name];
+		$value = $this->_blocks[$name];
+		if ($clear) {
+			$this->_blocks[$name] = '';
+		}
+		return $value;
 	}
 
 /**
