@@ -454,7 +454,7 @@ class View extends Object {
 			$layout = $this->layout;
 		}
 		if ($buffer = $this->Blocks->get('buffer', true)) {
-			$this->Blocks->append('content', "\r\n" . $buffer);
+			$this->Blocks->append('content', $buffer);
 		}
 		if ($layout && $this->autoLayout) {
 			$this->Blocks->set('content', $this->renderLayout('', $layout));
