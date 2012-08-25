@@ -47,12 +47,10 @@
 /**
  * <?php echo $admin ?>add method
  *
- * @throws MethodNotAllowedException
  * @return void
  */
 	public function <?php echo $admin ?>add() {
-		if ($this->request->data) {
-			$this->request->onlyAllow('post');
+		if ($this->request->is('post')) {
 			$this-><?php echo $currentModelName; ?>->create();
 			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
 <?php if ($wannaUseSession): ?>
@@ -88,7 +86,6 @@
 /**
  * <?php echo $admin ?>edit method
  *
- * @throws MethodNotAllowedException
  * @throws NotFoundException
  * @param string $id
  * @return void
@@ -98,8 +95,7 @@
 		if (!$this-><?php echo $currentModelName; ?>->exists()) {
 			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
-		if ($this->request->data) {
-			$this->request->onlyAllow('post', 'put');
+		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved'));
@@ -135,17 +131,17 @@
 /**
  * <?php echo $admin ?>delete method
  *
- * @throws MethodNotAllowedException
  * @throws NotFoundException
+ * @throws MethodNotAllowedException
  * @param string $id
  * @return void
  */
 	public function <?php echo $admin; ?>delete($id = null) {
-		$this->request->onlyAllow('post', 'delete');
 		$this-><?php echo $currentModelName; ?>->id = $id;
 		if (!$this-><?php echo $currentModelName; ?>->exists()) {
 			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
+		$this->request->onlyAllow('post', 'delete');
 		if ($this-><?php echo $currentModelName; ?>->delete()) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> deleted'));

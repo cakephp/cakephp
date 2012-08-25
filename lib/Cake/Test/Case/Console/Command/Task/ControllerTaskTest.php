@@ -353,8 +353,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
 		$this->assertContains('function add()', $result);
-		$this->assertContains("if (\$this->request->data)", $result);
-		$this->assertContains("\$this->request->onlyAllow('post')", $result);
+		$this->assertContains("if (\$this->request->is('post'))", $result);
 		$this->assertContains('if ($this->BakeArticle->save($this->request->data))', $result);
 		$this->assertContains("\$this->Session->setFlash(__('The bake article has been saved'));", $result);
 
@@ -393,8 +392,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
 		$this->assertContains('function add()', $result);
-		$this->assertContains("if (\$this->request->data)", $result);
-		$this->assertContains("\$this->request->onlyAllow('post')", $result);
+		$this->assertContains("if (\$this->request->is('post'))", $result);
 		$this->assertContains('if ($this->BakeArticle->save($this->request->data))', $result);
 
 		$this->assertContains("\$this->flash(__('The bake article has been saved.'), array('action' => 'index'))", $result);
@@ -404,6 +402,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set(compact('bakeTags'))", $result);
 
 		$this->assertContains('function delete($id = null)', $result);
+		$this->assertContains("\$this->request->onlyAllow('post', 'delete')", $result);
 		$this->assertContains('if ($this->BakeArticle->delete())', $result);
 		$this->assertContains("\$this->flash(__('Bake article deleted'), array('action' => 'index'))", $result);
 	}
