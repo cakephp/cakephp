@@ -1471,6 +1471,7 @@ class Model extends Object implements CakeEventListener {
 		$this->id = false;
 		$this->data = array();
 		$this->validationErrors = array();
+		$this->_validator = new ModelValidator($this);
 
 		if ($data !== null && $data !== false) {
 			foreach ($this->schema() as $field => $properties) {
