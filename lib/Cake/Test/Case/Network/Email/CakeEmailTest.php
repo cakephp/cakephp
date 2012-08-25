@@ -1119,8 +1119,8 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->template('image');
 		$this->CakeEmail->emailFormat('html');
 		$server = env('SERVER_NAME') ? env('SERVER_NAME') : 'localhost';
-		
-		if (env('SERVER_PORT') != 80) {
+				
+		if (env('SERVER_PORT') != NULL && env('SERVER_PORT') != 80) {
 			$server .= ':' . env('SERVER_PORT');
 		}
 				
