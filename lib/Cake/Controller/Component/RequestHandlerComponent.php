@@ -123,11 +123,10 @@ class RequestHandlerComponent extends Component {
  * and the requested mime-types, RequestHandler::$ext is set to that value.
  *
  * @param Controller $controller A reference to the controller
- * @param array $settings Array of settings to _set().
  * @return void
  * @see Router::parseExtensions()
  */
-	public function initialize(Controller $controller, $settings = array()) {
+	public function initialize(Controller $controller) {
 		if (isset($this->request->params['ext'])) {
 			$this->ext = $this->request->params['ext'];
 		}
@@ -135,9 +134,8 @@ class RequestHandlerComponent extends Component {
 			$this->_setExtension();
 		}
 		$this->params = $controller->params;
-		$this->_set($settings);
-		if (!empty($settings['viewClassMap'])) {
-			$this->viewClassMap($settings['viewClassMap']);
+		if (!empty($this->settings['viewClassMap'])) {
+			$this->viewClassMap($this->settings['viewClassMap']);
 		}
 	}
 
