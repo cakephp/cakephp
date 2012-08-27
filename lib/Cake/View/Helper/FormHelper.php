@@ -817,7 +817,7 @@ class FormHelper extends AppHelper {
  * - `fieldset` Set to false to disable the fieldset. If a string is supplied it will be used as
  *    the classname for the fieldset element.
  * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
- *	to customize the legend text.
+ *    to customize the legend text.
  *
  * @param array $fields An array of fields to generate inputs for, or null.
  * @param array $blacklist a simple array of fields to not create inputs for.
@@ -1843,7 +1843,12 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($tag) || isset($template)) {
-			if ((!isset($secure) || $secure == true) && empty($attributes['disabled'])) {
+			$hasOptions = (count($options) > 0 || $showEmpty);
+			if (
+				(!isset($secure) || $secure == true) &&
+				empty($attributes['disabled']) &&
+				$hasOptions
+			) {
 				$this->_secure(true);
 			}
 			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => '', 'value' => '')));
