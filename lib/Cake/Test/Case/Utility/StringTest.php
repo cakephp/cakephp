@@ -473,7 +473,7 @@ podeís adquirirla.</span></p>
 		));
 		$expected = '<b>&copy; 2005-2007, Cake Software...</b>';
 		$this->assertEquals($expected, $result);
-		
+
 		$result = $this->Text->truncate($text, 31, array(
 			'html' => true,
 			'exact' => true,
