@@ -116,6 +116,22 @@ TEXT;
 	}
 }
 
+/**
+ * Personnal Alternative to debug() function, but using it.
+ **/
+
+function dbg($var, $die = true) {
+	?>
+		<div class="alert">
+			<button class="close" data-dismiss="alert">×</button>
+			<?php echo debug($var); ?>
+		</div>
+	<?
+	if ($die) {
+		die();
+	}
+}
+
 if (!function_exists('sortByKey')) {
 
 /**
