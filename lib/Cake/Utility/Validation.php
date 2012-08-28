@@ -372,23 +372,39 @@ class Validation {
 	}
 
 /**
- * Checks that a value is a valid decimal. If $places is null, the $check is allowed to be a scientific float
- * If no decimal point is found a false will be returned. Both the sign and exponent are optional.
+ * Checks that a value is a valid decimal. Both the sign and exponent are optional.
+ *
+ * Valid Places:
+ *
+ * - null => Any number of decimal places, including none. The '.' is not required.
+ * - true => Any number of decimal places greater than 0, or a float|double. The '.' is required.
+ * - 1..N => Exactly that many number of decimal places. The '.' is required.
  *
  * @param integer $check The value the test for decimal
- * @param integer $places if set $check value must have exactly $places after the decimal point
- * @param string $regex If a custom regular expression is used this is the only validation that will occur.
+ * @param integer $places
+ * @param string $regex If a custom regular expression is used, this is the only validation that will occur.
  * @return boolean Success
  */
 	public static function decimal($check, $places = null, $regex = null) {
-		if (is_float($check) && floor($check) === $check) {
-			$check = sprintf("%.1f", $check);
-		}
 		if (is_null($regex)) {
-			if (is_null($places)) {
-				$regex = '/^[-+]?[0-9]*\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?$/';
-			} else {
-				$regex = '/^[-+]?[0-9]*\\.{1}[0-9]{' . $places . '}$/';
+			$lnum = '[0-9]+';
+			$dnum = "[0-9]*[\.]{$lnum}";
+			$sign = '[+-]?';
+			$exp = "(?:[eE]{$sign}{$lnum})?";
+
+			if ($places === null) {
+				$regex = "/^{$sign}(?:{$lnum}|{$dnum}){$exp}$/";
+
+			} elseif ($places === true) {
+				if (is_float($check) && floor($check) === $check) {
+					$check = sprintf("%.1f", $check);
+				}
+				$regex = "/^{$sign}{$dnum}{$exp}$/";
+
+			} elseif (is_numeric($places)) {
+				$places = '[0-9]{' . $places . '}';
+				$dnum = "(?:[0-9]*[\.]{$places}|{$lnum}[\.]{$places})";
+				$regex = "/^{$sign}{$dnum}{$exp}$/";
 			}
 		}
 		return self::_check($check, $regex);
@@ -796,7 +812,7 @@ class Validation {
  * @return boolean Success of match
  */
 	protected static function _check($check, $regex) {
-		if (preg_match($regex, $check)) {
+		if (is_string($regex) && preg_match($regex, $check)) {
 			self::$errors[] = false;
 			return true;
 		} else {
