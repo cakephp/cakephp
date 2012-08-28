@@ -361,8 +361,8 @@ class Shell extends Object {
 			array_shift($argv);
 		}
 
+		$this->OptionParser = $this->getOptionParser();
 		try {
-			$this->OptionParser = $this->getOptionParser();
 			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
 		} catch (ConsoleException $e) {
 			$this->out($this->OptionParser->help($command));
