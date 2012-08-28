@@ -135,8 +135,8 @@ class FormHelper extends AppHelper {
 			return $this->_models[$model];
 		}
 
-		if (ClassRegistry::isKeySet($model)) {
-			$object = ClassRegistry::getObject($model);
+		if ($obj = ClassRegistry::getObject($model)) {
+			$object = $obj;
 		} elseif (isset($this->request->params['models'][$model])) {
 			$plugin = $this->request->params['models'][$model]['plugin'];
 			$plugin .= ($plugin) ? '.' : null;
@@ -144,8 +144,8 @@ class FormHelper extends AppHelper {
 				'class' => $plugin . $this->request->params['models'][$model]['className'],
 				'alias' => $model
 			));
-		} elseif (ClassRegistry::isKeySet($this->defaultModel)) {
-			$defaultObject = ClassRegistry::getObject($this->defaultModel);
+		} elseif ($obj = ClassRegistry::getObject($this->defaultModel)) {
+			$defaultObject = $obj;
 			if (in_array($model, array_keys($defaultObject->getAssociated()), true) && isset($defaultObject->{$model})) {
 				$object = $defaultObject->{$model};
 			}
