@@ -1005,7 +1005,11 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$autoLength = (!array_key_exists('maxlength', $options) && isset($fieldDef['length']));
+		$autoLength = (
+			!array_key_exists('maxlength', $options) &&
+			isset($fieldDef['length']) &&
+			is_scalar($fieldDef['length'])
+		);
 		if ($autoLength && $options['type'] == 'text') {
 			$options['maxlength'] = $fieldDef['length'];
 		}
