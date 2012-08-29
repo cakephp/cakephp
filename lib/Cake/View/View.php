@@ -281,6 +281,13 @@ class View extends Object {
 	protected $_currentType = '';
 
 /**
+ * Holds name of place, used for finding a place Holder of element is rendering 
+ *.
+ * @var string
+ */
+	protected $_parentElementType = '';
+
+/**
  * Content stack, used for nested templates that all use View::extend();
  *
  * @var array
@@ -1140,6 +1147,15 @@ class View extends Object {
  * @param array $options Element options
  */
 	protected function _renderElement($file, $data, $options) {
+        if ($this->_currentType == self::TYPE_ELEMENT ){
+   	        $nested = true;
+
+        }else{
+   	        $this->_parentElementType = $this->_currentType;
+           	$this->_currentType = self::TYPE_ELEMENT;
+            $nested = false;
+        }
+
 		if (!$this->_helpersLoaded) {
 			$this->loadHelpers();
 		}
@@ -1147,7 +1163,7 @@ class View extends Object {
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
 		}
 
-		$this->_currentType = self::TYPE_ELEMENT;
+	
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
 
 		if (isset($options['callbacks'])) {
@@ -1156,6 +1172,10 @@ class View extends Object {
 		if (isset($options['cache'])) {
 			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);
 		}
+        if (!$nested){
+          $this->_currentType = $this->_parentElementType;
+          $this->_parentElementType =false;  
+        }
 		return $element;
 	}
 }
