@@ -24,8 +24,8 @@ use Cake\Model\ModelBehavior;
 use Cake\Utility\Hash;
 
 /**
- * Behavior to allow for dynamic and atomic manipulation of a Model's associations 
- * used for a find call. Most useful for limiting the amount of associations and 
+ * Behavior to allow for dynamic and atomic manipulation of a Model's associations
+ * used for a find call. Most useful for limiting the amount of associations and
  * data returned.
  *
  * @package       Cake.Model.Behavior
@@ -174,7 +174,7 @@ class ContainableBehavior extends ModelBehavior {
 		}
 
 		if ($this->settings[$Model->alias]['recursive']) {
-			$query['recursive'] = (isset($query['recursive'])) ? $query['recursive'] : $containments['depth'];
+			$query['recursive'] = (isset($query['recursive'])) ? max($query['recursive'], $containments['depth']) : $containments['depth'];
 		}
 
 		$autoFields = ($this->settings[$Model->alias]['autoFields']

@@ -138,6 +138,8 @@ class DatabaseSession implements SessionHandlerInterface {
 	public function gc($expires = null) {
 		if (!$expires) {
 			$expires = time();
+		} else {
+			$expires = time() - $expires;
 		}
 		return $this->_model->deleteAll(array($this->_model->alias . ".expires <" => $expires), false, false);
 	}

@@ -49,7 +49,7 @@ use Cake\Utility\Debugger;
 		endif;
 
 		$called = isset($stack['class']) ? $stack['class'] . $stack['type'] . $stack['function'] : $stack['function'];
-	
+
 		printf(
 			'<a href="#" onclick="traceToggle(event, \'trace-args-%s\')">%s(%s)</a> ',
 			$i,

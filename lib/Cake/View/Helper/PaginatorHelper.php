@@ -678,7 +678,7 @@ class PaginatorHelper extends Helper {
 				if ($offset < $start - 1) {
 					$out .= $this->first($offset, compact('tag', 'separator', 'ellipsis', 'class'));
 				} else {
-					$out .= $this->first($offset, compact('tag', 'separator', 'class') + array('after' => $separator));
+					$out .= $this->first($offset, compact('tag', 'separator', 'class', 'ellipsis') + array('after' => $separator));
 				}
 			}
 
@@ -712,7 +712,7 @@ class PaginatorHelper extends Helper {
 				if ($offset <= $last && $params['pageCount'] - $end > $offset) {
 					$out .= $this->last($offset, compact('tag', 'separator', 'ellipsis', 'class'));
 				} else {
-					$out .= $this->last($offset, compact('tag', 'separator', 'class') + array('before' => $separator));
+					$out .= $this->last($offset, compact('tag', 'separator', 'class', 'ellipsis') + array('before' => $separator));
 				}
 			}
 

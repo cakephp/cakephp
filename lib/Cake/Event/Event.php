@@ -18,9 +18,9 @@
 namespace Cake\Event;
 
 /**
- * Represent the transport class of events across the system, it receives a name, and subject and an optional
+ * Represents the transport class of events across the system, it receives a name, and subject and an optional
  * payload. The name can be any string that uniquely identifies the event across the application, while the subject
- * represents the object that the event is applying to.
+ * represents the object that the event applies to.
  *
  * @package Cake.Event
  */
@@ -28,7 +28,7 @@ class Event {
 
 /**
  * Name of the event
- * 
+ *
  * @var string $name
  */
 	protected $_name = null;

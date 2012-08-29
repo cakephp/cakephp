@@ -46,7 +46,7 @@ class Dispatcher implements EventListener {
 /**
  * Event manager, used to handle dispatcher filters
  *
- * @var Cake\Event\EventMaanger
+ * @var Cake\Event\EventManager
  */
 	protected $_eventManager;
 
@@ -145,9 +145,9 @@ class Dispatcher implements EventListener {
 		$request = $beforeEvent->data['request'];
 		if ($beforeEvent->result instanceof Response) {
 			if (isset($request->params['return'])) {
-				return $response->body();
+				return $beforeEvent->result->body();
 			}
-			$response->send();
+			$beforeEvent->result->send();
 			return;
 		}
 

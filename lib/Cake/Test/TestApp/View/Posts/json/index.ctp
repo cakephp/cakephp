@@ -16,9 +16,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+$paging = isset($this->Paginator->options['url']) ? $this->Paginator->options['url'] : null;
+
 $formatted = array(
 	'user' => $user['User']['username'],
-	'list' => array()
+	'list' => array(),
+	'paging' => $paging,
 );
 foreach ($user['Item'] as $item) {
 	$formatted['list'][] = $item['name'];

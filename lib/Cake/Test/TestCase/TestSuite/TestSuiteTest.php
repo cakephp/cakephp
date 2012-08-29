@@ -25,7 +25,7 @@ class TestSuiteTest extends TestCase {
 
 /**
  * testAddTestDirectory
- * 
+ *
  * @return void
  */
 	public function testAddTestDirectory() {
@@ -42,7 +42,7 @@ class TestSuiteTest extends TestCase {
 
 /**
  * testAddTestDirectoryRecursive
- * 
+ *
  * @return void
  */
 	public function testAddTestDirectoryRecursive() {
@@ -60,7 +60,7 @@ class TestSuiteTest extends TestCase {
 
 /**
  * testAddTestDirectoryRecursiveWithHidden
- * 
+ *
  * @return void
  */
 	public function testAddTestDirectoryRecursiveWithHidden() {
@@ -84,7 +84,7 @@ class TestSuiteTest extends TestCase {
 
 /**
  * testAddTestDirectoryRecursiveWithNonPhp
- * 
+ *
  * @return void
  */
 	public function testAddTestDirectoryRecursiveWithNonPhp() {

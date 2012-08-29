@@ -162,7 +162,10 @@ class Router {
  * @throws Cake\Error\Exception
  */
 	protected static function _validateRouteClass($routeClass) {
-		if (!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route')) {
+		if (
+			$routeClass != 'Cake\Routing\Route\Route' &&
+			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route'))
+		) {
 			throw new Error\Exception(__d('cake_dev', 'Route classes must extend Cake\Routing\Route\Route'));
 		}
 		return $routeClass;
@@ -650,8 +653,11 @@ class Router {
 			$plainString = (
 				strpos($url, 'javascript:') === 0 ||
 				strpos($url, 'mailto:') === 0 ||
+				strpos($url, 'tel:') === 0 ||
+				strpos($url, 'sms:') === 0 ||
 				strpos($url, '#') === 0
 			);
+
 			$hasColonSlash = strpos($url, '://') !== false;
 			$hasLeadingSlash = isset($url[0]) ? $url[0] === '/' : false;
 		}

@@ -1032,6 +1032,7 @@ class AuthComponentTest extends TestCase {
 					'id' => '1',
 					'name' => 'Members'
 				),
+				'is_admin' => false,
 		));
 		$this->Auth->Session->write('Auth', $data);
 
@@ -1049,5 +1050,8 @@ class AuthComponentTest extends TestCase {
 
 		$result = $this->Auth->user('Company.invalid');
 		$this->assertEquals(null, $result);
+
+		$result = $this->Auth->user('is_admin');
+		$this->assertFalse($result);
 	}
 }

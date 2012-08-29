@@ -64,7 +64,7 @@ class TestShellTest extends TestCase {
 
 /**
  * testMapCoreFileToCategory
- * 
+ *
  * @return void
  */
 	public function testMapCoreFileToCategory() {
@@ -84,7 +84,7 @@ class TestShellTest extends TestCase {
  * testMapCoreFileToCase
  *
  * basics.php is a slightly special case - it's the only file in the core with a test that isn't Capitalized
- * 
+ *
  * @return void
  */
 	public function testMapCoreFileToCase() {
@@ -102,7 +102,7 @@ class TestShellTest extends TestCase {
 
 /**
  * testMapAppFileToCategory
- * 
+ *
  * @return void
  */
 	public function testMapAppFileToCategory() {
@@ -132,7 +132,7 @@ class TestShellTest extends TestCase {
 
 /**
  * testMapPluginFileToCategory
- * 
+ *
  * @return void
  */
 	public function testMapPluginFileToCategory() {
@@ -162,7 +162,7 @@ class TestShellTest extends TestCase {
 
 /**
  * testMapCoreTestToCategory
- * 
+ *
  * @return void
  */
 	public function testMapCoreTestToCategory() {
@@ -182,7 +182,7 @@ class TestShellTest extends TestCase {
  * testMapCoreTestToCase
  *
  * basics.php is a slightly special case - it's the only file in the core with a test that isn't Capitalized
- * 
+ *
  * @return void
  */
 	public function testMapCoreTestToCase() {
@@ -200,7 +200,7 @@ class TestShellTest extends TestCase {
 
 /**
  * testMapAppTestToCategory
- * 
+ *
  * @return void
  */
 	public function testMapAppTestToCategory() {
@@ -230,7 +230,7 @@ class TestShellTest extends TestCase {
 
 /**
  * testMapPluginTestToCategory
- * 
+ *
  * @return void
  */
 	public function testMapPluginTestToCategory() {

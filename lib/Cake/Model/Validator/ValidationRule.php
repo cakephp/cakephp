@@ -245,7 +245,7 @@ class ValidationRule {
  * If called with no parameters it will return whether this rule
  * is configured for update operations or not.
  *
- * @return boolean 
+ * @return boolean
  **/
 	public function isUpdate($exists = null) {
 		if ($exists === null) {
@@ -273,7 +273,7 @@ class ValidationRule {
 			$this->_valid = call_user_func_array(array('Cake\Utility\Validation', $this->_rule), $this->_ruleParams);
 		} elseif (is_string($validator['rule'])) {
 			$this->_valid = preg_match($this->_rule, $data[$field]);
-		} elseif (Configure::read('debug') > 0) {
+		} else {
 			trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $this->_rule, $field), E_USER_WARNING);
 			return false;
 		}

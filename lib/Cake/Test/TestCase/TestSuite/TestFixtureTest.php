@@ -230,7 +230,7 @@ class TestFixtureTest extends TestCase {
 	}
 
 /**
- * test that init() correctly sets the fixture table when the connection 
+ * test that init() correctly sets the fixture table when the connection
  * or model have prefixes defined.
  *
  * @return void

@@ -105,7 +105,7 @@ class FileEngineTest extends TestCase {
 
 /**
  * Test read/write on the same cache key. Ensures file handles are re-wound.
- * 
+ *
  * @return void
  */
 	public function testConsecutiveReadWrite() {

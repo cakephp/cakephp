@@ -1,6 +1,5 @@
 <?php
 /**
- * HttpException class
  *
  * PHP 5
  *
@@ -11,19 +10,18 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html
- * @package       Cake.Error
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       Cake.Test.TestApp.View.Helper
  * @since         CakePHP(tm) v 3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace TestApp\View;
+use Cake\View\JsonView;
 
 /**
- * Parent class for all of the HTTP related exceptions in CakePHP.
- * All HTTP status/error related exceptions should extend this class so
- * catch blocks can be specifically typed.
+ * CustomJsonView class
  *
- * @package       Cake.Error
  */
-class HttpException extends BaseException {
+class CustomJsonView extends JsonView {
+
 }

@@ -15,6 +15,7 @@
 namespace Cake\TestSuite\Fixture;
 use Cake\Core\App;
 use Cake\Error;
+use Cake\Log\Log;
 use Cake\Model\ConnectionManager;
 use Cake\Model\Model;
 use Cake\Model\Schema;
@@ -23,7 +24,7 @@ use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 /**
- * TestFixture is responsible for building and destroying tables to be used 
+ * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
  *
  * @package       Cake.TestSuite.Fixture
@@ -200,6 +201,14 @@ class TestFixture {
 			$db->execute($db->createSchema($this->Schema), array('log' => false));
 			$this->created[] = $db->configKeyName;
 		} catch (Exception $e) {
+			$msg = __d(
+				'cake_dev',
+				'Fixture creation for "%s" failed "%s"',
+				$this->table,
+				$e->getMessage()
+			);
+			Log::error($msg);
+			trigger_error($msg, E_USER_WARNING);
 			return false;
 		}
 		return true;

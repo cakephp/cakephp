@@ -839,6 +839,45 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
+ * Test that two columns with key => primary doesn't create invalid sql.
+ *
+ * @return void
+ */
+	public function testTwoColumnsWithPrimaryKey() {
+		$schema = new CakeSchema(array(
+			'connection' => 'test',
+			'roles_users' => array(
+				'role_id' => array(
+					'type' => 'integer',
+					'null' => false,
+					'default' => null,
+					'key' => 'primary'
+				),
+				'user_id' => array(
+					'type' => 'integer',
+					'null' => false,
+					'default' => null,
+					'key' => 'primary'
+				),
+				'indexes' => array(
+					'user_role_index' => array(
+						'column' => array('role_id', 'user_id'),
+						'unique' => 1
+					),
+					'user_index' => array(
+						'column' => 'user_id',
+						'unique' => 0
+					)
+				),
+			)
+		));
+
+		$result = $this->Dbo->createSchema($schema);
+		$this->assertContains('`role_id` int(11) NOT NULL,', $result);
+		$this->assertContains('`user_id` int(11) NOT NULL,', $result);
+	}
+
+/**
  * Tests that listSources method sends the correct query and parses the result accordingly
  * @return void
  */

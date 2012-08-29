@@ -666,10 +666,8 @@ class ViewTest extends TestCase {
  *
  */
 	public function testElementCallbacks() {
-		$this->getMock('Cake\View\Helper\HtmlHelper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');
-		$this->View->helpers = array(
-			'ElementCallbackMockHtml' => array('className' => '\ElementCallbackMockHtmlHelper')
-		);
+		$this->getMock('Cake\View\Helper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');
+		$this->View->helpers = array('ElementCallbackMockHtml');
 		$this->View->loadHelpers();
 
 		$this->View->ElementCallbackMockHtml->expects($this->at(0))->method('beforeRender');
@@ -732,13 +730,13 @@ class ViewTest extends TestCase {
 		$expected = 'this is the test element';
 		$this->assertEquals($expected, $result);
 
-		$result = Cache::read('element__test_element_cache', 'test_view');
+		$result = Cache::read('element__test_element_cache_callbacks', 'test_view');
 		$this->assertEquals($expected, $result);
 
 		$result = $View->element('test_element', array('param' => 'one', 'foo' => 'two'), array('cache' => true));
 		$this->assertEquals($expected, $result);
 
-		$result = Cache::read('element__test_element_cache_param_foo', 'test_view');
+		$result = Cache::read('element__test_element_cache_callbacks_param_foo', 'test_view');
 		$this->assertEquals($expected, $result);
 
 		$result = $View->element('test_element', array(
@@ -757,7 +755,7 @@ class ViewTest extends TestCase {
 		), array(
 			'cache' => array('config' => 'test_view'),
 		));
-		$result = Cache::read('element__test_element_cache_param_foo', 'test_view');
+		$result = Cache::read('element__test_element_cache_callbacks_param_foo', 'test_view');
 		$this->assertEquals($expected, $result);
 
 		Cache::clear(true, 'test_view');

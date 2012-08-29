@@ -257,6 +257,8 @@ class RssHelper extends Helper {
 					$attrib = $val;
 					$val = null;
 				break;
+				default:
+					$attrib = $att;
 			}
 			if (!is_null($val) && $escape) {
 				$val = h($val);
@@ -313,7 +315,12 @@ class RssHelper extends Helper {
 
 		$xml = '<' . $name;
 		if (!empty($namespace)) {
-			$xml .= ' xmlns:"' . $namespace . '"';
+			$xml .= ' xmlns';
+			if (is_array($namespace)) {
+				$xml .= ':' . $namespace['prefix'];
+				$namespace = $namespace['url'];
+			}
+			$xml .= '="' . $namespace . '"';
 		}
 		$bareName = $name;
 		if (strpos($name, ':') !== false) {
@@ -330,8 +337,10 @@ class RssHelper extends Helper {
 		$xml .= '>' . $content . '</' . $name . '>';
 		$elem = Xml::build($xml, array('return' => 'domdocument'));
 		$nodes = $elem->getElementsByTagName($bareName);
-		foreach ($attrib as $key => $value) {
-			$nodes->item(0)->setAttribute($key, $value);
+		if ($attrib) {
+			foreach ($attrib as $key => $value) {
+				$nodes->item(0)->setAttribute($key, $value);
+			}
 		}
 		foreach ($children as $k => $child) {
 			$child = $elem->createElement($name, $child);

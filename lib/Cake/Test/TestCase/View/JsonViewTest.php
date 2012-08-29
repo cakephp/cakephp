@@ -78,6 +78,7 @@ class JsonViewTest extends TestCase {
 			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		));
 		$Request = new Request();
+		$Request->params['named'] = array('page' => 2);
 		$Response = new Response();
 		$Controller = new Controller($Request, $Response);
 		$Controller->name = $Controller->viewPath = 'Posts';
@@ -93,9 +94,10 @@ class JsonViewTest extends TestCase {
 		);
 		$Controller->set('user', $data);
 		$View = new JsonView($Controller);
+		$View->helpers = array('Paginator');
 		$output = $View->render('index');
 
-		$expected = json_encode(array('user' => 'fake', 'list' => array('item1', 'item2')));
+		$expected = json_encode(array('user' => 'fake', 'list' => array('item1', 'item2'), 'paging' => array('page' => 2)));
 		$this->assertSame($expected, $output);
 		$this->assertSame('application/json', $Response->type());
 	}

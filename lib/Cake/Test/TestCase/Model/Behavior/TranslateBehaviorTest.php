@@ -1,9 +1,5 @@
 <?php
 /**
- * TranslateBehaviorTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -532,6 +527,104 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * Test that saving only some of the translated fields allows the record to be found again.
+ *
+ * @return void
+ */
+	public function testSavePartialFields() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel = new TranslatedItem();
+		$TestModel->locale = 'spa';
+		$data = array(
+			'slug' => 'fourth_translated',
+			'title' => 'Leyenda #4',
+		);
+		$TestModel->create($data);
+		$TestModel->save();
+		$result = $TestModel->read();
+		$expected = array(
+			'TranslatedItem' => array(
+				'id' => $TestModel->id,
+				'translated_article_id' => null,
+				'locale' => 'spa',
+				'content' => '',
+			) + $data
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that all fields are create with partial data + multiple locales.
+ *
+ * @return void
+ */
+	public function testSavePartialFieldMultipleLocales() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel = new TranslatedItem();
+		$TestModel->locale = 'eng';
+		$data = array(
+			'slug' => 'fifth_translated',
+			'title' => array('eng' => 'Title #5', 'spa' => 'Leyenda #5'),
+		);
+		$TestModel->create($data);
+		$TestModel->save();
+		$TestModel->unbindTranslation();
+
+		$translations = array('title' => 'Title', 'content' => 'Content');
+		$TestModel->bindTranslation($translations, false);
+		$result = $TestModel->read(null, $TestModel->id);
+		$expected = array(
+			'TranslatedItem' => array(
+				'id' => '4',
+				'translated_article_id' => null,
+				'slug' => 'fifth_translated',
+				'locale' => 'eng',
+				'title' => 'Title #5',
+				'content' => ''
+			),
+			'Title' => array(
+				0 => array(
+					'id' => '19',
+					'locale' => 'eng',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'title',
+					'content' => 'Title #5'
+				),
+				1 => array(
+					'id' => '20',
+					'locale' => 'spa',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'title',
+					'content' => 'Leyenda #5'
+				)
+			),
+			'Content' => array(
+				0 => array(
+					'id' => '21',
+					'locale' => 'eng',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'content',
+					'content' => ''
+				),
+				1 => array(
+					'id' => '22',
+					'locale' => 'spa',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'content',
+					'content' => ''
+				)
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testSaveUpdate method
  *
  * @return void
@@ -1028,6 +1121,38 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$Model->unbindTranslation('slug');
 		$result = $Model->Behaviors->Translate->settings['TranslatedItem'];
 		$this->assertNotContains('slug', $result);
+	}
+
+/**
+ * Test that additional records are not inserted for associated translations.
+ *
+ * @return void
+ */
+	public function testNoExtraRowsForAssociatedTranslations() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+		$TestModel = new TranslatedItem();
+		$TestModel->locale = 'spa';
+		$TestModel->unbindTranslation();
+		$TestModel->bindTranslation(array('name' => 'nameTranslate'));
+
+		$data = array(
+			'TranslatedItem' => array(
+				'slug' => 'spanish-name',
+				'name' => 'Spanish name',
+			),
+		);
+		$TestModel->create($data);
+		$TestModel->save();
+
+		$Translate = $TestModel->translateModel();
+		$results = $Translate->find('all', array(
+			'conditions' => array(
+				'locale' => $TestModel->locale,
+				'foreign_key' => $TestModel->id
+			)
+		));
+		$this->assertCount(1, $results, 'Only one field should be saved');
+		$this->assertEquals('name', $results[0]['TranslateTestModel']['field']);
 	}
 
 }

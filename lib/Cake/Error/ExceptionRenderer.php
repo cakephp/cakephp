@@ -28,6 +28,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
+use Cake\Utility\Sanitize;
 
 /**
  * Exception Renderer.
@@ -152,6 +153,11 @@ class ExceptionRenderer {
 			$request = Request::createFromGlobals();
 		}
 		$response = new Response(array('charset' => Configure::read('App.encoding')));
+
+		if (method_exists($exception, 'responseHeader')) {
+			$response->header($exception->responseHeader());
+		}
+
 		try {
 			$controller = new ErrorController($request, $response);
 		} catch (\Exception $e) {
@@ -185,7 +191,7 @@ class ExceptionRenderer {
 		$this->controller->set(array(
 			'code' => $code,
 			'url' => h($url),
-			'name' => $error->getMessage(),
+			'name' => h($error->getMessage()),
 			'error' => $error,
 			'_serialize' => array('code', 'url', 'name')
 		));
@@ -207,7 +213,7 @@ class ExceptionRenderer {
 		$url = $this->controller->request->here();
 		$this->controller->response->statusCode($error->getCode());
 		$this->controller->set(array(
-			'name' => $message,
+			'name' => h($message),
 			'url' => h($url),
 			'error' => $error,
 			'_serialize' => array('name', 'url')
@@ -230,7 +236,7 @@ class ExceptionRenderer {
 		$code = ($error->getCode() > 500 && $error->getCode() < 506) ? $error->getCode() : 500;
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
-			'name' => $message,
+			'name' => h($message),
 			'message' => h($url),
 			'error' => $error,
 			'_serialize' => array('name', 'message')
@@ -251,7 +257,7 @@ class ExceptionRenderer {
 		$this->controller->set(array(
 			'code' => $code,
 			'url' => h($url),
-			'name' => $error->getMessage(),
+			'name' => h($error->getMessage()),
 			'error' => $error,
 			'_serialize' => array('code', 'url', 'name', 'error')
 		));

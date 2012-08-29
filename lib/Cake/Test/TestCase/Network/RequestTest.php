@@ -15,6 +15,7 @@
 namespace Cake\Test\TestSuite\Network;
 
 use Cake\Core\Configure;
+use Cake\Error;
 use Cake\Network\Request;
 use Cake\Routing\Dispatcher;
 use Cake\TestSuite\TestCase;
@@ -177,7 +178,7 @@ class RequestTest extends TestCase {
  */
 	public function testPutParsing() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
+		$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded; charset=UTF-8';
 
 		$data = array(
 			'Article' => array('title')
@@ -212,6 +213,22 @@ class RequestTest extends TestCase {
 			'input' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2'
 		));
 		$this->assertEquals($data, $request->data);
+	}
+
+/**
+ * test parsing json PUT data into the object.
+ *
+ * @return void
+ */
+	public function testPutParsingJSON() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+
+		$request = $this->getMock('TestCakeRequest', array('_readInput'));
+		$request->expects($this->at(0))->method('_readInput')
+			->will($this->returnValue('{Article":["title"]}'));
+		$request->reConstruct();
+		$this->assertEquals('{Article":["title"]}', $request->data);
 	}
 
 /**
@@ -841,6 +858,13 @@ class RequestTest extends TestCase {
 
 		$_SERVER['TEST_VAR'] = 'foo';
 		$this->assertTrue($request->is('compareCamelCase'), 'Value match failed.');
+		$this->assertTrue($request->is('comparecamelcase'), 'detectors should be case insensitive');
+		$this->assertTrue($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
+
+		$_SERVER['TEST_VAR'] = 'not foo';
+		$this->assertFalse($request->is('compareCamelCase'), 'Value match failed.');
+		$this->assertFalse($request->is('comparecamelcase'), 'detectors should be case insensitive');
+		$this->assertFalse($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
 		$request->addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
 		$_SERVER['TEST_VAR'] = 'banana';
@@ -1804,6 +1828,41 @@ XML;
 	
 		$result = $request->cookie('not there');
 		$this->assertNull($result);
+	}
+
+ /*
+ * TestOnlyAllow
+ *
+ * @return void
+ */
+	public function testOnlyAllow() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$request = new Request('/posts/edit/1');
+
+		$this->assertTrue($request->onlyAllow(array('put')));
+
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$this->assertTrue($request->onlyAllow('post', 'delete'));
+	}
+
+/**
+ * TestOnlyAllow throwing exception
+ *
+ * @return void
+ */
+	public function testOnlyAllowException() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$request = new Request('/posts/edit/1');
+
+		try {
+			$request->onlyAllow('POST', 'DELETE');
+			$this->fail('An expected exception has not been raised.');
+		} catch (Error\MethodNotAllowedException $e) {
+			$this->assertEquals(array('Allow' => 'POST, DELETE'), $e->responseHeader());
+		}
+
+		$this->setExpectedException('Cake\Error\MethodNotAllowedException');
+		$request->onlyAllow('POST');
 	}
 
 /**

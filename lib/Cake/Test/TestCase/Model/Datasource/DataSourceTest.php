@@ -32,7 +32,7 @@ class TestSource extends DataSource {
 
 /**
  * _schema
- * @var type 
+ * @var type
  */
 	protected $_schema = array(
 		'id' => array(

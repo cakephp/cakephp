@@ -21,7 +21,7 @@ use Cake\Error;
 use Cake\Utility\Inflector;
 
 /**
- * Plugin is responsible for loading and unloading plugins. It also can 
+ * Cake Plugin is responsible for loading and unloading plugins. It also can
  * retrieve plugin paths and load their bootstrap and routes files.
  *
  * @package       Cake.Core

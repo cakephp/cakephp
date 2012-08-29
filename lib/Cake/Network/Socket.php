@@ -42,11 +42,11 @@ class Socket {
  * @var array
  */
 	protected $_baseConfig = array(
-		'persistent'	=> false,
-		'host'			=> 'localhost',
-		'protocol'		=> 'tcp',
-		'port'			=> 80,
-		'timeout'		=> 30
+		'persistent' => false,
+		'host' => 'localhost',
+		'protocol' => 'tcp',
+		'port' => 80,
+		'timeout' => 30
 	);
 
 /**
@@ -76,6 +76,31 @@ class Socket {
  * @var array
  */
 	public $lastError = array();
+
+/**
+ * True if the socket stream is encrypted after a Cake\Network\Socket::enableCrypto() call
+ *
+ * @var boolean
+ */
+	public $encrypted = false;
+
+/**
+ * Contains all the encryption methods available
+ *
+ * @var array
+ */
+	protected $_encryptMethods = array(
+		// @codingStandardsIgnoreStart
+		'sslv2_client' => STREAM_CRYPTO_METHOD_SSLv2_CLIENT,
+		'sslv3_client' => STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
+		'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
+		'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
+		'sslv2_server' => STREAM_CRYPTO_METHOD_SSLv2_SERVER,
+		'sslv3_server' => STREAM_CRYPTO_METHOD_SSLv3_SERVER,
+		'sslv23_server' => STREAM_CRYPTO_METHOD_SSLv23_SERVER,
+		'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER
+		// @codingStandardsIgnoreEnd
+	);
 
 /**
  * Constructor.
@@ -276,6 +301,38 @@ class Socket {
 			$this->{$property} = $value;
 		}
 		return true;
+	}
+
+/**
+ * Encrypts current stream socket, using one of the defined encryption methods
+ *
+ * @param string $type can be one of 'ssl2', 'ssl3', 'ssl23' or 'tls'
+ * @param string $clientOrServer can be one of 'client', 'server'. Default is 'client'
+ * @param boolean $enable enable or disable encryption. Default is true (enable)
+ * @return boolean True on success
+ * @throws Cake\Error\InvalidArgumentException When an invalid encryption scheme is chosen.
+ * @throws Cake\Error\SocketException When attempting to enable SSL/TLS fails
+ * @see stream_socket_enable_crypto
+ */
+	public function enableCrypto($type, $clientOrServer = 'client', $enable = true) {
+		if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
+			throw new Error\InvalidArgumentException(__d('cake_dev', 'Invalid encryption scheme chosen'));
+		}
+		$enableCryptoResult = false;
+		try {
+			$enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $this->_encryptMethods[$type . '_' . $clientOrServer]);
+		} catch (\Exception $e) {
+			$this->setLastError(null, $e->getMessage());
+			throw new Error\SocketException($e->getMessage());
+		}
+		if ($enableCryptoResult === true) {
+			$this->encrypted = $enable;
+			return true;
+		} else {
+			$errorMessage = __d('cake_dev', 'Unable to perform enableCrypto operation on Cake\Error\Socket');
+			$this->setLastError(null, $errorMessage);
+			throw new Error\SocketException($errorMessage);
+		}
 	}
 
 }

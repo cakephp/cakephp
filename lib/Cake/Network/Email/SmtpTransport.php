@@ -53,7 +53,7 @@ class SmtpTransport extends AbstractTransport {
  *
  * @param Cake\Network\Email\Email $email Cake Email
  * @return array
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function send(Email $email) {
 		$this->_cakeEmail = $email;
@@ -80,7 +80,8 @@ class SmtpTransport extends AbstractTransport {
 			'timeout' => 30,
 			'username' => null,
 			'password' => null,
-			'client' => null
+			'client' => null,
+			'tls' => false
 		);
 		$this->_config = $config + $default;
 	}
@@ -89,7 +90,7 @@ class SmtpTransport extends AbstractTransport {
  * Connect to SMTP Server
  *
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _connect() {
 		$this->_generateSocket();
@@ -108,7 +109,15 @@ class SmtpTransport extends AbstractTransport {
 
 		try {
 			$this->_smtpSend("EHLO {$host}", '250');
-		} catch (Error\SocketException $e) {
+			if ($this->_config['tls']) {
+				$this->_smtpSend("STARTTLS", '220');
+				$this->_socket->enableCrypto('tls');
+				$this->_smtpSend("EHLO {$host}", '250');
+			}
+		} catch (Errpr\SocketException $e) {
+			if ($this->_config['tls']) {
+				throw new Error\SocketException(__d('cake_dev', 'SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.'));
+			}
 			try {
 				$this->_smtpSend("HELO {$host}", '250');
 			} catch (Error\SocketException $e2) {
@@ -121,7 +130,7 @@ class SmtpTransport extends AbstractTransport {
  * Send authentication
  *
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _auth() {
 		if (isset($this->_config['username']) && isset($this->_config['password'])) {
@@ -133,6 +142,8 @@ class SmtpTransport extends AbstractTransport {
 				if (!$this->_smtpSend(base64_encode($this->_config['password']), '235')) {
 					throw new Error\SocketException(__d('cake_dev', 'SMTP server did not accept the password.'));
 				}
+			} elseif ($authRequired == '504') {
+				throw new Error\SocketException(__d('cake_dev', 'SMTP authentication method not allowed, check if SMTP server requires TLS'));
 			} elseif ($authRequired != '503') {
 				throw new Error\SocketException(__d('cake_dev', 'SMTP does not require authentication.'));
 			}
@@ -143,7 +154,7 @@ class SmtpTransport extends AbstractTransport {
  * Send emails
  *
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _sendRcpt() {
 		$from = $this->_cakeEmail->from();
@@ -162,7 +173,7 @@ class SmtpTransport extends AbstractTransport {
  * Send Data
  *
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _sendData() {
 		$this->_smtpSend('DATA', '354');
@@ -187,7 +198,7 @@ class SmtpTransport extends AbstractTransport {
  * Disconnect
  *
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _disconnect() {
 		$this->_smtpSend('QUIT', false);
@@ -198,7 +209,7 @@ class SmtpTransport extends AbstractTransport {
  * Helper method to generate socket
  *
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _generateSocket() {
 		$this->_socket = new Socket($this->_config);
@@ -210,7 +221,7 @@ class SmtpTransport extends AbstractTransport {
  * @param string $data data to be sent to SMTP server
  * @param string|boolean $checkCode code to check for in server response, false to skip
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _smtpSend($data, $checkCode = '250') {
 		if (!is_null($data)) {
