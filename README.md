@@ -28,7 +28,7 @@ Get Support!
 
 [Our Google Group](http://groups.google.com/group/cake-php) - community mailing list and forum
 
-[#cakephp](irc://irc.freenode.net/cakephp) on irc.freenode.net - Come chat with us, we have cake.
+[#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
 
 [Q & A](http://ask.cakephp.org/) - Ask questions here, all questions welcome
 
