@@ -1,4 +1,4 @@
-Cakephp
+CakePHP
 =======
 
 ![CakePHP](http://cakephp.org/img/cake-logo.png)
