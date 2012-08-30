@@ -138,7 +138,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		if (empty($digest)) {
 			return false;
 		}
-		$user = $this->_findUser($digest['username'], null);
+		$user = $this->_findUser($digest['username']);
 		if (empty($user)) {
 			return false;
 		}
