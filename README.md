@@ -1,28 +1,37 @@
-CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC. Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.
+Cakephp
+=======
 
-The Cake Software Foundation - promoting development related to CakePHP
-http://cakefoundation.org/
+![CakePHP](http://cakephp.org/img/cake-logo.png)
 
-CakePHP - the rapid development PHP framework
-http://www.cakephp.org
+[CakePHP](http://cakephp.org) is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.
+Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.
 
-Cookbook - user documentation for learning about CakePHP
-http://book.cakephp.org
+Some Handy Links
+----------------
 
-API - quick reference to CakePHP
-http://api.cakephp.org
+[CakePHP](http://www.cakephp.org) - The rapid development PHP framework
 
-The Bakery - everything CakePHP
-http://bakery.cakephp.org
+[Cookbook](http://book.cakephp.org) - THE Cake user documentation; start learning here!
 
-The Show - live and archived podcasts about CakePHP and more
-http://live.cakephp.org
+[Plugins](http://plugins.cakephp.org/) - A repository of extensions to the framework
 
-CakePHP TV - screen casts from events and video tutorials
-http://tv.cakephp.org
+[The Bakery](http://bakery.cakephp.org) - Tips, tutorials and articles
 
-CakePHP Google Group - community mailing list and forum
-http://groups.google.com/group/cake-php
+[API](http://api.cakephp.org) - A reference to Cake's classes
 
-#cakephp on irc.freenode.net - chat with CakePHP developers
-irc://irc.freenode.net/cakephp
+[CakePHP TV](http://tv.cakephp.org) - Screen casts from events and video tutorials
+
+[The Cake Software Foundation](http://cakefoundation.org/) - promoting development related to CakePHP
+
+Get Support!
+------------
+
+[Our Google Group](http://groups.google.com/group/cake-php) - community mailing list and forum
+
+[#cakephp](irc://irc.freenode.net/cakephp) on irc.freenode.net - Come chat with us, we have cake.
+
+[Q & A](http://ask.cakephp.org/) - Ask questions here, all questions welcome
+
+[Lighthouse](http://cakephp.lighthouseapp.com/) - Got issues? Please tell us!
+
+![Cake Power](https://raw.github.com/cakephp/cakephp/master/lib/Cake/Console/Templates/skel/webroot/img/cake.power.gif)
