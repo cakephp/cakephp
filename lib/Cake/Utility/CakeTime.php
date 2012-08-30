@@ -923,13 +923,16 @@ class CakeTime {
  * This function also accepts a time string and a format string as first and second parameters.
  * In that case this function behaves as a wrapper for TimeHelper::i18nFormat()
  *
- * ## Examples:
- *	{{{
- *		CakeTime::format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
- *		CakeTime::format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
- *		CakeTime::format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
- *		CakeTime::format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
- *	}}}
+ * ## Examples
+ *
+ * Create localized & formatted time:
+ *
+ * {{{
+ *   CakeTime::format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
+ *   CakeTime::format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
+ *   CakeTime::format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
+ *   CakeTime::format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
+ * }}}
  *
  * @param integer|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)
  * @param integer|string|DateTime $format date format string (or UNIX timestamp, strtotime() valid string or DateTime object)
@@ -937,6 +940,7 @@ class CakeTime {
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
+ * @see CakeTime::i18nFormat()
  */
 	public static function format($date, $format = null, $default = false, $timezone = null) {
 		//Backwards compatible params order

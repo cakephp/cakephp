@@ -4329,6 +4329,30 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * When a select box has no options it should not be added to the fields list
+ * as it always fail post validation.
+ *
+ * @return void
+ */
+	public function testSelectNoSecureWithNoOptions() {
+		$this->Form->request['_Token'] = array('key' => 'testkey');
+		$this->assertEquals(array(), $this->Form->fields);
+
+		$this->Form->select(
+			'Model.select',
+			array()
+		);
+		$this->assertEquals(array(), $this->Form->fields);
+
+		$this->Form->select(
+			'Model.select',
+			array(),
+			array('empty' => true)
+		);
+		$this->assertEquals(array('Model.select'), $this->Form->fields);
+	}
+
+/**
  * testInputMultipleCheckboxes method
  *
  * test input() resulting in multi select elements being generated.

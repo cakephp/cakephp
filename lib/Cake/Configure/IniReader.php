@@ -84,20 +84,41 @@ class IniReader implements ConfigReaderInterface {
 /**
  * Read an ini file and return the results as an array.
  *
- * @param string $file Name of the file to read. The chosen file
- *    must be on the reader's path.
- * @return array
+ * For backwards compatibility, acl.ini.php will be treated specially until 3.0.
+ *
+ * @param string $key The identifier to read from. If the key has a . it will be treated
+ *  as a plugin prefix. The chosen file must be on the reader's path.
+ * @return array Parsed configuration values.
+ * @throws ConfigureException when files don't exist.
+ *  Or when files contain '..' as this could lead to abusive reads.
  * @throws ConfigureException
  */
-	public function read($file) {
-		$filename = $this->_path . $file;
-		if (!file_exists($filename)) {
-			$filename .= '.ini';
-			if (!file_exists($filename)) {
-				throw new ConfigureException(__d('cake_dev', 'Could not load configuration files: %s or %s', substr($filename, 0, -4), $filename));
-			}
+	public function read($key) {
+		if (strpos($key, '..') !== false) {
+			throw new ConfigureException(__d('cake_dev', 'Cannot load configuration files with ../ in them.'));
 		}
-		$contents = parse_ini_file($filename, true);
+		if (substr($key, -8) === '.ini.php') {
+			$key = substr($key, 0, -8);
+			list($plugin, $key) = pluginSplit($key);
+			$key .= '.ini.php';
+		} else {
+			if (substr($key, -4) === '.ini') {
+				$key = substr($key, 0, -4);
+			}
+			list($plugin, $key) = pluginSplit($key);
+			$key .= '.ini';
+		}
+
+		if ($plugin) {
+			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
+		} else {
+			$file = $this->_path . $key;
+		}
+		if (!is_file($file)) {
+			throw new ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
+		}
+
+		$contents = parse_ini_file($file, true);
 		if (!empty($this->_section) && isset($contents[$this->_section])) {
 			$values = $this->_parseNestedValues($contents[$this->_section]);
 		} else {

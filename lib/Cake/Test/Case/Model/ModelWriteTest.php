@@ -3242,7 +3242,6 @@ class ModelWriteTest extends BaseModelTest {
 				)
 			),
 			1 => array(
-				'body' => array('This field cannot be left blank'),
 				'Comment' => array(
 					0 => array(
 						'User' => array(
@@ -3687,9 +3686,6 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			0 => array(
 				'body' => array('This field cannot be left blank')
-			),
-			1 => array(
-				'body' => array('This field cannot be left blank')
 			)
 		);
 		$result = $TestModel->validationErrors;
@@ -3703,7 +3699,7 @@ class ModelWriteTest extends BaseModelTest {
 				)
 			),
 			array(
-				'Article' => array('id' => 2, 'body' => 'Same here'),
+				'Article' => array('id' => 2),
 				'Comment' => array(
 					array('comment' => '', 'published' => 'Y', 'user_id' => 2)
 				)

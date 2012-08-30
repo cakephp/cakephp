@@ -893,7 +893,7 @@ class View extends Object {
 
 		include $this->__viewFile;
 
-		unset($this->_viewFile);
+		unset($this->__viewFile);
 		return ob_get_clean();
 	}
 

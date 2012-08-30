@@ -117,6 +117,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * @return array list of validation errors for this field
  */
 	public function validate($data, $isUpdate = false) {
+		$this->reset();
 		$errors = array();
 		foreach ($this->getRules() as $name => $rule) {
 			$rule->isUpdate($isUpdate);
@@ -141,6 +142,17 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 		}
 
 		return $errors;
+	}
+
+/**
+ * Resets interal state for all validation rules in this set
+ *
+ * @return void
+ **/
+	public function reset() {
+		foreach ($this->getRules() as $rule) {
+			$rule->reset();
+		}
 	}
 
 /**
