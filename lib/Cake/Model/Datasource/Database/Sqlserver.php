@@ -86,16 +86,17 @@ class Sqlserver extends DboSource {
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),
-		'string'	=> array('name' => 'nvarchar', 'limit' => '255'),
-		'text'		=> array('name' => 'nvarchar', 'limit' => 'MAX'),
-		'integer'	=> array('name' => 'int', 'formatter' => 'intval'),
-		'float'		=> array('name' => 'numeric', 'formatter' => 'floatval'),
-		'datetime'	=> array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'string' => array('name' => 'nvarchar', 'limit' => '255'),
+		'text' => array('name' => 'nvarchar', 'limit' => 'MAX'),
+		'integer' => array('name' => 'int', 'formatter' => 'intval'),
+		'biginteger' => array('name' => 'bigint'),
+		'float' => array('name' => 'numeric', 'formatter' => 'floatval'),
+		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-		'time'		=> array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
-		'date'		=> array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
-		'binary'	=> array('name' => 'varbinary'),
-		'boolean'	=> array('name' => 'bit')
+		'time' => array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
+		'date' => array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
+		'binary' => array('name' => 'varbinary'),
+		'boolean' => array('name' => 'bit')
 	);
 
 /**
@@ -399,6 +400,9 @@ class Sqlserver extends DboSource {
 		if ($col == 'bit') {
 			return 'boolean';
 		}
+		if (strpos($col, 'bigint') !== false) {
+			return 'biginteger';
+		}
 		if (strpos($col, 'int') !== false) {
 			return 'integer';
 		}
@@ -643,7 +647,7 @@ class Sqlserver extends DboSource {
  */
 	public function buildColumn($column) {
 		$result = parent::buildColumn($column);
-		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', $result);
+		$result = preg_replace('/(bigint|int|integer)\([0-9]+\)/i', '$1', $result);
 		$result = preg_replace('/(bit)\([0-9]+\)/i', '$1', $result);
 		if (strpos($result, 'DEFAULT NULL') !== false) {
 			if (isset($column['default']) && $column['default'] === '') {
