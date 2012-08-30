@@ -18,15 +18,14 @@
         "source": "https://github.com/cakephp/cakephp/"
     },
     "require": {
-        "php": ">=5.2"
+        "php": ">=5.4"
     },
     "autoload": {
         "psr-0": {
-            "Cake": "Cake/"
+            "Cake": "lib/Cake/"
         }
     },
-    "minimum-stability": "dev",
     "bin": [
-        "Cake/Console/cake"
+        "lib/Cake/Console/cake"
     ]
 }
