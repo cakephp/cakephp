@@ -70,6 +70,7 @@ class Sqlite extends DboSource {
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'integer', 'limit' => null, 'formatter' => 'intval'),
+		'biginteger' => array('name' => 'bigint', 'limit' => 20),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
@@ -248,8 +249,21 @@ class Sqlite extends DboSource {
 		$limit = null;
 		@list($col, $limit) = explode('(', $col);
 
-		if (in_array($col, array('text', 'integer', 'float', 'boolean', 'timestamp', 'date', 'datetime', 'time'))) {
+		$standard = array(
+			'text',
+			'integer',
+			'float',
+			'boolean',
+			'timestamp',
+			'date',
+			'datetime',
+			'time'
+		);
+		if (in_array($col, $standard)) {
 			return $col;
+		}
+		if ($col === 'bigint') {
+			return 'biginteger';
 		}
 		if (strpos($col, 'char') !== false) {
 			return 'string';
