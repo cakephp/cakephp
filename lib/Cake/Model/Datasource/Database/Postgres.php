@@ -59,6 +59,7 @@ class Postgres extends DboSource {
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'integer', 'formatter' => 'intval'),
+		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
@@ -637,6 +638,8 @@ class Postgres extends DboSource {
 				return 'datetime';
 			case (strpos($col, 'time') === 0):
 				return 'time';
+			case ($col == 'bigint'):
+				return 'biginteger';
 			case (strpos($col, 'int') !== false && $col != 'interval'):
 				return 'integer';
 			case (strpos($col, 'char') !== false || $col == 'uuid'):
@@ -799,7 +802,19 @@ class Postgres extends DboSource {
 		if (!isset($col['length']) && !isset($col['limit'])) {
 			unset($column['length']);
 		}
-		$out = preg_replace('/integer\([0-9]+\)/', 'integer', parent::buildColumn($column));
+		$out = parent::buildColumn($column);
+
+		$out = preg_replace(
+			'/integer\([0-9]+\)/',
+			'integer',
+			$out
+		);
+		$out = preg_replace(
+			'/bigint\([0-9]+\)/',
+			'bigint',
+			$out
+		);
+
 		$out = str_replace('integer serial', 'serial', $out);
 		if (strpos($out, 'timestamp DEFAULT')) {
 			if (isset($column['null']) && $column['null']) {
