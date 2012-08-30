@@ -68,7 +68,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  * - `realm` The realm authentication is for, Defaults to the servername.
  * - `nonce` A nonce used for authentication.  Defaults to `uniqid()`.
  * - `qop` Defaults to auth, no other values are supported at this time.
- * - `opaque` A string that must be returned unchanged by clients. 
+ * - `opaque` A string that must be returned unchanged by clients.
  *    Defaults to `md5($settings['realm'])`
  *
  * @var array
@@ -138,7 +138,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		if (empty($digest)) {
 			return false;
 		}
-		$user = $this->_findUser($digest['username'], null);
+		$user = $this->_findUser($digest['username']);
 		if (empty($user)) {
 			return false;
 		}
@@ -157,7 +157,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  * @param string $password Unused password, digest doesn't require passwords.
  * @return Mixed Either false on failure, or an array of user data.
  */
-	protected function _findUser($username, $password) {
+	protected function _findUser($username, $password = null) {
 		$userModel = $this->settings['userModel'];
 		list($plugin, $model) = pluginSplit($userModel);
 		$fields = $this->settings['fields'];

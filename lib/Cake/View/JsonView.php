@@ -25,7 +25,7 @@ App::uses('View', 'View');
  *
  * `$this->set(array('posts' => $posts, '_serialize' => 'posts'));`
  *
- * When the view is rendered, the `$posts` view variable will be serialized 
+ * When the view is rendered, the `$posts` view variable will be serialized
  * into JSON.
  *
  * You can also define `'_serialize'` as an array.  This will create a top level object containing
@@ -35,7 +35,7 @@ App::uses('View', 'View');
  * $this->set(compact('posts', 'users', 'stuff'));
  * $this->set('_serialize', array('posts', 'users'));
  * }}}
- * 
+ *
  * The above would generate a JSON object that looks like:
  *
  * `{"posts": [...], "users": [...]}`
@@ -49,9 +49,9 @@ App::uses('View', 'View');
 class JsonView extends View {
 
 /**
- * JSON views are always located in the 'json' sub directory for a 
+ * JSON views are always located in the 'json' sub directory for a
  * controllers views.
- * 
+ *
  * @var string
  */
 	public $subDir = 'json';
@@ -72,8 +72,8 @@ class JsonView extends View {
  * Render a JSON view.
  *
  * Uses the special '_serialize' parameter to convert a set of
- * view variables into a JSON response.  Makes generating simple 
- * JSON responses very easy.  You can omit the '_serialize' parameter, 
+ * view variables into a JSON response.  Makes generating simple
+ * JSON responses very easy.  You can omit the '_serialize' parameter,
  * and use a normal view + layout as well.
  *
  * @param string $view The view being rendered.
@@ -82,27 +82,29 @@ class JsonView extends View {
  */
 	public function render($view = null, $layout = null) {
 		if (isset($this->viewVars['_serialize'])) {
-			$serialize = $this->viewVars['_serialize'];
-			if (is_array($serialize)) {
-				$data = array();
-				foreach ($serialize as $key) {
-					$data[$key] = $this->viewVars[$key];
-				}
-			} else {
-				$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
-			}
-			$content = json_encode($data);
-			$this->Blocks->set('content', $content);
-			return $content;
+			return $this->_serialize($this->viewVars['_serialize']);
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
-			if (!$this->_helpersLoaded) {
-				$this->loadHelpers();
-			}
-			$content = $this->_render($viewFileName);
-			$this->Blocks->set('content', $content);
-			return $content;
+			return parent::render($view, false);
 		}
+	}
+
+/**
+ * Serialize view vars
+ *
+ * @param array $serialize The viewVars that need to be serialized
+ * @return string The serialized data
+ */
+	protected function _serialize($serialize) {
+		if (is_array($serialize)) {
+			$data = array();
+			foreach ($serialize as $key) {
+				$data[$key] = $this->viewVars[$key];
+			}
+		} else {
+			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+		}
+		return json_encode($data);
 	}
 
 }

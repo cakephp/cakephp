@@ -130,20 +130,11 @@ if (!defined('JS_URL')) {
 }
 
 
+
+
 require CAKE . 'basics.php';
 require CAKE . 'Core' . DS . 'App.php';
 require CAKE . 'Error' . DS . 'exceptions.php';
-
-spl_autoload_register(array('App', 'load'));
-
-App::uses('ErrorHandler', 'Error');
-App::uses('Configure', 'Core');
-App::uses('CakePlugin', 'Core');
-App::uses('Cache', 'Cache');
-App::uses('Object', 'Core');
-App::$bootstrapping = true;
-
-Configure::bootstrap(isset($boot) ? $boot : true);
 
 
 /**
@@ -162,3 +153,15 @@ if (!defined('FULL_BASE_URL')) {
 	}
 	unset($httpHost, $s);
 }
+
+spl_autoload_register(array('App', 'load'));
+
+App::uses('ErrorHandler', 'Error');
+App::uses('Configure', 'Core');
+App::uses('CakePlugin', 'Core');
+App::uses('Cache', 'Cache');
+App::uses('Object', 'Core');
+App::$bootstrapping = true;
+
+Configure::bootstrap(isset($boot) ? $boot : true);
+

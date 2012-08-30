@@ -18,6 +18,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('AppController', 'Controller');
 
 /**
  * Error Handling Controller
@@ -63,20 +64,6 @@ class CakeErrorController extends AppController {
 		$this->startupProcess();
 
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'Errors'));
-	}
-
-/**
- * Escapes the viewVars.
- *
- * @return void
- */
-	public function beforeRender() {
-		parent::beforeRender();
-		foreach ($this->viewVars as $key => $value) {
-			if (!is_object($value)) {
-				$this->viewVars[$key] = h($value);
-			}
-		}
 	}
 
 }

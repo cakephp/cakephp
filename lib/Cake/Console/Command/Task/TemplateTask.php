@@ -56,7 +56,7 @@ class TemplateTask extends AppShell {
  *
  * Bake themes are directories not named `skel` inside a `Console/Templates` path.
  * They are listed in this order: app -> plugin -> default
- * 
+ *
  * @return array Array of bake themes that are installed.
  */
 	protected function _findThemes() {
