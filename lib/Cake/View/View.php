@@ -1147,35 +1147,30 @@ class View extends Object {
  * @param array $options Element options
  */
 	protected function _renderElement($file, $data, $options) {
-        if ($this->_currentType == self::TYPE_ELEMENT ){
-   	        $nested = true;
-
-        }else{
-   	        $this->_parentElementType = $this->_currentType;
-           	$this->_currentType = self::TYPE_ELEMENT;
-            $nested = false;
-        }
-
+		if ($this->_currentType == self::TYPE_ELEMENT) {
+			$nested = true;
+		} else {
+			$this->_parentElementType = $this->_currentType;
+			$this->_currentType = self::TYPE_ELEMENT;
+			$nested = false;
+		}
 		if (!$this->_helpersLoaded) {
 			$this->loadHelpers();
 		}
 		if ($options['callbacks']) {
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
 		}
-
-	
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
-
 		if (isset($options['callbacks'])) {
 			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
 		}
 		if (isset($options['cache'])) {
 			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);
 		}
-        if (!$nested){
-          $this->_currentType = $this->_parentElementType;
-          $this->_parentElementType =false;  
-        }
+		if (!$nested) {
+			$this->_currentType = $this->_parentElementType;
+			$this->_parentElementType = false;
+		}
 		return $element;
 	}
 }
