@@ -403,8 +403,12 @@ class TranslateBehaviorTest extends CakeTestCase {
 				)
 			)
 		);
-
 		$this->assertEquals($expected, $result);
+
+		$TestModel = new TranslatedItem();
+		$TestModel->locale = array('pt-br');
+		$result = $TestModel->find('all');
+		$this->assertCount(3, $result, '3 records should have been found, no SQL error.');
 	}
 
 /**
