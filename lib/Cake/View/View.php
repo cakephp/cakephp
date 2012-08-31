@@ -281,11 +281,18 @@ class View extends Object {
 	protected $_currentType = '';
 
 /**
- * Holds name of place, used for finding a place Holder of element is rendering 
+ * Holds type of parents 
  *.
  * @var string
  */
-	protected $_parentElementType = '';
+	protected $_parentsType = array();
+
+/**
+ * status of currently view is extended 
+ *.
+ * @var string
+ */
+	protected $_isExtended = false;
 
 /**
  * Content stack, used for nested templates that all use View::extend();
@@ -451,10 +458,11 @@ class View extends Object {
 		$this->Blocks->set('content', '');
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
-			$this->_currentType = self::TYPE_VIEW;
+			$this->_beginType(self::TYPE_VIEW);
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($viewFileName)));
 			$this->Blocks->set('content', $this->_render($viewFileName));
 			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($viewFileName)));
+			$this->_endType();
 		}
 
 		if ($layout === null) {
@@ -516,9 +524,9 @@ class View extends Object {
 			$this->viewVars['title_for_layout'] = Inflector::humanize($this->viewPath);
 		}
 
-		$this->_currentType = self::TYPE_LAYOUT;
+		$this->_beginType( self::TYPE_LAYOUT);
 		$this->Blocks->set('content', $this->_render($layoutFileName));
-
+		$this->_endType();
 		$this->getEventManager()->dispatch(new CakeEvent('View.afterLayout', $this, array($layoutFileName)));
 		return $this->Blocks->get('content');
 	}
@@ -871,8 +879,10 @@ class View extends Object {
 		if (isset($this->_parents[$viewFile])) {
 			$this->_stack[] = $this->fetch('content');
 			$this->assign('content', $content);
-
+			$this->_beginType(self::TYPE_VIEW);
+			$this->_isExtended = true;
 			$content = $this->_render($this->_parents[$viewFile]);
+			$this->_endType();
 			$this->assign('content', array_pop($this->_stack));
 		}
 
@@ -1147,13 +1157,7 @@ class View extends Object {
  * @param array $options Element options
  */
 	protected function _renderElement($file, $data, $options) {
-		if ($this->_currentType == self::TYPE_ELEMENT) {
-			$nested = true;
-		} else {
-			$this->_parentElementType = $this->_currentType;
-			$this->_currentType = self::TYPE_ELEMENT;
-			$nested = false;
-		}
+		$this->_beginType(self::TYPE_ELEMENT);
 		if (!$this->_helpersLoaded) {
 			$this->loadHelpers();
 		}
@@ -1167,10 +1171,37 @@ class View extends Object {
 		if (isset($options['cache'])) {
 			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);
 		}
-		if (!$nested) {
-			$this->_currentType = $this->_parentElementType;
-			$this->_parentElementType = false;
-		}
+		$this->_endType();
 		return $element;
+	}
+
+/**
+ * set type of currently render
+ *
+ * @param const $type view type
+ */
+	protected function _beginType($type) {
+		if (empty($this->_currentType)) {
+			$this->_currentType = $type;
+		} else {
+			$this->_parentsType[] = array($this->_currentType,$this->_isExtended);
+			$this->_currentType = $type;
+		}
+	}
+
+/**
+ * deletee type of currently render and restory old status
+ *
+ * @param const $type view type
+ */
+	protected function _endType() {
+		if (empty($this->_parentsType)) {
+			$this->_currentType = '';
+			$this->_isExtended = false;
+		} else {
+			list($type,$isExtend) = array_pop( $this->_parentsType );
+			$this->_currentType = $type;
+			$this->_isExtended = $isExtend;
+		}
 	}
 }
