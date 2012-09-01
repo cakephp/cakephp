@@ -2028,6 +2028,9 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->conditions('Member.email = "mariano@cricava.com" AND Member.user LIKE "mariano.iglesias%"');
 		$expected = ' WHERE `Member`.`email` = "mariano@cricava.com" AND `Member`.`user` LIKE "mariano.iglesias%"';
 		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->conditions('I18n__title_pt-br.content = "test"');
+		$this->assertEquals(' WHERE `I18n__title_pt-br`.`content` = "test"', $result);
 	}
 
 /**

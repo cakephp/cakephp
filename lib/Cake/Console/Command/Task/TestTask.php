@@ -331,9 +331,9 @@ class TestTask extends BakeTask {
 /**
  * Get the base class and package name for a given type.
  *
- * @param string $type The type of class having a test
- *   generated is in.
- * @return array Array of class, type)
+ * @param string $type The type the class having a test
+ *   generated for is in.
+ * @return array Array of (class, type)
  * @throws CakeException on invalid types.
  */
 	public function getBaseType($type) {
