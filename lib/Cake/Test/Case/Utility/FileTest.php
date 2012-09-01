@@ -64,38 +64,39 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	public function testBasic() {
-		$file = __FILE__;
+		$file = CAKE . DS . 'LICENSE.txt';
 
-		$result = $this->File->pwd();
-		$expecting = $file;
-		$this->assertEquals($expecting, $result);
+		$this->File = new File($file, false);
 
 		$result = $this->File->name;
-		$expecting = basename(__FILE__);
+		$expecting = basename($file);
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->info();
 		$expecting = array(
-			'dirname' => dirname(__FILE__),
-			'basename' => basename(__FILE__),
-			'extension' => 'php',
-			'filename' => 'FileTest',
+			'dirname' => dirname($file),
+			'basename' => basename($file),
+			'extension' => 'txt',
+			'filename' => 'LICENSE',
 			'filesize' => filesize($file),
-			'mime' => 'text/x-php'
+			'mime' => 'text/plain'
 		);
-		if (!function_exists('finfo_open') && (!function_exists('mime_content_type') ||
-				function_exists('mime_content_type') && false === mime_content_type($this->File->pwd()))) {
+		if (
+			!function_exists('finfo_open') &&
+			(!function_exists('mime_content_type') ||
+			function_exists('mime_content_type') &&
+			mime_content_type($this->File->pwd()) === false)
+		) {
 			$expecting['mime'] = false;
 		}
-
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->ext();
-		$expecting = 'php';
+		$expecting = 'txt';
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->name();
-		$expecting = 'FileTest';
+		$expecting = 'LICENSE';
 		$this->assertEquals($expecting, $result);
 
 		$result = $this->File->md5();
