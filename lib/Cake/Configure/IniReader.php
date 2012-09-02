@@ -77,6 +77,9 @@ class IniReader implements ConfigReaderInterface {
  *     all sections in the ini file.
  */
 	public function __construct($path, $section = null) {
+		if (!$path) {
+			$path = APP . 'Config' . DS;
+		}
 		$this->_path = $path;
 		$this->_section = $section;
 	}
