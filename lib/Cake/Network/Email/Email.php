@@ -299,14 +299,6 @@ class Email {
 	protected $_config = array();
 
 /**
- * An array of preconfigured Email types.
- *
- * @var array
- * @see Email::config()
- */
-	protected static $_preConfig = array();
-
-/**
  * 8Bit character sets
  *
  * @var array
@@ -338,7 +330,7 @@ class Email {
 		}
 
 		if ($config) {
-			$this->useConfig($config);
+			$this->config($config);
 		}
 		if (empty($this->headerCharset)) {
 			$this->headerCharset = $this->charset;
@@ -1026,19 +1018,6 @@ class Email {
 	}
 
 /**
- * Set configuration to use when sending email later.
- * Typically this is used during bootstrapping to configure
- * presets for email.
- *
- * @param string $name The name of the config you want set.
- * @param array $config Array of configuration data.
- * @return void
- */
-	public static function config($name, array $config) {
-		static::$_preConfig[$name] = $config;
-	}
-
-/**
  * Sets the configuration for this Email instance.
  *
  * This can be used to load previously loaded configuration
@@ -1049,7 +1028,7 @@ class Email {
  *    an array with config or null to return current config.
  * @return string|array|Cake\Network\Email\Email
  */
-	public function useConfig($config = null) {
+	public function config($config = null) {
 		if ($config === null) {
 			return $this->_config;
 		}
@@ -1117,7 +1096,7 @@ class Email {
 		if (is_array($message)) {
 			$instance->viewVars($message);
 			$message = null;
-		} elseif ($message === null && array_key_exists('message', $config = $instance->useConfig())) {
+		} elseif ($message === null && array_key_exists('message', $config = $instance->config())) {
 			$message = $config['message'];
 		}
 
@@ -1138,10 +1117,11 @@ class Email {
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
-			if (!isset(static::$_preConfig[$config])) {
-				throw new Error\ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $config));
+			$name = $config;
+			$config = Configure::read('Email.' . $name);
+			if (empty($config)) {
+				throw new Error\ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $name));
 			}
-			$config = static::$_preConfig[$config];
 		}
 		$this->_config += $config;
 		if (!empty($config['charset'])) {

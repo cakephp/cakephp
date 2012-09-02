@@ -14,7 +14,7 @@
  */
 namespace App\Config;
 
-use Cake\Network\Email\Email;
+use Cake\Core\Configure;
 /**
  * Email configuration.
  *
@@ -33,14 +33,14 @@ use Cake\Network\Email\Email;
  * from =>
  * The origin email. See Cake\Network\Email\Email::from() about the valid values
  */
-Email::config('default', [
+Configure::write('Email.default', [
 	'transport' => 'Mail',
 	'from' => 'you@localhost',
 	//'charset' => 'utf-8',
 	//'headerCharset' => 'utf-8',
 ]);
 
-Email::config('smtp', [
+Configure::write('Email.smtp', [
 	'transport' => 'Smtp',
 	'host' => 'localhost',
 	'port' => 25,
