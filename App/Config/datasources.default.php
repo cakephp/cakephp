@@ -14,7 +14,7 @@
  */
 namespace App\Config;
 
-use Cake\Model\ConnectionManager;
+use Cake\Core\Configure;
 
 /**
  * Database configuration class.
@@ -55,7 +55,7 @@ use Cake\Model\ConnectionManager;
  * Create the default connection, this is the conventional default connection used
  * by all models.
  */
-ConnectionManager::config('default', [
+Configure::write('Datasource.default', [
 	'datasource' => 'Database/Mysql',
 	'persistent' => false,
 	'host' => 'localhost',
@@ -70,7 +70,7 @@ ConnectionManager::config('default', [
  * Create a test connection.  This connection is used
  * while running unit and integration tests.
  */
-ConnectionManager::config('test', [
+Confgure::write('Datasource.test', [
 	'datasource' => 'Database/Mysql',
 	'persistent' => false,
 	'host' => 'localhost',
