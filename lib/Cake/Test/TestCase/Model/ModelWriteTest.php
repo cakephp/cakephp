@@ -1170,6 +1170,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 		$result = $TestModel->save();
 		$this->assertFalse(empty($result));
+		$this->assertEquals($data['Tag'], $result['Tag']);
 
 		$TestModel->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
 		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
@@ -3241,7 +3242,6 @@ class ModelWriteTest extends BaseModelTest {
 				)
 			),
 			1 => array(
-				'body' => array('This field cannot be left blank'),
 				'Comment' => array(
 					0 => array(
 						'User' => array(
@@ -3686,9 +3686,6 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			0 => array(
 				'body' => array('This field cannot be left blank')
-			),
-			1 => array(
-				'body' => array('This field cannot be left blank')
 			)
 		);
 		$result = $TestModel->validationErrors;
@@ -3702,7 +3699,7 @@ class ModelWriteTest extends BaseModelTest {
 				)
 			),
 			array(
-				'Article' => array('id' => 2, 'body' => 'Same here'),
+				'Article' => array('id' => 2),
 				'Comment' => array(
 					array('comment' => '', 'published' => 'Y', 'user_id' => 2)
 				)

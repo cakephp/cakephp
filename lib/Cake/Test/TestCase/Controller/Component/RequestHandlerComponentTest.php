@@ -231,8 +231,8 @@ class RequestHandlerComponentTest extends TestCase {
  * @return void
  */
 	public function testViewClassMap() {
-		$settings = array('viewClassMap' => array('json' => 'CustomJson'));
-		$this->RequestHandler->initialize($this->Controller, $settings);
+		$this->RequestHandler->settings = array('viewClassMap' => array('json' => 'CustomJson'));
+		$this->RequestHandler->initialize($this->Controller);
 		$result = $this->RequestHandler->viewClassMap();
 		$expected = array(
 			'json' => 'CustomJson',

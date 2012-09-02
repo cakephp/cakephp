@@ -888,6 +888,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'off', 'afterSave' => 'test'));
 		$Sample->create();
 		$expected = $record;
+		unset($expected['Sample']['name']);
 		$result = $Sample->save($record);
 		$expected['Sample']['id'] = $Sample->id;
 		$this->assertSame($expected, $result);

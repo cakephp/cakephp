@@ -406,7 +406,7 @@ class Log {
  *    or a string matching the recognized levels, then it will
  *    be treated log levels. Otherwise it's treated as scope.
  * @param string $message Message content to log
- * @param string|array $scope The scope(s) a log messge is being created in.
+ * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
  */
@@ -457,7 +457,7 @@ class Log {
  * Convenience method to log emergency messages
  *
  * @param string $message log message
- * @param string|array $scope The scope(s) a log messge is being created in.
+ * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
  */
@@ -469,7 +469,7 @@ class Log {
  * Convenience method to log alert messages
  *
  * @param string $message log message
- * @param string|array $scope The scope(s) a log messge is being created in.
+ * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
  */
@@ -481,7 +481,7 @@ class Log {
  * Convenience method to log critical messages
  *
  * @param string $message log message
- * @param string|array $scope The scope(s) a log messge is being created in.
+ * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
  */
@@ -493,7 +493,7 @@ class Log {
  * Convenience method to log error messages
  *
  * @param string $message log message
- * @param string|array $scope The scope(s) a log messge is being created in.
+ * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
  */
@@ -505,7 +505,7 @@ class Log {
  * Convenience method to log warning messages
  *
  * @param string $message log message
- * @param string|array $scope The scope(s) a log messge is being created in.
+ * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
  */
@@ -517,7 +517,7 @@ class Log {
  * Convenience method to log notice messages
  *
  * @param string $message log message
- * @param string|array $scope The scope(s) a log messge is being created in.
+ * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
  */
@@ -529,7 +529,7 @@ class Log {
  * Convenience method to log debug messages
  *
  * @param string $message log message
- * @param string|array $scope The scope(s) a log messge is being created in.
+ * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
  */
@@ -541,7 +541,7 @@ class Log {
  * Convenience method to log info messages
  *
  * @param string $message log message
- * @param string|array $scope The scope(s) a log messge is being created in.
+ * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
  */

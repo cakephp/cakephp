@@ -198,6 +198,7 @@ class TestAppSchema extends CakeSchema {
 	public $datatypes = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'float_field' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => ''),
+		'huge_int' => array('type' => 'biginteger'),
 		'bool' => array('type' => 'boolean', 'null' => false, 'default' => false),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		'tableParameters' => array()

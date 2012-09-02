@@ -18,6 +18,8 @@
  */
 namespace Cake\Test\TestCase\Configure;
 use Cake\Configure\IniReader;
+use Cake\Core\App;
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 class IniReaderTest extends TestCase {
@@ -59,6 +61,47 @@ class IniReaderTest extends TestCase {
  */
 	public function testConstruct() {
 		$reader = new IniReader($this->path);
+		$config = $reader->read('acl.ini');
+
+		$this->assertTrue(isset($config['admin']));
+		$this->assertTrue(isset($config['paul']['groups']));
+		$this->assertEquals('ads', $config['admin']['deny']);
+	}
+
+/**
+ * Test reading files.
+ *
+ * @return void
+ */
+	public function testRead() {
+		$reader = new IniReader($this->path);
+		$config = $reader->read('nested');
+		$this->assertTrue($config['bools']['test_on']);
+
+		$config = $reader->read('nested.ini');
+		$this->assertTrue($config['bools']['test_on']);
+	}
+
+/**
+ * No other sections should exist.
+ *
+ * @return void
+ */
+	public function testReadOnlyOneSection() {
+		$reader = new IniReader($this->path, 'admin');
+		$config = $reader->read('acl.ini');
+
+		$this->assertTrue(isset($config['groups']));
+		$this->assertEquals('administrators', $config['groups']);
+	}
+
+/**
+ * Test reading acl.ini.php.
+ *
+ * @return void
+ */
+	public function testReadSpecialAclIniPhp() {
+		$reader = new IniReader($this->path);
 		$config = $reader->read('acl.ini.php');
 
 		$this->assertTrue(isset($config['admin']));
@@ -67,24 +110,11 @@ class IniReaderTest extends TestCase {
 	}
 
 /**
- * no other sections should exist.
+ * Test without section.
  *
  * @return void
  */
-	public function testReadingOnlyOneSection() {
-		$reader = new IniReader($this->path, 'admin');
-		$config = $reader->read('acl.ini.php');
-
-		$this->assertTrue(isset($config['groups']));
-		$this->assertEquals('administrators', $config['groups']);
-	}
-
-/**
- * test without section
- *
- * @return void
- */
-	public function testReadingWithoutSection() {
+	public function testReadWithoutSection() {
 		$reader = new IniReader($this->path);
 		$config = $reader->read('no_section.ini');
 
@@ -96,11 +126,11 @@ class IniReaderTest extends TestCase {
 	}
 
 /**
- * test that names with .'s get exploded into arrays.
+ * Test that names with .'s get exploded into arrays.
  *
  * @return void
  */
-	public function testReadingValuesWithDots() {
+	public function testReadValuesWithDots() {
 		$reader = new IniReader($this->path);
 		$config = $reader->read('nested.ini');
 
@@ -112,7 +142,7 @@ class IniReaderTest extends TestCase {
 	}
 
 /**
- * test boolean reading
+ * Test boolean reading.
  *
  * @return void
  */
@@ -133,18 +163,93 @@ class IniReaderTest extends TestCase {
 	}
 
 /**
- * test read file without extension
+ * Test an exception is thrown by reading files that exist without .ini extension.
  *
+ * @expectedException Cake\Error\ConfigureException
  * @return void
  */
-	public function testReadingWithoutExtension() {
+	public function testReadWithExistentFileWithoutExtension() {
 		$reader = new IniReader($this->path);
-		$config = $reader->read('nested');
-		$this->assertTrue($config['bools']['test_on']);
+		$reader->read('no_ini_extension');
 	}
 
 /**
- * test dump method.
+ * Test an exception is thrown by reading files that don't exist.
+ *
+ * @expectedException Cake\Error\ConfigureException
+ * @return void
+ */
+	public function testReadWithNonExistentFile() {
+		$reader = new IniReader($this->path);
+		$reader->read('fake_values');
+	}
+
+/**
+ * Test reading an empty file.
+ *
+ * @return void
+ */
+	public function testReadEmptyFile() {
+		$reader = new IniReader($this->path);
+		$config = $reader->read('empty');
+		$this->assertEquals(array(), $config);
+	}
+
+/**
+ * Test reading keys with ../ doesn't work.
+ *
+ * @expectedException Cake\Error\ConfigureException
+ * @return void
+ */
+	public function testReadWithDots() {
+		$reader = new IniReader($this->path);
+		$reader->read('../empty');
+	}
+
+/**
+ * Test reading from plugins.
+ *
+ * @return void
+ */
+	public function testReadPluginValue() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+		), App::RESET);
+		Plugin::load('TestPlugin');
+		$reader = new IniReader($this->path);
+		$result = $reader->read('TestPlugin.nested');
+
+		$this->assertTrue(isset($result['database']['db']['username']));
+		$this->assertEquals('bar', $result['database']['db']['username']);
+		$this->assertFalse(isset($result['database.db.username']));
+		$this->assertFalse(isset($result['database']['db.username']));
+
+		$result = $reader->read('TestPlugin.nested.ini');
+		$this->assertEquals('foo', $result['database']['db']['password']);
+		Plugin::unload();
+	}
+
+/**
+ * Test reading acl.ini.php from plugins.
+ *
+ * @return void
+ */
+	public function testReadPluginSpecialAclIniPhpValue() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+		), App::RESET);
+		Plugin::load('TestPlugin');
+		$reader = new IniReader($this->path);
+		$result = $reader->read('TestPlugin.acl.ini.php');
+
+		$this->assertTrue(isset($result['admin']));
+		$this->assertTrue(isset($result['paul']['groups']));
+		$this->assertEquals('ads', $result['admin']['deny']);
+		Plugin::unload();
+	}
+
+/**
+ * Test dump method.
  *
  * @return void
  */

@@ -824,7 +824,7 @@ class FormHelper extends Helper {
  * - `fieldset` Set to false to disable the fieldset. If a string is supplied it will be used as
  *    the classname for the fieldset element.
  * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
- *	to customize the legend text.
+ *    to customize the legend text.
  *
  * @param array $fields An array of fields to generate inputs for, or null.
  * @param array $blacklist a simple array of fields to not create inputs for.
@@ -1012,7 +1012,11 @@ class FormHelper extends Helper {
 			}
 		}
 
-		$autoLength = (!array_key_exists('maxlength', $options) && isset($fieldDef['length']));
+		$autoLength = (
+			!array_key_exists('maxlength', $options) &&
+			isset($fieldDef['length']) &&
+			is_scalar($fieldDef['length'])
+		);
 		if ($autoLength && $options['type'] == 'text') {
 			$options['maxlength'] = $fieldDef['length'];
 		}
@@ -1581,7 +1585,7 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Creates an HTML link, but access the url using method POST.
+ * Creates an HTML link, but access the url using the method you specify (defaults to POST).
  * Requires javascript to be enabled in browser.
  *
  * This method creates a `<form>` element. So do not use this method inside an existing form.
@@ -1602,6 +1606,11 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
 	public function postLink($title, $url = null, $options = array(), $confirmMessage = false) {
+    $requestMethod = 'POST';
+		if (!empty($options['method'])) {
+			$requestMethod = strtoupper($options['method']);
+			unset($options['method']);
+		}
 		if (!empty($options['confirm'])) {
 			$confirmMessage = $options['confirm'];
 			unset($options['confirm']);
@@ -1610,7 +1619,7 @@ class FormHelper extends Helper {
 		$formName = uniqid('post_');
 		$formUrl = $this->url($url);
 		$out = $this->Html->useTag('form', $formUrl, array('name' => $formName, 'id' => $formName, 'style' => 'display:none;', 'method' => 'post'));
-		$out .= $this->Html->useTag('hidden', '_method', ' value="POST"');
+		$out .= $this->Html->useTag('hidden', '_method', ' value="' . $requestMethod . '"');
 		$out .= $this->_csrfField();
 
 		$fields = array();
@@ -1854,7 +1863,12 @@ class FormHelper extends Helper {
 		}
 
 		if (!empty($tag) || isset($template)) {
-			if ((!isset($secure) || $secure == true) && empty($attributes['disabled'])) {
+			$hasOptions = (count($options) > 0 || $showEmpty);
+			if (
+				(!isset($secure) || $secure == true) &&
+				empty($attributes['disabled']) &&
+				$hasOptions
+			) {
 				$this->_secure(true);
 			}
 			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => '', 'value' => '')));

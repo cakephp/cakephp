@@ -1,27 +1,27 @@
 <?php
 /**
- * FormAuthenticateTest file
+ * BlowfishAuthenticateTest file
  *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
- * Licensed under The MIT License
+ * Licensed under the MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Controller.Component.Auth
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright	Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link	http://cakephp.org CakePHP(tm) Project
+ * @package	Cake.Test.Case.Controller.Component.Auth
+ * @since	CakePHP(tm) v 2.3
+ * @license	MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 namespace Cake\Test\TestCase\Controller\Component\Auth;
+
 use Cake\Cache\Cache;
-use Cake\Controller\Component\Auth\FormAuthenticate;
+use Cake\Controller\Component\Auth\BlowfishAuthenticate;
 use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
@@ -31,11 +31,11 @@ use Cake\Utility\Security;
 require_once CAKE . 'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'models.php';
 
 /**
- * Test case for FormAuthentication
+ * Test case for BlowfishAuthentication
  *
- * @package       Cake.Test.Case.Controller.Component.Auth
+ * @package	Cake.Test.Case.Controller.Component.Auth
  */
-class FormAuthenticateTest extends TestCase {
+class BlowfishAuthenticateTest extends TestCase {
 
 	public $fixtures = array('core.user', 'core.auth_user');
 
@@ -47,11 +47,11 @@ class FormAuthenticateTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Collection = $this->getMock('Cake\Controller\ComponentCollection');
-		$this->auth = new FormAuthenticate($this->Collection, array(
+		$this->auth = new BlowfishAuthenticate($this->Collection, array(
 			'fields' => array('username' => 'user', 'password' => 'password'),
 			'userModel' => 'User'
 		));
-		$password = Security::hash('password', null, true);
+		$password = Security::hash('password', 'blowfish');
 		$User = ClassRegistry::init('User');
 		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
 		$this->response = $this->getMock('Cake\Network\Response');
@@ -63,49 +63,49 @@ class FormAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testConstructor() {
-		$object = new FormAuthenticate($this->Collection, array(
+		$Object = new BlowfishAuthenticate($this->Collection, array(
 			'userModel' => 'AuthUser',
 			'fields' => array('username' => 'user', 'password' => 'password')
 		));
-		$this->assertEquals('AuthUser', $object->settings['userModel']);
-		$this->assertEquals(array('username' => 'user', 'password' => 'password'), $object->settings['fields']);
+		$this->assertEquals('AuthUser', $Object->settings['userModel']);
+		$this->assertEquals(array('username' => 'user', 'password' => 'password'), $Object->settings['fields']);
 	}
 
 /**
- * test the authenticate method
+ * testAuthenticateNoData method
  *
  * @return void
  */
 	public function testAuthenticateNoData() {
-		$request = new Request('posts/index');
+		$request = new Request('posts/index', false);
 		$request->data = array();
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
 /**
- * test the authenticate method
+ * testAuthenticateNoUsername method
  *
  * @return void
  */
 	public function testAuthenticateNoUsername() {
-		$request = new Request('posts/index');
+		$request = new Request('posts/index', false);
 		$request->data = array('User' => array('password' => 'foobar'));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
 /**
- * test the authenticate method
+ * testAuthenticateNoPassword method
  *
  * @return void
  */
 	public function testAuthenticateNoPassword() {
-		$request = new Request('posts/index');
+		$request = new Request('posts/index', false);
 		$request->data = array('User' => array('user' => 'mariano'));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
 /**
- * test authenticate password is false method
+ * testAuthenticatePasswordIsFalse method
  *
  * @return void
  */
@@ -120,27 +120,26 @@ class FormAuthenticateTest extends TestCase {
 	}
 
 /**
- * test the authenticate method
+ * testAuthenticateInjection method
  *
  * @return void
  */
 	public function testAuthenticateInjection() {
-		$request = new Request('posts/index');
-		$request->data = array(
-			'User' => array(
-				'user' => '> 1',
-				'password' => "' OR 1 = 1"
+		$request = new Request('posts/index', false);
+		$request->data = array('User' => array(
+			'user' => '> 1',
+			'password' => "' OR 1 = 1"
 		));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
 /**
- * test authenticate success
+ * testAuthenticateSuccess method
  *
  * @return void
  */
 	public function testAuthenticateSuccess() {
-		$request = new Request('posts/index');
+		$request = new Request('posts/index', false);
 		$request->data = array('User' => array(
 			'user' => 'mariano',
 			'password' => 'password'
@@ -150,52 +149,51 @@ class FormAuthenticateTest extends TestCase {
 			'id' => 1,
 			'user' => 'mariano',
 			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'updated' => '2007-03-17 01:18:31',
 		);
 		$this->assertEquals($expected, $result);
 	}
 
 /**
- * test scope failure.
+ * testAuthenticateScopeFail method
  *
  * @return void
  */
 	public function testAuthenticateScopeFail() {
 		$this->auth->settings['scope'] = array('user' => 'nate');
-		$request = new Request('posts/index');
+		$request = new Request('posts/index', false);
 		$request->data = array('User' => array(
 			'user' => 'mariano',
 			'password' => 'password'
 		));
-
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
 /**
- * test a model in a plugin.
+ * testPluginModel method
  *
  * @return void
  */
 	public function testPluginModel() {
 		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
 		Plugin::load('TestPlugin');
 
 		$PluginModel = ClassRegistry::init('TestPlugin.TestPluginAuthUser');
 		$user['id'] = 1;
 		$user['username'] = 'gwoo';
-		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
+		$user['password'] = Security::hash('password', 'blowfish');
 		$PluginModel->save($user, false);
 
 		$this->auth->settings['userModel'] = 'TestPlugin.TestPluginAuthUser';
 		$this->auth->settings['fields']['username'] = 'username';
 
-		$request = new Request('posts/index');
+		$request = new Request('posts/index', false);
 		$request->data = array('TestPluginAuthUser' => array(
 			'username' => 'gwoo',
-			'password' => 'cake'
+			'password' => 'password'
 		));
 
 		$result = $this->auth->authenticate($request, $this->response);
@@ -209,5 +207,4 @@ class FormAuthenticateTest extends TestCase {
 		$this->assertEquals($expected, $result);
 		Plugin::unload();
 	}
-
 }

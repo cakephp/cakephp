@@ -268,6 +268,13 @@ class MysqlTest extends CakeTestCase {
 		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEquals($expected, $result);
 
+		$name = $this->Dbo->fullTableName('bigint');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id bigint(20) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+		$expected = array('PRIMARY' => array('column' => 'id', 'unique' => 1));
+		$result = $this->Dbo->index('bigint', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
+
 		$name = $this->Dbo->fullTableName('with_a_key');
 		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ));');
 		$expected = array(
@@ -475,6 +482,10 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->column('int(11) unsigned');
 		$expected = 'integer';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->column('bigint(20)');
+		$expected = 'biginteger';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->column('tinyint(1)');
@@ -2017,6 +2028,9 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->conditions('Member.email = "mariano@cricava.com" AND Member.user LIKE "mariano.iglesias%"');
 		$expected = ' WHERE `Member`.`email` = "mariano@cricava.com" AND `Member`.`user` LIKE "mariano.iglesias%"';
 		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->conditions('I18n__title_pt-br.content = "test"');
+		$this->assertEquals(' WHERE `I18n__title_pt-br`.`content` = "test"', $result);
 	}
 
 /**

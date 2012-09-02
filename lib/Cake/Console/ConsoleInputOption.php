@@ -78,7 +78,7 @@ class ConsoleInputOption {
  * @param boolean $boolean Whether this option is a boolean option.  Boolean options don't consume extra tokens
  * @param string $default The default value for this option.
  * @param array $choices Valid choices for this option.
- * @throws ConsoleException
+ * @throws Cake\Error\ConsoleException
  */
 	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = array()) {
 		if (is_array($name) && isset($name['name'])) {
@@ -95,7 +95,7 @@ class ConsoleInputOption {
 		}
 		if (strlen($this->_short) > 1) {
 			throw new Error\ConsoleException(
-				__d('cake_console', 'Short options must be one letter.')
+				__d('cake_console', 'Short option "%s" is invalid, short options must be one letter.', $this->_short)
 			);
 		}
 	}

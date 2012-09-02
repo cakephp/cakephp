@@ -746,8 +746,50 @@ class Request implements \ArrayAccess {
  * @return array An array of prefValue => array(content/types)
  */
 	public function parseAccept() {
+		return $this->_parseAcceptWithQualifier($this->header('accept'));
+	}
+
+/**
+ * Get the languages accepted by the client, or check if a specific language is accepted.
+ *
+ * Get the list of accepted languages:
+ *
+ * {{{ \Cake\Network\Request::acceptLanguage(); }}}
+ *
+ * Check if a specific language is accepted:
+ *
+ * {{{ \Cake\Network\Request::acceptLanguage('es-es'); }}}
+ *
+ * @param string $language The language to test.
+ * @return If a $language is provided, a boolean. Otherwise the array of accepted languages.
+ */
+	public static function acceptLanguage($language = null) {
+		$raw = self::_parseAcceptWithQualifier(self::header('Accept-Language'));
 		$accept = array();
-		$header = explode(',', $this->header('accept'));
+		foreach ($raw as $qualifier => $languages) {
+			foreach ($languages as &$lang) {
+				if (strpos($lang, '_')) {
+					$lang = str_replace('_', '-', $lang);
+				}
+				$lang = strtolower($lang);
+			}
+			$accept = array_merge($accept, $languages);
+		}
+		if ($language === null) {
+			return $accept;
+		}
+		return in_array(strtolower($language), $accept);
+	}
+
+/**
+ * Parse Accept* headers with qualifier options
+ *
+ * @param string $header
+ * @return array
+ */
+	protected static function _parseAcceptWithQualifier($header) {
+		$accept = array();
+		$header = explode(',', $header);
 		foreach (array_filter($header) as $value) {
 			$prefPos = strpos($value, ';');
 			if ($prefPos !== false) {
@@ -766,34 +808,6 @@ class Request implements \ArrayAccess {
 		}
 		krsort($accept);
 		return $accept;
-	}
-
-/**
- * Get the languages accepted by the client, or check if a specific language is accepted.
- *
- * Get the list of accepted languages:
- *
- * {{{ \Cake\Network\Request::acceptLanguage(); }}}
- *
- * Check if a specific language is accepted:
- *
- * {{{ \Cake\Network\Request::acceptLanguage('es-es'); }}}
- *
- * @param string $language The language to test.
- * @return If a $language is provided, a boolean. Otherwise the array of accepted languages.
- */
-	public static function acceptLanguage($language = null) {
-		$accepts = preg_split('/[;,]/', static::header('Accept-Language'));
-		foreach ($accepts as &$accept) {
-			$accept = strtolower($accept);
-			if (strpos($accept, '_') !== false) {
-				$accept = str_replace('_', '-', $accept);
-			}
-		}
-		if ($language === null) {
-			return $accepts;
-		}
-		return in_array($language, $accepts);
 	}
 
 /**

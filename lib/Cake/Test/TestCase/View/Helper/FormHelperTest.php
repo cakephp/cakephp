@@ -4344,6 +4344,30 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * When a select box has no options it should not be added to the fields list
+ * as it always fail post validation.
+ *
+ * @return void
+ */
+	public function testSelectNoSecureWithNoOptions() {
+		$this->Form->request['_Token'] = array('key' => 'testkey');
+		$this->assertEquals(array(), $this->Form->fields);
+
+		$this->Form->select(
+			'Model.select',
+			array()
+		);
+		$this->assertEquals(array(), $this->Form->fields);
+
+		$this->Form->select(
+			'Model.select',
+			array(),
+			array('empty' => true)
+		);
+		$this->assertEquals(array('Model.select'), $this->Form->fields);
+	}
+
+/**
  * testInputMultipleCheckboxes method
  *
  * test input() resulting in multi select elements being generated.
@@ -6110,6 +6134,19 @@ class FormHelperTest extends TestCase {
 				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/form',
+			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
+			'Delete',
+			'/a'
+		));
+
+		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('method'=>'delete'));
+		$this->assertTags($result, array(
+			'form' => array(
+				'method' => 'post', 'action' => '/posts/delete/1',
+				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+			),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'DELETE'),
 			'/form',
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',

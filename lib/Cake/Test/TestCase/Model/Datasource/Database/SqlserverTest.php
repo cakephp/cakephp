@@ -553,6 +553,14 @@ class SqlserverTest extends CakeTestCase {
 		$result = $this->db->buildColumn($column);
 		$expected = "[checked] bit DEFAULT '1'";
 		$this->assertEquals($expected, $result);
+
+		$column = array(
+			'name' => 'huge',
+			'type' => 'biginteger',
+		);
+		$result = $this->db->buildColumn($column);
+		$expected = "[huge] bigint";
+		$this->assertEquals($expected, $result);
 	}
 
 /**

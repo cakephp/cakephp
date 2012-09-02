@@ -585,6 +585,10 @@ class DboSourceTest extends CakeTestCase {
 		$expected = 'Function(`Something`.`foo`) AS `x`';
 		$this->assertEquals($expected, $result);
 
+		$result = $this->testDb->name('I18n__title__pt-br.locale');
+		$expected = '`I18n__title__pt-br`.`locale`';
+		$this->assertEquals($expected, $result);
+
 		$result = $this->testDb->name('name-with-minus');
 		$expected = '`name-with-minus`';
 		$this->assertEquals($expected, $result);

@@ -33,40 +33,40 @@ use Cake\I18n\Multibyte;
 class Time {
 
 /**
- * The format to use when formatting a time using `CakeTime::nice()`
+ * The format to use when formatting a time using `Cake\Utility\Time::nice()`
  *
  * The format should use the locale strings as defined in the PHP docs under
  * `strftime` (http://php.net/manual/en/function.strftime.php)
  *
  * @var string
- * @see CakeTime::format()
+ * @see Cake\Utility\Time::format()
  */
 	public static $niceFormat = '%a, %b %eS %Y, %H:%M';
 
 /**
- * The format to use when formatting a time using `CakeTime::timeAgoInWords()`
- * and the difference is more than `CakeTime::$wordEnd`
+ * The format to use when formatting a time using `Cake\Utility\Time::timeAgoInWords()`
+ * and the difference is more than `Cake\Utility\Time::$wordEnd`
  *
  * @var string
- * @see CakeTime::timeAgoInWords()
+ * @see Cake\Utility\Time::timeAgoInWords()
  */
 	public static $wordFormat = 'j/n/y';
 
 /**
- * The format to use when formatting a time using `CakeTime::niceShort()`
+ * The format to use when formatting a time using `Cake\Utility\Time::niceShort()`
  * and the difference is between 3 and 7 days
  *
  * @var string
- * @see CakeTime::niceShort()
+ * @see Cake\Utility\Time::niceShort()
  */
 	public static $niceShortFormat = '%d/%m, %H:%M';
 
 /**
- * The format to use when formatting a time using `CakeTime::timeAgoInWords()`
- * and the difference is less than `CakeTime::$wordEnd`
+ * The format to use when formatting a time using `Cake\Utility\Time::timeAgoInWords()`
+ * and the difference is less than `Cake\Utility\Time::$wordEnd`
  *
  * @var array
- * @see CakeTime::timeAgoInWords()
+ * @see Cake\Utility\Time::timeAgoInWords()
  */
 	public static $wordAccuracy = array(
 		'year' => "day",
@@ -82,7 +82,7 @@ class Time {
  * The end of relative time telling
  *
  * @var string
- * @see CakeTime::timeAgoInWords()
+ * @see Cake\Utility\Time::timeAgoInWords()
  */
 	public static $wordEnd = '+1 month';
 
@@ -926,13 +926,16 @@ class Time {
  * This function also accepts a time string and a format string as first and second parameters.
  * In that case this function behaves as a wrapper for TimeHelper::i18nFormat()
  *
- * ## Examples:
- *	{{{
- *		CakeTime::format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
- *		CakeTime::format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
- *		CakeTime::format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
- *		CakeTime::format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
- *	}}}
+ * ## Examples
+ *
+ * Create localized & formatted time:
+ *
+ * {{{
+ *   Cake\Utility\Time::format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
+ *   Cake\Utility\Time::format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
+ *   Cake\Utility\Time::format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
+ *   Cake\Utility\Time::format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
+ * }}}
  *
  * @param integer|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)
  * @param integer|string|DateTime $format date format string (or UNIX timestamp, strtotime() valid string or DateTime object)
@@ -940,6 +943,7 @@ class Time {
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
+ * @see Cake\Utility\Time::i18nFormat()
  */
 	public static function format($date, $format = null, $default = false, $timezone = null) {
 		//Backwards compatible params order
