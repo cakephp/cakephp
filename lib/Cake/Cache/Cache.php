@@ -132,7 +132,7 @@ class Cache {
  */
 	public static function config($name = null, $settings = array()) {
 		trigger_error(
-			__d('cake_dev', 'You should use Configure::write() to define cache configuration now.'),
+			__d('cake_dev', 'You must use Configure::write() to define cache configuration now.'),
 			E_USER_WARNING
 		);
 	}
