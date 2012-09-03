@@ -428,7 +428,7 @@ class FormHelper extends AppHelper {
 		$append .= $this->_csrfField();
 
 		if (!empty($append)) {
-			$append = $this->Html->useTag('block', ' style="display:none;"', $append);
+			$append = $this->Html->useTag('hiddenblock', $append);
 		}
 
 		if ($model !== false) {
@@ -545,7 +545,7 @@ class FormHelper extends AppHelper {
 			'value' => urlencode($unlocked),
 			'id' => 'TokenUnlocked' . mt_rand()
 		));
-		return $this->Html->useTag('block', ' style="display:none;"', $out);
+		return $this->Html->useTag('hiddenblock', $out);
 	}
 
 /**
