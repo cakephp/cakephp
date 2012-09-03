@@ -156,11 +156,12 @@ class Cache {
 		if (!is_subclass_of($cacheClass, 'Cake\Cache\CacheEngine')) {
 			throw new Error\CacheException(__d('cake_dev', 'Cache engines must use Cake\Cache\CacheEngine as a base class.'));
 		}
-		static::$_engines[$name] = new $cacheClass();
-		if (static::$_engines[$name]->init($config)) {
-			if (static::$_engines[$name]->settings['probability'] && time() % static::$_engines[$name]->settings['probability'] === 0) {
-				static::$_engines[$name]->gc();
+		$engine = new $cacheClass();
+		if ($engine->init($config)) {
+			if ($engine->settings['probability'] && time() % $engine->settings['probability'] === 0) {
+				$engine->gc();
 			}
+			static::$_engines[$name] = $engine;
 			return true;
 		}
 		return false;
@@ -204,16 +205,18 @@ class Cache {
  * triggered.
  *
  * @param string $config The configuration name you want an engine.
+ * @param Cake\Cache\CacheEngine $engine An engine instance if you are manually
+ *   injecting a cache engine.
  * @return Cake\Cache\Engine
  */
-	public static function engine($config) {
+	public static function engine($config, CacheEngine $engine = null) {
 		if (Configure::read('Cache.disable')) {
 			return false;
 		}
 		if (isset(static::$_engines[$config])) {
 			return static::$_engines[$config];
 		}
-		if (!static::_buildEngine($config)) {
+		if (!$engine && !static::_buildEngine($config, $engine)) {
 			$message = __d(
 				'cake_dev',
 				'The "%s" cache configuration does not exist, nor could configuration be found at "Cache.%s".',
@@ -221,6 +224,9 @@ class Cache {
 				$config
 			);
 			trigger_error($message, E_USER_WARNING);
+		}
+		if ($engine) {
+			static::$_engines[$config] = $engine;
 		}
 		return static::$_engines[$config];
 	}

@@ -154,9 +154,20 @@ class CacheTest extends TestCase {
 	public function testAttemptingToConfigureANonCacheEngineClass() {
 		$this->getMock('\StdClass', array(), array(), 'RubbishEngine');
 		Configure::write('Cache.wrong', array(
-			'engine' => __NAMESPACE__ . '\Rubbish'
+			'engine' => '\RubbishEngine'
 		));
 		Cache::engine('wrong');
+	}
+
+/**
+ * Test that engine() can be used to inject instances.
+ *
+ * @return void
+ */
+	public function testSetEngineValid() {
+		$engine = $this->getMockForAbstractClass('\Cake\Cache\CacheEngine');
+		Cache::engine('test', $engine);
+		$this->assertSame($engine, Cache::engine('test'));
 	}
 
 /**
