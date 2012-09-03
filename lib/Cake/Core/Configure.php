@@ -171,6 +171,20 @@ class Configure {
 	}
 
 /**
+ * Returns true if given variable is set in Configure.
+ *
+ * @param string $var Variable name to check for
+ * @return boolean True if variable is there
+ */
+	public static function check($var = null) {
+		if (empty($var)) {
+			return false;
+		}
+		$result = Hash::get(self::$_values, $var);
+		return isset($result);
+	}
+
+/**
  * Used to delete a variable from Configure.
  *
  * Usage:

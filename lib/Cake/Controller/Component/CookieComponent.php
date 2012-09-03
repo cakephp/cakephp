@@ -282,6 +282,20 @@ class CookieComponent extends Component {
 	}
 
 /**
+ * Returns true if given variable is set in cookie.
+ *
+ * @param string $var Variable name to check for
+ * @return boolean True if variable is there
+ */
+	public function check($key = null) {
+		if (empty($key)) {
+			return false;
+		}
+		$result = $this->read($key);
+		return isset($result);
+	}
+
+/**
  * Delete a cookie value
  *
  * Optional [Name.], required key
