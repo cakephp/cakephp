@@ -37,35 +37,28 @@ class CacheTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 
-		$this->_defaultCacheConfig = Cache::config('default');
-		Cache::config('default', array('engine' => 'File', 'path' => TMP . 'tests'));
+		Configure::write('Cache.default', [
+			'engine' => 'File',
+			'path' => TMP . 'tests'
+		]);
 	}
 
 /**
- * tearDown method
+ * testEngine method
  *
  * @return void
  */
-	public function tearDown() {
-		parent::tearDown();
-		Configure::write('Cache.disable', $this->_cacheDisable);
-		Cache::config('default', $this->_defaultCacheConfig['settings']);
-	}
-
-/**
- * testConfig method
- *
- * @return void
- */
-	public function testConfig() {
-		$settings = array('engine' => 'File', 'path' => TMP . 'tests', 'prefix' => 'cake_test_');
-		$results = Cache::config('new', $settings);
-		$this->assertEquals(Cache::config('new'), $results);
-		$this->assertTrue(isset($results['engine']));
-		$this->assertTrue(isset($results['settings']));
+	public function testEngine() {
+		$settings = [
+			'engine' => 'File',
+			'path' => TMP . 'tests',
+			'prefix' => 'cake_test_'
+		];
+		Configure::write('Cache.test_config', $settings);
+		$engine = Cache::engine('test_config');
+		$this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
 	}
 
 /**
@@ -98,50 +91,59 @@ class CacheTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
 
-		$settings = array('engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_');
-		$result = Cache::config('libEngine', $settings);
-		$this->assertEquals(Cache::config('libEngine'), $result);
+		$settings = ['engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_'];
+		Configure::write('Cache.libEngine', $settings);
+		$engine = Cache::engine('libEngine');
+		$this->assertInstanceOf('\TestApp\Cache\Engine\TestAppCacheEngine', $engine);
 
-		$settings = array('engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_');
-		$result = Cache::config('pluginLibEngine', $settings);
-		$this->assertEquals(Cache::config('pluginLibEngine'), $result);
+		$settings = ['engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_'];
+		$result = Configure::write('Cache.pluginLibEngine', $settings);
+		$engine = Cache::engine('pluginLibEngine');
+		$this->assertInstanceOf('\TestPlugin\Cache\Engine\TestPluginCacheEngine', $engine);
 
 		Cache::drop('libEngine');
 		Cache::drop('pluginLibEngine');
 
-		App::build();
 		Plugin::unload();
-	}
-
-/**
- * testInvalidConfig method
- *
- * Test that the cache class doesn't cause fatal errors with a partial path
- *
- * @expectedException PHPUnit_Framework_Error_Warning
- * @return void
- */
-	public function testInvalidConfig() {
-		Cache::config('invalid', array(
-			'engine' => 'File',
-			'duration' => '+1 year',
-			'prefix' => 'testing_invalid_',
-			'path' => 'data/',
-			'serialize' => true,
-			'random' => 'wii'
-		));
-		$read = Cache::read('Test', 'invalid');
 	}
 
 /**
  * Test reading from a config that is undefined.
  *
+ * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
 	public function testReadNonExistingConfig() {
 		$this->assertFalse(Cache::read('key', 'totally fake'));
+	}
+
+/**
+ * Test write from a config that is undefined.
+ *
+ * @expectedException PHPUnit_Framework_Error_Warning
+ * @return void
+ */
+	public function testWriteNonExistingConfig() {
 		$this->assertFalse(Cache::write('key', 'value', 'totally fake'));
+	}
+
+/**
+ * Test write from a config that is undefined.
+ *
+ * @expectedException PHPUnit_Framework_Error_Warning
+ * @return void
+ */
+	public function testIncrementNonExistingConfig() {
 		$this->assertFalse(Cache::increment('key', 1, 'totally fake'));
+	}
+
+/**
+ * Test write from a config that is undefined.
+ *
+ * @expectedException PHPUnit_Framework_Error_Warning
+ * @return void
+ */
+	public function testDecrementNonExistingConfig() {
 		$this->assertFalse(Cache::decrement('key', 1, 'totally fake'));
 	}
 
@@ -152,29 +154,11 @@ class CacheTest extends TestCase {
  * @return void
  */
 	public function testAttemptingToConfigureANonCacheEngineClass() {
-		$this->getMock('StdClass', array(), array(), 'RubbishEngine');
-		Cache::config('Garbage', array(
+		$this->getMock('\StdClass', array(), array(), 'RubbishEngine');
+		Configure::write('Cache.wrong', array(
 			'engine' => __NAMESPACE__ . '\Rubbish'
 		));
-	}
-
-/**
- * testConfigChange method
- *
- * @return void
- */
-	public function testConfigChange() {
-		$_cacheConfigSessions = Cache::config('sessions');
-		$_cacheConfigTests = Cache::config('tests');
-
-		$result = Cache::config('sessions', array('engine' => 'File', 'path' => TMP . 'sessions'));
-		$this->assertEquals(Cache::settings('sessions'), $result['settings']);
-
-		$result = Cache::config('tests', array('engine' => 'File', 'path' => TMP . 'tests'));
-		$this->assertEquals(Cache::settings('tests'), $result['settings']);
-
-		Cache::config('sessions', $_cacheConfigSessions['settings']);
-		Cache::config('tests', $_cacheConfigTests['settings']);
+		Cache::engine('wrong');
 	}
 
 /**
@@ -183,7 +167,10 @@ class CacheTest extends TestCase {
  * @return void
  */
 	public function testConfigSettingDefaultConfigKey() {
-		Cache::config('test_name', array('engine' => 'File', 'prefix' => 'test_name_'));
+		Configure::write('Cache.test_name', [
+			'engine' => 'File',
+			'prefix' => 'test_name_'
+		]);
 
 		Cache::write('value_one', 'I am cached', 'test_name');
 		$result = Cache::read('value_one', 'test_name');
@@ -204,57 +191,20 @@ class CacheTest extends TestCase {
 	}
 
 /**
- * testWritingWithConfig method
- *
- * @return void
- */
-	public function testWritingWithConfig() {
-		$_cacheConfigSessions = Cache::config('sessions');
-
-		Cache::write('test_something', 'this is the test data', 'tests');
-
-		$expected = array(
-			'path' => TMP . 'sessions/',
-			'prefix' => 'cake_',
-			'lock' => true,
-			'serialize' => true,
-			'duration' => 3600,
-			'probability' => 100,
-			'engine' => 'File',
-			'isWindows' => DIRECTORY_SEPARATOR == '\\',
-			'mask' => 0664,
-			'groups' => array()
-		);
-		$this->assertEquals($expected, Cache::settings('sessions'));
-
-		Cache::config('sessions', $_cacheConfigSessions['settings']);
-	}
-
-/**
- * test that configured returns an array of the currently configured cache
- * settings
+ * test that configured returns an array of the currently constrcuted cache
+ * engines
  *
  * @return void
  */
 	public function testConfigured() {
+		Cache::drop('default');
 		$result = Cache::configured();
-		$this->assertTrue(in_array('_cake_core_', $result));
-		$this->assertTrue(in_array('default', $result));
-	}
+		$this->assertContains('_cake_core_',  $result);
+		$this->assertNotContains('default', $result, 'Unconnected engines should not display.');
 
-/**
- * testInitSettings method
- *
- * @return void
- */
-	public function testInitSettings() {
-		$initial = Cache::settings();
-		$override = array('engine' => 'File', 'path' => TMP . 'tests');
-		Cache::config('for_test', $override);
-
-		$settings = Cache::settings();
-		$expecting = $override + $initial;
-		$this->assertEquals($settings, $expecting);
+		Cache::engine('default');
+		$result = Cache::configured();
+		$this->assertContains('default', $result, 'default should exist now.');
 	}
 
 /**
@@ -268,24 +218,53 @@ class CacheTest extends TestCase {
 			'Lib' => array(CAKE . 'Test/TestApp/Lib/'),
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
+		Configure::write('App.namespace', 'TestApp');
 
 		$result = Cache::drop('some_config_that_does_not_exist');
 		$this->assertFalse($result);
 
-		$_testsConfig = Cache::config('tests');
-		$result = Cache::drop('tests');
-		$this->assertTrue($result);
+		Cache::engine('default');
+		$result = Cache::drop('default');
+		$this->assertTrue($result, 'Built engines should be dropped');
 
-		Cache::config('unconfigTest', array(
+		$config = Configure::read('Cache.default');
+		$this->assertEquals('File', $config['engine'], 'Config data should not be removed.');
+
+		Configure::write('Cache.unconfigTest', [
 			'engine' => 'TestAppCache'
-		));
-		$this->assertTrue(Cache::isInitialized('unconfigTest'));
+		]);
+		$this->assertInstanceOf(
+			'TestApp\Cache\Engine\TestAppCacheEngine',
+			Cache::engine('unconfigTest')
+		);
 
 		$this->assertTrue(Cache::drop('unconfigTest'));
-		$this->assertFalse(Cache::isInitialized('TestAppCache'));
+	}
 
-		Cache::config('tests', $_testsConfig);
-		App::build();
+/**
+ * Test that dropping a cache config refreshes its configuration and
+ * creates a new instance.
+ *
+ * @return void
+ */
+	public function testDropChangeConfig() {
+		Configure::write('Cache.tests', [
+			'engine' => 'File',
+		]);
+		$result = Cache::engine('tests');
+		$settings = Cache::settings('tests');
+
+		$this->assertEquals(CACHE, $settings['path']);
+		$id = spl_object_hash($result);
+
+		Cache::drop('tests');
+
+		Configure::write('Cache.tests', [
+			'engine' => 'File',
+			'extra' => 'value'
+		]);
+		$result = Cache::engine('tests');
+		$this->assertNotEquals($id, spl_object_hash($result));
 	}
 
 /**
@@ -321,8 +300,11 @@ class CacheTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
+		Configure::write('Cache.test_trigger', [
+			'engine' => 'TestAppCache',
+			'prefix' => ''
+		]);
 
-		Cache::config('test_trigger', array('engine' => 'TestAppCache', 'prefix' => ''));
 		try {
 			Cache::write('fail', 'value', 'test_trigger');
 			$this->fail('No exception thrown');
@@ -343,7 +325,10 @@ class CacheTest extends TestCase {
  */
 	public function testCacheDisable() {
 		Configure::write('Cache.disable', false);
-		Cache::config('test_cache_disable_1', array('engine' => 'File', 'path' => TMP . 'tests'));
+		Configure::write('Cache.test_cache_disable_1', [
+			'engine' => 'File',
+			'path' => TMP . 'tests'
+		]);
 
 		$this->assertTrue(Cache::write('key_1', 'hello', 'test_cache_disable_1'));
 		$this->assertSame(Cache::read('key_1', 'test_cache_disable_1'), 'hello');
@@ -359,7 +344,10 @@ class CacheTest extends TestCase {
 		$this->assertSame(Cache::read('key_3', 'test_cache_disable_1'), 'hello');
 
 		Configure::write('Cache.disable', true);
-		Cache::config('test_cache_disable_2', array('engine' => 'File', 'path' => TMP . 'tests'));
+		Configure::write('Cache.test_cache_disable_2', [
+			'engine' => 'File',
+			'path' => TMP . 'tests'
+		]);
 
 		$this->assertFalse(Cache::write('key_4', 'hello', 'test_cache_disable_2'));
 		$this->assertFalse(Cache::read('key_4', 'test_cache_disable_2'));
@@ -396,10 +384,48 @@ class CacheTest extends TestCase {
 		$this->assertEquals('this is just a simple test of the cache system', $data);
 
 		Cache::delete('test_cache');
-
-		$global = Cache::settings();
-
 		Cache::set($_cacheSet);
+	}
+
+/**
+ * Test that set() modifies settings, which can be read back with
+ * settings().
+ *
+ * @return void
+ */
+	public function testSetModifySettings() {
+		Configure::write('Cache.tests', [
+			'engine' => 'File',
+			'duration' => '+1 minute'
+		]);
+		Cache::drop('tests');
+
+		$result = Cache::set(['duration' => '+1 year'], 'tests');
+		$this->assertEquals(strtotime('+1 year') - time(), $result['duration']);
+
+		$result = Cache::set('duration', '+1 month', 'tests');
+		$this->assertEquals(strtotime('+1 month') - time(), $result['duration']);
+
+		$settings = Cache::settings('tests');
+		$this->assertEquals($result, $settings, 'set() and settings() should be the same.');
+	}
+
+/**
+ * Test that calling set() with null, config restores old settings.
+ *
+ * @return void
+ */
+	public function testSetModifyAndResetSettings() {
+		Configure::write('Cache.tests', [
+			'engine' => 'File',
+			'duration' => '+1 minute'
+		]);
+		Cache::drop('tests');
+		$result = Cache::set('duration', '+1 year', 'tests');
+		$this->assertEquals(strtotime('+1 year') - time(), $result['duration']);
+
+		$result = Cache::set(null, 'tests');
+		$this->assertEquals(strtotime('+1 minute') - time(), $result['duration']);
 	}
 
 /**
@@ -408,11 +434,15 @@ class CacheTest extends TestCase {
  * @return void
  */
 	public function testSetOnAlternateConfigs() {
-		Cache::config('file_config', array('engine' => 'File', 'prefix' => 'test_file_'));
-		Cache::set(array('duration' => '+1 year'), 'file_config');
+		Configure::write('Cache.file_config', [
+			'engine' => 'File',
+			'prefix' => 'test_file_'
+		]);
+		Cache::set(['duration' => '+1 year'], 'file_config');
 		$settings = Cache::settings('file_config');
 
 		$this->assertEquals('test_file_', $settings['prefix']);
 		$this->assertEquals(strtotime('+1 year') - time(), $settings['duration']);
 	}
+
 }

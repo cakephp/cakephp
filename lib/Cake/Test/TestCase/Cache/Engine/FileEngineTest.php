@@ -455,4 +455,25 @@ class FileEngineTest extends TestCase {
 		$this->assertFalse(Cache::read('test_groups5', 'file_groups2'));
 		$this->assertEquals('value', Cache::read('test_groups6', 'file_groups3'));
 	}
+
+/**
+ * testInvalidConfig method
+ *
+ * Test that the cache class doesn't cause fatal errors with a partial path
+ *
+ * @expectedException PHPUnit_Framework_Error_Warning
+ * @return void
+ */
+	public function testInvalidConfig() {
+		Configure::write('Cache.invalid', [
+			'engine' => 'File',
+			'duration' => '+1 year',
+			'prefix' => 'testing_invalid_',
+			'path' => 'data/',
+			'serialize' => true,
+			'random' => 'wii'
+		]);
+		$read = Cache::read('Test', 'invalid');
+	}
+
 }
