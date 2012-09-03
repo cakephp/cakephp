@@ -149,9 +149,6 @@ class Cache {
 		if (empty($config['engine'])) {
 			return false;
 		}
-		$config += [
-			'prefix' => '',
-		];
 		$cacheClass = App::classname($config['engine'], 'Cache/Engine', 'Engine');
 		if (!$cacheClass) {
 			return false;
@@ -275,7 +272,7 @@ class Cache {
 		}
 
 		if (static::$_reset === true) {
-			static::_modifySettings($engine, $settings);
+			static::_modifySettings($engine, $config, $settings);
 		}
 		return static::settings($config);
 	}
@@ -288,7 +285,7 @@ class Cache {
  * @param array $settings The settings to temporarily set.
  * @return void
  */
-	protected static function _modifySettings($engine, $settings) {
+	protected static function _modifySettings($engine, $config, $settings) {
 		$restore = static::$_config[$config];
 		if (empty($settings)) {
 			static::$_reset = false;

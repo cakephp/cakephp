@@ -1,9 +1,5 @@
 <?php
 /**
- * CacheTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Cache
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -68,7 +63,10 @@ class CacheTest extends TestCase {
  */
 	public function testNonFatalErrorsWithCachedisable() {
 		Configure::write('Cache.disable', true);
-		Cache::config('test', array('engine' => 'File', 'path' => TMP, 'prefix' => 'error_test_'));
+		Configure::write('Cache.test', [
+			'engine' => 'File',
+			'path' => TMP, 'prefix' => 'error_test_'
+		]);
 
 		Cache::write('no_save', 'Noooo!', 'test');
 		Cache::read('no_save', 'test');
