@@ -1,12 +1,5 @@
 <?php
 /**
- * Command-line database management utility to automate programmer chores.
- *
- * Schema is CakePHP's database management utility. This helps you maintain versions of
- * of your database.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
