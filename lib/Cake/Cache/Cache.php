@@ -126,40 +126,15 @@ class Cache {
 	protected static $_engines = array();
 
 /**
- * Set the cache configuration to use.  config() can
- * both create new configurations, return the settings for already configured
- * configurations.
+ * Deprecated method. Will be removed in 3.0.0
  *
- * To create a new configuration, or to modify an existing configuration permanently:
- *
+ * @deprecated
  */
 	public static function config($name = null, $settings = array()) {
-		if (is_array($name)) {
-			$settings = $name;
-		}
-
-		$current = array();
-		if (isset(static::$_config[$name])) {
-			$current = static::$_config[$name];
-		}
-
-		if (!empty($settings)) {
-			static::$_config[$name] = array_merge($current, $settings);
-		}
-
-		if (empty(static::$_config[$name]['engine'])) {
-			return false;
-		}
-
-		$engine = static::$_config[$name]['engine'];
-
-		if (!isset(static::$_engines[$name])) {
-			static::_buildEngine($name);
-			$settings = static::$_config[$name] = static::settings($name);
-		} elseif ($settings = static::set(static::$_config[$name], null, $name)) {
-			static::$_config[$name] = $settings;
-		}
-		return compact('engine', 'settings');
+		trigger_error(
+			__d('cake_dev', 'You should use Configure::write() to define cache configuration now.'),
+			E_USER_WARNING
+		);
 	}
 
 /**
