@@ -63,10 +63,9 @@ class FileEngine extends CacheEngine {
 	protected $_init = true;
 
 /**
- * Initialize the Cache Engine
+ * Initialize File Cache Engine
  *
- * Called automatically by the cache frontend
- * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
+ * Called automatically by the cache frontend.
  *
  * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
