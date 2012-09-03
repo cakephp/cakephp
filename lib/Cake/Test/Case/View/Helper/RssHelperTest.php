@@ -642,13 +642,12 @@ class RssHelperTest extends CakeTestCase {
 			)
 		);
 		$result = $this->Rss->item(null, $item);
-		if (!function_exists('finfo_open') &&
-			(function_exists('mime_content_type') && false === mime_content_type($tmpFile))
-		) {
-			$type = false;
+		if (!function_exists('mime_content_type')) {
+			$type = null;
 		} else {
-			$type = 'text/plain';
+			$type = mime_content_type($tmpFile);
 		}
+		
 		$expected = array(
 			'<item',
 			'<title',
@@ -679,6 +678,9 @@ class RssHelperTest extends CakeTestCase {
 			'/category',
 			'/item'
 		);
+		if ($type === null) {
+			unset($expected['enclosure']['type']);
+		}
 		$this->assertTags($result, $expected);
 
 		$File->delete();
