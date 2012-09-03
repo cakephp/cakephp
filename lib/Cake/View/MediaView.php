@@ -69,11 +69,7 @@ class MediaView extends View {
 		$name = $download = $id = $modified = $path = $cache = $mimeType = $compress = null;
 		extract($this->viewVars, EXTR_OVERWRITE);
 
-		if (is_dir($path)) {
-			$path = $path . $id;
-		} else {
-			$path = APP . $path . $id;
-		}
+		$path = $path . $id;
 
 		if (is_array($mimeType)) {
 			$this->response->type($mimeType);
