@@ -281,7 +281,9 @@ class SchemaShell extends AppShell {
 		$Schema = $this->Schema->load($options);
 
 		if (!$Schema) {
-			$this->err(__d('cake_console', '%s could not be loaded', $this->Schema->path . DS . $this->Schema->file));
+			$this->err(__d('cake_console', 'The chosen schema could not be loaded. Attempted to load:'));
+			$this->err(__d('cake_console', 'File: %s', $this->Schema->path . DS . $this->Schema->file));
+			$this->err(__d('cake_console', 'Name: %s', $this->Schema->name));
 			$this->_stop();
 		}
 		$table = null;
