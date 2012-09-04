@@ -112,10 +112,8 @@ class CakeTime {
 		switch ($name) {
 			case 'niceFormat':
 				return self::${$name};
-				break;
 			default:
 				return null;
-				break;
 		}
 	}
 
