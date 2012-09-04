@@ -1599,7 +1599,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
 	public function postLink($title, $url = null, $options = array(), $confirmMessage = false) {
-    $requestMethod = 'POST';
+		$requestMethod = 'POST';
 		if (!empty($options['method'])) {
 			$requestMethod = strtoupper($options['method']);
 			unset($options['method']);
@@ -1611,8 +1611,15 @@ class FormHelper extends AppHelper {
 
 		$formName = uniqid('post_');
 		$formUrl = $this->url($url);
-		$out = $this->Html->useTag('form', $formUrl, array('name' => $formName, 'id' => $formName, 'style' => 'display:none;', 'method' => 'post'));
-		$out .= $this->Html->useTag('hidden', '_method', ' value="' . $requestMethod . '"');
+		$out = $this->Html->useTag('form', $formUrl, array(
+			'name' => $formName,
+			'id' => $formName,
+			'style' => 'display:none;',
+			'method' => 'post'
+		));
+		$out .= $this->Html->useTag('hidden', '_method', array(
+			'value' => $requestMethod
+		));
 		$out .= $this->_csrfField();
 
 		$fields = array();

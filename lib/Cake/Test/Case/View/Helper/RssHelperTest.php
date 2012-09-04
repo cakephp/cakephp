@@ -647,7 +647,7 @@ class RssHelperTest extends CakeTestCase {
 		} else {
 			$type = mime_content_type($tmpFile);
 		}
-		
+
 		$expected = array(
 			'<item',
 			'<title',

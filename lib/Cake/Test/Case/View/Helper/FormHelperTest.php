@@ -6125,7 +6125,7 @@ class FormHelperTest extends CakeTestCase {
 			'/a'
 		));
 
-		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('method'=>'delete'));
+		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('method' => 'delete'));
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
