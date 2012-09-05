@@ -474,7 +474,7 @@ class Sqlite extends DboSource {
 			if (is_bool($indexes)) {
 				return array();
 			}
-			foreach ($indexes as $i => $info) {
+			foreach ($indexes as $info) {
 				$key = array_pop($info);
 				$keyInfo = $this->query('PRAGMA index_info("' . $key['name'] . '")');
 				foreach ($keyInfo as $keyCol) {
