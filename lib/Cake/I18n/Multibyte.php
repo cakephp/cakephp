@@ -375,10 +375,10 @@ class Multibyte {
  *    or false if $needle is not found.
  */
 	public static function stripos($haystack, $needle, $offset = 0) {
-		if (Multibyte::checkMultibyte($haystack)) {
-			$haystack = Multibyte::strtoupper($haystack);
-			$needle = Multibyte::strtoupper($needle);
-			return Multibyte::strpos($haystack, $needle, $offset);
+		if (self::checkMultibyte($haystack)) {
+			$haystack = self::strtoupper($haystack);
+			$needle = self::strtoupper($needle);
+			return self::strpos($haystack, $needle, $offset);
 		}
 		return stripos($haystack, $needle, $offset);
 	}
@@ -397,16 +397,16 @@ class Multibyte {
 	public static function stristr($haystack, $needle, $part = false) {
 		$php = (PHP_VERSION < 5.3);
 
-		if (($php && $part) || Multibyte::checkMultibyte($haystack)) {
-			$check = Multibyte::strtoupper($haystack);
-			$check = Multibyte::utf8($check);
+		if (($php && $part) || self::checkMultibyte($haystack)) {
+			$check = self::strtoupper($haystack);
+			$check = self::utf8($check);
 			$found = false;
 
-			$haystack = Multibyte::utf8($haystack);
+			$haystack = self::utf8($haystack);
 			$haystackCount = count($haystack);
 
-			$needle = Multibyte::strtoupper($needle);
-			$needle = Multibyte::utf8($needle);
+			$needle = self::strtoupper($needle);
+			$needle = self::utf8($needle);
 			$needleCount = count($needle);
 
 			$parts = array();
@@ -431,9 +431,9 @@ class Multibyte {
 			}
 
 			if ($found && $part && !empty($parts)) {
-				return Multibyte::ascii($parts);
+				return self::ascii($parts);
 			} elseif ($found && !empty($haystack)) {
-				return Multibyte::ascii($haystack);
+				return self::ascii($haystack);
 			}
 			return false;
 		}
@@ -451,8 +451,8 @@ class Multibyte {
  * @return integer The number of characters in string $string
  */
 	public static function strlen($string) {
-		if (Multibyte::checkMultibyte($string)) {
-			$string = Multibyte::utf8($string);
+		if (self::checkMultibyte($string)) {
+			$string = self::utf8($string);
 			return count($string);
 		}
 		return strlen($string);
@@ -468,13 +468,13 @@ class Multibyte {
  *    If $needle is not found, it returns false.
  */
 	public static function strpos($haystack, $needle, $offset = 0) {
-		if (Multibyte::checkMultibyte($haystack)) {
+		if (self::checkMultibyte($haystack)) {
 			$found = false;
 
-			$haystack = Multibyte::utf8($haystack);
+			$haystack = self::utf8($haystack);
 			$haystackCount = count($haystack);
 
-			$needle = Multibyte::utf8($needle);
+			$needle = self::utf8($needle);
 			$needleCount = count($needle);
 
 			$position = $offset;
@@ -513,15 +513,15 @@ class Multibyte {
  * @return string|boolean The portion of $haystack. or false if $needle is not found.
  */
 	public static function strrchr($haystack, $needle, $part = false) {
-		$check = Multibyte::utf8($haystack);
+		$check = self::utf8($haystack);
 		$found = false;
 
-		$haystack = Multibyte::utf8($haystack);
+		$haystack = self::utf8($haystack);
 		$haystackCount = count($haystack);
 
 		$matches = array_count_values($check);
 
-		$needle = Multibyte::utf8($needle);
+		$needle = self::utf8($needle);
 		$needleCount = count($needle);
 
 		$parts = array();
@@ -554,9 +554,9 @@ class Multibyte {
 		}
 
 		if ($found && $part && !empty($parts)) {
-			return Multibyte::ascii($parts);
+			return self::ascii($parts);
 		} elseif ($found && !empty($haystack)) {
-			return Multibyte::ascii($haystack);
+			return self::ascii($haystack);
 		}
 		return false;
 	}
@@ -573,17 +573,17 @@ class Multibyte {
  * @return string|boolean The portion of $haystack. or false if $needle is not found.
  */
 	public static function strrichr($haystack, $needle, $part = false) {
-		$check = Multibyte::strtoupper($haystack);
-		$check = Multibyte::utf8($check);
+		$check = self::strtoupper($haystack);
+		$check = self::utf8($check);
 		$found = false;
 
-		$haystack = Multibyte::utf8($haystack);
+		$haystack = self::utf8($haystack);
 		$haystackCount = count($haystack);
 
 		$matches = array_count_values($check);
 
-		$needle = Multibyte::strtoupper($needle);
-		$needle = Multibyte::utf8($needle);
+		$needle = self::strtoupper($needle);
+		$needle = self::utf8($needle);
 		$needleCount = count($needle);
 
 		$parts = array();
@@ -616,9 +616,9 @@ class Multibyte {
 		}
 
 		if ($found && $part && !empty($parts)) {
-			return Multibyte::ascii($parts);
+			return self::ascii($parts);
 		} elseif ($found && !empty($haystack)) {
-			return Multibyte::ascii($haystack);
+			return self::ascii($haystack);
 		}
 		return false;
 	}
@@ -633,16 +633,16 @@ class Multibyte {
  *    or false if $needle is not found.
  */
 	public static function strripos($haystack, $needle, $offset = 0) {
-		if (Multibyte::checkMultibyte($haystack)) {
+		if (self::checkMultibyte($haystack)) {
 			$found = false;
-			$haystack = Multibyte::strtoupper($haystack);
-			$haystack = Multibyte::utf8($haystack);
+			$haystack = self::strtoupper($haystack);
+			$haystack = self::utf8($haystack);
 			$haystackCount = count($haystack);
 
 			$matches = array_count_values($haystack);
 
-			$needle = Multibyte::strtoupper($needle);
-			$needle = Multibyte::utf8($needle);
+			$needle = self::strtoupper($needle);
+			$needle = self::utf8($needle);
 			$needleCount = count($needle);
 
 			$position = $offset;
@@ -684,15 +684,15 @@ class Multibyte {
  *    If $needle is not found, it returns false.
  */
 	public static function strrpos($haystack, $needle, $offset = 0) {
-		if (Multibyte::checkMultibyte($haystack)) {
+		if (self::checkMultibyte($haystack)) {
 			$found = false;
 
-			$haystack = Multibyte::utf8($haystack);
+			$haystack = self::utf8($haystack);
 			$haystackCount = count($haystack);
 
 			$matches = array_count_values($haystack);
 
-			$needle = Multibyte::utf8($needle);
+			$needle = self::utf8($needle);
 			$needleCount = count($needle);
 
 			$position = $offset;
@@ -737,14 +737,14 @@ class Multibyte {
 	public static function strstr($haystack, $needle, $part = false) {
 		$php = (PHP_VERSION < 5.3);
 
-		if (($php && $part) || Multibyte::checkMultibyte($haystack)) {
-			$check = Multibyte::utf8($haystack);
+		if (($php && $part) || self::checkMultibyte($haystack)) {
+			$check = self::utf8($haystack);
 			$found = false;
 
-			$haystack = Multibyte::utf8($haystack);
+			$haystack = self::utf8($haystack);
 			$haystackCount = count($haystack);
 
-			$needle = Multibyte::utf8($needle);
+			$needle = self::utf8($needle);
 			$needleCount = count($needle);
 
 			$parts = array();
@@ -769,9 +769,9 @@ class Multibyte {
 			}
 
 			if ($found && $part && !empty($parts)) {
-				return Multibyte::ascii($parts);
+				return self::ascii($parts);
 			} elseif ($found && !empty($haystack)) {
-				return Multibyte::ascii($haystack);
+				return self::ascii($haystack);
 			}
 			return false;
 		}
@@ -789,7 +789,7 @@ class Multibyte {
  * @return string with all alphabetic characters converted to lowercase.
  */
 	public static function strtolower($string) {
-		$utf8Map = Multibyte::utf8($string);
+		$utf8Map = self::utf8($string);
 
 		$length = count($utf8Map);
 		$lowerCase = array();
@@ -823,7 +823,7 @@ class Multibyte {
 				$lowerCase[] = $char;
 			}
 		}
-		return Multibyte::ascii($lowerCase);
+		return self::ascii($lowerCase);
 	}
 
 /**
@@ -833,7 +833,7 @@ class Multibyte {
  * @return string with all alphabetic characters converted to uppercase.
  */
 	public static function strtoupper($string) {
-		$utf8Map = Multibyte::utf8($string);
+		$utf8Map = self::utf8($string);
 
 		$length = count($utf8Map);
 		$replaced = array();
@@ -911,7 +911,7 @@ class Multibyte {
 				$upperCase[] = $char;
 			}
 		}
-		return Multibyte::ascii($upperCase);
+		return self::ascii($upperCase);
 	}
 
 /**
@@ -923,10 +923,10 @@ class Multibyte {
  */
 	public static function substrCount($haystack, $needle) {
 		$count = 0;
-		$haystack = Multibyte::utf8($haystack);
+		$haystack = self::utf8($haystack);
 		$haystackCount = count($haystack);
 		$matches = array_count_values($haystack);
-		$needle = Multibyte::utf8($needle);
+		$needle = self::utf8($needle);
 		$needleCount = count($needle);
 
 		if ($needleCount === 1 && isset($matches[$needle[0]])) {
@@ -962,14 +962,14 @@ class Multibyte {
 			return $string;
 		}
 
-		$string = Multibyte::utf8($string);
+		$string = self::utf8($string);
 
 		for ($i = 1; $i <= $start; $i++) {
 			unset($string[$i - 1]);
 		}
 
 		if ($length === null || count($string) < $length) {
-			return Multibyte::ascii($string);
+			return self::ascii($string);
 		}
 		$string = array_values($string);
 
@@ -977,7 +977,7 @@ class Multibyte {
 		for ($i = 0; $i < $length; $i++) {
 			$value[] = $string[$i];
 		}
-		return Multibyte::ascii($value);
+		return self::ascii($value);
 	}
 
 /**
@@ -990,7 +990,7 @@ class Multibyte {
  * @TODO: add support for 'Q'('Quoted Printable') encoding
  */
 	public static function mimeEncode($string, $charset = null, $newline = "\r\n") {
-		if (!Multibyte::checkMultibyte($string) && strlen($string) < 75) {
+		if (!self::checkMultibyte($string) && strlen($string) < 75) {
 			return $string;
 		}
 
