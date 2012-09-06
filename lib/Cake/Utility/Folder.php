@@ -367,7 +367,7 @@ class Folder {
 			$paths = $this->tree($path);
 
 			foreach ($paths as $type) {
-				foreach ($type as $key => $fullpath) {
+				foreach ($type as $fullpath) {
 					$check = explode(DS, $fullpath);
 					$count = count($check);
 

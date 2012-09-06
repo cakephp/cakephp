@@ -603,7 +603,6 @@ class TranslateBehavior extends ModelBehavior {
 		if (is_string($fields)) {
 			$fields = array($fields);
 		}
-		$RuntimeModel = $this->translateModel($Model);
 		$associations = array();
 
 		foreach ($fields as $key => $value) {
