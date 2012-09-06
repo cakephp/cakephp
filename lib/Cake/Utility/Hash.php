@@ -432,7 +432,6 @@ class Hash {
 		}
 		$stack = array();
 
-		$i = 1;
 		while (!empty($needle)) {
 			$key = key($needle);
 			$val = $needle[$key];

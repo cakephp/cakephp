@@ -271,7 +271,7 @@ class CakeSchema extends Object {
 							unset($currentTables[$key]);
 						}
 						if (!empty($Object->hasAndBelongsToMany)) {
-							foreach ($Object->hasAndBelongsToMany as $Assoc => $assocData) {
+							foreach ($Object->hasAndBelongsToMany as $assocData) {
 								if (isset($assocData['with'])) {
 									$class = $assocData['with'];
 								}
@@ -597,7 +597,7 @@ class CakeSchema extends Object {
 		$db = $Obj->getDataSource();
 		$fields = $Obj->schema(true);
 
-		$columns = $props = array();
+		$columns = array();
 		foreach ($fields as $name => $value) {
 			if ($Obj->primaryKey == $name) {
 				$value['key'] = 'primary';

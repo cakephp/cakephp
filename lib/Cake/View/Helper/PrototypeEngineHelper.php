@@ -237,7 +237,6 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		$url = '"' . $this->url($url) . '"';
 		$options = $this->_mapOptions('request', $options);
 		$type = '.Request';
-		$data = null;
 		if (isset($options['type']) && strtolower($options['type']) == 'json') {
 			unset($options['type']);
 		}

@@ -185,7 +185,6 @@ class Configure {
  */
 	public static function delete($var = null) {
 		$keys = explode('.', $var);
-		$last = array_pop($keys);
 		self::$_values = Hash::remove(self::$_values, $var);
 	}
 

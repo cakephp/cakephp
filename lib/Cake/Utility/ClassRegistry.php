@@ -175,7 +175,7 @@ class ClassRegistry {
 					}
 
 					if (!isset($instance)) {
-						trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
+						trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %s', $class), E_USER_WARNING);
 						return $false;
 					}
 				}
