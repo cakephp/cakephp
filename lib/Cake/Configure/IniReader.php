@@ -72,11 +72,14 @@ class IniReader implements ConfigReaderInterface {
  * Build and construct a new ini file parser. The parser can be used to read
  * ini files that are on the filesystem.
  *
- * @param string $path Path to load ini config files from.
+ * @param string $path Path to load ini config files from. Defaults to APP . 'Config' . DS
  * @param string $section Only get one section, leave null to parse and fetch
  *     all sections in the ini file.
  */
-	public function __construct($path, $section = null) {
+	public function __construct($path = null, $section = null) {
+		if (!$path) {
+			$path = APP . 'Config' . DS;
+		}
 		$this->_path = $path;
 		$this->_section = $section;
 	}
