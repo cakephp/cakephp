@@ -652,7 +652,6 @@ class Postgres extends DboSource {
 				return 'float';
 			default:
 				return 'text';
-			break;
 		}
 	}
 
@@ -894,10 +893,8 @@ class Postgres extends DboSource {
 					}
 				}
 				return "CREATE TABLE {$table} (\n\t{$columns}\n);\n{$indexes}";
-			break;
 			default:
 				return parent::renderStatement($type, $data);
-			break;
 		}
 	}
 

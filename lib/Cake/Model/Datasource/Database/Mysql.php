@@ -533,7 +533,6 @@ class Mysql extends DboSource {
  * @param string $table Table to alter parameters for.
  * @param array $parameters Parameters to add & drop.
  * @return array Array of table property alteration statements.
- * @todo Implement this method.
  */
 	protected function _alterTableParameters($table, $parameters) {
 		if (isset($parameters['change'])) {

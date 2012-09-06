@@ -341,10 +341,8 @@ class DboSource extends DataSource {
 		switch ($column) {
 			case 'binary':
 				return $this->_connection->quote($data, PDO::PARAM_LOB);
-			break;
 			case 'boolean':
 				return $this->_connection->quote($this->boolean($data, true), PDO::PARAM_BOOL);
-			break;
 			case 'string':
 			case 'text':
 				return $this->_connection->quote($data, PDO::PARAM_STR);
@@ -362,7 +360,6 @@ class DboSource extends DataSource {
 					return $data;
 				}
 				return $this->_connection->quote($data);
-			break;
 		}
 	}
 
@@ -2029,7 +2026,6 @@ class DboSource extends DataSource {
 					$arg = $this->name($params[0]);
 				}
 				return strtoupper($func) . '(' . $arg . ') AS ' . $this->name($params[1]);
-			break;
 		}
 	}
 
@@ -2633,7 +2629,7 @@ class DboSource extends DataSource {
 		}
 		$conditions = str_replace(array($start, $end), '', $conditions);
 		$conditions = preg_replace_callback(
-			'/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9\\-_' . $start . $end . ']*\\.[a-z0-9_\\-' . $start . $end . ']*)/i',
+			'/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9_][a-z0-9\\-_]*\\.[a-z0-9_][a-z0-9_\\-]*)/i',
 			array(&$this, '_quoteMatchedField'),
 			$conditions
 		);

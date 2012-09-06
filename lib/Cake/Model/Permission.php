@@ -149,7 +149,6 @@ class Permission extends AppModel {
 							break;
 							case 1:
 								return true;
-							break;
 						}
 					}
 				}
