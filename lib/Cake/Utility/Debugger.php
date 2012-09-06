@@ -369,9 +369,6 @@ class Debugger {
 			return str_replace(ROOT, 'ROOT', $path);
 		}
 
-		if (strpos($path, CAKE) === 0) {
-			return str_replace($corePath, 'CORE' . DS, $path);
-		}
 		return $path;
 	}
 
