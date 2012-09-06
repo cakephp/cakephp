@@ -2216,6 +2216,7 @@ class Model extends Object implements CakeEventListener {
 					} else {
 						$data = array_merge(array($key => $this->{$association}->id), $data, array($key => $this->{$association}->id));
 					}
+					$options = $this->addToFieldlist($key, $options);
 				} else {
 					$validationErrors[$association] = $this->{$association}->validationErrors;
 				}
@@ -2246,6 +2247,7 @@ class Model extends Object implements CakeEventListener {
 						$validates = $this->{$association}->create(null) !== null;
 						$saved = false;
 						if ($validates) {
+							$options = $this->{$association}->addToFieldlist($key, $options);
 							if ($options['deep']) {
 								$saved = $this->{$association}->saveAssociated($values, array_merge($options, array('atomic' => false)));
 							} else {
@@ -2266,10 +2268,7 @@ class Model extends Object implements CakeEventListener {
 								$values[$i] = array_merge(array($key => $this->id), $value, array($key => $this->id));
 							}
 						}
-						// add foreignKey to whitelist if not already there
-						if (!in_array($key, $this->{$association}->whitelist)) {
-							$this->{$association}->whitelist[] = $key;
-						}
+						$options = $this->{$association}->addToFieldlist($key, $options);
 						$_return = $this->{$association}->saveMany($values, array_merge($options, array('atomic' => false)));
 						if (in_array(false, $_return, true)) {
 							$validationErrors[$association] = $this->{$association}->validationErrors;
@@ -2300,6 +2299,29 @@ class Model extends Object implements CakeEventListener {
 		}
 		$db->rollback();
 		return false;
+	}
+
+/**
+ * Helper method for saveAll() and friends, to add foreign key to fieldlist
+ *
+ * @param string $key fieldname to be added to list
+ * @param array $options
+ * @return array $options
+ */
+	public function addToFieldList($key, $options) {
+		if (empty($options['fieldList']) && $this->whitelist && !in_array($key, $this->whitelist)) {
+			$options['fieldList'][$this->alias] = $this->whitelist;
+			$options['fieldList'][$this->alias][] = $key;
+			return $options;
+		}
+		if (!empty($options['fieldList'][$this->alias]) && is_array($options['fieldList'][$this->alias])) {
+			$options['fieldList'][$this->alias][] = $key;
+			return $options;
+		}
+		if (!empty($options['fieldList']) && is_array($options['fieldList'])) {
+			$options['fieldList'][] = $key;
+		}
+		return $options;
 	}
 
 /**
