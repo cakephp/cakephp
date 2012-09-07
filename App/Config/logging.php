@@ -14,7 +14,7 @@
  */
 namespace App\Config;
 
-use Cake\Log\Log;
+use Cake\Core\Configure;
 
 /**
  * Defines the default error type when using the log() function. Used for
@@ -25,13 +25,14 @@ use Cake\Log\Log;
 /**
  * Configures default file logging options
  */
-Log::config('debug', array(
+Configure::write('Log.debug', [
 	'engine' => 'Cake\Log\Engine\FileLog',
-	'types' => array('notice', 'info', 'debug'),
+	'levels' => ['notice', 'info', 'debug'],
 	'file' => 'debug',
-));
-Log::config('error', array(
+]);
+
+Configure::write('Log.error', [
 	'engine' => 'Cake\Log\Engine\FileLog',
-	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
+	'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
 	'file' => 'error',
-));
+]);
