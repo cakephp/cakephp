@@ -1,11 +1,5 @@
 <?php
 /**
- * Wincache storage engine for cache.
- *
- * Supports wincache 1.1.0 and higher.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,15 +8,17 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Cache.Engine
- * @since         CakePHP(tm) v 1.2.0.4933
+ * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Cache\Engine;
+
 use Cake\Cache\CacheEngine;
 
 /**
  * Wincache storage engine for cache
+ *
+ * Supports wincache 1.1.0 and higher.
  *
  * @package       Cake.Cache.Engine
  */
