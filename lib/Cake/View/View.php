@@ -453,6 +453,9 @@ class View extends Object {
 		if ($layout === null) {
 			$layout = $this->layout;
 		}
+		if ($buffer = $this->Blocks->get('buffer', true)) {
+			$this->Blocks->append('content', $buffer);
+		}
 		if ($layout && $this->autoLayout) {
 			$this->Blocks->set('content', $this->renderLayout('', $layout));
 		}
@@ -485,15 +488,14 @@ class View extends Object {
  */
 	public function renderLayout($content, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
-		if (empty($layoutFileName)) {
-			return $this->Blocks->get('content');
-		}
-
-		if (!$this->_helpersLoaded) {
-			$this->loadHelpers();
-		}
 		if (empty($content)) {
 			$content = $this->Blocks->get('content');
+		}
+		if (empty($layoutFileName)) {
+			return $content;
+		}
+		if (!$this->_helpersLoaded) {
+			$this->loadHelpers();
 		}
 		$this->getEventManager()->dispatch(new CakeEvent('View.beforeLayout', $this, array($layoutFileName)));
 

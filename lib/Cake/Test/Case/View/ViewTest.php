@@ -922,6 +922,48 @@ class ViewTest extends CakeTestCase {
 		$result = $View->renderLayout($content, 'default');
 		$this->assertRegExp('/modified in the afterlife/', $result);
 		$this->assertRegExp('/This is my view output/', $result);
+
+		$content = 'This is my other view output';
+		$result = $View->renderLayout($content);
+		$this->assertRegExp('/modified in the afterlife/', $result);
+		$this->assertRegExp('/This is my other view output/', $result);
+	}
+
+/**
+ * testBuffer method
+ *
+ * @return void
+ */
+	public function testBuffer() {
+		$this->PostsController->helpers = array('Form', 'Html');
+
+		$View = new View($this->PostsController);
+		$result = $View->render('buffer', 'ajax');
+		$this->assertRegExp('/Testing buffer for post links/', $result);
+		$expected = '/\<span class="buttonContainer"\>\s*\<a href="#" onclick="document.post_(.*?).submit\(\); event.returnValue = false; return false;"\>postlink\<\/a\>\s*\<\/span\>/';
+		$this->assertRegExp($expected, $result);
+		$expected = '/\<form action="\/" name="post_(.*?)" id="post_(.*?)" style="display:none;" method="post"\>\<input type="hidden" name="_method" value="POST"\/\>\<\/form\>/';
+		$this->assertRegExp($expected, $result);
+
+		$View = new View($this->PostsController);
+		$result = $View->render('buffer', 'default');
+		$this->assertRegExp('/Testing buffer for post links/', $result);
+		$expected = '/\<span class="buttonContainer"\>\s*\<a href="#" onclick="document.post_(.*?).submit\(\); event.returnValue = false; return false;"\>postlink\<\/a\>\s*\<\/span\>/';
+		$this->assertRegExp($expected, $result);
+		$expected = '/\<form action="\/" name="post_(.*?)" id="post_(.*?)" style="display:none;" method="post"\>\<input type="hidden" name="_method" value="POST"\/\>\<\/form\>/';
+		$this->assertRegExp($expected, $result);
+
+		// test buffered content in layout and view
+		$View = new View($this->PostsController);
+		$result = $View->render('buffer', 'buffer');
+		$this->assertRegExp('/Testing buffer for post links/', $result);
+		$this->assertRegExp('/This is regular text/', $result);
+		$expected = '/\<form>\s*\<a href="#" onclick="document.post_(.*?).submit\(\); event.returnValue = false; return false;"\>postlink2\<\/a\>\s*\<\/form\>/';
+		$this->assertRegExp($expected, $result);
+		$expected = '/\<span class="buttonContainer"\>\s*\<a href="#" onclick="document.post_(.*?).submit\(\); event.returnValue = false; return false;"\>postlink\<\/a\>\s*\<\/span\>/';
+		$this->assertRegExp($expected, $result);
+		$expected = '/\<form action="\/" name="post_(.*?)" id="post_(.*?)" style="display:none;" method="post"\>\<input type="hidden" name="_method" value="POST"\/\>\<\/form\>\s*\<\/div\>\s*<form action="\/" name="post_(.*?)" id="post_(.*?)" style="display:none;" method="post"\>\<input type="hidden" name="_method" value="POST"\/\>\<\/form\>/';
+		$this->assertRegExp($expected, $result);
 	}
 
 /**
