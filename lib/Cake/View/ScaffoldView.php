@@ -66,7 +66,7 @@ class ScaffoldView extends ThemeView {
 		}
 
 		$names[] = $this->viewPath . DS . $subDir . $scaffoldAction;
-		$names[] = 'Scaffolds' . DS . $subDir . $name;
+		$names[] = 'Scaffolds/' . $subDir . $name;
 
 		$paths = $this->_paths($this->plugin);
 		$exts = array($this->ext);
@@ -83,8 +83,8 @@ class ScaffoldView extends ThemeView {
 			}
 		}
 
-		if ($name === 'Scaffolds' . DS . $subDir . 'error') {
-			return CAKE . 'View' . DS . 'Errors' . DS . 'scaffold_error.ctp';
+		if ($name === 'Scaffolds/' . $subDir . 'error') {
+			return CAKE . 'View/Errors/scaffold_error.ctp';
 		}
 
 		throw new Error\MissingViewException($paths[0] . $name . $this->ext);

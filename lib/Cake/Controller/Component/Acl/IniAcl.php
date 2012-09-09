@@ -97,7 +97,7 @@ class IniAcl extends Object implements AclInterface {
  */
 	public function check($aro, $aco, $action = null) {
 		if ($this->config == null) {
-			$this->config = $this->readConfigFile(APP . 'Config' . DS . 'acl.ini.php');
+			$this->config = $this->readConfigFile(APP . 'Config/acl.ini.php');
 		}
 		$aclConfig = $this->config;
 

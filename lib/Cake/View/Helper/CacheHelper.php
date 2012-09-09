@@ -331,7 +331,7 @@ class CacheHelper extends Helper {
 		?>';
 		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1'; ?>", $content);
 		$file .= $content;
-		return cache('views' . DS . $cache, $file, $timestamp);
+		return cache('views/' . $cache, $file, $timestamp);
 	}
 
 }

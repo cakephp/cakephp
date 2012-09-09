@@ -185,7 +185,7 @@ class ExtractTask extends Shell {
 			$this->_paths[] = CAKE;
 			$this->_exclude = array_merge($this->_exclude, array(
 				CAKE . 'Test',
-				CAKE . 'Console' . DS . 'Templates'
+				CAKE . 'Console/Templates'
 			));
 		}
 

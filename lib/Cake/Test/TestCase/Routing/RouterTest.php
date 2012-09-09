@@ -142,7 +142,7 @@ class RouterTest extends TestCase {
 	public function testPluginMapResources() {
 		App::build(array(
 			'Plugin' => array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
+				CAKE . 'Test/TestApp/Plugin/'
 			)
 		));
 		$resources = Router::mapResources('TestPlugin.TestPlugin');
@@ -203,7 +203,7 @@ class RouterTest extends TestCase {
 	public function testPluginMapResourcesWithPrefix() {
 		App::build(array(
 			'Plugin' => array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
+				CAKE . 'Test/TestApp/Plugin/'
 			)
 		));
 		$resources = Router::mapResources('TestPlugin.TestPlugin', array('prefix' => 'api'));
@@ -1070,7 +1070,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 		$result = Router::parse('/pages/display/home');
 		$expected = array(
 			'plugin' => null,
@@ -1320,13 +1320,13 @@ class RouterTest extends TestCase {
 		$paths = App::path('Plugin');
 		App::build(array(
 			'Plugin' =>  array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
+				CAKE . 'Test/TestApp/Plugin/'
 			)
 		), App::RESET);
 		Plugin::load(array('TestPlugin'));
 
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 		$request = new Request();
 		Router::setRequestInfo(
 			$request->addParams(array(
@@ -1351,7 +1351,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 		$request = new Request();
 		Router::setRequestInfo(
 			$request->addParams(array(
@@ -1410,7 +1410,7 @@ class RouterTest extends TestCase {
 		Router::setExtensions(array('rss'));
 		$this->assertEquals(array('rss'), Router::extensions());
 
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 
 		$result = Router::parse('/posts.rss');
 		$this->assertEquals('rss', $result['_ext']);
@@ -1436,7 +1436,7 @@ class RouterTest extends TestCase {
  */
 	public function testExtensionParsing() {
 		Router::parseExtensions('rss');
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 
 		$result = Router::parse('/posts.rss');
 		$expected = array(
@@ -1463,7 +1463,7 @@ class RouterTest extends TestCase {
 
 		Router::reload();
 		Router::parseExtensions('rss', 'xml');
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 
 		$result = Router::parse('/posts.xml');
 		$expected = array(
@@ -1783,7 +1783,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 
 		$result = Router::parse('/');
@@ -2077,12 +2077,12 @@ class RouterTest extends TestCase {
 	public function testConnectDefaultRoutes() {
 		App::build(array(
 			'Plugin' =>  array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
+				CAKE . 'Test/TestApp/Plugin/'
 			)
 		), App::RESET);
 		Plugin::load(array('TestPlugin', 'PluginJs'));
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 
 		$result = Router::url(array('plugin' => 'plugin_js', 'controller' => 'js_file', 'action' => 'index'));
 		$this->assertEquals('/plugin_js/js_file', $result);

@@ -48,7 +48,7 @@ use Cake\Network\Response;
  *				'name' => 'example',
  *				'download' => true,
  *				'extension' => 'zip',
- *				'path' => APP . 'files' . DS
+ *				'path' => APP . 'files/'
  *			);
  *			$this->set($params);
  *		}

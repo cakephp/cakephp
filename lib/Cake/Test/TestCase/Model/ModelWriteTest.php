@@ -235,8 +235,8 @@ class ModelWriteTest extends BaseModelTest {
 		$this->loadFixtures('OverallFavorite');
 		$OverallFavorite = new OverallFavorite();
 
-		touch(CACHE . 'views' . DS . 'some_dir_overallfavorites_index.php');
-		touch(CACHE . 'views' . DS . 'some_dir_overall_favorites_index.php');
+		touch(CACHE . 'views/some_dir_overallfavorites_index.php');
+		touch(CACHE . 'views/some_dir_overall_favorites_index.php');
 
 		$data = array(
 			'OverallFavorite' => array(
@@ -249,8 +249,8 @@ class ModelWriteTest extends BaseModelTest {
 		$OverallFavorite->create($data);
 		$OverallFavorite->save();
 
-		$this->assertFalse(file_exists(CACHE . 'views' . DS . 'some_dir_overallfavorites_index.php'));
-		$this->assertFalse(file_exists(CACHE . 'views' . DS . 'some_dir_overall_favorites_index.php'));
+		$this->assertFalse(file_exists(CACHE . 'views/some_dir_overallfavorites_index.php'));
+		$this->assertFalse(file_exists(CACHE . 'views/some_dir_overall_favorites_index.php'));
 
 		Configure::write('Cache.check', $_back['check']);
 		Configure::write('Cache.disable', $_back['disable']);

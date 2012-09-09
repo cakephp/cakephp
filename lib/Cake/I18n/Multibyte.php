@@ -1088,9 +1088,9 @@ class Multibyte {
 				return null;
 			}
 			if (!Configure::configured('_cake_core_')) {
-				Configure::config('_cake_core_', new PhpReader(CAKE . 'Config' . DS));
+				Configure::config('_cake_core_', new PhpReader(CAKE . 'Config/'));
 			}
-			Configure::load('unicode' . DS . 'casefolding' . DS . $range, '_cake_core_');
+			Configure::load('unicode/casefolding/' . $range, '_cake_core_');
 			static::$_caseFold[$range] = Configure::read($range);
 			Configure::delete($range);
 		}

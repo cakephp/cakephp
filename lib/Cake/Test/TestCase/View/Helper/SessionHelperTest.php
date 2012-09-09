@@ -132,7 +132,7 @@ class SessionHelperTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		$result = $this->Session->flash('notification');
 		$result = str_replace("\r\n", "\n", $result);
@@ -165,7 +165,7 @@ class SessionHelperTest extends TestCase {
  */
 	public function testFlashElementInAttrs() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		$result = $this->Session->flash('flash', array(
 			'element' => 'session_helper',
@@ -182,7 +182,7 @@ class SessionHelperTest extends TestCase {
  */
 	public function testFlashWithPluginElement() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
 

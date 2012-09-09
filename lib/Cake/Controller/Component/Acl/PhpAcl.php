@@ -66,7 +66,7 @@ class PhpAcl extends Object implements AclInterface {
 	public function __construct() {
 		$this->options = array(
 			'policy' => static::DENY,
-			'config' => APP . 'Config' . DS . 'acl.php',
+			'config' => APP . 'Config/acl.php',
 		);
 	}
 

@@ -151,7 +151,7 @@ class ProjectTask extends Shell {
 	public function cakeOnIncludePath() {
 		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
 		foreach ($paths as $path) {
-			if (file_exists($path . DS . 'Cake' . DS . 'bootstrap.php')) {
+			if (file_exists($path . DS . 'Cake/bootstrap.php')) {
 				return true;
 			}
 		}
@@ -238,7 +238,7 @@ class ProjectTask extends Shell {
  * @return boolean success
  */
 	public function consolePath($path) {
-		$File = new File($path . 'Console' . DS . 'cake.php');
+		$File = new File($path . 'Console/cake.php');
 		$contents = $File->read();
 		if (preg_match('/(__CAKE_PATH__)/', $contents, $match)) {
 			$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " \$ds . '" : "'";
@@ -259,7 +259,7 @@ class ProjectTask extends Shell {
  * @return boolean Success
  */
 	public function securitySalt($path) {
-		$File = new File($path . 'Config' . DS . 'core.php');
+		$File = new File($path . 'Config/core.php');
 		$contents = $File->read();
 		if (preg_match('/([\s]*Configure::write\(\'Security.salt\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
 			$string = Security::generateAuthKey();
@@ -279,7 +279,7 @@ class ProjectTask extends Shell {
  * @return boolean Success
  */
 	public function securityCipherSeed($path) {
-		$File = new File($path . 'Config' . DS . 'core.php');
+		$File = new File($path . 'Config/core.php');
 		$contents = $File->read();
 		if (preg_match('/([\s]*Configure::write\(\'Security.cipherSeed\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
 			$string = substr(bin2hex(Security::generateAuthKey()), 0, 30);
@@ -300,7 +300,7 @@ class ProjectTask extends Shell {
  */
 	public function cachePrefix($dir) {
 		$app = basename($dir);
-		$File = new File($dir . 'Config' . DS . 'core.php');
+		$File = new File($dir . 'Config/core.php');
 		$contents = $File->read();
 		if (preg_match('/(\$prefix = \'myapp_\';)/', $contents, $match)) {
 			$result = str_replace($match[0], '$prefix = \'' . $app . '_\';', $contents);
@@ -318,11 +318,11 @@ class ProjectTask extends Shell {
  */
 	public function corePath($path, $hardCode = true) {
 		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
-			$filename = $path . 'webroot' . DS . 'index.php';
+			$filename = $path . 'webroot/index.php';
 			if (!$this->_replaceCorePath($filename, $hardCode)) {
 				return false;
 			}
-			$filename = $path . 'webroot' . DS . 'test.php';
+			$filename = $path . 'webroot/test.php';
 			if (!$this->_replaceCorePath($filename, $hardCode)) {
 				return false;
 			}
@@ -363,7 +363,7 @@ class ProjectTask extends Shell {
  * @return boolean Success
  */
 	public function cakeAdmin($name) {
-		$path = (empty($this->configPath)) ? APP . 'Config' . DS : $this->configPath;
+		$path = (empty($this->configPath)) ? APP . 'Config/' : $this->configPath;
 		$File = new File($path . 'core.php');
 		$contents = $File->read();
 		if (preg_match('%(\s*[/]*Configure::write\(\'Routing.prefixes\',[\s\'a-z,\)\(]*\);)%', $contents, $match)) {

@@ -36,7 +36,7 @@ class AllTasksTest extends \PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new TestSuite('All Tasks tests');
 
-		$path = CORE_TEST_CASES . DS . 'Console' . DS . 'Command' . DS . 'Task' . DS;
+		$path = CORE_TEST_CASES . DS . 'Console/Command/Task/';
 		$suite->addTestDirectory($path);
 		return $suite;
 	}

@@ -364,7 +364,7 @@ class ConsoleShell extends Shell {
 		Router::reload();
 		extract(Router::getNamedExpressions());
 
-		if (!@include APP . 'Config' . DS . 'routes.php') {
+		if (!@include APP . 'Config/routes.php') {
 			return false;
 		}
 		Plugin::routes();

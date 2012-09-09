@@ -63,7 +63,7 @@ class HtmlReporter extends BaseReporter {
 	public function paintDocumentStart() {
 		ob_start();
 		$baseDir = $this->params['baseDir'];
-		include CAKE . 'TestSuite' . DS . 'templates' . DS . 'header.php';
+		include CAKE . 'TestSuite/templates/header.php';
 	}
 
 /**
@@ -76,7 +76,7 @@ class HtmlReporter extends BaseReporter {
 		$cases = $this->baseUrl() . '?show=cases';
 		$plugins = App::objects('plugin', null, false);
 		sort($plugins);
-		include CAKE . 'TestSuite' . DS . 'templates' . DS . 'menu.php';
+		include CAKE . 'TestSuite/templates/menu.php';
 	}
 
 /**
@@ -231,7 +231,7 @@ class HtmlReporter extends BaseReporter {
  */
 	public function paintDocumentEnd() {
 		$baseDir = $this->params['baseDir'];
-		include CAKE . 'TestSuite' . DS . 'templates' . DS . 'footer.php';
+		include CAKE . 'TestSuite/templates/footer.php';
 		if (ob_get_length()) {
 			ob_end_flush();
 		}

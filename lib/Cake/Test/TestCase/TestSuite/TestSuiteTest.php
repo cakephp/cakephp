@@ -48,7 +48,7 @@ class TestSuiteTest extends TestCase {
 	public function testAddTestDirectoryRecursive() {
 		$testFolder = CORE_TEST_CASES . DS . 'Cache';
 		$count = count(glob($testFolder . DS . '*Test.php'));
-		$count += count(glob($testFolder . DS . 'Engine' . DS . '*Test.php'));
+		$count += count(glob($testFolder . DS . 'Engine/*Test.php'));
 
 		$suite = $this->getMock('Cake\TestSuite\TestSuite', array('addTestFile'));
 		$suite
@@ -68,7 +68,7 @@ class TestSuiteTest extends TestCase {
 
 		$Folder = new Folder(TMP . 'MyTestFolder', true, 0777);
 		mkdir($Folder->path . DS . '.svn', 0777, true);
-		touch($Folder->path . DS . '.svn' . DS . 'InHiddenFolderTest.php');
+		touch($Folder->path . DS . '.svn/InHiddenFolderTest.php');
 		touch($Folder->path . DS . 'NotHiddenTest.php');
 		touch($Folder->path . DS . '.HiddenTest.php');
 

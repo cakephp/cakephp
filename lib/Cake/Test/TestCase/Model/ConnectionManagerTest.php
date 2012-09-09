@@ -55,7 +55,7 @@ class ConnectionManagerTest extends CakeTestCase {
 	public function testGetDataSource() {
 		App::build(array(
 			'Model/Datasource' => array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS . 'Datasource' . DS
+				CAKE . 'Test/TestApp/Model/Datasource/'
 			)
 		));
 
@@ -88,7 +88,7 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	public function testGetPluginDataSource() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		CakePlugin::load('TestPlugin');
 		$name = 'test_source';
@@ -109,7 +109,7 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	public function testGetPluginDataSourceAndPluginDriver() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		CakePlugin::load('TestPlugin');
 		$name = 'test_plugin_source_and_driver';
@@ -132,7 +132,7 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	public function testGetLocalDataSourceAndPluginDriver() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		CakePlugin::load('TestPlugin');
 		$name = 'test_local_source_and_plugin_driver';
@@ -154,9 +154,9 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	public function testGetPluginDataSourceAndLocalDriver() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
 			'Model/Datasource/Database' => array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
+				CAKE . 'Test/TestApp/Model/Datasource/Database/'
 			)
 		));
 
@@ -258,7 +258,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		$source = ConnectionManager::create('another_test', array());
 		$this->assertEquals(null, $source);
 
-		$config = array('classname' => 'DboMysql', 'filename' => 'dbo' . DS . 'dbo_mysql');
+		$config = array('classname' => 'DboMysql', 'filename' => 'dbo/dbo_mysql');
 		$source = ConnectionManager::create(null, $config);
 		$this->assertEquals(null, $source);
 	}
@@ -270,9 +270,9 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	public function testConnectionData() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
 			'Model/Datasource' => array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS . 'Datasource' . DS
+				CAKE . 'Test/TestApp/Model/Datasource/'
 			)
 		), App::RESET);
 		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
@@ -332,7 +332,7 @@ class ConnectionManagerTest extends CakeTestCase {
 	public function testDrop() {
 		App::build(array(
 			'Model/Datasource' => array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS . 'Datasource' . DS
+				CAKE . 'Test/TestApp/Model/Datasource/'
 			)
 		));
 		ConnectionManager::create('droppable', array('datasource' => 'Test2Source'));

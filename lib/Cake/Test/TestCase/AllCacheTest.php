@@ -36,7 +36,7 @@ class AllCacheTest extends \PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new TestSuite('All Cache related class tests');
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Cache');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Cache' . DS . 'Engine');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Cache/Engine');
 		return $suite;
 	}
 }

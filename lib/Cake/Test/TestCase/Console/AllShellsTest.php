@@ -36,7 +36,7 @@ class AllShellsTest extends \PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new TestSuite('All shell classes');
 
-		$path = CORE_TEST_CASES . DS . 'Console' . DS . 'Command' . DS;
+		$path = CORE_TEST_CASES . DS . 'Console/Command/';
 
 		$suite->addTestDirectory($path);
 		return $suite;

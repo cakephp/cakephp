@@ -36,11 +36,11 @@ class AllControllersTest extends \PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new TestSuite('All Controller related class tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller' . DS . 'ControllerTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller' . DS . 'ScaffoldTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller' . DS . 'PagesControllerTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller' . DS . 'ComponentTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller' . DS . 'ControllerMergeVarsTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/ControllerTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/ScaffoldTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/PagesControllerTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/ComponentTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/ControllerMergeVarsTest.php');
 		return $suite;
 	}
 }

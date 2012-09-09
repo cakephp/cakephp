@@ -710,7 +710,7 @@ class AuthComponentTest extends TestCase {
 		$pref = Configure::read('Routing.prefixes');
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 
 		$url = '/admin/auth_test/add';
 		$this->Auth->request->addParams(Router::parse($url));
@@ -737,7 +737,7 @@ class AuthComponentTest extends TestCase {
  */
 	public function testAjaxLogin() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 
@@ -758,7 +758,7 @@ class AuthComponentTest extends TestCase {
 	public function testLoginActionRedirect() {
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 
 		$url = '/admin/auth_test/login';
 		$request = $this->Auth->request;

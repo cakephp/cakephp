@@ -36,9 +36,9 @@ class AllComponentsTest extends \PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new TestSuite('All component class tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller' . DS . 'ComponentTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller' . DS . 'ComponentCollectionTest.php');
-		$suite->addTestDirectoryRecursive(CORE_TEST_CASES . DS . 'Controller' . DS . 'Component');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/ComponentTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/ComponentCollectionTest.php');
+		$suite->addTestDirectoryRecursive(CORE_TEST_CASES . DS . 'Controller/Component');
 		return $suite;
 	}
 }

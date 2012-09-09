@@ -195,8 +195,8 @@ class ShellTest extends TestCase {
  */
 	public function testInitialize() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
-			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
+			'Model' => array(CAKE . 'Test/TestApp/Model/')
 		), App::RESET);
 
 		Plugin::load('TestPlugin');
@@ -510,25 +510,25 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testShortPath() {
-		$path = $expected = DS . 'tmp' . DS . 'ab' . DS . 'cd';
+		$path = $expected = DS . 'tmp/ab/cd';
 		$this->assertEquals($expected, $this->Shell->shortPath($path));
 
-		$path = $expected = DS . 'tmp' . DS . 'ab' . DS . 'cd' . DS;
+		$path = $expected = DS . 'tmp/ab/cd/';
 		$this->assertEquals($expected, $this->Shell->shortPath($path));
 
-		$path = $expected = DS . 'tmp' . DS . 'ab' . DS . 'index.php';
+		$path = $expected = DS . 'tmp/ab/index.php';
 		$this->assertEquals($expected, $this->Shell->shortPath($path));
 
-		$path = DS . 'tmp' . DS . 'ab' . DS . DS . 'cd';
-		$expected = DS . 'tmp' . DS . 'ab' . DS . 'cd';
+		$path = DS . 'tmp/ab/' . DS . 'cd';
+		$expected = DS . 'tmp/ab/cd';
 		$this->assertEquals($expected, $this->Shell->shortPath($path));
 
-		$path = 'tmp' . DS . 'ab';
-		$expected = 'tmp' . DS . 'ab';
+		$path = 'tmp/ab';
+		$expected = 'tmp/ab';
 		$this->assertEquals($expected, $this->Shell->shortPath($path));
 
-		$path = 'tmp' . DS . 'ab';
-		$expected = 'tmp' . DS . 'ab';
+		$path = 'tmp/ab';
+		$expected = 'tmp/ab';
 		$this->assertEquals($expected, $this->Shell->shortPath($path));
 
 		$path = APP;
@@ -832,7 +832,7 @@ TEXT;
 		$this->assertFalse(file_exists(LOGS . 'error.log'));
 
 		// both file and console logging
-		require_once CORE_TEST_CASES . DS . 'Log' . DS . 'Engine' . DS . 'ConsoleLogTest.php';
+		require_once CORE_TEST_CASES . DS . 'Log/Engine/ConsoleLogTest.php';
 		$mock = $this->getMock('ConsoleLog', array('write'), array(
 			array('types' => 'error'),
 		));

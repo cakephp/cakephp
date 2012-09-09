@@ -88,7 +88,7 @@ class ApiShellTest extends TestCase {
 		$this->Shell->expects($this->at(2))->method('out')->with($expected);
 
 		$this->Shell->args = array('controller');
-		$this->Shell->paths['controller'] = CAKE . 'Controller' . DS;
+		$this->Shell->paths['controller'] = CAKE . 'Controller/';
 		$this->Shell->main();
 	}
 }

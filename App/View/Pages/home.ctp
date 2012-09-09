@@ -83,7 +83,7 @@ endif;
 <p>
 	<?php
 		$filePresent = null;
-		if (file_exists(APP . 'Config' . DS . 'database.php')):
+		if (file_exists(APP . 'Config/database.php')):
 			echo '<span class="notice success">';
 				echo __d('cake_dev', 'Your database configuration file is present.');
 				$filePresent = true;

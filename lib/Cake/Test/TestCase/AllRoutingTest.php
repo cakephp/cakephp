@@ -39,8 +39,8 @@ class AllRoutingTest extends \PHPUnit_Framework_TestSuite {
 		$libs = CORE_TEST_CASES . DS;
 
 		$suite->addTestDirectory($libs . 'Routing');
-		$suite->addTestDirectory($libs . 'Routing' . DS . 'Route');
-		$suite->addTestDirectory($libs . 'Routing' . DS . 'Filter');
+		$suite->addTestDirectory($libs . 'Routing/Route');
+		$suite->addTestDirectory($libs . 'Routing/Filter');
 		return $suite;
 	}
 }

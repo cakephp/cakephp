@@ -46,8 +46,8 @@ class PluginTaskTest extends TestCase {
 			array('in', 'err', 'createFile', '_stop', 'clear'),
 			array($this->out, $this->out, $this->in)
 		);
-		$this->Task->path = TMP . 'tests' . DS;
-		$this->Task->bootstrap = TMP . 'tests' . DS . 'bootstrap.php';
+		$this->Task->path = TMP . 'tests/';
+		$this->Task->bootstrap = TMP . 'tests/bootstrap.php';
 		touch($this->Task->bootstrap);
 
 		$this->_paths = $paths = App::path('Plugin');
@@ -56,7 +56,7 @@ class PluginTaskTest extends TestCase {
 				array_splice($paths, $i, 1);
 			}
 		}
-		$this->_testPath = array_push($paths, TMP . 'tests' . DS);
+		$this->_testPath = array_push($paths, TMP . 'tests/');
 		App::build(array('Plugin' => $paths));
 	}
 
@@ -83,11 +83,11 @@ class PluginTaskTest extends TestCase {
 
 		$path = $this->Task->path . 'BakeTestPlugin';
 
-		$file = $path . DS . 'Controller' . DS . 'BakeTestPluginAppController.php';
+		$file = $path . DS . 'Controller/BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = $path . DS . 'Model' . DS . 'BakeTestPluginAppModel.php';
+		$file = $path . DS . 'Model/BakeTestPluginAppModel.php';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
@@ -97,17 +97,17 @@ class PluginTaskTest extends TestCase {
 		$this->assertTrue(is_dir($path), 'No plugin dir %s');
 
 		$directories = array(
-			'Config' . DS . 'Schema',
-			'Model' . DS . 'Behavior',
-			'Model' . DS . 'Datasource',
-			'Console' . DS . 'Command' . DS . 'Task',
-			'Controller' . DS . 'Component',
+			'Config/Schema',
+			'Model/Behavior',
+			'Model/Datasource',
+			'Console/Command/Task',
+			'Controller/Component',
 			'Lib',
-			'View' . DS . 'Helper',
-			'Test' . DS . 'Case' . DS . 'Controller' . DS . 'Component',
-			'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper',
-			'Test' . DS . 'Case' . DS . 'Model' . DS . 'Behavior',
-			'Test' . DS . 'Fixture',
+			'View/Helper',
+			'Test/Case/Controller/Component',
+			'Test/Case/View/Helper',
+			'Test/Case/Model/Behavior',
+			'Test/Fixture',
 			'Vendor',
 			'webroot'
 		);
@@ -130,12 +130,12 @@ class PluginTaskTest extends TestCase {
 		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'TestPlugin';
-		$file = $path . DS . 'Controller' . DS . 'TestPluginAppController.php';
+		$file = $path . DS . 'Controller/TestPluginAppController.php';
 
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = $path . DS . 'Model' . DS . 'TestPluginAppModel.php';
+		$file = $path . DS . 'Model/TestPluginAppModel.php';
 		$this->Task->expects($this->at(4))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
@@ -158,12 +158,12 @@ class PluginTaskTest extends TestCase {
 			->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'BakeTestPlugin';
-		$file = $path . DS . 'Controller' . DS . 'BakeTestPluginAppController.php';
+		$file = $path . DS . 'Controller/BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$path = $this->Task->path . 'BakeTestPlugin';
-		$file = $path . DS . 'Model' . DS . 'BakeTestPluginAppModel.php';
+		$file = $path . DS . 'Model/BakeTestPluginAppModel.php';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
@@ -189,7 +189,7 @@ class PluginTaskTest extends TestCase {
 			array('in', 'out', 'err', 'createFile', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
-		$this->Task->path = TMP . 'tests' . DS;
+		$this->Task->path = TMP . 'tests/';
 
 		// Make sure the added path is filtered out.
 		$this->Task->expects($this->exactly($last))

@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Security;
 
-require_once CAKE . 'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'models.php';
+require_once CAKE . 'Test/TestCase/Model/models.php';
 
 /**
  * Test case for BlowfishAuthentication
@@ -177,7 +177,7 @@ class BlowfishAuthenticateTest extends TestCase {
 	public function testPluginModel() {
 		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Plugin::load('TestPlugin');
 

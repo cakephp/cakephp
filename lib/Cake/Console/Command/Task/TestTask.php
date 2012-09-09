@@ -533,7 +533,7 @@ class TestTask extends BakeTask {
  * @return string filename the test should be created on.
  */
 	public function testCaseFileName($type, $className) {
-		$path = $this->getPath() . 'Case' . DS;
+		$path = $this->getPath() . 'Case/';
 		$type = Inflector::camelize($type);
 		if (isset($this->classTypes[$type])) {
 			$path .= $this->classTypes[$type] . DS;

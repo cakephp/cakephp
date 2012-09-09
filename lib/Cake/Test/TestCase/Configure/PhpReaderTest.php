@@ -51,7 +51,7 @@ class PhpReaderTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->path = CAKE . 'Test' . DS . 'TestApp' . DS . 'Config'. DS;
+		$this->path = CAKE . 'Test/TestApp/Config'. DS;
 	}
 
 /**
@@ -120,7 +120,7 @@ class PhpReaderTest extends TestCase {
  */
 	public function testReadPluginValue() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Plugin::load('TestPlugin');
 		$reader = new PhpReader($this->path);

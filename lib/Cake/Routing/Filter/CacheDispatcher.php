@@ -51,10 +51,10 @@ class CacheDispatcher extends DispatcherFilter {
 		}
 		$path = strtolower(Inflector::slug($path));
 
-		$filename = CACHE . 'views' . DS . $path . '.php';
+		$filename = CACHE . 'views/' . $path . '.php';
 
 		if (!file_exists($filename)) {
-			$filename = CACHE . 'views' . DS . $path . '_index.php';
+			$filename = CACHE . 'views/' . $path . '_index.php';
 		}
 		if (file_exists($filename)) {
 			$controller = null;

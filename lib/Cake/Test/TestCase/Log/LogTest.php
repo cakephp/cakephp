@@ -51,8 +51,8 @@ class LogTest extends TestCase {
  */
 	public function testImportingLoggers() {
 		App::build(array(
-			'Lib' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Lib' . DS),
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Lib' => array(CAKE . 'Test/TestApp/Lib/'),
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');

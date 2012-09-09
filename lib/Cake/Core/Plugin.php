@@ -180,12 +180,12 @@ class Plugin {
 
 		$path = static::path($plugin);
 		if ($config['bootstrap'] === true) {
-			return include $path . 'Config' . DS . 'bootstrap.php';
+			return include $path . 'Config/bootstrap.php';
 		}
 
 		$bootstrap = (array)$config['bootstrap'];
 		foreach ($bootstrap as $file) {
-			include $path . 'Config' . DS . $file . '.php';
+			include $path . 'Config/' . $file . '.php';
 		}
 
 		return true;
@@ -209,7 +209,7 @@ class Plugin {
 		if ($config['routes'] === false) {
 			return false;
 		}
-		return (bool)include static::path($plugin) . 'Config' . DS . 'routes.php';
+		return (bool)include static::path($plugin) . 'Config/routes.php';
 	}
 
 /**

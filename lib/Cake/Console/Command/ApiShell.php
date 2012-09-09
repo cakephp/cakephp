@@ -45,13 +45,13 @@ class ApiShell extends Shell {
  */
 	public function initialize() {
 		$this->paths = array_merge($this->paths, array(
-			'behavior' => CAKE . 'Model' . DS . 'Behavior' . DS,
-			'cache' => CAKE . 'Cache' . DS,
-			'controller' => CAKE . 'Controller' . DS,
-			'component' => CAKE . 'Controller' . DS . 'Component' . DS,
-			'helper' => CAKE . 'View' . DS . 'Helper' . DS,
-			'model' => CAKE . 'Model' . DS,
-			'view' => CAKE . 'View' . DS,
+			'behavior' => CAKE . 'Model/Behavior/',
+			'cache' => CAKE . 'Cache/',
+			'controller' => CAKE . 'Controller/',
+			'component' => CAKE . 'Controller/Component/',
+			'helper' => CAKE . 'View/Helper/',
+			'model' => CAKE . 'Model/',
+			'view' => CAKE . 'View/',
 			'core' => CAKE
 		));
 	}

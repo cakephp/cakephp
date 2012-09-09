@@ -214,7 +214,7 @@ class HelperTest extends TestCase {
 		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
 
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
 		));
 	}
 
@@ -676,7 +676,7 @@ class HelperTest extends TestCase {
 	public function testAssetTimestampPluginsAndThemes() {
 		Configure::write('Asset.timestamp', 'force');
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS),
+			'View' => array(CAKE . 'Test/TestApp/View/'),
 		));
 		Plugin::load(array('TestPlugin'));
 
@@ -872,7 +872,7 @@ class HelperTest extends TestCase {
 		$this->Helper->theme = 'test_theme';
 
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
@@ -884,7 +884,7 @@ class HelperTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$webRoot = Configure::read('App.www_root');
-		Configure::write('App.www_root', CAKE . 'Test' . DS . 'TestApp' . DS . 'webroot' . DS);
+		Configure::write('App.www_root', CAKE . 'Test/TestApp/webroot/');
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/theme/test_theme/img/cake.power.gif';
@@ -912,7 +912,7 @@ class HelperTest extends TestCase {
  */
 	public function testLazyLoadingHelpers() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
 		));
 		Plugin::load(array('TestPlugin'));
 
@@ -929,7 +929,7 @@ class HelperTest extends TestCase {
  */
 	public function testThatHelperHelpersAreNotAttached() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
 		), App::RESET);
 		Plugin::loadAll();
 

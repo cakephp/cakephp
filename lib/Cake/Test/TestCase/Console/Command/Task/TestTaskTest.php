@@ -258,7 +258,7 @@ class TestTaskTest extends TestCase {
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->never())->method('_stop');
 
-		$file = TESTS . 'Case' . DS . 'Model' . DS . 'MyClassTest.php';
+		$file = TESTS . 'Case/Model/MyClassTest.php';
 
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with($file, $this->anything());
@@ -266,7 +266,7 @@ class TestTaskTest extends TestCase {
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, $this->anything());
 
-		$file = TESTS . 'Case' . DS . 'Controller' . DS . 'CommentsControllerTest.php';
+		$file = TESTS . 'Case/Controller/CommentsControllerTest.php';
 		$this->Task->expects($this->at(5))->method('createFile')
 			->with($file, $this->anything());
 
@@ -618,8 +618,8 @@ class TestTaskTest extends TestCase {
 		$this->Task->plugin = 'TestTest';
 
 		//fake plugin path
-		Plugin::load('TestTest', array('path' => APP . 'Plugin' . DS . 'TestTest' . DS));
-		$path =  APP . 'Plugin' . DS . 'TestTest' . DS . 'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'FormHelperTest.php';
+		Plugin::load('TestTest', array('path' => APP . 'Plugin/TestTest/'));
+		$path =  APP . 'Plugin/TestTest/Test/Case/View/Helper/FormHelperTest.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, $this->anything());
 
@@ -633,14 +633,14 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testInteractiveWithPlugin() {
-		$testApp = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS;
+		$testApp = CAKE . 'Test/TestApp/Plugin/';
 		App::build(array(
 			'Plugin' => array($testApp)
 		), App::RESET);
 		Plugin::load('TestPlugin');
 
 		$this->Task->plugin = 'TestPlugin';
-		$path = $testApp . 'TestPlugin' . DS . 'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' . DS . 'OtherHelperTest.php';
+		$path = $testApp . 'TestPlugin/Test/Case/View/Helper/OtherHelperTest.php';
 		$this->Task->expects($this->any())
 			->method('in')
 			->will($this->onConsecutiveCalls(
@@ -661,16 +661,16 @@ class TestTaskTest extends TestCase {
 
 	public static function caseFileNameProvider() {
 		return array(
-			array('Model', 'Post', 'Case' . DS . 'Model' . DS . 'PostTest.php'),
-			array('Helper', 'Form', 'Case' . DS . 'View' . DS . 'Helper' . DS . 'FormHelperTest.php'),
-			array('Controller', 'Posts', 'Case' . DS . 'Controller' . DS . 'PostsControllerTest.php'),
-			array('Behavior', 'Containable', 'Case' . DS . 'Model' . DS . 'Behavior' . DS . 'ContainableBehaviorTest.php'),
-			array('Component', 'Auth', 'Case' . DS . 'Controller' . DS . 'Component' . DS . 'AuthComponentTest.php'),
-			array('model', 'Post', 'Case' . DS . 'Model' . DS . 'PostTest.php'),
-			array('helper', 'Form', 'Case' . DS . 'View' . DS . 'Helper' . DS . 'FormHelperTest.php'),
-			array('controller', 'Posts', 'Case' . DS . 'Controller' . DS . 'PostsControllerTest.php'),
-			array('behavior', 'Containable', 'Case' . DS . 'Model' . DS . 'Behavior' . DS . 'ContainableBehaviorTest.php'),
-			array('component', 'Auth', 'Case' . DS . 'Controller' . DS . 'Component' . DS . 'AuthComponentTest.php'),
+			array('Model', 'Post', 'Case/Model/PostTest.php'),
+			array('Helper', 'Form', 'Case/View/Helper/FormHelperTest.php'),
+			array('Controller', 'Posts', 'Case/Controller/PostsControllerTest.php'),
+			array('Behavior', 'Containable', 'Case/Model/Behavior/ContainableBehaviorTest.php'),
+			array('Component', 'Auth', 'Case/Controller/Component/AuthComponentTest.php'),
+			array('model', 'Post', 'Case/Model/PostTest.php'),
+			array('helper', 'Form', 'Case/View/Helper/FormHelperTest.php'),
+			array('controller', 'Posts', 'Case/Controller/PostsControllerTest.php'),
+			array('behavior', 'Containable', 'Case/Model/Behavior/ContainableBehaviorTest.php'),
+			array('component', 'Auth', 'Case/Controller/Component/AuthComponentTest.php'),
 		);
 	}
 
@@ -681,7 +681,7 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testTestCaseFileName($type, $class, $expected) {
-		$this->Task->path = DS . 'my' . DS . 'path' . DS . 'tests' . DS;
+		$this->Task->path = DS . 'my/path/tests/';
 
 		$result = $this->Task->testCaseFileName($type, $class);
 		$expected = $this->Task->path . $expected;
@@ -694,12 +694,12 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testTestCaseFileNamePlugin() {
-		$this->Task->path = DS . 'my' . DS . 'path' . DS . 'tests' . DS;
+		$this->Task->path = DS . 'my/path/tests/';
 
-		Plugin::load('TestTest', array('path' => APP . 'Plugin' . DS . 'TestTest' . DS ));
+		Plugin::load('TestTest', array('path' => APP . 'Plugin/TestTest/' ));
 		$this->Task->plugin = 'TestTest';
 		$result = $this->Task->testCaseFileName('Model', 'Post');
-		$expected = APP . 'Plugin' . DS . 'TestTest' . DS . 'Test' . DS . 'Case' . DS . 'Model' . DS . 'PostTest.php';
+		$expected = APP . 'Plugin/TestTest/Test/Case/Model/PostTest.php';
 		$this->assertEquals($expected, $result);
 	}
 

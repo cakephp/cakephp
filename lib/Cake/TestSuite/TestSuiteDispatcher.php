@@ -20,7 +20,7 @@ namespace Cake\TestSuite;
 use Cake\Core\App;
 use Cake\Error;
 
-define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'TestCase');
+define('CORE_TEST_CASES', CAKE . 'Test/TestCase');
 define('APP_TEST_CASES', TESTS . 'TestCase');
 
 /**
@@ -126,7 +126,7 @@ class TestSuiteDispatcher {
 		$found = $this->loadTestFramework();
 		if (!$found) {
 			$baseDir = $this->_baseDir;
-			include CAKE . 'TestSuite' . DS . 'templates' . DS . 'phpunit.php';
+			include CAKE . 'TestSuite/templates/phpunit.php';
 			exit();
 		}
 	}
@@ -144,7 +144,7 @@ class TestSuiteDispatcher {
 			}
 		}
 
-		return include 'PHPUnit' . DS . 'Autoload.php';
+		return include 'PHPUnit/Autoload.php';
 	}
 
 /**
@@ -156,7 +156,7 @@ class TestSuiteDispatcher {
 	protected function _checkXdebug() {
 		if (!extension_loaded('xdebug')) {
 			$baseDir = $this->_baseDir;
-			include CAKE . 'TestSuite' . DS . 'templates' . DS . 'xdebug.php';
+			include CAKE . 'TestSuite/templates/xdebug.php';
 			exit();
 		}
 	}
@@ -244,7 +244,7 @@ class TestSuiteDispatcher {
 		} catch (Error\MissingConnectionException $exception) {
 			ob_end_clean();
 			$baseDir = $this->_baseDir;
-			include CAKE . 'TestSuite' . DS . 'templates' . DS . 'missing_connection.php';
+			include CAKE . 'TestSuite/templates/missing_connection.php';
 			exit();
 		}
 	}

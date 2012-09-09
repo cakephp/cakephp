@@ -36,9 +36,9 @@ class AllHelpersTest extends \PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new TestSuite('All Helper tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'View' . DS . 'HelperTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'View' . DS . 'HelperCollectionTest.php');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'View' . DS . 'Helper' . DS);
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'View/HelperTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'View/HelperCollectionTest.php');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'View/Helper/');
 		return $suite;
 	}
 }

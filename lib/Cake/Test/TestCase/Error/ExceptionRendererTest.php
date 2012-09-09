@@ -162,7 +162,7 @@ class ExceptionRendererTest extends TestCase {
 		parent::setUp();
 		App::build(array(
 			'View' => array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS
+				CAKE . 'Test/TestApp/View/'
 			)
 		), App::RESET);
 		Router::reload();
@@ -286,19 +286,19 @@ class ExceptionRendererTest extends TestCase {
  * test that helpers in custom CakeErrorController are not lost
  */
 	public function testCakeErrorHelpersNotLost() {
-		$testApp = CAKE . 'Test' . DS . 'TestApp' . DS;
+		$testApp = CAKE . 'Test/TestApp/';
 		App::build(array(
 			'Controller' => array(
-				$testApp . 'Controller' . DS
+				$testApp . 'Controller/'
 			),
 			'View/Helper' => array(
-				$testApp . 'View' . DS . 'Helper' . DS
+				$testApp . 'View/Helper/'
 			),
 			'View/Layouts' => array(
-				$testApp . 'View' . DS . 'Layouts' . DS
+				$testApp . 'View/Layouts/'
 			),
 			'Error' => array(
-				$testApp . 'Error' . DS
+				$testApp . 'Error/'
 			),
 		), App::RESET);
 

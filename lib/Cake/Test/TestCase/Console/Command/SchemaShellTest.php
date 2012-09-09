@@ -148,7 +148,7 @@ class SchemaShellTest extends TestCase {
 		$this->assertEquals('TestSchema', $this->Shell->Schema->name);
 		$this->assertEquals('test_schema.php', $this->Shell->Schema->file);
 		$this->assertEquals('default', $this->Shell->Schema->connection);
-		$this->assertEquals(APP . 'Config' . DS . 'Schema', $this->Shell->Schema->path);
+		$this->assertEquals(APP . 'Config/Schema', $this->Shell->Schema->path);
 
 		$this->Shell->Schema = null;
 		$this->Shell->params = array(
@@ -170,7 +170,7 @@ class SchemaShellTest extends TestCase {
  */
 	public function testView() {
 		$this->Shell->startup();
-		$this->Shell->Schema->path = APP . 'Config' . DS . 'Schema';
+		$this->Shell->Schema->path = APP . 'Config/Schema';
 		$this->Shell->params['file'] = 'i18n.php';
 		$this->Shell->expects($this->once())->method('_stop');
 		$this->Shell->expects($this->once())->method('out');
@@ -184,7 +184,7 @@ class SchemaShellTest extends TestCase {
  */
 	public function testViewWithPlugins() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
 		$this->Shell->args = array('TestPlugin.schema');
@@ -211,13 +211,13 @@ class SchemaShellTest extends TestCase {
 		$this->Shell->params = array(
 			'name' => 'i18n',
 			'connection' => 'test',
-			'write' => TMP . 'tests' . DS . 'i18n.sql'
+			'write' => TMP . 'tests/i18n.sql'
 		);
 		$this->Shell->expects($this->once())->method('_stop');
 		$this->Shell->startup();
 		$this->Shell->dump();
 
-		$this->file = new File(TMP . 'tests' . DS . 'i18n.sql');
+		$this->file = new File(TMP . 'tests/i18n.sql');
 		$contents = $this->file->read();
 		$this->assertRegExp('/DROP TABLE/', $contents);
 		$this->assertRegExp('/CREATE TABLE.*?i18n/', $contents);
@@ -236,19 +236,19 @@ class SchemaShellTest extends TestCase {
  */
 	public function testDumpFileWritingWithPlugins() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
 		$this->Shell->args = array('TestPlugin.TestPluginApp');
 		$this->Shell->params = array(
 			'connection' => 'test',
-			'write' => TMP . 'tests' . DS . 'dump_test.sql'
+			'write' => TMP . 'tests/dump_test.sql'
 		);
 		$this->Shell->startup();
 		$this->Shell->expects($this->once())->method('_stop');
 		$this->Shell->dump();
 
-		$this->file = new File(TMP . 'tests' . DS . 'dump_test.sql');
+		$this->file = new File(TMP . 'tests/dump_test.sql');
 		$contents = $this->file->read();
 
 		$this->assertRegExp('/CREATE TABLE.*?test_plugin_acos/', $contents);
@@ -337,7 +337,7 @@ class SchemaShellTest extends TestCase {
  */
 	public function testGenerateWithPlugins() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Plugin::load('TestPlugin');
 
@@ -348,10 +348,10 @@ class SchemaShellTest extends TestCase {
 			'force' => false
 		);
 		$this->Shell->startup();
-		$this->Shell->Schema->path = TMP . 'tests' . DS;
+		$this->Shell->Schema->path = TMP . 'tests/';
 
 		$this->Shell->generate();
-		$this->file = new File(TMP . 'tests' . DS . 'schema.php');
+		$this->file = new File(TMP . 'tests/schema.php');
 		$contents = $this->file->read();
 
 		$this->assertRegExp('/class TestPluginSchema/', $contents);
@@ -371,7 +371,7 @@ class SchemaShellTest extends TestCase {
  */
 	public function testGenerateModels() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Plugin::load('TestPlugin');
 
@@ -384,10 +384,10 @@ class SchemaShellTest extends TestCase {
 			'overwrite' => true
 		);
 		$this->Shell->startup();
-		$this->Shell->Schema->path = TMP . 'tests' . DS;
+		$this->Shell->Schema->path = TMP . 'tests/';
 
 		$this->Shell->generate();
-		$this->file = new File(TMP . 'tests' . DS . 'schema.php');
+		$this->file = new File(TMP . 'tests/schema.php');
 		$contents = $this->file->read();
 
 		$this->assertRegExp('/class TestPluginSchema/', $contents);
@@ -436,7 +436,7 @@ class SchemaShellTest extends TestCase {
 		$this->Shell->params = array(
 			'connection' => 'test',
 			'name' => 'DbAcl',
-			'path' => APP . 'Config' . DS . 'Schema'
+			'path' => APP . 'Config/Schema'
 		);
 		$this->Shell->args = array('DbAcl', 'acos');
 		$this->Shell->startup();
@@ -486,7 +486,7 @@ class SchemaShellTest extends TestCase {
  */
 	public function testPluginParam() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
 		$this->Shell->params = array(
@@ -494,7 +494,7 @@ class SchemaShellTest extends TestCase {
 			'connection' => 'test'
 		);
 		$this->Shell->startup();
-		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Config' . DS . 'Schema';
+		$expected = CAKE . 'Test/TestApp/Plugin/TestPlugin/Config/Schema';
 		$this->assertEquals($expected, $this->Shell->Schema->path);
 		Plugin::unload();
 	}
@@ -506,7 +506,7 @@ class SchemaShellTest extends TestCase {
  */
 	public function testName() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
 		$this->Shell->params = array(
@@ -535,7 +535,7 @@ class SchemaShellTest extends TestCase {
  */
 	public function testPluginDotSyntaxWithCreate() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
 		$this->Shell->params = array(

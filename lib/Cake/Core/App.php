@@ -252,7 +252,7 @@ class App {
  *
  * `App::build(array('View/Helper' => array('/path/to/helpers/', '/another/path/'))); will setup multiple search paths for helpers`
  *
- * `App::build(array('Service' => array('%s' . 'Service' . DS)), App::REGISTER); will register new package 'Service'`
+ * `App::build(array('Service' => array('%s' . 'Service/')), App::REGISTER); will register new package 'Service'`
  *
  * If reset is set to true, all loaded plugins will be forgotten and they will be needed to be loaded again.
  *
@@ -355,7 +355,7 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::themePath
  */
 	public static function themePath($theme) {
-		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
+		$themeDir = 'Themed/' . Inflector::camelize($theme);
 		foreach (static::$_packages['View'] as $path) {
 			if (is_dir($path . $themeDir)) {
 				return $path . $themeDir . DS;
@@ -503,7 +503,7 @@ class App {
 			$paths[] = CAKE . $package . DS;
 		} else {
 			$pluginPath = static::pluginPath($plugin);
-			$paths[] = $pluginPath . 'Lib' . DS . $package . DS;
+			$paths[] = $pluginPath . 'Lib/' . $package . DS;
 			$paths[] = $pluginPath . $package . DS;
 		}
 
@@ -590,60 +590,60 @@ class App {
 		if (empty(static::$_packageFormat)) {
 			static::$_packageFormat = array(
 				'Model' => array(
-					'%s' . 'Model' . DS
+					'%s' . 'Model/'
 				),
 				'Model/Behavior' => array(
-					'%s' . 'Model' . DS . 'Behavior' . DS
+					'%s' . 'Model/Behavior/'
 				),
 				'Model/Datasource' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS
+					'%s' . 'Model/Datasource/'
 				),
 				'Model/Datasource/Database' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
+					'%s' . 'Model/Datasource/Database/'
 				),
 				'Model/Datasource/Session' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS . 'Session' . DS
+					'%s' . 'Model/Datasource/Session/'
 				),
 				'Controller' => array(
-					'%s' . 'Controller' . DS
+					'%s' . 'Controller/'
 				),
 				'Controller/Component' => array(
-					'%s' . 'Controller' . DS . 'Component' . DS
+					'%s' . 'Controller/Component/'
 				),
 				'Controller/Component/Auth' => array(
-					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS
+					'%s' . 'Controller/Component/Auth/'
 				),
 				'Controller/Component/Acl' => array(
-					'%s' . 'Controller' . DS . 'Component' . DS . 'Acl' . DS
+					'%s' . 'Controller/Component/Acl/'
 				),
 				'View' => array(
-					'%s' . 'View' . DS
+					'%s' . 'View/'
 				),
 				'View/Helper' => array(
-					'%s' . 'View' . DS . 'Helper' . DS
+					'%s' . 'View/Helper/'
 				),
 				'Console' => array(
-					'%s' . 'Console' . DS
+					'%s' . 'Console/'
 				),
 				'Console/Command' => array(
-					'%s' . 'Console' . DS . 'Command' . DS
+					'%s' . 'Console/Command/'
 				),
 				'Console/Command/Task' => array(
-					'%s' . 'Console' . DS . 'Command' . DS . 'Task' . DS
+					'%s' . 'Console/Command/Task/'
 				),
 				'Lib' => array(
-					'%s' . 'Lib' . DS
+					'%s' . 'Lib/'
 				),
 				'Locale' => array(
-					'%s' . 'Locale' . DS
+					'%s' . 'Locale/'
 				),
 				'Vendor' => array(
-					'%s' . 'Vendor' . DS,
-					dirname(dirname(CAKE)) . DS . 'vendors' . DS,
+					'%s' . 'Vendor/',
+					dirname(dirname(CAKE)) . DS . 'vendors/',
 				),
 				'Plugin' => array(
-					APP . 'Plugin' . DS,
-					dirname(dirname(CAKE)) . DS . 'plugins' . DS
+					APP . 'Plugin/',
+					dirname(dirname(CAKE)) . DS . 'plugins/'
 				)
 			);
 		}

@@ -37,7 +37,7 @@ if (!defined('WEBROOT_DIR')) {
 /**
  * Path to the cake directory.
  */
-	define('CAKE', CORE_PATH . 'Cake' . DS);
+	define('CAKE', CORE_PATH . 'Cake/');
 
 /**
  * Path to the application's directory.
@@ -49,56 +49,56 @@ if (!defined('APP')) {
 /**
  * Path to the application's libs directory.
  */
-	define('APPLIBS', APP . 'Lib' . DS);
+	define('APPLIBS', APP . 'Lib/');
 
 /**
  * Path to the public CSS directory.
  */
-	define('CSS', WWW_ROOT . 'css' . DS);
+	define('CSS', WWW_ROOT . 'css/');
 
 /**
  * Path to the public JavaScript directory.
  */
-	define('JS', WWW_ROOT . 'js' . DS);
+	define('JS', WWW_ROOT . 'js/');
 
 /**
  * Path to the public images directory.
  */
-	define('IMAGES', WWW_ROOT . 'img' . DS);
+	define('IMAGES', WWW_ROOT . 'img/');
 
 /**
  * Path to the tests directory.
  */
 if (!defined('TESTS')) {
-	define('TESTS', APP . 'Test' . DS);
+	define('TESTS', APP . 'Test/');
 }
 
 /**
  * Path to the temporary files directory.
  */
 if (!defined('TMP')) {
-	define('TMP', APP . 'tmp' . DS);
+	define('TMP', APP . 'tmp/');
 }
 
 /**
  * Path to the logs directory.
  */
 if (!defined('LOGS')) {
-	define('LOGS', TMP . 'logs' . DS);
+	define('LOGS', TMP . 'logs/');
 }
 
 /**
  * Path to the cache files directory. It can be shared between hosts in a multi-server setup.
  */
 if (!defined('CACHE')) {
-	define('CACHE', TMP . 'cache' . DS);
+	define('CACHE', TMP . 'cache/');
 }
 
 /**
  * Path to the vendors directory.
  */
 if (!defined('VENDORS')) {
-	define('VENDORS', ROOT . DS . 'vendors' . DS);
+	define('VENDORS', ROOT . DS . 'vendors/');
 }
 
 /**
@@ -123,7 +123,7 @@ if (!defined('JS_URL')) {
 }
 
 require CAKE . 'basics.php';
-require CAKE . 'Core' . DS . 'ClassLoader.php';
+require CAKE . 'Core/ClassLoader.php';
 $loader = new \Cake\Core\ClassLoader('Cake', CORE_PATH);
 $loader->register();
 

@@ -67,7 +67,7 @@ class ConnectionManager {
  * @return void
  */
 	protected static function _init() {
-		include_once APP . 'Config' . DS . 'database.php';
+		include_once APP . 'Config/database.php';
 		$class = Configure::read('App.namespace') . '\Config\DATABASE_CONFIG';
 		if (class_exists($class)) {
 			static::$config = new $class();

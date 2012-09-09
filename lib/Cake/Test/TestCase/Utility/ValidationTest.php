@@ -2253,7 +2253,7 @@ class ValidationTest extends TestCase {
  * @return void
  */
 	public function testMimeType() {
-		$image = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'TestApp' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$image = CORE_PATH . 'Cake/Test/TestApp/webroot/img/cake.power.gif';
 		$File = new File($image, false);
 		$this->skipIf(!$File->mime(), 'Cannot determine mimeType');
 		$this->assertTrue(Validation::mimeType($image, array('image/gif')));
@@ -2270,7 +2270,7 @@ class ValidationTest extends TestCase {
  * @return void
  */
 	public function testMimeTypeFalse() {
-		$image = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'TestApp' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$image = CORE_PATH . 'Cake/Test/TestApp/webroot/img/cake.power.gif';
 		$File = new File($image, false);
 		$this->skipIf($File->mime(), 'mimeType can be determined, no Exception will be thrown');
 		Validation::mimeType($image, array('image/gif'));

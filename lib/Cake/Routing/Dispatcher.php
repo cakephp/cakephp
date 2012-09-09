@@ -278,7 +278,7 @@ class Dispatcher implements EventListener {
  * @return void
  */
 	protected function _loadRoutes() {
-		include APP . 'Config' . DS . 'routes.php';
+		include APP . 'Config/routes.php';
 	}
 
 }

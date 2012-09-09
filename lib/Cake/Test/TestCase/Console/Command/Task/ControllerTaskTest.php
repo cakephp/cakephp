@@ -300,8 +300,8 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->plugin = 'ControllerTest';
 
 		//fake plugin path
-		Plugin::load('ControllerTest', array('path' => APP . 'Plugin' . DS . 'ControllerTest' . DS));
-		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'Controller' . DS . 'ArticlesController.php';
+		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
+		$path = APP . 'Plugin/ControllerTest/Controller/ArticlesController.php';
 
 		$this->Task->expects($this->at(1))->method('createFile')->with(
 			$path,
@@ -315,7 +315,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->Task->plugin = 'ControllerTest';
-		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'Controller' . DS . 'ArticlesController.php';
+		$path = APP . 'Plugin/ControllerTest/Controller/ArticlesController.php';
 		$result = $this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->assertContains("App::uses('ControllerTestAppController', 'ControllerTest.Controller');", $result);

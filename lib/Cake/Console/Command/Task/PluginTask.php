@@ -50,7 +50,7 @@ class PluginTask extends Shell {
  */
 	public function initialize() {
 		$this->path = current(App::path('Plugin'));
-		$this->bootstrap = APP . 'Config' . DS . 'bootstrap.php';
+		$this->bootstrap = APP . 'Config/bootstrap.php';
 	}
 
 /**
@@ -111,17 +111,17 @@ class PluginTask extends Shell {
 		if (strtolower($looksGood) == 'y') {
 			$Folder = new Folder($this->path . $plugin);
 			$directories = array(
-				'Config' . DS . 'Schema',
-				'Model' . DS . 'Behavior',
-				'Model' . DS . 'Datasource',
-				'Console' . DS . 'Command' . DS . 'Task',
-				'Controller' . DS . 'Component',
+				'Config/Schema',
+				'Model/Behavior',
+				'Model/Datasource',
+				'Console/Command/Task',
+				'Controller/Component',
 				'Lib',
-				'View' . DS . 'Helper',
-				'Test' . DS . 'Case' . DS . 'Controller' . DS . 'Component',
-				'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper',
-				'Test' . DS . 'Case' . DS . 'Model' . DS . 'Behavior',
-				'Test' . DS . 'Fixture',
+				'View/Helper',
+				'Test/Case/Controller/Component',
+				'Test/Case/View/Helper',
+				'Test/Case/Model/Behavior',
+				'Test/Fixture',
 				'Vendor',
 				'webroot'
 			);
@@ -149,14 +149,14 @@ class PluginTask extends Shell {
 			$out = "<?php\n\n";
 			$out .= "class {$plugin}AppController extends AppController {\n\n";
 			$out .= "}\n\n";
-			$this->createFile($this->path . $plugin . DS . 'Controller' . DS . $controllerFileName, $out);
+			$this->createFile($this->path . $plugin . DS . 'Controller/' . $controllerFileName, $out);
 
 			$modelFileName = $plugin . 'AppModel.php';
 
 			$out = "<?php\n\n";
 			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
 			$out .= "}\n\n";
-			$this->createFile($this->path . $plugin . DS . 'Model' . DS . $modelFileName, $out);
+			$this->createFile($this->path . $plugin . DS . 'Model/' . $modelFileName, $out);
 
 			$this->_modifyBootstrap($plugin);
 

@@ -99,13 +99,13 @@ class NumberHelperTest extends TestCase {
  */
 	public function testEngineOverride() {
 		App::build(array(
-			'Utility' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Utility' . DS)
+			'Utility' => array(CAKE . 'Test/TestApp/Utility/')
 		), App::REGISTER);
 		$Number = new NumberHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
 		$this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Number->engine());
 
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
 		$Number = new NumberHelperTestObject($this->View, array('engine' => 'TestPlugin.TestPluginEngine'));

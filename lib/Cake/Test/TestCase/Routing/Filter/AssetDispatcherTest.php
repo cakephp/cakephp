@@ -46,8 +46,8 @@ class AssetDispatcherTest extends TestCase {
 			'css' => ''
 		));
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		), APP::RESET);
 
 		$request = new Request('theme/test_theme/ccss/cake.generic.css');
@@ -94,10 +94,10 @@ class AssetDispatcherTest extends TestCase {
 			'css' => ''
 		));
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
-		$time = filemtime(App::themePath('TestTheme') . 'webroot' . DS . 'img' . DS . 'cake.power.gif');
+		$time = filemtime(App::themePath('TestTheme') . 'webroot/img/cake.power.gif');
 		$time = new \DateTime('@' . $time);
 
 		$response = $this->getMock('Cake\Network\Response', array('send', 'checkNotModified'));

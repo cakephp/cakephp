@@ -48,7 +48,7 @@ class ExtractTaskTest extends TestCase {
 			array('in', 'out', 'err', '_stop'),
 			array($out, $out, $in)
 		);
-		$this->path = TMP . 'tests' . DS . 'extract_task_test';
+		$this->path = TMP . 'tests/extract_task_test';
 		$Folder = new Folder($this->path . DS . 'locale', true);
 	}
 
@@ -74,7 +74,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExecute() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Pages';
+		$this->Task->params['paths'] = CAKE . 'Test/TestApp/View/Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->expects($this->never())->method('err');
@@ -185,7 +185,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExtractWithExclude() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS . 'View';
+		$this->Task->params['paths'] = CAKE . 'Test/TestApp/View';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude'] = 'Pages,Layouts';
 		$this->Task->params['extract-core'] = 'no';
@@ -213,8 +213,8 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] =
-			CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Pages,' .
-			CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Posts';
+			CAKE . 'Test/TestApp/View/Pages,' .
+			CAKE . 'Test/TestApp/View/Posts';
 
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
@@ -235,7 +235,7 @@ class ExtractTaskTest extends TestCase {
  */
 	public function testExtractExcludePlugins() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
@@ -245,7 +245,7 @@ class ExtractTaskTest extends TestCase {
 		);
 		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS;
+		$this->Task->params['paths'] = CAKE . 'Test/TestApp/';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude-plugins'] = true;
 
@@ -261,7 +261,7 @@ class ExtractTaskTest extends TestCase {
  */
 	public function testExtractPlugin() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
@@ -288,8 +288,8 @@ class ExtractTaskTest extends TestCase {
  */
 	public function testExtractModelValidation() {
 		App::build(array(
-			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS),
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Model' => array(CAKE . 'Test/TestApp/Model/'),
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
@@ -299,7 +299,7 @@ class ExtractTaskTest extends TestCase {
 		);
 		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS;
+		$this->Task->params['paths'] = CAKE . 'Test/TestApp/';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['exclude-plugins'] = true;
@@ -308,10 +308,10 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
-		$pattern = preg_quote('#Model' . DS . 'PersisterOne.php:validation for field title#', '\\');
+		$pattern = preg_quote('#Model/PersisterOne.php:validation for field title#', '\\');
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = preg_quote('#Model' . DS . 'PersisterOne.php:validation for field body#', '\\');
+		$pattern = preg_quote('#Model/PersisterOne.php:validation for field body#', '\\');
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
@@ -335,7 +335,7 @@ class ExtractTaskTest extends TestCase {
  */
 	public function testExtractModelValidationWithDomainInModel() {
 		App::build(array(
-			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'Model' . DS)
+			'Model' => array(CAKE . 'Test/TestApp/Plugin/TestPlugin/Model/')
 		));
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
@@ -345,7 +345,7 @@ class ExtractTaskTest extends TestCase {
 		);
 		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS;
+		$this->Task->params['paths'] = CAKE . 'Test/TestApp/';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['exclude-plugins'] = true;
@@ -354,10 +354,10 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
 
-		$pattern = preg_quote('#Plugin' . DS . 'TestPlugin' . DS . 'Model' . DS . 'TestPluginPost.php:validation for field title#', '\\');
+		$pattern = preg_quote('#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#', '\\');
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = preg_quote('#Plugin' . DS . 'TestPlugin' . DS . 'Model' . DS . 'TestPluginPost.php:validation for field body#', '\\');
+		$pattern = preg_quote('#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field body#', '\\');
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
@@ -377,7 +377,7 @@ class ExtractTaskTest extends TestCase {
  */
 	public function testExtractModelValidationInPlugin() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
@@ -393,10 +393,10 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
 
-		$pattern = preg_quote('#Model' . DS . 'TestPluginPost.php:validation for field title#', '\\');
+		$pattern = preg_quote('#Model/TestPluginPost.php:validation for field title#', '\\');
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = preg_quote('#Model' . DS . 'TestPluginPost.php:validation for field body#', '\\');
+		$pattern = preg_quote('#Model/TestPluginPost.php:validation for field body#', '\\');
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
@@ -420,7 +420,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExtractOverwrite() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS;
+		$this->Task->params['paths'] = CAKE . 'Test/TestApp/';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['overwrite'] = true;
@@ -442,7 +442,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExtractCore() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'TestApp' . DS;
+		$this->Task->params['paths'] = CAKE . 'Test/TestApp/';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'yes';
 

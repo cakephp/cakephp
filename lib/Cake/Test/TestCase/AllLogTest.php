@@ -36,7 +36,7 @@ class AllLogTest extends \PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new TestSuite('All Logging related class tests');
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Log');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Log' . DS . 'Engine');
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'Log/Engine');
 		return $suite;
 	}
 }

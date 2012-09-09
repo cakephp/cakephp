@@ -36,8 +36,8 @@ class AllBehaviorsTest extends \PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new TestSuite('Model Behavior and all behaviors');
 
-		$path = CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS;
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'BehaviorCollectionTest.php');
+		$path = CORE_TEST_CASES . DS . 'Model/Behavior/';
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/BehaviorCollectionTest.php');
 
 		$suite->addTestDirectory($path);
 		return $suite;

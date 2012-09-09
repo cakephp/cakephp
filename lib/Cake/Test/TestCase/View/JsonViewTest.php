@@ -75,7 +75,7 @@ class JsonViewTest extends TestCase {
  */
 	public function testRenderWithView() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		$Request = new Request();
 		$Request->params['named'] = array('page' => 2);

@@ -310,7 +310,7 @@ class I18n {
 			foreach ($plugins as $plugin) {
 				$pluginDomain = Inflector::underscore($plugin);
 				if ($pluginDomain === $domain) {
-					$searchPaths[] = Plugin::path($plugin) . 'Locale' . DS;
+					$searchPaths[] = Plugin::path($plugin) . 'Locale/';
 					$searchPaths = array_reverse($searchPaths);
 					break;
 				}

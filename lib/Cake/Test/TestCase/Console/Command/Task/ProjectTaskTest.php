@@ -46,7 +46,7 @@ class ProjectTaskTest extends TestCase {
 			array('in', 'err', 'createFile', '_stop'),
 			array($out, $out, $in)
 		);
-		$this->Task->path = TMP . 'tests' . DS;
+		$this->Task->path = TMP . 'tests/';
 	}
 
 /**
@@ -68,7 +68,7 @@ class ProjectTaskTest extends TestCase {
  * @return void
  */
 	protected function _setupTestProject() {
-		$skel = CAKE . 'Console' . DS . 'Templates' . DS . 'skel';
+		$skel = CAKE . 'Console/Templates/skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
 	}
@@ -85,41 +85,41 @@ class ProjectTaskTest extends TestCase {
 		$this->assertTrue(is_dir($path), 'No project dir %s');
 		$dirs = array(
 			'Config',
-			'Config' . DS . 'Schema',
+			'Config/Schema',
 			'Console',
-			'Console' . DS . 'Command',
-			'Console' . DS . 'Templates',
-			'Console' . DS . 'Command' . DS . 'Task',
+			'Console/Command',
+			'Console/Templates',
+			'Console/Command/Task',
 			'Controller',
-			'Controller' . DS . 'Component',
+			'Controller/Component',
 			'Locale',
 			'Model',
-			'Model' . DS . 'Behavior',
-			'Model' . DS . 'Datasource',
+			'Model/Behavior',
+			'Model/Datasource',
 			'Plugin',
 			'Test',
-			'Test' . DS . 'TestCase',
-			'Test' . DS . 'TestCase' . DS . 'Controller',
-			'Test' . DS . 'TestCase' . DS . 'Controller' . DS . 'Component',
-			'Test' . DS . 'TestCase' . DS . 'Model',
-			'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'Behavior',
-			'Test' . DS . 'Fixture',
+			'Test/TestCase',
+			'Test/TestCase/Controller',
+			'Test/TestCase/Controller/Component',
+			'Test/TestCase/Model',
+			'Test/TestCase/Model/Behavior',
+			'Test/Fixture',
 			'Vendor',
 			'View',
-			'View' . DS . 'Helper',
+			'View/Helper',
 			'tmp',
-			'tmp' . DS . 'cache',
-			'tmp' . DS . 'cache' . DS . 'models',
-			'tmp' . DS . 'cache' . DS . 'persistent',
-			'tmp' . DS . 'cache' . DS . 'views',
-			'tmp' . DS . 'logs',
-			'tmp' . DS . 'sessions',
-			'tmp' . DS . 'tests',
+			'tmp/cache',
+			'tmp/cache/models',
+			'tmp/cache/persistent',
+			'tmp/cache/views',
+			'tmp/logs',
+			'tmp/sessions',
+			'tmp/tests',
 			'webroot',
-			'webroot' . DS . 'css',
-			'webroot' . DS . 'files',
-			'webroot' . DS . 'img',
-			'webroot' . DS . 'js',
+			'webroot/css',
+			'webroot/files',
+			'webroot/img',
+			'webroot/js',
 
 		);
 		foreach ($dirs as $dir) {
@@ -133,16 +133,16 @@ class ProjectTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithAbsolutePath() {
-		$path = $this->Task->args[0] = TMP . 'tests' . DS . 'bake_test_app';
-		$this->Task->params['skel'] = CAKE . 'Console' . DS . 'Templates' . DS . 'skel';
+		$path = $this->Task->args[0] = TMP . 'tests/bake_test_app';
+		$this->Task->params['skel'] = CAKE . 'Console/Templates/skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->execute();
 
 		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
-		$File = new File($path . DS . 'webroot' . DS . 'index.php');
+		$File = new File($path . DS . 'webroot/index.php');
 		$contents = $File->read();
 		$this->assertRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
-		$File = new File($path . DS . 'webroot' . DS . 'test.php');
+		$File = new File($path . DS . 'webroot/test.php');
 		$contents = $File->read();
 		$this->assertRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
 	}
@@ -159,16 +159,16 @@ class ProjectTaskTest extends TestCase {
 		$restore = ini_get('include_path');
 		ini_set('include_path', CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . $restore);
 
-		$path = $this->Task->args[0] = TMP . 'tests' . DS . 'bake_test_app';
-		$this->Task->params['skel'] = CAKE . 'Console' . DS . 'Templates' . DS . 'skel';
+		$path = $this->Task->args[0] = TMP . 'tests/bake_test_app';
+		$this->Task->params['skel'] = CAKE . 'Console/Templates/skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->execute();
 
 		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
-		$contents = file_get_contents($path . DS . 'webroot' . DS . 'index.php');
+		$contents = file_get_contents($path . DS . 'webroot/index.php');
 		$this->assertRegExp('#//define\(\'CAKE_CORE_INCLUDE_PATH#', $contents);
 
-		$contents = file_get_contents($path . DS . 'webroot' . DS . 'test.php');
+		$contents = file_get_contents($path . DS . 'webroot/test.php');
 		$this->assertRegExp('#//define\(\'CAKE_CORE_INCLUDE_PATH#', $contents);
 
 		ini_set('include_path', $restore);
@@ -185,27 +185,27 @@ class ProjectTaskTest extends TestCase {
 		$path = $this->Task->path . 'bake_test_app';
 
 		$empty = array(
-			'Console' . DS . 'Command' . DS . 'Task' => 'empty',
-			'Controller' . DS . 'Component' => 'empty',
+			'Console/Command/Task' => 'empty',
+			'Controller/Component' => 'empty',
 			'Lib' => 'empty',
-			'Model' . DS . 'Behavior' => 'empty',
-			'Model' . DS . 'Datasource' => 'empty',
+			'Model/Behavior' => 'empty',
+			'Model/Datasource' => 'empty',
 			'Plugin' => 'empty',
-			'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'Behavior' => 'empty',
-			'Test' . DS . 'TestCase' . DS . 'Controller' . DS . 'Component' => 'empty',
-			'Test' . DS . 'TestCase' . DS . 'View' . DS . 'Helper' => 'empty',
-			'Test' . DS . 'Fixture' => 'empty',
+			'Test/TestCase/Model/Behavior' => 'empty',
+			'Test/TestCase/Controller/Component' => 'empty',
+			'Test/TestCase/View/Helper' => 'empty',
+			'Test/Fixture' => 'empty',
 			'Vendor' => 'empty',
-			'View' . DS . 'Elements' => 'empty',
-			'View' . DS . 'Scaffolds' => 'empty',
-			'tmp' . DS . 'cache' . DS . 'models' => 'empty',
-			'tmp' . DS . 'cache' . DS . 'persistent' => 'empty',
-			'tmp' . DS . 'cache' . DS . 'views' => 'empty',
-			'tmp' . DS . 'logs' => 'empty',
-			'tmp' . DS . 'sessions' => 'empty',
-			'tmp' . DS . 'tests' => 'empty',
-			'webroot' . DS . 'js' => 'empty',
-			'webroot' . DS . 'files' => 'empty'
+			'View/Elements' => 'empty',
+			'View/Scaffolds' => 'empty',
+			'tmp/cache/models' => 'empty',
+			'tmp/cache/persistent' => 'empty',
+			'tmp/cache/views' => 'empty',
+			'tmp/logs' => 'empty',
+			'tmp/sessions' => 'empty',
+			'tmp/tests' => 'empty',
+			'webroot/js' => 'empty',
+			'webroot/files' => 'empty'
 		);
 
 		foreach ($empty as $dir => $file) {
@@ -221,11 +221,11 @@ class ProjectTaskTest extends TestCase {
 	public function testSecuritySaltGeneration() {
 		$this->_setupTestProject();
 
-		$path = $this->Task->path . 'bake_test_app' . DS;
+		$path = $this->Task->path . 'bake_test_app/';
 		$result = $this->Task->securitySalt($path);
 		$this->assertTrue($result);
 
-		$File = new File($path . 'Config' . DS . 'core.php');
+		$File = new File($path . 'Config/core.php');
 		$contents = $File->read();
 		$this->assertNotRegExp('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
 	}
@@ -238,11 +238,11 @@ class ProjectTaskTest extends TestCase {
 	public function testSecurityCipherSeedGeneration() {
 		$this->_setupTestProject();
 
-		$path = $this->Task->path . 'bake_test_app' . DS;
+		$path = $this->Task->path . 'bake_test_app/';
 		$result = $this->Task->securityCipherSeed($path);
 		$this->assertTrue($result);
 
-		$File = new File($path . 'Config' . DS . 'core.php');
+		$File = new File($path . 'Config/core.php');
 		$contents = $File->read();
 		$this->assertNotRegExp('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
 	}
@@ -255,11 +255,11 @@ class ProjectTaskTest extends TestCase {
 	public function testCachePrefixGeneration() {
 		$this->_setupTestProject();
 
-		$path = $this->Task->path . 'bake_test_app' . DS;
+		$path = $this->Task->path . 'bake_test_app/';
 		$result = $this->Task->cachePrefix($path);
 		$this->assertTrue($result);
 
-		$File = new File($path . 'Config' . DS . 'core.php');
+		$File = new File($path . 'Config/core.php');
 		$contents = $File->read();
 		$this->assertRegExp('/\$prefix = \'.+\';/', $contents, '$prefix is not defined');
 		$this->assertNotRegExp('/\$prefix = \'myapp_\';/', $contents, 'Default cache prefix left behind. %s');
@@ -273,13 +273,13 @@ class ProjectTaskTest extends TestCase {
 	public function testIndexPhpGeneration() {
 		$this->_setupTestProject();
 
-		$path = $this->Task->path . 'bake_test_app' . DS;
+		$path = $this->Task->path . 'bake_test_app/';
 		$this->Task->corePath($path);
 
-		$File = new File($path . 'webroot' . DS . 'index.php');
+		$File = new File($path . 'webroot/index.php');
 		$contents = $File->read();
 		$this->assertNotRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
-		$File = new File($path . 'webroot' . DS . 'test.php');
+		$File = new File($path . 'webroot/test.php');
 		$contents = $File->read();
 		$this->assertNotRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
 	}
@@ -296,7 +296,7 @@ class ProjectTaskTest extends TestCase {
 
 		Configure::write('Routing.prefixes', null);
 		$this->_setupTestProject();
-		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'Config' . DS;
+		$this->Task->configPath = $this->Task->path . 'bake_test_app/Config/';
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue('super_duper_admin'));
 
 		$result = $this->Task->getPrefix();
@@ -312,13 +312,13 @@ class ProjectTaskTest extends TestCase {
  * @return void
  */
 	public function testCakeAdmin() {
-		$File = new File(APP . 'Config' . DS . 'core.php');
+		$File = new File(APP . 'Config/core.php');
 		$contents = $File->read();
-		$File = new File(TMP . 'tests' . DS . 'core.php');
+		$File = new File(TMP . 'tests/core.php');
 		$File->write($contents);
 
 		Configure::write('Routing.prefixes', null);
-		$this->Task->configPath = TMP . 'tests' . DS;
+		$this->Task->configPath = TMP . 'tests/';
 		$result = $this->Task->cakeAdmin('my_prefix');
 		$this->assertTrue($result);
 
@@ -334,7 +334,7 @@ class ProjectTaskTest extends TestCase {
 	public function testGetPrefixWithMultiplePrefixes() {
 		Configure::write('Routing.prefixes', array('admin', 'ninja', 'shinobi'));
 		$this->_setupTestProject();
-		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'Config' . DS;
+		$this->Task->configPath = $this->Task->path . 'bake_test_app/Config/';
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue(2));
 
 		$result = $this->Task->getPrefix();
@@ -347,8 +347,8 @@ class ProjectTaskTest extends TestCase {
  * @return void
  */
 	public function testExecute() {
-		$this->Task->params['skel'] = CAKE . 'Console' . DS . 'Templates' . DS . 'skel';
-		$this->Task->params['working'] = TMP . 'tests' . DS;
+		$this->Task->params['skel'] = CAKE . 'Console/Templates/skel';
+		$this->Task->params['working'] = TMP . 'tests/';
 
 		$path = $this->Task->path . 'bake_test_app';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue($path));
@@ -357,13 +357,13 @@ class ProjectTaskTest extends TestCase {
 		$this->Task->execute();
 		$this->assertTrue(is_dir($path), 'No project dir');
 		$this->assertTrue(is_dir($path . DS . 'Controller'), 'No controllers dir ');
-		$this->assertTrue(is_dir($path . DS . 'Controller' . DS . 'Component'), 'No components dir ');
+		$this->assertTrue(is_dir($path . DS . 'Controller/Component'), 'No components dir ');
 		$this->assertTrue(is_dir($path . DS . 'Model'), 'No models dir');
 		$this->assertTrue(is_dir($path . DS . 'View'), 'No views dir');
-		$this->assertTrue(is_dir($path . DS . 'View' . DS . 'Helper'), 'No helpers dir');
+		$this->assertTrue(is_dir($path . DS . 'View/Helper'), 'No helpers dir');
 		$this->assertTrue(is_dir($path . DS . 'Test'), 'No tests dir');
-		$this->assertTrue(is_dir($path . DS . 'Test' . DS . 'TestCase'), 'No cases dir');
-		$this->assertTrue(is_dir($path . DS . 'Test' . DS . 'Fixture'), 'No fixtures dir');
+		$this->assertTrue(is_dir($path . DS . 'Test/TestCase'), 'No cases dir');
+		$this->assertTrue(is_dir($path . DS . 'Test/Fixture'), 'No fixtures dir');
 	}
 
 /**
@@ -374,11 +374,11 @@ class ProjectTaskTest extends TestCase {
 	public function testConsolePath() {
 		$this->_setupTestProject();
 
-		$path = $this->Task->path . 'bake_test_app' . DS;
+		$path = $this->Task->path . 'bake_test_app/';
 		$result = $this->Task->consolePath($path);
 		$this->assertTrue($result);
 
-		$File = new File($path . 'Console' . DS . 'cake.php');
+		$File = new File($path . 'Console/cake.php');
 		$contents = $File->read();
 		$this->assertNotRegExp('/__CAKE_PATH__/', $contents, 'Console path placeholder left behind.');
 	}

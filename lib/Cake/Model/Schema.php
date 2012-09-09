@@ -96,7 +96,7 @@ class Schema extends Object {
 		}
 
 		if (empty($options['path'])) {
-			$this->path = APP . 'Config' . DS . 'Schema';
+			$this->path = APP . 'Config/Schema';
 		}
 
 		$options = array_merge(get_object_vars($this), $options);
@@ -130,7 +130,7 @@ class Schema extends Object {
 		if (file_exists($this->path . DS . $file) && is_file($this->path . DS . $file)) {
 			$this->file = $file;
 		} elseif (!empty($this->plugin)) {
-			$this->path = Plugin::path($this->plugin) . 'Config' . DS . 'Schema';
+			$this->path = Plugin::path($this->plugin) . 'Config/Schema';
 		}
 	}
 

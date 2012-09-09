@@ -24,7 +24,7 @@ use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
-require_once dirname(dirname(__FILE__)) . DS . 'Model' . DS . 'models.php';
+require_once dirname(dirname(__FILE__)) . DS . 'Model/models.php';
 class_alias('Cake\Test\TestCase\Model\ScaffoldMock', 'Cake\Model\ScaffoldMock');
 
 /**

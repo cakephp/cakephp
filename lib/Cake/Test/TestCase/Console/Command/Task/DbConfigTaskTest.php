@@ -42,7 +42,7 @@ class DbConfigTaskTest extends TestCase {
 			array($out, $out, $in)
 		);
 
-		$this->Task->path = APP . 'Config' . DS;
+		$this->Task->path = APP . 'Config/';
 	}
 
 /**
@@ -77,7 +77,7 @@ class DbConfigTaskTest extends TestCase {
 	public function testInitialize() {
 		$this->Task->initialize();
 		$this->assertFalse(empty($this->Task->path));
-		$this->assertEquals(APP . 'Config' . DS, $this->Task->path);
+		$this->assertEquals(APP . 'Config/', $this->Task->path);
 	}
 
 /**

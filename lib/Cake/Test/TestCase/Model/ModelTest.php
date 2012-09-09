@@ -34,14 +34,14 @@ class ModelTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new PHPUnit_Framework_TestSuite('All Model related class tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Validator' . DS . 'CakeValidationSetTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Validator' . DS . 'CakeValidationRuleTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelReadTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelWriteTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelDeleteTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelValidationTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelIntegrationTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'ModelCrossSchemaHabtmTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/Validator/CakeValidationSetTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/Validator/CakeValidationRuleTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/ModelReadTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/ModelWriteTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/ModelDeleteTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/ModelValidationTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/ModelIntegrationTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/ModelCrossSchemaHabtmTest.php');
 		return $suite;
 	}
 }

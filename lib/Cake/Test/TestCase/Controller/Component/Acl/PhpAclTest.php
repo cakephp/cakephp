@@ -39,7 +39,7 @@ class PhpAclTest extends TestCase {
 		$this->PhpAcl = new PhpAcl();
 		$this->Acl = new AclComponent($Collection, array(
 			'adapter' => array(
-				'config' => CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS . 'acl.php',
+				'config' => CAKE . 'Test/TestApp/Config/acl.php',
 			),
 		));
 	}

@@ -825,7 +825,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$path = CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS;
+		$path = CAKE . 'Test/TestApp/Config/';
 		$this->Form->Html->loadConfig('htmlhelper_tags', $path);
 		$result = $this->Form->secure($fields);
 		$expected = array(
@@ -7951,7 +7951,7 @@ class FormHelperTest extends TestCase {
 	public function testIntrospectModelFromRequest() {
 		$this->loadFixtures('Post');
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
 		$this->Form->request['models'] = array(

@@ -71,7 +71,7 @@ class FileLogTest extends TestCase {
  * @return void
  */
 	public function testPathSetting() {
-		$path = TMP . 'tests' . DS;
+		$path = TMP . 'tests/';
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}

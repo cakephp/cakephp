@@ -344,9 +344,9 @@ class ObjectTest extends TestCase {
  */
 	public function testRequestAction() {
 		App::build(array(
-			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS),
-			'Controller' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Controller' . DS)
+			'Model' => array(CAKE . 'Test/TestApp/Model/'),
+			'View' => array(CAKE . 'Test/TestApp/View/'),
+			'Controller' => array(CAKE . 'Test/TestApp/Controller/')
 		), App::RESET);
 		$this->assertNull(Router::getRequest(), 'request stack should be empty.');
 
@@ -390,7 +390,7 @@ class ObjectTest extends TestCase {
  */
 	public function testRequestActionPlugins() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
 		), App::RESET);
 		Plugin::load('TestPlugin');
 		Router::reload();
@@ -427,14 +427,14 @@ class ObjectTest extends TestCase {
  */
 	public function testRequestActionArray() {
 		App::build(array(
-			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS),
-			'Controller' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Controller' . DS),
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Model' => array(CAKE . 'Test/TestApp/Model/'),
+			'View' => array(CAKE . 'Test/TestApp/View/'),
+			'Controller' => array(CAKE . 'Test/TestApp/Controller/'),
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Plugin::load(array('TestPlugin'));
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'test_request_action')
@@ -510,7 +510,7 @@ class ObjectTest extends TestCase {
  */
 	public function testRequestActionNoPostPassing() {
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 
 		$_POST = array(
 			'item' => 'value'
@@ -535,7 +535,7 @@ class ObjectTest extends TestCase {
  */
 	public function testRequestActionWithQueryString() {
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 		$query = ['page' => 1, 'sort' => 'title'];
 		$result = $this->object->requestAction(
 			['controller' => 'request_action', 'action' => 'query_pass'],
@@ -557,7 +557,7 @@ class ObjectTest extends TestCase {
  */
 	public function testRequestActionPostWithData() {
 		Router::reload();
-		require CAKE . 'Config' . DS . 'routes.php';
+		require CAKE . 'Config/routes.php';
 
 		$data = array(
 			'Post' => array('id' => 2)

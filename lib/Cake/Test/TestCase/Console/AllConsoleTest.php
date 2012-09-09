@@ -36,7 +36,7 @@ class AllConsoleTest extends \PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new TestSuite('All console classes');
 
-		$path = CORE_TEST_CASES . DS . 'Console' . DS;
+		$path = CORE_TEST_CASES . DS . 'Console/';
 
 		$suite->addTestFile($path . 'AllConsoleLibsTest.php');
 		$suite->addTestFile($path . 'AllTasksTest.php');

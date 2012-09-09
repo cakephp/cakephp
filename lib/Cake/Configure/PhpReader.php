@@ -40,11 +40,11 @@ class PhpReader implements ConfigReaderInterface {
 /**
  * Constructor for PHP Config file reading.
  *
- * @param string $path The path to read config files from.  Defaults to APP . 'Config' . DS
+ * @param string $path The path to read config files from.  Defaults to APP . 'Config/'
  */
 	public function __construct($path = null) {
 		if (!$path) {
-			$path = APP . 'Config' . DS;
+			$path = APP . 'Config/';
 		}
 		$this->_path = $path;
 	}
@@ -72,7 +72,7 @@ class PhpReader implements ConfigReaderInterface {
 		$key .= '.php';
 
 		if ($plugin) {
-			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
+			$file = App::pluginPath($plugin) . 'Config/' . $key;
 		} else {
 			$file = $this->_path . $key;
 		}

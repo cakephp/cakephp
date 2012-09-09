@@ -1051,7 +1051,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test' . DS . 'TestApp' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css');
+		$response->file(CAKE . 'Test/TestApp/Vendor/css/test_asset.css');
 
 		ob_start();
 		$result = $response->send();
@@ -1104,7 +1104,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS . 'no_section.ini');
+		$response->file(CAKE . 'Test/TestApp/Config/no_section.ini');
 
 		ob_start();
 		$result = $response->send();
@@ -1164,7 +1164,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS . 'no_section.ini');
+		$response->file(CAKE . 'Test/TestApp/Config/no_section.ini');
 
 		ob_start();
 		$result = $response->send();
@@ -1224,7 +1224,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS . 'no_section.ini', array(
+		$response->file(CAKE . 'Test/TestApp/Config/no_section.ini', array(
 			'name' => 'config.ini'
 		));
 
@@ -1265,7 +1265,7 @@ class ResponseTest extends TestCase {
 		$response->expects($this->never())
 			->method('download');
 
-		$response->file(CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS . 'no_section.ini', array(
+		$response->file(CAKE . 'Test/TestApp/Config/no_section.ini', array(
 			'download' => false
 		));
 
@@ -1303,7 +1303,7 @@ class ResponseTest extends TestCase {
 		$response->expects($this->once())->method('_clearBuffer');
 		$response->expects($this->never())->method('_flushBuffer');
 
-		$response->file(CAKE . 'Test' . DS . 'TestApp' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css');
+		$response->file(CAKE . 'Test/TestApp/Vendor/css/test_asset.css');
 
 		$result = $response->send();
 		$this->assertNull($result);
@@ -1335,7 +1335,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test' . DS . 'TestApp' . DS . 'Vendor' . DS . 'img' . DS . 'test_2.JPG');
+		$response->file(CAKE . 'Test/TestApp/Vendor/img/test_2.JPG');
 	}
 
 /**
@@ -1364,7 +1364,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test' . DS . 'TestApp' . DS . 'Vendor' . DS . 'img' . DS . 'test_2.JPG');
+		$response->file(CAKE . 'Test/TestApp/Vendor/img/test_2.JPG');
 	}
 
 }

@@ -138,7 +138,7 @@ class HtmlHelperTest extends TestCase {
 		$this->Html->request->webroot = '';
 
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 
 		Configure::write('Asset.timestamp', false);
@@ -438,11 +438,11 @@ class HtmlHelperTest extends TestCase {
 		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
 		$themeExists = is_dir(WWW_ROOT . 'theme');
 
-		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'img' . DS . '__cake_test_image.gif';
+		$testfile = WWW_ROOT . 'theme/test_theme/img/__cake_test_image.gif';
 		$File = new File($testfile, true);
 
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 1);
@@ -465,7 +465,7 @@ class HtmlHelperTest extends TestCase {
 				'alt' => ''
 		)));
 
-		$dir = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
+		$dir = new Folder(WWW_ROOT . 'theme/test_theme');
 		$dir->delete();
 		if (!$themeExists) {
 			$dir = new Folder(WWW_ROOT . 'theme');
@@ -480,10 +480,10 @@ class HtmlHelperTest extends TestCase {
  */
 	public function testThemeAssetsInMainWebrootPath() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		$webRoot = Configure::read('App.www_root');
-		Configure::write('App.www_root', CAKE . 'Test' . DS . 'TestApp' . DS . 'webroot' . DS);
+		Configure::write('App.www_root', CAKE . 'Test/TestApp/webroot/');
 
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->css('webroot_test');
@@ -731,7 +731,7 @@ class HtmlHelperTest extends TestCase {
 		Configure::write('debug', 2);
 		Configure::write('Asset.timestamp', true);
 
-		touch(WWW_ROOT . 'js' . DS . '__cake_js_test.js');
+		touch(WWW_ROOT . 'js/__cake_js_test.js');
 		$timestamp = substr(strtotime('now'), 0, 8);
 
 		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
@@ -741,7 +741,7 @@ class HtmlHelperTest extends TestCase {
 		Configure::write('Asset.timestamp', 'force');
 		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
 		$this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
-		unlink(WWW_ROOT . 'js' . DS . '__cake_js_test.js');
+		unlink(WWW_ROOT . 'js/__cake_js_test.js');
 		Configure::write('Asset.timestamp', false);
 	}
 
@@ -974,11 +974,11 @@ class HtmlHelperTest extends TestCase {
 		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
 		$themeExists = is_dir(WWW_ROOT . 'theme');
 
-		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'js' . DS . '__test_js.js';
+		$testfile = WWW_ROOT . 'theme/test_theme/js/__test_js.js';
 		$File = new File($testfile, true);
 
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 
 		$this->Html->webroot = '/';
@@ -989,7 +989,7 @@ class HtmlHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$Folder = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
+		$Folder = new Folder(WWW_ROOT . 'theme/test_theme');
 		$Folder->delete();
 
 		if (!$themeExists) {
@@ -1847,7 +1847,7 @@ class HtmlHelperTest extends TestCase {
  */
 
 	public function testLoadConfig() {
-		$path = CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS;
+		$path = CAKE . 'Test/TestApp/Config/';
 
 		$result = $this->Html->loadConfig('htmlhelper_tags', $path);
 		$expected = array(
@@ -1888,7 +1888,7 @@ class HtmlHelperTest extends TestCase {
  * @expectedException Cake\Error\ConfigureException
  */
 	public function testLoadConfigWrongReader() {
-		$path = CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS;
+		$path = CAKE . 'Test/TestApp/Config/';
 		$result = $this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
 	}
 

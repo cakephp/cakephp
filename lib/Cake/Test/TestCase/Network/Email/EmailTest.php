@@ -119,7 +119,7 @@ class CakeEmailTest extends TestCase {
 		$this->CakeEmail = new TestEmail();
 
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 	}
 
@@ -993,7 +993,7 @@ class CakeEmailTest extends TestCase {
  * @return void
  */
 	public function testSendWithLog() {
-		$path = CAKE . 'Test' . DS . 'TestApp' . DS . 'tmp' . DS;
+		$path = CAKE . 'Test/TestApp/tmp/';
 		Log::config('email', array(
 			'engine' => 'FileLog',
 			'path' => TMP
@@ -1185,7 +1185,7 @@ class CakeEmailTest extends TestCase {
  */
 	public function testSendRenderPlugin() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
 

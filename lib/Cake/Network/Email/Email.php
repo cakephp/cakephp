@@ -1553,7 +1553,7 @@ class Email {
 		foreach ($types as $type) {
 			$View->set('content', $content);
 			$View->hasRendered = false;
-			$View->viewPath = $View->layoutPath = 'Emails' . DS . $type;
+			$View->viewPath = $View->layoutPath = 'Emails/' . $type;
 
 			$render = $View->render($template, $layout);
 			$render = str_replace(array("\r\n", "\r"), "\n", $render);

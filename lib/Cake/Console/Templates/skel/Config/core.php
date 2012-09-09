@@ -328,7 +328,7 @@ $prefix = 'myapp_';
 Cache::config('_cake_core_', array(
 	'engine' => $engine,
 	'prefix' => $prefix . 'cake_core_',
-	'path' => CACHE . 'persistent' . DS,
+	'path' => CACHE . 'persistent/',
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
 ));
@@ -340,7 +340,7 @@ Cache::config('_cake_core_', array(
 Cache::config('_cake_model_', array(
 	'engine' => $engine,
 	'prefix' => $prefix . 'cake_model_',
-	'path' => CACHE . 'models' . DS,
+	'path' => CACHE . 'models/',
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
 ));

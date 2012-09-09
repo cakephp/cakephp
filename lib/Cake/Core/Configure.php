@@ -73,7 +73,7 @@ class Configure {
 				'www_root' => WWW_ROOT
 			));
 
-			if (!include APP . 'Config' . DS . 'core.php') {
+			if (!include APP . 'Config/core.php') {
 				trigger_error(__d('cake_dev', "Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
 			}
 			App::init();
@@ -88,7 +88,7 @@ class Configure {
 			);
 			static::_setErrorHandlers($error, $exception);
 
-			if (!include APP . 'Config' . DS . 'bootstrap.php') {
+			if (!include APP . 'Config/bootstrap.php') {
 				trigger_error(__d('cake_dev', "Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
 			}
 			restore_error_handler();
@@ -338,7 +338,7 @@ class Configure {
  */
 	public static function version() {
 		if (!isset(static::$_values['Cake']['version'])) {
-			require CAKE . 'Config' . DS . 'config.php';
+			require CAKE . 'Config/config.php';
 			static::write($config);
 		}
 		return static::$_values['Cake']['version'];

@@ -497,8 +497,8 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		if (file_exists(TMP . 'tests' . DS . 'schema.php')) {
-			unlink(TMP . 'tests' . DS . 'schema.php');
+		if (file_exists(TMP . 'tests/schema.php')) {
+			unlink(TMP . 'tests/schema.php');
 		}
 		unset($this->Schema);
 		CakePlugin::unload();
@@ -684,7 +684,7 @@ class CakeSchemaTest extends CakeTestCase {
 	public function testSchemaReadWithPlugins() {
 		App::objects('model', null, false);
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		CakePlugin::load('TestPlugin');
 
@@ -776,10 +776,10 @@ class CakeSchemaTest extends CakeTestCase {
 			'tables' => $this->Schema->tables,
 			'path' => TMP . 'tests'
 		));
-		$file = file_get_contents(TMP . 'tests' . DS . 'schema.php');
+		$file = file_get_contents(TMP . 'tests/schema.php');
 		$this->assertEquals($write, $file);
 
-		require_once TMP . 'tests' . DS . 'schema.php';
+		require_once TMP . 'tests/schema.php';
 		$OtherSchema = new MyOtherAppSchema();
 		$this->assertEquals($this->Schema->tables, $OtherSchema->tables);
 	}
@@ -1050,7 +1050,7 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function testSchemaLoadingFromPlugin() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		CakePlugin::load('TestPlugin');
 		$Other = $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));

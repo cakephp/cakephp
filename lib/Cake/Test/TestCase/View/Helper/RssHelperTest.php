@@ -607,7 +607,7 @@ class RssHelperTest extends TestCase {
 		}
 		$testExists = is_dir(WWW_ROOT . 'tests');
 
-		$tmpFile = WWW_ROOT . 'tests' . DS . 'cakephp.file.test.tmp';
+		$tmpFile = WWW_ROOT . 'tests/cakephp.file.test.tmp';
 		$File = new File($tmpFile, true);
 
 		$this->assertTrue($File->write('123'), 'Could not write to ' . $tmpFile);

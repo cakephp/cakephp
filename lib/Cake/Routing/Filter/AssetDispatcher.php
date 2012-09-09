@@ -64,7 +64,7 @@ class AssetDispatcher extends DispatcherFilter {
 			$themeName = $parts[1];
 			unset($parts[0], $parts[1]);
 			$fileFragment = urldecode(implode(DS, $parts));
-			$path = App::themePath($themeName) . 'webroot' . DS;
+			$path = App::themePath($themeName) . 'webroot/';
 			if (file_exists($path . $fileFragment)) {
 				$assetFile = $path . $fileFragment;
 			}
@@ -73,7 +73,7 @@ class AssetDispatcher extends DispatcherFilter {
 			if (Plugin::loaded($plugin)) {
 				unset($parts[0]);
 				$fileFragment = urldecode(implode(DS, $parts));
-				$pluginWebroot = Plugin::path($plugin) . 'webroot' . DS;
+				$pluginWebroot = Plugin::path($plugin) . 'webroot/';
 				if (file_exists($pluginWebroot . $fileFragment)) {
 					$assetFile = $pluginWebroot . $fileFragment;
 				}

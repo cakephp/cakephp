@@ -271,11 +271,11 @@ class Helper extends Object {
 				$file = str_replace('/', '\\', $file);
 			}
 
-			if (file_exists(Configure::read('App.www_root') . 'theme' . DS . $this->theme . DS . $file)) {
+			if (file_exists(Configure::read('App.www_root') . 'theme/' . $this->theme . DS . $file)) {
 				$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 			} else {
 				$themePath = App::themePath($this->theme);
-				$path = $themePath . 'webroot' . DS . $file;
+				$path = $themePath . 'webroot/' . $file;
 				if (file_exists($path)) {
 					$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 				}
@@ -355,13 +355,13 @@ class Helper extends Object {
 			if ($segments[0] === 'theme') {
 				$theme = $segments[1];
 				unset($segments[0], $segments[1]);
-				$themePath = App::themePath($theme) . 'webroot' . DS . implode(DS, $segments);
+				$themePath = App::themePath($theme) . 'webroot/' . implode(DS, $segments);
 				return $path . '?' . @filemtime($themePath);
 			} else {
 				$plugin = Inflector::camelize($segments[0]);
 				if (Plugin::loaded($plugin)) {
 					unset($segments[0]);
-					$pluginPath = Plugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
+					$pluginPath = Plugin::path($plugin) . 'webroot/' . implode(DS, $segments);
 					return $path . '?' . @filemtime($pluginPath);
 				}
 			}

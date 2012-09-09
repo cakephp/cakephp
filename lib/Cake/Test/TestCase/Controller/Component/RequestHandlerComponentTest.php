@@ -372,7 +372,7 @@ class RequestHandlerComponentTest extends TestCase {
 
 		$this->Controller->viewPath = 'request_handler_test\\rss';
 		$this->RequestHandler->renderAs($this->Controller, 'js');
-		$this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewPath);
+		$this->assertEquals('request_handler_test/js', $this->Controller->viewPath);
 	}
 
 /**
@@ -455,11 +455,11 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testRenderAsCalledTwice() {
 		$this->RequestHandler->renderAs($this->Controller, 'print');
-		$this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewPath);
+		$this->assertEquals('RequestHandlerTest/print', $this->Controller->viewPath);
 		$this->assertEquals('print', $this->Controller->layoutPath);
 
 		$this->RequestHandler->renderAs($this->Controller, 'js');
-		$this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewPath);
+		$this->assertEquals('RequestHandlerTest/js', $this->Controller->viewPath);
 		$this->assertEquals('js', $this->Controller->layoutPath);
 		$this->assertTrue(in_array('Js', $this->Controller->helpers));
 	}
@@ -697,7 +697,7 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testAjaxRedirectAsRequestAction() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		), App::RESET);
 
 		$this->Controller->RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
@@ -726,7 +726,7 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testAjaxRedirectAsRequestActionStillRenderingLayout() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		), App::RESET);
 
 		$this->Controller->RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));

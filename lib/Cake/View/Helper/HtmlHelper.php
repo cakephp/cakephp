@@ -1158,7 +1158,7 @@ class HtmlHelper extends Helper {
  * You can also specify the path to read the configuration file from, if APP/Config is not
  * where the file is.
  *
- * `$this->Html->loadConfig('tags.php', APP . 'Lib' . DS);`
+ * `$this->Html->loadConfig('tags.php', APP . 'Lib/');`
  *
  * Configuration files can define the following sections:
  *
@@ -1176,7 +1176,7 @@ class HtmlHelper extends Helper {
  */
 	public function loadConfig($configFile, $path = null) {
 		if (!$path) {
-			$path = APP . 'Config' . DS;
+			$path = APP . 'Config/';
 		}
 		$file = null;
 		$reader = 'php';

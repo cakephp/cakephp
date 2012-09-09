@@ -22,7 +22,7 @@ use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 
-require_once CAKE . 'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'models.php';
+require_once CAKE . 'Test/TestCase/Model/models.php';
 
 /**
  * Test case for DigestAuthentication

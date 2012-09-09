@@ -52,23 +52,23 @@ class ConfigureTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths')) {
-			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths');
+		if (file_exists(TMP . 'cache/persistent/cake_core_core_paths')) {
+			unlink(TMP . 'cache/persistent/cake_core_core_paths');
 		}
-		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_dir_map')) {
-			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_dir_map');
+		if (file_exists(TMP . 'cache/persistent/cake_core_dir_map')) {
+			unlink(TMP . 'cache/persistent/cake_core_dir_map');
 		}
-		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_file_map')) {
-			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_file_map');
+		if (file_exists(TMP . 'cache/persistent/cake_core_file_map')) {
+			unlink(TMP . 'cache/persistent/cake_core_file_map');
 		}
-		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_object_map')) {
-			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_object_map');
+		if (file_exists(TMP . 'cache/persistent/cake_core_object_map')) {
+			unlink(TMP . 'cache/persistent/cake_core_object_map');
 		}
-		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'test.config.php')) {
-			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'test.config.php');
+		if (file_exists(TMP . 'cache/persistent/test.config.php')) {
+			unlink(TMP . 'cache/persistent/test.config.php');
 		}
-		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'test.php')) {
-			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'test.php');
+		if (file_exists(TMP . 'cache/persistent/test.php')) {
+			unlink(TMP . 'cache/persistent/test.php');
 		}
 		Configure::drop('test');
 	}
@@ -214,7 +214,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadWithMerge() {
-		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS));
+		Configure::config('test', new PhpReader(CAKE . 'Test/TestApp/Config/'));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -237,7 +237,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadNoMerge() {
-		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'TestApp' . DS . 'Config' . DS));
+		Configure::config('test', new PhpReader(CAKE . 'Test/TestApp/Config/'));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -259,7 +259,7 @@ class ConfigureTest extends TestCase {
  */
 	public function testLoadPlugin() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Configure::config('test', new PhpReader());
 		Plugin::load('TestPlugin');

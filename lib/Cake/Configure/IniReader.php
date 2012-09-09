@@ -113,7 +113,7 @@ class IniReader implements ConfigReaderInterface {
 		}
 
 		if ($plugin) {
-			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
+			$file = App::pluginPath($plugin) . 'Config/' . $key;
 		} else {
 			$file = $this->_path . $key;
 		}

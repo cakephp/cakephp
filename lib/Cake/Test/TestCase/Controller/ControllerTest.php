@@ -467,9 +467,9 @@ class ControllerTest extends TestCase {
  */
 	public function testLoadModelInPlugins() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
-			'Controller' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Controller' . DS),
-			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
+			'Controller' => array(CAKE . 'Test/TestApp/Controller/'),
+			'Model' => array(CAKE . 'Test/TestApp/Model/')
 		));
 		Plugin::load('TestPlugin');
 
@@ -506,7 +506,7 @@ class ControllerTest extends TestCase {
 
 		unset($Controller);
 
-		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)));
+		App::build(array('Plugin' => array(CAKE . 'Test/TestApp/Plugin/')));
 		Plugin::load('TestPlugin');
 
 		$Controller = new Controller($request);
@@ -568,7 +568,7 @@ class ControllerTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		$Controller = new Controller($request);
 		$Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
@@ -627,7 +627,7 @@ class ControllerTest extends TestCase {
  */
 	public function testRender() {
 		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
+			'View' => array(CAKE . 'Test/TestApp/View/')
 		), App::RESET);
 		ClassRegistry::flush();
 		$request = new Request('controller_posts/index');
@@ -679,7 +679,7 @@ class ControllerTest extends TestCase {
 	public function testComponentBeforeRenderChangingViewClass() {
 		App::build(array(
 			'View' => array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS
+				CAKE . 'Test/TestApp/View/'
 			)
 		), true);
 		$Controller = new Controller($this->getMock('Cake\Network\Request'), new Response());

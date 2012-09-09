@@ -44,7 +44,7 @@ class ControllerMergeVarsTest extends TestCase {
 		$this->_appNamespace = Configure::read('App.namespace');
 		Configure::write('App.namespace', 'TestApp');
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 	}
 

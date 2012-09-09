@@ -690,9 +690,9 @@ class Shell extends Object {
 	protected function _checkUnitTest() {
 		if (class_exists('PHPUnit_Framework_TestCase')) {
 			return true;
-		} elseif (@include 'PHPUnit' . DS . 'Autoload.php') {
+		} elseif (@include 'PHPUnit/Autoload.php') {
 			return true;
-		} elseif (App::import('Vendor', 'phpunit', array('file' => 'PHPUnit' . DS . 'Autoload.php'))) {
+		} elseif (App::import('Vendor', 'phpunit', array('file' => 'PHPUnit/Autoload.php'))) {
 			return true;
 		}
 

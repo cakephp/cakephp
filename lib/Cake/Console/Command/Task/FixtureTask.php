@@ -58,7 +58,7 @@ class FixtureTask extends BakeTask {
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		parent::__construct($stdout, $stderr, $stdin);
-		$this->path = APP . 'Test' . DS . 'Fixture' . DS;
+		$this->path = APP . 'Test/Fixture/';
 	}
 
 /**
@@ -267,7 +267,7 @@ class FixtureTask extends BakeTask {
 	public function getPath() {
 		$path = $this->path;
 		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'Test' . DS . 'Fixture' . DS;
+			$path = $this->_pluginPath($this->plugin) . 'Test/Fixture/';
 		}
 		return $path;
 	}

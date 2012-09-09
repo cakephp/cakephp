@@ -34,10 +34,10 @@ class TreeBehaviorTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new CakeTestSuite('TreeBehavior tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS . 'TreeBehaviorNumberTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS . 'TreeBehaviorScopedTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS . 'TreeBehaviorAfterTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model' . DS . 'Behavior' . DS . 'TreeBehaviorUuidTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/Behavior/TreeBehaviorNumberTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/Behavior/TreeBehaviorScopedTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/Behavior/TreeBehaviorAfterTest.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/Behavior/TreeBehaviorUuidTest.php');
 		return $suite;
 	}
 }

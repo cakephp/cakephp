@@ -57,7 +57,7 @@ class FileTest extends TestCase {
 		unset($this->File);
 
 		$Folder = new Folder();
-		$Folder->delete(TMP . 'tests' . DS . 'permissions');
+		$Folder->delete(TMP . 'tests/permissions');
 	}
 
 /**
@@ -131,7 +131,7 @@ class FileTest extends TestCase {
 	public function testPermission() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows.');
 
-		$dir = TMP . 'tests' . DS . 'permissions' . DS;
+		$dir = TMP . 'tests/permissions/';
 		$Folder = new Folder($dir);
 
 		$old = umask();
@@ -281,7 +281,7 @@ class FileTest extends TestCase {
  * @return void
  */
 	public function testCreate() {
-		$tmpFile = TMP . 'tests' . DS . 'cakephp.file.test.tmp';
+		$tmpFile = TMP . 'tests/cakephp.file.test.tmp';
 		$File = new File($tmpFile, true, 0777);
 		$this->assertTrue($File->exists());
 	}
@@ -496,7 +496,7 @@ class FileTest extends TestCase {
  * @return void
  */
 	public function testCopy() {
-		$dest = TMP . 'tests' . DS . 'cakephp.file.test.tmp';
+		$dest = TMP . 'tests/cakephp.file.test.tmp';
 		$file = __FILE__;
 		$this->File = new File($file);
 		$result = $this->File->copy($dest);
@@ -525,7 +525,7 @@ class FileTest extends TestCase {
  */
 	public function testMime() {
 		$this->skipIf(!function_exists('finfo_open') && !function_exists('mime_content_type'), 'Not able to read mime type');
-		$path = CAKE . 'Test' . DS . 'TestApp' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$path = CAKE . 'Test/TestApp/webroot/img/cake.power.gif';
 		$file = new File($path);
 		$expected = 'image/gif';
 		if (function_exists('mime_content_type') && false === mime_content_type($file->pwd())) {
@@ -541,7 +541,7 @@ class FileTest extends TestCase {
  * @return void
  */
 	protected function _getTmpFile($paintSkip = true) {
-		$tmpFile = TMP . 'tests' . DS . 'cakephp.file.test.tmp';
+		$tmpFile = TMP . 'tests/cakephp.file.test.tmp';
 		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
 			return $tmpFile;
 		};

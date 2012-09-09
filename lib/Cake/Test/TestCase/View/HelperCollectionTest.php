@@ -83,7 +83,7 @@ class HelperCollectionTest extends TestCase {
 		$result = $this->Helpers->Form;
 		$this->assertInstanceOf('Cake\View\Helper\FormHelper', $result);
 
-		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)));
+		App::build(array('Plugin' => array(CAKE . 'Test/TestApp/Plugin/')));
 		$this->View->plugin = 'TestPlugin';
 		Plugin::load(array('TestPlugin'));
 		$result = $this->Helpers->OtherHelper;
@@ -118,7 +118,7 @@ class HelperCollectionTest extends TestCase {
 		$result = $this->Helpers->load('Html');
 		$this->assertInstanceOf(__NAMESPACE__ . '\HtmlAliasHelper', $result);
 
-		App::build(array('Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)));
+		App::build(array('Plugin' => array(CAKE . 'Test/TestApp/Plugin/')));
 		Plugin::load(array('TestPlugin'));
 		$result = $this->Helpers->load('SomeOther', array('className' => 'TestPlugin.OtherHelper'));
 		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
@@ -159,7 +159,7 @@ class HelperCollectionTest extends TestCase {
  */
 	public function testLoadPluginHelper() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
 		));
 		Plugin::load(array('TestPlugin'));
 
