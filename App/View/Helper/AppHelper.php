@@ -20,7 +20,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Helper', 'View');
+namespace App\View\Helper;
+
+use Cake\View\Helper;
 
 /**
  * Application helper

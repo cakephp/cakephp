@@ -472,10 +472,7 @@ class App {
 	}
 
 /**
- * Method to handle the automatic class loading. It will look for each class' package
- * defined using App::uses() and with this information it will resolve the package name to a full path
- * to load the class from. File name for each class should follow the class name. For instance,
- * if a class is name `MyCustomClass` the file name should be `MyCustomClass.php`
+ * Method to handle the class loading manually, ie. Vendor classes.
  *
  * @param string $className the name of the class to load
  * @return boolean

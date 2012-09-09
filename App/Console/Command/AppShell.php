@@ -16,7 +16,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Shell', 'Console');
+namespace App\Console\Command;
+
+use Cake\Console\Shell;
 
 /**
  * Application Shell

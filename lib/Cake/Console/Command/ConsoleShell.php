@@ -57,7 +57,6 @@ class ConsoleShell extends Shell {
 		foreach ($this->models as $model) {
 			$class = $model;
 			$this->models[$model] = $class;
-			App::uses($class, 'Model');
 			$this->{$class} = new $class();
 		}
 		$this->out(__d('cake_console', 'Model classes:'));

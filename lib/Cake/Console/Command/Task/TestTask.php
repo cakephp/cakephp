@@ -59,7 +59,7 @@ class TestTask extends BakeTask {
 
 /**
  * Mapping between packages, and their baseclass + package.
- * This is used to generate App::uses() call to autoload base
+ * This is used to generate App::classname() call to autoload base
  * classes if a developer has forgotten to do so.
  *
  * @var array
@@ -258,14 +258,8 @@ class TestTask extends BakeTask {
  * @return boolean
  */
 	public function isLoadableClass($package, $class) {
-		App::uses($class, $package);
-		list($plugin, $ns) = pluginSplit($package);
-		if ($plugin) {
-			App::uses("{$plugin}AppController", $package);
-			App::uses("{$plugin}AppModel", $package);
-			App::uses("{$plugin}AppHelper", $package);
-		}
-		return class_exists($class);
+		$classname = App::classname($class, $package);
+		return !empty($classname);
 	}
 
 /**
@@ -309,7 +303,7 @@ class TestTask extends BakeTask {
 	}
 
 /**
- * Map the types that TestTask uses to concrete types that App::uses can use.
+ * Map the types that TestTask uses to concrete types that App::classname can use.
  *
  * @param string $type The type of thing having a test generated.
  * @param string $plugin The plugin name.

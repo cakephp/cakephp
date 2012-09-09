@@ -1529,10 +1529,10 @@ class Email {
 			return $rendered;
 		}
 		$viewClass = $this->_viewRender;
-		if ($viewClass !== 'View') {
-			list($plugin, $viewClass) = pluginSplit($viewClass, true);
-			$viewClass .= 'View';
-			App::uses($viewClass, $plugin . 'View');
+		if ($viewClass === 'View') {
+			$viewClass = App::classname('View', 'View');
+		} else {
+			$viewClass = App::classname($viewClass, 'View', 'View');
 		}
 
 		$View = new $viewClass(null);
