@@ -1,8 +1,5 @@
 <?php
 /**
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,12 +8,11 @@
  *
  * @copyright	  Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link		  http://cakephp.org CakePHP(tm) Project
- * @package		  Cake.Routing
  * @since		  CakePHP(tm) v 2.2
  * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Routing\Filter;
+
 use Cake\Routing\DispatcherFilter;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -151,12 +147,7 @@ class AssetDispatcher extends DispatcherFilter {
 		$response->cache(filemtime($assetFile));
 		$response->send();
 		ob_clean();
-		if ($ext === 'css' || $ext === 'js') {
-			include $assetFile;
-		} else {
-			readfile($assetFile);
-		}
-
+		readfile($assetFile);
 		if ($compressionEnabled) {
 			ob_end_flush();
 		}
