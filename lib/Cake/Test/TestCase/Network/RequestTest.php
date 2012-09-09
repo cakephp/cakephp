@@ -21,6 +21,28 @@ use Cake\Routing\Dispatcher;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
 
+class TestRequest extends Request {
+
+	public function reConstruct($url = 'some/path', $parseEnvironment = true) {
+		$this->_base();
+		if (empty($url)) {
+			$url = $this->_url();
+		}
+		if ($url[0] == '/') {
+			$url = substr($url, 1);
+		}
+		$this->url = $url;
+
+		if ($parseEnvironment) {
+			$this->_processPost();
+			$this->_processGet();
+			$this->_processFiles();
+		}
+		$this->here = $this->base . '/' . $this->url;
+	}
+
+}
+
 class RequestTest extends TestCase {
 
 /**
@@ -224,7 +246,7 @@ class RequestTest extends TestCase {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/json';
 
-		$request = $this->getMock('TestCakeRequest', array('_readInput'));
+		$request = $this->getMock(__NAMESPACE__ . '\TestRequest', array('_readInput'));
 		$request->expects($this->at(0))->method('_readInput')
 			->will($this->returnValue('{Article":["title"]}'));
 		$request->reConstruct();

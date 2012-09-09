@@ -258,8 +258,8 @@ abstract class ControllerTestCase extends TestCase {
 		$Dispatch = new ControllerTestDispatcher();
 		$Dispatch->loadRoutes = $this->loadRoutes;
 		$Dispatch->parseParams(new Event('ControllerTestCase', $Dispatch, array('request' => $request)));
-		if (!isset($request->params['controller']) && Router::currentRoute()) {
-			$this->headers = Router::currentRoute()->response->header();
+		if (!isset($request->params['controller']) && Router::getRequest()) {
+			$this->headers = Router::getRequest()->response->header();
 			return;
 		}
 		if ($this->__dirtyController) {

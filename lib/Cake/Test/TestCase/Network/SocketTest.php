@@ -260,7 +260,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoBadMode
  *
- * @expectedException Cake\Error\InvalidArgumentException
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testEnableCryptoBadMode() {
