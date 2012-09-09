@@ -27,7 +27,7 @@ use Cake\Model\Permission;
 use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
 
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'Model/models.php';
+require_once dirname(dirname(dirname(__DIR__))) . DS . 'Model/models.php';
 
 /**
  * AclNodeTwoTestBase class

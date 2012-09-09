@@ -81,7 +81,7 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testBasic() {
-		$path = dirname(__FILE__);
+		$path = __DIR__;
 		$Folder = new Folder($path);
 
 		$result = $Folder->pwd();
@@ -105,7 +105,7 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testInPath() {
-		$path = dirname(dirname(__FILE__));
+		$path = dirname(__DIR__);
 		$inside = dirname($path) . DS;
 
 		$Folder = new Folder($path);

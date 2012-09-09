@@ -30,7 +30,7 @@ use Cake\TestSuite\Reporter\HtmlReporter;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 
-require_once dirname(dirname(__FILE__)) . DS . 'Model/models.php';
+require_once dirname(__DIR__) . DS . 'Model/models.php';
 
 /**
  * AppController class

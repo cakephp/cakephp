@@ -18,7 +18,7 @@
  * @since         CakePHP(tm) v 2.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
+require_once __DIR__ . DS . 'ModelTestBase.php';
 
 class ModelCrossSchemaHabtmTest extends BaseModelTest {
 

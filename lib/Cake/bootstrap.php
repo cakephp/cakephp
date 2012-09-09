@@ -23,7 +23,7 @@ define('TIME_START', microtime(true));
 error_reporting(E_ALL & ~E_DEPRECATED);
 
 if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-	define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(__FILE__)));
+	define('CAKE_CORE_INCLUDE_PATH', dirname(__DIR__));
 }
 
 if (!defined('CORE_PATH')) {

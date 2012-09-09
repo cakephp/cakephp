@@ -36,7 +36,7 @@ class AllConsoleLibsTest extends \PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new TestSuite('All console lib classes');
 
-		foreach (new \DirectoryIterator(dirname(__FILE__)) as $file) {
+		foreach (new \DirectoryIterator(__DIR__) as $file) {
 			if (!$file->isFile() || strpos($file, 'All') === 0) {
 				continue;
 			}

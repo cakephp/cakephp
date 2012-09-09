@@ -19,7 +19,7 @@
 
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
-require_once dirname(__FILE__) . DS . 'models.php';
+require_once __DIR__ . DS . 'models.php';
 
 /**
  * ModelBaseTest

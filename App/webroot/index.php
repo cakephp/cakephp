@@ -35,14 +35,14 @@ if (!defined('DS')) {
  *
  */
 if (!defined('ROOT')) {
-	define('ROOT', dirname(dirname(dirname(__FILE__))));
+	define('ROOT', dirname(dirname(__DIR__)));
 }
 /**
  * The actual directory name for the "App".
  *
  */
 if (!defined('APP_DIR')) {
-	define('APP_DIR', basename(dirname(dirname(__FILE__))));
+	define('APP_DIR', basename(dirname(__DIR__)));
 }
 
 /**
@@ -64,10 +64,10 @@ if (!defined('APP_DIR')) {
  *
  */
 if (!defined('WEBROOT_DIR')) {
-	define('WEBROOT_DIR', basename(dirname(__FILE__)));
+	define('WEBROOT_DIR', basename(__DIR__));
 }
 if (!defined('WWW_ROOT')) {
-	define('WWW_ROOT', dirname(__FILE__) . DS);
+	define('WWW_ROOT', __DIR__ . DS);
 }
 
 // for built-in server

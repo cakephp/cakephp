@@ -20,7 +20,7 @@ App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
 App::uses('Sqlite', 'Model/Datasource/Database');
 
-require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
+require_once dirname(dirname(__DIR__)) . DS . 'models.php';
 
 /**
  * DboSqliteTestDb class

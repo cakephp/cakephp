@@ -88,7 +88,7 @@ class ShellDispatcher {
 
 		if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 			define('DS', DIRECTORY_SEPARATOR);
-			define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
+			define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(__DIR__)));
 			define('CAKEPHP_SHELL', true);
 			if (!defined('CORE_PATH')) {
 				define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
@@ -262,7 +262,7 @@ class ShellDispatcher {
 
 		$defaults = array(
 			'app' => 'App',
-			'root' => dirname(dirname(dirname(dirname(__FILE__)))),
+			'root' => dirname(dirname(dirname(__DIR__))),
 			'working' => null,
 			'webroot' => 'webroot'
 		);

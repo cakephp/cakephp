@@ -30,7 +30,7 @@ foreach ($paths as $path) {
 }
 
 if (!$found) {
-	$root = dirname(dirname(dirname(__FILE__)));
+	$root = dirname(dirname(__DIR__));
 	if (!include $root . $ds . $dispatcher) {
 		trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 	}

@@ -21,7 +21,7 @@ App::uses('AppModel', 'Model');
 App::uses('Mysql', 'Model/Datasource/Database');
 App::uses('CakeSchema', 'Model');
 
-require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
+require_once dirname(dirname(__DIR__)) . DS . 'models.php';
 
 /**
  * DboMysqlTest class
