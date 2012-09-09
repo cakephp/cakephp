@@ -251,7 +251,6 @@ class Debugger {
 			break;
 			default:
 				return;
-			break;
 		}
 
 		$data = compact(
@@ -371,9 +370,6 @@ class Debugger {
 			return str_replace(ROOT, 'ROOT', $path);
 		}
 
-		if (strpos($path, CAKE) === 0) {
-			return str_replace($corePath, 'CORE' . DS, $path);
-		}
 		return $path;
 	}
 
@@ -475,29 +471,23 @@ class Debugger {
 		switch (static::getType($var)) {
 			case 'boolean':
 				return ($var) ? 'true' : 'false';
-			break;
 			case 'integer':
 				return '(int) ' . $var;
 			case 'float':
 				return '(float) ' . $var;
-			break;
 			case 'string':
 				if (trim($var) == '') {
 					return "''";
 				}
 				return "'" . $var . "'";
-			break;
 			case 'array':
 				return static::_array($var, $depth - 1, $indent + 1);
-			break;
 			case 'resource':
 				return strtolower(gettype($var));
-			break;
 			case 'null':
 				return 'null';
 			default:
 				return static::_object($var, $depth - 1, $indent + 1);
-			break;
 		}
 	}
 

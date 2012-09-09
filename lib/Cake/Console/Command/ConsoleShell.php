@@ -177,7 +177,6 @@ class ConsoleShell extends Shell {
 				case 'quit':
 				case 'exit':
 					return true;
-				break;
 				case 'models':
 					$this->out(__d('cake_console', 'Model classes:'));
 					$this->hr();

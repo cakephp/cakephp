@@ -6794,6 +6794,7 @@ class ModelWriteTest extends BaseModelTest {
  */
 	public function testSaveAllDeepEmptyHasManyHasMany() {
 		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
+
 		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
 		$TestModel = new Article();
 		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->Comment->belongsTo = array();
@@ -6805,9 +6806,10 @@ class ModelWriteTest extends BaseModelTest {
 		$this->db->truncate(new Attachment());
 
 		$result = $TestModel->saveAll(array(
-			'Article' => array('id' => 3, 'title' => 'Comment has no data'),
+			'Article' => array('id' => 3, 'user_id' => 1, 'title' => 'Comment has no data'),
 			'Comment' => array(
 				array(
+					'user_id' => 1,
 					'Attachment' => array(
 						array('attachment' => 'attachment should be created with comment_id'),
 						array('attachment' => 'comment should be created with article_id'),

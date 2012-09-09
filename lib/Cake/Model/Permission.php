@@ -150,7 +150,6 @@ class Permission extends Model {
 							break;
 							case 1:
 								return true;
-							break;
 						}
 					}
 				}

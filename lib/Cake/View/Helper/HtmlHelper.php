@@ -84,6 +84,7 @@ class HtmlHelper extends Helper {
 		'block' => '<div%s>%s</div>',
 		'blockstart' => '<div%s>',
 		'blockend' => '</div>',
+		'hiddenblock' => '<div style="display:none;">%s</div>',
 		'tag' => '<%s%s>%s</%s>',
 		'tagstart' => '<%s%s>',
 		'tagend' => '</%s>',

@@ -115,10 +115,8 @@ class Time {
 		switch ($name) {
 			case 'niceFormat':
 				return static::${$name};
-				break;
 			default:
 				return null;
-				break;
 		}
 	}
 

@@ -49,14 +49,11 @@ class Security {
 		switch (Configure::read('Security.level')) {
 			case 'high':
 				return 10;
-			break;
 			case 'medium':
 				return 100;
-			break;
 			case 'low':
 			default:
 				return 300;
-				break;
 		}
 	}
 
