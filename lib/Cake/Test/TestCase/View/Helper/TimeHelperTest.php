@@ -81,7 +81,7 @@ class TimeHelperTest extends TestCase {
 	}
 
 /**
- * test CakeTime class methods are called correctly
+ * test Cake\Utility\Time class methods are called correctly
  */
 	public function testTimeHelperProxyMethodCalls() {
 		$methods = array(

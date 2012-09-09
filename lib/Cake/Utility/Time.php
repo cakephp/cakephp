@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeTime utility class file.
+ * Cake Time utility class file.
  *
  * PHP 5
  *

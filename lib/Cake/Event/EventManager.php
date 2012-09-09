@@ -83,7 +83,7 @@ class EventManager {
  * Adds a new listener to an event. Listeners
  *
  * @param callback|Cake\Event\EventListener $callable PHP valid callback type or instance of Cake\Event\EventListener to be called
- * when the event named with $eventKey is triggered. If a CakeEventListener instance is passed, then the `implementedEvents`
+ * when the event named with $eventKey is triggered. If a Cake\Event\EventListener instance is passed, then the `implementedEvents`
  * method will be called on the object to register the declared events individually as methods to be managed by this class.
  * It is possible to define multiple event handlers per event name.
  *

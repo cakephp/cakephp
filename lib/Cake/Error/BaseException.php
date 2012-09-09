@@ -26,7 +26,7 @@ namespace Cake\Error;
 class BaseException extends \RuntimeException {
 
 /**
- * Array of headers to be passed to CakeResponse::header()
+ * Array of headers to be passed to Cake\Network\Response::header()
  *
  * @var array
  */
@@ -35,7 +35,7 @@ class BaseException extends \RuntimeException {
 /**
  * Get/set the response header to be used
  *
- * See also CakeResponse::header()
+ * See also Cake\Network\Response::header()
  *
  * @param string|array $header. An array of header strings or a single header string
  *	- an associative array of "header name" => "header value"

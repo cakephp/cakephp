@@ -359,7 +359,7 @@ TEXT;
 	[protected] _current => null
 	[protected] _currentType => ''
 	[protected] _stack => array()
-	[protected] _eventManager => object(CakeEventManager) {}
+	[protected] _eventManager => object(Cake\Event\EventManager) {}
 	[protected] _eventManagerConfigured => false
 	[private] __viewFileName => null
 

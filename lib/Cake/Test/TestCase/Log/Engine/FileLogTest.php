@@ -21,7 +21,7 @@ use Cake\Log\Engine\FileLog;
 use Cake\TestSuite\TestCase;
 
 /**
- * CakeLogTest class
+ * FileLogTest class
  *
  * @package       Cake.Test.Case.Log.Engine
  */

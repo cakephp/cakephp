@@ -826,9 +826,9 @@ class Shell extends Object {
 /**
  * Used to enable or disable logging stream output to stdout and stderr
  * If you don't wish to see in your stdout or stderr everything that is logged
- * through CakeLog, call this function with first param as false
+ * through Cake Log, call this function with first param as false
  *
- * @param boolean $enable wheter to enable CakeLog output or not
+ * @param boolean $enable wheter to enable Cake Log output or not
  * @return void
  **/
 	protected function _useLogger($enable = true) {
