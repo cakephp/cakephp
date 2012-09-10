@@ -23,7 +23,7 @@ class Folder {
 
 /**
  * Default scheme for Folder::copy
- * Recursivly merges subfolders with the same name 
+ * Recursively merges subfolders with the same name 
  *
  * @constant MERGE
  */

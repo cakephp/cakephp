@@ -809,7 +809,7 @@ class FolderTest extends CakeTestCase {
  * testCopy method
  *
  * Verify that subdirectories existing in both destination and source directory
- * are merged recursivly.
+ * are merged recursively.
  *
  * @return void
  */
@@ -838,7 +838,7 @@ class FolderTest extends CakeTestCase {
  * testCopyWithMerge method
  *
  * Verify that subdirectories existing in both destination and source directory
- * are merged recursivly.
+ * are merged recursively.
  *
  * @return void
  */
@@ -914,7 +914,7 @@ class FolderTest extends CakeTestCase {
  * testCopyWithOverwrite
  *
  * Verify that subdirectories existing in both destination and source directory
- * are overwritten/replaced recursivly.
+ * are overwritten/replaced recursively.
  *
  * @return void
  */
@@ -995,7 +995,7 @@ class FolderTest extends CakeTestCase {
  * Verify that directories and files are moved recursively
  * even if the destination directory already exists.
  * Subdirectories existing in both destination and source directory
- * are merged recursivly.
+ * are merged recursively.
  *
  * @return void
  */
