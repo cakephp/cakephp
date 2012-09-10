@@ -1,6 +1,6 @@
 <?php
 /**
- * SmtpTransportTest file
+ * MailTransportTest file
  *
  * PHP 5
  *
