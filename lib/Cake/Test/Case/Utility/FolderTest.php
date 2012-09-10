@@ -811,6 +811,7 @@ class FolderTest extends CakeTestCase {
  * Verify that subdirectories existing in both destination and source directory
  * are merged recursivly.
  *
+ * @return void
  */
 	public function testCopy() {
 		extract($this->_setupFilesystem());
@@ -839,6 +840,7 @@ class FolderTest extends CakeTestCase {
  * Verify that subdirectories existing in both destination and source directory
  * are merged recursivly.
  *
+ * @return void
  */
 	public function testCopyWithMerge() {
 		extract($this->_setupFilesystem());
@@ -914,16 +916,7 @@ class FolderTest extends CakeTestCase {
  * Verify that subdirectories existing in both destination and source directory
  * are overwritten/replaced recursivly.
  *
- * $path: folder_test/
- * $folderOne: folder_test/folder1/
- * - file1.php
- * $folderTwo: folder_test/folder2/
- * - file2.php
- * $folderThree: folder_test/folder1/folder3/
- * - file3.php
- * $folderFour: folder_test/folder2/folder4/
- * - file4.php
- * $folderThree: folder_test/folder5/
+ * @return void
  */
 	function testCopyWithOverwrite() {
 		extract($this->_setupFilesystem());
@@ -956,8 +949,14 @@ class FolderTest extends CakeTestCase {
 
 /**
  * Setup filesystem for copy tests
+ * $path: folder_test/
+ * - folder1/file1.php
+ * - folder1/folderA/fileA.php
+ * - folder2/file2.php
+ * - folder2/folderB/fileB.php
+ * - folder3/
  *
- * @return void
+ * @return array Filenames to extract in the test methods
  */
 	protected function _setupFilesystem() {
 		$path = TMP . 'folder_test';
