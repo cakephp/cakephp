@@ -268,7 +268,7 @@ class DebuggerTest extends CakeTestCase {
  * Test method for testing addFormat with callbacks.
  */
 	public function customFormat($error, $strings) {
-		return $error['error'] . ': I eated an error ' . $error['path'];
+		return $error['error'] . ': I eated an error ' . $error['file'];
 	}
 
 /**
