@@ -206,7 +206,7 @@ class Log {
  *    logger later.
  * @param array $config Array of configuration information for the logger
  * @return boolean success of configuration.
- * @throws Cake\Error\LogException
+ * @throws Cake\Error\Exception
  */
 	public static function config($key, $config) {
 		trigger_error(
@@ -254,12 +254,12 @@ class Log {
  *
  * @param string $streamName to check
  * @return bool
- * @throws Cake\Error\LogException
+ * @throws Cake\Error\Exception
  */
 	public static function enabled($streamName) {
 		static::_init();
 		if (!isset(static::$_Collection->{$streamName})) {
-			throw new Error\LogException(__d('cake_dev', 'Stream %s not found', $streamName));
+			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
 		return static::$_Collection->enabled($streamName);
 	}
@@ -270,12 +270,12 @@ class Log {
  *
  * @param string $streamName to enable
  * @return void
- * @throws Cake\Error\LogException
+ * @throws Cake\Error\Exception
  */
 	public static function enable($streamName) {
 		static::_init();
 		if (!isset(static::$_Collection->{$streamName})) {
-			throw new Error\LogException(__d('cake_dev', 'Stream %s not found', $streamName));
+			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
 		static::$_Collection->enable($streamName);
 	}
@@ -287,12 +287,12 @@ class Log {
  *
  * @param string $streamName to disable
  * @return void
- * @throws Cake\Error\LogException
+ * @throws Cake\Error\Exception
  */
 	public static function disable($streamName) {
 		static::_init();
 		if (!isset(static::$_Collection->{$streamName})) {
-			throw new Error\LogException(__d('cake_dev', 'Stream %s not found', $streamName));
+			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
 		static::$_Collection->disable($streamName);
 	}

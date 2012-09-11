@@ -148,7 +148,7 @@ class CacheTest extends TestCase {
 /**
  * test that trying to configure classes that don't extend CacheEngine fail.
  *
- * @expectedException Cake\Error\CacheException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testAttemptingToConfigureANonCacheEngineClass() {

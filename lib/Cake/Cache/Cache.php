@@ -142,7 +142,7 @@ class Cache {
  *
  * @param string $name Name of the config array that needs an engine instance built
  * @return boolean
- * @throws CacheException
+ * @throws Cake\Error\Exception
  */
 	protected static function _buildEngine($name) {
 		$config = Configure::read('Cache.' . $name);
@@ -154,7 +154,7 @@ class Cache {
 			return false;
 		}
 		if (!is_subclass_of($cacheClass, 'Cake\Cache\CacheEngine')) {
-			throw new Error\CacheException(__d('cake_dev', 'Cache engines must use Cake\Cache\CacheEngine as a base class.'));
+			throw new Error\Exception(__d('cake_dev', 'Cache engines must use Cake\Cache\CacheEngine as a base class.'));
 		}
 		$engine = new $cacheClass();
 		if ($engine->init($config)) {

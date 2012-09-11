@@ -32,7 +32,7 @@ class LogEngineCollection extends ObjectCollection {
  * @param LogInterface|array $options Setting for the Log Engine, or the log engine
  *   If a log engine is used, the adapter will be enabled.
  * @return BaseLog BaseLog engine instance
- * @throws Cake\Error\LogException when logger class does not implement a write method
+ * @throws Cake\Error\Exception when logger class does not implement a write method
  */
 	public function load($name, $options = array()) {
 		$logger = false;
@@ -46,7 +46,7 @@ class LogEngineCollection extends ObjectCollection {
 			$logger = $this->_getLogger($options);
 		}
 		if (!$logger instanceof LogInterface) {
-			throw new Error\LogException(sprintf(
+			throw new Error\Exception(sprintf(
 				__d('cake_dev', 'logger class %s is not an instance of Cake\Log\LogInterface.'), $name
 			));
 		}
@@ -70,7 +70,7 @@ class LogEngineCollection extends ObjectCollection {
 		unset($options['engine']);
 		$class = App::classname($name, 'Log/Engine');
 		if (!$class) {
-			throw new Error\LogException(__d('cake_dev', 'Could not load class %s', $name));
+			throw new Error\Exception(__d('cake_dev', 'Could not load class %s', $name));
 		}
 		$logger = new $class($options);
 		return $logger;

@@ -76,7 +76,7 @@ class LogTest extends TestCase {
 /**
  * test all the errors from failed logger imports
  *
- * @expectedException Cake\Error\LogException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testImportingLoggerFailure() {
@@ -98,7 +98,7 @@ class LogTest extends TestCase {
 /**
  * test that loggers have to implement the correct interface.
  *
- * @expectedException Cake\Error\LogException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testNotImplementingInterface() {
@@ -130,7 +130,7 @@ class LogTest extends TestCase {
  * Test that engine() throws an exception when adding an 
  * adapter with the wrong type.
  *
- * @expectedException Cake\Error\LogException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testEngineInjectErrorOnWrongType() {
@@ -219,7 +219,7 @@ class LogTest extends TestCase {
 /**
  * test enable
  *
- * @expectedException Cake\Error\LogException
+ * @expectedException Cake\Error\Exception
  */
 	public function testStreamEnable() {
 		Configure::write('Log.spam', array(
@@ -234,7 +234,7 @@ class LogTest extends TestCase {
 /**
  * test disable
  *
- * @expectedException Cake\Error\LogException
+ * @expectedException Cake\Error\Exception
  */
 	public function testStreamDisable() {
 		Configure::write('Log.spam', array(
@@ -251,7 +251,7 @@ class LogTest extends TestCase {
 /**
  * test enabled() invalid stream
  *
- * @expectedException Cake\Error\LogException
+ * @expectedException Cake\Error\Exception
  */
 	public function testStreamEnabledInvalid() {
 		Log::enabled('bogus_stream');
@@ -260,7 +260,7 @@ class LogTest extends TestCase {
 /**
  * test disable invalid stream
  *
- * @expectedException Cake\Error\LogException
+ * @expectedException Cake\Error\Exception
  */
 	public function testStreamDisableInvalid() {
 		Log::disable('bogus_stream');
