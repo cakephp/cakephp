@@ -70,7 +70,7 @@ class LogEngineCollection extends ObjectCollection {
 		unset($options['engine']);
 		$class = App::classname($name, 'Log/Engine');
 		if (!$class) {
-			throw new Error\LogException(__d('cake_dev', 'Could not load class %s', $class));
+			throw new Error\LogException(__d('cake_dev', 'Could not load class %s', $name));
 		}
 		$logger = new $class($options);
 		return $logger;
