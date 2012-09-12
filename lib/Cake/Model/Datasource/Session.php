@@ -49,13 +49,6 @@ class Session {
 	protected static $_userAgent = '';
 
 /**
- * Configuration data set at bootstrapping.
- *
- * @var array
- */
-	protected static $_config = array();
-
-/**
  * Path to where the session is active.
  *
  * @var string
@@ -121,18 +114,6 @@ class Session {
 	public static $requestCountdown = 10;
 
 /**
- * Used to set configuration data into Session from the application
- * bootstrap.  The session is not started or configuration completed until
- * Session::start() is called.
- *
- * @param array $config
- * @return void
- */
-	public static function config(array $config) {
-		static::$_config = $config;
-	}
-
-/**
  * Pseudo constructor.
  *
  * @param string $base The base path for the Session
@@ -141,7 +122,7 @@ class Session {
 	public static function init($base = null) {
 		static::$time = time();
 
-		$checkAgent = array_key_exists('checkAgent', static::$_config) ? static::$_config['checkAgent'] : null;
+		$checkAgent = Configure::read('Session.checkAgent');
 		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT') != null) {
 			static::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
@@ -337,7 +318,7 @@ class Session {
 	protected static function _validAgentAndTime() {
 		$config = static::read('Config');
 		$validAgent = (
-			static::$_config['checkAgent'] === false ||
+			Configure::read('Session.checkAgent') === false ||
 			static::$_userAgent == $config['userAgent']
 		);
 		return ($validAgent && static::$time <= $config['time']);
@@ -457,7 +438,7 @@ class Session {
  * @throws Cake\Error\SessionException Throws exceptions when ini_set() fails.
  */
 	protected static function _configureSession() {
-		$sessionConfig = static::$_config;
+		$sessionConfig = Configure::read('Session');
 		$iniSet = function_exists('ini_set');
 
 		if (isset($sessionConfig['defaults'])) {
@@ -514,7 +495,7 @@ class Session {
 				array($handler, 'gc')
 			);
 		}
-		static::$_config = $sessionConfig;
+		Configure::write('Session', $sessionConfig);
 		static::$sessionTime = static::$time + ($sessionConfig['timeout'] * 60);
 	}
 
@@ -639,7 +620,7 @@ class Session {
 			return false;
 		}
 		if ($config = static::read('Config')) {
-			$sessionConfig = static::$_config;
+			$sessionConfig = Configure::read('Session');
 
 			if (static::_validAgentAndTime()) {
 				static::write('Config.time', static::$sessionTime);
@@ -675,7 +656,7 @@ class Session {
 	public static function renew() {
 		if (session_id()) {
 			if (session_id() != '' || isset($_COOKIE[session_name()])) {
-				setcookie(self::$_config['cookie'], '', time() - 42000, static::$path);
+				setcookie(Configure::read('Session.cookie'), '', time() - 42000, static::$path);
 			}
 			session_regenerate_id(true);
 		}
