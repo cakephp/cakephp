@@ -244,13 +244,16 @@ class FormHelper extends AppHelper {
  * @return boolean true if field is required to be filled, false otherwise
  */
 	protected function _isRequiredField($validationRules) {
+		if (empty($validationRules) || count($validationRules) === 0) {
+			return false;
+		}
 		foreach ($validationRules as $rule) {
 			$rule->isUpdate($this->requestType === 'put');
-			if (!$rule->isEmptyAllowed()) {
-				return true;
+			if ($rule->isEmptyAllowed()) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 /**
