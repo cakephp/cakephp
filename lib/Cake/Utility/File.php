@@ -345,10 +345,8 @@ class File {
 		}
 		if (isset($this->info['extension'])) {
 			return basename($this->name, '.' . $this->info['extension']);
-		} elseif ($this->name) {
-			return $this->name;
 		}
-		return false;
+		return $this->name;
 	}
 
 /**
