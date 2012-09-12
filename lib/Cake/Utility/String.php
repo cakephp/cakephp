@@ -441,10 +441,6 @@ class String {
 		$options = array_merge($default, $options);
 		extract($options);
 
-		if (!function_exists('mb_strlen')) {
-			class_exists('Multibyte');
-		}
-
 		if (mb_strlen($text) <= $length) {
 			return $text;
 		} else {
