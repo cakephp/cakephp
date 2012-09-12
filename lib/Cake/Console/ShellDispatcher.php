@@ -1,9 +1,5 @@
 <?php
 /**
- * ShellDispatcher file
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,6 +12,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
