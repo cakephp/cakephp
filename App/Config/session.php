@@ -14,7 +14,7 @@
  */
 namespace App\Config;
 
-use Cake\Model\Datasource\Session;
+use Cake\Core\Configure;
 
 /**
  * Session configuration.
@@ -52,8 +52,7 @@ use Cake\Model\Datasource\Session;
  *
  * To use database sessions, run the app/Config/Schema/sessions.php schema using
  * the cake shell command: cake schema create Sessions
- *
  */
-	Session::config(array(
+	Configure::write('Session', [
 		'defaults' => 'php'
-	));
+	]);

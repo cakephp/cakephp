@@ -32,12 +32,12 @@ use Cake\Core\Configure;
  *
  * @see ErrorHandler for more information on error handling and configuration.
  */
-	$error = array(
+	Configure::write('Error', [
 		'handler' => 'Cake\Error\ErrorHandler::handleError',
 		'consoleHandler' => 'Cake\Console\ConsoleErrorHandler::handleError',
 		'level' => E_ALL & ~E_DEPRECATED,
 		'trace' => true
-	);
+	]);
 
 /**
  * Configure the Exception handler used for uncaught exceptions.  By default,
@@ -55,16 +55,14 @@ use Cake\Core\Configure;
  *
  * @see ErrorHandler for more information on exception handling and configuration.
  */
-	$exception = array(
+	Configure::write('Exception', [
 		'handler' => 'Cake\Error\ErrorHandler::handleException',
 		'consoleHandler' => 'Cake\Console\ConsoleErrorHandler::handleException',
 		'renderer' => 'Cake\Error\ExceptionRenderer',
 		'log' => true
-	);
+	]);
 
-	Configure::setErrorHandlers(
-		$error,
-		$exception
-	);
-
-	unset($error, $exception);
+/**
+ * Once configured, set the error/exception handlers to PHP's default handlers.
+ */
+	Configure::setErrorHandlers();

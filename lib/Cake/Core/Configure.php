@@ -348,15 +348,17 @@ class Configure {
 		static::$_values = array();
 		return true;
 	}
+
 /**
- * Set the error and exception handlers.
+ * Set the error and exception handlers using the native default handlers.
  *
- * @param array $error The Error handling configuration.
- * @param array $exception The exception handling configuration.
+ * Uses data already stored in Configure.
+ *
  * @return void
  */
-	public static function setErrorHandlers($error, $exception) {
+	public static function setErrorHandlers() {
 		$level = -1;
+		$error = static::read('Error');
 		if (isset($error['level'])) {
 			error_reporting($error['level']);
 			$level = $error['level'];
@@ -364,8 +366,10 @@ class Configure {
 		if (!empty($error['handler'])) {
 			set_error_handler($error['handler'], $level);
 		}
+		$exception = static::read('Exception');
 		if (!empty($exception['handler'])) {
 			set_exception_handler($exception['handler']);
 		}
 	}
+
 }
