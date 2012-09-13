@@ -187,8 +187,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::find
  */
 	public function find($regexpPattern = '.*', $sort = false) {
-		list($dirs, $files) = $this->read($sort);
-		return array_values(preg_grep('/^' . $regexpPattern . '$/i', $files));
+		return array_values(preg_grep('/^' . $regexpPattern . '$/i', array_pop($this->read($sort))));
 	}
 
 /**
@@ -331,11 +330,9 @@ class Folder {
 		$current = Folder::slashTerm($this->pwd());
 
 		if (!$reverse) {
-			$return = preg_match('/^(.*)' . preg_quote($dir, '/') . '(.*)/', $current);
-		} else {
-			$return = preg_match('/^(.*)' . preg_quote($current, '/') . '(.*)/', $dir);
+			return (bool)preg_match('/^(.*)' . preg_quote($dir, '/') . '(.*)/', $current);
 		}
-		return (bool)$return;
+		return (bool)preg_match('/^(.*)' . preg_quote($current, '/') . '(.*)/', $dir);
 	}
 
 /**
@@ -487,11 +484,10 @@ class Folder {
 					umask($old);
 					$this->_messages[] = __d('cake_dev', '%s created', $pathname);
 					return true;
-				} else {
-					umask($old);
-					$this->_errors[] = __d('cake_dev', '%s NOT created', $pathname);
-					return false;
 				}
+				umask($old);
+				$this->_errors[] = __d('cake_dev', '%s NOT created', $pathname);
+				return false;
 			}
 		}
 		return false;
@@ -575,12 +571,11 @@ class Folder {
 			}
 
 			$path = rtrim($path, DS);
-			if (@rmdir($path)) {
-				$this->_messages[] = __d('cake_dev', '%s removed', $path);
-			} else {
+			if (!@rmdir($path)) {
 				$this->_errors[] = __d('cake_dev', '%s NOT removed', $path);
 				return false;
 			}
+			$this->_messages[] = __d('cake_dev', '%s removed', $path);
 		}
 		return true;
 	}
@@ -629,46 +624,45 @@ class Folder {
 		}
 
 		$exceptions = array_merge(array('.', '..', '.svn'), $options['skip']);
-		if ($handle = @opendir($fromDir)) {
-			while (false !== ($item = readdir($handle))) {
-				if (!in_array($item, $exceptions)) {
-					$from = Folder::addPathElement($fromDir, $item);
-					$to = Folder::addPathElement($toDir, $item);
-					if (is_file($from)) {
-						if (copy($from, $to)) {
-							chmod($to, intval($mode, 8));
-							touch($to, filemtime($from));
-							$this->_messages[] = __d('cake_dev', '%s copied to %s', $from, $to);
-						} else {
-							$this->_errors[] = __d('cake_dev', '%s NOT copied to %s', $from, $to);
-						}
-					}
 
-					if (is_dir($from) && !file_exists($to)) {
+		$handle = @opendir($fromDir);
+		if (!$handle) {
+			return false;
+		}
+
+		while (false !== ($item = readdir($handle))) {
+			if (!in_array($item, $exceptions)) {
+				$from = Folder::addPathElement($fromDir, $item);
+				$to = Folder::addPathElement($toDir, $item);
+				if (is_file($from)) {
+					if (!copy($from, $to)) {
+						$this->_errors[] = __d('cake_dev', '%s NOT copied to %s', $from, $to);
+					} else {
+						chmod($to, intval($mode, 8));
+						touch($to, filemtime($from));
+						$this->_messages[] = __d('cake_dev', '%s copied to %s', $from, $to);
+					}
+				}
+
+				if (is_dir($from) && !file_exists($to)) {
+					$old = umask(0);
+					if (!mkdir($to, $mode)) {
+						$this->_errors[] = __d('cake_dev', '%s not created', $to);
+					} else {
+						umask($old);
 						$old = umask(0);
-						if (mkdir($to, $mode)) {
-							umask($old);
-							$old = umask(0);
-							chmod($to, $mode);
-							umask($old);
-							$this->_messages[] = __d('cake_dev', '%s created', $to);
-							$options = array_merge($options, array('to' => $to, 'from' => $from));
-							$this->copy($options);
-						} else {
-							$this->_errors[] = __d('cake_dev', '%s not created', $to);
-						}
+						chmod($to, $mode);
+						umask($old);
+						$this->_messages[] = __d('cake_dev', '%s created', $to);
+						$options = array_merge($options, array('to' => $to, 'from' => $from));
+						$this->copy($options);
 					}
 				}
 			}
-			closedir($handle);
-		} else {
-			return false;
 		}
+		closedir($handle);
 
-		if (!empty($this->_errors)) {
-			return false;
-		}
-		return true;
+		return empty($this->_errors);
 	}
 
 /**
@@ -754,9 +748,8 @@ class Folder {
 				if (!empty($newparts)) {
 					array_pop($newparts);
 					continue;
-				} else {
-					return false;
 				}
+				return false;
 			}
 			$newparts[] = $part;
 		}
@@ -773,8 +766,8 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isSlashTerm
  */
 	public static function isSlashTerm($path) {
-		$lastChar = $path[strlen($path) - 1];
-		return $lastChar === '/' || $lastChar === '\\';
+		$lastChar = strlen($path) - 1;
+		return $path[$lastChar] === '/' || $path[$lastChar] === '\\';
 	}
 
 }
