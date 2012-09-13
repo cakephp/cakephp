@@ -72,6 +72,10 @@ class String {
 		} elseif ($node !== '127.0.0.1') {
 			$node = ip2long($node);
 		} else {
+			$node = null;
+		}
+
+		if(empty($node)) {
 			$node = crc32(Configure::read('Security.salt'));
 		}
 
