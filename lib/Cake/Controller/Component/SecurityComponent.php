@@ -246,8 +246,7 @@ class SecurityComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requirePost
  */
 	public function requirePost() {
-		$args = func_get_args();
-		$this->_requireMethod('Post', $args);
+		$this->_requireMethod('Post', func_get_args());
 	}
 
 /**
@@ -256,8 +255,7 @@ class SecurityComponent extends Component {
  * @return void
  */
 	public function requireGet() {
-		$args = func_get_args();
-		$this->_requireMethod('Get', $args);
+		$this->_requireMethod('Get', func_get_args());
 	}
 
 /**
@@ -266,8 +264,7 @@ class SecurityComponent extends Component {
  * @return void
  */
 	public function requirePut() {
-		$args = func_get_args();
-		$this->_requireMethod('Put', $args);
+		$this->_requireMethod('Put', func_get_args());
 	}
 
 /**
@@ -276,8 +273,7 @@ class SecurityComponent extends Component {
  * @return void
  */
 	public function requireDelete() {
-		$args = func_get_args();
-		$this->_requireMethod('Delete', $args);
+		$this->_requireMethod('Delete', func_get_args());
 	}
 
 /**
@@ -287,8 +283,7 @@ class SecurityComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireSecure
  */
 	public function requireSecure() {
-		$args = func_get_args();
-		$this->_requireMethod('Secure', $args);
+		$this->_requireMethod('Secure', func_get_args());
 	}
 
 /**
@@ -298,8 +293,7 @@ class SecurityComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireAuth
  */
 	public function requireAuth() {
-		$args = func_get_args();
-		$this->_requireMethod('Auth', $args);
+		$this->_requireMethod('Auth', func_get_args());
 	}
 
 /**
@@ -316,9 +310,8 @@ class SecurityComponent extends Component {
 	public function blackHole(Controller $controller, $error = '') {
 		if ($this->blackHoleCallback == null) {
 			throw new BadRequestException(__d('cake_dev', 'The request has been black-holed'));
-		} else {
-			return $this->_callback($controller, $this->blackHoleCallback, array($error));
 		}
+		return $this->_callback($controller, $this->blackHoleCallback, array($error));
 	}
 
 /**
@@ -593,11 +586,10 @@ class SecurityComponent extends Component {
  * @throws BadRequestException When a the blackholeCallback is not callable.
  */
 	protected function _callback(Controller $controller, $method, $params = array()) {
-		if (is_callable(array($controller, $method))) {
-			return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
-		} else {
+		if (!is_callable(array($controller, $method))) {
 			throw new BadRequestException(__d('cake_dev', 'The request has been black-holed'));
 		}
+		return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
 	}
 
 }
