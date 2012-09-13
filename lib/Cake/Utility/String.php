@@ -75,7 +75,7 @@ class String {
 			$node = null;
 		}
 
-		if(empty($node)) {
+		if (empty($node)) {
 			$node = crc32(Configure::read('Security.salt'));
 		}
 
