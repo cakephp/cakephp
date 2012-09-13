@@ -249,36 +249,34 @@ class PaginatorComponent extends Component {
 			if (strpos($object, '.') !== false) {
 				list($object, $assoc) = pluginSplit($object);
 			}
-
 			if ($assoc && isset($this->Controller->{$object}->{$assoc})) {
-				$object = $this->Controller->{$object}->{$assoc};
-			} elseif (
-				$assoc && isset($this->Controller->{$this->Controller->modelClass}) &&
-				isset($this->Controller->{$this->Controller->modelClass}->{$assoc}
-			)) {
-				$object = $this->Controller->{$this->Controller->modelClass}->{$assoc};
-			} elseif (isset($this->Controller->{$object})) {
-				$object = $this->Controller->{$object};
-			} elseif (
-				isset($this->Controller->{$this->Controller->modelClass}) && isset($this->Controller->{$this->Controller->modelClass}->{$object}
-			)) {
-				$object = $this->Controller->{$this->Controller->modelClass}->{$object};
+				return $this->Controller->{$object}->{$assoc};
 			}
-		} elseif (empty($object) || $object === null) {
+			if ($assoc && isset($this->Controller->{$this->Controller->modelClass}->{$assoc})) {
+				return $this->Controller->{$this->Controller->modelClass}->{$assoc};
+			}
+			if (isset($this->Controller->{$object})) {
+				return $this->Controller->{$object};
+			}
+			if (isset($this->Controller->{$this->Controller->modelClass}->{$object})) {
+				return $this->Controller->{$this->Controller->modelClass}->{$object};
+			}
+		}
+		if (empty($object) || $object === null) {
 			if (isset($this->Controller->{$this->Controller->modelClass})) {
-				$object = $this->Controller->{$this->Controller->modelClass};
-			} else {
-				$className = null;
-				$name = $this->Controller->uses[0];
-				if (strpos($this->Controller->uses[0], '.') !== false) {
-					list($name, $className) = explode('.', $this->Controller->uses[0]);
-				}
-				if ($className) {
-					$object = $this->Controller->{$className};
-				} else {
-					$object = $this->Controller->{$name};
-				}
+				return $this->Controller->{$this->Controller->modelClass};
 			}
+
+			$className = null;
+			$name = $this->Controller->uses[0];
+			if (strpos($this->Controller->uses[0], '.') !== false) {
+				list($name, $className) = explode('.', $this->Controller->uses[0]);
+			}
+			if ($className) {
+				return $this->Controller->{$className};
+			}
+
+			return $this->Controller->{$name};
 		}
 		return $object;
 	}
@@ -320,10 +318,9 @@ class PaginatorComponent extends Component {
  * @return array An array of pagination defaults for a model, or the general settings.
  */
 	public function getDefaults($alias) {
+		$defaults = $this->settings;
 		if (isset($this->settings[$alias])) {
 			$defaults = $this->settings[$alias];
-		} else {
-			$defaults = $this->settings;
 		}
 		return array_merge(
 			array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named'),
@@ -344,13 +341,13 @@ class PaginatorComponent extends Component {
  * @param array $whitelist The list of columns that can be used for sorting.  If empty all keys are allowed.
  * @return array An array of options with sort + direction removed and replaced with order if possible.
  */
-	public function validateSort($object, $options, $whitelist = array()) {
+	public function validateSort(Model $object, array $options, array $whitelist = array()) {
 		if (isset($options['sort'])) {
 			$direction = null;
 			if (isset($options['direction'])) {
 				$direction = strtolower($options['direction']);
 			}
-			if ($direction != 'asc' && $direction != 'desc') {
+			if (!in_array($direction, array('asc', 'desc'))) {
 				$direction = 'asc';
 			}
 			$options['order'] = array($options['sort'] => $direction);
@@ -392,7 +389,7 @@ class PaginatorComponent extends Component {
  * @param array $options An array of options with a limit key to be checked.
  * @return array An array of options for pagination
  */
-	public function checkLimit($options) {
+	public function checkLimit(array $options) {
 		$options['limit'] = (int)$options['limit'];
 		if (empty($options['limit']) || $options['limit'] < 1) {
 			$options['limit'] = 1;
