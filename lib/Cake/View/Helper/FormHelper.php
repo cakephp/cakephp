@@ -168,14 +168,14 @@ class FormHelper extends AppHelper {
  *
  * The $key parameter accepts the following list of values:
  *
- *	- key: Returns the name of the primary key for the model
- *	- fields: Returns the model schema
- *  - validates: returns the list of fields that are required
- *	- errors: returns the list of validation errors
+ * - key: Returns the name of the primary key for the model
+ * - fields: Returns the model schema
+ * - validates: returns the list of fields that are required
+ * - errors: returns the list of validation errors
  *
  * If the $field parameter is passed if will return the information for that sole field.
  *
- *	`$this->_introspectModel('Post', 'fields', 'title');` will return the schema information for title column
+ * `$this->_introspectModel('Post', 'fields', 'title');` will return the schema information for title column
  *
  * @param string $model name of the model to extract information from
  * @param string $key name of the special information key to obtain (key, fields, validates, errors)
