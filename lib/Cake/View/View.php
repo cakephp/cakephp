@@ -636,11 +636,11 @@ class View extends Object {
  * empty or undefined '' will be returned.
  *
  * @param string $name Name of the block
- * @return The block content or '' if the block does not exist.
+ * @return string The block content or $default if the block does not exist.
  * @see ViewBlock::get()
  */
-	public function fetch($name) {
-		return $this->Blocks->get($name);
+	public function fetch($name, $default = '') {
+		return $this->Blocks->get($name, $default);
 	}
 
 /**
