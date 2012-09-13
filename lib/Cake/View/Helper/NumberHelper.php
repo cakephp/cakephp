@@ -21,6 +21,7 @@
 
 App::uses('CakeNumber', 'Utility');
 App::uses('AppHelper', 'View/Helper');
+App::uses('Hash', 'Utility');
 
 /**
  * Number helper library.

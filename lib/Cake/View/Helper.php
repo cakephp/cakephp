@@ -14,6 +14,7 @@
  */
 
 App::uses('Router', 'Routing');
+App::uses('Hash', 'Utility');
 
 /**
  * Abstract base class for all other Helpers in CakePHP.
