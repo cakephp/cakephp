@@ -150,10 +150,15 @@ class Sanitize {
  * Strips scripts and stylesheets from output
  *
  * @param string $str String to sanitize
- * @return string String with <script>, <style>, <link>, <img> elements removed.
+ * @return string String with <link>, <img>, <script>, <style> elements and html comments removed.
  */
 	public static function stripScripts($str) {
-		$regex = '/(<link[^>]+rel="[^"]*stylesheet"[^>]*>|<img[^>]*>|style="[^"]*")|<script[^>]*>.*?<\/script>|<style[^>]*>.*?<\/style>|<!--.*?-->/is';
+		$regex =
+			'/(<link[^>]+rel="[^"]*stylesheet"[^>]*>|' .
+			'<img[^>]*>|style="[^"]*")|' .
+			'<script[^>]*>.*?<\/script>|' .
+			'<style[^>]*>.*?<\/style>|' .
+			'<!--.*?-->/is';
 		return preg_replace($regex, '', $str);
 	}
 
