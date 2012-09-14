@@ -77,7 +77,7 @@ class ApiShell extends AppShell {
 		if ($count > 1) {
 			$file = Inflector::underscore($this->args[1]);
 			$class = Inflector::camelize($this->args[1]);
-		} elseif($count) {
+		} elseif ($count) {
 			$file = $type;
 			$class = Inflector::camelize($type);
 		}
