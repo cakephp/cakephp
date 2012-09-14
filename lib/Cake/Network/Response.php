@@ -477,7 +477,7 @@ class Response {
 		}
 		if ($shouldSetLength && !$this->outputCompressed()) {
 			$offset = ob_get_level() ? ob_get_length() : 0;
-			if (ini_get('mbstring.func_overload') & 2 && function_exists('mb_strlen')) {
+			if (ini_get('mbstring.func_overload') & 2) {
 				$this->length($offset + mb_strlen($this->_body, '8bit'));
 			} else {
 				$this->length($this->_headers['Content-Length'] = $offset + strlen($this->_body));
