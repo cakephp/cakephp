@@ -1286,7 +1286,7 @@ class FormHelper extends AppHelper {
 				'value' => ($options['hiddenField'] !== true ? $options['hiddenField'] : '0'),
 				'secure' => false
 			);
-			if (isset($options['disabled']) && $options['disabled'] == true) {
+			if (isset($options['disabled']) && $options['disabled']) {
 				$hiddenOptions['disabled'] = 'disabled';
 			}
 			$output = $this->hidden($fieldName, $hiddenOptions);
@@ -1865,7 +1865,7 @@ class FormHelper extends AppHelper {
 		if (!empty($tag) || isset($template)) {
 			$hasOptions = (count($options) > 0 || $showEmpty);
 			if (
-				(!isset($secure) || $secure == true) &&
+				(!isset($secure) || $secure) &&
 				empty($attributes['disabled']) &&
 				$hasOptions
 			) {

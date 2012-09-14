@@ -130,7 +130,7 @@ class CakeSocket {
 			$scheme = 'ssl://';
 		}
 
-		if ($this->config['persistent'] == true) {
+		if ($this->config['persistent']) {
 			$this->connection = @pfsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		} else {
 			$this->connection = @fsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);

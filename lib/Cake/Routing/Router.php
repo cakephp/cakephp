@@ -425,7 +425,7 @@ class Router {
 			$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
 		}
 
-		if ($options['reset'] == true || self::$_namedConfig['rules'] === false) {
+		if ($options['reset'] || self::$_namedConfig['rules'] === false) {
 			self::$_namedConfig['rules'] = array();
 		}
 

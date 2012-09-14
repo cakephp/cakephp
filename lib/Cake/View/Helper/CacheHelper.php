@@ -312,7 +312,7 @@ class CacheHelper extends AppHelper {
 				Router::setRequestInfo($controller->request);
 				$this->request = $request;';
 
-		if ($useCallbacks == true) {
+		if ($useCallbacks) {
 			$file .= '
 				$controller->constructClasses();
 				$controller->startupProcess();';

@@ -277,11 +277,7 @@ class DbConfigTask extends AppShell {
 					$info['port'] = null;
 				}
 
-				if ($info['persistent'] === false) {
-					$info['persistent'] = 'false';
-				} else {
-					$info['persistent'] = ($info['persistent'] == true) ? 'true' : 'false';
-				}
+				$info['persistent'] = var_export((bool)$info['persistent'], true);
 
 				$oldConfigs[] = array(
 					'name' => $configName,

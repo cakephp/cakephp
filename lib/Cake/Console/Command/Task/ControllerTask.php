@@ -395,7 +395,7 @@ class ControllerTask extends BakeTask {
 		}
 		$this->__tables = $this->Model->getAllTables($useDbConfig);
 
-		if ($this->interactive == true) {
+		if ($this->interactive) {
 			$this->out(__d('cake_console', 'Possible Controllers based on your current database:'));
 			$this->hr();
 			$this->_controllerNames = array();

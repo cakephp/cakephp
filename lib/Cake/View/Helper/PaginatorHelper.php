@@ -526,12 +526,7 @@ class PaginatorHelper extends AppHelper {
  */
 	protected function _hasPage($model, $page) {
 		$params = $this->params($model);
-		if (!empty($params)) {
-			if ($params["{$page}Page"] == true) {
-				return true;
-			}
-		}
-		return false;
+		return !empty($params) && $params[$page . 'Page'];
 	}
 
 /**

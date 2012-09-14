@@ -472,16 +472,14 @@ class ModelTask extends BakeTask {
 			}
 
 			if ($choice != $defaultChoice) {
+				$validate[$validatorName] = $choice;
 				if (is_numeric($choice) && isset($this->_validations[$choice])) {
 					$validate[$validatorName] = $this->_validations[$choice];
-				} else {
-					$validate[$validatorName] = $choice;
 				}
 			}
-			if ($this->interactive == true && $choice != $defaultChoice) {
+			$anotherValidator = 'n';
+			if ($this->interactive && $choice != $defaultChoice) {
 				$anotherValidator = $this->in(__d('cake_console', 'Would you like to add another validation rule?'), array('y', 'n'), 'n');
-			} else {
-				$anotherValidator = 'n';
 			}
 		}
 		return $validate;
@@ -583,7 +581,7 @@ class ModelTask extends BakeTask {
 
 			$pattern = '/_' . preg_quote($model->table, '/') . '|' . preg_quote($model->table, '/') . '_/';
 			$possibleJoinTable = preg_match($pattern, $otherTable);
-			if ($possibleJoinTable == true) {
+			if ($possibleJoinTable) {
 				continue;
 			}
 			foreach ($modelFieldsTemp as $fieldName => $field) {
