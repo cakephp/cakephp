@@ -1167,6 +1167,68 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
+ * testDeconstructFields with unkown datetime fields
+ *
+ * @return void
+ */
+	public function testDeconstructFieldsDateTimeWithUnkownFields() {
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+
+		$this->loadFixtures('Apple');
+		$TestModel = new Apple();
+
+		//test null/empty values first
+		$data['Apple']['published']['year'] = '';
+		$data['Apple']['published']['month'] = '';
+		$data['Apple']['published']['day'] = '';
+		$data['Apple']['published']['hour'] = '';
+		$data['Apple']['published']['min'] = '';
+		$data['Apple']['published']['sec'] = '';
+
+		$TestModel->data = null;
+		$TestModel->set($data);
+		$expected = array('Apple' => array('published' => ''));
+		$this->assertEquals($expected, $TestModel->data);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '--';
+		$data['Apple']['created']['day'] = '20';
+		$data['Apple']['created']['hour'] = '10';
+		$data['Apple']['created']['min'] = '12';
+		$data['Apple']['created']['sec'] = '09';
+		$data['Apple']['published']['year'] = '2006';
+		$data['Apple']['published']['month'] = '12';
+		$data['Apple']['published']['day'] = '25';
+
+		$TestModel->data = null;
+		$TestModel->set($data);
+		$expected = array('Apple' => array('created' => '', 'published' => '2006-12-25'));
+		$this->assertEquals($expected, $TestModel->data);
+	}
+
+/**
+ * Test a manual deconstruct call
+ *
+ * @return void
+ */
+	public function testDeconstruct() {
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+
+		$this->loadFixtures('Apple');
+		$TestModel = new Apple();
+
+		$data = array();
+		$data['Apple']['published']['year'] = '2006';
+		$data['Apple']['published']['month'] = '12';
+		$data['Apple']['published']['day'] = '25';
+		$data['Apple']['published'] = $TestModel->deconstruct('published', $data['Apple']['published'], 'datetime');
+
+		$expected = array('Apple' => array('published' => '2006-12-25 00:00:00'));
+		$this->assertEquals($expected, $data);
+	}
+
+/**
  * testTablePrefixSwitching method
  *
  * @return void
