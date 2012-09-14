@@ -319,7 +319,7 @@ class Controller extends Object implements CakeEventListener {
 			$this->name = substr(get_class($this), 0, -10);
 		}
 
-		if ($this->viewPath == null) {
+		if (!$this->viewPath) {
 			$this->viewPath = $this->name;
 		}
 

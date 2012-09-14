@@ -780,7 +780,7 @@ class ModelTask extends BakeTask {
  */
 	public function bake($name, $data = array()) {
 		if (is_object($name)) {
-			if ($data == false) {
+			if (!$data) {
 				$data = array();
 				$data['associations'] = $this->doAssociations($name);
 				$data['validate'] = $this->doValidation($name);

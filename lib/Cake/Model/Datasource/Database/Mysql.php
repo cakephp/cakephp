@@ -332,7 +332,7 @@ class Mysql extends DboSource {
 			return parent::update($model, $fields, $values, $conditions);
 		}
 
-		if ($values == null) {
+		if (!$values) {
 			$combined = $fields;
 		} else {
 			$combined = array_combine($fields, $values);

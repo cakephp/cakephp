@@ -248,7 +248,7 @@ class CakeSession {
 	public static function delete($name) {
 		if (self::check($name)) {
 			self::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
-			return (self::check($name) == false);
+			return !self::check($name);
 		}
 		self::_setError(2, __d('cake_dev', "%s doesn't exist", $name));
 		return false;

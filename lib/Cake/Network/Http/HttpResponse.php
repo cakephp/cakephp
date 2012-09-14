@@ -361,7 +361,7 @@ class HttpResponse implements ArrayAccess {
 			$escape[] = chr(127);
 		}
 
-		if ($hex == false) {
+		if (!$hex) {
 			return $escape;
 		}
 		foreach ($escape as $key => $char) {

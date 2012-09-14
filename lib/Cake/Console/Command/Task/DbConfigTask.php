@@ -92,7 +92,7 @@ class DbConfigTask extends AppShell {
 		$done = false;
 		$dbConfigs = array();
 
-		while ($done == false) {
+		while (!$done) {
 			$name = '';
 
 			while ($name == '') {
@@ -136,7 +136,7 @@ class DbConfigTask extends AppShell {
 			$password = '';
 			$blankPassword = false;
 
-			while ($password == '' && $blankPassword == false) {
+			while ($password == '' && !$blankPassword) {
 				$password = $this->in(__d('cake_console', 'Password:'));
 
 				if ($password == '') {
@@ -180,7 +180,7 @@ class DbConfigTask extends AppShell {
 
 			$config = compact('name', 'datasource', 'persistent', 'host', 'login', 'password', 'database', 'prefix', 'encoding', 'port', 'schema');
 
-			while ($this->_verify($config) == false) {
+			while (!$this->_verify($config)) {
 				$this->_interactive();
 			}
 

@@ -123,7 +123,7 @@ class TemplateTask extends AppShell {
 			$data = array($one => $two);
 		}
 
-		if ($data == null) {
+		if (!$data) {
 			return false;
 		}
 		$this->templateVars = $data + $this->templateVars;

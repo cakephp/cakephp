@@ -409,7 +409,7 @@ class FormHelper extends AppHelper {
 		$action = $this->url($options['action']);
 		unset($options['type'], $options['action']);
 
-		if ($options['default'] == false) {
+		if (!$options['default']) {
 			if (!isset($options['onsubmit'])) {
 				$options['onsubmit'] = '';
 			}

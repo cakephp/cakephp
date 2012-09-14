@@ -308,7 +308,7 @@ class SecurityComponent extends Component {
  * @throws BadRequestException
  */
 	public function blackHole(Controller $controller, $error = '') {
-		if ($this->blackHoleCallback == null) {
+		if (!$this->blackHoleCallback) {
 			throw new BadRequestException(__d('cake_dev', 'The request has been black-holed'));
 		}
 		return $this->_callback($controller, $this->blackHoleCallback, array($error));
