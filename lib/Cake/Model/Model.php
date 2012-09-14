@@ -743,9 +743,9 @@ class Model extends Object implements CakeEventListener {
 		return array(
 			'Model.beforeFind' => array('callable' => 'beforeFind', 'passParams' => true),
 			'Model.afterFind' => array('callable' => 'afterFind', 'passParams' => true),
-			'Model.beforeValidate' => array('callable' => 'beforeValidate', 'passParams' => true),
+			'Model.beforeValidate' => array('callable' => 'beforeValidateCheck', 'passParams' => true),
 			'Model.afterValidate' => array('callable' => 'afterValidate'),
-			'Model.beforeSave' => array('callable' => 'beforeSave', 'passParams' => true),
+			'Model.beforeSave' => array('callable' => 'beforeSaveCheck', 'passParams' => true),
 			'Model.afterSave' => array('callable' => 'afterSave', 'passParams' => true),
 			'Model.beforeDelete' => array('callable' => 'beforeDelete', 'passParams' => true),
 			'Model.afterDelete' => array('callable' => 'afterDelete'),
@@ -3294,6 +3294,17 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
+ * Temporary solution to stop events when beforeSave returns null
+ *
+ * @param array $options
+ * @return boolean
+ * @see http://cakephp.lighthouseapp.com/projects/42648/tickets/3123-problem-with-modelbeforesave
+ */
+	public function beforeSaveCheck($options = array()) {
+		return $this->beforeSave($options) === true;
+	}
+
+/**
  * Called after each successful save operation.
  *
  * @param boolean $created True if this save created a new record
@@ -3333,6 +3344,17 @@ class Model extends Object implements CakeEventListener {
  */
 	public function beforeValidate($options = array()) {
 		return true;
+	}
+
+/**
+ * Temporary solution to stop events when beforeValidate returns null
+ *
+ * @param array $options
+ * @return boolean
+ * @see http://cakephp.lighthouseapp.com/projects/42648/tickets/3123-problem-with-modelbeforesave
+ */
+	public function beforeValidateCheck($options = array()) {
+		return $this->beforeValidate($options) === true;
 	}
 
 /**
