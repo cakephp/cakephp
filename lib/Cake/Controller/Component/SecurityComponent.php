@@ -246,7 +246,8 @@ class SecurityComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requirePost
  */
 	public function requirePost() {
-		$this->_requireMethod('Post', func_get_args());
+		$args = func_get_args();
+		$this->_requireMethod('Post', $args);
 	}
 
 /**
@@ -255,7 +256,8 @@ class SecurityComponent extends Component {
  * @return void
  */
 	public function requireGet() {
-		$this->_requireMethod('Get', func_get_args());
+		$args = func_get_args();
+		$this->_requireMethod('Get', $args);
 	}
 
 /**
@@ -264,7 +266,8 @@ class SecurityComponent extends Component {
  * @return void
  */
 	public function requirePut() {
-		$this->_requireMethod('Put', func_get_args());
+		$args = func_get_args();
+		$this->_requireMethod('Put', $args);
 	}
 
 /**
@@ -273,7 +276,8 @@ class SecurityComponent extends Component {
  * @return void
  */
 	public function requireDelete() {
-		$this->_requireMethod('Delete', func_get_args());
+		$args = func_get_args();
+		$this->_requireMethod('Delete', $args);
 	}
 
 /**
@@ -283,7 +287,8 @@ class SecurityComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireSecure
  */
 	public function requireSecure() {
-		$this->_requireMethod('Secure', func_get_args());
+		$args = func_get_args();
+		$this->_requireMethod('Secure', $args);
 	}
 
 /**
@@ -293,7 +298,8 @@ class SecurityComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireAuth
  */
 	public function requireAuth() {
-		$this->_requireMethod('Auth', func_get_args());
+		$args = func_get_args();
+		$this->_requireMethod('Auth', $args);
 	}
 
 /**
