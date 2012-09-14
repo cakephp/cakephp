@@ -643,7 +643,7 @@ class Mysql extends DboSource {
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
 		}
-		if (($col === 'tinyint' && $limit == 1) || $col === 'boolean') {
+		if (($col === 'tinyint' && $limit === 1) || $col === 'boolean') {
 			return 'boolean';
 		}
 		if (strpos($col, 'bigint') !== false || $col === 'bigint') {

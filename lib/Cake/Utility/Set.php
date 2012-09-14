@@ -349,7 +349,7 @@ class Set {
 					$context = array('trace' => array(null), 'item' => $context, 'key' => $key);
 				}
 				if ($token === '..') {
-					if (count($context['trace']) == 1) {
+					if (count($context['trace']) === 1) {
 						$context['trace'][] = $context['key'];
 					}
 					$parent = implode('/', $context['trace']) . '/.';
@@ -373,7 +373,7 @@ class Set {
 					);
 				} elseif (is_array($context['item'])
 					&& array_key_exists($token, $context['item'])
-					&& !(strval($key) === strval($token) && count($tokens) == 1 && $tokens[0] === '.')) {
+					&& !(strval($key) === strval($token) && count($tokens) === 1 && $tokens[0] === '.')) {
 					$items = $context['item'][$token];
 					if (!is_array($items)) {
 						$items = array($items);

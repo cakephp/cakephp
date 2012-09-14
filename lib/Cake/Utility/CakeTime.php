@@ -745,7 +745,7 @@ class CakeTime {
 				$years = floor($months / 12);
 				$months = $months - ($years * 12);
 			}
-			if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] == 1) {
+			if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] === 1) {
 				$years--;
 			}
 

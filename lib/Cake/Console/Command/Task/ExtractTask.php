@@ -480,7 +480,7 @@ class ExtractTask extends AppShell {
 		}
 
 		$dims = Hash::dimensions($rules);
-		if ($dims == 1 || ($dims == 2 && isset($rules['message']))) {
+		if ($dims === 1 || ($dims === 2 && isset($rules['message']))) {
 			$rules = array($rules);
 		}
 
