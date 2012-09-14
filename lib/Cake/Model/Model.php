@@ -1210,14 +1210,26 @@ class Model extends Object implements CakeEventListener {
  *
  * @param string $field The name of the field to be deconstructed
  * @param array|object $data An array or object to be deconstructed into a field
+ * @param string $type The field type to manually override the automatic detection or schema default
  * @return mixed The resulting data that should be assigned to a field
  */
-	public function deconstruct($field, $data) {
+	public function deconstruct($field, $data, $type = null) {
 		if (!is_array($data)) {
 			return $data;
 		}
 
-		$type = $this->getColumnType($field);
+		if ($type === null) {
+			$type = $this->getColumnType($field);
+		}
+		if ($type === null) {
+			// try to auto-detect
+			if (isset($data['day']) || isset($data['month']) || isset($data['year'])) {
+				$type = 'date';
+			}
+			if (isset($data['hour']) || isset($data['min']) || isset($data['sec'])) {
+				$type .= 'time';
+			}
+		}
 
 		if (in_array($type, array('datetime', 'timestamp', 'date', 'time'))) {
 			$useNewDate = (isset($data['year']) || isset($data['month']) ||
