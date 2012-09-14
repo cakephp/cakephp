@@ -165,7 +165,7 @@ class ClassRegistry {
 						$instance = $reflection->newInstance();
 					}
 					if ($strict && !$instance instanceof Model) {
-						$instance =  null;
+						$instance = null;
 					}
 				}
 				if (!isset($instance)) {

@@ -44,7 +44,7 @@ class Folder {
  * @constant SKIP
  */
 	const SKIP = 'skip';
-	
+
 /**
  * Path to Folder.
  *
@@ -658,7 +658,7 @@ class Folder {
 			while (($item = readdir($handle)) !== false) {
 				$to = Folder::addPathElement($toDir, $item);
 				if (($options['scheme'] != Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {
-					$from = Folder::addPathElement($fromDir, $item);				
+					$from = Folder::addPathElement($fromDir, $item);
 					if (is_file($from)) {
 						if (copy($from, $to)) {
 							chmod($to, intval($mode, 8));
@@ -668,7 +668,7 @@ class Folder {
 							$this->_errors[] = __d('cake_dev', '%s NOT copied to %s', $from, $to);
 						}
 					}
-					
+
 					if (is_dir($from) && file_exists($to) && $options['scheme'] == Folder::OVERWRITE) {
 						$this->delete($to);
 					}
