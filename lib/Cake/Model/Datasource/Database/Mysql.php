@@ -433,7 +433,7 @@ class Mysql extends DboSource {
 				if (!isset($index[$idx->Key_name]['column'])) {
 					$col = array();
 					$index[$idx->Key_name]['column'] = $idx->Column_name;
-					$index[$idx->Key_name]['unique'] = intval($idx->Non_unique == 0);
+					$index[$idx->Key_name]['unique'] = intval(!$idx->Non_unique);
 				} else {
 					if (!empty($index[$idx->Key_name]['column']) && !is_array($index[$idx->Key_name]['column'])) {
 						$col[] = $index[$idx->Key_name]['column'];

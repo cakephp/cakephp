@@ -766,7 +766,7 @@ class CakeTime {
 				}
 			}
 
-			if ($months == 0 && $years >= 1 && $diff < ($years * 31536000)) {
+			if (!$months && $years >= 1 && $diff < ($years * 31536000)) {
 				$months = 11;
 				$years--;
 			}
@@ -795,7 +795,7 @@ class CakeTime {
 		}
 		$diff = $futureTime - $pastTime;
 
-		if ($diff == 0) {
+		if (!$diff) {
 			return __d('cake', 'just now', 'just now');
 		}
 

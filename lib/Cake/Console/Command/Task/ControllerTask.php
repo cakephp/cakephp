@@ -419,14 +419,14 @@ class ControllerTask extends BakeTask {
 		$controllers = $this->listAll($useDbConfig);
 		$enteredController = '';
 
-		while ($enteredController == '') {
+		while (!$enteredController) {
 			$enteredController = $this->in(__d('cake_console', "Enter a number from the list above,\ntype in the name of another controller, or 'q' to exit"), null, 'q');
 			if ($enteredController === 'q') {
 				$this->out(__d('cake_console', 'Exit'));
 				return $this->_stop();
 			}
 
-			if ($enteredController == '' || intval($enteredController) > count($controllers)) {
+			if (!$enteredController || intval($enteredController) > count($controllers)) {
 				$this->err(__d('cake_console', "The Controller name you supplied was empty,\nor the number you selected was not an option. Please try again."));
 				$enteredController = '';
 			}

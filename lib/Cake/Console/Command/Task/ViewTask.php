@@ -316,9 +316,9 @@ class ViewTask extends BakeTask {
  */
 	public function customAction() {
 		$action = '';
-		while ($action == '') {
+		while (!$action) {
 			$action = $this->in(__d('cake_console', 'Action Name? (use lowercase_underscored function name)'));
-			if ($action == '') {
+			if (!$action) {
 				$this->out(__d('cake_console', 'The action name you supplied was empty. Please try again.'));
 			}
 		}

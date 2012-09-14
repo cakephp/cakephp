@@ -701,7 +701,7 @@ class HtmlHelper extends AppHelper {
 				} else {
 					$elementContent = $this->link($crumb[0], $crumb[1], $crumb[2]);
 				}
-				if ($which == 0) {
+				if (!$which) {
 					$options['class'] = 'first';
 				} elseif ($which == $crumbCount - 1) {
 					$options['class'] = 'last';
@@ -1116,9 +1116,9 @@ class HtmlHelper extends AppHelper {
 			if (is_array($item)) {
 				$item = $key . $this->nestedList($item, $options, $itemOptions, $tag);
 			}
-			if (isset($itemOptions['even']) && $index % 2 == 0) {
+			if (isset($itemOptions['even']) && $index % 2 === 0) {
 				$itemOptions['class'] = $itemOptions['even'];
-			} elseif (isset($itemOptions['odd']) && $index % 2 != 0) {
+			} elseif (isset($itemOptions['odd']) && $index % 2 !== 0) {
 				$itemOptions['class'] = $itemOptions['odd'];
 			}
 			$out .= sprintf($this->_tags['li'], $this->_parseAttributes($itemOptions, array('even', 'odd'), ' ', ''), $item);

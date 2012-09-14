@@ -798,7 +798,7 @@ class TreeBehavior extends ModelBehavior {
 				$scope, 'OR' => array($Model->escapeField($left) => $i, $Model->escapeField($right) => $i)
 			)));
 			if ($count != 1) {
-				if ($count == 0) {
+				if (!$count) {
 					$errors[] = array('index', $i, 'missing');
 				} else {
 					$errors[] = array('index', $i, 'duplicate');

@@ -95,7 +95,7 @@ class DbConfigTask extends AppShell {
 		while (!$done) {
 			$name = '';
 
-			while ($name == '') {
+			while (!$name) {
 				$name = $this->in(__d('cake_console', "Name:"), null, 'default');
 				if (preg_match('/[^a-z0-9_]/i', $name)) {
 					$name = '';
@@ -116,12 +116,12 @@ class DbConfigTask extends AppShell {
 			}
 
 			$host = '';
-			while ($host == '') {
+			while (!$host) {
 				$host = $this->in(__d('cake_console', 'Database Host:'), null, 'localhost');
 			}
 
 			$port = '';
-			while ($port == '') {
+			while (!$port) {
 				$port = $this->in(__d('cake_console', 'Port?'), null, 'n');
 			}
 
@@ -130,16 +130,16 @@ class DbConfigTask extends AppShell {
 			}
 
 			$login = '';
-			while ($login == '') {
+			while (!$login) {
 				$login = $this->in(__d('cake_console', 'User:'), null, 'root');
 			}
 			$password = '';
 			$blankPassword = false;
 
-			while ($password == '' && !$blankPassword) {
+			while (!$password && !$blankPassword) {
 				$password = $this->in(__d('cake_console', 'Password:'));
 
-				if ($password == '') {
+				if (!$password) {
 					$blank = $this->in(__d('cake_console', 'The password you supplied was empty. Use an empty password?'), array('y', 'n'), 'n');
 					if ($blank == 'y') {
 						$blankPassword = true;
@@ -148,12 +148,12 @@ class DbConfigTask extends AppShell {
 			}
 
 			$database = '';
-			while ($database == '') {
+			while (!$database) {
 				$database = $this->in(__d('cake_console', 'Database Name:'), null, 'cake');
 			}
 
 			$prefix = '';
-			while ($prefix == '') {
+			while (!$prefix) {
 				$prefix = $this->in(__d('cake_console', 'Table Prefix?'), null, 'n');
 			}
 			if (strtolower($prefix) == 'n') {
@@ -161,7 +161,7 @@ class DbConfigTask extends AppShell {
 			}
 
 			$encoding = '';
-			while ($encoding == '') {
+			while (!$encoding) {
 				$encoding = $this->in(__d('cake_console', 'Table encoding?'), null, 'n');
 			}
 			if (strtolower($encoding) == 'n') {
@@ -170,7 +170,7 @@ class DbConfigTask extends AppShell {
 
 			$schema = '';
 			if ($datasource == 'postgres') {
-				while ($schema == '') {
+				while (!$schema) {
 					$schema = $this->in(__d('cake_console', 'Table schema?'), null, 'n');
 				}
 			}

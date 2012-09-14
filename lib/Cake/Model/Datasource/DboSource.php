@@ -1053,7 +1053,7 @@ class DboSource extends DataSource {
 
 		if ($model->recursive == -1) {
 			$_associations = array();
-		} elseif ($model->recursive == 0) {
+		} elseif (!$model->recursive) {
 			unset($_associations[2], $_associations[3]);
 		}
 

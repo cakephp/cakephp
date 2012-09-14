@@ -2228,7 +2228,7 @@ class FormHelper extends AppHelper {
 					} elseif ($time[0] >= 12) {
 						$meridian = 'pm';
 					}
-					if ($time[0] == 0 && $timeFormat == '12') {
+					if (!$time[0] && $timeFormat == '12') {
 						$time[0] = 12;
 					}
 					$hour = $min = null;

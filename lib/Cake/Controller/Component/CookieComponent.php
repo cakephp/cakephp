@@ -381,7 +381,7 @@ class CookieComponent extends Component {
 		}
 		$this->_reset = $this->_expires;
 
-		if ($expires == 0) {
+		if (!$expires) {
 			return $this->_expires = 0;
 		}
 

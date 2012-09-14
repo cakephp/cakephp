@@ -349,10 +349,7 @@ class ProjectTask extends AppShell {
 		if (!file_put_contents($filename, $result)) {
 			return false;
 		}
-		if ($count == 0) {
-			return false;
-		}
-		return true;
+		return (bool)$count;
 	}
 
 /**
@@ -409,7 +406,7 @@ class ProjectTask extends AppShell {
 			$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/Config/core.php to use prefix routing.'));
 			$this->out(__d('cake_console', 'What would you like the prefix route to be?'));
 			$this->out(__d('cake_console', 'Example: www.example.com/admin/controller'));
-			while ($admin == '') {
+			while (!$admin) {
 				$admin = $this->in(__d('cake_console', 'Enter a routing prefix:'), null, 'admin');
 			}
 			if ($this->cakeAdmin($admin) !== true) {

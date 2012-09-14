@@ -583,7 +583,7 @@ class PaginatorHelper extends AppHelper {
 		$options);
 
 		$paging = $this->params($options['model']);
-		if ($paging['pageCount'] == 0) {
+		if (!$paging['pageCount']) {
 			$paging['pageCount'] = 1;
 		}
 		$start = 0;

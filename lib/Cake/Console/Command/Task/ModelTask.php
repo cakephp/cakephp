@@ -700,7 +700,7 @@ class ModelTask extends BakeTask {
 			$alias = $this->in(__d('cake_console', 'What is the alias for this association?'));
 			$className = $this->in(__d('cake_console', 'What className will %s use?', $alias), null, $alias );
 
-			if ($assocType == 0) {
+			if (!$assocType) {
 				if (!empty($possibleKeys[$model->table])) {
 					$showKeys = $possibleKeys[$model->table];
 				} else {
@@ -935,7 +935,7 @@ class ModelTask extends BakeTask {
 
 		$enteredModel = '';
 
-		while ($enteredModel == '') {
+		while (!$enteredModel) {
 			$enteredModel = $this->in(__d('cake_console', "Enter a number from the list above,\n" .
 				"type in the name of another model, or 'q' to exit"), null, 'q');
 
@@ -944,18 +944,17 @@ class ModelTask extends BakeTask {
 				$this->_stop();
 			}
 
-			if ($enteredModel == '' || intval($enteredModel) > count($this->_modelNames)) {
+			if (!$enteredModel || intval($enteredModel) > count($this->_modelNames)) {
 				$this->err(__d('cake_console', "The model name you supplied was empty,\n" .
 					"or the number you selected was not an option. Please try again."));
 				$enteredModel = '';
 			}
 		}
 		if (intval($enteredModel) > 0 && intval($enteredModel) <= count($this->_modelNames)) {
-			$currentModelName = $this->_modelNames[intval($enteredModel) - 1];
-		} else {
-			$currentModelName = $enteredModel;
+			return $this->_modelNames[intval($enteredModel) - 1];
 		}
-		return $currentModelName;
+
+		return $enteredModel;
 	}
 
 /**
