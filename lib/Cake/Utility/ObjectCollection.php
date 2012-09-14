@@ -286,7 +286,7 @@ abstract class ObjectCollection {
  * @return void
  */
 	public function unload($name) {
-		$name = array_pop(pluginSplit($name));
+		list(, $name) = pluginSplit($name);
 		unset($this->_loaded[$name], $this->_enabled[$name]);
 	}
 
