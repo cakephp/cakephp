@@ -439,10 +439,6 @@ class String {
 		$options = array_merge($default, $options);
 		extract($options);
 
-		if (!function_exists('mb_strlen')) {
-			class_exists('Cake\I18n\Multibyte');
-		}
-
 		if (mb_strlen($text) <= $length) {
 			return $text;
 		}
@@ -485,10 +481,6 @@ class String {
 		}
 		$options = array_merge($default, $options);
 		extract($options);
-
-		if (!function_exists('mb_strlen')) {
-			class_exists('Multibyte');
-		}
 
 		if ($html) {
 			if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {

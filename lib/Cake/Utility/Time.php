@@ -20,7 +20,6 @@
 namespace Cake\Utility;
 
 use Cake\Core\Configure;
-use Cake\I18n\Multibyte;
 
 /**
  * Time Helper class for easy use of time data.
@@ -1040,15 +1039,8 @@ class Time {
 		$format = strftime($format, $date);
 		$encoding = Configure::read('App.encoding');
 
-		if (!empty($encoding) && $encoding === 'UTF-8') {
-			if (function_exists('mb_check_encoding')) {
-				$valid = mb_check_encoding($format, $encoding);
-			} else {
-				$valid = !Multibyte::checkMultibyte($format);
-			}
-			if (!$valid) {
-				$format = utf8_encode($format);
-			}
+		if ($encoding === 'UTF-8' && !mb_check_encoding($format, $encoding)) {
+			$format = utf8_encode($format);
 		}
 		return $format;
 	}

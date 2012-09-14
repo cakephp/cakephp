@@ -21,15 +21,11 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\I18n\Multibyte;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
-if (function_exists('mb_internal_encoding')) {
-	$encoding = Configure::read('App.encoding');
-	if (!empty($encoding)) {
-		mb_internal_encoding($encoding);
-	}
-}
+mb_internal_encoding(Configure::read('App.encoding'));
 
 /**
  * I18n handles translation of Text and time format strings.
