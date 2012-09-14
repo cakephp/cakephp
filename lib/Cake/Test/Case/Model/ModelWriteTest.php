@@ -540,25 +540,6 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
- * test that beforeValidate returning false can abort saves.
- *
- * @return void
- */
-	public function testBeforeValidateNullSaveAbortion() {
-		$this->loadFixtures('Post');
-		$Model = new CallbackPostTestModel();
-		$Model->beforeValidateReturn = null;
-
-		$data = array(
-			'title' => 'new article',
-			'body' => 'this is some text.'
-		);
-		$Model->create();
-		$result = $Model->save($data);
-		$this->assertFalse($result);
-	}
-
-/**
  * test that beforeSave returning false can abort saves.
  *
  * @return void
@@ -575,26 +556,6 @@ class ModelWriteTest extends BaseModelTest {
 		$Model->create();
 		$result = $Model->save($data);
 		$this->assertFalse($result);
-	}
-
-/**
- * Test that beforeSave returnning null can abort saves.
- *
- * @return void
- */
-	public function testBeforeSaveNullAbort() {
-		$this->loadFixtures('Post');
-		$Model = new CallbackPostTestModel();
-		$Model->beforeSaveReturn = null;
-
-		$data = array(
-			'title' => 'new article',
-			'body' => 'this is some text.'
-		);
-		$Model->create();
-		$result = $Model->save($data);
-		$this->assertFalse($result);
-
 	}
 
 /**
