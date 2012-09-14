@@ -1210,7 +1210,7 @@ class Model extends Object implements CakeEventListener {
  *
  * @param string $field The name of the field to be deconstructed
  * @param array|object $data An array or object to be deconstructed into a field
- * @param string $type The field type to manually overwrite the automatic detection or schema default
+ * @param string $type The field type to manually override the automatic detection or schema default
  * @return mixed The resulting data that should be assigned to a field
  */
 	public function deconstruct($field, $data, $type = null) {
