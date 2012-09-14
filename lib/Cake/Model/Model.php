@@ -1667,7 +1667,7 @@ class Model extends Object implements CakeEventListener {
 			$event = new CakeEvent('Model.beforeSave', $this, array($options));
 			list($event->break, $event->breakOn) = array(true, array(false, null));
 			$this->getEventManager()->dispatch($event);
-			if (!$event->result) {
+			if ($event->isStopped()) {
 				$this->whitelist = $_whitelist;
 				return false;
 			}

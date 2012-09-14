@@ -248,6 +248,10 @@ class CakeEventManager {
 			if ($result === false) {
 				$event->stopPropagation();
 			}
+			// TODO remove this in 3.0 as its a compatibility shim for model callbacks.
+			if (isset($event->break, $event->breakOn) && in_array($result, (array)$event->breakOn)) {
+				$event->stopPropagation();
+			}
 			if ($result !== null) {
 				$event->result = $result;
 			}
