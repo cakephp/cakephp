@@ -146,7 +146,7 @@ class FormHelper extends AppHelper {
 			));
 		} elseif (ClassRegistry::isKeySet($this->defaultModel)) {
 			$defaultObject = ClassRegistry::getObject($this->defaultModel);
-			if (in_array($model, array_keys($defaultObject->getAssociated()), true) && isset($defaultObject->{$model})) {
+			if ($defaultObject && in_array($model, array_keys($defaultObject->getAssociated()), true) && isset($defaultObject->{$model})) {
 				$object = $defaultObject->{$model};
 			}
 		} else {
