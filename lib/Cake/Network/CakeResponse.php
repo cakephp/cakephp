@@ -746,7 +746,7 @@ class CakeResponse {
  * @return void
  */
 	public function cache($since, $time = '+1 day') {
-		if (!is_integer($time)) {
+		if (!is_int($time)) {
 			$time = strtotime($time);
 		}
 		$this->header(array(
@@ -1008,7 +1008,7 @@ class CakeResponse {
 	protected function _getUTCDate($time = null) {
 		if ($time instanceof DateTime) {
 			$result = clone $time;
-		} elseif (is_integer($time)) {
+		} elseif (is_int($time)) {
 			$result = new DateTime(date('Y-m-d H:i:s', $time));
 		} else {
 			$result = new DateTime($time);

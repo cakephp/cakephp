@@ -310,7 +310,7 @@ class CakeTime {
 			return false;
 		}
 
-		if (is_integer($dateString) || is_numeric($dateString)) {
+		if (is_int($dateString) || is_numeric($dateString)) {
 			$date = intval($dateString);
 		} elseif (is_object($dateString) && $dateString instanceof DateTime) {
 			$clone = clone $dateString;
@@ -589,7 +589,7 @@ class CakeTime {
 
 		if ($dateString instanceof DateTime) {
 			$date = $dateString;
-		} elseif (is_integer($dateString) || is_numeric($dateString)) {
+		} elseif (is_int($dateString) || is_numeric($dateString)) {
 			$dateString = (int)$dateString;
 
 			$date = new DateTime('@' . $dateString);

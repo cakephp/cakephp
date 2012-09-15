@@ -607,7 +607,7 @@ class Helper extends Object {
 
 		$entity = $this->entity();
 		$model = array_shift($entity);
-		$dom = $model . join('', array_map(array('Inflector', 'camelize'), $entity));
+		$dom = $model . implode('', array_map(array('Inflector', 'camelize'), $entity));
 
 		if (is_array($options) && !array_key_exists($id, $options)) {
 			$options[$id] = $dom;
