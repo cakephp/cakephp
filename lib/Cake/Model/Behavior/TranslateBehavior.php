@@ -139,7 +139,10 @@ class TranslateBehavior extends ModelBehavior {
 			return $query;
 		}
 
-		$fields = array_merge($this->settings[$Model->alias], $this->runtime[$Model->alias]['fields']);
+		$fields = array_merge(
+			$this->settings[$Model->alias],
+			$this->runtime[$Model->alias]['fields']
+		);
 		$addFields = array();
 		if (empty($query['fields'])) {
 			$addFields = $fields;
@@ -147,7 +150,11 @@ class TranslateBehavior extends ModelBehavior {
 			foreach ($fields as $key => $value) {
 				$field = (is_numeric($key)) ? $value : $key;
 
-				if (in_array($Model->escapeField('*'), $query['fields']) || in_array($Model->alias . '.' . $field, $query['fields']) || in_array($field, $query['fields'])) {
+				if (
+					in_array($Model->escapeField('*'), $query['fields']) ||
+					in_array($Model->alias . '.' . $field, $query['fields']) ||
+					in_array($field, $query['fields'])
+				) {
 					$addFields[] = $field;
 				}
 			}
@@ -395,7 +402,10 @@ class TranslateBehavior extends ModelBehavior {
 		$conditions = array('model' => $Model->alias, 'foreign_key' => $Model->id);
 		$RuntimeModel = $this->translateModel($Model);
 
-		$fields = array_merge($this->settings[$Model->alias], $this->runtime[$Model->alias]['fields']);
+		$fields = array_merge(
+			$this->settings[$Model->alias],
+			$this->runtime[$Model->alias]['fields']
+		);
 		if ($created) {
 			// set each field value to an empty string
 			foreach ($fields as $key => $field) {
@@ -421,13 +431,20 @@ class TranslateBehavior extends ModelBehavior {
 					$value = array($locale => $value);
 				}
 			}
-			$translations = $RuntimeModel->find('list', array('conditions' => $conditions, 'fields' => array($RuntimeModel->alias . '.locale', $RuntimeModel->alias . '.id')));
+			$translations = $RuntimeModel->find('list', array(
+				'conditions' => $conditions,
+				'fields' => array($RuntimeModel->alias . '.locale', $RuntimeModel->alias . '.id')
+			));
 			foreach ($value as $_locale => $_value) {
 				$RuntimeModel->create();
 				$conditions['locale'] = $_locale;
 				$conditions['content'] = $_value;
 				if (array_key_exists($_locale, $translations)) {
-					$RuntimeModel->save(array($RuntimeModel->alias => array_merge($conditions, array('id' => $translations[$_locale]))));
+					$RuntimeModel->save(array(
+						$RuntimeModel->alias => array_merge(
+							$conditions, array('id' => $translations[$_locale])
+						)
+					));
 				} else {
 					$RuntimeModel->save(array($RuntimeModel->alias => $conditions));
 				}
@@ -443,7 +460,10 @@ class TranslateBehavior extends ModelBehavior {
  */
 	public function afterDelete(Model $Model) {
 		$RuntimeModel = $this->translateModel($Model);
-		$conditions = array('model' => $Model->alias, 'foreign_key' => $Model->id);
+		$conditions = array(
+			'model' => $Model->alias,
+			'foreign_key' => $Model->id
+		);
 		$RuntimeModel->deleteAll($conditions);
 	}
 
@@ -511,7 +531,10 @@ class TranslateBehavior extends ModelBehavior {
 		}
 		$associations = array();
 		$RuntimeModel = $this->translateModel($Model);
-		$default = array('className' => $RuntimeModel->alias, 'foreignKey' => 'foreign_key');
+		$default = array(
+			'className' => $RuntimeModel->alias,
+			'foreignKey' => 'foreign_key'
+		);
 
 		foreach ($fields as $key => $value) {
 			if (is_numeric($key)) {
