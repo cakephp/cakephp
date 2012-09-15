@@ -918,7 +918,7 @@ class FolderTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCopyWithOverwrite() {
+	public function testCopyWithOverwrite() {
 		extract($this->_setupFilesystem());
 
 		$Folder = new Folder($folderOne);
@@ -1050,7 +1050,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertTrue(file_exists($folderTwo . DS . 'file1.php'));
 		$this->assertEquals('', file_get_contents($folderTwoB . DS . 'fileB.php'));
 		$this->assertFalse(file_exists($fileOne));
-  	$this->assertFalse(file_exists($folderOneA));
+		$this->assertFalse(file_exists($folderOneA));
 		$this->assertFalse(file_exists($fileOneA));
 
 		$Folder = new Folder($path);
