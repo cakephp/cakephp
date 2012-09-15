@@ -22,19 +22,69 @@ use Cake\Log\Engine\FileLog;
 /**
  * Logs messages to configured Log adapters.  One or more adapters
  * can be configured using Cake Logs's methods.  If you don't
- * configure any adapters, and write to the logs a default
- * FileLog will be autoconfigured for you.
+ * configure any adapters, and write to Log, the messages will be
+ * ignored.
  *
  * ### Configuring Log adapters
  *
- * You can configure log adapters in your applications `bootstrap.php` file.
+ * You can configure log adapters in your applications `Config/logging.php` file.
  * A sample configuration would look like:
  *
  * {{{
- * Log::config('my_log', array('engine' => 'FileLog'));
+ * Configure::write('Log.my_log', ['engine' => 'FileLog']);
  * }}}
  *
- * See the documentation on Log::config() for more detail.
+ * You can define the engine as any fully namespaced classname or use a short hand
+ * classname to use loggers in the `App\Log\Engine` & `Cake\Log\Engine` namespaces.
+ * You can also use plugin short hand to use logging classes provided by plugins.
+ *
+ * Log adapters are required to implement `Cake\Log\LogInterface`, and there is a
+ * built-in base class (`Cake\Log\Engine\BaseLog`) that can be used for custom loggers.
+ *
+ * Outside of the `engine` key, all other configuration values will be passed to the 
+ * logging adapter's constructor as an array.
+ *
+ * ### Logging levels
+ *
+ * When configuring loggers, you can set which levels a logger will handle.
+ * This allows you to disable debug messages in production for example:
+ *
+ * {{{
+ * Configure::write('default', [
+ *     'engine' => 'File',
+ *     'path' => LOGS,
+ *     'levels' => ['error', 'critical', 'alert', 'emergency']
+ * ]);
+ * }}}
+ *
+ * The above logger would only log error messages or higher. Any
+ * other log messages would be discarded.
+ *
+ * ### Logging scopes
+ *
+ * When configuring loggers you can define the active scopes the logger
+ * is for.  If defined, only the listed scopes will be handled by the
+ * logger.  If you don't define any scopes an adapter will catch
+ * all scopes that match the handled levels.
+ *
+ * {{{
+ * Configure::write('payments', [
+ *     'engine' => 'File',
+ *     'scopes' => ['payment', 'order']
+ * ]);
+ * }}}
+ *
+ * The above logger will only capture log entries made in the
+ * `payment` and `order` scopes. All other scopes including the
+ * undefined scope will be ignored.
+ *
+ * ### Loading loggers at runtime
+ *
+ * After an application's bootstrap phase is complete, or after
+ * any log messages are written you cannot use Configure to create 
+ * new loggers, without using Log::reset() first.  Instead you should
+ * used Log::engine() to insert constructed loggers, when dynamically
+ * adding loggers at runtime.
  *
  * ### Writing to the log
  *
@@ -51,9 +101,6 @@ use Cake\Log\Engine\FileLog;
  * Log::write(LOG_ERR, 'Something horrible happened');
  * }}}
  *
- * If you require custom logging levels, you can use Log::levels() to
- * append additoinal logging levels.
- *
  * ### Logging scopes
  *
  * When logging messages and configuring log adapters, you can specify
@@ -62,10 +109,7 @@ use Cake\Log\Engine\FileLog;
  * example in an e-commerce application you may want to handle logged errors
  * in the cart and ordering subsystems differently than the rest of the
  * application.  By using scopes you can control logging for each part
- * of your application and still keep standard log levels.
- *
- * See Log::config() and Log::write() for more information
- * on scopes
+ * of your application and also use standard log levels.
  *
  * @package       Cake.Log
  */
@@ -150,63 +194,9 @@ class Log {
 	}
 
 /**
- * Configure and add a new logging stream to Cake Log
- * You can use add loggers from app/Log/Engine use app.loggername, or any
- * plugin/Log/Engine using plugin.loggername.
- *
- * ### Usage:
- *
- * {{{
- * Log::config('second_file', array(
- *     'engine' => 'FileLog',
- *     'path' => '/var/logs/my_app/'
- * ));
- * }}}
- *
- * Will configure a FileLog instance to use the specified path.
- * All options that are not `engine` are passed onto the logging adapter,
- * and handled there.  Any class can be configured as a logging
- * adapter as long as it implements the methods in Cake\Log\LogInterface.
- *
- * ### Logging levels
- *
- * When configuring loggers, you can set which levels a logger will handle.
- * This allows you to disable debug messages in production for example:
- *
- * {{{
- * Log::config('default', array(
- *     'engine' => 'File',
- *     'path' => LOGS,
- *     'levels' => array('error', 'critical', 'alert', 'emergency')
- * ));
- * }}}
- *
- * The above logger would only log error messages or higher. Any
- * other log messages would be discarded.
- *
- * ### Logging scopes
- *
- * When configuring loggers you can define the active scopes the logger
- * is for.  If defined only the listed scopes will be handled by the
- * logger.  If you don't define any scopes an adapter will catch
- * all scopes that match the handled levels.
- *
- * {{{
- * Log::config('payments', array(
- *     'engine' => 'File',
- *     'scopes' => array('payment', 'order')
- * ));
- * }}}
- *
- * The above logger will only capture log entries made in the
- * `payment` and `order` scopes. All other scopes including the
- * undefined scope will be ignored.
- *
- * @param string $key The keyname for this logger, used to remove the
- *    logger later.
- * @param array $config Array of configuration information for the logger
- * @return boolean success of configuration.
- * @throws Cake\Error\Exception
+ * @deprecated Use Configure::write() to configure logging.
+ * @see App/Config/logging.php
+ * @return void
  */
 	public static function config($key, $config) {
 		trigger_error(
