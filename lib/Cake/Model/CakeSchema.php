@@ -418,26 +418,26 @@ class CakeSchema extends Object {
 					}
 					$col = "\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
 					unset($value['type']);
-					$col .= join(', ',  $this->_values($value));
+					$col .= implode(', ',  $this->_values($value));
 				} elseif ($field == 'indexes') {
 					$col = "\t\t'indexes' => array(\n\t\t\t";
 					$props = array();
 					foreach ((array)$value as $key => $index) {
-						$props[] = "'{$key}' => array(" . join(', ',  $this->_values($index)) . ")";
+						$props[] = "'{$key}' => array(" . implode(', ',  $this->_values($index)) . ")";
 					}
-					$col .= join(",\n\t\t\t", $props) . "\n\t\t";
+					$col .= implode(",\n\t\t\t", $props) . "\n\t\t";
 				} elseif ($field == 'tableParameters') {
 					$col = "\t\t'tableParameters' => array(";
 					$props = array();
 					foreach ((array)$value as $key => $param) {
 						$props[] = "'{$key}' => '$param'";
 					}
-					$col .= join(', ', $props);
+					$col .= implode(', ', $props);
 				}
 				$col .= ")";
 				$cols[] = $col;
 			}
-			$out .= join(",\n", $cols);
+			$out .= implode(",\n", $cols);
 		}
 		$out .= "\n\t);\n";
 		return $out;
