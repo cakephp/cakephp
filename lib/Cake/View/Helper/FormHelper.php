@@ -274,7 +274,7 @@ class FormHelper extends AppHelper {
 		if (empty($errors)) {
 			return false;
 		}
-		$errors = Hash::get($errors, join('.', $entity));
+		$errors = Hash::get($errors, implode('.', $entity));
 		return $errors === null ? false : $errors;
 	}
 

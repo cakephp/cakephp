@@ -180,7 +180,7 @@ class IniReader implements ConfigReaderInterface {
 				}
 			}
 		}
-		$contents = join("\n", $result);
+		$contents = implode("\n", $result);
 
 		if (substr($filename, -4) !== '.ini') {
 			$filename .= '.ini';
