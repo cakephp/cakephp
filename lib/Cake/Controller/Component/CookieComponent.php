@@ -291,8 +291,7 @@ class CookieComponent extends Component {
 		if (empty($key)) {
 			return false;
 		}
-		$result = $this->read($key);
-		return isset($result);
+		return $this->read($key) !== null;
 	}
 
 /**

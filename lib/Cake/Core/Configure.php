@@ -180,8 +180,7 @@ class Configure {
 		if (empty($var)) {
 			return false;
 		}
-		$result = Hash::get(self::$_values, $var);
-		return isset($result);
+		return Hash::get(self::$_values, $var) !== null;
 	}
 
 /**
