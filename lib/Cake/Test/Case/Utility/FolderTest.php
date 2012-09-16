@@ -374,7 +374,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testFolderReadWithHiddenFiles() {
-		$this->skipIf(!is_writeable(TMP), 'Cant test Folder::read with hidden files unless the tmp folder is writable.');
+		$this->skipIf(!is_writable(TMP), 'Cant test Folder::read with hidden files unless the tmp folder is writable.');
 
 		$Folder = new Folder(TMP . 'folder_tree_hidden', true, 0777);
 		mkdir($Folder->path . DS . '.svn');
@@ -457,7 +457,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testFolderTreeWithHiddenFiles() {
-		$this->skipIf(!is_writeable(TMP), 'Can\'t test Folder::tree with hidden files unless the tmp folder is writable.');
+		$this->skipIf(!is_writable(TMP), 'Can\'t test Folder::tree with hidden files unless the tmp folder is writable.');
 
 		$Folder = new Folder(TMP . 'folder_tree_hidden', true, 0777);
 		mkdir($Folder->path . DS . '.svn', 0777, true);
