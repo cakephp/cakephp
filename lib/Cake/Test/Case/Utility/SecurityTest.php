@@ -215,6 +215,7 @@ class SecurityTest extends CakeTestCase {
  * @return void
  */
 	public function testRijndael() {
+		$this->skipIf(!function_exists('mcrypt_encrypt'));
 		$txt = 'The quick brown fox jumped over the lazy dog.';
 		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
 
