@@ -14,6 +14,7 @@
  */
 namespace Cake\Routing;
 
+use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Request;
@@ -285,11 +286,7 @@ class Router {
 		}
 		$routeClass = static::$_routeClass;
 		if (isset($options['routeClass'])) {
-			if (strpos($options['routeClass'], '.') === false) {
-				$routeClass = $options['routeClass'];
-			} else {
-				list($plugin, $routeClass) = pluginSplit($options['routeClass'], true);
-			}
+			$routeClass = App::classname($options['routeClass'], 'Routing/Route');
 			$routeClass = static::_validateRouteClass($routeClass);
 			unset($options['routeClass']);
 		}
