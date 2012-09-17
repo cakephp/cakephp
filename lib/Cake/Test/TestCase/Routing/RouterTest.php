@@ -2130,6 +2130,27 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * test using custom route class in PluginDot notation
+ *
+ * @return void
+ */
+	public function testUsingCustomRouteClassPluginDotSyntax() {
+		App::build(array(
+			'Plugin' => array(
+				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
+			)
+		));
+		Plugin::load('TestPlugin');
+		$routes = Router::connect(
+			'/:slug',
+			array('controller' => 'posts', 'action' => 'view'),
+			array('routeClass' => 'TestPlugin.TestRoute', 'slug' => '[a-z_-]+')
+		);
+		$this->assertInstanceOf('TestPlugin\Routing\Route\TestRoute', $routes[0]);
+		Plugin::unload('TestPlugin');
+	}
+
+/**
  * test that route classes must extend \Cake\Routing\Route\Route
  *
  * @expectedException Cake\Error\Exception

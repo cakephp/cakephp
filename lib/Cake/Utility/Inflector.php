@@ -407,8 +407,8 @@ class Inflector {
 		}
 
 		if (!isset(static::$_singular['cacheUninflected']) || !isset(static::$_singular['cacheIrregular'])) {
-			static::$_singular['cacheUninflected'] = '(?:' . join('|', static::$_singular['merged']['uninflected']) . ')';
-			static::$_singular['cacheIrregular'] = '(?:' . join('|', array_keys(static::$_singular['merged']['irregular'])) . ')';
+			static::$_singular['cacheUninflected'] = '(?:' . implode('|', static::$_singular['merged']['uninflected']) . ')';
+			static::$_singular['cacheIrregular'] = '(?:' . implode('|', array_keys(static::$_singular['merged']['irregular'])) . ')';
 		}
 
 		if (preg_match('/(.*)\\b(' . static::$_singular['cacheIrregular'] . ')$/i', $word, $regs)) {

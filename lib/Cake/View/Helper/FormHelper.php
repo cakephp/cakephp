@@ -153,7 +153,7 @@ class FormHelper extends Helper {
 			));
 		} elseif (ClassRegistry::isKeySet($this->defaultModel)) {
 			$defaultObject = ClassRegistry::getObject($this->defaultModel);
-			if (in_array($model, array_keys($defaultObject->getAssociated()), true) && isset($defaultObject->{$model})) {
+			if ($defaultObject && in_array($model, array_keys($defaultObject->getAssociated()), true) && isset($defaultObject->{$model})) {
 				$object = $defaultObject->{$model};
 			}
 		} else {
@@ -281,7 +281,7 @@ class FormHelper extends Helper {
 		if (empty($errors)) {
 			return false;
 		}
-		$errors = Hash::get($errors, join('.', $entity));
+		$errors = Hash::get($errors, implode('.', $entity));
 		return $errors === null ? false : $errors;
 	}
 

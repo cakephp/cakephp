@@ -219,8 +219,7 @@ class Session {
 		if (empty($name)) {
 			return false;
 		}
-		$result = Hash::get($_SESSION, $name);
-		return isset($result);
+		return Hash::get($_SESSION, $name) !== null;
 	}
 
 /**
@@ -284,9 +283,8 @@ class Session {
 	protected static function _error($errorNumber) {
 		if (!is_array(static::$error) || !array_key_exists($errorNumber, static::$error)) {
 			return false;
-		} else {
-			return static::$error[$errorNumber];
 		}
+		return self::$error[$errorNumber];
 	}
 
 /**

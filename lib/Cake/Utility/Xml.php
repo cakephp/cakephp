@@ -170,14 +170,14 @@ class Xml {
  * @param array $input Array with data
  * @param array $options The options to use
  * @return SimpleXMLElement|DOMDocument SimpleXMLElement or DOMDocument
- * @throws XmlException
+ * @throws Cake\Error\XmlException
  */
 	public static function fromArray($input, $options = array()) {
 		if (!is_array($input) || count($input) !== 1) {
 			throw new Error\XmlException(__d('cake_dev', 'Invalid input.'));
 		}
 		$key = key($input);
-		if (is_integer($key)) {
+		if (is_int($key)) {
 			throw new Error\XmlException(__d('cake_dev', 'The key of input must be alphanumeric'));
 		}
 

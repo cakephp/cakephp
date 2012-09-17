@@ -643,7 +643,7 @@ class HtmlHelper extends Helper {
 			$out[] = $key . ':' . $value . ';';
 		}
 		if ($oneline) {
-			return join(' ', $out);
+			return implode(' ', $out);
 		}
 		return implode("\n", $out);
 	}
@@ -675,7 +675,7 @@ class HtmlHelper extends Helper {
 					$out[] = $crumb[0];
 				}
 			}
-			return join($separator, $out);
+			return implode($separator, $out);
 		} else {
 			return null;
 		}
@@ -811,7 +811,7 @@ class HtmlHelper extends Helper {
 				$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes(current($arg)), key($arg));
 			}
 		}
-		return sprintf($this->_tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
+		return sprintf($this->_tags['tablerow'], $this->_parseAttributes($trOptions), implode(' ', $out));
 	}
 
 /**

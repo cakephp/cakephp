@@ -495,7 +495,7 @@ abstract class JsBaseEngineHelper extends Helper {
 			$out[] = $key . ':' . $value;
 		}
 		sort($out);
-		return join(', ', $out);
+		return implode(', ', $out);
 	}
 
 /**

@@ -320,9 +320,8 @@ class SecurityComponent extends Component {
 	public function blackHole(Controller $controller, $error = '') {
 		if ($this->blackHoleCallback == null) {
 			throw new Error\BadRequestException(__d('cake_dev', 'The request has been black-holed'));
-		} else {
-			return $this->_callback($controller, $this->blackHoleCallback, array($error));
 		}
+		return $this->_callback($controller, $this->blackHoleCallback, array($error));
 	}
 
 /**
@@ -597,11 +596,10 @@ class SecurityComponent extends Component {
  * @throws BadRequestException When a the blackholeCallback is not callable.
  */
 	protected function _callback(Controller $controller, $method, $params = array()) {
-		if (is_callable(array($controller, $method))) {
-			return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
-		} else {
+		if (!is_callable(array($controller, $method))) {
 			throw new BadRequestException(__d('cake_dev', 'The request has been black-holed'));
 		}
+		return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
 	}
 
 }

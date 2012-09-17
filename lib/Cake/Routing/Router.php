@@ -285,7 +285,12 @@ class Router {
 		}
 		$routeClass = static::$_routeClass;
 		if (isset($options['routeClass'])) {
-			$routeClass = static::_validateRouteClass($options['routeClass']);
+			if (strpos($options['routeClass'], '.') === false) {
+				$routeClass = $options['routeClass'];
+			} else {
+				list($plugin, $routeClass) = pluginSplit($options['routeClass'], true);
+			}
+			$routeClass = static::_validateRouteClass($routeClass);
 			unset($options['routeClass']);
 		}
 		if ($routeClass === 'Cake\Routing\Route\RedirectRoute' && isset($defaults['redirect'])) {

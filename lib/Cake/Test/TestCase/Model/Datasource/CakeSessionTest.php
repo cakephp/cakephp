@@ -231,7 +231,7 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::write('SessionTestCase', 'value');
 		$this->assertTrue(TestCakeSession::check('SessionTestCase'));
 
-		$this->assertFalse(TestCakeSession::check('NotExistingSessionTestCase'), false);
+		$this->assertFalse(TestCakeSession::check('NotExistingSessionTestCase'));
 	}
 
 /**

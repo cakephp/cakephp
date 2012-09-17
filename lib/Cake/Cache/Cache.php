@@ -365,7 +365,7 @@ class Cache {
 		}
 		$key = static::$_engines[$config]->key($key);
 
-		if (!$key || !is_integer($offset) || $offset < 0) {
+		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
 		$success = static::$_engines[$config]->increment($settings['prefix'] . $key, $offset);
@@ -393,7 +393,7 @@ class Cache {
 		}
 		$key = static::$_engines[$config]->key($key);
 
-		if (!$key || !is_integer($offset) || $offset < 0) {
+		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
 		$success = static::$_engines[$config]->decrement($settings['prefix'] . $key, $offset);

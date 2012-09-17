@@ -92,8 +92,6 @@ class ClassRegistry {
  */
 	public static function init($class, $strict = false) {
 		$_this = ClassRegistry::getInstance();
-		$false = false;
-		$true = true;
 
 		if (is_array($class)) {
 			$objects = $class;
@@ -103,11 +101,19 @@ class ClassRegistry {
 		} else {
 			$objects = array(array('class' => $class));
 		}
-		$defaults = isset($_this->_config['Model']) ? $_this->_config['Model'] : array();
+		$defaults = array();
+		if (isset($_this->_config['Model'])) {
+			$defaults = $_this->_config['Model'];
+		}
 		$count = count($objects);
 		$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
 
 		foreach ($objects as $key => $settings) {
+			if (is_numeric($settings)) {
+				trigger_error(__d('cake_dev', '(ClassRegistry::init() Attempted to create instance of a class with a numeric name'), E_USER_WARNING);
+				return false;
+			}
+
 			if (is_array($settings)) {
 				$pluginPath = null;
 				$settings = array_merge($defaults, $settings);
@@ -123,7 +129,8 @@ class ClassRegistry {
 				}
 				$alias = $settings['alias'];
 
-				if ($model = $_this->_duplicate($alias, $class)) {
+				$model = $_this->_duplicate($alias, $class);
+				if ($model) {
 					$_this->map($alias, $class);
 					return $model;
 				}
@@ -153,8 +160,8 @@ class ClassRegistry {
 					} else {
 						$instance = $reflection->newInstance();
 					}
-					if ($strict) {
-						$instance = ($instance instanceof Model) ? $instance : null;
+					if ($strict && !$instance instanceof Model) {
+						$instance = null;
 					}
 				}
 				if (!isset($instance)) {
@@ -170,14 +177,11 @@ class ClassRegistry {
 					$instance = new $appModel($settings);
 				}
 				$_this->map($alias, $class);
-			} elseif (is_numeric($settings)) {
-				trigger_error(__d('cake_dev', '(ClassRegistry::init() Attempted to create instance of a class with a numeric name'), E_USER_WARNING);
-				return $false;
 			}
 		}
 
 		if ($count > 1) {
-			return $true;
+			return true;
 		}
 		return $instance;
 	}
@@ -222,12 +226,8 @@ class ClassRegistry {
 	public static function isKeySet($key) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		if (isset($_this->_objects[$key])) {
-			return true;
-		} elseif (isset($_this->_map[$key])) {
-			return true;
-		}
-		return false;
+
+		return isset($_this->_objects[$key]) || isset($_this->_map[$key]);
 	}
 
 /**
@@ -236,8 +236,7 @@ class ClassRegistry {
  * @return array Set of keys stored in registry
  */
 	public static function keys() {
-		$_this = ClassRegistry::getInstance();
-		return array_keys($_this->_objects);
+		return array_keys(ClassRegistry::getInstance()->_objects);
 	}
 
 /**
@@ -328,8 +327,7 @@ class ClassRegistry {
  * @return array Keys of registry's map
  */
 	public static function mapKeys() {
-		$_this = ClassRegistry::getInstance();
-		return array_keys($_this->_map);
+		return array_keys(ClassRegistry::getInstance()->_map);
 	}
 
 /**
