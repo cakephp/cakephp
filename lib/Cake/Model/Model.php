@@ -2266,6 +2266,10 @@ class Model extends Object implements CakeEventListener {
 								$values[$i] = array_merge(array($key => $this->id), $value, array($key => $this->id));
 							}
 						}
+						// add foreignKey to whitelist if not already there
+						if (!in_array($key, $this->{$association}->whitelist)) {
+							$this->{$association}->whitelist[] = $key;
+						}
 						$_return = $this->{$association}->saveMany($values, array_merge($options, array('atomic' => false)));
 						if (in_array(false, $_return, true)) {
 							$validationErrors[$association] = $this->{$association}->validationErrors;
