@@ -19,6 +19,7 @@
 
 App::uses('Multibyte', 'I18n');
 App::uses('File', 'Utility');
+App::uses('CakeNumber', 'Utility');
 // Load multibyte if the extension is missing.
 if (!function_exists('mb_strlen')) {
 	class_exists('Multibyte');
@@ -897,6 +898,27 @@ class Validation {
 			throw new CakeException(__d('cake_dev', 'Can not determine the mimetype.'));
 		}
 		return in_array($mime, $mimeTypes);
+	}
+
+/**
+ * Checks the filesize
+ *
+ * @param string|array $check
+ * @param integer|string $size Size in bytes or human readable string like '5MB'
+ * @param string $operator See `Validation::comparison()`
+ * @return boolean Success
+ */
+	public static function fileSize($check, $operator = null, $size = null) {
+		if (is_array($check) && isset($check['tmp_name'])) {
+			$check = $check['tmp_name'];
+		}
+
+		if (is_string($size)) {
+			$size = CakeNumber::fromReadableSize($size);
+		}
+		$filesize = filesize($check);
+
+		return self::comparison($filesize, $operator, $size);
 	}
 
 /**
