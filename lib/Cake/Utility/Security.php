@@ -101,17 +101,15 @@ class Security {
 			return self::_crypt($string, $type, $salt);
 		}
 		if ($salt) {
-			if (is_string($salt)) {
-				$string = $salt . $string;
-			} else {
-				$string = Configure::read('Security.salt') . $string;
+			if (!is_string($salt)) {
+				$salt = Configure::read('Security.salt');
 			}
+			$string = $salt . $string;
 		}
 
 		if ($type == 'sha1' || $type == null) {
 			if (function_exists('sha1')) {
-				$return = sha1($string);
-				return $return;
+				return sha1($string);
 			}
 			$type = 'sha256';
 		}
@@ -201,13 +199,11 @@ class Security {
 		$mode = 'cbc';
 		$cryptKey = substr($key, 0, 32);
 		$iv = substr($key, strlen($key) - 32, 32);
-		$out = '';
+
 		if ($operation === 'encrypt') {
-			$out .= mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
-		} elseif ($operation === 'decrypt') {
-			$out .= rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
+			return mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
 		}
-		return $out;
+		return rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
 	}
 
 /**
@@ -248,35 +244,36 @@ class Security {
 		);
 		extract($options);
 		if ($type === null) {
-			$hashType = self::$hashType;
-		} else {
-			$hashType = $type;
+			$type = self::$hashType;
 		}
 		$cost = self::$hashCost;
 		if ($salt === false) {
-			if (isset($costLimits[$hashType]) && ($cost < $costLimits[$hashType][0] || $cost > $costLimits[$hashType][1])) {
+			if (isset($costLimits[$type]) && ($cost < $costLimits[$type][0] || $cost > $costLimits[$type][1])) {
 				trigger_error(__d(
 					'cake_dev',
 					'When using %s you must specify a cost between %s and %s',
 					array(
-						$hashType,
-						$costLimits[$hashType][0],
-						$costLimits[$hashType][1]
+						$type,
+						$costLimits[$type][0],
+						$costLimits[$type][1]
 					)
 				), E_USER_WARNING);
 				return '';
 			}
-			$salt = self::salt($saltLength[$hashType]);
+			$salt = self::salt($saltLength[$type]);
 			$vspArgs = array(
 				$cost,
 				$salt,
 			);
-			$salt = vsprintf($saltFormat[$hashType], $vspArgs);
-		} elseif ($salt === true || strpos($salt, '$2a$') !== 0 || strlen($salt) < 29) {
+			$salt = vsprintf($saltFormat[$type], $vspArgs);
+			return crypt($password, $salt);
+		}
+
+		if ($salt === true || strpos($salt, '$2a$') !== 0 || strlen($salt) < 29) {
 			trigger_error(__d(
 				'cake_dev',
 				'Invalid salt: %s for %s Please visit http://www.php.net/crypt and read the appropriate section for building %s salts.',
-				array($salt, $hashType, $hashType)
+				array($salt, $type, $type)
 			), E_USER_WARNING);
 			return '';
 		}
