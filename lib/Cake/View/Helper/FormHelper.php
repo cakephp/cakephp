@@ -1850,10 +1850,12 @@ class FormHelper extends AppHelper {
 
 		if (!empty($tag) || isset($template)) {
 			$hasOptions = (count($options) > 0 || $showEmpty);
+			// Secure the field if there are options, or its a multi select.
+			// Single selects with no options don't submit, but multiselects do.
 			if (
 				(!isset($secure) || $secure == true) &&
 				empty($attributes['disabled']) &&
-				$hasOptions
+				(!empty($attributes['multiple']) || $hasOptions)
 			) {
 				$this->_secure(true);
 			}
