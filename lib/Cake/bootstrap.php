@@ -49,5 +49,3 @@ if (!defined('FULL_BASE_URL')) {
 	}
 	unset($httpHost, $s);
 }
-
-\Cake\Core\Configure::bootstrap(isset($boot) ? $boot : true);
