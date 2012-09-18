@@ -119,11 +119,11 @@ class ViewBlock {
  * Get the content for a block.
  *
  * @param string $name Name of the block
- * @return The block content or '' if the block does not exist.
+ * @return string The block content or $default if the block does not exist.
  */
-	public function get($name) {
+	public function get($name, $default = '') {
 		if (!isset($this->_blocks[$name])) {
-			return '';
+			return $default;
 		}
 		return $this->_blocks[$name];
 	}
