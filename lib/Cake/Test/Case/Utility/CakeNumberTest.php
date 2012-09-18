@@ -555,6 +555,7 @@ class CakeNumberTest extends CakeTestCase {
 			array(array('size' => '1KB', 'default' => false), 1024),
 			array(array('size' => '1.5KB', 'default' => false), 1536),
 			array(array('size' => '1MB', 'default' => false), 1048576),
+			array(array('size' => '1mb', 'default' => false), 1048576),
 			array(array('size' => '1.5MB', 'default' => false), 1572864),
 			array(array('size' => '1GB', 'default' => false), 1073741824),
 			array(array('size' => '1.5GB', 'default' => false), 1610612736),
