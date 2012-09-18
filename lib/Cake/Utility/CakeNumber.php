@@ -107,6 +107,7 @@ class CakeNumber {
  * @param string $size Size in human readable string like '5MB'
  * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
  * @return integer Bytes
+ * @throws CakeException On invalid Unit type.
  */
 	public static function fromReadableSize($size, $default = false) {
 		if (ctype_digit($size)) {

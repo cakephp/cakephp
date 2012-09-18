@@ -2931,7 +2931,6 @@ class DboSource extends DataSource {
  * @return boolean success.
  */
 	public function resetSequence($table, $column) {
-
 	}
 
 /**
