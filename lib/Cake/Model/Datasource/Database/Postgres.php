@@ -301,9 +301,11 @@ class Postgres extends DboSource {
  * @return boolean success.
  */
 	public function resetSequence($table, $column) {
-		$sequence = $this->value($this->getSequence($table, $column));
-		$table = $this->fullTableName($table);
-		$this->execute("SELECT setval($sequence, (SELECT MAX(id) FROM $table))");
+		$tableName = $this->fullTableName($table, false, false);
+		$fullTable = $this->fullTableName($table);
+
+		$sequence = $this->value($this->getSequence($tableName, $column));
+		$this->execute("SELECT setval($sequence, (SELECT MAX(id) FROM $fullTable))");
 		return true;
 	}
 
