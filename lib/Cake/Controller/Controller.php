@@ -265,6 +265,13 @@ class Controller extends Object implements CakeEventListener {
 	public $methods = array();
 
 /**
+ * The paginate options for this controller
+ *
+ * @var array
+ */
+	public $paginate = array();
+
+/**
  * This controller's primary model class name, the Inflector::singularize()'ed version of
  * the controller's $name property.
  *
