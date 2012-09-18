@@ -112,15 +112,19 @@ class CakeNumber {
 		if (ctype_digit($size)) {
 			return $size * 1;
 		}
-		$units = array('KB', 'MB', 'GB', 'TB', 'PB');
-		foreach ($units as $i => $unit) {
-			if ($unit == substr($size, -2)) {
-				return $size * pow(1024, $i + 1);
-			}
+		$size = strtoupper($size);
+
+		$i = array_search(substr($size, -2), array('KB', 'MB', 'GB', 'TB', 'PB'));
+		if ($i !== false) {
+			$size = substr($size, 0, strlen($size) -2);
+			return $size * pow(1024, $i + 1);
 		}
+
 		if (substr($size, -1) == 'B' && ctype_digit(substr($size, 0, strlen($size) - 1))) {
+			$size = substr($size, 0, strlen($size) - 1);
 			return $size * 1;
 		}
+
 		if ($default !== false) {
 			return $default;
 		}
