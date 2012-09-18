@@ -1454,11 +1454,11 @@ TEXT;
 	public function testBlockDefaultValue() {
 		$default = 'Default';
 		$result = $this->View->fetch('title', $default);
-		$this->assertEqual($result, $default);
+		$this->assertEquals($default, $result);
 
 		$expected = 'My Title';
 		$this->View->assign('title', $expected);
 		$result = $this->View->fetch('title', $default);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 }
