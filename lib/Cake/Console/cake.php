@@ -18,10 +18,17 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 $root = dirname(dirname(dirname(__DIR__)));
+$loaded = false;
 
+$appIndex = array_search('-app', $argv);
+if ($appIndex !== false) {
+	$loaded = true;
+	$dir = $argv[$appIndex + 1];
+	require $dir . '/Config/bootstrap.php';
+}
 // Default app directory layout
-if (file_exists($root . '/App/Config/bootstrap.php')) {
+if (!$loaded && file_exists($root . '/App/Config/bootstrap.php')) {
 	require $root . '/App/Config/bootstrap.php';
 }
-// TODO read ARGV for -app flag, and bootstrap that application.
+unset($root, $loaded, $appIndex, $dir);
 return Cake\Console\ShellDispatcher::run($argv);
