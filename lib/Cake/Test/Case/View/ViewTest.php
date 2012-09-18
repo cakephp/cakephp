@@ -1445,4 +1445,20 @@ TEXT;
 		$end = memory_get_usage();
 		$this->assertLessThanOrEqual($start + 5000, $end);
 	}
+
+/**
+ * tests that a vew block uses default value when not assigned and uses assigned value when it is
+ *
+ * @return void
+ */
+	public function testBlockDefaultValue() {
+		$default = 'Default';
+		$result = $this->View->fetch('title', $default);
+		$this->assertEquals($default, $result);
+
+		$expected = 'My Title';
+		$this->View->assign('title', $expected);
+		$result = $this->View->fetch('title', $default);
+		$this->assertEquals($expected, $result);
+	}
 }
