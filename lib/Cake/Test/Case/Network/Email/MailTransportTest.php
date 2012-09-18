@@ -60,7 +60,7 @@ class MailTransportTest extends CakeTestCase {
 		$data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>" . PHP_EOL;
 		$data .= "Bcc: phpnut@cakephp.org" . PHP_EOL;
 		$data .= "X-Mailer: CakePHP Email" . PHP_EOL;
-		$data .= "Date: " . $date  . PHP_EOL;
+		$data .= "Date: " . $date . PHP_EOL;
 		$data .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>" . PHP_EOL;
 		$data .= "MIME-Version: 1.0" . PHP_EOL;
 		$data .= "Content-Type: text/plain; charset=UTF-8" . PHP_EOL;
