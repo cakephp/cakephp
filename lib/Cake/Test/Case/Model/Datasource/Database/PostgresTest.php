@@ -950,4 +950,26 @@ class PostgresTest extends CakeTestCase {
 		$this->assertNotEmpty($model->read(null, 1));
 	}
 
+	public function testResetSequence() {
+		$model = new Article();
+
+		$table = $this->Dbo->fullTableName($model, false);
+		$fields = array(
+			'id', 'user_id', 'title', 'body', 'published',
+		);
+		$values = array(
+			array(1, 1, 'test', 'first post', false),
+			array(2, 1, 'test 2', 'second post post', false),
+		);
+		$this->Dbo->insertMulti($table, $fields, $values);
+		$sequence = $this->Dbo->getSequence($table);
+		$result = $this->Dbo->rawQuery("SELECT nextval('$sequence')");
+		$original = $result->fetch(PDO::FETCH_ASSOC);
+
+		$this->assertTrue($this->Dbo->resetSequence($table, 'id'));
+		$result = $this->Dbo->rawQuery("SELECT currval('$sequence')");
+		$new = $result->fetch(PDO::FETCH_ASSOC);
+		$this->assertTrue($new['currval'] > $original['nextval'], 'Sequence did not update');
+	}
+
 }
