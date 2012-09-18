@@ -292,6 +292,22 @@ class Postgres extends DboSource {
 	}
 
 /**
+ * Reset a sequence based on the MAX() value of $column.  Useful
+ * for resetting sequences after using insertMulti().
+ *
+ * @param string $table The name of the table to update.
+ * @param string $column The column to use when reseting the sequence value, the
+ *   sequence name will be fetched using Postgres::getSequence();
+ * @return boolean success.
+ */
+	public function resetSequence($table, $column) {
+		$sequence = $this->value($this->getSequence($table, $column));
+		$table = $this->fullTableName($table);
+		$this->execute("SELECT setval($sequence, (SELECT MAX(id) FROM $table))");
+		return true;
+	}
+
+/**
  * Deletes all the records in a table and drops all associated auto-increment sequences
  *
  * @param string|Model $table A string or model class representing the table to be truncated
