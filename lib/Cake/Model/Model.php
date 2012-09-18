@@ -2216,7 +2216,7 @@ class Model extends Object implements CakeEventListener {
 					} else {
 						$data = array_merge(array($key => $this->{$association}->id), $data, array($key => $this->{$association}->id));
 					}
-					$options = $this->addToFieldlist($key, $options);
+					$options = $this->_addToWhiteList($key, $options);
 				} else {
 					$validationErrors[$association] = $this->{$association}->validationErrors;
 				}
@@ -2247,7 +2247,7 @@ class Model extends Object implements CakeEventListener {
 						$validates = $this->{$association}->create(null) !== null;
 						$saved = false;
 						if ($validates) {
-							$options = $this->{$association}->addToFieldlist($key, $options);
+							$options = $this->{$association}->_addToWhiteList($key, $options);
 							if ($options['deep']) {
 								$saved = $this->{$association}->saveAssociated($values, array_merge($options, array('atomic' => false)));
 							} else {
@@ -2268,7 +2268,7 @@ class Model extends Object implements CakeEventListener {
 								$values[$i] = array_merge(array($key => $this->id), $value, array($key => $this->id));
 							}
 						}
-						$options = $this->{$association}->addToFieldlist($key, $options);
+						$options = $this->{$association}->_addToWhiteList($key, $options);
 						$_return = $this->{$association}->saveMany($values, array_merge($options, array('atomic' => false)));
 						if (in_array(false, $_return, true)) {
 							$validationErrors[$association] = $this->{$association}->validationErrors;
@@ -2308,7 +2308,7 @@ class Model extends Object implements CakeEventListener {
  * @param array $options
  * @return array $options
  */
-	public function addToFieldList($key, $options) {
+	protected function _addToWhiteList($key, $options) {
 		if (empty($options['fieldList']) && $this->whitelist && !in_array($key, $this->whitelist)) {
 			$options['fieldList'][$this->alias] = $this->whitelist;
 			$options['fieldList'][$this->alias][] = $key;
