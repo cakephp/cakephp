@@ -90,6 +90,10 @@ class CakeNumberTest extends CakeTestCase {
 	public function testFormatDelta() {
 		$value = '100100100';
 
+		$result = $this->Number->formatDelta($value);
+		$expected = '+100,100,100.00';
+		$this->assertEquals($expected, $result);
+
 		$result = $this->Number->formatDelta($value, array('before' => '', 'after' => ''));
 		$expected = '+100,100,100.00';
 		$this->assertEquals($expected, $result);
