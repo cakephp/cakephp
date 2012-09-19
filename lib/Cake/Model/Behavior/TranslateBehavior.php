@@ -184,7 +184,7 @@ class TranslateBehavior extends ModelBehavior {
  */
 	protected function _checkConditions(Model $Model, $query) {
 		$conditionFields = array();
-		if (empty($query['conditions']) || (!empty($query['conditions']) && !is_array($query['conditions'])) ) {
+		if (empty($query['conditions']) || (!empty($query['conditions']) && !is_array($query['conditions']))) {
 			return $conditionFields;
 		}
 		foreach ($query['conditions'] as $col => $val) {
