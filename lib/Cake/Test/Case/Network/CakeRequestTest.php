@@ -233,7 +233,7 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function testPutParsing() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
+		$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded; charset=UTF-8';
 
 		$data = array('data' => array(
 			'Article' => array('title')
@@ -918,6 +918,13 @@ class CakeRequestTest extends CakeTestCase {
 
 		$_SERVER['TEST_VAR'] = 'foo';
 		$this->assertTrue($request->is('compareCamelCase'), 'Value match failed.');
+		$this->assertTrue($request->is('comparecamelcase'), 'detectors should be case insensitive');
+		$this->assertTrue($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
+
+		$_SERVER['TEST_VAR'] = 'not foo';
+		$this->assertFalse($request->is('compareCamelCase'), 'Value match failed.');
+		$this->assertFalse($request->is('comparecamelcase'), 'detectors should be case insensitive');
+		$this->assertFalse($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
 		$request->addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
 		$_SERVER['TEST_VAR'] = 'banana';
@@ -1739,18 +1746,40 @@ class CakeRequestTest extends CakeTestCase {
  * @return void
  */
 	public function testAcceptLanguage() {
+		// Weird language
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
 		$result = CakeRequest::acceptLanguage();
 		$this->assertEquals(array('inexistent', 'en-ca'), $result, 'Languages do not match');
 
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx;en_ca';
+		// No qualifier
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx,en_ca';
 		$result = CakeRequest::acceptLanguage();
 		$this->assertEquals(array('es-mx', 'en-ca'), $result, 'Languages do not match');
+
+		// With qualifier
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.8,pt-BR;q=0.6,pt;q=0.4';
+		$result = CakeRequest::acceptLanguage();
+		$this->assertEquals(array('en-us', 'en', 'pt-br', 'pt'), $result, 'Languages do not match');
+
+		// With spaces
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'da, en-gb;q=0.8, en;q=0.7';
+		$result = CakeRequest::acceptLanguage();
+		$this->assertEquals(array('da', 'en-gb', 'en'), $result, 'Languages do not match');
+
+		// Checking if requested
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx,en_ca';
+		$result = CakeRequest::acceptLanguage();
 
 		$result = CakeRequest::acceptLanguage('en-ca');
 		$this->assertTrue($result);
 
+		$result = CakeRequest::acceptLanguage('en-CA');
+		$this->assertTrue($result);
+
 		$result = CakeRequest::acceptLanguage('en-us');
+		$this->assertFalse($result);
+
+		$result = CakeRequest::acceptLanguage('en-US');
 		$this->assertFalse($result);
 	}
 
@@ -1855,6 +1884,40 @@ XML;
 		));
 		$this->assertFalse($request->is('requested'));
 		$this->assertFalse($request->isRequested());
+	}
+
+/**
+ * TestOnlyAllow
+ *
+ * @return void
+ */
+	public function testOnlyAllow() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$request = new CakeRequest('/posts/edit/1');
+
+		$this->assertTrue($request->onlyAllow(array('put')));
+
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$this->assertTrue($request->onlyAllow('post', 'delete'));
+	}
+
+/**
+ * TestOnlyAllow throwing exception
+ *
+ */
+	public function testOnlyAllowException() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$request = new CakeRequest('/posts/edit/1');
+
+		try {
+			$request->onlyAllow('POST', 'DELETE');
+			$this->fail('An expected exception has not been raised.');
+		} catch (MethodNotAllowedException $e) {
+			$this->assertEquals(array('Allow' => 'POST, DELETE'), $e->responseHeader());
+		}
+
+		$this->setExpectedException('MethodNotAllowedException');
+		$request->onlyAllow('POST');
 	}
 
 /**

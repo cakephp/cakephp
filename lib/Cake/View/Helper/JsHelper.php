@@ -142,7 +142,7 @@ class JsHelper extends AppHelper {
 				$this->buffer($out);
 				return null;
 			}
-			if (is_object($out) && is_a($out, 'JsBaseEngineHelper')) {
+			if (is_object($out) && $out instanceof JsBaseEngineHelper) {
 				return $this;
 			}
 			return $out;
@@ -208,18 +208,19 @@ class JsHelper extends AppHelper {
 		$opts = $options;
 		unset($opts['onDomReady'], $opts['cache'], $opts['clear']);
 
-		if (!$options['cache'] && $options['inline']) {
-			return $this->Html->scriptBlock($script, $opts);
-		}
-
 		if ($options['cache'] && $options['inline']) {
 			$filename = md5($script);
-			if (!file_exists(JS . $filename . '.js')) {
-				cache(str_replace(WWW_ROOT, '', JS) . $filename . '.js', $script, '+999 days', 'public');
+			if (file_exists(JS . $filename . '.js')
+				|| cache(str_replace(WWW_ROOT, '', JS) . $filename . '.js', $script, '+999 days', 'public')
+				) {
+				return $this->Html->script($filename);
 			}
-			return $this->Html->script($filename);
 		}
-		$this->Html->scriptBlock($script, $opts);
+
+		$return = $this->Html->scriptBlock($script, $opts);
+		if ($options['inline']) {
+			return $return;
+		}
 		return null;
 	}
 

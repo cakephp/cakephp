@@ -282,6 +282,19 @@ class CookieComponent extends Component {
 	}
 
 /**
+ * Returns true if given variable is set in cookie.
+ *
+ * @param string $var Variable name to check for
+ * @return boolean True if variable is there
+ */
+	public function check($key = null) {
+		if (empty($key)) {
+			return false;
+		}
+		return $this->read($key) !== null;
+	}
+
+/**
  * Delete a cookie value
  *
  * Optional [Name.], required key
@@ -385,7 +398,7 @@ class CookieComponent extends Component {
 			return $this->_expires = 0;
 		}
 
-		if (is_integer($expires) || is_numeric($expires)) {
+		if (is_int($expires) || is_numeric($expires)) {
 			return $this->_expires = $now + intval($expires);
 		}
 		return $this->_expires = strtotime($expires, $now);

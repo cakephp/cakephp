@@ -341,10 +341,8 @@ class DboSource extends DataSource {
 		switch ($column) {
 			case 'binary':
 				return $this->_connection->quote($data, PDO::PARAM_LOB);
-			break;
 			case 'boolean':
 				return $this->_connection->quote($this->boolean($data, true), PDO::PARAM_BOOL);
-			break;
 			case 'string':
 			case 'text':
 				return $this->_connection->quote($data, PDO::PARAM_STR);
@@ -362,7 +360,6 @@ class DboSource extends DataSource {
 					return $data;
 				}
 				return $this->_connection->quote($data);
-			break;
 		}
 	}
 
@@ -447,7 +444,7 @@ class DboSource extends DataSource {
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$sql = trim($sql);
-		if (preg_match('/^(?:CREATE|ALTER|DROP)/i', $sql)) {
+		if (preg_match('/^(?:CREATE|ALTER|DROP)\s+(?:TABLE|INDEX)/i', $sql)) {
 			$statements = array_filter(explode(';', $sql));
 			if (count($statements) > 1) {
 				$result = array_map(array($this, '_execute'), $statements);
@@ -1769,7 +1766,7 @@ class DboSource extends DataSource {
 			case 'schema':
 				foreach (array('columns', 'indexes', 'tableParameters') as $var) {
 					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
 					} else {
 						${$var} = '';
 					}
@@ -2029,7 +2026,6 @@ class DboSource extends DataSource {
 					$arg = $this->name($params[0]);
 				}
 				return strtoupper($func) . '(' . $arg . ') AS ' . $this->name($params[1]);
-			break;
 		}
 	}
 
@@ -2315,7 +2311,6 @@ class DboSource extends DataSource {
 			}
 			$fields = array_values($fields);
 		}
-
 		if (!$quote) {
 			if (!empty($virtual)) {
 				$fields = array_merge($fields, $this->_constructVirtualFields($model, $alias, $virtual));
@@ -2633,8 +2628,11 @@ class DboSource extends DataSource {
 			$end = preg_quote($this->endQuote);
 		}
 		$conditions = str_replace(array($start, $end), '', $conditions);
-		$conditions = preg_replace_callback('/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', array(&$this, '_quoteMatchedField'), $conditions);
-
+		$conditions = preg_replace_callback(
+			'/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9_][a-z0-9\\-_]*\\.[a-z0-9_][a-z0-9_\\-]*)/i',
+			array(&$this, '_quoteMatchedField'),
+			$conditions
+		);
 		if ($conditions !== null) {
 			return $conditions;
 		}
@@ -2923,6 +2921,19 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Reset a sequence based on the MAX() value of $column.  Useful
+ * for resetting sequences after using insertMulti().
+ *
+ * This method should be implmented by datasources that require sequences to be used.
+ *
+ * @param string $table The name of the table to update.
+ * @param string $column The column to use when reseting the sequence value.
+ * @return boolean success.
+ */
+	public function resetSequence($table, $column) {
+	}
+
+/**
  * Returns an array of the indexes in given datasource name.
  *
  * @param string $model Name of model to inspect
@@ -3068,7 +3079,7 @@ class DboSource extends DataSource {
 		}
 		$out = $this->_buildFieldParameters($out, $column, 'beforeDefault');
 
-		if (isset($column['key']) && $column['key'] === 'primary' && $type === 'integer') {
+		if (isset($column['key']) && $column['key'] === 'primary' && ($type === 'integer' || $type === 'biginteger')) {
 			$out .= ' ' . $this->columns['primary_key']['name'];
 		} elseif (isset($column['key']) && $column['key'] === 'primary') {
 			$out .= ' NOT NULL';

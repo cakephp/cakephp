@@ -123,7 +123,6 @@ class Object {
 				return $this->{$method}($params[0], $params[1], $params[2], $params[3], $params[4]);
 			default:
 				return call_user_func_array(array(&$this, $method), $params);
-			break;
 		}
 	}
 

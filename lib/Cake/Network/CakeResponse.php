@@ -100,6 +100,7 @@ class CakeResponse {
 		'dir' => 'application/x-director',
 		'dms' => 'application/octet-stream',
 		'doc' => 'application/msword',
+		'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 		'drw' => 'application/drafting',
 		'dvi' => 'application/x-dvi',
 		'dwg' => 'application/acad',
@@ -133,10 +134,11 @@ class CakeResponse {
 		'otf' => 'font/otf',
 		'pdf' => 'application/pdf',
 		'pgn' => 'application/x-chess-pgn',
-		'pot' => 'application/mspowerpoint',
-		'pps' => 'application/mspowerpoint',
-		'ppt' => 'application/mspowerpoint',
-		'ppz' => 'application/mspowerpoint',
+		'pot' => 'application/vnd.ms-powerpoint',
+		'pps' => 'application/vnd.ms-powerpoint',
+		'ppt' => 'application/vnd.ms-powerpoint',
+		'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+		'ppz' => 'application/vnd.ms-powerpoint',
 		'pre' => 'application/x-freelance',
 		'prt' => 'application/pro_eng',
 		'ps' => 'application/postscript',
@@ -181,6 +183,7 @@ class CakeResponse {
 		'xll' => 'application/vnd.ms-excel',
 		'xlm' => 'application/vnd.ms-excel',
 		'xls' => 'application/vnd.ms-excel',
+		'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 		'xlw' => 'application/vnd.ms-excel',
 		'zip' => 'application/zip',
 		'aif' => 'audio/x-aiff',
@@ -743,7 +746,7 @@ class CakeResponse {
  * @return void
  */
 	public function cache($since, $time = '+1 day') {
-		if (!is_integer($time)) {
+		if (!is_int($time)) {
 			$time = strtotime($time);
 		}
 		$this->header(array(
@@ -1005,7 +1008,7 @@ class CakeResponse {
 	protected function _getUTCDate($time = null) {
 		if ($time instanceof DateTime) {
 			$result = clone $time;
-		} elseif (is_integer($time)) {
+		} elseif (is_int($time)) {
 			$result = new DateTime(date('Y-m-d H:i:s', $time));
 		} else {
 			$result = new DateTime($time);
@@ -1083,12 +1086,11 @@ class CakeResponse {
  * is marked as so accordingly so the client can be informed of that.
  *
  * In order to mark a response as not modified, you need to set at least
- * the Last-Modified response header or a response etag to be compared
- * with the request itself
+ * the Last-Modified etag response header before calling this method.  Otherwise
+ * a comparison will not be possible.
  *
- * @return boolean whether the response was marked as not modified or
- * not
- **/
+ * @return boolean whether the response was marked as not modified or not.
+ */
 	public function checkNotModified(CakeRequest $request) {
 		$etags = preg_split('/\s*,\s*/', $request->header('If-None-Match'), null, PREG_SPLIT_NO_EMPTY);
 		$modifiedSince = $request->header('If-Modified-Since');

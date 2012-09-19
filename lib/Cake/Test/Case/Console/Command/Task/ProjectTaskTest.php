@@ -250,6 +250,24 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test generation of cache prefix
+ *
+ * @return void
+ */
+	public function testCachePrefixGeneration() {
+		$this->_setupTestProject();
+
+		$path = $this->Task->path . 'bake_test_app' . DS;
+		$result = $this->Task->cachePrefix($path);
+		$this->assertTrue($result);
+
+		$File = new File($path . 'Config' . DS . 'core.php');
+		$contents = $File->read();
+		$this->assertRegExp('/\$prefix = \'.+\';/', $contents, '$prefix is not defined');
+		$this->assertNotRegExp('/\$prefix = \'myapp_\';/', $contents, 'Default cache prefix left behind. %s');
+	}
+
+/**
  * Test that index.php is generated correctly.
  *
  * @return void

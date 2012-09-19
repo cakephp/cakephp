@@ -102,6 +102,37 @@ class CakeNumber {
 	}
 
 /**
+ * Converts filesize from human readable string to bytes
+ *
+ * @param string $size Size in human readable string like '5MB'
+ * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
+ * @return integer Bytes
+ * @throws CakeException On invalid Unit type.
+ */
+	public static function fromReadableSize($size, $default = false) {
+		if (ctype_digit($size)) {
+			return $size * 1;
+		}
+		$size = strtoupper($size);
+
+		$i = array_search(substr($size, -2), array('KB', 'MB', 'GB', 'TB', 'PB'));
+		if ($i !== false) {
+			$size = substr($size, 0, strlen($size) -2);
+			return $size * pow(1024, $i + 1);
+		}
+
+		if (substr($size, -1) == 'B' && ctype_digit(substr($size, 0, strlen($size) - 1))) {
+			$size = substr($size, 0, strlen($size) - 1);
+			return $size * 1;
+		}
+
+		if ($default !== false) {
+			return $default;
+		}
+		throw new CakeException(__d('cake_dev', 'No unit type.'));
+	}
+
+/**
  * Formats a number into a percentage string.
  *
  * @param float $value A floating point number

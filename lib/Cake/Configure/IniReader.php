@@ -84,20 +84,41 @@ class IniReader implements ConfigReaderInterface {
 /**
  * Read an ini file and return the results as an array.
  *
- * @param string $file Name of the file to read. The chosen file
- *    must be on the reader's path.
- * @return array
+ * For backwards compatibility, acl.ini.php will be treated specially until 3.0.
+ *
+ * @param string $key The identifier to read from. If the key has a . it will be treated
+ *  as a plugin prefix. The chosen file must be on the reader's path.
+ * @return array Parsed configuration values.
+ * @throws ConfigureException when files don't exist.
+ *  Or when files contain '..' as this could lead to abusive reads.
  * @throws ConfigureException
  */
-	public function read($file) {
-		$filename = $this->_path . $file;
-		if (!file_exists($filename)) {
-			$filename .= '.ini';
-			if (!file_exists($filename)) {
-				throw new ConfigureException(__d('cake_dev', 'Could not load configuration files: %s or %s', substr($filename, 0, -4), $filename));
-			}
+	public function read($key) {
+		if (strpos($key, '..') !== false) {
+			throw new ConfigureException(__d('cake_dev', 'Cannot load configuration files with ../ in them.'));
 		}
-		$contents = parse_ini_file($filename, true);
+		if (substr($key, -8) === '.ini.php') {
+			$key = substr($key, 0, -8);
+			list($plugin, $key) = pluginSplit($key);
+			$key .= '.ini.php';
+		} else {
+			if (substr($key, -4) === '.ini') {
+				$key = substr($key, 0, -4);
+			}
+			list($plugin, $key) = pluginSplit($key);
+			$key .= '.ini';
+		}
+
+		if ($plugin) {
+			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
+		} else {
+			$file = $this->_path . $key;
+		}
+		if (!is_file($file)) {
+			throw new ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
+		}
+
+		$contents = parse_ini_file($file, true);
 		if (!empty($this->_section) && isset($contents[$this->_section])) {
 			$values = $this->_parseNestedValues($contents[$this->_section]);
 		} else {
@@ -142,6 +163,7 @@ class IniReader implements ConfigReaderInterface {
  * Dumps the state of Configure data into an ini formatted string.
  *
  * @param string $filename The filename on $this->_path to save into.
+ * 	Extension ".ini" will be automatically appended if not included in filename.
  * @param array $data The data to convert to ini file.
  * @return int Bytes saved.
  */
@@ -158,7 +180,11 @@ class IniReader implements ConfigReaderInterface {
 				}
 			}
 		}
-		$contents = join("\n", $result);
+		$contents = implode("\n", $result);
+
+		if (substr($filename, -4) !== '.ini') {
+			$filename .= '.ini';
+		}
 		return file_put_contents($this->_path . $filename, $contents);
 	}
 

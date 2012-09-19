@@ -402,6 +402,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set(compact('bakeTags'))", $result);
 
 		$this->assertContains('function delete($id = null)', $result);
+		$this->assertContains("\$this->request->onlyAllow('post', 'delete')", $result);
 		$this->assertContains('if ($this->BakeArticle->delete())', $result);
 		$this->assertContains("\$this->flash(__('Bake article deleted'), array('action' => 'index'))", $result);
 	}

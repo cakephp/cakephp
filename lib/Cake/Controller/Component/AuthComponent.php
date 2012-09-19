@@ -289,13 +289,7 @@ class AuthComponent extends Component {
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
 
-		$allowedActions = $this->allowedActions;
-		$isAllowed = (
-			$this->allowedActions == array('*') ||
-			in_array($action, array_map('strtolower', $allowedActions))
-		);
-
-		if ($loginAction != $url && $isAllowed) {
+		if ($loginAction != $url && in_array($action, array_map('strtolower', $this->allowedActions))) {
 			return true;
 		}
 
@@ -306,23 +300,24 @@ class AuthComponent extends Component {
 				}
 			}
 			return true;
-		} else {
-			if (!$this->_getUser()) {
-				if (!$request->is('ajax')) {
-					$this->flash($this->authError);
-					$this->Session->write('Auth.redirect', $request->here());
-					$controller->redirect($loginAction);
-					return false;
-				} elseif (!empty($this->ajaxLogin)) {
-					$controller->viewPath = 'Elements';
-					echo $controller->render($this->ajaxLogin, $this->RequestHandler->ajaxLayout);
-					$this->_stop();
-					return false;
-				} else {
-					$controller->redirect(null, 403);
-				}
-			}
 		}
+
+		if (!$this->_getUser()) {
+			if (!$request->is('ajax')) {
+				$this->flash($this->authError);
+				$this->Session->write('Auth.redirect', $request->here());
+				$controller->redirect($loginAction);
+				return false;
+			}
+			if (!empty($this->ajaxLogin)) {
+				$controller->viewPath = 'Elements';
+				echo $controller->render($this->ajaxLogin, $this->RequestHandler->ajaxLayout);
+				$this->_stop();
+				return false;
+			}
+			$controller->redirect(null, 403);
+		}
+
 		if (empty($this->authorize) || $this->isAuthorized($this->user())) {
 			return true;
 		}
@@ -366,7 +361,8 @@ class AuthComponent extends Component {
 	public function isAuthorized($user = null, $request = null) {
 		if (empty($user) && !$this->user()) {
 			return false;
-		} elseif (empty($user)) {
+		}
+		if (empty($user)) {
 			$user = $this->user();
 		}
 		if (empty($request)) {
@@ -434,12 +430,12 @@ class AuthComponent extends Component {
 		$args = func_get_args();
 		if (empty($args) || $action === null) {
 			$this->allowedActions = $this->_methods;
-		} else {
-			if (isset($args[0]) && is_array($args[0])) {
-				$args = $args[0];
-			}
-			$this->allowedActions = array_merge($this->allowedActions, $args);
+			return;
 		}
+		if (isset($args[0]) && is_array($args[0])) {
+			$args = $args[0];
+		}
+		$this->allowedActions = array_merge($this->allowedActions, $args);
 	}
 
 /**
@@ -460,18 +456,18 @@ class AuthComponent extends Component {
 		$args = func_get_args();
 		if (empty($args) || $action === null) {
 			$this->allowedActions = array();
-		} else {
-			if (isset($args[0]) && is_array($args[0])) {
-				$args = $args[0];
-			}
-			foreach ($args as $arg) {
-				$i = array_search($arg, $this->allowedActions);
-				if (is_int($i)) {
-					unset($this->allowedActions[$i]);
-				}
-			}
-			$this->allowedActions = array_values($this->allowedActions);
+			return;
 		}
+		if (isset($args[0]) && is_array($args[0])) {
+			$args = $args[0];
+		}
+		foreach ($args as $arg) {
+			$i = array_search($arg, $this->allowedActions);
+			if (is_int($i)) {
+				unset($this->allowedActions[$i]);
+			}
+		}
+		$this->allowedActions = array_values($this->allowedActions);
 	}
 
 /**

@@ -152,13 +152,16 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:18\nmsgid "';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:22\nmsgid "';
 		$pattern .= 'Hot features!';
 		$pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
 		$pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
 		$pattern .= '\\\n - Active, Friendly Community: Join us #cakephp on IRC. We\'d love to help you get started';
 		$pattern .= '"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
+
+		$this->assertContains('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
+		$this->assertContains("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
 		// extract.ctp - reading the domain.pot
 		$result = file_get_contents($this->path . DS . 'domain.pot');

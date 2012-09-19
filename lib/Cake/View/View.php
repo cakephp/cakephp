@@ -625,7 +625,7 @@ class View extends Object {
  * @param string $value The content for the block.
  * @return void
  * @throws CakeException when you use non-string values.
- * @see ViewBlock::assign()
+ * @see ViewBlock::set()
  */
 	public function assign($name, $value) {
 		return $this->Blocks->set($name, $value);
@@ -636,18 +636,18 @@ class View extends Object {
  * empty or undefined '' will be returned.
  *
  * @param string $name Name of the block
- * @return The block content or '' if the block does not exist.
- * @see ViewBlock::fetch()
+ * @return string The block content or $default if the block does not exist.
+ * @see ViewBlock::get()
  */
-	public function fetch($name) {
-		return $this->Blocks->get($name);
+	public function fetch($name, $default = '') {
+		return $this->Blocks->get($name, $default);
 	}
 
 /**
  * End a capturing block. The compliment to View::start()
  *
  * @return void
- * @see ViewBlock::start()
+ * @see ViewBlock::end()
  */
 	public function end() {
 		return $this->Blocks->end();
@@ -893,7 +893,7 @@ class View extends Object {
 
 		include $this->__viewFile;
 
-		unset($this->_viewFile);
+		unset($this->__viewFile);
 		return ob_get_clean();
 	}
 

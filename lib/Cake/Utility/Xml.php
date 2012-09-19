@@ -174,7 +174,7 @@ class Xml {
 			throw new XmlException(__d('cake_dev', 'Invalid input.'));
 		}
 		$key = key($input);
-		if (is_integer($key)) {
+		if (is_int($key)) {
 			throw new XmlException(__d('cake_dev', 'The key of input must be alphanumeric'));
 		}
 

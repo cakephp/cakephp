@@ -100,6 +100,21 @@ class FormAuthenticateTest extends CakeTestCase {
 	}
 
 /**
+ * test authenticate password is false method
+ *
+ * @return void
+ */
+	public function testAuthenticatePasswordIsFalse() {
+		$request = new CakeRequest('posts/index', false);
+		$request->data = array(
+			'User' => array(
+				'user' => 'mariano',
+				'password' => null
+		));
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
+	}
+
+/**
  * test the authenticate method
  *
  * @return void

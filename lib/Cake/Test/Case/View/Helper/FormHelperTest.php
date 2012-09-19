@@ -792,14 +792,32 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request['_Token'] = array('key' => $key);
 		$result = $this->Form->secure($fields);
 
-		$expected = Security::hash(serialize($fields) . Configure::read('Security.salt'));
-		$expected .= ':' . 'Model.valid';
+		$hash = Security::hash(serialize($fields) . Configure::read('Security.salt'));
+		$hash .= ':' . 'Model.valid';
+		$hash = urlencode($hash);
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
-				'value' => urlencode($expected), 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+			)),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
+				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS;
+		$this->Form->Html->loadConfig('htmlhelper_tags', $path);
+		$result = $this->Form->secure($fields);
+		$expected = array(
+			'div' => array('class' => 'hidden'),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][fields]',
+				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
@@ -4329,6 +4347,30 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * When a select box has no options it should not be added to the fields list
+ * as it always fail post validation.
+ *
+ * @return void
+ */
+	public function testSelectNoSecureWithNoOptions() {
+		$this->Form->request['_Token'] = array('key' => 'testkey');
+		$this->assertEquals(array(), $this->Form->fields);
+
+		$this->Form->select(
+			'Model.select',
+			array()
+		);
+		$this->assertEquals(array(), $this->Form->fields);
+
+		$this->Form->select(
+			'Model.select',
+			array(),
+			array('empty' => true)
+		);
+		$this->assertEquals(array('Model.select'), $this->Form->fields);
+	}
+
+/**
  * testInputMultipleCheckboxes method
  *
  * test input() resulting in multi select elements being generated.
@@ -6095,6 +6137,19 @@ class FormHelperTest extends CakeTestCase {
 				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/form',
+			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
+			'Delete',
+			'/a'
+		));
+
+		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('method' => 'delete'));
+		$this->assertTags($result, array(
+			'form' => array(
+				'method' => 'post', 'action' => '/posts/delete/1',
+				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+			),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'DELETE'),
 			'/form',
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',

@@ -218,8 +218,7 @@ class CakeSession {
 		if (empty($name)) {
 			return false;
 		}
-		$result = Hash::get($_SESSION, $name);
-		return isset($result);
+		return Hash::get($_SESSION, $name) !== null;
 	}
 
 /**
@@ -283,9 +282,8 @@ class CakeSession {
 	protected static function _error($errorNumber) {
 		if (!is_array(self::$error) || !array_key_exists($errorNumber, self::$error)) {
 			return false;
-		} else {
-			return self::$error[$errorNumber];
 		}
+		return self::$error[$errorNumber];
 	}
 
 /**

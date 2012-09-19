@@ -1162,8 +1162,12 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->config(array('empty'));
 		$this->CakeEmail->template('image');
 		$this->CakeEmail->emailFormat('html');
-
 		$server = env('SERVER_NAME') ? env('SERVER_NAME') : 'localhost';
+
+		if (env('SERVER_PORT') != null && env('SERVER_PORT') != 80) {
+			$server .= ':' . env('SERVER_PORT');
+		}
+
 		$expected = '<img src="http://' . $server . '/img/image.gif" alt="cool image" width="100" height="100" />';
 		$result = $this->CakeEmail->send();
 		$this->assertContains($expected, $result['message']);

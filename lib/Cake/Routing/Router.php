@@ -304,7 +304,12 @@ class Router {
 		}
 		$routeClass = self::$_routeClass;
 		if (isset($options['routeClass'])) {
-			$routeClass = self::_validateRouteClass($options['routeClass']);
+			if (strpos($options['routeClass'], '.') === false) {
+				$routeClass = $options['routeClass'];
+			} else {
+				list($plugin, $routeClass) = pluginSplit($options['routeClass'], true);
+			}
+			$routeClass = self::_validateRouteClass($routeClass);
 			unset($options['routeClass']);
 		}
 		if ($routeClass == 'RedirectRoute' && isset($defaults['redirect'])) {

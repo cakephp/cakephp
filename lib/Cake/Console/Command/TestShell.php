@@ -57,7 +57,7 @@ class TestShell extends Shell {
 			'help' => __d('cake_console', '<file> Log test execution in JUnit XML format to file.'),
 			'default' => false
 		))->addOption('log-json', array(
-			'help' => __d('cake_console', '<file> Log test execution in TAP format to file.'),
+			'help' => __d('cake_console', '<file> Log test execution in JSON format to file.'),
 			'default' => false
 		))->addOption('log-tap', array(
 			'help' => __d('cake_console', '<file> Log test execution in TAP format to file.'),

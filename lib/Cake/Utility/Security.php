@@ -49,14 +49,11 @@ class Security {
 		switch (Configure::read('Security.level')) {
 			case 'high':
 				return 10;
-			break;
 			case 'medium':
 				return 100;
-			break;
 			case 'low':
 			default:
 				return 300;
-				break;
 		}
 	}
 
@@ -222,7 +219,12 @@ class Security {
  * @return string The generated salt
  */
 	public static function salt($length = 22) {
-		return substr(str_replace('+', '.', base64_encode(sha1(uniqid(Configure::read('Security.salt'), true), true))), 0, $length);
+		$salt = str_replace(
+			array('+', '='),
+			'.',
+			base64_encode(sha1(uniqid(Configure::read('Security.salt'), true), true))
+		);
+		return substr($salt, 0, $length);
 	}
 
 /**

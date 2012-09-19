@@ -268,6 +268,13 @@ class MysqlTest extends CakeTestCase {
 		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEquals($expected, $result);
 
+		$name = $this->Dbo->fullTableName('bigint');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id bigint(20) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+		$expected = array('PRIMARY' => array('column' => 'id', 'unique' => 1));
+		$result = $this->Dbo->index('bigint', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
+
 		$name = $this->Dbo->fullTableName('with_a_key');
 		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ));');
 		$expected = array(
@@ -475,6 +482,10 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->column('int(11) unsigned');
 		$expected = 'integer';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->column('bigint(20)');
+		$expected = 'biginteger';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->column('tinyint(1)');
@@ -2020,6 +2031,25 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
+ * test that - in conditions and field names works
+ *
+ * @return void
+ */
+	public function testHypenInStringConditionsAndFieldNames() {
+		$result = $this->Dbo->conditions('I18n__title_pt-br.content = "test"');
+		$this->assertEquals(' WHERE `I18n__title_pt-br`.`content` = "test"', $result);
+
+		$result = $this->Dbo->conditions('Model.field=NOW()-3600');
+		$this->assertEquals(' WHERE `Model`.`field`=NOW()-3600', $result);
+
+		$result = $this->Dbo->conditions('NOW() - Model.created < 7200');
+		$this->assertEquals(' WHERE NOW() - `Model`.`created` < 7200', $result);
+
+		$result = $this->Dbo->conditions('NOW()-Model.created < 7200');
+		$this->assertEquals(' WHERE NOW()-`Model`.`created` < 7200', $result);
+	}
+
+/**
  * testParenthesisInStringConditions method
  *
  * @return void
@@ -3240,7 +3270,7 @@ class MysqlTest extends CakeTestCase {
 		);
 
 		$conditions = array('comment_count >' => 2);
-		$query = 'SELECT ' . join(',', $this->Dbo->fields($Article, null, array('id', 'comment_count'))) .
+		$query = 'SELECT ' . implode(',', $this->Dbo->fields($Article, null, array('id', 'comment_count'))) .
 				' FROM ' . $this->Dbo->fullTableName($Article) . ' Article ' . $this->Dbo->conditions($conditions, true, true, $Article);
 		$result = $this->Dbo->fetchAll($query);
 		$expected = array(array(

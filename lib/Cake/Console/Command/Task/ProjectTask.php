@@ -92,6 +92,13 @@ class ProjectTask extends AppShell {
 				$success = false;
 			}
 
+			if ($this->cachePrefix($path)) {
+				$this->out(__d('cake_console', ' * Cache prefix set'));
+			} else {
+				$this->err(__d('cake_console', 'The cache prefix was <error>NOT</error> set'));
+				$success = false;
+			}
+
 			if ($this->consolePath($path) === true) {
 				$this->out(__d('cake_console', ' * app/Console/cake.php path set.'));
 			} else {
@@ -280,6 +287,23 @@ class ProjectTask extends AppShell {
 				return true;
 			}
 			return false;
+		}
+		return false;
+	}
+
+/**
+ * Writes cache prefix using app's name
+ *
+ * @param string $dir Path to project
+ * @return boolean Success
+ */
+	public function cachePrefix($dir) {
+		$app = basename($dir);
+		$File = new File($dir . 'Config' . DS . 'core.php');
+		$contents = $File->read();
+		if (preg_match('/(\$prefix = \'myapp_\';)/', $contents, $match)) {
+			$result = str_replace($match[0], '$prefix = \'' . $app . '_\';', $contents);
+			return $File->write($result);
 		}
 		return false;
 	}
