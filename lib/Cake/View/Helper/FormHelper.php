@@ -1377,7 +1377,7 @@ class FormHelper extends AppHelper {
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
 
-			if (isset($value) && $optValue == $value) {
+			if (isset($value) && strval($optValue) === strval($value)) {
 				$optionsHere['checked'] = 'checked';
 			}
 			if ($disabled && (!is_array($disabled) || in_array($optValue, $disabled))) {
