@@ -192,6 +192,8 @@ class CakeNumber {
 /**
  * Formats a number into a currency format to show deltas (signed differences in value).
  *
+ * ### Options
+ *
  * - `places` - Number of decimal places to use. ie. 2
  * - `before` - The string to place before whole numbers. ie. '['
  * - `after` - The string to place after decimal numbers. ie. ']'
