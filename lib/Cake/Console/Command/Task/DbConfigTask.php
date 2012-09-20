@@ -315,8 +315,11 @@ class DbConfigTask extends AppShell {
 			$config = array_merge($this->_defaultConfig, $config);
 			extract($config);
 
+			if (strpos($datasource, 'Database/') === false) {
+				$datasource = "Database/{$datasource}";
+			}
 			$out .= "\tpublic \${$name} = array(\n";
-			$out .= "\t\t'datasource' => 'Database/{$datasource}',\n";
+			$out .= "\t\t'datasource' => '{$datasource}',\n";
 			$out .= "\t\t'persistent' => {$persistent},\n";
 			$out .= "\t\t'host' => '{$host}',\n";
 
