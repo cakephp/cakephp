@@ -3543,7 +3543,7 @@ class FormHelperTest extends CakeTestCase {
 			'separator' => '--separator--',
 			'between' => array('--between first--', '--between second--')
 		));
-		//die(debug($result, null, false));
+
 		$expected = array(
 			'div' => array('class' => 'input radio'),
 			'--before--',
