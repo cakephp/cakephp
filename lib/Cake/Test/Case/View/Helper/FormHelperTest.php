@@ -1576,9 +1576,6 @@ class FormHelperTest extends CakeTestCase {
 				'type' => 'password', 'name' => 'data[Contact][password]',
 				'id' => 'ContactPassword', 'class' => 'form-error'
 			),
-			array('div' => array('class' => 'error-message')),
-			array(),
-			'/div',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
