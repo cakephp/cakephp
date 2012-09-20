@@ -1303,7 +1303,8 @@ class FormHelper extends AppHelper {
  * ### Attributes:
  *
  * - `separator` - define the string in between the radio buttons
- * - `between` - the string between legend and input set
+ * - `between` - the string between legend and input set or array of strings to insert
+ *    strings between each input block
  * - `legend` - control whether or not the widget set has a fieldset & legend
  * - `value` - indicate a value that is should be checked
  * - `label` - boolean to indicate whether or not labels for widgets show be displayed
@@ -1388,6 +1389,9 @@ class FormHelper extends AppHelper {
 			if ($label) {
 				$optTitle = $this->Html->useTag('label', $tagName, '', $optTitle);
 			}
+			if (is_array($between)) {
+				$optTitle .= array_shift($between);
+			}
 			$allOptions = array_merge($attributes, $optionsHere);
 			$out[] = $this->Html->useTag('radio', $attributes['name'], $tagName,
 				array_diff_key($allOptions, array('name' => '', 'type' => '', 'id' => '')),
@@ -1405,6 +1409,9 @@ class FormHelper extends AppHelper {
 		}
 		$out = $hidden . implode($separator, $out);
 
+		if (is_array($between)) {
+			$between = '';
+		}
 		if ($legend) {
 			$out = $this->Html->useTag('fieldset', '', $this->Html->useTag('legend', $legend) . $between . $out);
 		}
