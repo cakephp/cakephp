@@ -912,16 +912,18 @@ class FormHelper extends AppHelper {
  * will be treated as a regular html attribute for the generated input.
  *
  * - `type` - Force the type of widget you want. e.g. `type => 'select'`
- * - `label` - Either a string label, or an array of options for the label. See FormHelper::label()
+ * - `label` - Either a string label, or an array of options for the label. See FormHelper::label().
  * - `div` - Either `false` to disable the div, or an array of options for the div.
  *	See HtmlHelper::div() for more options.
- * - `options` - for widgets that take options e.g. radio, select
- * - `error` - control the error message that is produced
+ * - `options` - For widgets that take options e.g. radio, select.
+ * - `error` - Control the error message that is produced. Set to `false` to disable any kind of error reporting (field
+ *    error and error messages).
+ * - `errorMessage` - Boolean to control rendering error messages (field error will still occur).
  * - `empty` - String or boolean to enable empty select box options.
  * - `before` - Content to place before the label + input.
  * - `after` - Content to place after the label + input.
  * - `between` - Content to place between the label + input.
- * - `format` - format template for element order. Any element that is not in the array, will not be in the output.
+ * - `format` - Format template for element order. Any element that is not in the array, will not be in the output.
  *	- Default input format order: array('before', 'label', 'between', 'input', 'after', 'error')
  *	- Default checkbox format order: array('before', 'input', 'between', 'label', 'after', 'error')
  *	- Hidden input will not be formatted
@@ -1070,6 +1072,9 @@ class FormHelper extends AppHelper {
 		$error = $this->_extractOption('error', $options, null);
 		unset($options['error']);
 
+		$errorMessage = $this->_extractOption('errorMessage', $options, true);
+		unset($options['errorMessage']);
+
 		$selected = $this->_extractOption('selected', $options, null);
 		unset($options['selected']);
 
@@ -1149,7 +1154,9 @@ class FormHelper extends AppHelper {
 			$errMsg = $this->error($fieldName, $error);
 			if ($errMsg) {
 				$divOptions = $this->addClass($divOptions, 'error');
-				$out['error'] = $errMsg;
+				if ($errorMessage) {
+					$out['error'] = $errMsg;
+				}
 			}
 		}
 
