@@ -1679,6 +1679,45 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * test the query() method
+ *
+ * @return void
+ */
+	public function testQuery() {
+		$_GET = array();
+		$_GET['foo'] = 'bar';
+
+		$request = new CakeRequest();
+
+		$result = $request->query('foo');
+		$this->assertEquals('bar', $result);
+
+		$result = $request->query('imaginary');
+		$this->assertNull($result);
+	}
+
+/**
+ * test the query() method with arrays passed via $_GET
+ *
+ * @return void
+ */
+	public function testQueryWithArray() {
+		$_GET = array();
+		$_GET['test'] = array('foo', 'bar');
+
+		$request = new CakeRequest();
+
+		$result = $request->query('test');
+		$this->assertEquals(array('foo', 'bar'), $result);
+
+		$result = $request->query('test.1');
+		$this->assertEquals('bar', $result);
+
+		$result = $request->query('test.2');
+		$this->assertNull($result);
+	}
+
+/**
  * test the data() method reading
  *
  * @return void
