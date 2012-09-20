@@ -423,17 +423,21 @@ class Mysql extends DboSource {
 		$table = $this->fullTableName($model);
 		$old = version_compare($this->getVersion(), '4.1', '<=');
 		if ($table) {
-			$indices = $this->_execute('SHOW INDEX FROM ' . $table);
+			$indexes = $this->_execute('SHOW INDEX FROM ' . $table);
 			// @codingStandardsIgnoreStart
 			// MySQL columns don't match the cakephp conventions.
-			while ($idx = $indices->fetch(PDO::FETCH_OBJ)) {
+			while ($idx = $indexes->fetch(PDO::FETCH_OBJ)) {
 				if ($old) {
 					$idx = (object)current((array)$idx);
 				}
 				if (!isset($index[$idx->Key_name]['column'])) {
 					$col = array();
 					$index[$idx->Key_name]['column'] = $idx->Column_name;
-					$index[$idx->Key_name]['unique'] = intval($idx->Non_unique == 0);
+					if ($idx->Index_type === 'FULLTEXT') {
+						$index[$idx->Key_name]['type'] = strtolower($idx->Index_type);
+					} else {
+						$index[$idx->Key_name]['unique'] = intval($idx->Non_unique == 0);
+					}
 				} else {
 					if (!empty($index[$idx->Key_name]['column']) && !is_array($index[$idx->Key_name]['column'])) {
 						$col[] = $index[$idx->Key_name]['column'];
@@ -443,7 +447,7 @@ class Mysql extends DboSource {
 				}
 			}
 			// @codingStandardsIgnoreEnd
-			$indices->closeCursor();
+			$indexes->closeCursor();
 		}
 		return $index;
 	}
@@ -553,31 +557,18 @@ class Mysql extends DboSource {
 		if (isset($indexes['drop'])) {
 			foreach ($indexes['drop'] as $name => $value) {
 				$out = 'DROP ';
-				if ($name == 'PRIMARY') {
+				if ($name === 'PRIMARY') {
 					$out .= 'PRIMARY KEY';
 				} else {
-					$out .= 'KEY ' . $name;
+					$out .= 'KEY ' . $this->startQuote . $name . $this->endQuote;
 				}
 				$alter[] = $out;
 			}
 		}
 		if (isset($indexes['add'])) {
-			foreach ($indexes['add'] as $name => $value) {
-				$out = 'ADD ';
-				if ($name == 'PRIMARY') {
-					$out .= 'PRIMARY ';
-					$name = null;
-				} else {
-					if (!empty($value['unique'])) {
-						$out .= 'UNIQUE ';
-					}
-				}
-				if (is_array($value['column'])) {
-					$out .= 'KEY ' . $name . ' (' . implode(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
-				} else {
-					$out .= 'KEY ' . $name . ' (' . $this->name($value['column']) . ')';
-				}
-				$alter[] = $out;
+			$add = $this->buildIndex($indexes['add']);
+			foreach ($add as $index) {
+				$alter[] = 'ADD ' . $index;
 			}
 		}
 		return $alter;

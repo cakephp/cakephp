@@ -320,6 +320,16 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->index('with_multiple_compound_keys', false);
 		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEquals($expected, $result);
+
+		$name = $this->Dbo->fullTableName('with_fulltext');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, name varchar(255), description text, primary key(id), FULLTEXT KEY `MyFtIndex` ( `name`, `description` )) ENGINE=MyISAM;');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'MyFtIndex' => array('column' => array('name', 'description'), 'type' => 'fulltext')
+		);
+		$result = $this->Dbo->index('with_fulltext', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -559,9 +569,9 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->alterSchema($schemaB->compare($schemaA));
 		$this->assertContains("ALTER TABLE $table", $result);
-		$this->assertContains('ADD KEY name_idx (`name`),', $result);
-		$this->assertContains('ADD KEY group_idx (`group1`),', $result);
-		$this->assertContains('ADD KEY compound_idx (`group1`, `group2`),', $result);
+		$this->assertContains('ADD KEY `name_idx` (`name`),', $result);
+		$this->assertContains('ADD KEY `group_idx` (`group1`),', $result);
+		$this->assertContains('ADD KEY `compound_idx` (`group1`, `group2`),', $result);
 		$this->assertContains('ADD PRIMARY KEY  (`id`);', $result);
 
 		//Test that the string is syntactically correct
@@ -587,13 +597,13 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->alterSchema($schemaC->compare($schemaB));
 		$this->assertContains("ALTER TABLE $table", $result);
 		$this->assertContains('DROP PRIMARY KEY,', $result);
-		$this->assertContains('DROP KEY name_idx,', $result);
-		$this->assertContains('DROP KEY group_idx,', $result);
-		$this->assertContains('DROP KEY compound_idx,', $result);
-		$this->assertContains('ADD KEY id_name_idx (`id`, `name`),', $result);
-		$this->assertContains('ADD UNIQUE KEY name_idx (`name`),', $result);
-		$this->assertContains('ADD KEY group_idx (`group2`),', $result);
-		$this->assertContains('ADD KEY compound_idx (`group2`, `group1`);', $result);
+		$this->assertContains('DROP KEY `name_idx`,', $result);
+		$this->assertContains('DROP KEY `group_idx`,', $result);
+		$this->assertContains('DROP KEY `compound_idx`,', $result);
+		$this->assertContains('ADD KEY `id_name_idx` (`id`, `name`),', $result);
+		$this->assertContains('ADD UNIQUE KEY `name_idx` (`name`),', $result);
+		$this->assertContains('ADD KEY `group_idx` (`group2`),', $result);
+		$this->assertContains('ADD KEY `compound_idx` (`group2`, `group1`);', $result);
 
 		$query = $this->Dbo->getConnection()->prepare($result);
 		$this->assertEquals($query->queryString, $result);
@@ -605,10 +615,10 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->alterSchema($schemaA->compare($schemaC));
 
 		$this->assertContains("ALTER TABLE $table", $result);
-		$this->assertContains('DROP KEY name_idx,', $result);
-		$this->assertContains('DROP KEY group_idx,', $result);
-		$this->assertContains('DROP KEY compound_idx,', $result);
-		$this->assertContains('DROP KEY id_name_idx;', $result);
+		$this->assertContains('DROP KEY `name_idx`,', $result);
+		$this->assertContains('DROP KEY `group_idx`,', $result);
+		$this->assertContains('DROP KEY `compound_idx`,', $result);
+		$this->assertContains('DROP KEY `id_name_idx`;', $result);
 
 		$query = $this->Dbo->getConnection()->prepare($result);
 		$this->assertEquals($query->queryString, $result);
@@ -2866,6 +2876,13 @@ class MysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildIndex($data);
 		$expected = array('UNIQUE KEY `MyIndex` (`id`, `name`)');
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'MyFtIndex' => array('column' => array('name', 'description'), 'type' => 'fulltext')
+		);
+		$result = $this->Dbo->buildIndex($data);
+		$expected = array('FULLTEXT KEY `MyFtIndex` (`name`, `description`)');
 		$this->assertEquals($expected, $result);
 	}
 
