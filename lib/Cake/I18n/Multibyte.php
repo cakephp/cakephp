@@ -20,10 +20,13 @@
 
 namespace Cake\I18n;
 
+use Cake\Utility\String;
+
 /**
  * Multibyte handling methods.
  *
  * @package       Cake.I18n
+ * @deprecated
  */
 class Multibyte {
 
@@ -33,37 +36,11 @@ class Multibyte {
  *
  * @param string $string
  * @return array
+ * @deprecated
+ * @see Cake\Utility\String::utf8
  */
 	public static function utf8($string) {
-		$map = array();
-
-		$values = array();
-		$find = 1;
-		$length = strlen($string);
-
-		for ($i = 0; $i < $length; $i++) {
-			$value = ord($string[$i]);
-
-			if ($value < 128) {
-				$map[] = $value;
-			} else {
-				if (empty($values)) {
-					$find = ($value < 224) ? 2 : 3;
-				}
-				$values[] = $value;
-
-				if (count($values) === $find) {
-					if ($find == 3) {
-						$map[] = (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64);
-					} else {
-						$map[] = (($values[0] % 32) * 64) + ($values[1] % 64);
-					}
-					$values = array();
-					$find = 1;
-				}
-			}
-		}
-		return $map;
+		return String::utf8($string);
 	}
 
 /**
@@ -72,23 +49,11 @@ class Multibyte {
  *
  * @param array $array
  * @return string
+ * @deprecated
+ * @see Cake\Utility\String::ascii
  */
 	public static function ascii($array) {
-		$ascii = '';
-
-		foreach ($array as $utf8) {
-			if ($utf8 < 128) {
-				$ascii .= chr($utf8);
-			} elseif ($utf8 < 2048) {
-				$ascii .= chr(192 + (($utf8 - ($utf8 % 64)) / 64));
-				$ascii .= chr(128 + ($utf8 % 64));
-			} else {
-				$ascii .= chr(224 + (($utf8 - ($utf8 % 4096)) / 4096));
-				$ascii .= chr(128 + ((($utf8 % 4096) - ($utf8 % 64)) / 64));
-				$ascii .= chr(128 + ($utf8 % 64));
-			}
-		}
-		return $ascii;
+		return String::ascii($array);
 	}
 
 /**
@@ -299,19 +264,14 @@ class Multibyte {
 
 /**
  * Check the $string for multibyte characters
+ *
  * @param string $string value to test
  * @return boolean
+ * @deprecated
+ * @see Cake\Utility\String::isMultibyte
  */
 	public static function checkMultibyte($string) {
-		$length = strlen($string);
-
-		for ($i = 0; $i < $length; $i++ ) {
-			$value = ord(($string[$i]));
-			if ($value > 128) {
-				return true;
-			}
-		}
-		return false;
+		return String::isMultibyte($string);
 	}
 
 }
