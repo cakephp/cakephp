@@ -21,9 +21,9 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\I18n\Multibyte;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use Cake\Utility\String;
 
 mb_internal_encoding(Configure::read('App.encoding'));
 
@@ -603,7 +603,7 @@ class I18n {
 			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
 		if (preg_match('/U([0-9a-fA-F]{4})/', $string, $match)) {
-			return Multibyte::ascii(array(hexdec($match[1])));
+			return String::ascii(array(hexdec($match[1])));
 		}
 		return $string;
 	}

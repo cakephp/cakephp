@@ -146,7 +146,7 @@ class Multibyte {
  * @see mb_strrichr function
  */
 	public static function strrichr($haystack, $needle, $part = false) {
-		return mb_strrichr;
+		return mb_strrichr($haystack, $needle, $part);
 	}
 
 /**

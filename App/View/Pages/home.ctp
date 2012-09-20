@@ -61,7 +61,7 @@ endif;
 		echo '</span>';
 	else:
 		echo '<span class="notice">';
-			echo __d('cake_dev', 'Your version of PHP do NOT have mbstring extension loaded.');
+			echo __d('cake_dev', 'Your version of PHP does NOT have the mbstring extension loaded.');
 		echo '</span>';
 	endif;
 ?>

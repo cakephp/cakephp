@@ -13,8 +13,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View\Helper;
-use Cake\I18n\Multibyte;
 use Cake\View\Helper;
+use Cake\Utility\String;
 
 /**
  * JsEngineBaseClass
@@ -229,7 +229,7 @@ abstract class JsBaseEngineHelper extends Helper {
 						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1};
-					$char = Multibyte::utf8($charbits);
+					$char = String::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 1;
 					break;
@@ -240,7 +240,7 @@ abstract class JsBaseEngineHelper extends Helper {
 						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2};
-					$char = Multibyte::utf8($charbits);
+					$char = String::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 2;
 					break;
@@ -251,7 +251,7 @@ abstract class JsBaseEngineHelper extends Helper {
 						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3};
-					$char = Multibyte::utf8($charbits);
+					$char = String::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 3;
 					break;
@@ -262,7 +262,7 @@ abstract class JsBaseEngineHelper extends Helper {
 						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3} . $string{$i + 4};
-					$char = Multibyte::utf8($charbits);
+					$char = String::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 4;
 					break;
@@ -273,7 +273,7 @@ abstract class JsBaseEngineHelper extends Helper {
 						break;
 					}
 					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3} . $string{$i + 4} . $string{$i + 5};
-					$char = Multibyte::utf8($charbits);
+					$char = String::utf8($charbits);
 					$return .= sprintf('\u%04s', dechex($char[0]));
 					$i += 5;
 					break;
