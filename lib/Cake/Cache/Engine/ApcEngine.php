@@ -1,10 +1,5 @@
 <?php
 /**
- * APC storage engine for cache.
- *
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,6 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Cache\Engine;
+
 use Cake\Cache\CacheEngine;
 use Cake\Utility\Inflector;
 
@@ -30,7 +26,7 @@ class ApcEngine extends CacheEngine {
 
 /**
  * Contains the compiled group names
- * (prefixed witht the global configuration prefix)
+ * (prefixed with the global configuration prefix)
  *
  * @var array
  **/
@@ -40,11 +36,9 @@ class ApcEngine extends CacheEngine {
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
- * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
  * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
- * @see CacheEngine::__defaults
  */
 	public function init($settings = array()) {
 		if (!isset($settings['prefix'])) {
@@ -148,7 +142,7 @@ class ApcEngine extends CacheEngine {
  * the group accordingly.
  *
  * @return array
- **/
+ */
 	public function groups() {
 		if (empty($this->_compiledGroupNames)) {
 			foreach ($this->settings['groups'] as $group) {
@@ -180,7 +174,7 @@ class ApcEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @return boolean success
- **/
+ */
 	public function clearGroup($group) {
 		apc_inc($this->settings['prefix'] . $group, 1, $success);
 		return $success;

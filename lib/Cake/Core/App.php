@@ -536,9 +536,6 @@ class App {
  * @return void
  */
 	public static function init() {
-		$loader = new ClassLoader(Configure::read('App.namespace'), dirname(APP));
-		$loader->register();
-
 		register_shutdown_function(array(__CLASS__, 'shutdown'));
 	}
 

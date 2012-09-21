@@ -1,9 +1,5 @@
 <?php
 /**
- * SessionTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,16 +8,21 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model.Datasource
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Model\Datasource;
 
-App::uses('CakeSession', 'Model/Datasource');
-App::uses('DatabaseSession', 'Model/Datasource/Session');
-App::uses('CacheSession', 'Model/Datasource/Session');
+use Cake\Cache\Cache;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Model\Datasource\Session;
+use Cake\Model\Datasource\Session\DatabaseSession;
+use Cake\Model\Datasource\Session\CacheSession;
+use Cake\TestSuite\TestCase;
 
-class TestCakeSession extends CakeSession {
+class TestCakeSession extends Session {
 
 	public static function setUserAgent($value) {
 		static::$_userAgent = $value;
@@ -50,11 +51,11 @@ class TestDatabaseSession extends DatabaseSession {
 }
 
 /**
- * CakeSessionTest class
+ * SessionTest class
  *
  * @package       Cake.Test.Case.Model.Datasource
  */
-class CakeSessionTest extends CakeTestCase {
+class SessionTest extends TestCase {
 
 	protected static $_gcDivisor;
 
@@ -541,6 +542,7 @@ class CakeSessionTest extends CakeTestCase {
 			),
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
+		Configure::write('App.namespace', 'TestApp');
 		Configure::write('Session', array(
 			'defaults' => 'cake',
 			'handler' => array(
@@ -562,8 +564,9 @@ class CakeSessionTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 
+		Configure::write('App.namespace', 'TestApp');
 		Configure::write('Session', array(
 			'defaults' => 'cake',
 			'handler' => array(
@@ -584,7 +587,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testReadAndWriteWithCacheStorage() {
 		Configure::write('Session.defaults', 'cache');
-		Configure::write('Session.handler.engine', 'TestCacheSession');
+		Configure::write('Session.handler.engine', __NAMESPACE__ . '\TestCacheSession');
 
 		TestCakeSession::init();
 		TestCakeSession::destroy();
@@ -620,13 +623,13 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testReadAndWriteWithCustomCacheConfig() {
 		Configure::write('Session.defaults', 'cache');
-		Configure::write('Session.handler.engine', 'TestCacheSession');
+		Configure::write('Session.handler.engine', __NAMESPACE__ . '\TestCacheSession');
 		Configure::write('Session.handler.config', 'session_test');
 
-		Cache::config('session_test', array(
+		Configure::write('Cache.session_test', [
 			'engine' => 'File',
 			'prefix' => 'session_test_',
-		));
+		]);
 
 		TestCakeSession::init();
 		TestCakeSession::start();
@@ -645,7 +648,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testReadAndWriteWithDatabaseStorage() {
 		Configure::write('Session.defaults', 'database');
-		Configure::write('Session.handler.engine', 'TestDatabaseSession');
+		Configure::write('Session.handler.engine', __NAMESPACE__ . '\TestDatabaseSession');
 		Configure::write('Session.handler.table', 'sessions');
 		Configure::write('Session.handler.model', 'Session');
 		Configure::write('Session.handler.database', 'test');
@@ -706,21 +709,21 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::destroy();
 		TestCakeSession::write('Test', 'some value');
 
-		$this->assertWithinMargin(time() + $timeoutSeconds, CakeSession::$sessionTime, 1);
+		$this->assertWithinMargin(time() + $timeoutSeconds, Session::$sessionTime, 1);
 		$this->assertEquals(10, $_SESSION['Config']['countdown']);
-		$this->assertWithinMargin(CakeSession::$sessionTime, $_SESSION['Config']['time'], 1);
-		$this->assertWithinMargin(time(), CakeSession::$time, 1);
+		$this->assertWithinMargin(Session::$sessionTime, $_SESSION['Config']['time'], 1);
+		$this->assertWithinMargin(time(), Session::$time, 1);
 		$this->assertWithinMargin(time() + $timeoutSeconds, $_SESSION['Config']['time'], 1);
 
 		Configure::write('Session.harden', true);
 		TestCakeSession::destroy();
 
 		TestCakeSession::write('Test', 'some value');
-		$this->assertWithinMargin(time() + $timeoutSeconds, CakeSession::$sessionTime, 1);
+		$this->assertWithinMargin(time() + $timeoutSeconds, Session::$sessionTime, 1);
 		$this->assertEquals(10, $_SESSION['Config']['countdown']);
-		$this->assertWithinMargin(CakeSession::$sessionTime, $_SESSION['Config']['time'], 1);
-		$this->assertWithinMargin(time(), CakeSession::$time, 1);
-		$this->assertWithinMargin(CakeSession::$time + $timeoutSeconds, $_SESSION['Config']['time'], 1);
+		$this->assertWithinMargin(Session::$sessionTime, $_SESSION['Config']['time'], 1);
+		$this->assertWithinMargin(time(), Session::$time, 1);
+		$this->assertWithinMargin(Session::$time + $timeoutSeconds, $_SESSION['Config']['time'], 1);
 	}
 
 /**

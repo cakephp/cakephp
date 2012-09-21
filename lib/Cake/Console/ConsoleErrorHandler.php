@@ -52,13 +52,14 @@ class ConsoleErrorHandler {
  * @param Exception $exception The exception to handle
  * @return void
  */
-	public function handleException(\Exception $exception) {
+	public static function handleException(\Exception $exception) {
 		$stderr = static::getStderr();
 		$stderr->write(__d('cake_console', "<error>Error:</error> %s\n%s",
 			$exception->getMessage(),
 			$exception->getTraceAsString()
 		));
-		$this->_stop($exception->getCode() ? $exception->getCode() : 1);
+		// TODO this makes this method impossible to test.
+		exit($exception->getCode() ? $exception->getCode() : 1);
 	}
 
 /**
@@ -72,7 +73,7 @@ class ConsoleErrorHandler {
  * @param array $context The backtrace of the error.
  * @return void
  */
-	public function handleError($code, $description, $file = null, $line = null, $context = null) {
+	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if (error_reporting() === 0) {
 			return;
 		}
@@ -84,15 +85,6 @@ class ConsoleErrorHandler {
 		if (Configure::read('debug') == 0) {
 			Log::write($log, $message);
 		}
-	}
-
-/**
- * Wrapper for exit(), used for testing.
- *
- * @param $code int The exit code.
- */
-	protected function _stop($code = 0) {
-		exit($code);
 	}
 
 }

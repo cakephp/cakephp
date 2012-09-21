@@ -1,14 +1,5 @@
 <?php
 /**
- * Session class for Cake.
- *
- * Cake abstracts the handling of sessions.
- * There are several convenient methods to access session information.
- * This class is the implementation of those methods.
- * They are mostly used by the Session Component.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -21,9 +12,12 @@
  * @since         CakePHP(tm) v .0.10.0.1222
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Model\Datasource;
+
+use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Model\Datasource\Session\SessionHandlerInterface;
+use Cake\Error;
 use Cake\Utility\Hash;
 
 /**
@@ -444,7 +438,7 @@ class Session {
  * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
  *
  * @return void
- * @throws Cake\Error\SessionException Throws exceptions when ini_set() fails.
+ * @throws Cake\Error\Exception Throws exceptions when ini_set() fails.
  */
 	protected static function _configureSession() {
 		$sessionConfig = Configure::read('Session');
@@ -482,7 +476,7 @@ class Session {
 			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
 				foreach ($sessionConfig['ini'] as $setting => $value) {
 					if (ini_set($setting, $value) === false) {
-						throw new Error\SessionException(sprintf(
+						throw new Error\Exception(sprintf(
 							__d('cake_dev', 'Unable to configure the session, setting %s failed.'),
 							$setting
 						));
@@ -513,17 +507,18 @@ class Session {
  *
  * @param string $class
  * @return void
- * @throws Cake\Error\SessionException
+ * @throws Cake\Error\Exception
  */
 	protected static function _getHandler($class) {
+		$class = App::className($class, 'Model/Datasource/Session');
 		if (!class_exists($class)) {
-			throw new Error\SessionException(__d('cake_dev', 'Could not load %s to handle the session.', $class));
+			throw new Error\Exception(__d('cake_dev', 'Could not load %s to handle the session.', $class));
 		}
 		$handler = new $class();
 		if ($handler instanceof SessionHandlerInterface) {
 			return $handler;
 		}
-		throw new Error\SessionException(__d('cake_dev', 'Chosen SessionHandler does not implement SessionHandlerInterface it cannot be used with an engine key.'));
+		throw new Error\Exception(__d('cake_dev', 'Chosen SessionHandler does not implement SessionHandlerInterface it cannot be used with an engine key.'));
 	}
 
 /**
@@ -535,6 +530,7 @@ class Session {
 	protected static function _defaultConfig($name) {
 		$defaults = array(
 			'php' => array(
+				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
 				'ini' => array(
@@ -543,6 +539,7 @@ class Session {
 				)
 			),
 			'cake' => array(
+				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
 				'ini' => array(
@@ -557,6 +554,7 @@ class Session {
 				)
 			),
 			'cache' => array(
+				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
 				'ini' => array(
@@ -573,6 +571,7 @@ class Session {
 				)
 			),
 			'database' => array(
+				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
 				'timeout' => 240,
 				'ini' => array(

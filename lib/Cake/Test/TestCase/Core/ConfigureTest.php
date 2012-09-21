@@ -453,8 +453,9 @@ class ConfigureTest extends TestCase {
  */
 	public function testDumpPartial() {
 		Configure::config('test_reader', new PhpReader(TMP));
+		Configure::write('Error', ['test' => 'value']);
 
-		$result = Configure::dump('config_test.php', 'test_reader', array('Error'));
+		$result = Configure::dump('config_test.php', 'test_reader', ['Error']);
 		$this->assertTrue($result > 0);
 		$result = file_get_contents(TMP . 'config_test.php');
 		$this->assertContains('<?php', $result);

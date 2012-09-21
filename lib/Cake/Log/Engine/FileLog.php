@@ -37,6 +37,13 @@ class FileLog extends BaseLog {
 	protected $_path = null;
 
 /**
+ * The name of the file to save logs into.
+ *
+ * @var string
+ */
+	protected $_file = null;
+
+/**
  * Constructs a new File Logger.
  *
  * Config

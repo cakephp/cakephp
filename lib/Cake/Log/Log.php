@@ -1,11 +1,5 @@
 <?php
 /**
- * Logging.
- *
- * Log messages to text files.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,32 +8,83 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Log
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Log;
+
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Log\Engine\BaseLog;
 use Cake\Log\Engine\FileLog;
 
 /**
  * Logs messages to configured Log adapters.  One or more adapters
  * can be configured using Cake Logs's methods.  If you don't
- * configure any adapters, and write to the logs a default
- * FileLog will be autoconfigured for you.
+ * configure any adapters, and write to Log, the messages will be
+ * ignored.
  *
  * ### Configuring Log adapters
  *
- * You can configure log adapters in your applications `bootstrap.php` file.
+ * You can configure log adapters in your applications `Config/logging.php` file.
  * A sample configuration would look like:
  *
  * {{{
- * Log::config('my_log', array('engine' => 'FileLog'));
+ * Configure::write('Log.my_log', ['engine' => 'FileLog']);
  * }}}
  *
- * See the documentation on Log::config() for more detail.
+ * You can define the engine as any fully namespaced classname or use a short hand
+ * classname to use loggers in the `App\Log\Engine` & `Cake\Log\Engine` namespaces.
+ * You can also use plugin short hand to use logging classes provided by plugins.
+ *
+ * Log adapters are required to implement `Cake\Log\LogInterface`, and there is a
+ * built-in base class (`Cake\Log\Engine\BaseLog`) that can be used for custom loggers.
+ *
+ * Outside of the `engine` key, all other configuration values will be passed to the 
+ * logging adapter's constructor as an array.
+ *
+ * ### Logging levels
+ *
+ * When configuring loggers, you can set which levels a logger will handle.
+ * This allows you to disable debug messages in production for example:
+ *
+ * {{{
+ * Configure::write('default', [
+ *     'engine' => 'File',
+ *     'path' => LOGS,
+ *     'levels' => ['error', 'critical', 'alert', 'emergency']
+ * ]);
+ * }}}
+ *
+ * The above logger would only log error messages or higher. Any
+ * other log messages would be discarded.
+ *
+ * ### Logging scopes
+ *
+ * When configuring loggers you can define the active scopes the logger
+ * is for.  If defined, only the listed scopes will be handled by the
+ * logger.  If you don't define any scopes an adapter will catch
+ * all scopes that match the handled levels.
+ *
+ * {{{
+ * Configure::write('payments', [
+ *     'engine' => 'File',
+ *     'scopes' => ['payment', 'order']
+ * ]);
+ * }}}
+ *
+ * The above logger will only capture log entries made in the
+ * `payment` and `order` scopes. All other scopes including the
+ * undefined scope will be ignored.
+ *
+ * ### Loading loggers at runtime
+ *
+ * After an application's bootstrap phase is complete, or after
+ * any log messages are written you cannot use Configure to create 
+ * new loggers, without using Log::reset() first.  Instead you should
+ * use Log::engine() to insert constructed loggers, when dynamically
+ * adding loggers at runtime.
  *
  * ### Writing to the log
  *
@@ -56,9 +101,6 @@ use Cake\Log\Engine\FileLog;
  * Log::write(LOG_ERR, 'Something horrible happened');
  * }}}
  *
- * If you require custom logging levels, you can use Log::levels() to
- * append additoinal logging levels.
- *
  * ### Logging scopes
  *
  * When logging messages and configuring log adapters, you can specify
@@ -67,10 +109,7 @@ use Cake\Log\Engine\FileLog;
  * example in an e-commerce application you may want to handle logged errors
  * in the cart and ordering subsystems differently than the rest of the
  * application.  By using scopes you can control logging for each part
- * of your application and still keep standard log levels.
- *
- * See Log::config() and Log::write() for more information
- * on scopes
+ * of your application and also use standard log levels.
  *
  * @package       Cake.Log
  */
@@ -84,12 +123,28 @@ class Log {
 	protected static $_Collection;
 
 /**
- * Default log levels as detailed in RFC 5424
+ * Log levels as detailed in RFC 5424
  * http://tools.ietf.org/html/rfc5424
  *
  * @var array
  */
-	protected static $_defaultLevels = array(
+	protected static $_levels = array(
+		LOG_EMERG => 'emergency',
+		LOG_ALERT => 'alert',
+		LOG_CRIT => 'critical',
+		LOG_ERR => 'error',
+		LOG_WARNING => 'warning',
+		LOG_NOTICE => 'notice',
+		LOG_INFO => 'info',
+		LOG_DEBUG => 'debug',
+	);
+
+/**
+ * Mapped log levels
+ *
+ * @var array
+ */
+	protected static $_levelMap = array(
 		'emergency' => LOG_EMERG,
 		'alert' => LOG_ALERT,
 		'critical' => LOG_CRIT,
@@ -101,100 +156,53 @@ class Log {
 	);
 
 /**
- * Active log levels for this instance.
- *
- * @var array
- */
-	protected static $_levels;
-
-/**
- * Mapped log levels
- *
- * @var array
- */
-	protected static $_levelMap;
-
-/**
  * initialize ObjectCollection
  *
  * @return void
  */
 	protected static function _init() {
-		static::$_levels = static::defaultLevels();
-		static::$_Collection = new LogEngineCollection();
+		if (empty(static::$_Collection)) {
+			static::$_Collection = new LogEngineCollection();
+			static::_loadConfig();
+		}
 	}
 
 /**
- * Configure and add a new logging stream to Cake Log
- * You can use add loggers from app/Log/Engine use app.loggername, or any
- * plugin/Log/Engine using plugin.loggername.
+ * Load the defined configuration and create all the defined logging
+ * adapters.
  *
- * ### Usage:
+ * @return void
+ */
+	protected static function _loadConfig() {
+		$loggers = Configure::read('Log');
+		foreach ($loggers as $key => $config) {
+			static::$_Collection->load($key, $config);
+		}
+	}
+
+/**
+ * Reset all the connected loggers.  This is useful to do when changing the logging
+ * configuration or during testing when you want to reset the internal state of the
+ * Log class.
  *
- * {{{
- * Log::config('second_file', array(
- *     'engine' => 'FileLog',
- *     'path' => '/var/logs/my_app/'
- * ));
- * }}}
+ * Resets the configured logging adapters, as well as any custom logging levels.
  *
- * Will configure a FileLog instance to use the specified path.
- * All options that are not `engine` are passed onto the logging adapter,
- * and handled there.  Any class can be configured as a logging
- * adapter as long as it implements the methods in Cake\Log\LogInterface.
- *
- * ### Logging levels
- *
- * When configuring loggers, you can set which levels a logger will handle.
- * This allows you to disable debug messages in production for example:
- *
- * {{{
- * Log::config('default', array(
- *     'engine' => 'File',
- *     'path' => LOGS,
- *     'levels' => array('error', 'critical', 'alert', 'emergency')
- * ));
- * }}}
- *
- * The above logger would only log error messages or higher. Any
- * other log messages would be discarded.
- *
- * ### Logging scopes
- *
- * When configuring loggers you can define the active scopes the logger
- * is for.  If defined only the listed scopes will be handled by the
- * logger.  If you don't define any scopes an adapter will catch
- * all scopes that match the handled levels.
- *
- * {{{
- * Log::config('payments', array(
- *     'engine' => 'File',
- *     'scopes' => array('payment', 'order')
- * ));
- * }}}
- *
- * The above logger will only capture log entries made in the
- * `payment` and `order` scopes. All other scopes including the
- * undefined scope will be ignored.
- *
- * @param string $key The keyname for this logger, used to remove the
- *    logger later.
- * @param array $config Array of configuration information for the logger
- * @return boolean success of configuration.
- * @throws Cake\Error\LogException
+ * @return void
+ */
+	public static function reset() {
+		static::$_Collection = null;
+	}
+
+/**
+ * @deprecated Use Configure::write() to configure logging.
+ * @see App/Config/logging.php
+ * @return void
  */
 	public static function config($key, $config) {
-		if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $key)) {
-			throw new Error\LogException(__d('cake_dev', 'Invalid key name'));
-		}
-		if (empty($config['engine'])) {
-			throw new Error\LogException(__d('cake_dev', 'Missing logger classname'));
-		}
-		if (empty(static::$_Collection)) {
-			static::_init();
-		}
-		static::$_Collection->load($key, $config);
-		return true;
+		trigger_error(
+			__d('cake_dev', 'You must use Configure::write() to define logging configuration. Or use engine() to inject new adapter.'),
+			E_USER_WARNING
+		);
 	}
 
 /**
@@ -203,83 +211,19 @@ class Log {
  * @return array Array of configured log streams.
  */
 	public static function configured() {
-		if (empty(static::$_Collection)) {
-			static::_init();
-		}
+		static::_init();
 		return static::$_Collection->attached();
 	}
 
 /**
- * Gets/sets log levels
+ * Gets log levels
  *
- * Call this method without arguments, eg: `Log::levels()` to obtain current
+ * Call this method to obtain current
  * level configuration.
  *
- * To append additional level 'user0' and 'user1' to to default log levels:
- *
- * {{{
- * Log::levels(array('user0, 'user1'));
- * // or
- * Log::levels(array('user0, 'user1'), true);
- * }}}
- *
- * will result in:
- *
- * {{{
- * array(
- *     0 => 'emergency',
- *     1 => 'alert',
- *     ...
- *     8 => 'user0',
- *     9 => 'user1',
- * );
- * }}}
- *
- * To set/replace existing configuration, pass an array with the second argument
- * set to false.
- *
- * {{{
- * Log::levels(array('user0, 'user1'), false);
- * }}}
- *
- * will result in:
- *
- * {{{
- * array(
- *      0 => 'user0',
- *      1 => 'user1',
- * );
- * }}}
- *
- * @param array $levels array
- * @param bool $append true to append, false to replace
  * @return array active log levels
  */
-	public static function levels($levels = array(), $append = true) {
-		if (empty(static::$_Collection)) {
-			static::_init();
-		}
-		if (empty($levels)) {
-			return static::$_levels;
-		}
-		$levels = array_values($levels);
-		if ($append) {
-			static::$_levels = array_merge(static::$_levels, $levels);
-		} else {
-			static::$_levels = $levels;
-		}
-		static::$_levelMap = array_flip(static::$_levels);
-		return static::$_levels;
-	}
-
-/**
- * Reset log levels to the original value
- *
- * @return array default log levels
- */
-	public static function defaultLevels() {
-		static::$_levelMap = static::$_defaultLevels;
-		static::$_levels = array_flip(static::$_levelMap);
+	public static function levels() {
 		return static::$_levels;
 	}
 
@@ -291,9 +235,7 @@ class Log {
  * @return void
  */
 	public static function drop($streamName) {
-		if (empty(static::$_Collection)) {
-			static::_init();
-		}
+		static::_init();
 		static::$_Collection->unload($streamName);
 	}
 
@@ -302,14 +244,12 @@ class Log {
  *
  * @param string $streamName to check
  * @return bool
- * @throws Cake\Error\LogException
+ * @throws Cake\Error\Exception
  */
 	public static function enabled($streamName) {
-		if (empty(static::$_Collection)) {
-			static::_init();
-		}
+		static::_init();
 		if (!isset(static::$_Collection->{$streamName})) {
-			throw new Error\LogException(__d('cake_dev', 'Stream %s not found', $streamName));
+			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
 		return static::$_Collection->enabled($streamName);
 	}
@@ -320,14 +260,12 @@ class Log {
  *
  * @param string $streamName to enable
  * @return void
- * @throws Cake\Error\LogException
+ * @throws Cake\Error\Exception
  */
 	public static function enable($streamName) {
-		if (empty(static::$_Collection)) {
-			static::_init();
-		}
+		static::_init();
 		if (!isset(static::$_Collection->{$streamName})) {
-			throw new Error\LogException(__d('cake_dev', 'Stream %s not found', $streamName));
+			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
 		static::$_Collection->enable($streamName);
 	}
@@ -339,118 +277,114 @@ class Log {
  *
  * @param string $streamName to disable
  * @return void
- * @throws Cake\Error\LogException
+ * @throws Cake\Error\Exception
  */
 	public static function disable($streamName) {
-		if (empty(static::$_Collection)) {
-			static::_init();
-		}
+		static::_init();
 		if (!isset(static::$_Collection->{$streamName})) {
-			throw new Error\LogException(__d('cake_dev', 'Stream %s not found', $streamName));
+			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
 		static::$_Collection->disable($streamName);
 	}
 
 /**
- * Gets the logging engine from the active streams.
+ * Get/Set a logging engine.
  *
  * @see BaseLog
- * @param string $streamName Key name of a configured stream to get.
+ * @param string $name Key name of a configured adapter to get/set
+ * @param LogInterface $engine The logging instance to inject/add to Log.
  * @return $mixed instance of BaseLog or false if not found
  */
-	public static function stream($streamName) {
-		if (empty(static::$_Collection)) {
-			static::_init();
+	public static function engine($name, $engine = null) {
+		static::_init();
+		if ($engine) {
+			static::$_Collection->load($name, $engine);
+			return;
 		}
-		if (!empty(static::$_Collection->{$streamName})) {
-			return static::$_Collection->{$streamName};
+		if (static::$_Collection->{$name}) {
+			return static::$_Collection->{$name};
 		}
 		return false;
 	}
 
 /**
- * Configures the automatic/default stream a FileLog.
- *
- * @return void
- */
-	protected static function _autoConfig() {
-		static::$_Collection->load('default', array(
-			'engine' => 'Cake\Log\Engine\FileLog',
-			'path' => LOGS,
-		));
-	}
-
-/**
  * Writes the given message and type to all of the configured log adapters.
- * Configured adapters are passed both the $type and $message variables. $type
+ * Configured adapters are passed both the $level and $message variables. $level
  * is one of the following strings/values.
  *
- * ### Types:
+ * ### Levels:
  *
- * -  LOG_EMERG => 'emergency',
- * -  LOG_ALERT => 'alert',
- * -  LOG_CRIT => 'critical',
+ * - `LOG_EMERG` => 'emergency',
+ * - `LOG_ALERT` => 'alert',
+ * - `LOG_CRIT` => 'critical',
  * - `LOG_ERR` => 'error',
  * - `LOG_WARNING` => 'warning',
  * - `LOG_NOTICE` => 'notice',
  * - `LOG_INFO` => 'info',
  * - `LOG_DEBUG` => 'debug',
  *
- * ### Usage:
+ * ### Basic usage
  *
- * Write a message to the 'warning' log:
+ * Write a 'warning' message to the logs:
  *
  * `Log::write('warning', 'Stuff is broken here');`
  *
- * @param integer|string $type Type of message being written. When value is an integer
- *    or a string matching the recognized levels, then it will
- *    be treated log levels. Otherwise it's treated as scope.
+ * ### Using scopes
+ *
+ * When writing a log message you can define one or many scopes for the message.
+ * This allows you to handle messages differently based on application section/feature.
+ *
+ * `Log::write('warning', 'Payment failed', 'payment');`
+ *
+ * When configuring loggers you can configure the scopes a particular logger will handle.
+ * When using scopes, you must ensure that the level of the message, and the scope of the message
+ * intersect with the defined levels & scopes for a logger.
+ *
+ * ### Unhandled log messages
+ *
+ * If no configured logger can handle a log message (because of level or scope restrictions)
+ * then the logged message will be ignored and silently dropped. You can check if this has happened
+ * by inspecting the return of write().  If false the message was not handled.
+ *
+ * @param integer|string $level The level of the message being written. The value must be
+ *    an integer or string matching a known level.
  * @param string $message Message content to log
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
  */
-	public static function write($type, $message, $scope = array()) {
-		if (empty(static::$_Collection)) {
-			static::_init();
-		}
-
-		if (is_int($type) && isset(static::$_levels[$type])) {
-			$type = static::$_levels[$type];
-		}
-		if (is_string($type) && empty($scope) && !in_array($type, static::$_levels)) {
-			$scope = $type;
+	public static function write($level, $message, $scope = array()) {
+		static::_init();
+		if (is_int($level) && isset(static::$_levels[$level])) {
+			$level = static::$_levels[$level];
 		}
 		$logged = false;
 		foreach (static::$_Collection->enabled() as $streamName) {
 			$logger = static::$_Collection->{$streamName};
-			$types = null;
-			$scopes = array();
+			$levels = $scopes = null;
 			if ($logger instanceof BaseLog) {
 				$config = $logger->config();
 				if (isset($config['types'])) {
-					$types = $config['types'];
+					$levels = $config['types'];
 				}
 				if (isset($config['scopes'])) {
 					$scopes = $config['scopes'];
 				}
 			}
-			if (is_string($scope)) {
-				$inScope = in_array($scope, $scopes);
-			} else {
-				$intersect = array_intersect($scope, $scopes);
-				$inScope = !empty($intersect);
-			}
-			if (empty($types) || in_array($type, $types) || in_array($type, $scopes) && $inScope) {
-				$logger->write($type, $message);
+			$correctLevel = (
+				empty($levels) ||
+				in_array($level, $levels)
+			);
+			$inScope = (
+				empty($scopes) ||
+				count(array_intersect((array)$scope, $scopes)) > 0
+			);
+			if ($correctLevel && $inScope) {
+				$logger->write($level, $message);
 				$logged = true;
 			}
 		}
-		if (!$logged) {
-			static::_autoConfig();
-			static::stream('default')->write($type, $message);
-		}
-		return true;
+		return $logged;
 	}
 
 /**
