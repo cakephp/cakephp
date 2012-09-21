@@ -749,7 +749,7 @@ class Helper extends Object {
  * @return array Array of options with $key set.
  */
 	public function addClass($options = array(), $class = null, $key = 'class') {
-		if (isset($options[$key]) && trim($options[$key]) != '') {
+		if (isset($options[$key]) && trim($options[$key])) {
 			$options[$key] .= ' ' . $class;
 		} else {
 			$options[$key] = $class;

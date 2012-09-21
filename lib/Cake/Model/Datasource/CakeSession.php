@@ -663,7 +663,7 @@ class CakeSession {
  */
 	public static function renew() {
 		if (session_id()) {
-			if (session_id() != '' || isset($_COOKIE[session_name()])) {
+			if (session_id() || isset($_COOKIE[session_name()])) {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, self::$path);
 			}
 			session_regenerate_id(true);
