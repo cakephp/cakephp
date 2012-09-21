@@ -51,11 +51,6 @@ define('WWW_ROOT', dirname(__FILE__) . DS);
 define('APP', ROOT . DS . APP_DIR . DS);
 
 /**
- * Path to the application's libs directory.
- */
-define('APPLIBS', APP . 'Lib' . DS);
-
-/**
  * Path to the public CSS directory.
  */
 define('CSS', WWW_ROOT . 'css' . DS);
