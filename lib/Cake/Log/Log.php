@@ -83,7 +83,7 @@ use Cake\Log\Engine\FileLog;
  * After an application's bootstrap phase is complete, or after
  * any log messages are written you cannot use Configure to create 
  * new loggers, without using Log::reset() first.  Instead you should
- * used Log::engine() to insert constructed loggers, when dynamically
+ * use Log::engine() to insert constructed loggers, when dynamically
  * adding loggers at runtime.
  *
  * ### Writing to the log
