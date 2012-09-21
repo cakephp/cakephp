@@ -78,7 +78,7 @@ Configure::write('Cache._cake_model_', [
  *
  * File storage engine.
  *
- * 	 Cache::config('default', array(
+ * 	 Configure::write('Cache.default', array(
  *		'engine' => 'File', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
@@ -91,7 +91,7 @@ Configure::write('Cache._cake_model_', [
  *
  * APC (http://pecl.php.net/package/APC)
  *
- * 	 Cache::config('default', array(
+ * 	 Configure::write('Cache.default', array(
  *		'engine' => 'Apc', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
@@ -100,7 +100,7 @@ Configure::write('Cache._cake_model_', [
  *
  * Xcache (http://xcache.lighttpd.net/)
  *
- * 	 Cache::config('default', array(
+ * 	 Configure::write('Cache.default', array(
  *		'engine' => 'Xcache', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
@@ -111,7 +111,7 @@ Configure::write('Cache._cake_model_', [
  *
  * Memcache (http://memcached.org/)
  *
- * 	 Cache::config('default', array(
+ * 	 Configure::write('Cache.default', array(
  *		'engine' => 'Memcache', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
@@ -125,7 +125,7 @@ Configure::write('Cache._cake_model_', [
  *
  *  Wincache (http://php.net/wincache)
  *
- * 	 Cache::config('default', array(
+ * 	 Configure::write('Cache.default', array(
  *		'engine' => 'Wincache', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
@@ -134,7 +134,7 @@ Configure::write('Cache._cake_model_', [
  *
  * Redis (http://http://redis.io/)
  *
- * 	 Cache::config('default', array(
+ * 	 Configure::write('Cache.default', array(
  *		'engine' => 'Redis', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
