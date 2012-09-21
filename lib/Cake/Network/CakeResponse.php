@@ -1070,7 +1070,7 @@ class CakeResponse {
  * @return int
  */
 	public function length($bytes = null) {
-		if ($bytes !== null ) {
+		if ($bytes !== null) {
 			$this->_headers['Content-Length'] = $bytes;
 		}
 		if (isset($this->_headers['Content-Length'])) {

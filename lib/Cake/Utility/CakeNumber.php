@@ -70,13 +70,13 @@ class CakeNumber {
 /**
  * Formats a number with a level of precision.
  *
- * @param float $number A floating point number.
+ * @param float $value A floating point number.
  * @param integer $precision The precision of the returned number.
  * @return float Formatted float.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
-	public static function precision($number, $precision = 3) {
-		return sprintf("%01.{$precision}F", $number);
+	public static function precision($value, $precision = 3) {
+		return sprintf("%01.{$precision}F", $value);
 	}
 
 /**
@@ -135,25 +135,25 @@ class CakeNumber {
 /**
  * Formats a number into a percentage string.
  *
- * @param float $number A floating point number
+ * @param float $value A floating point number
  * @param integer $precision The precision of the returned number
  * @return string Percentage string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
  */
-	public static function toPercentage($number, $precision = 2) {
-		return self::precision($number, $precision) . '%';
+	public static function toPercentage($value, $precision = 2) {
+		return self::precision($value, $precision) . '%';
 	}
 
 /**
  * Formats a number into a currency format.
  *
- * @param float $number A floating point number
+ * @param float $value A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
  *   or array with places and before keys
  * @return string formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
-	public static function format($number, $options = false) {
+	public static function format($value, $options = false) {
 		$places = 0;
 		if (is_int($options)) {
 			$places = $options;
@@ -180,7 +180,8 @@ class CakeNumber {
 			extract($options);
 		}
 
-		$out = $before . self::_numberFormat($number, $places, $decimals, $thousands) . $after;
+		$value = self::_numberFormat($value, $places, '.', '');
+		$out = $before . self::_numberFormat($value, $places, $decimals, $thousands) . $after;
 
 		if ($escape) {
 			return h($out);
@@ -189,33 +190,56 @@ class CakeNumber {
 	}
 
 /**
+ * Formats a number into a currency format to show deltas (signed differences in value).
+ *
+ * ### Options
+ *
+ * - `places` - Number of decimal places to use. ie. 2
+ * - `before` - The string to place before whole numbers. ie. '['
+ * - `after` - The string to place after decimal numbers. ie. ']'
+ * - `thousands` - Thousands separator ie. ','
+ * - `decimals` - Decimal separator symbol ie. '.'
+ *
+ * @param float $value A floating point number
+ * @param array $options
+ * @return string formatted delta
+ */
+	public static function formatDelta($value, $options = array()) {
+		$places = isset($options['places']) ? $options['places'] : 0;
+		$value = self::_numberFormat($value, $places, '.', '');
+		$sign = $value > 0 ? '+' : '';
+		$options['before'] = isset($options['before']) ? $options['before'] . $sign : $sign;
+		return self::format($value, $options);
+	}
+
+/**
  * Alternative number_format() to accommodate multibyte decimals and thousands < PHP 5.4
  *
- * @param float $number
+ * @param float $value
  * @param integer $places
  * @param string $decimals
  * @param string $thousands
  * @return string
  */
-	protected static function _numberFormat($number, $places = 0, $decimals = '.', $thousands = ',') {
+	protected static function _numberFormat($value, $places = 0, $decimals = '.', $thousands = ',') {
 		if (!isset(self::$_numberFormatSupport)) {
 			self::$_numberFormatSupport = version_compare(PHP_VERSION, '5.4.0', '>=');
 		}
 		if (self::$_numberFormatSupport) {
-			return number_format($number, $places, $decimals, $thousands);
+			return number_format($value, $places, $decimals, $thousands);
 		}
-		$number = number_format($number, $places, '.', '');
+		$value = number_format($value, $places, '.', '');
 		$after = '';
-		$foundDecimal = strpos($number, '.');
+		$foundDecimal = strpos($value, '.');
 		if ($foundDecimal !== false) {
-			$after = substr($number, $foundDecimal);
-			$number = substr($number, 0, $foundDecimal);
+			$after = substr($value, $foundDecimal);
+			$value = substr($value, 0, $foundDecimal);
 		}
-		while (($foundThousand = preg_replace('/(\d+)(\d\d\d)/', '\1 \2', $number)) != $number) {
-			$number = $foundThousand;
+		while (($foundThousand = preg_replace('/(\d+)(\d\d\d)/', '\1 \2', $value)) != $value) {
+			$value = $foundThousand;
 		}
-		$number .= $after;
-		return strtr($number, array(' ' => $thousands, '.' => $decimals));
+		$value .= $after;
+		return strtr($value, array(' ' => $thousands, '.' => $decimals));
 	}
 
 /**
@@ -244,14 +268,14 @@ class CakeNumber {
  *   the number will be wrapped with ( and )
  * - `escape` - Should the output be htmlentity escaped? Defaults to true
  *
- * @param float $number
+ * @param float $value
  * @param string $currency Shortcut to default options. Valid values are
  *   'USD', 'EUR', 'GBP', otherwise set at least 'before' and 'after' options.
  * @param array $options
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
-	public static function currency($number, $currency = 'USD', $options = array()) {
+	public static function currency($value, $currency = 'USD', $options = array()) {
 		$default = self::$_currencyDefaults;
 
 		if (isset(self::$_currencies[$currency])) {
@@ -272,14 +296,14 @@ class CakeNumber {
 		$result = $options['before'] = $options['after'] = null;
 
 		$symbolKey = 'whole';
-		if ($number == 0 ) {
-			if ($options['zero'] !== 0 ) {
+		if ($value == 0) {
+			if ($options['zero'] !== 0) {
 				return $options['zero'];
 			}
-		} elseif ($number < 1 && $number > -1 ) {
+		} elseif ($value < 1 && $value > -1) {
 			if ($options['fractionSymbol'] !== false) {
 				$multiply = intval('1' . str_pad('', $options['places'], '0'));
-				$number = $number * $multiply;
+				$value = $value * $multiply;
 				$options['places'] = null;
 				$symbolKey = 'fraction';
 			}
@@ -288,10 +312,10 @@ class CakeNumber {
 		$position = $options[$symbolKey . 'Position'] != 'after' ? 'before' : 'after';
 		$options[$position] = $options[$symbolKey . 'Symbol'];
 
-		$abs = abs($number);
+		$abs = abs($value);
 		$result = self::format($abs, $options);
 
-		if ($number < 0 ) {
+		if ($value < 0) {
 			if ($options['negative'] == '()') {
 				$result = '(' . $result . ')';
 			} else {
