@@ -599,7 +599,7 @@ class DboSource extends DataSource {
 		} else {
 			if (isset($args[1]) && $args[1] === true) {
 				return $this->fetchAll($args[0], true);
-			} elseif (isset($args[1]) && !is_array($args[1]) ) {
+			} elseif (isset($args[1]) && !is_array($args[1])) {
 				return $this->fetchAll($args[0], false);
 			} elseif (isset($args[1]) && is_array($args[1])) {
 				if (isset($args[2])) {
