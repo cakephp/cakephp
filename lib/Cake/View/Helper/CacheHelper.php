@@ -59,7 +59,7 @@ class CacheHelper extends AppHelper {
  * @return boolean
  */
 	protected function _enabled() {
-		return (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
+		return $this->_View->cacheAction && (Configure::read('Cache.check') === true);
 	}
 
 /**

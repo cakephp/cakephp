@@ -2561,7 +2561,7 @@ class Model extends Object implements CakeEventListener {
  * @return boolean True if such a record exists
  */
 	public function hasAny($conditions = null) {
-		return ($this->find('count', array('conditions' => $conditions, 'recursive' => -1)) != false);
+		return (bool)$this->find('count', array('conditions' => $conditions, 'recursive' => -1));
 	}
 
 /**
