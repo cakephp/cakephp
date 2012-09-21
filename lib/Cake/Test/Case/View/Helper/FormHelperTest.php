@@ -3568,6 +3568,38 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.field', array(
+			'options' => array('1' => 'first', '2' => 'second'),
+			'type' => 'radio',
+			'before' => '--before--',
+			'after' => '--after--',
+			'separator' => '--separator--',
+			'between' => array('--between first--')
+		));
+
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			'--before--',
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'ModelField_', 'value' => '')),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'first',
+			'/label',
+			'--between first--',
+			'--separator--',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '2', 'id' => 'ModelField2')),
+			array('label' => array('for' => 'ModelField2')),
+			'second',
+			'/label',
+			'/fieldset',
+			'--after--',
+			'/div'
+		);
 	}
 
 /**
