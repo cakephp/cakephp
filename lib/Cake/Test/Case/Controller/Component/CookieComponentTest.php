@@ -271,12 +271,14 @@ class CookieComponentTest extends CakeTestCase {
 		$expected = array(
 			'name' => $this->Cookie->name . '[Testing]',
 			'value' => '[1,2,3]',
-			'expire' => time() + 10,
 			'path' => '/',
 			'domain' => '',
 			'secure' => false,
 			'httpOnly' => false);
 		$result = $this->Controller->response->cookie($this->Cookie->name . '[Testing]');
+
+		$this->assertWithinMargin($result['expire'], time() + 10, 1);
+		unset($result['expire']);
 		$this->assertEquals($expected, $result);
 	}
 
