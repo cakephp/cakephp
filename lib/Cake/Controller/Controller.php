@@ -454,7 +454,7 @@ class Controller extends Object implements CakeEventListener {
 			$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
 		}
 
-		if (!empty($request->params['return']) && $request->params['return']) {
+		if (!empty($request->params['return']) && $request->params['return'] == 1) {
 			$this->autoRender = false;
 		}
 		if (!empty($request->params['bare'])) {
