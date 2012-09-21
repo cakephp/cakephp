@@ -1,9 +1,5 @@
 <?php
 /**
- * Cake E-Mail
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -17,12 +13,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Email;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Log\Log;
+use Cake\Utility\Hash;
 use Cake\Utility\String;
 use Cake\Utility\Validation;
+use Cake\View\View;
 
 /**
  * Cake e-mail class.
@@ -182,7 +181,7 @@ class Email {
  *
  * @var string
  */
-	protected $_viewRender = 'View';
+	protected $_viewRender = 'Cake\View\View';
 
 /**
  * Vars to sent to render
@@ -1019,9 +1018,14 @@ class Email {
 	}
 
 /**
- * Configuration to use when send email
+ * Sets the configuration for this Email instance.
  *
- * @param string|array $config String with configuration name (from email.php), array with config or null to return current config
+ * This can be used to load previously loaded configuration
+ * data added via Email::config().  Additionally it can be
+ * used to augment the existing configuration
+ *
+ * @param string|array $config String with configuration name, or
+ *    an array with config or null to return current config.
  * @return string|array|Cake\Network\Email\Email
  */
 	public function config($config = null) {
@@ -1031,7 +1035,6 @@ class Email {
 		if (!is_array($config)) {
 			$config = (string)$config;
 		}
-
 		$this->_applyConfig($config);
 		return $this;
 	}
@@ -1041,7 +1044,7 @@ class Email {
  *
  * @param string|array $content String with message or array with messages
  * @return array
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function send($content = null) {
 		if (empty($this->_from)) {
@@ -1114,14 +1117,11 @@ class Email {
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
-			if (!class_exists('EmailConfig') && !config('email')) {
-				throw new Error\ConfigureException(__d('cake_dev', '%s not found.', APP . 'Config' . DS . 'email.php'));
+			$name = $config;
+			$config = Configure::read('Email.' . $name);
+			if (empty($config)) {
+				throw new Error\ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $name));
 			}
-			$configs = new EmailConfig();
-			if (!isset($configs->{$config})) {
-				throw new Error\ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $config));
-			}
-			$config = $configs->{$config};
 		}
 		$this->_config += $config;
 		if (!empty($config['charset'])) {
@@ -1179,7 +1179,7 @@ class Email {
 		$this->_headers = array();
 		$this->_layout = 'default';
 		$this->_template = '';
-		$this->_viewRender = 'View';
+		$this->_viewRender = 'Cake\View\View';
 		$this->_viewVars = array();
 		$this->_theme = null;
 		$this->_helpers = array('Html');
@@ -1534,6 +1534,7 @@ class Email {
 		} else {
 			$viewClass = App::classname($viewClass, 'View', 'View');
 		}
+		$viewClass = 'Cake\View\View';
 
 		$View = new $viewClass(null);
 		$View->viewVars = $this->_viewVars;

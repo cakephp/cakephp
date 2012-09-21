@@ -16,12 +16,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Log\Log;
+use Cake\Log\Engine\ConsoleLog;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;
@@ -837,15 +839,15 @@ class Shell extends Object {
 			Log::drop('stderr');
 			return;
 		}
-		Log::config('stdout', array(
-			'engine' => 'Cake\Log\Engine\ConsoleLog',
-			'types' => array('notice', 'info'),
-			'stream' => $this->stdout,
-		));
-		Log::config('stderr', array(
-			'engine' => 'Cake\Log\Engine\ConsoleLog',
-			'types' => array('emergency', 'alert', 'critical', 'error', 'warning', 'debug'),
+		$stdout = new ConsoleLog([
+			'types' => ['notice', 'info', 'debug'],
+			'stream' => $this->stdout
+		]);
+		$stderr = new ConsoleLog([
+			'types' => ['emergency', 'alert', 'critical', 'error', 'warning'],
 			'stream' => $this->stderr,
-		));
+		]);
+		Log::engine('stdout', $stdout);
+		Log::engine('stderr', $stderr);
 	}
 }

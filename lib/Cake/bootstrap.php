@@ -22,110 +22,16 @@ define('TIME_START', microtime(true));
 
 error_reporting(E_ALL & ~E_DEPRECATED);
 
-if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-	define('CAKE_CORE_INCLUDE_PATH', dirname(__DIR__));
-}
-
-if (!defined('CORE_PATH')) {
-	define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-}
-
-if (!defined('WEBROOT_DIR')) {
-	define('WEBROOT_DIR', 'webroot');
-}
-
-/**
- * Path to the cake directory.
- */
-	define('CAKE', CORE_PATH . 'Cake/');
-
-/**
- * Path to the application's directory.
- */
-if (!defined('APP')) {
-	define('APP', ROOT . DS . APP_DIR . DS);
-}
-
-/**
- * Path to the application's libs directory.
- */
-	define('APPLIBS', APP . 'Lib/');
-
-/**
- * Path to the public CSS directory.
- */
-	define('CSS', WWW_ROOT . 'css/');
-
-/**
- * Path to the public JavaScript directory.
- */
-	define('JS', WWW_ROOT . 'js/');
-
-/**
- * Path to the public images directory.
- */
-	define('IMAGES', WWW_ROOT . 'img/');
-
-/**
- * Path to the tests directory.
- */
-if (!defined('TESTS')) {
-	define('TESTS', APP . 'Test/');
-}
-
-/**
- * Path to the temporary files directory.
- */
-if (!defined('TMP')) {
-	define('TMP', APP . 'tmp/');
-}
-
-/**
- * Path to the logs directory.
- */
-if (!defined('LOGS')) {
-	define('LOGS', TMP . 'logs/');
-}
-
-/**
- * Path to the cache files directory. It can be shared between hosts in a multi-server setup.
- */
-if (!defined('CACHE')) {
-	define('CACHE', TMP . 'cache/');
-}
-
-/**
- * Path to the vendors directory.
- */
-if (!defined('VENDORS')) {
-	define('VENDORS', ROOT . DS . 'vendors/');
-}
-
-/**
- * Web path to the public images directory.
- */
-if (!defined('IMAGES_URL')) {
-	define('IMAGES_URL', 'img/');
-}
-
-/**
- * Web path to the CSS files directory.
- */
-if (!defined('CSS_URL')) {
-	define('CSS_URL', 'css/');
-}
-
-/**
- * Web path to the js files directory.
- */
-if (!defined('JS_URL')) {
-	define('JS_URL', 'js/');
-}
-
 require CAKE . 'basics.php';
 require CAKE . 'Core/ClassLoader.php';
 $loader = new \Cake\Core\ClassLoader('Cake', CORE_PATH);
 $loader->register();
+
+
+use Cake\Core\App;
+
+App::init();
+App::build();
 
 /**
  *  Full url prefix
@@ -143,5 +49,3 @@ if (!defined('FULL_BASE_URL')) {
 	}
 	unset($httpHost, $s);
 }
-
-\Cake\Core\Configure::bootstrap(isset($boot) ? $boot : true);

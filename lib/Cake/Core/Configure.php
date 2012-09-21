@@ -50,57 +50,6 @@ class Configure {
 	protected static $_readers = array();
 
 /**
- * Initializes configure and runs the bootstrap process.
- * Bootstrapping includes the following steps:
- *
- * - Setup App array in Configure.
- * - Include app/Config/core.php.
- * - Configure core cache configurations.
- * - Load App cache files.
- * - Include app/Config/bootstrap.php.
- * - Setup error/exception handlers.
- *
- * @param boolean $boot
- * @return void
- */
-	public static function bootstrap($boot = true) {
-		if ($boot) {
-			static::write('App', array(
-				'base' => false,
-				'baseUrl' => false,
-				'dir' => APP_DIR,
-				'webroot' => WEBROOT_DIR,
-				'www_root' => WWW_ROOT
-			));
-
-			if (!include APP . 'Config/core.php') {
-				trigger_error(__d('cake_dev', "Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
-			}
-			App::init();
-			App::build();
-
-			$exception = array(
-				'handler' => 'Cake\Error\ErrorHandler::handleException',
-			);
-			$error = array(
-				'handler' => 'Cake\Error\ErrorHandler::handleError',
-				'level' => E_ALL & ~E_DEPRECATED,
-			);
-			static::_setErrorHandlers($error, $exception);
-
-			if (!include APP . 'Config/bootstrap.php') {
-				trigger_error(__d('cake_dev', "Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
-			}
-			restore_error_handler();
-
-			static::_setErrorHandlers(
-				static::$_values['Error'],
-				static::$_values['Exception']
-			);
-		}
-	}
-
-/**
  * Used to store a dynamic variable in Configure.
  *
  * Usage:
@@ -399,15 +348,17 @@ class Configure {
 		static::$_values = array();
 		return true;
 	}
+
 /**
- * Set the error and exception handlers.
+ * Set the error and exception handlers using the native default handlers.
  *
- * @param array $error The Error handling configuration.
- * @param array $exception The exception handling configuration.
+ * Uses data already stored in Configure.
+ *
  * @return void
  */
-	protected static function _setErrorHandlers($error, $exception) {
+	public static function setErrorHandlers() {
 		$level = -1;
+		$error = static::read('Error');
 		if (isset($error['level'])) {
 			error_reporting($error['level']);
 			$level = $error['level'];
@@ -415,8 +366,10 @@ class Configure {
 		if (!empty($error['handler'])) {
 			set_error_handler($error['handler'], $level);
 		}
+		$exception = static::read('Exception');
 		if (!empty($exception['handler'])) {
 			set_exception_handler($exception['handler']);
 		}
 	}
+
 }

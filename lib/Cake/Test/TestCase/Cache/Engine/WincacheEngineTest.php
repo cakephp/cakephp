@@ -1,10 +1,6 @@
 <?php
 /**
- * WincacheEngineTest file
- *
- * PHP 5
- *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -13,7 +9,7 @@
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Cache.Engine
- * @since         CakePHP(tm) v 1.2.0.5434
+ * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Cache\Engine;
@@ -36,9 +32,8 @@ class WincacheEngineTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->skipIf(!function_exists('wincache_ucache_set'), 'Wincache is not installed or configured properly.');
-		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
-		Cache::config('wincache', array('engine' => 'Wincache', 'prefix' => 'cake_'));
+		Configure::write('Cache.wincache', ['engine' => 'Wincache', 'prefix' => 'cake_']);
 	}
 
 /**
@@ -48,10 +43,8 @@ class WincacheEngineTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::drop('wincache');
 		Cache::drop('wincache_groups');
-		Cache::config('default');
 	}
 
 /**
@@ -60,7 +53,7 @@ class WincacheEngineTest extends TestCase {
  * @return void
  */
 	public function testReadAndWriteCache() {
-		Cache::set(array('duration' => 1), 'wincache');
+		Cache::set(['duration' => 1], 'wincache');
 
 		$result = Cache::read('test', 'wincache');
 		$expecting = '';
@@ -83,7 +76,7 @@ class WincacheEngineTest extends TestCase {
  * @return void
  */
 	public function testExpiry() {
-		Cache::set(array('duration' => 1), 'wincache');
+		Cache::set(['duration' => 1], 'wincache');
 
 		$result = Cache::read('test', 'wincache');
 		$this->assertFalse($result);
@@ -96,7 +89,7 @@ class WincacheEngineTest extends TestCase {
 		$result = Cache::read('other_test', 'wincache');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' => 1), 'wincache');
+		Cache::set(['duration' => 1], 'wincache');
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'wincache');
@@ -202,12 +195,12 @@ class WincacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupsReadWrite() {
-		Cache::config('wincache_groups', array(
+		Configure::write('Cache.wincache_groups', [
 			'engine' => 'Wincache',
 			'duration' => 0,
-			'groups' => array('group_a', 'group_b'),
+			'groups' => ['group_a', 'group_b'],
 			'prefix' => 'test_'
-		));
+		]);
 		$this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'wincache_groups'));
 
@@ -228,12 +221,12 @@ class WincacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Cache::config('wincache_groups', array(
+		Configure::write('Cache.wincache_groups', [
 			'engine' => 'Wincache',
 			'duration' => 0,
-			'groups' => array('group_a', 'group_b'),
+			'groups' => ['group_a', 'group_b'],
 			'prefix' => 'test_'
-		));
+		]);
 		$this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'wincache_groups'));
 		$this->assertTrue(Cache::delete('test_groups', 'wincache_groups'));
@@ -247,12 +240,12 @@ class WincacheEngineTest extends TestCase {
  * @return void
  **/
 	public function testGroupClear() {
-		Cache::config('wincache_groups', array(
+		Configure::write('Cache.wincache_groups', [
 			'engine' => 'Wincache',
 			'duration' => 0,
-			'groups' => array('group_a', 'group_b'),
+			'groups' => ['group_a', 'group_b'],
 			'prefix' => 'test_'
-		));
+		]);
 
 		$this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
 		$this->assertTrue(Cache::clearGroup('group_a', 'wincache_groups'));
