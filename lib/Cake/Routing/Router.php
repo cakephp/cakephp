@@ -1073,7 +1073,7 @@ class Router {
  * @return string base url with plugin name removed if present
  */
 	public static function stripPlugin($base, $plugin = null) {
-		if ($plugin != null) {
+		if ($plugin) {
 			$base = preg_replace('/(?:' . $plugin . ')/', '', $base);
 			$base = str_replace('//', '', $base);
 			$pos1 = strrpos($base, '/');

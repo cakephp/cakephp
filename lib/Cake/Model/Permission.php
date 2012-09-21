@@ -198,7 +198,7 @@ class Permission extends AppModel {
 		}
 		list($save['aro_id'], $save['aco_id']) = array($perms['aro'], $perms['aco']);
 
-		if ($perms['link'] != null && !empty($perms['link'])) {
+		if ($perms['link'] && !empty($perms['link'])) {
 			$save['id'] = $perms['link'][0][$this->alias]['id'];
 		} else {
 			unset($save['id']);

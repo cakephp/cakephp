@@ -398,7 +398,7 @@ class RequestHandlerComponent extends Component {
  * @return string Prototype version of component making Ajax call
  */
 	public function getAjaxVersion() {
-		if (env('HTTP_X_PROTOTYPE_VERSION') != null) {
+		if (env('HTTP_X_PROTOTYPE_VERSION')) {
 			return env('HTTP_X_PROTOTYPE_VERSION');
 		}
 		return false;
@@ -672,7 +672,7 @@ class RequestHandlerComponent extends Component {
 			$cType = $type;
 		}
 
-		if ($cType != null) {
+		if ($cType) {
 			if (empty($this->request->params['requested'])) {
 				$this->response->type($cType);
 			}

@@ -167,7 +167,7 @@ class RssHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::items
  */
 	public function items($items, $callback = null) {
-		if ($callback != null) {
+		if ($callback) {
 			$items = array_map($callback, $items);
 		}
 

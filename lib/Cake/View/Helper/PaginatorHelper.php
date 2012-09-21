@@ -536,7 +536,7 @@ class PaginatorHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::defaultModel
  */
 	public function defaultModel() {
-		if ($this->_defaultModel != null) {
+		if ($this->_defaultModel) {
 			return $this->_defaultModel;
 		}
 		if (empty($this->request->params['paging'])) {

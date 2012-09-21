@@ -827,7 +827,7 @@ class Set {
 			}
 		}
 
-		if ($groupPath != null) {
+		if ($groupPath) {
 			$group = Set::extract($data, $groupPath);
 			if (!empty($group)) {
 				$c = count($keys);

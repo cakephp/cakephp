@@ -121,7 +121,7 @@ class CakeSocket {
  * @throws SocketException
  */
 	public function connect() {
-		if ($this->connection != null) {
+		if ($this->connection) {
 			$this->disconnect();
 		}
 

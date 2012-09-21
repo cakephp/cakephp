@@ -951,13 +951,12 @@ class HtmlHelper extends AppHelper {
 		if (isset($options['escape'])) {
 			$text = h($text);
 		}
-		if ($class != null && !empty($class)) {
+		if ($class && !empty($class)) {
 			$options['class'] = $class;
 		}
+		$tag = 'para';
 		if ($text === null) {
 			$tag = 'parastart';
-		} else {
-			$tag = 'para';
 		}
 		return sprintf($this->_tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $text);
 	}

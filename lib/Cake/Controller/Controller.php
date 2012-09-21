@@ -967,14 +967,15 @@ class Controller extends Object implements CakeEventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::referer
  */
 	public function referer($default = null, $local = false) {
-		if ($this->request) {
-			$referer = $this->request->referer($local);
-			if ($referer == '/' && $default != null) {
-				return Router::url($default, true);
-			}
-			return $referer;
+		if(!$this->request) {
+			return '/';
 		}
-		return '/';
+
+		$referer = $this->request->referer($local);
+		if ($referer == '/' && $default) {
+			return Router::url($default, true);
+		}
+		return $referer;
 	}
 
 /**
@@ -1062,7 +1063,7 @@ class Controller extends Object implements CakeEventListener {
 				$cond[$key] = $value;
 			}
 		}
-		if ($bool != null && strtoupper($bool) != 'AND') {
+		if ($bool && strtoupper($bool) != 'AND') {
 			$cond = array($bool => $cond);
 		}
 		return $cond;

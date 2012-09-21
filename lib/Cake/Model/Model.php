@@ -1389,7 +1389,7 @@ class Model extends Object implements CakeEventListener {
 			$this->schema();
 		}
 
-		if ($this->_schema != null) {
+		if ($this->_schema) {
 			return isset($this->_schema[$name]);
 		}
 		return false;
@@ -1499,7 +1499,7 @@ class Model extends Object implements CakeEventListener {
 	public function read($fields = null, $id = null) {
 		$this->validationErrors = array();
 
-		if ($id != null) {
+		if ($id) {
 			$this->id = $id;
 		}
 
@@ -1515,9 +1515,8 @@ class Model extends Object implements CakeEventListener {
 				'fields' => $fields
 			));
 			return $this->data;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 /**
@@ -3151,7 +3150,7 @@ class Model extends Object implements CakeEventListener {
 	public function setDataSource($dataSource = null) {
 		$oldConfig = $this->useDbConfig;
 
-		if ($dataSource != null) {
+		if ($dataSource) {
 			$this->useDbConfig = $dataSource;
 		}
 		$db = ConnectionManager::getDataSource($this->useDbConfig);

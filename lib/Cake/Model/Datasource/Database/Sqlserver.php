@@ -184,7 +184,7 @@ class Sqlserver extends DboSource {
 	public function describe($model) {
 		$table = $this->fullTableName($model, false);
 		$cache = parent::describe($table);
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$fields = array();
@@ -619,7 +619,7 @@ class Sqlserver extends DboSource {
  */
 	public function insertMulti($table, $fields, $values) {
 		$primaryKey = $this->_getPrimaryKey($table);
-		$hasPrimaryKey = $primaryKey != null && (
+		$hasPrimaryKey = $primaryKey && (
 			(is_array($fields) && in_array($primaryKey, $fields)
 			|| (is_string($fields) && strpos($fields, $this->startQuote . $primaryKey . $this->endQuote) !== false))
 		);

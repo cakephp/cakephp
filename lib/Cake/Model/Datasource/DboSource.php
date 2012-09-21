@@ -670,7 +670,7 @@ class DboSource extends DataSource {
 
 			if ($this->hasResult()) {
 				$first = $this->fetchRow();
-				if ($first != null) {
+				if ($first) {
 					$out[] = $first;
 				}
 				while ($item = $this->fetchResult()) {
@@ -1407,10 +1407,9 @@ class DboSource extends DataSource {
 					}
 				}
 				if (!isset($data[$association])) {
-					if ($merge[0][$association] != null) {
+					$data[$association] = array();
+					if ($merge[0][$association]) {
 						$data[$association] = $merge[0][$association];
-					} else {
-						$data[$association] = array();
 					}
 				} else {
 					if (is_array($merge[0][$association])) {
@@ -2513,7 +2512,7 @@ class DboSource extends DataSource {
 					$data = $this->_parseKey($model, trim($key), $value);
 				}
 
-				if ($data != null) {
+				if ($data) {
 					$out[] = $data;
 					$data = null;
 				}

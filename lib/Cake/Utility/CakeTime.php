@@ -903,7 +903,7 @@ class CakeTime {
  */
 	public static function gmt($dateString = null) {
 		$time = time();
-		if ($dateString != null) {
+		if ($dateString) {
 			$time = self::fromString($dateString);
 		}
 		return gmmktime(

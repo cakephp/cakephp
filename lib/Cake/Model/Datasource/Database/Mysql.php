@@ -175,7 +175,7 @@ class Mysql extends DboSource {
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$result = $this->_execute('SHOW TABLES FROM ' . $this->name($this->config['database']));
@@ -280,7 +280,7 @@ class Mysql extends DboSource {
 	public function describe($model) {
 		$key = $this->fullTableName($model, false);
 		$cache = parent::describe($key);
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$table = $this->fullTableName($model);
