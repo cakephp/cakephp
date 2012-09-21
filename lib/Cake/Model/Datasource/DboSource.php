@@ -3113,7 +3113,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Format indexes for create table.
+ * Format indexes for create table
  *
  * @param array $indexes
  * @param string $table
@@ -3129,8 +3129,6 @@ class DboSource extends DataSource {
 			} else {
 				if (!empty($value['unique'])) {
 					$out .= 'UNIQUE ';
-				} elseif (!empty($value['type']) && strtoupper($value['type']) === 'FULLTEXT') {
-					$out .= 'FULLTEXT ';
 				}
 				$name = $this->startQuote . $name . $this->endQuote;
 			}
