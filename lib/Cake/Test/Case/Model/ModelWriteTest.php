@@ -6399,10 +6399,10 @@ class ModelWriteTest extends BaseModelTest {
 
 		// test belongsTo
 		$fieldList = array(
-			'Post' => array('title', 'author_id'),
+			'Post' => array('title'),
 			'Author' => array('user')
 		);
-		$TestModel->saveAll(array(
+		$data = array(
 			'Post' => array(
 				'title' => 'Post without body',
 				'body' => 'This will not be saved',
@@ -6411,7 +6411,8 @@ class ModelWriteTest extends BaseModelTest {
 				'user' => 'bob',
 				'test' => 'This will not be saved',
 
-		)), array('fieldList' => $fieldList));
+		));
+		$TestModel->saveAll($data, array('fieldList' => $fieldList));
 
 		$result = $TestModel->find('all');
 		$expected = array(
@@ -6570,6 +6571,18 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertTrue($result);
 		$this->assertEmpty($TestModel->validationErrors);
+
+		$TestModel->Attachment->whitelist = array('id');
+		$fieldList = array(
+			'Comment' => array('id', 'article_id', 'user_id'),
+			'Attachment' => array('id')
+		);
+		$result = $TestModel->saveAll($record, array(
+			'fieldList' => $fieldList
+		));
+		$this->assertTrue($result);
+		$result = $TestModel->find('first', array('order' => array('Comment.created' => 'DESC')));
+		$this->assertEquals($result['Comment']['id'], $result['Attachment']['comment_id']);
 	}
 
 /**
