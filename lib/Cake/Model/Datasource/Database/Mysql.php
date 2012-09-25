@@ -150,7 +150,10 @@ class Mysql extends DboSource {
 			);
 			$this->connected = true;
 		} catch (PDOException $e) {
-			throw new MissingConnectionException(array('class' => $e->getMessage()));
+			throw new MissingConnectionException(array(
+				'class' => get_class($this),
+				'message' => $e->getMessage()
+			));
 		}
 
 		$this->_useAlias = (bool)version_compare($this->getVersion(), "4.1", ">=");

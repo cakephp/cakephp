@@ -2374,7 +2374,7 @@ class Model extends Object implements CakeEventListener {
 
 			$updateCounterCache = false;
 			if (!empty($this->belongsTo)) {
-				foreach ($this->belongsTo as $parent => $assoc) {
+				foreach ($this->belongsTo as $assoc) {
 					if (!empty($assoc['counterCache'])) {
 						$updateCounterCache = true;
 						break;
@@ -2460,7 +2460,7 @@ class Model extends Object implements CakeEventListener {
  * @return void
  */
 	protected function _deleteLinks($id) {
-		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
+		foreach ($this->hasAndBelongsToMany as $data) {
 			list($plugin, $joinModel) = pluginSplit($data['with']);
 			$records = $this->{$joinModel}->find('all', array(
 				'conditions' => array($this->{$joinModel}->escapeField($data['foreignKey']) => $id),
@@ -3053,7 +3053,7 @@ class Model extends Object implements CakeEventListener {
 	public function isForeignKey($field) {
 		$foreignKeys = array();
 		if (!empty($this->belongsTo)) {
-			foreach ($this->belongsTo as $assoc => $data) {
+			foreach ($this->belongsTo as $data) {
 				$foreignKeys[] = $data['foreignKey'];
 			}
 		}

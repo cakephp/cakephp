@@ -573,10 +573,10 @@ class ExceptionRendererTest extends CakeTestCase {
 				500
 			),
 			array(
-				new MissingConnectionException(array('class' => 'Article')),
+				new MissingConnectionException(array('class' => 'Mysql')),
 				array(
 					'/<h2>Missing Database Connection<\/h2>/',
-					'/Article requires a database connection/'
+					'/A Database connection using "Mysql" was missing or unable to connect./',
 				),
 				500
 			),
@@ -584,7 +584,7 @@ class ExceptionRendererTest extends CakeTestCase {
 				new MissingConnectionException(array('class' => 'Mysql', 'enabled' => false)),
 				array(
 					'/<h2>Missing Database Connection<\/h2>/',
-					'/Mysql requires a database connection/',
+					'/A Database connection using "Mysql" was missing or unable to connect./',
 					'/Mysql driver is NOT enabled/'
 				),
 				500

@@ -1049,4 +1049,19 @@ class CakeTimeTest extends CakeTestCase {
 		}
 	}
 
+/**
+ * Tests that using CakeTime::format() with the correct sytax actually converts
+ * from one timezone to the other correctly
+ *
+ * @return void
+ **/
+	public function testCorrectTimezoneConversion() {
+		date_default_timezone_set('UTC');
+		$date = '2012-01-01 10:00:00';
+		$converted = CakeTime::format($date, '%Y-%m-%d %H:%M:%S', '', 'Europe/Copenhagen');
+		$expected = new DateTime($date);
+		$expected->setTimezone(new DateTimeZone('Europe/Copenhagen'));
+		$this->assertEquals($expected->format('Y-m-d H:i:s'), $converted);
+	}
+
 }

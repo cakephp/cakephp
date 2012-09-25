@@ -19,7 +19,13 @@
 <h2><?php echo __d('cake_dev', 'Missing Database Connection'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', '%s requires a database connection', $class); ?>
+	<?php echo __d('cake_dev', 'A Database connection using "%s" was missing or unable to connect. ', $class); ?>
+	<br />
+	<?php
+	if (isset($message)):
+		echo __d('cake_dev', 'The database server returned this error: %s', $message);
+	endif;
+	?>
 </p>
 <?php if (!$enabled) : ?>
 <p class="error">

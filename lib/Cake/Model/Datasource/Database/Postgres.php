@@ -122,7 +122,10 @@ class Postgres extends DboSource {
 				 $this->_execute('SET search_path TO ' . $config['schema']);
 			}
 		} catch (PDOException $e) {
-			throw new MissingConnectionException(array('class' => $e->getMessage()));
+			throw new MissingConnectionException(array(
+				'class' => get_class($this),
+				'message' => $e->getMessage()
+			));
 		}
 
 		return $this->connected;
@@ -457,7 +460,7 @@ class Postgres extends DboSource {
 			)
 			AND c.oid = i.indrelid AND i.indexrelid = c2.oid
 			ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname", false);
-			foreach ($indexes as $i => $info) {
+			foreach ($indexes as $info) {
 				$key = array_pop($info);
 				if ($key['indisprimary']) {
 					$key['relname'] = 'PRIMARY';

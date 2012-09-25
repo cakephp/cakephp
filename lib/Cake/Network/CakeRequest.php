@@ -675,7 +675,7 @@ class CakeRequest implements ArrayAccess {
 	public function accepts($type = null) {
 		$raw = $this->parseAccept();
 		$accept = array();
-		foreach ($raw as $value => $types) {
+		foreach ($raw as $types) {
 			$accept = array_merge($accept, $types);
 		}
 		if ($type === null) {
