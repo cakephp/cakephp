@@ -357,7 +357,6 @@ TEXT;
 	[protected] _stack => array()
 	[protected] _eventManager => object(CakeEventManager) {}
 	[protected] _eventManagerConfigured => false
-	[private] __viewFileName => null
 
 TEXT;
 		}
