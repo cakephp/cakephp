@@ -17,11 +17,11 @@
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config
- * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace App\Config;
 
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Routing\Router;
 
@@ -41,7 +41,7 @@ use Cake\Routing\Router;
  *  `App\Controller\Manager` and `/manager/controller/index`
  *
  */
-	//Configure::write('Routing.prefixes', array('admin'));
+	// Configure::write('Routing.prefixes', array('admin'));
 
 /**
  * Here, we are connecting '/' (base path) to controller called 'Pages',
