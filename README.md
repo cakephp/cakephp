@@ -23,6 +23,8 @@ Some Handy Links
 
 [The Cake Software Foundation](http://cakefoundation.org/) - promoting development related to CakePHP
 
+[Stack Overflow [CakePHP]] (http://stackoverflow.com/questions/tagged/cakephp) - CakePHP questions and answers
+
 Get Support!
 ------------
 
