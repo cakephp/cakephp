@@ -424,6 +424,9 @@ class Router {
  * @return array A list of prefixes used in connected routes
  */
 	public static function prefixes() {
+		if (empty(static::$_prefixes)) {
+			return (array)Configure::read('Routing.prefixes');
+		}
 		return static::$_prefixes;
 	}
 
