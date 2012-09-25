@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\View\Helper;
+
 use Cake\View\Helper;
 
 class BananaHelper extends Helper {
