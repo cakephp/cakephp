@@ -15,9 +15,9 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-use Cake\Cache\Cache,
-	Cake\Model\ConnectionManager,
-	Cake\Core\Configure;
+use Cake\Cache\Cache;
+use Cake\Model\ConnectionManager;
+use Cake\Core\Configure;
 ?>
 <p>
 	<!--nocache-->
@@ -37,7 +37,7 @@ use Cake\Cache\Cache,
 	<span class="notice">
 		<?php
 			echo __d('cake', 'Your cache is ');
-			if (Cache::isInitialized('default')):
+			if (Cache::engine('default')):
 				echo __d('cake', 'set up and initialized properly.');
 				$settings = Cache::settings();
 				echo '<p>' . $settings['engine'];
