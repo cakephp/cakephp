@@ -2925,7 +2925,7 @@ class DboSource extends DataSource {
  * Reset a sequence based on the MAX() value of $column.  Useful
  * for resetting sequences after using insertMulti().
  *
- * This method should be implmented by datasources that require sequences to be used.
+ * This method should be implemented by datasources that require sequences to be used.
  *
  * @param string $table The name of the table to update.
  * @param string $column The column to use when reseting the sequence value.
