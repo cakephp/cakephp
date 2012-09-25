@@ -62,9 +62,15 @@ class MailTransport extends AbstractTransport {
  * @throws SocketException if mail could not be sent
  * @return void
  */
-	protected function _mail($to, $subject, $message, $headers, $params = null) {
-		if (!@mail($to, $subject, $message, $headers, $params)) {
-			throw new SocketException(__d('cake_dev', 'Could not send email.'));
+	protected function _mail($to, $subject, $message, $headers, $params = null) {		
+		if ( !ini_get( 'safe_mode' ) ){
+			if (!@mail($to, $subject, $message, $headers, $params)) {
+				throw new SocketException(__d('cake_dev', 'Could not send email.'));
+			}
+		}else{
+			if (!@mail($to, $subject, $message, $headers)) {
+				throw new SocketException(__d('cake_dev', 'Could not send email.'));
+			}
 		}
 	}
 
