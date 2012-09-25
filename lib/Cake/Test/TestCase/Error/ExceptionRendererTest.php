@@ -1,9 +1,5 @@
 <?php
 /**
- * ExceptionRendererTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Error
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Error;
+
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\App;
@@ -511,7 +507,11 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testMissingController() {
-		$exception = new Error\MissingControllerException(array('class' => 'PostsController'));
+		$exception = new Error\MissingControllerException(array(
+			'class' => 'Posts',
+			'prefix' => '',
+			'plugin' => '',
+		));
 		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
 
 		ob_start();
@@ -530,7 +530,12 @@ class ExceptionRendererTest extends TestCase {
 	public static function testProvider() {
 		return array(
 			array(
-				new Error\MissingActionException(array('controller' => 'PostsController', 'action' => 'index')),
+				new Error\MissingActionException(array(
+					'controller' => 'PostsController',
+					'action' => 'index',
+					'prefix' => '',
+					'plugin' => '',
+				)),
 				array(
 					'/<h2>Missing Method in PostsController<\/h2>/',
 					'/<em>PostsController::<\/em><em>index\(\)<\/em>/'

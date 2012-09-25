@@ -58,7 +58,6 @@ use Cake\Utility\Sanitize;
  * @package       Cake.Error
  */
 class ExceptionRenderer {
-
 /**
  * Controller instance.
  *

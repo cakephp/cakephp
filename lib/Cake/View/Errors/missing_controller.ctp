@@ -19,29 +19,32 @@ use Cake\Utility\Inflector;
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 $namespace = Configure::read('App.namespace');
 $prefixNs = '';
+$prefixPath = '';
 
 if (!empty($prefix)) {
 	$prefix = Inflector::camelize($prefix);
 	$prefixNs = '\\' . $prefix;
+	$prefixPath = $prefix . DS;
 }
+
 if (!empty($plugin)) {
 	$namespace = $plugin;
 }
 if (empty($plugin)) {
-	$path = APP_DIR . DS . 'Controller' . DS . $prefix . DS . $class . '.php' ;
+	$path = APP_DIR . DS . 'Controller' . DS . $prefixPath . $class . 'Controller.php' ;
 } else {
-	$path = Plugin::path($plugin) . 'Controller' . DS . $prefix . DS . $class . '.php';
+	$path = Plugin::path($plugin) . 'Controller' . DS . $prefixPath . $class . 'Controller.php';
 }
 
 ?>
 <h2><?php echo __d('cake_dev', 'Missing Controller'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . $pluginDot . $class . '</em>'); ?>
+	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . $pluginDot . $class . 'Controller</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . $class . '</em>', $path); ?>
+	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . $class . 'Controller</em>', $path); ?>
 </p>
 <pre>
 &lt;?php
@@ -49,7 +52,7 @@ namespace <?= $namespace; ?>\Controller<?= $prefixNs; ?>;
 
 use <?= $namespace; ?>\Controller\AppController;
 
-class <?php echo $class . ' extends ' . $plugin; ?>AppController {
+class <?php echo $class . 'Controller extends ' . $plugin; ?>AppController {
 
 }
 </pre>
