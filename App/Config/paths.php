@@ -27,12 +27,12 @@ define('DS', DIRECTORY_SEPARATOR);
 /**
  * The full path to the directory which holds "App", WITHOUT a trailing DS.
  */
-define('ROOT', dirname(dirname(dirname(__FILE__))));
+define('ROOT', dirname(dirname(__DIR__)));
 
 /**
  * The actual directory name for the "App".
  */
-define('APP_DIR', basename(dirname(dirname(__FILE__))));
+define('APP_DIR', basename(dirname(__DIR__)));
 
 /**
  * The name of the webroot dir.  Defaults to 'webroot'
@@ -40,15 +40,14 @@ define('APP_DIR', basename(dirname(dirname(__FILE__))));
 define('WEBROOT_DIR', 'webroot');
 
 /**
- * File path to the webroot directory.
- */
-define('WWW_ROOT', dirname(__FILE__) . DS);
-
-
-/**
  * Path to the application's directory.
  */
 define('APP', ROOT . DS . APP_DIR . DS);
+
+/**
+ * File path to the webroot directory.
+ */
+define('WWW_ROOT', APP . WEBROOT_DIR . DS);
 
 /**
  * Path to the public CSS directory.
