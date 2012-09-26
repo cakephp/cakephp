@@ -1068,7 +1068,7 @@ class Email {
 			if ($this->_config['log'] !== true) {
 				$level = $this->_config['log'];
 			}
-			Log::write($level, PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message']);
+			Log::write($level, PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message'], ['email']);
 		}
 		return $contents;
 	}

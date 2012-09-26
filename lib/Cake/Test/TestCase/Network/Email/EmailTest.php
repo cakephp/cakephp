@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
+use Cake\Log\LogInterface;
 use Cake\Network\Email\Email;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
@@ -95,11 +96,11 @@ class ExtendTransport {
 }
 
 /**
- * CakeEmailTest class
+ * EmailTest class
  *
  * @package       Cake.Test.Case.Network.Email
  */
-class CakeEmailTest extends TestCase {
+class EmailTest extends TestCase {
 
 /**
  * setUp
@@ -995,24 +996,29 @@ class CakeEmailTest extends TestCase {
  */
 	public function testSendWithLog() {
 		$path = CAKE . 'Test/TestApp/tmp/';
-		Log::config('email', array(
-			'engine' => 'FileLog',
-			'path' => TMP
-		));
-		Log::drop('default');
+		$log = $this->getMock('Cake\Log\Engine\BaseLog', ['write'], ['scopes' => 'email']);
+
+		$message = 'Logging This';
+
+		$log->expects($this->once())
+			->method('write')
+			->with(
+				'debug',
+				$this->logicalAnd(
+					$this->stringContains($message),
+					$this->stringContains('cake@cakephp.org'),
+					$this->stringContains('me@cakephp.org')
+				)
+			);
+
+		Log::engine('email', $log);
+
 		$this->CakeEmail->transport('Debug');
 		$this->CakeEmail->to('me@cakephp.org');
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
-		$this->CakeEmail->config(array('log' => 'cake_test_emails'));
-		$result = $this->CakeEmail->send("Logging This");
-
-		$File = new File(TMP . 'cake_test_emails.log');
-		$log = $File->read();
-		$this->assertTrue(strpos($log, $result['headers']) !== false);
-		$this->assertTrue(strpos($log, $result['message']) !== false);
-		$File->delete();
-		Log::drop('email');
+		$this->CakeEmail->config(array('log' => 'debug'));
+		$result = $this->CakeEmail->send($message);
 	}
 
 /**

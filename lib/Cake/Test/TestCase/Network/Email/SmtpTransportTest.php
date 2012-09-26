@@ -12,11 +12,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Network.Email
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Network\Email;
+
 use Cake\Network\Email\Email;
 use Cake\Network\Email\SmtpTransport;
 use Cake\Network\Socket;
@@ -25,6 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Help to test SmtpTransport
  *
+ * @package Cake.Test.Case.Network.Email
  */
 class SmtpTestTransport extends SmtpTransport {
 
@@ -133,7 +134,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectEhloTlsOnNonTlsServer method
  *
- * @expectedException SocketException
+ * @expectedException Cake\Error\SocketException
  * @return void
  */
 	public function testConnectEhloTlsOnNonTlsServer() {
@@ -153,7 +154,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectEhloNoTlsOnRequiredTlsServer method
  *
- * @expectedException SocketException
+ * @expectedException Cake\Error\SocketException
  * @return void
  */
 	public function testConnectEhloNoTlsOnRequiredTlsServer() {
@@ -276,8 +277,7 @@ class SmtpTransportTest extends TestCase {
  * @return void
  */
 	public function testSendData() {
-		$this->getMock('Cake\Network\Email\Email', array('message'), array(), 'SmtpCakeEmail');
-		$email = new \SmtpCakeEmail();
+		$email = $this->getMock('Cake\Network\Email\Email', array('message'));
 		$email->from('noreply@cakephp.org', 'CakePHP Test');
 		$email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
 		$email->to('cake@cakephp.org', 'CakePHP');
@@ -286,8 +286,10 @@ class SmtpTransportTest extends TestCase {
 		$email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
 		$email->subject('Testing SMTP');
 		$date = date(DATE_RFC2822);
-		$email->setHeaders(array('X-Mailer' => SmtpCakeEmail::EMAIL_CLIENT, 'Date' => $date));
-		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
+		$email->setHeaders(array('X-Mailer' => Email::EMAIL_CLIENT, 'Date' => $date));
+		$email->expects($this->any())
+			->method('message')
+			->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
 
 		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
 		$data .= "Return-Path: CakePHP Return <pleasereply@cakephp.org>\r\n";

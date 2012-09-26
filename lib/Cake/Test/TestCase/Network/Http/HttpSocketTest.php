@@ -1,9 +1,5 @@
 <?php
 /**
- * HttpSocketTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Network.Http
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Network\Http;
+
 use Cake\Network\Http\HttpResponse;
 use Cake\Network\Http\HttpSocket;
 use Cake\TestSuite\TestCase;
@@ -25,7 +21,6 @@ use Cake\Utility\Hash;
 /**
  * TestAuthentication class
  *
- * @package       Cake.Test.Case.Network.Http
  * @package       Cake.Test.Case.Network.Http
  */
 class TestAuthentication {
@@ -820,8 +815,13 @@ class HttpSocketTest extends TestCase {
  */
 	public function testProxy() {
 		$this->Socket->reset();
-		$this->Socket->expects($this->any())->method('connect')->will($this->returnValue(true));
-		$this->Socket->expects($this->any())->method('read')->will($this->returnValue(false));
+		$this->Socket->expects($this->any())
+			->method('connect')
+			->will($this->returnValue(true));
+
+		$this->Socket->expects($this->any())
+			->method('read')
+			->will($this->returnValue(false));
 
 		$this->Socket->configProxy('proxy.server', 123);
 		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n\r\n";
@@ -853,7 +853,8 @@ class HttpSocketTest extends TestCase {
 		$this->assertEquals($expected, $this->Socket->request['proxy']);
 
 		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nProxy-Authorization: Test mark.secret\r\n\r\n";
-		$this->Socket->configProxy('proxy.server', 123, 'Test', 'mark', 'secret');
+		$class = __NAMESPACE__ . '\TestAuthentication';
+		$this->Socket->configProxy('proxy.server', 123, $class, 'mark', 'secret');
 		$this->Socket->request('http://www.cakephp.org/');
 		$this->assertEquals($expected, $this->Socket->request['raw']);
 		$this->assertEquals('proxy.server', $this->Socket->config['host']);
@@ -861,26 +862,26 @@ class HttpSocketTest extends TestCase {
 		$expected = array(
 			'host' => 'proxy.server',
 			'port' => 123,
-			'method' => 'Test',
+			'method' => $class,
 			'user' => 'mark',
 			'pass' => 'secret'
 		);
 		$this->assertEquals($expected, $this->Socket->request['proxy']);
 
-		$this->Socket->configAuth('Test', 'login', 'passwd');
+		$this->Socket->configAuth($class, 'login', 'passwd');
 		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nProxy-Authorization: Test mark.secret\r\nAuthorization: Test login.passwd\r\n\r\n";
 		$this->Socket->request('http://www.cakephp.org/');
 		$this->assertEquals($expected, $this->Socket->request['raw']);
 		$expected = array(
 			'host' => 'proxy.server',
 			'port' => 123,
-			'method' => 'Test',
+			'method' => $class,
 			'user' => 'mark',
 			'pass' => 'secret'
 		);
 		$this->assertEquals($expected, $this->Socket->request['proxy']);
 		$expected = array(
-			'Test' => array(
+			$class => array(
 				'user' => 'login',
 				'pass' => 'passwd'
 			)
@@ -1005,7 +1006,8 @@ class HttpSocketTest extends TestCase {
 		$socket->get('http://example.com/test');
 		$this->assertFalse(strpos($socket->request['header'], 'Authorization:'));
 
-		$socket->configAuth('Test', 'mark', 'passwd');
+		$class = __NAMESPACE__ . '\TestAuthentication';
+		$socket->configAuth($class, 'mark', 'passwd');
 		$socket->get('http://example.com/test');
 		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Test mark.passwd') !== false);
 	}
