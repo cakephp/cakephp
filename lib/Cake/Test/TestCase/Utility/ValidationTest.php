@@ -1,9 +1,5 @@
 <?php
 /**
- * ValidationTest file
- *
- * PHP Version 5.x
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
@@ -2266,7 +2262,7 @@ class ValidationTest extends TestCase {
 /**
  * testMimeTypeFalse method
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testMimeTypeFalse() {

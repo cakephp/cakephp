@@ -1,9 +1,5 @@
 <?php
 /**
- * FolderTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
 use Cake\Utility\Folder;
@@ -726,12 +722,12 @@ class FolderTest extends TestCase {
 
 		$result = $Folder->findRecursive('(paths|my)\.php', true);
 		$expected = array(
+			APP . 'Config/paths.php',
 			TMP . 'testme/my.php',
 			TMP . 'testme/paths.php'
 		);
 		$this->assertSame($expected, $result);
 
-		$Folder->cd(CAKE . 'Config');
 		$Folder->cd(TMP);
 		$Folder->delete($Folder->pwd() . DS . 'testme');
 		$File->delete();
