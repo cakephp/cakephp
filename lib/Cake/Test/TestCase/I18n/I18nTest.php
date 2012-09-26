@@ -66,6 +66,10 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testTranslationCaching() {
+		$this->skipIf(
+			!Cache::engine('_cake_core_'),
+			'Missing _cake_core_ cache config, cannot test caching.'
+		);
 		Configure::write('Config.language', 'cache_test_po');
 
 		// reset internally stored entries
@@ -73,8 +77,6 @@ class I18nTest extends TestCase {
 
 		Cache::clear(false, '_cake_core_');
 		$lang = Configure::read('Config.language');
-
-		Cache::config('_cake_core_', Cache::config('default'));
 
 		// make some calls to translate using different domains
 		$this->assertEquals('Dom 1 Foo', I18n::translate('dom1.foo', false, 'dom1'));

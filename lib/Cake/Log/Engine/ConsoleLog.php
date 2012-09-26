@@ -11,8 +11,8 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Log\Engine;
+
 use Cake\Console\ConsoleOutput;
 use Cake\Utility\Hash;
 use Cake\Error;
