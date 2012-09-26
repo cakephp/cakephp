@@ -38,6 +38,7 @@ class ConsoleOutputTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->output);
 	}
 

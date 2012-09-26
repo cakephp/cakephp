@@ -21,6 +21,7 @@ App::uses('Controller', 'Controller');
 App::uses('ComponentCollection', 'Controller');
 App::uses('AclComponent', 'Controller/Component');
 App::uses('DbAcl', 'Model');
+App::uses('Hash', 'Utility');
 
 /**
  * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode
@@ -69,12 +70,15 @@ class AclShell extends AppShell {
 			$this->connection = $this->params['connection'];
 		}
 
-		if (!in_array(Configure::read('Acl.classname'), array('DbAcl', 'DB_ACL'))) {
+		$class = Configure::read('Acl.classname');
+		list($plugin, $class) = pluginSplit($class, true);
+		App::uses($class, $plugin . 'Controller/Component/Acl');
+		if (!in_array($class, array('DbAcl', 'DB_ACL')) && !is_subclass_of($class, 'DbAcl')) {
 			$out = "--------------------------------------------------\n";
 			$out .= __d('cake_console', 'Error: Your current Cake configuration is set to an ACL implementation other than DB.') . "\n";
 			$out .= __d('cake_console', 'Please change your core config to reflect your decision to use DbAcl before attempting to use this script') . "\n";
 			$out .= "--------------------------------------------------\n";
-			$out .= __d('cake_console', 'Current ACL Classname: %s', Configure::read('Acl.classname')) . "\n";
+			$out .= __d('cake_console', 'Current ACL Classname: %s', $class) . "\n";
 			$out .= "--------------------------------------------------\n";
 			$this->err($out);
 			$this->_stop();
@@ -548,7 +552,7 @@ class AclShell extends AppShell {
  * or an array of properties to use in AcoNode::node()
  *
  * @param string $class Class type you want (Aro/Aco)
- * @param mixed $identifier A mixed identifier for finding the node.
+ * @param string|array $identifier A mixed identifier for finding the node.
  * @return integer Integer of NodeId. Will trigger an error if nothing is found.
  */
 	protected function _getNodeId($class, $identifier) {
@@ -558,8 +562,9 @@ class AclShell extends AppShell {
 				$identifier = var_export($identifier, true);
 			}
 			$this->error(__d('cake_console', 'Could not find node using reference "%s"', $identifier));
+			return;
 		}
-		return Set::extract($node, "0.{$class}.id");
+		return Hash::get($node, "0.{$class}.id");
 	}
 
 /**

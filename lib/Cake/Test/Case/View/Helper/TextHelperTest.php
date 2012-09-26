@@ -181,6 +181,16 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEquals($expected, $result);
 
+		$text = 'This is a test that includes http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment';
+		$expected = 'This is a test that includes <a href="http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'This is a test that includes www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment';
+		$expected = 'This is a test that includes <a href="http://www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
 		$text = 'Text with a partial www.cakephp.org URL';
 		$expected = 'Text with a partial <a href="http://www.cakephp.org"\s*>www.cakephp.org</a> URL';
 		$result = $this->Text->autoLinkUrls($text);

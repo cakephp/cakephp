@@ -43,9 +43,27 @@ class XmlViewTest extends CakeTestCase {
 		$View = new XmlView($Controller);
 		$output = $View->render(false);
 
-		$expected = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<users><user>user1</user><user>user2</user></users>';
-		$this->assertTextEquals($expected, trim($output));
-		$this->assertIdentical('application/xml', $Response->type());
+		$this->assertSame(Xml::build($data)->asXML(), $output);
+		$this->assertSame('application/xml', $Response->type());
+
+		$data = array(
+			array(
+				'User' => array(
+					'username' => 'user1'
+				)
+			),
+			array(
+				'User' => array(
+					'username' => 'user2'
+				)
+			)
+		);
+		$Controller->set(array('users' => $data, '_serialize' => 'users'));
+		$View = new XmlView($Controller);
+		$output = $View->render(false);
+
+		$expected = Xml::build(array('response' => array('users' => $data)))->asXML();
+		$this->assertSame($expected, $output);
 	}
 
 /**
@@ -66,8 +84,8 @@ class XmlViewTest extends CakeTestCase {
 		$expected = array(
 			'response' => array('no' => $data['no'], 'user' => $data['user'])
 		);
-		$this->assertIdentical(Xml::build($expected)->asXML(), $output);
-		$this->assertIdentical('application/xml', $Response->type());
+		$this->assertSame(Xml::build($expected)->asXML(), $output);
+		$this->assertSame('application/xml', $Response->type());
 	}
 
 /**
@@ -100,9 +118,12 @@ class XmlViewTest extends CakeTestCase {
 		$View = new XmlView($Controller);
 		$output = $View->render('index');
 
-		$expected = '<?xml version="1.0" encoding="UTF-8"?><users><user>user1</user><user>user2</user></users>';
-		$this->assertIdentical($expected, str_replace(array("\r", "\n"), '', $output));
-		$this->assertIdentical('application/xml', $Response->type());
+		$expected = array(
+			'users' => array('user' => array('user1', 'user2'))
+		);
+		$expected = Xml::build($expected)->asXML();
+		$this->assertSame($expected, $output);
+		$this->assertSame('application/xml', $Response->type());
 		$this->assertInstanceOf('HelperCollection', $View->Helpers);
 	}
 

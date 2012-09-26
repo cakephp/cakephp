@@ -21,6 +21,28 @@ App::uses('Dispatcher', 'Routing');
 App::uses('Xml', 'Utility');
 App::uses('CakeRequest', 'Network');
 
+class TestCakeRequest extends CakeRequest {
+
+	public function reConstruct($url = 'some/path', $parseEnvironment = true) {
+		$this->_base();
+		if (empty($url)) {
+			$url = $this->_url();
+		}
+		if ($url[0] == '/') {
+			$url = substr($url, 1);
+		}
+		$this->url = $url;
+
+		if ($parseEnvironment) {
+			$this->_processPost();
+			$this->_processGet();
+			$this->_processFiles();
+		}
+		$this->here = $this->base . '/' . $this->url;
+	}
+
+}
+
 class CakeRequestTest extends CakeTestCase {
 
 /**
@@ -41,7 +63,7 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
- * tearDown-
+ * tearDown
  *
  * @return void
  */
@@ -202,6 +224,96 @@ class CakeRequestTest extends CakeTestCase {
 		);
 		$request = new CakeRequest('some/path');
 		$this->assertEquals($_POST, $request->data);
+	}
+
+/**
+ * test parsing PUT data into the object.
+ *
+ * @return void
+ */
+	public function testPutParsing() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+
+		$data = array('data' => array(
+			'Article' => array('title')
+		));
+
+		$request = $this->getMock('TestCakeRequest', array('_readInput'));
+		$request->expects($this->at(0))->method('_readInput')
+			->will($this->returnValue('data[Article][]=title'));
+		$request->reConstruct();
+		$this->assertEquals($data['data'], $request->data);
+
+		$data = array('one' => 1, 'two' => 'three');
+		$request = $this->getMock('TestCakeRequest', array('_readInput'));
+		$request->expects($this->at(0))->method('_readInput')
+			->will($this->returnValue('one=1&two=three'));
+		$request->reConstruct();
+		$this->assertEquals($data, $request->data);
+
+		$data = array(
+			'data' => array(
+				'Article' => array('title' => 'Testing'),
+			),
+			'action' => 'update'
+		);
+		$request = $this->getMock('TestCakeRequest', array('_readInput'));
+		$request->expects($this->at(0))->method('_readInput')
+			->will($this->returnValue('data[Article][title]=Testing&action=update'));
+		$request->reConstruct();
+		$expected = array(
+			'Article' => array('title' => 'Testing'),
+			'action' => 'update'
+		);
+		$this->assertEquals($expected, $request->data);
+
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$data = array('data' => array(
+			'Article' => array('title'),
+			'Tag' => array('Tag' => array(1, 2))
+		));
+		$request = $this->getMock('TestCakeRequest', array('_readInput'));
+		$request->expects($this->at(0))->method('_readInput')
+			->will($this->returnValue('data[Article][]=title&Tag[Tag][]=1&Tag[Tag][]=2'));
+		$request->reConstruct();
+		$this->assertEquals($data['data'], $request->data);
+
+		$data = array('data' => array(
+			'Article' => array('title' => 'some title'),
+			'Tag' => array('Tag' => array(1, 2))
+		));
+		$request = $this->getMock('TestCakeRequest', array('_readInput'));
+		$request->expects($this->at(0))->method('_readInput')
+			->will($this->returnValue('data[Article][title]=some%20title&Tag[Tag][]=1&Tag[Tag][]=2'));
+		$request->reConstruct();
+		$this->assertEquals($data['data'], $request->data);
+
+		$data = array(
+			'a' => array(1, 2),
+			'b' => array(1, 2)
+		);
+		$request = $this->getMock('TestCakeRequest', array('_readInput'));
+		$request->expects($this->at(0))->method('_readInput')
+			->will($this->returnValue('a[]=1&a[]=2&b[]=1&b[]=2'));
+		$request->reConstruct();
+		$this->assertEquals($data, $request->data);
+	}
+
+/**
+ * test parsing json PUT data into the object.
+ *
+ * @return void
+ */
+	public function testPutParsingJSON() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+
+		$request = $this->getMock('TestCakeRequest', array('_readInput'));
+		$request->expects($this->at(0))->method('_readInput')
+			->will($this->returnValue('{Article":["title"]}'));
+		$request->reConstruct();
+		$this->assertEquals('{Article":["title"]}', $request->data);
 	}
 
 /**
@@ -806,6 +918,13 @@ class CakeRequestTest extends CakeTestCase {
 
 		$_SERVER['TEST_VAR'] = 'foo';
 		$this->assertTrue($request->is('compareCamelCase'), 'Value match failed.');
+		$this->assertTrue($request->is('comparecamelcase'), 'detectors should be case insensitive');
+		$this->assertTrue($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
+
+		$_SERVER['TEST_VAR'] = 'not foo';
+		$this->assertFalse($request->is('compareCamelCase'), 'Value match failed.');
+		$this->assertFalse($request->is('comparecamelcase'), 'detectors should be case insensitive');
+		$this->assertFalse($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
 		$request->addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
 		$_SERVER['TEST_VAR'] = 'banana';
@@ -1748,7 +1867,7 @@ XML;
 /**
  * loadEnvironment method
  *
- * @param mixed $env
+ * @param array $env
  * @return void
  */
 	protected function __loadEnvironment($env) {

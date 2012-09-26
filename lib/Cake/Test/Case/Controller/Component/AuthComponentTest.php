@@ -178,7 +178,7 @@ class AuthTestController extends Controller {
 /**
  * redirect method
  *
- * @param mixed $url
+ * @param string|array $url
  * @param mixed $status
  * @param mixed $exit
  * @return void
@@ -258,7 +258,7 @@ class AjaxAuthController extends Controller {
 /**
  * redirect method
  *
- * @param mixed $url
+ * @param string|array $url
  * @param mixed $status
  * @param mixed $exit
  * @return void
@@ -306,9 +306,6 @@ class AuthComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->_server = $_SERVER;
-		$this->_env = $_ENV;
-
 		Configure::write('Security.salt', 'YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 		Configure::write('Security.cipherSeed', 770011223369876);
 
@@ -339,8 +336,6 @@ class AuthComponentTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		$_SERVER = $this->_server;
-		$_ENV = $this->_env;
 
 		TestAuthComponent::clearUser();
 		$this->Auth->Session->delete('Auth');
@@ -1259,4 +1254,41 @@ class AuthComponentTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * testUser method
+ *
+ * @return void
+ */
+	public function testUser() {
+		$data = array(
+			'User' => array(
+				'id' => '2',
+				'username' => 'mark',
+				'group_id' => 1,
+				'Group' => array(
+					'id' => '1',
+					'name' => 'Members'
+				),
+				'is_admin' => false,
+		));
+		$this->Auth->Session->write('Auth', $data);
+
+		$result = $this->Auth->user();
+		$this->assertEquals($data['User'], $result);
+
+		$result = $this->Auth->user('username');
+		$this->assertEquals($data['User']['username'], $result);
+
+		$result = $this->Auth->user('Group.name');
+		$this->assertEquals($data['User']['Group']['name'], $result);
+
+		$result = $this->Auth->user('invalid');
+		$this->assertEquals(null, $result);
+
+		$result = $this->Auth->user('Company.invalid');
+		$this->assertEquals(null, $result);
+
+		$result = $this->Auth->user('is_admin');
+		$this->assertFalse($result);
+	}
 }

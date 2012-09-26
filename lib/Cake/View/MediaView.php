@@ -101,8 +101,6 @@ class MediaView extends View {
 
 		if ($this->_isActive()) {
 			$extension = strtolower($extension);
-			$chunkSize = 8192;
-			$buffer = '';
 			$fileSize = @filesize($path);
 			$handle = fopen($path, 'rb');
 

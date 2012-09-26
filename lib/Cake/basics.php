@@ -77,7 +77,7 @@ function debug($var = false, $showHtml = null, $showFrom = true) {
 		$lineInfo = '';
 		if ($showFrom) {
 			$trace = Debugger::trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
-			$file = substr($trace[0]['file'], strlen(ROOT));
+			$file = str_replace(array(CAKE_CORE_INCLUDE_PATH, ROOT), '', $trace[0]['file']);
 			$line = $trace[0]['line'];
 		}
 		$html = <<<HTML
@@ -154,7 +154,7 @@ if (!function_exists('sortByKey')) {
 /**
  * Convenience method for htmlspecialchars.
  *
- * @param mixed $text Text to wrap through htmlspecialchars.  Also works with arrays, and objects.
+ * @param string|array|object $text Text to wrap through htmlspecialchars.  Also works with arrays, and objects.
  *    Arrays will be mapped and have all their elements escaped.  Objects will be string cast if they
  *    implement a `__toString` method.  Otherwise the class name will be used.
  * @param boolean $double Encode existing html entities
@@ -175,6 +175,8 @@ function h($text, $double = true, $charset = null) {
 		} else {
 			$text = '(object)' . get_class($text);
 		}
+	} elseif (is_bool($text)) {
+		return $text;
 	}
 
 	static $defaultCharset = false;
@@ -407,7 +409,7 @@ function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
 			}
 		}
 	} elseif (is_writable(dirname($filename))) {
-		@file_put_contents($filename, $data);
+		@file_put_contents($filename, $data, LOCK_EX);
 	}
 	return $data;
 }
@@ -415,7 +417,7 @@ function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
 /**
  * Used to delete files in the cache directories, or clear contents of cache directories
  *
- * @param mixed $params As String name to be searched for deletion, if name is a directory all files in
+ * @param string|array $params As String name to be searched for deletion, if name is a directory all files in
  *   directory will be deleted. If array, names to be searched for deletion. If clearCache() without params,
  *   all files in app/tmp/cache/views will be deleted
  * @param string $type Directory in tmp/cache defaults to view directory

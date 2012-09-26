@@ -43,6 +43,9 @@
 
 				echo 'Settings: <ul>';
 				foreach ($settings as $name => $value):
+					if (is_array($value)):
+						$value = join(',', $value);
+					endif;
 					echo '<li>' . $name . ': ' . $value . '</li>';
 				endforeach;
 				echo '</ul>';

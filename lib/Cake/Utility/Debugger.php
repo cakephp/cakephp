@@ -63,11 +63,13 @@ class Debugger {
 			'trace' => '<pre class="stack-trace">{:trace}</pre>',
 			'code' => '',
 			'context' => '',
-			'links' => array()
+			'links' => array(),
+			'escapeContext' => true,
 		),
 		'html' => array(
 			'trace' => '<pre class="cake-error trace"><b>Trace</b> <p>{:trace}</p></pre>',
-			'context' => '<pre class="cake-error context"><b>Context</b> <p>{:context}</p></pre>'
+			'context' => '<pre class="cake-error context"><b>Context</b> <p>{:context}</p></pre>',
+			'escapeContext' => true,
 		),
 		'txt' => array(
 			'error' => "{:error}: {:code} :: {:description} on line {:line} of {:path}\n{:info}",
@@ -211,7 +213,6 @@ class Debugger {
 		if (empty($line)) {
 			$line = '??';
 		}
-		$path = self::trimPath($file);
 
 		$info = compact('code', 'description', 'file', 'line');
 		if (!in_array($info, $self->errors)) {
@@ -227,7 +228,7 @@ class Debugger {
 			case E_COMPILE_ERROR:
 			case E_USER_ERROR:
 				$error = 'Fatal Error';
-				$level = LOG_ERROR;
+				$level = LOG_ERR;
 			break;
 			case E_WARNING:
 			case E_USER_WARNING:
@@ -248,7 +249,6 @@ class Debugger {
 			break;
 			default:
 				return;
-			break;
 		}
 
 		$data = compact(
@@ -288,7 +288,7 @@ class Debugger {
 			'scope'		=> null,
 			'exclude'	=> array('call_user_func_array', 'trigger_error')
 		);
-		$options = Set::merge($defaults, $options);
+		$options = Hash::merge($defaults, $options);
 
 		$backtrace = debug_backtrace();
 		$count = count($backtrace);
@@ -368,9 +368,6 @@ class Debugger {
 			return str_replace(ROOT, 'ROOT', $path);
 		}
 
-		if (strpos($path, CAKE) === 0) {
-			return str_replace($corePath, 'CORE' . DS, $path);
-		}
 		return $path;
 	}
 
@@ -472,29 +469,23 @@ class Debugger {
 		switch (self::getType($var)) {
 			case 'boolean':
 				return ($var) ? 'true' : 'false';
-			break;
 			case 'integer':
 				return '(int) ' . $var;
 			case 'float':
 				return '(float) ' . $var;
-			break;
 			case 'string':
 				if (trim($var) == '') {
 					return "''";
 				}
 				return "'" . $var . "'";
-			break;
 			case 'array':
 				return self::_array($var, $depth - 1, $indent + 1);
-			break;
 			case 'resource':
 				return strtolower(gettype($var));
-			break;
 			case 'null':
 				return 'null';
 			default:
 				return self::_object($var, $depth - 1, $indent + 1);
-			break;
 		}
 	}
 
@@ -540,10 +531,18 @@ class Debugger {
 
 		if ($depth >= 0) {
 			foreach ($var as $key => $val) {
+				// Sniff for globals as !== explodes in < 5.4
+				if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
+					$val = '[recursion]';
+				} else if ($val !== $var) {
+					$val = self::_export($val, $depth, $indent);
+				}
 				$vars[] = $break . self::exportVar($key) .
 					' => ' .
-					self::_export($val, $depth - 1, $indent);
+					$val;
 			}
+		} else {
+			$vars[] = $break . '[maximum depth reached]';
 		}
 		return $out . implode(',', $vars) . $end . ')';
 	}
@@ -706,8 +705,14 @@ class Debugger {
 
 		$files = $this->trace(array('start' => $data['start'], 'format' => 'points'));
 		$code = '';
-		if (isset($files[1]['file'])) {
-			$code = $this->excerpt($files[1]['file'], $files[1]['line'] - 1, 1);
+		$file = null;
+		if (isset($files[0]['file'])) {
+			$file = $files[0];
+		} elseif (isset($files[1]['file'])) {
+			$file = $files[1];
+		}
+		if ($file) {
+			$code = $this->excerpt($file['file'], $file['line'] - 1, 1);
 		}
 		$trace = $this->trace(array('start' => $data['start'], 'depth' => '20'));
 		$insertOpts = array('before' => '{:', 'after' => '}');
@@ -716,7 +721,7 @@ class Debugger {
 		$info = '';
 
 		foreach ((array)$data['context'] as $var => $value) {
-			$context[] = "\${$var}\t=\t" . $this->exportVar($value, 1);
+			$context[] = "\${$var} = " . $this->exportVar($value, 3);
 		}
 
 		switch ($this->_outputFormat) {
@@ -731,30 +736,29 @@ class Debugger {
 		$data['trace'] = $trace;
 		$data['id'] = 'cakeErr' . uniqid();
 		$tpl = array_merge($this->_templates['base'], $this->_templates[$this->_outputFormat]);
-		$insert = array('context' => join("\n", $context)) + $data;
-
-		$detect = array('context');
 
 		if (isset($tpl['links'])) {
 			foreach ($tpl['links'] as $key => $val) {
-				if (in_array($key, $detect) && empty($insert[$key])) {
-					continue;
-				}
-				$links[$key] = String::insert($val, $insert, $insertOpts);
+				$links[$key] = String::insert($val, $data, $insertOpts);
 			}
 		}
 
-		foreach (array('code', 'context', 'trace') as $key) {
-			if (empty($$key) || !isset($tpl[$key])) {
+		if (!empty($tpl['escapeContext'])) {
+			$context = h($context);
+		}
+
+		$infoData = compact('code', 'context', 'trace');
+		foreach ($infoData as $key => $value) {
+			if (empty($value) || !isset($tpl[$key])) {
 				continue;
 			}
-			if (is_array($$key)) {
-				$$key = join("\n", $$key);
+			if (is_array($value)) {
+				$value = join("\n", $value);
 			}
-			$info .= String::insert($tpl[$key], compact($key) + $insert, $insertOpts);
+			$info .= String::insert($tpl[$key], array($key => $value) + $data, $insertOpts);
 		}
 		$links = join(' ', $links);
-		unset($data['context']);
+
 		if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
 			return call_user_func($tpl['callback'], $data, compact('links', 'info'));
 		}

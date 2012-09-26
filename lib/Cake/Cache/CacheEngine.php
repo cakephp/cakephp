@@ -28,6 +28,14 @@ abstract class CacheEngine {
 	public $settings = array();
 
 /**
+ * Contains the compiled string with all groups
+ * prefixes to be prepeded to every key in this cache engine
+ *
+ * @var string
+ **/
+	protected $_groupPrefix = null;
+
+/**
  * Initialize the cache engine
  *
  * Called automatically by the cache frontend
@@ -36,11 +44,17 @@ abstract class CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
-		$this->settings = array_merge(
-			array('prefix' => 'cake_', 'duration' => 3600, 'probability' => 100),
-			$this->settings,
-			$settings
+		$settings += $this->settings + array(
+			'prefix' => 'cake_',
+			'duration' => 3600,
+			'probability' => 100,
+			'groups' => array()
 		);
+		$this->settings = $settings;
+		if (!empty($this->settings['groups'])) {
+			sort($this->settings['groups']);
+			$this->_groupPrefix = str_repeat('%s_', count($this->settings['groups']));
+		}
 		if (!is_numeric($this->settings['duration'])) {
 			$this->settings['duration'] = strtotime($this->settings['duration']) - time();
 		}
@@ -51,9 +65,11 @@ abstract class CacheEngine {
  * Garbage collection
  *
  * Permanently remove all expired and deleted data
+ * 
+ * @param integer $expires [optional] An expires timestamp, invalidataing all data before.
  * @return void
  */
-	public function gc() {
+	public function gc($expires = null) {
 	}
 
 /**
@@ -61,7 +77,7 @@ abstract class CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param mixed $duration How long to cache for.
+ * @param integer $duration How long to cache for.
  * @return boolean True if the data was successfully cached, false on failure
  */
 	abstract public function write($key, $value, $duration);
@@ -109,6 +125,29 @@ abstract class CacheEngine {
 	abstract public function clear($check);
 
 /**
+ * Clears all values belonging to a group. Is upt to the implementing engine
+ * to decide whether actually deete the keys or just simulate it to acheive
+ * the same result.
+ *
+ * @param string $groups name of the group to be cleared
+ * @return boolean
+ */
+	public function clearGroup($group) {
+		return false;
+	}
+
+/**
+ * Does whatever initialization for each group is required
+ * and returns the `group value` for each of them, this is
+ * the token representing each group in the cache key
+ *
+ * @return array
+ */
+	public function groups() {
+		return $this->settings['groups'];
+	}
+
+/**
  * Cache Engine settings
  *
  * @return array settings
@@ -127,8 +166,14 @@ abstract class CacheEngine {
 		if (empty($key)) {
 			return false;
 		}
-		$key = Inflector::underscore(str_replace(array(DS, '/', '.'), '_', strval($key)));
-		return $key;
+
+		$prefix = '';
+		if (!empty($this->_groupPrefix)) {
+			$prefix = vsprintf($this->_groupPrefix, $this->groups());
+		}
+
+		$key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace(array(DS, '/', '.'), '_', strval($key)))));
+		return $prefix . $key;
 	}
 
 }

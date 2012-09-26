@@ -318,10 +318,8 @@ class PhpAco {
  * @return void 
  */
 	public function build(array $allow, array $deny = array()) {
-		$stack = array();
 		$this->_tree = array();
 		$tree = array();
-		$root = &$tree;
 
 		foreach ($allow as $dotPath => $aros) {
 			if (is_string($aros)) {
@@ -403,7 +401,7 @@ class PhpAro {
  * index. The resulting array will contain a prioritized list of (list of) roles ordered from 
  * the most distant AROs to the requested one itself.
  * 
- * @param mixed $aro An ARO identifier
+ * @param string|array $aro An ARO identifier
  * @return array prioritized AROs
  */
 	public function roles($aro) {
@@ -429,7 +427,7 @@ class PhpAro {
  * resolve an ARO identifier to an internal ARO string using
  * the internal mapping information. 
  *
- * @param mixed $aro ARO identifier (User.jeff, array('User' => ...), etc)
+ * @param string|array $aro ARO identifier (User.jeff, array('User' => ...), etc)
  * @return string internal aro string (e.g. User/jeff, Role/default)
  */
 	public function resolve($aro) {
@@ -494,7 +492,7 @@ class PhpAro {
 					// detect cycles
 					$roles = $this->roles($dependency);
 
-					if (in_array($role, Set::flatten($roles))) {
+					if (in_array($role, Hash::flatten($roles))) {
 						$path = '';
 
 						foreach ($roles as $roleDependencies) {

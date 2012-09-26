@@ -16,7 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<div class="<?php echo $pluralVar;?> view">
+<div class="<?php echo $pluralVar; ?> view">
 <h2><?php echo __d('cake', 'View %s', $singularHumanName); ?></h2>
 	<dl>
 <?php
@@ -68,7 +68,7 @@ if (!empty($associations['hasOne'])) :
 foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <div class="related">
 	<h3><?php echo __d('cake', "Related %s", Inflector::humanize($_details['controller'])); ?></h3>
-<?php if (!empty(${$singularVar}[$_alias])):?>
+<?php if (!empty(${$singularVar}[$_alias])): ?>
 	<dl>
 <?php
 		$i = 0;
@@ -82,7 +82,7 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $this->Html->link(__d('cake', 'Edit %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n";?>
+			<li><?php echo $this->Html->link(__d('cake', 'Edit %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n"; ?>
 		</ul>
 	</div>
 </div>
@@ -103,7 +103,7 @@ $otherSingularVar = Inflector::variable($_alias);
 ?>
 <div class="related">
 	<h3><?php echo __d('cake', "Related %s", Inflector::humanize($_details['controller'])); ?></h3>
-<?php if (!empty(${$singularVar}[$_alias])):?>
+<?php if (!empty(${$singularVar}[$_alias])): ?>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 <?php
@@ -139,8 +139,8 @@ $otherSingularVar = Inflector::variable($_alias);
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $this->Html->link(__d('cake', "New %s", Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add'));?> </li>
+			<li><?php echo $this->Html->link(__d('cake', "New %s", Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')); ?> </li>
 		</ul>
 	</div>
 </div>
-<?php endforeach;?>
+<?php endforeach; ?>

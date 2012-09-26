@@ -23,47 +23,28 @@ echo "<?php\n";
 App::uses('<?php echo $dependency[0]; ?>', '<?php echo $dependency[1]; ?>');
 <?php endforeach; ?>
 
-<?php if ($mock and strtolower($type) == 'controller'): ?>
-/**
- * Test<?php echo $fullClassName; ?>
- *
- */
-class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
-/**
- * Auto render
- *
- * @var boolean
- */
-	public $autoRender = false;
-
-/**
- * Redirect action
- *
- * @param mixed $url
- * @param mixed $status
- * @param boolean $exit
- * @return void
- */
-	public function redirect($url, $status = null, $exit = true) {
-		$this->redirectUrl = $url;
-	}
-}
-
-<?php endif; ?>
 /**
  * <?php echo $fullClassName; ?> Test Case
  *
  */
-class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
+<?php if ($type === 'Controller'): ?>
+class <?php echo $fullClassName; ?>Test extends ControllerTestCase {
+<?php else: ?>
+class <?php echo $fullClassName; ?>Test extends CakeTestCase {
+<?php endif; ?>
+
 <?php if (!empty($fixtures)): ?>
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array('<?php echo join("', '", $fixtures); ?>');
+	public $fixtures = array(
+		'<?php echo join("',\n\t\t'", $fixtures); ?>'
+	);
 
 <?php endif; ?>
+<?php if (!empty($construction)): ?>
 /**
  * setUp method
  *
@@ -82,11 +63,12 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this-><?php echo $className;?>);
+		unset($this-><?php echo $className; ?>);
 
 		parent::tearDown();
 	}
 
+<?php endif; ?>
 <?php foreach ($methods as $method): ?>
 /**
  * test<?php echo Inflector::camelize($method); ?> method
@@ -94,7 +76,7 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
  * @return void
  */
 	public function test<?php echo Inflector::camelize($method); ?>() {
-
 	}
-<?php endforeach;?>
+
+<?php endforeach; ?>
 }

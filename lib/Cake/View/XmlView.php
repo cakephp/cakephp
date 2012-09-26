@@ -26,7 +26,7 @@ App::uses('Xml', 'Utility');
  *
  * `$this->set(array('posts' => $posts, '_serialize' => 'posts'));`
  *
- * When the view is rendered, the `$posts` view variable will be serialized 
+ * When the view is rendered, the `$posts` view variable will be serialized
  * into XML.
  *
  * **Note** The view variable you specify must be compatible with Xml::fromArray().
@@ -38,7 +38,7 @@ App::uses('Xml', 'Utility');
  * $this->set(compact('posts', 'users', 'stuff'));
  * $this->set('_serialize', array('posts', 'users'));
  * }}}
- * 
+ *
  * The above would generate a XML object that looks like:
  *
  * `<response><posts>...</posts><users>...</users></response>`
@@ -75,8 +75,8 @@ class XmlView extends View {
  * Render a XML view.
  *
  * Uses the special '_serialize' parameter to convert a set of
- * view variables into a XML response.  Makes generating simple 
- * XML responses very easy.  You can omit the '_serialize' parameter, 
+ * view variables into a XML response.  Makes generating simple
+ * XML responses very easy.  You can omit the '_serialize' parameter,
  * and use a normal view + layout as well.
  *
  * @param string $view The view being rendered.
@@ -93,9 +93,11 @@ class XmlView extends View {
 				}
 			} else {
 				$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+				if (is_array($data) && Set::numeric(array_keys($data))) {
+					$data = array('response' => array($serialize => $data));
+				}
 			}
 			$content = Xml::fromArray($data)->asXML();
-			$this->Blocks->set('content', $content);
 			return $content;
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {

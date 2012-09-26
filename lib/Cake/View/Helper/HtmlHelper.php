@@ -171,7 +171,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $name Text for link
  * @param string $link URL for link (if empty it won't be a link)
- * @param mixed $options Link attributes e.g. array('id' => 'selected')
+ * @param string|array $options Link attributes e.g. array('id' => 'selected')
  * @return void
  * @see HtmlHelper::link() for details on $options that can be used.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
@@ -228,7 +228,7 @@ class HtmlHelper extends AppHelper {
  *   will override the inline option.
  *
  * @param string $type The title of the external resource
- * @param mixed $url The address of the external resource or string for content attribute
+ * @param string|array $url The address of the external resource or string for content attribute
  * @param array $options Other attributes for the generated tag. If the type attribute is html,
  *    rss, atom, or icon, the mime-type is returned.
  * @return string A completed `<link />` element.
@@ -323,7 +323,7 @@ class HtmlHelper extends AppHelper {
  * - `confirm` JavaScript confirmation message.
  *
  * @param string $title The content to be wrapped by <a> tags.
- * @param mixed $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
+ * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param array $options Array of HTML attributes.
  * @param string $confirmMessage JavaScript confirmation message.
  * @return string An `<a />` element.
@@ -335,7 +335,8 @@ class HtmlHelper extends AppHelper {
 			$url = $this->url($url);
 		} else {
 			$url = $this->url($title);
-			$title = h(urldecode($url));
+			$title = htmlspecialchars_decode($url, ENT_QUOTES);
+			$title = h(urldecode($title));
 			$escapeTitle = false;
 		}
 
@@ -397,7 +398,7 @@ class HtmlHelper extends AppHelper {
  *   option.
  * - `plugin` False value will prevent parsing path as a plugin
  *
- * @param mixed $path The name of a CSS style sheet or an array containing names of
+ * @param string|array $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
  *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
  * @param string $rel Rel attribute. Defaults to "stylesheet". If equal to 'import' the stylesheet will be imported.
@@ -487,8 +488,8 @@ class HtmlHelper extends AppHelper {
  *   included once, use false to allow the same script to be included more than once per request.
  * - `plugin` False value will prevent parsing path as a plugin
  *
- * @param mixed $url String or array of javascript files to include
- * @param mixed $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
+ * @param string|array $url String or array of javascript files to include
+ * @param array|boolean $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
  * @return mixed String of `<script />` tags or null if $inline is false or if $once is true and the file has been
  *   included before.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::script
@@ -651,7 +652,7 @@ class HtmlHelper extends AppHelper {
  * All other keys will be passed to HtmlHelper::link() as the `$options` parameter.
  *
  * @param string $separator Text to separate crumbs.
- * @param mixed $startText This will be the first crumb, if false it defaults to first crumb in array. Can
+ * @param string|array|boolean $startText This will be the first crumb, if false it defaults to first crumb in array. Can
  *   also be an array, see above for details.
  * @return string Composed bread crumbs
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
@@ -681,7 +682,7 @@ class HtmlHelper extends AppHelper {
  * crumb was added with.
  *
  * @param array $options Array of html attributes to apply to the generated list elements.
- * @param mixed $startText This will be the first crumb, if false it defaults to first crumb in array. Can
+ * @param string|array|boolean $startText This will be the first crumb, if false it defaults to first crumb in array. Can
  *   also be an array, see `HtmlHelper::getCrumbs` for details.
  * @return string breadcrumbs html list
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
@@ -787,7 +788,8 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a row of formatted and named TABLE headers.
  *
- * @param array $names Array of tablenames.
+ * @param array $names Array of tablenames. Each tablename also can be a key that points to an array with a set
+ *     of attributes to its specific tag
  * @param array $trOptions HTML options for TR elements.
  * @param array $thOptions HTML options for TH elements.
  * @return string Completed table headers
@@ -796,7 +798,11 @@ class HtmlHelper extends AppHelper {
 	public function tableHeaders($names, $trOptions = null, $thOptions = null) {
 		$out = array();
 		foreach ($names as $arg) {
-			$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
+			if (!is_array($arg)) {
+				$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
+			} else {
+				$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes(current($arg)), key($arg));
+			}
 		}
 		return sprintf($this->_tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
 	}
@@ -1155,7 +1161,7 @@ class HtmlHelper extends AppHelper {
  * - `attributeFormat` Format for long attributes e.g. `'%s="%s"'`
  * - `minimizedAttributeFormat` Format for minimized attributes e.g. `'%s="%s"'`
  *
- * @param mixed $configFile String with the config file (load using PhpReader) or an array with file and reader name
+ * @param string|array $configFile String with the config file (load using PhpReader) or an array with file and reader name
  * @param string $path Path with config file
  * @return mixed False to error or loaded configs
  * @throws ConfigureException

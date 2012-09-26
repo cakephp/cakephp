@@ -35,12 +35,20 @@ class PluginTask extends AppShell {
 	public $path = null;
 
 /**
+ * Path to the bootstrap file. Changed in tests.
+ *
+ * @var string
+ */
+	public $bootstrap = null;
+
+/**
  * initialize
  *
  * @return void
  */
 	public function initialize() {
 		$this->path = current(App::path('plugins'));
+		$this->bootstrap = APP . 'Config' . DS . 'bootstrap.php';
 	}
 
 /**
@@ -53,8 +61,9 @@ class PluginTask extends AppShell {
 			$plugin = Inflector::camelize($this->args[0]);
 			$pluginPath = $this->_pluginPath($plugin);
 			if (is_dir($pluginPath)) {
-				$this->out(__d('cake_console', 'Plugin: %s', $plugin));
+				$this->out(__d('cake_console', 'Plugin: %s already exists, no action taken', $plugin));
 				$this->out(__d('cake_console', 'Path: %s', $pluginPath));
+				return false;
 			} else {
 				$this->_interactive($plugin);
 			}
@@ -127,6 +136,9 @@ class PluginTask extends AppShell {
 
 			$errors = $Folder->errors();
 			if (!empty($errors)) {
+				foreach ($errors as $message) {
+					$this->error($message);
+				}
 				return false;
 			}
 
@@ -144,11 +156,28 @@ class PluginTask extends AppShell {
 			$out .= "}\n\n";
 			$this->createFile($this->path . $plugin . DS . 'Model' . DS . $modelFileName, $out);
 
+			$this->_modifyBootstrap($plugin);
+
 			$this->hr();
 			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $plugin), 2);
 		}
 
 		return true;
+	}
+
+/**
+ * Update the app's bootstrap.php file.
+ *
+ * @return void
+ */
+	protected function _modifyBootstrap($plugin) {
+		$bootstrap = new File($this->bootstrap, false);
+		$contents = $bootstrap->read();
+		if (!preg_match("@\n\s*CakePlugin::loadAll@", $contents)) {
+			$bootstrap->append("\nCakePlugin::load('$plugin', array('bootstrap' => false, 'routes' => false));\n");
+			$this->out('');
+			$this->out(__d('cake_dev', '%s modified', $this->bootstrap));
+		}
 	}
 
 /**
@@ -170,7 +199,7 @@ class PluginTask extends AppShell {
 				$this->out($i + 1 . '. ' . $option);
 			}
 			$prompt = __d('cake_console', 'Choose a plugin path from the paths above.');
-			$choice = $this->in($prompt);
+			$choice = $this->in($prompt, null, 1);
 			if (intval($choice) > 0 && intval($choice) <= $max) {
 				$valid = true;
 			}

@@ -180,7 +180,7 @@
 		<echo msg="Creating new release commit" />
 		<exec command="git add ./lib/Cake/VERSION.txt" logoutput="true" checkreturn="true" />
 		<exec command="git commit -m 'Update version number to ${release_version}'" logoutput="true" checkreturn="true" />
-		<exec command="git tag -a ${release_version} -m 'CakePHP ${release_version}'" logoutput="true" checkreturn="true" />
+		<exec command="git tag -s ${release_version} -m 'CakePHP ${release_version}'" logoutput="true" checkreturn="true" />
 
 		<propertyprompt propertyName="shipit" defaultValue="n" promptText="Ship the new commit and tag?" />
 		<condition property="noshipit" value="1">

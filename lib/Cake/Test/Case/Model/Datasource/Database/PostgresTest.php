@@ -347,8 +347,8 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testLocalizedFloats() {
-		$restore = setlocale(LC_ALL, 0);
-		setlocale(LC_ALL, 'de_DE');
+		$restore = setlocale(LC_NUMERIC, 0);
+		setlocale(LC_NUMERIC, 'de_DE');
 
 		$result = $this->db->value(3.141593, 'float');
 		$this->assertEquals("3.141593", $result);
@@ -356,7 +356,7 @@ class PostgresTest extends CakeTestCase {
 		$result = $this->db->value(3.14);
 		$this->assertEquals("3.140000", $result);
 
-		setlocale(LC_ALL, $restore);
+		setlocale(LC_NUMERIC, $restore);
 	}
 
 /**
@@ -784,7 +784,7 @@ class PostgresTest extends CakeTestCase {
 	}
 
 /**
- * Test it is possible to do a SELECT COUNT(DISTINCT Model.field) 
+ * Test it is possible to do a SELECT COUNT(DISTINCT Model.field)
  * query in postgres and it gets correctly quoted
  *
  * @return void
@@ -907,6 +907,39 @@ class PostgresTest extends CakeTestCase {
 		$this->Dbo->expects($this->at(0))->method('execute')
 			->with("DELETE FROM \"$schema\".\"tbl_articles\"");
 		$this->Dbo->truncate('articles');
+	}
+
+/**
+ * Test nested transaction
+ *
+ * @return void
+ */
+	public function testNestedTransaction() {
+		$this->skipIf($this->Dbo->nestedTransactionSupported() === false, 'The Postgres server do not support nested transaction');
+
+		$this->loadFixtures('Article');
+		$model = new Article();
+		$model->hasOne = $model->hasMany = $model->belongsTo = $model->hasAndBelongsToMany = array();
+		$model->cacheQueries = false;
+		$this->Dbo->cacheMethods = false;
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertNotEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertTrue($model->delete(1));
+		$this->assertEmpty($model->read(null, 1));
+		$this->assertTrue($this->Dbo->rollback());
+		$this->assertNotEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertTrue($model->delete(1));
+		$this->assertEmpty($model->read(null, 1));
+		$this->assertTrue($this->Dbo->commit());
+		$this->assertEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->rollback());
+		$this->assertNotEmpty($model->read(null, 1));
 	}
 
 }

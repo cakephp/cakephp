@@ -146,7 +146,10 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		if (class_exists('ClassRegistry', false)) {
 			ClassRegistry::flush();
 		}
-		Configure::write($this->_configure);
+		if (!empty($this->_configure)) {
+			Configure::clear();
+			Configure::write($this->_configure);
+		}
 		if (isset($_GET['debug']) && $_GET['debug']) {
 			ob_flush();
 		}

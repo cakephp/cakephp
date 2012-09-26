@@ -333,6 +333,10 @@ class HtmlHelperTest extends CakeTestCase {
 			'/a'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('http://www.example.org?param1=value1&param2=value2');
+		$expected = array('a' => array('href' => 'http://www.example.org?param1=value1&amp;param2=value2'), 'http://www.example.org?param1=value1&amp;param2=value2', '/a');
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -357,10 +361,26 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('test.gif?one=two&three=four');
 		$this->assertTags($result, array('img' => array('src' => 'img/test.gif?one=two&amp;three=four', 'alt' => '')));
+	}
 
+/**
+ * Test that image() works with fullBase and a webroot not equal to /
+ *
+ * @return void
+ */
+	public function testImageWithFullBase() {
 		$result = $this->Html->image('test.gif', array('fullBase' => true));
 		$here = $this->Html->url('/', true);
 		$this->assertTags($result, array('img' => array('src' => $here . 'img/test.gif', 'alt' => '')));
+
+		$result = $this->Html->image('sub/test.gif', array('fullBase' => true));
+		$here = $this->Html->url('/', true);
+		$this->assertTags($result, array('img' => array('src' => $here . 'img/sub/test.gif', 'alt' => '')));
+
+		$request = $this->Html->request;
+		$request->webroot = '/myproject/';
+		$request->base = '/myproject';
+		Router::setRequestInfo($request);
 
 		$result = $this->Html->image('sub/test.gif', array('fullBase' => true));
 		$here = $this->Html->url('/', true);
@@ -1503,6 +1523,18 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function testTableHeaders() {
 		$result = $this->Html->tableHeaders(array('ID', 'Name', 'Date'));
+		$expected = array('<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->tableHeaders(array('ID', array('Name' => array('class' => 'highlight')), 'Date'));
+		$expected = array('<tr', '<th', 'ID', '/th', '<th class="highlight"', 'Name', '/th', '<th', 'Date', '/th', '/tr');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->tableHeaders(array('ID', array('Name' => array('class' => 'highlight', 'width' => '120px')), 'Date'));
+		$expected = array('<tr', '<th', 'ID', '/th', '<th class="highlight" width="120px"', 'Name', '/th', '<th', 'Date', '/th', '/tr');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->tableHeaders(array('ID', array('Name' => array()), 'Date'));
 		$expected = array('<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr');
 		$this->assertTags($result, $expected);
 	}

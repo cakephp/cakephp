@@ -1,9 +1,5 @@
 <?php
 /**
- * DebuggerTest file
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -140,8 +135,8 @@ class DebuggerTest extends CakeTestCase {
 			'a' => array(
 				'href' => "javascript:void(0);",
 				'onclick' => "preg:/document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display = " .
-							 "\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
-							 " \? '' \: 'none'\);/"
+					 "\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
+					 " \? '' \: 'none'\);/"
 			),
 			'b' => array(), 'Notice', '/b', ' (8)',
 		));
@@ -149,6 +144,7 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertRegExp('/Undefined variable:\s+buzz/', $result[1]);
 		$this->assertRegExp('/<a[^>]+>Code/', $result[1]);
 		$this->assertRegExp('/<a[^>]+>Context/', $result[2]);
+		$this->assertContains('$wrong = &#039;&#039;', $result[3], 'Context should be HTML escaped.');
 	}
 
 /**
@@ -162,14 +158,14 @@ class DebuggerTest extends CakeTestCase {
 
 		Debugger::output('js', array(
 			'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
-							 '&line={:line}">{:path}</a>, line {:line}'
+				'&line={:line}">{:path}</a>, line {:line}'
 		));
 		$result = Debugger::trace();
 		$this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
 		Debugger::output('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-						 '{:description}</error>',
+				 '{:description}</error>',
 			'context' => "<context>{:context}</context>",
 			'trace' => "<stack>{:trace}</stack>",
 		));
@@ -272,7 +268,7 @@ class DebuggerTest extends CakeTestCase {
  * Test method for testing addFormat with callbacks.
  */
 	public function customFormat($error, $strings) {
-		return $error['error'] . ': I eated an error ' . $error['path'];
+		return $error['error'] . ': I eated an error ' . $error['file'];
 	}
 
 /**
@@ -281,8 +277,11 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	public function testTrimPath() {
-		$this->assertEquals(Debugger::trimPath(APP), 'APP' . DS);
-		$this->assertEquals(Debugger::trimPath(CAKE_CORE_INCLUDE_PATH), 'CORE');
+		$this->assertEquals('APP' . DS, Debugger::trimPath(APP));
+		$this->assertEquals('CORE', Debugger::trimPath(CAKE_CORE_INCLUDE_PATH));
+		$this->assertEquals('ROOT', Debugger::trimPath(ROOT));
+		$this->assertEquals('CORE' . DS . 'Cake' . DS, Debugger::trimPath(CAKE));
+		$this->assertEquals('Some/Other/Path', Debugger::trimPath('Some/Other/Path'));
 	}
 
 /**
@@ -323,7 +322,7 @@ object(View) {
 	validationErrors => array()
 	hasRendered => false
 	uuids => array()
-	request => null
+	request => object(CakeRequest) {}
 	response => object(CakeResponse) {}
 	elementCache => 'default'
 	int => (int) 2
@@ -344,6 +343,21 @@ array(
 )
 TEXT;
 		$this->assertTextEquals($expected, $result);
+
+		$data = array(
+			'key' => array(
+				'value'
+			)
+		);
+		$result = Debugger::exportVar($data, 1);
+		$expected = <<<TEXT
+array(
+	'key' => array(
+		[maximum depth reached]
+	)
+)
+TEXT;
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -361,10 +375,10 @@ TEXT;
 		$this->assertRegExp('/DebuggerTest\:\:testLog/i', $result);
 		$this->assertRegExp("/'cool'/", $result);
 
-		unlink(TMP . 'logs' . DS . 'debug.log');
+		unlink(LOGS . 'debug.log');
 
 		Debugger::log(array('whatever', 'here'));
-		$result = file_get_contents(TMP . 'logs' . DS . 'debug.log');
+		$result = file_get_contents(LOGS . 'debug.log');
 		$this->assertRegExp('/DebuggerTest\:\:testLog/i', $result);
 		$this->assertRegExp('/\[main\]/', $result);
 		$this->assertRegExp('/array/', $result);
@@ -397,8 +411,14 @@ TEXT;
 <pre>array(
 	'People' => array(
 		(int) 0 => array(
+			'name' => 'joeseph',
+			'coat' => 'technicolor',
+			'hair_color' => 'brown'
 		),
 		(int) 1 => array(
+			'name' => 'Shaft',
+			'coat' => 'black',
+			'hair' => 'black'
 		)
 	)
 )</pre>
@@ -458,6 +478,16 @@ TEXT;
 		$expected = Debugger::exportVar($expectedArray);
 
 		$this->assertEquals($expected, $output);
+	}
+
+/**
+ * Test that exportVar() doesn't loop through recursive structures.
+ *
+ * @return void
+ */
+	public function testExportVarRecursion() {
+		$output = Debugger::exportVar($GLOBALS);
+		$this->assertContains("'GLOBALS' => [recursion]", $output);
 	}
 
 /**

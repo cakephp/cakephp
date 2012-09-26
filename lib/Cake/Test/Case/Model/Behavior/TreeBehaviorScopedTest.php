@@ -140,8 +140,8 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 
 		$this->Ad->id = 4;
 		$result = $this->Ad->children();
-		$this->assertEquals(array(6, 5), Set::extract('/Ad/id', $result));
-		$this->assertEquals(array(2, 2), Set::extract('/Campaign/id', $result));
+		$this->assertEquals(array(6, 5), Hash::extract($result, '{n}.Ad.id'));
+		$this->assertEquals(array(2, 2), Hash::extract($result, '{n}.Campaign.id'));
 	}
 
 /**
@@ -156,8 +156,8 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 
 		$this->Ad->id = 4;
 		$result = $this->Ad->children();
-		$this->assertEquals(array(5, 6), Set::extract('/Ad/id', $result));
-		$this->assertEquals(array(2, 2), Set::extract('/Campaign/id', $result));
+		$this->assertEquals(array(5, 6), Hash::extract($result, '{n}.Ad.id'));
+		$this->assertEquals(array(2, 2), Hash::extract($result, '{n}.Campaign.id'));
 	}
 
 /**

@@ -147,6 +147,17 @@ class ModelBehavior extends Object {
 	}
 
 /**
+ * afterValidate is called just after model data was validated, you can use this callback
+ * to perform any data cleanup or preparation if needed
+ *
+ * @param Model $model Model using this behavior
+ * @return mixed False will stop this event from being passed to other behaviors
+ */
+	public function afterValidate(Model $model) {
+		return true;
+	}
+
+/**
  * beforeSave is called before a model is saved.  Returning false from a beforeSave callback
  * will abort the save operation.
  *

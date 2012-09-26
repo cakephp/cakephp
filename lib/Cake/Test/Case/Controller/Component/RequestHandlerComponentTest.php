@@ -99,7 +99,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->_server = $_SERVER;
 		$this->_init();
 	}
 
@@ -128,7 +127,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		if (!headers_sent()) {
 			header('Content-type: text/html'); //reset content type.
 		}
-		$_SERVER = $this->_server;
 		call_user_func_array('Router::parseExtensions', $this->_extensions);
 	}
 

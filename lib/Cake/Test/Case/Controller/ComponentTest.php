@@ -89,7 +89,7 @@ class AppleComponent extends Component {
 /**
  * startup method
  *
- * @param mixed $controller
+ * @param Controller $controller
  * @return void
  */
 	public function startup(Controller $controller) {
@@ -115,7 +115,7 @@ class OrangeComponent extends Component {
 /**
  * initialize method
  *
- * @param mixed $controller
+ * @param Controller $controller
  * @return void
  */
 	public function initialize(Controller $controller) {
@@ -220,20 +220,11 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->_pluginPaths = App::path('plugins');
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
-	}
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		App::build();
-		ClassRegistry::flush();
 	}
 
 /**

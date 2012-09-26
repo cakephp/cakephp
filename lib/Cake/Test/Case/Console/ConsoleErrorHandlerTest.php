@@ -61,6 +61,23 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
+ * test that the console error handler can deal with fatal errors.
+ *
+ * @return void
+ */
+	public function testHandleFatalError() {
+		$content = "<error>Fatal Error Error:</error> This is a fatal error in [/some/file, line 275]\n";
+		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
+			->with($content);
+
+		$this->Error->expects($this->once())
+			->method('_stop')
+			->with(1);
+
+		$this->Error->handleError(E_USER_ERROR, 'This is a fatal error', '/some/file', 275);
+	}
+
+/**
  * test that the console error handler can deal with CakeExceptions.
  *
  * @return void

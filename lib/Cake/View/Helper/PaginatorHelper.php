@@ -135,7 +135,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Sets default options for all pagination links
  *
- * @param mixed $options Default options for pagination links. If a string is supplied - it
+ * @param array|string $options Default options for pagination links. If a string is supplied - it
  *   is used as the DOM id element to update. See PaginatorHelper::$options for list of keys.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::options
@@ -189,7 +189,7 @@ class PaginatorHelper extends AppHelper {
  * Gets the current key by which the recordset is sorted
  *
  * @param string $model Optional model name.  Uses the default if none is specified.
- * @param mixed $options Options for pagination links. See #options for list of keys.
+ * @param array $options Options for pagination links. See #options for list of keys.
  * @return string The name of the key by which the recordset is being sorted, or
  *  null if the results are not currently sorted.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortKey
@@ -215,7 +215,7 @@ class PaginatorHelper extends AppHelper {
  * Gets the current direction the recordset is sorted
  *
  * @param string $model Optional model name.  Uses the default if none is specified.
- * @param mixed $options Options for pagination links. See #options for list of keys.
+ * @param array $options Options for pagination links. See #options for list of keys.
  * @return string The direction by which the recordset is being sorted, or
  *  null if the results are not currently sorted.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortDir
@@ -276,9 +276,9 @@ class PaginatorHelper extends AppHelper {
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
  *
  * @param string $title Title for the link. Defaults to 'Next >>'.
- * @param mixed $options Options for pagination link. See above for list of keys.
+ * @param array $options Options for pagination link. See above for list of keys.
  * @param string $disabledTitle Title when the link is disabled.
- * @param mixed $disabledOptions Options for the disabled pagination link. See above for list of keys.
+ * @param array $disabledOptions Options for the disabled pagination link. See above for list of keys.
  * @return string A "next" link or or $disabledTitle text if the link is disabled.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::next
  */
@@ -356,7 +356,7 @@ class PaginatorHelper extends AppHelper {
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
  *
  * @param string $title Title for the link.
- * @param mixed $url Url for the action. See Router::url()
+ * @param string|array $url Url for the action. See Router::url()
  * @param array $options Options for the link. See #options for list of keys.
  * @return string A link with pagination parameters.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::link
@@ -471,7 +471,7 @@ class PaginatorHelper extends AppHelper {
 		$url = array_merge(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
 
 		if ($this->{$check}($model)) {
-			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape'))), compact('class'));
+			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape', 'model'))), compact('class'));
 		} else {
 			unset($options['rel']);
 			return $this->Html->tag($tag, $title, array_merge($options, compact('escape', 'class')));
@@ -564,7 +564,7 @@ class PaginatorHelper extends AppHelper {
  * - `separator` The separator string to use, default to ' of '
  *
  * The `%page%` style placeholders also work, but are deprecated and will be removed in a future version.
- * @param mixed $options Options for the counter string. See #options for list of keys.
+ * @param array $options Options for the counter string. See #options for list of keys.
  * @return string Counter string.
  * @deprecated The %page% style placeholders are deprecated.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::counter
@@ -651,7 +651,7 @@ class PaginatorHelper extends AppHelper {
  * - `class` Class for wrapper tag
  * - `currentClass` Class for wrapper tag on current active page, defaults to 'current'
  *
- * @param mixed $options Options for the numbers, (before, after, model, modulus, separator)
+ * @param array $options Options for the numbers, (before, after, model, modulus, separator)
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::numbers
  */
@@ -701,7 +701,7 @@ class PaginatorHelper extends AppHelper {
 				if ($offset < $start - 1) {
 					$out .= $this->first($offset, compact('tag', 'separator', 'ellipsis', 'class'));
 				} else {
-					$out .= $this->first($offset, compact('tag', 'separator', 'class') + array('after' => $separator));
+					$out .= $this->first($offset, compact('tag', 'separator', 'class', 'ellipsis') + array('after' => $separator));
 				}
 			}
 
@@ -735,7 +735,7 @@ class PaginatorHelper extends AppHelper {
 				if ($offset <= $last && $params['pageCount'] - $end > $offset) {
 					$out .= $this->last($offset, compact('tag', 'separator', 'ellipsis', 'class'));
 				} else {
-					$out .= $this->last($offset, compact('tag', 'separator', 'class') + array('before' => $separator));
+					$out .= $this->last($offset, compact('tag', 'separator', 'class', 'ellipsis') + array('before' => $separator));
 				}
 			}
 
@@ -782,9 +782,9 @@ class PaginatorHelper extends AppHelper {
  * - `separator` Content between the generated links, defaults to ' | '
  * - `ellipsis` Content for ellipsis, defaults to '...'
  *
- * @param mixed $first if string use as label for the link. If numeric, the number of page links
+ * @param string|integer $first if string use as label for the link. If numeric, the number of page links
  *   you want at the beginning of the range.
- * @param mixed $options An array of options.
+ * @param array $options An array of options.
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::first
  */
@@ -848,8 +848,8 @@ class PaginatorHelper extends AppHelper {
  * - `separator` Content between the generated links, defaults to ' | '
  * - `ellipsis` Content for ellipsis, defaults to '...'
  *
- * @param mixed $last if string use as label for the link, if numeric print page numbers
- * @param mixed $options Array of options
+ * @param string|integer $last if string use as label for the link, if numeric print page numbers
+ * @param array $options Array of options
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::last
  */

@@ -130,7 +130,7 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertRegExp('/php echo microtime()/', $contents);
 		$this->assertRegExp('/clark kent/', $result);
 
-		@unlink($filename);
+		unlink($filename);
 	}
 
 /**
@@ -156,7 +156,7 @@ class CacheHelperTest extends CakeTestCase {
 		$filename = CACHE . 'views' . DS . 'posts_view_風街ろまん.php';
 		$this->assertTrue(file_exists($filename));
 
-		@unlink($filename);
+		unlink($filename);
 	}
 
 /**
@@ -190,7 +190,7 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertRegExp('/php echo microtime()/', $contents);
 		$this->assertNotRegExp('/cake:nocache/', $contents);
 
-		@unlink($filename);
+		unlink($filename);
 	}
 
 /**
@@ -221,7 +221,7 @@ class CacheHelperTest extends CakeTestCase {
 
 		$contents = file_get_contents($filename);
 		$this->assertNotRegExp('/cake:nocache/', $contents);
-		@unlink($filename);
+		unlink($filename);
 	}
 
 /**
@@ -266,7 +266,7 @@ class CacheHelperTest extends CakeTestCase {
 		$filename = CACHE . 'views' . DS . 'cachetest_cache_complex.php';
 		$this->assertTrue(file_exists($filename));
 		$contents = file_get_contents($filename);
-		@unlink($filename);
+		unlink($filename);
 
 		$this->assertRegExp('/A\. Layout Before Content/', $contents);
 		$this->assertNotRegExp('/B\. In Plain Element/', $contents);
@@ -291,15 +291,14 @@ class CacheHelperTest extends CakeTestCase {
  */
 	public function testCacheViewVars() {
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
 			'named' => array()
-		);
+		));
+		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->cacheAction = 21600;
-		$this->Controller->here = '/cacheTest/cache_parsing';
-		$this->Controller->action = 'cache_parsing';
 
 		$View = new View($this->Controller);
 		$result = $View->render('index');
@@ -314,7 +313,7 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertRegExp('/extract\(\$this\-\>viewVars, EXTR_SKIP\);/', $contents);
 		$this->assertRegExp('/php echo \$variable/', $contents);
 
-		@unlink($filename);
+		unlink($filename);
 	}
 
 /**
@@ -323,21 +322,20 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testCacheCallbacks() {
-		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
 			'named' => array()
-		);
+		));
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => array(
 				'duration' => 21600,
 				'callbacks' => true
 			)
 		);
-		$this->Controller->here = '/cacheTest/cache_parsing';
-		$this->Controller->action = 'cache_parsing';
+		$this->Controller->request->here = '/cacheTest/cache_parsing';
+		$this->Controller->cache_parsing();
 
 		$View = new View($this->Controller);
 		$result = $View->render('index');
@@ -349,7 +347,7 @@ class CacheHelperTest extends CakeTestCase {
 
 		$this->assertRegExp('/\$controller->startupProcess\(\);/', $contents);
 
-		@unlink($filename);
+		unlink($filename);
 	}
 
 /**
@@ -358,18 +356,18 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testCacheActionArray() {
-		$this->Controller->cache_parsing();
 		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'pass' => array(),
 			'named' => array()
 		));
+		$this->Controller->request->here = '/cache_test/cache_parsing';
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
 		);
-		$this->Controller->request->here = '/cache_test/cache_parsing';
-		$this->Controller->action = 'cache_parsing';
+
+		$this->Controller->cache_parsing();
 
 		$View = new View($this->Controller);
 		$result = $View->render('index');
@@ -379,14 +377,26 @@ class CacheHelperTest extends CakeTestCase {
 
 		$filename = CACHE . 'views' . DS . 'cache_test_cache_parsing.php';
 		$this->assertTrue(file_exists($filename));
-		@unlink($filename);
+		unlink($filename);
+	}
 
-		$this->Controller->cache_parsing();
+/**
+ * Test that cacheAction works with camelcased controller names.
+ *
+ * @return void
+ */
+	public function testCacheActionArrayCamelCase() {
+		$this->Controller->request->addParams(array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'pass' => array(),
+			'named' => array()
+		));
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
 		);
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
-		$this->Controller->action = 'cache_parsing';
+		$this->Controller->cache_parsing();
 
 		$View = new View($this->Controller);
 		$result = $View->render('index');
@@ -396,29 +406,7 @@ class CacheHelperTest extends CakeTestCase {
 
 		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
 		$this->assertTrue(file_exists($filename));
-		@unlink($filename);
-
-		$this->Controller->cache_parsing();
-		$this->Controller->request->addParams(array(
-			'controller' => 'cache_test',
-			'action' => 'cache_parsing',
-			'pass' => array(),
-			'named' => array()
-		));
-		$this->Controller->cacheAction = array(
-			'some_other_action' => 21600
-		);
-		$this->Controller->request->here = '/cacheTest/cache_parsing';
-		$this->Controller->action = 'cache_parsing';
-
-		$View = new View($this->Controller);
-		$result = $View->render('index');
-
-		$this->assertNotRegExp('/cake:nocache/', $result);
-		$this->assertNotRegExp('/php echo/', $result);
-
-		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
-		$this->assertFalse(file_exists($filename));
+		unlink($filename);
 	}
 
 /**
@@ -452,7 +440,7 @@ class CacheHelperTest extends CakeTestCase {
 
 		$filename = CACHE . 'views' . DS . 'cache_test_cache_parsing_1_2_name_mark_ice_cream.php';
 		$this->assertTrue(file_exists($filename));
-		@unlink($filename);
+		unlink($filename);
 	}
 
 /**
@@ -484,7 +472,7 @@ class CacheHelperTest extends CakeTestCase {
 
 		$filename = CACHE . 'views' . DS . 'cache_test_cache_parsing_q_cakephp.php';
 		$this->assertTrue(file_exists($filename), 'Missing cache file ' . $filename);
-		@unlink($filename);
+		unlink($filename);
 	}
 
 /**
@@ -518,7 +506,7 @@ class CacheHelperTest extends CakeTestCase {
 
 		$filename = CACHE . 'views' . DS . 'en_cache_test_cache_parsing.php';
 		$this->assertTrue(file_exists($filename));
-		@unlink($filename);
+		unlink($filename);
 	}
 
 /**
@@ -553,7 +541,7 @@ class CacheHelperTest extends CakeTestCase {
 
 		$filename = CACHE . 'views' . DS . 'cache_cachetest_cache_name.php';
 		$this->assertTrue(file_exists($filename));
-		@unlink($filename);
+		unlink($filename);
 	}
 
 /**
@@ -657,6 +645,6 @@ class CacheHelperTest extends CakeTestCase {
 			'<\?php \$y = 1; \?>\s*' .
 			'<\?php echo \'cached count is: \' . \$x; \?>\s*' .
 			'@', $contents);
-		@unlink($filename);
+		unlink($filename);
 	}
 }

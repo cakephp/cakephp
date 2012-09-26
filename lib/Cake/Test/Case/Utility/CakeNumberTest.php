@@ -87,7 +87,7 @@ class CakeNumberTest extends CakeTestCase {
 			'before'	=> '',
 		));
 		$expected = '5&nbsp;199&nbsp;100&amp;001';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$value = 1000.45;
 		$result = $this->Number->format($value, array(
@@ -96,7 +96,7 @@ class CakeNumberTest extends CakeTestCase {
 			'escape'	=> false,
 		));
 		$expected = '$1,,000.a45';
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		$value = 519919827593784.00;
 		$this->Number->addFormat('RUR', array(
@@ -228,7 +228,7 @@ class CakeNumberTest extends CakeTestCase {
 		$this->Number->addFormat('Other2', array('before' => '$ ', 'after' => false));
 		$result = $this->Number->currency(0.22, 'Other2');
 		$expected = '$ 0.22';
-		$this->assertEquals($expected,$result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -482,6 +482,22 @@ class CakeNumberTest extends CakeTestCase {
 		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 * 1024);
 		$expected = (1024 * 1024) . '.00 TB';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test toReadableSize() with locales
+ *
+ * @return void
+ */
+	public function testReadableSizeLocalized() {
+		$restore = setlocale(LC_NUMERIC, 0);
+		setlocale(LC_NUMERIC, 'de_DE');
+		$result = $this->Number->toReadableSize(1321205);
+		$this->assertRegExp('/1[,.]26 MB/', $result);
+
+		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 512);
+		$this->assertRegExp('/512[,.]00 GB/', $result);
+		setlocale(LC_NUMERIC, $restore);
 	}
 
 /**

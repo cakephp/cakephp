@@ -273,7 +273,11 @@ class Article extends CakeTestModel {
  *
  * @var array
  */
-	public $validate = array('user_id' => 'numeric', 'title' => array('allowEmpty' => false, 'rule' => 'notEmpty'), 'body' => 'notEmpty');
+	public $validate = array(
+		'user_id' => 'numeric',
+		'title' => array('required' => false, 'rule' => 'notEmpty'),
+		'body' => array('required' => false, 'rule' => 'notEmpty'),
+	);
 
 /**
  * beforeSaveReturn property
@@ -294,7 +298,7 @@ class Article extends CakeTestModel {
 /**
  * titleDuplicate method
  *
- * @param mixed $title
+ * @param string $title
  * @return void
  */
 	public static function titleDuplicate($title) {
@@ -959,7 +963,7 @@ class Author extends CakeTestModel {
 /**
  * afterFind method
  *
- * @param mixed $results
+ * @param array $results
  * @return void
  */
 	public function afterFind($results, $primary = false) {
@@ -986,7 +990,7 @@ class ModifiedAuthor extends Author {
 /**
  * afterFind method
  *
- * @param mixed $results
+ * @param array $results
  * @return void
  */
 	public function afterFind($results, $primary = false) {
@@ -1208,7 +1212,7 @@ class NodeAfterFind extends CakeTestModel {
  * afterFind method
  *
  * @param mixed $results
- * @return void
+ * @return array
  */
 	public function afterFind($results, $primary = false) {
 		return $results;
@@ -2532,8 +2536,8 @@ class NumberTree extends CakeTestModel {
 /**
  * initialize method
  *
- * @param int $levelLimit
- * @param int $childLimit
+ * @param integer $levelLimit
+ * @param integer $childLimit
  * @param mixed $currentLevel
  * @param mixed $parent_id
  * @param string $prefix
@@ -3119,7 +3123,7 @@ class TranslatedItem2 extends CakeTestModel {
 /**
  * translateModel property
  *
- * @var string 'TranslateTestModel'
+ * @var string
  */
 	public $translateModel = 'TranslateWithPrefix';
 
@@ -3163,7 +3167,7 @@ class TranslatedItemWithTable extends CakeTestModel {
 /**
  * translateModel property
  *
- * @var string 'TranslateTestModel'
+ * @var string
  */
 	public $translateModel = 'TranslateTestModel';
 
@@ -3247,6 +3251,13 @@ class TranslatedArticle extends CakeTestModel {
  * @var array
  */
 	public $belongsTo = array('User');
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $hasMany = array('TranslatedItem');
 
 }
 
@@ -4942,6 +4953,13 @@ class CustomArticle extends AppModel {
 	public $findMethods = array('unPublished' => true);
 
 /**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array('User');
+
+/**
  * _findUnPublished custom find
  *
  * @return array
@@ -4952,6 +4970,20 @@ class CustomArticle extends AppModel {
 			return $query;
 		}
 		return $results;
+	}
+
+/**
+ * Alters title data
+ *
+ * @return void
+ **/
+	public function beforeValidate($options = array()) {
+		$this->data[$this->alias]['title'] = 'foo';
+		if ($this->findMethods['unPublished'] === true) {
+			$this->findMethods['unPublished'] = false;
+		} else {
+			$this->findMethods['unPublished'] = 'true again';
+		}
 	}
 
 }

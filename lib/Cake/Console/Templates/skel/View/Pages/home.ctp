@@ -116,7 +116,7 @@ if (isset($filePresent)):
 		endif;
 	?>
 </p>
-<?php endif;?>
+<?php endif; ?>
 <?php
 	App::uses('Validation', 'Utility');
 	if (!Validation::alphaNumeric('cakephp')) {

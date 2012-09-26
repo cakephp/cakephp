@@ -123,7 +123,8 @@ class JsHelperTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->_asset = Configure::read('Asset.timestamp');
+		parent::setUp();
+
 		Configure::write('Asset.timestamp', false);
 
 		$controller = null;
@@ -146,7 +147,7 @@ class JsHelperTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		Configure::write('Asset.timestamp', $this->_asset);
+		parent::tearDown();
 		unset($this->Js);
 	}
 
@@ -351,6 +352,7 @@ class JsHelperTest extends CakeTestCase {
 	public function testWriteScriptsInFile() {
 		$this->skipIf(!is_writable(JS), 'webroot/js is not Writable, script caching test has been skipped.');
 
+		Configure::write('Cache.disable', false);
 		$this->Js->request->webroot = '/';
 		$this->Js->JsBaseEngine = new TestJsEngineHelper($this->View);
 		$this->Js->buffer('one = 1;');
@@ -364,8 +366,14 @@ class JsHelperTest extends CakeTestCase {
 		$this->assertTrue(file_exists(WWW_ROOT . $filename[1]));
 		$contents = file_get_contents(WWW_ROOT . $filename[1]);
 		$this->assertRegExp('/one\s=\s1;\ntwo\s=\s2;/', $contents);
-
 		@unlink(WWW_ROOT . $filename[1]);
+
+		Configure::write('Cache.disable', true);
+		$this->Js->buffer('one = 1;');
+		$this->Js->buffer('two = 2;');
+		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'cache' => true));
+		$this->assertRegExp('/one\s=\s1;\ntwo\s=\s2;/', $result);
+		$this->assertFalse(file_exists(WWW_ROOT . $filename[1]));
 	}
 
 /**

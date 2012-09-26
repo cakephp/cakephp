@@ -34,20 +34,10 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		App::build(array(
 			'Locale' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS)
 		));
-		$this->_language = Configure::read('Config.language');
-	}
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		App::build();
-		Configure::write('Config.language', $this->_language);
 	}
 
 /**
@@ -235,6 +225,15 @@ class BasicsTest extends CakeTestCase {
 			'n' => '&nbsp;'
 		);
 		$this->assertEquals($expected, $result);
+
+		// Test that boolean values are not converted to strings
+		$result = h(false);
+		$this->assertFalse($result);
+
+		$arr = array('foo' => false, 'bar' => true);
+		$result = h($arr);
+		$this->assertFalse($result['foo']);
+		$this->assertTrue($result['bar']);
 
 		$obj = new stdClass();
 		$result = h($obj);
@@ -606,8 +605,17 @@ class BasicsTest extends CakeTestCase {
 	public function testLogError() {
 		@unlink(LOGS . 'error.log');
 
+		// disable stderr output for this test
+		if (CakeLog::stream('stderr')) {
+			CakeLog::disable('stderr');
+		}
+
 		LogError('Testing LogError() basic function');
 		LogError("Testing with\nmulti-line\nstring");
+
+		if (CakeLog::stream('stderr')) {
+			CakeLog::enable('stderr');
+		}
 
 		$result = file_get_contents(LOGS . 'error.log');
 		$this->assertRegExp('/Error: Testing LogError\(\) basic function/', $result);
@@ -691,7 +699,8 @@ class BasicsTest extends CakeTestCase {
 'this-is-a-test'
 ###########################
 EXPECTED;
-		$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT)), __LINE__ - 8);
+		$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -705,7 +714,7 @@ EXPECTED;
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT)), __LINE__ - 10);
+		$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -719,7 +728,7 @@ EXPECTED;
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT)), __LINE__ - 10);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -733,7 +742,7 @@ EXPECTED;
 </pre>
 </div>
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT)), __LINE__ - 10);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -754,9 +763,9 @@ EXPECTED;
 ###########################
 EXPECTED;
 		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT)), __LINE__ - 17);
+			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
 		} else {
-			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT)), __LINE__ - 19);
+			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
 		}
 		$this->assertEquals($expected, $result);
 
@@ -778,9 +787,9 @@ EXPECTED;
 ###########################
 EXPECTED;
 		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, substr(__FILE__, strlen(ROOT)), __LINE__ - 17);
+			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
 		} else {
-			$expected = sprintf($expectedHtml, substr(__FILE__, strlen(ROOT)), __LINE__ - 19);
+			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
 		}
 		$this->assertEquals($expected, $result);
 
@@ -793,7 +802,7 @@ EXPECTED;
 '<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT)), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -805,7 +814,7 @@ EXPECTED;
 '<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT)), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -817,7 +826,7 @@ EXPECTED;
 '<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
-		$expected = sprintf($expected, substr(__FILE__, strlen(ROOT)), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
 		$this->assertEquals($expected, $result);
 	}
 

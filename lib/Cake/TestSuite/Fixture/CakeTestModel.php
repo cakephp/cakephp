@@ -57,7 +57,7 @@ class CakeTestModel extends Model {
  * Overriding save() to set CakeTestSuiteDispatcher::date() as formatter for created, modified and updated fields
  *
  * @param array $data
- * @param mixed $validate
+ * @param boolean|array $validate
  * @param array $fieldList
  */
 

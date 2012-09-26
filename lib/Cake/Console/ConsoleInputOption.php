@@ -70,7 +70,7 @@ class ConsoleInputOption {
 /**
  * Make a new Input Option
  *
- * @param mixed $name The long name of the option, or an array with all the properties.
+ * @param string|array $name The long name of the option, or an array with all the properties.
  * @param string $short The short alias for this option
  * @param string $help The help text for this option
  * @param boolean $boolean Whether this option is a boolean option.  Boolean options don't consume extra tokens
@@ -93,7 +93,7 @@ class ConsoleInputOption {
 		}
 		if (strlen($this->_short) > 1) {
 			throw new ConsoleException(
-				__d('cake_console', 'Short options must be one letter.')
+				__d('cake_console', 'Short option "%s" is invalid, short options must be one letter.', $this->_short)
 			);
 		}
 	}

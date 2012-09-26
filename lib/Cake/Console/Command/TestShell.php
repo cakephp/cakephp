@@ -57,7 +57,7 @@ class TestShell extends Shell {
 			'help' => __d('cake_console', '<file> Log test execution in JUnit XML format to file.'),
 			'default' => false
 		))->addOption('log-json', array(
-			'help' => __d('cake_console', '<file> Log test execution in TAP format to file.'),
+			'help' => __d('cake_console', '<file> Log test execution in JSON format to file.'),
 			'default' => false
 		))->addOption('log-tap', array(
 			'help' => __d('cake_console', '<file> Log test execution in TAP format to file.'),
@@ -334,9 +334,9 @@ class TestShell extends Shell {
 /**
  * Find the test case for the passed file. The file could itself be a test.
  *
- * @param mixed $file
- * @param mixed $category 
- * @param mixed $throwOnMissingFile 
+ * @param string $file
+ * @param string $category 
+ * @param boolean $throwOnMissingFile 
  * @access protected
  * @return array(type, case)
  * @throws Exception
@@ -412,7 +412,7 @@ class TestShell extends Shell {
 /**
  * For the given file, what category of test is it? returns app, core or the name of the plugin
  *
- * @param mixed $file
+ * @param string $file
  * @access protected
  * @return string
  */

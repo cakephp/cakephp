@@ -70,13 +70,13 @@ class CakeNumber {
 /**
  * Formats a number with a level of precision.
  *
- * @param float $number	A floating point number.
+ * @param float $number A floating point number.
  * @param integer $precision The precision of the returned number.
  * @return float Formatted float.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
 	public static function precision($number, $precision = 3) {
-		return sprintf("%01.{$precision}f", $number);
+		return sprintf("%01.{$precision}F", $number);
 	}
 
 /**

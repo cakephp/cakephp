@@ -50,6 +50,8 @@ class PluginTaskTest extends CakeTestCase {
 			array($this->out, $this->out, $this->in)
 		);
 		$this->Task->path = TMP . 'tests' . DS;
+		$this->Task->bootstrap = TMP . 'tests' . DS . 'bootstrap.php';
+		touch($this->Task->bootstrap);
 
 		$this->_paths = $paths = App::path('plugins');
 		foreach ($paths as $i => $p) {
@@ -59,6 +61,18 @@ class PluginTaskTest extends CakeTestCase {
 		}
 		$this->_testPath = array_push($paths, TMP . 'tests' . DS);
 		App::build(array('plugins' => $paths));
+	}
+
+/**
+ * tearDown()
+ *
+ * @return void
+ */
+	public function tearDown() {
+		if (file_exists($this->Task->bootstrap)) {
+			unlink($this->Task->bootstrap);
+		}
+		parent::tearDown();
 	}
 
 /**

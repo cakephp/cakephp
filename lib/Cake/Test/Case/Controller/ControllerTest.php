@@ -97,14 +97,14 @@ class ControllerPost extends CakeTestModel {
 /**
  * find method
  *
- * @param mixed $type
+ * @param string $type
  * @param array $options
  * @return void
  */
 	public function find($type = 'first', $options = array()) {
 		if ($type == 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
-			$options = Set::merge($options, compact('conditions'));
+			$options = Hash::merge($options, compact('conditions'));
 			return parent::find('all', $options);
 		}
 		return parent::find($type, $options);
@@ -387,7 +387,7 @@ class AnotherTestController extends ControllerTestAppController {
 
 /**
  * merge parent
- * 
+ *
  * @var string
  */
 	protected $_mergeParent = 'ControllerTestAppController';
@@ -405,7 +405,10 @@ class ControllerTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.post', 'core.comment', 'core.name');
+	public $fixtures = array(
+		'core.post',
+		'core.comment'
+	);
 
 /**
  * reset environment.
@@ -425,9 +428,8 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		CakePlugin::unload();
-		App::build();
 		parent::tearDown();
+		CakePlugin::unload();
 	}
 
 /**
@@ -729,7 +731,8 @@ class ControllerTest extends CakeTestCase {
 			array(303, "See Other"),
 			array(304, "Not Modified"),
 			array(305, "Use Proxy"),
-			array(307, "Temporary Redirect")
+			array(307, "Temporary Redirect"),
+			array(403, "Forbidden"),
 		);
 	}
 
@@ -872,6 +875,33 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * Test that beforeRedirect works with returning an array from the controller method.
+ *
+ * @return void
+ */
+	public function testRedirectBeforeRedirectInControllerWithArray() {
+		$Controller = $this->getMock('Controller', array('_stop', 'beforeRedirect'));
+		$Controller->response = $this->getMock('CakeResponse', array('header'));
+		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
+
+		$Controller->expects($this->once())
+			->method('beforeRedirect')
+			->with('http://cakephp.org', null, true)
+			->will($this->returnValue(array(
+				'url' => 'http://example.org',
+				'status' => 302,
+				'exit' => true
+			)));
+
+		$Controller->response->expects($this->at(0))
+			->method('header')
+			->with('Location', 'http://example.org');
+
+		$Controller->expects($this->once())->method('_stop');
+		$Controller->redirect('http://cakephp.org');
+	}
+
+/**
  * testMergeVars method
  *
  * @return void
@@ -900,7 +930,7 @@ class ControllerTest extends CakeTestCase {
 
 		$this->assertEquals(0, count(array_diff_key($TestController->helpers, array_flip($helpers))));
 		$this->assertEquals(0, count(array_diff($TestController->uses, $uses)));
-		$this->assertEquals(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
+		$this->assertEquals(count(array_diff_assoc(Hash::normalize($TestController->components), Hash::normalize($components))), 0);
 
 		$expected = array('ControllerComment', 'ControllerAlias', 'ControllerPost');
 		$this->assertEquals($expected, $TestController->uses, '$uses was merged incorrectly, ControllerTestAppController models should be last.');
@@ -1277,7 +1307,7 @@ class ControllerTest extends CakeTestCase {
 		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named');
 		$this->assertEquals($expected, $Controller->paginate);
 
-		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$results = Hash::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEquals(array(1, 2, 3), $results);
 
 		$Controller->passedArgs = array();

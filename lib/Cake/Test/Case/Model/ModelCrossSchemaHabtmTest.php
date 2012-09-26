@@ -110,7 +110,7 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
 			),
 		));
 		$this->assertEquals(4, count($players));
-		$wizards = Set::extract('/Guild[name=Wizards]', $players);
+		$wizards = Hash::extract($players, '{n}.Guild.{n}[name=Wizards]');
 		$this->assertEquals(1, count($wizards));
 
 		$players = $Player->find('all', array(
@@ -120,7 +120,7 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
 			),
 		));
 		$this->assertEquals(1, count($players));
-		$wizards = Set::extract('/Guild', $players);
+		$wizards = Hash::extract($players, '{n}.Guild.{n}');
 		$this->assertEquals(2, count($wizards));
 	}
 
@@ -163,8 +163,7 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
 				),
 			),
 		));
-
-		$rangers = Set::extract('/Guild[name=Rangers]', $players);
+		$rangers = Hash::extract($players, '{n}.Guild.{n}[name=Rangers]');
 		$this->assertEquals(2, count($rangers));
 	}
 
@@ -214,7 +213,6 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
 			'Armor' => array(
 				'Armor' => array(
 					1, 2, 3, 4,
-					1, 2, 3, 4,
 				),
 			),
 		);
@@ -227,7 +225,7 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
 				'Player.id' => 10,
 			)
 		));
-		$spongeBobsArmors = Set::extract('/Armor', $spongebob);
+		$spongeBobsArmors = Hash::extract($spongebob, '{n}.Armor.{n}');
 		$this->assertEquals(4, count($spongeBobsArmors));
 	}
 }

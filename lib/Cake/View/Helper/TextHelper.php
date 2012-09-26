@@ -66,7 +66,7 @@ class TextHelper extends AppHelper {
  * @throws CakeException when the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
-		$settings = Set::merge(array('engine' => 'String'), $settings);
+		$settings = Hash::merge(array('engine' => 'String'), $settings);
 		parent::__construct($View, $settings);
 		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
 		App::uses($engineClass, $plugin . 'Utility');
@@ -101,8 +101,9 @@ class TextHelper extends AppHelper {
 		$this->_placeholders = array();
 		$options += array('escape' => true);
 
+		$pattern = '#(?<!href="|src="|">)((?:https?|ftp|nntp)://[^\s<>()]+\.[a-z]+(?:\/[^\s]+)?)#i';
 		$text = preg_replace_callback(
-			'#(?<!href="|src="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i',
+			$pattern,
 			array(&$this, '_insertPlaceHolder'),
 			$text
 		);

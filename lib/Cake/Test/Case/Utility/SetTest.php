@@ -80,67 +80,24 @@ class SetTest extends CakeTestCase {
 /**
  * testFilter method
  *
+ * @see Hash test cases, as Set::filter() is just a proxy.
  * @return void
  */
 	public function testFilter() {
 		$result = Set::filter(array('0', false, true, 0, array('one thing', 'I can tell you', 'is you got to be', false)));
 		$expected = array('0', 2 => true, 3 => 0, 4 => array('one thing', 'I can tell you', 'is you got to be'));
 		$this->assertSame($expected, $result);
-
-		$result = Set::filter(array(1, array(false)));
-		$expected = array(1);
-		$this->assertEquals($expected, $result);
-
-		$result = Set::filter(array(1, array(false, false)));
-		$expected = array(1);
-		$this->assertEquals($expected, $result);
-
-		$result = Set::filter(array(1, array('empty', false)));
-		$expected = array(1, array('empty'));
-		$this->assertEquals($expected, $result);
-
-		$result = Set::filter(array(1, array('2', false, array(3, null))));
-		$expected = array(1, array('2', 2 => array(3)));
-		$this->assertEquals($expected, $result);
-
-		$this->assertSame(array(), Set::filter(array()));
 	}
 
 /**
  * testNumericArrayCheck method
  *
+ * @see Hash test cases, as Set::numeric() is just a proxy.
  * @return void
  */
 	public function testNumericArrayCheck() {
 		$data = array('one');
 		$this->assertTrue(Set::numeric(array_keys($data)));
-
-		$data = array(1 => 'one');
-		$this->assertFalse(Set::numeric($data));
-
-		$data = array('one');
-		$this->assertFalse(Set::numeric($data));
-
-		$data = array('one' => 'two');
-		$this->assertFalse(Set::numeric($data));
-
-		$data = array('one' => 1);
-		$this->assertTrue(Set::numeric($data));
-
-		$data = array(0);
-		$this->assertTrue(Set::numeric($data));
-
-		$data = array('one', 'two', 'three', 'four', 'five');
-		$this->assertTrue(Set::numeric(array_keys($data)));
-
-		$data = array(1 => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five');
-		$this->assertTrue(Set::numeric(array_keys($data)));
-
-		$data = array('1' => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five');
-		$this->assertTrue(Set::numeric(array_keys($data)));
-
-		$data = array('one', 2 => 'two', 3 => 'three', 4 => 'four', 'a' => 'five');
-		$this->assertFalse(Set::numeric(array_keys($data)));
 	}
 
 /**
@@ -1388,6 +1345,33 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * Test that extract() + matching can hit null things.
+ */
+	public function testExtractMatchesNull() {
+		$data = array(
+			'Country' => array(
+				array('name' => 'Canada'),
+				array('name' => 'Australia'),
+				array('name' => null),
+			)
+		);
+		$result = Set::extract('/Country[name=/Canada|^$/]', $data);
+		$expected = array(
+			array(
+				'Country' => array(
+					'name' => 'Canada',
+				),
+			),
+			array(
+				'Country' => array(
+					'name' => null,
+				),
+			),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testMatches method
  *
  * @return void
@@ -1488,7 +1472,7 @@ class SetTest extends CakeTestCase {
 		);
 
 		$result = Set::extract($a, '{n}.Article.id');
-		$expected = array( 1, 2, 3 );
+		$expected = array(1, 2, 3);
 		$this->assertEquals($expected, $result);
 
 		$result = Set::extract($a, '{n}.Article.title');
@@ -1658,8 +1642,23 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * test classicExtract with keys that exceed 32bit max int.
+ *
+ * @return void
+ */
+	public function testClassicExtractMaxInt() {
+		$data = array(
+			'Data' => array(
+				'13376924712' => 'abc'
+			)
+		);
+		$this->assertEquals('abc', Set::classicExtract($data, 'Data.13376924712'));
+	}
+
+/**
  * testInsert method
  *
+ * @see Hash tests, as Set::insert() is just a proxy.
  * @return void
  */
 	public function testInsert() {
@@ -1669,55 +1668,8 @@ class SetTest extends CakeTestCase {
 
 		$result = Set::insert($a, 'files', array('name' => 'files'));
 		$expected = array(
-			'pages'     => array('name' => 'page'),
-			'files'		=> array('name' => 'files')
-		);
-		$this->assertEquals($expected, $result);
-
-		$a = array(
-			'pages' => array('name' => 'page')
-		);
-		$result = Set::insert($a, 'pages.name', array());
-		$expected = array(
-			'pages'     => array('name' => array()),
-		);
-		$this->assertEquals($expected, $result);
-
-		$a = array(
-			'pages' => array(
-				0 => array('name' => 'main'),
-				1 => array('name' => 'about')
-			)
-		);
-
-		$result = Set::insert($a, 'pages.1.vars', array('title' => 'page title'));
-		$expected = array(
-			'pages' => array(
-				0 => array('name' => 'main'),
-				1 => array('name' => 'about', 'vars' => array('title' => 'page title'))
-			)
-		);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * Test that insert() can insert data over a string value.
- *
- * @return void
- */
-	public function testInsertOverwriteStringValue() {
-		$data = array(
-			'Some' => array(
-				'string' => 'value'
-			)
-		);
-		$result = Set::insert($data, 'Some.string.value', array('values'));
-		$expected = array(
-			'Some' => array(
-				'string' => array(
-					'value' => array( 'values')
-				)
-			)
+			'pages' => array('name' => 'page'),
+			'files' => array('name' => 'files')
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -1729,34 +1681,14 @@ class SetTest extends CakeTestCase {
  */
 	public function testRemove() {
 		$a = array(
-			'pages'     => array('name' => 'page'),
-			'files'		=> array('name' => 'files')
+			'pages' => array('name' => 'page'),
+			'files' => array('name' => 'files')
 		);
 
 		$result = Set::remove($a, 'files');
 		$expected = array(
 			'pages'     => array('name' => 'page')
 		);
-		$this->assertEquals($expected, $result);
-
-		$a = array(
-			'pages' => array(
-				0 => array('name' => 'main'),
-				1 => array('name' => 'about', 'vars' => array('title' => 'page title'))
-			)
-		);
-
-		$result = Set::remove($a, 'pages.1.vars');
-		$expected = array(
-			'pages' => array(
-				0 => array('name' => 'main'),
-				1 => array('name' => 'about')
-			)
-		);
-		$this->assertEquals($expected, $result);
-
-		$result = Set::remove($a, 'pages.2.vars');
-		$expected = $a;
 		$this->assertEquals($expected, $result);
 	}
 
@@ -3132,26 +3064,18 @@ class SetTest extends CakeTestCase {
 		$data[9] = 'Shemp';
 		$result = Set::flatten($data);
 		$this->assertEquals($data, $result);
+	}
 
-		$data = array(
-			array(
-				'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post'),
-				'Author' => array('id' => '1', 'user' => 'nate', 'password' => 'foo'),
-			),
-			array(
-				'Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body'),
-				'Author' => array('id' => '3', 'user' => 'larry', 'password' => null),
-			)
-		);
-
-		$result = Set::flatten($data);
-		$expected = array(
-			'0.Post.id' => '1', '0.Post.author_id' => '1', '0.Post.title' => 'First Post', '0.Author.id' => '1',
-			'0.Author.user' => 'nate', '0.Author.password' => 'foo', '1.Post.id' => '2', '1.Post.author_id' => '3',
-			'1.Post.title' => 'Second Post', '1.Post.body' => 'Second Post Body', '1.Author.id' => '3',
-			'1.Author.user' => 'larry', '1.Author.password' => null
-		);
-		$this->assertEquals($expected, $result);
+/**
+ * Tests Set::expand
+ *
+ * @return void
+ */
+	public function testExpand() {
+		$data = array('My', 'Array', 'To', 'Flatten');
+		$flat = Set::flatten($data);
+		$result = Set::expand($flat);
+		$this->assertEquals($data, $result);
 	}
 
 /**

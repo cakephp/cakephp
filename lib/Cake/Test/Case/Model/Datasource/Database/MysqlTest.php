@@ -45,7 +45,7 @@ class MysqlTest extends CakeTestCase {
 	public $fixtures = array(
 		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment',
 		'core.sample', 'core.tag', 'core.user', 'core.post', 'core.author', 'core.data_test',
-		'core.binary_test'
+		'core.binary_test', 'core.inno'
 	);
 
 /**
@@ -147,8 +147,8 @@ class MysqlTest extends CakeTestCase {
 	public function testLocalizedFloats() {
 		$this->skipIf(DS === '\\', 'The locale is not supported in Windows and affect the others tests.');
 
-		$restore = setlocale(LC_ALL, 0);
-		setlocale(LC_ALL, 'de_DE');
+		$restore = setlocale(LC_NUMERIC, 0);
+		setlocale(LC_NUMERIC, 'de_DE');
 
 		$result = $this->Dbo->value(3.141593);
 		$this->assertEquals('3.141593', $result);
@@ -171,7 +171,7 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->db->value(2.2E-54);
 		$this->assertEquals('2.2E-54', (string)$result);
 
-		setlocale(LC_ALL, $restore);
+		setlocale(LC_NUMERIC, $restore);
 	}
 
 /**
@@ -839,6 +839,45 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
+ * Test that two columns with key => primary doesn't create invalid sql.
+ *
+ * @return void
+ */
+	public function testTwoColumnsWithPrimaryKey() {
+		$schema = new CakeSchema(array(
+			'connection' => 'test',
+			'roles_users' => array(
+				'role_id' => array(
+					'type' => 'integer',
+					'null' => false,
+					'default' => null,
+					'key' => 'primary'
+				),
+				'user_id' => array(
+					'type' => 'integer',
+					'null' => false,
+					'default' => null,
+					'key' => 'primary'
+				),
+				'indexes' => array(
+					'user_role_index' => array(
+						'column' => array('role_id', 'user_id'),
+						'unique' => 1
+					),
+					'user_index' => array(
+						'column' => 'user_id',
+						'unique' => 0
+					)
+				),
+			)
+		));
+
+		$result = $this->Dbo->createSchema($schema);
+		$this->assertContains('`role_id` int(11) NOT NULL,', $result);
+		$this->assertContains('`user_id` int(11) NOT NULL,', $result);
+	}
+
+/**
  * Tests that listSources method sends the correct query and parses the result accordingly
  * @return void
  */
@@ -1051,7 +1090,7 @@ class MysqlTest extends CakeTestCase {
 /**
  * buildRelatedModels method
  *
- * @param mixed $model
+ * @param Model $model
  * @return void
  */
 	protected function _buildRelatedModels(Model $model) {
@@ -1071,9 +1110,9 @@ class MysqlTest extends CakeTestCase {
 /**
  * &_prepareAssociationQuery method
  *
- * @param mixed $model
- * @param mixed $queryData
- * @param mixed $binding
+ * @param Model $model
+ * @param array $queryData
+ * @param array $binding
  * @return void
  */
 	protected function &_prepareAssociationQuery(Model $model, &$queryData, $binding) {
@@ -1981,6 +2020,25 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
+ * test that - in conditions and field names works
+ *
+ * @return void
+ */
+	public function testHypenInStringConditionsAndFieldNames() {
+		$result = $this->Dbo->conditions('I18n__title_pt-br.content = "test"');
+		$this->assertEquals(' WHERE `I18n__title_pt-br`.`content` = "test"', $result);
+
+		$result = $this->Dbo->conditions('Model.field=NOW()-3600');
+		$this->assertEquals(' WHERE `Model`.`field`=NOW()-3600', $result);
+
+		$result = $this->Dbo->conditions('NOW() - Model.created < 7200');
+		$this->assertEquals(' WHERE NOW() - `Model`.`created` < 7200', $result);
+
+		$result = $this->Dbo->conditions('NOW()-Model.created < 7200');
+		$this->assertEquals(' WHERE NOW()-`Model`.`created` < 7200', $result);
+	}
+
+/**
  * testParenthesisInStringConditions method
  *
  * @return void
@@ -2371,10 +2429,10 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testConditionsOptionalArguments() {
-		$result = $this->Dbo->conditions( array('Member.name' => 'Mariano'), true, false);
+		$result = $this->Dbo->conditions(array('Member.name' => 'Mariano'), true, false);
 		$this->assertRegExp('/^\s*`Member`.`name`\s*=\s*\'Mariano\'\s*$/', $result);
 
-		$result = $this->Dbo->conditions( array(), true, false);
+		$result = $this->Dbo->conditions(array(), true, false);
 		$this->assertRegExp('/^\s*1\s*=\s*1\s*$/', $result);
 	}
 
@@ -3579,4 +3637,45 @@ class MysqlTest extends CakeTestCase {
 			->with("TRUNCATE TABLE `$schema`.`tbl_articles`");
 		$this->Dbo->truncate('articles');
 	}
+
+/**
+ * Test nested transaction
+ *
+ * @return void
+ */
+	public function testNestedTransaction() {
+		$nested = $this->Dbo->useNestedTransactions;
+		$this->Dbo->useNestedTransactions = true;
+		if ($this->Dbo->nestedTransactionSupported() === false) {
+			$this->Dbo->useNestedTransactions = $nested;
+			$this->skipIf(true, 'The MySQL server do not support nested transaction');
+		}
+
+		$this->loadFixtures('Inno');
+		$model = ClassRegistry::init('Inno');
+		$model->hasOne = $model->hasMany = $model->belongsTo = $model->hasAndBelongsToMany = array();
+		$model->cacheQueries = false;
+		$this->Dbo->cacheMethods = false;
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertNotEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertTrue($model->delete(1));
+		$this->assertEmpty($model->read(null, 1));
+		$this->assertTrue($this->Dbo->rollback());
+		$this->assertNotEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->begin());
+		$this->assertTrue($model->delete(1));
+		$this->assertEmpty($model->read(null, 1));
+		$this->assertTrue($this->Dbo->commit());
+		$this->assertEmpty($model->read(null, 1));
+
+		$this->assertTrue($this->Dbo->rollback());
+		$this->assertNotEmpty($model->read(null, 1));
+
+		$this->Dbo->useNestedTransactions = $nested;
+	}
+
 }

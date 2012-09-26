@@ -16,14 +16,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<div class="<?php echo $pluralVar;?> index">
-<h2><?php echo $pluralHumanName;?></h2>
+<div class="<?php echo $pluralVar; ?> index">
+<h2><?php echo $pluralHumanName; ?></h2>
 <table cellpadding="0" cellspacing="0">
 <tr>
-<?php foreach ($scaffoldFields as $_field):?>
-	<th><?php echo $this->Paginator->sort($_field);?></th>
-<?php endforeach;?>
-	<th><?php echo __d('cake', 'Actions');?></th>
+<?php foreach ($scaffoldFields as $_field): ?>
+	<th><?php echo $this->Paginator->sort($_field); ?></th>
+<?php endforeach; ?>
+	<th><?php echo __d('cake', 'Actions'); ?></th>
 </tr>
 <?php
 $i = 0;

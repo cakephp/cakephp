@@ -17,7 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('CakeLogInterface', 'Log');
+App::uses('BaseLog', 'Log/Engine');
 
 /**
  * File Storage stream for Logging.  Writes logs to different files
@@ -25,7 +25,7 @@ App::uses('CakeLogInterface', 'Log');
  *
  * @package       Cake.Log.Engine
  */
-class FileLog implements CakeLogInterface {
+class FileLog extends BaseLog {
 
 /**
  * Path to save log files on.
@@ -37,15 +37,29 @@ class FileLog implements CakeLogInterface {
 /**
  * Constructs a new File Logger.
  *
- * Options
+ * Config
  *
+ * - `types` string or array, levels the engine is interested in
+ * - `scopes` string or array, scopes the engine is interested in
+ * - `file` log file name
  * - `path` the path to save logs on.
  *
  * @param array $options Options for the FileLog, see above.
  */
-	public function __construct($options = array()) {
-		$options += array('path' => LOGS);
-		$this->_path = $options['path'];
+	public function __construct($config = array()) {
+		parent::__construct($config);
+		$config = Hash::merge(array(
+			'path' => LOGS,
+			'file' => null,
+			'types' => null,
+			'scopes' => array(),
+			), $this->_config);
+		$config = $this->config($config);
+		$this->_path = $config['path'];
+		$this->_file = $config['file'];
+		if (!empty($this->_file) && !preg_match('/\.log$/', $this->_file)) {
+			$this->_file .= '.log';
+		}
 	}
 
 /**
@@ -58,10 +72,14 @@ class FileLog implements CakeLogInterface {
 	public function write($type, $message) {
 		$debugTypes = array('notice', 'info', 'debug');
 
-		if ($type == 'error' || $type == 'warning') {
+		if (!empty($this->_file)) {
+			$filename = $this->_path . $this->_file;
+		} elseif ($type == 'error' || $type == 'warning') {
 			$filename = $this->_path . 'error.log';
 		} elseif (in_array($type, $debugTypes)) {
 			$filename = $this->_path . 'debug.log';
+		} elseif (in_array($type, $this->_config['scopes'])) {
+			$filename = $this->_path . $this->_file;
 		} else {
 			$filename = $this->_path . $type . '.log';
 		}

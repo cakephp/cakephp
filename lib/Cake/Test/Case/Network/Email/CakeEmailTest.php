@@ -81,6 +81,8 @@ class EmailConfig {
 		'to' => array('test@example.com' => 'Testname'),
 		'subject' => 'Test mail subject',
 		'transport' => 'Debug',
+		'theme' => 'TestTheme',
+		'helpers' => array('Html', 'Form'),
 	);
 
 }
@@ -388,6 +390,38 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testDomain method
+ *
+ * @return void
+ */
+	public function testDomain() {
+		$result = $this->CakeEmail->domain();
+		$expected = env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n');
+		$this->assertSame($expected, $result);
+
+		$this->CakeEmail->domain('example.org');
+		$result = $this->CakeEmail->domain();
+		$expected = 'example.org';
+		$this->assertSame($expected, $result);
+	}
+
+/**
+ * testMessageIdWithDomain method
+ *
+ * @return void
+ */
+	public function testMessageIdWithDomain() {
+		$result = $this->CakeEmail->getHeaders();
+		$expected = '@' . (env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n')) . '>';
+		$this->assertTextContains($expected, $result['Message-ID']);
+
+		$this->CakeEmail->domain('example.org');
+		$result = $this->CakeEmail->getHeaders();
+		$expected = '@example.org>';
+		$this->assertTextContains($expected, $result['Message-ID']);
+	}
+
+/**
  * testSubject method
  *
  * @return void
@@ -569,6 +603,19 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testTheme method
+ *
+ * @return void
+ */
+	public function testTheme() {
+		$this->assertSame(null, $this->CakeEmail->theme());
+
+		$this->CakeEmail->theme('default');
+		$expected = 'default';
+		$this->assertSame($expected, $this->CakeEmail->theme());
+	}
+
+/**
  * testViewVars method
  *
  * @return void
@@ -679,11 +726,17 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->subject();
 		$this->assertEquals($configs->test['subject'], $result);
 
+		$result = $this->CakeEmail->theme();
+		$this->assertEquals($configs->test['theme'], $result);
+
 		$result = $this->CakeEmail->transport();
 		$this->assertEquals($configs->test['transport'], $result);
 
 		$result = $this->CakeEmail->transportClass();
 		$this->assertInstanceOf('DebugTransport', $result);
+
+		$result = $this->CakeEmail->helpers();
+		$this->assertEquals($configs->test['helpers'], $result);
 	}
 
 /**
@@ -959,6 +1012,28 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendRenderThemed method
+ *
+ * @return void
+ */
+	public function testSendRenderThemed() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->theme('TestTheme');
+		$this->CakeEmail->template('themed', 'default');
+		$result = $this->CakeEmail->send();
+
+		$this->assertContains('In TestTheme', $result['message']);
+		$this->assertContains('Message-ID: ', $result['headers']);
+		$this->assertContains('To: ', $result['headers']);
+	}
+
+/**
  * testSendRenderWithVars method
  *
  * @return void
@@ -1029,6 +1104,32 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendRenderWithImage method
+ *
+ * @return void
+ */
+	public function testSendRenderWithImage() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('Debug');
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->template('image');
+		$this->CakeEmail->emailFormat('html');
+		$server = env('SERVER_NAME') ? env('SERVER_NAME') : 'localhost';
+
+		if (env('SERVER_PORT') != null && env('SERVER_PORT') != 80) {
+			$server .= ':' . env('SERVER_PORT');
+		}
+
+		$expected = '<img src="http://' . $server . '/img/image.gif" alt="cool image" width="100" height="100" />';
+		$result = $this->CakeEmail->send();
+		$this->assertContains($expected, $result['message']);
+	}
+
+/**
  * testSendRenderPlugin method
  *
  * @return void
@@ -1057,6 +1158,12 @@ class CakeEmailTest extends CakeTestCase {
 		$result = $this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'plug_default')->send();
 		$this->assertContains('Into TestPlugin.', $result['message']);
 		$this->assertContains('This email was sent using the TestPlugin.', $result['message']);
+
+		// test plugin template overridden by theme
+		$this->CakeEmail->theme('TestTheme');
+		$result = $this->CakeEmail->send();
+
+		$this->assertContains('Into TestPlugin. (themed)', $result['message']);
 
 		$this->CakeEmail->viewVars(array('value' => 12345));
 		$result = $this->CakeEmail->template('custom', 'TestPlugin.plug_default')->send();
@@ -1215,10 +1322,25 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testReset() {
 		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->theme('TestTheme');
 		$this->assertSame($this->CakeEmail->to(), array('cake@cakephp.org' => 'cake@cakephp.org'));
 
 		$this->CakeEmail->reset();
 		$this->assertSame($this->CakeEmail->to(), array());
+		$this->assertSame(null, $this->CakeEmail->theme());
+	}
+
+/**
+ * testReset with charset
+ *
+ * @return void
+ */
+	public function testResetWithCharset() {
+		$this->CakeEmail->charset = 'ISO-2022-JP';
+		$this->CakeEmail->reset();
+
+		$this->assertSame($this->CakeEmail->charset, 'utf-8', $this->CakeEmail->charset);
+		$this->assertSame($this->CakeEmail->headerCharset, null, $this->CakeEmail->headerCharset);
 	}
 
 /**
@@ -1447,15 +1569,64 @@ class CakeEmailTest extends CakeTestCase {
 
 		$email->to('someone@example.com')->from('someone@example.com');
 		$result = $email->send('ってテーブルを作ってやってたらう');
-		$this->assertContains('Content-Type: text/plain; charset=iso-2022-jp', $result['headers']);
+		$this->assertContains('Content-Type: text/plain; charset=ISO-2022-JP', $result['headers']);
 		$this->assertContains(mb_convert_encoding('ってテーブルを作ってやってたらう','ISO-2022-JP'), $result['message']);
+	}
+
+/**
+ * Tests that the body is encoded using the configured charset (Japanese standard encoding)
+ *
+ * @return void
+ */
+	public function testBodyEncodingIso2022Jp() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+		$email = new CakeEmail(array(
+			'charset' => 'iso-2022-jp',
+			'headerCharset' => 'iso-2022-jp',
+			'transport' => 'Debug'
+		));
+		$email->subject('あれ？もしかしての前と');
+		$headers = $email->getHeaders(array('subject'));
+		$expected = "?ISO-2022-JP?B?GyRCJCIkbCEpJGIkNyQrJDckRiROQTAkSBsoQg==?=";
+		$this->assertContains($expected, $headers['Subject']);
+
+		$email->to('someone@example.com')->from('someone@example.com');
+		$result = $email->send('①㈱');
+		$this->assertTextContains("Content-Type: text/plain; charset=ISO-2022-JP", $result['headers']);
+		$this->assertTextNotContains("Content-Type: text/plain; charset=ISO-2022-JP-MS", $result['headers']); // not charset=iso-2022-jp-ms
+		$this->assertTextNotContains(mb_convert_encoding('①㈱','ISO-2022-JP-MS'), $result['message']);
+	}
+
+/**
+ * Tests that the body is encoded using the configured charset (Japanese irregular encoding, but sometime use this)
+ *
+ * @return void
+ */
+	public function testBodyEncodingIso2022JpMs() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+		$email = new CakeEmail(array(
+			'charset' => 'iso-2022-jp-ms',
+			'headerCharset' => 'iso-2022-jp-ms',
+			'transport' => 'Debug'
+		));
+		$email->subject('あれ？もしかしての前と');
+		$headers = $email->getHeaders(array('subject'));
+		$expected = "?ISO-2022-JP?B?GyRCJCIkbCEpJGIkNyQrJDckRiROQTAkSBsoQg==?=";
+		$this->assertContains($expected, $headers['Subject']);
+
+		$email->to('someone@example.com')->from('someone@example.com');
+		$result = $email->send('①㈱');
+		$this->assertTextContains("Content-Type: text/plain; charset=ISO-2022-JP", $result['headers']);
+		$this->assertTextNotContains("Content-Type: text/plain; charset=iso-2022-jp-ms", $result['headers']); // not charset=iso-2022-jp-ms
+		$this->assertContains(mb_convert_encoding('①㈱','ISO-2022-JP-MS'), $result['message']);
 	}
 
 	protected function _checkContentTransferEncoding($message, $charset) {
 		$boundary = '--alt-' . $this->CakeEmail->getBoundary();
 		$result['text'] = false;
 		$result['html'] = false;
-		for ($i = 0; $i < count($message); ++$i) {
+		$length = count($message);
+		for ($i = 0; $i < $length; ++$i) {
 			if ($message[$i] == $boundary) {
 				$flag = false;
 				$type = '';
@@ -1497,4 +1668,130 @@ class CakeEmailTest extends CakeTestCase {
 			" =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=";
 		$this->assertSame($expected, $result);
 	}
+
+/**
+ * Tests charset setter/getter
+ *
+ * @return void
+ */
+	public function testCharset() {
+		$this->CakeEmail->charset('UTF-8');
+		$this->assertSame($this->CakeEmail->charset(), 'UTF-8');
+
+		$this->CakeEmail->charset('ISO-2022-JP');
+		$this->assertSame($this->CakeEmail->charset(), 'ISO-2022-JP');
+
+		$charset = $this->CakeEmail->charset('Shift_JIS');
+		$this->assertSame($charset, 'Shift_JIS');
+	}
+
+/**
+ * Tests headerCharset setter/getter
+ *
+ * @return void
+ */
+	public function testHeaderCharset() {
+		$this->CakeEmail->headerCharset('UTF-8');
+		$this->assertSame($this->CakeEmail->headerCharset(), 'UTF-8');
+
+		$this->CakeEmail->headerCharset('ISO-2022-JP');
+		$this->assertSame($this->CakeEmail->headerCharset(), 'ISO-2022-JP');
+
+		$charset = $this->CakeEmail->headerCharset('Shift_JIS');
+		$this->assertSame($charset, 'Shift_JIS');
+	}
+
+/**
+ * Tests for compatible check.
+ *          charset property and       charset() method.
+ *    headerCharset property and headerCharset() method.
+ */
+	public function testCharsetsCompatible() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+
+		$checkHeaders = array(
+			'from' => true,
+			'to' => true,
+			'cc' => true,
+			'subject' => true,
+		);
+
+		// Header Charset : null (used by default UTF-8)
+		//   Body Charset : ISO-2022-JP
+		$oldStyleEmail = $this->_getEmailByOldStyleCharset('iso-2022-jp', null);
+		$oldStyleHeaders = $oldStyleEmail->getHeaders($checkHeaders);
+
+		$newStyleEmail = $this->_getEmailByNewStyleCharset('iso-2022-jp', null);
+		$newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
+
+		$this->assertSame($oldStyleHeaders['From'],    $newStyleHeaders['From']);
+		$this->assertSame($oldStyleHeaders['To'],      $newStyleHeaders['To']);
+		$this->assertSame($oldStyleHeaders['Cc'],      $newStyleHeaders['Cc']);
+		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
+
+		// Header Charset : UTF-8
+		//   Boby Charset : ISO-2022-JP
+		$oldStyleEmail = $this->_getEmailByOldStyleCharset('iso-2022-jp', 'utf-8');
+		$oldStyleHeaders = $oldStyleEmail->getHeaders($checkHeaders);
+
+		$newStyleEmail = $this->_getEmailByNewStyleCharset('iso-2022-jp', 'utf-8');
+		$newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
+
+		$this->assertSame($oldStyleHeaders['From'],    $newStyleHeaders['From']);
+		$this->assertSame($oldStyleHeaders['To'],      $newStyleHeaders['To']);
+		$this->assertSame($oldStyleHeaders['Cc'],      $newStyleHeaders['Cc']);
+		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
+
+		// Header Charset : ISO-2022-JP
+		//   Boby Charset : UTF-8
+		$oldStyleEmail = $this->_getEmailByOldStyleCharset('utf-8', 'iso-2022-jp');
+		$oldStyleHeaders = $oldStyleEmail->getHeaders($checkHeaders);
+
+		$newStyleEmail = $this->_getEmailByNewStyleCharset('utf-8', 'iso-2022-jp');
+		$newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
+
+		$this->assertSame($oldStyleHeaders['From'],    $newStyleHeaders['From']);
+		$this->assertSame($oldStyleHeaders['To'],      $newStyleHeaders['To']);
+		$this->assertSame($oldStyleHeaders['Cc'],      $newStyleHeaders['Cc']);
+		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
+	}
+
+	protected function _getEmailByOldStyleCharset($charset, $headerCharset) {
+		$email = new CakeEmail(array('transport' => 'Debug'));
+
+		if (! empty($charset)) {
+			$email->charset = $charset;
+		}
+		if (! empty($headerCharset)) {
+			$email->headerCharset = $headerCharset;
+		}
+
+		$email->from('someone@example.com', 'どこかの誰か');
+		$email->to('someperson@example.jp', 'どこかのどなたか');
+		$email->cc('miku@example.net', 'ミク');
+		$email->subject('テストメール');
+		$email->send('テストメールの本文');
+
+		return $email;
+	}
+
+	protected function _getEmailByNewStyleCharset($charset, $headerCharset) {
+		$email = new CakeEmail(array('transport' => 'Debug'));
+
+		if (! empty($charset)) {
+			$email->charset($charset);
+		}
+		if (! empty($headerCharset)) {
+			$email->headerCharset($headerCharset);
+		}
+
+		$email->from('someone@example.com', 'どこかの誰か');
+		$email->to('someperson@example.jp', 'どこかのどなたか');
+		$email->cc('miku@example.net', 'ミク');
+		$email->subject('テストメール');
+		$email->send('テストメールの本文');
+
+		return $email;
+	}
+
 }

@@ -271,12 +271,14 @@ class CookieComponentTest extends CakeTestCase {
 		$expected = array(
 			'name' => $this->Cookie->name . '[Testing]',
 			'value' => '[1,2,3]',
-			'expire' => time() + 10,
 			'path' => '/',
 			'domain' => '',
 			'secure' => false,
 			'httpOnly' => false);
 		$result = $this->Controller->response->cookie($this->Cookie->name . '[Testing]');
+
+		$this->assertWithinMargin($result['expire'], time() + 10, 1);
+		unset($result['expire']);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -514,14 +516,14 @@ class CookieComponentTest extends CakeTestCase {
  */
 	public function testReadEmpty() {
 		$_COOKIE['CakeTestCookie'] = array(
-		  'JSON' => '{"name":"value"}',
-		  'Empty' => '',
-		  'String' => '{"somewhat:"broken"}'
+			'JSON' => '{"name":"value"}',
+			'Empty' => '',
+			'String' => '{"somewhat:"broken"}'
 		);
-		$this->assertEqual(array('name' => 'value'), $this->Cookie->read('JSON'));
-		$this->assertEqual('value', $this->Cookie->read('JSON.name'));
-		$this->assertEqual('', $this->Cookie->read('Empty'));
-		$this->assertEqual('{"somewhat:"broken"}', $this->Cookie->read('String'));
+		$this->assertEquals(array('name' => 'value'), $this->Cookie->read('JSON'));
+		$this->assertEquals('value', $this->Cookie->read('JSON.name'));
+		$this->assertEquals('', $this->Cookie->read('Empty'));
+		$this->assertEquals('{"somewhat:"broken"}', $this->Cookie->read('String'));
 	}
 
 /**
@@ -589,7 +591,7 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * encrypt method
  *
- * @param mixed $value
+ * @param array|string $value
  * @return string
  */
 	protected function __encrypt($value) {

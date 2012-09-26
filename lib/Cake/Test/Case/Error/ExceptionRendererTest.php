@@ -174,10 +174,10 @@ class ExceptionRendererTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}
-		parent::tearDown();
 	}
 
 /**
@@ -275,6 +275,36 @@ class ExceptionRendererTest extends CakeTestCase {
 		$this->assertInstanceOf('CakeErrorController', $ExceptionRenderer->controller);
 		$this->assertEquals('error400', $ExceptionRenderer->method);
 		$this->assertEquals($exception, $ExceptionRenderer->error);
+	}
+
+/**
+ * test that helpers in custom CakeErrorController are not lost
+ */
+	public function testCakeErrorHelpersNotLost() {
+		$testApp = CAKE . 'Test' . DS . 'test_app' . DS;
+		App::build(array(
+			'Controller' => array(
+				$testApp . 'Controller' . DS
+			),
+			'View/Helper' => array(
+				$testApp . 'View' . DS . 'Helper' . DS
+			),
+			'View/Layouts' => array(
+				$testApp . 'View' . DS . 'Layouts' . DS
+			),
+			'Error' => array(
+				$testApp . 'Error' . DS
+			),
+		), App::RESET);
+
+		App::uses('TestAppsExceptionRenderer', 'Error');
+		$exception = new SocketException('socket exception');
+		$renderer = new TestAppsExceptionRenderer($exception);
+
+		ob_start();
+		$renderer->render();
+		$result = ob_get_clean();
+		$this->assertContains('<b>peeled</b>', $result);
 	}
 
 /**
@@ -522,10 +552,19 @@ class ExceptionRendererTest extends CakeTestCase {
 				500
 			),
 			array(
-				new MissingConnectionException(array('class' => 'Article')),
+				new MissingConnectionException(array('class' => 'Mysql')),
 				array(
 					'/<h2>Missing Database Connection<\/h2>/',
-					'/Article requires a database connection/'
+					'/A Database connection using "Mysql" was missing or unable to connect./',
+				),
+				500
+			),
+			array(
+				new MissingConnectionException(array('class' => 'Mysql', 'enabled' => false)),
+				array(
+					'/<h2>Missing Database Connection<\/h2>/',
+					'/A Database connection using "Mysql" was missing or unable to connect./',
+					'/Mysql driver is NOT enabled/'
 				),
 				500
 			),

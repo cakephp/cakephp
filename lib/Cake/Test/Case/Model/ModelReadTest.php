@@ -80,7 +80,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEquals(2, count($result['SomethingElse']));
 
-		$doomed = Set::extract('/JoinThing/doomed', $result['SomethingElse']);
+		$doomed = Hash::extract($result['SomethingElse'], '{n}.JoinThing.doomed');
 		$this->assertTrue(in_array(true, $doomed));
 		$this->assertTrue(in_array(false, $doomed));
 	}
@@ -320,8 +320,8 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params, false);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-			   isset($result[0][$this->db->fullTableName('articles', false, false)])
-			|| isset($result[0][0])
+			isset($result[0][$this->db->fullTableName('articles', false, false)]) ||
+			isset($result[0][0])
 		);
 		$result = $this->db->getQueryCache($query, $params);
 		$this->assertTrue(empty($result));
@@ -334,8 +334,8 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $params);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-			   isset($result[0][$this->db->fullTableName('articles', false, false)]['title'])
-			|| isset($result[0][0]['title'])
+			isset($result[0][$this->db->fullTableName('articles', false, false)]['title']) ||
+			isset($result[0][0]['title'])
 		);
 
 		//related to ticket #5035
@@ -3015,7 +3015,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Apple', 'Sample');
 		$Apple = new Apple();
 		$result = $Apple->find('threaded');
-		$result = Set::extract($result, '{n}.children');
+		$result = Hash::extract($result, '{n}.children');
 		$expected = array(array(), array(), array(), array(), array(), array(),	array());
 		$this->assertEquals($expected, $result);
 	}
@@ -3030,7 +3030,7 @@ class ModelReadTest extends BaseModelTest {
 		$Model = new Person();
 		$Model->recursive = -1;
 		$result = $Model->find('threaded');
-		$result = Set::extract($result, '{n}.children');
+		$result = Hash::extract($result, '{n}.children');
 		$expected = array(array(), array(), array(), array(), array(), array(),	array());
 		$this->assertEquals($expected, $result);
 
@@ -3736,6 +3736,30 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test find(neighbors) with missing fields so no neighbors are found.
+ *
+ * @return
+ */
+	public function testFindNeighborsNoPrev() {
+		$this->loadFixtures('User', 'Article', 'Comment', 'Tag', 'ArticlesTag', 'Attachment');
+		$Article = new Article();
+
+		$result = $Article->find('neighbors', array(
+			'field' => 'Article.title',
+			'value' => 'Second Article',
+			'fields' => array('id'),
+			'conditions' => array(
+				'Article.title LIKE' => '%Article%'
+			),
+			'recursive' => 0,
+		));
+		$expected = array(
+			'prev' => null,
+			'next' => null
+		);
+		$this->assertEquals($expected, $result);
+	}
 /**
  * testFindCombinedRelations method
  *
@@ -5061,19 +5085,19 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Author');
 		$TestModel = new ModifiedAuthor();
 
-		$result = Set::extract($TestModel->find('all'), '/Author/user');
+		$result = Hash::extract($TestModel->find('all'), '{n}.Author.user');
 		$expected = array('mariano (CakePHP)', 'nate (CakePHP)', 'larry (CakePHP)', 'garrett (CakePHP)');
 		$this->assertEquals($expected, $result);
 
-		$result = Set::extract($TestModel->find('all', array('callbacks' => 'after')), '/Author/user');
+		$result = Hash::extract($TestModel->find('all', array('callbacks' => 'after')), '{n}.Author.user');
 		$expected = array('mariano (CakePHP)', 'nate (CakePHP)', 'larry (CakePHP)', 'garrett (CakePHP)');
 		$this->assertEquals($expected, $result);
 
-		$result = Set::extract($TestModel->find('all', array('callbacks' => 'before')), '/Author/user');
+		$result = Hash::extract($TestModel->find('all', array('callbacks' => 'before')), '{n}.Author.user');
 		$expected = array('mariano', 'nate', 'larry', 'garrett');
 		$this->assertEquals($expected, $result);
 
-		$result = Set::extract($TestModel->find('all', array('callbacks' => false)), '/Author/user');
+		$result = Hash::extract($TestModel->find('all', array('callbacks' => false)), '{n}.Author.user');
 		$expected = array('mariano', 'nate', 'larry', 'garrett');
 		$this->assertEquals($expected, $result);
 	}
@@ -6512,7 +6536,7 @@ class ModelReadTest extends BaseModelTest {
 			$this->assertEquals($expected, $result);
 		}
 
-		$result = Set::combine(
+		$result = Hash::combine(
 			$TestModel->find('all', array(
 				'order' => 'Article.title ASC',
 				'fields' => array('id', 'title')
@@ -6526,7 +6550,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = Set::combine(
+		$result = Hash::combine(
 			$TestModel->find('all', array(
 				'order' => 'Article.title ASC'
 			)),
@@ -6563,7 +6587,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEquals($expected, $result);
 
-		$result = Set::combine(
+		$result = Hash::combine(
 			$TestModel->find('all', array(
 				'order' => 'Article.title ASC'
 			)),
@@ -6602,7 +6626,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEquals($expected, $result);
 
-		$result = Set::combine(
+		$result = Hash::combine(
 			$TestModel->find('all', array(
 				'order' => 'Article.title ASC',
 				'fields' => array('id', 'title', 'user_id')
@@ -7722,17 +7746,17 @@ class ModelReadTest extends BaseModelTest {
 
 		$Post->Author->virtualFields = array('joined' => 'Post.id * Author.id');
 		$result = $Post->find('all');
-		$result = Set::extract('{n}.Author.joined', $result);
+		$result = Hash::extract($result, '{n}.Author.joined');
 		$expected = array(1, 6, 3);
 		$this->assertEquals($expected, $result);
 
 		$result = $Post->find('all', array('order' => array('Author.joined' => 'ASC')));
-		$result = Set::extract('{n}.Author.joined', $result);
+		$result = Hash::extract($result, '{n}.Author.joined');
 		$expected = array(1, 3, 6);
 		$this->assertEquals($expected, $result);
 
 		$result = $Post->find('all', array('order' => array('Author.joined' => 'DESC')));
-		$result = Set::extract('{n}.Author.joined', $result);
+		$result = Hash::extract($result, '{n}.Author.joined');
 		$expected = array(6, 3, 1);
 		$this->assertEquals($expected, $result);
 	}
@@ -7868,7 +7892,7 @@ class ModelReadTest extends BaseModelTest {
 		$Article = new CustomArticle();
 		$data = array('user_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
 		$Article->create($data);
-		$Article->save();
+		$Article->save(null, false);
 		$this->assertEquals(4, $Article->id);
 
 		$result = $Article->find('published');

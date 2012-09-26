@@ -78,17 +78,6 @@ class Mysql extends DboSource {
 	protected $_useAlias = true;
 
 /**
- * Index of basic SQL commands
- *
- * @var array
- */
-	protected $_commands = array(
-		'begin'    => 'START TRANSACTION',
-		'commit'   => 'COMMIT',
-		'rollback' => 'ROLLBACK'
-	);
-
-/**
  * List of engine specific additional field parameters used on table creating
  *
  * @var array
@@ -160,7 +149,10 @@ class Mysql extends DboSource {
 			);
 			$this->connected = true;
 		} catch (PDOException $e) {
-			throw new MissingConnectionException(array('class' => $e->getMessage()));
+			throw new MissingConnectionException(array(
+				'class' => get_class($this),
+				'message' => $e->getMessage()
+			));
 		}
 
 		$this->_useAlias = (bool)version_compare($this->getVersion(), "4.1", ">=");
@@ -260,15 +252,6 @@ class Mysql extends DboSource {
  */
 	public function getEncoding() {
 		return $this->_execute('SHOW VARIABLES LIKE ?', array('character_set_client'))->fetchObject()->Value;
-	}
-
-/**
- * Gets the version string of the database server
- *
- * @return string The database encoding
- */
-	public function getVersion() {
-		return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
 	}
 
 /**
@@ -552,7 +535,6 @@ class Mysql extends DboSource {
  * @param string $table Table to alter parameters for.
  * @param array $parameters Parameters to add & drop.
  * @return array Array of table property alteration statements.
- * @todo Implement this method.
  */
 	protected function _alterTableParameters($table, $parameters) {
 		if (isset($parameters['change'])) {
@@ -694,6 +676,15 @@ class Mysql extends DboSource {
  */
 	public function getSchemaName() {
 		return $this->config['database'];
+	}
+
+/**
+ * Check if the server support nested transactions
+ *
+ * @return boolean
+ */
+	public function nestedTransactionSupported() {
+		return $this->useNestedTransactions && version_compare($this->getVersion(), '4.1', '>=');
 	}
 
 }

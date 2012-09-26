@@ -47,11 +47,18 @@ class ProjectTask extends AppShell {
 		$project = null;
 		if (isset($this->args[0])) {
 			$project = $this->args[0];
+		} else {
+			$appContents = array_diff(scandir(APP), array('.', '..'));
+			if (empty($appContents)) {
+				$suggestedPath = rtrim(APP, DS);
+			} else {
+				$suggestedPath = APP . 'myapp';
+			}
 		}
 
 		while (!$project) {
 			$prompt = __d('cake_console', "What is the path to the project you want to bake?");
-			$project = $this->in($prompt, null, APP . 'myapp');
+			$project = $this->in($prompt, null, $suggestedPath);
 		}
 
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
@@ -70,12 +77,6 @@ class ProjectTask extends AppShell {
 		$success = true;
 		if ($this->bake($project)) {
 			$path = Folder::slashTerm($project);
-			if ($this->createHome($path)) {
-				$this->out(__d('cake_console', ' * Welcome page created'));
-			} else {
-				$this->err(__d('cake_console', 'The Welcome page was <error>NOT</error> created'));
-				$success = false;
-			}
 
 			if ($this->securitySalt($path) === true) {
 				$this->out(__d('cake_console', ' * Random hash key created for \'Security.salt\''));
@@ -218,20 +219,6 @@ class ProjectTask extends AppShell {
 				$this->out(__d('cake_console', '<error>Bake Aborted.</error>'));
 				return false;
 		}
-	}
-
-/**
- * Writes a file with a default home page to the project.
- *
- * @param string $dir Path to project
- * @return boolean Success
- */
-	public function createHome($dir) {
-		$app = basename($dir);
-		$path = $dir . 'View' . DS . 'Pages' . DS;
-		$source = CAKE . 'Console' . DS . 'Templates' . DS . 'default' . DS . 'views' . DS . 'home.ctp';
-		include $source;
-		return $this->createFile($path . 'home.ctp', $output);
 	}
 
 /**

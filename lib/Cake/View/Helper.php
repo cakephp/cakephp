@@ -231,7 +231,7 @@ class Helper extends Object {
  *
  * Returns a URL pointing at the provided parameters.
  *
- * @param mixed $url Either a relative string url like `/products/view/23` or
+ * @param string|array $url Either a relative string url like `/products/view/23` or
  *    an array of url parameters.  Using an array for urls will allow you to leverage
  *    the reverse routing features of CakePHP.
  * @param boolean $full If true, the full base URL will be prepended to the result
@@ -313,7 +313,12 @@ class Helper extends Object {
 			$path = h($this->assetTimestamp($this->webroot($path)));
 
 			if (!empty($options['fullBase'])) {
-				$path = $this->url('/', true) . $path;
+				$base = $this->url('/', true);
+				$len = strlen($this->request->webroot);
+				if ($len) {
+					$base = substr($base, 0, -$len);
+				}
+				$path = $base . $path;
 			}
 		}
 
@@ -360,7 +365,7 @@ class Helper extends Object {
  * from content.  However, is not guaranteed to remove all possibilities.  Escaping
  * content is the best way to prevent all possible attacks.
  *
- * @param mixed $output Either an array of strings to clean or a single string to clean.
+ * @param string|array $output Either an array of strings to clean or a single string to clean.
  * @return string|array cleaned content for output
  */
 	public function clean($output) {
@@ -474,7 +479,7 @@ class Helper extends Object {
 /**
  * Sets this helper's model and field properties to the dot-separated value-pair in $entity.
  *
- * @param mixed $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
+ * @param string $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
  * @param boolean $setScope Sets the view scope to the model specified in $tagValue
  * @return void
  */
@@ -485,7 +490,7 @@ class Helper extends Object {
 		if ($setScope === true) {
 			$this->_modelScope = $entity;
 		}
-		$parts = array_values(Set::filter(explode('.', $entity), true));
+		$parts = array_values(Hash::filter(explode('.', $entity)));
 		if (empty($parts)) {
 			return;
 		}
@@ -583,7 +588,7 @@ class Helper extends Object {
  * Generates a DOM ID for the selected element, if one is not set.
  * Uses the current View::entity() settings to generate a CamelCased id attribute.
  *
- * @param mixed $options Either an array of html attributes to add $id into, or a string
+ * @param array|string $options Either an array of html attributes to add $id into, or a string
  *   with a view entity path to get a domId for.
  * @param string $id The name of the 'id' attribute.
  * @return mixed If $options was an array, an array will be returned with $id set.  If a string
@@ -615,7 +620,7 @@ class Helper extends Object {
  * Gets the input field name for the current tag. Creates input name attributes
  * using CakePHP's data[Model][field] formatting.
  *
- * @param mixed $options If an array, should be an array of attributes that $key needs to be added to.
+ * @param array|string $options If an array, should be an array of attributes that $key needs to be added to.
  *   If a string or null, will be used as the View entity.
  * @param string $field
  * @param string $key The name of the attribute to be set, defaults to 'name'
@@ -659,7 +664,7 @@ class Helper extends Object {
 /**
  * Gets the data for the current tag
  *
- * @param mixed $options If an array, should be an array of attributes that $key needs to be added to.
+ * @param array|string $options If an array, should be an array of attributes that $key needs to be added to.
  *   If a string or null, will be used as the View entity.
  * @param string $field
  * @param string $key The name of the attribute to be set, defaults to 'value'
@@ -686,8 +691,8 @@ class Helper extends Object {
 		$data = $this->request->data;
 
 		$entity = $this->entity();
-		if (!empty($data) && !empty($entity)) {
-			$result = Set::extract(implode('.', $entity), $data);
+		if (!empty($data) && is_array($data) && !empty($entity)) {
+			$result = Hash::get($data, implode('.', $entity));
 		}
 
 		$habtmKey = $this->field();
@@ -839,7 +844,7 @@ class Helper extends Object {
  * Transforms a recordset from a hasAndBelongsToMany association to a list of selected
  * options for a multiple select element
  *
- * @param mixed $data
+ * @param string|array $data
  * @param string $key
  * @return array
  */

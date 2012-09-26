@@ -31,6 +31,8 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
+
 		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
 			'Locale' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Locale' . DS),
@@ -45,6 +47,8 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
+
 		Cache::delete('object_map', '_cake_core_');
 		App::build();
 		CakePlugin::unload();

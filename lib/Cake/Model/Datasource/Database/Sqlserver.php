@@ -99,29 +99,10 @@ class Sqlserver extends DboSource {
 	);
 
 /**
- * Index of basic SQL commands
- *
- * @var array
- */
-	protected $_commands = array(
-		'begin'    => 'BEGIN TRANSACTION',
-		'commit'   => 'COMMIT',
-		'rollback' => 'ROLLBACK'
-	);
-
-/**
  * Magic column name used to provide pagination support for SQLServer 2008
  * which lacks proper limit/offset support.
  */
 	const ROW_COUNTER = '_cake_page_rownum_';
-
-/**
- * The version of SQLServer being used.  If greater than 11
- * Normal limit offset statements will be used
- *
- * @var string
- */
-	protected $_version;
 
 /**
  * Connects to the database using options in the given configuration array.
@@ -148,10 +129,12 @@ class Sqlserver extends DboSource {
 			);
 			$this->connected = true;
 		} catch (PDOException $e) {
-			throw new MissingConnectionException(array('class' => $e->getMessage()));
+			throw new MissingConnectionException(array(
+				'class' => get_class($this),
+				'message' => $e->getMessage()
+			));
 		}
 
-		$this->_version = $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
 		return $this->connected;
 	}
 
@@ -515,7 +498,7 @@ class Sqlserver extends DboSource {
 				}
 
 				// For older versions use the subquery version of pagination.
-				if (version_compare($this->_version, '11', '<') && preg_match('/FETCH\sFIRST\s+([0-9]+)/i', $limit, $offset)) {
+				if (version_compare($this->getVersion(), '11', '<') && preg_match('/FETCH\sFIRST\s+([0-9]+)/i', $limit, $offset)) {
 					preg_match('/OFFSET\s*(\d+)\s*.*?(\d+)\s*ROWS/', $limit, $limitOffset);
 
 					$limit = 'TOP ' . intval($limitOffset[2]);
@@ -553,10 +536,8 @@ class Sqlserver extends DboSource {
 					}
 				}
 				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
-			break;
 			default:
 				return parent::renderStatement($type, $data);
-			break;
 		}
 	}
 
@@ -710,7 +691,7 @@ class Sqlserver extends DboSource {
 /**
  * Makes sure it will return the primary key
  *
- * @param mixed $model Model instance of table name
+ * @param Model|string $model Model instance of table name
  * @return string
  */
 	protected function _getPrimaryKey($model) {
