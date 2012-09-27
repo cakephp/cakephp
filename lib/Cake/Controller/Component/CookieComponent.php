@@ -177,7 +177,7 @@ class CookieComponent extends Component {
 		if ($controller && isset($controller->response)) {
 			$this->_response = $controller->response;
 		} else {
-			$this->_response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+			$this->_response = new CakeResponse();
 		}
 	}
 
