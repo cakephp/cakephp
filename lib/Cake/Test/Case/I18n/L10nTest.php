@@ -186,15 +186,19 @@ class L10nTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $localize->map(array('dut', 'nl'));
-		$expected = array('dut' => 'nl', 'nl' => 'dut');
+		$expected = array('dut' => 'nl', 'nl' => 'nld');
 		$this->assertEquals($expected, $result);
 
 		$result = $localize->map(array('nld', 'nl'));
-		$expected = array('nld' => 'nl', 'nl' => 'dut');
+		$expected = array('nld' => 'nl', 'nl' => 'nld');
 		$this->assertEquals($expected, $result);
 
 		$result = $localize->map(array('nld'));
 		$expected = array('nld' => 'nl');
+		$this->assertEquals($expected, $result);
+
+		$result = $localize->map(array('dut'));
+		$expected = array('dut' => 'nl');
 		$this->assertEquals($expected, $result);
 
 		$result = $localize->map(array('eng', 'en'));
@@ -740,22 +744,22 @@ class L10nTest extends CakeTestCase {
 
 		$result = $localize->catalog(array('n', 'nl', 'nl-be'));
 		$expected = array(
-			'n' => array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr'),
-			'nl' => array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr'),
-			'nl-be' => array('language' => 'Dutch (Belgium)', 'locale' => 'nl_be', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr')
+			'n' => array('language' => 'Dutch (Standard)', 'locale' => 'nld', 'localeFallback' => 'nld', 'charset' => 'utf-8', 'direction' => 'ltr'),
+			'nl' => array('language' => 'Dutch (Standard)', 'locale' => 'nld', 'localeFallback' => 'nld', 'charset' => 'utf-8', 'direction' => 'ltr'),
+			'nl-be' => array('language' => 'Dutch (Belgium)', 'locale' => 'nl_be', 'localeFallback' => 'nld', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
 		$this->assertEquals($expected, $result);
 
 		$result = $localize->catalog('nl');
-		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr');
+		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'nld', 'localeFallback' => 'nld', 'charset' => 'utf-8', 'direction' => 'ltr');
 		$this->assertEquals($expected, $result);
 
 		$result = $localize->catalog('nld');
-		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr');
+		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'nld', 'localeFallback' => 'nld', 'charset' => 'utf-8', 'direction' => 'ltr');
 		$this->assertEquals($expected, $result);
 
 		$result = $localize->catalog('dut');
-		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr');
+		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'nld', 'localeFallback' => 'nld', 'charset' => 'utf-8', 'direction' => 'ltr');
 		$this->assertEquals($expected, $result);
 
 		$result = $localize->catalog(array('nb'));
