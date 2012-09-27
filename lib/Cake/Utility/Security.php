@@ -272,8 +272,7 @@ class Security {
 				$salt,
 			);
 			$salt = vsprintf($saltFormat[$hashType], $vspArgs);
-		}
-		if ($salt === true || strpos($salt, '$2a$') !== 0 || strlen($salt) < 12) {
+		} elseif ($salt === true || strpos($salt, '$2a$') !== 0 || strlen($salt) < 29) {
 			trigger_error(__d(
 				'cake_dev',
 				'Invalid salt: %s for %s Please visit http://www.php.net/crypt and read the appropriate section for building %s salts.',
