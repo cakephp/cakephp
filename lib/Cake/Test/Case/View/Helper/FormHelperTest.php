@@ -6169,6 +6169,29 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testPostLink method
+ *
+ * @return void
+ */
+	public function testDeleteLink() {
+		$result = $this->Form->deleteLink('Delete', '/posts/delete/1', array(), 'Confirm?');
+		$this->assertTags($result, array(
+			'form' => array(
+				'method' => 'post', 'action' => '/posts/delete/1',
+				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+			),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'DELETE'),
+			'/form',
+			'a' => array('href' => '#', 'onclick' => 'preg:/if \(confirm\(&#039;Confirm\?&#039;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
+			'Delete',
+			'/a'
+		));
+
+		$result = $this->Form->deleteLink('Delete', '/posts/delete', array('data' => array('id' => 1)));
+		$this->assertContains('<input type="hidden" name="data[id]" value="1"/>', $result);
+	}
+
+/**
  * Test that postLink adds _Token fields.
  *
  * @return void
