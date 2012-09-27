@@ -6169,7 +6169,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * testPostLink method
+ * testDeleteLink method
  *
  * @return void
  */
