@@ -64,11 +64,11 @@ class ShellDispatcher {
  * Run the dispatcher
  *
  * @param array $argv The argv from PHP
- * @return void
+ * @return integer The exit code of the shell process.
  */
 	public static function run($argv) {
 		$dispatcher = new ShellDispatcher($argv);
-		$dispatcher->_stop($dispatcher->dispatch() === false ? 1 : 0);
+		return $dispatcher->dispatch();
 	}
 
 /**
@@ -82,7 +82,9 @@ class ShellDispatcher {
 			ini_set('implicit_flush', true);
 			ini_set('max_execution_time', 0);
 		}
-		define('CAKEPHP_SHELL', true);
+		if (!defined('CAKEPHP_SHELL')) {
+			define('CAKEPHP_SHELL', true);
+		}
 	}
 
 /**
@@ -135,23 +137,38 @@ class ShellDispatcher {
 		$errorHandler = new ConsoleErrorHandler();
 		if (empty($error['consoleHandler'])) {
 			$error['consoleHandler'] = array($errorHandler, 'handleError');
-			Configure::write('error', $error);
+			Configure::write('Error', $error);
 		}
 		if (empty($exception['consoleHandler'])) {
 			$exception['consoleHandler'] = array($errorHandler, 'handleException');
-			Configure::write('exception', $exception);
+			Configure::write('Exception', $exception);
 		}
-		set_exception_handler($exception['consoleHandler']);
 		set_error_handler($error['consoleHandler'], Configure::read('Error.level'));
 	}
 
 /**
  * Dispatches a CLI request
  *
+ * @return integer The cli command exit code. 0 is success.
+ */
+	public function dispatch() {
+		try {
+			$exit = 0;
+			$this->_dispatch();
+		} catch (\Exception $e) {
+			$handler = Configure::read('Exception.consoleHandler');
+			$exit = $handler($e);
+		}
+		return $exit;
+	}
+
+/**
+ * Dispatch a request.
+ *
  * @return boolean
  * @throws MissingShellMethodException
  */
-	public function dispatch() {
+	protected function _dispatch() {
 		$shell = $this->shiftArgs();
 
 		if (!$shell) {

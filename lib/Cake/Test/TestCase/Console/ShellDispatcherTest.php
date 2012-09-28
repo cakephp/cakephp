@@ -1,9 +1,5 @@
 <?php
 /**
- * ShellDispatcherTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
@@ -12,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Console
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console;
+
 use Cake\Console\ShellDispatcher;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -454,7 +450,7 @@ class ShellDispatcherTest extends TestCase {
 
 		$Dispatcher->args = array('mock_with_main');
 		$result = $Dispatcher->dispatch();
-		$this->assertTrue($result);
+		$this->assertEquals(0, $result);
 		$this->assertEquals(array(), $Dispatcher->args);
 	}
 
@@ -480,7 +476,7 @@ class ShellDispatcherTest extends TestCase {
 
 		$Dispatcher->args = array('mock_without_main', 'initdb');
 		$result = $Dispatcher->dispatch();
-		$this->assertTrue($result);
+		$this->assertEquals(0, $result);
 	}
 
 /**
@@ -502,7 +498,7 @@ class ShellDispatcherTest extends TestCase {
 
 		$Dispatcher->args = array('mock_with_main_not_a');
 		$result = $Dispatcher->dispatch();
-		$this->assertTrue($result);
+		$this->assertEquals(0, $result);
 		$this->assertEquals(array(), $Dispatcher->args);
 
 		$Shell = new \MockWithMainNotAShell($Dispatcher);
@@ -513,7 +509,7 @@ class ShellDispatcherTest extends TestCase {
 
 		$Dispatcher->args = array('mock_with_main_not_a', 'initdb');
 		$result = $Dispatcher->dispatch();
-		$this->assertTrue($result);
+		$this->assertEquals(0, $result);
 	}
 
 /**
@@ -535,7 +531,7 @@ class ShellDispatcherTest extends TestCase {
 
 		$Dispatcher->args = array('mock_without_main_not_a');
 		$result = $Dispatcher->dispatch();
-		$this->assertTrue($result);
+		$this->assertEquals(0, $result);
 		$this->assertEquals(array(), $Dispatcher->args);
 
 		$Shell = new \MockWithoutMainNotAShell($Dispatcher);
@@ -546,7 +542,7 @@ class ShellDispatcherTest extends TestCase {
 
 		$Dispatcher->args = array('mock_without_main_not_a', 'initdb');
 		$result = $Dispatcher->dispatch();
-		$this->assertTrue($result);
+		$this->assertEquals(0, $result);
 	}
 
 /**

@@ -1,9 +1,5 @@
 <?php
 /**
- * ErrorHandler for Console Shells
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,6 +12,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console;
+
 use Cake\Core\Configure;
 use Cake\Error\ErrorHandler;
 
@@ -50,7 +47,7 @@ class ConsoleErrorHandler {
  * Handle a exception in the console environment. Prints a message to stderr.
  *
  * @param Exception $exception The exception to handle
- * @return void
+ * @return integer Exit code from exception caught.
  */
 	public static function handleException(\Exception $exception) {
 		$stderr = static::getStderr();
@@ -58,8 +55,7 @@ class ConsoleErrorHandler {
 			$exception->getMessage(),
 			$exception->getTraceAsString()
 		));
-		// TODO this makes this method impossible to test.
-		exit($exception->getCode() ? $exception->getCode() : 1);
+		return $exception->getCode() ?: 1;
 	}
 
 /**

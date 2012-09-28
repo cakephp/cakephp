@@ -31,4 +31,4 @@ if (!$loaded && file_exists($root . '/App/Config/bootstrap.php')) {
 	require $root . '/App/Config/bootstrap.php';
 }
 unset($root, $loaded, $appIndex, $dir);
-return Cake\Console\ShellDispatcher::run($argv);
+exit(Cake\Console\ShellDispatcher::run($argv));

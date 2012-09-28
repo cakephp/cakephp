@@ -19,4 +19,4 @@
  */
 include dirname(__DIR__) . '/Config/bootstrap.php';
 
-return Cake\Console\ShellDispatcher::run($argv);
+exit(Cake\Console\ShellDispatcher::run($argv));

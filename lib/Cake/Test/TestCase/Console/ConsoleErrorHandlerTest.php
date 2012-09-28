@@ -1,9 +1,5 @@
 <?php
 /**
- * ConsoleErrorHandler Test case
- *
- * PHP versions 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Console
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console;
+
 use Cake\Console\ConsoleErrorHandler;
 use Cake\Error;
 use Cake\TestSuite\TestCase;
@@ -72,11 +68,8 @@ class ConsoleErrorHandlerTest extends TestCase {
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Missing action'));
 
-		$this->Error->expects($this->once())
-			->method('_stop')
-			->with(404);
-
-		$this->Error->handleException($exception);
+		$result = $this->Error->handleException($exception);
+		$this->assertEquals(404, $result);
 	}
 
 /**
@@ -90,11 +83,8 @@ class ConsoleErrorHandlerTest extends TestCase {
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Too many parameters.'));
 
-		$this->Error->expects($this->once())
-			->method('_stop')
-			->with(1);
-
-		$this->Error->handleException($exception);
+		$result = $this->Error->handleException($exception);
+		$this->assertEquals(1, $result);
 	}
 
 /**
@@ -108,11 +98,8 @@ class ConsoleErrorHandlerTest extends TestCase {
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
-		$this->Error->expects($this->once())
-			->method('_stop')
-			->with(404);
-
-		$this->Error->handleException($exception);
+		$result = $this->Error->handleException($exception);
+		$this->assertEquals(404, $result);
 	}
 
 /**
@@ -126,11 +113,8 @@ class ConsoleErrorHandlerTest extends TestCase {
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
-		$this->Error->expects($this->once())
-			->method('_stop')
-			->with(500);
-
-		$this->Error->handleException($exception);
+		$result = $this->Error->handleException($exception);
+		$this->assertEquals(500, $result);
 	}
 
 }
