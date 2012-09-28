@@ -765,23 +765,6 @@ if (!function_exists('__c')) {
 
 }
 
-if (!function_exists('LogError')) {
-
-/**
- * Shortcut to Log::write.
- *
- * @param string $message Message to write to log
- * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#LogError
- */
-	function LogError($message) {
-		$bad = array("\n", "\r", "\t");
-		$good = ' ';
-		Log::write('error', str_replace($bad, $good, $message));
-	}
-
-}
-
 if (!function_exists('fileExistsInPath')) {
 
 /**
