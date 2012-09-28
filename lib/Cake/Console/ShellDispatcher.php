@@ -157,7 +157,14 @@ class ShellDispatcher {
 			$this->_dispatch();
 		} catch (\Exception $e) {
 			$handler = Configure::read('Exception.consoleHandler');
-			$exit = $handler($e);
+			if (is_callable($handler)) {
+				$exit = call_user_func($handler, $e);
+			} else {
+				echo __d('cake_console', "An exception occured\n");
+				echo __d('cake_console', "But the configured Exception.consoleHandler is not callable\n");
+				echo $e->getMessage() . "\n";
+				echo $e->getTraceAsString() . "\n";
+			}
 		}
 		return $exit;
 	}
