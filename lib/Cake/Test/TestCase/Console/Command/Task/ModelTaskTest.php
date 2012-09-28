@@ -1,11 +1,5 @@
 <?php
 /**
- * ModelTaskTest file
- *
- * Test Case for test generation shell task
- *
- * PHP 5
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
@@ -14,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.6
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -30,7 +23,7 @@ use Cake\Utility\Inflector;
 /**
  * ModelTaskTest class
  *
- * @package	   Cake.Test.Case.Console.Command.Task
+ * @package Cake.Test.Case.Console.Command.Task
  */
 class ModelTaskTest extends TestCase {
 
@@ -50,6 +43,8 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		$this->markTestIncomplete('Model baking will not work as models do not work.');
+
 		parent::setUp();
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
