@@ -160,7 +160,7 @@ class HtmlHelper extends AppHelper {
 		if (is_object($this->_View->response)) {
 			$this->response = $this->_View->response;
 		} else {
-			$this->response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+			$this->response = new CakeResponse();
 		}
 		if (!empty($settings['configFile'])) {
 			$this->loadConfig($settings['configFile']);

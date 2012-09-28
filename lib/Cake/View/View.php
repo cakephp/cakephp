@@ -330,7 +330,7 @@ class View extends Object {
 		if (is_object($controller) && isset($controller->response)) {
 			$this->response = $controller->response;
 		} else {
-			$this->response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+			$this->response = new CakeResponse();
 		}
 		$this->Helpers = new HelperCollection($this);
 		$this->Blocks = new ViewBlock();

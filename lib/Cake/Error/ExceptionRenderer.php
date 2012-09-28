@@ -146,7 +146,7 @@ class ExceptionRenderer {
 		if (!$request = Router::getRequest(true)) {
 			$request = new CakeRequest();
 		}
-		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+		$response = new CakeResponse();
 
 		if (method_exists($exception, 'responseHeader')) {
 			$response->header($exception->responseHeader());
