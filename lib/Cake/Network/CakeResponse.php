@@ -384,9 +384,10 @@ class CakeResponse {
 		if (isset($options['type'])) {
 			$this->type($options['type']);
 		}
-		if (isset($options['charset'])) {
-			$this->charset($options['charset']);
+		if (!isset($options['charset'])) {
+			$options['charset'] = Configure::read('App.encoding');
 		}
+		$this->charset($options['charset']);
 	}
 
 /**

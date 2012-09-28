@@ -302,7 +302,7 @@ class CacheHelper extends AppHelper {
 
 		$file .= '
 				$request = unserialize(base64_decode(\'' . base64_encode(serialize($this->request)) . '\'));
-				$response = new CakeResponse(array("charset" => Configure::read("App.encoding")));
+				$response = new CakeResponse();
 				$controller = new ' . $this->_View->name . 'Controller($request, $response);
 				$controller->plugin = $this->plugin = \'' . $this->_View->plugin . '\';
 				$controller->helpers = $this->helpers = unserialize(base64_decode(\'' . base64_encode(serialize($this->_View->helpers)) . '\'));
