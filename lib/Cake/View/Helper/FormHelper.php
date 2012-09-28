@@ -1580,7 +1580,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates an HTML link, but access the url using the method you specify (defaults to POST).
+ * Creates an HTML link, but accesses the url using the method you specify (defaults to POST).
  * Requires javascript to be enabled in browser.
  *
  * This method creates a `<form>` element. So do not use this method inside an existing form.
@@ -1589,6 +1589,7 @@ class FormHelper extends AppHelper {
  * ### Options:
  *
  * - `data` - Array with key/value to pass in input hidden
+ * - `method` - Request method to use (defaults to POST)
  * - `confirm` - Can be used instead of $confirmMessage.
  * - Other options is the same of HtmlHelper::link() method.
  * - The option `onclick` will be replaced.
@@ -1647,6 +1648,31 @@ class FormHelper extends AppHelper {
 
 		$out .= $this->Html->link($title, $url, $options);
 		return $out;
+	}
+
+/**
+ * Creates an HTML link, but accesses the url using DELETE method.
+ * Requires javascript to be enabled in browser.
+ *
+ * This method creates a `<form>` element. So do not use this method inside an existing form.
+ * Instead you should add a submit button using FormHelper::submit()
+ *
+ * ### Options:
+ *
+ * - `data` - Array with key/value to pass in input hidden
+ * - `confirm` - Can be used instead of $confirmMessage.
+ * - Other options is the same of HtmlHelper::link() method.
+ * - The option `onclick` will be replaced.
+ *
+ * @param string $title The content to be wrapped by <a> tags.
+ * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
+ * @param array $options Array of HTML attributes.
+ * @param string $confirmMessage JavaScript confirmation message.
+ * @return string An `<a />` element.
+ */
+	public function deleteLink($title, $url = null, $options = array(), $confirmMessage = false) {
+		$options['method'] = 'DELETE';
+		return $this->postLink($title, $url, $options, $confirmMessage);
 	}
 
 /**
