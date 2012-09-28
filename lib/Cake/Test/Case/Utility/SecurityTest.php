@@ -161,7 +161,7 @@ class SecurityTest extends CakeTestCase {
 		$this->skipIf(strpos($test, '$2a$') === false, 'Blowfish hashes are incorrect.');
 
 		$_hashType = Security::$hashType;
-	
+
 		$key = 'someKey';
 		$hashType = 'blowfish';
 		Security::setHash($hashType);
