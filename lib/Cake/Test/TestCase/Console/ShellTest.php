@@ -1,11 +1,5 @@
 <?php
 /**
- * ShellTest file
- *
- * Test Case for Shell
- *
- * PHP 5
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
@@ -14,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console;
+
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
@@ -832,16 +826,12 @@ TEXT;
 		unlink(LOGS . 'error.log');
 		$this->assertFalse(file_exists(LOGS . 'error.log'));
 
-		// both file and console logging
-		require_once CORE_TEST_CASES . DS . 'Log/Engine/ConsoleLogTest.php';
-		$mock = $this->getMock('ConsoleLog', array('write'), array(
-			array('types' => 'error'),
-		));
-		TestCakeLog::config('console', array(
-			'engine' => 'ConsoleLog',
-			'stream' => 'php://stderr',
-			));
-		TestCakeLog::replace('console', $mock);
+		$mock = $this->getMock(
+			'Cake\Log\Engine\ConsoleLog',
+			['write'],
+			[['types' => 'error']]
+		);
+		Log::engine('console', $mock);
 		$mock->expects($this->once())
 			->method('write')
 			->with('error', $this->Shell->testMessage);
@@ -860,11 +850,11 @@ TEXT;
 		Log::drop('stdout');
 		Log::drop('stderr');
 		$this->Shell->useLogger(true);
-		$this->assertNotEmpty(Log::stream('stdout'));
-		$this->assertNotEmpty(Log::stream('stderr'));
+		$this->assertNotEmpty(Log::engine('stdout'));
+		$this->assertNotEmpty(Log::engine('stderr'));
 		$this->Shell->useLogger(false);
-		$this->assertFalse(Log::stream('stdout'));
-		$this->assertFalse(Log::stream('stderr'));
+		$this->assertFalse(Log::engine('stdout'));
+		$this->assertFalse(Log::engine('stderr'));
 	}
 
 /**
