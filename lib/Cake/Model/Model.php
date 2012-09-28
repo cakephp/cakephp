@@ -3250,7 +3250,7 @@ class Model extends Object implements CakeEventListener {
 			return array($with, array_unique(array_merge($assoc[$with], $keys)));
 		}
 		trigger_error(
-			__d('cake_dev', 'Invalid join model settings. The Association parameter has the wrong type, expecting a string or array, but was passed :' . gettype($assoc)),
+			__d('cake_dev', 'Invalid join model settings in %s. The Association parameter has the wrong type, expecting a string or array, but was passed type: %s', $this->alias,  gettype($assoc)),
 			E_USER_WARNING
 		);
 	}
