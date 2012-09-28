@@ -117,7 +117,7 @@ class CakeNumber {
 
 		$i = array_search(substr($size, -2), array('KB', 'MB', 'GB', 'TB', 'PB'));
 		if ($i !== false) {
-			$size = substr($size, 0, strlen($size) -2);
+			$size = substr($size, 0, strlen($size) - 2);
 			return $size * pow(1024, $i + 1);
 		}
 
