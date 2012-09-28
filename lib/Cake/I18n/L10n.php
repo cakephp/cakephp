@@ -86,7 +86,8 @@ class L10n {
 /**
  * Maps ISO 639-3 to I10n::_l10nCatalog
  * The terminological codes (first one per language) should be used if possible.
- * The bibliographic codes are aliases and work as well, though.
+ * They are the ones building the path in `/APP/Locale/[code]/`
+ * The bibliographic codes are aliases.
  *
  * @var array
  */
