@@ -21,7 +21,6 @@ namespace Cake\View\Helper;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
-use Cake\I18n\Multibyte;
 use Cake\Utility\Hash;
 use Cake\View\Helper;
 use Cake\View\View;

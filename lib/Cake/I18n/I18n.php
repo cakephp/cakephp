@@ -23,13 +23,9 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use Cake\Utility\String;
 
-if (function_exists('mb_internal_encoding')) {
-	$encoding = Configure::read('App.encoding');
-	if (!empty($encoding)) {
-		mb_internal_encoding($encoding);
-	}
-}
+mb_internal_encoding(Configure::read('App.encoding'));
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -607,7 +603,7 @@ class I18n {
 			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
 		if (preg_match('/U([0-9a-fA-F]{4})/', $string, $match)) {
-			return Multibyte::ascii(array(hexdec($match[1])));
+			return String::ascii(array(hexdec($match[1])));
 		}
 		return $string;
 	}

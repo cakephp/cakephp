@@ -439,10 +439,6 @@ class String {
 		$options = array_merge($default, $options);
 		extract($options);
 
-		if (!function_exists('mb_strlen')) {
-			class_exists('Cake\I18n\Multibyte');
-		}
-
 		if (mb_strlen($text) <= $length) {
 			return $text;
 		}
@@ -485,10 +481,6 @@ class String {
 		}
 		$options = array_merge($default, $options);
 		extract($options);
-
-		if (!function_exists('mb_strlen')) {
-			class_exists('Multibyte');
-		}
 
 		if ($html) {
 			if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
@@ -643,4 +635,87 @@ class String {
 
 		return array_pop($list);
 	}
+
+/**
+ * Check if the string contain multibyte characters
+ *
+ * @param string $string value to test
+ * @return boolean
+ */
+	public static function isMultibyte($string) {
+		$length = strlen($string);
+
+		for ($i = 0; $i < $length; $i++ ) {
+			$value = ord(($string[$i]));
+			if ($value > 128) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+/**
+ * Converts a multibyte character string
+ * to the decimal value of the character
+ *
+ * @param string $string
+ * @return array
+ */
+	public static function utf8($string) {
+		$map = array();
+
+		$values = array();
+		$find = 1;
+		$length = strlen($string);
+
+		for ($i = 0; $i < $length; $i++) {
+			$value = ord($string[$i]);
+
+			if ($value < 128) {
+				$map[] = $value;
+			} else {
+				if (empty($values)) {
+					$find = ($value < 224) ? 2 : 3;
+				}
+				$values[] = $value;
+
+				if (count($values) === $find) {
+					if ($find == 3) {
+						$map[] = (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64);
+					} else {
+						$map[] = (($values[0] % 32) * 64) + ($values[1] % 64);
+					}
+					$values = array();
+					$find = 1;
+				}
+			}
+		}
+		return $map;
+	}
+
+/**
+ * Converts the decimal value of a multibyte character string
+ * to a string
+ *
+ * @param array $array
+ * @return string
+ */
+	public static function ascii($array) {
+		$ascii = '';
+
+		foreach ($array as $utf8) {
+			if ($utf8 < 128) {
+				$ascii .= chr($utf8);
+			} elseif ($utf8 < 2048) {
+				$ascii .= chr(192 + (($utf8 - ($utf8 % 64)) / 64));
+				$ascii .= chr(128 + ($utf8 % 64));
+			} else {
+				$ascii .= chr(224 + (($utf8 - ($utf8 % 4096)) / 4096));
+				$ascii .= chr(128 + ((($utf8 % 4096) - ($utf8 % 64)) / 64));
+				$ascii .= chr(128 + ($utf8 % 64));
+			}
+		}
+		return $ascii;
+	}
+
 }
