@@ -411,28 +411,9 @@ class FolderTest extends TestCase {
 		$expected = array(
 			array(
 				CAKE . 'Config',
-				CAKE . 'Config/unicode',
-				CAKE . 'Config/unicode/casefolding'
 			),
 			array(
 				CAKE . 'Config/config.php',
-				CAKE . 'Config/unicode/casefolding/0080_00ff.php',
-				CAKE . 'Config/unicode/casefolding/0100_017f.php',
-				CAKE . 'Config/unicode/casefolding/0180_024F.php',
-				CAKE . 'Config/unicode/casefolding/0250_02af.php',
-				CAKE . 'Config/unicode/casefolding/0370_03ff.php',
-				CAKE . 'Config/unicode/casefolding/0400_04ff.php',
-				CAKE . 'Config/unicode/casefolding/0500_052f.php',
-				CAKE . 'Config/unicode/casefolding/0530_058f.php',
-				CAKE . 'Config/unicode/casefolding/1e00_1eff.php',
-				CAKE . 'Config/unicode/casefolding/1f00_1fff.php',
-				CAKE . 'Config/unicode/casefolding/2100_214f.php',
-				CAKE . 'Config/unicode/casefolding/2150_218f.php',
-				CAKE . 'Config/unicode/casefolding/2460_24ff.php',
-				CAKE . 'Config/unicode/casefolding/2c00_2c5f.php',
-				CAKE . 'Config/unicode/casefolding/2c60_2c7f.php',
-				CAKE . 'Config/unicode/casefolding/2c80_2cff.php',
-				CAKE . 'Config/unicode/casefolding/ff00_ffef.php'
 			)
 		);
 

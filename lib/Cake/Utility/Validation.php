@@ -21,11 +21,6 @@ use Cake\Core\App;
 use Cake\Error\Exception;
 use Cake\Utility\File;
 
-// Load multibyte if the extension is missing.
-if (!function_exists('mb_strlen')) {
-	class_exists('Cake\I18n\Multibyte');
-}
-
 /**
  * Offers different validation methods.
  *

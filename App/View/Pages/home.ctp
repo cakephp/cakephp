@@ -54,6 +54,19 @@ endif;
 ?>
 </p>
 <p>
+<?php
+	if (extension_loaded('mbstring')):
+		echo '<span class="notice success">';
+			echo __d('cake_dev', 'Your version of PHP has mbstring extension loaded.');
+		echo '</span>';
+	else:
+		echo '<span class="notice">';
+			echo __d('cake_dev', 'Your version of PHP does NOT have the mbstring extension loaded.');
+		echo '</span>';
+	endif;
+?>
+</p>
+<p>
 	<?php
 		if (is_writable(TMP)):
 			echo '<span class="notice success">';
