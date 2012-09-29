@@ -325,7 +325,7 @@ class CakeEmail {
 		if ($this->_appCharset !== null) {
 			$this->charset = $this->_appCharset;
 		}
-		$this->_domain = env('HTTP_HOST');
+		$this->_domain = preg_replace('/\:\d+$/', '', env('HTTP_HOST'));
 		if (empty($this->_domain)) {
 			$this->_domain = php_uname('n');
 		}
