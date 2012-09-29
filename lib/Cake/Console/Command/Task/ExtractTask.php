@@ -446,7 +446,7 @@ class ExtractTask extends Shell {
 		foreach ($models as $model) {
 			$modelClass = App::classname($plugin . $model, 'Model');
 			$reflection = new \ReflectionClass($modelClass);
-			if (!$reflection->isSubClassOf('Model')) {
+			if (!$reflection->isSubClassOf('Cake\Model\Model')) {
 				continue;
 			}
 			$properties = $reflection->getDefaultProperties();

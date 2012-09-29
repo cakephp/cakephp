@@ -18,10 +18,11 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\Console\Command\Task;
+
 use Cake\Console\Command\Task\ExtractTask;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Folder;
@@ -148,7 +149,7 @@ class ExtractTaskTest extends TestCase {
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
-		$pattern .= '\#: (\\\\|\/)home\.ctp:99\n';
+		$pattern .= '\#: (\\\\|\/)home\.ctp:101\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
 
@@ -287,10 +288,13 @@ class ExtractTaskTest extends TestCase {
  * @return void
  */
 	public function testExtractModelValidation() {
+		Configure::write('App.namespace', 'TestApp');
 		App::build(array(
 			'Model' => array(CAKE . 'Test/TestApp/Model/'),
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
+		Plugin::load('TestPlugin');
+
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
@@ -328,49 +332,6 @@ class ExtractTaskTest extends TestCase {
 	}
 
 /**
- *  Tests that the task will inspect application models and extract the validation messages from them
- *	while using a custom validation domain for the messages set on the model itself
- *
- * @return void
- */
-	public function testExtractModelValidationWithDomainInModel() {
-		App::build(array(
-			'Model' => array(CAKE . 'Test/TestApp/Plugin/TestPlugin/Model/')
-		));
-		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
-			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
-			array($this->out, $this->out, $this->in)
-		);
-		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
-
-		$this->Task->params['paths'] = CAKE . 'Test/TestApp/';
-		$this->Task->params['output'] = $this->path . DS;
-		$this->Task->params['extract-core'] = 'no';
-		$this->Task->params['exclude-plugins'] = true;
-		$this->Task->params['ignore-model-validation'] = false;
-
-		$this->Task->execute();
-		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
-
-		$pattern = preg_quote('#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = preg_quote('#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field body#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post title is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is super required"#';
-		$this->assertRegExp($pattern, $result);
-	}
-
-/**
  *  Test that the extract shell can obtain validation messages from models inside a specific plugin
  *
  * @return void
@@ -379,6 +340,7 @@ class ExtractTaskTest extends TestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
+		Plugin::load('TestPlugin');
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',

@@ -20,17 +20,17 @@ namespace TestApp\Model;
 use Cake\TestSuite\Fixture\TestModel;
 
 /**
- * ControllerPaginateModel class
+ * ControllerPaginatorModel class
  *
  */
-class ControllerPaginateModel extends TestModel {
+class ControllerPaginatorModel extends TestModel {
 
 /**
  * name property
  *
  * @var string 'ControllerPaginateModel'
  */
-	public $name = 'ControllerPaginateModel';
+	public $name = 'ControllerPaginatorModel';
 
 /**
  * useTable property
