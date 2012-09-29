@@ -1881,7 +1881,7 @@ class Model extends Object implements CakeEventListener {
 					if ($keepExisting && !empty($links)) {
 						foreach ($links as $link) {
 							$oldJoin = $link[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']];
-							if (! in_array($oldJoin, $newJoins) ) {
+							if (!in_array($oldJoin, $newJoins)) {
 								$conditions[$associationForeignKey] = $oldJoin;
 								$db->delete($this->{$join}, $conditions);
 							} else {
@@ -2735,7 +2735,7 @@ class Model extends Object implements CakeEventListener {
  */
 	protected function _findCount($state, $query, $results = array()) {
 		if ($state === 'before') {
-			if (!empty($query['type']) && isset($this->findMethods[$query['type']]) && $query['type'] !== 'count' ) {
+			if (!empty($query['type']) && isset($this->findMethods[$query['type']]) && $query['type'] !== 'count') {
 				$query['operation'] = 'count';
 				$query = $this->{'_find' . ucfirst($query['type'])}('before', $query);
 			}

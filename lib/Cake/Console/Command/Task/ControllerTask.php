@@ -432,7 +432,7 @@ class ControllerTask extends BakeTask {
 			}
 		}
 
-		if (intval($enteredController) > 0 && intval($enteredController) <= count($controllers) ) {
+		if (intval($enteredController) > 0 && intval($enteredController) <= count($controllers)) {
 			$controllerName = $controllers[intval($enteredController) - 1];
 		} else {
 			$controllerName = Inflector::camelize($enteredController);

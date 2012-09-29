@@ -688,7 +688,7 @@ class ModelTask extends BakeTask {
 		$prompt = __d('cake_console', 'Would you like to define some additional model associations?');
 		$wannaDoMoreAssoc = $this->in($prompt, array('y', 'n'), 'n');
 		$possibleKeys = $this->_generatePossibleKeys();
-		while (strtolower($wannaDoMoreAssoc) == 'y') {
+		while (strtolower($wannaDoMoreAssoc) === 'y') {
 			$assocs = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 			$this->out(__d('cake_console', 'What is the association type?'));
 			$assocType = intval($this->inOptions($assocs, __d('cake_console', 'Enter a number')));
@@ -698,9 +698,9 @@ class ModelTask extends BakeTask {
 			$this->hr();
 
 			$alias = $this->in(__d('cake_console', 'What is the alias for this association?'));
-			$className = $this->in(__d('cake_console', 'What className will %s use?', $alias), null, $alias );
+			$className = $this->in(__d('cake_console', 'What className will %s use?', $alias), null, $alias);
 
-			if ($assocType == 0) {
+			if ($assocType === 0) {
 				if (!empty($possibleKeys[$model->table])) {
 					$showKeys = $possibleKeys[$model->table];
 				} else {
@@ -733,7 +733,7 @@ class ModelTask extends BakeTask {
 			if (!isset($foreignKey)) {
 				$foreignKey = $this->in(__d('cake_console', 'What is the foreignKey? Specify your own.'), null, $suggestedForeignKey);
 			}
-			if ($assocType == 3) {
+			if ($assocType === 3) {
 				$associationForeignKey = $this->in(__d('cake_console', 'What is the associationForeignKey?'), null, $this->_modelKey($model->name));
 				$joinTable = $this->in(__d('cake_console', 'What is the joinTable?'));
 			}
@@ -743,7 +743,7 @@ class ModelTask extends BakeTask {
 			$associations[$assocs[$assocType]][$i]['alias'] = $alias;
 			$associations[$assocs[$assocType]][$i]['className'] = $className;
 			$associations[$assocs[$assocType]][$i]['foreignKey'] = $foreignKey;
-			if ($assocType == 3) {
+			if ($assocType === 3) {
 				$associations[$assocs[$assocType]][$i]['associationForeignKey'] = $associationForeignKey;
 				$associations[$assocs[$assocType]][$i]['joinTable'] = $joinTable;
 			}
