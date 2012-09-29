@@ -148,11 +148,14 @@ class TranslateBehavior extends ModelBehavior {
 		if (empty($query['fields'])) {
 			$addFields = $fields;
 		} elseif (is_array($query['fields'])) {
+			$isAllFields = (
+				in_array($Model->alias . '.' . '*', $query['fields']) ||
+				in_array($Model->escapeField('*'), $query['fields'])
+			);
 			foreach ($fields as $key => $value) {
 				$field = (is_numeric($key)) ? $value : $key;
-
 				if (
-					in_array($Model->escapeField('*'), $query['fields']) ||
+					$isAllFields ||
 					in_array($Model->alias . '.' . $field, $query['fields']) ||
 					in_array($field, $query['fields'])
 				) {
