@@ -515,7 +515,23 @@ class App {
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::uses
  */
-	public static function uses($className, $location) {
+	public static function uses($className, $location = null) {
+		if (is_array($className)) {
+			foreach ($className as $class => $location) {
+				self::$_classMap[$class] = $location;
+			}
+			return;
+		}
+
+		if (!$location) {
+			trigger_error(sprintf(
+				'Missing argument 2 for %s(), called in %s on line %s',
+				__METHOD__,
+				__FILE__,
+				__LINE__
+			), E_USER_ERROR);
+		}
+
 		self::$_classMap[$className] = $location;
 	}
 
