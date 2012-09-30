@@ -1803,7 +1803,7 @@ class FormHelper extends AppHelper {
 		$tag = null;
 		// For 1.3 to 2.* compatibility
 		if ($attributes === null) {
-			$attributes = (array)$attributes;
+			$attributes = array();
 		}
 		$attributes += array(
 			'class' => null,
