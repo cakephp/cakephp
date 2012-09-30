@@ -808,7 +808,7 @@ class AppTest extends CakeTestCase {
 
 		$this->assertFalse(class_exists('TestUtilityClass', false));
 		App::uses('TestUtilityClass', 'Utility');
-		$this->assertTrue(class_exists('CustomLibClass'));
+		$this->assertTrue(class_exists('TestUtilityClass'));
 	}
 
 /**
