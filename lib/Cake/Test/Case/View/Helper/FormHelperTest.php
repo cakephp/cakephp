@@ -1365,6 +1365,21 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test sending non-array as paramter to select method.
+ *
+ * This is related to the method api changing from 1.3 -> 2.*
+ *
+ * @return void
+ */
+	public function testSelectApiChange() {
+		$options = array('1' => 'one', '2' => 'two');
+		// 1.3 syntax (should not throw a fatal error with properly casted third parameter)
+		$this->Form->select('Model.select', $options, null, array('escape' => false));
+		$expected = array('Model.select');
+		$this->assertEquals($expected, $this->Form->fields);
+	}
+
+/**
  * testFormSecuredRadio method
  *
  * @return void

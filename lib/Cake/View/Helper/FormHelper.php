@@ -1801,6 +1801,10 @@ class FormHelper extends AppHelper {
 		$select = array();
 		$style = null;
 		$tag = null;
+		// For 1.3 to 2.* compatibility
+		if ($attributes === null) {
+			$attributes = (array)$attributes;
+		}
 		$attributes += array(
 			'class' => null,
 			'escape' => true,
