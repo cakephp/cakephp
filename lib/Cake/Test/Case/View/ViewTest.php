@@ -1258,12 +1258,36 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test prepending to a block with append.
+ *
+ * @return void
+ */
+	public function testBlockPrepend() {
+		$this->View->assign('test', 'Block');
+		$this->View->prepend('test', 'Before ');
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Before Block', $result);
+	}
+
+/**
  * You should be able to append to undefined blocks.
  *
  * @return void
  */
 	public function testBlockAppendUndefined() {
 		$this->View->append('test', 'Unknown');
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Unknown', $result);
+	}
+
+/**
+ * You should be able to prepend to undefined blocks.
+ *
+ * @return void
+ */
+	public function testBlockPrependUndefined() {
+		$this->View->prepend('test', 'Unknown');
 		$result = $this->View->fetch('test');
 		$this->assertEquals('Unknown', $result);
 	}

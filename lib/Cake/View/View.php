@@ -599,17 +599,31 @@ class View extends Object {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new
+ * Append to an existing or new block. Appending to a new
  * block will create the block.
  *
  * @param string $name Name of the block
  * @param string $value The content for the block.
  * @return void
  * @throws CakeException when you use non-string values.
- * @see ViewBlock::append()
+ * @see ViewBlock::concat()
  */
 	public function append($name, $value = null) {
-		return $this->Blocks->append($name, $value);
+		return $this->Blocks->concat($name, $value);
+	}
+
+/**
+ * Prepend to an existing or new block. Prepending to a new
+ * block will create the block.
+ *
+ * @param string $name Name of the block
+ * @param string $value The content for the block.
+ * @return void
+ * @throws CakeException when you use non-string values.
+ * @see ViewBlock::concat()
+ */
+	public function prepend($name, $value = null) {
+		return $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 	}
 
 /**

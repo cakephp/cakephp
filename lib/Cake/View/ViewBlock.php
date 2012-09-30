@@ -24,6 +24,20 @@
 class ViewBlock {
 
 /**
+ * Append content
+ *
+ * @constant APPEND
+ */
+	const APPEND = 'append';
+
+/**
+ * Prepend content
+ *
+ * @constant PREPEND
+ */
+	const PREPEND = 'prepend';
+
+/**
  * Block content.  An array of blocks indexed by name.
  *
  * @var array
@@ -73,6 +87,39 @@ class ViewBlock {
 	}
 
 /**
+ * Concat content to an existing or new block.
+ * Concating to a new block will create the block.
+ *
+ * Calling concat() without a value will create a new capturing
+ * block that needs to be finished with View::end(). The content
+ * of the new capturing context will be added to the existing block context.
+ *
+ * @param string $name Name of the block
+ * @param string $value The content for the block
+ * @param string $mode If ViewBlock::APPEND content will be appended to existing content.
+ *   If ViewBlock::PREPEND it will be prepended.
+ * @return void
+ * @throws CakeException when you use non-string values.
+ */
+	public function concat($name, $value = null, $mode = ViewBlock::APPEND) {
+		if (isset($value)) {
+			if (!is_string($value)) {
+				throw new CakeException(__d('cake_dev', '$value must be a string.'));
+			}
+			if (!isset($this->_blocks[$name])) {
+				$this->_blocks[$name] = '';
+			}
+			if ($mode === ViewBlock::PREPEND) {
+				$this->_blocks[$name] = $value . $this->_blocks[$name];
+			} else {
+				$this->_blocks[$name] .= $value;
+			}
+		} else {
+			$this->start($name);
+		}
+	}
+
+/**
  * Append to an existing or new block.  Appending to a new
  * block will create the block.
  *
@@ -84,19 +131,10 @@ class ViewBlock {
  * @param string $value The content for the block.
  * @return void
  * @throws CakeException when you use non-string values.
+ * @deprecated As of 2.3 use ViewBlock::concat() instead.
  */
 	public function append($name, $value = null) {
-		if (isset($value)) {
-			if (!is_string($value)) {
-				throw new CakeException(__d('cake_dev', '$value must be a string.'));
-			}
-			if (!isset($this->_blocks[$name])) {
-				$this->_blocks[$name] = '';
-			}
-			$this->_blocks[$name] .= $value;
-		} else {
-			$this->start($name);
-		}
+		$this->concat($name, $value);
 	}
 
 /**
