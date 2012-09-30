@@ -19,6 +19,8 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
@@ -58,9 +60,21 @@ class TestTask extends BakeTask {
 	);
 
 /**
- * Mapping between packages, and their baseclass + package.
- * This is used to generate App::classname() call to autoload base
- * classes if a developer has forgotten to do so.
+ * Mapping between type names and their namespaces
+ *
+ * @var array
+ */
+	public $classNamespaces = array(
+		'Model' => 'Model',
+		'Controller' => 'Controller',
+		'Component' => 'Controller\Component',
+		'Behavior' => 'Model\Behavior',
+		'Helper' => 'View\Helper'
+	);
+
+/**
+ * Mapping between packages, and their baseclass
+ * This is used to create use statements.
  *
  * @var array
  */
@@ -150,7 +164,6 @@ class TestTask extends BakeTask {
 		} elseif ($this->interactive) {
 			$this->getUserFixtures();
 		}
-		$fullClassName = App::className($fullClassName, $realType);
 
 		$methods = array();
 		if (class_exists($fullClassName)) {
@@ -160,14 +173,18 @@ class TestTask extends BakeTask {
 		list($preConstruct, $construction, $postConstruct) = $this->generateConstructor($type, $fullClassName, $plugin);
 		$uses = $this->generateUses($type, $realType, $fullClassName);
 
-		$this->out("\n" . __d('cake_console', 'Baking test case for %s %s ...', $className, $type), 1, Shell::QUIET);
+		$subject = $className;
+		list($namespace, $className) = namespaceSplit($fullClassName);
+		list($baseNamespace, $subNamespace) = explode('\\', $namespace, 2);
+
+		$this->out("\n" . __d('cake_console', 'Baking test case for %s ...', $fullClassName), 1, Shell::QUIET);
 
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);
 		$this->Template->set(compact(
-			'className', 'methods', 'type', 'fullClassName', 'mock',
+			'subject', 'className', 'methods', 'type', 'fullClassName', 'mock',
 			'realType', 'preConstruct', 'postConstruct', 'construction',
-			'uses'
+			'uses', 'baseNamespace', 'subNamespace', 'namespace'
 		));
 		$out = $this->Template->generate('classes', 'test');
 
@@ -287,19 +304,32 @@ class TestTask extends BakeTask {
  *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $class the Classname of the class the test is being generated for.
+ * @param string $plugin The plugin name of the class being generated..
  * @return string Real classname
  */
-	public function getRealClassName($type, $class) {
-		if (strtolower($type) == 'model' || empty($this->classTypes[$type])) {
+	public function getRealClassName($type, $class, $plugin = null) {
+		if (strpos('\\', $class)) {
 			return $class;
 		}
+		$namespace = Configure::read('App.namespace');
+		$loadedPlugin = $plugin && Plugin::loaded($plugin);
+		if ($loadedPlugin) {
+			$namespace = Plugin::getNamespace($plugin);
+		}
+		if ($plugin && !$loadedPlugin) {
+			$namespace = Inflector::camelize($plugin);
+		}
+		$subNamespace = $this->classNamespaces[$type];
 
 		$position = strpos($class, $type);
 
-		if ($position !== false && strlen($class) - $position == strlen($type)) {
-			return $class;
+		if (
+			strtolower($type) !== 'model' &&
+			($position === false || strlen($class) - $position !== strlen($type))
+		) {
+			$class .= $type;
 		}
-		return $class . $type;
+		return $namespace . '\\' . $subNamespace . '\\' . $class;
 	}
 
 /**
@@ -471,26 +501,27 @@ class TestTask extends BakeTask {
  * Generate a constructor code snippet for the type and classname
  *
  * @param string $type The Type of object you are generating tests for eg. controller
- * @param string $fullClassName The Classname of the class the test is being generated for.
+ * @param string $fullClassName The full classname of the class the test is being generated for.
  * @param string $plugin The plugin name.
  * @return array Constructor snippets for the thing you are building.
  */
 	public function generateConstructor($type, $fullClassName, $plugin) {
+		list($namespace, $className) = namespaceSplit($fullClassName);
 		$type = strtolower($type);
 		$pre = $construct = $post = '';
 		if ($type == 'model') {
-			$construct = "ClassRegistry::init('{$plugin}$fullClassName');\n";
+			$construct = "ClassRegistry::init('{$plugin}$className');\n";
 		}
 		if ($type == 'behavior') {
-			$construct = "new $fullClassName();\n";
+			$construct = "new $className();\n";
 		}
 		if ($type == 'helper') {
 			$pre = "\$View = new View();\n";
-			$construct = "new {$fullClassName}(\$View);\n";
+			$construct = "new {$className}(\$View);\n";
 		}
 		if ($type == 'component') {
 			$pre = "\$Collection = new ComponentCollection();\n";
-			$construct = "new {$fullClassName}(\$Collection);\n";
+			$construct = "new {$className}(\$Collection);\n";
 		}
 		return array($pre, $construct, $post);
 	}
@@ -500,21 +531,19 @@ class TestTask extends BakeTask {
  *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $realType The package name for the class.
- * @param string $className The Classname of the class the test is being generated for.
+ * @param string $fullClassName The Classname of the class the test is being generated for.
  * @return array An array containing used classes
  */
-	public function generateUses($type, $realType, $className) {
+	public function generateUses($type, $realType, $fullClassName) {
 		$uses = array();
 		$type = strtolower($type);
 		if ($type == 'component') {
-			$uses[] = array('ComponentCollection', 'Controller');
-			$uses[] = array('Component', 'Controller');
+			$uses[] = 'Cake\Controller\ComponentCollection';
 		}
 		if ($type == 'helper') {
-			$uses[] = array('View', 'View');
-			$uses[] = array('Helper', 'View');
+			$uses[] = 'Cake\View\View';
 		}
-		$uses[] = array($className, $realType);
+		$uses[] = $fullClassName;
 		return $uses;
 	}
 
@@ -527,12 +556,12 @@ class TestTask extends BakeTask {
  * @return string filename the test should be created on.
  */
 	public function testCaseFileName($type, $className) {
-		$path = $this->getPath() . 'Case/';
+		$path = $this->getPath() . 'TestCase/';
 		$type = Inflector::camelize($type);
 		if (isset($this->classTypes[$type])) {
 			$path .= $this->classTypes[$type] . DS;
 		}
-		$className = $this->getRealClassName($type, $className);
+		list($namespace, $className) = namespaceSplit($this->getRealClassName($type, $className));
 		return str_replace('/', DS, $path) . Inflector::camelize($className) . 'Test.php';
 	}
 
