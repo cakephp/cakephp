@@ -1,11 +1,5 @@
 <?php
 /**
- * This is core configuration file.
- *
- * Use it to configure core behaviour of Cake.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -15,29 +9,26 @@
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config
- * @since         CakePHP(tm) v 0.2.9
+ * @since         CakePHP(tm) v3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace App\Config;
 
-/**
- * In this file you set up your database connection details.
- *
- * @package       cake.config
- */
+use Cake\Core\Configure;
+
 /**
  * Database configuration class.
  * You can specify multiple configurations for production, development and testing.
  *
  * datasource => The name of a supported datasource; valid options are as follows:
- *		Database/Mysql 		- MySQL 4 & 5,
- *		Database/Sqlite		- SQLite (PHP5 only),
- *		Database/Postgres	- PostgreSQL 7 and higher,
- *		Database/Sqlserver	- Microsoft SQL Server 2005 and higher
+ *
+ *  Database/Mysql      - MySQL 4 & 5,
+ *  Database/Sqlite     - SQLite (PHP5 only),
+ *  Database/Postgres   - PostgreSQL 7 and higher,
+ *  Database/Sqlserver  - Microsoft SQL Server 2005 and higher
  *
  * You can add custom database datasources (or override existing datasources) by adding the
  * appropriate file to app/Model/Datasource/Database.  Datasources should be named 'MyDatasource.php',
- *
  *
  * persistent => true / false
  * Determines whether or not the database should use a persistent connection
@@ -59,27 +50,33 @@ namespace App\Config;
  * unix_socket =>
  * For MySQL to connect via socket specify the `unix_socket` parameter instead of `host` and `port`
  */
-class DATABASE_CONFIG {
 
-	public $default = array(
-		'datasource' => 'Database/Mysql',
-		'persistent' => false,
-		'host' => 'localhost',
-		'login' => 'user',
-		'password' => 'password',
-		'database' => 'database_name',
-		'prefix' => '',
-		//'encoding' => 'utf8',
-	);
+/**
+ * Create the default connection, this is the conventional default connection used
+ * by all models.
+ */
+Configure::write('Datasource.default', [
+	'datasource' => 'Database/Mysql',
+	'persistent' => false,
+	'host' => 'localhost',
+	'login' => 'user',
+	'password' => 'password',
+	'database' => 'database_name',
+	'prefix' => '',
+	//'encoding' => 'utf8',
+]);
 
-	public $test = array(
-		'datasource' => 'Database/Mysql',
-		'persistent' => false,
-		'host' => 'localhost',
-		'login' => 'user',
-		'password' => 'password',
-		'database' => 'test_database_name',
-		'prefix' => '',
-		//'encoding' => 'utf8',
-	);
-}
+/**
+ * Create a test connection.  This connection is used
+ * while running unit and integration tests.
+ */
+Confgure::write('Datasource.test', [
+	'datasource' => 'Database/Mysql',
+	'persistent' => false,
+	'host' => 'localhost',
+	'login' => 'user',
+	'password' => 'password',
+	'database' => 'test_database_name',
+	'prefix' => '',
+	//'encoding' => 'utf8',
+]);
