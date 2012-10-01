@@ -54,7 +54,6 @@
 	echo "<?php endforeach; ?>\n";
 	?>
 	</table>
-
 	<p>
 	<?php echo "<?php
 	echo \$this->Paginator->counter(array(
@@ -62,7 +61,6 @@
 	));
 	?>"; ?>
 	</p>
-
 	<div class="paging">
 	<?php
 		echo "<?php\n";
