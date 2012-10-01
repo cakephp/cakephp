@@ -1,10 +1,5 @@
 <?php
 /**
- * The Project Task handles creating the base application
- *
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -17,6 +12,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command\Task;
+
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -259,7 +255,7 @@ class ProjectTask extends Shell {
  * @return boolean Success
  */
 	public function securitySalt($path) {
-		$File = new File($path . 'Config/core.php');
+		$File = new File($path . 'Config/app.php');
 		$contents = $File->read();
 		if (preg_match('/([\s]*Configure::write\(\'Security.salt\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
 			$string = Security::generateAuthKey();
@@ -279,9 +275,9 @@ class ProjectTask extends Shell {
  * @return boolean Success
  */
 	public function securityCipherSeed($path) {
-		$File = new File($path . 'Config/core.php');
+		$File = new File($path . 'Config/app.php');
 		$contents = $File->read();
-		if (preg_match('/([\s]*Configure::write\(\'Security.cipherSeed\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
+		if (preg_match('/([\s]*Configure::write\(\'Security.cipherSeed\',[\s\'0-9]*\);)/', $contents, $match)) {
 			$string = substr(bin2hex(Security::generateAuthKey()), 0, 30);
 			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.cipherSeed\', \'' . $string . '\');', $contents);
 			if ($File->write($result)) {
@@ -364,7 +360,7 @@ class ProjectTask extends Shell {
  */
 	public function cakeAdmin($name) {
 		$path = (empty($this->configPath)) ? APP . 'Config/' : $this->configPath;
-		$File = new File($path . 'core.php');
+		$File = new File($path . 'routes.php');
 		$contents = $File->read();
 		if (preg_match('%(\s*[/]*Configure::write\(\'Routing.prefixes\',[\s\'a-z,\)\(]*\);)%', $contents, $match)) {
 			$result = str_replace($match[0], "\n" . 'Configure::write(\'Routing.prefixes\', array(\'' . $name . '\'));', $contents);

@@ -225,7 +225,7 @@ class ProjectTaskTest extends TestCase {
 		$result = $this->Task->securitySalt($path);
 		$this->assertTrue($result);
 
-		$File = new File($path . 'Config/core.php');
+		$File = new File($path . 'Config/app.php');
 		$contents = $File->read();
 		$this->assertNotRegExp('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
 	}
@@ -242,7 +242,7 @@ class ProjectTaskTest extends TestCase {
 		$result = $this->Task->securityCipherSeed($path);
 		$this->assertTrue($result);
 
-		$File = new File($path . 'Config/core.php');
+		$File = new File($path . 'Config/app.php');
 		$contents = $File->read();
 		$this->assertNotRegExp('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
 	}
@@ -312,9 +312,9 @@ class ProjectTaskTest extends TestCase {
  * @return void
  */
 	public function testCakeAdmin() {
-		$File = new File(APP . 'Config/core.php');
+		$File = new File(APP . 'Config/routes.php');
 		$contents = $File->read();
-		$File = new File(TMP . 'tests/core.php');
+		$File = new File(TMP . 'tests/routes.php');
 		$File->write($contents);
 
 		Configure::write('Routing.prefixes', null);
