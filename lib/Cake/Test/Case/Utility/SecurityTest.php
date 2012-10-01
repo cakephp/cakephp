@@ -147,9 +147,25 @@ class SecurityTest extends CakeTestCase {
 			$this->assertSame(strlen(Security::hash($key, 'sha256', true)), 64);
 		}
 
+		Security::setHash($_hashType);
+	}
+
+/**
+ * Test that hash() works with blowfish.
+ *
+ * @return void
+ */
+	public function testHashBlowfish() {
+		Security::setCost(10);
+		$test = Security::hash('password', 'blowfish');
+		$this->skipIf(strpos($test, '$2a$') === false, 'Blowfish hashes are incorrect.');
+
+		$_hashType = Security::$hashType;
+
+		$key = 'someKey';
 		$hashType = 'blowfish';
 		Security::setHash($hashType);
-		Security::setCost(10); // ensure default cost
+
 		$this->assertSame(Security::$hashType, $hashType);
 		$this->assertSame(strlen(Security::hash($key, null, false)), 60);
 
@@ -215,6 +231,7 @@ class SecurityTest extends CakeTestCase {
  * @return void
  */
 	public function testRijndael() {
+		$this->skipIf(!function_exists('mcrypt_encrypt'));
 		$txt = 'The quick brown fox jumped over the lazy dog.';
 		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
 

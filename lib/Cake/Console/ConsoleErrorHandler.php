@@ -84,6 +84,10 @@ class ConsoleErrorHandler {
 		if (!Configure::read('debug')) {
 			CakeLog::write($log, $message);
 		}
+
+		if ($log === LOG_ERR) {
+			$this->_stop(1);
+		}
 	}
 
 /**

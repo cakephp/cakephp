@@ -253,6 +253,7 @@ class DboSource extends DataSource {
 		if (!$this->enabled()) {
 			throw new MissingConnectionException(array(
 				'class' => get_class($this),
+				'message' => __d('cake_dev', 'Selected driver is not enabled'),
 				'enabled' => false
 			));
 		}
@@ -599,7 +600,7 @@ class DboSource extends DataSource {
 		} else {
 			if (isset($args[1]) && $args[1] === true) {
 				return $this->fetchAll($args[0], true);
-			} elseif (isset($args[1]) && !is_array($args[1]) ) {
+			} elseif (isset($args[1]) && !is_array($args[1])) {
 				return $this->fetchAll($args[0], false);
 			} elseif (isset($args[1]) && is_array($args[1])) {
 				if (isset($args[2])) {
@@ -1294,9 +1295,9 @@ class DboSource extends DataSource {
 						}
 					}
 					if ($type === 'hasAndBelongsToMany') {
-						$uniqueIds = $merge = array();
+						$merge = array();
 
-						foreach ($fetch as $j => $data) {
+						foreach ($fetch as $data) {
 							if (isset($data[$with]) && $data[$with][$foreignKey] === $row[$modelAlias][$modelPK]) {
 								if ($habtmFieldsCount <= 2) {
 									unset($data[$with]);
@@ -1444,7 +1445,7 @@ class DboSource extends DataSource {
 					$data[$association] = array();
 				}
 			} else {
-				foreach ($merge as $i => $row) {
+				foreach ($merge as $row) {
 					$insert = array();
 					if (count($row) === 1) {
 						$insert = $row[$association];
@@ -1765,7 +1766,7 @@ class DboSource extends DataSource {
 			case 'schema':
 				foreach (array('columns', 'indexes', 'tableParameters') as $var) {
 					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
 					} else {
 						${$var} = '';
 					}
@@ -2412,7 +2413,7 @@ class DboSource extends DataSource {
 		}
 		$clauses = '/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i';
 
-		if (preg_match($clauses, $conditions, $match)) {
+		if (preg_match($clauses, $conditions)) {
 			$clause = '';
 		}
 		$conditions = $this->_quoteFields($conditions);
@@ -2907,7 +2908,7 @@ class DboSource extends DataSource {
 			$columnMap[$key] = $pdoMap[$type];
 		}
 
-		foreach ($values as $row => $value) {
+		foreach ($values as $value) {
 			$i = 1;
 			foreach ($value as $col => $val) {
 				$statement->bindValue($i, $val, $columnMap[$col]);
@@ -2917,6 +2918,19 @@ class DboSource extends DataSource {
 			$statement->closeCursor();
 		}
 		return $this->commit();
+	}
+
+/**
+ * Reset a sequence based on the MAX() value of $column.  Useful
+ * for resetting sequences after using insertMulti().
+ *
+ * This method should be implemented by datasources that require sequences to be used.
+ *
+ * @param string $table The name of the table to update.
+ * @param string $column The column to use when reseting the sequence value.
+ * @return boolean success.
+ */
+	public function resetSequence($table, $column) {
 	}
 
 /**
@@ -3111,7 +3125,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Format indexes for create table
+ * Format indexes for create table.
  *
  * @param array $indexes
  * @param string $table
@@ -3127,6 +3141,8 @@ class DboSource extends DataSource {
 			} else {
 				if (!empty($value['unique'])) {
 					$out .= 'UNIQUE ';
+				} elseif (!empty($value['type']) && strtoupper($value['type']) === 'FULLTEXT') {
+					$out .= 'FULLTEXT ';
 				}
 				$name = $this->startQuote . $name . $this->endQuote;
 			}
@@ -3204,7 +3220,7 @@ class DboSource extends DataSource {
 
 		$isAllFloat = $isAllInt = true;
 		$containsFloat = $containsInt = $containsString = false;
-		foreach ($value as $key => $valElement) {
+		foreach ($value as $valElement) {
 			$valElement = trim($valElement);
 			if (!is_float($valElement) && !preg_match('/^[\d]+\.[\d]+$/', $valElement)) {
 				$isAllFloat = false;

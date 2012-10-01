@@ -592,19 +592,19 @@ class I18n {
 		$string = $string[1];
 		if (substr($string, 0, 2) === $this->_escape . 'x') {
 			$delimiter = $this->_escape . 'x';
-			return join('', array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
+			return implode('', array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
 		}
 		if (substr($string, 0, 2) === $this->_escape . 'd') {
 			$delimiter = $this->_escape . 'd';
-			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
+			return implode('', array_map('chr', array_filter(explode($delimiter, $string))));
 		}
 		if ($string[0] === $this->_escape && isset($string[1]) && is_numeric($string[1])) {
 			$delimiter = $this->_escape;
-			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
+			return implode('', array_map('chr', array_filter(explode($delimiter, $string))));
 		}
 		if (substr($string, 0, 3) === 'U00') {
 			$delimiter = 'U00';
-			return join('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
+			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
 		if (preg_match('/U([0-9a-fA-F]{4})/', $string, $match)) {
 			return Multibyte::ascii(array(hexdec($match[1])));

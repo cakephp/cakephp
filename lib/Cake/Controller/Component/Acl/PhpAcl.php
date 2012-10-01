@@ -318,10 +318,8 @@ class PhpAco {
  * @return void
  */
 	public function build(array $allow, array $deny = array()) {
-		$stack = array();
 		$this->_tree = array();
 		$tree = array();
-		$root = &$tree;
 
 		foreach ($allow as $dotPath => $aros) {
 			if (is_string($aros)) {

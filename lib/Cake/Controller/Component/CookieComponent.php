@@ -177,7 +177,7 @@ class CookieComponent extends Component {
 		if ($controller && isset($controller->response)) {
 			$this->_response = $controller->response;
 		} else {
-			$this->_response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+			$this->_response = new CakeResponse();
 		}
 	}
 
@@ -191,9 +191,6 @@ class CookieComponent extends Component {
 		$this->_expire($this->time);
 
 		$this->_values[$this->name] = array();
-		if (isset($_COOKIE[$this->name])) {
-			$this->_values[$this->name] = $this->_decrypt($_COOKIE[$this->name]);
-		}
 	}
 
 /**
@@ -279,6 +276,19 @@ class CookieComponent extends Component {
 			return Hash::get($this->_values[$this->name][$key], $names[1]);
 		}
 		return $this->_values[$this->name][$key];
+	}
+
+/**
+ * Returns true if given variable is set in cookie.
+ *
+ * @param string $var Variable name to check for
+ * @return boolean True if variable is there
+ */
+	public function check($key = null) {
+		if (empty($key)) {
+			return false;
+		}
+		return $this->read($key) !== null;
 	}
 
 /**
@@ -385,7 +395,7 @@ class CookieComponent extends Component {
 			return $this->_expires = 0;
 		}
 
-		if (is_integer($expires) || is_numeric($expires)) {
+		if (is_int($expires) || is_numeric($expires)) {
 			return $this->_expires = $now + intval($expires);
 		}
 		return $this->_expires = strtotime($expires, $now);

@@ -160,7 +160,7 @@ class HtmlHelper extends AppHelper {
 		if (is_object($this->_View->response)) {
 			$this->response = $this->_View->response;
 		} else {
-			$this->response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+			$this->response = new CakeResponse();
 		}
 		if (!empty($settings['configFile'])) {
 			$this->loadConfig($settings['configFile']);
@@ -637,7 +637,7 @@ class HtmlHelper extends AppHelper {
 			$out[] = $key . ':' . $value . ';';
 		}
 		if ($oneline) {
-			return join(' ', $out);
+			return implode(' ', $out);
 		}
 		return implode("\n", $out);
 	}
@@ -669,7 +669,7 @@ class HtmlHelper extends AppHelper {
 					$out[] = $crumb[0];
 				}
 			}
-			return join($separator, $out);
+			return implode($separator, $out);
 		} else {
 			return null;
 		}
@@ -805,7 +805,7 @@ class HtmlHelper extends AppHelper {
 				$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes(current($arg)), key($arg));
 			}
 		}
-		return sprintf($this->_tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
+		return sprintf($this->_tags['tablerow'], $this->_parseAttributes($trOptions), implode(' ', $out));
 	}
 
 /**

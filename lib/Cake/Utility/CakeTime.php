@@ -310,7 +310,7 @@ class CakeTime {
 			return false;
 		}
 
-		if (is_integer($dateString) || is_numeric($dateString)) {
+		if (is_int($dateString) || is_numeric($dateString)) {
 			$date = intval($dateString);
 		} elseif (is_object($dateString) && $dateString instanceof DateTime) {
 			$clone = clone $dateString;
@@ -589,7 +589,7 @@ class CakeTime {
 
 		if ($dateString instanceof DateTime) {
 			$date = $dateString;
-		} elseif (is_integer($dateString) || is_numeric($dateString)) {
+		} elseif (is_int($dateString) || is_numeric($dateString)) {
 			$dateString = (int)$dateString;
 
 			$date = new DateTime('@' . $dateString);
@@ -941,18 +941,11 @@ class CakeTime {
  * @see CakeTime::i18nFormat()
  */
 	public static function format($date, $format = null, $default = false, $timezone = null) {
-		//Backwards compatible params order
+		//Backwards compatible params re-order test
 		$time = self::fromString($format, $timezone);
-		$_time = false;
-		if (!is_numeric($time)) {
-			$_time = self::fromString($date, $timezone);
-		}
 
-		if (is_numeric($_time) && $time === false) {
-			return self::i18nFormat($_time, $format, $default, $timezone);
-		}
-		if ($time === false && $default !== false) {
-			return $default;
+		if ($time === false) {
+			return self::i18nFormat($date, $format, $default, $timezone);
 		}
 		return date($date, $time);
 	}

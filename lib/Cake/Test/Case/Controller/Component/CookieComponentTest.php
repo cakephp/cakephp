@@ -271,12 +271,14 @@ class CookieComponentTest extends CakeTestCase {
 		$expected = array(
 			'name' => $this->Cookie->name . '[Testing]',
 			'value' => '[1,2,3]',
-			'expire' => time() + 10,
 			'path' => '/',
 			'domain' => '',
 			'secure' => false,
 			'httpOnly' => false);
 		$result = $this->Controller->response->cookie($this->Cookie->name . '[Testing]');
+
+		$this->assertWithinMargin($result['expire'], time() + 10, 1);
+		unset($result['expire']);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -534,6 +536,60 @@ class CookieComponentTest extends CakeTestCase {
 		$_COOKIE['CakeTestCookie'] = 'kaboom';
 
 		$this->assertNull($this->Cookie->read('value'));
+	}
+
+/**
+ * testCheck method
+ *
+ * @return void
+ */
+	public function testCheck() {
+		$this->Cookie->write('CookieComponentTestCase', 'value');
+		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
+
+		$this->assertFalse($this->Cookie->check('NotExistingCookieComponentTestCase'));
+	}
+
+/**
+ * testCheckingSavedEmpty method
+ *
+ * @return void
+ */
+	public function testCheckingSavedEmpty() {
+		$this->Cookie->write('CookieComponentTestCase', 0);
+		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
+
+		$this->Cookie->write('CookieComponentTestCase', '0');
+		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
+
+		$this->Cookie->write('CookieComponentTestCase', false);
+		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
+
+		$this->Cookie->write('CookieComponentTestCase', null);
+		$this->assertFalse($this->Cookie->check('CookieComponentTestCase'));
+	}
+
+/**
+ * testCheckKeyWithSpaces method
+ *
+ * @return void
+ */
+	public function testCheckKeyWithSpaces() {
+		$this->Cookie->write('CookieComponent Test', "test");
+		$this->assertTrue($this->Cookie->check('CookieComponent Test'));
+		$this->Cookie->delete('CookieComponent Test');
+
+		$this->Cookie->write('CookieComponent Test.Test Case', "test");
+		$this->assertTrue($this->Cookie->check('CookieComponent Test.Test Case'));
+	}
+
+/**
+ * testCheckEmpty
+ *
+ * @return void
+ */
+	public function testCheckEmpty() {
+		$this->assertFalse($this->Cookie->check());
 	}
 
 /**

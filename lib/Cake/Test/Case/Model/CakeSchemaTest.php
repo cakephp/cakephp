@@ -763,6 +763,23 @@ class CakeSchemaTest extends CakeTestCase {
 		);
 		$result = $this->Schema->generateTable('posts', $posts);
 		$this->assertRegExp('/public \$posts/', $result);
+
+		$posts = array(
+			'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+			'author_id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'null' => false),
+			'body' => array('type' => 'text', 'null' => true, 'default' => null),
+			'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1),
+			'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+			'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+			'indexes' => array(
+				'PRIMARY' => array('column' => 'id', 'unique' => true),
+				'MyFtIndex' => array('column' => array('title', 'body'), 'type' => 'fulltext')
+			)
+		);
+		$result = $this->Schema->generateTable('fields', $posts);
+		$this->assertRegExp('/public \$fields/', $result);
+		$this->assertPattern('/\'type\' \=\> \'fulltext\'/', $result);
 	}
 
 /**

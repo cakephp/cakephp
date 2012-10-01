@@ -675,7 +675,7 @@ class CakeRequest implements ArrayAccess {
 	public function accepts($type = null) {
 		$raw = $this->parseAccept();
 		$accept = array();
-		foreach ($raw as $value => $types) {
+		foreach ($raw as $types) {
 			$accept = array_merge($accept, $types);
 		}
 		if ($type === null) {
@@ -756,6 +756,16 @@ class CakeRequest implements ArrayAccess {
 		}
 		krsort($accept);
 		return $accept;
+	}
+
+/**
+ * Provides a read accessor for `$this->query`.  Allows you
+ * to use a syntax similar to `CakeSession` for reading url query data.
+ *
+ * @return mixed The value being read
+ */
+	public function query($name) {
+		return Hash::get($this->query, $name);
 	}
 
 /**

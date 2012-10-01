@@ -1826,32 +1826,32 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::url('ftp://cakephp.org/pub/cake'));
 		$this->assertTrue(Validation::url('ftp://192.168.0.1/pub/cake'));
 		$this->assertTrue(Validation::url('sftp://192.168.0.1/pub/cake'));
-		$this->assertFalse(Validation::url('ftps://256.168.0.1/pub/cake'));
-		$this->assertFalse(Validation::url('ftp://256.168.0.1/pub/cake'));
 		$this->assertTrue(Validation::url('https://my.domain.com/gizmo/app?class=MySip;proc=start'));
 		$this->assertTrue(Validation::url('www.domain.tld'));
+		$this->assertTrue(Validation::url('http://123456789112345678921234567893123456789412345678951234567896123.com'));
+		$this->assertTrue(Validation::url('http://www.domain.com/blogs/index.php?blog=6&tempskin=_rss2'));
+		$this->assertTrue(Validation::url('http://www.domain.com/blogs/parenth()eses.php'));
+		$this->assertTrue(Validation::url('http://www.domain.com/index.php?get=params&amp;get2=params'));
+		$this->assertTrue(Validation::url('http://www.domain.com/ndex.php?get=params&amp;get2=params#anchor'));
+		$this->assertTrue(Validation::url('http://www.domain.com/real%20url%20encodeing'));
+		$this->assertTrue(Validation::url('http://en.wikipedia.org/wiki/Architectural_pattern_(computer_science)'));
+		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
+		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
+		$this->assertTrue(Validation::url('http://underscore_subdomain.example.org'));
+		$this->assertTrue(Validation::url('http://_jabber._tcp.gmail.com'));
+		$this->assertFalse(Validation::url('ftps://256.168.0.1/pub/cake'));
+		$this->assertFalse(Validation::url('ftp://256.168.0.1/pub/cake'));
 		$this->assertFalse(Validation::url('http://w_w.domain.co_m'));
 		$this->assertFalse(Validation::url('http://www.domain.12com'));
 		$this->assertFalse(Validation::url('http://www.domain.longttldnotallowed'));
 		$this->assertFalse(Validation::url('http://www.-invaliddomain.tld'));
 		$this->assertFalse(Validation::url('http://www.domain.-invalidtld'));
-		$this->assertTrue(Validation::url('http://123456789112345678921234567893123456789412345678951234567896123.com'));
 		$this->assertFalse(Validation::url('http://this-domain-is-too-loooooong-by-icann-rules-maximum-length-is-63.com'));
-		$this->assertTrue(Validation::url('http://www.domain.com/blogs/index.php?blog=6&tempskin=_rss2'));
-		$this->assertTrue(Validation::url('http://www.domain.com/blogs/parenth()eses.php'));
-		$this->assertTrue(Validation::url('http://www.domain.com/index.php?get=params&amp;get2=params'));
-		$this->assertTrue(Validation::url('http://www.domain.com/ndex.php?get=params&amp;get2=params#anchor'));
-		$this->assertFalse(Validation::url('http://www.domain.com/fakeenco%ode'));
-		$this->assertTrue(Validation::url('http://www.domain.com/real%20url%20encodeing'));
-		$this->assertTrue(Validation::url('http://en.wikipedia.org/wiki/Architectural_pattern_(computer_science)'));
-		$this->assertFalse(Validation::url('http://en.(wikipedia).org/'));
-		$this->assertFalse(Validation::url('www.cakephp.org', true));
-		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
-		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
-		$this->assertTrue(Validation::url('http://underscore_subdomain.example.org'));
-		$this->assertTrue(Validation::url('http://_jabber._tcp.gmail.com'));
 		$this->assertFalse(Validation::url('http://www.underscore_domain.org'));
 		$this->assertFalse(Validation::url('http://_jabber._tcp.g_mail.com'));
+		$this->assertFalse(Validation::url('http://en.(wikipedia).org/'));
+		$this->assertFalse(Validation::url('http://www.domain.com/fakeenco%ode'));
+		$this->assertFalse(Validation::url('www.cakephp.org', true));
 
 		$this->assertTrue(Validation::url('http://example.com/~userdir/subdir/index.html'));
 		$this->assertTrue(Validation::url('http://www.zwischenraume.de'));
@@ -2273,7 +2273,7 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * testMimeType method
+ * testUploadError method
  *
  * @return void
  */
@@ -2284,4 +2284,23 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::uploadError(2));
 		$this->assertFalse(Validation::uploadError(array('error' => 2)));
 	}
+
+/**
+ * testFileSize method
+ *
+ * @return void
+ */
+	public function testFileSize() {
+		$image = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$this->assertTrue(Validation::fileSize($image, '<', 1024));
+		$this->assertTrue(Validation::fileSize(array('tmp_name' => $image), 'isless', 1024));
+		$this->assertTrue(Validation::fileSize($image, '<', '1KB'));
+		$this->assertTrue(Validation::fileSize($image, '>=', 200));
+		$this->assertTrue(Validation::fileSize($image, '==', 201));
+		$this->assertTrue(Validation::fileSize($image, '==', '201B'));
+
+		$this->assertFalse(Validation::fileSize($image, 'isgreater', 1024));
+		$this->assertFalse(Validation::fileSize(array('tmp_name' => $image), '>', '1KB'));
+	}
+
 }

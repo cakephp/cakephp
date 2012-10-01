@@ -219,7 +219,7 @@ class CakeRoute {
 			if (isset($route[$key])) {
 				continue;
 			}
-			if (is_integer($key)) {
+			if (is_int($key)) {
 				$route['pass'][] = $value;
 				continue;
 			}

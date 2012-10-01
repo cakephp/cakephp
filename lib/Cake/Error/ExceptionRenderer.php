@@ -146,7 +146,7 @@ class ExceptionRenderer {
 		if (!$request = Router::getRequest(true)) {
 			$request = new CakeRequest();
 		}
-		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+		$response = new CakeResponse();
 
 		if (method_exists($exception, 'responseHeader')) {
 			$response->header($exception->responseHeader());
@@ -295,11 +295,11 @@ class ExceptionRenderer {
 		$this->controller->layoutPath = null;
 		$this->controller->subDir = null;
 		$this->controller->viewPath = 'Errors/';
-		$this->controller->viewClass = 'View';
 		$this->controller->layout = 'error';
 		$this->controller->helpers = array('Form', 'Html', 'Session');
 
-		$this->controller->render($template);
+		$view = new View($this->controller);
+		$this->controller->response->body($view->render($template, 'error'));
 		$this->controller->response->type('html');
 		$this->controller->response->send();
 	}

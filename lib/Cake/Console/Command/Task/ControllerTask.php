@@ -349,7 +349,7 @@ class ControllerTask extends BakeTask {
 	public function doHelpers() {
 		return $this->_doPropertyChoices(
 			__d('cake_console', "Would you like this controller to use other helpers\nbesides HtmlHelper and FormHelper?"),
-			__d('cake_console', "Please provide a comma separated list of the other\nhelper names you'd like to use.\nExample: 'Ajax, Javascript, Time'")
+			__d('cake_console', "Please provide a comma separated list of the other\nhelper names you'd like to use.\nExample: 'Text, Js, Time'")
 		);
 	}
 
@@ -432,7 +432,7 @@ class ControllerTask extends BakeTask {
 			}
 		}
 
-		if (intval($enteredController) > 0 && intval($enteredController) <= count($controllers) ) {
+		if (intval($enteredController) > 0 && intval($enteredController) <= count($controllers)) {
 			$controllerName = $controllers[intval($enteredController) - 1];
 		} else {
 			$controllerName = Inflector::camelize($enteredController);

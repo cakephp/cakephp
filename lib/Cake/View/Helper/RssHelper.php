@@ -341,7 +341,7 @@ class RssHelper extends AppHelper {
 				$nodes->item(0)->setAttribute($key, $value);
 			}
 		}
-		foreach ($children as $k => $child) {
+		foreach ($children as $child) {
 			$child = $elem->createElement($name, $child);
 			$nodes->item(0)->appendChild($child);
 		}

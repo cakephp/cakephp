@@ -358,7 +358,6 @@ class TimeHelper extends AppHelper {
  */
 	public function timeAgoInWords($dateTime, $options = array()) {
 		$element = null;
-		$stringDate = '';
 
 		if (is_array($options) && !empty($options['element'])) {
 			$element = array(

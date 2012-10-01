@@ -374,7 +374,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testFolderReadWithHiddenFiles() {
-		$this->skipIf(!is_writeable(TMP), 'Cant test Folder::read with hidden files unless the tmp folder is writable.');
+		$this->skipIf(!is_writable(TMP), 'Cant test Folder::read with hidden files unless the tmp folder is writable.');
 
 		$Folder = new Folder(TMP . 'folder_tree_hidden', true, 0777);
 		mkdir($Folder->path . DS . '.svn');
@@ -457,7 +457,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testFolderTreeWithHiddenFiles() {
-		$this->skipIf(!is_writeable(TMP), 'Can\'t test Folder::tree with hidden files unless the tmp folder is writable.');
+		$this->skipIf(!is_writable(TMP), 'Can\'t test Folder::tree with hidden files unless the tmp folder is writable.');
 
 		$Folder = new Folder(TMP . 'folder_tree_hidden', true, 0777);
 		mkdir($Folder->path . DS . '.svn', 0777, true);
@@ -918,7 +918,7 @@ class FolderTest extends CakeTestCase {
  *
  * @return void
  */
-	function testCopyWithOverwrite() {
+	public function testCopyWithOverwrite() {
 		extract($this->_setupFilesystem());
 
 		$Folder = new Folder($folderOne);
@@ -1050,7 +1050,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertTrue(file_exists($folderTwo . DS . 'file1.php'));
 		$this->assertEquals('', file_get_contents($folderTwoB . DS . 'fileB.php'));
 		$this->assertFalse(file_exists($fileOne));
-  	$this->assertFalse(file_exists($folderOneA));
+		$this->assertFalse(file_exists($folderOneA));
 		$this->assertFalse(file_exists($fileOneA));
 
 		$Folder = new Folder($path);

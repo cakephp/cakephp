@@ -213,7 +213,6 @@ class Debugger {
 		if (empty($line)) {
 			$line = '??';
 		}
-		$path = self::trimPath($file);
 
 		$info = compact('code', 'description', 'file', 'line');
 		if (!in_array($info, $self->errors)) {
@@ -318,7 +317,7 @@ class Debugger {
 						foreach ($next['args'] as $arg) {
 							$args[] = Debugger::exportVar($arg);
 						}
-						$reference .= join(', ', $args);
+						$reference .= implode(', ', $args);
 					}
 					$reference .= ')';
 				}
@@ -779,11 +778,11 @@ class Debugger {
 				continue;
 			}
 			if (is_array($value)) {
-				$value = join("\n", $value);
+				$value = implode("\n", $value);
 			}
 			$info .= String::insert($tpl[$key], array($key => $value) + $data, $insertOpts);
 		}
-		$links = join(' ', $links);
+		$links = implode(' ', $links);
 
 		if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
 			return call_user_func($tpl['callback'], $data, compact('links', 'info'));

@@ -327,7 +327,7 @@ class AuthComponent extends Component {
 		if (!empty($this->loginRedirect)) {
 			$default = $this->loginRedirect;
 		}
-		$controller->redirect($controller->referer($default), null, true);
+		$controller->redirect($controller->referer($default, true), null, true);
 		return false;
 	}
 
