@@ -812,6 +812,28 @@ class AppTest extends CakeTestCase {
 	}
 
 /**
+ * loading classes with a single call
+ */
+	public function testUsesWithArray() {
+		App::uses(array(
+			'Foo' => 'Foo1',
+			'Bar' => 'Bar1',
+			'Baz' => 'Baz1'
+		));
+
+		$this->assertEquals('Foo1', App::location('Foo'));
+		$this->assertEquals('Bar1', App::location('Bar'));
+		$this->assertEquals('Baz1', App::location('Baz'));
+	}
+
+/**
+ * @expectedException PHPUnit_Framework_Error
+ */
+	public function testUsesError() {
+		App::uses('DoingItWrong');
+	}
+
+/**
  * Tests that  App::location() returns the defined path for a class
  *
  * @return void
