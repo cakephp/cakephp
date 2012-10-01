@@ -778,7 +778,9 @@ class FolderTest extends CakeTestCase {
 		mkdir($folder);
 		$file = $folder . DS . 'file';
 		touch($file);
-		$handle = fopen($file, 'a');
+
+		chmod($folder, 0555);
+		chmod($file, 0444);
 
 		$Folder = new Folder($folder);
 		$return = $Folder->delete();
@@ -787,7 +789,7 @@ class FolderTest extends CakeTestCase {
 		$messages = $Folder->messages();
 		$errors = $Folder->errors();
 		$expected = array(
-			$folder . DS . 'file NOT removed',
+			$file . ' NOT removed',
 			$folder . ' NOT removed',
 		);
 		sort($expected);
@@ -795,7 +797,8 @@ class FolderTest extends CakeTestCase {
 		$this->assertEmpty($messages);
 		$this->assertEquals($expected, $errors);
 
-		fclose($handle);
+		chmod($file, 0644);
+		chmod($folder, 0755);
 
 		$return = $Folder->delete();
 		$this->assertTrue($return);
@@ -803,7 +806,7 @@ class FolderTest extends CakeTestCase {
 		$messages = $Folder->messages();
 		$errors = $Folder->errors();
 		$expected = array(
-			$folder . DS . 'file removed',
+			$file . ' removed',
 			$folder . ' removed',
 		);
 		sort($expected);
