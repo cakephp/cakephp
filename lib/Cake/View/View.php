@@ -415,8 +415,14 @@ class View extends Object {
 				$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
 			}
 
+			$current = $this->_current;
+			$restore = $this->_currentType;
+
 			$this->_currentType = self::TYPE_ELEMENT;
 			$element = $this->_render($file, array_merge($this->viewVars, $data));
+
+			$this->_currentType = $restore;
+			$this->_current = $current;
 
 			if ($callbacks) {
 				$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));

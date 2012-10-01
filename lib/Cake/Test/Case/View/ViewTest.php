@@ -1398,6 +1398,22 @@ TEXT;
 	}
 
 /**
+ * Test extend() preceeded by an element()
+ *
+ * @return void
+ */
+	public function testExtendWithElementBeforeExtend() {
+		$this->View->layout = false;
+		$result = $this->View->render('extend_with_element');
+		$expected = <<<TEXT
+Parent View.
+this is the test elementThe view
+
+TEXT;
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test that setting arbitrary properties still works.
  *
  * @return void
