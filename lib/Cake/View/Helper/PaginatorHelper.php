@@ -39,14 +39,6 @@ class PaginatorHelper extends Helper {
 	public $helpers = array('Html');
 
 /**
- * The class used for 'Ajax' pagination links. Defaults to JsHelper. You should make sure
- * that JsHelper is defined as a helper before PaginatorHelper, if you want to customize the JsHelper.
- *
- * @var string
- */
-	protected $_ajaxHelperClass = 'Js';
-
-/**
  * Holds the default options for pagination links
  *
  * The values that may be specified are:
@@ -62,41 +54,12 @@ class PaginatorHelper extends Helper {
  * - `url['page']` Page number to use in links.
  * - `model` The name of the model.
  * - `escape` Defines if the title field for the link should be escaped (default: true).
- * - `update` DOM id of the element updated with the results of the AJAX call.
- *     If this key isn't specified Paginator will use plain HTML links.
  *
  * @var array
  */
 	public $options = array(
 		'convertKeys' => array('page', 'limit', 'sort', 'direction')
 	);
-
-/**
- * Constructor for the helper. Sets up the helper that is used for creating 'AJAX' links.
- *
- * Use `public $helpers = array('Paginator' => array('ajax' => 'CustomHelper'));` to set a custom Helper
- * or choose a non JsHelper Helper. If you want to use a specific library with JsHelper declare JsHelper and its
- * adapter before including PaginatorHelper in your helpers array.
- *
- * The chosen custom helper must implement a `link()` method.
- *
- * @param View $View the view object the helper is attached to.
- * @param array $settings Array of settings.
- * @throws Cake\Error\Exception When the AjaxProvider helper does not implement a link method.
- */
-	public function __construct(View $View, $settings = array()) {
-		$ajaxProvider = isset($settings['ajax']) ? $settings['ajax'] : 'Js';
-		$this->helpers[] = $ajaxProvider;
-		$this->_ajaxHelperClass = $ajaxProvider;
-
-		$classname = App::classname($ajaxProvider, 'View/Helper', 'Helper');
-		if (!$classname || !method_exists($classname, 'link')) {
-			throw new Error\Exception(sprintf(
-				__d('cake_dev', '%s does not implement a link() method, it is incompatible with PaginatorHelper'), $classname
-			));
-		}
-		parent::__construct($View, $settings);
-	}
 
 /**
  * Before render callback. Overridden to merge passed args with url options.
@@ -132,16 +95,12 @@ class PaginatorHelper extends Helper {
 /**
  * Sets default options for all pagination links
  *
- * @param array|string $options Default options for pagination links. If a string is supplied - it
- *   is used as the DOM id element to update. See PaginatorHelper::$options for list of keys.
+ * @param array $options Default options for pagination links.
+ *   See PaginatorHelper::$options for list of keys.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::options
  */
 	public function options($options = array()) {
-		if (is_string($options)) {
-			$options = array('update' => $options);
-		}
-
 		if (!empty($options['paging'])) {
 			if (!isset($this->request->params['paging'])) {
 				$this->request->params['paging'] = array();
@@ -350,12 +309,10 @@ class PaginatorHelper extends Helper {
 	}
 
 /**
- * Generates a plain or Ajax link with pagination parameters
+ * Generates a link with pagination parameters
  *
  * ### Options
  *
- * - `update` The Id of the DOM element you wish to update. Creates Ajax enabled links
- *    with the AjaxHelper.
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
  *
@@ -380,9 +337,7 @@ class PaginatorHelper extends Helper {
 		unset($options['convertKeys']);
 
 		$url = $this->url($url, true, $model);
-
-		$obj = isset($options['update']) ? $this->_ajaxHelperClass : 'Html';
-		return $this->{$obj}->link($title, $url, $options);
+		return $this->Html->link($title, $url, $options);
 	}
 
 /**
