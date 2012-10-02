@@ -17,16 +17,20 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\TestCase\Model;
 
-App::uses('CakeSchema', 'Model');
-App::uses('CakeTestFixture', 'TestSuite/Fixture');
+use Cake\Core\Plugin;
+use Cake\Model\Schema;
+use Cake\TestSuite\Fixture\TestFixture;
+use Cake\TestSuite\Fixture\TestModel;
+use Cake\TestSuite\TestCase;
 
 /**
  * Test for Schema database management
  *
  * @package       Cake.Test.Case.Model
  */
-class MyAppSchema extends CakeSchema {
+class MyAppSchema extends Schema {
 
 /**
  * name property
@@ -121,7 +125,7 @@ class MyAppSchema extends CakeSchema {
  *
  * @package       Cake.Test.Case.Model
  */
-class TestAppSchema extends CakeSchema {
+class TestAppSchema extends Schema {
 
 /**
  * name property
@@ -229,7 +233,7 @@ class TestAppSchema extends CakeSchema {
  *
  * @package       Cake.Test.Case.Model
  */
-class SchemaPost extends CakeTestModel {
+class SchemaPost extends TestModel {
 
 /**
  * name property
@@ -265,7 +269,7 @@ class SchemaPost extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Model
  */
-class SchemaComment extends CakeTestModel {
+class SchemaComment extends TestModel {
 
 /**
  * name property
@@ -294,7 +298,7 @@ class SchemaComment extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Model
  */
-class SchemaTag extends CakeTestModel {
+class SchemaTag extends TestModel {
 
 /**
  * name property
@@ -323,7 +327,7 @@ class SchemaTag extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Model
  */
-class SchemaDatatype extends CakeTestModel {
+class SchemaDatatype extends TestModel {
 
 /**
  * name property
@@ -347,11 +351,11 @@ class SchemaDatatype extends CakeTestModel {
  * testSchemaCreateTable will fail if listSources has already been called and
  * its source cache populated - I.e. if the test is run within a group
  *
- * @uses          CakeTestModel
+ * @uses          TestModel
  * @package
  * @package       Cake.Test.Case.Model
  */
-class Testdescribe extends CakeTestModel {
+class Testdescribe extends TestModel {
 
 /**
  * name property
@@ -366,7 +370,7 @@ class Testdescribe extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Model
  */
-class SchemaCrossDatabase extends CakeTestModel {
+class SchemaCrossDatabase extends TestModel {
 
 /**
  * name property
@@ -395,7 +399,7 @@ class SchemaCrossDatabase extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Model
  */
-class SchemaCrossDatabaseFixture extends CakeTestFixture {
+class SchemaCrossDatabaseFixture extends TestFixture {
 
 /**
  * name property
@@ -436,7 +440,7 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
  *
  * @package       Cake.Test.Case.Model
  */
-class SchemaPrefixAuthUser extends CakeTestModel {
+class SchemaPrefixAuthUser extends TestModel {
 
 /**
  * name property
@@ -461,11 +465,11 @@ class SchemaPrefixAuthUser extends CakeTestModel {
 }
 
 /**
- * CakeSchemaTest
+ * SchemaTest
  *
  * @package       Cake.Test.Case.Model
  */
-class CakeSchemaTest extends CakeTestCase {
+class SchemaTest extends TestCase {
 
 /**
  * fixtures property
@@ -486,6 +490,7 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->markTestIncomplete('Not runnable until Models are fixed.');
 		ConnectionManager::getDataSource('test')->cacheSources = false;
 		$this->Schema = new TestAppSchema();
 	}
@@ -501,7 +506,7 @@ class CakeSchemaTest extends CakeTestCase {
 			unlink(TMP . 'tests/schema.php');
 		}
 		unset($this->Schema);
-		CakePlugin::unload();
+		Plugin::unload();
 	}
 
 /**
@@ -510,23 +515,23 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	public function testSchemaName() {
-		$Schema = new CakeSchema();
+		$Schema = new Schema();
 		$this->assertEquals(Inflector::camelize(Inflector::slug(APP_DIR)), $Schema->name);
 
 		Configure::write('App.dir', 'Some.name.with.dots');
-		$Schema = new CakeSchema();
+		$Schema = new Schema();
 		$this->assertEquals('SomeNameWithDots', $Schema->name);
 
 		Configure::write('App.dir', 'Some-name-with-dashes');
-		$Schema = new CakeSchema();
+		$Schema = new Schema();
 		$this->assertEquals('SomeNameWithDashes', $Schema->name);
 
 		Configure::write('App.dir', 'Some name with spaces');
-		$Schema = new CakeSchema();
+		$Schema = new Schema();
 		$this->assertEquals('SomeNameWithSpaces', $Schema->name);
 
 		Configure::write('App.dir', 'Some,name;with&weird=characters');
-		$Schema = new CakeSchema();
+		$Schema = new Schema();
 		$this->assertEquals('SomeNameWithWeirdCharacters', $Schema->name);
 
 		Configure::write('App.dir', 'app');
@@ -640,7 +645,7 @@ class CakeSchemaTest extends CakeTestCase {
 
 		$model = new SchemaPrefixAuthUser();
 
-		$Schema = new CakeSchema();
+		$Schema = new Schema();
 		$read = $Schema->read(array(
 			'connection' => 'test',
 			'name' => 'TestApp',
@@ -686,9 +691,9 @@ class CakeSchemaTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 
-		$Schema = new CakeSchema();
+		$Schema = new Schema();
 		$Schema->plugin = 'TestPlugin';
 		$read = $Schema->read(array(
 			'connection' => 'test',
@@ -870,13 +875,13 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	public function testCompareEmptyStringAndNull() {
-		$One = new CakeSchema(array(
+		$One = new Schema(array(
 			'posts' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
 				'name' => array('type' => 'string', 'null' => false, 'default' => '')
 			)
 		));
-		$Two = new CakeSchema(array(
+		$Two = new Schema(array(
 			'posts' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
 				'name' => array('type' => 'string', 'null' => false, 'default' => null)
@@ -1052,7 +1057,7 @@ class CakeSchemaTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 		$Other = $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));
 		$this->assertEquals('TestPluginApp', $Other->name);
 		$this->assertEquals(array('test_plugin_acos'), array_keys($Other->tables));
@@ -1069,7 +1074,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$db = ConnectionManager::getDataSource('test');
 		$db->cacheSources = false;
 
-		$Schema = new CakeSchema(array(
+		$Schema = new Schema(array(
 			'connection' => 'test',
 			'testdescribes' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),

@@ -39,14 +39,14 @@ class AllDatabaseTest extends \PHPUnit_Framework_TestSuite {
 		$path = CORE_TEST_CASES . DS . 'Model/';
 		$tasks = array(
 			'AclNode',
-			'CakeSchema',
+			'Schema',
 			'ConnectionManager',
 			'Datasource/DboSource',
 			'Datasource/Database/Mysql',
 			'Datasource/Database/Postgres',
 			'Datasource/Database/Sqlite',
 			'Datasource/Database/Sqlserver',
-			'Datasource/CakeSession',
+			'Datasource/Session',
 			'Datasource/Session/CacheSession',
 			'Datasource/Session/DatabaseSession',
 		);

@@ -16,12 +16,15 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Test\TestCase\Model\Datasource\Session;
 
-App::uses('CakeSession', 'Model/Datasource');
-App::uses('CacheSession', 'Model/Datasource/Session');
-class_exists('CakeSession');
+use Cake\Core\Configure;
+use Cake\Cache\Cache;
+use Cake\Model\Datasource\Session;
+use Cake\Model\Datasource\Session\CacheSession;
+use Cake\TestSuite\TestCase;
 
-class CacheSessionTest extends CakeTestCase {
+class CacheSessionTest extends TestCase {
 
 	protected static $_sessionBackup;
 
@@ -31,7 +34,7 @@ class CacheSessionTest extends CakeTestCase {
  * @return void
  */
 	public static function setupBeforeClass() {
-		Cache::config('session_test', array(
+		Configure::write('Cache.session_test', array(
 			'engine' => 'File',
 			'prefix' => 'session_test_'
 		));

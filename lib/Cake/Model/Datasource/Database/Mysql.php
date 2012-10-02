@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model\Datasource\Database;
+
 use Cake\Error;
 use Cake\Model\Datasource\DboSource;
 use Cake\Model\Model;
