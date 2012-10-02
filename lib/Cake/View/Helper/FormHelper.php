@@ -644,6 +644,7 @@ class FormHelper extends AppHelper {
  */
 	public function error($field, $text = null, $options = array()) {
 		$defaults = array('wrap' => true, 'class' => 'error-message', 'escape' => true);
+                if ($options == null) $options = array();
 		$options = array_merge($defaults, $options);
 		$this->setEntity($field);
 
@@ -1136,7 +1137,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($type != 'hidden' && $error !== false) {
-			$errMsg = $this->error($fieldName, $error);
+			$errMsg = $this->error($fieldName, null, $error);
 			if ($errMsg) {
 				$divOptions = $this->addClass($divOptions, 'error');
 				$out['error'] = $errMsg;
