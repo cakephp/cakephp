@@ -2261,6 +2261,20 @@ class FormHelper extends AppHelper {
 		$monthNames = $attributes['monthNames'];
 		$attributes = array_diff_key($attributes, $defaults);
 
+		if (!empty($interval) && $interval > 1 && !empty($min)) {
+			$current = new DateTime();
+			if ($year !== null) {
+				$current->setDate($year, $month, $day);
+			}
+			if ($hour !== null) {
+				$current->setTime($hour, $min);
+			}
+			$change = (round($min * (1 / $interval)) * $interval) - $min;
+			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
+			$newTime = explode(' ', $current->format('Y m d H i a'));
+			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
+		}
+
 		if (isset($attributes['id'])) {
 			if (is_string($attributes['id'])) {
 				// build out an array version
@@ -2322,9 +2336,6 @@ class FormHelper extends AppHelper {
 		}
 		$opt = implode($separator, $selects);
 
-		if (!empty($interval) && $interval > 1 && !empty($min)) {
-			$min = round($min * (1 / $interval)) * $interval;
-		}
 		$selectMinuteAttr['interval'] = $interval;
 		switch ($timeFormat) {
 			case '24':

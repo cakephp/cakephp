@@ -891,7 +891,7 @@ class View extends Object {
  * Sandbox method to evaluate a template / view script in.
  *
  * @param string $viewFn Filename of the view
- * @param array $___dataForView Data to include in rendered view.
+ * @param array $dataForView Data to include in rendered view.
  *    If empty the current View::$viewVars will be used.
  * @return string Rendered output
  */
@@ -1156,8 +1156,14 @@ class View extends Object {
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
 		}
 
+		$current = $this->_current;
+		$restore = $this->_currentType;
+
 		$this->_currentType = self::TYPE_ELEMENT;
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
+
+		$this->_currentType = $restore;
+		$this->_current = $current;
 
 		if (isset($options['callbacks'])) {
 			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
