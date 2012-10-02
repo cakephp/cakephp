@@ -672,7 +672,7 @@ class FolderTest extends TestCase {
 		$this->assertSame(array_diff($expected, $result), array());
 		$this->assertSame(array_diff($expected, $result), array());
 
-		$result = $Folder->findRecursive('(config|paths)\.php', true);
+		$result = $Folder->findRecursive('(config|woot)\.php', true);
 		$expected = array(
 			CAKE . 'Config/config.php'
 		);
