@@ -13,6 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component;
+
 use Cake\Configure\IniReader;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentCollection;
@@ -68,7 +69,7 @@ class AclComponent extends Component {
 		parent::__construct($collection, $settings);
 		$classname = $name = Configure::read('Acl.classname');
 		if (!class_exists($classname)) {
-			$classname = App::classname($name, 'Controller/Component', 'Component');
+			$classname = App::classname($name, 'Controller/Component/Acl');
 			if (!$classname) {
 				throw new Error\Exception(__d('cake_dev', 'Could not find %s.', $name));
 			}

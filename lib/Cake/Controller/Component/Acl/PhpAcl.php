@@ -1,9 +1,5 @@
 <?php
 /**
- * PHP configuration based AclInterface implementation
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,16 +8,16 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component.Acl
  * @since         CakePHP(tm) v 2.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Controller\Component\Acl;
+
 use Cake\Configure\PhpReader;
 use Cake\Controller\Component;
 use Cake\Core\Object;
 use Cake\Error;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 /**
@@ -93,7 +89,7 @@ class PhpAcl extends Object implements AclInterface {
  *
  * @param array $config configuration array, see docs
  * @return void
- * @throws AclException When required keys are missing.
+ * @throws Cake\Error\Exception When required keys are missing.
  */
 	public function build(array $config) {
 		if (empty($config['roles'])) {
