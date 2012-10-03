@@ -500,7 +500,7 @@ class Helper extends Object {
 
 		// Either 'body' or 'date.month' type inputs.
 		if (
-			($count === 1 && $this->_modelScope && $setScope == false) ||
+			($count === 1 && $this->_modelScope && !$setScope) ||
 			(
 				$count === 2 &&
 				in_array($lastPart, $this->_fieldSuffixes) &&
@@ -526,12 +526,11 @@ class Helper extends Object {
 
 		$isHabtm = (
 			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) &&
-			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple' &&
-			$count == 1
+			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
 		);
 
 		// habtm models are special
-		if ($count == 1 && $isHabtm) {
+		if ($count === 1 && $isHabtm) {
 			$this->_association = $parts[0];
 			$entity = $parts[0] . '.' . $parts[0];
 		} else {
@@ -750,7 +749,7 @@ class Helper extends Object {
  * @return array Array of options with $key set.
  */
 	public function addClass($options = array(), $class = null, $key = 'class') {
-		if (isset($options[$key]) && trim($options[$key]) != '') {
+		if (isset($options[$key]) && trim($options[$key])) {
 			$options[$key] .= ' ' . $class;
 		} else {
 			$options[$key] = $class;

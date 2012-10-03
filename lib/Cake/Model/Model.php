@@ -727,7 +727,7 @@ class Model extends Object implements CakeEventListener {
 				$this->useTable = Inflector::tableize($this->name);
 			}
 
-			if ($this->displayField == null) {
+			if (!$this->displayField) {
 				unset($this->displayField);
 			}
 			$this->table = $this->useTable;
@@ -1400,7 +1400,7 @@ class Model extends Object implements CakeEventListener {
 			$this->schema();
 		}
 
-		if ($this->_schema != null) {
+		if ($this->_schema) {
 			return isset($this->_schema[$name]);
 		}
 		return false;
@@ -1454,7 +1454,7 @@ class Model extends Object implements CakeEventListener {
  *    or false if none $field exist.
  */
 	public function getVirtualField($field = null) {
-		if ($field == null) {
+		if (!$field) {
 			return empty($this->virtualFields) ? false : $this->virtualFields;
 		}
 		if ($this->isVirtualField($field)) {
@@ -1510,7 +1510,7 @@ class Model extends Object implements CakeEventListener {
 	public function read($fields = null, $id = null) {
 		$this->validationErrors = array();
 
-		if ($id != null) {
+		if ($id) {
 			$this->id = $id;
 		}
 
@@ -1526,9 +1526,8 @@ class Model extends Object implements CakeEventListener {
 				'fields' => $fields
 			));
 			return $this->data;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 /**
@@ -2573,7 +2572,7 @@ class Model extends Object implements CakeEventListener {
  * @return boolean True if such a record exists
  */
 	public function hasAny($conditions = null) {
-		return ($this->find('count', array('conditions' => $conditions, 'recursive' => -1)) != false);
+		return (bool)$this->find('count', array('conditions' => $conditions, 'recursive' => -1));
 	}
 
 /**
@@ -2991,7 +2990,7 @@ class Model extends Object implements CakeEventListener {
 		if (!empty($this->id)) {
 			$fields[$this->alias . '.' . $this->primaryKey . ' !='] = $this->id;
 		}
-		return ($this->find('count', array('conditions' => $fields, 'recursive' => -1)) == 0);
+		return !$this->find('count', array('conditions' => $fields, 'recursive' => -1));
 	}
 
 /**
@@ -3162,7 +3161,7 @@ class Model extends Object implements CakeEventListener {
 	public function setDataSource($dataSource = null) {
 		$oldConfig = $this->useDbConfig;
 
-		if ($dataSource != null) {
+		if ($dataSource) {
 			$this->useDbConfig = $dataSource;
 		}
 		$db = ConnectionManager::getDataSource($this->useDbConfig);
@@ -3208,7 +3207,7 @@ class Model extends Object implements CakeEventListener {
  * @return array Associations
  */
 	public function getAssociated($type = null) {
-		if ($type == null) {
+		if (!$type) {
 			$associated = array();
 			foreach ($this->_associations as $assoc) {
 				if (!empty($this->{$assoc})) {

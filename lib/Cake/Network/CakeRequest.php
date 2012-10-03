@@ -364,17 +364,17 @@ class CakeRequest implements ArrayAccess {
  * @return string The client IP.
  */
 	public function clientIp($safe = true) {
-		if (!$safe && env('HTTP_X_FORWARDED_FOR') != null) {
+		if (!$safe && env('HTTP_X_FORWARDED_FOR')) {
 			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
 		} else {
-			if (env('HTTP_CLIENT_IP') != null) {
+			if (env('HTTP_CLIENT_IP')) {
 				$ipaddr = env('HTTP_CLIENT_IP');
 			} else {
 				$ipaddr = env('REMOTE_ADDR');
 			}
 		}
 
-		if (env('HTTP_CLIENTADDRESS') != null) {
+		if (env('HTTP_CLIENTADDRESS')) {
 			$tmpipaddr = env('HTTP_CLIENTADDRESS');
 
 			if (!empty($tmpipaddr)) {

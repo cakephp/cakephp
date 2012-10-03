@@ -355,17 +355,16 @@ class TreeBehavior extends ModelBehavior {
 			$recursive = $overrideRecursive;
 		}
 
-		if ($keyPath == null && $valuePath == null && $Model->hasField($Model->displayField)) {
+		$fields = null;
+		if (!$keyPath && !$valuePath && $Model->hasField($Model->displayField)) {
 			$fields = array($Model->primaryKey, $Model->displayField, $left, $right);
-		} else {
-			$fields = null;
 		}
 
-		if ($keyPath == null) {
+		if (!$keyPath) {
 			$keyPath = '{n}.' . $Model->alias . '.' . $Model->primaryKey;
 		}
 
-		if ($valuePath == null) {
+		if (!$valuePath) {
 			$valuePath = array('%s%s', '{n}.tree_prefix', '{n}.' . $Model->alias . '.' . $Model->displayField);
 
 		} elseif (is_string($valuePath)) {
@@ -645,9 +644,8 @@ class TreeBehavior extends ModelBehavior {
 			$db = ConnectionManager::getDataSource($Model->useDbConfig);
 			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
 				$path = $this->getPath($Model, $array[$Model->alias][$Model->primaryKey]);
-				if ($path == null || count($path) < 2) {
-					$parentId = null;
-				} else {
+				$parentId = null;
+				if (count($path) > 1) {
 					$parentId = $path[count($path) - 2][$Model->alias][$Model->primaryKey];
 				}
 				$Model->updateAll(array($parent => $db->value($parentId, $parent)), array($Model->escapeField() => $array[$Model->alias][$Model->primaryKey]));
@@ -800,7 +798,7 @@ class TreeBehavior extends ModelBehavior {
 				$scope, 'OR' => array($Model->escapeField($left) => $i, $Model->escapeField($right) => $i)
 			)));
 			if ($count != 1) {
-				if ($count == 0) {
+				if (!$count) {
 					$errors[] = array('index', $i, 'missing');
 				} else {
 					$errors[] = array('index', $i, 'duplicate');

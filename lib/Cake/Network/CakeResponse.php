@@ -790,7 +790,7 @@ class CakeResponse {
 			unset($this->_cacheDirectives['public']);
 			$this->maxAge($time);
 		}
-		if ($time == null) {
+		if (!$time) {
 			$this->_setCacheControl();
 		}
 		return (bool)$public;

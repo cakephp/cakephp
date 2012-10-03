@@ -139,7 +139,7 @@ class Sqlite extends DboSource {
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 
@@ -147,14 +147,14 @@ class Sqlite extends DboSource {
 
 		if (!$result || empty($result)) {
 			return array();
-		} else {
-			$tables = array();
-			foreach ($result as $table) {
-				$tables[] = $table[0]['name'];
-			}
-			parent::listSources($tables);
-			return $tables;
 		}
+
+		$tables = array();
+		foreach ($result as $table) {
+			$tables[] = $table[0]['name'];
+		}
+		parent::listSources($tables);
+		return $tables;
 	}
 
 /**
@@ -166,7 +166,7 @@ class Sqlite extends DboSource {
 	public function describe($model) {
 		$table = $this->fullTableName($model, false, false);
 		$cache = parent::describe($table);
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$fields = array();
