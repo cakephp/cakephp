@@ -404,15 +404,6 @@ class Controller extends Object implements EventListener {
  */
 	public function __get($name) {
 		switch ($name) {
-			case 'base':
-			case 'here':
-			case 'webroot':
-			case 'data':
-				return $this->request->{$name};
-			case 'action':
-				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
-			case 'params':
-				return $this->request;
 			case 'paginate':
 				return $this->Components->load('Paginator')->settings;
 		}
@@ -433,15 +424,6 @@ class Controller extends Object implements EventListener {
  */
 	public function __set($name, $value) {
 		switch ($name) {
-			case 'base':
-			case 'here':
-			case 'webroot':
-			case 'data':
-				return $this->request->{$name} = $value;
-			case 'action':
-				return $this->request->params['action'] = $value;
-			case 'params':
-				return $this->request->params = $value;
 			case 'paginate':
 				return $this->Components->load('Paginator')->settings = $value;
 		}
@@ -955,10 +937,9 @@ class Controller extends Object implements EventListener {
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {
 			$currentObject = ClassRegistry::getObject($currentModel);
-			if (is_a($currentObject, 'Model')) {
+			if ($currentObject instanceof \Cake\Model\Model) {
 				$className = get_class($currentObject);
-				list($plugin) = pluginSplit(App::location($className));
-				$this->request->params['models'][$currentObject->alias] = compact('plugin', 'className');
+				$this->request->params['models'][$currentObject->alias] = compact('className');
 				$View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
 			}
 		}
@@ -1018,65 +999,6 @@ class Controller extends Object implements EventListener {
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
 		$this->render(false, $layout);
-	}
-
-/**
- * Converts POST'ed form data to a model conditions array, suitable for use in a Model::find() call.
- *
- * @param array $data POST'ed data organized by model and field
- * @param string|array $op A string containing an SQL comparison operator, or an array matching operators
- *        to fields
- * @param string $bool SQL boolean operator: AND, OR, XOR, etc.
- * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be
- *        included in the returned conditions
- * @return array An array of model conditions
- * @deprecated
- */
-	public function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
-		if (!is_array($data) || empty($data)) {
-			if (!empty($this->request->data)) {
-				$data = $this->request->data;
-			} else {
-				return null;
-			}
-		}
-		$cond = array();
-
-		if ($op === null) {
-			$op = '';
-		}
-
-		$arrayOp = is_array($op);
-		foreach ($data as $model => $fields) {
-			foreach ($fields as $field => $value) {
-				$key = $model . '.' . $field;
-				$fieldOp = $op;
-				if ($arrayOp) {
-					if (array_key_exists($key, $op)) {
-						$fieldOp = $op[$key];
-					} elseif (array_key_exists($field, $op)) {
-						$fieldOp = $op[$field];
-					} else {
-						$fieldOp = false;
-					}
-				}
-				if ($exclusive && $fieldOp === false) {
-					continue;
-				}
-				$fieldOp = strtoupper(trim($fieldOp));
-				if ($fieldOp === 'LIKE') {
-					$key = $key . ' LIKE';
-					$value = '%' . $value . '%';
-				} elseif ($fieldOp && $fieldOp != '=') {
-					$key = $key . ' ' . $fieldOp;
-				}
-				$cond[$key] = $value;
-			}
-		}
-		if ($bool != null && strtoupper($bool) != 'AND') {
-			$cond = array($bool => $cond);
-		}
-		return $cond;
 	}
 
 /**

@@ -13,8 +13,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller;
+
 use Cake\Controller\Controller;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
@@ -120,115 +122,6 @@ class ControllerPost extends TestModel {
 }
 
 /**
- * ControllerPostsController class
- *
- * @package       Cake.Test.Case.Controller
- */
-class ControllerCommentsController extends ControllerTestAppController {
-
-/**
- * name property
- *
- * @var string 'ControllerPost'
- */
-	public $name = 'ControllerComments';
-
-	protected $_mergeParent = 'ControllerTestAppController';
-}
-
-/**
- * ControllerComment class
- *
- * @package       Cake.Test.Case.Controller
- */
-class ControllerComment extends TestModel {
-
-/**
- * name property
- *
- * @var string 'ControllerComment'
- */
-	public $name = 'Comment';
-
-/**
- * useTable property
- *
- * @var string 'comments'
- */
-	public $useTable = 'comments';
-
-/**
- * data property
- *
- * @var array
- */
-	public $data = array('name' => 'Some Name');
-
-/**
- * alias property
- *
- * @var string 'ControllerComment'
- */
-	public $alias = 'ControllerComment';
-}
-
-/**
- * ControllerAlias class
- *
- * @package       Cake.Test.Case.Controller
- */
-class ControllerAlias extends TestModel {
-
-/**
- * name property
- *
- * @var string 'ControllerAlias'
- */
-	public $name = 'ControllerAlias';
-
-/**
- * alias property
- *
- * @var string 'ControllerSomeAlias'
- */
-	public $alias = 'ControllerSomeAlias';
-
-/**
- * useTable property
- *
- * @var string 'posts'
- */
-	public $useTable = 'posts';
-}
-
-/**
- * NameTest class
- *
- * @package       Cake.Test.Case.Controller
- */
-class NameTest extends TestModel {
-
-/**
- * name property
- * @var string 'Name'
- */
-	public $name = 'Name';
-
-/**
- * useTable property
- * @var string 'names'
- */
-	public $useTable = 'comments';
-
-/**
- * alias property
- *
- * @var string 'ControllerComment'
- */
-	public $alias = 'Name';
-}
-
-/**
  * TestController class
  *
  * @package       Cake.Test.Case.Controller
@@ -260,7 +153,7 @@ class TestController extends ControllerTestAppController {
  *
  * @var array
  */
-	public $uses = array('ControllerComment', 'ControllerAlias');
+	public $uses = array('Comment');
 
 	protected $_mergeParent = 'ControllerTestAppController';
 
@@ -272,7 +165,7 @@ class TestController extends ControllerTestAppController {
  * @return void
  */
 	public function index($testId, $testTwoId) {
-		$this->data = array(
+		$this->request->data = array(
 			'testId' => $testId,
 			'test2Id' => $testTwoId
 		);
@@ -286,7 +179,7 @@ class TestController extends ControllerTestAppController {
  * @return void
  */
 	public function view($testId, $testTwoId) {
-		$this->data = array(
+		$this->request->data = array(
 			'testId' => $testId,
 			'test2Id' => $testTwoId
 		);
@@ -308,66 +201,6 @@ class TestController extends ControllerTestAppController {
 	//@codingStandardsIgnoreEnd
 
 	public function admin_add() {
-	}
-
-}
-
-/**
- * TestComponent class
- *
- * @package       Cake.Test.Case.Controller
- */
-class TestComponent extends Object {
-
-/**
- * beforeRedirect method
- *
- * @return void
- */
-	public function beforeRedirect() {
-	}
-
-/**
- * initialize method
- *
- * @return void
- */
-	public function initialize(Controller $controller) {
-	}
-
-/**
- * startup method
- *
- * @return void
- */
-	public function startup(Controller $controller) {
-	}
-
-/**
- * shutdown method
- *
- * @return void
- */
-	public function shutdown(Controller $controller) {
-	}
-
-/**
- * beforeRender callback
- *
- * @return void
- */
-	public function beforeRender(Controller $controller) {
-		if ($this->viewclass) {
-			$controller->viewClass = $this->viewclass;
-		}
-	}
-
-}
-
-class Test2Component extends TestComponent {
-
-	public function beforeRender(Controller $controller) {
-		return false;
 	}
 
 }
@@ -445,16 +278,17 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testLoadModel() {
+		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
 		$Controller = new Controller($request, $response);
 
-		$this->assertFalse(isset($Controller->ControllerPost));
+		$this->assertFalse(isset($Controller->Post));
 
-		$result = $Controller->loadModel('ControllerPost');
+		$result = $Controller->loadModel('Post');
 		$this->assertTrue($result);
-		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
-		$this->assertTrue(in_array('ControllerPost', $Controller->uses));
+		$this->assertInstanceOf('TestApp\Model\Post', $Controller->Post);
+		$this->assertTrue(in_array('Post', $Controller->uses));
 
 		ClassRegistry::flush();
 		unset($Controller);
@@ -466,11 +300,12 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testLoadModelInPlugins() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-			'Controller' => array(CAKE . 'Test/TestApp/Controller/'),
-			'Model' => array(CAKE . 'Test/TestApp/Model/')
-		));
+		Configure::write('App.namespace', 'TestApp');
+		App::build([
+			'Plugin' => [CAKE . 'Test/TestApp/Plugin/'],
+			'Controller' => [CAKE . 'Test/TestApp/Controller/'],
+			'Model' => [CAKE . 'Test/TestApp/Model/']
+		]);
 		Plugin::load('TestPlugin');
 
 		$Controller = new TestPluginController();
@@ -494,19 +329,20 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testConstructClasses() {
+		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 
 		$Controller = new Controller($request);
-		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->uses = ['Post', 'Comment'];
 		$Controller->constructClasses();
-		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
-		$this->assertTrue(is_a($Controller->ControllerComment, 'ControllerComment'));
+		$this->assertInstanceOf('TestApp\Model\Post', $Controller->Post);
+		$this->assertInstanceOf('TestApp\Model\Comment', $Controller->Comment);
 
-		$this->assertEquals('Comment', $Controller->ControllerComment->name);
+		$this->assertEquals('Comment', $Controller->Comment->name);
 
 		unset($Controller);
 
-		App::build(array('Plugin' => array(CAKE . 'Test/TestApp/Plugin/')));
+		App::build(['Plugin' => [CAKE . 'Test/TestApp/Plugin/']]);
 		Plugin::load('TestPlugin');
 
 		$Controller = new Controller($request);
@@ -514,24 +350,7 @@ class ControllerTest extends TestCase {
 		$Controller->constructClasses();
 
 		$this->assertTrue(isset($Controller->TestPluginPost));
-		$this->assertTrue(is_a($Controller->TestPluginPost, 'TestPluginPost'));
-	}
-
-/**
- * testAliasName method
- *
- * @return void
- */
-	public function testAliasName() {
-		$request = new Request('controller_posts/index');
-		$Controller = new Controller($request);
-		$Controller->uses = array('NameTest');
-		$Controller->constructClasses();
-
-		$this->assertEquals('Name', $Controller->NameTest->name);
-		$this->assertEquals('Name', $Controller->NameTest->alias);
-
-		unset($Controller);
+		$this->assertInstanceOf('TestPlugin\Model\TestPluginPost', $Controller->TestPluginPost);
 	}
 
 /**
@@ -626,10 +445,14 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testRender() {
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		), App::RESET);
+		Configure::write('App.namespace', 'TestApp');
+		App::build([
+			'Plugin' => [CAKE . 'Test/TestApp/Plugin/'],
+			'View' => [CAKE . 'Test/TestApp/View/']
+		], App::RESET);
 		ClassRegistry::flush();
+		Plugin::load('TestPlugin');
+
 		$request = new Request('controller_posts/index');
 		$request->params['action'] = 'index';
 
@@ -648,27 +471,24 @@ class ControllerTest extends TestCase {
 		$Controller->view = null;
 
 		$Controller = new TestController($request, new Response());
-		$Controller->uses = array('ControllerAlias', 'TestPlugin.ControllerComment', 'ControllerPost');
+		$Controller->uses = ['TestPlugin.TestPluginComment'];
 		$Controller->helpers = array('Html');
 		$Controller->constructClasses();
-		$Controller->ControllerComment->validationErrors = array('title' => 'tooShort');
-		$expected = $Controller->ControllerComment->validationErrors;
+		$expected = ['title' => 'tooShort'];
+		$Controller->TestPluginComment->validationErrors = $expected;
 
 		$Controller->viewPath = 'Posts';
 		$result = $Controller->render('index');
 		$View = $Controller->View;
-		$this->assertTrue(isset($View->validationErrors['ControllerComment']));
-		$this->assertEquals($expected, $View->validationErrors['ControllerComment']);
+		$this->assertTrue(isset($View->validationErrors['TestPluginComment']));
+		$this->assertEquals($expected, $View->validationErrors['TestPluginComment']);
 
-		$expectedModels = array(
-			'ControllerAlias' => array('plugin' => null, 'className' => 'ControllerAlias'),
-			'ControllerComment' => array('plugin' => 'TestPlugin', 'className' => 'ControllerComment'),
-			'ControllerPost' => array('plugin' => null, 'className' => 'ControllerPost')
-		);
+		$expectedModels = [
+			'TestPluginComment' => [
+				'className' => 'TestPlugin\Model\TestPluginComment'
+			],
+		];
 		$this->assertEquals($expectedModels, $Controller->request->params['models']);
-
-		ClassRegistry::flush();
-		App::build();
 	}
 
 /**
@@ -677,21 +497,31 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testComponentBeforeRenderChangingViewClass() {
-		App::build(array(
-			'View' => array(
+		Configure::write('App.namespace', 'TestApp');
+		App::build([
+			'View' => [
 				CAKE . 'Test/TestApp/View/'
-			)
-		), true);
+			]
+		], true);
 		$Controller = new Controller($this->getMock('Cake\Network\Request'), new Response());
-		$Controller->uses = array();
-		$Controller->components = array('Test');
 		$Controller->constructClasses();
-		$Controller->Test->viewclass = 'Theme';
-		$Controller->viewPath = 'Posts';
-		$Controller->theme = 'TestTheme';
+		$Controller->uses = $Controller->components = [];
+
+		$mock = $this->getMock('Cake\Controller\Component', ['beforeRender'], [$Controller->Components]);
+		$mock->expects($this->once())
+			->method('beforeRender')
+			->will($this->returnCallback(function ($controller) {
+				$controller->viewClass = 'Json';
+			}));
+		$Controller->Components->set('Test', $mock);
+		$Controller->Components->enable('Test');
+
+		$Controller->set([
+			'test' => 'value',
+			'_serialize' => ['test']
+		]);
 		$result = $Controller->render('index');
-		$this->assertRegExp('/default test_theme layout/', (string)$result);
-		App::build();
+		$this->assertEquals('{"test":"value"}', $result);
 	}
 
 /**
@@ -701,9 +531,14 @@ class ControllerTest extends TestCase {
  */
 	public function testComponentCancelRender() {
 		$Controller = new Controller($this->getMock('Cake\Network\Request'), new Response());
-		$Controller->uses = array();
-		$Controller->components = array('Test2');
 		$Controller->constructClasses();
+		$mock = $this->getMock('Cake\Controller\Component', ['beforeRender'], [$Controller->Components]);
+		$mock->expects($this->once())
+			->method('beforeRender')
+			->will($this->returnValue(false));
+		$Controller->Components->set('Test', $mock);
+		$Controller->Components->enable('Test');
+
 		$result = $Controller->render('index');
 		$this->assertInstanceOf('Cake\Network\Response', $result);
 	}
@@ -937,7 +772,7 @@ class ControllerTest extends TestCase {
 		$this->assertEquals(0, count(array_diff($TestController->uses, $uses)));
 		$this->assertEquals(count(array_diff_assoc(Hash::normalize($TestController->components), Hash::normalize($components))), 0);
 
-		$expected = array('ControllerComment', 'ControllerAlias', 'ControllerPost');
+		$expected = array('Comment', 'ControllerPost');
 		$this->assertEquals($expected, $TestController->uses, '$uses was merged incorrectly, ControllerTestAppController models should be last.');
 
 		$TestController = new AnotherTestController($request);
@@ -1063,10 +898,10 @@ class ControllerTest extends TestCase {
 		$this->assertFalse($TestController->validateErrors());
 		$this->assertEquals(0, $TestController->validate());
 
-		$TestController->ControllerComment->invalidate('some_field', 'error_message');
-		$TestController->ControllerComment->invalidate('some_field2', 'error_message2');
+		$TestController->Comment->invalidate('some_field', 'error_message');
+		$TestController->Comment->invalidate('some_field2', 'error_message2');
 
-		$comment = new ControllerComment($request);
+		$comment = new \TestApp\Model\Comment($request);
 		$comment->set('someVar', 'data');
 		$result = $TestController->validateErrors($comment);
 		$expected = array('some_field' => array('error_message'), 'some_field2' => array('error_message2'));
@@ -1089,68 +924,6 @@ class ControllerTest extends TestCase {
 
 		$expected = array('title' => array('This field cannot be left blank'));
 		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testPostConditions method
- *
- * @return void
- */
-	public function testPostConditions() {
-		$request = new Request('controller_posts/index');
-
-		$Controller = new Controller($request);
-
-		$data = array(
-			'Model1' => array('field1' => '23'),
-			'Model2' => array('field2' => 'string'),
-			'Model3' => array('field3' => '23'),
-		);
-		$expected = array(
-			'Model1.field1' => '23',
-			'Model2.field2' => 'string',
-			'Model3.field3' => '23',
-		);
-		$result = $Controller->postConditions($data);
-		$this->assertSame($expected, $result);
-
-		$data = array();
-		$Controller->data = array(
-			'Model1' => array('field1' => '23'),
-			'Model2' => array('field2' => 'string'),
-			'Model3' => array('field3' => '23'),
-		);
-		$expected = array(
-			'Model1.field1' => '23',
-			'Model2.field2' => 'string',
-			'Model3.field3' => '23',
-		);
-		$result = $Controller->postConditions($data);
-		$this->assertSame($expected, $result);
-
-		$data = array();
-		$Controller->data = array();
-		$result = $Controller->postConditions($data);
-		$this->assertNull($result);
-
-		$data = array();
-		$Controller->data = array(
-			'Model1' => array('field1' => '23'),
-			'Model2' => array('field2' => 'string'),
-			'Model3' => array('field3' => '23'),
-		);
-		$ops = array(
-			'Model1.field1' => '>',
-			'Model2.field2' => 'LIKE',
-			'Model3.field3' => '<=',
-		);
-		$expected = array(
-			'Model1.field1 >' => '23',
-			'Model2.field2 LIKE' => "%string%",
-			'Model3.field3 <=' => '23',
-		);
-		$result = $Controller->postConditions($data, $ops);
-		$this->assertSame($expected, $result);
 	}
 
 /**
@@ -1254,47 +1027,6 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * test that BC works for attributes on the request object.
- *
- * @return void
- */
-	public function testPropertyBackwardsCompatibility() {
-		$request = new Request('posts/index');
-		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
-		$request->data = array('Post' => array('id' => 1));
-		$request->here = '/posts/index';
-		$request->webroot = '/';
-
-		$Controller = new TestController($request);
-		$this->assertEquals($request->data, $Controller->data);
-		$this->assertEquals($request->webroot, $Controller->webroot);
-		$this->assertEquals($request->here, $Controller->here);
-		$this->assertEquals($request->action, $Controller->action);
-
-		$this->assertFalse(empty($Controller->data));
-		$this->assertTrue(isset($Controller->data));
-		$this->assertTrue(empty($Controller->something));
-		$this->assertFalse(isset($Controller->something));
-
-		$this->assertEquals($request, $Controller->params);
-		$this->assertEquals($request->params['controller'], $Controller->params['controller']);
-	}
-
-/**
- * test that the BC wrapper doesn't interfere with models and components.
- *
- * @return void
- */
-	public function testPropertyCompatibilityAndModelsComponents() {
-		$request = new Request('controller_posts/index');
-
-		$Controller = new TestController($request);
-		$Controller->constructClasses();
-		$this->assertInstanceOf('Cake\Controller\Component\SecurityComponent', $Controller->Security);
-		$this->assertInstanceOf('ControllerComment', $Controller->ControllerComment);
-	}
-
-/**
  * test that using Controller::paginate() falls back to PaginatorComponent
  *
  * @return void
@@ -1302,27 +1034,27 @@ class ControllerTest extends TestCase {
 	public function testPaginateBackwardsCompatibility() {
 		$request = new Request('controller_posts/index');
 		$request->params['pass'] = array();
-		$response = $this->getMock('Cake\Network\Response', array('httpCodes'));
+		$response = $this->getMock('Cake\Network\Response', ['httpCodes']);
 
 		$Controller = new Controller($request, $response);
-		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->uses = ['Post', 'Comment'];
 		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
+		$Controller->request->query['url'] = [];
 		$Controller->constructClasses();
-		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100);
+		$expected = ['page' => 1, 'limit' => 20, 'maxLimit' => 100];
 		$this->assertEquals($expected, $Controller->paginate);
 
-		$results = Hash::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEquals(array(1, 2, 3), $results);
+		$results = Hash::extract($Controller->paginate('Post'), '{n}.Post.id');
+		$this->assertEquals([1, 2, 3], $results);
 
 		$Controller->passedArgs = array();
 		$Controller->paginate = array('limit' => '-1');
 		$this->assertEquals(array('limit' => '-1'), $Controller->paginate);
-		$Controller->paginate('ControllerPost');
-		$this->assertSame($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertSame($Controller->params['paging']['ControllerPost']['pageCount'], 3);
-		$this->assertSame($Controller->params['paging']['ControllerPost']['prevPage'], false);
-		$this->assertSame($Controller->params['paging']['ControllerPost']['nextPage'], true);
+		$Controller->paginate('Post');
+		$this->assertSame($Controller->request->params['paging']['Post']['page'], 1);
+		$this->assertSame($Controller->request->params['paging']['Post']['pageCount'], 3);
+		$this->assertSame($Controller->request->params['paging']['Post']['prevPage'], false);
+		$this->assertSame($Controller->request->params['paging']['Post']['nextPage'], true);
 	}
 
 /**

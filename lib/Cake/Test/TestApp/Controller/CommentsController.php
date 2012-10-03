@@ -7,21 +7,21 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.2.9
+ * @link          http://cakephp.org CakePHP Project
+ * @package       Cake.Test.TestApp.Controller
+ * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Controller;
-use Cake\Controller\Controller;
+
+use TestApp\Controller\AppController;
 
 /**
- * This is a placeholder class.
- * Create the same file in app/Controller/AppController.php
+ * ControllerPostsController class
  *
- * Add your application-wide methods in the class below, your controllers
- * will inherit them.
- *
- * @package       Cake.Controller
+ * @package       Cake.Test.Case.Controller
  */
-class AppController extends Controller {
+class CommentsController extends AppController {
+
+	protected $_mergeParent = 'ControllerTestAppController';
 }
