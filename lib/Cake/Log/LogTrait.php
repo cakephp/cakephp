@@ -13,8 +13,6 @@
  */
 namespace Cake\Log;
 
-use Cake\Log\Log;
-
 /**
  * A trait providing an object short-cut method
  * to logging.
