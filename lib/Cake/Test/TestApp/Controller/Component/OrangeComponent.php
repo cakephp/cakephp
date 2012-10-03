@@ -1,9 +1,5 @@
 <?php
 /**
- * OrangeComponent
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -17,7 +13,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Controller\Component;
+
 use Cake\Controller\Component;
+use Cake\Controller\Controller;
 
 /**
  * OrangeComponent class
@@ -38,7 +36,7 @@ class OrangeComponent extends Component {
  * @param mixed $controller
  * @return void
  */
-	public function initialize($controller) {
+	public function initialize(Controller $controller) {
 		$this->Controller = $controller;
 		$this->Banana->testField = 'OrangeField';
 	}
@@ -49,7 +47,7 @@ class OrangeComponent extends Component {
  * @param Controller $controller
  * @return string
  */
-	public function startup($controller) {
+	public function startup(Controller $controller) {
 		$controller->foo = 'pass';
 	}
 }

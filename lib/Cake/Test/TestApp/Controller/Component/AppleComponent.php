@@ -17,7 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Controller\Component;
+
 use Cake\Controller\Component;
+use Cake\Controller\Controller;
 
 /**
  * AppleComponent class
@@ -46,7 +48,7 @@ class AppleComponent extends Component {
  * @param mixed $controller
  * @return void
  */
-	public function startup($controller) {
+	public function startup(Controller $controller) {
 		$this->testName = $controller->name;
 	}
 }

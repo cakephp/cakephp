@@ -17,7 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Controller\Component;
+
 use Cake\Controller\Component;
+use Cake\Controller\Controller;
 
 /**
  * BananaComponent class
@@ -39,7 +41,7 @@ class BananaComponent extends Component {
  * @param Controller $controller
  * @return string
  */
-	public function startup($controller) {
+	public function startup(Controller $controller) {
 		$controller->bar = 'fail';
 	}
 }
