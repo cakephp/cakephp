@@ -249,7 +249,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$this->RequestHandler->renderAs($this->Controller, 'json');
-		$this->assertEquals('CustomJson', $this->Controller->viewClass);
+		$this->assertEquals('TestApp\View\CustomJsonView', $this->Controller->viewClass);
 	}
 
 /**
@@ -273,7 +273,7 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testAutoResponseType() {
 		$this->Controller->ext = '.thtml';
-		$this->Controller->request->params['ext'] = 'rss';
+		$this->Controller->request->params['_ext'] = 'rss';
 		$this->RequestHandler->initialize($this->Controller);
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertEquals('.ctp', $this->Controller->ext);
@@ -290,7 +290,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$this->assertEquals($this->Controller->layout, $this->RequestHandler->ajaxLayout);
 
 		$this->_init();
-		$this->Controller->request->params['ext'] = 'js';
+		$this->Controller->request->params['_ext'] = 'js';
 		$this->RequestHandler->initialize($this->Controller);
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertNotEquals('ajax', $this->Controller->layout);
@@ -399,7 +399,7 @@ class RequestHandlerComponentTest extends TestCase {
 
 		$this->RequestHandler->renderAs($this->Controller, 'xml', array('attachment' => 'myfile.xml'));
 
-		$this->assertEquals('Xml', $this->Controller->viewClass);
+		$this->assertEquals('Cake\View\XmlView', $this->Controller->viewClass);
 	}
 
 /**
@@ -696,11 +696,17 @@ class RequestHandlerComponentTest extends TestCase {
  * @return void
  */
 	public function testAjaxRedirectAsRequestAction() {
+		Configure::write('App.namespace', 'TestApp');
 		App::build(array(
 			'View' => array(CAKE . 'Test/TestApp/View/')
 		), App::RESET);
+		Router::connect('/:controller/:action');
 
-		$this->Controller->RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$this->Controller->RequestHandler = $this->getMock(
+			'Cake\Controller\Component\RequestHandlerComponent',
+			array('_stop'),
+			array(&$this->Controller->Components)
+		);
 		$this->Controller->request = $this->getMock('Cake\Network\Request');
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$this->Controller->RequestHandler->request = $this->Controller->request;
@@ -725,11 +731,17 @@ class RequestHandlerComponentTest extends TestCase {
  * @return void
  */
 	public function testAjaxRedirectAsRequestActionStillRenderingLayout() {
+		Configure::write('App.namespace', 'TestApp');
 		App::build(array(
 			'View' => array(CAKE . 'Test/TestApp/View/')
 		), App::RESET);
+		Router::connect('/:controller/:action');
 
-		$this->Controller->RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$this->Controller->RequestHandler = $this->getMock(
+			'Cake\Controller\Component\RequestHandlerComponent',
+			array('_stop'),
+			array(&$this->Controller->Components)
+		);
 		$this->Controller->request = $this->getMock('Cake\Network\Request');
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$this->Controller->RequestHandler->request = $this->Controller->request;
@@ -744,8 +756,6 @@ class RequestHandlerComponentTest extends TestCase {
 		$result = ob_get_clean();
 		$this->assertRegExp('/posts index/', $result, 'RequestAction redirect failed.');
 		$this->assertRegExp('/Ajax!/', $result, 'Layout was not rendered.');
-
-		App::build();
 	}
 
 /**
@@ -757,14 +767,20 @@ class RequestHandlerComponentTest extends TestCase {
  * @return void
  */
 	public function testBeforeRedirectCallbackWithArrayUrl() {
+		Configure::write('App.namespace', 'TestApp');
+		Router::connect('/:controller/:action/*');
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 
 		Router::setRequestInfo(array(
 			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array()),
-			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
+			array('base' => '', 'here' => '/accounts/', 'webroot' => '/')
 		));
 
-		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
+		$RequestHandler = $this->getMock(
+			'Cake\Controller\Component\RequestHandlerComponent',
+			array('_stop'),
+			array(&$this->Controller->Components)
+		);
 		$RequestHandler->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$RequestHandler->request = new Request('posts/index');
 		$RequestHandler->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
