@@ -263,7 +263,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$this->RequestHandler->initialize($this->Controller);
 		$this->Controller->beforeFilter();
 		$this->RequestHandler->startup($this->Controller);
-		$this->assertEquals(true, $this->Controller->params['isAjax']);
+		$this->assertEquals(true, $this->Controller->request->params['isAjax']);
 	}
 
 /**
@@ -308,8 +308,8 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['CONTENT_TYPE'] = 'application/xml';
 		$this->Controller->request = $this->getMock('Cake\Network\Request', array('_readInput'));
 		$this->RequestHandler->startup($this->Controller);
-		$this->assertTrue(is_array($this->Controller->data));
-		$this->assertFalse(is_object($this->Controller->data));
+		$this->assertTrue(is_array($this->Controller->request->data));
+		$this->assertFalse(is_object($this->Controller->request->data));
 	}
 
 /**
@@ -322,8 +322,8 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
 		$this->Controller->request = $this->getMock('Cake\Network\Request', array('_readInput'));
 		$this->RequestHandler->startup($this->Controller);
-		$this->assertTrue(is_array($this->Controller->data));
-		$this->assertFalse(is_object($this->Controller->data));
+		$this->assertTrue(is_array($this->Controller->request->data));
+		$this->assertFalse(is_object($this->Controller->request->data));
 	}
 
 /**

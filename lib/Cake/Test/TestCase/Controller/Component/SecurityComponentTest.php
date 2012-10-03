@@ -228,7 +228,7 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testStartup() {
 		$this->Controller->Security->startup($this->Controller);
-		$result = $this->Controller->params['_Token']['key'];
+		$result = $this->Controller->request->params['_Token']['key'];
 		$this->assertNotNull($result);
 		$this->assertTrue($this->Controller->Session->check('_Token'));
 	}
@@ -502,7 +502,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->Controller->Session->delete('_Token');
 
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 
 		$this->Controller->data = array(
@@ -519,7 +519,7 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testValidatePostFormHacking() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -1095,7 +1095,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 
-		$this->Controller->params['requested'] = 1;
+		$this->Controller->request->params['requested'] = 1;
 		unset($this->Controller->request->params['_Token']);
 
 		$this->Controller->Security->startup($this->Controller);
