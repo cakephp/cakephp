@@ -1,11 +1,5 @@
 <?php
 /**
- * PaginatorComponentTest file
- *
- * Series of tests for paginator component.
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -430,19 +423,23 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testMergeOptionsCustomFindKey() {
-		$this->request->params['named'] = array(
+		$this->request->query = [
 			'page' => 10,
 			'limit' => 10
-		);
-		$this->Paginator->settings = array(
+		];
+		$this->Paginator->settings = [
 			'page' => 1,
 			'limit' => 20,
 			'maxLimit' => 100,
-			'paramType' => 'named',
+			'findType' => 'myCustomFind'
+		];
+		$result = $this->Paginator->mergeOptions('Post');
+		$expected = array(
+			'page' => 10,
+			'limit' => 10,
+			'maxLimit' => 100,
 			'findType' => 'myCustomFind'
 		);
-		$result = $this->Paginator->mergeOptions('Post');
-		$expected = array('page' => 10, 'limit' => 10, 'maxLimit' => 100, 'paramType' => 'named', 'findType' => 'myCustomFind');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -539,7 +536,7 @@ class PaginatorComponentTest extends TestCase {
 	public function testOutOfRangePageNumberGetsClamped() {
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
-		$Controller->query['page'] = 3000;
+		$Controller->request->query['page'] = 3000;
 		$Controller->constructClasses();
 		$Controller->PaginatorControllerPost->recursive = 0;
 		$Controller->Paginator->paginate('PaginatorControllerPost');
@@ -630,7 +627,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortNoSort() {
-		$model = $this->getMock('Model');
+		$model = $this->getMock('Cake\Model\Model');
 		$model->alias = 'model';
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
