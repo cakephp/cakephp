@@ -65,5 +65,9 @@ class SomePagesController extends Controller {
 		return new Response(array('body' => 'new response'));
 	}
 
+	protected function _fail() {
+
+	}
+
 }
 

@@ -114,20 +114,6 @@ class SecurityTestController extends Controller {
 
 }
 
-class BrokenCallbackController extends Controller {
-
-	public $name = 'UncallableCallback';
-
-	public $components = array('Session', 'TestSecurity');
-
-	public function index() {
-	}
-
-	protected function _fail() {
-	}
-
-}
-
 /**
  * SecurityComponentTest class
  *
@@ -189,16 +175,16 @@ class SecurityComponentTest extends TestCase {
  * @expectedException Cake\Error\BadRequestException
  */
 	public function testBlackholeWithBrokenCallback() {
-		$request = new Request('posts/index', false);
-		$request->addParams(array(
-			'controller' => 'posts', 'action' => 'index')
-		);
-		$this->Controller = new BrokenCallbackController($request);
-		$this->Controller->Components->init($this->Controller);
-		$this->Controller->Security = $this->Controller->TestSecurity;
-		$this->Controller->Security->blackHoleCallback = '_fail';
-		$this->Controller->Security->startup($this->Controller);
-		$this->Controller->Security->blackHole($this->Controller, 'csrf');
+		$request = new Request('posts/index');
+		$request->addParams([
+			'controller' => 'posts',
+			'action' => 'index'
+		]);
+		$Controller = new \TestApp\Controller\SomePagesController($request);
+		$Security = new SecurityComponent($Controller->Components);
+		$Security->blackHoleCallback = '_fail';
+		$Security->startup($Controller);
+		$Security->blackHole($Controller, 'csrf');
 	}
 
 /**
@@ -505,7 +491,7 @@ class SecurityComponentTest extends TestCase {
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
 			'_Token' => compact('key', 'fields')
 		);

@@ -1,9 +1,5 @@
 <?php
 /**
- * Security Component
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.8.2156
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component;
+
 use Cake\Controller\Component;
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Controller;
@@ -315,7 +311,7 @@ class SecurityComponent extends Component {
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @see SecurityComponent::$blackHoleCallback
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#handling-blackhole-callbacks
- * @throws BadRequestException
+ * @throws Cake\Error\BadRequestException
  */
 	public function blackHole(Controller $controller, $error = '') {
 		if ($this->blackHoleCallback == null) {
@@ -593,11 +589,11 @@ class SecurityComponent extends Component {
  * @param string $method Method to execute
  * @param array $params Parameters to send to method
  * @return mixed Controller callback method's response
- * @throws BadRequestException When a the blackholeCallback is not callable.
+ * @throws Cake\Error\BadRequestException When a the blackholeCallback is not callable.
  */
 	protected function _callback(Controller $controller, $method, $params = array()) {
 		if (!is_callable(array($controller, $method))) {
-			throw new BadRequestException(__d('cake_dev', 'The request has been black-holed'));
+			throw new Error\BadRequestException(__d('cake_dev', 'The request has been black-holed'));
 		}
 		return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
 	}
