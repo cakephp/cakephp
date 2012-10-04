@@ -116,11 +116,11 @@ class ExceptionRenderer {
 			}
 		}
 
-		$isDebug = (Configure::read('debug') == 0);
-		if ($isDebug && $method == '_cakeError') {
+		$isNotDebug = (Configure::read('debug') == 0);
+		if ($isNotDebug && $method == '_cakeError') {
 			$method = 'error400';
 		}
-		if ($isDebug && $code == 500) {
+		if ($isNotDebug && $code == 500) {
 			$method = 'error500';
 		}
 		$this->template = $template;
