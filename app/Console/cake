@@ -17,7 +17,11 @@
 # @license      MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
 ################################################################################
-ME=$(readlink -f $0)
+if [[ `uname` =~ 'Darwin' ]]; then
+	ME=$0
+else
+	ME=$(readlink -f $0)
+fi
 LIB=$(cd -P -- "$(dirname -- "$ME")" && pwd -P) && LIB=$LIB/$(basename -- "$ME")
 
 while [ -h "$LIB" ]; do
