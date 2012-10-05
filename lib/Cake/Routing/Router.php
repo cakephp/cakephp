@@ -945,9 +945,9 @@ class Router {
 		if (!empty($named)) {
 			foreach ($named as $name => $value) {
 				if (is_array($value)) {
-					$flattend = Hash::flatten($value, '][');
+					$flattend = Hash::flatten($value, '%5D%5B');
 					foreach ($flattend as $namedKey => $namedValue) {
-						$output .= '/' . $name . "[$namedKey]" . self::$_namedConfig['separator'] . rawurlencode($namedValue);
+						$output .= '/' . $name . "%5B{$namedKey}%5D" . self::$_namedConfig['separator'] . rawurlencode($namedValue);
 					}
 				} else {
 					$output .= '/' . $name . self::$_namedConfig['separator'] . rawurlencode($value);
