@@ -120,6 +120,13 @@ class Mysql extends DboSource {
 	);
 
 /**
+ * MySQL mapping of collation to charset names.
+ *
+ * @var array
+ */
+	protected $_charsets = array();
+
+/**
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
@@ -263,12 +270,13 @@ class Mysql extends DboSource {
  */
 	public function getCharsetName($name) {
 		if ((bool)version_compare($this->getVersion(), "5", ">=")) {
+			if (isset($this->_charsets[$name])) {
+				return $this->_charsets[$name];
+			}
 			$r = $this->_execute('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array($name));
 			$cols = $r->fetch(PDO::FETCH_ASSOC);
-
-			if (isset($cols['CHARACTER_SET_NAME'])) {
-				return $cols['CHARACTER_SET_NAME'];
-			}
+			$this->_charsets[$name] = (isset($cols['CHARACTER_SET_NAME'])) ? $cols['CHARACTER_SET_NAME'] : false;
+			return $this->_charsets[$name];
 		}
 		return false;
 	}
