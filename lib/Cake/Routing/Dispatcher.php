@@ -212,11 +212,6 @@ class Dispatcher implements EventListener {
 	public function parseParams($event) {
 		$request = $event->data['request'];
 		Router::setRequestInfo($request);
-		if (Router::getRequest(false) === $request) {
-			$namedExpressions = Router::getNamedExpressions();
-			extract($namedExpressions);
-			$this->_loadRoutes();
-		}
 
 		if (empty($request->params['controller'])) {
 			$params = Router::parse($request->url);
@@ -270,15 +265,6 @@ class Dispatcher implements EventListener {
 			return App::classname($pluginPath . $controller, $namespace, 'Controller');
 		}
 		return false;
-	}
-
-/**
- * Loads route configuration
- *
- * @return void
- */
-	protected function _loadRoutes() {
-		include APP . 'Config/routes.php';
 	}
 
 }

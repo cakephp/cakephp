@@ -389,7 +389,7 @@ class SecurityComponent extends Component {
 			$requireAuth = $this->requireAuth;
 
 			if (in_array($this->request->params['action'], $requireAuth) || $this->requireAuth == array('*')) {
-				if (!isset($controller->request->data['_Token'] )) {
+				if (!isset($controller->request->data['_Token'])) {
 					if (!$this->blackHole($controller, 'auth')) {
 						return null;
 					}

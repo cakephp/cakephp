@@ -306,11 +306,6 @@ class View extends Object {
 	protected $_eventManager = null;
 
 /**
- * The view file to be rendered, only used inside _execute()
- */
-	private $__viewFileName = null;
-
-/**
  * Whether the event manager was already configured for this object
  *
  * @var boolean
@@ -343,7 +338,7 @@ class View extends Object {
 		if (is_object($controller) && isset($controller->response)) {
 			$this->response = $controller->response;
 		} else {
-			$this->response = new Response(array('charset' => Configure::read('App.encoding')));
+			$this->response = new Response();
 		}
 		$this->Helpers = new HelperCollection($this);
 		$this->Blocks = new ViewBlock();
@@ -612,17 +607,31 @@ class View extends Object {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new
+ * Append to an existing or new block. Appending to a new
  * block will create the block.
  *
  * @param string $name Name of the block
  * @param string $value The content for the block.
  * @return void
  * @throws Cake\Error\Exception when you use non-string values.
- * @see ViewBlock::append()
+ * @see ViewBlock::concat()
  */
 	public function append($name, $value = null) {
-		return $this->Blocks->append($name, $value);
+		return $this->Blocks->concat($name, $value);
+	}
+
+/**
+ * Prepend to an existing or new block. Prepending to a new
+ * block will create the block.
+ *
+ * @param string $name Name of the block
+ * @param string $value The content for the block.
+ * @return void
+ * @throws CakeException when you use non-string values.
+ * @see ViewBlock::concat()
+ */
+	public function prepend($name, $value = null) {
+		return $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 	}
 
 /**
@@ -644,11 +653,11 @@ class View extends Object {
  * empty or undefined '' will be returned.
  *
  * @param string $name Name of the block
- * @return The block content or '' if the block does not exist.
+ * @return string The block content or $default if the block does not exist.
  * @see ViewBlock::get()
  */
-	public function fetch($name) {
-		return $this->Blocks->get($name);
+	public function fetch($name, $default = '') {
+		return $this->Blocks->get($name, $default);
 	}
 
 /**
@@ -838,7 +847,7 @@ class View extends Object {
  */
 	public function loadHelpers() {
 		$helpers = HelperCollection::normalizeObjectArray($this->helpers);
-		foreach ($helpers as $name => $properties) {
+		foreach ($helpers as $properties) {
 			list($plugin, $class) = pluginSplit($properties['class']);
 			$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
 		}
@@ -890,7 +899,7 @@ class View extends Object {
  * Sandbox method to evaluate a template / view script in.
  *
  * @param string $viewFn Filename of the view
- * @param array $___dataForView Data to include in rendered view.
+ * @param array $dataForView Data to include in rendered view.
  *    If empty the current View::$viewVars will be used.
  * @return string Rendered output
  */
@@ -1155,8 +1164,14 @@ class View extends Object {
 			$this->getEventManager()->dispatch(new Event('View.beforeRender', $this, array($file)));
 		}
 
+		$current = $this->_current;
+		$restore = $this->_currentType;
+
 		$this->_currentType = static::TYPE_ELEMENT;
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
+
+		$this->_currentType = $restore;
+		$this->_current = $current;
 
 		if (isset($options['callbacks'])) {
 			$this->getEventManager()->dispatch(new Event('View.afterRender', $this, array($file, $element)));

@@ -386,9 +386,10 @@ class Response {
 		if (isset($options['type'])) {
 			$this->type($options['type']);
 		}
-		if (isset($options['charset'])) {
-			$this->charset($options['charset']);
+		if (!isset($options['charset'])) {
+			$options['charset'] = Configure::read('App.encoding');
 		}
+		$this->charset($options['charset']);
 	}
 
 /**
@@ -1072,7 +1073,7 @@ class Response {
  * @return int
  */
 	public function length($bytes = null) {
-		if ($bytes !== null ) {
+		if ($bytes !== null) {
 			$this->_headers['Content-Length'] = $bytes;
 		}
 		if (isset($this->_headers['Content-Length'])) {

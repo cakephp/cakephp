@@ -32,5 +32,5 @@ use Cake\Routing\Dispatcher;
 $Dispatcher = new Dispatcher();
 $Dispatcher->dispatch(
 	Request::createFromGlobals(),
-	new Response(['charset' => Configure::read('App.encoding')])
+	new Response()
 );

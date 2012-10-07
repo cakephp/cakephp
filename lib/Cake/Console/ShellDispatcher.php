@@ -214,7 +214,8 @@ class ShellDispatcher {
 				return $Shell->main();
 			}
 		}
-		throw new Error\MissingShellMethodException(array('shell' => $shell, 'method' => $arg));
+
+		throw new Error\MissingShellMethodException(array('shell' => $shell, 'method' => $command));
 	}
 
 /**

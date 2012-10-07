@@ -21,6 +21,8 @@
 
 namespace Cake\Utility;
 
+use Cake\Error;
+
 /**
  * Number helper library.
  *
@@ -65,13 +67,13 @@ class Number {
 /**
  * Formats a number with a level of precision.
  *
- * @param float $number A floating point number.
+ * @param float $value A floating point number.
  * @param integer $precision The precision of the returned number.
  * @return float Formatted float.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
-	public static function precision($number, $precision = 3) {
-		return sprintf("%01.{$precision}F", $number);
+	public static function precision($value, $precision = 3) {
+		return sprintf("%01.{$precision}F", $value);
 	}
 
 /**
@@ -97,27 +99,58 @@ class Number {
 	}
 
 /**
+ * Converts filesize from human readable string to bytes
+ *
+ * @param string $size Size in human readable string like '5MB'
+ * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
+ * @return integer Bytes
+ * @throws Cake\Error\Exception On invalid Unit type.
+ */
+	public static function fromReadableSize($size, $default = false) {
+		if (ctype_digit($size)) {
+			return $size * 1;
+		}
+		$size = strtoupper($size);
+
+		$i = array_search(substr($size, -2), array('KB', 'MB', 'GB', 'TB', 'PB'));
+		if ($i !== false) {
+			$size = substr($size, 0, strlen($size) - 2);
+			return $size * pow(1024, $i + 1);
+		}
+
+		if (substr($size, -1) == 'B' && ctype_digit(substr($size, 0, strlen($size) - 1))) {
+			$size = substr($size, 0, strlen($size) - 1);
+			return $size * 1;
+		}
+
+		if ($default !== false) {
+			return $default;
+		}
+		throw new Error\Exception(__d('cake_dev', 'No unit type.'));
+	}
+
+/**
  * Formats a number into a percentage string.
  *
- * @param float $number A floating point number
+ * @param float $value A floating point number
  * @param integer $precision The precision of the returned number
  * @return string Percentage string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
  */
-	public static function toPercentage($number, $precision = 2) {
-		return static::precision($number, $precision) . '%';
+	public static function toPercentage($value, $precision = 2) {
+		return static::precision($value, $precision) . '%';
 	}
 
 /**
  * Formats a number into a currency format.
  *
- * @param float $number A floating point number
+ * @param float $value A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
  *   or array with places and before keys
  * @return string formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
-	public static function format($number, $options = false) {
+	public static function format($value, $options = false) {
 		$places = 0;
 		if (is_int($options)) {
 			$places = $options;
@@ -144,12 +177,35 @@ class Number {
 			extract($options);
 		}
 
-		$out = $before . number_format($number, $places, $decimals, $thousands) . $after;
+		$out = $before . number_format($value, $places, $decimals, $thousands) . $after;
 
 		if ($escape) {
 			return h($out);
 		}
 		return $out;
+	}
+
+/**
+ * Formats a number into a currency format to show deltas (signed differences in value).
+ *
+ * ### Options
+ *
+ * - `places` - Number of decimal places to use. ie. 2
+ * - `before` - The string to place before whole numbers. ie. '['
+ * - `after` - The string to place after decimal numbers. ie. ']'
+ * - `thousands` - Thousands separator ie. ','
+ * - `decimals` - Decimal separator symbol ie. '.'
+ *
+ * @param float $value A floating point number
+ * @param array $options
+ * @return string formatted delta
+ */
+	public static function formatDelta($value, $options = array()) {
+		$places = isset($options['places']) ? $options['places'] : 0;
+		$value = number_format($value, $places, '.', '');
+		$sign = $value > 0 ? '+' : '';
+		$options['before'] = isset($options['before']) ? $options['before'] . $sign : $sign;
+		return static::format($value, $options);
 	}
 
 /**
@@ -178,14 +234,14 @@ class Number {
  *   the number will be wrapped with ( and )
  * - `escape` - Should the output be htmlentity escaped? Defaults to true
  *
- * @param float $number
+ * @param float $value
  * @param string $currency Shortcut to default options. Valid values are
  *   'USD', 'EUR', 'GBP', otherwise set at least 'before' and 'after' options.
  * @param array $options
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
-	public static function currency($number, $currency = 'USD', $options = array()) {
+	public static function currency($value, $currency = 'USD', $options = array()) {
 		$default = static::$_currencyDefaults;
 
 		if (isset(static::$_currencies[$currency])) {
@@ -206,14 +262,14 @@ class Number {
 		$result = $options['before'] = $options['after'] = null;
 
 		$symbolKey = 'whole';
-		if ($number == 0 ) {
-			if ($options['zero'] !== 0 ) {
+		if ($value == 0) {
+			if ($options['zero'] !== 0) {
 				return $options['zero'];
 			}
-		} elseif ($number < 1 && $number > -1 ) {
+		} elseif ($value < 1 && $value > -1) {
 			if ($options['fractionSymbol'] !== false) {
 				$multiply = intval('1' . str_pad('', $options['places'], '0'));
-				$number = $number * $multiply;
+				$value = $value * $multiply;
 				$options['places'] = null;
 				$symbolKey = 'fraction';
 			}
@@ -222,10 +278,10 @@ class Number {
 		$position = $options[$symbolKey . 'Position'] != 'after' ? 'before' : 'after';
 		$options[$position] = $options[$symbolKey . 'Symbol'];
 
-		$abs = abs($number);
+		$abs = abs($value);
 		$result = static::format($abs, $options);
 
-		if ($number < 0 ) {
+		if ($value < 0) {
 			if ($options['negative'] == '()') {
 				$result = '(' . $result . ')';
 			} else {

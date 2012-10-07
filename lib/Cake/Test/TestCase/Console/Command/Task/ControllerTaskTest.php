@@ -182,9 +182,9 @@ class ControllerTaskTest extends TestCase {
  */
 	public function testDoHelpersTrailingSpace() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne  '));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Text, Number, CustomOne  '));
 		$result = $this->Task->doHelpers();
-		$expected = array('Javascript', 'Ajax', 'CustomOne');
+		$expected = array('Text', 'Number', 'CustomOne');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -195,9 +195,9 @@ class ControllerTaskTest extends TestCase {
  */
 	public function testDoHelpersTrailingCommas() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne, , '));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Text, Number, CustomOne, , '));
 		$result = $this->Task->doHelpers();
-		$expected = array('Javascript', 'Ajax', 'CustomOne');
+		$expected = array('Text', 'Number', 'CustomOne');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -248,11 +248,11 @@ class ControllerTaskTest extends TestCase {
 	public function testConfirmController() {
 		$controller = 'Posts';
 		$scaffold = false;
-		$helpers = array('Ajax', 'Time');
+		$helpers = array('Js', 'Time');
 		$components = array('Acl', 'Auth');
 
 		$this->Task->expects($this->at(4))->method('out')->with("Controller Name:\n\t$controller");
-		$this->Task->expects($this->at(5))->method('out')->with("Helpers:\n\tAjax, Time");
+		$this->Task->expects($this->at(5))->method('out')->with("Helpers:\n\tJs, Time");
 		$this->Task->expects($this->at(6))->method('out')->with("Components:\n\tAcl, Auth");
 		$this->Task->confirmController($controller, $scaffold, $helpers, $components);
 	}
@@ -263,7 +263,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testBake() {
-		$helpers = array('Ajax', 'Time');
+		$helpers = array('Js', 'Time');
 		$components = array('Acl', 'Auth');
 		$this->Task->expects($this->any())->method('createFile')->will($this->returnValue(true));
 
@@ -273,7 +273,7 @@ class ControllerTaskTest extends TestCase {
 		$this->assertContains(' * @property AuthComponent $Auth', $result);
 		$this->assertContains('class ArticlesController extends AppController', $result);
 		$this->assertContains("public \$components = array('Acl', 'Auth')", $result);
-		$this->assertContains("public \$helpers = array('Ajax', 'Time')", $result);
+		$this->assertContains("public \$helpers = array('Js', 'Time')", $result);
 		$this->assertContains("--actions--", $result);
 
 		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);
@@ -339,7 +339,8 @@ class ControllerTaskTest extends TestCase {
 
 		$this->assertContains('function view($id = null)', $result);
 		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
-		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
+		$this->assertContains("\$options = array('conditions' => array('BakeArticle.' . \$this->BakeArticle->primaryKey => \$id));", $result);
+		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->find('first', \$options));", $result);
 
 		$this->assertContains('function add()', $result);
 		$this->assertContains("if (\$this->request->is('post'))", $result);
@@ -376,7 +377,7 @@ class ControllerTaskTest extends TestCase {
 
 		$this->assertContains('function view($id = null)', $result);
 		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
-		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
+		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->find('first', \$options));", $result);
 
 		$this->assertContains('function add()', $result);
 		$this->assertContains("if (\$this->request->is('post'))", $result);

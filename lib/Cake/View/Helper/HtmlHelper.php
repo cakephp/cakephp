@@ -166,7 +166,7 @@ class HtmlHelper extends Helper {
 		if (is_object($this->_View->response)) {
 			$this->response = $this->_View->response;
 		} else {
-			$this->response = new Response(array('charset' => Configure::read('App.encoding')));
+			$this->response = new Response();
 		}
 		if (!empty($settings['configFile'])) {
 			$this->loadConfig($settings['configFile']);

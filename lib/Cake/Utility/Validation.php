@@ -19,7 +19,6 @@
 namespace Cake\Utility;
 use Cake\Core\App;
 use Cake\Error\Exception;
-use Cake\Utility\File;
 
 /**
  * Offers different validation methods.
@@ -894,6 +893,27 @@ class Validation {
 			throw new Exception(__d('cake_dev', 'Can not determine the mimetype.'));
 		}
 		return in_array($mime, $mimeTypes);
+	}
+
+/**
+ * Checks the filesize
+ *
+ * @param string|array $check
+ * @param integer|string $size Size in bytes or human readable string like '5MB'
+ * @param string $operator See `Validation::comparison()`
+ * @return boolean Success
+ */
+	public static function fileSize($check, $operator = null, $size = null) {
+		if (is_array($check) && isset($check['tmp_name'])) {
+			$check = $check['tmp_name'];
+		}
+
+		if (is_string($size)) {
+			$size = Number::fromReadableSize($size);
+		}
+		$filesize = filesize($check);
+
+		return static::comparison($filesize, $operator, $size);
 	}
 
 /**

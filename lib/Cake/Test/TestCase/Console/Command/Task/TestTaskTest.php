@@ -681,7 +681,7 @@ class TestTaskTest extends TestCase {
 	public function testTestCaseFileNamePlugin() {
 		$this->Task->path = DS . 'my/path/tests/';
 
-		Plugin::load('TestTest', array('path' => APP . 'Plugin/TestTest/' ));
+		Plugin::load('TestTest', array('path' => APP . 'Plugin/TestTest/'));
 		$this->Task->plugin = 'TestTest';
 		$result = $this->Task->testCaseFileName('Model', 'Post');
 		$expected = APP . 'Plugin/TestTest/Test/TestCase/Model/PostTest.php';

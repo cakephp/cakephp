@@ -214,7 +214,6 @@ class Debugger {
 		if (empty($line)) {
 			$line = '??';
 		}
-		$path = static::trimPath($file);
 
 		$info = compact('code', 'description', 'file', 'line');
 		if (!in_array($info, $self->errors)) {

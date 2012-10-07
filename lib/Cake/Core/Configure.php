@@ -140,7 +140,6 @@ class Configure {
  */
 	public static function delete($var = null) {
 		$keys = explode('.', $var);
-		$last = array_pop($keys);
 		static::$_values = Hash::remove(static::$_values, $var);
 	}
 

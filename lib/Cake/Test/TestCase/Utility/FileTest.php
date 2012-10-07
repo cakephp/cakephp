@@ -364,11 +364,10 @@ class FileTest extends TestCase {
  * @return void
  */
 	public function testLastAccess() {
-		$ts = time();
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastAccess());
 		$this->assertTrue($someFile->open());
-		$this->assertTrue($someFile->lastAccess() >= $ts);
+		$this->assertWithinMargin($someFile->lastAccess(), time(), 2);
 		$someFile->close();
 		$someFile->delete();
 	}
@@ -379,13 +378,14 @@ class FileTest extends TestCase {
  * @return void
  */
 	public function testLastChange() {
-		$ts = time();
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastChange());
 		$this->assertTrue($someFile->open('r+'));
-		$this->assertTrue($someFile->lastChange() >= $ts);
+		$this->assertWithinMargin($someFile->lastChange(), time(), 2);
+
 		$someFile->write('something');
-		$this->assertTrue($someFile->lastChange() >= $ts);
+		$this->assertWithinMargin($someFile->lastChange(), time(), 2);
+
 		$someFile->close();
 		$someFile->delete();
 	}

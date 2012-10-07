@@ -81,6 +81,11 @@ class ConsoleErrorHandler {
 		if (Configure::read('debug') == 0) {
 			Log::write($log, $message);
 		}
+
+		if ($log === LOG_ERR) {
+			// @todo define how to handle exit
+			return 1;
+		}
 	}
 
 }

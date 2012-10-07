@@ -24,11 +24,13 @@ namespace Cake\Error;
 use Cake\Controller\Controller;
 use Cake\Controller\ErrorController;
 use Cake\Core\Configure;
+use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\Sanitize;
+use Cake\View\View;
 
 /**
  * Exception Renderer.
@@ -108,10 +110,7 @@ class ExceptionRenderer {
 
 		if ($exception instanceof Exception && !$methodExists) {
 			$method = '_cakeError';
-			if (empty($template)) {
-				$template = 'error500';
-			}
-			if ($template == 'internalError') {
+			if (empty($template) || $template == 'internalError') {
 				$template = 'error500';
 			}
 		} elseif ($exception instanceof \PDOException) {
@@ -125,13 +124,12 @@ class ExceptionRenderer {
 			}
 		}
 
-		if (Configure::read('debug') == 0) {
-			if ($method == '_cakeError') {
-				$method = 'error400';
-			}
-			if ($code == 500) {
-				$method = 'error500';
-			}
+		$isNotDebug = (Configure::read('debug') == 0);
+		if ($isNotDebug && $method == '_cakeError') {
+			$method = 'error400';
+		}
+		if ($isNotDebug && $code == 500) {
+			$method = 'error500';
 		}
 		$this->template = $template;
 		$this->method = $method;
@@ -151,7 +149,7 @@ class ExceptionRenderer {
 		if (!$request = Router::getRequest(true)) {
 			$request = Request::createFromGlobals();
 		}
-		$response = new Response(array('charset' => Configure::read('App.encoding')));
+		$response = new Response();
 
 		if (method_exists($exception, 'responseHeader')) {
 			$response->header($exception->responseHeader());
@@ -274,7 +272,7 @@ class ExceptionRenderer {
 			$this->controller->render($template);
 			$this->controller->afterFilter();
 			$this->controller->response->send();
-		} catch (MissingViewException $e) {
+		} catch (Error\MissingViewException $e) {
 			try {
 				$this->_outputMessage('error500');
 			} catch (\Exception $e) {
@@ -296,11 +294,11 @@ class ExceptionRenderer {
 		$this->controller->layoutPath = null;
 		$this->controller->subDir = null;
 		$this->controller->viewPath = 'Errors/';
-		$this->controller->viewClass = 'View';
 		$this->controller->layout = 'error';
 		$this->controller->helpers = array('Form', 'Html', 'Session');
 
-		$this->controller->render($template);
+		$view = new View($this->controller);
+		$this->controller->response->body($view->render($template, 'error'));
 		$this->controller->response->type('html');
 		$this->controller->response->send();
 	}

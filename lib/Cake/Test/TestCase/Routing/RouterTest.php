@@ -2163,6 +2163,8 @@ class RouterTest extends TestCase {
 /**
  * test reversing parameter arrays back into strings.
  *
+ * Mark the router as initialized so it doesn't auto-load routes
+ *
  * @return void
  */
 	public function testReverse() {

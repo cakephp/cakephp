@@ -237,6 +237,13 @@ class Model extends Object implements EventListener {
 	public $tablePrefix = null;
 
 /**
+ * Plugin model belongs to.
+ *
+ * @var string
+ */
+	public $plugin = null;
+
+/**
  * Name of the model.
  *
  * @var string
@@ -666,10 +673,14 @@ class Model extends Object implements EventListener {
 			extract(array_merge(
 				array(
 					'id' => $this->id, 'table' => $this->useTable, 'ds' => $this->useDbConfig,
-					'name' => $this->name, 'alias' => $this->alias
+					'name' => $this->name, 'alias' => $this->alias, 'plugin' => $this->plugin
 				),
 				$id
 			));
+		}
+
+		if ($this->plugin === null) {
+			$this->plugin = (isset($plugin) ? $plugin : $this->plugin);
 		}
 
 		if ($this->name === null) {
@@ -1877,7 +1888,7 @@ class Model extends Object implements EventListener {
 					if ($keepExisting && !empty($links)) {
 						foreach ($links as $link) {
 							$oldJoin = $link[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']];
-							if (! in_array($oldJoin, $newJoins) ) {
+							if (!in_array($oldJoin, $newJoins)) {
 								$conditions[$associationForeignKey] = $oldJoin;
 								$db->delete($this->{$join}, $conditions);
 							} else {
@@ -2370,7 +2381,7 @@ class Model extends Object implements EventListener {
 
 			$updateCounterCache = false;
 			if (!empty($this->belongsTo)) {
-				foreach ($this->belongsTo as $parent => $assoc) {
+				foreach ($this->belongsTo as $assoc) {
 					if (!empty($assoc['counterCache'])) {
 						$updateCounterCache = true;
 						break;
@@ -2456,7 +2467,7 @@ class Model extends Object implements EventListener {
  * @return void
  */
 	protected function _deleteLinks($id) {
-		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
+		foreach ($this->hasAndBelongsToMany as $data) {
 			list($plugin, $joinModel) = pluginSplit($data['with']);
 			$records = $this->{$joinModel}->find('all', array(
 				'conditions' => array($this->{$joinModel}->escapeField($data['foreignKey']) => $id),
@@ -2731,7 +2742,7 @@ class Model extends Object implements EventListener {
  */
 	protected function _findCount($state, $query, $results = array()) {
 		if ($state === 'before') {
-			if (!empty($query['type']) && isset($this->findMethods[$query['type']]) && $query['type'] !== 'count' ) {
+			if (!empty($query['type']) && isset($this->findMethods[$query['type']]) && $query['type'] !== 'count') {
 				$query['operation'] = 'count';
 				$query = $this->{'_find' . ucfirst($query['type'])}('before', $query);
 			}
@@ -3049,7 +3060,7 @@ class Model extends Object implements EventListener {
 	public function isForeignKey($field) {
 		$foreignKeys = array();
 		if (!empty($this->belongsTo)) {
-			foreach ($this->belongsTo as $assoc => $data) {
+			foreach ($this->belongsTo as $data) {
 				$foreignKeys[] = $data['foreignKey'];
 			}
 		}
@@ -3257,7 +3268,7 @@ class Model extends Object implements EventListener {
 			return array($with, array_unique(array_merge($assoc[$with], $keys)));
 		}
 		trigger_error(
-			__d('cake_dev', 'Invalid join model settings in %s', $model->alias),
+			__d('cake_dev', 'Invalid join model settings in %s. The association parameter has the wrong type, expecting a string or array, but was passed type: %s', $this->alias, gettype($assoc)),
 			E_USER_WARNING
 		);
 	}

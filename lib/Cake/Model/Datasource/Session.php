@@ -442,7 +442,6 @@ class Session {
  */
 	protected static function _configureSession() {
 		$sessionConfig = Configure::read('Session');
-		$iniSet = function_exists('ini_set');
 
 		if (isset($sessionConfig['defaults'])) {
 			$defaults = static::_defaultConfig($sessionConfig['defaults']);

@@ -249,7 +249,7 @@ class ExtractTask extends Shell {
 		if (empty($this->_translations[$domain][$msgid])) {
 			$this->_translations[$domain][$msgid] = array(
 				'msgid_plural' => false
-			 );
+			);
 		}
 
 		if (isset($details['msgid_plural'])) {

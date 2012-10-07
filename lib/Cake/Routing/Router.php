@@ -48,6 +48,13 @@ class Router {
 	public static $_routes;
 
 /**
+ * Have routes been loaded
+ *
+ * @var boolean
+ */
+	public static $initialized = false;
+
+/**
  * List of action prefixes used in connected routes.
  * Includes admin prefix
  *
@@ -269,6 +276,8 @@ class Router {
  * @throws Cake\Error\Exception
  */
 	public static function connect($route, $defaults = array(), $options = array()) {
+		static::$initialized = true;
+
 		if (!empty($defaults['prefix'])) {
 			static::$_prefixes[] = $defaults['prefix'];
 			static::$_prefixes = array_keys(array_flip(static::$_prefixes));
@@ -437,6 +446,10 @@ class Router {
  * @return array Parsed elements from URL
  */
 	public static function parse($url) {
+		if (!static::$initialized) {
+			static::_loadRoutes();
+		}
+
 		if ($url && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
@@ -647,6 +660,10 @@ class Router {
  * @return string Full translated URL with base path.
  */
 	public static function url($url = null, $options = array()) {
+		if (!static::$initialized) {
+			static::_loadRoutes();
+		}
+
 		$full = false;
 		if (is_bool($options)) {
 			list($full, $options) = array($options, array());
@@ -892,6 +909,10 @@ class Router {
  * @return array Array of extensions Router is configured to parse.
  */
 	public static function extensions() {
+		if (!static::$initialized) {
+			static::_loadRoutes();
+		}
+
 		return static::$_validExtensions;
 	}
 
@@ -945,6 +966,16 @@ class Router {
 		}
 		$request->params['named'] = $named;
 		return $request;
+	}
+
+/**
+ * Loads route configuration
+ *
+ * @return void
+ */
+	protected static function _loadRoutes() {
+		static::$initialized = true;
+		include APP . 'Config/routes.php';
 	}
 
 }

@@ -408,14 +408,18 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testMessageIdWithDomain() {
-		$result = $this->CakeEmail->getHeaders();
-		$expected = '@' . (env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n')) . '>';
-		$this->assertTextContains($expected, $result['Message-ID']);
-
 		$this->CakeEmail->domain('example.org');
 		$result = $this->CakeEmail->getHeaders();
 		$expected = '@example.org>';
 		$this->assertTextContains($expected, $result['Message-ID']);
+
+		$_SERVER['HTTP_HOST'] = 'example.org';
+		$result = $this->CakeEmail->getHeaders();
+		$this->assertTextContains('example.org', $result['Message-ID']);
+
+		$_SERVER['HTTP_HOST'] = 'example.org:81';
+		$result = $this->CakeEmail->getHeaders();
+		$this->assertTextNotContains(':81', $result['Message-ID']);
 	}
 
 /**

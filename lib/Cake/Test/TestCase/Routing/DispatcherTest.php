@@ -450,7 +450,7 @@ class DispatcherTest extends TestCase {
 
 		$url = new Request('test_dispatch_pages/camelCased/something. .');
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertEquals('something. .', $Dispatcher->controller->params['pass'][0], 'Period was chopped off. %s');
+		$this->assertEquals('something. .', $url->params['pass'][0], 'Period was chopped off. %s');
 	}
 
 /**
@@ -555,24 +555,24 @@ class DispatcherTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertEquals('test_plugin', $Dispatcher->controller->params['controller']);
-		$this->assertEquals('test_plugin', $Dispatcher->controller->params['plugin']);
-		$this->assertEquals('index', $Dispatcher->controller->params['action']);
-		$this->assertFalse(isset($Dispatcher->controller->params['pass'][0]));
+		$this->assertEquals('test_plugin', $url->params['controller']);
+		$this->assertEquals('test_plugin', $url->params['plugin']);
+		$this->assertEquals('index', $url->params['action']);
+		$this->assertFalse(isset($url->params['pass'][0]));
 
 		$url = new Request('/test_plugin/tests/index');
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertEquals('tests', $Dispatcher->controller->params['controller']);
-		$this->assertEquals('test_plugin', $Dispatcher->controller->params['plugin']);
-		$this->assertEquals('index', $Dispatcher->controller->params['action']);
-		$this->assertFalse(isset($Dispatcher->controller->params['pass'][0]));
+		$this->assertEquals('tests', $url->params['controller']);
+		$this->assertEquals('test_plugin', $url->params['plugin']);
+		$this->assertEquals('index', $url->params['action']);
+		$this->assertFalse(isset($url->params['pass'][0]));
 
 		$url = new Request('/test_plugin/tests/index/some_param');
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertEquals('tests', $Dispatcher->controller->params['controller']);
-		$this->assertEquals('test_plugin', $Dispatcher->controller->params['plugin']);
-		$this->assertEquals('index', $Dispatcher->controller->params['action']);
-		$this->assertEquals('some_param', $Dispatcher->controller->params['pass'][0]);
+		$this->assertEquals('tests', $url->params['controller']);
+		$this->assertEquals('test_plugin', $url->params['plugin']);
+		$this->assertEquals('index', $url->params['action']);
+		$this->assertEquals('some_param', $url->params['pass'][0]);
 
 		App::build();
 	}
@@ -598,9 +598,9 @@ class DispatcherTest extends TestCase {
 		$this->assertTrue(class_exists('TestPlugin\Controller\TestPluginAppController'));
 		$this->assertTrue(class_exists('TestPlugin\Controller\Component\PluginsComponent'));
 
-		$this->assertEquals('tests', $Dispatcher->controller->params['controller']);
-		$this->assertEquals('test_plugin', $Dispatcher->controller->params['plugin']);
-		$this->assertEquals('index', $Dispatcher->controller->params['action']);
+		$this->assertEquals('tests', $url->params['controller']);
+		$this->assertEquals('test_plugin', $url->params['plugin']);
+		$this->assertEquals('index', $url->params['action']);
 
 		App::build();
 	}
@@ -754,10 +754,10 @@ class DispatcherTest extends TestCase {
 		$this->assertEquals($expected, $Dispatcher->controller->name);
 
 		$expected = 'change';
-		$this->assertEquals($expected, $Dispatcher->controller->action);
+		$this->assertEquals($expected, $url->action);
 
 		$expected = array('changed');
-		$this->assertSame($expected, $Dispatcher->controller->params['pass']);
+		$this->assertSame($expected, $url->params['pass']);
 	}
 
 /**

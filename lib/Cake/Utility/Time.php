@@ -943,18 +943,11 @@ class Time {
  * @see Cake\Utility\Time::i18nFormat()
  */
 	public static function format($date, $format = null, $default = false, $timezone = null) {
-		//Backwards compatible params order
+		//Backwards compatible params re-order test
 		$time = static::fromString($format, $timezone);
-		$_time = false;
-		if (!is_numeric($time)) {
-			$_time = static::fromString($date, $timezone);
-		}
 
-		if (is_numeric($_time) && $time === false) {
-			return static::i18nFormat($_time, $format, $default, $timezone);
-		}
-		if ($time === false && $default !== false) {
-			return $default;
+		if ($time === false) {
+			return static::i18nFormat($date, $format, $default, $timezone);
 		}
 		return date($date, $time);
 	}

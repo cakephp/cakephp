@@ -175,14 +175,14 @@ class FormHelper extends Helper {
  *
  * The $key parameter accepts the following list of values:
  *
- *	- key: Returns the name of the primary key for the model
- *	- fields: Returns the model schema
- *  - validates: returns the list of fields that are required
- *	- errors: returns the list of validation errors
+ * - key: Returns the name of the primary key for the model
+ * - fields: Returns the model schema
+ * - validates: returns the list of fields that are required
+ * - errors: returns the list of validation errors
  *
  * If the $field parameter is passed if will return the information for that sole field.
  *
- *	`$this->_introspectModel('Post', 'fields', 'title');` will return the schema information for title column
+ * `$this->_introspectModel('Post', 'fields', 'title');` will return the schema information for title column
  *
  * @param string $model name of the model to extract information from
  * @param string $key name of the special information key to obtain (key, fields, validates, errors)
@@ -201,7 +201,7 @@ class FormHelper extends Helper {
 
 		if ($key === 'fields') {
 			if (!isset($this->fieldset[$model]['fields'])) {
-				$fields = $this->fieldset[$model]['fields'] = $object->schema();
+				$this->fieldset[$model]['fields'] = $object->schema();
 				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
 					$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
 				}
@@ -251,20 +251,23 @@ class FormHelper extends Helper {
  * @return boolean true if field is required to be filled, false otherwise
  */
 	protected function _isRequiredField($validationRules) {
+		if (empty($validationRules) || count($validationRules) === 0) {
+			return false;
+		}
 		foreach ($validationRules as $rule) {
 			$rule->isUpdate($this->requestType === 'put');
-			if (!$rule->isEmptyAllowed()) {
-				return true;
+			if ($rule->isEmptyAllowed()) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 /**
  * Returns false if given form field described by the current entity has no errors.
  * Otherwise it returns the validation message
  *
- * @return mixed Either false when there or no errors, or an array of error
+ * @return mixed Either false when there are no errors, or an array of error
  *    strings. An error string could be ''.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::tagIsInvalid
  */
@@ -327,7 +330,6 @@ class FormHelper extends Helper {
 
 		$key = null;
 		if ($model !== false) {
-			$object = $this->_getModel($model);
 			$key = $this->_introspectModel($model, 'key');
 			$this->setEntity($model, true);
 		}
@@ -724,7 +726,7 @@ class FormHelper extends Helper {
 
 /**
  * Returns a formatted LABEL element for HTML FORMs. Will automatically generate
- * a for attribute if one is not provided.
+ * a `for` attribute if one is not provided.
  *
  * ### Options
  *
@@ -1382,7 +1384,7 @@ class FormHelper extends Helper {
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
 
-			if (isset($value) && $optValue == $value) {
+			if (isset($value) && strval($optValue) === strval($value)) {
 				$optionsHere['checked'] = 'checked';
 			}
 			if ($disabled && (!is_array($disabled) || in_array($optValue, $disabled))) {
@@ -1871,10 +1873,12 @@ class FormHelper extends Helper {
 
 		if (!empty($tag) || isset($template)) {
 			$hasOptions = (count($options) > 0 || $showEmpty);
+			// Secure the field if there are options, or its a multi select.
+			// Single selects with no options don't submit, but multiselects do.
 			if (
 				(!isset($secure) || $secure == true) &&
 				empty($attributes['disabled']) &&
-				$hasOptions
+				(!empty($attributes['multiple']) || $hasOptions)
 			) {
 				$this->_secure(true);
 			}
@@ -2264,6 +2268,20 @@ class FormHelper extends Helper {
 		$monthNames = $attributes['monthNames'];
 		$attributes = array_diff_key($attributes, $defaults);
 
+		if (!empty($interval) && $interval > 1 && !empty($min)) {
+			$current = new \DateTime();
+			if ($year !== null) {
+				$current->setDate($year, $month, $day);
+			}
+			if ($hour !== null) {
+				$current->setTime($hour, $min);
+			}
+			$change = (round($min * (1 / $interval)) * $interval) - $min;
+			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
+			$newTime = explode(' ', $current->format('Y m d H i a'));
+			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
+		}
+
 		if (isset($attributes['id'])) {
 			if (is_string($attributes['id'])) {
 				// build out an array version
@@ -2325,9 +2343,6 @@ class FormHelper extends Helper {
 		}
 		$opt = implode($separator, $selects);
 
-		if (!empty($interval) && $interval > 1 && !empty($min)) {
-			$min = round($min * (1 / $interval)) * $interval;
-		}
 		$selectMinuteAttr['interval'] = $interval;
 		switch ($timeFormat) {
 			case '24':

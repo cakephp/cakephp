@@ -16,7 +16,7 @@ class TestAppsExceptionRenderer extends ExceptionRenderer {
 		if (!$request = Router::getRequest(true)) {
 			$request = new Request();
 		}
-		$response = new Response(array('charset' => Configure::read('App.encoding')));
+		$response = new Response();
 		try {
 			$controller = new TestAppsErrorController($request, $response);
 			$controller->layout = 'banana';

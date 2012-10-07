@@ -559,7 +559,6 @@ class Controller extends Object implements EventListener {
 
 		if ($mergeParent || !empty($pluginController)) {
 			$appVars = get_class_vars($this->_mergeParent);
-			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
 			$this->_mergeVars($merge, $this->_mergeParent, true);
 		}

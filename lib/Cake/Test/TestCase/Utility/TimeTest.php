@@ -1053,4 +1053,19 @@ class TimeTest extends TestCase {
 		$this->assertFalse(isset($return['Asia/Bangkok']));
 	}
 
+/**
+ * Tests that using Cake\Utility\Time::format() with the correct sytax actually converts
+ * from one timezone to the other correctly
+ *
+ * @return void
+ **/
+	public function testCorrectTimezoneConversion() {
+		date_default_timezone_set('UTC');
+		$date = '2012-01-01 10:00:00';
+		$converted = Time::format($date, '%Y-%m-%d %H:%M:%S', '', 'Europe/Copenhagen');
+		$expected = new \DateTime($date);
+		$expected->setTimezone(new \DateTimeZone('Europe/Copenhagen'));
+		$this->assertEquals($expected->format('Y-m-d H:i:s'), $converted);
+	}
+
 }

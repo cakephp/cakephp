@@ -196,7 +196,7 @@ class CookieComponent extends Component {
 		if ($controller && isset($controller->response)) {
 			$this->_response = $controller->response;
 		} else {
-			$this->_response = new Response(array('charset' => Configure::read('App.encoding')));
+			$this->_response = new Response();
 		}
 	}
 
@@ -210,10 +210,6 @@ class CookieComponent extends Component {
 		$this->_expire($this->time);
 
 		$this->_values[$this->name] = array();
-		$values = $this->_request->cookie($this->name);
-		if ($values) {
-			$this->_values[$this->name] = $this->_decrypt($values);
-		}
 	}
 
 /**

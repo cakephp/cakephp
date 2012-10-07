@@ -583,10 +583,10 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\MissingConnectionException(array('class' => 'Article')),
+				new Error\MissingConnectionException(array('class' => 'Mysql')),
 				array(
 					'/<h2>Missing Database Connection<\/h2>/',
-					'/Article requires a database connection/'
+					'/A Database connection using "Mysql" was missing or unable to connect./',
 				),
 				500
 			),
@@ -594,7 +594,7 @@ class ExceptionRendererTest extends TestCase {
 				new Error\MissingConnectionException(array('class' => 'Mysql', 'enabled' => false)),
 				array(
 					'/<h2>Missing Database Connection<\/h2>/',
-					'/Mysql requires a database connection/',
+					'/A Database connection using "Mysql" was missing or unable to connect./',
 					'/Mysql driver is NOT enabled/'
 				),
 				500
@@ -701,23 +701,47 @@ class ExceptionRendererTest extends TestCase {
 		$exception = new Error\MissingHelperException(array('class' => 'Fail'));
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
-		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller');
+		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
 		$ExceptionRenderer->controller->helpers = array('Fail', 'Boom');
 		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
-		$ExceptionRenderer->controller->expects($this->at(2))
+		$ExceptionRenderer->controller->expects($this->at(0))
 			->method('render')
 			->with('missingHelper')
 			->will($this->throwException($exception));
 
-		$ExceptionRenderer->controller->expects($this->at(4))
-			->method('render')
-			->with('error500')
-			->will($this->returnValue(true));
+		$response = $this->getMock('Cake\Network\Response');
+		$response->expects($this->once())
+			->method('body')
+			->with($this->stringContains('Helper class Fail'));
 
-		$ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response');
+		$ExceptionRenderer->controller->response = $response;
 		$ExceptionRenderer->render();
 		sort($ExceptionRenderer->controller->helpers);
 		$this->assertEquals(array('Form', 'Html', 'Session'), $ExceptionRenderer->controller->helpers);
+	}
+
+/**
+ * Test that exceptions in beforeRender() are handled by outputMessageSafe
+ *
+ * @return void
+ */
+	public function testRenderExceptionInBeforeRender() {
+		$exception = new Error\NotFoundException('Not there, sorry');
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+
+		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('beforeRender'));
+		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+		$ExceptionRenderer->controller->expects($this->any())
+			->method('beforeRender')
+			->will($this->throwException($exception));
+
+		$response = $this->getMock('Cake\Network\Response');
+		$response->expects($this->once())
+			->method('body')
+			->with($this->stringContains('Not there, sorry'));
+
+		$ExceptionRenderer->controller->response = $response;
+		$ExceptionRenderer->render();
 	}
 
 /**
@@ -729,32 +753,31 @@ class ExceptionRendererTest extends TestCase {
 		$exception = new Error\NotFoundException();
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
-		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller');
+		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
 		$ExceptionRenderer->controller->helpers = array('Fail', 'Boom');
 		$ExceptionRenderer->controller->layoutPath = 'json';
 		$ExceptionRenderer->controller->subDir = 'json';
 		$ExceptionRenderer->controller->viewClass = 'Json';
 		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
 
-		$ExceptionRenderer->controller->expects($this->at(1))
+		$ExceptionRenderer->controller->expects($this->once())
 			->method('render')
 			->with('error400')
 			->will($this->throwException($exception));
 
-		$ExceptionRenderer->controller->expects($this->at(3))
-			->method('render')
-			->with('error500')
-			->will($this->returnValue(true));
-
-		$ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response');
-		$ExceptionRenderer->controller->response->expects($this->once())
+		$response = $this->getMock('Cake\Network\Response');
+		$response->expects($this->once())
+			->method('body')
+			->with($this->stringContains('Not Found'));
+		$response->expects($this->once())
 			->method('type')
 			->with('html');
+
+		$ExceptionRenderer->controller->response = $response;
 
 		$ExceptionRenderer->render();
 		$this->assertEquals('', $ExceptionRenderer->controller->layoutPath);
 		$this->assertEquals('', $ExceptionRenderer->controller->subDir);
-		$this->assertEquals('View', $ExceptionRenderer->controller->viewClass);
 		$this->assertEquals('Errors/', $ExceptionRenderer->controller->viewPath);
 	}
 

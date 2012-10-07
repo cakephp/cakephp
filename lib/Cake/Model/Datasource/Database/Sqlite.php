@@ -114,8 +114,11 @@ class Sqlite extends DboSource {
 		try {
 			$this->_connection = new PDO('sqlite:' . $config['database'], null, null, $flags);
 			$this->connected = true;
-		} catch (\PDOException $e) {
-			throw new MissingConnectionException(array('class' => $e->getMessage()));
+		} catch(\PDOException $e) {
+			throw new Error\MissingConnectionException(array(
+				'class' => get_class($this),
+				'message' => $e->getMessage()
+			));
 		}
 		return $this->connected;
 	}
@@ -489,7 +492,7 @@ class Sqlite extends DboSource {
 			if (is_bool($indexes)) {
 				return array();
 			}
-			foreach ($indexes as $i => $info) {
+			foreach ($indexes as $info) {
 				$key = array_pop($info);
 				$keyInfo = $this->query('PRAGMA index_info("' . $key['name'] . '")');
 				foreach ($keyInfo as $keyCol) {

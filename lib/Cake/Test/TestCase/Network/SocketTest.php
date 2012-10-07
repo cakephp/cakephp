@@ -205,11 +205,11 @@ class SocketTest extends TestCase {
  */
 	public function testReset() {
 		$config = array(
-			'persistent'	=> true,
-			'host'			=> '127.0.0.1',
-			'protocol'		=> 'udp',
-			'port'			=> 80,
-			'timeout'		=> 20
+			'persistent' => true,
+			'host' => '127.0.0.1',
+			'protocol' => 'udp',
+			'port' => 80,
+			'timeout' => 20
 		);
 		$anotherSocket = new Socket($config);
 		$anotherSocket->reset();
@@ -223,6 +223,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoSocketExceptionNoSsl() {
+		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
 		$configNoSslOrTls = array('host' => 'localhost', 'port' => 80, 'timeout' => 0.1);
 
 		// testing exception on no ssl socket server for ssl and tls methods
@@ -252,6 +253,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	protected function _connectSocketToSslTls() {
+		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
 		$configSslTls = array('host' => 'smtp.gmail.com', 'port' => 465, 'timeout' => 5);
 		$this->Socket = new Socket($configSslTls);
 		$this->Socket->connect();
