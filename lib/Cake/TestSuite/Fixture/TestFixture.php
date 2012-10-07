@@ -13,6 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite\Fixture;
+
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Log\Log;

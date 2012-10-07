@@ -1,9 +1,5 @@
 <?php
 /**
- * TestFixture file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,11 +8,12 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.TestSuite
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\TestSuite;
+
+use Cake\Core\Configure;
 use Cake\Model\ConnectionManager;
 use Cake\Model\Model;
 use Cake\TestSuite\Fixture\TestFixture;
@@ -26,7 +23,7 @@ use Cake\Utility\ClassRegistry;
 /**
  * TestFixtureTestFixture class
  *
- * @package       Cake.Test.Case.TestSuite
+ * @package       Cake.Test.TestCase.TestSuite
  */
 class TestFixtureTestFixture extends TestFixture {
 
@@ -115,11 +112,11 @@ class StringsTestFixture extends TestFixture {
 
 
 /**
- * TestFixtureImportFixture class
+ * ImportFixture class
  *
  * @package       Cake.Test.Case.TestSuite
  */
-class TestFixtureImportFixture extends TestFixture {
+class ImportFixture extends TestFixture {
 
 /**
  * Name property
@@ -133,51 +130,8 @@ class TestFixtureImportFixture extends TestFixture {
  *
  * @var mixed
  */
-	public $import = array('table' => 'fixture_tests', 'connection' => 'fixture_test_suite');
+	public $import = ['table' => 'posts', 'connection' => 'test'];
 }
-
-/**
- * TestFixtureDefaultImportFixture class
- *
- * @package       Cake.Test.Case.TestSuite
- */
-class TestFixtureDefaultImportFixture extends TestFixture {
-
-/**
- * Name property
- *
- * @var string
- */
-	public $name = 'ImportFixture';
-}
-
-/**
- * FixtureImportTestModel class
- *
- * @package       Cake.Test.Case.TestSuite
- * @package       Cake.Test.Case.TestSuite
- */
-class FixtureImportTestModel extends Model {
-
-	public $name = 'FixtureImport';
-
-	public $useTable = 'fixture_tests';
-
-	public $useDbConfig = 'test';
-
-}
-
-class FixturePrefixTest extends Model {
-
-	public $name = 'FixturePrefix';
-
-	public $useTable = '_tests';
-
-	public $tablePrefix = 'fixture';
-
-	public $useDbConfig = 'test';
-}
-
 
 /**
  * Test case for TestFixture
@@ -187,11 +141,19 @@ class FixturePrefixTest extends Model {
 class TestFixtureTest extends TestCase {
 
 /**
+ * Fixtures for this test.
+ *
+ * @var array
+ */
+	public $fixtures = ['core.post'];
+
+/**
  * setUp method
  *
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$methods = array_diff(get_class_methods('Cake\Model\Datasource\DboSource'), array('enabled'));
 		$methods[] = 'connect';
 
@@ -207,6 +169,7 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->criticDb);
 		$this->db->config = $this->_backupConfig;
 	}
@@ -236,7 +199,8 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInitDbPrefix() {
-		$this->skipIf($this->db instanceof Sqlite, 'Cannot open 2 connections to Sqlite');
+		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
+
 		$db = ConnectionManager::getDataSource('test');
 		$Source = new TestFixtureTestFixture();
 		$Source->drop($db);
@@ -277,6 +241,8 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInitDbPrefixDuplication() {
+		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
+
 		$this->skipIf($this->db instanceof Sqlite, 'Cannot open 2 connections to Sqlite');
 		$db = ConnectionManager::getDataSource('test');
 		$backPrefix = $db->config['prefix'];
@@ -307,8 +273,7 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInitModelTablePrefix() {
-		$this->skipIf($this->db instanceof Sqlite, 'Cannot open 2 connections to Sqlite');
-		$this->skipIf(!empty($this->db->config['prefix']), 'Cannot run this test, you have a database connection prefix.');
+		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
 
 		$Source = new TestFixtureTestFixture();
 		$Source->create($this->db);
@@ -333,25 +298,28 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testImport() {
-		$testSuiteDb = ConnectionManager::getDataSource('test');
-		$testSuiteConfig = $testSuiteDb->config;
-		ConnectionManager::create('new_test_suite', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
-		$newTestSuiteDb = ConnectionManager::getDataSource('new_test_suite');
-
-		$Source = new TestFixtureTestFixture();
-		$Source->create($newTestSuiteDb);
-		$Source->insert($newTestSuiteDb);
-
-		$Fixture = new TestFixtureDefaultImportFixture();
+		Configure::write('App.namespace', 'TestApp');
+		$Fixture = new ImportFixture();
 		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'new_test_suite');
+		$Fixture->import = [
+			'model' => 'Post',
+			'connection' => 'test',
+		];
 		$Fixture->init();
-		$this->assertEquals(array('id', 'name', 'created'), array_keys($Fixture->fields));
+
+		$expected = [
+			'id',
+			'author_id',
+			'title',
+			'body',
+			'published',
+			'created',
+			'updated',
+		];
+		$this->assertEquals($expected, array_keys($Fixture->fields));
 
 		$keys = array_flip(ClassRegistry::keys());
-		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
-
-		$Source->drop($newTestSuiteDb);
+		$this->assertFalse(array_key_exists('post', $keys));
 	}
 
 /**
@@ -361,26 +329,27 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testImportWithRecords() {
-		$testSuiteDb = ConnectionManager::getDataSource('test');
-		$testSuiteConfig = $testSuiteDb->config;
-		ConnectionManager::create('new_test_suite', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
-		$newTestSuiteDb = ConnectionManager::getDataSource('new_test_suite');
-
-		$Source = new TestFixtureTestFixture();
-		$Source->create($newTestSuiteDb);
-		$Source->insert($newTestSuiteDb);
-
-		$Fixture = new TestFixtureDefaultImportFixture();
+		Configure::write('App.namespace', 'TestApp');
+		$Fixture = new ImportFixture();
 		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = array(
-			'model' => 'FixtureImportTestModel', 'connection' => 'new_test_suite', 'records' => true
-		);
+		$Fixture->import = [
+			'model' => 'Post',
+			'connection' => 'test',
+			'records' => true
+		];
 		$Fixture->init();
-		$this->assertEquals(array('id', 'name', 'created'), array_keys($Fixture->fields));
+		$expected = [
+			'id',
+			'author_id',
+			'title',
+			'body',
+			'published',
+			'created',
+			'updated',
+		];
+		$this->assertEquals($expected, array_keys($Fixture->fields));
 		$this->assertFalse(empty($Fixture->records[0]), 'No records loaded on importing fixture.');
-		$this->assertTrue(isset($Fixture->records[0]['name']), 'No name loaded for first record');
-
-		$Source->drop($newTestSuiteDb);
+		$this->assertTrue(isset($Fixture->records[0]['title']), 'No title loaded for first record');
 	}
 
 /**
@@ -472,9 +441,14 @@ class TestFixtureTest extends TestCase {
  */
 	public function testDrop() {
 		$Fixture = new TestFixtureTestFixture();
-		$this->criticDb->expects($this->at(1))->method('execute')->will($this->returnValue(true));
-		$this->criticDb->expects($this->at(3))->method('execute')->will($this->returnValue(false));
-		$this->criticDb->expects($this->exactly(2))->method('dropSchema');
+		$this->criticDb->expects($this->at(1))
+			->method('execute')
+			->will($this->returnValue(true));
+		$this->criticDb->expects($this->at(3))
+			->method('execute')
+			->will($this->returnValue(false));
+		$this->criticDb->expects($this->exactly(2))
+			->method('dropSchema');
 
 		$return = $Fixture->drop($this->criticDb);
 		$this->assertTrue($this->criticDb->fullDebug);
