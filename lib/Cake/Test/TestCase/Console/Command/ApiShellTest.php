@@ -1,9 +1,5 @@
 <?php
 /**
- * ApiShellTest file
- *
- * PHP 5
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
@@ -16,8 +12,8 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\Console\Command;
+
 use Cake\Console\Command\ApiShellShell;
 use Cake\TestSuite\TestCase;
 
@@ -35,13 +31,13 @@ class ApiShellTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
 		$this->Shell = $this->getMock(
 			'Cake\Console\Command\ApiShell',
-			array('in', 'out', 'createFile', 'hr', '_stop'),
-			array(	$out, $out, $in)
+			['in', 'out', 'createFile', 'hr', '_stop'],
+			[$out, $out, $in]
 		);
 	}
 
@@ -51,43 +47,19 @@ class ApiShellTest extends TestCase {
  * @return void
  */
 	public function testMethodNameDetection() {
-		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('q'));
-		$this->Shell->expects($this->at(0))->method('out')->with('Controller');
+		$this->Shell->expects($this->any())
+			->method('in')->will($this->returnValue('q'));
+		$this->Shell->expects($this->at(0))
+			->method('out')->with('Controller');
 
-		$expected = array(
-			'1. afterFilter()',
-			'2. afterScaffoldSave($method)',
-			'3. afterScaffoldSaveError($method)',
-			'4. beforeFilter()',
-			'5. beforeRedirect($url, $status = NULL, $exit = true)',
-			'6. beforeRender()',
-			'7. beforeScaffold($method)',
-			'8. constructClasses()',
-			'9. disableCache()',
-			'10. flash($message, $url, $pause = 1, $layout = \'flash\')',
-			'11. getEventManager()',
-			'12. header($status)',
-			'13. httpCodes($code = NULL)',
-			'14. implementedEvents()',
-			'15. invokeAction($request)',
-			'16. loadModel($modelClass = NULL, $id = NULL)',
-			'17. paginate($object = NULL, $scope = array (), $whitelist = array ())',
-			'18. postConditions($data = array (), $op = NULL, $bool = \'AND\', $exclusive = false)',
-			'19. redirect($url, $status = NULL, $exit = true)',
-			'20. referer($default = NULL, $local = false)',
-			'21. render($view = NULL, $layout = NULL)',
-			'22. scaffoldError($method)',
-			'23. set($one, $two = NULL)',
-			'24. setAction($action)',
-			'25. setRequest($request)',
-			'26. shutdownProcess()',
-			'27. startupProcess()',
-			'28. validate()',
-			'29. validateErrors()'
-		);
-		$this->Shell->expects($this->at(2))->method('out')->with($expected);
+		$this->Shell->expects($this->at(2))
+			->method('out')
+			->with($this->logicalAnd(
+				$this->contains('8. beforeFilter()'),
+				$this->contains('24. render($view = NULL, $layout = NULL)')
+			));
 
-		$this->Shell->args = array('controller');
+		$this->Shell->args = ['controller'];
 		$this->Shell->paths['controller'] = CAKE . 'Controller/';
 		$this->Shell->main();
 	}

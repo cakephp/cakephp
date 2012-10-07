@@ -1,11 +1,5 @@
 <?php
 /**
- * API shell to get CakePHP core method signatures.
- *
- * Implementation of a Cake Shell to show CakePHP core method signatures.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,6 +12,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command;
+
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Utility\Inflector;
@@ -81,19 +76,16 @@ class ApiShell extends Shell {
 			$file = Inflector::underscore($this->args[1]);
 			$class = Inflector::camelize($this->args[1]);
 		}
-		$objects = App::objects('class', $path);
-		if (in_array($class, $objects)) {
-			if (in_array($type, array('behavior', 'component', 'helper')) && $type !== $file) {
-				if (!preg_match('/' . Inflector::camelize($type) . '$/', $class)) {
-					$class .= Inflector::camelize($type);
-				}
-			}
+		$path = $path . Inflector::camelize($type);
+		$file = $path . '.php';
+		$classPath = str_replace(CORE_PATH, '', $path);
+		$className = str_replace(DS, '\\', $classPath);
 
-		} else {
-			$this->error(__d('cake_console', '%s not found', $class));
+		if (!class_exists($className)) {
+			return $this->error(__d('cake_console', '%s not found', $class));
 		}
 
-		$parsed = $this->_parseClass($path . $class . '.php', $class);
+		$parsed = $this->_parseClass($className);
 
 		if (!empty($parsed)) {
 			if (isset($this->params['method'])) {
@@ -196,23 +188,16 @@ class ApiShell extends Shell {
  * Parse a given class (located on given file) and get public methods and their
  * signatures.
  *
- * @param string $path File path
  * @param string $class Class name
  * @return array Methods and signatures indexed by method name
  */
-	protected function _parseClass($path, $class) {
+	protected function _parseClass($class) {
 		$parsed = array();
-
-		if (!class_exists($class)) {
-			if (!include_once $path) {
-				$this->err(__d('cake_console', '%s could not be found', $path));
-			}
-		}
 
 		$reflection = new \ReflectionClass($class);
 
 		foreach ($reflection->getMethods() as $method) {
-			if (!$method->isPublic() || strpos($method->getName(), '_') === 0) {
+			if (!$method->isPublic()) {
 				continue;
 			}
 			if ($method->getDeclaringClass()->getName() != $class) {
