@@ -126,11 +126,12 @@ class NumberHelper extends AppHelper {
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
  *   set at least 'before' and 'after' options.
+ * 'USD' is the default currency, use CakeNumber::defaultCurrency() to change this default.
  * @param array $options
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
-	public function currency($number, $currency = 'USD', $options = array()) {
+	public function currency($number, $currency = null, $options = array()) {
 		return $this->_engine->currency($number, $currency, $options);
 	}
 
@@ -145,6 +146,17 @@ class NumberHelper extends AppHelper {
  */
 	public function addFormat($formatName, $options) {
 		return $this->_engine->addFormat($formatName, $options);
+	}
+
+/**
+ * @see: CakeNumber::defaultCurrency()
+ *
+ * @param string $currency The currency to be used in the future.
+ * @return void
+ * @see NumberHelper::currency()
+ */
+	public function defaultCurrency($currency) {
+		return $this->_engine->defaultCurrency($currency);
 	}
 
 }
