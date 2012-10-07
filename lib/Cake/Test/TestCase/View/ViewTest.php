@@ -24,6 +24,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\View\Helper;
@@ -300,8 +301,8 @@ class ViewTest extends TestCase {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
 		$this->Controller->viewPath = 'Pages';
-		$this->Controller->action = 'display';
-		$this->Controller->params['pass'] = array('home');
+		$this->Controller->request->action = 'display';
+		$this->Controller->request->params['pass'] = array('home');
 
 		$ThemeView = new TestThemeView($this->Controller);
 		$ThemeView->theme = 'TestTheme';
@@ -440,8 +441,8 @@ class ViewTest extends TestCase {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
 		$this->Controller->viewPath = 'Pages';
-		$this->Controller->action = 'display';
-		$this->Controller->params['pass'] = array('home');
+		$this->Controller->request->action = 'display';
+		$this->Controller->request->params['pass'] = array('home');
 
 		$View = new TestView($this->Controller);
 
@@ -534,8 +535,8 @@ class ViewTest extends TestCase {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
 		$this->Controller->viewPath = 'Pages';
-		$this->Controller->action = 'display';
-		$this->Controller->params['pass'] = array('home');
+		$this->Controller->request->action = 'display';
+		$this->Controller->request->params['pass'] = array('home');
 
 		$View = new TestView($this->Controller);
 		ob_start();
@@ -547,7 +548,7 @@ class ViewTest extends TestCase {
 		$this->ThemeController->action = 'display';
 		$this->ThemeController->theme = 'my_theme';
 
-		$this->ThemeController->params['pass'] = array('home');
+		$this->ThemeController->request->params['pass'] = array('home');
 
 		$View = new TestThemeView($this->ThemeController);
 		ob_start();
@@ -603,10 +604,13 @@ class ViewTest extends TestCase {
  * @return void
  */
 	public function testUUIDGeneration() {
+		Router::connect('/:controller', ['action' => 'index']);
 		$result = $this->View->uuid('form', array('controller' => 'posts', 'action' => 'index'));
 		$this->assertEquals('form5988016017', $result);
+
 		$result = $this->View->uuid('form', array('controller' => 'posts', 'action' => 'index'));
 		$this->assertEquals('formc3dc6be854', $result);
+
 		$result = $this->View->uuid('form', array('controller' => 'posts', 'action' => 'index'));
 		$this->assertEquals('form28f92cc87f', $result);
 	}
@@ -666,15 +670,13 @@ class ViewTest extends TestCase {
  *
  */
 	public function testElementCallbacks() {
-		$this->getMock('Cake\View\Helper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');
-		$this->View->helpers = array('ElementCallbackMockHtml');
-		$this->View->loadHelpers();
-
-		$this->View->ElementCallbackMockHtml->expects($this->at(0))->method('beforeRender');
-		$this->View->ElementCallbackMockHtml->expects($this->at(1))->method('afterRender');
+		$mock = $this->getMock('Cake\View\Helper', [], [$this->View]);
+		$mock->expects($this->at(0))->method('beforeRender');
+		$mock->expects($this->at(1))->method('afterRender');
+		$this->View->Helpers->set('Test', $mock);
+		$this->View->Helpers->enable('Test');
 
 		$this->View->element('test_element', array(), array('callbacks' => true));
-		$this->mockObjects[] = $this->View->ElementCallbackMockHtml;
 	}
 
 /**
@@ -715,12 +717,12 @@ class ViewTest extends TestCase {
  */
 	public function testElementCache() {
 		Cache::drop('test_view');
-		Cache::config('test_view', array(
+		Configure::write('Cache.test_view', [
 			'engine' => 'File',
 			'duration' => '+1 day',
 			'path' => CACHE . 'views/',
 			'prefix' => ''
-		));
+		]);
 		Cache::clear(true, 'test_view');
 
 		$View = new TestView($this->PostsController);

@@ -172,7 +172,7 @@ class ThemeViewTest extends TestCase {
 		$this->Controller->name = 'Pages';
 		$this->Controller->viewPath = 'Pages';
 		$this->Controller->action = 'display';
-		$this->Controller->params['pass'] = array('home');
+		$this->Controller->request->params['pass'] = array('home');
 
 		$ThemeView = new TestTheme2View($this->Controller);
 		$ThemeView->theme = 'TestTheme';
@@ -212,7 +212,7 @@ class ThemeViewTest extends TestCase {
 		$this->Controller->action = 'display';
 		$this->Controller->theme = 'my_theme';
 
-		$this->Controller->params['pass'] = array('home');
+		$this->Controller->request->params['pass'] = array('home');
 
 		$View = new TestTheme2View($this->Controller);
 		ob_start();
