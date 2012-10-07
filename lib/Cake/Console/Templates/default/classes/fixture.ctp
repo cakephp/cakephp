@@ -20,11 +20,15 @@
  */
 ?>
 <?php echo '<?php' . "\n"; ?>
+namespace <?php echo $namespace; ?>\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
+
 /**
  * <?php echo $model; ?>Fixture
  *
  */
-class <?php echo $model; ?>Fixture extends \Cake\TestSuite\Fixture\TestFixture {
+class <?php echo $model; ?>Fixture extends TestFixture {
 
 <?php if ($table): ?>
 /**

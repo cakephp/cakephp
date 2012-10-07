@@ -1,9 +1,5 @@
 <?php
 /**
- * FixtureTask Test case
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -152,7 +147,9 @@ class FixtureTaskTest extends TestCase {
 			'fromTable' => true, 'schema' => 'Article', 'records' => false
 		));
 
-		$this->assertContains('class ArticleFixture extends CakeTestFixture', $result);
+		$this->assertContains('namespace App\Test\Fixture;', $result);
+		$this->assertContains('use Cake\TestSuite\Fixture\TestFixture;', $result);
+		$this->assertContains('class ArticleFixture extends TestFixture', $result);
 		$this->assertContains('public $records', $result);
 		$this->assertContains('public $import', $result);
 		$this->assertContains("'title' => 'First Article'", $result, 'Missing import data %s');
@@ -302,13 +299,13 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article');
-		$this->assertContains('class ArticleFixture extends CakeTestFixture', $result);
+		$this->assertContains('class ArticleFixture extends TestFixture', $result);
 		$this->assertContains('public $fields', $result);
 		$this->assertContains('public $records', $result);
 		$this->assertNotContains('public $import', $result);
 
 		$result = $this->Task->bake('Article', 'comments');
-		$this->assertContains('class ArticleFixture extends CakeTestFixture', $result);
+		$this->assertContains('class ArticleFixture extends TestFixture', $result);
 		$this->assertContains('public $table = \'comments\';', $result);
 		$this->assertContains('public $fields = array(', $result);
 

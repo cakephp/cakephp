@@ -156,7 +156,8 @@ class TemplateTaskTest extends TestCase {
 			'table' => 'articles',
 			'import' => false,
 			'records' => false,
-			'schema' => ''
+			'schema' => '',
+			'namespace' => ''
 		));
 		$result = $this->Task->generate('classes', 'fixture');
 		$this->assertRegExp('/ArticleFixture extends .*TestFixture/', $result);

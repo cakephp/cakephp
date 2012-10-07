@@ -1,9 +1,5 @@
 <?php
 /**
- * The FixtureTask handles creating and updating fixture files.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
@@ -16,6 +12,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command\Task;
+
+use Cake\Core\Configure;
 use Cake\Console\Shell;
 use Cake\Model\Model;
 use Cake\Model\Schema;
@@ -244,7 +242,17 @@ class FixtureTask extends BakeTask {
  * @return string Content saved into fixture file.
  */
 	public function generateFixtureFile($model, $otherVars) {
-		$defaults = array('table' => null, 'schema' => null, 'records' => null, 'import' => null, 'fields' => null);
+		$defaults = [
+			'table' => null,
+			'schema' => null,
+			'records' => null,
+			'import' => null,
+			'fields' => null,
+			'namespace' => Configure::read('App.namespace')
+		];
+		if ($this->plugin) {
+			$defaults['namespace'] = $this->plugin;
+		}
 		$vars = array_merge($defaults, $otherVars);
 
 		$path = $this->getPath();
