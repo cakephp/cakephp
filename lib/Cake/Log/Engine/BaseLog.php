@@ -27,36 +27,59 @@ abstract class BaseLog implements LogInterface {
  *
  * @var string
  */
-	protected $_config = array();
+	protected $_config = [];
 
 /**
  * __construct method
  *
  * @return void
  */
-	public function __construct($config = array()) {
+	public function __construct(array $config = []) {
 		$this->config($config);
 	}
 
 /**
  * Sets instance config.  When $config is null, returns config array
  *
- * Config
+ * ### Options
  *
- * - `types` string or array, levels the engine is interested in
+ * - `levels` string or array, levels the engine is interested in
  * - `scopes` string or array, scopes the engine is interested in
  *
- * @param array $config engine configuration
+ * @param array|null $config Either an array of configuration, or null to get
+ *    current configuration.
+ * @return array Array of configuration options.
+ */
+	public function config($config = null) {
+		if (empty($config)) {
+			return $this->_config;
+		}
+		$config += ['levels' => [], 'scopes' => []];
+		$config['scopes'] = (array)$config['scopes'];
+		$config['levels'] = (array)$config['levels'];
+		if (isset($config['types']) && empty($config['levels'])) {
+			$config['levels'] = $config['types'];
+		}
+		$this->_config = $config;
+		return $this->_config;
+	}
+
+/**
+ * Get the levls this logger is interested in.
+ *
  * @return array
  */
-	public function config($config = array()) {
-		if (!empty($config)) {
-			if (isset($config['types']) && is_string($config['types'])) {
-				$config['types'] = array($config['types']);
-			}
-			$this->_config = $config;
-		}
-		return $this->_config;
+	public function levels() {
+		return isset($this->_config['levels']) ? $this->_config['levels'] : [];
+	}
+
+/**
+ * Get the scopes this logger is interested in.
+ *
+ * @return array
+ */
+	public function scopes() {
+		return isset($this->_config['scopes']) ? $this->_config['scopes'] : [];
 	}
 
 }

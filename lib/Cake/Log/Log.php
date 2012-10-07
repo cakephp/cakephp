@@ -17,7 +17,6 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Log\Engine\BaseLog;
-use Cake\Log\Engine\FileLog;
 
 /**
  * Logs messages to configured Log adapters.  One or more adapters
@@ -363,13 +362,8 @@ class Log {
 			$logger = static::$_Collection->{$streamName};
 			$levels = $scopes = null;
 			if ($logger instanceof BaseLog) {
-				$config = $logger->config();
-				if (isset($config['types'])) {
-					$levels = $config['types'];
-				}
-				if (isset($config['scopes'])) {
-					$scopes = $config['scopes'];
-				}
+				$levels = $logger->levels();
+				$scopes = $logger->scopes();
 			}
 			$correctLevel = (
 				empty($levels) ||

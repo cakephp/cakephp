@@ -1,9 +1,5 @@
 <?php
 /**
- * File Storage stream for Logging
- *
- * PHP 5
- *
  * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,14 +12,14 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Log\Engine;
+
 use Cake\Log\Engine\BaseLog;
 use Cake\Utility\Hash;
 
 /**
  * File Storage stream for Logging.  Writes logs to different files
- * based on the type of log it is.
+ * based on the level of log it is.
  *
  * @package       Cake.Log.Engine
  */
@@ -48,7 +44,7 @@ class FileLog extends BaseLog {
  *
  * Config
  *
- * - `types` string or array, levels the engine is interested in
+ * - `levels` string or array, levels the engine is interested in
  * - `scopes` string or array, scopes the engine is interested in
  * - `file` log file name
  * - `path` the path to save logs on.
@@ -60,10 +56,11 @@ class FileLog extends BaseLog {
 		$config = Hash::merge(array(
 			'path' => LOGS,
 			'file' => null,
-			'types' => null,
+			'levels' => null,
 			'scopes' => array(),
 			), $this->_config);
 		$config = $this->config($config);
+
 		$this->_path = $config['path'];
 		$this->_file = $config['file'];
 		if (!empty($this->_file) && !preg_match('/\.log$/', $this->_file)) {

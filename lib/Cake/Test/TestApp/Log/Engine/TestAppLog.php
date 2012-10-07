@@ -1,9 +1,5 @@
 <?php
 /**
- * Test Suite Test App Logging stream class.
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -17,9 +13,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Log\Engine;
-use Cake\Log\LogInterface;
+
 use Cake\Log\Engine\BaseLog;
 
+/**
+ * Test Suite Test App Logging stream class.
+ */
 class TestAppLog extends BaseLog {
 
 	public function write($type, $message) {
