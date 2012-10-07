@@ -64,21 +64,6 @@ class AppController extends Controller {
 	public $components = array('Cookie');
 }
 
-/**
- * PostsController class
- */
-class PostsController extends AppController {
-
-/**
- * Components array
- *
- * @var array
- */
-	public $components = array(
-		'RequestHandler',
-		'Auth'
-	);
-}
 
 /**
  * ControllerTestCaseTest controller
@@ -123,6 +108,7 @@ class ControllerTestCaseTest extends TestCase {
 		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
+
 		$this->Case = $this->getMockForAbstractClass('Cake\TestSuite\ControllerTestCase');
 		Router::reload();
 	}
@@ -142,30 +128,30 @@ class ControllerTestCaseTest extends TestCase {
  * Test that ControllerTestCase::generate() creates mock objects correctly
  */
 	public function testGenerate() {
-		$Posts = $this->Case->generate(__NAMESPACE__ . '\PostsController');
+		$Posts = $this->Case->generate('TestApp\Controller\PostsController');
 		$this->assertEquals('Posts', $Posts->name);
-		$this->assertEquals('ControllerPost', $Posts->modelClass);
+		$this->assertEquals('Post', $Posts->modelClass);
 		$this->assertNull($Posts->response->send());
 
-		$Posts = $this->Case->generate(__NAMESPACE__ . '\PostsController', array(
+		$Posts = $this->Case->generate('TestApp\Controller\PostsController', array(
 			'methods' => array(
 				'render'
 			)
 		));
 		$this->assertNull($Posts->render('index'));
 
-		$Posts = $this->Case->generate(__NAMESPACE__ . '\PostsController', array(
+		$Posts = $this->Case->generate('TestApp\Controller\PostsController', array(
 			'models' => array('Post'),
 			'components' => array('RequestHandler')
 		));
 
-		$this->assertInstanceOf(__NAMESPACE__ . '\ControllerPost', $Posts->Post);
+		$this->assertInstanceOf('TestApp\Model\Post', $Posts->Post);
 		$this->assertNull($Posts->Post->save(array()));
 		$this->assertNull($Posts->Post->find('all'));
 		$this->assertEquals('posts', $Posts->Post->useTable);
 		$this->assertNull($Posts->RequestHandler->isAjax());
 
-		$Posts = $this->Case->generate(__NAMESPACE__ . '\PostsController', array(
+		$Posts = $this->Case->generate('TestApp\Controller\PostsController', array(
 			'models' => array(
 				'Post' => true
 			)
@@ -173,7 +159,7 @@ class ControllerTestCaseTest extends TestCase {
 		$this->assertNull($Posts->Post->save(array()));
 		$this->assertNull($Posts->Post->find('all'));
 
-		$Posts = $this->Case->generate('Posts', array(
+		$Posts = $this->Case->generate('TestApp\Controller\PostsController', array(
 			'models' => array(
 				'Post' => array('save'),
 			)
@@ -181,7 +167,7 @@ class ControllerTestCaseTest extends TestCase {
 		$this->assertNull($Posts->Post->save(array()));
 		$this->assertInternalType('array', $Posts->Post->find('all'));
 
-		$Posts = $this->Case->generate('Posts', array(
+		$Posts = $this->Case->generate('TestApp\Controller\PostsController', array(
 			'models' => array('Post'),
 			'components' => array(
 				'RequestHandler' => array('isPut'),
@@ -334,7 +320,7 @@ class ControllerTestCaseTest extends TestCase {
 			'data' => $data
 		));
 		$this->assertEquals($this->Case->controller->viewVars['data'], $data);
-		$this->assertEquals($this->Case->controller->data, $data);
+		$this->assertEquals($this->Case->controller->request->data, $data);
 
 		$result = $this->Case->testAction('/tests_apps_posts/post_var', array(
 			'return' => 'vars',
