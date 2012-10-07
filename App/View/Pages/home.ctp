@@ -15,12 +15,13 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-use Cake\Core\Configure,
-	Cake\Utility\Debugger,
-	Cake\Cache\Cache,
-	Cake\Model\ConnectionManager,
-	Cake\Utility\Validation,
-	Cake\Error;
+use Cake\Core\Configure;
+use Cake\Utility\Debugger;
+use Cake\Cache\Cache;
+use Cake\Model\ConnectionManager;
+use Cake\Utility\Validation;
+use Cake\Error;
+
 if (Configure::read('debug') == 0):
 	throw new Error\NotFoundException();
 endif;
@@ -81,14 +82,14 @@ endif;
 </p>
 <p>
 	<?php
-		$settings = Cache::settings();
+		$settings = Cache::settings('_cake_model_');
 		if (!empty($settings)):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/core.php ', '<em>'. $settings['engine'] . 'Engine</em>');
+				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/cache.php ', '<em>'. $settings['engine'] . 'Engine</em>');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in APP/Config/core.php');
+				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in APP/Config/cache.php');
 			echo '</span>';
 		endif;
 	?>
