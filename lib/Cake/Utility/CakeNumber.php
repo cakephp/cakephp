@@ -61,6 +61,13 @@ class CakeNumber {
 	);
 
 /**
+ * Default currency used by CakeNumber::currency()
+ *
+ * @var string
+ */
+	protected static $_defaultCurrency = 'USD';
+
+/**
  * If native number_format() should be used. If >= PHP5.4
  *
  * @var boolean
@@ -275,8 +282,11 @@ class CakeNumber {
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
-	public static function currency($value, $currency = 'USD', $options = array()) {
+	public static function currency($value, $currency = null, $options = array()) {
 		$default = self::$_currencyDefaults;
+		if ($currency === null) {
+			$currency = self::defaultCurrency();
+		}
 
 		if (isset(self::$_currencies[$currency])) {
 			$default = self::$_currencies[$currency];
@@ -346,6 +356,19 @@ class CakeNumber {
  */
 	public static function addFormat($formatName, $options) {
 		self::$_currencies[$formatName] = $options + self::$_currencyDefaults;
+	}
+
+/**
+ * Getter/setter for default currency
+ *
+ * @param string $currency Default currency string  used by currency() if $currency argument is not provided
+ * @return string Currency
+ */
+	public static function defaultCurrency($currency = null) {
+		if ($currency) {
+			self::$_defaultCurrency = $currency;
+		}
+		return self::$_defaultCurrency;
 	}
 
 }
