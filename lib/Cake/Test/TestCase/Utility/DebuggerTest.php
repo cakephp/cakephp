@@ -12,8 +12,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Debugger;
 use Cake\View\View;
@@ -397,20 +399,30 @@ TEXT;
  * @return void
  */
 	public function testLog() {
-		$this->skipIf(!is_writable(LOGS), 'Cannot write to logs dir');
+		$mock = $this->getMock('Cake\Log\Engine\BaseLog', ['write']);
+		Log::engine('test', $mock);
+
+		$mock->expects($this->at(0))
+			->method('write')
+			->with('debug', $this->logicalAnd(
+				$this->stringContains('DebuggerTest::testLog'),
+				$this->stringContains('cool')
+			));
+
+		$mock->expects($this->at(1))
+			->method('write')
+			->with('debug', $this->logicalAnd(
+				$this->stringContains('DebuggerTest::testLog'),
+				$this->stringContains('[main]'),
+				$this->stringContains('array'),
+				$this->stringContains("'whatever',"),
+				$this->stringContains("'here'")
+			));
 
 		Debugger::log('cool');
-		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertContains('DebuggerTest::testLog', $result);
-		$this->assertContains("'cool'", $result);
-
 		Debugger::log(array('whatever', 'here'));
-		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertContains('DebuggerTest::testLog', $result);
-		$this->assertContains('[main]', $result);
-		$this->assertContains('array', $result);
-		$this->assertContains("'whatever',", $result);
-		$this->assertContains("'here'", $result);
+
+		Log::drop('test');
 	}
 
 /**
