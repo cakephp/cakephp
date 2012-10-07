@@ -536,7 +536,7 @@ class App {
  * @return void
  */
 	public static function init() {
-		register_shutdown_function(array(__CLASS__, 'shutdown'));
+		register_shutdown_function(array(get_called_class(), 'shutdown'));
 	}
 
 /**

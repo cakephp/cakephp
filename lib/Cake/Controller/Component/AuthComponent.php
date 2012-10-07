@@ -349,7 +349,7 @@ class AuthComponent extends Component {
  */
 	protected function _unauthorized(Controller $controller) {
 		if (!$this->unauthorizedRedirect) {
-			throw new ForbiddenException($this->authError);
+			throw new Error\ForbiddenException($this->authError);
 		}
 
 		$this->flash($this->authError);

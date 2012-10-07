@@ -264,7 +264,7 @@ class Cache {
 			$settings = array($settings => $value);
 		}
 
-		$engine = self::engine($config);
+		$engine = static::engine($config);
 		if (!$engine) {
 			return false;
 		}

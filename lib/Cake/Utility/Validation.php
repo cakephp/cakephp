@@ -409,7 +409,7 @@ class Validation {
 /**
  * Validates for an email address.
  *
- * Only uses getmxrr() checking for deep validation if PHP 5.3.0+ is used, or
+ * Only uses getmxrr() checking for deep validation, or
  * any PHP version on a non-windows distribution
  *
  * @param string $check Value to check

@@ -401,11 +401,11 @@ class Time {
 			__d('cake', 'Friday'),
 			__d('cake', 'Saturday')
 		);
-		if (self::wasWithinLast('7 days', $dateString, $timezone)) {
-			return sprintf('%s %s', $day[$d], self::_strftime(self::$niceShortFormat, $date));
+		if (static::wasWithinLast('7 days', $dateString, $timezone)) {
+			return sprintf('%s %s', $day[$d], static::_strftime(static::$niceShortFormat, $date));
 		}
-		if (self::isWithinNext('7 days', $dateString, $timezone)) {
-			return __d('cake', 'On %s %s', $day[$d], self::_strftime(self::$niceShortFormat, $date));
+		if (static::isWithinNext('7 days', $dateString, $timezone)) {
+			return __d('cake', 'On %s %s', $day[$d], static::_strftime(static::$niceShortFormat, $date));
 		}
 
 		$y = '';
@@ -978,9 +978,9 @@ class Time {
  * Get list of timezone identifiers
  *
  * @param integer|string $filter A regex to filter identifer
- * 	Or one of DateTimeZone class constants (PHP 5.3 and above)
+ * 	Or one of DateTimeZone class constants
  * @param string $country A two-letter ISO 3166-1 compatible country code.
- * 	This option is only used when $filter is set to DateTimeZone::PER_COUNTRY (available only in PHP 5.3 and above)
+ * 	This option is only used when $filter is set to DateTimeZone::PER_COUNTRY
  * @param boolean $group If true (default value) groups the identifiers list by primary region
  * @return array List of timezone identifiers
  * @since 2.2

@@ -278,7 +278,7 @@ class Session {
 		if (!is_array(static::$error) || !array_key_exists($errorNumber, static::$error)) {
 			return false;
 		}
-		return self::$error[$errorNumber];
+		return static::$error[$errorNumber];
 	}
 
 /**

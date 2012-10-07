@@ -127,7 +127,7 @@ class ServerShell extends Shell {
 			$this->_documentRoot
 		);
 
-		$port = ($this->_port == self::DEFAULT_PORT) ? '' : ':' . $this->_port;
+		$port = ($this->_port == static::DEFAULT_PORT) ? '' : ':' . $this->_port;
 		$this->out(__d('cake_console', 'built-in server is running in http://%s%s/', $this->_host, $port));
 		$ret = system($command);
 	}

@@ -122,7 +122,7 @@ class Configure {
 		if (empty($var)) {
 			return false;
 		}
-		return Hash::get(self::$_values, $var) !== null;
+		return Hash::get(static::$_values, $var) !== null;
 	}
 
 /**
