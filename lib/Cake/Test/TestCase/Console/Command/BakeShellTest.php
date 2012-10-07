@@ -1,10 +1,5 @@
 <?php
 /**
- * BakeShell Test Case
- *
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,9 +13,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command;
+
 use Cake\Console\Command\BakeShellShell;
 use Cake\Controller\Controller;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
 class BakeShellTest extends TestCase {
@@ -30,7 +27,7 @@ class BakeShellTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.user');
+	public $fixtures = array('core.comment');
 
 /**
  * setup test
@@ -39,14 +36,15 @@ class BakeShellTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
 		$this->Shell = $this->getMock(
 			'Cake\Console\Command\BakeShell',
-			array('in', 'out', 'hr', 'err', 'createFile', '_stop', '_checkUnitTest'),
-			array($out, $out, $in)
+			['in', 'out', 'hr', 'err', 'createFile', '_stop', '_checkUnitTest'],
+			[$out, $out, $in]
 		);
+		Configure::write('App.namespace', 'TestApp');
 	}
 
 /**
@@ -65,13 +63,26 @@ class BakeShellTest extends TestCase {
  * @return void
  */
 	public function testAllWithModelName() {
-		$userExists = App::classname('User', 'Model');
-		$this->skipIf($userExists, 'User class exists, cannot test `bake all [param]`.');
-
-		$this->Shell->Model = $this->getMock('Cake\Console\Command\Task\ModelTask', array(), array(&$this->Dispatcher));
-		$this->Shell->Controller = $this->getMock('Cake\Console\Command\Task\ControllerTask', array(), array(&$this->Dispatcher));
-		$this->Shell->View = $this->getMock('Cake\Console\Command\Task\ModelTask', array(), array(&$this->Dispatcher));
-		$this->Shell->DbConfig = $this->getMock('Cake\Console\Command\Task\DbConfigTask', array(), array(&$this->Dispatcher));
+		$this->Shell->Model = $this->getMock(
+			'Cake\Console\Command\Task\ModelTask',
+			[],
+			[&$this->Dispatcher]
+		);
+		$this->Shell->Controller = $this->getMock(
+			'Cake\Console\Command\Task\ControllerTask',
+			[],
+			[&$this->Dispatcher]
+		);
+		$this->Shell->View = $this->getMock(
+			'Cake\Console\Command\Task\ModelTask',
+			[],
+			[&$this->Dispatcher]
+		);
+		$this->Shell->DbConfig = $this->getMock(
+			'Cake\Console\Command\Task\DbConfigTask',
+			[],
+			[&$this->Dispatcher]
+		);
 
 		$this->Shell->DbConfig->expects($this->once())
 			->method('getConfig')
@@ -91,20 +102,22 @@ class BakeShellTest extends TestCase {
 		$this->Shell->View->expects($this->once())
 			->method('execute');
 
-		$this->Shell->expects($this->once())->method('_stop');
+		$this->Shell->expects($this->once())
+			->method('_stop');
+
 		$this->Shell->expects($this->at(0))
 			->method('out')
 			->with('Bake All');
 
-		$this->Shell->expects($this->at(5))
+		$this->Shell->expects($this->at(4))
 			->method('out')
 			->with('<success>Bake All complete</success>');
 
 		$this->Shell->connection = '';
 		$this->Shell->params = array();
-		$this->Shell->args = array('User');
+		$this->Shell->args = array('Comment');
 		$this->Shell->all();
 
-		$this->assertEquals('User', $this->Shell->View->args[0]);
+		$this->assertEquals('Comment', $this->Shell->View->args[0]);
 	}
 }

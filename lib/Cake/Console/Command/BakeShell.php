@@ -1,13 +1,5 @@
 <?php
 /**
- * Command-line code generation utility to automate programmer chores.
- *
- * Bake is CakePHP's code generation script, which can help you kickstart
- * application development by writing fully functional skeleton controllers,
- * models, and views. Going further, Bake can also write Unit Tests for you.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -20,6 +12,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command;
+
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
