@@ -450,7 +450,11 @@ class DispatcherTest extends TestCase {
 
 		$url = new Request('test_dispatch_pages/camelCased/something. .');
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertEquals('something. .', $url->params['pass'][0], 'Period was chopped off. %s');
+		$this->assertEquals(
+			'something. .',
+			$url->params['pass'][0],
+			'Period was chopped off. %s'
+		);
 	}
 
 /**
@@ -543,10 +547,10 @@ class DispatcherTest extends TestCase {
 		$this->skipIf($loaded, 'TestPluginController already loaded.');
 
 		Router::reload();
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
-		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
+		App::build([
+			'Plugin' => [CAKE . 'Test/TestApp/Plugin/']
+		], App::RESET);
+		Plugin::load(['TestPlugin', 'TestPluginTwo']);
 
 		$Dispatcher = new TestDispatcher();
 		$Dispatcher->base = false;
