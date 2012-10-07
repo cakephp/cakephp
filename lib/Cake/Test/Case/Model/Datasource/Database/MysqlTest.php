@@ -773,7 +773,7 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
- * testBuildTableParameters method
+ * testGetCharsetName method
  *
  * @return void
  */
@@ -783,6 +783,34 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals('utf8', $result);
 		$result = $this->Dbo->getCharsetName('cp1250_general_ci');
 		$this->assertEquals('cp1250', $result);
+	}
+
+/**
+ * testGetCharsetNameCaching method
+ *
+ * @return void
+ */
+	public function testGetCharsetNameCaching() {
+		$db = $this->getMock('Mysql', array('connect', '_execute', 'getVersion'));
+		$queryResult = $this->getMock('PDOStatement');
+
+		$db->expects($this->exactly(2))->method('getVersion')->will($this->returnValue('5.1'));
+
+		$db->expects($this->exactly(1))
+			->method('_execute')
+			->with('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array('utf8_unicode_ci'))
+			->will($this->returnValue($queryResult));
+
+		$queryResult->expects($this->once())
+			->method('fetch')
+			->with(PDO::FETCH_ASSOC)
+			->will($this->returnValue(array('CHARACTER_SET_NAME' => 'utf8')));
+
+		$result = $db->getCharsetName('utf8_unicode_ci');
+		$this->assertEquals('utf8', $result);
+
+		$result = $db->getCharsetName('utf8_unicode_ci');
+		$this->assertEquals('utf8', $result);
 	}
 
 /**

@@ -120,6 +120,13 @@ class Mysql extends DboSource {
 	);
 
 /**
+ * Mapping of collation names to character set names
+ *
+ * @var array
+ */
+	protected $_charsets = array();
+
+/**
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
@@ -156,6 +163,7 @@ class Mysql extends DboSource {
 			));
 		}
 
+		$this->_charsets = array();
 		$this->_useAlias = (bool)version_compare($this->getVersion(), "4.1", ">=");
 
 		return $this->connected;
@@ -262,15 +270,24 @@ class Mysql extends DboSource {
  * @return string Character set name
  */
 	public function getCharsetName($name) {
-		if ((bool)version_compare($this->getVersion(), "5", ">=")) {
-			$r = $this->_execute('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array($name));
-			$cols = $r->fetch(PDO::FETCH_ASSOC);
-
-			if (isset($cols['CHARACTER_SET_NAME'])) {
-				return $cols['CHARACTER_SET_NAME'];
-			}
+		if ((bool)version_compare($this->getVersion(), "5", "<")) {
+			return false;
 		}
-		return false;
+		if (isset($this->_charsets[$name])) {
+			return $this->_charsets[$name];
+		}
+		$r = $this->_execute(
+			'SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?',
+			array($name)
+		);
+		$cols = $r->fetch(PDO::FETCH_ASSOC);
+
+		if (isset($cols['CHARACTER_SET_NAME'])) {
+			$this->_charsets[$name] = $cols['CHARACTER_SET_NAME'];
+		} else {
+			$this->_charsets[$name] = false;
+		}
+		return $this->_charsets[$name];
 	}
 
 /**
