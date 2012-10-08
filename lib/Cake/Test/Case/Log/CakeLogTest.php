@@ -331,21 +331,22 @@ class CakeLogTest extends CakeTestCase {
 
 /**
  * test backward compatible scoped logging
+ *
+ * @return void
  */
 	public function testScopedLoggingBC() {
-		$this->_deleteLogs();
-
 		$this->_resetLogConfig();
+
 		CakeLog::config('shops', array(
 			'engine' => 'FileLog',
 			'types' => array('info', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops',
-			));
+		));
+		$this->_deleteLogs();
 
 		CakeLog::write('info', 'info message');
 		$this->assertFalse(file_exists(LOGS . 'error.log'));
-		$this->assertTrue(file_exists(LOGS . 'shops.log'));
 		$this->assertTrue(file_exists(LOGS . 'debug.log'));
 
 		$this->_deleteLogs();
@@ -375,12 +376,39 @@ class CakeLogTest extends CakeTestCase {
 
 		CakeLog::write('warning', 'warning message');
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
-		$this->assertTrue(file_exists(LOGS . 'shops.log'));
 		$this->assertFalse(file_exists(LOGS . 'debug.log'));
 
 		$this->_deleteLogs();
 
 		CakeLog::drop('shops');
+	}
+
+
+	public function testScopedLoggingExclusive() {
+		$this->_deleteLogs();
+
+		CakeLog::config('shops', array(
+			'engine' => 'FileLog',
+			'types' => array('info', 'notice', 'warning'),
+			'scopes' => array('transactions', 'orders'),
+			'file' => 'shops.log',
+		));
+		CakeLog::config('eggs', array(
+			'engine' => 'FileLog',
+			'types' => array('info', 'notice', 'warning'),
+			'scopes' => array('eggs'),
+			'file' => 'eggs.log',
+		));
+
+		CakeLog::write('info', 'transactions message', 'transactions');
+		$this->assertFalse(file_exists(LOGS . 'eggs.log'));
+		$this->assertTrue(file_exists(LOGS . 'shops.log'));
+
+		$this->_deleteLogs();
+
+		CakeLog::write('info', 'eggs message', 'eggs');
+		$this->assertTrue(file_exists(LOGS . 'eggs.log'));
+		$this->assertFalse(file_exists(LOGS . 'shops.log'));
 	}
 
 /**
@@ -389,23 +417,14 @@ class CakeLogTest extends CakeTestCase {
  * @return void
  */
 	public function testScopedLogging() {
-		if (file_exists(LOGS . 'shops.log')) {
-			unlink(LOGS . 'shops.log');
-		}
-		if (file_exists(LOGS . 'error.log')) {
-			unlink(LOGS . 'error.log');
-		}
-		if (file_exists(LOGS . 'debug.log')) {
-			unlink(LOGS . 'debug.log');
-		}
-
 		$this->_resetLogConfig();
+		$this->_deleteLogs();
 		CakeLog::config('shops', array(
 			'engine' => 'FileLog',
 			'types' => array('info', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
-			'file' => 'shops',
-			));
+			'file' => 'shops.log',
+		));
 
 		CakeLog::write('info', 'info message', 'transactions');
 		$this->assertFalse(file_exists(LOGS . 'error.log'));
