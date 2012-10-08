@@ -426,24 +426,29 @@ class CakeLog {
 		$logged = false;
 		foreach (self::$_Collection->enabled() as $streamName) {
 			$logger = self::$_Collection->{$streamName};
-			$types = null;
-			$scopes = array();
+			$types = $scopes = $config = array();
 			if ($logger instanceof BaseLog) {
 				$config = $logger->config();
-				if (isset($config['types'])) {
-					$types = $config['types'];
-				}
-				if (isset($config['scopes'])) {
-					$scopes = $config['scopes'];
-				}
 			}
-			if (is_string($scope)) {
-				$inScope = in_array($scope, $scopes);
-			} else {
-				$intersect = array_intersect($scope, $scopes);
-				$inScope = !empty($intersect);
+			if (isset($config['types'])) {
+				$types = $config['types'];
 			}
-			if (empty($types) || in_array($type, $types) || in_array($type, $scopes) && $inScope) {
+			if (isset($config['scopes'])) {
+				$scopes = $config['scopes'];
+			}
+			$inScope = (count(array_intersect((array)$scope, $scopes)) > 0);
+			$correctLevel = in_array($type, $types);
+
+			if (
+				// No config is a catch all (bc mode)
+				(empty($types) && empty($scopes)) ||
+				// BC layer for mixing scope & level
+				(in_array($type, $scopes)) ||
+				// no scopes, but has level
+				(empty($scopes) && $correctLevel) ||
+				// exact scope + level
+				($correctLevel && $inScope)
+			) {
 				$logger->write($type, $message);
 				$logged = true;
 			}
