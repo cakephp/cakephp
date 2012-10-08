@@ -79,7 +79,7 @@ class NumberTest extends TestCase {
 
 		$value = -0.00001;
 		$result = $this->Number->format($value, array('places' => 1));
-		$expected = '$0.0';
+		$expected = '$-0.0';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -588,7 +588,7 @@ class NumberTest extends TestCase {
 /**
  * testFromReadableSize
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testFromReadableSizeException() {

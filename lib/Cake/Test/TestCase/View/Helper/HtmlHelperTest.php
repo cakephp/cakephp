@@ -396,7 +396,7 @@ class HtmlHelperTest extends TestCase {
 		$request = $this->Html->request;
 		$request->webroot = '/myproject/';
 		$request->base = '/myproject';
-		Router::setRequestInfo($request);
+		Router::pushRequest($request);
 
 		$result = $this->Html->image('sub/test.gif', array('fullBase' => true));
 		$here = $this->Html->url('/', true);

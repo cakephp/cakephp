@@ -1,9 +1,5 @@
 <?php
 /**
- * Pagination Helper class file.
- *
- * Generates pagination links
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -29,8 +24,8 @@ use Cake\View\View;
  *
  * PaginationHelper encloses all methods needed when working with pagination.
  *
- * @package       Cake.View.Helper
- * @property      HtmlHelper $Html
+ * @package Cake.View.Helper
+ * @property HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html
  */
 class PaginatorHelper extends Helper {

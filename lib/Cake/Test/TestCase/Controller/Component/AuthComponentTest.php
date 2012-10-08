@@ -668,7 +668,7 @@ class AuthComponentTest extends TestCase {
 
 /**
  * Throw ForbiddenException if AuthComponent::$unauthorizedRedirect set to false
- * @expectedException ForbiddenException
+ * @expectedException Cake\Error\ForbiddenException
  * @return void
  */
 	public function testForbiddenException() {

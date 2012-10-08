@@ -31,8 +31,8 @@ class ConsoleErrorHandlerTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Error = $this->getMock('Cake\Console\ConsoleErrorHandler', array('_stop'));
-		ConsoleErrorHandler::$stderr = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
+		$this->Error = $this->getMock('Cake\Console\ConsoleErrorHandler', ['_stop']);
+		ConsoleErrorHandler::$stderr = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
 	}
 
 /**
@@ -67,10 +67,6 @@ class ConsoleErrorHandlerTest extends TestCase {
 		$content = "<error>Fatal Error Error:</error> This is a fatal error in [/some/file, line 275]\n";
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($content);
-
-		$this->Error->expects($this->once())
-			->method('_stop')
-			->with(1);
 
 		$this->Error->handleError(E_USER_ERROR, 'This is a fatal error', '/some/file', 275);
 	}

@@ -1,9 +1,5 @@
 <?php
 /**
- * FormHelperTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
@@ -12,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -36,8 +31,7 @@ use Cake\View\View;
 /**
  * ContactTestController class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package Cake.Test.Case.View.Helper
  */
 class ContactTestController extends Controller {
 
@@ -3524,11 +3518,11 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'Yes',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0', 'checked' => 'checked')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0', 'checked' => 'checked')),
 			array('label' => array('for' => 'ModelField0')),
 			'No',
 			'/label',
@@ -3545,12 +3539,12 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'Yes',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0')),
 			array('label' => array('for' => 'ModelField0')),
 			'No',
 			'/label',

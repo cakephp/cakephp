@@ -297,7 +297,7 @@ class ScaffoldTest extends TestCase {
 		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
-		$this->assertRegExp('/name="data\[ScaffoldTag\]\[ScaffoldTag\]"/', $result);
+		$this->assertContains('name="ScaffoldTag[ScaffoldTag]"', $result);
 
 		$result = $Scaffold->controller->viewVars;
 		$this->assertEquals(array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'ScaffoldTag'), $result['scaffoldFields']);

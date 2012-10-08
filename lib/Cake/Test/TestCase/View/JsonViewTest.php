@@ -1,9 +1,5 @@
 <?php
 /**
- * JsonViewTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View
  * @since         CakePHP(tm) v 2.1.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,7 +22,7 @@ use Cake\View\JsonView;
 /**
  * JsonViewTest
  *
- * @package       Cake.Test.Case.View
+ * @package Cake.Test.Case.View
  */
 class JsonViewTest extends TestCase {
 
@@ -74,30 +69,29 @@ class JsonViewTest extends TestCase {
  * @return void
  */
 	public function testRenderWithView() {
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
+		App::build([
+			'View' => [CAKE . 'Test/TestApp/View/']
+		]);
 		$Request = new Request();
-		$Request->params['named'] = array('page' => 2);
 		$Response = new Response();
 		$Controller = new Controller($Request, $Response);
 		$Controller->name = $Controller->viewPath = 'Posts';
 
-		$data = array(
-			'User' => array(
+		$data = [
+			'User' => [
 				'username' => 'fake'
-			),
-			'Item' => array(
-				array('name' => 'item1'),
-				array('name' => 'item2')
-			)
-		);
+			],
+			'Item' => [
+				['name' => 'item1'],
+				['name' => 'item2']
+			]
+		];
 		$Controller->set('user', $data);
 		$View = new JsonView($Controller);
-		$View->helpers = array('Paginator');
+		$View->helpers = ['Paginator'];
 		$output = $View->render('index');
 
-		$expected = json_encode(array('user' => 'fake', 'list' => array('item1', 'item2'), 'paging' => array('page' => 2)));
+		$expected = json_encode(['user' => 'fake', 'list' => ['item1', 'item2'], 'paging' => []]);
 		$this->assertSame($expected, $output);
 		$this->assertSame('application/json', $Response->type());
 	}
