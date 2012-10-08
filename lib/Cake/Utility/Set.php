@@ -533,7 +533,7 @@ class Set {
  *
  * @param array $data Array from where to extract
  * @param string|array $path As an array, or as a dot-separated string.
- * @return array Extracted data
+ * @return array|null Extracted data or null when $data or $path are empty.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::classicExtract
  */
 	public static function classicExtract($data, $path = null) {
