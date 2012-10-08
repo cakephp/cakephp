@@ -1,9 +1,5 @@
 <?php
 /**
- * CacheHelperTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -31,7 +26,7 @@ use Cake\View\View;
 /**
  * CacheTestController class
  *
- * @package       Cake.Test.Case.View.Helper
+ * @package Cake.Test.Case.View.Helper
  */
 class CacheTestController extends Controller {
 
@@ -72,7 +67,7 @@ class CacheHelperTest extends TestCase {
  */
 	public function skip() {
 		if (!is_writable(TMP . 'cache/views/')) {
-			$this->markTestSkipped('TMP/views is not writable %s');
+			$this->markTestSkipped('TMP/views is not writable.');
 		}
 	}
 
@@ -83,16 +78,16 @@ class CacheHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$_GET = array();
+		$_GET = [];
 		$request = new Request();
 		$this->Controller = new CacheTestController($request);
 		$View = new View($this->Controller);
 		$this->Cache = new CacheHelper($View);
 		Configure::write('Cache.check', true);
 		Configure::write('Cache.disable', false);
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		), App::RESET);
+		App::build([
+			'View' => [CAKE . 'Test/TestApp/View/']
+		], App::RESET);
 	}
 
 /**
@@ -514,14 +509,14 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->cacheAction = array(
 			'cache_name' => 21600
 		);
-		$this->Controller->params = array(
+		$request = $this->Controller->request;
+		$request->params = array(
 			'controller' => 'cacheTest',
 			'action' => 'cache_name',
 			'pass' => array(),
 		);
-		$this->Controller->here = '/cache/cacheTest/cache_name';
-		$this->Controller->action = 'cache_name';
-		$this->Controller->base = '/cache';
+		$request->here = '/cache/cacheTest/cache_name';
+		$request->base = '/cache';
 
 		$View = new View($this->Controller);
 		$result = $View->render('index');
@@ -543,7 +538,7 @@ class CacheHelperTest extends TestCase {
 		Configure::write('Cache.check', true);
 		$View = new View($this->Controller);
 		$View->cacheAction = '+1 day';
-		$View->output = 'test';
+		$View->assign('content', 'test');
 
 		$Cache = $this->getMock('Cake\View\Helper\CacheHelper', array('_parseContent'), array($View));
 		$Cache->expects($this->once())
@@ -570,12 +565,12 @@ class CacheHelperTest extends TestCase {
 		Configure::write('Cache.check', true);
 		$View = new View($this->Controller);
 		$View->cacheAction = '+1 day';
-		$View->output = 'test';
+		$View->set('content', 'test');
 
 		$Cache = $this->getMock('Cake\View\Helper\CacheHelper', array('cache'), array($View));
 		$Cache->expects($this->once())
 			->method('cache')
-			->with('posts/index', $View->output)
+			->with('posts/index', $View->fetch('content'))
 			->will($this->returnValue(''));
 
 		$Cache->afterLayout('posts/index');
@@ -596,22 +591,22 @@ class CacheHelperTest extends TestCase {
  * @return void
  */
 	public function testCacheEmptySections() {
+		Configure::write('Cache.check', true);
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams([
 			'controller' => 'cacheTest',
 			'action' => 'cache_empty_sections',
-			'pass' => array(),
-		);
-		$this->Controller->cacheAction = array('cache_empty_sections' => 21600);
-		$this->Controller->here = '/cacheTest/cache_empty_sections';
-		$this->Controller->action = 'cache_empty_sections';
+			'pass' => [],
+		]);
+		$this->Controller->request->here = '/cacheTest/cache_empty_sections';
+		$this->Controller->cacheAction = ['cache_empty_sections' => 21600];
 		$this->Controller->layout = 'cache_empty_sections';
 		$this->Controller->viewPath = 'Posts';
 
 		$View = new View($this->Controller);
 		$result = $View->render('cache_empty_sections');
-		$this->assertNotRegExp('/nocache/', $result);
-		$this->assertNotRegExp('/php echo/', $result);
+		$this->assertNotContains('nocache', $result);
+		$this->assertNotContains('<?php echo', $result);
 		$this->assertRegExp(
 			'@</title>\s*</head>\s*' .
 			'<body>\s*' .
@@ -622,7 +617,7 @@ class CacheHelperTest extends TestCase {
 		$filename = CACHE . 'views/cachetest_cache_empty_sections.php';
 		$this->assertTrue(file_exists($filename));
 		$contents = file_get_contents($filename);
-		$this->assertNotRegExp('/nocache/', $contents);
+		$this->assertNotContains('nocache', $contents);
 		$this->assertRegExp(
 			'@<head>\s*<title>Posts</title>\s*' .
 			'<\?php \$x \= 1; \?>\s*' .

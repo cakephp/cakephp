@@ -1,9 +1,5 @@
 <?php
 /**
- * CacheHelper helps create full page view caching.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 1.0.0.2277
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View\Helper;
+
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
@@ -27,7 +23,7 @@ use Cake\View\Helper;
  * When using CacheHelper you don't call any of its methods, they are all automatically
  * called by View, and use the $cacheAction settings set in the controller.
  *
- * @package       Cake.View.Helper
+ * @package Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
  */
 class CacheHelper extends Helper {
@@ -84,9 +80,15 @@ class CacheHelper extends Helper {
  */
 	public function afterLayout($layoutFile) {
 		if ($this->_enabled()) {
-			$this->_View->output = $this->cache($layoutFile, $this->_View->output);
+			$this->_View->assign(
+				'content',
+				$this->cache($layoutFile, $this->_View->fetch('content'))
+			);
 		}
-		$this->_View->output = preg_replace('/<!--\/?nocache-->/', '', $this->_View->output);
+		$this->_View->assign(
+			'content',
+			preg_replace('/<!--\/?nocache-->/', '', $this->_View->fetch('content'))
+		);
 	}
 
 /**
@@ -181,8 +183,18 @@ class CacheHelper extends Helper {
 		} elseif ($file = fileExistsInPath($file)) {
 			$file = file_get_contents($file);
 		}
-		preg_match_all('/(<!--nocache:\d{3}-->(?<=<!--nocache:\d{3}-->)[\\s\\S]*?(?=<!--\/nocache-->)<!--\/nocache-->)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
-		preg_match_all('/(?<=<!--nocache-->)([\\s\\S]*?)(?=<!--\/nocache-->)/i', $file, $fileResult, PREG_PATTERN_ORDER);
+		preg_match_all(
+			'/(<!--nocache:\d{3}-->(?<=<!--nocache:\d{3}-->)[\\s\\S]*?(?=<!--\/nocache-->)<!--\/nocache-->)/i',
+			$cache,
+			$outputResult,
+			PREG_PATTERN_ORDER
+		);
+		preg_match_all(
+			'/(?<=<!--nocache-->)([\\s\\S]*?)(?=<!--\/nocache-->)/i',
+			$file,
+			$fileResult,
+			PREG_PATTERN_ORDER
+		);
 		$fileResult = $fileResult[0];
 		$outputResult = $outputResult[0];
 
