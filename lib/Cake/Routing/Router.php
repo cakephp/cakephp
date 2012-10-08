@@ -684,25 +684,24 @@ class Router {
 			$hasLeadingSlash = isset($url[0]) ? $url[0] === '/' : false;
 		}
 
+		$params = array(
+			'plugin' => null,
+			'controller' => null,
+			'action' => 'index'
+		);
+		$here = $base = $output = $frag = null;
+
 		$request = static::getRequest(true);
 		if ($request) {
 			$params = $request->params;
 			$here = $request->here;
-		} else {
-			$params = array(
-				'plugin' => null,
-				'controller' => null,
-				'action' => 'index'
-			);
-			$here = null;
+			$base = $request->base;
 		}
-
-		$output = $frag = null;
 
 		if (empty($url)) {
 			$output = isset($here) ? $here : '/';
 			if ($full && defined('FULL_BASE_URL')) {
-				$output = FULL_BASE_URL . $output;
+				$output = FULL_BASE_URL . $base . $output;
 			}
 			return $output;
 		} elseif ($urlType === 'array') {
@@ -777,9 +776,11 @@ class Router {
 			if ($hasColonSlash || $plainString) {
 				return $url;
 			}
-			if ($hasLeadingSlash) {
-				$output = substr($url, 1);
+			$output = $url;
+			if ($hasLeadingSlash && strlen($output) > 1) {
+				$output = substr($output, 1);
 			}
+			$output = $base . $output;
 		}
 		$protocol = preg_match('#^[a-z][a-z0-9+-.]*\://#i', $output);
 		if ($protocol === 0) {

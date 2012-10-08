@@ -65,14 +65,9 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testFullBaseURL() {
-		$skip = PHP_SAPI == 'cli';
-		if ($skip) {
-			$this->markTestSkipped('Cannot validate base urls in CLI');
-		}
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('_full' => true)));
-		$this->assertSame(FULL_BASE_URL . '/', Router::url(array('_full' => true)));
 	}
 
 /**
@@ -369,6 +364,32 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test generating urls with base paths.
+ */
+	public function testUrlGenerationWithBasePath() {
+		Router::connect('/:controller/:action/*');
+		$request = new Request();
+		$request->addParams([
+			'action' => 'index',
+			'plugin' => null,
+			'controller' => 'subscribe',
+		]);
+		$request->base = '/magazine';
+		$request->here = '/magazine/';
+		$request->webroot = '/magazine/';
+		Router::pushRequest($request);
+
+		$result = Router::url();
+		$this->assertEquals('/magazine/', $result);
+
+		$result = Router::url('/');
+		$this->assertEquals('/magazine/', $result);
+
+		$result = Router::url(['controller' => 'articles', 'action' => 'view', 1]);
+		$this->assertEquals('/magazine/articles/view/1', $result);
+	}
+
+/**
  * test generation of basic urls.
  *
  * @return void
@@ -376,19 +397,6 @@ class RouterTest extends TestCase {
 	public function testUrlGenerationBasic() {
 		extract(Router::getNamedExpressions());
 
-		$request = new Request();
-		$request->addParams(array(
-			'action' => 'index', 'plugin' => null, 'controller' => 'subscribe', 'admin' => true
-		));
-		$request->base = '/magazine';
-		$request->here = '/magazine';
-		$request->webroot = '/magazine/';
-		Router::setRequestInfo($request);
-
-		$result = Router::url();
-		$this->assertEquals('/magazine', $result);
-
-		Router::reload();
 
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$out = Router::url(array('controller' => 'pages', 'action' => 'display', 'home'));
