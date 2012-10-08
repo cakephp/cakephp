@@ -67,6 +67,7 @@ App::uses('LogEngineCollection', 'Log');
  * application.  By using scopes you can control logging for each part
  * of your application and still keep standard log levels.
  *
+ *
  * See CakeLog::config() and CakeLog::write() for more information
  * on scopes
  *
@@ -173,7 +174,10 @@ class CakeLog {
  *
  * The above logger will only capture log entries made in the
  * `payment` and `order` scopes. All other scopes including the
- * undefined scope will be ignored.
+ * undefined scope will be ignored. Its important to remember that
+ * when using scopes you must also define the `types` of log messages
+ * that a logger will handle. Failing to do so will result in the logger
+ * catching all log messages even if the scope is incorrect.
  *
  * @param string $key The keyname for this logger, used to remove the
  *    logger later.
