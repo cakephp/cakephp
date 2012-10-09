@@ -749,7 +749,7 @@ class AppTest extends CakeTestCase {
 		$result = App::import('Vendor', 'css/TestAsset', array('ext' => 'css'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEquals('this is the test asset css file', $text);
+		$this->assertEquals('/* this is the test asset css file */', trim($text));
 
 		$result = App::import('Vendor', 'TestPlugin.sample/SamplePlugin');
 		$this->assertTrue($result);
