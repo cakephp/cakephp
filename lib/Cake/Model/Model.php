@@ -2888,7 +2888,8 @@ class Model extends Object implements CakeEventListener {
 
 /**
  * In the event of ambiguous results returned (multiple top level results, with different parent_ids)
- * top level results with different parent_ids to the first result will be dropped
+ * top level results with different parent_ids to the first result will be dropped.
+ * If fields are passed as array, the parent_id will automatically be added to it if missing.
  *
  * @param string $state
  * @param mixed $query
@@ -2896,13 +2897,16 @@ class Model extends Object implements CakeEventListener {
  * @return array Threaded results
  */
 	protected function _findThreaded($state, $query, $results = array()) {
+		$parent = 'parent_id';
+		if (isset($query['parent'])) {
+			$parent = $query['parent'];
+		}
 		if ($state === 'before') {
+			if (!empty($query['fields']) && is_array($query['fields']) && !in_array($parent, $query['fields']) && !in_array($this->alias . '.' . $parent, $query['fields'])) {
+				$query['fields'][] = $this->alias . '.' . $parent;
+			}
 			return $query;
 		} elseif ($state === 'after') {
-			$parent = 'parent_id';
-			if (isset($query['parent'])) {
-				$parent = $query['parent'];
-			}
 			return Hash::nest($results, array(
 				'idPath' => '{n}.' . $this->alias . '.' . $this->primaryKey,
 				'parentPath' => '{n}.' . $this->alias . '.' . $parent

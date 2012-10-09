@@ -3317,6 +3317,80 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEquals($expected, $result);
 
+		$result = $TestModel->find('threaded', array(
+			'fields' => array('id', 'name')
+		));
+
+		$expected = array(
+			array(
+				'Category' => array(
+					'id' => '1',
+					'name' => 'Category 1',
+					'parent_id' => '0'
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'id' => '2',
+							'name' => 'Category 1.1',
+							'parent_id' => '1'
+						),
+						'children' => array(
+							array('Category' => array(
+								'id' => '7',
+								'name' => 'Category 1.1.1',
+								'parent_id' => '2'),
+								'children' => array()),
+							array('Category' => array(
+								'id' => '8',
+								'name' => 'Category 1.1.2',
+								'parent_id' => '2'),
+								'children' => array()))
+					),
+					array(
+						'Category' => array(
+							'id' => '3',
+							'name' => 'Category 1.2',
+							'parent_id' => '1'
+						),
+						'children' => array()
+					)
+				)
+			),
+			array(
+				'Category' => array(
+					'id' => '4',
+					'name' => 'Category 2',
+					'parent_id' => '0',
+				),
+				'children' => array()
+			),
+			array(
+				'Category' => array(
+					'id' => '5',
+					'name' => 'Category 3',
+					'parent_id' => '0',
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'id' => '6',
+							'name' => 'Category 3.1',
+							'parent_id' => '5',
+						),
+						'children' => array()
+					)
+				)
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->find('threaded', array(
+			'fields' => array($TestModel->alias . '.id', $TestModel->alias . '.name', $TestModel->alias . '.parent_id')
+		));
+
+		$this->assertEquals($expected, $result);
+
 		$result = $TestModel->find('threaded', array('order' => 'id DESC'));
 
 		$expected = array(
