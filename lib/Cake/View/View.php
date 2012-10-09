@@ -781,25 +781,12 @@ class View extends Object {
 	}
 
 /**
- * Magic accessor for helpers. Provides access to attributes that were deprecated.
+ * Magic accessor for helpers.
  *
  * @param string $name Name of the attribute to get.
  * @return mixed
  */
 	public function __get($name) {
-		switch ($name) {
-			case 'base':
-			case 'here':
-			case 'webroot':
-			case 'data':
-				return $this->request->{$name};
-			case 'action':
-				return $this->request->params['action'];
-			case 'params':
-				return $this->request;
-			case 'output':
-				return $this->Blocks->get('content');
-		}
 		if (isset($this->Helpers->{$name})) {
 			$this->{$name} = $this->Helpers->{$name};
 			return $this->Helpers->{$name};
@@ -815,12 +802,7 @@ class View extends Object {
  * @return mixed
  */
 	public function __set($name, $value) {
-		switch ($name) {
-			case 'output':
-				return $this->Blocks->set('content', $value);
-			default:
-				$this->{$name} = $value;
-		}
+		$this->{$name} = $value;
 	}
 
 /**
@@ -832,10 +814,6 @@ class View extends Object {
 	public function __isset($name) {
 		if (isset($this->{$name})) {
 			return true;
-		}
-		$magicGet = array('base', 'here', 'webroot', 'data', 'action', 'params', 'output');
-		if (in_array($name, $magicGet)) {
-			return $this->__get($name) !== null;
 		}
 		return false;
 	}
@@ -891,7 +869,6 @@ class View extends Object {
 		if ($initialBlocks !== $remainingBlocks) {
 			throw new Error\Exception(__d('cake_dev', 'The "%s" block was left open. Blocks are not allowed to cross files.', $this->Blocks->active()));
 		}
-
 		return $content;
 	}
 
