@@ -633,8 +633,8 @@ class Router {
  * @return array Parameter information
  */
 	public static function getParams($current = false) {
-		if ($current) {
-			return self::$_requests[count(self::$_requests) - 1]->params;
+		if ($current && ($count = count(self::$_requests)) > 0) {
+			return self::$_requests[$count - 1]->params;
 		}
 		if (isset(self::$_requests[0])) {
 			return self::$_requests[0]->params;
