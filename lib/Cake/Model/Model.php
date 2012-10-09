@@ -2901,8 +2901,8 @@ class Model extends Object implements CakeEventListener {
 			$parent = $query['parent'];
 		}
 		if ($state === 'before') {
-			if (!empty($query['fields']) && is_array($query['fields']) && !in_array($parent, $query['fields']) &&  !in_array($this->alias . '.' .$parent, $query['fields'])) {
-				$query['fields'][] = $this->alias . '.' .$parent;
+			if (!empty($query['fields']) && is_array($query['fields']) && !in_array($parent, $query['fields']) &&  !in_array($this->alias . '.' . $parent, $query['fields'])) {
+				$query['fields'][] = $this->alias . '.' . $parent;
 			}
 			return $query;
 		} elseif ($state === 'after') {
