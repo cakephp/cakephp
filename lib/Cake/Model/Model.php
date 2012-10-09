@@ -2749,8 +2749,8 @@ class Model extends Object implements CakeEventListener {
 		} elseif ($state === 'after') {
 			foreach (array(0, $this->alias) as $key) {
 				if (isset($results[0][$key]['count'])) {
-					if (($count = count($results)) > 1) {
-						return $count;
+					if ($query['group']) {
+						return count($results);
 					} else {
 						return intval($results[0][$key]['count']);
 					}
