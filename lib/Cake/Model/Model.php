@@ -2888,7 +2888,8 @@ class Model extends Object implements CakeEventListener {
 
 /**
  * In the event of ambiguous results returned (multiple top level results, with different parent_ids)
- * top level results with different parent_ids to the first result will be dropped
+ * top level results with different parent_ids to the first result will be dropped.
+ * If fields are passed as array, the parent_id will automatically be added to it if missing.
  *
  * @param string $state
  * @param mixed $query
@@ -2901,7 +2902,7 @@ class Model extends Object implements CakeEventListener {
 			$parent = $query['parent'];
 		}
 		if ($state === 'before') {
-			if (!empty($query['fields']) && is_array($query['fields']) && !in_array($parent, $query['fields']) &&  !in_array($this->alias . '.' . $parent, $query['fields'])) {
+			if (!empty($query['fields']) && is_array($query['fields']) && !in_array($parent, $query['fields']) && !in_array($this->alias . '.' . $parent, $query['fields'])) {
 				$query['fields'][] = $this->alias . '.' . $parent;
 			}
 			return $query;
