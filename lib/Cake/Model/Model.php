@@ -1082,7 +1082,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Sets a custom table for your controller class. Used by your controller to select a database table.
+ * Sets a custom table for your model class. Used by your controller to select a database table.
  *
  * @param string $tableName Name of the custom table
  * @throws MissingTableException when database table $tableName is not found on data source
