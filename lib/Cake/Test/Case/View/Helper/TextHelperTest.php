@@ -181,6 +181,11 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEquals($expected, $result);
 
+		$text = 'This is a test that includes www.cakephp.org:8080';
+		$expected = 'This is a test that includes <a href="http://www.cakephp.org:8080">www.cakephp.org:8080</a>';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
 		$text = 'This is a test that includes http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment';
 		$expected = 'This is a test that includes <a href="http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>';
 		$result = $this->Text->autoLinkUrls($text);
@@ -188,6 +193,16 @@ class TextHelperTest extends CakeTestCase {
 
 		$text = 'This is a test that includes www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment';
 		$expected = 'This is a test that includes <a href="http://www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'This is a test that includes http://example.com/test.php?foo=bar text';
+		$expected = 'This is a test that includes <a href="http://example.com/test.php?foo=bar">http://example.com/test.php?foo=bar</a> text';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'This is a test that includes www.example.com/test.php?foo=bar text';
+		$expected = 'This is a test that includes <a href="http://www.example.com/test.php?foo=bar">www.example.com/test.php?foo=bar</a> text';
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEquals($expected, $result);
 
