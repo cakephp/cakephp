@@ -355,8 +355,6 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 
 		$laterCount = $this->Tree->find('count');
-
-		$laterCount = $this->Tree->find('count');
 		$this->assertEquals($initialCount + 1, $laterCount);
 
 		$children = $this->Tree->children($data[$modelClass]['id'], true, array('name'));
