@@ -588,6 +588,24 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test that files in the 0th index work.
+ */
+	public function testFilesZeroithIndex() {
+		$_FILES = array(
+			0 => array(
+				'name' => 'cake_sqlserver_patch.patch',
+				'type' => 'text/plain',
+				'tmp_name' => '/private/var/tmp/phpy05Ywj',
+				'error' => 0,
+				'size' => 6271,
+			),
+		);
+
+		$request = new CakeRequest('some/path');
+		$this->assertEquals($_FILES, $request->params['form']);
+	}
+
+/**
  * test method overrides coming in from POST data.
  *
  * @return void

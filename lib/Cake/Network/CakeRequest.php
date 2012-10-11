@@ -319,7 +319,7 @@ class CakeRequest implements ArrayAccess {
 	protected function _processFiles() {
 		if (isset($_FILES) && is_array($_FILES)) {
 			foreach ($_FILES as $name => $data) {
-				if ($name != 'data') {
+				if ($name !== 'data') {
 					$this->params['form'][$name] = $data;
 				}
 			}
