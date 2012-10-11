@@ -4726,6 +4726,32 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * test that saveAll still behaves like previous versions (does not necessarily need a first argument)
+ *
+ * @return void
+ */
+	public function testSaveAllWithSet() {
+		$this->loadFixtures('Article', 'Tag', 'Comment', 'User', 'ArticlesTag');
+		$data = array(
+			'Article' => array(
+				'user_id' => 1,
+				'title' => 'Article Has and belongs to Many Tags'
+			),
+			'Tag' => array(
+				'Tag' => array(1, 2)
+			),
+			'Comment' => array(
+				array(
+					'comment' => 'Article comment',
+					'user_id' => 1
+		)));
+		$Article = new Article();
+		$Article->set($data);
+		$result = $Article->saveAll();
+		$this->assertFalse(empty($result));
+	}
+
+/**
  * test that saveAll behaves like plain save() when supplied empty data
  *
  * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
@@ -4740,7 +4766,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 
 		$model = new ProductUpdateAll();
-		$result = $model->saveAll(array());
+		$result = $model->saveAll();
 		$this->assertFalse($result);
 	}
 
