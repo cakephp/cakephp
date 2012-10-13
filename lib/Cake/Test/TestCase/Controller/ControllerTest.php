@@ -47,7 +47,7 @@ class ControllerTestAppController extends Controller {
  *
  * @var array
  */
-	public $uses = array('ControllerPost');
+	public $uses = ['Post'];
 
 /**
  * components property
@@ -57,69 +57,6 @@ class ControllerTestAppController extends Controller {
 	public $components = array('Cookie');
 }
 
-
-/**
- * ControllerPost class
- *
- * @package       Cake.Test.Case.Controller
- */
-class ControllerPost extends TestModel {
-
-/**
- * name property
- *
- * @var string 'ControllerPost'
- */
-	public $name = 'ControllerPost';
-
-/**
- * useTable property
- *
- * @var string 'posts'
- */
-	public $useTable = 'posts';
-
-/**
- * invalidFields property
- *
- * @var array
- */
-	public $invalidFields = array('name' => 'error_msg');
-
-/**
- * lastQuery property
- *
- * @var mixed null
- */
-	public $lastQuery = null;
-
-/**
- * beforeFind method
- *
- * @param mixed $query
- * @return void
- */
-	public function beforeFind($query) {
-		$this->lastQuery = $query;
-	}
-
-/**
- * find method
- *
- * @param string $type
- * @param array $options
- * @return void
- */
-	public function find($type = 'first', $options = array()) {
-		if ($type == 'popular') {
-			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
-			$options = Hash::merge($options, compact('conditions'));
-			return parent::find('all', $options);
-		}
-		return parent::find($type, $options);
-	}
-
-}
 
 /**
  * TestController class
@@ -215,13 +152,6 @@ class AnotherTestController extends ControllerTestAppController {
  * @var string 'Name'
  */
 	public $name = 'AnotherTest';
-
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = false;
 
 }
 
@@ -757,7 +687,7 @@ class ControllerTest extends TestCase {
 		];
 		$this->assertEquals($expected, $TestController->components);
 
-		$expected = array('Comment', 'ControllerPost');
+		$expected = array('Comment', 'Post');
 		$this->assertEquals(
 			$expected,
 			$TestController->uses,
@@ -767,13 +697,12 @@ class ControllerTest extends TestCase {
 		$TestController = new AnotherTestController($request);
 		$TestController->constructClasses();
 
-		$appVars = get_class_vars(__NAMESPACE__ . '\ControllerTestAppController');
-		$testVars = get_class_vars(__NAMESPACE__ . '\AnotherTestController');
-
-		$this->assertTrue(in_array('ControllerPost', $appVars['uses']));
-		$this->assertFalse($testVars['uses']);
-
-		$this->assertFalse(property_exists($TestController, 'ControllerPost'));
+		$this->assertEquals('AnotherTest', $TestController->modelClass);
+		$this->assertEquals(
+			['AnotherTest', 'Post'],
+			$TestController->uses,
+			'Incorrect uses when controller does not define $uses.'
+		);
 	}
 
 /**
@@ -894,7 +823,7 @@ class ControllerTest extends TestCase {
 	public function testValidateErrorsOnArbitraryModels() {
 		$TestController = new TestController();
 
-		$Post = new ControllerPost();
+		$Post = new \TestApp\Model\Post();
 		$Post->validate = array('title' => 'notEmpty');
 		$Post->set('title', '');
 		$result = $TestController->validateErrors($Post);

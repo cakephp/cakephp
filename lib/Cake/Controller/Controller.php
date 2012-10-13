@@ -544,7 +544,6 @@ class Controller extends Object implements EventListener {
 		if ($this->uses === true) {
 			$this->uses = [$pluginDot . $this->modelClass];
 		}
-		$oldUses = $this->uses;
 		$this->_mergeVars(
 			['components', 'helpers', 'uses'],
 			[
@@ -552,7 +551,8 @@ class Controller extends Object implements EventListener {
 				'reverse' => ['uses']
 			]
 		);
-		if ($this->uses === $oldUses && $this->modelClass) {
+		$usesProperty = new \ReflectionProperty($this, 'uses');
+		if ($this->uses && $usesProperty->getDeclaringClass()->getName() !== get_class($this)) {
 			array_unshift($this->uses, $pluginDot . $this->modelClass);
 		}
 		$this->uses = array_unique($this->uses);
