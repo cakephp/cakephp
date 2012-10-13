@@ -13,11 +13,11 @@
  */
 namespace Cake\Routing\Filter;
 
-use Cake\Routing\DispatcherFilter;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Response;
+use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
 
 /**

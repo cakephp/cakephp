@@ -158,7 +158,7 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
  * @return New incremented value, false otherwise
- * @throws CacheException when you try to increment with compress = true
+ * @throws Cake\Error\CacheException when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
 		if ($this->settings['compress']) {
@@ -175,7 +175,7 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
  * @return New decremented value, false otherwise
- * @throws CacheException when you try to decrement with compress = true
+ * @throws Cake\Error\CacheException when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
 		if ($this->settings['compress']) {

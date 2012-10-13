@@ -105,6 +105,7 @@ class ErrorHandler {
  *
  * @param \Exception $exception
  * @return void
+ * @throws Exception When renderer class not found
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */
 	public static function handleException(\Exception $exception) {

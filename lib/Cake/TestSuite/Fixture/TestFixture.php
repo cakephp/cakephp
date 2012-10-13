@@ -123,7 +123,7 @@ class TestFixture {
  * Initialize the fixture.
  *
  * @return void
- * @throws MissingModelException Whe importing from a model that does not exist.
+ * @throws Cake\Error\MissingModelException Whe importing from a model that does not exist.
  */
 	public function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {

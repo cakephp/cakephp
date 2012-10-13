@@ -13,8 +13,8 @@
  */
 
 namespace Cake\Routing\Filter;
-use Cake\Routing\DispatcherFilter;
 use Cake\Core\Configure;
+use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 

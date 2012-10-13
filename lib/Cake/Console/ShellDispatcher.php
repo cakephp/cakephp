@@ -173,7 +173,7 @@ class ShellDispatcher {
  * Dispatch a request.
  *
  * @return boolean
- * @throws MissingShellMethodException
+ * @throws Cake\Error\MissingShellMethodException
  */
 	protected function _dispatch() {
 		$shell = $this->shiftArgs();
@@ -225,7 +225,7 @@ class ShellDispatcher {
  *
  * @param string $shell Optionally the name of a plugin
  * @return mixed An object
- * @throws MissingShellException when errors are encountered.
+ * @throws Cake\Error\MissingShellException when errors are encountered.
  */
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell);

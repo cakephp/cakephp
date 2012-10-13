@@ -119,7 +119,7 @@ class Socket {
  * Connect the socket to the given host and port.
  *
  * @return boolean Success
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function connect() {
 		if ($this->connection != null) {
@@ -311,7 +311,7 @@ class Socket {
  * @param boolean $enable enable or disable encryption. Default is true (enable)
  * @return boolean True on success
  * @throws InvalidArgumentException When an invalid encryption scheme is chosen.
- * @throws SocketException When attempting to enable SSL/TLS fails
+ * @throws Cake\Error\SocketException When attempting to enable SSL/TLS fails
  * @see stream_socket_enable_crypto
  */
 	public function enableCrypto($type, $clientOrServer = 'client', $enable = true) {

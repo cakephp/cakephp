@@ -18,9 +18,9 @@
 namespace Cake\Console\Command;
 
 use Cake\Console\Shell;
-use Cake\Controller\Controller;
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Component\AclComponent;
+use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Utility\Hash;

@@ -13,8 +13,8 @@
  */
 namespace Cake\Console\Command\Task;
 
-use Cake\Core\Configure;
 use Cake\Console\Shell;
+use Cake\Core\Configure;
 use Cake\Model\Model;
 use Cake\Model\Schema;
 use Cake\Utility\Inflector;

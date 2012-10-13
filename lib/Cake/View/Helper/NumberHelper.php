@@ -54,7 +54,7 @@ class NumberHelper extends Helper {
  *
  * @param View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper
- * @throws CakeException When the engine class could not be found.
+ * @throws Cake\Error\Exception When the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
 		$settings = Hash::merge(array('engine' => 'Cake\Utility\Number'), $settings);

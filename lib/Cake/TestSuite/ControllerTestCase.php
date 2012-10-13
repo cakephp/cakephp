@@ -309,8 +309,8 @@ abstract class ControllerTestCase extends TestCase {
  * @param string $controller Controller name
  * @param array $mocks List of classes and methods to mock
  * @return Controller Mocked controller
- * @throws MissingControllerException When controllers could not be created.
- * @throws MissingComponentException When components could not be created.
+ * @throws Cake\Error\MissingControllerException When controllers could not be created.
+ * @throws Cake\Error\MissingComponentException When components could not be created.
  */
 	public function generate($controller, $mocks = array()) {
 		$classname = App::classname($controller, 'Controller', 'Controller');

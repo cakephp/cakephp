@@ -84,7 +84,7 @@ class Xml {
  * @param string|array $input XML string, a path to a file, an URL or an array
  * @param array $options The options to use
  * @return SimpleXMLElement|DOMDocument SimpleXMLElement or DOMDocument
- * @throws XmlException
+ * @throws Cake\Error\XmlException
  */
 	public static function build($input, $options = array()) {
 		if (!is_array($options)) {
@@ -210,7 +210,7 @@ class Xml {
  * @param array $data Array of data to append to the $node.
  * @param string $format Either 'attribute' or 'tags'.  This determines where nested keys go.
  * @return void
- * @throws XmlException
+ * @throws Cake\Error\XmlException
  */
 	protected static function _fromArray($dom, $node, &$data, $format) {
 		if (empty($data) || !is_array($data)) {
@@ -309,7 +309,7 @@ class Xml {
  *
  * @param SimpleXMLElement|DOMDocument|DOMNode $obj SimpleXMLElement, DOMDocument or DOMNode instance
  * @return array Array representation of the XML structure.
- * @throws XmlException
+ * @throws Cake\Error\XmlException
  */
 	public static function toArray($obj) {
 		if ($obj instanceof \DOMNode) {

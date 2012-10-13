@@ -14,6 +14,7 @@
  */
 namespace Cake\Model\Behavior;
 use Cake\Core\Configure;
+use Cake\Error;
 use Cake\I18n\I18n;
 use Cake\Model\ConnectionManager;
 use Cake\Model\Model;
@@ -548,7 +549,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param boolean $reset Leave true to have the fields only modified for the next operation.
  *   if false the field will be added for all future queries.
  * @return boolean
- * @throws CakeException when attempting to bind a translating called name.  This is not allowed
+ * @throws Cake\Error\Exception when attempting to bind a translating called name.  This is not allowed
  *   as it shadows Model::$name.
  */
 	public function bindTranslation(Model $Model, $fields, $reset = true) {
@@ -568,7 +569,7 @@ class TranslateBehavior extends ModelBehavior {
 				$association = $value;
 			}
 			if ($association === 'name') {
-				throw new CakeException(
+				throw new Error\Exception(
 					__d('cake_dev', 'You cannot bind a translation named "name".')
 				);
 			}

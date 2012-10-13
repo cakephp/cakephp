@@ -103,7 +103,7 @@ class Sqlite extends DboSource {
  * Connects to the database using config['database'] as a filename.
  *
  * @return boolean
- * @throws MissingConnectionException
+ * @throws Cake\Error\MissingConnectionException
  */
 	public function connect() {
 		$config = $this->config;

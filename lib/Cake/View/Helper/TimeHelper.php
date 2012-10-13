@@ -51,7 +51,7 @@ class TimeHelper extends Helper {
  *
  * @param View $View the view object the helper is attached to.
  * @param array $settings Settings array Settings array
- * @throws CakeException When the engine class could not be found.
+ * @throws Cake\Error\Exception When the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
 		$settings = Hash::merge(array('engine' => 'Cake\Utility\Time'), $settings);

@@ -18,6 +18,7 @@
 
 namespace Cake\Model;
 use Cake\Core\Configure;
+use Cake\Error;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 
@@ -132,7 +133,7 @@ class AclNode extends Model {
 			$model = ClassRegistry::init(array('class' => $name, 'alias' => $alias));
 
 			if (empty($model)) {
-				throw new CakeException('cake_dev', "Model class '%s' not found in AclNode::node() when trying to bind %s object", $type, $this->alias);
+				throw new Error\Exception('cake_dev', "Model class '%s' not found in AclNode::node() when trying to bind %s object", $type, $this->alias);
 			}
 
 			$tmpRef = null;
@@ -176,7 +177,7 @@ class AclNode extends Model {
 			$result = $db->read($this, $queryData, -1);
 
 			if (!$result) {
-				throw new CakeException(__d('cake_dev', "AclNode::node() - Couldn't find %s node identified by \"%s\"", $type, print_r($ref, true)));
+				throw new Error\Exception(__d('cake_dev', "AclNode::node() - Couldn't find %s node identified by \"%s\"", $type, print_r($ref, true)));
 			}
 		}
 		return $result;

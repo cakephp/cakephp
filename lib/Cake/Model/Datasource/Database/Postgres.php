@@ -99,7 +99,7 @@ class Postgres extends DboSource {
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if successfully connected.
- * @throws MissingConnectionException
+ * @throws Cake\Error\MissingConnectionException
  */
 	public function connect() {
 		$config = $this->config;

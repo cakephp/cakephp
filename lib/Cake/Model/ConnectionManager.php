@@ -81,8 +81,8 @@ class ConnectionManager {
  *
  * @param string $name The name of the DataSource, as defined in app/Config/database.php
  * @return DataSource Instance
- * @throws MissingDatasourceConfigException
- * @throws MissingDatasourceException
+ * @throws Cake\Error\MissingDatasourceConfigException
+ * @throws Cake\Error\MissingDatasourceException
  */
 	public static function getDataSource($name) {
 		if (empty(static::$_init)) {
@@ -237,7 +237,7 @@ class ConnectionManager {
  *
  * @param string $name Connection name
  * @return void
- * @throws MissingDatasourceConfigException
+ * @throws Cake\Error\MissingDatasourceConfigException
  */
 	protected static function _getConnectionObject($name) {
 		if (!empty(static::$config->{$name})) {

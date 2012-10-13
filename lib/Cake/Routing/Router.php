@@ -19,8 +19,8 @@ use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\Route\Route;
 use Cake\Routing\RouteCollection;
+use Cake\Routing\Route\Route;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
@@ -658,6 +658,7 @@ class Router {
  *   If an array accepts the following keys.  If used with a named route you can provide
  *   a list of query string parameters.
  * @return string Full translated URL with base path.
+ * @throws Cake\Error\Exception When the route name is not found
  */
 	public static function url($url = null, $options = array()) {
 		if (!static::$initialized) {

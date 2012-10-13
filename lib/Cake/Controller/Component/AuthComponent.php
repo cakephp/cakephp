@@ -345,7 +345,7 @@ class AuthComponent extends Component {
  *
  * @param Controller $controller A reference to the controller object
  * @return boolean Returns false
- * @throws ForbiddenException
+ * @throws Cake\Error\ForbiddenException
  */
 	protected function _unauthorized(Controller $controller) {
 		if (!$this->unauthorizedRedirect) {

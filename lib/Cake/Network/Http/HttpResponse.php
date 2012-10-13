@@ -141,7 +141,7 @@ class HttpResponse implements \ArrayAccess {
  *
  * @param string $message Message to parse
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function parseResponse($message) {
 		if (!is_string($message)) {
@@ -205,7 +205,7 @@ class HttpResponse implements \ArrayAccess {
  *
  * @param string $body A string containing the chunked body to decode.
  * @return mixed Array of response headers and body or false.
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _decodeChunkedBody($body) {
 		if (!is_string($body)) {

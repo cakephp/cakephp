@@ -228,7 +228,7 @@ class HttpSocket extends Socket {
  *
  * @param resource|boolean $resource Resource or false to disable the resource use
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function setContentResource($resource) {
 		if ($resource === false) {
@@ -247,7 +247,7 @@ class HttpSocket extends Socket {
  *
  * @param string|array $request Either an URI string, or an array defining host/uri
  * @return mixed false on error, HttpResponse on success
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function request($request = array()) {
 		$this->reset(false);
@@ -563,7 +563,7 @@ class HttpSocket extends Socket {
  * Set authentication in request
  *
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _setAuth() {
 		if (empty($this->_auth)) {
@@ -585,7 +585,7 @@ class HttpSocket extends Socket {
  * Set the proxy configuration and authentication
  *
  * @return void
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _setProxy() {
 		if (empty($this->_proxy) || !isset($this->_proxy['host'], $this->_proxy['port'])) {
@@ -820,7 +820,7 @@ class HttpSocket extends Socket {
  * @param array $request Needs to contain a 'uri' key. Should also contain a 'method' key, otherwise defaults to GET.
  * @param string $versionToken The version token to use, defaults to HTTP/1.1
  * @return string Request line
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _buildRequestLine($request = array(), $versionToken = 'HTTP/1.1') {
 		$asteriskMethods = array('OPTIONS');

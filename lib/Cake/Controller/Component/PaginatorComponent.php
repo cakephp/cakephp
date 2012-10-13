@@ -20,8 +20,8 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentCollection;
-use Cake\Model\Model;
 use Cake\Error;
+use Cake\Model\Model;
 use Cake\Utility\Hash;
 
 /**
@@ -122,7 +122,7 @@ class PaginatorComponent extends Component {
  * @param array $whitelist List of allowed fields for ordering.  This allows you to prevent ordering
  *   on non-indexed, or undesirable columns.
  * @return array Model query results
- * @throws MissingModelException
+ * @throws Cake\Error\MissingModelException
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
 		if (is_array($object)) {

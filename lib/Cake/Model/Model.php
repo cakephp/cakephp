@@ -1103,7 +1103,7 @@ class Model extends Object implements EventListener {
  * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
  * @param string $tableName Name of the custom table
- * @throws MissingTableException when database table $tableName is not found on data source
+ * @throws Cake\Error\MissingTableException when database table $tableName is not found on data source
  * @return void
  */
 	public function setSource($tableName) {

@@ -182,7 +182,7 @@ class ConsoleInputOption {
  *
  * @param string $value
  * @return boolean
- * @throws ConsoleException
+ * @throws Cake\Error\ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {

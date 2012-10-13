@@ -67,7 +67,7 @@ class Plugin {
  *
  * @param string|array $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
  * @param array $config configuration options for the plugin
- * @throws MissingPluginException if the folder for the plugin to be loaded is not found
+ * @throws Cake\Error\MissingPluginException if the folder for the plugin to be loaded is not found
  * @return void
  */
 	public static function load($plugin, $config = array()) {
@@ -139,7 +139,7 @@ class Plugin {
  *
  * @param string $plugin name of the plugin in CamelCase format
  * @return string path to the plugin folder
- * @throws MissingPluginException if the folder for plugin was not found or plugin has not been loaded
+ * @throws Cake\Error\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
  */
 	public static function path($plugin) {
 		if (empty(static::$_plugins[$plugin])) {
@@ -153,7 +153,7 @@ class Plugin {
  *
  * @param string $plugin name of the plugin in CamelCase format
  * @return string namespace to the plugin
- * @throws MissingPluginException if the namespace for plugin was not found or plugin has not been loaded
+ * @throws Cake\Error\MissingPluginException if the namespace for plugin was not found or plugin has not been loaded
  */
 	public static function getNamespace($plugin) {
 		if (empty(static::$_plugins[$plugin])) {

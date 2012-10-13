@@ -910,7 +910,7 @@ class View extends Object {
  *
  * @param string $name Controller action to find template filename for
  * @return string Template filename
- * @throws MissingViewException when a view file could not be found.
+ * @throws Cake\Error\MissingViewException when a view file could not be found.
  */
 	protected function _getViewFileName($name = null) {
 		$subDir = null;
@@ -989,7 +989,7 @@ class View extends Object {
  *
  * @param string $name The name of the layout to find.
  * @return string Filename for layout file (.ctp).
- * @throws MissingLayoutException when a layout cannot be located
+ * @throws Cake\Error\MissingLayoutException when a layout cannot be located
  */
 	protected function _getLayoutFileName($name = null) {
 		if ($name === null) {

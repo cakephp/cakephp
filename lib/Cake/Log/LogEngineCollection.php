@@ -14,8 +14,8 @@
 namespace Cake\Log;
 
 use Cake\Core\App;
-use Cake\Log\LogInterface;
 use Cake\Error;
+use Cake\Log\LogInterface;
 use Cake\Utility\ObjectCollection;
 
 /**
@@ -63,7 +63,7 @@ class LogEngineCollection extends ObjectCollection {
  *
  * @param array $options The configuration options to load a logger with.
  * @return false|LogInterface boolean false on any failures, log adapter interface on success
- * @throws Cake\Error\LogException
+ * @throws Cake\Error\Exception
  */
 	protected static function _getLogger($options) {
 		$name = isset($options['engine']) ? $options['engine'] : null;

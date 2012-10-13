@@ -135,7 +135,7 @@ class Mysql extends DboSource {
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
- * @throws MissingConnectionException
+ * @throws Cake\Error\MissingConnectionException
  */
 	public function connect() {
 		$config = $this->config;

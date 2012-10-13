@@ -20,8 +20,8 @@
  */
 
 namespace Cake\Model;
-use Cake\Model\Validator\ValidationSet;
 use Cake\Event\Event;
+use Cake\Model\Validator\ValidationSet;
 
 /**
  * ModelValidator object encapsulates all methods related to data validations for a model

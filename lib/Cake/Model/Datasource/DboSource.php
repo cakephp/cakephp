@@ -250,7 +250,7 @@ class DboSource extends DataSource {
  *
  * @param array $config Array of configuration information for the Datasource.
  * @param boolean $autoConnect Whether or not the datasource should automatically connect.
- * @throws MissingConnectionException when a connection cannot be made.
+ * @throws Cake\Error\MissingConnectionException when a connection cannot be made.
  */
 	public function __construct($config = null, $autoConnect = true) {
 		if (!isset($config['prefix'])) {
@@ -1185,7 +1185,7 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @param array $stack
  * @return mixed
- * @throws CakeException when results cannot be created.
+ * @throws Cake\Error\Exception when results cannot be created.
  */
 	public function queryAssociation(Model $model, &$linkModel, $type, $association, $assocData, &$queryData, $external, &$resultSet, $recursive, $stack) {
 		if (isset($stack['_joined'])) {

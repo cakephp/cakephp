@@ -81,7 +81,7 @@ class ComponentCollection extends ObjectCollection implements EventListener {
  * @param string $component Component name to load
  * @param array $settings Settings for the component.
  * @return Component A component object, Either the existing loaded component or a new one.
- * @throws MissingComponentException when the component could not be found
+ * @throws Cake\Error\MissingComponentException when the component could not be found
  */
 	public function load($component, $settings = array()) {
 		if (is_array($settings) && isset($settings['className'])) {

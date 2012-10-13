@@ -16,8 +16,8 @@ namespace Cake\Model\Datasource;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Model\Datasource\Session\SessionHandlerInterface;
 use Cake\Error;
+use Cake\Model\Datasource\Session\SessionHandlerInterface;
 use Cake\Utility\Hash;
 
 /**

@@ -103,7 +103,7 @@ class BehaviorCollection extends ObjectCollection implements EventListener {
  * @param string $behavior CamelCased name of the behavior to load
  * @param array $config Behavior configuration parameters
  * @return boolean True on success, false on failure
- * @throws MissingBehaviorException when a behavior could not be found.
+ * @throws Cake\Error\MissingBehaviorException when a behavior could not be found.
  */
 	public function load($behavior, $config = array()) {
 		if (is_array($config) && isset($config['className'])) {

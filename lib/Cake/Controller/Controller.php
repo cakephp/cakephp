@@ -466,8 +466,8 @@ class Controller extends Object implements EventListener {
  *
  * @param Cake\Network\Request $request
  * @return mixed The resulting response.
- * @throws PrivateActionException When actions are not public or prefixed by _
- * @throws MissingActionException When actions are not defined and scaffolding is
+ * @throws Cake\Error\PrivateActionException When actions are not public or prefixed by _
+ * @throws Cake\Error\MissingActionException When actions are not defined and scaffolding is
  *    not enabled.
  */
 	public function invokeAction(Request $request) {
@@ -716,7 +716,7 @@ class Controller extends Object implements EventListener {
  * @param string $modelClass Name of model class to load
  * @param integer|string $id Initial ID the instanced model class should have
  * @return mixed true when single model found and instance created, error returned if model not found.
- * @throws MissingModelException if the model class cannot be found.
+ * @throws Cake\Error\MissingModelException if the model class cannot be found.
  */
 	public function loadModel($modelClass = null, $id = null) {
 		if ($modelClass === null) {

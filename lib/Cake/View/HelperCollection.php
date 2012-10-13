@@ -114,7 +114,7 @@ class HelperCollection extends ObjectCollection implements EventListener {
  * @param string $helper Helper name to load
  * @param array $settings Settings for the helper.
  * @return Helper A helper object, Either the existing loaded helper or a new one.
- * @throws MissingHelperException when the helper could not be found
+ * @throws Cake\Error\MissingHelperException when the helper could not be found
  */
 	public function load($helper, $settings = array()) {
 		list($plugin, $name) = pluginSplit($helper);

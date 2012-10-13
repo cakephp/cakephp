@@ -91,7 +91,7 @@ class Dispatcher implements EventListener {
  *
  * @param Cake\Event\EventManager $manager
  * @return void
- * @throws MissingDispatcherFilterException
+ * @throws Cake\Error\MissingDispatcherFilterException
  */
 	protected function _attachFilters($manager) {
 		$filters = Configure::read('Dispatcher.filters');
@@ -136,7 +136,7 @@ class Dispatcher implements EventListener {
  * @param Cake\Network\Response $response Response object to put the results of the dispatch into.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return string|void if `$request['return']` is set then it returns response body, null otherwise
- * @throws MissingControllerException When the controller is missing.
+ * @throws Cake\Error\MissingControllerException When the controller is missing.
  */
 	public function dispatch(Request $request, Response $response, $additionalParams = array()) {
 		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response', 'additionalParams'));
