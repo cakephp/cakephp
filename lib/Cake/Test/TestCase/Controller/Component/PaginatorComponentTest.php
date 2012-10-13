@@ -737,7 +737,8 @@ class PaginatorComponentTest extends TestCase {
  */
 	public function testPaginateCustomFind() {
 		$Controller = new Controller($this->request);
-		$Controller->uses = array('PaginatorCustomPost');
+		$Controller->uses = ['PaginatorCustomPost'];
+
 		$Controller->constructClasses();
 		$data = array('author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
 		$Controller->PaginatorCustomPost->create($data);

@@ -329,9 +329,6 @@ class Controller extends Object implements EventListener {
 			}
 			$this->viewPath = $viewPath;
 		}
-		if ($this->_mergeParent === null) {
-			$this->_mergeParent = Configure::read('App.namespace') . '\Controller\Controller';
-		}
 
 		$this->modelClass = Inflector::singularize($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
@@ -528,7 +525,7 @@ class Controller extends Object implements EventListener {
 
 /**
  * Merge components, helpers, and uses vars from
- * Controller::$_mergeParent and PluginAppController.
+ * parent classes.
  *
  * @return void
  */
@@ -545,7 +542,7 @@ class Controller extends Object implements EventListener {
 			$this->modelClass = '';
 		}
 		if ($this->uses === true) {
-			$this->uses = array($pluginDot . $this->modelClass);
+			$this->uses = [$pluginDot . $this->modelClass];
 		}
 		$oldUses = $this->uses;
 		$this->_mergeVars(
@@ -555,7 +552,7 @@ class Controller extends Object implements EventListener {
 				'reverse' => ['uses']
 			]
 		);
-		if ($this->uses === $oldUses) {
+		if ($this->uses === $oldUses && $this->modelClass) {
 			array_unshift($this->uses, $pluginDot . $this->modelClass);
 		}
 		$this->uses = array_unique($this->uses);
