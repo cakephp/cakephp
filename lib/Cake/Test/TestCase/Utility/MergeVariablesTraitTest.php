@@ -26,8 +26,8 @@ class Base {
 
 	public $assocProperty = ['Red'];
 
-	public function mergeVars($properties) {
-		return $this->_mergeVars($properties);
+	public function mergeVars($properties, $options = []) {
+		return $this->_mergeVars($properties, $options);
 	}
 
 }
@@ -69,7 +69,7 @@ class MergeVariablesTraitTest extends TestCase {
  */
 	public function testMergeVarsAsList() {
 		$object = new Grandchild();
-		$object->mergeVars(['listProperty' => false]);
+		$object->mergeVars(['listProperty']);
 
 		$expected = ['One', 'Two', 'Three', 'Four', 'Five'];
 		$this->assertSame($expected, $object->listProperty);
@@ -82,7 +82,7 @@ class MergeVariablesTraitTest extends TestCase {
  */
 	public function testMergeVarsAsAssoc() {
 		$object = new Grandchild();
-		$object->mergeVars(['assocProperty' => true]);
+		$object->mergeVars(['assocProperty'], ['associative' => ['assocProperty']]);
 		$expected = [
 			'Red' => null,
 			'Orange' => null,
@@ -93,6 +93,24 @@ class MergeVariablesTraitTest extends TestCase {
 	}
 
 /**
+ * Test merging vars with mixed modes.
+ */
+	public function testMergeVarsMixedModes() {
+		$object = new Grandchild();
+		$object->mergeVars(['assocProperty', 'listProperty'], ['associative' => ['assocProperty']]);
+		$expected = [
+			'Red' => null,
+			'Orange' => null,
+			'Green' => ['lime', 'apple'],
+			'Yellow' => ['banana'],
+		];
+		$this->assertEquals($expected, $object->assocProperty);
+
+		$expected = ['One', 'Two', 'Three', 'Four', 'Five'];
+		$this->assertSame($expected, $object->listProperty);
+	}
+
+/**
  * Test that merging variables with booleans in the class heirarchy
  * doesn't cause issues.
  *
@@ -100,7 +118,19 @@ class MergeVariablesTraitTest extends TestCase {
  */
 	public function testMergeVarsWithBoolean() {
 		$object = new Child();
-		$object->mergeVars(['hasBoolean' => false]);
+		$object->mergeVars(['hasBoolean']);
 		$this->assertEquals(['test'], $object->hasBoolean);
+	}
+
+/**
+ * Test that merging reversed works.
+ *
+ * @return void
+ */
+	public function testMergeVariablesReversed() {
+		$object = new Grandchild();
+		$object->mergeVars(['listProperty'], ['reverse' => ['listProperty']]);
+		$expected = ['Four', 'Five', 'Two', 'Three', 'One'];
+		$this->assertSame($expected, $object->listProperty);
 	}
 }

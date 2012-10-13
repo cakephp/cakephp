@@ -26,10 +26,20 @@ trait MergeVariablesTrait {
 /**
  * Merge the list of $properties with all parent classes of the current class.
  *
+ * ### Options:
+ *
+ * - `associative` - A list of properties that should be treated as associative arrays.
+ *   Properties in this list will be passed through Hash::normalize() before merging.
+ * - `reverse` - A list of properties that should be merged in reverse.  Reverse merging
+ *   allows the parent properties to follow the child classes.  Generally this option is only
+ *   useful when merging list properties that need to maintain the child property values
+ *   as the first elements in the merged list.
+ *
  * @param array $properties An array of properties and the merge strategy for them.
+ * @param array $options The options to use when merging properties.
  * @return void
  */
-	protected function _mergeVars($properties) {
+	protected function _mergeVars($properties, $options = []) {
 		$class = get_class($this);
 		$parents = [];
 		while (true) {
@@ -40,7 +50,7 @@ trait MergeVariablesTrait {
 			$parents[] = $parent;
 			$class = $parent;
 		}
-		foreach ($properties as $property => $strategy) {
+		foreach ($properties as $property) {
 			if (!property_exists($this, $property)) {
 				continue;
 			}
@@ -48,7 +58,7 @@ trait MergeVariablesTrait {
 			if ($thisValue === null || $thisValue === false) {
 				continue;
 			}
-			$this->_mergeProperty($property, $parents, $strategy);
+			$this->_mergeProperty($property, $parents, $options);
 		}
 	}
 
@@ -57,12 +67,26 @@ trait MergeVariablesTrait {
  *
  * @param string $property The name of the property being merged.
  * @param array $parentClasses An array of classes you want to merge with.
- * @param bool $asAssoc Set true for merging as assoc, false for list.
+ * @param array $options Options for merging the property, see _mergeVars()
  * @return void
  */
-	protected function _mergeProperty($property, $parentClasses, $asAssoc) {
+	protected function _mergeProperty($property, $parentClasses, $options) {
 		$thisValue = $this->{$property};
-		if ($asAssoc) {
+		$isAssoc = $isReversed = false;
+		if (
+			isset($options['associative']) &&
+			in_array($property, (array)$options['associative'])
+		) {
+			$isAssoc = true;
+		}
+		if (
+			isset($options['reverse']) &&
+			in_array($property, (array)$options['reverse'])
+		) {
+			$isReversed = true;
+		}
+
+		if ($isAssoc) {
 			$thisValue = Hash::normalize($thisValue);
 		}
 		foreach ($parentClasses as $class) {
@@ -71,10 +95,15 @@ trait MergeVariablesTrait {
 				continue;
 			}
 			$parentProperty = $parentProperties[$property];
-			if ($asAssoc) {
+			if (empty($parentProperty) || $parentProperty === true) {
+				continue;
+			}
+			if ($isAssoc) {
 				$parentProperty = Hash::normalize($parentProperty);
 			}
-			if (is_array($parentProperty)) {
+			if ($isReversed) {
+				$thisValue = Hash::merge($thisValue, $parentProperty);
+			} else {
 				$thisValue = Hash::merge($parentProperty, $thisValue);
 			}
 		}
