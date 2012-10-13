@@ -18,8 +18,8 @@
  * @since         CakePHP(tm) v 0.10.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Model;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
@@ -30,6 +30,7 @@ use Cake\Event\EventManager;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\Set;
 use Cake\Utility\Xml;
 
@@ -45,6 +46,8 @@ use Cake\Utility\Xml;
  * @link          http://book.cakephp.org/2.0/en/models.html
  */
 class Model extends Object implements EventListener {
+
+	use MergeVariablesTrait;
 
 /**
  * The name of the DataSource connection that this Model uses
@@ -714,16 +717,10 @@ class Model extends Object implements EventListener {
 			$this->useDbConfig = $ds;
 		}
 
-		$appModelClass = App::classname('Model', 'Model');
-		if (is_subclass_of($this, $appModelClass)) {
-			$merge = array('actsAs', 'findMethods');
-			$parentClass = get_parent_class($this);
-			if ($parentClass !== $appModelClass) {
-				$this->_mergeVars($merge, $parentClass);
-			}
-			$this->_mergeVars($merge, $appModelClass);
-		}
-		$this->_mergeVars(array('findMethods'), 'Model');
+		$this->_mergeVars(
+			['actsAs', 'findMethods'],
+			['associative' => ['actsAs', 'findMethods']]
+		);
 
 		$this->Behaviors = new BehaviorCollection();
 
