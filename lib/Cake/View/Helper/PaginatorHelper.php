@@ -650,6 +650,7 @@ class PaginatorHelper extends AppHelper {
  * - `ellipsis` Ellipsis content, defaults to '...'
  * - `class` Class for wrapper tag
  * - `currentClass` Class for wrapper tag on current active page, defaults to 'current'
+ * - `currentTag` Tag to use for current page number, defaults to null
  *
  * @param array $options Options for the numbers, (before, after, model, modulus, separator)
  * @return string numbers string.
@@ -664,7 +665,8 @@ class PaginatorHelper extends AppHelper {
 
 		$defaults = array(
 			'tag' => 'span', 'before' => null, 'after' => null, 'model' => $this->defaultModel(), 'class' => null,
-			'modulus' => '8', 'separator' => ' | ', 'first' => null, 'last' => null, 'ellipsis' => '...', 'currentClass' => 'current'
+			'modulus' => '8', 'separator' => ' | ', 'first' => null, 'last' => null, 'ellipsis' => '...',
+			'currentClass' => 'current', 'currentTag' => null
 		);
 		$options += $defaults;
 
@@ -678,7 +680,7 @@ class PaginatorHelper extends AppHelper {
 		extract($options);
 		unset($options['tag'], $options['before'], $options['after'], $options['model'],
 			$options['modulus'], $options['separator'], $options['first'], $options['last'],
-			$options['ellipsis'], $options['class'], $options['currentClass']
+			$options['ellipsis'], $options['class'], $options['currentClass'], $options['currentTag']
 		);
 
 		$out = '';
@@ -714,7 +716,11 @@ class PaginatorHelper extends AppHelper {
 			if ($class) {
 				$currentClass .= ' ' . $class;
 			}
-			$out .= $this->Html->tag($tag, $params['page'], array('class' => $currentClass));
+			if ($currentTag) {
+				$out .= $this->Html->tag($tag, $this->Html->tag($currentTag, $params['page']), array('class' => $currentClass));
+			} else {
+				$out .= $this->Html->tag($tag, $params['page'], array('class' => $currentClass));
+			}
 			if ($i != $params['pageCount']) {
 				$out .= $separator;
 			}
