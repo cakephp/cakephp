@@ -155,8 +155,6 @@ class TestController extends ControllerTestAppController {
  */
 	public $uses = array('Comment');
 
-	protected $_mergeParent = 'ControllerTestAppController';
-
 /**
  * index method
  *
@@ -225,12 +223,6 @@ class AnotherTestController extends ControllerTestAppController {
  */
 	public $uses = false;
 
-/**
- * merge parent
- *
- * @var string
- */
-	protected $_mergeParent = 'ControllerTestAppController';
 }
 
 /**
@@ -747,33 +739,30 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testMergeVars() {
-		$request = new Request('controller_posts/index');
+		$request = new Request();
 
 		$TestController = new TestController($request);
 		$TestController->constructClasses();
 
-		$testVars = get_class_vars(__NAMESPACE__ . '\TestController');
-		$appVars = get_class_vars(__NAMESPACE__ . '\ControllerTestAppController');
+		$expected = [
+			'Html' => null,
+			'Session' => null
+		];
+		$this->assertEquals($expected, $TestController->helpers);
 
-		$components = is_array($appVars['components'])
-						? array_merge($appVars['components'], $testVars['components'])
-						: $testVars['components'];
-		if (!in_array('Session', $components)) {
-			$components[] = 'Session';
-		}
-		$helpers = is_array($appVars['helpers'])
-					? array_merge($appVars['helpers'], $testVars['helpers'])
-					: $testVars['helpers'];
-		$uses = is_array($appVars['uses'])
-					? array_merge($appVars['uses'], $testVars['uses'])
-					: $testVars['uses'];
-
-		$this->assertEquals(0, count(array_diff_key($TestController->helpers, array_flip($helpers))));
-		$this->assertEquals(0, count(array_diff($TestController->uses, $uses)));
-		$this->assertEquals(count(array_diff_assoc(Hash::normalize($TestController->components), Hash::normalize($components))), 0);
+		$expected = [
+			'Session' => null,
+			'Security' => null,
+			'Cookie' => null,
+		];
+		$this->assertEquals($expected, $TestController->components);
 
 		$expected = array('Comment', 'ControllerPost');
-		$this->assertEquals($expected, $TestController->uses, '$uses was merged incorrectly, ControllerTestAppController models should be last.');
+		$this->assertEquals(
+			$expected,
+			$TestController->uses,
+			'$uses was merged incorrectly, ControllerTestAppController models should be last.'
+		);
 
 		$TestController = new AnotherTestController($request);
 		$TestController->constructClasses();
@@ -785,18 +774,6 @@ class ControllerTest extends TestCase {
 		$this->assertFalse($testVars['uses']);
 
 		$this->assertFalse(property_exists($TestController, 'ControllerPost'));
-
-		$TestController = new ControllerCommentsController($request);
-		$TestController->constructClasses();
-
-		$appVars = get_class_vars(__NAMESPACE__ . '\ControllerTestAppController');
-		$testVars = get_class_vars(__NAMESPACE__ . '\ControllerCommentsController');
-
-		$this->assertTrue(in_array('ControllerPost', $appVars['uses']));
-		$this->assertEquals(array('ControllerPost'), $testVars['uses']);
-
-		$this->assertTrue(isset($TestController->ControllerPost));
-		$this->assertTrue(isset($TestController->ControllerComment));
 	}
 
 /**
