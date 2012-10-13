@@ -17,7 +17,10 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\MergeVariablesTrait;
 
 class Base {
+
 	use MergeVariablesTrait;
+
+	public $hasBoolean = false;
 
 	public $listProperty = ['One'];
 
@@ -30,6 +33,8 @@ class Base {
 }
 
 class Child extends Base {
+
+	public $hasBoolean = ['test'];
 
 	public $listProperty = ['Two', 'Three'];
 
@@ -85,5 +90,17 @@ class MergeVariablesTraitTest extends TestCase {
 			'Yellow' => ['banana'],
 		];
 		$this->assertEquals($expected, $object->assocProperty);
+	}
+
+/**
+ * Test that merging variables with booleans in the class heirarchy
+ * doesn't cause issues.
+ *
+ * @return void
+ */
+	public function testMergeVarsWithBoolean() {
+		$object = new Child();
+		$object->mergeVars(['hasBoolean' => false]);
+		$this->assertEquals(['test'], $object->hasBoolean);
 	}
 }

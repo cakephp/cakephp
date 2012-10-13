@@ -74,7 +74,9 @@ trait MergeVariablesTrait {
 			if ($asAssoc) {
 				$parentProperty = Hash::normalize($parentProperty);
 			}
-			$thisValue = Hash::merge($parentProperty, $thisValue);
+			if (is_array($parentProperty)) {
+				$thisValue = Hash::merge($parentProperty, $thisValue);
+			}
 		}
 		$this->{$property} = $thisValue;
 	}
