@@ -75,7 +75,7 @@ if (!function_exists('debug')) {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#basic-debugging
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#debug
  */
-	function debug($var = false, $showHtml = null, $showFrom = true) {
+	function debug($var, $showHtml = null, $showFrom = true) {
 		if (Configure::read('debug') > 0) {
 			App::uses('Debugger', 'Utility');
 			$file = '';
