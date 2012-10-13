@@ -27,6 +27,7 @@ use Cake\Log\Engine\ConsoleLog;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;
+use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\String;
 
 /**
@@ -36,6 +37,7 @@ use Cake\Utility\String;
  */
 class Shell extends Object {
 
+	use MergeVariablesTrait;
 /**
  * Output constants for making verbose and quiet shells.
  */
@@ -179,13 +181,10 @@ class Shell extends Object {
 			$this->stdin = new ConsoleInput('php://stdin');
 		}
 		$this->_useLogger();
-		$parent = get_parent_class($this);
-		if ($this->tasks !== null && $this->tasks !== false) {
-			$this->_mergeVars(array('tasks'), $parent, true);
-		}
-		if ($this->uses !== null && $this->uses !== false) {
-			$this->_mergeVars(array('uses'), $parent, false);
-		}
+		$this->_mergeVars(
+			['tasks', 'uses'],
+			['associative' => ['tasks']]
+		);
 	}
 
 /**

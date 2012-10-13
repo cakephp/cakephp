@@ -74,26 +74,9 @@ class ShellTestShell extends Shell {
 	}
 	//@codingStandardsIgnoreEnd
 
-	public function mergeVars($properties, $class, $normalize = true) {
-		return $this->_mergeVars($properties, $class, $normalize);
-	}
-
 	public function useLogger($enable = true) {
 		$this->_useLogger($enable);
 	}
-
-}
-
-/**
- * Class for testing merging vars
- *
- * @package       Cake.Test.Case.Console.Command
- */
-class TestMergeShell extends Shell {
-
-	public $tasks = array('DbConfig', 'Fixture');
-
-	public $uses = array('Comment');
 
 }
 
@@ -162,25 +145,6 @@ class ShellTest extends TestCase {
 		$this->assertInstanceOf('Cake\Console\ConsoleInput', $this->Shell->stdin);
 		$this->assertInstanceOf('Cake\Console\ConsoleOutput', $this->Shell->stdout);
 		$this->assertInstanceOf('Cake\Console\ConsoleOutput', $this->Shell->stderr);
-	}
-
-/**
- * test merging vars
- *
- * @return void
- */
-	public function testMergeVars() {
-		$this->Shell->tasks = array('DbConfig' => array('one', 'two'));
-		$this->Shell->uses = array('Posts');
-		$this->Shell->mergeVars(array('tasks'), __NAMESPACE__ . '\TestMergeShell');
-		$this->Shell->mergeVars(array('uses'), __NAMESPACE__ . '\TestMergeShell', false);
-
-		$expected = array('DbConfig' => null, 'Fixture' => null, 'DbConfig' => array('one', 'two'));
-		$this->assertEquals($expected, $this->Shell->tasks);
-
-		$expected = array('Fixture' => null, 'DbConfig' => array('one', 'two'));
-		$this->assertEquals($expected, Hash::normalize($this->Shell->tasks), 'Normalized results are wrong.');
-		$this->assertEquals(array('Comment', 'Posts'), $this->Shell->uses, 'Merged models are wrong.');
 	}
 
 /**
