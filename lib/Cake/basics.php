@@ -234,7 +234,7 @@ if (!function_exists('pluginSplit')) {
 
 }
 
-if (!function_exists('pr')) {
+if (!function_exists('namespaceSplit')) {
 
 /**
  * Split the namespace from the classname.
@@ -244,13 +244,17 @@ if (!function_exists('pr')) {
  * @param string $class The full class name, ie `Cake\Core\App`
  * @return array Array with 2 indexes. 0 => namespace, 1 => classname
  */
-function namespaceSplit($class) {
-	$pos = strrpos($class, '\\');
-	if ($pos === false) {
-		return array('', $class);
+	function namespaceSplit($class) {
+		$pos = strrpos($class, '\\');
+		if ($pos === false) {
+			return array('', $class);
+		}
+		return array(substr($class, 0, $pos), substr($class, $pos + 1));
 	}
-	return array(substr($class, 0, $pos), substr($class, $pos + 1));
+
 }
+
+if (!function_exists('pr')) {
 
 /**
  * Print_r convenience function, which prints out <PRE> tags around
