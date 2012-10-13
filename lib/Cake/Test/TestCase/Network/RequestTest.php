@@ -1607,7 +1607,7 @@ class RequestTest extends TestCase {
  */
 	public function testEnvironmentDetection($name, $env, $expected) {
 		$_GET = array();
-		$this->__loadEnvironment($env);
+		$this->_loadEnvironment($env);
 
 		$request = Request::createFromGlobals();
 		$this->assertEquals($expected['url'], $request->url, "url error");
@@ -1932,7 +1932,7 @@ XML;
  * @param array $env
  * @return void
  */
-	protected function __loadEnvironment($env) {
+	protected function _loadEnvironment($env) {
 		if (isset($env['App'])) {
 			Configure::write('App', $env['App']);
 		}

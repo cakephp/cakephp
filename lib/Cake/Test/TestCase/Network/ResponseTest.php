@@ -1042,7 +1042,7 @@ class ResponseTest extends TestCase {
 
 		$response->expects($this->at(1))
 			->method('header')
-			->with('Content-Length', 31);
+			->with('Content-Length', 38);
 
 		$response->expects($this->once())->method('_clearBuffer');
 		$response->expects($this->once())->method('_flushBuffer');
@@ -1056,7 +1056,7 @@ class ResponseTest extends TestCase {
 		ob_start();
 		$result = $response->send();
 		$output = ob_get_clean();
-		$this->assertEquals('this is the test asset css file', $output);
+		$this->assertEquals("/* this is the test asset css file */", trim($output));
 		$this->assertTrue($result !== false);
 	}
 

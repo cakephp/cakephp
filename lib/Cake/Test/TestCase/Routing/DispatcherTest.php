@@ -993,7 +993,7 @@ class DispatcherTest extends TestCase {
 
 		$this->assertTextEquals($out, $cached);
 
-		$filename = $this->__cachePath($request->here());
+		$filename = $this->_cachePath($request->here());
 		unlink($filename);
 	}
 
@@ -1107,7 +1107,7 @@ class DispatcherTest extends TestCase {
  *
  * @return void
  */
-	protected function __backupEnvironment() {
+	protected function _backupEnvironment() {
 		return array(
 			'App' => Configure::read('App'),
 			'GET' => $_GET,
@@ -1121,7 +1121,7 @@ class DispatcherTest extends TestCase {
  *
  * @return void
  */
-	protected function __reloadEnvironment() {
+	protected function _reloadEnvironment() {
 		foreach ($_GET as $key => $val) {
 			unset($_GET[$key]);
 		}
@@ -1140,9 +1140,9 @@ class DispatcherTest extends TestCase {
  * @param array $env
  * @return void
  */
-	protected function __loadEnvironment($env) {
+	protected function _loadEnvironment($env) {
 		if ($env['reload']) {
-			$this->__reloadEnvironment();
+			$this->_reloadEnvironment();
 		}
 
 		if (isset($env['App'])) {
@@ -1174,7 +1174,7 @@ class DispatcherTest extends TestCase {
  * @param string $here
  * @return string
  */
-	protected function __cachePath($here) {
+	protected function _cachePath($here) {
 		$path = $here;
 		if ($here == '/') {
 			$path = 'home';

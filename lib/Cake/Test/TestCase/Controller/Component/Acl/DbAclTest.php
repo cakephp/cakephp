@@ -506,7 +506,7 @@ class DbAclTest extends TestCase {
  * @param bool $treesToo
  * @return void
  */
-	protected function __debug($printTreesToo = false) {
+	protected function _debug($printTreesToo = false) {
 		$this->Acl->Aro->displayField = 'alias';
 		$this->Acl->Aco->displayField = 'alias';
 		$aros = $this->Acl->Aro->find('list', array('order' => 'lft'));
@@ -534,10 +534,10 @@ class DbAclTest extends TestCase {
 		}
 		foreach ($permissions as $key => $values) {
 			array_unshift($values, $key);
-			$values = array_map(array(&$this, '__pad'), $values);
+			$values = array_map(array(&$this, '_pad'), $values);
 			$permissions[$key] = implode (' ', $values);
 		}
-		$permisssions = array_map(array(&$this, '__pad'), $permissions);
+		$permisssions = array_map(array(&$this, '_pad'), $permissions);
 		array_unshift($permissions, 'Current Permissions :');
 		if ($printTreesToo) {
 			debug(array('aros' => $this->Acl->Aro->generateTreeList(), 'acos' => $this->Acl->Aco->generateTreeList()));
@@ -553,7 +553,7 @@ class DbAclTest extends TestCase {
  * @param integer $len
  * @return void
  */
-	protected function __pad($string = '', $len = 14) {
+	protected function _pad($string = '', $len = 14) {
 		return str_pad($string, $len);
 	}
 }

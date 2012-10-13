@@ -92,7 +92,7 @@ class TestFixture {
 /**
  * Instantiate the fixture.
  *
- * @throws CakeException on invalid datasource usage.
+ * @throws Cake\Error\Exception on invalid datasource usage.
  */
 	public function __construct() {
 		if ($this->name === null) {
@@ -106,7 +106,13 @@ class TestFixture {
 		if (!empty($this->useDbConfig)) {
 			$connection = $this->useDbConfig;
 			if (strpos($connection, 'test') !== 0) {
-				throw new Error\Exception(__d('cake_dev', 'Invalid datasource %s for object %s', $connection, $this->name));
+				$message = __d(
+					'cake_dev',
+					'Invalid datasource name "%s" for "%s" fixture. Fixture datasource names must begin with "test".',
+					$connection,
+					$this->name
+				);
+				throw new Error\Exception($message);
 			}
 		}
 		$this->Schema = new Schema(array('name' => 'TestSuite', 'connection' => $connection));
