@@ -753,7 +753,11 @@ class PaginatorHelper extends AppHelper {
 					if ($class) {
 						$currentClass .= ' ' . $class;
 					}
-					$out .= $this->Html->tag($tag, $i, array('class' => $currentClass));
+					if ($currentTag) {
+						$out .= $this->Html->tag($tag, $this->Html->tag($currentTag, $i), array('class' => $currentClass));
+					} else {
+						$out .= $this->Html->tag($tag, $i, array('class' => $currentClass));
+					}
 				} else {
 					$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'));
 				}

@@ -1690,6 +1690,16 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Paginator->numbers(array('modulus' => 3, 'currentTag' => 'span', 'tag' => 'li'));
+		$expected = array(
+			array('li' => array('class' => 'current')), array('span' => array()), '1', '/span', '/li',
+			' | ',
+			array('li' => array()), array('a' => array('href' => '/index/page:2')), '2', '/a', '/li',
+			' | ',
+			array('li' => array()), array('a' => array('href' => '/index/page:3')), '3', '/a', '/li',
+		);
+		$this->assertTags($result, $expected);
+
 		$this->Paginator->request->params['paging'] = array(
 			'Client' => array(
 				'page' => 2,
