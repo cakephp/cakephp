@@ -25,7 +25,7 @@ use Cake\Model\Datasource\Database\Query;
  * Tests Connection class
  *
  **/
-class ConnectionTest extends \Cake\TestSuite\TestCase {
+class QueryTest extends \Cake\TestSuite\TestCase {
 
 
 	public function setUp() {
