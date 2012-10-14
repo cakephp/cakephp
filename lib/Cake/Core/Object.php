@@ -13,7 +13,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Core;
-use Cake\Log\Log;
+
+use Cake\Log\LogTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
@@ -30,6 +31,7 @@ use Cake\Utility\Hash;
  */
 class Object {
 
+	use LogTrait;
 /**
  * constructor, no-op
  *
@@ -152,21 +154,6 @@ class Object {
  */
 	protected function _stop($status = 0) {
 		exit($status);
-	}
-
-/**
- * Convenience method to write a message to Log. See Log::write()
- * for more information on writing to logs.
- *
- * @param string $msg Log message
- * @param integer $type Error type constant. Defined in app/Config/core.php.
- * @return boolean Success of log write
- */
-	public function log($msg, $type = LOG_ERR) {
-		if (!is_string($msg)) {
-			$msg = print_r($msg, true);
-		}
-		return Log::write($type, $msg);
 	}
 
 /**
