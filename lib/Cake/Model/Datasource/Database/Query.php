@@ -30,16 +30,16 @@ class Query implements IteratorAggregate  {
 		'from' => [],
 		'join' => [],
 		'set' => [],
-		'where' => [],
+		'where' => null,
 		'group' => [],
-		'having' => [],
+		'having' => null,
 		'order' => [],
 		'limit' => null,
 		'offset' => null
 		];
 
 /**
- * Indicates wheter internal state of this query was changed and most recent
+ * Indicates whether internal state of this query was changed and most recent
  * results 
  *
  * @return void
@@ -53,9 +53,10 @@ class Query implements IteratorAggregate  {
  **/
 	protected $_iterator;
 
-
 	public function __construct($connection) {
 		$this->connection($connection);
+		$this->_parts['where'] = new Expression;
+		$this->_parts['having'] = new Expression;
 	}
 
 	public function connection($connection = null) {
@@ -90,6 +91,24 @@ class Query implements IteratorAggregate  {
 
 		if (!empty($this->_parts['join'])) {
 			$statement .= $this->_buildJoins();
+		}
+
+		$where = $this->_parts['where'];
+		if (count($where->expressions())) {
+			$statement .= sprintf(' WHERE %s', $where->sql($this->_connection));
+		}
+
+		if (!empty($this->_parts['group'])) {
+			$statement .= sprintf(' GROUP BY %s', implode(', ', $this->_parts['group']));
+		}
+
+		$having = $this->_parts['having'];
+		if (count($having->expressions())) {
+			$statement .= sprintf(' HAVING %s', $having->sql($this->_connection));
+		}
+
+		if ($this->_parts['limit'] !== null) {
+			$statement .= sprintf(' LIMIT %s, %s', $this->_parts['limit'], intval($this->_parts['offset']));
 		}
 
 		return $statement;
@@ -188,43 +207,53 @@ class Query implements IteratorAggregate  {
 		return $this;
 	}
 
-	public function where() {
+	public function where($field, $value = null) {
+		$this->_parts['where']->where($field, $value);
 		return $this;
 	}
 
-	public function andWhere() {
+	public function andWhere($field, $value = null) {
+		$this->where($field, $value);
 		return $this;
 	}
 
-	public function orWhere() {
+	public function orWhere($field, $value = null) {
+		$this->_parts['where']->orWhere($field, $value);
 		return $this;
 	}
 
-	public function order() {
+	public function order($field, $direction = 'ASC') {
+		$this->_parts['order'] += [$field => $direction];
 		return $this;
 	}
 
-	public function group() {
+	public function group($field) {
+		$this->_parts['group'][] = $field;
 		return $this;
 	}
 
-	public function having() {
+	public function having($field, $value = null) {
+		$this->_parts['having']->andWhere($field, $value);
 		return $this;
 	}
 
-	public function andHaving() {
+	public function andHaving($field, $value = null) {
+		$this->having($field, $value);
 		return $this;
 	}
 
-	public function orHaving() {
+	public function orHaving($field, $value = null) {
+		$this->_parts['having']->orWhere($field, $value);
 		return $this;
 	}
 
 	public function limit($num = null) {
+		$this->_parts['limit'] = $num;
 		return $this;
 	}
 
 	public function offset($num = null) {
+		$this->_parts['offset'] = $num;
 		return $this;
 	}
 
@@ -254,7 +283,7 @@ class Query implements IteratorAggregate  {
 	}
 
 /**
- * Returns string respresentation of this query (complete SQL statement)
+ * Returns string representation of this query (complete SQL statement)
  *
  * @return string
  **/
