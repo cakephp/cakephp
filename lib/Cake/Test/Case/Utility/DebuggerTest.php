@@ -393,6 +393,13 @@ array(
 )
 TEXT;
 		$this->assertTextEquals($expected, $result);
+
+		$data = false;
+		$result = Debugger::exportVar($data);
+		$expected = <<<TEXT
+false
+TEXT;
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
