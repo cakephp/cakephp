@@ -70,7 +70,7 @@ Configure::write('Datasource.default', [
  * Create a test connection.  This connection is used
  * while running unit and integration tests.
  */
-Confgure::write('Datasource.test', [
+Configure::write('Datasource.test', [
 	'datasource' => 'Database/Mysql',
 	'persistent' => false,
 	'host' => 'localhost',
