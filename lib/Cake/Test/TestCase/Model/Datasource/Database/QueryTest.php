@@ -29,7 +29,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 
 
 	public function setUp() {
-		$this->connection = new Connection(Configure::read('Connections.test'));
+		$this->connection = new Connection(Configure::read('Datasource.test'));
 	}
 
 	public function tearDown() {

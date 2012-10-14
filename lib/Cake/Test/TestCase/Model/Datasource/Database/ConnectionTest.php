@@ -28,7 +28,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 
 
 	public function setUp() {
-		$this->connection = new Connection(Configure::read('Connections.test'));
+		$this->connection = new Connection(Configure::read('Datasource.test'));
 	}
 
 	public function tearDown() {
@@ -75,7 +75,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testWrongCredentials() {
-		$connection = new Connection(['database' => 'foobar'] + Configure::read('Connections.test'));
+		$connection = new Connection(['database' => 'foobar'] + Configure::read('Datasource.test'));
 		$connection->connect();
 		$this->skipIf($connection->driver() instanceof \Cake\Model\Datasource\Database\Driver\Sqlite);
 	}
