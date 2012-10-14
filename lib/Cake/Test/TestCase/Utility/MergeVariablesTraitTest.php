@@ -111,7 +111,7 @@ class MergeVariablesTraitTest extends TestCase {
 	}
 
 /**
- * Test that merging variables with booleans in the class heirarchy
+ * Test that merging variables with booleans in the class hierarchy
  * doesn't cause issues.
  *
  * @return void
