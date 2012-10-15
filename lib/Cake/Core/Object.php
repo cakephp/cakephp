@@ -174,34 +174,4 @@ class Object {
 		}
 	}
 
-/**
- * Merges this objects $property with the property in $class' definition.
- * This classes value for the property will be merged on top of $class'
- *
- * This provides some of the DRY magic CakePHP provides.  If you want to shut it off, redefine
- * this method as an empty function.
- *
- * @param array $properties The name of the properties to merge.
- * @param string $class The class to merge the property with.
- * @param boolean $normalize Set to true to run the properties through Hash::normalize() before merging.
- * @return void
- */
-	protected function _mergeVars($properties, $class, $normalize = true) {
-		$classProperties = get_class_vars($class);
-		foreach ($properties as $var) {
-			if (
-				isset($classProperties[$var]) &&
-				!empty($classProperties[$var]) &&
-				is_array($this->{$var}) &&
-				$this->{$var} != $classProperties[$var]
-			) {
-				if ($normalize) {
-					$classProperties[$var] = Hash::normalize($classProperties[$var]);
-					$this->{$var} = Hash::normalize($this->{$var});
-				}
-				$this->{$var} = Hash::merge($classProperties[$var], $this->{$var});
-			}
-		}
-	}
-
 }

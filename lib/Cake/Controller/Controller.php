@@ -8,12 +8,12 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 namespace Cake\Controller;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
@@ -27,6 +27,7 @@ use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
+use Cake\Utility\MergeVariablesTrait;
 use Cake\View\View;
 
 /**
@@ -62,6 +63,8 @@ use Cake\View\View;
  * @link          http://book.cakephp.org/2.0/en/controllers.html
  */
 class Controller extends Object implements EventListener {
+
+	use MergeVariablesTrait;
 
 /**
  * The name of this controller. Controller names are plural, named after the model they manipulate.
@@ -299,15 +302,6 @@ class Controller extends Object implements EventListener {
 	public $validationErrors = null;
 
 /**
- * The class name of the parent class you wish to merge with.
- * Typically this is AppController, but you may wish to merge vars with a different
- * parent class.
- *
- * @var string
- */
-	protected $_mergeParent = null;
-
-/**
  * Instance of the Cake\Event\EventManager this controller is using
  * to dispatch inner events.
  *
@@ -334,9 +328,6 @@ class Controller extends Object implements EventListener {
 				$viewPath = Inflector::camelize($request->params['prefix']) . DS . $viewPath;
 			}
 			$this->viewPath = $viewPath;
-		}
-		if ($this->_mergeParent === null) {
-			$this->_mergeParent = Configure::read('App.namespace') . '\Controller\Controller';
 		}
 
 		$this->modelClass = Inflector::singularize($this->name);
@@ -534,76 +525,37 @@ class Controller extends Object implements EventListener {
 
 /**
  * Merge components, helpers, and uses vars from
- * Controller::$_mergeParent and PluginAppController.
+ * parent classes.
  *
  * @return void
  */
 	protected function _mergeControllerVars() {
-		$pluginController = $pluginDot = null;
-		$mergeParent = is_subclass_of($this, $this->_mergeParent);
-		$pluginVars = array();
-		$appVars = array();
-
+		$pluginDot = null;
 		if (!empty($this->plugin)) {
-			$pluginController = Plugin::getNamespace($this->plugin) . '\Controller\Controller';
-			if (!is_subclass_of($this, $pluginController)) {
-				$pluginController = null;
-			}
 			$pluginDot = $this->plugin . '.';
 		}
-
-		if ($pluginController) {
-			$merge = array('components', 'helpers');
-			$this->_mergeVars($merge, $pluginController);
-		}
-
-		if ($mergeParent || !empty($pluginController)) {
-			$appVars = get_class_vars($this->_mergeParent);
-			$merge = array('components', 'helpers');
-			$this->_mergeVars($merge, $this->_mergeParent, true);
-		}
-
 		if ($this->uses === null) {
 			$this->uses = false;
 		}
-		if ($this->uses === true) {
-			$this->uses = array($pluginDot . $this->modelClass);
-		}
-		if (isset($appVars['uses']) && $appVars['uses'] === $this->uses) {
-			array_unshift($this->uses, $pluginDot . $this->modelClass);
-		}
-		if ($pluginController) {
-			$pluginVars = get_class_vars($pluginController);
-		}
-		if ($this->uses !== false) {
-			$this->_mergeUses($pluginVars);
-			$this->_mergeUses($appVars);
-		} else {
-			$this->uses = array();
+		if ($this->uses === false) {
+			$this->uses = [];
 			$this->modelClass = '';
 		}
-	}
-
-/**
- * Helper method for merging the $uses property together.
- *
- * Merges the elements not already in $this->uses into
- * $this->uses.
- *
- * @param array $merge The data to merge in.
- * @return void
- */
-	protected function _mergeUses($merge) {
-		if (!isset($merge['uses'])) {
-			return;
+		if ($this->uses === true) {
+			$this->uses = [$pluginDot . $this->modelClass];
 		}
-		if ($merge['uses'] === true) {
-			return;
-		}
-		$this->uses = array_merge(
-			$this->uses,
-			array_diff($merge['uses'], $this->uses)
+		$this->_mergeVars(
+			['components', 'helpers', 'uses'],
+			[
+				'associative' => ['components', 'helpers'],
+				'reverse' => ['uses']
+			]
 		);
+		$usesProperty = new \ReflectionProperty($this, 'uses');
+		if ($this->uses && $usesProperty->getDeclaringClass()->getName() !== get_class($this)) {
+			array_unshift($this->uses, $pluginDot . $this->modelClass);
+		}
+		$this->uses = array_unique($this->uses);
 	}
 
 /**

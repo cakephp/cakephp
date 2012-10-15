@@ -26,7 +26,7 @@ use Cake\TestSuite\TestSuite;
  *
  * @package       Cake.Test.Case
  */
-class AllControllersTest extends \PHPUnit_Framework_TestSuite {
+class AllControllerTest extends \PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -40,7 +40,6 @@ class AllControllersTest extends \PHPUnit_Framework_TestSuite {
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/ScaffoldTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/PagesControllerTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/ComponentTest.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'Controller/ControllerMergeVarsTest.php');
 		return $suite;
 	}
 }
