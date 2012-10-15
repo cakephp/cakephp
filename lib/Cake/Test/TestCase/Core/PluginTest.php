@@ -1,9 +1,5 @@
 <?php
 /**
- * PluginTest file.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Core
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Core;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -25,6 +21,7 @@ use Cake\TestSuite\TestCase;
 /**
  * PluginTest class
  *
+ * @package Cake.Test.Case.Core
  */
 class PluginTest extends TestCase {
 
@@ -245,7 +242,7 @@ class PluginTest extends TestCase {
  */
 	public function testLoadAll() {
 		Plugin::loadAll();
-		$expected = array('MergeVar', 'PluginJs', 'TestPlugin', 'TestPluginTwo');
+		$expected = ['PluginJs', 'TestPlugin', 'TestPluginTwo'];
 		$this->assertEquals($expected, Plugin::loaded());
 	}
 
@@ -257,7 +254,7 @@ class PluginTest extends TestCase {
 	public function testLoadAllWithDefaults() {
 		$defaults = array('bootstrap' => true);
 		Plugin::loadAll(array($defaults));
-		$expected = array('MergeVar', 'PluginJs', 'TestPlugin', 'TestPluginTwo');
+		$expected = ['PluginJs', 'TestPlugin', 'TestPluginTwo'];
 		$this->assertEquals($expected, Plugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
@@ -274,7 +271,7 @@ class PluginTest extends TestCase {
 		Plugin::loadAll(array(array('bootstrap' => true), 'TestPlugin' => array('routes' => true)));
 		Plugin::routes();
 
-		$expected = array('MergeVar', 'PluginJs', 'TestPlugin', 'TestPluginTwo');
+		$expected = ['PluginJs', 'TestPlugin', 'TestPluginTwo'];
 		$this->assertEquals($expected, Plugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
