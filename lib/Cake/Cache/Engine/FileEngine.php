@@ -308,7 +308,8 @@ class FileEngine extends CacheEngine {
 		if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
 			$exists = file_exists($path->getPathname());
 			try {
-				$this->_File = $path->openFile('c+');
+//				$this->_File = $path->openFile('c+'); //may be here is a bug for open mode
+				$this->_File = $path->openFile('w+');
 			} catch (Exception $e) {
 				trigger_error($e->getMessage(), E_USER_WARNING);
 				return false;
