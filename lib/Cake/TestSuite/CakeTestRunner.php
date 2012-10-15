@@ -97,6 +97,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 		if (class_exists('AppFixtureManager')) {
 			return new AppFixtureManager();
 		}
+		App::uses('CakeFixtureManager', 'TestSuite/Fixture');
 		return new CakeFixtureManager();
 	}
 
