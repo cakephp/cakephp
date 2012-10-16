@@ -235,6 +235,10 @@ class EventManagerTest extends TestCase {
  * @return void
  */
 	public function testDispatchReturnValue() {
+		$this->skipIf(
+			version_compare(\PHPUnit_Runner_Version::id(), '3.7', '<'),
+			'These tests fail in PHPUnit 3.6'
+		);
 		$manager = new EventManager;
 		$listener = $this->getMock(__NAMESPACE__ . '\EventTestListener');
 		$anotherListener = $this->getMock(__NAMESPACE__ . '\EventTestListener');
@@ -242,11 +246,12 @@ class EventManagerTest extends TestCase {
 		$manager->attach(array($anotherListener, 'listenerFunction'), 'fake.event');
 		$event = new Event('fake.event');
 
-		$firstStep = clone $event;
 		$listener->expects($this->at(0))->method('listenerFunction')
-			->with($firstStep)
+			->with($event)
 			->will($this->returnValue('something special'));
-		$anotherListener->expects($this->at(0))->method('listenerFunction')->with($event);
+		$anotherListener->expects($this->at(0))
+			->method('listenerFunction')
+			->with($event);
 		$manager->dispatch($event);
 		$this->assertEquals('something special', $event->result);
 	}
@@ -257,6 +262,11 @@ class EventManagerTest extends TestCase {
  * @return void
  */
 	public function testDispatchFalseStopsEvent() {
+		$this->skipIf(
+			version_compare(PHPUnit_Runner_Version::id(), '3.7', '<'),
+			'These tests fail in PHPUnit 3.6'
+		);
+
 		$manager = new EventManager;
 		$listener = $this->getMock(__NAMESPACE__ . '\EventTestListener');
 		$anotherListener = $this->getMock(__NAMESPACE__ . '\EventTestListener');
@@ -264,11 +274,11 @@ class EventManagerTest extends TestCase {
 		$manager->attach(array($anotherListener, 'listenerFunction'), 'fake.event');
 		$event = new Event('fake.event');
 
-		$originalEvent = clone $event;
 		$listener->expects($this->at(0))->method('listenerFunction')
-			->with($originalEvent)
+			->with($event)
 			->will($this->returnValue(false));
-		$anotherListener->expects($this->never())->method('listenerFunction');
+		$anotherListener->expects($this->never())
+			->method('listenerFunction');
 		$manager->dispatch($event);
 		$this->assertTrue($event->isStopped());
 	}

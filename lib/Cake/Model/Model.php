@@ -1097,7 +1097,7 @@ class Model extends Object implements EventListener {
 	}
 
 /**
- * Sets a custom table for your controller class. Used by your controller to select a database table.
+ * Sets a custom table for your model class. Used by your controller to select a database table.
  *
  * @param string $tableName Name of the custom table
  * @throws Cake\Error\MissingTableException when database table $tableName is not found on data source
@@ -2764,8 +2764,8 @@ class Model extends Object implements EventListener {
 		} elseif ($state === 'after') {
 			foreach (array(0, $this->alias) as $key) {
 				if (isset($results[0][$key]['count'])) {
-					if (($count = count($results)) > 1) {
-						return $count;
+					if ($query['group']) {
+						return count($results);
 					} else {
 						return intval($results[0][$key]['count']);
 					}

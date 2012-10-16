@@ -21,6 +21,7 @@
 
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
+App::uses('String', 'Utility');
 require_once dirname(__DIR__) . DS . 'models.php';
 
 /**
@@ -60,6 +61,37 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 		parent::setUp();
 		$this->markTestIncomplete('Not runnable until Models are fixed.');
 	}
+/**
+ * testAddWithPreSpecifiedId method
+ *
+ * @return void
+ */
+	public function testAddWithPreSpecifiedId() {
+		extract($this->settings);
+		$this->Tree = new $modelClass();
+		$this->Tree->initialize(2, 2);
+
+		$data = $this->Tree->find('first', array(
+			'fields' => array('id'),
+			'conditions' => array($modelClass . '.name' => '1.1')
+		));
+
+		$id = String::uuid();
+		$this->Tree->create();
+		$result = $this->Tree->save(array($modelClass => array(
+			'id' => $id,
+			'name' => 'testAddMiddle',
+			$parentField => $data[$modelClass]['id'])
+		));
+		$expected = array_merge(
+			array($modelClass => array('id' => $id, 'name' => 'testAddMiddle', $parentField => '2')),
+			$result
+		);
+		$this->assertSame($expected, $result);
+
+		$this->assertTrue($this->Tree->verify());
+	}
+
 /**
  * testMovePromote method
  *

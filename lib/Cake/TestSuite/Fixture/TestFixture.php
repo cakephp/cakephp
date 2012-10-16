@@ -300,7 +300,7 @@ class TestFixture {
 	}
 
 /**
- * Truncates the current fixture. Can be overwritten by classes extending 
+ * Truncates the current fixture. Can be overwritten by classes extending
  * CakeFixture to trigger other events before / after truncate.
  *
  * @param DboSource $db A reference to a db instance
