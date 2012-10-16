@@ -588,6 +588,24 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test that files in the 0th index work.
+ */
+	public function testFilesZeroithIndex() {
+		$_FILES = array(
+			0 => array(
+				'name' => 'cake_sqlserver_patch.patch',
+				'type' => 'text/plain',
+				'tmp_name' => '/private/var/tmp/phpy05Ywj',
+				'error' => 0,
+				'size' => 6271,
+			),
+		);
+
+		$request = new CakeRequest('some/path');
+		$this->assertEquals($_FILES, $request->params['form']);
+	}
+
+/**
  * test method overrides coming in from POST data.
  *
  * @return void
@@ -1626,6 +1644,30 @@ class CakeRequestTest extends CakeTestCase {
 					'url' => '',
 					'base' => '',
 					'webroot' => '/',
+				),
+			),
+			array(
+				'Apache - w/rewrite, document root set above top level cake dir, request root, absolute REQUEST_URI',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost',
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
+						'REQUEST_URI' => FULL_BASE_URL . '/site/posts/index',
+						'SCRIPT_NAME' => '/site/app/webroot/index.php',
+						'PHP_SELF' => '/site/app/webroot/index.php',
+					),
+				),
+				array(
+					'url' => 'posts/index',
+					'base' => '/site',
+					'webroot' => '/site/',
 				),
 			),
 			array(
