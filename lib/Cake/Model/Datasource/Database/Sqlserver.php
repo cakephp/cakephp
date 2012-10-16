@@ -637,7 +637,7 @@ class Sqlserver extends DboSource {
 /**
  * Generate a database-native column schema string
  *
- * @param array $column An array structured like the 
+ * @param array $column An array structured like the
  *   following: array('name'=>'value', 'type'=>'value'[, options]),
  *   where options can be 'default', 'length', or 'key'.
  * @return string

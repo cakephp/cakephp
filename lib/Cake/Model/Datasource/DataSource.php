@@ -420,7 +420,7 @@ class DataSource extends Object {
 
 /**
  * Closes a connection. Override in subclasses
- * 
+ *
  * @return boolean
  * @access public
  */
