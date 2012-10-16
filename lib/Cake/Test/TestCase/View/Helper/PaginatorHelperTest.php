@@ -1381,23 +1381,23 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 1, 'tag' => 'li', 'currentClass' => 'active', 'currentTag' => 'a'));
 		$expected = array(
-			array('li' => array()), array('a' => array('href' => '/index/page:1')), '1', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index?page=1')), '1', '/a', '/li',
 			' | ',
 			array('li' => array('class' => 'active')), array('a' => array()), '2', '/a', '/li',
 			' | ',
-			array('li' => array()), array('a' => array('href' => '/index/page:3')), '3', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index?page=3')), '3', '/a', '/li',
 			' | ',
-			array('li' => array()), array('a' => array('href' => '/index/page:4')), '4', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index?page=4')), '4', '/a', '/li',
 			' | ',
-			array('li' => array()), array('a' => array('href' => '/index/page:5')), '5', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index?page=5')), '5', '/a', '/li',
 			' | ',
-			array('li' => array()), array('a' => array('href' => '/index/page:6')), '6', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index?page=6')), '6', '/a', '/li',
 			' | ',
-			array('li' => array()), array('a' => array('href' => '/index/page:7')), '7', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index?page=7')), '7', '/a', '/li',
 			' | ',
-			array('li' => array()), array('a' => array('href' => '/index/page:8')), '8', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index?page=8')), '8', '/a', '/li',
 			' | ',
-			array('li' => array()), array('a' => array('href' => '/index/page:9')), '9', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index?page=9')), '9', '/a', '/li',
 		);
 		$this->assertTags($result, $expected);
 
@@ -1632,9 +1632,9 @@ class PaginatorHelperTest extends TestCase {
 		$expected = array(
 			array('li' => array('class' => 'current')), array('span' => array()), '1', '/span', '/li',
 			' | ',
-			array('li' => array()), array('a' => array('href' => '/index/page:2')), '2', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/li',
 			' | ',
-			array('li' => array()), array('a' => array('href' => '/index/page:3')), '3', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index?page=3')), '3', '/a', '/li',
 		);
 		$this->assertTags($result, $expected);
 
