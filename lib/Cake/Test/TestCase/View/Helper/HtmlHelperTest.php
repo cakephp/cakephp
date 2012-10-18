@@ -527,8 +527,6 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testCssLink() {
-		Configure::write('Asset.filter.css', false);
-
 		$result = $this->Html->css('screen');
 		$expected = array(
 			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*css\/screen\.css/')
@@ -560,16 +558,9 @@ class HtmlHelperTest extends TestCase {
 		$expected['link']['href'] = 'preg:/http:\/\/.*\/screen\.css\?1234/';
 		$this->assertTags($result, $expected);
 
-		Configure::write('Asset.filter.css', 'css.php');
-		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/.*ccss\/cake\.generic\.css/';
-		$this->assertTags($result, $expected);
-
 		$result = $this->Html->css('//example.com/css/cake.generic.css');
 		$expected['link']['href'] = 'preg:/.*example\.com\/css\/cake\.generic\.css/';
 		$this->assertTags($result, $expected);
-
-		Configure::write('Asset.filter.css', false);
 
 		$result = explode("\n", trim($this->Html->css(array('cake.generic', 'vendor.generic'))));
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css/';
@@ -599,7 +590,6 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testPluginCssLink() {
-		Configure::write('Asset.filter.css', false);
 		Plugin::load('TestPlugin');
 
 		$result = $this->Html->css('TestPlugin.test_plugin_asset');
@@ -618,13 +608,6 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->css('TestPlugin.test_plugin_asset.css?1234');
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?1234/';
 		$this->assertTags($result, $expected);
-
-		Configure::write('Asset.filter.css', 'css.php');
-		$result = $this->Html->css('TestPlugin.test_plugin_asset');
-		$expected['link']['href'] = 'preg:/.*test_plugin\/ccss\/test_plugin_asset\.css/';
-		$this->assertTags($result, $expected);
-
-		Configure::write('Asset.filter.css', false);
 
 		$result = explode("\n", trim($this->Html->css(array('TestPlugin.test_plugin_asset', 'TestPlugin.vendor.generic'))));
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/';
@@ -942,27 +925,6 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->script('second_script', array('block' => 'headScripts'));
 		$this->assertNull($result);
-	}
-
-/**
- * Test that Asset.filter.js works.
- *
- * @return void
- */
-	public function testScriptAssetFilter() {
-		Configure::write('Asset.filter.js', 'js.php');
-
-		$result = $this->Html->script('jquery-1.3');
-		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'cjs/jquery-1.3.js')
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Html->script('//example.com/js/jquery-1.3.js');
-		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => '//example.com/js/jquery-1.3.js')
-		);
-		$this->assertTags($result, $expected);
 	}
 
 /**

@@ -48,11 +48,6 @@ class AssetDispatcher extends DispatcherFilter {
 			return;
 		}
 
-		if ($result = $this->_filterAsset($event)) {
-			$event->stopPropagation();
-			return $result;
-		}
-
 		$assetFile = $this->_getAssetFile($url);
 		if ($assetFile === null || !file_exists($assetFile)) {
 			return null;
@@ -70,42 +65,6 @@ class AssetDispatcher extends DispatcherFilter {
 		$ext = array_pop($pathSegments);
 		$this->_deliverAsset($response, $assetFile, $ext);
 		return $response;
-	}
-
-/**
- * Checks if the client is requesting a filtered asset and runs the corresponding
- * filter if any is configured
- *
- * @param Cake\Event\Event $event containing the request and response object
- * @return Cake\Network\Response if the client is requesting a recognized asset, null otherwise
- */
-	protected function _filterAsset($event) {
-		$url = $event->data['request']->url;
-		$response = $event->data['response'];
-		$filters = Configure::read('Asset.filter');
-		$isCss = (
-			strpos($url, 'ccss/') === 0 ||
-			preg_match('#^(theme/([^/]+)/ccss/)|(([^/]+)(?<!css)/ccss)/#i', $url)
-		);
-		$isJs = (
-			strpos($url, 'cjs/') === 0 ||
-			preg_match('#^/((theme/[^/]+)/cjs/)|(([^/]+)(?<!js)/cjs)/#i', $url)
-		);
-
-		if (($isCss && empty($filters['css'])) || ($isJs && empty($filters['js']))) {
-			$response->statusCode(404);
-			return $response;
-		}
-
-		if ($isCss) {
-			include WWW_ROOT . DS . $filters['css'];
-			return $response;
-		}
-
-		if ($isJs) {
-			include WWW_ROOT . DS . $filters['js'];
-			return $response;
-		}
 	}
 
 /**
