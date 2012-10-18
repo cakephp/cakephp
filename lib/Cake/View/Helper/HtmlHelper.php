@@ -435,13 +435,6 @@ class HtmlHelper extends Helper {
 			$url = $path;
 		} else {
 			$url = $this->assetUrl($path, $options + array('pathPrefix' => CSS_URL, 'ext' => '.css'));
-
-			if (Configure::read('Asset.filter.css')) {
-				$pos = strpos($url, CSS_URL);
-				if ($pos !== false) {
-					$url = substr($url, 0, $pos) . 'ccss/' . substr($url, $pos + strlen(CSS_URL));
-				}
-			}
 		}
 
 		if ($rel == 'import') {
@@ -529,10 +522,6 @@ class HtmlHelper extends Helper {
 
 		if (strpos($url, '//') === false) {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => JS_URL, 'ext' => '.js'));
-
-			if (Configure::read('Asset.filter.js')) {
-				$url = str_replace(JS_URL, 'cjs/', $url);
-			}
 		}
 		$attributes = $this->_parseAttributes($options, array('block', 'once'), ' ');
 		$out = sprintf($this->_tags['javascriptlink'], $url, $attributes);

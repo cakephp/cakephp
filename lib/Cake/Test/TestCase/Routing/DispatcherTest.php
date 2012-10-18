@@ -914,25 +914,6 @@ class DispatcherTest extends TestCase {
 	}
 
 /**
- * test that missing asset processors trigger a 404 with no response body.
- *
- * @return void
- */
-	public function testMissingAssetProcessor404() {
-		$response = $this->getMock('Cake\Network\Response', array('send'));
-		$Dispatcher = new TestDispatcher();
-		Configure::write('Asset.filter', array(
-			'js' => '',
-			'css' => null
-		));
-		Configure::write('Dispatcher.filters', array('AssetDispatcher'));
-
-		$request = new Request('ccss/cake.generic.css');
-		$Dispatcher->dispatch($request, $response);
-		$this->assertEquals('404', $response->statusCode());
-	}
-
-/**
  * Data provider for cached actions.
  *
  * - Test simple views
