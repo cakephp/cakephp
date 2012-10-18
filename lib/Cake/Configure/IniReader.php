@@ -173,8 +173,10 @@ class IniReader implements ConfigReaderInterface {
 	public function dump($filename, $data) {
 		$result = array();
 		foreach ($data as $key => $value) {
+			$isSection = false;
 			if ($key[0] != '[') {
 				$result[] = "[$key]";
+				$isSection = true;
 			}
 			if (is_array($value)) {
 				$keyValues = Hash::flatten($value, '.');
@@ -182,8 +184,11 @@ class IniReader implements ConfigReaderInterface {
 					$result[] = "$k = " . $this->_value($v);
 				}
 			}
+			if ($isSection) {
+				$result[] = '';
+			}
 		}
-		$contents = implode("\n", $result);
+		$contents = trim(implode("\n", $result));
 
 		if (substr($filename, -4) !== '.ini') {
 			$filename .= '.ini';
