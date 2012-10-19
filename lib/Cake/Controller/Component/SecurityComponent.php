@@ -493,7 +493,7 @@ class SecurityComponent extends Component {
 
 		$fieldList += $lockedFields;
 		$unlocked = implode('|', $unlocked);
-		$check = Security::hash(serialize($fieldList) . $unlocked . Configure::read('Security.salt'));
+		$check = Security::hash(serialize($fieldList) . $unlocked . Configure::read('Security.salt'), 'sha1');
 		return ($token === $check);
 	}
 
