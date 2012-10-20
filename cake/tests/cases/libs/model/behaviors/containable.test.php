@@ -245,6 +245,20 @@ class ContainableBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * Test that mixing contain() and the contain find option.
+ *
+ * @access public
+ * @return void
+ */
+	function testContainAndContainOption() {
+		$this->Article->contain();
+		$r = $this->Article->find('all', array(
+			'contain' => array('Comment')
+		));
+		$this->assertTrue(isset($r[0]['Comment']), 'No comment returned');
+	}
+
+/**
  * testFindEmbeddedNoBindings method
  *
  * @access public
