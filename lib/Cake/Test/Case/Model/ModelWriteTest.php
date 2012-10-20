@@ -4831,6 +4831,51 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * Test that validate = first, atomic = false works when associated records
+ * fail validation.
+ *
+ * @return void
+ */
+	public function testSaveAssociatedAtomicFalseValidateFirstWithErrors() {
+		$this->loadFixtures('Comment', 'Article', 'User');
+		$Article = ClassRegistry::init('Article');
+		$Article->Comment->validator()->add('comment', array(
+			array('rule' => 'notEmpty')
+		));
+
+		$data = array(
+			'Article' => array(
+				'user_id' => 1,
+				'title' => 'Foo',
+				'body' => 'text',
+				'published' => 'N'
+			),
+			'Comment' => array(
+				array(
+					'user_id' => 1,
+					'comment' => '',
+					'published' => 'N',
+				)
+			),
+		);
+
+		$Article->saveAssociated(
+			$data,
+			array('validate' => 'first', 'atomic' => false)
+		);
+
+		$result = $Article->validationErrors;
+		$expected = array(
+			'Comment' => array(
+				array(
+					'comment' => array( 'This field cannot be left blank' )
+				)
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testSaveMany method
  *
  * @return void
