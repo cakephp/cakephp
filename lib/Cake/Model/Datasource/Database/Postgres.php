@@ -287,7 +287,10 @@ class Postgres extends DboSource {
 		if (is_object($table)) {
 			$table = $this->fullTableName($table, false, false);
 		}
-		if (isset($this->_sequenceMap[$table]) && isset($this->_sequenceMap[$table][$field])) {
+		if (!isset($this->_sequenceMap[$table])) {
+			$this->describe($table);
+		}
+		if (isset($this->_sequenceMap[$table][$field])) {
 			return $this->_sequenceMap[$table][$field];
 		} else {
 			return "{$table}_{$field}_seq";
