@@ -161,7 +161,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::pluralize('cafe'), 'cafes');
 		$this->assertEquals(Inflector::pluralize('roof'), 'roofs');
 		$this->assertEquals(Inflector::pluralize('foe'), 'foes');
-		$this->assertEquals(Inflector::pluralize('cookie'), 'cookie');
+		$this->assertEquals(Inflector::pluralize('cookie'), 'cookies');
 		$this->assertEquals(Inflector::pluralize(''), '');
 	}
 
