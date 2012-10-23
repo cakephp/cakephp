@@ -1140,7 +1140,9 @@ class FormHelper extends AppHelper {
 			$errMsg = $this->error($fieldName, $error);
 			if ($errMsg) {
 				$divOptions = $this->addClass($divOptions, 'error');
-				$out['error'] = $errMsg;
+				if ($error !== '') {
+					$out['error'] = $errMsg;
+				}
 			}
 		}
 
