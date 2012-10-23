@@ -1006,12 +1006,17 @@ class FormHelper extends AppHelper {
 				}
 				$options['options'] = $varOptions;
 			}
+
+			if ($options['type'] === 'select' && array_key_exists('step', $options)) {
+				unset($options['step']);
+			}
 		}
 
 		$autoLength = (
 			!array_key_exists('maxlength', $options) &&
 			isset($fieldDef['length']) &&
-			is_scalar($fieldDef['length'])
+			is_scalar($fieldDef['length']) &&
+		 	$options['type'] !== 'select'
 		);
 		if ($autoLength && $options['type'] == 'text') {
 			$options['maxlength'] = $fieldDef['length'];
