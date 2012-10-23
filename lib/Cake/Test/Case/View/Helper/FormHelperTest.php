@@ -2650,6 +2650,29 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->View->viewVars['balances'] = array(0 => 'nothing', 1 => 'some', 100 => 'a lot');
+		$this->Form->request->data = array('ValidateUser' => array('balance' => 1));
+		$result = $this->Form->input('ValidateUser.balance');
+		$expected = array(
+			'div' => array('class' => 'input select'),
+			'label' => array('for' => 'ValidateUserBalance'),
+			'Balance',
+			'/label',
+			'select' => array('name' => 'data[ValidateUser][balance]', 'id' => 'ValidateUserBalance'),
+			array('option' => array('value' => '0')),
+			'nothing',
+			'/option',
+			array('option' => array('value' => '1', 'selected' => 'selected')),
+			'some',
+			'/option',
+			array('option' => array('value' => '100')),
+			'a lot',
+			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
