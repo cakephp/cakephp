@@ -129,13 +129,9 @@ if (!defined('JS_URL')) {
 	define('JS_URL', 'js/');
 }
 
-
-
-
 require CAKE . 'basics.php';
 require CAKE . 'Core' . DS . 'App.php';
 require CAKE . 'Error' . DS . 'exceptions.php';
-
 
 /**
  *  Full url prefix
@@ -165,3 +161,9 @@ App::$bootstrapping = true;
 
 Configure::bootstrap(isset($boot) ? $boot : true);
 
+if (function_exists('mb_internal_encoding')) {
+	$encoding = Configure::read('App.encoding');
+	if (!empty($encoding)) {
+		mb_internal_encoding($encoding);
+	}
+}
