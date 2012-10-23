@@ -40,7 +40,7 @@ class MergeVarsAppController extends Controller {
  *
  * @var array
  */
-	public $helpers = array('MergeVar' => array('format' => 'html', 'terse'));
+	public $helpers = array('Html' => array('className' => 'HtmlExt'), 'MergeVar' => array('format' => 'html', 'terse'));
 }
 
 /**
@@ -72,6 +72,13 @@ class MergeVariablesController extends MergeVarsAppController {
  * @var arrays
  */
 	public $uses = array();
+
+/**
+ * helpers
+ *
+ * @var array
+ */
+	public $helpers = array('Html' => array('className' => 'HtmlExtTwo'));
 
 /**
  * parent for mergeVars
@@ -176,7 +183,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 		$Controller = new MergeVariablesController();
 		$Controller->constructClasses();
 
-		$expected = array('MergeVar' => array('format' => 'html', 'terse'));
+		$expected = array('Html' => array('className' => 'HtmlExtTwo'), 'MergeVar' => array('format' => 'html', 'terse'));
 		$this->assertEquals($expected, $Controller->helpers, 'Duplication of settings occurred. %s');
 	}
 
@@ -188,10 +195,30 @@ class ControllerMergeVarsTest extends CakeTestCase {
  */
 	public function testHelperOrderPrecedence() {
 		$Controller = new MergeVariablesController();
-		$Controller->helpers = array('Custom', 'Foo' => array('something'));
+		$Controller->helpers = array('Html', 'Custom', 'Foo' => array('something'));
 		$Controller->constructClasses();
 
 		$expected = array(
+			'Html' => array('className' => 'HtmlExt'),
+			'MergeVar' => array('format' => 'html', 'terse'),
+			'Custom' => null,
+			'Foo' => array('something')
+		);
+		$this->assertSame($expected, $Controller->helpers, 'Order is incorrect.');
+	}
+
+/**
+ * Test that merging can be disabled using `'HelperName' => false`
+ *
+ * @return void
+ */
+	public function testHelperDisabledMerge() {
+		$Controller = new MergeVariablesController();
+		$Controller->helpers = array('Html' => false, 'Custom', 'Foo' => array('something'));
+		$Controller->constructClasses();
+
+		$expected = array(
+			'Html' => false,
 			'MergeVar' => array('format' => 'html', 'terse'),
 			'Custom' => null,
 			'Foo' => array('something')
@@ -218,6 +245,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 		$this->assertEquals($expected, $Controller->components, 'Components are unexpected.');
 
 		$expected = array(
+			'Html' => array('className' => 'HtmlExt'),
 			'MergeVar' => array('format' => 'html', 'terse'),
 			'Javascript' => null
 		);
