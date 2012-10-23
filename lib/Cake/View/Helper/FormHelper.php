@@ -994,7 +994,7 @@ class FormHelper extends AppHelper {
 
 		if (
 			(!isset($options['options']) && in_array($options['type'], $types)) ||
-			(isset($magicType) && $options['type'] == 'text')
+			(isset($magicType) && in_array($options['type'], array('text', 'number')))
 		) {
 			$varName = Inflector::variable(
 				Inflector::pluralize(preg_replace('/_id$/', '', $fieldKey))
