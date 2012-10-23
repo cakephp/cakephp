@@ -699,6 +699,36 @@ podeís adquirirla.</span></p>
 	}
 
 /**
+ * test testSafeUrlEncode
+ *
+ * @return void
+ */
+	public function testSafeUrlEncode() {
+		$text = 'abc123';
+		$result = $this->Text->safeUrlEncode($text);
+		$this->assertEquals('YWJjMTIz', $result);
+
+		$text = 'some/problematic+and-not=urlsafe&string';
+		$result = $this->Text->safeUrlEncode($text);
+		$this->assertEquals('c29tZS9wcm9ibGVtYXRpYythbmQtbm90PXVybHNhZmUmc3RyaW5n', $result);
+	}
+
+/**
+ * test testSafeUrlDecode
+ *
+ * @return void
+ */
+	public function testSafeUrlDecode() {
+		$text = 'YWJjMTIz';
+		$result = $this->Text->safeUrlDecode($text);
+		$this->assertEquals('abc123', $result);
+
+		$text = 'c29tZS9wcm9ibGVtYXRpYythbmQtbm90PXVybHNhZmUmc3RyaW5n';
+		$result = $this->Text->safeUrlDecode($text);
+		$this->assertEquals('some/problematic+and-not=urlsafe&string', $result);
+	}
+
+/**
  * testListGeneration method
  *
  * @return void

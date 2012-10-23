@@ -626,6 +626,26 @@ class String {
 	}
 
 /**
+ * Creates a string that is safe to be passed via $_GET query string
+ *
+ * @param string $string Unsafe string
+ * @return string Encoded string
+ */
+	public static function safeUrlEncode($text) {
+		return str_replace(array('/', '='), array('-', '_'), base64_encode($text));
+	}
+
+/**
+ * Decodes a string that has previously been encoded with String::safeUrlEncode()
+ *
+ * @param string $string Safe string
+ * @return string Decoded string
+ */
+	public static function safeUrlDecode($text) {
+		return base64_decode(str_replace(array('-', '_'), array('/', '='), $text));
+	}
+
+/**
  * Creates a comma separated list where the last two items are joined with 'and', forming natural English
  *
  * @param array $list The list to be joined
@@ -641,4 +661,5 @@ class String {
 
 		return array_pop($list);
 	}
+
 }
