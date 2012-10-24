@@ -1165,7 +1165,7 @@ class View extends Object {
 		$this->_currentType = $restore;
 		$this->_current = $current;
 
-		if (isset($options['callbacks'])) {
+		if ($options['callbacks']) {
 			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
 		}
 		if (isset($options['cache'])) {
