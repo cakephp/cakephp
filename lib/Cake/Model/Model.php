@@ -1093,7 +1093,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Sets a custom table for your controller class. Used by your controller to select a database table.
+ * Sets a custom table for your model class. Used by your controller to select a database table.
  *
  * @param string $tableName Name of the custom table
  * @throws MissingTableException when database table $tableName is not found on data source
@@ -2027,7 +2027,7 @@ class Model extends Object implements CakeEventListener {
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-saveassociated-array-data-null-array-options-array
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-saveall-array-data-null-array-options-array
  */
-	public function saveAll($data, $options = array()) {
+	public function saveAll($data = array(), $options = array()) {
 		$options = array_merge(array('validate' => 'first'), $options);
 		if (Hash::numeric(array_keys($data))) {
 			if ($options['validate'] === 'only') {
@@ -2193,7 +2193,7 @@ class Model extends Object implements CakeEventListener {
 
 		if ($options['validate'] === 'first') {
 			$validates = $this->validateAssociated($data, $options);
-			if ((!$validates && $options['atomic']) || (!$options['atomic'] && in_array(false, $validates, true))) {
+			if ((!$validates && $options['atomic']) || (!$options['atomic'] && in_array(false, Hash::flatten($validates), true))) {
 				return $validates;
 			}
 			$options['validate'] = false;
@@ -2759,8 +2759,8 @@ class Model extends Object implements CakeEventListener {
 		} elseif ($state === 'after') {
 			foreach (array(0, $this->alias) as $key) {
 				if (isset($results[0][$key]['count'])) {
-					if (($count = count($results)) > 1) {
-						return $count;
+					if ($query['group']) {
+						return count($results);
 					} else {
 						return intval($results[0][$key]['count']);
 					}

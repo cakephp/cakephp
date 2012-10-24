@@ -21,6 +21,7 @@ App::uses('View', 'View');
 App::uses('Helper', 'View');
 App::uses('Controller', 'Controller');
 App::uses('CacheHelper', 'View/Helper');
+App::uses('HtmlHelper', 'View/Helper');
 App::uses('ErrorHandler', 'Error');
 
 
@@ -1258,12 +1259,36 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test prepending to a block with append.
+ *
+ * @return void
+ */
+	public function testBlockPrepend() {
+		$this->View->assign('test', 'Block');
+		$this->View->prepend('test', 'Before ');
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Before Block', $result);
+	}
+
+/**
  * You should be able to append to undefined blocks.
  *
  * @return void
  */
 	public function testBlockAppendUndefined() {
 		$this->View->append('test', 'Unknown');
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Unknown', $result);
+	}
+
+/**
+ * You should be able to prepend to undefined blocks.
+ *
+ * @return void
+ */
+	public function testBlockPrependUndefined() {
+		$this->View->prepend('test', 'Unknown');
 		$result = $this->View->fetch('test');
 		$this->assertEquals('Unknown', $result);
 	}
@@ -1395,6 +1420,22 @@ TEXT;
 	public function testExtendMissingElement() {
 		$this->View->layout = false;
 		$this->View->render('extend_missing_element');
+	}
+
+/**
+ * Test extend() preceeded by an element()
+ *
+ * @return void
+ */
+	public function testExtendWithElementBeforeExtend() {
+		$this->View->layout = false;
+		$result = $this->View->render('extend_with_element');
+		$expected = <<<TEXT
+Parent View.
+this is the test elementThe view
+
+TEXT;
+		$this->assertEquals($expected, $result);
 	}
 
 /**

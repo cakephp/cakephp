@@ -121,7 +121,6 @@ class MemcacheEngineTest extends CakeTestCase {
 		$Memcache = new MemcacheEngine();
 		$Memcache->init(array('engine' => 'Memcache', 'servers' => $servers));
 
-		$servers = array_keys($Memcache->__Memcache->getExtendedStats());
 		$settings = $Memcache->settings();
 		$this->assertEquals($settings['servers'], $servers);
 		Cache::drop('dual_server');

@@ -921,14 +921,14 @@ class DboSource extends DataSource {
 		$this->_queriesCnt++;
 		$this->_queriesTime += $this->took;
 		$this->_queriesLog[] = array(
-			'query'		=> $sql,
-			'params'	=> $params,
-			'affected'	=> $this->affected,
-			'numRows'	=> $this->numRows,
-			'took'		=> $this->took
+			'query' => $sql,
+			'params' => $params,
+			'affected' => $this->affected,
+			'numRows' => $this->numRows,
+			'took' => $this->took
 		);
 		if (count($this->_queriesLog) > $this->_queriesLogMax) {
-			array_pop($this->_queriesLog);
+			array_shift($this->_queriesLog);
 		}
 	}
 
@@ -2996,7 +2996,7 @@ class DboSource extends DataSource {
 						$tableParameters = array_merge($tableParameters, $this->buildTableParameters($col, $table));
 					}
 				}
-				if (empty($indexes) && !empty($primary)) {
+				if (!isset($columns['indexes']['PRIMARY']) && !empty($primary)) {
 					$col = array('PRIMARY' => array('column' => $primary, 'unique' => 1));
 					$indexes = array_merge($indexes, $this->buildIndex($col, $table));
 				}

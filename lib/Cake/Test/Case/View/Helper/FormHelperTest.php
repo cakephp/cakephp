@@ -2242,9 +2242,55 @@ class FormHelperTest extends CakeTestCase {
 			'type' => 'time',
 			'selected' => '18:15'
 		));
-		$this->assertRegExp('#<option value="06"[^>]*>6</option>#', $result);
-		$this->assertRegExp('#<option value="15"[^>]*>15</option>#', $result);
-		$this->assertRegExp('#<option value="pm"[^>]*>pm</option>#', $result);
+		$this->assertContains('<option value="06" selected="selected">6</option>', $result);
+		$this->assertContains('<option value="15" selected="selected">15</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+	}
+
+/**
+ * Test interval + selected near the hour roll over.
+ *
+ * @return void
+ */
+	public function testTimeSelectedWithInterval() {
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'interval' => 15,
+			'selected' => '2012-10-23 15:57:00'
+		));
+		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+
+		$result = $this->Form->input('Model.start_time', array(
+			'timeFormat' => 24,
+			'type' => 'time',
+			'interval' => 15,
+			'selected' => '15:57'
+		));
+		$this->assertContains('<option value="16" selected="selected">16</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
+
+		$result = $this->Form->input('Model.start_time', array(
+			'timeFormat' => 24,
+			'type' => 'time',
+			'interval' => 15,
+			'selected' => '23:57'
+		));
+		$this->assertContains('<option value="00" selected="selected">0</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
+
+		$result = $this->Form->input('Model.created', array(
+			'timeFormat' => 24,
+			'type' => 'datetime',
+			'interval' => 15,
+			'selected' => '2012-09-30 23:56'
+		));
+		$this->assertContains('<option value="2012" selected="selected">2012</option>', $result);
+		$this->assertContains('<option value="10" selected="selected">October</option>', $result);
+		$this->assertContains('<option value="01" selected="selected">1</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">0</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
 	}
 
 /**
@@ -5674,26 +5720,11 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->hour('Model.field', true, array('value' => '23'));
-		$expected = array(
-			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
-			array('option' => array('value' => '')),
-			'/option',
-			array('option' => array('value' => '00')),
-			'0',
-			'/option',
-			array('option' => array('value' => '01')),
-			'1',
-			'/option',
-			array('option' => array('value' => '02')),
-			'2',
-			'/option',
-			$hoursRegex,
-			array('option' => array('value' => '23', 'selected' => 'selected')),
-			'23',
-			'/option',
-			'/select',
-		);
-		$this->assertTags($result, $expected);
+		$this->assertContains('<option value="23" selected="selected">23</option>', $result);
+
+		$result = $this->Form->hour('Model.field', false, array('value' => '23'));
+		$this->assertContains('<option value="11" selected="selected">11</option>', $result);
+
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->hour('Model.field', true);

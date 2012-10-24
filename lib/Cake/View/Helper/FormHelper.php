@@ -299,8 +299,9 @@ class FormHelper extends AppHelper {
  *   can be overridden when calling input()
  * - `encoding` Set the accept-charset encoding for the form.  Defaults to `Configure::read('App.encoding')`
  *
- * @param string $model The model object which the form is being defined for.  Should
+ * @param string|array $model The model object which the form is being defined for. Should
  *   include the plugin name for plugin forms.  e.g. `ContactManager.Contact`.
+ *   If an array is passed and $options argument is empty, the array will be used as options.
  * @param array $options An array of html attributes and options.
  * @return string An formatted opening FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
@@ -537,7 +538,7 @@ class FormHelper extends AppHelper {
 
 		$locked = implode(array_keys($locked), '|');
 		$unlocked = implode($unlockedFields, '|');
-		$fields = Security::hash(serialize($fields) . $unlocked . Configure::read('Security.salt'));
+		$fields = Security::hash(serialize($fields) . $unlocked . Configure::read('Security.salt'), 'sha1');
 
 		$out = $this->hidden('_Token.fields', array(
 			'value' => urlencode($fields . ':' . $locked),
@@ -2058,6 +2059,11 @@ class FormHelper extends AppHelper {
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
+
+		if ($attributes['value'] > 12 && !$format24Hours) {
+			$attributes['value'] -= 12;
+		}
+
 		return $this->select(
 			$fieldName . ".hour",
 			$this->_generateOptions($format24Hours ? 'hour24' : 'hour'),
@@ -2222,10 +2228,7 @@ class FormHelper extends AppHelper {
 				if (!empty($timeFormat)) {
 					$time = explode(':', $days[1]);
 
-					if (($time[0] > 12) && $timeFormat == '12') {
-						$time[0] = $time[0] - 12;
-						$meridian = 'pm';
-					} elseif ($time[0] == '12' && $timeFormat == '12') {
+					if ($time[0] >= '12' && $timeFormat == '12') {
 						$meridian = 'pm';
 					} elseif ($time[0] == '00' && $timeFormat == '12') {
 						$time[0] = 12;
@@ -2260,6 +2263,20 @@ class FormHelper extends AppHelper {
 		$interval = $attributes['interval'];
 		$monthNames = $attributes['monthNames'];
 		$attributes = array_diff_key($attributes, $defaults);
+
+		if (!empty($interval) && $interval > 1 && !empty($min)) {
+			$current = new DateTime();
+			if ($year !== null) {
+				$current->setDate($year, $month, $day);
+			}
+			if ($hour !== null) {
+				$current->setTime($hour, $min);
+			}
+			$change = (round($min * (1 / $interval)) * $interval) - $min;
+			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
+			$newTime = explode(' ', $current->format('Y m d H i a'));
+			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
+		}
 
 		if (isset($attributes['id'])) {
 			if (is_string($attributes['id'])) {
@@ -2322,9 +2339,6 @@ class FormHelper extends AppHelper {
 		}
 		$opt = implode($separator, $selects);
 
-		if (!empty($interval) && $interval > 1 && !empty($min)) {
-			$min = round($min * (1 / $interval)) * $interval;
-		}
 		$selectMinuteAttr['interval'] = $interval;
 		switch ($timeFormat) {
 			case '24':

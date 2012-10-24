@@ -484,7 +484,7 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('controller' => 'tests', 'pages' => array(
 			1, 2, 3
 		)));
-		$expected = '/tests/index/pages[0]:1/pages[1]:2/pages[2]:3';
+		$expected = '/tests/index/pages%5B0%5D:1/pages%5B1%5D:2/pages%5B2%5D:3';
 		$this->assertEquals($expected, $result);
 
 		$result = Router::url(array('controller' => 'tests',
@@ -496,7 +496,7 @@ class RouterTest extends CakeTestCase {
 				'three'
 			)
 		));
-		$expected = '/tests/index/pages[param1][0]:one/pages[param1][1]:two/pages[0]:three';
+		$expected = '/tests/index/pages%5Bparam1%5D%5B0%5D:one/pages%5Bparam1%5D%5B1%5D:two/pages%5B0%5D:three';
 		$this->assertEquals($expected, $result);
 
 		$result = Router::url(array('controller' => 'tests',
@@ -508,7 +508,7 @@ class RouterTest extends CakeTestCase {
 				'three'
 			)
 		));
-		$expected = '/tests/index/pages[param1][one]:1/pages[param1][two]:2/pages[0]:three';
+		$expected = '/tests/index/pages%5Bparam1%5D%5Bone%5D:1/pages%5Bparam1%5D%5Btwo%5D:2/pages%5B0%5D:three';
 		$this->assertEquals($expected, $result);
 
 		$result = Router::url(array('controller' => 'tests',
@@ -520,14 +520,14 @@ class RouterTest extends CakeTestCase {
 				'cool'
 			)
 		));
-		$expected = '/tests/index/super[nested][array]:awesome/super[nested][something]:else/super[0]:cool';
+		$expected = '/tests/index/super%5Bnested%5D%5Barray%5D:awesome/super%5Bnested%5D%5Bsomething%5D:else/super%5B0%5D:cool';
 		$this->assertEquals($expected, $result);
 
 		$result = Router::url(array('controller' => 'tests', 'namedParam' => array(
 			'keyed' => 'is an array',
 			'test'
 		)));
-		$expected = '/tests/index/namedParam[keyed]:is%20an%20array/namedParam[0]:test';
+		$expected = '/tests/index/namedParam%5Bkeyed%5D:is%20an%20array/namedParam%5B0%5D:test';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -2339,9 +2339,13 @@ class RouterTest extends CakeTestCase {
 /**
  * test reversing parameter arrays back into strings.
  *
+ * Mark the router as initialized so it doesn't auto-load routes
+ *
  * @return void
  */
 	public function testRouterReverse() {
+		Router::$initialized = true;
+
 		$params = array(
 			'controller' => 'posts',
 			'action' => 'view',

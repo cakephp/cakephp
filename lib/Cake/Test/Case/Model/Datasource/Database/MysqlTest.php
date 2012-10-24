@@ -773,7 +773,7 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
- * testBuildTableParameters method
+ * testGetCharsetName method
  *
  * @return void
  */
@@ -783,6 +783,34 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals('utf8', $result);
 		$result = $this->Dbo->getCharsetName('cp1250_general_ci');
 		$this->assertEquals('cp1250', $result);
+	}
+
+/**
+ * testGetCharsetNameCaching method
+ *
+ * @return void
+ */
+	public function testGetCharsetNameCaching() {
+		$db = $this->getMock('Mysql', array('connect', '_execute', 'getVersion'));
+		$queryResult = $this->getMock('PDOStatement');
+
+		$db->expects($this->exactly(2))->method('getVersion')->will($this->returnValue('5.1'));
+
+		$db->expects($this->exactly(1))
+			->method('_execute')
+			->with('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array('utf8_unicode_ci'))
+			->will($this->returnValue($queryResult));
+
+		$queryResult->expects($this->once())
+			->method('fetch')
+			->with(PDO::FETCH_ASSOC)
+			->will($this->returnValue(array('CHARACTER_SET_NAME' => 'utf8')));
+
+		$result = $db->getCharsetName('utf8_unicode_ci');
+		$this->assertEquals('utf8', $result);
+
+		$result = $db->getCharsetName('utf8_unicode_ci');
+		$this->assertEquals('utf8', $result);
 	}
 
 /**
@@ -896,6 +924,52 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->createSchema($schema);
 		$this->assertContains('`role_id` int(11) NOT NULL,', $result);
 		$this->assertContains('`user_id` int(11) NOT NULL,', $result);
+	}
+
+/**
+ * Test that the primary flag is handled correctly.
+ *
+ * @return void
+ */
+	public function testCreateSchemaAutoPrimaryKey() {
+		$schema = new CakeSchema();
+		$schema->tables = array(
+			'no_indexes' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
+				'data' => array('type' => 'integer', 'null' => false),
+				'indexes' => array(),
+			)
+		);
+		$result = $this->Dbo->createSchema($schema, 'no_indexes');
+		$this->assertContains('PRIMARY KEY  (`id`)', $result);
+		$this->assertNotContains('UNIQUE KEY', $result);
+
+		$schema->tables = array(
+			'primary_index' => array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'data' => array('type' => 'integer', 'null' => false),
+				'indexes' => array(
+					'PRIMARY' => array('column' => 'id', 'unique' => 1),
+					'some_index' => array('column' => 'data', 'unique' => 1)
+				),
+			)
+		);
+		$result = $this->Dbo->createSchema($schema, 'primary_index');
+		$this->assertContains('PRIMARY KEY  (`id`)', $result);
+		$this->assertContains('UNIQUE KEY `some_index` (`data`)', $result);
+
+		$schema->tables = array(
+			'primary_flag_has_index' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
+				'data' => array('type' => 'integer', 'null' => false),
+				'indexes' => array (
+					'some_index' => array('column' => 'data', 'unique' => 1)
+				),
+			)
+		);
+		$result = $this->Dbo->createSchema($schema, 'primary_flag_has_index');
+		$this->assertContains('PRIMARY KEY  (`id`)', $result);
+		$this->assertContains('UNIQUE KEY `some_index` (`data`)', $result);
 	}
 
 /**

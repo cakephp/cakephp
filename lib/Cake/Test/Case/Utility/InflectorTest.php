@@ -109,6 +109,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::singularize('roofs'), 'roof');
 		$this->assertEquals(Inflector::singularize('foes'), 'foe');
 		$this->assertEquals(Inflector::singularize('databases'), 'database');
+		$this->assertEquals(Inflector::singularize('cookies'), 'cookie');
 
 		$this->assertEquals(Inflector::singularize(''), '');
 	}
@@ -160,6 +161,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::pluralize('cafe'), 'cafes');
 		$this->assertEquals(Inflector::pluralize('roof'), 'roofs');
 		$this->assertEquals(Inflector::pluralize('foe'), 'foes');
+		$this->assertEquals(Inflector::pluralize('cookie'), 'cookies');
 		$this->assertEquals(Inflector::pluralize(''), '');
 	}
 

@@ -599,17 +599,31 @@ class View extends Object {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new
+ * Append to an existing or new block. Appending to a new
  * block will create the block.
  *
  * @param string $name Name of the block
  * @param string $value The content for the block.
  * @return void
  * @throws CakeException when you use non-string values.
- * @see ViewBlock::append()
+ * @see ViewBlock::concat()
  */
 	public function append($name, $value = null) {
-		return $this->Blocks->append($name, $value);
+		return $this->Blocks->concat($name, $value);
+	}
+
+/**
+ * Prepend to an existing or new block. Prepending to a new
+ * block will create the block.
+ *
+ * @param string $name Name of the block
+ * @param string $value The content for the block.
+ * @return void
+ * @throws CakeException when you use non-string values.
+ * @see ViewBlock::concat()
+ */
+	public function prepend($name, $value = null) {
+		return $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 	}
 
 /**
@@ -877,7 +891,7 @@ class View extends Object {
  * Sandbox method to evaluate a template / view script in.
  *
  * @param string $viewFn Filename of the view
- * @param array $___dataForView Data to include in rendered view.
+ * @param array $dataForView Data to include in rendered view.
  *    If empty the current View::$viewVars will be used.
  * @return string Rendered output
  */
@@ -1142,8 +1156,14 @@ class View extends Object {
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
 		}
 
+		$current = $this->_current;
+		$restore = $this->_currentType;
+
 		$this->_currentType = self::TYPE_ELEMENT;
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
+
+		$this->_currentType = $restore;
+		$this->_current = $current;
 
 		if (isset($options['callbacks'])) {
 			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
