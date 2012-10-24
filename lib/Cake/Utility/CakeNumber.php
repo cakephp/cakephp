@@ -296,8 +296,8 @@ class CakeNumber {
 		$result = $options['before'] = $options['after'] = null;
 
 		$symbolKey = 'whole';
-		if ($value == 0) {
-			if ($options['zero'] !== 0) {
+		if (!$value) {
+			if ($options['zero'] !== 0 ) {
 				return $options['zero'];
 			}
 		} elseif ($value < 1 && $value > -1) {

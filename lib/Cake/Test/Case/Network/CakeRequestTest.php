@@ -980,7 +980,7 @@ class CakeRequestTest extends CakeTestCase {
  * @return void
  */
 	public function detectCallback($request) {
-		return $request->return == true;
+		return (bool)$request->return;
 	}
 
 /**

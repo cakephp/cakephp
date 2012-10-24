@@ -526,12 +526,7 @@ class PaginatorHelper extends AppHelper {
  */
 	protected function _hasPage($model, $page) {
 		$params = $this->params($model);
-		if (!empty($params)) {
-			if ($params["{$page}Page"] == true) {
-				return true;
-			}
-		}
-		return false;
+		return !empty($params) && $params[$page . 'Page'];
 	}
 
 /**
@@ -541,7 +536,7 @@ class PaginatorHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::defaultModel
  */
 	public function defaultModel() {
-		if ($this->_defaultModel != null) {
+		if ($this->_defaultModel) {
 			return $this->_defaultModel;
 		}
 		if (empty($this->request->params['paging'])) {
@@ -583,7 +578,7 @@ class PaginatorHelper extends AppHelper {
 		$options);
 
 		$paging = $this->params($options['model']);
-		if ($paging['pageCount'] == 0) {
+		if (!$paging['pageCount']) {
 			$paging['pageCount'] = 1;
 		}
 		$start = 0;

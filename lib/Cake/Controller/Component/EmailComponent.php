@@ -316,7 +316,7 @@ class EmailComponent extends Component {
 		foreach ($this->headers as $key => $value) {
 			$headers['X-' . $key] = $value;
 		}
-		if ($this->date != false) {
+		if ($this->date) {
 			$headers['Date'] = $this->date;
 		}
 		$lib->setHeaders($headers);

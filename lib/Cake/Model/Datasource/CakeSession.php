@@ -131,7 +131,7 @@ class CakeSession {
 		self::$time = time();
 
 		$checkAgent = Configure::read('Session.checkAgent');
-		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT') != null) {
+		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT')) {
 			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
 		self::_setPath($base);
@@ -247,7 +247,7 @@ class CakeSession {
 	public static function delete($name) {
 		if (self::check($name)) {
 			self::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
-			return (self::check($name) == false);
+			return !self::check($name);
 		}
 		self::_setError(2, __d('cake_dev', "%s doesn't exist", $name));
 		return false;
@@ -660,7 +660,7 @@ class CakeSession {
  */
 	public static function renew() {
 		if (session_id()) {
-			if (session_id() != '' || isset($_COOKIE[session_name()])) {
+			if (session_id() || isset($_COOKIE[session_name()])) {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, self::$path);
 			}
 			session_regenerate_id(true);

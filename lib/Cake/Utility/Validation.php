@@ -860,7 +860,7 @@ class Validation {
 		if ($deep !== true) {
 			return true;
 		}
-		if ($check == 0) {
+		if (!$check) {
 			return false;
 		}
 		$sum = 0;
@@ -875,7 +875,7 @@ class Validation {
 			$sum += ($number < 10) ? $number : $number - 9;
 		}
 
-		return ($sum % 10 == 0);
+		return ($sum % 10 === 0);
 	}
 
 /**

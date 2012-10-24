@@ -425,7 +425,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::tree
  */
 	public function tree($path = null, $exceptions = false, $type = null) {
-		if ($path == null) {
+		if (!$path) {
 			$path = $this->path;
 		}
 		$files = array();
