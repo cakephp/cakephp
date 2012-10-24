@@ -2059,6 +2059,11 @@ class FormHelper extends AppHelper {
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
+
+		if ($attributes['value'] > 12 && !$format24Hours) {
+			$attributes['value'] -= 12;
+		}
+
 		return $this->select(
 			$fieldName . ".hour",
 			$this->_generateOptions($format24Hours ? 'hour24' : 'hour'),
@@ -2223,10 +2228,7 @@ class FormHelper extends AppHelper {
 				if (!empty($timeFormat)) {
 					$time = explode(':', $days[1]);
 
-					if (($time[0] > 12) && $timeFormat == '12') {
-						$time[0] = $time[0] - 12;
-						$meridian = 'pm';
-					} elseif ($time[0] == '12' && $timeFormat == '12') {
+					if ($time[0] >= '12' && $timeFormat == '12') {
 						$meridian = 'pm';
 					} elseif ($time[0] == '00' && $timeFormat == '12') {
 						$time[0] = 12;
