@@ -265,14 +265,54 @@ class CakeValidationRule {
 
 		$validator = $this->_getPropertiesArray();
 		$rule = strtolower($this->_rule);
+		
+		
 		if (isset($methods[$rule])) {
 			$this->_ruleParams[] = array_merge($validator, $this->_passedOptions);
 			$this->_ruleParams[0] = array($field => $this->_ruleParams[0]);
 			$this->_valid = call_user_func_array($methods[$rule], $this->_ruleParams);
 		} elseif (class_exists('Validation') && method_exists('Validation', $this->_rule)) {
 			$this->_valid = call_user_func_array(array('Validation', $this->_rule), $this->_ruleParams);
+		
+		
+		/**
+		 * Allow external validator objects to be used as custom validation rules
+		 * Inspired by: http://goo.gl/8u4FN
+		 * 
+		 * It allow to create a custom validator object like:
+		 *
+		 * // App/Model/Validation
+		 * class MyValidator {
+		 *   public static function isReallyInt() {}
+		 * }
+		 *
+		 * // App/Model/Users.php
+		 * ...
+		 * $validate = array(
+		 *   'username' => 'MyValidator::isReallyInt'
+		 *);
+		 * ...
+		 * 
+		 */
+		} elseif (  strpos($this->_rule , '::') ){
+			
+			list($plugin, $class) = pluginSplit($this->_rule);
+			list($className,$method) = explode('::',$class);
+			
+			// Contestualize lazy loading to validation repository even into plugins
+			$location = 'Model/Validation';
+			if ( $plugin ) $location = $plugin.'.'.$location;
+			
+			// Lazy loading and method call
+			App::uses($className, $location);
+			if ( class_exists($className) ) $this->_valid = call_user_func_array(array($className, $method), $this->_ruleParams);                
+			
+		
 		} elseif (is_string($validator['rule'])) {
 			$this->_valid = preg_match($this->_rule, $data[$field]);
+		
+		
+		
 		} elseif (Configure::read('debug') > 0) {
 			trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $this->_rule, $field), E_USER_WARNING);
 			return false;
