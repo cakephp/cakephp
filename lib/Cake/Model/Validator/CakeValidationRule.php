@@ -280,8 +280,10 @@ class CakeValidationRule {
 			$location = 'Model/Validation';
 			if ( $plugin ) $location = $plugin . '.' . $location;
 			App::uses($className, $location);
-			if (class_exists($className)) {
+			if (class_exists($className) && method_exists($className, $method)) {
 				$this->_valid = call_user_func_array(array($className, $method), $this->_ruleParams);
+			} else {
+				$this->_valid = false;
 			}
 		} elseif (is_string($validator['rule'])) {
 			$this->_valid = preg_match($this->_rule, $data[$field]);
