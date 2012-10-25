@@ -359,7 +359,7 @@ class HtmlHelper extends AppHelper {
 			$confirmMessage = str_replace("'", "\'", $confirmMessage);
 			$confirmMessage = str_replace('"', '\"', $confirmMessage);
 			$options['onclick'] = "return confirm('{$confirmMessage}');";
-		} elseif (isset($options['default']) && $options['default'] == false) {
+		} elseif (isset($options['default']) && !$options['default']) {
 			if (isset($options['onclick'])) {
 				$options['onclick'] .= ' event.returnValue = false; return false;';
 			} else {
@@ -441,7 +441,7 @@ class HtmlHelper extends AppHelper {
 		if ($rel == 'import') {
 			$out = sprintf($this->_tags['style'], $this->_parseAttributes($options, array('inline', 'block'), '', ' '), '@import url(' . $url . ');');
 		} else {
-			if ($rel == null) {
+			if (!$rel) {
 				$rel = 'stylesheet';
 			}
 			$out = sprintf($this->_tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline', 'block'), '', ' '));
@@ -701,7 +701,7 @@ class HtmlHelper extends AppHelper {
 				} else {
 					$elementContent = $this->link($crumb[0], $crumb[1], $crumb[2]);
 				}
-				if ($which == 0) {
+				if (!$which) {
 					$options['class'] = 'first';
 				} elseif ($which == $crumbCount - 1) {
 					$options['class'] = 'last';
@@ -951,13 +951,12 @@ class HtmlHelper extends AppHelper {
 		if (isset($options['escape'])) {
 			$text = h($text);
 		}
-		if ($class != null && !empty($class)) {
+		if ($class && !empty($class)) {
 			$options['class'] = $class;
 		}
+		$tag = 'para';
 		if ($text === null) {
 			$tag = 'parastart';
-		} else {
-			$tag = 'para';
 		}
 		return sprintf($this->_tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $text);
 	}
@@ -1116,9 +1115,9 @@ class HtmlHelper extends AppHelper {
 			if (is_array($item)) {
 				$item = $key . $this->nestedList($item, $options, $itemOptions, $tag);
 			}
-			if (isset($itemOptions['even']) && $index % 2 == 0) {
+			if (isset($itemOptions['even']) && $index % 2 === 0) {
 				$itemOptions['class'] = $itemOptions['even'];
-			} elseif (isset($itemOptions['odd']) && $index % 2 != 0) {
+			} elseif (isset($itemOptions['odd']) && $index % 2 !== 0) {
 				$itemOptions['class'] = $itemOptions['odd'];
 			}
 			$out .= sprintf($this->_tags['li'], $this->_parseAttributes($itemOptions, array('even', 'odd'), ' ', ''), $item);

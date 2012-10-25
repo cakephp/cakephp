@@ -766,7 +766,7 @@ class View extends Object {
 		} else {
 			$data = array($one => $two);
 		}
-		if ($data == null) {
+		if (!$data) {
 			return false;
 		}
 		$this->viewVars = $data + $this->viewVars;

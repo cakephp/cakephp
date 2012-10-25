@@ -391,7 +391,7 @@ class CookieComponent extends Component {
 		}
 		$this->_reset = $this->_expires;
 
-		if ($expires == 0) {
+		if (!$expires) {
 			return $this->_expires = 0;
 		}
 
@@ -517,7 +517,7 @@ class CookieComponent extends Component {
 		$first = substr($string, 0, 1);
 		if ($first === '{' || $first === '[') {
 			$ret = json_decode($string, true);
-			return ($ret != null) ? $ret : $string;
+			return ($ret) ? $ret : $string;
 		}
 		$array = array();
 		foreach (explode(',', $string) as $pair) {
