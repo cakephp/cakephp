@@ -186,13 +186,32 @@ class Sqlite extends DboSource {
 			if ($column['pk'] == 1) {
 				$fields[$column['name']]['key'] = $this->index['PRI'];
 				$fields[$column['name']]['null'] = false;
-				if (empty($fields[$column['name']]['length'])) {
-					$fields[$column['name']]['length'] = 11;
-				}
 			}
 		}
-
 		$result->closeCursor();
+
+		// add index information
+		$indexes = $this->_execute("PRAGMA index_list($table)");
+		if ($indexes instanceof PDOStatement) {
+			foreach ($indexes as $index) {
+				$index_info = $this->_execute('PRAGMA index_info("' . $index['name'] . '")');
+				foreach($index_info as $column) {
+					if ($column['seqno'] == 0) {
+						if ($index['unique']) {
+							if (empty($fields[$column['name']]['key']) || ($fields[$column['name']]['key'] != $this->index['PRI'])) {
+								$fields[$column['name']]['key'] = $this->index['UNI'];
+							}
+						} else {
+							if (empty($fields[$column['name']]['key'])) {
+								$fields[$column['name']]['key'] = $this->index['MUL'];
+							}
+						}
+					}
+				}
+			}
+			$indexes->closeCursor();
+		}
+
 		$this->_cacheDescription($table, $fields);
 		return $fields;
 	}
@@ -228,7 +247,11 @@ class Sqlite extends DboSource {
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table) {
-		$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->startQuote . $this->fullTableName($table, false, false) . $this->endQuote);
+		try {
+			$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->startQuote . $this->fullTableName($table, false, false) . $this->endQuote);
+		} catch (PDOException $e) {
+			// sqlite_squence might not exist
+		}
 		return $this->execute('DELETE FROM ' . $this->fullTableName($table));
 	}
 
@@ -424,41 +447,247 @@ class Sqlite extends DboSource {
 	}
 
 /**
- * Removes redundant primary key indexes, as they are handled in the column def of the key.
+ * Generate a alter syntax from	CakeSchema::compare()
+ *
+ * See http://www.sqlite.org/faq.html#q11
+ *
+ * @param mixed $compare
+ * @param string $table
+ * @return boolean
+ */
+	public function alterSchema($compare, $table = null) {
+		$out = '';
+		foreach ($compare as $tableName => $changes) {
+			if (!$table || ($tableName == $table)) {
+				$out .= $this->_alterSchema($tableName, $changes) . "\n";
+			}
+		}
+		return $out;
+	}
+
+	private function _alterSchema($table, $changes) {
+		$out = array();
+
+		// step 1. Recreate tables that cannot be altered
+		if ($this->_mustRecreateTable($changes)) {
+			$out = array_merge($out, $this->_recreateTable($table, $changes));
+		}
+
+		// step 2. Alter tables that can be altered
+		if (array_key_exists('add', $changes)) {
+			$out = array_merge($out, $this->_addColumns($table, $changes['add']));
+		}
+
+		// step 3. Drop indexes (including changed)
+		if (isset($changes['drop']['indexes'])) {
+			foreach($changes['drop']['indexes'] as $index => $details) {
+				$out[] = "DROP INDEX IF EXISTS {$this->fullTableName($index)};";
+			}
+		}
+
+		if (isset($changes['add']['indexes'])) {
+			foreach($changes['add']['indexes'] as $index => $details) {
+				if (is_array($details['column'])) {
+					$details['column'] = join(', ', $details['column']);
+				}
+
+				$out[] = ((empty($details['unique']))? 'CREATE INDEX' : 'CREATE UNIQUE INDEX' ) . ' '
+							. $this->fullTableName($index)
+							. ' on "' . $table . '" ( ' . $details['column'] . ' );';
+			}
+		}
+
+		if (isset($changes['alter']['indexes'])) {
+			foreach($changes['add']['indexes'] as $index => $details) {
+
+			}
+		}
+
+		return empty($out) ? '' : implode("\n", $out) . "\n";
+	}
+
+	private function _mustRecreateTable($changes) {
+		$drop = @array_diff_key($changes['drop'], array('indexes' => 0, 'tableParameters' => 0));
+		$change = @array_diff_key($changes['change'], array('indexes => 0', 'tableParameters' => 0));
+		return !(empty($drop) && empty($change));
+	}
+
+	private function _recreateTable($table, $changes) {
+		$out = array();
+
+		$reader = new CakeSchema();
+		$schema = $reader->read(array(
+			'connection' => ConnectionManager::getSourceName($this),
+			'models' => false
+		));
+
+		// change columns
+		$renamed = array();
+		if (array_key_exists('change', $changes)) {
+			foreach($changes['change'] as $col => $details) {
+				if (!empty($changes['change'][$col]['name'])) {
+					$renamed[$changes['change'][$col]['name']] = $col;
+					unset($schema['tables'][$table][$col]);
+					$schema['tables'][$table][$changes['change'][$col]['name']] = $changes['change'][$col];
+				} else {
+					$schema['tables'][$table][$col] = $changes['change'][$col];
+				}
+			}
+		}
+
+		// drop columns
+		if (array_key_exists('drop', $changes)) {
+			// remove column from table
+			$schema['tables'][$table] = array_diff_key($schema['tables'][$table], $changes['drop']);
+
+			// remove any indexes that contain the dropped column
+			if (!empty($schema['tables'][$table]['indexes'])) {
+				foreach ($schema['tables'][$table]['indexes'] as $name => $details) {
+					$index_columns = (is_array($details['column'])? $details['column'] : array($details['column']));
+					$dropped_columns = array_keys($changes['drop']);
+					$intersection = array_intersect($index_columns, $dropped_columns);
+					if (!empty($intersection)) {
+						unset($schema['tables'][$table]['indexes'][$name]);
+					}
+				}
+			}
+		}
+
+		$reader->tables = $schema['tables'];
+		$tableSql = $this->createSchema($reader, $table);
+
+		$fullTableName = $this->fullTableName($table);
+		$fullTmpName = $this->fullTableName("{$table}_tmp");
+
+		$cols = array_keys($schema['tables'][$table]);
+		$cols = array_diff($cols, array('indexes', 'tableParameters'));
+		$cols2 = $cols;
+		if (!empty($renamed)) {
+			foreach ($cols2 as &$name) {
+				if (array_key_exists($name, $renamed)) {
+					$name = $renamed[$name];
+				}
+			}
+		}
+		$cols =  $this->_columnsAsString($cols);
+		$cols2 = $this->_columnsAsString($cols2);
+
+		$out[] = preg_replace("/$fullTableName/i", $fullTmpName, $tableSql, 1);
+		$out[] = "INSERT INTO $fullTmpName ($cols) SELECT $cols2 FROM $fullTableName;";
+		$out[] = "DROP TABLE $fullTableName;";
+		$out[] = "ALTER TABLE $fullTmpName RENAME TO $table;";
+		return $out;
+	}
+
+	private function _addColumns($table, $cols) {
+		$out = array();
+
+		$cols = array_diff_key($cols, array('indexes' => 0, 'tableParameters' => 0));
+		foreach ($cols as $col => $details) {
+			$details['name'] = $col;
+
+			// alter table must have default for fields that cannot be null
+			if (isset($details['null']) && !$details['null'] && empty($details['default'])) {
+				if(isset($details['type']) && ($details['type'] == 'text') || ($details['type'] == 'string')) {
+					$details['default'] = '';
+				} else {
+					$details['default'] = 0;
+				}
+			}
+
+			$out[] = "ALTER TABLE {$this->fullTableName($table)} ADD COLUMN {$this->buildColumn($details)};";
+		}
+
+		return $out;
+	}
+
+/**
+ * Generate a database-native schema for the given Schema object
+ *
+ * @param Model $schema An instance of a subclass of CakeSchema
+ * @param string $tableName Optional.  If specified only the table name given will be generated.
+ *   Otherwise, all tables defined in the schema are generated.
+ * @return string
+ */
+	public function createSchema($schema, $tableName = null) {
+		if (!is_a($schema, 'CakeSchema')) {
+			trigger_error(__d('cake_dev', 'Invalid schema object'), E_USER_WARNING);
+			return null;
+		}
+		$out = '';
+
+		foreach ($schema->tables as $curTable => $columns) {
+			if (!$tableName || $tableName == $curTable) {
+				$cols = $colList = $indexes = $tableParameters = array();
+				$table = $this->fullTableName($curTable);
+
+				// prevent duplicate primary key
+				// column is higher priority because it allows autoincrement to be used
+				foreach ($columns as $name => $col) {
+					if (isset($col['key']) && $col['key'] === 'primary') {
+						unset($columns['indexes']['PRIMARY']);
+					}
+				}
+				$primaryIndex = isset($columns['indexes']['PRIMARY']) ? $columns['indexes']['PRIMARY'] : '';
+
+				foreach ($columns as $name => $col) {
+					if (is_string($col)) {
+						$col = array('type' => $col);
+					}
+					if ($name !== 'indexes' && $name !== 'tableParameters') {
+						$col['name'] = $name;
+						if (!isset($col['type'])) {
+							$col['type'] = 'string';
+						}
+						$cols[] = $this->buildColumn($col);
+					} elseif ($name === 'indexes') {
+						$indexes = array_merge($indexes, $this->buildIndex($col, $curTable));
+					} elseif ($name === 'tableParameters') {
+						$tableParameters = array_merge($tableParameters, $this->buildTableParameters($col, $table));
+					}
+				}
+
+				$columns = $cols;
+				$out .= $this->renderStatement('schema', compact('table', 'columns', 'indexes', 'tableParameters', 'primaryIndex')) . "\n\n";
+			}
+		}
+		return $out;
+	}
+
+/**
+ * Plain indexes/keys (non-unique, non-primary) cannot be added by the create table statement.
+ * The keyword UNIQUE should not be followed by KEY
+ * Ignores names because they are not used by SQLite
  *
  * @param array $indexes
  * @param string $table
  * @return string
- */
+*/
 	public function buildIndex($indexes, $table = null) {
 		$join = array();
-
-		$table = str_replace('"', '', $table);
-		list($dbname, $table) = explode('.', $table);
-		$dbname = $this->name($dbname);
-
-		foreach ($indexes as $name => $value) {
-
-			if ($name == 'PRIMARY') {
-				continue;
+		if (!empty($table)) {
+			$table = $this->startQuote . $table . $this->endQuote;
+			foreach ($indexes as $name => $value) {
+				if ($name != 'PRIMARY') {
+					$unique = empty($value['unique'])? '' : 'UNIQUE';
+					$name = $this->fullTableName($name);
+					$join[] = "CREATE $unique INDEX $name ON $table ({$this->_columnsAsString($value['column'])})";;
+				}
 			}
-			$out = 'CREATE ';
-
-			if (!empty($value['unique'])) {
-				$out .= 'UNIQUE ';
-			}
-			if (is_array($value['column'])) {
-				$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
-			} else {
-				$value['column'] = $this->name($value['column']);
-			}
-			$t = trim($table, '"');
-			$indexname = $this->name($t . '_' . $name);
-			$table = $this->name($table);
-			$out .= "INDEX {$dbname}.{$indexname} ON {$table}({$value['column']});";
-			$join[] = $out;
 		}
 		return $join;
+	}
+
+	private function _getPrimaryKey($table) {
+		$info = $this->query("PRAGMA table_info($table)");
+		$pk = array();
+		foreach ($info as $index => $column) {
+			$column = $column[0];
+			if ($column['pk']) {
+				$pk[] = $column['name'];
+			}
+		}
+		return $pk;
 	}
 
 /**
@@ -469,36 +698,44 @@ class Sqlite extends DboSource {
  * @return array Fields in table. Keys are column and unique
  */
 	public function index($model) {
-		$index = array();
+		$result = array();
 		$table = $this->fullTableName($model, false, false);
-		if ($table) {
-			$indexes = $this->query('PRAGMA index_list(' . $table . ')');
 
-			if (is_bool($indexes)) {
-				return array();
-			}
-			foreach ($indexes as $info) {
-				$key = array_pop($info);
-				$keyInfo = $this->query('PRAGMA index_info("' . $key['name'] . '")');
-				foreach ($keyInfo as $keyCol) {
-					if (!isset($index[$key['name']])) {
-						$col = array();
-						if (preg_match('/autoindex/', $key['name'])) {
-							$key['name'] = 'PRIMARY';
+		if ($table) {
+			$indexes = $this->query("PRAGMA index_list($table)");
+			$pk = $this->_getPrimaryKey($table);
+			if (is_array($indexes)) {
+				foreach ($indexes as $i => $index) {
+					$index = array_pop($index);
+					$info = $this->query('PRAGMA index_info("' . $index['name'] . '")');
+					$autoindex = preg_match('/^sqlite_autoindex/', $index['name']);
+
+					$column = array();
+					$first_column = '';
+					foreach ($info as $j => $row) {
+						$column[] = $row[0]['name'];
+						if ($row[0]['seqno'] == 0) {
+							$first_column = $row[0]['name'];
 						}
-						$index[$key['name']]['column'] = $keyCol[0]['name'];
-						$index[$key['name']]['unique'] = intval($key['unique'] == 1);
-					} else {
-						if (!is_array($index[$key['name']]['column'])) {
-							$col[] = $index[$key['name']]['column'];
-						}
-						$col[] = $keyCol[0]['name'];
-						$index[$key['name']]['column'] = $col;
 					}
+
+					if ($autoindex) {
+						$index['name'] = ($column == $pk) ? 'PRIMARY' : $first_column;
+					}
+
+					$result[$index['name']] = array(
+						'column' => (count($column) == 1) ? $column[0] : $column,
+						'unique' => intval($index['unique'] == 1)
+					);
 				}
 			}
+
+			if (empty($result['PRIMARY']) && !empty($pk)) {
+				$result['PRIMARY'] = array('column' => (count($pk) == 1) ? $pk[0] : $pk, 'unique' => 1);
+			}
 		}
-		return $index;
+
+		return $result;
 	}
 
 /**
@@ -509,19 +746,25 @@ class Sqlite extends DboSource {
  * @return string
  */
 	public function renderStatement($type, $data) {
-		switch (strtolower($type)) {
-			case 'schema':
-				extract($data);
-				if (is_array($columns)) {
-					$columns = "\t" . join(",\n\t", array_filter($columns));
+		if (strtolower($type) == 'schema') {
+			extract($data);
+
+			foreach (array('columns', 'tableParameters') as $var) {
+				if (is_array(${$var})) {
+					${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+				} else {
+					${$var} = '';
 				}
-				if (is_array($indexes)) {
-					$indexes = "\t" . join("\n\t", array_filter($indexes));
-				}
-				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
-			default:
-				return parent::renderStatement($type, $data);
+			}
+
+			if (!empty($primaryIndex)) {
+				$columns .= ", PRIMARY KEY ({$this->_columnsAsString($primaryIndex['column'])})";
+			}
+			$indexes = is_array($indexes) ? join(";\n", $indexes) : '';
+
+			return "CREATE TABLE {$table} (\n{$columns}) {$tableParameters}; {$indexes}";
 		}
+		return parent::renderStatement($type, $data);
 	}
 
 /**
@@ -569,4 +812,11 @@ class Sqlite extends DboSource {
 		return $this->useNestedTransactions && version_compare($this->getVersion(), '3.6.8', '>=');
 	}
 
+	private function _columnsAsString($cols = array()) {
+		if (is_array($cols)) {
+			return implode(', ', array_map(array(&$this, 'name'), $cols));
+		} else {
+			return $this->name($cols);
+		}
+	}
 }

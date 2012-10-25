@@ -77,7 +77,7 @@ class SqliteTest extends CakeTestCase {
  *
  * @var object
  */
-	public $fixtures = array('core.user', 'core.uuid');
+	public $fixtures = array('core.user', 'core.uuid', 'core.apple');
 
 /**
  * Actual DB connection used in testing
@@ -155,13 +155,185 @@ class SqliteTest extends CakeTestCase {
 	}
 
 /**
+ * test Index introspection.
+ *
+ * @return void
+ */
+	public function testIndex2() {
+		$this->Dbo->cacheSources = false;
+
+		$name = 'test_index_tbl';
+		$table = $this->Dbo->fullTableName($name, false, false);
+
+		// no primary key
+		$this->Dbo->rawQuery("CREATE TABLE $table (name text)");
+		$expected = array();
+		$result = $this->Dbo->index($table);
+		$this->assertEqual($result, $expected);
+		$this->Dbo->rawQuery("DROP TABLE $table");
+
+		// alias of ROWID
+		$this->Dbo->rawQuery("CREATE TABLE $table (id integer primary key, name text)");
+		$expected = array('PRIMARY' => array('column' => 'id', 'unique' => 1));
+		$result = $this->Dbo->index($table);
+		$this->assertEqual($result, $expected);
+		$this->Dbo->rawQuery("DROP TABLE $table");
+
+		// not an alias of ROWID
+		$this->Dbo->rawQuery("CREATE TABLE $table (id int primary key, name text)");
+		$expected = array('PRIMARY' => array('column' => 'id', 'unique' => 1));
+		$result = $this->Dbo->index($table);
+		$this->assertEqual($result, $expected);
+		$this->Dbo->rawQuery("DROP TABLE $table");
+
+		// composite primary key
+		$this->Dbo->rawQuery("CREATE TABLE $table (id1 integer, id2 integer,  name text, primary key(id1, id2))");
+		$expected = array('PRIMARY' => array('column' => array('id1', 'id2'), 'unique' => 1));
+		$result = $this->Dbo->index($table);
+		$this->assertEqual($result, $expected);
+		$this->Dbo->rawQuery("DROP TABLE $table");
+
+		// unique column
+		$this->Dbo->rawQuery("CREATE TABLE $table (id integer primary key, name text unique)");
+		$expected = array(
+				'PRIMARY' => array('column' => 'id', 'unique' => 1),
+				'name' => array('column' => 'name', 'unique' => 1)   // consistent with MySql
+		);
+		$result = $this->Dbo->index($table);
+		$this->assertEqual($result, $expected);
+		$this->Dbo->rawQuery("DROP TABLE $table");
+
+		// unique column pair
+		$this->Dbo->rawQuery("CREATE TABLE $table (id integer primary key, x integer, y integer, UNIQUE(x, y))");
+		$expected = array(
+				'PRIMARY' => array('column' => 'id', 'unique' => 1),
+				'x' => array('column' => array('x', 'y'), 'unique' => 1) // consistent with MySql
+		);
+		$result = $this->Dbo->index($table);
+		$this->assertEqual($result, $expected);
+		$this->Dbo->rawQuery("DROP TABLE $table");
+
+		// named single column index (not unique)
+		$indexName = 'index_for_name';
+		$this->Dbo->rawQuery("CREATE TABLE $table (id integer primary key, name text)");
+		$this->Dbo->rawQuery("CREATE INDEX $indexName ON $name (name)");
+		$expected = array(
+				'PRIMARY' => array('column' => 'id', 'unique' => 1),
+				$indexName => array('column' => 'name', 'unique' => 0));
+		$result = $this->Dbo->index($table);
+		$this->assertEqual($result, $expected);
+		$this->Dbo->rawQuery("DROP TABLE $table");
+
+		// named multi column index (not unique)
+		$indexName = 'index_for_x_and_y';
+		$this->Dbo->rawQuery("CREATE TABLE $table (id integer primary key, x integer, y integer)");
+		$this->Dbo->rawQuery("CREATE INDEX $indexName ON $name (x, y)");
+		$expected = array(
+				'PRIMARY' => array('column' => 'id', 'unique' => 1),
+				$indexName => array('column' => array('x', 'y'), 'unique' => 0));
+		$result = $this->Dbo->index($table);
+		$this->assertEqual($result, $expected);
+		$this->Dbo->rawQuery("DROP TABLE $table");
+	}
+
+/**
+ *
+ *
+ * autoincrement can only be declared on the primary key
+ *     cannot use: CREATE TABLE my_table (id int(11) AUTOINCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));
+ *       must use: CREATE TABLE my_table (id integer primary key AUTOINCREMENT, bool tinyint(1), small_int tinyint(2));
+ *
+ * non-unique indexes cannot be declared in CREATE TABE statement
+ *     cannot use: CREATE TABLE my_table (id integer primary key AUTOINCREMENT, bool tinyint(1), small_int tinyint(2), KEY pointless_bool (bool))
+ *       must use: CREATE TABLE my_table (id integer primary key AUTOINCREMENT, bool tinyint(1), small_int tinyint(2))
+ *                 CREATE INDEX pointless_bool on my_table (bool);
+ *
+ * @return void
+ */
+	public function testIndexDetection() {
+		$this->Dbo->cacheSources = false;
+
+		$name = $this->Dbo->fullTableName('simple');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id integer primary key AUTOINCREMENT, bool tinyint(1), small_int tinyint(2));');
+		$expected = array('PRIMARY' => array('column' => 'id', 'unique' => 1));
+		$result = $this->Dbo->index('simple', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
+
+		$name = $this->Dbo->fullTableName('simple');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int, bool tinyint(1), small_int tinyint(2), primary key(id));');
+		$expected = array('PRIMARY' => array('column' => 'id', 'unique' => 1));
+		$result = $this->Dbo->index('simple', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
+
+		$name = $this->Dbo->fullTableName('with_a_key');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id integer primary key AUTOINCREMENT, bool tinyint(1), small_int tinyint(2));');
+		$this->Dbo->rawQuery('CREATE INDEX pointless_bool on with_a_key (bool);');
+		$expected = array(
+				'PRIMARY' => array('column' => 'id', 'unique' => 1),
+				'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+		);
+		$result = $this->Dbo->index('with_a_key', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
+
+		$name = $this->Dbo->fullTableName('with_two_keys');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id integer primary key AUTOINCREMENT, bool tinyint(1), small_int tinyint(2));');
+		$this->Dbo->rawQuery('CREATE INDEX pointless_bool on with_two_keys (bool);');
+		$this->Dbo->rawQuery('CREATE INDEX pointless_small_int on with_two_keys (small_int);');
+		$expected = array(
+				'PRIMARY' => array('column' => 'id', 'unique' => 1),
+				'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+				'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
+		);
+		$result = $this->Dbo->index('with_two_keys', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
+
+		$name = $this->Dbo->fullTableName('with_compound_keys');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id integer primary key AUTOINCREMENT, bool tinyint(1), small_int tinyint(2));');
+		$this->Dbo->rawQuery('CREATE INDEX pointless_bool on with_compound_keys (bool);');
+		$this->Dbo->rawQuery('CREATE INDEX pointless_small_int on with_compound_keys (small_int);');
+		$this->Dbo->rawQuery('CREATE INDEX one_way on with_compound_keys (bool, small_int);');
+		$expected = array(
+				'PRIMARY' => array('column' => 'id', 'unique' => 1),
+				'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+				'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
+				'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
+		);
+		$result = $this->Dbo->index('with_compound_keys', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
+
+		$name = $this->Dbo->fullTableName('with_multiple_compound_keys');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id integer primary key AUTOINCREMENT, bool tinyint(1), small_int tinyint(2));');
+		$this->Dbo->rawQuery('CREATE INDEX pointless_bool on with_multiple_compound_keys (bool);');
+		$this->Dbo->rawQuery('CREATE INDEX pointless_small_int on with_multiple_compound_keys (small_int);');
+		$this->Dbo->rawQuery('CREATE INDEX one_way on with_multiple_compound_keys (bool, small_int);');
+		$this->Dbo->rawQuery('CREATE INDEX other_way on with_multiple_compound_keys (small_int, bool);');
+		$expected = array(
+				'PRIMARY' => array('column' => 'id', 'unique' => 1),
+				'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+				'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
+				'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
+				'other_way' => array('column' => array('small_int', 'bool'), 'unique' => 0),
+		);
+		$result = $this->Dbo->index('with_multiple_compound_keys', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Tests that cached table descriptions are saved under the sanitized key name
  *
  */
 	public function testCacheKeyName() {
 		Configure::write('Cache.disable', false);
+		Cache::set(array('duration' => '+1 days'));
 
-		$dbName = 'db' . rand() . '$(*%&).db';
+		$dbName = 'db' . rand();
+		$dbName .= (DS === '\\') ? '$(%&).db' : '$(*%&).db';
 		$this->assertFalse(file_exists(TMP . $dbName));
 
 		$config = $this->Dbo->config;
@@ -256,6 +428,82 @@ class SqliteTest extends CakeTestCase {
 	}
 
 /**
+ * test testCreateSchemaWithIndexes()
+ *
+ * SQLite does not support named table constraints.  Say you want to 'DROP INDEX x_y_is_unique;'
+ *   cannot use:
+ *     create table aaa (id integer primary key autoincrement, x integer, y integer, constraint x_y_is_unique unique (x, y));
+ *   must use:
+ *     create table aaa (id integer primary key autoincrement, x integer, y integer);
+ *     create index x_y_is_unique on aaa (x, y);
+ *
+ * @return void
+ */
+	public function testCreateSchemaWithIndexes() {
+		$this->Dbo->cacheSources = false;
+		$tableName = 'test_drop_schema';
+
+		$schema = new CakeSchema();
+		$schema->tables[$tableName] = array(
+				'id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
+				'x' => array('type' => 'integer', 'null' => false),
+				'data' => array('type' => 'text', 'null' => false),
+				'indexes' => array(
+						'x_is_unique' => array('column' => 'x', 'unique' => 1),
+						'data_is_fast' => array('column' => 'data', 'unique => 0')
+				)
+		);
+
+		$sql = $this->Dbo->createSchema($schema);
+		$this->Dbo->rawQuery($sql);
+		$fields = $this->Dbo->describe($tableName);
+		$this->assertEqual($fields['id'], array('type' => 'integer', 'null' => false, 'length' => null, 'default' => null, 'key' => 'primary'));
+		$this->assertEqual($fields['x'], array('type' => 'integer', 'null' => false, 'length' => null, 'default' => null, 'key' => 'unique'));
+		$this->assertEqual($fields['data'], array('type' => 'text', 'null' => false, 'length' => null, 'default' => null, 'key' => 'index'));
+
+		$this->Dbo->rawQuery('DROP INDEX x_is_unique;');
+		$fields = $this->Dbo->describe($tableName);
+		$this->assertEqual($fields['x'], array('type' => 'integer', 'null' => false, 'length' => null, 'default' => null));
+
+		$this->Dbo->rawQuery('DROP INDEX data_is_fast;');
+		$fields = $this->Dbo->describe($tableName);
+		$this->assertEqual($fields['data'], array('type' => 'text', 'null' => false, 'length' => null, 'default' => null));
+
+		$this->Dbo->rawQuery("DROP TABLE $tableName");
+
+
+
+		$schema = new CakeSchema();
+		$schema->tables[$tableName] = array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'x' => array('type' => 'integer', 'null' => false),
+				'data' => array('type' => 'text', 'null' => false),
+				'indexes' => array(
+						'PRIMARY' => array('column' => 'id', 'unique' => 1),
+						'x_is_unique' => array('column' => 'x', 'unique' => 1),
+						'data_is_fast' => array('column' => 'data', 'unique => 0')
+				)
+		);
+
+		$sql = $this->Dbo->createSchema($schema);
+		$this->Dbo->rawQuery($sql);
+		$fields = $this->Dbo->describe($tableName);
+		$this->assertEqual($fields['id'], array('type' => 'integer', 'null' => false, 'length' => null, 'default' => null, 'key' => 'primary'));
+		$this->assertEqual($fields['x'], array('type' => 'integer', 'null' => false, 'length' => null, 'default' => null, 'key' => 'unique'));
+		$this->assertEqual($fields['data'], array('type' => 'text', 'null' => false, 'length' => null, 'default' => null, 'key' => 'index'));
+
+		$this->Dbo->rawQuery('DROP INDEX x_is_unique;');
+		$fields = $this->Dbo->describe($tableName);
+		$this->assertEqual($fields['x'], array('type' => 'integer', 'null' => false, 'length' => null, 'default' => null));
+
+		$this->Dbo->rawQuery('DROP INDEX data_is_fast;');
+		$fields = $this->Dbo->describe($tableName);
+		$this->assertEqual($fields['data'], array('type' => 'text', 'null' => false, 'length' => null, 'default' => null));
+
+		$this->Dbo->rawQuery("DROP TABLE $tableName");
+	}
+
+/**
  * test describe() and normal results.
  *
  * @return void
@@ -274,7 +522,7 @@ class SqliteTest extends CakeTestCase {
 				'key' => 'primary',
 				'null' => false,
 				'default' => null,
-				'length' => 11
+				'length' => null
 			),
 			'user' => array(
 				'type' => 'string',
@@ -311,6 +559,31 @@ class SqliteTest extends CakeTestCase {
 	}
 
 /**
+ * test testDescribeApple() and normal results.
+ *
+ * @return void
+ */
+	public function testDescribeApple() {
+		$this->loadFixtures('Apple');
+		$this->Dbo->cacheSources = false;
+
+		$model = new Apple();
+		$fields_by_model = $this->Dbo->describe($model);
+		$fields_by_name = $this->Dbo->describe($model->useTable);
+		$this->assertIdentical($fields_by_model, $fields_by_name);
+
+		$fields = $fields_by_model;
+		$this->assertEqual($fields['id'], array('type' => 'integer', 'null' => false, 'default' => '', 'length' => null, 'key' => 'primary'));
+		$this->assertEqual($fields['apple_id'], array('type' => 'integer', 'null' => true, 'default' => null, 'length' => null));
+		$this->assertEqual($fields['color'], array('type' => 'string', 'null' => false, 'default' => '', 'length' => 40));
+		$this->assertEqual($fields['name'], array('type' => 'string', 'null' => false, 'default' => '', 'length' => 40));
+		$this->assertEqual($fields['created'], array('type' => 'datetime', 'null' => true, 'default' => null, 'length' => null));
+		$this->assertEqual($fields['date'], array('type' => 'date', 'null' => true, 'default' => null, 'length' => null));
+		$this->assertEqual($fields['modified'], array('type' => 'datetime', 'null' => true, 'default' => null, 'length' => null));
+		$this->assertEqual($fields['mytime'], array('type' => 'time', 'null' => true, 'default' => null, 'length' => null));
+	}
+
+/**
  * test that describe does not corrupt UUID primary keys
  *
  * @return void
@@ -343,6 +616,40 @@ class SqliteTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result['id']);
 		$this->Dbo->query('DROP TABLE ' . $tableName);
+	}
+
+/**
+ * test that describe 'key' value is consistent with MySql
+ *
+ * @return void
+ */
+	public function testDescribeWithIndexes() {
+		$this->Dbo->cacheSources = false;
+
+		$name = $this->Dbo->fullTableName('with_multiple_compound_keys');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int primary key, bool tinyint(1), small_int tinyint(2), unique_int integer unique);');
+		$this->Dbo->rawQuery('CREATE INDEX pointless_bool on with_multiple_compound_keys (bool);');
+		$this->Dbo->rawQuery('CREATE INDEX one_way on with_multiple_compound_keys (bool, small_int);');
+
+		$fields = $this->Dbo->describe('with_multiple_compound_keys');
+		$this->assertEqual($fields['id']['key'], 'primary');
+		$this->assertEqual($fields['unique_int']['key'], 'unique');
+		$this->assertEqual($fields['bool']['key'], 'index');
+		$this->assertTrue(empty($fields['small_int']['key']));
+
+		$this->Dbo->rawQuery('CREATE INDEX other_way on with_multiple_compound_keys (small_int, bool);');
+
+		$fields = $this->Dbo->describe('with_multiple_compound_keys');
+		$this->assertEqual($fields['bool']['key'], 'index');
+		$this->assertEqual($fields['small_int']['key'], 'index');
+
+		$this->Dbo->rawQuery('CREATE UNIQUE INDEX pointless_small_int on with_multiple_compound_keys (small_int);');
+
+		$fields = $this->Dbo->describe('with_multiple_compound_keys');
+		$this->assertEqual($fields['bool']['key'], 'index');
+		$this->assertEqual($fields['small_int']['key'], 'unique');
+
+		$this->Dbo->rawQuery("DROP TABLE $name");
 	}
 
 /**
