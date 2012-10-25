@@ -265,8 +265,6 @@ class CakeValidationRule {
 
 		$validator = $this->_getPropertiesArray();
 		$rule = strtolower($this->_rule);
-		
-		
 		if (isset($methods[$rule])) {
 			$this->_ruleParams[] = array_merge($validator, $this->_passedOptions);
 			$this->_ruleParams[0] = array($field => $this->_ruleParams[0]);
