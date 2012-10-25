@@ -295,14 +295,14 @@ class CakeValidationRule {
 		 * ...
 		 * 
 		 */
-		} elseif (  strpos($this->_rule , '::') ){
+		} elseif (strpos($this->_rule ,'::')) {
 			
 			list($plugin, $class) = pluginSplit($this->_rule);
 			list($className,$method) = explode('::',$class);
 			
 			// Contestualize lazy loading to validation repository even into plugins
 			$location = 'Model/Validation';
-			if ( $plugin ) $location = $plugin.'.'.$location;
+			if ( $plugin ) $location = $plugin . '.' . $location;
 			
 			// Lazy loading and method call
 			App::uses($className, $location);
