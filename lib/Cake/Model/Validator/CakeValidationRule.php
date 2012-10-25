@@ -257,6 +257,9 @@ class CakeValidationRule {
 /**
  * Dispatches the validation rule to the given validator method
  *
+ * Use "PluginName.ClassName::method" as validation rule name to refer to a custom validator object.
+ * /App/Plugin/Model/Validation/ClassName.php
+ *
  * @return boolean True if the rule could be dispatched, false otherwise
  */
 	public function process($field, &$data, &$methods) {
