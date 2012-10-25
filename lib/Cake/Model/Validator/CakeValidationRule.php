@@ -274,7 +274,7 @@ class CakeValidationRule {
 			$this->_valid = call_user_func_array($methods[$rule], $this->_ruleParams);
 		} elseif (class_exists('Validation') && method_exists('Validation', $this->_rule)) {
 			$this->_valid = call_user_func_array(array('Validation', $this->_rule), $this->_ruleParams);
-		} elseif (strpos($this->_rule ,'::')) {
+		} elseif (strpos($this->_rule, '::')) {
 			list($plugin, $class) = pluginSplit($this->_rule);
 			list($className,$method) = explode('::', $class);
 			$location = 'Model/Validation';
