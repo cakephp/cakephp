@@ -492,7 +492,8 @@ class PaginatorComponentTest extends CakeTestCase {
 			'PaginatorControllerPost' => array(
 				'contain' => array('PaginatorControllerComment'),
 				'maxLimit' => 10,
-				'paramType' => 'named'
+				'paramType' => 'named',
+				'order' => array('PaginatorControllerPost.id' => 'ASC')
 			),
 		);
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
