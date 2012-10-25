@@ -273,28 +273,6 @@ class CakeValidationRule {
 			$this->_valid = call_user_func_array($methods[$rule], $this->_ruleParams);
 		} elseif (class_exists('Validation') && method_exists('Validation', $this->_rule)) {
 			$this->_valid = call_user_func_array(array('Validation', $this->_rule), $this->_ruleParams);
-		
-		
-		/**
-		 * Allow external validator objects to be used as custom validation rules
-		 * Inspired by: http://goo.gl/8u4FN
-		 * Documentation: http://bit.ly/RXxw43
-		 * 
-		 * It allow to create a custom validator object like:
-		 *
-		 * // App/Model/Validation
-		 * class MyValidator {
-		 *   public static function isReallyInt() {}
-		 * }
-		 *
-		 * // App/Model/Users.php
-		 * ...
-		 * $validate = array(
-		 *   'username' => 'MyValidator::isReallyInt'
-		 *);
-		 * ...
-		 * 
-		 */
 		} elseif (strpos($this->_rule ,'::')) {
 			
 			list($plugin, $class) = pluginSplit($this->_rule);
@@ -311,9 +289,6 @@ class CakeValidationRule {
 		
 		} elseif (is_string($validator['rule'])) {
 			$this->_valid = preg_match($this->_rule, $data[$field]);
-		
-		
-		
 		} elseif (Configure::read('debug') > 0) {
 			trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $this->_rule, $field), E_USER_WARNING);
 			return false;
