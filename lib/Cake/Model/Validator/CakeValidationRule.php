@@ -257,6 +257,9 @@ class CakeValidationRule {
 /**
  * Dispatches the validation rule to the given validator method
  *
+ * Use "PluginName.ClassName::method" as validation rule name to refer to a custom validator object.
+ * /App/Plugin/Model/Validation/ClassName.php
+ *
  * @return boolean True if the rule could be dispatched, false otherwise
  */
 	public function process($field, &$data, &$methods) {
@@ -271,6 +274,17 @@ class CakeValidationRule {
 			$this->_valid = call_user_func_array($methods[$rule], $this->_ruleParams);
 		} elseif (class_exists('Validation') && method_exists('Validation', $this->_rule)) {
 			$this->_valid = call_user_func_array(array('Validation', $this->_rule), $this->_ruleParams);
+		} elseif (strpos($this->_rule, '::')) {
+			list($plugin, $class) = pluginSplit($this->_rule);
+			list($className,$method) = explode('::', $class);
+			$location = 'Model/Validation';
+			if ( $plugin ) $location = $plugin . '.' . $location;
+			App::uses($className, $location);
+			if (class_exists($className) && method_exists($className, $method)) {
+				$this->_valid = call_user_func_array(array($className, $method), $this->_ruleParams);
+			} else {
+				$this->_valid = false;
+			}
 		} elseif (is_string($validator['rule'])) {
 			$this->_valid = preg_match($this->_rule, $data[$field]);
 		} elseif (Configure::read('debug') > 0) {
