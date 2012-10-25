@@ -58,7 +58,7 @@ class ModelWriteTest extends BaseModelTest {
 		$lastInsertId = $TestModel->JoinAsJoinB->getLastInsertID();
 		$data['id'] = $lastInsertId;
 		$this->assertEquals(array('JoinAsJoinB' => $data), $result);
-		$this->assertTrue($lastInsertId);
+		$this->assertTrue($lastInsertId > 0);
 
 		$result = $TestModel->JoinAsJoinB->findById(1);
 		$expected = array(

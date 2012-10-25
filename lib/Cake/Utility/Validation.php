@@ -860,7 +860,7 @@ class Validation {
 		if ($deep !== true) {
 			return true;
 		}
-		if (!$check) {
+		if ((int)$check === 0) {
 			return false;
 		}
 		$sum = 0;
