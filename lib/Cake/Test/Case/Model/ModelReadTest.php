@@ -4959,7 +4959,9 @@ class ModelReadTest extends BaseModelTest {
 	public function testAssociationAfterFind() {
 		$this->loadFixtures('Post', 'Author', 'Comment');
 		$TestModel = new Post();
-		$result = $TestModel->find('all');
+		$result = $TestModel->find('all', array(
+			'order' => array('Post.id' => 'ASC')
+		));
 		$expected = array(
 			array(
 				'Post' => array(
@@ -5384,7 +5386,9 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$Post->Tag->primaryKey = 'tag';
 
-		$result = $Post->find('all');
+		$result = $Post->find('all', array(
+			'order' => array('Post.id' => 'ASC')
+		));
 		$expected = array(
 			array(
 				'Post' => array(
