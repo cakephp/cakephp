@@ -272,19 +272,12 @@ class CakeValidationRule {
 		} elseif (class_exists('Validation') && method_exists('Validation', $this->_rule)) {
 			$this->_valid = call_user_func_array(array('Validation', $this->_rule), $this->_ruleParams);
 		} elseif (strpos($this->_rule ,'::')) {
-			
 			list($plugin, $class) = pluginSplit($this->_rule);
 			list($className,$method) = explode('::',$class);
-			
-			// Contestualize lazy loading to validation repository even into plugins
 			$location = 'Model/Validation';
 			if ( $plugin ) $location = $plugin . '.' . $location;
-			
-			// Lazy loading and method call
 			App::uses($className, $location);
 			if ( class_exists($className) ) $this->_valid = call_user_func_array(array($className, $method), $this->_ruleParams);                
-			
-		
 		} elseif (is_string($validator['rule'])) {
 			$this->_valid = preg_match($this->_rule, $data[$field]);
 		} elseif (Configure::read('debug') > 0) {
