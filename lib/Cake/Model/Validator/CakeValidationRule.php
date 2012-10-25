@@ -277,6 +277,7 @@ class CakeValidationRule {
 		
 		/**
 		 * Allow external validator objects to be used as custom validation rules
+		 * Inspired by: http://goo.gl/8u4FN
 		 * Documentation: http://bit.ly/RXxw43
 		 * 
 		 * It allow to create a custom validator object like:
