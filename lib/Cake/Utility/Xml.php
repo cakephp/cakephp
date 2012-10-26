@@ -110,7 +110,7 @@ class Xml {
  * Parse the input data and create either a SimpleXmlElement object or a DOMDocument.
  *
  * @param string $input The input to load.
- * @param array  $options The options to use. See Xml::build()
+ * @param array $options The options to use. See Xml::build()
  * @return SimpleXmlElement|DOMDocument.
  */
 	protected static function _loadXml($input, $options) {

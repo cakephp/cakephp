@@ -295,9 +295,9 @@ class Debugger {
 		$back = array();
 
 		$_trace = array(
-			'line'     => '??',
-			'file'     => '[internal]',
-			'class'    => null,
+			'line' => '??',
+			'file' => '[internal]',
+			'class' => null,
 			'function' => '[main]'
 		);
 
@@ -510,7 +510,7 @@ class Debugger {
 	protected static function _array(array $var, $depth, $indent) {
 		$secrets = array(
 			'password' => '*****',
-			'login'  => '*****',
+			'login' => '*****',
 			'host' => '*****',
 			'database' => '*****',
 			'port' => '*****',

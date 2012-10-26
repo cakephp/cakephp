@@ -558,7 +558,7 @@ class HtmlHelper extends AppHelper {
 	public function scriptBlock($script, $options = array()) {
 		$options += array('safe' => true, 'inline' => true);
 		if ($options['safe']) {
-			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
+			$script = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
 		}
 		if (!$options['inline'] && empty($options['block'])) {
 			$options['block'] = 'script';
