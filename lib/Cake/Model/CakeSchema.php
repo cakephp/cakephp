@@ -439,7 +439,7 @@ class CakeSchema extends Object {
 			}
 			$out .= implode(",\n", $cols);
 		}
-		$out .= "\n\t);\n";
+		$out .= "\n\t);\n\n";
 		return $out;
 	}
 
