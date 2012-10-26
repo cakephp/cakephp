@@ -119,6 +119,11 @@ class Contact extends CakeTestModel {
 			'between' => array('rule' => array('between', 5, 30), 'allowEmpty' => true),
 		),
 		'imnotrequiredeither' => array('required' => true, 'rule' => array('between', 5, 30), 'allowEmpty' => true),
+		'iamrequiredalways' => array(
+			'email' => array('rule' => 'email'),
+			'rule_on_create' => array('rule' => array('maxLength', 50), 'on' => 'create'),
+			'rule_on_update' => array('rule' => array('between', 1, 50), 'on' => 'update'),
+		),
 	);
 
 /**
@@ -7064,6 +7069,20 @@ class FormHelperTest extends CakeTestCase {
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][imnotrequiredeither]',
 				'id' => 'ContactImnotrequiredeither'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.iamrequiredalways');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactIamrequiredalways'),
+			'Iamrequiredalways',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][iamrequiredalways]',
+				'id' => 'ContactIamrequiredalways'
 			),
 			'/div'
 		);

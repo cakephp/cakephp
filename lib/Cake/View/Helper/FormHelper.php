@@ -249,11 +249,11 @@ class FormHelper extends AppHelper {
 		}
 		foreach ($validationRules as $rule) {
 			$rule->isUpdate($this->requestType === 'put');
-			if ($rule->isEmptyAllowed()) {
-				return false;
+			if (!$rule->isEmptyAllowed()) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 /**
