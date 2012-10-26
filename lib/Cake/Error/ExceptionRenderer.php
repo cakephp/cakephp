@@ -116,7 +116,7 @@ class ExceptionRenderer {
 			}
 		}
 
-		$isNotDebug = (Configure::read('debug') == 0);
+		$isNotDebug = !Configure::read('debug');
 		if ($isNotDebug && $method == '_cakeError') {
 			$method = 'error400';
 		}
