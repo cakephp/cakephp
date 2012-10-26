@@ -734,8 +734,17 @@ class Helper extends Object {
 			$this->setEntity($field);
 		}
 		$options = (array)$options;
+		$normalize = true;
+		if (isset($options['normalize'])) {
+			$normalize = $options['normalize'];
+			unset($options['normalize']);
+		}
+
 		$options = $this->_name($options);
 		$options = $this->value($options);
+		if (!empty($options['value']) && $normalize) {
+			$options['value'] = str_replace(array("\t", "\r\n", "\n"), ' ', $options['value']);
+		}
 		$options = $this->domId($options);
 		return $options;
 	}

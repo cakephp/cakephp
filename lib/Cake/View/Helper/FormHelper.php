@@ -1463,6 +1463,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::textarea
  */
 	public function textarea($fieldName, $options = array()) {
+		$options['normalize'] = false;
 		$options = $this->_initInputField($fieldName, $options);
 		$value = null;
 
@@ -2621,6 +2622,8 @@ class FormHelper extends AppHelper {
  * - `secure` - boolean whether or not the field should be added to the security fields.
  *   Disabling the field using the `disabled` option, will also omit the field from being
  *   part of the hashed key.
+ * - `normalize` - boolean whether the content should be normalized regarding whitespaces.
+ *   Since only textareas understand new line characters, this is a good default for all other types.
  *
  * @param string $field Name of the field to initialize options for.
  * @param array $options Array of options to append options into.
