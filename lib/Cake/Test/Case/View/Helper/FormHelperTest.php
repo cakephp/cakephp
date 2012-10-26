@@ -3072,9 +3072,9 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * testTextbox method
+ * testNormalize method
  *
- * test textbox element generation
+ * test that whitespaces are normalized for all inputs except textareas (which also understand new line characters)
  *
  * @return void
  */
