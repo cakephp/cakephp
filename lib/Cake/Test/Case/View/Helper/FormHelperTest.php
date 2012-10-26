@@ -2238,6 +2238,15 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('Model.start_time', array(
 			'type' => 'time',
 			'interval' => 15,
+			'selected' => array('hour' => '3', 'min' => '57', 'meridian' => 'pm')
+		));
+		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'interval' => 15,
 			'selected' => '2012-10-23 15:57:00'
 		));
 		$this->assertContains('<option value="04" selected="selected">4</option>', $result);

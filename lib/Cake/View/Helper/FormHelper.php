@@ -2197,6 +2197,9 @@ class FormHelper extends AppHelper {
 		if (!empty($attributes['value'])) {
 			if (is_array($attributes['value'])) {
 				extract($attributes['value']);
+				if ($meridian === 'pm') {
+					$hour += 12;
+				}
 			} else {
 				if (is_numeric($attributes['value'])) {
 					$attributes['value'] = strftime('%Y-%m-%d %H:%M:%S', $attributes['value']);
