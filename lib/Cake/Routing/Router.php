@@ -434,7 +434,7 @@ class Router {
 			$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
 		}
 
-		if ($options['reset'] == true || self::$_namedConfig['rules'] === false) {
+		if ($options['reset'] || self::$_namedConfig['rules'] === false) {
 			self::$_namedConfig['rules'] = array();
 		}
 
@@ -651,7 +651,7 @@ class Router {
  * @return array Parameter information
  */
 	public static function getParams($current = false) {
-		if ($current) {
+		if ($current && self::$_requests) {
 			return self::$_requests[count(self::$_requests) - 1]->params;
 		}
 		if (isset(self::$_requests[0])) {
@@ -1090,7 +1090,7 @@ class Router {
  * @return string base url with plugin name removed if present
  */
 	public static function stripPlugin($base, $plugin = null) {
-		if ($plugin != null) {
+		if ($plugin) {
 			$base = preg_replace('/(?:' . $plugin . ')/', '', $base);
 			$base = str_replace('//', '', $base);
 			$pos1 = strrpos($base, '/');

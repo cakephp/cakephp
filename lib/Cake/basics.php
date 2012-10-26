@@ -44,20 +44,15 @@ if (!function_exists('config')) {
  */
 	function config() {
 		$args = func_get_args();
+		$count = count($args);
+		$included = 0;
 		foreach ($args as $arg) {
 			if (file_exists(APP . 'Config' . DS . $arg . '.php')) {
 				include_once APP . 'Config' . DS . $arg . '.php';
-
-				if (count($args) == 1) {
-					return true;
-				}
-			} else {
-				if (count($args) == 1) {
-					return false;
-				}
+				$included++;
 			}
 		}
-		return true;
+		return $included === $count;
 	}
 
 }
@@ -75,7 +70,7 @@ if (!function_exists('debug')) {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#basic-debugging
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#debug
  */
-	function debug($var = false, $showHtml = null, $showFrom = true) {
+	function debug($var, $showHtml = null, $showFrom = true) {
 		if (Configure::read('debug') > 0) {
 			App::uses('Debugger', 'Utility');
 			$file = '';

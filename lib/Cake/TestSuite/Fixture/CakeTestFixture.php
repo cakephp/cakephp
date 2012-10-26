@@ -97,7 +97,13 @@ class CakeTestFixture {
 		if (!empty($this->useDbConfig)) {
 			$connection = $this->useDbConfig;
 			if (strpos($connection, 'test') !== 0) {
-				throw new CakeException(__d('cake_dev', 'Invalid datasource %s for object %s', $connection, $this->name));
+				$message = __d(
+					'cake_dev',
+					'Invalid datasource name "%s" for "%s" fixture. Fixture datasource names must begin with "test".',
+					$connection,
+					$this->name
+				);
+				throw new CakeException($message);
 			}
 		}
 		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => $connection));
@@ -287,7 +293,7 @@ class CakeTestFixture {
 	}
 
 /**
- * Truncates the current fixture. Can be overwritten by classes extending 
+ * Truncates the current fixture. Can be overwritten by classes extending
  * CakeFixture to trigger other events before / after truncate.
  *
  * @param DboSource $db A reference to a db instance

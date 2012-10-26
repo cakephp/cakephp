@@ -4959,7 +4959,9 @@ class ModelReadTest extends BaseModelTest {
 	public function testAssociationAfterFind() {
 		$this->loadFixtures('Post', 'Author', 'Comment');
 		$TestModel = new Post();
-		$result = $TestModel->find('all');
+		$result = $TestModel->find('all', array(
+			'order' => array('Post.id' => 'ASC')
+		));
 		$expected = array(
 			array(
 				'Post' => array(
@@ -5384,7 +5386,9 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$Post->Tag->primaryKey = 'tag';
 
-		$result = $Post->find('all');
+		$result = $Post->find('all', array(
+			'order' => array('Post.id' => 'ASC')
+		));
 		$expected = array(
 			array(
 				'Post' => array(
@@ -6860,6 +6864,17 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$result = $Article->find('count', array('group' => array('Article.user_id')));
 		$this->assertEquals($expected, $result);
+
+		$expected = count($Article->find('all', array(
+			'fields' => array('Article.user_id'),
+			'conditions' => array('Article.user_id' => 1),
+			'group' => 'Article.user_id')
+		));
+		$result = $Article->find('count', array(
+			'conditions' => array('Article.user_id' => 1),
+			'group' => array('Article.user_id'),
+		));
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -6886,7 +6901,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->skipIf($this->db instanceof Sqlite, 'SELECT COUNT(DISTINCT field) is not compatible with SQLite.');
 		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
 
-		$this->loadFixtures('Project');
+		$this->loadFixtures('Project', 'Thread');
 		$TestModel = new Project();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();

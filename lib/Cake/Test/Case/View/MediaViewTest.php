@@ -100,7 +100,7 @@ class MediaViewTest extends CakeTestCase {
 
 		$this->MediaView->response->expects($this->at(2))
 			->method('header')
-			->with('Content-Length', 31);
+			->with('Content-Length', 38);
 
 		$this->MediaView->response->expects($this->once())->method('_clearBuffer');
 		$this->MediaView->response->expects($this->exactly(1))
@@ -111,7 +111,7 @@ class MediaViewTest extends CakeTestCase {
 		ob_start();
 		$result = $this->MediaView->render();
 		$output = ob_get_clean();
-		$this->assertEquals('this is the test asset css file', $output);
+		$this->assertEquals("/* this is the test asset css file */\n", $output);
 		$this->assertTrue($result !== false);
 	}
 
