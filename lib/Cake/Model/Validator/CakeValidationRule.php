@@ -283,7 +283,7 @@ class CakeValidationRule {
 			if (class_exists($className) && method_exists($className, $method)) {
 				$this->_valid = call_user_func_array(array($className, $method), $this->_ruleParams);
 			} else {
-				$this->_valid = false;
+				trigger_error(__d('cake_dev', 'Could not find custom validation rule %s', $this->_rule ), E_USER_WARNING);
 			}
 		} elseif (is_string($validator['rule'])) {
 			$this->_valid = preg_match($this->_rule, $data[$field]);
