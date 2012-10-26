@@ -2613,9 +2613,12 @@ class Model extends Object implements CakeEventListener {
  *
  *  Note: find(list) + database views have issues with MySQL 5.0. Try upgrading to MySQL 5.1 if you
  *  have issues with database views.
+ *
+ *  Note: find(count) has its own return values.
+ *
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
- * @return array Array of records
+ * @return array Array of records, or Null on failure.
  * @link http://book.cakephp.org/2.0/en/models/deleting-data.html#deleteall
  */
 	public function find($type = 'first', $query = array()) {
@@ -2638,10 +2641,10 @@ class Model extends Object implements CakeEventListener {
 
 		if ($type === 'all') {
 			return $results;
-		} else {
-			if ($this->findMethods[$type] === true) {
-				return $this->{'_find' . ucfirst($type)}('after', $query, $results);
-			}
+		}
+
+		if ($this->findMethods[$type] === true) {
+			return $this->{'_find' . ucfirst($type)}('after', $query, $results);
 		}
 	}
 
@@ -2707,7 +2710,7 @@ class Model extends Object implements CakeEventListener {
 			return $query;
 		} elseif ($state === 'after') {
 			if (empty($results[0])) {
-				return false;
+				return array();
 			}
 			return $results[0];
 		}

@@ -422,7 +422,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$TestModel = new TranslatedItem();
 		$TestModel->locale = 'rus';
 		$result = $TestModel->read(null, 1);
-		$this->assertFalse($result);
+		$this->assertEquals(array(), $result);
 
 		$TestModel->locale = array('rus');
 		$result = $TestModel->read(null, 1);
