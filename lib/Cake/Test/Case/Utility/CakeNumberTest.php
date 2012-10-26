@@ -282,6 +282,39 @@ class CakeNumberTest extends CakeTestCase {
 	}
 
 /**
+ * Test default currency
+ *
+ * @return void
+ */
+	public function testDefaultCurrency() {
+		$result = $this->Number->defaultCurrency();
+		$this->assertEquals('USD', $result);
+		$this->Number->addFormat('NOK', array('before' => 'Kr. '));
+
+		$this->Number->defaultCurrency('NOK');
+		$result = $this->Number->defaultCurrency();
+		$this->assertEquals('NOK', $result);
+
+		$result = $this->Number->currency(1000);
+		$expected = 'Kr. 1,000.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(2000);
+		$expected = 'Kr. 2,000.00';
+		$this->assertEquals($expected, $result);
+		$this->Number->defaultCurrency('EUR');
+		$result = $this->Number->currency(1000);
+		$expected = '&#8364;1.000,00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(2000);
+		$expected = '&#8364;2.000,00';
+		$this->assertEquals($expected, $result);
+
+		$this->Number->defaultCurrency('USD');
+	}
+
+/**
  * testCurrencyPositive method
  *
  * @return void
