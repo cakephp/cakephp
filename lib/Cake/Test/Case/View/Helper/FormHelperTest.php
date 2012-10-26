@@ -3072,6 +3072,23 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testNormalize method
+ *
+ * test that whitespaces are normalized for all inputs except textareas (which also understand new line characters)
+ *
+ * @return void
+ */
+	public function testNormalize() {
+		$this->Form->request->data['Model']['field'] = "My\nvalue";
+		$result = $this->Form->text('Model.field');
+		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value'=>'My value', 'id' => 'ModelField')));
+
+		$this->Form->request->data['Model']['field'] = "My\nvalue";
+		$result = $this->Form->textarea('Model.field');
+		$this->assertTags($result, array('textarea' => array('name' => 'data[Model][field]', 'id' => 'ModelField'), "My\nvalue", '/textarea'));
+	}
+
+/**
  * testDefaultValue method
  *
  * Test default value setting
