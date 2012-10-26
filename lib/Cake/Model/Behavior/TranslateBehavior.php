@@ -129,7 +129,7 @@ class TranslateBehavior extends ModelBehavior {
 				'conditions' => array(
 					$Model->escapeField() => $db->identifier($RuntimeModel->escapeField('foreign_key')),
 					$RuntimeModel->escapeField('model') => $Model->name,
-					$RuntimeModel->escapeField('locale')  => $locale
+					$RuntimeModel->escapeField('locale') => $locale
 				)
 			);
 			$conditionFields = $this->_checkConditions($Model, $query);
