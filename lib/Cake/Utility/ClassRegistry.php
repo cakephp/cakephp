@@ -303,7 +303,7 @@ class ClassRegistry {
  * @param string $class
  * @return boolean
  */
-	protected function &_duplicate($alias,  $class) {
+	protected function &_duplicate($alias, $class) {
 		$duplicate = false;
 		if ($this->isKeySet($alias)) {
 			$model = $this->getObject($alias);
