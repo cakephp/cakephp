@@ -474,7 +474,7 @@ class CakeTimeTest extends CakeTestCase {
 
 		date_default_timezone_set('UTC');
 
-		$serverTime = new DateTime('now');
+		$serverTime = new DateTime('2012-12-11 14:15:20');
 
 		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
 		foreach ($timezones as $timezone) {
@@ -509,17 +509,18 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function testToRss() {
-		$this->assertEquals(date('r'), $this->Time->toRss(time()));
+		$date = '2012-08-12 12:12:45';
+		$time = strtotime($date);
+		$this->assertEquals(date('r', $time), $this->Time->toRss($time));
 
-		if (!$this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.')) {
-			$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
-			foreach ($timezones as $timezone) {
-				$yourTimezone = new DateTimeZone($timezone);
-				$yourTime = new DateTime('now', $yourTimezone);
-				$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
-				$this->assertEquals($yourTime->format('r'), $this->Time->toRss(time(), $userOffset));
-				$this->assertEquals($yourTime->format('r'), $this->Time->toRss(time(), $timezone));
-			}
+		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
+		foreach ($timezones as $timezone) {
+			$yourTimezone = new DateTimeZone($timezone);
+			$yourTime = new DateTime($date, $yourTimezone);
+			$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
+			$time = $yourTime->getTimestamp();
+			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $userOffset), "Failed on $timezone");
+			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
 		}
 	}
 
