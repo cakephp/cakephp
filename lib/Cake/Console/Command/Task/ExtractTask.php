@@ -395,7 +395,7 @@ class ExtractTask extends Shell {
 				$position = $count;
 				$depth = 0;
 
-				while ($depth == 0) {
+				while (!$depth) {
 					if ($this->_tokens[$position] == '(') {
 						$depth++;
 					} elseif ($this->_tokens[$position] == ')') {
@@ -482,7 +482,7 @@ class ExtractTask extends Shell {
 		}
 
 		$dims = Hash::dimensions($rules);
-		if ($dims == 1 || ($dims == 2 && isset($rules['message']))) {
+		if ($dims === 1 || ($dims === 2 && isset($rules['message']))) {
 			$rules = array($rules);
 		}
 
@@ -525,7 +525,7 @@ class ExtractTask extends Shell {
 					$occurrences[] = $file . ':' . implode(';', $lines);
 				}
 				$occurrences = implode("\n#: ", $occurrences);
-				$header = '#: ' . str_replace($paths, '', $occurrences) . "\n";
+				$header = '#: ' . str_replace(DS, '/', str_replace($paths, '', $occurrences)) . "\n";
 
 				if ($plural === false) {
 					$sentence = "msgid \"{$msgid}\"\n";
@@ -593,7 +593,7 @@ class ExtractTask extends Shell {
 				);
 				if (strtoupper($response) === 'N') {
 					$response = '';
-					while ($response == '') {
+					while (!$response) {
 						$response = $this->in(__d('cake_console', "What would you like to name this file?"), null, 'new_' . $filename);
 						$File = new File($this->_output . $response);
 						$filename = $response;

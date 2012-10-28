@@ -34,7 +34,7 @@ App::init();
 App::build();
 
 /**
- *  Full url prefix
+ * Full url prefix
  */
 if (!defined('FULL_BASE_URL')) {
 	$s = null;

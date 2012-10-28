@@ -124,7 +124,7 @@ class TemplateTask extends Shell {
 			$data = array($one => $two);
 		}
 
-		if ($data == null) {
+		if (!$data) {
 			return false;
 		}
 		$this->templateVars = $data + $this->templateVars;
@@ -167,7 +167,7 @@ class TemplateTask extends Shell {
  * @return string returns the path to the selected theme.
  */
 	public function getThemePath() {
-		if (count($this->templatePaths) == 1) {
+		if (count($this->templatePaths) === 1) {
 			$paths = array_values($this->templatePaths);
 			return $paths[0];
 		}

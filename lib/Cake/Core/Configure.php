@@ -261,10 +261,10 @@ class Configure {
 	public static function dump($key, $config = 'default', $keys = array()) {
 		$reader = static::_getReader($config);
 		if (!$reader) {
-			throw new Error\ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
+			throw new Error\ConfigureException(__d('cake_dev', 'There is no "%s" adapter.', $config));
 		}
 		if (!method_exists($reader, 'dump')) {
-			throw new Error\ConfigureException(__d('cake', 'The "%s" adapter, does not have a dump() method.', $config));
+			throw new Error\ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a dump() method.', $config));
 		}
 		$values = static::$_values;
 		if (!empty($keys) && is_array($keys)) {

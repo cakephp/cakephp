@@ -57,7 +57,7 @@ class CacheHelper extends Helper {
  * @return boolean
  */
 	protected function _enabled() {
-		return (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
+		return $this->_View->cacheAction && (Configure::read('Cache.check') === true);
 	}
 
 /**
@@ -152,7 +152,7 @@ class CacheHelper extends Helper {
 			$cacheTime = $cacheAction;
 		}
 
-		if ($cacheTime != '' && $cacheTime > 0) {
+		if ($cacheTime && $cacheTime > 0) {
 			$cached = $this->_parseOutput($out);
 			try {
 				$this->_writeFile($cached, $cacheTime, $useCallbacks);
@@ -330,7 +330,7 @@ class CacheHelper extends Helper {
 				Router::setRequestInfo($controller->request);
 				$this->request = $request;';
 
-		if ($useCallbacks == true) {
+		if ($useCallbacks) {
 			$file .= '
 				$controller->constructClasses();
 				$controller->startupProcess();';

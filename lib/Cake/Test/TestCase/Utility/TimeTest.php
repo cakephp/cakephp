@@ -480,7 +480,7 @@ class TimeTest extends TestCase {
 
 		date_default_timezone_set('UTC');
 
-		$serverTime = new \DateTime('now');
+		$serverTime = new \DateTime('2012-12-11 14:15:20');
 
 		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
 		foreach ($timezones as $timezone) {
@@ -515,17 +515,18 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testToRss() {
-		$this->assertEquals(date('r'), $this->Time->toRss(time()));
+		$date = '2012-08-12 12:12:45';
+		$time = strtotime($date);
+		$this->assertEquals(date('r', $time), $this->Time->toRss($time));
 
-		if (!$this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.')) {
-			$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
-			foreach ($timezones as $timezone) {
-				$yourTimezone = new \DateTimeZone($timezone);
-				$yourTime = new \DateTime('now', $yourTimezone);
-				$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
-				$this->assertEquals($yourTime->format('r'), $this->Time->toRss(time(), $userOffset));
-				$this->assertEquals($yourTime->format('r'), $this->Time->toRss(time(), $timezone));
-			}
+		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
+		foreach ($timezones as $timezone) {
+			$yourTimezone = new \DateTimeZone($timezone);
+			$yourTime = new \DateTime($date, $yourTimezone);
+			$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
+			$time = $yourTime->format('U');
+			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $userOffset), "Failed on $timezone");
+			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
 		}
 	}
 
@@ -785,17 +786,17 @@ class TimeTest extends TestCase {
 
 		$expected = time();
 		$result = $this->Time->fromString(time(), $yourTimezone);
-		$this->assertEquals($expected, $result);
+		$this->assertWithinMargin($expected, $result, 1);
 
 		$result = $this->Time->fromString(time(), $timezoneServer->getName());
-		$this->assertEquals($expected, $result);
+		$this->assertWithinMargin($expected, $result, 1);
 
 		$result = $this->Time->fromString(time(), $timezoneServer);
-		$this->assertEquals($expected, $result);
+		$this->assertWithinMargin($expected, $result, 1);
 
 		Configure::write('Config.timezone', $timezoneServer->getName());
 		$result = $this->Time->fromString(time());
-		$this->assertEquals($expected, $result);
+		$this->assertWithinMargin($expected, $result, 1);
 		Configure::delete('Config.timezone');
 	}
 
@@ -813,17 +814,17 @@ class TimeTest extends TestCase {
 
 		$result = $this->Time->fromString('+1 hour');
 		$expected = strtotime('+1 hour');
-		$this->assertEquals($expected, $result);
+		$this->assertWithinMargin($expected, $result, 1);
 
 		$timezone = date('Z', time());
 		$result = $this->Time->fromString('+1 hour', $timezone);
 		$expected = $this->Time->convert(strtotime('+1 hour'), $timezone);
-		$this->assertEquals($expected, $result);
+		$this->assertWithinMargin($expected, $result, 1);
 
 		$timezone = date_default_timezone_get();
 		$result = $this->Time->fromString('+1 hour', $timezone);
 		$expected = $this->Time->convert(strtotime('+1 hour'), $timezone);
-		$this->assertEquals($expected, $result);
+		$this->assertWithinMargin($expected, $result, 1);
 
 		date_default_timezone_set('UTC');
 		$date = new \DateTime('now', new \DateTimeZone('Europe/London'));
@@ -846,7 +847,7 @@ class TimeTest extends TestCase {
 		$date->setTimezone(new \DateTimeZone('UTC'));
 		$expected = $date->format('U') + $date->getOffset();
 
-		$this->assertEquals($expected, $result);
+		$this->assertWithinMargin($expected, $result, 1);
 
 		date_default_timezone_set('Australia/Melbourne');
 
@@ -854,7 +855,7 @@ class TimeTest extends TestCase {
 		$result = $this->Time->fromString($date, 'Asia/Kuwait');
 		$date->setTimezone(new \DateTimeZone('Asia/Kuwait'));
 		$expected = $date->format('U') + $date->getOffset();
-		$this->assertEquals($expected, $result);
+		$this->assertWithinMargin($expected, $result, 1);
 
 		$this->_restoreSystemTimezone();
 	}
@@ -1062,10 +1063,10 @@ class TimeTest extends TestCase {
 	public function testCorrectTimezoneConversion() {
 		date_default_timezone_set('UTC');
 		$date = '2012-01-01 10:00:00';
-		$converted = Time::format($date, '%Y-%m-%d %H:%M:%S', '', 'Europe/Copenhagen');
+		$converted = Time::format($date, '%Y-%m-%d %H:%M', '', 'Europe/Copenhagen');
 		$expected = new \DateTime($date);
 		$expected->setTimezone(new \DateTimeZone('Europe/Copenhagen'));
-		$this->assertEquals($expected->format('Y-m-d H:i:s'), $converted);
+		$this->assertEquals($expected->format('Y-m-d H:i'), $converted);
 	}
 
 }

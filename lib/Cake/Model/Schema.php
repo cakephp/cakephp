@@ -420,12 +420,12 @@ class Schema extends Object {
 					}
 					$col = "\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
 					unset($value['type']);
-					$col .= implode(', ',  $this->_values($value));
+					$col .= implode(', ', $this->_values($value));
 				} elseif ($field == 'indexes') {
 					$col = "\t\t'indexes' => array(\n\t\t\t";
 					$props = array();
 					foreach ((array)$value as $key => $index) {
-						$props[] = "'{$key}' => array(" . implode(', ',  $this->_values($index)) . ")";
+						$props[] = "'{$key}' => array(" . implode(', ', $this->_values($index)) . ")";
 					}
 					$col .= implode(",\n\t\t\t", $props) . "\n\t\t";
 				} elseif ($field == 'tableParameters') {
@@ -441,7 +441,7 @@ class Schema extends Object {
 			}
 			$out .= implode(",\n", $cols);
 		}
-		$out .= "\n\t);\n";
+		$out .= "\n\t);\n\n";
 		return $out;
 	}
 
@@ -582,7 +582,7 @@ class Schema extends Object {
 		if (is_array($values)) {
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
-					$vals[] = "'{$key}' => array('" . implode("', '",  $val) . "')";
+					$vals[] = "'{$key}' => array('" . implode("', '", $val) . "')";
 				} elseif (!is_numeric($key)) {
 					$val = var_export($val, true);
 					if ($val === 'NULL') {

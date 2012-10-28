@@ -747,7 +747,7 @@ class Time {
 				$years = floor($months / 12);
 				$months = $months - ($years * 12);
 			}
-			if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] == 1) {
+			if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] === 1) {
 				$years--;
 			}
 
@@ -768,7 +768,7 @@ class Time {
 				}
 			}
 
-			if ($months == 0 && $years >= 1 && $diff < ($years * 31536000)) {
+			if (!$months && $years >= 1 && $diff < ($years * 31536000)) {
 				$months = 11;
 				$years--;
 			}
@@ -797,7 +797,7 @@ class Time {
 		}
 		$diff = $futureTime - $pastTime;
 
-		if ($diff == 0) {
+		if (!$diff) {
 			return __d('cake', 'just now', 'just now');
 		}
 
@@ -905,7 +905,7 @@ class Time {
  */
 	public static function gmt($dateString = null) {
 		$time = time();
-		if ($dateString != null) {
+		if ($dateString) {
 			$time = static::fromString($dateString);
 		}
 		return gmmktime(

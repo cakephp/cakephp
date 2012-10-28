@@ -122,7 +122,7 @@ class Socket {
  * @throws Cake\Error\SocketException
  */
 	public function connect() {
-		if ($this->connection != null) {
+		if ($this->connection) {
 			$this->disconnect();
 		}
 
@@ -131,7 +131,7 @@ class Socket {
 			$scheme = 'ssl://';
 		}
 
-		if ($this->config['persistent'] == true) {
+		if ($this->config['persistent']) {
 			$this->connection = @pfsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		} else {
 			$this->connection = @fsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);

@@ -120,6 +120,11 @@ class Contact extends TestModel {
 			'between' => array('rule' => array('between', 5, 30), 'allowEmpty' => true),
 		),
 		'imnotrequiredeither' => array('required' => true, 'rule' => array('between', 5, 30), 'allowEmpty' => true),
+		'iamrequiredalways' => array(
+			'email' => array('rule' => 'email'),
+			'rule_on_create' => array('rule' => array('maxLength', 50), 'on' => 'create'),
+			'rule_on_update' => array('rule' => array('between', 1, 50), 'on' => 'update'),
+		),
 	);
 
 /**
@@ -2251,9 +2256,9 @@ class FormHelperTest extends TestCase {
 			'type' => 'time',
 			'selected' => '18:15'
 		));
-		$this->assertRegExp('#<option value="06"[^>]*>6</option>#', $result);
-		$this->assertRegExp('#<option value="15"[^>]*>15</option>#', $result);
-		$this->assertRegExp('#<option value="pm"[^>]*>pm</option>#', $result);
+		$this->assertContains('<option value="06" selected="selected">6</option>', $result);
+		$this->assertContains('<option value="15" selected="selected">15</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
 	}
 
 /**
@@ -2262,6 +2267,24 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTimeSelectedWithInterval() {
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'interval' => 15,
+			'selected' => array('hour' => '3', 'min' => '57', 'meridian' => 'pm')
+		));
+		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'interval' => 15,
+			'selected' => '2012-10-23 15:57:00'
+		));
+		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+
 		$result = $this->Form->input('Model.start_time', array(
 			'timeFormat' => 24,
 			'type' => 'time',
@@ -2707,6 +2730,36 @@ class FormHelperTest extends TestCase {
 			'select' => array('name' => 'Model[type]', 'id' => 'ModelType'),
 			array('option' => array('value' => 'value')), 'good', '/option',
 			array('option' => array('value' => 'other')), 'bad', '/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that magic input() selects are created for type=number
+ *
+ * @return void
+ */
+	public function testInputMagicSelectForTypeNumber() {
+		$this->View->viewVars['balances'] = array(0 => 'nothing', 1 => 'some', 100 => 'a lot');
+		$this->Form->request->data = array('ValidateUser' => array('balance' => 1));
+		$result = $this->Form->input('ValidateUser.balance');
+		$expected = array(
+			'div' => array('class' => 'input select'),
+			'label' => array('for' => 'ValidateUserBalance'),
+			'Balance',
+			'/label',
+			'select' => array('name' => 'data[ValidateUser][balance]', 'id' => 'ValidateUserBalance'),
+			array('option' => array('value' => '0')),
+			'nothing',
+			'/option',
+			array('option' => array('value' => '1', 'selected' => 'selected')),
+			'some',
+			'/option',
+			array('option' => array('value' => '100')),
+			'a lot',
+			'/option',
 			'/select',
 			'/div'
 		);
@@ -5720,26 +5773,10 @@ class FormHelperTest extends TestCase {
 
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->hour('Model.field', true, array('value' => '23'));
-		$expected = array(
-			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
-			array('option' => array('value' => '')),
-			'/option',
-			array('option' => array('value' => '00')),
-			'0',
-			'/option',
-			array('option' => array('value' => '01')),
-			'1',
-			'/option',
-			array('option' => array('value' => '02')),
-			'2',
-			'/option',
-			$hoursRegex,
-			array('option' => array('value' => '23', 'selected' => 'selected')),
-			'23',
-			'/option',
-			'/select',
-		);
-		$this->assertTags($result, $expected);
+		$this->assertContains('<option value="23" selected="selected">23</option>', $result);
+
+		$result = $this->Form->hour('Model.field', false, array('value' => '23'));
+		$this->assertContains('<option value="11" selected="selected">11</option>', $result);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->hour('Model.field', true);
@@ -7128,6 +7165,20 @@ class FormHelperTest extends TestCase {
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imnotrequiredeither]',
 				'id' => 'ContactImnotrequiredeither'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.iamrequiredalways');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactIamrequiredalways'),
+			'Iamrequiredalways',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][iamrequiredalways]',
+				'id' => 'ContactIamrequiredalways'
 			),
 			'/div'
 		);

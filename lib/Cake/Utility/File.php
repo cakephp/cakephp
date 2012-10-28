@@ -301,7 +301,7 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::info
  */
 	public function info() {
-		if ($this->info == null) {
+		if (!$this->info) {
 			$this->info = pathinfo($this->path);
 		}
 		if (!isset($this->info['filename'])) {
@@ -323,7 +323,7 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::ext
  */
 	public function ext() {
-		if ($this->info == null) {
+		if (!$this->info) {
 			$this->info();
 		}
 		if (isset($this->info['extension'])) {
@@ -339,7 +339,7 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::name
  */
 	public function name() {
-		if ($this->info == null) {
+		if (!$this->info) {
 			$this->info();
 		}
 		if (isset($this->info['extension'])) {
