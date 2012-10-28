@@ -634,7 +634,7 @@ class BasicsTest extends TestCase {
 
 		$this->assertEquals(fileExistsInPath('file1.php'), $file1);
 		$this->assertEquals(fileExistsInPath('file2.php'), $file2);
-		$this->assertEquals(fileExistsInPath('folder1/file2.php'), $file2);
+		$this->assertEquals(fileExistsInPath('folder1' . DS . 'file2.php'), $file2);
 		$this->assertEquals(fileExistsInPath($file2), $file2);
 		$this->assertEquals(fileExistsInPath('file3.php'), $file3);
 		$this->assertEquals(fileExistsInPath($file4), $file4);
