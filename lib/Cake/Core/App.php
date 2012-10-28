@@ -355,7 +355,7 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::themePath
  */
 	public static function themePath($theme) {
-		$themeDir = 'Themed/' . Inflector::camelize($theme);
+		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
 		foreach (static::$_packages['View'] as $path) {
 			if (is_dir($path . $themeDir)) {
 				return $path . $themeDir . DS;
@@ -500,7 +500,7 @@ class App {
 			$paths[] = CAKE . $package . DS;
 		} else {
 			$pluginPath = static::pluginPath($plugin);
-			$paths[] = $pluginPath . 'Lib/' . $package . DS;
+			$paths[] = $pluginPath . 'Lib' . DS . $package . DS;
 			$paths[] = $pluginPath . $package . DS;
 		}
 
@@ -584,60 +584,60 @@ class App {
 		if (empty(static::$_packageFormat)) {
 			static::$_packageFormat = array(
 				'Model' => array(
-					'%s' . 'Model/'
+					'%s' . 'Model' . DS
 				),
 				'Model/Behavior' => array(
-					'%s' . 'Model/Behavior/'
+					'%s' . 'Model' . DS . 'Behavior' . DS
 				),
 				'Model/Datasource' => array(
-					'%s' . 'Model/Datasource/'
+					'%s' . 'Model' . DS . 'Datasource' . DS
 				),
 				'Model/Datasource/Database' => array(
-					'%s' . 'Model/Datasource/Database/'
+					'%s' . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
 				),
 				'Model/Datasource/Session' => array(
-					'%s' . 'Model/Datasource/Session/'
+					'%s' . 'Model' . DS . 'Datasource' . DS . 'Session' . DS
 				),
 				'Controller' => array(
-					'%s' . 'Controller/'
+					'%s' . 'Controller' . DS
 				),
 				'Controller/Component' => array(
-					'%s' . 'Controller/Component/'
+					'%s' . 'Controller' . DS . 'Component' . DS
 				),
 				'Controller/Component/Auth' => array(
-					'%s' . 'Controller/Component/Auth/'
+					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS
 				),
 				'Controller/Component/Acl' => array(
-					'%s' . 'Controller/Component/Acl/'
+					'%s' . 'Controller' . DS . 'Component' . DS . 'Acl' . DS
 				),
 				'View' => array(
-					'%s' . 'View/'
+					'%s' . 'View' . DS
 				),
 				'View/Helper' => array(
-					'%s' . 'View/Helper/'
+					'%s' . 'View' . DS . 'Helper' . DS
 				),
 				'Console' => array(
-					'%s' . 'Console/'
+					'%s' . 'Console' . DS
 				),
 				'Console/Command' => array(
-					'%s' . 'Console/Command/'
+					'%s' . 'Console' . DS . 'Command' . DS
 				),
 				'Console/Command/Task' => array(
-					'%s' . 'Console/Command/Task/'
+					'%s' . 'Console' . DS . 'Command' . DS . 'Task' . DS
 				),
 				'Lib' => array(
-					'%s' . 'Lib/'
+					'%s' . 'Lib' . DS
 				),
 				'Locale' => array(
-					'%s' . 'Locale/'
+					'%s' . 'Locale' . DS
 				),
 				'Vendor' => array(
-					'%s' . 'Vendor/',
-					dirname(dirname(CAKE)) . DS . 'vendors/',
+					'%s' . 'Vendor' . DS,
+					dirname(dirname(CAKE)) . DS . 'vendors' . DS,
 				),
 				'Plugin' => array(
-					APP . 'Plugin/',
-					dirname(dirname(CAKE)) . DS . 'plugins/'
+					APP . 'Plugin' . DS,
+					dirname(dirname(CAKE)) . DS . 'plugins' . DS
 				)
 			);
 		}

@@ -33,7 +33,7 @@ class PluginTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		), App::RESET);
 		App::objects('Plugin', null, false);
 	}
@@ -58,7 +58,7 @@ class PluginTest extends TestCase {
 		$this->assertEquals('TestPlugin', Plugin::getNamespace('TestPlugin'));
 
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin2/')
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin2' . DS)
 		), App::RESET);
 
 		Plugin::load('TestPluginThree', array('namespace' => 'Company\TestPluginThree'));
@@ -218,10 +218,10 @@ class PluginTest extends TestCase {
  */
 	public function testPath() {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
-		$expected = CAKE . 'Test/TestApp/Plugin/TestPlugin/';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
 		$this->assertEquals(Plugin::path('TestPlugin'), $expected);
 
-		$expected = CAKE . 'Test/TestApp/Plugin/TestPluginTwo/';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
 		$this->assertEquals(Plugin::path('TestPluginTwo'), $expected);
 	}
 
