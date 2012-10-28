@@ -133,7 +133,7 @@ class TranslateBehavior extends ModelBehavior {
 				'conditions' => array(
 					$Model->escapeField() => $db->identifier($RuntimeModel->escapeField('foreign_key')),
 					$RuntimeModel->escapeField('model') => $Model->name,
-					$RuntimeModel->escapeField('locale')  => $locale
+					$RuntimeModel->escapeField('locale') => $locale
 				)
 			);
 			$conditionFields = $this->_checkConditions($Model, $query);
@@ -342,7 +342,7 @@ class TranslateBehavior extends ModelBehavior {
  * @return boolean true.
  */
 	public function beforeSave(Model $Model, $options = array()) {
-		if (isset($options['validate']) && $options['validate'] == false) {
+		if (isset($options['validate']) && !$options['validate']) {
 			unset($this->runtime[$Model->alias]['beforeSave']);
 		}
 		if (isset($this->runtime[$Model->alias]['beforeSave'])) {

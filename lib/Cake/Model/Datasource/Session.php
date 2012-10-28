@@ -126,7 +126,7 @@ class Session {
 		static::$time = time();
 
 		$checkAgent = Configure::read('Session.checkAgent');
-		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT') != null) {
+		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT')) {
 			static::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
 		static::_setPath($base);
@@ -242,7 +242,7 @@ class Session {
 	public static function delete($name) {
 		if (static::check($name)) {
 			static::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
-			return (static::check($name) == false);
+			return !static::check($name);
 		}
 		static::_setError(2, __d('cake_dev', "%s doesn't exist", $name));
 		return false;
@@ -658,7 +658,7 @@ class Session {
  */
 	public static function renew() {
 		if (session_id()) {
-			if (session_id() != '' || isset($_COOKIE[session_name()])) {
+			if (session_id() || isset($_COOKIE[session_name()])) {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, static::$path);
 			}
 			session_regenerate_id(true);

@@ -48,20 +48,15 @@ if (!function_exists('config')) {
  */
 	function config() {
 		$args = func_get_args();
+		$count = count($args);
+		$included = 0;
 		foreach ($args as $arg) {
 			if (file_exists(APP . 'Config/' . $arg . '.php')) {
 				include_once APP . 'Config/' . $arg . '.php';
-
-				if (count($args) == 1) {
-					return true;
-				}
-			} else {
-				if (count($args) == 1) {
-					return false;
-				}
+				$included++;
 			}
 		}
-		return true;
+		return $included === $count;
 	}
 
 }

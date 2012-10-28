@@ -730,7 +730,7 @@ class Model extends Object implements EventListener {
 				$this->useTable = Inflector::tableize($this->name);
 			}
 
-			if ($this->displayField == null) {
+			if (!$this->displayField) {
 				unset($this->displayField);
 			}
 			$this->table = $this->useTable;
@@ -1404,7 +1404,7 @@ class Model extends Object implements EventListener {
 			$this->schema();
 		}
 
-		if ($this->_schema != null) {
+		if ($this->_schema) {
 			return isset($this->_schema[$name]);
 		}
 		return false;
@@ -1458,7 +1458,7 @@ class Model extends Object implements EventListener {
  *    or false if none $field exist.
  */
 	public function getVirtualField($field = null) {
-		if ($field == null) {
+		if (!$field) {
 			return empty($this->virtualFields) ? false : $this->virtualFields;
 		}
 		if ($this->isVirtualField($field)) {
@@ -1514,7 +1514,7 @@ class Model extends Object implements EventListener {
 	public function read($fields = null, $id = null) {
 		$this->validationErrors = array();
 
-		if ($id != null) {
+		if ($id) {
 			$this->id = $id;
 		}
 
@@ -1530,9 +1530,8 @@ class Model extends Object implements EventListener {
 				'fields' => $fields
 			));
 			return $this->data;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 /**
@@ -2032,7 +2031,7 @@ class Model extends Object implements EventListener {
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-saveassociated-array-data-null-array-options-array
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-saveall-array-data-null-array-options-array
  */
-	public function saveAll($data, $options = array()) {
+	public function saveAll($data = array(), $options = array()) {
 		$options = array_merge(array('validate' => 'first'), $options);
 		if (Hash::numeric(array_keys($data))) {
 			if ($options['validate'] === 'only') {
@@ -2198,7 +2197,7 @@ class Model extends Object implements EventListener {
 
 		if ($options['validate'] === 'first') {
 			$validates = $this->validateAssociated($data, $options);
-			if ((!$validates && $options['atomic']) || (!$options['atomic'] && in_array(false, $validates, true))) {
+			if ((!$validates && $options['atomic']) || (!$options['atomic'] && in_array(false, Hash::flatten($validates), true))) {
 				return $validates;
 			}
 			$options['validate'] = false;
@@ -2577,7 +2576,7 @@ class Model extends Object implements EventListener {
  * @return boolean True if such a record exists
  */
 	public function hasAny($conditions = null) {
-		return ($this->find('count', array('conditions' => $conditions, 'recursive' => -1)) != false);
+		return (bool)$this->find('count', array('conditions' => $conditions, 'recursive' => -1));
 	}
 
 /**
@@ -2628,9 +2627,12 @@ class Model extends Object implements EventListener {
  *
  *  Note: find(list) + database views have issues with MySQL 5.0. Try upgrading to MySQL 5.1 if you
  *  have issues with database views.
+ *
+ *  Note: find(count) has its own return values.
+ *
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
- * @return array Array of records
+ * @return array Array of records, or Null on failure.
  * @link http://book.cakephp.org/2.0/en/models/deleting-data.html#deleteall
  */
 	public function find($type = 'first', $query = array()) {
@@ -2653,10 +2655,10 @@ class Model extends Object implements EventListener {
 
 		if ($type === 'all') {
 			return $results;
-		} else {
-			if ($this->findMethods[$type] === true) {
-				return $this->{'_find' . ucfirst($type)}('after', $query, $results);
-			}
+		}
+
+		if ($this->findMethods[$type] === true) {
+			return $this->{'_find' . ucfirst($type)}('after', $query, $results);
 		}
 	}
 
@@ -2722,7 +2724,7 @@ class Model extends Object implements EventListener {
 			return $query;
 		} elseif ($state === 'after') {
 			if (empty($results[0])) {
-				return false;
+				return array();
 			}
 			return $results[0];
 		}
@@ -2995,7 +2997,7 @@ class Model extends Object implements EventListener {
 		if (!empty($this->id)) {
 			$fields[$this->alias . '.' . $this->primaryKey . ' !='] = $this->id;
 		}
-		return ($this->find('count', array('conditions' => $fields, 'recursive' => -1)) == 0);
+		return !$this->find('count', array('conditions' => $fields, 'recursive' => -1));
 	}
 
 /**
@@ -3166,7 +3168,7 @@ class Model extends Object implements EventListener {
 	public function setDataSource($dataSource = null) {
 		$oldConfig = $this->useDbConfig;
 
-		if ($dataSource != null) {
+		if ($dataSource) {
 			$this->useDbConfig = $dataSource;
 		}
 		$db = ConnectionManager::getDataSource($this->useDbConfig);
@@ -3212,7 +3214,7 @@ class Model extends Object implements EventListener {
  * @return array Associations
  */
 	public function getAssociated($type = null) {
-		if ($type == null) {
+		if (!$type) {
 			$associated = array();
 			foreach ($this->_associations as $assoc) {
 				if (!empty($this->{$assoc})) {

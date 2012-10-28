@@ -119,7 +119,6 @@ class MemcacheEngineTest extends TestCase {
 		$Memcache = new MemcacheEngine();
 		$Memcache->init(array('engine' => 'Memcache', 'servers' => $servers));
 
-		$servers = array_keys($Memcache->__Memcache->getExtendedStats());
 		$settings = $Memcache->settings();
 		$this->assertEquals($settings['servers'], $servers);
 		Cache::drop('dual_server');
@@ -226,12 +225,11 @@ class MemcacheEngineTest extends TestCase {
 		$result = Cache::write('other_test', $data, 'memcache');
 		$this->assertTrue($result);
 
-		sleep(2);
+		sleep(3);
 		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
 
 		Cache::set(['duration' => '+1 second'], 'memcache');
-		sleep(2);
 
 		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);

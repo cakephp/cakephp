@@ -162,7 +162,7 @@ class Shell extends Object {
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
-		if ($this->name == null) {
+		if (!$this->name) {
 			list(, $class) = namespaceSplit(get_class($this));
 			$this->name = str_replace(array('Shell', 'Task'), '', $class);
 		}
@@ -171,13 +171,13 @@ class Shell extends Object {
 		$this->stdout = $stdout;
 		$this->stderr = $stderr;
 		$this->stdin = $stdin;
-		if ($this->stdout == null) {
+		if (!$this->stdout) {
 			$this->stdout = new ConsoleOutput('php://stdout');
 		}
-		if ($this->stderr == null) {
+		if (!$this->stderr) {
 			$this->stderr = new ConsoleOutput('php://stderr');
 		}
-		if ($this->stdin == null) {
+		if (!$this->stdin) {
 			$this->stdin = new ConsoleInput('php://stdin');
 		}
 		$this->_useLogger();
@@ -330,7 +330,7 @@ class Shell extends Object {
  */
 	public function dispatchShell() {
 		$args = func_get_args();
-		if (is_string($args[0]) && count($args) == 1) {
+		if (is_string($args[0]) && count($args) === 1) {
 			$args = explode(' ', $args[0]);
 		}
 

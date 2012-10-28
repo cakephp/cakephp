@@ -237,7 +237,7 @@ class AppTest extends TestCase {
 		$this->assertEquals($pluginPaths, $result);
 
 		$paths = App::path('Service');
-		$this->assertEquals(array(), $paths);
+		$this->assertSame(array(), $paths);
 
 		App::build(array(
 			'Service' => array(
@@ -257,7 +257,7 @@ class AppTest extends TestCase {
 
 		App::build();
 		$paths = App::path('Service');
-		$this->assertEquals(array(), $paths);
+		$this->assertSame(array(), $paths);
 	}
 
 /**
@@ -368,7 +368,7 @@ class AppTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = App::objects('NonExistingType');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		App::build(array(
 			'Plugin' => array(
@@ -426,7 +426,7 @@ class AppTest extends TestCase {
 		$this->assertTrue(in_array('OtherComponent', $result));
 
 		$result = App::objects('TestPluginTwo.Model/Behavior');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		$result = App::objects('Model', null, false);
 		$this->assertTrue(in_array('Comment', $result));

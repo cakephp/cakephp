@@ -72,7 +72,7 @@ class BasicsTest extends TestCase {
 		$one = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$two = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$result = array_diff_key($one, $two);
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 	}
 
 /**

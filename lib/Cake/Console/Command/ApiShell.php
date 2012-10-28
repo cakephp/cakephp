@@ -69,12 +69,13 @@ class ApiShell extends Shell {
 			$path = $this->paths['core'];
 		}
 
-		if (count($this->args) == 1) {
-			$file = $type;
-			$class = Inflector::camelize($type);
-		} elseif (count($this->args) > 1) {
+		$count = count($this->args);
+		if ($count > 1) {
 			$file = Inflector::underscore($this->args[1]);
 			$class = Inflector::camelize($this->args[1]);
+		} elseif ($count) {
+			$file = $type;
+			$class = Inflector::camelize($type);
 		}
 		$path = $path . Inflector::camelize($type);
 		$file = $path . '.php';

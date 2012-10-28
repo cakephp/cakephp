@@ -20,13 +20,10 @@
  */
 define('TIME_START', microtime(true));
 
-error_reporting(E_ALL & ~E_DEPRECATED);
-
 require CAKE . 'basics.php';
 require CAKE . 'Core/ClassLoader.php';
 $loader = new \Cake\Core\ClassLoader('Cake', CORE_PATH);
 $loader->register();
-
 
 use Cake\Core\App;
 
@@ -34,7 +31,7 @@ App::init();
 App::build();
 
 /**
- *  Full url prefix
+ * Full url prefix
  */
 if (!defined('FULL_BASE_URL')) {
 	$s = null;
@@ -48,4 +45,11 @@ if (!defined('FULL_BASE_URL')) {
 		define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost);
 	}
 	unset($httpHost, $s);
+}
+
+spl_autoload_register(array('App', 'load'));
+
+$encoding = Configure::read('App.encoding');
+if (!empty($encoding)) {
+	mb_internal_encoding($encoding);
 }

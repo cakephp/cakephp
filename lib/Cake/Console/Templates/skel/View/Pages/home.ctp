@@ -23,7 +23,7 @@ use Cake\Error\NotFoundException;
 use Cake\Utility\Debugger;
 use Cake\Utility\Validation;
 
-if (Configure::read('debug') == 0):
+if (!Configure::read('debug')):
 	throw new NotFoundException();
 endif;
 ?>

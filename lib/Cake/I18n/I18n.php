@@ -25,8 +25,6 @@ use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\String;
 
-mb_internal_encoding(Configure::read('App.encoding'));
-
 /**
  * I18n handles translation of Text and time format strings.
  *
@@ -408,7 +406,7 @@ class I18n {
 			$header = unpack("L1magic/L1version/L1count/L1o_msg/L1o_trn", $header);
 			extract($header);
 
-			if ((dechex($magic) == '950412de' || dechex($magic) == 'ffffffff950412de') && $version == 0) {
+			if ((dechex($magic) == '950412de' || dechex($magic) == 'ffffffff950412de') && !$version) {
 				for ($n = 0; $n < $count; $n++) {
 					$r = unpack("L1len/L1offs", substr($data, $o_msg + $n * 8, 8));
 					$msgid = substr($data, $r["offs"], $r["len"]);

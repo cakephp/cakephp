@@ -1970,7 +1970,7 @@ class SetTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Set::combine($a, 'fail', 'fail');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 	}
 
 /**

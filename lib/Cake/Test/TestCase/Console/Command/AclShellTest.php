@@ -178,7 +178,7 @@ class AclShellTest extends TestCase {
 
 		$Aro = ClassRegistry::init('Aro');
 		$result = $Aro->findById(3);
-		$this->assertFalse($result);
+		$this->assertSame(array(), $result);
 	}
 
 /**

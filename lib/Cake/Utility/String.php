@@ -136,7 +136,7 @@ class String {
 			}
 			if ($tmpOffset !== -1) {
 				$buffer .= substr($data, $offset, ($tmpOffset - $offset));
-				if ($data{$tmpOffset} == $separator && $depth == 0) {
+				if (!$depth && $data{$tmpOffset} == $separator) {
 					$results[] = $buffer;
 					$buffer = '';
 				} else {

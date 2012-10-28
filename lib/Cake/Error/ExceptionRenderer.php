@@ -124,7 +124,7 @@ class ExceptionRenderer {
 			}
 		}
 
-		$isNotDebug = (Configure::read('debug') == 0);
+		$isNotDebug = !Configure::read('debug');
 		if ($isNotDebug && $method == '_cakeError') {
 			$method = 'error400';
 		}
@@ -204,7 +204,7 @@ class ExceptionRenderer {
  */
 	public function error400($error) {
 		$message = $error->getMessage();
-		if (Configure::read('debug') == 0 && $error instanceof Exception) {
+		if (!Configure::read('debug') && $error instanceof Exception) {
 			$message = __d('cake', 'Not Found');
 		}
 		$url = $this->controller->request->here();
@@ -226,7 +226,7 @@ class ExceptionRenderer {
  */
 	public function error500($error) {
 		$message = $error->getMessage();
-		if (Configure::read('debug') == 0) {
+		if (!Configure::read('debug')) {
 			$message = __d('cake', 'An Internal Error Has Occurred.');
 		}
 		$url = $this->controller->request->here();

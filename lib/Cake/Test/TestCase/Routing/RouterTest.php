@@ -114,7 +114,7 @@ class RouterTest extends TestCase {
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = Router::parse('/posts/add');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		Router::reload();
 		$resources = Router::mapResources('Posts', array('id' => '[a-z0-9_]+'));
@@ -390,13 +390,35 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test that catch all routes work with a variety of falsey inputs.
+ *
+ * @return void
+ */
+	public function testUrlCatchAllRoute() {
+		Router::connect('/*', array('controller' => 'categories', 'action' => 'index'));
+		$result = Router::url(array('controller' => 'categories', 'action' => 'index', '0'));
+		$this->assertEquals('/0', $result);
+
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'categories',
+			'action' => 'index',
+			'pass' => array('0'),
+		);
+		$result = Router::parse('/0');
+		$this->assertEquals($expected, $result);
+
+		$result = Router::parse('0');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test generation of basic urls.
  *
  * @return void
  */
 	public function testUrlGenerationBasic() {
 		extract(Router::getNamedExpressions());
-
 
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$out = Router::url(array('controller' => 'pages', 'action' => 'display', 'home'));
@@ -1403,7 +1425,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testParseExtensions() {
-		$this->assertEquals(array(), Router::extensions());
+		$this->assertSame(array(), Router::extensions());
 
 		Router::parseExtensions('rss');
 		$this->assertEquals(array('rss'), Router::extensions());
@@ -1861,7 +1883,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Router::parse('/blog/foobar');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'foo'));
 		$this->assertEquals('/', $result);
@@ -2037,7 +2059,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Router::parse('/badness/test/test_action');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		Router::reload();
 		Router::connect('/:locale/:controller/:action/*', array(), array('locale' => 'dan|eng'));
@@ -2469,7 +2491,7 @@ class RouterTest extends TestCase {
 			array('_sendHeader')
 		);
 		Router::parse('/not-a-match');
-		$this->assertEquals(array(), $routes->get(0)->response->header());
+		$this->assertSame(array(), $routes->get(0)->response->header());
 	}
 
 /**
@@ -2547,7 +2569,7 @@ class RouterTest extends TestCase {
 			'action' => 'index',
 		));
 		$result = Router::parseNamedParams($request);
-		$this->assertEquals(array(), $result->params['named']);
+		$this->assertSame(array(), $result->params['named']);
 
 		$request = new Request();
 		$request->addParams(array(

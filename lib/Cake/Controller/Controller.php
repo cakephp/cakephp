@@ -322,7 +322,7 @@ class Controller extends Object implements EventListener {
 			$this->name = substr($this->name, 0, -10);
 		}
 
-		if ($this->viewPath == null) {
+		if (!$this->viewPath) {
 			$viewPath = $this->name;
 			if (isset($request->params['prefix'])) {
 				$viewPath = Inflector::camelize($request->params['prefix']) . DS . $viewPath;
@@ -443,7 +443,7 @@ class Controller extends Object implements EventListener {
 			$this->passedArgs = $request->params['pass'];
 		}
 
-		if (array_key_exists('return', $request->params) && $request->params['return'] == 1) {
+		if (!empty($request->params['return']) && $request->params['return'] == 1) {
 			$this->autoRender = false;
 		}
 		if (!empty($request->params['bare'])) {
@@ -750,7 +750,7 @@ class Controller extends Object implements EventListener {
  * @return array Array with keys url, status and exit
  */
 	protected function _parseBeforeRedirect($response, $url, $status, $exit) {
-		if (is_array($response) && isset($response[0])) {
+		if (is_array($response) && array_key_exists(0, $response)) {
 			foreach ($response as $resp) {
 				if (is_array($resp) && isset($resp['url'])) {
 					extract($resp, EXTR_OVERWRITE);
@@ -910,14 +910,15 @@ class Controller extends Object implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::referer
  */
 	public function referer($default = null, $local = false) {
-		if ($this->request) {
-			$referer = $this->request->referer($local);
-			if ($referer == '/' && $default != null) {
-				return Router::url($default, true);
-			}
-			return $referer;
+		if(!$this->request) {
+			return '/';
 		}
-		return '/';
+
+		$referer = $this->request->referer($local);
+		if ($referer == '/' && $default) {
+			return Router::url($default, true);
+		}
+		return $referer;
 	}
 
 /**

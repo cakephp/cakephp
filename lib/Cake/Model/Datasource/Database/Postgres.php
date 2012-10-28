@@ -149,7 +149,7 @@ class Postgres extends DboSource {
 	public function listSources($data = null) {
 		$cache = parent::listSources();
 
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 
@@ -159,17 +159,17 @@ class Postgres extends DboSource {
 
 		if (!$result) {
 			return array();
-		} else {
-			$tables = array();
-
-			foreach ($result as $item) {
-				$tables[] = $item->name;
-			}
-
-			$result->closeCursor();
-			parent::listSources($tables);
-			return $tables;
 		}
+
+		$tables = array();
+
+		foreach ($result as $item) {
+			$tables[] = $item->name;
+		}
+
+		$result->closeCursor();
+		parent::listSources($tables);
+		return $tables;
 	}
 
 /**
@@ -287,7 +287,10 @@ class Postgres extends DboSource {
 		if (is_object($table)) {
 			$table = $this->fullTableName($table, false, false);
 		}
-		if (isset($this->_sequenceMap[$table]) && isset($this->_sequenceMap[$table][$field])) {
+		if (!isset($this->_sequenceMap[$table])) {
+			$this->describe($table);
+		}
+		if (isset($this->_sequenceMap[$table][$field])) {
 			return $this->_sequenceMap[$table][$field];
 		} else {
 			return "{$table}_{$field}_seq";
@@ -692,7 +695,7 @@ class Postgres extends DboSource {
 		if ($col == 'uuid') {
 			return 36;
 		}
-		if ($limit != null) {
+		if ($limit) {
 			return intval($limit);
 		}
 		return null;
