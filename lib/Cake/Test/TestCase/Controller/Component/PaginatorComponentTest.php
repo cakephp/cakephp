@@ -217,7 +217,7 @@ class PaginatorComponentTest extends TestCase {
 		$Controller->request->query = array();
 		$Controller->constructClasses();
 
-		$Controller->request->params['named'] = array('page' => '-1', 'contain' => array('PaginatorControllerComment'));
+		$Controller->request->query = array('page' => '-1', 'contain' => array('PaginatorControllerComment'));
 		$Controller->Paginator->settings = array(
 			'order' => array('PaginatorControllerPost.id' => 'ASC')
 		);
@@ -231,7 +231,6 @@ class PaginatorComponentTest extends TestCase {
 			'PaginatorControllerPost' => array(
 				'contain' => array('PaginatorControllerComment'),
 				'maxLimit' => 10,
-				'paramType' => 'named',
 				'order' => array('PaginatorControllerPost.id' => 'ASC')
 			),
 		);

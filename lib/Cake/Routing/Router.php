@@ -450,7 +450,7 @@ class Router {
 			static::_loadRoutes();
 		}
 
-		if ($url && strpos($url, '/') !== 0) {
+		if (strlen($url) && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
 		if (strpos($url, '?') !== false) {

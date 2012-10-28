@@ -237,7 +237,7 @@ class AppTest extends TestCase {
 		$this->assertEquals($pluginPaths, $result);
 
 		$paths = App::path('Service');
-		$this->assertEquals(array(), $paths);
+		$this->assertSame(array(), $paths);
 
 		App::build(array(
 			'Service' => array(
@@ -257,7 +257,7 @@ class AppTest extends TestCase {
 
 		App::build();
 		$paths = App::path('Service');
-		$this->assertEquals(array(), $paths);
+		$this->assertSame(array(), $paths);
 	}
 
 /**

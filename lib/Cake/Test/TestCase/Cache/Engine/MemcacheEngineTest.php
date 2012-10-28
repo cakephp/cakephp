@@ -230,7 +230,6 @@ class MemcacheEngineTest extends TestCase {
 		$this->assertFalse($result);
 
 		Cache::set(['duration' => '+1 second'], 'memcache');
-		sleep(3);
 
 		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);

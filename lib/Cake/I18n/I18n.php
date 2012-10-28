@@ -25,8 +25,6 @@ use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\String;
 
-mb_internal_encoding(Configure::read('App.encoding'));
-
 /**
  * I18n handles translation of Text and time format strings.
  *

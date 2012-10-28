@@ -1,11 +1,5 @@
 <?php
 /**
- * ProjectTask Test file
- *
- * Test Case for project generation shell task
- *
- * PHP 5
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
@@ -14,11 +8,11 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
+
 use Cake\Console\Command\Task\ProjectTask;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;

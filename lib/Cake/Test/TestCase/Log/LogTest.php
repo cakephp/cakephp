@@ -386,6 +386,38 @@ class LogTest extends TestCase {
 	}
 
 /**
+ * Test that scopes are exclusive and don't bleed.
+ *
+ * @return void
+ */
+	public function testScopedLoggingExclusive() {
+		$this->_deleteLogs();
+
+		Configure::write('Log.shops', array(
+			'engine' => 'FileLog',
+			'types' => array('info', 'notice', 'warning'),
+			'scopes' => array('transactions', 'orders'),
+			'file' => 'shops.log',
+		));
+		Configure::write('Log.eggs', array(
+			'engine' => 'FileLog',
+			'types' => array('info', 'notice', 'warning'),
+			'scopes' => array('eggs'),
+			'file' => 'eggs.log',
+		));
+
+		Log::write('info', 'transactions message', 'transactions');
+		$this->assertFalse(file_exists(LOGS . 'eggs.log'));
+		$this->assertTrue(file_exists(LOGS . 'shops.log'));
+
+		$this->_deleteLogs();
+
+		Log::write('info', 'eggs message', 'eggs');
+		$this->assertTrue(file_exists(LOGS . 'eggs.log'));
+		$this->assertFalse(file_exists(LOGS . 'shops.log'));
+	}
+
+/**
  * test convenience methods
  */
 	public function testConvenienceMethods() {

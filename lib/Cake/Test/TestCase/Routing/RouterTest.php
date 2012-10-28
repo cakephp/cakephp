@@ -390,13 +390,35 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test that catch all routes work with a variety of falsey inputs.
+ *
+ * @return void
+ */
+	public function testUrlCatchAllRoute() {
+		Router::connect('/*', array('controller' => 'categories', 'action' => 'index'));
+		$result = Router::url(array('controller' => 'categories', 'action' => 'index', '0'));
+		$this->assertEquals('/0', $result);
+
+		$expected = [
+			'plugin' => null,
+			'controller' => 'categories',
+			'action' => 'index',
+			'pass' => ['0'],
+		];
+		$result = Router::parse('/0');
+		$this->assertEquals($expected, $result);
+
+		$result = Router::parse('0');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test generation of basic urls.
  *
  * @return void
  */
 	public function testUrlGenerationBasic() {
 		extract(Router::getNamedExpressions());
-
 
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$out = Router::url(array('controller' => 'pages', 'action' => 'display', 'home'));
@@ -1403,7 +1425,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testParseExtensions() {
-		$this->assertEquals(array(), Router::extensions());
+		$this->assertSame(array(), Router::extensions());
 
 		Router::parseExtensions('rss');
 		$this->assertEquals(array('rss'), Router::extensions());
@@ -2469,7 +2491,7 @@ class RouterTest extends TestCase {
 			array('_sendHeader')
 		);
 		Router::parse('/not-a-match');
-		$this->assertEquals(array(), $routes->get(0)->response->header());
+		$this->assertSame(array(), $routes->get(0)->response->header());
 	}
 
 /**
@@ -2547,7 +2569,7 @@ class RouterTest extends TestCase {
 			'action' => 'index',
 		));
 		$result = Router::parseNamedParams($request);
-		$this->assertEquals(array(), $result->params['named']);
+		$this->assertSame(array(), $result->params['named']);
 
 		$request = new Request();
 		$request->addParams(array(
