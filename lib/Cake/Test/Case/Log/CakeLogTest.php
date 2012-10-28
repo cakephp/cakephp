@@ -175,7 +175,7 @@ class CakeLogTest extends CakeTestCase {
 
 		CakeLog::drop('file');
 		$result = CakeLog::configured();
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 	}
 
 /**

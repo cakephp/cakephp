@@ -15,8 +15,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Set', 'Utility');
+App::uses('Hash', 'Utility');
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -353,7 +352,7 @@ class CakeRequest implements ArrayAccess {
 				$this->_processFileData($newPath, $fields, $field);
 			} else {
 				$newPath .= '.' . $field;
-				$this->data = Set::insert($this->data, $newPath, $fields);
+				$this->data = Hash::insert($this->data, $newPath, $fields);
 			}
 		}
 	}

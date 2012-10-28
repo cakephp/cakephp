@@ -347,7 +347,7 @@ class AppTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = App::objects('NonExistingType');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		App::build(array(
 			'plugins' => array(
@@ -414,9 +414,9 @@ class AppTest extends CakeTestCase {
 		$this->assertTrue(in_array('OtherComponent', $result));
 
 		$result = App::objects('TestPluginTwo.behavior');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 		$result = App::objects('TestPluginTwo.Model/Behavior');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		$result = App::objects('model', null, false);
 		$this->assertTrue(in_array('Comment', $result));
