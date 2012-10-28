@@ -340,14 +340,14 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals(date('Y-d-m', $time), $this->Time->nice($time));
 		$this->assertEquals('%Y-%d-%m', $this->Time->niceFormat);
 
-		CakeTime::$niceFormat = '%Y-%d-%m %H:%M:%S';
-		$this->assertEquals(date('Y-d-m H:i:s', $time), $this->Time->nice($time));
-		$this->assertEquals('%Y-%d-%m %H:%M:%S', $this->Time->niceFormat);
+		CakeTime::$niceFormat = '%Y-%d-%m %H:%M';
+		$this->assertEquals(date('Y-d-m H:i', $time), $this->Time->nice($time));
+		$this->assertEquals('%Y-%d-%m %H:%M', $this->Time->niceFormat);
 
 		date_default_timezone_set('UTC');
 		$result = $this->Time->nice(null, 'America/New_York');
 		$expected = $this->Time->nice(time(), 'America/New_York');
-		$this->assertEquals($expected, $result);
+		$this->assertEquals(substr($expected, 0, -1), substr($result, 0, -1));
 
 		$this->_restoreSystemTimezone();
 	}
