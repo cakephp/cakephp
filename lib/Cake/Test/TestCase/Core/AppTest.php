@@ -266,14 +266,14 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testPathWithPlugins() {
-		$basepath = CAKE . 'Test/TestApp/Plugin/';
+		$basepath = CAKE . 'Test' . DS . 'TestApp' . DS. 'Plugin' . DS;
 		App::build(array(
 			'Plugin' => array($basepath),
 		));
 		Plugin::load('TestPlugin');
 
 		$result = App::path('Vendor', 'TestPlugin');
-		$this->assertEquals($basepath . 'TestPlugin/Vendor/', $result[0]);
+		$this->assertEquals($basepath . 'TestPlugin' . DS. 'Vendor' . '/', $result[0]);
 	}
 
 /**
@@ -309,22 +309,22 @@ class AppTest extends TestCase {
  */
 	public function testCore() {
 		$model = App::core('Model');
-		$this->assertEquals(array(CAKE . 'Model/'), $model);
+		$this->assertEquals(array(CAKE . 'Model' . DS), $model);
 
 		$view = App::core('View');
-		$this->assertEquals(array(CAKE . 'View/'), $view);
+		$this->assertEquals(array(CAKE . 'View' . DS), $view);
 
 		$controller = App::core('Controller');
-		$this->assertEquals(array(CAKE . 'Controller/'), $controller);
+		$this->assertEquals(array(CAKE . 'Controller' . DS), $controller);
 
 		$component = App::core('Controller/Component');
-		$this->assertEquals(array(CAKE . 'Controller/Component/'), str_replace('/', DS, $component));
+		$this->assertEquals(array(CAKE . 'Controller' . DS . 'Component' . DS), str_replace('/', DS, $component));
 
 		$auth = App::core('Controller/Component/Auth');
-		$this->assertEquals(array(CAKE . 'Controller/Component/Auth/'), str_replace('/', DS, $auth));
+		$this->assertEquals(array(CAKE . 'Controller' . DS . 'Component' . DS . 'Auth' . DS), str_replace('/', DS, $auth));
 
 		$datasource = App::core('Model/Datasource');
-		$this->assertEquals(array(CAKE . 'Model/Datasource/'), str_replace('/', DS, $datasource));
+		$this->assertEquals(array(CAKE . 'Model' . DS . 'Datasource' . DS), str_replace('/', DS, $datasource));
 	}
 
 /**
@@ -442,16 +442,16 @@ class AppTest extends TestCase {
  */
 	public function testPluginPath() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
 		));
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$path = App::pluginPath('TestPlugin');
-		$expected = CAKE . 'Test/TestApp/Plugin/TestPlugin/';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
 		$this->assertEquals($expected, $path);
 
 		$path = App::pluginPath('TestPluginTwo');
-		$expected = CAKE . 'Test/TestApp/Plugin/TestPluginTwo/';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
 		$this->assertEquals($expected, $path);
 		App::build();
 	}
@@ -463,14 +463,14 @@ class AppTest extends TestCase {
  */
 	public function testThemePath() {
 		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
+			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
 		));
 		$path = App::themePath('test_theme');
-		$expected = CAKE . 'Test/TestApp/View/Themed/TestTheme/';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Themed' . '/' . 'TestTheme' . DS;
 		$this->assertEquals($expected, $path);
 
 		$path = App::themePath('TestTheme');
-		$expected = CAKE . 'Test/TestApp/View/Themed/TestTheme/';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Themed' . '/' . 'TestTheme' . DS;
 		$this->assertEquals($expected, $path);
 
 		App::build();
