@@ -518,7 +518,7 @@ class CakeTimeTest extends CakeTestCase {
 			$yourTimezone = new DateTimeZone($timezone);
 			$yourTime = new DateTime($date, $yourTimezone);
 			$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
-			$time = $yourTime->getTimestamp();
+			$time = $yourTime->format('U');
 			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $userOffset), "Failed on $timezone");
 			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
 		}
