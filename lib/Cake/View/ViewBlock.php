@@ -52,6 +52,15 @@ class ViewBlock {
 	protected $_active = array();
 
 /**
+ * Should the currently captured content be discarded on ViewBlock::end()
+ *
+ * @var boolean
+ * @see ViewBlock::end()
+ * @see ViewBlock::startIfEmpty()
+ */
+	protected $_discardActiveBufferOnEnd = false;
+
+/**
  * Start capturing output for a 'block'
  *
  * Blocks allow you to create slots or blocks of dynamic content in the layout.
@@ -69,12 +78,37 @@ class ViewBlock {
 	}
 
 /**
+ * Start capturing output for a 'block' if it is empty
+ *
+ * Blocks allow you to create slots or blocks of dynamic content in the layout.
+ * view files can implement some or all of a layout's slots.
+ *
+ * You can end capturing blocks using View::end().  Blocks can be output
+ * using View::get();
+ *
+ * @param string $name The name of the block to capture for.
+ * @return void
+ */
+	public function startIfEmpty($name) {
+		if (empty($this->_blocks[$name])) {
+			return $this->start($name);
+		}
+		$this->_discardActiveBufferOnEnd = true;
+		ob_start();
+	}
+
+/**
  * End a capturing block. The compliment to ViewBlock::start()
  *
  * @return void
  * @see ViewBlock::start()
  */
 	public function end() {
+		if ($this->_discardActiveBufferOnEnd) {
+			$this->_discardActiveBufferOnEnd = false;
+			ob_end_clean();
+			return;
+		}
 		if (!empty($this->_active)) {
 			$active = end($this->_active);
 			$content = ob_get_clean();
