@@ -768,11 +768,11 @@ class RssHelperTest extends CakeTestCase {
 			),
 			'Alex',
 			'/dc:creator',
-			'description' => array(
+			'xy:description' => array(
 					'xmlns:dc' => 'http://link.com'
 			),
 			'descriptive words',
-			'/description',
+			'/xy:description',
 			'/item'
 		);
 		$this->assertTags($result, $expected, true);
