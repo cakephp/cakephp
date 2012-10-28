@@ -110,3 +110,25 @@ use Cake\Core\ClassLoader;
 	$loader = new ClassLoader($namespace, dirname(APP));
 	$loader->register();
 	unset($loader, $namespace);
+
+/**
+ * Define the FULL_BASE_URL used for link generation.
+ * In most cases the code below will generate the correct hostname.
+ * However, you can manually define the hostname to resolve any issues.
+ */
+$s = null;
+if (env('HTTPS')) {
+	$s = 's';
+}
+
+$httpHost = env('HTTP_HOST');
+if (isset($httpHost)) {
+	define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost);
+}
+unset($httpHost, $s);
+
+/**
+ * Configure the mbstring extension to use the correct encoding.
+ */
+$encoding = Configure::read('App.encoding');
+mb_internal_encoding($encoding);

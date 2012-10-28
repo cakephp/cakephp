@@ -26,30 +26,7 @@ $loader = new \Cake\Core\ClassLoader('Cake', CORE_PATH);
 $loader->register();
 
 use Cake\Core\App;
+use Cake\Core\Configure;
 
 App::init();
 App::build();
-
-/**
- * Full url prefix
- */
-if (!defined('FULL_BASE_URL')) {
-	$s = null;
-	if (env('HTTPS')) {
-		$s = 's';
-	}
-
-	$httpHost = env('HTTP_HOST');
-
-	if (isset($httpHost)) {
-		define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost);
-	}
-	unset($httpHost, $s);
-}
-
-spl_autoload_register(array('App', 'load'));
-
-$encoding = Configure::read('App.encoding');
-if (!empty($encoding)) {
-	mb_internal_encoding($encoding);
-}

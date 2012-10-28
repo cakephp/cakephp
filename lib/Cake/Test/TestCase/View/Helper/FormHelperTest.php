@@ -2750,7 +2750,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ValidateUserBalance'),
 			'Balance',
 			'/label',
-			'select' => array('name' => 'data[ValidateUser][balance]', 'id' => 'ValidateUserBalance'),
+			'select' => array('name' => 'ValidateUser[balance]', 'id' => 'ValidateUserBalance'),
 			array('option' => array('value' => '0')),
 			'nothing',
 			'/option',
@@ -7177,7 +7177,7 @@ class FormHelperTest extends TestCase {
 			'Iamrequiredalways',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][iamrequiredalways]',
+				'type' => 'text', 'name' => 'Contact[iamrequiredalways]',
 				'id' => 'ContactIamrequiredalways'
 			),
 			'/div'

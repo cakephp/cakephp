@@ -399,12 +399,12 @@ class RouterTest extends TestCase {
 		$result = Router::url(array('controller' => 'categories', 'action' => 'index', '0'));
 		$this->assertEquals('/0', $result);
 
-		$expected = array(
+		$expected = [
 			'plugin' => null,
 			'controller' => 'categories',
 			'action' => 'index',
-			'pass' => array('0'),
-		);
+			'pass' => ['0'],
+		];
 		$result = Router::parse('/0');
 		$this->assertEquals($expected, $result);
 
