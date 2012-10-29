@@ -66,15 +66,12 @@ class TestBehavior extends ModelBehavior {
 		switch ($settings['beforeFind']) {
 			case 'on':
 				return false;
-			break;
 			case 'test':
 				return null;
-			break;
 			case 'modify':
 				$query['fields'] = array($model->alias . '.id', $model->alias . '.name', $model->alias . '.mytime');
 				$query['recursive'] = -1;
 				return $query;
-			break;
 		}
 	}
 
@@ -94,16 +91,12 @@ class TestBehavior extends ModelBehavior {
 		switch ($settings['afterFind']) {
 			case 'on':
 				return array();
-			break;
 			case 'test':
 				return true;
-			break;
 			case 'test2':
 				return null;
-			break;
 			case 'modify':
 				return Hash::extract($results, "{n}.{$model->alias}");
-			break;
 		}
 	}
 
@@ -121,14 +114,11 @@ class TestBehavior extends ModelBehavior {
 		switch ($settings['beforeSave']) {
 			case 'on':
 				return false;
-			break;
 			case 'test':
 				return true;
-			break;
 			case 'modify':
 				$model->data[$model->alias]['name'] .= ' modified before';
 				return true;
-			break;
 		}
 	}
 
@@ -157,7 +147,6 @@ class TestBehavior extends ModelBehavior {
 			break;
 			case 'test2':
 				return false;
-			break;
 			case 'modify':
 				$model->data[$model->alias]['name'] .= ' ' . $string;
 			break;
@@ -179,18 +168,14 @@ class TestBehavior extends ModelBehavior {
 			case 'on':
 				$model->invalidate('name');
 				return true;
-			break;
 			case 'test':
 				return null;
-			break;
 			case 'whitelist':
 				$this->_addToWhitelist($model, array('name'));
 				return true;
-			break;
 			case 'stop':
 				$model->invalidate('name');
 				return false;
-			break;
 		}
 	}
 
@@ -209,11 +194,9 @@ class TestBehavior extends ModelBehavior {
 		switch ($settings['afterValidate']) {
 			case 'on':
 				return false;
-			break;
 			case 'test':
 				$model->data = array('foo');
 				return true;
-			break;
 		}
 	}
 
@@ -232,17 +215,14 @@ class TestBehavior extends ModelBehavior {
 		switch ($settings['beforeDelete']) {
 			case 'on':
 				return false;
-			break;
 			case 'test':
 				return null;
-			break;
 			case 'test2':
 				echo 'beforeDelete success';
 				if ($cascade) {
 					echo ' (cascading) ';
 				}
 				return true;
-			break;
 		}
 	}
 
