@@ -178,7 +178,7 @@ class ThemeViewTest extends TestCase {
 
 		$ThemeView = new TestTheme2View($this->Controller);
 		$ThemeView->theme = 'TestTheme';
-		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . '' .'Pages' . DS . 'home.ctp';
+		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Pages' . DS . 'home.ctp';
 		$result = $ThemeView->getViewFileName('home');
 		$this->assertEquals($expected, $result);
 
