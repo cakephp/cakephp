@@ -323,7 +323,16 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertContains('[FatalErrorException] Something wrong', $log[1], 'message missing.');
 	}
 
-	public function testEvents() {
+/**
+ * test error handler events
+ * These events are tested:
+ * ErrorHandler.handleError
+ * ErrorHandler.handleException
+ * ErrorHandler.handleException
+ *
+ * @return void
+ */
+	public function testErrorHandlerEvents() {
 		CakeEventManager::instance()->attach(new TestErrorHandlerListener());
 
 		$result = ErrorHandler::handleError(E_ERROR, 'Something wrong');
