@@ -99,6 +99,28 @@ App::uses('CakeEvent', 'Event');
 class ErrorHandler {
 
 /**
+ * Instance of the CakeEventManager this error handler is using
+ * to dispatch inner events.
+ *
+ * @var CakeEventManager
+ */
+	protected static $_eventManager = null;
+
+/**
+ * Returns the CakeEventManager manager instance that is handling any callbacks.
+ * You can use this instance to register any new listeners or callbacks to the
+ * error handler events, or create your own events and trigger them at will.
+ *
+ * @return CakeEventManager
+ */
+	public function getEventManager() {
+		if (empty(self::$_eventManager)) {
+			self::$_eventManager = new CakeEventManager();
+		}
+		return self::$_eventManager;
+	}
+
+/**
  * Set as the default exception handler by the CakePHP bootstrap process.
  *
  * This will either use custom exception renderer class if configured,
@@ -110,7 +132,7 @@ class ErrorHandler {
  */
 	public static function handleException(Exception $exception) {
 		$event = new CakeEvent('ErrorHandler.handleException', null, array($exception));
-		CakeEventManager::instance()->dispatch($event);
+		self::getEventManager()->dispatch($event);
 
 		if ($event->isStopped()) {
 			return $event->result;
@@ -166,7 +188,7 @@ class ErrorHandler {
 		}
 
 		$event = new CakeEvent('ErrorHandler.handleError', null, array($code, $description, $file, $line, $context));
-		CakeEventManager::instance()->dispatch($event);
+		self::getEventManager()->dispatch($event);
 
 		if ($event->isStopped()) {
 			return $event->result;
@@ -214,7 +236,7 @@ class ErrorHandler {
  */
 	public static function handleFatalError($code, $description, $file, $line) {
 		$event = new CakeEvent('ErrorHandler.handleFatalError', null, array($code, $description, $file, $line));
-		CakeEventManager::instance()->dispatch($event);
+		self::getEventManager()->dispatch($event);
 
 		if ($event->isStopped()) {
 			return $event->result;
