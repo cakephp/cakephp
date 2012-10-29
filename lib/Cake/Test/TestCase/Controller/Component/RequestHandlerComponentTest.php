@@ -372,7 +372,7 @@ class RequestHandlerComponentTest extends TestCase {
 
 		$this->Controller->viewPath = 'request_handler_test\\rss';
 		$this->RequestHandler->renderAs($this->Controller, 'js');
-		$this->assertEquals('request_handler_test/js', $this->Controller->viewPath);
+		$this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewPath);
 	}
 
 /**
@@ -455,11 +455,11 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testRenderAsCalledTwice() {
 		$this->RequestHandler->renderAs($this->Controller, 'print');
-		$this->assertEquals('RequestHandlerTest/print', $this->Controller->viewPath);
+		$this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewPath);
 		$this->assertEquals('print', $this->Controller->layoutPath);
 
 		$this->RequestHandler->renderAs($this->Controller, 'js');
-		$this->assertEquals('RequestHandlerTest/js', $this->Controller->viewPath);
+		$this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewPath);
 		$this->assertEquals('js', $this->Controller->layoutPath);
 		$this->assertTrue(in_array('Js', $this->Controller->helpers));
 	}
