@@ -910,7 +910,7 @@ class Controller extends Object implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::referer
  */
 	public function referer($default = null, $local = false) {
-		if(!$this->request) {
+		if (!$this->request) {
 			return '/';
 		}
 
