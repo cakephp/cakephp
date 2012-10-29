@@ -24,10 +24,12 @@ App::uses('AppShell', 'Console/Command');
  * @package       Cake.Console.Command
  */
 class ServerShell extends AppShell {
+
 /**
  * Default ServerHost
  */
 	const DEFAULT_HOST = 'localhost';
+
 /**
  * Default ListenPort
  */
