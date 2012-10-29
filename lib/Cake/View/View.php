@@ -631,6 +631,17 @@ class View extends Object {
 	}
 
 /**
+ * Start capturing output for a 'block' if it has no content
+ *
+ * @param string $name The name of the block to capture for.
+ * @return void
+ * @see ViewBlock::startIfEmpty()
+ */
+	public function startIfEmpty($name) {
+		return $this->Blocks->startIfEmpty($name);
+	}
+
+/**
  * Append to an existing or new block.  Appending to a new
  * block will create the block.
  *
