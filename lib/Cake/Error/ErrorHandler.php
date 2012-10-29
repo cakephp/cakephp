@@ -22,6 +22,8 @@
 App::uses('Debugger', 'Utility');
 App::uses('CakeLog', 'Log');
 App::uses('ExceptionRenderer', 'Error');
+App::uses('CakeEventManager', 'Event');
+App::uses('CakeEvent', 'Event');
 
 /**
  *
@@ -107,6 +109,13 @@ class ErrorHandler {
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */
 	public static function handleException(Exception $exception) {
+		$event = new CakeEvent('ErrorHandler.handleException', null, array($exception));
+		CakeEventManager::instance()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
 		$config = Configure::read('Exception');
 		if (!empty($config['log'])) {
 			$message = sprintf("[%s] %s\n%s",
@@ -155,6 +164,15 @@ class ErrorHandler {
 		if (error_reporting() === 0) {
 			return false;
 		}
+
+		$event = new CakeEvent('ErrorHandler.handleError', null, array($code, $description, $file, $line, $context));
+		CakeEventManager::instance()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
+
 		$errorConfig = Configure::read('Error');
 		list($error, $log) = self::mapErrorCode($code);
 		if ($log === LOG_ERR) {
@@ -195,6 +213,13 @@ class ErrorHandler {
  * @return boolean
  */
 	public static function handleFatalError($code, $description, $file, $line) {
+		$event = new CakeEvent('ErrorHandler.handleFatalError', null, array($code, $description, $file, $line));
+		CakeEventManager::instance()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
 		$logMessage = 'Fatal Error (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
 		CakeLog::write(LOG_ERR, $logMessage);
 
