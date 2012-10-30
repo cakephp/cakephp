@@ -1217,6 +1217,24 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test block with startIfEmpty
+ *
+ * @return void
+ */
+	public function testBlockCaptureStartIfEmpty() {
+		$this->View->startIfEmpty('test');
+		echo "Block content 1";
+		$this->View->end();
+
+		$this->View->startIfEmpty('test');
+		echo "Block content 2";
+		$this->View->end();
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Block content 1', $result);
+	}
+
+/**
  * Test appending to a block with capturing output.
  *
  * @return void
