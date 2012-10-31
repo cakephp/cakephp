@@ -1,0 +1,15 @@
+{
+    "name": "cakephp/app",
+    "description": "CakePHP skeleton app",
+    "homepage": "http://cakephp.org",
+    "license": "MIT",
+    "require": {
+        "cakephp/framework": "dev-3.0",
+        "php": ">=5.4"
+    },
+    "autoload": {
+        "psr-0": {
+            "App\\": "."
+        }
+    }
+}

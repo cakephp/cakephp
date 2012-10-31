@@ -1,5 +1,5 @@
 {
-    "name": "cakephp/cakephp",
+    "name": "cakephp/framework",
     "description": "The CakePHP framework",
     "type": "library",
     "keywords": ["framework"],
@@ -22,10 +22,10 @@
     },
     "autoload": {
         "psr-0": {
-            "Cake": "lib/Cake/"
+            "Cake\\": "Cake/"
         }
     },
     "bin": [
-        "lib/Cake/Console/cake"
+        "Cake/Console/cake"
     ]
 }
