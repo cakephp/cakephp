@@ -83,15 +83,16 @@ class TestTask extends BakeTask {
  */
 	public function execute() {
 		parent::execute();
-		if (empty($this->args)) {
+		$count = count($this->args);
+		if (!$count) {
 			$this->_interactive();
 		}
 
-		if (count($this->args) == 1) {
+		if ($count === 1) {
 			$this->_interactive($this->args[0]);
 		}
 
-		if (count($this->args) > 1) {
+		if ($count > 1) {
 			$type = Inflector::classify($this->args[0]);
 			if ($this->bake($type, $this->args[1])) {
 				$this->out('<success>Done</success>');

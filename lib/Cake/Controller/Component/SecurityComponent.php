@@ -314,7 +314,7 @@ class SecurityComponent extends Component {
  * @throws BadRequestException
  */
 	public function blackHole(Controller $controller, $error = '') {
-		if ($this->blackHoleCallback == null) {
+		if (!$this->blackHoleCallback) {
 			throw new BadRequestException(__d('cake_dev', 'The request has been black-holed'));
 		}
 		return $this->_callback($controller, $this->blackHoleCallback, array($error));
@@ -389,7 +389,7 @@ class SecurityComponent extends Component {
 			$requireAuth = $this->requireAuth;
 
 			if (in_array($this->request->params['action'], $requireAuth) || $this->requireAuth == array('*')) {
-				if (!isset($controller->request->data['_Token'] )) {
+				if (!isset($controller->request->data['_Token'])) {
 					if (!$this->blackHole($controller, 'auth')) {
 						return null;
 					}
@@ -493,7 +493,7 @@ class SecurityComponent extends Component {
 
 		$fieldList += $lockedFields;
 		$unlocked = implode('|', $unlocked);
-		$check = Security::hash(serialize($fieldList) . $unlocked . Configure::read('Security.salt'));
+		$check = Security::hash(serialize($fieldList) . $unlocked . Configure::read('Security.salt'), 'sha1');
 		return ($token === $check);
 	}
 

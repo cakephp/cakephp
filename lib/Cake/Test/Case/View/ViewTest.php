@@ -21,6 +21,7 @@ App::uses('View', 'View');
 App::uses('Helper', 'View');
 App::uses('Controller', 'Controller');
 App::uses('CacheHelper', 'View/Helper');
+App::uses('HtmlHelper', 'View/Helper');
 App::uses('ErrorHandler', 'Error');
 
 
@@ -1258,12 +1259,36 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test prepending to a block with append.
+ *
+ * @return void
+ */
+	public function testBlockPrepend() {
+		$this->View->assign('test', 'Block');
+		$this->View->prepend('test', 'Before ');
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Before Block', $result);
+	}
+
+/**
  * You should be able to append to undefined blocks.
  *
  * @return void
  */
 	public function testBlockAppendUndefined() {
 		$this->View->append('test', 'Unknown');
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Unknown', $result);
+	}
+
+/**
+ * You should be able to prepend to undefined blocks.
+ *
+ * @return void
+ */
+	public function testBlockPrependUndefined() {
+		$this->View->prepend('test', 'Unknown');
 		$result = $this->View->fetch('test');
 		$this->assertEquals('Unknown', $result);
 	}
@@ -1398,6 +1423,22 @@ TEXT;
 	}
 
 /**
+ * Test extend() preceeded by an element()
+ *
+ * @return void
+ */
+	public function testExtendWithElementBeforeExtend() {
+		$this->View->layout = false;
+		$result = $this->View->render('extend_with_element');
+		$expected = <<<TEXT
+Parent View.
+this is the test elementThe view
+
+TEXT;
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test that setting arbitrary properties still works.
  *
  * @return void
@@ -1444,5 +1485,21 @@ TEXT;
 		}
 		$end = memory_get_usage();
 		$this->assertLessThanOrEqual($start + 5000, $end);
+	}
+
+/**
+ * tests that a vew block uses default value when not assigned and uses assigned value when it is
+ *
+ * @return void
+ */
+	public function testBlockDefaultValue() {
+		$default = 'Default';
+		$result = $this->View->fetch('title', $default);
+		$this->assertEquals($default, $result);
+
+		$expected = 'My Title';
+		$this->View->assign('title', $expected);
+		$result = $this->View->fetch('title', $default);
+		$this->assertEquals($expected, $result);
 	}
 }

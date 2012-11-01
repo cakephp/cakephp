@@ -271,12 +271,14 @@ class CookieComponentTest extends CakeTestCase {
 		$expected = array(
 			'name' => $this->Cookie->name . '[Testing]',
 			'value' => '[1,2,3]',
-			'expire' => time() + 10,
 			'path' => '/',
 			'domain' => '',
 			'secure' => false,
 			'httpOnly' => false);
 		$result = $this->Controller->response->cookie($this->Cookie->name . '[Testing]');
+
+		$this->assertWithinMargin($result['expire'], time() + 10, 1);
+		unset($result['expire']);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -410,11 +412,11 @@ class CookieComponentTest extends CakeTestCase {
 		$this->assertNull($data);
 
 		$_COOKIE['CakeTestCookie'] = array(
-				'Encrytped_array' => $this->__encrypt(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!')),
+				'Encrytped_array' => $this->_encrypt(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!')),
 				'Encrytped_multi_cookies' => array(
-						'name' => $this->__encrypt('CakePHP'),
-						'version' => $this->__encrypt('1.2.0.x'),
-						'tag' => $this->__encrypt('CakePHP Rocks!')),
+						'name' => $this->_encrypt('CakePHP'),
+						'version' => $this->_encrypt('1.2.0.x'),
+						'tag' => $this->_encrypt('CakePHP Rocks!')),
 				'Plain_array' => '{"name":"CakePHP","version":"1.2.0.x","tag":"CakePHP Rocks!"}',
 				'Plain_multi_cookies' => array(
 						'name' => 'CakePHP',
@@ -465,11 +467,11 @@ class CookieComponentTest extends CakeTestCase {
 		$this->assertEquals($expected, $data);
 
 		$_COOKIE['CakeTestCookie'] = array(
-				'Encrytped_array' => $this->__encrypt(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!')),
+				'Encrytped_array' => $this->_encrypt(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!')),
 				'Encrytped_multi_cookies' => array(
-						'name' => $this->__encrypt('CakePHP'),
-						'version' => $this->__encrypt('1.2.0.x'),
-						'tag' => $this->__encrypt('CakePHP Rocks!')),
+						'name' => $this->_encrypt('CakePHP'),
+						'version' => $this->_encrypt('1.2.0.x'),
+						'tag' => $this->_encrypt('CakePHP Rocks!')),
 				'Plain_array' => '{"name":"CakePHP","version":"1.2.0.x","tag":"CakePHP Rocks!"}',
 				'Plain_multi_cookies' => array(
 						'name' => 'CakePHP',
@@ -646,7 +648,7 @@ class CookieComponentTest extends CakeTestCase {
  * @param array|string $value
  * @return string
  */
-	protected function __encrypt($value) {
+	protected function _encrypt($value) {
 		if (is_array($value)) {
 			$value = $this->_implode($value);
 		}

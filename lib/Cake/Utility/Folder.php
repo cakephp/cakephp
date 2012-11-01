@@ -23,7 +23,7 @@ class Folder {
 
 /**
  * Default scheme for Folder::copy
- * Recursively merges subfolders with the same name 
+ * Recursively merges subfolders with the same name
  *
  * @constant MERGE
  */
@@ -391,7 +391,7 @@ class Folder {
 			$paths = $this->tree($path);
 
 			foreach ($paths as $type) {
-				foreach ($type as $key => $fullpath) {
+				foreach ($type as $fullpath) {
 					$check = explode(DS, $fullpath);
 					$count = count($check);
 
@@ -425,7 +425,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::tree
  */
 	public function tree($path = null, $exceptions = false, $type = null) {
-		if ($path == null) {
+		if (!$path) {
 			$path = $this->path;
 		}
 		$files = array();
@@ -740,21 +740,31 @@ class Folder {
 /**
  * get messages from latest method
  *
+ * @param boolean $reset Reset message stack after reading
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::messages
  */
-	public function messages() {
-		return $this->_messages;
+	public function messages($reset = true) {
+		$messages = $this->_messages;
+		if ($reset) {
+			$this->_messages = array();
+		}
+		return $messages;
 	}
 
 /**
  * get error from latest method
  *
+ * @param boolean $reset Reset error stack after reading
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::errors
  */
-	public function errors() {
-		return $this->_errors;
+	public function errors($reset = true) {
+		$errors = $this->_errors;
+		if ($reset) {
+			$this->_errors = array();
+		}
+		return $errors;
 	}
 
 /**

@@ -319,7 +319,7 @@ class Controller extends Object implements CakeEventListener {
 			$this->name = substr(get_class($this), 0, -10);
 		}
 
-		if ($this->viewPath == null) {
+		if (!$this->viewPath) {
 			$this->viewPath = $this->name;
 		}
 
@@ -454,7 +454,7 @@ class Controller extends Object implements CakeEventListener {
 			$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
 		}
 
-		if (array_key_exists('return', $request->params) && $request->params['return'] == 1) {
+		if (!empty($request->params['return']) && $request->params['return'] == 1) {
 			$this->autoRender = false;
 		}
 		if (!empty($request->params['bare'])) {
@@ -557,7 +557,6 @@ class Controller extends Object implements CakeEventListener {
 
 		if ($mergeParent || !empty($pluginController)) {
 			$appVars = get_class_vars($this->_mergeParent);
-			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
 			$this->_mergeVars($merge, $this->_mergeParent, true);
 		}
@@ -797,7 +796,7 @@ class Controller extends Object implements CakeEventListener {
  * @return array Array with keys url, status and exit
  */
 	protected function _parseBeforeRedirect($response, $url, $status, $exit) {
-		if (is_array($response) && isset($response[0])) {
+		if (is_array($response) && array_key_exists(0, $response)) {
 			foreach ($response as $resp) {
 				if (is_array($resp) && isset($resp['url'])) {
 					extract($resp, EXTR_OVERWRITE);
@@ -967,14 +966,15 @@ class Controller extends Object implements CakeEventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::referer
  */
 	public function referer($default = null, $local = false) {
-		if ($this->request) {
-			$referer = $this->request->referer($local);
-			if ($referer == '/' && $default != null) {
-				return Router::url($default, true);
-			}
-			return $referer;
+		if (!$this->request) {
+			return '/';
 		}
-		return '/';
+
+		$referer = $this->request->referer($local);
+		if ($referer == '/' && $default) {
+			return Router::url($default, true);
+		}
+		return $referer;
 	}
 
 /**
@@ -1062,7 +1062,7 @@ class Controller extends Object implements CakeEventListener {
 				$cond[$key] = $value;
 			}
 		}
-		if ($bool != null && strtoupper($bool) != 'AND') {
+		if ($bool && strtoupper($bool) != 'AND') {
 			$cond = array($bool => $cond);
 		}
 		return $cond;

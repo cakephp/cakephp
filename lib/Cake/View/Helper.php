@@ -293,8 +293,9 @@ class Helper extends Object {
  */
 	public function assetUrl($path, $options = array()) {
 		if (is_array($path)) {
-			$path = $this->url($path, !empty($options['fullBase']));
-		} elseif (strpos($path, '://') === false) {
+			return $this->url($path, !empty($options['fullBase']));
+		}
+		if (strpos($path, '://') === false) {
 			if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
 				list($plugin, $path) = $this->_View->pluginSplit($path, false);
 			}
@@ -322,7 +323,6 @@ class Helper extends Object {
 				$path = $base . $path;
 			}
 		}
-
 		return $path;
 	}
 
@@ -460,21 +460,21 @@ class Helper extends Object {
  * @deprecated This method will be moved to HtmlHelper in 3.0
  */
 	protected function _formatAttribute($key, $value, $escape = true) {
-		$attribute = '';
 		if (is_array($value)) {
 			$value = implode(' ' , $value);
 		}
-
 		if (is_numeric($key)) {
-			$attribute = sprintf($this->_minimizedAttributeFormat, $value, $value);
-		} elseif (in_array($key, $this->_minimizedAttributes)) {
-			if ($value === 1 || $value === true || $value === 'true' || $value === '1' || $value == $key) {
-				$attribute = sprintf($this->_minimizedAttributeFormat, $key, $key);
-			}
-		} else {
-			$attribute = sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
+			return sprintf($this->_minimizedAttributeFormat, $value, $value);
 		}
-		return $attribute;
+		$truthy = array(1, '1', true, 'true', $key);
+		$isMinimized = in_array($key, $this->_minimizedAttributes);
+		if ($isMinimized && in_array($value, $truthy, true)) {
+			return sprintf($this->_minimizedAttributeFormat, $key, $key);
+		}
+		if ($isMinimized) {
+			return '';
+		}
+		return sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
 	}
 
 /**
@@ -500,7 +500,7 @@ class Helper extends Object {
 
 		// Either 'body' or 'date.month' type inputs.
 		if (
-			($count === 1 && $this->_modelScope && $setScope == false) ||
+			($count === 1 && $this->_modelScope && !$setScope) ||
 			(
 				$count === 2 &&
 				in_array($lastPart, $this->_fieldSuffixes) &&
@@ -526,12 +526,11 @@ class Helper extends Object {
 
 		$isHabtm = (
 			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) &&
-			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple' &&
-			$count == 1
+			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
 		);
 
 		// habtm models are special
-		if ($count == 1 && $isHabtm) {
+		if ($count === 1 && $isHabtm) {
 			$this->_association = $parts[0];
 			$entity = $parts[0] . '.' . $parts[0];
 		} else {
@@ -750,7 +749,7 @@ class Helper extends Object {
  * @return array Array of options with $key set.
  */
 	public function addClass($options = array(), $class = null, $key = 'class') {
-		if (isset($options[$key]) && trim($options[$key]) != '') {
+		if (isset($options[$key]) && trim($options[$key])) {
 			$options[$key] .= ' ' . $class;
 		} else {
 			$options[$key] = $class;

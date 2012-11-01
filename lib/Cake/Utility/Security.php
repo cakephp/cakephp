@@ -107,7 +107,7 @@ class Security {
 			$string = $salt . $string;
 		}
 
-		if ($type == 'sha1' || $type == null) {
+		if (!$type || $type == 'sha1') {
 			if (function_exists('sha1')) {
 				return sha1($string);
 			}

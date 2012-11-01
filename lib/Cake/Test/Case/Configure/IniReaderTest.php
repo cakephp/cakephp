@@ -261,6 +261,7 @@ three.four = value four
 is_null = null
 bool_false = false
 bool_true = true
+
 [Asset]
 timestamp = force
 INI;

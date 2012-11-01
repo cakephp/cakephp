@@ -49,6 +49,13 @@ class Router {
 	public static $routes = array();
 
 /**
+ * Have routes been loaded
+ *
+ * @var boolean
+ */
+	public static $initialized = false;
+
+/**
  * List of action prefixes used in connected routes.
  * Includes admin prefix
  *
@@ -284,6 +291,8 @@ class Router {
  * @throws RouterException
  */
 	public static function connect($route, $defaults = array(), $options = array()) {
+		self::$initialized = true;
+
 		foreach (self::$_prefixes as $prefix) {
 			if (isset($defaults[$prefix])) {
 				if ($defaults[$prefix]) {
@@ -425,7 +434,7 @@ class Router {
 			$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
 		}
 
-		if ($options['reset'] == true || self::$_namedConfig['rules'] === false) {
+		if ($options['reset'] || self::$_namedConfig['rules'] === false) {
 			self::$_namedConfig['rules'] = array();
 		}
 
@@ -520,10 +529,14 @@ class Router {
  * @return array Parsed elements from URL
  */
 	public static function parse($url) {
+		if (!self::$initialized) {
+			self::_loadRoutes();
+		}
+
 		$ext = null;
 		$out = array();
 
-		if ($url && strpos($url, '/') !== 0) {
+		if (strlen($url) && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
 		if (strpos($url, '?') !== false) {
@@ -638,7 +651,7 @@ class Router {
  * @return array Parameter information
  */
 	public static function getParams($current = false) {
-		if ($current) {
+		if ($current && self::$_requests) {
 			return self::$_requests[count(self::$_requests) - 1]->params;
 		}
 		if (isset(self::$_requests[0])) {
@@ -748,6 +761,10 @@ class Router {
  * @return string Full translated URL with base path.
  */
 	public static function url($url = null, $full = false) {
+		if (!self::$initialized) {
+			self::_loadRoutes();
+		}
+
 		$params = array('plugin' => null, 'controller' => null, 'action' => 'index');
 
 		if (is_bool($full)) {
@@ -928,9 +945,9 @@ class Router {
 		if (!empty($named)) {
 			foreach ($named as $name => $value) {
 				if (is_array($value)) {
-					$flattend = Hash::flatten($value, '][');
+					$flattend = Hash::flatten($value, '%5D%5B');
 					foreach ($flattend as $namedKey => $namedValue) {
-						$output .= '/' . $name . "[$namedKey]" . self::$_namedConfig['separator'] . rawurlencode($namedValue);
+						$output .= '/' . $name . "%5B{$namedKey}%5D" . self::$_namedConfig['separator'] . rawurlencode($namedValue);
 					}
 				} else {
 					$output .= '/' . $name . self::$_namedConfig['separator'] . rawurlencode($value);
@@ -1073,7 +1090,7 @@ class Router {
  * @return string base url with plugin name removed if present
  */
 	public static function stripPlugin($base, $plugin = null) {
-		if ($plugin != null) {
+		if ($plugin) {
 			$base = preg_replace('/(?:' . $plugin . ')/', '', $base);
 			$base = str_replace('//', '', $base);
 			$pos1 = strrpos($base, '/');
@@ -1117,6 +1134,10 @@ class Router {
  * @return array Array of extensions Router is configured to parse.
  */
 	public static function extensions() {
+		if (!self::$initialized) {
+			self::_loadRoutes();
+		}
+
 		return self::$_validExtensions;
 	}
 
@@ -1136,6 +1157,16 @@ class Router {
 			return self::$_validExtensions = $extensions;
 		}
 		return self::$_validExtensions = array_merge(self::$_validExtensions, $extensions);
+	}
+
+/**
+ * Loads route configuration
+ *
+ * @return void
+ */
+	protected static function _loadRoutes() {
+		self::$initialized = true;
+		include APP . 'Config' . DS . 'routes.php';
 	}
 
 }

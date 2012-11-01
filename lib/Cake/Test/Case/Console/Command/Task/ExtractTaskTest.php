@@ -308,10 +308,10 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
-		$pattern = preg_quote('#Model' . DS . 'PersisterOne.php:validation for field title#', '\\');
+		$pattern = preg_quote('#Model/PersisterOne.php:validation for field title#', '\\');
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = preg_quote('#Model' . DS . 'PersisterOne.php:validation for field body#', '\\');
+		$pattern = preg_quote('#Model/PersisterOne.php:validation for field body#', '\\');
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
@@ -354,10 +354,10 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
 
-		$pattern = preg_quote('#Plugin' . DS . 'TestPlugin' . DS . 'Model' . DS . 'TestPluginPost.php:validation for field title#', '\\');
+		$pattern = preg_quote('#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#', '\\');
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = preg_quote('#Plugin' . DS . 'TestPlugin' . DS . 'Model' . DS . 'TestPluginPost.php:validation for field body#', '\\');
+		$pattern = preg_quote('#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field body#', '\\');
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
@@ -393,10 +393,10 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
 
-		$pattern = preg_quote('#Model' . DS . 'TestPluginPost.php:validation for field title#', '\\');
+		$pattern = preg_quote('#Model/TestPluginPost.php:validation for field title#', '\\');
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = preg_quote('#Model' . DS . 'TestPluginPost.php:validation for field body#', '\\');
+		$pattern = preg_quote('#Model/TestPluginPost.php:validation for field body#', '\\');
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';

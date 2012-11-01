@@ -745,7 +745,7 @@ class CakeTime {
 				$years = floor($months / 12);
 				$months = $months - ($years * 12);
 			}
-			if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] == 1) {
+			if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] === 1) {
 				$years--;
 			}
 
@@ -766,7 +766,7 @@ class CakeTime {
 				}
 			}
 
-			if ($months == 0 && $years >= 1 && $diff < ($years * 31536000)) {
+			if (!$months && $years >= 1 && $diff < ($years * 31536000)) {
 				$months = 11;
 				$years--;
 			}
@@ -795,7 +795,7 @@ class CakeTime {
 		}
 		$diff = $futureTime - $pastTime;
 
-		if ($diff == 0) {
+		if (!$diff) {
 			return __d('cake', 'just now', 'just now');
 		}
 
@@ -903,7 +903,7 @@ class CakeTime {
  */
 	public static function gmt($dateString = null) {
 		$time = time();
-		if ($dateString != null) {
+		if ($dateString) {
 			$time = self::fromString($dateString);
 		}
 		return gmmktime(
@@ -941,18 +941,11 @@ class CakeTime {
  * @see CakeTime::i18nFormat()
  */
 	public static function format($date, $format = null, $default = false, $timezone = null) {
-		//Backwards compatible params order
+		//Backwards compatible params re-order test
 		$time = self::fromString($format, $timezone);
-		$_time = false;
-		if (!is_numeric($time)) {
-			$_time = self::fromString($date, $timezone);
-		}
 
-		if (is_numeric($_time) && $time === false) {
-			return self::i18nFormat($_time, $format, $default, $timezone);
-		}
-		if ($time === false && $default !== false) {
-			return $default;
+		if ($time === false) {
+			return self::i18nFormat($date, $format, $default, $timezone);
 		}
 		return date($date, $time);
 	}

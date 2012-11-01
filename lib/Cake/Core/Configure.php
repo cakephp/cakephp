@@ -198,7 +198,6 @@ class Configure {
  */
 	public static function delete($var = null) {
 		$keys = explode('.', $var);
-		$last = array_pop($keys);
 		self::$_values = Hash::remove(self::$_values, $var);
 	}
 
@@ -320,10 +319,10 @@ class Configure {
 	public static function dump($key, $config = 'default', $keys = array()) {
 		$reader = self::_getReader($config);
 		if (!$reader) {
-			throw new ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
+			throw new ConfigureException(__d('cake_dev', 'There is no "%s" adapter.', $config));
 		}
 		if (!method_exists($reader, 'dump')) {
-			throw new ConfigureException(__d('cake', 'The "%s" adapter, does not have a dump() method.', $config));
+			throw new ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a dump() method.', $config));
 		}
 		$values = self::$_values;
 		if (!empty($keys) && is_array($keys)) {

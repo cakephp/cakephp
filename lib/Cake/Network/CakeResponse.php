@@ -384,9 +384,10 @@ class CakeResponse {
 		if (isset($options['type'])) {
 			$this->type($options['type']);
 		}
-		if (isset($options['charset'])) {
-			$this->charset($options['charset']);
+		if (!isset($options['charset'])) {
+			$options['charset'] = Configure::read('App.encoding');
 		}
+		$this->charset($options['charset']);
 	}
 
 /**
@@ -789,7 +790,7 @@ class CakeResponse {
 			unset($this->_cacheDirectives['public']);
 			$this->maxAge($time);
 		}
-		if ($time == null) {
+		if (!$time) {
 			$this->_setCacheControl();
 		}
 		return (bool)$public;
@@ -1070,7 +1071,7 @@ class CakeResponse {
  * @return int
  */
 	public function length($bytes = null) {
-		if ($bytes !== null ) {
+		if ($bytes !== null) {
 			$this->_headers['Content-Length'] = $bytes;
 		}
 		if (isset($this->_headers['Content-Length'])) {

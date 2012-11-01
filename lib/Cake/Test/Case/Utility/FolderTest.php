@@ -767,6 +767,55 @@ class FolderTest extends CakeTestCase {
 	}
 
 /**
+ * test that errors and messages can be resetted
+ *
+ * @return void
+ */
+	public function testReset() {
+		$path = TMP . 'folder_delete_test';
+		mkdir($path);
+		$folder = $path . DS . 'sub';
+		mkdir($folder);
+		$file = $folder . DS . 'file';
+		touch($file);
+
+		chmod($folder, 0555);
+		chmod($file, 0444);
+
+		$Folder = new Folder($folder);
+		$return = $Folder->delete();
+		$this->assertFalse($return);
+
+		$messages = $Folder->messages();
+		$errors = $Folder->errors();
+		$expected = array(
+			$file . ' NOT removed',
+			$folder . ' NOT removed',
+		);
+		sort($expected);
+		sort($errors);
+		$this->assertEmpty($messages);
+		$this->assertEquals($expected, $errors);
+
+		chmod($file, 0644);
+		chmod($folder, 0755);
+
+		$return = $Folder->delete();
+		$this->assertTrue($return);
+
+		$messages = $Folder->messages();
+		$errors = $Folder->errors();
+		$expected = array(
+			$file . ' removed',
+			$folder . ' removed',
+		);
+		sort($expected);
+		sort($messages);
+		$this->assertEmpty($errors);
+		$this->assertEquals($expected, $messages);
+	}
+
+/**
  * testDelete method
  *
  * @return void

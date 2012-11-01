@@ -160,11 +160,11 @@ class ShellDispatcher {
 		$errorHandler = new ConsoleErrorHandler();
 		if (empty($error['consoleHandler'])) {
 			$error['consoleHandler'] = array($errorHandler, 'handleError');
-			Configure::write('error', $error);
+			Configure::write('Error', $error);
 		}
 		if (empty($exception['consoleHandler'])) {
 			$exception['consoleHandler'] = array($errorHandler, 'handleException');
-			Configure::write('exception', $exception);
+			Configure::write('Exception', $exception);
 		}
 		set_exception_handler($exception['consoleHandler']);
 		set_error_handler($error['consoleHandler'], Configure::read('Error.level'));
@@ -215,7 +215,8 @@ class ShellDispatcher {
 				return $Shell->main();
 			}
 		}
-		throw new MissingShellMethodException(array('shell' => $shell, 'method' => $arg));
+
+		throw new MissingShellMethodException(array('shell' => $shell, 'method' => $command));
 	}
 
 /**
@@ -275,7 +276,11 @@ class ShellDispatcher {
 		if (isset($params['working'])) {
 			$params['working'] = trim($params['working']);
 		}
-		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
+
+		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0][0] !== '.')) {
+			if ($params['working'][0] === '.') {
+				$params['working'] = realpath($params['working']);
+			}
 			if (empty($this->params['app']) && $params['working'] != $params['root']) {
 				$params['root'] = dirname($params['working']);
 				$params['app'] = basename($params['working']);

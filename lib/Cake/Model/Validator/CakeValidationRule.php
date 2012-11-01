@@ -18,8 +18,7 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('ModelValidator', 'Model');
-App::uses('CakeValidationSet', 'Model/Validator');
+
 App::uses('Validation', 'Utility');
 
 /**

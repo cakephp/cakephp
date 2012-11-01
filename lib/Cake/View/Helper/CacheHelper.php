@@ -59,7 +59,7 @@ class CacheHelper extends AppHelper {
  * @return boolean
  */
 	protected function _enabled() {
-		return (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
+		return $this->_View->cacheAction && (Configure::read('Cache.check') === true);
 	}
 
 /**
@@ -148,7 +148,7 @@ class CacheHelper extends AppHelper {
 			$cacheTime = $cacheAction;
 		}
 
-		if ($cacheTime != '' && $cacheTime > 0) {
+		if ($cacheTime && $cacheTime > 0) {
 			$cached = $this->_parseOutput($out);
 			try {
 				$this->_writeFile($cached, $cacheTime, $useCallbacks);
@@ -302,7 +302,7 @@ class CacheHelper extends AppHelper {
 
 		$file .= '
 				$request = unserialize(base64_decode(\'' . base64_encode(serialize($this->request)) . '\'));
-				$response = new CakeResponse(array("charset" => Configure::read("App.encoding")));
+				$response = new CakeResponse();
 				$controller = new ' . $this->_View->name . 'Controller($request, $response);
 				$controller->plugin = $this->plugin = \'' . $this->_View->plugin . '\';
 				$controller->helpers = $this->helpers = unserialize(base64_decode(\'' . base64_encode(serialize($this->_View->helpers)) . '\'));
@@ -312,7 +312,7 @@ class CacheHelper extends AppHelper {
 				Router::setRequestInfo($controller->request);
 				$this->request = $request;';
 
-		if ($useCallbacks == true) {
+		if ($useCallbacks) {
 			$file .= '
 				$controller->constructClasses();
 				$controller->startupProcess();';

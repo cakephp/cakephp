@@ -130,7 +130,10 @@ class Sqlserver extends DboSource {
 			);
 			$this->connected = true;
 		} catch (PDOException $e) {
-			throw new MissingConnectionException(array('class' => $e->getMessage()));
+			throw new MissingConnectionException(array(
+				'class' => get_class($this),
+				'message' => $e->getMessage()
+			));
 		}
 
 		return $this->connected;
@@ -184,7 +187,7 @@ class Sqlserver extends DboSource {
 	public function describe($model) {
 		$table = $this->fullTableName($model, false);
 		$cache = parent::describe($table);
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$fields = array();
@@ -619,7 +622,7 @@ class Sqlserver extends DboSource {
  */
 	public function insertMulti($table, $fields, $values) {
 		$primaryKey = $this->_getPrimaryKey($table);
-		$hasPrimaryKey = $primaryKey != null && (
+		$hasPrimaryKey = $primaryKey && (
 			(is_array($fields) && in_array($primaryKey, $fields)
 			|| (is_string($fields) && strpos($fields, $this->startQuote . $primaryKey . $this->endQuote) !== false))
 		);
@@ -732,7 +735,7 @@ class Sqlserver extends DboSource {
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->_lastAffected = false;
-		if (strncasecmp($sql, 'SELECT', 6) == 0 || preg_match('/^EXEC(?:UTE)?\s/mi', $sql) > 0) {
+		if (strncasecmp($sql, 'SELECT', 6) === 0 || preg_match('/^EXEC(?:UTE)?\s/mi', $sql) > 0) {
 			$prepareOptions += array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL);
 			return parent::_execute($sql, $params, $prepareOptions);
 		}
