@@ -1104,6 +1104,39 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test conditionKeysToString()
+ *
+ * @return void
+ */
+	public function testConditionKeysToString() {
+		$Article = ClassRegistry::init('Article');
+		$conn = $this->getMock('MockPDO', array('quote'));
+		$db = new DboTestSource;
+		$db->setConnection($conn);
+
+		$conn->expects($this->at(0))
+			->method('quote')
+			->will($this->returnValue('just text'));
+
+		$conditions = array('Article.name' => 'just text');
+		$result = $db->conditionKeysToString($conditions, true, $Article);
+		$expected = "Article.name = just text";
+		$this->assertEquals($expected, $result[0]);
+
+		$conn->expects($this->at(0))
+			->method('quote')
+			->will($this->returnValue('just text'));
+		$conn->expects($this->at(1))
+			->method('quote')
+			->will($this->returnValue('other text'));
+
+		$conditions = array('Article.name' => array('just text', 'other text'));
+		$result = $db->conditionKeysToString($conditions, true, $Article);
+		$expected = "Article.name IN (just text, other text)";
+		$this->assertEquals($expected, $result[0]);
+	}
+
+/**
  * Test conditionKeysToString() with virtual field
  *
  * @return void
