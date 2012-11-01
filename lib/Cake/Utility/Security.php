@@ -98,7 +98,7 @@ class Security {
 		$type = strtolower($type);
 
 		if ($type === 'blowfish') {
-			return self::_crypt($string, $type, $salt);
+			return self::_crypt($string, $salt);
 		}
 		if ($salt) {
 			if (!is_string($salt)) {
@@ -143,6 +143,14 @@ class Security {
  * @return void
  */
 	public static function setCost($cost) {
+		if ($cost < 4 || $cost > 31) {
+			trigger_error(__d(
+				'cake_dev',
+				'Invalid value, cost must be between %s and %s',
+				array(4, 31)
+			), E_USER_WARNING);
+			return null;
+		}
 		self::$hashCost = $cost;
 	}
 
@@ -224,56 +232,22 @@ class Security {
 	}
 
 /**
- * One way encryption using php's crypt() function.
+ * One way encryption using php's crypt() function, used with type blowfish in ``Security::hash()``
  *
  * @param string $password The string to be encrypted.
- * @param string $type The encryption method to use (blowfish)
  * @param mixed $salt false to generate a new salt or an existing salt.
  */
-	protected static function _crypt($password, $type = null, $salt = false) {
-		$options = array(
-			'saltFormat' => array(
-				'blowfish' => '$2a$%02d$%s',
-			),
-			'saltLength' => array(
-				'blowfish' => 22,
-			),
-			'costLimits' => array(
-				'blowfish' => array(4, 31),
-			)
-		);
-		extract($options);
-		if ($type === null) {
-			$type = self::$hashType;
-		}
-		$cost = self::$hashCost;
+	protected static function _crypt($password, $salt = false) {
 		if ($salt === false) {
-			if (isset($costLimits[$type]) && ($cost < $costLimits[$type][0] || $cost > $costLimits[$type][1])) {
-				trigger_error(__d(
-					'cake_dev',
-					'When using %s you must specify a cost between %s and %s',
-					array(
-						$type,
-						$costLimits[$type][0],
-						$costLimits[$type][1]
-					)
-				), E_USER_WARNING);
-				return '';
-			}
-			$salt = self::salt($saltLength[$type]);
-			$vspArgs = array(
-				$cost,
-				$salt,
-			);
-			$salt = vsprintf($saltFormat[$type], $vspArgs);
-			return crypt($password, $salt);
+			$salt = self::salt(22);
+			$salt = vsprintf('$2a$%02d$%s', array(self::$hashCost, $salt));
 		}
 
 		if ($salt === true || strpos($salt, '$2a$') !== 0 || strlen($salt) < 29) {
 			trigger_error(__d(
 				'cake_dev',
 				'Invalid salt: %s for %s Please visit http://www.php.net/crypt and read the appropriate section for building %s salts.',
-				array($salt, $type, $type)
+				array($salt, 'blowfish', 'blowfish')
 			), E_USER_WARNING);
 			return '';
 		}

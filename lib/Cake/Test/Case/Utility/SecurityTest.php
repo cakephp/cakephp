@@ -100,7 +100,6 @@ class SecurityTest extends CakeTestCase {
  */
 	public function testHashInvalidCost() {
 		Security::setCost(1000);
-		$result = Security::hash('somekey', 'blowfish', false);
 	}
 /**
  * testHash method
