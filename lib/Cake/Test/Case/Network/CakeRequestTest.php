@@ -311,9 +311,10 @@ class CakeRequestTest extends CakeTestCase {
 
 		$request = $this->getMock('TestCakeRequest', array('_readInput'));
 		$request->expects($this->at(0))->method('_readInput')
-			->will($this->returnValue('{Article":["title"]}'));
+			->will($this->returnValue('{"Article":["title"]}'));
 		$request->reConstruct();
-		$this->assertEquals('{Article":["title"]}', $request->data);
+		$result = $request->input('json_decode', true);
+		$this->assertEquals(array('title'), $result['Article']);
 	}
 
 /**
