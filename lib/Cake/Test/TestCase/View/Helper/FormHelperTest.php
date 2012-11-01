@@ -104,26 +104,29 @@ class Contact extends TestModel {
 	public $validate = array(
 		'non_existing' => array(),
 		'idontexist' => array(),
-		'imrequired' => array('rule' => array('between', 5, 30), 'allowEmpty' => false),
+		'imrequired' => array('_allowEmpty' => false, array('rule' => array('between', 5, 30))),
 		'imrequiredonupdate' => array('notEmpty' => array('rule' => 'alphaNumeric', 'on' => 'update')),
 		'imrequiredoncreate' => array('required' => array('rule' => 'alphaNumeric', 'on' => 'create')),
 		'imrequiredonboth' => array(
 			'required' => array('rule' => 'alphaNumeric'),
 		),
 		'string_required' => 'notEmpty',
-		'imalsorequired' => array('rule' => 'alphaNumeric', 'allowEmpty' => false),
+		'imalsorequired' => array('_allowEmpty' => false, array('rule' => 'alphaNumeric')),
 		'imrequiredtoo' => array('rule' => 'notEmpty'),
 		'required_one' => array('required' => array('rule' => array('notEmpty'))),
-		'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric', 'allowEmpty' => true),
+		'imnotrequired' => array(
+			'_allowEmpty' => true,
+			array('rule' => 'alphaNumeric')
+		),
 		'imalsonotrequired' => array(
-			'alpha' => array('rule' => 'alphaNumeric', 'allowEmpty' => true),
+			'_allowEmpty' => true,
+			'alpha' => array('rule' => 'alphaNumeric'),
 			'between' => array('rule' => array('between', 5, 30)),
 		),
-		'imalsonotrequired2' => array(
-			'alpha' => array('rule' => 'alphaNumeric', 'allowEmpty' => true),
-			'between' => array('rule' => array('between', 5, 30), 'allowEmpty' => true),
+		'imnotrequiredeither' => array(
+			'_allowEmpty' => true,
+			array('rule' => array('between', 5, 30))
 		),
-		'imnotrequiredeither' => array('required' => true, 'rule' => array('between', 5, 30), 'allowEmpty' => true),
 		'iamrequiredalways' => array(
 			'email' => array('rule' => 'email'),
 			'rule_on_create' => array('rule' => array('maxLength', 50), 'on' => 'create'),
