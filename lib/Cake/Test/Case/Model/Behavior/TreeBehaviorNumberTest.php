@@ -355,8 +355,6 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 
 		$laterCount = $this->Tree->find('count');
-
-		$laterCount = $this->Tree->find('count');
 		$this->assertEquals($initialCount + 1, $laterCount);
 
 		$children = $this->Tree->children($data[$modelClass]['id'], true, array('name'));
@@ -367,6 +365,36 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 
 		$validTree = $this->Tree->verify();
 		$this->assertSame($validTree, true);
+	}
+
+/**
+ * testAddWithPreSpecifiedId method
+ *
+ * @return void
+ */
+	public function testAddWithPreSpecifiedId() {
+		extract($this->settings);
+		$this->Tree = new $modelClass();
+		$this->Tree->initialize(2, 2);
+
+		$data = $this->Tree->find('first', array(
+			'fields' => array('id'),
+			'conditions' => array($modelClass . '.name' => '1.1')
+		));
+
+		$this->Tree->create();
+		$result = $this->Tree->save(array($modelClass => array(
+			'id' => 100,
+			'name' => 'testAddMiddle',
+			$parentField => $data[$modelClass]['id'])
+		));
+		$expected = array_merge(
+			array($modelClass => array('id' => 100, 'name' => 'testAddMiddle', $parentField => '2')),
+			$result
+		);
+		$this->assertSame($expected, $result);
+
+		$this->assertTrue($this->Tree->verify());
 	}
 
 /**

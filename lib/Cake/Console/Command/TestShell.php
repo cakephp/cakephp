@@ -335,8 +335,8 @@ class TestShell extends Shell {
  * Find the test case for the passed file. The file could itself be a test.
  *
  * @param string $file
- * @param string $category 
- * @param boolean $throwOnMissingFile 
+ * @param string $category
+ * @param boolean $throwOnMissingFile
  * @access protected
  * @return array(type, case)
  * @throws Exception

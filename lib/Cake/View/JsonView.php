@@ -25,7 +25,7 @@ App::uses('View', 'View');
  *
  * `$this->set(array('posts' => $posts, '_serialize' => 'posts'));`
  *
- * When the view is rendered, the `$posts` view variable will be serialized 
+ * When the view is rendered, the `$posts` view variable will be serialized
  * into JSON.
  *
  * You can also define `'_serialize'` as an array.  This will create a top level object containing
@@ -35,7 +35,7 @@ App::uses('View', 'View');
  * $this->set(compact('posts', 'users', 'stuff'));
  * $this->set('_serialize', array('posts', 'users'));
  * }}}
- * 
+ *
  * The above would generate a JSON object that looks like:
  *
  * `{"posts": [...], "users": [...]}`
@@ -49,9 +49,9 @@ App::uses('View', 'View');
 class JsonView extends View {
 
 /**
- * JSON views are always located in the 'json' sub directory for a 
+ * JSON views are always located in the 'json' sub directory for a
  * controllers views.
- * 
+ *
  * @var string
  */
 	public $subDir = 'json';
@@ -72,8 +72,8 @@ class JsonView extends View {
  * Render a JSON view.
  *
  * Uses the special '_serialize' parameter to convert a set of
- * view variables into a JSON response.  Makes generating simple 
- * JSON responses very easy.  You can omit the '_serialize' parameter, 
+ * view variables into a JSON response.  Makes generating simple
+ * JSON responses very easy.  You can omit the '_serialize' parameter,
  * and use a normal view + layout as well.
  *
  * @param string $view The view being rendered.
