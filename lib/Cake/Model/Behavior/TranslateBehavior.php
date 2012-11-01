@@ -384,6 +384,21 @@ class TranslateBehavior extends ModelBehavior {
 	}
 
 /**
+ * Restores model data to the original data.
+ * This solves issues with saveAssociated and validate = first.
+ *
+ * @param Model $model
+ * @return void
+ */
+	public function afterValidate(Model $Model) {
+		$Model->data[$Model->alias] = array_merge(
+			$Model->data[$Model->alias],
+			$this->runtime[$Model->alias]['beforeSave']
+		);
+		return true;
+	}
+
+/**
  * afterSave Callback
  *
  * @param Model $Model Model the callback is called on
