@@ -41,11 +41,11 @@ class FlagTreeFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id'	=> array('type' => 'integer','key' => 'primary'),
-		'name'	=> array('type' => 'string','null' => false),
+		'id' => array('type' => 'integer','key' => 'primary'),
+		'name' => array('type' => 'string','null' => false),
 		'parent_id' => 'integer',
-		'lft'	=> array('type' => 'integer','null' => false),
-		'rght'	=> array('type' => 'integer','null' => false),
-		'flag'	=> array('type' => 'integer','null' => false, 'length' => 1, 'default' => 0)
+		'lft' => array('type' => 'integer','null' => false),
+		'rght' => array('type' => 'integer','null' => false),
+		'flag' => array('type' => 'integer','null' => false, 'length' => 1, 'default' => 0)
 	);
 }
