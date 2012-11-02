@@ -103,7 +103,7 @@ class Cache {
  * - `path` Used by FileCache.  Path to where cachefiles should be saved.
  * - `lock` Used by FileCache.  Should files be locked before writing to them?
  * - `user` Used by Xcache.  Username for XCache
- * - `password` Used by Xcache.  Password for XCache
+ * - `password` Used by Xcache/Redis.  Password for XCache/Redis
  *
  * @see app/Config/core.php for configuration settings
  * @param string $name Name of the configuration
