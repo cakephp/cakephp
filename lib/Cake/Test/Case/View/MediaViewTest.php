@@ -135,10 +135,12 @@ class MediaViewTest extends CakeTestCase {
 
 		$this->MediaView->response->expects($this->at(0))
 			->method('header')
-			->with(array(
-				'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
-				'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
-				'Last-Modified' => gmdate('D, d M Y H:i:s', time()) . ' GMT'
+			->with($this->logicalAnd(
+				$this->arrayHasKey('Last-Modified'),
+				$this->arrayHasKey('Expires'),
+				$this->arrayHasKey('Cache-Control'),
+				$this->contains('Mon, 26 Jul 1997 05:00:00 GMT'),
+				$this->contains('no-store, no-cache, must-revalidate, post-check=0, pre-check=0')
 			));
 
 		$this->MediaView->response->expects($this->once())

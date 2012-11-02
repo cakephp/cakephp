@@ -138,6 +138,7 @@ class ExceptionRenderer {
  * @return Controller
  */
 	protected function _getController($exception) {
+		App::uses('AppController', 'Controller');
 		App::uses('CakeErrorController', 'Controller');
 		if (!$request = Router::getRequest(true)) {
 			$request = new CakeRequest();
@@ -149,9 +150,7 @@ class ExceptionRenderer {
 		}
 
 		try {
-			if (class_exists('AppController')) {
-				$controller = new CakeErrorController($request, $response);
-			}
+			$controller = new CakeErrorController($request, $response);
 		} catch (Exception $e) {
 		}
 		if (empty($controller)) {

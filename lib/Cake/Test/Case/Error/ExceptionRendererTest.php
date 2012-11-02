@@ -19,7 +19,6 @@
 
 App::uses('ExceptionRenderer', 'Error');
 App::uses('Controller', 'Controller');
-App::uses('AppController', 'Controller');
 App::uses('Component', 'Controller');
 App::uses('Router', 'Routing');
 

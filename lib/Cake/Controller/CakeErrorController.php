@@ -20,6 +20,8 @@
  */
 App::uses('AppController', 'Controller');
 
+App::uses('AppController', 'Controller');
+
 /**
  * Error Handling Controller
  *
