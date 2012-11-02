@@ -11,10 +11,10 @@ class CustomValidationObjectController extends AppController {
 
 	public $autoRender = false;
 
-	public $uses = array( 'CustomValidationModel' );
+	public $uses = array('CustomValidationModel');
 
 	public function index() {
-		$data = array( 'CustomValidationModel' => array(
+		$data = array('CustomValidationModel' => array(
 			'name' => '',
 			'surname' => '',
 			'age' => '',

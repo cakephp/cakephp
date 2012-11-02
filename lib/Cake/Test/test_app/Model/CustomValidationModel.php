@@ -15,8 +15,8 @@ class CustomValidationModel extends AppModel {
 	public $useTable = false;
 
 	public $validate = array(
-		'name' 		=> 'notEmpty',
-		'surname' 	=> array(
+		'name' => 'notEmpty',
+		'surname' => array(
 			'rule' => 'CustomValidationObject::myCustomRule',
 			'message' => 'value not accepted'
 		),

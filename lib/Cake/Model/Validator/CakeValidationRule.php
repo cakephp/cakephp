@@ -282,7 +282,7 @@ class CakeValidationRule {
 				$location = $plugin . '.' . $location;
 			}
 			App::uses($className, $location);
-			if (class_exists($className) && method_exists($className, $method)) {
+			if ( is_callable(array($className,$method)) ) {
 				$this->_valid = call_user_func_array(array($className, $method), $this->_ruleParams);
 			} else {
 				trigger_error(__d('cake_dev', 'Could not find custom validation rule %s', $this->_rule), E_USER_WARNING);
