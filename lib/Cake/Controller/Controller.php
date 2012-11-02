@@ -25,6 +25,7 @@ use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
+use Cake\Routing\RequestActionTrait;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
@@ -65,6 +66,7 @@ use Cake\View\View;
 class Controller extends Object implements EventListener {
 
 	use MergeVariablesTrait;
+	use RequestActionTrait;
 
 /**
  * The name of this controller. Controller names are plural, named after the model they manipulate.

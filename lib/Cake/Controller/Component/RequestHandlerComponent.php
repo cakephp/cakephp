@@ -26,6 +26,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\Xml;
@@ -42,6 +43,8 @@ use Cake\Utility\Xml;
  *
  */
 class RequestHandlerComponent extends Component {
+
+	use RequestActionTrait;
 
 /**
  * The layout that will be switched to for Ajax requests

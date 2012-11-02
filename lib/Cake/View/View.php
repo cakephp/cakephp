@@ -29,6 +29,7 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\ObjectCollection;
@@ -63,6 +64,8 @@ use Cake\Utility\ObjectCollection;
  * @property      ViewBlock $Blocks
  */
 class View extends Object {
+
+	use RequestActionTrait;
 
 /**
  * Helpers collection
