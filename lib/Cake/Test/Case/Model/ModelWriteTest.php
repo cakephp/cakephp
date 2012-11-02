@@ -6470,10 +6470,10 @@ class ModelWriteTest extends BaseModelTest {
 
 		// test belongsTo
 		$fieldList = array(
-			'Post' => array('title', 'author_id'),
+			'Post' => array('title'),
 			'Author' => array('user')
 		);
-		$TestModel->saveAll(array(
+		$data = array(
 			'Post' => array(
 				'title' => 'Post without body',
 				'body' => 'This will not be saved',
@@ -6482,7 +6482,8 @@ class ModelWriteTest extends BaseModelTest {
 				'user' => 'bob',
 				'test' => 'This will not be saved',
 
-		)), array('fieldList' => $fieldList));
+		));
+		$TestModel->saveAll($data, array('fieldList' => $fieldList));
 
 		$result = $TestModel->find('all');
 		$expected = array(
@@ -6569,22 +6570,42 @@ class ModelWriteTest extends BaseModelTest {
 		$this->db->truncate($TestModel);
 		$this->db->truncate(new Comment());
 
-		$fieldList = array(
-			'Article' => array('id'),
-			'Comment' => array('article_id', 'user_id')
-		);
-		$result = $TestModel->saveAll(array(
-			'Article' => array('id' => 2, 'title' => 'I will not save'),
+		$data = array(
+			'Article' => array('title' => 'I will not save'),
 			'Comment' => array(
 				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
 				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
 			)
-		), array('fieldList' => $fieldList));
+		);
+
+		$fieldList = array(
+			'Article' => array('id'),
+			'Comment' => array('article_id', 'user_id')
+		);
+		$TestModel->saveAll($data, array('fieldList' => $fieldList));
 
 		$result = $TestModel->find('all');
 		$this->assertEquals('', $result[0]['Article']['title']);
 		$this->assertEquals('', $result[0]['Comment'][0]['comment']);
 		$this->assertEquals('', $result[0]['Comment'][1]['comment']);
+
+		$fieldList = array(
+			'Article' => array('id'),
+			'Comment' => array('user_id')
+		);
+		$TestModel->saveAll($data, array('fieldList' => $fieldList));
+		$result = $TestModel->find('all');
+
+		$this->assertEquals('', $result[1]['Article']['title']);
+		$this->assertEquals(2, count($result[1]['Comment']));
+
+		$TestModel->whitelist = array('id');
+		$TestModel->Comment->whitelist = array('user_id');
+		$TestModel->saveAll($data);
+		$result = $TestModel->find('all');
+
+		$this->assertEquals('', $result[2]['Article']['title']);
+		$this->assertEquals(2, count($result[2]['Comment']));
 	}
 
 /**
@@ -6621,6 +6642,18 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertTrue($result);
 		$this->assertEmpty($TestModel->validationErrors);
+
+		$TestModel->Attachment->whitelist = array('id');
+		$fieldList = array(
+			'Comment' => array('id', 'article_id', 'user_id'),
+			'Attachment' => array('id')
+		);
+		$result = $TestModel->saveAll($record, array(
+			'fieldList' => $fieldList
+		));
+		$this->assertTrue($result);
+		$result = $TestModel->find('first', array('order' => array('Comment.created' => 'DESC')));
+		$this->assertEquals($result['Comment']['id'], $result['Attachment']['comment_id']);
 	}
 
 /**
