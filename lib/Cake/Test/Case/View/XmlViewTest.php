@@ -66,7 +66,7 @@ class XmlViewTest extends CakeTestCase {
 		$this->assertSame($expected, $output);
 
 
-		$Controller->set('_rootElement', 'custom_name');
+		$Controller->set('_rootNode', 'custom_name');
 		$View = new XmlView($Controller);
 		$output = $View->render(false);
 
@@ -95,7 +95,7 @@ class XmlViewTest extends CakeTestCase {
 		$this->assertSame(Xml::build($expected)->asXML(), $output);
 
 
-		$Controller->set('_rootElement', 'custom_name');
+		$Controller->set('_rootNode', 'custom_name');
 		$View = new XmlView($Controller);
 		$output = $View->render(false);
 		$expected = array(
