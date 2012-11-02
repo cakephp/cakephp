@@ -6642,6 +6642,18 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertTrue($result);
 		$this->assertEmpty($TestModel->validationErrors);
+
+		$TestModel->Attachment->whitelist = array('id');
+		$fieldList = array(
+			'Comment' => array('id', 'article_id', 'user_id'),
+			'Attachment' => array('id')
+		);
+		$result = $TestModel->saveAll($record, array(
+			'fieldList' => $fieldList
+		));
+		$this->assertTrue($result);
+		$result = $TestModel->find('first', array('order' => array('Comment.created' => 'DESC')));
+		$this->assertEquals($result['Comment']['id'], $result['Attachment']['comment_id']);
 	}
 
 /**
