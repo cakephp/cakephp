@@ -35,6 +35,14 @@ class XmlViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderWithoutView() {
+		Configure::write('XmlView.RootNodeName', null);
+		$this->__testRenderWithoutView('response');
+
+		Configure::write('XmlView.RootNodeName', 'custom_name');
+		$this->__testRenderWithoutView('custom_name');
+	}
+
+	private function __testRenderWithoutView($rootNodeName) {
 		$Request = new CakeRequest();
 		$Response = new CakeResponse();
 		$Controller = new Controller($Request, $Response);
@@ -62,9 +70,11 @@ class XmlViewTest extends CakeTestCase {
 		$View = new XmlView($Controller);
 		$output = $View->render(false);
 
-		$expected = Xml::build(array('response' => array('users' => $data)))->asXML();
+		$expected = Xml::build(array($rootNodeName => array('users' => $data)))->asXML();
 		$this->assertSame($expected, $output);
 	}
+
+
 
 /**
  * Test render with an array in _serialize
@@ -72,6 +82,14 @@ class XmlViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderWithoutViewMultiple() {
+		Configure::write('XmlView.RootNodeName', null);
+		$this->__testRenderWithoutViewMultiple('response');
+
+		Configure::write('XmlView.RootNodeName', 'custom_name');
+		$this->__testRenderWithoutViewMultiple('custom_name');
+	}
+
+	private function __testRenderWithoutViewMultiple($rootNodeName) {
 		$Request = new CakeRequest();
 		$Response = new CakeResponse();
 		$Controller = new Controller($Request, $Response);
@@ -82,7 +100,7 @@ class XmlViewTest extends CakeTestCase {
 		$output = $View->render(false);
 
 		$expected = array(
-			'response' => array('no' => $data['no'], 'user' => $data['user'])
+			$rootNodeName => array('no' => $data['no'], 'user' => $data['user'])
 		);
 		$this->assertSame(Xml::build($expected)->asXML(), $output);
 		$this->assertSame('application/xml', $Response->type());
