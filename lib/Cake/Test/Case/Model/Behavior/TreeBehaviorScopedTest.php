@@ -175,6 +175,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->Tree->locale = 'eng';
 		$data = array('FlagTree' => array(
 			'title' => 'name #1',
+			'name' => 'test',
 			'locale' => 'eng',
 			'parent_id' => null,
 		));
@@ -183,7 +184,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$expected = array(array('FlagTree' => array(
 			'id' => 1,
 			'title' => 'name #1',
-			'name' => '',
+			'name' => 'test',
 			'parent_id' => null,
 			'lft' => 1,
 			'rght' => 2,
@@ -201,7 +202,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$expected = array(array('FlagTree' => array(
 			'id' => 1,
 			'title' => 'Named 2',
-			'name' => '',
+			'name' => 'test',
 			'parent_id' => null,
 			'lft' => 1,
 			'rght' => 2,
@@ -218,6 +219,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 			'id' => 1,
 			'parent_id' => null,
 			'title' => 'namen #1',
+			'name' => 'test',
 			'locale' => 'deu',
 		));
 		$this->Tree->save($data);
@@ -229,7 +231,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 				'FlagTree' => array(
 					'id' => 1,
 					'title' => 'namen #1',
-					'name' => '',
+					'name' => 'test',
 					'parent_id' => null,
 					'lft' => 1,
 					'rght' => 2,
@@ -244,6 +246,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->Tree->locale = 'eng';
 		$data = array(
 			'title' => array('eng' => 'New title', 'spa' => 'Nuevo leyenda'),
+			'name' => 'test',
 			'parent_id' => null
 		);
 		$this->Tree->create($data);
@@ -260,7 +263,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 				'id' => 2,
 				'parent_id' => null,
 				'locale' => 'eng',
-				'name' => '',
+				'name' => 'test',
 				'title' => 'New title',
 				'flag' => 0,
 				'lft' => 3,
