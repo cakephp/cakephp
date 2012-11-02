@@ -298,7 +298,6 @@ class HashTest extends CakeTestCase {
 				'Author' => array('id' => '3', 'user' => 'larry', 'password' => null),
 			)
 		);
-
 		$result = Hash::flatten($data);
 		$expected = array(
 			'0.Post.id' => '1',
@@ -314,6 +313,21 @@ class HashTest extends CakeTestCase {
 			'1.Author.id' => '3',
 			'1.Author.user' => 'larry',
 			'1.Author.password' => null
+		);
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			array(
+				'Post' => array('id' => '1', 'author_id' => null, 'title' => 'First Post'),
+				'Author' => array(),
+			)
+		);
+		$result = Hash::flatten($data);
+		$expected = array(
+			'0.Post.id' => '1',
+			'0.Post.author_id' => null,
+			'0.Post.title' => 'First Post',
+			'0.Author' => array()
 		);
 		$this->assertEquals($expected, $result);
 
