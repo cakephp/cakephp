@@ -127,13 +127,13 @@ class ClassLoader {
  * @return boolean
  */
 	public function loadClass($className) {
-		if (substr($className, 0, $this->namespaceLength) === $this->namespace) {
-			$path = $this->includePath . DS . str_replace('\\', DS, $className) . $this->fileExtension;
-			if (!file_exists($path)) {
-				return false;
-			}
-			return require $path;
+		if (substr($className, 0, $this->namespaceLength) !== $this->namespace) {
+			return false;
 		}
-		return false;
+		$path = $this->includePath . DS . str_replace('\\', DS, $className) . $this->fileExtension;
+		if (!file_exists($path)) {
+			return false;
+		}
+		return require $path;
 	}
 }
