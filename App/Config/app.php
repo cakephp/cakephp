@@ -112,7 +112,7 @@ use Cake\Core\Configure;
 if (!class_exists('App\Controller\AppController')) {
 	$loader = new \Cake\Core\ClassLoader($namespace, dirname(APP));
 	$loader->register();
-	unset($loader, $namespace);
+	unset($loader);
 }
 
 /**
@@ -129,10 +129,11 @@ $httpHost = env('HTTP_HOST');
 if (isset($httpHost)) {
 	define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost);
 }
-unset($httpHost, $s);
 
 /**
  * Configure the mbstring extension to use the correct encoding.
  */
 $encoding = Configure::read('App.encoding');
 mb_internal_encoding($encoding);
+
+unset($httpHost, $s, $namespace, $encoding);
