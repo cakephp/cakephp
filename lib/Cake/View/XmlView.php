@@ -99,8 +99,7 @@ class XmlView extends View {
  * @return string The serialized data
  */
 	protected function _serialize($serialize) {
-		$root = Configure::read('XmlView.RootNodeName');
-		$root = empty($root) ? 'response' : $root;
+		$root = isset($this->viewVars['_rootElement']) ? $this->viewVars['_rootElement'] : 'response';
 
 		if (is_array($serialize)) {
 			$data = array($root => array());
