@@ -15,7 +15,6 @@
 namespace App\Config;
 
 use Cake\Core\Configure;
-use Cake\Core\ClassLoader;
 
 /**
  * CakePHP Debug Level:
@@ -106,10 +105,15 @@ use Cake\Core\ClassLoader;
 
 /**
  * Configure an autoloader for the App namespace.
+ *
+ * Use App\Controller\AppController as a test to see if composer
+ * support is being used.
  */
-	$loader = new ClassLoader($namespace, dirname(APP));
+if (!class_exists('App\Controller\AppController')) {
+	$loader = new \Cake\Core\ClassLoader($namespace, dirname(APP));
 	$loader->register();
 	unset($loader, $namespace);
+}
 
 /**
  * Define the FULL_BASE_URL used for link generation.
