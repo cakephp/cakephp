@@ -99,15 +99,17 @@ class XmlView extends View {
  * @return string The serialized data
  */
 	protected function _serialize($serialize) {
+		$rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'response';
+
 		if (is_array($serialize)) {
-			$data = array('response' => array());
+			$data = array($rootNode => array());
 			foreach ($serialize as $key) {
-				$data['response'][$key] = $this->viewVars[$key];
+				$data[$rootNode][$key] = $this->viewVars[$key];
 			}
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 			if (is_array($data) && Set::numeric(array_keys($data))) {
-				$data = array('response' => array($serialize => $data));
+				$data = array($rootNode => array($serialize => $data));
 			}
 		}
 		 return Xml::fromArray($data)->asXML();
