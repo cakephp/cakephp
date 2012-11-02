@@ -107,12 +107,12 @@ class ModelDeleteTest extends BaseModelTest {
 		$result = $Portfolio->find('first', array(
 			'conditions' => array('Portfolio.id' => 1)
 		));
-		$this->assertFalse($result);
+		$this->assertSame(array(), $result);
 
 		$result = $Portfolio->ItemsPortfolio->find('all', array(
 			'conditions' => array('ItemsPortfolio.portfolio_id' => 1)
 		));
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 	}
 
 /**
@@ -195,7 +195,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertTrue($result);
 
 		$result = $TestModel->read(null, 2);
-		$this->assertFalse($result);
+		$this->assertSame(array(), $result);
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->find('all', array(
@@ -216,7 +216,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertTrue($result);
 
 		$result = $TestModel->read(null, 3);
-		$this->assertFalse($result);
+		$this->assertSame(array(), $result);
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->find('all', array(
@@ -448,16 +448,16 @@ class ModelDeleteTest extends BaseModelTest {
 
 		$TestModel->recursive = 2;
 		$result = $TestModel->read(null, 2);
-		$this->assertFalse($result);
+		$this->assertSame(array(), $result);
 
 		$result = $TestModel->Comment->read(null, 5);
-		$this->assertFalse($result);
+		$this->assertSame(array(), $result);
 
 		$result = $TestModel->Comment->read(null, 6);
-		$this->assertFalse($result);
+		$this->assertSame(array(), $result);
 
 		$result = $TestModel->Comment->Attachment->read(null, 1);
-		$this->assertFalse($result);
+		$this->assertSame(array(), $result);
 
 		$result = $TestModel->find('count');
 		$this->assertEquals(2, $result);

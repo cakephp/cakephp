@@ -67,7 +67,7 @@ class BasicsTest extends CakeTestCase {
 		$one = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$two = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$result = array_diff_key($one, $two);
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 	}
 
 /**
@@ -824,6 +824,18 @@ EXPECTED;
 
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
+###########################
+EXPECTED;
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		debug(false, false, false);
+		$result = ob_get_clean();
+		$expected = <<<EXPECTED
+
+########## DEBUG ##########
+false
 ###########################
 EXPECTED;
 		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);

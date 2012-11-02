@@ -108,7 +108,7 @@ class HttpResponse implements ArrayAccess {
 			return $headers[$name];
 		}
 		foreach ($headers as $key => $value) {
-			if (strcasecmp($key, $name) == 0) {
+			if (strcasecmp($key, $name) === 0) {
 				return $value;
 			}
 		}
@@ -361,7 +361,7 @@ class HttpResponse implements ArrayAccess {
 			$escape[] = chr(127);
 		}
 
-		if ($hex == false) {
+		if (!$hex) {
 			return $escape;
 		}
 		foreach ($escape as $key => $char) {

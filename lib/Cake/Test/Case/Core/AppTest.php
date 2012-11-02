@@ -347,7 +347,7 @@ class AppTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = App::objects('NonExistingType');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		App::build(array(
 			'plugins' => array(
@@ -414,9 +414,9 @@ class AppTest extends CakeTestCase {
 		$this->assertTrue(in_array('OtherComponent', $result));
 
 		$result = App::objects('TestPluginTwo.behavior');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 		$result = App::objects('TestPluginTwo.Model/Behavior');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		$result = App::objects('model', null, false);
 		$this->assertTrue(in_array('Comment', $result));
@@ -749,7 +749,7 @@ class AppTest extends CakeTestCase {
 		$result = App::import('Vendor', 'css/TestAsset', array('ext' => 'css'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEquals('this is the test asset css file', $text);
+		$this->assertEquals('/* this is the test asset css file */', trim($text));
 
 		$result = App::import('Vendor', 'TestPlugin.sample/SamplePlugin');
 		$this->assertTrue($result);
@@ -808,7 +808,7 @@ class AppTest extends CakeTestCase {
 
 		$this->assertFalse(class_exists('TestUtilityClass', false));
 		App::uses('TestUtilityClass', 'Utility');
-		$this->assertTrue(class_exists('CustomLibClass'));
+		$this->assertTrue(class_exists('TestUtilityClass'));
 	}
 
 /**

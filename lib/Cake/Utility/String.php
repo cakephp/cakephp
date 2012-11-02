@@ -92,12 +92,10 @@ class String {
 		}
 
 		list($timeMid, $timeLow) = explode(' ', microtime());
-		$uuid = sprintf(
+		return sprintf(
 			"%08x-%04x-%04x-%02x%02x-%04x%08x", (int)$timeLow, (int)substr($timeMid, 2) & 0xffff,
 			mt_rand(0, 0xfff) | 0x4000, mt_rand(0, 0x3f) | 0x80, mt_rand(0, 0xff), $pid, $node
 		);
-
-		return $uuid;
 	}
 
 /**
@@ -136,7 +134,7 @@ class String {
 			}
 			if ($tmpOffset !== -1) {
 				$buffer .= substr($data, $offset, ($tmpOffset - $offset));
-				if ($data{$tmpOffset} == $separator && $depth == 0) {
+				if (!$depth && $data{$tmpOffset} == $separator) {
 					$results[] = $buffer;
 					$buffer = '';
 				} else {
@@ -156,7 +154,6 @@ class String {
 							$open = true;
 						} else {
 							$depth--;
-							$open = false;
 						}
 					}
 				}
@@ -171,11 +168,10 @@ class String {
 		}
 
 		if (!empty($results)) {
-			$data = array_map('trim', $results);
-		} else {
-			$data = array();
+			return array_map('trim', $results);
 		}
-		return $data;
+
+		return array();
 	}
 
 /**
@@ -227,25 +223,25 @@ class String {
 				$str = substr_replace($str, $val, $pos, 1);
 			}
 			return ($options['clean']) ? String::cleanInsert($str, $options) : $str;
-		} else {
-			asort($data);
+		}
 
-			$hashKeys = array();
-			foreach ($data as $key => $value) {
-				$hashKeys[] = crc32($key);
-			}
+		asort($data);
 
-			$tempData = array_combine(array_keys($data), array_values($hashKeys));
-			krsort($tempData);
-			foreach ($tempData as $key => $hashVal) {
-				$key = sprintf($format, preg_quote($key, '/'));
-				$str = preg_replace($key, $hashVal, $str);
-			}
-			$dataReplacements = array_combine($hashKeys, array_values($data));
-			foreach ($dataReplacements as $tmpHash => $tmpValue) {
-				$tmpValue = (is_array($tmpValue)) ? '' : $tmpValue;
-				$str = str_replace($tmpHash, $tmpValue, $str);
-			}
+		$hashKeys = array();
+		foreach ($data as $key => $value) {
+			$hashKeys[] = crc32($key);
+		}
+
+		$tempData = array_combine(array_keys($data), array_values($hashKeys));
+		krsort($tempData);
+		foreach ($tempData as $key => $hashVal) {
+			$key = sprintf($format, preg_quote($key, '/'));
+			$str = preg_replace($key, $hashVal, $str);
+		}
+		$dataReplacements = array_combine($hashKeys, array_values($data));
+		foreach ($dataReplacements as $tmpHash => $tmpValue) {
+			$tmpValue = (is_array($tmpValue)) ? '' : $tmpValue;
+			$str = str_replace($tmpHash, $tmpValue, $str);
 		}
 
 		if (!isset($options['format']) && isset($options['before'])) {
@@ -397,14 +393,14 @@ class String {
 			}
 
 			return preg_replace($replace, $with, $text);
-		} else {
-			$phrase = '(' . preg_quote($phrase, '|') . ')';
-			if ($html) {
-				$phrase = "(?![^<]+>)$phrase(?![^<]+>)";
-			}
-
-			return preg_replace(sprintf($options['regex'], $phrase), $format, $text);
 		}
+
+		$phrase = '(' . preg_quote($phrase, '|') . ')';
+		if ($html) {
+			$phrase = "(?![^<]+>)$phrase(?![^<]+>)";
+		}
+
+		return preg_replace(sprintf($options['regex'], $phrase), $format, $text);
 	}
 
 /**
@@ -447,9 +443,9 @@ class String {
 
 		if (mb_strlen($text) <= $length) {
 			return $text;
-		} else {
-			$truncate = mb_substr($text, mb_strlen($text) - $length + mb_strlen($ellipsis));
 		}
+
+		$truncate = mb_substr($text, mb_strlen($text) - $length + mb_strlen($ellipsis));
 		if (!$exact) {
 			$spacepos = mb_strpos($truncate, ' ');
 			$truncate = $spacepos === false ? '' : trim(mb_substr($truncate, $spacepos));
@@ -542,9 +538,8 @@ class String {
 		} else {
 			if (mb_strlen($text) <= $length) {
 				return $text;
-			} else {
-				$truncate = mb_substr($text, 0, $length - mb_strlen($ellipsis));
 			}
+			$truncate = mb_substr($text, 0, $length - mb_strlen($ellipsis));
 		}
 		if (!$exact) {
 			$spacepos = mb_strrpos($truncate, ' ');
@@ -642,9 +637,8 @@ class String {
 	public static function toList($list, $and = 'and', $separator = ', ') {
 		if (count($list) > 1) {
 			return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
-		} else {
-			return array_pop($list);
 		}
-	}
 
+		return array_pop($list);
+	}
 }

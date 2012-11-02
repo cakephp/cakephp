@@ -110,7 +110,7 @@ class Xml {
  * Parse the input data and create either a SimpleXmlElement object or a DOMDocument.
  *
  * @param string $input The input to load.
- * @param array  $options The options to use. See Xml::build()
+ * @param array $options The options to use. See Xml::build()
  * @return SimpleXmlElement|DOMDocument.
  */
 	protected static function _loadXml($input, $options) {
@@ -174,7 +174,7 @@ class Xml {
 			throw new XmlException(__d('cake_dev', 'Invalid input.'));
 		}
 		$key = key($input);
-		if (is_integer($key)) {
+		if (is_int($key)) {
 			throw new XmlException(__d('cake_dev', 'The key of input must be alphanumeric'));
 		}
 

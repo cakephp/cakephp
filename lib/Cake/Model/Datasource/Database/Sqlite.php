@@ -114,7 +114,10 @@ class Sqlite extends DboSource {
 			$this->_connection = new PDO('sqlite:' . $config['database'], null, null, $flags);
 			$this->connected = true;
 		} catch(PDOException $e) {
-			throw new MissingConnectionException(array('class' => $e->getMessage()));
+			throw new MissingConnectionException(array(
+				'class' => get_class($this),
+				'message' => $e->getMessage()
+			));
 		}
 		return $this->connected;
 	}
@@ -136,7 +139,7 @@ class Sqlite extends DboSource {
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 
@@ -144,14 +147,14 @@ class Sqlite extends DboSource {
 
 		if (!$result || empty($result)) {
 			return array();
-		} else {
-			$tables = array();
-			foreach ($result as $table) {
-				$tables[] = $table[0]['name'];
-			}
-			parent::listSources($tables);
-			return $tables;
 		}
+
+		$tables = array();
+		foreach ($result as $table) {
+			$tables[] = $table[0]['name'];
+		}
+		parent::listSources($tables);
+		return $tables;
 	}
 
 /**
@@ -163,7 +166,7 @@ class Sqlite extends DboSource {
 	public function describe($model) {
 		$table = $this->fullTableName($model, false, false);
 		$cache = parent::describe($table);
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$fields = array();
@@ -459,7 +462,7 @@ class Sqlite extends DboSource {
 				$out .= 'UNIQUE ';
 			}
 			if (is_array($value['column'])) {
-				$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
+				$value['column'] = implode(', ', array_map(array(&$this, 'name'), $value['column']));
 			} else {
 				$value['column'] = $this->name($value['column']);
 			}
@@ -488,7 +491,7 @@ class Sqlite extends DboSource {
 			if (is_bool($indexes)) {
 				return array();
 			}
-			foreach ($indexes as $i => $info) {
+			foreach ($indexes as $info) {
 				$key = array_pop($info);
 				$keyInfo = $this->query('PRAGMA index_info("' . $key['name'] . '")');
 				foreach ($keyInfo as $keyCol) {
@@ -524,10 +527,10 @@ class Sqlite extends DboSource {
 			case 'schema':
 				extract($data);
 				if (is_array($columns)) {
-					$columns = "\t" . join(",\n\t", array_filter($columns));
+					$columns = "\t" . implode(",\n\t", array_filter($columns));
 				}
 				if (is_array($indexes)) {
-					$indexes = "\t" . join("\n\t", array_filter($indexes));
+					$indexes = "\t" . implode("\n\t", array_filter($indexes));
 				}
 				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
 			default:

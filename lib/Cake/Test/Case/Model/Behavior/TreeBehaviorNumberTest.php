@@ -355,8 +355,6 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 
 		$laterCount = $this->Tree->find('count');
-
-		$laterCount = $this->Tree->find('count');
 		$this->assertEquals($initialCount + 1, $laterCount);
 
 		$children = $this->Tree->children($data[$modelClass]['id'], true, array('name'));
@@ -367,6 +365,36 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 
 		$validTree = $this->Tree->verify();
 		$this->assertSame($validTree, true);
+	}
+
+/**
+ * testAddWithPreSpecifiedId method
+ *
+ * @return void
+ */
+	public function testAddWithPreSpecifiedId() {
+		extract($this->settings);
+		$this->Tree = new $modelClass();
+		$this->Tree->initialize(2, 2);
+
+		$data = $this->Tree->find('first', array(
+			'fields' => array('id'),
+			'conditions' => array($modelClass . '.name' => '1.1')
+		));
+
+		$this->Tree->create();
+		$result = $this->Tree->save(array($modelClass => array(
+			'id' => 100,
+			'name' => 'testAddMiddle',
+			$parentField => $data[$modelClass]['id'])
+		));
+		$expected = array_merge(
+			array($modelClass => array('id' => 100, 'name' => 'testAddMiddle', $parentField => '2')),
+			$result
+		);
+		$this->assertSame($expected, $result);
+
+		$this->assertTrue($this->Tree->verify());
 	}
 
 /**
@@ -636,8 +664,8 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$parent = $this->Tree->findByName('1. Root', array('id'));
 		$this->Tree->id = $parent[$modelClass]['id'];
 		$result = $this->Tree->children(null, true, array('name'));
-		$expected = array(array($modelClass => array('name' => '1.2', )),
-			array($modelClass => array('name' => '1.1', )));
+		$expected = array(array($modelClass => array('name' => '1.2')),
+			array($modelClass => array('name' => '1.1')));
 		$this->assertSame($expected, $result);
 	}
 
@@ -658,8 +686,8 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$parent = $this->Tree->findByName('1. Root', array('id'));
 		$this->Tree->id = $parent[$modelClass]['id'];
 		$result = $this->Tree->children(null, true, array('name'));
-		$expected = array(array($modelClass => array('name' => '1.1', )),
-			array($modelClass => array('name' => '1.2', )));
+		$expected = array(array($modelClass => array('name' => '1.1')),
+			array($modelClass => array('name' => '1.2')));
 		$this->assertSame($expected, $result);
 	}
 
@@ -680,16 +708,16 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->id = $parent[$modelClass]['id'];
 		$result = $this->Tree->children(null, true, array('name'));
 		$expected = array(
-			array($modelClass => array('name' => '1.1', )),
-			array($modelClass => array('name' => '1.2', )),
-			array($modelClass => array('name' => '1.5', )),
-			array($modelClass => array('name' => '1.3', )),
-			array($modelClass => array('name' => '1.4', )),
-			array($modelClass => array('name' => '1.6', )),
-			array($modelClass => array('name' => '1.7', )),
-			array($modelClass => array('name' => '1.8', )),
-			array($modelClass => array('name' => '1.9', )),
-			array($modelClass => array('name' => '1.10', )));
+			array($modelClass => array('name' => '1.1')),
+			array($modelClass => array('name' => '1.2')),
+			array($modelClass => array('name' => '1.5')),
+			array($modelClass => array('name' => '1.3')),
+			array($modelClass => array('name' => '1.4')),
+			array($modelClass => array('name' => '1.6')),
+			array($modelClass => array('name' => '1.7')),
+			array($modelClass => array('name' => '1.8')),
+			array($modelClass => array('name' => '1.9')),
+			array($modelClass => array('name' => '1.10')));
 		$this->assertSame($expected, $result);
 	}
 
@@ -710,16 +738,16 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->id = $parent[$modelClass]['id'];
 		$result = $this->Tree->children(null, true, array('name'));
 		$expected = array(
-			array($modelClass => array('name' => '1.5', )),
-			array($modelClass => array('name' => '1.1', )),
-			array($modelClass => array('name' => '1.2', )),
-			array($modelClass => array('name' => '1.3', )),
-			array($modelClass => array('name' => '1.4', )),
-			array($modelClass => array('name' => '1.6', )),
-			array($modelClass => array('name' => '1.7', )),
-			array($modelClass => array('name' => '1.8', )),
-			array($modelClass => array('name' => '1.9', )),
-			array($modelClass => array('name' => '1.10', )));
+			array($modelClass => array('name' => '1.5')),
+			array($modelClass => array('name' => '1.1')),
+			array($modelClass => array('name' => '1.2')),
+			array($modelClass => array('name' => '1.3')),
+			array($modelClass => array('name' => '1.4')),
+			array($modelClass => array('name' => '1.6')),
+			array($modelClass => array('name' => '1.7')),
+			array($modelClass => array('name' => '1.8')),
+			array($modelClass => array('name' => '1.9')),
+			array($modelClass => array('name' => '1.10')));
 		$this->assertSame($expected, $result);
 	}
 
@@ -739,8 +767,8 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$parent = $this->Tree->findByName('1. Root', array('id'));
 		$this->Tree->id = $parent[$modelClass]['id'];
 		$result = $this->Tree->children(null, true, array('name'));
-		$expected = array(array($modelClass => array('name' => '1.2', )),
-			array($modelClass => array('name' => '1.1', )));
+		$expected = array(array($modelClass => array('name' => '1.2')),
+			array($modelClass => array('name' => '1.1')));
 		$this->assertSame($expected, $result);
 	}
 
@@ -760,8 +788,8 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$parent = $this->Tree->findByName('1. Root', array('id'));
 		$this->Tree->id = $parent[$modelClass]['id'];
 		$result = $this->Tree->children(null, true, array('name'));
-		$expected = array(array($modelClass => array('name' => '1.1', )),
-			array($modelClass => array('name' => '1.2', )));
+		$expected = array(array($modelClass => array('name' => '1.1')),
+			array($modelClass => array('name' => '1.2')));
 		$this->assertSame($expected, $result);
 	}
 
@@ -782,16 +810,16 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->id = $parent[$modelClass]['id'];
 		$result = $this->Tree->children(null, true, array('name'));
 		$expected = array(
-			array($modelClass => array('name' => '1.1', )),
-			array($modelClass => array('name' => '1.2', )),
-			array($modelClass => array('name' => '1.3', )),
-			array($modelClass => array('name' => '1.4', )),
-			array($modelClass => array('name' => '1.6', )),
-			array($modelClass => array('name' => '1.7', )),
-			array($modelClass => array('name' => '1.8', )),
-			array($modelClass => array('name' => '1.9', )),
-			array($modelClass => array('name' => '1.10', )),
-			array($modelClass => array('name' => '1.5', )));
+			array($modelClass => array('name' => '1.1')),
+			array($modelClass => array('name' => '1.2')),
+			array($modelClass => array('name' => '1.3')),
+			array($modelClass => array('name' => '1.4')),
+			array($modelClass => array('name' => '1.6')),
+			array($modelClass => array('name' => '1.7')),
+			array($modelClass => array('name' => '1.8')),
+			array($modelClass => array('name' => '1.9')),
+			array($modelClass => array('name' => '1.10')),
+			array($modelClass => array('name' => '1.5')));
 		$this->assertSame($expected, $result);
 	}
 
@@ -812,16 +840,16 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->id = $parent[$modelClass]['id'];
 		$result = $this->Tree->children(null, true, array('name'));
 		$expected = array(
-			array($modelClass => array('name' => '1.1', )),
-			array($modelClass => array('name' => '1.2', )),
-			array($modelClass => array('name' => '1.3', )),
-			array($modelClass => array('name' => '1.4', )),
-			array($modelClass => array('name' => '1.6', )),
-			array($modelClass => array('name' => '1.7', )),
-			array($modelClass => array('name' => '1.5', )),
-			array($modelClass => array('name' => '1.8', )),
-			array($modelClass => array('name' => '1.9', )),
-			array($modelClass => array('name' => '1.10', )));
+			array($modelClass => array('name' => '1.1')),
+			array($modelClass => array('name' => '1.2')),
+			array($modelClass => array('name' => '1.3')),
+			array($modelClass => array('name' => '1.4')),
+			array($modelClass => array('name' => '1.6')),
+			array($modelClass => array('name' => '1.7')),
+			array($modelClass => array('name' => '1.5')),
+			array($modelClass => array('name' => '1.8')),
+			array($modelClass => array('name' => '1.9')),
+			array($modelClass => array('name' => '1.10')));
 		$this->assertSame($expected, $result);
 	}
 
@@ -842,16 +870,16 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->id = $parent[$modelClass]['id'];
 		$result = $this->Tree->children(null, true, array('name'));
 		$expected = array(
-			array($modelClass => array('name' => '1.1', )),
-			array($modelClass => array('name' => '1.2', )),
-			array($modelClass => array('name' => '1.3', )),
-			array($modelClass => array('name' => '1.4', )),
-			array($modelClass => array('name' => 'renamed', )),
-			array($modelClass => array('name' => '1.6', )),
-			array($modelClass => array('name' => '1.7', )),
-			array($modelClass => array('name' => '1.8', )),
-			array($modelClass => array('name' => '1.9', )),
-			array($modelClass => array('name' => '1.10', )));
+			array($modelClass => array('name' => '1.1')),
+			array($modelClass => array('name' => '1.2')),
+			array($modelClass => array('name' => '1.3')),
+			array($modelClass => array('name' => '1.4')),
+			array($modelClass => array('name' => 'renamed')),
+			array($modelClass => array('name' => '1.6')),
+			array($modelClass => array('name' => '1.7')),
+			array($modelClass => array('name' => '1.8')),
+			array($modelClass => array('name' => '1.9')),
+			array($modelClass => array('name' => '1.10')));
 		$this->assertSame($expected, $result);
 	}
 

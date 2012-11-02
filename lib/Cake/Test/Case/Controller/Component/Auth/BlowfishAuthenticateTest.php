@@ -51,6 +51,9 @@ class BlowfishAuthenticateTest extends CakeTestCase {
 		$User = ClassRegistry::init('User');
 		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
 		$this->response = $this->getMock('CakeResponse');
+
+		$hash = Security::hash('password', 'blowfish');
+		$this->skipIf(strpos($hash, '$2a$') === false, 'Skipping blowfish tests as hashing is not working');
 	}
 
 /**

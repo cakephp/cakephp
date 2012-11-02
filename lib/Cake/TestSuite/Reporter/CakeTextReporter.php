@@ -71,10 +71,10 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintFooter($result) {
-		if ($result->failureCount() + $result->errorCount() == 0) {
-			echo "\nOK\n";
-		} else {
+		if ($result->failureCount() + $result->errorCount()) {
 			echo "FAILURES!!!\n";
+		} else {
+			echo "\nOK\n";
 		}
 
 		echo "Test cases run: " . $result->count() .
