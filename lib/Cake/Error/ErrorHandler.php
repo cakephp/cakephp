@@ -22,6 +22,7 @@
 App::uses('Debugger', 'Utility');
 App::uses('CakeLog', 'Log');
 App::uses('ExceptionRenderer', 'Error');
+App::uses('AppController', 'Controller');
 
 /**
  *
