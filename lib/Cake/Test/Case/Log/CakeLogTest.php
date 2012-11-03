@@ -383,7 +383,6 @@ class CakeLogTest extends CakeTestCase {
 		CakeLog::drop('shops');
 	}
 
-
 	public function testScopedLoggingExclusive() {
 		$this->_deleteLogs();
 

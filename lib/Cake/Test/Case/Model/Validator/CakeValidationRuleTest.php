@@ -178,7 +178,6 @@ class CakeValidationRuleTest extends CakeTestCase {
  * @return void
  */
 	public function testCheckRequiredWhenRequiredAndAllowEmpty() {
-
 		$Rule = $this->getMock('CakeValidationRule', array('isRequired'));
 		$Rule->expects($this->any())
 			->method('isRequired')
@@ -195,6 +194,6 @@ class CakeValidationRuleTest extends CakeTestCase {
 		$Rule->allowEmpty = false;
 
 		$this->assertTrue($Rule->checkRequired($fieldname, $data), "A null but present field should fail requirement check if allowEmpty is false");
-
 	}
+
 }

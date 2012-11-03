@@ -5683,7 +5683,6 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->hour('Model.field', false, array('value' => '23'));
 		$this->assertContains('<option value="11" selected="selected">11</option>', $result);
 
-
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->hour('Model.field', true);
 		$expected = array(
