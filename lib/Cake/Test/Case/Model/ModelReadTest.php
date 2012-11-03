@@ -5123,7 +5123,10 @@ class ModelReadTest extends BaseModelTest {
 	public function testAssociationAfterFindCalbacksDisabled() {
 		$this->loadFixtures('Post', 'Author', 'Comment');
 		$TestModel = new Post();
-		$result = $TestModel->find('all', array('callbacks' => false));
+		$result = $TestModel->find('all', array(
+			'callbacks' => false,
+			'order' => array('Post.id' => 'ASC'),
+		));
 		$expected = array(
 			array(
 				'Post' => array(
@@ -5190,6 +5193,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Author->find('all', array(
 			'conditions' => array('Author.id' => 1),
 			'recursive' => 2,
+			'order' => array('Post.id' => 'ASC'),
 			'callbacks' => false
 		));
 		$expected = array(
