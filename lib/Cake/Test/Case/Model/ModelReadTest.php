@@ -5193,7 +5193,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Author->find('all', array(
 			'conditions' => array('Author.id' => 1),
 			'recursive' => 2,
-			'order' => array('Post.id' => 'ASC'),
+			'order' => array('Author.id' => 'ASC'),
 			'callbacks' => false
 		));
 		$expected = array(
