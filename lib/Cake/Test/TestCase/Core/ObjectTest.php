@@ -515,7 +515,7 @@ class ObjectTest extends TestCase {
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'params_pass'),
-			array('url' => array('get' => 'value', 'limit' => 5))
+			array('query' => array('get' => 'value', 'limit' => 5))
 		);
 		$this->assertEquals('value', $result->query['get']);
 	}

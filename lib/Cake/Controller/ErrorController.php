@@ -1,11 +1,5 @@
 <?php
 /**
- * Error Handling Controller
- *
- * Controller used by ErrorHandler to render error views.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,14 +8,12 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller;
-use Cake\Routing\Router;
 
-App::uses('AppController', 'Controller');
+use Cake\Routing\Router;
 
 /**
  * Error Handling Controller

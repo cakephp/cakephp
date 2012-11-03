@@ -7167,7 +7167,7 @@ class FormHelperTest extends TestCase {
 			'Imalsonotrequired2',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][imalsonotrequired2]',
+				'type' => 'text', 'name' => 'Contact[imalsonotrequired2]',
 				'id' => 'ContactImalsonotrequired2'
 			),
 			'/div'
