@@ -31,7 +31,7 @@ trait RequestActionTrait {
  * or fetch the return value from controller actions.
  *
  * Under the hood this method uses Router::reverse() to convert the $url parameter into a string
- * URL.  You should use URL formats that are compatible with Router::reverse()
+ * URL. You should use URL formats that are compatible with Router::reverse()
  *
  * #### Passing POST and GET data
  *
@@ -71,9 +71,9 @@ trait RequestActionTrait {
 			$url = Router::normalize(str_replace(FULL_BASE_URL, '', $url));
 		}
 		if (is_string($url)) {
-			$params = array(
+			$params = [
 				'url' => $url
-			);
+			];
 		} elseif (is_array($url)) {
 			$params = array_merge($url, [
 				'pass' => [],
