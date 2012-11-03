@@ -140,8 +140,6 @@ class RequestActionTraitTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Plugin::load(array('TestPlugin'));
-		Router::reload();
-		require CAKE . 'Config/routes.php';
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'test_request_action')
@@ -216,9 +214,6 @@ class RequestActionTraitTest extends TestCase {
  * @return void
  */
 	public function testRequestActionNoPostPassing() {
-		Router::reload();
-		require CAKE . 'Config/routes.php';
-
 		$_POST = array(
 			'item' => 'value'
 		);
@@ -263,9 +258,6 @@ class RequestActionTraitTest extends TestCase {
  * @return void
  */
 	public function testRequestActionPostWithData() {
-		Router::reload();
-		require CAKE . 'Config/routes.php';
-
 		$data = array(
 			'Post' => array('id' => 2)
 		);
