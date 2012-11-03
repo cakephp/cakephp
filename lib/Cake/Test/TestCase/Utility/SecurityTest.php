@@ -103,7 +103,6 @@ class SecurityTest extends TestCase {
  */
 	public function testHashInvalidCost() {
 		Security::setCost(1000);
-		$result = Security::hash('somekey', 'blowfish', false);
 	}
 /**
  * testHash method
@@ -182,6 +181,18 @@ class SecurityTest extends TestCase {
 		$hashedPassword = Security::hash($submittedPassword, null, $storedPassword);
 		$this->assertNotSame($storedPassword, $hashedPassword);
 
+		$expected = sha1('customsaltsomevalue');
+		$result = Security::hash('somevalue', 'sha1', 'customsalt');
+		$this->assertSame($expected, $result);
+
+		$oldSalt = Configure::read('Security.salt');
+		Configure::write('Security.salt', 'customsalt');
+
+		$expected = sha1('customsaltsomevalue');
+		$result = Security::hash('somevalue', 'sha1', true);
+		$this->assertSame($expected, $result);
+
+		Configure::write('Security.salt', $oldSalt);
 		Security::setHash($_hashType);
 	}
 

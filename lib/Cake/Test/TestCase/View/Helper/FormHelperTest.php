@@ -117,6 +117,10 @@ class Contact extends TestModel {
 		'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric', 'allowEmpty' => true),
 		'imalsonotrequired' => array(
 			'alpha' => array('rule' => 'alphaNumeric', 'allowEmpty' => true),
+			'between' => array('rule' => array('between', 5, 30)),
+		),
+		'imalsonotrequired2' => array(
+			'alpha' => array('rule' => 'alphaNumeric', 'allowEmpty' => true),
 			'between' => array('rule' => array('between', 5, 30), 'allowEmpty' => true),
 		),
 		'imnotrequiredeither' => array('required' => true, 'rule' => array('between', 5, 30), 'allowEmpty' => true),
@@ -7151,6 +7155,20 @@ class FormHelperTest extends TestCase {
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imalsonotrequired]',
 				'id' => 'ContactImalsonotrequired'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imalsonotrequired2');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'ContactImalsonotrequired2'),
+			'Imalsonotrequired2',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][imalsonotrequired2]',
+				'id' => 'ContactImalsonotrequired2'
 			),
 			'/div'
 		);

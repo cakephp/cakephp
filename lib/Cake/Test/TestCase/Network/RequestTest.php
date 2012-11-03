@@ -229,6 +229,8 @@ class RequestTest extends TestCase {
 			'input' => $data
 		]);
 		$this->assertEquals([], $request->data);
+		$result = $request->input('json_decode', true);
+		$this->assertEquals(['title'], $result['Article']);
 	}
 
 /**

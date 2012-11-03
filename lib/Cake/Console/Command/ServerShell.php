@@ -26,11 +26,13 @@ use Cake\Core\Configure;
  *
  * @package       Cake.Console.Command
  */
-class ServerShell extends Shell {
+class ServerShell extends AppShell {
+
 /**
  * Default ServerHost
  */
 	const DEFAULT_HOST = 'localhost';
+
 /**
  * Default ListenPort
  */

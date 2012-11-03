@@ -21,6 +21,8 @@
 namespace Cake\Controller;
 use Cake\Routing\Router;
 
+App::uses('AppController', 'Controller');
+
 /**
  * Error Handling Controller
  *

@@ -147,7 +147,6 @@ class Permission extends Model {
 								return false;
 							case 0:
 								continue;
-							break;
 							case 1:
 								return true;
 						}

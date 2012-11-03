@@ -70,7 +70,8 @@ class RegisEngineTest extends TestCase {
 			'server' => '127.0.0.1',
 			'port' => 6379,
 			'timeout' => 0,
-			'persistent' => true
+			'persistent' => true,
+			'password' => false,
 		);
 		$this->assertEquals($expecting, $settings);
 	}
