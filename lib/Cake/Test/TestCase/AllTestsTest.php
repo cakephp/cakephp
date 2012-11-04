@@ -46,6 +46,8 @@ class AllTests extends \PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'AllConfigureTest.php');
 		$suite->addTestFile($path . 'AllCoreTest.php');
 		$suite->addTestFile($path . 'AllControllerTest.php');
+		//Temporarily added to run only validator test.
+		$suite->addTestFile($path . 'AllValidatorTest.php');
 		//$suite->addTestFile($path . 'AllDatabaseTest.php');
 		$suite->addTestFile($path . 'AllErrorTest.php');
 		$suite->addTestFile($path . 'AllEventTest.php');
