@@ -2,7 +2,7 @@
 /**
  * Datasource connection manager
  *
- * Provides an interface for loading and enumerating connections defined in app/Config/database.php
+ * Provides an interface for loading and enumerating connections defined in app/Config/datasources.php
  *
  * PHP 5
  *
@@ -28,16 +28,16 @@ use Cake\Error;
  * Manages loaded instances of DataSource objects
  *
  * Provides an interface for loading and enumerating connections defined in
- * app/Config/database.php
+ * app/Config/datasources.php
  *
  * @package       Cake.Model
  */
 class ConnectionManager {
 
 /**
- * Holds a loaded instance of the Connections object
+ * Holds a list of datasource configurations
  *
- * @var DATABASE_CONFIG
+ * @var array
  */
 	public static $config = null;
 
@@ -68,10 +68,8 @@ class ConnectionManager {
  * @return void
  */
 	protected static function _init() {
-		include_once APP . 'Config/database.php';
-		$class = Configure::read('App.namespace') . '\Config\DATABASE_CONFIG';
-		if (class_exists($class)) {
-			static::$config = new $class();
+		if (Configure::check('Datasource') !== null) {
+			static::$config = Configure::read('Datasource');
 		}
 		static::$_init = true;
 	}
@@ -79,7 +77,7 @@ class ConnectionManager {
 /**
  * Gets a reference to a DataSource object
  *
- * @param string $name The name of the DataSource, as defined in app/Config/database.php
+ * @param string $name The name of the DataSource, as defined in app/Config/datasources.php
  * @return DataSource Instance
  * @throws Cake\Error\MissingDatasourceConfigException
  * @throws Cake\Error\MissingDatasourceException
@@ -99,7 +97,7 @@ class ConnectionManager {
 		}
 
 		$class = static::loadDataSource($name);
-		static::$_dataSources[$name] = new $class(static::$config->{$name});
+		static::$_dataSources[$name] = new $class(static::$config[$name]);
 		static::$_dataSources[$name]->configKeyName = $name;
 
 		return static::$_dataSources[$name];
@@ -141,7 +139,7 @@ class ConnectionManager {
 /**
  * Loads the DataSource class for the given connection name
  *
- * @param string|array $connName A string name of the connection, as defined in app/Config/database.php,
+ * @param string|array $connName A string name of the connection, as defined in app/Config/datasources.php,
  *                        or an array containing the filename (without extension) and class name of the object,
  *                        to be found in app/Model/Datasource/ or lib/Cake/Model/Datasource/.
  * @return string
@@ -208,7 +206,7 @@ class ConnectionManager {
 		if (empty($name) || empty($config) || array_key_exists($name, static::$_connectionsEnum)) {
 			return null;
 		}
-		static::$config->{$name} = $config;
+		static::$config[$name] = $config;
 		static::$_connectionsEnum[$name] = static::_connectionData($config);
 		$return = static::getDataSource($name);
 		return $return;
@@ -225,10 +223,10 @@ class ConnectionManager {
 			static::_init();
 		}
 
-		if (!isset(static::$config->{$name})) {
+		if (!isset(static::$config[$name])) {
 			return false;
 		}
-		unset(static::$_connectionsEnum[$name], static::$_dataSources[$name], static::$config->{$name});
+		unset(static::$_connectionsEnum[$name], static::$_dataSources[$name], static::$config[$name]);
 		return true;
 	}
 
@@ -240,8 +238,8 @@ class ConnectionManager {
  * @throws Cake\Error\MissingDatasourceConfigException
  */
 	protected static function _getConnectionObject($name) {
-		if (!empty(static::$config->{$name})) {
-			static::$_connectionsEnum[$name] = static::_connectionData(static::$config->{$name});
+		if (!empty(static::$config[$name])) {
+			static::$_connectionsEnum[$name] = static::_connectionData(static::$config[$name]);
 		} else {
 			throw new Error\MissingDatasourceConfigException(array('config' => $name));
 		}

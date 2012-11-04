@@ -21,15 +21,26 @@ before_script:
     server.listen(80, 'localhost');
     console.log('TCP server listening on port 80 at localhost.');" > App/tmp/socket.js
   - sudo node ./App/tmp/socket.js &
+  - sed -i "s/\/\/ \(require __DIR__ \. '\/datasources\.php';\)/\\1/" App/Config/bootstrap.php
   - set +H
   - echo "<?php
     namespace App\Config;
-    class DATABASE_CONFIG {
-    private \$identities = array(
+    use Cake\Core\Configure;
+    \$db = 'mysql';
+    if (!empty(\$_SERVER['DB'])) {
+      \$db = \$_SERVER['DB'];
+    }
+    \$identities = array(
       'mysql' => array(
         'datasource' => 'Database/Mysql',
         'host' => '0.0.0.0',
-        'login' => 'travis'
+        'login' => 'travis',
+        'database' => array(
+          'default' => 'cakephp_test',
+          'test' => 'cakephp_test',
+          'test2' => 'cakephp_test2',
+          'test_database_three' => 'cakephp_test3'
+        ),
       ),
       'pgsql' => array(
         'datasource' => 'Database/Postgres',
@@ -53,55 +64,26 @@ before_script:
         ),
       )
     );
-    public \$default = array(
+    \$default = array(
       'persistent' => false,
       'host' => '',
       'login' => '',
       'password' => '',
-      'database' => 'cakephp_test',
+      'database' => '',
       'prefix' => ''
     );
-    public \$test = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test',
-      'prefix' => ''
-    );
-    public \$test2 = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test2',
-      'prefix' => ''
-    );
-    public \$test_database_three = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test3',
-      'prefix' => ''
-    );
-    public function __construct() {
-      \$db = 'mysql';
-      if (!empty(\$_SERVER['DB'])) {
-        \$db = \$_SERVER['DB'];
+    \$datasources = array();
+    foreach (array('default', 'test', 'test2', 'test_database_three') as \$source) {
+      \$config = array_merge(\$default, \$identities[\$db]);
+      if (is_array(\$config['database'])) {
+        \$config['database'] = \$config['database'][\$source];
       }
-      foreach (array('default', 'test', 'test2', 'test_database_three') as \$source) {
-        \$config = array_merge(\$this->{\$source}, \$this->identities[\$db]);
-        if (is_array(\$config['database'])) {
-          \$config['database'] = \$config['database'][\$source];
-        }
-        if (!empty(\$config['schema']) && is_array(\$config['schema'])) {
-          \$config['schema'] = \$config['schema'][\$source];
-        }
-        \$this->{\$source} = \$config;
+      if (!empty(\$config['schema']) && is_array(\$config['schema'])) {
+        \$config['schema'] = \$config['schema'][\$source];
       }
+      \$datasources[\$source] = \$config;
     }
-    }" > App/Config/database.php
+    Configure::write('Datasource', \$datasources);" > App/Config/datasources.php
 
 script:
   - ./lib/Cake/Console/cake test core AllTests --stderr
