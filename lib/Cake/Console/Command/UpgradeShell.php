@@ -113,11 +113,115 @@ class UpgradeShell extends Shell {
  */
 	public function app_uses() {
 		$path = isset($this->args[0]) ? $this->args[0] : APP;
+		if (isset($this->params['plugin'])) {
+			$path = Plugin::path($this->params['plugin']);
+		}
 
 		$Folder = new Folder($path);
 		$this->_paths = $Folder->tree(null, false, 'dir');
 		$this->_findFiles('php');
-		debug($this->_files);
+		foreach ($this->_files as $filePath) {
+			$this->_replaceUses($filePath, $this->params['dryRun']);
+		}
+		$this->out(__d('cake_console', '<success>App::uses() replaced successfully</success>'));
+	}
+
+/**
+ * Replace all the App::uses() calls with `use`
+ *
+ * @param string $file The file to search and replace.
+ * @param boolean $dryRun Whether or not to do the thing.
+ */
+	protected function _replaceUses($file) {
+		$pattern = '#App::uses\([\'"]([a-z0-9_]+)[\'"],\s*[\'"]([a-z0-9/_]+)(?:\.([a-z0-9/_]+))?[\'"]\)#i';
+		$contents = file_get_contents($file);
+
+		$self = $this;
+
+		$replacement = function ($matches) use ($file) {
+			$matches = $this->_mapClassName($matches);
+			if (count($matches) === 4) {
+				$use = $matches[3] . '\\' . $matches[2] . '\\' . $matches[1];
+			} else if ($matches[2] == 'Vendor') {
+				$this->out(
+					__d('cake_console', '<info>Skip %s as it is a vendor library.</info>', $matches[1]),
+					1,
+					Shell::VERBOSE
+				);
+				return;
+			} else {
+				$use = 'Cake\\' . str_replace('/', '\\', $matches[2]) . '\\' . $matches[1];
+			}
+
+			if (!class_exists($use)) {
+				$use = 'App\\' . substr($use, 5);
+			}
+
+			return 'use ' . $use;
+		};
+
+		$contents = preg_replace_callback($pattern, $replacement, $contents, -1, $count);
+
+		if (!$count) {
+			$this->out(
+				__d('cake_console', '<info>Skip %s as there are no App::uses()</info>', $file),
+				1,
+				Shell::VERBOSE
+			);
+			return;
+		}
+
+		$this->out(__d('cake_console', '<info> * Updating App::uses()</info>'), 1, Shell::VERBOSE);
+
+		$result = true;
+		if (!$this->params['dryRun']) {
+			$result = file_put_contents($file, $contents);
+		}
+
+		if ($result) {
+			$this->out(__d('cake_console', '<success>Done updating %s</success>', $file), 1);
+			return;
+		}
+		$this->err(__d(
+			'cake_console',
+			'<error>Error</error> Was unable to update %s',
+			$filePath
+		));
+	}
+
+/**
+ * Convert old classnames to new ones.
+ * Strips the Cake prefix off of classes that no longer have it.
+ *
+ * @param array $matches
+ */
+	protected function _mapClassName($matches) {
+		$rename = [
+			'CakePlugin',
+			'CakeEvent',
+			'CakeEventListener',
+			'CakeEventManager',
+			'CakeValidationRule',
+			'CakeSocket',
+			'CakeRoute',
+			'CakeRequest',
+			'CakeResponse',
+			'CakeSession',
+			'CakeLog',
+			'CakeNumber',
+			'CakeTime',
+			'CakeEmail',
+			'CakeLogInterface',
+			'CakeSessionHandlerInterface',
+		];
+
+		if (empty($matches[3])) {
+			unset($matches[3]);
+		}
+		if (in_array($matches[1], $rename)) {
+			$matches[1] = substr($matches[1], 4);
+		}
+		return $matches;
 	}
 
 /**
@@ -184,28 +288,14 @@ class UpgradeShell extends Shell {
 			return;
 		}
 		$namespace = trim($ns . str_replace(DS, '\\', dirname($shortPath)), '\\');
-		$this->out(
-			__d('cake_console', "<info>Adding namespace %s to %s </info>", $namespace, $shortPath),
-			1,
-			Shell::VERBOSE
-		);
-
-		if (!$dry) {
-			$contents = preg_replace(
+		$patterns = [
+			[
+				' namespace to ' . $namespace,
 				'#^(<\?(?:php)?\s+(?:\/\*.*?\*\/\s{0,1})?)#s',
 				"\\1namespace " . $namespace . ";\n",
-				$contents
-			);
-			$result = file_put_contents($filePath, $contents);
-		}
-
-		if (!$result) {
-			$this->err(__d(
-				'cake_console',
-				'<error>Error</error> Was unable to update %s',
-				$filePath
-			));
-		}
+			]
+		];
+		$this->_updateFile($filePath, $patterns);
 	}
 
 /**
@@ -258,14 +348,24 @@ class UpgradeShell extends Shell {
 		$contents = file_get_contents($file);
 
 		foreach ($patterns as $pattern) {
-			$this->out(__d('cake_console', ' * Updating %s', $pattern[0]), 1, Shell::VERBOSE);
+			$this->out(__d('cake_console', '<info> * Updating %s</info>', $pattern[0]), 1, Shell::VERBOSE);
 			$contents = preg_replace($pattern[1], $pattern[2], $contents);
 		}
 
-		$this->out(__d('cake_console', 'Done updating %s', $file), 1);
+		$result = true;
+
 		if (!$this->params['dryRun']) {
-			file_put_contents($file, $contents);
+			$result = file_put_contents($file, $contents);
 		}
+		if ($result) {
+			$this->out(__d('cake_console', '<success>Done updating %s</success>', $file), 1);
+			return;
+		}
+		$this->err(__d(
+			'cake_console',
+			'<error>Error</error> Was unable to update %s',
+			$filePath
+		));
 	}
 
 /**
