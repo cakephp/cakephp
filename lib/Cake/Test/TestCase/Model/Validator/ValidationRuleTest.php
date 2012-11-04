@@ -17,14 +17,16 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('ValidationRule', 'Model/Validator');
+namespace Cake\Test\TestCase\Model\Validator;
+use Cake\Model\Validator\ValidationRule;
+use Cake\TestSuite\TestCase;
 
 /**
  * ValidationRuleTest
  *
- * @package       Cake.Test.Case.Model.Validator
+ * @package       Cake.Test.TestCase.Model.Validator
  */
-class ValidationRuleTest extends CakeTestCase {
+class ValidationRuleTest extends TestCase {
 
 /**
  * Auxiliary method to test custom validators
