@@ -558,6 +558,8 @@ class Model extends Object implements CakeEventListener {
  */
 	protected $_associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
+// @codingStandardsIgnoreStart
+
 /**
  * Holds model associations temporarily to allow for dynamic (un)binding.
  *
@@ -585,6 +587,8 @@ class Model extends Object implements CakeEventListener {
  * @var array
  */
 	public $__backContainableAssociation = array();
+
+// @codingStandardsIgnoreEnd
 
 /**
  * The ID of the model record that was last inserted.
