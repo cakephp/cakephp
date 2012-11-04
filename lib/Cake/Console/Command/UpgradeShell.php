@@ -47,7 +47,7 @@ class UpgradeShell extends Shell {
  */
 	public function startup() {
 		parent::startup();
-		if ($this->params['dry-run']) {
+		if ($this->params['dryRun']) {
 			$this->out(__d('cake_console', '<warning>Dry-run mode enabled!</warning>'), 1, Shell::QUIET);
 		}
 	}
@@ -65,6 +65,44 @@ class UpgradeShell extends Shell {
 			}
 			$this->out(__d('cake_console', 'Running %s', $name));
 			$this->$name();
+		}
+	}
+
+/**
+ * Move files and folders to their new homes
+ *
+ * @return void
+ */
+	public function locations() {
+		$path = isset($this->args[0]) ? $this->args[0] : APP;
+
+		if (!empty($this->params['plugin'])) {
+			$path = App::pluginPath($this->params['plugin']);
+		}
+		$path = rtrim($path, DS);
+
+		$moves = array(
+			'Test' . DS . 'Case' => 'Test' . DS . 'TestCase'
+		);
+		$dry = $this->params['dryRun'];
+
+		foreach ($moves as $old => $new) {
+			$old = $path . DS . $old;
+			$new = $path . DS . $new;
+			if (!is_dir($old)) {
+				continue;
+			}
+			$this->out(__d('cake_console', '<info>Moving %s to %s</info>', $old, $new));
+			if ($dry) {
+				continue;
+			}
+			if ($this->params['git']) {
+				exec('git mv -f ' . escapeshellarg($old) . ' ' . escapeshellarg($old . '__'));
+				exec('git mv -f ' . escapeshellarg($old . '__') . ' ' . escapeshellarg($new));
+			} else {
+				$Folder = new Folder($old);
+				$Folder->move($new);
+			}
 		}
 	}
 
@@ -106,7 +144,7 @@ class UpgradeShell extends Shell {
 		$this->_findFiles('php', ['index.php', 'test.php', 'cake.php']);
 
 		foreach ($this->_files as $filePath) {
-			$this->_addNamespace($path, $filePath, $ns, $this->params['dry-run']);
+			$this->_addNamespace($path, $filePath, $ns, $this->params['dryRun']);
 		}
 		$this->out(__d('cake_console', '<success>Namespaces added successfully</success>'));
 	}
@@ -225,7 +263,7 @@ class UpgradeShell extends Shell {
 		}
 
 		$this->out(__d('cake_console', 'Done updating %s', $file), 1);
-		if (!$this->params['dry-run']) {
+		if (!$this->params['dryRun']) {
 			file_put_contents($file, $contents);
 		}
 	}
@@ -236,57 +274,54 @@ class UpgradeShell extends Shell {
  * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
-		$subcommandParser = array(
-			'options' => array(
-				'plugin' => array(
-					'short' => 'p',
-					'help' => __d('cake_console', 'The plugin to update. Only the specified plugin will be updated.')
-				),
-				'ext' => array(
-					'short' => 'e',
-					'help' => __d('cake_console', 'The extension(s) to search. A pipe delimited list, or a preg_match compatible subpattern'),
-					'default' => 'php|ctp'
-				),
-				'dry-run' => array(
-					'short' => 'd',
-					'help' => __d('cake_console', 'Dry run the update, no files will actually be modified.'),
-					'boolean' => true
-				)
-			)
-		);
-
-		$namespaceParser = $subcommandParser;
-		$namespaceParser['options']['namespace'] = [
+		$plugin = [
+			'short' => 'p',
+			'help' => __d('cake_console', 'The plugin to update. Only the specified plugin will be updated.')
+		];
+		$dryRun = [
+			'short' => 'd',
+			'help' => __d('cake_console', 'Dry run the update, no files will actually be modified.'),
+			'boolean' => true
+		];
+		$git = [
+			'help' => __d('cake_console', 'Perform git operations. eg. git mv instead of just moving files.'),
+			'boolean' => true
+		];
+		$namespace = [
 			'help' => __d('cake_console', 'Set the base namespace you want to use. Defaults to App or the plugin name.'),
 			'default' => 'App',
 		];
-		$namespaceParser['options']['exclude'] = [
+		$exclude = [
 			'help' => __d('cake_console', 'Comma separated list of top level diretories to exclude.'),
 			'default' => '',
 		];
 
 		return parent::getOptionParser()
-			->description(__d('cake_console', "A shell to help automate upgrading from CakePHP 1.3 to 2.0. \n" .
+			->description(__d('cake_console', "A shell to help automate upgrading from CakePHP 3.0 to 2.x. \n" .
 				"Be sure to have a backup of your application before running these commands."))
 			->addSubcommand('all', array(
 				'help' => __d('cake_console', 'Run all upgrade commands.'),
-				'parser' => $subcommandParser
+				'parser' => ['options' => compact('plugin', 'dryRun')]
+			))
+			->addSubcommand('locations', array(
+				'help' => __d('cake_console', 'Move files/directories around. Run this *before* adding namespaces with the namespaces command.'),
+				'parser' => ['options' => compact('plugin', 'dryRun', 'git')]
+			))
+			->addSubcommand('namespaces', array(
+				'help' => __d('cake_console', 'Add namespaces to files based on their file path. Only run this *after* you have moved files.'),
+				'parser' => ['options' => compact('plugin', 'dryRun', 'namespace', 'exclude')]
 			))
 			->addSubcommand('app_uses', array(
 				'help' => __d('cake_console', 'Replace App::uses() with use statements'),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('namespaces', array(
-				'help' => __d('cake_console', 'Add namespaces to files based on their file path.'),
-				'parser' => $namespaceParser
+				'parser' => ['options' => compact('plugin', 'dryRun')]
 			))
 			->addSubcommand('cache', array(
 				'help' => __d('cake_console', "Replace Cache::config() with Configure."),
-				'parser' => $subcommandParser
+				'parser' => ['options' => compact('plugin', 'dryRun')]
 			))
 			->addSubcommand('log', array(
 				'help' => __d('cake_console', "Replace CakeLog::config() with Configure."),
-				'parser' => $subcommandParser
+				'parser' => ['options' => compact('plugin', 'dryRun')]
 			));
 	}
 
