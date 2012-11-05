@@ -260,7 +260,7 @@ class ProjectTask extends Shell {
 		$newSalt = Security::generateAuthKey();
 		$contents = preg_replace(
 			"/^(\s+'salt'\s+\=\>\s+')([^']+)(',)/m",
-			'\\1' . $newSalt . '\\3',
+			'${1}' . $newSalt . '\\3',
 			$contents,
 			-1,
 			$count
@@ -283,7 +283,7 @@ class ProjectTask extends Shell {
 		$newCipher = substr(bin2hex(Security::generateAuthKey()), 0, 30);
 		$contents = preg_replace(
 			"/^(\s+'cipherSeed'\s+\=\>\s+')([^']+)(',)/m",
-			'\\1' . $newCipher . '\\3',
+			'${1}' . $newCipher . '\\3',
 			$contents,
 			-1,
 			$count
@@ -320,11 +320,7 @@ class ProjectTask extends Shell {
  */
 	public function corePath($path, $hardCode = true) {
 		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
-			$filename = $path . 'webroot/index.php';
-			if (!$this->_replaceCorePath($filename, $hardCode)) {
-				return false;
-			}
-			$filename = $path . 'webroot/test.php';
+			$filename = $path . 'Config/paths.php';
 			if (!$this->_replaceCorePath($filename, $hardCode)) {
 				return false;
 			}
