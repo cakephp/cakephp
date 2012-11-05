@@ -112,7 +112,7 @@ class XmlView extends View {
 				$data = array($rootNode => array($serialize => $data));
 			}
 		}
-		 return Xml::fromArray($data)->asXML();
+		return Xml::fromArray($data)->asXML();
 	}
 
 }
