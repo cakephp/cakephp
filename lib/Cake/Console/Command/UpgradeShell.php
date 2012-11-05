@@ -148,7 +148,7 @@ class UpgradeShell extends Shell {
 					1,
 					Shell::VERBOSE
 				);
-				return;
+				return $matches[0];
 			} else {
 				$use = 'Cake\\' . str_replace('/', '\\', $matches[2]) . '\\' . $matches[1];
 			}
