@@ -97,16 +97,16 @@ endif;
 <p>
 	<?php
 		$filePresent = null;
-		if (file_exists(APP . 'Config/database.php')):
+		if (file_exists(APP . 'Config/datasouces.php')):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your database configuration file is present.');
+				echo __d('cake_dev', 'Your datasources configuration file is present.');
 				$filePresent = true;
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your database configuration file is NOT present.');
+				echo __d('cake_dev', 'Your datasouces configuration file is NOT present.');
 				echo '<br/>';
-				echo __d('cake_dev', 'Rename APP/Config/database.php.default to APP/Config/database.php');
+				echo __d('cake_dev', 'Rename APP/Config/datasources.default.php to APP/Config/datasources.php');
 			echo '</span>';
 		endif;
 	?>
@@ -134,7 +134,7 @@ if (isset($filePresent)):
 		endif;
 	?>
 </p>
-<?php endif;?>
+<?php endif; ?>
 <?php
 	if (!Validation::alphaNumeric('cakephp')) {
 		echo '<p><span class="notice">';

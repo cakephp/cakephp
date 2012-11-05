@@ -19,8 +19,8 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Model', 'Model');
+namespace App\Model;
+use Cake\Model\Model;
 
 /**
  * Application model for Cake.

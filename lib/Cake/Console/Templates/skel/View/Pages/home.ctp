@@ -15,16 +15,15 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 use Cake\Core\Configure;
+use Cake\Utility\Debugger;
 use Cake\Cache\Cache;
 use Cake\Model\ConnectionManager;
-use Cake\Error\NotFoundException;
-use Cake\Utility\Debugger;
 use Cake\Utility\Validation;
+use Cake\Error;
 
-if (!Configure::read('debug')):
-	throw new NotFoundException();
+if (Configure::read('debug') == 0):
+	throw new Error\NotFoundException();
 endif;
 ?>
 <iframe src="http://cakephp.org/bake-banner" width="830" height="160" style="overflow:hidden; border:none;">
@@ -98,16 +97,16 @@ endif;
 <p>
 	<?php
 		$filePresent = null;
-		if (file_exists(APP . 'Config/database.php')):
+		if (file_exists(APP . 'Config/datasouces.php')):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your database configuration file is present.');
+				echo __d('cake_dev', 'Your datasources configuration file is present.');
 				$filePresent = true;
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your database configuration file is NOT present.');
+				echo __d('cake_dev', 'Your datasouces configuration file is NOT present.');
 				echo '<br/>';
-				echo __d('cake_dev', 'Rename APP/Config/database.php.default to APP/Config/database.php');
+				echo __d('cake_dev', 'Rename APP/Config/datasources.default.php to APP/Config/datasources.php');
 			echo '</span>';
 		endif;
 	?>
@@ -116,7 +115,7 @@ endif;
 if (isset($filePresent)):
 	try {
 		$connected = ConnectionManager::getDataSource('default');
-	} catch (\Exception $connectionError) {
+	} catch (Exception $connectionError) {
 		$connected = false;
 	}
 ?>
@@ -148,8 +147,8 @@ if (isset($filePresent)):
 <h3><?php echo __d('cake_dev', 'Editing this Page'); ?></h3>
 <p>
 <?php
-echo __d('cake_dev', 'To change the content of this page, create: APP/View/Pages/home.ctp.<br />
-To change its layout, create: APP/View/Layouts/default.ctp.<br />
+echo __d('cake_dev', 'To change the content of this page, edit: APP/View/Pages/home.ctp.<br />
+To change its layout, edit: APP/View/Layouts/default.ctp.<br />
 You can also add some CSS styles for your pages at: APP/webroot/css.');
 ?>
 </p>

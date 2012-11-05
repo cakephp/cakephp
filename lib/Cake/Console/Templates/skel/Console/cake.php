@@ -17,17 +17,6 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$ds = DIRECTORY_SEPARATOR;
-$dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
+include dirname(__DIR__) . '/Config/bootstrap.php';
 
-if (function_exists('ini_set')) {
-	$root = dirname(dirname(__DIR__));
-	ini_set('include_path', $root . PATH_SEPARATOR . __CAKE_PATH__ . PATH_SEPARATOR . ini_get('include_path'));
-}
-
-if (!include $dispatcher) {
-	trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
-}
-unset($paths, $path, $dispatcher, $root, $ds);
-
-return ShellDispatcher::run($argv);
+exit(Cake\Console\ShellDispatcher::run($argv));
