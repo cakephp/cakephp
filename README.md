@@ -34,6 +34,6 @@ Get Support!
 
 [Lighthouse](http://cakephp.lighthouseapp.com/) - Got issues? Please tell us!
 
-[![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=master)](http://travis-ci.org/cakephp/cakephp)
+[![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=3.0)](http://travis-ci.org/cakephp/cakephp)
 
 ![Cake Power](https://raw.github.com/cakephp/cakephp/master/lib/Cake/Console/Templates/skel/webroot/img/cake.power.gif)
