@@ -97,7 +97,7 @@ endif;
 <p>
 	<?php
 		$filePresent = null;
-		if (file_exists(APP . 'Config/datasouces.php')):
+		if (file_exists(APP . 'Config/datasources.php')):
 			echo '<span class="notice success">';
 				echo __d('cake_dev', 'Your datasources configuration file is present.');
 				$filePresent = true;
