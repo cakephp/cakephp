@@ -111,7 +111,7 @@ define('JS_URL', 'js/');
  * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
  */
 //TODO include_path support.
-define('CAKE_CORE_INCLUDE_PATH', __CAKE_PATH__);
+//define('CAKE_CORE_INCLUDE_PATH', __CAKE_PATH__);
 
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 

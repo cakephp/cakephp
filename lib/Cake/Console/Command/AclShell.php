@@ -89,12 +89,11 @@ class AclShell extends Shell {
 		}
 
 		if ($this->command) {
-			if (!config('database')) {
-				$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'), true);
+			if (Configure::check('Datasource') === null) {
+				$this->out(__d('cake_console', 'Your datasources configuration was not found. Take a moment to create one.'), true);
 				$this->args = null;
 				return $this->DbConfig->execute();
 			}
-			require_once (APP . 'Config/database.php');
 
 			if (!in_array($this->command, array('initdb'))) {
 				$collection = new ComponentCollection();

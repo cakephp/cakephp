@@ -64,7 +64,7 @@ class ProjectTask extends Shell {
 		}
 
 		$response = false;
-		while (!$response && is_dir($project) === true && file_exists($project . 'Config' . 'core.php')) {
+		while (!$response && is_dir($project) === true && file_exists($project . 'Config' . 'boostrap.php')) {
 			$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
 			$response = $this->in($prompt, array('y', 'n'), 'n');
 			if (strtolower($response) === 'n') {
@@ -79,14 +79,14 @@ class ProjectTask extends Shell {
 			if ($this->securitySalt($path) === true) {
 				$this->out(__d('cake_console', ' * Random hash key created for \'Security.salt\''));
 			} else {
-				$this->err(__d('cake_console', 'Unable to generate random hash for \'Security.salt\', you should change it in %s', APP . 'Config' . DS . 'core.php'));
+				$this->err(__d('cake_console', 'Unable to generate random hash for \'Security.salt\', you should change it in %s', APP . 'Config' . DS . 'app.php'));
 				$success = false;
 			}
 
 			if ($this->securityCipherSeed($path) === true) {
 				$this->out(__d('cake_console', ' * Random seed created for \'Security.cipherSeed\''));
 			} else {
-				$this->err(__d('cake_console', 'Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s', APP . 'Config' . DS . 'core.php'));
+				$this->err(__d('cake_console', 'Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s', APP . 'Config' . DS . 'app.php'));
 				$success = false;
 			}
 
@@ -94,13 +94,6 @@ class ProjectTask extends Shell {
 				$this->out(__d('cake_console', ' * Cache prefix set'));
 			} else {
 				$this->err(__d('cake_console', 'The cache prefix was <error>NOT</error> set'));
-				$success = false;
-			}
-
-			if ($this->consolePath($path) === true) {
-				$this->out(__d('cake_console', ' * app/Console/cake.php path set.'));
-			} else {
-				$this->err(__d('cake_console', 'Unable to set console path for app/Console.'));
 				$success = false;
 			}
 
@@ -114,10 +107,9 @@ class ProjectTask extends Shell {
 			}
 			$success = $this->corePath($path, $hardCode) === true;
 			if ($success) {
-				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
-				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
+				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in Config/paths.php', CAKE_CORE_INCLUDE_PATH));
 			} else {
-				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' . DS . 'index.php'));
+				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'Config' . DS . 'paths.php'));
 				$success = false;
 			}
 			if ($success && $hardCode) {
@@ -227,28 +219,6 @@ class ProjectTask extends Shell {
 	}
 
 /**
- * Generates the correct path to the CakePHP libs that are generating the project
- * and points app/console/cake.php to the right place
- *
- * @param string $path Project path.
- * @return boolean success
- */
-	public function consolePath($path) {
-		$File = new File($path . 'Console/cake.php');
-		$contents = $File->read();
-		if (preg_match('/(__CAKE_PATH__)/', $contents, $match)) {
-			$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " \$ds . '" : "'";
-			$replacement = $root . str_replace(DS, "' . \$ds . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "'";
-			$result = str_replace($match[0], $replacement, $contents);
-			if ($File->write($result)) {
-				return true;
-			}
-			return false;
-		}
-		return false;
-	}
-
-/**
  * Generates and writes 'Security.salt'
  *
  * @param string $path Project path
@@ -302,7 +272,7 @@ class ProjectTask extends Shell {
  */
 	public function cachePrefix($dir) {
 		$app = basename($dir);
-		$File = new File($dir . 'Config/core.php');
+		$File = new File($dir . 'Config/cache.php');
 		$contents = $File->read();
 		if (preg_match('/(\$prefix = \'myapp_\';)/', $contents, $match)) {
 			$result = str_replace($match[0], '$prefix = \'' . $app . '_\';', $contents);
@@ -352,7 +322,7 @@ class ProjectTask extends Shell {
 	}
 
 /**
- * Enables Configure::read('Routing.prefixes') in /app/Config/core.php
+ * Enables Configure::read('Routing.prefixes') in /app/Config/routes.php
  *
  * @param string $name Name to use as admin routing
  * @return boolean Success
@@ -402,15 +372,15 @@ class ProjectTask extends Shell {
 		}
 		if ($this->interactive) {
 			$this->hr();
-			$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/Config/core.php to use prefix routing.'));
+			$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/Config/routes.php to use prefix routing.'));
 			$this->out(__d('cake_console', 'What would you like the prefix route to be?'));
 			$this->out(__d('cake_console', 'Example: www.example.com/admin/controller'));
 			while (!$admin) {
 				$admin = $this->in(__d('cake_console', 'Enter a routing prefix:'), null, 'admin');
 			}
 			if ($this->cakeAdmin($admin) !== true) {
-				$this->out(__d('cake_console', '<error>Unable to write to</error> /app/Config/core.php.'));
-				$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/Config/core.php to use prefix routing.'));
+				$this->out(__d('cake_console', '<error>Unable to write to</error> /app/Config/routes.php.'));
+				$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/Config/routes.php to use prefix routing.'));
 				$this->_stop();
 			}
 			return $admin . '_';
