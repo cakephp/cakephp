@@ -1,6 +1,6 @@
 <?php
 /**
- * The DbConfig Task handles creating and updating the database.php
+ * The DbConfig Task handles creating and updating the datasources.php
  *
  * PHP 5
  *
@@ -246,7 +246,7 @@ class DbConfigTask extends Shell {
 	}
 
 /**
- * Assembles and writes database.php
+ * Assembles and writes datasources.php
  *
  * @param array $configs Configuration settings to use
  * @return boolean Success
@@ -257,7 +257,7 @@ class DbConfigTask extends Shell {
 			return false;
 		}
 
-		$filename = $this->path . 'database.php';
+		$filename = $this->path . 'datasources.php';
 		$oldConfigs = array();
 
 		if (file_exists($filename)) {
@@ -344,7 +344,7 @@ class DbConfigTask extends Shell {
 		}
 
 		$out .= "}\n";
-		$filename = $this->path . 'database.php';
+		$filename = $this->path . 'datasources.php';
 		return $this->createFile($filename, $out);
 	}
 

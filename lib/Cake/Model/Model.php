@@ -52,7 +52,7 @@ class Model extends Object implements EventListener {
 /**
  * The name of the DataSource connection that this Model uses
  *
- * The value must be an attribute name that you defined in `app/Config/database.php`
+ * The value must be an attribute name that you defined in `App/Config/datasources.php`
  * or created using `ConnectionManager::create()`.
  *
  * @var string
@@ -3187,7 +3187,7 @@ class Model extends Object implements EventListener {
 /**
  * Sets the DataSource to which this model is bound.
  *
- * @param string $dataSource The name of the DataSource, as defined in app/Config/database.php
+ * @param string $dataSource The name of the DataSource, as defined in App/Config/datasources.php
  * @return void
  * @throws MissingConnectionException
  */

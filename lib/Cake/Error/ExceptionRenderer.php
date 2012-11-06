@@ -54,7 +54,7 @@ use Cake\View\View;
  * #### Using a subclass of ExceptionRenderer
  *
  * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you
- * can configure your class in your core.php, with `Configure::write('Exception.renderer', 'MyClass');`
+ * can configure your class in your App/Config/error.php, with `Configure::write('Exception.renderer', 'MyClass');`
  * You should place any custom exception renderers in `app/Lib/Error`.
  *
  * @package       Cake.Error

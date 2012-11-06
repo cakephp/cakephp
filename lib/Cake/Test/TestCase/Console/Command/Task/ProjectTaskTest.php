@@ -293,7 +293,7 @@ class ProjectTaskTest extends TestCase {
 	}
 
 /**
- * test cakeAdmin() writing core.php
+ * test cakeAdmin() writing routes.php
  *
  * @return void
  */

@@ -85,7 +85,7 @@ endif;
 		$settings = Cache::settings('_cake_model_');
 		if (!empty($settings)):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/cache.php ', '<em>'. $settings['engine'] . 'Engine</em>');
+				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/cache.php', '<em>'. $settings['engine'] . 'Engine</em>');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
@@ -104,7 +104,7 @@ endif;
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your datasouces configuration file is NOT present.');
+				echo __d('cake_dev', 'Your datasources configuration file is NOT present.');
 				echo '<br/>';
 				echo __d('cake_dev', 'Rename APP/Config/datasources.default.php to APP/Config/datasources.php');
 			echo '</span>';

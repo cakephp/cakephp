@@ -216,7 +216,7 @@ class BakeShell extends Shell {
 			'help' => __d('cake_console', 'Bake a new plugin folder in the path supplied or in current directory if no path is specified.'),
 			'parser' => $this->Plugin->getOptionParser()
 		))->addSubcommand('db_config', array(
-			'help' => __d('cake_console', 'Bake a database.php file in config directory.'),
+			'help' => __d('cake_console', 'Bake a datasources.php file in config directory.'),
 			'parser' => $this->DbConfig->getOptionParser()
 		))->addSubcommand('model', array(
 			'help' => __d('cake_console', 'Bake a model.'),

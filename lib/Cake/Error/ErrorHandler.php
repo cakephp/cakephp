@@ -68,7 +68,7 @@ use Cake\Utility\Debugger;
  * #### Logging exceptions
  *
  * Using the built-in exception handling, you can log all the exceptions
- * that are dealt with by ErrorHandler by setting `Exception.log` to true in your core.php.
+ * that are dealt with by ErrorHandler by setting `Exception.log` to true in your App/Config/error.php.
  * Enabling this will log every exception to Log and the configured loggers.
  *
  * ### PHP errors
@@ -76,7 +76,7 @@ use Cake\Utility\Debugger;
  * Error handler also provides the built in features for handling php errors (trigger_error).
  * While in debug mode, errors will be output to the screen using debugger.  While in production mode,
  * errors will be logged to Log.  You can control which errors are logged by setting
- * `Error.level` in your core.php.
+ * `Error.level` in your App/Config/error.php.
  *
  * #### Logging errors
  *
