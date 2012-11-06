@@ -18,6 +18,7 @@
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
 use Cake\Console\Command\Task\DbConfigTask;
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -92,8 +93,21 @@ class DbConfigTaskTest extends TestCase {
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock(
 			'Cake\Console\Command\Task\DbConfigTask',
-			array('in', '_stop', 'createFile', 'bake'), array($out, $out, $in)
+			array('in', '_stop', 'createFile'), array($out, $out, $in)
 		);
+		$this->Task->path = APP . 'Config' . DS;
+
+		$expected = "<?php\n";
+		$expected .= "namespace App\Config;\n";
+		$expected .= "use Cake\Core\Configure;\n\n";
+		$expected .= "Configure::write('Datasource.default', [\n";
+		$expected .= "\t'datasource' => 'Database/mysql',\n";
+		$expected .= "\t'persistent' => false,\n";
+		$expected .= "\t'host' => 'localhost',\n";
+		$expected .= "\t'login' => 'root',\n";
+		$expected .= "\t'password' => 'password',\n";
+		$expected .= "\t'database' => 'cake_test',\n";
+		$expected .= "]);\n";
 
 		$this->Task->expects($this->once())->method('_stop');
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('default')); //name
@@ -108,23 +122,12 @@ class DbConfigTaskTest extends TestCase {
 		$this->Task->expects($this->at(12))->method('in')->will($this->returnValue('n')); //encoding
 		$this->Task->expects($this->at(13))->method('in')->will($this->returnValue('y')); //looks good
 		$this->Task->expects($this->at(14))->method('in')->will($this->returnValue('n')); //another
-		$this->Task->expects($this->at(15))->method('bake')
-			->with(array(
-				array(
-					'name' => 'default',
-					'datasource' => 'mysql',
-					'persistent' => 'false',
-					'host' => 'localhost',
-					'login' => 'root',
-					'password' => 'password',
-					'database' => 'cake_test',
-					'prefix' => null,
-					'encoding' => null,
-					'port' => '',
-					'schema' => null
-				)
-			));
+		$this->Task->expects($this->at(15))->method('createFile')
+			->with(
+				$this->equalTo($this->Task->path . 'datasources.php'),
+				$this->equalTo($expected));
 
+		Configure::write('Datasource', array());
 		$result = $this->Task->execute();
 	}
 }

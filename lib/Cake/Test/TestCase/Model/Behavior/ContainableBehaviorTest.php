@@ -3587,14 +3587,12 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testAutoFieldsWithMultipleDatabases() {
-		$config = new DATABASE_CONFIG();
-
 		$this->skipIf(
-			!isset($config->test) || !isset($config->test2),
+			!Configure::check('Datasource.test') || !Configure::check('Datasource.test2'),
 			'Primary and secondary test databases not configured, ' .
 			'skipping cross-database join tests. ' .
 			' To run these tests, you must define $test and $test2 ' .
-			'in your database configuration.'
+			'in your datasources configuration.'
 		);
 
 		$db = ConnectionManager::getDataSource('test2');

@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests cross database HABTM. Requires $test and $test2 to both be set in DATABASE_CONFIG
+ * Tests cross database HABTM. Requires $test and $test2 to both be set in datasources.php
  * NOTE: When testing on MySQL, you must set 'persistent' => false on *both* database connections,
  * or one connection will step on the other.
  *

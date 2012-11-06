@@ -17,6 +17,7 @@
  */
 namespace Cake\Console\Command\Task;
 use Cake\Console\Shell;
+use Cake\Core\Configure;
 use Cake\Model\ConnectionManager;
 
 /**
@@ -51,14 +52,6 @@ class DbConfigTask extends Shell {
 		'encoding' => null,
 		'port' => null
 	);
-
-/**
- * String name of the database config class name.
- * Used for testing.
- *
- * @var string
- */
-	public $databaseClassName = 'DATABASE_CONFIG';
 
 /**
  * initialization callback
@@ -258,14 +251,10 @@ class DbConfigTask extends Shell {
 		}
 
 		$filename = $this->path . 'datasources.php';
-		$oldConfigs = array();
-
 		if (file_exists($filename)) {
-			config('database');
-			$db = new $this->databaseClassName;
-			$temp = get_class_vars(get_class($db));
+			$oldConfigs = Configure::read('Datasource');
 
-			foreach ($temp as $configName => $info) {
+			foreach ($oldConfigs as $configName => $info) {
 				$info = array_merge($this->_defaultConfig, $info);
 
 				if (!isset($info['schema'])) {
@@ -280,7 +269,7 @@ class DbConfigTask extends Shell {
 
 				$info['persistent'] = var_export((bool)$info['persistent'], true);
 
-				$oldConfigs[] = array(
+				$oldConfigs[$configName] = array(
 					'name' => $configName,
 					'datasource' => $info['datasource'],
 					'persistent' => $info['persistent'],
@@ -306,7 +295,8 @@ class DbConfigTask extends Shell {
 
 		$configs = array_merge($oldConfigs, $configs);
 		$out = "<?php\n";
-		$out .= "class DATABASE_CONFIG {\n\n";
+		$out .= "namespace " . Configure::read('App.namespace') . "\Config;\n";
+		$out .= "use Cake\Core\Configure;\n\n";
 
 		foreach ($configs as $config) {
 			$config = array_merge($this->_defaultConfig, $config);
@@ -315,35 +305,34 @@ class DbConfigTask extends Shell {
 			if (strpos($datasource, 'Database/') === false) {
 				$datasource = "Database/{$datasource}";
 			}
-			$out .= "\tpublic \${$name} = array(\n";
-			$out .= "\t\t'datasource' => '{$datasource}',\n";
-			$out .= "\t\t'persistent' => {$persistent},\n";
-			$out .= "\t\t'host' => '{$host}',\n";
+			$out .= "Configure::write('Datasource.{$name}', [\n";
+			$out .= "\t'datasource' => '{$datasource}',\n";
+			$out .= "\t'persistent' => {$persistent},\n";
+			$out .= "\t'host' => '{$host}',\n";
 
 			if ($port) {
-				$out .= "\t\t'port' => {$port},\n";
+				$out .= "\t'port' => {$port},\n";
 			}
 
-			$out .= "\t\t'login' => '{$login}',\n";
-			$out .= "\t\t'password' => '{$password}',\n";
-			$out .= "\t\t'database' => '{$database}',\n";
+			$out .= "\t'login' => '{$login}',\n";
+			$out .= "\t'password' => '{$password}',\n";
+			$out .= "\t'database' => '{$database}',\n";
 
 			if ($schema) {
-				$out .= "\t\t'schema' => '{$schema}',\n";
+				$out .= "\t'schema' => '{$schema}',\n";
 			}
 
 			if ($prefix) {
-				$out .= "\t\t'prefix' => '{$prefix}',\n";
+				$out .= "\t'prefix' => '{$prefix}',\n";
 			}
 
 			if ($encoding) {
-				$out .= "\t\t'encoding' => '{$encoding}'\n";
+				$out .= "\t'encoding' => '{$encoding}'\n";
 			}
 
-			$out .= "\t);\n";
+			$out .= "]);\n";
 		}
 
-		$out .= "}\n";
 		$filename = $this->path . 'datasources.php';
 		return $this->createFile($filename, $out);
 	}
