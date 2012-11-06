@@ -15,10 +15,6 @@
 namespace Cake\Core;
 
 use Cake\Log\LogTrait;
-use Cake\Network\Request;
-use Cake\Network\Response;
-use Cake\Routing\Dispatcher;
-use Cake\Routing\Router;
 use Cake\Utility\Hash;
 
 /**
@@ -47,75 +43,6 @@ class Object {
  */
 	public function toString() {
 		return get_class($this);
-	}
-
-/**
- * Calls a controller's method from any location. Can be used to connect controllers together
- * or tie plugins into a main application. requestAction can be used to return rendered views
- * or fetch the return value from controller actions.
- *
- * Under the hood this method uses Router::reverse() to convert the $url parameter into a string
- * URL.  You should use URL formats that are compatible with Router::reverse()
- *
- * #### Passing POST and GET data
- *
- * POST and GET data can be simulated in requestAction.  Use `$extra['query']` for
- * GET data.  The `$extra['post']` parameter allows POST data simulation.
- *
- * @param string|array $url String or array-based url.  Unlike other url arrays in CakePHP, this
- *    url will not automatically handle passed arguments in the $url parameter.
- * @param array $extra if array includes the key "return" it sets the AutoRender to true.  Can
- *    also be used to submit GET/POST data, and passed arguments.
- * @return mixed Boolean true or false on success/failure, or contents
- *    of rendered action if 'return' is set in $extra.
- */
-	public function requestAction($url, $extra = array()) {
-		if (empty($url)) {
-			return false;
-		}
-		if (($index = array_search('return', $extra)) !== false) {
-			$extra['return'] = 0;
-			$extra['autoRender'] = 1;
-			unset($extra[$index]);
-		}
-		$extra = array_merge(
-			['autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1],
-			$extra
-		);
-		$post = $query = [];
-		if (isset($extra['post'])) {
-			$post = $extra['post'];
-		}
-		if (isset($extra['query'])) {
-			$query = $extra['query'];
-		}
-		unset($extra['post'], $extra['query']);
-
-		if (is_string($url) && strpos($url, FULL_BASE_URL) === 0) {
-			$url = Router::normalize(str_replace(FULL_BASE_URL, '', $url));
-		}
-		if (is_string($url)) {
-			$params = array(
-				'url' => $url
-			);
-		} elseif (is_array($url)) {
-			$params = array_merge($url, [
-				'pass' => [],
-				'base' => false,
-				'url' => Router::reverse($url)
-			]);
-		}
-		if (!empty($post)) {
-			$params['post'] = $post;
-		}
-		if (!empty($query)) {
-			$params['query'] = $query;
-		}
-		$request = new Request($params);
-		$dispatcher = new Dispatcher();
-		$result = $dispatcher->dispatch($request, new Response(), $extra);
-		Router::popRequest();
-		return $result;
 	}
 
 /**

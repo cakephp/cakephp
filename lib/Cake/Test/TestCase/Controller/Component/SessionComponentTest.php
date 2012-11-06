@@ -94,14 +94,14 @@ class SessionComponentTest extends TestCase {
 		$Session->check('Test');
 		$this->assertTrue(isset($_SESSION));
 
-		$Object = new Object();
+		$Controller = new Controller();
 		$Session = new SessionComponent($this->ComponentCollection);
 		$expected = $Session->id();
 
-		$result = $Object->requestAction('/session_test/session_id');
+		$result = $Controller->requestAction('/session_test/session_id');
 		$this->assertEquals($expected, $result);
 
-		$result = $Object->requestAction('/orange_session_test/session_id');
+		$result = $Controller->requestAction('/orange_session_test/session_id');
 		$this->assertEquals($expected, $result);
 	}
 

@@ -39,7 +39,7 @@ class Request implements \ArrayAccess {
 		'plugin' => null,
 		'controller' => null,
 		'action' => null,
-		'pass' => array(),
+		'pass' => [],
 	);
 
 /**
@@ -49,14 +49,21 @@ class Request implements \ArrayAccess {
  *
  * @var array
  */
-	public $data = array();
+	public $data = [];
 
 /**
  * Array of querystring arguments
  *
  * @var array
  */
-	public $query = array();
+	public $query = [];
+
+/**
+ * Array of cookie data.
+ *
+ * @var array
+ */
+	public $cookies = [];
 
 /**
  * The url string used for the request.
