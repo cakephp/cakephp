@@ -689,7 +689,7 @@ class View extends Object {
 					if (!$parent) {
 						list($plugin, $name) = $this->pluginSplit($name);
 						$paths = $this->_paths($plugin);
-						$defaultPath = $paths[0] . 'Elements/';
+						$defaultPath = $paths[0] . 'Elements' . DS;
 						throw new \LogicException(__d(
 							'cake_dev',
 							'You cannot extend an element which does not exist (%s).',
@@ -1002,7 +1002,7 @@ class View extends Object {
 		}
 		list($plugin, $name) = $this->pluginSplit($name);
 		$paths = $this->_paths($plugin);
-		$file = 'Layouts/' . $subDir . $name;
+		$file = 'Layouts' . DS . $subDir . $name;
 
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
@@ -1041,8 +1041,8 @@ class View extends Object {
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
-				if (file_exists($path . 'Elements/' . $name . $ext)) {
-					return $path . 'Elements/' . $name . $ext;
+				if (file_exists($path . 'Elements' . DS . $name . $ext)) {
+					return $path . 'Elements' . DS . $name . $ext;
 				}
 			}
 		}
@@ -1068,7 +1068,7 @@ class View extends Object {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				if (!in_array($viewPaths[$i], $corePaths)) {
-					$paths[] = $viewPaths[$i] . 'Plugin/' . $plugin . DS;
+					$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
 				}
 			}
 			$paths = array_merge($paths, App::path('View', $plugin));
@@ -1078,11 +1078,11 @@ class View extends Object {
 		if (!empty($this->theme)) {
 			$themePaths = array();
 			foreach ($paths as $path) {
-				if (strpos($path, DS . 'Plugin/') === false) {
+				if (strpos($path, DS . 'Plugin' . DS) === false) {
 					if ($plugin) {
-						$themePaths[] = $path . 'Themed/' . $this->theme . DS . 'Plugin/' . $plugin . DS;
+						$themePaths[] = $path . 'Themed' . DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
 					}
-					$themePaths[] = $path . 'Themed/' . $this->theme . DS;
+					$themePaths[] = $path . 'Themed' . DS . $this->theme . DS;
 				}
 			}
 			$paths = array_merge($themePaths, $paths);
