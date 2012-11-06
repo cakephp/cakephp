@@ -50,13 +50,20 @@ class ProjectTask extends Shell {
 			if (empty($appContents)) {
 				$suggestedPath = rtrim(APP, DS);
 			} else {
-				$suggestedPath = APP . 'myapp';
+				$suggestedPath = APP . 'MyApp';
 			}
 		}
 
 		while (!$project) {
 			$prompt = __d('cake_console', "What is the path to the project you want to bake?");
 			$project = $this->in($prompt, null, $suggestedPath);
+		}
+
+		$namespace = basename($project);
+		if (!preg_match('/^\w[\w\d_]+$/', $namespace)) {
+			$this->err(__d('cake_console', 'Project Name/Namespace needs to start with a letter and can only contain letters, digits and underscore'));
+			$this->args = array();
+			return $this->execute();
 		}
 
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
@@ -75,6 +82,13 @@ class ProjectTask extends Shell {
 		$success = true;
 		if ($this->bake($project)) {
 			$path = Folder::slashTerm($project);
+
+			if ($this->appNamespace($path) === true) {
+				$this->out(__d('cake_console', ' * Namespace set for \'App.namespace\' and namespace declarations'));
+			} else {
+				$this->err(__d('cake_console', 'The namespace was <error>NOT</error> set'));
+				$success = false;
+			}
 
 			if ($this->securitySalt($path) === true) {
 				$this->out(__d('cake_console', ' * Random hash key created for \'Security.salt\''));
@@ -183,6 +197,7 @@ class ProjectTask extends Shell {
 
 		$this->out(__d('cake_console', '<info>Skel Directory</info>: ') . $skel);
 		$this->out(__d('cake_console', '<info>Will be copied to</info>: ') . $path);
+		$this->out(__d('cake_console', '<info>With namespace</info>: ') . $app);
 		$this->hr();
 
 		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
@@ -216,6 +231,48 @@ class ProjectTask extends Shell {
 				$this->out(__d('cake_console', '<error>Bake Aborted.</error>'));
 				return false;
 		}
+	}
+
+/**
+ * Writes 'App.namespace' to App/Config/app.php and fixes namespace declarations
+ *
+ * @param string $path Project path
+ * @return boolean Success
+ */
+	public function appNamespace($path) {
+		$namespace = basename($path);
+
+		$File = new File($path . 'Config/app.php');
+		$contents = $File->read();
+		$contents = preg_replace(
+			"/namespace = 'App'/",
+			"namespace = '" . $namespace . "'",
+			$contents,
+			-1,
+			$count
+		);
+		if (!$count || !$File->write($contents)) {
+			return false;
+		}
+
+		$Folder = new Folder($path);
+		$files = $Folder->findRecursive('.*\.php');
+		foreach ($files as $filename) {
+			$File = new File($filename);
+			$contents = $File->read();
+			$contents = preg_replace(
+				'/namespace App\\\/',
+				'namespace ' . $namespace . '\\',
+				$contents,
+				-1,
+				$count
+			);
+			if ($count && !$File->write($contents)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 /**
