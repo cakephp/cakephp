@@ -110,9 +110,7 @@ use Cake\Core\Configure;
  * support is being used.
  */
 if (!class_exists('App\Controller\AppController')) {
-	$loader = new \Cake\Core\ClassLoader($namespace, dirname(APP));
-	$loader->register();
-	unset($loader);
+	(new \Cake\Core\ClassLoader($namespace, dirname(APP)))->register();
 }
 
 /**
