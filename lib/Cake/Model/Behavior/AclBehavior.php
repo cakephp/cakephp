@@ -86,7 +86,7 @@ class AclBehavior extends ModelBehavior {
 		}
 		if (empty($ref)) {
 			$ref = array(
-				'model' => is_null($model->plugin) ? $model->name : $model->plugin.'.'.$model->name, 
+				'model' => is_null($model->plugin) ? $model->name : $model->plugin . '.' . $model->name,
 				'foreign_key' => $model->id
 			);
 		}
@@ -112,7 +112,7 @@ class AclBehavior extends ModelBehavior {
 			}
 			$data = array(
 				'parent_id' => isset($parent[0][$type]['id']) ? $parent[0][$type]['id'] : null,
-				'model' => is_null($model->plugin) ? $model->name : $model->plugin.'.'.$model->name,
+				'model' => is_null($model->plugin) ? $model->name : $model->plugin . '.' . $model->name,
 				'foreign_key' => $model->id
 			);
 			if (!$created) {
