@@ -479,7 +479,7 @@ class String {
 		if (isset($options['ending'])) {
 			$default['ellipsis'] = $options['ending'];
 		} elseif (!empty($options['html']) && Configure::read('App.encoding') == 'UTF-8') {
-			$default['ellipsis'] = "\xE2\x80\xA6";
+			$default['ellipsis'] = "\xe2\x80\xa6";
 		}
 		$options = array_merge($default, $options);
 		extract($options);
