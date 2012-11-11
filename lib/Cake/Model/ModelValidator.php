@@ -265,7 +265,7 @@ class ModelValidator implements \ArrayAccess, \IteratorAggregate, \Countable {
 
 		foreach ($fields as $field) {
 			$field->setMethods($methods);
-			$field->setValidationDomain($model->validationDomain);
+			$field->validationDomain($model->validationDomain);
 			$data = isset($model->data[$model->alias]) ? $model->data[$model->alias] : array();
 			$errors = $field->validate($data, $exists);
 			foreach ($errors as $error) {

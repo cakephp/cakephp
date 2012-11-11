@@ -38,11 +38,11 @@ class ValidationRule {
 	protected $_valid = true;
 
 /**
- * Holds whether the record being validated exists in datasource or not
+ * Holds whether the record being validated is being created or updated
  *
  * @var boolean
  */
-	protected $_recordExists = false;
+	protected $_isUpdate = false;
 
 /**
  * Validation method
@@ -71,20 +71,6 @@ class ValidationRule {
  * @var mixed
  */
 	public $rule = 'blank';
-
-/**
- * The 'required' key
- *
- * @var mixed
- */
-	public $required = null;
-
-/**
- * The 'allowEmpty' key
- *
- * @var boolean
- */
-	public $allowEmpty = null;
 
 /**
  * The 'on' key
@@ -127,61 +113,6 @@ class ValidationRule {
 		}
 
 		return true;
-	}
-
-/**
- * Returns whether the field can be left blank according to this rule
- *
- * @return boolean
- */
-	public function isEmptyAllowed() {
-		return $this->skip() || $this->allowEmpty === true;
-	}
-
-/**
- * Checks if the field is required according to the `required` property
- *
- * @return boolean
- */
-	public function isRequired() {
-		if (in_array($this->required, array('create', 'update'), true)) {
-			if ($this->required === 'create' && !$this->isUpdate() || $this->required === 'update' && $this->isUpdate()) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		return $this->required;
-	}
-
-/**
- * Checks whether the field failed the `field should be present` validation
- *
- * @param array $data data to check rule against
- * @return boolean
- */
-	public function checkRequired($field, &$data) {
-		return (
-			(!isset($data[$field]) && $this->isRequired() === true) ||
-			(
-				isset($data[$field]) && (empty($data[$field]) &&
-				!is_numeric($data[$field])) && $this->allowEmpty === false
-			)
-		);
-	}
-
-/**
- * Checks if the allowEmpty key applies
- *
- * @param array $data data to check rule against
- * @return boolean
- */
-	public function checkEmpty($field, &$data) {
-		if (empty($data[$field]) && $data[$field] != '0' && $this->allowEmpty === true) {
-			return true;
-		}
-		return false;
 	}
 
 /**
@@ -229,8 +160,6 @@ class ValidationRule {
 		}
 		return array(
 			'rule' => $rule,
-			'required' => $this->required,
-			'allowEmpty' => $this->allowEmpty,
 			'on' => $this->on,
 			'last' => $this->last,
 			'message' => $this->message
@@ -246,12 +175,12 @@ class ValidationRule {
  * is configured for update operations or not.
  *
  * @return boolean
- **/
+ */
 	public function isUpdate($exists = null) {
 		if ($exists === null) {
-			return $this->_recordExists;
+			return $this->_isUpdate;
 		}
-		return $this->_recordExists = $exists;
+		return $this->_isUpdate = $exists;
 	}
 
 /**
@@ -259,7 +188,7 @@ class ValidationRule {
  *
  * @return boolean True if the rule could be dispatched, false otherwise
  */
-	public function process($field, &$data, &$methods) {
+	public function process($field, $data, $methods) {
 		$this->_valid = true;
 		$this->_parseRule($field, $data);
 
@@ -286,17 +215,17 @@ class ValidationRule {
  * and it will set isUpdate() to false
  *
  * @return void
- **/
+ */
 	public function reset() {
 		$this->_valid = true;
-		$this->_recordExists = false;
+		$this->_isUpdate = false;
 	}
 
 /**
  * Returns passed options for this rule
  *
  * @return array
- **/
+ */
 	public function getOptions($key) {
 		if (!isset($this->_passedOptions[$key])) {
 			return null;
@@ -316,7 +245,7 @@ class ValidationRule {
 		}
 		foreach ($validator as $key => $value) {
 			if (isset($value) || !empty($value)) {
-				if (in_array($key, array('rule', 'required', 'allowEmpty', 'on', 'message', 'last'))) {
+				if (in_array($key, array('rule', 'on', 'message', 'last'))) {
 					$this->{$key} = $validator[$key];
 				} else {
 					$this->_passedOptions[$key] = $value;
@@ -330,7 +259,7 @@ class ValidationRule {
  *
  * @return void
  */
-	protected function _parseRule($field, &$data) {
+	protected function _parseRule($field, $data) {
 		if (is_array($this->rule)) {
 			$this->_rule = $this->rule[0];
 			$this->_ruleParams = array_merge(array($data[$field]), array_values(array_slice($this->rule, 1)));

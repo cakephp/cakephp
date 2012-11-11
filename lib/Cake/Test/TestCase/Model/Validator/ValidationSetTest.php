@@ -50,17 +50,6 @@ class ValidationSetTest  extends TestCase {
 		$result = $Field->validate($data);
 		$this->assertEmpty($result);
 
-		$Field = new ValidationSet('nothere', array(
-			'notEmpty' => array(
-				'rule' => 'notEmpty',
-				'required' => true
-			)
-		));
-
-		$result = $Field->validate($data);
-		$expected = array('notEmpty');
-		$this->assertEquals($expected, $result);
-
 		$Field = new ValidationSet('body', array(
 			'inList' => array(
 				'rule' => array('inList', array('test'))
@@ -69,6 +58,120 @@ class ValidationSetTest  extends TestCase {
 		$result = $Field->validate($data);
 		$expected = array('inList');
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testValidateWithvalidatePresent method
+ *
+ * @return void
+ */
+	public function testValidateWithvalidatePresent() {
+		$data = array(
+			'title' => '',
+			'body' => 'a body'
+		);
+		$expectedPresent = array('This field must exist in data');
+
+		$Field = new ValidationSet('notthere', array(
+			'_validatePresent' => true,
+			'notEmpty' => array(
+				'rule' => 'notEmpty'
+			)
+		));
+
+		$result = $Field->validate($data);
+		$this->assertEquals($expectedPresent, $result);
+
+		$Field = new ValidationSet('notthere', array(
+			'_validatePresent' => 'create',
+			'notEmpty' => array(
+				'rule' => 'notEmpty'
+			)
+		));
+
+		$result = $Field->validate($data);
+		$this->assertEquals($expectedPresent, $result);
+
+		$result = $Field->validate($data, true);
+		$this->assertSame(array(), $result);
+
+		$Field = new ValidationSet('notthere', array(
+			'_validatePresent' => 'update',
+			'notEmpty' => array(
+				'rule' => 'notEmpty'
+			)
+		));
+
+		$result = $Field->validate($data);
+		$this->assertSame(array(), $result);
+
+		$result = $Field->validate($data, true);
+		$this->assertEquals($expectedPresent, $result);
+	}
+
+/**
+ * testValidateWithAllowEmpty method
+ *
+ * @return void
+ */
+	public function testValidateWithAllowEmpty() {
+		$data = array(
+			'title' => '',
+			'body' => 'a body'
+		);
+
+		$Field = new ValidationSet('title', array(
+			'_allowEmpty' => true,
+			'notEmpty' => array(
+				'rule' => 'notEmpty'
+			)
+		));
+
+		$result = $Field->validate($data);
+		$this->assertSame(array(), $result);
+
+		$Field = new ValidationSet('title', array(
+			'_allowEmpty' => 'create',
+			'notEmpty' => array(
+				'rule' => 'notEmpty'
+			)
+		));
+
+		$result = $Field->validate($data);
+		$this->assertSame(array(), $result);
+
+		$result = $Field->validate($data, true);
+		$this->assertEquals(array('notEmpty'), $result);
+
+		$Field = new ValidationSet('title', array(
+			'_allowEmpty' => 'update',
+			'notEmpty' => array(
+				'rule' => 'notEmpty'
+			)
+		));
+
+		$result = $Field->validate($data);
+		$this->assertEquals(array('notEmpty'), $result);
+
+		$result = $Field->validate($data, true);
+		$this->assertSame(array(), $result);
+
+		$Field = new ValidationSet('title', array(
+			'_allowEmpty' => 'update',
+			'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'on' => 'create'
+			),
+			'between' => array(
+				'rule' => array('between', 1, 50),
+				'on' => 'update'
+			)
+		));
+		$result = $Field->validate($data);
+		$this->assertEquals(array('notEmpty'), $result);
+
+		$result = $Field->validate($data, true);
+		$this->assertSame(array(), $result);
 	}
 
 /**
@@ -87,8 +190,6 @@ class ValidationSetTest  extends TestCase {
 		$result = $Field->getRule('notEmpty');
 		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $result);
 		$this->assertEquals('notEmpty', $result->rule);
-		$this->assertEquals(null, $result->required);
-		$this->assertEquals(false, $result->allowEmpty);
 		$this->assertEquals(null, $result->on);
 		$this->assertEquals(true, $result->last);
 		$this->assertEquals('Can not be empty', $result->message);
@@ -134,8 +235,6 @@ class ValidationSetTest  extends TestCase {
 		$result = $Field->getRule('validEmail');
 		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $result);
 		$this->assertEquals('email', $result->rule);
-		$this->assertEquals(null, $result->required);
-		$this->assertEquals(false, $result->allowEmpty);
 		$this->assertEquals(null, $result->on);
 		$this->assertEquals(true, $result->last);
 		$this->assertEquals('Other message', $result->message);
@@ -172,7 +271,8 @@ class ValidationSetTest  extends TestCase {
  */
 	public function testArrayAccessGet() {
 		$Set = new ValidationSet('title', array(
-			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'_validatePresent' => true,
+			'notEmpty' => array('rule' => 'notEmpty'),
 			'numeric' => array('rule' => 'numeric'),
 			'other' => array('rule' => array('other', 1)),
 		));
@@ -197,7 +297,8 @@ class ValidationSetTest  extends TestCase {
  */
 	public function testArrayAccessExists() {
 		$Set = new ValidationSet('title', array(
-			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'_validatePresent' => true,
+			'notEmpty' => array('rule' => 'notEmpty'),
 			'numeric' => array('rule' => 'numeric'),
 			'other' => array('rule' => array('other', 1)),
 		));
@@ -215,7 +316,8 @@ class ValidationSetTest  extends TestCase {
  */
 	public function testArrayAccessSet() {
 		$Set = new ValidationSet('title', array(
-			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'_validatePresent' => true,
+			'notEmpty' => array('rule' => 'notEmpty'),
 		));
 
 		$this->assertFalse(isset($Set['other']));
@@ -238,7 +340,8 @@ class ValidationSetTest  extends TestCase {
  */
 	public function testArrayAccessUnset() {
 		$Set = new ValidationSet('title', array(
-			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'_validatePresent' => true,
+			'notEmpty' => array('rule' => 'notEmpty'),
 			'numeric' => array('rule' => 'numeric'),
 			'other' => array('rule' => array('other', 1)),
 		));
@@ -260,7 +363,8 @@ class ValidationSetTest  extends TestCase {
  */
 	public function testIterator() {
 		$Set = new ValidationSet('title', array(
-			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'_validatePresent' => true,
+			'notEmpty' => array('rule' => 'notEmpty'),
 			'numeric' => array('rule' => 'numeric'),
 			'other' => array('rule' => array('other', 1)),
 		));
@@ -289,7 +393,8 @@ class ValidationSetTest  extends TestCase {
  */
 	public function testCount() {
 		$Set = new ValidationSet('title', array(
-			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'_validatePresent' => true,
+			'notEmpty' => array('rule' => 'notEmpty'),
 			'numeric' => array('rule' => 'numeric'),
 			'other' => array('rule' => array('other', 1)),
 		));
@@ -306,7 +411,8 @@ class ValidationSetTest  extends TestCase {
  */
 	public function testRemoveRule() {
 		$Set = new ValidationSet('title', array(
-			'notEmpty' => array('rule' => 'notEmpty', 'required' => true),
+			'_validatePresent' => true,
+			'notEmpty' => array('rule' => 'notEmpty'),
 			'numeric' => array('rule' => 'numeric'),
 			'other' => array('rule' => array('other', 1)),
 		));
