@@ -18,6 +18,7 @@
  */
 App::uses('CakeSocket', 'Network');
 App::uses('Router', 'Routing');
+App::uses('Hash', 'Utility');
 
 /**
  * Cake network socket connection class.
@@ -64,7 +65,7 @@ class HttpSocket extends CakeSocket {
 		),
 		'raw' => null,
 		'redirect' => false,
-		'cookies' => array()
+		'cookies' => array(),
 	);
 
 /**
@@ -92,6 +93,9 @@ class HttpSocket extends CakeSocket {
 		'protocol' => 'tcp',
 		'port' => 80,
 		'timeout' => 30,
+		'ssl_verify_peer' => true,
+		'ssl_verify_depth' => 5,
+		'ssl_verify_host' => true,
 		'request' => array(
 			'uri' => array(
 				'scheme' => array('http', 'https'),
@@ -99,7 +103,7 @@ class HttpSocket extends CakeSocket {
 				'port' => array(80, 443)
 			),
 			'redirect' => false,
-			'cookies' => array()
+			'cookies' => array(),
 		)
 	);
 
@@ -348,6 +352,8 @@ class HttpSocket extends CakeSocket {
 			return false;
 		}
 
+		$this->_configContext($this->request['uri']['host']);
+
 		$this->request['raw'] = '';
 		if ($this->request['line'] !== false) {
 			$this->request['raw'] = $this->request['line'];
@@ -395,6 +401,7 @@ class HttpSocket extends CakeSocket {
 			throw new SocketException(__d('cake_dev', 'Class %s not found.', $this->responseClass));
 		}
 		$this->response = new $responseClass($response);
+
 		if (!empty($this->response->cookies)) {
 			if (!isset($this->config['request']['cookies'][$Host])) {
 				$this->config['request']['cookies'][$Host] = array();
@@ -641,6 +648,33 @@ class HttpSocket extends CakeSocket {
 		$this->config = Hash::merge($this->config, $config);
 		$this->config = Hash::merge($this->config, array_intersect_key($this->config['request']['uri'], $this->config));
 		return true;
+	}
+
+/**
+ * Configure the socket's context.  Adds in configuration
+ * that can not be declared in the class definition.
+ *
+ * @param string $host The host you're connecting to.
+ * @return void
+ */
+	protected function _configContext($host) {
+		foreach ($this->config as $key => $value) {
+			if (substr($key, 0, 4) !== 'ssl_') {
+				continue;
+			}
+			$contextKey = substr($key, 4);
+			if (empty($this->config['context']['ssl'][$contextKey])) {
+				$this->config['context']['ssl'][$contextKey] = $value;
+			}
+			unset($this->config[$key]);
+		}
+		if (empty($this->_context['ssl']['cafile'])) {
+			$this->config['context']['ssl']['cafile'] = CAKE . 'Config' . DS . 'cacert.pem';
+		}
+		if (!empty($this->config['context']['ssl']['verify_host'])) {
+			$this->config['context']['ssl']['CN_match'] = $host;
+			unset($this->config['context']['ssl']['verify_host']);
+		}
 	}
 
 /**
