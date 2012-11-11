@@ -79,7 +79,7 @@ class HttpSocket extends CakeSocket {
  *
  * @var string
  */
-	public $responseClass = 'HttpResponse';
+	public $responseClass = 'HttpSocketResponse';
 
 /**
  * Configuration settings for the HttpSocket and the requests
@@ -246,7 +246,7 @@ class HttpSocket extends CakeSocket {
  * method and provide a more granular interface.
  *
  * @param string|array $request Either an URI string, or an array defining host/uri
- * @return mixed false on error, HttpResponse on success
+ * @return mixed false on error, HttpSocketResponse on success
  * @throws SocketException
  */
 	public function request($request = array()) {
