@@ -20,6 +20,36 @@
 App::uses('ErrorHandler', 'Error');
 App::uses('Controller', 'Controller');
 App::uses('Router', 'Routing');
+App::uses('CakeEventManager', 'Event');
+App::uses('CakeEventListener', 'Event');
+
+class TestErrorHandlerListener implements CakeEventListener {
+/**
+ * Implemented events
+ */
+	public function implementedEvents() {
+		return array(
+			'ErrorHandler.handleException' => 'handleException',
+			'ErrorHandler.handleError' => 'handleError',
+			'ErrorHandler.handleFatalError' => 'handleFatalError');
+	}
+
+	public function handleException($event) {
+		$event->result = 'handleException fired';
+		$event->stopPropagation();
+	}
+
+	public function handleError($event) {
+		$event->result = 'handleError fired';
+		$event->stopPropagation();
+	}
+
+	public function handleFatalError($event) {
+		$event->result = 'handleFatalError fired';
+		$event->stopPropagation();
+	}
+
+}
 
 /**
  * ErrorHandlerTest class
@@ -293,4 +323,25 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertContains('[FatalErrorException] Something wrong', $log[1], 'message missing.');
 	}
 
+/**
+ * test error handler events
+ * These events are tested:
+ * ErrorHandler.handleError
+ * ErrorHandler.handleException
+ * ErrorHandler.handleException
+ *
+ * @return void
+ */
+	public function testErrorHandlerEvents() {
+		CakeEventManager::instance()->attach(new TestErrorHandlerListener());
+
+		$result = ErrorHandler::handleError(E_ERROR, 'Something wrong');
+		$this->assertEqual($result, 'handleError fired');
+
+		$result = ErrorHandler::handleException(new Exception('Something wrong'));
+		$this->assertEqual($result, 'handleException fired');
+
+		$result = ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
+		$this->assertEqual($result, 'handleFatalError fired');
+	}
 }

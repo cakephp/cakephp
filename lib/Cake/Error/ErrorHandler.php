@@ -22,6 +22,8 @@
 App::uses('Debugger', 'Utility');
 App::uses('CakeLog', 'Log');
 App::uses('ExceptionRenderer', 'Error');
+App::uses('CakeEventManager', 'Event');
+App::uses('CakeEvent', 'Event');
 
 /**
  *
@@ -97,6 +99,28 @@ App::uses('ExceptionRenderer', 'Error');
 class ErrorHandler {
 
 /**
+ * Instance of the CakeEventManager this error handler is using
+ * to dispatch inner events.
+ *
+ * @var CakeEventManager
+ */
+	protected static $_eventManager = null;
+
+/**
+ * Returns the CakeEventManager manager instance that is handling any callbacks.
+ * You can use this instance to register any new listeners or callbacks to the
+ * error handler events, or create your own events and trigger them at will.
+ *
+ * @return CakeEventManager
+ */
+	public function getEventManager() {
+		if (empty(self::$_eventManager)) {
+			self::$_eventManager = new CakeEventManager();
+		}
+		return self::$_eventManager;
+	}
+
+/**
  * Set as the default exception handler by the CakePHP bootstrap process.
  *
  * This will either use custom exception renderer class if configured,
@@ -107,6 +131,13 @@ class ErrorHandler {
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */
 	public static function handleException(Exception $exception) {
+		$event = new CakeEvent('ErrorHandler.handleException', null, array($exception));
+		self::getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
 		$config = Configure::read('Exception');
 		if (!empty($config['log'])) {
 			$message = sprintf("[%s] %s\n%s",
@@ -155,6 +186,15 @@ class ErrorHandler {
 		if (error_reporting() === 0) {
 			return false;
 		}
+
+		$event = new CakeEvent('ErrorHandler.handleError', null, array($code, $description, $file, $line, $context));
+		self::getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
+
 		$errorConfig = Configure::read('Error');
 		list($error, $log) = self::mapErrorCode($code);
 		if ($log === LOG_ERR) {
@@ -195,6 +235,13 @@ class ErrorHandler {
  * @return boolean
  */
 	public static function handleFatalError($code, $description, $file, $line) {
+		$event = new CakeEvent('ErrorHandler.handleFatalError', null, array($code, $description, $file, $line));
+		self::getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
 		$logMessage = 'Fatal Error (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
 		CakeLog::write(LOG_ERR, $logMessage);
 
