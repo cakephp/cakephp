@@ -2916,6 +2916,10 @@ class DboSource extends DataSource {
 			}
 			$statement->execute();
 			$statement->closeCursor();
+
+			if ($this->fullDebug) {
+				$this->logQuery($sql, $value);
+			}
 		}
 		return $this->commit();
 	}

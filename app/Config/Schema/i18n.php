@@ -21,7 +21,9 @@
  *
  * cake schema run create i18n
  */
+// @codingStandardsIgnoreStart
 class I18nSchema extends CakeSchema {
+// @codingStandardsIgnoreEnd
 
 	public $name = 'i18n';
 

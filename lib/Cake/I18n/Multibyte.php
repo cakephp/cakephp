@@ -753,8 +753,8 @@ class Multibyte {
 		if ($charset == 'UTF-8') {
 			$parts = array();
 			$maxchars = floor(($length * 3) / 4);
-			$strlen = strlen($string);
-			while ($strlen > $maxchars) {
+			$stringLength = strlen($string);
+			while ($stringLength > $maxchars) {
 				$i = (int)$maxchars;
 				$test = ord($string[$i]);
 				while ($test >= 128 && $test <= 191) {
@@ -763,7 +763,7 @@ class Multibyte {
 				}
 				$parts[] = base64_encode(substr($string, 0, $i));
 				$string = substr($string, $i);
-				$strlen = strlen($string);
+				$stringLength = strlen($string);
 			}
 			$parts[] = base64_encode($string);
 			$string = implode($spacer, $parts);

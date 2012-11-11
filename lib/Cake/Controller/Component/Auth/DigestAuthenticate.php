@@ -170,7 +170,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		}
 		$result = ClassRegistry::init($userModel)->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => (int)$this->settings['recursive']
+			'recursive' => $this->settings['recursive']
 		));
 		if (empty($result) || empty($result[$model])) {
 			return false;

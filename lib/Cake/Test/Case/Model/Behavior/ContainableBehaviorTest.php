@@ -3017,7 +3017,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 				'User' => array(
 					'fields' => array('user')
 				)
-			)
+			),
+			'order' => 'Article.id ASC',
 		));
 		$this->assertTrue(isset($result[0]['Article']['title']), 'title missing %s');
 		$this->assertTrue(isset($result[0]['Article']['body']), 'body missing %s');
@@ -3040,7 +3041,10 @@ class ContainableBehaviorTest extends CakeTestCase {
 				'conditions' => array('created >=' => '2007-03-18 12:24')
 			)
 		));
-		$result = $this->Article->find('all', array('fields' => array('title'), 'order' => array('Article.id' => 'ASC')));
+		$result = $this->Article->find('all', array(
+			'fields' => array('title'),
+			'order' => array('Article.id' => 'ASC')
+		));
 		$expected = array(
 			array(
 				'Article' => array('id' => 1, 'title' => 'First Article'),

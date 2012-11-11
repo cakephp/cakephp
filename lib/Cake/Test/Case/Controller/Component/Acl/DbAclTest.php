@@ -483,7 +483,7 @@ class DbAclTest extends CakeTestCase {
 /**
  * debug function - to help editing/creating test cases for the ACL component
  *
- * To check the overall ACL status at any time call $this->__debug();
+ * To check the overall ACL status at any time call $this->_debug();
  * Generates a list of the current aro and aco structures and a grid dump of the permissions that are defined
  * Only designed to work with the db based ACL
  *
