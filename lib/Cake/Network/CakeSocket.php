@@ -126,15 +126,28 @@ class CakeSocket {
 		}
 
 		$scheme = null;
-		if (isset($this->config['request']) && $this->config['request']['uri']['scheme'] == 'https') {
+		if (isset($this->config['request']['uri']) && $this->config['request']['uri']['scheme'] == 'https') {
 			$scheme = 'ssl://';
 		}
 
-		if ($this->config['persistent']) {
-			$this->connection = @pfsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+		if (!empty($this->config['request']['context'])) {
+			$context = stream_context_create($this->config['request']['context']);
 		} else {
-			$this->connection = @fsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$context = stream_context_create();
 		}
+
+		$connectAs = STREAM_CLIENT_CONNECT;
+		if ($this->config['persistent']) {
+			$connectAs = STREAM_CLIENT_PERSISTENT;
+		}
+		$this->connection = @stream_socket_client(
+			$scheme . $this->config['host'] . ':' . $this->config['port'],
+			$errNum,
+			$errStr,
+			$this->config['timeout'],
+			$connectAs,
+			$context
+		);
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errNum, $errStr);
@@ -146,6 +159,15 @@ class CakeSocket {
 			stream_set_timeout($this->connection, $this->config['timeout']);
 		}
 		return $this->connected;
+	}
+
+/**
+ * Get the connection context.
+ *
+ * @return array
+ */
+	public function context() {
+		return stream_context_get_options($this->connection);
 	}
 
 /**
