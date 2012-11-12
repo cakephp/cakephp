@@ -50,6 +50,15 @@ class CakeTime {
 	public static $wordFormat = 'j/n/y';
 
 /**
+ * The format to use when formatting a time using `CakeTime::timeAgoInWords()`
+ * and the difference is less than `CakeTime::$wordEnd`
+ *
+ * @var string
+ * @see CakeTime::timeAgoInWords()
+ */
+	public static $timeAgoFormat = '%s ago';
+
+/**
  * The format to use when formatting a time using `CakeTime::niceShort()`
  * and the difference is between 3 and 7 days
  *
@@ -74,7 +83,7 @@ class CakeTime {
 		'minute' => "minute",
 		'second' => "second",
 	);
-
+	
 /**
  * The end of relative time telling
  *
@@ -690,6 +699,7 @@ class CakeTime {
 		$format = self::$wordFormat;
 		$end = self::$wordEnd;
 		$accuracy = self::$wordAccuracy;
+		$time_ago_format = self::$timeAgoFormat;
 
 		if (is_array($options)) {
 			if (isset($options['timezone'])) {
@@ -715,6 +725,9 @@ class CakeTime {
 				$end = $options['end'];
 			}
 			unset($options['end'], $options['format']);
+			
+			$time_ago_format = isset($options['time_ago_format']) ? $options['time_ago_format'] : self::$timeAgoFormat;
+			
 		} else {
 			$format = $options;
 		}
@@ -844,7 +857,7 @@ class CakeTime {
 		}
 
 		if (!$backwards) {
-			return __d('cake', '%s ago', $relativeDate);
+			return __d('cake', $time_ago_format, $relativeDate);
 		}
 
 		return $relativeDate;

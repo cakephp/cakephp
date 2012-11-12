@@ -38,6 +38,7 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->Time = new CakeTime();
 		$this->_systemTimezoneIdentifier = date_default_timezone_get();
 	}
@@ -48,6 +49,7 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->Time);
 		$this->_restoreSystemTimezone();
 	}
@@ -123,6 +125,42 @@ class CakeTimeTest extends CakeTestCase {
 		$result = $this->Time->timeAgoInWords($input);
 		$this->assertEquals($expected, $result);
 	}
+
+
+/**
+ * provider for timeAgoInWordsSpecificFormat() tests
+ *
+ * @return array
+ */
+	public static function timeAgoSpecificFormatProvider() {
+		return array(
+			array('-12 seconds', 'for 12 seconds'),
+			array('-12 minutes', 'for 12 minutes'),
+			array('-2 hours', 'for 2 hours'),
+			array('-1 day', 'for 1 day'),
+			array('-2 days', 'for 2 days'),
+			array('-2 days -3 hours', 'for 2 days, 3 hours'),
+			array('-1 week', 'for 1 week'),
+			array('-2 weeks -2 days', 'for 2 weeks, 2 days'),
+			array('+1 week', '1 week'),
+			array('+1 week 1 day', '1 week, 1 day'),
+			array('+2 weeks 2 day', '2 weeks, 2 days'),
+			array('2007-9-24', 'on 24/9/07'),
+			array('now', 'just now'),
+		);
+	}
+
+/**
+ * testTimeAgoInWordsSpecificFormat method when a specific format is passed as an option
+ *
+ * @dataProvider timeAgoSpecificFormatProvider
+ * @return void
+ */
+	public function testTimeAgoInWordsSpecificFormat($input, $expected) {
+		$result = $this->Time->timeAgoInWords($input, array('time_ago_format' => 'for %s'));
+		$this->assertEquals($expected, $result);
+	}
+
 
 /**
  * provider for timeAgo with an end date.
