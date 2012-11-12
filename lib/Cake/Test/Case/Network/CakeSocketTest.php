@@ -336,16 +336,14 @@ class CakeSocketTest extends CakeTestCase {
 			'host' => 'smtp.gmail.com',
 			'port' => 465,
 			'timeout' => 5,
-			'request' => array(
-				'context' => array(
-					'ssl' => array('capture_peer' => true)
-				)
+			'context' => array(
+				'ssl' => array('capture_peer' => true)
 			)
 		);
 		$this->Socket = new CakeSocket($config);
 		$this->Socket->connect();
 		$result = $this->Socket->context();
-		$this->assertEquals($config['request']['context'], $result);
+		$this->assertEquals($config['context'], $result);
 	}
 
 }
