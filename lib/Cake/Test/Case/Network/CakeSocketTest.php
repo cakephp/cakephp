@@ -332,6 +332,7 @@ class CakeSocketTest extends CakeTestCase {
  * @return void
  */
 	public function testGetContext() {
+		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
 		$config = array(
 			'host' => 'smtp.gmail.com',
 			'port' => 465,
