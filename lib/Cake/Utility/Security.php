@@ -78,14 +78,26 @@ class Security {
 	}
 
 /**
- * Create a hash from string using given method.
- * Fallback on next available method.
- * If you are using blowfish, for comparisons simply pass the originally hashed
- * string as the salt (the salt is prepended to the hash and php handles the
- * parsing automagically. Do NOT use a constant salt for blowfish.
+ * Create a hash from string using given method or fallback on next available method.
+ *
+ * #### Using Blowfish
+ *
+ * - Creating Hashes: *Do not supply a salt*. Cake handles salt creation for
+ * you ensuring that each hashed password will have a *unique* salt.
+ * - Comparing Hashes: Simply pass the originally hashed password as the salt.
+ * The salt is prepended to the hash and php handles the parsing automagically.
+ * For convenience the BlowfishAuthenticate adapter is available for use with
+ * the AuthComponent.
+ * - Do NOT use a constant salt for blowfish!
+ *
+ * Creating a blowfish/bcrypt hash:
+ *
+ * {{{
+ * 	$hash = Security::hash($password, 'blowfish');
+ * }}}
  *
  * @param string $string String to hash
- * @param string $type Method to use (sha1/sha256/md5)
+ * @param string $type Method to use (sha1/sha256/md5/blowfish)
  * @param mixed $salt If true, automatically appends the application's salt
  *     value to $string (Security.salt). If you are using blowfish the salt
  *     must be false or a previously generated salt.
@@ -222,7 +234,7 @@ class Security {
  * @param integer $length The length of the returned salt
  * @return string The generated salt
  */
-	public static function salt($length = 22) {
+	protected static function _salt($length = 22) {
 		$salt = str_replace(
 			array('+', '='),
 			'.',
@@ -232,14 +244,15 @@ class Security {
 	}
 
 /**
- * One way encryption using php's crypt() function, used with type blowfish in ``Security::hash()``
+ * One way encryption using php's crypt() function. To use blowfish hashing see ``Security::hash()``
  *
  * @param string $password The string to be encrypted.
  * @param mixed $salt false to generate a new salt or an existing salt.
+ * @return string The hashed string or an empty string on error.
  */
 	protected static function _crypt($password, $salt = false) {
 		if ($salt === false) {
-			$salt = self::salt(22);
+			$salt = self::_salt(22);
 			$salt = vsprintf('$2a$%02d$%s', array(self::$hashCost, $salt));
 		}
 
