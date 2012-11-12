@@ -699,7 +699,7 @@ class CakeTime {
 		$format = self::$wordFormat;
 		$end = self::$wordEnd;
 		$accuracy = self::$wordAccuracy;
-		$time_ago_format = self::$timeAgoFormat;
+		$timeAgoFormat = self::$timeAgoFormat;
 
 		if (is_array($options)) {
 			if (isset($options['timezone'])) {
@@ -726,8 +726,7 @@ class CakeTime {
 			}
 			unset($options['end'], $options['format']);
 			
-			$time_ago_format = isset($options['time_ago_format']) ? $options['time_ago_format'] : self::$timeAgoFormat;
-			
+			$timeAgoFormat = isset($options['timeAgoFormat']) ? $options['timeAgoFormat'] : self::$timeAgoFormat;
 		} else {
 			$format = $options;
 		}
@@ -857,7 +856,7 @@ class CakeTime {
 		}
 
 		if (!$backwards) {
-			return __d('cake', $time_ago_format, $relativeDate);
+			return __d('cake', $timeAgoFormat, $relativeDate);
 		}
 
 		return $relativeDate;

@@ -157,7 +157,7 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function testTimeAgoInWordsSpecificFormat($input, $expected) {
-		$result = $this->Time->timeAgoInWords($input, array('time_ago_format' => 'for %s'));
+		$result = $this->Time->timeAgoInWords($input, array('timeAgoFormat' => 'for %s'));
 		$this->assertEquals($expected, $result);
 	}
 
