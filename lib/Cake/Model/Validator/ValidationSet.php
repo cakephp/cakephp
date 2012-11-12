@@ -202,7 +202,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 		$this->reset();
 		$this->_isUpdate = $isUpdate;
 
-		if ($this->checkvalidatePresent($this->field, $data)) {
+		if ($this->checkValidatePresent($this->field, $data)) {
 			return array(__d('cake', 'This field must exist in data'));
 		}
 
@@ -255,7 +255,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param array $data data to check against
  * @return boolean
  */
-	public function checkvalidatePresent($field, $data) {
+	public function checkValidatePresent($field, $data) {
 		if (array_key_exists($field, $data)) {
 			return false;
 		}
