@@ -247,7 +247,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @see ModelValidator::validates()
  */
 	public function errors($options = array()) {
-		if (!$this->_triggerBeforeValidate($options)) {
+		if (!$this->_triggerBeforeValidate(&$options)) {
 			return false;
 		}
 		$model = $this->getModel();
@@ -464,7 +464,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  */
 	protected function _triggerBeforeValidate($options = array()) {
 		$model = $this->getModel();
-		$event = new CakeEvent('Model.beforeValidate', $model, array($options));
+		$event = new CakeEvent('Model.beforeValidate', $model, array(&$options));
 		list($event->break, $event->breakOn) = array(true, false);
 		$model->getEventManager()->dispatch($event);
 		if ($event->isStopped()) {
