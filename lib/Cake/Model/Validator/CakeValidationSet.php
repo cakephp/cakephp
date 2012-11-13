@@ -235,10 +235,11 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * @return ModelField
  */
 	public function setRules($rules = array(), $mergeVars = true) {
-		if ($mergeVars === false) {
-			$this->_rules = $rules;
-		} else {
-			$this->_rules = array_merge($this->_rules, $rules);
+		if($mergeVars === false) {
+			$this->_rules = array();
+		}
+		foreach($rules as $name => $rule) {
+			$this->setRule($name, $rule);
 		}
 		return $this;
 	}
