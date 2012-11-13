@@ -73,8 +73,12 @@ class Object {
 			$extra['autoRender'] = 1;
 			unset($extra[$index]);
 		}
-		if (is_array($url) && !isset($extra['url'])) {
+		$arrayUrl = is_array($url);
+		if ($arrayUrl && !isset($extra['url'])) {
 			$extra['url'] = array();
+		}
+		if ($arrayUrl && !isset($extra['data'])) {
+			$extra['data'] = array();
 		}
 		$extra = array_merge(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
 		$data = isset($extra['data']) ? $extra['data'] : null;
@@ -88,11 +92,12 @@ class Object {
 		} elseif (is_array($url)) {
 			$params = $url + array('pass' => array(), 'named' => array(), 'base' => false);
 			$params = array_merge($params, $extra);
-			$request = new CakeRequest(Router::reverse($params), false);
+			$request = new CakeRequest(Router::reverse($params));
 		}
 		if (isset($data)) {
 			$request->data = $data;
 		}
+
 		$dispatcher = new Dispatcher();
 		$result = $dispatcher->dispatch($request, new CakeResponse(), $extra);
 		Router::popRequest();

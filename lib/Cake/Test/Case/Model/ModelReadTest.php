@@ -4203,7 +4203,8 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('all', array(
-			'fields' => 'User.id, User.user'
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
 		));
 		$expected = array(
 			array(
@@ -4290,13 +4291,14 @@ class ModelReadTest extends BaseModelTest {
 
 		$TestModel->resetAssociations();
 		$result = $TestModel->hasMany;
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		$result = $TestModel->bindModel(array('hasMany' => array('Comment')), false);
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('all', array(
-			'fields' => 'User.id, User.user'
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
 		));
 
 		$expected = array(
@@ -4407,7 +4409,8 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->find('all', array(
-			'fields' => 'User.id, User.user'
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
 		));
 		$expected = array(
 			array('User' => array('id' => '1', 'user' => 'mariano')),
@@ -4417,7 +4420,8 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->find('all', array(
-			'fields' => 'User.id, User.user'
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
 		));
 		$expected = array(
 			array(
@@ -4505,7 +4509,10 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->unbindModel(array('hasMany' => array('Comment')), false);
 		$this->assertTrue($result);
 
-		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$result = $TestModel->find('all', array(
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
+		));
 		$expected = array(
 			array('User' => array('id' => '1', 'user' => 'mariano')),
 			array('User' => array('id' => '2', 'user' => 'nate')),
@@ -4522,7 +4529,10 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$this->assertTrue($result);
 
-		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$result = $TestModel->find('all', array(
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
+		));
 		$expected = array(
 			array(
 				'User' => array(
@@ -4959,7 +4969,9 @@ class ModelReadTest extends BaseModelTest {
 	public function testAssociationAfterFind() {
 		$this->loadFixtures('Post', 'Author', 'Comment');
 		$TestModel = new Post();
-		$result = $TestModel->find('all');
+		$result = $TestModel->find('all', array(
+			'order' => array('Post.id' => 'ASC')
+		));
 		$expected = array(
 			array(
 				'Post' => array(
@@ -5028,6 +5040,7 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$result = $Author->find('all', array(
 			'conditions' => array('Author.id' => 1),
+			'order' => array('Author.id' => 'ASC'),
 			'recursive' => 2
 		));
 		$expected = array(
@@ -5110,7 +5123,10 @@ class ModelReadTest extends BaseModelTest {
 	public function testAssociationAfterFindCalbacksDisabled() {
 		$this->loadFixtures('Post', 'Author', 'Comment');
 		$TestModel = new Post();
-		$result = $TestModel->find('all', array('callbacks' => false));
+		$result = $TestModel->find('all', array(
+			'callbacks' => false,
+			'order' => array('Post.id' => 'ASC'),
+		));
 		$expected = array(
 			array(
 				'Post' => array(
@@ -5177,6 +5193,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Author->find('all', array(
 			'conditions' => array('Author.id' => 1),
 			'recursive' => 2,
+			'order' => array('Author.id' => 'ASC'),
 			'callbacks' => false
 		));
 		$expected = array(
@@ -6860,6 +6877,17 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$result = $Article->find('count', array('group' => array('Article.user_id')));
 		$this->assertEquals($expected, $result);
+
+		$expected = count($Article->find('all', array(
+			'fields' => array('Article.user_id'),
+			'conditions' => array('Article.user_id' => 1),
+			'group' => 'Article.user_id')
+		));
+		$result = $Article->find('count', array(
+			'conditions' => array('Article.user_id' => 1),
+			'group' => array('Article.user_id'),
+		));
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -6886,7 +6914,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->skipIf($this->db instanceof Sqlite, 'SELECT COUNT(DISTINCT field) is not compatible with SQLite.');
 		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
 
-		$this->loadFixtures('Project');
+		$this->loadFixtures('Project', 'Thread');
 		$TestModel = new Project();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
@@ -7745,7 +7773,9 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 
 		$Post->Author->virtualFields = array('joined' => 'Post.id * Author.id');
-		$result = $Post->find('all');
+		$result = $Post->find('all', array(
+			'order' => array('Post.id' => 'ASC')
+		));
 		$result = Hash::extract($result, '{n}.Author.joined');
 		$expected = array(1, 6, 3);
 		$this->assertEquals($expected, $result);

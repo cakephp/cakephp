@@ -27,7 +27,7 @@ class CakeEvent {
 
 /**
  * Name of the event
- * 
+ *
  * @var string $name
  */
 	protected $_name = null;

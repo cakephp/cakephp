@@ -247,13 +247,17 @@ class FormHelper extends AppHelper {
 		if (empty($validationRules) || count($validationRules) === 0) {
 			return false;
 		}
+
+		$isUpdate = $this->requestType === 'put';
 		foreach ($validationRules as $rule) {
-			$rule->isUpdate($this->requestType === 'put');
-			if ($rule->isEmptyAllowed()) {
-				return false;
+			$rule->isUpdate($isUpdate);
+			if ($rule->skip()) {
+				continue;
 			}
+
+			return !$rule->allowEmpty;
 		}
-		return true;
+		return false;
 	}
 
 /**
@@ -299,8 +303,9 @@ class FormHelper extends AppHelper {
  *   can be overridden when calling input()
  * - `encoding` Set the accept-charset encoding for the form.  Defaults to `Configure::read('App.encoding')`
  *
- * @param string $model The model object which the form is being defined for.  Should
+ * @param string|array $model The model object which the form is being defined for. Should
  *   include the plugin name for plugin forms.  e.g. `ContactManager.Contact`.
+ *   If an array is passed and $options argument is empty, the array will be used as options.
  * @param array $options An array of html attributes and options.
  * @return string An formatted opening FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
@@ -993,7 +998,7 @@ class FormHelper extends AppHelper {
 
 		if (
 			(!isset($options['options']) && in_array($options['type'], $types)) ||
-			(isset($magicType) && $options['type'] == 'text')
+			(isset($magicType) && in_array($options['type'], array('text', 'number')))
 		) {
 			$varName = Inflector::variable(
 				Inflector::pluralize(preg_replace('/_id$/', '', $fieldKey))
@@ -1005,12 +1010,17 @@ class FormHelper extends AppHelper {
 				}
 				$options['options'] = $varOptions;
 			}
+
+			if ($options['type'] === 'select' && array_key_exists('step', $options)) {
+				unset($options['step']);
+			}
 		}
 
 		$autoLength = (
 			!array_key_exists('maxlength', $options) &&
 			isset($fieldDef['length']) &&
-			is_scalar($fieldDef['length'])
+			is_scalar($fieldDef['length']) &&
+			$options['type'] !== 'select'
 		);
 		if ($autoLength && $options['type'] == 'text') {
 			$options['maxlength'] = $fieldDef['length'];
@@ -2041,6 +2051,11 @@ class FormHelper extends AppHelper {
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
+
+		if ($attributes['value'] > 12 && !$format24Hours) {
+			$attributes['value'] -= 12;
+		}
+
 		return $this->select(
 			$fieldName . ".hour",
 			$this->_generateOptions($format24Hours ? 'hour24' : 'hour'),
@@ -2184,50 +2199,12 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($attributes['value'])) {
-			if (is_array($attributes['value'])) {
-				extract($attributes['value']);
-			} else {
-				if (is_numeric($attributes['value'])) {
-					$attributes['value'] = strftime('%Y-%m-%d %H:%M:%S', $attributes['value']);
-				}
-				$meridian = 'am';
-				$pos = strpos($attributes['value'], '-');
-				if ($pos !== false) {
-					$date = explode('-', $attributes['value']);
-					$days = explode(' ', $date[2]);
-					$day = $days[0];
-					$month = $date[1];
-					$year = $date[0];
-				} else {
-					$days[1] = $attributes['value'];
-				}
-
-				if (!empty($timeFormat)) {
-					$time = explode(':', $days[1]);
-
-					if (($time[0] > 12) && $timeFormat == '12') {
-						$time[0] = $time[0] - 12;
-						$meridian = 'pm';
-					} elseif ($time[0] == '12' && $timeFormat == '12') {
-						$meridian = 'pm';
-					} elseif ($time[0] == '00' && $timeFormat == '12') {
-						$time[0] = 12;
-					} elseif ($time[0] >= 12) {
-						$meridian = 'pm';
-					}
-					if ($time[0] == 0 && $timeFormat == '12') {
-						$time[0] = 12;
-					}
-					$hour = $min = null;
-					if (isset($time[1])) {
-						$hour = $time[0];
-						$min = $time[1];
-					}
-				}
-			}
+			list($year, $month, $day, $hour, $min, $meridian) = $this->_getDateTimeValue(
+				$attributes['value'],
+				$timeFormat
+			);
 		}
 
-		$elements = array('Day', 'Month', 'Year', 'Hour', 'Minute', 'Meridian');
 		$defaults = array(
 			'minYear' => null, 'maxYear' => null, 'separator' => '-',
 			'interval' => 1, 'monthNames' => true
@@ -2258,42 +2235,42 @@ class FormHelper extends AppHelper {
 			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
 		}
 
-		if (isset($attributes['id'])) {
-			if (is_string($attributes['id'])) {
-				// build out an array version
-				foreach ($elements as $element) {
-					$selectAttrName = 'select' . $element . 'Attr';
-					${$selectAttrName} = $attributes;
-					${$selectAttrName}['id'] = $attributes['id'] . $element;
-				}
-			} elseif (is_array($attributes['id'])) {
-				// check for missing ones and build selectAttr for each element
-				$attributes['id'] += array(
-					'month' => '', 'year' => '', 'day' => '',
-					'hour' => '', 'minute' => '', 'meridian' => ''
-				);
-				foreach ($elements as $element) {
-					$selectAttrName = 'select' . $element . 'Attr';
-					${$selectAttrName} = $attributes;
-					${$selectAttrName}['id'] = $attributes['id'][strtolower($element)];
-				}
+		$keys = array('Day', 'Month', 'Year', 'Hour', 'Minute', 'Meridian');
+		$attrs = array_fill_keys($keys, $attributes);
+
+		$hasId = isset($attributes['id']);
+		if ($hasId && is_array($attributes['id'])) {
+			// check for missing ones and build selectAttr for each element
+			$attributes['id'] += array(
+				'month' => '',
+				'year' => '',
+				'day' => '',
+				'hour' => '',
+				'minute' => '',
+				'meridian' => ''
+			);
+			foreach ($keys as $key) {
+				$attrs[$key]['id'] = $attributes['id'][strtolower($key)];
 			}
-		} else {
-			// build the selectAttrName with empty id's to pass
-			foreach ($elements as $element) {
-				$selectAttrName = 'select' . $element . 'Attr';
-				${$selectAttrName} = $attributes;
+		}
+		if ($hasId && is_string($attributes['id'])) {
+			// build out an array version
+			foreach ($keys as $key) {
+				$attrs[$key]['id'] = $attributes['id'] . $key;
 			}
 		}
 
 		if (is_array($attributes['empty'])) {
 			$attributes['empty'] += array(
-				'month' => true, 'year' => true, 'day' => true,
-				'hour' => true, 'minute' => true, 'meridian' => true
+				'month' => true,
+				'year' => true,
+				'day' => true,
+				'hour' => true,
+				'minute' => true,
+				'meridian' => true
 			);
-			foreach ($elements as $element) {
-				$selectAttrName = 'select' . $element . 'Attr';
-				${$selectAttrName}['empty'] = $attributes['empty'][strtolower($element)];
+			foreach ($keys as $key) {
+				$attrs[$key]['empty'] = $attributes['empty'][strtolower($key)];
 			}
 		}
 
@@ -2301,45 +2278,96 @@ class FormHelper extends AppHelper {
 		foreach (preg_split('//', $dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
 			switch ($char) {
 				case 'Y':
-					$selectYearAttr['value'] = $year;
+					$attrs['Year']['value'] = $year;
 					$selects[] = $this->year(
-						$fieldName, $minYear, $maxYear, $selectYearAttr
+						$fieldName, $minYear, $maxYear, $attrs['Year']
 					);
 				break;
 				case 'M':
-					$selectMonthAttr['value'] = $month;
-					$selectMonthAttr['monthNames'] = $monthNames;
-					$selects[] = $this->month($fieldName, $selectMonthAttr);
+					$attrs['Month']['value'] = $month;
+					$attrs['Month']['monthNames'] = $monthNames;
+					$selects[] = $this->month($fieldName, $attrs['Month']);
 				break;
 				case 'D':
-					$selectDayAttr['value'] = $day;
-					$selects[] = $this->day($fieldName, $selectDayAttr);
+					$attrs['Day']['value'] = $day;
+					$selects[] = $this->day($fieldName, $attrs['Day']);
 				break;
 			}
 		}
 		$opt = implode($separator, $selects);
 
-		$selectMinuteAttr['interval'] = $interval;
+		$attrs['Minute']['interval'] = $interval;
 		switch ($timeFormat) {
 			case '24':
-				$selectHourAttr['value'] = $hour;
-				$selectMinuteAttr['value'] = $min;
-				$opt .= $this->hour($fieldName, true, $selectHourAttr) . ':' .
-				$this->minute($fieldName, $selectMinuteAttr);
+				$attrs['Hour']['value'] = $hour;
+				$attrs['Minute']['value'] = $min;
+				$opt .= $this->hour($fieldName, true, $attrs['Hour']) . ':' .
+				$this->minute($fieldName, $attrs['Minute']);
 			break;
 			case '12':
-				$selectHourAttr['value'] = $hour;
-				$selectMinuteAttr['value'] = $min;
-				$selectMeridianAttr['value'] = $meridian;
-				$opt .= $this->hour($fieldName, false, $selectHourAttr) . ':' .
-				$this->minute($fieldName, $selectMinuteAttr) . ' ' .
-				$this->meridian($fieldName, $selectMeridianAttr);
-			break;
-			default:
-				$opt .= '';
+				$attrs['Hour']['value'] = $hour;
+				$attrs['Minute']['value'] = $min;
+				$attrs['Meridian']['value'] = $meridian;
+				$opt .= $this->hour($fieldName, false, $attrs['Hour']) . ':' .
+				$this->minute($fieldName, $attrs['Minute']) . ' ' .
+				$this->meridian($fieldName, $attrs['Meridian']);
 			break;
 		}
 		return $opt;
+	}
+
+/**
+ * Parse the value for a datetime selected value
+ *
+ * @param string|array $value The selected value.
+ * @param integer $timeFormat The time format
+ * @return array Array of selected value.
+ */
+	protected function _getDateTimeValue($value, $timeFormat) {
+		$year = $month = $day = $hour = $min = $meridian = null;
+		if (is_array($value)) {
+			extract($value);
+			if ($meridian === 'pm') {
+				$hour += 12;
+			}
+			return array($year, $month, $day, $hour, $min, $meridian);
+		}
+
+		if (is_numeric($value)) {
+			$value = strftime('%Y-%m-%d %H:%M:%S', $value);
+		}
+		$meridian = 'am';
+		$pos = strpos($value, '-');
+		if ($pos !== false) {
+			$date = explode('-', $value);
+			$days = explode(' ', $date[2]);
+			$day = $days[0];
+			$month = $date[1];
+			$year = $date[0];
+		} else {
+			$days[1] = $value;
+		}
+
+		if (!empty($timeFormat)) {
+			$time = explode(':', $days[1]);
+
+			if ($time[0] >= '12' && $timeFormat == '12') {
+				$meridian = 'pm';
+			} elseif ($time[0] == '00' && $timeFormat == '12') {
+				$time[0] = 12;
+			} elseif ($time[0] >= 12) {
+				$meridian = 'pm';
+			}
+			if ($time[0] == 0 && $timeFormat == '12') {
+				$time[0] = 12;
+			}
+			$hour = $min = null;
+			if (isset($time[1])) {
+				$hour = $time[0];
+				$min = $time[1];
+			}
+		}
+		return array($year, $month, $day, $hour, $min, $meridian);
 	}
 
 /**

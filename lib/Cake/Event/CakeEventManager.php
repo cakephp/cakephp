@@ -50,7 +50,7 @@ class CakeEventManager {
 	protected $_listeners = array();
 
 /**
- * Internal flag to distinguish a common manager from the sigleton 
+ * Internal flag to distinguish a common manager from the sigleton
  *
  * @var boolean
  */
@@ -64,7 +64,7 @@ class CakeEventManager {
  *
  * If called with a first params, it will be set as the globally available instance
  *
- * @param CakeEventManager $manager 
+ * @param CakeEventManager $manager
  * @return CakeEventManager the global event manager
  */
 	public static function instance($manager = null) {
@@ -80,7 +80,7 @@ class CakeEventManager {
 	}
 
 /**
- * Adds a new listener to an event. Listeners 
+ * Adds a new listener to an event. Listeners
  *
  * @param callback|CakeEventListener $callable PHP valid callback type or instance of CakeEventListener to be called
  * when the event named with $eventKey is triggered. If a CakeEventListener instances is passed, then the `implementedEvents`

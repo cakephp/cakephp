@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 /**
  * Short description for file.
  *
@@ -28,7 +29,7 @@
 <?php if (!empty($plugins)): ?>
 	<li style="padding-top: 10px">
 		<span style="font-size: 18px">Plugins</span>
-	<?php foreach ($plugins as $plugin): ?>
+	<?php foreach ($plugins as $plugin) : ?>
 			<ul>
 				<li style="padding-top: 10px">
 					<span  style="font-size: 18px"><?php echo $plugin; ?></span>

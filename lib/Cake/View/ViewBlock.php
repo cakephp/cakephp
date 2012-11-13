@@ -73,7 +73,7 @@ class ViewBlock {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new 
+ * Append to an existing or new block.  Appending to a new
  * block will create the block.
  *
  * Calling append() without a value will create a new capturing

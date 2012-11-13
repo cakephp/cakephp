@@ -904,7 +904,7 @@ class JsBaseEngineTest extends CakeTestCase {
 	public function testOptionMapping() {
 		$JsEngine = new OptionEngineHelper($this->View);
 		$result = $JsEngine->testMap();
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		$result = $JsEngine->testMap(array('foo' => 'bar', 'baz' => 'sho'));
 		$this->assertEquals(array('foo' => 'bar', 'baz' => 'sho'), $result);

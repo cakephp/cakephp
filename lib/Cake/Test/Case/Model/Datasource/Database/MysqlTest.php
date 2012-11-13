@@ -878,6 +878,52 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
+ * Test that the primary flag is handled correctly.
+ *
+ * @return void
+ */
+	public function testCreateSchemaAutoPrimaryKey() {
+		$schema = new CakeSchema();
+		$schema->tables = array(
+			'no_indexes' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
+				'data' => array('type' => 'integer', 'null' => false),
+				'indexes' => array(),
+			)
+		);
+		$result = $this->Dbo->createSchema($schema, 'no_indexes');
+		$this->assertContains('PRIMARY KEY  (`id`)', $result);
+		$this->assertNotContains('UNIQUE KEY', $result);
+
+		$schema->tables = array(
+			'primary_index' => array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'data' => array('type' => 'integer', 'null' => false),
+				'indexes' => array(
+					'PRIMARY' => array('column' => 'id', 'unique' => 1),
+					'some_index' => array('column' => 'data', 'unique' => 1)
+				),
+			)
+		);
+		$result = $this->Dbo->createSchema($schema, 'primary_index');
+		$this->assertContains('PRIMARY KEY  (`id`)', $result);
+		$this->assertContains('UNIQUE KEY `some_index` (`data`)', $result);
+
+		$schema->tables = array(
+			'primary_flag_has_index' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
+				'data' => array('type' => 'integer', 'null' => false),
+				'indexes' => array (
+					'some_index' => array('column' => 'data', 'unique' => 1)
+				),
+			)
+		);
+		$result = $this->Dbo->createSchema($schema, 'primary_flag_has_index');
+		$this->assertContains('PRIMARY KEY  (`id`)', $result);
+		$this->assertContains('UNIQUE KEY `some_index` (`data`)', $result);
+	}
+
+/**
  * Tests that listSources method sends the correct query and parses the result accordingly
  * @return void
  */
@@ -1914,7 +1960,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score' => array(2 => 1, 2, 10)));
-		$expected = " WHERE score IN (1, 2, 10)";
+		$expected = " WHERE `score` IN (1, 2, 10)";
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions("Aro.rght = Aro.lft + 1.1");
@@ -2194,7 +2240,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score' => array(1, 2, 10)));
-		$expected = " WHERE score IN (1, 2, 10)";
+		$expected = " WHERE `score` IN (1, 2, 10)";
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions(array('score' => array()));
@@ -2285,7 +2331,7 @@ class MysqlTest extends CakeTestCase {
 			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),
 			'Enrollment.yearcompleted >' => '0')
 		);
-		$this->assertRegExp('/^\s*WHERE\s+\(NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(level_of_education_id IN \(912, 999\)\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
+		$this->assertRegExp('/^\s*WHERE\s+\(NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
 
 		$result = $this->Dbo->conditions(array('id <>' => '8'));
 		$this->assertRegExp('/^\s*WHERE\s+`id`\s+<>\s+\'8\'\s*$/', $result);
@@ -2321,7 +2367,7 @@ class MysqlTest extends CakeTestCase {
 
 		$conditions = array('id' => array(2, 5, 6, 9, 12, 45, 78, 43, 76));
 		$result = $this->Dbo->conditions($conditions);
-		$expected = " WHERE id IN (2, 5, 6, 9, 12, 45, 78, 43, 76)";
+		$expected = " WHERE `id` IN (2, 5, 6, 9, 12, 45, 78, 43, 76)";
 		$this->assertEquals($expected, $result);
 
 		$conditions = array('title' => 'user(s)');
