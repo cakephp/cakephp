@@ -307,6 +307,10 @@ class PostgresTest extends CakeTestCase {
 		$this->assertEquals('string', $this->Dbo2->column('character varying'));
 		$this->assertEquals('time', $this->Dbo2->column('time without time zone'));
 		$this->assertEquals('datetime', $this->Dbo2->column('timestamp without time zone'));
+
+		$result = $this->Dbo2->column('bigint');
+		$expected = 'biginteger';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -530,6 +534,7 @@ class PostgresTest extends CakeTestCase {
 			id serial NOT NULL,
 			"varchar" character varying(40) NOT NULL,
 			"full_length" character varying NOT NULL,
+			"huge_int" bigint NOT NULL,
 			"timestamp" timestamp without time zone,
 			"date" date,
 			CONSTRAINT test_data_types_pkey PRIMARY KEY (id)
@@ -541,12 +546,15 @@ class PostgresTest extends CakeTestCase {
 			'connection' => 'test',
 			'models' => array('DatatypeTest')
 		));
-		$schema->tables = array('datatype_tests' => $result['tables']['missing']['datatype_tests']);
+		$schema->tables = array(
+			'datatype_tests' => $result['tables']['missing']['datatype_tests']
+		);
 		$result = $db1->createSchema($schema, 'datatype_tests');
 
 		$this->assertNotRegExp('/timestamp DEFAULT/', $result);
 		$this->assertRegExp('/\"full_length\"\s*text\s.*,/', $result);
-		$this->assertRegExp('/timestamp\s*,/', $result);
+		$this->assertContains('timestamp ,', $result);
+		$this->assertContains('"huge_int" bigint NOT NULL,', $result);
 
 		$db1->query('DROP TABLE ' . $db1->fullTableName('datatype_tests'));
 
@@ -940,6 +948,28 @@ class PostgresTest extends CakeTestCase {
 
 		$this->assertTrue($this->Dbo->rollback());
 		$this->assertNotEmpty($model->read(null, 1));
+	}
+
+	public function testResetSequence() {
+		$model = new Article();
+
+		$table = $this->Dbo->fullTableName($model, false);
+		$fields = array(
+			'id', 'user_id', 'title', 'body', 'published',
+		);
+		$values = array(
+			array(1, 1, 'test', 'first post', false),
+			array(2, 1, 'test 2', 'second post post', false),
+		);
+		$this->Dbo->insertMulti($table, $fields, $values);
+		$sequence = $this->Dbo->getSequence($table);
+		$result = $this->Dbo->rawQuery("SELECT nextval('$sequence')");
+		$original = $result->fetch(PDO::FETCH_ASSOC);
+
+		$this->assertTrue($this->Dbo->resetSequence($table, 'id'));
+		$result = $this->Dbo->rawQuery("SELECT currval('$sequence')");
+		$new = $result->fetch(PDO::FETCH_ASSOC);
+		$this->assertTrue($new['currval'] > $original['nextval'], 'Sequence did not update');
 	}
 
 }

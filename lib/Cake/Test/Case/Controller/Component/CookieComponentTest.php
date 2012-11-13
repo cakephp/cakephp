@@ -539,6 +539,60 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * testCheck method
+ *
+ * @return void
+ */
+	public function testCheck() {
+		$this->Cookie->write('CookieComponentTestCase', 'value');
+		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
+
+		$this->assertFalse($this->Cookie->check('NotExistingCookieComponentTestCase'));
+	}
+
+/**
+ * testCheckingSavedEmpty method
+ *
+ * @return void
+ */
+	public function testCheckingSavedEmpty() {
+		$this->Cookie->write('CookieComponentTestCase', 0);
+		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
+
+		$this->Cookie->write('CookieComponentTestCase', '0');
+		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
+
+		$this->Cookie->write('CookieComponentTestCase', false);
+		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
+
+		$this->Cookie->write('CookieComponentTestCase', null);
+		$this->assertFalse($this->Cookie->check('CookieComponentTestCase'));
+	}
+
+/**
+ * testCheckKeyWithSpaces method
+ *
+ * @return void
+ */
+	public function testCheckKeyWithSpaces() {
+		$this->Cookie->write('CookieComponent Test', "test");
+		$this->assertTrue($this->Cookie->check('CookieComponent Test'));
+		$this->Cookie->delete('CookieComponent Test');
+
+		$this->Cookie->write('CookieComponent Test.Test Case', "test");
+		$this->assertTrue($this->Cookie->check('CookieComponent Test.Test Case'));
+	}
+
+/**
+ * testCheckEmpty
+ *
+ * @return void
+ */
+	public function testCheckEmpty() {
+		$this->assertFalse($this->Cookie->check());
+	}
+
+/**
  * test that deleting a top level keys kills the child elements too.
  *
  * @return void

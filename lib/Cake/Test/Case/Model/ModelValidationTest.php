@@ -714,25 +714,6 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
- * Test that missing validation methods does not trigger errors in production mode.
- *
- * @return void
- */
-	public function testMissingValidationErrorNoTriggering() {
-		Configure::write('debug', 0);
-		$TestModel = new ValidationTest1();
-		$TestModel->create(array('title' => 'foo'));
-		$TestModel->validate = array(
-			'title' => array(
-				'rule' => array('thisOneBringsThePain'),
-				'required' => true
-			)
-		);
-		$TestModel->invalidFields(array('fieldList' => array('title')));
-		$this->assertEquals(array(), $TestModel->validationErrors);
-	}
-
-/**
  * Test placeholder replacement when validation message is an array
  *
  * @return void

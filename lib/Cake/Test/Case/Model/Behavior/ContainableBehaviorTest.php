@@ -262,6 +262,30 @@ class ContainableBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * testContainFindList method
+ *
+ * @return void
+ */
+	public function testContainFindList() {
+		$this->Article->contain('Comment.User');
+		$result = $this->Article->find('list');
+		$expected = array(
+			1 => 'First Article',
+			2 => 'Second Article',
+			3 => 'Third Article'
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Article->find('list', array('fields' => array('Article.id', 'User.id'), 'contain' => array('User')));
+		$expected = array(
+			1 => '1',
+			2 => '3',
+			3 => '1'
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test that mixing contain() and the contain find option.
  *
  * @return void

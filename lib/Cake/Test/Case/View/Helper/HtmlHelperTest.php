@@ -337,6 +337,30 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->link('http://www.example.org?param1=value1&param2=value2');
 		$expected = array('a' => array('href' => 'http://www.example.org?param1=value1&amp;param2=value2'), 'http://www.example.org?param1=value1&amp;param2=value2', '/a');
 		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('alert', 'javascript:alert(\'cakephp\');');
+		$expected = array('a' => array('href' => 'javascript:alert(&#039;cakephp&#039;);'), 'alert', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('write me', 'mailto:example@cakephp.org');
+		$expected = array('a' => array('href' => 'mailto:example@cakephp.org'), 'write me', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('call me on 0123465-798', 'tel:0123465-798');
+		$expected = array('a' => array('href' => 'tel:0123465-798'), 'call me on 0123465-798', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('text me on 0123465-798', 'sms:0123465-798');
+		$expected = array('a' => array('href' => 'sms:0123465-798'), 'text me on 0123465-798', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('say hello to 0123465-798', 'sms:0123465-798?body=hello there');
+		$expected = array('a' => array('href' => 'sms:0123465-798?body=hello there'), 'say hello to 0123465-798', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('say hello to 0123465-798', 'sms:0123465-798?body=hello "cakephp"');
+		$expected = array('a' => array('href' => 'sms:0123465-798?body=hello &quot;cakephp&quot;'), 'say hello to 0123465-798', '/a');
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -1839,7 +1863,8 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array(
 			'tags' => array(
 				'form' => 'start form',
-				'formend' => 'finish form'
+				'formend' => 'finish form',
+				'hiddenblock' => '<div class="hidden">%s</div>'
 			)
 		);
 		$this->assertEquals($expected, $result);

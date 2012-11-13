@@ -73,7 +73,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 			);
 		}
 
-		if (count($suite) == 0) {
+		if (!count($suite)) {
 			$skeleton = new PHPUnit_Util_Skeleton_Test(
 				$suite->getName(),
 				$this->arguments['testFile']

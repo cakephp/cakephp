@@ -62,6 +62,7 @@ class RedisEngine extends CacheEngine {
 			'prefix' => null,
 			'server' => '127.0.0.1',
 			'port' => 6379,
+			'password' => false,
 			'timeout' => 0,
 			'persistent' => true
 			), $settings)
@@ -86,6 +87,9 @@ class RedisEngine extends CacheEngine {
 			}
 		} catch (RedisException $e) {
 			return false;
+		}
+		if ($return && $this->settings['password']) {
+			$return = $this->_Redis->auth($this->settings['password']);
 		}
 		return $return;
 	}

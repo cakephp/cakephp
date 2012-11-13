@@ -72,6 +72,11 @@ if (!defined('WWW_ROOT')) {
 	define('WWW_ROOT', dirname(__FILE__) . DS);
 }
 
+// for built-in server
+if (php_sapi_name() == 'cli-server') {
+	$_SERVER['PHP_SELF'] = '/' . basename(__FILE__);
+}
+
 if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	if (function_exists('ini_set')) {
 		ini_set('include_path', ROOT . DS . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
@@ -93,5 +98,5 @@ App::uses('Dispatcher', 'Routing');
 $Dispatcher = new Dispatcher();
 $Dispatcher->dispatch(
 	new CakeRequest(),
-	new CakeResponse(array('charset' => Configure::read('App.encoding')))
+	new CakeResponse()
 );

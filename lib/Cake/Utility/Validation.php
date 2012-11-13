@@ -19,6 +19,7 @@
 
 App::uses('Multibyte', 'I18n');
 App::uses('File', 'Utility');
+App::uses('CakeNumber', 'Utility');
 // Load multibyte if the extension is missing.
 if (!function_exists('mb_strlen')) {
 	class_exists('Multibyte');
@@ -325,13 +326,13 @@ class Validation {
  * Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)
  * ## Keys:
  *
- *	- dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
- *	- mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
- *	- ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
- *  - dMy 27 December 2006 or 27 Dec 2006
- *	- Mdy December 27, 2006 or Dec 27, 2006 comma is optional
- *	- My December 2006 or Dec 2006
- * 	- my 12/2006 separators can be a space, period, dash, forward slash
+ * - dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
+ * - mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
+ * - ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
+ * - dMy 27 December 2006 or 27 Dec 2006
+ * - Mdy December 27, 2006 or Dec 27, 2006 comma is optional
+ * - My December 2006 or Dec 2006
+ * - my 12/2006 separators can be a space, period, dash, forward slash
  * @param string $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
  * @return boolean True if the value is valid, false otherwise
  * @see Validation::date
@@ -615,7 +616,7 @@ class Validation {
 				case 'can':
 					// includes all NANPA members.
 					// see http://en.wikipedia.org/wiki/North_American_Numbering_Plan#List_of_NANPA_countries_and_territories
-					$regex  = '/^(?:\+?1)?[-. ]?\\(?[2-9][0-8][0-9]\\)?[-. ]?[2-9][0-9]{2}[-. ]?[0-9]{4}$/';
+					$regex = '/^(?:\+?1)?[-. ]?\\(?[2-9][0-8][0-9]\\)?[-. ]?[2-9][0-9]{2}[-. ]?[0-9]{4}$/';
 				break;
 			}
 		}
@@ -641,20 +642,20 @@ class Validation {
 		if (is_null($regex)) {
 			switch ($country) {
 				case 'uk':
-					$regex  = '/\\A\\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\\b\\z/i';
+					$regex = '/\\A\\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\\b\\z/i';
 					break;
 				case 'ca':
-					$regex  = '/\\A\\b[ABCEGHJKLMNPRSTVXY][0-9][A-Z] [0-9][A-Z][0-9]\\b\\z/i';
+					$regex = '/\\A\\b[ABCEGHJKLMNPRSTVXY][0-9][A-Z] [0-9][A-Z][0-9]\\b\\z/i';
 					break;
 				case 'it':
 				case 'de':
-					$regex  = '/^[0-9]{5}$/i';
+					$regex = '/^[0-9]{5}$/i';
 					break;
 				case 'be':
-					$regex  = '/^[1-9]{1}[0-9]{3}$/i';
+					$regex = '/^[1-9]{1}[0-9]{3}$/i';
 					break;
 				case 'us':
-					$regex  = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
+					$regex = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
 					break;
 			}
 		}
@@ -700,13 +701,13 @@ class Validation {
 		if (is_null($regex)) {
 			switch ($country) {
 				case 'dk':
-					$regex  = '/\\A\\b[0-9]{6}-[0-9]{4}\\b\\z/i';
+					$regex = '/\\A\\b[0-9]{6}-[0-9]{4}\\b\\z/i';
 					break;
 				case 'nl':
-					$regex  = '/\\A\\b[0-9]{9}\\b\\z/i';
+					$regex = '/\\A\\b[0-9]{9}\\b\\z/i';
 					break;
 				case 'us':
-					$regex  = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
+					$regex = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
 					break;
 			}
 		}
@@ -859,7 +860,7 @@ class Validation {
 		if ($deep !== true) {
 			return true;
 		}
-		if ($check == 0) {
+		if ((int)$check === 0) {
 			return false;
 		}
 		$sum = 0;
@@ -874,7 +875,7 @@ class Validation {
 			$sum += ($number < 10) ? $number : $number - 9;
 		}
 
-		return ($sum % 10 == 0);
+		return ($sum % 10 === 0);
 	}
 
 /**
@@ -900,6 +901,27 @@ class Validation {
 	}
 
 /**
+ * Checks the filesize
+ *
+ * @param string|array $check
+ * @param integer|string $size Size in bytes or human readable string like '5MB'
+ * @param string $operator See `Validation::comparison()`
+ * @return boolean Success
+ */
+	public static function fileSize($check, $operator = null, $size = null) {
+		if (is_array($check) && isset($check['tmp_name'])) {
+			$check = $check['tmp_name'];
+		}
+
+		if (is_string($size)) {
+			$size = CakeNumber::fromReadableSize($size);
+		}
+		$filesize = filesize($check);
+
+		return self::comparison($filesize, $operator, $size);
+	}
+
+/**
  * Checking for upload errors
  *
  * @param string|array $check
@@ -921,7 +943,7 @@ class Validation {
  */
 	protected static function _populateIp() {
 		if (!isset(self::$_pattern['IPv6'])) {
-			$pattern  = '((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}';
+			$pattern = '((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}';
 			$pattern .= '(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})';
 			$pattern .= '|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})';
 			$pattern .= '(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)';

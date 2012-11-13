@@ -58,7 +58,7 @@ class ModelWriteTest extends BaseModelTest {
 		$lastInsertId = $TestModel->JoinAsJoinB->getLastInsertID();
 		$data['id'] = $lastInsertId;
 		$this->assertEquals(array('JoinAsJoinB' => $data), $result);
-		$this->assertTrue($lastInsertId != null);
+		$this->assertTrue($lastInsertId > 0);
 
 		$result = $TestModel->JoinAsJoinB->findById(1);
 		$expected = array(
@@ -6470,10 +6470,10 @@ class ModelWriteTest extends BaseModelTest {
 
 		// test belongsTo
 		$fieldList = array(
-			'Post' => array('title', 'author_id'),
+			'Post' => array('title'),
 			'Author' => array('user')
 		);
-		$TestModel->saveAll(array(
+		$data = array(
 			'Post' => array(
 				'title' => 'Post without body',
 				'body' => 'This will not be saved',
@@ -6482,7 +6482,8 @@ class ModelWriteTest extends BaseModelTest {
 				'user' => 'bob',
 				'test' => 'This will not be saved',
 
-		)), array('fieldList' => $fieldList));
+		));
+		$TestModel->saveAll($data, array('fieldList' => $fieldList));
 
 		$result = $TestModel->find('all');
 		$expected = array(
@@ -6569,22 +6570,42 @@ class ModelWriteTest extends BaseModelTest {
 		$this->db->truncate($TestModel);
 		$this->db->truncate(new Comment());
 
-		$fieldList = array(
-			'Article' => array('id'),
-			'Comment' => array('article_id', 'user_id')
-		);
-		$result = $TestModel->saveAll(array(
-			'Article' => array('id' => 2, 'title' => 'I will not save'),
+		$data = array(
+			'Article' => array('title' => 'I will not save'),
 			'Comment' => array(
 				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
 				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
 			)
-		), array('fieldList' => $fieldList));
+		);
+
+		$fieldList = array(
+			'Article' => array('id'),
+			'Comment' => array('article_id', 'user_id')
+		);
+		$TestModel->saveAll($data, array('fieldList' => $fieldList));
 
 		$result = $TestModel->find('all');
 		$this->assertEquals('', $result[0]['Article']['title']);
 		$this->assertEquals('', $result[0]['Comment'][0]['comment']);
 		$this->assertEquals('', $result[0]['Comment'][1]['comment']);
+
+		$fieldList = array(
+			'Article' => array('id'),
+			'Comment' => array('user_id')
+		);
+		$TestModel->saveAll($data, array('fieldList' => $fieldList));
+		$result = $TestModel->find('all');
+
+		$this->assertEquals('', $result[1]['Article']['title']);
+		$this->assertEquals(2, count($result[1]['Comment']));
+
+		$TestModel->whitelist = array('id');
+		$TestModel->Comment->whitelist = array('user_id');
+		$TestModel->saveAll($data);
+		$result = $TestModel->find('all');
+
+		$this->assertEquals('', $result[2]['Article']['title']);
+		$this->assertEquals(2, count($result[2]['Comment']));
 	}
 
 /**
@@ -6621,6 +6642,59 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertTrue($result);
 		$this->assertEmpty($TestModel->validationErrors);
+	}
+
+/**
+ * testSaveAllFieldListHasOneAddFkToWhitelist method
+ *
+ * @return void
+ */
+	public function testSaveAllFieldListHasOneAddFkToWhitelist() {
+		$this->loadFixtures('ArticleFeatured', 'Featured');
+		$Article = new ArticleFeatured();
+		$Article->belongsTo = $Article->hasMany = array();
+		$Article->Featured->validate = array('end_date' => 'notEmpty');
+
+		$record = array(
+			'ArticleFeatured' => array(
+				'user_id' => 1,
+				'title' => 'First Article',
+				'body' => '',
+				'published' => 'Y'
+			),
+			'Featured' => array(
+				'category_id' => 1,
+				'end_date' => ''
+			)
+		);
+		$result = $Article->saveAll($record, array('validate' => 'only'));
+		$this->assertFalse($result);
+		$expected = array(
+			'body' => array(
+				'This field cannot be left blank'
+			),
+			'Featured' => array(
+				'end_date' => array(
+					'This field cannot be left blank'
+				)
+			)
+		);
+		$this->assertEquals($expected, $Article->validationErrors);
+
+		$fieldList = array(
+			'ArticleFeatured' => array('user_id', 'title'),
+			'Featured' => array('category_id')
+		);
+
+		$result = $Article->saveAll($record, array(
+			'fieldList' => $fieldList, 'validate' => 'first'
+		));
+		$this->assertTrue($result);
+		$this->assertEmpty($Article->validationErrors);
+
+		$Article->recursive = 0;
+		$result = $Article->find('first', array('order' => array('ArticleFeatured.created' => 'DESC')));
+		$this->assertSame($result['ArticleFeatured']['id'], $result['Featured']['article_featured_id']);
 	}
 
 /**

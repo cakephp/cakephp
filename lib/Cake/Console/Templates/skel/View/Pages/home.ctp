@@ -15,7 +15,7 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (Configure::read('debug') == 0):
+if (!Configure::read('debug')):
 	throw new NotFoundException();
 endif;
 App::uses('Debugger', 'Utility');
@@ -127,11 +127,28 @@ if (isset($filePresent)):
 		echo '</span></p>';
 	}
 ?>
+
+<p>
+	<?php
+		if (CakePlugin::loaded('DebugKit')):
+			echo '<span class="notice success">';
+				echo __d('cake_dev', 'DebugKit plugin is present');
+			echo '</span>';
+		else:
+			echo '<span class="notice">';
+				echo __d('cake_dev', 'DebugKit is not installed. It will help you inspect and debug different aspects of your application.');
+				echo '<br/>';
+				echo __d('cake_dev', 'You can install it from %s', $this->Html->link('github', 'https://github.com/cakephp/debug_kit'));
+			echo '</span>';
+		endif;
+	?>
+</p>
+
 <h3><?php echo __d('cake_dev', 'Editing this Page'); ?></h3>
 <p>
 <?php
-echo __d('cake_dev', 'To change the content of this page, create: APP/View/Pages/home.ctp.<br />
-To change its layout, create: APP/View/Layouts/default.ctp.<br />
+echo __d('cake_dev', 'To change the content of this page, edit: APP/View/Pages/home.ctp.<br />
+To change its layout, edit: APP/View/Layouts/default.ctp.<br />
 You can also add some CSS styles for your pages at: APP/webroot/css.');
 ?>
 </p>
@@ -156,6 +173,20 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 	?>
 </p>
 
+<h3><?php echo __d('cake_dev', 'Official Plugins'); ?></h3>
+<p>
+<ul>
+	<li>
+		<?php echo $this->Html->link('DebugKit', 'https://github.com/cakephp/debug_kit') ?>:
+		<?php echo __d('cake_dev', 'provides a debugging toolbar and enhanced debugging tools for CakePHP applications.'); ?>
+	</li>
+	<li>
+		<?php echo $this->Html->link('Localized', 'https://github.com/cakephp/localized') ?>:
+		<?php echo __d('cake_dev', 'contains various localized validation classes and translations for specific countries'); ?>
+	</li>
+</ul>
+</p>
+
 <h3><?php echo __d('cake_dev', 'More about Cake'); ?></h3>
 <p>
 <?php echo __d('cake_dev', 'CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
@@ -175,8 +206,8 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 	<ul><li><?php echo __d('cake_dev', 'Quick Reference'); ?></li></ul></li>
 	<li><a href="http://bakery.cakephp.org"><?php echo __d('cake_dev', 'The Bakery'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Everything CakePHP'); ?></li></ul></li>
-	<li><a href="http://live.cakephp.org"><?php echo __d('cake_dev', 'The Show'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'The Show is a live and archived internet radio broadcast CakePHP-related topics and answer questions live via IRC, Skype, and telephone.'); ?></li></ul></li>
+	<li><a href="http://plugins.cakephp.org"><?php echo __d('cake_dev', 'CakePHP plugins repo'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'A comprehensive list of all CakePHP plugins created by the community'); ?></li></ul></li>
 	<li><a href="http://groups.google.com/group/cake-php"><?php echo __d('cake_dev', 'CakePHP Google Group'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Community mailing list'); ?></li></ul></li>
 	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>

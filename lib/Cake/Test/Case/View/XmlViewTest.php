@@ -64,6 +64,13 @@ class XmlViewTest extends CakeTestCase {
 
 		$expected = Xml::build(array('response' => array('users' => $data)))->asXML();
 		$this->assertSame($expected, $output);
+
+		$Controller->set('_rootNode', 'custom_name');
+		$View = new XmlView($Controller);
+		$output = $View->render(false);
+
+		$expected = Xml::build(array('custom_name' => array('users' => $data)))->asXML();
+		$this->assertSame($expected, $output);
 	}
 
 /**
@@ -79,13 +86,20 @@ class XmlViewTest extends CakeTestCase {
 		$Controller->set($data);
 		$Controller->set('_serialize', array('no', 'user'));
 		$View = new XmlView($Controller);
+		$this->assertSame('application/xml', $Response->type());
 		$output = $View->render(false);
-
 		$expected = array(
 			'response' => array('no' => $data['no'], 'user' => $data['user'])
 		);
 		$this->assertSame(Xml::build($expected)->asXML(), $output);
-		$this->assertSame('application/xml', $Response->type());
+
+		$Controller->set('_rootNode', 'custom_name');
+		$View = new XmlView($Controller);
+		$output = $View->render(false);
+		$expected = array(
+			'custom_name' => array('no' => $data['no'], 'user' => $data['user'])
+		);
+		$this->assertSame(Xml::build($expected)->asXML(), $output);
 	}
 
 /**
