@@ -662,7 +662,7 @@ class ViewTest extends CakeTestCase {
  *
  */
 	public function testElementCallbacks() {
-		$this->getMock('HtmlHelper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');
+		$this->getMock('Helper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');
 		$this->View->helpers = array('ElementCallbackMockHtml');
 		$this->View->loadHelpers();
 
@@ -726,13 +726,13 @@ class ViewTest extends CakeTestCase {
 		$expected = 'this is the test element';
 		$this->assertEquals($expected, $result);
 
-		$result = Cache::read('element__test_element_cache', 'test_view');
+		$result = Cache::read('element__test_element_cache_callbacks', 'test_view');
 		$this->assertEquals($expected, $result);
 
 		$result = $View->element('test_element', array('param' => 'one', 'foo' => 'two'), array('cache' => true));
 		$this->assertEquals($expected, $result);
 
-		$result = Cache::read('element__test_element_cache_param_foo', 'test_view');
+		$result = Cache::read('element__test_element_cache_callbacks_param_foo', 'test_view');
 		$this->assertEquals($expected, $result);
 
 		$result = $View->element('test_element', array(
@@ -751,7 +751,7 @@ class ViewTest extends CakeTestCase {
 		), array(
 			'cache' => array('config' => 'test_view'),
 		));
-		$result = Cache::read('element__test_element_cache_param_foo', 'test_view');
+		$result = Cache::read('element__test_element_cache_callbacks_param_foo', 'test_view');
 		$this->assertEquals($expected, $result);
 
 		Cache::clear(true, 'test_view');
@@ -1259,12 +1259,36 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test prepending to a block with append.
+ *
+ * @return void
+ */
+	public function testBlockPrepend() {
+		$this->View->assign('test', 'Block');
+		$this->View->prepend('test', 'Before ');
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Before Block', $result);
+	}
+
+/**
  * You should be able to append to undefined blocks.
  *
  * @return void
  */
 	public function testBlockAppendUndefined() {
 		$this->View->append('test', 'Unknown');
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Unknown', $result);
+	}
+
+/**
+ * You should be able to prepend to undefined blocks.
+ *
+ * @return void
+ */
+	public function testBlockPrependUndefined() {
+		$this->View->prepend('test', 'Unknown');
 		$result = $this->View->fetch('test');
 		$this->assertEquals('Unknown', $result);
 	}
@@ -1461,5 +1485,21 @@ TEXT;
 		}
 		$end = memory_get_usage();
 		$this->assertLessThanOrEqual($start + 5000, $end);
+	}
+
+/**
+ * tests that a vew block uses default value when not assigned and uses assigned value when it is
+ *
+ * @return void
+ */
+	public function testBlockDefaultValue() {
+		$default = 'Default';
+		$result = $this->View->fetch('title', $default);
+		$this->assertEquals($default, $result);
+
+		$expected = 'My Title';
+		$this->View->assign('title', $expected);
+		$result = $this->View->fetch('title', $default);
+		$this->assertEquals($expected, $result);
 	}
 }

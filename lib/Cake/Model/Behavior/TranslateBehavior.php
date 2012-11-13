@@ -13,6 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('ModelBehavior', 'Model');
 App::uses('I18n', 'I18n');
 App::uses('I18nModel', 'Model');
 
@@ -128,7 +129,7 @@ class TranslateBehavior extends ModelBehavior {
 				'conditions' => array(
 					$Model->escapeField() => $db->identifier($RuntimeModel->escapeField('foreign_key')),
 					$RuntimeModel->escapeField('model') => $Model->name,
-					$RuntimeModel->escapeField('locale')  => $locale
+					$RuntimeModel->escapeField('locale') => $locale
 				)
 			);
 			$conditionFields = $this->_checkConditions($Model, $query);
@@ -193,7 +194,7 @@ class TranslateBehavior extends ModelBehavior {
  */
 	protected function _checkConditions(Model $Model, $query) {
 		$conditionFields = array();
-		if (empty($query['conditions']) || (!empty($query['conditions']) && !is_array($query['conditions'])) ) {
+		if (empty($query['conditions']) || (!empty($query['conditions']) && !is_array($query['conditions']))) {
 			return $conditionFields;
 		}
 		foreach ($query['conditions'] as $col => $val) {
@@ -337,7 +338,7 @@ class TranslateBehavior extends ModelBehavior {
  * @return boolean true.
  */
 	public function beforeSave(Model $Model, $options = array()) {
-		if (isset($options['validate']) && $options['validate'] == false) {
+		if (isset($options['validate']) && !$options['validate']) {
 			unset($this->runtime[$Model->alias]['beforeSave']);
 		}
 		if (isset($this->runtime[$Model->alias]['beforeSave'])) {
@@ -409,7 +410,6 @@ class TranslateBehavior extends ModelBehavior {
 		if (!isset($this->runtime[$Model->alias]['beforeValidate']) && !isset($this->runtime[$Model->alias]['beforeSave'])) {
 			return true;
 		}
-		$locale = $this->_getLocale($Model);
 		if (isset($this->runtime[$Model->alias]['beforeValidate'])) {
 			$tempData = $this->runtime[$Model->alias]['beforeValidate'];
 		} else {
@@ -420,21 +420,10 @@ class TranslateBehavior extends ModelBehavior {
 		$conditions = array('model' => $Model->alias, 'foreign_key' => $Model->id);
 		$RuntimeModel = $this->translateModel($Model);
 
-		$fields = array_merge(
-			$this->settings[$Model->alias],
-			$this->runtime[$Model->alias]['fields']
-		);
 		if ($created) {
-			// set each field value to an empty string
-			foreach ($fields as $key => $field) {
-				if (!is_numeric($key)) {
-					$field = $key;
-				}
-				if (!isset($tempData[$field])) {
-					$tempData[$field] = '';
-				}
-			}
+			$tempData = $this->_prepareTranslations($Model, $tempData);
 		}
+		$locale = $this->_getLocale($Model);
 
 		foreach ($tempData as $field => $value) {
 			unset($conditions['content']);
@@ -451,7 +440,10 @@ class TranslateBehavior extends ModelBehavior {
 			}
 			$translations = $RuntimeModel->find('list', array(
 				'conditions' => $conditions,
-				'fields' => array($RuntimeModel->alias . '.locale', $RuntimeModel->alias . '.id')
+				'fields' => array(
+					$RuntimeModel->alias . '.locale',
+					$RuntimeModel->alias . '.id'
+				)
 			));
 			foreach ($value as $_locale => $_value) {
 				$RuntimeModel->create();
@@ -471,6 +463,37 @@ class TranslateBehavior extends ModelBehavior {
 	}
 
 /**
+ * Prepares the data to be saved for translated records.
+ * Add blank fields, and populates data for multi-locale saves.
+ *
+ * @param array $data The sparse data that was provided.
+ * @return array The fully populated data to save.
+ */
+	protected function _prepareTranslations(Model $Model, $data) {
+		$fields = array_merge($this->settings[$Model->alias], $this->runtime[$Model->alias]['fields']);
+		$locales = array();
+		foreach ($data as $key => $value) {
+			if (is_array($value)) {
+				$locales = array_merge($locales, array_keys($value));
+			}
+		}
+		$locales = array_unique($locales);
+		$hasLocales = count($locales) > 0;
+
+		foreach ($fields as $key => $field) {
+			if (!is_numeric($key)) {
+				$field = $key;
+			}
+			if ($hasLocales && !isset($data[$field])) {
+				$data[$field] = array_fill_keys($locales, '');
+			} elseif (!isset($data[$field])) {
+				$data[$field] = '';
+			}
+		}
+		return $data;
+	}
+
+/**
  * afterDelete Callback
  *
  * @param Model $Model Model the callback was run on.
@@ -478,10 +501,7 @@ class TranslateBehavior extends ModelBehavior {
  */
 	public function afterDelete(Model $Model) {
 		$RuntimeModel = $this->translateModel($Model);
-		$conditions = array(
-			'model' => $Model->alias,
-			'foreign_key' => $Model->id
-		);
+		$conditions = array('model' => $Model->alias, 'foreign_key' => $Model->id);
 		$RuntimeModel->deleteAll($conditions);
 	}
 
@@ -549,10 +569,7 @@ class TranslateBehavior extends ModelBehavior {
 		}
 		$associations = array();
 		$RuntimeModel = $this->translateModel($Model);
-		$default = array(
-			'className' => $RuntimeModel->alias,
-			'foreignKey' => 'foreign_key'
-		);
+		$default = array('className' => $RuntimeModel->alias, 'foreignKey' => 'foreign_key');
 
 		foreach ($fields as $key => $value) {
 			if (is_numeric($key)) {

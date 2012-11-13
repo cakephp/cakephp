@@ -600,7 +600,7 @@ class DboSource extends DataSource {
 		} else {
 			if (isset($args[1]) && $args[1] === true) {
 				return $this->fetchAll($args[0], true);
-			} elseif (isset($args[1]) && !is_array($args[1]) ) {
+			} elseif (isset($args[1]) && !is_array($args[1])) {
 				return $this->fetchAll($args[0], false);
 			} elseif (isset($args[1]) && is_array($args[1])) {
 				if (isset($args[2])) {
@@ -671,7 +671,7 @@ class DboSource extends DataSource {
 
 			if ($this->hasResult()) {
 				$first = $this->fetchRow();
-				if ($first != null) {
+				if ($first) {
 					$out[] = $first;
 				}
 				while ($item = $this->fetchResult()) {
@@ -984,7 +984,7 @@ class DboSource extends DataSource {
 	public function create(Model $model, $fields = null, $values = null) {
 		$id = null;
 
-		if ($fields == null) {
+		if (!$fields) {
 			unset($fields, $values);
 			$fields = array_keys($model->data);
 			$values = array_values($model->data);
@@ -1054,7 +1054,7 @@ class DboSource extends DataSource {
 
 		if ($model->recursive == -1) {
 			$_associations = array();
-		} elseif ($model->recursive == 0) {
+		} elseif ($model->recursive === 0) {
 			unset($_associations[2], $_associations[3]);
 		}
 
@@ -1408,10 +1408,9 @@ class DboSource extends DataSource {
 					}
 				}
 				if (!isset($data[$association])) {
-					if ($merge[0][$association] != null) {
+					$data[$association] = array();
+					if ($merge[0][$association]) {
 						$data[$association] = $merge[0][$association];
-					} else {
-						$data[$association] = array();
 					}
 				} else {
 					if (is_array($merge[0][$association])) {
@@ -1767,7 +1766,7 @@ class DboSource extends DataSource {
 			case 'schema':
 				foreach (array('columns', 'indexes', 'tableParameters') as $var) {
 					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
 					} else {
 						${$var} = '';
 					}
@@ -1821,7 +1820,7 @@ class DboSource extends DataSource {
  * @return boolean Success
  */
 	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
-		if ($values == null) {
+		if (!$values) {
 			$combined = $fields;
 		} else {
 			$combined = array_combine($fields, $values);
@@ -2514,7 +2513,7 @@ class DboSource extends DataSource {
 					$data = $this->_parseKey($model, trim($key), $value);
 				}
 
-				if ($data != null) {
+				if ($data) {
 					$out[] = $data;
 					$data = null;
 				}
@@ -2926,6 +2925,19 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Reset a sequence based on the MAX() value of $column.  Useful
+ * for resetting sequences after using insertMulti().
+ *
+ * This method should be implemented by datasources that require sequences to be used.
+ *
+ * @param string $table The name of the table to update.
+ * @param string $column The column to use when reseting the sequence value.
+ * @return boolean success.
+ */
+	public function resetSequence($table, $column) {
+	}
+
+/**
  * Returns an array of the indexes in given datasource name.
  *
  * @param string $model Name of model to inspect
@@ -3071,7 +3083,7 @@ class DboSource extends DataSource {
 		}
 		$out = $this->_buildFieldParameters($out, $column, 'beforeDefault');
 
-		if (isset($column['key']) && $column['key'] === 'primary' && $type === 'integer') {
+		if (isset($column['key']) && $column['key'] === 'primary' && ($type === 'integer' || $type === 'biginteger')) {
 			$out .= ' ' . $this->columns['primary_key']['name'];
 		} elseif (isset($column['key']) && $column['key'] === 'primary') {
 			$out .= ' NOT NULL';
@@ -3117,7 +3129,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Format indexes for create table
+ * Format indexes for create table.
  *
  * @param array $indexes
  * @param string $table
@@ -3133,6 +3145,8 @@ class DboSource extends DataSource {
 			} else {
 				if (!empty($value['unique'])) {
 					$out .= 'UNIQUE ';
+				} elseif (!empty($value['type']) && strtoupper($value['type']) === 'FULLTEXT') {
+					$out .= 'FULLTEXT ';
 				}
 				$name = $this->startQuote . $name . $this->endQuote;
 			}

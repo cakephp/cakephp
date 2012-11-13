@@ -220,6 +220,14 @@ class View extends Object {
 	public $elementCache = 'default';
 
 /**
+ * Element cache settings
+ *
+ * @see View::_elementCache();
+ * @see View::_renderElement
+ */
+	public $elementCacheSettings = array();
+
+/**
  * List of variables to collect from the associated controller.
  *
  * @var array
@@ -322,7 +330,7 @@ class View extends Object {
 		if (is_object($controller) && isset($controller->response)) {
 			$this->response = $controller->response;
 		} else {
-			$this->response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+			$this->response = new CakeResponse();
 		}
 		$this->Helpers = new HelperCollection($this);
 		$this->Blocks = new ViewBlock();
@@ -370,68 +378,28 @@ class View extends Object {
  *   `Plugin.element_name` instead.
  */
 	public function element($name, $data = array(), $options = array()) {
-		$file = $plugin = $key = null;
-		$callbacks = false;
+		$file = $plugin = null;
 
 		if (isset($options['plugin'])) {
 			$name = Inflector::camelize($options['plugin']) . '.' . $name;
 		}
 
-		if (isset($options['callbacks'])) {
-			$callbacks = $options['callbacks'];
+		if (!isset($options['callbacks'])) {
+			$options['callbacks'] = false;
 		}
 
 		if (isset($options['cache'])) {
-			$underscored = null;
-			if ($plugin) {
-				$underscored = Inflector::underscore($plugin);
-			}
-			$keys = array_merge(array($underscored, $name), array_keys($options), array_keys($data));
-			$caching = array(
-				'config' => $this->elementCache,
-				'key' => implode('_', $keys)
-			);
-			if (is_array($options['cache'])) {
-				$defaults = array(
-					'config' => $this->elementCache,
-					'key' => $caching['key']
-				);
-				$caching = array_merge($defaults, $options['cache']);
-			}
-			$key = 'element_' . $caching['key'];
-			$contents = Cache::read($key, $caching['config']);
+			$contents = $this->_elementCache($name, $data, $options);
 			if ($contents !== false) {
 				return $contents;
 			}
 		}
 
 		$file = $this->_getElementFilename($name);
-
 		if ($file) {
-			if (!$this->_helpersLoaded) {
-				$this->loadHelpers();
-			}
-			if ($callbacks) {
-				$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
-			}
-
-			$current = $this->_current;
-			$restore = $this->_currentType;
-
-			$this->_currentType = self::TYPE_ELEMENT;
-			$element = $this->_render($file, array_merge($this->viewVars, $data));
-
-			$this->_currentType = $restore;
-			$this->_current = $current;
-
-			if ($callbacks) {
-				$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
-			}
-			if (isset($options['cache'])) {
-				Cache::write($key, $element, $caching['config']);
-			}
-			return $element;
+			return $this->_renderElement($file, $data, $options);
 		}
+
 		$file = 'Elements' . DS . $name . $this->ext;
 
 		if (Configure::read('debug') > 0) {
@@ -631,17 +599,31 @@ class View extends Object {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new
+ * Append to an existing or new block. Appending to a new
  * block will create the block.
  *
  * @param string $name Name of the block
  * @param string $value The content for the block.
  * @return void
  * @throws CakeException when you use non-string values.
- * @see ViewBlock::append()
+ * @see ViewBlock::concat()
  */
 	public function append($name, $value = null) {
-		return $this->Blocks->append($name, $value);
+		return $this->Blocks->concat($name, $value);
+	}
+
+/**
+ * Prepend to an existing or new block. Prepending to a new
+ * block will create the block.
+ *
+ * @param string $name Name of the block
+ * @param string $value The content for the block.
+ * @return void
+ * @throws CakeException when you use non-string values.
+ * @see ViewBlock::concat()
+ */
+	public function prepend($name, $value = null) {
+		return $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 	}
 
 /**
@@ -663,11 +645,11 @@ class View extends Object {
  * empty or undefined '' will be returned.
  *
  * @param string $name Name of the block
- * @return The block content or '' if the block does not exist.
+ * @return string The block content or $default if the block does not exist.
  * @see ViewBlock::get()
  */
-	public function fetch($name) {
-		return $this->Blocks->get($name);
+	public function fetch($name, $default = '') {
+		return $this->Blocks->get($name, $default);
 	}
 
 /**
@@ -784,7 +766,7 @@ class View extends Object {
 		} else {
 			$data = array($one => $two);
 		}
-		if ($data == null) {
+		if (!$data) {
 			return false;
 		}
 		$this->viewVars = $data + $this->viewVars;
@@ -880,12 +862,16 @@ class View extends Object {
 		$this->_current = $viewFile;
 		$initialBlocks = count($this->Blocks->unclosed());
 
-		$this->getEventManager()->dispatch(new CakeEvent('View.beforeRenderFile', $this, array($viewFile)));
+		$eventManager = $this->getEventManager();
+		$beforeEvent = new CakeEvent('View.beforeRenderFile', $this, array($viewFile));
+
+		$eventManager->dispatch($beforeEvent);
 		$content = $this->_evaluate($viewFile, $data);
+
 		$afterEvent = new CakeEvent('View.afterRenderFile', $this, array($viewFile, $content));
 		//TODO: For BC puporses, set extra info in the event object. Remove when appropriate
 		$afterEvent->modParams = 1;
-		$this->getEventManager()->dispatch($afterEvent);
+		$eventManager->dispatch($afterEvent);
 		$content = $afterEvent->data[1];
 
 		if (isset($this->_parents[$viewFile])) {
@@ -1127,4 +1113,68 @@ class View extends Object {
 		return $this->_paths = $paths;
 	}
 
+/**
+ * Checks if an element is cached and returns the cached data if present
+ *
+ * @param string $name Element name
+ * @param string $plugin Plugin name
+ * @param array $options Element options
+ */
+	protected function _elementCache($name, $data, $options) {
+		$plugin = null;
+		list($plugin, $name) = $this->pluginSplit($name);
+
+		$underscored = null;
+		if ($plugin) {
+			$underscored = Inflector::underscore($plugin);
+		}
+		$keys = array_merge(array($underscored, $name), array_keys($options), array_keys($data));
+		$this->elementCacheSettings = array(
+			'config' => $this->elementCache,
+			'key' => implode('_', $keys)
+		);
+		if (is_array($options['cache'])) {
+			$defaults = array(
+				'config' => $this->elementCache,
+				'key' => $this->elementCacheSettings['key']
+			);
+			$this->elementCacheSettings = array_merge($defaults, $options['cache']);
+		}
+		$this->elementCacheSettings['key'] = 'element_' . $this->elementCacheSettings['key'];
+		return Cache::read($this->elementCacheSettings['key'], $this->elementCacheSettings['config']);
+	}
+
+/**
+ * Renders an element and fires the before and afterRender callbacks for it
+ * and writes to the cache if a cache is used
+ *
+ * @param string $file Element file path
+ * @param array $data Data to render
+ * @param array $options Element options
+ */
+	protected function _renderElement($file, $data, $options) {
+		if (!$this->_helpersLoaded) {
+			$this->loadHelpers();
+		}
+		if ($options['callbacks']) {
+			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
+		}
+
+		$current = $this->_current;
+		$restore = $this->_currentType;
+
+		$this->_currentType = self::TYPE_ELEMENT;
+		$element = $this->_render($file, array_merge($this->viewVars, $data));
+
+		$this->_currentType = $restore;
+		$this->_current = $current;
+
+		if ($options['callbacks']) {
+			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
+		}
+		if (isset($options['cache'])) {
+			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);
+		}
+		return $element;
+	}
 }

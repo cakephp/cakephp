@@ -383,6 +383,11 @@ class CakeLogTest extends CakeTestCase {
 		CakeLog::drop('shops');
 	}
 
+/**
+ * Test that scopes are exclusive and don't bleed.
+ *
+ * @return void
+ */
 	public function testScopedLoggingExclusive() {
 		$this->_deleteLogs();
 

@@ -405,7 +405,7 @@ class I18n {
 			$header = unpack("L1magic/L1version/L1count/L1o_msg/L1o_trn", $header);
 			extract($header);
 
-			if ((dechex($magic) == '950412de' || dechex($magic) == 'ffffffff950412de') && $version == 0) {
+			if ((dechex($magic) == '950412de' || dechex($magic) == 'ffffffff950412de') && !$version) {
 				for ($n = 0; $n < $count; $n++) {
 					$r = unpack("L1len/L1offs", substr($data, $o_msg + $n * 8, 8));
 					$msgid = substr($data, $r["offs"], $r["len"]);
@@ -585,19 +585,19 @@ class I18n {
 		$string = $string[1];
 		if (substr($string, 0, 2) === $this->_escape . 'x') {
 			$delimiter = $this->_escape . 'x';
-			return join('', array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
+			return implode('', array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
 		}
 		if (substr($string, 0, 2) === $this->_escape . 'd') {
 			$delimiter = $this->_escape . 'd';
-			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
+			return implode('', array_map('chr', array_filter(explode($delimiter, $string))));
 		}
 		if ($string[0] === $this->_escape && isset($string[1]) && is_numeric($string[1])) {
 			$delimiter = $this->_escape;
-			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
+			return implode('', array_map('chr', array_filter(explode($delimiter, $string))));
 		}
 		if (substr($string, 0, 3) === 'U00') {
 			$delimiter = 'U00';
-			return join('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
+			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
 		if (preg_match('/U([0-9a-fA-F]{4})/', $string, $match)) {
 			return Multibyte::ascii(array(hexdec($match[1])));

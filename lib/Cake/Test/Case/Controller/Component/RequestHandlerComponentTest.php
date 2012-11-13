@@ -21,6 +21,7 @@ App::uses('RequestHandlerComponent', 'Controller/Component');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 App::uses('Router', 'Routing');
+App::uses('JsonView', 'View');
 
 /**
  * RequestHandlerTestController class
@@ -70,6 +71,14 @@ class RequestHandlerTestController extends Controller {
 
 }
 
+/**
+ * CustomJsonView class
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ */
+class CustomJsonView extends JsonView {
+
+}
 
 /**
  * RequestHandlerComponentTest class
@@ -137,12 +146,14 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	public function testConstructorSettings() {
 		$settings = array(
-			'ajaxLayout' => 'test_ajax'
+			'ajaxLayout' => 'test_ajax',
+			'viewClassMap' => array('json' => 'MyPlugin.MyJson')
 		);
 		$Collection = new ComponentCollection();
 		$Collection->init($this->Controller);
 		$RequestHandler = new RequestHandlerComponent($Collection, $settings);
 		$this->assertEquals('test_ajax', $RequestHandler->ajaxLayout);
+		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $RequestHandler->settings['viewClassMap']);
 	}
 
 /**
@@ -178,7 +189,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testInitializeContentTypeWithjQueryAccept() {
-		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/javascript, */*; q=0.01';
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, application/javascript, */*; q=0.01';
 		$this->assertNull($this->RequestHandler->ext);
 		Router::parseExtensions('json');
 
@@ -193,7 +204,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testInitializeContentTypeWithjQueryAcceptAndMultiplesExtensions() {
-		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/javascript, */*; q=0.01';
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, application/javascript, */*; q=0.01';
 		$this->assertNull($this->RequestHandler->ext);
 		Router::parseExtensions('rss', 'json');
 
@@ -221,7 +232,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testInitializeNoContentTypeWithMultipleAcceptedTypes() {
-		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/javascript, application/xml, */*; q=0.01';
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, application/javascript, application/xml, */*; q=0.01';
 		$this->assertNull($this->RequestHandler->ext);
 		Router::parseExtensions('xml', 'json');
 
@@ -262,6 +273,33 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertNull($this->RequestHandler->ext);
 
 		call_user_func_array(array('Router', 'parseExtensions'), $extensions);
+	}
+
+/**
+ * testViewClassMap method
+ *
+ * @return void
+ */
+	public function testViewClassMap() {
+		$this->RequestHandler->settings = array('viewClassMap' => array('json' => 'CustomJson'));
+		$this->RequestHandler->initialize($this->Controller);
+		$result = $this->RequestHandler->viewClassMap();
+		$expected = array(
+			'json' => 'CustomJson',
+			'xml' => 'Xml'
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->RequestHandler->viewClassMap('xls', 'Excel.Excel');
+		$expected = array(
+			'json' => 'CustomJson',
+			'xml' => 'Xml',
+			'xls' => 'Excel.Excel'
+		);
+		$this->assertEquals($expected, $result);
+
+		$this->RequestHandler->renderAs($this->Controller, 'json');
+		$this->assertEquals('CustomJson', $this->Controller->viewClass);
 	}
 
 /**
@@ -630,7 +668,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEquals('text/vnd.wap.wml', $result);
 
 		$result = $this->RequestHandler->mapAlias(array('xml', 'js', 'json'));
-		$expected = array('application/xml', 'text/javascript', 'application/json');
+		$expected = array('application/xml', 'application/javascript', 'application/json');
 		$this->assertEquals($expected, $result);
 	}
 
