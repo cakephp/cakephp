@@ -183,19 +183,19 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->Behaviors->disable('Tree');
 
-		$this->Tree->save(array('parent_id' => null, 'name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
 		$node1 = $this->Tree->id;
 
 		$this->Tree->create();
-		$this->Tree->save(array('parent_id' => null, 'name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node11	= $this->Tree->id;
 		$this->Tree->create();
-		$this->Tree->save(array('parent_id' => null, 'name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node12	= $this->Tree->id;
 		$this->Tree->create();
-		$this->Tree->save(array('parent_id' => null, 'name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
 		$this->Tree->create();
-		$this->Tree->save(array('parent_id' => null, 'name' => 'Overview', $parentField => $node12, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'Overview', $parentField => $node12, $leftField => 0, $rightField => 0));
 
 		$this->Tree->Behaviors->enable('Tree');
 
@@ -234,23 +234,32 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree = new $modelClass();
 		$this->Tree->Behaviors->disable('Tree');
 
-		$this->Tree->save(array('parent_id' => null, 'name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
 		$node1 = $this->Tree->id;
 
 		$this->Tree->create();
-		$this->Tree->save(array('parent_id' => null, 'name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node11	= $this->Tree->id;
 		$this->Tree->create();
-		$this->Tree->save(array('parent_id' => null, 'name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node12	= $this->Tree->id;
 		$this->Tree->create();
-		$this->Tree->save(array('parent_id' => null, 'name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
 		$this->Tree->create();
-		$this->Tree->save(array('parent_id' => null, 'name' => 'Overview', $parentField => $node12, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'Overview', $parentField => $node12, $leftField => 0, $rightField => 0));
 		$this->Tree->create();
-		$this->Tree->save(array('parent_id' => null, 'name' => 'Lost', $parentField => 9, $leftField => 0, $rightField => 0));
+		$this->Tree->save(array('name' => 'Lost', $parentField => 9, $leftField => 0, $rightField => 0));
 
 		$this->Tree->Behaviors->enable('Tree');
+
+		$this->Tree->bindModel(array('belongsTo' => array('Parent' => array(
+			'className' => $this->Tree->name,
+			'foreignKey' => $parentField
+		))));
+		$this->Tree->bindModel(array('hasMany' => array('Child' => array(
+			'className' => $this->Tree->name,
+			'foreignKey' => $parentField
+		))));
 
 		$result = $this->Tree->verify();
 		$this->assertNotSame($result, true);

@@ -622,9 +622,9 @@ class TreeBehavior extends ModelBehavior {
 					}
 					return false;
 				} elseif ($missingParentAction === 'delete') {
-					$Model->deleteAll(array($Model->alias . '.' . $Model->primaryKey => array_flip($missingParents)));
+					$Model->deleteAll(array($Model->escapeField($Model->primaryKey) => array_flip($missingParents)), false);
 				} else {
-					$Model->updateAll(array($parent => $missingParentAction), array($Model->escapeField($Model->primaryKey) => array_flip($missingParents)));
+					$Model->updateAll(array($Model->escapeField($parent) => $missingParentAction), array($Model->escapeField($Model->primaryKey) => array_flip($missingParents)));
 				}
 			}
 			$count = 1;
