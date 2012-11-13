@@ -184,7 +184,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->Behaviors->disable('Tree');
 
 		$this->Tree->save(array('parent_id' => null, 'name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
-		$node1	= $this->Tree->id;
+		$node1 = $this->Tree->id;
 
 		$this->Tree->create();
 		$this->Tree->save(array('parent_id' => null, 'name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
@@ -207,6 +207,65 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 
 		$result = $this->Tree->verify();
 		$this->assertTrue($result);
+
+		$result = $this->Tree->find('first', array(
+			'fields' => array('name', $parentField, $leftField, $rightField),
+			'conditions' => array('name' => 'Main'),
+			'recursive' => -1
+		));
+		$expected = array(
+			$modelClass => array(
+				'name' => 'Main',
+				$parentField => null,
+				$leftField => 1,
+				$rightField => 10
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testRecoverUsingParentModeAndDelete method
+ *
+ * @return void
+ */
+	public function testRecoverUsingParentModeAndDelete() {
+		extract($this->settings);
+		$this->Tree = new $modelClass();
+		$this->Tree->Behaviors->disable('Tree');
+
+		$this->Tree->save(array('parent_id' => null, 'name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
+		$node1 = $this->Tree->id;
+
+		$this->Tree->create();
+		$this->Tree->save(array('parent_id' => null, 'name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
+		$node11	= $this->Tree->id;
+		$this->Tree->create();
+		$this->Tree->save(array('parent_id' => null, 'name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
+		$node12	= $this->Tree->id;
+		$this->Tree->create();
+		$this->Tree->save(array('parent_id' => null, 'name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
+		$this->Tree->create();
+		$this->Tree->save(array('parent_id' => null, 'name' => 'Overview', $parentField => $node12, $leftField => 0, $rightField => 0));
+		$this->Tree->create();
+		$this->Tree->save(array('parent_id' => null, 'name' => 'Lost', $parentField => 9, $leftField => 0, $rightField => 0));
+
+		$this->Tree->Behaviors->enable('Tree');
+
+		$result = $this->Tree->verify();
+		$this->assertNotSame($result, true);
+
+		$count = $this->Tree->find('count');
+		$this->assertEquals(6, $count);
+
+		$result = $this->Tree->recover('parent', 'delete');
+		$this->assertTrue($result);
+
+		$result = $this->Tree->verify();
+		$this->assertTrue($result);
+
+		$count = $this->Tree->find('count');
+		$this->assertEquals(5, $count);
 
 		$result = $this->Tree->find('first', array(
 			'fields' => array('name', $parentField, $leftField, $rightField),
