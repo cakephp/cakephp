@@ -326,4 +326,25 @@ class CakeSocketTest extends CakeTestCase {
 		$this->assertTrue($this->Socket->encrypted);
 	}
 
+/**
+ * test getting the context for a socket.
+ *
+ * @return void
+ */
+	public function testGetContext() {
+		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+		$config = array(
+			'host' => 'smtp.gmail.com',
+			'port' => 465,
+			'timeout' => 5,
+			'context' => array(
+				'ssl' => array('capture_peer' => true)
+			)
+		);
+		$this->Socket = new CakeSocket($config);
+		$this->Socket->connect();
+		$result = $this->Socket->context();
+		$this->assertEquals($config['context'], $result);
+	}
+
 }
