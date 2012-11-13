@@ -102,6 +102,14 @@ class CakeSocket {
 	);
 
 /**
+ * Used to capture connection warnings which can happen when there are
+ * SSL errors for example.
+ *
+ * @var array
+ */
+	protected $_connectionErrors = array();
+
+/**
  * Constructor.
  *
  * @param array $config Socket configuration, which will be merged with the base configuration
@@ -126,19 +134,40 @@ class CakeSocket {
 		}
 
 		$scheme = null;
-		if (isset($this->config['request']) && $this->config['request']['uri']['scheme'] == 'https') {
+		if (isset($this->config['request']['uri']) && $this->config['request']['uri']['scheme'] == 'https') {
 			$scheme = 'ssl://';
 		}
 
-		if ($this->config['persistent']) {
-			$this->connection = @pfsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+		if (!empty($this->config['context'])) {
+			$context = stream_context_create($this->config['context']);
 		} else {
-			$this->connection = @fsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$context = stream_context_create();
 		}
+
+		$connectAs = STREAM_CLIENT_CONNECT;
+		if ($this->config['persistent']) {
+			$connectAs |= STREAM_CLIENT_PERSISTENT;
+		}
+
+		set_error_handler(array($this, '_connectionErrorHandler'));
+		$this->connection = stream_socket_client(
+			$scheme . $this->config['host'] . ':' . $this->config['port'],
+			$errNum,
+			$errStr,
+			$this->config['timeout'],
+			$connectAs,
+			$context
+		);
+		restore_error_handler();
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errNum, $errStr);
 			throw new SocketException($errStr, $errNum);
+		}
+
+		if (!$this->connection && $this->_connectionErrors) {
+			$message = implode("\n", $this->_connectionErrors);
+			throw new SocketException($message, E_WARNING);
 		}
 
 		$this->connected = is_resource($this->connection);
@@ -146,6 +175,31 @@ class CakeSocket {
 			stream_set_timeout($this->connection, $this->config['timeout']);
 		}
 		return $this->connected;
+	}
+
+/**
+ * socket_stream_client() does not populate errNum, or $errStr when there are
+ * connection errors, as in the case of SSL verification failure.
+ *
+ * Instead we need to handle those errors manually.
+ *
+ * @param int $code
+ * @param string $message
+ */
+	protected function _connectionErrorHandler($code, $message) {
+		$this->_connectionErrors[] = $message;
+	}
+
+/**
+ * Get the connection context.
+ *
+ * @return null|array Null when there is no connnection, an array when there is.
+ */
+	public function context() {
+		if (!$this->connection) {
+			return;
+		}
+		return stream_context_get_options($this->connection);
 	}
 
 /**
