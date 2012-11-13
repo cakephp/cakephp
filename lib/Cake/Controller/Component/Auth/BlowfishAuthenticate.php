@@ -28,7 +28,10 @@ App::uses('FormAuthenticate', 'Controller/Component/Auth');
  * }}}
  *
  * When  configuring BlowfishAuthenticate you can pass in settings to which fields, model and additional conditions
- * are used. See BlowfishAuthenticate::$settings for more information.
+ * are used. See FormAuthenticate::$settings for more information.
+ *
+ * For inital password hashing/creation see Security::hash(). Other than how the password is initally hashed,
+ * BlowfishAuthenticate works exactly the same way as FormAuthenticate.
  *
  * @package	Cake.Controller.Component.Auth
  * @since	CakePHP(tm) v 2.3
