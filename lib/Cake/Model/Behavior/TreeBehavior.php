@@ -618,7 +618,7 @@ class TreeBehavior extends ModelBehavior {
 			if ($missingParents) {
 				if ($missingParentAction == 'return') {
 					foreach ($missingParents as $id => $display) {
-						$this->errors[]	= 'cannot find the parent for ' . $Model->alias . ' with id ' . $id . '(' . $display . ')';
+						$this->errors[] = 'cannot find the parent for ' . $Model->alias . ' with id ' . $id . '(' . $display . ')';
 					}
 					return false;
 				} elseif ($missingParentAction == 'delete') {
