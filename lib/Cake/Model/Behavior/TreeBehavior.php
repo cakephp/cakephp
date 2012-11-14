@@ -107,7 +107,7 @@ class TreeBehavior extends ModelBehavior {
  * @return array
  */
 	public function beforeFind(Model $Model, $query) {
-		if ($Model->findQueryType == 'threaded' && !isset($query['parent'])) {
+		if ($Model->findQueryType === 'threaded' && !isset($query['parent'])) {
 			$query['parent'] = $this->settings[$Model->alias]['parent'];
 		}
 		return $query;
@@ -602,7 +602,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		extract($this->settings[$Model->alias]);
 		$Model->recursive = $recursive;
-		if ($mode == 'parent') {
+		if ($mode === 'parent') {
 			$Model->bindModel(array('belongsTo' => array('VerifyParent' => array(
 				'className' => $Model->name,
 				'foreignKey' => $parent,
@@ -616,15 +616,15 @@ class TreeBehavior extends ModelBehavior {
 			));
 			$Model->unbindModel(array('belongsTo' => array('VerifyParent')));
 			if ($missingParents) {
-				if ($missingParentAction == 'return') {
+				if ($missingParentAction === 'return') {
 					foreach ($missingParents as $id => $display) {
 						$this->errors[]	= 'cannot find the parent for ' . $Model->alias . ' with id ' . $id . '(' . $display . ')';
 					}
 					return false;
-				} elseif ($missingParentAction == 'delete') {
-					$Model->deleteAll(array($Model->primaryKey => array_flip($missingParents)));
+				} elseif ($missingParentAction === 'delete') {
+					$Model->deleteAll(array($Model->escapeField($Model->primaryKey) => array_flip($missingParents)), false);
 				} else {
-					$Model->updateAll(array($parent => $missingParentAction), array($Model->escapeField($Model->primaryKey) => array_flip($missingParents)));
+					$Model->updateAll(array($Model->escapeField($parent) => $missingParentAction), array($Model->escapeField($Model->primaryKey) => array_flip($missingParents)));
 				}
 			}
 			$count = 1;
@@ -986,14 +986,14 @@ class TreeBehavior extends ModelBehavior {
 		extract($this->settings[$Model->alias]);
 		$Model->recursive = $recursive;
 
-		if ($field == 'both') {
+		if ($field === 'both') {
 			$this->_sync($Model, $shift, $dir, $conditions, $created, $left);
 			$field = $right;
 		}
 		if (is_string($conditions)) {
 			$conditions = array($Model->escapeField($field) . " {$conditions}");
 		}
-		if (($scope != '1 = 1' && $scope !== true) && $scope) {
+		if (($scope !== '1 = 1' && $scope !== true) && $scope) {
 			$conditions[] = $scope;
 		}
 		if ($created) {
