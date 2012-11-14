@@ -188,10 +188,10 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
-		$node11	= $this->Tree->id;
+		$node11 = $this->Tree->id;
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
-		$node12	= $this->Tree->id;
+		$node12 = $this->Tree->id;
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
 		$this->Tree->create();
@@ -239,10 +239,10 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
-		$node11	= $this->Tree->id;
+		$node11 = $this->Tree->id;
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
-		$node12	= $this->Tree->id;
+		$node12 = $this->Tree->id;
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
 		$this->Tree->create();
