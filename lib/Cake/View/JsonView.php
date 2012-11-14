@@ -82,27 +82,29 @@ class JsonView extends View {
  */
 	public function render($view = null, $layout = null) {
 		if (isset($this->viewVars['_serialize'])) {
-			$serialize = $this->viewVars['_serialize'];
-			if (is_array($serialize)) {
-				$data = array();
-				foreach ($serialize as $key) {
-					$data[$key] = $this->viewVars[$key];
-				}
-			} else {
-				$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
-			}
-			$content = json_encode($data);
-			$this->Blocks->set('content', $content);
-			return $content;
+			return $this->_serialize($this->viewVars['_serialize']);
 		}
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
-			if (!$this->_helpersLoaded) {
-				$this->loadHelpers();
-			}
-			$content = $this->_render($viewFileName);
-			$this->Blocks->set('content', $content);
-			return $content;
+			return parent::render($view, false);
 		}
+	}
+
+/**
+ * Serialize view vars
+ *
+ * @param array $serialize The viewVars that need to be serialized
+ * @return string The serialized data
+ */
+	protected function _serialize($serialize) {
+		if (is_array($serialize)) {
+			$data = array();
+			foreach ($serialize as $key) {
+				$data[$key] = $this->viewVars[$key];
+			}
+		} else {
+			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+		}
+		return json_encode($data);
 	}
 
 }
