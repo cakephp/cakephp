@@ -471,10 +471,10 @@ class PaginatorHelper extends AppHelper {
 		$url = array_merge(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
 
 		if ($this->{$check}($model)) {
-			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape', 'model'))), compact('class'));
+			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape'))), compact('class'));
 		} else {
 			unset($options['rel']);
-			return $this->Html->tag($tag, $title, array_merge($options, compact('escape', 'class')));
+			return $this->Html->tag($tag, '<a>'.h($title).'</a>', array_merge($options, compact('class')));
 		}
 	}
 
@@ -711,11 +711,15 @@ class PaginatorHelper extends AppHelper {
 			if ($class) {
 				$currentClass .= ' ' . $class;
 			}
+<<<<<<< HEAD
 			if ($currentTag) {
 				$out .= $this->Html->tag($tag, $this->Html->tag($currentTag, $params['page']), array('class' => $currentClass));
 			} else {
 				$out .= $this->Html->tag($tag, $params['page'], array('class' => $currentClass));
 			}
+=======
+			$out .= $this->Html->tag($tag, '<a>'.$params['page'].'</a>', array('class' => $currentClass));
+>>>>>>> 77886a9c5b62529e9af5368d40978bc1bf852e4f
 			if ($i != $params['pageCount']) {
 				$out .= $separator;
 			}
@@ -748,11 +752,15 @@ class PaginatorHelper extends AppHelper {
 					if ($class) {
 						$currentClass .= ' ' . $class;
 					}
+<<<<<<< HEAD
 					if ($currentTag) {
 						$out .= $this->Html->tag($tag, $this->Html->tag($currentTag, $i), array('class' => $currentClass));
 					} else {
 						$out .= $this->Html->tag($tag, $i, array('class' => $currentClass));
 					}
+=======
+					$out .= $this->Html->tag($tag, "<a>$i</a>", array('class' => $currentClass));
+>>>>>>> 77886a9c5b62529e9af5368d40978bc1bf852e4f
 				} else {
 					$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'));
 				}
