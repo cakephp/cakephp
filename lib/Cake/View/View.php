@@ -562,7 +562,9 @@ class View extends Object {
 
 		if (preg_match('/^<!--cachetime:(\\d+)-->/', $out, $match)) {
 			if (time() >= $match['1']) {
+				//@codingStandardsIgnoreStart
 				@unlink($filename);
+				//@codingStandardsIgnoreEnd
 				unset ($out);
 				return false;
 			} else {

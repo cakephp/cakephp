@@ -150,7 +150,7 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertEquals(array('file'), $result);
 
 		if (file_exists(LOGS . 'error.log')) {
-			@unlink(LOGS . 'error.log');
+			unlink(LOGS . 'error.log');
 		}
 		CakeLog::write(LOG_WARNING, 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
