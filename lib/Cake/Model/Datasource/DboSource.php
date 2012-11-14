@@ -527,11 +527,11 @@ class DboSource extends DataSource {
  * @return resource Result resource identifier.
  */
 	public function query() {
-		$args	  = func_get_args();
-		$fields	  = null;
-		$order	  = null;
-		$limit	  = null;
-		$page	  = null;
+		$args = func_get_args();
+		$fields = null;
+		$order = null;
+		$limit = null;
+		$page = null;
 		$recursive = null;
 
 		if (count($args) === 1) {
@@ -830,7 +830,7 @@ class DboSource extends DataSource {
 		}
 		if (preg_match('/^([\w-]+)\((.*)\)$/', $data, $matches)) { // Functions
 			return $this->cacheMethod(__FUNCTION__, $cacheKey,
-				 $matches[1] . '(' . $this->name($matches[2]) . ')'
+				$matches[1] . '(' . $this->name($matches[2]) . ')'
 			);
 		}
 		if (
