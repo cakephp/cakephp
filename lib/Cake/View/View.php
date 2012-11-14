@@ -885,7 +885,7 @@ class View extends Object {
 		$this->getEventManager()->dispatch(new CakeEvent('View.beforeRenderFile', $this, array($viewFile)));
 		$content = $this->_evaluate($viewFile, $data);
 		$afterEvent = new CakeEvent('View.afterRenderFile', $this, array($viewFile, $content));
-		//TODO: For BC puporses, set extra info in the event object. Remove when appropriate
+
 		$afterEvent->modParams = 1;
 		$this->getEventManager()->dispatch($afterEvent);
 		$content = $afterEvent->data[1];

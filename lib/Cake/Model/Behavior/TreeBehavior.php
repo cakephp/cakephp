@@ -588,7 +588,6 @@ class TreeBehavior extends ModelBehavior {
  * 'parent' the values of the parent_id field will be used to populate the left and right fields. The missingParentAction
  * parameter only applies to "parent" mode and determines what to do if the parent field contains an id that is not present.
  *
- * @todo Could be written to be faster, *maybe*. Ideally using a subquery and putting all the logic burden on the DB.
  * @param Model $Model Model instance
  * @param string $mode parent or tree
  * @param string|integer $missingParentAction 'return' to do nothing and return, 'delete' to

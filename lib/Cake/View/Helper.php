@@ -599,7 +599,6 @@ class Helper extends Object {
  * @param string $id The name of the 'id' attribute.
  * @return mixed If $options was an array, an array will be returned with $id set.  If a string
  *   was supplied, a string will be returned.
- * @todo Refactor this method to not have as many input/output options.
  */
 	public function domId($options = null, $id = 'id') {
 		if (is_array($options) && array_key_exists($id, $options) && $options[$id] === null) {
@@ -632,7 +631,6 @@ class Helper extends Object {
  * @param string $key The name of the attribute to be set, defaults to 'name'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
- * @todo Refactor this method to not have as many input/output options.
  */
 	protected function _name($options = array(), $field = null, $key = 'name') {
 		if ($options === null) {
@@ -676,7 +674,6 @@ class Helper extends Object {
  * @param string $key The name of the attribute to be set, defaults to 'value'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
- * @todo Refactor this method to not have as many input/output options.
  */
 	public function value($options = array(), $field = null, $key = 'value') {
 		if ($options === null) {
