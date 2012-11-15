@@ -31,7 +31,6 @@ before_script:
     server.listen(80, 'localhost');
     console.log('TCP server listening on port 80 at localhost.');" > App/tmp/socket.js
   - sudo node ./App/tmp/socket.js &
-  - sed -i "s/\/\/ \(require __DIR__ \. '\/datasources\.php';\)/\\1/" App/Config/bootstrap.php
   - pear channel-discover pear.cakephp.org
   - pear install --alldeps cakephp/CakePHP_CodeSniffer
   - phpenv rehash

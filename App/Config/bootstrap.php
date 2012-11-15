@@ -67,7 +67,9 @@ require __DIR__ . '/error.php';
  *
  * See App/Config/datasources.default.php for a template.
  */
-// require __DIR__ . '/datasources.php';
+if (file_exists(__DIR__ . '/datasources.php')) {
+	require __DIR__ . '/datasources.php';
+}
 
 /**
  * Load logging configuration.
