@@ -2194,7 +2194,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'User0'), '/label',
-			'input' => array('type' => 'text', 'name' => 'data[User][0]', 'id' => 'User0'),
+			'input' => array('type' => 'text', 'name' => 'User[0]', 'id' => 'User0'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);

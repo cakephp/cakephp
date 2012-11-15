@@ -261,7 +261,7 @@ class ValidationSetTest  extends TestCase {
 		$Field->setRules(array('validEmail' => $rule), false);
 		$result = $Field->getRules();
 		$this->assertEquals(array('validEmail'), array_keys($result));
-		$this->assertTrue(array_pop($result) instanceof CakeValidationRule);
+		$this->assertTrue(array_pop($result) instanceof ValidationRule);
 
 		$rules = array('notEmpty' => $RuleEmpty);
 		$Field->setRules($rules, true);
@@ -272,8 +272,8 @@ class ValidationSetTest  extends TestCase {
 		$Field->setRules($rules, true);
 		$result = $Field->getRules();
 		$this->assertEquals(array('validEmail', 'notEmpty'), array_keys($result));
-		$this->assertTrue(array_pop($result) instanceof CakeValidationRule);
-		$this->assertTrue(array_pop($result) instanceof CakeValidationRule);
+		$this->assertTrue(array_pop($result) instanceof ValidationRule);
+		$this->assertTrue(array_pop($result) instanceof ValidationRule);
 	}
 
 /**
