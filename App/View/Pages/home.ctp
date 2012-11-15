@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Utility\Debugger;
 use Cake\Cache\Cache;
 use Cake\Model\ConnectionManager;
@@ -147,7 +148,7 @@ if (isset($filePresent)):
 
 <p>
 	<?php
-		if (CakePlugin::loaded('DebugKit')):
+		if (Plugin::loaded('DebugKit')):
 			echo '<span class="notice success">';
 				echo __d('cake_dev', 'DebugKit plugin is present');
 			echo '</span>';
