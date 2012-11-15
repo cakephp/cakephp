@@ -2172,6 +2172,23 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that inputs with 0 can be created.
+ *
+ * @return void
+ */
+	public function testInputZero() {
+		$this->Form->create('User');
+		$result = $this->Form->input('0');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'User0'), '/label',
+			'input' => array('type' => 'text', 'name' => 'data[User][0]', 'id' => 'User0'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test input() with checkbox creation
  *
  * @return void
