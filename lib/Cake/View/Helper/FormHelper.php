@@ -199,7 +199,7 @@ class FormHelper extends AppHelper {
 					$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
 				}
 			}
-			if (empty($field)) {
+			if ($field === null || $field === false) {
 				return $this->fieldset[$model]['fields'];
 			} elseif (isset($this->fieldset[$model]['fields'][$field])) {
 				return $this->fieldset[$model]['fields'][$field];
@@ -773,7 +773,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::label
  */
 	public function label($fieldName = null, $text = null, $options = array()) {
-		if (empty($fieldName)) {
+		if ($fieldName === null) {
 			$fieldName = implode('.', $this->entity());
 		}
 
