@@ -766,21 +766,22 @@ class BehaviorCollectionTest extends CakeTestCase {
 	public function testBehaviorBelongsToFindCallbacks() {
 		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
 
+		$conditions = array('order' => 'Apple.id ASC');
 		$Apple = new Apple();
 		$Apple->unbindModel(array('hasMany' => array('Child'), 'hasOne' => array('Sample')), false);
-		$expected = $Apple->find('all');
+		$expected = $Apple->find('all', $conditions);
 
 		$Apple->unbindModel(array('belongsTo' => array('Parent')));
-		$wellBehaved = $Apple->find('all');
+		$wellBehaved = $Apple->find('all', $conditions);
 		$Apple->Parent->Behaviors->attach('Test');
 		$Apple->unbindModel(array('belongsTo' => array('Parent')));
-		$this->assertSame($Apple->find('all'), $wellBehaved);
+		$this->assertSame($Apple->find('all', $conditions), $wellBehaved);
 
 		$Apple->Parent->Behaviors->attach('Test', array('before' => 'off'));
-		$this->assertSame($expected, $Apple->find('all'));
+		$this->assertSame($expected, $Apple->find('all', $conditions));
 
 		$Apple->Parent->Behaviors->attach('Test', array('before' => 'test'));
-		$this->assertSame($expected, $Apple->find('all'));
+		$this->assertSame($expected, $Apple->find('all', $conditions));
 
 		$Apple->Parent->Behaviors->attach('Test', array('before' => 'modify'));
 		$expected2 = array(
@@ -796,22 +797,23 @@ class BehaviorCollectionTest extends CakeTestCase {
 		);
 		$result2 = $Apple->find('all', array(
 			'fields' => array('Apple.id', 'Parent.id', 'Parent.name', 'Parent.mytime'),
-			'conditions' => array('Apple.id <' => '4')
+			'conditions' => array('Apple.id <' => '4'),
+			'order' => 'Apple.id ASC',
 		));
 		$this->assertEquals($expected2, $result2);
 
 		$Apple->Parent->Behaviors->disable('Test');
-		$result = $Apple->find('all');
+		$result = $Apple->find('all', $conditions);
 		$this->assertEquals($expected, $result);
 
 		$Apple->Parent->Behaviors->attach('Test', array('after' => 'off'));
-		$this->assertEquals($expected, $Apple->find('all'));
+		$this->assertEquals($expected, $Apple->find('all', $conditions));
 
 		$Apple->Parent->Behaviors->attach('Test', array('after' => 'test'));
-		$this->assertEquals($expected, $Apple->find('all'));
+		$this->assertEquals($expected, $Apple->find('all', $conditions));
 
 		$Apple->Parent->Behaviors->attach('Test', array('after' => 'test2'));
-		$this->assertEquals($expected, $Apple->find('all'));
+		$this->assertEquals($expected, $Apple->find('all', $conditions));
 	}
 
 /**

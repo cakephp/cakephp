@@ -851,12 +851,16 @@ class View extends Object {
 		$this->_current = $viewFile;
 		$initialBlocks = count($this->Blocks->unclosed());
 
-		$this->getEventManager()->dispatch(new Event('View.beforeRenderFile', $this, array($viewFile)));
+		$eventManager = $this->getEventManager();
+		$beforeEvent = new Event('View.beforeRenderFile', $this, array($viewFile));
+
+		$eventManager->dispatch($beforeEvent);
 		$content = $this->_evaluate($viewFile, $data);
+
 		$afterEvent = new Event('View.afterRenderFile', $this, array($viewFile, $content));
 		//TODO: For BC puporses, set extra info in the event object. Remove when appropriate
 		$afterEvent->modParams = 1;
-		$this->getEventManager()->dispatch($afterEvent);
+		$eventManager->dispatch($afterEvent);
 		$content = $afterEvent->data[1];
 
 		if (isset($this->_parents[$viewFile])) {

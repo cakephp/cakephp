@@ -335,7 +335,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @return Cake\Model\Validator\ValidationSet this instance
  */
 	public function setRule($name, $rule) {
-		if (!$rule instanceof ValidationRule) {
+		if (!($rule instanceof ValidationRule)) {
 			$rule = new ValidationRule($rule);
 		}
 		$this->_rules[$name] = $rule;
@@ -379,9 +379,10 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  */
 	public function setRules($rules = array(), $mergeVars = true) {
 		if ($mergeVars === false) {
-			$this->_rules = $rules;
-		} else {
-			$this->_rules = array_merge($this->_rules, $rules);
+			$this->_rules = array();
+		}
+		foreach ($rules as $name => $rule) {
+			$this->setRule($name, $rule);
 		}
 		return $this;
 	}

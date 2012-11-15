@@ -4203,7 +4203,8 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('all', array(
-			'fields' => 'User.id, User.user'
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
 		));
 		$expected = array(
 			array(
@@ -4296,7 +4297,8 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('all', array(
-			'fields' => 'User.id, User.user'
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
 		));
 
 		$expected = array(
@@ -4407,7 +4409,8 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->find('all', array(
-			'fields' => 'User.id, User.user'
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
 		));
 		$expected = array(
 			array('User' => array('id' => '1', 'user' => 'mariano')),
@@ -4417,7 +4420,8 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->find('all', array(
-			'fields' => 'User.id, User.user'
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
 		));
 		$expected = array(
 			array(
@@ -4505,7 +4509,10 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->unbindModel(array('hasMany' => array('Comment')), false);
 		$this->assertTrue($result);
 
-		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$result = $TestModel->find('all', array(
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
+		));
 		$expected = array(
 			array('User' => array('id' => '1', 'user' => 'mariano')),
 			array('User' => array('id' => '2', 'user' => 'nate')),
@@ -4522,7 +4529,10 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$this->assertTrue($result);
 
-		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$result = $TestModel->find('all', array(
+			'fields' => 'User.id, User.user',
+			'order' => array('User.id' => 'ASC'),
+		));
 		$expected = array(
 			array(
 				'User' => array(
@@ -5113,7 +5123,10 @@ class ModelReadTest extends BaseModelTest {
 	public function testAssociationAfterFindCalbacksDisabled() {
 		$this->loadFixtures('Post', 'Author', 'Comment');
 		$TestModel = new Post();
-		$result = $TestModel->find('all', array('callbacks' => false));
+		$result = $TestModel->find('all', array(
+			'callbacks' => false,
+			'order' => array('Post.id' => 'ASC'),
+		));
 		$expected = array(
 			array(
 				'Post' => array(
@@ -5180,6 +5193,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Author->find('all', array(
 			'conditions' => array('Author.id' => 1),
 			'recursive' => 2,
+			'order' => array('Author.id' => 'ASC'),
 			'callbacks' => false
 		));
 		$expected = array(
