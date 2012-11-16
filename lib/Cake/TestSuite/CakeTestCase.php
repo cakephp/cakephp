@@ -676,4 +676,23 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	}
 	// @codingStandardsIgnoreStop
 
+/**
+ * Mock a model, maintain fixtures and table association
+ *
+ * @param string $model
+ * @param mixed $methods
+ * @return Model
+ */
+	public function getMockForModel($model, $methods = array(), $config = null) {
+		if (is_null($config)) {
+			$config = ClassRegistry::config('Model');
+		}
+
+		list($plugin, $name) = pluginSplit($model);
+		$config = array_merge((array) $config, array('name' => $name));
+		$mock = $this->getMock($name, $methods, array($config));
+		ClassRegistry::removeObject($name);
+		ClassRegistry::addObject($name, $mock);
+		return $mock;
+	}
 }
