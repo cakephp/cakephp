@@ -54,8 +54,8 @@ class TaskCollectionTest extends CakeTestCase {
 		$this->assertInstanceOf('DbConfigTask', $result);
 		$this->assertInstanceOf('DbConfigTask', $this->Tasks->DbConfig);
 
-		$result = $this->Tasks->attached();
-		$this->assertEquals(array('DbConfig'), $result, 'attached() results are wrong.');
+		$result = $this->Tasks->loaded();
+		$this->assertEquals(array('DbConfig'), $result, 'loaded() results are wrong.');
 	}
 
 /**
@@ -110,14 +110,14 @@ class TaskCollectionTest extends CakeTestCase {
 		$this->Tasks->load('Extract');
 		$this->Tasks->load('DbConfig');
 
-		$result = $this->Tasks->attached();
+		$result = $this->Tasks->loaded();
 		$this->assertEquals(array('Extract', 'DbConfig'), $result, 'loaded tasks is wrong');
 
 		$this->Tasks->unload('DbConfig');
 		$this->assertFalse(isset($this->Tasks->DbConfig));
 		$this->assertTrue(isset($this->Tasks->Extract));
 
-		$result = $this->Tasks->attached();
+		$result = $this->Tasks->loaded();
 		$this->assertEquals(array('Extract'), $result, 'loaded tasks is wrong');
 	}
 

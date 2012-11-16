@@ -208,7 +208,7 @@ class CakeLog {
 		if (empty(self::$_Collection)) {
 			self::_init();
 		}
-		return self::$_Collection->attached();
+		return self::$_Collection->loaded();
 	}
 
 /**

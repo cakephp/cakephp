@@ -272,7 +272,7 @@ abstract class ObjectCollection {
  * @return mixed If $name is specified, returns the boolean status of the corresponding behavior.
  *    Otherwise, returns an array of all attached behaviors.
  */
-	public function attached($name = null) {
+	public function loaded($name = null) {
 		if (!empty($name)) {
 			return isset($this->_loaded[$name]);
 		}
