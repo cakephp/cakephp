@@ -1853,7 +1853,6 @@ class HtmlHelperTest extends CakeTestCase {
 /**
  * test getCrumbList() in Twitter Bootstrap style.
  *
- *
  * @return void
  */
 	public function testCrumbListBootstrapStyle() {
@@ -1892,7 +1891,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->Html->addCrumb('Gene Splicing', '#'); 
 		$this->Html->addCrumb('Home', '#'); 
 		$result = $this->Html->getCrumbList(
-			array( 'class' => 'breadcrumbs', 'firstClass' => false, 'lastClass' => 'current')
+			array('class' => 'breadcrumbs', 'firstClass' => false, 'lastClass' => 'current')
 		);
 		$this->assertTags(
 			$result,
