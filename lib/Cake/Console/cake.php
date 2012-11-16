@@ -26,9 +26,24 @@ if ($appIndex !== false) {
 	$dir = $argv[$appIndex + 1];
 	require $dir . '/Config/bootstrap.php';
 }
-// Default app directory layout
-if (!$loaded && file_exists($root . '/App/Config/bootstrap.php')) {
-	require $root . '/App/Config/bootstrap.php';
+
+$locations = [
+	// Default repository layout.
+	$root . '/App/Config/bootstrap.php',
+	// Composer vendor directory
+	$root . '/../../Config/bootstrap.php',
+];
+
+foreach ($locations as $path) {
+	if (file_exists($path)) {
+		$loaded = true;
+		require $path;
+		break;
+	}
 }
-unset($root, $loaded, $appIndex, $dir);
+if (!$loaded) {
+	fwrite(STDERR, "Unable to load CakePHP libraries, check your configuration/installation.\n");
+	exit(10);
+}
+unset($root, $loaded, $appIndex, $dir, $path, $locations);
 exit(Cake\Console\ShellDispatcher::run($argv));
