@@ -694,7 +694,7 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
 	public function getCrumbList($options = array(), $startText = false) {
-		$defaults = array('firstClass'=>'first', 'lastClass'=>'last', 'separator' => '');
+		$defaults = array('firstClass' => 'first', 'lastClass' => 'last', 'separator' => '');
 		$options = array_merge($defaults, (array)$options);
 		$firstClass = $options['firstClass'];
 		$lastClass = $options['lastClass'];
