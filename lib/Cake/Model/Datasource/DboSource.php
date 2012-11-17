@@ -2464,6 +2464,10 @@ class DboSource extends DataSource {
 					$not = 'NOT ';
 				}
 
+				if (empty($value)) {
+					continue;
+				}
+
 				if (empty($value[1])) {
 					if ($not) {
 						$out[] = $not . '(' . $value[0] . ')';
