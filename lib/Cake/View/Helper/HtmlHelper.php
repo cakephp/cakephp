@@ -699,37 +699,34 @@ class HtmlHelper extends AppHelper {
 		$firstClass = $options['firstClass'];
 		$lastClass = $options['lastClass'];
 		$separator = $options['separator'];
-		unset($options['firstClass'], $options['lastClass'], $options['separator']);		
+		unset($options['firstClass'], $options['lastClass'], $options['separator']);
+
 		$crumbs = $this->_prepareCrumbs($startText);
-		if (!empty($crumbs)) {
-			$result = '';
-			$crumbCount = count($crumbs);
-			$ulOptions = $options;
-			foreach ($crumbs as $which => $crumb) {
-				$options = array();
-				if (empty($crumb[1])) {
-					$elementContent = $crumb[0];
-				} else {
-					$elementContent = $this->link($crumb[0], $crumb[1], $crumb[2]);
-				}
-				if (!$which) {
-					if ($firstClass !== false) {
-						$options['class'] = $firstClass;
-					}
-				} elseif ($which == $crumbCount - 1) {
-					if ($lastClass !== false) {
-						$options['class'] = $lastClass;
-					}
-				}
-				if (!empty($separator) && ($crumbCount - $which >= 2)) {
-					$elementContent .= $separator;
-				}
-				$result .= $this->tag('li', $elementContent, $options);
-			}
-			return $this->tag('ul', $result, $ulOptions);
-		} else {
-			return null;
+		if (empty($crumbs)) {
+			return '';
 		}
+
+		$result = '';
+		$crumbCount = count($crumbs);
+		$ulOptions = $options;
+		foreach ($crumbs as $which => $crumb) {
+			$options = array();
+			if (empty($crumb[1])) {
+				$elementContent = $crumb[0];
+			} else {
+				$elementContent = $this->link($crumb[0], $crumb[1], $crumb[2]);
+			}
+			if (!$which && $firstClass !== false) {
+				$options['class'] = $firstClass;
+			} elseif ($which == $crumbCount - 1 && $lastClass !== false) {
+				$options['class'] = $lastClass;
+			}
+			if (!empty($separator) && ($crumbCount - $which >= 2)) {
+				$elementContent .= $separator;
+			}
+			$result .= $this->tag('li', $elementContent, $options);
+		}
+		return $this->tag('ul', $result, $ulOptions);
 	}
 
 /**

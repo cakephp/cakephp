@@ -1856,27 +1856,31 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testCrumbListBootstrapStyle() {
-		$this->Html->addCrumb('Home', '/', array('class'=>'home'));
+		$this->Html->addCrumb('Home', '/', array('class' => 'home'));
 		$this->Html->addCrumb('Library', '/lib');
 		$this->Html->addCrumb('Data');
-		$result = $this->Html->getCrumbList(
-			array('class' => 'breadcrumb', 'separator' => '<span class="divider">/</span>', 'firstClass' => false, 'lastClass' => 'active')
-		);
+		$result = $this->Html->getCrumbList(array(
+			'class' => 'breadcrumb',
+			'separator' => '<span class="divider">-</span>',
+			'firstClass' => false,
+			'lastClass' => 'active'
+		));
+		debug($result);
 		$this->assertTags(
 			$result,
 			array(
 				array('ul' => array('class' => 'breadcrumb')),
 				'<li',
-				array('a' => array('href' => '/')), 'Home', '/a',
-				array('span' =>array('class' => 'divider')), 'preg:/\//', '/span',
+				array('a' => array('class' => 'home', 'href' => '/')), 'Home', '/a',
+				array('span' =>array('class' => 'divider')), '-', '/span',
 				'/li',
 				'<li',
 				array('a' => array('href' => '/lib')), 'Library', '/a',
-				array('span' => array('class' => 'divider')), 'preg:/\//', '/span',
+				array('span' => array('class' => 'divider')), '-', '/span',
 				'/li',
 				array('li' => array('class' => 'active')), 'Data', '/li',
 				'/ul'
-			), true
+			)
 		);
 	}
 
