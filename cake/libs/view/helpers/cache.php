@@ -240,7 +240,7 @@ class CacheHelper extends AppHelper {
 		if ($this->here == '/') {
 			$path = 'home';
 		}
-		$cache = strtolower(Inflector::slug($path));
+		$cache = strtolower(Inflector::slug(Configure::read('Cache.prefix') . '_' . $path));
 
 		if (empty($cache)) {
 			return;
