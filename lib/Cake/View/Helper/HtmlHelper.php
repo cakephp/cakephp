@@ -703,7 +703,7 @@ class HtmlHelper extends AppHelper {
 
 		$crumbs = $this->_prepareCrumbs($startText);
 		if (empty($crumbs)) {
-			return '';
+			return null;
 		}
 
 		$result = '';

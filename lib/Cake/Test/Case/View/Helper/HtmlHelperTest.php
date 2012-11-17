@@ -1865,7 +1865,6 @@ class HtmlHelperTest extends CakeTestCase {
 			'firstClass' => false,
 			'lastClass' => 'active'
 		));
-		debug($result);
 		$this->assertTags(
 			$result,
 			array(
