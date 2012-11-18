@@ -409,8 +409,10 @@ class CakeResponse {
 		if (in_array($this->_status, array(304, 204))) {
 			return;
 		}
-		if (strpos($this->_contentType, 'text/') === 0 || $this->_contentType === 'application/json') {
+		if (strpos($this->_contentType, 'text/') === 0) {
 			$this->header('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
+		} else if ($this->_contentType === 'application/json') {
+			$this->header('Content-Type', "{$this->_contentType}; charset=UTF-8");
 		} else {
 			$this->header('Content-Type', "{$this->_contentType}");
 		}
