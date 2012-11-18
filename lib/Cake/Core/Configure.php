@@ -292,7 +292,7 @@ class Configure {
 	}
 
 /**
- * Dump data currently in Configure into $filename.  The serialization format
+ * Dump data currently in Configure into $key. The serialization format
  * is decided by the config reader attached as $config.  For example, if the
  * 'default' adapter is a PhpReader, the generated file will be a PHP
  * configuration file loadable by the PhpReader.
