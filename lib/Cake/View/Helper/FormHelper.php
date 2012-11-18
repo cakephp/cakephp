@@ -955,6 +955,13 @@ class FormHelper extends AppHelper {
 				$options['type'] = 'checkbox';
 			} elseif ($fieldDef = $this->_introspectModel($modelKey, 'fields', $fieldKey)) {
 				$type = $fieldDef['type'];
+				if(substr($type,0,4)=='enum'){
+					$options['options']=explode("','",substr($type,6,strlen($type)-8));
+					if(count($options['options'])<=3)
+						$options['type'] = 'radio';
+					else
+						$options['type'] = 'select';
+				}
 				$primaryKey = $this->fieldset[$modelKey]['key'];
 			}
 
