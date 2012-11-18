@@ -52,7 +52,7 @@ class PhpReader implements ConfigReaderInterface {
  * Files with `.` in the name will be treated as values in plugins.  Instead of reading from
  * the initialized path, plugin keys will be located using App::pluginPath().
  *
- * @param string $key The identifier to read from.  If the key has a . it will be treated
+ * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix.
  * @return array Parsed configuration values.
  * @throws ConfigureException when files don't exist or they don't contain `$config`.
@@ -62,17 +62,8 @@ class PhpReader implements ConfigReaderInterface {
 		if (strpos($key, '..') !== false) {
 			throw new ConfigureException(__d('cake_dev', 'Cannot load configuration files with ../ in them.'));
 		}
-		if (substr($key, -4) === '.php') {
-			$key = substr($key, 0, -4);
-		}
-		list($plugin, $key) = pluginSplit($key);
-		$key .= '.php';
 
-		if ($plugin) {
-			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
-		} else {
-			$file = $this->_path . $key;
-		}
+		$file = $this->_getFilePath($key);
 		if (!is_file($file)) {
 			throw new ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
 		}
@@ -90,18 +81,39 @@ class PhpReader implements ConfigReaderInterface {
  * Converts the provided $data into a string of PHP code that can
  * be used saved into a file and loaded later.
  *
- * @param string $filename The filename to create on $this->_path.
- * 	Extension ".php" will be automatically appended if not included in filename.
+ * @param string $key The identifier to write to. If the key has a . it will be treated
+ *  as a plugin prefix.
  * @param array $data Data to dump.
  * @return int Bytes saved.
  */
-	public function dump($filename, $data) {
+	public function dump($key, $data) {
 		$contents = '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';
 
-		if (substr($filename, -4) !== '.php') {
-			$filename .= '.php';
+		$filename = $this->_getFilePath($key);
+		return file_put_contents($filename, $contents);
+	}
+
+/**
+ * Get file path
+ *
+ * @param string $key The identifier to write to. If the key has a . it will be treated
+ *  as a plugin prefix.
+ * @return string Full file path
+ */
+	protected function _getFilePath($key) {
+		if (substr($key, -4) === '.php') {
+			$key = substr($key, 0, -4);
 		}
-		return file_put_contents($this->_path . $filename, $contents);
+		list($plugin, $key) = pluginSplit($key);
+		$key .= '.php';
+
+		if ($plugin) {
+			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
+		} else {
+			$file = $this->_path . $key;
+		}
+
+		return $file;
 	}
 
 }
