@@ -152,6 +152,9 @@ class SetTest extends CakeTestCase {
 		$r = Set::merge('foo', 'bar');
 		$this->assertEquals(array('foo', 'bar'), $r);
 
+		$r = Set::merge(array('foo'), array(), array('bar'));
+		$this->assertEquals(array('foo', 'bar'), $r);
+
 		$r = Set::merge('foo', array('user' => 'bob', 'no-bar'), 'bar');
 		$this->assertEquals(array('foo', 'user' => 'bob', 'no-bar', 'bar'), $r);
 
