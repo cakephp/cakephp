@@ -865,6 +865,14 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Paginator->prev('<< Previous', array('tag' => false), null, array('class' => 'disabled'));
+		$expected = array(
+			'a' => array('href' => '/index/page:1', 'rel' => 'prev', 'class' => 'prev'),
+			'&lt;&lt; Previous',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Paginator->next('Next');
 		$expected = array(
 			'span' => array('class' => 'next'),
@@ -882,6 +890,14 @@ class PaginatorHelperTest extends CakeTestCase {
 			'Next',
 			'/a',
 			'/li'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->next('Next', array('tag' => false));
+		$expected = array(
+			'a' => array('href' => '/index/page:3', 'rel' => 'next', 'class' => 'next'),
+			'Next',
+			'/a'
 		);
 		$this->assertTags($result, $expected);
 
@@ -940,6 +956,14 @@ class PaginatorHelperTest extends CakeTestCase {
 		$expected = array(
 			'span' => array('class' => 'prev'),
 			'<strong', 'Disabled', '/strong',
+			'/span'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->prev('<< Previous', array('tag' => false), '<strong>Disabled</strong>');
+		$expected = array(
+			'span' => array('class' => 'prev'),
+			'&lt;strong&gt;Disabled&lt;/strong&gt;',
 			'/span'
 		);
 		$this->assertTags($result, $expected);
@@ -1012,6 +1036,14 @@ class PaginatorHelperTest extends CakeTestCase {
 			'a' => array('href' => '/index/page:1/limit:10', 'rel' => 'prev'),
 			'Prev',
 			'/a',
+			'/span'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->next('Next', array(), null, array('tag' => false));
+		$expected = array(
+			'span' => array('class' => 'next'),
+			'Next',
 			'/span'
 		);
 		$this->assertTags($result, $expected);
