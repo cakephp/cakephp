@@ -279,7 +279,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		$this->assertRegExp('/<h2>View Scaffold Mock<\/h2>/', $result);
 		$this->assertRegExp('/<dl>/', $result);
-		//TODO: add specific tests for fields.
+
 		$this->assertRegExp('/<a href="\/scaffold_users\/view\/1">1<\/a>/', $result); //belongsTo links
 		$this->assertRegExp('/<li><a href="\/scaffold_mock\/edit\/1">Edit Scaffold Mock<\/a>\s<\/li>/', $result);
 		$this->assertRegExp('/<a href="\#" onclick="if[^>]*>Delete Scaffold Mock<\/a>\s<\/li>/', $result);
@@ -370,7 +370,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		$this->assertRegExp('/<h2>Scaffold Mock<\/h2>/', $result);
 		$this->assertRegExp('/<table cellpadding="0" cellspacing="0">/', $result);
-		//TODO: add testing for table generation
+
 		$this->assertRegExp('/<li><a href="\/admin\/scaffold_mock\/add">New Scaffold Mock<\/a><\/li>/', $result);
 
 		Configure::write('Routing.prefixes', $_backAdmin);
@@ -454,7 +454,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		$this->assertRegExp('/<h2>Scaffold Mock<\/h2>/', $result);
 		$this->assertRegExp('/<table cellpadding="0" cellspacing="0">/', $result);
-		//TODO: add testing for table generation
+
 		$this->assertRegExp('/<li><a href="\/member\/scaffold_mock\/add">New Scaffold Mock<\/a><\/li>/', $result);
 
 		Configure::write('Routing.prefixes', $_backAdmin);
