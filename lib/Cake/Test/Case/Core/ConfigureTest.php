@@ -383,7 +383,9 @@ class ConfigureTest extends CakeTestCase {
 		$result = file_get_contents(TMP . 'config_test.php');
 		$this->assertContains('<?php', $result);
 		$this->assertContains('$config = ', $result);
-		@unlink(TMP . 'config_test.php');
+		if (file_exists(TMP . 'config_test.php')) {
+			unlink(TMP . 'config_test.php');
+		}
 	}
 
 /**
@@ -402,7 +404,9 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertContains('Error', $result);
 		$this->assertNotContains('debug', $result);
 
-		@unlink(TMP . 'config_test.php');
+		if (file_exists(TMP . 'config_test.php')) {
+			unlink(TMP . 'config_test.php');
+		}
 	}
 
 }

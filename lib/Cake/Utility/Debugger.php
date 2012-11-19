@@ -395,7 +395,10 @@ class Debugger {
 		if (!file_exists($file)) {
 			return array();
 		}
-		$data = @explode("\n", file_get_contents($file));
+		$data = file_get_contents($file);
+		if (!empty($data) && strpos($data, "\n") !== false) {
+			$data = explode("\n", $data);
+		}
 
 		if (empty($data) || !isset($data[$line])) {
 			return;
