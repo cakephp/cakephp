@@ -18,6 +18,7 @@
  * @since         CakePHP v .0.10.3.1400
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('HttpSocket', 'Network/Http');
 
 /**
  * XML handling for Cake.
@@ -97,9 +98,15 @@ class Xml {
 			return self::fromArray((array)$input, $options);
 		} elseif (strpos($input, '<') !== false) {
 			return self::_loadXml($input, $options);
-		} elseif (file_exists($input) || strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
-			$input = file_get_contents($input);
-			return self::_loadXml($input, $options);
+		} elseif (file_exists($input)) {
+			return self::_loadXml(file_get_contents($input), $options);
+		} elseif (strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
+			$socket = new HttpSocket();
+			$response = $socket->get($input);
+			if (!$response->isOk()) {
+				throw new XmlException(__d('cake_dev', 'XML cannot be read.'));
+			}
+			return self::_loadXml($response->body, $options);
 		} elseif (!is_string($input)) {
 			throw new XmlException(__d('cake_dev', 'Invalid input.'));
 		}
