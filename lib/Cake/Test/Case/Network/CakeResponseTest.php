@@ -199,7 +199,7 @@ class CakeResponseTest extends CakeTestCase {
  * Tests the send method and changing the content type
  *
  */
-	public function testSendChangingContentYype() {
+	public function testSendChangingContentType() {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->type('mp3');
 		$response->body('the response body');
@@ -215,12 +215,12 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
- * Tests the send method and changing the content type
+ * Tests the send method and changing the content type to JSON
  *
  */
-	public function testSendChangingContentType() {
+	public function testSendChangingContentTypeJSON() {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
-		$response->type('mp3');
+		$response->type('json');
 		$response->body('the response body');
 		$response->expects($this->once())->method('_sendContent')->with('the response body');
 		$response->expects($this->at(0))->method('_setCookies');
@@ -229,7 +229,7 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(2))
 			->method('_sendHeader')->with('Content-Length', 17);
 		$response->expects($this->at(3))
-			->method('_sendHeader')->with('Content-Type', 'audio/mpeg');
+			->method('_sendHeader')->with('Content-Type', 'application/json; charset=UTF-8');
 		$response->send();
 	}
 
