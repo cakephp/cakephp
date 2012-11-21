@@ -272,6 +272,26 @@ class AppTest extends CakeTestCase {
 	}
 
 /**
+ * testLoadWithBuildReset method
+ * Test that
+ *
+ * @return void
+ */
+	public function testLoadWithBuildReset() {
+		App::uses('AppController', 'Controller');
+		App::uses('PagesController', 'Controller');
+
+		$result = App::load('AppController');
+		$this->assertTrue(!empty($result));
+
+		App::build(array('Controller' => '/some/inexisting/path/'), App::RESET);
+		$result = App::load('PagesController');
+		$this->assertFalse($result);
+
+		App::build(); //reset defaults
+	}
+
+/**
  * testCore method
  *
  * @return void
