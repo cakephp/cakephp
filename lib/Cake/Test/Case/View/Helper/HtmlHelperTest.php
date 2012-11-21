@@ -319,8 +319,8 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
- 		$expected = array(
- 			'a' => array('href' => '#'),
+		$expected = array(
+			'a' => array('href' => '#'),
 			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
 			'/a'
 		);
@@ -1871,7 +1871,7 @@ class HtmlHelperTest extends CakeTestCase {
 				array('ul' => array('class' => 'breadcrumb')),
 				'<li',
 				array('a' => array('class' => 'home', 'href' => '/')), 'Home', '/a',
-				array('span' =>array('class' => 'divider')), '-', '/span',
+				array('span' => array('class' => 'divider')), '-', '/span',
 				'/li',
 				'<li',
 				array('a' => array('href' => '/lib')), 'Library', '/a',
@@ -1885,14 +1885,14 @@ class HtmlHelperTest extends CakeTestCase {
 
 /**
  * Test GetCrumbList using style of Zurb Foundation.
- * 
+ *
  * @return void
  */
 	public function testCrumbListZurbStyle() {
 		$this->Html->addCrumb('Home', '#');
 		$this->Html->addCrumb('Features', '#');
-		$this->Html->addCrumb('Gene Splicing', '#'); 
-		$this->Html->addCrumb('Home', '#'); 
+		$this->Html->addCrumb('Gene Splicing', '#');
+		$this->Html->addCrumb('Home', '#');
 		$result = $this->Html->getCrumbList(
 			array('class' => 'breadcrumbs', 'firstClass' => false, 'lastClass' => 'current')
 		);

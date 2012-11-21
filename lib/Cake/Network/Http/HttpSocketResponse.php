@@ -245,7 +245,7 @@ class HttpSocketResponse implements ArrayAccess {
 			$chunkLength = hexdec($hexLength);
 			$chunk = substr($body, 0, $chunkLength);
 			if (!empty($chunkExtensionName)) {
-				 // @todo See if there are popular chunk extensions we should implement
+				// @todo See if there are popular chunk extensions we should implement
 			}
 			$decodedBody .= $chunk;
 			if ($chunkLength !== 0) {

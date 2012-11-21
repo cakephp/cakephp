@@ -221,7 +221,7 @@ class HttpSocketTest extends CakeTestCase {
 		$baseConfig = $this->Socket->config;
 		$this->Socket->expects($this->never())->method('connect');
 		$this->Socket->__construct(array('host' => 'foo-bar'));
-		$baseConfig['host']	 = 'foo-bar';
+		$baseConfig['host'] = 'foo-bar';
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
 		$this->assertEquals($this->Socket->config, $baseConfig);
 
