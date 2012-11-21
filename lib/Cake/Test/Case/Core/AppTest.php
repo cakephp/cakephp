@@ -302,7 +302,7 @@ class AppTest extends CakeTestCase {
  * @return void
  */
 	public function testListObjects() {
-		$result = App::objects('class',  CAKE . 'Routing', false);
+		$result = App::objects('class', CAKE . 'Routing', false);
 		$this->assertTrue(in_array('Dispatcher', $result));
 		$this->assertTrue(in_array('Router', $result));
 

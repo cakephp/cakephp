@@ -283,7 +283,7 @@ class Sqlserver extends DboSource {
 
 					if (strpos($fields[$i], '.') === false) {
 						$this->_fieldMappings[$alias . '__' . $fields[$i]] = $alias . '.' . $fields[$i];
-						$fieldName  = $this->name($alias . '.' . $fields[$i]);
+						$fieldName = $this->name($alias . '.' . $fields[$i]);
 						$fieldAlias = $this->name($alias . '__' . $fields[$i]);
 					} else {
 						$build = explode('.', $fields[$i]);

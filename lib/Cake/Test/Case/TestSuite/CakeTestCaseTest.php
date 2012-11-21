@@ -352,7 +352,6 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  */
 	public function testGetMockForModel() {
-
 		$Post = $this->getMockForModel('Post');
 
 		$this->assertInstanceOf('Post', $Post);
@@ -372,7 +371,6 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  */
 	public function testGetMockForModelWithPlugin() {
-
 		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComment');
 
 		$result = ClassRegistry::init('TestPlugin.TestPluginComment');

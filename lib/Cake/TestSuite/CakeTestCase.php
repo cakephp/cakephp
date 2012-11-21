@@ -394,7 +394,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 					}
 					$regex[] = array(
 						sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
-						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags,  strlen($match[0]))),
+						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
 						$i,
 					);
 					continue;
@@ -689,7 +689,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 
 		list($plugin, $name) = pluginSplit($model);
-		$config = array_merge((array) $config, array('name' => $name));
+		$config = array_merge((array)$config, array('name' => $name));
 		$mock = $this->getMock($name, $methods, array($config));
 		ClassRegistry::removeObject($name);
 		ClassRegistry::addObject($name, $mock);

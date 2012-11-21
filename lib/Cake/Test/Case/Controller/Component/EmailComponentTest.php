@@ -596,13 +596,13 @@ HTMLBLOC;
 		$this->assertEquals($expected, $result);
 
 		$content = '<p>Some HTML content with an <a href="mailto:test@example.com">email link</a>';
-		$result  = $this->Controller->EmailTest->strip($content, true);
+		$result = $this->Controller->EmailTest->strip($content, true);
 		$expected = $content;
 		$this->assertEquals($expected, $result);
 
-		$content  = '<p>Some HTML content with an ';
+		$content = '<p>Some HTML content with an ';
 		$content .= '<a href="mailto:test@example.com,test2@example.com">email link</a>';
-		$result  = $this->Controller->EmailTest->strip($content, true);
+		$result = $this->Controller->EmailTest->strip($content, true);
 		$expected = $content;
 		$this->assertEquals($expected, $result);
 	}

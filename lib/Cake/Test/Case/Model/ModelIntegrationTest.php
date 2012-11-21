@@ -1427,7 +1427,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$assocTypes = array('hasMany', 'hasOne', 'belongsTo', 'hasAndBelongsToMany');
 		foreach ($assocTypes as $type) {
-			 $this->assertEquals($Article->getAssociated($type), array_keys($Article->{$type}));
+			$this->assertEquals($Article->getAssociated($type), array_keys($Article->{$type}));
 		}
 
 		$Article->bindModel(array('hasMany' => array('Category')));

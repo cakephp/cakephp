@@ -1772,9 +1772,9 @@ class CakeEmailTest extends CakeTestCase {
 		$newStyleEmail = $this->_getEmailByNewStyleCharset('iso-2022-jp', null);
 		$newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
 
-		$this->assertSame($oldStyleHeaders['From'],    $newStyleHeaders['From']);
-		$this->assertSame($oldStyleHeaders['To'],      $newStyleHeaders['To']);
-		$this->assertSame($oldStyleHeaders['Cc'],      $newStyleHeaders['Cc']);
+		$this->assertSame($oldStyleHeaders['From'], $newStyleHeaders['From']);
+		$this->assertSame($oldStyleHeaders['To'], $newStyleHeaders['To']);
+		$this->assertSame($oldStyleHeaders['Cc'], $newStyleHeaders['Cc']);
 		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
 
 		// Header Charset : UTF-8
@@ -1785,9 +1785,9 @@ class CakeEmailTest extends CakeTestCase {
 		$newStyleEmail = $this->_getEmailByNewStyleCharset('iso-2022-jp', 'utf-8');
 		$newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
 
-		$this->assertSame($oldStyleHeaders['From'],    $newStyleHeaders['From']);
-		$this->assertSame($oldStyleHeaders['To'],      $newStyleHeaders['To']);
-		$this->assertSame($oldStyleHeaders['Cc'],      $newStyleHeaders['Cc']);
+		$this->assertSame($oldStyleHeaders['From'], $newStyleHeaders['From']);
+		$this->assertSame($oldStyleHeaders['To'], $newStyleHeaders['To']);
+		$this->assertSame($oldStyleHeaders['Cc'], $newStyleHeaders['Cc']);
 		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
 
 		// Header Charset : ISO-2022-JP
@@ -1798,9 +1798,9 @@ class CakeEmailTest extends CakeTestCase {
 		$newStyleEmail = $this->_getEmailByNewStyleCharset('utf-8', 'iso-2022-jp');
 		$newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
 
-		$this->assertSame($oldStyleHeaders['From'],    $newStyleHeaders['From']);
-		$this->assertSame($oldStyleHeaders['To'],      $newStyleHeaders['To']);
-		$this->assertSame($oldStyleHeaders['Cc'],      $newStyleHeaders['Cc']);
+		$this->assertSame($oldStyleHeaders['From'], $newStyleHeaders['From']);
+		$this->assertSame($oldStyleHeaders['To'], $newStyleHeaders['To']);
+		$this->assertSame($oldStyleHeaders['Cc'], $newStyleHeaders['Cc']);
 		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
 	}
 
