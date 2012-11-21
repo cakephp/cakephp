@@ -933,7 +933,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request['_Token'] = array('key' => $key);
 		$result = $this->Form->secure($fields);
 
-		$hash  = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
+		$hash = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
 		$hash .= '%7CModel.1.hidden%7CModel.1.valid';
 
 		$expected = array(

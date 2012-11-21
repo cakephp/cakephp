@@ -743,7 +743,7 @@ class RssHelperTest extends CakeTestCase {
 
 	public function testElementNamespaceWithPrefix() {
 		$item = array(
-				'title'   => 'Title',
+				'title' => 'Title',
 				'dc:creator' => 'Alex',
 				'xy:description' => 'descriptive words'
 			);

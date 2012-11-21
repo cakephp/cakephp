@@ -133,7 +133,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
  * @return CakeTestRunner
  */
 	public function getRunner($loader) {
- 		return new CakeTestRunner($loader, $this->_params);
+		return new CakeTestRunner($loader, $this->_params);
 	}
 
 /**

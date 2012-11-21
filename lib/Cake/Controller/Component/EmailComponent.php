@@ -448,7 +448,7 @@ class EmailComponent extends Component {
  * @return string Stripped value
  */
 	protected function _strip($value, $message = false) {
-		$search  = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
+		$search = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
 		$search .= '|charset\=|mime-version\:|multipart/mixed|(?:[^a-z]to|b?cc)\:.*';
 
 		if ($message !== true) {

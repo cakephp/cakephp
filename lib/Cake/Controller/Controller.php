@@ -507,7 +507,7 @@ class Controller extends Object implements CakeEventListener {
 		$privateAction = (
 			$method->name[0] === '_' ||
 			!$method->isPublic() ||
-			!in_array($method->name,  $this->methods)
+			!in_array($method->name, $this->methods)
 		);
 		$prefixes = Router::prefixes();
 
