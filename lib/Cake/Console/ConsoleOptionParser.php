@@ -345,6 +345,7 @@ class ConsoleOptionParser {
 			$arg = new ConsoleInputArgument($options);
 		}
 		$this->_args[$index] = $arg;
+		ksort($this->_args);
 		return $this;
 	}
 
