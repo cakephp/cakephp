@@ -45,7 +45,7 @@ class Set {
  */
 	public static function merge($data, $merge = null) {
 		$args = func_get_args();
-		if (empty($args[1])) {
+		if (empty($args[1]) && count($args) <= 2) {
 			return (array)$args[0];
 		}
 		if (!is_array($args[0])) {

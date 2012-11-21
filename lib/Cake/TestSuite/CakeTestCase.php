@@ -674,7 +674,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 		return $condition;
 	}
-	// @codingStandardsIgnoreStop
+	// @codingStandardsIgnoreEnd
 
 /**
  * Mock a model, maintain fixtures and table association

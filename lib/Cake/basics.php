@@ -422,19 +422,27 @@ if (!function_exists('cache')) {
 		$filetime = false;
 
 		if (file_exists($filename)) {
+			//@codingStandardsIgnoreStart
 			$filetime = @filemtime($filename);
+			//@codingStandardsIgnoreEnd
 		}
 
 		if ($data === null) {
 			if (file_exists($filename) && $filetime !== false) {
 				if ($filetime + $timediff < $now) {
+					//@codingStandardsIgnoreStart
 					@unlink($filename);
+					//@codingStandardsIgnoreEnd
 				} else {
+					//@codingStandardsIgnoreStart
 					$data = @file_get_contents($filename);
+					//@codingStandardsIgnoreEnd
 				}
 			}
 		} elseif (is_writable(dirname($filename))) {
+			//@codingStandardsIgnoreStart
 			@file_put_contents($filename, $data, LOCK_EX);
+			//@codingStandardsIgnoreEnd
 		}
 		return $data;
 	}
@@ -459,7 +467,9 @@ if (!function_exists('clearCache')) {
 			$cache = CACHE . $type . DS . $params;
 
 			if (is_file($cache . $ext)) {
+				//@codingStandardsIgnoreStart
 				@unlink($cache . $ext);
+				//@codingStandardsIgnoreEnd
 				return true;
 			} elseif (is_dir($cache)) {
 				$files = glob($cache . '*');
@@ -470,7 +480,9 @@ if (!function_exists('clearCache')) {
 
 				foreach ($files as $file) {
 					if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
+						//@codingStandardsIgnoreStart
 						@unlink($file);
+						//@codingStandardsIgnoreEnd
 					}
 				}
 				return true;
@@ -491,7 +503,9 @@ if (!function_exists('clearCache')) {
 				}
 				foreach ($files as $file) {
 					if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
+						//@codingStandardsIgnoreStart
 						@unlink($file);
+						//@codingStandardsIgnoreEnd
 					}
 				}
 				return true;

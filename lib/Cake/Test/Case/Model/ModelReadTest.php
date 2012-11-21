@@ -4054,7 +4054,6 @@ class ModelReadTest extends BaseModelTest {
 /**
  * testFindAllWithConditionInChildQuery
  *
- * @todo external conditions like this are going to need to be revisited at some point
  * @return void
  */
 	public function testFindAllWithConditionInChildQuery() {

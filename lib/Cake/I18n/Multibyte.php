@@ -732,7 +732,6 @@ class Multibyte {
  * @param string $charset charset to use for encoding. defaults to UTF-8
  * @param string $newline
  * @return string
- * @TODO: add support for 'Q'('Quoted Printable') encoding
  */
 	public static function mimeEncode($string, $charset = null, $newline = "\r\n") {
 		if (!Multibyte::checkMultibyte($string) && strlen($string) < 75) {

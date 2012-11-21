@@ -78,7 +78,6 @@ class TemplateTask extends AppShell {
 
 		$paths[] = $core;
 
-		// TEMPORARY TODO remove when all paths are DS terminated
 		foreach ($paths as $i => $path) {
 			$paths[$i] = rtrim($path, DS) . DS;
 		}

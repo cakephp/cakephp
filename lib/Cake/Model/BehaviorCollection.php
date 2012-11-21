@@ -55,7 +55,6 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 /**
  * Attaches a model object and loads a list of behaviors
  *
- * @todo Make this method a constructor instead..
  * @param string $modelName
  * @param array $behaviors
  * @return void
