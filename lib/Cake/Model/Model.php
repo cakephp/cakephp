@@ -1281,8 +1281,7 @@ class Model extends Object implements CakeEventListener {
 			}
 
 			if ($useNewDate && !empty($date)) {
-				$columnTypes = $this->getDataSource()->columns[$type];
-				$format = $columnTypes['format'];
+				$format = $this->getDataSource()->columns[$type]['format'];
 
 				foreach (array('m', 'd', 'H', 'i', 's') as $index) {
 					if (isset($date[$index])) {
@@ -1290,14 +1289,7 @@ class Model extends Object implements CakeEventListener {
 					}
 				}
 
-				$result = str_replace(array_keys($date), array_values($date), $format);
-
-				// Don't trigger on date()
-				if (isset($columnTypes['formatter']) && $columnTypes['formatter'] !== 'date') {
-					$result = call_user_func($columnTypes['formatter'], $format, $result);
-				}
-
-				return $result;
+				return str_replace(array_keys($date), array_values($date), $format);
 			}
 		}
 		return $data;
@@ -1668,7 +1660,7 @@ class Model extends Object implements CakeEventListener {
 				if (!array_key_exists('format', $colType)) {
 					$time = strtotime('now');
 				} else {
-					$time = call_user_func($colType['formatter'], $colType['format'], time());
+					$time = call_user_func($colType['formatter'], $colType['format']);
 				}
 				if (!empty($this->whitelist)) {
 					$this->whitelist[] = $updateCol;
