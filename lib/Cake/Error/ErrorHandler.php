@@ -109,10 +109,9 @@ class ErrorHandler {
 	public static function handleException(Exception $exception) {
 		$config = Configure::read('Exception');
 		if (!empty($config['log'])) {
-			$message = sprintf("[%s] %s [%s]\n%s",
+			$message = sprintf("[%s] %s\n%s",
 				get_class($exception),
 				$exception->getMessage(),
-				Router::url(),
 				$exception->getTraceAsString()
 			);
 			CakeLog::write(LOG_ERR, $message);
