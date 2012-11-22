@@ -325,7 +325,7 @@ class CakeEmail {
 		if ($this->_appCharset !== null) {
 			$this->charset = $this->_appCharset;
 		}
-		$this->_domain = env('HTTP_HOST');
+		$this->_domain = preg_replace('/\:\d+$/', '', env('HTTP_HOST'));
 		if (empty($this->_domain)) {
 			$this->_domain = php_uname('n');
 		}
@@ -1035,7 +1035,7 @@ class CakeEmail {
 
 /**
  * Send an email using the specified content, template and layout
- * 
+ *
  * @param string|array $content String with message or array with messages
  * @return array
  * @throws SocketException
@@ -1337,7 +1337,7 @@ class CakeEmail {
 /**
  * Attach non-embedded files by adding file contents inside boundaries.
  *
- * @param string $boundary Boundary to use. If null, will default to $this->_boundary 
+ * @param string $boundary Boundary to use. If null, will default to $this->_boundary
  * @return array An array of lines to add to the message
  */
 	protected function _attachFiles($boundary = null) {
@@ -1380,7 +1380,7 @@ class CakeEmail {
 /**
  * Attach inline/embedded files to the message.
  *
- * @param string $boundary Boundary to use. If null, will default to $this->_boundary 
+ * @param string $boundary Boundary to use. If null, will default to $this->_boundary
  * @return array An array of lines to add to the message
  */
 	protected function _attachInlineFiles($boundary = null) {

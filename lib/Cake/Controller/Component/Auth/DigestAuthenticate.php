@@ -68,7 +68,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  * - `realm` The realm authentication is for, Defaults to the servername.
  * - `nonce` A nonce used for authentication.  Defaults to `uniqid()`.
  * - `qop` Defaults to auth, no other values are supported at this time.
- * - `opaque` A string that must be returned unchanged by clients. 
+ * - `opaque` A string that must be returned unchanged by clients.
  *    Defaults to `md5($settings['realm'])`
  *
  * @var array
@@ -170,7 +170,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		}
 		$result = ClassRegistry::init($userModel)->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => (int)$this->settings['recursive']
+			'recursive' => $this->settings['recursive']
 		));
 		if (empty($result) || empty($result[$model])) {
 			return false;

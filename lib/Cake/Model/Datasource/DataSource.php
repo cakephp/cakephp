@@ -322,7 +322,6 @@ class DataSource extends Object {
  * @param Model $linkModel Instance of model to replace $__cakeForeignKey__$
  * @param array $stack
  * @return string String of query data with placeholders replaced.
- * @todo Remove and refactor $assocData, ensure uses of the method have the param removed too.
  */
 	public function insertQueryData($query, $data, $association, $assocData, Model $model, Model $linkModel, $stack) {
 		$keys = array('{$__cakeID__$}', '{$__cakeForeignKey__$}');
@@ -420,7 +419,7 @@ class DataSource extends Object {
 
 /**
  * Closes a connection. Override in subclasses
- * 
+ *
  * @return boolean
  * @access public
  */

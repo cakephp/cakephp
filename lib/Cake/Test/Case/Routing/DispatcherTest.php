@@ -1574,7 +1574,7 @@ class DispatcherTest extends CakeTestCase {
 
 		$this->assertTextEquals($out, $cached);
 
-		$filename = $this->__cachePath($request->here());
+		$filename = $this->_cachePath($request->here());
 		unlink($filename);
 	}
 
@@ -1658,78 +1658,12 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
- * backupEnvironment method
- *
- * @return void
- */
-	protected function __backupEnvironment() {
-		return array(
-			'App' => Configure::read('App'),
-			'GET' => $_GET,
-			'POST' => $_POST,
-			'SERVER' => $_SERVER
-		);
-	}
-
-/**
- * reloadEnvironment method
- *
- * @return void
- */
-	protected function __reloadEnvironment() {
-		foreach ($_GET as $key => $val) {
-			unset($_GET[$key]);
-		}
-		foreach ($_POST as $key => $val) {
-			unset($_POST[$key]);
-		}
-		foreach ($_SERVER as $key => $val) {
-			unset($_SERVER[$key]);
-		}
-		Configure::write('App', array());
-	}
-
-/**
- * loadEnvironment method
- *
- * @param array $env
- * @return void
- */
-	protected function __loadEnvironment($env) {
-		if ($env['reload']) {
-			$this->__reloadEnvironment();
-		}
-
-		if (isset($env['App'])) {
-			Configure::write('App', $env['App']);
-		}
-
-		if (isset($env['GET'])) {
-			foreach ($env['GET'] as $key => $val) {
-				$_GET[$key] = $val;
-			}
-		}
-
-		if (isset($env['POST'])) {
-			foreach ($env['POST'] as $key => $val) {
-				$_POST[$key] = $val;
-			}
-		}
-
-		if (isset($env['SERVER'])) {
-			foreach ($env['SERVER'] as $key => $val) {
-				$_SERVER[$key] = $val;
-			}
-		}
-	}
-
-/**
  * cachePath method
  *
  * @param string $here
  * @return string
  */
-	protected function __cachePath($here) {
+	protected function _cachePath($here) {
 		$path = $here;
 		if ($here == '/') {
 			$path = 'home';

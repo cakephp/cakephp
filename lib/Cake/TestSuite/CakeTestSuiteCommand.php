@@ -82,7 +82,9 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 			$result = $skeleton->generate(true);
 
 			if (!$result['incomplete']) {
+				//@codingStandardsIgnoreStart
 				eval(str_replace(array('<?php', '?>'), '', $result['code']));
+				//@codingStandardsIgnoreEnd
 				$suite = new PHPUnit_Framework_TestSuite(
 					$this->arguments['test'] . 'Test'
 				);

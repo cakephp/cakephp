@@ -22,7 +22,7 @@ class CakeTestSuiteTest extends CakeTestCase {
 
 /**
  * testAddTestDirectory
- * 
+ *
  * @return void
  */
 	public function testAddTestDirectory() {
@@ -39,7 +39,7 @@ class CakeTestSuiteTest extends CakeTestCase {
 
 /**
  * testAddTestDirectoryRecursive
- * 
+ *
  * @return void
  */
 	public function testAddTestDirectoryRecursive() {
@@ -57,7 +57,7 @@ class CakeTestSuiteTest extends CakeTestCase {
 
 /**
  * testAddTestDirectoryRecursiveWithHidden
- * 
+ *
  * @return void
  */
 	public function testAddTestDirectoryRecursiveWithHidden() {
@@ -81,7 +81,7 @@ class CakeTestSuiteTest extends CakeTestCase {
 
 /**
  * testAddTestDirectoryRecursiveWithNonPhp
- * 
+ *
  * @return void
  */
 	public function testAddTestDirectoryRecursiveWithNonPhp() {

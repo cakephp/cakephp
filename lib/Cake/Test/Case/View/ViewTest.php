@@ -21,6 +21,7 @@ App::uses('View', 'View');
 App::uses('Helper', 'View');
 App::uses('Controller', 'Controller');
 App::uses('CacheHelper', 'View/Helper');
+App::uses('HtmlHelper', 'View/Helper');
 App::uses('ErrorHandler', 'Error');
 
 
@@ -1100,7 +1101,9 @@ class ViewTest extends CakeTestCase {
 
 		$this->assertRegExp('/^some cacheText/', $result);
 
-		@unlink($path);
+		if (file_exists($path)) {
+			unlink($path);
+		}
 	}
 
 /**
@@ -1395,6 +1398,22 @@ TEXT;
 	public function testExtendMissingElement() {
 		$this->View->layout = false;
 		$this->View->render('extend_missing_element');
+	}
+
+/**
+ * Test extend() preceeded by an element()
+ *
+ * @return void
+ */
+	public function testExtendWithElementBeforeExtend() {
+		$this->View->layout = false;
+		$result = $this->View->render('extend_with_element');
+		$expected = <<<TEXT
+Parent View.
+this is the test elementThe view
+
+TEXT;
+		$this->assertEquals($expected, $result);
 	}
 
 /**

@@ -197,7 +197,7 @@
 	<!--
 		Upload to pirum pear channel.
 	-->
-	<target name="distribute" depends="prepare">
+	<target name="distribute" depends="prepare" description="Upload pear packages to pear.cakephp.org">
 		<echo msg="Uploading tgz file to cakephp.org" />
 		<exec command="scp ${dist.dir}/${pear.package}.tgz cakephp@cakephp.org:${pirum.dir}" dir="." checkreturn="true"  />
 
@@ -208,7 +208,7 @@
 	<!--
 		Top level easy to type targets
 	-->
-	<target name="build" depends="generate-package" />
-	<target name="release" depends="release-commit,build,distribute" />
+	<target name="build" depends="generate-package" description="Generate a pear package" />
+	<target name="release" depends="release-commit,build,distribute" description="Release a new version of CakePHP" />
 
 </project>

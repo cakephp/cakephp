@@ -45,7 +45,7 @@ class Set {
  */
 	public static function merge($data, $merge = null) {
 		$args = func_get_args();
-		if (empty($args[1])) {
+		if (empty($args[1]) && count($args) <= 2) {
 			return (array)$args[0];
 		}
 		if (!is_array($args[0])) {
@@ -533,7 +533,7 @@ class Set {
  *
  * @param array $data Array from where to extract
  * @param string|array $path As an array, or as a dot-separated string.
- * @return array Extracted data
+ * @return array|null Extracted data or null when $data or $path are empty.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::classicExtract
  */
 	public static function classicExtract($data, $path = null) {

@@ -114,7 +114,7 @@ class TestShell extends Shell {
 		))->addOption('stop-on-failure', array(
 			'help' => __d('cake_console', 'Stop execution upon first failure.'),
 			'boolean' => true
-		))->addOption('stop-on-skipped ', array(
+		))->addOption('stop-on-skipped', array(
 			'help' => __d('cake_console', 'Stop execution upon first skipped test.'),
 			'boolean' => true
 		))->addOption('stop-on-incomplete', array(
@@ -132,7 +132,7 @@ class TestShell extends Shell {
 		))->addOption('no-globals-backup', array(
 			'help' => __d('cake_console', 'Do not backup and restore $GLOBALS for each test.'),
 			'boolean' => true
-		))->addOption('static-backup ', array(
+		))->addOption('static-backup', array(
 			'help' => __d('cake_console', 'Backup and restore static attributes for each test.'),
 			'boolean' => true
 		))->addOption('syntax-check', array(
@@ -335,8 +335,8 @@ class TestShell extends Shell {
  * Find the test case for the passed file. The file could itself be a test.
  *
  * @param string $file
- * @param string $category 
- * @param boolean $throwOnMissingFile 
+ * @param string $category
+ * @param boolean $throwOnMissingFile
  * @access protected
  * @return array(type, case)
  * @throws Exception
