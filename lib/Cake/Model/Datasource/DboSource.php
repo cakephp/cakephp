@@ -2272,18 +2272,28 @@ class DboSource extends DataSource {
  */
 	public function fields(Model $model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
-			$alias = $model->alias;
-		}
-		$virtualFields = $model->getVirtualField();
-		$cacheKey = array(
-			$alias,
-			get_class($model),
-			$model->alias,
-			$virtualFields,
-			$fields,
-			$quote,
-			ConnectionManager::getSourceName($this)
-		);
+                        $alias = $model->alias;
+                }
+                if (isset($model->table))
+                {
+                        $table = $model->table;
+                }
+                else
+                {
+                        $table = '';
+                }
+                $virtualFields = $model->getVirtualField();
+                $cacheKey = array(
+                        $alias,
+                        get_class($model),
+                        $model->alias,
+                        $virtualFields,
+                        $fields,
+                        $quote,
+                        ConnectionManager::getSourceName($this),
+                        $table
+
+                );
 		$cacheKey = md5(serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
