@@ -37,14 +37,12 @@ class MediaViewTest extends CakeTestCase {
 		parent::setUp();
 		$this->MediaView = new MediaView();
 		$this->MediaView->response = $this->getMock('CakeResponse', array(
-			'_isActive',
-			'_clearBuffer',
-			'_flushBuffer',
-			'send',
 			'cache',
 			'type',
-			'download',
-			'statusCode'
+			'disableCache',
+			'file',
+			'send',
+			'compress',
 		));
 	}
 
@@ -59,247 +57,71 @@ class MediaViewTest extends CakeTestCase {
 	}
 
 /**
- * tests that rendering a file that does not exists throws an exception
- *
- * @expectedException NotFoundException
- * @return void
- */
-	public function testRenderNotFound() {
-		$this->MediaView->viewVars = array(
-			'path' => '/some/missing/folder',
-			'id' => 'file.jpg'
-		);
-		$this->MediaView->render();
-	}
-
-/**
  * testRender method
  *
  * @return void
  */
 	public function testRender() {
-		$this->MediaView->viewVars = array(
+		$vars = array(
 			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS,
 			'id' => 'test_asset.css'
 		);
-
-		$this->MediaView->response->expects($this->exactly(1))
-			->method('_isActive')
-			->will($this->returnValue(true));
-
-		$this->MediaView->response->expects($this->exactly(1))
-			->method('type')
-			->with('css')
-			->will($this->returnArgument(0));
-
-		$this->MediaView->response->expects($this->once())->method('send');
-		$this->MediaView->response->expects($this->exactly(1))
-			->method('_isActive')
-			->will($this->returnValue(true));
-		$this->MediaView->response->expects($this->once())->method('_clearBuffer');
-		$this->MediaView->response->expects($this->once())->method('_flushBuffer');
-
-		ob_start();
-		$result = $this->MediaView->render();
-		$output = ob_get_clean();
-		$this->assertEquals("/* this is the test asset css file */\n", $output);
-		$this->assertTrue($result !== false);
-
-		$headers = $this->MediaView->response->header();
-		$this->assertEquals(31, $headers['Content-Length']);
-		$this->assertEquals(0, $headers['Expires']);
-		$this->assertEquals(
-			'private, must-revalidate, post-check=0, pre-check=0',
-			$headers['Cache-Control']
-		);
-		$this->assertEquals('no-cache', $headers['Pragma']);
-		$this->assertContains(gmdate('D, d M Y H:i', time()), $headers['Date']);
-	}
-
-/**
- * testRenderWithUnknownFileTypeGeneric method
- *
- * @return void
- */
-	public function testRenderWithUnknownFileTypeGeneric() {
-		$currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-		$_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
-		$this->MediaView->viewVars = array(
-			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS,
-			'id' => 'no_section.ini'
-		);
-
-		$this->MediaView->response->expects($this->exactly(1))
-			->method('type')
-			->with('ini')
-			->will($this->returnValue(false));
+		$this->MediaView->viewVars = $vars;
 
 		$this->MediaView->response->expects($this->once())
-			->method('download')
-			->with('no_section.ini');
+			->method('disableCache');
 
-		$this->MediaView->response->expects($this->once())->method('_clearBuffer');
-		$this->MediaView->response->expects($this->exactly(1))
-			->method('_isActive')
-			->will($this->returnValue(true));
-		$this->MediaView->response->expects($this->once())->method('_flushBuffer');
+		$this->MediaView->response->expects($this->once())
+			->method('file')
+			->with(
+				$vars['path'] . $vars['id'],
+				array('name' => null, 'download' => null)
+			);
 
-		ob_start();
+		$this->MediaView->response->expects($this->once())
+			->method('send');
+
 		$result = $this->MediaView->render();
-		$output = ob_get_clean();
-		$this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-		$this->assertTrue($result !== false);
-		if ($currentUserAgent !== null) {
-			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-		}
-
-		$headers = $this->MediaView->response->header();
-		$this->assertEquals(35, $headers['Content-Length']);
-		$this->assertEquals(0, $headers['Expires']);
-		$this->assertEquals('bytes', $headers['Accept-Ranges']);
-		$this->assertEquals(
-			'private, must-revalidate, post-check=0, pre-check=0',
-			$headers['Cache-Control']
-		);
-		$this->assertEquals('no-cache', $headers['Pragma']);
-		$this->assertContains(gmdate('D, d M Y H:i', time()), $headers['Date']);
+		$this->assertTrue($result);
 	}
 
 /**
- * testRenderWithUnknownFileTypeOpera method
+ * Test render() when caching is on.
  *
  * @return void
  */
-	public function testRenderWithUnknownFileTypeOpera() {
-		$currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-		$_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
-		$this->MediaView->viewVars = array(
-			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS,
-			'id' => 'no_section.ini',
-		);
-
-		$this->MediaView->response->expects($this->at(0))
-			->method('type')
-			->with('ini')
-			->will($this->returnValue(false));
-
-		$this->MediaView->response->expects($this->at(1))
-			->method('type')
-			->with('application/octetstream')
-			->will($this->returnValue(false));
-
-		$this->MediaView->response->expects($this->at(3))
-			->method('download')
-			->with('no_section.ini');
-
-		$this->MediaView->response->expects($this->once())->method('send');
-		$this->MediaView->response->expects($this->once())->method('_clearBuffer');
-		$this->MediaView->response->expects($this->exactly(1))
-			->method('_isActive')
-			->will($this->returnValue(true));
-		$this->MediaView->response->expects($this->once())->method('_flushBuffer');
-
-		ob_start();
-		$result = $this->MediaView->render();
-		$output = ob_get_clean();
-		$this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-		$this->assertTrue($result !== false);
-		if ($currentUserAgent !== null) {
-			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-		}
-
-		$headers = $this->MediaView->response->header();
-		$this->assertEquals(35, $headers['Content-Length']);
-		$this->assertEquals(0, $headers['Expires']);
-		$this->assertEquals('bytes', $headers['Accept-Ranges']);
-		$this->assertEquals(
-			'private, must-revalidate, post-check=0, pre-check=0',
-			$headers['Cache-Control']
-		);
-		$this->assertEquals('no-cache', $headers['Pragma']);
-		$this->assertContains(gmdate('D, d M Y H:i', time()), $headers['Date']);
-	}
-
-/**
- * testRenderWithUnknownFileTypeIE method
- *
- * @return void
- */
-	public function testRenderWithUnknownFileTypeIE() {
-		$currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
-		$this->MediaView->viewVars = array(
-			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS,
-			'id' => 'no_section.ini',
-			'name' => 'config'
-		);
-
-		$this->MediaView->response->expects($this->at(0))
-			->method('type')
-			->with('ini')
-			->will($this->returnValue(false));
-
-		$this->MediaView->response->expects($this->at(1))
-			->method('type')
-			->with('application/force-download')
-			->will($this->returnValue(false));
-
-		$this->MediaView->response->expects($this->at(3))
-			->method('download')
-			->with('config.ini');
-
-		$this->MediaView->response->expects($this->once())->method('send');
-		$this->MediaView->response->expects($this->once())->method('_clearBuffer');
-		$this->MediaView->response->expects($this->exactly(1))
-			->method('_isActive')
-			->will($this->returnValue(true));
-		$this->MediaView->response->expects($this->once())->method('_flushBuffer');
-
-		ob_start();
-		$result = $this->MediaView->render();
-		$output = ob_get_clean();
-		$this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-		$this->assertTrue($result !== false);
-		if ($currentUserAgent !== null) {
-			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-		}
-
-		$headers = $this->MediaView->response->header();
-		$this->assertEquals(35, $headers['Content-Length']);
-		$this->assertEquals(0, $headers['Expires']);
-		$this->assertEquals('bytes', $headers['Accept-Ranges']);
-		$this->assertEquals(
-			'private, must-revalidate, post-check=0, pre-check=0',
-			$headers['Cache-Control']
-		);
-		$this->assertEquals('no-cache', $headers['Pragma']);
-		$this->assertContains(gmdate('D, d M Y H:i', time()), $headers['Date']);
-	}
-
-/**
- * testConnectionAbortedOnBuffering method
- *
- * @return void
- */
-	public function testConnectionAbortedOnBuffering() {
-		$this->MediaView->viewVars = array(
+	public function testRenderCachingAndName() {
+		$vars = array(
 			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS,
-			'id' => 'test_asset.css'
+			'id' => 'test_asset.css',
+			'cache' => '+1 day',
+			'name' => 'something_special',
+			'download' => true,
 		);
+		$this->MediaView->viewVars = $vars;
 
-		$this->MediaView->response->expects($this->any())
-			->method('type')
-			->with('css')
-			->will($this->returnArgument(0));
+		$this->MediaView->response->expects($this->never())
+			->method('disableCache');
 
-		$this->MediaView->response->expects($this->at(1))
-			->method('_isActive')
-			->will($this->returnValue(false));
+		$this->MediaView->response->expects($this->once())
+			->method('cache')
+			->with($this->anything(), $vars['cache']);
 
-		$this->MediaView->response->expects($this->once())->method('_clearBuffer');
-		$this->MediaView->response->expects($this->never())->method('_flushBuffer');
+		$this->MediaView->response->expects($this->once())
+			->method('file')
+			->with(
+				$vars['path'] . $vars['id'],
+				array(
+					'name' => 'something_special.css',
+					'download' => true
+				)
+			);
 
-		$this->MediaView->render();
+		$this->MediaView->response->expects($this->once())
+			->method('send');
+
+		$result = $this->MediaView->render();
+		$this->assertTrue($result);
 	}
 
 /**
@@ -308,6 +130,7 @@ class MediaViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderUpperExtension() {
+		return;
 		$this->MediaView->viewVars = array(
 			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'img' . DS,
 			'id' => 'test_2.JPG'
@@ -319,10 +142,11 @@ class MediaViewTest extends CakeTestCase {
 			->will($this->returnArgument(0));
 
 		$this->MediaView->response->expects($this->at(0))
-			->method('_isActive')
+			->method('send')
 			->will($this->returnValue(true));
 
 		$this->MediaView->render();
 	}
+
 
 }
