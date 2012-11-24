@@ -160,6 +160,19 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test that booleans work on empty set.
+ *
+ * @return void
+ */
+	public function testBooleanEmptyConditionsParsing() {
+		$result = $this->testDb->conditions(array('OR' => array()));
+		$this->assertEquals(' WHERE  1 = 1', $result, 'empty conditions failed');
+
+		$result = $this->testDb->conditions(array('OR' => array('OR' => array())));
+		$this->assertEquals(' WHERE  1 = 1', $result, 'nested empty conditions failed');
+	}
+
+/**
  * test that order() will accept objects made from DboSource::expression
  *
  * @return void
