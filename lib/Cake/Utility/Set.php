@@ -203,7 +203,7 @@ class Set {
  *
  * $list defaults to 0 = no 1 = yes if param is not passed
  *
- * @param array $select Key in $list to return
+ * @param string $select Key in $list to return
  * @param array|string $list can be an array or a comma-separated list.
  * @return string the value of the array key or null if no match
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::enum
@@ -467,7 +467,7 @@ class Set {
 			return true;
 		}
 		if (is_string($conditions)) {
-			return !!Set::extract($conditions, $data);
+			return (bool)Set::extract($conditions, $data);
 		}
 		foreach ($conditions as $condition) {
 			if ($condition === ':last') {

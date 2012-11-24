@@ -634,7 +634,7 @@ class Folder {
  * @return boolean Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::copy
  */
-	public function copy($options = array()) {
+	public function copy($options) {
 		if (!$this->pwd()) {
 			return false;
 		}

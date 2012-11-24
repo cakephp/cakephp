@@ -321,7 +321,7 @@ class Validation {
  * Validates a datetime value
  * All values matching the "date" core validation rule, and the "time" one will be valid
  *
- * @param array $check Value to check
+ * @param string $check Value to check
  * @param string|array $dateFormat Format of the date part
  * Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)
  * ## Keys:
@@ -381,7 +381,7 @@ class Validation {
  * - true => Any number of decimal places greater than 0, or a float|double. The '.' is required.
  * - 1..N => Exactly that many number of decimal places. The '.' is required.
  *
- * @param integer $check The value the test for decimal
+ * @param float $check The value the test for decimal
  * @param integer $places
  * @param string $regex If a custom regular expression is used, this is the only validation that will occur.
  * @return boolean Success
