@@ -66,8 +66,6 @@ class CakeErrorController extends AppController {
 		if ($this->Components->enabled('Security')) {
 			$this->Components->disable('Security');
 		}
-		$this->startupProcess();
-
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'Errors'));
 	}
 

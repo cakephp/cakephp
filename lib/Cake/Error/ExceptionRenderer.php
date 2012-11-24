@@ -150,7 +150,11 @@ class ExceptionRenderer {
 		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
 		try {
 			$controller = new CakeErrorController($request, $response);
+			$controller->startupProcess();
 		} catch (Exception $e) {
+			if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
+				$controller->RequestHandler->startup($controller);
+			}
 		}
 		if (empty($controller)) {
 			$controller = new Controller($request, $response);
