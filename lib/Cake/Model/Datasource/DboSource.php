@@ -2281,7 +2281,8 @@ class DboSource extends DataSource {
 			$virtualFields,
 			$fields,
 			$quote,
-			ConnectionManager::getSourceName($this)
+			ConnectionManager::getSourceName($this),
+			$model->table
 		);
 		$cacheKey = md5(serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
@@ -2461,6 +2462,10 @@ class DboSource extends DataSource {
 						$key = 'AND ' . trim($key);
 					}
 					$not = 'NOT ';
+				}
+
+				if (empty($value)) {
+					continue;
 				}
 
 				if (empty($value[1])) {

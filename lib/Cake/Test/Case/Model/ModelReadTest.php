@@ -5401,7 +5401,7 @@ class ModelReadTest extends BaseModelTest {
 		$Post->Tag->primaryKey = 'tag';
 
 		$result = $Post->find('all', array(
-			'order' => array('Post.id' => 'ASC')
+			'order' => 'Post.id ASC',
 		));
 		$expected = array(
 			array(
@@ -5617,7 +5617,9 @@ class ModelReadTest extends BaseModelTest {
 		$Project = new Project();
 		$Project->recursive = 3;
 
-		$result = $Project->find('all');
+		$result = $Project->find('all', array(
+			'order' => 'Project.id ASC',
+		));
 		$expected = array(
 			array(
 				'Project' => array(
@@ -5731,7 +5733,9 @@ class ModelReadTest extends BaseModelTest {
 		$TestModel = new Home();
 		$TestModel->recursive = 2;
 
-		$result = $TestModel->find('all');
+		$result = $TestModel->find('all', array(
+			'order' => 'Home.id ASC',
+		));
 		$expected = array(
 			array(
 				'Home' => array(
@@ -5844,7 +5848,9 @@ class ModelReadTest extends BaseModelTest {
 		$MyUser = new MyUser();
 		$MyUser->recursive = 2;
 
-		$result = $MyUser->find('all');
+		$result = $MyUser->find('all', array(
+			'order' => 'MyUser.id ASC'
+		));
 		$expected = array(
 			array(
 				'MyUser' => array('id' => '1', 'firstname' => 'userA'),
@@ -6035,7 +6041,7 @@ class ModelReadTest extends BaseModelTest {
 		$fullDebug = $this->db->fullDebug;
 		$this->db->fullDebug = true;
 		$TestModel->recursive = 6;
-		$result = $TestModel->find('all', null, null, 'CategoryThread.id ASC');
+		$result = $TestModel->find('all');
 		$expected = array(
 			array(
 				'CategoryThread' => array(
