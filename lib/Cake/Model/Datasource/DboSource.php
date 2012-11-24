@@ -2273,6 +2273,14 @@ class DboSource extends DataSource {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
+                if (isset($model->table))
+                {
+                        $table = $model->table;
+                }
+                else
+                {
+                        $table = '';
+                }
 		$virtualFields = $model->getVirtualField();
 		$cacheKey = array(
 			$alias,
@@ -2281,7 +2289,9 @@ class DboSource extends DataSource {
 			$virtualFields,
 			$fields,
 			$quote,
-			ConnectionManager::getSourceName($this)
+			ConnectionManager::getSourceName($this),
+                        $table
+
 		);
 		$cacheKey = md5(serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
