@@ -36,7 +36,7 @@ class CacheDispatcher extends DispatcherFilter {
  * @param CakeEvent $event containing the request and response object
  * @return CakeResponse with cached content if found, null otherwise
  */
-	public function beforeDispatch($event) {
+	public function beforeDispatch(CakeEvent $event) {
 		if (Configure::read('Cache.check') !== true) {
 			return;
 		}
