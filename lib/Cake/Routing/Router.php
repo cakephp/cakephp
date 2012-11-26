@@ -851,7 +851,7 @@ class Router {
 				$output = self::_handleNoRoute($url);
 			}
 		} else {
-			if (preg_match('/:\/\/|^(javascript|mailto|tel|sms):|\#/i', $url)) {
+			if (preg_match('/:\/\/|^(javascript|mailto|tel|sms):|^\#/i', $url)) {
 				return $url;
 			}
 			if (substr($url, 0, 1) === '/') {
