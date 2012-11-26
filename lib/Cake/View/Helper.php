@@ -292,36 +292,37 @@ class Helper extends Object {
  */
 	public function assetUrl($path, $options = array()) {
 		if (is_array($path)) {
-			$path = $this->url($path, !empty($options['fullBase']));
-		} elseif (strpos($path, '://') === false) {
-			if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
-				list($plugin, $path) = $this->_View->pluginSplit($path, false);
-			}
-			if (!empty($options['pathPrefix']) && $path[0] !== '/') {
-				$path = $options['pathPrefix'] . $path;
-			}
-			if (
-				!empty($options['ext']) &&
-				strpos($path, '?') === false &&
-				substr($path, -strlen($options['ext'])) !== $options['ext']
-			) {
-				$path .= $options['ext'];
-			}
-			if (isset($plugin)) {
-				$path = Inflector::underscore($plugin) . '/' . $path;
-			}
-			$path = h($this->assetTimestamp($this->webroot($path)));
-
-			if (!empty($options['fullBase'])) {
-				$base = $this->url('/', true);
-				$len = strlen($this->request->webroot);
-				if ($len) {
-					$base = substr($base, 0, -$len);
-				}
-				$path = $base . $path;
-			}
+			return $this->url($path, !empty($options['fullBase']));
 		}
+		if (strpos($path, '://') !== false) {
+			return $path;
+		}
+		if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
+			list($plugin, $path) = $this->_View->pluginSplit($path, false);
+		}
+		if (!empty($options['pathPrefix']) && $path[0] !== '/') {
+			$path = $options['pathPrefix'] . $path;
+		}
+		if (
+			!empty($options['ext']) &&
+			strpos($path, '?') === false &&
+			substr($path, -strlen($options['ext'])) !== $options['ext']
+		) {
+			$path .= $options['ext'];
+		}
+		if (isset($plugin)) {
+			$path = Inflector::underscore($plugin) . '/' . $path;
+		}
+		$path = h($this->assetTimestamp($this->webroot($path)));
 
+		if (!empty($options['fullBase'])) {
+			$base = $this->url('/', true);
+			$len = strlen($this->request->webroot);
+			if ($len) {
+				$base = substr($base, 0, -$len);
+			}
+			$path = $base . $path;
+		}
 		return $path;
 	}
 
