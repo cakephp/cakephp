@@ -1105,7 +1105,7 @@ class FormHelper extends AppHelper {
 			break;
 			case 'checkbox':
 				$input = $this->checkbox($fieldName, $options);
-				$format = $format ? $format : array('before', 'input', 'between', 'label', 'after', 'error');
+				$format = $format ? $format : array('before', 'label', 'between', 'input', 'after', 'error');
 			break;
 			case 'radio':
 				if (isset($out['between'])) {
