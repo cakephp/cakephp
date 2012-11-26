@@ -39,6 +39,13 @@ class Helper extends Object {
 	protected $_helperMap = array();
 
 /**
+ * Settings for this Helper
+ *
+ * @var array
+ */
+	public $settings = array();
+	
+/**
  * The current theme name if any.
  *
  * @var string
@@ -167,6 +174,8 @@ class Helper extends Object {
 		if (!empty($this->helpers)) {
 			$this->_helperMap = ObjectCollection::normalizeObjectArray($this->helpers);
 		}
+		$this->settings = $settings;
+		$this->_set($settings);
 	}
 
 /**
