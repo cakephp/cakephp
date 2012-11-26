@@ -313,7 +313,7 @@ class Helper extends Object {
 		if (isset($plugin)) {
 			$path = Inflector::underscore($plugin) . '/' . $path;
 		}
-		$path = h($this->assetTimestamp($this->webroot($path)));
+		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
 		if (!empty($options['fullBase'])) {
 			$base = $this->url('/', true);
@@ -324,6 +324,21 @@ class Helper extends Object {
 			$path = $base . $path;
 		}
 		return $path;
+	}
+
+/**
+ * Encodes a URL for use in HTML attributes.
+ *
+ * @param string $url The url to encode.
+ * @return string The url encoded for both URL & HTML contexts.
+ */
+	protected function _encodeUrl($url) {
+		$path = parse_url($url, PHP_URL_PATH);
+		$encoded = implode('/', array_map(
+			'rawurlencode',
+			explode('/', $path)
+		));
+		return h(str_replace($path, $encoded, $url));
 	}
 
 /**
