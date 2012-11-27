@@ -1360,6 +1360,23 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->cacheQueries = $original;
 	}
 
+	/**
+	 * Test formatTreeList()
+	 *
+	 * @return void
+	 */
+	public function testFormatTreeList() {
+		extract($this->settings);
+		$this->Tree = new $modelClass();
+		$this->Tree->initialize(2, 2);
+
+		$options = array('order' => array('lft' => 'asc'));
+		$results = $this->Tree->find('all', $options);
+		$result = $this->Tree->formatTreeList($results);
+		$expected = array(1 => '1. Root', 2 => '_1.1', 3 => '__1.1.1', 4 => '__1.1.2', 5 => '_1.2', 6 => '__1.2.1', 7 => '__1.2.2');
+		$this->assertSame($expected, $result);
+	}
+
 /**
  * testGenerateTreeListWithSelfJoin method
  *

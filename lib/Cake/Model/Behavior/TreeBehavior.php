@@ -360,6 +360,24 @@ class TreeBehavior extends ModelBehavior {
 			$fields = array($Model->primaryKey, $Model->displayField, $left, $right);
 		}
 
+		$order = $Model->escapeField($left) . " asc";
+		$results = $Model->find('all', compact('conditions', 'fields', 'order', 'recursive'));
+		return $this->formatTreeList($Model, $results, $keyPath, $valuePath, $spacer);
+	}
+
+/**
+ * A helper method to format a result array into a hierarchical one.
+ * The results need to be ordered by the lft field.
+ *
+ * @param Model $Model Model instance
+ * @param array $array
+ * @param string $keyPath A string path to the key, i.e. "{n}.Post.id"
+ * @param string $valuePath A string path to the value, i.e. "{n}.Post.title"
+ * @param string $spacer The character or characters which will be repeated
+ * @return array An associative array of records, where the id is the key, and the display field is the value
+ */
+	public function formatTreeList(Model $Model, $array, $keyPath = null, $valuePath = null, $spacer = '_') {
+		extract($this->settings[$Model->alias]);
 		if (!$keyPath) {
 			$keyPath = '{n}.' . $Model->alias . '.' . $Model->primaryKey;
 		}
@@ -373,23 +391,21 @@ class TreeBehavior extends ModelBehavior {
 		} else {
 			array_unshift($valuePath, '%s' . $valuePath[0], '{n}.tree_prefix');
 		}
-		$order = $Model->escapeField($left) . " asc";
-		$results = $Model->find('all', compact('conditions', 'fields', 'order', 'recursive'));
-		$stack = array();
 
-		foreach ($results as $i => $result) {
+		$stack = array();
+		foreach ($array as $i => $row) {
 			$count = count($stack);
-			while ($stack && ($stack[$count - 1] < $result[$Model->alias][$right])) {
+			while ($stack && ($stack[$count - 1] < $row[$Model->alias][$right])) {
 				array_pop($stack);
 				$count--;
 			}
-			$results[$i]['tree_prefix'] = str_repeat($spacer, $count);
-			$stack[] = $result[$Model->alias][$right];
+			$array[$i]['tree_prefix'] = str_repeat($spacer, $count);
+			$stack[] = $row[$Model->alias][$right];
 		}
-		if (empty($results)) {
+		if (empty($array)) {
 			return array();
 		}
-		return Hash::combine($results, $keyPath, $valuePath);
+		return Hash::combine($array, $keyPath, $valuePath);
 	}
 
 /**
