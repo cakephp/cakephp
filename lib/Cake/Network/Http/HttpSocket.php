@@ -929,7 +929,6 @@ class HttpSocket extends Socket {
  *
  * @param array $cookies Array of cookies to send with the request.
  * @return string Cookie header string to be sent with the request.
- * @todo Refactor token escape mechanism to be configurable
  */
 	public function buildCookies($cookies) {
 		$header = array();
@@ -945,7 +944,6 @@ class HttpSocket extends Socket {
  * @param string $token Token to escape
  * @param array $chars
  * @return string Escaped token
- * @todo Test $chars parameter
  */
 	protected function _escapeToken($token, $chars = null) {
 		$regex = '/([' . implode('', $this->_tokenEscapeChars(true, $chars)) . '])/';
@@ -959,7 +957,6 @@ class HttpSocket extends Socket {
  * @param boolean $hex true to get them as HEX values, false otherwise
  * @param array $chars
  * @return array Escape chars
- * @todo Test $chars parameter
  */
 	protected function _tokenEscapeChars($hex = true, $chars = null) {
 		if (!empty($chars)) {

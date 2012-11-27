@@ -613,7 +613,7 @@ class ExtractTask extends Shell {
  * @return string Translation template header
  */
 	protected function _writeHeader() {
-		$output  = "# LANGUAGE translation of CakePHP Application\n";
+		$output = "# LANGUAGE translation of CakePHP Application\n";
 		$output .= "# Copyright YEAR NAME <EMAIL@ADDRESS>\n";
 		$output .= "#\n";
 		$output .= "#, fuzzy\n";

@@ -23,7 +23,7 @@ namespace Cake\Event;
  *
  * @package Cake.Event
  */
-interface EventListener  {
+interface EventListener {
 
 /**
  * Returns a list of events this object is implementing. When the class is registered

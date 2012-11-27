@@ -67,7 +67,7 @@ abstract class DispatcherFilter implements EventListener {
  *	keys in the data property.
  * @return Cake\Network\Response|boolean
  **/
-	public function beforeDispatch($event) {
+	public function beforeDispatch(CakeEvent $event) {
 	}
 
 /**
@@ -82,6 +82,6 @@ abstract class DispatcherFilter implements EventListener {
  *	keys in the data property.
  * @return mixed boolean to stop the event dispatching or null to continue
  **/
-	public function afterDispatch($event) {
+	public function afterDispatch(CakeEvent $event) {
 	}
 }

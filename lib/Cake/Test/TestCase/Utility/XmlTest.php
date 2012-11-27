@@ -176,6 +176,7 @@ class XmlTest extends TestCase {
 			array(null),
 			array(false),
 			array(''),
+			array('http://localhost/notthere.xml'),
 		);
 	}
 

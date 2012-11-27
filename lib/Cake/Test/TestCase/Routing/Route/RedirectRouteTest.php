@@ -31,7 +31,7 @@ use Cake\TestSuite\TestCase;
  *
  * @package       Cake.Test.Case.Routing.Route
  */
-class RedirectRouteTest extends  TestCase {
+class RedirectRouteTest extends TestCase {
 
 /**
  * setUp method

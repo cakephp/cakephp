@@ -131,7 +131,9 @@ class ErrorHandlerTest extends TestCase {
 		$this->_restoreError = true;
 
 		ob_start();
+		//@codingStandardsIgnoreStart
 		@include 'invalid.file';
+		//@codingStandardsIgnoreEnd
 		$result = ob_get_clean();
 		$this->assertTrue(empty($result));
 	}
@@ -145,7 +147,7 @@ class ErrorHandlerTest extends TestCase {
 		Configure::write('debug', 0);
 		Configure::write('Error.trace', false);
 		if (file_exists(LOGS . 'debug.log')) {
-			@unlink(LOGS . 'debug.log');
+			unlink(LOGS . 'debug.log');
 		}
 
 		set_error_handler('Cake\Error\ErrorHandler::handleError');
@@ -159,7 +161,9 @@ class ErrorHandlerTest extends TestCase {
 			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (Notice|Debug): Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
 			$result[0]
 		);
-		@unlink(LOGS . 'debug.log');
+		if (file_exists(LOGS . 'debug.log')) {
+			unlink(LOGS . 'debug.log');
+		}
 	}
 
 /**
@@ -171,7 +175,7 @@ class ErrorHandlerTest extends TestCase {
 		Configure::write('debug', 0);
 		Configure::write('Error.trace', true);
 		if (file_exists(LOGS . 'debug.log')) {
-			@unlink(LOGS . 'debug.log');
+			unlink(LOGS . 'debug.log');
 		}
 
 		set_error_handler('Cake\Error\ErrorHandler::handleError');
@@ -186,7 +190,9 @@ class ErrorHandlerTest extends TestCase {
 		);
 		$this->assertRegExp('/^Trace:/', $result[1]);
 		$this->assertRegExp('/^' . preg_quote(__NAMESPACE__, '/') . '\\\ErrorHandlerTest\:\:testHandleErrorLoggingTrace\(\)/', $result[2]);
-		@unlink(LOGS . 'debug.log');
+		if (file_exists(LOGS . 'debug.log')) {
+			unlink(LOGS . 'debug.log');
+		}
 	}
 
 /**

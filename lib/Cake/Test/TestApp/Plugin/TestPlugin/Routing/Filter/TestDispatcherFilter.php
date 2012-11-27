@@ -21,11 +21,11 @@ use Cake\Routing\DispatcherFilter;
 
 class TestDispatcherFilter extends DispatcherFilter {
 
-	public function beforeDispatch($event) {
+	public function beforeDispatch(CakeEvent $event) {
 		$event->data['request']->params['altered'] = true;
 	}
 
-	public function afterDispatch($event) {
+	public function afterDispatch(CakeEvent $event) {
 		$event->data['response']->statusCode(304);
 	}
 

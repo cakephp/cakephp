@@ -42,7 +42,7 @@ class AssetDispatcher extends DispatcherFilter {
  * @param Cake\Event\Event $event containing the request and response object
  * @return Cake\Network\Response if the client is requesting a recognized asset, null otherwise
  */
-	public function beforeDispatch($event) {
+	public function beforeDispatch(CakeEvent $event) {
 		$url = $event->data['request']->url;
 		if (strpos($url, '..') !== false || strpos($url, '.') === false) {
 			return;

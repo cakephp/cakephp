@@ -155,6 +155,9 @@ class SetTest extends TestCase {
 		$r = Set::merge('foo', 'bar');
 		$this->assertEquals(array('foo', 'bar'), $r);
 
+		$r = Set::merge(array('foo'), array(), array('bar'));
+		$this->assertEquals(array('foo', 'bar'), $r);
+
 		$r = Set::merge('foo', array('user' => 'bob', 'no-bar'), 'bar');
 		$this->assertEquals(array('foo', 'user' => 'bob', 'no-bar', 'bar'), $r);
 
@@ -1218,21 +1221,21 @@ class SetTest extends TestCase {
 
 		$nonSequential = array(
 			'User' => array(
-				0  => array('id' => 1),
-				2  => array('id' => 2),
-				6  => array('id' => 3),
-				9  => array('id' => 4),
-				3  => array('id' => 5),
+				0 => array('id' => 1),
+				2 => array('id' => 2),
+				6 => array('id' => 3),
+				9 => array('id' => 4),
+				3 => array('id' => 5),
 			),
 		);
 
 		$nonZero = array(
 			'User' => array(
-				2  => array('id' => 1),
-				4  => array('id' => 2),
-				6  => array('id' => 3),
-				9  => array('id' => 4),
-				3  => array('id' => 5),
+				2 => array('id' => 1),
+				4 => array('id' => 2),
+				6 => array('id' => 3),
+				9 => array('id' => 4),
+				3 => array('id' => 5),
 			),
 		);
 
@@ -1690,7 +1693,7 @@ class SetTest extends TestCase {
 
 		$result = Set::remove($a, 'files');
 		$expected = array(
-			'pages'     => array('name' => 'page')
+			'pages' => array('name' => 'page')
 		);
 		$this->assertEquals($expected, $result);
 	}

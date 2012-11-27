@@ -502,7 +502,7 @@ class Controller extends Object implements EventListener {
 		$privateAction = (
 			$method->name[0] === '_' ||
 			!$method->isPublic() ||
-			!in_array($method->name,  $this->methods)
+			!in_array($method->name, $this->methods)
 		);
 		$prefixes = Router::prefixes();
 
@@ -711,7 +711,6 @@ class Controller extends Object implements EventListener {
 			extract($status, EXTR_OVERWRITE);
 		}
 		$event = new Event('Controller.beforeRedirect', $this, array($url, $status, $exit));
-		//TODO: Remove the following line when the events are fully migrated to the Cake\Event\EventManager
 		list($event->break, $event->breakOn, $event->collectReturn) = array(true, false, true);
 		$this->getEventManager()->dispatch($event);
 

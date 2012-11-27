@@ -19,8 +19,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Utility;
+
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Network\Http\HttpSocket;
+
 
 /**
  * XML handling for Cake.
@@ -100,9 +103,15 @@ class Xml {
 			return static::fromArray((array)$input, $options);
 		} elseif (strpos($input, '<') !== false) {
 			return static::_loadXml($input, $options);
-		} elseif (file_exists($input) || strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
-			$input = file_get_contents($input);
-			return static::_loadXml($input, $options);
+		} elseif (file_exists($input)) {
+			return static::_loadXml(file_get_contents($input), $options);
+		} elseif (strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
+			$socket = new HttpSocket();
+			$response = $socket->get($input);
+			if (!$response->isOk()) {
+				throw new Error\XmlException(__d('cake_dev', 'XML cannot be read.'));
+			}
+			return static::_loadXml($response->body, $options);
 		} elseif (!is_string($input)) {
 			throw new Error\XmlException(__d('cake_dev', 'Invalid input.'));
 		}

@@ -1544,6 +1544,7 @@ class RouterTest extends TestCase {
  * test newer style automatically generated prefix routes.
  *
  * @return void
+ * @see testUrlGenerationWithAutoPrefixes
  */
 	public function testUrlGenerationWithAutoPrefixes() {
 		Router::reload();
@@ -2402,6 +2403,12 @@ class RouterTest extends TestCase {
 
 		$url = 'sms:012345-678';
 		$this->assertEquals($url, Router::url($url));
+
+		$url = '#here';
+		$this->assertEquals($url, Router::url($url));
+		$url = 'posts/index#here';
+		$expected = FULL_BASE_URL . '/posts/index#here';
+		$this->assertEquals($expected, Router::url($url, true));
 	}
 
 /**
@@ -2440,9 +2447,9 @@ class RouterTest extends TestCase {
 			array('action' => 'index',	'method' => 'GET',		'id' => false),
 			array('action' => 'view',	'method' => 'GET',		'id' => true),
 			array('action' => 'add',	'method' => 'POST',		'id' => false),
-			array('action' => 'edit',	'method' => 'PUT', 		'id' => true),
+			array('action' => 'edit',	'method' => 'PUT',		'id' => true),
 			array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
-			array('action' => 'edit',	'method' => 'POST', 	'id' => true)
+			array('action' => 'edit',	'method' => 'POST',		'id' => true)
 		);
 		$this->assertEquals($default, $expected);
 
@@ -2450,9 +2457,9 @@ class RouterTest extends TestCase {
 			array('action' => 'index',	'method' => 'GET',		'id' => false),
 			array('action' => 'view',	'method' => 'GET',		'id' => true),
 			array('action' => 'add',	'method' => 'POST',		'id' => false),
-			array('action' => 'edit',	'method' => 'PUT', 		'id' => true),
+			array('action' => 'edit',	'method' => 'PUT',		'id' => true),
 			array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
-			array('action' => 'update',	'method' => 'POST', 	'id' => true)
+			array('action' => 'update',	'method' => 'POST',		'id' => true)
 		);
 		Router::resourceMap($custom);
 		$this->assertEquals(Router::resourceMap(), $custom);

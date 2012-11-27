@@ -79,7 +79,6 @@ class TemplateTask extends Shell {
 
 		$paths[] = $core;
 
-		// TEMPORARY TODO remove when all paths are DS terminated
 		foreach ($paths as $i => $path) {
 			$paths[$i] = rtrim($path, DS) . DS;
 		}

@@ -239,7 +239,9 @@ class ConsoleShell extends Shell {
 
 					if ($this->_isValidModel($modelToCheck)) {
 						$findCommand = "\$data = \$this->$command;";
+						//@codingStandardsIgnoreStart
 						@eval($findCommand);
+						//@codingStandardsIgnoreEnd
 
 						if (is_array($data)) {
 							foreach ($data as $idx => $results) {
@@ -295,7 +297,9 @@ class ConsoleShell extends Shell {
 						list($foo, $data) = explode("->save", $command);
 						$data = preg_replace('/^\(*(array)?\(*(.+?)\)*$/i', '\\2', $data);
 						$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
+						//@codingStandardsIgnoreStart
 						@eval($saveCommand);
+						//@codingStandardsIgnoreEnd
 						$this->out(__d('cake_console', 'Saved record for %s', $modelToSave));
 					}
 				break;
@@ -305,7 +309,9 @@ class ConsoleShell extends Shell {
 					if ($this->_isValidModel($modelToCheck)) {
 						// Get the column info for this model
 						$fieldsCommand = "\$data = \$this->{$modelToCheck}->getColumnTypes();";
+						//@codingStandardsIgnoreStart
 						@eval($fieldsCommand);
+						//@codingStandardsIgnoreEnd
 
 						if (is_array($data)) {
 							foreach ($data as $field => $type) {
@@ -326,8 +332,10 @@ class ConsoleShell extends Shell {
 				case preg_match("/^routes\s+show/i", $command, $tmp):
 					$this->out(print_r(Hash::combine(Router::$routes, '{n}.template', '{n}.defaults'), true));
 				break;
-				case preg_match("/^route\s+(\(.*\))$/i", $command, $tmp):
+				case (preg_match("/^route\s+(\(.*\))$/i", $command, $tmp) == true):
+					//@codingStandardsIgnoreStart
 					if ($url = eval('return array' . $tmp[1] . ';')) {
+						//@codingStandardsIgnoreEnd
 						$this->out(Router::url($url));
 					}
 				break;
@@ -363,7 +371,9 @@ class ConsoleShell extends Shell {
 		Router::reload();
 		extract(Router::getNamedExpressions());
 
+		//@codingStandardsIgnoreStart
 		if (!@include APP . 'Config/routes.php') {
+			//@codingStandardsIgnoreEnd
 			return false;
 		}
 		Plugin::routes();

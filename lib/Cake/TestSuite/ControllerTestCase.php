@@ -176,7 +176,7 @@ abstract class ControllerTestCase extends TestCase {
  *
  * @var boolean
  */
-	private $__dirtyController = false;
+	protected $_dirtyController = false;
 
 /**
  * Used to enable calling ControllerTestCase::testAction() without the testing
@@ -262,7 +262,7 @@ abstract class ControllerTestCase extends TestCase {
 			$this->headers = Router::getRequest()->response->header();
 			return;
 		}
-		if ($this->__dirtyController) {
+		if ($this->_dirtyController) {
 			$this->controller = null;
 		}
 
@@ -285,7 +285,7 @@ abstract class ControllerTestCase extends TestCase {
 		if (isset($this->controller->View)) {
 			$this->view = $this->controller->View->fetch('__view_no_layout__');
 		}
-		$this->__dirtyController = true;
+		$this->_dirtyController = true;
 		$this->headers = $Dispatch->response->header();
 
 		return $this->{$options['return']};
@@ -348,12 +348,7 @@ abstract class ControllerTestCase extends TestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
-			$modelClass = get_class(ClassRegistry::init($model));
-			list(, $modelName) = namespaceSplit($modelClass);
-			$config = array_merge((array)$config, array('name' => $model));
-			$model = $this->getMock($modelClass, $methods, array($config));
-			ClassRegistry::removeObject($modelName);
-			ClassRegistry::addObject($modelName, $model);
+			$this->getMockForModel($model, $methods, $config);
 		}
 
 		foreach ($mocks['components'] as $component => $methods) {
@@ -375,8 +370,13 @@ abstract class ControllerTestCase extends TestCase {
 			$controller->Components->set($name, $component);
 		}
 
+<<<<<<< HEAD
 		$controller->constructClasses();
 		$this->__dirtyController = false;
+=======
+		$_controller->constructClasses();
+		$this->_dirtyController = false;
+>>>>>>> origin/2.3
 
 		$this->controller = $controller;
 		return $this->controller;

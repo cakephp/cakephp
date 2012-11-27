@@ -1118,7 +1118,9 @@ class ViewTest extends TestCase {
 
 		$this->assertRegExp('/^some cacheText/', $result);
 
-		@unlink($path);
+		if (file_exists($path)) {
+			unlink($path);
+		}
 	}
 
 /**

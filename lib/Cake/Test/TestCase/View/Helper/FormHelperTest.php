@@ -945,7 +945,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request['_Token'] = array('key' => $key);
 		$result = $this->Form->secure($fields);
 
-		$hash  = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
+		$hash = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
 		$hash .= '%7CModel.1.hidden%7CModel.1.valid';
 
 		$expected = array(
@@ -2857,6 +2857,12 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Form->inputs(null, null, array('legend' => 'Field of Dreams', 'fieldset' => 'classy-stuff'));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->inputs('Field of Dreams', null, array('fieldset' => 'classy-stuff'));
+		$this->assertTags($result, $expected);
+
 		$this->Form->create('Contact');
 		$this->Form->request['prefix'] = 'admin';
 		$this->Form->request['action'] = 'admin_edit';
@@ -2921,6 +2927,10 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->create('Contact');
+		$result = $this->Form->inputs(null, null, array('fieldset' => false));
+		$this->assertTags($result, $expected);
+
+		$this->Form->create('Contact');
 		$result = $this->Form->inputs(array('fieldset' => true, 'legend' => false));
 		$expected = array(
 			'fieldset' => array(),
@@ -2970,6 +2980,10 @@ class FormHelperTest extends TestCase {
 			array('div' => array('class' => 'input select')),
 			'*/div',
 		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->create('Contact');
+		$result = $this->Form->inputs(null, null, array('fieldset' => false, 'legend' => 'Hello'));
 		$this->assertTags($result, $expected);
 
 		$this->Form->create('Contact');
@@ -3030,6 +3044,10 @@ class FormHelperTest extends TestCase {
 			'*/div',
 			'/fieldset'
 		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->create('Contact');
+		$result = $this->Form->inputs(null, null, array('legend' => 'Hello'));
 		$this->assertTags($result, $expected);
 	}
 

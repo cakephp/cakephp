@@ -1278,7 +1278,7 @@ class RequestTest extends TestCase {
 		return array(
 			array(
 				'IIS - No rewrite base path',
-				 array(
+				array(
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/index.php',

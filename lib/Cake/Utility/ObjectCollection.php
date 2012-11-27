@@ -106,7 +106,6 @@ abstract class ObjectCollection {
 			if (empty($event->omitSubject)) {
 				$subject = $event->subject();
 			}
-			//TODO: Temporary BC check, while we move all the triggers system into the Cake\Event\EventManager
 			foreach (array('break', 'breakOn', 'collectReturn', 'modParams') as $opt) {
 				if (isset($event->{$opt})) {
 					$options[$opt] = $event->{$opt};

@@ -287,7 +287,9 @@ class BasicsTest extends TestCase {
 
 		$result = cache('basics_test');
 		$this->assertEquals('simple cache write', $result);
-		@unlink(CACHE . 'basics_test');
+		if (file_exists(CACHE . 'basics_test')) {
+			unlink(CACHE . 'basics_test');
+		}
 
 		cache('basics_test', 'expired', '+1 second');
 		sleep(2);

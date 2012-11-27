@@ -327,7 +327,7 @@ class AclShell extends Shell {
 		$this->hr();
 
 		$stack = array();
-		$last  = null;
+		$last = null;
 
 		foreach ($nodes as $n) {
 			$stack[] = $n;

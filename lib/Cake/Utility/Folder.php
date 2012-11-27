@@ -379,7 +379,9 @@ class Folder {
 		}
 
 		if ($recursive === false && is_dir($path)) {
+			//@codingStandardsIgnoreStart
 			if (@chmod($path, intval($mode, 8))) {
+				//@codingStandardsIgnoreEnd
 				$this->_messages[] = __d('cake_dev', '%s changed to %s', $path, $mode);
 				return true;
 			}
@@ -400,7 +402,9 @@ class Folder {
 						continue;
 					}
 
+					//@codingStandardsIgnoreStart
 					if (@chmod($fullpath, intval($mode, 8))) {
+						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s changed to %s', $fullpath, $mode);
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT changed to %s', $fullpath, $mode);
@@ -584,13 +588,17 @@ class Folder {
 			foreach ($iterator as $item) {
 				$filePath = $item->getPathname();
 				if ($item->isFile() || $item->isLink()) {
+					//@codingStandardsIgnoreStart
 					if (@unlink($filePath)) {
+						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
 					}
 				} elseif ($item->isDir() && !$item->isDot()) {
+					//@codingStandardsIgnoreStart
 					if (@rmdir($filePath)) {
+						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
@@ -600,7 +608,9 @@ class Folder {
 			}
 
 			$path = rtrim($path, DS);
+			//@codingStandardsIgnoreStart
 			if (@rmdir($path)) {
+				//@codingStandardsIgnoreEnd
 				$this->_messages[] = __d('cake_dev', '%s removed', $path);
 			} else {
 				$this->_errors[] = __d('cake_dev', '%s NOT removed', $path);
@@ -625,7 +635,7 @@ class Folder {
  * @return boolean Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::copy
  */
-	public function copy($options = array()) {
+	public function copy($options) {
 		if (!$this->pwd()) {
 			return false;
 		}
@@ -655,7 +665,9 @@ class Folder {
 		}
 
 		$exceptions = array_merge(array('.', '..', '.svn'), $options['skip']);
+		//@codingStandardsIgnoreStart
 		if ($handle = @opendir($fromDir)) {
+			//@codingStandardsIgnoreEnd
 			while (($item = readdir($handle)) !== false) {
 				$to = Folder::addPathElement($toDir, $item);
 				if (($options['scheme'] != Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {

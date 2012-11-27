@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
  *
  * @package       Cake.Test.TestCase.Model.Validator
  */
-class ValidationSetTest  extends TestCase {
+class ValidationSetTest extends TestCase {
 
 /**
  * testValidate method

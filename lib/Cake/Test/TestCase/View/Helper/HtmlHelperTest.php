@@ -308,8 +308,8 @@ class HtmlHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
- 		$expected = array(
- 			'a' => array('href' => '#'),
+		$expected = array(
+			'a' => array('href' => '#'),
 			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
 			'/a'
 		);
@@ -1799,6 +1799,73 @@ class HtmlHelperTest extends TestCase {
 				'/li',
 				'/ul'
 			)
+		);
+	}
+
+/**
+ * test getCrumbList() in Twitter Bootstrap style.
+ *
+ * @return void
+ */
+	public function testCrumbListBootstrapStyle() {
+		$this->Html->addCrumb('Home', '/', array('class' => 'home'));
+		$this->Html->addCrumb('Library', '/lib');
+		$this->Html->addCrumb('Data');
+		$result = $this->Html->getCrumbList(array(
+			'class' => 'breadcrumb',
+			'separator' => '<span class="divider">-</span>',
+			'firstClass' => false,
+			'lastClass' => 'active'
+		));
+		$this->assertTags(
+			$result,
+			array(
+				array('ul' => array('class' => 'breadcrumb')),
+				'<li',
+				array('a' => array('class' => 'home', 'href' => '/')), 'Home', '/a',
+				array('span' => array('class' => 'divider')), '-', '/span',
+				'/li',
+				'<li',
+				array('a' => array('href' => '/lib')), 'Library', '/a',
+				array('span' => array('class' => 'divider')), '-', '/span',
+				'/li',
+				array('li' => array('class' => 'active')), 'Data', '/li',
+				'/ul'
+			)
+		);
+	}
+
+/**
+ * Test GetCrumbList using style of Zurb Foundation.
+ *
+ * @return void
+ */
+	public function testCrumbListZurbStyle() {
+		$this->Html->addCrumb('Home', '#');
+		$this->Html->addCrumb('Features', '#');
+		$this->Html->addCrumb('Gene Splicing', '#');
+		$this->Html->addCrumb('Home', '#');
+		$result = $this->Html->getCrumbList(
+			array('class' => 'breadcrumbs', 'firstClass' => false, 'lastClass' => 'current')
+		);
+		$this->assertTags(
+			$result,
+			array(
+				array('ul' => array('class' => 'breadcrumbs')),
+				'<li',
+				array('a' => array('href' => '#')), 'Home', '/a',
+				'/li',
+				'<li',
+				array('a' => array('href' => '#')), 'Features', '/a',
+				'/li',
+				'<li',
+				array('a' => array('href' => '#')), 'Gene Splicing', '/a',
+				'/li',
+				array('li' => array('class' => 'current')),
+				array('a' => array('href' => '#')), 'Home', '/a',
+				'/li',
+				'/ul'
+			), true
 		);
 	}
 

@@ -21,13 +21,13 @@ use Cake\Routing\DispatcherFilter;
 
 class Test2DispatcherFilter extends DispatcherFilter {
 
-	public function beforeDispatch($event) {
+	public function beforeDispatch(CakeEvent $event) {
 		$event->data['response']->statusCode(500);
 		$event->stopPropagation();
 		return $event->data['response'];
 	}
 
-	public function afterDispatch($event) {
+	public function afterDispatch(CakeEvent $event) {
 		$event->data['response']->statusCode(200);
 	}
 

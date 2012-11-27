@@ -142,8 +142,8 @@ class DebuggerTest extends TestCase {
 			'a' => array(
 				'href' => "javascript:void(0);",
 				'onclick' => "preg:/document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display = " .
-					 "\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
-					 " \? '' \: 'none'\);/"
+					"\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
+					" \? '' \: 'none'\);/"
 			),
 			'b' => array(), 'Notice', '/b', ' (8)',
 		));
@@ -172,7 +172,7 @@ class DebuggerTest extends TestCase {
 
 		Debugger::output('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-				 '{:description}</error>',
+				'{:description}</error>',
 			'context' => "<context>{:context}</context>",
 			'trace' => "<stack>{:trace}</stack>",
 		));
@@ -224,7 +224,7 @@ class DebuggerTest extends TestCase {
 
 		Debugger::addFormat('js', array(
 			'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
-							 '&line={:line}">{:path}</a>, line {:line}'
+				'&line={:line}">{:path}</a>, line {:line}'
 		));
 		Debugger::outputAs('js');
 
@@ -233,7 +233,7 @@ class DebuggerTest extends TestCase {
 
 		Debugger::addFormat('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-						 '{:description}</error>',
+				'{:description}</error>',
 		));
 		Debugger::outputAs('xml');
 

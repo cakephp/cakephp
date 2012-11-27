@@ -275,7 +275,7 @@ class PhpAco {
 
 		foreach ($aco as $i => $node) {
 			if (!isset($tree[$node])) {
-				$tree[$node]  = array(
+				$tree[$node] = array(
 					'children' => array(),
 				);
 			}
@@ -521,7 +521,7 @@ class PhpAro {
  * @param array $alias alias from => to (e.g. Role/13 -> Role/editor)
  * @return void
  */
-	public  function addAlias(array $alias) {
+	public function addAlias(array $alias) {
 		$this->aliases = array_merge($this->aliases, $alias);
 	}
 

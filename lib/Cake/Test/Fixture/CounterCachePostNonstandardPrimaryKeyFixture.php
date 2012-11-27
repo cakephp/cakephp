@@ -35,8 +35,8 @@ class CounterCachePostNonstandardPrimaryKeyFixture extends TestFixture {
 	);
 
 	public $records = array(
-		array('pid' => 1, 'title' => 'Rock and Roll',  'uid' => 66),
-		array('pid' => 2, 'title' => 'Music',   'uid' => 66),
-		array('pid' => 3, 'title' => 'Food',   'uid' => 301),
+		array('pid' => 1, 'title' => 'Rock and Roll', 'uid' => 66),
+		array('pid' => 2, 'title' => 'Music', 'uid' => 66),
+		array('pid' => 3, 'title' => 'Food', 'uid' => 301),
 	);
 }

@@ -65,9 +65,11 @@ class MailTransport extends AbstractTransport {
  * @return void
  */
 	protected function _mail($to, $subject, $message, $headers, $params = null) {
+		//@codingStandardsIgnoreStart
 		if (!@mail($to, $subject, $message, $headers, $params)) {
 			throw new Error\SocketException(__d('cake_dev', 'Could not send email.'));
 		}
+		//@codingStandardsIgnoreEnd
 	}
 
 }

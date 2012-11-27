@@ -243,7 +243,7 @@ class PaginatorHelper extends Helper {
  *
  * ### Options:
  *
- * - `tag` The tag wrapping tag you want to use, defaults to 'span'
+ * - `tag` The tag wrapping tag you want to use, defaults to 'span'. Set this to false to disable this option
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
  *
@@ -267,7 +267,7 @@ class PaginatorHelper extends Helper {
  *
  * ### Options:
  *
- * - `tag` The tag wrapping tag you want to use, defaults to 'span'
+ * - `tag` The tag wrapping tag you want to use, defaults to 'span'. Set this to false to disable this option
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
  *
@@ -440,12 +440,16 @@ class PaginatorHelper extends Helper {
 			${$key} = $options[$key];
 			unset($options[$key]);
 		}
-		$url = array_merge(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
 
 		if ($this->{$check}($model)) {
+			$url = array_merge(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
+			if ($tag === false) {
+				return $this->link($title, $url, array_merge($options, compact('escape', 'model', 'class')));
+			}
 			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape', 'model'))), compact('class'));
 		} else {
 			unset($options['rel']);
+			$tag = $tag ? $tag : $_defaults['tag'];
 			return $this->Html->tag($tag, $title, array_merge($options, compact('escape', 'class')));
 		}
 	}

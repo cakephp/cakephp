@@ -254,7 +254,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag', 'Comment', 'Attachment');
 		$Article = new Article();
 
-		$query  = 'SELECT title FROM ';
+		$query = 'SELECT title FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.id IN (1,2)';
 
@@ -262,7 +262,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue(is_array($results));
 		$this->assertEquals(2, count($results));
 
-		$query  = 'SELECT title, body FROM ';
+		$query = 'SELECT title, body FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.id = 1';
 
@@ -270,7 +270,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertFalse($this->db->getQueryCache($query));
 		$this->assertTrue(is_array($results));
 
-		$query  = 'SELECT title, id FROM ';
+		$query = 'SELECT title, id FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles');
 		$query .= '.published = ' . $this->db->value('Y');
@@ -312,7 +312,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $this->db->getQueryCache($query, $params);
 		$this->assertFalse(empty($result));
 
-		$query  = 'SELECT id, created FROM ';
+		$query = 'SELECT id, created FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= '  WHERE ' . $this->db->fullTableName('articles') . '.title = ?';
 
@@ -326,7 +326,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $this->db->getQueryCache($query, $params);
 		$this->assertTrue(empty($result));
 
-		$query  = 'SELECT title FROM ';
+		$query = 'SELECT title FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.title LIKE ?';
 
@@ -339,7 +339,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 
 		//related to ticket #5035
-		$query  = 'SELECT title FROM ';
+		$query = 'SELECT title FROM ';
 		$query .= $this->db->fullTableName('articles') . ' WHERE title = ? AND published = ?';
 		$params = array('First? Article', 'Y');
 		$Article->query($query, $params);
@@ -359,7 +359,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag');
 		$Article = new Article();
 
-		$query  = 'SELECT * FROM ' . $this->db->fullTableName('articles');
+		$query = 'SELECT * FROM ' . $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles');
 		$query .= '.published = ? AND ' . $this->db->fullTableName('articles') . '.user_id = ?';
 		$params = array('Y');
@@ -4054,7 +4054,6 @@ class ModelReadTest extends BaseModelTest {
 /**
  * testFindAllWithConditionInChildQuery
  *
- * @todo external conditions like this are going to need to be revisited at some point
  * @return void
  */
 	public function testFindAllWithConditionInChildQuery() {
@@ -5402,7 +5401,7 @@ class ModelReadTest extends BaseModelTest {
 		$Post->Tag->primaryKey = 'tag';
 
 		$result = $Post->find('all', array(
-			'order' => array('Post.id' => 'ASC')
+			'order' => 'Post.id ASC',
 		));
 		$expected = array(
 			array(
@@ -5618,7 +5617,9 @@ class ModelReadTest extends BaseModelTest {
 		$Project = new Project();
 		$Project->recursive = 3;
 
-		$result = $Project->find('all');
+		$result = $Project->find('all', array(
+			'order' => 'Project.id ASC',
+		));
 		$expected = array(
 			array(
 				'Project' => array(
@@ -5732,7 +5733,9 @@ class ModelReadTest extends BaseModelTest {
 		$TestModel = new Home();
 		$TestModel->recursive = 2;
 
-		$result = $TestModel->find('all');
+		$result = $TestModel->find('all', array(
+			'order' => 'Home.id ASC',
+		));
 		$expected = array(
 			array(
 				'Home' => array(
@@ -5845,7 +5848,9 @@ class ModelReadTest extends BaseModelTest {
 		$MyUser = new MyUser();
 		$MyUser->recursive = 2;
 
-		$result = $MyUser->find('all');
+		$result = $MyUser->find('all', array(
+			'order' => 'MyUser.id ASC'
+		));
 		$expected = array(
 			array(
 				'MyUser' => array('id' => '1', 'firstname' => 'userA'),
@@ -6036,7 +6041,7 @@ class ModelReadTest extends BaseModelTest {
 		$fullDebug = $this->db->fullDebug;
 		$this->db->fullDebug = true;
 		$TestModel->recursive = 6;
-		$result = $TestModel->find('all', null, null, 'CategoryThread.id ASC');
+		$result = $TestModel->find('all');
 		$expected = array(
 			array(
 				'CategoryThread' => array(
