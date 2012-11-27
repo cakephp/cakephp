@@ -2116,6 +2116,33 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
+ * Test that validator override works as expected
+ *
+ * @return void
+ */
+	public function testValidatorOverride() {
+		$TestModel = new Article();
+		$ValidatorA = new ModelValidator($TestModel);
+		$ValidatorB = new ModelValidator($TestModel);
+
+		$TestModel->validator($ValidatorA);
+		$TestModel->validator($ValidatorB);
+
+		$this->assertSame($ValidatorB, $TestModel->validator());
+		$this->assertNotSame($ValidatorA, $TestModel->validator());
+	}
+
+/**
+ * Test that type hint exception is thrown
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testValidatorTypehintException() {
+		$Validator = new ModelValidator('asdasds');
+	}
+
+/**
  * Tests that altering data in a beforeValidate callback will lead to saving those
  * values in database, this time with belongsTo associations
  *
