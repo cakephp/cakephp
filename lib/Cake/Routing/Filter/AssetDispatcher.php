@@ -16,6 +16,7 @@ namespace Cake\Routing\Filter;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Event\Event;
 use Cake\Network\Response;
 use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
@@ -42,7 +43,7 @@ class AssetDispatcher extends DispatcherFilter {
  * @param Cake\Event\Event $event containing the request and response object
  * @return Cake\Network\Response if the client is requesting a recognized asset, null otherwise
  */
-	public function beforeDispatch(CakeEvent $event) {
+	public function beforeDispatch(Event $event) {
 		$url = $event->data['request']->url;
 		if (strpos($url, '..') !== false || strpos($url, '.') === false) {
 			return;

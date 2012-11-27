@@ -692,10 +692,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 			$config = ClassRegistry::config('Model');
 		}
 
-		$modelClass = get_class(ClassRegistry::init($model));
-		list(, $modelName) = namespaceSplit($modelClass);
+		$modelClass = App::className($model, 'Model');
+		list(, $name) = namespaceSplit($modelClass);
 		$config = array_merge((array)$config, array('name' => $name));
-		$mock = $this->getMock($name, $methods, array($config));
+		$mock = $this->getMock($modelClass, $methods, array($config));
 		ClassRegistry::removeObject($name);
 		ClassRegistry::addObject($name, $mock);
 		return $mock;

@@ -129,11 +129,7 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
  * @return Cake\TestSuite\TestRunner
  */
 	public function getRunner($loader) {
-<<<<<<< HEAD:lib/Cake/TestSuite/TestSuiteCommand.php
- 		return new TestRunner($loader, $this->_params);
-=======
-		return new CakeTestRunner($loader, $this->_params);
->>>>>>> origin/2.3:lib/Cake/TestSuite/CakeTestSuiteCommand.php
+		return new TestRunner($loader, $this->_params);
 	}
 
 /**

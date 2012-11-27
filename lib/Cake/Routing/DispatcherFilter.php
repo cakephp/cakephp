@@ -17,7 +17,9 @@
  */
 
 namespace Cake\Routing;
+
 use Cake\Event\EventListener;
+use Cake\Event\Event;
 
 /**
  * This abstract class represents a filter to be applied to a dispatcher cycle. It acts as as
@@ -67,7 +69,7 @@ abstract class DispatcherFilter implements EventListener {
  *	keys in the data property.
  * @return Cake\Network\Response|boolean
  **/
-	public function beforeDispatch(CakeEvent $event) {
+	public function beforeDispatch(Event $event) {
 	}
 
 /**
@@ -82,6 +84,6 @@ abstract class DispatcherFilter implements EventListener {
  *	keys in the data property.
  * @return mixed boolean to stop the event dispatching or null to continue
  **/
-	public function afterDispatch(CakeEvent $event) {
+	public function afterDispatch(Event $event) {
 	}
 }

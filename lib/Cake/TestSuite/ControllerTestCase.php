@@ -370,13 +370,8 @@ abstract class ControllerTestCase extends TestCase {
 			$controller->Components->set($name, $component);
 		}
 
-<<<<<<< HEAD
 		$controller->constructClasses();
-		$this->__dirtyController = false;
-=======
-		$_controller->constructClasses();
 		$this->_dirtyController = false;
->>>>>>> origin/2.3
 
 		$this->controller = $controller;
 		return $this->controller;

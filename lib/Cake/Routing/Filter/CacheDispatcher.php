@@ -14,6 +14,7 @@
 
 namespace Cake\Routing\Filter;
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
 use Cake\View\View;
@@ -40,7 +41,7 @@ class CacheDispatcher extends DispatcherFilter {
  * @param Cake\Event\Event $event containing the request and response object
  * @return Cake\NetworkResponse with cached content if found, null otherwise
  */
-	public function beforeDispatch(CakeEvent $event) {
+	public function beforeDispatch(Event $event) {
 		if (Configure::read('Cache.check') !== true) {
 			return;
 		}

@@ -821,7 +821,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->prev('<< Previous', array('tag' => false), null, array('class' => 'disabled'));
 		$expected = array(
-			'a' => array('href' => '/index/page:1', 'rel' => 'prev', 'class' => 'prev'),
+			'a' => array('href' => '/index?page=1', 'rel' => 'prev', 'class' => 'prev'),
 			'&lt;&lt; Previous',
 			'/a'
 		);
@@ -849,7 +849,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->next('Next', array('tag' => false));
 		$expected = array(
-			'a' => array('href' => '/index/page:3', 'rel' => 'next', 'class' => 'next'),
+			'a' => array('href' => '/index?page=3', 'rel' => 'next', 'class' => 'next'),
 			'Next',
 			'/a'
 		);

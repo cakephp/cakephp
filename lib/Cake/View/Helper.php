@@ -381,7 +381,7 @@ class Helper extends Object {
 				$plugin = Inflector::camelize($segments[0]);
 				if (Plugin::loaded($plugin)) {
 					unset($segments[0]);
-					$pluginPath = CakePlugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
+					$pluginPath = Plugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
 					//@codingStandardsIgnoreStart
 					return $path . '?' . @filemtime($pluginPath);
 					//@codingStandardsIgnoreEnd

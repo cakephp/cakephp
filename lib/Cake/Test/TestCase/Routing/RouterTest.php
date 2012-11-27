@@ -2406,7 +2406,8 @@ class RouterTest extends TestCase {
 
 		$url = '#here';
 		$this->assertEquals($url, Router::url($url));
-		$url = 'posts/index#here';
+		$url = '/posts/index#here';
+
 		$expected = FULL_BASE_URL . '/posts/index#here';
 		$this->assertEquals($expected, Router::url($url, true));
 	}

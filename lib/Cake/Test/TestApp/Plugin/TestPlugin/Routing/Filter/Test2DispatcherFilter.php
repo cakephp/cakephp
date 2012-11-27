@@ -1,8 +1,5 @@
 <?php
 /**
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,23 +8,23 @@
  *
  * @copyright	  Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link		  http://cakephp.org CakePHP(tm) Project
- * @package		  Cake.Test.TestApp.Routing.Filter
  * @since		  CakePHP(tm) v 2.2
  * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace TestPlugin\Routing\Filter;
+
+use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
 
 class Test2DispatcherFilter extends DispatcherFilter {
 
-	public function beforeDispatch(CakeEvent $event) {
+	public function beforeDispatch(Event $event) {
 		$event->data['response']->statusCode(500);
 		$event->stopPropagation();
 		return $event->data['response'];
 	}
 
-	public function afterDispatch(CakeEvent $event) {
+	public function afterDispatch(Event $event) {
 		$event->data['response']->statusCode(200);
 	}
 
