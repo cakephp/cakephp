@@ -94,6 +94,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Sets the list of methods to use for validation
  *
+ * @param array $methods Methods list
  * @return void
  **/
 	public function setMethods(&$methods) {
@@ -114,6 +115,8 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * Runs all validation rules in this set and returns a list of
  * validation errors
  *
+ * @param array $data Data array
+ * @param boolean $isUpdate Is record being updated or created
  * @return array list of validation errors for this field
  */
 	public function validate($data, $isUpdate = false) {

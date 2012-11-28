@@ -1057,7 +1057,8 @@ class CakeResponse {
  * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
  * If called with no arguments, it will return the current configured protocol
  *
- * @return string protocol to be used for sending response
+ * @param string protocol to be used for sending response
+ * @return string protocol currently set
  */
 	public function protocol($protocol = null) {
 		if ($protocol !== null) {
@@ -1070,7 +1071,8 @@ class CakeResponse {
  * Sets the Content-Length header for the response
  * If called with no arguments returns the last Content-Length set
  *
- * @return int
+ * @param integer $bytes Number of bytes
+ * @return integer|null
  */
 	public function length($bytes = null) {
 		if ($bytes !== null) {
@@ -1092,6 +1094,7 @@ class CakeResponse {
  * the Last-Modified etag response header before calling this method.  Otherwise
  * a comparison will not be possible.
  *
+ * @param CakeRequest $request Request object
  * @return boolean whether the response was marked as not modified or not.
  */
 	public function checkNotModified(CakeRequest $request) {
@@ -1136,7 +1139,7 @@ class CakeResponse {
  * If the method is called with an array as argument, it will set the cookie
  * configuration to the cookie container.
  *
- * @param $options Either null to get all cookies, string for a specific cookie
+ * @param array $options Either null to get all cookies, string for a specific cookie
  *  or array to set cookie.
  *
  * ### Options (when setting a configuration)

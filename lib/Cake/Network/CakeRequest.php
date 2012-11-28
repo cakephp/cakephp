@@ -764,6 +764,7 @@ class CakeRequest implements ArrayAccess {
  * Provides a read accessor for `$this->query`.  Allows you
  * to use a syntax similar to `CakeSession` for reading url query data.
  *
+ * @param string $name Query string variable name
  * @return mixed The value being read
  */
 	public function query($name) {

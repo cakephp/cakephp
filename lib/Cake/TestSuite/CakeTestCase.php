@@ -170,7 +170,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Announces the start of a test.
  *
- * @param string $method Test method just started.
  * @return void
  */
 	protected function assertPreConditions() {
@@ -181,7 +180,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Announces the end of a test.
  *
- * @param string $method Test method just finished.
  * @return void
  */
 	protected function assertPostConditions() {
@@ -496,6 +494,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * Generates all permutation of an array $items and returns them in a new array.
  *
  * @param array $items An array of items
+ * @param array $perms
  * @return array
  */
 	protected function _arrayPermute($items, $perms = array()) {
@@ -594,6 +593,9 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		return self::assertNotRegExp($pattern, $string, $message);
 	}
 
+/**
+ * assert no errors
+ */
 	protected function assertNoErrors() {
 	}
 
@@ -681,6 +683,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  *
  * @param string $model
  * @param mixed $methods
+ * @param mixed $config
  * @return Model
  */
 	public function getMockForModel($model, $methods = array(), $config = null) {

@@ -687,6 +687,7 @@ class Hash {
  *
  * @param array $data The data to reduce.
  * @param string $path The path to extract from $data.
+ * @param callable $function The function to call on each extracted value.
  * @return mixed The reduced value.
  */
 	public static function reduce(array $data, $path, $function) {
@@ -700,6 +701,7 @@ class Hash {
  *
  * @param array $data The data to reduce.
  * @param string $path The path to extract from $data.
+ * @param callable $function The function to call on each extracted value.
  * @return mixed The results of the applied method.
  */
 	public static function apply(array $data, $path, $function) {

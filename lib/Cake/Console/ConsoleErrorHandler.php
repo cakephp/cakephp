@@ -93,7 +93,7 @@ class ConsoleErrorHandler {
 /**
  * Wrapper for exit(), used for testing.
  *
- * @param $code int The exit code.
+ * @param int $code The exit code.
  */
 	protected function _stop($code = 0) {
 		exit($code);

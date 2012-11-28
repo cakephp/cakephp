@@ -118,7 +118,7 @@ class Xml {
  *
  * @param string $input The input to load.
  * @param array $options The options to use. See Xml::build()
- * @return SimpleXmlElement|DOMDocument.
+ * @return SimpleXmlElement|DOMDocument
  */
 	protected static function _loadXml($input, $options) {
 		$hasDisable = function_exists('libxml_disable_entity_loader');
