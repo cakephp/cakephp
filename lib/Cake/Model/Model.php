@@ -3425,16 +3425,15 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Retunrs an instance of a model validator for this class
+ * Returns an instance of a model validator for this class
  *
+ * @param  ModelValidator $instance [optional] A ModelValidator instance.
  * @return ModelValidator
  */
-	public function validator($instance = null) {
-		if ($instance instanceof ModelValidator) {
-			return $this->_validator = $instance;
-		}
-
-		if (empty($this->_validator) && is_null($instance)) {
+	public function validator(ModelValidator $instance = null) {
+		if ($instance) {
+			$this->_validator = $instance;
+		} elseif (!$this->_validator) {
 			$this->_validator = new ModelValidator($this);
 		}
 
