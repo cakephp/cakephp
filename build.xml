@@ -205,7 +205,7 @@
 		<exec command="ssh cakephp@cakephp.org pirum add ${pirum.dir} ${pirum.dir}/${pear.package}.tgz" checkreturn="true" />
 	</target>
 
-	<target name="subtree-split">
+	<target name="subtree-split" description="Split the main repo into subtrees for the -app and -framework repos">
 		<echo msg="Generating app-split subtree branch" />
 		<exec command="git subtree split --prefix App/ --branch app-split" />
 
