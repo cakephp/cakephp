@@ -222,6 +222,7 @@ class View extends Object {
 /**
  * Element cache settings
  *
+ * @var array
  * @see View::_elementCache();
  * @see View::_renderElement
  */
@@ -304,8 +305,19 @@ class View extends Object {
  */
 	protected $_eventManagerConfigured = false;
 
+/**
+ * Constant for view file type 'view'
+ */
 	const TYPE_VIEW = 'view';
+
+/**
+ * Constant for view file type 'element'
+ */
 	const TYPE_ELEMENT = 'element';
+
+/**
+ * Constant for view file type 'layout'
+ */
 	const TYPE_LAYOUT = 'layout';
 
 /**
@@ -647,7 +659,8 @@ class View extends Object {
  * empty or undefined '' will be returned.
  *
  * @param string $name Name of the block
- * @return string The block content or $default if the block does not exist.
+ * @param string $default Default text
+ * @return string $default The block content or $default if the block does not exist.
  * @see ViewBlock::get()
  */
 	public function fetch($name, $default = '') {
@@ -1119,8 +1132,9 @@ class View extends Object {
  * Checks if an element is cached and returns the cached data if present
  *
  * @param string $name Element name
- * @param string $plugin Plugin name
+ * @param string $data Data
  * @param array $options Element options
+ * @return string|null
  */
 	protected function _elementCache($name, $data, $options) {
 		$plugin = null;
@@ -1153,6 +1167,7 @@ class View extends Object {
  * @param string $file Element file path
  * @param array $data Data to render
  * @param array $options Element options
+ * @return string
  */
 	protected function _renderElement($file, $data, $options) {
 		if (!$this->_helpersLoaded) {

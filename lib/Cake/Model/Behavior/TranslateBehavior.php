@@ -214,7 +214,6 @@ class TranslateBehavior extends ModelBehavior {
  * Appends a join for translated fields.
  *
  * @param Model $Model The model being worked on.
- * @param object $joinTable The jointable object.
  * @param array $query The query array to append a join to.
  * @param string $field The field name being joined.
  * @param string $aliasField The aliased field name being joined.
@@ -466,6 +465,7 @@ class TranslateBehavior extends ModelBehavior {
  * Prepares the data to be saved for translated records.
  * Add blank fields, and populates data for multi-locale saves.
  *
+ * @param Model $Model Model instance
  * @param array $data The sparse data that was provided.
  * @return array The fully populated data to save.
  */
@@ -625,6 +625,7 @@ class TranslateBehavior extends ModelBehavior {
 /**
  * Update runtime setting for a given field.
  *
+ * @param Model $Model Model instance
  * @param string $field The field to update.
  */
 	protected function _removeField(Model $Model, $field) {

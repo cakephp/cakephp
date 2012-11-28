@@ -925,7 +925,7 @@ class Validation {
  * Checking for upload errors
  *
  * @param string|array $check
- * @retrun boolean
+ * @return boolean
  * @see http://www.php.net/manual/en/features.file-upload.errors.php
  */
 	public static function uploadError($check) {

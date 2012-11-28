@@ -33,6 +33,7 @@ App::import('I18n', 'Multibyte');
  * @package       Cake.Network.Email
  */
 class CakeEmail {
+
 /**
  * Default X-Mailer
  *
@@ -85,7 +86,7 @@ class CakeEmail {
 /**
  * The sender email
  *
- * @var array();
+ * @var array
  */
 	protected $_sender = array();
 
@@ -1109,7 +1110,6 @@ class CakeEmail {
 /**
  * Apply the config to an instance
  *
- * @param CakeEmail $obj CakeEmail
  * @param array $config
  * @return void
  * @throws ConfigureException When configuration file cannot be found, or is missing

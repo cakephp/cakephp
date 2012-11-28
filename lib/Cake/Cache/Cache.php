@@ -108,7 +108,7 @@ class Cache {
  * @see app/Config/core.php for configuration settings
  * @param string $name Name of the configuration
  * @param array $settings Optional associative array of settings passed to the engine
- * @return array(engine, settings) on success, false on failure
+ * @return array array(engine, settings) on success, false on failure
  * @throws CacheException
  */
 	public static function config($name = null, $settings = array()) {

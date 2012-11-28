@@ -184,7 +184,7 @@ class Router {
 /**
  * Validates that the passed route class exists and is a subclass of CakeRoute
  *
- * @param $routeClass
+ * @param string $routeClass Route class name
  * @return string
  * @throws RouterException
  */

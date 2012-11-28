@@ -31,10 +31,18 @@ App::uses('File', 'Utility');
 class Shell extends Object {
 
 /**
- * Output constants for making verbose and quiet shells.
+ * Output constant making verbose shells.
  */
 	const VERBOSE = 2;
+
+/**
+ * Output constant for making normal shells.
+ */
 	const NORMAL = 1;
+
+/**
+ * Output constants for making quiet shells.
+ */
 	const QUIET = 0;
 
 /**

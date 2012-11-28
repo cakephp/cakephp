@@ -38,6 +38,9 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  */
 class AuthComponent extends Component {
 
+/**
+ * Constant for 'all'
+ */
 	const ALL = 'all';
 
 /**

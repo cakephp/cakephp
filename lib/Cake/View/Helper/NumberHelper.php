@@ -73,7 +73,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::precision()
+ * @see CakeNumber::precision()
  *
  * @param float $number	A floating point number.
  * @param integer $precision The precision of the returned number.
@@ -85,7 +85,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::toReadableSize()
+ * @see CakeNumber::toReadableSize()
  *
  * @param integer $size Size in bytes
  * @return string Human readable size
@@ -96,7 +96,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::toPercentage()
+ * @see CakeNumber::toPercentage()
  *
  * @param float $number A floating point number
  * @param integer $precision The precision of the returned number
@@ -108,7 +108,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::format()
+ * @see CakeNumber::format()
  *
  * @param float $number A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
@@ -121,7 +121,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::currency()
+ * @see CakeNumber::currency()
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
@@ -136,7 +136,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::addFormat()
+ * @see CakeNumber::addFormat()
  *
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
@@ -149,7 +149,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::defaultCurrency()
+ * @see CakeNumber::defaultCurrency()
  *
  * @param string $currency The currency to be used in the future.
  * @return void

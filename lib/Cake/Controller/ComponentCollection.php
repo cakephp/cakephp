@@ -56,7 +56,7 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
 /**
  * Get the controller associated with the collection.
  *
- * @return Controller.
+ * @return Controller Controller instance
  */
 	public function getController() {
 		return $this->_Controller;

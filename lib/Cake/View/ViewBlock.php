@@ -157,6 +157,7 @@ class ViewBlock {
  * Get the content for a block.
  *
  * @param string $name Name of the block
+ * @param string $default Default string
  * @return string The block content or $default if the block does not exist.
  */
 	public function get($name, $default = '') {
