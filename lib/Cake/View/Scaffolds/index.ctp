@@ -82,8 +82,19 @@ endforeach;
 		foreach ($associations as $_type => $_data) {
 			foreach ($_data as $_alias => $_details) {
 				if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-					echo '<li>' . $this->Html->link(__d('cake', 'List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . '</li>';
-					echo '<li>' . $this->Html->link(__d('cake', 'New %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . '</li>';
+					echo '<li>';
+					echo $this->Html->link(
+						__d('cake', 'List %s', Inflector::humanize($_details['controller'])),
+						array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'index')
+					);
+					echo '</li>';
+
+					echo '<li>';
+					echo $this->Html->link(
+						__d('cake', 'New %s', Inflector::humanize(Inflector::underscore($_alias))),
+						array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'add')
+					);
+					echo '</li>';
 					$done[] = $_details['controller'];
 				}
 			}
