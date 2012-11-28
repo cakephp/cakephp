@@ -821,6 +821,40 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test mergeOptions with limit > maxLimit in code.
+ *
+ * @return void
+ */
+	public function testMergeOptionsMaxLimit() {
+		$this->Paginator->settings = array(
+			'limit' => 200,
+			'paramType' => 'named',
+		);
+		$result = $this->Paginator->mergeOptions('Post');
+		$expected = array('page' => 1, 'limit' => 200, 'maxLimit' => 200, 'paramType' => 'named');
+		$this->assertEquals($expected, $result);
+
+		$this->Paginator->settings = array(
+			'maxLimit' => 10,
+			'paramType' => 'named',
+		);
+		$result = $this->Paginator->mergeOptions('Post');
+		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 10, 'paramType' => 'named');
+		$this->assertEquals($expected, $result);
+
+		$this->request->params['named'] = array(
+			'limit' => 500
+		);
+		$this->Paginator->settings = array(
+			'limit' => 150,
+			'paramType' => 'named',
+		);
+		$result = $this->Paginator->mergeOptions('Post');
+		$expected = array('page' => 1, 'limit' => 500, 'maxLimit' => 150, 'paramType' => 'named');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test that invalid directions are ignored.
  *
  * @return void

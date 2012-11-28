@@ -1311,8 +1311,8 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEquals(array(1, 2, 3), $results);
 
 		$Controller->passedArgs = array();
-		$Controller->paginate = array('limit' => '-1');
-		$this->assertEquals(array('limit' => '-1'), $Controller->paginate);
+		$Controller->paginate = array('limit' => '1');
+		$this->assertEquals(array('limit' => '1'), $Controller->paginate);
 		$Controller->paginate('ControllerPost');
 		$this->assertSame($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertSame($Controller->params['paging']['ControllerPost']['pageCount'], 3);
