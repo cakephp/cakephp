@@ -163,6 +163,7 @@ class CakeEventManager {
  * Removes a listener from the active listeners.
  *
  * @param callback|CakeEventListener $callable any valid PHP callback type or an instance of CakeEventListener
+ * @param string $eventKey The event unique identifier name with which the callback has been associated
  * @return void
  */
 	public function detach($callable, $eventKey = null) {

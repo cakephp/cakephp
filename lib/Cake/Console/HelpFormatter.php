@@ -174,7 +174,7 @@ class HelpFormatter {
  * Get the help as an xml string.
  *
  * @param boolean $string Return the SimpleXml object or a string.  Defaults to true.
- * @return mixed. See $string
+ * @return string|SimpleXmlElement See $string
  */
 	public function xml($string = true) {
 		$parser = $this->_parser;

@@ -199,7 +199,7 @@ class Scaffold {
  * Renders an add or edit action for scaffolded model.
  *
  * @param string $action Action (add or edit)
- * @return mixed A rendered view with a form to edit or add a record in the Models database table
+ * @return void
  */
 	protected function _scaffoldForm($action = 'edit') {
 		$this->controller->viewVars['scaffoldFields'] = array_merge(
@@ -351,7 +351,7 @@ class Scaffold {
  * `public $scaffold;` is placed in the controller's class definition.
  *
  * @param CakeRequest $request Request object for scaffolding
- * @return mixed A rendered view of scaffold action, or showing the error
+ * @return void
  * @throws MissingActionException When methods are not scaffolded.
  * @throws MissingDatabaseException When the database connection is undefined.
  */

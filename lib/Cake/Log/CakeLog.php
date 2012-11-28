@@ -358,7 +358,7 @@ class CakeLog {
  *
  * @see BaseLog
  * @param string $streamName Key name of a configured stream to get.
- * @return $mixed instance of BaseLog or false if not found
+ * @return mixed instance of BaseLog or false if not found
  */
 	public static function stream($streamName) {
 		if (empty(self::$_Collection)) {

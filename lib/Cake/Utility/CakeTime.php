@@ -85,13 +85,17 @@ class CakeTime {
 
 /**
  * Temporary variable containing timestamp value, used internally convertSpecifiers()
+ *
+ * @var integer
  */
 	protected static $_time = null;
 
 /**
  * Magic set method for backward compatibility.
- *
  * Used by TimeHelper to modify static variables in CakeTime
+ *
+ * @param string $name Variable name
+ * @param mixes $value Variable value
  */
 	public function __set($name, $value) {
 		switch ($name) {
@@ -105,8 +109,10 @@ class CakeTime {
 
 /**
  * Magic set method for backward compatibility.
- *
  * Used by TimeHelper to get static variables in CakeTime
+ *
+ * @param string $name Variable name
+ * @return mixed
  */
 	public function __get($name) {
 		switch ($name) {

@@ -748,7 +748,7 @@ class RequestHandlerComponent extends Component {
  *
  * @param array|string $type The type string or array with format `array('type' => 'viewClass')` to map one or more
  * @param array $viewClass The viewClass to be used for the type without `View` appended
- * @return array]string Returns viewClass when only string $type is set, else array with viewClassMap
+ * @return array|string Returns viewClass when only string $type is set, else array with viewClassMap
  */
 	public function viewClassMap($type = null, $viewClass = null) {
 		if (!$viewClass && is_string($type) && isset($this->_viewClassMap[$type])) {
