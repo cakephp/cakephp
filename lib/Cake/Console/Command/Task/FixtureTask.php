@@ -314,7 +314,7 @@ class FixtureTask extends BakeTask {
 						} else {
 							$insert = "Lorem ipsum dolor sit amet";
 							if (!empty($fieldInfo['length'])) {
-								 $insert = substr($insert, 0, (int)$fieldInfo['length'] - 2);
+								$insert = substr($insert, 0, (int)$fieldInfo['length'] - 2);
 							}
 						}
 					break;

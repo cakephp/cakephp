@@ -342,12 +342,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
-			ClassRegistry::init($model);
-			list($plugin, $name) = pluginSplit($model);
-			$config = array_merge((array)$config, array('name' => $model));
-			$_model = $this->getMock($name, $methods, array($config));
-			ClassRegistry::removeObject($name);
-			ClassRegistry::addObject($name, $_model);
+			$this->getMockForModel($model, $methods, $config);
 		}
 
 		foreach ($mocks['components'] as $component => $methods) {

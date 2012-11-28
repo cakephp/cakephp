@@ -1427,7 +1427,7 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$assocTypes = array('hasMany', 'hasOne', 'belongsTo', 'hasAndBelongsToMany');
 		foreach ($assocTypes as $type) {
-			 $this->assertEquals($Article->getAssociated($type), array_keys($Article->{$type}));
+			$this->assertEquals($Article->getAssociated($type), array_keys($Article->{$type}));
 		}
 
 		$Article->bindModel(array('hasMany' => array('Category')));
@@ -1667,6 +1667,14 @@ class ModelIntegrationTest extends BaseModelTest {
 		$result = $TestModel->alias;
 		$expected = 'AnotherTest';
 		$this->assertEquals($expected, $result);
+
+		$TestModel = ClassRegistry::init('Test');
+		$expected = null;
+		$this->assertEquals($expected, $TestModel->plugin);
+
+		$TestModel = ClassRegistry::init('TestPlugin.TestPluginComment');
+		$expected = 'TestPlugin';
+		$this->assertEquals($expected, $TestModel->plugin);
 	}
 
 /**

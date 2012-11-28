@@ -18,6 +18,7 @@
  */
 
 App::uses('BaseLog', 'Log/Engine');
+App::uses('Hash', 'Utility');
 
 /**
  * File Storage stream for Logging.  Writes logs to different files

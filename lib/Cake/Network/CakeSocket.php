@@ -41,11 +41,11 @@ class CakeSocket {
  * @var array
  */
 	protected $_baseConfig = array(
-		'persistent'	=> false,
-		'host'			=> 'localhost',
-		'protocol'		=> 'tcp',
-		'port'			=> 80,
-		'timeout'		=> 30
+		'persistent' => false,
+		'host' => 'localhost',
+		'protocol' => 'tcp',
+		'port' => 80,
+		'timeout' => 30
 	);
 
 /**
@@ -77,6 +77,39 @@ class CakeSocket {
 	public $lastError = array();
 
 /**
+ * True if the socket stream is encrypted after a CakeSocket::enableCrypto() call
+ *
+ * @var boolean
+ */
+	public $encrypted = false;
+
+/**
+ * Contains all the encryption methods available
+ *
+ * @var array
+ */
+	protected $_encryptMethods = array(
+		// @codingStandardsIgnoreStart
+		'sslv2_client' => STREAM_CRYPTO_METHOD_SSLv2_CLIENT,
+		'sslv3_client' => STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
+		'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
+		'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
+		'sslv2_server' => STREAM_CRYPTO_METHOD_SSLv2_SERVER,
+		'sslv3_server' => STREAM_CRYPTO_METHOD_SSLv3_SERVER,
+		'sslv23_server' => STREAM_CRYPTO_METHOD_SSLv23_SERVER,
+		'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER
+		// @codingStandardsIgnoreEnd
+	);
+
+/**
+ * Used to capture connection warnings which can happen when there are
+ * SSL errors for example.
+ *
+ * @var array
+ */
+	protected $_connectionErrors = array();
+
+/**
  * Constructor.
  *
  * @param array $config Socket configuration, which will be merged with the base configuration
@@ -96,26 +129,45 @@ class CakeSocket {
  * @throws SocketException
  */
 	public function connect() {
-		if ($this->connection != null) {
+		if ($this->connection) {
 			$this->disconnect();
 		}
 
 		$scheme = null;
-		if (isset($this->config['request']) && $this->config['request']['uri']['scheme'] == 'https') {
+		if (isset($this->config['request']['uri']) && $this->config['request']['uri']['scheme'] == 'https') {
 			$scheme = 'ssl://';
 		}
 
-		//@codingStandardsIgnoreStart
-		if ($this->config['persistent'] == true) {
-			$this->connection = @pfsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+		if (!empty($this->config['context'])) {
+			$context = stream_context_create($this->config['context']);
 		} else {
-			$this->connection = @fsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$context = stream_context_create();
 		}
-		//@codingStandardsIgnoreEnd
+
+		$connectAs = STREAM_CLIENT_CONNECT;
+		if ($this->config['persistent']) {
+			$connectAs |= STREAM_CLIENT_PERSISTENT;
+		}
+
+		set_error_handler(array($this, '_connectionErrorHandler'));
+		$this->connection = stream_socket_client(
+			$scheme . $this->config['host'] . ':' . $this->config['port'],
+			$errNum,
+			$errStr,
+			$this->config['timeout'],
+			$connectAs,
+			$context
+		);
+		restore_error_handler();
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errNum, $errStr);
 			throw new SocketException($errStr, $errNum);
+		}
+
+		if (!$this->connection && $this->_connectionErrors) {
+			$message = implode("\n", $this->_connectionErrors);
+			throw new SocketException($message, E_WARNING);
 		}
 
 		$this->connected = is_resource($this->connection);
@@ -123,6 +175,31 @@ class CakeSocket {
 			stream_set_timeout($this->connection, $this->config['timeout']);
 		}
 		return $this->connected;
+	}
+
+/**
+ * socket_stream_client() does not populate errNum, or $errStr when there are
+ * connection errors, as in the case of SSL verification failure.
+ *
+ * Instead we need to handle those errors manually.
+ *
+ * @param int $code
+ * @param string $message
+ */
+	protected function _connectionErrorHandler($code, $message) {
+		$this->_connectionErrors[] = $message;
+	}
+
+/**
+ * Get the connection context.
+ *
+ * @return null|array Null when there is no connnection, an array when there is.
+ */
+	public function context() {
+		if (!$this->connection) {
+			return;
+		}
+		return stream_context_get_options($this->connection);
 	}
 
 /**
@@ -277,6 +354,38 @@ class CakeSocket {
 			$this->{$property} = $value;
 		}
 		return true;
+	}
+
+/**
+ * Encrypts current stream socket, using one of the defined encryption methods
+ *
+ * @param string $type can be one of 'ssl2', 'ssl3', 'ssl23' or 'tls'
+ * @param string $clientOrServer can be one of 'client', 'server'. Default is 'client'
+ * @param boolean $enable enable or disable encryption. Default is true (enable)
+ * @return boolean True on success
+ * @throws InvalidArgumentException When an invalid encryption scheme is chosen.
+ * @throws SocketException When attempting to enable SSL/TLS fails
+ * @see stream_socket_enable_crypto
+ */
+	public function enableCrypto($type, $clientOrServer = 'client', $enable = true) {
+		if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
+			throw new InvalidArgumentException(__d('cake_dev', 'Invalid encryption scheme chosen'));
+		}
+		$enableCryptoResult = false;
+		try {
+			$enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $this->_encryptMethods[$type . '_' . $clientOrServer]);
+		} catch (Exception $e) {
+			$this->setLastError(null, $e->getMessage());
+			throw new SocketException($e->getMessage());
+		}
+		if ($enableCryptoResult === true) {
+			$this->encrypted = $enable;
+			return true;
+		} else {
+			$errorMessage = __d('cake_dev', 'Unable to perform enableCrypto operation on CakeSocket');
+			$this->setLastError(null, $errorMessage);
+			throw new SocketException($errorMessage);
+		}
 	}
 
 }

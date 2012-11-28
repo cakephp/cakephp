@@ -135,8 +135,8 @@ class DebuggerTest extends CakeTestCase {
 			'a' => array(
 				'href' => "javascript:void(0);",
 				'onclick' => "preg:/document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display = " .
-					 "\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
-					 " \? '' \: 'none'\);/"
+					"\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
+					" \? '' \: 'none'\);/"
 			),
 			'b' => array(), 'Notice', '/b', ' (8)',
 		));
@@ -165,7 +165,7 @@ class DebuggerTest extends CakeTestCase {
 
 		Debugger::output('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-				 '{:description}</error>',
+				'{:description}</error>',
 			'context' => "<context>{:context}</context>",
 			'trace' => "<stack>{:trace}</stack>",
 		));
@@ -217,7 +217,7 @@ class DebuggerTest extends CakeTestCase {
 
 		Debugger::addFormat('js', array(
 			'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
-							 '&line={:line}">{:path}</a>, line {:line}'
+				'&line={:line}">{:path}</a>, line {:line}'
 		));
 		Debugger::outputAs('js');
 
@@ -226,7 +226,7 @@ class DebuggerTest extends CakeTestCase {
 
 		Debugger::addFormat('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-						 '{:description}</error>',
+				'{:description}</error>',
 		));
 		Debugger::outputAs('xml');
 
@@ -325,10 +325,45 @@ object(View) {
 	request => object(CakeRequest) {}
 	response => object(CakeResponse) {}
 	elementCache => 'default'
+	elementCacheSettings => array()
 	int => (int) 2
 	float => (float) 1.333
+
+TEXT;
+		if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+			$expected .= <<<TEXT
+	[protected] _passedVars => array(
+		(int) 0 => 'viewVars',
+		(int) 1 => 'autoLayout',
+		(int) 2 => 'ext',
+		(int) 3 => 'helpers',
+		(int) 4 => 'view',
+		(int) 5 => 'layout',
+		(int) 6 => 'name',
+		(int) 7 => 'theme',
+		(int) 8 => 'layoutPath',
+		(int) 9 => 'viewPath',
+		(int) 10 => 'request',
+		(int) 11 => 'plugin',
+		(int) 12 => 'passedArgs',
+		(int) 13 => 'cacheAction'
+	)
+	[protected] _scripts => array()
+	[protected] _paths => array()
+	[protected] _helpersLoaded => false
+	[protected] _parents => array()
+	[protected] _current => null
+	[protected] _currentType => ''
+	[protected] _stack => array()
+	[protected] _eventManager => object(CakeEventManager) {}
+	[protected] _eventManagerConfigured => false
+
+TEXT;
+		}
+		$expected .= <<<TEXT
 }
 TEXT;
+
 		$this->assertTextEquals($expected, $result);
 
 		$data = array(
@@ -356,6 +391,13 @@ array(
 		[maximum depth reached]
 	)
 )
+TEXT;
+		$this->assertTextEquals($expected, $result);
+
+		$data = false;
+		$result = Debugger::exportVar($data);
+		$expected = <<<TEXT
+false
 TEXT;
 		$this->assertTextEquals($expected, $result);
 	}
