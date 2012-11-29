@@ -380,7 +380,9 @@ class Shell extends Object {
 		if (!empty($this->params['quiet'])) {
 			$this->_useLogger(false);
 		}
-
+		if (!empty($this->params['plugin'])) {
+			CakePlugin::load($this->params['plugin']);
+		}
 		$this->command = $command;
 		if (!empty($this->params['help'])) {
 			return $this->_displayHelp($command);

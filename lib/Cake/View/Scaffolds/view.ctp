@@ -28,7 +28,12 @@ foreach ($scaffoldFields as $_field) {
 			if ($_field === $_details['foreignKey']) {
 				$isKey = true;
 				echo "\t\t<dt>" . Inflector::humanize($_alias) . "</dt>\n";
-				echo "\t\t<dd>\n\t\t\t" . $this->Html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t&nbsp;</dd>\n";
+				echo "\t\t<dd>\n\t\t\t";
+				echo $this->Html->link(
+					${$singularVar}[$_alias][$_details['displayField']],
+					array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])
+				);
+				echo "\n\t\t&nbsp;</dd>\n";
 				break;
 			}
 		}
@@ -45,17 +50,38 @@ foreach ($scaffoldFields as $_field) {
 	<h3><?php echo __d('cake', 'Actions'); ?></h3>
 	<ul>
 <?php
-	echo "\t\t<li>" . $this->Html->link(__d('cake', 'Edit %s', $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])) . " </li>\n";
-	echo "\t\t<li>" . $this->Form->postLink(__d('cake', 'Delete %s', $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __d('cake', 'Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?') . " </li>\n";
-	echo "\t\t<li>" . $this->Html->link(__d('cake', 'List %s', $pluralHumanName), array('action' => 'index')) . " </li>\n";
-	echo "\t\t<li>" . $this->Html->link(__d('cake', 'New %s', $singularHumanName), array('action' => 'add')) . " </li>\n";
+	echo "\t\t<li>";
+	echo $this->Html->link(__d('cake', 'Edit %s', $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey]));
+	echo " </li>\n";
+
+	echo "\t\t<li>";
+	echo $this->Form->postLink(__d('cake', 'Delete %s', $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __d('cake', 'Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?');
+	echo " </li>\n";
+
+	echo "\t\t<li>";
+	echo $this->Html->link(__d('cake', 'List %s', $pluralHumanName), array('action' => 'index'));
+	echo " </li>\n";
+
+	echo "\t\t<li>";
+	echo $this->Html->link(__d('cake', 'New %s', $singularHumanName), array('action' => 'add'));
+	echo " </li>\n";
 
 	$done = array();
 	foreach ($associations as $_type => $_data) {
 		foreach ($_data as $_alias => $_details) {
 			if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-				echo "\t\t<li>" . $this->Html->link(__d('cake', 'List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
-				echo "\t\t<li>" . $this->Html->link(__d('cake', 'New %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
+				echo "\t\t<li>";
+				echo $this->Html->link(
+					__d('cake', 'List %s', Inflector::humanize($_details['controller'])),
+					array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'index')
+				);
+				echo "</li>\n";
+				echo "\t\t<li>";
+				echo $this->Html->link(
+					__d('cake', 'New %s', Inflector::humanize(Inflector::underscore($_alias))),
+					array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'add')
+				);
+				echo "</li>\n";
 				$done[] = $_details['controller'];
 			}
 		}
@@ -82,7 +108,13 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $this->Html->link(__d('cake', 'Edit %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n"; ?>
+		<li><?php
+			echo $this->Html->link(
+				__d('cake', 'Edit %s', Inflector::humanize(Inflector::underscore($_alias))),
+				array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'edit', ${$singularVar}[$_alias][$_details['primaryKey']])
+			);
+			echo "</li>\n";
+			?>
 		</ul>
 	</div>
 </div>
@@ -128,9 +160,26 @@ $otherSingularVar = Inflector::variable($_alias);
 			}
 
 			echo "\t\t\t<td class=\"actions\">\n";
-			echo "\t\t\t\t" . $this->Html->link(__d('cake', 'View'), array('controller' => $_details['controller'], 'action' => 'view', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
-			echo "\t\t\t\t" . $this->Html->link(__d('cake', 'Edit'), array('controller' => $_details['controller'], 'action' => 'edit', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
-			echo "\t\t\t\t" . $this->Form->postLink(__d('cake', 'Delete'), array('controller' => $_details['controller'], 'action' => 'delete', ${$otherSingularVar}[$_details['primaryKey']]), null, __d('cake', 'Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'). "\n";
+			echo "\t\t\t\t";
+			echo $this->Html->link(
+				__d('cake', 'View'),
+				array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'view', ${$otherSingularVar}[$_details['primaryKey']])
+			);
+			echo "\n";
+			echo "\t\t\t\t";
+			echo $this->Html->link(
+				__d('cake', 'Edit'),
+				array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'edit', ${$otherSingularVar}[$_details['primaryKey']])
+			);
+			echo "\n";
+			echo "\t\t\t\t";
+			echo $this->Form->postLink(
+				__d('cake', 'Delete'),
+				array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'delete', ${$otherSingularVar}[$_details['primaryKey']]),
+				null,
+				__d('cake', 'Are you sure you want to delete', true) .' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'
+			);
+			echo "\n";
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 		endforeach;
@@ -139,7 +188,10 @@ $otherSingularVar = Inflector::variable($_alias);
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $this->Html->link(__d('cake', "New %s", Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')); ?> </li>
+			<li><?php echo $this->Html->link(
+				__d('cake', "New %s", Inflector::humanize(Inflector::underscore($_alias))),
+				array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'add')
+			); ?> </li>
 		</ul>
 	</div>
 </div>
