@@ -20,6 +20,7 @@
 App::uses('CakePlugin', 'Core');
 App::uses('L10n', 'I18n');
 App::uses('Multibyte', 'I18n');
+App::uses('CakeSession', 'Model/Datasource');
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -144,9 +145,10 @@ class I18n {
 		}
 
 		if (empty($language)) {
-			if (!empty($_SESSION['Config']['language'])) {
-				$language = $_SESSION['Config']['language'];
-			} else {
+			if (CakeSession::started()) {
+				$language = CakeSession::read('Config.language');
+			}
+			if (empty($language)) {
 				$language = Configure::read('Config.language');
 			}
 		}
