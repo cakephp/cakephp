@@ -174,8 +174,9 @@ class Helper extends Object {
 		if (!empty($this->helpers)) {
 			$this->_helperMap = ObjectCollection::normalizeObjectArray($this->helpers);
 		}
-		$this->settings = $settings;
-		$this->_set($settings);
+		if ($settings) {
+			$this->settings = Hash::merge($this->settings, $settings);
+		}
 	}
 
 /**
