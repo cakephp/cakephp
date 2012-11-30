@@ -30,4 +30,13 @@ interface ConfigReaderInterface {
  */
 	public function read($key);
 
+/**
+ * Dumps the configure data into source.
+ *
+ * @param string $key The identifier to write to.
+ * @param array $data The data to dump.
+ * @return boolean True on success or false on failure.
+ */
+	public function dump($key, $data);
+
 }
