@@ -25,6 +25,13 @@ App::uses('Hash', 'Utility');
 class Helper extends Object {
 
 /**
+ * Settings for this helper.
+ *
+ * @var array
+ */
+	public $settings = array();
+
+/**
  * List of helpers used by this helper
  *
  * @var array
@@ -164,6 +171,9 @@ class Helper extends Object {
 	public function __construct(View $View, $settings = array()) {
 		$this->_View = $View;
 		$this->request = $View->request;
+		if ($settings) {
+			$this->settings = Hash::merge($this->settings, $settings);
+		}
 		if (!empty($this->helpers)) {
 			$this->_helperMap = ObjectCollection::normalizeObjectArray($this->helpers);
 		}
