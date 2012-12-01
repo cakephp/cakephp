@@ -1527,9 +1527,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * testPasswordValidation method
- *
- * test validation errors on password input.
+ * Test validation errors.
  *
  * @return void
  */
@@ -1553,18 +1551,31 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.password', array('errorMessage' => false));
+		$expected = array(
+			'div' => array('class' => 'input password error'),
+			'label' => array('for' => 'ContactPassword'),
+			'Password',
+			'/label',
+			'input' => array(
+				'type' => 'password', 'name' => 'data[Contact][password]',
+				'id' => 'ContactPassword', 'class' => 'form-error'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
- * testEmptyErrorValidation method
- *
- * test validation error div when validation message is an empty string
+ * Test validation errors, when validation message is an empty string.
  *
  * @access public
  * @return void
  */
 	public function testEmptyErrorValidation() {
 		$this->Form->validationErrors['Contact']['password'] = '';
+
 		$result = $this->Form->input('Contact.password');
 		$expected = array(
 			'div' => array('class' => 'input password error'),
@@ -1581,18 +1592,31 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.password', array('errorMessage' => false));
+		$expected = array(
+			'div' => array('class' => 'input password error'),
+			'label' => array('for' => 'ContactPassword'),
+			'Password',
+			'/label',
+			'input' => array(
+				'type' => 'password', 'name' => 'data[Contact][password]',
+				'id' => 'ContactPassword', 'class' => 'form-error'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
- * testEmptyInputErrorValidation method
- *
- * test validation error div when validation message is overridden by an empty string when calling input()
+ * Test validation errors, when calling input() overriding validation message by an empty string.
  *
  * @access public
  * @return void
  */
 	public function testEmptyInputErrorValidation() {
 		$this->Form->validationErrors['Contact']['password'] = 'Please provide a password';
+
 		$result = $this->Form->input('Contact.password', array('error' => ''));
 		$expected = array(
 			'div' => array('class' => 'input password error'),
@@ -1606,6 +1630,20 @@ class FormHelperTest extends CakeTestCase {
 			array('div' => array('class' => 'error-message')),
 			array(),
 			'/div',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.password', array('error' => '', 'errorMessage' => false));
+		$expected = array(
+			'div' => array('class' => 'input password error'),
+			'label' => array('for' => 'ContactPassword'),
+			'Password',
+			'/label',
+			'input' => array(
+				'type' => 'password', 'name' => 'data[Contact][password]',
+				'id' => 'ContactPassword', 'class' => 'form-error'
+			),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
