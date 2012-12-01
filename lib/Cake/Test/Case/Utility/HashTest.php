@@ -928,6 +928,9 @@ class HashTest extends CakeTestCase {
  * @return void
  */
 	public function testSort() {
+		$result = Hash::sort(array(), '{n}.name', 'asc');
+		$this->assertEquals(array(), $result);
+
 		$a = array(
 			0 => array(
 				'Person' => array('name' => 'Jeff'),

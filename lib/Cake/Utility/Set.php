@@ -956,6 +956,9 @@ class Set {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::sort
  */
 	public static function sort($data, $path, $dir) {
+		if (empty($data)) {
+			return $data;
+		}
 		$originalKeys = array_keys($data);
 		$numeric = false;
 		if (is_numeric(implode('', $originalKeys))) {

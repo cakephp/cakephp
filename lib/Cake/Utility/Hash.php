@@ -732,6 +732,9 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::sort
  */
 	public static function sort(array $data, $path, $dir, $type = 'regular') {
+		if (empty($data)) {
+			return array();
+		}
 		$originalKeys = array_keys($data);
 		$numeric = is_numeric(implode('', $originalKeys));
 		if ($numeric) {
