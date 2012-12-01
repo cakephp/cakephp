@@ -422,8 +422,8 @@ class View extends Object {
 /**
  * Checks if an element exists
  *
- * @param string $name Name of template file in the/app/View/Elements/ folder,
- *   or `MyPlugin.template` to use the template element from MyPlugin.  If the element
+ * @param string $name Name of template file in the /app/View/Elements/ folder,
+ *   or `MyPlugin.template` to check the template element from MyPlugin.  If the element
  *   is not found in the plugin, the normal view path cascade will be searched.
  * @return boolean Success
  */
