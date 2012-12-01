@@ -385,6 +385,7 @@ class View extends Object {
  * - `plugin` - Load an element from a specific plugin.  This option is deprecated, see below.
  * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
  *   Defaults to false.
+ * - `ignoreMissing` - Used to allow missing elements. Set to true to not trigger notices.
  * @return string Rendered Element
  * @deprecated The `$options['plugin']` is deprecated and will be removed in CakePHP 3.0.  Use
  *   `Plugin.element_name` instead.
@@ -412,11 +413,22 @@ class View extends Object {
 			return $this->_renderElement($file, $data, $options);
 		}
 
-		$file = 'Elements' . DS . $name . $this->ext;
-
-		if (Configure::read('debug') > 0) {
-			return __d('cake_dev', 'Element Not Found: %s', $file);
+		if (empty($options['ignoreMissing'])) {
+			$file = 'Elements' . DS . $name . $this->ext;
+			trigger_error(__d('cake_dev', 'Element Not Found: %s', $file), E_USER_NOTICE);
 		}
+	}
+
+/**
+ * Checks if an element exists
+ *
+ * @param string $name Name of template file in the /app/View/Elements/ folder,
+ *   or `MyPlugin.template` to check the template element from MyPlugin.  If the element
+ *   is not found in the plugin, the normal view path cascade will be searched.
+ * @return boolean Success
+ */
+	public function elementExists($name) {
+		return (bool)$this->_getElementFilename($name);
 	}
 
 /**
