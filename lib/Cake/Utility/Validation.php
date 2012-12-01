@@ -38,7 +38,7 @@ class Validation {
  * @var array
  */
 	protected static $_pattern = array(
-		'hostname' => '(?:[-_a-z0-9][-_a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,4}|museum|travel)'
+		'hostname' => '(?:[-_a-z0-9][-_a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})'
 	);
 
 /**
