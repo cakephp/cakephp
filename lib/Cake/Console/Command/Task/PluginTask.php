@@ -122,7 +122,7 @@ class PluginTask extends Shell {
 				'Test/Case/View/Helper',
 				'Test/Case/Model/Behavior',
 				'Test/Fixture',
-				'Vendor',
+				'vendor',
 				'webroot'
 			);
 
