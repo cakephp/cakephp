@@ -632,7 +632,7 @@ class App {
 					'%s' . 'Locale' . DS
 				),
 				'Vendor' => array(
-					'%s' . 'Vendor' . DS,
+					'%s' . 'vendor' . DS,
 					dirname(dirname(CAKE)) . DS . 'vendors' . DS,
 				),
 				'Plugin' => array(

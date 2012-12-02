@@ -108,7 +108,7 @@ class PluginTaskTest extends TestCase {
 			'Test/Case/View/Helper',
 			'Test/Case/Model/Behavior',
 			'Test/Fixture',
-			'Vendor',
+			'vendor',
 			'webroot'
 		);
 		foreach ($directories as $dir) {

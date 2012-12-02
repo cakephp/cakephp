@@ -695,8 +695,6 @@ class Shell extends Object {
 		} elseif (@include 'PHPUnit/Autoload.php') {
 			//@codingStandardsIgnoreEnd
 			return true;
-		} elseif (App::import('Vendor', 'phpunit', array('file' => 'PHPUnit/Autoload.php'))) {
-			return true;
 		}
 
 		$prompt = __d('cake_console', 'PHPUnit is not installed. Do you want to bake unit test files anyway?');

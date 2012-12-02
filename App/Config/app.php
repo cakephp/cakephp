@@ -15,7 +15,6 @@
 namespace App\Config;
 
 use Cake\Core\Configure;
-use Cake\Core\ClassLoader;
 
 /**
  * CakePHP Debug Level:
@@ -106,10 +105,13 @@ use Cake\Core\ClassLoader;
 
 /**
  * Configure an autoloader for the App namespace.
+ *
+ * Use App\Controller\AppController as a test to see if composer
+ * support is being used.
  */
-	$loader = new ClassLoader($namespace, dirname(APP));
-	$loader->register();
-	unset($loader, $namespace);
+if (!class_exists('App\Controller\AppController')) {
+	(new \Cake\Core\ClassLoader($namespace, dirname(APP)))->register();
+}
 
 /**
  * Define the FULL_BASE_URL used for link generation.
@@ -125,10 +127,11 @@ $httpHost = env('HTTP_HOST');
 if (isset($httpHost)) {
 	define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost);
 }
-unset($httpHost, $s);
 
 /**
  * Configure the mbstring extension to use the correct encoding.
  */
 $encoding = Configure::read('App.encoding');
 mb_internal_encoding($encoding);
+
+unset($httpHost, $s, $namespace, $encoding);

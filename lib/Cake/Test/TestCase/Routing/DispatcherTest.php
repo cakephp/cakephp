@@ -774,7 +774,7 @@ class DispatcherTest extends TestCase {
 
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-			'Vendor' => array(CAKE . 'Test/TestApp/Vendor/'),
+			'Vendor' => array(CAKE . 'Test/TestApp/vendor/'),
 			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
@@ -892,7 +892,7 @@ class DispatcherTest extends TestCase {
 
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-			'Vendor' => array(CAKE . 'Test/TestApp/Vendor/'),
+			'Vendor' => array(CAKE . 'Test/TestApp/vendor/'),
 			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		Plugin::load(array('TestPlugin', 'PluginJs'));
