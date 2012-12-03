@@ -2574,7 +2574,11 @@ class DboSource extends DataSource {
 		$value = $this->value($value, $type);
 
 		if (!$virtual && $key !== '?') {
-			$isKey = (strpos($key, '(') !== false || strpos($key, ')') !== false);
+			$isKey = (
+				strpos($key, '(') !== false ||
+				strpos($key, ')') !== false ||
+				strpos($key, '|') !== false
+			);
 			$key = $isKey ? $this->_quoteFields($key) : $this->name($key);
 		}
 
