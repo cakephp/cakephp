@@ -3155,11 +3155,24 @@ class DboSource extends DataSource {
 				}
 				$name = $this->startQuote . $name . $this->endQuote;
 			}
+			/*
+			 * length attribute only used for MySQL datasource, for TEXT/BLOB index columns
+			 */
+			$out .= 'KEY ' . $name . ' (';
 			if (is_array($value['column'])) {
-				$out .= 'KEY ' . $name . ' (' . implode(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+				if (isset($value['length'])) {
+					$out .= implode(', ', $this->name($value['column'], $value['length']));
+				} else {
+					$out .= implode(', ', array_map(array(&$this, 'name'), $value['column']));
+				}
 			} else {
-				$out .= 'KEY ' . $name . ' (' . $this->name($value['column']) . ')';
+				if (isset($value['length'])) {
+					$out .= $this->name($value['column'], $value['length']);
+				} else {
+					$out .= $this->name($value['column']);
+				}
 			}
+			$out .= ')';
 			$join[] = $out;
 		}
 		return $join;

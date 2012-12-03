@@ -466,6 +466,13 @@ class Mysql extends DboSource {
 					$col[] = $idx->Column_name;
 					$index[$idx->Key_name]['column'] = $col;
 				}
+				if (!empty($idx->Sub_part)) {
+					if (!isset($index[$idx->Key_name]['length'])) {
+						$length = array();
+					}
+					$length[$idx->Column_name] = $idx->Sub_part;
+					$index[$idx->Key_name]['length'] = $length;
+				}
 			}
 			// @codingStandardsIgnoreEnd
 			$indexes->closeCursor();
@@ -593,6 +600,45 @@ class Mysql extends DboSource {
 			}
 		}
 		return $alter;
+	}
+
+/**
+ * Format length for text indexes
+ *
+ * @param array $lengths
+ * @param string $column
+ */
+	protected function _buildIndexSubPart($lengths, $column) {
+		if (is_null($lengths)) {
+			return '';
+		}
+		if (!isset($lengths[$column])) {
+			return '';
+		}
+		return '(' . $lengths[$column] . ')';
+	}
+
+/**
+ * Override to append length subparts to index column name
+ * (non-PHPdoc)
+ * @see DboSource::name()
+ */
+	public function name($data, $lengths = array()) {
+		if (is_object($data) && isset($data->type)) {
+			return $data->value;
+		}
+		if ($data === '*') {
+			return '*';
+		}
+		if (is_array($data)) {
+			foreach ($data as $i => $dataItem) {
+				$data[$i] = $this->name($dataItem, $lengths);
+			}
+			return $data;
+		}
+		$unquoted = $data;
+		$quoted = parent::name($data);
+		return $quoted . $this->_buildIndexSubPart($lengths, $unquoted);
 	}
 
 /**
