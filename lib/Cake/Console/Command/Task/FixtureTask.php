@@ -279,8 +279,8 @@ class FixtureTask extends BakeTask {
  * @return string fields definitions
  */
 	protected function _generateSchema($tableInfo) {
-		$schema = $this->_Schema->generateTable('f', $tableInfo);
-		return substr($schema, 13, -2);
+		$schema = trim($this->_Schema->generateTable('f', $tableInfo), "\n");
+		return substr($schema, 13, -1);
 	}
 
 /**
