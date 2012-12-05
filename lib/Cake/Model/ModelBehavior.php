@@ -233,4 +233,3 @@ class ModelBehavior extends Object {
 	}
 
 }
-

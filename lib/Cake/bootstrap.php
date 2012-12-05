@@ -423,4 +423,3 @@ if (!function_exists('mb_encode_mimeheader')) {
 	}
 
 }
-

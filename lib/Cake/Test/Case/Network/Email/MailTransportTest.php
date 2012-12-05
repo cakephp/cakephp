@@ -81,4 +81,3 @@ class MailTransportTest extends CakeTestCase {
 	}
 
 }
-
