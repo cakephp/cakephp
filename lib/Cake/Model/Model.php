@@ -2438,31 +2438,33 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		foreach (array_merge($this->hasMany, $this->hasOne) as $assoc => $data) {
-			if ($data['dependent'] === true) {
-				$model = $this->{$assoc};
+			if ($data['dependent'] !== true) {
+				continue;
+			}
 
-				if ($data['foreignKey'] === false && $data['conditions'] && in_array($this->name, $model->getAssociated('belongsTo'))) {
-					$model->recursive = 0;
-					$conditions = array($this->escapeField(null, $this->name) => $id);
-				} else {
-					$model->recursive = -1;
-					$conditions = array($model->escapeField($data['foreignKey']) => $id);
-					if ($data['conditions']) {
-						$conditions = array_merge((array)$data['conditions'], $conditions);
-					}
+			$model = $this->{$assoc};
+
+			if ($data['foreignKey'] === false && $data['conditions'] && in_array($this->name, $model->getAssociated('belongsTo'))) {
+				$model->recursive = 0;
+				$conditions = array($this->escapeField(null, $this->name) => $id);
+			} else {
+				$model->recursive = -1;
+				$conditions = array($model->escapeField($data['foreignKey']) => $id);
+				if ($data['conditions']) {
+					$conditions = array_merge((array)$data['conditions'], $conditions);
 				}
+			}
 
-				if (isset($data['exclusive']) && $data['exclusive']) {
-					$model->deleteAll($conditions);
-				} else {
-					$records = $model->find('all', array(
-						'conditions' => $conditions, 'fields' => $model->primaryKey
-					));
+			if (isset($data['exclusive']) && $data['exclusive']) {
+				$model->deleteAll($conditions);
+			} else {
+				$records = $model->find('all', array(
+					'conditions' => $conditions, 'fields' => $model->primaryKey
+				));
 
-					if (!empty($records)) {
-						foreach ($records as $record) {
-							$model->delete($record[$model->alias][$model->primaryKey]);
-						}
+				if (!empty($records)) {
+					foreach ($records as $record) {
+						$model->delete($record[$model->alias][$model->primaryKey]);
 					}
 				}
 			}
