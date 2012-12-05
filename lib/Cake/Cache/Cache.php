@@ -498,4 +498,3 @@ class Cache {
 	}
 
 }
-

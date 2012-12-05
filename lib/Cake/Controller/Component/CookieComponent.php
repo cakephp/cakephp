@@ -529,4 +529,3 @@ class CookieComponent extends Component {
 		return $array;
 	}
 }
-
