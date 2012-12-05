@@ -2482,7 +2482,7 @@ class Model extends Object implements CakeEventListener {
  */
 	protected function _deleteLinks($id) {
 		foreach ($this->hasAndBelongsToMany as $data) {
-			list($plugin, $joinModel) = pluginSplit($data['with']);
+			list(, $joinModel) = pluginSplit($data['with']);
 			$records = $this->{$joinModel}->find('all', array(
 				'conditions' => array($this->{$joinModel}->escapeField($data['foreignKey']) => $id),
 				'fields' => $this->{$joinModel}->primaryKey,
@@ -2581,9 +2581,13 @@ class Model extends Object implements CakeEventListener {
 		if ($id === false) {
 			return false;
 		}
-		$conditions = array($this->alias . '.' . $this->primaryKey => $id);
-		$query = array('conditions' => $conditions, 'recursive' => -1, 'callbacks' => false);
-		return $this->find('count', $query) > 0;
+		return (bool)$this->find('count',  array(
+			'conditions' => array(
+				$this->alias . '.' . $this->primaryKey => $id
+			),
+			'recursive' => -1,
+			'callbacks' => false
+		));
 	}
 
 /**
