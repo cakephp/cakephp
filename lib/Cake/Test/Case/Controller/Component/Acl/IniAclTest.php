@@ -66,4 +66,3 @@ class IniAclTest extends CakeTestCase {
 		$this->assertTrue($Ini->check($user, 'posts'));
 	}
 }
-
