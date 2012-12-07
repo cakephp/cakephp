@@ -12,9 +12,9 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.TestApp.Vendor.somename
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @package       Cake.Test.TestApp.vendor
+ * @since         CakePHP(tm) v 1.2.0.7629
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-This is a file with dot in file name
+This is the welcome.php file in vendors directory

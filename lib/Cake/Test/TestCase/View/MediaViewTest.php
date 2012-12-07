@@ -63,7 +63,7 @@ class MediaViewTest extends TestCase {
  */
 	public function testRender() {
 		$vars = array(
-			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS,
+			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'vendor' . DS . 'css' . DS,
 			'id' => 'test_asset.css'
 		);
 		$this->MediaView->viewVars = $vars;
@@ -92,7 +92,7 @@ class MediaViewTest extends TestCase {
  */
 	public function testRenderCachingAndName() {
 		$vars = array(
-			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS,
+			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'vendor' . DS . 'css' . DS,
 			'id' => 'test_asset.css',
 			'cache' => '+1 day',
 			'name' => 'something_special',
@@ -132,7 +132,7 @@ class MediaViewTest extends TestCase {
 	public function testRenderUpperExtension() {
 		return;
 		$this->MediaView->viewVars = array(
-			'path' => CAKE . 'Test/TestApp/Vendor/img/',
+			'path' => CAKE . 'Test/TestApp/vendor/img/',
 			'id' => 'test_2.JPG'
 		);
 

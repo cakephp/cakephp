@@ -273,7 +273,7 @@ class AppTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		$result = App::path('Vendor', 'TestPlugin');
-		$this->assertEquals($basepath . 'TestPlugin' . DS. 'Vendor' . DS, $result[0]);
+		$this->assertEquals($basepath . 'TestPlugin' . DS. 'vendor' . DS, $result[0]);
 	}
 
 /**

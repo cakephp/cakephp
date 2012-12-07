@@ -1051,7 +1051,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test/TestApp/Vendor/css/test_asset.css');
+		$response->file(CAKE . 'Test/TestApp/vendor/css/test_asset.css');
 
 		ob_start();
 		$result = $response->send();
@@ -1303,7 +1303,7 @@ class ResponseTest extends TestCase {
 		$response->expects($this->once())->method('_clearBuffer');
 		$response->expects($this->never())->method('_flushBuffer');
 
-		$response->file(CAKE . 'Test/TestApp/Vendor/css/test_asset.css');
+		$response->file(CAKE . 'Test/TestApp/vendor/css/test_asset.css');
 
 		$result = $response->send();
 		$this->assertNull($result);
@@ -1335,7 +1335,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test/TestApp/Vendor/img/test_2.JPG');
+		$response->file(CAKE . 'Test/TestApp/vendor/img/test_2.JPG');
 	}
 
 /**
@@ -1364,7 +1364,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test/TestApp/Vendor/img/test_2.JPG');
+		$response->file(CAKE . 'Test/TestApp/vendor/img/test_2.JPG');
 	}
 
 }
