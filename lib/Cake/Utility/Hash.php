@@ -596,7 +596,7 @@ class Hash {
 			foreach ((array)$arg as $key => $val) {
 				if (!empty($return[$key]) && is_array($return[$key]) && is_array($val)) {
 					$return[$key] = self::merge($return[$key], $val);
-				} elseif (is_int($key)) {
+				} elseif (is_int($key) && isset($return[$key])) {
 					$return[] = $val;
 				} else {
 					$return[$key] = $val;
