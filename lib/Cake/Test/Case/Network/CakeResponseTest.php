@@ -234,6 +234,46 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
+ * Tests the send method and changing the content type to JS
+ *
+ */
+	public function testSendChangingContentTypeJS() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
+		$response->type('js');
+		$response->body('var $foo = "bar";');
+		$response->expects($this->once())->method('_sendContent')->with('the response body');
+		$response->expects($this->at(0))->method('_setCookies');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(3))
+			->method('_sendHeader')->with('Content-Type', 'application/javascript; charset=UTF-8');
+		$response->send();
+	}
+
+/**
+ * Tests the send method and changing the content type to JS without adding the charset
+ *
+ */
+	public function testSendChangingContentTypeWihtoutCharset() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
+		$response->type('js');
+		$response->charset('');
+
+		$response->body('var $foo = "bar";');
+		$response->expects($this->once())->method('_sendContent')->with('the response body');
+		$response->expects($this->at(0))->method('_setCookies');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(3))
+			->method('_sendHeader')->with('Content-Type', 'application/javascript;');
+		$response->send();
+	}
+
+/**
  * Tests the send method and changing the content type
  *
  */
