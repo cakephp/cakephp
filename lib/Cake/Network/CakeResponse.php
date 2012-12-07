@@ -569,12 +569,15 @@ class CakeResponse {
  * Buffers the response message to be sent
  * if $content is null the current buffer is returned
  *
- * @param string $content the string message to be sent
- * @return string current message buffer if $content param is passed as null
+ * @param string|CakeResponse $content the string message to be sent or the CakeResponse object
+ * @return string Current message, or buffer if $content param is passed as null
  */
 	public function body($content = null) {
 		if (is_null($content)) {
 			return $this->_body;
+		}
+		if (is_object($content) && $content instanceof CakeResponse) {
+			$content = $content->body();
 		}
 		return $this->_body = $content;
 	}
