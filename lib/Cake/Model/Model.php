@@ -1721,7 +1721,7 @@ class Model extends Object implements CakeEventListener {
 			if (!empty($this->id)) {
 				$success = (bool)$db->update($this, $fields, $values);
 			} else {
-				if (empty($this->data[$this->alias][$this->primaryKey]) && $this->isUUID($this->primaryKey)) {
+				if (empty($this->data[$this->alias][$this->primaryKey]) && $this->_isUUID($this->primaryKey)) {
 					if (array_key_exists($this->primaryKey, $this->data[$this->alias])) {
 						$j = array_search($this->primaryKey, $fields);
 						$values[$j] = String::uuid();
@@ -1773,7 +1773,7 @@ class Model extends Object implements CakeEventListener {
  * @param string $field the field to check
  * @return array
  */
-	public function isUUID($field) {
+	protected function _isUUID($field) {
 		$field = $this->schema($field);
 		return $field['length'] == 36 && in_array($field['type'], array('string', 'binary'));
 	}
@@ -1800,7 +1800,7 @@ class Model extends Object implements CakeEventListener {
 					$dbMulti = $db;
 				}
 
-				$isUUID = !empty($this->{$join}->primaryKey) && $this->{$join}->isUUID($this->{$join}->primaryKey);
+				$isUUID = !empty($this->{$join}->primaryKey) && $this->{$join}->_isUUID($this->{$join}->primaryKey);
 
 				$newData = $newValues = $newJoins = array();
 				$primaryAdded = false;
