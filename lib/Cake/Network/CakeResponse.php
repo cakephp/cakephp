@@ -569,7 +569,7 @@ class CakeResponse {
  * Buffers the response message to be sent
  * if $content is null the current buffer is returned
  *
- * @param string $content the string message to be sent
+ * @param string|CakeResponse $content the string message to be sent or the CakeResponse object
  * @return string Current message, or buffer if $content param is passed as null
  */
 	public function body($content = null) {
