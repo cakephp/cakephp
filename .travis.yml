@@ -33,6 +33,7 @@ before_script:
     server.listen(80, 'localhost');
     console.log('TCP server listening on port 80 at localhost.');" > app/tmp/socket.js
   - sudo node ./app/tmp/socket.js &
+  - echo "zend.enable_gc=0" >> `php --ini | grep "Loaded Configuration" | sed -e "s/^.*:\s*//"`
   - pear channel-discover pear.cakephp.org
   - pear install --alldeps cakephp/CakePHP_CodeSniffer
   - phpenv rehash
