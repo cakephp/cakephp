@@ -96,7 +96,7 @@ class Hash {
 			return (array)self::get($data, $path);
 		}
 
-		if (strpos('[', $path) === false) {
+		if (strpos($path, '[') === false) {
 			$tokens = explode('.', $path);
 		} else {
 			$tokens = String::tokenize($path, '.', '[', ']');
