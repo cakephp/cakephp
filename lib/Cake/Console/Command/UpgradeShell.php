@@ -74,12 +74,7 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	public function locations() {
-		$path = isset($this->args[0]) ? $this->args[0] : APP;
-
-		if (!empty($this->params['plugin'])) {
-			$path = App::pluginPath($this->params['plugin']);
-		}
-		$path = rtrim($path, DS);
+		$this->_getPath();
 
 		$moves = array(
 			'Test' . DS . 'Case' => 'Test' . DS . 'TestCase'
@@ -112,11 +107,7 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	public function app_uses() {
-		$path = isset($this->args[0]) ? $this->args[0] : APP;
-		if (isset($this->params['plugin'])) {
-			$path = Plugin::path($this->params['plugin']);
-		}
-
+		$path = $this->_getPath();
 		$Folder = new Folder($path);
 		$this->_paths = $Folder->tree(null, false, 'dir');
 		$this->_findFiles('php');
@@ -254,6 +245,30 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Update cache configs.
+ *
+ * @return void
+ */
+	public function cache() {
+		$path = $this->_getPath();
+
+		$Folder = new Folder($path);
+		$this->_paths = $Folder->tree(null, false, 'dir');
+		$this->_findFiles('php');
+		foreach ($this->_files as $filePath) {
+			$patterns = [
+				[
+					' Cache::config to Configure::write',
+					'#(Cache\:\:config\()(\s*[\'"])([^\'"]+)([\'"])#ms',
+					"Configure::write('Cache.\\3'",
+				]
+			];
+			$this->_updateFile($filePath, $patterns);
+		}
+		$this->out(__d('cake_console', '<success>Cache::config() replaced successfully</success>'));
+	}
+
+/**
  * Filter paths to remove webroot, Plugin, tmp directories
  */
 	protected function _filterPaths($paths, $directories) {
@@ -366,6 +381,20 @@ class UpgradeShell extends Shell {
 			'<error>Error</error> Was unable to update %s',
 			$filePath
 		));
+	}
+
+/**
+ * Get the path to operate on. Uses either the first argument,
+ * or the plugin parameter if its set.
+ *
+ * @return string
+ */
+	protected function _getPath() {
+		$path = isset($this->args[0]) ? $this->args[0] : APP;
+		if (isset($this->params['plugin'])) {
+			$path = Plugin::path($this->params['plugin']);
+		}
+		return rtrim($path, DS);
 	}
 
 /**
