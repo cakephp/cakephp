@@ -148,5 +148,4 @@ class MediaViewTest extends CakeTestCase {
 		$this->MediaView->render();
 	}
 
-
 }
