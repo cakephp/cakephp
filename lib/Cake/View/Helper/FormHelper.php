@@ -944,7 +944,7 @@ class FormHelper extends AppHelper {
  */
 	public function input($fieldName, $options = array()) {
 		$this->setEntity($fieldName);
-		$options = $this->_parseOptions($fieldName, $options);
+		$options = $this->_parseOptions($options);
 
 		$divOptions = $this->_divOptions($options);
 		unset($options['div']);
@@ -1011,6 +1011,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Generates an input element
  *
  * @param type $args
  * @return type
@@ -1050,12 +1051,12 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Generates input options array
  *
- * @param type $fieldName
  * @param type $options
- * @return array
+ * @return array Options
  */
-	protected function _parseOptions($fieldName, $options) {
+	protected function _parseOptions($options) {
 		$options = array_merge(
 			array('before' => null, 'between' => null, 'after' => null, 'format' => null),
 			$this->_inputDefaults,
@@ -1081,6 +1082,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Generates list of options for multiple select
  *
  * @param type $options
  * @return array
@@ -1104,6 +1106,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Magically set option type and corresponding options
  *
  * @param type $options
  * @return array
@@ -1167,6 +1170,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Generate format options
  *
  * @param type $options
  * @return array
@@ -1185,6 +1189,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Generate label for input
  *
  * @param type $fieldName
  * @param type $options
@@ -1207,6 +1212,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Calculates maxlength option
  *
  * @param type $options
  * @return array
@@ -1229,6 +1235,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Generate div options for input
  *
  * @param array $options
  * @return array
