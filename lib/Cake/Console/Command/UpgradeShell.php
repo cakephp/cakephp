@@ -245,6 +245,30 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Update log configs.
+ *
+ * @return void
+ */
+	public function log() {
+		$path = $this->_getPath();
+
+		$Folder = new Folder($path);
+		$this->_paths = $Folder->tree(null, false, 'dir');
+		$this->_findFiles('php');
+		foreach ($this->_files as $filePath) {
+			$patterns = [
+				[
+					' Log::config to Configure::write',
+					'#(Log\:\:config\()(\s*[\'"])([^\'"]+)([\'"])#ms',
+					"Configure::write('Log.\\3'",
+				]
+			];
+			$this->_updateFile($filePath, $patterns);
+		}
+		$this->out(__d('cake_console', '<success>Log::config() replaced successfully</success>'));
+	}
+
+/**
  * Update cache configs.
  *
  * @return void
