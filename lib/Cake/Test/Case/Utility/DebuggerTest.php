@@ -84,7 +84,13 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertTrue(is_array($result));
 		$this->assertEquals(4, count($result));
 
-		$pattern = '/<code><span style\="color\: \#\d+">.*?&lt;\?php/';
+		$pattern = '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/';
+		$this->assertRegExp($pattern, $result[0]);
+
+		$result = Debugger::excerpt(__FILE__, 10, 2);
+		$this->assertEquals(5, count($result));
+
+		$pattern = '/<span style\="color\: \#\d{6}">\*<\/span>/';
 		$this->assertRegExp($pattern, $result[0]);
 
 		$return = Debugger::excerpt('[internal]', 2, 2);
