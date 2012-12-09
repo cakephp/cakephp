@@ -1336,7 +1336,7 @@ class FormHelper extends AppHelper {
 
 		$showEmpty = $this->_extractOption('empty', $attributes);
 		if ($showEmpty) {
-			$showEmpty = ($showEmpty === true) ? __('empty') : $showEmpty;
+			$showEmpty = ($showEmpty === true) ? __d('cake', 'empty') : $showEmpty;
 			$options = array('' => $showEmpty) + $options;
 		}
 		unset($attributes['empty']);
