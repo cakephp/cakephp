@@ -269,7 +269,7 @@ class Router {
  * - `named` is used to configure named parameters at the route level. This key uses the same options
  *   as Router::connectNamed()
  *
- * In addition to the 4 keys listed above, you can add additional conditions for matching routes.
+ * You can also add additional conditions for matching routes to the $defaults array.
  * The following conditions can be used:
  *
  * - `[type]` Only match requests for specific content types.
@@ -278,7 +278,7 @@ class Router {
  *
  * Example of using the `[method]` condition:
  *
- * `Router::connect('/tasks', array('controller' => 'tasks', 'action' => 'index'), array('[method]' => 'GET'));`
+ * `Router::connect('/tasks', array('controller' => 'tasks', 'action' => 'index', '[method]' => 'GET'));`
  *
  * The above route will only be matched for GET requests. POST requests will fail to match this route.
  *
