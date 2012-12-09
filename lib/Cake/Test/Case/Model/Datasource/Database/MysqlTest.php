@@ -2997,55 +2997,80 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
+ * Return valid real database-layer enumerations.
+ *
+ * @return array
+ */
+	public function validRealEnumerations() {
+		return array(
+			// Enum
+			array('enum(\'one\',\'two\',\'three\')'),
+			array(' enum ( \'one\' , \'two\' , \'three\' ) '),
+			array('enum("one","two","three")'),
+			array(' enum ( "one" , "two" , "three" ) '),
+			array('enum(\'one\',"two",\'three\')'),
+			array(' enum ( \'one\' , "two" , \'three\' ) '),
+			array('enum("one",\'two\',"three")'),
+			array(' enum ( "one" , \'two\' , "three" ) '),
+			array('enum (\'one\', \'two\', \'three\')'),
+			array('enum ("one", "two", "three")'),
+			// Set
+			array('set(\'one\',\'two\',\'three\')'),
+			array(' set ( \'one\' , \'two\' , \'three\' ) '),
+			array('set("one","two","three")'),
+			array(' set ( "one" , "two" , "three" ) '),
+			array('set(\'one\',"two",\'three\')'),
+			array(' set ( \'one\' , "two" , \'three\' ) '),
+			array('set("one",\'two\',"three")'),
+			array(' set ( "one" , \'two\' , "three" ) '),
+			array('set (\'one\', \'two\', \'three\')'),
+			array('set ("one", "two", "three")'),
+		);
+	}
+
+/**
+ * Return invalid real database-layer enumerations.
+ *
+ * @return array
+ */
+	public function invalidRealEnumerations() {
+		return array(
+			// Enum
+			array('noenum("one","two","three")'),
+			array('enum("one\',"two",\'three\')'),
+			array('enum(\'one","two",\'three\')'),
+			array('enum(\'one\',"two",\'three")'),
+			array('enum(\'one\',"two","three\')'),
+			array('enum()'),
+			// Set
+			array('noset("one","two","three")'),
+			array('set("one\',"two",\'three\')'),
+			array('set(\'one","two",\'three\')'),
+			array('set(\'one\',"two",\'three")'),
+			array('set(\'one\',"two","three\')'),
+			array('set()')
+		);
+	}
+
+/**
  * Test that a MySQL column description is a valid enumerated column type.
  *
+ * @dataProvider validRealEnumerations
  * @return void
  */
-	public function testIsEnumeration() {
-		$result = $this->Dbo->isEnumeration('enum(\'first\',\'second\')');
-		$this->assertTrue($result);
-
-		$result = $this->Dbo->isEnumeration('set(\'one\',"two",\'three\')');
-		$this->assertTrue($result);
-
-		$result = $this->Dbo->isEnumeration(' set ( \'one\' , "two" , \'three\' ) ');
-		$this->assertTrue($result);
-
-		$result = $this->Dbo->isEnumeration('enum ("first","second")');
-		$this->assertTrue($result);
-
-		$result = $this->Dbo->isEnumeration('set ("one","two","three")');
-		$this->assertTrue($result);
-
-		$result = $this->Dbo->isEnumeration('set ("one", "two","three")');
+	public function testIsEnumeration($real) {
+		$result = $this->Dbo->isEnumeration($real);
 		$this->assertTrue($result);
 	}
 
 /**
  * Test that a MySQL column description is an invalid enumerated column type.
  *
+ * @dataProvider invalidRealEnumerations
  * @return void
  */
-	public function testIsEnumerationInvalid() {
-		$result = $this->Dbo->isEnumeration('noset("one","two","three")');
-		$this->assertFalse($result);
-
-		$result = $this->Dbo->isEnumeration('set("one\',"two",\'three\')');
-		$this->assertFalse($result);
-
-		$result = $this->Dbo->isEnumeration('enum(\'one","two",\'three\')');
-		$this->assertFalse($result);
-
-		$result = $this->Dbo->isEnumeration('set(\'one\',"two",\'three")');
-		$this->assertFalse($result);
-
-		$result = $this->Dbo->isEnumeration('set(\'one\',"two","three\')');
-		$this->assertFalse($result);
-
-		$result = $this->Dbo->isEnumeration('enum()');
-		$this->assertFalse($result);
-
-		$result = $this->Dbo->isEnumeration('set()');
+	public function testIsEnumerationInvalid($real) {
+		$result = $this->Dbo->isEnumeration($real);
 		$this->assertFalse($result);
 	}
 
