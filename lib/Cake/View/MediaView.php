@@ -15,7 +15,6 @@
  * @package       Cake.View
  * @since         CakePHP(tm) v 1.2.0.5714
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
- * @deprecated    Deprecated since version 2.3, use CakeResponse::file() instead
  */
 
 App::uses('View', 'View');
@@ -55,6 +54,7 @@ App::uses('CakeRequest', 'Network');
  * }}}
  *
  * @package       Cake.View
+ * @deprecated Deprecated since version 2.3, use CakeResponse::file() instead
  */
 class MediaView extends View {
 
