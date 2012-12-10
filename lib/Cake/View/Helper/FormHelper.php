@@ -944,88 +944,281 @@ class FormHelper extends AppHelper {
  */
 	public function input($fieldName, $options = array()) {
 		$this->setEntity($fieldName);
+		$options = $this->_parseOptions($options);
 
+		$divOptions = $this->_divOptions($options);
+		unset($options['div']);
+
+		if ($options['type'] === 'radio' && isset($options['options'])) {
+			$radioOptions = (array)$options['options'];
+			unset($options['options']);
+		}
+
+		$label = $this->_getLabel($fieldName, $options);
+		if ($options['type'] !== 'radio') {
+			unset($options['label']);
+		}
+
+		$error = $this->_extractOption('error', $options, null);
+		unset($options['error']);
+
+		$errorMessage = $this->_extractOption('errorMessage', $options, true);
+		unset($options['errorMessage']);
+
+		$selected = $this->_extractOption('selected', $options, null);
+		unset($options['selected']);
+
+		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time') {
+			$dateFormat = $this->_extractOption('dateFormat', $options, 'MDY');
+			$timeFormat = $this->_extractOption('timeFormat', $options, 12);
+			unset($options['dateFormat'], $options['timeFormat']);
+		}
+
+		$type = $options['type'];
+		$out = array('before' => $options['before'], 'label' => $label, 'between' => $options['between'], 'after' => $options['after']);
+		$format = $this->_getFormat($options);
+
+		unset($options['type'], $options['before'], $options['between'], $options['after'], $options['format']);
+
+		$out['error'] = null;
+		if ($type != 'hidden' && $error !== false) {
+			$errMsg = $this->error($fieldName, $error);
+			if ($errMsg) {
+				$divOptions = $this->addClass($divOptions, 'error');
+				if ($errorMessage) {
+					$out['error'] = $errMsg;
+				}
+			}
+		}
+
+		if ($type === 'radio' && isset($out['between'])) {
+			$options['between'] = $out['between'];
+			$out['between'] = null;
+		}
+		$out['input'] = $this->_getInput(compact('type', 'fieldName', 'options', 'radioOptions', 'selected', 'dateFormat', 'timeFormat'));
+
+		$output = '';
+		foreach ($format as $element) {
+			$output .= $out[$element];
+		}
+
+		if (!empty($divOptions['tag'])) {
+			$tag = $divOptions['tag'];
+			unset($divOptions['tag']);
+			$output = $this->Html->tag($tag, $output, $divOptions);
+		}
+		return $output;
+	}
+
+/**
+ * Generates an input element
+ *
+ * @param type $args
+ * @return type
+ */
+	protected function _getInput($args) {
+		extract($args);
+		switch ($type) {
+			case 'hidden':
+				return $this->hidden($fieldName, $options);
+			case 'checkbox':
+				return $this->checkbox($fieldName, $options);
+			case 'radio':
+				return $this->radio($fieldName, $radioOptions, $options);
+			case 'file':
+				return $this->file($fieldName, $options);
+			case 'select':
+				$options += array('options' => array(), 'value' => $selected);
+				$list = $options['options'];
+				unset($options['options']);
+				return $this->select($fieldName, $list, $options);
+			case 'time':
+				$options['value'] = $selected;
+				return $this->dateTime($fieldName, null, $timeFormat, $options);
+			case 'date':
+				$options['value'] = $selected;
+				return $this->dateTime($fieldName, $dateFormat, null, $options);
+			case 'datetime':
+				$options['value'] = $selected;
+				return $this->dateTime($fieldName, $dateFormat, $timeFormat, $options);
+			case 'textarea':
+				return $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
+			case 'url':
+				return $this->text($fieldName, array('type' => 'url') + $options);
+			default:
+				return $this->{$type}($fieldName, $options);
+		}
+	}
+
+/**
+ * Generates input options array
+ *
+ * @param type $options
+ * @return array Options
+ */
+	protected function _parseOptions($options) {
 		$options = array_merge(
 			array('before' => null, 'between' => null, 'after' => null, 'format' => null),
 			$this->_inputDefaults,
 			$options
 		);
 
+		if (!isset($options['type'])) {
+			$options = $this->_magicOptions($options);
+		}
+
+		if (in_array($options['type'], array('checkbox', 'radio', 'select'))) {
+			$options = $this->_optionsOptions($options);
+		}
+
+		if (isset($options['rows']) || isset($options['cols'])) {
+			$options['type'] = 'textarea';
+		}
+
+		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time' || $options['type'] === 'select') {
+			$options += array('empty' => false);
+		}
+		return $options;
+	}
+
+/**
+ * Generates list of options for multiple select
+ *
+ * @param type $options
+ * @return array
+ */
+	protected function _optionsOptions($options) {
+		if (isset($options['options'])) {
+			return $options;
+		}
+		$varName = Inflector::variable(
+			Inflector::pluralize(preg_replace('/_id$/', '', $this->field()))
+		);
+		$varOptions = $this->_View->getVar($varName);
+		if (!is_array($varOptions)) {
+			return $options;
+		}
+		if ($options['type'] !== 'radio') {
+			$options['type'] = 'select';
+		}
+		$options['options'] = $varOptions;
+		return $options;
+	}
+
+/**
+ * Magically set option type and corresponding options
+ *
+ * @param type $options
+ * @return array
+ */
+	protected function _magicOptions($options) {
 		$modelKey = $this->model();
 		$fieldKey = $this->field();
-
-		if (!isset($options['type'])) {
-			$magicType = true;
-			$options['type'] = 'text';
-			if (isset($options['options'])) {
-				$options['type'] = 'select';
-			} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
-				$options['type'] = 'password';
-			} elseif (isset($options['checked'])) {
-				$options['type'] = 'checkbox';
-			} elseif ($fieldDef = $this->_introspectModel($modelKey, 'fields', $fieldKey)) {
-				$type = $fieldDef['type'];
-				$primaryKey = $this->fieldset[$modelKey]['key'];
-			}
-
-			if (isset($type)) {
-				$map = array(
-					'string' => 'text', 'datetime' => 'datetime',
-					'boolean' => 'checkbox', 'timestamp' => 'datetime',
-					'text' => 'textarea', 'time' => 'time',
-					'date' => 'date', 'float' => 'number',
-					'integer' => 'number'
-				);
-
-				if (isset($this->map[$type])) {
-					$options['type'] = $this->map[$type];
-				} elseif (isset($map[$type])) {
-					$options['type'] = $map[$type];
-				}
-				if ($fieldKey == $primaryKey) {
-					$options['type'] = 'hidden';
-				}
-				if (
-					$options['type'] === 'number' &&
-					$type === 'float' &&
-					!isset($options['step'])
-				) {
-					$options['step'] = 'any';
-				}
-			}
-			if (preg_match('/_id$/', $fieldKey) && $options['type'] !== 'hidden') {
-				$options['type'] = 'select';
-			}
-
-			if ($modelKey === $fieldKey) {
-				$options['type'] = 'select';
-				if (!isset($options['multiple'])) {
-					$options['multiple'] = 'multiple';
-				}
-			}
-		}
-		$types = array('checkbox', 'radio', 'select');
-
-		if (
-			(!isset($options['options']) && in_array($options['type'], $types)) ||
-			(isset($magicType) && in_array($options['type'], array('text', 'number')))
-		) {
-			$varName = Inflector::variable(
-				Inflector::pluralize(preg_replace('/_id$/', '', $fieldKey))
+		$options['type'] = 'text';
+		if (isset($options['options'])) {
+			$options['type'] = 'select';
+		} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
+			$options['type'] = 'password';
+		} elseif (isset($options['checked'])) {
+			$options['type'] = 'checkbox';
+		} elseif ($fieldDef = $this->_introspectModel($modelKey, 'fields', $fieldKey)) {
+			$type = $fieldDef['type'];
+			$primaryKey = $this->fieldset[$modelKey]['key'];
+			$map = array(
+				'string' => 'text', 'datetime' => 'datetime',
+				'boolean' => 'checkbox', 'timestamp' => 'datetime',
+				'text' => 'textarea', 'time' => 'time',
+				'date' => 'date', 'float' => 'number',
+				'integer' => 'number'
 			);
-			$varOptions = $this->_View->getVar($varName);
-			if (is_array($varOptions)) {
-				if ($options['type'] !== 'radio') {
-					$options['type'] = 'select';
-				}
-				$options['options'] = $varOptions;
-			}
 
-			if ($options['type'] === 'select' && array_key_exists('step', $options)) {
-				unset($options['step']);
+			if (isset($this->map[$type])) {
+				$options['type'] = $this->map[$type];
+			} elseif (isset($map[$type])) {
+				$options['type'] = $map[$type];
+			}
+			if ($fieldKey == $primaryKey) {
+				$options['type'] = 'hidden';
+			}
+			if (
+				$options['type'] === 'number' &&
+				$type === 'float' &&
+				!isset($options['step'])
+			) {
+				$options['step'] = 'any';
 			}
 		}
 
+		if (preg_match('/_id$/', $fieldKey) && $options['type'] !== 'hidden') {
+			$options['type'] = 'select';
+		}
+
+		if ($modelKey === $fieldKey) {
+			$options['type'] = 'select';
+			if (!isset($options['multiple'])) {
+				$options['multiple'] = 'multiple';
+			}
+		}
+		if (in_array($options['type'], array('text', 'number'))) {
+			$options = $this->_optionsOptions($options);
+		}
+		if ($options['type'] === 'select' && array_key_exists('step', $options)) {
+			unset($options['step']);
+		}
+		$options = $this->_maxLength($options);
+		return $options;
+	}
+
+/**
+ * Generate format options
+ *
+ * @param type $options
+ * @return array
+ */
+	protected function _getFormat($options) {
+		if ($options['type'] == 'hidden') {
+			return array('input');
+		}
+		if (is_array($options['format']) && in_array('input', $options['format'])) {
+			return $options['format'];
+		}
+		if ($options['type'] == 'checkbox') {
+			return array('before', 'input', 'between', 'label', 'after', 'error');
+		}
+		return array('before', 'label', 'between', 'input', 'after', 'error');
+	}
+
+/**
+ * Generate label for input
+ *
+ * @param type $fieldName
+ * @param type $options
+ * @return boolean|string false or Generated label element
+ */
+	protected function _getLabel($fieldName, $options) {
+		if ($options['type'] === 'radio') {
+			return false;
+		}
+
+		$label = null;
+		if (isset($options['label'])) {
+			$label = $options['label'];
+		}
+
+		if ($label === false) {
+			return false;
+		}
+		return $this->_inputLabel($fieldName, $label, $options);
+	}
+
+/**
+ * Calculates maxlength option
+ *
+ * @param type $options
+ * @return array
+ */
+	protected function _maxLength($options) {
+		$fieldDef = $this->_introspectModel($this->model(), 'fields', $this->field());
 		$autoLength = (
 			!array_key_exists('maxlength', $options) &&
 			isset($fieldDef['length']) &&
@@ -1038,150 +1231,39 @@ class FormHelper extends AppHelper {
 		if ($autoLength && $fieldDef['type'] == 'float') {
 			$options['maxlength'] = array_sum(explode(',', $fieldDef['length'])) + 1;
 		}
+		return $options;
+	}
 
-		$divOptions = array();
+/**
+ * Generate div options for input
+ *
+ * @param array $options
+ * @return array
+ */
+	protected function _divOptions($options) {
+		if ($options['type'] === 'hidden') {
+			return array();
+		}
 		$div = $this->_extractOption('div', $options, true);
-		unset($options['div']);
-
-		if (!empty($div)) {
-			$divOptions['class'] = 'input';
-			$divOptions = $this->addClass($divOptions, $options['type']);
-			if (is_string($div)) {
-				$divOptions['class'] = $div;
-			} elseif (is_array($div)) {
-				$divOptions = array_merge($divOptions, $div);
-			}
-			if ($this->_introspectModel($modelKey, 'validates', $fieldKey)) {
-				$divOptions = $this->addClass($divOptions, 'required');
-			}
-			if (!isset($divOptions['tag'])) {
-				$divOptions['tag'] = 'div';
-			}
+		if (!$div) {
+			return array();
 		}
 
-		$label = null;
-		if (isset($options['label']) && $options['type'] !== 'radio') {
-			$label = $options['label'];
-			unset($options['label']);
+		$divOptions = array('class' => 'input');
+		$divOptions = $this->addClass($divOptions, $options['type']);
+		if (is_string($div)) {
+			$divOptions['class'] = $div;
+		} elseif (is_array($div)) {
+			$divOptions = array_merge($divOptions, $div);
 		}
 
-		if ($options['type'] === 'radio') {
-			$label = false;
-			if (isset($options['options'])) {
-				$radioOptions = (array)$options['options'];
-				unset($options['options']);
-			}
+		if ($this->_introspectModel($this->model(), 'validates', $this->field())) {
+			$divOptions = $this->addClass($divOptions, 'required');
 		}
-
-		if ($label !== false) {
-			$label = $this->_inputLabel($fieldName, $label, $options);
+		if (!isset($divOptions['tag'])) {
+			$divOptions['tag'] = 'div';
 		}
-
-		$error = $this->_extractOption('error', $options, null);
-		unset($options['error']);
-
-		$errorMessage = $this->_extractOption('errorMessage', $options, true);
-		unset($options['errorMessage']);
-
-		$selected = $this->_extractOption('selected', $options, null);
-		unset($options['selected']);
-
-		if (isset($options['rows']) || isset($options['cols'])) {
-			$options['type'] = 'textarea';
-		}
-
-		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time' || $options['type'] === 'select') {
-			$options += array('empty' => false);
-		}
-		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time') {
-			$dateFormat = $this->_extractOption('dateFormat', $options, 'MDY');
-			$timeFormat = $this->_extractOption('timeFormat', $options, 12);
-			unset($options['dateFormat'], $options['timeFormat']);
-		}
-
-		$type = $options['type'];
-		$out = array_merge(
-			array('before' => null, 'label' => null, 'between' => null, 'input' => null, 'after' => null, 'error' => null),
-			array('before' => $options['before'], 'label' => $label, 'between' => $options['between'], 'after' => $options['after'])
-		);
-		$format = null;
-		if (is_array($options['format']) && in_array('input', $options['format'])) {
-			$format = $options['format'];
-		}
-		unset($options['type'], $options['before'], $options['between'], $options['after'], $options['format']);
-
-		switch ($type) {
-			case 'hidden':
-				$input = $this->hidden($fieldName, $options);
-				$format = array('input');
-				unset($divOptions);
-			break;
-			case 'checkbox':
-				$input = $this->checkbox($fieldName, $options);
-				$format = $format ? $format : array('before', 'input', 'between', 'label', 'after', 'error');
-			break;
-			case 'radio':
-				if (isset($out['between'])) {
-					$options['between'] = $out['between'];
-					$out['between'] = null;
-				}
-				$input = $this->radio($fieldName, $radioOptions, $options);
-			break;
-			case 'file':
-				$input = $this->file($fieldName, $options);
-			break;
-			case 'select':
-				$options += array('options' => array(), 'value' => $selected);
-				$list = $options['options'];
-				unset($options['options']);
-				$input = $this->select($fieldName, $list, $options);
-			break;
-			case 'time':
-				$options['value'] = $selected;
-				$input = $this->dateTime($fieldName, null, $timeFormat, $options);
-			break;
-			case 'date':
-				$options['value'] = $selected;
-				$input = $this->dateTime($fieldName, $dateFormat, null, $options);
-			break;
-			case 'datetime':
-				$options['value'] = $selected;
-				$input = $this->dateTime($fieldName, $dateFormat, $timeFormat, $options);
-			break;
-			case 'textarea':
-				$input = $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
-			break;
-			case 'url':
-				$input = $this->text($fieldName, array('type' => 'url') + $options);
-			break;
-			default:
-				$input = $this->{$type}($fieldName, $options);
-		}
-
-		if ($type != 'hidden' && $error !== false) {
-			$errMsg = $this->error($fieldName, $error);
-			if ($errMsg) {
-				$divOptions = $this->addClass($divOptions, 'error');
-				if ($errorMessage) {
-					$out['error'] = $errMsg;
-				}
-			}
-		}
-
-		$out['input'] = $input;
-		$format = $format ? $format : array('before', 'label', 'between', 'input', 'after', 'error');
-		$output = '';
-		foreach ($format as $element) {
-			$output .= $out[$element];
-			unset($out[$element]);
-		}
-
-		if (!empty($divOptions['tag'])) {
-			$tag = $divOptions['tag'];
-			unset($divOptions['tag']);
-			$output = $this->Html->tag($tag, $output, $divOptions);
-		}
-		return $output;
+		return $divOptions;
 	}
 
 /**
