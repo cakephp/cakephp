@@ -226,16 +226,12 @@ class HttpSocketResponse implements ArrayAccess {
 
 			$chunkSize = 0;
 			$hexLength = 0;
-			$chunkExtensionName = '';
 			$chunkExtensionValue = '';
 			if (isset($match[0])) {
 				$chunkSize = $match[0];
 			}
 			if (isset($match[1])) {
 				$hexLength = $match[1];
-			}
-			if (isset($match[2])) {
-				$chunkExtensionName = $match[2];
 			}
 			if (isset($match[3])) {
 				$chunkExtensionValue = $match[3];
@@ -244,9 +240,6 @@ class HttpSocketResponse implements ArrayAccess {
 			$body = substr($body, strlen($chunkSize));
 			$chunkLength = hexdec($hexLength);
 			$chunk = substr($body, 0, $chunkLength);
-			if (!empty($chunkExtensionName)) {
-				// @todo See if there are popular chunk extensions we should implement
-			}
 			$decodedBody .= $chunk;
 			if ($chunkLength !== 0) {
 				$body = substr($body, $chunkLength + strlen("\r\n"));
@@ -298,7 +291,6 @@ class HttpSocketResponse implements ArrayAccess {
  *
  * @param array $header Header array containing one ore more 'Set-Cookie' headers.
  * @return mixed Either false on no cookies, or an array of cookies received.
- * @todo Make this 100% RFC 2965 confirm
  */
 	public function parseCookies($header) {
 		$cookieHeader = $this->getHeader('Set-Cookie', $header);
@@ -341,7 +333,6 @@ class HttpSocketResponse implements ArrayAccess {
  * @param string $token Token to unescape
  * @param array $chars
  * @return string Unescaped token
- * @todo Test $chars parameter
  */
 	protected function _unescapeToken($token, $chars = null) {
 		$regex = '/"([' . implode('', $this->_tokenEscapeChars(true, $chars)) . '])"/';
@@ -355,7 +346,6 @@ class HttpSocketResponse implements ArrayAccess {
  * @param boolean $hex true to get them as HEX values, false otherwise
  * @param array $chars
  * @return array Escape chars
- * @todo Test $chars parameter
  */
 	protected function _tokenEscapeChars($hex = true, $chars = null) {
 		if (!empty($chars)) {
