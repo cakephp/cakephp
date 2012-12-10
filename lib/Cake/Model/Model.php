@@ -2581,7 +2581,7 @@ class Model extends Object implements CakeEventListener {
 		if ($id === false) {
 			return false;
 		}
-		return (bool)$this->find('count',  array(
+		return (bool)$this->find('count', array(
 			'conditions' => array(
 				$this->alias . '.' . $this->primaryKey => $id
 			),

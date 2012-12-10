@@ -130,7 +130,6 @@ class MediaViewTest extends CakeTestCase {
  * @return void
  */
 	public function testRenderUpperExtension() {
-		return;
 		$this->MediaView->viewVars = array(
 			'path' => CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'img' . DS,
 			'id' => 'test_2.JPG'

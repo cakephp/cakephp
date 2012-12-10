@@ -332,13 +332,10 @@ if (!function_exists('env')) {
 					$offset = 4;
 				}
 				return substr($filename, 0, -(strlen($name) + $offset));
-				break;
 			case 'PHP_SELF':
 				return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
-				break;
 			case 'CGI_MODE':
 				return (PHP_SAPI === 'cgi');
-				break;
 			case 'HTTP_BASE':
 				$host = env('HTTP_HOST');
 				$parts = explode('.', $host);
@@ -378,7 +375,6 @@ if (!function_exists('env')) {
 				}
 				array_shift($parts);
 				return '.' . implode('.', $parts);
-				break;
 		}
 		return null;
 	}

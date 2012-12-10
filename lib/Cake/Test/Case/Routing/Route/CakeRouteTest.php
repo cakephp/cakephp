@@ -880,7 +880,6 @@ class CakeRouteTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-
 /**
  * test that utf-8 patterns work for :section
  *
@@ -888,14 +887,14 @@ class CakeRouteTest extends CakeTestCase {
  */
 	public function testUTF8PatternOnSection() {
 		$route = new CakeRoute(
-			'/:section', 
+			'/:section',
 			array('plugin' => 'blogs', 'controller' => 'posts' , 'action' => 'index' ),
 			array(
 				'persist' => array('section'),
 				'section' => 'آموزش|weblog'
 			)
 		);
-		
+
 		$result = $route->parse('/%D8%A2%D9%85%D9%88%D8%B2%D8%B4');
 		$expected = array('section' => 'آموزش', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => array(), 'named' => array());
 		$this->assertEquals($expected, $result);
