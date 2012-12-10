@@ -1314,7 +1314,9 @@ class CakeResponse {
  * @return boolean
  */
 	protected function _clearBuffer() {
+		//@codingStandardsIgnoreStart
 		return @ob_end_clean();
+		//@codingStandardsIgnoreEnd
 	}
 
 /**
@@ -1323,8 +1325,10 @@ class CakeResponse {
  * @return void
  */
 	protected function _flushBuffer() {
+		//@codingStandardsIgnoreStart
 		@flush();
 		@ob_flush();
+		//@codingStandardsIgnoreEnd
 	}
 
 }
