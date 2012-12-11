@@ -278,8 +278,12 @@ class CacheHelper extends AppHelper {
 			$cacheTime = strtotime($timestamp, $now);
 		}
 		$path = $this->request->here();
-		if ($path == '/') {
+		if ($path === '/') {
 			$path = 'home';
+		}
+		$prefix = Configure::read('Cache.viewPrefix');
+		if ($prefix) {
+			$path = $prefix . '_' . $path;
 		}
 		$cache = strtolower(Inflector::slug($path));
 
