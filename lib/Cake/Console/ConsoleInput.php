@@ -48,4 +48,20 @@ class ConsoleInput {
 		return fgets($this->_input);
 	}
 
+/**
+ * Check if data is available on stdin
+ *
+ * @param integer $timeout An optional time to wait for data
+ * @return bool True for data available, false otherwise
+ */
+	public function data_avail($timeout = 0) {
+		$read_fds = array($this->_input);
+		$ready_fds = stream_select($read_fds, $w = NULL, $e = NULL, $timeout);
+
+		if($ready_fds > 0)
+			return true;
+		else
+			return false;
+	}
+
 }
