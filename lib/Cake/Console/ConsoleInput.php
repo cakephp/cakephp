@@ -54,14 +54,10 @@ class ConsoleInput {
  * @param integer $timeout An optional time to wait for data
  * @return bool True for data available, false otherwise
  */
-	public function data_avail($timeout = 0) {
-		$read_fds = array($this->_input);
-		$ready_fds = stream_select($read_fds, $w = NULL, $e = NULL, $timeout);
-
-		if($ready_fds > 0)
-			return true;
-		else
-			return false;
+	public function dataAvailable($timeout = 0) {
+		$readFds = array($this->_input);
+		$readyFds = stream_select($readFds, $w = NULL, $e = NULL, $timeout);
+		return ($readyFds > 0)
 	}
 
 }
