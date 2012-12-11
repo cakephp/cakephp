@@ -79,6 +79,18 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * test adding an option with a zero value
+ *
+ * @return void
+ */
+	public function testAddOptionZero() {
+		$parser = new ConsoleOptionParser('test', false);
+		$parser->addOption('count', array());
+		$result = $parser->parse(array('--count', '0'));
+		$this->assertEquals(array('count' => '0', 'help' => false), $result[0], 'Zero parameter did not parse out');
+	}
+
+/**
  * test addOption with an object.
  *
  * @return void
