@@ -21,7 +21,9 @@
 namespace TestApp\Model;
 
 class PersisterTwo extends AppModel {
+
 	public $useTable = 'posts';
+
 	public $name = 'PersisterTwo';
 
 	public $actsAs = array('PersisterOneBehavior', 'TestPlugin.TestPluginPersisterOne');

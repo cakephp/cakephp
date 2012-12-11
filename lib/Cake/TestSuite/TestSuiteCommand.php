@@ -36,9 +36,9 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
  * @throws Cake\Error\MissingTestLoaderException When a loader class could not be found.
  */
 	public function __construct($loader, $params = array()) {
-	    if ($loader && !class_exists($loader)) {
-	        throw new Error\MissingTestLoaderException(array('class' => $loader));
-	    }
+		if ($loader && !class_exists($loader)) {
+			throw new Error\MissingTestLoaderException(array('class' => $loader));
+		}
 		$this->arguments['loader'] = $loader;
 		$this->arguments['test'] = $params['case'];
 		$this->arguments['testFile'] = $params;

@@ -59,7 +59,7 @@ class AuthTestController extends Controller {
  *
  * @return void
  */
-	function __construct($request, $response) {
+	public function __construct($request = null, $response = null) {
 		$request->addParams(Router::parse('/auth_test'));
 		$request->here = '/auth_test';
 		$request->webroot = '/';
@@ -97,7 +97,6 @@ class AuthTestController extends Controller {
  * @return void
  */
 	public function logout() {
-
 	}
 
 /**
@@ -137,7 +136,6 @@ class AuthTestController extends Controller {
  * @return void
  */
 	public function isAuthorized() {
-
 	}
 
 }

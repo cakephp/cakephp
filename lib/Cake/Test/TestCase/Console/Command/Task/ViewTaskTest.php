@@ -399,7 +399,7 @@ class ViewTaskTest extends TestCase {
 
 		//fake plugin path
 		Plugin::load('TestTest', array('path' => APP . 'Plugin/TestTest/'));
-		$path =  APP . 'Plugin/TestTest/View/ViewTaskComments/view.ctp';
+		$path = APP . 'Plugin/TestTest/View/ViewTaskComments/view.ctp';
 
 		$result = $this->Task->getContent('index');
 		$this->assertNotContains('List Test Test.view Task Articles', $result);
@@ -732,7 +732,7 @@ class ViewTaskTest extends TestCase {
 		$this->assertEquals('form', $result);
 
 		$this->Task->Template->templatePaths = array(
-			'test' => CAKE . 'Test/' .  'TestApp/Console/Templates/test/'
+			'test' => CAKE . 'Test/' . 'TestApp/Console/Templates/test/'
 		);
 		$this->Task->Template->params['theme'] = 'test';
 

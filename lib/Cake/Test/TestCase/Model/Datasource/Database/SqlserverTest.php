@@ -17,14 +17,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-namespace Cake\Test\TestCase\Datasource\Database;
+namespace Cake\Test\TestCase\Model\Datasource\Database;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Model\Model;
 use Cake\Model\Datasource\Database\Sqlserver;
-use Cake\TestSuite\TestCase;
+use Cake\Model\Model;
 use Cake\TestSuite\Fixture\TestModel;
+use Cake\TestSuite\TestCase;
 
 require_once dirname(dirname(__DIR__)) . DS . 'models.php';
 

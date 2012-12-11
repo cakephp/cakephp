@@ -151,7 +151,7 @@ class ThemeViewTest extends TestCase {
 		$ThemeView = new TestTheme2View($this->Controller);
 		$themePath = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
 
-		$expected =  $themePath . 'Plugin' . DS . 'TestPlugin' . DS . 'Tests' . DS . 'index.ctp';
+		$expected = $themePath . 'Plugin' . DS . 'TestPlugin' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
 		$this->assertEquals($expected, $result);
 

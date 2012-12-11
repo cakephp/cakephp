@@ -2147,7 +2147,7 @@ class ValidationTest extends TestCase {
  * @return void
  */
 	public function testPhonePostalSsnPass() {
-		$this->assertTrue(Validation::postal('text', null,  __NAMESPACE__ . '\TestNlValidation'));
+		$this->assertTrue(Validation::postal('text', null, __NAMESPACE__ . '\TestNlValidation'));
 		$this->assertTrue(Validation::phone('text', null, __NAMESPACE__ . '\TestDeValidation'));
 		$this->assertTrue(Validation::ssn('text', null, __NAMESPACE__ . '\TestNlValidation'));
 	}

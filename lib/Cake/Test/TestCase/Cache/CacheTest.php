@@ -208,7 +208,7 @@ class CacheTest extends TestCase {
 	public function testConfigured() {
 		Cache::drop('default');
 		$result = Cache::configured();
-		$this->assertContains('_cake_core_',  $result);
+		$this->assertContains('_cake_core_', $result);
 		$this->assertNotContains('default', $result, 'Unconnected engines should not display.');
 
 		Cache::engine('default');

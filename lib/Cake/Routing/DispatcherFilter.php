@@ -18,8 +18,8 @@
 
 namespace Cake\Routing;
 
-use Cake\Event\EventListener;
 use Cake\Event\Event;
+use Cake\Event\EventListener;
 
 /**
  * This abstract class represents a filter to be applied to a dispatcher cycle. It acts as as

@@ -14,8 +14,8 @@
 namespace Cake\Test\TestCase\Log;
 
 use Cake\Log\Log;
-use Cake\Log\LogTrait;
 use Cake\Log\LogInterface;
+use Cake\Log\LogTrait;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -40,7 +40,7 @@ class LogTraitTest extends TestCase {
 		$mock->expects($this->at(0))
 			->method('write')
 			->with('error', 'Testing');
-		
+
 		$mock->expects($this->at(1))
 			->method('write')
 			->with('debug', print_r(array(1, 2), true));

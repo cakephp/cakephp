@@ -13,10 +13,10 @@
  */
 
 namespace Cake\Test\TestCase\Cache\Engine;
-use Cake\TestSuite\TestCase;
-use Cake\Cache\Engine\RedisEngine;
 use Cake\Cache\Cache;
+use Cake\Cache\Engine\RedisEngine;
 use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
 
 /**
  * RedisEngineTest class

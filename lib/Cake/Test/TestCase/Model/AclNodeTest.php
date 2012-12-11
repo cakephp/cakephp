@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\TestCase\Model;
+namespace Cake\Test\TestCase\Model;
 
 use Cake\Controller\Component\Acl\DbAcl;
 use Cake\Model\AclNode;

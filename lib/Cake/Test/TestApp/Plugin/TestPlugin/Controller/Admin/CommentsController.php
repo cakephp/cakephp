@@ -11,7 +11,7 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace TestApp\Controller\Admin;
+namespace TestPlugin\Controller\Admin;
 
 use Cake\Controller\Controller;
 
@@ -21,6 +21,7 @@ use Cake\Controller\Controller;
  * For testing prefix routing.
  */
 class CommentsController extends Controller {
+
 /**
  * components
  *

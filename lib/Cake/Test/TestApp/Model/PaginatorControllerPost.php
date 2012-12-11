@@ -80,7 +80,7 @@ class PaginatorControllerPost extends TestModel {
  */
 	public function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
 		if ($conditions == 'popular') {
-			$conditions = array($this->name . '.' . $this->primaryKey .' > ' => '1');
+			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
 			$options = Hash::merge($fields, compact('conditions'));
 			return parent::find('all', $options);
 		}

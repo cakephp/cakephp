@@ -19,9 +19,9 @@
 namespace Cake\Test\TestCase\Model\Datasource\Session;
 
 use Cake\Core\Configure;
-use Cake\Model\Model;
 use Cake\Model\Datasource\Session;
 use Cake\Model\Datasource\Session\DatabaseSession;
+use Cake\Model\Model;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 

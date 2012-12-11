@@ -204,7 +204,7 @@ class Router {
 /**
  * Resource map getter & setter.
  *
- * Allows you to define the default route configuration for REST routing and 
+ * Allows you to define the default route configuration for REST routing and
  * Router::mapResources()
  *
  * @param array $resourceMap Resource map
@@ -251,7 +251,7 @@ class Router {
  * providing patterns for those parameters. Patterns for routing parameters
  * do not need capturing groups, as one will be added for each route params.
  *
- * $options offers several 'special' keys that have special meaning 
+ * $options offers several 'special' keys that have special meaning
  * in the $options array.
  *
  * - `pass` is used to define which of the routed parameters should be shifted
@@ -366,7 +366,7 @@ class Router {
  * Plugins will create lower_case underscored resource routes. e.g
  * `/comments/comment`
  *
- * Connect resource routes for the Posts controller in the 
+ * Connect resource routes for the Posts controller in the
  * Admin prefix:
  *
  * {{{
@@ -579,7 +579,7 @@ class Router {
  * Add a url filter to Router.
  *
  * Url filter functions are applied to every array $url provided to
- * Router::url() before the urls are sent to the route collection. 
+ * Router::url() before the urls are sent to the route collection.
  *
  * Callback functions should expect the following parameters:
  *
@@ -803,7 +803,7 @@ class Router {
  *
  * @param Cake\Network\Request|array $params The params array or
  *     Cake\Network\Request object that needs to be reversed.
- * @param boolean $full Set to true to include the full url including the 
+ * @param boolean $full Set to true to include the full url including the
  *     protocol when reversing the url.
  * @return string The string that is the reversed result of the array
  */
@@ -874,7 +874,7 @@ class Router {
  * A list of valid extension can be passed to this method, i.e. Router::parseExtensions('rss', 'xml');
  * If no parameters are given, anything after the first . (dot) after the last / in the URL will be
  * parsed, excluding querystring parameters (i.e. ?q=...).
-*
+ *
  * @return void
  * @see RequestHandler::startup()
  */

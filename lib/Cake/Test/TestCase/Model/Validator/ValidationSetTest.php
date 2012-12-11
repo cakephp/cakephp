@@ -18,8 +18,8 @@
  */
 
 namespace Cake\Test\TestCase\Model\Validator;
-use Cake\Model\Validator\ValidationSet;
 use Cake\Model\Validator\ValidationRule;
+use Cake\Model\Validator\ValidationSet;
 use Cake\TestSuite\TestCase;
 
 /**

@@ -12,7 +12,7 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestSuite\Log;
+namespace Cake\Test\TestCase\Log;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -127,7 +127,7 @@ class LogTest extends TestCase {
 	}
 
 /**
- * Test that engine() throws an exception when adding an 
+ * Test that engine() throws an exception when adding an
  * adapter with the wrong type.
  *
  * @expectedException Cake\Error\Exception
@@ -503,6 +503,5 @@ class LogTest extends TestCase {
 		$result = Log::write('error', 'Bad stuff', 'unpossible');
 		$this->assertFalse($result);
 	}
-
 
 }

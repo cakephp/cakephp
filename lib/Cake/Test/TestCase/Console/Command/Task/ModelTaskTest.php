@@ -818,7 +818,7 @@ STRINGEND;
 		$this->Task->plugin = 'ControllerTest';
 
 		//fake plugin path
-		Plugin::load('ControllerTest', array('path' =>  APP . 'Plugin/ControllerTest/'));
+		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
 		$path = APP . 'Plugin/ControllerTest/Model/BakeArticle.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, $this->stringContains('BakeArticle extends ControllerTestAppModel'));
@@ -957,7 +957,7 @@ STRINGEND;
  *
  * @return void
  */
-    public function testExecuteIntoAllOddTables() {
+	public function testExecuteIntoAllOddTables() {
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
@@ -1012,7 +1012,7 @@ STRINGEND;
  *
  * @return void
  */
-    public function testExecuteIntoBakeOddTables() {
+	public function testExecuteIntoBakeOddTables() {
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',

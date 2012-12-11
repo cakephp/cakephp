@@ -328,7 +328,7 @@ class RouteTest extends TestCase {
 			'controller' => 'subscribe', 'prefix' => 'admin'
 		));
 
-		$url = array('controller' => 'subscribe', 'prefix' =>  'admin', 'action' => 'edit', 1);
+		$url = array('controller' => 'subscribe', 'prefix' => 'admin', 'action' => 'edit', 1);
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit/1';
 		$this->assertEquals($expected, $result);
@@ -545,7 +545,7 @@ class RouteTest extends TestCase {
 
 		$restore = ini_get('arg_separator.output');
 		ini_set('arg_separator.output', '&amp;');
-	
+
 		$result = $route->match(array(
 			'controller' => 'posts',
 			'action' => 'index',
@@ -645,7 +645,6 @@ class RouteTest extends TestCase {
 			'[method]' => 'POST',
 		];
 		$this->assertEquals($expected, $route->parse('/sample'));
-
 	}
 
 /**
@@ -671,7 +670,6 @@ class RouteTest extends TestCase {
 		];
 		$this->assertEquals($expected, $route->parse('/sample'));
 	}
-
 
 /**
  * Test that the [type] condition works.

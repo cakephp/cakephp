@@ -37,7 +37,7 @@ class TestAuthComponent extends AuthComponent {
  *
  * @return void
  */
-	function _stop($status = 0) {
+	protected function _stop($status = 0) {
 		$this->testStop = true;
 	}
 

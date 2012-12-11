@@ -20,7 +20,7 @@ use Cake\Utility\Folder;
 use Cake\Utility\Inflector;
 
 /**
- * A shell class to help developers upgrade applications to CakePHP 2.0
+ * A shell class to help developers upgrade applications to CakePHP 3.0
  *
  * @package       Cake.Console.Command
  */
