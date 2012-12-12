@@ -830,7 +830,7 @@ class DboSource extends DataSource {
 		}
 		if (preg_match('/^([\w-]+)\((.*)\)$/', $data, $matches)) { // Functions
 			return $this->cacheMethod(__FUNCTION__, $cacheKey,
-				 $matches[1] . '(' . $this->name($matches[2]) . ')'
+				$matches[1] . '(' . $this->name($matches[2]) . ')'
 			);
 		}
 		if (
