@@ -83,6 +83,7 @@ class EmailConfig {
 		'transport' => 'Debug',
 		'theme' => 'TestTheme',
 		'helpers' => array('Html', 'Form'),
+		'aParamForTransportClass' => 'somevalue'
 	);
 
 }
@@ -703,13 +704,27 @@ class CakeEmailTest extends CakeTestCase {
 	public function testConfig() {
 		$transportClass = $this->CakeEmail->transport('debug')->transportClass();
 
+		$this->CakeEmail->config(array());
+		$this->assertSame($transportClass->config(), array());
+
 		$config = array('test' => 'ok', 'test2' => true);
 		$this->CakeEmail->config($config);
 		$this->assertSame($transportClass->config(), $config);
 		$this->assertSame($this->CakeEmail->config(), $config);
+	}
 
-		$this->CakeEmail->config(array());
-		$this->assertSame($transportClass->config(), array());
+/**
+ * testConfigOverwrite method
+ *
+ * @return void
+ */
+	public function testConfigOverwrite() {
+		$this->CakeEmail->config('test');
+
+		$this->CakeEmail->config(array('subject' => 'test'));
+		$transportClass = $this->CakeEmail->transportClass();
+		$result = $transportClass->config();
+		$this->assertEquals('somevalue', $result['aParamForTransportClass']);
 	}
 
 /**
