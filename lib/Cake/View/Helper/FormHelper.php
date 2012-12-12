@@ -1720,12 +1720,18 @@ class FormHelper extends AppHelper {
 
 		$formName = uniqid('post_');
 		$formUrl = $this->url($url);
-		$out = $this->Html->useTag('form', $formUrl, array(
+		$formOptions = array(
 			'name' => $formName,
 			'id' => $formName,
 			'style' => 'display:none;',
-			'method' => 'post'
-		));
+			'method' => 'post',
+		);
+		if (isset($options['target'])) {
+			$formOptions['target'] = $options['target'];
+			unset($options['target']);
+		}
+
+		$out = $this->Html->useTag('form', $formUrl, $formOptions);
 		$out .= $this->Html->useTag('hidden', '_method', array(
 			'value' => $requestMethod
 		));
