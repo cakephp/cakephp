@@ -177,7 +177,6 @@ class PluginTest extends TestCase {
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
 	}
 
-
 /**
  * Tests that it is possible to load plugin bootstrap by calling a callback function
  *
@@ -209,7 +208,6 @@ class PluginTest extends TestCase {
 	public function testLoadNotFound() {
 		Plugin::load('MissingPlugin');
 	}
-
 
 /**
  * Tests that Plugin::path() returns the correct path for the loaded plugins

@@ -22,9 +22,9 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
-use Cake\Routing\Route\Route;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
+use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
 if (!defined('FULL_BASE_URL')) {
@@ -1349,7 +1349,7 @@ class RouterTest extends TestCase {
 		Configure::write('Routing.prefixes', array('admin'));
 		$paths = App::path('Plugin');
 		App::build(array(
-			'Plugin' =>  array(
+			'Plugin' => array(
 				CAKE . 'Test/TestApp/Plugin/'
 			)
 		), App::RESET);
@@ -2107,7 +2107,7 @@ class RouterTest extends TestCase {
  */
 	public function testConnectDefaultRoutes() {
 		App::build(array(
-			'Plugin' =>  array(
+			'Plugin' => array(
 				CAKE . 'Test/TestApp/Plugin/'
 			)
 		), App::RESET);

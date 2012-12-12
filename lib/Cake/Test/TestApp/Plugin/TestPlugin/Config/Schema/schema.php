@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestPlugin\Config\Schema;
+
 use Cake\Model\Schema;
 
 class TestPluginAppSchema extends Schema {

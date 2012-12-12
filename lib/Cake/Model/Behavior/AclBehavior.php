@@ -18,8 +18,8 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Model\Behavior;
+
 use Cake\Model\Model;
 use Cake\Model\ModelBehavior;
 use Cake\Utility\ClassRegistry;

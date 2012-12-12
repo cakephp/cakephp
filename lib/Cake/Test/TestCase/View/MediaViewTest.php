@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View;
+
 use Cake\Controller\Controller;
 use Cake\TestSuite\TestCase;
 use Cake\View\MediaView;
@@ -130,7 +131,6 @@ class MediaViewTest extends TestCase {
  * @return void
  */
 	public function testRenderUpperExtension() {
-		return;
 		$this->MediaView->viewVars = array(
 			'path' => CAKE . 'Test/TestApp/vendor/img/',
 			'id' => 'test_2.JPG'

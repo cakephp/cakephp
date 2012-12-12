@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Error;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Log\Log;

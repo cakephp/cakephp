@@ -18,8 +18,8 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Controller\Component;
+
 use Cake\Controller\Component;
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Controller;

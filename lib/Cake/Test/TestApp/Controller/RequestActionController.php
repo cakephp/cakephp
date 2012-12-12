@@ -25,31 +25,31 @@ namespace TestApp\Controller;
 class RequestActionController extends AppController {
 
 /**
-* uses property
-*
-* @var array
-* @access public
-*/
+ * uses property
+ *
+ * @var array
+ * @access public
+ */
 	public $uses = ['Post'];
 
 /**
-* test_request_action method
-*
-* @access public
-* @return void
-*/
+ * test_request_action method
+ *
+ * @access public
+ * @return void
+ */
 	public function test_request_action() {
 		return 'This is a test';
 	}
 
 /**
-* another_ra_test method
-*
-* @param mixed $id
-* @param mixed $other
-* @access public
-* @return void
-*/
+ * another_ra_test method
+ *
+ * @param mixed $id
+ * @param mixed $other
+ * @access public
+ * @return void
+ */
 	public function another_ra_test($id, $other) {
 		return $id + $other;
 	}

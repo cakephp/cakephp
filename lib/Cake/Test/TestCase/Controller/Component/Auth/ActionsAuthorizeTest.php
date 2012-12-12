@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
+
 use Cake\Controller\Component\Auth\ActionsAuthorize;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;

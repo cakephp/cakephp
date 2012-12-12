@@ -13,6 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace App\Config\Schema;
+
 use Cake\Model\Schema;
 
 /**

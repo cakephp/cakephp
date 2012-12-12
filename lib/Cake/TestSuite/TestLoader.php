@@ -19,6 +19,7 @@
  * @package Cake.TestSuite
  */
 namespace Cake\TestSuite;
+
 use Cake\Core\Plugin;
 use Cake\Error;
 

@@ -12,8 +12,8 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Controller\Component\Acl;
+
 use Cake\Controller\Component;
 use Cake\Controller\Component\Acl\AclInterface;
 use Cake\Core\Object;

@@ -13,6 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model\Behavior;
+
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\I18n\I18n;

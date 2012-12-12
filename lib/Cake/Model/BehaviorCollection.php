@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model;
+
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\EventListener;

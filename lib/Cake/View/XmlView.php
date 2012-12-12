@@ -11,6 +11,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View;
+
 use Cake\Controller\Controller;
 use Cake\Network\Response;
 use Cake\Utility\Set;

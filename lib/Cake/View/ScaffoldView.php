@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View;
+
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Utility\Inflector;

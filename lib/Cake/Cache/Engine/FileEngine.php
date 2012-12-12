@@ -20,6 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Cache\Engine;
+
 use Cake\Cache\CacheEngine;
 use Cake\Error;
 use Cake\Utility\Inflector;

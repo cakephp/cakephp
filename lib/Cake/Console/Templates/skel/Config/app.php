@@ -15,7 +15,6 @@
 namespace App\Config;
 
 use Cake\Core\Configure;
-use Cake\Core\ClassLoader;
 
 /**
  * CakePHP Debug Level:
@@ -67,7 +66,7 @@ use Cake\Core\ClassLoader;
 	]);
 
 /**
- * Uncomment this line and correct your server timezone to fix 
+ * Uncomment this line and correct your server timezone to fix
  * any date & time related errors.
  */
 	//date_default_timezone_set('UTC');
@@ -77,7 +76,7 @@ use Cake\Core\ClassLoader;
  * The level of CakePHP security.
  *
  * - salt - A random string used in security hashing methods.
- * - cipherSeed - A random numeric string (digits only) used to seed 
+ * - cipherSeed - A random numeric string (digits only) used to seed
  *   the xor cipher functions in Security.
  */
 	Configure::write('Security', [

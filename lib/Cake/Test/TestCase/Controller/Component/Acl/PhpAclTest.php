@@ -11,7 +11,7 @@
  * @since         CakePHP(tm) v 2.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Controller\Component;
+namespace Cake\Test\TestCase\Controller\Component\Acl;
 
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Component\AclComponent;

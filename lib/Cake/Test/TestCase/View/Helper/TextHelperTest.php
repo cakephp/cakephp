@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View\Helper;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;

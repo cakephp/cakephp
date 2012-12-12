@@ -141,7 +141,7 @@ class Route {
 	}
 
 /**
- * Compiles the route's regular expression.  Modifies defaults property so all necessary 
+ * Compiles the route's regular expression.  Modifies defaults property so all necessary
  * keys are set and populates $this->names with the named routing elements.
  *
  * @return array Returns a string regular expression of the compiled route.
@@ -521,7 +521,7 @@ class Route {
 			$out = $params['_base'] . $out;
 			unset($params['_base']);
 		}
-	
+
 		$out = str_replace('//', '/', $out);
 
 		if (

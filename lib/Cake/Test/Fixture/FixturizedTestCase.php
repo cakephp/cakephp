@@ -1,6 +1,6 @@
 <?php
-
 namespace Cake\Test\Fixture;
+
 use Cake\TestSuite\TestCase;
 
 /**

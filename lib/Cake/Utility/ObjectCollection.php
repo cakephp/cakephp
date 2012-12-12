@@ -11,6 +11,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Utility;
+
 use Cake\Error;
 use Cake\Event\Event;
 

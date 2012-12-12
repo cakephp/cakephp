@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite\Reporter;
+
 use Cake\TestSuite\TestLoader;
 
 require_once 'PHPUnit/TextUI/ResultPrinter.php';

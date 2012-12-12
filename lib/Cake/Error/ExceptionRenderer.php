@@ -60,6 +60,7 @@ use Cake\View\View;
  * @package       Cake.Error
  */
 class ExceptionRenderer {
+
 /**
  * Controller instance.
  *

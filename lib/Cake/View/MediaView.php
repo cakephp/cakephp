@@ -18,6 +18,7 @@
  * @deprecated    Deprecated since version 2.3, use Cake\Network\Response::file() instead
  */
 namespace Cake\View;
+
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Response;

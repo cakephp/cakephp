@@ -18,8 +18,8 @@
  */
 namespace Cake\Test\TestCase\Model\Datasource\Session;
 
-use Cake\Core\Configure;
 use Cake\Cache\Cache;
+use Cake\Core\Configure;
 use Cake\Model\Datasource\Session;
 use Cake\Model\Datasource\Session\CacheSession;
 use Cake\TestSuite\TestCase;

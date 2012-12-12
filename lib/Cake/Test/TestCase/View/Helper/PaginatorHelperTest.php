@@ -28,7 +28,6 @@ use Cake\View\Helper\JsHelper;
 use Cake\View\Helper\PaginatorHelper;
 use Cake\View\View;
 
-
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');
 }
