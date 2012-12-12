@@ -12,15 +12,15 @@
  * @since         CakePHP(tm) v 2.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\Routing\Filter;
-use Cake\TestSuite\TestCase;
-use Cake\Routing\Filter\AssetDispatcher;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\Filter\AssetDispatcher;
+use Cake\TestSuite\TestCase;
 
 class AssetDispatcherTest extends TestCase {
 

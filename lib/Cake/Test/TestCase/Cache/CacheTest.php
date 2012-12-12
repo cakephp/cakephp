@@ -12,6 +12,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Cache;
+
 use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -208,7 +209,7 @@ class CacheTest extends TestCase {
 	public function testConfigured() {
 		Cache::drop('default');
 		$result = Cache::configured();
-		$this->assertContains('_cake_core_',  $result);
+		$this->assertContains('_cake_core_', $result);
 		$this->assertNotContains('default', $result, 'Unconnected engines should not display.');
 
 		Cache::engine('default');

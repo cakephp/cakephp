@@ -12,12 +12,12 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.fixtures
+ * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 2.1
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 namespace Cake\Test\Fixture;
+
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**

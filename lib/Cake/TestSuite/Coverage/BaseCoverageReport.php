@@ -18,6 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite\Coverage;
+
 use Cake\Core\App;
 use Cake\TestSuite\Reporter\BaseReporter;
 use Cake\Utility\Inflector;

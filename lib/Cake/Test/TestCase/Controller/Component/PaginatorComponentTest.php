@@ -13,11 +13,11 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\TestSuite\TestCase;
 use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Network\Request;
+use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 
 /**

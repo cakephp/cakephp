@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
+
 use Cake\Console\Command\Task\DbConfigTask;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;

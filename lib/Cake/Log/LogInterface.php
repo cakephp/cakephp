@@ -20,6 +20,7 @@ namespace Cake\Log;
  * @package       Cake.Log
  */
 interface LogInterface {
+
 /**
  * Write method to handle writes being made to the Logger
  *

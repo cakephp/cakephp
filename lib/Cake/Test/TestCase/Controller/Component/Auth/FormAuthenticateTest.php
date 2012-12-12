@@ -16,8 +16,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\Controller\Component\Auth;
+
 use Cake\Cache\Cache;
 use Cake\Controller\Component\Auth\FormAuthenticate;
 use Cake\Core\App;

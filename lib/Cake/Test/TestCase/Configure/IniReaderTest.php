@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Configure;
+
 use Cake\Configure\IniReader;
 use Cake\Core\App;
 use Cake\Core\Plugin;
@@ -51,7 +52,7 @@ class IniReaderTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->path = CAKE . 'Test/TestApp/Config'. DS;
+		$this->path = CAKE . 'Test/TestApp/Config' . DS;
 	}
 
 /**

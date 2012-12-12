@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Network\Http;
+
 use Cake\Network\Http\BasicAuthentication;
 use Cake\Network\Http\HttpSocket;
 use Cake\TestSuite\TestCase;

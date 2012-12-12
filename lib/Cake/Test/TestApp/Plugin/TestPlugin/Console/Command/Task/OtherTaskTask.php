@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestPlugin\Console\Command\Task;
+
 use Cake\Console\Shell;
 
 class OtherTaskTask extends Shell {

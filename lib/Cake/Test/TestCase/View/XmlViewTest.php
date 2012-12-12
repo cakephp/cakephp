@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View;
+
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Network\Request;

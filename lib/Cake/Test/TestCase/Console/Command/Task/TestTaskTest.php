@@ -604,7 +604,7 @@ class TestTaskTest extends TestCase {
 
 		//fake plugin path
 		Plugin::load('TestTest', array('path' => APP . 'Plugin/TestTest/'));
-		$path =  APP . 'Plugin/TestTest/Test/TestCase/View/Helper/FormHelperTest.php';
+		$path = APP . 'Plugin/TestTest/Test/TestCase/View/Helper/FormHelperTest.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, $this->anything());
 

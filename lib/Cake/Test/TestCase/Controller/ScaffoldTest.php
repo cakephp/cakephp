@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Controller;
+
 use Cake\Controller\Controller;
 use Cake\Controller\Scaffold;
 use Cake\Core\Plugin;

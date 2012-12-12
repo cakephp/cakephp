@@ -21,6 +21,7 @@ use Cake\Controller\Controller;
  * For testing prefix routing.
  */
 class PostsController extends Controller {
+
 /**
  * components
  *

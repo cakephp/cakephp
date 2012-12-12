@@ -15,13 +15,13 @@
 namespace Cake\Test\TestCase\Model\Datasource;
 
 use Cake\Core\Configure;
-use Cake\Model\Model;
 use Cake\Model\ConnectionManager;
 use Cake\Model\Datasource\Datasource;
 use Cake\Model\Datasource\DboSource;
+use Cake\Model\Model;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Hash;
 use Cake\Utility\ClassRegistry;
+use Cake\Utility\Hash;
 
 require_once dirname(__DIR__) . DS . 'models.php';
 

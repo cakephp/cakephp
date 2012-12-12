@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite\Reporter;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\TestSuite\Coverage\HtmlCoverageReport;

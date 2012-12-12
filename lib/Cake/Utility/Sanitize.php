@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Utility;
+
 use Cake\Core\Configure;
 use Cake\Model\ConnectionManager;
 

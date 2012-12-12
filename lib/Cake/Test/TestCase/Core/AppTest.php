@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Core;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -266,14 +267,14 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testPathWithPlugins() {
-		$basepath = CAKE . 'Test' . DS . 'TestApp' . DS. 'Plugin' . DS;
+		$basepath = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS;
 		App::build(array(
 			'Plugin' => array($basepath),
 		));
 		Plugin::load('TestPlugin');
 
 		$result = App::path('Vendor', 'TestPlugin');
-		$this->assertEquals($basepath . 'TestPlugin' . DS. 'vendor' . DS, $result[0]);
+		$this->assertEquals($basepath . 'TestPlugin' . DS . 'vendor' . DS, $result[0]);
 	}
 
 /**
@@ -333,7 +334,7 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testListObjects() {
-		$result = App::objects('class',  CAKE . 'Routing', false);
+		$result = App::objects('class', CAKE . 'Routing', false);
 		$this->assertTrue(in_array('Dispatcher', $result));
 		$this->assertTrue(in_array('Router', $result));
 

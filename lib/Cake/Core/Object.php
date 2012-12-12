@@ -28,6 +28,7 @@ use Cake\Utility\Hash;
 class Object {
 
 	use LogTrait;
+
 /**
  * constructor, no-op
  *

@@ -18,8 +18,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Model\Datasource\Session;
-use Cake\Model\Datasource\Session\DatabaseSession;
 use Cake\Model\Datasource\Session\CacheSession;
+use Cake\Model\Datasource\Session\DatabaseSession;
 use Cake\TestSuite\TestCase;
 
 class TestCakeSession extends Session {

@@ -16,8 +16,8 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\Core;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;

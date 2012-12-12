@@ -12,7 +12,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestSuite\Network;
+namespace Cake\Test\TestCase\Network;
 
 use Cake\Core\Configure;
 use Cake\Error;
@@ -536,7 +536,7 @@ class RequestTest extends TestCase {
 
 		$request->trustProxy = true;
 		$this->assertEquals('192.168.1.5', $request->clientIp());
-	
+
 		$request->trustProxy = false;
 		$this->assertEquals('192.168.1.2', $request->clientIp());
 
@@ -1930,12 +1930,12 @@ XML;
 		));
 		$result = $request->cookie('testing');
 		$this->assertEquals('A value in the cookie', $result);
-	
+
 		$result = $request->cookie('not there');
 		$this->assertNull($result);
 	}
 
- /*
+/**
  * TestOnlyAllow
  *
  * @return void
