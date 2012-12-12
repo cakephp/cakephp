@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\Core\Object;
 use Cake\Event\Event;
 use Cake\TestSuite\TestCase;

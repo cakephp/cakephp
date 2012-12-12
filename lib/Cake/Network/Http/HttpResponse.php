@@ -19,6 +19,7 @@ namespace Cake\Network\Http;
 
 use Cake\Error;
 use Cake\Utility\Inflector;
+
 /**
  * HTTP Response from HttpSocket.
  *

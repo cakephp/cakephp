@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Model;
+
 use Cake\Model\Model;
 use Cake\TestSuite\Fixture\TestModel as CakeTestModel;
 

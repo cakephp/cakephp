@@ -19,6 +19,7 @@
  * @license       Open Group Test Suite License (http://www.opensource.org/licenses/opengroup.php)
  */
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
 

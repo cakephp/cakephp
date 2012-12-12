@@ -15,7 +15,6 @@
  * @package       Cake.Test.Case.View.Helper
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Routing\Router;

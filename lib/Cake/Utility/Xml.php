@@ -24,7 +24,6 @@ use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Http\HttpSocket;
 
-
 /**
  * XML handling for Cake.
  *

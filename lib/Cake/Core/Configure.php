@@ -12,8 +12,8 @@
  * @since         CakePHP(tm) v 1.0.0.2363
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Core;
+
 use Cake\Cache\Cache;
 use Cake\Configure\ConfigReaderInterface;
 use Cake\Configure\PhpReader;

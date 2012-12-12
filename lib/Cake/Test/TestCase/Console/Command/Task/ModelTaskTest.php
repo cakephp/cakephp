@@ -12,6 +12,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
+
 use Cake\Console\Command\Task\ModelTask;
 use Cake\Console\Command\Task\TemplateTask;
 use Cake\Core\Plugin;

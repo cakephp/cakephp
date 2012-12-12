@@ -1,5 +1,6 @@
 <?php
 namespace TestApp\Model\Datasource\Session;
+
 use Cake\Model\Datasource\Session\SessionHandlerInterface;
 
 /**

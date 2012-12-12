@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component;
+
 use Cake\Controller\Component;
 use Cake\Model\Datasource\Session;
 

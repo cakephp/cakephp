@@ -16,8 +16,8 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace TestPlugin\View\Helper;
+
 use Cake\View\Helper;
 
 class PluggedHelperHelper extends Helper {

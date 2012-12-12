@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model;
+
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
 

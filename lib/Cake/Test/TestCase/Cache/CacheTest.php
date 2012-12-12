@@ -12,6 +12,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Cache;
+
 use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;

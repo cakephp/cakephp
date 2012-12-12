@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestPluginTwo\Console\Command;
+
 use Cake\Console\Shell;
 
 class WelcomeShell extends Shell {

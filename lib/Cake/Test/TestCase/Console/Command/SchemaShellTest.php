@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command;
+
 use Cake\Console\Command\SchemaShell;
 use Cake\Core\App;
 use Cake\Core\Plugin;

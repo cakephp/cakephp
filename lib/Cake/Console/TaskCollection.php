@@ -15,6 +15,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console;
+
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Utility\ObjectCollection;

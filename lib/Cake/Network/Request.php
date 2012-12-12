@@ -11,7 +11,6 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Network;
 
 use Cake\Core\Configure;

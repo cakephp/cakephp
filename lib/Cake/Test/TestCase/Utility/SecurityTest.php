@@ -12,6 +12,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;

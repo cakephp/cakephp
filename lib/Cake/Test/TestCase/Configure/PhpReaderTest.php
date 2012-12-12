@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Configure;
+
 use Cake\Configure\PhpReader;
 use Cake\Core\App;
 use Cake\Core\Plugin;

@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\I18n;
+
 use Cake\Core\Configure;
 use Cake\Network\Request;
 
