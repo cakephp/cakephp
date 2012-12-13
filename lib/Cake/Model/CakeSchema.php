@@ -574,13 +574,17 @@ class CakeSchema extends Object {
 		if (is_array($values)) {
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
-					$vals[] = "'{$key}' => array('" . implode("', '",  $val) . "')";
-				} elseif (!is_numeric($key)) {
+					$vals[] = "'{$key}' => array(" . implode(", ",  $this->_values($val)) . ")";
+				} else {
 					$val = var_export($val, true);
 					if ($val === 'NULL') {
 						$val = 'null';
 					}
-					$vals[] = "'{$key}' => {$val}";
+					if (!is_numeric($key)) {
+						$vals[] = "'{$key}' => {$val}";
+					} else {
+						$vals[] = "{$val}";
+					}
 				}
 			}
 		}
