@@ -83,10 +83,14 @@ class ConsoleInputSubcommand {
 /**
  * Generate the help for this this subcommand.
  *
- * @param integer $width The width to make the name of the subcommand.
+ * @param integer $width The width to make the name of the subcommand if you want to prepend it to the help text.
  * @return string
  */
 	public function help($width = 0) {
+		if ($width === 0) {
+			return $this->_help;
+		}
+
 		$name = $this->_name;
 		if (strlen($name) < $width) {
 			$name = str_pad($name, $width, ' ');

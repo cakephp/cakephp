@@ -518,7 +518,11 @@ class ConsoleOptionParser {
 		) {
 			$subparser = $this->_subcommands[$subcommand]->parser();
 			$subparser->command($this->command() . ' ' . $subparser->command());
-			return $subparser->help(null, $format, $width);
+			$help = $this->_subcommands[$subcommand]->help();
+			if ($help) {
+				$help .= "\n\n";
+			}
+			return $help . $subparser->help(null, $format, $width);
 		}
 		$formatter = new HelpFormatter($this);
 		if ($format == 'text' || $format === true) {
