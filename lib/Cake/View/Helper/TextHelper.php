@@ -225,6 +225,17 @@ class TextHelper extends AppHelper {
 	}
 
 /**
+ * @see String::autoP()
+ *
+ * @param string $text Text
+ * @return string The text with proper <p> tags
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoP
+ */
+  public function autoP($text) {
+    return $this->_engine->autoP($text);
+  }
+
+/**
  * @see String::stripLinks()
  *
  * @param string $text Text
