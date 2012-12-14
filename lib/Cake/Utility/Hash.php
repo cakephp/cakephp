@@ -117,7 +117,7 @@ class Hash {
 			}
 
 			foreach ($context[$_key] as $item) {
-				foreach ($item as $k => $v) {
+				foreach ((array)$item as $k => $v) {
 					if (self::_matchToken($k, $token)) {
 						$next[] = $v;
 					}
