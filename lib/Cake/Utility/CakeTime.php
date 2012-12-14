@@ -52,11 +52,12 @@ class CakeTime {
 /**
  * The format to use when formatting a time using `CakeTime::timeAgoInWords()`
  * and the difference is less than `CakeTime::$wordEnd`
+ * false value here means that a default value will be used later
  *
  * @var string
  * @see CakeTime::timeAgoInWords()
  */
-	public static $timeAgoFormat = '%s ago';
+	public static $timeAgoFormat = false;
 
 /**
  * The format to use when formatting a time using `CakeTime::niceShort()`
@@ -856,7 +857,13 @@ class CakeTime {
 		}
 
 		if (!$backwards) {
-			return __d('cake', $timeAgoFormat, $relativeDate);
+			if($timeAgoFormat) {
+				// user format, has already been translated (logically, when setting the 'timeAgoFormat' option)
+				return vsprintf($timeAgoFormat, $relativeDate);
+			} else {
+				// default format, needs to be translated 
+				return __d('cake', '%s ago', $relativeDate);
+			}
 		}
 
 		return $relativeDate;
