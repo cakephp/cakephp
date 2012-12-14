@@ -242,7 +242,7 @@ class TextHelper extends AppHelper {
       $texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY); // make paragraphs, including one at the end
       $text = '';
       foreach ( $texts as $txt )
-          $text .= '<p>' . trim($txt, "\n") . "</p>\n";
+          $text .= '<p>' . nl2br(trim($txt, "\n")) . "</p>\n";
       $text = preg_replace('|<p>\s*</p>|', '', $text); // Remove empty/whitespace <p> tags
     }
     return $text;
