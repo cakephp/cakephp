@@ -1433,7 +1433,7 @@ class FormHelper extends AppHelper {
 
 		$showEmpty = $this->_extractOption('empty', $attributes);
 		if ($showEmpty) {
-			$showEmpty = ($showEmpty === true) ? __('empty') : $showEmpty;
+			$showEmpty = ($showEmpty === true) ? __d('cake', 'empty') : $showEmpty;
 			$options = array('' => $showEmpty) + $options;
 		}
 		unset($attributes['empty']);
@@ -1628,7 +1628,8 @@ class FormHelper extends AppHelper {
 			$this->_secure($secure, array_merge($field, array($suffix)));
 		}
 
-		return $this->Html->useTag('file', $options['name'], array_diff_key($options, array('name' => '')));
+		$exclude = array('name' => '', 'value' => '');
+		return $this->Html->useTag('file', $options['name'], array_diff_key($options, $exclude));
 	}
 
 /**

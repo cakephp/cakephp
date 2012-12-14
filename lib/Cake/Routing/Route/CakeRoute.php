@@ -11,8 +11,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Set', 'Utility');
+App::uses('Hash', 'Utility');
 
 /**
  * A single Route used by the Router to connect requests to

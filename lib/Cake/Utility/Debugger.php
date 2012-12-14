@@ -396,12 +396,14 @@ class Debugger {
 			return array();
 		}
 		$data = file_get_contents($file);
-		if (!empty($data) && strpos($data, "\n") !== false) {
+		if (empty($data)) {
+			return $lines;
+		}
+		if (strpos($data, "\n") !== false) {
 			$data = explode("\n", $data);
 		}
-
-		if (empty($data) || !isset($data[$line])) {
-			return;
+		if (!isset($data[$line])) {
+			return $lines;
 		}
 		for ($i = $line - ($context + 1); $i < $line + $context; $i++) {
 			if (!isset($data[$i])) {
@@ -425,13 +427,23 @@ class Debugger {
  * @return string
  */
 	protected static function _highlight($str) {
-		static $supportHighlight = null;
-		if (!$supportHighlight && function_exists('hphp_log')) {
-			$supportHighlight = false;
+		if (function_exists('hphp_log')) {
 			return htmlentities($str);
 		}
-		$supportHighlight = true;
-		return highlight_string($str, true);
+		$added = false;
+		if (strpos($str, '<?php') === false) {
+			$added = true;
+			$str = "<?php \n" . $str;
+		}
+		$highlight = highlight_string($str, true);
+		if ($added) {
+			$highlight = str_replace(
+				'&lt;?php&nbsp;<br />',
+				'',
+				$highlight
+			);
+		}
+		return $highlight;
 	}
 
 /**

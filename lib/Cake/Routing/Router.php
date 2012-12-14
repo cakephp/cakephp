@@ -266,18 +266,28 @@ class Router {
  * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass`
  * have special meaning in the $options array.
  *
- * `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
- * parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
+ * - `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
+ *   parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
+ * - `persist` is used to define which route parameters should be automatically included when generating
+ *   new urls. You can override persistent parameters by redefining them in a url or remove them by
+ *   setting the parameter to `false`.  Ex. `'persist' => array('lang')`
+ * - `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
+ *   via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
+ * - `named` is used to configure named parameters at the route level. This key uses the same options
+ *   as Router::connectNamed()
  *
- * `persist` is used to define which route parameters should be automatically included when generating
- * new urls. You can override persistent parameters by redefining them in a url or remove them by
- * setting the parameter to `false`.  Ex. `'persist' => array('lang')`
+ * You can also add additional conditions for matching routes to the $defaults array.
+ * The following conditions can be used:
  *
- * `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
- * via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
+ * - `[type]` Only match requests for specific content types.
+ * - `[method]` Only match requests with specific HTTP verbs.
+ * - `[server]` Only match when $_SERVER['SERVER_NAME'] matches the given value.
  *
- * `named` is used to configure named parameters at the route level. This key uses the same options
- * as Router::connectNamed()
+ * Example of using the `[method]` condition:
+ *
+ * `Router::connect('/tasks', array('controller' => 'tasks', 'action' => 'index', '[method]' => 'GET'));`
+ *
+ * The above route will only be matched for GET requests. POST requests will fail to match this route.
  *
  * @param string $route A string describing the template of the route
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default

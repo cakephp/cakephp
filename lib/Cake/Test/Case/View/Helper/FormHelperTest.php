@@ -6164,6 +6164,10 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Model']['upload'] = 'no data should be set in value';
+		$result = $this->Form->file('Model.upload');
+		$this->assertTags($result, array('input' => array('type' => 'file', 'name' => 'data[Model][upload]', 'id' => 'ModelUpload')));
 	}
 
 /**
