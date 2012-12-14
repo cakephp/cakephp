@@ -302,7 +302,7 @@ class AppTest extends CakeTestCase {
  * @return void
  */
 	public function testListObjects() {
-		$result = App::objects('class',  CAKE . 'Routing', false);
+		$result = App::objects('class', CAKE . 'Routing', false);
 		$this->assertTrue(in_array('Dispatcher', $result));
 		$this->assertTrue(in_array('Router', $result));
 
@@ -749,7 +749,7 @@ class AppTest extends CakeTestCase {
 		$result = App::import('Vendor', 'css/TestAsset', array('ext' => 'css'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEquals('this is the test asset css file', $text);
+		$this->assertEquals('/* this is the test asset css file */', trim($text));
 
 		$result = App::import('Vendor', 'TestPlugin.sample/SamplePlugin');
 		$this->assertTrue($result);
@@ -808,7 +808,7 @@ class AppTest extends CakeTestCase {
 
 		$this->assertFalse(class_exists('TestUtilityClass', false));
 		App::uses('TestUtilityClass', 'Utility');
-		$this->assertTrue(class_exists('CustomLibClass'));
+		$this->assertTrue(class_exists('TestUtilityClass'));
 	}
 
 /**

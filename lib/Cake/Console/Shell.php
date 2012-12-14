@@ -31,10 +31,18 @@ App::uses('File', 'Utility');
 class Shell extends Object {
 
 /**
- * Output constants for making verbose and quiet shells.
+ * Output constant making verbose shells.
  */
 	const VERBOSE = 2;
+
+/**
+ * Output constant for making normal shells.
+ */
 	const NORMAL = 1;
+
+/**
+ * Output constants for making quiet shells.
+ */
 	const QUIET = 0;
 
 /**
@@ -154,7 +162,7 @@ class Shell extends Object {
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
-		if ($this->name == null) {
+		if (!$this->name) {
 			$this->name = Inflector::camelize(str_replace(array('Shell', 'Task'), '', get_class($this)));
 		}
 		$this->Tasks = new TaskCollection($this);
@@ -162,13 +170,13 @@ class Shell extends Object {
 		$this->stdout = $stdout;
 		$this->stderr = $stderr;
 		$this->stdin = $stdin;
-		if ($this->stdout == null) {
+		if (!$this->stdout) {
 			$this->stdout = new ConsoleOutput('php://stdout');
 		}
-		if ($this->stderr == null) {
+		if (!$this->stderr) {
 			$this->stderr = new ConsoleOutput('php://stderr');
 		}
-		if ($this->stdin == null) {
+		if (!$this->stdin) {
 			$this->stdin = new ConsoleInput('php://stdin');
 		}
 		$this->_useLogger();
@@ -325,7 +333,7 @@ class Shell extends Object {
  */
 	public function dispatchShell() {
 		$args = func_get_args();
-		if (is_string($args[0]) && count($args) == 1) {
+		if (is_string($args[0]) && count($args) === 1) {
 			$args = explode(' ', $args[0]);
 		}
 

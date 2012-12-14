@@ -153,7 +153,8 @@ class CakeRoute {
 		if (preg_match('#\/\*\*$#', $route)) {
 			$parsed = preg_replace('#/\\\\\*\\\\\*$#', '(?:/(?P<_trailing_>.*))?', $parsed);
 			$this->_greedy = true;
-		} elseif (preg_match('#\/\*$#', $route)) {
+		}
+		if (preg_match('#\/\*$#', $route)) {
 			$parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
 			$this->_greedy = true;
 		}
@@ -162,7 +163,7 @@ class CakeRoute {
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
 
-		//remove defaults that are also keys. They can cause match failures
+		// Remove defaults that are also keys. They can cause match failures
 		foreach ($this->keys as $key) {
 			unset($this->defaults[$key]);
 		}
@@ -180,7 +181,7 @@ class CakeRoute {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
-		if (!preg_match($this->_compiledRoute, $url, $route)) {
+		if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
 			return false;
 		}
 		foreach ($this->defaults as $key => $val) {
@@ -218,7 +219,7 @@ class CakeRoute {
 			if (isset($route[$key])) {
 				continue;
 			}
-			if (is_integer($key)) {
+			if (is_int($key)) {
 				$route['pass'][] = $value;
 				continue;
 			}

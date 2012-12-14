@@ -25,7 +25,14 @@
  */
 class PhpAcl extends Object implements AclInterface {
 
+/**
+ * Constant for deny
+ */
 	const DENY = false;
+
+/**
+ * Constant for allow
+ */
 	const ALLOW = true;
 
 /**
@@ -170,11 +177,11 @@ class PhpAcl extends Object implements AclInterface {
 		foreach ($path as $depth => $node) {
 			foreach ($prioritizedAros as $aros) {
 				if (!empty($node['allow'])) {
-					$allow = $allow || count(array_intersect($node['allow'], $aros)) > 0;
+					$allow = $allow || count(array_intersect($node['allow'], $aros));
 				}
 
 				if (!empty($node['deny'])) {
-					$allow = $allow && count(array_intersect($node['deny'], $aros)) == 0;
+					$allow = $allow && !count(array_intersect($node['deny'], $aros));
 				}
 			}
 		}
@@ -206,6 +213,11 @@ class PhpAco {
 		'*' => '.*',
 	);
 
+/**
+ * Constructor
+ *
+ * @param array $rules Rules array
+ */
 	public function __construct(array $rules = array()) {
 		foreach (array('allow', 'deny') as $type) {
 			if (empty($rules[$type])) {
@@ -219,6 +231,7 @@ class PhpAco {
 /**
  * return path to the requested ACO with allow and deny rules attached on each level
  *
+ * @param string $aco ACO string
  * @return array
  */
 	public function path($aco) {
@@ -263,6 +276,10 @@ class PhpAco {
 /**
  * allow/deny ARO access to ARO
  *
+ * @param string $aro ARO string
+ * @param string $aco ACO string
+ * @param string $action Action string
+ * @param string $type access type
  * @return void
  */
 	public function access($aro, $aco, $action, $type = 'deny') {
@@ -273,7 +290,7 @@ class PhpAco {
 
 		foreach ($aco as $i => $node) {
 			if (!isset($tree[$node])) {
-				$tree[$node]  = array(
+				$tree[$node] = array(
 					'children' => array(),
 				);
 			}
@@ -349,8 +366,6 @@ class PhpAro {
 /**
  * role to resolve to when a provided ARO is not listed in
  * the internal tree
- *
- * @var string
  */
 	const DEFAULT_ROLE = 'Role/default';
 
@@ -385,6 +400,13 @@ class PhpAro {
  */
 	protected $_tree = array();
 
+/**
+ * Constructor
+ *
+ * @param array $aro
+ * @param array $map
+ * @param array $aliases
+ */
 	public function __construct(array $aro = array(), array $map = array(), array $aliases = array()) {
 		if (!empty($map)) {
 			$this->map = $map;
@@ -519,7 +541,7 @@ class PhpAro {
  * @param array $alias alias from => to (e.g. Role/13 -> Role/editor)
  * @return void
  */
-	public  function addAlias(array $alias) {
+	public function addAlias(array $alias) {
 		$this->aliases = array_merge($this->aliases, $alias);
 	}
 

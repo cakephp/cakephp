@@ -69,8 +69,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * Redirects to a URL.  Creates a window.location modification snippet
  * that can be used to trigger 'redirects' from Javascript.
  *
- * @param string|array $url
- * @param array  $options
+ * @param string|array $url URL
  * @return string completed redirect in javascript
  */
 	public function redirect($url = null) {
@@ -494,7 +493,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 			$out[] = $key . ':' . $value;
 		}
 		sort($out);
-		return join(', ', $out);
+		return implode(', ', $out);
 	}
 
 /**

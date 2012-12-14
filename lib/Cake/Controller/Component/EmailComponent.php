@@ -317,7 +317,7 @@ class EmailComponent extends Component {
 		foreach ($this->headers as $key => $value) {
 			$headers['X-' . $key] = $value;
 		}
-		if ($this->date != false) {
+		if ($this->date) {
 			$headers['Date'] = $this->date;
 		}
 		$lib->setHeaders($headers);
@@ -449,7 +449,7 @@ class EmailComponent extends Component {
  * @return string Stripped value
  */
 	protected function _strip($value, $message = false) {
-		$search  = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
+		$search = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
 		$search .= '|charset\=|mime-version\:|multipart/mixed|(?:[^a-z]to|b?cc)\:.*';
 
 		if ($message !== true) {

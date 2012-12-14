@@ -103,12 +103,12 @@ class Cache {
  * - `path` Used by FileCache.  Path to where cachefiles should be saved.
  * - `lock` Used by FileCache.  Should files be locked before writing to them?
  * - `user` Used by Xcache.  Username for XCache
- * - `password` Used by Xcache.  Password for XCache
+ * - `password` Used by Xcache/Redis.  Password for XCache/Redis
  *
  * @see app/Config/core.php for configuration settings
  * @param string $name Name of the configuration
  * @param array $settings Optional associative array of settings passed to the engine
- * @return array(engine, settings) on success, false on failure
+ * @return array array(engine, settings) on success, false on failure
  * @throws CacheException
  */
 	public static function config($name = null, $settings = array()) {
@@ -366,7 +366,7 @@ class Cache {
 		}
 		$key = self::$_engines[$config]->key($key);
 
-		if (!$key || !is_integer($offset) || $offset < 0) {
+		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
 		$success = self::$_engines[$config]->increment($settings['prefix'] . $key, $offset);
@@ -394,7 +394,7 @@ class Cache {
 		}
 		$key = self::$_engines[$config]->key($key);
 
-		if (!$key || !is_integer($offset) || $offset < 0) {
+		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
 		$success = self::$_engines[$config]->decrement($settings['prefix'] . $key, $offset);
@@ -498,4 +498,3 @@ class Cache {
 	}
 
 }
-

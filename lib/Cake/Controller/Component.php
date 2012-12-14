@@ -156,7 +156,7 @@ class Component extends Object {
  * @param string|array $url Either the string or url array that is being redirected to.
  * @param integer $status The status code of the redirect
  * @param boolean $exit Will the script exit.
- * @return array|null Either an array or null.
+ * @return array|void Either an array or null.
  * @link @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::beforeRedirect
  */
 	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {

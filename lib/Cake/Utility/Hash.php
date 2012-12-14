@@ -596,7 +596,7 @@ class Hash {
 			foreach ((array)$arg as $key => $val) {
 				if (!empty($return[$key]) && is_array($return[$key]) && is_array($val)) {
 					$return[$key] = self::merge($return[$key], $val);
-				} elseif (is_int($key)) {
+				} elseif (is_int($key) && isset($return[$key])) {
 					$return[] = $val;
 				} else {
 					$return[$key] = $val;
@@ -687,6 +687,7 @@ class Hash {
  *
  * @param array $data The data to reduce.
  * @param string $path The path to extract from $data.
+ * @param callable $function The function to call on each extracted value.
  * @return mixed The reduced value.
  */
 	public static function reduce(array $data, $path, $function) {
@@ -700,6 +701,7 @@ class Hash {
  *
  * @param array $data The data to reduce.
  * @param string $path The path to extract from $data.
+ * @param callable $function The function to call on each extracted value.
  * @return mixed The results of the applied method.
  */
 	public static function apply(array $data, $path, $function) {

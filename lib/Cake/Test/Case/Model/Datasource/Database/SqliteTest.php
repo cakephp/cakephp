@@ -77,7 +77,7 @@ class SqliteTest extends CakeTestCase {
  *
  * @var object
  */
-	public $fixtures = array('core.user', 'core.uuid');
+	public $fixtures = array('core.user', 'core.uuid', 'core.datatype');
 
 /**
  * Actual DB connection used in testing
@@ -253,6 +253,16 @@ class SqliteTest extends CakeTestCase {
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" integer(10) DEFAULT 10 NOT NULL';
 		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'name' => 'huge',
+			'type' => 'biginteger',
+			'length' => 20,
+			'null' => false,
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '"huge" bigint(20) NOT NULL';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -262,7 +272,11 @@ class SqliteTest extends CakeTestCase {
  */
 	public function testDescribe() {
 		$this->loadFixtures('User');
-		$Model = new Model(array('name' => 'User', 'ds' => 'test', 'table' => 'users'));
+		$Model = new Model(array(
+			'name' => 'User',
+			'ds' => 'test',
+			'table' => 'users'
+		));
 
 		$this->Dbo->cacheSources = true;
 		Configure::write('Cache.disable', false);
@@ -308,6 +322,46 @@ class SqliteTest extends CakeTestCase {
 
 		$result = Cache::read('test_users', '_cake_model_');
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that datatypes are reflected
+ *
+ * @return void
+ */
+	public function testDatatypes() {
+		$this->loadFixtures('Datatype');
+		$Model = new Model(array(
+			'name' => 'Datatype',
+			'ds' => 'test',
+			'table' => 'datatypes'
+		));
+		$result = $this->Dbo->describe($Model);
+		$expected = array(
+			'id' => array(
+				'type' => 'integer',
+				'null' => false,
+				'default' => 0,
+				'key' => 'primary'
+			),
+			'float_field' => array(
+				'type' => 'float',
+				'length' => '5,2',
+				'null' => false,
+				'default' => null
+			),
+			'huge_int' => array(
+				'type' => 'bigint',
+				'length' => '20',
+				'null' => true,
+				'default' => null
+			),
+			'bool' => array(
+				'type' => 'boolean',
+				'null' => false,
+				'default' => false
+			),
+		);
 	}
 
 /**

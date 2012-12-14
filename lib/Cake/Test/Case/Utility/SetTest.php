@@ -1221,21 +1221,21 @@ class SetTest extends CakeTestCase {
 
 		$nonSequential = array(
 			'User' => array(
-				0  => array('id' => 1),
-				2  => array('id' => 2),
-				6  => array('id' => 3),
-				9  => array('id' => 4),
-				3  => array('id' => 5),
+				0 => array('id' => 1),
+				2 => array('id' => 2),
+				6 => array('id' => 3),
+				9 => array('id' => 4),
+				3 => array('id' => 5),
 			),
 		);
 
 		$nonZero = array(
 			'User' => array(
-				2  => array('id' => 1),
-				4  => array('id' => 2),
-				6  => array('id' => 3),
-				9  => array('id' => 4),
-				3  => array('id' => 5),
+				2 => array('id' => 1),
+				4 => array('id' => 2),
+				6 => array('id' => 3),
+				9 => array('id' => 4),
+				3 => array('id' => 5),
 			),
 		);
 
@@ -1693,7 +1693,7 @@ class SetTest extends CakeTestCase {
 
 		$result = Set::remove($a, 'files');
 		$expected = array(
-			'pages'     => array('name' => 'page')
+			'pages' => array('name' => 'page')
 		);
 		$this->assertEquals($expected, $result);
 	}

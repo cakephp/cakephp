@@ -16,6 +16,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('Component', 'Controller');
 App::uses('Hash', 'Utility');
 
 /**
@@ -49,6 +50,20 @@ App::uses('Hash', 'Utility');
  * }}}
  *
  * This would allow you to have different pagination settings for `Comment` and `Post` models.
+ *
+ * #### Paginating with custom finders
+ *
+ * You can paginate with any find type defined on your model using the `findType` option.
+ *
+ * {{{
+ * $this->Paginator->settings = array(
+ *		'Post' => array(
+ *			'findType' => 'popular'
+ *		)
+ * );
+ * }}}
+ *
+ * Would paginate using the `find('popular')` method.
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/pagination.html
@@ -152,6 +167,12 @@ class PaginatorComponent extends Component {
 		$extra = array_diff_key($options, compact(
 			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
 		));
+
+		if (!empty($extra['findType'])) {
+			$type = $extra['findType'];
+			unset($extra['findType']);
+		}
+
 		if ($type !== 'all') {
 			$extra['type'] = $type;
 		}
@@ -228,36 +249,34 @@ class PaginatorComponent extends Component {
 			if (strpos($object, '.') !== false) {
 				list($object, $assoc) = pluginSplit($object);
 			}
-
 			if ($assoc && isset($this->Controller->{$object}->{$assoc})) {
-				$object = $this->Controller->{$object}->{$assoc};
-			} elseif (
-				$assoc && isset($this->Controller->{$this->Controller->modelClass}) &&
-				isset($this->Controller->{$this->Controller->modelClass}->{$assoc}
-			)) {
-				$object = $this->Controller->{$this->Controller->modelClass}->{$assoc};
-			} elseif (isset($this->Controller->{$object})) {
-				$object = $this->Controller->{$object};
-			} elseif (
-				isset($this->Controller->{$this->Controller->modelClass}) && isset($this->Controller->{$this->Controller->modelClass}->{$object}
-			)) {
-				$object = $this->Controller->{$this->Controller->modelClass}->{$object};
+				return $this->Controller->{$object}->{$assoc};
 			}
-		} elseif (empty($object) || $object === null) {
+			if ($assoc && isset($this->Controller->{$this->Controller->modelClass}->{$assoc})) {
+				return $this->Controller->{$this->Controller->modelClass}->{$assoc};
+			}
+			if (isset($this->Controller->{$object})) {
+				return $this->Controller->{$object};
+			}
+			if (isset($this->Controller->{$this->Controller->modelClass}->{$object})) {
+				return $this->Controller->{$this->Controller->modelClass}->{$object};
+			}
+		}
+		if (empty($object) || $object === null) {
 			if (isset($this->Controller->{$this->Controller->modelClass})) {
-				$object = $this->Controller->{$this->Controller->modelClass};
-			} else {
-				$className = null;
-				$name = $this->Controller->uses[0];
-				if (strpos($this->Controller->uses[0], '.') !== false) {
-					list($name, $className) = explode('.', $this->Controller->uses[0]);
-				}
-				if ($className) {
-					$object = $this->Controller->{$className};
-				} else {
-					$object = $this->Controller->{$name};
-				}
+				return $this->Controller->{$this->Controller->modelClass};
 			}
+
+			$className = null;
+			$name = $this->Controller->uses[0];
+			if (strpos($this->Controller->uses[0], '.') !== false) {
+				list($name, $className) = explode('.', $this->Controller->uses[0]);
+			}
+			if ($className) {
+				return $this->Controller->{$className};
+			}
+
+			return $this->Controller->{$name};
 		}
 		return $object;
 	}
@@ -299,10 +318,14 @@ class PaginatorComponent extends Component {
  * @return array An array of pagination defaults for a model, or the general settings.
  */
 	public function getDefaults($alias) {
+		$defaults = $this->settings;
 		if (isset($this->settings[$alias])) {
 			$defaults = $this->settings[$alias];
-		} else {
-			$defaults = $this->settings;
+		}
+		if (isset($defaults['limit']) &&
+			(empty($defaults['maxLimit']) || $defaults['limit'] > $defaults['maxLimit'])
+		) {
+			$defaults['maxLimit'] = $defaults['limit'];
 		}
 		return array_merge(
 			array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named'),
@@ -323,13 +346,13 @@ class PaginatorComponent extends Component {
  * @param array $whitelist The list of columns that can be used for sorting.  If empty all keys are allowed.
  * @return array An array of options with sort + direction removed and replaced with order if possible.
  */
-	public function validateSort($object, $options, $whitelist = array()) {
+	public function validateSort(Model $object, array $options, array $whitelist = array()) {
 		if (isset($options['sort'])) {
 			$direction = null;
 			if (isset($options['direction'])) {
 				$direction = strtolower($options['direction']);
 			}
-			if ($direction != 'asc' && $direction != 'desc') {
+			if (!in_array($direction, array('asc', 'desc'))) {
 				$direction = 'asc';
 			}
 			$options['order'] = array($options['sort'] => $direction);
@@ -371,7 +394,7 @@ class PaginatorComponent extends Component {
  * @param array $options An array of options with a limit key to be checked.
  * @return array An array of options for pagination
  */
-	public function checkLimit($options) {
+	public function checkLimit(array $options) {
 		$options['limit'] = (int)$options['limit'];
 		if (empty($options['limit']) || $options['limit'] < 1) {
 			$options['limit'] = 1;

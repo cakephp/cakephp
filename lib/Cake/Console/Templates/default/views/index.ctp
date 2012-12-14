@@ -20,14 +20,13 @@
 	<h2><?php echo "<?php echo __('{$pluralHumanName}'); ?>"; ?></h2>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
-	<?php  foreach ($fields as $field): ?>
+	<?php foreach ($fields as $field): ?>
 		<th><?php echo "<?php echo \$this->Paginator->sort('{$field}'); ?>"; ?></th>
 	<?php endforeach; ?>
 		<th class="actions"><?php echo "<?php echo __('Actions'); ?>"; ?></th>
 	</tr>
 	<?php
-	echo "<?php
-	foreach (\${$pluralVar} as \${$singularVar}): ?>\n";
+	echo "<?php foreach (\${$pluralVar} as \${$singularVar}): ?>\n";
 	echo "\t<tr>\n";
 		foreach ($fields as $field) {
 			$isKey = false;
@@ -47,8 +46,8 @@
 
 		echo "\t\t<td class=\"actions\">\n";
 		echo "\t\t\t<?php echo \$this->Html->link(__('View'), array('action' => 'view', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-	 	echo "\t\t\t<?php echo \$this->Html->link(__('Edit'), array('action' => 'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-	 	echo "\t\t\t<?php echo \$this->Form->postLink(__('Delete'), array('action' => 'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, __('Are you sure you want to delete # %s?', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+		echo "\t\t\t<?php echo \$this->Html->link(__('Edit'), array('action' => 'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+		echo "\t\t\t<?php echo \$this->Form->postLink(__('Delete'), array('action' => 'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, __('Are you sure you want to delete # %s?', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 
@@ -62,7 +61,6 @@
 	));
 	?>"; ?>
 	</p>
-
 	<div class="paging">
 	<?php
 		echo "<?php\n";

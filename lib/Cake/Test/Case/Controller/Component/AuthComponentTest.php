@@ -908,6 +908,30 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Throw ForbiddenException if AuthComponent::$unauthorizedRedirect set to false
+ * @expectedException ForbiddenException
+ * @return void
+ */
+	public function testForbiddenException() {
+		$url = '/party/on';
+		$this->Auth->request = $CakeRequest = new CakeRequest($url);
+		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->authorize = array('Controller');
+		$this->Auth->authorize = array('Controller');
+		$this->Auth->unauthorizedRedirect = false;
+		$this->Auth->login(array('username' => 'baker', 'password' => 'cake'));
+
+		$CakeResponse = new CakeResponse();
+		$Controller = $this->getMock(
+			'Controller',
+			array('on', 'redirect'),
+			array($CakeRequest, $CakeResponse)
+		);
+
+		$this->Auth->startup($Controller);
+	}
+
+/**
  * Test that no redirects or authorization tests occur on the loginAction
  *
  * @return void

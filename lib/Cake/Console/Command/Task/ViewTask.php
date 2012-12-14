@@ -207,7 +207,7 @@ class ViewTask extends BakeTask {
 		$this->Controller->connection = $this->connection;
 		$this->controllerName = $this->Controller->getName();
 
-		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.",  $this->controllerName);
+		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.", $this->controllerName);
 		$interactive = $this->in($prompt, array('y', 'n'), 'n');
 
 		if (strtolower($interactive) == 'n') {
@@ -316,9 +316,9 @@ class ViewTask extends BakeTask {
  */
 	public function customAction() {
 		$action = '';
-		while ($action == '') {
+		while (!$action) {
 			$action = $this->in(__d('cake_console', 'Action Name? (use lowercase_underscored function name)'));
-			if ($action == '') {
+			if (!$action) {
 				$this->out(__d('cake_console', 'The action name you supplied was empty. Please try again.'));
 			}
 		}
