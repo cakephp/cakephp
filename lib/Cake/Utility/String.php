@@ -408,6 +408,30 @@ class String {
 	}
 
 /**
+ * Adds <p> tags around given text for all line breaks
+ * Inspired by WordPress wpautop formatting
+ *
+ * @param string $text Text
+ * @return string The text with proper <p> tags
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoP
+ */
+  public static function autoP($text) {
+    if ( trim($text) !== '' ){
+      $text = preg_replace('|<br />\s*<br />|', "\n\n", $text . "\n"); // just to make things a little easier, pad the end
+      $text = preg_replace("/\n\n+/", "\n\n", str_replace(array("\r\n", "\r"), "\n", $text)); // take care of duplicates and cross-platform newlines
+      $texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY); // make paragraphs, including one at the end
+      $text = '';
+      foreach ( $texts as $txt )
+          $text .= '<p>' . trim($txt, "\n") . "</p>\n";
+      $text = preg_replace('|<p>\s*</p>|', '', $text); // under certain strange conditions it could create a P of entirely whitespace
+      // Preserve existing <p> tags
+      $text = preg_replace('!<p>\s*(</?(?:p)[^>]*>)!', "$1", $text);
+      $text = preg_replace('!(</?(?:p)[^>]*>)\s*</p>!', "$1", $text);
+    }
+    return $text;
+  }
+
+/**
  * Strips given text of all links (<a href=....)
  *
  * @param string $text Text
