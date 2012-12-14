@@ -600,6 +600,37 @@ podeís adquirirla.</span></p>
 	}
 
 /**
+ * testAutoParagraph method
+ *
+ * @return void
+ */
+  public function testAutoParagraph() {
+    $text = 'This is a test text';
+    $expected = '<p>This is a test text</p>
+';
+    $result = $this->Text->autoParagraph($text);
+    $this->assertEquals($expected, $result);
+    
+    $text = 'This is a test text.
+This is a line return.';
+    $expected = '<p>This is a test text.<br />
+This is a line return.</p>
+';
+    $result = $this->Text->autoParagraph($text);
+    $this->assertEquals($expected, $result);
+    
+    $text = 'This is a test text.
+
+This is a new line.';
+    $expected = '<p>This is a test text.</p>
+<p>This is a new line.</p>
+';
+    $result = $this->Text->autoParagraph($text);
+    $this->assertEquals($expected, $result);
+  }
+
+
+/**
  * testStripLinks method
  *
  * @return void
