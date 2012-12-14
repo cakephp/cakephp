@@ -857,7 +857,7 @@ class CakeTime {
 		}
 
 		if (!$backwards) {
-			if($timeAgoFormat) {
+			if ($timeAgoFormat) {
 				// user format, has already been translated (logically, when setting the 'timeAgoFormat' option)
 				return vsprintf($timeAgoFormat, $relativeDate);
 			} else {
