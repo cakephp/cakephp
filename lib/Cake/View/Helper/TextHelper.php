@@ -228,6 +228,27 @@ class TextHelper extends AppHelper {
 	}
 
 /**
+ * Formats paragraphs around given text for all line breaks
+ * Inspired by WordPress wpautop formatting
+ *
+ * @param string $text Text
+ * @return string The text with proper <p> tags
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoParagraph
+ */
+  public static function autoParagraph($text) {
+    if ( trim($text) !== '' ){
+      $text = preg_replace('|<br />\s*<br />|', "\n\n", $text . "\n"); // just to make things a little easier, pad the end
+      $text = preg_replace("/\n\n+/", "\n\n", str_replace(array("\r\n", "\r"), "\n", $text)); // take care of duplicates and cross-platform newlines
+      $texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY); // make paragraphs, including one at the end
+      $text = '';
+      foreach ( $texts as $txt )
+          $text .= '<p>' . trim($txt, "\n") . "</p>\n";
+      $text = preg_replace('|<p>\s*</p>|', '', $text); // Remove empty/whitespace <p> tags
+    }
+    return $text;
+  }
+
+/**
  * @see String::stripLinks()
  *
  * @param string $text Text
