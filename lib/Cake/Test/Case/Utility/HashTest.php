@@ -659,6 +659,9 @@ class HashTest extends CakeTestCase {
 
 		$result = Hash::extract($data, '1.Article.title');
 		$this->assertEquals(array('Second Article'), $result);
+
+		$result = Hash::extract(array(false), '{n}.Something.another_thing');
+		$this->assertEquals(array(), $result);
 	}
 
 /**
