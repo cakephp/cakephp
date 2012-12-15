@@ -414,7 +414,9 @@ class View extends Object {
 		}
 
 		if (empty($options['ignoreMissing'])) {
-			$file = 'Elements' . DS . $name . $this->ext;
+			list ($plugin, $name) = pluginSplit($name, true);
+			$name = str_replace('/', DS, $name);
+			$file = $plugin . 'Elements' . DS . $name . $this->ext;
 			trigger_error(__d('cake_dev', 'Element Not Found: %s', $file), E_USER_NOTICE);
 		}
 	}
