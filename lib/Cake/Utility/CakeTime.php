@@ -860,10 +860,9 @@ class CakeTime {
 			if ($timeAgoFormat) {
 				// user format, has already been translated (logically, when setting the 'timeAgoFormat' option)
 				return vsprintf($timeAgoFormat, $relativeDate);
-			} else {
-				// default format, needs to be translated 
-				return __d('cake', '%s ago', $relativeDate);
-			}
+			} 
+			// default format, needs to be translated 
+			return __d('cake', '%s ago', $relativeDate);
 		}
 
 		return $relativeDate;
