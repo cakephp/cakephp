@@ -1379,6 +1379,18 @@ class FormHelper extends AppHelper {
 			$disabled = $attributes['disabled'];
 		}
 
+		$beforeOption = null;
+		if (isset($attributes['beforeOption'])) {
+			$beforeOption = $attributes['beforeOption'];
+			unset($attributes['beforeOption']);
+		}
+
+		$afterOption = null;
+		if (isset($attributes['afterOption'])) {
+			$afterOption = $attributes['afterOption'];
+			unset($attributes['afterOption']);
+		}
+		
 		$out = array();
 
 		$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
@@ -1401,10 +1413,10 @@ class FormHelper extends AppHelper {
 				$optTitle = $this->Html->useTag('label', $tagName, '', $optTitle);
 			}
 			$allOptions = array_merge($attributes, $optionsHere);
-			$out[] = $this->Html->useTag('radio', $attributes['name'], $tagName,
+			$out[] = $beforeOption . $this->Html->useTag('radio', $attributes['name'], $tagName,
 				array_diff_key($allOptions, array('name' => '', 'type' => '', 'id' => '')),
 				$optTitle
-			);
+			) . $afterOption;
 		}
 		$hidden = null;
 
