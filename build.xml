@@ -40,6 +40,9 @@
 		<include name="cake" />
 	</fileset>
 
+	<fileset id="non-tests" dir="./lib/Cake">
+		<exclude name=".lib/Cake/Test" />
+	</fileset>
 
 	<!-- start fresh each time.  Remove the dist and build dirs -->
 	<target name="clean">
@@ -205,10 +208,43 @@
 		<exec command="ssh cakephp@cakephp.org pirum add ${pirum.dir} ${pirum.dir}/${pear.package}.tgz" checkreturn="true" />
 	</target>
 
+	<target name="codestyle" description="Check codestyle (human readable format)">
+		<phpcodesniffer
+			standard="CakePHP"
+			allowedFileExtensions="php">
+			<fileset refid="libs" />
+		</phpcodesniffer>
+	</target>
+
+	<target name="reports-ci">
+		<phpcodesniffer
+			standard="CakePHP"
+			allowedFileExtensions="php">
+			<fileset refid="libs" />
+			<formatter type="checkstyle" outfile="checkstyle.xml" />
+		</phpcodesniffer>
+		<phpcpd
+			minLines="4"
+			minTokens="50">
+			<fileset refid="libs" />
+			<formatter type="pmd" outfile="pmd-cpd.xml"/>
+		</phpcpd>
+		<phpdepend>
+			<fileset refid="non-tests" />
+			<logger type="jdepend-xml" outfile="jdepend.xml"/>
+		</phpdepend>
+		<phpmd rulesets="codesize,unusedcode,design">
+			<fileset refid="non-tests" />
+			<formatter type="xml" outfile="reports/pmd.html"/>
+		</phpmd>
+	</target>
+
 	<!--
 		Top level easy to type targets
 	-->
 	<target name="build" depends="generate-package" description="Generate a pear package" />
 	<target name="release" depends="release-commit,build,distribute" description="Release a new version of CakePHP" />
+	<target name="code-reports" depends="reports-ci"
+		description="Run the code reports, generating XML output for CI server use." />
 
 </project>
