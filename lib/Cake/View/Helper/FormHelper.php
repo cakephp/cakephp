@@ -1332,8 +1332,9 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  */
 	public function radio($fieldName, $options = array(), $attributes = array()) {
-		$attributes = $this->_initInputField($fieldName, $attributes);
 
+		$attributes = $this->_initInputField($fieldName, $attributes);
+		
 		$showEmpty = $this->_extractOption('empty', $attributes);
 		if ($showEmpty) {
 			$showEmpty = ($showEmpty === true) ? __('empty') : $showEmpty;
@@ -1378,13 +1379,13 @@ class FormHelper extends AppHelper {
 		if (isset($attributes['disabled'])) {
 			$disabled = $attributes['disabled'];
 		}
-
+		
 		$beforeOption = null;
 		if (isset($attributes['beforeOption'])) {
 			$beforeOption = $attributes['beforeOption'];
 			unset($attributes['beforeOption']);
 		}
-
+		
 		$afterOption = null;
 		if (isset($attributes['afterOption'])) {
 			$afterOption = $attributes['afterOption'];
@@ -1410,13 +1411,15 @@ class FormHelper extends AppHelper {
 			);
 
 			if ($label) {
-				$optTitle = $this->Html->useTag('label', $tagName, '', $optTitle);
+				$optLabel = $this->Html->useTag('label', $tagName, '', $optTitle);
+			} else {
+				$optLabel = $optTitle;
 			}
 			$allOptions = array_merge($attributes, $optionsHere);
-			$out[] = $beforeOption . $this->Html->useTag('radio', $attributes['name'], $tagName,
+			$out[] = sprintf($beforeOption, $optValue, $optTitle) . $this->Html->useTag('radio', $attributes['name'], $tagName,
 				array_diff_key($allOptions, array('name' => '', 'type' => '', 'id' => '')),
-				$optTitle
-			) . $afterOption;
+				$optLabel
+			) . sprintf($afterOption, $optValue, $optTitle);
 		}
 		$hidden = null;
 

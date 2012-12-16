@@ -3657,6 +3657,51 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->radio(
+			'Model.field',
+			array('A' => 'option A', 'B' => 'option B'),
+			array(
+				'beforeOption' => '<img src="/img/%1$s.png" alt="%2$s" />',
+				'afterOption' => '<a href="/option/%1$s">learn more about %2$s</a>'
+			)
+		);
+		$expected = array(
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][field]',
+				'value' => '', 'id' => 'ModelField_'
+			),
+			array('img' => array('src' => '/img/A.png', 'alt' => 'option A')),
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Model][field]',
+				'value' => 'A', 'id' => 'ModelFieldA'
+			)),
+			array('label' => array('for' => 'ModelFieldA')),
+			'option A',
+			'/label',
+			array('a' => array('href' => '/option/A')),
+			'learn more about option A',
+			'/a',
+			array('img' => array('src' => '/img/B.png', 'alt' => 'option B')),
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Model][field]',
+				'value' => 'B', 'id' => 'ModelFieldB'
+			)),
+			array('label' => array('for' => 'ModelFieldB')),
+			'option B',
+			'/label',
+			array('a' => array('href' => '/option/B')),
+			'learn more about option B',
+			'/a',
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
+		
+		
 
 	}
 
