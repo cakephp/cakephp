@@ -141,6 +141,17 @@ class Hash {
 	}
 
 /**
+ *  Wrapper for counting the number of items found
+ *
+ * @param array $data The data to count from.
+ * @param string $path The path to count.
+ * @return integer
+ */
+	public function count(array $data, $path) {
+		return count(self::extract($data, $path));
+	}
+
+/**
  * Check a key against a token.
  *
  * @param string $key The key in the array being searched.

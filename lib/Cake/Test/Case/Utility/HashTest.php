@@ -2180,4 +2180,72 @@ class HashTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * test counting
+ *
+ * @dataProvider countDataProvider
+ */
+	public function testCount($path, $expected) {
+		$array = array(
+			array(
+				'User' => array(
+					'id' => 1,
+					'first_name' => 'sam',
+					'last_name' => 'jones',
+				),
+				'Order' => array(
+					array(
+						'product_id' => 1
+					),
+					array(
+						'product_id' => 2
+					)
+				)
+			),
+			array(
+				'User' => array(
+					'id' => 2,
+					'first_name' => 'bob',
+					'last_name' => 'smith'
+				),
+				'Order' => array(
+					array(
+						'product_id' => 2
+					)
+				)
+			),
+			array(
+				'User' => array(
+					'id' => 3,
+					'first_name' => 'bob',
+					'last_name' => 'jones'
+				),
+				'Order' => array(
+					array(
+						'product_id' => 2
+					),
+					array(
+						'product_id' => 3
+					)
+				)
+			)
+		);
+		$result = Hash::count($array, $path);
+		$this->assertEquals($expected, $result);
+	}
+
+	public function countDataProvider() {
+		return array(
+			array('{n}.User.id', 3),
+			array('{n}.User[first_name=bob]', 2),
+			array('{n}.User[last_name=smith]', 1),
+			array('{n}.Order.{n}[product_id=1]', 1),
+			array('{n}.Order.{n}[product_id=2]', 3),
+			array('{n}.Order.{n}[product_id=3]', 1),
+			array('{n}.Order.{n}[product_id>3]', 0),
+			array('{n}.Order.{n}[product_id<3]', 4),
+			array('{s}.NoMatch.whatever', 0),
+		);
+	}
+
 }
