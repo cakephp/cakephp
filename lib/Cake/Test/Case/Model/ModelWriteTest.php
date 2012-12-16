@@ -25,6 +25,24 @@ require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 class ModelWriteTest extends BaseModelTest {
 
 /**
+ * Test save() failing when there is no data.
+ *
+ * @return void
+ */
+	public function testInsertNoData() {
+		$this->loadFixtures('Bid');
+		$Bid = ClassRegistry::init('Bid');
+
+		$this->assertFalse($Bid->save());
+
+		$result = $Bid->save(array('Bid' => array()));
+		$this->assertFalse($result);
+
+		$result = $Bid->save(array('Bid' => array('not in schema' => 1)));
+		$this->assertFalse($result);
+	}
+
+/**
  * testInsertAnotherHabtmRecordWithSameForeignKey method
  *
  * @access public
