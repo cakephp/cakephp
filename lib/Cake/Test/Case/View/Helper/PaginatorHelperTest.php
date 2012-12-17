@@ -243,7 +243,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->sort('Article.full_name');
 		$expected = array(
 			'a' => array('href' => '/accounts/index/page:1/sort:Article.full_name/direction:desc', 'class' => 'asc'),
-			'Article.full Name',
+			'Article Full Name',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
@@ -260,7 +260,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->sort('Article.full_name');
 		$expected = array(
 			'a' => array('href' => '/accounts/index/page:1/sort:Article.full_name/direction:asc', 'class' => 'desc'),
-			'Article.full Name',
+			'Article Full Name',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
@@ -318,6 +318,15 @@ class PaginatorHelperTest extends CakeTestCase {
 			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
 			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
 		));
+
+		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
+		$result = $this->Paginator->sort('Article.title');
+		$expected = array(
+			'a' => array('href' => '/officespace/accounts/index/page:1/sort:Article.title/direction:asc', 'class' => 'desc'),
+			'Article Title',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
 		$result = $this->Paginator->sort('Article.title', 'Title');
