@@ -169,6 +169,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 /**
  * Paints a code coverage report.
  *
+ * @param array $coverage
  * @return void
  */
 	public function paintCoverage(array $coverage) {
@@ -242,6 +243,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
  *   the context of the other tests.
+ * @param mixed $test
  * @return void
  */
 	public function paintFail($message, $test) {
@@ -249,10 +251,12 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$testName = get_class($test) . '(' . $test->getName() . ')';
 
 		$actualMsg = $expectedMsg = null;
-		$failure = $message->getComparisonFailure();
-		if (is_object($failure)) {
-			$actualMsg = $message->getComparisonFailure()->getActualAsString();
-			$expectedMsg = $message->getComparisonFailure()->getExpectedAsString();
+		if (method_exists($message, 'comparisonFailure')) {
+			$failure = $message->comparisonFailure();
+			if (is_object($failure)) {
+				$actualMsg = $message->getComparisonFailure()->getActualAsString();
+				$expectedMsg = $message->getComparisonFailure()->getExpectedAsString();
+			}
 		}
 
 		echo "<li class='fail'>\n";
@@ -292,6 +296,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * Paints a PHP exception.
  *
  * @param Exception $exception Exception to display.
+ * @param mixed $test
  * @return void
  */
 	public function paintException($message, $test) {

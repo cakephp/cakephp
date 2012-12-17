@@ -259,9 +259,9 @@ class JsHelper extends AppHelper {
 	}
 
 /**
- * Generates the object string for variables passed to javascript.
+ * Generates the object string for variables passed to javascript and adds to buffer
  *
- * @return string Generated JSON object of all set vars
+ * @return void
  */
 	protected function _createVars() {
 		if (!empty($this->_jsVars)) {
@@ -338,7 +338,7 @@ class JsHelper extends AppHelper {
 		} else {
 			$data = array($one => $two);
 		}
-		if ($data == null) {
+		if (!$data) {
 			return false;
 		}
 		$this->_jsVars = array_merge($this->_jsVars, $data);

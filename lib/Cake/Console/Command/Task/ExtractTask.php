@@ -245,7 +245,7 @@ class ExtractTask extends AppShell {
 		if (empty($this->_translations[$domain][$msgid])) {
 			$this->_translations[$domain][$msgid] = array(
 				'msgid_plural' => false
-			 );
+			);
 		}
 
 		if (isset($details['msgid_plural'])) {
@@ -391,7 +391,7 @@ class ExtractTask extends AppShell {
 				$position = $count;
 				$depth = 0;
 
-				while ($depth == 0) {
+				while (!$depth) {
 					if ($this->_tokens[$position] == '(') {
 						$depth++;
 					} elseif ($this->_tokens[$position] == ')') {
@@ -480,7 +480,7 @@ class ExtractTask extends AppShell {
 		}
 
 		$dims = Hash::dimensions($rules);
-		if ($dims == 1 || ($dims == 2 && isset($rules['message']))) {
+		if ($dims === 1 || ($dims === 2 && isset($rules['message']))) {
 			$rules = array($rules);
 		}
 
@@ -523,7 +523,7 @@ class ExtractTask extends AppShell {
 					$occurrences[] = $file . ':' . implode(';', $lines);
 				}
 				$occurrences = implode("\n#: ", $occurrences);
-				$header = '#: ' . str_replace($paths, '', $occurrences) . "\n";
+				$header = '#: ' . str_replace(DS, '/', str_replace($paths, '', $occurrences)) . "\n";
 
 				if ($plural === false) {
 					$sentence = "msgid \"{$msgid}\"\n";
@@ -591,7 +591,7 @@ class ExtractTask extends AppShell {
 				);
 				if (strtoupper($response) === 'N') {
 					$response = '';
-					while ($response == '') {
+					while (!$response) {
 						$response = $this->in(__d('cake_console', "What would you like to name this file?"), null, 'new_' . $filename);
 						$File = new File($this->_output . $response);
 						$filename = $response;
@@ -611,7 +611,7 @@ class ExtractTask extends AppShell {
  * @return string Translation template header
  */
 	protected function _writeHeader() {
-		$output  = "# LANGUAGE translation of CakePHP Application\n";
+		$output = "# LANGUAGE translation of CakePHP Application\n";
 		$output .= "# Copyright YEAR NAME <EMAIL@ADDRESS>\n";
 		$output .= "#\n";
 		$output .= "#, fuzzy\n";

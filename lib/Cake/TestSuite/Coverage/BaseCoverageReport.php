@@ -136,7 +136,7 @@ abstract class BaseCoverageReport {
  *
  * @param array $fileLines
  * @param array $coverageData
- * @return array. Array of covered, total lines.
+ * @return array Array of covered, total lines.
  */
 	protected function _calculateCoveredLines($fileLines, $coverageData) {
 		$covered = $total = 0;

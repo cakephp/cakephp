@@ -36,6 +36,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 /**
  * Construct method
  *
+ * @param mixed $loader
  * @param array $params list of options to be used for this run
  * @throws MissingTestLoaderException When a loader class could not be found.
  */
@@ -73,7 +74,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 			);
 		}
 
-		if (count($suite) == 0) {
+		if (!count($suite)) {
 			$skeleton = new PHPUnit_Util_Skeleton_Test(
 				$suite->getName(),
 				$this->arguments['testFile']
@@ -129,11 +130,11 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 /**
  * Create a runner for the command.
  *
- * @param $loader The loader to be used for the test run.
+ * @param mixed $loader The loader to be used for the test run.
  * @return CakeTestRunner
  */
 	public function getRunner($loader) {
- 		return new CakeTestRunner($loader, $this->_params);
+		return new CakeTestRunner($loader, $this->_params);
 	}
 
 /**
@@ -149,6 +150,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 /**
  * Handles output flag used to change printing on webrunner.
  *
+ * @param string $reporter
  * @return void
  */
 	public function handleReporter($reporter) {

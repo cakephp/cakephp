@@ -24,7 +24,7 @@ App::uses('CakeValidationSet', 'Model/Validator');
  *
  * @package       Cake.Test.Case.Model.Validator
  */
-class CakeValidationSetTest  extends CakeTestCase {
+class CakeValidationSetTest extends CakeTestCase {
 
 /**
  * testValidate method

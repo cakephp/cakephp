@@ -73,5 +73,3 @@ class TreeBehaviorAfterTest extends CakeTestCase {
 		$this->assertEquals($expected, $result[7]);
 	}
 }
-
-

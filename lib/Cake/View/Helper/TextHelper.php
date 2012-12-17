@@ -20,6 +20,7 @@
  */
 
 App::uses('AppHelper', 'View/Helper');
+App::uses('Hash', 'Utility');
 
 /**
  * Text helper library.
@@ -50,6 +51,8 @@ class TextHelper extends AppHelper {
 
 /**
  * String utility instance
+ *
+ * @var stdClass
  */
 	protected $_engine;
 

@@ -372,6 +372,7 @@ TEXT;
 		$text9 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
 		$text10 = 'http://example.com/something/foo:bar';
 
+		$elipsis = "\xe2\x80\xa6";
 		$this->assertSame($this->Text->truncate($text1, 15), 'The quick br...');
 		$this->assertSame($this->Text->truncate($text1, 15, array('exact' => false)), 'The quick...');
 		$this->assertSame($this->Text->truncate($text1, 100), 'The quick brown fox jumps over the lazy dog');
@@ -379,18 +380,18 @@ TEXT;
 		$this->assertSame($this->Text->truncate($text2, 10, array('exact' => false)), '...');
 		$this->assertSame($this->Text->truncate($text3, 20), '<b>&copy; 2005-20...');
 		$this->assertSame($this->Text->truncate($text4, 15), '<img src="my...');
-		$this->assertSame($this->Text->truncate($text5, 6, array('ending' => '')), '0<b>1<');
-		$this->assertSame($this->Text->truncate($text1, 15, array('html' => true)), 'The quick br...');
-		$this->assertSame($this->Text->truncate($text1, 15, array('exact' => false, 'html' => true)), 'The quick...');
-		$this->assertSame($this->Text->truncate($text2, 10, array('html' => true)), 'Heiz&ouml;lr...');
-		$this->assertSame($this->Text->truncate($text2, 10, array('exact' => false, 'html' => true)), '...');
-		$this->assertSame($this->Text->truncate($text3, 20, array('html' => true)), '<b>&copy; 2005-2007, Cake...</b>');
-		$this->assertSame($this->Text->truncate($text4, 15, array('html' => true)), '<img src="mypic.jpg"> This image ...');
-		$this->assertSame($this->Text->truncate($text4, 45, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But t...</b>');
-		$this->assertSame($this->Text->truncate($text4, 90, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Grea...');
-		$this->assertSame($this->Text->truncate($text5, 6, array('ending' => '', 'html' => true)), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
-		$this->assertSame($this->Text->truncate($text5, 20, array('ending' => '', 'html' => true)), $text5);
-		$this->assertSame($this->Text->truncate($text6, 57, array('exact' => false, 'html' => true)), "<p><strong>Extra dates have been announced for this year's...</strong></p>");
+		$this->assertSame($this->Text->truncate($text5, 6, array('ellipsis' => '')), '0<b>1<');
+		$this->assertSame($this->Text->truncate($text1, 15, array('html' => true)), 'The quick brow' . $elipsis);
+		$this->assertSame($this->Text->truncate($text1, 15, array('exact' => false, 'html' => true)), 'The quick' . $elipsis);
+		$this->assertSame($this->Text->truncate($text2, 10, array('html' => true)), 'Heiz&ouml;lr&uuml;c' . $elipsis);
+		$this->assertSame($this->Text->truncate($text2, 10, array('exact' => false, 'html' => true)), $elipsis);
+		$this->assertSame($this->Text->truncate($text3, 20, array('html' => true)), '<b>&copy; 2005-2007, Cake S' . $elipsis . '</b>');
+		$this->assertSame($this->Text->truncate($text4, 15, array('html' => true)), '<img src="mypic.jpg"> This image ta' . $elipsis);
+		$this->assertSame($this->Text->truncate($text4, 45, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the' . $elipsis . '</b>');
+		$this->assertSame($this->Text->truncate($text4, 90, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great,' . $elipsis);
+		$this->assertSame($this->Text->truncate($text5, 6, array('ellipsis' => '', 'html' => true)), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
+		$this->assertSame($this->Text->truncate($text5, 20, array('ellipsis' => '', 'html' => true)), $text5);
+		$this->assertSame($this->Text->truncate($text6, 57, array('exact' => false, 'html' => true)), "<p><strong>Extra dates have been announced for this year's" . $elipsis . "</strong></p>");
 		$this->assertSame($this->Text->truncate($text7, 255), $text7);
 		$this->assertSame($this->Text->truncate($text7, 15), 'El moño está...');
 		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R' . chr(195) . chr(169) . 'pu...');
@@ -399,7 +400,7 @@ TEXT;
 
 		$text = '<p><span style="font-size: medium;"><a>Iamatestwithnospacesandhtml</a></span></p>';
 		$result = $this->Text->truncate($text, 10, array(
-			'ending' => '...',
+			'ellipsis' => '...',
 			'exact' => false,
 			'html' => true
 		));
@@ -422,7 +423,7 @@ podeís adquirirla.</span></p>
 <p><span style="font-size: medium;"><a>http://www.amazon.com/Steve-
 Jobs-Walter-Isaacson/dp/1451648537</a></span></p>';
 		$result = $this->Text->truncate($text, 500, array(
-			'ending' => '... ',
+			'ellipsis' => '... ',
 			'exact' => false,
 			'html' => true
 		));
@@ -441,6 +442,88 @@ Isaacson</strong>", aquí os dejamos la dirección de amazon donde
 podeís adquirirla.</span></p>
 <p><span style="font-size: medium;"><a>... </a></span></p>';
 		$this->assertEquals($expected, $result);
+
+		// test deprecated `ending` (`ellipsis` taking precedence if both are defined)
+		$result = $this->Text->truncate($text1, 31, array(
+			'ending' => '.',
+			'exact' => false,
+		));
+		$expected = 'The quick brown fox jumps.';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Text->truncate($text1, 31, array(
+			'ellipsis' => '..',
+			'ending' => '.',
+			'exact' => false,
+		));
+		$expected = 'The quick brown fox jumps..';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testTruncate method with non utf8 sites
+ *
+ * @return void
+ */
+	public function testTruncateLegacy() {
+		Configure::write('App.encoding', 'ISO-8859-1');
+		$text = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
+		$result = $this->Text->truncate($text, 31, array(
+			'html' => true,
+			'exact' => false,
+		));
+		$expected = '<b>&copy; 2005-2007, Cake Software...</b>';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Text->truncate($text, 31, array(
+			'html' => true,
+			'exact' => true,
+		));
+		$expected = '<b>&copy; 2005-2007, Cake Software F...</b>';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testTail method
+ *
+ * @return void
+ */
+	public function testTail() {
+		$text1 = 'The quick brown fox jumps over the lazy dog';
+		$text2 = 'Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung';
+		$text3 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
+		$text4 = 'Vive la R' . chr(195) . chr(169) . 'publique de France';
+		$text5 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
+
+		$result = $this->Text->tail($text1, 13);
+		$this->assertEquals('...e lazy dog', $result);
+
+		$result = $this->Text->tail($text1, 13, array('exact' => false));
+		$this->assertEquals('...lazy dog', $result);
+
+		$result = $this->Text->tail($text1, 100);
+		$this->assertEquals('The quick brown fox jumps over the lazy dog', $result);
+
+		$result = $this->Text->tail($text2, 10);
+		$this->assertEquals('...;mpfung', $result);
+
+		$result = $this->Text->tail($text2, 10, array('exact' => false));
+		$this->assertEquals('...', $result);
+
+		$result = $this->Text->tail($text3, 255);
+		$this->assertEquals($text3, $result);
+
+		$result = $this->Text->tail($text3, 21);
+		$this->assertEquals('...á dicho la verdad?', $result);
+
+		$result = $this->Text->tail($text4, 25);
+		$this->assertEquals('...a R' . chr(195) . chr(169) . 'publique de France', $result);
+
+		$result = $this->Text->tail($text5, 10);
+		$this->assertEquals('...цчшщъыь', $result);
+
+		$result = $this->Text->tail($text5, 6, array('ellipsis' => ''));
+		$this->assertEquals('чшщъыь', $result);
 	}
 
 /**
