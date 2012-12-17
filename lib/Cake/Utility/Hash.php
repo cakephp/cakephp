@@ -698,6 +698,17 @@ class Hash {
  * Apply a callback to a set of extracted values using `$function`.
  * The function will get the extracted values as the first argument.
  *
+ * ### Example
+ *
+ * You can easily count the results of an extract using apply().
+ * For example to count the comments on an Article:
+ *
+ * `$count = Hash::apply($data, 'Article.Comment.{n}', 'count');`
+ *
+ * You could also use a function like `array_sum` to sum the results.
+ *
+ * `$total = Hash::apply($data, '{n}.Item.price', 'array_sum');`
+ *
  * @param array $data The data to reduce.
  * @param string $path The path to extract from $data.
  * @return mixed The results of the applied method.
