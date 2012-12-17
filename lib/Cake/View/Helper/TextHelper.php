@@ -236,19 +236,19 @@ class TextHelper extends AppHelper {
  * @return string The text with proper <p> tags
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoParagraph
  */
-  public static function autoParagraph($text) {
-    if ( trim($text) !== '' ) {
-      $text = preg_replace('|<br />\s*<br />|', "\n\n", $text . "\n");
-      $text = preg_replace("/\n\n+/", "\n\n", str_replace(array("\r\n", "\r"), "\n", $text));
-      $texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);
-      $text = '';
-      foreach ( $texts as $txt ) {
-          $text .= '<p>' . nl2br(trim($txt, "\n")) . "</p>\n";
-      }
-      $text = preg_replace('|<p>\s*</p>|', '', $text);
-    }
-    return $text;
-  }
+	public static function autoParagraph($text) {
+		if (trim($text) !== '') {
+			$text = preg_replace('|<br />\s*<br />|', "\n\n", $text . "\n");
+			$text = preg_replace("/\n\n+/", "\n\n", str_replace(array("\r\n", "\r"), "\n", $text));
+			$texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);
+			$text = '';
+			foreach ($texts as $txt) {
+				$text .= '<p>' . nl2br(trim($txt, "\n")) . "</p>\n";
+			}
+			$text = preg_replace('|<p>\s*</p>|', '', $text);
+		}
+		return $text;
+	}
   
 /**
  * @see String::stripLinks()
