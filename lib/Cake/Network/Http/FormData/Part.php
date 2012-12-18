@@ -22,4 +22,97 @@ namespace Cake\Network\Http\FormData;
  */
 class Part {
 
+/**
+ * Name of the value.
+ *
+ * @var string
+ */
+	protected $_name;
+
+/**
+ * Value to send.
+ *
+ * @var string
+ */
+	protected $_value;
+
+/**
+ * Content type to use
+ *
+ * @var string
+ */
+	protected $_type;
+
+/**
+ * Disposition to send
+ *
+ * @var string
+ */
+	protected $_disposition;
+
+/**
+ * Filename to send if using files.
+ *
+ * @var string
+ */
+	protected $_filename;
+
+/**
+ * Constructor
+ *
+ * @param string $name The name of the data.
+ * @param string $value The value of the data.
+ * @param string $disposition The type of disposition to use, defaults to form-data.
+ * @return void
+ */
+	public function __construct($name, $value, $disposition = 'form-data') {
+		$this->_name = $name;
+		$this->_value = $value;
+		$this->_disposition = $disposition;
+	}
+
+/**
+ * Get/set the filename.
+ *
+ * @param null|string $filename Use null to get/string to set.
+ * @return mixed
+ */
+	public function filename($filename = null) {
+		if ($filename === null) {
+			return $this->_filename;
+		}
+		$this->_filename = $filename;
+	}
+
+/**
+ * Get/set the content type.
+ *
+ * @param null|string $type Use null to get/string to set.
+ * @return mixed
+ */
+	public function contentType($type) {
+		if ($type === null) {
+			return $this->_type;
+		}
+		$this->_type = $type;
+	}
+
+/**
+ * Convert the part into a string.
+ *
+ * Creates a string suitable for use in HTTP requests.
+ *
+ * @return string
+ */
+	public function __toString() {
+		$out = '';
+		$out .= sprintf('Content-Disposition: %s; name="%s"', $this->_disposition, $this->_name);
+		if ($this->_filename) {
+			$out .= '; filename="' . $this->_filename . '"';
+		}
+		$out .= "\r\n\r\n";
+		$out .= (string)$this->_value;
+		return $out;
+	}
+
 }
