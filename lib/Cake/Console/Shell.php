@@ -672,10 +672,10 @@ class Shell extends Object {
 			$File->write($data);
 			$this->out(__d('cake_console', '<success>Wrote</success> `%s`', $path));
 			return true;
-		} else {
-			$this->err(__d('cake_console', '<error>Could not write to `%s`</error>.', $path), 2);
-			return false;
 		}
+		
+		$this->err(__d('cake_console', '<error>Could not write to `%s`</error>.', $path), 2);
+		return false;
 	}
 
 /**
