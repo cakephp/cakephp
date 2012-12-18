@@ -167,18 +167,10 @@ class Shell extends Object {
 		}
 		$this->Tasks = new TaskCollection($this);
 
-		$this->stdout = $stdout;
-		$this->stderr = $stderr;
-		$this->stdin = $stdin;
-		if (!$this->stdout) {
-			$this->stdout = new ConsoleOutput('php://stdout');
-		}
-		if (!$this->stderr) {
-			$this->stderr = new ConsoleOutput('php://stderr');
-		}
-		if (!$this->stdin) {
-			$this->stdin = new ConsoleInput('php://stdin');
-		}
+		$this->stdout = $stdout ?: new ConsoleOutput('php://stdout');
+		$this->stderr = $stderr ?: new ConsoleOutput('php://stderr');
+		$this->stdin = $stdin ?: new ConsoleInput('php://stdin');
+
 		$this->_useLogger();
 		$parent = get_parent_class($this);
 		if ($this->tasks !== null && $this->tasks !== false) {
