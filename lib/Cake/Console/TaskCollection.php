@@ -63,14 +63,15 @@ class TaskCollection extends ObjectCollection {
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
+
 		$taskClass = $name . 'Task';
 		App::uses($taskClass, $plugin . 'Console/Command/Task');
-		if (!class_exists($taskClass)) {
-			if (!class_exists($taskClass)) {
-				throw new MissingTaskException(array(
-					'class' => $taskClass
-				));
-			}
+
+		$exists = class_exists($taskClass);
+		if (!$exists) {
+			throw new MissingTaskException(array(
+				'class' => $taskClass
+			));
 		}
 
 		$this->_loaded[$name] = new $taskClass(
