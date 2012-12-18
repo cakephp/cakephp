@@ -230,8 +230,8 @@ class Shell extends Object {
  * @return boolean
  */
 	protected function _loadModels() {
-		if ($this->uses === null || $this->uses === false || empty($this->uses)) {
-			return;
+		if (empty($this->uses)) {
+			return false;
 		}
 		App::uses('ClassRegistry', 'Utility');
 
