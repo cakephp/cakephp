@@ -315,6 +315,11 @@ class PaginatorHelper extends AppHelper {
 
 		if (empty($title)) {
 			$title = $key;
+
+			if (strpos($title, '.') !== false) {
+				$title = str_replace('.', ' ', $title);
+			}
+
 			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
 		}
 		$dir = isset($options['direction']) ? $options['direction'] : 'asc';
