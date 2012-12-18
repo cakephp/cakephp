@@ -230,27 +230,25 @@ class Shell extends Object {
  * @return boolean
  */
 	protected function _loadModels() {
-		if ($this->uses === null || $this->uses === false) {
+		if ($this->uses === null || $this->uses === false || empty($this->uses)) {
 			return;
 		}
 		App::uses('ClassRegistry', 'Utility');
 
-		if ($this->uses !== true && !empty($this->uses)) {
-			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
+		$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 
-			$modelClassName = $uses[0];
-			if (strpos($uses[0], '.') !== false) {
-				list($plugin, $modelClassName) = explode('.', $uses[0]);
-			}
-			$this->modelClass = $modelClassName;
-
-			foreach ($uses as $modelClass) {
-				list($plugin, $modelClass) = pluginSplit($modelClass, true);
-				$this->{$modelClass} = ClassRegistry::init($plugin . $modelClass);
-			}
-			return true;
+		$modelClassName = $uses[0];
+		if (strpos($uses[0], '.') !== false) {
+			list($plugin, $modelClassName) = explode('.', $uses[0]);
 		}
-		return false;
+		$this->modelClass = $modelClassName;
+
+		foreach ($uses as $modelClass) {
+			list($plugin, $modelClass) = pluginSplit($modelClass, true);
+			$this->{$modelClass} = ClassRegistry::init($plugin . $modelClass);
+		}
+
+		return true;
 	}
 
 /**
