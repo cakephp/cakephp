@@ -2424,7 +2424,7 @@ class Model extends Object implements EventListener {
 		if (!empty($keys[$this->alias])) {
 			$this->updateCounterCache($keys[$this->alias]);
 		}
-		$this->getEventManager()->dispatch(new CakeEvent('Model.afterDelete', $this));
+		$this->getEventManager()->dispatch(new Event('Model.afterDelete', $this));
 		$this->_clearCache();
 		$this->id = false;
 		return true;

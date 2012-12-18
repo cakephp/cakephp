@@ -856,7 +856,7 @@ class RouteTest extends TestCase {
  * @return void
  */
 	public function testUTF8PatternOnSection() {
-		$route = new CakeRoute(
+		$route = new Route(
 			'/:section',
 			array('plugin' => 'blogs', 'controller' => 'posts' , 'action' => 'index' ),
 			array(
@@ -866,11 +866,11 @@ class RouteTest extends TestCase {
 		);
 
 		$result = $route->parse('/%D8%A2%D9%85%D9%88%D8%B2%D8%B4');
-		$expected = array('section' => 'آموزش', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => array(), 'named' => array());
+		$expected = array('section' => 'آموزش', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => array());
 		$this->assertEquals($expected, $result);
 
 		$result = $route->parse('/weblog');
-		$expected = array('section' => 'weblog', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => array(), 'named' => array());
+		$expected = array('section' => 'weblog', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => array());
 		$this->assertEquals($expected, $result);
 	}
 

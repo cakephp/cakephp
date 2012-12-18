@@ -955,11 +955,11 @@ class ControllerTest extends TestCase {
 
 		$Controller->paginate = array('limit' => '1');
 		$this->assertEquals(array('limit' => '1'), $Controller->paginate);
-		$Controller->paginate('ControllerPost');
-		$this->assertSame($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertSame($Controller->params['paging']['ControllerPost']['pageCount'], 3);
-		$this->assertSame($Controller->params['paging']['ControllerPost']['prevPage'], false);
-		$this->assertSame($Controller->params['paging']['ControllerPost']['nextPage'], true);
+		$Controller->paginate('Post');
+		$this->assertSame($Controller->request->params['paging']['Post']['page'], 1);
+		$this->assertSame($Controller->request->params['paging']['Post']['pageCount'], 3);
+		$this->assertSame($Controller->request->params['paging']['Post']['prevPage'], false);
+		$this->assertSame($Controller->request->params['paging']['Post']['nextPage'], true);
 	}
 
 /**

@@ -1571,7 +1571,7 @@ class FormHelperTest extends TestCase {
 			'Password',
 			'/label',
 			'input' => array(
-				'type' => 'password', 'name' => 'data[Contact][password]',
+				'type' => 'password', 'name' => 'Contact[password]',
 				'id' => 'ContactPassword', 'class' => 'form-error'
 			),
 			'/div'
@@ -1612,7 +1612,7 @@ class FormHelperTest extends TestCase {
 			'Password',
 			'/label',
 			'input' => array(
-				'type' => 'password', 'name' => 'data[Contact][password]',
+				'type' => 'password', 'name' => 'Contact[password]',
 				'id' => 'ContactPassword', 'class' => 'form-error'
 			),
 			'/div'
@@ -1653,7 +1653,7 @@ class FormHelperTest extends TestCase {
 			'Password',
 			'/label',
 			'input' => array(
-				'type' => 'password', 'name' => 'data[Contact][password]',
+				'type' => 'password', 'name' => 'Contact[password]',
 				'id' => 'ContactPassword', 'class' => 'form-error'
 			),
 			'/div'
@@ -6179,7 +6179,7 @@ class FormHelperTest extends TestCase {
 
 		$this->Form->request->data['Model']['upload'] = 'no data should be set in value';
 		$result = $this->Form->file('Model.upload');
-		$this->assertTags($result, array('input' => array('type' => 'file', 'name' => 'data[Model][upload]', 'id' => 'ModelUpload')));
+		$this->assertTags($result, array('input' => array('type' => 'file', 'name' => 'Model[upload]', 'id' => 'ModelUpload')));
 	}
 
 /**

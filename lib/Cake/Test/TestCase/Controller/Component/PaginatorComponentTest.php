@@ -554,7 +554,7 @@ class PaginatorComponentTest extends TestCase {
 			'paramType' => 'named',
 		);
 		$result = $this->Paginator->mergeOptions('Post');
-		$expected = array('page' => 1, 'limit' => 500, 'maxLimit' => 150, 'paramType' => 'named');
+		$expected = array('page' => 1, 'limit' => 150, 'maxLimit' => 150, 'paramType' => 'named');
 		$this->assertEquals($expected, $result);
 	}
 
