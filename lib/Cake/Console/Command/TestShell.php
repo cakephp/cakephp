@@ -341,7 +341,7 @@ class TestShell extends Shell {
  * @param string $category
  * @param boolean $throwOnMissingFile
  * @access protected
- * @return array(type, case)
+ * @return array array(type, case)
  * @throws Exception
  */
 	protected function _mapFileToCase($file, $category, $throwOnMissingFile = true) {

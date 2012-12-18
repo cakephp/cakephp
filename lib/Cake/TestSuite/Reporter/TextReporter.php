@@ -50,7 +50,7 @@ class TextReporter extends BaseReporter {
 /**
  * Paints a failing test.
  *
- * @param $message PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
+ * @param PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
  *   the context of the other tests.
  * @return void
  */
@@ -97,7 +97,6 @@ class TextReporter extends BaseReporter {
 /**
  * Paints the title only.
  *
- * @param string $test_name Name class of test.
  * @return void
  */
 	public function paintHeader() {
@@ -179,7 +178,7 @@ class TextReporter extends BaseReporter {
  * Generates a Text summary of the coverage data.
  *
  * @param array $coverage Array of coverage data.
- * @return string
+ * @return void
  */
 	public function paintCoverage($coverage) {
 		$reporter = new TextCoverageReport($coverage, $this);

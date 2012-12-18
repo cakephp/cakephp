@@ -33,6 +33,7 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
 /**
  * Construct method
  *
+ * @param mixed $loader
  * @param array $params list of options to be used for this run
  * @throws Cake\Error\MissingTestLoaderException When a loader class could not be found.
  */
@@ -126,7 +127,7 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
 /**
  * Create a runner for the command.
  *
- * @param $loader The loader to be used for the test run.
+ * @param mixed $loader The loader to be used for the test run.
  * @return Cake\TestSuite\TestRunner
  */
 	public function getRunner($loader) {
@@ -146,6 +147,7 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
 /**
  * Handles output flag used to change printing on webrunner.
  *
+ * @param string $reporter
  * @return void
  */
 	public function handleReporter($reporter) {

@@ -19,13 +19,13 @@
 use Cake\View\View;
 ?>	</div>
 		</div>
- 		<div id="footer">
+		<div id="footer">
 			<p>
- 			<!--PLEASE USE ONE OF THE POWERED BY CAKEPHP LOGO-->
- 			<a href="http://www.cakephp.org/" target="_blank">
+			<!--PLEASE USE ONE OF THE POWERED BY CAKEPHP LOGO-->
+			<a href="http://www.cakephp.org/" target="_blank">
 				<img src="<?php echo $baseDir; ?>img/cake.power.gif" alt="CakePHP(tm) :: Rapid Development Framework" /></a>
 			</p>
- 		</div>
+		</div>
 		<?php
 			$null = null;
 			$View = new View($null, false);

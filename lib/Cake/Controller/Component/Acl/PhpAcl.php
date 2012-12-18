@@ -28,7 +28,14 @@ use Cake\Utility\Inflector;
  */
 class PhpAcl extends Object implements AclInterface {
 
+/**
+ * Constant for deny
+ */
 	const DENY = false;
+
+/**
+ * Constant for allow
+ */
 	const ALLOW = true;
 
 /**
@@ -208,6 +215,11 @@ class PhpAco {
 		'*' => '.*',
 	);
 
+/**
+ * Constructor
+ *
+ * @param array $rules Rules array
+ */
 	public function __construct(array $rules = array()) {
 		foreach (array('allow', 'deny') as $type) {
 			if (empty($rules[$type])) {
@@ -221,6 +233,7 @@ class PhpAco {
 /**
  * return path to the requested ACO with allow and deny rules attached on each level
  *
+ * @param string $aco ACO string
  * @return array
  */
 	public function path($aco) {
@@ -265,6 +278,10 @@ class PhpAco {
 /**
  * allow/deny ARO access to ARO
  *
+ * @param string $aro ARO string
+ * @param string $aco ACO string
+ * @param string $action Action string
+ * @param string $type access type
  * @return void
  */
 	public function access($aro, $aco, $action, $type = 'deny') {
@@ -351,8 +368,6 @@ class PhpAro {
 /**
  * role to resolve to when a provided ARO is not listed in
  * the internal tree
- *
- * @var string
  */
 	const DEFAULT_ROLE = 'Role/default';
 
@@ -387,6 +402,13 @@ class PhpAro {
  */
 	protected $_tree = array();
 
+/**
+ * Constructor
+ *
+ * @param array $aro
+ * @param array $map
+ * @param array $aliases
+ */
 	public function __construct(array $aro = array(), array $map = array(), array $aliases = array()) {
 		if (!empty($map)) {
 			$this->map = $map;

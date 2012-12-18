@@ -44,6 +44,9 @@ use Cake\Utility\Security;
  */
 class AuthComponent extends Component {
 
+/**
+ * Constant for 'all'
+ */
 	const ALL = 'all';
 
 /**

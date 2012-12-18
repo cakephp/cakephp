@@ -467,7 +467,6 @@ class CookieComponent extends Component {
  * Encrypts $value using public $type method in Security class
  *
  * @param string $value Value to encrypt
- * @return string encrypted string
  * @return string Encoded values
  */
 	protected function _encrypt($value) {
@@ -550,4 +549,3 @@ class CookieComponent extends Component {
 		return $array;
 	}
 }
-

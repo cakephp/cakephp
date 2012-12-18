@@ -173,6 +173,7 @@ class ValidationRule {
  * If called with no parameters it will return whether this rule
  * is configured for update operations or not.
  *
+ * @param boolean $exists Boolean to indicate if records exists
  * @return boolean
  */
 	public function isUpdate($exists = null) {
@@ -185,6 +186,9 @@ class ValidationRule {
 /**
  * Dispatches the validation rule to the given validator method
  *
+ * @param string $field Field name
+ * @param array $data Data array
+ * @param array $methods Methods list
  * @return boolean True if the rule could be dispatched, false otherwise
  */
 	public function process($field, $data, $methods) {
@@ -223,6 +227,7 @@ class ValidationRule {
 /**
  * Returns passed options for this rule
  *
+ * @param string|integer $key Array index
  * @return array
  */
 	public function getOptions($key) {
@@ -256,6 +261,8 @@ class ValidationRule {
 /**
  * Parses the rule and sets the rule and ruleParams
  *
+ * @param string $field Field name
+ * @param array $data Data array
  * @return void
  */
 	protected function _parseRule($field, $data) {

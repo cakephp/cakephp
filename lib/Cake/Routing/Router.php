@@ -165,7 +165,7 @@ class Router {
 /**
  * Validates that the passed route class exists and is a subclass of Cake Route
  *
- * @param $routeClass
+ * @param string $routeClass Route class name
  * @return string
  * @throws Cake\Error\Exception
  */
@@ -234,7 +234,7 @@ class Router {
  * it will match requests like `/posts/index` as well as requests
  * like `/posts/edit/1/foo/bar`.
  *
- * `Router::connect('/home-page', array('controller' => 'pages', 'action' => 'display', 'home'));`
+ * `Router::connect('/home-page', ['controller' => 'pages', 'action' => 'display', 'home']);`
  *
  * The above shows the use of route parameter defaults. And providing routing
  * parameters for a static route.
@@ -242,8 +242,8 @@ class Router {
  * {{{
  * Router::connect(
  *   '/:lang/:controller/:action/:id',
- *   array(),
- *   array('id' => '[0-9]+', 'lang' => '[a-z]{3}')
+ *   [],
+ *   ['id' => '[0-9]+', 'lang' => '[a-z]{3}']
  * );
  * }}}
  *
@@ -263,6 +263,19 @@ class Router {
  * - `_name` Used to define a specific name for routes.  This can be used to optimize
  *   reverse routing lookups. If undefined a name will be generated for each
  *   connected route.
+ *
+ * You can also add additional conditions for matching routes to the $defaults array.
+ * The following conditions can be used:
+ *
+ * - `[type]` Only match requests for specific content types.
+ * - `[method]` Only match requests with specific HTTP verbs.
+ * - `[server]` Only match when $_SERVER['SERVER_NAME'] matches the given value.
+ *
+ * Example of using the `[method]` condition:
+ *
+ * `Router::connect('/tasks', array('controller' => 'tasks', 'action' => 'index', '[method]' => 'GET'));`
+ *
+ * The above route will only be matched for GET requests. POST requests will fail to match this route.
  *
  * @param string $route A string describing the template of the route
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default

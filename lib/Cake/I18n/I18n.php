@@ -25,6 +25,7 @@ use Cake\Core\Plugin;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\String;
+use Cake\Model\Datasource\Session;
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -92,6 +93,11 @@ class I18n {
 		'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
 	);
 
+/**
+ * Escape string
+ *
+ * @var string
+ */
 	protected $_escape = null;
 
 /**
@@ -144,9 +150,10 @@ class I18n {
 		}
 
 		if (empty($language)) {
-			if (!empty($_SESSION['Config']['language'])) {
-				$language = $_SESSION['Config']['language'];
-			} else {
+			if (Session::started()) {
+				$language = Session::read('Config.language');
+			}
+			if (empty($language)) {
 				$language = Configure::read('Config.language');
 			}
 		}

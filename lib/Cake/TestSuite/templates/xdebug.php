@@ -25,4 +25,3 @@
 </div>
 <?php
 include __DIR__ . DS . 'footer.php';
-

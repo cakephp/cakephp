@@ -118,6 +118,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Sets the list of methods to use for validation
  *
+ * @param array $methods Methods list
  * @return void
  */
 	public function setMethods($methods) {
@@ -194,8 +195,8 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * validation errors
  *
  * @param array $data Data array to validate
- * @param boolean $isUpdate Is record being created or updated
- * @return array List of validation errors for this field
+ * @param boolean $isUpdate Is record being updated or created
+ * @return array list of validation errors for this field
  */
 	public function validate($data, $isUpdate = false) {
 		$this->reset();

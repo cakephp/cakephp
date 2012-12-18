@@ -205,7 +205,7 @@ class Scaffold {
  * Renders an add or edit action for scaffolded model.
  *
  * @param string $action Action (add or edit)
- * @return mixed A rendered view with a form to edit or add a record in the Models database table
+ * @return void
  */
 	protected function _scaffoldForm($action = 'edit') {
 		$this->controller->viewVars['scaffoldFields'] = array_merge(
@@ -357,7 +357,7 @@ class Scaffold {
  * `public $scaffold;` is placed in the controller's class definition.
  *
  * @param Cake\Network\Request $request Request object for scaffolding
- * @return mixed A rendered view of scaffold action, or showing the error
+ * @return void
  * @throws Cake\Error\MissingActionException When methods are not scaffolded.
  * @throws Cake\Error\MissingDatabaseException When the database connection is undefined.
  */
@@ -439,8 +439,14 @@ class Scaffold {
 				$associations[$type][$assocKey]['foreignKey'] =
 					$assocData['foreignKey'];
 
+				list($plugin, $model) = pluginSplit($assocData['className']);
+				if ($plugin) {
+					$plugin = Inflector::underscore($plugin);
+				}
+				$associations[$type][$assocKey]['plugin'] = $plugin;
+
 				$associations[$type][$assocKey]['controller'] =
-					Inflector::pluralize(Inflector::underscore($assocData['className']));
+					Inflector::pluralize(Inflector::underscore($model));
 
 				if ($type == 'hasAndBelongsToMany') {
 					$associations[$type][$assocKey]['with'] = $assocData['with'];

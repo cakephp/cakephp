@@ -229,6 +229,9 @@ class SetTest extends TestCase {
  * @return void
  */
 	public function testSort() {
+		$result = Set::sort(array(), '{n}.name', 'asc');
+		$this->assertEquals(array(), $result);
+
 		$a = array(
 			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
 			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))

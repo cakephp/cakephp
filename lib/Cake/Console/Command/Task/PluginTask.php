@@ -171,6 +171,7 @@ class PluginTask extends Shell {
 /**
  * Update the app's bootstrap.php file.
  *
+ * @param string $plugin Name of plugin
  * @return void
  */
 	protected function _modifyBootstrap($plugin) {
@@ -187,7 +188,7 @@ class PluginTask extends Shell {
  * find and change $this->path to the user selection
  *
  * @param array $pathOptions
- * @return string plugin path
+ * @return void
  */
 	public function findPath($pathOptions) {
 		$valid = false;

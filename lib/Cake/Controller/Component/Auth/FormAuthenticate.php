@@ -67,7 +67,7 @@ class FormAuthenticate extends BaseAuthenticate {
  *
  * @param Cake\Network\Request $request The request that contains login information.
  * @param Cake\Network\Response $response Unused response object.
- * @return mixed.  False on login failure.  An array of User data on success.
+ * @return mixed False on login failure.  An array of User data on success.
  */
 	public function authenticate(Request $request, Response $response) {
 		$userModel = $this->settings['userModel'];

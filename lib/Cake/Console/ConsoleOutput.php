@@ -45,6 +45,7 @@ namespace Cake\Console;
  * @package       Cake.Console
  */
 class ConsoleOutput {
+
 /**
  * Raw output constant - no modification of output text.
  */
@@ -75,7 +76,7 @@ class ConsoleOutput {
 /**
  * The current output type. Manipulated with ConsoleOutput::outputAs();
  *
- * @var integer.
+ * @var integer
  */
 	protected $_outputAs = self::COLOR;
 

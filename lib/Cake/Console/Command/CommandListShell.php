@@ -104,7 +104,7 @@ class CommandListShell extends Shell {
  * @param string $type
  * @param array $shells
  * @param array $shellList
- * @return array
+ * @return void
  */
 	protected function _appendShells($type, $shells, &$shellList) {
 		foreach ($shells as $shell) {

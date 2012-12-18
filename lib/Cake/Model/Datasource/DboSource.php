@@ -73,7 +73,7 @@ class DboSource extends DataSource {
  * Whether or not to cache the results of DboSource::name() and DboSource::conditions()
  * into the memory cache.  Set to false to disable the use of the memory cache.
  *
- * @var boolean.
+ * @var boolean
  */
 	public $cacheMethods = true;
 
@@ -2582,7 +2582,11 @@ class DboSource extends DataSource {
 		$value = $this->value($value, $type);
 
 		if (!$virtual && $key !== '?') {
-			$isKey = (strpos($key, '(') !== false || strpos($key, ')') !== false);
+			$isKey = (
+				strpos($key, '(') !== false ||
+				strpos($key, ')') !== false ||
+				strpos($key, '|') !== false
+			);
 			$key = $isKey ? $this->_quoteFields($key) : $this->name($key);
 		}
 
@@ -2946,7 +2950,7 @@ class DboSource extends DataSource {
  *
  * @param string $table The name of the table to update.
  * @param string $column The column to use when reseting the sequence value.
- * @return boolean success.
+ * @return boolean|void success.
  */
 	public function resetSequence($table, $column) {
 	}

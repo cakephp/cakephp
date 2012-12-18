@@ -633,6 +633,29 @@ class ViewTest extends TestCase {
 	}
 
 /**
+ * testElementExists method
+ *
+ * @return void
+ */
+	public function testElementExists() {
+		$result = $this->View->elementExists('test_element');
+		$this->assertTrue($result);
+
+		$result = $this->View->elementExists('TestPlugin.plugin_element');
+		$this->assertTrue($result);
+
+		$result = $this->View->elementExists('non_existent_element');
+		$this->assertFalse($result);
+
+		$result = $this->View->elementExists('TestPlugin.element');
+		$this->assertFalse($result);
+
+		$this->View->plugin = 'TestPlugin';
+		$result = $this->View->elementExists('test_plugin_element');
+		$this->assertTrue($result);
+	}
+
+/**
  * testElement method
  *
  * @return void
@@ -650,21 +673,39 @@ class ViewTest extends TestCase {
 		$result = $this->View->element('TestPlugin.plugin_element');
 		$this->assertEquals('this is the plugin element using params[plugin]', $result);
 
-		$result = $this->View->element('test_plugin.plugin_element');
-		$this->assertRegExp('/Not Found:/', $result);
-		$this->assertRegExp('/test_plugin.plugin_element/', $result);
-
 		$this->View->plugin = 'TestPlugin';
 		$result = $this->View->element('test_plugin_element');
 		$this->assertEquals('this is the test set using View::$plugin plugin element', $result);
+	}
 
+/**
+ * testElementInexistent method
+ *
+ * @expectedException PHPUnit_Framework_Error_Notice
+ * @return void
+ */
+	public function testElementInexistent() {
 		$result = $this->View->element('non_existent_element');
-		$this->assertRegExp('/Not Found:/', $result);
-		$this->assertRegExp('/non_existent_element/', $result);
+	}
 
+/**
+ * testElementInexistent2 method
+ *
+ * @expectedException PHPUnit_Framework_Error_Notice
+ * @return void
+ */
+	public function testElementInexistent2() {
 		$result = $this->View->element('TestPlugin.plugin_element', array(), array('plugin' => 'test_plugin'));
-		$this->assertRegExp('/Not Found:/', $result);
-		$this->assertRegExp('/TestPlugin.plugin_element/', $result);
+	}
+
+/**
+ * testElementInexistent3 method
+ *
+ * @expectedException PHPUnit_Framework_Error_Notice
+ * @return void
+ */
+	public function testElementInexistent3() {
+		$result = $this->View->element('test_plugin.plugin_element');
 	}
 
 /**
@@ -1233,6 +1274,42 @@ class ViewTest extends TestCase {
 
 		$result = $this->View->fetch('test');
 		$this->assertEquals('Block content', $result);
+	}
+
+/**
+ * Test block with startIfEmpty
+ *
+ * @return void
+ */
+	public function testBlockCaptureStartIfEmpty() {
+		$this->View->startIfEmpty('test');
+		echo "Block content 1";
+		$this->View->end();
+
+		$this->View->startIfEmpty('test');
+		echo "Block content 2";
+		$this->View->end();
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Block content 1', $result);
+	}
+
+/**
+ * Test block with startIfEmpty
+ *
+ * @return void
+ */
+	public function testBlockCaptureStartStartIfEmpty() {
+		$this->View->start('test');
+		echo "Block content 1";
+		$this->View->end();
+
+		$this->View->startIfEmpty('test');
+		echo "Block content 2";
+		$this->View->end();
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Block content 1', $result);
 	}
 
 /**

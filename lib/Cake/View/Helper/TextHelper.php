@@ -55,6 +55,8 @@ class TextHelper extends Helper {
 
 /**
  * String utility instance
+ *
+ * @var stdClass
  */
 	protected $_engine;
 

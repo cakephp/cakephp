@@ -82,4 +82,3 @@ class MailTransportTest extends TestCase {
 	}
 
 }
-

@@ -28,6 +28,11 @@ require_once 'PHPUnit/TextUI/ResultPrinter.php';
  */
 class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 
+/**
+ * Headers sent
+ *
+ * @var boolean
+ */
 	protected $_headerSent = false;
 
 /**
@@ -117,13 +122,15 @@ class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 		return '';
 	}
 
+/**
+ * Paint result
+ *
+ * @param \PHPUnit_Framework_TestResult $result
+ */
 	public function printResult(\PHPUnit_Framework_TestResult $result) {
 		$this->paintFooter($result);
 	}
 
-	public function paintResult(\PHPUnit_Framework_TestResult $result) {
-		$this->paintFooter($result);
-	}
 
 /**
  * An error occurred.

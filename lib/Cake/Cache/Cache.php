@@ -73,33 +73,11 @@ use Cake\Utility\Inflector;
  * - `user` Used by Xcache.  Username for XCache
  * - `password` Used by Xcache/Redis.  Password for XCache/Redis
  *
- * ### Removing existing engines
- *
- * To remove an existing cache engine you can use:
- *
- * {{{
- * Cache::drop($configName);
- * }}}
- *
- * When an engine is dropped the connected engine will be deleted.
- *
- * ### Reconfiguring an engine
- *
- * If you need to change a connected engine at runtime, you can do one of two things.
- * Cache::set() will allow you to temporarily reconfigure an engine for one write operation.
- * If you need to permanetly alter a cache engine's configuration at runtime, you should drop it first 
- * and then update the configuration in Configure:
- *
- * {{{
- * Cache::drop('fast_cache');
- * Configure::write('Cache.fast_cache', [...]);
- * }}}
- *
- * Reconnecting an engine will reset any data stored in the engine instance as it
- * will be recreated.
- *
- * @package       Cake.Cache
- * @see app/Config/cache.php for configuration settings
+ * @see app/Config/core.php for configuration settings
+ * @param string $name Name of the configuration
+ * @param array $settings Optional associative array of settings passed to the engine
+ * @return array array(engine, settings) on success, false on failure
+ * @throws CacheException
  */
 class Cache {
 

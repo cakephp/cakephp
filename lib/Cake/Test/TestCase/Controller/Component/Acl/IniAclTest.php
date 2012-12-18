@@ -70,4 +70,3 @@ class IniAclTest extends TestCase {
 		$this->assertTrue($Ini->check($user, 'posts'));
 	}
 }
-

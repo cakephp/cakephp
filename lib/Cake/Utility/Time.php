@@ -86,6 +86,8 @@ class Time {
 
 /**
  * Temporary variable containing timestamp value, used internally convertSpecifiers()
+ *
+ * @var integer
  */
 	protected static $_time = null;
 
@@ -93,6 +95,9 @@ class Time {
  * Magic set method for backward compatibility.
  *
  * Used by TimeHelper to modify static variables in this class
+ *
+ * @param string $name Variable name
+ * @param mixes $value Variable value
  */
 	public function __set($name, $value) {
 		switch ($name) {
@@ -106,8 +111,11 @@ class Time {
 
 /**
  * Magic set method for backward compatibility.
+ * 
+ * Used by TimeHelper to get static variables in this class.
  *
- * Used by TimeHelper to get static variables in Cake Time
+ * @param string $name Variable name
+ * @return mixed
  */
 	public function __get($name) {
 		switch ($name) {

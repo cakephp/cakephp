@@ -174,6 +174,7 @@ class HtmlReporter extends BaseReporter {
 /**
  * Paints a code coverage report.
  *
+ * @param array $coverage
  * @return void
  */
 	public function paintCoverage(array $coverage) {
@@ -245,6 +246,7 @@ class HtmlReporter extends BaseReporter {
  *
  * @param PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
  *   the context of the other tests.
+ * @param mixed $test
  * @return void
  */
 	public function paintFail($message, $test) {
@@ -297,6 +299,7 @@ class HtmlReporter extends BaseReporter {
  * Paints a PHP exception.
  *
  * @param Exception $exception Exception to display.
+ * @param mixed $test
  * @return void
  */
 	public function paintException($message, $test) {

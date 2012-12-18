@@ -151,7 +151,7 @@ class NumberHelper extends Helper {
 	}
 
 /**
- * @see: CakeNumber::defaultCurrency()
+ * @see CakeNumber::defaultCurrency()
  *
  * @param string $currency The currency to be used in the future.
  * @return void

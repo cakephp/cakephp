@@ -45,11 +45,7 @@ class MailTransport extends AbstractTransport {
 		$headers = $this->_headersToString($headers, $eol);
 		$message = implode($eol, $email->message());
 
-		$params = null;
-		if (!ini_get('safe_mode')) {
-			$params = isset($this->_config['additionalParameters']) ? $this->_config['additionalParameters'] : null;
-		}
-
+		$params = isset($this->_config['additionalParameters']) ? $this->_config['additionalParameters'] : null;
 		$this->_mail($to, $email->subject(), $message, $headers, $params);
 		return array('headers' => $headers, 'message' => $message);
 	}
@@ -70,7 +66,6 @@ class MailTransport extends AbstractTransport {
 		if (!@mail($to, $subject, $message, $headers, $params)) {
 			throw new Error\SocketException(__d('cake_dev', 'Could not send email.'));
 		}
-		//@codingStandardsIgnoreEnd
 	}
 
 }

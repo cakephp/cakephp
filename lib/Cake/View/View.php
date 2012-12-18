@@ -233,6 +233,7 @@ class View extends Object {
 /**
  * Element cache settings
  *
+ * @var array
  * @see View::_elementCache();
  * @see View::_renderElement
  */
@@ -315,8 +316,19 @@ class View extends Object {
  */
 	protected $_eventManagerConfigured = false;
 
+/**
+ * Constant for view file type 'view'
+ */
 	const TYPE_VIEW = 'view';
+
+/**
+ * Constant for view file type 'element'
+ */
 	const TYPE_ELEMENT = 'element';
+
+/**
+ * Constant for view file type 'layout'
+ */
 	const TYPE_LAYOUT = 'layout';
 
 /**
@@ -384,6 +396,7 @@ class View extends Object {
  * - `plugin` - Load an element from a specific plugin.  This option is deprecated, see below.
  * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
  *   Defaults to false.
+ * - `ignoreMissing` - Used to allow missing elements. Set to true to not trigger notices.
  * @return string Rendered Element
  * @deprecated The `$options['plugin']` is deprecated and will be removed in CakePHP 3.0.  Use
  *   `Plugin.element_name` instead.
@@ -411,11 +424,24 @@ class View extends Object {
 			return $this->_renderElement($file, $data, $options);
 		}
 
-		$file = 'Elements/' . $name . $this->ext;
-
-		if (Configure::read('debug') > 0) {
-			return __d('cake_dev', 'Element Not Found: %s', $file);
+		if (empty($options['ignoreMissing'])) {
+			list ($plugin, $name) = pluginSplit($name, true);
+			$name = str_replace('/', DS, $name);
+			$file = $plugin . 'Elements' . DS . $name . $this->ext;
+			trigger_error(__d('cake_dev', 'Element Not Found: %s', $file), E_USER_NOTICE);
 		}
+	}
+
+/**
+ * Checks if an element exists
+ *
+ * @param string $name Name of template file in the /app/View/Elements/ folder,
+ *   or `MyPlugin.template` to check the template element from MyPlugin.  If the element
+ *   is not found in the plugin, the normal view path cascade will be searched.
+ * @return boolean Success
+ */
+	public function elementExists($name) {
+		return (bool)$this->_getElementFilename($name);
 	}
 
 /**
@@ -612,7 +638,18 @@ class View extends Object {
 	}
 
 /**
- * Append to an existing or new block. Appending to a new
+ * Start capturing output for a 'block' if it has no content
+ *
+ * @param string $name The name of the block to capture for.
+ * @return void
+ * @see ViewBlock::startIfEmpty()
+ */
+	public function startIfEmpty($name) {
+		return $this->Blocks->startIfEmpty($name);
+	}
+
+/**
+ * Append to an existing or new block.  Appending to a new
  * block will create the block.
  *
  * @param string $name Name of the block
@@ -658,7 +695,8 @@ class View extends Object {
  * empty or undefined '' will be returned.
  *
  * @param string $name Name of the block
- * @return string The block content or $default if the block does not exist.
+ * @param string $default Default text
+ * @return string $default The block content or $default if the block does not exist.
  * @see ViewBlock::get()
  */
 	public function fetch($name, $default = '') {
@@ -1106,8 +1144,9 @@ class View extends Object {
  * Checks if an element is cached and returns the cached data if present
  *
  * @param string $name Element name
- * @param string $plugin Plugin name
+ * @param string $data Data
  * @param array $options Element options
+ * @return string|null
  */
 	protected function _elementCache($name, $data, $options) {
 		$plugin = null;
@@ -1140,6 +1179,7 @@ class View extends Object {
  * @param string $file Element file path
  * @param array $data Data to render
  * @param array $options Element options
+ * @return string
  */
 	protected function _renderElement($file, $data, $options) {
 		if (!$this->_helpersLoaded) {

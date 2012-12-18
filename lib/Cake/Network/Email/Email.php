@@ -32,6 +32,7 @@ use Cake\View\View;
  * @package       Cake.Network.Email
  */
 class Email {
+
 /**
  * Default X-Mailer
  *
@@ -84,7 +85,7 @@ class Email {
 /**
  * The sender email
  *
- * @var array();
+ * @var array
  */
 	protected $_sender = array();
 

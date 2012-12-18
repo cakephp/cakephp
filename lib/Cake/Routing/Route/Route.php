@@ -254,7 +254,7 @@ class Route {
 		}
 		list($url, $ext) = $this->_parseExtension($url);
 
-		if (!preg_match($this->_compiledRoute, $url, $route)) {
+		if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
 			return false;
 		}
 		foreach ($this->defaults as $key => $val) {

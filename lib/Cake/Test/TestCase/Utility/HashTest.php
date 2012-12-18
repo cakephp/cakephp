@@ -662,6 +662,9 @@ class HashTest extends TestCase {
 
 		$result = Hash::extract($data, '1.Article.title');
 		$this->assertEquals(array('Second Article'), $result);
+
+		$result = Hash::extract(array(false), '{n}.Something.another_thing');
+		$this->assertEquals(array(), $result);
 	}
 
 /**
@@ -931,6 +934,9 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testSort() {
+		$result = Hash::sort(array(), '{n}.name', 'asc');
+		$this->assertEquals(array(), $result);
+
 		$a = array(
 			0 => array(
 				'Person' => array('name' => 'Jeff'),
@@ -2160,6 +2166,18 @@ class HashTest extends TestCase {
 			)
 		);
 		$this->assertEquals($result, $expected);
+
+		$data = array('a.b.100.a' => null, 'a.b.200.a' => null);
+		$expected = array(
+			'a' => array(
+				'b' => array(
+					100 => array('a' => null),
+					200 => array('a' => null)
+				)
+			)
+		);
+		$result = Hash::expand($data);
+		$this->assertEquals($expected, $result);
 	}
 
 }

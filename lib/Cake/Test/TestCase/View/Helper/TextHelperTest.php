@@ -343,4 +343,3 @@ class TextHelperTest extends TestCase {
 	}
 
 }
-
