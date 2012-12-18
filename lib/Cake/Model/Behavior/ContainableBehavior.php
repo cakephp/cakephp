@@ -109,9 +109,7 @@ class ContainableBehavior extends ModelBehavior {
 		}
 		$noContain = $noContain && empty($contain);
 
-		if (
-			$noContain || empty($contain) || (isset($contain[0]) && $contain[0] === null)
-		) {
+		if ($noContain || empty($contain)) {
 			if ($noContain) {
 				$query['recursive'] = -1;
 			}
