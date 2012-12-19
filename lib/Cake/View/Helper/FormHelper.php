@@ -2607,7 +2607,8 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Sets field defaults and adds field to form security input hash
+ * Sets field defaults and adds field to form security input hash.
+ * Will also add a 'form-error' class if the field contains validation errors.
  *
  * ### Options
  *
