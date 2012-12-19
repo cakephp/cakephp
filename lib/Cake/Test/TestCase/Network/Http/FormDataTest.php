@@ -122,8 +122,66 @@ class FormDataTest extends TestCase {
 
 /**
  * Test adding a part with a file in it.
+ *
+ * @return void
+ */
+	public function testAddArrayWithFile() {
+		$this->markTestIncomplete();
+	}
+
+/**
+ * Test adding a part with a file in it.
+ *
+ * @return void
  */
 	public function testAddFile() {
+		$file = CAKE . 'VERSION.txt';
+		$contents = file_get_contents($file);
 
+		$data = new FormData();
+		$data->add('upload', '@' . $file);
+		$boundary = $data->boundary();
+		$result = (string)$data;
+
+		$expected = array(
+			'--' . $boundary,
+			'Content-Disposition: form-data; name="upload"; filename="VERSION.txt"',
+			'',
+			$contents,
+			'--' . $boundary . '--',
+			'',
+			''
+		);
+		$this->assertEquals(implode("\r\n", $expected), $result);
 	}
+
+/**
+ * Test adding a part with a filehandle.
+ *
+ * @return void
+ */
+	public function testAddFileHandle() {
+		$file = CAKE . 'VERSION.txt';
+		$fh = fopen($file, 'r');
+
+		$data = new FormData();
+		$data->add('upload', $fh);
+		$boundary = $data->boundary();
+		$result = (string)$data;
+
+		rewind($fh);
+		$contents = stream_get_contents($fh);
+
+		$expected = array(
+			'--' . $boundary,
+			'Content-Disposition: form-data; name="upload"',
+			'',
+			$contents,
+			'--' . $boundary . '--',
+			'',
+			''
+		);
+		$this->assertEquals(implode("\r\n", $expected), $result);
+	}
+
 }

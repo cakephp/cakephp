@@ -57,6 +57,7 @@ class FormData implements \Countable {
  *
  * @param string $name The name of the part.
  * @param string $value The value to add.
+ * @return Cake\Network\Http\FormData\Part
  */
 	public function newPart($name, $value) {
 		return new Part($name, $value);
@@ -88,8 +89,28 @@ class FormData implements \Countable {
 		return $this;
 	}
 
+/**
+ * Add either a file reference (string starting with @)
+ * or a file handle.
+ *
+ * @param string $name The name to use.
+ * @param mixed $value Either a string filename, or a filehandle.
+ * @return void
+ */
 	public function addFile($name, $value) {
-
+		$filename = false;
+		if (is_resource($value)) {
+			$content = stream_get_contents($value);
+		} else {
+			$value = substr($value, 1);
+			$filename = basename($value);
+			$content = file_get_contents($value);
+		}
+		$part = $this->newPart($name, $content);
+		if ($filename) {
+			$part->filename($filename);
+		}
+		return $part;
 	}
 
 /**
@@ -97,6 +118,7 @@ class FormData implements \Countable {
  *
  * @param string $name The name to use.
  * @param mixed $value The value to add.
+ * @return void
  */
 	public function addRecursive($name, $value) {
 		foreach ($value as $key => $value) {
