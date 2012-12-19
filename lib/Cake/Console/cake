@@ -21,6 +21,10 @@
 # Canonicalize by following every symlink of the given name recursively
 canonicalize() {
 	NAME=$1
+	if [ -f "$NAME" ]
+	then
+		NAME=$(cd -P -- "$(dirname -- "$NAME")" && pwd -P)/$(basename -- "$NAME")
+	fi
 	while [ -h "$NAME" ]; do
 		DIR=$(dirname -- "$NAME")
 		SYM=$(readlink "$NAME")
