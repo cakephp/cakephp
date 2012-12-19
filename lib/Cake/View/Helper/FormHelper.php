@@ -833,8 +833,11 @@ class FormHelper extends AppHelper {
  */
 	public function inputs($fields = null, $blacklist = null, $options = array()) {
 		$fieldset = $legend = true;
+		$modelFields = array();
 		$model = $this->model();
-		$modelFields = array_keys($this->_introspectModel($model, 'fields'));
+		if ($model) {
+			$modelFields = array_keys($this->_introspectModel($model, 'fields'));
+		}
 		if (is_array($fields)) {
 			if (array_key_exists('legend', $fields) && !in_array('legend', $modelFields)) {
 				$legend = $fields['legend'];

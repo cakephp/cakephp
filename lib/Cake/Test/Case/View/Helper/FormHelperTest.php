@@ -3075,6 +3075,25 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create('Contact');
 		$result = $this->Form->inputs(null, null, array('legend' => 'Hello'));
 		$this->assertTags($result, $expected);
+		$this->Form->end();
+
+		$this->Form->create(false);
+		$expected = array(
+			'fieldset' => array(),
+			array('div' => array('class' => 'input text')),
+			'label' => array('for' => 'foo'),
+			'Foo',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[foo]', 'id' => 'foo'),
+			'*/div',
+			'/fieldset'
+		);
+		$result = $this->Form->inputs(
+			array('foo' => array('type' => 'text')),
+			array(),
+			array('legend' => false)
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
