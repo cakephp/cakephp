@@ -20,10 +20,11 @@
 
 # Canonicalize by following every symlink of the given name recursively
 canonicalize() {
-	NAME=$1
+	NAME="$1"
 	if [ -f "$NAME" ]
 	then
-		NAME=$(cd -P -- "$(dirname -- "$NAME")" && pwd -P)/$(basename -- "$NAME")
+		DIR=$(dirname -- "$NAME")
+		NAME=$(cd -P "$DIR" && pwd -P)/$(basename -- "$NAME")
 	fi
 	while [ -h "$NAME" ]; do
 		DIR=$(dirname -- "$NAME")
@@ -33,9 +34,8 @@ canonicalize() {
 	echo "$NAME"
 }
 
-CONSOLE=$(dirname $(canonicalize "$0"))
+CONSOLE=$(dirname -- "$(canonicalize "$0")")
 APP=`pwd`
 
-exec php -q $CONSOLE/cake.php -working "$APP" "$@"
-
-exit;
+exec php -q "$CONSOLE"/cake.php -working "$APP" "$@"
+exit
