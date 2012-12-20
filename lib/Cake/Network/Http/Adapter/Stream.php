@@ -19,4 +19,11 @@ namespace Cake\Network\Http\Adapter;
  *
  */
 class Stream {
+
+	public function __construct() {
+	}
+
+	public function send($request, $options) {
+	}
+
 }
