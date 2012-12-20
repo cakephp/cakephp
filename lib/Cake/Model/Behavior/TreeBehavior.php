@@ -52,7 +52,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @var array
  */
-	protected $_deletedRow = null;
+	protected $_deletedRow = array();
 
 /**
  * Initiate Tree behavior
@@ -129,7 +129,7 @@ class TreeBehavior extends ModelBehavior {
 			'fields' => array($Model->escapeField($left), $Model->escapeField($right)),
 			'recursive' => -1));
 		if ($data) {
-			$this->_deletedRow = current($data);
+			$this->_deletedRow[$Model->alias] = current($data);
 		}
 		return true;
 	}
@@ -144,8 +144,8 @@ class TreeBehavior extends ModelBehavior {
  */
 	public function afterDelete(Model $Model) {
 		extract($this->settings[$Model->alias]);
-		$data = $this->_deletedRow;
-		$this->_deletedRow = null;
+		$data = $this->_deletedRow[$Model->alias];
+		$this->_deletedRow[$Model->alias] = null;
 
 		if (!$data[$right] || !$data[$left]) {
 			return true;
