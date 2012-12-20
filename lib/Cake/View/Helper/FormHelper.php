@@ -303,9 +303,10 @@ class FormHelper extends AppHelper {
  *   can be overridden when calling input()
  * - `encoding` Set the accept-charset encoding for the form.  Defaults to `Configure::read('App.encoding')`
  *
- * @param string|array $model The model object which the form is being defined for. Should
- *   include the plugin name for plugin forms.  e.g. `ContactManager.Contact`.
+ * @param mixed $model The model name for which the form is being defined. Should
+ *   include the plugin name for plugin models. e.g. `ContactManager.Contact`.
  *   If an array is passed and $options argument is empty, the array will be used as options.
+ *   If `false` no model is used.
  * @param array $options An array of html attributes and options.
  * @return string An formatted opening FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
@@ -2746,7 +2747,8 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Sets field defaults and adds field to form security input hash
+ * Sets field defaults and adds field to form security input hash.
+ * Will also add a 'form-error' class if the field contains validation errors.
  *
  * ### Options
  *

@@ -1317,10 +1317,8 @@ class Model extends Object implements CakeEventListener {
 		if ($this->useTable !== false && (!is_array($this->_schema) || $field === true)) {
 			$db = $this->getDataSource();
 			$db->cacheSources = ($this->cacheSources && $db->cacheSources);
-			if (method_exists($db, 'describe') && $this->useTable !== false) {
+			if (method_exists($db, 'describe')) {
 				$this->_schema = $db->describe($this);
-			} elseif ($this->useTable === false) {
-				$this->_schema = array();
 			}
 		}
 		if (!is_string($field)) {
@@ -1484,7 +1482,8 @@ class Model extends Object implements CakeEventListener {
 		$this->validationErrors = array();
 
 		if ($data !== null && $data !== false) {
-			foreach ($this->schema() as $field => $properties) {
+			$schema = (array)$this->schema();
+			foreach ($schema as $field => $properties) {
 				if ($this->primaryKey !== $field && isset($properties['default']) && $properties['default'] !== '') {
 					$defaults[$field] = $properties['default'];
 				}

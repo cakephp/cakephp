@@ -751,8 +751,7 @@ class Helper extends Object {
 
 /**
  * Sets the defaults for an input tag.  Will set the
- * name, value, and id attributes for an array of html attributes. Will also
- * add a 'form-error' class if the field contains validation errors.
+ * name, value, and id attributes for an array of html attributes.
  *
  * @param string $field The field name to initialize.
  * @param array $options Array of options to use while initializing an input field.
