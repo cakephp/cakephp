@@ -170,6 +170,9 @@ class Client {
 		$request->method($method)
 			->url($url)
 			->content($data);
+		if (isset($options['headers'])) {
+			$request->header($options['headers']);
+		}
 		return $request;
 	}
 
