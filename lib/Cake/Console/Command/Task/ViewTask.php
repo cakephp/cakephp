@@ -452,9 +452,9 @@ class ViewTask extends BakeTask {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 
-		foreach ($keys as $key => $type) {
+		foreach ($keys as $type) {
 			foreach ($model->{$type} as $assocKey => $assocData) {
-				list($plugin, $modelClass) = pluginSplit($assocData['className']);
+				list(, $modelClass) = pluginSplit($assocData['className']);
 				$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
 				$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
 				$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];

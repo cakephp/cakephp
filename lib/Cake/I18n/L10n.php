@@ -414,7 +414,7 @@ class L10n {
  */
 	protected function _autoLanguage() {
 		$_detectableLanguages = CakeRequest::acceptLanguage();
-		foreach ($_detectableLanguages as $key => $langKey) {
+		foreach ($_detectableLanguages as $langKey) {
 			if (isset($this->_l10nCatalog[$langKey])) {
 				$this->_setLanguage($langKey);
 				return true;

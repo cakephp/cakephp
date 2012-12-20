@@ -84,7 +84,7 @@ class JsonView extends View {
 		if (isset($this->viewVars['_serialize'])) {
 			return $this->_serialize($this->viewVars['_serialize']);
 		}
-		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
+		if ($view !== false && $this->_getViewFileName($view)) {
 			return parent::render($view, false);
 		}
 	}

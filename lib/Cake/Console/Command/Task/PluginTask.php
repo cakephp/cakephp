@@ -127,7 +127,7 @@ class PluginTask extends AppShell {
 			foreach ($directories as $directory) {
 				$dirPath = $this->path . $plugin . DS . $directory;
 				$Folder->create($dirPath);
-				$File = new File($dirPath . DS . 'empty', true);
+				new File($dirPath . DS . 'empty', true);
 			}
 
 			foreach ($Folder->messages() as $message) {

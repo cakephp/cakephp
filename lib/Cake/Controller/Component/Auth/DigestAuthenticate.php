@@ -159,7 +159,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  */
 	protected function _findUser($username, $password = null) {
 		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
+		list(, $model) = pluginSplit($userModel);
 		$fields = $this->settings['fields'];
 
 		$conditions = array(

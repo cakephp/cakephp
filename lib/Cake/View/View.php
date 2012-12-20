@@ -880,7 +880,7 @@ class View extends Object {
 	public function loadHelpers() {
 		$helpers = HelperCollection::normalizeObjectArray($this->helpers);
 		foreach ($helpers as $properties) {
-			list($plugin, $class) = pluginSplit($properties['class']);
+			list(, $class) = pluginSplit($properties['class']);
 			$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
 		}
 		$this->_helpersLoaded = true;

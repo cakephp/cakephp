@@ -326,7 +326,7 @@ class Router {
 			if (strpos($options['routeClass'], '.') === false) {
 				$routeClass = $options['routeClass'];
 			} else {
-				list($plugin, $routeClass) = pluginSplit($options['routeClass'], true);
+				list(, $routeClass) = pluginSplit($options['routeClass'], true);
 			}
 			$routeClass = self::_validateRouteClass($routeClass);
 			unset($options['routeClass']);

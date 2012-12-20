@@ -269,9 +269,8 @@ class HtmlHelper extends AppHelper {
 			} else {
 				$type = array();
 			}
-		} elseif ($url !== null) {
-			$inline = $url;
 		}
+
 		$options = array_merge($type, $options);
 		$out = null;
 

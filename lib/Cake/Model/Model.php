@@ -1799,7 +1799,7 @@ class Model extends Object implements CakeEventListener {
 
 				if ($with = $this->hasAndBelongsToMany[$assoc]['with']) {
 					$withModel = is_array($with) ? key($with) : $with;
-					list($pluginName, $withModel) = pluginSplit($withModel);
+					list(, $withModel) = pluginSplit($withModel);
 					$dbMulti = $this->{$withModel}->getDataSource();
 				} else {
 					$dbMulti = $db;

@@ -50,7 +50,7 @@ class BlowfishAuthenticate extends FormAuthenticate {
  */
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
 		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
+		list(, $model) = pluginSplit($userModel);
 
 		$fields = $this->settings['fields'];
 		if (!$this->_checkFields($request, $model, $fields)) {
