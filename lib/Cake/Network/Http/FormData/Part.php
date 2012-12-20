@@ -90,7 +90,7 @@ class Part {
  * @param null|string $type Use null to get/string to set.
  * @return mixed
  */
-	public function contentType($type) {
+	public function type($type) {
 		if ($type === null) {
 			return $this->_type;
 		}
@@ -110,7 +110,11 @@ class Part {
 		if ($this->_filename) {
 			$out .= '; filename="' . $this->_filename . '"';
 		}
-		$out .= "\r\n\r\n";
+		$out .= "\r\n";
+		if ($this->_type) {
+			$out .= 'Content-Type: ' . $this->_type . "\r\n";
+		}
+		$out .= "\r\n";
 		$out .= (string)$this->_value;
 		return $out;
 	}

@@ -126,7 +126,33 @@ class FormDataTest extends TestCase {
  * @return void
  */
 	public function testAddArrayWithFile() {
-		$this->markTestIncomplete();
+		$file = CAKE . 'VERSION.txt';
+		$contents = file_get_contents($file);
+
+		$data = new FormData();
+		$data->add('Article', [
+			'title' => 'first post',
+			'thumbnail' => '@' . $file
+		]);
+		$boundary = $data->boundary();
+		$result = (string)$data;
+
+		$expected = array(
+			'--' . $boundary,
+			'Content-Disposition: form-data; name="Article[title]"',
+			'',
+			'first post',
+			'--' . $boundary,
+			'Content-Disposition: form-data; name="Article[thumbnail]"; filename="VERSION.txt"',
+			'Content-Type: text/plain; charset=us-ascii',
+			'',
+			$contents,
+			'--' . $boundary . '--',
+			'',
+			'',
+		);
+		$this->assertEquals(implode("\r\n", $expected), $result);
+
 	}
 
 /**
@@ -146,6 +172,7 @@ class FormDataTest extends TestCase {
 		$expected = array(
 			'--' . $boundary,
 			'Content-Disposition: form-data; name="upload"; filename="VERSION.txt"',
+			'Content-Type: text/plain; charset=us-ascii',
 			'',
 			$contents,
 			'--' . $boundary . '--',
@@ -175,6 +202,7 @@ class FormDataTest extends TestCase {
 		$expected = array(
 			'--' . $boundary,
 			'Content-Disposition: form-data; name="upload"',
+			'Content-Type: application/octet-stream',
 			'',
 			$contents,
 			'--' . $boundary . '--',

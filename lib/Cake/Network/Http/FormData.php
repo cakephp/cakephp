@@ -99,14 +99,18 @@ class FormData implements \Countable {
  */
 	public function addFile($name, $value) {
 		$filename = false;
+		$contentType = 'application/octet-stream';
 		if (is_resource($value)) {
 			$content = stream_get_contents($value);
 		} else {
+			$finfo = new \finfo(FILEINFO_MIME);
 			$value = substr($value, 1);
 			$filename = basename($value);
 			$content = file_get_contents($value);
+			$contentType = $finfo->file($value);
 		}
 		$part = $this->newPart($name, $content);
+		$part->type($contentType);
 		if ($filename) {
 			$part->filename($filename);
 		}
