@@ -13,6 +13,8 @@
  */
 namespace Cake\Network\Http;
 
+use Cake\Error;
+
 /**
  * Implements methods for HTTP requests.
  */
@@ -47,6 +49,10 @@ class Request {
 	public function method($method = null) {
 		if ($method === null) {
 			return $this->_method;
+		}
+		$name = __CLASS__ . '::METHOD_' . strtoupper($method);
+		if (!defined($name)) {
+			throw new Error\Exception(__d('cake_dev', 'Invalid method type'));
 		}
 		$this->_method = $method;
 		return $this;
