@@ -36,8 +36,12 @@ class Request {
 	protected $_version = '1.1';
 
 	protected $_method;
+
 	protected $_content;
+
 	protected $_url;
+
+	protected $_cookies = [];
 
 /**
  * Headers to be sent.
@@ -143,6 +147,38 @@ class Request {
 			return $this->_content;
 		}
 		$this->_content = $content;
+		return $this;
+	}
+
+/**
+ * Get/Set cookie values.
+ *
+ * ### Getting a cookie
+ *
+ * `$request->cookie('session');`
+ *
+ * ### Setting one cookie
+ *
+ * `$request->cookie('session', '123456');`
+ *
+ * ### Setting multiple headers
+ *
+ * `$request->cookie(['test' => 'value', 'split' => 'banana']);`
+ *
+ * @param string $name The name of the cookie to get/set
+ * @param string|null $value Either the value or null when getting values.
+ * @return mixed Either $this or the cookie value.
+ */
+	public function cookie($name, $value = null) {
+		if ($value === null && is_string($name)) {
+			return isset($this->_cookies[$name]) ? $this->_cookies[$name] : null;
+		}
+		if (is_string($name) && is_string($value)) {
+			$name = [$name => $value];
+		}
+		foreach ($name as $key => $val) {
+			$this->_cookies[$key] = $val;
+		}
 		return $this;
 	}
 

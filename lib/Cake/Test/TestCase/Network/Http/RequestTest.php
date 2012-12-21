@@ -97,4 +97,20 @@ class RequestTest extends TestCase {
 		$this->assertNull($request->header('not set'));
 	}
 
+/**
+ * test cookie method.
+ *
+ * @return void
+ */
+	public function testCookie() {
+		$request = new Request();
+		$result = $request->cookie('session', '123456');
+		$this->assertSame($result, $request, 'Should return self');
+
+		$this->assertNull($request->cookie('not set'));
+
+		$result = $request->cookie('session');
+		$this->assertEquals('123456', $result);
+	}
+
 }
