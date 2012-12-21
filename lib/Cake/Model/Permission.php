@@ -178,7 +178,7 @@ class Permission extends AppModel {
 			$save = $perms[0][$this->alias];
 		}
 
-		if ($actions == "*") {
+		if ($actions === "*") {
 			$save = array_combine($permKeys, array_pad(array(), count($permKeys), $value));
 		} else {
 			if (!is_array($actions)) {
@@ -186,7 +186,7 @@ class Permission extends AppModel {
 			}
 			if (is_array($actions)) {
 				foreach ($actions as $action) {
-					if ($action{0} != '_') {
+					if ($action{0} !== '_') {
 						$action = '_' . $action;
 					}
 					if (in_array($action, $permKeys)) {
