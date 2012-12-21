@@ -66,10 +66,62 @@ class Request {
 		return $this;
 	}
 
+/**
+ * Get/Set headers into the request.
+ *
+ * You can get the value of a header, or set one/many headers.
+ * Headers are set / fetched in a case insensitive way.
+ *
+ * ### Getting headers
+ *
+ * `$request->header('Content-Type');`
+ *
+ * ### Setting one header
+ *
+ * `$request->header('Content-Type', 'application/json');`
+ *
+ * ### Setting multiple headers
+ *
+ * `$request->header(['Connection' => 'close', 'User-Agent' => 'CakePHP']);`
+ *
+ * @param string|array $name The name to get, or array of multiple values to set.
+ * @param string $value The value to set for the header.
+ * @return mixed Either $this when setting or header value when getting.
+ */
 	public function header($name = null, $value = null) {
-
+		if ($value === null && is_string($name)) {
+			$name = $this->_normalizeHeader($name);
+			return isset($this->_headers[$name]) ? $this->_headers[$name] : null;
+		}
+		if ($value !== null && !is_array($name)) {
+			$name = [$name => $value];
+		}
+		foreach ($name as $key => $val) {
+			$key = $this->_normalizeHeader($key);
+			$this->_headers[$key] = $val;
+		}
+		return $this;
 	}
 
+/**
+ * Normalize header names to Camel-Case form.
+ *
+ * @param string $name The header name to normalize.
+ * @return string Normalized header name.
+ */
+	protected function _normalizeHeader($name) {
+		$parts = explode('-', $name);
+		$parts = array_map('strtolower', $parts);
+		$parts = array_map('ucfirst', $parts);
+		return implode('-', $parts);
+	}
+
+/**
+ * Get/set the content or body for the request.
+ *
+ * @param string|null $content The content for the request. Leave null for get
+ * @return mixed Either $this or the content value.
+ */
 	public function content($content = null) {
 		if ($content === null) {
 			return $this->_content;

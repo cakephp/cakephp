@@ -75,16 +75,26 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testHeader() {
-		$this->markTestIncomplete();
-	}
+		$request = new Request();
+		$type = 'application/json';
+		$result = $request->header('Content-Type', $type);
+		$this->assertSame($result, $request, 'Should return self');
 
-/**
- * test headers being case insenstive
- *
- * @return void
- */
-	public function testHeaderInsensitive() {
-		$this->markTestIncomplete();
+		$result = $request->header('content-type');
+		$this->assertEquals($type, $result, 'lowercase does not work');
+
+		$result = $request->header('ConTent-typE');
+		$this->assertEquals($type, $result, 'Funny casing does not work');
+
+		$result = $request->header([
+			'Connection' => 'close',
+			'user-agent' => 'CakePHP'
+		]);
+		$this->assertSame($result, $request, 'Should return self');
+
+		$this->assertEquals('close', $request->header('connection'));
+		$this->assertEquals('CakePHP', $request->header('USER-AGENT'));
+		$this->assertNull($request->header('not set'));
 	}
 
 }
