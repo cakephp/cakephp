@@ -167,18 +167,10 @@ class Shell extends Object {
 		}
 		$this->Tasks = new TaskCollection($this);
 
-		$this->stdout = $stdout;
-		$this->stderr = $stderr;
-		$this->stdin = $stdin;
-		if (!$this->stdout) {
-			$this->stdout = new ConsoleOutput('php://stdout');
-		}
-		if (!$this->stderr) {
-			$this->stderr = new ConsoleOutput('php://stderr');
-		}
-		if (!$this->stdin) {
-			$this->stdin = new ConsoleInput('php://stdin');
-		}
+		$this->stdout = $stdout ? $stdout : new ConsoleOutput('php://stdout');
+		$this->stderr = $stderr ? $stderr : new ConsoleOutput('php://stderr');
+		$this->stdin = $stdin ? $stdin : new ConsoleInput('php://stdin');
+
 		$this->_useLogger();
 		$parent = get_parent_class($this);
 		if ($this->tasks !== null && $this->tasks !== false) {
@@ -238,27 +230,25 @@ class Shell extends Object {
  * @return boolean
  */
 	protected function _loadModels() {
-		if ($this->uses === null || $this->uses === false) {
-			return;
+		if (empty($this->uses)) {
+			return false;
 		}
 		App::uses('ClassRegistry', 'Utility');
 
-		if ($this->uses !== true && !empty($this->uses)) {
-			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
+		$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 
-			$modelClassName = $uses[0];
-			if (strpos($uses[0], '.') !== false) {
-				list($plugin, $modelClassName) = explode('.', $uses[0]);
-			}
-			$this->modelClass = $modelClassName;
-
-			foreach ($uses as $modelClass) {
-				list($plugin, $modelClass) = pluginSplit($modelClass, true);
-				$this->{$modelClass} = ClassRegistry::init($plugin . $modelClass);
-			}
-			return true;
+		$modelClassName = $uses[0];
+		if (strpos($uses[0], '.') !== false) {
+			list($plugin, $modelClassName) = explode('.', $uses[0]);
 		}
-		return false;
+		$this->modelClass = $modelClassName;
+
+		foreach ($uses as $modelClass) {
+			list($plugin, $modelClass) = pluginSplit($modelClass, true);
+			$this->{$modelClass} = ClassRegistry::init($plugin . $modelClass);
+		}
+
+		return true;
 	}
 
 /**
@@ -682,10 +672,10 @@ class Shell extends Object {
 			$File->write($data);
 			$this->out(__d('cake_console', '<success>Wrote</success> `%s`', $path));
 			return true;
-		} else {
-			$this->err(__d('cake_console', '<error>Could not write to `%s`</error>.', $path), 2);
-			return false;
 		}
+		
+		$this->err(__d('cake_console', '<error>Could not write to `%s`</error>.', $path), 2);
+		return false;
 	}
 
 /**
