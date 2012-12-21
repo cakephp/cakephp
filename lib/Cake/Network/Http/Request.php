@@ -124,6 +124,15 @@ class Request {
 	}
 
 /**
+ * Get all headers
+ *
+ * @return array
+ */
+	public function headers() {
+		return $this->_headers;
+	}
+
+/**
  * Normalize header names to Camel-Case form.
  *
  * @param string $name The header name to normalize.
@@ -180,6 +189,19 @@ class Request {
 			$this->_cookies[$key] = $val;
 		}
 		return $this;
+	}
+
+/**
+ * Get all cookies
+ *
+ * @return array
+ */
+	public function cookies() {
+		return $this->_cookies;
+	}
+
+	public function version() {
+		return $this->_version;
 	}
 
 }
