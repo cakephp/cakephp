@@ -50,44 +50,60 @@ class ClientTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Data provider for buildUrl() tests
+ *
+ * @return array
+ */
 	public static function urlProvider() {
 		return [
 			[
-				// simple
 				'http://example.com/test.html',
 				'http://example.com/test.html',
-				null
+				null,
+				'Null options'
 			],
 			[
-				// simple array opts
 				'http://example.com/test.html',
 				'http://example.com/test.html',
-				[]
+				[],
+				'Simple string'
 			],
 			[
 				'http://example.com/test.html',
 				'/test.html',
-				['host' => 'example.com']
+				['host' => 'example.com'],
+				'host name option',
 			],
 			[
 				'https://example.com/test.html',
 				'/test.html',
-				['host' => 'example.com', 'scheme' => 'https']
+				['host' => 'example.com', 'scheme' => 'https'],
+				'HTTPS',
 			],
 			[
 				'http://example.com:8080/test.html',
 				'/test.html',
-				['host' => 'example.com', 'port' => '8080']
+				['host' => 'example.com', 'port' => '8080'],
+				'Non standard port',
 			],
 			[
 				'http://example.com/test.html',
 				'/test.html',
-				['host' => 'example.com', 'port' => '80']
+				['host' => 'example.com', 'port' => '80'],
+				'standard port, does not display'
 			],
 			[
 				'https://example.com/test.html',
 				'/test.html',
-				['host' => 'example.com', 'scheme' => 'https', 'port' => '443']
+				['host' => 'example.com', 'scheme' => 'https', 'port' => '443'],
+				'standard port, does not display'
+			],
+			[
+				'http://example.com/test.html',
+				'http://example.com/test.html',
+				['host' => 'example.com', 'scheme' => 'https'],
+				'options do not duplicate'
 			],
 		];
 	}
@@ -102,14 +118,20 @@ class ClientTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	public function testGet() {
+/**
+ * test simple get request.
+ *
+ * @return void
+ */
+	public function testGetSimple() {
 		$response = new Response();
 
 		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
 		$mock->expects($this->once())
 			->method('send')
 			->with($this->logicalAnd(
-				$this->isInstanceOf('Cake\Network\Http\Request')
+				$this->isInstanceOf('Cake\Network\Http\Request'),
+				$this->attributeEqualTo('_url', 'http://cakephp.org/test.html')
 			))
 			->will($this->returnValue($response));
 
@@ -118,6 +140,42 @@ class ClientTest extends TestCase {
 			'adapter' => $mock
 		]);
 		$result = $http->get('/test.html');
+		$this->assertSame($result, $response);
+	}
+
+/**
+ * test simple get request with headers & cookies.
+ *
+ * @return void
+ */
+	public function testGetSimpleWithHeadersAndCookies() {
+		$response = new Response();
+
+		$headers = [
+			'User-Agent' => 'Cake',
+			'Connection' => 'close',
+			'Content-Type' => 'application/json',
+		];
+		$cookies = [
+			'split' => 'value'
+		];
+
+		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+		$mock->expects($this->once())
+			->method('send')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('Cake\Network\Http\Request'),
+				$this->attributeEqualTo('_url', 'http://cakephp.org/test.html'),
+				$this->attributeEqualTo('_headers', $headers),
+				$this->attributeEqualTo('_cookies', $cookies)
+			))
+			->will($this->returnValue($response));
+
+		$http = new Client(['adapter' => $mock]);
+		$result = $http->get('http://cakephp.org/test.html', [], [
+			'headers' => $headers,
+			'cookies' => $cookies,
+		]);
 		$this->assertSame($result, $response);
 	}
 

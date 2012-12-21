@@ -29,8 +29,28 @@ use Cake\Utility\Hash;
  */
 class Client {
 
-	protected $_config = [];
+/**
+ * Stored configuration for the client.
+ *
+ * @var array
+ */
+	protected $_config = [
+		'host' => null,
+		'port' => null,
+		'scheme' => 'http',
+		'timeout' => 30,
+		'ssl_verify_peer' => true,
+		'ssl_verify_depth' => 5,
+		'ssl_verify_host' => true,
+		'redirect' => false,
+	];
 
+/**
+ * Adapter for sending requests. Defaults to
+ * Cake\Network\Http\Stream
+ *
+ * @var Cake\Network\Http\Stream
+ */
 	protected $_adapter;
 
 /**
@@ -83,7 +103,7 @@ class Client {
 	public function get($url, $data = [], $options = []) {
 		$options = $this->_mergeOptions($options);
 		$request = $this->_createRequest(Request::METHOD_GET, $url, $data, $options);
-		return $this->_adapter->send($request, $options);
+		return $this->send($request, $options);
 	}
 
 /**
@@ -136,6 +156,20 @@ class Client {
 	}
 
 /**
+ * Send a request.
+ *
+ * Used internally by other methods, but can also be used to send
+ * handcrafted Request objects.
+ *
+ * @param Cake\Network\Http\Request $request The request to send.
+ * @param array $options Additional options to use.
+ * @return Cake\Network\Http\Response
+ */
+	public function send(Request $request, $options = []) {
+		return $this->_adapter->send($request, $options);
+	}
+
+/**
  * Generate a URL based on the scoped client options.
  *
  * @param string $url Either a full URL or just the path.
@@ -146,12 +180,15 @@ class Client {
 		if (empty($options)) {
 			return $url;
 		}
+		if (preg_match('#^http?://#', $url)) {
+			return $url;
+		}
 		$defaults = [
 			'host' => null,
 			'port' => null,
 			'scheme' => 'http',
 		];
-		$options = array_merge($defaults, (array)$options);
+		$options += $defaults;
 		$defaultPorts = [
 			'http' => 80,
 			'https' => 443
@@ -164,6 +201,12 @@ class Client {
 		return $out;
 	}
 
+/**
+ * Creates a new request object based on the parameters.
+ *
+ *
+ * @return Cake\Network\Http\Request
+ */
 	protected function _createRequest($method, $url, $data, $options) {
 		$url = $this->buildUrl($url, $options);
 		$request = new Request();
@@ -173,6 +216,10 @@ class Client {
 		if (isset($options['headers'])) {
 			$request->header($options['headers']);
 		}
+		if (isset($options['cookies'])) {
+			$request->cookie($options['cookies']);
+		}
+		// TODO auth + proxy config.
 		return $request;
 	}
 
