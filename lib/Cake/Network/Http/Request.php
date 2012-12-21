@@ -17,6 +17,9 @@ use Cake\Error;
 
 /**
  * Implements methods for HTTP requests.
+ *
+ * Used by Cake\Network\Http\Client to contain request information
+ * for making requests.
  */
 class Request {
 
@@ -46,6 +49,13 @@ class Request {
 		'User-Agent' => 'CakePHP'
 	];
 
+/**
+ * Get/Set the HTTP method.
+ *
+ * @param string|null $method The method for the request.
+ * @return mixed Either this or the current method.
+ * @throws Cake\Error\Exception On invalid methods.
+ */
 	public function method($method = null) {
 		if ($method === null) {
 			return $this->_method;
@@ -58,6 +68,12 @@ class Request {
 		return $this;
 	}
 
+/**
+ * Get/Set the url for the request.
+ *
+ * @param string|null $url The url for the request. Leave null for get
+ * @return mixed Either $this or the url value.
+ */
 	public function url($url = null) {
 		if ($url === null) {
 			return $this->_url;
