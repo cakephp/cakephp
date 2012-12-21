@@ -164,7 +164,7 @@ class PhpAcl extends Object implements AclInterface {
 		$allow = $this->options['policy'];
 		$prioritizedAros = $this->Aro->roles($aro);
 
-		if ($action && $action != "*") {
+		if ($action && $action !== "*") {
 			$aco .= '/' . $action;
 		}
 

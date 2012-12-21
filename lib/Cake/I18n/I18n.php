@@ -456,7 +456,7 @@ class I18n {
 
 		do {
 			$line = trim(fgets($file));
-			if ($line == "" || $line[0] == "#") {
+			if ($line === "" || $line[0] === "#") {
 				continue;
 			}
 			if (preg_match("/msgid[[:space:]]+\"(.+)\"$/i", $line, $regs)) {
