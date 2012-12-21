@@ -1722,11 +1722,7 @@ class Model extends Object implements CakeEventListener {
 			if (!empty($this->id)) {
 				$success = (bool)$db->update($this, $fields, $values);
 			} else {
-				$fInfo = $this->schema($this->primaryKey);
-				$isUUID = ($fInfo['length'] == 36 &&
-					($fInfo['type'] === 'string' || $fInfo['type'] === 'binary')
-				);
-				if (empty($this->data[$this->alias][$this->primaryKey]) && $isUUID) {
+				if (empty($this->data[$this->alias][$this->primaryKey]) && $this->_isUUIDField($this->primaryKey)) {
 					if (array_key_exists($this->primaryKey, $this->data[$this->alias])) {
 						$j = array_search($this->primaryKey, $fields);
 						$values[$j] = String::uuid();
@@ -1777,6 +1773,17 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
+ * Check if the passed in field is a UUID field
+ *
+ * @param string $field the field to check
+ * @return boolean
+ */
+	protected function _isUUIDField($field) {
+		$field = $this->schema($field);
+		return $field['length'] == 36 && in_array($field['type'], array('string', 'binary'));
+	}
+
+/**
  * Saves model hasAndBelongsToMany data to the database.
  *
  * @param array $joined Data to save
@@ -1790,7 +1797,6 @@ class Model extends Object implements CakeEventListener {
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
 
-				$keyInfo = $this->{$join}->schema($this->{$join}->primaryKey);
 				if ($with = $this->hasAndBelongsToMany[$assoc]['with']) {
 					$withModel = is_array($with) ? key($with) : $with;
 					list($pluginName, $withModel) = pluginSplit($withModel);
@@ -1799,12 +1805,7 @@ class Model extends Object implements CakeEventListener {
 					$dbMulti = $db;
 				}
 
-				$isUUID = !empty($this->{$join}->primaryKey) && (
-						$keyInfo['length'] == 36 && (
-						$keyInfo['type'] === 'string' ||
-						$keyInfo['type'] === 'binary'
-					)
-				);
+				$isUUID = !empty($this->{$join}->primaryKey) && $this->{$join}->_isUUIDField($this->{$join}->primaryKey);
 
 				$newData = $newValues = $newJoins = array();
 				$primaryAdded = false;
