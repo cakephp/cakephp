@@ -2628,7 +2628,7 @@ class Model extends Object implements CakeEventListener {
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
  * @return array Array of records, or Null on failure.
- * @link http://book.cakephp.org/2.0/en/models/deleting-data.html#deleteall
+ * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html
  */
 	public function find($type = 'first', $query = array()) {
 		$this->findQueryType = $type;
