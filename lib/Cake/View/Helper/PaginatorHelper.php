@@ -837,7 +837,6 @@ class PaginatorHelper extends AppHelper {
 			}
 			$out .= $after;
 		} elseif ($params['page'] > 1 && is_string($first)) {
-			$options += array('rel' => 'first');
 			$out = $this->Html->tag($tag, $this->link($first, array('page' => 1), $options), compact('class')) . $after;
 		}
 		return $out;
@@ -904,7 +903,6 @@ class PaginatorHelper extends AppHelper {
 			}
 			$out = $before . $out;
 		} elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
-			$options += array('rel' => 'last');
 			$out = $before . $this->Html->tag(
 				$tag, $this->link($last, array('page' => $params['pageCount']), $options), compact('class')
 			);
