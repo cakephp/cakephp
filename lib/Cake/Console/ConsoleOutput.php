@@ -37,7 +37,7 @@
  * `$this->out('<warning>Overwrite:</warning> foo.php was overwritten.');`
  *
  * This would create orange 'Overwrite:' text, while the rest of the text would remain the normal color.
- * See ConsoleOutput::styles() to learn more about defining your own styles.  Nested styles are not supported
+ * See ConsoleOutput::styles() to learn more about defining your own styles. Nested styles are not supported
  * at this time.
  *
  * @package       Cake.Console
@@ -270,9 +270,9 @@ class ConsoleOutput {
 	}
 
 /**
- * Get/Set the output type to use.  The output type how formatting tags are treated.
+ * Get/Set the output type to use. The output type how formatting tags are treated.
  *
- * @param integer $type The output type to use.  Should be one of the class constants.
+ * @param integer $type The output type to use. Should be one of the class constants.
  * @return mixed Either null or the value if getting.
  */
 	public function outputAs($type = null) {

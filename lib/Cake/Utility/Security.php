@@ -136,7 +136,7 @@ class Security {
 	}
 
 /**
- * Sets the default hash method for the Security object.  This affects all objects using
+ * Sets the default hash method for the Security object. This affects all objects using
  * Security::hash().
  *
  * @param string $hash Method to use (sha1/sha256/md5/blowfish)

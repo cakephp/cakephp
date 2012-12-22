@@ -121,7 +121,7 @@ class WincacheEngine extends CacheEngine {
 	}
 
 /**
- * Delete all keys from the cache.  This will clear every
+ * Delete all keys from the cache. This will clear every
  * item in the cache matching the cache config prefix.
  *
  * @param boolean $check If true, nothing will be cleared, as entries will

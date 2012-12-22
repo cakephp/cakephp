@@ -21,21 +21,21 @@ App::uses('CakeRequest', 'Network');
 App::uses('CakeRoute', 'Routing/Route');
 
 /**
- * Parses the request URL into controller, action, and parameters.  Uses the connected routes
- * to match the incoming url string to parameters that will allow the request to be dispatched.  Also
- * handles converting parameter lists into url strings, using the connected routes.  Routing allows you to decouple
+ * Parses the request URL into controller, action, and parameters. Uses the connected routes
+ * to match the incoming url string to parameters that will allow the request to be dispatched. Also
+ * handles converting parameter lists into url strings, using the connected routes. Routing allows you to decouple
  * the way the world interacts with your application (urls) and the implementation (controllers and actions).
  *
  * ### Connecting routes
  *
- * Connecting routes is done using Router::connect().  When parsing incoming requests or reverse matching
- * parameters, routes are enumerated in the order they were connected.  You can modify the order of connected
- * routes using Router::promote().  For more information on routes and how to connect them see Router::connect().
+ * Connecting routes is done using Router::connect(). When parsing incoming requests or reverse matching
+ * parameters, routes are enumerated in the order they were connected. You can modify the order of connected
+ * routes using Router::promote(). For more information on routes and how to connect them see Router::connect().
  *
  * ### Named parameters
  *
- * Named parameters allow you to embed key:value pairs into path segments.  This allows you create hash
- * structures using urls.  You can define how named parameters work in your application using Router::connectNamed()
+ * Named parameters allow you to embed key:value pairs into path segments. This allows you create hash
+ * structures using urls. You can define how named parameters work in your application using Router::connectNamed()
  *
  * @package       Cake.Routing
  */
@@ -71,7 +71,7 @@ class Router {
 	protected static $_parseExtensions = false;
 
 /**
- * List of valid extensions to parse from a URL.  If null, any extension is allowed.
+ * List of valid extensions to parse from a URL. If null, any extension is allowed.
  *
  * @var array
  */
@@ -152,7 +152,7 @@ class Router {
 
 /**
  * Initial state is populated the first time reload() is called which is at the bottom
- * of this file.  This is a cheat as get_class_vars() returns the value of static vars even if they
+ * of this file. This is a cheat as get_class_vars() returns the value of static vars even if they
  * have changed.
  *
  * @var array
@@ -237,7 +237,7 @@ class Router {
 /**
  * Connects a new Route in the router.
  *
- * Routes are a way of connecting request urls to objects in your application.  At their core routes
+ * Routes are a way of connecting request urls to objects in your application. At their core routes
  * are a set or regular expressions that are used to match requests to destinations.
  *
  * Examples:
@@ -266,11 +266,11 @@ class Router {
  * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass`
  * have special meaning in the $options array.
  *
- * - `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
+ * - `pass` is used to define which of the routed parameters should be shifted into the pass array. Adding a
  *   parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
  * - `persist` is used to define which route parameters should be automatically included when generating
  *   new urls. You can override persistent parameters by redefining them in a url or remove them by
- *   setting the parameter to `false`.  Ex. `'persist' => array('lang')`
+ *   setting the parameter to `false`. Ex. `'persist' => array('lang')`
  * - `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
  *   via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
  * - `named` is used to configure named parameters at the route level. This key uses the same options
@@ -293,7 +293,7 @@ class Router {
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default
  *   and can supply routing parameters that are not dynamic. See above.
  * @param array $options An array matching the named elements in the route to regular expressions which that
- *   element should match.  Also contains additional parameters such as which routed parameters should be
+ *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
  * @see routes
@@ -349,7 +349,7 @@ class Router {
  *
  * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view', array('persist' => true)));`
  *
- * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the
+ * Redirects /home/* to /posts/view and passes the parameters to /posts/view. Using an array as the
  * redirect destination allows you to use other routes to define where a url string should be redirected to.
  *
  * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
@@ -359,13 +359,13 @@ class Router {
  * ### Options:
  *
  * - `status` Sets the HTTP status (default 301)
- * - `persist` Passes the params to the redirected route, if it can.  This is useful with greedy routes,
- *   routes that end in `*` are greedy.  As you can remap urls and not loose any passed/named args.
+ * - `persist` Passes the params to the redirected route, if it can. This is useful with greedy routes,
+ *   routes that end in `*` are greedy. As you can remap urls and not loose any passed/named args.
  *
  * @param string $route A string describing the template of the route
  * @param array $url A url to redirect to. Can be a string or a Cake array-based url
  * @param array $options An array matching the named elements in the route to regular expressions which that
- *   element should match.  Also contains additional parameters such as which routed parameters should be
+ *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
  * @see routes
  * @return array Array of routes
@@ -381,7 +381,7 @@ class Router {
 
 /**
  * Specifies what named parameters CakePHP should be parsing out of incoming urls. By default
- * CakePHP will parse every named parameter out of incoming URLs.  However, if you want to take more
+ * CakePHP will parse every named parameter out of incoming URLs. However, if you want to take more
  * control over how named parameters are parsed you can use one of the following setups:
  *
  * Do not parse any named parameters:
@@ -420,11 +420,11 @@ class Router {
  *
  * ### Options
  *
- * - `greedy` Setting this to true will make Router parse all named params.  Setting it to false will
+ * - `greedy` Setting this to true will make Router parse all named params. Setting it to false will
  *    parse only the connected named params.
  * - `default` Set this to true to merge in the default set of named parameters.
  * - `reset` Set to true to clear existing rules and start fresh.
- * - `separator` Change the string used to separate the key & value in a named parameter.  Defaults to `:`
+ * - `separator` Change the string used to separate the key & value in a named parameter. Defaults to `:`
  *
  * @param array $named A list of named parameters. Key value pairs are accepted where values are
  *    either regex strings to match, or arrays as seen above.
@@ -474,15 +474,15 @@ class Router {
 	}
 
 /**
- * Creates REST resource routes for the given controller(s).  When creating resource routes
+ * Creates REST resource routes for the given controller(s). When creating resource routes
  * for a plugin, by default the prefix will be changed to the lower_underscore version of the plugin
- * name.  By providing a prefix you can override this behavior.
+ * name. By providing a prefix you can override this behavior.
  *
  * ### Options:
  *
- * - 'id' - The regular expression fragment to use when matching IDs.  By default, matches
+ * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
  *    integer values and UUIDs.
- * - 'prefix' - URL prefix to use for the generated routes.  Defaults to '/'.
+ * - 'prefix' - URL prefix to use for the generated routes. Defaults to '/'.
  *
  * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
@@ -533,7 +533,7 @@ class Router {
 	}
 
 /**
- * Parses given URL string.  Returns 'routing' parameters for that url.
+ * Parses given URL string. Returns 'routing' parameters for that url.
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
@@ -608,8 +608,8 @@ class Router {
  * parameters as the current request parameters that are merged with url arrays
  * created later in the request.
  *
- * Nested requests will create a stack of requests.  You can remove requests using
- * Router::popRequest().  This is done automatically when using Object::requestAction().
+ * Nested requests will create a stack of requests. You can remove requests using
+ * Router::popRequest(). This is done automatically when using Object::requestAction().
  *
  * Will accept either a CakeRequest object or an array of arrays. Support for
  * accepting arrays may be removed in the future.
@@ -630,7 +630,7 @@ class Router {
 	}
 
 /**
- * Pops a request off of the request stack.  Used when doing requestAction
+ * Pops a request off of the request stack. Used when doing requestAction
  *
  * @return CakeRequest The request removed from the stack.
  * @see Router::setRequestInfo()
@@ -702,7 +702,7 @@ class Router {
 	}
 
 /**
- * Reloads default Router settings.  Resets all class variables and
+ * Reloads default Router settings. Resets all class variables and
  * removes all connected routes.
  *
  * @return void
@@ -1042,8 +1042,8 @@ class Router {
 	}
 
 /**
- * Normalizes a URL for purposes of comparison.  Will strip the base path off
- * and replace any double /'s.  It will not unify the casing and underscoring
+ * Normalizes a URL for purposes of comparison. Will strip the base path off
+ * and replace any double /'s. It will not unify the casing and underscoring
  * of the input value.
  *
  * @param array|string $url URL to normalize Either an array or a string url.

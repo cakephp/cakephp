@@ -264,7 +264,7 @@ class DataSource extends Object {
 
 /**
  * Check whether the conditions for the Datasource being available
- * are satisfied.  Often used from connect() to check for support
+ * are satisfied. Often used from connect() to check for support
  * before establishing a connection.
  *
  * @return boolean Whether or not the Datasources conditions for use are met.

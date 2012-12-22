@@ -225,7 +225,7 @@ class HtmlHelper extends AppHelper {
  *
  * - `inline` Whether or not the link element should be output inline. Set to false to
  *   have the meta tag included in `$scripts_for_layout`, and appended to the 'meta' view block.
- * - `block` Choose a custom block to append the meta tag to.  Using this option
+ * - `block` Choose a custom block to append the meta tag to. Using this option
  *   will override the inline option.
  *
  * @param string $type The title of the external resource
@@ -395,7 +395,7 @@ class HtmlHelper extends AppHelper {
  *
  * - `inline` If set to false, the generated tag will be appended to the 'css' block,
  *   and included in the `$scripts_for_layout` layout variable. Defaults to true.
- * - `block` Set the name of the block link/style tag will be appended to.  This overrides the `inline`
+ * - `block` Set the name of the block link/style tag will be appended to. This overrides the `inline`
  *   option.
  * - `plugin` False value will prevent parsing path as a plugin
  *
@@ -458,7 +458,7 @@ class HtmlHelper extends AppHelper {
  * Returns one or many `<script>` tags depending on the number of scripts given.
  *
  * If the filename is prefixed with "/", the path will be relative to the base path of your
- * application.  Otherwise, the path will be relative to your JavaScript path, usually webroot/js.
+ * application. Otherwise, the path will be relative to your JavaScript path, usually webroot/js.
  *
  *
  * ### Usage
@@ -483,7 +483,7 @@ class HtmlHelper extends AppHelper {
  *
  * - `inline` Whether script should be output inline or into `$scripts_for_layout`. When set to false,
  *   the script tag will be appended to the 'script' view block as well as `$scripts_for_layout`.
- * - `block` The name of the block you want the script appended to.  Leave undefined to output inline.
+ * - `block` The name of the block you want the script appended to. Leave undefined to output inline.
  *   Using this option will override the inline option.
  * - `once` Whether or not the script should be checked for uniqueness. If true scripts will only be
  *   included once, use false to allow the same script to be included more than once per request.
@@ -775,7 +775,7 @@ class HtmlHelper extends AppHelper {
  * - `plugin` False value will prevent parsing path as a plugin
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
- * @param array $options Array of HTML attributes.  See above for special options.
+ * @param array $options Array of HTML attributes. See above for special options.
  * @return string completed img tag
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::image
  */
@@ -1144,7 +1144,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Load Html tag configuration.
  *
- * Loads a file from APP/Config that contains tag data.  By default the file is expected
+ * Loads a file from APP/Config that contains tag data. By default the file is expected
  * to be compatible with PhpReader:
  *
  * `$this->Html->loadConfig('tags.php');`

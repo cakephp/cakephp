@@ -1,6 +1,6 @@
 <?php
 /**
- * Exceptions file.  Contains the various exceptions CakePHP will throw until they are
+ * Exceptions file. Contains the various exceptions CakePHP will throw until they are
  * moved into their permanent location.
  *
  * PHP 5
@@ -508,7 +508,7 @@ class AclException extends CakeException {
 }
 
 /**
- * Exception class for Cache.  This exception will be thrown from Cache when it
+ * Exception class for Cache. This exception will be thrown from Cache when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -517,7 +517,7 @@ class CacheException extends CakeException {
 }
 
 /**
- * Exception class for Router.  This exception will be thrown from Router when it
+ * Exception class for Router. This exception will be thrown from Router when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -526,7 +526,7 @@ class RouterException extends CakeException {
 }
 
 /**
- * Exception class for CakeLog.  This exception will be thrown from CakeLog when it
+ * Exception class for CakeLog. This exception will be thrown from CakeLog when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -535,7 +535,7 @@ class CakeLogException extends CakeException {
 }
 
 /**
- * Exception class for CakeSession.  This exception will be thrown from CakeSession when it
+ * Exception class for CakeSession. This exception will be thrown from CakeSession when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -544,7 +544,7 @@ class CakeSessionException extends CakeException {
 }
 
 /**
- * Exception class for Configure.  This exception will be thrown from Configure when it
+ * Exception class for Configure. This exception will be thrown from Configure when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -562,7 +562,7 @@ class SocketException extends CakeException {
 }
 
 /**
- * Exception class for Xml.  This exception will be thrown from Xml when it
+ * Exception class for Xml. This exception will be thrown from Xml when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -571,7 +571,7 @@ class XmlException extends CakeException {
 }
 
 /**
- * Exception class for Console libraries.  This exception will be thrown from Console library
+ * Exception class for Console libraries. This exception will be thrown from Console library
  * classes when they encounter an error.
  *
  * @package       Cake.Error

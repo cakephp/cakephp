@@ -1070,7 +1070,7 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testFormSecurityMultipleInputFields method
  *
- * Test secure form creation with multiple row creation.  Checks hidden, text, checkbox field types
+ * Test secure form creation with multiple row creation. Checks hidden, text, checkbox field types
  *
  * @return void
  */
@@ -7881,7 +7881,7 @@ class FormHelperTest extends CakeTestCase {
 		/*
 		 * #2 This is structurally identical to the test above (#1) - only the parent name has
 		 * changed, so we should expect the same select list data, just with a different name
-		 * for the parent.  As of #7117, this test fails because option 3 => 'Three' disappears.
+		 * for the parent. As of #7117, this test fails because option 3 => 'Three' disappears.
 		 * This is where data corruption can occur, because when a select value is missing from
 		 * a list a form will substitute the first value in the list - without the user knowing.
 		 * If the optgroup name 'Parent' (above) is updated to 'Three' (below), this should not

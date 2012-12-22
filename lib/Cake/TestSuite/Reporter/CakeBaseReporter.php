@@ -32,7 +32,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 	protected $_headerSent = false;
 
 /**
- * Array of request parameters.  Usually parsed GET params.
+ * Array of request parameters. Usually parsed GET params.
  *
  * @var array
  */

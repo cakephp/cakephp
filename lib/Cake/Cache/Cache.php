@@ -19,10 +19,10 @@ App::uses('CacheEngine', 'Cache');
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you
  * to use several different Cache engines, without coupling your application to a specific
- * implementation.  It also allows you to change out cache storage or configuration without effecting
+ * implementation. It also allows you to change out cache storage or configuration without effecting
  * the rest of your application.
  *
- * You can configure Cache engines in your application's `bootstrap.php` file.  A sample configuration would
+ * You can configure Cache engines in your application's `bootstrap.php` file. A sample configuration would
  * be
  *
  * {{{
@@ -32,9 +32,9 @@ App::uses('CacheEngine', 'Cache');
  *  ));
  * }}}
  *
- * This would configure an APC cache engine to the 'shared' alias.  You could then read and write
- * to that cache alias by using it for the `$config` parameter in the various Cache methods.  In
- * general all Cache operations are supported by all cache engines.  However, Cache::increment() and
+ * This would configure an APC cache engine to the 'shared' alias. You could then read and write
+ * to that cache alias by using it for the `$config` parameter in the various Cache methods. In
+ * general all Cache operations are supported by all cache engines. However, Cache::increment() and
  * Cache::decrement() are not supported by File caching.
  *
  * @package       Cake.Cache
@@ -65,7 +65,7 @@ class Cache {
 	protected static $_engines = array();
 
 /**
- * Set the cache configuration to use.  config() can
+ * Set the cache configuration to use. config() can
  * both create new configurations, return the settings for already configured
  * configurations.
  *
@@ -95,15 +95,15 @@ class Cache {
  *    handy for deleting a complete group from cache.
  * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
  *    with either another cache config or another application.
- * - `probability` Probability of hitting a cache gc cleanup.  Setting to 0 will disable
+ * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
  *    cache::gc from ever being called automatically.
  * - `servers' Used by memcache. Give the address of the memcached servers to use.
- * - `compress` Used by memcache.  Enables memcache's compressed format.
- * - `serialize` Used by FileCache.  Should cache objects be serialized first.
- * - `path` Used by FileCache.  Path to where cachefiles should be saved.
- * - `lock` Used by FileCache.  Should files be locked before writing to them?
- * - `user` Used by Xcache.  Username for XCache
- * - `password` Used by Xcache/Redis.  Password for XCache/Redis
+ * - `compress` Used by memcache. Enables memcache's compressed format.
+ * - `serialize` Used by FileCache. Should cache objects be serialized first.
+ * - `path` Used by FileCache. Path to where cachefiles should be saved.
+ * - `lock` Used by FileCache. Should files be locked before writing to them?
+ * - `user` Used by Xcache. Username for XCache
+ * - `password` Used by Xcache/Redis. Password for XCache/Redis
  *
  * @see app/Config/core.php for configuration settings
  * @param string $name Name of the configuration
@@ -180,7 +180,7 @@ class Cache {
 	}
 
 /**
- * Drops a cache engine.  Deletes the cache configuration information
+ * Drops a cache engine. Deletes the cache configuration information
  * If the deleted configuration is the last configuration using an certain engine,
  * the Engine instance is also unset.
  *
@@ -196,7 +196,7 @@ class Cache {
 	}
 
 /**
- * Temporarily change the settings on a cache config.  The settings will persist for the next write
+ * Temporarily change the settings on a cache config. The settings will persist for the next write
  * operation (write, decrement, increment, clear). Any reads that are done before the write, will
  * use the modified settings. If `$settings` is empty, the settings will be reset to the
  * original configuration.
@@ -262,7 +262,7 @@ class Cache {
 
 /**
  * Write data for key into cache. Will automatically use the currently
- * active cache configuration.  To set the currently active configuration use
+ * active cache configuration. To set the currently active configuration use
  * Cache::config()
  *
  * ### Usage:
@@ -312,8 +312,8 @@ class Cache {
 	}
 
 /**
- * Read a key from the cache.  Will automatically use the currently
- * active cache configuration.  To set the currently active configuration use
+ * Read a key from the cache. Will automatically use the currently
+ * active cache configuration. To set the currently active configuration use
  * Cache::config()
  *
  * ### Usage:

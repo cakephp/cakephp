@@ -75,7 +75,7 @@ class SessionHelper extends AppHelper {
  * In your view: $this->Session->flash('somekey');
  * Will default to flash if no param is passed
  *
- * You can pass additional information into the flash message generation.  This allows you
+ * You can pass additional information into the flash message generation. This allows you
  * to consolidate all the parameters for a given type of flash message into the view.
  *
  * {{{

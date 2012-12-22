@@ -39,7 +39,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 	}
 
 /**
- * Actually run a suite of tests.  Cake initializes fixtures here using the chosen fixture manager
+ * Actually run a suite of tests. Cake initializes fixtures here using the chosen fixture manager
  *
  * @param PHPUnit_Framework_Test $suite
  * @param array $arguments

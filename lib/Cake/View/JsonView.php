@@ -28,7 +28,7 @@ App::uses('View', 'View');
  * When the view is rendered, the `$posts` view variable will be serialized
  * into JSON.
  *
- * You can also define `'_serialize'` as an array.  This will create a top level object containing
+ * You can also define `'_serialize'` as an array. This will create a top level object containing
  * all the named view variables:
  *
  * {{{
@@ -40,7 +40,7 @@ App::uses('View', 'View');
  *
  * `{"posts": [...], "users": [...]}`
  *
- * If you don't use the `_serialize` key, you will need a view.  You can use extended
+ * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout like functionality.
  *
  * @package       Cake.View
@@ -72,8 +72,8 @@ class JsonView extends View {
  * Render a JSON view.
  *
  * Uses the special '_serialize' parameter to convert a set of
- * view variables into a JSON response.  Makes generating simple
- * JSON responses very easy.  You can omit the '_serialize' parameter,
+ * view variables into a JSON response. Makes generating simple
+ * JSON responses very easy. You can omit the '_serialize' parameter,
  * and use a normal view + layout as well.
  *
  * @param string $view The view being rendered.

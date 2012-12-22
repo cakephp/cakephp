@@ -318,7 +318,7 @@ class CakeSession {
 /**
  * Tests that the user agent is valid and that the session hasn't 'timed out'.
  * Since timeouts are implemented in CakeSession it checks the current self::$time
- * against the time the session is set to expire.  The User agent is only checked
+ * against the time the session is set to expire. The User agent is only checked
  * if Session.checkAgent == true.
  *
  * @return boolean

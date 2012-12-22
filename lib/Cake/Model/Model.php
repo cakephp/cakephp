@@ -91,7 +91,7 @@ class Model extends Object implements CakeEventListener {
 	public $data = array();
 
 /**
- * Holds physical schema/database name for this model.  Automatically set during Model creation.
+ * Holds physical schema/database name for this model. Automatically set during Model creation.
  *
  * @var string
  * @access public
@@ -265,7 +265,7 @@ class Model extends Object implements CakeEventListener {
 	public $tableToModel = array();
 
 /**
- * Whether or not to cache queries for this model.  This enables in-memory
+ * Whether or not to cache queries for this model. This enables in-memory
  * caching only, the results are not stored beyond the current request.
  *
  * @var boolean
@@ -533,7 +533,7 @@ class Model extends Object implements CakeEventListener {
 	public $order = null;
 
 /**
- * Array of virtual fields this model has.  Virtual fields are aliased
+ * Array of virtual fields this model has. Virtual fields are aliased
  * SQL expressions. Fields added to this property will be read as other fields in a model
  * but will not be saveable.
  *
@@ -662,7 +662,7 @@ class Model extends Object implements CakeEventListener {
  * $Post = new Model(array('table' => 'posts', 'name' => 'Post', 'ds' => 'connection2'));
  * }}}
  *
- * Would create a model attached to the posts table on connection2.  Dynamic model creation is useful
+ * Would create a model attached to the posts table on connection2. Dynamic model creation is useful
  * when you want a model object that contains no associations or attached behaviors.
  *
  * @param integer|string|array $id Set this ID for this model on startup, can also be an array of options, see above.
@@ -1408,7 +1408,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Check that a method is callable on a model.  This will check both the model's own methods, its
+ * Check that a method is callable on a model. This will check both the model's own methods, its
  * inherited methods and methods that could be callable through behaviors.
  *
  * @param string $method The method to be called.
@@ -1469,7 +1469,7 @@ class Model extends Object implements CakeEventListener {
  * for those fields that are not defined in $data, and clearing previous validation errors.
  * Especially helpful for saving data in loops.
  *
- * @param boolean|array $data Optional data array to assign to the model after it is created.  If null or false,
+ * @param boolean|array $data Optional data array to assign to the model after it is created. If null or false,
  *   schema data defaults are not merged.
  * @param boolean $filterKey If true, overwrites any primary key input with an empty value
  * @return array The current Model::data; after merging $data and/or defaults from database
@@ -1971,7 +1971,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Helper method for Model::updateCounterCache().  Checks the fields to be updated for
+ * Helper method for Model::updateCounterCache(). Checks the fields to be updated for
  *
  * @param array $data The fields of the record that will be updated
  * @return array Returns updated foreign key values, along with an 'old' key containing the old
@@ -2626,7 +2626,7 @@ class Model extends Object implements CakeEventListener {
  * }}}
  *
  * In addition to the standard query keys above, you can provide Datasource, and behavior specific
- * keys.  For example, when using a SQL based datasource you can use the joins key to specify additional
+ * keys. For example, when using a SQL based datasource you can use the joins key to specify additional
  * joins that should be part of the query.
  *
  * {{{
@@ -2735,7 +2735,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Handles the before/after filter logic for find('first') operations.  Only called by Model::find().
+ * Handles the before/after filter logic for find('first') operations. Only called by Model::find().
  *
  * @param string $state Either "before" or "after"
  * @param array $query
@@ -2756,7 +2756,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Handles the before/after filter logic for find('count') operations.  Only called by Model::find().
+ * Handles the before/after filter logic for find('count') operations. Only called by Model::find().
  *
  * @param string $state Either "before" or "after"
  * @param array $query
@@ -2802,7 +2802,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Handles the before/after filter logic for find('list') operations.  Only called by Model::find().
+ * Handles the before/after filter logic for find('list') operations. Only called by Model::find().
  *
  * @param string $state Either "before" or "after"
  * @param array $query
@@ -3039,7 +3039,7 @@ class Model extends Object implements CakeEventListener {
  * Returns true if all fields pass validation. Will validate hasAndBelongsToMany associations
  * that use the 'with' key as well. Since _saveMulti is incapable of exiting a save operation.
  *
- * Will validate the currently set data.  Use Model::set() or Model::create() to set the active data.
+ * Will validate the currently set data. Use Model::set() or Model::create() to set the active data.
  *
  * @param array $options An optional array of custom options to be made available in the beforeValidate callback
  * @return boolean True if there are no errors
@@ -3273,7 +3273,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Gets the name and fields to be used by a join model.  This allows specifying join fields
+ * Gets the name and fields to be used by a join model. This allows specifying join fields
  * in the association definition.
  *
  * @param string|array $assoc The model to be joined

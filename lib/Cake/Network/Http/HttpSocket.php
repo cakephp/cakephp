@@ -165,7 +165,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Set authentication settings.
  *
- * Accepts two forms of parameters.  If all you need is a username + password, as with
+ * Accepts two forms of parameters. If all you need is a username + password, as with
  * Basic authentication you can do the following:
  *
  * {{{
@@ -651,7 +651,7 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Configure the socket's context.  Adds in configuration
+ * Configure the socket's context. Adds in configuration
  * that can not be declared in the class definition.
  *
  * @param string $host The host you're connecting to.

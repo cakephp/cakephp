@@ -207,7 +207,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 	}
 
 /**
- * Dispatches a behavior method.  Will call either normal methods or mapped methods.
+ * Dispatches a behavior method. Will call either normal methods or mapped methods.
  *
  * If a method is not handled by the BehaviorCollection, and $strict is false, a
  * special return of `array('unhandled')` will be returned to signal the method was not found.
@@ -249,13 +249,13 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 	}
 
 /**
- * Check to see if a behavior in this collection implements the provided method.  Will
+ * Check to see if a behavior in this collection implements the provided method. Will
  * also check mappedMethods.
  *
  * @param string $method The method to find.
  * @param boolean $callback Return the callback for the method.
  * @return mixed If $callback is false, a boolean will be returned, if its true, an array
- *   containing callback information will be returned.  For mapped methods the array will have 3 elements.
+ *   containing callback information will be returned. For mapped methods the array will have 3 elements.
  */
 	public function hasMethod($method, $callback = false) {
 		if (isset($this->_methods[$method])) {

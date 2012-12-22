@@ -30,12 +30,12 @@ App::uses('ExceptionRenderer', 'Error');
  *
  * ### Uncaught exceptions
  *
- * When debug < 1 a CakeException will render 404 or  500 errors.  If an uncaught exception is thrown
+ * When debug < 1 a CakeException will render 404 or  500 errors. If an uncaught exception is thrown
  * and it is a type that ErrorHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception handling
  *
- * You can implement application specific exception handling in one of a few ways.  Each approach
+ * You can implement application specific exception handling in one of a few ways. Each approach
  * gives you different amounts of control over the exception handling process.
  *
  * - Set Configure::write('Exception.handler', 'YourClass::yourMethod');
@@ -44,22 +44,22 @@ App::uses('ExceptionRenderer', 'Error');
  *
  * #### Create your own Exception handler with `Exception.handler`
  *
- * This gives you full control over the exception handling process.  The class you choose should be
- * loaded in your app/Config/bootstrap.php, so its available to handle any exceptions.  You can
+ * This gives you full control over the exception handling process. The class you choose should be
+ * loaded in your app/Config/bootstrap.php, so its available to handle any exceptions. You can
  * define the handler as any callback type. Using Exception.handler overrides all other exception
  * handling settings and logic.
  *
  * #### Using `AppController::appError();`
  *
- * This controller method is called instead of the default exception rendering.  It receives the
- * thrown exception as its only argument.  You should implement your error handling in that method.
+ * This controller method is called instead of the default exception rendering. It receives the
+ * thrown exception as its only argument. You should implement your error handling in that method.
  * Using AppController::appError(), will supersede any configuration for Exception.renderer.
  *
  * #### Using a custom renderer with `Exception.renderer`
  *
  * If you don't want to take control of the exception handling, but want to change how exceptions are
- * rendered you can use `Exception.renderer` to choose a class to render exception pages.  By default
- * `ExceptionRenderer` is used.  Your custom exception renderer class should be placed in app/Lib/Error.
+ * rendered you can use `Exception.renderer` to choose a class to render exception pages. By default
+ * `ExceptionRenderer` is used. Your custom exception renderer class should be placed in app/Lib/Error.
  *
  * Your custom renderer should expect an exception in its constructor, and implement a render method.
  * Failing to do so will cause additional errors.
@@ -73,8 +73,8 @@ App::uses('ExceptionRenderer', 'Error');
  * ### PHP errors
  *
  * Error handler also provides the built in features for handling php errors (trigger_error).
- * While in debug mode, errors will be output to the screen using debugger.  While in production mode,
- * errors will be logged to CakeLog.  You can control which errors are logged by setting
+ * While in debug mode, errors will be output to the screen using debugger. While in production mode,
+ * errors will be logged to CakeLog. You can control which errors are logged by setting
  * `Error.level` in your core.php.
  *
  * #### Logging errors
@@ -84,7 +84,7 @@ App::uses('ExceptionRenderer', 'Error');
  *
  * #### Controlling what errors are logged/displayed
  *
- * You can control which errors are logged / displayed by ErrorHandler by setting `Error.level`.  Setting this
+ * You can control which errors are logged / displayed by ErrorHandler by setting `Error.level`. Setting this
  * to one or a combination of a few of the E_* constants will only enable the specified errors.
  *
  * e.g. `Configure::write('Error.level', E_ALL & ~E_NOTICE);`
@@ -138,7 +138,7 @@ class ErrorHandler {
 
 /**
  * Set as the default error handler by CakePHP. Use Configure::write('Error.handler', $callback), to use your own
- * error handling methods.  This function will use Debugger to display errors when debug > 0.  And
+ * error handling methods. This function will use Debugger to display errors when debug > 0. And
  * will log errors to CakeLog, when debug == 0.
  *
  * You can use Configure::write('Error.level', $value); to set what type of errors will be handled here.

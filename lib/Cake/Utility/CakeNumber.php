@@ -30,7 +30,7 @@
 class CakeNumber {
 
 /**
- * Currencies supported by the helper.  You can add additional currency formats
+ * Currencies supported by the helper. You can add additional currency formats
  * with CakeNumber::addFormat
  *
  * @var array
@@ -270,7 +270,7 @@ class CakeNumber {
  *   ie. '$'. `before` is an alias for `wholeSymbol`.
  * - `after` - The currency symbol to place after decimal numbers
  *   ie. 'c'. Set to boolean false to use no decimal symbol.
- *   eg. 0.35 => $0.35.  `after` is an alias for `fractionSymbol`
+ *   eg. 0.35 => $0.35. `after` is an alias for `fractionSymbol`
  * - `zero` - The text to use for zero values, can be a
  *   string or a number. ie. 0, 'Free!'
  * - `places` - Number of decimal places to use. ie. 2
@@ -344,7 +344,7 @@ class CakeNumber {
 	}
 
 /**
- * Add a currency format to the Number helper.  Makes reusing
+ * Add a currency format to the Number helper. Makes reusing
  * currency formats easier.
  *
  * {{{ $number->addFormat('NOK', array('before' => 'Kr. ')); }}}

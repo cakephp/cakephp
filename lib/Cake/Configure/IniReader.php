@@ -25,7 +25,7 @@ App::uses('Hash', 'Utility');
  * class shares the same behavior, especially with regards to boolean and null values.
  *
  * In addition to the native `parse_ini_file` features, IniReader also allows you
- * to create nested array structures through usage of `.` delimited names.  This allows
+ * to create nested array structures through usage of `.` delimited names. This allows
  * you to create nested arrays structures in an ini config file. For example:
  *
  * `db.password = secret` would turn into `array('db' => array('password' => 'secret'))`

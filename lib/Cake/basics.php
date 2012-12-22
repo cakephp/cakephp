@@ -159,11 +159,11 @@ if (!function_exists('h')) {
 /**
  * Convenience method for htmlspecialchars.
  *
- * @param string|array|object $text Text to wrap through htmlspecialchars.  Also works with arrays, and objects.
- *    Arrays will be mapped and have all their elements escaped.  Objects will be string cast if they
- *    implement a `__toString` method.  Otherwise the class name will be used.
+ * @param string|array|object $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
+ *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
+ *    implement a `__toString` method. Otherwise the class name will be used.
  * @param boolean $double Encode existing html entities
- * @param string $charset Character set to use when escaping.  Defaults to config value in 'App.encoding' or 'UTF-8'
+ * @param string $charset Character set to use when escaping. Defaults to config value in 'App.encoding' or 'UTF-8'
  * @return string Wrapped text
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#h
  */
@@ -210,7 +210,7 @@ if (!function_exists('pluginSplit')) {
  * @param string $name The name you want to plugin split.
  * @param boolean $dotAppend Set to true if you want the plugin to have a '.' appended to it.
  * @param string $plugin Optional default plugin to use if no plugin is found. Defaults to null.
- * @return array Array with 2 indexes.  0 => plugin name, 1 => classname
+ * @return array Array with 2 indexes. 0 => plugin name, 1 => classname
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
  */
 	function pluginSplit($name, $dotAppend = false, $plugin = null) {
@@ -277,7 +277,7 @@ if (!function_exists('env')) {
 /**
  * Gets an environment variable from available sources, and provides emulation
  * for unsupported or inconsistent environment variables (i.e. DOCUMENT_ROOT on
- * IIS, or SCRIPT_NAME in CGI mode).  Also exposes some additional custom
+ * IIS, or SCRIPT_NAME in CGI mode). Also exposes some additional custom
  * environment information.
  *
  * @param  string $key Environment variable name.
@@ -663,7 +663,7 @@ if (!function_exists('__dc')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * Note that the category must be specified with a numeric value, instead of the constant name. The values are:
  *
  * - LC_ALL       0
  * - LC_COLLATE   1
@@ -707,7 +707,7 @@ if (!function_exists('__dcn')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * Note that the category must be specified with a numeric value, instead of the constant name. The values are:
  *
  * - LC_ALL       0
  * - LC_COLLATE   1
@@ -748,7 +748,7 @@ if (!function_exists('__c')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * Note that the category must be specified with a numeric value, instead of the constant name. The values are:
  *
  * - LC_ALL       0
  * - LC_COLLATE   1

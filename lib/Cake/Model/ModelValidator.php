@@ -90,7 +90,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * Returns true if all fields pass validation. Will validate hasAndBelongsToMany associations
  * that use the 'with' key as well. Since `Model::_saveMulti` is incapable of exiting a save operation.
  *
- * Will validate the currently set data.  Use `Model::set()` or `Model::create()` to set the active data.
+ * Will validate the currently set data. Use `Model::set()` or `Model::create()` to set the active data.
  *
  * @param array $options An optional array of custom options to be made available in the beforeValidate callback
  * @return boolean True if there are no errors
