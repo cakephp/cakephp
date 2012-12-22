@@ -444,10 +444,20 @@ class CakeResponse {
 		if (in_array($this->_status, array(304, 204))) {
 			return;
 		}
-		if (strpos($this->_contentType, 'text/') === 0) {
+		$whitelist = array(
+			'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
+		);
+
+		$charset = false;
+		if (
+			$this->_charset &&
+			(strpos($this->_contentType, 'text/') === 0 || in_array($this->_contentType, $whitelist))
+		) {
+			$charset = true;
+		}
+
+		if ($charset) {
 			$this->header('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
-		} elseif ($this->_contentType === 'application/json') {
-			$this->header('Content-Type', "{$this->_contentType}; charset=UTF-8");
 		} else {
 			$this->header('Content-Type', "{$this->_contentType}");
 		}
