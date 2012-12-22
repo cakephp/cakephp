@@ -115,7 +115,7 @@ class FixtureTask extends BakeTask {
 	}
 
 /**
- * Bake All the Fixtures at once.  Will only bake fixtures for models that exist.
+ * Bake All the Fixtures at once. Will only bake fixtures for models that exist.
  *
  * @return void
  */

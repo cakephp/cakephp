@@ -17,7 +17,7 @@ App::uses('Hash', 'Utility');
  * A single Route used by the Router to connect requests to
  * parameter maps.
  *
- * Not normally created as a standalone.  Use Router::connect() to create
+ * Not normally created as a standalone. Use Router::connect() to create
  * Routes for your application.
  *
  * @package Cake.Routing.Route
@@ -69,7 +69,7 @@ class CakeRoute {
 	protected $_compiledRoute = null;
 
 /**
- * HTTP header shortcut map.  Used for evaluating header-based route expressions.
+ * HTTP header shortcut map. Used for evaluating header-based route expressions.
  *
  * @var array
  */
@@ -102,7 +102,7 @@ class CakeRoute {
 	}
 
 /**
- * Compiles the route's regular expression.  Modifies defaults property so all necessary keys are set
+ * Compiles the route's regular expression. Modifies defaults property so all necessary keys are set
  * and populates $this->names with the named routing elements.
  *
  * @return array Returns a string regular expression of the compiled route.
@@ -116,7 +116,7 @@ class CakeRoute {
 	}
 
 /**
- * Builds a route regular expression.  Uses the template, defaults and options
+ * Builds a route regular expression. Uses the template, defaults and options
  * properties to compile a regular expression that can be used to parse request strings.
  *
  * @return void
@@ -260,7 +260,7 @@ class CakeRoute {
  * Parse passed and Named parameters into a list of passed args, and a hash of named parameters.
  * The local and global configuration for named parameters will be used.
  *
- * @param string $args A string with the passed & named params.  eg. /1/page:2
+ * @param string $args A string with the passed & named params. eg. /1/page:2
  * @param string $context The current route context, which should contain controller/action keys.
  * @return array Array of ($pass, $named)
  */
@@ -378,8 +378,8 @@ class CakeRoute {
 	}
 
 /**
- * Attempt to match a url array.  If the url matches the route parameters and settings, then
- * return a generated string url.  If the url doesn't match the route parameters, false will be returned.
+ * Attempt to match a url array. If the url matches the route parameters and settings, then
+ * return a generated string url. If the url doesn't match the route parameters, false will be returned.
  * This method handles the reverse routing or conversion of url arrays into string urls.
  *
  * @param array $url An array of parameters to check matching with.

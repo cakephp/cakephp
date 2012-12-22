@@ -62,7 +62,7 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * Setup a mock that has out mocked.  Normally this is not used as it makes $this->at() really tricky.
+ * Setup a mock that has out mocked. Normally this is not used as it makes $this->at() really tricky.
  *
  * @return void
  */

@@ -43,7 +43,7 @@ class TemplateTask extends AppShell {
 	public $templatePaths = array();
 
 /**
- * Initialize callback.  Setup paths for the template task.
+ * Initialize callback. Setup paths for the template task.
  *
  * @return void
  */

@@ -16,7 +16,7 @@
 App::uses('BaseAuthorize', 'Controller/Component/Auth');
 
 /**
- * An authorization adapter for AuthComponent.  Provides the ability to authorize using a controller callback.
+ * An authorization adapter for AuthComponent. Provides the ability to authorize using a controller callback.
  * Your controller's isAuthorized() method should return a boolean to indicate whether or not the user is authorized.
  *
  * {{{
@@ -38,7 +38,7 @@ App::uses('BaseAuthorize', 'Controller/Component/Auth');
 class ControllerAuthorize extends BaseAuthorize {
 
 /**
- * Get/set the controller this authorize object will be working with.  Also checks that isAuthorized is implemented.
+ * Get/set the controller this authorize object will be working with. Also checks that isAuthorized is implemented.
  *
  * @param Controller $controller null to get, a controller to set.
  * @return mixed

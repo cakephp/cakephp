@@ -59,7 +59,7 @@ class BakeTask extends AppShell {
 	}
 
 /**
- * Gets the path for output.  Checks the plugin property
+ * Gets the path for output. Checks the plugin property
  * and returns the correct path.
  *
  * @return string Path to output.

@@ -167,7 +167,7 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
- * Test that invalidFields() integrates well with save().  And that fieldList can be an empty type.
+ * Test that invalidFields() integrates well with save(). And that fieldList can be an empty type.
  *
  * @return void
  */

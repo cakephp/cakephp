@@ -88,7 +88,7 @@ class CacheHelper extends AppHelper {
 	}
 
 /**
- * Parse a file + output.  Matches nocache tags between the current output and the current file
+ * Parse a file + output. Matches nocache tags between the current output and the current file
  * stores a reference of the file, so the generated can be swapped back with the file contents when
  * writing the cache file.
  *

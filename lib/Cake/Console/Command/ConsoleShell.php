@@ -120,7 +120,7 @@ class ConsoleShell extends AppShell {
 			"\tRoute <url>",
 			"",
 			"where url is the path to your your action plus any query parameters,",
-			"minus the application's base path.  For example:",
+			"minus the application's base path. For example:",
 			"",
 			"\tRoute /posts/view/1",
 			"",

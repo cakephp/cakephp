@@ -38,7 +38,7 @@ class ViewBlock {
 	const PREPEND = 'prepend';
 
 /**
- * Block content.  An array of blocks indexed by name.
+ * Block content. An array of blocks indexed by name.
  *
  * @var array
  */
@@ -66,7 +66,7 @@ class ViewBlock {
  * Blocks allow you to create slots or blocks of dynamic content in the layout.
  * view files can implement some or all of a layout's slots.
  *
- * You can end capturing blocks using View::end().  Blocks can be output
+ * You can end capturing blocks using View::end(). Blocks can be output
  * using View::get();
  *
  * @param string $name The name of the block to capture for.
@@ -83,7 +83,7 @@ class ViewBlock {
  * Blocks allow you to create slots or blocks of dynamic content in the layout.
  * view files can implement some or all of a layout's slots.
  *
- * You can end capturing blocks using View::end().  Blocks can be output
+ * You can end capturing blocks using View::end(). Blocks can be output
  * using View::get();
  *
  * @param string $name The name of the block to capture for.
@@ -154,7 +154,7 @@ class ViewBlock {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new
+ * Append to an existing or new block. Appending to a new
  * block will create the block.
  *
  * Calling append() without a value will create a new capturing
@@ -172,7 +172,7 @@ class ViewBlock {
 	}
 
 /**
- * Set the content for a block.  This will overwrite any
+ * Set the content for a block. This will overwrite any
  * existing content.
  *
  * @param string $name Name of the block

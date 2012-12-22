@@ -1507,7 +1507,7 @@ class CakeEmail {
 /**
  * Gets the text body types that are in this email message
  *
- * @return array Array of types.  Valid types are 'text' and 'html'
+ * @return array Array of types. Valid types are 'text' and 'html'
  */
 	protected function _getTypes() {
 		$types = array($this->_emailFormat);

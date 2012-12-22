@@ -165,7 +165,7 @@ class SessionComponent extends Component {
  * Get/Set the session id.
  *
  * When fetching the session id, the session will be started
- * if it has not already been started.  When setting the session id,
+ * if it has not already been started. When setting the session id,
  * the session will not be started.
  *
  * @param string $id Id to use (optional)

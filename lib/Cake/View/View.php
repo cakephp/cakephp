@@ -27,16 +27,16 @@ App::uses('CakeResponse', 'Network');
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
- * in from the controller to render the results of the controller action.  Often this is HTML,
+ * in from the controller to render the results of the controller action. Often this is HTML,
  * but can also take the form of JSON, XML, PDF's or streaming files.
  *
- * CakePHP uses a two-step-view pattern.  This means that the view content is rendered first,
- * and then inserted into the selected layout.  This also means you can pass data from the view to the
+ * CakePHP uses a two-step-view pattern. This means that the view content is rendered first,
+ * and then inserted into the selected layout. This also means you can pass data from the view to the
  * layout using `$this->set()`
  *
- * Since 2.1, the base View class also includes support for themes by default.  Theme views are regular
- * view files that can provide unique HTML and static assets.  If theme views are not found for the
- * current view the default app view files will be used.  You can set `$this->theme = 'mytheme'`
+ * Since 2.1, the base View class also includes support for themes by default. Theme views are regular
+ * view files that can provide unique HTML and static assets. If theme views are not found for the
+ * current view the default app view files will be used. You can set `$this->theme = 'mytheme'`
  * in your Controller to use the Themes.
  *
  * Example of theme path with `$this->theme = 'SuperHot';` Would be `app/View/Themed/SuperHot/Posts`
@@ -150,7 +150,7 @@ class View extends Object {
 	public $ext = '.ctp';
 
 /**
- * Sub-directory for this view file.  This is often used for extension based routing.
+ * Sub-directory for this view file. This is often used for extension based routing.
  * Eg. With an `xml` extension, $subDir would be `xml/`
  *
  * @var string
@@ -210,8 +210,8 @@ class View extends Object {
 	public $response;
 
 /**
- * The Cache configuration View will use to store cached elements.  Changing this will change
- * the default configuration elements are stored under.  You can also choose a cache config
+ * The Cache configuration View will use to store cached elements. Changing this will change
+ * the default configuration elements are stored under. You can also choose a cache config
  * per element.
  *
  * @var string
@@ -274,7 +274,7 @@ class View extends Object {
 	protected $_current = null;
 
 /**
- * Currently rendering an element.  Used for finding parent fragments
+ * Currently rendering an element. Used for finding parent fragments
  * for elements.
  *
  * @var string
@@ -374,20 +374,20 @@ class View extends Object {
  * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
  *
  * @param string $name Name of template file in the/app/View/Elements/ folder,
- *   or `MyPlugin.template` to use the template element from MyPlugin.  If the element
+ *   or `MyPlugin.template` to use the template element from MyPlugin. If the element
  *   is not found in the plugin, the normal view path cascade will be searched.
  * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
  * @param array $options Array of options. Possible keys are:
  * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
  *   If an array, the following keys can be used:
  *   - `config` - Used to store the cached element in a custom cache configuration.
- *   - `key` - Used to define the key used in the Cache::write().  It will be prefixed with `element_`
- * - `plugin` - Load an element from a specific plugin.  This option is deprecated, see below.
+ *   - `key` - Used to define the key used in the Cache::write(). It will be prefixed with `element_`
+ * - `plugin` - Load an element from a specific plugin. This option is deprecated, see below.
  * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
  *   Defaults to false.
  * - `ignoreMissing` - Used to allow missing elements. Set to true to not trigger notices.
  * @return string Rendered Element
- * @deprecated The `$options['plugin']` is deprecated and will be removed in CakePHP 3.0.  Use
+ * @deprecated The `$options['plugin']` is deprecated and will be removed in CakePHP 3.0. Use
  *   `Plugin.element_name` instead.
  */
 	public function element($name, $data = array(), $options = array()) {
@@ -425,7 +425,7 @@ class View extends Object {
  * Checks if an element exists
  *
  * @param string $name Name of template file in the /app/View/Elements/ folder,
- *   or `MyPlugin.template` to check the template element from MyPlugin.  If the element
+ *   or `MyPlugin.template` to check the template element from MyPlugin. If the element
  *   is not found in the plugin, the normal view path cascade will be searched.
  * @return boolean Success
  */
@@ -437,7 +437,7 @@ class View extends Object {
  * Renders view for given view file and layout.
  *
  * Render triggers helper callbacks, which are fired before and after the view are rendered,
- * as well as before and after the layout.  The helper callbacks are called:
+ * as well as before and after the layout. The helper callbacks are called:
  *
  * - `beforeRender`
  * - `afterRender`
@@ -446,8 +446,8 @@ class View extends Object {
  *
  * If View::$autoRender is false and no `$layout` is provided, the view will be returned bare.
  *
- * View and layout names can point to plugin views/layouts.  Using the `Plugin.view` syntax
- * a plugin view/layout can be used instead of the app ones.  If the chosen plugin is not found
+ * View and layout names can point to plugin views/layouts. Using the `Plugin.view` syntax
+ * a plugin view/layout can be used instead of the app ones. If the chosen plugin is not found
  * the view will be located along the regular view path cascade.
  *
  * @param string $view Name of view file to use
@@ -488,12 +488,12 @@ class View extends Object {
  * - `title_for_layout` - A backwards compatible place holder, you should set this value if you want more control.
  * - `content_for_layout` - contains rendered view file
  * - `scripts_for_layout` - Contains content added with addScript() as well as any content in
- *   the 'meta', 'css', and 'script' blocks.  They are appended in that order.
+ *   the 'meta', 'css', and 'script' blocks. They are appended in that order.
  *
  * Deprecated features:
  *
  * - `$scripts_for_layout` is deprecated and will be removed in CakePHP 3.0.
- *   Use the block features instead.  `meta`, `css` and `script` will be populated
+ *   Use the block features instead. `meta`, `css` and `script` will be populated
  *   by the matching methods on HtmlHelper.
  * - `$title_for_layout` is deprecated and will be removed in CakePHP 3.0
  * - `$content_for_layout` is deprecated and will be removed in CakePHP 3.0.
@@ -638,7 +638,7 @@ class View extends Object {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new
+ * Append to an existing or new block. Appending to a new
  * block will create the block.
  *
  * @param string $name Name of the block
@@ -666,7 +666,7 @@ class View extends Object {
 	}
 
 /**
- * Set the content for a block.  This will overwrite any
+ * Set the content for a block. This will overwrite any
  * existing content.
  *
  * @param string $name Name of the block
@@ -703,7 +703,7 @@ class View extends Object {
 	}
 
 /**
- * Provides view or element extension/inheritance.  Views can extends a
+ * Provides view or element extension/inheritance. Views can extends a
  * parent view and populate blocks in the parent template.
  *
  * @param string $name The view or element to 'extend' the current one with.
@@ -754,7 +754,7 @@ class View extends Object {
  *   update/replace a script element.
  * @param string $content The content of the script being added, optional.
  * @return void
- * @deprecated Will be removed in 3.0.  Supersceeded by blocks functionality.
+ * @deprecated Will be removed in 3.0. Supersceeded by blocks functionality.
  * @see View::start()
  */
 	public function addScript($name, $content = null) {
@@ -951,7 +951,7 @@ class View extends Object {
 	}
 
 /**
- * Loads a helper.  Delegates to the `HelperCollection::load()` to load the helper
+ * Loads a helper. Delegates to the `HelperCollection::load()` to load the helper
  *
  * @param string $helperName Name of the helper to load.
  * @param array $settings Settings for the helper
@@ -1028,7 +1028,7 @@ class View extends Object {
  *
  * @param string $name The name you want to plugin split.
  * @param boolean $fallback If true uses the plugin set in the current CakeRequest when parsed plugin is not loaded
- * @return array Array with 2 indexes.  0 => plugin name, 1 => filename
+ * @return array Array with 2 indexes. 0 => plugin name, 1 => filename
  */
 	public function pluginSplit($name, $fallback = true) {
 		$plugin = null;

@@ -49,16 +49,16 @@ class Object {
  * or fetch the return value from controller actions.
  *
  * Under the hood this method uses Router::reverse() to convert the $url parameter into a string
- * URL.  You should use URL formats that are compatible with Router::reverse()
+ * URL. You should use URL formats that are compatible with Router::reverse()
  *
  * #### Passing POST and GET data
  *
- * POST and GET data can be simulated in requestAction.  Use `$extra['url']` for
- * GET data.  The `$extra['data']` parameter allows POST data simulation.
+ * POST and GET data can be simulated in requestAction. Use `$extra['url']` for
+ * GET data. The `$extra['data']` parameter allows POST data simulation.
  *
- * @param string|array $url String or array-based url.  Unlike other url arrays in CakePHP, this
+ * @param string|array $url String or array-based url. Unlike other url arrays in CakePHP, this
  *    url will not automatically handle passed and named arguments in the $url parameter.
- * @param array $extra if array includes the key "return" it sets the AutoRender to true.  Can
+ * @param array $extra if array includes the key "return" it sets the AutoRender to true. Can
  *    also be used to submit GET/POST data, and named/passed arguments.
  * @return mixed Boolean true or false on success/failure, or contents
  *    of rendered action if 'return' is set in $extra.
@@ -132,7 +132,7 @@ class Object {
 	}
 
 /**
- * Stop execution of the current script.  Wraps exit() making
+ * Stop execution of the current script. Wraps exit() making
  * testing easier.
  *
  * @param integer|string $status see http://php.net/exit for values
@@ -143,7 +143,7 @@ class Object {
 	}
 
 /**
- * Convenience method to write a message to CakeLog.  See CakeLog::write()
+ * Convenience method to write a message to CakeLog. See CakeLog::write()
  * for more information on writing to logs.
  *
  * @param string $msg Log message
@@ -159,7 +159,7 @@ class Object {
 	}
 
 /**
- * Allows setting of multiple properties of the object in a single line of code.  Will only set
+ * Allows setting of multiple properties of the object in a single line of code. Will only set
  * properties that are part of a class declaration.
  *
  * @param array $properties An associative array containing properties and corresponding values.
@@ -180,7 +180,7 @@ class Object {
  * Merges this objects $property with the property in $class' definition.
  * This classes value for the property will be merged on top of $class'
  *
- * This provides some of the DRY magic CakePHP provides.  If you want to shut it off, redefine
+ * This provides some of the DRY magic CakePHP provides. If you want to shut it off, redefine
  * this method as an empty function.
  *
  * @param array $properties The name of the properties to merge.

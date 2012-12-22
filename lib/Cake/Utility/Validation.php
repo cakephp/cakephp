@@ -1,6 +1,6 @@
 <?php
 /**
- * Validation Class.  Used for validation of model data
+ * Validation Class. Used for validation of model data
  *
  * PHP Version 5.x
  *
@@ -783,7 +783,7 @@ class Validation {
 
 /**
  * Attempts to pass unhandled Validation locales to a class starting with $classPrefix
- * and ending with Validation.  For example $classPrefix = 'nl', the class would be
+ * and ending with Validation. For example $classPrefix = 'nl', the class would be
  * `NlValidation`.
  *
  * @param string $method The method to call on the other class.

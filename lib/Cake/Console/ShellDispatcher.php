@@ -337,7 +337,7 @@ class ShellDispatcher {
 	}
 
 /**
- * Shows console help.  Performs an internal dispatch to the CommandList Shell
+ * Shows console help. Performs an internal dispatch to the CommandList Shell
  *
  * @return void
  */

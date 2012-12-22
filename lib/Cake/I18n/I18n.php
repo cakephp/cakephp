@@ -123,7 +123,7 @@ class I18n {
  *
  * @param string $singular String to translate
  * @param string $plural Plural string (if any)
- * @param string $domain Domain The domain of the translation.  Domains are often used by plugin translations
+ * @param string $domain Domain The domain of the translation. Domains are often used by plugin translations
  * @param string $category Category The integer value of the category to use.
  * @param integer $count Count Count is used with $plural to choose the correct plural form.
  * @param string $language Language to translate string to.
@@ -222,7 +222,7 @@ class I18n {
 	}
 
 /**
- * Clears the domains internal data array.  Useful for testing i18n.
+ * Clears the domains internal data array. Useful for testing i18n.
  *
  * @return void
  */

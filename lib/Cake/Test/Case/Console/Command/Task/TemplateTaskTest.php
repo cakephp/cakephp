@@ -93,8 +93,8 @@ class TemplateTaskTest extends CakeTestCase {
 	}
 
 /**
- * test getting the correct theme name.  Ensure that with only one theme, or a theme param
- * that the user is not bugged.  If there are more, find and return the correct theme name
+ * test getting the correct theme name. Ensure that with only one theme, or a theme param
+ * that the user is not bugged. If there are more, find and return the correct theme name
  *
  * @return void
  */

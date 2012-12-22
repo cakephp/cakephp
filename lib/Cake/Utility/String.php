@@ -320,7 +320,7 @@ class String {
  *
  * ### Options
  *
- * - `width` The width to wrap to.  Defaults to 72
+ * - `width` The width to wrap to. Defaults to 72
  * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
  * - `indent` String to indent with. Defaults to null.
  * - `indentAt` 0 based index to start indenting at. Defaults to 0.

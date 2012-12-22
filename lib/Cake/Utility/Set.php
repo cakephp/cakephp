@@ -32,7 +32,7 @@ class Set {
  * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
  * but does not do if for keys containing strings (unlike array_merge_recursive).
  *
- * Since this method emulates `array_merge`, it will re-order numeric keys.  When combined with out of
+ * Since this method emulates `array_merge`, it will re-order numeric keys. When combined with out of
  * order numeric keys containing arrays, results can be lossy.
  *
  * Note: This function will work with an unlimited amount of arguments and typecasts non-array
@@ -185,7 +185,7 @@ class Set {
 /**
  * Checks to see if all the values in the array are numeric
  *
- * @param array $array The array to check.  If null, the value of the current Set object
+ * @param array $array The array to check. If null, the value of the current Set object
  * @return boolean true if values are numeric, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::numeric
  */

@@ -273,10 +273,10 @@ class ClassRegistry {
 /**
  * Sets the default constructor parameter for an object type
  *
- * @param string $type Type of object.  If this parameter is omitted, defaults to "Model"
+ * @param string $type Type of object. If this parameter is omitted, defaults to "Model"
  * @param array $param The parameter that will be passed to object constructors when objects
  *                      of $type are created
- * @return mixed Void if $param is being set.  Otherwise, if only $type is passed, returns
+ * @return mixed Void if $param is being set. Otherwise, if only $type is passed, returns
  *               the previously-set value of $param, or null if not set.
  */
 	public static function config($type, $param = array()) {

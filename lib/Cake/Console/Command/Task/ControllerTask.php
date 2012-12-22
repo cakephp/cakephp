@@ -96,7 +96,7 @@ class ControllerTask extends BakeTask {
 	}
 
 /**
- * Bake All the controllers at once.  Will only bake controllers for models that exist.
+ * Bake All the controllers at once. Will only bake controllers for models that exist.
  *
  * @return void
  */

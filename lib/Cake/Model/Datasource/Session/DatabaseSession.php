@@ -1,6 +1,6 @@
 <?php
 /**
- * Database Session save handler.  Allows saving session information into a model.
+ * Database Session save handler. Allows saving session information into a model.
  *
  * PHP 5
  *
@@ -42,7 +42,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 	protected $_timeout;
 
 /**
- * Constructor.  Looks at Session configuration information and
+ * Constructor. Looks at Session configuration information and
  * sets up the session model.
  *
  */

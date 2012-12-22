@@ -200,8 +200,8 @@ class File {
 	}
 
 /**
- * Prepares a ascii string for writing.  Converts line endings to the
- * correct terminator for the current platform.  If windows "\r\n" will be used
+ * Prepares a ascii string for writing. Converts line endings to the
+ * correct terminator for the current platform. If windows "\r\n" will be used
  * all other platforms will use "\n"
  *
  * @param string $data Data to prepare for writing.
@@ -546,7 +546,7 @@ class File {
 	}
 
 /**
- * Get the mime type of the file.  Uses the finfo extension if
+ * Get the mime type of the file. Uses the finfo extension if
  * its available, otherwise falls back to mime_content_type
  *
  * @return false|string The mimetype of the file, or false if reading fails.
