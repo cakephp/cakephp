@@ -250,6 +250,16 @@ if (Configure::read('debug') >= 1) {
 	$duration = '+10 seconds';
 }
 
+/**
+ * The number of seconds (if any) to add or subtract from the cache duration.
+ * In systems with large caches this can lessen the thundering hurd effect.
+ * In development mode, use no jitter
+ */
+$jitter = 300;
+if (Configure::read('debug') >= 1) {
+  $jitter = 0;
+}
+
 // Prefix each application on the same server with a different string, to avoid Memcache and APC conflicts.
 $prefix = 'myapp_';
 
@@ -262,7 +272,8 @@ Cache::config('_cake_core_', array(
 	'prefix' => $prefix . 'cake_core_',
 	'path' => CACHE . 'persistent' . DS,
 	'serialize' => ($engine === 'File'),
-	'duration' => $duration
+	'duration' => $duration,
+	'jitter' => $jitter
 ));
 
 /**
@@ -274,5 +285,6 @@ Cache::config('_cake_model_', array(
 	'prefix' => $prefix . 'cake_model_',
 	'path' => CACHE . 'models' . DS,
 	'serialize' => ($engine === 'File'),
-	'duration' => $duration
+	'duration' => $duration,
+	'jitter' => $jitter
 ));

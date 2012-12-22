@@ -241,6 +241,7 @@
  * 	 Cache::config('default', array(
  *		'engine' => 'File', //[required]
  *		'duration' => 3600, //[optional]
+ *    'jitter' => 300, //[optional]
  *		'probability' => 100, //[optional]
  * 		'path' => CACHE, //[optional] use system tmp directory - remember to use absolute path
  * 		'prefix' => 'cake_', //[optional]  prefix every cache file with this string
@@ -253,6 +254,7 @@
  * 	 Cache::config('default', array(
  *		'engine' => 'Apc', //[required]
  *		'duration' => 3600, //[optional]
+ *    'jitter' => 300, //[optional]
  *		'probability' => 100, //[optional]
  * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  *	));
@@ -262,6 +264,7 @@
  * 	 Cache::config('default', array(
  *		'engine' => 'Xcache', //[required]
  *		'duration' => 3600, //[optional]
+ *    'jitter' => 300, //[optional]
  *		'probability' => 100, //[optional]
  *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional] prefix every cache file with this string
  *		'user' => 'user', //user from xcache.admin.user settings
@@ -273,6 +276,7 @@
  * 	 Cache::config('default', array(
  *		'engine' => 'Memcache', //[required]
  *		'duration' => 3600, //[optional]
+ *    'jitter' => 300, //[optional]
  *		'probability' => 100, //[optional]
  * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  * 		'servers' => array(
@@ -287,6 +291,7 @@
  * 	 Cache::config('default', array(
  *		'engine' => 'Wincache', //[required]
  *		'duration' => 3600, //[optional]
+ *    'jitter' => 300, //[optional]
  *		'probability' => 100, //[optional]
  *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  *	));
@@ -312,6 +317,16 @@ if (Configure::read('debug') >= 1) {
 $prefix = 'myapp_';
 
 /**
+ * The number of seconds (if any) to add or subtract from the cache duration.
+ * In systems with large caches this can lessen the thundering hurd effect.
+ * In development mode, use no jitter
+ */
+$jitter = 300;
+if (Configure::read('debug') >= 1) {
+  $jitter = 0;
+}
+
+/**
  * Configure the cache used for general framework caching.  Path information,
  * object listings, and translation cache files are stored with this configuration.
  */
@@ -320,7 +335,8 @@ Cache::config('_cake_core_', array(
 	'prefix' => $prefix . 'cake_core_',
 	'path' => CACHE . 'persistent' . DS,
 	'serialize' => ($engine === 'File'),
-	'duration' => $duration
+	'duration' => $duration,
+	'jitter' => $jitter
 ));
 
 /**
@@ -332,5 +348,6 @@ Cache::config('_cake_model_', array(
 	'prefix' => $prefix . 'cake_model_',
 	'path' => CACHE . 'models' . DS,
 	'serialize' => ($engine === 'File'),
-	'duration' => $duration
+	'duration' => $duration,
+	'jitter' => $jitter
 ));

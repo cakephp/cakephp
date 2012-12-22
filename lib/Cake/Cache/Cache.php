@@ -241,6 +241,11 @@ class Cache {
 				if (isset($settings['duration']) && !is_numeric($settings['duration'])) {
 					$settings['duration'] = strtotime($settings['duration']) - time();
 				}
+        if (isset($settings['duration']) && isset($settings['jitter'])) {
+          $jitter = rand(0, $settings['jitter']);
+          $plus_or_minus = (bool) rand(0, 1);
+          $settings['duration'] = ($plus_or_minus) ? ($settings['duration'] + $jitter) : ($settings['duration'] - $jitter);
+        }
 			}
 			self::$_engines[$config]->settings = $settings;
 		}
