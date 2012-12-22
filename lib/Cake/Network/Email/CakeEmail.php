@@ -1155,7 +1155,7 @@ class CakeEmail {
 			$this->template($config['template'], $layout);
 			unset($config['template']);
 		}
-		$this->transportClass()->config($config);
+		$this->transportClass()->config($this->transportClass()->config() + $config);
 	}
 
 /**
