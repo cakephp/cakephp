@@ -208,11 +208,11 @@ class ModelIntegrationTest extends BaseModelTest {
 	public function testDynamicBehaviorAttachment() {
 		$this->loadFixtures('Apple', 'Sample', 'Author');
 		$TestModel = new Apple();
-		$this->assertEquals(array(), $TestModel->Behaviors->attached());
+		$this->assertEquals(array(), $TestModel->Behaviors->loaded());
 
 		$TestModel->Behaviors->attach('Tree', array('left' => 'left_field', 'right' => 'right_field'));
 		$this->assertTrue(is_object($TestModel->Behaviors->Tree));
-		$this->assertEquals(array('Tree'), $TestModel->Behaviors->attached());
+		$this->assertEquals(array('Tree'), $TestModel->Behaviors->loaded());
 
 		$expected = array(
 			'parent' => 'parent_id',
@@ -227,10 +227,10 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->Behaviors->attach('Tree', array('enabled' => false));
 		$this->assertEquals($expected, $TestModel->Behaviors->Tree->settings['Apple']);
-		$this->assertEquals(array('Tree'), $TestModel->Behaviors->attached());
+		$this->assertEquals(array('Tree'), $TestModel->Behaviors->loaded());
 
 		$TestModel->Behaviors->detach('Tree');
-		$this->assertEquals(array(), $TestModel->Behaviors->attached());
+		$this->assertEquals(array(), $TestModel->Behaviors->loaded());
 		$this->assertFalse(isset($TestModel->Behaviors->Tree));
 	}
 
