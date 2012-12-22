@@ -3577,7 +3577,13 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->radio('Contact.1.imrequired', array('option A'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][1][imrequired]', 'value' => '', 'id' => 'Contact1Imrequired_'),
-			array('input' => array('type' => 'radio', 'name' => 'data[Contact][1][imrequired]', 'value' => '0', 'id' => 'Contact1Imrequired0')),
+			array('input' => array(
+				'type' => 'radio',
+				'name' => 'data[Contact][1][imrequired]',
+				'value' => '0',
+				'id' => 'Contact1Imrequired0',
+				'required' => 'required'
+			)),
 			'label' => array('for' => 'Contact1Imrequired0'),
 			'option A',
 			'/label'
@@ -7185,7 +7191,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][imrequired]',
-				'id' => 'ContactImrequired'
+				'id' => 'ContactImrequired',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7199,7 +7206,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][imalsorequired]',
-				'id' => 'ContactImalsorequired'
+				'id' => 'ContactImalsorequired',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7213,7 +7221,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][imrequiredtoo]',
-				'id' => 'ContactImrequiredtoo'
+				'id' => 'ContactImrequiredtoo',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7227,7 +7236,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][required_one]',
-				'id' => 'ContactRequiredOne'
+				'id' => 'ContactRequiredOne',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7241,7 +7251,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][string_required]',
-				'id' => 'ContactStringRequired'
+				'id' => 'ContactStringRequired',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7311,7 +7322,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][iamrequiredalways]',
-				'id' => 'ContactIamrequiredalways'
+				'id' => 'ContactIamrequiredalways',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -8216,7 +8228,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][imrequiredoncreate]',
-				'id' => 'ContactImrequiredoncreate'
+				'id' => 'ContactImrequiredoncreate',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -8230,12 +8243,14 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][imrequiredonboth]',
-				'id' => 'ContactImrequiredonboth'
+				'id' => 'ContactImrequiredonboth',
+				'required' => 'required'
 			),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
+		$this->Form->inputDefaults(array('required' => false));
 		$result = $this->Form->input('Contact.imrequired');
 		$expected = array(
 			'div' => array('class' => 'input text required'),
@@ -8248,6 +8263,9 @@ class FormHelperTest extends CakeTestCase {
 			),
 			'/div'
 		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequired', array('required' => false));
 		$this->assertTags($result, $expected);
 	}
 
@@ -8268,7 +8286,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][imrequiredonupdate]',
-				'id' => 'ContactImrequiredonupdate'
+				'id' => 'ContactImrequiredonupdate',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -8295,7 +8314,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][imrequiredonboth]',
-				'id' => 'ContactImrequiredonboth'
+				'id' => 'ContactImrequiredonboth',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -8309,7 +8329,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][imrequired]',
-				'id' => 'ContactImrequired'
+				'id' => 'ContactImrequired',
+				'required' => 'required'
 			),
 			'/div'
 		);

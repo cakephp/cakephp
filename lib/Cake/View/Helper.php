@@ -145,7 +145,7 @@ class Helper extends Object {
 	protected $_minimizedAttributes = array(
 		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
 		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize',
-		'autoplay', 'controls', 'loop', 'muted'
+		'autoplay', 'controls', 'loop', 'muted', 'required'
 	);
 
 /**
@@ -418,22 +418,8 @@ class Helper extends Object {
 	}
 
 /**
- * Returns a space-delimited string with items of the $options array. If a
- * key of $options array happens to be one of:
- *
- * - 'compact'
- * - 'checked'
- * - 'declare'
- * - 'readonly'
- * - 'disabled'
- * - 'selected'
- * - 'defer'
- * - 'ismap'
- * - 'nohref'
- * - 'noshade'
- * - 'nowrap'
- * - 'multiple'
- * - 'noresize'
+ * Returns a space-delimited string with items of the $options array. If a key
+ * of $options array happens to be one of those listed in `Helper::$_minimizedAttributes`
  *
  * And its value is one of:
  *
