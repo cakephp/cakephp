@@ -2775,6 +2775,11 @@ class FormHelper extends AppHelper {
 		if (!empty($result['disabled']) || $secure === self::SECURE_SKIP) {
 			return $result;
 		}
+		if (!isset($result['required']) &&
+			$this->_introspectModel($this->model(), 'validates', $this->field())
+		) {
+			$result['required'] = true;
+		}
 
 		$fieldName = null;
 		if (!empty($options['name'])) {
