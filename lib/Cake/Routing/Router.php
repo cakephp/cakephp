@@ -484,41 +484,49 @@ class Router {
  *    integer values and UUIDs.
  * - 'prefix' - URL prefix to use for the generated routes.  Defaults to '/'.
  *
+ * For any configured Routing.prefixes you can set extra option key with boolean value
+ *
  * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
  * @return array Array of mapped resources
  */
 	public static function mapResources($controller, $options = array()) {
-		$hasPrefix = isset($options['prefix']);
+		$hasRoutePrefix = isset($options['prefix']);
 		$options = array_merge(array(
 			'prefix' => '/',
 			'id' => self::ID . '|' . self::UUID
 		), $options);
 
-		$prefix = $options['prefix'];
+		$routePrefix = $options['prefix'];
+		$extra = array();
+		foreach (self::prefixes() as $prefix) {
+			if (array_key_exists($prefix, $options)) {
+				$extra[$prefix] = $options[$prefix];
+			}
+		}
 
 		foreach ((array)$controller as $name) {
 			list($plugin, $name) = pluginSplit($name);
-			$urlName = Inflector::underscore($name);
+			$name = Inflector::underscore($name);
 			$plugin = Inflector::underscore($plugin);
-			if ($plugin && !$hasPrefix) {
-				$prefix = '/' . $plugin . '/';
+			if ($plugin && !$hasRoutePrefix) {
+				$routePrefix = '/' . $plugin . '/';
 			}
 
 			foreach (self::$_resourceMap as $params) {
-				$url = $prefix . $urlName . (($params['id']) ? '/:id' : '');
-
-				Router::connect($url,
+				$route = $routePrefix . $name . (($params['id']) ? '/:id' : '');
+				$url = 	array_merge(
+					$extra,
 					array(
 						'plugin' => $plugin,
-						'controller' => $urlName,
+						'controller' => $name,
 						'action' => $params['action'],
 						'[method]' => $params['method']
-					),
-					array('id' => $options['id'], 'pass' => array('id'))
+					)
 				);
+				Router::connect($route, $url, array('id' => $options['id'], 'pass' => array('id')));
 			}
-			self::$_resourceMapped[] = $urlName;
+			self::$_resourceMapped[] = $name;
 		}
 		return self::$_resourceMapped;
 	}
