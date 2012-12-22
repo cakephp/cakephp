@@ -544,7 +544,7 @@ class Mysql extends DboSource {
  * Generate a MySQL "drop table" statement for the given Schema object
  *
  * @param CakeSchema $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
+ * @param string $table Optional. If specified only the table name given will be generated.
  *                      Otherwise, all tables defined in the schema are generated.
  * @return string
  */

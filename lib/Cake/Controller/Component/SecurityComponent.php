@@ -137,7 +137,7 @@ class SecurityComponent extends Component {
 	public $unlockedActions = array();
 
 /**
- * Whether to validate POST data.  Set to false to disable for data coming from 3rd party
+ * Whether to validate POST data. Set to false to disable for data coming from 3rd party
  * services, etc.
  *
  * @var boolean
@@ -145,7 +145,7 @@ class SecurityComponent extends Component {
 	public $validatePost = true;
 
 /**
- * Whether to use CSRF protected forms.  Set to false to disable CSRF protection on forms.
+ * Whether to use CSRF protected forms. Set to false to disable CSRF protection on forms.
  *
  * @var boolean
  * @see http://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
@@ -156,15 +156,15 @@ class SecurityComponent extends Component {
 /**
  * The duration from when a CSRF token is created that it will expire on.
  * Each form/page request will generate a new token that can only be submitted once unless
- * it expires.  Can be any value compatible with strtotime()
+ * it expires. Can be any value compatible with strtotime()
  *
  * @var string
  */
 	public $csrfExpires = '+30 minutes';
 
 /**
- * Controls whether or not CSRF tokens are use and burn.  Set to false to not generate
- * new tokens on each request.  One token will be reused until it expires. This reduces
+ * Controls whether or not CSRF tokens are use and burn. Set to false to not generate
+ * new tokens on each request. One token will be reused until it expires. This reduces
  * the chances of users getting invalid requests because of token consumption.
  * It has the side effect of making CSRF less secure, as tokens are reusable.
  *
@@ -174,7 +174,7 @@ class SecurityComponent extends Component {
 
 /**
  * Control the number of tokens a user can keep open.
- * This is most useful with one-time use tokens.  Since new tokens
+ * This is most useful with one-time use tokens. Since new tokens
  * are created on each request, having a hard limit on the number of open tokens
  * can be useful in controlling the size of the session file.
  *
@@ -543,7 +543,7 @@ class SecurityComponent extends Component {
 
 /**
  * Validate that the controller has a CSRF token in the POST data
- * and that the token is legit/not expired.  If the token is valid
+ * and that the token is legit/not expired. If the token is valid
  * it will be removed from the list of valid tokens.
  *
  * @param Controller $controller A controller to check

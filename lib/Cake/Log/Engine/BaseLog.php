@@ -44,7 +44,7 @@ abstract class BaseLog implements CakeLogInterface {
 	}
 
 /**
- * Sets instance config.  When $config is null, returns config array
+ * Sets instance config. When $config is null, returns config array
  *
  * Config
  *

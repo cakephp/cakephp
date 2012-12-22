@@ -19,8 +19,8 @@
  */
 
 /**
- * Memcache storage engine for cache.  Memcache has some limitations in the amount of
- * control you have over expire times far in the future.  See MemcacheEngine::write() for
+ * Memcache storage engine for cache. Memcache has some limitations in the amount of
+ * control you have over expire times far in the future. See MemcacheEngine::write() for
  * more information.
  *
  * @package       Cake.Cache.Engine
@@ -98,7 +98,7 @@ class MemcacheEngine extends CacheEngine {
 	}
 
 /**
- * Parses the server address into the host/port.  Handles both IPv6 and IPv4
+ * Parses the server address into the host/port. Handles both IPv6 and IPv4
  * addresses and Unix sockets
  *
  * @param string $server The server address string.
@@ -126,7 +126,7 @@ class MemcacheEngine extends CacheEngine {
 	}
 
 /**
- * Write data for key into cache.  When using memcache as your cache engine
+ * Write data for key into cache. When using memcache as your cache engine
  * remember that the Memcache pecl extension does not support cache expiry times greater
  * than 30 days in the future. Any duration greater than 30 days will be treated as never expiring.
  *

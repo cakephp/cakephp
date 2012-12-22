@@ -63,7 +63,7 @@ class ViewTask extends BakeTask {
 	public $scaffoldActions = array('index', 'view', 'add', 'edit');
 
 /**
- * An array of action names that don't require templates.  These
+ * An array of action names that don't require templates. These
  * actions will not emit errors when doing bakeActions()
  *
  * @var array
@@ -423,7 +423,7 @@ class ViewTask extends BakeTask {
 		return $parser->description(
 			__d('cake_console', 'Bake views for a controller, using built-in or custom templates.')
 		)->addArgument('controller', array(
-			'help' => __d('cake_console', 'Name of the controller views to bake.  Can be Plugin.name as a shortcut for plugin baking.')
+			'help' => __d('cake_console', 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.')
 		))->addArgument('action', array(
 			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
 		))->addArgument('alias', array(

@@ -1101,7 +1101,7 @@ class CakeResponse {
  * is marked as so accordingly so the client can be informed of that.
  *
  * In order to mark a response as not modified, you need to set at least
- * the Last-Modified etag response header before calling this method.  Otherwise
+ * the Last-Modified etag response header before calling this method. Otherwise
  * a comparison will not be possible.
  *
  * @param CakeRequest $request Request object
@@ -1128,7 +1128,7 @@ class CakeResponse {
 	}
 
 /**
- * String conversion.  Fetches the response body as a string.
+ * String conversion. Fetches the response body as a string.
  * Does *not* send headers.
  *
  * @return string

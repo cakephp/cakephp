@@ -352,7 +352,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 	}
 
 /**
- * test that importing with records works.  Make sure to try with postgres as its
+ * test that importing with records works. Make sure to try with postgres as its
  * handling of aliases is a workaround at best.
  *
  * @return void

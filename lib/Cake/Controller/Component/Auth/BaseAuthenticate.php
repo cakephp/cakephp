@@ -144,7 +144,7 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Get a user based on information in the request.  Primarily used by stateless authentication
+ * Get a user based on information in the request. Primarily used by stateless authentication
  * systems like basic and digest auth.
  *
  * @param CakeRequest $request Request object.

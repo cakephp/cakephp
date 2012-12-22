@@ -35,8 +35,8 @@
 	Configure::write('debug', 2);
 
 /**
- * Configure the Error handler used to handle errors for your application.  By default
- * ErrorHandler::handleError() is used.  It will display errors using Debugger, when debug > 0
+ * Configure the Error handler used to handle errors for your application. By default
+ * ErrorHandler::handleError() is used. It will display errors using Debugger, when debug > 0
  * and log errors with CakeLog when debug = 0.
  *
  * Options:
@@ -55,16 +55,16 @@
 	));
 
 /**
- * Configure the Exception handler used for uncaught exceptions.  By default,
+ * Configure the Exception handler used for uncaught exceptions. By default,
  * ErrorHandler::handleException() is used. It will display a HTML page for the exception, and
- * while debug > 0, framework errors like Missing Controller will be displayed.  When debug = 0,
+ * while debug > 0, framework errors like Missing Controller will be displayed. When debug = 0,
  * framework errors will be coerced into generic HTTP errors.
  *
  * Options:
  *
  * - `handler` - callback - The callback to handle exceptions. You can set this to any callback type,
  *   including anonymous functions.
- * - `renderer` - string - The class responsible for rendering uncaught exceptions.  If you choose a custom class you
+ * - `renderer` - string - The class responsible for rendering uncaught exceptions. If you choose a custom class you
  *   should place the file for that class in app/Lib/Error. This class needs to implement a render method.
  * - `log` - boolean - Should Exceptions be logged?
  *
@@ -161,8 +161,8 @@
  *    value to false, when dealing with older versions of IE, Chrome Frame or certain web-browsing devices and AJAX
  * - `Session.defaults` - The default configuration set to use as a basis for your session.
  *    There are four builtins: php, cake, cache, database.
- * - `Session.handler` - Can be used to enable a custom session handler.  Expects an array of of callables,
- *    that can be used with `session_save_handler`.  Using this option will automatically add `session.save_handler`
+ * - `Session.handler` - Can be used to enable a custom session handler. Expects an array of of callables,
+ *    that can be used with `session_save_handler`. Using this option will automatically add `session.save_handler`
  *    to the ini array.
  * - `Session.autoRegenerate` - Enabling this setting, turns on automatic renewal of sessions, and
  *    sessionids that change frequently. See CakeSession::$requestCountdown.
@@ -324,7 +324,7 @@ if (Configure::read('debug') > 0) {
 $prefix = 'myapp_';
 
 /**
- * Configure the cache used for general framework caching.  Path information,
+ * Configure the cache used for general framework caching. Path information,
  * object listings, and translation cache files are stored with this configuration.
  */
 Cache::config('_cake_core_', array(
@@ -336,7 +336,7 @@ Cache::config('_cake_core_', array(
 ));
 
 /**
- * Configure the cache for model and datasource caches.  This cache configuration
+ * Configure the cache for model and datasource caches. This cache configuration
  * is used to store schema descriptions, and table listings in connections.
  */
 Cache::config('_cake_model_', array(

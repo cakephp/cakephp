@@ -33,7 +33,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 
 /**
  * Collection of option maps. Option maps allow other helpers to use generic names for engine
- * callbacks and options.  Allowing uniform code access for all engine types.  Their use is optional
+ * callbacks and options. Allowing uniform code access for all engine types. Their use is optional
  * for end user use though.
  *
  * @var array
@@ -66,7 +66,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Redirects to a URL.  Creates a window.location modification snippet
+ * Redirects to a URL. Creates a window.location modification snippet
  * that can be used to trigger 'redirects' from Javascript.
  *
  * @param string|array $url URL
@@ -112,7 +112,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 
 /**
  * Generates a JavaScript object in JavaScript Object Notation (JSON)
- * from an array.  Will use native JSON encode method if available, and $useNative == true
+ * from an array. Will use native JSON encode method if available, and $useNative == true
  *
  * ### Options:
  *
@@ -186,7 +186,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Encode a string into JSON.  Converts and escapes necessary characters.
+ * Encode a string into JSON. Converts and escapes necessary characters.
  *
  * @param string $string The string that needs to be utf8->hex encoded
  * @return void
@@ -362,7 +362,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * - `update` - Dom id to update with the content of the request.
  * - `type` - Data type for response. 'json' and 'html' are supported. Default is html for most libraries.
  * - `evalScripts` - Whether or not <script> tags should be eval'ed.
- * - `dataExpression` - Should the `data` key be treated as a callback.  Useful for supplying `$options['data']` as
+ * - `dataExpression` - Should the `data` key be treated as a callback. Useful for supplying `$options['data']` as
  *    another Javascript expression.
  *
  * @param string|array $url Array or String URL to target with the request.
@@ -372,7 +372,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 	abstract public function request($url, $options = array());
 
 /**
- * Create a draggable element.  Works on the currently selected element.
+ * Create a draggable element. Works on the currently selected element.
  * Additional options may be supported by the library implementation.
  *
  * ### Options
@@ -436,7 +436,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 	abstract public function sortable($options = array());
 
 /**
- * Create a slider UI widget.  Comprised of a track and knob.
+ * Create a slider UI widget. Comprised of a track and knob.
  * Additional options may be supported by the library implementation.
  *
  * ### Options

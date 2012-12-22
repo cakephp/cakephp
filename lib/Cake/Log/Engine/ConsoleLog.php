@@ -21,7 +21,7 @@ App::uses('BaseLog', 'Log/Engine');
 App::uses('ConsoleOutput', 'Console');
 
 /**
- * Console logging.  Writes logs to console output.
+ * Console logging. Writes logs to console output.
  *
  * @package       Cake.Log.Engine
  */

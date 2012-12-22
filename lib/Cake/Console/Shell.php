@@ -521,7 +521,7 @@ class Shell extends Object {
  *
  * ### Options
  *
- * - `width` The width to wrap to.  Defaults to 72
+ * - `width` The width to wrap to. Defaults to 72
  * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
  * - `indent` Indent the text with the string provided. Defaults to null.
  *
@@ -541,9 +541,9 @@ class Shell extends Object {
  *
  * ### Output levels
  *
- * There are 3 built-in output level.  Shell::QUIET, Shell::NORMAL, Shell::VERBOSE.
+ * There are 3 built-in output level. Shell::QUIET, Shell::NORMAL, Shell::VERBOSE.
  * The verbose and quiet output levels, map to the `verbose` and `quiet` output switches
- * present in  most shells.  Using Shell::QUIET for a message means it will always display.
+ * present in  most shells. Using Shell::QUIET for a message means it will always display.
  * While using Shell::VERBOSE means it will only display when verbose output is toggled.
  *
  * @param string|array $message A string or a an array of strings to output

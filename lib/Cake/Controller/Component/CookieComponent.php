@@ -110,7 +110,7 @@ class CookieComponent extends Component {
 /**
  * HTTP only cookie
  *
- * Set to true to make HTTP only cookies.  Cookies that are HTTP only
+ * Set to true to make HTTP only cookies. Cookies that are HTTP only
  * are not accessible in Javascript.
  *
  * @var boolean

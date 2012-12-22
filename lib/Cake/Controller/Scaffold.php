@@ -321,7 +321,7 @@ class Scaffold {
 	}
 
 /**
- * Sends a message to the user.  Either uses Sessions or flash messages depending
+ * Sends a message to the user. Either uses Sessions or flash messages depending
  * on the availability of a session
  *
  * @param string $message Message to display

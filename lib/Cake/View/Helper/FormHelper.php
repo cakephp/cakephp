@@ -60,7 +60,7 @@ class FormHelper extends AppHelper {
 	const SECURE_SKIP = 'skip';
 
 /**
- * Defines the type of form being created.  Set by FormHelper::create().
+ * Defines the type of form being created. Set by FormHelper::create().
  *
  * @var string
  */
@@ -292,16 +292,16 @@ class FormHelper extends AppHelper {
  *
  * - `type` Form method defaults to POST
  * - `action`  The controller action the form submits to, (optional).
- * - `url`  The url the form submits to. Can be a string or a url array.  If you use 'url'
+ * - `url`  The url the form submits to. Can be a string or a url array. If you use 'url'
  *    you should leave 'action' undefined.
  * - `default`  Allows for the creation of Ajax forms. Set this to false to prevent the default event handler.
  *   Will create an onsubmit attribute if it doesn't not exist. If it does, default action suppression
  *   will be appended.
  * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
  * - `inputDefaults` set the default $options for FormHelper::input(). Any options that would
- *   be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
+ *   be set when using FormHelper::input() can be set here. Options set with `inputDefaults`
  *   can be overridden when calling input()
- * - `encoding` Set the accept-charset encoding for the form.  Defaults to `Configure::read('App.encoding')`
+ * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
  *
  * @param mixed $model The model name for which the form is being defined. Should
  *   include the plugin name for plugin models. e.g. `ContactManager.Contact`.
@@ -586,7 +586,7 @@ class FormHelper extends AppHelper {
  *
  * @param boolean $lock Whether this field should be part of the validation
  *     or excluded as part of the unlockedFields.
- * @param string|array $field Reference to field to be secured.  Should be dot separated to indicate nesting.
+ * @param string|array $field Reference to field to be secured. Should be dot separated to indicate nesting.
  * @param mixed $value Field value, if value should not be tampered with.
  * @return void
  */
@@ -766,7 +766,7 @@ class FormHelper extends AppHelper {
  * }}}
  *
  * @param string $fieldName This should be "Modelname.fieldname"
- * @param string $text Text that will appear in the label field.  If
+ * @param string $text Text that will appear in the label field. If
  *   $text is left undefined the text will be inflected from the
  *   fieldName.
  * @param array|string $options An array of HTML attributes, or a string, to be used as a class name.
@@ -806,7 +806,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Generate a set of inputs for `$fields`.  If $fields is null the fields of current model
+ * Generate a set of inputs for `$fields`. If $fields is null the fields of current model
  * will be used.
  *
  * You can customize individual inputs through `$fields`.
@@ -1288,7 +1288,7 @@ class FormHelper extends AppHelper {
 /**
  * Generate a label for an input() call.
  *
- * $options can contain a hash of id overrides.  These overrides will be
+ * $options can contain a hash of id overrides. These overrides will be
  * used instead of the generated values if present.
  *
  * @param string $fieldName
@@ -1363,8 +1363,8 @@ class FormHelper extends AppHelper {
  * - `hiddenField` - boolean to indicate if you want the results of checkbox() to include
  *    a hidden input with a value of ''.
  * - `disabled` - create a disabled input.
- * - `default` - Set the default value for the checkbox.  This allows you to start checkboxes
- *    as checked, without having to check the POST data.  A matching POST data value, will overwrite
+ * - `default` - Set the default value for the checkbox. This allows you to start checkboxes
+ *    as checked, without having to check the POST data. A matching POST data value, will overwrite
  *    the default value.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
@@ -1411,7 +1411,7 @@ class FormHelper extends AppHelper {
 
 /**
  * Creates a set of radio widgets. Will create a legend and fieldset
- * by default.  Use $options to control this
+ * by default. Use $options to control this
  *
  * ### Attributes:
  *
@@ -1423,8 +1423,8 @@ class FormHelper extends AppHelper {
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
  *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
  * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
- * - `empty` - Set to `true` to create a input with the value '' as the first option.  When `true`
- *   the radio label will be 'empty'.  Set this option to a string to control the label value.
+ * - `empty` - Set to `true` to create a input with the value '' as the first option. When `true`
+ *   the radio label will be 'empty'. Set this option to a string to control the label value.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
@@ -1526,7 +1526,7 @@ class FormHelper extends AppHelper {
 
 /**
  * Missing method handler - implements various simple input types. Is used to create inputs
- * of various types.  e.g. `$this->Form->text();` will create `<input type="text" />` while
+ * of various types. e.g. `$this->Form->text();` will create `<input type="text" />` while
  * `$this->Form->range();` will create `<input type="range" />`
  *
  * ### Usage
@@ -1637,7 +1637,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates a `<button>` tag.  The type attribute defaults to `type="submit"`
+ * Creates a `<button>` tag. The type attribute defaults to `type="submit"`
  * You can change it to a different value by using `$options['type']`.
  *
  * ### Options:
@@ -1768,22 +1768,22 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates a submit button element.  This method will generate `<input />` elements that
- * can be used to submit, and reset forms by using $options.  image submits can be created by supplying an
+ * Creates a submit button element. This method will generate `<input />` elements that
+ * can be used to submit, and reset forms by using $options. image submits can be created by supplying an
  * image path for $caption.
  *
  * ### Options
  *
- * - `div` - Include a wrapping div?  Defaults to true.  Accepts sub options similar to
+ * - `div` - Include a wrapping div?  Defaults to true. Accepts sub options similar to
  *   FormHelper::input().
  * - `before` - Content to include before the input.
  * - `after` - Content to include after the input.
- * - `type` - Set to 'reset' for reset inputs.  Defaults to 'submit'
+ * - `type` - Set to 'reset' for reset inputs. Defaults to 'submit'
  * - Other attributes will be assigned to the input element.
  *
  * ### Options
  *
- * - `div` - Include a wrapping div?  Defaults to true.  Accepts sub options similar to
+ * - `div` - Include a wrapping div?  Defaults to true. Accepts sub options similar to
  *   FormHelper::input().
  * - Other attributes will be assigned to the input element.
  *
@@ -1791,7 +1791,7 @@ class FormHelper extends AppHelper {
  *  extension .jpg, .jpe, .jpeg, .gif, .png use an image if the extension
  *  exists, AND the first character is /, image is relative to webroot,
  *  OR if the first character is not /, image is relative to webroot/img.
- * @param array $options Array of options.  See above.
+ * @param array $options Array of options. See above.
  * @return string A HTML submit button
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::submit
  */
@@ -1878,15 +1878,15 @@ class FormHelper extends AppHelper {
  * - `showParents` - If included in the array and set to true, an additional option element
  *   will be added for the parent of each option group. You can set an option with the same name
  *   and it's key will be used for the value of the option.
- * - `multiple` - show a multiple select box.  If set to 'checkbox' multiple checkboxes will be
+ * - `multiple` - show a multiple select box. If set to 'checkbox' multiple checkboxes will be
  *   created instead.
- * - `empty` - If true, the empty select option is shown.  If a string,
+ * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
  * - `value` The selected value of the input.
  * - `class` - When using multiple = checkbox the classname to apply to the divs. Defaults to 'checkbox'.
- * - `disabled` - Control the disabled attribute.  When creating a select box, set to true to disable the
- *   select box.  When creating checkboxes, `true` will disable all checkboxes. You can also set disabled
+ * - `disabled` - Control the disabled attribute. When creating a select box, set to true to disable the
+ *   select box. When creating checkboxes, `true` will disable all checkboxes. You can also set disabled
  *   to a list of values you want to disable when creating checkboxes.
  *
  * ### Using options
@@ -1910,7 +1910,7 @@ class FormHelper extends AppHelper {
  * $this->Form->select('Model.field', $options);
  * }}}
  *
- * In the above `2 => 'fred'` will not generate an option element.  You should enable the `showParents`
+ * In the above `2 => 'fred'` will not generate an option element. You should enable the `showParents`
  * attribute to show the fred option.
  *
  * If you have multiple options that need to have the same value attribute, you can
@@ -2036,7 +2036,7 @@ class FormHelper extends AppHelper {
  *
  * ### Attributes:
  *
- * - `empty` - If true, the empty select option is shown.  If a string,
+ * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
  *
@@ -2062,7 +2062,7 @@ class FormHelper extends AppHelper {
  *
  * ### Attributes:
  *
- * - `empty` - If true, the empty select option is shown.  If a string,
+ * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `orderYear` - Ordering of year values in select options.
  *   Possible values 'asc', 'desc'. Default 'desc'
@@ -2118,7 +2118,7 @@ class FormHelper extends AppHelper {
  *
  * - `monthNames` - If false, 2 digit numbers will be used instead of text.
  *   If a array, the given array will be used.
- * - `empty` - If true, the empty select option is shown.  If a string,
+ * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
  *
@@ -2153,7 +2153,7 @@ class FormHelper extends AppHelper {
  *
  * ### Attributes:
  *
- * - `empty` - If true, the empty select option is shown.  If a string,
+ * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
  *
@@ -2193,7 +2193,7 @@ class FormHelper extends AppHelper {
  *
  * ### Attributes:
  *
- * - `empty` - If true, the empty select option is shown.  If a string,
+ * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
  *
@@ -2253,7 +2253,7 @@ class FormHelper extends AppHelper {
  *
  * ### Attributes:
  *
- * - `empty` - If true, the empty select option is shown.  If a string,
+ * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
  *
@@ -2299,10 +2299,10 @@ class FormHelper extends AppHelper {
  * - `maxYear` The maximum year to use in the year select
  * - `interval` The interval for the minutes select. Defaults to 1
  * - `separator` The contents of the string between select elements. Defaults to '-'
- * - `empty` - If true, the empty select option is shown.  If a string,
+ * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
- * - `value` | `default` The default value to be used by the input.  A value in `$this->data`
- *   matching the field name will override this value.  If no default is provided `time()` will be used.
+ * - `value` | `default` The default value to be used by the input. A value in `$this->data`
+ *   matching the field name will override this value. If no default is provided `time()` will be used.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $dateFormat DMY, MDY, YMD, or null to not generate date inputs.

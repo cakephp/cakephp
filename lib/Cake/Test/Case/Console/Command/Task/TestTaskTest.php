@@ -425,7 +425,7 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
- * test baking files.  The conditionally run tests are known to fail in PHP4
+ * test baking files. The conditionally run tests are known to fail in PHP4
  * as PHP4 classnames are all lower case, breaking the plugin path inflection.
  *
  * @return void

@@ -24,8 +24,8 @@ App::uses('DbAcl', 'Model');
 App::uses('Hash', 'Utility');
 
 /**
- * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode
- * being enabled.  Be sure to turn it off when using this shell.
+ * Shell for ACL management. This console is known to have issues with zend.ze1_compatibility_mode
+ * being enabled. Be sure to turn it off when using this shell.
  *
  * @package       Cake.Console.Command
  */
@@ -501,7 +501,7 @@ class AclShell extends AppShell {
 					' - <model>.<id> - The node will be bound to a specific record of the given model.',
 					'',
 					' - <alias> - The node will be given a string alias (or path, in the case of <parent>)',
-					"   i.e. 'John'.  When used with <parent>, this takes the form of an alias path,",
+					"   i.e. 'John'. When used with <parent>, this takes the form of an alias path,",
 					"   i.e. <group>/<subgroup>/<parent>.",
 					'',
 					"To add a node at the root level, enter 'root' or '/' as the <parent> parameter."

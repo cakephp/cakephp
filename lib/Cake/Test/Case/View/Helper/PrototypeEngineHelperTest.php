@@ -283,8 +283,8 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 	}
 
 /**
- * test drag() method.  Scriptaculous lacks the ability to take an Array of Elements
- * in new Drag() when selection is a multiple type.  Iterate over the array.
+ * test drag() method. Scriptaculous lacks the ability to take an Array of Elements
+ * in new Drag() when selection is a multiple type. Iterate over the array.
  *
  * @return void
  */

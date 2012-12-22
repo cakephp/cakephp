@@ -38,7 +38,7 @@ class PaginatorHelper extends AppHelper {
 	public $helpers = array('Html');
 
 /**
- * The class used for 'Ajax' pagination links. Defaults to JsHelper.  You should make sure
+ * The class used for 'Ajax' pagination links. Defaults to JsHelper. You should make sure
  * that JsHelper is defined as a helper before PaginatorHelper, if you want to customize the JsHelper.
  *
  * @var string
@@ -63,8 +63,8 @@ class PaginatorHelper extends AppHelper {
  * - `escape` Defines if the title field for the link should be escaped (default: true).
  * - `update` DOM id of the element updated with the results of the AJAX call.
  *     If this key isn't specified Paginator will use plain HTML links.
- * - `paging['paramType']` The type of parameters to use when creating links.  Valid options are
- *     'querystring' and 'named'.  See PaginatorComponent::$settings for more information.
+ * - `paging['paramType']` The type of parameters to use when creating links. Valid options are
+ *     'querystring' and 'named'. See PaginatorComponent::$settings for more information.
  * - `convertKeys` - A list of keys in url arrays that should be converted to querysting params
  *    if paramType == 'querystring'.
  *
@@ -78,7 +78,7 @@ class PaginatorHelper extends AppHelper {
  * Constructor for the helper. Sets up the helper that is used for creating 'AJAX' links.
  *
  * Use `public $helpers = array('Paginator' => array('ajax' => 'CustomHelper'));` to set a custom Helper
- * or choose a non JsHelper Helper.  If you want to use a specific library with JsHelper declare JsHelper and its
+ * or choose a non JsHelper Helper. If you want to use a specific library with JsHelper declare JsHelper and its
  * adapter before including PaginatorHelper in your helpers array.
  *
  * The chosen custom helper must implement a `link()` method.
@@ -118,7 +118,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Gets the current paging parameters from the resultset for the given model
  *
- * @param string $model Optional model name.  Uses the default if none is specified.
+ * @param string $model Optional model name. Uses the default if none is specified.
  * @return array The array of paging parameters for the paginated resultset.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::params
  */
@@ -172,7 +172,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Gets the current page of the recordset for the given model
  *
- * @param string $model Optional model name.  Uses the default if none is specified.
+ * @param string $model Optional model name. Uses the default if none is specified.
  * @return string The current page number of the recordset.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::current
  */
@@ -188,7 +188,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Gets the current key by which the recordset is sorted
  *
- * @param string $model Optional model name.  Uses the default if none is specified.
+ * @param string $model Optional model name. Uses the default if none is specified.
  * @param array $options Options for pagination links. See #options for list of keys.
  * @return string The name of the key by which the recordset is being sorted, or
  *  null if the results are not currently sorted.
@@ -214,7 +214,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Gets the current direction the recordset is sorted
  *
- * @param string $model Optional model name.  Uses the default if none is specified.
+ * @param string $model Optional model name. Uses the default if none is specified.
  * @param array $options Options for pagination links. See #options for list of keys.
  * @return string The direction by which the recordset is being sorted, or
  *  null if the results are not currently sorted.
@@ -291,7 +291,7 @@ class PaginatorHelper extends AppHelper {
 	}
 
 /**
- * Generates a sorting link. Sets named parameters for the sort and direction.  Handles
+ * Generates a sorting link. Sets named parameters for the sort and direction. Handles
  * direction switching automatically.
  *
  * ### Options:
@@ -355,7 +355,7 @@ class PaginatorHelper extends AppHelper {
  *
  * ### Options
  *
- * - `update` The Id of the DOM element you wish to update.  Creates Ajax enabled links
+ * - `update` The Id of the DOM element you wish to update. Creates Ajax enabled links
  *    with the AjaxHelper.
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
@@ -501,7 +501,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Returns true if the given result set is not at the last page
  *
- * @param string $model Optional model name.  Uses the default if none is specified.
+ * @param string $model Optional model name. Uses the default if none is specified.
  * @return boolean True if the result set is not at the last page.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::hasNext
  */
@@ -512,7 +512,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Returns true if the given result set has the page number given by $page
  *
- * @param string $model Optional model name.  Uses the default if none is specified.
+ * @param string $model Optional model name. Uses the default if none is specified.
  * @param integer $page The page number - if not set defaults to 1.
  * @return boolean True if the given result set has the specified page number.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::hasPage
@@ -562,7 +562,7 @@ class PaginatorHelper extends AppHelper {
  *
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel();
  * - `format` The format string you want to use, defaults to 'pages' Which generates output like '1 of 5'
- *    set to 'range' to generate output like '1 - 3 of 13'.  Can also be set to a custom string, containing
+ *    set to 'range' to generate output like '1 - 3 of 13'. Can also be set to a custom string, containing
  *    the following placeholders `{:page}`, `{:pages}`, `{:current}`, `{:count}`, `{:model}`, `{:start}`, `{:end}` and any
  *    custom content you would like.
  * - `separator` The separator string to use, default to ' of '
@@ -781,7 +781,7 @@ class PaginatorHelper extends AppHelper {
  *
  * `echo $this->Paginator->first('< first');`
  *
- * Creates a single link for the first page.  Will output nothing if you are on the first page.
+ * Creates a single link for the first page. Will output nothing if you are on the first page.
  *
  * `echo $this->Paginator->first(3);`
  *
@@ -848,11 +848,11 @@ class PaginatorHelper extends AppHelper {
  *
  * `echo $this->Paginator->last('last >');`
  *
- * Creates a single link for the last page.  Will output nothing if you are on the last page.
+ * Creates a single link for the last page. Will output nothing if you are on the last page.
  *
  * `echo $this->Paginator->last(3);`
  *
- * Will create links for the last 3 pages.  Once you enter the page range, no output will be created.
+ * Will create links for the last 3 pages. Once you enter the page range, no output will be created.
  *
  * ### Options:
  *

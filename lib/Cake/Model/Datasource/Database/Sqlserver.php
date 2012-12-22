@@ -22,7 +22,7 @@ App::uses('DboSource', 'Model/Datasource');
 /**
  * Dbo driver for SQLServer
  *
- * A Dbo driver for SQLServer 2008 and higher.  Requires the `sqlsrv`
+ * A Dbo driver for SQLServer 2008 and higher. Requires the `sqlsrv`
  * and `pdo_sqlsrv` extensions to be enabled.
  *
  * @package       Cake.Model.Datasource.Database
@@ -51,7 +51,7 @@ class Sqlserver extends DboSource {
 	public $endQuote = "]";
 
 /**
- * Creates a map between field aliases and numeric indexes.  Workaround for the
+ * Creates a map between field aliases and numeric indexes. Workaround for the
  * SQL Server driver's 30-character column name limitation.
  *
  * @var array
@@ -762,7 +762,7 @@ class Sqlserver extends DboSource {
  * Generate a "drop table" statement for the given Schema object
  *
  * @param CakeSchema $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
+ * @param string $table Optional. If specified only the table name given will be generated.
  *   Otherwise, all tables defined in the schema are generated.
  * @return string
  */
