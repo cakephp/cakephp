@@ -691,11 +691,13 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 			$config = ClassRegistry::config('Model');
 		}
 
-		list($plugin, $name) = pluginSplit($model);
+		list($plugin, $name) = pluginSplit($model, true);
+		App::uses($name, $plugin . 'Model');
 		$config = array_merge((array)$config, array('name' => $name));
 		$mock = $this->getMock($name, $methods, array($config));
 		ClassRegistry::removeObject($name);
 		ClassRegistry::addObject($name, $mock);
 		return $mock;
 	}
+
 }
