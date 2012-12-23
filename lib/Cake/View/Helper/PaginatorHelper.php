@@ -452,7 +452,8 @@ class PaginatorHelper extends AppHelper {
 		$check = 'has' . $which;
 		$_defaults = array(
 			'url' => array(), 'step' => 1, 'escape' => true,
-			'model' => null, 'tag' => 'span', 'class' => strtolower($which)
+			'model' => null, 'tag' => 'span', 'class' => strtolower($which),
+			'disabledTag' => null
 		);
 		$options = array_merge($_defaults, (array)$options);
 		$paging = $this->params($options['model']);
@@ -483,7 +484,11 @@ class PaginatorHelper extends AppHelper {
 		} else {
 			unset($options['rel']);
 			$tag = $tag ? $tag : $_defaults['tag'];
-			return $this->Html->tag($tag, $title, array_merge($options, compact('escape', 'class')));
+			if ($disabledTag) {
+				return $this->Html->tag($tag, $this->Html->tag($disabledTag, $title), array_merge($options, compact('escape', 'class')));
+			} else {
+				return $this->Html->tag($tag, $title, array_merge($options, compact('escape', 'class')));
+			}
 		}
 	}
 
