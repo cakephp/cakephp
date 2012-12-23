@@ -133,7 +133,7 @@ class ServerShell extends AppShell {
 
 		$port = ($this->_port == self::DEFAULT_PORT) ? '' : ':' . $this->_port;
 		$this->out(__d('cake_console', 'built-in server is running in http://%s%s/', $this->_host, $port));
-		$ret = system($command);
+		system($command);
 	}
 
 /**

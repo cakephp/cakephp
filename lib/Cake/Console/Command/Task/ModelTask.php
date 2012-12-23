@@ -377,7 +377,7 @@ class ModelTask extends BakeTask {
 		}
 		sort($options);
 		$default = 1;
-		foreach ($options as $key => $option) {
+		foreach ($options as $option) {
 			if ($option{0} != '_') {
 				$choices[$default] = strtolower($option);
 				$default++;
@@ -545,8 +545,8 @@ class ModelTask extends BakeTask {
  * @return array $associations with belongsTo added in.
  */
 	public function findBelongsTo(Model $model, $associations) {
-		$fields = $model->schema(true);
-		foreach ($fields as $fieldName => $field) {
+		$fieldNames = array_keys($model->schema(true));
+		foreach ($fieldNames as $fieldName) {
 			$offset = strpos($fieldName, '_id');
 			if ($fieldName != $model->primaryKey && $fieldName != 'parent_id' && $offset !== false) {
 				$tmpModelName = $this->_modelNameFromKey($fieldName);
@@ -577,14 +577,14 @@ class ModelTask extends BakeTask {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->_tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
-			$modelFieldsTemp = $tempOtherModel->schema(true);
+			$tempFieldNames = array_keys($tempOtherModel->schema(true));
 
 			$pattern = '/_' . preg_quote($model->table, '/') . '|' . preg_quote($model->table, '/') . '_/';
 			$possibleJoinTable = preg_match($pattern, $otherTable);
 			if ($possibleJoinTable) {
 				continue;
 			}
-			foreach ($modelFieldsTemp as $fieldName => $field) {
+			foreach ($tempFieldNames as $fieldName) {
 				$assoc = false;
 				if ($fieldName != $model->primaryKey && $fieldName == $foreignKey) {
 					$assoc = array(
@@ -619,9 +619,6 @@ class ModelTask extends BakeTask {
 	public function findHasAndBelongsToMany(Model $model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->_tables as $otherTable) {
-			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
-			$modelFieldsTemp = $tempOtherModel->schema(true);
-
 			$offset = strpos($otherTable, $model->table . '_');
 			$otherOffset = strpos($otherTable, '_' . $model->table);
 

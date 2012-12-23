@@ -1932,7 +1932,7 @@ class DboSource extends DataSource {
 			foreach ($conditions as $field => $value) {
 				$originalField = $field;
 				if (strpos($field, '.') !== false) {
-					list($alias, $field) = explode('.', $field);
+					list(, $field) = explode('.', $field);
 					$field = ltrim($field, $this->startQuote);
 					$field = rtrim($field, $this->endQuote);
 				}
@@ -2973,7 +2973,7 @@ class DboSource extends DataSource {
 
 		foreach ($schema->tables as $curTable => $columns) {
 			if (!$tableName || $tableName == $curTable) {
-				$cols = $colList = $indexes = $tableParameters = array();
+				$cols = $indexes = $tableParameters = array();
 				$primary = null;
 				$table = $this->fullTableName($curTable);
 
@@ -3042,12 +3042,26 @@ class DboSource extends DataSource {
 	public function dropSchema(CakeSchema $schema, $table = null) {
 		$out = '';
 
-		foreach ($schema->tables as $curTable => $columns) {
-			if (!$table || $table == $curTable) {
-				$out .= 'DROP TABLE ' . $this->fullTableName($curTable) . ";\n";
-			}
+		if ($table && array_key_exists($table, $schema->tables)) {
+			return $this->_dropTable($table) . "\n";
+		} elseif ($table) {
+			return $out;
+		}
+
+		foreach (array_keys($schema->tables) as $curTable) {
+			$out .= $this->_dropTable($curTable) . "\n";
 		}
 		return $out;
+	}
+
+/**
+ * Generate a "drop table" statement for a single table
+ *
+ * @param type $table Name of the table to drop
+ * @return string Drop table SQL statement
+ */
+	protected function _dropTable($table) {
+		return 'DROP TABLE ' . $this->fullTableName($table) . ";";
 	}
 
 /**

@@ -261,9 +261,7 @@ class Shell extends Object {
 			return true;
 		}
 		$this->_taskMap = TaskCollection::normalizeObjectArray((array)$this->tasks);
-		foreach ($this->_taskMap as $task => $properties) {
-			$this->taskNames[] = $task;
-		}
+		$this->taskNames = array_merge($this->taskNames, array_keys($this->_taskMap));
 		return true;
 	}
 

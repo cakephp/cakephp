@@ -174,7 +174,7 @@ class PhpAcl extends Object implements AclInterface {
 			return $allow;
 		}
 
-		foreach ($path as $depth => $node) {
+		foreach ($path as $node) {
 			foreach ($prioritizedAros as $aros) {
 				if (!empty($node['allow'])) {
 					$allow = $allow || count(array_intersect($node['allow'], $aros));
@@ -336,7 +336,6 @@ class PhpAco {
  */
 	public function build(array $allow, array $deny = array()) {
 		$this->_tree = array();
-		$tree = array();
 
 		foreach ($allow as $dotPath => $aros) {
 			if (is_string($aros)) {

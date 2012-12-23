@@ -75,7 +75,7 @@ abstract class BaseAuthenticate {
  */
 	protected function _findUser($conditions, $password = null) {
 		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
+		list(, $model) = pluginSplit($userModel);
 		$fields = $this->settings['fields'];
 
 		if (!is_array($conditions)) {

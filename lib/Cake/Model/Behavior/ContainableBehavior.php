@@ -124,7 +124,7 @@ class ContainableBehavior extends ModelBehavior {
 		$map = $this->containmentsMap($containments);
 
 		$mandatory = array();
-		foreach ($containments['models'] as $name => $model) {
+		foreach ($containments['models'] as $model) {
 			$instance = $model['instance'];
 			$needed = $this->fieldDependencies($instance, $map, false);
 			if (!empty($needed)) {

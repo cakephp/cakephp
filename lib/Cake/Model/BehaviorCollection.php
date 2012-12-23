@@ -63,7 +63,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 		$this->modelName = $modelName;
 
 		if (!empty($behaviors)) {
-			foreach (BehaviorCollection::normalizeObjectArray($behaviors) as $behavior => $config) {
+			foreach (BehaviorCollection::normalizeObjectArray($behaviors) as $config) {
 				$this->load($config['class'], $config['settings']);
 			}
 		}
@@ -183,7 +183,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  * @return void
  */
 	public function unload($name) {
-		list($plugin, $name) = pluginSplit($name);
+		list(, $name) = pluginSplit($name);
 		if (isset($this->_loaded[$name])) {
 			$this->_loaded[$name]->cleanup(ClassRegistry::getObject($this->modelName));
 			parent::unload($name);

@@ -110,7 +110,7 @@ class ClassRegistry {
 		$count = count($objects);
 		$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
 
-		foreach ($objects as $key => $settings) {
+		foreach ($objects as $settings) {
 			if (is_numeric($settings)) {
 				trigger_error(__d('cake_dev', '(ClassRegistry::init() Attempted to create instance of a class with a numeric name'), E_USER_WARNING);
 				return false;

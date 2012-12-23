@@ -355,7 +355,7 @@ class DataSource extends Object {
 						$type = $model->getColumnType($model->primaryKey);
 					break;
 					case '{$__cakeForeignKey__$}':
-						foreach ($model->associations() as $id => $name) {
+						foreach ($model->associations() as $name) {
 							foreach ($model->$name as $assocName => $assoc) {
 								if ($assocName === $association) {
 									if (isset($assoc['foreignKey'])) {
