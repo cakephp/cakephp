@@ -250,6 +250,7 @@ class PaginatorHelper extends AppHelper {
  * - `tag` The tag wrapping tag you want to use, defaults to 'span'. Set this to false to disable this option
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
+ * - `disabledTag` Tag to use instead of A tag when there is no previous page
  *
  * @param string $title Title for the link. Defaults to '<< Previous'.
  * @param array $options Options for pagination link. See #options for list of keys.
@@ -274,12 +275,13 @@ class PaginatorHelper extends AppHelper {
  * - `tag` The tag wrapping tag you want to use, defaults to 'span'. Set this to false to disable this option
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
+ * - `disabledTag` Tag to use instead of A tag when there is no next page
  *
  * @param string $title Title for the link. Defaults to 'Next >>'.
  * @param array $options Options for pagination link. See above for list of keys.
  * @param string $disabledTitle Title when the link is disabled.
  * @param array $disabledOptions Options for the disabled pagination link. See above for list of keys.
- * @return string A "next" link or or $disabledTitle text if the link is disabled.
+ * @return string A "next" link or $disabledTitle text if the link is disabled.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::next
  */
 	public function next($title = 'Next >>', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
@@ -451,8 +453,8 @@ class PaginatorHelper extends AppHelper {
 	protected function _pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$check = 'has' . $which;
 		$_defaults = array(
-			'url' => array(), 'step' => 1, 'escape' => true,
-			'model' => null, 'tag' => 'span', 'class' => strtolower($which)
+			'url' => array(), 'step' => 1, 'escape' => true, 'model' => null,
+			'tag' => 'span', 'class' => strtolower($which), 'disabledTag' => null
 		);
 		$options = array_merge($_defaults, (array)$options);
 		$paging = $this->params($options['model']);
@@ -475,15 +477,34 @@ class PaginatorHelper extends AppHelper {
 		}
 
 		if ($this->{$check}($model)) {
-			$url = array_merge(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
+			$url = array_merge(
+				array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)),
+				$url
+			);
 			if ($tag === false) {
-				return $this->link($title, $url, array_merge($options, compact('escape', 'model', 'class')));
+				return $this->link(
+					$title,
+					$url,
+					compact('escape', 'model', 'class') + $options
+				);
 			}
-			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape', 'model'))), compact('class'));
+			$link = $this->link($title, $url, compact('escape', 'model') + $options);
+			return $this->Html->tag($tag, $link, compact('class'));
 		} else {
 			unset($options['rel']);
-			$tag = $tag ? $tag : $_defaults['tag'];
-			return $this->Html->tag($tag, $title, array_merge($options, compact('escape', 'class')));
+			if (!$tag) {
+				if ($disabledTag) {
+					$tag = $disabledTag;
+					$disabledTag = null;
+				} else {
+					$tag = $_defaults['tag'];
+				}
+			}
+			if ($disabledTag) {
+				$title = $this->Html->tag($disabledTag, $title, compact('escape') + $options);
+				return $this->Html->tag($tag, $title, compact('class'));
+			}
+			return $this->Html->tag($tag, $title, compact('escape', 'class') + $options);
 		}
 	}
 
