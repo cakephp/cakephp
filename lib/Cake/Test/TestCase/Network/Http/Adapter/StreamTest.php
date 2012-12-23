@@ -133,4 +133,32 @@ class StreamTest extends TestCase {
 		$this->assertContains('my value', $result['content']);
 	}
 
+/**
+ * Test send() + context options for SSL.
+ *
+ * @return void
+ */
+	public function testSendContextSsl() {
+		$request = new Request();
+		$request->url('https://localhost.com/test.html');
+		$options = [
+			'ssl_verify_host' => true,
+			'ssl_verify_peer' => true,
+			'ssl_verify_depth' => 9000,
+			'ssl_allow_self_signed' => false,
+		];
+
+		$this->stream->send($request, $options);
+		$result = $this->stream->contextOptions();
+		$expected = [
+			'CN_match' => 'localhost.com',
+			'verify_peer' => true,
+			'verify_depth' => 9000,
+			'allow_self_signed' => false,
+		];
+		foreach ($expected as $k => $v) {
+			$this->assertEquals($v, $result[$k]);
+		}
+	}
+
 }

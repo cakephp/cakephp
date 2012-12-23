@@ -48,6 +48,9 @@ class Stream {
 
 		$url = $request->url();
 		$scheme = parse_url($url, PHP_URL_SCHEME);
+		if ($scheme === 'https') {
+			$this->_buildSslContext($request, $options);
+		}
 		$this->_context = stream_context_create([
 			$scheme => $this->_contextOptions
 		]);
@@ -117,6 +120,37 @@ class Stream {
 		}
 		if (!empty($options['redirect'])) {
 			$this->_contextOptions['max_redirects'] = $options['redirect'];
+		}
+	}
+
+/**
+ * Build SSL options for the request.
+ *
+ * @param Request $request
+ * @param array $options
+ */
+	protected function _buildSslContext($request, $options) {
+		$sslOptions = [
+			'ssl_verify_peer',
+			'ssl_verify_depth',
+			'ssl_allow_self_signed',
+			'ssl_cafile',
+			'ssl_local_cert',
+			'ssl_passphrase',
+		];
+		if (empty($options['ssl_cafile'])) {
+			$options['ssl_cafile'] = CAKE . 'Config' . DS . 'cacert.pem';
+		}
+		if (!empty($options['ssl_verify_host'])) {
+			$url = $request->url();
+			$host = parse_url($url, PHP_URL_HOST);
+			$this->_contextOptions['CN_match'] = $host;
+		}
+		foreach ($sslOptions as $key) {
+			if (isset($options[$key])) {
+				$name = substr($key, 4);
+				$this->_contextOptions[$name] = $options[$key];
+			}
 		}
 	}
 
