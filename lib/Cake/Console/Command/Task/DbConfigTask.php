@@ -296,7 +296,7 @@ class DbConfigTask extends AppShell {
 		}
 
 		foreach ($oldConfigs as $key => $oldConfig) {
-			foreach ($configs as $k => $config) {
+			foreach ($configs as $config) {
 				if ($oldConfig['name'] == $config['name']) {
 					unset($oldConfigs[$key]);
 				}

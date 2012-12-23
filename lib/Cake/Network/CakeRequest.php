@@ -716,7 +716,7 @@ class CakeRequest implements ArrayAccess {
 	public static function acceptLanguage($language = null) {
 		$raw = self::_parseAcceptWithQualifier(self::header('Accept-Language'));
 		$accept = array();
-		foreach ($raw as $qualifier => $languages) {
+		foreach ($raw as $languages) {
 			foreach ($languages as &$lang) {
 				if (strpos($lang, '_')) {
 					$lang = str_replace('_', '-', $lang);

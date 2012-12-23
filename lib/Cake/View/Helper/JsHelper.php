@@ -91,7 +91,7 @@ class JsHelper extends AppHelper {
 			$className = $settings;
 		}
 		$engineName = $className;
-		list($plugin, $className) = pluginSplit($className);
+		list(, $className) = pluginSplit($className);
 
 		$this->_engineName = $className . 'Engine';
 		$engineClass = $engineName . 'Engine';

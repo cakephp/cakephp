@@ -211,7 +211,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::find
  */
 	public function find($regexpPattern = '.*', $sort = false) {
-		list($dirs, $files) = $this->read($sort);
+		list(, $files) = $this->read($sort);
 		return array_values(preg_grep('/^' . $regexpPattern . '$/i', $files));
 	}
 

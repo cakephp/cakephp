@@ -1261,7 +1261,7 @@ class CakeResponse {
 
 			$httpRange = env('HTTP_RANGE');
 			if (isset($httpRange)) {
-				list($toss, $range) = explode('=', $httpRange);
+				list(, $range) = explode('=', $httpRange);
 
 				$size = $fileSize - 1;
 				$length = $fileSize - $range;
