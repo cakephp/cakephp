@@ -498,48 +498,60 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testColumn() {
-		$result = $this->Dbo->column('varchar(50)');
 		$expected = 'string';
+		$result = $this->Dbo->column('varchar(50)');
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->column('varchar (50)');
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Dbo->column('text');
 		$expected = 'text';
+		$result = $this->Dbo->column('text');
 		$this->assertEquals($expected, $result);
 
+		$expected = 'integer';
 		$result = $this->Dbo->column('int(11)');
-		$expected = 'integer';
 		$this->assertEquals($expected, $result);
-
 		$result = $this->Dbo->column('int(11) unsigned');
-		$expected = 'integer';
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->column('int (11) unsigned');
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Dbo->column('bigint(20)');
 		$expected = 'biginteger';
+		$result = $this->Dbo->column('bigint(20)');
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->column('bigint (20)');
 		$this->assertEquals($expected, $result);
 
+		$expected = 'boolean';
 		$result = $this->Dbo->column('tinyint(1)');
-		$expected = 'boolean';
 		$this->assertEquals($expected, $result);
-
+		$result = $this->Dbo->column('tinyint (1)');
+		$this->assertEquals($expected, $result);
 		$result = $this->Dbo->column('boolean');
-		$expected = 'boolean';
 		$this->assertEquals($expected, $result);
 
+		$expected = 'float';
 		$result = $this->Dbo->column('float');
-		$expected = 'float';
 		$this->assertEquals($expected, $result);
-
 		$result = $this->Dbo->column('float unsigned');
-		$expected = 'float';
 		$this->assertEquals($expected, $result);
-
 		$result = $this->Dbo->column('double unsigned');
-		$expected = 'float';
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->column('decimal(14,7) unsigned');
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->column('decimal (14,7) unsigned');
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Dbo->column('decimal(14,7) unsigned');
-		$expected = 'float';
+		$expected = 'enum';
+		$result = $this->Dbo->column('enum(\'first\',\'second\')');
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->column(' enum ( \'first\' , \'second\' ) ');
+		$this->assertEquals($expected, $result);
+
+		$expected = 'set';
+		$result = $this->Dbo->column('set (\'one\',\'two\')');
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->column(' set ( \'one\' , \'two\' ) ');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -893,6 +905,20 @@ class MysqlTest extends CakeTestCase {
 					'null' => false,
 					'charset' => 'latin1',
 					'comment' => 'Test Comment'
+				),
+				'color' => array(
+					'type' => 'enum',
+					'values' => array('white', 'black', 'red'),
+					'null' => true,
+					'charset' => 'utf8',
+					'collate' => 'utf8_general_ci'
+				),
+				'pet' => array(
+					'type' => 'set',
+					'values' => array('dog', 'cat', 'wabbit'),
+					'null' => false,
+					'charset' => 'latin1',
+					'comment' => 'Love my pets'
 				)
 			)
 		));
@@ -990,6 +1016,47 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->createSchema($schema, 'primary_flag_has_index');
 		$this->assertContains('PRIMARY KEY  (`id`)', $result);
 		$this->assertContains('UNIQUE KEY `some_index` (`data`)', $result);
+	}
+
+/**
+ * Test that schema is created correctly when setting enumerated column types.
+ *
+ * @return void
+ */
+	public function testCreateSchemaEnumeration() {
+		$schema = new CakeSchema(array(
+			'connection' => 'test',
+			'myqsl_funny_types' => array(
+				'enum_plain' => array(
+					'type' => 'enum',
+					'values' => array('red', 'green', 'blue'),
+					'null' => true
+				),
+				'enum_default' => array(
+					'type' => 'enum',
+					'values' => array('red', 'green', 'blue'),
+					'default' => array('green'),
+					'null' => false
+				),
+				'set_plain' => array(
+					'type' => 'set',
+					'values' => array('dog', 'cat', 'wabbit'),
+					'null' => false
+				),
+				'set_default' => array(
+					'type' => 'set',
+					'values' => array('dog', 'cat', 'wabbit'),
+					'default' => array('wabbit', 'cat'),
+					'null' => true
+				)
+			)
+		));
+
+		$result = $this->Dbo->createSchema($schema);
+		$this->assertContains('`enum_plain` enum(\'red\',\'green\',\'blue\') DEFAULT NULL,', $result);
+		$this->assertContains('`enum_default` enum(\'red\',\'green\',\'blue\') DEFAULT \'green\' NOT NULL,', $result);
+		$this->assertContains('`set_plain` set(\'dog\',\'cat\',\'wabbit\') NOT NULL,', $result);
+		$this->assertContains('`set_default` set(\'dog\',\'cat\',\'wabbit\') DEFAULT \'wabbit,cat\'', $result);
 	}
 
 /**
@@ -2910,45 +2977,150 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
- * testLength method
+ * Test MySQL column description length values.
  *
  * @return void
  */
 	public function testLength() {
 		$result = $this->Dbo->length('varchar(255)');
-		$expected = 255;
-		$this->assertSame($expected, $result);
+		$this->assertSame(255, $result);
 
 		$result = $this->Dbo->length('int(11)');
-		$expected = 11;
-		$this->assertSame($expected, $result);
+		$this->assertSame(11, $result);
 
 		$result = $this->Dbo->length('float(5,3)');
-		$expected = '5,3';
-		$this->assertSame($expected, $result);
+		$this->assertSame('5,3', $result);
 
 		$result = $this->Dbo->length('decimal(5,2)');
-		$expected = '5,2';
-		$this->assertSame($expected, $result);
+		$this->assertSame('5,2', $result);
 
-		$result = $this->Dbo->length("enum('test','me','now')");
-		$expected = 4;
-		$this->assertSame($expected, $result);
-
-		$result = $this->Dbo->length("set('a','b','cd')");
 		$expected = 2;
+		$result = $this->Dbo->length('enum(\'first\',\'second\')');
+		$this->assertSame($expected, $result);
+		$result = $this->Dbo->length(' enum ( \'first\' , \'second\' ) ');
+		$this->assertSame($expected, $result);
+
+		$expected = 3;
+		$result = $this->Dbo->length('set(\'one\',\'two\',\'three\')');
+		$this->assertSame($expected, $result);
+		$result = $this->Dbo->length(' set ( \'one\' , \'two\' , \'three\' ) ');
 		$this->assertSame($expected, $result);
 
 		$result = $this->Dbo->length(false);
-		$this->assertTrue($result === null);
+		$this->assertNull($result);
 
 		$result = $this->Dbo->length('datetime');
-		$expected = null;
-		$this->assertSame($expected, $result);
+		$this->assertNull($result);
 
 		$result = $this->Dbo->length('text');
-		$expected = null;
-		$this->assertSame($expected, $result);
+		$this->assertNull($result);
+	}
+
+/**
+ * Return valid real database-layer enumerations.
+ *
+ * @return array
+ */
+	public function validRealEnumerations() {
+		return array(
+			// Enum
+			array('enum(\'one\',\'two\',\'three\')'),
+			array(' enum ( \'one\' , \'two\' , \'three\' ) '),
+			array('enum("one","two","three")'),
+			array(' enum ( "one" , "two" , "three" ) '),
+			array('enum(\'one\',"two",\'three\')'),
+			array(' enum ( \'one\' , "two" , \'three\' ) '),
+			array('enum("one",\'two\',"three")'),
+			array(' enum ( "one" , \'two\' , "three" ) '),
+			array('enum (\'one\', \'two\', \'three\')'),
+			array('enum ("one", "two", "three")'),
+			// Set
+			array('set(\'one\',\'two\',\'three\')'),
+			array(' set ( \'one\' , \'two\' , \'three\' ) '),
+			array('set("one","two","three")'),
+			array(' set ( "one" , "two" , "three" ) '),
+			array('set(\'one\',"two",\'three\')'),
+			array(' set ( \'one\' , "two" , \'three\' ) '),
+			array('set("one",\'two\',"three")'),
+			array(' set ( "one" , \'two\' , "three" ) '),
+			array('set (\'one\', \'two\', \'three\')'),
+			array('set ("one", "two", "three")'),
+		);
+	}
+
+/**
+ * Return invalid real database-layer enumerations.
+ *
+ * @return array
+ */
+	public function invalidRealEnumerations() {
+		return array(
+			// Enum
+			array('noenum("one","two","three")'),
+			array('enum("one\',"two",\'three\')'),
+			array('enum(\'one","two",\'three\')'),
+			array('enum(\'one\',"two",\'three")'),
+			array('enum(\'one\',"two","three\')'),
+			array('enum()'),
+			// Set
+			array('noset("one","two","three")'),
+			array('set("one\',"two",\'three\')'),
+			array('set(\'one","two",\'three\')'),
+			array('set(\'one\',"two",\'three")'),
+			array('set(\'one\',"two","three\')'),
+			array('set()')
+		);
+	}
+
+/**
+ * Test that a MySQL column description is a valid enumerated column type.
+ *
+ * @dataProvider validRealEnumerations
+ * @return void
+ */
+	public function testIsEnumeration($real) {
+		$result = $this->Dbo->isEnumeration($real);
+		$this->assertTrue($result);
+	}
+
+/**
+ * Test that a MySQL column description is an invalid enumerated column type.
+ *
+ * @dataProvider invalidRealEnumerations
+ * @return void
+ */
+	public function testIsEnumerationInvalid($real) {
+		$result = $this->Dbo->isEnumeration($real);
+		$this->assertFalse($result);
+	}
+
+/**
+ * Test getting values of a MySQL column description from an enumerated column type.
+ *
+ * @return void
+ */
+	public function testEnumerationValues() {
+		$expected = array('first', 'second');
+		$result = $this->Dbo->enumerationValues('enum(\'first\',\'second\')');
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->enumerationValues('enum(\'first\',"second")');
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->enumerationValues(' enum ( "first" , \'second\' ) ');
+		$this->assertEquals($expected, $result);
+
+		$expected = array('one', 'two');
+		$result = $this->Dbo->enumerationValues('set(\'one\',\'two\')');
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->enumerationValues('set(\'one\',"two")');
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->enumerationValues(' set ( \'one\' , "two" ) ');
+		$this->assertEquals($expected, $result);
+
+		$expected = array();
+		$result = $this->Dbo->enumerationValues('noset(\'one\',\'two\')');
+		$this->assertEquals($expected, $result);
+		$result = $this->Dbo->enumerationValues('set()');
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -3025,7 +3197,7 @@ class MysqlTest extends CakeTestCase {
 		);
 		$restore = $this->Dbo->columns;
 
-		$this->Dbo->columns = array('integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'), );
+		$this->Dbo->columns = array('integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'));
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`int_field` int(11) NOT NULL';
 		$this->assertEquals($expected, $result);
@@ -3100,6 +3272,270 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`modified` timestamp NULL';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test building Enum column type.
+ *
+ * @return void
+ */
+	public function testBuildColumnEnum() {
+		$data = array(
+			'name' => 'testEnum',
+			'type' => 'enum',
+			'values' => array('red', 'green', 'blue'),
+			'default' => 'red',
+			'null' => false,
+			'charset' => 'utf8',
+			'collate' => 'utf8_unicode_ci'
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`testEnum` enum(\'red\',\'green\',\'blue\') CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT \'red\' NOT NULL';
+		$this->assertEquals($expected, $result);
+
+		$expected = '`testEnum` enum(\'red\',\'green\',\'blue\') DEFAULT \'blue\'';
+		$data = array(
+			'name' => 'testEnum',
+			'type' => 'enum',
+			'values' => array('red', 'green', 'blue'),
+			'default' => 'blue',
+			'null' => true
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$this->assertEquals($expected, $result);
+		$data = array(
+			'name' => 'testEnum',
+			'type' => 'enum',
+			'values' => array('red', 'green', 'blue'),
+			'default' => array('blue'),
+			'null' => true
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'name' => 'testEnum',
+			'type' => 'enum',
+			'values' => array('red', 'green', 'blue', ''),
+			'default' => array('blue', '', 'green'),
+			'null' => true
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`testEnum` enum(\'red\',\'green\',\'blue\',\'\') DEFAULT \'blue\'';
+		$this->assertEquals($expected, $result);
+
+		$expected = '`testEnum` enum(\'red\',\'green\',\'blue\') DEFAULT NULL';
+		$data = array(
+			'name' => 'testEnum',
+			'type' => 'enum',
+			'values' => array('red', 'green', 'blue'),
+			'null' => true
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$this->assertEquals($expected, $result);
+		$data = array(
+			'name' => 'testEnum',
+			'type' => 'enum',
+			'values' => array('red', 'green', 'blue'),
+			'default' => null,
+			'null' => true
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'name' => 'testEnum',
+			'type' => 'enum',
+			'values' => array('1', '10', '100')
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`testEnum` enum(\'1\',\'10\',\'100\')';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test building Enum column type with invalid default option.
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testBuildColumnEnumInvalidDefault() {
+		$data = array(
+			'name' => 'testEnum',
+			'type' => 'enum',
+			'values' => array('red', 'green', 'blue'),
+			'default' => 'yellow'
+		);
+		$result = $this->Dbo->buildColumn($data);
+	}
+
+/**
+ * Test building Enum column type with invalid values.
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testBuildColumnEnumInvalidValues() {
+		$data = array(
+			'name' => 'testEnum',
+			'type' => 'enum',
+			'values' => 'red'
+		);
+		$result = $this->Dbo->buildColumn($data);
+	}
+
+/**
+ * Test building Enum column type with no values.
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testBuildColumnEnumNoValues() {
+		$data = array(
+			'name' => 'testEnum',
+			'type' => 'enum'
+		);
+		$result = $this->Dbo->buildColumn($data);
+	}
+
+/**
+ * Test building Set column type.
+ *
+ * @return void
+ */
+	public function testBuildColumnSet() {
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set',
+			'values' => array('dog', 'cat', 'wabbit'),
+			'default' => 'dog',
+			'null' => false,
+			'charset' => 'utf8',
+			'collate' => 'utf8_unicode_ci'
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`testSet` set(\'dog\',\'cat\',\'wabbit\') CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT \'dog\' NOT NULL';
+		$this->assertEquals($expected, $result);
+
+		$expected = '`testSet` set(\'dog\',\'cat\',\'wabbit\') DEFAULT \'dog\'';
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set',
+			'values' => array('dog', 'cat', 'wabbit'),
+			'default' => 'dog',
+			'null' => true
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$this->assertEquals($expected, $result);
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set',
+			'values' => array('dog', 'cat', 'wabbit'),
+			'default' => array('dog'),
+			'null' => true
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set',
+			'values' => array('dog', 'cat', 'wabbit', ''),
+			'default' => array('wabbit', '', 'cat'),
+			'null' => true
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`testSet` set(\'dog\',\'cat\',\'wabbit\',\'\') DEFAULT \'wabbit,,cat\'';
+		$this->assertEquals($expected, $result);
+
+		$expected = '`testSet` set(\'dog\',\'cat\',\'wabbit\') DEFAULT NULL';
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set',
+			'values' => array('dog', 'cat', 'wabbit'),
+			'null' => true
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$this->assertEquals($expected, $result);
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set',
+			'values' => array('dog', 'cat', 'wabbit'),
+			'default' => null,
+			'null' => true
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set',
+			'values' => array('1', '10', '100')
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`testSet` set(\'1\',\'10\',\'100\')';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test building Set column type with invalid default option.
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testBuildColumnSetInvalidDefault() {
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set',
+			'values' => array('dog', 'cat', 'wabbit'),
+			'default' => 'bat'
+		);
+		$result = $this->Dbo->buildColumn($data);
+	}
+
+/**
+ * Test building Set column type with invalid default option.
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testBuildColumnSetInvalidDefault2() {
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set',
+			'values' => array('dog', 'cat', 'wabbit'),
+			'default' => array('cat', 'bat')
+		);
+		$result = $this->Dbo->buildColumn($data);
+	}
+
+/**
+ * Test building Set column type with invalid values.
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testBuildColumnSetInvalidValues() {
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set',
+			'values' => 'dog'
+		);
+		$result = $this->Dbo->buildColumn($data);
+	}
+
+/**
+ * Test building Set column type with no values.
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testBuildColumnSetNoValues() {
+		$data = array(
+			'name' => 'testSet',
+			'type' => 'set'
+		);
+		$result = $this->Dbo->buildColumn($data);
 	}
 
 /**

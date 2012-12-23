@@ -320,7 +320,7 @@ class Postgres extends DboSource {
  *
  * @param string|Model $table A string or model class representing the table to be truncated
  * @param boolean $reset true for resetting the sequence, false to leave it as is.
- *    and if 1, sequences are not modified
+ *   and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table, $reset = false) {
@@ -630,7 +630,7 @@ class Postgres extends DboSource {
 	}
 
 /**
- * Converts database-layer column types to basic types
+ * Converts database-layer column types to basic types.
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
@@ -813,11 +813,10 @@ class Postgres extends DboSource {
 	}
 
 /**
- * Generate a Postgres-native column schema string
+ * Generate a PostgreSQL native column schema string.
  *
  * @param array $column An array structured like the following:
- *                      array('name'=>'value', 'type'=>'value'[, options]),
- *                      where options can be 'default', 'length', or 'key'.
+ *   array('name'=>'value', 'type'=>'value'[, options]), where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	public function buildColumn($column) {

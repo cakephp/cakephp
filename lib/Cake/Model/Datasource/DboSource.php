@@ -2812,7 +2812,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Gets the length of a database-native column description, or null if no length
+ * Gets the length of a database-native column description, or null if no length.
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
  * @return mixed An integer or string representing the length of the column, or null for unknown length.
@@ -2855,18 +2855,8 @@ class DboSource extends DataSource {
 			if (!empty($sign)) {
 				$length--;
 			}
-		} elseif (in_array($type, array('enum', 'set'))) {
-			$length = 0;
-			foreach ($typeArr as $key => $enumValue) {
-				if ($key === 0) {
-					continue;
-				}
-				$tmpLength = strlen($enumValue);
-				if ($tmpLength > $length) {
-					$length = $tmpLength;
-				}
-			}
 		}
+
 		return intval($length);
 	}
 
@@ -3051,15 +3041,15 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Generate a database-native column schema string
+ * Generate a database-native column schema string.
  *
- * @param array $column An array structured like the following: array('name' => 'value', 'type' => 'value'[, options]),
- *   where options can be 'default', 'length', or 'key'.
+ * @param array $column An array structured like the following:
+ *   array('name'=>'value', 'type'=>'value'[, options]), where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	public function buildColumn($column) {
 		$name = $type = null;
-		extract(array_merge(array('null' => true), $column));
+		extract($column);
 
 		if (empty($name) || empty($type)) {
 			trigger_error(__d('cake_dev', 'Column name or type not defined in schema'), E_USER_WARNING);
@@ -3074,42 +3064,45 @@ class DboSource extends DataSource {
 		$real = $this->columns[$type];
 		$out = $this->name($name) . ' ' . $real['name'];
 
-		if (isset($column['length'])) {
-			$length = $column['length'];
-		} elseif (isset($column['limit'])) {
-			$length = $column['limit'];
-		} elseif (isset($real['length'])) {
-			$length = $real['length'];
-		} elseif (isset($real['limit'])) {
-			$length = $real['limit'];
+		if (!isset($length)) {
+			if (isset($limit)) {
+				$length = $limit;
+			} elseif (isset($real['length'])) {
+				$length = $real['length'];
+			} elseif (isset($real['limit'])) {
+				$length = $real['limit'];
+			}
 		}
 		if (isset($length)) {
 			$out .= '(' . $length . ')';
 		}
 
-		if (($column['type'] === 'integer' || $column['type'] === 'float') && isset($column['default']) && $column['default'] === '') {
-			$column['default'] = null;
-		}
 		$out = $this->_buildFieldParameters($out, $column, 'beforeDefault');
 
-		if (isset($column['key']) && $column['key'] === 'primary' && ($type === 'integer' || $type === 'biginteger')) {
+		if (($type === 'integer' || $type === 'float') && isset($default) && $default === '') {
+			$default = null;
+		}
+
+		if (isset($key) && $key === 'primary' && ($type === 'integer' || $type === 'biginteger')) {
 			$out .= ' ' . $this->columns['primary_key']['name'];
-		} elseif (isset($column['key']) && $column['key'] === 'primary') {
+		} elseif (isset($key) && $key === 'primary') {
 			$out .= ' NOT NULL';
-		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] === false) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
-		} elseif (isset($column['default'])) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
-		} elseif ($type !== 'timestamp' && !empty($column['null'])) {
+		} elseif (isset($default) && isset($null) && $null === false) {
+			$out .= ' DEFAULT ' . $this->value($default, $type) . ' NOT NULL';
+		} elseif (isset($default)) {
+			$out .= ' DEFAULT ' . $this->value($default, $type);
+		} elseif ($type !== 'timestamp' && !empty($null)) {
 			$out .= ' DEFAULT NULL';
-		} elseif ($type === 'timestamp' && !empty($column['null'])) {
+		} elseif ($type === 'timestamp' && !empty($null)) {
 			$out .= ' NULL';
-		} elseif (isset($column['null']) && $column['null'] === false) {
+		} elseif (isset($null) && $null === false) {
 			$out .= ' NOT NULL';
 		}
-		if ($type === 'timestamp' && isset($column['default']) && strtolower($column['default']) === 'current_timestamp') {
+
+		if ($type === 'timestamp' && isset($default) && mb_strtolower($default) === 'current_timestamp') {
 			$out = str_replace(array("'CURRENT_TIMESTAMP'", "'current_timestamp'"), 'CURRENT_TIMESTAMP', $out);
 		}
+
 		return $this->_buildFieldParameters($out, $column, 'afterDefault');
 	}
 

@@ -116,7 +116,9 @@ class Mysql extends DboSource {
 		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'blob'),
-		'boolean' => array('name' => 'tinyint', 'limit' => '1')
+		'boolean' => array('name' => 'tinyint', 'limit' => '1'),
+		'enum' => array('name' => 'enum'),
+		'set' => array('name' => 'set')
 	);
 
 /**
@@ -312,20 +314,30 @@ class Mysql extends DboSource {
 		}
 
 		while ($column = $cols->fetch(PDO::FETCH_OBJ)) {
+			$type = $this->column($column->Type);
+
 			$fields[$column->Field] = array(
-				'type' => $this->column($column->Type),
+				'type' => $type,
 				'null' => ($column->Null === 'YES' ? true : false),
 				'default' => $column->Default,
-				'length' => $this->length($column->Type),
 			);
+
+			if ($type === 'enum' || $type === 'set') {
+				$fields[$column->Field]['values'] = $this->enumerationValues($column->Type);
+			} else {
+				$fields[$column->Field]['length'] = $this->length($column->Type);
+			}
+
 			if (!empty($column->Key) && isset($this->index[$column->Key])) {
 				$fields[$column->Field]['key'] = $this->index[$column->Key];
 			}
+
 			foreach ($this->fieldParameters as $name => $value) {
 				if (!empty($column->{$value['column']})) {
 					$fields[$column->Field][$name] = $column->{$value['column']};
 				}
 			}
+
 			if (isset($fields[$column->Field]['collate'])) {
 				$charset = $this->getCharsetName($fields[$column->Field]['collate']);
 				if ($charset) {
@@ -333,6 +345,7 @@ class Mysql extends DboSource {
 				}
 			}
 		}
+
 		$this->_cacheDescription($key, $fields);
 		$cols->closeCursor();
 		return $fields;
@@ -704,30 +717,25 @@ class Mysql extends DboSource {
 	}
 
 /**
- * Converts database-layer column types to basic types
+ * Converts database-layer column types to basic types.
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
  */
 	public function column($real) {
-		if (is_array($real)) {
-			$col = $real['name'];
-			if (isset($real['limit'])) {
-				$col .= '(' . $real['limit'] . ')';
-			}
-			return $col;
-		}
-
 		$col = str_replace(')', '', $real);
-		$limit = $this->length($real);
 		if (strpos($col, '(') !== false) {
 			list($col, $vals) = explode('(', $col);
 		}
+		$col = trim($col);
 
-		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
+		if (in_array($col, array('date', 'time', 'datetime', 'timestamp', 'enum', 'set'))) {
 			return $col;
 		}
-		if (($col === 'tinyint' && $limit === 1) || $col === 'boolean') {
+		if (
+			((strpos($col, 'tinyint') !== false || $col === 'tinyint') && $this->length($real) === 1) ||
+			$col === 'boolean'
+		) {
 			return 'boolean';
 		}
 		if (strpos($col, 'bigint') !== false || $col === 'bigint') {
@@ -748,10 +756,100 @@ class Mysql extends DboSource {
 		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false || strpos($col, 'decimal') !== false) {
 			return 'float';
 		}
-		if (strpos($col, 'enum') !== false) {
-			return "enum($vals)";
-		}
 		return 'text';
+	}
+
+/**
+ * Gets the length of a MySQL column description.
+ *
+ * If type is ENUM or SET, the actual count of values is returned.
+ *
+ * @see DboSource::length().
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return mixed An integer or string representing the length of the column, or null for unknown length.
+ */
+	public function length($real) {
+		if ($this->isEnumeration($real)) {
+			return count($this->enumerationValues($real));
+		}
+		return parent::length($real);
+	}
+
+/**
+ * Tell if a MySQL column description is a valid enumerated column type.
+ *
+ * @param string $real Real database-layer column type (i.e. "enum('dog','cat')")
+ * @return boolean
+ */
+	public function isEnumeration($real) {
+		$values = '\s*(?:\s*([\'\"])[\w\s]+\1)(?:\s*,\s*(?:([\'\"])[\w\s]+\2))+\s*';
+		if (preg_match('/\s*\b(?:enum|set)\s*\(' . $values . '\)/', $real, $a)) {
+			return true;
+		}
+		return false;
+	}
+
+/**
+ * Gets the values of a MySQL column description from an enumerated column type.
+ *
+ * @param string $real Real database-layer column type (i.e. "enum('dog','cat')")
+ * @return array An array representing the values.
+ */
+	public function enumerationValues($real) {
+		if (!preg_match('/\s*\b(?:enum|set)\s*\((.+)\)/', $real, $result)) {
+			return array();
+		}
+		$values = array();
+		foreach (explode(',', $result[1]) as $v) {
+			$values[] = trim(trim($v), '\'"');
+		}
+		return $values;
+	}
+
+/**
+ * Generate a MySQL native column schema string.
+ *
+ * @param array $column An array structured like the following:
+ *   array('name'=>'value', 'type'=>'value'[, options]), where options can be 'default', 'length', or 'key'.
+ * @return string
+ */
+	public function buildColumn($column) {
+		$name = $type = null;
+		extract($column);
+
+		if (empty($name) || empty($type)) {
+			trigger_error(__d('cake_dev', 'Column name or type not defined in schema'), E_USER_WARNING);
+			return null;
+		}
+
+		if (!isset($this->columns[$type])) {
+			trigger_error(__d('cake_dev', 'Column type %s does not exist', $type), E_USER_WARNING);
+			return null;
+		}
+
+		if (($type === 'enum' || $type === 'set')) {
+			if (!isset($values) || empty($values) || !is_array($values)) {
+				trigger_error(__d('cake_dev', "Column type %s does not have values set.", $type), E_USER_WARNING);
+				return null;
+			}
+
+			if (isset($default)) {
+				$default = (array)$default;
+				if ($type === 'enum') {
+					$default = (array)$default[0];
+				}
+				foreach ($default as $_default) {
+					if (!in_array($_default, $values, true)) {
+						trigger_error(__d('cake_dev', "Invalid default value for column %s.", $name), E_USER_WARNING);
+						return null;
+					}
+				}
+				$column['default'] = implode(',', $default);
+			}
+			$column['length'] = '\'' . implode('\',\'', $values) . '\'';
+		}
+
+		return parent::buildColumn($column);
 	}
 
 /**

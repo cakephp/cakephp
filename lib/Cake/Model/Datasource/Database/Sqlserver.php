@@ -380,7 +380,7 @@ class Sqlserver extends DboSource {
 	}
 
 /**
- * Converts database-layer column types to basic types
+ * Converts database-layer column types to basic types.
  *
  * @param mixed $real Either the string value of the fields type.
  *    or the Result object from Sqlserver::describe()
@@ -639,11 +639,10 @@ class Sqlserver extends DboSource {
 	}
 
 /**
- * Generate a database-native column schema string
+ * Generate a MS SQL Server native column schema string.
  *
- * @param array $column An array structured like the
- *   following: array('name'=>'value', 'type'=>'value'[, options]),
- *   where options can be 'default', 'length', or 'key'.
+ * @param array $column An array structured like the following:
+ *   array('name'=>'value', 'type'=>'value'[, options]), where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	public function buildColumn($column) {
