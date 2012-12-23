@@ -15,6 +15,7 @@ namespace Cake\Network\Http\Adapter;
 
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
+use Cake\Network\Http\FormData;
 
 /**
  * Implements sending Cake\Network\Http\Request
@@ -41,8 +42,8 @@ class Stream {
  * @return void
  */
 	protected function _buildContext(Request $request, $options) {
-		$this->_buildHeaders($request, $options);
 		$this->_buildContent($request, $options);
+		$this->_buildHeaders($request, $options);
 		$this->_buildOptions($request, $options);
 
 		$url = $request->url();
@@ -73,7 +74,31 @@ class Stream {
 		$this->_contextOptions['header'] = implode("\r\n", $headers);
 	}
 
+/**
+ * Builds the request content based on the request object.
+ *
+ * If the $request->content() is a string, it will be used as is.
+ * Array data will be processed with Cake\Network\Http\FormData
+ *
+ * @param Request $request
+ * @param array $options
+ */
 	protected function _buildContent($request, $options) {
+		$content = $request->content();
+		if (empty($content)) {
+			return;
+		}
+		if (is_string($content)) {
+			$this->_contextOptions['content'] = $content;
+			return;
+		}
+		if (is_array($content)) {
+			$formData = new FormData();
+			$formData->addMany($content);
+			$type = 'multipart/form-data; boundary="' . $formData->boundary() . '"';
+			$request->header('Content-Type', $type);
+			$this->_contextOptions['content'] = (string)$formData;
+		}
 	}
 
 /**
@@ -85,9 +110,13 @@ class Stream {
 	protected function _buildOptions(Request $request, $options) {
 		$this->_contextOptions['method'] = $request->method();
 		$this->_contextOptions['protocol_version'] = $request->version();
+		$this->_contextOptions['ignore_errors'] = true;
 
 		if (isset($options['timeout'])) {
 			$this->_contextOptions['timeout'] = $options['timeout'];
+		}
+		if (!empty($options['redirect'])) {
+			$this->_contextOptions['max_redirects'] = $options['redirect'];
 		}
 	}
 

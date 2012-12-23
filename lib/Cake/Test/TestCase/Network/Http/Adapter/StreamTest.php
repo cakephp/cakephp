@@ -23,6 +23,14 @@ use Cake\TestSuite\TestCase;
  */
 class StreamTest extends TestCase {
 
+	public function setUp() {
+		parent::setUp();
+		$this->stream = $this->getMock(
+			'Cake\Network\Http\Adapter\Stream',
+			['_send']
+		);
+	}
+
 /**
  * Test the send method
  *
@@ -45,10 +53,6 @@ class StreamTest extends TestCase {
  * @return void
  */
 	public function testBuildingContextHeader() {
-		$stream = $this->getMock(
-			'Cake\Network\Http\Adapter\Stream',
-			['_send']
-		);
 		$request = new Request();
 		$request->url('http://localhost')
 			->header([
@@ -60,8 +64,11 @@ class StreamTest extends TestCase {
 				'utm_src' => 'awesome',
 			]);
 
-		$stream->send($request, []);
-		$result = $stream->contextOptions();
+		$options = [
+			'redirect' => 20
+		];
+		$this->stream->send($request, $options);
+		$result = $this->stream->contextOptions();
 		$expected = [
 			'Connection: close',
 			'User-Agent: CakePHP TestSuite',
@@ -69,6 +76,61 @@ class StreamTest extends TestCase {
 			'Cookie: testing=value; utm_src=awesome',
 		];
 		$this->assertEquals(implode("\r\n", $expected), $result['header']);
+		$this->assertEquals($options['redirect'], $result['max_redirects']);
+		$this->assertTrue($result['ignore_errors']);
+	}
+
+/**
+ * Test send() + context options with string content.
+ *
+ * @return void
+ */
+	public function testSendContextContentString() {
+		$content = json_encode(['a' => 'b']);
+		$request = new Request();
+		$request->url('http://localhost')
+			->header([
+				'Content-Type' => 'application/json'
+			])
+			->content($content);
+
+		$options = [
+			'redirect' => 20
+		];
+		$this->stream->send($request, $options);
+		$result = $this->stream->contextOptions();
+		$expected = [
+			'Connection: close',
+			'User-Agent: CakePHP',
+			'Content-Type: application/json',
+		];
+		$this->assertEquals(implode("\r\n", $expected), $result['header']);
+		$this->assertEquals($content, $result['content']);
+	}
+
+/**
+ * Test send() + context options with array content.
+ *
+ * @return void
+ */
+	public function testSendContextContentArray() {
+		$request = new Request();
+		$request->url('http://localhost')
+			->header([
+				'Content-Type' => 'application/json'
+			])
+			->content(['a' => 'my value']);
+
+		$this->stream->send($request, []);
+		$result = $this->stream->contextOptions();
+		$expected = [
+			'Connection: close',
+			'User-Agent: CakePHP',
+			'Content-Type: multipart/form-data; boundary="',
+		];
+		$this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
+		$this->assertContains('Content-Disposition: form-data; name="a"', $result['content']);
+		$this->assertContains('my value', $result['content']);
 	}
 
 }
