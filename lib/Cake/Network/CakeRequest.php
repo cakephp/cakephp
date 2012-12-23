@@ -249,7 +249,7 @@ class CakeRequest implements ArrayAccess {
 		if (strpos($uri, '?') !== false) {
 			list($uri) = explode('?', $uri, 2);
 		}
-		if (empty($uri) || $uri == '/' || $uri == '//') {
+		if (empty($uri) || $uri == '/' || $uri == '//' || $uri == '/index.php') {
 			return '/';
 		}
 		return $uri;
