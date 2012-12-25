@@ -20,13 +20,39 @@ use Cake\Network\Http\FormData;
 /**
  * Implements sending Cake\Network\Http\Request
  * via php's stream API.
+ *
+ * This approach and implementation is partly inspired by Aura.Http
  */
 class Stream {
 
+/**
+ * Context resource used by the stream API.
+ *
+ * @var resource
+ */
 	protected $_context;
+
+/**
+ * Array of options/content for the stream context.
+ *
+ * @var array
+ */
 	protected $_contextOptions;
+
+/**
+ * The stream resource.
+ *
+ * @var resource
+ */
 	protected $_stream;
 
+/**
+ * Send a request and get a response back.
+ *
+ * @param Cake\Network\Http\Request $request The request object to send.
+ * @param array $options Array of options for the stream.
+ * @return Cake\Network\Http\Response
+ */
 	public function send(Request $request, $options) {
 		$this->_context = array();
 
@@ -37,7 +63,7 @@ class Stream {
 /**
  * Build the stream context out of the request object.
  *
- * @param Request $request The request to build context from.
+ * @param Cake\Network\Http\Request $request The request to build context from.
  * @param array $options Additional request options.
  * @return void
  */
@@ -60,6 +86,10 @@ class Stream {
  * Build the header context for the request.
  *
  * Creates cookies & headers.
+ *
+ * @param Cake\Network\Http\Request $request The request being sent.
+ * @param array $options Array of options to use.
+ * @return void
  */
 	protected function _buildHeaders(Request $request, $options) {
 		$headers = [];
@@ -83,10 +113,11 @@ class Stream {
  * If the $request->content() is a string, it will be used as is.
  * Array data will be processed with Cake\Network\Http\FormData
  *
- * @param Request $request
- * @param array $options
+ * @param Cake\Network\Http\Request $request The request being sent.
+ * @param array $options Array of options to use.
+ * @return void
  */
-	protected function _buildContent($request, $options) {
+	protected function _buildContent(Request $request, $options) {
 		$content = $request->content();
 		if (empty($content)) {
 			return;
@@ -107,8 +138,9 @@ class Stream {
 /**
  * Build miscellaneous options for the request.
  *
- * @param Request $request
- * @param array $options
+ * @param Cake\Network\Http\Request $request The request being sent.
+ * @param array $options Array of options to use.
+ * @return void
  */
 	protected function _buildOptions(Request $request, $options) {
 		$this->_contextOptions['method'] = $request->method();
@@ -126,10 +158,11 @@ class Stream {
 /**
  * Build SSL options for the request.
  *
- * @param Request $request
- * @param array $options
+ * @param Cake\Network\Http\Request $request The request being sent.
+ * @param array $options Array of options to use.
+ * @return void
  */
-	protected function _buildSslContext($request, $options) {
+	protected function _buildSslContext(Request $request, $options) {
 		$sslOptions = [
 			'ssl_verify_peer',
 			'ssl_verify_depth',
