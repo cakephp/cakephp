@@ -933,7 +933,7 @@ class TreeBehavior extends ModelBehavior {
 			if (is_string($scope)) {
 				$scope .= " AND " . $Model->escapeField() . " <> ";
 				$scope .= $db->value($Model->id, $Model->getColumnType($Model->primaryKey));
-				$scope = array($scop);
+				$scope = array($scope);
 			} else {
 				$scope['NOT'][$Model->alias . '.' . $Model->primaryKey] = $Model->id;
 			}
@@ -960,7 +960,7 @@ class TreeBehavior extends ModelBehavior {
 		$db = ConnectionManager::getDataSource($Model->useDbConfig);
 		$name = $Model->escapeField($left);
 		if (is_string($scope)) {
-			$scope = array($scop);
+			$scope = array($scope);
 		}
 		list($edge) = array_values($Model->find('first', array(
 			'conditions' => $scope,
