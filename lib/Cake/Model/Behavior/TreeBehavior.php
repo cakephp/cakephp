@@ -933,7 +933,6 @@ class TreeBehavior extends ModelBehavior {
 			if (is_string($scope)) {
 				$scope .= " AND " . $Model->escapeField() . " <> ";
 				$scope .= $db->value($Model->id, $Model->getColumnType($Model->primaryKey));
-				$scope = array($scope);
 			} else {
 				$scope['NOT'][$Model->alias . '.' . $Model->primaryKey] = $Model->id;
 			}
@@ -942,7 +941,8 @@ class TreeBehavior extends ModelBehavior {
 		list($edge) = array_values($Model->find('first', array(
 			'conditions' => $scope,
 			'fields' => $db->calculate($Model, 'max', array($name, $right)),
-			'recursive' => $recursive
+			'recursive' => $recursive,
+			'callbacks' => false			
 		)));
 		return (empty($edge[$right])) ? 0 : $edge[$right];
 	}
@@ -959,13 +959,11 @@ class TreeBehavior extends ModelBehavior {
 	protected function _getMin(Model $Model, $scope, $left, $recursive = -1) {
 		$db = ConnectionManager::getDataSource($Model->useDbConfig);
 		$name = $Model->escapeField($left);
-		if (is_string($scope)) {
-			$scope = array($scope);
-		}
 		list($edge) = array_values($Model->find('first', array(
 			'conditions' => $scope,
 			'fields' => $db->calculate($Model, 'min', array($name, $left)),
-			'recursive' => $recursive
+			'recursive' => $recursive,
+			'callbacks' => false			
 		)));
 		return (empty($edge[$left])) ? 0 : $edge[$left];
 	}
