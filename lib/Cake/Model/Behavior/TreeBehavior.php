@@ -941,7 +941,8 @@ class TreeBehavior extends ModelBehavior {
 		list($edge) = array_values($Model->find('first', array(
 			'conditions' => $scope,
 			'fields' => $db->calculate($Model, 'max', array($name, $right)),
-			'recursive' => $recursive
+			'recursive' => $recursive,
+			'callbacks' => false
 		)));
 		return (empty($edge[$right])) ? 0 : $edge[$right];
 	}
@@ -961,7 +962,8 @@ class TreeBehavior extends ModelBehavior {
 		list($edge) = array_values($Model->find('first', array(
 			'conditions' => $scope,
 			'fields' => $db->calculate($Model, 'min', array($name, $left)),
-			'recursive' => $recursive
+			'recursive' => $recursive,
+			'callbacks' => false
 		)));
 		return (empty($edge[$left])) ? 0 : $edge[$left];
 	}
