@@ -18,7 +18,23 @@ namespace Cake\Network\Http;
  */
 class Response {
 
-	public function __construct() {
+	protected $_headers;
+	protected $_content;
+
+	public function headers($headers = null) {
+		if ($headers === null) {
+			return $this->_headers;
+		}
+		$this->_headers = $headers;
+		return $this;
+	}
+
+	public function content($content) {
+		if ($content === null) {
+			return $this->_content;
+		}
+		$this->_content = $content;
+		return $this;
 	}
 
 }

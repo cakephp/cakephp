@@ -13,6 +13,7 @@
  */
 namespace Cake\Network\Http\Adapter;
 
+use Cake\Error;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
 use Cake\Network\Http\FormData;
@@ -47,6 +48,13 @@ class Stream {
 	protected $_stream;
 
 /**
+ * Connection error list.
+ *
+ * @var array
+ */
+	protected $_connectionErrors = [];
+
+/**
  * Send a request and get a response back.
  *
  * @param Cake\Network\Http\Request $request The request object to send.
@@ -54,10 +62,12 @@ class Stream {
  * @return Cake\Network\Http\Response
  */
 	public function send(Request $request, $options) {
-		$this->_context = array();
+		$this->_stream = null;
+		$this->_context = [];
+		$this->_connectionErrors = [];
 
 		$this->_buildContext($request, $options);
-		return $this->_send();
+		return $this->_send($request);
 	}
 
 /**
@@ -132,7 +142,9 @@ class Stream {
 			$type = 'multipart/form-data; boundary="' . $formData->boundary() . '"';
 			$request->header('Content-Type', $type);
 			$this->_contextOptions['content'] = (string)$formData;
+			return;
 		}
+		$this->_contextOptions['content'] = $content;
 	}
 
 /**
@@ -187,7 +199,59 @@ class Stream {
 		}
 	}
 
-	protected function _send() {
+/**
+ * Open the stream and send the request.
+ *
+ * @return void
+ * @throws Cake\Error\Exception
+ */
+	protected function _send($request) {
+		$url = $request->url();
+		$this->_open($url);
+		$content = '';
+		while (!feof($this->_stream)) {
+			$content .= fread($this->_stream, 8192);
+		}
+		$meta = stream_get_meta_data($this->_stream);
+		fclose($this->_stream);
+
+		if ($meta['timed_out']) {
+			throw Error\Exception('Connection timed out ' . $url);
+		}
+		$headers = $meta['wrapper_data'];
+		if (isset($meta['wrapper_type']) && $meta['wrapper_type'] === 'curl') {
+			$headers = $meta['wrapper_data']['headers'];
+		}
+		return new Response($headers, $content);
+	}
+
+/**
+ * Open the socket and handle any connection errors.
+ *
+ * @param string $url The url to connect to.
+ * @return void
+ * @throws Cake\Error\Exception
+ */
+	protected function _open($url) {
+		set_error_handler([$this, '_connectionErrorHandler']);
+		$this->_stream = fopen($url, 'rb', false, $this->_context);
+		restore_error_handler();
+
+		if (!$this->_stream || !empty($this->_connectionErrors)) {
+			throw new Error\Exception(implode("\n", $this->_connectionErrors));
+		}
+	}
+
+/**
+ * Local error handler to capture errors triggered during
+ * stream connection.
+ *
+ * @param int $code
+ * @param string $message
+ * @return void
+ */
+	protected function _connectionErrorHandler($code, $message) {
+		$this->_connectionErrors[] = $message;
 	}
 
 /**
