@@ -942,7 +942,7 @@ class TreeBehavior extends ModelBehavior {
 			'conditions' => $scope,
 			'fields' => $db->calculate($Model, 'max', array($name, $right)),
 			'recursive' => $recursive,
-			'callbacks' => false			
+			'callbacks' => false
 		)));
 		return (empty($edge[$right])) ? 0 : $edge[$right];
 	}
@@ -963,7 +963,7 @@ class TreeBehavior extends ModelBehavior {
 			'conditions' => $scope,
 			'fields' => $db->calculate($Model, 'min', array($name, $left)),
 			'recursive' => $recursive,
-			'callbacks' => false			
+			'callbacks' => false
 		)));
 		return (empty($edge[$left])) ? 0 : $edge[$left];
 	}
