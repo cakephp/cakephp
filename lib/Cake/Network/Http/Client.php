@@ -180,7 +180,7 @@ class Client {
 		if (empty($options)) {
 			return $url;
 		}
-		if (preg_match('#^http?://#', $url)) {
+		if (preg_match('#^https?://#', $url)) {
 			return $url;
 		}
 		$defaults = [
