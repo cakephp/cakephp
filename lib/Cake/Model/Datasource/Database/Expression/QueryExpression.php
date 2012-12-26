@@ -11,10 +11,10 @@ class QueryExpression implements Countable {
 
 	protected $_bindings = [];
 
-	public function __construct($conditions = [], $conjunction = 'AND') {
+	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
 		$this->_conjunction = strtoupper($conjunction);
 		if (!empty($conditions)) {
-			$this->add($conditions);
+			$this->add($conditions, $types);
 		}
 	}
 

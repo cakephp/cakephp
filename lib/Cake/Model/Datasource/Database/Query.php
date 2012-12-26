@@ -92,8 +92,8 @@ class Query implements IteratorAggregate  {
 			}
 			$statement->bind($params, $types);
 		};
-		$this->build($visitor);
 
+		$this->build($visitor);
 		$statement->execute();
 		return $statement;
 	}
@@ -222,16 +222,16 @@ class Query implements IteratorAggregate  {
 		return $this;
 	}
 
-	public function where($conditions = null, $overwrite = false) {
+	public function where($conditions = null, $types = [], $overwrite = false) {
 		$where = $this->_parts['where'] ?: new QueryExpression();
 		if ($conditions === null) {
 			return $where;
 		}
 
 		if ($overwrite) {
-			$this->_parts['where'] = new QueryExpression($conditions);
+			$this->_parts['where'] = new QueryExpression($conditions, $types);
 		} else {
-			$where->add($conditions);
+			$where->add($conditions, $types);
 		}
 
 		$this->_parts['where'] = $where;

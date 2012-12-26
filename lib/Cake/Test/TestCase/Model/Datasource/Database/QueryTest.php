@@ -156,6 +156,14 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->where(['id' => 1, 'title' => 'a title'])
 			->execute();
 		$this->assertCount(1, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['id' => 100], ['id' => 'integer'])
+			->execute();
+		$this->assertCount(0, $result);
 	}
 
 }
