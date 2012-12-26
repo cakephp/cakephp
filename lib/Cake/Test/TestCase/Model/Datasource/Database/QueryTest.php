@@ -142,4 +142,20 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(array('title' => 'a title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
 	}
 
+/**
+ * Tests it is possible to filter a query by using simple AND joined conditions
+ *
+ * @return void
+ **/
+	public function testSelectSimpleWhere() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['id' => 1, 'title' => 'a title'])
+			->execute();
+		$this->assertCount(1, $result);
+	}
+
 }

@@ -1,8 +1,9 @@
 <?php
-
 namespace Cake\Model\Datasource\Database;
 
-use Iterator, IteratorAggregate;
+use Iterator;
+use IteratorAggregate;
+use Cake\Model\Datasource\Database\Expression\QueryExpression;
 
 class Query implements IteratorAggregate  {
 
@@ -38,6 +39,17 @@ class Query implements IteratorAggregate  {
 		'offset' => null
 		];
 
+	protected $_templates = [
+		'select' => 'SELECT %s',
+		'from' => ' FROM %s',
+		'where' => ' WHERE %s',
+		'group' => ' GROUP BY %s ',
+		'having' => ' HAVING %s ',
+		'order' => ' ORDER BY %s',
+		'limit' => ' LIMIT %s',
+		'offset' => ' , %d'
+	];
+
 /**
  * Indicates whether internal state of this query was changed and most recent
  * results 
@@ -55,8 +67,6 @@ class Query implements IteratorAggregate  {
 
 	public function __construct($connection) {
 		$this->connection($connection);
-		$this->_parts['where'] = new Expression;
-		$this->_parts['having'] = new Expression;
 	}
 
 	public function connection($connection = null) {
@@ -68,61 +78,66 @@ class Query implements IteratorAggregate  {
 	}
 
 	public function execute() {
-		$results = $this->_connection->execute($this->sql());
-		if ($results instanceof Iterator) {
-			$this->_iterator = $results;
-		}
-		return $results;
-	}
+		$statement = $this->_connection->prepare($this->sql());
+		$visitor = function($expression) use($statement) {
+			if (!($expression instanceof QueryExpression)) {
+				return;
+			}
 
-	public function sql() {
-		switch ($this->_type) {
-			case 'select' :
-				return $this->_buildSelect();
-		}
-	}
+			$bindings = $expression->bindings();
+			$params = $values = $types = [];
+			foreach ($bindings as $b) {
+				$params[$b['placeholder']] = $b['value'];
+				$types[$b['placeholder']] = $b['type'];
+			}
+			$statement->bind($params, $types);
+		};
+		$this->build($visitor);
 
-	protected function _buildSelect() {
-		$statement = sprintf('SELECT %s ', implode(', ', $this->_parts['select']));
-
-		if (!empty($this->_parts['from'])) {
-			$statement .= sprintf('FROM %s ', implode(', ', $this->_parts['from']));
-		}
-
-		if (!empty($this->_parts['join'])) {
-			$statement .= $this->_buildJoins();
-		}
-
-		$where = $this->_parts['where'];
-		if (count($where->expressions())) {
-			$statement .= sprintf(' WHERE %s', $where->sql($this->_connection));
-		}
-
-		if (!empty($this->_parts['group'])) {
-			$statement .= sprintf(' GROUP BY %s', implode(', ', $this->_parts['group']));
-		}
-
-		$having = $this->_parts['having'];
-		if (count($having->expressions())) {
-			$statement .= sprintf(' HAVING %s', $having->sql($this->_connection));
-		}
-
-		if ($this->_parts['limit'] !== null) {
-			$statement .= sprintf(' LIMIT %s, %s', $this->_parts['limit'], intval($this->_parts['offset']));
-		}
-
+		$statement->execute();
 		return $statement;
 	}
 
-	protected function _buildJoins() {
+	public function sql() {
+		$sql = '';
+		$builder = function($parts, $name) use(&$sql) {
+			if (!count($parts)) {
+				return;
+			}
+			if ($parts instanceof QueryExpression) {
+				$parts = [$parts->sql()];
+			}
+			if (isset($this->_templates[$name])) {
+				return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
+			}
+
+			return $sql .= $this->{'_build' . ucFirst($name)}($parts, $sql);
+		};
+
+		$this->build($builder);
+		return $sql;
+	}
+
+	public function build($builder) {
+		return $this->{'_build' . ucFirst($this->_type)}($builder);
+	}
+
+	protected function _buildSelect($builder) {
+		$parts = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit', 'offset'];
+		foreach ($parts as $part) {
+			$builder($this->_parts[$part], $part);
+		}
+	}
+
+	protected function _buildJoin($parts) {
 		$joins = '';
-		foreach ($this->_parts['join'] as $join) {
+		foreach ($parts as $join) {
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
 			if (!empty($join['conditions'])) {
-				$joins .= sprintf(' ON %s', (string) $join['conditions']);
+				$joins .= sprintf(' ON %s', (string)$join['conditions']);
 			}
 		}
-		return trim($joins);
+		return $joins;
 	}
 
 	public function select($fields = [], $overwrite = false) {
@@ -180,8 +195,8 @@ class Query implements IteratorAggregate  {
 		return $this;
 	}
 
-	public function join($tables = [], $overwrite = false) {
-		if (empty($tables)) {
+	public function join($tables = null, $overwrite = false) {
+		if ($tables === null) {
 			return $this->_parts['join'];
 		}
 
@@ -207,8 +222,20 @@ class Query implements IteratorAggregate  {
 		return $this;
 	}
 
-	public function where($field, $value = null) {
-		$this->_parts['where']->where($field, $value);
+	public function where($conditions = null, $overwrite = false) {
+		$where = $this->_parts['where'] ?: new QueryExpression();
+		if ($conditions === null) {
+			return $where;
+		}
+
+		if ($overwrite) {
+			$this->_parts['where'] = new QueryExpression($conditions);
+		} else {
+			$where->add($conditions);
+		}
+
+		$this->_parts['where'] = $where;
+		$this->_dirty = true;
 		return $this;
 	}
 
