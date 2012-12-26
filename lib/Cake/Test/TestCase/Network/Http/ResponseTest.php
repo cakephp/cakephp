@@ -58,6 +58,20 @@ class ResponseTest extends TestCase {
 		$this->assertTrue($response->isOk());
 
 		$headers = [
+			'HTTP/1.1 201 Created',
+			'Content-Type: text/html'
+		];
+		$response = new Response($headers, 'ok');
+		$this->assertTrue($response->isOk());
+
+		$headers = [
+			'HTTP/1.1 202 Accepted',
+			'Content-Type: text/html'
+		];
+		$response = new Response($headers, 'ok');
+		$this->assertTrue($response->isOk());
+
+		$headers = [
 			'HTTP/1.1 301 Moved Permanently',
 			'Content-Type: text/html'
 		];

@@ -26,6 +26,8 @@ namespace Cake\Network\Http;
 class Response {
 
 	const STATUS_OK = 200;
+	const STATUS_CREATED = 201;
+	const STATUS_ACCEPTED = 202;
 
 /**
  * The status code of the response.
@@ -102,7 +104,10 @@ class Response {
  * @return boolean
  */
 	public function isOk() {
-		return $this->_code == static::STATUS_OK;
+		return in_array(
+			$this->_code,
+			[static::STATUS_OK, static::STATUS_CREATED, static::STATUS_ACCEPTED]
+		);
 	}
 
 /**
