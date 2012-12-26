@@ -62,6 +62,9 @@ class Response {
 /**
  * Parses headers if necessary.
  *
+ * - Decodes the status code.
+ * - Parses and normalizes header names + values.
+ *
  * @param array $headers
  */
 	protected function _parseHeaders($headers) {
@@ -73,10 +76,24 @@ class Response {
 			}
 			if (is_int($key)) {
 				list($name, $value) = explode(':', $value, 2);
-				$this->_headers[$name] = $value;
+				$name = $this->_normalizeHeader($name);
+				$this->_headers[trim($name)] = trim($value);
 				continue;
 			}
 		}
+	}
+
+/**
+ * Normalize header names to Camel-Case form.
+ *
+ * @param string $name The header name to normalize.
+ * @return string Normalized header name.
+ */
+	protected function _normalizeHeader($name) {
+		$parts = explode('-', $name);
+		$parts = array_map('strtolower', $parts);
+		$parts = array_map('ucfirst', $parts);
+		return implode('-', $parts);
 	}
 
 /**
@@ -127,6 +144,10 @@ class Response {
 	public function header($name = null) {
 		if ($name === null) {
 			return $this->_headers;
+		}
+		$name = $this->_normalizeHeader($name);
+		if (!isset($this->_headers[$name])) {
+			return null;
 		}
 		return $this->_headers[$name];
 	}

@@ -22,7 +22,22 @@ use Cake\TestSuite\TestCase;
 class ResponseTest extends TestCase {
 
 	public function testHeaderParsing() {
-		$this->markTestIncomplete();
+		$headers = [
+			'HTTP/1.1 200 OK',
+			'Content-Type : text/html;charset="UTF-8"',
+			'date: Tue, 25 Dec 2012 04:43:47 GMT',
+		];
+		$response = new Response($headers, 'ok');
+
+		$this->assertEquals(200, $response->statusCode());
+		$this->assertEquals(
+			'text/html;charset="UTF-8"',
+			$response->header('content-type')
+		);
+		$this->assertEquals(
+			'Tue, 25 Dec 2012 04:43:47 GMT',
+			$response->header('Date')
+		);
 	}
 
 	public function testContent() {
