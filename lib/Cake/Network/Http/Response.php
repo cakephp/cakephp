@@ -14,14 +14,48 @@
 namespace Cake\Network\Http;
 
 /**
- * Implements methods for HTTP responses
+ * Implements methods for HTTP responses.
+ *
+ * All of the following examples assume that `$response` is an
+ * instance of this class.
  *
  * ### Get header values
  *
+ * Header names are case-insensitve, but normalized to Title-Case
+ * when the response is parsed.
+ *
+ * `$val = $response->header('content-type');`
+ *
+ * Will read the Content-Type header. You can get all set
+ * headers using:
+ *
+ * `$response->header();`
+ *
+ * You can also get at the headers using array notation. When getting
+ * headers with array notation, you have to use case-sensitive header
+ * names:
+ *
+ * `$val = $response['headers']['Content-Type'];`
+ *
  * ### Get the response body
+ *
+ * You can access the response body using:
+ *
+ * `$content = $response->body();`
+ *
+ * You can also use array notation:
+ *
+ * `$content = $response['body'];`
  *
  * ### Check the status code
  *
+ * You can access the response status code using:
+ *
+ * `$content = $response->statusCode();`
+ *
+ * You can also use array notation:
+ *
+ * `$content = $response['code'];`
  */
 class Response implements \ArrayAccess {
 
