@@ -95,6 +95,11 @@ class Client {
 /**
  * Do a GET request.
  *
+ * The $data argument supports a special `_content` key
+ * for providing a request body in a GET request. This is
+ * generally not used but services like ElasticSearch use 
+ * this feature.
+ *
  * @param string $url The url or path you want to request.
  * @param array $data The query data you want to send.
  * @param array $options Additional options for the request.
@@ -102,11 +107,16 @@ class Client {
  */
 	public function get($url, $data = [], $options = []) {
 		$options = $this->_mergeOptions($options);
+		$body = [];
+		if (isset($data['_content'])) {
+			$body = $data['_content'];
+			unset($data['_content']);
+		}
 		$url = $this->buildUrl($url, $data, $options);
 		$request = $this->_createRequest(
 			Request::METHOD_GET,
 			$url,
-			[],
+			$body,
 			$options
 		);
 		return $this->send($request, $options);
