@@ -186,9 +186,18 @@ class Response {
 /**
  * Get the encoding if it was set.
  *
- * @return string
+ * @return string|null
  */
 	public function encoding() {
+		$content = $this->header('content-type');
+		if (!$content) {
+			return null;
+		}
+		preg_match('/charset\s?=\s?[\'"]?([a-z0-9-_]+)[\'"]?/i', $content, $matches);
+		if (empty($matches[1])) {
+			return null;
+		}
+		return $matches[1];
 	}
 
 /**

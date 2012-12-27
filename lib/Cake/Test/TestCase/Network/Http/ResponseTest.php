@@ -172,8 +172,38 @@ class ResponseTest extends TestCase {
 		$this->assertEquals(404, $response->statusCode());
 	}
 
+/**
+ * Test reading the encoding out.
+ *
+ * @return void
+ */
 	public function testEncoding() {
-		$this->markTestIncomplete();
+		$headers = [
+			'HTTP/1.0 200 Ok',
+		];
+		$response = new Response($headers, '');
+		$this->assertNull($response->encoding());
+
+		$headers = [
+			'HTTP/1.0 200 Ok',
+			'Content-Type: text/html'
+		];
+		$response = new Response($headers, '');
+		$this->assertNull($response->encoding());
+
+		$headers = [
+			'HTTP/1.0 200 Ok',
+			'Content-Type: text/html; charset="UTF-8"'
+		];
+		$response = new Response($headers, '');
+		$this->assertEquals('UTF-8', $response->encoding());
+
+		$headers = [
+			'HTTP/1.0 200 Ok',
+			"Content-Type: text/html; charset='ISO-8859-1'"
+		];
+		$response = new Response($headers, '');
+		$this->assertEquals('ISO-8859-1', $response->encoding());
 	}
 
 }
