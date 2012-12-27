@@ -188,7 +188,8 @@ class Client {
 			return $url;
 		}
 		if ($query) {
-			$url .= '?' . http_build_query($query);
+			$q = (strpos($url, '?') === false) ? '?' : '&';
+			$url .= $q . http_build_query($query);
 		}
 		if (preg_match('#^https?://#', $url)) {
 			return $url;

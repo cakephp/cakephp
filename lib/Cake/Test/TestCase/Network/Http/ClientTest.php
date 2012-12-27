@@ -120,6 +120,13 @@ class ClientTest extends TestCase {
 				[],
 				'query string data.'
 			],
+			[
+				'http://example.com/search?q=hi+there&id=12',
+				'http://example.com/search?q=hi+there',
+				['id' => '12'],
+				[],
+				'query string data with some already on the url.'
+			],
 		];
 	}
 
