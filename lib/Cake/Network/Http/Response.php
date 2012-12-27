@@ -45,6 +45,13 @@ class Response {
 	protected $_headers;
 
 /**
+ * The array of cookies in the response.
+ *
+ * @var array
+ */
+	protected $_cookies;
+
+/**
  * The response body
  *
  * @var string
@@ -77,13 +84,57 @@ class Response {
 				$this->_code = $matches[1];
 				continue;
 			}
-			if (is_int($key)) {
-				list($name, $value) = explode(':', $value, 2);
-				$name = $this->_normalizeHeader($name);
-				$this->_headers[trim($name)] = trim($value);
-				continue;
+			list($name, $value) = explode(':', $value, 2);
+			$value = trim($value);
+			$name = $this->_normalizeHeader($name);
+			if ($name === 'Set-Cookie') {
+				$this->_parseCookie($value);
+			}
+			if (isset($this->_headers[$name])) {
+				$this->_headers[$name] = (array)$this->_headers[$name];
+				$this->_headers[$name][] = $value;
+			} else {
+				$this->_headers[$name] = $value;
 			}
 		}
+	}
+
+/**
+ * Parse a cookie header into data.
+ *
+ * @param string $value The cookie value to parse.
+ * @return void
+ */
+	protected function _parseCookie($value) {
+		$nestedSemi = '";"';
+		if (strpos($value, $nestedSemi) !== false) {
+			$value = str_replace($nestedSemi, "{__cookie_replace__}", $value);
+			$parts = explode(';', $value);
+			$parts = str_replace("{__cookie_replace__}", $nestedSemi, $parts);
+		} else {
+			$parts = preg_split('/\;[ \t]*/', $value);
+		}
+
+		$name = false;
+		$cookie = [];
+		foreach ($parts as $i => $part) {
+			if (strpos($part, '=') !== false) {
+				list($key, $value) = explode('=', $part, 2);
+			} else {
+				$key = $part;
+				$value = true;
+			}
+			if ($i === 0) {
+				$name = $key;
+				$cookie['value'] = $value;
+				continue;
+			}
+			$key = strtolower($key);
+			if (!isset($cookie[$key])) {
+				$cookie[$key] = $value;
+			}
+		}
+		$this->_cookies[$name] = $cookie;
 	}
 
 /**
@@ -93,7 +144,7 @@ class Response {
  * @return string Normalized header name.
  */
 	protected function _normalizeHeader($name) {
-		$parts = explode('-', $name);
+		$parts = explode('-', trim($name));
 		$parts = array_map('strtolower', $parts);
 		$parts = array_map('ucfirst', $parts);
 		return implode('-', $parts);
@@ -143,9 +194,12 @@ class Response {
 /**
  * Read single/multiple header value(s) out.
  *
- * @param string $name The name of the header you want. Leave 
+ * @param string $name The name of the header you want. Leave
  *   null to get all headers.
- * @return null|string
+ * @return mixed Null when the header doesn't exist. An array
+ *   will be returned when getting all headers or when getting
+ *   a header that had multiple values set. Otherwise a string
+ *   will be returned.
  */
 	public function header($name = null) {
 		if ($name === null) {
@@ -156,6 +210,28 @@ class Response {
 			return null;
 		}
 		return $this->_headers[$name];
+	}
+
+/**
+ * Read single/multiple cookie values out.
+ *
+ * @param string $name The name of the cookie you want. Leave
+ *   null to get all cookies.
+ * @param boolean $all Get all parts of the cookie. When false only
+ *   the value will be returned.
+ * @return mixed
+ */
+	public function cookie($name = null, $all = false) {
+		if ($name === null) {
+			return $this->_cookies;
+		}
+		if (!isset($this->_cookies[$name])) {
+			return null;
+		}
+		if ($all) {
+			return $this->_cookies[$name];
+		}
+		return $this->_cookies[$name]['value'];
 	}
 
 /**

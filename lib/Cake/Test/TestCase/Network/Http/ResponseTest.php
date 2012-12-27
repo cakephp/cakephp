@@ -128,12 +128,48 @@ class ResponseTest extends TestCase {
 		$this->assertFalse($response->isRedirect());
 	}
 
+/**
+ * Test parsing / getting cookies.
+ *
+ * @return void
+ */
 	public function testCookie() {
-		$this->markTestIncomplete();
+		$headers = [
+			'HTTP/1.0 200 Ok',
+			'Set-Cookie: test=value',
+			'Set-Cookie: session=123abc',
+			'Set-Cookie: expiring=soon; Expires=Wed, 09-Jun-2021 10:18:14 GMT; Path=/; HttpOnly; Secure',
+		];
+		$response = new Response($headers, '');
+		$this->assertEquals('value', $response->cookie('test'));
+		$this->assertEquals('123abc', $response->cookie('session'));
+		$this->assertEquals('soon', $response->cookie('expiring'));
+
+		$result = $response->cookie('expiring', true);
+		$this->assertTrue($result['httponly']);
+		$this->assertTrue($result['secure']);
+		$this->assertEquals(
+			'Wed, 09-Jun-2021 10:18:14 GMT',
+			$result['expires']
+		);
+		$this->assertEquals('/', $result['path']);
+
+		$result = $response->header('set-cookie');
+		$this->assertCount(3, $result, 'Should be an array.');
 	}
 
+/**
+ * Test statusCode()
+ *
+ * @return void
+ */
 	public function testStatusCode() {
-		$this->markTestIncomplete();
+		$headers = [
+			'HTTP/1.0 404 Not Found',
+			'Content-Type: text/html'
+		];
+		$response = new Response($headers, '');
+		$this->assertEquals(404, $response->statusCode());
 	}
 
 	public function testEncoding() {
