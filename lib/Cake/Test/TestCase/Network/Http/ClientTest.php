@@ -60,6 +60,7 @@ class ClientTest extends TestCase {
 			[
 				'http://example.com/test.html',
 				'http://example.com/test.html',
+				[],
 				null,
 				'Null options'
 			],
@@ -67,43 +68,57 @@ class ClientTest extends TestCase {
 				'http://example.com/test.html',
 				'http://example.com/test.html',
 				[],
+				[],
 				'Simple string'
 			],
 			[
 				'http://example.com/test.html',
 				'/test.html',
+				[],
 				['host' => 'example.com'],
 				'host name option',
 			],
 			[
 				'https://example.com/test.html',
 				'/test.html',
+				[],
 				['host' => 'example.com', 'scheme' => 'https'],
 				'HTTPS',
 			],
 			[
 				'http://example.com:8080/test.html',
 				'/test.html',
+				[],
 				['host' => 'example.com', 'port' => '8080'],
 				'Non standard port',
 			],
 			[
 				'http://example.com/test.html',
 				'/test.html',
+				[],
 				['host' => 'example.com', 'port' => '80'],
 				'standard port, does not display'
 			],
 			[
 				'https://example.com/test.html',
 				'/test.html',
+				[],
 				['host' => 'example.com', 'scheme' => 'https', 'port' => '443'],
 				'standard port, does not display'
 			],
 			[
 				'http://example.com/test.html',
 				'http://example.com/test.html',
+				[],
 				['host' => 'example.com', 'scheme' => 'https'],
 				'options do not duplicate'
+			],
+			[
+				'http://example.com/search?q=hi+there&cat%5Bid%5D%5B0%5D=2&cat%5Bid%5D%5B1%5D=3',
+				'http://example.com/search',
+				['q' => 'hi there', 'cat' => ['id' => [2, 3]]],
+				[],
+				'query string data.'
 			],
 		];
 	}
@@ -111,10 +126,10 @@ class ClientTest extends TestCase {
 	/**
 	 * @dataProvider urlProvider
 	 */
-	public function testBuildUrl($expected, $url, $opts) {
+	public function testBuildUrl($expected, $url, $query, $opts) {
 		$http = new Client();
 
-		$result = $http->buildUrl($url, $opts);
+		$result = $http->buildUrl($url, $query, $opts);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -179,4 +194,31 @@ class ClientTest extends TestCase {
 		$this->assertSame($result, $response);
 	}
 
+/**
+ * test get request with querystring data
+ *
+ * @return void
+ */
+	public function testGetQuerystring() {
+		$response = new Response();
+
+		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+		$mock->expects($this->once())
+			->method('send')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('Cake\Network\Http\Request'),
+				$this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3')
+			))
+			->will($this->returnValue($response));
+
+		$http = new Client([
+			'host' => 'cakephp.org',
+			'adapter' => $mock
+		]);
+		$result = $http->get('/search', [
+			'q' => 'hi there',
+			'Category' => ['id' => [2, 3]]
+		]);
+		$this->assertSame($result, $response);
+	}
 }

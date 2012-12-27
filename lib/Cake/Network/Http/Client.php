@@ -102,7 +102,13 @@ class Client {
  */
 	public function get($url, $data = [], $options = []) {
 		$options = $this->_mergeOptions($options);
-		$request = $this->_createRequest(Request::METHOD_GET, $url, $data, $options);
+		$url = $this->buildUrl($url, $data, $options);
+		$request = $this->_createRequest(
+			Request::METHOD_GET,
+			$url,
+			[],
+			$options
+		);
 		return $this->send($request, $options);
 	}
 
@@ -173,12 +179,16 @@ class Client {
  * Generate a URL based on the scoped client options.
  *
  * @param string $url Either a full URL or just the path.
+ * @param array $query The query data for the URL.
  * @param array $options The config options stored with Client::config()
  * @return string A complete url with scheme, port, host, path.
  */
-	public function buildUrl($url, $options = []) {
-		if (empty($options)) {
+	public function buildUrl($url, $query = [], $options = []) {
+		if (empty($options) && empty($query)) {
 			return $url;
+		}
+		if ($query) {
+			$url .= '?' . http_build_query($query);
 		}
 		if (preg_match('#^https?://#', $url)) {
 			return $url;
@@ -204,11 +214,13 @@ class Client {
 /**
  * Creates a new request object based on the parameters.
  *
- *
+ * @param string $method HTTP method name.
+ * @param string $url The url including query string.
+ * @param mixed $data The request body content.
+ * @param array $options The options to use. Contains auth, proxy etc.
  * @return Cake\Network\Http\Request
  */
 	protected function _createRequest($method, $url, $data, $options) {
-		$url = $this->buildUrl($url, $options);
 		$request = new Request();
 		$request->method($method)
 			->url($url)
