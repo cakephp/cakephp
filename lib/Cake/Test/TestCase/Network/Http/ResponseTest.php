@@ -38,6 +38,12 @@ class ResponseTest extends TestCase {
 			'Tue, 25 Dec 2012 04:43:47 GMT',
 			$response->header('Date')
 		);
+
+		$this->assertEquals(
+			'text/html;charset="UTF-8"',
+			$response['headers']['Content-Type']
+		);
+		$this->assertTrue(isset($response['headers']));
 	}
 
 /**
@@ -55,6 +61,9 @@ class ResponseTest extends TestCase {
 		$result = $response->body('json_decode');
 		$this->assertEquals($data['property'], $result->property);
 		$this->assertEquals($encoded, $response->body());
+
+		$this->assertEquals($encoded, $response['body']);
+		$this->assertTrue(isset($response['body']));
 	}
 
 /**
@@ -156,6 +165,12 @@ class ResponseTest extends TestCase {
 
 		$result = $response->header('set-cookie');
 		$this->assertCount(3, $result, 'Should be an array.');
+
+		$this->assertTrue(isset($response['cookies']));
+		$this->assertEquals(
+			'soon',
+			$response['cookies']['expiring']['value']
+		);
 	}
 
 /**
@@ -170,6 +185,9 @@ class ResponseTest extends TestCase {
 		];
 		$response = new Response($headers, '');
 		$this->assertEquals(404, $response->statusCode());
+
+		$this->assertEquals(404, $response['code']);
+		$this->assertTrue(isset($response['code']));
 	}
 
 /**

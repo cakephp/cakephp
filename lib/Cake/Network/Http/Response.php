@@ -22,9 +22,8 @@ namespace Cake\Network\Http;
  *
  * ### Check the status code
  *
- *
  */
-class Response {
+class Response implements \ArrayAccess {
 
 	const STATUS_OK = 200;
 	const STATUS_CREATED = 201;
@@ -58,6 +57,17 @@ class Response {
  */
 	protected $_body;
 
+/**
+ * Map of public => property names for ArrayAccess
+ *
+ * @var array
+ */
+	protected $_arrayProperties = [
+		'cookies' => '_cookies',
+		'headers' => '_headers',
+		'body' => '_body',
+		'code' => '_code'
+	];
 /**
  * Constructor
  *
@@ -262,6 +272,55 @@ class Response {
 			return $parser($this->_body);
 		}
 		return $this->_body;
+	}
+
+/**
+ * Read values with array syntax.
+ *
+ * @param string $name
+ * @return mixed
+ */
+	public function offsetGet($name) {
+		if (!isset($this->_arrayProperties[$name])) {
+			return false;
+		}
+		$key = $this->_arrayProperties[$name];
+		return $this->{$key};
+	}
+
+/**
+ * isset/empty test with array syntax.
+ *
+ * @param string $name
+ * @return boolean
+ */
+	public function offsetExists($name) {
+		if (!isset($this->_arrayProperties[$name])) {
+			return false;
+		}
+		$key = $this->_arrayProperties[$name];
+		return isset($this->$key);
+	}
+
+/**
+ * Do nothing ArrayAccess is readonly
+ *
+ * @param string $name
+ * @param mixed $value
+ * @return null
+ */
+	public function offsetSet($name, $value) {
+		
+	}
+
+/**
+ * Do nothing ArrayAccess is readonly
+ *
+ * @param string $name
+ * @return null
+ */
+	public function offsetUnset($name) {
+		
 	}
 
 }
