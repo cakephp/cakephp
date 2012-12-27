@@ -287,9 +287,14 @@ class Sqlserver extends DboSource {
 						$fieldAlias = $this->name($alias . '__' . $fields[$i]);
 					} else {
 						$build = explode('.', $fields[$i]);
-						$this->_fieldMappings[$build[0] . '__' . $build[1]] = $fields[$i];
-						$fieldName = $this->name($build[0] . '.' . $build[1]);
-						$fieldAlias = $this->name(preg_replace("/^\[(.+)\]$/", "$1", $build[0]) . '__' . $build[1]);
+						$build[0] = trim($build[0], '[]');
+						$build[1] = trim($build[1], '[]');
+						$name = $build[0] . '.' . $build[1];
+						$alias = $build[0] . '__' . $build[1];
+
+						$this->_fieldMappings[$alias] = $name;
+						$fieldName = $this->name($name);
+						$fieldAlias = $this->name($alias);
 					}
 					if ($model->getColumnType($fields[$i]) == 'datetime') {
 						$fieldName = "CONVERT(VARCHAR(20), {$fieldName}, 20)";

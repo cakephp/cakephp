@@ -427,7 +427,7 @@ class Debugger {
  * @return string
  */
 	protected static function _highlight($str) {
-		if (function_exists('hphp_log')) {
+		if (function_exists('hphp_log') || function_exists('hphp_gettid')) {
 			return htmlentities($str);
 		}
 		$added = false;
