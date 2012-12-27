@@ -108,7 +108,7 @@ class Response implements \ArrayAccess {
  * @param array $headers Unparsed headers.
  * @param string $body The response body.
  */
-	public function __construct($headers, $body) {
+	public function __construct($headers = [], $body = '') {
 		$this->_parseHeaders($headers);
 		$this->_body = $body;
 	}
