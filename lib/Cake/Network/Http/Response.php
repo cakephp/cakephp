@@ -22,6 +22,7 @@ namespace Cake\Network\Http;
  *
  * ### Check the status code
  *
+ *
  */
 class Response {
 
@@ -44,21 +45,21 @@ class Response {
 	protected $_headers;
 
 /**
- * The response content
+ * The response body
  *
  * @var string
  */
-	protected $_content;
+	protected $_body;
 
 /**
  * Constructor
  *
  * @param array $headers Unparsed headers.
- * @param string $content The response body.
+ * @param string $body The response body.
  */
-	public function __construct($headers, $content) {
+	public function __construct($headers, $body) {
 		$this->_parseHeaders($headers);
-		$this->_content = $content;
+		$this->_body = $body;
 	}
 
 /**
@@ -157,8 +158,25 @@ class Response {
 		return $this->_headers[$name];
 	}
 
-	public function content($content) {
-		return $this->_content;
+/**
+ * Get the response body.
+ *
+ * By passing in a $parser callable, you can get the decoded
+ * response content back.
+ *
+ * For example to get the json data as an object:
+ *
+ * `$body = $response->body('json_decode');`
+ *
+ * @param callable $parser The callback to use to decode
+ *   the response body.
+ * @return mixed The response body.
+ */
+	public function body($parser = null) {
+		if ($parser) {
+			return $parser($this->_body);
+		}
+		return $this->_body;
 	}
 
 }

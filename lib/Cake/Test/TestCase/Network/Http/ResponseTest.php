@@ -40,8 +40,21 @@ class ResponseTest extends TestCase {
 		);
 	}
 
-	public function testContent() {
-		$this->markTestIncomplete();
+/**
+ * Test body()
+ *
+ * @return void
+ */
+	public function testBody() {
+		$data = [
+			'property' => 'value'
+		];
+		$encoded = json_encode($data);
+
+		$response = new Response([], $encoded);
+		$result = $response->body('json_decode');
+		$this->assertEquals($data['property'], $result->property);
+		$this->assertEquals($encoded, $response->body());
 	}
 
 /**
