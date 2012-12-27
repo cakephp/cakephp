@@ -216,7 +216,7 @@ class AuthComponent extends Component {
 
 /**
  * Controls handling of unauthorized access. By default unauthorized user is
- * redirected to the referrer url or AuthComponent::$loginAction or '/'.
+ * redirected to the referrer url or AuthComponent::$loginRedirect or '/'.
  * If set to false a ForbiddenException exception is thrown instead of redirecting.
  *
  * @var boolean
