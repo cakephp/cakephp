@@ -122,6 +122,7 @@ class PaginatorComponent extends Component {
  *   on non-indexed, or undesirable columns.
  * @return array Model query results
  * @throws MissingModelException
+ * @throws NotFoundException
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
 		if (is_array($object)) {
@@ -206,6 +207,7 @@ class PaginatorComponent extends Component {
 			$count = $object->find('count', array_merge($parameters, $extra));
 		}
 		$pageCount = intval(ceil($count / $limit));
+		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
 
 		$paging = array(
@@ -220,6 +222,7 @@ class PaginatorComponent extends Component {
 			'options' => Hash::diff($options, $defaults),
 			'paramType' => $options['paramType']
 		);
+
 		if (!isset($this->Controller->request['paging'])) {
 			$this->Controller->request['paging'] = array();
 		}
@@ -227,6 +230,10 @@ class PaginatorComponent extends Component {
 			(array)$this->Controller->request['paging'],
 			array($object->alias => $paging)
 		);
+
+		if ($requestedPage > $page) {
+			throw new NotFoundException();
+		}
 
 		if (
 			!in_array('Paginator', $this->Controller->helpers) &&
