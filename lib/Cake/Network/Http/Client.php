@@ -113,13 +113,12 @@ class Client {
 			unset($data['_content']);
 		}
 		$url = $this->buildUrl($url, $data, $options);
-		$request = $this->_createRequest(
+		return $this->_doRequest(
 			Request::METHOD_GET,
 			$url,
 			$body,
 			$options
 		);
-		return $this->send($request, $options);
 	}
 
 /**
@@ -133,13 +132,7 @@ class Client {
 	public function post($url, $data = [], $options = []) {
 		$options = $this->_mergeOptions($options);
 		$url = $this->buildUrl($url, [], $options);
-		$request = $this->_createRequest(
-			Request::METHOD_POST,
-			$url,
-			$data,
-			$options
-		);
-		return $this->send($request, $options);
+		return $this->_doRequest(Request::METHOD_POST, $url, $data, $options);
 	}
 
 /**
@@ -151,6 +144,9 @@ class Client {
  * @return Cake\Network\Http\Response
  */
 	public function put($url, $data = [], $options = []) {
+		$options = $this->_mergeOptions($options);
+		$url = $this->buildUrl($url, [], $options);
+		return $this->_doRequest(Request::METHOD_PUT, $url, $data, $options);
 	}
 
 /**
@@ -162,6 +158,9 @@ class Client {
  * @return Cake\Network\Http\Response
  */
 	public function patch($url, $data = [], $options = []) {
+		$options = $this->_mergeOptions($options);
+		$url = $this->buildUrl($url, [], $options);
+		return $this->_doRequest(Request::METHOD_PATCH, $url, $data, $options);
 	}
 
 /**
@@ -173,6 +172,25 @@ class Client {
  * @return Cake\Network\Http\Response
  */
 	public function delete($url, $data = [], $options = []) {
+		$options = $this->_mergeOptions($options);
+		$url = $this->buildUrl($url, [], $options);
+		return $this->_doRequest(Request::METHOD_DELETE, $url, $data, $options);
+	}
+
+/**
+ * Helper method for doing non-GET requests.
+ *
+ * @param string $method HTTP method.
+ * @param string $url URL to request.
+ */
+	protected function _doRequest($method, $url, $data, $options) {
+		$request = $this->_createRequest(
+			$method,
+			$url,
+			$data,
+			$options
+		);
+		return $this->send($request, $options);
 	}
 
 /**

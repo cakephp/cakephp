@@ -141,32 +141,6 @@ class ClientTest extends TestCase {
 	}
 
 /**
- * test simple get request.
- *
- * @return void
- */
-	public function testGetSimple() {
-		$response = new Response();
-
-		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
-		$mock->expects($this->once())
-			->method('send')
-			->with($this->logicalAnd(
-				$this->isInstanceOf('Cake\Network\Http\Request'),
-				$this->attributeEqualTo('_method', Request::METHOD_GET),
-				$this->attributeEqualTo('_url', 'http://cakephp.org/test.html')
-			))
-			->will($this->returnValue($response));
-
-		$http = new Client([
-			'host' => 'cakephp.org',
-			'adapter' => $mock
-		]);
-		$result = $http->get('/test.html');
-		$this->assertSame($result, $response);
-	}
-
-/**
  * test simple get request with headers & cookies.
  *
  * @return void
@@ -263,11 +237,26 @@ class ClientTest extends TestCase {
 	}
 
 /**
+ * Return a list of HTTP methods.
+ *
+ * @return array
+ */
+	public static function methodProvider() {
+		return [
+			[Request::METHOD_GET],
+			[Request::METHOD_POST],
+			[Request::METHOD_PUT],
+			[Request::METHOD_DELETE],
+			[Request::METHOD_PATCH],
+		];
+	}
+/**
  * test simple POST request.
  *
+ * @dataProvider methodProvider
  * @return void
  */
-	public function testPostSimple() {
+	public function testMethodsSimple($method) {
 		$response = new Response();
 
 		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
@@ -275,7 +264,7 @@ class ClientTest extends TestCase {
 			->method('send')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('Cake\Network\Http\Request'),
-				$this->attributeEqualTo('_method', Request::METHOD_POST),
+				$this->attributeEqualTo('_method', $method),
 				$this->attributeEqualTo('_url', 'http://cakephp.org/projects/add')
 			))
 			->will($this->returnValue($response));
@@ -284,7 +273,7 @@ class ClientTest extends TestCase {
 			'host' => 'cakephp.org',
 			'adapter' => $mock
 		]);
-		$result = $http->post('/projects/add');
+		$result = $http->{$method}('/projects/add');
 		$this->assertSame($result, $response);
 	}
 
