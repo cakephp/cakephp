@@ -277,4 +277,50 @@ class ClientTest extends TestCase {
 		$this->assertSame($result, $response);
 	}
 
+/**
+ * Provider for testing the type option.
+ *
+ * @return array
+ */
+	public static function typeProvider() {
+		return [
+			['application/json', 'application/json'],
+			['json', 'application/json'],
+			['xml', 'application/xml'],
+			['application/xml', 'application/xml'],
+		];
+	}
+
+/**
+ * Test that using the 'type' option sets the correct headers
+ *
+ * @dataProvider typeProvider
+ * @return void
+ */
+	public function testPostWithTypeKey($type, $mime) {
+		$response = new Response();
+		$data = 'some data';
+		$headers = [
+			'Connection' => 'close',
+			'User-Agent' => 'CakePHP',
+			'Content-Type' => $mime,
+			'Accept' => $mime,
+		];
+
+		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+		$mock->expects($this->once())
+			->method('send')
+			->with($this->logicalAnd(
+				$this->attributeEqualTo('_method', Request::METHOD_POST),
+				$this->attributeEqualTo('_content', $data),
+				$this->attributeEqualTo('_headers', $headers)
+			))
+			->will($this->returnValue($response));
+
+		$http = new Client([
+			'host' => 'cakephp.org',
+			'adapter' => $mock
+		]);
+		$http->post('/projects/add', $data, ['type' => $type]);
+	}
 }

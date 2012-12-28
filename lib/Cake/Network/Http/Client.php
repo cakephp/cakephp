@@ -24,7 +24,26 @@ use Cake\Utility\Hash;
  *
  * ### Doing requests
  *
+ * ### Sending request bodies
+ *
+ * By default any POST/PUT/PATCH/DELETE request with $data will
+ * send their data as `multipart/form-data`.
+ *
+ * When sending request bodies you can use the `type` option to
+ * set the Content-Type for the request:
+ *
+ * `$http->get('/users', [], ['type' => 'json']);`
+ *
+ * The `type` option sets both the `Content-Type` and `Accept` header, to
+ * the same mime type. When using `type` you can use either a full mime
+ * type or an alias. If you need different types in the Accept and Content-Type
+ * headers you should set them manually and not use `type`
+ *
  * ### Using authentication
+ *
+ *
+ * ### Using proxies
+ *
  *
  */
 class Client {
@@ -268,6 +287,9 @@ class Client {
 		$request->method($method)
 			->url($url)
 			->content($data);
+		if (isset($options['type'])) {
+			$request->header($this->_typeHeaders($options['type']));
+		}
 		if (isset($options['headers'])) {
 			$request->header($options['headers']);
 		}
@@ -276,6 +298,34 @@ class Client {
 		}
 		// TODO auth + proxy config.
 		return $request;
+	}
+
+/**
+ * Returns headers for Accept/Content-Type based on a short type
+ * or full mime-type.
+ *
+ * @param string $type short type alias or full mimetype.
+ * @return array Headers to set on the request.
+ */
+	protected function _typeHeaders($type) {
+		if (strpos($type, '/') !== false) {
+			return [
+				'Accept' => $type,
+				'Content-Type' => $type
+			];
+		}
+		// Hacky as hell but I'll clean it up I promise
+		$reflection = new \ReflectionClass('Cake\Network\Response');
+		$properties = $reflection->getDefaultProperties();
+		if (isset($properties['_mimeTypes'][$type])) {
+			$mimeTypes = $properties['_mimeTypes'][$type];
+			$mimeType = is_array($mimeTypes) ? current($mimeTypes) : $mimeTypes;
+			return [
+				'Accept' => $mimeType,
+				'Content-Type' => $mimeType,
+			];
+		}
+		return [];
 	}
 
 }
