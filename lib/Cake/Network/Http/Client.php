@@ -131,6 +131,15 @@ class Client {
  * @return Cake\Network\Http\Response
  */
 	public function post($url, $data = [], $options = []) {
+		$options = $this->_mergeOptions($options);
+		$url = $this->buildUrl($url, [], $options);
+		$request = $this->_createRequest(
+			Request::METHOD_POST,
+			$url,
+			$data,
+			$options
+		);
+		return $this->send($request, $options);
 	}
 
 /**
@@ -166,8 +175,13 @@ class Client {
 	public function delete($url, $data = [], $options = []) {
 	}
 
-	protected function _mergeOptions($options)
-	{
+/**
+ * Does a recursive merge of the parameter with the scope config.
+ *
+ * @param array $options Options to merge.
+ * @return array Options merged with set config.
+ */
+	protected function _mergeOptions($options) {
 		return Hash::merge($this->_config, $options);
 	}
 

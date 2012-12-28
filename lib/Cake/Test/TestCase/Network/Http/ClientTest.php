@@ -153,6 +153,7 @@ class ClientTest extends TestCase {
 			->method('send')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('Cake\Network\Http\Request'),
+				$this->attributeEqualTo('_method', Request::METHOD_GET),
 				$this->attributeEqualTo('_url', 'http://cakephp.org/test.html')
 			))
 			->will($this->returnValue($response));
@@ -187,6 +188,7 @@ class ClientTest extends TestCase {
 			->method('send')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('Cake\Network\Http\Request'),
+				$this->attributeEqualTo('_method', Request::METHOD_GET),
 				$this->attributeEqualTo('_url', 'http://cakephp.org/test.html'),
 				$this->attributeEqualTo('_headers', $headers),
 				$this->attributeEqualTo('_cookies', $cookies)
@@ -214,6 +216,7 @@ class ClientTest extends TestCase {
 			->method('send')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('Cake\Network\Http\Request'),
+				$this->attributeEqualTo('_method', Request::METHOD_GET),
 				$this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3')
 			))
 			->will($this->returnValue($response));
@@ -243,6 +246,7 @@ class ClientTest extends TestCase {
 			->method('send')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('Cake\Network\Http\Request'),
+				$this->attributeEqualTo('_method', Request::METHOD_GET),
 				$this->attributeEqualTo('_url', 'http://cakephp.org/search'),
 				$this->attributeEqualTo('_content', 'some data')
 			))
@@ -257,4 +261,31 @@ class ClientTest extends TestCase {
 		]);
 		$this->assertSame($result, $response);
 	}
+
+/**
+ * test simple POST request.
+ *
+ * @return void
+ */
+	public function testPostSimple() {
+		$response = new Response();
+
+		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+		$mock->expects($this->once())
+			->method('send')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('Cake\Network\Http\Request'),
+				$this->attributeEqualTo('_method', Request::METHOD_POST),
+				$this->attributeEqualTo('_url', 'http://cakephp.org/projects/add')
+			))
+			->will($this->returnValue($response));
+
+		$http = new Client([
+			'host' => 'cakephp.org',
+			'adapter' => $mock
+		]);
+		$result = $http->post('/projects/add');
+		$this->assertSame($result, $response);
+	}
+
 }
