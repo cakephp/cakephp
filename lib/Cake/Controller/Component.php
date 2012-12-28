@@ -135,7 +135,7 @@ class Component extends Object {
  *
  * @param Controller $controller Controller with components to shutdown
  * @return void
- * @link @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::shutdown
+ * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::shutdown
  */
 	public function shutdown(Controller $controller) {
 	}
