@@ -278,7 +278,7 @@ class Client {
  *
  * @param string $method HTTP method name.
  * @param string $url The url including query string.
- * @param mixed $data The request body content.
+ * @param mixed $data The request body.
  * @param array $options The options to use. Contains auth, proxy etc.
  * @return Cake\Network\Http\Request
  */
@@ -286,7 +286,7 @@ class Client {
 		$request = new Request();
 		$request->method($method)
 			->url($url)
-			->content($data);
+			->body($data);
 		if (isset($options['type'])) {
 			$request->header($this->_typeHeaders($options['type']));
 		}

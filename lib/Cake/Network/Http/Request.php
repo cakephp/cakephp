@@ -24,16 +24,9 @@ use Cake\Network\Http\Message;
  */
 class Request extends Message {
 
-/**
- * HTTP Version being used.
- *
- * @var string
- */
-	protected $_version = '1.1';
-
 	protected $_method;
 
-	protected $_content;
+	protected $_body;
 
 	protected $_url;
 
@@ -127,20 +120,6 @@ class Request extends Message {
 	}
 
 /**
- * Get/set the content or body for the request.
- *
- * @param string|null $content The content for the request. Leave null for get
- * @return mixed Either $this or the content value.
- */
-	public function content($content = null) {
-		if ($content === null) {
-			return $this->_content;
-		}
-		$this->_content = $content;
-		return $this;
-	}
-
-/**
  * Get/Set cookie values.
  *
  * ### Getting a cookie
@@ -170,19 +149,6 @@ class Request extends Message {
 			$this->_cookies[$key] = $val;
 		}
 		return $this;
-	}
-
-/**
- * Get all cookies
- *
- * @return array
- */
-	public function cookies() {
-		return $this->_cookies;
-	}
-
-	public function version() {
-		return $this->_version;
 	}
 
 }

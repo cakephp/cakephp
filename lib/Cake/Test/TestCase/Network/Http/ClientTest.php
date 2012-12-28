@@ -222,7 +222,7 @@ class ClientTest extends TestCase {
 				$this->isInstanceOf('Cake\Network\Http\Request'),
 				$this->attributeEqualTo('_method', Request::METHOD_GET),
 				$this->attributeEqualTo('_url', 'http://cakephp.org/search'),
-				$this->attributeEqualTo('_content', 'some data')
+				$this->attributeEqualTo('_body', 'some data')
 			))
 			->will($this->returnValue($response));
 
@@ -312,7 +312,7 @@ class ClientTest extends TestCase {
 			->method('send')
 			->with($this->logicalAnd(
 				$this->attributeEqualTo('_method', Request::METHOD_POST),
-				$this->attributeEqualTo('_content', $data),
+				$this->attributeEqualTo('_body', $data),
 				$this->attributeEqualTo('_headers', $headers)
 			))
 			->will($this->returnValue($response));

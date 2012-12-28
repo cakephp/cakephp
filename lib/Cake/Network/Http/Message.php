@@ -45,6 +45,12 @@ class Message {
  */
 	protected $_cookies;
 
+/**
+ * HTTP Version being used.
+ *
+ * @var string
+ */
+	protected $_version = '1.1';
 
 /**
  * Normalize header names to Camel-Case form.
@@ -57,6 +63,38 @@ class Message {
 		$parts = array_map('strtolower', $parts);
 		$parts = array_map('ucfirst', $parts);
 		return implode('-', $parts);
+	}
+
+/**
+ * Get all cookies
+ *
+ * @return array
+ */
+	public function cookies() {
+		return $this->_cookies;
+	}
+
+/**
+ * Get the HTTP version used.
+ *
+ * @return string
+ */
+	public function version() {
+		return $this->_version;
+	}
+
+/**
+ * Get/set the body for the message.
+ *
+ * @param string|null $body The body for the request. Leave null for get
+ * @return mixed Either $this or the body value.
+ */
+	public function body($body = null) {
+		if ($body === null) {
+			return $this->_body;
+		}
+		$this->_body = $body;
+		return $this;
 	}
 
 }

@@ -86,6 +86,7 @@ class Response extends Message implements \ArrayAccess {
 		'body' => '_body',
 		'code' => '_code'
 	];
+
 /**
  * Constructor
  *

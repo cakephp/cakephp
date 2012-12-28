@@ -57,16 +57,16 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test content method.
+ * test body method.
  *
  * @return void
  */
-	public function testContent() {
+	public function testBody() {
 		$data = '{"json":"data"}';
 		$request = new Request();
-		$this->assertSame($request, $request->content($data));
+		$this->assertSame($request, $request->body($data));
 
-		$this->assertEquals($data, $request->content());
+		$this->assertEquals($data, $request->body());
 	}
 
 /**
