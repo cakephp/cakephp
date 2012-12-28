@@ -14,6 +14,7 @@
 namespace Cake\Network\Http;
 
 use Cake\Error;
+use Cake\Network\Http\Message;
 
 /**
  * Implements methods for HTTP requests.
@@ -21,13 +22,8 @@ use Cake\Error;
  * Used by Cake\Network\Http\Client to contain request information
  * for making requests.
  */
-class Request {
+class Request extends Message {
 
-	const METHOD_GET = 'GET';
-	const METHOD_POST = 'POST';
-	const METHOD_PUT = 'PUT';
-	const METHOD_DELETE = 'DELETE';
-	const METHOD_PATCH = 'PATCH';
 /**
  * HTTP Version being used.
  *
@@ -40,8 +36,6 @@ class Request {
 	protected $_content;
 
 	protected $_url;
-
-	protected $_cookies = [];
 
 /**
  * Headers to be sent.
@@ -130,19 +124,6 @@ class Request {
  */
 	public function headers() {
 		return $this->_headers;
-	}
-
-/**
- * Normalize header names to Camel-Case form.
- *
- * @param string $name The header name to normalize.
- * @return string Normalized header name.
- */
-	protected function _normalizeHeader($name) {
-		$parts = explode('-', $name);
-		$parts = array_map('strtolower', $parts);
-		$parts = array_map('ucfirst', $parts);
-		return implode('-', $parts);
 	}
 
 /**

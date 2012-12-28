@@ -13,6 +13,8 @@
  */
 namespace Cake\Network\Http;
 
+use Cake\Network\Http\Message;
+
 /**
  * Implements methods for HTTP responses.
  *
@@ -57,11 +59,7 @@ namespace Cake\Network\Http;
  *
  * `$content = $response['code'];`
  */
-class Response implements \ArrayAccess {
-
-	const STATUS_OK = 200;
-	const STATUS_CREATED = 201;
-	const STATUS_ACCEPTED = 202;
+class Response extends Message implements \ArrayAccess {
 
 /**
  * The status code of the response.
@@ -69,20 +67,6 @@ class Response implements \ArrayAccess {
  * @var int
  */
 	protected $_code;
-
-/**
- * The array of headers in the response.
- *
- * @var array
- */
-	protected $_headers;
-
-/**
- * The array of cookies in the response.
- *
- * @var array
- */
-	protected $_cookies;
 
 /**
  * The response body
@@ -179,19 +163,6 @@ class Response implements \ArrayAccess {
 			}
 		}
 		$this->_cookies[$name] = $cookie;
-	}
-
-/**
- * Normalize header names to Camel-Case form.
- *
- * @param string $name The header name to normalize.
- * @return string Normalized header name.
- */
-	protected function _normalizeHeader($name) {
-		$parts = explode('-', trim($name));
-		$parts = array_map('strtolower', $parts);
-		$parts = array_map('ucfirst', $parts);
-		return implode('-', $parts);
 	}
 
 /**
