@@ -109,8 +109,9 @@ class Response extends Message implements \ArrayAccess {
 	protected function _parseHeaders($headers) {
 		foreach ($headers as $key => $value) {
 			if (substr($value, 0, 5) === 'HTTP/') {
-				preg_match('/HTTP\/[\d.]+ ([0-9]+)/i', $value, $matches);
-				$this->_code = $matches[1];
+				preg_match('/HTTP\/([\d.]+) ([0-9]+)/i', $value, $matches);
+				$this->_version = $matches[1];
+				$this->_code = $matches[2];
 				continue;
 			}
 			list($name, $value) = explode(':', $value, 2);

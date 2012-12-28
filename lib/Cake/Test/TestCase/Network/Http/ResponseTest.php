@@ -23,12 +23,13 @@ class ResponseTest extends TestCase {
 
 	public function testHeaderParsing() {
 		$headers = [
-			'HTTP/1.1 200 OK',
+			'HTTP/1.0 200 OK',
 			'Content-Type : text/html;charset="UTF-8"',
 			'date: Tue, 25 Dec 2012 04:43:47 GMT',
 		];
 		$response = new Response($headers, 'ok');
 
+		$this->assertEquals('1.0', $response->version());
 		$this->assertEquals(200, $response->statusCode());
 		$this->assertEquals(
 			'text/html;charset="UTF-8"',
