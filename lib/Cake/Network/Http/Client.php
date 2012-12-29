@@ -13,6 +13,7 @@
  */
 namespace Cake\Network\Http;
 
+use Cake\Error;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
 use Cake\Utility\Hash;
@@ -314,18 +315,17 @@ class Client {
 				'Content-Type' => $type
 			];
 		}
-		// Hacky as hell but I'll clean it up I promise
-		$reflection = new \ReflectionClass('Cake\Network\Response');
-		$properties = $reflection->getDefaultProperties();
-		if (isset($properties['_mimeTypes'][$type])) {
-			$mimeTypes = $properties['_mimeTypes'][$type];
-			$mimeType = is_array($mimeTypes) ? current($mimeTypes) : $mimeTypes;
-			return [
-				'Accept' => $mimeType,
-				'Content-Type' => $mimeType,
-			];
+		$typeMap = [
+			'json' => 'application/json',
+			'xml' => 'application/xml',
+		];
+		if (!isset($typeMap[$type])) {
+			throw new Error\Exception(__d('cake_dev', 'Unknown type alias.'));
 		}
-		return [];
+		return [
+			'Accept' => $typeMap[$type],
+			'Content-Type' => $typeMap[$type],
+		];
 	}
 
 }

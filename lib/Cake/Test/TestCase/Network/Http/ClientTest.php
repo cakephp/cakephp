@@ -323,4 +323,22 @@ class ClientTest extends TestCase {
 		]);
 		$http->post('/projects/add', $data, ['type' => $type]);
 	}
+
+/**
+ * Test that exceptions are raised on invalid types.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testExceptionOnUnknownType() {
+		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+		$mock->expects($this->never())
+			->method('send');
+
+		$http = new Client([
+			'host' => 'cakephp.org',
+			'adapter' => $mock
+		]);
+		$http->post('/projects/add', 'it works', ['type' => 'invalid']);
+	}
 }
