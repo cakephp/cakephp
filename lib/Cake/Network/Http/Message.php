@@ -36,14 +36,14 @@ class Message {
  *
  * @var array
  */
-	protected $_headers;
+	protected $_headers = [];
 
 /**
  * The array of cookies in the response.
  *
  * @var array
  */
-	protected $_cookies;
+	protected $_cookies = [];
 
 /**
  * HTTP Version being used.

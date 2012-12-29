@@ -120,7 +120,7 @@ class Stream {
 /**
  * Builds the request content based on the request object.
  *
- * If the $request->content() is a string, it will be used as is.
+ * If the $request->body() is a string, it will be used as is.
  * Array data will be processed with Cake\Network\Http\FormData
  *
  * @param Cake\Network\Http\Request $request The request being sent.
@@ -128,7 +128,7 @@ class Stream {
  * @return void
  */
 	protected function _buildContent(Request $request, $options) {
-		$content = $request->content();
+		$content = $request->body();
 		if (empty($content)) {
 			return;
 		}

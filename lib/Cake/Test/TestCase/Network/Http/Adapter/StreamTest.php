@@ -92,7 +92,7 @@ class StreamTest extends TestCase {
 			->header([
 				'Content-Type' => 'application/json'
 			])
-			->content($content);
+			->body($content);
 
 		$options = [
 			'redirect' => 20
@@ -119,7 +119,7 @@ class StreamTest extends TestCase {
 			->header([
 				'Content-Type' => 'application/json'
 			])
-			->content(['a' => 'my value']);
+			->body(['a' => 'my value']);
 
 		$this->stream->send($request, []);
 		$result = $this->stream->contextOptions();
