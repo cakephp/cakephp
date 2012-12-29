@@ -237,6 +237,63 @@ class ClientTest extends TestCase {
 	}
 
 /**
+ * Test invalid authentication types throw exceptions.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testInvalidAuthenticationType() {
+		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+		$mock->expects($this->never())
+			->method('send');
+
+		$http = new Client([
+			'host' => 'cakephp.org',
+			'adapter' => $mock
+		]);
+		$result = $http->get('/', [], [
+			'auth' => ['type' => 'horribly broken']
+		]);
+	}
+
+/**
+ * Test setting basic authentication with get
+ *
+ * @return void
+ */
+	public function testGetWithAuthenticationAndProxy() {
+		$response = new Response();
+
+		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+		$headers = [
+			'Connection' => 'close',
+			'User-Agent' => 'CakePHP',
+			'Authorization' => 'Basic ' . base64_encode('mark:secret'),
+			'Proxy-Authorization' => 'Basic ' . base64_encode('mark:pass'),
+		];
+		$mock->expects($this->once())
+			->method('send')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('Cake\Network\Http\Request'),
+				$this->attributeEqualTo('_method', Request::METHOD_GET),
+				$this->attributeEqualTo('_url', 'http://cakephp.org/'),
+				$this->attributeEqualTo('_headers', $headers)
+			))
+			->will($this->returnValue($response));
+
+		$http = new Client([
+			'host' => 'cakephp.org',
+			'adapter' => $mock
+		]);
+		$result = $http->get('/', [], [
+			'auth' => ['username' => 'mark', 'password' => 'secret'],
+			'proxy' => ['username' => 'mark', 'password' => 'pass'],
+		]);
+		$this->assertSame($result, $response);
+	}
+
+
+/**
  * Return a list of HTTP methods.
  *
  * @return array
@@ -341,4 +398,5 @@ class ClientTest extends TestCase {
 		]);
 		$http->post('/projects/add', 'it works', ['type' => 'invalid']);
 	}
+
 }

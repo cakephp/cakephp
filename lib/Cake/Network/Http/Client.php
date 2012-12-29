@@ -13,10 +13,12 @@
  */
 namespace Cake\Network\Http;
 
+use Cake\Core\App;
 use Cake\Error;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 /**
  * The end user interface for doing HTTP requests.
@@ -297,7 +299,12 @@ class Client {
 		if (isset($options['cookies'])) {
 			$request->cookie($options['cookies']);
 		}
-		// TODO auth + proxy config.
+		if (isset($options['auth'])) {
+			$this->_addAuthentication($request, $options);
+		}
+		if (isset($options['proxy'])) {
+			$this->_addProxy($request, $options);
+		}
 		return $request;
 	}
 
@@ -326,6 +333,63 @@ class Client {
 			'Accept' => $typeMap[$type],
 			'Content-Type' => $typeMap[$type],
 		];
+	}
+
+/**
+ * Add authentication headers to the request.
+ *
+ * Uses the authentication type to choose the correct strategy
+ * and use its methods to add headers.
+ *
+ * @param Request $request The request to modify.
+ * @param array $options Array of options containing the 'auth' key.
+ * @return void
+ */
+	protected function _addAuthentication(Request $request, $options) {
+		$auth = $options['auth'];
+		$adapter = $this->_createAuth($auth, $options);
+		$adapter->authentication($request, $options['auth']);
+	}
+
+/**
+ * Add proxy authentication headers.
+ *
+ * Uses the authentication type to choose the correct strategy
+ * and use its methods to add headers.
+ *
+ * @param Request $request The request to modify.
+ * @param array $options Array of options containing the 'proxy' key.
+ * @return void
+ */
+	protected function _addProxy(Request $request, $options) {
+		$auth = $options['proxy'];
+		$adapter = $this->_createAuth($auth, $options);
+		$adapter->proxyAuthentication($request, $options['proxy']);
+	}
+
+/**
+ * Create the authentication strategy.
+ *
+ * Use the configuration options to create the correct
+ * authentication strategy handler.
+ *
+ * @param array $auth The authentication options to use.
+ * @param array $options The overall request options to use.
+ * @return mixed Authentication strategy instance.
+ * @throws Cake\Error\Exception when an invalid stratgey is chosen.
+ */
+	protected function _createAuth($auth, $options) {
+		if (empty($auth['type'])) {
+			$auth['type'] = 'basic';
+		}
+		$name = Inflector::classify($auth['type']);
+		$class = App::className($name, 'Network/Http/Auth');
+		if (!$class) {
+			throw new Error\Exception(
+				__d('cake_dev', 'Invalid authentication type %s', $name)
+			);
+		}
+		return new $class($options);
 	}
 
 }
