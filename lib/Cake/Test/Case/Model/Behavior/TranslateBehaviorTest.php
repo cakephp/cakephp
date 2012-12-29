@@ -531,6 +531,44 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * test save multiple locales method
+ *
+ * @return void
+ */
+	public function testSaveMultipleLocales() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel = new TranslatedItem();
+		$data = array(
+			'slug' => 'fourth_translated',
+			'title' => array(
+				'eng' => 'Title #4',
+				'spa' => 'Leyenda #4',
+			),
+			'content' => array(
+				'eng' => 'Content #4',
+				'spa' => 'Contenido #4',
+			),
+			'translated_article_id' => 1,
+		);
+		$TestModel->create();
+		$TestModel->save($data);
+
+		$translations = array('title' => 'Title', 'content' => 'Content');
+		$TestModel->bindTranslation($translations, false);
+		$TestModel->locale = array('eng', 'spa');
+		$result = $TestModel->read();
+
+		$this->assertCount(2, $result['Title']);
+		$this->assertEquals($result['Title'][0]['locale'], 'eng');
+		$this->assertEquals($result['Title'][0]['content'], 'Title #4');
+		$this->assertEquals($result['Title'][1]['locale'], 'spa');
+		$this->assertEquals($result['Title'][1]['content'], 'Leyenda #4');
+
+		$this->assertCount(2, $result['Content']);
+	}
+
+/**
  * testSaveAssociatedCreate method
  *
  * @return void
