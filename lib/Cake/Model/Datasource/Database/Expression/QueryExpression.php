@@ -128,8 +128,15 @@ class QueryExpression implements Countable {
 
 	protected function _parseCondition($field, $value, $types) {
 		$operator = '=';
-		$type = isset($types[$field]) ? $types[$field] : null;
-		return sprintf('%s %s %s', $field,  $operator, $this->bind($field, $value, $type));
+		$expression = $field;
+		$parts = explode(' ', trim($field), 2);
+
+		if (count($parts) > 1) {
+			list($expression, $operator) = $parts;
+		}
+
+		$type = isset($types[$expression]) ? $types[$expression] : null;
+		return sprintf('%s %s %s', $expression,  $operator, $this->bind($field, $value, $type));
 	}
 
 }

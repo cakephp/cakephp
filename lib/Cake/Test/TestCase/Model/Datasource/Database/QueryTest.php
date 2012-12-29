@@ -166,4 +166,202 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(0, $result);
 	}
 
+/**
+ * Tests using where conditions with operators and scalar values works
+ *
+ * @return void
+ **/
+	public function testSelectWhereOperators() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['id >' => 1])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('title' => 'another title'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['id <' => 2])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['id <' => 2])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['id <=' => 2])
+			->execute();
+		$this->assertCount(2, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['id >=' => 1])
+			->execute();
+		$this->assertCount(2, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['id <=' => 1])
+			->execute();
+		$this->assertCount(1, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['id !=' => 2])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['title like' => 'a title'])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['title like' => '%title%'])
+			->execute();
+		$this->assertCount(2, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['title not like' => '%title%'])
+			->execute();
+		$this->assertCount(0, $result);
+	}
+
+/**
+ * Auxiliary function to insert a couple rows in a newly created table containing dates
+ *
+ * @return void
+ **/
+	protected function _insertDateRecords() {
+		$table = 'CREATE TEMPORARY TABLE dates(id int, name varchar(50), posted datetime)';
+		$this->connection->execute($table);
+		$data = [
+			'id' => '1',
+			'name' =>  'Chuck Norris',
+			'posted' => new \DateTime('2012-12-21 12:00')
+		];
+		$result = $this->connection->insert(
+			'dates',
+			$data,
+			['id' => 'integer', 'name' => 'string', 'posted' => 'datetime']
+		);
+
+		$result->bindValue(1, '2', 'integer');
+		$result->bindValue(2, 'Bruce Lee');
+		$result->bindValue(3, new \DateTime('2012-12-22 12:00'), 'datetime');
+		$result->execute();
+
+		$result->bindValue(1, 3, 'integer');
+		$result->bindValue(2, 'Jet Li');
+		$result->bindValue(3, new \DateTime('2012-12-25 12:00'), 'datetime');
+		$result->execute();
+
+		return $result;
+	}
+
+/**
+ * Tests selecting with conditions and specifying types for those
+ *
+ * @return void
+ **/
+	public function testSelectWhereTypes() {
+		$this->_insertDateRecords();
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('id' => 1), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['posted >' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(array('id' => 2), $result->fetch('assoc'));
+		$this->assertEquals(array('id' => 3), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(
+				[
+					'posted >' => new \DateTime('2012-12-21 12:00'),
+					'posted <' => new \DateTime('2012-12-23 12:00')
+				],
+				['posted' => 'datetime']
+			)
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('id' => 2), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(
+				[
+					'id' => '3something-crazy',
+					'posted <' => new \DateTime('2013-01-01 12:00')
+				],
+				['posted' => 'datetime', 'id' => 'integer']
+			)
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('id' => 3), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(
+				[
+					'id' => '3something-crazy',
+					'posted <' => new \DateTime('2013-01-01 12:00')
+				],
+				['posted' => 'datetime', 'id' => 'boolean']
+			)
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('id' => 1), $result->fetch('assoc'));
+	}
+
 }
