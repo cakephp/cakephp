@@ -66,6 +66,15 @@ class Message {
 	}
 
 /**
+ * Get all headers
+ *
+ * @return array
+ */
+	public function headers() {
+		return $this->_headers;
+	}
+
+/**
  * Get all cookies
  *
  * @return array

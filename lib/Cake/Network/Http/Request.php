@@ -111,15 +111,6 @@ class Request extends Message {
 	}
 
 /**
- * Get all headers
- *
- * @return array
- */
-	public function headers() {
-		return $this->_headers;
-	}
-
-/**
  * Get/Set cookie values.
  *
  * ### Getting a cookie

@@ -21,6 +21,11 @@ use Cake\TestSuite\TestCase;
  */
 class ResponseTest extends TestCase {
 
+/**
+ * Test parsing headers and capturing content
+ *
+ * @return void
+ */
 	public function testHeaderParsing() {
 		$headers = [
 			'HTTP/1.0 200 OK',
