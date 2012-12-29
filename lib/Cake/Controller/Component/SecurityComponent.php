@@ -225,6 +225,10 @@ class SecurityComponent extends Component {
 			$controller->request->params['requested'] != 1
 		);
 
+		if ($this->_action == $this->blackHoleCallback) {
+			return $this->blackhole($controller, 'auth');
+		}
+
 		if (!in_array($this->_action, (array)$this->unlockedActions) && $isPost && $isNotRequestAction) {
 			if ($this->validatePost && $this->_validatePost($controller) === false) {
 				return $this->blackHole($controller, 'auth');
