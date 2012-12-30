@@ -25,7 +25,20 @@ use Cake\Utility\Inflector;
  *
  * ### Scoped clients
  *
+ * If you're doing multiple requests to the same hostname its often convienent
+ * to use the constructor arguments to create a scoped client. This allows you
+ * to keep your code DRY and not repeat hostnames, authentication, and other options.
+ *
  * ### Doing requests
+ *
+ * Once you've created an instance of Client you can do requests
+ * using several methods. Each corresponds to a different HTTP method.
+ *
+ * - get()
+ * - post()
+ * - put()
+ * - delete()
+ * - patch()
  *
  * ### Sending request bodies
  *
@@ -44,9 +57,23 @@ use Cake\Utility\Inflector;
  *
  * ### Using authentication
  *
+ * By using the `auth` key you can use authentication. The type sub option
+ * can be used to specify which authentication strategy you want to use.
+ * CakePHP comes with a few built-in strategies:
+ *
+ * - Basic
+ * - Digest
+ * - Oauth
  *
  * ### Using proxies
  *
+ * By using the `proxy` key you can set authentication credentials for
+ * a proxy if you need to use one.. The type sub option can be used to 
+ * specify which authentication strategy you want to use.
+ * CakePHP comes with a few built-in strategies:
+ *
+ * - Basic
+ * - Digest
  *
  */
 class Client {
@@ -80,6 +107,19 @@ class Client {
  *
  * ### Config options
  *
+ * You can set the following options when creating a client:
+ *
+ * - host - The hostname to do requests on.
+ * - port - The port to use.
+ * - scheme - The default scheme/protocol to use. Defaults to http.
+ * - timeout - The timeout in seconds. Defaults to 30
+ * - ssl_verify_peer - Whether or not SSL certificates should be validated.
+ *   Defaults to true.
+ * - ssl_verify_depth - The maximum certificate chain depth to travers.
+ *   Defaults to 5.
+ * - ssl_verify_host - Verify that the certificate and hostname match.
+ *   Defaults to true.
+ * - redirect - Number of redirects to follow. Defaults to false.
  *
  * @param array $config Config options for scoped clients.
  */

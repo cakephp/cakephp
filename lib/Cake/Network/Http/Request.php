@@ -24,10 +24,25 @@ use Cake\Network\Http\Message;
  */
 class Request extends Message {
 
-	protected $_method;
+/**
+ * The HTTP method to use.
+ *
+ * @var string
+ */
+	protected $_method = self::METHOD_GET;
 
+/**
+ * Request body to send.
+ *
+ * @var mixed
+ */
 	protected $_body;
 
+/**
+ * The URL to request.
+ *
+ * @var string
+ */
 	protected $_url;
 
 /**

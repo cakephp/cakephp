@@ -173,10 +173,12 @@ class Response extends Message implements \ArrayAccess {
  * @return boolean
  */
 	public function isOk() {
-		return in_array(
-			$this->_code,
-			[static::STATUS_OK, static::STATUS_CREATED, static::STATUS_ACCEPTED]
-		);
+		$codes = [
+			static::STATUS_OK,
+			static::STATUS_CREATED,
+			static::STATUS_ACCEPTED
+		];
+		return in_array($this->_code, $codes);
 	}
 
 /**
@@ -185,8 +187,14 @@ class Response extends Message implements \ArrayAccess {
  * @return boolean
  */
 	public function isRedirect() {
+		$codes = [
+			static::STATUS_MOVED_PERMANENTLY,
+			static::STATUS_FOUND,
+			static::STATUS_SEE_OTHER,
+			static::STATUS_TEMPORARY_REDIRECT,
+		];
 		return (
-			in_array($this->_code, array(301, 302, 303, 307)) &&
+			in_array($this->_code, $codes) &&
 			$this->header('Location')
 		);
 	}
@@ -317,7 +325,7 @@ class Response extends Message implements \ArrayAccess {
  * @return null
  */
 	public function offsetSet($name, $value) {
-		
+
 	}
 
 /**
@@ -327,7 +335,7 @@ class Response extends Message implements \ArrayAccess {
  * @return null
  */
 	public function offsetUnset($name) {
-		
+
 	}
 
 }

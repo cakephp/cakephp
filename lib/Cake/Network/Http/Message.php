@@ -24,6 +24,10 @@ class Message {
 	const STATUS_OK = 200;
 	const STATUS_CREATED = 201;
 	const STATUS_ACCEPTED = 202;
+	const STATUS_MOVED_PERMANENTLY = 301;
+	const STATUS_FOUND = 302;
+	const STATUS_SEE_OTHER = 303;
+	const STATUS_TEMPORARY_REDIRECT = 307;
 
 	const METHOD_GET = 'GET';
 	const METHOD_POST = 'POST';

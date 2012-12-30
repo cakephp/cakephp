@@ -202,10 +202,11 @@ class Stream {
 /**
  * Open the stream and send the request.
  *
- * @return void
+ * @param Request $request
+ * @return Response The populated response object.
  * @throws Cake\Error\Exception
  */
-	protected function _send($request) {
+	protected function _send(Request $request) {
 		$url = $request->url();
 		$this->_open($url);
 		$content = '';
@@ -255,7 +256,9 @@ class Stream {
 	}
 
 /**
- * Get the contextOptions.
+ * Get the context options
+ *
+ * Useful for debugging and testing context creation.
  *
  * @return array
  */
