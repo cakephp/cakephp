@@ -429,7 +429,7 @@ class Client {
 				__d('cake_dev', 'Invalid authentication type %s', $name)
 			);
 		}
-		return new $class($options);
+		return new $class($this, $options);
 	}
 
 }
