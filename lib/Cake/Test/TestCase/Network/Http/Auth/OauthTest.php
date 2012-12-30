@@ -66,11 +66,68 @@ class OauthTest extends TestCase {
 		$this->assertContains('oauth_nonce=', $result);
 	}
 
-	public function testHmacSigning() {
+/**
+ * Test that baseString() normalizes the URL.
+ *
+ * @return void
+ */
+	public function testBaseStringNormalizeUrl() {
+		$request = new Request();
+		$request->url('HTTP://exAmple.com:80/parts/foo');
+
+		$auth = new Oauth();
+		$creds = [];
+		$result = $auth->baseString($request, $creds);
+		$this->assertContains('GET&', $result, 'method was missing.');
+		$this->assertContains('http%3A%2F%2Fexample.com%2Fparts%2Ffoo', $result);
+	}
+
+/**
+ * Test that the query string is stripped from the normalized host.
+ *
+ * @return void
+ */
+	public function testBaseStringWithQueryString() {
+		$request = new Request();
+		$request->url('http://example.com/search?q=pogo&cat=2');
+
+		$auth = new Oauth();
+		$values = [
+			'oauth_version' => '1.0',
+			'oauth_nonce' => uniqid(),
+			'oauth_timestamp' => time(),
+			'oauth_signature_method' => 'HMAC-SHA1',
+			'oauth_token' => 'token',
+			'oauth_consumer_key' => 'consumer-key',
+		];
+		$result = $auth->baseString($request, $values);
+		$this->assertContains('GET&', $result, 'method was missing.');
+		$this->assertContains(
+			'http%3A%2F%2Fexample.com%2Fsearch&',
+			$result
+		);
+		$this->assertContains(
+			'cat%3D2%26oauth_consumer_key%3Dconsumer-key' .
+			'%26oauth_nonce%3D' . $values['oauth_nonce'] .
+			'%26oauth_signature_method%3DHMAC-SHA1' .
+			'%26oauth_timestamp%3D' . $values['oauth_timestamp'] .
+			'%26oauth_token%3Dtoken' .
+			'%26oauth_version%3D1.0' .
+			'%26q%3Dpogo',
+			$result
+		);
+	}
+
+	public function testBaseStringWithPostData() {
 		$this->markTestIncomplete();
 	}
 
-	public function testRsaSha1Signing() {
+/**
+ * Test HMAC-SHA1 signing
+ *
+ * @return void
+ */
+	public function testHmacSigning() {
 		$this->markTestIncomplete();
 	}
 

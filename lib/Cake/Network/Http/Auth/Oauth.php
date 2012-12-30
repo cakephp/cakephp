@@ -55,10 +55,6 @@ class Oauth {
 				$value = $this->_hmacSha1($request, $credentials);
 				break;
 
-			case 'RSA-SHA1':
-				$value = $this->_rsaSha1($request, $credentials);
-				break;
-
 			case 'PLAINTEXT':
 				$value = $this->_plaintext($request, $credentials);
 				break;
@@ -73,6 +69,10 @@ class Oauth {
 /**
  * Plaintext signing
  *
+ * This method is **not** suitable for plain HTTP.
+ * You should only ever use PLAINTEXT when dealing with SSL
+ * services.
+ *
  * @param Request $request
  * @param array $credentials
  * @return string Authorization header.
@@ -85,19 +85,135 @@ class Oauth {
 			'oauth_signature_method' => 'PLAINTEXT',
 			'oauth_token' => $credentials['token'],
 			'oauth_consumer_key' => $credentials['consumerKey'],
-			'oauth_signature' => $credentials['consumerSecret'] . '&' . $credentials['tokenSecret']
 		];
+		if (isset($credentials['realm'])) {
+			$values['oauth_realm'] = $credentials['realm'];
+		}
+		$key = [$credentials['consumerSecret'], $credentials['tokenSecret']];
+		$key = implode('&', $key);
+		$values['oauth_signature'] = $key;
+
 		return $this->_buildAuth($values);
 	}
 
+/**
+ * Use HMAC-SHA1 signing.
+ *
+ * This method is suitable for plain HTTP or HTTPS.
+ *
+ * @param Request $request
+ * @param array $credentials
+ */
 	protected function _hmacSha1($request, $credentials) {
+		$values = [
+			'oauth_version' => '1.0',
+			'oauth_nonce' => uniqid(),
+			'oauth_timestamp' => time(),
+			'oauth_signature_method' => 'HMAC-SHA1',
+			'oauth_token' => $credentials['token'],
+			'oauth_consumer_key' => $credentials['consumerKey'],
+		];
+		$baseString = $this->_baseString($request, $values);
 
+		if (isset($credentials['realm'])) {
+			$values['oauth_realm'] = $credentials['realm'];
+		}
+		$key = [$credentials['consumerSecret'], $value['tokenSecret']];
+		$key = array_map([$this, 'encode'], $key);
+
+		$values['oauth_signature'] = base64_encode(
+			hash_hmac('sha1', $baseString, $key, true)
+		);
+		return $this->_buildAuth($values);
 	}
 
-	protected function _rsaSha1($request, $credentials) {
-
+/**
+ * Generate the Oauth basestring
+ *
+ * - Querystring, request data and oauth_* parameters are combined.
+ * - Values are sorted by name and then value.
+ * - Request values are concatenated and urlencoded.
+ * - The request URL (without querystring) is normalized.
+ * - The HTTP method, URL and request parameters are concatenated and returnned.
+ *
+ * @param Request $request
+ * @param array $oauthValues
+ * @return string
+ */
+	public function baseString($request, $oauthValues) {
+		$parts = [
+			$request->method(),
+			$this->_normalizedUrl($request->url()),
+			$this->_normalizedParams($request, $oauthValues),
+		];
+		$parts = array_map([$this, '_encode'], $parts);
+		return implode('&', $parts);
 	}
 
+/**
+ * Builds a normalized URL
+ *
+ * Section 9.1.2. of the Oauth spec
+ *
+ * @param string $url
+ * @return string Normalized URL
+ */
+	protected function _normalizedUrl($url) {
+		$parts = parse_url($url);
+		if (!$parts) {
+			throw new Error\Exception(__d('cake_dev', 'Unable to parse URL'));
+		}
+		$scheme = strtolower($parts['scheme'] ?: 'http');
+		$defaultPorts = [
+			'http' => 80,
+			'https' => 443
+		];
+		if (isset($parts['port']) && $parts['port'] != $defaultPorts[$scheme]) {
+
+			$parts['host'] .= ':' . $parts['port'];
+		}
+		$out = $scheme . '://';
+		$out .= strtolower($parts['host']);
+		$out .= $parts['path'];
+		return $out;
+	}
+
+/**
+ * Sorts and normalizes request data and oauthValues
+ *
+ * Section 9.1.1 of Oauth spec.
+ *
+ * - URL encode keys + values.
+ * - Sort keys & values by byte value.
+ *
+ * @param Request $request
+ * @param array $oauthValues
+ * @return string sorted and normalized values
+ */
+	protected function _normalizedParams($request, $oauthValues) {
+		$query = parse_url($request->url(), PHP_URL_QUERY);
+		parse_str($query, $queryArgs);
+
+		$args = array_merge($queryArgs, $oauthValues);
+		$keys = array_map([$this, '_encode'], array_keys($args));
+		$values = array_map([$this, '_encode'], array_values($args));
+		$args = array_combine($keys, $values);
+
+		uksort($args, 'strcmp');
+
+		$pairs = [];
+		foreach ($args as $k => $val) {
+			$pairs[] = "$k=$val";
+		}
+		return implode('&', $pairs);
+	}
+
+/**
+ * Builds the Oauth Authorization header value.
+ *
+ * @param array $values The oauth_* values to build
+ * @return string
+ */
 	protected function _buildAuth($data) {
 		$out = 'Oauth ';
 		$params = [];
