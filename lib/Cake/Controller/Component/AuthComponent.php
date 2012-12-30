@@ -215,11 +215,13 @@ class AuthComponent extends Component {
 	public $authError = null;
 
 /**
- * Controls handling of unauthorized access. By default unauthorized user is
- * redirected to the referrer url or AuthComponent::$loginRedirect or '/'.
- * If set to false a ForbiddenException exception is thrown instead of redirecting.
+ * Controls handling of unauthorized access.
+ * - For default value `true` unauthorized user is redirected to the referrer url
+ *   or AuthComponent::$loginRedirect or '/'.
+ * - If set to a string or array the value is used as an url to redirect to.
+ * - If set to false a ForbiddenException exception is thrown instead of redirecting.
  *
- * @var boolean
+ * @var mixed
  */
 	public $unauthorizedRedirect = true;
 
@@ -345,16 +347,21 @@ class AuthComponent extends Component {
  * @throws ForbiddenException
  */
 	protected function _unauthorized(Controller $controller) {
-		if (!$this->unauthorizedRedirect) {
+		if ($this->unauthorizedRedirect === false) {
 			throw new ForbiddenException($this->authError);
 		}
 
 		$this->flash($this->authError);
-		$default = '/';
-		if (!empty($this->loginRedirect)) {
-			$default = $this->loginRedirect;
+		if ($this->unauthorizedRedirect === true) {
+			$default = '/';
+			if (!empty($this->loginRedirect)) {
+				$default = $this->loginRedirect;
+			}
+			$url = $controller->referer($default, true);
+		} else {
+			$url = $this->unauthorizedRedirect;
 		}
-		$controller->redirect($controller->referer($default, true), null, true);
+		$controller->redirect($url, null, true);
 		return false;
 	}
 
