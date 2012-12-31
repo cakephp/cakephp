@@ -11,8 +11,11 @@ class QueryExpression implements Countable {
 
 	protected $_bindings = [];
 
+	protected $_identifier;
+
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
 		$this->_conjunction = strtoupper($conjunction);
+		$this->_identifier = substr(spl_object_hash($this), 7, 9);
 		if (!empty($conditions)) {
 			$this->add($conditions, $types);
 		}
@@ -55,8 +58,7 @@ class QueryExpression implements Countable {
 		if (is_numeric($token)) {
 			$param = '?';
 		} else if ($param[0] !== ':') {
-			$identifier = spl_object_hash($this);
-			$param = sprintf(':c%s%s', $identifier, count($this->_bindings));
+			$param = sprintf(':c%s%s', $this->_identifier, count($this->_bindings));
 		}
 
 		$this->_bindings[$token] = compact('value', 'type') + ['placeholder' => substr($param, 1)];
