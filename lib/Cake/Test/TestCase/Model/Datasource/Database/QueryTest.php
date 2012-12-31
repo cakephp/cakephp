@@ -35,6 +35,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function tearDown() {
 		$this->connection->execute('DROP TABLE IF EXISTS articles');
 		$this->connection->execute('DROP TABLE IF EXISTS authors');
+		$this->connection->execute('DROP TABLE IF EXISTS dates');
 	}
 
 /**
@@ -66,6 +67,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$result->bindValue(3, 'another body');
 		$result->bindValue(4, 2);
 		$result->execute();
+
+		return $result;
 	}
 
 /**
@@ -364,4 +367,17 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(array('id' => 1), $result->fetch('assoc'));
 	}
 
+	public function testSelectOrWhere() {
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->orWhere(['posted' => new \DateTime('2012-12-22 12:00')], ['posted' => 'datetime'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(array('id' => 1), $result->fetch('assoc'));
+		$this->assertEquals(array('id' => 2), $result->fetch('assoc'));
+	}
 }

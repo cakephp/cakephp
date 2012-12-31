@@ -327,7 +327,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$title = 'changed the title!';
 		$body = new \DateTime('2012-01-01');
 		$values = compact('title', 'body');
-		$this->connection->update('things', $values, ['id' => '1-string-parsed-as-int'], ['body' =>  'date', 'id' => 'integer']);
+		$this->connection->update('things', $values, ['id' => '1-string-parsed-as-int'], ['body' => 'date', 'id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');

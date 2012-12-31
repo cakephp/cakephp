@@ -79,21 +79,23 @@ class Query implements IteratorAggregate  {
 
 	public function execute() {
 		$statement = $this->_connection->prepare($this->sql());
-		$visitor = function($expression) use($statement) {
+		$binder = function($expression) use($statement) {
 			if (!($expression instanceof QueryExpression)) {
 				return;
 			}
 
-			$bindings = $expression->bindings();
-			$params = $values = $types = [];
-			foreach ($bindings as $b) {
-				$params[$b['placeholder']] = $b['value'];
-				$types[$b['placeholder']] = $b['type'];
-			}
-			$statement->bind($params, $types);
+			//Visit all expressions and subexpressions to get every bound value
+			$expression->traverse(function($expression) use($statement) {
+				$params = $types = [];
+				foreach ($expression->bindings() as $b) {
+					$params[$b['placeholder']] = $b['value'];
+					$types[$b['placeholder']] = $b['type'];
+				}
+				$statement->bind($params, $types);
+			});
 		};
 
-		$this->build($visitor);
+		$this->build($binder);
 		$statement->execute();
 		return $statement;
 	}
@@ -239,13 +241,31 @@ class Query implements IteratorAggregate  {
 		return $this;
 	}
 
-	public function andWhere($field, $value = null) {
-		$this->where($field, $value);
+	public function andWhere($conditions, $types = []) {
+		$where = $this->_parts['where'];
+
+		if ($where->type() === 'AND') {
+			$where->add($conditions, $types);
+		} else {
+			$where = new QueryExpression([$conditions, $where], $types, 'AND');
+		}
+
+		$this->_parts['where'] = $where;
+		$this->_dirty = true;
 		return $this;
 	}
 
-	public function orWhere($field, $value = null) {
-		$this->_parts['where']->orWhere($field, $value);
+	public function orWhere($conditions, $types = []) {
+		$where = $this->_parts['where'];
+
+		if ($where->type() === 'OR') {
+			$where->add($conditions, $types);
+		} else {
+			$where = new QueryExpression([$conditions, $where], $types, 'OR');
+		}
+
+		$this->_parts['where'] = $where;
+		$this->_dirty = true;
 		return $this;
 	}
 

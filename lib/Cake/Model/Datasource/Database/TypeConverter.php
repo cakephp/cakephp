@@ -35,9 +35,9 @@ trait TypeConverter {
  **/
 	public function matchTypes($columns, $types) {
 		if (!is_int(key($types))) {
-			$positons = array_intersect_key(array_flip($columns), $types);
-			$types = array_intersect_key($types, $positons);
-			$types = array_combine($positons, $types);
+			$positions = array_intersect_key(array_flip($columns), $types);
+			$types = array_intersect_key($types, $positions);
+			$types = array_combine($positions, $types);
 		}
 		return $types;
 	}

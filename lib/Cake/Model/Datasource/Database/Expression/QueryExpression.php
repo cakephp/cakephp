@@ -55,7 +55,7 @@ class QueryExpression implements Countable {
 		if (is_numeric($token)) {
 			$param = '?';
 		} else if ($param[0] !== ':') {
-			$identifier = substr(spl_object_hash($this), -7);
+			$identifier = spl_object_hash($this);
 			$param = sprintf(':c%s%s', $identifier, count($this->_bindings));
 		}
 
@@ -101,7 +101,7 @@ class QueryExpression implements Countable {
 		foreach ($conditions as $k => $c) {
 			$numericKey = is_numeric($k);
 
-			if ($numericKey && !empty($c)) {
+			if ($numericKey && empty($c)) {
 				continue;
 			}
 
@@ -111,11 +111,11 @@ class QueryExpression implements Countable {
 			}
 
 			if ($numericKey && is_array($c) || in_array(strtolower($k), $operators)) {
-				$this->_conditions[] = new self($c, $k);
+				$this->_conditions[] = new self($c, $types, $numericKey ? 'AND' : $k);
 				continue;
 			}
 
-			if ($conditions instanceof QueryExpression && count($c) > 0) {
+			if ($c instanceof QueryExpression && count($c) > 0) {
 				$this->_conditions[] = $c;
 				continue;
 			}
