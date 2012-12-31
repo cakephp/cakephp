@@ -467,4 +467,21 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 	}
 
+/**
+ * Tests that Query::andWhere() can be used without calling where() before
+ *
+ * @return void
+ **/
+	public function testSelectAndWhereNoPreviousCondition() {
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->andWhere(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->andWhere(['id' => 1])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+	}
 }
