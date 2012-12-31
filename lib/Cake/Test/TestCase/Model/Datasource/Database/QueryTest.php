@@ -309,7 +309,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
 			->execute();
 		$this->assertCount(1, $result);
-		$this->assertEquals(array('id' => 1), $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
@@ -318,8 +318,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->where(['posted >' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
 			->execute();
 		$this->assertCount(2, $result);
-		$this->assertEquals(array('id' => 2), $result->fetch('assoc'));
-		$this->assertEquals(array('id' => 3), $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
@@ -349,7 +349,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			)
 			->execute();
 		$this->assertCount(1, $result);
-		$this->assertEquals(array('id' => 3), $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
@@ -364,9 +364,14 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			)
 			->execute();
 		$this->assertCount(1, $result);
-		$this->assertEquals(array('id' => 1), $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 	}
 
+/**
+ * Tests that Query::orWhere() can be used to concatenate conditions with OR
+ *
+ * @return void
+ **/
 	public function testSelectOrWhere() {
 		$this->_insertDateRecords();
 		$query = new Query($this->connection);
@@ -377,7 +382,70 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->orWhere(['posted' => new \DateTime('2012-12-22 12:00')], ['posted' => 'datetime'])
 			->execute();
 		$this->assertCount(2, $result);
-		$this->assertEquals(array('id' => 1), $result->fetch('assoc'));
-		$this->assertEquals(array('id' => 2), $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 	}
+
+/**
+ * Tests that Query::andWhere() can be used to concatenate conditions with AND
+ *
+ * @return void
+ **/
+	public function testSelectAndWhere() {
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->andWhere(['id' => 1])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->andWhere(['id' => 2])
+			->execute();
+		$this->assertCount(0, $result);
+	}
+
+/**
+ * Tests that combining Query::andWhere() and Query::orWhere() produces
+ * correct conditions nesting
+ *
+ * @return void
+ **/
+	public function testSelectExpressionNesting() {
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->orWhere(['id' => 2])
+			->andWhere(['posted >=' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->orWhere(['id' => 2])
+			->andWhere(['posted >=' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->orWhere(['posted' => new \DateTime('2012-12-25 12:00')], ['posted' => 'datetime'])
+			->execute();
+		$this->assertCount(3, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+	}
+
 }
