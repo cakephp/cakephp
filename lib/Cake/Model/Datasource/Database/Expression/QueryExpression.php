@@ -54,14 +54,17 @@ class QueryExpression implements Countable {
  */
 	public function bind($token, $value, $type) {
 		$param = $token;
+		$number = count($this->_bindings);
 
 		if (is_numeric($token)) {
 			$param = '?';
 		} else if ($param[0] !== ':') {
-			$param = sprintf(':c%s%s', $this->_identifier, count($this->_bindings));
+			$param = sprintf(':c%s%s', $this->_identifier, $number);
 		}
 
-		$this->_bindings[$token] = compact('value', 'type') + ['placeholder' => substr($param, 1)];
+		$this->_bindings[$number] = compact('value', 'type') + [
+			'placeholder' => substr($param, 1)
+		];
 		return $param;
 	}
 
