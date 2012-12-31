@@ -121,6 +121,13 @@ class OauthTest extends TestCase {
 /**
  * Ensure that post data is sorted and encoded.
  *
+ * Keys with array values have to be serialized using
+ * a more standard HTTP approach. PHP flavoured HTTP
+ * is not part of the Oauth spec.
+ *
+ * See Normalize Request Parameters (section 9.1.1)
+ * http://wiki.oauth.net/w/page/12238556/TestCases
+ *
  * @return void
  */
 	public function testBaseStringWithPostData() {
@@ -129,7 +136,7 @@ class OauthTest extends TestCase {
 			->method(Request::METHOD_POST)
 			->body([
 				'address' => 'post',
-				'tags' => ['cake', 'oauth'],
+				'tags' => ['oauth', 'cake'],
 				'zed' => 'last'
 			]);
 
@@ -158,6 +165,8 @@ class OauthTest extends TestCase {
 			'%26oauth_token%3Dtoken' .
 			'%26oauth_version%3D1.0' .
 			'%26q%3Dpogo' .
+			'%26tags%3Dcake' .
+			'%26tags%3Doauth' .
 			'%26zed%3Dlast',
 			$result
 		);

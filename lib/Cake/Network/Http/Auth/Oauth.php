@@ -211,6 +211,10 @@ class Oauth {
 		$pairs = [];
 		foreach ($args as $k => $val) {
 			if (is_array($val)) {
+				sort($val, SORT_STRING);
+				foreach ($val as $nestedVal) {
+					$pairs[] = "$k=$nestedVal";
+				}
 			} else {
 				$pairs[] = "$k=$val";
 			}
