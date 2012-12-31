@@ -34,7 +34,10 @@ class ClientTest extends TestCase {
 			'host' => 'example.org',
 		];
 		$http = new Client($config);
-		$this->assertEquals($config, $http->config());
+		$result = $http->config();
+		foreach ($config as $key => $val) {
+			$this->assertEquals($val, $result[$key]);
+		}
 
 		$result = $http->config([
 			'auth' => ['username' => 'mark', 'password' => 'secret']
@@ -47,7 +50,9 @@ class ClientTest extends TestCase {
 			'host' => 'example.org',
 			'auth' => ['username' => 'mark', 'password' => 'secret']
 		];
-		$this->assertEquals($expected, $result);
+		foreach ($config as $key => $val) {
+			$this->assertEquals($val, $result[$key]);
+		}
 	}
 
 /**

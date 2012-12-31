@@ -129,7 +129,7 @@ class Client {
 			$adapter = $config['adapter'];
 			unset($config['adapter']);
 		}
-		$this->_config = $config;
+		$this->config($config);
 
 		if (is_string($adapter)) {
 			$adapter = new $adapter();
