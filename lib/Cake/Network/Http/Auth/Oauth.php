@@ -105,21 +105,24 @@ class Oauth {
  * @param array $credentials
  */
 	protected function _hmacSha1($request, $credentials) {
+		$nonce = isset($credentials['nonce']) ? $credentials['nonce'] : uniqid();
+		$timestamp = isset($credentials['timestamp']) ? $credentials['timestamp'] : time();
 		$values = [
 			'oauth_version' => '1.0',
-			'oauth_nonce' => uniqid(),
-			'oauth_timestamp' => time(),
+			'oauth_nonce' => $nonce,
+			'oauth_timestamp' => $timestamp,
 			'oauth_signature_method' => 'HMAC-SHA1',
 			'oauth_token' => $credentials['token'],
 			'oauth_consumer_key' => $credentials['consumerKey'],
 		];
-		$baseString = $this->_baseString($request, $values);
+		$baseString = $this->baseString($request, $values);
 
 		if (isset($credentials['realm'])) {
 			$values['oauth_realm'] = $credentials['realm'];
 		}
-		$key = [$credentials['consumerSecret'], $value['tokenSecret']];
-		$key = array_map([$this, 'encode'], $key);
+		$key = [$credentials['consumerSecret'], $credentials['tokenSecret']];
+		$key = array_map([$this, '_encode'], $key);
+		$key = implode('&', $key);
 
 		$values['oauth_signature'] = base64_encode(
 			hash_hmac('sha1', $baseString, $key, true)
@@ -194,16 +197,23 @@ class Oauth {
 		$query = parse_url($request->url(), PHP_URL_QUERY);
 		parse_str($query, $queryArgs);
 
-		$args = array_merge($queryArgs, $oauthValues);
-		$keys = array_map([$this, '_encode'], array_keys($args));
-		$values = array_map([$this, '_encode'], array_values($args));
-		$args = array_combine($keys, $values);
+		$post = [];
+		$body = $request->body();
+		$contentType = $request->header('content-type');
 
+		if (is_array($body)) {
+			$post = $body;
+		}
+
+		$args = array_merge($queryArgs, $oauthValues, $post);
 		uksort($args, 'strcmp');
 
 		$pairs = [];
 		foreach ($args as $k => $val) {
-			$pairs[] = "$k=$val";
+			if (is_array($val)) {
+			} else {
+				$pairs[] = "$k=$val";
+			}
 		}
 		return implode('&', $pairs);
 	}
