@@ -112,6 +112,10 @@ class QueryExpression implements Countable {
 		return new self($conditions, $types, 'OR');
 	}
 
+	public function not($conditions, $types = []) {
+		return $this->add(['NOT' => $conditions], $types);
+	}
+
 /**
  * Associates a query placeholder to a value and a type for next execution
  *

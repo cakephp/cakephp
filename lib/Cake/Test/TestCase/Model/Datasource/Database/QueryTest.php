@@ -811,11 +811,38 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 
 /**
  * Tests that conditions can be nested with an unary operator using the array notation
+ * and the not() method
  *
  * @return void
  **/
 	public function testSelectWhereNot() {
 		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				return $exp->not(
+					$exp->and_(['id' => 2, 'posted' => new \DateTime('2012-12-22 12:00')], ['posted' => 'datetime'])
+				);
+			})
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				return $exp->not(
+					$exp->and_(['id' => 2, 'posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+				);
+			})
+			->execute();
+		$this->assertCount(3, $result);
+
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
