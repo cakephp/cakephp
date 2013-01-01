@@ -90,6 +90,7 @@ class Message {
 /**
  * Get the HTTP version used.
  *
+ * @param null|string $version
  * @return string
  */
 	public function version() {

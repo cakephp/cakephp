@@ -172,7 +172,7 @@ class ClientTest extends TestCase {
 				$this->attributeEqualTo('_headers', $headers),
 				$this->attributeEqualTo('_cookies', $cookies)
 			))
-			->will($this->returnValue($response));
+			->will($this->returnValue([$response]));
 
 		$http = new Client(['adapter' => $mock]);
 		$result = $http->get('http://cakephp.org/test.html', [], [
@@ -198,7 +198,7 @@ class ClientTest extends TestCase {
 				$this->attributeEqualTo('_method', Request::METHOD_GET),
 				$this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3')
 			))
-			->will($this->returnValue($response));
+			->will($this->returnValue([$response]));
 
 		$http = new Client([
 			'host' => 'cakephp.org',
@@ -229,7 +229,7 @@ class ClientTest extends TestCase {
 				$this->attributeEqualTo('_url', 'http://cakephp.org/search'),
 				$this->attributeEqualTo('_body', 'some data')
 			))
-			->will($this->returnValue($response));
+			->will($this->returnValue([$response]));
 
 		$http = new Client([
 			'host' => 'cakephp.org',
@@ -284,7 +284,7 @@ class ClientTest extends TestCase {
 				$this->attributeEqualTo('_url', 'http://cakephp.org/'),
 				$this->attributeEqualTo('_headers', $headers)
 			))
-			->will($this->returnValue($response));
+			->will($this->returnValue([$response]));
 
 		$http = new Client([
 			'host' => 'cakephp.org',
@@ -329,7 +329,7 @@ class ClientTest extends TestCase {
 				$this->attributeEqualTo('_method', $method),
 				$this->attributeEqualTo('_url', 'http://cakephp.org/projects/add')
 			))
-			->will($this->returnValue($response));
+			->will($this->returnValue([$response]));
 
 		$http = new Client([
 			'host' => 'cakephp.org',
@@ -377,7 +377,7 @@ class ClientTest extends TestCase {
 				$this->attributeEqualTo('_body', $data),
 				$this->attributeEqualTo('_headers', $headers)
 			))
-			->will($this->returnValue($response));
+			->will($this->returnValue([$response]));
 
 		$http = new Client([
 			'host' => 'cakephp.org',

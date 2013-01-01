@@ -59,7 +59,7 @@ class Stream {
  *
  * @param Cake\Network\Http\Request $request The request object to send.
  * @param array $options Array of options for the stream.
- * @return Cake\Network\Http\Response
+ * @return array Array of populated Response objects
  */
 	public function send(Request $request, $options) {
 		$this->_stream = null;
@@ -68,6 +68,33 @@ class Stream {
 
 		$this->_buildContext($request, $options);
 		return $this->_send($request);
+	}
+
+/**
+ * Create the response list based on the headers & content
+ *
+ * Creates one or many response objects based on the number
+ * of redirects that occured.
+ *
+ * @param array $headers The list of headers from the request(s)
+ * @param string $content The response content.
+ * @return array The list of responses from the request(s)
+ */
+	public function createResponses($headers, $content) {
+		$indexes = $responses = [];
+		foreach ($headers as $i => $header) {
+			if (strtoupper(substr($header, 0, 5)) === 'HTTP/') {
+				$indexes[] = $i;
+			}
+		}
+		$last = count($indexes) - 1;
+		foreach ($indexes as $i => $start) {
+			$end = isset($indexes[$i + 1]) ? $indexes[$i + 1] - $start : null;
+			$headerSlice = array_slice($headers, $start, $end);
+			$body = $i == $last ? $content : '';
+			$responses[] = new Response($headerSlice, $body);
+		}
+		return $responses;
 	}
 
 /**
@@ -162,8 +189,8 @@ class Stream {
 		if (isset($options['timeout'])) {
 			$this->_contextOptions['timeout'] = $options['timeout'];
 		}
-		if (!empty($options['redirect'])) {
-			$this->_contextOptions['max_redirects'] = $options['redirect'];
+		if (isset($options['redirect'])) {
+			$this->_contextOptions['max_redirects'] = (int)$options['redirect'];
 		}
 	}
 
@@ -203,7 +230,7 @@ class Stream {
  * Open the stream and send the request.
  *
  * @param Request $request
- * @return Response The populated response object.
+ * @return array Array of populated Response objects
  * @throws Cake\Error\Exception
  */
 	protected function _send(Request $request) {
@@ -223,7 +250,7 @@ class Stream {
 		if (isset($meta['wrapper_type']) && $meta['wrapper_type'] === 'curl') {
 			$headers = $meta['wrapper_data']['headers'];
 		}
-		return new Response($headers, $content);
+		return $this->createResponses($headers, $content);
 	}
 
 /**

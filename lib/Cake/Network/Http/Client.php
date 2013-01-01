@@ -277,9 +277,10 @@ class Client {
  */
 	public function send(Request $request, $options = []) {
 		// TODO possibly implment support for
-		// holding onto cookies so subsequent requests 
+		// holding onto cookies so subsequent requests
 		// can share cookies.
-		return $this->_adapter->send($request, $options);
+		$responses = $this->_adapter->send($request, $options);
+		return array_pop($responses);
 	}
 
 /**
