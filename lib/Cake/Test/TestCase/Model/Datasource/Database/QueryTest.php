@@ -692,6 +692,47 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->where(function($exp) { return $exp->isNotNull('visible'); })
 			->execute();
 		$this->assertCount(2, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				return $exp->in('visible', ['Y', 'N']);
+			})
+			->execute();
+		$this->assertCount(2, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				return $exp->in(
+					'posted',
+					[new \DateTime('2012-12-21 12:00'), new \DateTime('2012-12-22 12:00')],
+					'datetime'
+				);
+			})
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				return $exp->notIn(
+					'posted',
+					[new \DateTime('2012-12-21 12:00'), new \DateTime('2012-12-22 12:00')],
+					'datetime'
+				);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 	}
 
 }

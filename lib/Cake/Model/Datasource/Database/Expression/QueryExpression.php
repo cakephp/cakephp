@@ -13,6 +13,11 @@ class QueryExpression implements Countable {
 
 	protected $_identifier;
 
+	protected $_bindingsCount = 0;
+
+	protected $_replaceArrayParams = false;
+
+
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
 		$this->_conjunction = strtoupper($conjunction);
 		$this->_identifier = substr(spl_object_hash($this), 7, 9);
@@ -89,6 +94,10 @@ class QueryExpression implements Countable {
 		return $this->add([$field . ' IN' => $values], $type ? [$field => $type] : []);
 	}
 
+	public function notIn($field, $values, $type = null) {
+		return $this->add([$field . ' NOT IN' => $values], $type ? [$field => $type] : []);
+	}
+
 /**
  * Associates a query placeholder to a value and a type for next execution
  *
@@ -101,7 +110,7 @@ class QueryExpression implements Countable {
  */
 	public function bind($token, $value, $type) {
 		$param = $token;
-		$number = count($this->_bindings);
+		$number = $this->_bindingsCount++;
 
 		if (is_numeric($token)) {
 			$param = '?';
@@ -109,7 +118,12 @@ class QueryExpression implements Countable {
 			$param = sprintf(':c%s%s', $this->_identifier, $number);
 		}
 
-		$this->_bindings[$number] = compact('value', 'type') + [
+		if (strpos($type, '[]') !== false) {
+			$param = sprintf(':array%d', $number);
+			$type = str_replace('[]', '', $type);
+		}
+
+		$this->_bindings[$number] = compact('value', 'type', 'token') + [
 			'placeholder' => substr($param, 1)
 		];
 		return $param;
@@ -134,6 +148,9 @@ class QueryExpression implements Countable {
 	}
 
 	public function sql() {
+		if ($this->_replaceArrayParams) {
+			$this->_replaceArrays();
+		}
 		$conjunction = $this->_conjunction;
 		return '(' . implode(" $conjunction ", $this->_conditions) . ')';
 	}
@@ -188,7 +205,34 @@ class QueryExpression implements Countable {
 		}
 
 		$type = isset($types[$expression]) ? $types[$expression] : null;
-		return sprintf('%s %s %s', $expression,  $operator, $this->bind($field, $value, $type));
+		$template = '%s %s %s';
+
+		if (in_array(strtolower(trim($operator)), ['in', 'not in'])) {
+			$type = $type ?: 'string';
+			$type .= strpos($type, '[]') === false ? '[]' : null;
+			$template = '%s %s (%s)';
+			$this->_replaceArrayParams = true;
+		}
+
+		return sprintf($template, $expression,  $operator, $this->bind($field, $value, $type));
+	}
+
+	protected function _replaceArrays() {
+		foreach ($this->_conditions as $k => $condition) {
+			if (!is_string($condition)) {
+				continue;
+			}
+			$condition = preg_replace_callback('/(:array(\d+))/', function($match) {
+				$params = [];
+				$binding = $this->_bindings[$match[2]];
+				foreach ($this->_bindings[$match[2]]['value'] as $value) {
+					$params[] = $this->bind($binding['token'], $value, $binding['type']);
+				}
+				unset($this->_bindings[$match[2]]);
+				return implode(', ', $params);
+			}, $condition);
+			$this->_conditions[$k] = $condition;
+		}
 	}
 
 }
