@@ -230,6 +230,11 @@ class Query implements IteratorAggregate  {
 			return $where;
 		}
 
+		if (is_callable($conditions)) {
+			$this->_parts['where'] = $conditions($where, $this);
+			return $this;
+		}
+
 		if ($overwrite) {
 			$this->_parts['where'] = new QueryExpression($conditions, $types);
 		} else {

@@ -42,6 +42,10 @@ class QueryExpression implements Countable {
 		return $this;
 	}
 
+	public function equals($field, $value, $type = null) {
+		return $this->add([$field => $value], $type ? [$field => $type] : []);
+	}
+
 /**
  * Associates a query placeholder to a value and a type for next execution
  *

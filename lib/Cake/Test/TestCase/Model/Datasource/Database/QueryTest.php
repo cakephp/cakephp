@@ -484,4 +484,43 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 	}
+
+	public function testSelectAndWhereUsingClosure() {
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				return $exp->equals('id', 1);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				return $exp
+					->equals('id', 1)
+					->equals('posted',  new \DateTime('2012-12-21 12:00'), 'datetime');
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				return $exp
+					->equals('id', 1)
+					->equals('posted',  new \DateTime('2021-12-30 15:00'), 'datetime');
+			})
+			->execute();
+		$this->assertCount(0, $result);
+	}
 }
