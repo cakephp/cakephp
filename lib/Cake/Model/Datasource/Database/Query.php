@@ -267,6 +267,10 @@ class Query implements IteratorAggregate  {
 	public function orWhere($conditions, $types = []) {
 		$where = $this->_parts['where'] ?: new QueryExpression([], [], 'OR');
 
+		if (is_callable($conditions)) {
+			$conditions = $conditions(new QueryExpression, $this);
+		}
+
 		if ($where->type() === 'OR') {
 			$where->add($conditions, $types);
 		} else {

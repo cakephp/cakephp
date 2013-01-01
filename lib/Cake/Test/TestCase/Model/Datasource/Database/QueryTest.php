@@ -562,4 +562,40 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(0, $result);
 	}
 
+/**
+ * Tests that it is possible to pass a closure to orWhere() to build a set of
+ * conditions and return the expression to be used
+ *
+ * @return void
+ **/
+	public function testSelectOrWhereUsingClosure() {
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['id' => '1'])
+			->orWhere(function($exp) {
+				return $exp->equals('posted',  new \DateTime('2012-12-22 12:00'), 'datetime');
+			})
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['id' => '1'])
+			->orWhere(function($exp) {
+				return $exp
+					->equals('posted',  new \DateTime('2012-12-22 12:00'), 'datetime')
+					->equals('id',  3);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+	}
+
 }
