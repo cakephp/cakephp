@@ -157,6 +157,10 @@ class Type {
  * @return mixed
  **/
 	protected function _basicTypeCast($value, Driver $driver) {
+		if (is_null($value)) {
+			return null;
+		}
+
 		if (!empty(self::$_basicTypes[$this->_name])) {
 			$typeInfo = self::$_basicTypes[$this->_name];
 			if (isset($typeInfo['callback'])) {
@@ -174,10 +178,15 @@ class Type {
  * @return mixed
  **/
 	public function toStatement($value, Driver $driver) {
+		if (is_null($value)) {
+			return PDO::PARAM_NULL;
+		}
+
 		if (!empty(self::$_basicTypes[$this->_name])) {
 			$typeInfo = self::$_basicTypes[$this->_name];
 			return isset($typeInfo['pdo']) ? $typeInfo['pdo'] : PDO::PARAM_STR;
 		}
+
 		return PDO::PARAM_STR;
 	}
 
