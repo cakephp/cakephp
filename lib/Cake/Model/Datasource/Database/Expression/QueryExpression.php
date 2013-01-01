@@ -179,7 +179,7 @@ class QueryExpression implements Countable {
 	}
 
 	protected function _addConditions(array $conditions, array $types) {
-		$operators = array('and', 'or', 'not', 'xor');
+		$operators = array('and', 'or', 'xor');
 
 		foreach ($conditions as $k => $c) {
 			$numericKey = is_numeric($k);
@@ -195,6 +195,11 @@ class QueryExpression implements Countable {
 
 			if ($numericKey && is_array($c) || in_array(strtolower($k), $operators)) {
 				$this->_conditions[] = new self($c, $types, $numericKey ? 'AND' : $k);
+				continue;
+			}
+
+			if (strtolower($k) === 'not') {
+				$this->_conditions[] = new UnaryExpression(new self($c, $types), [], 'NOT');
 				continue;
 			}
 
