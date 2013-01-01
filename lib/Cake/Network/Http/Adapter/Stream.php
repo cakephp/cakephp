@@ -115,7 +115,7 @@ class Stream {
 			$this->_buildSslContext($request, $options);
 		}
 		$this->_context = stream_context_create([
-			$scheme => $this->_contextOptions
+			'http' => $this->_contextOptions
 		]);
 	}
 
