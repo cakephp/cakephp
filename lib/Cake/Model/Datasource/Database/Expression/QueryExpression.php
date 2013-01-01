@@ -45,8 +45,48 @@ class QueryExpression implements Countable {
 		return $this;
 	}
 
-	public function equals($field, $value, $type = null) {
+	public function eq($field, $value, $type = null) {
 		return $this->add([$field => $value], $type ? [$field => $type] : []);
+	}
+
+	public function notEq($field, $value, $type = null) {
+		return $this->add([$field . ' !=' => $value], $type ? [$field => $type] : []);
+	}
+
+	public function gt($field, $value, $type = null) {
+		return $this->add([$field . ' >' => $value], $type ? [$field => $type] : []);
+	}
+
+	public function lt($field, $value, $type = null) {
+		return $this->add([$field . ' <' => $value], $type ? [$field => $type] : []);
+	}
+
+	public function gte($field, $value, $type = null) {
+		return $this->add([$field . ' >=' => $value], $type ? [$field => $type] : []);
+	}
+
+	public function lte($field, $value, $type = null) {
+		return $this->add([$field . ' <=' => $value], $type ? [$field => $type] : []);
+	}
+
+	public function isNull($field) {
+		return $this->add($field . ' IS NULL');
+	}
+
+	public function isNotNull($field) {
+		return $this->add($field . ' IS NOT NULL');
+	}
+
+	public function like($field, $value, $type = null) {
+		return $this->add([$field . ' LIKE' => $value], $type ? [$field => $type] : []);
+	}
+
+	public function notLike($field, $value, $type = null) {
+		return $this->add([$field . ' NOT LIKE' => $value], $type ? [$field => $type] : []);
+	}
+
+	public function in($field, $values, $type = null) {
+		return $this->add([$field . ' IN' => $values], $type ? [$field => $type] : []);
 	}
 
 /**
