@@ -485,7 +485,13 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 	}
 
-	public function testSelectAndWhereUsingClosure() {
+/**
+ * Tests that it is possible to pass a closure to where() to build a set of
+ * conditions and return the expression to be used
+ *
+ * @return void
+ **/
+	public function testSelectWhereUsingClosure() {
 		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
@@ -523,4 +529,37 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->execute();
 		$this->assertCount(0, $result);
 	}
+
+/**
+ * Tests that it is possible to pass a closure to andWhere() to build a set of
+ * conditions and return the expression to be used
+ *
+ * @return void
+ **/
+	public function testSelectAndWhereUsingClosure() {
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['id' => '1'])
+			->andWhere(function($exp) {
+				return $exp->equals('posted',  new \DateTime('2012-12-21 12:00'), 'datetime');
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['id' => '1'])
+			->andWhere(function($exp) {
+				return $exp->equals('posted',  new \DateTime('2022-12-21 12:00'), 'datetime');
+			})
+			->execute();
+		$this->assertCount(0, $result);
+	}
+
 }

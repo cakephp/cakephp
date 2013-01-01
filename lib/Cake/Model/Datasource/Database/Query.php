@@ -247,7 +247,11 @@ class Query implements IteratorAggregate  {
 	}
 
 	public function andWhere($conditions, $types = []) {
-		$where = $this->_parts['where'] ?: new QueryExpression();
+		$where = $this->_parts['where'] ?: new QueryExpression;
+
+		if (is_callable($conditions)) {
+			$conditions = $conditions(new QueryExpression, $this);
+		}
 
 		if ($where->type() === 'AND') {
 			$where->add($conditions, $types);

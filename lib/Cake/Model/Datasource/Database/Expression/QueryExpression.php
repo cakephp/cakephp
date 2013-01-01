@@ -5,7 +5,7 @@ use \Countable;
 
 class QueryExpression implements Countable {
 
-	protected $_conjuction;
+	protected $_conjunction;
 
 	protected $_conditions = [];
 
@@ -33,9 +33,12 @@ class QueryExpression implements Countable {
 	public function add($conditions, $types = []) {
 		if (is_string($conditions)) {
 			$this->_conditions[] = $conditions;
+			return $this;
 		}
-		if ($conditions instanceof self && count($conditions) > 0) {
+
+		if ($conditions instanceof QueryExpression && count($conditions) > 0) {
 			$this->_conditions[] = $conditions;
+			return $this;
 		}
 
 		$this->_addConditions($conditions, $types);
