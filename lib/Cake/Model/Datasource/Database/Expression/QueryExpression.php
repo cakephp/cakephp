@@ -98,6 +98,20 @@ class QueryExpression implements Countable {
 		return $this->add([$field . ' NOT IN' => $values], $type ? [$field => $type] : []);
 	}
 
+	public function and_($conditions, $types = []) {
+		if (is_callable($conditions)) {
+			return $conditions(new self);
+		}
+		return new self($conditions, $types);
+	}
+
+	public function or_($conditions, $types = []) {
+		if (is_callable($conditions)) {
+			return $conditions(new self([], [], 'OR'));
+		}
+		return new self($conditions, $types, 'OR');
+	}
+
 /**
  * Associates a query placeholder to a value and a type for next execution
  *

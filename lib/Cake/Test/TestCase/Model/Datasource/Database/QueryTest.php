@@ -735,4 +735,77 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 	}
 
+/**
+ * Tests nesting query expressions both using arrays and closures
+ *
+ * @return void
+ **/
+	public function testSelectExpressionComposition() {
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				$and = $exp->and_(['id' => 2, 'id >' => 1]);
+				return $exp->add($and);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				$and = $exp->and_(['id' => 2, 'id <' => 2]);
+				return $exp->add($and);
+			})
+			->execute();
+		$this->assertCount(0, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				$and = $exp->and_(function($and) {
+					return $and->eq('id', 1)->gt('id', 0); 
+				});
+				return $exp->add($and);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				$or = $exp->or_(['id' => 1]);
+				$and = $exp->and_(['id >' => 2, 'id <' => 4]);
+				return $or->add($and);
+			})
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(function($exp) {
+				$or = $exp->or_(function($or) {
+					return $or->eq('id', 1)->eq('id', 2);
+				});
+				return $or;
+			})
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+	}
 }
