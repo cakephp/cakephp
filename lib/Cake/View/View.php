@@ -1058,7 +1058,7 @@ class View extends Object {
 	protected function _getExtensions() {
 		$exts = array($this->ext);
 		if ($this->ext !== '.ctp') {
-			array_push($exts, '.ctp');
+			$exts[] = '.ctp';
 		}
 		return $exts;
 	}
