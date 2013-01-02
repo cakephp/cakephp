@@ -146,6 +146,33 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests it is possible to add joins to a select query using array or expression as conditions
+ *
+ * @return void
+ **/
+	public function testSelectWithJoinsConditions() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title', 'name'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => ['author_id' => 1]])
+			->execute();
+		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'a title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$conditions = $query->newExpr()->add(['author_id' => 2]);
+		$result = $query
+			->select(['title', 'name'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $conditions])
+			->execute();
+		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'another title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+	}
+
+/**
  * Tests it is possible to filter a query by using simple AND joined conditions
  *
  * @return void

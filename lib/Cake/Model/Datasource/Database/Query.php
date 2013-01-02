@@ -79,20 +79,28 @@ class Query implements IteratorAggregate  {
 
 	public function execute() {
 		$statement = $this->_connection->prepare($this->sql());
-		$binder = function($expression) use($statement) {
+		$binder = function($expression, $name) use($statement, &$binder) {
+			if (is_array($expression)) {
+				foreach ($expression as $e) {
+					$binder($e, $name);
+				}
+			}
+
 			if (!($expression instanceof QueryExpression)) {
 				return;
 			}
 
-			//Visit all expressions and subexpressions to get every bound value
-			$expression->traverse(function($expression) use($statement) {
+			$visitor = function($expression) use($statement) {
 				$params = $types = [];
 				foreach ($expression->bindings() as $b) {
 					$params[$b['placeholder']] = $b['value'];
 					$types[$b['placeholder']] = $b['type'];
 				}
 				$statement->bind($params, $types);
-			});
+			};
+
+			//Visit all expressions and subexpressions to get every bound value
+			$expression->traverse($visitor);
 		};
 
 		$this->build($binder);
@@ -135,8 +143,8 @@ class Query implements IteratorAggregate  {
 		$joins = '';
 		foreach ($parts as $join) {
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
-			if (!empty($join['conditions'])) {
-				$joins .= sprintf(' ON %s', (string)$join['conditions']);
+			if (isset($join['conditions']) && count($join['conditions'])) {
+				$joins .= sprintf(' ON %s', $join['conditions']);
 			}
 		}
 		return $joins;
@@ -209,9 +217,12 @@ class Query implements IteratorAggregate  {
 		$joins = array();
 		foreach ($tables as $t) {
 			if (is_string($t)) {
-				$t = array('table' => $t);
+				$t = array('table' => $t, 'conditions' => new QueryExpression);
 			}
-			$joins[] = $t + ['type' => 'LEFT', 'alias' => null, 'conditions' => '1 = 1'];
+			if (!($t['conditions']) instanceof QueryExpression) {
+				$t['conditions'] = new QueryExpression($t['conditions']);
+			}
+			$joins[] = $t + ['type' => 'INNER', 'alias' => null];
 		}
 
 		if ($overwrite) {
@@ -328,6 +339,10 @@ class Query implements IteratorAggregate  {
  **/
 	public function type() {
 		return $this->_type;
+	}
+
+	public function newExpr() {
+		return new QueryExpression;
 	}
 
 /**
