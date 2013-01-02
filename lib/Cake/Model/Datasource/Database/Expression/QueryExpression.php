@@ -41,7 +41,7 @@ class QueryExpression implements Countable {
 			return $this;
 		}
 
-		if ($conditions instanceof QueryExpression && count($conditions) > 0) {
+		if ($conditions instanceof self && count($conditions) > 0) {
 			$this->_conditions[] = $conditions;
 			return $this;
 		}
@@ -175,7 +175,7 @@ class QueryExpression implements Countable {
 
 	public function traverse($callable) {
 		foreach ($this->_conditions as $c) {
-			if ($c instanceof QueryExpression) {
+			if ($c instanceof self) {
 				$c->traverse($callable);
 			}
 		}
@@ -207,7 +207,7 @@ class QueryExpression implements Countable {
 				continue;
 			}
 
-			if ($c instanceof QueryExpression && count($c) > 0) {
+			if ($c instanceof self && count($c) > 0) {
 				$this->_conditions[] = $c;
 				continue;
 			}
