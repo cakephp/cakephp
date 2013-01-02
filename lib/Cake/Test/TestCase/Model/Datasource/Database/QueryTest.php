@@ -119,6 +119,38 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests it is possible to select aliased fields
+ *
+ * @return void
+ **/
+	public function testSelectAliasedFieldsFromTable() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$result = $query->select(['text' => 'body', 'author_id'])->from('articles')->execute();
+		$this->assertEquals(array('text' => 'a body', 'author_id' => 1), $result->fetch('assoc'));
+		$this->assertEquals(array('text' => 'another body', 'author_id' => 2), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query->select(['text' => 'body', 'author' => 'author_id'])->from('articles')->execute();
+		$this->assertEquals(array('text' => 'a body', 'author' => 1), $result->fetch('assoc'));
+		$this->assertEquals(array('text' => 'another body', 'author' => 2), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$query->select(['text' => 'body'])->select(['author_id', 'foo' => 'body']);
+		$result = $query->from('articles')->execute();
+		$this->assertEquals(array('foo' => 'a body', 'text' => 'a body', 'author_id' => 1), $result->fetch('assoc'));
+		$this->assertEquals(array('foo' => 'another body', 'text' => 'another body', 'author_id' => 2), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$exp = $query->newExpr()->add('1 + 1');
+		$comp = $query->newExpr()->add(['author_id +' => 2]);
+		$result = $query->select(['text' => 'body', 'two' => $exp, 'three' => $comp])
+			->from('articles')->execute();
+		$this->assertEquals(array('text' => 'a body', 'two' => 2, 'three' => 3), $result->fetch('assoc'));
+		$this->assertEquals(array('text' => 'another body', 'two' => 2, 'three' => 4), $result->fetch('assoc'));
+	}
+
+/**
  * Tests it is possible to add joins to a select query
  *
  * @return void

@@ -40,7 +40,6 @@ class Query implements IteratorAggregate  {
 		];
 
 	protected $_templates = [
-		'select' => 'SELECT %s',
 		'from' => ' FROM %s',
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
@@ -120,7 +119,7 @@ class Query implements IteratorAggregate  {
 				return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
 			}
 
-			return $sql .= $this->{'_build' . ucFirst($name)}($parts, $sql);
+			return $sql .= $this->{'_build' . ucFirst($name) . 'Part'}($parts, $sql);
 		};
 
 		$this->build($builder);
@@ -138,7 +137,7 @@ class Query implements IteratorAggregate  {
 		}
 	}
 
-	protected function _buildJoin($parts) {
+	protected function _buildJoinPart($parts) {
 		$joins = '';
 		foreach ($parts as $join) {
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
@@ -150,23 +149,35 @@ class Query implements IteratorAggregate  {
 	}
 
 	public function select($fields = [], $overwrite = false) {
-		if (empty($fields)) {
+		if ($fields === null) {
 			return $this->_parts['select'];
 		}
 
-		if (is_string($fields)) {
+		if (!is_array($fields)) {
 			$fields = [$fields];
 		}
 
 		if ($overwrite) {
-			$this->_parts['select'] = array_values($fields);
+			$this->_parts['select'] = $fields;
 		} else {
-			$this->_parts['select'] = array_merge($this->_parts['select'], array_values($fields));
+			$this->_parts['select'] = array_merge($this->_parts['select'], $fields);
 		}
 
 		$this->_dirty = true;
 		$this->_type = 'select';
 		return $this;
+	}
+
+	protected function _buildSelectPart($parts) {
+		$select = 'SELECT %s';
+		$normalized = [];
+		foreach ($parts as $k => $p) {
+			if (!is_numeric($k)) {
+				$p = $p . ' AS ' . $k;
+			}
+			$normalized[] = $p;
+		}
+		return sprintf($select, implode(', ', $normalized));
 	}
 
 	public function insert() {
