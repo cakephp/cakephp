@@ -72,6 +72,41 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Auxiliary function to insert a couple rows in a newly created table containing dates
+ *
+ * @return void
+ **/
+	protected function _insertDateRecords() {
+		$table = 'CREATE TEMPORARY TABLE dates(id int, name varchar(50), posted datetime, visible char(1))';
+		$this->connection->execute($table);
+		$data = [
+			'id' => '1',
+			'name' =>  'Chuck Norris',
+			'posted' => new \DateTime('2012-12-21 12:00'),
+			'visible' => 'Y'
+		];
+		$result = $this->connection->insert(
+			'dates',
+			$data,
+			['id' => 'integer', 'name' => 'string', 'posted' => 'datetime', 'visible' => 'string']
+		);
+
+		$result->bindValue(1, '2', 'integer');
+		$result->bindValue(2, 'Bruce Lee');
+		$result->bindValue(3, new \DateTime('2012-12-22 12:00'), 'datetime');
+		$result->bindValue(4, 'N');
+		$result->execute();
+
+		$result->bindValue(1, 3, 'integer');
+		$result->bindValue(2, 'Jet Li');
+		$result->bindValue(3, new \DateTime('2012-12-25 12:00'), 'datetime');
+		$result->bindValue(4, null);
+		$result->execute();
+
+		return $result;
+	}
+
+/**
  * Tests that it is possible to obtain expression results from a query
  *
  * @return void
@@ -168,10 +203,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
 		$this->assertEquals(array('title' => 'another title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
 
-		$result = $query->join('authors', true)->execute();
+		$result = $query->join('authors', [], true)->execute();
 		$this->assertCount(4, $result);
 
-		$result = $query->join([['table' => 'authors', 'type' => 'INNER', 'conditions' => 'author_id = 1']], true)->execute();
+		$result = $query->join([
+			['table' => 'authors', 'type' => 'INNER', 'conditions' => 'author_id = 1']
+		], [], true)->execute();
 		$this->assertCount(2, $result);
 		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
 		$this->assertEquals(array('title' => 'a title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
@@ -184,6 +221,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  **/
 	public function testSelectWithJoinsConditions() {
 		$this->_insertTwoRecords();
+		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['title', 'name'])
@@ -202,6 +240,17 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->execute();
 		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
 		$this->assertEquals(array('title' => 'another title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$time = new \DateTime('2012-12-21 12:00');
+		$types = ['posted' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'd.name'])
+			->from('articles')
+			->join(['table' => 'dates', 'alias' => 'd', 'conditions' => ['posted' => $time]], $types)
+			->execute();
+		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
 	}
 
 /**
@@ -310,41 +359,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->where(['title not like' => '%title%'])
 			->execute();
 		$this->assertCount(0, $result);
-	}
-
-/**
- * Auxiliary function to insert a couple rows in a newly created table containing dates
- *
- * @return void
- **/
-	protected function _insertDateRecords() {
-		$table = 'CREATE TEMPORARY TABLE dates(id int, name varchar(50), posted datetime, visible char(1))';
-		$this->connection->execute($table);
-		$data = [
-			'id' => '1',
-			'name' =>  'Chuck Norris',
-			'posted' => new \DateTime('2012-12-21 12:00'),
-			'visible' => 'Y'
-		];
-		$result = $this->connection->insert(
-			'dates',
-			$data,
-			['id' => 'integer', 'name' => 'string', 'posted' => 'datetime', 'visible' => 'string']
-		);
-
-		$result->bindValue(1, '2', 'integer');
-		$result->bindValue(2, 'Bruce Lee');
-		$result->bindValue(3, new \DateTime('2012-12-22 12:00'), 'datetime');
-		$result->bindValue(4, 'N');
-		$result->execute();
-
-		$result->bindValue(1, 3, 'integer');
-		$result->bindValue(2, 'Jet Li');
-		$result->bindValue(3, new \DateTime('2012-12-25 12:00'), 'datetime');
-		$result->bindValue(4, null);
-		$result->execute();
-
-		return $result;
 	}
 
 /**

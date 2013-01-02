@@ -215,7 +215,7 @@ class Query implements IteratorAggregate  {
 		return $this;
 	}
 
-	public function join($tables = null, $overwrite = false) {
+	public function join($tables = null, $types = [], $overwrite = false) {
 		if ($tables === null) {
 			return $this->_parts['join'];
 		}
@@ -230,7 +230,7 @@ class Query implements IteratorAggregate  {
 				$t = array('table' => $t, 'conditions' => $this->newExpr());
 			}
 			if (!($t['conditions']) instanceof QueryExpression) {
-				$t['conditions'] = $this->newExpr()->add($t['conditions']);
+				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}
 			$joins[] = $t + ['type' => 'INNER', 'alias' => null];
 		}
