@@ -79,7 +79,15 @@ class Query implements IteratorAggregate  {
 
 	public function execute() {
 		$statement = $this->_connection->prepare($this->sql());
-		$binder = function($expression, $name) use($statement, &$binder) {
+		$visitor = function($expression) use($statement) {
+			$params = $types = [];
+			foreach ($expression->bindings() as $b) {
+				$params[$b['placeholder']] = $b['value'];
+				$types[$b['placeholder']] = $b['type'];
+			}
+			$statement->bind($params, $types);
+		};
+		$binder = function($expression, $name) use($statement, $visitor, &$binder) {
 			if (is_array($expression)) {
 				foreach ($expression as $e) {
 					$binder($e, $name);
@@ -89,15 +97,6 @@ class Query implements IteratorAggregate  {
 			if (!($expression instanceof QueryExpression)) {
 				return;
 			}
-
-			$visitor = function($expression) use($statement) {
-				$params = $types = [];
-				foreach ($expression->bindings() as $b) {
-					$params[$b['placeholder']] = $b['value'];
-					$types[$b['placeholder']] = $b['type'];
-				}
-				$statement->bind($params, $types);
-			};
 
 			//Visit all expressions and subexpressions to get every bound value
 			$expression->traverse($visitor);
@@ -217,10 +216,10 @@ class Query implements IteratorAggregate  {
 		$joins = array();
 		foreach ($tables as $t) {
 			if (is_string($t)) {
-				$t = array('table' => $t, 'conditions' => new QueryExpression);
+				$t = array('table' => $t, 'conditions' => $this->newExpr());
 			}
 			if (!($t['conditions']) instanceof QueryExpression) {
-				$t['conditions'] = new QueryExpression($t['conditions']);
+				$t['conditions'] = $this->newExpr()->add($t['conditions']);
 			}
 			$joins[] = $t + ['type' => 'INNER', 'alias' => null];
 		}
@@ -236,7 +235,7 @@ class Query implements IteratorAggregate  {
 	}
 
 	public function where($conditions = null, $types = [], $overwrite = false) {
-		$where = $this->_parts['where'] ?: new QueryExpression();
+		$where = $this->_parts['where'] ?: $this->newExpr();
 		if ($conditions === null) {
 			return $where;
 		}
@@ -247,7 +246,7 @@ class Query implements IteratorAggregate  {
 		}
 
 		if ($overwrite) {
-			$this->_parts['where'] = new QueryExpression($conditions, $types);
+			$this->_parts['where'] = $this->newExpr()->add($conditions, $types);
 		} else {
 			$where->add($conditions, $types);
 		}
@@ -258,16 +257,16 @@ class Query implements IteratorAggregate  {
 	}
 
 	public function andWhere($conditions, $types = []) {
-		$where = $this->_parts['where'] ?: new QueryExpression;
+		$where = $this->_parts['where'] ?: $this->newExpr();
 
 		if (is_callable($conditions)) {
-			$conditions = $conditions(new QueryExpression, $this);
+			$conditions = $conditions($this->newExpr(), $this);
 		}
 
 		if ($where->type() === 'AND') {
 			$where->add($conditions, $types);
 		} else {
-			$where = new QueryExpression([$conditions, $where], $types, 'AND');
+			$where = $this->newExpr()->add([$conditions, $where], $types);
 		}
 
 		$this->_parts['where'] = $where;
@@ -276,16 +275,16 @@ class Query implements IteratorAggregate  {
 	}
 
 	public function orWhere($conditions, $types = []) {
-		$where = $this->_parts['where'] ?: new QueryExpression([], [], 'OR');
+		$where = $this->_parts['where'] ?: $this->newExpr()->type('OR');
 
 		if (is_callable($conditions)) {
-			$conditions = $conditions(new QueryExpression, $this);
+			$conditions = $conditions($this->newExpr(), $this);
 		}
 
 		if ($where->type() === 'OR') {
 			$where->add($conditions, $types);
 		} else {
-			$where = new QueryExpression([$conditions, $where], $types, 'OR');
+			$where = $this->newExpr()->type('OR')->add([$conditions, $where], $types);
 		}
 
 		$this->_parts['where'] = $where;
