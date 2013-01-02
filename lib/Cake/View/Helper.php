@@ -145,7 +145,7 @@ class Helper extends Object {
 	protected $_minimizedAttributes = array(
 		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
 		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize',
-		'autoplay', 'controls', 'loop', 'muted', 'required'
+		'autoplay', 'controls', 'loop', 'muted', 'required', 'novalidate', 'formnovalidate'
 	);
 
 /**
