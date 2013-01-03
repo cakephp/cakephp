@@ -172,7 +172,8 @@ class EventManager {
 			return $this->_detachSubscriber($callable, $eventKey);
 		}
 		if (empty($eventKey)) {
-			foreach (array_keys($this->_listeners) as $eventKey) {
+			$keys = array_keys($this->_listeners);
+			foreach ($keys as $eventKey) {
 				$this->detach($callable, $eventKey);
 			}
 			return;
