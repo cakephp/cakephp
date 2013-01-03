@@ -18,7 +18,6 @@ use Cake\Error;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 
 /**
  * The end user interface for doing HTTP requests.
@@ -426,7 +425,7 @@ class Client {
 		if (empty($auth['type'])) {
 			$auth['type'] = 'basic';
 		}
-		$name = Inflector::classify($auth['type']);
+		$name = ucfirst($auth['type']);
 		$class = App::className($name, 'Network/Http/Auth');
 		if (!$class) {
 			throw new Error\Exception(
