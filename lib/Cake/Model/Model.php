@@ -2446,7 +2446,8 @@ class Model extends Object implements EventListener {
 			$this->__backAssociation = array();
 		}
 
-		foreach (array_merge($this->hasMany, $this->hasOne) as $assoc => $data) {
+		$ManyOne = array_merge($this->hasMany, $this->hasOne);
+		foreach ($ManyOne as $assoc => $data) {
 			if ($data['dependent'] !== true) {
 				continue;
 			}
