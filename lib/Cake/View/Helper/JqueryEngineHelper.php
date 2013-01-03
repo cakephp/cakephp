@@ -250,7 +250,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @see JsBaseEngineHelper::request() for options list.
  */
 	public function request($url, $options = array()) {
-		$url = $this->url($url);
+		$url = html_entity_decode($this->url($url), ENT_COMPAT, Configure::read('App.encoding'));
 		$options = $this->_mapOptions('request', $options);
 		if (isset($options['data']) && is_array($options['data'])) {
 			$options['data'] = $this->_toQuerystring($options['data']);
