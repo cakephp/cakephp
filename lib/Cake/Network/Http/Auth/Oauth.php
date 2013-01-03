@@ -229,7 +229,7 @@ class Oauth {
  * @return string
  */
 	protected function _buildAuth($data) {
-		$out = 'Oauth ';
+		$out = 'OAuth ';
 		$params = [];
 		foreach ($data as $key => $value) {
 			$params[] = $key . '="' . $this->_encode($value) . '"';

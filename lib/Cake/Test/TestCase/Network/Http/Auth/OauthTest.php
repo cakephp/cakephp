@@ -56,7 +56,7 @@ class OauthTest extends TestCase {
 		$auth->authentication($request, $creds);
 
 		$result = $request->header('Authorization');
-		$this->assertContains('Oauth', $result);
+		$this->assertContains('OAuth', $result);
 		$this->assertContains('oauth_version="1.0"', $result);
 		$this->assertContains('oauth_token="a%20token%20value"', $result);
 		$this->assertContains('oauth_consumer_key="a%20key"', $result);
