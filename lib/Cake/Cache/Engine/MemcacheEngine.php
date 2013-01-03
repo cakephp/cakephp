@@ -207,7 +207,8 @@ class MemcacheEngine extends CacheEngine {
 			return true;
 		}
 		foreach ($this->_Memcache->getExtendedStats('slabs') as $slabs) {
-			foreach (array_keys($slabs) as $slabId) {
+			$keys = array_keys($slabs);
+			foreach ($keys as $slabId) {
 				if (!is_numeric($slabId)) {
 					continue;
 				}
@@ -216,7 +217,7 @@ class MemcacheEngine extends CacheEngine {
 					if (!is_array($stats)) {
 						continue;
 					}
-					foreach (array_keys($stats) as $key) {
+					foreach ($keys as $key) {
 						if (strpos($key, $this->settings['prefix']) === 0) {
 							$this->_Memcache->delete($key);
 						}

@@ -186,6 +186,8 @@ class XcacheEngine extends CacheEngine {
 	protected function _auth($reverse = false) {
 		static $backup = array();
 		$keys = array('PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password');
+		$settings_is_empty = empty($this->settings[$setting]);
+		
 		foreach ($keys as $key => $setting) {
 			if ($reverse) {
 				if (isset($backup[$key])) {
@@ -199,7 +201,7 @@ class XcacheEngine extends CacheEngine {
 				if (!empty($value)) {
 					$backup[$key] = $value;
 				}
-				if (!empty($this->settings[$setting])) {
+				if (!$settings_is_empty) {
 					$_SERVER[$key] = $this->settings[$setting];
 				} elseif (!empty($this->settings[$key])) {
 					$_SERVER[$key] = $this->settings[$key];

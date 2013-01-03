@@ -436,7 +436,8 @@ class PaginatorHelper extends Helper {
 			return null;
 		}
 
-		foreach (array_keys($_defaults) as $key) {
+		$keys = array_keys($_defaults);
+		foreach ($keys as $key) {
 			${$key} = $options[$key];
 			unset($options[$key]);
 		}

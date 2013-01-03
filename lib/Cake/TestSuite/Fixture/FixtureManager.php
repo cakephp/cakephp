@@ -213,7 +213,8 @@ class FixtureManager {
  */
 	public function unload(TestCase $test) {
 		$fixtures = !empty($test->fixtures) ? $test->fixtures : array();
-		foreach (array_reverse($fixtures) as $f) {
+		$reverse = array_reverse($fixtures); 
+		foreach ($reverse as $f) {
 			if (isset($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
 				if (!empty($fixture->created)) {
