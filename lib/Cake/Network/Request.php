@@ -798,8 +798,8 @@ class Request implements \ArrayAccess {
  */
 	protected static function _parseAcceptWithQualifier($header) {
 		$accept = array();
-		$header = explode(',', $header);
-		foreach (array_filter($header) as $value) {
+		$header = array_filter(explode(',', $header));
+		foreach ($header as $value) {
 			$prefPos = strpos($value, ';');
 			if ($prefPos !== false) {
 				$prefValue = substr($value, strpos($value, '=') + 1);
