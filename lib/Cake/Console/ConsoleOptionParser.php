@@ -627,7 +627,7 @@ class ConsoleOptionParser {
  */
 	protected function _parseArg($argument, $args) {
 		if (empty($this->_args)) {
-			array_push($args, $argument);
+			$args[] = $argument;
 			return $args;
 		}
 		$next = count($args);
@@ -636,7 +636,7 @@ class ConsoleOptionParser {
 		}
 
 		if ($this->_args[$next]->validChoice($argument)) {
-			array_push($args, $argument);
+			$args[] = $argument;
 			return $args;
 		}
 	}
