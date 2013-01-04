@@ -404,4 +404,115 @@ class ClientTest extends TestCase {
 		$http->post('/projects/add', 'it works', ['type' => 'invalid']);
 	}
 
+/**
+ * Test that Client keeps cookies from responses and holds onto non expired cookies.
+ *
+ * @return void
+ */
+	public function testCookiesExpiring() {
+		$mock = $this->getMock(
+			'Cake\Network\Http\Adapter\Stream',
+			['send']
+		);
+
+		$firstHeaders = [
+			'HTTP/1.0 200 Ok',
+			'Set-Cookie: first=1',
+			'Set-Cookie: expiring=now; Expires=Wed, 09-Jun-1999 10:18:14 GMT'
+		];
+		$firstResponse = new Response($firstHeaders, '');
+
+		$secondHeaders = [
+			'HTTP/1.0 200 Ok',
+			'Set-Cookie: second=2',
+		];
+		$secondResponse = new Response($secondHeaders, '');
+
+		$mock->expects($this->at(0))
+			->method('send')
+			->will($this->returnValue([$firstResponse]));
+
+		$mock->expects($this->at(1))
+			->method('send')
+			->with($this->attributeEqualTo(
+				'_cookies',
+				['first' => '1']
+			))
+			->will($this->returnValue([$secondResponse]));
+
+		$http = new Client([
+			'host' => 'cakephp.org',
+			'adapter' => $mock
+		]);
+
+		$http->get('/projects');
+		$http->get('/projects/two');
+
+		$result = $http->cookies();
+		$expected = [
+			'cakephp.org' => [
+				'first' => 1,
+				'second' => 2
+			]
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test cookies with domain set.
+ *
+ * @return void
+ */
+	public function testCookiesWithDomain() {
+		$firstHeaders = [
+			'HTTP/1.0 200 Ok',
+			'Set-Cookie: first=1; Domain=.cakephp.org',
+			'Set-Cookie: second=2',
+		];
+		$firstResponse = new Response($firstHeaders, '');
+
+		$secondHeaders = [
+			'HTTP/1.0 200 Ok',
+			'Set-Cookie: third=3',
+		];
+		$secondResponse = new Response($secondHeaders, '');
+
+		$mock = $this->getMock(
+			'Cake\Network\Http\Adapter\Stream',
+			['send']
+		);
+
+		$mock->expects($this->at(0))
+			->method('send')
+			->will($this->returnValue([$firstResponse]));
+
+		$mock->expects($this->at(1))
+			->method('send')
+			->with($this->attributeEqualTo(
+				'_cookies',
+				['first' => '1']
+			))
+			->will($this->returnValue([$secondResponse]));
+
+		$http = new Client([
+			'host' => 'test.cakephp.org',
+			'adapter' => $mock
+		]);
+
+		$http->get('/projects');
+		$http->get('http://cakephp.org/versions');
+
+		$result = $http->cookies();
+		$expected = [
+			'cakephp.org' => [
+				'first' => '1',
+				'third' => '3',
+			],
+			'test.cakephp.org' => [
+				'second' => '2',
+			]
+		];
+		$this->assertEquals($expected, $result);
+	}
+
 }

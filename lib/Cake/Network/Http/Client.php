@@ -39,6 +39,14 @@ use Cake\Utility\Hash;
  * - delete()
  * - patch()
  *
+ * ### Cookie management
+ *
+ * Client will maintain cookies from the responses done with
+ * a client instance. These cookies will be automatically added
+ * to future requests to matching hosts. Cookies will respect the
+ * `Expires` and `Domain` attributes. You can get the list of
+ * currently stored cookies using the cookies() method.
+ *
  * ### Sending request bodies
  *
  * By default any POST/PUT/PATCH/DELETE request with $data will
@@ -67,12 +75,9 @@ use Cake\Utility\Hash;
  * ### Using proxies
  *
  * By using the `proxy` key you can set authentication credentials for
- * a proxy if you need to use one.. The type sub option can be used to 
+ * a proxy if you need to use one.. The type sub option can be used to
  * specify which authentication strategy you want to use.
- * CakePHP comes with a few built-in strategies:
- *
- * - Basic
- * - Digest
+ * CakePHP comes with built-in support for basic authentication.
  *
  */
 class Client {
@@ -92,6 +97,16 @@ class Client {
 		'ssl_verify_host' => true,
 		'redirect' => false,
 	];
+
+/**
+ * List of cookies from responses made with this client.
+ *
+ * Cookies are indexed by the cookie's domain or 
+ * request host name.
+ *
+ * @var array
+ */
+	protected $_cookies = [];
 
 /**
  * Adapter for sending requests. Defaults to
@@ -151,6 +166,15 @@ class Client {
 		}
 		$this->_config = Hash::merge($this->_config, $config);
 		return $this;
+	}
+
+/**
+ * Get the cookies stored in the Client.
+ *
+ * @return array
+ */
+	public function cookies() {
+		return $this->_cookies;
 	}
 
 /**
@@ -275,11 +299,58 @@ class Client {
  * @return Cake\Network\Http\Response
  */
 	public function send(Request $request, $options = []) {
-		// TODO possibly implment support for
-		// holding onto cookies so subsequent requests
-		// can share cookies.
 		$responses = $this->_adapter->send($request, $options);
+		$host = parse_url($request->url(), PHP_URL_HOST);
+		foreach ($responses as $response) {
+			$this->_storeCookies($response, $host);
+		}
 		return array_pop($responses);
+	}
+
+/**
+ * Store cookies in a response to be used in future requests.
+ *
+ * Non-expired cookies will be stored for use in future requests
+ * made with the same Client instance. Cookies are not saved
+ * between instances.
+ *
+ * @param Response $response The response to read cookies from
+ * @param string $host The request host, used for getting host names
+ *   in case the cookies didn't set a domain.
+ * @return void
+ */
+	protected function _storeCookies(Response $response, $host) {
+		$cookies = $response->cookies();
+		foreach ($cookies as $name => $cookie) {
+			$expires = isset($cookie['expires']) ? $cookie['expires'] : false;
+			$domain = isset($cookie['domain']) ? $cookie['domain'] : $host;
+			$domain = trim($domain, '.');
+			if ($expires) {
+				$expires = \DateTime::createFromFormat('D, j-M-Y H:i:s e', $expires);
+			}
+			if ($expires && $expires->getTimestamp() <= time()) {
+				continue;
+			}
+			if (empty($this->_cookies[$domain])) {
+				$this->_cookies[$domain] = [];
+			}
+			$this->_cookies[$domain][$name] = $cookie['value'];
+		}
+	}
+
+/**
+ * Adds cookies stored in the client to the request.
+ *
+ * Uses the request's host to find matching cookies.
+ *
+ * @param Request $request
+ * @return void
+ */
+	protected function _addCookies(Request $request) {
+		$host = parse_url($request->url(), PHP_URL_HOST);
+		if (isset($this->_cookies[$host])) {
+			$request->cookie($this->_cookies[$host]);
+		}
 	}
 
 /**
@@ -339,6 +410,7 @@ class Client {
 		if (isset($options['headers'])) {
 			$request->header($options['headers']);
 		}
+		$this->_addCookies($request);
 		if (isset($options['cookies'])) {
 			$request->cookie($options['cookies']);
 		}
