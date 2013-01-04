@@ -342,14 +342,19 @@ class Client {
  * Adds cookies stored in the client to the request.
  *
  * Uses the request's host to find matching cookies.
+ * Walks backwards through subdomains to find cookies
+ * defined on parent domains.
  *
  * @param Request $request
  * @return void
  */
 	protected function _addCookies(Request $request) {
-		$host = parse_url($request->url(), PHP_URL_HOST);
-		if (isset($this->_cookies[$host])) {
-			$request->cookie($this->_cookies[$host]);
+		$parts = explode('.', parse_url($request->url(), PHP_URL_HOST));
+		for ($i = 0, $len = count($parts); $i < $len - 1; $i++) {
+			$host = implode('.', array_slice($parts, $i));
+			if (isset($this->_cookies[$host])) {
+				$request->cookie($this->_cookies[$host]);
+			}
 		}
 	}
 

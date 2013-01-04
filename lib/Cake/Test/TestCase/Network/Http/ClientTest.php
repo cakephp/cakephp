@@ -476,6 +476,7 @@ class ClientTest extends TestCase {
 			'Set-Cookie: third=3',
 		];
 		$secondResponse = new Response($secondHeaders, '');
+		$thirdResponse = new Response([], '');
 
 		$mock = $this->getMock(
 			'Cake\Network\Http\Adapter\Stream',
@@ -494,6 +495,14 @@ class ClientTest extends TestCase {
 			))
 			->will($this->returnValue([$secondResponse]));
 
+		$mock->expects($this->at(2))
+			->method('send')
+			->with($this->attributeEqualTo(
+				'_cookies',
+				['first' => '1', 'second' => '2', 'third' => '3']
+			))
+			->will($this->returnValue([$thirdResponse]));
+
 		$http = new Client([
 			'host' => 'test.cakephp.org',
 			'adapter' => $mock
@@ -501,6 +510,7 @@ class ClientTest extends TestCase {
 
 		$http->get('/projects');
 		$http->get('http://cakephp.org/versions');
+		$http->get('/projects');
 
 		$result = $http->cookies();
 		$expected = [
