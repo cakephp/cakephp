@@ -33,11 +33,11 @@ use Cake\Network\Http\Message;
  *
  * `$response->header();`
  *
- * You can also get at the headers using array notation. When getting
- * headers with array notation, you have to use case-sensitive header
+ * You can also get at the headers using object access. When getting
+ * headers with object access, you have to use case-sensitive header
  * names:
  *
- * `$val = $response['headers']['Content-Type'];`
+ * `$val = $response->headers['Content-Type'];`
  *
  * ### Get the response body
  *
@@ -45,9 +45,9 @@ use Cake\Network\Http\Message;
  *
  * `$content = $response->body();`
  *
- * You can also use array notation:
+ * You can also use object access:
  *
- * `$content = $response['body'];`
+ * `$content = $response->body;`
  *
  * ### Check the status code
  *
@@ -55,11 +55,11 @@ use Cake\Network\Http\Message;
  *
  * `$content = $response->statusCode();`
  *
- * You can also use array notation:
+ * You can also use object access:
  *
- * `$content = $response['code'];`
+ * `$content = $response->code;`
  */
-class Response extends Message implements \ArrayAccess {
+class Response extends Message {
 
 /**
  * The status code of the response.
@@ -76,11 +76,11 @@ class Response extends Message implements \ArrayAccess {
 	protected $_body;
 
 /**
- * Map of public => property names for ArrayAccess
+ * Map of public => property names for __get()
  *
  * @var array
  */
-	protected $_arrayProperties = [
+	protected $_exposedProperties = [
 		'cookies' => '_cookies',
 		'headers' => '_headers',
 		'body' => '_body',
@@ -290,52 +290,31 @@ class Response extends Message implements \ArrayAccess {
 	}
 
 /**
- * Read values with array syntax.
+ * Read values as properties.
  *
  * @param string $name
  * @return mixed
  */
-	public function offsetGet($name) {
-		if (!isset($this->_arrayProperties[$name])) {
+	public function __get($name) {
+		if (!isset($this->_exposedProperties[$name])) {
 			return false;
 		}
-		$key = $this->_arrayProperties[$name];
+		$key = $this->_exposedProperties[$name];
 		return $this->{$key};
 	}
 
 /**
- * isset/empty test with array syntax.
+ * isset/empty test with -> syntax.
  *
  * @param string $name
  * @return boolean
  */
-	public function offsetExists($name) {
-		if (!isset($this->_arrayProperties[$name])) {
+	public function __isset($name) {
+		if (!isset($this->_exposedProperties[$name])) {
 			return false;
 		}
-		$key = $this->_arrayProperties[$name];
+		$key = $this->_exposedProperties[$name];
 		return isset($this->$key);
-	}
-
-/**
- * Do nothing ArrayAccess is readonly
- *
- * @param string $name
- * @param mixed $value
- * @return null
- */
-	public function offsetSet($name, $value) {
-
-	}
-
-/**
- * Do nothing ArrayAccess is readonly
- *
- * @param string $name
- * @return null
- */
-	public function offsetUnset($name) {
-
 	}
 
 }

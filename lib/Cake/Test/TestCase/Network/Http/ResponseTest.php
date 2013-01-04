@@ -47,9 +47,9 @@ class ResponseTest extends TestCase {
 
 		$this->assertEquals(
 			'text/html;charset="UTF-8"',
-			$response['headers']['Content-Type']
+			$response->headers['Content-Type']
 		);
-		$this->assertTrue(isset($response['headers']));
+		$this->assertTrue(isset($response->headers));
 	}
 
 /**
@@ -68,8 +68,8 @@ class ResponseTest extends TestCase {
 		$this->assertEquals($data['property'], $result->property);
 		$this->assertEquals($encoded, $response->body());
 
-		$this->assertEquals($encoded, $response['body']);
-		$this->assertTrue(isset($response['body']));
+		$this->assertEquals($encoded, $response->body);
+		$this->assertTrue(isset($response->body));
 	}
 
 /**
@@ -172,10 +172,10 @@ class ResponseTest extends TestCase {
 		$result = $response->header('set-cookie');
 		$this->assertCount(3, $result, 'Should be an array.');
 
-		$this->assertTrue(isset($response['cookies']));
+		$this->assertTrue(isset($response->cookies));
 		$this->assertEquals(
 			'soon',
-			$response['cookies']['expiring']['value']
+			$response->cookies['expiring']['value']
 		);
 	}
 
@@ -192,8 +192,8 @@ class ResponseTest extends TestCase {
 		$response = new Response($headers, '');
 		$this->assertEquals(404, $response->statusCode());
 
-		$this->assertEquals(404, $response['code']);
-		$this->assertTrue(isset($response['code']));
+		$this->assertEquals(404, $response->code);
+		$this->assertTrue(isset($response->code));
 	}
 
 /**
