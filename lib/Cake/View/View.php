@@ -1111,13 +1111,14 @@ class View extends Object {
 
 		$paths = array_unique(array_merge($paths, $viewPaths));
 		if (!empty($this->theme)) {
+			$theme = Inflector::camelize($this->theme);
 			$themePaths = array();
 			foreach ($paths as $path) {
 				if (strpos($path, DS . 'Plugin' . DS) === false) {
 					if ($plugin) {
-						$themePaths[] = $path . 'Themed' . DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
+						$themePaths[] = $path . 'Themed' . DS . $theme . DS . 'Plugin' . DS . $plugin . DS;
 					}
-					$themePaths[] = $path . 'Themed' . DS . $this->theme . DS;
+					$themePaths[] = $path . 'Themed' . DS . $theme . DS;
 				}
 			}
 			$paths = array_merge($themePaths, $paths);
