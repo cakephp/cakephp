@@ -22,7 +22,7 @@ namespace Cake\Utility;
 
 use Cake\Core\Configure;
 use Cake\Error;
-use Cake\Network\Http\HttpSocket;
+use Cake\Network\Http\Client;
 
 /**
  * XML handling for Cake.
@@ -105,7 +105,7 @@ class Xml {
 		} elseif (file_exists($input)) {
 			return static::_loadXml(file_get_contents($input), $options);
 		} elseif (strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
-			$socket = new HttpSocket();
+			$socket = new Client();
 			$response = $socket->get($input);
 			if (!$response->isOk()) {
 				throw new Error\XmlException(__d('cake_dev', 'XML cannot be read.'));
