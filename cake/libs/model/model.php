@@ -1605,7 +1605,7 @@ class Model extends Overloadable {
 						if ($options['atomic']) {
 							$validates = $validates && $currentValidates;
 						} else {
-							$validates = $currentValidates;
+							$validates = true;
 						}
 					} else {
 						$validating = false;
@@ -1613,7 +1613,7 @@ class Model extends Overloadable {
 					}
 
 					if (!$options['atomic']) {
-						$return[] = $validates;
+						$return[] = $currentValidates;
 					} elseif (!$validates && !$validating) {
 						break;
 					}
