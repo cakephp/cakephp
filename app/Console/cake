@@ -35,7 +35,7 @@ canonicalize() {
 }
 
 CONSOLE=$(dirname -- "$(canonicalize "$0")")
-APP=`pwd`
+APP=$(dirname "$CONSOLE")
 
 exec php -q "$CONSOLE"/cake.php -working "$APP" "$@"
 exit
