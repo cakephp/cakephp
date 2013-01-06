@@ -33,6 +33,7 @@ class CrudAuthorizeTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Routing.prefixes', array());
+		Router::clearPrefixes();
 
 		$this->Acl = $this->getMock('AclComponent', array(), array(), '', false);
 		$this->Components = $this->getMock('ComponentCollection');
@@ -131,23 +132,6 @@ class CrudAuthorizeTest extends CakeTestCase {
 			'view' => 'read',
 			'remove' => 'delete'
 		);
-		$prefixes = Router::prefixes();
-		if (!empty($prefixes)) {
-			foreach ($prefixes as $prefix) {
-				$expected = array_merge($expected, array(
-					$prefix . '_index' => 'read',
-					$prefix . '_add' => 'create',
-					$prefix . '_edit' => 'update',
-					$prefix . '_view' => 'read',
-					$prefix . '_remove' => 'delete',
-					$prefix . '_create' => 'create',
-					$prefix . '_read' => 'read',
-					$prefix . '_update' => 'update',
-					$prefix . '_delete' => 'delete'
-				));
-			}
-		}
-
 		$this->assertEquals($expected, $result);
 	}
 
@@ -183,22 +167,6 @@ class CrudAuthorizeTest extends CakeTestCase {
 			'update' => 'update',
 			'random' => 'custom',
 		);
-		$prefixes = Router::prefixes();
-		if (!empty($prefixes)) {
-			foreach ($prefixes as $prefix) {
-				$expected = array_merge($expected, array(
-					$prefix . '_index' => 'read',
-					$prefix . '_add' => 'create',
-					$prefix . '_edit' => 'update',
-					$prefix . '_view' => 'read',
-					$prefix . '_remove' => 'delete',
-					$prefix . '_create' => 'create',
-					$prefix . '_read' => 'read',
-					$prefix . '_update' => 'update',
-					$prefix . '_delete' => 'delete'
-				));
-			}
-		}
 		$this->assertEquals($expected, $result);
 	}
 
