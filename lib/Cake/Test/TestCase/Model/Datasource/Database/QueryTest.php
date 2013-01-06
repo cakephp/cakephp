@@ -981,8 +981,9 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['id' => 5], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
-		$expression = $query->newExpr()->add(['(id + :offset) % 2 = 0']);
-		$expression->bind(':offset', 1, null);
+		$expression = $query->newExpr()
+			->add(['(id + :offset) % 2 = 0'])
+			->bind(':offset', 1, null);
 		$result = $query->order([$expression, 'id' => 'desc'], true)->execute();
 		$this->assertEquals(['id' => 4], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));

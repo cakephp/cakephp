@@ -126,7 +126,18 @@ class QueryExpression implements Countable {
  * to database
  * @return string placeholder name or question mark to be used in the query string
  */
-	public function bind($token, $value, $type) {
+	public function bind($param, $value, $type) {
+		$number = $this->_bindingsCount;
+		$this->_bindings[$number] = compact('value', 'type') + [
+			'placeholder' => substr($param, 1)
+		];
+		if (strpos($type, '[]') !== false) {
+			$this->_replaceArrayParams = true;
+		}
+		return $this;
+	}
+
+	public function placeholder($token) {
 		$param = $token;
 		$number = $this->_bindingsCount++;
 
@@ -136,14 +147,6 @@ class QueryExpression implements Countable {
 			$param = sprintf(':c%s%s', $this->_identifier, $number);
 		}
 
-		if (strpos($type, '[]') !== false) {
-			$param = sprintf(':array%d', $number);
-			$type = str_replace('[]', '', $type);
-		}
-
-		$this->_bindings[$number] = compact('value', 'type', 'token') + [
-			'placeholder' => substr($param, 1)
-		];
 		return $param;
 	}
 
@@ -235,27 +238,40 @@ class QueryExpression implements Countable {
 			$type = $type ?: 'string';
 			$type .= strpos($type, '[]') === false ? '[]' : null;
 			$template = '%s %s (%s)';
-			$this->_replaceArrayParams = true;
 		}
 
-		return sprintf($template, $expression,  $operator, $this->bind($field, $value, $type));
+		return sprintf($template, $expression,  $operator, $this->_bindValue($field, $value, $type));
+	}
+
+	protected function _bindValue($field, $value, $type) {
+		$param = $this->placeholder($field);
+		$this->bind($param, $value, $type);
+		return $param;
 	}
 
 	protected function _replaceArrays() {
+		$replacements = [];
+		foreach ($this->_bindings as $n => $b) {
+			if (strpos($b['type'], '[]') === false) {
+				continue;
+			}
+			$type = str_replace('[]', '', $b['type']);
+			$params = [];
+			foreach ($b['value'] as $value) {
+				$params[] = $this->_bindValue($b['placeholder'], $value, $type);
+			}
+			$token = ':' . $b['placeholder'];
+			$replacements[$token] = implode(', ', $params);
+			unset($this->_bindings[$n]);
+		}
+
 		foreach ($this->_conditions as $k => $condition) {
 			if (!is_string($condition)) {
 				continue;
 			}
-			$condition = preg_replace_callback('/(:array(\d+))/', function($match) {
-				$params = [];
-				$binding = $this->_bindings[$match[2]];
-				foreach ($this->_bindings[$match[2]]['value'] as $value) {
-					$params[] = $this->bind($binding['token'], $value, $binding['type']);
-				}
-				unset($this->_bindings[$match[2]]);
-				return implode(', ', $params);
-			}, $condition);
-			$this->_conditions[$k] = $condition;
+			foreach ($replacements as $token => $r) {
+				$this->_conditions[$k] = str_replace($token, $r, $condition);
+			}
 		}
 	}
 
