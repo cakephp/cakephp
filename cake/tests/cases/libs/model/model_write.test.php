@@ -3716,6 +3716,26 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$expected = array(true, true);
 		$this->assertEqual($result, $expected);
+
+        // test with database
+		$TestModel =& new Article();
+		$TestModel->validate = array('title' => 'notEmpty');
+		$result = $TestModel->saveAll(
+			array(
+				array('title' => 'title 1'),
+				array('title' => 'title 2'),
+				array('title' => ''),
+			),
+			array('validate'=>'first', 'atomic' => false)
+		);
+		$this->assertEqual($result, array(true, true, false));
+		$expected = array(
+			2 => array('title' => 'This field cannot be left blank'),
+		);
+		$this->assertEqual($TestModel->validationErrors, $expected);
+		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'title ASC'));
+        // make sure the good ones are saved
+		$this->assertEqual(count($result), 2);
 	}
 
 /**
