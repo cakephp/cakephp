@@ -929,4 +929,73 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 	}
 
+/**
+ * Tests order() method both with simple fields and expressions
+ *
+ * @return void
+ **/
+	public function testSelectOrderBy() {
+		$statement = $this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->order(['id' => 'desc'])
+			->execute();
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$result = $query->order(['id' => 'asc'])->execute();
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$result = $query->order(['name' => 'asc'])->execute();
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$result = $query->order(['name' => 'asc'], true)->execute();
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$statement->bindValue(1, 4, 'integer');
+		$statement->bindValue(2, 'Chuck Norris');
+		$statement->bindValue(3, new \DateTime('2012-12-21 12:00'), 'datetime');
+		$statement->bindValue(4, 'N');
+		$statement->execute();
+
+		$statement->bindValue(1, 5, 'integer');
+		$statement->bindValue(2, 'Chuck Norris');
+		$statement->bindValue(3, new \DateTime('2012-12-20 12:00'), 'datetime');
+		$statement->bindValue(4, 'N');
+		$statement->execute();
+
+		$result = $query->order(['name' => 'asc', 'posted' => 'desc', 'visible' => 'asc'], true)
+			->execute();
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 4], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 5], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$expression = $query->newExpr()->add(['(id + :offset) % 2 = 0']);
+		$expression->bind(':offset', 1, null);
+		$result = $query->order([$expression, 'id' => 'desc'], true)->execute();
+		$this->assertEquals(['id' => 4], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 5], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$result = $query->order($expression, true)->order(['id' => 'asc'])->execute();
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 4], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 5], $result->fetch('assoc'));
+	}
+
 }

@@ -44,7 +44,6 @@ class Query implements IteratorAggregate  {
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
-		'order' => ' ORDER BY %s',
 		'limit' => ' LIMIT %s',
 		'offset' => ' , %d'
 	];
@@ -303,9 +302,28 @@ class Query implements IteratorAggregate  {
 		return $this;
 	}
 
-	public function order($field, $direction = 'ASC') {
-		$this->_parts['order'] += [$field => $direction];
+	public function order($clause, $overwrite = false) {
+		$order = $this->_parts['order'];
+		if ($overwrite) {
+			$order = [];
+		}
+
+		if (!is_array($clause)) {
+			$clause = [$clause];
+		}
+
+		$order = array_merge($order, $clause);
+		$this->_parts['order'] = $order;
+		$this->_dirty = true;
 		return $this;
+	}
+
+	protected function _buildOrderPart($parts) {
+		$order = [];
+		foreach ($parts as $k => $direction) {
+			$order[] = is_numeric($k) ? $direction : sprintf('%s %s', $k, $direction);
+		}
+		return sprintf (' ORDER BY %s', implode(', ', $order));
 	}
 
 	public function group($field) {

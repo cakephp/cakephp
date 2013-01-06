@@ -170,7 +170,8 @@ class QueryExpression implements Countable {
 			$this->_replaceArrays();
 		}
 		$conjunction = $this->_conjunction;
-		return '(' . implode(" $conjunction ", $this->_conditions) . ')';
+		$template = ($this->count() === 1) ? '%s' : '(%s)';
+		return sprintf($template, implode(" $conjunction ", $this->_conditions));
 	}
 
 	public function traverse($callable) {
