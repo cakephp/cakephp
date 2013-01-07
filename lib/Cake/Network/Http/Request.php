@@ -66,7 +66,7 @@ class Request extends Message {
 		if ($method === null) {
 			return $this->_method;
 		}
-		$name = __CLASS__ . '::METHOD_' . strtoupper($method);
+		$name = get_called_class() . '::METHOD_' . strtoupper($method);
 		if (!defined($name)) {
 			throw new Error\Exception(__d('cake_dev', 'Invalid method type'));
 		}
