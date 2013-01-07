@@ -154,20 +154,20 @@ class Cache {
 		$cacheClass = $class . 'Engine';
 		App::uses($cacheClass, $plugin . 'Cache/Engine');
 		if (!class_exists($cacheClass)) {
-			return false;
+			throw new CacheException(__d('cake_dev', 'Cache engine %s is not available.', $name));
 		}
 		$cacheClass = $class . 'Engine';
 		if (!is_subclass_of($cacheClass, 'CacheEngine')) {
 			throw new CacheException(__d('cake_dev', 'Cache engines must use CacheEngine as a base class.'));
 		}
 		self::$_engines[$name] = new $cacheClass();
-		if (self::$_engines[$name]->init($config)) {
-			if (self::$_engines[$name]->settings['probability'] && time() % self::$_engines[$name]->settings['probability'] === 0) {
-				self::$_engines[$name]->gc();
-			}
-			return true;
+		if (!self::$_engines[$name]->init($config)) {
+			throw new CacheException(__d('cake_dev', 'Cache engine %s is not properly configured.', $name));
 		}
-		return false;
+		if (self::$_engines[$name]->settings['probability'] && time() % self::$_engines[$name]->settings['probability'] === 0) {
+			self::$_engines[$name]->gc();
+		}
+		return true;
 	}
 
 /**
