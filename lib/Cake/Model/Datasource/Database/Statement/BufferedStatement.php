@@ -29,18 +29,21 @@ class BufferedStatement extends \Cake\Model\Datasource\Database\Statement {
 		$this->_fetchType = $type;
 		$record = parent::fetch($type);
 
-		if ($record !== false) {
-			$this->_count++;
-			$this->_counter++;
-		} else {
+		if ($record === false) {
 			$this->_allFetched = true;
-			$this->_counter++;
+			$this->_counter = $this->_count + 1;
+			return false;
 		}
 
-		return $record;
+		$this->_count++;
+		return $this->_records[] = $record;
 	}
 
 	public function fetchAll($type = 'num') {
+		if ($this->_allFetched) {
+			return $this->_records;
+		}
+
 		$this->_records = parent::fetchAll($type);
 		$this->_count = count($this->_records);
 		$this->_allFetched = true;
@@ -49,8 +52,11 @@ class BufferedStatement extends \Cake\Model\Datasource\Database\Statement {
 
 	public function rowCount() {
 		if (!$this->_allFetched) {
-			$this->_records = $this->fetchAll('assoc');
+			$counter = $this->_counter;
+			while($this->fetch('assoc'));
+			$this->_counter = $counter;
 		}
+
 		return $this->_count;
 	}
 

@@ -30,9 +30,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 
 	public function setUp() {
 		$this->connection = new Connection(Configure::read('Datasource.test'));
-	}
-
-	public function tearDown() {
 		$this->connection->execute('DROP TABLE IF EXISTS articles');
 		$this->connection->execute('DROP TABLE IF EXISTS authors');
 		$this->connection->execute('DROP TABLE IF EXISTS dates');
@@ -140,7 +137,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(array('body' => 'another body', 'author_id' => 2), $result->fetch('assoc'));
 
 		//Append more tables to next execution
-		$result = $query->select('name')->from(array('authors'))->execute();
+		$result = $query->select('name')->from(array('authors'))->order(['name' => 'desc'])->execute();
 		$this->assertEquals(array('body' => 'a body', 'author_id' => 1, 'name' => 'Chuck Norris'), $result->fetch('assoc'));
 		$this->assertEquals(array('body' => 'another body', 'author_id' => 2, 'name' => 'Chuck Norris'), $result->fetch('assoc'));
 		$this->assertEquals(array('body' => 'a body', 'author_id' => 1, 'name' => 'Bruce Lee'), $result->fetch('assoc'));
@@ -198,13 +195,15 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['text' => 'a body', 'author_id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['text' => 'another body', 'author_id' => 2], $result->fetch('assoc'));
 
-		$result = $query->select(['name' => 'b.name'])->from(['b' => 'authors'])->execute();
+		$result = $query->select(['name' => 'b.name'])->from(['b' => 'authors'])
+			->order(['text' => 'desc'])
+			->execute();
 		$this->assertEquals(
-			['text' => 'a body', 'author_id' => 1, 'name' => 'Chuck Norris'],
+			['text' => 'another body', 'author_id' => 2, 'name' => 'Chuck Norris'],
 			$result->fetch('assoc')
 		);
 		$this->assertEquals(
-			['text' => 'another body', 'author_id' => 2, 'name' => 'Chuck Norris'],
+			['text' => 'another body', 'author_id' => 2, 'name' => 'Bruce Lee'],
 			$result->fetch('assoc')
 		);
 	}
