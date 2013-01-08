@@ -338,8 +338,17 @@ class Query implements IteratorAggregate  {
 		return sprintf (' ORDER BY %s', implode(', ', $order));
 	}
 
-	public function group($field, $overwrite = true) {
-		$this->_parts['group'][] = $field;
+	public function group($fields, $overwrite = false) {
+		if ($overwrite) {
+			$this->_parts['group'] = [];
+		}
+
+		if (!is_array($fields)) {
+			$fields = [$fields];
+		}
+
+		$this->_parts['group'] = array_merge($this->_parts['group'], array_values($fields));
+		$this->_dirty = true;
 		return $this;
 	}
 
