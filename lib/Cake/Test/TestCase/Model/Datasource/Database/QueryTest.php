@@ -186,6 +186,30 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that tables can also be aliased and referenced in the select clause using such alias
+ *
+ * @return void
+ **/
+	public function testSelectAliasedTables() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$result = $query->select(['text' => 'a.body', 'a.author_id'])
+			->from(['a' => 'articles'])->execute();
+		$this->assertEquals(['text' => 'a body', 'author_id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['text' => 'another body', 'author_id' => 2], $result->fetch('assoc'));
+
+		$result = $query->select(['name' => 'b.name'])->from(['b' => 'authors'])->execute();
+		$this->assertEquals(
+			['text' => 'a body', 'author_id' => 1, 'name' => 'Chuck Norris'],
+			$result->fetch('assoc')
+		);
+		$this->assertEquals(
+			['text' => 'another body', 'author_id' => 2, 'name' => 'Chuck Norris'],
+			$result->fetch('assoc')
+		);
+	}
+
+/**
  * Tests it is possible to add joins to a select query
  *
  * @return void

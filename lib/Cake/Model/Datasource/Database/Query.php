@@ -40,7 +40,6 @@ class Query implements IteratorAggregate  {
 		];
 
 	protected $_templates = [
-		'from' => ' FROM %s',
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
@@ -207,12 +206,25 @@ class Query implements IteratorAggregate  {
 		if ($overwrite) {
 			$this->_parts['from'] = $tables;
 		} else {
-			$this->_parts['from'] =  array_merge($this->_parts['from'], array_values($tables));
+			$this->_parts['from'] =  array_merge($this->_parts['from'], $tables);
 		}
 
 		$this->_dirty = true;
 		return $this;
 	}
+
+	public function _buildFromPart($parts) {
+		$select = ' FROM %s';
+		$normalized = [];
+		foreach ($parts as $k => $p) {
+			if (!is_numeric($k)) {
+				$p = $p . ' ' . $k;
+			}
+			$normalized[] = $p;
+		}
+		return sprintf($select, implode(', ', $normalized));
+	}
+
 
 	public function join($tables = null, $types = [], $overwrite = false) {
 		if ($tables === null) {
@@ -326,7 +338,7 @@ class Query implements IteratorAggregate  {
 		return sprintf (' ORDER BY %s', implode(', ', $order));
 	}
 
-	public function group($field) {
+	public function group($field, $overwrite = true) {
 		$this->_parts['group'][] = $field;
 		return $this;
 	}
