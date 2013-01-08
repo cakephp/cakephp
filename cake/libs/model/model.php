@@ -1701,9 +1701,7 @@ class Model extends Overloadable {
 						break;
 						case 'hasMany':
 							if (!$validating) {
-								foreach ($values as $i => $value) {
-									$values[$i][$this->{$type}[$association]['foreignKey']] =  $this->id;
-								}
+								$values[$this->{$type}[$association]['foreignKey']] =  $this->id;
 							}
 
 							$_options = array_merge($options, array('atomic' => false));
