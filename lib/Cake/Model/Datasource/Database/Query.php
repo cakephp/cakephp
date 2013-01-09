@@ -202,9 +202,9 @@ class Query implements IteratorAggregate  {
 		}
 
 		if (is_array($this->_distinct)) {
-			//Supports DISTINCT ON?
-			if (false) {
-
+			//todo: ask driver if it cannot support distinct on
+			if (true) {
+				$this->group($this->_distinct, true);
 			} else {
 				$distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $this->_distinct));
 			}

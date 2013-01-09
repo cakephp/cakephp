@@ -1075,6 +1075,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 
 		$result = $query->distinct()->execute();
 		$this->assertCount(2, $result);
+
+		$result = $query->select(['id'])->distinct(false)->execute();
+		$this->assertCount(3, $result);
+
+		$result = $query->select(['id'])->distinct(['author_id'])->execute();
+		$this->assertCount(2, $result);
 	}
 
 }
