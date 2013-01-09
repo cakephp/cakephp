@@ -532,6 +532,7 @@ class Hash {
 					$stack[] = array($data, $path);
 				}
 				$data = $element;
+				reset($data);
 				$path .= $key . $separator;
 			} else {
 				$result[$path . $key] = $element;
@@ -539,6 +540,7 @@ class Hash {
 
 			if (empty($data) && !empty($stack)) {
 				list($data, $path) = array_pop($stack);
+				reset($data);
 			}
 		}
 		return $result;

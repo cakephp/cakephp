@@ -204,19 +204,16 @@ class CakeFixtureManager {
 			return;
 		}
 
-		$nested = $test->db->useNestedTransactions;
-		$test->db->useNestedTransactions = false;
-		$test->db->begin();
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
+				$db->begin();
 				$this->_setupTable($fixture, $db, $test->dropTables);
 				$fixture->insert($db);
+				$db->commit();
 			}
 		}
-		$test->db->commit();
-		$test->db->useNestedTransactions = $nested;
 	}
 
 /**

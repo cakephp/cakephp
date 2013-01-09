@@ -1485,6 +1485,10 @@ class FormHelper extends AppHelper {
 		$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
 		unset($attributes['hiddenField']);
 
+		if (isset($value) && is_bool($value)) {
+			$value = $value ? 1 : 0;
+		}
+
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
 
