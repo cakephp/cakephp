@@ -25,6 +25,7 @@ App::uses('View', 'View');
  * Stub class for 2.1 Compatibility
  *
  * @package       Cake.View
+ * @deprecated Deprecated since 2.1, use View class instead
  */
 class ThemeView extends View {
 

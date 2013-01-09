@@ -830,7 +830,7 @@ class DboSource extends DataSource {
 		}
 		if (preg_match('/^([\w-]+)\((.*)\)$/', $data, $matches)) { // Functions
 			return $this->cacheMethod(__FUNCTION__, $cacheKey,
-				 $matches[1] . '(' . $this->name($matches[2]) . ')'
+				$matches[1] . '(' . $this->name($matches[2]) . ')'
 			);
 		}
 		if (
@@ -2282,7 +2282,8 @@ class DboSource extends DataSource {
 			$virtualFields,
 			$fields,
 			$quote,
-			ConnectionManager::getSourceName($this)
+			ConnectionManager::getSourceName($this),
+			$model->table
 		);
 		$cacheKey = md5(serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
@@ -2464,6 +2465,10 @@ class DboSource extends DataSource {
 					$not = 'NOT ';
 				}
 
+				if (empty($value)) {
+					continue;
+				}
+
 				if (empty($value[1])) {
 					if ($not) {
 						$out[] = $not . '(' . $value[0] . ')';
@@ -2490,16 +2495,16 @@ class DboSource extends DataSource {
 						$count = count($value);
 						if ($count === 1 && !preg_match("/\s+NOT$/", $key)) {
 							$data = $this->_quoteFields($key) . ' = (';
-						} else {
-							$data = $this->_quoteFields($key) . ' IN (';
-						}
-						if ($quoteValues) {
-							if (is_object($model)) {
-								$columnType = $model->getColumnType($key);
+							if ($quoteValues) {
+								if (is_object($model)) {
+									$columnType = $model->getColumnType($key);
+								}
+								$data .= implode(', ', $this->value($value, $columnType));
 							}
-							$data .= implode(', ', $this->value($value, $columnType));
+							$data .= ')';
+						} else {
+							$data = $this->_parseKey($model, $key, $value);
 						}
-						$data .= ')';
 					} else {
 						$ret = $this->conditionKeysToString($value, $quoteValues, $model);
 						if (count($ret) > 1) {
@@ -2569,7 +2574,11 @@ class DboSource extends DataSource {
 		$value = $this->value($value, $type);
 
 		if (!$virtual && $key !== '?') {
-			$isKey = (strpos($key, '(') !== false || strpos($key, ')') !== false);
+			$isKey = (
+				strpos($key, '(') !== false ||
+				strpos($key, ')') !== false ||
+				strpos($key, '|') !== false
+			);
 			$key = $isKey ? $this->_quoteFields($key) : $this->name($key);
 		}
 
@@ -2917,6 +2926,10 @@ class DboSource extends DataSource {
 			}
 			$statement->execute();
 			$statement->closeCursor();
+
+			if ($this->fullDebug) {
+				$this->logQuery($sql, $value);
+			}
 		}
 		return $this->commit();
 	}
@@ -2984,7 +2997,7 @@ class DboSource extends DataSource {
 						$tableParameters = array_merge($tableParameters, $this->buildTableParameters($col, $table));
 					}
 				}
-				if (empty($indexes) && !empty($primary)) {
+				if (!isset($columns['indexes']['PRIMARY']) && !empty($primary)) {
 					$col = array('PRIMARY' => array('column' => $primary, 'unique' => 1));
 					$indexes = array_merge($indexes, $this->buildIndex($col, $table));
 				}

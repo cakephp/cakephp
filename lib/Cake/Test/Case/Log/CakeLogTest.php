@@ -150,7 +150,7 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertEquals(array('file'), $result);
 
 		if (file_exists(LOGS . 'error.log')) {
-			@unlink(LOGS . 'error.log');
+			unlink(LOGS . 'error.log');
 		}
 		CakeLog::write(LOG_WARNING, 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
@@ -175,7 +175,7 @@ class CakeLogTest extends CakeTestCase {
 
 		CakeLog::drop('file');
 		$result = CakeLog::configured();
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 	}
 
 /**
@@ -382,7 +382,6 @@ class CakeLogTest extends CakeTestCase {
 
 		CakeLog::drop('shops');
 	}
-
 
 	public function testScopedLoggingExclusive() {
 		$this->_deleteLogs();

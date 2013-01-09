@@ -987,7 +987,6 @@ class Multibyte {
  * @param string $charset charset to use for encoding. defaults to UTF-8
  * @param string $newline
  * @return string
- * @TODO: add support for 'Q'('Quoted Printable') encoding
  */
 	public static function mimeEncode($string, $charset = null, $newline = "\r\n") {
 		if (!Multibyte::checkMultibyte($string) && strlen($string) < 75) {
@@ -1008,7 +1007,8 @@ class Multibyte {
 		if ($charset == 'UTF-8') {
 			$parts = array();
 			$maxchars = floor(($length * 3) / 4);
-			while (strlen($string) > $maxchars) {
+			$stringLength = strlen($string);
+			while ($stringLength > $maxchars) {
 				$i = (int)$maxchars;
 				$test = ord($string[$i]);
 				while ($test >= 128 && $test <= 191) {
@@ -1017,6 +1017,7 @@ class Multibyte {
 				}
 				$parts[] = base64_encode(substr($string, 0, $i));
 				$string = substr($string, $i);
+				$stringLength = strlen($string);
 			}
 			$parts[] = base64_encode($string);
 			$string = implode($spacer, $parts);

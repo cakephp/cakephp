@@ -29,7 +29,9 @@ class JsEncodingObject {
 
 	protected $_title = 'Old thing';
 
+	//@codingStandardsIgnoreStart
 	private $__noshow = 'Never ever';
+	//@codingStandardsIgnoreEnd
 
 }
 
@@ -366,7 +368,9 @@ class JsHelperTest extends CakeTestCase {
 		$this->assertTrue(file_exists(WWW_ROOT . $filename[1]));
 		$contents = file_get_contents(WWW_ROOT . $filename[1]);
 		$this->assertRegExp('/one\s=\s1;\ntwo\s=\s2;/', $contents);
-		@unlink(WWW_ROOT . $filename[1]);
+		if (file_exists(WWW_ROOT . $filename[1])) {
+			unlink(WWW_ROOT . $filename[1]);
+		}
 
 		Configure::write('Cache.disable', true);
 		$this->Js->buffer('one = 1;');
@@ -904,7 +908,7 @@ class JsBaseEngineTest extends CakeTestCase {
 	public function testOptionMapping() {
 		$JsEngine = new OptionEngineHelper($this->View);
 		$result = $JsEngine->testMap();
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		$result = $JsEngine->testMap(array('foo' => 'bar', 'baz' => 'sho'));
 		$this->assertEquals(array('foo' => 'bar', 'baz' => 'sho'), $result);

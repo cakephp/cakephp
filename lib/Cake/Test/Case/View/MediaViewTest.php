@@ -36,7 +36,10 @@ class MediaViewTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->MediaView = $this->getMock('MediaView', array('_isActive', '_clearBuffer', '_flushBuffer'));
-		$this->MediaView->response = $this->getMock('CakeResponse');
+		$this->MediaView->response = $this->getMock(
+			'CakeResponse',
+			array('send', 'cache', 'type', 'download', 'statusCode')
+		);
 	}
 
 /**
@@ -83,20 +86,6 @@ class MediaViewTest extends CakeTestCase {
 			->with('css')
 			->will($this->returnArgument(0));
 
-		$this->MediaView->response->expects($this->at(1))
-			->method('header')
-			->with(array(
-				'Date' => gmdate('D, d M Y H:i:s', time()) . ' GMT',
-				'Expires' => '0',
-				'Cache-Control' => 'private, must-revalidate, post-check=0, pre-check=0',
-				'Pragma' => 'no-cache'
-			));
-
-		$this->MediaView->response->expects($this->at(2))
-			->method('header')
-			->with(array(
-				'Content-Length' => 31
-			));
 		$this->MediaView->response->expects($this->once())->method('send');
 		$this->MediaView->expects($this->once())->method('_clearBuffer');
 		$this->MediaView->expects($this->once())->method('_flushBuffer');
@@ -106,6 +95,16 @@ class MediaViewTest extends CakeTestCase {
 		$output = ob_get_clean();
 		$this->assertEquals('this is the test asset css file', $output);
 		$this->assertTrue($result !== false);
+
+		$headers = $this->MediaView->response->header();
+		$this->assertEquals(31, $headers['Content-Length']);
+		$this->assertEquals(0, $headers['Expires']);
+		$this->assertEquals(
+			'private, must-revalidate, post-check=0, pre-check=0',
+			$headers['Cache-Control']
+		);
+		$this->assertEquals('no-cache', $headers['Pragma']);
+		$this->assertContains(gmdate('D, d M Y H:i', time()), $headers['Date']);
 	}
 
 /**
@@ -130,28 +129,9 @@ class MediaViewTest extends CakeTestCase {
 			->with('ini')
 			->will($this->returnValue(false));
 
-		$this->MediaView->response->expects($this->at(1))
-			->method('header')
-			->with(array(
-				'Date' => gmdate('D, d M Y H:i:s', time()) . ' GMT',
-				'Expires' => '0',
-				'Cache-Control' => 'private, must-revalidate, post-check=0, pre-check=0',
-				'Pragma' => 'no-cache'
-			));
-
 		$this->MediaView->response->expects($this->once())
 			->method('download')
 			->with('no_section.ini');
-
-		$this->MediaView->response->expects($this->at(3))
-			->method('header')
-			->with(array(
-				'Accept-Ranges' => 'bytes'
-			));
-
-		$this->MediaView->response->expects($this->at(4))
-			->method('header')
-			->with('Content-Length', 35);
 
 		$this->MediaView->response->expects($this->once())->method('send');
 		$this->MediaView->expects($this->once())->method('_clearBuffer');
@@ -165,6 +145,17 @@ class MediaViewTest extends CakeTestCase {
 		if ($currentUserAgent !== null) {
 			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
 		}
+
+		$headers = $this->MediaView->response->header();
+		$this->assertEquals(35, $headers['Content-Length']);
+		$this->assertEquals(0, $headers['Expires']);
+		$this->assertEquals('bytes', $headers['Accept-Ranges']);
+		$this->assertEquals(
+			'private, must-revalidate, post-check=0, pre-check=0',
+			$headers['Cache-Control']
+		);
+		$this->assertEquals('no-cache', $headers['Pragma']);
+		$this->assertContains(gmdate('D, d M Y H:i', time()), $headers['Date']);
 	}
 
 /**
@@ -190,15 +181,6 @@ class MediaViewTest extends CakeTestCase {
 			->will($this->returnValue(false));
 
 		$this->MediaView->response->expects($this->at(1))
-			->method('header')
-			->with(array(
-				'Date' => gmdate('D, d M Y H:i:s', time()) . ' GMT',
-				'Expires' => '0',
-				'Cache-Control' => 'private, must-revalidate, post-check=0, pre-check=0',
-				'Pragma' => 'no-cache'
-			));
-
-		$this->MediaView->response->expects($this->at(2))
 			->method('type')
 			->with('application/octetstream')
 			->will($this->returnValue(false));
@@ -206,16 +188,6 @@ class MediaViewTest extends CakeTestCase {
 		$this->MediaView->response->expects($this->once())
 			->method('download')
 			->with('no_section.ini');
-
-		$this->MediaView->response->expects($this->at(4))
-			->method('header')
-			->with(array(
-				'Accept-Ranges' => 'bytes'
-			));
-
-		$this->MediaView->response->expects($this->at(5))
-			->method('header')
-			->with('Content-Length', 35);
 
 		$this->MediaView->response->expects($this->once())->method('send');
 		$this->MediaView->expects($this->once())->method('_clearBuffer');
@@ -229,6 +201,17 @@ class MediaViewTest extends CakeTestCase {
 		if ($currentUserAgent !== null) {
 			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
 		}
+
+		$headers = $this->MediaView->response->header();
+		$this->assertEquals(35, $headers['Content-Length']);
+		$this->assertEquals(0, $headers['Expires']);
+		$this->assertEquals('bytes', $headers['Accept-Ranges']);
+		$this->assertEquals(
+			'private, must-revalidate, post-check=0, pre-check=0',
+			$headers['Cache-Control']
+		);
+		$this->assertEquals('no-cache', $headers['Pragma']);
+		$this->assertContains(gmdate('D, d M Y H:i', time()), $headers['Date']);
 	}
 
 /**
@@ -255,15 +238,6 @@ class MediaViewTest extends CakeTestCase {
 			->will($this->returnValue(false));
 
 		$this->MediaView->response->expects($this->at(1))
-			->method('header')
-			->with(array(
-				'Date' => gmdate('D, d M Y H:i:s', time()) . ' GMT',
-				'Expires' => '0',
-				'Cache-Control' => 'private, must-revalidate, post-check=0, pre-check=0',
-				'Pragma' => 'no-cache'
-			));
-
-		$this->MediaView->response->expects($this->at(2))
 			->method('type')
 			->with('application/force-download')
 			->will($this->returnValue(false));
@@ -271,16 +245,6 @@ class MediaViewTest extends CakeTestCase {
 		$this->MediaView->response->expects($this->once())
 			->method('download')
 			->with('config.ini');
-
-		$this->MediaView->response->expects($this->at(4))
-			->method('header')
-			->with(array(
-				'Accept-Ranges' => 'bytes'
-			));
-
-		$this->MediaView->response->expects($this->at(5))
-			->method('header')
-			->with('Content-Length', 35);
 
 		$this->MediaView->response->expects($this->once())->method('send');
 		$this->MediaView->expects($this->once())->method('_clearBuffer');
@@ -294,6 +258,17 @@ class MediaViewTest extends CakeTestCase {
 		if ($currentUserAgent !== null) {
 			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
 		}
+
+		$headers = $this->MediaView->response->header();
+		$this->assertEquals(35, $headers['Content-Length']);
+		$this->assertEquals(0, $headers['Expires']);
+		$this->assertEquals('bytes', $headers['Accept-Ranges']);
+		$this->assertEquals(
+			'private, must-revalidate, post-check=0, pre-check=0',
+			$headers['Cache-Control']
+		);
+		$this->assertEquals('no-cache', $headers['Pragma']);
+		$this->assertContains(gmdate('D, d M Y H:i', time()), $headers['Date']);
 	}
 
 /**

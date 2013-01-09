@@ -25,6 +25,24 @@ require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 class ModelWriteTest extends BaseModelTest {
 
 /**
+ * Test save() failing when there is no data.
+ *
+ * @return void
+ */
+	public function testInsertNoData() {
+		$this->loadFixtures('Bid');
+		$Bid = ClassRegistry::init('Bid');
+
+		$this->assertFalse($Bid->save());
+
+		$result = $Bid->save(array('Bid' => array()));
+		$this->assertFalse($result);
+
+		$result = $Bid->save(array('Bid' => array('not in schema' => 1)));
+		$this->assertFalse($result);
+	}
+
+/**
  * testInsertAnotherHabtmRecordWithSameForeignKey method
  *
  * @access public
@@ -4536,7 +4554,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse($result);
 
 		$result = $model->find('all');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 		$expected = array('Comment' => array(
 			1 => array('comment' => array('This field cannot be left blank'))
 		));
@@ -4726,6 +4744,32 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * test that saveAll still behaves like previous versions (does not necessarily need a first argument)
+ *
+ * @return void
+ */
+	public function testSaveAllWithSet() {
+		$this->loadFixtures('Article', 'Tag', 'Comment', 'User', 'ArticlesTag');
+		$data = array(
+			'Article' => array(
+				'user_id' => 1,
+				'title' => 'Article Has and belongs to Many Tags'
+			),
+			'Tag' => array(
+				'Tag' => array(1, 2)
+			),
+			'Comment' => array(
+				array(
+					'comment' => 'Article comment',
+					'user_id' => 1
+		)));
+		$Article = new Article();
+		$Article->set($data);
+		$result = $Article->saveAll();
+		$this->assertFalse(empty($result));
+	}
+
+/**
  * test that saveAll behaves like plain save() when supplied empty data
  *
  * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
@@ -4740,7 +4784,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 
 		$model = new ProductUpdateAll();
-		$result = $model->saveAll(array());
+		$result = $model->saveAll();
 		$this->assertFalse($result);
 	}
 
@@ -4828,6 +4872,51 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(self::date(), $result[6]['Attachment']['created']);
 		unset($result[6]['Attachment']['updated'], $result[6]['Attachment']['created']);
 		$this->assertEquals($expected, $result[6]['Attachment']);
+	}
+
+/**
+ * Test that validate = first, atomic = false works when associated records
+ * fail validation.
+ *
+ * @return void
+ */
+	public function testSaveAssociatedAtomicFalseValidateFirstWithErrors() {
+		$this->loadFixtures('Comment', 'Article', 'User');
+		$Article = ClassRegistry::init('Article');
+		$Article->Comment->validator()->add('comment', array(
+			array('rule' => 'notEmpty')
+		));
+
+		$data = array(
+			'Article' => array(
+				'user_id' => 1,
+				'title' => 'Foo',
+				'body' => 'text',
+				'published' => 'N'
+			),
+			'Comment' => array(
+				array(
+					'user_id' => 1,
+					'comment' => '',
+					'published' => 'N',
+				)
+			),
+		);
+
+		$Article->saveAssociated(
+			$data,
+			array('validate' => 'first', 'atomic' => false)
+		);
+
+		$result = $Article->validationErrors;
+		$expected = array(
+			'Comment' => array(
+				array(
+					'comment' => array( 'This field cannot be left blank' )
+				)
+			)
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -5869,7 +5958,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse($result);
 
 		$result = $model->find('all');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 		$expected = array('Comment' => array(
 			1 => array('comment' => array('This field cannot be left blank'))
 		));

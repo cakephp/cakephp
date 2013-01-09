@@ -311,9 +311,10 @@ class CakeRequestTest extends CakeTestCase {
 
 		$request = $this->getMock('TestCakeRequest', array('_readInput'));
 		$request->expects($this->at(0))->method('_readInput')
-			->will($this->returnValue('{Article":["title"]}'));
+			->will($this->returnValue('{"Article":["title"]}'));
 		$request->reConstruct();
-		$this->assertEquals('{Article":["title"]}', $request->data);
+		$result = $request->input('json_decode', true);
+		$this->assertEquals(array('title'), $result['Article']);
 	}
 
 /**
@@ -1709,7 +1710,7 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function testEnvironmentDetection($name, $env, $expected) {
 		$_GET = array();
-		$this->__loadEnvironment($env);
+		$this->_loadEnvironment($env);
 
 		$request = new CakeRequest();
 		$this->assertEquals($expected['url'], $request->url, "url error");
@@ -1912,7 +1913,7 @@ XML;
  * @param array $env
  * @return void
  */
-	protected function __loadEnvironment($env) {
+	protected function _loadEnvironment($env) {
 		if (isset($env['App'])) {
 			Configure::write('App', $env['App']);
 		}

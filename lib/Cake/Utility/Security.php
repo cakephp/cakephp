@@ -64,7 +64,6 @@ class Security {
  *
  * @param string $authKey Authorization hash
  * @return boolean Success
- * @todo Complete implementation
  */
 	public static function validateAuthKey($authKey) {
 		return true;

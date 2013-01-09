@@ -211,7 +211,10 @@ class CakeNumber {
  * - `decimals` - Decimal separator symbol ie. '.'
  * - `negative` - Symbol for negative numbers. If equal to '()',
  *   the number will be wrapped with ( and )
- * - `escape` - Should the output be htmlentity escaped? Defaults to true
+ * - `escape` - Should the output be escaped for html special characters.
+ *   The default value for this option is controlled by the currency settings.
+ *   By default the EUR, and GBP contain HTML encoded symbols. If you require non HTML
+ *   encoded symbols you will need to update the settings with the correct bytes.
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are

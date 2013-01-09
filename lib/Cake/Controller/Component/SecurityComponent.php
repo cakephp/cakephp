@@ -218,6 +218,10 @@ class SecurityComponent extends Component {
 			$controller->request->params['requested'] != 1
 		);
 
+		if ($this->_action == $this->blackHoleCallback) {
+			return $this->blackhole($controller, 'auth');
+		}
+
 		if ($isPost && $isNotRequestAction && $this->validatePost) {
 			if ($this->_validatePost($controller) === false) {
 				return $this->blackHole($controller, 'auth');
@@ -309,11 +313,10 @@ class SecurityComponent extends Component {
  * @throws BadRequestException
  */
 	public function blackHole(Controller $controller, $error = '') {
-		if ($this->blackHoleCallback == null) {
+		if (!$this->blackHoleCallback) {
 			throw new BadRequestException(__d('cake_dev', 'The request has been black-holed'));
-		} else {
-			return $this->_callback($controller, $this->blackHoleCallback, array($error));
 		}
+		return $this->_callback($controller, $this->blackHoleCallback, array($error));
 	}
 
 /**

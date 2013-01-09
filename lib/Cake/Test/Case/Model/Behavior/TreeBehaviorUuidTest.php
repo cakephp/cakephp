@@ -248,7 +248,10 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
 			array('className' => $modelClass, 'foreignKey' => $parentField, 'conditions' => array('Dummy.id' => null)))), false);
 
-		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
+		$data = $this->Tree->find('first', array(
+			'conditions' => array($modelClass . '.name' => '1. Root'),
+			'recursive' => -1
+		));
 		$this->Tree->id = $data[$modelClass]['id'];
 
 		$direct = $this->Tree->children(null, true, array('name', $leftField, $rightField));

@@ -763,6 +763,38 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
+ * Test that redirect urls are urldecoded
+ *
+ * @return void
+ */
+	public function testRequestWithRedirectUrlEncoded() {
+		$request = array(
+			'uri' => 'http://localhost/oneuri',
+			'redirect' => 1
+		);
+		$serverResponse1 = "HTTP/1.x 302 Found\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\nLocation: http://i.cmpnet.com%2Ftechonline%2Fpdf%2Fa.pdf=\r\n\r\n";
+		$serverResponse2 = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>You have been redirected</h1>";
+
+		$this->Socket->expects($this->at(1))
+			->method('read')
+			->will($this->returnValue($serverResponse1));
+
+		$this->Socket->expects($this->at(3))
+			->method('write')
+			->with($this->logicalAnd(
+				$this->stringContains('Host: i.cmpnet.com'),
+				$this->stringContains('GET /techonline/pdf/a.pdf')
+			));
+
+		$this->Socket->expects($this->at(4))
+			->method('read')
+			->will($this->returnValue($serverResponse2));
+
+		$response = $this->Socket->request($request);
+		$this->assertEquals('<h1>You have been redirected</h1>', $response->body());
+	}
+
+/**
  * testRequestWithRedirect method
  *
  * @return void
@@ -781,6 +813,11 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEquals('<h1>You have been redirected</h1>', $response->body());
 	}
 
+/**
+ * Test that redirects with a count limit are decremented.
+ *
+ * @return void
+ */
 	public function testRequestWithRedirectAsInt() {
 		$request = array(
 			'uri' => 'http://localhost/oneuri',
@@ -795,6 +832,11 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEquals(1, $this->Socket->request['redirect']);
 	}
 
+/**
+ * Test that redirects after the redirect count reaches 9 are not followed.
+ *
+ * @return void
+ */
 	public function testRequestWithRedirectAsIntReachingZero() {
 		$request = array(
 			'uri' => 'http://localhost/oneuri',
@@ -1509,7 +1551,6 @@ class HttpSocketTest extends CakeTestCase {
  * testBuildCookies method
  *
  * @return void
- * @todo Test more scenarios
  */
 	public function testBuildCookies() {
 		$cookies = array(

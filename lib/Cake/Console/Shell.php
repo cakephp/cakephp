@@ -372,7 +372,9 @@ class Shell extends Object {
 		if (!empty($this->params['quiet'])) {
 			$this->_useLogger(false);
 		}
-
+		if (!empty($this->params['plugin'])) {
+			CakePlugin::load($this->params['plugin']);
+		}
 		$this->command = $command;
 		if (!empty($this->params['help'])) {
 			return $this->_displayHelp($command);
@@ -686,7 +688,9 @@ class Shell extends Object {
 	protected function _checkUnitTest() {
 		if (class_exists('PHPUnit_Framework_TestCase')) {
 			return true;
+			//@codingStandardsIgnoreStart
 		} elseif (@include 'PHPUnit' . DS . 'Autoload.php') {
+			//@codingStandardsIgnoreEnd
 			return true;
 		} elseif (App::import('Vendor', 'phpunit', array('file' => 'PHPUnit' . DS . 'Autoload.php'))) {
 			return true;

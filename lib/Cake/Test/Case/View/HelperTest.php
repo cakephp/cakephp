@@ -622,6 +622,9 @@ class HelperTest extends CakeTestCase {
 		$result = $this->Helper->assetUrl('style', array('ext' => '.css'));
 		$this->assertEquals('style.css', $result);
 
+		$result = $this->Helper->assetUrl('dir/sub dir/my image', array('ext' => '.jpg'));
+		$this->assertEquals('dir/sub%20dir/my%20image.jpg', $result);
+
 		$result = $this->Helper->assetUrl('foo.jpg?one=two&three=four');
 		$this->assertEquals('foo.jpg?one=two&amp;three=four', $result);
 	}

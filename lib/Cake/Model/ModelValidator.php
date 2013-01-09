@@ -156,7 +156,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 						$data[$association] = $model->{$association}->data[$model->{$association}->alias];
 					}
 					if (is_array($validates)) {
-						if (in_array(false, $validates, true)) {
+						if (in_array(false, Hash::flatten($validates), true)) {
 							$validates = false;
 						} else {
 							$validates = true;
@@ -220,7 +220,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 				$validates = $model->set($record) && $model->validates($options);
 				$data[$key] = $model->data;
 			}
-			if ($validates === false || (is_array($validates) && in_array(false, $validates, true))) {
+			if ($validates === false || (is_array($validates) && in_array(false, Hash::flatten($validates), true))) {
 				$validationErrors[$key] = $model->validationErrors;
 				$validates = false;
 			} else {

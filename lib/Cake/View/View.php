@@ -562,7 +562,9 @@ class View extends Object {
 
 		if (preg_match('/^<!--cachetime:(\\d+)-->/', $out, $match)) {
 			if (time() >= $match['1']) {
+				//@codingStandardsIgnoreStart
 				@unlink($filename);
+				//@codingStandardsIgnoreEnd
 				unset ($out);
 				return false;
 			} else {
@@ -883,7 +885,7 @@ class View extends Object {
 		$this->getEventManager()->dispatch(new CakeEvent('View.beforeRenderFile', $this, array($viewFile)));
 		$content = $this->_evaluate($viewFile, $data);
 		$afterEvent = new CakeEvent('View.afterRenderFile', $this, array($viewFile, $content));
-		//TODO: For BC puporses, set extra info in the event object. Remove when appropriate
+
 		$afterEvent->modParams = 1;
 		$this->getEventManager()->dispatch($afterEvent);
 		$content = $afterEvent->data[1];
@@ -1056,7 +1058,7 @@ class View extends Object {
 	protected function _getExtensions() {
 		$exts = array($this->ext);
 		if ($this->ext !== '.ctp') {
-			array_push($exts, '.ctp');
+			$exts[] = '.ctp';
 		}
 		return $exts;
 	}
@@ -1109,13 +1111,14 @@ class View extends Object {
 
 		$paths = array_unique(array_merge($paths, $viewPaths));
 		if (!empty($this->theme)) {
+			$theme = Inflector::camelize($this->theme);
 			$themePaths = array();
 			foreach ($paths as $path) {
 				if (strpos($path, DS . 'Plugin' . DS) === false) {
 					if ($plugin) {
-						$themePaths[] = $path . 'Themed' . DS . $this->theme . DS . 'Plugin' . DS . $plugin . DS;
+						$themePaths[] = $path . 'Themed' . DS . $theme . DS . 'Plugin' . DS . $plugin . DS;
 					}
-					$themePaths[] = $path . 'Themed' . DS . $this->theme . DS;
+					$themePaths[] = $path . 'Themed' . DS . $theme . DS;
 				}
 			}
 			$paths = array_merge($themePaths, $paths);

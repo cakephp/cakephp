@@ -142,16 +142,19 @@ class ExceptionRenderer {
  * @return Controller
  */
 	protected function _getController($exception) {
+		App::uses('AppController', 'Controller');
 		App::uses('CakeErrorController', 'Controller');
 		if (!$request = Router::getRequest(true)) {
 			$request = new CakeRequest();
 		}
 		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
 		try {
-			if (class_exists('AppController')) {
-				$controller = new CakeErrorController($request, $response);
-			}
+			$controller = new CakeErrorController($request, $response);
+			$controller->startupProcess();
 		} catch (Exception $e) {
+			if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
+				$controller->RequestHandler->startup($controller);
+			}
 		}
 		if (empty($controller)) {
 			$controller = new Controller($request, $response);
@@ -269,10 +272,11 @@ class ExceptionRenderer {
 			$this->controller->afterFilter();
 			$this->controller->response->send();
 		} catch (MissingViewException $e) {
-			try {
-				$this->_outputMessage('error500');
-			} catch (Exception $e) {
+			$attributes = $e->getAttributes();
+			if (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false) {
 				$this->_outputMessageSafe('error500');
+			} else {
+				$this->_outputMessage('error500');
 			}
 		} catch (Exception $e) {
 			$this->_outputMessageSafe('error500');

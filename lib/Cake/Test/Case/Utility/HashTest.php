@@ -298,7 +298,6 @@ class HashTest extends CakeTestCase {
 				'Author' => array('id' => '3', 'user' => 'larry', 'password' => null),
 			)
 		);
-
 		$result = Hash::flatten($data);
 		$expected = array(
 			'0.Post.id' => '1',
@@ -314,6 +313,21 @@ class HashTest extends CakeTestCase {
 			'1.Author.id' => '3',
 			'1.Author.user' => 'larry',
 			'1.Author.password' => null
+		);
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			array(
+				'Post' => array('id' => '1', 'author_id' => null, 'title' => 'First Post'),
+				'Author' => array(),
+			)
+		);
+		$result = Hash::flatten($data);
+		$expected = array(
+			'0.Post.id' => '1',
+			'0.Post.author_id' => null,
+			'0.Post.title' => 'First Post',
+			'0.Author' => array()
 		);
 		$this->assertEquals($expected, $result);
 
@@ -914,6 +928,9 @@ class HashTest extends CakeTestCase {
  * @return void
  */
 	public function testSort() {
+		$result = Hash::sort(array(), '{n}.name', 'asc');
+		$this->assertEquals(array(), $result);
+
 		$a = array(
 			0 => array(
 				'Person' => array('name' => 'Jeff'),
@@ -2146,6 +2163,144 @@ class HashTest extends CakeTestCase {
 			)
 		);
 		$this->assertEquals($result, $expected);
+	}
+
+/**
+ * Test that flattening a large complex set doesn't loop forever.
+ *
+ * @return void
+ */
+	public function testFlattenInfiniteLoop() {
+		$data = array(
+			'Order.ASI' => '0',
+			'Order.Accounting' => '0',
+			'Order.Admin' => '0',
+			'Order.Art' => '0',
+			'Order.ArtChecker' => '0',
+			'Order.Canned' => '0',
+			'Order.Customer_Tags' => '',
+			'Order.Embroidery' => '0',
+			'Order.Item.0.Product.style_number' => 'a11222',
+			'Order.Item.0.Product.slug' => 'a11222',
+			'Order.Item.0.Product._id' => '4ff8b8d3d7bbe8ad30000000',
+			'Order.Item.0.Product.Color.slug' => 'kelly_green',
+			'Order.Item.0.Product.ColorSizes.0.Color.color' => 'Sport Grey',
+			'Order.Item.0.Product.ColorSizes.0.Color.slug' => 'sport_grey',
+			'Order.Item.0.Product.ColorSizes.1.Color.color' => 'Kelly Green',
+			'Order.Item.0.Product.ColorSizes.1.Color.slug' => 'kelly_green',
+			'Order.Item.0.Product.ColorSizes.2.Color.color' => 'Orange',
+			'Order.Item.0.Product.ColorSizes.2.Color.slug' => 'orange',
+			'Order.Item.0.Product.ColorSizes.3.Color.color' => 'Yellow Haze',
+			'Order.Item.0.Product.ColorSizes.3.Color.slug' => 'yellow_haze',
+			'Order.Item.0.Product.brand' => 'OUTER BANKS',
+			'Order.Item.0.Product.style' => 'T-shirt',
+			'Order.Item.0.Product.description' => 'uhiuhuih oin ooi ioo ioio',
+			'Order.Item.0.Product.sizes.0.Size.qty' => '',
+			'Order.Item.0.Product.sizes.0.Size.size' => '0-3mo',
+			'Order.Item.0.Product.sizes.0.Size.id' => '38',
+			'Order.Item.0.Product.sizes.1.Size.qty' => '',
+			'Order.Item.0.Product.sizes.1.Size.size' => '3-6mo',
+			'Order.Item.0.Product.sizes.1.Size.id' => '39',
+			'Order.Item.0.Product.sizes.2.Size.qty' => '78',
+			'Order.Item.0.Product.sizes.2.Size.size' => '6-9mo',
+			'Order.Item.0.Product.sizes.2.Size.id' => '40',
+			'Order.Item.0.Product.sizes.3.Size.qty' => '',
+			'Order.Item.0.Product.sizes.3.Size.size' => '6-12mo',
+			'Order.Item.0.Product.sizes.3.Size.id' => '41',
+			'Order.Item.0.Product.sizes.4.Size.qty' => '',
+			'Order.Item.0.Product.sizes.4.Size.size' => '12-18mo',
+			'Order.Item.0.Product.sizes.4.Size.id' => '42',
+			'Order.Item.0.Art.imprint_locations.0.id' => 2,
+			'Order.Item.0.Art.imprint_locations.0.name' => 'Left Chest',
+			'Order.Item.0.Art.imprint_locations.0.imprint_type.id' => 7,
+			'Order.Item.0.Art.imprint_locations.0.imprint_type.type' => 'Embroidery',
+			'Order.Item.0.Art.imprint_locations.0.art' => '',
+			'Order.Item.0.Art.imprint_locations.0.num_colors' => 3,
+			'Order.Item.0.Art.imprint_locations.0.description' => 'Wooo! This is Embroidery!!',
+			'Order.Item.0.Art.imprint_locations.0.lines.0' => 'Platen',
+			'Order.Item.0.Art.imprint_locations.0.lines.1' => 'Logo',
+			'Order.Item.0.Art.imprint_locations.0.height' => 4,
+			'Order.Item.0.Art.imprint_locations.0.width' => 5,
+			'Order.Item.0.Art.imprint_locations.0.stitch_density' => 'Light',
+			'Order.Item.0.Art.imprint_locations.0.metallic_thread' => true,
+			'Order.Item.0.Art.imprint_locations.1.id' => 4,
+			'Order.Item.0.Art.imprint_locations.1.name' => 'Full Back',
+			'Order.Item.0.Art.imprint_locations.1.imprint_type.id' => 6,
+			'Order.Item.0.Art.imprint_locations.1.imprint_type.type' => 'Screenprinting',
+			'Order.Item.0.Art.imprint_locations.1.art' => '',
+			'Order.Item.0.Art.imprint_locations.1.num_colors' => 3,
+			'Order.Item.0.Art.imprint_locations.1.description' => 'Wooo! This is Screenprinting!!',
+			'Order.Item.0.Art.imprint_locations.1.lines.0' => 'Platen',
+			'Order.Item.0.Art.imprint_locations.1.lines.1' => 'Logo',
+			'Order.Item.0.Art.imprint_locations.2.id' => 26,
+			'Order.Item.0.Art.imprint_locations.2.name' => 'HS - JSY Name Below',
+			'Order.Item.0.Art.imprint_locations.2.imprint_type.id' => 9,
+			'Order.Item.0.Art.imprint_locations.2.imprint_type.type' => 'Names',
+			'Order.Item.0.Art.imprint_locations.2.description' => 'Wooo! This is Names!!',
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.0.active' => 1,
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.0.name' => 'Benjamin Talavera',
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.0.color' => 'Red',
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.0.height' => '3',
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.0.layout' => 'Arched',
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.0.style' => 'Classic',
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.1.active' => 0,
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.1.name' => 'Rishi Narayan',
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.1.color' => 'Cardinal',
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.1.height' => '4',
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.1.layout' => 'Straight',
+			'Order.Item.0.Art.imprint_locations.2.sizes.S.1.style' => 'Team US',
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.0.active' => 1,
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.0.name' => 'Brandon Plasters',
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.0.color' => 'Red',
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.0.height' => '3',
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.0.layout' => 'Arched',
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.0.style' => 'Classic',
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.1.active' => 0,
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.1.name' => 'Andrew Reed',
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.1.color' => 'Cardinal',
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.1.height' => '4',
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.1.layout' => 'Straight',
+			'Order.Item.0.Art.imprint_locations.2.sizes.M.1.style' => 'Team US',
+			'Order.Job.0._id' => 'job-1',
+			'Order.Job.0.type' => 'screenprinting',
+			'Order.Job.0.postPress' => 'job-2',
+			'Order.Job.1._id' => 'job-2',
+			'Order.Job.1.type' => 'embroidery',
+			'Order.Postpress' => '0',
+			'Order.PriceAdjustment.0._id' => 'price-adjustment-1',
+			'Order.PriceAdjustment.0.adjustment' => '-20',
+			'Order.PriceAdjustment.0.adjustment_type' => 'percent',
+			'Order.PriceAdjustment.0.type' => 'grand_total',
+			'Order.PriceAdjustment.1.adjustment' => '20',
+			'Order.PriceAdjustment.1.adjustment_type' => 'flat',
+			'Order.PriceAdjustment.1.min-items' => '10',
+			'Order.PriceAdjustment.1.type' => 'min-items',
+			'Order.PriceAdjustment.1._id' => 'another-test-adjustment',
+			'Order.Purchasing' => '0',
+			'Order.QualityControl' => '0',
+			'Order.Receiving' => '0',
+			'Order.ScreenPrinting' => '0',
+			'Order.Stage.art_approval' => 0,
+			'Order.Stage.draft' => 1,
+			'Order.Stage.quote' => 1,
+			'Order.Stage.order' => 1,
+			'Order.StoreLiason' => '0',
+			'Order.Tag_UI_Email' => '',
+			'Order.Tags' => '',
+			'Order._id' => 'test-2',
+			'Order.add_print_location' => '',
+			'Order.created' => '2011-Dec-29 05:40:18',
+			'Order.force_admin' => '0',
+			'Order.modified' => '2012-Jul-25 01:24:49',
+			'Order.name' => 'towering power',
+			'Order.order_id' => '135961',
+			'Order.slug' => 'test-2',
+			'Order.title' => 'test job 2',
+			'Order.type' => 'ttt'
+		);
+		$expanded = Hash::expand($data);
+		$flattened = Hash::flatten($expanded);
+		$this->assertEquals($data, $flattened);
 	}
 
 }

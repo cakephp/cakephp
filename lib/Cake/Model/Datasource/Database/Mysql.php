@@ -443,6 +443,12 @@ class Mysql extends DboSource {
 					$col[] = $idx->Column_name;
 					$index[$idx->Key_name]['column'] = $col;
 				}
+				if (!empty($idx->Sub_part)) {
+					if (!isset($index[$idx->Key_name]['length'])) {
+						$index[$idx->Key_name]['length'] = array();
+					}
+					$index[$idx->Key_name]['length'][$idx->Column_name] = $idx->Sub_part;
+				}
 			}
 			// @codingStandardsIgnoreEnd
 			$indices->closeCursor();
@@ -544,6 +550,55 @@ class Mysql extends DboSource {
 	}
 
 /**
+ * Format indexes for create table
+ *
+ * @param array $indexes An array of indexes to generate SQL from
+ * @param string $table Optional table name, not used
+ * @return array An array of SQL statements for indexes
+ * @see DboSource::buildIndex()
+ */
+	public function buildIndex($indexes, $table = null) {
+		$join = array();
+		foreach ($indexes as $name => $value) {
+			$out = '';
+			if ($name === 'PRIMARY') {
+				$out .= 'PRIMARY ';
+				$name = null;
+			} else {
+				if (!empty($value['unique'])) {
+					$out .= 'UNIQUE ';
+				}
+				$name = $this->startQuote . $name . $this->endQuote;
+			}
+			// length attribute only used for MySQL datasource, for TEXT/BLOB index columns
+			$out .= 'KEY ' . $name . ' (';
+			if (is_array($value['column'])) {
+				if (isset($value['length'])) {
+					$vals = array();
+					foreach ($value['column'] as $column) {
+						$name = $this->name($column);
+						if (isset($value['length'])) {
+							$name .= $this->_buildIndexSubPart($value['length'], $column);
+						}
+						$vals[] = $name;
+					}
+					$out .= implode(', ', $vals);
+				} else {
+					$out .= implode(', ', array_map(array(&$this, 'name'), $value['column']));
+				}
+			} else {
+				$out .= $this->name($value['column']);
+				if (isset($value['length'])) {
+					$out .= $this->_buildIndexSubPart($value['length'], $value['column']);
+				}
+			}
+			$out .= ')';
+			$join[] = $out;
+		}
+		return $join;
+	}
+
+/**
  * Generate MySQL index alteration statements for a table.
  *
  * @param string $table Table to alter indexes for
@@ -558,31 +613,35 @@ class Mysql extends DboSource {
 				if ($name == 'PRIMARY') {
 					$out .= 'PRIMARY KEY';
 				} else {
-					$out .= 'KEY ' . $name;
+					$out .= 'KEY ' . $this->startQuote . $name . $this->endQuote;
 				}
 				$alter[] = $out;
 			}
 		}
 		if (isset($indexes['add'])) {
-			foreach ($indexes['add'] as $name => $value) {
-				$out = 'ADD ';
-				if ($name == 'PRIMARY') {
-					$out .= 'PRIMARY ';
-					$name = null;
-				} else {
-					if (!empty($value['unique'])) {
-						$out .= 'UNIQUE ';
-					}
-				}
-				if (is_array($value['column'])) {
-					$out .= 'KEY ' . $name . ' (' . implode(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
-				} else {
-					$out .= 'KEY ' . $name . ' (' . $this->name($value['column']) . ')';
-				}
-				$alter[] = $out;
+			$add = $this->buildIndex($indexes['add']);
+			foreach ($add as $index) {
+				$alter[] = 'ADD ' . $index;
 			}
 		}
 		return $alter;
+	}
+
+/**
+ * Format length for text indexes
+ *
+ * @param array $lengths An array of lengths for a single index
+ * @param string $column The column for which to generate the index length
+ * @return string Formatted length part of an index field
+ */
+	protected function _buildIndexSubPart($lengths, $column) {
+		if (is_null($lengths)) {
+			return '';
+		}
+		if (!isset($lengths[$column])) {
+			return '';
+		}
+		return '(' . $lengths[$column] . ')';
 	}
 
 /**

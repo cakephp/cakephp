@@ -292,37 +292,53 @@ class Helper extends Object {
  */
 	public function assetUrl($path, $options = array()) {
 		if (is_array($path)) {
-			$path = $this->url($path, !empty($options['fullBase']));
-		} elseif (strpos($path, '://') === false) {
-			if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
-				list($plugin, $path) = $this->_View->pluginSplit($path, false);
-			}
-			if (!empty($options['pathPrefix']) && $path[0] !== '/') {
-				$path = $options['pathPrefix'] . $path;
-			}
-			if (
-				!empty($options['ext']) &&
-				strpos($path, '?') === false &&
-				substr($path, -strlen($options['ext'])) !== $options['ext']
-			) {
-				$path .= $options['ext'];
-			}
-			if (isset($plugin)) {
-				$path = Inflector::underscore($plugin) . '/' . $path;
-			}
-			$path = h($this->assetTimestamp($this->webroot($path)));
-
-			if (!empty($options['fullBase'])) {
-				$base = $this->url('/', true);
-				$len = strlen($this->request->webroot);
-				if ($len) {
-					$base = substr($base, 0, -$len);
-				}
-				$path = $base . $path;
-			}
+			return $this->url($path, !empty($options['fullBase']));
 		}
+		if (strpos($path, '://') !== false) {
+			return $path;
+		}
+		if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
+			list($plugin, $path) = $this->_View->pluginSplit($path, false);
+		}
+		if (!empty($options['pathPrefix']) && $path[0] !== '/') {
+			$path = $options['pathPrefix'] . $path;
+		}
+		if (
+			!empty($options['ext']) &&
+			strpos($path, '?') === false &&
+			substr($path, -strlen($options['ext'])) !== $options['ext']
+		) {
+			$path .= $options['ext'];
+		}
+		if (isset($plugin)) {
+			$path = Inflector::underscore($plugin) . '/' . $path;
+		}
+		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
+		if (!empty($options['fullBase'])) {
+			$base = $this->url('/', true);
+			$len = strlen($this->request->webroot);
+			if ($len) {
+				$base = substr($base, 0, -$len);
+			}
+			$path = $base . $path;
+		}
 		return $path;
+	}
+
+/**
+ * Encodes a URL for use in HTML attributes.
+ *
+ * @param string $url The url to encode.
+ * @return string The url encoded for both URL & HTML contexts.
+ */
+	protected function _encodeUrl($url) {
+		$path = parse_url($url, PHP_URL_PATH);
+		$encoded = implode('/', array_map(
+			'rawurlencode',
+			explode('/', $path)
+		));
+		return h(str_replace($path, $encoded, $url));
 	}
 
 /**
@@ -340,20 +356,26 @@ class Helper extends Object {
 			$filepath = preg_replace('/^' . preg_quote($this->request->webroot, '/') . '/', '', $path);
 			$webrootPath = WWW_ROOT . str_replace('/', DS, $filepath);
 			if (file_exists($webrootPath)) {
+				//@codingStandardsIgnoreStart
 				return $path . '?' . @filemtime($webrootPath);
+				//@codingStandardsIgnoreEnd
 			}
 			$segments = explode('/', ltrim($filepath, '/'));
 			if ($segments[0] === 'theme') {
 				$theme = $segments[1];
 				unset($segments[0], $segments[1]);
 				$themePath = App::themePath($theme) . 'webroot' . DS . implode(DS, $segments);
+				//@codingStandardsIgnoreStart
 				return $path . '?' . @filemtime($themePath);
+				//@codingStandardsIgnoreEnd
 			} else {
 				$plugin = Inflector::camelize($segments[0]);
 				if (CakePlugin::loaded($plugin)) {
 					unset($segments[0]);
 					$pluginPath = CakePlugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
+					//@codingStandardsIgnoreStart
 					return $path . '?' . @filemtime($pluginPath);
+					//@codingStandardsIgnoreEnd
 				}
 			}
 		}
@@ -593,7 +615,6 @@ class Helper extends Object {
  * @param string $id The name of the 'id' attribute.
  * @return mixed If $options was an array, an array will be returned with $id set.  If a string
  *   was supplied, a string will be returned.
- * @todo Refactor this method to not have as many input/output options.
  */
 	public function domId($options = null, $id = 'id') {
 		if (is_array($options) && array_key_exists($id, $options) && $options[$id] === null) {
@@ -626,7 +647,6 @@ class Helper extends Object {
  * @param string $key The name of the attribute to be set, defaults to 'name'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
- * @todo Refactor this method to not have as many input/output options.
  */
 	protected function _name($options = array(), $field = null, $key = 'name') {
 		if ($options === null) {
@@ -670,7 +690,6 @@ class Helper extends Object {
  * @param string $key The name of the attribute to be set, defaults to 'value'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
- * @todo Refactor this method to not have as many input/output options.
  */
 	public function value($options = array(), $field = null, $key = 'value') {
 		if ($options === null) {
@@ -722,8 +741,7 @@ class Helper extends Object {
 
 /**
  * Sets the defaults for an input tag.  Will set the
- * name, value, and id attributes for an array of html attributes. Will also
- * add a 'form-error' class if the field contains validation errors.
+ * name, value, and id attributes for an array of html attributes.
  *
  * @param string $field The field name to initialize.
  * @param array $options Array of options to use while initializing an input field.

@@ -96,7 +96,7 @@ class Hash {
 			return (array)self::get($data, $path);
 		}
 
-		if (strpos('[', $path) === false) {
+		if (strpos($path, '[') === false) {
 			$tokens = explode('.', $path);
 		} else {
 			$tokens = String::tokenize($path, '.', '[', ']');
@@ -527,11 +527,12 @@ class Hash {
 			$element = $data[$key];
 			unset($data[$key]);
 
-			if (is_array($element)) {
+			if (is_array($element) && !empty($element)) {
 				if (!empty($data)) {
 					$stack[] = array($data, $path);
 				}
 				$data = $element;
+				reset($data);
 				$path .= $key . $separator;
 			} else {
 				$result[$path . $key] = $element;
@@ -539,6 +540,7 @@ class Hash {
 
 			if (empty($data) && !empty($stack)) {
 				list($data, $path) = array_pop($stack);
+				reset($data);
 			}
 		}
 		return $result;
@@ -698,6 +700,17 @@ class Hash {
  * Apply a callback to a set of extracted values using `$function`.
  * The function will get the extracted values as the first argument.
  *
+ * ### Example
+ *
+ * You can easily count the results of an extract using apply().
+ * For example to count the comments on an Article:
+ *
+ * `$count = Hash::apply($data, 'Article.Comment.{n}', 'count');`
+ *
+ * You could also use a function like `array_sum` to sum the results.
+ *
+ * `$total = Hash::apply($data, '{n}.Item.price', 'array_sum');`
+ *
  * @param array $data The data to reduce.
  * @param string $path The path to extract from $data.
  * @return mixed The results of the applied method.
@@ -730,6 +743,9 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::sort
  */
 	public static function sort(array $data, $path, $dir, $type = 'regular') {
+		if (empty($data)) {
+			return array();
+		}
 		$originalKeys = array_keys($data);
 		$numeric = is_numeric(implode('', $originalKeys));
 		if ($numeric) {

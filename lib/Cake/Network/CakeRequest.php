@@ -15,8 +15,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::uses('Set', 'Utility');
+App::uses('Hash', 'Utility');
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -163,11 +162,12 @@ class CakeRequest implements ArrayAccess {
 	protected function _processPost() {
 		if ($_POST) {
 			$this->data = $_POST;
-		} elseif ($this->is('put') || $this->is('delete')) {
-			$this->data = $this->_readInput();
-			if (strpos(env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0) {
-				parse_str($this->data, $this->data);
-			}
+		} elseif (
+			($this->is('put') || $this->is('delete')) &&
+			strpos(env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
+		) {
+				$data = $this->_readInput();
+				parse_str($data, $this->data);
 		}
 		if (ini_get('magic_quotes_gpc') === '1') {
 			$this->data = stripslashes_deep($this->data);
@@ -353,7 +353,7 @@ class CakeRequest implements ArrayAccess {
 				$this->_processFileData($newPath, $fields, $field);
 			} else {
 				$newPath .= '.' . $field;
-				$this->data = Set::insert($this->data, $newPath, $fields);
+				$this->data = Hash::insert($this->data, $newPath, $fields);
 			}
 		}
 	}

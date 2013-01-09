@@ -300,7 +300,7 @@ class ViewTest extends CakeTestCase {
 		$this->Controller->params['pass'] = array('home');
 
 		$ThemeView = new TestThemeView($this->Controller);
-		$ThemeView->theme = 'TestTheme';
+		$ThemeView->theme = 'test_theme';
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages' . DS . 'home.ctp';
 		$result = $ThemeView->getViewFileName('home');
 		$this->assertEquals($expected, $result);
@@ -309,6 +309,7 @@ class ViewTest extends CakeTestCase {
 		$result = $ThemeView->getViewFileName('/Posts/index');
 		$this->assertEquals($expected, $result);
 
+		$ThemeView->theme = 'TestTheme';
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Layouts' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEquals($expected, $result);
@@ -546,11 +547,7 @@ class ViewTest extends CakeTestCase {
 		$this->ThemeController->params['pass'] = array('home');
 
 		$View = new TestThemeView($this->ThemeController);
-		ob_start();
-		$result = $View->getViewFileName('does_not_exist');
-		$expected = ob_get_clean();
-		$this->assertRegExp("/PagesController::/", $expected);
-		$this->assertRegExp("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)pages(\/|\\\)does_not_exist.ctp/", $expected);
+		$View->getViewFileName('does_not_exist');
 	}
 
 /**
@@ -577,11 +574,7 @@ class ViewTest extends CakeTestCase {
 		$this->ThemeController->theme = 'my_theme';
 
 		$View = new TestThemeView($this->ThemeController);
-		ob_start();
 		$result = $View->getLayoutFileName();
-		$expected = ob_get_clean();
-		$this->assertRegExp("/Missing Layout/", $expected);
-		$this->assertRegExp("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)layouts(\/|\\\)whatever.ctp/", $expected);
 	}
 
 /**
@@ -1101,7 +1094,9 @@ class ViewTest extends CakeTestCase {
 
 		$this->assertRegExp('/^some cacheText/', $result);
 
-		@unlink($path);
+		if (file_exists($path)) {
+			unlink($path);
+		}
 	}
 
 /**

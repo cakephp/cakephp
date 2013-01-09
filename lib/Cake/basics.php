@@ -311,13 +311,10 @@ function env($key) {
 				$offset = 4;
 			}
 			return substr($filename, 0, -(strlen($name) + $offset));
-			break;
 		case 'PHP_SELF':
 			return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
-			break;
 		case 'CGI_MODE':
 			return (PHP_SAPI === 'cgi');
-			break;
 		case 'HTTP_BASE':
 			$host = env('HTTP_HOST');
 			$parts = explode('.', $host);
@@ -357,7 +354,6 @@ function env($key) {
 			}
 			array_shift($parts);
 			return '.' . implode('.', $parts);
-			break;
 	}
 	return null;
 }
@@ -397,19 +393,27 @@ function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
 	$filetime = false;
 
 	if (file_exists($filename)) {
+		//@codingStandardsIgnoreStart
 		$filetime = @filemtime($filename);
+		//@codingStandardsIgnoreEnd
 	}
 
 	if ($data === null) {
 		if (file_exists($filename) && $filetime !== false) {
 			if ($filetime + $timediff < $now) {
+				//@codingStandardsIgnoreStart
 				@unlink($filename);
+				//@codingStandardsIgnoreEnd
 			} else {
+				//@codingStandardsIgnoreStart
 				$data = @file_get_contents($filename);
+				//@codingStandardsIgnoreEnd
 			}
 		}
 	} elseif (is_writable(dirname($filename))) {
+		//@codingStandardsIgnoreStart
 		@file_put_contents($filename, $data, LOCK_EX);
+		//@codingStandardsIgnoreEnd
 	}
 	return $data;
 }
@@ -430,7 +434,9 @@ function clearCache($params = null, $type = 'views', $ext = '.php') {
 		$cache = CACHE . $type . DS . $params;
 
 		if (is_file($cache . $ext)) {
+			//@codingStandardsIgnoreStart
 			@unlink($cache . $ext);
+			//@codingStandardsIgnoreEnd
 			return true;
 		} elseif (is_dir($cache)) {
 			$files = glob($cache . '*');
@@ -441,7 +447,9 @@ function clearCache($params = null, $type = 'views', $ext = '.php') {
 
 			foreach ($files as $file) {
 				if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
+					//@codingStandardsIgnoreStart
 					@unlink($file);
+					//@codingStandardsIgnoreEnd
 				}
 			}
 			return true;
@@ -462,7 +470,9 @@ function clearCache($params = null, $type = 'views', $ext = '.php') {
 			}
 			foreach ($files as $file) {
 				if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
+					//@codingStandardsIgnoreStart
 					@unlink($file);
+					//@codingStandardsIgnoreEnd
 				}
 			}
 			return true;

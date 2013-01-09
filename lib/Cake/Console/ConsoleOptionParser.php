@@ -345,6 +345,7 @@ class ConsoleOptionParser {
 			$arg = new ConsoleInputArgument($options);
 		}
 		$this->_args[$index] = $arg;
+		ksort($this->_args);
 		return $this;
 	}
 
@@ -584,7 +585,8 @@ class ConsoleOptionParser {
 		$option = $this->_options[$name];
 		$isBoolean = $option->isBoolean();
 		$nextValue = $this->_nextToken();
-		if (!$isBoolean && !empty($nextValue) && !$this->_optionExists($nextValue)) {
+		$emptyNextValue = (empty($nextValue) && $nextValue !== '0');
+		if (!$isBoolean && !$emptyNextValue && !$this->_optionExists($nextValue)) {
 			array_shift($this->_tokens);
 			$value = $nextValue;
 		} elseif ($isBoolean) {
@@ -625,7 +627,7 @@ class ConsoleOptionParser {
  */
 	protected function _parseArg($argument, $args) {
 		if (empty($this->_args)) {
-			array_push($args, $argument);
+			$args[] = $argument;
 			return $args;
 		}
 		$next = count($args);
@@ -634,7 +636,7 @@ class ConsoleOptionParser {
 		}
 
 		if ($this->_args[$next]->validChoice($argument)) {
-			array_push($args, $argument);
+			$args[] = $argument;
 			return $args;
 		}
 	}

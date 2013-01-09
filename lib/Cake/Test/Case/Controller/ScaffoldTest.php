@@ -217,6 +217,7 @@ class ScaffoldTest extends CakeTestCase {
 		$this->assertEquals('scaffoldMock', $result['singularVar']);
 		$this->assertEquals('scaffoldMock', $result['pluralVar']);
 		$this->assertEquals(array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'), $result['scaffoldFields']);
+		$this->assertArrayHasKey('plugin', $result['associations']['belongsTo']['User']);
 	}
 
 /**

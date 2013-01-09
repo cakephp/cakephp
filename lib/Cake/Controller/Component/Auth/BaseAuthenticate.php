@@ -84,7 +84,7 @@ abstract class BaseAuthenticate {
 		}
 		$result = ClassRegistry::init($userModel)->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => (int)$this->settings['recursive'],
+			'recursive' => $this->settings['recursive'],
 			'contain' => $this->settings['contain'],
 		));
 		if (empty($result) || empty($result[$model])) {
