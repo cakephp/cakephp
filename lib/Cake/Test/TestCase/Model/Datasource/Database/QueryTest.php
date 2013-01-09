@@ -1038,7 +1038,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 
 		$query = new Query($this->connection);
 		$result = $query
-			->select(['total' =>  'count(author_id)', 'author_id'])
+			->select(['total' => 'count(author_id)', 'author_id'])
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
@@ -1056,6 +1056,25 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->group(['articles.id'])
 			->execute();
 		$this->assertCount(3, $result);
+	}
+
+	public function testSelectDistinct() {
+		$result = $this->_insertTwoRecords();
+		$result->bindValue(1, '3', 'integer');
+		$result->bindValue(2, 'another title');
+		$result->bindValue(3, 'another body');
+		$result->bindValue(4, 2);
+		$result->execute();
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['author_id'])
+			->from(['a' => 'articles'])
+			->execute();
+		$this->assertCount(3, $result);
+
+		$result = $query->distinct()->execute();
+		$this->assertCount(2, $result);
 	}
 
 }

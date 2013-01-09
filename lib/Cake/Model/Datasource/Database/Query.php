@@ -37,7 +37,9 @@ class Query implements IteratorAggregate  {
 		'order' => [],
 		'limit' => null,
 		'offset' => null
-		];
+	];
+
+	protected $_distinct = false;
 
 	protected $_templates = [
 		'where' => ' WHERE %s',
@@ -166,8 +168,27 @@ class Query implements IteratorAggregate  {
 		return $this;
 	}
 
+	public function distinct($on = [], $overwrite = false) {
+		if ($on === []) {
+			$on = true;
+		}
+
+		if (is_array($on)) {
+			$merge = [];
+			if (is_array($this->_distinct)) {
+				$merge = $this->_distinct;
+			}
+			$on = ($overwrite) ? array_values($on) : array_merge($merge, array_values($on));
+		}
+
+		$this->_distinct = $on;
+		$this->_dirty = true;
+		return $this;
+	}
+
 	protected function _buildSelectPart($parts) {
-		$select = 'SELECT %s';
+		$select = 'SELECT %s%s';
+		$distinct = null;
 		$normalized = [];
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
@@ -175,7 +196,21 @@ class Query implements IteratorAggregate  {
 			}
 			$normalized[] = $p;
 		}
-		return sprintf($select, implode(', ', $normalized));
+
+		if ($this->_distinct === true) {
+			$distinct = 'DISTINCT ';
+		}
+
+		if (is_array($this->_distinct)) {
+			//Supports DISTINCT ON?
+			if (false) {
+
+			} else {
+				$distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $this->_distinct));
+			}
+		}
+
+		return sprintf($select, $distinct, implode(', ', $normalized));
 	}
 
 	public function insert() {
@@ -374,10 +409,6 @@ class Query implements IteratorAggregate  {
 
 	public function offset($num = null) {
 		$this->_parts['offset'] = $num;
-		return $this;
-	}
-
-	public function distinct($on = []) {
 		return $this;
 	}
 
