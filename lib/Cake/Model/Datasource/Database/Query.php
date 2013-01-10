@@ -347,18 +347,21 @@ class Query implements IteratorAggregate  {
 		return $this;
 	}
 
-	public function having($field, $value = null) {
-		$this->_parts['having']->andWhere($field, $value);
+	public function having($conditions = null, $types = [], $overwrite = false) {
+		if ($overwrite) {
+			$this->_parts['having'] = $this->newExpr();
+		}
+		$this->_conjugate('having', $conditions, 'AND', $types);
 		return $this;
 	}
 
-	public function andHaving($field, $value = null) {
-		$this->having($field, $value);
+	public function andHaving($conditions, $types = []) {
+		$this->_conjugate('having', $conditions, 'AND', $types);
 		return $this;
 	}
 
-	public function orHaving($field, $value = null) {
-		$this->_parts['having']->orWhere($field, $value);
+	public function orHaving($conditions, $types = []) {
+		$this->_conjugate('having', $conditions, 'OR', $types);
 		return $this;
 	}
 
