@@ -409,6 +409,32 @@ TEXT;
 	}
 
 /**
+ * Test exporting various kinds of false.
+ *
+ * @return void
+ */
+	public function testExportVarZero() {
+		$data = array(
+			'nothing' => '',
+			'null' => null,
+			'false' => false,
+			'szero' => '0',
+			'zero' => 0
+		);;
+		$result = Debugger::exportVar($data);
+		$expected = <<<TEXT
+array(
+	'nothing' => '',
+	'null' => null,
+	'false' => false,
+	'szero' => '0',
+	'zero' => (int) 0
+)
+TEXT;
+		$this->assertTextEquals($expected, $result);
+	}
+
+/**
  * testLog method
  *
  * @return void

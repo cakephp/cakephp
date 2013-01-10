@@ -489,7 +489,7 @@ class Debugger {
 			case 'float':
 				return '(float) ' . $var;
 			case 'string':
-				if (!trim($var)) {
+				if (trim($var) === '') {
 					return "''";
 				}
 				return "'" . $var . "'";
