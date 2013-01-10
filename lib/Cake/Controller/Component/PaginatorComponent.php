@@ -197,7 +197,9 @@ class PaginatorComponent extends Component {
 		$defaults = $this->getDefaults($object->alias);
 		unset($defaults[0]);
 
-		if ($object->hasMethod('paginateCount')) {
+		if (!$results) {
+			$count = 0;
+		} elseif ($object->hasMethod('paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive, $extra);
 		} else {
 			$parameters = compact('conditions');
