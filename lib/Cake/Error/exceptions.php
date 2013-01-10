@@ -1,6 +1,6 @@
 <?php
 /**
- * Exceptions file.  Contains the various exceptions CakePHP will throw until they are
+ * Exceptions file. Contains the various exceptions CakePHP will throw until they are
  * moved into their permanent location.
  *
  * PHP 5
@@ -19,6 +19,43 @@
  */
 
 /**
+ * Base class that all Exceptions extend.
+ *
+ * @package       Cake.Error
+ */
+class CakeBaseException extends RuntimeException {
+
+/**
+ * Array of headers to be passed to CakeResponse::header()
+ *
+ * @var array
+ */
+	protected $_responseHeaders = null;
+
+/**
+ * Get/set the response header to be used
+ *
+ * See also CakeResponse::header()
+ *
+ * @param string|array $header. An array of header strings or a single header string
+ *	- an associative array of "header name" => "header value"
+ *	- an array of string headers is also accepted
+ * @param string $value. The header value.
+ * @return array
+ */
+	public function responseHeader($header = null, $value = null) {
+		if ($header) {
+			if (is_array($header)) {
+				return $this->_responseHeaders = $header;
+			}
+			$this->_responseHeaders = array($header => $value);
+		}
+		return $this->_responseHeaders;
+	}
+
+}
+
+/**
  * Parent class for all of the HTTP related exceptions in CakePHP.
  * All HTTP status/error related exceptions should extend this class so
  * catch blocks can be specifically typed.
@@ -26,7 +63,7 @@
  * @package       Cake.Error
  */
 if (!class_exists('HttpException')) {
-	class HttpException extends RuntimeException {
+	class HttpException extends CakeBaseException {
 	}
 }
 
@@ -168,7 +205,7 @@ class InternalErrorException extends HttpException {
  *
  * @package       Cake.Error
  */
-class CakeException extends RuntimeException {
+class CakeException extends CakeBaseException {
 
 /**
  * Array of attributes that are passed in from the constructor, and
@@ -471,7 +508,7 @@ class AclException extends CakeException {
 }
 
 /**
- * Exception class for Cache.  This exception will be thrown from Cache when it
+ * Exception class for Cache. This exception will be thrown from Cache when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -480,7 +517,7 @@ class CacheException extends CakeException {
 }
 
 /**
- * Exception class for Router.  This exception will be thrown from Router when it
+ * Exception class for Router. This exception will be thrown from Router when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -489,7 +526,7 @@ class RouterException extends CakeException {
 }
 
 /**
- * Exception class for CakeLog.  This exception will be thrown from CakeLog when it
+ * Exception class for CakeLog. This exception will be thrown from CakeLog when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -498,7 +535,7 @@ class CakeLogException extends CakeException {
 }
 
 /**
- * Exception class for CakeSession.  This exception will be thrown from CakeSession when it
+ * Exception class for CakeSession. This exception will be thrown from CakeSession when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -507,7 +544,7 @@ class CakeSessionException extends CakeException {
 }
 
 /**
- * Exception class for Configure.  This exception will be thrown from Configure when it
+ * Exception class for Configure. This exception will be thrown from Configure when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -525,7 +562,7 @@ class SocketException extends CakeException {
 }
 
 /**
- * Exception class for Xml.  This exception will be thrown from Xml when it
+ * Exception class for Xml. This exception will be thrown from Xml when it
  * encounters an error.
  *
  * @package       Cake.Error
@@ -534,7 +571,7 @@ class XmlException extends CakeException {
 }
 
 /**
- * Exception class for Console libraries.  This exception will be thrown from Console library
+ * Exception class for Console libraries. This exception will be thrown from Console library
  * classes when they encounter an error.
  *
  * @package       Cake.Error

@@ -2,7 +2,7 @@
 /**
  * Exception Renderer
  *
- * Provides Exception rendering features.  Which allow exceptions to be rendered
+ * Provides Exception rendering features. Which allow exceptions to be rendered
  * as HTML pages.
  *
  * PHP 5
@@ -29,7 +29,7 @@ App::uses('Controller', 'Controller');
  * Exception Renderer.
  *
  * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
- * When debug < 1 a CakeException will render 404 or  500 errors.  If an uncaught exception is thrown
+ * When debug < 1 a CakeException will render 404 or  500 errors. If an uncaught exception is thrown
  * and it is a type that ExceptionHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception rendering
@@ -41,8 +41,8 @@ App::uses('Controller', 'Controller');
  *
  * #### Using AppController::appError();
  *
- * This controller method is called instead of the default exception handling.  It receives the
- * thrown exception as its only argument.  You should implement your error handling in that method.
+ * This controller method is called instead of the default exception handling. It receives the
+ * thrown exception as its only argument. You should implement your error handling in that method.
  *
  * #### Using a subclass of ExceptionRenderer
  *
@@ -88,6 +88,7 @@ class ExceptionRenderer {
  * code error depending on the code used to construct the error.
  *
  * @param Exception $exception Exception
+ * @return mixed Return void or value returned by controller's `appError()` function
  */
 	public function __construct(Exception $exception) {
 		$this->controller = $this->_getController($exception);
@@ -102,10 +103,7 @@ class ExceptionRenderer {
 
 		if ($exception instanceof CakeException && !$methodExists) {
 			$method = '_cakeError';
-			if (empty($template)) {
-				$template = 'error500';
-			}
-			if ($template == 'internalError') {
+			if (empty($template) || $template == 'internalError') {
 				$template = 'error500';
 			}
 		} elseif ($exception instanceof PDOException) {
@@ -119,13 +117,12 @@ class ExceptionRenderer {
 			}
 		}
 
-		if (Configure::read('debug') == 0) {
-			if ($method == '_cakeError') {
-				$method = 'error400';
-			}
-			if ($code == 500) {
-				$method = 'error500';
-			}
+		$isNotDebug = !Configure::read('debug');
+		if ($isNotDebug && $method == '_cakeError') {
+			$method = 'error400';
+		}
+		if ($isNotDebug && $code == 500) {
+			$method = 'error500';
 		}
 		$this->template = $template;
 		$this->method = $method;
@@ -147,7 +144,12 @@ class ExceptionRenderer {
 		if (!$request = Router::getRequest(true)) {
 			$request = new CakeRequest();
 		}
-		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+		$response = new CakeResponse();
+
+		if (method_exists($exception, 'responseHeader')) {
+			$response->header($exception->responseHeader());
+		}
+
 		try {
 			$controller = new CakeErrorController($request, $response);
 			$controller->startupProcess();
@@ -187,7 +189,7 @@ class ExceptionRenderer {
 		$this->controller->set(array(
 			'code' => $code,
 			'url' => h($url),
-			'name' => $error->getMessage(),
+			'name' => h($error->getMessage()),
 			'error' => $error,
 			'_serialize' => array('code', 'url', 'name')
 		));
@@ -203,13 +205,13 @@ class ExceptionRenderer {
  */
 	public function error400($error) {
 		$message = $error->getMessage();
-		if (Configure::read('debug') == 0 && $error instanceof CakeException) {
+		if (!Configure::read('debug') && $error instanceof CakeException) {
 			$message = __d('cake', 'Not Found');
 		}
 		$url = $this->controller->request->here();
 		$this->controller->response->statusCode($error->getCode());
 		$this->controller->set(array(
-			'name' => $message,
+			'name' => h($message),
 			'url' => h($url),
 			'error' => $error,
 			'_serialize' => array('name', 'url')
@@ -225,14 +227,14 @@ class ExceptionRenderer {
  */
 	public function error500($error) {
 		$message = $error->getMessage();
-		if (Configure::read('debug') == 0) {
+		if (!Configure::read('debug')) {
 			$message = __d('cake', 'An Internal Error Has Occurred.');
 		}
 		$url = $this->controller->request->here();
 		$code = ($error->getCode() > 500 && $error->getCode() < 506) ? $error->getCode() : 500;
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
-			'name' => $message,
+			'name' => h($message),
 			'message' => h($url),
 			'error' => $error,
 			'_serialize' => array('name', 'message')
@@ -253,7 +255,7 @@ class ExceptionRenderer {
 		$this->controller->set(array(
 			'code' => $code,
 			'url' => h($url),
-			'name' => $error->getMessage(),
+			'name' => h($error->getMessage()),
 			'error' => $error,
 			'_serialize' => array('code', 'url', 'name', 'error')
 		));

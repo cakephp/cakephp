@@ -17,11 +17,11 @@
 App::uses('String', 'Utility');
 
 /**
- * HelpFormatter formats help for console shells.  Can format to either
- * text or XML formats.  Uses ConsoleOptionParser methods to generate help.
+ * HelpFormatter formats help for console shells. Can format to either
+ * text or XML formats. Uses ConsoleOptionParser methods to generate help.
  *
  * Generally not directly used. Using $parser->help($command, 'xml'); is usually
- * how you would access help.  Or via the `--help=xml` option on the command line.
+ * how you would access help. Or via the `--help=xml` option on the command line.
  *
  * Xml output is useful for integration with other tools like IDE's or other build tools.
  *
@@ -173,8 +173,8 @@ class HelpFormatter {
 /**
  * Get the help as an xml string.
  *
- * @param boolean $string Return the SimpleXml object or a string.  Defaults to true.
- * @return mixed. See $string
+ * @param boolean $string Return the SimpleXml object or a string. Defaults to true.
+ * @return string|SimpleXmlElement See $string
  */
 	public function xml($string = true) {
 		$parser = $this->_parser;

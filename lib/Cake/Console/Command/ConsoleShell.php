@@ -120,7 +120,7 @@ class ConsoleShell extends AppShell {
 			"\tRoute <url>",
 			"",
 			"where url is the path to your your action plus any query parameters,",
-			"minus the application's base path.  For example:",
+			"minus the application's base path. For example:",
 			"",
 			"\tRoute /posts/view/1",
 			"",
@@ -182,7 +182,7 @@ class ConsoleShell extends AppShell {
 						$this->out(" - {$model}");
 					}
 				break;
-				case (preg_match("/^(\w+) bind (\w+) (\w+)/", $command, $tmp) == true):
+				case preg_match("/^(\w+) bind (\w+) (\w+)/", $command, $tmp):
 					foreach ($tmp as $data) {
 						$data = strip_tags($data);
 						$data = str_replace($this->badCommandChars, "", $data);
@@ -200,7 +200,7 @@ class ConsoleShell extends AppShell {
 						$this->out(__d('cake_console', "Please verify you are using valid models and association types"));
 					}
 				break;
-				case (preg_match("/^(\w+) unbind (\w+) (\w+)/", $command, $tmp) == true):
+				case preg_match("/^(\w+) unbind (\w+) (\w+)/", $command, $tmp):
 					foreach ($tmp as $data) {
 						$data = strip_tags($data);
 						$data = str_replace($this->badCommandChars, "", $data);
@@ -293,7 +293,7 @@ class ConsoleShell extends AppShell {
 
 					if ($this->_isValidModel($modelToSave)) {
 						// Extract the array of data we are trying to build
-						list($foo, $data) = explode("->save", $command);
+						list(, $data) = explode("->save", $command);
 						$data = preg_replace('/^\(*(array)?\(*(.+?)\)*$/i', '\\2', $data);
 						$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
 						//@codingStandardsIgnoreStart
@@ -302,7 +302,7 @@ class ConsoleShell extends AppShell {
 						$this->out(__d('cake_console', 'Saved record for %s', $modelToSave));
 					}
 				break;
-				case (preg_match("/^(\w+) columns/", $command, $tmp) == true):
+				case preg_match("/^(\w+) columns/", $command, $tmp):
 					$modelToCheck = strip_tags(str_replace($this->badCommandChars, "", $tmp[1]));
 
 					if ($this->_isValidModel($modelToCheck)) {
@@ -321,14 +321,14 @@ class ConsoleShell extends AppShell {
 						$this->out(__d('cake_console', "Please verify that you selected a valid model"));
 					}
 				break;
-				case (preg_match("/^routes\s+reload/i", $command, $tmp) == true):
+				case preg_match("/^routes\s+reload/i", $command, $tmp):
 					if (!$this->_loadRoutes()) {
 						$this->err(__d('cake_console', "There was an error loading the routes config. Please check that the file exists and is free of parse errors."));
 						break;
 					}
 					$this->out(__d('cake_console', "Routes configuration reloaded, %d routes connected", count(Router::$routes)));
 				break;
-				case (preg_match("/^routes\s+show/i", $command, $tmp) == true):
+				case preg_match("/^routes\s+show/i", $command, $tmp):
 					$this->out(print_r(Hash::combine(Router::$routes, '{n}.template', '{n}.defaults'), true));
 				break;
 				case (preg_match("/^route\s+(\(.*\))$/i", $command, $tmp) == true):
@@ -338,7 +338,7 @@ class ConsoleShell extends AppShell {
 						$this->out(Router::url($url));
 					}
 				break;
-				case (preg_match("/^route\s+(.*)/i", $command, $tmp) == true):
+				case preg_match("/^route\s+(.*)/i", $command, $tmp):
 					$this->out(var_export(Router::parse($tmp[1]), true));
 				break;
 				default:

@@ -70,6 +70,7 @@ class Sqlite extends DboSource {
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'integer', 'limit' => null, 'formatter' => 'intval'),
+		'biginteger' => array('name' => 'bigint', 'limit' => 20),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
@@ -138,7 +139,7 @@ class Sqlite extends DboSource {
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 
@@ -146,14 +147,14 @@ class Sqlite extends DboSource {
 
 		if (!$result || empty($result)) {
 			return array();
-		} else {
-			$tables = array();
-			foreach ($result as $table) {
-				$tables[] = $table[0]['name'];
-			}
-			parent::listSources($tables);
-			return $tables;
 		}
+
+		$tables = array();
+		foreach ($result as $table) {
+			$tables[] = $table[0]['name'];
+		}
+		parent::listSources($tables);
+		return $tables;
 	}
 
 /**
@@ -165,7 +166,7 @@ class Sqlite extends DboSource {
 	public function describe($model) {
 		$table = $this->fullTableName($model, false, false);
 		$cache = parent::describe($table);
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$fields = array();
@@ -253,8 +254,21 @@ class Sqlite extends DboSource {
 			list($col, $limit) = explode('(', $col);
 		}
 
-		if (in_array($col, array('text', 'integer', 'float', 'boolean', 'timestamp', 'date', 'datetime', 'time'))) {
+		$standard = array(
+			'text',
+			'integer',
+			'float',
+			'boolean',
+			'timestamp',
+			'date',
+			'datetime',
+			'time'
+		);
+		if (in_array($col, $standard)) {
 			return $col;
+		}
+		if ($col === 'bigint') {
+			return 'biginteger';
 		}
 		if (strpos($col, 'char') !== false) {
 			return 'string';
@@ -303,7 +317,7 @@ class Sqlite extends DboSource {
 				continue;
 			}
 			if (preg_match('/\bAS\s+(.*)/i', $selects[$j], $matches)) {
-				 $columnName = trim($matches[1], '"');
+				$columnName = trim($matches[1], '"');
 			} else {
 				$columnName = trim(str_replace('"', '', $selects[$j]));
 			}
@@ -450,7 +464,7 @@ class Sqlite extends DboSource {
 				$out .= 'UNIQUE ';
 			}
 			if (is_array($value['column'])) {
-				$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
+				$value['column'] = implode(', ', array_map(array(&$this, 'name'), $value['column']));
 			} else {
 				$value['column'] = $this->name($value['column']);
 			}
@@ -515,10 +529,10 @@ class Sqlite extends DboSource {
 			case 'schema':
 				extract($data);
 				if (is_array($columns)) {
-					$columns = "\t" . join(",\n\t", array_filter($columns));
+					$columns = "\t" . implode(",\n\t", array_filter($columns));
 				}
 				if (is_array($indexes)) {
-					$indexes = "\t" . join("\n\t", array_filter($indexes));
+					$indexes = "\t" . implode("\n\t", array_filter($indexes));
 				}
 				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
 			default:
@@ -536,21 +550,13 @@ class Sqlite extends DboSource {
 	}
 
 /**
- * Generate a "drop table" statement for the given Schema object
+ * Generate a "drop table" statement for the given table
  *
- * @param CakeSchema $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
- *   Otherwise, all tables defined in the schema are generated.
- * @return string
+ * @param type $table Name of the table to drop
+ * @return string Drop table SQL statement
  */
-	public function dropSchema(CakeSchema $schema, $table = null) {
-		$out = '';
-		foreach ($schema->tables as $curTable => $columns) {
-			if (!$table || $table == $curTable) {
-				$out .= 'DROP TABLE IF EXISTS ' . $this->fullTableName($curTable) . ";\n";
-			}
-		}
-		return $out;
+	protected function _dropTable($table) {
+		return 'DROP TABLE IF EXISTS ' . $this->fullTableName($table) . ";";
 	}
 
 /**

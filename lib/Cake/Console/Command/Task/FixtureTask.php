@@ -115,7 +115,7 @@ class FixtureTask extends BakeTask {
 	}
 
 /**
- * Bake All the Fixtures at once.  Will only bake fixtures for models that exist.
+ * Bake All the Fixtures at once. Will only bake fixtures for models that exist.
  *
  * @return void
  */
@@ -232,7 +232,7 @@ class FixtureTask extends BakeTask {
 		if (!empty($this->params['records']) || isset($importOptions['fromTable'])) {
 			$records = $this->_makeRecordString($this->_getRecordsFromTable($model, $useTable));
 		}
-		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import', 'fields'));
+		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import'));
 		return $out;
 	}
 
@@ -279,8 +279,8 @@ class FixtureTask extends BakeTask {
  * @return string fields definitions
  */
 	protected function _generateSchema($tableInfo) {
-		$schema = $this->_Schema->generateTable('f', $tableInfo);
-		return substr($schema, 13, -2);
+		$schema = trim($this->_Schema->generateTable('f', $tableInfo), "\n");
+		return substr($schema, 13, -1);
 	}
 
 /**
@@ -314,7 +314,7 @@ class FixtureTask extends BakeTask {
 						} else {
 							$insert = "Lorem ipsum dolor sit amet";
 							if (!empty($fieldInfo['length'])) {
-								 $insert = substr($insert, 0, (int)$fieldInfo['length'] - 2);
+								$insert = substr($insert, 0, (int)$fieldInfo['length'] - 2);
 							}
 						}
 					break;
@@ -402,7 +402,7 @@ class FixtureTask extends BakeTask {
 			'recursive' => -1,
 			'limit' => $recordCount
 		));
-		$db = $modelObject->getDatasource();
+
 		$schema = $modelObject->schema(true);
 		$out = array();
 		foreach ($records as $record) {

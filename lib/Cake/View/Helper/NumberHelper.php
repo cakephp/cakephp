@@ -21,6 +21,7 @@
 
 App::uses('CakeNumber', 'Utility');
 App::uses('AppHelper', 'View/Helper');
+App::uses('Hash', 'Utility');
 
 /**
  * Number helper library.
@@ -72,7 +73,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::precision()
+ * @see CakeNumber::precision()
  *
  * @param float $number	A floating point number.
  * @param integer $precision The precision of the returned number.
@@ -84,7 +85,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::toReadableSize()
+ * @see CakeNumber::toReadableSize()
  *
  * @param integer $size Size in bytes
  * @return string Human readable size
@@ -95,7 +96,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::toPercentage()
+ * @see CakeNumber::toPercentage()
  *
  * @param float $number A floating point number
  * @param integer $precision The precision of the returned number
@@ -107,7 +108,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::format()
+ * @see CakeNumber::format()
  *
  * @param float $number A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
@@ -120,21 +121,22 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::currency()
+ * @see CakeNumber::currency()
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
  *   set at least 'before' and 'after' options.
+ * 'USD' is the default currency, use CakeNumber::defaultCurrency() to change this default.
  * @param array $options
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
-	public function currency($number, $currency = 'USD', $options = array()) {
+	public function currency($number, $currency = null, $options = array()) {
 		return $this->_engine->currency($number, $currency, $options);
 	}
 
 /**
- * @see: CakeNumber::addFormat()
+ * @see CakeNumber::addFormat()
  *
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
@@ -144,6 +146,17 @@ class NumberHelper extends AppHelper {
  */
 	public function addFormat($formatName, $options) {
 		return $this->_engine->addFormat($formatName, $options);
+	}
+
+/**
+ * @see CakeNumber::defaultCurrency()
+ *
+ * @param string $currency The currency to be used in the future.
+ * @return void
+ * @see NumberHelper::currency()
+ */
+	public function defaultCurrency($currency) {
+		return $this->_engine->defaultCurrency($currency);
 	}
 
 }

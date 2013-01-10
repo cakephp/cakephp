@@ -47,7 +47,7 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer',  'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'length' => '255'),
 		'created' => array('type' => 'datetime')
 	);
@@ -92,7 +92,7 @@ class StringsTestFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer',  'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'length' => '255'),
 		'email' => array('type' => 'string', 'length' => '255'),
 		'age' => array('type' => 'integer', 'default' => 10)
@@ -352,7 +352,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 	}
 
 /**
- * test that importing with records works.  Make sure to try with postgres as its
+ * test that importing with records works. Make sure to try with postgres as its
  * handling of aliases is a workaround at best.
  *
  * @return void

@@ -61,9 +61,8 @@ class ApcEngine extends CacheEngine {
  * @return boolean True if the data was successfully cached, false on failure
  */
 	public function write($key, $value, $duration) {
-		if ($duration == 0) {
-			$expires = 0;
-		} else {
+		$expires = 0;
+		if ($duration) {
 			$expires = time() + $duration;
 		}
 		apc_store($key . '_expires', $expires, $duration);
@@ -118,10 +117,10 @@ class ApcEngine extends CacheEngine {
 	}
 
 /**
- * Delete all keys from the cache.  This will clear every cache config using APC.
+ * Delete all keys from the cache. This will clear every cache config using APC.
  *
  * @param boolean $check If true, nothing will be cleared, as entries are removed
- *    from APC as they expired.  This flag is really only used by FileEngine.
+ *    from APC as they expired. This flag is really only used by FileEngine.
  * @return boolean True Returns true.
  */
 	public function clear($check) {

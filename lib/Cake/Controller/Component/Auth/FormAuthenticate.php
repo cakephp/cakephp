@@ -16,8 +16,8 @@
 App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 
 /**
- * An authentication adapter for AuthComponent.  Provides the ability to authenticate using POST
- * data.  Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate setting.
+ * An authentication adapter for AuthComponent. Provides the ability to authenticate using POST
+ * data. Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate setting.
  *
  * {{{
  *	$this->Auth->authenticate = array(
@@ -37,19 +37,14 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 class FormAuthenticate extends BaseAuthenticate {
 
 /**
- * Authenticates the identity contained in a request.  Will use the `settings.userModel`, and `settings.fields`
- * to find POST data that is used to find a matching record in the `settings.userModel`.  Will return false if
- * there is no post data, either username or password is missing, of if the scope conditions have not been met.
+ * Checks the fields to ensure they are supplied.
  *
  * @param CakeRequest $request The request that contains login information.
- * @param CakeResponse $response Unused response object.
- * @return mixed.  False on login failure.  An array of User data on success.
+ * @param string $model The model used for login verification.
+ * @param array $fields The fields to be checked.
+ * @return boolean False if the fields have not been supplied. True if they exist.
  */
-	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
-
-		$fields = $this->settings['fields'];
+	protected function _checkFields(CakeRequest $request, $model, $fields) {
 		if (empty($request->data[$model])) {
 			return false;
 		}
@@ -57,6 +52,26 @@ class FormAuthenticate extends BaseAuthenticate {
 			empty($request->data[$model][$fields['username']]) ||
 			empty($request->data[$model][$fields['password']])
 		) {
+			return false;
+		}
+		return true;
+	}
+
+/**
+ * Authenticates the identity contained in a request. Will use the `settings.userModel`, and `settings.fields`
+ * to find POST data that is used to find a matching record in the `settings.userModel`. Will return false if
+ * there is no post data, either username or password is missing, of if the scope conditions have not been met.
+ *
+ * @param CakeRequest $request The request that contains login information.
+ * @param CakeResponse $response Unused response object.
+ * @return mixed False on login failure. An array of User data on success.
+ */
+	public function authenticate(CakeRequest $request, CakeResponse $response) {
+		$userModel = $this->settings['userModel'];
+		list(, $model) = pluginSplit($userModel);
+
+		$fields = $this->settings['fields'];
+		if (!$this->_checkFields($request, $model, $fields)) {
 			return false;
 		}
 		return $this->_findUser(

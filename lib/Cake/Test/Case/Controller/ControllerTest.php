@@ -543,8 +543,8 @@ class ControllerTest extends CakeTestCase {
 		$Controller->flash('this should work', '/flash');
 		$result = $Controller->response->body();
 
-		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-		<html xmlns="http://www.w3.org/1999/xhtml">
+		$expected = '<!DOCTYPE html>
+		<html>
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>this should work</title>
@@ -1254,7 +1254,7 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function testPropertyBackwardsCompatibility() {
-		$request = new CakeRequest('posts/index', null);
+		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
 		$request->data = array('Post' => array('id' => 1));
 		$request->here = '/posts/index';
@@ -1311,8 +1311,8 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEquals(array(1, 2, 3), $results);
 
 		$Controller->passedArgs = array();
-		$Controller->paginate = array('limit' => '-1');
-		$this->assertEquals(array('limit' => '-1'), $Controller->paginate);
+		$Controller->paginate = array('limit' => '1');
+		$this->assertEquals(array('limit' => '1'), $Controller->paginate);
 		$Controller->paginate('ControllerPost');
 		$this->assertSame($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertSame($Controller->params['paging']['ControllerPost']['pageCount'], 3);

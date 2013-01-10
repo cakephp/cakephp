@@ -32,7 +32,7 @@ class Set {
  * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
  * but does not do if for keys containing strings (unlike array_merge_recursive).
  *
- * Since this method emulates `array_merge`, it will re-order numeric keys.  When combined with out of
+ * Since this method emulates `array_merge`, it will re-order numeric keys. When combined with out of
  * order numeric keys containing arrays, results can be lossy.
  *
  * Note: This function will work with an unlimited amount of arguments and typecasts non-array
@@ -185,7 +185,7 @@ class Set {
 /**
  * Checks to see if all the values in the array are numeric
  *
- * @param array $array The array to check.  If null, the value of the current Set object
+ * @param array $array The array to check. If null, the value of the current Set object
  * @return boolean true if values are numeric, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::numeric
  */
@@ -203,7 +203,7 @@ class Set {
  *
  * $list defaults to 0 = no 1 = yes if param is not passed
  *
- * @param array $select Key in $list to return
+ * @param string $select Key in $list to return
  * @param array|string $list can be an array or a comma-separated list.
  * @return string the value of the array key or null if no match
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::enum
@@ -349,7 +349,7 @@ class Set {
 					$context = array('trace' => array(null), 'item' => $context, 'key' => $key);
 				}
 				if ($token === '..') {
-					if (count($context['trace']) == 1) {
+					if (count($context['trace']) === 1) {
 						$context['trace'][] = $context['key'];
 					}
 					$parent = implode('/', $context['trace']) . '/.';
@@ -373,7 +373,7 @@ class Set {
 					);
 				} elseif (is_array($context['item'])
 					&& array_key_exists($token, $context['item'])
-					&& !(strval($key) === strval($token) && count($tokens) == 1 && $tokens[0] === '.')) {
+					&& !(strval($key) === strval($token) && count($tokens) === 1 && $tokens[0] === '.')) {
 					$items = $context['item'][$token];
 					if (!is_array($items)) {
 						$items = array($items);
@@ -467,7 +467,7 @@ class Set {
 			return true;
 		}
 		if (is_string($conditions)) {
-			return !!Set::extract($conditions, $data);
+			return (bool)Set::extract($conditions, $data);
 		}
 		foreach ($conditions as $condition) {
 			if ($condition === ':last') {
@@ -827,7 +827,7 @@ class Set {
 			}
 		}
 
-		if ($groupPath != null) {
+		if ($groupPath) {
 			$group = Set::extract($data, $groupPath);
 			if (!empty($group)) {
 				$c = count($keys);

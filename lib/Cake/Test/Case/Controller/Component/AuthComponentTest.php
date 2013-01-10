@@ -418,7 +418,7 @@ class AuthComponentTest extends CakeTestCase {
 
 /**
  * test that being redirected to the login page, with no post data does
- * not set the session value.  Saving the session value in this circumstance
+ * not set the session value. Saving the session value in this circumstance
  * can cause the user to be redirected to an already public page.
  *
  * @return void
@@ -904,6 +904,30 @@ class AuthComponentTest extends CakeTestCase {
 		$Controller->expects($this->once())
 			->method('redirect')
 			->with($this->equalTo($expected));
+		$this->Auth->startup($Controller);
+	}
+
+/**
+ * Throw ForbiddenException if AuthComponent::$unauthorizedRedirect set to false
+ * @expectedException ForbiddenException
+ * @return void
+ */
+	public function testForbiddenException() {
+		$url = '/party/on';
+		$this->Auth->request = $CakeRequest = new CakeRequest($url);
+		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->authorize = array('Controller');
+		$this->Auth->authorize = array('Controller');
+		$this->Auth->unauthorizedRedirect = false;
+		$this->Auth->login(array('username' => 'baker', 'password' => 'cake'));
+
+		$CakeResponse = new CakeResponse();
+		$Controller = $this->getMock(
+			'Controller',
+			array('on', 'redirect'),
+			array($CakeRequest, $CakeResponse)
+		);
+
 		$this->Auth->startup($Controller);
 	}
 

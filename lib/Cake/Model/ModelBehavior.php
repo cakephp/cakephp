@@ -22,13 +22,13 @@
 /**
  * Model behavior base class.
  *
- * Defines the Behavior interface, and contains common model interaction functionality.  Behaviors
+ * Defines the Behavior interface, and contains common model interaction functionality. Behaviors
  * allow you to simulate mixins, and create reusable blocks of application logic, that can be reused across
- * several models.  Behaviors also provide a way to hook into model callbacks and augment their behavior.
+ * several models. Behaviors also provide a way to hook into model callbacks and augment their behavior.
  *
  * ### Mixin methods
  *
- * Behaviors can provide mixin like features by declaring public methods.  These methods should expect
+ * Behaviors can provide mixin like features by declaring public methods. These methods should expect
  * the model instance to be shifted onto the parameter list.
  *
  * {{{
@@ -41,9 +41,9 @@
  *
  * ### Mapped methods
  *
- * Behaviors can also define mapped methods.  Mapped methods use pattern matching for method invocation. This
- * allows you to create methods similar to Model::findAllByXXX methods on your behaviors.  Mapped methods need to
- * be declared in your behaviors `$mapMethods` array.  The method signature for a mapped method is slightly different
+ * Behaviors can also define mapped methods. Mapped methods use pattern matching for method invocation. This
+ * allows you to create methods similar to Model::findAllByXXX methods on your behaviors. Mapped methods need to
+ * be declared in your behaviors `$mapMethods` array. The method signature for a mapped method is slightly different
  * than a normal behavior mixin method.
  *
  * {{{
@@ -54,8 +54,8 @@
  * }
  * }}}
  *
- * The above will map every doXXX() method call to the behavior.  As you can see, the model is
- * still the first parameter, but the called method name will be the 2nd parameter.  This allows
+ * The above will map every doXXX() method call to the behavior. As you can see, the model is
+ * still the first parameter, but the called method name will be the 2nd parameter. This allows
  * you to munge the method name for additional information, much like Model::findAllByXX.
  *
  * @package       Cake.Model
@@ -65,9 +65,9 @@
 class ModelBehavior extends Object {
 
 /**
- * Contains configuration settings for use with individual model objects.  This
+ * Contains configuration settings for use with individual model objects. This
  * is used because if multiple models use this Behavior, each will use the same
- * object instance.  Individual model settings should be stored as an
+ * object instance. Individual model settings should be stored as an
  * associative array, keyed off of the model name.
  *
  * @var array
@@ -78,7 +78,7 @@ class ModelBehavior extends Object {
 /**
  * Allows the mapping of preg-compatible regular expressions to public or
  * private methods in this class, where the array key is a /-delimited regular
- * expression, and the value is a class method.  Similar to the functionality of
+ * expression, and the value is a class method. Similar to the functionality of
  * the findBy* / findAllBy* magic methods.
  *
  * @var array
@@ -96,7 +96,7 @@ class ModelBehavior extends Object {
 	}
 
 /**
- * Clean up any initialization this behavior has done on a model.  Called when a behavior is dynamically
+ * Clean up any initialization this behavior has done on a model. Called when a behavior is dynamically
  * detached from a model using Model::detach().
  *
  * @param Model $model Model using this behavior
@@ -111,7 +111,7 @@ class ModelBehavior extends Object {
 
 /**
  * beforeFind can be used to cancel find operations, or modify the query that will be executed.
- * By returning null/false you can abort a find.  By returning an array you can modify/replace the query
+ * By returning null/false you can abort a find. By returning an array you can modify/replace the query
  * that is going to be run.
  *
  * @param Model $model Model using this behavior
@@ -136,7 +136,7 @@ class ModelBehavior extends Object {
 
 /**
  * beforeValidate is called before a model is validated, you can use this callback to
- * add behavior validation rules into a models validate array.  Returning false
+ * add behavior validation rules into a models validate array. Returning false
  * will allow you to make the validation fail.
  *
  * @param Model $model Model using this behavior
@@ -158,7 +158,7 @@ class ModelBehavior extends Object {
 	}
 
 /**
- * beforeSave is called before a model is saved.  Returning false from a beforeSave callback
+ * beforeSave is called before a model is saved. Returning false from a beforeSave callback
  * will abort the save operation.
  *
  * @param Model $model Model using this behavior
@@ -181,7 +181,7 @@ class ModelBehavior extends Object {
 
 /**
  * Before delete is called before any delete occurs on the attached model, but after the model's
- * beforeDelete is called.  Returning false from a beforeDelete will abort the delete.
+ * beforeDelete is called. Returning false from a beforeDelete will abort the delete.
  *
  * @param Model $model Model using this behavior
  * @param boolean $cascade If true records that depend on this record will also be deleted
@@ -213,7 +213,7 @@ class ModelBehavior extends Object {
 /**
  * If $model's whitelist property is non-empty, $field will be added to it.
  * Note: this method should *only* be used in beforeValidate or beforeSave to ensure
- * that it only modifies the whitelist for the current save operation.  Also make sure
+ * that it only modifies the whitelist for the current save operation. Also make sure
  * you explicitly set the value of the field which you are allowing.
  *
  * @param Model $model Model using this behavior
@@ -233,4 +233,3 @@ class ModelBehavior extends Object {
 	}
 
 }
-

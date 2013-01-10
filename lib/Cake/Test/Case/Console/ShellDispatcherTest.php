@@ -564,7 +564,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertEquals('a', $Dispatcher->shiftArgs());
 		$this->assertSame($Dispatcher->args, array('b' => 'c', 'd'));
 
-		$Dispatcher->args = array(0 => 'a',  2 => 'b', 30 => 'c');
+		$Dispatcher->args = array(0 => 'a', 2 => 'b', 30 => 'c');
 		$this->assertEquals('a', $Dispatcher->shiftArgs());
 		$this->assertSame($Dispatcher->args, array(0 => 'b', 1 => 'c'));
 

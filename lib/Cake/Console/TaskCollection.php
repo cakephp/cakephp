@@ -18,7 +18,7 @@
 App::uses('ObjectCollection', 'Utility');
 
 /**
- * Collection object for Tasks.  Provides features
+ * Collection object for Tasks. Provides features
  * for lazily loading tasks, and firing callbacks on loaded tasks.
  *
  * @package       Cake.Console
@@ -49,7 +49,7 @@ class TaskCollection extends ObjectCollection {
 	}
 
 /**
- * Loads/constructs a task.  Will return the instance in the collection
+ * Loads/constructs a task. Will return the instance in the collection
  * if it already exists.
  *
  * @param string $task Task name to load
@@ -63,14 +63,15 @@ class TaskCollection extends ObjectCollection {
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
+
 		$taskClass = $name . 'Task';
 		App::uses($taskClass, $plugin . 'Console/Command/Task');
-		if (!class_exists($taskClass)) {
-			if (!class_exists($taskClass)) {
-				throw new MissingTaskException(array(
-					'class' => $taskClass
-				));
-			}
+
+		$exists = class_exists($taskClass);
+		if (!$exists) {
+			throw new MissingTaskException(array(
+				'class' => $taskClass
+			));
 		}
 
 		$this->_loaded[$name] = new $taskClass(

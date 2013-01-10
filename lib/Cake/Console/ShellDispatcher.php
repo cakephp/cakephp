@@ -48,12 +48,10 @@ class ShellDispatcher {
  */
 	public function __construct($args = array(), $bootstrap = true) {
 		set_time_limit(0);
+		$this->parseParams($args);
 
 		if ($bootstrap) {
 			$this->_initConstants();
-		}
-		$this->parseParams($args);
-		if ($bootstrap) {
 			$this->_initEnvironment();
 		}
 	}
@@ -276,7 +274,11 @@ class ShellDispatcher {
 		if (isset($params['working'])) {
 			$params['working'] = trim($params['working']);
 		}
-		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
+
+		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0][0] !== '.')) {
+			if ($params['working'][0] === '.') {
+				$params['working'] = realpath($params['working']);
+			}
 			if (empty($this->params['app']) && $params['working'] != $params['root']) {
 				$params['root'] = dirname($params['working']);
 				$params['app'] = basename($params['working']);
@@ -335,7 +337,7 @@ class ShellDispatcher {
 	}
 
 /**
- * Shows console help.  Performs an internal dispatch to the CommandList Shell
+ * Shows console help. Performs an internal dispatch to the CommandList Shell
  *
  * @return void
  */

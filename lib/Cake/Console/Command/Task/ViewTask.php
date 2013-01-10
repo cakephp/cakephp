@@ -63,7 +63,7 @@ class ViewTask extends BakeTask {
 	public $scaffoldActions = array('index', 'view', 'add', 'edit');
 
 /**
- * An array of action names that don't require templates.  These
+ * An array of action names that don't require templates. These
  * actions will not emit errors when doing bakeActions()
  *
  * @var array
@@ -207,7 +207,7 @@ class ViewTask extends BakeTask {
 		$this->Controller->connection = $this->connection;
 		$this->controllerName = $this->Controller->getName();
 
-		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.",  $this->controllerName);
+		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.", $this->controllerName);
 		$interactive = $this->in($prompt, array('y', 'n'), 'n');
 
 		if (strtolower($interactive) == 'n') {
@@ -316,9 +316,9 @@ class ViewTask extends BakeTask {
  */
 	public function customAction() {
 		$action = '';
-		while ($action == '') {
+		while (!$action) {
 			$action = $this->in(__d('cake_console', 'Action Name? (use lowercase_underscored function name)'));
-			if ($action == '') {
+			if (!$action) {
 				$this->out(__d('cake_console', 'The action name you supplied was empty. Please try again.'));
 			}
 		}
@@ -423,7 +423,7 @@ class ViewTask extends BakeTask {
 		return $parser->description(
 			__d('cake_console', 'Bake views for a controller, using built-in or custom templates.')
 		)->addArgument('controller', array(
-			'help' => __d('cake_console', 'Name of the controller views to bake.  Can be Plugin.name as a shortcut for plugin baking.')
+			'help' => __d('cake_console', 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.')
 		))->addArgument('action', array(
 			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
 		))->addArgument('alias', array(
@@ -452,9 +452,9 @@ class ViewTask extends BakeTask {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 
-		foreach ($keys as $key => $type) {
+		foreach ($keys as $type) {
 			foreach ($model->{$type} as $assocKey => $assocData) {
-				list($plugin, $modelClass) = pluginSplit($assocData['className']);
+				list(, $modelClass) = pluginSplit($assocData['className']);
 				$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
 				$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
 				$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];

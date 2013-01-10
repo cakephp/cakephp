@@ -56,16 +56,16 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
 /**
  * Get the controller associated with the collection.
  *
- * @return Controller.
+ * @return Controller Controller instance
  */
 	public function getController() {
 		return $this->_Controller;
 	}
 
 /**
- * Loads/constructs a component.  Will return the instance in the registry if it already exists.
+ * Loads/constructs a component. Will return the instance in the registry if it already exists.
  * You can use `$settings['enabled'] = false` to disable callbacks on a component when loading it.
- * Callbacks default to on.  Disabled component methods work as normal, only callbacks are disabled.
+ * Callbacks default to on. Disabled component methods work as normal, only callbacks are disabled.
  *
  * You can alias your component as an existing component by setting the 'className' key, i.e.,
  * {{{

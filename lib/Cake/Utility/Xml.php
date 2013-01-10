@@ -75,7 +75,7 @@ class Xml {
  * ### Options
  *
  * - `return` Can be 'simplexml' to return object of SimpleXMLElement or 'domdocument' to return DOMDocument.
- * - `loadEntities` Defaults to false.  Set to true to enable loading of `<!ENTITY` definitions.  This
+ * - `loadEntities` Defaults to false. Set to true to enable loading of `<!ENTITY` definitions. This
  *   is disabled by default for security reasons.
  * - If using array as input, you can pass `options` from Xml::fromArray.
  *
@@ -117,8 +117,8 @@ class Xml {
  * Parse the input data and create either a SimpleXmlElement object or a DOMDocument.
  *
  * @param string $input The input to load.
- * @param array  $options The options to use. See Xml::build()
- * @return SimpleXmlElement|DOMDocument.
+ * @param array $options The options to use. See Xml::build()
+ * @return SimpleXmlElement|DOMDocument
  */
 	protected static function _loadXml($input, $options) {
 		$hasDisable = function_exists('libxml_disable_entity_loader');
@@ -181,7 +181,7 @@ class Xml {
 			throw new XmlException(__d('cake_dev', 'Invalid input.'));
 		}
 		$key = key($input);
-		if (is_integer($key)) {
+		if (is_int($key)) {
 			throw new XmlException(__d('cake_dev', 'The key of input must be alphanumeric'));
 		}
 
@@ -212,7 +212,7 @@ class Xml {
  * @param DOMDocument $dom Handler to DOMDocument
  * @param DOMElement $node Handler to DOMElement (child)
  * @param array $data Array of data to append to the $node.
- * @param string $format Either 'attribute' or 'tags'.  This determines where nested keys go.
+ * @param string $format Either 'attribute' or 'tags'. This determines where nested keys go.
  * @return void
  * @throws XmlException
  */

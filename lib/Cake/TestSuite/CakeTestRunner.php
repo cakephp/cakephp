@@ -29,6 +29,8 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 /**
  * Lets us pass in some options needed for cake's webrunner.
  *
+ * @param mixed $loader
+ * @param array $params list of options to be used for this run
  * @return void
  */
 	public function __construct($loader, $params) {
@@ -37,7 +39,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 	}
 
 /**
- * Actually run a suite of tests.  Cake initializes fixtures here using the chosen fixture manager
+ * Actually run a suite of tests. Cake initializes fixtures here using the chosen fixture manager
  *
  * @param PHPUnit_Framework_Test $suite
  * @param array $arguments
@@ -84,7 +86,8 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 /**
  * Get the fixture manager class specified or use the default one.
  *
- * @return instance of a fixture manager.
+ * @param array $arguments
+ * @return mixed instance of a fixture manager.
  * @throws RuntimeException When fixture manager class cannot be loaded.
  */
 	protected function _getFixtureManager($arguments) {

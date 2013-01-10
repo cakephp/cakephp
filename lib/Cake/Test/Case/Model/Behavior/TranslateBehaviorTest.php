@@ -629,6 +629,76 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * Test that all fields are create with partial data + multiple locales.
+ *
+ * @return void
+ */
+	public function testSavePartialFieldMultipleLocales() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel = new TranslatedItem();
+		$TestModel->locale = 'eng';
+		$data = array(
+			'slug' => 'fifth_translated',
+			'title' => array('eng' => 'Title #5', 'spa' => 'Leyenda #5'),
+		);
+		$TestModel->create($data);
+		$TestModel->save();
+		$TestModel->unbindTranslation();
+
+		$translations = array('title' => 'Title', 'content' => 'Content');
+		$TestModel->bindTranslation($translations, false);
+		$result = $TestModel->read(null, $TestModel->id);
+		$expected = array(
+			'TranslatedItem' => array(
+				'id' => '4',
+				'translated_article_id' => null,
+				'slug' => 'fifth_translated',
+				'locale' => 'eng',
+				'title' => 'Title #5',
+				'content' => ''
+			),
+			'Title' => array(
+				0 => array(
+					'id' => '19',
+					'locale' => 'eng',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'title',
+					'content' => 'Title #5'
+				),
+				1 => array(
+					'id' => '20',
+					'locale' => 'spa',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'title',
+					'content' => 'Leyenda #5'
+				)
+			),
+			'Content' => array(
+				0 => array(
+					'id' => '21',
+					'locale' => 'eng',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'content',
+					'content' => ''
+				),
+				1 => array(
+					'id' => '22',
+					'locale' => 'spa',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'content',
+					'content' => ''
+				)
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testSaveUpdate method
  *
  * @return void

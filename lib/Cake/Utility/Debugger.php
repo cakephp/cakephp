@@ -47,7 +47,7 @@ class Debugger {
 	protected $_outputFormat = 'js';
 
 /**
- * Templates used when generating trace or error strings.  Can be global or indexed by the format
+ * Templates used when generating trace or error strings. Can be global or indexed by the format
  * value used in $_outputFormat.
  *
  * @var string
@@ -180,7 +180,7 @@ class Debugger {
 	}
 
 /**
- * Creates an entry in the log file.  The log entry will contain a stack trace from where it was called.
+ * Creates an entry in the log file. The log entry will contain a stack trace from where it was called.
  * as well as export the variable using exportVar. By default the log is written to the debug log.
  *
  * @param mixed $var Variable or content to log
@@ -268,11 +268,11 @@ class Debugger {
  * ### Options
  *
  * - `depth` - The number of stack frames to return. Defaults to 999
- * - `format` - The format you want the return.  Defaults to the currently selected format.  If
+ * - `format` - The format you want the return. Defaults to the currently selected format. If
  *    format is 'array' or 'points' the return will be an array.
  * - `args` - Should arguments for functions be shown?  If true, the arguments for each method call
  *   will be displayed.
- * - `start` - The stack frame to start generating a trace from.  Defaults to 0
+ * - `start` - The stack frame to start generating a trace from. Defaults to 0
  *
  * @param array $options Format for outputting stack trace
  * @return mixed Formatted stack trace
@@ -295,9 +295,9 @@ class Debugger {
 		$back = array();
 
 		$_trace = array(
-			'line'     => '??',
-			'file'     => '[internal]',
-			'class'    => null,
+			'line' => '??',
+			'file' => '[internal]',
+			'class' => null,
 			'function' => '[main]'
 		);
 
@@ -317,7 +317,7 @@ class Debugger {
 						foreach ($next['args'] as $arg) {
 							$args[] = Debugger::exportVar($arg);
 						}
-						$reference .= join(', ', $args);
+						$reference .= implode(', ', $args);
 					}
 					$reference .= ')';
 				}
@@ -379,7 +379,7 @@ class Debugger {
  * `Debugger::excerpt('/path/to/file', 100, 4);`
  *
  * The above would return an array of 8 items. The 4th item would be the provided line,
- * and would be wrapped in `<span class="code-highlight"></span>`.  All of the lines
+ * and would be wrapped in `<span class="code-highlight"></span>`. All of the lines
  * are processed with highlight_string() as well, so they have basic PHP syntax highlighting
  * applied.
  *
@@ -489,7 +489,7 @@ class Debugger {
 			case 'float':
 				return '(float) ' . $var;
 			case 'string':
-				if (trim($var) == '') {
+				if (trim($var) === '') {
 					return "''";
 				}
 				return "'" . $var . "'";
@@ -505,7 +505,7 @@ class Debugger {
 	}
 
 /**
- * Export an array type object.  Filters out keys used in datasource configuration.
+ * Export an array type object. Filters out keys used in datasource configuration.
  *
  * The following keys are replaced with ***'s
  *
@@ -525,7 +525,7 @@ class Debugger {
 	protected static function _array(array $var, $depth, $indent) {
 		$secrets = array(
 			'password' => '*****',
-			'login'  => '*****',
+			'login' => '*****',
 			'host' => '*****',
 			'database' => '*****',
 			'port' => '*****',
@@ -586,6 +586,31 @@ class Debugger {
 				$value = self::_export($value, $depth - 1, $indent);
 				$props[] = "$key => " . $value;
 			}
+
+			if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+				$ref = new ReflectionObject($var);
+
+				$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PROTECTED);
+				foreach ($reflectionProperties as $reflectionProperty) {
+					$reflectionProperty->setAccessible(true);
+					$property = $reflectionProperty->getValue($var);
+
+					$value = self::_export($property, $depth - 1, $indent);
+					$key = $reflectionProperty->name;
+					$props[] = "[protected] $key => " . $value;
+				}
+
+				$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PRIVATE);
+				foreach ($reflectionProperties as $reflectionProperty) {
+					$reflectionProperty->setAccessible(true);
+					$property = $reflectionProperty->getValue($var);
+
+					$value = self::_export($property, $depth - 1, $indent);
+					$key = $reflectionProperty->name;
+					$props[] = "[private] $key => " . $value;
+				}
+			}
+
 			$out .= $break . implode($break, $props) . $end;
 		}
 		$out .= '}';
@@ -597,7 +622,7 @@ class Debugger {
  *
  * @param string $format The format you want errors to be output as.
  *   Leave null to get the current format.
- * @return mixed Returns null when setting.  Returns the current format when getting.
+ * @return mixed Returns null when setting. Returns the current format when getting.
  * @throws CakeException when choosing a format that doesn't exist.
  */
 	public static function outputAs($format = null) {
@@ -617,7 +642,7 @@ class Debugger {
  * `Debugger::addFormat('custom', $data);`
  *
  * Where $data is an array of strings that use String::insert() variable
- * replacement.  The template vars should be in a `{:id}` style.
+ * replacement. The template vars should be in a `{:id}` style.
  * An error formatter can have the following keys:
  *
  * - 'error' - Used for the container for the error message. Gets the following template
@@ -630,7 +655,7 @@ class Debugger {
  *   Gets the following templates: `id`, `context`
  * - 'links' - An array of HTML links that are used for creating links to other resources.
  *   Typically this is used to create javascript links to open other sections.
- *   Link keys, are: `code`, `context`, `help`.  See the js output format for an
+ *   Link keys, are: `code`, `context`, `help`. See the js output format for an
  *   example.
  * - 'traceLine' - Used for creating lines in the stacktrace. Gets the following
  *   template variables: `reference`, `path`, `line`
@@ -640,9 +665,9 @@ class Debugger {
  *
  * `Debugger::addFormat('custom', array('callback' => array($foo, 'outputError'));`
  *
- * The callback can expect two parameters.  The first is an array of all
+ * The callback can expect two parameters. The first is an array of all
  * the error data. The second contains the formatted strings generated using
- * the other template strings.  Keys like `info`, `links`, `code`, `context` and `trace`
+ * the other template strings. Keys like `info`, `links`, `code`, `context` and `trace`
  * will be present depending on the other templates in the format type.
  *
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
@@ -768,11 +793,11 @@ class Debugger {
 				continue;
 			}
 			if (is_array($value)) {
-				$value = join("\n", $value);
+				$value = implode("\n", $value);
 			}
 			$info .= String::insert($tpl[$key], array($key => $value) + $data, $insertOpts);
 		}
-		$links = join(' ', $links);
+		$links = implode(' ', $links);
 
 		if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
 			return call_user_func($tpl['callback'], $data, compact('links', 'info'));

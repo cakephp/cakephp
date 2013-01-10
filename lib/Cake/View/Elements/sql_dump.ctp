@@ -1,6 +1,6 @@
 <?php
 /**
- * SQL Dump element.  Dumps out SQL log information
+ * SQL Dump element. Dumps out SQL log information
  *
  * PHP 5
  *

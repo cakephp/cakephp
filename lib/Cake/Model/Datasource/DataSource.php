@@ -264,7 +264,7 @@ class DataSource extends Object {
 
 /**
  * Check whether the conditions for the Datasource being available
- * are satisfied.  Often used from connect() to check for support
+ * are satisfied. Often used from connect() to check for support
  * before establishing a connection.
  *
  * @return boolean Whether or not the Datasources conditions for use are met.
@@ -355,7 +355,7 @@ class DataSource extends Object {
 						$type = $model->getColumnType($model->primaryKey);
 					break;
 					case '{$__cakeForeignKey__$}':
-						foreach ($model->associations() as $id => $name) {
+						foreach ($model->associations() as $name) {
 							foreach ($model->$name as $assocName => $assoc) {
 								if ($assocName === $association) {
 									if (isset($assoc['foreignKey'])) {

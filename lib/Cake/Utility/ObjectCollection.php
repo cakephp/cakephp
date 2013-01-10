@@ -12,12 +12,12 @@
  */
 
 /**
- * Deals with Collections of objects.  Keeping registries of those objects,
+ * Deals with Collections of objects. Keeping registries of those objects,
  * loading and constructing new objects and triggering callbacks. Each subclass needs
  * to implement its own load() functionality.
  *
  * All core subclasses of ObjectCollection by convention loaded objects are stored
- * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`.  In addition
+ * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`. In addition
  * the all support an `enabled` option that controls the enabled/disabled state of the object
  * when loaded.
  *
@@ -61,7 +61,7 @@ abstract class ObjectCollection {
 
 /**
  * Trigger a callback method on every object in the collection.
- * Used to trigger methods on objects in the collection.  Will fire the methods in the
+ * Used to trigger methods on objects in the collection. Will fire the methods in the
  * order they were attached.
  *
  * ### Options
@@ -70,7 +70,7 @@ abstract class ObjectCollection {
  *    Can either be a scalar value, or an array of values to break on. Defaults to `false`.
  *
  * - `break` Set to true to enabled breaking. When a trigger is broken, the last returned value
- *    will be returned.  If used in combination with `collectReturn` the collected results will be returned.
+ *    will be returned. If used in combination with `collectReturn` the collected results will be returned.
  *    Defaults to `false`.
  *
  * - `collectReturn` Set to true to collect the return of each object into an array.
@@ -126,6 +126,7 @@ abstract class ObjectCollection {
 		if ($options['modParams'] !== false && !isset($params[$options['modParams']])) {
 			throw new CakeException(__d('cake_dev', 'Cannot use modParams with indexes that do not exist.'));
 		}
+		$result = null;
 		foreach ($list as $name) {
 			$result = call_user_func_array(array($this->_loaded[$name], $callback), compact('subject') + $params);
 			if ($options['collectReturn'] === true) {
@@ -180,7 +181,10 @@ abstract class ObjectCollection {
 		$enabled = false;
 		foreach ((array)$name as $object) {
 			if (isset($this->_loaded[$object]) && !isset($this->_enabled[$object])) {
-				$priority = isset($this->_loaded[$object]->settings['priority']) ? $this->_loaded[$object]->settings['priority'] : $this->defaultPriority;
+				$priority = $this->defaultPriority;
+				if (isset($this->_loaded[$object]->settings['priority'])) {
+					$priority = $this->_loaded[$object]->settings['priority'];
+				}
 				$this->_enabled[$object] = array($priority);
 				$enabled = true;
 			}
@@ -218,14 +222,14 @@ abstract class ObjectCollection {
 		if (is_string($name)) {
 			$name = array($name => $priority);
 		}
-		foreach ($name as $obj => $prio) {
-			if (isset($this->_loaded[$obj])) {
-				if (is_null($prio)) {
-					$prio = $this->defaultPriority;
+		foreach ($name as $object => $objectPriority) {
+			if (isset($this->_loaded[$object])) {
+				if (is_null($objectPriority)) {
+					$objectPriority = $this->defaultPriority;
 				}
-				$this->_loaded[$obj]->settings['priority'] = $prio;
-				if (isset($this->_enabled[$obj])) {
-					$this->_enabled[$obj] = array($prio);
+				$this->_loaded[$object]->settings['priority'] = $objectPriority;
+				if (isset($this->_enabled[$object])) {
+					$this->_enabled[$object] = array($objectPriority);
 				}
 			}
 		}
@@ -233,7 +237,7 @@ abstract class ObjectCollection {
 	}
 
 /**
- * Disables callbacks on a object or array of objects.  Public object methods are still
+ * Disables callbacks on a object or array of objects. Public object methods are still
  * callable as normal.
  *
  * @param string|array $name CamelCased name of the objects(s) to disable (string or array)
@@ -248,7 +252,7 @@ abstract class ObjectCollection {
 /**
  * Gets the list of currently-enabled objects, or, the current status of a single objects
  *
- * @param string $name Optional.  The name of the object to check the status of.  If omitted,
+ * @param string $name Optional. The name of the object to check the status of. If omitted,
  *   returns an array of currently-enabled object
  * @return mixed If $name is specified, returns the boolean status of the corresponding object.
  *   Otherwise, returns an array of all enabled objects.
@@ -263,12 +267,25 @@ abstract class ObjectCollection {
 /**
  * Gets the list of attached objects, or, whether the given object is attached
  *
- * @param string $name Optional.  The name of the behavior to check the status of.  If omitted,
- *   returns an array of currently-attached behaviors
- * @return mixed If $name is specified, returns the boolean status of the corresponding behavior.
- *    Otherwise, returns an array of all attached behaviors.
+ * @param string $name Optional. The name of the object to check the status of. If omitted,
+ *   returns an array of currently-attached objects
+ * @return mixed If $name is specified, returns the boolean status of the corresponding object.
+ *    Otherwise, returns an array of all attached objects.
+ * @deprecated Use loaded instead.
  */
 	public function attached($name = null) {
+		return $this->loaded($name);
+	}
+
+/**
+ * Gets the list of loaded objects, or, whether the given object is loaded
+ *
+ * @param string $name Optional. The name of the object to check the status of. If omitted,
+ *   returns an array of currently-loaded objects
+ * @return mixed If $name is specified, returns the boolean status of the corresponding object.
+ *    Otherwise, returns an array of all loaded objects.
+ */
+	public function loaded($name = null) {
 		if (!empty($name)) {
 			return isset($this->_loaded[$name]);
 		}
@@ -282,9 +299,8 @@ abstract class ObjectCollection {
  * @return void
  */
 	public function unload($name) {
-		list($plugin, $name) = pluginSplit($name);
-		unset($this->_loaded[$name]);
-		unset($this->_enabled[$name]);
+		list(, $name) = pluginSplit($name);
+		unset($this->_loaded[$name], $this->_enabled[$name]);
 	}
 
 /**
@@ -296,7 +312,7 @@ abstract class ObjectCollection {
  */
 	public function set($name = null, $object = null) {
 		if (!empty($name) && !empty($object)) {
-			list($plugin, $name) = pluginSplit($name);
+			list(, $name) = pluginSplit($name);
 			$this->_loaded[$name] = $object;
 		}
 		return $this->_loaded;
@@ -317,7 +333,7 @@ abstract class ObjectCollection {
 				$options = (array)$objectName;
 				$objectName = $i;
 			}
-			list($plugin, $name) = pluginSplit($objectName);
+			list(, $name) = pluginSplit($objectName);
 			$normal[$name] = array('class' => $objectName, 'settings' => $options);
 		}
 		return $normal;

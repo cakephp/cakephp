@@ -239,7 +239,7 @@ class EmailComponent extends Component {
  * it be handled by sendmail (or similar) or a string
  * to completely override the Message-ID.
  *
- * If you are sending Email from a shell, be sure to set this value.  As you
+ * If you are sending Email from a shell, be sure to set this value. As you
  * could encounter delivery issues if you do not.
  *
  * @var mixed
@@ -317,7 +317,7 @@ class EmailComponent extends Component {
 		foreach ($this->headers as $key => $value) {
 			$headers['X-' . $key] = $value;
 		}
-		if ($this->date != false) {
+		if ($this->date) {
 			$headers['Date'] = $this->date;
 		}
 		$lib->setHeaders($headers);
@@ -449,7 +449,7 @@ class EmailComponent extends Component {
  * @return string Stripped value
  */
 	protected function _strip($value, $message = false) {
-		$search  = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
+		$search = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
 		$search .= '|charset\=|mime-version\:|multipart/mixed|(?:[^a-z]to|b?cc)\:.*';
 
 		if ($message !== true) {

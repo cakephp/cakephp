@@ -18,6 +18,7 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('ModelBehavior', 'Model');
 App::uses('AclNode', 'Model');
 App::uses('Hash', 'Utility');
 

@@ -159,9 +159,19 @@ class HelperTestPostsTag extends Model {
 class TestHelper extends Helper {
 
 /**
+ * Settings for this helper.
+ *
+ * @var array
+ */
+	public $settings = array(
+		'key1' => 'val1',
+		'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'val2.2')
+	);
+
+/**
  * Helpers for this helper.
  *
- * @var string
+ * @var array
  */
 	public $helpers = array('Html', 'TestPlugin.OtherHelper');
 
@@ -262,6 +272,24 @@ class HelperTest extends CakeTestCase {
 				'min'
 			)
 		);
+	}
+
+/**
+ * Test settings merging
+ *
+ * @return void
+ */
+	public function testSettingsMerging() {
+		$Helper = new TestHelper($this->View, array(
+			'key3' => 'val3',
+			'key2' => array('key2.2' => 'newval')
+		));
+		$expected = array(
+			'key1' => 'val1',
+			'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'newval'),
+			'key3' => 'val3'
+		);
+		$this->assertEquals($expected, $Helper->settings);
 	}
 
 /**
@@ -528,7 +556,7 @@ class HelperTest extends CakeTestCase {
 	}
 
 /**
- * Ensure HTML escaping of url params.  So link addresses are valid and not exploited
+ * Ensure HTML escaping of url params. So link addresses are valid and not exploited
  *
  * @return void
  */

@@ -18,6 +18,7 @@
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('ModelBehavior', 'Model');
 
 /**
  * Behavior to allow for dynamic and atomic manipulation of a Model's associations
@@ -108,9 +109,7 @@ class ContainableBehavior extends ModelBehavior {
 		}
 		$noContain = $noContain && empty($contain);
 
-		if (
-			$noContain || empty($contain) || (isset($contain[0]) && $contain[0] === null)
-		) {
+		if ($noContain || empty($contain)) {
 			if ($noContain) {
 				$query['recursive'] = -1;
 			}
@@ -125,7 +124,7 @@ class ContainableBehavior extends ModelBehavior {
 		$map = $this->containmentsMap($containments);
 
 		$mandatory = array();
-		foreach ($containments['models'] as $name => $model) {
+		foreach ($containments['models'] as $model) {
 			$instance = $model['instance'];
 			$needed = $this->fieldDependencies($instance, $map, false);
 			if (!empty($needed)) {
@@ -174,7 +173,7 @@ class ContainableBehavior extends ModelBehavior {
 		}
 
 		if ($this->settings[$Model->alias]['recursive']) {
-			$query['recursive'] = (isset($query['recursive'])) ? $query['recursive'] : $containments['depth'];
+			$query['recursive'] = (isset($query['recursive'])) ? max($query['recursive'], $containments['depth']) : $containments['depth'];
 		}
 
 		$autoFields = ($this->settings[$Model->alias]['autoFields']

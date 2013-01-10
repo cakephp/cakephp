@@ -37,7 +37,7 @@ class PhpReader implements ConfigReaderInterface {
 /**
  * Constructor for PHP Config file reading.
  *
- * @param string $path The path to read config files from.  Defaults to APP . 'Config' . DS
+ * @param string $path The path to read config files from. Defaults to APP . 'Config' . DS
  */
 	public function __construct($path = null) {
 		if (!$path) {
@@ -49,10 +49,10 @@ class PhpReader implements ConfigReaderInterface {
 /**
  * Read a config file and return its contents.
  *
- * Files with `.` in the name will be treated as values in plugins.  Instead of reading from
+ * Files with `.` in the name will be treated as values in plugins. Instead of reading from
  * the initialized path, plugin keys will be located using App::pluginPath().
  *
- * @param string $key The identifier to read from.  If the key has a . it will be treated
+ * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix.
  * @return array Parsed configuration values.
  * @throws ConfigureException when files don't exist or they don't contain `$config`.
@@ -62,6 +62,43 @@ class PhpReader implements ConfigReaderInterface {
 		if (strpos($key, '..') !== false) {
 			throw new ConfigureException(__d('cake_dev', 'Cannot load configuration files with ../ in them.'));
 		}
+
+		$file = $this->_getFilePath($key);
+		if (!is_file($file)) {
+			throw new ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
+		}
+
+		include $file;
+		if (!isset($config)) {
+			throw new ConfigureException(__d('cake_dev', 'No variable $config found in %s', $file));
+		}
+		return $config;
+	}
+
+/**
+ * Converts the provided $data into a string of PHP code that can
+ * be used saved into a file and loaded later.
+ *
+ * @param string $key The identifier to write to. If the key has a . it will be treated
+ *  as a plugin prefix.
+ * @param array $data Data to dump.
+ * @return int Bytes saved.
+ */
+	public function dump($key, $data) {
+		$contents = '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';
+
+		$filename = $this->_getFilePath($key);
+		return file_put_contents($filename, $contents);
+	}
+
+/**
+ * Get file path
+ *
+ * @param string $key The identifier to write to. If the key has a . it will be treated
+ *  as a plugin prefix.
+ * @return string Full file path
+ */
+	protected function _getFilePath($key) {
 		if (substr($key, -4) === '.php') {
 			$key = substr($key, 0, -4);
 		}
@@ -73,35 +110,8 @@ class PhpReader implements ConfigReaderInterface {
 		} else {
 			$file = $this->_path . $key;
 		}
-		if (!is_file($file)) {
-			throw new ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
-		}
 
-		include $file;
-		if (!isset($config)) {
-			throw new ConfigureException(
-				sprintf(__d('cake_dev', 'No variable $config found in %s'), $file)
-			);
-		}
-		return $config;
-	}
-
-/**
- * Converts the provided $data into a string of PHP code that can
- * be used saved into a file and loaded later.
- *
- * @param string $filename The filename to create on $this->_path.
- * 	Extension ".php" will be automatically appended if not included in filename.
- * @param array $data Data to dump.
- * @return int Bytes saved.
- */
-	public function dump($filename, $data) {
-		$contents = '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';
-
-		if (substr($filename, -4) !== '.php') {
-			$filename .= '.php';
-		}
-		return file_put_contents($this->_path . $filename, $contents);
+		return $file;
 	}
 
 }

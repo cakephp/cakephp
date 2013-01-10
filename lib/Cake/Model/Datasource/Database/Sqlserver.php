@@ -22,7 +22,7 @@ App::uses('DboSource', 'Model/Datasource');
 /**
  * Dbo driver for SQLServer
  *
- * A Dbo driver for SQLServer 2008 and higher.  Requires the `sqlsrv`
+ * A Dbo driver for SQLServer 2008 and higher. Requires the `sqlsrv`
  * and `pdo_sqlsrv` extensions to be enabled.
  *
  * @package       Cake.Model.Datasource.Database
@@ -51,7 +51,7 @@ class Sqlserver extends DboSource {
 	public $endQuote = "]";
 
 /**
- * Creates a map between field aliases and numeric indexes.  Workaround for the
+ * Creates a map between field aliases and numeric indexes. Workaround for the
  * SQL Server driver's 30-character column name limitation.
  *
  * @var array
@@ -86,16 +86,17 @@ class Sqlserver extends DboSource {
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),
-		'string'	=> array('name' => 'nvarchar', 'limit' => '255'),
-		'text'		=> array('name' => 'nvarchar', 'limit' => 'MAX'),
-		'integer'	=> array('name' => 'int', 'formatter' => 'intval'),
-		'float'		=> array('name' => 'numeric', 'formatter' => 'floatval'),
-		'datetime'	=> array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'string' => array('name' => 'nvarchar', 'limit' => '255'),
+		'text' => array('name' => 'nvarchar', 'limit' => 'MAX'),
+		'integer' => array('name' => 'int', 'formatter' => 'intval'),
+		'biginteger' => array('name' => 'bigint'),
+		'float' => array('name' => 'numeric', 'formatter' => 'floatval'),
+		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-		'time'		=> array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
-		'date'		=> array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
-		'binary'	=> array('name' => 'varbinary'),
-		'boolean'	=> array('name' => 'bit')
+		'time' => array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
+		'date' => array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
+		'binary' => array('name' => 'varbinary'),
+		'boolean' => array('name' => 'bit')
 	);
 
 /**
@@ -186,7 +187,7 @@ class Sqlserver extends DboSource {
 	public function describe($model) {
 		$table = $this->fullTableName($model, false);
 		$cache = parent::describe($table);
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$fields = array();
@@ -282,7 +283,7 @@ class Sqlserver extends DboSource {
 
 					if (strpos($fields[$i], '.') === false) {
 						$this->_fieldMappings[$alias . '__' . $fields[$i]] = $alias . '.' . $fields[$i];
-						$fieldName  = $this->name($alias . '.' . $fields[$i]);
+						$fieldName = $this->name($alias . '.' . $fields[$i]);
 						$fieldAlias = $this->name($alias . '__' . $fields[$i]);
 					} else {
 						$build = explode('.', $fields[$i]);
@@ -406,6 +407,9 @@ class Sqlserver extends DboSource {
 		}
 		if ($col == 'bit') {
 			return 'boolean';
+		}
+		if (strpos($col, 'bigint') !== false) {
+			return 'biginteger';
 		}
 		if (strpos($col, 'int') !== false) {
 			return 'integer';
@@ -623,7 +627,7 @@ class Sqlserver extends DboSource {
  */
 	public function insertMulti($table, $fields, $values) {
 		$primaryKey = $this->_getPrimaryKey($table);
-		$hasPrimaryKey = $primaryKey != null && (
+		$hasPrimaryKey = $primaryKey && (
 			(is_array($fields) && in_array($primaryKey, $fields)
 			|| (is_string($fields) && strpos($fields, $this->startQuote . $primaryKey . $this->endQuote) !== false))
 		);
@@ -649,7 +653,7 @@ class Sqlserver extends DboSource {
  */
 	public function buildColumn($column) {
 		$result = parent::buildColumn($column);
-		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', $result);
+		$result = preg_replace('/(bigint|int|integer)\([0-9]+\)/i', '$1', $result);
 		$result = preg_replace('/(bit)\([0-9]+\)/i', '$1', $result);
 		if (strpos($result, 'DEFAULT NULL') !== false) {
 			if (isset($column['default']) && $column['default'] === '') {
@@ -736,7 +740,7 @@ class Sqlserver extends DboSource {
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->_lastAffected = false;
-		if (strncasecmp($sql, 'SELECT', 6) == 0 || preg_match('/^EXEC(?:UTE)?\s/mi', $sql) > 0) {
+		if (strncasecmp($sql, 'SELECT', 6) === 0 || preg_match('/^EXEC(?:UTE)?\s/mi', $sql) > 0) {
 			$prepareOptions += array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL);
 			return parent::_execute($sql, $params, $prepareOptions);
 		}
@@ -760,21 +764,13 @@ class Sqlserver extends DboSource {
 	}
 
 /**
- * Generate a "drop table" statement for the given Schema object
+ * Generate a "drop table" statement for the given table
  *
- * @param CakeSchema $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
- *   Otherwise, all tables defined in the schema are generated.
- * @return string
+ * @param type $table Name of the table to drop
+ * @return string Drop table SQL statement
  */
-	public function dropSchema(CakeSchema $schema, $table = null) {
-		$out = '';
-		foreach ($schema->tables as $curTable => $columns) {
-			if (!$table || $table == $curTable) {
-				$out .= "IF OBJECT_ID('" . $this->fullTableName($curTable, false) . "', 'U') IS NOT NULL DROP TABLE " . $this->fullTableName($curTable) . ";\n";
-			}
-		}
-		return $out;
+	protected function _dropTable($table) {
+		return "IF OBJECT_ID('" . $this->fullTableName($table, false) . "', 'U') IS NOT NULL DROP TABLE " . $this->fullTableName($table) . ";";
 	}
 
 /**

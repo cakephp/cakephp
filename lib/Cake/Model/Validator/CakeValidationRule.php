@@ -158,7 +158,8 @@ class CakeValidationRule {
 /**
  * Checks whether the field failed the `field should be present` validation
  *
- * @param array $data data to check rule against
+ * @param string $field Field name
+ * @param array $data Data to check rule against
  * @return boolean
  */
 	public function checkRequired($field, &$data) {
@@ -174,6 +175,7 @@ class CakeValidationRule {
 /**
  * Checks if the allowEmpty key applies
  *
+ * @param string $field Field name
  * @param array $data data to check rule against
  * @return boolean
  */
@@ -245,8 +247,9 @@ class CakeValidationRule {
  * If called with no parameters it will return whether this rule
  * is configured for update operations or not.
  *
+ * @param boolean $exists Boolean to indicate if records exists
  * @return boolean
- **/
+ */
 	public function isUpdate($exists = null) {
 		if ($exists === null) {
 			return $this->_recordExists;
@@ -257,6 +260,9 @@ class CakeValidationRule {
 /**
  * Dispatches the validation rule to the given validator method
  *
+ * @param string $field Field name
+ * @param array $data Data array
+ * @param array $methods Methods list
  * @return boolean True if the rule could be dispatched, false otherwise
  */
 	public function process($field, &$data, &$methods) {
@@ -273,7 +279,7 @@ class CakeValidationRule {
 			$this->_valid = call_user_func_array(array('Validation', $this->_rule), $this->_ruleParams);
 		} elseif (is_string($validator['rule'])) {
 			$this->_valid = preg_match($this->_rule, $data[$field]);
-		} elseif (Configure::read('debug') > 0) {
+		} else {
 			trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $this->_rule, $field), E_USER_WARNING);
 			return false;
 		}
@@ -286,7 +292,7 @@ class CakeValidationRule {
  * and it will set isUpdate() to false
  *
  * @return void
- **/
+ */
 	public function reset() {
 		$this->_valid = true;
 		$this->_recordExists = false;
@@ -295,8 +301,9 @@ class CakeValidationRule {
 /**
  * Returns passed options for this rule
  *
+ * @param string|integer $key Array index
  * @return array
- **/
+ */
 	public function getOptions($key) {
 		if (!isset($this->_passedOptions[$key])) {
 			return null;
@@ -328,6 +335,8 @@ class CakeValidationRule {
 /**
  * Parses the rule and sets the rule and ruleParams
  *
+ * @param string $field Field name
+ * @param array $data Data array
  * @return void
  */
 	protected function _parseRule($field, &$data) {

@@ -4,7 +4,7 @@
  *
  * Provides jQuery specific Javascript for JsHelper.
  *
- * Implements the JsHelper interface for jQuery.  All $options arrays
+ * Implements the JsHelper interface for jQuery. All $options arrays
  * support all options found in the JsHelper, as well as those in the jQuery
  * documentation.
  *
@@ -31,7 +31,7 @@ App::uses('JsBaseEngineHelper', 'View/Helper');
  *
  * Provides jQuery specific Javascript for JsHelper.
  *
- * Implements the JsHelper interface for jQuery.  All $options arrays
+ * Implements the JsHelper interface for jQuery. All $options arrays
  * support all options found in the JsHelper, as well as those in the jQuery
  * documentation.
  *
@@ -189,7 +189,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * bind a 'traditional event' as `$(document).bind('ready', fn)`
  * Works in an entirely different fashion than  `$(document).ready()`
  * The first will not run the function when eval()'d as part of a response
- * The second will.  Because of the way that ajax pagination is done
+ * The second will. Because of the way that ajax pagination is done
  * `$().ready()` is used.
  *
  * @param string $functionBody The code to run on domReady

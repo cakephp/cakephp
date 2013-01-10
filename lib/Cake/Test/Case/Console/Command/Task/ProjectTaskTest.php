@@ -150,7 +150,7 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
- * test bake with CakePHP on the include path.  The constants should remain commented out.
+ * test bake with CakePHP on the include path. The constants should remain commented out.
  *
  * @return void
  */
@@ -247,6 +247,24 @@ class ProjectTaskTest extends CakeTestCase {
 		$File = new File($path . 'Config' . DS . 'core.php');
 		$contents = $File->read();
 		$this->assertNotRegExp('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
+	}
+
+/**
+ * test generation of cache prefix
+ *
+ * @return void
+ */
+	public function testCachePrefixGeneration() {
+		$this->_setupTestProject();
+
+		$path = $this->Task->path . 'bake_test_app' . DS;
+		$result = $this->Task->cachePrefix($path);
+		$this->assertTrue($result);
+
+		$File = new File($path . 'Config' . DS . 'core.php');
+		$contents = $File->read();
+		$this->assertRegExp('/\$prefix = \'.+\';/', $contents, '$prefix is not defined');
+		$this->assertNotRegExp('/\$prefix = \'myapp_\';/', $contents, 'Default cache prefix left behind. %s');
 	}
 
 /**

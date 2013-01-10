@@ -167,7 +167,7 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
- * Test that invalidFields() integrates well with save().  And that fieldList can be an empty type.
+ * Test that invalidFields() integrates well with save(). And that fieldList can be an empty type.
  *
  * @return void
  */
@@ -711,25 +711,6 @@ class ModelValidationTest extends BaseModelTest {
 			)
 		);
 		$TestModel->invalidFields(array('fieldList' => array('title')));
-	}
-
-/**
- * Test that missing validation methods does not trigger errors in production mode.
- *
- * @return void
- */
-	public function testMissingValidationErrorNoTriggering() {
-		Configure::write('debug', 0);
-		$TestModel = new ValidationTest1();
-		$TestModel->create(array('title' => 'foo'));
-		$TestModel->validate = array(
-			'title' => array(
-				'rule' => array('thisOneBringsThePain'),
-				'required' => true
-			)
-		);
-		$TestModel->invalidFields(array('fieldList' => array('title')));
-		$this->assertEquals(array(), $TestModel->validationErrors);
 	}
 
 /**
@@ -2132,6 +2113,33 @@ class ModelValidationTest extends BaseModelTest {
 
 		$result = $TestModel->validator()->getField('title');
 		$this->assertTrue($result instanceof CakeValidationSet);
+	}
+
+/**
+ * Test that validator override works as expected
+ *
+ * @return void
+ */
+	public function testValidatorOverride() {
+		$TestModel = new Article();
+		$ValidatorA = new ModelValidator($TestModel);
+		$ValidatorB = new ModelValidator($TestModel);
+
+		$TestModel->validator($ValidatorA);
+		$TestModel->validator($ValidatorB);
+
+		$this->assertSame($ValidatorB, $TestModel->validator());
+		$this->assertNotSame($ValidatorA, $TestModel->validator());
+	}
+
+/**
+ * Test that type hint exception is thrown
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testValidatorTypehintException() {
+		$Validator = new ModelValidator('asdasds');
 	}
 
 /**

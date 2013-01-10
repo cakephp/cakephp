@@ -96,7 +96,7 @@ class AclComponent extends Component {
 	}
 
 /**
- * Pass-thru function for ACL check instance.  Check methods
+ * Pass-thru function for ACL check instance. Check methods
  * are used to check whether or not an ARO can access an ACO
  *
  * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats

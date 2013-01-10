@@ -35,8 +35,8 @@
 	Configure::write('debug', 2);
 
 /**
- * Configure the Error handler used to handle errors for your application.  By default
- * ErrorHandler::handleError() is used.  It will display errors using Debugger, when debug > 0
+ * Configure the Error handler used to handle errors for your application. By default
+ * ErrorHandler::handleError() is used. It will display errors using Debugger, when debug > 0
  * and log errors with CakeLog when debug = 0.
  *
  * Options:
@@ -56,9 +56,9 @@
 	));
 
 /**
- * Configure the Exception handler used for uncaught exceptions.  By default,
+ * Configure the Exception handler used for uncaught exceptions. By default,
  * ErrorHandler::handleException() is used. It will display a HTML page for the exception, and
- * while debug > 0, framework errors like Missing Controller will be displayed.  When debug = 0,
+ * while debug > 0, framework errors like Missing Controller will be displayed. When debug = 0,
  * framework errors will be coerced into generic HTTP errors.
  *
  * Options:
@@ -66,7 +66,7 @@
  * - `handler` - callback - The callback to handle exceptions. You can set this to any callback type,
  *   including anonymous functions.
  *   Make sure you add App::uses('MyHandler', 'Error'); when using a custom handler class
- * - `renderer` - string - The class responsible for rendering uncaught exceptions.  If you choose a custom class you
+ * - `renderer` - string - The class responsible for rendering uncaught exceptions. If you choose a custom class you
  *   should place the file for that class in app/Lib/Error. This class needs to implement a render method.
  * - `log` - boolean - Should Exceptions be logged?
  *
@@ -132,6 +132,16 @@
 	//Configure::write('Cache.check', true);
 
 /**
+ * Enable cache view prefixes.
+ *
+ * If set it will be prepended to the cache name for view file caching. This is
+ * helpful if you deploy the same application via multiple subdomains and languages,
+ * for instance. Each version can then have its own view cache namespace.
+ * Note: The final cache file name will then be `prefix_cachefilename`.
+ */
+	//Configure::write('Cache.viewPrefix', 'prefix');
+
+/**
  * Defines the default error type when using the log() function. Used for
  * differentiating error logging and debugging. Currently PHP supports LOG_DEBUG.
  */
@@ -153,8 +163,8 @@
  *    value to false, when dealing with older versions of IE, Chrome Frame or certain web-browsing devices and AJAX
  * - `Session.defaults` - The default configuration set to use as a basis for your session.
  *    There are four builtins: php, cake, cache, database.
- * - `Session.handler` - Can be used to enable a custom session handler.  Expects an array of of callables,
- *    that can be used with `session_save_handler`.  Using this option will automatically add `session.save_handler`
+ * - `Session.handler` - Can be used to enable a custom session handler. Expects an array of of callables,
+ *    that can be used with `session_save_handler`. Using this option will automatically add `session.save_handler`
  *    to the ini array.
  * - `Session.autoRegenerate` - Enabling this setting, turns on automatic renewal of sessions, and
  *    sessionids that change frequently. See CakeSession::$requestCountdown.
@@ -295,18 +305,20 @@
  */
 
 /**
- * Pick the caching engine to use.  If APC is enabled use it.
- * If running via cli - apc is disabled by default. ensure it's available and enabled in this case
+ * Configure the cache handlers that CakePHP will use for internal
+ * metadata like class maps, and model schema.
  *
+ * By default File is used, but for improved performance you should use APC.
+ *
+ * Note: 'default' and other application caches should be configured in app/Config/bootstrap.php.
+ *       Please check the comments in boostrap.php for more info on the cache engines available
+ *       and their setttings.
  */
 $engine = 'File';
-if (extension_loaded('apc') && function_exists('apc_dec') && (php_sapi_name() !== 'cli' || ini_get('apc.enable_cli'))) {
-	$engine = 'Apc';
-}
 
 // In development mode, caches should expire quickly.
 $duration = '+999 days';
-if (Configure::read('debug') >= 1) {
+if (Configure::read('debug') > 0) {
 	$duration = '+10 seconds';
 }
 
@@ -314,7 +326,7 @@ if (Configure::read('debug') >= 1) {
 $prefix = 'myapp_';
 
 /**
- * Configure the cache used for general framework caching.  Path information,
+ * Configure the cache used for general framework caching. Path information,
  * object listings, and translation cache files are stored with this configuration.
  */
 Cache::config('_cake_core_', array(
@@ -326,7 +338,7 @@ Cache::config('_cake_core_', array(
 ));
 
 /**
- * Configure the cache for model and datasource caches.  This cache configuration
+ * Configure the cache for model and datasource caches. This cache configuration
  * is used to store schema descriptions, and table listings in connections.
  */
 Cache::config('_cake_model_', array(

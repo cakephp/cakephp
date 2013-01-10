@@ -48,7 +48,7 @@ class CakeTextReporter extends CakeBaseReporter {
 /**
  * Paints a failing test.
  *
- * @param $message PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
+ * @param PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
  *   the context of the other tests.
  * @return void
  */
@@ -71,10 +71,10 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintFooter($result) {
-		if ($result->failureCount() + $result->errorCount() == 0) {
-			echo "\nOK\n";
-		} else {
+		if ($result->failureCount() + $result->errorCount()) {
 			echo "FAILURES!!!\n";
+		} else {
+			echo "\nOK\n";
 		}
 
 		echo "Test cases run: " . $result->count() .
@@ -95,7 +95,6 @@ class CakeTextReporter extends CakeBaseReporter {
 /**
  * Paints the title only.
  *
- * @param string $test_name Name class of test.
  * @return void
  */
 	public function paintHeader() {
@@ -177,7 +176,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * Generates a Text summary of the coverage data.
  *
  * @param array $coverage Array of coverage data.
- * @return string
+ * @return void
  */
 	public function paintCoverage($coverage) {
 		$reporter = new TextCoverageReport($coverage, $this);

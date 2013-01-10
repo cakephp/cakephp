@@ -91,7 +91,7 @@ class JsHelper extends AppHelper {
 			$className = $settings;
 		}
 		$engineName = $className;
-		list($plugin, $className) = pluginSplit($className);
+		list(, $className) = pluginSplit($className);
 
 		$this->_engineName = $className . 'Engine';
 		$engineClass = $engineName . 'Engine';
@@ -171,8 +171,8 @@ class JsHelper extends AppHelper {
 
 /**
  * Writes all Javascript generated so far to a code block or
- * caches them to a file and returns a linked script.  If no scripts have been
- * buffered this method will return null.  If the request is an XHR(ajax) request
+ * caches them to a file and returns a linked script. If no scripts have been
+ * buffered this method will return null. If the request is an XHR(ajax) request
  * onDomReady will be set to false. As the dom is already 'ready'.
  *
  * ### Options
@@ -229,7 +229,7 @@ class JsHelper extends AppHelper {
  *
  * @param string $script Script string to add to the buffer.
  * @param boolean $top If true the script will be added to the top of the
- *   buffered scripts array.  If false the bottom.
+ *   buffered scripts array. If false the bottom.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::buffer
  */
@@ -259,9 +259,9 @@ class JsHelper extends AppHelper {
 	}
 
 /**
- * Generates the object string for variables passed to javascript.
+ * Generates the object string for variables passed to javascript and adds to buffer
  *
- * @return string Generated JSON object of all set vars
+ * @return void
  */
 	protected function _createVars() {
 		if (!empty($this->_jsVars)) {
@@ -271,15 +271,15 @@ class JsHelper extends AppHelper {
 	}
 
 /**
- * Generate an 'Ajax' link.  Uses the selected JS engine to create a link
- * element that is enhanced with Javascript.  Options can include
+ * Generate an 'Ajax' link. Uses the selected JS engine to create a link
+ * element that is enhanced with Javascript. Options can include
  * both those for HtmlHelper::link() and JsBaseEngine::request(), JsBaseEngine::event();
  *
  * ### Options
  *
  * - `confirm` - Generate a confirm() dialog before sending the event.
  * - `id` - use a custom id.
- * - `htmlAttributes` - additional non-standard htmlAttributes.  Standard attributes are class, id,
+ * - `htmlAttributes` - additional non-standard htmlAttributes. Standard attributes are class, id,
  *    rel, title, escape, onblur and onfocus.
  * - `buffer` - Disable the buffering and return a script tag in addition to the link.
  *
@@ -318,7 +318,7 @@ class JsHelper extends AppHelper {
 	}
 
 /**
- * Pass variables into Javascript.  Allows you to set variables that will be
+ * Pass variables into Javascript. Allows you to set variables that will be
  * output when the buffer is fetched with `JsHelper::getBuffer()` or `JsHelper::writeBuffer()`
  * The Javascript variable used to output set variables can be controlled with `JsHelper::$setVariable`
  *
@@ -338,7 +338,7 @@ class JsHelper extends AppHelper {
 		} else {
 			$data = array($one => $two);
 		}
-		if ($data == null) {
+		if (!$data) {
 			return false;
 		}
 		$this->_jsVars = array_merge($this->_jsVars, $data);
@@ -346,7 +346,7 @@ class JsHelper extends AppHelper {
 
 /**
  * Uses the selected JS engine to create a submit input
- * element that is enhanced with Javascript.  Options can include
+ * element that is enhanced with Javascript. Options can include
  * both those for FormHelper::submit() and JsBaseEngine::request(), JsBaseEngine::event();
  *
  * Forms submitting with this method, cannot send files. Files do not transfer over XmlHttpRequest

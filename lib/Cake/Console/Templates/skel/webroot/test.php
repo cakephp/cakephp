@@ -50,7 +50,7 @@ if (!defined('APP_DIR')) {
 /**
  * The absolute path to the "Cake" directory, WITHOUT a trailing DS.
  *
- * For ease of development CakePHP uses PHP's include_path.  If you
+ * For ease of development CakePHP uses PHP's include_path. If you
  * need to cannot modify your include_path, you can set this path.
  *
  * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
@@ -82,11 +82,11 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	}
 }
 if (!empty($failed)) {
-	trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
+	trigger_error("CakePHP core could not be found. Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php. It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
 
 if (Configure::read('debug') < 1) {
-	die(__d('cake_dev', 'Debug setting does not allow access to this url.'));
+	exit(__d('cake_dev', 'Debug setting does not allow access to this url.'));
 }
 
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';

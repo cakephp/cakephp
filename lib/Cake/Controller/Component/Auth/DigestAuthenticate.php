@@ -18,12 +18,12 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 /**
  * Digest Authentication adapter for AuthComponent.
  *
- * Provides Digest HTTP authentication support for AuthComponent.  Unlike most AuthComponent adapters,
- * DigestAuthenticate requires a special password hash that conforms to RFC2617.  You can create this
- * password using `DigestAuthenticate::password()`.  If you wish to use digest authentication alongside other
+ * Provides Digest HTTP authentication support for AuthComponent. Unlike most AuthComponent adapters,
+ * DigestAuthenticate requires a special password hash that conforms to RFC2617. You can create this
+ * password using `DigestAuthenticate::password()`. If you wish to use digest authentication alongside other
  * authentication methods, its recommended that you store the digest authentication separately.
  *
- * Clients using Digest Authentication  must support cookies.  Since AuthComponent identifies users based
+ * Clients using Digest Authentication  must support cookies. Since AuthComponent identifies users based
  * on Session contents, clients without support for cookies will not function properly.
  *
  * ### Using Digest auth
@@ -37,18 +37,18 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  *	);
  * }}}
  *
- * In your login function just call `$this->Auth->login()` without any checks for POST data.  This
+ * In your login function just call `$this->Auth->login()` without any checks for POST data. This
  * will send the authentication headers, and trigger the login dialog in the browser/client.
  *
  * ### Generating passwords compatible with Digest authentication.
  *
- * Due to the Digest authentication specification, digest auth requires a special password value.  You
+ * Due to the Digest authentication specification, digest auth requires a special password value. You
  * can generate this password using `DigestAuthenticate::password()`
  *
  * `$digestPass = DigestAuthenticate::password($username, env('SERVER_NAME'), $password);`
  *
  * Its recommended that you store this digest auth only password separate from password hashes used for other
- * login methods.  For example `User.digest_pass` could be used for a digest password, while `User.password` would
+ * login methods. For example `User.digest_pass` could be used for a digest password, while `User.password` would
  * store the password hash for use with other methods like Basic or Form.
  *
  * @package       Cake.Controller.Component.Auth
@@ -66,7 +66,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
  * - `contain` Extra models to contain and store in session.
  * - `realm` The realm authentication is for, Defaults to the servername.
- * - `nonce` A nonce used for authentication.  Defaults to `uniqid()`.
+ * - `nonce` A nonce used for authentication. Defaults to `uniqid()`.
  * - `qop` Defaults to auth, no other values are supported at this time.
  * - `opaque` A string that must be returned unchanged by clients.
  *    Defaults to `md5($settings['realm'])`
@@ -108,7 +108,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Authenticate a user using Digest HTTP auth.  Will use the configured User model and attempt a
+ * Authenticate a user using Digest HTTP auth. Will use the configured User model and attempt a
  * login using Digest HTTP auth.
  *
  * @param CakeRequest $request The request to authenticate with.
@@ -128,7 +128,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Get a user based on information in the request.  Used by cookie-less auth for stateless clients.
+ * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
  *
  * @param CakeRequest $request Request object.
  * @return mixed Either false or an array of user information
@@ -138,7 +138,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		if (empty($digest)) {
 			return false;
 		}
-		$user = $this->_findUser($digest['username'], null);
+		$user = $this->_findUser($digest['username']);
 		if (empty($user)) {
 			return false;
 		}
@@ -157,9 +157,9 @@ class DigestAuthenticate extends BaseAuthenticate {
  * @param string $password Unused password, digest doesn't require passwords.
  * @return Mixed Either false on failure, or an array of user data.
  */
-	protected function _findUser($username, $password) {
+	protected function _findUser($username, $password = null) {
 		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
+		list(, $model) = pluginSplit($userModel);
 		$fields = $this->settings['fields'];
 
 		$conditions = array(

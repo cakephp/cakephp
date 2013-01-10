@@ -170,7 +170,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Announces the start of a test.
  *
- * @param string $method Test method just started.
  * @return void
  */
 	protected function assertPreConditions() {
@@ -181,7 +180,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Announces the end of a test.
  *
- * @param string $method Test method just finished.
  * @return void
  */
 	protected function assertPostConditions() {
@@ -394,7 +392,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 					}
 					$regex[] = array(
 						sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
-						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags,  strlen($match[0]))),
+						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
 						$i,
 					);
 					continue;
@@ -496,6 +494,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * Generates all permutation of an array $items and returns them in a new array.
  *
  * @param array $items An array of items
+ * @param array $perms
  * @return array
  */
 	protected function _arrayPermute($items, $perms = array()) {
@@ -594,6 +593,9 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		return self::assertNotRegExp($pattern, $string, $message);
 	}
 
+/**
+ * assert no errors
+ */
 	protected function assertNoErrors() {
 	}
 
@@ -675,5 +677,27 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		return $condition;
 	}
 	// @codingStandardsIgnoreEnd
+
+/**
+ * Mock a model, maintain fixtures and table association
+ *
+ * @param string $model
+ * @param mixed $methods
+ * @param mixed $config
+ * @return Model
+ */
+	public function getMockForModel($model, $methods = array(), $config = null) {
+		if (is_null($config)) {
+			$config = ClassRegistry::config('Model');
+		}
+
+		list($plugin, $name) = pluginSplit($model, true);
+		App::uses($name, $plugin . 'Model');
+		$config = array_merge((array)$config, array('name' => $name));
+		$mock = $this->getMock($name, $methods, array($config));
+		ClassRegistry::removeObject($name);
+		ClassRegistry::addObject($name, $mock);
+		return $mock;
+	}
 
 }

@@ -17,12 +17,12 @@ App::uses('BaseAuthorize', 'Controller/Component/Auth');
 App::uses('Router', 'Routing');
 
 /**
- * An authorization adapter for AuthComponent.  Provides the ability to authorize using CRUD mappings.
+ * An authorization adapter for AuthComponent. Provides the ability to authorize using CRUD mappings.
  * CRUD mappings allow you to translate controller actions into *C*reate *R*ead *U*pdate *D*elete actions.
  * This is then checked in the AclComponent as specific permissions.
  *
- * For example, taking `/posts/index` as the current request.  The default mapping for `index`, is a `read` permission
- * check. The Acl check would then be for the `posts` controller with the `read` permission.  This allows you
+ * For example, taking `/posts/index` as the current request. The default mapping for `index`, is a `read` permission
+ * check. The Acl check would then be for the `posts` controller with the `read` permission. This allows you
  * to create permission systems that focus more on what is being done to resources, rather than the specific actions
  * being visited.
  *
@@ -37,7 +37,7 @@ class CrudAuthorize extends BaseAuthorize {
  * Sets up additional actionMap values that match the configured `Routing.prefixes`.
  *
  * @param ComponentCollection $collection The component collection from the controller.
- * @param string $settings An array of settings.  This class does not use any settings.
+ * @param string $settings An array of settings. This class does not use any settings.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		parent::__construct($collection, $settings);

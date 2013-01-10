@@ -11,10 +11,6 @@ env:
   - DB=sqlite
 
 matrix:
-  allow_failures:
-    - php: 5.4
-      env:
-        - PHPCS=1
   include:
     - php: 5.4
       env:
@@ -118,7 +114,7 @@ before_script:
     }" > app/Config/database.php
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else phpcs --extensions=php --standard=CakePHP ./lib/Cake; fi"
+  - sh -c "if [ '$PHPCS' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi"
 
 notifications:
   email: false
