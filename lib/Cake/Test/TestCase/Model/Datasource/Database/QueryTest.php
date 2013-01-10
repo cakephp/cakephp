@@ -1058,6 +1058,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(3, $result);
 	}
 
+/**
+ * Tests that it is possible to select distinct rows, even filtering by one column
+ * this is testing that there is an specific implementation for DISTINCT ON
+ *
+ * @return void
+ **/
 	public function testSelectDistinct() {
 		$result = $this->_insertTwoRecords();
 		$result->bindValue(1, '3', 'integer');
