@@ -1089,4 +1089,39 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(2, $result);
 	}
 
+/**
+ * Tests that having() behaves pretty much the same as the where() method
+ *
+ * @return void
+ **/
+	public function testSelectHaving() {
+		$statement = $this->_insertTwoRecords();
+		$statement->bindValue(1, 3);
+		$statement->bindValue(2, 'another title');
+		$statement->bindValue(3, 'another body');
+		$statement->bindValue(4, 2);
+		$statement->execute();
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(author_id)', 'author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('author_id')
+			->having(['total <' => 2], ['total' => 'integer'])
+			->execute();
+		$expected = [['total' => 1, 'author_id' => 1]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
+		$result = $query->having(['total' => 2], ['total' => 'integer'], true)
+			->execute();
+		$expected = [['total' => 2, 'author_id' => 2]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
+		$result = $query->having(function($e) { return $e->add('total = 1 + 1'); }, [], true)
+			->execute();
+		$expected = [['total' => 2, 'author_id' => 2]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+	}
+
 }
