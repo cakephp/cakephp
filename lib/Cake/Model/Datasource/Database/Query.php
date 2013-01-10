@@ -292,60 +292,20 @@ class Query implements IteratorAggregate  {
 	}
 
 	public function where($conditions = null, $types = [], $overwrite = false) {
-		$where = $this->_parts['where'] ?: $this->newExpr();
-		if ($conditions === null) {
-			return $where;
-		}
-
-		if (is_callable($conditions)) {
-			$this->_parts['where'] = $conditions($where, $this);
-			return $this;
-		}
-
 		if ($overwrite) {
-			$this->_parts['where'] = $this->newExpr()->add($conditions, $types);
-		} else {
-			$where->add($conditions, $types);
+			$this->_parts['where'] = $this->newExpr();
 		}
-
-		$this->_parts['where'] = $where;
-		$this->_dirty = true;
+		$this->_conjugate('where', $conditions, 'AND', $types);
 		return $this;
 	}
 
 	public function andWhere($conditions, $types = []) {
-		$where = $this->_parts['where'] ?: $this->newExpr();
-
-		if (is_callable($conditions)) {
-			$conditions = $conditions($this->newExpr(), $this);
-		}
-
-		if ($where->type() === 'AND') {
-			$where->add($conditions, $types);
-		} else {
-			$where = $this->newExpr()->add([$conditions, $where], $types);
-		}
-
-		$this->_parts['where'] = $where;
-		$this->_dirty = true;
+		$this->_conjugate('where', $conditions, 'AND', $types);
 		return $this;
 	}
 
 	public function orWhere($conditions, $types = []) {
-		$where = $this->_parts['where'] ?: $this->newExpr()->type('OR');
-
-		if (is_callable($conditions)) {
-			$conditions = $conditions($this->newExpr(), $this);
-		}
-
-		if ($where->type() === 'OR') {
-			$where->add($conditions, $types);
-		} else {
-			$where = $this->newExpr()->type('OR')->add([$conditions, $where], $types);
-		}
-
-		$this->_parts['where'] = $where;
-		$this->_dirty = true;
+		$this->_conjugate('where', $conditions, 'OR', $types);
 		return $this;
 	}
 
@@ -435,6 +395,25 @@ class Query implements IteratorAggregate  {
 			$this->_iterator = $this->execute();
 		}
 		return $this->_iterator;
+	}
+
+	protected function _conjugate($part, $append, $conjunction, $types) {
+		$expression = $this->_parts[$part] ?: $this->newExpr();
+
+		if (is_callable($append)) {
+			$append = $append($this->newExpr(), $this);
+		}
+
+		if ($expression->type() === $conjunction) {
+			$expression->add($append, $types);
+		} else {
+			$expression = $this->newExpr()
+				->type($conjunction)
+				->add([$append, $expression], $types);
+		}
+
+		$this->_parts[$part] = $expression;
+		$this->_dirty = true;
 	}
 
 /**
