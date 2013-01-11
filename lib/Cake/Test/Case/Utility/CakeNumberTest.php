@@ -253,6 +253,18 @@ class CakeNumberTest extends CakeTestCase {
 		$result = $this->Number->currency(0.5, null, array('fractionSymbol' => false, 'fractionPosition' => 'before', 'wholeSymbol' => '$'));
 		$expected = '$0.50';
 		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(0, 'GBP');
+		$expected = '&#163;0.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(0.00000, 'GBP');
+		$expected = '&#163;0.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency('0.00000', 'GBP');
+		$expected = '&#163;0.00';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
