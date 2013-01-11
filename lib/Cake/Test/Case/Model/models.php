@@ -4976,7 +4976,7 @@ class CustomArticle extends AppModel {
  * Alters title data
  *
  * @return void
- **/
+ */
 	public function beforeValidate($options = array()) {
 		$this->data[$this->alias]['title'] = 'foo';
 		if ($this->findMethods['unPublished'] === true) {

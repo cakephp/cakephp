@@ -30,7 +30,7 @@ class ApcEngine extends CacheEngine {
  * (prefixed witht the global configuration prefix)
  *
  * @var array
- **/
+ */
 	protected $_compiledGroupNames = array();
 
 /**
@@ -144,7 +144,7 @@ class ApcEngine extends CacheEngine {
  * the group accordingly.
  *
  * @return array
- **/
+ */
 	public function groups() {
 		if (empty($this->_compiledGroupNames)) {
 			foreach ($this->settings['groups'] as $group) {
@@ -176,7 +176,7 @@ class ApcEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @return boolean success
- **/
+ */
 	public function clearGroup($group) {
 		apc_inc($this->settings['prefix'] . $group, 1, $success);
 		return $success;

@@ -2171,7 +2171,7 @@ class ValidationTest extends CakeTestCase {
  *
  * @expectedException PHPUnit_Framework_Error
  * @return void
- **/
+ */
 	public function testPassThroughClassFailure() {
 		Validation::postal('text', null, 'AUTOFAIL');
 	}

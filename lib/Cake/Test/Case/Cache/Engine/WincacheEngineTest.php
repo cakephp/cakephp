@@ -243,7 +243,7 @@ class WincacheEngineTest extends CakeTestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Cache::config('wincache_groups', array(
 			'engine' => 'Wincache',

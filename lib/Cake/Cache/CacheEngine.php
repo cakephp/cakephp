@@ -32,7 +32,7 @@ abstract class CacheEngine {
  * prefixes to be prepeded to every key in this cache engine
  *
  * @var string
- **/
+ */
 	protected $_groupPrefix = null;
 
 /**

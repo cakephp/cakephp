@@ -186,7 +186,7 @@ class RedisEngine extends CacheEngine {
  * the group accordingly.
  *
  * @return array
- **/
+ */
 	public function groups() {
 		$result = array();
 		foreach ($this->settings['groups'] as $group) {
@@ -205,7 +205,7 @@ class RedisEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @return boolean success
- **/
+ */
 	public function clearGroup($group) {
 		return (bool)$this->_Redis->incr($this->settings['prefix'] . $group);
 	}
@@ -214,7 +214,7 @@ class RedisEngine extends CacheEngine {
  * Disconnects from the redis server
  *
  * @return void
- **/
+ */
 	public function __destruct() {
 		if (!$this->settings['persistent']) {
 			$this->_Redis->close();

@@ -466,7 +466,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param string $field name of the field to check
  * @return boolean
- **/
+ */
 	public function offsetExists($field) {
 		$this->_parseRules();
 		return isset($this->_fields[$field]);
@@ -477,7 +477,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param string $field name of the field to check
  * @return CakeValidationSet
- **/
+ */
 	public function offsetGet($field) {
 		$this->_parseRules();
 		return $this->_fields[$field];
@@ -489,7 +489,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @param string $field name of the field to set
  * @param array|CakeValidationSet $rules set of rules to apply to field
  * @return void
- **/
+ */
 	public function offsetSet($field, $rules) {
 		$this->_parseRules();
 		if (!$rules instanceof CakeValidationSet) {
@@ -505,7 +505,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param string $field name of the field to unset
  * @return void
- **/
+ */
 	public function offsetUnset($field) {
 		$this->_parseRules();
 		unset($this->_fields[$field]);
@@ -515,7 +515,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * Returns an iterator for each of the fields to be validated
  *
  * @return ArrayIterator
- **/
+ */
 	public function getIterator() {
 		$this->_parseRules();
 		return new ArrayIterator($this->_fields);
@@ -525,7 +525,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * Returns the number of fields having validation rules
  *
  * @return int
- **/
+ */
 	public function count() {
 		$this->_parseRules();
 		return count($this->_fields);
@@ -553,7 +553,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @param string|array|CakeValidationSet $name name of the rule to be added or list of rules for the field
  * @param array|CakeValidationRule $rule or list of rules to be added to the field's rule set
  * @return ModelValidator this instance
- **/
+ */
 	public function add($field, $name, $rule = null) {
 		$this->_parseRules();
 		if ($name instanceof CakeValidationSet) {
@@ -592,7 +592,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @param string $field The name of the field from wich the rule will be removed
  * @param string $rule the name of the rule to be removed
  * @return ModelValidator this instance
- **/
+ */
 	public function remove($field, $rule = null) {
 		$this->_parseRules();
 		if ($rule === null) {

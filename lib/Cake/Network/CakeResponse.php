@@ -941,7 +941,7 @@ class CakeResponse {
  * conflicting headers
  *
  * @return void
- **/
+ */
 	public function notModified() {
 		$this->statusCode(304);
 		$this->body('');
@@ -968,7 +968,7 @@ class CakeResponse {
  * @param string|array $cacheVariances a single Vary string or a array
  * containig the list for variances.
  * @return array
- **/
+ */
 	public function vary($cacheVariances = null) {
 		if ($cacheVariances !== null) {
 			$cacheVariances = (array)$cacheVariances;
@@ -1000,7 +1000,7 @@ class CakeResponse {
  * @param boolean $weak whether the response is semantically the same as
  * other with th same hash or not
  * @return string
- **/
+ */
 	public function etag($tag = null, $weak = false) {
 		if ($tag !== null) {
 			$this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $tag);

@@ -164,7 +164,7 @@ class CakeLogTest extends CakeTestCase {
  * explicit tests for drop()
  *
  * @return void
- **/
+ */
 	public function testDrop() {
 		CakeLog::config('file', array(
 			'engine' => 'FileLog',

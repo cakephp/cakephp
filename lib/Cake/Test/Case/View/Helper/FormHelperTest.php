@@ -3314,7 +3314,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		/** Testing error messages list options **/
+		// Testing error messages list options
 		$Contact->validationErrors['field'] = array('notEmpty', 'email');
 
 		$result = $this->Form->error('Contact.field', null, array('listOptions' => 'ol'));

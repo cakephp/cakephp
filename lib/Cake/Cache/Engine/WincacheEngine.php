@@ -31,7 +31,7 @@ class WincacheEngine extends CacheEngine {
  * (prefixed witht the global configuration prefix)
  *
  * @var array
- **/
+ */
 	protected $_compiledGroupNames = array();
 
 /**
@@ -149,7 +149,7 @@ class WincacheEngine extends CacheEngine {
  * the group accordingly.
  *
  * @return array
- **/
+ */
 	public function groups() {
 		if (empty($this->_compiledGroupNames)) {
 			foreach ($this->settings['groups'] as $group) {
@@ -181,7 +181,7 @@ class WincacheEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @return boolean success
- **/
+ */
 	public function clearGroup($group) {
 		$success = null;
 		wincache_ucache_inc($this->settings['prefix'] . $group, 1, $success);

@@ -146,7 +146,7 @@ class XcacheEngine extends CacheEngine {
  * the group accordingly.
  *
  * @return array
- **/
+ */
 	public function groups() {
 		$result = array();
 		foreach ($this->settings['groups'] as $group) {
@@ -165,7 +165,7 @@ class XcacheEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @return boolean success
- **/
+ */
 	public function clearGroup($group) {
 		return (bool)xcache_inc($this->settings['prefix'] . $group, 1);
 	}

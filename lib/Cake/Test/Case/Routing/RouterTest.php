@@ -535,7 +535,7 @@ class RouterTest extends CakeTestCase {
  * Test generation of routes with query string parameters.
  *
  * @return void
- **/
+ */
 	public function testUrlGenerationWithQueryStrings() {
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
 		$expected = '/posts/index/0?var=test&var2=test2';
@@ -559,7 +559,7 @@ class RouterTest extends CakeTestCase {
  * test that regex validation of keyed route params is working.
  *
  * @return void
- **/
+ */
 	public function testUrlGenerationWithRegexQualifiedParams() {
 		Router::connect(
 			':language/galleries',

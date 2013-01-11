@@ -848,7 +848,7 @@ TEXT;
  * Tests that _useLogger works properly
  *
  * @return void
- **/
+ */
 	public function testProtectedUseLogger() {
 		CakeLog::drop('stdout');
 		CakeLog::drop('stderr');
