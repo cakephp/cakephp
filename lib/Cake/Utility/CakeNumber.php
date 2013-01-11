@@ -314,6 +314,7 @@ class CakeNumber {
 		$result = $options['before'] = $options['after'] = null;
 
 		$symbolKey = 'whole';
+		$value = (float)$value;
 		if (!$value) {
 			if ($options['zero'] !== 0 ) {
 				return $options['zero'];
