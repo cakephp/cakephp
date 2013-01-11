@@ -22,6 +22,7 @@
 App::uses('Debugger', 'Utility');
 App::uses('CakeLog', 'Log');
 App::uses('ExceptionRenderer', 'Error');
+App::uses('Router', 'Routing');
 
 /**
  *
@@ -109,12 +110,7 @@ class ErrorHandler {
 	public static function handleException(Exception $exception) {
 		$config = Configure::read('Exception');
 		if (!empty($config['log'])) {
-			$message = sprintf("[%s] %s\n%s",
-				get_class($exception),
-				$exception->getMessage(),
-				$exception->getTraceAsString()
-			);
-			CakeLog::write(LOG_ERR, $message);
+			CakeLog::write(LOG_ERR, self::_getMessage($exception));
 		}
 		$renderer = $config['renderer'];
 		if ($renderer !== 'ExceptionRenderer') {
@@ -134,6 +130,32 @@ class ErrorHandler {
 			);
 			trigger_error($message, E_USER_ERROR);
 		}
+	}
+
+/**
+ * Generates a formatted error message
+ * @param Exception $exception Exception instance
+ * @return string Formatted message
+ */
+	protected function _getMessage($exception) {
+		$message = sprintf("[%s] %s",
+			get_class($exception),
+			$exception->getMessage()
+		);
+		if (method_exists($exception, 'getAttributes')) {
+			$attributes = $exception->getAttributes();
+			if ($attributes) {
+				$message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
+			}
+		}
+		if (php_sapi_name() != 'cli') {
+			$request = Router::getRequest();
+			if ($request) {
+				$message .= "\nRequest URL: " . $request->here();
+			}
+		}
+		$message .= "\nStack Trace:\n" . $exception->getTraceAsString();
+		return $message;
 	}
 
 /**
