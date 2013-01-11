@@ -358,7 +358,7 @@ class FileEngine extends CacheEngine {
  * Recursively deletes all files under any directory named as $group
  *
  * @return boolean success
- **/
+ */
 	public function clearGroup($group) {
 		$directoryIterator = new RecursiveDirectoryIterator($this->settings['path']);
 		$contents = new RecursiveIteratorIterator($directoryIterator, RecursiveIteratorIterator::CHILD_FIRST);

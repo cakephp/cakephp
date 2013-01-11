@@ -268,7 +268,7 @@ class RequestHandlerComponent extends Component {
  *
  * @params Controller $controller
  * @return boolean false if the render process should be aborted
- **/
+ */
 	public function beforeRender(Controller $controller) {
 		if ($this->settings['checkHttpCache'] && $this->response->checkNotModified($this->request)) {
 			return false;

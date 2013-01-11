@@ -517,7 +517,7 @@ class CacheHelperTest extends CakeTestCase {
  * apps url would look something like http://localhost/cache/cacheTest/cache_name
  *
  * @return void
- **/
+ */
 	public function testCacheBaseNameControllerName() {
 		$this->Controller->cache_parsing();
 		$this->Controller->cacheAction = array(

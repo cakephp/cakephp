@@ -253,7 +253,7 @@ class ApcEngineTest extends CakeTestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Cache::config('apc_groups', array(
 			'engine' => 'Apc',

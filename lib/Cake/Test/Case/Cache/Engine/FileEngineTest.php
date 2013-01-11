@@ -428,7 +428,7 @@ class FileEngineTest extends CakeTestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Cache::config('file_groups', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_a', 'group_b')));
 		Cache::config('file_groups2', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_b')));

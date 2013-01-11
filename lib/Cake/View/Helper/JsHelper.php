@@ -161,7 +161,7 @@ class JsHelper extends AppHelper {
  * @param boolean $quoteString If false, leaves string values unquoted
  * @return string a JavaScript-safe/JSON representation of $val
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::value
- **/
+ */
 	public function value($val = array(), $quoteString = null, $key = 'value') {
 		if ($quoteString === null) {
 			$quoteString = true;
