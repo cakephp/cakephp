@@ -137,7 +137,7 @@ class ErrorHandler {
  * @param Exception $exception Exception instance
  * @return string Formatted message
  */
-	protected function _getMessage($exception) {
+	protected static function _getMessage($exception) {
 		$message = sprintf("[%s] %s",
 			get_class($exception),
 			$exception->getMessage()
