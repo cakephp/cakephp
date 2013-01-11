@@ -459,7 +459,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Cache::config('memcache_groups', array(
 			'engine' => 'Memcache',

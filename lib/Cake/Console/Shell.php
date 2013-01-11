@@ -826,7 +826,7 @@ class Shell extends Object {
  *
  * @param boolean $enable wheter to enable CakeLog output or not
  * @return void
- **/
+ */
 	protected function _useLogger($enable = true) {
 		if (!$enable) {
 			CakeLog::drop('stdout');

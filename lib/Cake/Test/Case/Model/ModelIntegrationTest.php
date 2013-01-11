@@ -2438,7 +2438,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * does not trigger any calls on any datasource
  *
  * @return void
- **/
+ */
 	public function testSchemaNoDB() {
 		$model = $this->getMock('Article', array('getDataSource'));
 		$model->useTable = false;

@@ -2177,7 +2177,7 @@ class ModelValidationTest extends BaseModelTest {
  * after a presentation made to show off this new feature
  *
  * @return void
- **/
+ */
 	public function testDynamicValidationRuleBuilding() {
 		$model = new Article;
 		$validator = $model->validator();
