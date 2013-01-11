@@ -180,6 +180,20 @@ class CakePluginTest extends CakeTestCase {
 	}
 
 /**
+ * Test ignoring missing bootstrap/routes file
+ *
+ * @return void
+ */
+	public function testIgnoreMissingFiles() {
+		CakePlugin::loadAll(array(array(
+			'bootstrap' => true,
+			'routes' => true,
+			'ignoreMissing' => true
+		)));
+		CakePlugin::routes();
+	}
+
+/**
  * Tests that CakePlugin::load() throws an exception on unknown plugin
  *
  * @return void
