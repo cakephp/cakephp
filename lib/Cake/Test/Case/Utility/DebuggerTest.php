@@ -420,7 +420,7 @@ TEXT;
 			'false' => false,
 			'szero' => '0',
 			'zero' => 0
-		);;
+		);
 		$result = Debugger::exportVar($data);
 		$expected = <<<TEXT
 array(
