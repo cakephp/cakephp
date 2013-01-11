@@ -175,7 +175,7 @@ class CakeFixtureManager {
 			return;
 		}
 
-		$sources = $db->listSources();
+		$sources = (array)$db->listSources();
 		$table = $db->config['prefix'] . $fixture->table;
 		$exists = in_array($table, $sources);
 
