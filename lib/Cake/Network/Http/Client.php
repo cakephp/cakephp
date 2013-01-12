@@ -44,7 +44,7 @@ use Cake\Utility\Hash;
  * Client will maintain cookies from the responses done with
  * a client instance. These cookies will be automatically added
  * to future requests to matching hosts. Cookies will respect the
- * `Expires` and `Domain` attributes. You can get the list of
+ * `Expires`, `Path` and `Domain` attributes. You can get the list of
  * currently stored cookies using the cookies() method.
  *
  * ### Sending request bodies
@@ -170,6 +170,8 @@ class Client {
 
 /**
  * Get the cookies stored in the Client.
+ *
+ * Returns an array of cookie data arrays.
  *
  * @return array
  */
