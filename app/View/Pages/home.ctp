@@ -99,6 +99,13 @@ if (isset($filePresent)):
 		$connected = ConnectionManager::getDataSource('default');
 	} catch (Exception $connectionError) {
 		$connected = false;
+		$errorMsg = $connectionError->getMessage();
+		if (method_exists($connectionError, 'getAttributes')) {
+			$attributes = $connectionError->getAttributes();
+			if (isset($errorMsg['message'])) {
+				$errorMsg .= '<br />' . $attributes['message'];
+			}
+		}
 	}
 ?>
 <p>
@@ -111,7 +118,7 @@ if (isset($filePresent)):
 			echo '<span class="notice">';
 				echo __d('cake_dev', 'Cake is NOT able to connect to the database.');
 				echo '<br /><br />';
-				echo $connectionError->getMessage();
+				echo $errorMsg;
 			echo '</span>';
 		endif;
 	?>
