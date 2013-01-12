@@ -146,7 +146,6 @@ class Response extends Message {
 		}
 
 		$name = false;
-		$cookie = [];
 		foreach ($parts as $i => $part) {
 			if (strpos($part, '=') !== false) {
 				list($key, $value) = explode('=', $part, 2);
@@ -164,6 +163,7 @@ class Response extends Message {
 				$cookie[$key] = $value;
 			}
 		}
+		$cookie['name'] = $name;
 		$this->_cookies[$name] = $cookie;
 	}
 

@@ -450,10 +450,18 @@ class ClientTest extends TestCase {
 
 		$result = $http->cookies();
 		$expected = [
-			'cakephp.org' => [
-				'first' => 1,
-				'second' => 2
-			]
+			[
+				'name' => 'first',
+				'value' => '1',
+				'domain' => 'cakephp.org',
+				'path' => '/'
+			],
+			[
+				'name' => 'second',
+				'value' => '2',
+				'domain' => 'cakephp.org',
+				'path' => '/'
+			],
 		];
 		$this->assertEquals($expected, $result);
 	}
@@ -514,12 +522,83 @@ class ClientTest extends TestCase {
 
 		$result = $http->cookies();
 		$expected = [
-			'cakephp.org' => [
-				'first' => '1',
-				'third' => '3',
+			[
+				'domain' => 'cakephp.org',
+				'path' => '/',
+				'name' => 'first',
+				'value' => 1,
 			],
-			'test.cakephp.org' => [
-				'second' => '2',
+			[
+				'domain' => 'test.cakephp.org',
+				'path' => '/',
+				'name' => 'second',
+				'value' => 2,
+			],
+			[
+				'domain' => 'cakephp.org',
+				'path' => '/',
+				'name' => 'third',
+				'value' => 3,
+			],
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test path based cookies
+ *
+ * @return void
+ */
+	public function testCookiesWithPath() {
+		$firstHeaders = [
+			'HTTP/1.0 200 Ok',
+			'Set-Cookie: first=1; Domain=.cakephp.org; Path=/projects',
+		];
+		$firstResponse = new Response($firstHeaders, '');
+
+		$secondResponse = new Response([], '');
+
+		$mock = $this->getMock(
+			'Cake\Network\Http\Adapter\Stream',
+			['send']
+		);
+
+		$mock->expects($this->at(0))
+			->method('send')
+			->will($this->returnValue([$firstResponse]));
+
+		$mock->expects($this->at(1))
+			->method('send')
+			->with($this->attributeEqualTo(
+				'_cookies',
+				[]
+			))
+			->will($this->returnValue([$secondResponse]));
+
+		$mock->expects($this->at(2))
+			->method('send')
+			->with($this->attributeEqualTo(
+				'_cookies',
+				['first' => '1']
+			))
+			->will($this->returnValue([$secondResponse]));
+
+		$http = new Client([
+			'host' => 'cakephp.org',
+			'adapter' => $mock
+		]);
+
+		$http->get('/projects');
+		$http->get('/versions');
+		$http->get('/projects/foo');
+
+		$result = $http->cookies();
+		$expected = [
+			[
+				'domain' => 'cakephp.org',
+				'name' => 'first',
+				'value' => 1,
+				'path' => '/projects'
 			]
 		];
 		$this->assertEquals($expected, $result);

@@ -323,18 +323,20 @@ class Client {
 		$cookies = $response->cookies();
 		foreach ($cookies as $name => $cookie) {
 			$expires = isset($cookie['expires']) ? $cookie['expires'] : false;
-			$domain = isset($cookie['domain']) ? $cookie['domain'] : $host;
-			$domain = trim($domain, '.');
 			if ($expires) {
 				$expires = \DateTime::createFromFormat('D, j-M-Y H:i:s e', $expires);
 			}
 			if ($expires && $expires->getTimestamp() <= time()) {
 				continue;
 			}
-			if (empty($this->_cookies[$domain])) {
-				$this->_cookies[$domain] = [];
+			if (empty($cookie['domain'])) {
+				$cookie['domain'] = $host;
 			}
-			$this->_cookies[$domain][$name] = $cookie['value'];
+			$cookie['domain'] = trim($cookie['domain'], '.');
+			if (empty($cookie['path'])) {
+				$cookie['path'] = '/';
+			}
+			$this->_cookies[] = $cookie;
 		}
 	}
 
@@ -349,11 +351,19 @@ class Client {
  * @return void
  */
 	protected function _addCookies(Request $request) {
-		$parts = explode('.', parse_url($request->url(), PHP_URL_HOST));
+		$url = $request->url();
+		$path = parse_url($url, PHP_URL_PATH);
+		$parts = explode('.', parse_url($url, PHP_URL_HOST));
+		$domains = [];
 		for ($i = 0, $len = count($parts); $i < $len - 1; $i++) {
-			$host = implode('.', array_slice($parts, $i));
-			if (isset($this->_cookies[$host])) {
-				$request->cookie($this->_cookies[$host]);
+			$domains[] = implode('.', array_slice($parts, $i));
+		}
+		foreach ($this->_cookies as $cookie) {
+			if (
+				in_array($cookie['domain'], $domains) &&
+				strpos($path, $cookie['path']) === 0
+			) {
+				$request->cookie($cookie['name'], $cookie['value']);
 			}
 		}
 	}
