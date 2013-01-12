@@ -226,7 +226,7 @@ class DataSource extends Object {
  *
  * @param Model $model The model class having record(s) deleted
  * @param mixed $conditions The conditions to use for deleting.
- * @return void
+ * @return boolean Success
  */
 	public function delete(Model $model, $id = null) {
 		return false;
