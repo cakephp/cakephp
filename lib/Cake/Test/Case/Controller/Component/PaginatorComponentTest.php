@@ -140,10 +140,11 @@ class ControllerPaginateModel extends CakeTestModel {
 /**
  * paginate method
  *
- * @return void
+ * @return boolean
  */
 	public function paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra) {
 		$this->extra = $extra;
+		return true;
 	}
 
 /**
