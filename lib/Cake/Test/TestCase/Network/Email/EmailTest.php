@@ -997,7 +997,7 @@ class EmailTest extends TestCase {
  */
 	public function testSendWithLog() {
 		$path = CAKE . 'Test/TestApp/tmp/';
-		$log = $this->getMock('Cake\Log\Engine\BaseLog', ['write'], ['scopes' => 'email']);
+		$log = $this->getMock('Cake\Log\Engine\BaseLog', ['write'], [['scopes' => 'email']]);
 
 		$message = 'Logging This';
 

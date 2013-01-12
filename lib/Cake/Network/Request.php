@@ -363,7 +363,11 @@ class Request implements \ArrayAccess {
 	protected function _processFiles($post, $files) {
 		if (isset($files) && is_array($files)) {
 			foreach ($files as $key => $data) {
-				$this->_processFileData($post, '', $data, $key);
+				if (!is_numeric($key)) {
+					$this->_processFileData($post, '', $data, $key);
+				} else {
+					$post[$key] = $data;
+				}
 			}
 		}
 		return $post;

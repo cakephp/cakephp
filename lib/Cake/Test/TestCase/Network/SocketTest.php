@@ -263,7 +263,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoBadMode
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testEnableCryptoBadMode() {
@@ -343,7 +343,7 @@ class SocketTest extends TestCase {
 				'ssl' => array('capture_peer' => true)
 			)
 		);
-		$this->Socket = new CakeSocket($config);
+		$this->Socket = new Socket($config);
 		$this->Socket->connect();
 		$result = $this->Socket->context();
 		$this->assertEquals($config['context'], $result);

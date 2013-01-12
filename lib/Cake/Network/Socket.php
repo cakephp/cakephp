@@ -169,7 +169,7 @@ class Socket {
 
 		if (!$this->connection && $this->_connectionErrors) {
 			$message = implode("\n", $this->_connectionErrors);
-			throw new SocketException($message, E_WARNING);
+			throw new Error\SocketException($message, E_WARNING);
 		}
 
 		$this->connected = is_resource($this->connection);

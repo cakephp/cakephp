@@ -224,7 +224,7 @@ class RequestTest extends TestCase {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/json';
 
-		$data = '{Article":["title"]}';
+		$data = '{"Article":["title"]}';
 		$request = new Request([
 			'input' => $data
 		]);
@@ -488,9 +488,11 @@ class RequestTest extends TestCase {
 
 /**
  * Test that files in the 0th index work.
+ *
+ * @return void
  */
 	public function testFilesZeroithIndex() {
-		$_FILES = array(
+		$files = array(
 			0 => array(
 				'name' => 'cake_sqlserver_patch.patch',
 				'type' => 'text/plain',
@@ -500,8 +502,10 @@ class RequestTest extends TestCase {
 			),
 		);
 
-		$request = new Request('some/path');
-		$this->assertEquals($_FILES, $request->params['form']);
+		$request = new Request([
+			'files' => $files
+		]);
+		$this->assertEquals($files, $request->data);
 	}
 
 /**
@@ -1668,10 +1672,9 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testQuery() {
-		$_GET = array();
-		$_GET['foo'] = 'bar';
-
-		$request = new Request();
+		$request = new Request([
+			'query' => ['foo' => 'bar']
+		]);
 
 		$result = $request->query('foo');
 		$this->assertEquals('bar', $result);
@@ -1686,10 +1689,11 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testQueryWithArray() {
-		$_GET = array();
-		$_GET['test'] = array('foo', 'bar');
+		$get['test'] = array('foo', 'bar');
 
-		$request = new Request();
+		$request = new Request([
+			'query' => $get
+		]);
 
 		$result = $request->query('test');
 		$this->assertEquals(array('foo', 'bar'), $result);
