@@ -10,7 +10,7 @@ use PDOException;
 /**
  * Represents a connection with a database server
  *
- **/
+ */
 class Connection {
 
 	use TypeConverter;
@@ -19,36 +19,36 @@ class Connection {
  * Contains the configuration params for this connection
  *
  * @var array
- **/
+ */
 	protected $_config;
 
 /**
  * Driver object, responsible for creating the real connection
  * and provide specific SQL dialect
  *
- * @var Cake\Model\Datasource\Database\Driver
- **/
+ * @var \Cake\Model\Datasource\Database\Driver
+ */
 	protected $_driver;
 
 /**
  * Whether connection was established or not
  *
  * @var boolean
- **/
+ */
 	protected $_connected = false;
 
 /**
  * Contains how many nested transactions have been started
  *
  * @var int
- **/
+ */
 	protected $_transactionLevel = 0;
 
 /**
  * Whether a transaction is active in this connection
  *
  * @var int
- **/
+ */
 	protected $_transactionStarted = false;
 
 /**
@@ -56,17 +56,17 @@ class Connection {
  * transactions
  *
  * @var boolean
- **/
+ */
 	protected $_useSavePoints = false;
 
 /**
  * Constructor
  *
  * @param array $config configuration for connecting to database
- * @throws \Cake\Model\Datasource\Database\Exception\MissingDriverException if driver class can not be found
- * @throws  \Cake\Model\Datasource\Database\Exception\MissingExtensionException if driver cannot be used
- * @return void
- **/
+ * @throws MissingDriverException if driver class can not be found
+ * @throws MissingExtensionException if driver cannot be used
+ * @return self
+ */
 	public function __construct($config) {
 		$this->_config = $config;
 		if (!class_exists($config['datasource'])) {
@@ -87,7 +87,7 @@ class Connection {
  *
  * @param string|Driver $driver
  * @return Driver
- **/
+ */
 	public function driver($driver = null) {
 		if ($driver === null) {
 			return $this->_driver;
@@ -101,9 +101,9 @@ class Connection {
 /**
  * Connects to the configured database
  *
- * @throws \Cake\Model\Datasource\Database\Exception\MissingConnectionException if credentials are invalid
+ * @throws MissingConnectionException if credentials are invalid
  * @return boolean true on success or false if already connected
- **/
+ */
 	public function connect() {
 		if ($this->_connected) {
 			return false;
@@ -119,7 +119,7 @@ class Connection {
  * Disconnects from database server
  *
  * @return void
- **/
+ */
 	public function disconnect() {
 		$this->_driver->disconnect();
 		$this->_connected = false;
@@ -129,7 +129,7 @@ class Connection {
  * Returns whether connection to database server was already stablished
  *
  * @return boolean
- **/
+ */
 	public function isConnected() {
 		return $this->_connected;
 	}
@@ -138,8 +138,8 @@ class Connection {
  * Prepares a sql statement to be executed
  *
  * @param string $sql
- * @return Cake\Model\Datasource\Database\Statement
- **/
+ * @return \Cake\Model\Datasource\Database\Statement
+ */
 	public function prepare($sql) {
 		$this->connect();
 		return $this->_driver->prepare($sql);
@@ -152,8 +152,8 @@ class Connection {
  * @param string $query SQL to be executed and interpolated with $params
  * @param array $params list or associative array of params to be interpolated in $query as values
  * @param array $types list or associative array of types to be used for casting values in query
- * @return Cake\Model\Datasource\Database\Statement executed statement
- **/
+ * @return \Cake\Model\Datasource\Database\Statement executed statement
+ */
 	public function execute($query, array $params = array(), array $types = array()) {
 		$this->connect();
 		if ($params) {
@@ -169,8 +169,9 @@ class Connection {
 /**
  * Executes a SQL statement and returns the Statement object as result
  *
- * @return Cake\Model\Datasource\Database\Statement
- **/
+ * @param string $sql
+ * @return \Cake\Model\Datasource\Database\Statement
+ */
 	public function query($sql) {
 		$this->connect();
 		$statement = $this->prepare($sql);
@@ -183,9 +184,9 @@ class Connection {
  *
  * @param string $table the table to update values in
  * @param array $data values to be inserted
- * @params array $types list of associative array containing the types to be used for casting
- * @return Cake\Model\Datasource\Database\Statement
- **/
+ * @param array $types list of associative array containing the types to be used for casting
+ * @return \Cake\Model\Datasource\Database\Statement
+ */
 	public function insert($table, array $data, array $types = array()) {
 		$this->connect();
 		$keys = array_keys($data);
@@ -207,8 +208,8 @@ class Connection {
  * @param array $data values to be updated
  * @param array $conditions conditions to be set for update statement
  * @param array $types list of associative array containing the types to be used for casting
- * @return Cake\Model\Datasource\Database\Statement
- **/
+ * @return \Cake\Model\Datasource\Database\Statement
+ */
 	public function update($table, array $data, array $conditions = array(), $types = array()) {
 		$this->connect();
 		$keys = array_keys($data);
@@ -239,8 +240,8 @@ class Connection {
  * @param string $table the table to delete rows from
  * @param array $conditions conditions to be set for delete statement
  * @param array $types list of associative array containing the types to be used for casting
- * @return Cake\Model\Datasource\Database\Statement
- **/
+ * @return \Cake\Model\Datasource\Database\Statement
+ */
 	public function delete($table, $conditions = array(), $types = array()) {
 		$this->connect();
 		$conditionsKeys = array_keys($conditions);
@@ -261,7 +262,7 @@ class Connection {
  * Starts a new transaction
  *
  * @return void
- **/
+ */
 	public function begin() {
 		$this->connect();
 		if (!$this->_transactionStarted) {
@@ -281,7 +282,7 @@ class Connection {
  * Commits current transaction
  *
  * @return boolean true on success, false otherwise
- **/
+ */
 	public function commit() {
 		if (!$this->_transactionStarted) {
 			return false;
@@ -303,8 +304,8 @@ class Connection {
 /**
  * Rollback current transaction
  *
- * @return void
- **/
+ * @return boolean
+ */
 	public function rollback() {
 		if (!$this->_transactionStarted) {
 			return false;
@@ -339,8 +340,9 @@ class Connection {
  * `$connection->useSavePoints(false)` Disables usage of savepoints and returns false
  * `$connection->useSavePoints()` Returns current status
  *
+ * @param boolean|null $enable
  * @return boolean true if enabled, false otherwise
- **/
+ */
 	public function useSavePoints($enable = null) {
 		if ($enable === null) {
 			return $this->_useSavePoints;
@@ -355,8 +357,9 @@ class Connection {
 /**
  * Creates a new save point for nested transactions
  *
+ * @param string $name
  * @return void
- **/
+ */
 	public function createSavePoint($name) {
 		$this->connect();
 		$this->execute($this->_driver->savePointSQL($name));
@@ -365,8 +368,9 @@ class Connection {
 /**
  * Releases a save point by its name
  *
+ * @param string $name
  * @return void
- **/
+ */
 	public function releaseSavePoint($name) {
 		$this->connect();
 		$this->execute($this->_driver->releaseSavePointSQL($name));
@@ -375,8 +379,9 @@ class Connection {
 /**
  * Rollsback a save point by its name
  *
+ * @param string $name
  * @return void
- **/
+ */
 	public function rollbackSavepoint($name) {
 		$this->connect();
 		$this->execute($this->_driver->rollbackSavePointSQL($name));
@@ -386,9 +391,9 @@ class Connection {
  * Quotes value to be used safely in database query
  *
  * @param mixed $value
- * @param Type to be used for determining kind of quoting to perform
+ * @param string $type Type to be used for determining kind of quoting to perform
  * @return mixed quoted value
- **/
+ */
 	public function quote($value, $type = null) {
 		$this->connect();
 		list($value, $type) = $this->cast($value, $type);
@@ -401,7 +406,7 @@ class Connection {
  *
  * @param string $identifier
  * @return string
- **/
+ */
 	public function quoteIdentifier($identifier) {
 		return $this->_driver->quoteIdentifier($identifier);
 	}
@@ -411,7 +416,7 @@ class Connection {
  *
  * @param string $table table name or sequence to get last insert value from
  * @return string|integer
- **/
+ */
 	public function lastInsertId($table) {
 		$this->connect();
 		return $this->_driver->lastInsertId($table);
@@ -420,10 +425,10 @@ class Connection {
 /**
  * Simple conditions parser joined by AND
  *
- * @param array conditions key value array or list of conditions to be joined
+ * @param array $conditions key value array or list of conditions to be joined
  * to construct a WHERE clause
  * @return string
- **/
+ */
 	protected function _parseConditions($conditions) {
 		$params = array();
 		if (empty($conditions)) {
