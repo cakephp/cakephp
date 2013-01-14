@@ -78,30 +78,7 @@ class Query implements IteratorAggregate  {
 
 	public function execute() {
 		$statement = $this->_connection->prepare($this->sql());
-		$visitor = function($expression) use($statement) {
-			$params = $types = [];
-			foreach ($expression->bindings() as $b) {
-				$params[$b['placeholder']] = $b['value'];
-				$types[$b['placeholder']] = $b['type'];
-			}
-			$statement->bind($params, $types);
-		};
-		$binder = function($expression, $name) use($statement, $visitor, &$binder) {
-			if (is_array($expression)) {
-				foreach ($expression as $e) {
-					$binder($e, $name);
-				}
-			}
-
-			if (!($expression instanceof QueryExpression)) {
-				return;
-			}
-
-			//Visit all expressions and subexpressions to get every bound value
-			$expression->traverse($visitor);
-		};
-
-		$this->build($binder);
+		$this->_bindParams($statement);
 		$statement->execute();
 		return $statement;
 	}
@@ -112,7 +89,7 @@ class Query implements IteratorAggregate  {
 			if (!count($parts)) {
 				return;
 			}
-			if ($parts instanceof QueryExpression) {
+			if ($parts instanceof QueryExpression || $parts instanceof self) {
 				$parts = [$parts->sql()];
 			}
 			if (isset($this->_templates[$name])) {
@@ -417,6 +394,37 @@ class Query implements IteratorAggregate  {
 
 		$this->_parts[$part] = $expression;
 		$this->_dirty = true;
+	}
+
+	protected function _bindParams($statement) {
+		$visitor = function($expression) use($statement) {
+			$params = $types = [];
+			foreach ($expression->bindings() as $b) {
+				$params[$b['placeholder']] = $b['value'];
+				$types[$b['placeholder']] = $b['type'];
+			}
+			$statement->bind($params, $types);
+		};
+		$binder = function($expression, $name) use($statement, $visitor, &$binder) {
+			if (is_array($expression)) {
+				foreach ($expression as $e) {
+					$binder($e, $name);
+				}
+			}
+
+			if ($expression instanceof self) {
+				return $expression->build($binder);
+			}
+
+			if (!($expression instanceof QueryExpression)) {
+				return;
+			}
+
+			//Visit all expressions and subexpressions to get every bound value
+			$expression->traverse($visitor);
+		};
+
+		$this->build($binder);
 	}
 
 /**
