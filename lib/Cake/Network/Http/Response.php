@@ -136,6 +136,7 @@ class Response extends Message {
  * @return void
  */
 	protected function _parseCookie($value) {
+		$value = rtrim($value, ';');
 		$nestedSemi = '";"';
 		if (strpos($value, $nestedSemi) !== false) {
 			$value = str_replace($nestedSemi, "{__cookie_replace__}", $value);

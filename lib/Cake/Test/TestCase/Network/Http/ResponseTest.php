@@ -153,7 +153,7 @@ class ResponseTest extends TestCase {
 			'HTTP/1.0 200 Ok',
 			'Set-Cookie: test=value',
 			'Set-Cookie: session=123abc',
-			'Set-Cookie: expiring=soon; Expires=Wed, 09-Jun-2021 10:18:14 GMT; Path=/; HttpOnly; Secure',
+			'Set-Cookie: expiring=soon; Expires=Wed, 09-Jun-2021 10:18:14 GMT; Path=/; HttpOnly; Secure;',
 		];
 		$response = new Response($headers, '');
 		$this->assertEquals('value', $response->cookie('test'));
