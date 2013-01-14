@@ -15,6 +15,7 @@ namespace Cake\Network\Http;
 
 use Cake\Core\App;
 use Cake\Error;
+use Cake\Network\Http\Cookies;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
 use Cake\Utility\Hash;
@@ -46,6 +47,10 @@ use Cake\Utility\Hash;
  * to future requests to matching hosts. Cookies will respect the
  * `Expires`, `Path` and `Domain` attributes. You can get the list of
  * currently stored cookies using the cookies() method.
+ *
+ * You can use the 'cookieJar' constructor option to provide a custom
+ * cookie jar instance you've restored from cache/disk. By default
+ * an empty instance of Cake\Network\Http\Cookies will be created.
  *
  * ### Sending request bodies
  *
@@ -104,9 +109,9 @@ class Client {
  * Cookies are indexed by the cookie's domain or 
  * request host name.
  *
- * @var array
+ * @var Cake\Network\Http\Cookies
  */
-	protected $_cookies = [];
+	protected $_cookies;
 
 /**
  * Adapter for sending requests. Defaults to
@@ -143,6 +148,14 @@ class Client {
 			$adapter = $config['adapter'];
 			unset($config['adapter']);
 		}
+		if (isset($config['cookieJar'])) {
+			$this->_cookies = $config['cookieJar'];
+			unset($config['cookieJar']);
+		}
+		if (empty($this->_cookies)) {
+			$this->_cookies = new Cookies();
+		}
+
 		$this->config($config);
 
 		if (is_string($adapter)) {
@@ -173,7 +186,7 @@ class Client {
  *
  * Returns an array of cookie data arrays.
  *
- * @return array
+ * @return Cake\Network\Http\Cookies
  */
 	public function cookies() {
 		return $this->_cookies;
@@ -302,72 +315,11 @@ class Client {
  */
 	public function send(Request $request, $options = []) {
 		$responses = $this->_adapter->send($request, $options);
-		$host = parse_url($request->url(), PHP_URL_HOST);
+		$url = $request->url();
 		foreach ($responses as $response) {
-			$this->_storeCookies($response, $host);
+			$this->_cookies->store($response, $url);
 		}
 		return array_pop($responses);
-	}
-
-/**
- * Store cookies in a response to be used in future requests.
- *
- * Non-expired cookies will be stored for use in future requests
- * made with the same Client instance. Cookies are not saved
- * between instances.
- *
- * @param Response $response The response to read cookies from
- * @param string $host The request host, used for getting host names
- *   in case the cookies didn't set a domain.
- * @return void
- */
-	protected function _storeCookies(Response $response, $host) {
-		$cookies = $response->cookies();
-		foreach ($cookies as $name => $cookie) {
-			$expires = isset($cookie['expires']) ? $cookie['expires'] : false;
-			if ($expires) {
-				$expires = \DateTime::createFromFormat('D, j-M-Y H:i:s e', $expires);
-			}
-			if ($expires && $expires->getTimestamp() <= time()) {
-				continue;
-			}
-			if (empty($cookie['domain'])) {
-				$cookie['domain'] = $host;
-			}
-			$cookie['domain'] = trim($cookie['domain'], '.');
-			if (empty($cookie['path'])) {
-				$cookie['path'] = '/';
-			}
-			$this->_cookies[] = $cookie;
-		}
-	}
-
-/**
- * Adds cookies stored in the client to the request.
- *
- * Uses the request's host to find matching cookies.
- * Walks backwards through subdomains to find cookies
- * defined on parent domains.
- *
- * @param Request $request
- * @return void
- */
-	protected function _addCookies(Request $request) {
-		$url = $request->url();
-		$path = parse_url($url, PHP_URL_PATH);
-		$parts = explode('.', parse_url($url, PHP_URL_HOST));
-		$domains = [];
-		for ($i = 0, $len = count($parts); $i < $len - 1; $i++) {
-			$domains[] = implode('.', array_slice($parts, $i));
-		}
-		foreach ($this->_cookies as $cookie) {
-			if (
-				in_array($cookie['domain'], $domains) &&
-				strpos($path, $cookie['path']) === 0
-			) {
-				$request->cookie($cookie['name'], $cookie['value']);
-			}
-		}
 	}
 
 /**
@@ -427,7 +379,7 @@ class Client {
 		if (isset($options['headers'])) {
 			$request->header($options['headers']);
 		}
-		$this->_addCookies($request);
+		$request->cookie($this->_cookies->get($url));
 		if (isset($options['cookies'])) {
 			$request->cookie($options['cookies']);
 		}
