@@ -1124,4 +1124,104 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
 
+/**
+ * Tests that Query::orHaving() can be used to concatenate conditions with OR
+ * in the having clause
+ *
+ * @return void
+ **/
+	public function testSelectOrHaving() {
+		$statement = $this->_insertTwoRecords();
+		$statement->bindValue(1, 3);
+		$statement->bindValue(2, 'another title');
+		$statement->bindValue(3, 'another body');
+		$statement->bindValue(4, 2);
+		$statement->execute();
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(author_id)', 'author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('author_id')
+			->having(['total >' => 2], ['total' => 'integer'])
+			->orHaving(['total <' => 2], ['total' => 'integer'])
+			->execute();
+		$expected = [['total' => 1, 'author_id' => 1]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(author_id)', 'author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('author_id')
+			->having(['total >' => 2], ['total' => 'integer'])
+			->orHaving(['total <=' => 2], ['total' => 'integer'])
+			->execute();
+		$expected = [['total' => 1, 'author_id' => 1], ['total' => 2, 'author_id' => 2]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(author_id)', 'author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('author_id')
+			->having(['total >' => 2], ['total' => 'integer'])
+			->orHaving(function($e) { return $e->add('total = 1 + 1'); })
+			->execute();
+		$expected = [['total' => 2, 'author_id' => 2]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+	}
+
+/**
+ * Tests that Query::andHaving() can be used to concatenate conditions with AND
+ * in the having clause
+ *
+ * @return void
+ **/
+	public function testSelectAndHaving() {
+		$statement = $this->_insertTwoRecords();
+		$statement->bindValue(1, 3);
+		$statement->bindValue(2, 'another title');
+		$statement->bindValue(3, 'another body');
+		$statement->bindValue(4, 2);
+		$statement->execute();
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(author_id)', 'author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('author_id')
+			->having(['total >' => 2], ['total' => 'integer'])
+			->andHaving(['total <' => 2], ['total' => 'integer'])
+			->execute();
+		$this->assertCount(0, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(author_id)', 'author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('author_id')
+			->having(['total' => 2], ['total' => 'integer'])
+			->andHaving(['total >' => 1], ['total' => 'integer'])
+			->execute();
+		$expected = [['total' => 2, 'author_id' => 2]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(author_id)', 'author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('author_id')
+			->andHaving(function($e) { return $e->add('total = 2 - 1'); })
+			->execute();
+		$expected = [['total' => 1, 'author_id' => 1]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+	}
+
 }
