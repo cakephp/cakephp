@@ -89,7 +89,7 @@ class Query implements IteratorAggregate  {
 			if (!count($parts)) {
 				return;
 			}
-			if ($parts instanceof QueryExpression || $parts instanceof self) {
+			if ($parts instanceof QueryExpression) {
 				$parts = [$parts->sql()];
 			}
 			if (isset($this->_templates[$name])) {
@@ -433,7 +433,7 @@ class Query implements IteratorAggregate  {
  * @return string
  **/
 	public function __toString() {
-		return $this->sql();
+		return sprintf('(%s)', $this->sql());
 	}
 
 }

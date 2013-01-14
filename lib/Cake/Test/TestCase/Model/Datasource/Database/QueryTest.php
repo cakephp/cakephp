@@ -1265,4 +1265,27 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 	}
 
+	public function testSuqueryInSelect() {
+		$this->_insertDateRecords();
+		$this->_insertTwoRecords();
+
+		$query = new Query($this->connection);
+		$subquery = (new Query($this->connection))
+			->select('name')
+			->from(['b' => 'authors'])
+			->where(['b.id = a.id']);
+		$result = $query
+			->select(['id', 'name' => $subquery])
+			->from(['a' => 'dates'])->execute();
+
+		$expected = [
+			['id' => 1, 'name' => 'Chuck Norris'],
+			['id' => 2, 'name' => 'Bruce Lee'],
+			['id' => 3, 'name' => null]
+		];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
+
+	}
+
 }
