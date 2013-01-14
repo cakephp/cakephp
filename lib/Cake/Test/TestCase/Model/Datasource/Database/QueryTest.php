@@ -1224,4 +1224,45 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
 
+/**
+ * Tests selecting rows using a limit clause
+ *
+ * @return void
+ **/
+	public function testSelectLimit() {
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query->select('id')->from('dates')->limit(1)->execute();
+		$this->assertCount(1, $result);
+
+		$result = $query->limit(null)->execute();
+		$this->assertCount(3, $result);
+
+		$result = $query->limit(2)->execute();
+		$this->assertCount(2, $result);
+
+		$result = $query->limit(3)->execute();
+		$this->assertCount(3, $result);
+	}
+
+/**
+ * Tests selecting rows combining a limit and offset clause
+ *
+ * @return void
+ **/
+	public function testSelectOffset() {
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query->select('id')->from('dates')
+			->limit(1)
+			->offset(0)->execute();
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$result = $query->offset(1)->execute();
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$result = $query->offset(2)->execute();
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+	}
+
 }

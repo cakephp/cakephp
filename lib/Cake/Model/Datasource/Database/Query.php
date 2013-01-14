@@ -46,7 +46,7 @@ class Query implements IteratorAggregate  {
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
 		'limit' => ' LIMIT %s',
-		'offset' => ' , %d'
+		'offset' => ' OFFSET %s'
 	];
 
 /**
@@ -116,7 +116,7 @@ class Query implements IteratorAggregate  {
 				$parts = [$parts->sql()];
 			}
 			if (isset($this->_templates[$name])) {
-				return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
+				return $sql .= sprintf($this->_templates[$name], implode(', ', (array)$parts));
 			}
 
 			return $sql .= $this->{'_build' . ucFirst($name) . 'Part'}($parts, $sql);
@@ -365,12 +365,12 @@ class Query implements IteratorAggregate  {
 		return $this;
 	}
 
-	public function limit($num = null) {
+	public function limit($num) {
 		$this->_parts['limit'] = $num;
 		return $this;
 	}
 
-	public function offset($num = null) {
+	public function offset($num) {
 		$this->_parts['offset'] = $num;
 		return $this;
 	}
