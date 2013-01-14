@@ -1265,6 +1265,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 	}
 
+/**
+ * Tests that Query objects can be included inside the select clause
+ * and be used as a normal field, including binding any passed parameter
+ *
+ * @return void
+ **/
 	public function testSuqueryInSelect() {
 		$this->_insertDateRecords();
 		$this->_insertTwoRecords();
@@ -1285,7 +1291,14 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
-
+		$query = new Query($this->connection);
+		$subquery = (new Query($this->connection))
+			->select('name')
+			->from(['b' => 'authors'])
+			->where(['name' => 'Chuck Norris'], ['name' => 'string']);
+		$result = $query
+			->select(['id', 'name' => $subquery])
+			->from(['a' => 'dates'])->execute();
 	}
 
 }
