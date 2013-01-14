@@ -48,20 +48,23 @@ class Cookies {
 
 		$cookies = $response->cookies();
 		foreach ($cookies as $name => $cookie) {
-			$expires = isset($cookie['expires']) ? $cookie['expires'] : false;
-			if ($expires) {
-				$expires = \DateTime::createFromFormat('D, j-M-Y H:i:s e', $expires);
-			}
-			if ($expires && $expires->getTimestamp() <= time()) {
-				continue;
-			}
 			if (empty($cookie['domain'])) {
 				$cookie['domain'] = $host;
 			}
 			if (empty($cookie['path'])) {
 				$cookie['path'] = $path;
 			}
-			$this->_cookies[] = $cookie;
+			$key = implode(';', [$cookie['name'], $cookie['domain'], $cookie['path']]);
+
+			$expires = isset($cookie['expires']) ? $cookie['expires'] : false;
+			if ($expires) {
+				$expires = \DateTime::createFromFormat('D, j-M-Y H:i:s e', $expires);
+			}
+			if ($expires && $expires->getTimestamp() <= time()) {
+				unset($this->_cookies[$key]);
+				continue;
+			}
+			$this->_cookies[$key] = $cookie;
 		}
 	}
 
@@ -108,7 +111,7 @@ class Cookies {
  * @return array
  */
 	public function getAll() {
-		return $this->_cookies;
+		return array_values($this->_cookies);
 	}
 
 }

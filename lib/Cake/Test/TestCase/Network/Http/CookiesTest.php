@@ -104,6 +104,61 @@ class CookiesTest extends TestCase {
 	}
 
 /**
+ * test storing an expired cookie clears existing ones too.
+ *
+ * @return void
+ */
+	public function testStoreExpiring() {
+		$headers = [
+			'HTTP/1.0 200 Ok',
+			'Set-Cookie: first=1',
+			'Set-Cookie: second=2; Path=/',
+		];
+		$response = new Response($headers, '');
+		$this->cookies->store($response, 'http://example.com/some/path');
+
+		$result = $this->cookies->getAll();
+		$this->assertCount(2, $result);
+
+		$headers = [
+			'HTTP/1.0 200 Ok',
+			'Set-Cookie: first=1; Expires=Wed, 09-Jun-1999 10:18:14 GMT',
+		];
+		$response = new Response($headers, '');
+		$this->cookies->store($response, 'http://example.com/');
+		$result = $this->cookies->getAll();
+		$this->assertCount(2, $result, 'Path does not match, no expiration');
+
+		$headers = [
+			'HTTP/1.0 200 Ok',
+			'Set-Cookie: first=1; Domain=.foo.example.com; Expires=Wed, 09-Jun-1999 10:18:14 GMT',
+		];
+		$response = new Response($headers, '');
+		$this->cookies->store($response, 'http://example.com/some/path');
+		$result = $this->cookies->getAll();
+		$this->assertCount(2, $result, 'Domain does not match, no expiration');
+
+		$headers = [
+			'HTTP/1.0 200 Ok',
+			'Set-Cookie: first=1; Expires=Wed, 09-Jun-1999 10:18:14 GMT',
+		];
+		$response = new Response($headers, '');
+		$this->cookies->store($response, 'http://example.com/some/path');
+		$result = $this->cookies->getAll();
+		$this->assertCount(1, $result, 'Domain does not match, no expiration');
+
+		$expected = [
+			[
+				'name' => 'second',
+				'value' => '2',
+				'path' => '/',
+				'domain' => 'example.com'
+			],
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test getting cookies with secure flags
  *
  * @return void
@@ -155,8 +210,10 @@ class CookiesTest extends TestCase {
 
 /**
  * Test getting cookies matching on paths exactly
+ *
+ * @return void
  */
-	public function testGetMatchingDomainExact() {
+	public function testGetMatchingDomain() {
 		$headers = [
 			'HTTP/1.0 200 Ok',
 			'Set-Cookie: first=1; Domain=.example.com',
@@ -185,12 +242,5 @@ class CookiesTest extends TestCase {
 		$expected = [];
 		$this->assertEquals($expected, $result);
 	}
-
-/**
- * Test getting cookies matching on paths
- */
-	public function testGetMatchingDomain() {
-	}
-
 
 }
