@@ -29,7 +29,7 @@ class Cookies {
  *
  * @var array
  */
-	protected $cookies = [];
+	protected $_cookies = [];
 
 /**
  * Store the cookies from a response.
