@@ -145,6 +145,7 @@ class PluginTask extends AppShell {
 			$controllerFileName = $plugin . 'AppController.php';
 
 			$out = "<?php\n\n";
+			$out .= "App::uses('AppController', 'Controller');\n\n";
 			$out .= "class {$plugin}AppController extends AppController {\n\n";
 			$out .= "}\n\n";
 			$this->createFile($this->path . $plugin . DS . 'Controller' . DS . $controllerFileName, $out);
@@ -152,6 +153,7 @@ class PluginTask extends AppShell {
 			$modelFileName = $plugin . 'AppModel.php';
 
 			$out = "<?php\n\n";
+			$out .= "App::uses('AppModel', 'Model');\n\n";
 			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
 			$out .= "}\n\n";
 			$this->createFile($this->path . $plugin . DS . 'Model' . DS . $modelFileName, $out);
