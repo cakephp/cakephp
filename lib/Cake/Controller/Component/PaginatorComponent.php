@@ -234,7 +234,7 @@ class PaginatorComponent extends Component {
 		);
 
 		if ($requestedPage > $page) {
-			throw new NotFoundException();
+			throw new Error\NotFoundException();
 		}
 
 		if (

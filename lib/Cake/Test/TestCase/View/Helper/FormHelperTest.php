@@ -3096,7 +3096,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'foo'),
 			'Foo',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'data[foo]', 'id' => 'foo'),
+			'input' => array('type' => 'text', 'name' => 'foo', 'id' => 'foo'),
 			'*/div',
 			'/fieldset'
 		);
@@ -3512,7 +3512,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->radio('Contact.1.imrequired', array('option A'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Contact[1][imrequired]', 'value' => '', 'id' => 'Contact1Imrequired_'),
-			array('input' => array('type' => 'radio', 'name' => 'Contact[1][imrequired]', 'value' => '0', 'id' => 'Contact1Imrequired0')),
+			array('input' => array('type' => 'radio', 'name' => 'Contact[1][imrequired]', 'value' => '0', 'id' => 'Contact1Imrequired0', 'required' => 'required')),
 			'label' => array('for' => 'Contact1Imrequired0'),
 			'option A',
 			'/label'
@@ -3643,11 +3643,11 @@ class FormHelperTest extends TestCase {
 			'legend' => array(),
 			'Field',
 			'/legend',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'checked' => 'checked', 'value' => '1', 'id' => 'ModelField1')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'checked' => 'checked', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'Yes',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0')),
 			array('label' => array('for' => 'ModelField0')),
 			'No',
 			'/label',
@@ -7133,7 +7133,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequired]',
-				'id' => 'ContactImrequired'
+				'id' => 'ContactImrequired',
 				'required' => 'required'
 			),
 			'/div'
@@ -7148,7 +7148,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imalsorequired]',
-				'id' => 'ContactImalsorequired'
+				'id' => 'ContactImalsorequired',
 				'required' => 'required'
 			),
 			'/div'
@@ -7163,7 +7163,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequiredtoo]',
-				'id' => 'ContactImrequiredtoo'
+				'id' => 'ContactImrequiredtoo',
 				'required' => 'required'
 			),
 			'/div'
@@ -7178,7 +7178,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[required_one]',
-				'id' => 'ContactRequiredOne'
+				'id' => 'ContactRequiredOne',
 				'required' => 'required'
 			),
 			'/div'
@@ -7193,7 +7193,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[string_required]',
-				'id' => 'ContactStringRequired'
+				'id' => 'ContactStringRequired',
 				'required' => 'required'
 			),
 			'/div'
@@ -7264,7 +7264,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[iamrequiredalways]',
-				'id' => 'ContactIamrequiredalways'
+				'id' => 'ContactIamrequiredalways',
 				'required' => 'required'
 			),
 			'/div'
@@ -8175,7 +8175,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequiredoncreate]',
-				'id' => 'ContactImrequiredoncreate'
+				'id' => 'ContactImrequiredoncreate',
 				'required' => 'required'
 			),
 			'/div'
@@ -8190,7 +8190,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequiredonboth]',
-				'id' => 'ContactImrequiredonboth'
+				'id' => 'ContactImrequiredonboth',
 				'required' => 'required'
 			),
 			'/div'
@@ -8233,7 +8233,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequiredonupdate]',
-				'id' => 'ContactImrequiredonupdate'
+				'id' => 'ContactImrequiredonupdate',
 				'required' => 'required'
 			),
 			'/div'
@@ -8261,7 +8261,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequiredonboth]',
-				'id' => 'ContactImrequiredonboth'
+				'id' => 'ContactImrequiredonboth',
 				'required' => 'required'
 			),
 			'/div'
@@ -8276,7 +8276,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequired]',
-				'id' => 'ContactImrequired'
+				'id' => 'ContactImrequired',
 				'required' => 'required'
 			),
 			'/div'

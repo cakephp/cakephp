@@ -14,6 +14,8 @@
  */
 namespace Cake\View\Helper;
 
+use Cake\Core\Configure;
+
 /**
  * MooTools Engine Helper for JsHelper
  *

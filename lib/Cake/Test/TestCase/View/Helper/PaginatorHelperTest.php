@@ -358,7 +358,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
 		$result = $this->Paginator->sort('Article.title');
 		$expected = array(
-			'a' => array('href' => '/officespace/accounts/index/page:1/sort:Article.title/direction:asc', 'class' => 'desc'),
+			'a' => array('href' => '/accounts/index?page=1&amp;sort=Article.title&amp;direction=asc', 'class' => 'desc'),
 			'Article Title',
 			'/a'
 		);
@@ -843,7 +843,7 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$expected = array(
 			'span' => array('class' => 'prev'),
-			'a' => array('href' => '/index/page:1', 'rel' => 'prev'),
+			'a' => array('href' => '/index?page=1', 'rel' => 'prev'),
 			'&lt;&lt; Previous',
 			'/a',
 			'/span'

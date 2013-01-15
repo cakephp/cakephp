@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
@@ -274,7 +275,6 @@ class PaginatorComponentTest extends TestCase {
 			'maxLimit' => 10,
 		);
 		$this->assertEquals($expected, $Controller->ControllerPaginateModel->extra);
-		$this->assertEquals($expected, $Controller->ControllerPaginateModel->extraCount);
 
 		$Controller->Paginator->settings = array(
 			'ControllerPaginateModel' => array(
@@ -291,7 +291,6 @@ class PaginatorComponentTest extends TestCase {
 			'maxLimit' => 10,
 		);
 		$this->assertEquals($expected, $Controller->ControllerPaginateModel->extra);
-		$this->assertEquals($expected, $Controller->ControllerPaginateModel->extraCount);
 	}
 
 /**
@@ -577,7 +576,7 @@ class PaginatorComponentTest extends TestCase {
 /**
  * Test that a really large page number gets clamped to the max page size.
  *
- * @expectedException NotFoundException
+ * @expectedException Cake\Error\NotFoundException
  * @return void
  */
 	public function testOutOfRangePageNumberGetsClamped() {
@@ -597,9 +596,7 @@ class PaginatorComponentTest extends TestCase {
 	public function testOutOfRangePageNumberAndPageCountZero() {
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
-		$Controller->params['named'] = array(
-			'page' => 3000,
-		);
+		$Controller->request->query['page'] = 3000;
 		$Controller->constructClasses();
 		$Controller->PaginatorControllerPost->recursive = 0;
 		$Controller->paginate = array(
@@ -607,7 +604,7 @@ class PaginatorComponentTest extends TestCase {
 		);
 		try {
 			$Controller->Paginator->paginate('PaginatorControllerPost');
-		} catch (NotFoundException $e) {
+		} catch (Error\NotFoundException $e) {
 			$this->assertEquals(
 				1,
 				$Controller->request->params['paging']['PaginatorControllerPost']['page'],

@@ -24,6 +24,8 @@
  */
 namespace Cake\View\Helper;
 
+use Cake\Core\Configure;
+
 /**
  * jQuery Engine Helper for JsHelper
  *

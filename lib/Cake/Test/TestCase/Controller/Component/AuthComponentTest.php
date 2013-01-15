@@ -673,7 +673,7 @@ class AuthComponentTest extends TestCase {
  */
 	public function testRedirectToUnauthorizedRedirect() {
 		$url = '/party/on';
-		$this->Auth->request = $CakeRequest = new CakeRequest($url);
+		$this->Auth->request = $request = new Request($url);
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->authorize = array('Controller');
 		$this->Auth->login(array('username' => 'admad', 'password' => 'cake'));
@@ -681,11 +681,11 @@ class AuthComponentTest extends TestCase {
 			'controller' => 'no_can_do', 'action' => 'jack'
 		);
 
-		$CakeResponse = new CakeResponse();
+		$response = new Response();
 		$Controller = $this->getMock(
-			'Controller',
+			'Cake\Controller\Controller',
 			array('on', 'redirect'),
-			array($CakeRequest, $CakeResponse)
+			array($request, $response)
 		);
 
 		$expected = array(
