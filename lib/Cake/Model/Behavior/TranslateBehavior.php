@@ -336,7 +336,7 @@ class TranslateBehavior extends ModelBehavior {
  * beforeSave callback.
  *
  * Copies data into the runtime property when `$options['validate']` is
- * disabled.  Or the runtime data hasn't been set yet.
+ * disabled. Or the runtime data hasn't been set yet.
  *
  * @param Model $Model Model save was called on.
  * @return boolean true.
@@ -530,7 +530,7 @@ class TranslateBehavior extends ModelBehavior {
  * Get instance of model for translations.
  *
  * If the model has a translateModel property set, this will be used as the class
- * name to find/use.  If no translateModel property is found 'I18nModel' will be used.
+ * name to find/use. If no translateModel property is found 'I18nModel' will be used.
  *
  * @param Model $Model Model to get a translatemodel for.
  * @return Model
@@ -565,7 +565,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param boolean $reset Leave true to have the fields only modified for the next operation.
  *   if false the field will be added for all future queries.
  * @return boolean
- * @throws Cake\Error\Exception when attempting to bind a translating called name.  This is not allowed
+ * @throws Cake\Error\Exception when attempting to bind a translating called name. This is not allowed
  *   as it shadows Model::$name.
  */
 	public function bindTranslation(Model $Model, $fields, $reset = true) {

@@ -16,12 +16,12 @@ use Cake\Error;
 use Cake\Event\Event;
 
 /**
- * Deals with Collections of objects.  Keeping registries of those objects,
+ * Deals with Collections of objects. Keeping registries of those objects,
  * loading and constructing new objects and triggering callbacks. Each subclass needs
  * to implement its own load() functionality.
  *
  * All core subclasses of ObjectCollection by convention loaded objects are stored
- * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`.  In addition
+ * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`. In addition
  * the all support an `enabled` option that controls the enabled/disabled state of the object
  * when loaded.
  *
@@ -65,7 +65,7 @@ abstract class ObjectCollection {
 
 /**
  * Trigger a callback method on every object in the collection.
- * Used to trigger methods on objects in the collection.  Will fire the methods in the
+ * Used to trigger methods on objects in the collection. Will fire the methods in the
  * order they were attached.
  *
  * ### Options
@@ -74,7 +74,7 @@ abstract class ObjectCollection {
  *    Can either be a scalar value, or an array of values to break on. Defaults to `false`.
  *
  * - `break` Set to true to enabled breaking. When a trigger is broken, the last returned value
- *    will be returned.  If used in combination with `collectReturn` the collected results will be returned.
+ *    will be returned. If used in combination with `collectReturn` the collected results will be returned.
  *    Defaults to `false`.
  *
  * - `collectReturn` Set to true to collect the return of each object into an array.
@@ -240,7 +240,7 @@ abstract class ObjectCollection {
 	}
 
 /**
- * Disables callbacks on a object or array of objects.  Public object methods are still
+ * Disables callbacks on a object or array of objects. Public object methods are still
  * callable as normal.
  *
  * @param string|array $name CamelCased name of the objects(s) to disable (string or array)
@@ -255,7 +255,7 @@ abstract class ObjectCollection {
 /**
  * Gets the list of currently-enabled objects, or, the current status of a single objects
  *
- * @param string $name Optional.  The name of the object to check the status of.  If omitted,
+ * @param string $name Optional. The name of the object to check the status of. If omitted,
  *   returns an array of currently-enabled object
  * @return mixed If $name is specified, returns the boolean status of the corresponding object.
  *   Otherwise, returns an array of all enabled objects.
@@ -270,12 +270,25 @@ abstract class ObjectCollection {
 /**
  * Gets the list of attached objects, or, whether the given object is attached
  *
- * @param string $name Optional.  The name of the behavior to check the status of.  If omitted,
- *   returns an array of currently-attached behaviors
- * @return mixed If $name is specified, returns the boolean status of the corresponding behavior.
- *    Otherwise, returns an array of all attached behaviors.
+ * @param string $name Optional. The name of the object to check the status of. If omitted,
+ *   returns an array of currently-attached objects
+ * @return mixed If $name is specified, returns the boolean status of the corresponding object.
+ *    Otherwise, returns an array of all attached objects.
+ * @deprecated Use loaded instead.
  */
 	public function attached($name = null) {
+		return $this->loaded($name);
+	}
+
+/**
+ * Gets the list of loaded objects, or, whether the given object is loaded
+ *
+ * @param string $name Optional. The name of the object to check the status of. If omitted,
+ *   returns an array of currently-loaded objects
+ * @return mixed If $name is specified, returns the boolean status of the corresponding object.
+ *    Otherwise, returns an array of all loaded objects.
+ */
+	public function loaded($name = null) {
 		if (!empty($name)) {
 			return isset($this->_loaded[$name]);
 		}

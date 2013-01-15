@@ -247,7 +247,7 @@ class XcacheEngineTest extends TestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Configure::write('Cache.xcache_groups', [
 			'engine' => 'Xcache',

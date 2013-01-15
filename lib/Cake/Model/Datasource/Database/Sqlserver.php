@@ -25,7 +25,7 @@ use \PDO;
 /**
  * Dbo driver for SQLServer
  *
- * A Dbo driver for SQLServer 2008 and higher.  Requires the `sqlsrv`
+ * A Dbo driver for SQLServer 2008 and higher. Requires the `sqlsrv`
  * and `pdo_sqlsrv` extensions to be enabled.
  *
  * @package       Cake.Model.Datasource.Database
@@ -54,7 +54,7 @@ class Sqlserver extends DboSource {
 	public $endQuote = "]";
 
 /**
- * Creates a map between field aliases and numeric indexes.  Workaround for the
+ * Creates a map between field aliases and numeric indexes. Workaround for the
  * SQL Server driver's 30-character column name limitation.
  *
  * @var array
@@ -290,9 +290,14 @@ class Sqlserver extends DboSource {
 						$fieldAlias = $this->name($alias . '__' . $fields[$i]);
 					} else {
 						$build = explode('.', $fields[$i]);
-						$this->_fieldMappings[$build[0] . '__' . $build[1]] = $fields[$i];
-						$fieldName = $this->name($build[0] . '.' . $build[1]);
-						$fieldAlias = $this->name(preg_replace("/^\[(.+)\]$/", "$1", $build[0]) . '__' . $build[1]);
+						$build[0] = trim($build[0], '[]');
+						$build[1] = trim($build[1], '[]');
+						$name = $build[0] . '.' . $build[1];
+						$alias = $build[0] . '__' . $build[1];
+
+						$this->_fieldMappings[$alias] = $name;
+						$fieldName = $this->name($name);
+						$fieldAlias = $this->name($alias);
 					}
 					if ($model->getColumnType($fields[$i]) == 'datetime') {
 						$fieldName = "CONVERT(VARCHAR(20), {$fieldName}, 20)";
@@ -762,21 +767,13 @@ class Sqlserver extends DboSource {
 	}
 
 /**
- * Generate a "drop table" statement for the given Schema object
+ * Generate a "drop table" statement for the given table
  *
- * @param Cake\Model\Schema $schema An instance of a subclass of Cake\Model\Schema
- * @param string $table Optional.  If specified only the table name given will be generated.
- *   Otherwise, all tables defined in the schema are generated.
- * @return string
+ * @param type $table Name of the table to drop
+ * @return string Drop table SQL statement
  */
-	public function dropSchema(Schema $schema, $table = null) {
-		$out = '';
-		foreach ($schema->tables as $curTable => $columns) {
-			if (!$table || $table == $curTable) {
-				$out .= "IF OBJECT_ID('" . $this->fullTableName($curTable, false) . "', 'U') IS NOT NULL DROP TABLE " . $this->fullTableName($curTable) . ";\n";
-			}
-		}
-		return $out;
+	protected function _dropTable($table) {
+		return "IF OBJECT_ID('" . $this->fullTableName($table, false) . "', 'U') IS NOT NULL DROP TABLE " . $this->fullTableName($table) . ";";
 	}
 
 /**

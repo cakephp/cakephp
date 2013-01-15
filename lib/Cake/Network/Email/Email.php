@@ -1235,7 +1235,7 @@ class Email {
  * @param string $message Message to wrap
  * @return array Wrapped message
  */
-	protected function _wrap($message) {
+	protected function _wrap($message, $wrapLength = CakeEmail::LINE_LENGTH_MUST) {
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
 		$lines = explode("\n", $message);
 		$formatted = array();
@@ -1246,7 +1246,10 @@ class Email {
 				continue;
 			}
 			if (!preg_match('/\<[a-z]/i', $line)) {
-				$formatted = array_merge($formatted, explode("\n", wordwrap($line, static::LINE_LENGTH_SHOULD, "\n")));
+				$formatted = array_merge(
+					$formatted,
+					explode("\n", wordwrap($line, $wrapLength, "\n"))
+				);
 				continue;
 			}
 
@@ -1259,7 +1262,7 @@ class Email {
 					$tag .= $char;
 					if ($char === '>') {
 						$tagLength = strlen($tag);
-						if ($tagLength + $tmpLineLength < static::LINE_LENGTH_SHOULD) {
+						if ($tagLength + $tmpLineLength < $wrapLength) {
 							$tmpLine .= $tag;
 							$tmpLineLength += $tagLength;
 						} else {
@@ -1268,7 +1271,7 @@ class Email {
 								$tmpLine = '';
 								$tmpLineLength = 0;
 							}
-							if ($tagLength > static::LINE_LENGTH_SHOULD) {
+							if ($tagLength > $wrapLength) {
 								$formatted[] = $tag;
 							} else {
 								$tmpLine = $tag;
@@ -1285,14 +1288,14 @@ class Email {
 					$tag = '<';
 					continue;
 				}
-				if ($char === ' ' && $tmpLineLength >= static::LINE_LENGTH_SHOULD) {
+				if ($char === ' ' && $tmpLineLength >= $wrapLength) {
 					$formatted[] = $tmpLine;
 					$tmpLineLength = 0;
 					continue;
 				}
 				$tmpLine .= $char;
 				$tmpLineLength++;
-				if ($tmpLineLength === static::LINE_LENGTH_SHOULD) {
+				if ($tmpLineLength === $wrapLength) {
 					$nextChar = $line[$i + 1];
 					if ($nextChar === ' ' || $nextChar === '<') {
 						$formatted[] = trim($tmpLine);
@@ -1497,7 +1500,7 @@ class Email {
 /**
  * Gets the text body types that are in this email message
  *
- * @return array Array of types.  Valid types are 'text' and 'html'
+ * @return array Array of types. Valid types are 'text' and 'html'
  */
 	protected function _getTypes() {
 		$types = array($this->_emailFormat);

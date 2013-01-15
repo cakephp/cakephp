@@ -20,7 +20,7 @@ use Cake\Core\Object;
 use Cake\Utility\Hash;
 
 /**
- * IniAcl implements an access control system using an INI file.  An example
+ * IniAcl implements an access control system using an INI file. An example
  * of the ini file used can be found in /config/acl.ini.php.
  *
  * @package       Cake.Controller.Component.Acl
@@ -36,7 +36,7 @@ class IniAcl extends Object implements AclInterface {
 
 /**
  * The Hash::extract() path to the user/aro identifier in the
- * acl.ini file.  This path will be used to extract the string
+ * acl.ini file. This path will be used to extract the string
  * representation of a user used in the ini file.
  *
  * @var string

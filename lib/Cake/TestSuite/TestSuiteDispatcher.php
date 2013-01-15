@@ -57,7 +57,7 @@ class TestSuiteDispatcher {
 	protected $_baseUrl;
 
 /**
- * Base dir of the request.  Used for accessing assets.
+ * Base dir of the request. Used for accessing assets.
  *
  * @var string
  */
@@ -119,7 +119,7 @@ class TestSuiteDispatcher {
 	}
 
 /**
- * Checks that PHPUnit is installed.  Will exit if it doesn't
+ * Checks that PHPUnit is installed. Will exit if it doesn't
  *
  * @return void
  */

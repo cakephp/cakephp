@@ -91,7 +91,6 @@ class MemcacheEngineTest extends TestCase {
 			'persistent' => true,
 			'compress' => false,
 			'engine' => 'Memcache',
-			'persistent' => true,
 			'groups' => array()
 		);
 		$this->assertEquals($expecting, $settings);
@@ -458,7 +457,7 @@ class MemcacheEngineTest extends TestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Configure::write('Cache.memcache_groups', [
 			'engine' => 'Memcache',

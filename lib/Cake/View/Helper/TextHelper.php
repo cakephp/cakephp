@@ -125,7 +125,7 @@ class TextHelper extends Helper {
 	}
 
 /**
- * Saves the placeholder for a string, for later use.  This gets around double
+ * Saves the placeholder for a string, for later use. This gets around double
  * escaping content in URL's.
  *
  * @param array $matches An array of regexp matches.

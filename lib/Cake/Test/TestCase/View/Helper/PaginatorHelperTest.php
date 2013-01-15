@@ -283,7 +283,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->sort('Article.full_name');
 		$expected = array(
 			'a' => array('href' => '/accounts/index?page=1&amp;sort=Article.full_name&amp;direction=desc', 'class' => 'asc'),
-			'Article.full Name',
+			'Article Full Name',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
@@ -300,7 +300,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->sort('Article.full_name');
 		$expected = array(
 			'a' => array('href' => '/accounts/index?page=1&amp;sort=Article.full_name&amp;direction=asc', 'class' => 'desc'),
-			'Article.full Name',
+			'Article Full Name',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
@@ -354,6 +354,15 @@ class PaginatorHelperTest extends TestCase {
 			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array()),
 			array('base' => '', 'here' => '/accounts/', 'webroot' => '/')
 		));
+
+		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
+		$result = $this->Paginator->sort('Article.title');
+		$expected = array(
+			'a' => array('href' => '/officespace/accounts/index/page:1/sort:Article.title/direction:asc', 'class' => 'desc'),
+			'Article Title',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
 		$result = $this->Paginator->sort('Article.title', 'Title');
@@ -826,6 +835,21 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Paginator->prev(
+			'<< Previous',
+			array(),
+			null,
+			array('disabledTag' => 'span', 'class' => 'disabled')
+		);
+		$expected = array(
+			'span' => array('class' => 'prev'),
+			'a' => array('href' => '/index/page:1', 'rel' => 'prev'),
+			'&lt;&lt; Previous',
+			'/a',
+			'/span'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Paginator->next('Next');
 		$expected = array(
 			'span' => array('class' => 'next'),
@@ -917,6 +941,33 @@ class PaginatorHelperTest extends TestCase {
 			'span' => array('class' => 'prev'),
 			'&lt;strong&gt;Disabled&lt;/strong&gt;',
 			'/span'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->prev(
+			'<< Previous',
+			array('tag' => 'li'),
+			null,
+			array('tag' => 'li', 'disabledTag' => 'span', 'class' => 'disabled')
+		);
+		$expected = array(
+			'li' => array('class' => 'disabled'),
+			'span' => array(),
+			'&lt;&lt; Previous',
+			'/span',
+			'/li'
+		);
+		$this->assertTags($result, $expected);
+		$result = $this->Paginator->prev(
+			'<< Previous',
+			array(),
+			null,
+			array('tag' => false, 'disabledTag' => 'span', 'class' => 'disabled')
+		);
+		$expected = array(
+			'span' => array('class' => 'disabled'),
+			'&lt;&lt; Previous',
+			'/span',
 		);
 		$this->assertTags($result, $expected);
 

@@ -208,11 +208,11 @@ class ModelIntegrationTest extends BaseModelTest {
 	public function testDynamicBehaviorAttachment() {
 		$this->loadFixtures('Apple', 'Sample', 'Author');
 		$TestModel = new Apple();
-		$this->assertEquals(array(), $TestModel->Behaviors->attached());
+		$this->assertEquals(array(), $TestModel->Behaviors->loaded());
 
 		$TestModel->Behaviors->attach('Tree', array('left' => 'left_field', 'right' => 'right_field'));
 		$this->assertTrue(is_object($TestModel->Behaviors->Tree));
-		$this->assertEquals(array('Tree'), $TestModel->Behaviors->attached());
+		$this->assertEquals(array('Tree'), $TestModel->Behaviors->loaded());
 
 		$expected = array(
 			'parent' => 'parent_id',
@@ -227,10 +227,10 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->Behaviors->attach('Tree', array('enabled' => false));
 		$this->assertEquals($expected, $TestModel->Behaviors->Tree->settings['Apple']);
-		$this->assertEquals(array('Tree'), $TestModel->Behaviors->attached());
+		$this->assertEquals(array('Tree'), $TestModel->Behaviors->loaded());
 
 		$TestModel->Behaviors->detach('Tree');
-		$this->assertEquals(array(), $TestModel->Behaviors->attached());
+		$this->assertEquals(array(), $TestModel->Behaviors->loaded());
 		$this->assertFalse(isset($TestModel->Behaviors->Tree));
 	}
 
@@ -274,7 +274,7 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
- * Tests cross database joins.  Requires $test and $test2 to both be set in datasources.php
+ * Tests cross database joins. Requires $test and $test2 to both be set in datasources.php
  * NOTE: When testing on MySQL, you must set 'persistent' => false on *both* database connections,
  * or one connection will step on the other.
  */
@@ -284,7 +284,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$skip = (!isset($config['test']) || !isset($config['test2']));
 		if ($skip) {
 			$this->markTestSkipped('Primary and secondary test databases not configured, skipping cross-database
-				join tests.  To run theses tests defined $test and $test2 in your database configuration.'
+				join tests. To run theses tests defined $test and $test2 in your database configuration.'
 			);
 		}
 
@@ -815,7 +815,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
 		$this->skipIf(
 			!isset($config['test']) || !isset($config['test2']) || !isset($config['test_database_three']),
-			'Primary, secondary, and tertiary test databases not configured, skipping test.  To run this test define $test, $test2, and $test_database_three in your database configuration.'
+			'Primary, secondary, and tertiary test databases not configured, skipping test. To run this test define $test, $test2, and $test_database_three in your database configuration.'
 		);
 
 		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer', 'Armor', 'ArmorsPlayer');
@@ -904,6 +904,20 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertNull($Post->schema('foo'));
 
 		$this->assertEquals($Post->getColumnTypes(), array_combine($columns, $types));
+	}
+
+/**
+ * Check schema() on a model with useTable = false;
+ *
+ * @return void
+ */
+	public function testSchemaUseTableFalse() {
+		$model = new TheVoid();
+		$result = $model->schema();
+		$this->assertNull($result);
+
+		$result = $model->create();
+		$this->assertEmpty($result);
 	}
 
 /**
@@ -2353,7 +2367,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$config = ConnectionManager::enumConnectionObjects();
 		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
 		$this->skipIf(!isset($config['test']) || !isset($config['test2']),
-			'Primary and secondary test databases not configured, skipping cross-database join tests.  To run these tests define $test and $test2 in your database configuration.'
+			'Primary and secondary test databases not configured, skipping cross-database join tests. To run these tests define $test and $test2 in your database configuration.'
 			);
 
 		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer');
@@ -2383,7 +2397,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->skipIf($this->db instanceof Sqlite, 'This test is not compatible with Sqlite.');
 		$this->skipIf(
 			!isset($config['test']) || !isset($config['test2']) || !isset($config['test_database_three']),
-			'Primary, secondary, and tertiary test databases not configured, skipping test.  To run this test define $test, $test2, and $test_database_three in your database configuration.'
+			'Primary, secondary, and tertiary test databases not configured, skipping test. To run this test define $test, $test2, and $test_database_three in your database configuration.'
 			);
 
 		$this->loadFixtures('Player', 'Guild', 'GuildsPlayer', 'Armor', 'ArmorsPlayer');
@@ -2424,7 +2438,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * does not trigger any calls on any datasource
  *
  * @return void
- **/
+ */
 	public function testSchemaNoDB() {
 		$model = $this->getMock('Article', array('getDataSource'));
 		$model->useTable = false;

@@ -703,4 +703,5 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		ClassRegistry::addObject($name, $mock);
 		return $mock;
 	}
+
 }

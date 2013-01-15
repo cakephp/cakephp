@@ -2,7 +2,7 @@
 /**
  * Exception Renderer
  *
- * Provides Exception rendering features.  Which allow exceptions to be rendered
+ * Provides Exception rendering features. Which allow exceptions to be rendered
  * as HTML pages.
  *
  * PHP 5

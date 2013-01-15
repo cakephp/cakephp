@@ -576,6 +576,9 @@ class PaginatorComponentTest extends TestCase {
 
 /**
  * Test that a really large page number gets clamped to the max page size.
+ *
+ * @expectedException NotFoundException
+ * @return void
  */
 	public function testOutOfRangePageNumberGetsClamped() {
 		$Controller = new PaginatorTestController($this->request);
@@ -584,21 +587,35 @@ class PaginatorComponentTest extends TestCase {
 		$Controller->constructClasses();
 		$Controller->PaginatorControllerPost->recursive = 0;
 		$Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertEquals(
-			1,
-			$Controller->request->params['paging']['PaginatorControllerPost']['page'],
-			'Super big page number should be capped to max number of pages'
-		);
+	}
 
+/**
+ * testOutOfRangePageNumberAndPageCountZero
+ *
+ * @return void
+ */
+	public function testOutOfRangePageNumberAndPageCountZero() {
+		$Controller = new PaginatorTestController($this->request);
+		$Controller->uses = array('PaginatorControllerPost');
+		$Controller->params['named'] = array(
+			'page' => 3000,
+		);
+		$Controller->constructClasses();
+		$Controller->PaginatorControllerPost->recursive = 0;
 		$Controller->paginate = array(
 			'conditions' => array('PaginatorControllerPost.id >' => 100)
 		);
-		$Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertEquals(
-			1,
-			$Controller->request->params['paging']['PaginatorControllerPost']['page'],
-			'Page number should not be 0'
-		);
+		try {
+			$Controller->Paginator->paginate('PaginatorControllerPost');
+		} catch (NotFoundException $e) {
+			$this->assertEquals(
+				1,
+				$Controller->request->params['paging']['PaginatorControllerPost']['page'],
+				'Page number should not be 0'
+			);
+			return;
+		}
+		$this->fail();
 	}
 
 /**

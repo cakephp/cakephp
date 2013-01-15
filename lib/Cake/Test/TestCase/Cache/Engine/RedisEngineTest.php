@@ -311,7 +311,7 @@ class RegisEngineTest extends TestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Configure::write('Cache.redis_groups', [
 			'engine' => 'Redis',

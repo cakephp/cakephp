@@ -185,7 +185,7 @@ class AuthComponentTest extends TestCase {
 
 /**
  * test that being redirected to the login page, with no post data does
- * not set the session value.  Saving the session value in this circumstance
+ * not set the session value. Saving the session value in this circumstance
  * can cause the user to be redirected to an already public page.
  *
  * @return void
@@ -660,6 +660,37 @@ class AuthComponentTest extends TestCase {
 		);
 
 		$expected = Router::url($this->Auth->loginRedirect, true);
+		$Controller->expects($this->once())
+			->method('redirect')
+			->with($this->equalTo($expected));
+		$this->Auth->startup($Controller);
+	}
+
+/**
+ * testRedirectToUnauthorizedRedirect
+ *
+ * @return void
+ */
+	public function testRedirectToUnauthorizedRedirect() {
+		$url = '/party/on';
+		$this->Auth->request = $CakeRequest = new CakeRequest($url);
+		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->authorize = array('Controller');
+		$this->Auth->login(array('username' => 'admad', 'password' => 'cake'));
+		$this->Auth->unauthorizedRedirect = array(
+			'controller' => 'no_can_do', 'action' => 'jack'
+		);
+
+		$CakeResponse = new CakeResponse();
+		$Controller = $this->getMock(
+			'Controller',
+			array('on', 'redirect'),
+			array($CakeRequest, $CakeResponse)
+		);
+
+		$expected = array(
+			'controller' => 'no_can_do', 'action' => 'jack'
+		);
 		$Controller->expects($this->once())
 			->method('redirect')
 			->with($this->equalTo($expected));

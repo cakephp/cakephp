@@ -21,8 +21,8 @@ use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
 
 /**
- * DbAcl implements an ACL control system in the database.  ARO's and ACO's are
- * structured into trees and a linking table is used to define permissions.  You
+ * DbAcl implements an ACL control system in the database. ARO's and ACO's are
+ * structured into trees and a linking table is used to define permissions. You
  * can install the schema for DbAcl with the Schema Shell.
  *
  * `$aco` and `$aro` parameters can be slash delimited paths to tree nodes.

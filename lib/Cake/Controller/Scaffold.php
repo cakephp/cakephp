@@ -143,7 +143,7 @@ class Scaffold {
 		$associations = $this->_associations();
 
 		$this->controller->set(compact(
-			'title_for_layout', 'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
+			'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 			'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'
 		));
 		$this->controller->set('title_for_layout', $title);
@@ -327,7 +327,7 @@ class Scaffold {
 	}
 
 /**
- * Sends a message to the user.  Either uses Sessions or flash messages depending
+ * Sends a message to the user. Either uses Sessions or flash messages depending
  * on the availability of a session
  *
  * @param string $message Message to display
@@ -428,7 +428,7 @@ class Scaffold {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 
-		foreach ($keys as $key => $type) {
+		foreach ($keys as $type) {
 			foreach ($this->ScaffoldModel->{$type} as $assocKey => $assocData) {
 				$associations[$type][$assocKey]['primaryKey'] =
 					$this->ScaffoldModel->{$assocKey}->primaryKey;

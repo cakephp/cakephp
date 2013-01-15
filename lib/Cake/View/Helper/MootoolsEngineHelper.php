@@ -225,7 +225,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Create an new Request.
  *
- * Requires `Request`.  If you wish to use 'update' key you must have ```Request.HTML```
+ * Requires `Request`. If you wish to use 'update' key you must have ```Request.HTML```
  * if you wish to do Json requests you will need ```JSON``` and ```Request.JSON```.
  *
  * @param string|array $url
@@ -233,7 +233,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string The completed ajax call.
  */
 	public function request($url, $options = array()) {
-		$url = $this->url($url);
+		$url = html_entity_decode($this->url($url), ENT_COMPAT, Configure::read('App.encoding'));
 		$options = $this->_mapOptions('request', $options);
 		$type = $data = null;
 		if (isset($options['type']) || isset($options['update'])) {
@@ -294,8 +294,8 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  *
  * Requires the `Drag` and `Drag.Move` plugins from MootoolsMore
  *
- * Droppables in Mootools function differently from other libraries.  Droppables
- * are implemented as an extension of Drag.  So in addition to making a get() selection for
+ * Droppables in Mootools function differently from other libraries. Droppables
+ * are implemented as an extension of Drag. So in addition to making a get() selection for
  * the droppable element. You must also provide a selector rule to the draggable element. Furthermore,
  * Mootools droppables inherit all options from Drag.
  *

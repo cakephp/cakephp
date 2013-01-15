@@ -34,7 +34,7 @@ abstract class DispatcherFilter implements EventListener {
  * Default priority for all methods in this filter
  *
  * @var int
- **/
+ */
 	public $priority = 10;
 
 /**
@@ -45,7 +45,7 @@ abstract class DispatcherFilter implements EventListener {
  * Override this method at will to only listen to the events you are interested in.
  *
  * @return array
- **/
+ */
 	public function implementedEvents() {
 		return array(
 			'Dispatcher.beforeDispatch' => array('callable' => 'beforeDispatch', 'priority' => $this->priority),
@@ -66,9 +66,9 @@ abstract class DispatcherFilter implements EventListener {
  * Alternatively you can call `$event->stopPropagation()` to acheive the same result.
  *
  * @param Cake\Event\Event $event container object having the `request`, `response` and `additionalParams`
- *	keys in the data property.
+ *    keys in the data property.
  * @return Cake\Network\Response|boolean
- **/
+ */
 	public function beforeDispatch(Event $event) {
 	}
 
@@ -81,9 +81,9 @@ abstract class DispatcherFilter implements EventListener {
  * Alternatively you can call `$event->stopPropagation()` to acheive the same result.
  *
  * @param Cake\Event\Event $event container object having the `request` and  `response`
- *	keys in the data property.
+ *    keys in the data property.
  * @return mixed boolean to stop the event dispatching or null to continue
- **/
+ */
 	public function afterDispatch(Event $event) {
 	}
 }

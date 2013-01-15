@@ -829,7 +829,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagStar() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = '*';
 		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
@@ -843,7 +843,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagExact() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
@@ -857,7 +857,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagAndTime() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
@@ -873,7 +873,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedNoInfo() {
 		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
 		$RequestHandler->response = $this->getMock('Cake\Network\Response', array('notModified'));

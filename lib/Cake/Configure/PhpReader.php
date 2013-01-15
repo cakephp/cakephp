@@ -41,7 +41,7 @@ class PhpReader implements ConfigReaderInterface {
 /**
  * Constructor for PHP Config file reading.
  *
- * @param string $path The path to read config files from.  Defaults to APP . 'Config/'
+ * @param string $path The path to read config files from. Defaults to APP . 'Config/'
  */
 	public function __construct($path = null) {
 		if (!$path) {
@@ -53,7 +53,7 @@ class PhpReader implements ConfigReaderInterface {
 /**
  * Read a config file and return its contents.
  *
- * Files with `.` in the name will be treated as values in plugins.  Instead of reading from
+ * Files with `.` in the name will be treated as values in plugins. Instead of reading from
  * the initialized path, plugin keys will be located using App::pluginPath().
  *
  * @param string $key The identifier to read from. If the key has a . it will be treated
@@ -75,7 +75,7 @@ class PhpReader implements ConfigReaderInterface {
 		include $file;
 		if (!isset($config)) {
 			throw new Error\ConfigureException(
-				sprintf(__d('cake_dev', 'No variable $config found in %s'), $file)
+				__d('cake_dev', 'No variable $config found in %s', $file)
 			);
 		}
 		return $config;

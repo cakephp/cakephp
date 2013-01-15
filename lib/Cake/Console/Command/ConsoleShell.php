@@ -122,7 +122,7 @@ class ConsoleShell extends Shell {
 			"\tRoute <url>",
 			"",
 			"where url is the path to your your action plus any query parameters,",
-			"minus the application's base path.  For example:",
+			"minus the application's base path. For example:",
 			"",
 			"\tRoute /posts/view/1",
 			"",
@@ -295,7 +295,7 @@ class ConsoleShell extends Shell {
 
 					if ($this->_isValidModel($modelToSave)) {
 						// Extract the array of data we are trying to build
-						list($foo, $data) = explode("->save", $command);
+						list(, $data) = explode("->save", $command);
 						$data = preg_replace('/^\(*(array)?\(*(.+?)\)*$/i', '\\2', $data);
 						$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
 						//@codingStandardsIgnoreStart

@@ -128,7 +128,7 @@ class HttpSocketResponse implements ArrayAccess {
  * @return boolean
  */
 	public function isOk() {
-		return $this->code == 200;
+		return in_array($this->code, array(200, 201, 202, 203, 204, 205, 206));
 	}
 
 /**

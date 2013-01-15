@@ -239,7 +239,7 @@ class WincacheEngineTest extends TestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Configure::write('Cache.wincache_groups', [
 			'engine' => 'Wincache',

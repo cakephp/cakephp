@@ -21,7 +21,7 @@ use Cake\Error;
 use Cake\Utility\ObjectCollection;
 
 /**
- * Collection object for Tasks.  Provides features
+ * Collection object for Tasks. Provides features
  * for lazily loading tasks, and firing callbacks on loaded tasks.
  *
  * @package       Cake.Console
@@ -52,7 +52,7 @@ class TaskCollection extends ObjectCollection {
 	}
 
 /**
- * Loads/constructs a task.  Will return the instance in the collection
+ * Loads/constructs a task. Will return the instance in the collection
  * if it already exists.
  *
  * @param string $task Task name to load

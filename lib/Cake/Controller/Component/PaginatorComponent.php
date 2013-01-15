@@ -25,12 +25,12 @@ use Cake\Model\Model;
 use Cake\Utility\Hash;
 
 /**
- * This component is used to handle automatic model data pagination.  The primary way to use this
+ * This component is used to handle automatic model data pagination. The primary way to use this
  * component is to call the paginate() method. There is a convenience wrapper on Controller as well.
  *
  * ### Configuring pagination
  *
- * You configure pagination using the PaginatorComponent::$settings.  This allows you to configure
+ * You configure pagination using the PaginatorComponent::$settings. This allows you to configure
  * the default pagination behavior in general or for a specific model. General settings are used when there
  * are no specific model configuration, or the model you are paginating does not have specific settings.
  *
@@ -41,7 +41,7 @@ use Cake\Utility\Hash;
  *	);
  * }}}
  *
- * The above settings will be used to paginate any model.  You can configure model specific settings by
+ * The above settings will be used to paginate any model. You can configure model specific settings by
  * keying the settings with the model name.
  *
  * {{{
@@ -76,11 +76,11 @@ use Cake\Utility\Hash;
 class PaginatorComponent extends Component {
 
 /**
- * Pagination settings.  These settings control pagination at a general level.
+ * Pagination settings. These settings control pagination at a general level.
  * You can also define sub arrays for pagination settings for specific models.
  *
  * - `maxLimit` The maximum limit users can choose to view. Defaults to 100
- * - `limit` The initial number of items per page.  Defaults to 20.
+ * - `limit` The initial number of items per page. Defaults to 20.
  * - `page` The starting page, defaults to 1.
  *
  * @var array
@@ -92,7 +92,7 @@ class PaginatorComponent extends Component {
 	);
 
 /**
- * A list of parameters users are allowed to set using request parameters.  Modifying
+ * A list of parameters users are allowed to set using request parameters. Modifying
  * this list will allow users to have more influence over pagination,
  * be careful with what you permit.
  *
@@ -119,10 +119,11 @@ class PaginatorComponent extends Component {
  *
  * @param Model|string $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
  * @param string|array $scope Additional find conditions to use while paginating
- * @param array $whitelist List of allowed fields for ordering.  This allows you to prevent ordering
+ * @param array $whitelist List of allowed fields for ordering. This allows you to prevent ordering
  *   on non-indexed, or undesirable columns.
  * @return array Model query results
  * @throws Cake\Error\MissingModelException
+ * @throws Cake\Error\NotFoundException
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
 		if (is_array($object)) {
@@ -197,7 +198,9 @@ class PaginatorComponent extends Component {
 		$defaults = $this->getDefaults($object->alias);
 		unset($defaults[0]);
 
-		if ($object->hasMethod('paginateCount')) {
+		if (!$results) {
+			$count = 0;
+		} elseif ($object->hasMethod('paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive, $extra);
 		} else {
 			$parameters = compact('conditions');
@@ -207,6 +210,7 @@ class PaginatorComponent extends Component {
 			$count = $object->find('count', array_merge($parameters, $extra));
 		}
 		$pageCount = intval(ceil($count / $limit));
+		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
 
 		$paging = array(
@@ -220,6 +224,7 @@ class PaginatorComponent extends Component {
 			'limit' => $limit,
 			'options' => Hash::diff($options, $defaults),
 		);
+
 		if (!isset($this->Controller->request['paging'])) {
 			$this->Controller->request['paging'] = array();
 		}
@@ -227,6 +232,10 @@ class PaginatorComponent extends Component {
 			(array)$this->Controller->request['paging'],
 			array($object->alias => $paging)
 		);
+
+		if ($requestedPage > $page) {
+			throw new NotFoundException();
+		}
 
 		if (
 			!in_array('Paginator', $this->Controller->helpers) &&
@@ -289,7 +298,7 @@ class PaginatorComponent extends Component {
  * - Model specific settings.
  * - Request parameters
  *
- * The result of this method is the aggregate of all the option sets combined together.  You can change
+ * The result of this method is the aggregate of all the option sets combined together. You can change
  * PaginatorComponent::$whitelist to modify which options/values can be set using request parameters.
  *
  * @param string $alias Model alias being paginated, if the general settings has a key with this value
@@ -304,7 +313,7 @@ class PaginatorComponent extends Component {
 	}
 
 /**
- * Get the default settings for a $model.  If there are no settings for a specific model, the general settings
+ * Get the default settings for a $model. If there are no settings for a specific model, the general settings
  * will be used.
  *
  * @param string $alias Model name to get default settings for.
@@ -327,8 +336,8 @@ class PaginatorComponent extends Component {
 	}
 
 /**
- * Validate that the desired sorting can be performed on the $object.  Only fields or
- * virtualFields can be sorted on.  The direction param will also be sanitized.  Lastly
+ * Validate that the desired sorting can be performed on the $object. Only fields or
+ * virtualFields can be sorted on. The direction param will also be sanitized. Lastly
  * sort + direction keys will be converted into the model friendly order key.
  *
  * You can use the whitelist parameter to control which columns/fields are available for sorting.
@@ -336,7 +345,7 @@ class PaginatorComponent extends Component {
  *
  * @param Model $object The model being paginated.
  * @param array $options The pagination options being used for this request.
- * @param array $whitelist The list of columns that can be used for sorting.  If empty all keys are allowed.
+ * @param array $whitelist The list of columns that can be used for sorting. If empty all keys are allowed.
  * @return array An array of options with sort + direction removed and replaced with order if possible.
  */
 	public function validateSort(Model $object, array $options, array $whitelist = array()) {

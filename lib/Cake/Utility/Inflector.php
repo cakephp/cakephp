@@ -56,7 +56,7 @@ class Inflector {
 			'/$/' => 's',
 		),
 		'uninflected' => array(
-			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', 'people', 'cookie'
+			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', 'people'
 		),
 		'irregular' => array(
 			'atlas' => 'atlases',

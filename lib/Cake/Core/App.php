@@ -27,7 +27,7 @@ use Cake\Utility\Inflector;
  *
  * ### Adding paths
  *
- * You can add paths to the search indexes App uses to find classes using `App::build()`.  Adding
+ * You can add paths to the search indexes App uses to find classes using `App::build()`. Adding
  * additional controller paths for example would alter where CakePHP looks for controllers.
  * This allows you to split your application up across the filesystem.
  *
@@ -53,8 +53,8 @@ use Cake\Utility\Inflector;
  *
  * ### Locating plugins and themes
  *
- * Plugins and Themes can be located with App as well.  Using App::pluginPath('DebugKit') for example, will
- * give you the full path to the DebugKit plugin.  App::themePath('purple'), would give the full path to the
+ * Plugins and Themes can be located with App as well. Using App::pluginPath('DebugKit') for example, will
+ * give you the full path to the DebugKit plugin. App::themePath('purple'), would give the full path to the
  * `purple` theme.
  *
  * ### Inspecting known objects
@@ -230,7 +230,7 @@ class App {
 
 /**
  * Get all the currently loaded paths from App. Useful for inspecting
- * or storing all paths App knows about.  For a paths to a specific package
+ * or storing all paths App knows about. For a paths to a specific package
  * use App::path()
  *
  * @return array An array of packages and their associated paths.
@@ -345,7 +345,7 @@ class App {
 	}
 
 /**
- * Finds the path that a theme is on.  Searches through the defined theme paths.
+ * Finds the path that a theme is on. Searches through the defined theme paths.
  *
  * Usage:
  *
@@ -400,7 +400,7 @@ class App {
  * @param string $type Type of object, i.e. 'Model', 'Controller', 'View/Helper', 'file', 'class' or 'Plugin'
  * @param string|array $path Optional Scan only the path given. If null, paths for the chosen type will be used.
  * @param boolean $cache Set to false to rescan objects of the chosen type. Defaults to true.
- * @return mixed Either false on incorrect / miss.  Or an array of found objects.
+ * @return mixed Either false on incorrect / miss. Or an array of found objects.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::objects
  */
 	public static function objects($type, $path = null, $cache = true) {

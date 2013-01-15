@@ -53,7 +53,7 @@ abstract class BaseCoverageReport {
 	public $pluginTest = false;
 
 /**
- * Array of test case file names.  Used to do basename() matching with
+ * Array of test case file names. Used to do basename() matching with
  * files that have coverage to decide which results to show on page load.
  *
  * @var array
@@ -115,7 +115,7 @@ abstract class BaseCoverageReport {
 	}
 
 /**
- * Filters the coverage data by path.  Files not in the provided path will be removed.
+ * Filters the coverage data by path. Files not in the provided path will be removed.
  *
  * @param string $path Path to filter files by.
  * @return array Array of coverage data for files that match the given path.

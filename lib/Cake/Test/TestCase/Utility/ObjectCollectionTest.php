@@ -137,8 +137,8 @@ class ObjectCollectionTest extends TestCase {
 		$this->assertInstanceOf(__NAMESPACE__ . '\FirstGenericObject', $result);
 		$this->assertInstanceOf(__NAMESPACE__ . '\FirstGenericObject', $this->Objects->First);
 
-		$result = $this->Objects->attached();
-		$this->assertEquals(array('First'), $result, 'attached() results are wrong.');
+		$result = $this->Objects->loaded();
+		$this->assertEquals(array('First'), $result, 'loaded() results are wrong.');
 
 		$this->assertTrue($this->Objects->enabled('First'));
 
@@ -155,17 +155,17 @@ class ObjectCollectionTest extends TestCase {
 		$this->Objects->load('First');
 		$this->Objects->load('Second');
 
-		$result = $this->Objects->attached();
+		$result = $this->Objects->loaded();
 		$this->assertEquals(array('First', 'Second'), $result, 'loaded objects are wrong');
 
 		$this->Objects->unload('First');
 		$this->assertFalse(isset($this->Objects->First));
 		$this->assertTrue(isset($this->Objects->Second));
 
-		$result = $this->Objects->attached();
+		$result = $this->Objects->loaded();
 		$this->assertEquals(array('Second'), $result, 'loaded objects are wrong');
 
-		$result = $this->Objects->enabled();
+		$result = $this->Objects->loaded();
 		$this->assertEquals(array('Second'), $result, 'enabled objects are wrong');
 	}
 
@@ -177,7 +177,7 @@ class ObjectCollectionTest extends TestCase {
 	public function testSet() {
 		$this->Objects->load('First');
 
-		$result = $this->Objects->attached();
+		$result = $this->Objects->loaded();
 		$this->assertEquals(array('First'), $result, 'loaded objects are wrong');
 
 		$result = $this->Objects->set('First', new SecondGenericObject($this->Objects));
