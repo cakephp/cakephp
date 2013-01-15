@@ -518,6 +518,8 @@ class ConsoleOptionParserTest extends CakeTestCase {
 
 		$result = $parser->help('method');
 		$expected = <<<TEXT
+This is another command
+
 <info>Usage:</info>
 cake mycommand method [-h] [--connection]
 
