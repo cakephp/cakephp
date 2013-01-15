@@ -116,12 +116,12 @@ class HttpResponse implements ArrayAccess {
 	}
 
 /**
- * If return is 200 (OK)
+ * If return is a valid 2xx (OK or Successful)
  *
  * @return boolean
  */
 	public function isOk() {
-		return $this->code == 200;
+		return in_array($this->code, array(200, 201, 202, 203, 204, 205, 206));
 	}
 
 /**
