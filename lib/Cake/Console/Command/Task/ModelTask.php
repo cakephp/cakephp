@@ -627,7 +627,7 @@ class ModelTask extends BakeTask {
 			$offset = strpos($otherTable, $model->table . '_');
 			$otherOffset = strpos($otherTable, '_' . $model->table);
 
-			if ($offset !== false) {
+			if ($offset === 0) {
 				$offset = strlen($model->table . '_');
 				$habtmName = $this->_modelName(substr($otherTable, $offset));
 				$associations['hasAndBelongsToMany'][] = array(
@@ -637,7 +637,7 @@ class ModelTask extends BakeTask {
 					'associationForeignKey' => $this->_modelKey($habtmName),
 					'joinTable' => $otherTable
 				);
-			} elseif ($otherOffset !== false) {
+			} elseif ($otherOffset === 0) {
 				$habtmName = $this->_modelName(substr($otherTable, 0, $otherOffset));
 				$associations['hasAndBelongsToMany'][] = array(
 					'alias' => $habtmName,
