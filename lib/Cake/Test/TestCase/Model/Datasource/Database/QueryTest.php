@@ -1301,4 +1301,31 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from(['a' => 'dates'])->execute();
 	}
 
+/**
+ * Tests that Query objects can be included inside the from clause
+ * and be used as a normal table, including binding any passed parameter
+ *
+ * @return void
+ **/
+	public function testSuqueryInFrom() {
+		$this->_insertDateRecords();
+		$this->_insertTwoRecords();
+
+		$query = new Query($this->connection);
+		$subquery = (new Query($this->connection))
+			->select(['id', 'name'])
+			->from('dates')
+			->where(['posted >' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime']);
+		$result = $query
+			->select(['name'])
+			->from(['b' => $subquery])
+			->where(['id !=' => 3])
+			->execute();
+
+		$expected = [
+			['name' => 'Bruce Lee'],
+		];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+	}
+
 }
