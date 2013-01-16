@@ -514,6 +514,7 @@ class ControllerTaskTest extends CakeTestCase {
 		if (!defined('ARTICLE_MODEL_CREATED')) {
 			$this->markTestSkipped('Execute into all could not be run as an Article, Tag or Comment model was already loaded.');
 		}
+
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
@@ -525,6 +526,42 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename,
 			$this->stringContains('class BakeArticlesController')
+		)->will($this->returnValue(true));
+
+		$this->Task->execute();
+	}
+
+/**
+ * Test execute() with all and --admin
+ *
+ * @return void
+ */
+	public function testExecuteIntoAllAdmin() {
+		$count = count($this->Task->listAll('test'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+		if (!defined('ARTICLE_MODEL_CREATED')) {
+			$this->markTestSkipped('Execute into all could not be run as an Article, Tag or Comment model was already loaded.');
+		}
+
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('all');
+		$this->Task->params['admin'] = true;
+
+		$this->Task->Project->expects($this->any())
+			->method('getPrefix')
+			->will($this->returnValue('admin_'));
+		$this->Task->expects($this->any())
+			->method('_checkUnitTest')
+			->will($this->returnValue(true));
+		$this->Task->Test->expects($this->once())->method('bake');
+
+		$filename = '/my/path/BakeArticlesController.php';
+		$this->Task->expects($this->once())->method('createFile')->with(
+			$filename,
+			$this->stringContains('function admin_index')
 		)->will($this->returnValue(true));
 
 		$this->Task->execute();
