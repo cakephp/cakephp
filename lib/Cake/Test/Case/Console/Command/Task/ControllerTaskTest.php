@@ -90,6 +90,10 @@ class ControllerTaskTest extends CakeTestCase {
 			array($out, $out, $in)
 		);
 		$this->Task->Test = $this->getMock('TestTask', array(), array($out, $out, $in));
+
+		if (!defined('ARTICLE_MODEL_CREATED')) {
+			$this->markTestSkipped('Could not run as an Article, Tag or Comment model was already loaded.');
+		}
 	}
 
 /**
@@ -340,7 +344,6 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeActionsUsingSessions() {
-		$this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Testing bakeActions requires Article, Comment & Tag Model to be undefined.');
 
 		$result = $this->Task->bakeActions('BakeArticles', null, true);
 
@@ -379,7 +382,6 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeActionsWithNoSessions() {
-		$this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Testing bakeActions requires Article, Tag, Comment Models to be undefined.');
 
 		$result = $this->Task->bakeActions('BakeArticles', null, false);
 
@@ -511,9 +513,6 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
-		if (!defined('ARTICLE_MODEL_CREATED')) {
-			$this->markTestSkipped('Execute into all could not be run as an Article, Tag or Comment model was already loaded.');
-		}
 
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
@@ -540,9 +539,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
-		}
-		if (!defined('ARTICLE_MODEL_CREATED')) {
-			$this->markTestSkipped('Execute into all could not be run as an Article, Tag or Comment model was already loaded.');
 		}
 
 		$this->Task->connection = 'test';
@@ -573,9 +569,6 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithController() {
-		if (!defined('ARTICLE_MODEL_CREATED')) {
-			$this->markTestSkipped('Execute with scaffold param requires no Article, Tag or Comment model to be defined');
-		}
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticles');
@@ -607,9 +600,6 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithControllerNameVariations($name) {
-		if (!defined('ARTICLE_MODEL_CREATED')) {
-			$this->markTestSkipped('Execute with scaffold param requires no Article, Tag or Comment model to be defined.');
-		}
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array($name);
@@ -627,9 +617,6 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithPublicParam() {
-		if (!defined('ARTICLE_MODEL_CREATED')) {
-			$this->markTestSkipped('Execute with public param requires no Article, Tag or Comment model to be defined.');
-		}
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticles');
@@ -649,9 +636,6 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithControllerAndBoth() {
-		if (!defined('ARTICLE_MODEL_CREATED')) {
-			$this->markTestSkipped('Execute with controller and both requires no Article, Tag or Comment model to be defined.');
-		}
 		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
@@ -671,9 +655,6 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithControllerAndAdmin() {
-		if (!defined('ARTICLE_MODEL_CREATED')) {
-			$this->markTestSkipped('Execute with controller and admin requires no Article, Tag or Comment model to be defined.');
-		}
 		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
