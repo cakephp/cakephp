@@ -1354,6 +1354,22 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			['name' => 'Jet Li']
 		];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$subquery = (new Query($this->connection))
+			->select(['id'])
+			->from('dates')
+			->where(['posted >' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime']);
+		$result = $query
+			->select(['name'])
+			->from(['authors'])
+			->where(['id !=' => $subquery])
+			->execute();
+
+		$expected = [
+			['name' => 'Chuck Norris'],
+		];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
 
 }
