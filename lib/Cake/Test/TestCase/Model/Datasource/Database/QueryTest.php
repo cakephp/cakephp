@@ -1328,4 +1328,32 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
 
+/**
+ * Tests that Query objects can be included inside the where clause
+ * and be used as a normal condition, including binding any passed parameter
+ *
+ * @return void
+ **/
+	public function testSuqueryInWhere() {
+		$this->_insertDateRecords();
+		$this->_insertTwoRecords();
+
+		$query = new Query($this->connection);
+		$subquery = (new Query($this->connection))
+			->select(['id'])
+			->from('authors')
+			->where(['id >' => 1]);
+		$result = $query
+			->select(['name'])
+			->from(['dates'])
+			->where(['id !=' => $subquery])
+			->execute();
+
+		$expected = [
+			['name' => 'Chuck Norris'],
+			['name' => 'Jet Li']
+		];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+	}
+
 }

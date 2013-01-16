@@ -1,6 +1,8 @@
 <?php
 
 namespace Cake\Model\Datasource\Database\Expression;
+
+use Cake\Model\Datasource\Database\Query;
 use \Countable;
 
 class QueryExpression implements Countable {
@@ -238,6 +240,10 @@ class QueryExpression implements Countable {
 			$type = $type ?: 'string';
 			$type .= strpos($type, '[]') === false ? '[]' : null;
 			$template = '%s %s (%s)';
+		}
+
+		if ($value instanceof Query) {
+			return new Comparisson([$expression => $value], [$field => $type], $operator);
 		}
 
 		return sprintf($template, $expression,  $operator, $this->_bindValue($field, $value, $type));

@@ -4,6 +4,7 @@ namespace Cake\Model\Datasource\Database;
 use Iterator;
 use IteratorAggregate;
 use Cake\Model\Datasource\Database\Expression\QueryExpression;
+use Cake\Model\Datasource\Database\Expression\Comparisson;
 
 class Query implements IteratorAggregate  {
 
@@ -399,12 +400,20 @@ class Query implements IteratorAggregate  {
 	protected function _bindParams($statement) {
 		$visitor = function($expression) use($statement) {
 			$params = $types = [];
+
+			if ($expression instanceof Comparisson) {
+				if ($expression->getValue() instanceof self) {
+					$expression->getValue()->_bindParams($statement);
+				}
+			}
+
 			foreach ($expression->bindings() as $b) {
 				$params[$b['placeholder']] = $b['value'];
 				$types[$b['placeholder']] = $b['type'];
 			}
 			$statement->bind($params, $types);
 		};
+
 		$binder = function($expression, $name) use($statement, $visitor, &$binder) {
 			if (is_array($expression)) {
 				foreach ($expression as $e) {
