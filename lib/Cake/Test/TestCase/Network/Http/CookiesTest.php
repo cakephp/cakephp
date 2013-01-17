@@ -129,6 +129,7 @@ class CookiesTest extends TestCase {
 		$result = $this->cookies->getAll();
 		$this->assertCount(2, $result, 'Path does not match, no expiration');
 
+		// Use a more common date format that doesn't match
 		$headers = [
 			'HTTP/1.0 200 Ok',
 			'Set-Cookie: first=1; Domain=.foo.example.com; Expires=Wed, 09-Jun-1999 10:18:14 GMT',
@@ -138,9 +139,10 @@ class CookiesTest extends TestCase {
 		$result = $this->cookies->getAll();
 		$this->assertCount(2, $result, 'Domain does not match, no expiration');
 
+		// Use an RFC1123 date
 		$headers = [
 			'HTTP/1.0 200 Ok',
-			'Set-Cookie: first=1; Expires=Wed, 09-Jun-1999 10:18:14 GMT',
+			'Set-Cookie: first=1; Expires=Wed, 09 Jun 1999 10:18:14 GMT',
 		];
 		$response = new Response($headers, '');
 		$this->cookies->store($response, 'http://example.com/some/path');

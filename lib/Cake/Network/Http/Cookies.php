@@ -13,6 +13,7 @@
  */
 namespace Cake\Network\Http;
 
+use DateTime;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
 
@@ -57,10 +58,11 @@ class Cookies {
 			$key = implode(';', [$cookie['name'], $cookie['domain'], $cookie['path']]);
 
 			$expires = isset($cookie['expires']) ? $cookie['expires'] : false;
+			$expiresTime = false;
 			if ($expires) {
-				$expires = \DateTime::createFromFormat('D, j-M-Y H:i:s e', $expires);
+				$expiresTime = strtotime($expires);
 			}
-			if ($expires && $expires->getTimestamp() <= time()) {
+			if ($expiresTime && $expiresTime <= time()) {
 				unset($this->_cookies[$key]);
 				continue;
 			}
