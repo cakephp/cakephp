@@ -1363,7 +1363,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$result = $query
 			->select(['name'])
 			->from(['authors'])
-			->where(['id !=' => $subquery])
+			->where(['id not in' => $subquery])
 			->execute();
 
 		$expected = [
