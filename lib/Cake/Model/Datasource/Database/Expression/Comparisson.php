@@ -15,6 +15,7 @@
  * @since         CakePHP(tm) v 3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 namespace Cake\Model\Datasource\Database\Expression;
 
 use Cake\Model\Datasource\Database\Expression;
@@ -27,8 +28,19 @@ class Comparisson extends QueryExpression {
 
 	protected $_type;
 
-	public function __construct(array $condition, $types = [], $conjuntion = '=') {
-		parent::__construct($condition, $types, $conjuntion);
+	public function __construct($field, $value, $type, $conjuntion) {
+		$this->_field = $field;
+		$this->_value = $value;
+		$this->type($conjuntion);
+
+		if (is_string($type)) {
+			$this->_type = $type;
+		}
+		if (is_string($field) && isset($types[$this->_field])) {
+			$this->_type = current($types);
+		}
+
+		$this->_conditions[$field] = $value;
 	}
 
 	public function field($field) {
@@ -51,7 +63,7 @@ class Comparisson extends QueryExpression {
 		$value = $this->_value;
 		$template = '%s %s (%s)';
 		if (!($this->_value instanceof Expression)) {
-			$value = $this->_bindValue($this->_field,$value, $this->_type);
+			$value = $this->_bindValue($this->_field, $value, $this->_type);
 			$template = '%s %s %s';
 		}
 
@@ -60,16 +72,6 @@ class Comparisson extends QueryExpression {
 
 	public function count() {
 		return 1;
-	}
-
-	protected function _addConditions(array $condition, array $types) {
-		$this->_conditions[] = current($condition);
-		$this->_field = key($condition);
-		$this->_value = current($condition);
-
-		if (isset($types[$this->_field])) {
-			$this->_type = current($types);
-		}
 	}
 
 }

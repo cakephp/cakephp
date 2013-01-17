@@ -258,7 +258,7 @@ class QueryExpression implements Expression, Countable {
 		}
 
 		if ($value instanceof Expression) {
-			return new Comparisson([$expression => $value], [$field => $type], $operator);
+			return new Comparisson($expression, $value, $type, $operator);
 		}
 
 		return sprintf($template, $expression,  $operator, $this->_bindValue($field, $value, $type));
