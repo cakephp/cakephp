@@ -1,4 +1,20 @@
 <?php
+/**
+ * 
+ * PHP Version 5.4
+ *
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The Open Group Test Suite License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2013, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package       Cake.Test.Case.Model.Datasource.Database
+ * @since         CakePHP(tm) v 3.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 namespace Cake\Model\Datasource\Database;
 
 use Iterator;
@@ -6,7 +22,7 @@ use IteratorAggregate;
 use Cake\Model\Datasource\Database\Expression\QueryExpression;
 use Cake\Model\Datasource\Database\Expression\Comparisson;
 
-class Query implements IteratorAggregate  {
+class Query implements Expression, IteratorAggregate {
 
 /**
  * Connection instance to be used to execute this query
@@ -90,7 +106,7 @@ class Query implements IteratorAggregate  {
 			if (!count($parts)) {
 				return;
 			}
-			if ($parts instanceof QueryExpression) {
+			if ($parts instanceof Expression) {
 				$parts = [$parts->sql()];
 			}
 			if (isset($this->_templates[$name])) {
@@ -253,7 +269,7 @@ class Query implements IteratorAggregate  {
 			if (is_string($t)) {
 				$t = array('table' => $t, 'conditions' => $this->newExpr());
 			}
-			if (!($t['conditions']) instanceof QueryExpression) {
+			if (!($t['conditions']) instanceof Expression) {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}
 			$joins[] = $t + ['type' => 'INNER', 'alias' => null];

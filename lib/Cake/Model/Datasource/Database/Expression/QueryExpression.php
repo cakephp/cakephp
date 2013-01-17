@@ -1,11 +1,27 @@
 <?php
-
+/**
+ * 
+ * PHP Version 5.4
+ *
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The Open Group Test Suite License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2013, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package       Cake.Test.Case.Model.Datasource.Database
+ * @since         CakePHP(tm) v 3.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 namespace Cake\Model\Datasource\Database\Expression;
 
+use Cake\Model\Datasource\Database\Expression;
 use Cake\Model\Datasource\Database\Query;
 use \Countable;
 
-class QueryExpression implements Countable {
+class QueryExpression implements Expression, Countable {
 
 	protected $_conjunction;
 
@@ -18,7 +34,6 @@ class QueryExpression implements Countable {
 	protected $_bindingsCount = 0;
 
 	protected $_replaceArrayParams = false;
-
 
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
 		$this->_conjunction = strtoupper($conjunction);
@@ -242,7 +257,7 @@ class QueryExpression implements Countable {
 			$template = '%s %s (%s)';
 		}
 
-		if ($value instanceof Query) {
+		if ($value instanceof Expression) {
 			return new Comparisson([$expression => $value], [$field => $type], $operator);
 		}
 
