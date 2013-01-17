@@ -1411,4 +1411,31 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
 
+/**
+ * Tests that it is possible to use a subquery in a join clause
+ *
+ * @return void
+ **/
+	public function testSubqueyInJoin() {
+		$this->_insertTwoRecords();
+		$this->_insertDateRecords();
+		$subquery = (new Query($this->connection))->select('*')->from('authors');
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title', 'name'])
+			->from('articles')
+			->join(['b' => $subquery])
+			->execute();
+		$this->assertCount(4, $result);
+
+		$subquery->where(['id' => 1]);
+		$result = $query->execute();
+		$this->assertCount(2, $result);
+
+		$query->join(['b' => ['table' => $subquery, 'conditions' => ['b.id = articles.id']]], [], true);
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+	}
+
 }
