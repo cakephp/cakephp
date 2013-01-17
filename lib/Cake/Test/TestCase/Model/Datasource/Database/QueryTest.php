@@ -277,6 +277,45 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that joins can be aliased using array keys
+ *
+ * @return void
+ **/
+	public function testSelectAliasedJoins() {
+		$this->_insertTwoRecords();
+		$this->_insertDateRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title', 'name'])
+			->from('articles')
+			->join(['a' => 'authors'])
+			->execute();
+		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'a title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$conditions = $query->newExpr()->add(['author_id' => 2]);
+		$result = $query
+			->select(['title', 'name'])
+			->from('articles')
+			->join(['a' => ['table' => 'authors', 'conditions' => $conditions]])
+			->execute();
+		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'another title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$time = new \DateTime('2012-12-21 12:00');
+		$types = ['posted' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'd.name'])
+			->from('articles')
+			->join(['d' => ['table' => 'dates', 'conditions' => ['posted' => $time]]], $types)
+			->execute();
+		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
+	}
+
+/**
  * Tests it is possible to filter a query by using simple AND joined conditions
  *
  * @return void

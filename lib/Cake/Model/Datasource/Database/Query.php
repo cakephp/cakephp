@@ -265,14 +265,15 @@ class Query implements Expression, IteratorAggregate {
 		}
 
 		$joins = array();
-		foreach ($tables as $t) {
+		foreach ($tables as $alias => $t) {
+			$hasAlias = is_string($alias);
 			if (is_string($t)) {
 				$t = array('table' => $t, 'conditions' => $this->newExpr());
 			}
 			if (!($t['conditions']) instanceof Expression) {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}
-			$joins[] = $t + ['type' => 'INNER', 'alias' => null];
+			$joins[] = $t + ['type' => 'INNER', 'alias' => $hasAlias ? $alias : null];
 		}
 
 		if ($overwrite) {
