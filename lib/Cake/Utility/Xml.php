@@ -101,7 +101,7 @@ class Xml {
 		} elseif (file_exists($input)) {
 			return self::_loadXml(file_get_contents($input), $options);
 		} elseif (strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
-			$socket = new HttpSocket(array('redirect' => 10));
+			$socket = new HttpSocket(array('request' => array('redirect' => 10)));
 			$response = $socket->get($input);
 			if (!$response->isOk()) {
 				throw new XmlException(__d('cake_dev', 'XML cannot be read.'));
