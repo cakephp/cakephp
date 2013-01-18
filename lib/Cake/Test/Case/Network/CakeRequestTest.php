@@ -136,6 +136,14 @@ class CakeRequestTest extends CakeTestCase {
 		$_SERVER['REQUEST_URI'] = '/tasks/index/page:1/?ts=123456';
 		$request = new CakeRequest();
 		$this->assertEquals('tasks/index/page:1/', $request->url);
+
+		$_SERVER['REQUEST_URI'] = '/some/path?url=http://cakephp.org';
+		$request = new CakeRequest();
+		$this->assertEquals('some/path', $request->url);
+
+		$_SERVER['REQUEST_URI'] = FULL_BASE_URL.'/other/path?url=http://cakephp.org';
+		$request = new CakeRequest();
+		$this->assertEquals('other/path', $request->url);
 	}
 
 /**
