@@ -129,6 +129,10 @@ class ControllerCommentsController extends ControllerTestAppController {
 	protected $_mergeParent = 'ControllerTestAppController';
 }
 
+class ControllerTwoCommentsController extends ControllerCommentsController {
+
+}
+
 /**
  * ControllerComment class
  *
@@ -1436,6 +1440,23 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new TestController($url, $response);
 		$result = $Controller->invokeAction($url);
 		$this->assertEquals('I am from the controller.', $result);
+	}
+
+/**
+ * test invoking controller methods.
+ *
+ * @return void
+ */
+	public function testCorrectPropertyInitializationForInheritedControllers() {
+		$url = new CakeRequest('test/returner/');
+		$url->addParams(array(
+			'controller' => 'test_controller',
+			'action' => 'returner',
+			'pass' => array()
+		));
+		$response = $this->getMock('CakeResponse');
+		$Controller = new ControllerTwoCommentsController($url, $response);
+		$this->assertEqual($Controller->modelClass, 'ControllerTwoComment');
 	}
 
 }
