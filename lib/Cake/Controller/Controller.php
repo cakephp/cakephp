@@ -315,8 +315,11 @@ class Controller extends Object implements CakeEventListener {
  * @param CakeResponse $response Response object for this controller.
  */
 	public function __construct($request = null, $response = null) {
+		$name = substr(get_class($this), 0, -10);
 		if ($this->name === null) {
-			$this->name = substr(get_class($this), 0, -10);
+			$this->name = $name;
+		} elseif ($name !== $this->name) {
+			$this->name = $name;
 		}
 
 		if ($this->viewPath == null) {
