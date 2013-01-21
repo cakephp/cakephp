@@ -519,6 +519,15 @@ class Router {
 	}
 
 /**
+ * Clears all prefixes used in de connected routes
+ *
+ * @return void
+ */
+	public static function clearPrefixes() {
+		self::$_prefixes = array();
+	}
+
+/**
  * Parses given URL string.  Returns 'routing' parameters for that url.
  *
  * @param string $url URL to be parsed
