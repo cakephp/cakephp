@@ -320,6 +320,24 @@ class ClassRegistryTest extends CakeTestCase {
 	}
 
 /**
+ * Tests non override user provided test datasource
+ *
+ */
+	public function testProvideTestDatasource() {
+		ClassRegistry::config(array('testing' => true));
+
+		$testConfig = ConnectionManager::getDataSource('test')->config;
+		ConnectionManager::create('test_doesnotexist', $testConfig);
+
+		$Model = ClassRegistry::init('RegisterArticle');
+		$this->assertEquals('test', $Model->useDbConfig);
+		ClassRegistry::removeObject('RegisterArticle');
+
+		$Model = ClassRegistry::init(array('class' => 'RegisterArticle', 'ds' => 'test_doesnotexist'));
+		$this->assertEquals('test_doesnotexist', $Model->useDbConfig);
+	}
+
+/**
  * Tests that passing the string parameter to init() will return false if the model does not exists
  *
  */
