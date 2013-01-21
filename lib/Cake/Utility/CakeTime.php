@@ -56,7 +56,7 @@ class CakeTime {
  * @var string
  * @see CakeTime::niceShort()
  */
-	public static $niceShortFormat = '%d/%m, %H:%M';
+	public static $niceShortFormat = '%B %d, %H:%M';
 
 /**
  * The format to use when formatting a time using `CakeTime::timeAgoInWords()`
