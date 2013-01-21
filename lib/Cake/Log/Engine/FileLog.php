@@ -61,6 +61,9 @@ class FileLog extends BaseLog {
 		if (!empty($this->_file) && !preg_match('/\.log$/', $this->_file)) {
 			$this->_file .= '.log';
 		}
+		if (Configure::read('debug') && !is_dir($this->_path)) {
+			mkdir($this->_path, 0664, true);
+		}
 	}
 
 /**
