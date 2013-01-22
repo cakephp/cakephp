@@ -170,6 +170,17 @@ class HashTest extends CakeTestCase {
  * return void
  */
 	public function testGet() {
+		$data = array('abc', 'def');
+
+		$result = Hash::get($data, '0');
+		$this->assertEquals('abc', $result);
+
+		$result = Hash::get($data, 0);
+		$this->assertEquals('abc', $result);
+
+		$result = Hash::get($data, '1');
+		$this->assertEquals('def', $result);
+
 		$data = self::articleData();
 
 		$result = Hash::get(array(), '1.Article.title');
