@@ -39,7 +39,7 @@ class Hash {
  * @return mixed The value fetched from the array, or null.
  */
 	public static function get(array $data, $path) {
-		if (empty($data) || empty($path)) {
+		if (empty($data)) {
 			return null;
 		}
 		if (is_string($path)) {
