@@ -45,6 +45,7 @@ class Query implements Expression, IteratorAggregate {
  **/
 	protected $_parts = [
 		'select' => [],
+		'distinct' => false,
 		'from' => [],
 		'join' => [],
 		'set' => [],
@@ -56,8 +57,6 @@ class Query implements Expression, IteratorAggregate {
 		'offset' => null,
 		'union' => []
 	];
-
-	protected $_distinct = false;
 
 	protected $_templates = [
 		'where' => ' WHERE %s',
@@ -127,8 +126,8 @@ class Query implements Expression, IteratorAggregate {
 
 	protected function _buildSelect($builder) {
 		$parts = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit', 'offset', 'union'];
-		foreach ($parts as $part) {
-			$builder($this->_parts[$part], $part);
+		foreach ($parts as $name) {
+			$builder($this->_parts[$name], $name);
 		}
 	}
 
@@ -172,13 +171,13 @@ class Query implements Expression, IteratorAggregate {
 
 		if (is_array($on)) {
 			$merge = [];
-			if (is_array($this->_distinct)) {
-				$merge = $this->_distinct;
+			if (is_array($this->_parts['distinct'])) {
+				$merge = $this->_parts['distinct'];
 			}
 			$on = ($overwrite) ? array_values($on) : array_merge($merge, array_values($on));
 		}
 
-		$this->_distinct = $on;
+		$this->_parts['distinct'] = $on;
 		$this->_dirty = true;
 		return $this;
 	}
@@ -194,17 +193,12 @@ class Query implements Expression, IteratorAggregate {
 			$normalized[] = $p;
 		}
 
-		if ($this->_distinct === true) {
+		if ($this->_parts['distinct'] === true) {
 			$distinct = 'DISTINCT ';
 		}
 
-		if (is_array($this->_distinct)) {
-			//todo: ask driver if it cannot support distinct on
-			if (true) {
-				$this->group($this->_distinct, true);
-			} else {
-				$distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $this->_distinct));
-			}
+		if (is_array($this->_parts['distinct'])) {
+			$distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $this->_parts['distinct']));
 		}
 
 		return sprintf($select, $distinct, implode(', ', $normalized));
@@ -410,6 +404,10 @@ class Query implements Expression, IteratorAggregate {
 			$this->_iterator = $this->execute();
 		}
 		return $this->_iterator;
+	}
+
+	public function clause($name) {
+		return $this->_parts[$name];
 	}
 
 	protected function _conjugate($part, $append, $conjunction, $types) {
