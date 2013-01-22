@@ -43,6 +43,7 @@ class Security {
 /**
  * Get allowed minutes of inactivity based on security level.
  *
+ * @deprecated Exists for backwards compatibility only, not used by the core
  * @return integer Allowed inactivity in minutes
  */
 	public static function inactiveMins() {
