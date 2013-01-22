@@ -42,7 +42,7 @@ class Hash {
 		if (empty($data)) {
 			return null;
 		}
-		if (is_string($path)) {
+		if (is_string($path) || is_numeric($path)) {
 			$parts = explode('.', $path);
 		} else {
 			$parts = $path;
