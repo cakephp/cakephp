@@ -151,7 +151,7 @@ class ClassRegistry {
 							}
 						}
 
-						if(!isset($settings['ds']) || empty($settings['ds'])) {
+						if (empty($settings['ds'])) {
 							$settings['ds'] = 'test';
 						}
 					}
