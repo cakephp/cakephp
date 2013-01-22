@@ -74,7 +74,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	protected function _insertDateRecords() {
-		$table = 'CREATE TEMPORARY TABLE dates(id int, name varchar(50), posted date, visible char(1))';
+		$table = 'CREATE TEMPORARY TABLE dates(id int, name varchar(50), posted timestamp, visible char(1))';
 		$this->connection->execute($table);
 		$data = [
 			'id' => '1',
