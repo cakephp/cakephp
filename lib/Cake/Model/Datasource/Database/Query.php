@@ -138,6 +138,8 @@ class Query implements Expression, IteratorAggregate {
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
 			if (isset($join['conditions']) && count($join['conditions'])) {
 				$joins .= sprintf(' ON %s', $join['conditions']);
+			} else {
+				$joins .= ' ON 1 = 1';
 			}
 		}
 		return $joins;

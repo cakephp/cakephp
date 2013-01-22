@@ -74,7 +74,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	protected function _insertDateRecords() {
-		$table = 'CREATE TEMPORARY TABLE dates(id int, name varchar(50), posted datetime, visible char(1))';
+		$table = 'CREATE TEMPORARY TABLE dates(id int, name varchar(50), posted date, visible char(1))';
 		$this->connection->execute($table);
 		$data = [
 			'id' => '1',
@@ -289,9 +289,10 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->select(['title', 'name'])
 			->from('articles')
 			->join(['a' => 'authors'])
+			->order(['name' => 'desc'])
 			->execute();
 		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'a title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$conditions = $query->newExpr()->add(['author_id' => 2]);
@@ -486,10 +487,10 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('dates')
 			->where(
 				[
-					'id' => '3something-crazy',
+					'id' => '1something-crazy',
 					'posted <' => new \DateTime('2013-01-01 12:00')
 				],
-				['posted' => 'datetime', 'id' => 'boolean']
+				['posted' => 'datetime', 'id' => 'float']
 			)
 			->execute();
 		$this->assertCount(1, $result);
@@ -1085,10 +1086,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$expected = [['total' => 1, 'author_id' => 1], ['total' => '2', 'author_id' => 2]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
-		$result = $query->select(['total' => 'count(title)', 'author_id'], true)
+		$result = $query->select(['total' => 'count(title)', 'name'], true)
 			->group(['name'], true)
+			->order(['total' => 'asc'])
 			->execute();
-		$expected = [['total' => 2, 'author_id' => 2], ['total' => 1, 'author_id' => 1]];
+		$expected = [['total' => 1, 'name' => 'Chuck Norris'], ['total' => 2, 'name' => 'Bruce Lee']];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$result = $query->select(['articles.id'])
@@ -1147,17 +1149,17 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
-			->having(['total <' => 2], ['total' => 'integer'])
+			->having(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
 			->execute();
 		$expected = [['total' => 1, 'author_id' => 1]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
-		$result = $query->having(['total' => 2], ['total' => 'integer'], true)
+		$result = $query->having(['count(author_id)' => 2], ['count(author_id)' => 'integer'], true)
 			->execute();
 		$expected = [['total' => 2, 'author_id' => 2]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
-		$result = $query->having(function($e) { return $e->add('total = 1 + 1'); }, [], true)
+		$result = $query->having(function($e) { return $e->add('count(author_id) = 1 + 1'); }, [], true)
 			->execute();
 		$expected = [['total' => 2, 'author_id' => 2]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -1183,8 +1185,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
-			->having(['total >' => 2], ['total' => 'integer'])
-			->orHaving(['total <' => 2], ['total' => 'integer'])
+			->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
+			->orHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
 			->execute();
 		$expected = [['total' => 1, 'author_id' => 1]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -1195,8 +1197,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
-			->having(['total >' => 2], ['total' => 'integer'])
-			->orHaving(['total <=' => 2], ['total' => 'integer'])
+			->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
+			->orHaving(['count(author_id) <=' => 2], ['count(author_id)' => 'integer'])
 			->execute();
 		$expected = [['total' => 1, 'author_id' => 1], ['total' => 2, 'author_id' => 2]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -1207,8 +1209,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
-			->having(['total >' => 2], ['total' => 'integer'])
-			->orHaving(function($e) { return $e->add('total = 1 + 1'); })
+			->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
+			->orHaving(function($e) { return $e->add('count(author_id) = 1 + 1'); })
 			->execute();
 		$expected = [['total' => 2, 'author_id' => 2]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -1234,8 +1236,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
-			->having(['total >' => 2], ['total' => 'integer'])
-			->andHaving(['total <' => 2], ['total' => 'integer'])
+			->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
+			->andHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
 			->execute();
 		$this->assertCount(0, $result);
 
@@ -1245,8 +1247,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
-			->having(['total' => 2], ['total' => 'integer'])
-			->andHaving(['total >' => 1], ['total' => 'integer'])
+			->having(['count(author_id)' => 2], ['count(author_id)' => 'integer'])
+			->andHaving(['count(author_id) >' => 1], ['count(author_id)' => 'integer'])
 			->execute();
 		$expected = [['total' => 2, 'author_id' => 2]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -1257,7 +1259,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
-			->andHaving(function($e) { return $e->add('total = 2 - 1'); })
+			->andHaving(function($e) { return $e->add('count(author_id) = 2 - 1'); })
 			->execute();
 		$expected = [['total' => 1, 'author_id' => 1]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -1446,28 +1448,30 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testUnion() {
 		$this->_insertTwoRecords();
 		$this->_insertDateRecords();
-		$union = (new Query($this->connection))->select('*')->from(['a' => 'articles']);
+		$union = (new Query($this->connection))->select(['id', 'title'])->from(['a' => 'articles']);
 		$query = new Query($this->connection);
-		$result = $query->select('*')
+		$result = $query->select(['id', 'name'])
 			->from(['d' => 'dates'])
 			->union($union)
 			->execute();
 		$this->assertCount(5, $result);
 		$rows = $result->fetchAll();
 
+		$union->select(['foo' => 'id', 'bar' => 'title']);
 		$union = (new Query($this->connection))
 			->select(['id', 'name', 'other' => 'id', 'nameish' => 'name'])
 			->from(['b' => 'authors'])
-			->where(['id >' => 1])
+			->where(['id ' => 1])
 			->order(['id' => 'desc']);
 
-		$result = $query->union($union)->execute();
-		$this->assertCount(6, $result);
+		$result = $query->select(['foo' => 'id', 'bar' => 'name'])->union($union)->execute();
+		$this->assertCount(5, $result);
+		$this->assertNotEquals($rows, $result->fetchAll());
 
 		$union = (new Query($this->connection))
-			->select('*')
+			->select(['id', 'title'])
 			->from(['c' => 'articles']);
-		$result = $query->union($union, true)->execute();
+		$result = $query->select(['id', 'name'], true)->union($union, true)->execute();
 		$this->assertCount(5, $result);
 		$this->assertEquals($rows, $result->fetchAll());
 	}
