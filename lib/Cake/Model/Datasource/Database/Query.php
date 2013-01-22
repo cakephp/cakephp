@@ -53,7 +53,8 @@ class Query implements Expression, IteratorAggregate {
 		'having' => null,
 		'order' => [],
 		'limit' => null,
-		'offset' => null
+		'offset' => null,
+		'union' => []
 	];
 
 	protected $_distinct = false;
@@ -63,7 +64,7 @@ class Query implements Expression, IteratorAggregate {
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
 		'limit' => ' LIMIT %s',
-		'offset' => ' OFFSET %s'
+		'offset' => ' OFFSET %s',
 	];
 
 /**
@@ -125,7 +126,7 @@ class Query implements Expression, IteratorAggregate {
 	}
 
 	protected function _buildSelect($builder) {
-		$parts = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit', 'offset'];
+		$parts = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit', 'offset', 'union'];
 		foreach ($parts as $part) {
 			$builder($this->_parts[$part], $part);
 		}
@@ -216,10 +217,6 @@ class Query implements Expression, IteratorAggregate {
 	}
 
 	public function delete() {
-		return $this;
-	}
-
-	public function union($query) {
 		return $this;
 	}
 
@@ -369,6 +366,23 @@ class Query implements Expression, IteratorAggregate {
 	public function offset($num) {
 		$this->_parts['offset'] = $num;
 		return $this;
+	}
+
+	public function union($query, $overwrite = false) {
+		if ($overwrite) {
+			$this->_parts['union'] = [];
+		}
+		$this->_parts['union'][] = $query;
+		$this->_dirty = true;
+		return $this;
+	}
+
+	protected function _buildUnionPart($parts) {
+		$parts = array_map(function($p) {
+			$p =(string)$p;
+			return $p[0] === '(' ? trim($p, '()') : $p;
+		}, $parts);
+		return sprintf("\nUNION %s", implode("\nUNION ", $parts));
 	}
 
 /**

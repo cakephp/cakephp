@@ -1438,4 +1438,38 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(1, $result);
 	}
 
+/**
+ * Tests that it is possible to one or multiple UNION statements in a query
+ *
+ * @return void
+ **/
+	public function testUnion() {
+		$this->_insertTwoRecords();
+		$this->_insertDateRecords();
+		$union = (new Query($this->connection))->select('*')->from(['a' => 'articles']);
+		$query = new Query($this->connection);
+		$result = $query->select('*')
+			->from(['d' => 'dates'])
+			->union($union)
+			->execute();
+		$this->assertCount(5, $result);
+		$rows = $result->fetchAll();
+
+		$union = (new Query($this->connection))
+			->select(['id', 'name', 'other' => 'id', 'nameish' => 'name'])
+			->from(['b' => 'authors'])
+			->where(['id >' => 1])
+			->order(['id' => 'desc']);
+
+		$result = $query->union($union)->execute();
+		$this->assertCount(6, $result);
+
+		$union = (new Query($this->connection))
+			->select('*')
+			->from(['c' => 'articles']);
+		$result = $query->union($union, true)->execute();
+		$this->assertCount(5, $result);
+		$this->assertEquals($rows, $result->fetchAll());
+	}
+
 }
