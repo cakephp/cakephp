@@ -561,7 +561,7 @@ class HttpSocketTest extends CakeTestCase {
 			$expectation['request']['raw'] = $expectation['request']['line'] . $expectation['request']['header'] . "\r\n" . $raw;
 
 			$r = array('config' => $this->Socket->config, 'request' => $this->Socket->request);
-			$v = $this->assertEquals($r, $expectation, 'Failed test #' . $i . ' ');
+			$this->assertEquals($r, $expectation, 'Failed test #' . $i . ' ');
 			$expectation['request']['raw'] = $raw;
 		}
 
@@ -587,7 +587,7 @@ class HttpSocketTest extends CakeTestCase {
 			),
 			'method' => 'GET'
 		);
-		$response = $this->Socket->request($request);
+		$this->Socket->request($request);
 		$this->assertContains('Host: cakephp.org:8080', $this->Socket->request['header']);
 	}
 
@@ -607,7 +607,7 @@ class HttpSocketTest extends CakeTestCase {
 			),
 			'method' => 'GET'
 		);
-		$response = $this->Socket->request($request);
+		$this->Socket->request($request);
 		$this->assertContains("GET /index.php?somestring HTTP/1.1", $this->Socket->request['line']);
 	}
 
@@ -620,7 +620,7 @@ class HttpSocketTest extends CakeTestCase {
 	public function testRequestNotAllowedUri() {
 		$this->Socket->reset();
 		$request = array('uri' => '*', 'method' => 'GET');
-		$response = $this->Socket->request($request);
+		$this->Socket->request($request);
 	}
 
 /**
@@ -844,7 +844,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse1));
 		$this->Socket->expects($this->at(4))->method('read')->will($this->returnValue($serverResponse2));
 
-		$response = $this->Socket->request($request);
+		$this->Socket->request($request);
 		$this->assertEquals(1, $this->Socket->request['redirect']);
 	}
 
@@ -1216,7 +1216,7 @@ class HttpSocketTest extends CakeTestCase {
  * @return void
  */
 	public function testBadBuildRequestLine() {
-		$r = $this->Socket->buildRequestLine('Foo');
+		$this->Socket->buildRequestLine('Foo');
 	}
 
 /**
@@ -1226,7 +1226,7 @@ class HttpSocketTest extends CakeTestCase {
  * @return void
  */
 	public function testBadBuildRequestLine2() {
-		$r = $this->Socket->buildRequestLine("GET * HTTP/1.1\r\n");
+		$this->Socket->buildRequestLine("GET * HTTP/1.1\r\n");
 	}
 
 /**
@@ -1709,7 +1709,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
 		$socket = new HttpSocket();
 		try {
-			$result = $socket->get('https://typography.com');
+			$socket->get('https://typography.com');
 			$this->markTestSkipped('Found valid certificate, was expecting invalid certificate.');
 		} catch (SocketException $e) {
 			$message = $e->getMessage();

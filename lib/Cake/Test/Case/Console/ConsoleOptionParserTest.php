@@ -259,7 +259,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$parser = new ConsoleOptionParser('test', false);
 		$parser->addOption('no-commit', array('boolean' => true));
 
-		$result = $parser->parse(array('--fail', 'other'));
+		$parser->parse(array('--fail', 'other'));
 	}
 
 /**
@@ -271,7 +271,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$parser = new ConsoleOptionParser('test', false);
 		$parser->addOption('no-commit', array('boolean' => true));
 
-		$result = $parser->parse(array('-f'));
+		$parser->parse(array('-f'));
 	}
 
 /**

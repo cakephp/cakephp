@@ -62,7 +62,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		$name = 'test_get_datasource';
 		$config = array('datasource' => 'Test2Source');
 
-		$connection = ConnectionManager::create($name, $config);
+		ConnectionManager::create($name, $config);
 		$connections = ConnectionManager::enumConnectionObjects();
 		$this->assertTrue((bool)(count(array_keys($connections) >= 1)));
 
@@ -190,7 +190,6 @@ class ConnectionManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testGetSourceName() {
-		$connections = ConnectionManager::enumConnectionObjects();
 		$source = ConnectionManager::getDataSource('test');
 		$result = ConnectionManager::getSourceName($source);
 
@@ -228,7 +227,7 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	public function testLoadDataSourceException() {
 		$connection = array('classname' => 'NonExistentDataSource', 'filename' => 'non_existent');
-		$loaded = ConnectionManager::loadDataSource($connection);
+		ConnectionManager::loadDataSource($connection);
 	}
 
 /**

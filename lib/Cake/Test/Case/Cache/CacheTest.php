@@ -136,7 +136,7 @@ class CacheTest extends CakeTestCase {
 			'serialize' => true,
 			'random' => 'wii'
 		));
-		$read = Cache::read('Test', 'invalid');
+		Cache::read('Test', 'invalid');
 	}
 
 /**
@@ -402,7 +402,7 @@ class CacheTest extends CakeTestCase {
 
 		Cache::delete('test_cache');
 
-		$global = Cache::settings();
+		Cache::settings();
 
 		Cache::set($_cacheSet);
 	}

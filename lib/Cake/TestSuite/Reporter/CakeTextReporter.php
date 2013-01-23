@@ -164,7 +164,7 @@ class CakeTextReporter extends CakeBaseReporter {
 			echo $buffer;
 		}
 
-		foreach ($testCases as $testCaseFile => $testCase) {
+		foreach ($testCases as $testCase) {
 			$buffer .= $_SERVER['SERVER_NAME'] . $this->baseUrl() . "?case=" . $testCase . "&output=text\n";
 		}
 

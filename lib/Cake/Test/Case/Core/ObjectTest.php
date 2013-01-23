@@ -105,7 +105,7 @@ class RequestActionController extends Controller {
  * @return void
  */
 	public function paginate_request_action() {
-		$data = $this->paginate();
+		$this->paginate();
 		return true;
 	}
 

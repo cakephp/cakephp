@@ -294,7 +294,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->Schema->path = TMP;
 		$this->Shell->Schema->expects($this->never())->method('read');
 
-		$result = $this->Shell->generate();
+		$this->Shell->generate();
 		unlink(TMP . 'schema.php');
 	}
 

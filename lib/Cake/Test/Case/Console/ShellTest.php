@@ -545,7 +545,7 @@ class ShellTest extends CakeTestCase {
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
 
-		$Folder = new Folder($path, true);
+		new Folder($path, true);
 
 		$this->Shell->interactive = false;
 
@@ -572,7 +572,7 @@ class ShellTest extends CakeTestCase {
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
-		$Folder = new Folder($path, true);
+		new Folder($path, true);
 
 		$this->Shell->interactive = true;
 
@@ -663,7 +663,6 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testRunCommandMain() {
-		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('main', 'startup'), array(), '', false);
 
 		$Mock->expects($this->once())->method('main')->will($this->returnValue(true));
@@ -677,7 +676,6 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testRunCommandWithMethod() {
-		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('hit_me', 'startup'), array(), '', false);
 
 		$Mock->expects($this->once())->method('hit_me')->will($this->returnValue(true));
@@ -700,7 +698,7 @@ class ShellTest extends CakeTestCase {
 		$Mock->expects($this->never())->method('hr');
 		$Mock->expects($this->once())->method('out');
 
-		$result = $Mock->runCommand('hr', array());
+		$Mock->runCommand('hr', array());
 	}
 
 /**
@@ -709,7 +707,6 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testRunCommandMissingMethod() {
-		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
 		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
 
@@ -762,7 +759,7 @@ class ShellTest extends CakeTestCase {
 
 		$Shell->RunCommand = $task;
 
-		$result = $Shell->runCommand('run_command', array('run_command', 'one', 'value'));
+		$Shell->runCommand('run_command', array('run_command', 'one', 'value'));
 	}
 
 /**

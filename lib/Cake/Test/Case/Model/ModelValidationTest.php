@@ -2139,7 +2139,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testValidatorTypehintException() {
-		$Validator = new ModelValidator('asdasds');
+		new ModelValidator('asdasds');
 	}
 
 /**

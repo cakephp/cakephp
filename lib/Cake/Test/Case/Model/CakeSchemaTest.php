@@ -596,7 +596,7 @@ class CakeSchemaTest extends CakeTestCase {
 		ConnectionManager::drop('default');
 		ConnectionManager::create('default', $connections['test']);
 		try {
-			$read = $this->Schema->read(array(
+			$this->Schema->read(array(
 				'connection' => 'default',
 				'name' => 'TestApp',
 				'models' => array('AppModel')
@@ -637,8 +637,6 @@ class CakeSchemaTest extends CakeTestCase {
 	public function testSchemaReadWithTablePrefix() {
 		$config = ConnectionManager::getDataSource('test')->config;
 		$this->skipIf(!empty($config['prefix']), 'This test can not be executed with datasource prefix set.');
-
-		$model = new SchemaPrefixAuthUser();
 
 		$Schema = new CakeSchema();
 		$read = $Schema->read(array(

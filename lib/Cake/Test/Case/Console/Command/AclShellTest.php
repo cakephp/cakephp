@@ -115,6 +115,7 @@ class AclShellTest extends CakeTestCase {
 	public function testParsingModelAndForeignKey() {
 		$result = $this->Task->parseIdentifier('Model.foreignKey');
 		$expected = array('model' => 'Model', 'foreign_key' => 'foreignKey');
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->parseIdentifier('mySuperUser');
 		$this->assertEquals('mySuperUser', $result);
