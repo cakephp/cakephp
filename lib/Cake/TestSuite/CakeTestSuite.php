@@ -34,7 +34,7 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
  */
 	public function addTestDirectory($directory = '.') {
 		$Folder = new Folder($directory);
-		list($dirs, $files) = $Folder->read(true, true, true);
+		list(, $files) = $Folder->read(true, true, true);
 
 		foreach ($files as $file) {
 			if (substr($file, -4) === '.php') {

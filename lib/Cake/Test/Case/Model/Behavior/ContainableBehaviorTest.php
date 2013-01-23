@@ -152,7 +152,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testInvalidContainments() {
-		$r = $this->_containments($this->Article, array('Comment', 'InvalidBinding'));
+		$this->_containments($this->Article, array('Comment', 'InvalidBinding'));
 	}
 
 /**
@@ -162,7 +162,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  */
 	public function testInvalidContainmentsNoNotices() {
 		$this->Article->Behaviors->attach('Containable', array('notices' => false));
-		$r = $this->_containments($this->Article, array('Comment', 'InvalidBinding'));
+		$this->_containments($this->Article, array('Comment', 'InvalidBinding'));
 	}
 
 /**
@@ -243,7 +243,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testBeforeFindWithNonExistingBinding() {
-		$r = $this->Article->find('all', array('contain' => array('Comment' => 'NonExistingBinding')));
+		$this->Article->find('all', array('contain' => array('Comment' => 'NonExistingBinding')));
 	}
 
 /**
@@ -3252,7 +3252,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$firstResult = $this->Article->Comment->find('all', $options);
 
-		$dummyResult = $this->Article->Comment->find('all', array(
+		$this->Article->Comment->find('all', array(
 			'conditions' => array(
 				'User.user' => 'mariano'
 			),

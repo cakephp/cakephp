@@ -49,7 +49,7 @@ class ExtractTaskTest extends CakeTestCase {
 			array($out, $out, $in)
 		);
 		$this->path = TMP . 'tests' . DS . 'extract_task_test';
-		$Folder = new Folder($this->path . DS . 'locale', true);
+		new Folder($this->path . DS . 'locale', true);
 	}
 
 /**

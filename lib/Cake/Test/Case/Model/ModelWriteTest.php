@@ -499,10 +499,6 @@ class ModelWriteTest extends BaseModelTest {
 		), false);
 
 		// Count Increase
-		$user = $User->find('first', array(
-			'conditions' => array('id' => 66),
-			'recursive' => -1
-		));
 		$data = array('Post' => array(
 			'id' => 22,
 			'title' => 'New Post',
@@ -2219,7 +2215,6 @@ class ModelWriteTest extends BaseModelTest {
 	public function testCreationWithMultipleDataSameModel() {
 		$this->loadFixtures('Article');
 		$Article = new Article();
-		$SecondaryArticle = new Article();
 
 		$result = $Article->field('title', array('id' => 1));
 		$this->assertEquals('First Article', $result);
@@ -2279,7 +2274,6 @@ class ModelWriteTest extends BaseModelTest {
 	public function testCreationWithMultipleDataSameModelManualInstances() {
 		$this->loadFixtures('PrimaryModel');
 		$Primary = new PrimaryModel();
-		$Secondary = new PrimaryModel();
 
 		$result = $Primary->field('primary_name', array('id' => 1));
 		$this->assertEquals('Primary Name Existing', $result);
@@ -4028,7 +4022,7 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAllAssociatedTransactionNoRollback() {
 		$testDb = ConnectionManager::getDataSource('test');
 
-		$mock = $this->getMock(
+		$this->getMock(
 			'DboSource',
 			array('connect', 'rollback', 'describe', 'create', 'update', 'begin'),
 			array(),
@@ -5455,7 +5449,7 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAssociatedTransactionNoRollback() {
 		$testDb = ConnectionManager::getDataSource('test');
 
-		$mock = $this->getMock(
+		$this->getMock(
 			'DboSource',
 			array('connect', 'rollback', 'describe', 'create', 'begin'),
 			array(),

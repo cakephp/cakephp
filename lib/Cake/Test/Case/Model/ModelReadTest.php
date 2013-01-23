@@ -364,7 +364,7 @@ class ModelReadTest extends BaseModelTest {
 		$query .= '.published = ? AND ' . $this->db->fullTableName('articles') . '.user_id = ?';
 		$params = array('Y');
 
-		$result = $Article->query($query, $params);
+		$Article->query($query, $params);
 	}
 
 /**
@@ -384,7 +384,7 @@ class ModelReadTest extends BaseModelTest {
 			$this->db->fullTableName('articles') . '.published', 'Y'
 		);
 
-		$result = $Article->query($query, $param);
+		$Article->query($query, $param);
 	}
 
 /**
@@ -2996,7 +2996,6 @@ class ModelReadTest extends BaseModelTest {
 
 		$duplicateModel = new NodeAfterFind();
 		$duplicateModel->recursive = 3;
-		$duplicateModelData = $duplicateModel->find('all');
 
 		$noAfterFindModel = new NodeNoAfterFind();
 		$noAfterFindModel->recursive = 3;

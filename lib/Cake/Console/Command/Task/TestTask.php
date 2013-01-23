@@ -398,7 +398,7 @@ class TestTask extends BakeTask {
 			}
 			if ($type == 'hasAndBelongsToMany') {
 				if (!empty($subject->hasAndBelongsToMany[$alias]['with'])) {
-					list($plugin, $joinModel) = pluginSplit($subject->hasAndBelongsToMany[$alias]['with']);
+					list(, $joinModel) = pluginSplit($subject->hasAndBelongsToMany[$alias]['with']);
 				} else {
 					$joinModel = Inflector::classify($subject->hasAndBelongsToMany[$alias]['joinTable']);
 				}
@@ -423,7 +423,7 @@ class TestTask extends BakeTask {
 			$models = $subject->uses;
 		}
 		foreach ($models as $model) {
-			list($plugin, $model) = pluginSplit($model);
+			list(, $model) = pluginSplit($model);
 			$this->_processModel($subject->{$model});
 		}
 	}

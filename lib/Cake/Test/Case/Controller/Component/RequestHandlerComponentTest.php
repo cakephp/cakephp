@@ -848,7 +848,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 		ob_start();
 		$RequestHandler->beforeRedirect($controller, 'request_handler_test/param_method/first/second', 403);
-		$result = ob_get_clean();
+		ob_get_clean();
 	}
 
 /**

@@ -319,7 +319,7 @@ class JsHelperTest extends CakeTestCase {
 			->method('append')
 			->with('script', $this->matchesRegularExpression('#<script type="text\/javascript">window.app \= \{"foo"\:1\}\;<\/script>#'));
 
-		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'safe' => false));
+		$this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'safe' => false));
 	}
 
 /**
@@ -338,7 +338,7 @@ class JsHelperTest extends CakeTestCase {
 
 		$this->Js->buffer('alert("test");');
 		$this->Js->TestJsEngine->expects($this->never())->method('domReady');
-		$result = $this->Js->writeBuffer();
+		$this->Js->writeBuffer();
 
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 		if ($requestWith !== null) {

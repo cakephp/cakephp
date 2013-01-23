@@ -239,7 +239,7 @@ class CakeTestSuiteDispatcher {
 		try {
 			self::time();
 			$command = new CakeTestSuiteCommand('CakeTestLoader', $commandArgs);
-			$result = $command->run($options);
+			$command->run($options);
 		} catch (MissingConnectionException $exception) {
 			ob_end_clean();
 			$baseDir = $this->_baseDir;

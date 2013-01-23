@@ -525,7 +525,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	public function testDirectCallThrowsException() {
-		$result = $this->db->query('directCall', array(), $this->Model);
+		$this->db->query('directCall', array(), $this->Model);
 	}
 
 /**
@@ -1062,7 +1062,10 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	public function testBuildStatementDefaults() {
-		$conn = $this->getMock('MockPDO');
+		$conn = $this->getMock('MockPDO', array('quote'));
+		$conn->expects($this->at(0))
+			->method('quote')
+			->will($this->returnValue('foo bar'));
 		$db = new DboTestSource;
 		$db->setConnection($conn);
 		$subQuery = $db->buildStatement(
@@ -1076,6 +1079,8 @@ class DboSourceTest extends CakeTestCase {
 			),
 			$this->Model
 		);
+		$expected = 'SELECT DISTINCT(AssetsTag.asset_id) FROM assets_tags AS AssetsTag   WHERE Tag.name = foo bar  GROUP BY AssetsTag.asset_id  ';
+		$this->assertEquals($expected, $subQuery);
 	}
 
 /**

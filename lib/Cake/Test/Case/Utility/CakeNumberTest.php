@@ -636,7 +636,7 @@ class CakeNumberTest extends CakeTestCase {
  * @return void
  */
 	public function testFromReadableSizeException() {
-		$result = $this->Number->fromReadableSize('bogus', false);
+		$this->Number->fromReadableSize('bogus', false);
 	}
 
 /**

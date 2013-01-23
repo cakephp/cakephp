@@ -2426,7 +2426,7 @@ class PaginatorHelperTest extends CakeTestCase {
  */
 	public function testAjaxLinkGenerationNumbers() {
 		$this->Paginator->Js->expectCallCount('link', 2);
-		$result = $this->Paginator->numbers(array(
+		$this->Paginator->numbers(array(
 			'modulus' => '2',
 			'url' => array('controller' => 'projects', 'action' => 'sort'),
 			'update' => 'list'
@@ -2470,9 +2470,9 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$Paginator->PaginatorMockJs = $mock;
 		$Paginator->PaginatorMockJs->expects($this->once())->method('link');
-		$result = $Paginator->link('Page 2', array('page' => 2), array('update' => '#content'));
+		$Paginator->link('Page 2', array('page' => 2), array('update' => '#content'));
 
-		$Paginator = new PaginatorHelper($this->View, array('ajax' => 'Form'));
+		new PaginatorHelper($this->View, array('ajax' => 'Form'));
 	}
 
 /**

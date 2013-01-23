@@ -857,8 +857,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$larrysArmor = Hash::extract($larry, 'Armor.{n}.ArmorsPlayer');
 		$this->assertEquals(2 , count($larrysArmor));
 
-		$larrysArmorsPlayersIds = Hash::extract($larry, 'Armor.{n}.ArmorsPlayer.id');
-
 		$Player->ArmorsPlayer->id = 3;
 		$Player->ArmorsPlayer->saveField('broken', true); // larry's cloak broke
 

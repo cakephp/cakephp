@@ -239,7 +239,7 @@ class ConfigureTest extends CakeTestCase {
  */
 	public function testLoadExceptionOnNonExistantFile() {
 		Configure::config('test', new PhpReader());
-		$result = Configure::load('non_existing_configuration_file', 'test');
+		Configure::load('non_existing_configuration_file', 'test');
 	}
 
 /**

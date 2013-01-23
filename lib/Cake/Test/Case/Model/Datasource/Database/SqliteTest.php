@@ -164,7 +164,6 @@ class SqliteTest extends CakeTestCase {
 		$dbName = 'db' . rand() . '$(*%&).db';
 		$this->assertFalse(file_exists(TMP . $dbName));
 
-		$config = $this->Dbo->config;
 		$db = new Sqlite(array_merge($this->Dbo->config, array('database' => TMP . $dbName)));
 		$this->assertTrue(file_exists(TMP . $dbName));
 
@@ -341,27 +340,30 @@ class SqliteTest extends CakeTestCase {
 			'id' => array(
 				'type' => 'integer',
 				'null' => false,
-				'default' => 0,
-				'key' => 'primary'
+				'default' => '',
+				'length' => 11,
+				'key' => 'primary',
 			),
 			'float_field' => array(
 				'type' => 'float',
-				'length' => '5,2',
 				'null' => false,
-				'default' => null
+				'default' => '',
+				'length' => '5,2',
 			),
 			'huge_int' => array(
-				'type' => 'bigint',
-				'length' => '20',
+				'type' => 'biginteger',
 				'null' => true,
-				'default' => null
+				'default' => null,
+				'length' => 20,
 			),
 			'bool' => array(
 				'type' => 'boolean',
 				'null' => false,
-				'default' => false
+				'default' => '0',
+				'length' => null
 			),
 		);
+		$this->assertSame($expected, $result);
 	}
 
 /**

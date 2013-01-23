@@ -61,7 +61,7 @@ class AclComponentTest extends CakeTestCase {
 	public function testConstrutorException() {
 		Configure::write('Acl.classname', 'AclClassNameThatDoesNotExist');
 		$Collection = new ComponentCollection();
-		$acl = new AclComponent($Collection);
+		new AclComponent($Collection);
 	}
 
 /**

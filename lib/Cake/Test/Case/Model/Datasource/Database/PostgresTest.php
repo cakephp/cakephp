@@ -540,7 +540,6 @@ class PostgresTest extends CakeTestCase {
 			CONSTRAINT test_data_types_pkey PRIMARY KEY (id)
 		)');
 
-		$model = new Model(array('name' => 'DatatypeTest', 'ds' => 'test'));
 		$schema = new CakeSchema(array('connection' => 'test'));
 		$result = $schema->read(array(
 			'connection' => 'test',

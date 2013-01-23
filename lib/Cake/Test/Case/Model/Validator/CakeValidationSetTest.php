@@ -76,11 +76,6 @@ class CakeValidationSetTest extends CakeTestCase {
 	public function testGetRule() {
 		$rules = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
 		$Field = new CakeValidationSet('title', $rules);
-		$data = array(
-			'title' => '',
-			'body' => 'a body'
-		);
-
 		$result = $Field->getRule('notEmpty');
 		$this->assertInstanceOf('CakeValidationRule', $result);
 		$this->assertEquals('notEmpty', $result->rule);

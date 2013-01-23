@@ -449,7 +449,7 @@ class HtmlHelperTest extends CakeTestCase {
 		App::uses('File', 'Utility');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'img' . DS . '__cake_test_image.gif';
-		$File = new File($testfile, true);
+		new File($testfile, true);
 
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
@@ -987,7 +987,7 @@ class HtmlHelperTest extends CakeTestCase {
 		App::uses('File', 'Utility');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'js' . DS . '__test_js.js';
-		$File = new File($testfile, true);
+		new File($testfile, true);
 
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
@@ -1955,7 +1955,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @expectedException ConfigureException
  */
 	public function testLoadConfigWrongFile() {
-		$result = $this->Html->loadConfig('wrong_file');
+		$this->Html->loadConfig('wrong_file');
 	}
 
 /**
@@ -1966,7 +1966,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function testLoadConfigWrongReader() {
 		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS;
-		$result = $this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
+		$this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
 	}
 
 /**
