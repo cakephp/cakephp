@@ -1364,7 +1364,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
 		$this->assertEquals(array(), $this->Form->fields);
 
-		$result = $this->Form->file('Attachment.file');
+		$this->Form->file('Attachment.file');
 		$expected = array(
 			'Attachment.file.name', 'Attachment.file.type', 'Attachment.file.tmp_name',
 			'Attachment.file.error', 'Attachment.file.size'
@@ -4477,7 +4477,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request['_Token'] = array('key' => 'testkey');
 		$this->assertEquals(array(), $this->Form->fields);
 
-		$result = $this->Form->select(
+		$this->Form->select(
 			'Model.select',
 			array(),
 			array('multiple' => true)

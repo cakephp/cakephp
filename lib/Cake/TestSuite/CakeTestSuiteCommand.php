@@ -156,7 +156,6 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 	public function handleReporter($reporter) {
 		$object = null;
 
-		$type = strtolower($reporter);
 		$reporter = ucwords($reporter);
 		$coreClass = 'Cake' . $reporter . 'Reporter';
 		App::uses($coreClass, 'TestSuite/Reporter');

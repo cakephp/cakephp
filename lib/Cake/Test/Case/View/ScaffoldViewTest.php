@@ -364,7 +364,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 
 		ob_start();
-		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
@@ -407,7 +407,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 
 		ob_start();
-		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
@@ -448,7 +448,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 
 		ob_start();
-		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 

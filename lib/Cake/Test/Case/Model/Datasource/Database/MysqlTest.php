@@ -1210,7 +1210,7 @@ class MysqlTest extends CakeTestCase {
  */
 	protected function _buildRelatedModels(Model $model) {
 		foreach ($model->associations() as $type) {
-			foreach ($model->{$type} as $assoc => $assocData) {
+			foreach ($model->{$type} as $assocData) {
 				if (is_string($assocData)) {
 					$className = $assocData;
 				} elseif (isset($assocData['className'])) {
@@ -2779,7 +2779,7 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testDropSchemaNoSchema() {
-		$result = $this->Dbo->dropSchema(null);
+		$this->Dbo->dropSchema(null);
 	}
 
 /**
@@ -3674,7 +3674,7 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testExceptionOnBrokenConnection() {
-		$dbo = new Mysql(array(
+		new Mysql(array(
 			'driver' => 'mysql',
 			'host' => 'imaginary_host',
 			'login' => 'mark',

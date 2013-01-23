@@ -181,7 +181,7 @@ class FileEngineTest extends CakeTestCase {
 
 		$newread = Cache::read('serialize_test', 'file_test');
 
-		$delete = Cache::delete('serialize_test', 'file_test');
+		Cache::delete('serialize_test', 'file_test');
 
 		$this->assertSame($read, serialize($data));
 

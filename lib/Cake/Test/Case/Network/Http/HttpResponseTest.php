@@ -458,7 +458,7 @@ class HttpResponseTest extends CakeTestCase {
  */
 	public function testDecodeChunkedBodyError() {
 		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\n";
-		$r = $this->HttpResponse->decodeChunkedBody($encoded);
+		$this->HttpResponse->decodeChunkedBody($encoded);
 	}
 
 /**

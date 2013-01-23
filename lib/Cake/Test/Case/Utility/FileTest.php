@@ -130,8 +130,6 @@ class FileTest extends CakeTestCase {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows.');
 
 		$dir = TMP . 'tests' . DS . 'permissions' . DS;
-		$Folder = new Folder($dir);
-
 		$old = umask();
 
 		umask(0002);

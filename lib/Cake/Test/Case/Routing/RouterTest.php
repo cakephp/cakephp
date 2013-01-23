@@ -2290,7 +2290,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	public function testUsingCustomRouteClass() {
-		$mock = $this->getMock('CakeRoute', array(), array(), 'MockConnectedRoute', false);
+		$this->getMock('CakeRoute', array(), array(), 'MockConnectedRoute', false);
 		$routes = Router::connect(
 			'/:slug',
 			array('controller' => 'posts', 'action' => 'view'),

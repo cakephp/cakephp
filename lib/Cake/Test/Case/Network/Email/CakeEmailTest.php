@@ -699,7 +699,7 @@ class CakeEmailTest extends CakeTestCase {
 	public function testExtendTransport() {
 		$this->setExpectedException('SocketException');
 		$this->CakeEmail->transport('Extend');
-		$result = $this->CakeEmail->transportClass();
+		$this->CakeEmail->transportClass();
 	}
 
 /**
@@ -991,7 +991,6 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testSendWithLog() {
-		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'tmp' . DS;
 		CakeLog::config('email', array(
 			'engine' => 'FileLog',
 			'path' => TMP
@@ -1238,7 +1237,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->config(array());
 		$this->CakeEmail->viewVars(array('value' => 12345));
 		$this->CakeEmail->emailFormat('both');
-		$result = $this->CakeEmail->send();
+		$this->CakeEmail->send();
 
 		$message = $this->CakeEmail->message();
 		$boundary = $this->CakeEmail->getBoundary();
@@ -1338,7 +1337,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->config(array('empty'));
 		$this->CakeEmail->template('default', 'default');
 		$this->CakeEmail->emailFormat('both');
-		$result = $this->CakeEmail->send();
+		$this->CakeEmail->send();
 
 		$expected = '<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>';
 		$this->assertContains($expected, $this->CakeEmail->message(CakeEmail::MESSAGE_HTML));

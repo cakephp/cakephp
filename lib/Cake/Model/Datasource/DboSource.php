@@ -2448,7 +2448,7 @@ class DboSource extends DataSource {
 			if (is_numeric($key) && empty($value)) {
 				continue;
 			} elseif (is_numeric($key) && is_string($value)) {
-				$out[] = $not . $this->_quoteFields($value);
+				$out[] = $this->_quoteFields($value);
 			} elseif ((is_numeric($key) && is_array($value)) || in_array(strtolower(trim($key)), $bool)) {
 				if (in_array(strtolower(trim($key)), $bool)) {
 					$join = ' ' . strtoupper($key) . ' ';
