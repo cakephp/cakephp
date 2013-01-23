@@ -242,6 +242,10 @@ class BasicsTest extends CakeTestCase {
 		$obj = new CakeResponse(array('body' => 'Body content'));
 		$result = h($obj);
 		$this->assertEquals('Body content', $result);
+		
+		$invalidString = "An invalid\x80string";
+		$result = h($invalidString);
+		$this->assertNotEmpty($result);
 	}
 
 /**
