@@ -128,6 +128,7 @@ class Contact extends CakeTestModel {
 			'rule_on_create' => array('rule' => array('maxLength', 50), 'on' => 'create'),
 			'rule_on_update' => array('rule' => array('between', 1, 50), 'on' => 'update'),
 		),
+		'boolean_field' => array('rule' => 'boolean')
 	);
 
 /**
@@ -7276,6 +7277,28 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'ContactIamrequiredalways',
 				'required' => 'required'
 			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.boolean_field', array('type' => 'checkbox'));
+		$expected = array(
+			'div' => array('class' => 'input checkbox required'),
+			array('input' => array(
+				'type' => 'hidden',
+				'name' => 'data[Contact][boolean_field]',
+				'id' => 'ContactBooleanField_',
+				'value' => '0'
+			)),
+			array('input' => array(
+				'type' => 'checkbox',
+				'name' => 'data[Contact][boolean_field]',
+				'value' => '1',
+				'id' => 'ContactBooleanField'
+			)),
+			'label' => array('for' => 'ContactBooleanField'),
+			'Boolean Field',
+			'/label',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
