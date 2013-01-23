@@ -116,7 +116,11 @@ class Query implements Expression, IteratorAggregate {
 			return $sql .= $this->{'_build' . ucFirst($name) . 'Part'}($parts, $sql);
 		};
 
-		$this->build($builder);
+		// TODO: Should Query actually get the driver or just let the connection decide where
+		// to get the query translator?
+		$translator = $this->connection()->driver()->queryTranslator($this->_type);
+		$query = $translator($this);
+		$query->build($builder->bindTo($query));
 		return $sql;
 	}
 
