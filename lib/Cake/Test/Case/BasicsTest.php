@@ -243,7 +243,7 @@ class BasicsTest extends CakeTestCase {
 		$result = h($obj);
 		$this->assertEquals('Body content', $result);
 		
-		$invalidString = file_get_contents(CAKE.'..'.DS.'..'.DS.'app'.DS.'webroot'.DS.'favicon.ico');
+		$invalidString = "An invalid\x80string";
 		$result = h($invalidString);
 		$this->assertNotEmpty($result);
 	}
