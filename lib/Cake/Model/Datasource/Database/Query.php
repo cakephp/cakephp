@@ -466,13 +466,15 @@ class Query implements Expression, IteratorAggregate {
 			$expression->traverse($visitor);
 		};
 
-		$this->build($binder);
+		$query = $this->_transformQuery();
+		$query->build($binder->bindTo($query));
 	}
 
 /**
  * Returns a query object as returned by the connection object as a result of
  * transforming this query instance to conform to any dialect specifics
  *
+ * @todo if the query is not dirty, we could locally cache the result of this function
  * @return void
  **/
 	protected function _transformQuery() {
