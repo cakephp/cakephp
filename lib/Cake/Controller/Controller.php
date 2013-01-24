@@ -930,14 +930,7 @@ class Controller extends Object implements CakeEventListener {
 			}
 		}
 
-		$viewClass = $this->viewClass;
-		if ($this->viewClass != 'View') {
-			list($plugin, $viewClass) = pluginSplit($viewClass, true);
-			$viewClass = $viewClass . 'View';
-			App::uses($viewClass, $plugin . 'View');
-		}
-
-		$View = new $viewClass($this);
+		$this->View = $this->_view();
 
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {
@@ -946,15 +939,13 @@ class Controller extends Object implements CakeEventListener {
 				$className = get_class($currentObject);
 				list($plugin) = pluginSplit(App::location($className));
 				$this->request->params['models'][$currentObject->alias] = compact('plugin', 'className');
-				$View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
+				$this->View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
 			}
 		}
 
 		$this->autoRender = false;
-		$this->View = $View;
-		$this->response->body($View->render($view, $layout));
-		return $this->response;
-	}
+		$this->response->body($this->View->render($view, $layout));
+		return $this->response;	}
 
 /**
  * Returns the referring URL for this request.
@@ -1222,6 +1213,22 @@ class Controller extends Object implements CakeEventListener {
  */
 	protected function _scaffoldError($method) {
 		return $this->scaffoldError($method);
+	}
+
+/**
+ * Constructs the view class based on the controllers properties
+ *
+ * @return View
+ */
+	protected function _view() {
+		$viewClass = $this->viewClass;
+		if ($this->viewClass != 'View') {
+			list($plugin, $viewClass) = pluginSplit($viewClass, true);
+			$viewClass = $viewClass . 'View';
+			App::uses($viewClass, $plugin . 'View');
+		}
+
+		return new $viewClass($this);
 	}
 
 }
