@@ -65,8 +65,8 @@ class HelperCollectionTest extends TestCase {
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $result);
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $this->Helpers->Html);
 
-		$result = $this->Helpers->attached();
-		$this->assertEquals(array('Html'), $result, 'attached() results are wrong.');
+		$result = $this->Helpers->loaded();
+		$this->assertEquals(array('Html'), $result, 'loaded() results are wrong.');
 
 		$this->assertTrue($this->Helpers->enabled('Html'));
 	}
@@ -110,8 +110,8 @@ class HelperCollectionTest extends TestCase {
 		$this->assertInstanceOf(__NAMESPACE__ . '\HtmlAliasHelper', $result);
 		$this->assertInstanceOf(__NAMESPACE__ . '\HtmlAliasHelper', $this->Helpers->Html);
 
-		$result = $this->Helpers->attached();
-		$this->assertEquals(array('Html'), $result, 'attached() results are wrong.');
+		$result = $this->Helpers->loaded();
+		$this->assertEquals(array('Html'), $result, 'loaded() results are wrong.');
 
 		$this->assertTrue($this->Helpers->enabled('Html'));
 
@@ -124,8 +124,8 @@ class HelperCollectionTest extends TestCase {
 		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
 		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $this->Helpers->SomeOther);
 
-		$result = $this->Helpers->attached();
-		$this->assertEquals(array('Html', 'SomeOther'), $result, 'attached() results are wrong.');
+		$result = $this->Helpers->loaded();
+		$this->assertEquals(array('Html', 'SomeOther'), $result, 'loaded() results are wrong.');
 		App::build();
 	}
 
@@ -179,14 +179,14 @@ class HelperCollectionTest extends TestCase {
 		$this->Helpers->load('Form');
 		$this->Helpers->load('Html');
 
-		$result = $this->Helpers->attached();
+		$result = $this->Helpers->loaded();
 		$this->assertEquals(array('Form', 'Html'), $result, 'loaded helpers is wrong');
 
 		$this->Helpers->unload('Html');
-		$this->assertNotContains('Html', $this->Helpers->attached());
-		$this->assertContains('Form', $this->Helpers->attached());
+		$this->assertNotContains('Html', $this->Helpers->loaded());
+		$this->assertContains('Form', $this->Helpers->loaded());
 
-		$result = $this->Helpers->attached();
+		$result = $this->Helpers->loaded();
 		$this->assertEquals(array('Form'), $result, 'loaded helpers is wrong');
 	}
 

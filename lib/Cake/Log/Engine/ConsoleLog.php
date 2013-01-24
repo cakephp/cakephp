@@ -18,7 +18,7 @@ use Cake\Error;
 use Cake\Utility\Hash;
 
 /**
- * Console logging.  Writes logs to console output.
+ * Console logging. Writes logs to console output.
  *
  * @package       Cake.Log.Engine
  */

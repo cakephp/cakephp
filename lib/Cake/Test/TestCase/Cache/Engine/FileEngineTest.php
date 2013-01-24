@@ -424,7 +424,7 @@ class FileEngineTest extends TestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Configure::write('Cache.file_groups', [
 			'engine' => 'File',

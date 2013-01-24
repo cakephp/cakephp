@@ -79,7 +79,7 @@ class Xml {
  * ### Options
  *
  * - `return` Can be 'simplexml' to return object of SimpleXMLElement or 'domdocument' to return DOMDocument.
- * - `loadEntities` Defaults to false.  Set to true to enable loading of `<!ENTITY` definitions.  This
+ * - `loadEntities` Defaults to false. Set to true to enable loading of `<!ENTITY` definitions. This
  *   is disabled by default for security reasons.
  * - If using array as input, you can pass `options` from Xml::fromArray.
  *
@@ -216,7 +216,7 @@ class Xml {
  * @param DOMDocument $dom Handler to DOMDocument
  * @param DOMElement $node Handler to DOMElement (child)
  * @param array $data Array of data to append to the $node.
- * @param string $format Either 'attribute' or 'tags'.  This determines where nested keys go.
+ * @param string $format Either 'attribute' or 'tags'. This determines where nested keys go.
  * @return void
  * @throws Cake\Error\XmlException
  */

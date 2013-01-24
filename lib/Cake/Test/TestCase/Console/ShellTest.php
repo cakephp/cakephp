@@ -809,7 +809,7 @@ TEXT;
  * Tests that _useLogger works properly
  *
  * @return void
- **/
+ */
 	public function testProtectedUseLogger() {
 		Log::drop('stdout');
 		Log::drop('stderr');

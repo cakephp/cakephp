@@ -242,7 +242,7 @@ class SchemaShell extends Shell {
 	}
 
 /**
- * Run database create commands.  Alias for run create.
+ * Run database create commands. Alias for run create.
  *
  * @return void
  */
@@ -252,7 +252,7 @@ class SchemaShell extends Shell {
 	}
 
 /**
- * Run database create commands.  Alias for run create.
+ * Run database create commands. Alias for run create.
  *
  * @return void
  */

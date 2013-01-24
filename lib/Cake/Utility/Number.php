@@ -33,7 +33,7 @@ use Cake\Error;
 class Number {
 
 /**
- * Currencies supported by the helper.  You can add additional currency formats
+ * Currencies supported by the helper. You can add additional currency formats
  * with Cake\Utility\Number::addFormat
  *
  * @var array
@@ -114,26 +114,31 @@ class Number {
 /**
  * Converts filesize from human readable string to bytes
  *
- * @param string $size Size in human readable string like '5MB'
+ * @param string $size Size in human readable string like '5MB', '5M', '500B', '50kb' etc.
  * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
- * @return integer Bytes
+ * @return mixed Number of bytes as integer on success, `$default` on failure if not false
  * @throws Cake\Error\Exception On invalid Unit type.
  */
 	public static function fromReadableSize($size, $default = false) {
 		if (ctype_digit($size)) {
-			return $size * 1;
+			return (int)$size;
 		}
 		$size = strtoupper($size);
 
+		$l = -2;
 		$i = array_search(substr($size, -2), array('KB', 'MB', 'GB', 'TB', 'PB'));
+		if ($i === false) {
+			$l = -1;
+			$i = array_search(substr($size, -1), array('K', 'M', 'G', 'T', 'P'));
+		}
 		if ($i !== false) {
-			$size = substr($size, 0, strlen($size) - 2);
+			$size = substr($size, 0, $l);
 			return $size * pow(1024, $i + 1);
 		}
 
-		if (substr($size, -1) == 'B' && ctype_digit(substr($size, 0, strlen($size) - 1))) {
-			$size = substr($size, 0, strlen($size) - 1);
-			return $size * 1;
+		if (substr($size, -1) == 'B' && ctype_digit(substr($size, 0, -1))) {
+			$size = substr($size, 0, -1);
+			return (int)$size;
 		}
 
 		if ($default !== false) {
@@ -237,7 +242,7 @@ class Number {
  *   ie. '$'. `before` is an alias for `wholeSymbol`.
  * - `after` - The currency symbol to place after decimal numbers
  *   ie. 'c'. Set to boolean false to use no decimal symbol.
- *   eg. 0.35 => $0.35.  `after` is an alias for `fractionSymbol`
+ *   eg. 0.35 => $0.35. `after` is an alias for `fractionSymbol`
  * - `zero` - The text to use for zero values, can be a
  *   string or a number. ie. 0, 'Free!'
  * - `places` - Number of decimal places to use. ie. 2
@@ -281,6 +286,7 @@ class Number {
 		$result = $options['before'] = $options['after'] = null;
 
 		$symbolKey = 'whole';
+		$value = (float)$value;
 		if (!$value) {
 			if ($options['zero'] !== 0 ) {
 				return $options['zero'];
@@ -311,7 +317,7 @@ class Number {
 	}
 
 /**
- * Add a currency format to the Number helper.  Makes reusing
+ * Add a currency format to the Number helper. Makes reusing
  * currency formats easier.
  *
  * {{{ $number->addFormat('NOK', array('before' => 'Kr. ')); }}}

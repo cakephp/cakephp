@@ -200,6 +200,20 @@ class PluginTest extends TestCase {
 	}
 
 /**
+ * Test ignoring missing bootstrap/routes file
+ *
+ * @return void
+ */
+	public function testIgnoreMissingFiles() {
+		Plugin::loadAll(array(array(
+				'bootstrap' => true,
+				'routes' => true,
+				'ignoreMissing' => true
+		)));
+		Plugin::routes();
+	}
+
+/**
  * Tests that Plugin::load() throws an exception on unknown plugin
  *
  * @return void

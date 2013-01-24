@@ -1082,7 +1082,7 @@ class FormHelperTest extends TestCase {
 /**
  * testFormSecurityMultipleInputFields method
  *
- * Test secure form creation with multiple row creation.  Checks hidden, text, checkbox field types
+ * Test secure form creation with multiple row creation. Checks hidden, text, checkbox field types
  *
  * @return void
  */
@@ -3087,6 +3087,25 @@ class FormHelperTest extends TestCase {
 		$this->Form->create('Contact');
 		$result = $this->Form->inputs(null, null, array('legend' => 'Hello'));
 		$this->assertTags($result, $expected);
+		$this->Form->end();
+
+		$this->Form->create(false);
+		$expected = array(
+			'fieldset' => array(),
+			array('div' => array('class' => 'input text')),
+			'label' => array('for' => 'foo'),
+			'Foo',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'foo', 'id' => 'foo'),
+			'*/div',
+			'/fieldset'
+		);
+		$result = $this->Form->inputs(
+			array('foo' => array('type' => 'text')),
+			array(),
+			array('legend' => false)
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -3307,7 +3326,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		/** Testing error messages list options **/
+		// Testing error messages list options
 		$Contact->validationErrors['field'] = array('notEmpty', 'email');
 
 		$result = $this->Form->error('Contact.field', null, array('listOptions' => 'ol'));
@@ -3452,83 +3471,6 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Newsletter.subscribe', array('legend' => 'Legend title', 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-			'fieldset' => array(),
-			'legend' => array(),
-			'Legend title',
-			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'Newsletter[subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
-			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
-			array('label' => array('for' => 'NewsletterSubscribe0')),
-			'Unsubscribe',
-			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
-			array('label' => array('for' => 'NewsletterSubscribe1')),
-			'Subscribe',
-			'/label',
-			'/fieldset',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-			'input' => array('type' => 'hidden', 'name' => 'Newsletter[subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
-			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
-			array('label' => array('for' => 'NewsletterSubscribe0')),
-			'Unsubscribe',
-			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
-			array('label' => array('for' => 'NewsletterSubscribe1')),
-			'Subscribe',
-			'/label',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Newsletter.subscribe', array('legend' => 'Legend title', 'label' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-			'fieldset' => array(),
-			'legend' => array(),
-			'Legend title',
-			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'Newsletter[subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
-			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
-			'Unsubscribe',
-			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
-			'Subscribe',
-			'/fieldset',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'label' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-			'input' => array('type' => 'hidden', 'name' => 'Newsletter[subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
-			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
-			'Unsubscribe',
-			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1')),
-			'Subscribe',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'label' => false, 'type' => 'radio', 'value' => '1', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
-			'Unsubscribe',
-			array('input' => array('type' => 'radio', 'name' => 'Newsletter[subscribe]', 'value' => '1', 'id' => 'NewsletterSubscribe1', 'checked' => 'checked')),
-			'Subscribe',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
 		$result = $this->Form->radio('Employee.gender', array('male' => 'Male', 'female' => 'Female'));
 		$expected = array(
 			'fieldset' => array(),
@@ -3570,7 +3512,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->radio('Contact.1.imrequired', array('option A'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Contact[1][imrequired]', 'value' => '', 'id' => 'Contact1Imrequired_'),
-			array('input' => array('type' => 'radio', 'name' => 'Contact[1][imrequired]', 'value' => '0', 'id' => 'Contact1Imrequired0')),
+			array('input' => array('type' => 'radio', 'name' => 'Contact[1][imrequired]', 'value' => '0', 'id' => 'Contact1Imrequired0', 'required' => 'required')),
 			'label' => array('for' => 'Contact1Imrequired0'),
 			'option A',
 			'/label'
@@ -3642,10 +3584,11 @@ class FormHelperTest extends TestCase {
 
 /**
  * Test that radios with a 0 value are selected under the correct conditions.
+ * Also ensure that values that are booleanish are handled correctly.
  *
  * @return void
  */
-	public function testRadioOptionWithZeroValue() {
+	public function testRadioOptionWithBooleanishValues() {
 		$expected = array(
 			'fieldset' => array(),
 			'legend' => array(),
@@ -3665,6 +3608,9 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => 0));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => false));
 		$this->assertTags($result, $expected);
 
 		$expected = array(
@@ -3690,6 +3636,30 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'));
+		$this->assertTags($result, $expected);
+
+		$expected = array(
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'checked' => 'checked', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'Yes',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField0')),
+			array('label' => array('for' => 'ModelField0')),
+			'No',
+			'/label',
+			'/fieldset'
+		);
+		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => 1));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => '1'));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => true));
 		$this->assertTags($result, $expected);
 	}
 
@@ -7163,7 +7133,8 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequired]',
-				'id' => 'ContactImrequired'
+				'id' => 'ContactImrequired',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7177,7 +7148,8 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imalsorequired]',
-				'id' => 'ContactImalsorequired'
+				'id' => 'ContactImalsorequired',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7191,7 +7163,8 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequiredtoo]',
-				'id' => 'ContactImrequiredtoo'
+				'id' => 'ContactImrequiredtoo',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7205,7 +7178,8 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[required_one]',
-				'id' => 'ContactRequiredOne'
+				'id' => 'ContactRequiredOne',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7219,7 +7193,8 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[string_required]',
-				'id' => 'ContactStringRequired'
+				'id' => 'ContactStringRequired',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7289,7 +7264,8 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[iamrequiredalways]',
-				'id' => 'ContactIamrequiredalways'
+				'id' => 'ContactIamrequiredalways',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -7847,7 +7823,7 @@ class FormHelperTest extends TestCase {
 		/*
 		 * #2 This is structurally identical to the test above (#1) - only the parent name has
 		 * changed, so we should expect the same select list data, just with a different name
-		 * for the parent.  As of #7117, this test fails because option 3 => 'Three' disappears.
+		 * for the parent. As of #7117, this test fails because option 3 => 'Three' disappears.
 		 * This is where data corruption can occur, because when a select value is missing from
 		 * a list a form will substitute the first value in the list - without the user knowing.
 		 * If the optgroup name 'Parent' (above) is updated to 'Three' (below), this should not
@@ -8199,7 +8175,8 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequiredoncreate]',
-				'id' => 'ContactImrequiredoncreate'
+				'id' => 'ContactImrequiredoncreate',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -8213,12 +8190,14 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequiredonboth]',
-				'id' => 'ContactImrequiredonboth'
+				'id' => 'ContactImrequiredonboth',
+				'required' => 'required'
 			),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
+		$this->Form->inputDefaults(array('required' => false));
 		$result = $this->Form->input('Contact.imrequired');
 		$expected = array(
 			'div' => array('class' => 'input text required'),
@@ -8231,6 +8210,9 @@ class FormHelperTest extends TestCase {
 			),
 			'/div'
 		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequired', array('required' => false));
 		$this->assertTags($result, $expected);
 	}
 
@@ -8251,7 +8233,8 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequiredonupdate]',
-				'id' => 'ContactImrequiredonupdate'
+				'id' => 'ContactImrequiredonupdate',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -8278,7 +8261,8 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequiredonboth]',
-				'id' => 'ContactImrequiredonboth'
+				'id' => 'ContactImrequiredonboth',
+				'required' => 'required'
 			),
 			'/div'
 		);
@@ -8292,7 +8276,8 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[imrequired]',
-				'id' => 'ContactImrequired'
+				'id' => 'ContactImrequired',
+				'required' => 'required'
 			),
 			'/div'
 		);

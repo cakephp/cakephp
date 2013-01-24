@@ -18,7 +18,7 @@ use Cake\Log\Engine\BaseLog;
 use Cake\Utility\Hash;
 
 /**
- * File Storage stream for Logging.  Writes logs to different files
+ * File Storage stream for Logging. Writes logs to different files
  * based on the level of log it is.
  *
  * @package       Cake.Log.Engine

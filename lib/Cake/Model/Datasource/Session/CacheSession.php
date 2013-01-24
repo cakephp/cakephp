@@ -1,6 +1,6 @@
 <?php
 /**
- * Cache Session save handler.  Allows saving session information into Cache.
+ * Cache Session save handler. Allows saving session information into Cache.
  *
  * PHP 5
  *

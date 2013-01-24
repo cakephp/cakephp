@@ -140,7 +140,7 @@ class ProjectTaskTest extends TestCase {
 	}
 
 /**
- * test bake with CakePHP on the include path.  The constants should remain commented out.
+ * test bake with CakePHP on the include path. The constants should remain commented out.
  *
  * @return void
  */

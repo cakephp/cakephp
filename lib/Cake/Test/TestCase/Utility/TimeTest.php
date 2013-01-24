@@ -1059,7 +1059,7 @@ class TimeTest extends TestCase {
  * from one timezone to the other correctly
  *
  * @return void
- **/
+ */
 	public function testCorrectTimezoneConversion() {
 		date_default_timezone_set('UTC');
 		$date = '2012-01-01 10:00:00';

@@ -221,6 +221,18 @@ class JqueryEngineHelperTest extends TestCase {
 	}
 
 /**
+ * Test that querystring arguments are not double escaped.
+ *
+ * @return void
+ */
+	public function testRequestWithQueryStringArguments() {
+		$url = '/users/search/sort:User.name/direction:desc?nome=&cpm=&audience=public';
+		$result = $this->Jquery->request($url);
+		$expected = '$.ajax({url:"\\/users\\/search\\/sort:User.name\\/direction:desc?nome=&cpm=&audience=public"});';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test that alternate jQuery object values work for request()
  *
  * @return void

@@ -249,7 +249,7 @@ class ApcEngineTest extends TestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Configure::write('Cache.apc_groups', array(
 			'engine' => 'Apc',

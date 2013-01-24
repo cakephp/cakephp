@@ -57,7 +57,7 @@ class AuthComponent extends Component {
 	public $components = array('Session', 'RequestHandler');
 
 /**
- * An array of authentication objects to use for authenticating users.  You can configure
+ * An array of authentication objects to use for authenticating users. You can configure
  * multiple adapters and they will be checked sequentially when users are identified.
  *
  * {{{
@@ -69,7 +69,7 @@ class AuthComponent extends Component {
  * }}}
  *
  * Using the class name without 'Authenticate' as the key, you can pass in an array of settings for each
- * authentication object.  Additionally you can define settings that should be set to all authentications objects
+ * authentication object. Additionally you can define settings that should be set to all authentications objects
  * using the 'all' key:
  *
  * {{{
@@ -98,7 +98,7 @@ class AuthComponent extends Component {
 	protected $_authenticateObjects = array();
 
 /**
- * An array of authorization objects to use for authorizing users.  You can configure
+ * An array of authorization objects to use for authorizing users. You can configure
  * multiple adapters and they will be checked sequentially when authorization checks are done.
  *
  * {{{
@@ -110,7 +110,7 @@ class AuthComponent extends Component {
  * }}}
  *
  * Using the class name without 'Authorize' as the key, you can pass in an array of settings for each
- * authorization object.  Additionally you can define settings that should be set to all authorization objects
+ * authorization object. Additionally you can define settings that should be set to all authorization objects
  * using the 'all' key:
  *
  * {{{
@@ -162,7 +162,7 @@ class AuthComponent extends Component {
 	);
 
 /**
- * The session key name where the record of the current user is stored.  If
+ * The session key name where the record of the current user is stored. If
  * unspecified, it will be "Auth.User".
  *
  * @var string
@@ -179,7 +179,7 @@ class AuthComponent extends Component {
 
 /**
  * A URL (defined as a string or array) to the controller action that handles
- * logins.  Defaults to `/users/login`
+ * logins. Defaults to `/users/login`
  *
  * @var mixed
  */
@@ -192,7 +192,7 @@ class AuthComponent extends Component {
 /**
  * Normally, if a user is redirected to the $loginAction page, the location they
  * were redirected from will be stored in the session so that they can be
- * redirected back after a successful login.  If this session value is not
+ * redirected back after a successful login. If this session value is not
  * set, the user will be redirected to the page specified in $loginRedirect.
  *
  * @var mixed
@@ -201,7 +201,7 @@ class AuthComponent extends Component {
 	public $loginRedirect = null;
 
 /**
- * The default action to redirect to after the user is logged out.  While AuthComponent does
+ * The default action to redirect to after the user is logged out. While AuthComponent does
  * not handle post-logout redirection, a redirect URL will be returned from AuthComponent::logout().
  * Defaults to AuthComponent::$loginAction.
  *
@@ -221,11 +221,13 @@ class AuthComponent extends Component {
 	public $authError = null;
 
 /**
- * Controls handling of unauthorized access. By default unauthorized user is
- * redirected to the referrer url or AuthComponent::$loginAction or '/'.
- * If set to false a ForbiddenException exception is thrown instead of redirecting.
+ * Controls handling of unauthorized access.
+ * - For default value `true` unauthorized user is redirected to the referrer url
+ *   or AuthComponent::$loginRedirect or '/'.
+ * - If set to a string or array the value is used as an url to redirect to.
+ * - If set to false a ForbiddenException exception is thrown instead of redirecting.
  *
- * @var boolean
+ * @var mixed
  */
 	public $unauthorizedRedirect = true;
 
@@ -275,7 +277,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Main execution method.  Handles redirecting of invalid users, and processing
+ * Main execution method. Handles redirecting of invalid users, and processing
  * of login form data.
  *
  * @param Controller $controller A reference to the instantiating controller object
@@ -351,16 +353,21 @@ class AuthComponent extends Component {
  * @throws Cake\Error\ForbiddenException
  */
 	protected function _unauthorized(Controller $controller) {
-		if (!$this->unauthorizedRedirect) {
+		if ($this->unauthorizedRedirect === false) {
 			throw new Error\ForbiddenException($this->authError);
 		}
 
 		$this->flash($this->authError);
-		$default = '/';
-		if (!empty($this->loginRedirect)) {
-			$default = $this->loginRedirect;
+		if ($this->unauthorizedRedirect === true) {
+			$default = '/';
+			if (!empty($this->loginRedirect)) {
+				$default = $this->loginRedirect;
+			}
+			$url = $controller->referer($default, true);
+		} else {
+			$url = $this->unauthorizedRedirect;
 		}
-		$controller->redirect($controller->referer($default, true), null, true);
+		$controller->redirect($url, null, true);
 		return false;
 	}
 
@@ -388,7 +395,7 @@ class AuthComponent extends Component {
  * be authorized for the request.
  *
  * @param array $user The user to check the authorization of. If empty the user in the session will be used.
- * @param Cake\Network\Request $request The request to authenticate for.  If empty, the current request will be used.
+ * @param Cake\Network\Request $request The request to authenticate for. If empty, the current request will be used.
  * @return boolean True if $user is authorized, otherwise false
  */
 	public function isAuthorized($user = null, $request = null) {
@@ -502,7 +509,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Maps action names to CRUD operations. Used for controller-based authentication.  Make sure
+ * Maps action names to CRUD operations. Used for controller-based authentication. Make sure
  * to configure the authorize property before calling this method. As it delegates $map to all the
  * attached authorize objects.
  *
@@ -521,7 +528,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Log a user in. If a $user is provided that data will be stored as the logged in user.  If `$user` is empty or not
+ * Log a user in. If a $user is provided that data will be stored as the logged in user. If `$user` is empty or not
  * specified, the request will be used to identify a user. If the identification was successful,
  * the user record is written to the session key specified in AuthComponent::$sessionKey. Logging in
  * will also change the session id in order to help mitigate session replays.
@@ -546,9 +553,9 @@ class AuthComponent extends Component {
 /**
  * Logs a user out, and returns the login action to redirect to.
  * Triggers the logout() method of all the authenticate objects, so they can perform
- * custom logout logic.  AuthComponent will remove the session data, so
- * there is no need to do that in an authentication object.  Logging out
- * will also renew the session id.  This helps mitigate issues with session replays.
+ * custom logout logic. AuthComponent will remove the session data, so
+ * there is no need to do that in an authentication object. Logging out
+ * will also renew the session id. This helps mitigate issues with session replays.
  *
  * @return string AuthComponent::$logoutRedirect
  * @see AuthComponent::$logoutRedirect
@@ -572,11 +579,11 @@ class AuthComponent extends Component {
 /**
  * Get the current user.
  *
- * Will prefer the static user cache over sessions.  The static user
- * cache is primarily used for stateless authentication.  For stateful authentication,
+ * Will prefer the static user cache over sessions. The static user
+ * cache is primarily used for stateless authentication. For stateful authentication,
  * cookies + sessions will be used.
  *
- * @param string $key field to retrieve.  Leave null to get entire User record
+ * @param string $key field to retrieve. Leave null to get entire User record
  * @return mixed User record. or null if no user is logged in.
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
  */
@@ -597,7 +604,7 @@ class AuthComponent extends Component {
 
 /**
  * Similar to AuthComponent::user() except if the session user cannot be found, connected authentication
- * objects will have their getUser() methods called.  This lets stateless authentication methods function correctly.
+ * objects will have their getUser() methods called. This lets stateless authentication methods function correctly.
  *
  * @return boolean true if a user can be found, false if one cannot.
  */
@@ -620,8 +627,8 @@ class AuthComponent extends Component {
 	}
 
 /**
- * If no parameter is passed, gets the authentication redirect URL.  Pass a url in to
- * set the destination a user should be redirected to upon logging in.  Will fallback to
+ * If no parameter is passed, gets the authentication redirect URL. Pass a url in to
+ * set the destination a user should be redirected to upon logging in. Will fallback to
  * AuthComponent::$loginRedirect if there is no stored redirect value.
  *
  * @param string|array $url Optional URL to write as the login redirect URL.
@@ -699,7 +706,7 @@ class AuthComponent extends Component {
 /**
  * Hash a password with the application's salt value (as defined with Configure::write('Security.salt');
  *
- * This method is intended as a convenience wrapper for Security::hash().  If you want to use
+ * This method is intended as a convenience wrapper for Security::hash(). If you want to use
  * a hashing/encryption system not supported by that method, do not use this method.
  *
  * @param string $password Password to hash
@@ -711,7 +718,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Component shutdown.  If user is logged in, wipe out redirect.
+ * Component shutdown. If user is logged in, wipe out redirect.
  *
  * @param Controller $controller Instantiating controller
  * @return void
@@ -732,7 +739,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Set a flash message.  Uses the Session component, and values from AuthComponent::$flash.
+ * Set a flash message. Uses the Session component, and values from AuthComponent::$flash.
  *
  * @param string $message The message to set.
  * @return void

@@ -15,7 +15,7 @@
 namespace Cake\Model\Datasource\Session;
 
 /**
- * Interface for Session handlers.  Custom session handler classes should implement
+ * Interface for Session handlers. Custom session handler classes should implement
  * this interface as it allows Cake\Model\Datasource\Session know how to map methods to session_set_save_handler()
  *
  * @package       Cake.Model.Datasource.Session
@@ -62,7 +62,7 @@ interface SessionHandlerInterface {
 	public function destroy($id);
 
 /**
- * Run the Garbage collection on the session storage.  This method should vacuum all
+ * Run the Garbage collection on the session storage. This method should vacuum all
  * expired or dead sessions.
  *
  * @param integer $expires Timestamp (defaults to current time)

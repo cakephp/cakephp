@@ -2,7 +2,7 @@
 /**
  * Exception Renderer
  *
- * Provides Exception rendering features.  Which allow exceptions to be rendered
+ * Provides Exception rendering features. Which allow exceptions to be rendered
  * as HTML pages.
  *
  * PHP 5
@@ -36,7 +36,7 @@ use Cake\View\View;
  * Exception Renderer.
  *
  * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
- * When debug < 1 a Cake\Error\Exception will render 404 or  500 errors.  If an uncaught exception is thrown
+ * When debug < 1 a CakeException will render 404 or 500 errors. If an uncaught exception is thrown
  * and it is a type that ExceptionHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception rendering
@@ -48,8 +48,8 @@ use Cake\View\View;
  *
  * #### Using AppController::appError();
  *
- * This controller method is called instead of the default exception handling.  It receives the
- * thrown exception as its only argument.  You should implement your error handling in that method.
+ * This controller method is called instead of the default exception handling. It receives the
+ * thrown exception as its only argument. You should implement your error handling in that method.
  *
  * #### Using a subclass of ExceptionRenderer
  *
@@ -281,10 +281,11 @@ class ExceptionRenderer {
 			$this->controller->afterFilter();
 			$this->controller->response->send();
 		} catch (Error\MissingViewException $e) {
-			try {
-				$this->_outputMessage('error500');
-			} catch (\Exception $e) {
+			$attributes = $e->getAttributes();
+			if (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false) {
 				$this->_outputMessageSafe('error500');
+			} else {
+				$this->_outputMessage('error500');
 			}
 		} catch (\Exception $e) {
 			$this->_outputMessageSafe('error500');

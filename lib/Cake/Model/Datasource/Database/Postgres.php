@@ -34,7 +34,7 @@ class Postgres extends DboSource {
 	public $description = "PostgreSQL DBO Driver";
 
 /**
- * Base driver configuration settings.  Merged with user settings.
+ * Base driver configuration settings. Merged with user settings.
  *
  * @var array
  */
@@ -298,7 +298,7 @@ class Postgres extends DboSource {
 	}
 
 /**
- * Reset a sequence based on the MAX() value of $column.  Useful
+ * Reset a sequence based on the MAX() value of $column. Useful
  * for resetting sequences after using insertMulti().
  *
  * @param string $table The name of the table to update.
@@ -334,7 +334,7 @@ class Postgres extends DboSource {
 		if ($this->execute('DELETE FROM ' . $this->fullTableName($table))) {
 			$schema = $this->config['schema'];
 			if (isset($this->_sequenceMap[$table]) && $reset != true) {
-				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
+				foreach ($this->_sequenceMap[$table] as $sequence) {
 					list($schema, $sequence) = explode('.', $sequence);
 					$this->_execute("ALTER SEQUENCE \"{$schema}\".\"{$sequence}\" RESTART WITH 1");
 				}

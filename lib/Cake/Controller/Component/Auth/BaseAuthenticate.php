@@ -81,7 +81,7 @@ abstract class BaseAuthenticate {
  */
 	protected function _findUser($conditions, $password = null) {
 		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
+		list(, $model) = pluginSplit($userModel);
 		$fields = $this->settings['fields'];
 
 		if (!is_array($conditions)) {
@@ -150,7 +150,7 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Get a user based on information in the request.  Primarily used by stateless authentication
+ * Get a user based on information in the request. Primarily used by stateless authentication
  * systems like basic and digest auth.
  *
  * @param Cake\Network\Request $request Request object.

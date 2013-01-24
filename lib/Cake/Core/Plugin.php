@@ -79,7 +79,7 @@ class Plugin {
 			}
 			return;
 		}
-		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin);
+		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false);
 		if (empty($config['path'])) {
 			$namespacePath = str_replace('\\', DS, $config['namespace']);
 			foreach (App::path('Plugin') as $path) {
@@ -181,12 +181,18 @@ class Plugin {
 
 		$path = static::path($plugin);
 		if ($config['bootstrap'] === true) {
-			return include $path . 'Config/bootstrap.php';
+			return static::_includeFile(
+				$path . 'Config/bootstrap.php',
+				$config['ignoreMissing']
+			);
 		}
 
 		$bootstrap = (array)$config['bootstrap'];
 		foreach ($bootstrap as $file) {
-			include $path . 'Config/' . $file . '.php';
+			static::_includeFile(
+				$path . 'Config' . DS . $file . '.php',
+				$config['ignoreMissing']
+			);
 		}
 
 		return true;
@@ -210,7 +216,10 @@ class Plugin {
 		if ($config['routes'] === false) {
 			return false;
 		}
-		return (bool)include static::path($plugin) . 'Config/routes.php';
+		return (bool)static::_includeFile(
+			static::path($plugin) . 'Config' . DS . 'routes.php',
+			$config['ignoreMissing']
+		);
 	}
 
 /**
@@ -242,6 +251,20 @@ class Plugin {
 		} else {
 			unset(static::$_plugins[$plugin]);
 		}
+	}
+
+/**
+ * Include file, ignoring include error if needed if file is missing
+ *
+ * @param string $file File to include
+ * @param boolean $ignoreMissing Whether to ignore include error for missing files
+ * @return mixed
+ */
+	protected static function _includeFile($file, $ignoreMissing = false) {
+		if ($ignoreMissing && !is_file($file)) {
+			return false;
+		}
+		return include $file;
 	}
 
 }

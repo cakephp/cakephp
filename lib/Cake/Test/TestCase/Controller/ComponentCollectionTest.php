@@ -62,8 +62,8 @@ class ComponentCollectionTest extends TestCase {
 		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);
 		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $this->Components->Cookie);
 
-		$result = $this->Components->attached();
-		$this->assertEquals(array('Cookie'), $result, 'attached() results are wrong.');
+		$result = $this->Components->loaded();
+		$this->assertEquals(array('Cookie'), $result, 'loaded() results are wrong.');
 
 		$this->assertTrue($this->Components->enabled('Cookie'));
 
@@ -82,8 +82,8 @@ class ComponentCollectionTest extends TestCase {
 		$this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $this->Components->Cookie);
 		$this->assertTrue($this->Components->Cookie->settings['somesetting']);
 
-		$result = $this->Components->attached();
-		$this->assertEquals(array('Cookie'), $result, 'attached() results are wrong.');
+		$result = $this->Components->loaded();
+		$this->assertEquals(array('Cookie'), $result, 'loaded() results are wrong.');
 
 		$this->assertTrue($this->Components->enabled('Cookie'));
 
@@ -96,8 +96,8 @@ class ComponentCollectionTest extends TestCase {
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->SomeOther);
 
-		$result = $this->Components->attached();
-		$this->assertEquals(array('Cookie', 'SomeOther'), $result, 'attached() results are wrong.');
+		$result = $this->Components->loaded();
+		$this->assertEquals(array('Cookie', 'SomeOther'), $result, 'loaded() results are wrong.');
 		App::build();
 		Plugin::unload();
 	}
@@ -151,14 +151,14 @@ class ComponentCollectionTest extends TestCase {
 		$this->Components->load('Cookie');
 		$this->Components->load('Security');
 
-		$result = $this->Components->attached();
+		$result = $this->Components->loaded();
 		$this->assertEquals(array('Cookie', 'Security'), $result, 'loaded components is wrong');
 
 		$this->Components->unload('Cookie');
 		$this->assertFalse(isset($this->Components->Cookie));
 		$this->assertTrue(isset($this->Components->Security));
 
-		$result = $this->Components->attached();
+		$result = $this->Components->loaded();
 		$this->assertEquals(array('Security'), $result, 'loaded components is wrong');
 
 		$result = $this->Components->enabled();

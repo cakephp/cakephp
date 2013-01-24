@@ -4,7 +4,7 @@
  *
  * Provides jQuery specific Javascript for JsHelper.
  *
- * Implements the JsHelper interface for jQuery.  All $options arrays
+ * Implements the JsHelper interface for jQuery. All $options arrays
  * support all options found in the JsHelper, as well as those in the jQuery
  * documentation.
  *
@@ -24,12 +24,14 @@
  */
 namespace Cake\View\Helper;
 
+use Cake\Core\Configure;
+
 /**
  * jQuery Engine Helper for JsHelper
  *
  * Provides jQuery specific Javascript for JsHelper.
  *
- * Implements the JsHelper interface for jQuery.  All $options arrays
+ * Implements the JsHelper interface for jQuery. All $options arrays
  * support all options found in the JsHelper, as well as those in the jQuery
  * documentation.
  *
@@ -187,7 +189,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * bind a 'traditional event' as `$(document).bind('ready', fn)`
  * Works in an entirely different fashion than  `$(document).ready()`
  * The first will not run the function when eval()'d as part of a response
- * The second will.  Because of the way that ajax pagination is done
+ * The second will. Because of the way that ajax pagination is done
  * `$().ready()` is used.
  *
  * @param string $functionBody The code to run on domReady
@@ -248,7 +250,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @see JsBaseEngineHelper::request() for options list.
  */
 	public function request($url, $options = array()) {
-		$url = $this->url($url);
+		$url = html_entity_decode($this->url($url), ENT_COMPAT, Configure::read('App.encoding'));
 		$options = $this->_mapOptions('request', $options);
 		if (isset($options['data']) && is_array($options['data'])) {
 			$options['data'] = $this->_toQuerystring($options['data']);

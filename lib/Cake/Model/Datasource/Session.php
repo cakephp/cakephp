@@ -313,7 +313,7 @@ class Session {
 /**
  * Tests that the user agent is valid and that the session hasn't 'timed out'.
  * Since timeouts are implemented in Session it checks the current static::$time
- * against the time the session is set to expire.  The User agent is only checked
+ * against the time the session is set to expire. The User agent is only checked
  * if Session.checkAgent == true.
  *
  * @return boolean

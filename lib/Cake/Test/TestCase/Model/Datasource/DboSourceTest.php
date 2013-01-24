@@ -953,7 +953,7 @@ class DboSourceTest extends TestCase {
  * Tests that transaction commands are logged
  *
  * @return void
- **/
+ */
 	public function testTransactionLogging() {
 		$conn = $this->getMock('MockPDO');
 		$db = new DboTestSource;

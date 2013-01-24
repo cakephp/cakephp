@@ -254,6 +254,18 @@ class NumberTest extends TestCase {
 		$result = $this->Number->currency(0.5, null, array('fractionSymbol' => false, 'fractionPosition' => 'before', 'wholeSymbol' => '$'));
 		$expected = '$0.50';
 		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(0, 'GBP');
+		$expected = '&#163;0.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(0.00000, 'GBP');
+		$expected = '&#163;0.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency('0.00000', 'GBP');
+		$expected = '&#163;0.00';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -643,6 +655,13 @@ class NumberTest extends TestCase {
 			array(array('size' => '1.5MB', 'default' => false), 1572864),
 			array(array('size' => '1GB', 'default' => false), 1073741824),
 			array(array('size' => '1.5GB', 'default' => false), 1610612736),
+			array(array('size' => '1K', 'default' => false), 1024),
+			array(array('size' => '1.5K', 'default' => false), 1536),
+			array(array('size' => '1M', 'default' => false), 1048576),
+			array(array('size' => '1m', 'default' => false), 1048576),
+			array(array('size' => '1.5M', 'default' => false), 1572864),
+			array(array('size' => '1G', 'default' => false), 1073741824),
+			array(array('size' => '1.5G', 'default' => false), 1610612736),
 			array(array('size' => '512', 'default' => 'Unknown type'), 512),
 			array(array('size' => '2VB', 'default' => 'Unknown type'), 'Unknown type')
 		);

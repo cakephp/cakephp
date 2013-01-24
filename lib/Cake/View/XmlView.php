@@ -34,7 +34,7 @@ use Cake\Utility\Xml;
  *
  * **Note** The view variable you specify must be compatible with Xml::fromArray().
  *
- * You can also define `'_serialize'` as an array.  This will create an additional
+ * You can also define `'_serialize'` as an array. This will create an additional
  * top level element named `<response>` containing all the named view variables:
  *
  * {{{
@@ -46,7 +46,7 @@ use Cake\Utility\Xml;
  *
  * `<response><posts>...</posts><users>...</users></response>`
  *
- * If you don't use the `_serialize` key, you will need a view.  You can use extended
+ * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout like functionality.
  *
  * @package       Cake.View
@@ -55,7 +55,7 @@ use Cake\Utility\Xml;
 class XmlView extends View {
 
 /**
- * The subdirectory.  XML views are always in xml.
+ * The subdirectory. XML views are always in xml.
  *
  * @var string
  */
@@ -78,8 +78,8 @@ class XmlView extends View {
  * Render a XML view.
  *
  * Uses the special '_serialize' parameter to convert a set of
- * view variables into a XML response.  Makes generating simple
- * XML responses very easy.  You can omit the '_serialize' parameter,
+ * view variables into a XML response. Makes generating simple
+ * XML responses very easy. You can omit the '_serialize' parameter,
  * and use a normal view + layout as well.
  *
  * @param string $view The view being rendered.
@@ -90,7 +90,7 @@ class XmlView extends View {
 		if (isset($this->viewVars['_serialize'])) {
 			return $this->_serialize($this->viewVars['_serialize']);
 		}
-		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
+		if ($view !== false && $this->_getViewFileName($view)) {
 			return parent::render($view, false);
 		}
 	}

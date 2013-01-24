@@ -58,6 +58,18 @@ class CacheTest extends TestCase {
 	}
 
 /**
+ * testConfigInvalidEngine method
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testConfigInvalidEngine() {
+		$settings = array('engine' => 'Imaginary');
+		Configure::write('Cache.imaginary', $settings);
+		Cache::engine('imaginary');
+	}
+
+/**
  * Check that no fatal errors are issued doing normal things when Cache.disable is true.
  *
  * @return void

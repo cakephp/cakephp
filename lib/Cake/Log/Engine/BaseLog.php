@@ -40,7 +40,7 @@ abstract class BaseLog implements LogInterface {
 	}
 
 /**
- * Sets instance config.  When $config is null, returns config array
+ * Sets instance config. When $config is null, returns config array
  *
  * ### Options
  *

@@ -232,7 +232,7 @@ class ErrorHandlerTest extends TestCase {
 
 		$log = file(LOGS . 'error.log');
 		$this->assertRegExp('/\[Cake\\\Error\\\NotFoundException\] Kaboom!/', $log[0], 'message missing.');
-		$this->assertRegExp('/\#0.*ErrorHandlerTest->testHandleExceptionLog/', $log[1], 'Stack trace missing.');
+		$this->assertRegExp('/\#0.*ErrorHandlerTest->testHandleExceptionLog/', $log[2], 'Stack trace missing.');
 	}
 
 /**

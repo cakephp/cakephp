@@ -45,7 +45,7 @@ class RouteTest extends TestCase {
  * Test the construction of a Route
  *
  * @return void
- **/
+ */
 	public function testConstruction() {
 		$route = new Route('/:controller/:action/:id', array(), array('id' => '[0-9]+'));
 
@@ -59,7 +59,7 @@ class RouteTest extends TestCase {
  * test Route compiling.
  *
  * @return void
- **/
+ */
 	public function testBasicRouteCompiling() {
 		$route = new Route('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$result = $route->compile();
@@ -140,7 +140,7 @@ class RouteTest extends TestCase {
  * test compiling routes with keys that have patterns
  *
  * @return void
- **/
+ */
 	public function testRouteCompilingWithParamPatterns() {
 		$route = new Route(
 			'/:controller/:action/:id',

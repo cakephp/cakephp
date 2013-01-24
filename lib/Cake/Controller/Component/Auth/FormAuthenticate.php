@@ -19,8 +19,8 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 
 /**
- * An authentication adapter for AuthComponent.  Provides the ability to authenticate using POST
- * data.  Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate setting.
+ * An authentication adapter for AuthComponent. Provides the ability to authenticate using POST
+ * data. Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate setting.
  *
  * {{{
  *	$this->Auth->authenticate = array(
@@ -61,8 +61,8 @@ class FormAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Authenticates the identity contained in a request.  Will use the `settings.userModel`, and `settings.fields`
- * to find POST data that is used to find a matching record in the `settings.userModel`.  Will return false if
+ * Authenticates the identity contained in a request. Will use the `settings.userModel`, and `settings.fields`
+ * to find POST data that is used to find a matching record in the `settings.userModel`. Will return false if
  * there is no post data, either username or password is missing, of if the scope conditions have not been met.
  *
  * @param Cake\Network\Request $request The request that contains login information.
@@ -71,7 +71,7 @@ class FormAuthenticate extends BaseAuthenticate {
  */
 	public function authenticate(Request $request, Response $response) {
 		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
+		list(, $model) = pluginSplit($userModel);
 
 		$fields = $this->settings['fields'];
 		if (!$this->_checkFields($request, $model, $fields)) {
