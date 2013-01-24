@@ -945,7 +945,8 @@ class Controller extends Object implements CakeEventListener {
 
 		$this->autoRender = false;
 		$this->response->body($this->View->render($view, $layout));
-		return $this->response;	}
+		return $this->response;
+	}
 
 /**
  * Returns the referring URL for this request.
