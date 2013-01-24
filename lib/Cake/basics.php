@@ -197,7 +197,7 @@ if (!function_exists('h')) {
 		if (is_string($double)) {
 			$charset = $double;
 		}
-		return htmlspecialchars($text, ENT_QUOTES, ($charset) ? $charset : $defaultCharset, $double);
+		return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, ($charset) ? $charset : $defaultCharset, $double);
 	}
 
 }
