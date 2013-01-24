@@ -96,17 +96,21 @@ abstract class BaseAuthenticate {
 			'recursive' => $this->settings['recursive'],
 			'contain' => $this->settings['contain'],
 		));
-		if (empty($result) || empty($result[$model])) {
+		if (empty($result))
+		{
 			return false;
 		}
-		$user = $result[$model];
-		if (
-			isset($conditions[$model . '.' . $fields['password']]) ||
-			isset($conditions[$fields['password']])
-		) {
-			unset($user[$fields['password']]);
+		if (empty($result[$model]))
+		{
+    			$user = $result[0];
+    			unset($result[0]);
 		}
-		unset($result[$model]);
+		else
+		{
+    			$user = $result[$model];
+    			unset($result[$model]);
+		}
+		unset($user[$fields['password']]);
 		return array_merge($user, $result);
 	}
 
