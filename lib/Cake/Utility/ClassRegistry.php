@@ -140,9 +140,8 @@ class ClassRegistry {
 					}
 					$testing = isset($settings['testing']) ? $settings['testing'] : false;
 					if ($testing) {
-						$settings['ds'] = 'test';
 						$defaultProperties = $reflection->getDefaultProperties();
-						if (isset($defaultProperties['useDbConfig'])) {
+						if (isset($defaultProperties['useDbConfig']) && !isset($settings['ds'])) {
 							$useDbConfig = $defaultProperties['useDbConfig'];
 							if (in_array('test_' . $useDbConfig, $availableDs)) {
 								$useDbConfig = 'test_' . $useDbConfig;
@@ -150,6 +149,10 @@ class ClassRegistry {
 							if (strpos($useDbConfig, 'test') === 0) {
 								$settings['ds'] = $useDbConfig;
 							}
+						}
+
+						if (empty($settings['ds'])) {
+							$settings['ds'] = 'test';
 						}
 					}
 					if ($reflection->getConstructor()) {
