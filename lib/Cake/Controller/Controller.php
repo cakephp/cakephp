@@ -930,7 +930,7 @@ class Controller extends Object implements CakeEventListener {
 			}
 		}
 
-		$this->View = $this->_view();
+		$this->View = $this->_getViewObject();
 
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {
@@ -1221,7 +1221,7 @@ class Controller extends Object implements CakeEventListener {
  *
  * @return View
  */
-	protected function _view() {
+	protected function _getViewObject() {
 		$viewClass = $this->viewClass;
 		if ($this->viewClass != 'View') {
 			list($plugin, $viewClass) = pluginSplit($viewClass, true);
