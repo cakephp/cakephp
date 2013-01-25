@@ -724,6 +724,23 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testFormCreateGetNoSecurity method
+ *
+ * Test form->create() with no security key as its a get form
+ *
+ * @return void
+ */
+	public function testCreateEndGetNoSecurity() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$result = $this->Form->create('Contact', array('type' => 'get', 'url' => '/contacts/add'));
+		$this->assertNotContains('Token', $result);
+
+		$result = $this->Form->end('Save');
+		$this->assertNotContains('Token', $result);
+	}
+
+/**
  * test that create() clears the fields property so it starts fresh
  *
  * @return void

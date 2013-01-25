@@ -433,7 +433,9 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();
-		$append .= $this->_csrfField();
+		if ($this->requestType !== 'get') {
+			$append .= $this->_csrfField();
+		}
 
 		if (!empty($append)) {
 			$append = $this->Html->useTag('block', ' style="display:none;"', $append);
@@ -504,7 +506,11 @@ class FormHelper extends AppHelper {
 			}
 			$out .= $this->submit($submit, $submitOptions);
 		}
-		if (isset($this->request['_Token']) && !empty($this->request['_Token'])) {
+		if (
+			$this->requestType !== 'get' &&
+			isset($this->request['_Token']) &&
+			!empty($this->request['_Token'])
+		) {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
 		}
