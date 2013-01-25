@@ -1217,13 +1217,13 @@ class Controller extends Object implements CakeEventListener {
 	}
 
 /**
- * Constructs the view class based on the controllers properties
+ * Constructs the view class based on the controller properties
  *
  * @return View
  */
 	protected function _getViewObject() {
 		$viewClass = $this->viewClass;
-		if ($this->viewClass != 'View') {
+		if ($this->viewClass !== 'View') {
 			list($plugin, $viewClass) = pluginSplit($viewClass, true);
 			$viewClass = $viewClass . 'View';
 			App::uses($viewClass, $plugin . 'View');
