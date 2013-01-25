@@ -20,7 +20,9 @@ namespace Cake\Model\Datasource\Database;
 use Iterator;
 use IteratorAggregate;
 use Cake\Model\Datasource\Database\Expression\QueryExpression;
+use Cake\Model\Datasource\Database\Expression\OrderByExpression;
 use Cake\Model\Datasource\Database\Expression\Comparisson;
+use Cake\Model\Datasource\Database\Statement\CallbackStatement;
 
 class Query implements Expression, IteratorAggregate {
 
@@ -62,9 +64,12 @@ class Query implements Expression, IteratorAggregate {
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
+		'order' => ' %s',
 		'limit' => ' LIMIT %s',
 		'offset' => ' OFFSET %s',
 	];
+
+	protected $_transformedQuery;
 
 /**
  * Indicates whether internal state of this query was changed and most recent
@@ -73,6 +78,13 @@ class Query implements Expression, IteratorAggregate {
  * @return void
  **/
 	protected $_dirty = false;
+
+/**
+ * A set of callback functions to be called to alter 
+ *
+ * @return void
+ **/
+	protected $_resultDecorators = [];
 
 /**
  * Iterator for statement results
@@ -94,13 +106,18 @@ class Query implements Expression, IteratorAggregate {
 	}
 
 	public function execute() {
-		$statement = $this->_connection->prepare($this->sql());
-		$this->_bindParams($statement);
+		$this->_transformedQuery = null;
+		$this->_dirty = false;
+
+		$query = $this->_transformQuery();
+		$statement = $this->_connection->prepare($query->sql(false));
+		$query->_bindParams($statement);
 		$statement->execute();
-		return $statement;
+
+		return $query->_decorateResults($statement);
 	}
 
-	public function sql() {
+	public function sql($transform = false) {
 		$sql = '';
 		$builder = function($parts, $name) use(&$sql) {
 			if (!count($parts)) {
@@ -116,7 +133,7 @@ class Query implements Expression, IteratorAggregate {
 			return $sql .= $this->{'_build' . ucFirst($name) . 'Part'}($parts, $sql);
 		};
 
-		$query = $this->_transformQuery();
+		$query = $transform ? $this->_transformQuery() : $this;
 		$query->build($builder->bindTo($query));
 		return $sql;
 	}
@@ -300,27 +317,11 @@ class Query implements Expression, IteratorAggregate {
 	}
 
 	public function order($clause, $overwrite = false) {
-		$order = $this->_parts['order'];
-		if ($overwrite) {
-			$order = [];
+		if ($overwrite || !$this->_parts['order']) {
+			$this->_parts['order'] = new OrderByExpression;
 		}
-
-		if (!is_array($clause)) {
-			$clause = [$clause];
-		}
-
-		$order = array_merge($order, $clause);
-		$this->_parts['order'] = $order;
-		$this->_dirty = true;
+		$this->_conjugate('order', $clause, '', []);
 		return $this;
-	}
-
-	protected function _buildOrderPart($parts) {
-		$order = [];
-		foreach ($parts as $k => $direction) {
-			$order[] = is_numeric($k) ? $direction : sprintf('%s %s', $k, $direction);
-		}
-		return sprintf (' ORDER BY %s', implode(', ', $order));
 	}
 
 	public function group($fields, $overwrite = false) {
@@ -411,6 +412,22 @@ class Query implements Expression, IteratorAggregate {
 		return $this->_parts[$name];
 	}
 
+	public function decorateResults($callback, $overwrite = false) {
+		if ($overwrite) {
+			$this->_resultDecorators = [];
+		}
+		$this->_resultDecorators[] = $callback;
+
+		return $this;
+	}
+
+	protected function _decorateResults($statement) {
+		foreach ($this->_resultDecorators as $f) {
+			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
+		}
+		return $statement;
+	}
+
 	protected function _conjugate($part, $append, $conjunction, $types) {
 		$expression = $this->_parts[$part] ?: $this->newExpr();
 
@@ -466,22 +483,23 @@ class Query implements Expression, IteratorAggregate {
 			$expression->traverse($visitor);
 		};
 
-		$query = $this->_transformQuery();
-		$query->build($binder->bindTo($query));
+		$this->_transformQuery()->build($binder);
 	}
 
 /**
  * Returns a query object as returned by the connection object as a result of
  * transforming this query instance to conform to any dialect specifics
  *
- * @todo if the query is not dirty, we could locally cache the result of this function
  * @return void
  **/
 	protected function _transformQuery() {
+		if (isset($this->_transformedQuery)) {
+			return $this->_transformedQuery;
+		}
 		// TODO: Should Query actually get the driver or just let the connection decide where
 		// to get the query translator?
 		$translator = $this->connection()->driver()->queryTranslator($this->_type);
-		return $translator($this);
+		return $this->_transformedQuery = $translator($this);
 	}
 
 /**

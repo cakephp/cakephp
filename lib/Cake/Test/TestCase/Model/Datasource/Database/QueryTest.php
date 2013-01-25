@@ -1297,13 +1297,29 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$result = $query->select('id')->from('dates')
 			->limit(1)
 			->offset(0)->execute();
+		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
 		$result = $query->offset(1)->execute();
+		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 
 		$result = $query->offset(2)->execute();
+		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query->select('id')->from('dates')
+			->order(['id' => 'desc'])
+			->limit(1)
+			->offset(0)->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$result = $query->limit(2)->offset(1)->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 	}
 
 /**
