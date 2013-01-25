@@ -35,13 +35,6 @@ App::uses('Router', 'Routing');
 class ContactTestController extends Controller {
 
 /**
- * name property
- *
- * @var string 'ContactTest'
- */
-	public $name = 'ContactTest';
-
-/**
  * uses property
  *
  * @var mixed null
@@ -58,25 +51,11 @@ class ContactTestController extends Controller {
 class Contact extends CakeTestModel {
 
 /**
- * primaryKey property
- *
- * @var string 'id'
- */
-	public $primaryKey = 'id';
-
-/**
  * useTable property
  *
  * @var bool false
  */
 	public $useTable = false;
-
-/**
- * name property
- *
- * @var string 'Contact'
- */
-	public $name = 'Contact';
 
 /**
  * Default schema
@@ -171,13 +150,6 @@ class ContactTagsContact extends CakeTestModel {
 	public $useTable = false;
 
 /**
- * name property
- *
- * @var string 'Contact'
- */
-	public $name = 'ContactTagsContact';
-
-/**
  * Default schema
  *
  * @var array
@@ -214,13 +186,6 @@ class ContactNonStandardPk extends Contact {
  * @var string 'pk'
  */
 	public $primaryKey = 'pk';
-
-/**
- * name property
- *
- * @var string 'ContactNonStandardPk'
- */
-	public $name = 'ContactNonStandardPk';
 
 /**
  * schema method
@@ -280,20 +245,6 @@ class UserForm extends CakeTestModel {
 	public $useTable = false;
 
 /**
- * primaryKey property
- *
- * @var string 'id'
- */
-	public $primaryKey = 'id';
-
-/**
- * name property
- *
- * @var string 'UserForm'
- */
-	public $name = 'UserForm';
-
-/**
  * hasMany property
  *
  * @var array
@@ -333,20 +284,6 @@ class OpenidUrl extends CakeTestModel {
  * @var bool false
  */
 	public $useTable = false;
-
-/**
- * primaryKey property
- *
- * @var string 'id'
- */
-	public $primaryKey = 'id';
-
-/**
- * name property
- *
- * @var string 'OpenidUrl'
- */
-	public $name = 'OpenidUrl';
 
 /**
  * belongsTo property
@@ -398,25 +335,11 @@ class OpenidUrl extends CakeTestModel {
 class ValidateUser extends CakeTestModel {
 
 /**
- * primaryKey property
- *
- * @var string 'id'
- */
-	public $primaryKey = 'id';
-
-/**
  * useTable property
  *
  * @var bool false
  */
 	public $useTable = false;
-
-/**
- * name property
- *
- * @var string 'ValidateUser'
- */
-	public $name = 'ValidateUser';
 
 /**
  * hasOne property
@@ -462,13 +385,6 @@ class ValidateUser extends CakeTestModel {
 class ValidateProfile extends CakeTestModel {
 
 /**
- * primaryKey property
- *
- * @var string 'id'
- */
-	public $primaryKey = 'id';
-
-/**
  * useTable property
  *
  * @var bool false
@@ -488,13 +404,6 @@ class ValidateProfile extends CakeTestModel {
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
-
-/**
- * name property
- *
- * @var string 'ValidateProfile'
- */
-	public $name = 'ValidateProfile';
 
 /**
  * hasOne property
@@ -536,25 +445,11 @@ class ValidateProfile extends CakeTestModel {
 class ValidateItem extends CakeTestModel {
 
 /**
- * primaryKey property
- *
- * @var string 'id'
- */
-	public $primaryKey = 'id';
-
-/**
  * useTable property
  *
  * @var bool false
  */
 	public $useTable = false;
-
-/**
- * name property
- *
- * @var string 'ValidateItem'
- */
-	public $name = 'ValidateItem';
 
 /**
  * schema property
@@ -600,25 +495,12 @@ class ValidateItem extends CakeTestModel {
 class TestMail extends CakeTestModel {
 
 /**
- * primaryKey property
- *
- * @var string 'id'
- */
-	public $primaryKey = 'id';
-
-/**
  * useTable property
  *
  * @var bool false
  */
 	public $useTable = false;
 
-/**
- * name property
- *
- * @var string 'TestMail'
- */
-	public $name = 'TestMail';
 }
 
 /**
@@ -3575,6 +3457,51 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio(
+			'Model.field',
+			array('option A', 'option B', 'option C'),
+			array('separator' => '--separator--', 'between' => array('between A', 'between B', 'between C'))
+		);
+
+		$expected = array(
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][field]',
+				'value' => '', 'id' => 'ModelField_'
+			),
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Model][field]',
+				'value' => '0', 'id' => 'ModelField0'
+			)),
+			array('label' => array('for' => 'ModelField0')),
+			'option A',
+			'/label',
+			'between A',
+			'--separator--',
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Model][field]',
+				'value' => '1', 'id' => 'ModelField1'
+			)),
+			array('label' => array('for' => 'ModelField1')),
+			'option B',
+			'/label',
+			'between B',
+			'--separator--',
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Model][field]',
+				'value' => '2', 'id' => 'ModelField2'
+			)),
+			array('label' => array('for' => 'ModelField2')),
+			'option C',
+			'/label',
+			'between C',
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -3729,6 +3656,72 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.field', array(
+			'options' => array('1' => 'first', '2' => 'second'),
+			'type' => 'radio',
+			'before' => '--before--',
+			'after' => '--after--',
+			'separator' => '--separator--',
+			'between' => array('--between first--', '--between second--')
+		));
+
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			'--before--',
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'ModelField_', 'value' => '')),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'first',
+			'/label',
+			'--between first--',
+			'--separator--',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '2', 'id' => 'ModelField2')),
+			array('label' => array('for' => 'ModelField2')),
+			'second',
+			'/label',
+			'--between second--',
+			'/fieldset',
+			'--after--',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.field', array(
+			'options' => array('1' => 'first', '2' => 'second'),
+			'type' => 'radio',
+			'before' => '--before--',
+			'after' => '--after--',
+			'separator' => '--separator--',
+			'between' => array('--between first--')
+		));
+
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			'--before--',
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'ModelField_', 'value' => '')),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'first',
+			'/label',
+			'--between first--',
+			'--separator--',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '2', 'id' => 'ModelField2')),
+			array('label' => array('for' => 'ModelField2')),
+			'second',
+			'/label',
+			'/fieldset',
+			'--after--',
+			'/div'
+		);
 	}
 
 /**
