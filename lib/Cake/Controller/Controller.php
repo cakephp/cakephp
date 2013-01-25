@@ -1217,7 +1217,7 @@ class Controller extends Object implements CakeEventListener {
 	}
 
 /**
- * Constructs the view class based on the controller properties
+ * Constructs the view class instance based on the controller property
  *
  * @return View
  */
