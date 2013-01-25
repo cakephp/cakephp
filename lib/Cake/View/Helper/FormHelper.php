@@ -1129,6 +1129,10 @@ class FormHelper extends AppHelper {
 			$options['type'] = 'select';
 		} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
 			$options['type'] = 'password';
+		} elseif (in_array($fieldKey, array('tel', 'telephone', 'phone'))) {
+			$options['type'] = 'tel';
+		} elseif ($fieldKey === 'email') {
+			$options['type'] = 'email';
 		} elseif (isset($options['checked'])) {
 			$options['type'] = 'checkbox';
 		} elseif ($fieldDef = $this->_introspectModel($modelKey, 'fields', $fieldKey)) {
@@ -1235,7 +1239,9 @@ class FormHelper extends AppHelper {
 			is_scalar($fieldDef['length']) &&
 			$options['type'] !== 'select'
 		);
-		if ($autoLength && $options['type'] == 'text') {
+		if ($autoLength &&
+			in_array($options['type'], array('text', 'email', 'tel', 'url'))
+		) {
 			$options['maxlength'] = $fieldDef['length'];
 		}
 		if ($autoLength && $fieldDef['type'] == 'float') {

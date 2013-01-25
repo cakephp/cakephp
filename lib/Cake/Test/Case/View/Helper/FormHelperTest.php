@@ -1826,12 +1826,12 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
 		$expected = array(
-			'div' => array('class' => 'input text'),
+			'div' => array('class' => 'input email'),
 			'label' => array('for' => 'custom'),
 			'Email',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][email]',
+				'type' => 'email', 'name' => 'data[Contact][email]',
 				'id' => 'custom', 'maxlength' => 255
 			)),
 			'/div'
@@ -1845,7 +1845,7 @@ class FormHelperTest extends CakeTestCase {
 			'Email',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][email]',
+				'type' => 'email', 'name' => 'data[Contact][email]',
 				'id' => 'ContactEmail', 'maxlength' => 255
 			)),
 			'/div'
@@ -1920,12 +1920,12 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request->data = array('Contact' => array('phone' => 'Hello & World > weird chars'));
 		$result = $this->Form->input('Contact.phone');
 		$expected = array(
-			'div' => array('class' => 'input text'),
+			'div' => array('class' => 'input tel'),
 			'label' => array('for' => 'ContactPhone'),
 			'Phone',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'data[Contact][phone]',
+				'type' => 'tel', 'name' => 'data[Contact][phone]',
 				'value' => 'Hello &amp; World &gt; weird chars',
 				'id' => 'ContactPhone', 'maxlength' => 255
 			)),
@@ -2808,9 +2808,9 @@ class FormHelperTest extends CakeTestCase {
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input email')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input tel')),
 			'*/div',
 			array('div' => array('class' => 'input password')),
 			'*/div',
@@ -2833,9 +2833,9 @@ class FormHelperTest extends CakeTestCase {
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input email')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input tel')),
 			'*/div',
 			array('div' => array('class' => 'input password')),
 			'*/div',
@@ -2863,9 +2863,9 @@ class FormHelperTest extends CakeTestCase {
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input email')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input tel')),
 			'*/div',
 			array('div' => array('class' => 'input password')),
 			'*/div',
@@ -2889,9 +2889,9 @@ class FormHelperTest extends CakeTestCase {
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input email')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input tel')),
 			'*/div',
 			array('div' => array('class' => 'input password')),
 			'*/div',
@@ -2922,9 +2922,9 @@ class FormHelperTest extends CakeTestCase {
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input email')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input tel')),
 			'*/div',
 			array('div' => array('class' => 'input password')),
 			'*/div',
@@ -2952,9 +2952,9 @@ class FormHelperTest extends CakeTestCase {
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'id' => 'ContactId'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input email')),
 			'*/div',
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input tel')),
 			'*/div',
 			array('div' => array('class' => 'input password')),
 			'*/div',
