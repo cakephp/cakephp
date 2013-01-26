@@ -1118,6 +1118,28 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
+ * Test that sort() with 'natural' type will fallback to 'regular' as SORT_NATURAL is introduced in PHP 5.4
+ *
+ * @return void
+ */
+	public function testSortNaturalFallbackToRegular() {
+		if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
+			$this->markTestSkipped('Skipping SORT_NATURAL fallback test on PHP >= 5.4');
+		}
+
+		$a = array(
+			0 => array('Person' => array('name' => 'Jeff')),
+			1 => array('Shirt' => array('color' => 'black'))
+		);
+		$b = array(
+			0 => array('Shirt' => array('color' => 'black')),
+			1 => array('Person' => array('name' => 'Jeff')),
+		);
+		$sorted = Hash::sort($a, '{n}.Person.name', 'asc', 'natural');
+		$this->assertEquals($sorted, $b);
+	}
+
+/**
  * test sorting with out of order keys.
  *
  * @return void

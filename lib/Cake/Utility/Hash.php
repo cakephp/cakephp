@@ -732,10 +732,11 @@ class Hash {
  *
  * ## Sort types
  *
- * - `numeric` Sort by numeric value.
- * - `regular` Sort by numeric value.
- * - `string` Sort by numeric value.
- * - `natural` Sort by natural order. Requires PHP 5.4 or greater.
+ * - `regular` For regular sorting (don't change types)
+ * - `numeric` Compare values numerically
+ * - `string` Compare values as strings
+ * - `natural` Compare items as strings using "natural ordering" in a human friendly way.
+ *   Will sort foo10 below foo2 as an example. Requires PHP 5.4 or greater or it will fallback to 'regular'
  *
  * @param array $data An array of data to sort
  * @param string $path A Set-compatible path to the array value
@@ -769,7 +770,7 @@ class Hash {
 		$dir = strtolower($dir);
 		$type = strtolower($type);
 		if ($type == 'natural' && version_compare(PHP_VERSION, '5.4.0', '<')) {
-			$type == 'regular';
+			$type = 'regular';
 		}
 		if ($dir === 'asc') {
 			$dir = SORT_ASC;
