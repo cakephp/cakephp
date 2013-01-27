@@ -344,7 +344,6 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeActionsUsingSessions() {
-
 		$result = $this->Task->bakeActions('BakeArticles', null, true);
 
 		$this->assertContains('function index() {', $result);
@@ -383,7 +382,6 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeActionsWithNoSessions() {
-
 		$result = $this->Task->bakeActions('BakeArticles', null, false);
 
 		$this->assertContains('function index() {', $result);
