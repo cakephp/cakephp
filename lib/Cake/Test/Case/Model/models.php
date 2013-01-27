@@ -552,6 +552,13 @@ class ModifiedComment extends CakeTestModel {
 	public $useTable = 'comments';
 
 /**
+ * Property used to toggle filtering of results
+ *
+ * @var boolean
+ */
+	public $remove = false;
+
+/**
  * belongsTo property
  *
  * @var array
@@ -566,6 +573,9 @@ class ModifiedComment extends CakeTestModel {
 	public function afterFind($results, $primary = false) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['callback'] = 'Fire';
+		}
+		if ($this->remove) {
+			return array();
 		}
 		return $results;
 	}

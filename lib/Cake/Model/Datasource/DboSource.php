@@ -1153,10 +1153,12 @@ class DboSource extends DataSource {
 			}
 			$linkedModel = $model->{$className};
 			$filtering[] = $className;
-			foreach ($results as &$result) {
+			foreach ($results as $key => &$result) {
 				$data = $linkedModel->afterFind(array(array($className => $result[$className])), false);
 				if (isset($data[0][$className])) {
 					$result[$className] = $data[0][$className];
+				} else {
+					unset($results[$key]);
 				}
 			}
 		}

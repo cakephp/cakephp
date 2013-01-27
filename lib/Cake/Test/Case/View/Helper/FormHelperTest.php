@@ -607,6 +607,23 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testFormCreateGetNoSecurity method
+ *
+ * Test form->create() with no security key as its a get form
+ *
+ * @return void
+ */
+	public function testCreateEndGetNoSecurity() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$result = $this->Form->create('Contact', array('type' => 'get', 'url' => '/contacts/add'));
+		$this->assertNotContains('Token', $result);
+
+		$result = $this->Form->end('Save');
+		$this->assertNotContains('Token', $result);
+	}
+
+/**
  * test that create() clears the fields property so it starts fresh
  *
  * @return void
@@ -3948,6 +3965,17 @@ class FormHelperTest extends CakeTestCase {
 			array('option' => array('value' => '')), '/option',
 			array('option' => array('value' => '0', 'selected' => 'selected')), 'No', '/option',
 			array('option' => array('value' => '1')), 'Yes', '/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Model']['field'] = 50;
+		$result = $this->Form->select('Model.field', array('50f5c0cf' => 'Stringy', '50' => 'fifty'));
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => '')), '/option',
+			array('option' => array('value' => '50f5c0cf')), 'Stringy', '/option',
+			array('option' => array('value' => '50', 'selected' => 'selected')), 'fifty', '/option',
 			'/select'
 		);
 		$this->assertTags($result, $expected);

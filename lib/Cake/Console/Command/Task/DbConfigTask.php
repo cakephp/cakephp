@@ -211,7 +211,7 @@ class DbConfigTask extends AppShell {
 		$this->out(__d('cake_console', 'The following database configuration will be created:'));
 		$this->hr();
 		$this->out(__d('cake_console', "Name:         %s", $name));
-		$this->out(__d('cake_console', "Datasource:       %s", $datasource));
+		$this->out(__d('cake_console', "Datasource:   %s", $datasource));
 		$this->out(__d('cake_console', "Persistent:   %s", $persistent));
 		$this->out(__d('cake_console', "Host:         %s", $host));
 

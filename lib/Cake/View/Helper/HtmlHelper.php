@@ -616,7 +616,7 @@ class HtmlHelper extends AppHelper {
  * ### Usage:
  *
  * {{{
- * echo $html->style(array('margin' => '10px', 'padding' => '10px'), true);
+ * echo $this->Html->style(array('margin' => '10px', 'padding' => '10px'), true);
  *
  * // creates
  * 'margin:10px;padding:10px;'
@@ -760,11 +760,11 @@ class HtmlHelper extends AppHelper {
  *
  * Create a regular image:
  *
- * `echo $html->image('cake_icon.png', array('alt' => 'CakePHP'));`
+ * `echo $this->Html->image('cake_icon.png', array('alt' => 'CakePHP'));`
  *
  * Create an image link:
  *
- * `echo $html->image('cake_icon.png', array('alt' => 'CakePHP', 'url' => 'http://cakephp.org'));`
+ * `echo $this->Html->image('cake_icon.png', array('alt' => 'CakePHP', 'url' => 'http://cakephp.org'));`
  *
  * ### Options:
  *

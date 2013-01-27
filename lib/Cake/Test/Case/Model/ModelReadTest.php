@@ -3006,6 +3006,30 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * Test that afterFind can completely unset data.
+ *
+ * @return void
+ */
+	public function testAfterFindUnset() {
+		$this->loadFixtures('Article', 'Comment', 'User');
+		$model = new CustomArticle();
+		$model->bindModel(array(
+			'hasMany' => array(
+				'ModifiedComment' => array(
+					'className' => 'ModifiedComment',
+					'foreignKey' => 'article_id',
+				)
+			)
+		));
+		$model->ModifiedComment->remove = true;
+		$result = $model->find('all');
+		$this->assertTrue(
+			empty($result[0]['ModifiedComment']),
+			'Zeroith row should be removed by afterFind'
+		);
+	}
+
+/**
  * testFindThreadedNoParent method
  *
  * @return void
