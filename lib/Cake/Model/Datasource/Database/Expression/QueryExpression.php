@@ -249,19 +249,20 @@ class QueryExpression implements Expression, Countable {
 		}
 
 		$type = isset($types[$expression]) ? $types[$expression] : null;
-		$template = '%s %s %s';
+		$multi = false;
 
 		if (in_array(strtolower(trim($operator)), ['in', 'not in'])) {
 			$type = $type ?: 'string';
 			$type .= strpos($type, '[]') === false ? '[]' : null;
-			$template = '%s %s (%s)';
+			$multi = true;
 		}
 
-		if ($value instanceof Expression) {
+		if ($value instanceof Expression || $multi === false) {
 			return new Comparisson($expression, $value, $type, $operator);
 		}
 
-		return sprintf($template, $expression,  $operator, $this->_bindValue($field, $value, $type));
+		$placeholder = $this->_bindValue($field, $value, $type);
+		return sprintf('%s %s (%s)', $expression,  $operator, $placeholder);
 	}
 
 	protected function _bindValue($field, $value, $type) {

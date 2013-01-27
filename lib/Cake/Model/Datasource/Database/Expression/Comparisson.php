@@ -40,6 +40,7 @@ class Comparisson extends QueryExpression {
 			$this->_type = current($types);
 		}
 
+		$this->_identifier = substr(spl_object_hash($this), 7, 9);
 		$this->_conditions[$field] = $value;
 	}
 
@@ -57,6 +58,10 @@ class Comparisson extends QueryExpression {
 
 	public function getValue() {
 		return $this->_value;
+	}
+
+	public function placeholder($token) {
+		return sprintf(':c%s', $this->_identifier);
 	}
 
 	public function sql() {
