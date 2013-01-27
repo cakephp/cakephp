@@ -493,7 +493,7 @@ class Query implements Expression, IteratorAggregate {
  * @return void
  **/
 	protected function _transformQuery() {
-		if (isset($this->_transformedQuery)) {
+		if (isset($this->_transformedQuery) && !$this->_dirty) {
 			return $this->_transformedQuery;
 		}
 		// TODO: Should Query actually get the driver or just let the connection decide where
