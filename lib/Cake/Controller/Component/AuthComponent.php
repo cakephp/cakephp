@@ -623,6 +623,17 @@ class AuthComponent extends Component {
 	}
 
 /**
+ * Backwards compatible alias for AuthComponent::redirectUrl()
+ *
+ * @param string|array $url Optional URL to write as the login redirect URL.
+ * @return string Redirect URL
+ * @deprecated 2.3 Use AuthComponent::redirectUrl() instead
+ */
+	public function redirect($url = null) {
+		return $this->redirectUrl($url);
+	}
+
+/**
  * If no parameter is passed, gets the authentication redirect URL. Pass a url in to
  * set the destination a user should be redirected to upon logging in. Will fallback to
  * AuthComponent::$loginRedirect if there is no stored redirect value.
@@ -630,7 +641,7 @@ class AuthComponent extends Component {
  * @param string|array $url Optional URL to write as the login redirect URL.
  * @return string Redirect URL
  */
-	public function redirect($url = null) {
+	public function redirectUrl($url = null) {
 		if (!is_null($url)) {
 			$redir = $url;
 			$this->Session->write('Auth.redirect', $redir);
