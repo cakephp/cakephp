@@ -758,7 +758,7 @@ class AuthComponentTest extends CakeTestCase {
 		);
 		$this->Auth->startup($this->Controller);
 		$expected = Router::normalize($this->Auth->loginRedirect);
-		$this->assertEquals($expected, $this->Auth->redirect());
+		$this->assertEquals($expected, $this->Auth->redirectUrl());
 
 		$this->Auth->Session->delete('Auth');
 
@@ -797,7 +797,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->loginRedirect = false;
 		$this->Auth->startup($this->Controller);
 		$expected = Router::normalize('/admin');
-		$this->assertEquals($expected, $this->Auth->redirect());
+		$this->assertEquals($expected, $this->Auth->redirectUrl());
 
 		// Ticket #4750
 		// Named Parameters
@@ -1263,7 +1263,7 @@ class AuthComponentTest extends CakeTestCase {
  */
 	public function testRedirectSet() {
 		$value = array('controller' => 'users', 'action' => 'home');
-		$result = $this->Auth->redirect($value);
+		$result = $this->Auth->redirectUrl($value);
 		$this->assertEquals('/users/home', $result);
 		$this->assertEquals($value, $this->Auth->Session->read('Auth.redirect'));
 	}
@@ -1277,7 +1277,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->loginAction = array('controller' => 'users', 'action' => 'login');
 		$this->Auth->Session->write('Auth.redirect', '/users/home');
 
-		$result = $this->Auth->redirect();
+		$result = $this->Auth->redirectUrl();
 		$this->assertEquals('/users/home', $result);
 		$this->assertFalse($this->Auth->Session->check('Auth.redirect'));
 	}
@@ -1293,7 +1293,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->loginRedirect = array('controller' => 'users', 'action' => 'home');
 		$this->Auth->Session->write('Auth.redirect', array('controller' => 'users', 'action' => 'login'));
 
-		$result = $this->Auth->redirect();
+		$result = $this->Auth->redirectUrl();
 		$this->assertEquals('/users/home', $result);
 		$this->assertFalse($this->Auth->Session->check('Auth.redirect'));
 	}
