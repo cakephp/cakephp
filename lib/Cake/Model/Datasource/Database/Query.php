@@ -448,7 +448,7 @@ class Query implements Expression, IteratorAggregate {
 	}
 
 	protected function _bindParams($statement) {
-		$visitor = function($expression) use($statement) {
+		$visitor = function($expression) use ($statement) {
 			$params = $types = [];
 
 			if ($expression instanceof Comparisson) {
@@ -464,7 +464,7 @@ class Query implements Expression, IteratorAggregate {
 			$statement->bind($params, $types);
 		};
 
-		$binder = function($expression, $name) use($statement, $visitor, &$binder) {
+		$binder = function($expression, $name) use ($statement, $visitor, &$binder) {
 			if (is_array($expression)) {
 				foreach ($expression as $e) {
 					$binder($e, $name);
@@ -475,12 +475,10 @@ class Query implements Expression, IteratorAggregate {
 				return $expression->build($binder);
 			}
 
-			if (!($expression instanceof QueryExpression)) {
-				return;
+			if ($expression instanceof QueryExpression) {
+				//Visit all expressions and subexpressions to get every bound value
+				$expression->traverse($visitor);
 			}
-
-			//Visit all expressions and subexpressions to get every bound value
-			$expression->traverse($visitor);
 		};
 
 		$this->_transformQuery()->build($binder);
