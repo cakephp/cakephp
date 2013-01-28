@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Controller.Component.Acl
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Test.Case.Controller.Component.Acl
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ComponentCollection', 'Controller');
@@ -27,7 +27,7 @@ require_once dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'Model' . DS . 
 /**
  * AclNodeTwoTestBase class
  *
- * @package       Cake.Test.Case.Controller.Component.Acl
+ * @package			 Cake.Test.Case.Controller.Component.Acl
  */
 class AclNodeTwoTestBase extends AclNode {
 
@@ -49,7 +49,7 @@ class AclNodeTwoTestBase extends AclNode {
 /**
  * AroTwoTest class
  *
- * @package       Cake.Test.Case.Controller.Component.Acl
+ * @package			 Cake.Test.Case.Controller.Component.Acl
  */
 class AroTwoTest extends AclNodeTwoTestBase {
 
@@ -78,7 +78,7 @@ class AroTwoTest extends AclNodeTwoTestBase {
 /**
  * AcoTwoTest class
  *
- * @package       Cake.Test.Case.Controller.Component.Acl
+ * @package			 Cake.Test.Case.Controller.Component.Acl
  */
 class AcoTwoTest extends AclNodeTwoTestBase {
 
@@ -107,7 +107,7 @@ class AcoTwoTest extends AclNodeTwoTestBase {
 /**
  * PermissionTwoTest class
  *
- * @package       Cake.Test.Case.Controller.Component.Acl
+ * @package			 Cake.Test.Case.Controller.Component.Acl
  */
 class PermissionTwoTest extends Permission {
 
@@ -150,7 +150,7 @@ class PermissionTwoTest extends Permission {
 /**
  * DbAclTwoTest class
  *
- * @package       Cake.Test.Case.Controller.Component.Acl
+ * @package			 Cake.Test.Case.Controller.Component.Acl
  */
 class DbAclTwoTest extends DbAcl {
 
@@ -175,7 +175,7 @@ class DbAclTwoTest extends DbAcl {
 /**
  * Test case for AclComponent using the DbAcl implementation.
  *
- * @package       Cake.Test.Case.Controller.Component.Acl
+ * @package			 Cake.Test.Case.Controller.Component.Acl
  */
 class DbAclTest extends CakeTestCase {
 

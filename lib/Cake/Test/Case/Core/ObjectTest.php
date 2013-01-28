@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Core
- * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Core
+ * @since				 CakePHP(tm) v 1.2.0.5432
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Object', 'Core');
@@ -25,7 +25,7 @@ App::uses('Model', 'Model');
 /**
  * RequestActionPost class
  *
- * @package       Cake.Test.Case.Core
+ * @package			 Cake.Test.Case.Core
  */
 class RequestActionPost extends CakeTestModel {
 
@@ -47,7 +47,7 @@ class RequestActionPost extends CakeTestModel {
 /**
  * RequestActionController class
  *
- * @package       Cake.Test.Case.Core
+ * @package			 Cake.Test.Case.Core
  */
 class RequestActionController extends Controller {
 
@@ -141,7 +141,7 @@ class RequestActionController extends Controller {
 /**
  * TestObject class
  *
- * @package       Cake.Test.Case.Core
+ * @package			 Cake.Test.Case.Core
  */
 class TestObject extends Object {
 
@@ -275,7 +275,7 @@ class TestObject extends Object {
 /**
  * ObjectTestModel class
  *
- * @package       Cake.Test.Case.Core
+ * @package			 Cake.Test.Case.Core
  */
 class ObjectTestModel extends CakeTestModel {
 
@@ -288,7 +288,7 @@ class ObjectTestModel extends CakeTestModel {
 /**
  * Object Test class
  *
- * @package       Cake.Test.Case.Core
+ * @package			 Cake.Test.Case.Core
  */
 class ObjectTest extends CakeTestCase {
 

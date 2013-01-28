@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller.Component
- * @since         CakePHP(tm) v 1.2.0.5347
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Controller.Component
+ * @since				 CakePHP(tm) v 1.2.0.5347
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Controller', 'Controller');
@@ -25,8 +25,8 @@ App::uses('FormAuthenticate', 'Controller/Component/Auth');
 /**
  * TestAuthComponent class
  *
- * @package       Cake.Test.Case.Controller.Component
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class TestAuthComponent extends AuthComponent {
 
@@ -55,8 +55,8 @@ class TestAuthComponent extends AuthComponent {
 /**
  * AuthUser class
  *
- * @package       Cake.Test.Case.Controller.Component
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class AuthUser extends CakeTestModel {
 
@@ -79,8 +79,8 @@ class AuthUser extends CakeTestModel {
 /**
  * AuthTestController class
  *
- * @package       Cake.Test.Case.Controller.Component
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class AuthTestController extends Controller {
 
@@ -201,7 +201,7 @@ class AuthTestController extends Controller {
 /**
  * AjaxAuthController class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class AjaxAuthController extends Controller {
 
@@ -273,8 +273,8 @@ class AjaxAuthController extends Controller {
 /**
  * AuthComponentTest class
  *
- * @package       Cake.Test.Case.Controller.Component
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class AuthComponentTest extends CakeTestCase {
 
@@ -418,7 +418,7 @@ class AuthComponentTest extends CakeTestCase {
 
 /**
  * test that being redirected to the login page, with no post data does
- * not set the session value.  Saving the session value in this circumstance
+ * not set the session value.	Saving the session value in this circumstance
  * can cause the user to be redirected to an already public page.
  *
  * @return void

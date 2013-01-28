@@ -6,11 +6,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Controller
- * @since         CakePHP(tm) v 1.2.0.5436
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.Controller
+ * @since				 CakePHP(tm) v 1.2.0.5436
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Controller', 'Controller');
 App::uses('Router', 'Routing');
@@ -22,7 +22,7 @@ App::uses('CookieComponent', 'Controller/Component');
 /**
  * AppController class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ControllerTestAppController extends Controller {
 
@@ -52,7 +52,7 @@ class ControllerTestAppController extends Controller {
 /**
  * ControllerPost class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ControllerPost extends CakeTestModel {
 
@@ -115,7 +115,7 @@ class ControllerPost extends CakeTestModel {
 /**
  * ControllerPostsController class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ControllerCommentsController extends ControllerTestAppController {
 
@@ -132,7 +132,7 @@ class ControllerCommentsController extends ControllerTestAppController {
 /**
  * ControllerComment class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ControllerComment extends CakeTestModel {
 
@@ -168,7 +168,7 @@ class ControllerComment extends CakeTestModel {
 /**
  * ControllerAlias class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ControllerAlias extends CakeTestModel {
 
@@ -197,7 +197,7 @@ class ControllerAlias extends CakeTestModel {
 /**
  * NameTest class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class NameTest extends CakeTestModel {
 
@@ -224,7 +224,7 @@ class NameTest extends CakeTestModel {
 /**
  * TestController class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class TestController extends ControllerTestAppController {
 
@@ -308,7 +308,7 @@ class TestController extends ControllerTestAppController {
 /**
  * TestComponent class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class TestComponent extends Object {
 
@@ -368,7 +368,7 @@ class Test2Component extends TestComponent {
 /**
  * AnotherTestController class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class AnotherTestController extends ControllerTestAppController {
 
@@ -396,7 +396,7 @@ class AnotherTestController extends ControllerTestAppController {
 /**
  * ControllerTest class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ControllerTest extends CakeTestCase {
 

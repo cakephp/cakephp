@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View.Helper
+ * @since				 CakePHP(tm) v 0.10.0.1076
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeNumber', 'Utility');
@@ -27,7 +27,7 @@ App::uses('AppHelper', 'View/Helper');
  *
  * Methods to make numbers more readable.
  *
- * @package       Cake.View.Helper
+ * @package			 Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html
  * @see CakeNumber
  */
@@ -46,7 +46,7 @@ class NumberHelper extends AppHelper {
  * ### Settings:
  *
  * - `engine` Class name to use to replace CakeNumber functionality
- *            The class needs to be placed in the `Utility` directory.
+ *						The class needs to be placed in the `Utility` directory.
  *
  * @param View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper
@@ -111,7 +111,7 @@ class NumberHelper extends AppHelper {
  *
  * @param float $number A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
- *   or array with places and before keys
+ *	 or array with places and before keys
  * @return string formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
@@ -124,7 +124,7 @@ class NumberHelper extends AppHelper {
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
- *   set at least 'before' and 'after' options.
+ *	 set at least 'before' and 'after' options.
  * @param array $options
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency

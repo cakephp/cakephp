@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.TestSuite.Coverage
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.TestSuite.Coverage
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('BaseCoverageReport', 'TestSuite/Coverage');
@@ -22,7 +22,7 @@ App::uses('BaseCoverageReport', 'TestSuite/Coverage');
 /**
  * Generates code coverage reports in Simple plain text from data obtained from PHPUnit
  *
- * @package       Cake.TestSuite.Coverage
+ * @package			 Cake.TestSuite.Coverage
  */
 class TextCoverageReport extends BaseCoverageReport {
 

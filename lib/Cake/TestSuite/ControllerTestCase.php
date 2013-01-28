@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.TestSuite
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.TestSuite
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Dispatcher', 'Routing');
@@ -28,7 +28,7 @@ App::uses('CakeEvent', 'Event');
 /**
  * ControllerTestDispatcher class
  *
- * @package       Cake.TestSuite
+ * @package			 Cake.TestSuite
  */
 class ControllerTestDispatcher extends Dispatcher {
 
@@ -87,7 +87,7 @@ class ControllerTestDispatcher extends Dispatcher {
 /**
  * InterceptContentHelper class
  *
- * @package       Cake.TestSuite
+ * @package			 Cake.TestSuite
  */
 class InterceptContentHelper extends Helper {
 
@@ -106,7 +106,7 @@ class InterceptContentHelper extends Helper {
 /**
  * ControllerTestCase class
  *
- * @package       Cake.TestSuite
+ * @package			 Cake.TestSuite
  */
 abstract class ControllerTestCase extends CakeTestCase {
 
@@ -196,17 +196,17 @@ abstract class ControllerTestCase extends CakeTestCase {
  *
  * ### Options:
  *
- * - `data` Will be used as the request data.  If the `method` is GET,
- *   data will be used a GET params.  If the `method` is POST, it will be used
- *   as POST data. By setting `$options['data']` to a string, you can simulate XML or JSON
- *   payloads to your controllers allowing you to test REST webservices.
+ * - `data` Will be used as the request data.	If the `method` is GET,
+ *	 data will be used a GET params.	If the `method` is POST, it will be used
+ *	 as POST data. By setting `$options['data']` to a string, you can simulate XML or JSON
+ *	 payloads to your controllers allowing you to test REST webservices.
  * - `method` POST or GET. Defaults to POST.
- * - `return` Specify the return type you want.  Choose from:
- *     - `vars` Get the set view variables.
- *     - `view` Get the rendered view, without a layout.
- *     - `contents` Get the rendered view including the layout.
- *     - `result` Get the return value of the controller action.  Useful
- *       for testing requestAction methods.
+ * - `return` Specify the return type you want.	Choose from:
+ *		 - `vars` Get the set view variables.
+ *		 - `view` Get the rendered view, without a layout.
+ *		 - `contents` Get the rendered view including the layout.
+ *		 - `result` Get the return value of the controller action.	Useful
+ *			 for testing requestAction methods.
  *
  * @param string $url The url to test
  * @param array $options See options
@@ -293,11 +293,11 @@ abstract class ControllerTestCase extends CakeTestCase {
  *
  * - `methods` Methods to mock on the controller. `_stop()` is mocked by default
  * - `models` Models to mock. Models are added to the ClassRegistry so they any
- *   time they are instantiated the mock will be created. Pass as key value pairs
- *   with the value being specific methods on the model to mock. If `true` or
- *   no value is passed, the entire model will be mocked.
+ *	 time they are instantiated the mock will be created. Pass as key value pairs
+ *	 with the value being specific methods on the model to mock. If `true` or
+ *	 no value is passed, the entire model will be mocked.
  * - `components` Components to mock. Components are only mocked on this controller
- *   and not within each other (i.e., components on components)
+ *	 and not within each other (i.e., components on components)
  *
  * @param string $controller Controller name
  * @param array $mocks List of classes and methods to mock

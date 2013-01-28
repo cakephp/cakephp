@@ -6,17 +6,17 @@
  *
  * PHP 5
  *
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
+ * CakePHP :	Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Model.Behavior
- * @since         CakePHP v 1.2.0.4487
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Model.Behavior
+ * @since				 CakePHP v 1.2.0.4487
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -25,7 +25,7 @@
  * Enables a model object to act as a node-based tree. Using Modified Preorder Tree Traversal
  *
  * @see http://en.wikipedia.org/wiki/Tree_traversal
- * @package       Cake.Model.Behavior
+ * @package			 Cake.Model.Behavior
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html
  */
 class TreeBehavior extends ModelBehavior {
@@ -170,7 +170,7 @@ class TreeBehavior extends ModelBehavior {
  * parameters to be saved. For newly created nodes with NO parent the left and right field values are set directly by
  * this method bypassing the setParent logic.
  *
- * @since         1.2
+ * @since				 1.2
  * @param Model $Model Model instance
  * @return boolean true to continue, false to abort the save
  */
@@ -781,7 +781,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param Model $Model Model instance
  * @return mixed true if the tree is valid or empty, otherwise an array of (error type [index, node],
- *  [incorrect left/right index,node id], message)
+ *	[incorrect left/right index,node id], message)
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::verify
  */
 	public function verify(Model $Model) {

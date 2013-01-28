@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       Cake.Test.Case.Cache.Engine
- * @since         CakePHP(tm) v 2.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Cache.Engine
+ * @since				 CakePHP(tm) v 2.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Cache', 'Cache');
@@ -23,7 +23,7 @@ App::uses('RedisEngine', 'Cache/Engine');
 /**
  * RedisEngineTest class
  *
- * @package       Cake.Test.Case.Cache.Engine
+ * @package			 Cake.Test.Case.Cache.Engine
  */
 class RegisEngineTest extends CakeTestCase {
 

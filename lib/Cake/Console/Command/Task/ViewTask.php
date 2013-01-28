@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -23,7 +23,7 @@ App::uses('BakeTask', 'Console/Command/Task');
 /**
  * Task class for creating and updating view files.
  *
- * @package       Cake.Console.Command.Task
+ * @package			 Cake.Console.Command.Task
  */
 class ViewTask extends BakeTask {
 
@@ -63,7 +63,7 @@ class ViewTask extends BakeTask {
 	public $scaffoldActions = array('index', 'view', 'add', 'edit');
 
 /**
- * An array of action names that don't require templates.  These
+ * An array of action names that don't require templates.	These
  * actions will not emit errors when doing bakeActions()
  *
  * @var array
@@ -207,7 +207,7 @@ class ViewTask extends BakeTask {
 		$this->Controller->connection = $this->connection;
 		$this->controllerName = $this->Controller->getName();
 
-		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.",  $this->controllerName);
+		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.",	$this->controllerName);
 		$interactive = $this->in($prompt, array('y', 'n'), 'n');
 
 		if (strtolower($interactive) == 'n') {
@@ -327,8 +327,8 @@ class ViewTask extends BakeTask {
 		$this->out(__d('cake_console', 'The following view will be created:'));
 		$this->hr();
 		$this->out(__d('cake_console', 'Controller Name: %s', $this->controllerName));
-		$this->out(__d('cake_console', 'Action Name:     %s', $action));
-		$this->out(__d('cake_console', 'Path:            %s', $this->getPath() . $this->controllerName . DS . Inflector::underscore($action) . ".ctp"));
+		$this->out(__d('cake_console', 'Action Name:		 %s', $action));
+		$this->out(__d('cake_console', 'Path:						%s', $this->getPath() . $this->controllerName . DS . Inflector::underscore($action) . ".ctp"));
 		$this->hr();
 		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n'), 'y');
 		if (strtolower($looksGood) == 'y') {
@@ -423,7 +423,7 @@ class ViewTask extends BakeTask {
 		return $parser->description(
 			__d('cake_console', 'Bake views for a controller, using built-in or custom templates.')
 		)->addArgument('controller', array(
-			'help' => __d('cake_console', 'Name of the controller views to bake.  Can be Plugin.name as a shortcut for plugin baking.')
+			'help' => __d('cake_console', 'Name of the controller views to bake.	Can be Plugin.name as a shortcut for plugin baking.')
 		))->addArgument('action', array(
 			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
 		))->addArgument('alias', array(

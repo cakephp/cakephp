@@ -9,33 +9,33 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller
- * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Controller
+ * @since				 CakePHP(tm) v 1.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('ComponentCollection', 'Controller');
 
 /**
- * Base class for an individual Component.  Components provide reusable bits of
- * controller logic that can be composed into a controller.  Components also
+ * Base class for an individual Component.	Components provide reusable bits of
+ * controller logic that can be composed into a controller.	Components also
  * provide request life-cycle callbacks for injecting logic at specific points.
  *
  * ## Life cycle callbacks
  *
  * Components can provide several callbacks that are fired at various stages of the request
- * cycle.  The available callbacks are:
+ * cycle.	The available callbacks are:
  *
  * - `initialize()` - Fired before the controller's beforeFilter method.
  * - `startup()` - Fired after the controller's beforeFilter method.
  * - `beforeRender()` - Fired before the view + layout are rendered.
  * - `shutdown()` - Fired after the action is complete and the view has been rendered
- *    but before Controller::afterFilter().
+ *		but before Controller::afterFilter().
  * - `beforeRedirect()` - Fired before a redirect() is done.
  *
- * @package       Cake.Controller
- * @link          http://book.cakephp.org/2.0/en/controllers/components.html
+ * @package			 Cake.Controller
+ * @link					http://book.cakephp.org/2.0/en/controllers/components.html
  * @see Controller::$components
  */
 class Component extends Object {
@@ -141,10 +141,10 @@ class Component extends Object {
 	}
 
 /**
- * Called before Controller::redirect().  Allows you to replace the url that will
+ * Called before Controller::redirect().	Allows you to replace the url that will
  * be redirected to with a new url. The return of this method can either be an array or a string.
  *
- * If the return is an array and contains a 'url' key.  You may also supply the following:
+ * If the return is an array and contains a 'url' key.	You may also supply the following:
  *
  * - `status` The status code for the redirect
  * - `exit` Whether or not the redirect should exit.

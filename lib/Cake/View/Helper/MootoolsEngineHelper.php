@@ -6,11 +6,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
- * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View.Helper
+ * @since				 CakePHP(tm) v 1.3
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('JsBaseEngineHelper', 'View/Helper');
@@ -26,7 +26,7 @@ App::uses('JsBaseEngineHelper', 'View/Helper');
  * - Selectors, DomReady,
  * - Drag, Drag.Move
  *
- * @package       Cake.View.Helper
+ * @package			 Cake.View.Helper
  */
 class MootoolsEngineHelper extends JsBaseEngineHelper {
 
@@ -226,7 +226,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Create an new Request.
  *
- * Requires `Request`.  If you wish to use 'update' key you must have ```Request.HTML```
+ * Requires `Request`.	If you wish to use 'update' key you must have ```Request.HTML```
  * if you wish to do Json requests you will need ```JSON``` and ```Request.JSON```.
  *
  * @param string|array $url
@@ -295,8 +295,8 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  *
  * Requires the `Drag` and `Drag.Move` plugins from MootoolsMore
  *
- * Droppables in Mootools function differently from other libraries.  Droppables
- * are implemented as an extension of Drag.  So in addition to making a get() selection for
+ * Droppables in Mootools function differently from other libraries.	Droppables
+ * are implemented as an extension of Drag.	So in addition to making a get() selection for
  * the droppable element. You must also provide a selector rule to the draggable element. Furthermore,
  * Mootools droppables inherit all options from Drag.
  *

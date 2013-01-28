@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Console
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Console
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ConsoleOptionParser', 'Console');
@@ -45,22 +45,22 @@ cake test [subcommand] [-h] [--four] [<four>]
 
 <info>Subcommands:</info>
 
-four  this is help text this
-      is help text
+four	this is help text this
+			is help text
 
 To see help on a subcommand use <info>`cake test [subcommand] --help`</info>
 
 <info>Options:</info>
 
---help, -h  Display this help.
---four      this is help text
-            this is help text
+--help, -h	Display this help.
+--four			this is help text
+						this is help text
 
 <info>Arguments:</info>
 
-four  this is help text this
-      is help text
-      <comment>(optional)</comment>
+four	this is help text this
+			is help text
+			<comment>(optional)</comment>
 
 TEXT;
 		$this->assertTextEquals($expected, $result, 'Generated help is too wide');
@@ -89,13 +89,13 @@ cake mycommand [-h] [--test one|two] <aco|aro> [<other_longer>]
 
 <info>Options:</info>
 
---help, -h  Display this help.
---test      A test option. <comment>(choices: one|two)</comment>
+--help, -h	Display this help.
+--test			A test option. <comment>(choices: one|two)</comment>
 
 <info>Arguments:</info>
 
-type          Resource type. <comment>(choices: aco|aro)</comment>
-other_longer  Another argument. <comment>(optional)</comment>
+type					Resource type. <comment>(choices: aco|aro)</comment>
+other_longer	Another argument. <comment>(optional)</comment>
 
 TEXT;
 		$this->assertTextEquals($expected, $result, 'Help does not match');
@@ -123,12 +123,12 @@ cake mycommand [-h] [--test] <model>
 
 <info>Options:</info>
 
---help, -h  Display this help.
---test      A test option.
+--help, -h	Display this help.
+--test			A test option.
 
 <info>Arguments:</info>
 
-model  The model to make.
+model	The model to make.
 
 epilog text
 
@@ -154,14 +154,14 @@ cake mycommand [subcommand] [-h] [--test]
 
 <info>Subcommands:</info>
 
-method  This is another command
+method	This is another command
 
 To see help on a subcommand use <info>`cake mycommand [subcommand] --help`</info>
 
 <info>Options:</info>
 
---help, -h  Display this help.
---test      A test option.
+--help, -h	Display this help.
+--test			A test option.
 
 TEXT;
 		$this->assertTextEquals($expected, $result, 'Help is not correct.');
@@ -187,10 +187,10 @@ cake mycommand [-h] [--test] [-c default]
 
 <info>Options:</info>
 
---help, -h        Display this help.
---test            A test option.
---connection, -c  The connection to use. <comment>(default:
-                  default)</comment>
+--help, -h				Display this help.
+--test						A test option.
+--connection, -c	The connection to use. <comment>(default:
+									default)</comment>
 
 TEXT;
 		$this->assertTextEquals($expected, $result, 'Help does not match');
@@ -215,13 +215,13 @@ cake mycommand [-h] [--test] <model> [<other_longer>]
 
 <info>Options:</info>
 
---help, -h  Display this help.
---test      A test option.
+--help, -h	Display this help.
+--test			A test option.
 
 <info>Arguments:</info>
 
-model         The model to make.
-other_longer  Another argument. <comment>(optional)</comment>
+model				 The model to make.
+other_longer	Another argument. <comment>(optional)</comment>
 
 TEXT;
 		$this->assertTextEquals($expected, $result, 'Help does not match');

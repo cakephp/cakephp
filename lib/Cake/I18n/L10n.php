@@ -10,18 +10,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.I18n
- * @since         CakePHP(tm) v 1.2.0.4116
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.I18n
+ * @since				 CakePHP(tm) v 1.2.0.4116
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeRequest', 'Network');
 
 /**
  * Localization
  *
- * @package       Cake.I18n
+ * @package			 Cake.I18n
  */
 class L10n {
 
@@ -428,7 +428,7 @@ class L10n {
  *
  * @param string|array $mixed 2/3 char string (language/locale), array of those strings, or null
  * @return string|array|boolean string language/locale, array of those values, whole map as an array,
- *    or false when language/locale doesn't exist
+ *		or false when language/locale doesn't exist
  */
 	public function map($mixed = null) {
 		if (is_array($mixed)) {
@@ -455,7 +455,7 @@ class L10n {
  *
  * @param string|array $language string requested language, array of requested languages, or null for whole catalog
  * @return array|boolean array catalog record for requested language, array of catalog records, whole catalog,
- *    or false when language doesn't exist
+ *		or false when language doesn't exist
  */
 	public function catalog($language = null) {
 		if (is_array($language)) {

@@ -9,11 +9,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	  Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link		  http://cakephp.org CakePHP(tm) Project
- * @package		  Cake.Event
- * @since		  CakePHP(tm) v 2.1
- * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link			http://cakephp.org CakePHP(tm) Project
+ * @package			Cake.Event
+ * @since			CakePHP(tm) v 2.1
+ * @license			MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeEventListener', 'Event');
@@ -97,7 +97,7 @@ class CakeEventManager {
  *
  * @return void
  * @throws InvalidArgumentException When event key is missing or callable is not an
- *   instance of CakeEventListener.
+ *	 instance of CakeEventListener.
  */
 	public function attach($callable, $eventKey = null, $options = array()) {
 		if (!$eventKey && !($callable instanceof CakeEventListener)) {

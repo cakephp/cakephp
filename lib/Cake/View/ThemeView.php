@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View
+ * @since				 CakePHP(tm) v 0.10.0.1076
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('View', 'View');
@@ -24,7 +24,7 @@ App::uses('View', 'View');
  *
  * Stub class for 2.1 Compatibility
  *
- * @package       Cake.View
+ * @package			 Cake.View
  * @deprecated Deprecated since 2.1, use View class instead
  */
 class ThemeView extends View {

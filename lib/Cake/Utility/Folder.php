@@ -6,18 +6,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP(tm) v 0.2.9
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
  * Folder structure browser, lists folders and files.
  * Provides an Object interface for Common directory related tasks.
  *
- * @package       Cake.Utility
+ * @package			 Cake.Utility
  */
 class Folder {
 
@@ -131,7 +131,7 @@ class Folder {
  * The returned array holds two arrays: One of directories and one of files.
  *
  * @param boolean $sort Whether you want the results sorted, set this and the sort property
- *   to false to get unsorted results.
+ *	 to false to get unsorted results.
  * @param array|boolean $exceptions Either an array or boolean true will not grab dot files
  * @param boolean $fullPath True returns the full path
  * @return mixed Contents of current directory as an array, an empty array on failure
@@ -399,7 +399,7 @@ class Folder {
  *
  * @param string $path the directory path to build the tree from
  * @param array|boolean $exceptions Either an array of files/folder to exclude
- *   or boolean true to not grab dot files/folders
+ *	 or boolean true to not grab dot files/folders
  * @param string $type either 'file' or 'dir'. null returns both files and directories
  * @return mixed array of nested directories and files in each directory
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::tree

@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.View
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('View', 'View');
@@ -25,7 +25,7 @@ App::uses('Router', 'Routing');
 /**
  * HelperTestPost class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class HelperTestPost extends Model {
 
@@ -65,7 +65,7 @@ class HelperTestPost extends Model {
 /**
  * HelperTestComment class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class HelperTestComment extends Model {
 
@@ -99,7 +99,7 @@ class HelperTestComment extends Model {
 /**
  * HelperTestTag class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class HelperTestTag extends Model {
 
@@ -130,7 +130,7 @@ class HelperTestTag extends Model {
 /**
  * HelperTestPostsTag class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class HelperTestPostsTag extends Model {
 
@@ -183,7 +183,7 @@ class TestHelper extends Helper {
 /**
  * HelperTest class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class HelperTest extends CakeTestCase {
 
@@ -528,7 +528,7 @@ class HelperTest extends CakeTestCase {
 	}
 
 /**
- * Ensure HTML escaping of url params.  So link addresses are valid and not exploited
+ * Ensure HTML escaping of url params.	So link addresses are valid and not exploited
  *
  * @return void
  */

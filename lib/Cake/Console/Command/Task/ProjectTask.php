@@ -11,10 +11,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -26,7 +26,7 @@ App::uses('Security', 'Utility');
 /**
  * Task class for creating new project apps and plugins
  *
- * @package       Cake.Console.Command.Task
+ * @package			 Cake.Console.Command.Task
  */
 class ProjectTask extends AppShell {
 
@@ -116,7 +116,7 @@ class ProjectTask extends AppShell {
 				$success = false;
 			}
 			if ($success && $hardCode) {
-				$this->out(__d('cake_console', '   * <warning>Remember to check these values after moving to production server</warning>'));
+				$this->out(__d('cake_console', '	 * <warning>Remember to check these values after moving to production server</warning>'));
 			}
 
 			$Folder = new Folder($path);

@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command
- * @since         CakePHP v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.Console.Command
+ * @since				 CakePHP v 1.3
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -27,7 +27,7 @@ App::uses('SchemaShell', 'Console/Command');
 /**
  * Test for Schema database management
  *
- * @package       Cake.Test.Case.Console.Command
+ * @package			 Cake.Test.Case.Console.Command
  */
 class SchemaShellTestSchema extends CakeSchema {
 
@@ -83,7 +83,7 @@ class SchemaShellTestSchema extends CakeSchema {
 /**
  * SchemaShellTest class
  *
- * @package       Cake.Test.Case.Console.Command
+ * @package			 Cake.Test.Case.Console.Command
  */
 class SchemaShellTest extends CakeTestCase {
 

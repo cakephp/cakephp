@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.TestSuite.templates
- * @since         CakePHP(tm) v 1.2.0.4433
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.TestSuite.templates
+ * @since				 CakePHP(tm) v 1.2.0.4433
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -127,7 +127,7 @@
 			div.code-coverage-results span.result-bad { color: #a00; }
 			div.code-coverage-results span.result-ok { color: #fa0; }
 			div.code-coverage-results span.result-good { color: #0a0; }
-			
+
 			div#version {
 				padding-top: 2px;
 				float: right;

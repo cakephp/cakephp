@@ -10,17 +10,17 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Model
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 /**
  * ModelReadTest
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class ModelReadTest extends BaseModelTest {
 
@@ -254,7 +254,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag', 'Comment', 'Attachment');
 		$Article = new Article();
 
-		$query  = 'SELECT title FROM ';
+		$query	= 'SELECT title FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.id IN (1,2)';
 
@@ -262,7 +262,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue(is_array($results));
 		$this->assertEquals(2, count($results));
 
-		$query  = 'SELECT title, body FROM ';
+		$query	= 'SELECT title, body FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.id = 1';
 
@@ -270,7 +270,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertFalse($this->db->getQueryCache($query));
 		$this->assertTrue(is_array($results));
 
-		$query  = 'SELECT title, id FROM ';
+		$query	= 'SELECT title, id FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles');
 		$query .= '.published = ' . $this->db->value('Y');
@@ -312,9 +312,9 @@ class ModelReadTest extends BaseModelTest {
 		$result = $this->db->getQueryCache($query, $params);
 		$this->assertFalse(empty($result));
 
-		$query  = 'SELECT id, created FROM ';
+		$query	= 'SELECT id, created FROM ';
 		$query .= $this->db->fullTableName('articles');
-		$query .= '  WHERE ' . $this->db->fullTableName('articles') . '.title = ?';
+		$query .= '	WHERE ' . $this->db->fullTableName('articles') . '.title = ?';
 
 		$params = array('First Article');
 		$result = $Article->query($query, $params, false);
@@ -326,7 +326,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $this->db->getQueryCache($query, $params);
 		$this->assertTrue(empty($result));
 
-		$query  = 'SELECT title FROM ';
+		$query	= 'SELECT title FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.title LIKE ?';
 
@@ -339,7 +339,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 
 		//related to ticket #5035
-		$query  = 'SELECT title FROM ';
+		$query	= 'SELECT title FROM ';
 		$query .= $this->db->fullTableName('articles') . ' WHERE title = ? AND published = ?';
 		$params = array('First? Article', 'Y');
 		$Article->query($query, $params);
@@ -359,7 +359,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag');
 		$Article = new Article();
 
-		$query  = 'SELECT * FROM ' . $this->db->fullTableName('articles');
+		$query	= 'SELECT * FROM ' . $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles');
 		$query .= '.published = ? AND ' . $this->db->fullTableName('articles') . '.user_id = ?';
 		$params = array('Y');

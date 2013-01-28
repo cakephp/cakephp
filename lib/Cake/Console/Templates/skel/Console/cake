@@ -4,7 +4,7 @@
 # Bake is a shell script for running CakePHP bake script
 # PHP 5
 #
-# CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
+# CakePHP(tm) :	Rapid Development Framework (http://cakephp.org)
 # Copyright 2005-2012, Cake Software Foundation, Inc.
 #
 # Licensed under The MIT License
@@ -12,7 +12,7 @@
 #
 # @copyright		Copyright 2005-2012, Cake Software Foundation, Inc.
 # @link			http://cakephp.org CakePHP(tm) Project
-# @package   		app.Console
+# @package	 		app.Console
 # @since		CakePHP(tm) v 2.0
 # @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
@@ -20,9 +20,9 @@
 LIB=$(cd -P -- "$(dirname -- "$0")" && pwd -P) && LIB=$LIB/$(basename -- "$0")
 
 while [ -h "$LIB" ]; do
-    DIR=$(dirname -- "$LIB")
-    SYM=$(readlink "$LIB")
-    LIB=$(cd "$DIR" && cd $(dirname -- "$SYM") && pwd)/$(basename -- "$SYM")
+		DIR=$(dirname -- "$LIB")
+		SYM=$(readlink "$LIB")
+		LIB=$(cd "$DIR" && cd $(dirname -- "$SYM") && pwd)/$(basename -- "$SYM")
 done
 
 LIB=$(dirname -- "$LIB")/

@@ -10,18 +10,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Utility
- * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Utility
+ * @since				 CakePHP(tm) v 1.2.0.5432
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('ClassRegistry', 'Utility');
 
 /**
  * ClassRegisterModel class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class ClassRegisterModel extends CakeTestModel {
 
@@ -36,7 +36,7 @@ class ClassRegisterModel extends CakeTestModel {
 /**
  * RegisterArticle class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class RegisterArticle extends ClassRegisterModel {
 
@@ -51,7 +51,7 @@ class RegisterArticle extends ClassRegisterModel {
 /**
  * RegisterArticleFeatured class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class RegisterArticleFeatured extends ClassRegisterModel {
 
@@ -66,7 +66,7 @@ class RegisterArticleFeatured extends ClassRegisterModel {
 /**
  * RegisterArticleTag class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class RegisterArticleTag extends ClassRegisterModel {
 
@@ -81,7 +81,7 @@ class RegisterArticleTag extends ClassRegisterModel {
 /**
  * RegistryPluginAppModel class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class RegistryPluginAppModel extends ClassRegisterModel {
 
@@ -96,7 +96,7 @@ class RegistryPluginAppModel extends ClassRegisterModel {
 /**
  * TestRegistryPluginModel class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class TestRegistryPluginModel extends RegistryPluginAppModel {
 
@@ -111,7 +111,7 @@ class TestRegistryPluginModel extends RegistryPluginAppModel {
 /**
  * RegisterCategory class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class RegisterCategory extends ClassRegisterModel {
 
@@ -125,7 +125,7 @@ class RegisterCategory extends ClassRegisterModel {
 /**
  * RegisterPrefixedDs class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class RegisterPrefixedDs extends ClassRegisterModel {
 
@@ -158,7 +158,7 @@ interface ClassRegistryInterfaceTest {
 /**
  * ClassRegistryTest class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class ClassRegistryTest extends CakeTestCase {
 

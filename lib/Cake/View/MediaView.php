@@ -10,27 +10,27 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
- * @since         CakePHP(tm) v 1.2.0.5714
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View
+ * @since				 CakePHP(tm) v 1.2.0.5714
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('View', 'View');
 App::uses('CakeRequest', 'Network');
 
 /**
- * Media View provides a custom view implementation for sending files to visitors.  Its great
+ * Media View provides a custom view implementation for sending files to visitors.	Its great
  * for making the response of a controller action be a file that is saved somewhere on the filesystem.
  *
  * An example use comes from the CakePHP internals. MediaView is used to serve plugin and theme assets,
- * as they are not normally accessible from an application's webroot.  Unlike other views, MediaView
+ * as they are not normally accessible from an application's webroot.	Unlike other views, MediaView
  * uses several viewVars that have special meaning:
  *
  * - `id` The filename on the server's filesystem, including extension.
  * - `name` The filename that will be sent to the user, specified without the extension.
- * - `download` Set to true to set a `Content-Disposition` header.  This is ideal for file downloads.
+ * - `download` Set to true to set a `Content-Disposition` header.	This is ideal for file downloads.
  * - `extension` The extension of the file being served. This is used to set the mimetype.
  * 	If not provided its extracted from filename provided as `id`.
  * - `path` The absolute path, including the trailing / on the server's filesystem to `id`.
@@ -55,7 +55,7 @@ App::uses('CakeRequest', 'Network');
  * }
  * }}}
  *
- * @package       Cake.View
+ * @package			 Cake.View
  */
 class MediaView extends View {
 
@@ -64,7 +64,7 @@ class MediaView extends View {
  *
  * @var boolean
  */
-	protected  $_compressionEnabled = false;
+	protected	$_compressionEnabled = false;
 
 /**
  * Display or download the given file

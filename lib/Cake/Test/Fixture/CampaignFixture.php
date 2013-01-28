@@ -11,17 +11,17 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * @link          http://www.cakephp.org
- * @package       Cake.Test.Fixture
- * @since         1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * @link					http://www.cakephp.org
+ * @package			 Cake.Test.Fixture
+ * @since				 1.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
  * CampaignFixture class
  *
- * @package       Cake.Test.Fixture
+ * @package			 Cake.Test.Fixture
  */
 class CampaignFixture extends CakeTestFixture {
 

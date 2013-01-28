@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Model.Datasource.Database
- * @since         CakePHP(tm) v 1.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Test.Case.Model.Datasource.Database
+ * @since				 CakePHP(tm) v 1.2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
@@ -25,7 +25,7 @@ require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 /**
  * DboSqliteTestDb class
  *
- * @package       Cake.Test.Case.Model.Datasource.Database
+ * @package			 Cake.Test.Case.Model.Datasource.Database
  */
 class DboSqliteTestDb extends Sqlite {
 
@@ -61,7 +61,7 @@ class DboSqliteTestDb extends Sqlite {
 /**
  * DboSqliteTest class
  *
- * @package       Cake.Test.Case.Model.Datasource.Database
+ * @package			 Cake.Test.Case.Model.Datasource.Database
  */
 class SqliteTest extends CakeTestCase {
 

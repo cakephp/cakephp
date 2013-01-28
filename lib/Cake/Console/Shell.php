@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.5012
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.2.0.5012
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('TaskCollection', 'Console');
@@ -26,7 +26,7 @@ App::uses('File', 'Utility');
 /**
  * Base class for command-line utilities for automating programmer chores.
  *
- * @package       Cake.Console
+ * @package			 Cake.Console
  */
 class Shell extends Object {
 
@@ -146,7 +146,7 @@ class Shell extends Object {
 	public $stdin;
 
 /**
- *  Constructs this Shell instance.
+ *	Constructs this Shell instance.
  *
  * @param ConsoleOutput $stdout A ConsoleOutput object for stdout.
  * @param ConsoleOutput $stderr A ConsoleOutput object for stderr.
@@ -347,7 +347,7 @@ class Shell extends Object {
  * `main()` with the original method name in the argv.
  *
  * @param string $command The command name to run on this shell. If this argument is empty,
- *   and the shell has a `main()` method, that will be called instead.
+ *	 and the shell has a `main()` method, that will be called instead.
  * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
  * @return void
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::runCommand
@@ -523,7 +523,7 @@ class Shell extends Object {
  *
  * ### Options
  *
- * - `width` The width to wrap to.  Defaults to 72
+ * - `width` The width to wrap to.	Defaults to 72
  * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
  * - `indent` Indent the text with the string provided. Defaults to null.
  *
@@ -543,9 +543,9 @@ class Shell extends Object {
  *
  * ### Output levels
  *
- * There are 3 built-in output level.  Shell::QUIET, Shell::NORMAL, Shell::VERBOSE.
+ * There are 3 built-in output level.	Shell::QUIET, Shell::NORMAL, Shell::VERBOSE.
  * The verbose and quiet output levels, map to the `verbose` and `quiet` output switches
- * present in  most shells.  Using Shell::QUIET for a message means it will always display.
+ * present in	most shells.	Using Shell::QUIET for a message means it will always display.
  * While using Shell::VERBOSE means it will only display when verbose output is toggled.
  *
  * @param string|array $message A string or a an array of strings to output

@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View.Helper
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.View.Helper
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Controller', 'Controller');
@@ -32,7 +32,7 @@ if (!defined('FULL_BASE_URL')) {
 /**
  * TheHtmlTestController class
  *
- * @package       Cake.Test.Case.View.Helper
+ * @package			 Cake.Test.Case.View.Helper
  */
 class TheHtmlTestController extends Controller {
 
@@ -84,7 +84,7 @@ class TestHtmlHelper extends HtmlHelper {
 /**
  * Html5TestHelper class
  *
- * @package       Cake.Test.Case.View.Helper
+ * @package			 Cake.Test.Case.View.Helper
  */
 class Html5TestHelper extends TestHtmlHelper {
 
@@ -113,7 +113,7 @@ class Html5TestHelper extends TestHtmlHelper {
 /**
  * HtmlHelperTest class
  *
- * @package       Cake.Test.Case.View.Helper
+ * @package			 Cake.Test.Case.View.Helper
  */
 class HtmlHelperTest extends CakeTestCase {
 

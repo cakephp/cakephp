@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP(tm) v .0.10.0.1233
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP(tm) v .0.10.0.1233
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('String', 'Utility');
@@ -22,7 +22,7 @@ App::uses('String', 'Utility');
 /**
  * Security Library contains utility methods related to security
  *
- * @package       Cake.Utility
+ * @package			 Cake.Utility
  */
 class Security {
 
@@ -76,7 +76,7 @@ class Security {
  * @param string $string String to hash
  * @param string $type Method to use (sha1/sha256/md5)
  * @param boolean $salt If true, automatically appends the application's salt
- *     value to $string (Security.salt)
+ *		 value to $string (Security.salt)
  * @return string Hash
  */
 	public static function hash($string, $type = null, $salt = false) {
@@ -112,7 +112,7 @@ class Security {
 	}
 
 /**
- * Sets the default hash method for the Security object.  This affects all objects using
+ * Sets the default hash method for the Security object.	This affects all objects using
  * Security::hash().
  *
  * @param string $hash Method to use (sha1/sha256/md5)

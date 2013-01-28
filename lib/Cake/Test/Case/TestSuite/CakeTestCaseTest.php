@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.TestSuite
- * @since         CakePHP v 1.2.0.4487
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.TestSuite
+ * @since				 CakePHP v 1.2.0.4487
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Controller', 'Controller');
@@ -25,7 +25,7 @@ App::uses('CakeHtmlReporter', 'TestSuite/Reporter');
 /**
  * CakeTestCaseTest
  *
- * @package       Cake.Test.Case.TestSuite
+ * @package			 Cake.Test.Case.TestSuite
  */
 class CakeTestCaseTest extends CakeTestCase {
 

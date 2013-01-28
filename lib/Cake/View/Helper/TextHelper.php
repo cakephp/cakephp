@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View.Helper
+ * @since				 CakePHP(tm) v 0.10.0.1076
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppHelper', 'View/Helper');
@@ -26,8 +26,8 @@ App::uses('AppHelper', 'View/Helper');
  *
  * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
- * @package       Cake.View.Helper
- * @property      HtmlHelper $Html
+ * @package			 Cake.View.Helper
+ * @property			HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html
  * @see String
  */
@@ -59,7 +59,7 @@ class TextHelper extends AppHelper {
  * ### Settings:
  *
  * - `engine` Class name to use to replace String functionality.
- *            The class needs to be placed in the `Utility` directory.
+ *						The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
  * @param array $settings Settings array Settings array
@@ -119,7 +119,7 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * Saves the placeholder for a string, for later use.  This gets around double
+ * Saves the placeholder for a string, for later use.	This gets around double
  * escaping content in URL's.
  *
  * @param array $matches An array of regexp matches.

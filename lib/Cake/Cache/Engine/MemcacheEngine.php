@@ -11,19 +11,19 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Cache.Engine
- * @since         CakePHP(tm) v 1.2.0.4933
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Cache.Engine
+ * @since				 CakePHP(tm) v 1.2.0.4933
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
- * Memcache storage engine for cache.  Memcache has some limitations in the amount of
- * control you have over expire times far in the future.  See MemcacheEngine::write() for
+ * Memcache storage engine for cache.	Memcache has some limitations in the amount of
+ * control you have over expire times far in the future.	See MemcacheEngine::write() for
  * more information.
  *
- * @package       Cake.Cache.Engine
+ * @package			 Cake.Cache.Engine
  */
 class MemcacheEngine extends CacheEngine {
 
@@ -45,9 +45,9 @@ class MemcacheEngine extends CacheEngine {
 /**
  * Settings
  *
- *  - servers = string or array of memcache servers, default => 127.0.0.1. If an
- *    array MemcacheEngine will use them as a pool.
- *  - compress = boolean, default => false
+ *	- servers = string or array of memcache servers, default => 127.0.0.1. If an
+ *		array MemcacheEngine will use them as a pool.
+ *	- compress = boolean, default => false
  *
  * @var array
  */
@@ -98,7 +98,7 @@ class MemcacheEngine extends CacheEngine {
 	}
 
 /**
- * Parses the server address into the host/port.  Handles both IPv6 and IPv4
+ * Parses the server address into the host/port.	Handles both IPv6 and IPv4
  * addresses and Unix sockets
  *
  * @param string $server The server address string.
@@ -126,7 +126,7 @@ class MemcacheEngine extends CacheEngine {
 	}
 
 /**
- * Write data for key into cache.  When using memcache as your cache engine
+ * Write data for key into cache.	When using memcache as your cache engine
  * remember that the Memcache pecl extension does not support cache expiry times greater
  * than 30 days in the future. Any duration greater than 30 days will be treated as never expiring.
  *

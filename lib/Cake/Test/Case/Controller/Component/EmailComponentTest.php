@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller.Component
- * @since         CakePHP(tm) v 1.2.0.5347
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Controller.Component
+ * @since				 CakePHP(tm) v 1.2.0.5347
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Controller', 'Controller');
 App::uses('EmailComponent', 'Controller/Component');
@@ -25,7 +25,7 @@ App::uses('AbstractTransport', 'Network/Email');
 /**
  * EmailTestComponent class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class EmailTestComponent extends EmailComponent {
 
@@ -43,7 +43,7 @@ class EmailTestComponent extends EmailComponent {
 /**
  * DebugCompTransport class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class DebugCompTransport extends AbstractTransport {
 
@@ -87,7 +87,7 @@ class DebugCompTransport extends AbstractTransport {
 /**
  * EmailTestController class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class EmailTestController extends Controller {
 
@@ -117,7 +117,7 @@ class EmailTestController extends Controller {
 /**
  * EmailTest class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class EmailComponentTest extends CakeTestCase {
 
@@ -596,13 +596,13 @@ HTMLBLOC;
 		$this->assertEquals($expected, $result);
 
 		$content = '<p>Some HTML content with an <a href="mailto:test@example.com">email link</a>';
-		$result  = $this->Controller->EmailTest->strip($content, true);
+		$result	= $this->Controller->EmailTest->strip($content, true);
 		$expected = $content;
 		$this->assertEquals($expected, $result);
 
-		$content  = '<p>Some HTML content with an ';
+		$content	= '<p>Some HTML content with an ';
 		$content .= '<a href="mailto:test@example.com,test2@example.com">email link</a>';
-		$result  = $this->Controller->EmailTest->strip($content, true);
+		$result	= $this->Controller->EmailTest->strip($content, true);
 		$expected = $content;
 		$this->assertEquals($expected, $result);
 	}

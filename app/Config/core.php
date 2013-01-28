@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.Config
- * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 app.Config
+ * @since				 CakePHP(tm) v 0.2.9
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -35,15 +35,15 @@
 	Configure::write('debug', 2);
 
 /**
- * Configure the Error handler used to handle errors for your application.  By default
- * ErrorHandler::handleError() is used.  It will display errors using Debugger, when debug > 0
+ * Configure the Error handler used to handle errors for your application.	By default
+ * ErrorHandler::handleError() is used.	It will display errors using Debugger, when debug > 0
  * and log errors with CakeLog when debug = 0.
  *
  * Options:
  *
  * - `handler` - callback - The callback to handle errors. You can set this to any callable type,
- *   including anonymous functions.
- *   Make sure you add App::uses('MyHandler', 'Error'); when using a custom handler class
+ *	 including anonymous functions.
+ *	 Make sure you add App::uses('MyHandler', 'Error'); when using a custom handler class
  * - `level` - int - The level of errors you are interested in capturing.
  * - `trace` - boolean - Include stack traces for errors in log files.
  *
@@ -56,18 +56,18 @@
 	));
 
 /**
- * Configure the Exception handler used for uncaught exceptions.  By default,
+ * Configure the Exception handler used for uncaught exceptions.	By default,
  * ErrorHandler::handleException() is used. It will display a HTML page for the exception, and
- * while debug > 0, framework errors like Missing Controller will be displayed.  When debug = 0,
+ * while debug > 0, framework errors like Missing Controller will be displayed.	When debug = 0,
  * framework errors will be coerced into generic HTTP errors.
  *
  * Options:
  *
  * - `handler` - callback - The callback to handle exceptions. You can set this to any callback type,
- *   including anonymous functions.
- *   Make sure you add App::uses('MyHandler', 'Error'); when using a custom handler class
- * - `renderer` - string - The class responsible for rendering uncaught exceptions.  If you choose a custom class you
- *   should place the file for that class in app/Lib/Error. This class needs to implement a render method.
+ *	 including anonymous functions.
+ *	 Make sure you add App::uses('MyHandler', 'Error'); when using a custom handler class
+ * - `renderer` - string - The class responsible for rendering uncaught exceptions.	If you choose a custom class you
+ *	 should place the file for that class in app/Lib/Error. This class needs to implement a render method.
  * - `log` - boolean - Should Exceptions be logged?
  *
  * @see ErrorHandler for more information on exception handling and configuration.
@@ -150,14 +150,14 @@
  * - `Session.timeout` - The number of minutes you want sessions to live for. This timeout is handled by CakePHP
  * - `Session.cookieTimeout` - The number of minutes you want session cookies to live for.
  * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions? You might want to set the
- *    value to false, when dealing with older versions of IE, Chrome Frame or certain web-browsing devices and AJAX
+ *		value to false, when dealing with older versions of IE, Chrome Frame or certain web-browsing devices and AJAX
  * - `Session.defaults` - The default configuration set to use as a basis for your session.
- *    There are four builtins: php, cake, cache, database.
- * - `Session.handler` - Can be used to enable a custom session handler.  Expects an array of of callables,
- *    that can be used with `session_save_handler`.  Using this option will automatically add `session.save_handler`
- *    to the ini array.
+ *		There are four builtins: php, cake, cache, database.
+ * - `Session.handler` - Can be used to enable a custom session handler.	Expects an array of of callables,
+ *		that can be used with `session_save_handler`.	Using this option will automatically add `session.save_handler`
+ *		to the ini array.
  * - `Session.autoRegenerate` - Enabling this setting, turns on automatic renewal of sessions, and
- *    sessionids that change frequently. See CakeSession::$requestCountdown.
+ *		sessionids that change frequently. See CakeSession::$requestCountdown.
  * - `Session.ini` - An associative array of additional ini values to set.
  *
  * The built in defaults are:
@@ -234,12 +234,12 @@
 	//date_default_timezone_set('UTC');
 
 /**
- * Pick the caching engine to use.  If APC is enabled use it.
+ * Pick the caching engine to use.	If APC is enabled use it.
  * If running via cli - apc is disabled by default. ensure it's available and enabled in this case
  *
  * Note: 'default' and other application caches should be configured in app/Config/bootstrap.php.
- *       Please check the comments in boostrap.php for more info on the cache engines available
- *       and their setttings.
+ *			 Please check the comments in boostrap.php for more info on the cache engines available
+ *			 and their setttings.
  */
 $engine = 'File';
 if (extension_loaded('apc') && function_exists('apc_dec') && (php_sapi_name() !== 'cli' || ini_get('apc.enable_cli'))) {
@@ -256,7 +256,7 @@ if (Configure::read('debug') >= 1) {
 $prefix = 'myapp_';
 
 /**
- * Configure the cache used for general framework caching.  Path information,
+ * Configure the cache used for general framework caching.	Path information,
  * object listings, and translation cache files are stored with this configuration.
  */
 Cache::config('_cake_core_', array(
@@ -268,7 +268,7 @@ Cache::config('_cake_core_', array(
 ));
 
 /**
- * Configure the cache for model and datasource caches.  This cache configuration
+ * Configure the cache for model and datasource caches.	This cache configuration
  * is used to store schema descriptions, and table listings in connections.
  */
 Cache::config('_cake_model_', array(

@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View.Helper
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.View.Helper
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('View', 'View');
 App::uses('HtmlHelper', 'View/Helper');
@@ -29,7 +29,7 @@ if (!defined('FULL_BASE_URL')) {
 /**
  * PaginatorHelperTest class
  *
- * @package       Cake.Test.Case.View.Helper
+ * @package			 Cake.Test.Case.View.Helper
  */
 class PaginatorHelperTest extends CakeTestCase {
 
@@ -315,7 +315,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(),  'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(),	'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
 			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
 		));
 

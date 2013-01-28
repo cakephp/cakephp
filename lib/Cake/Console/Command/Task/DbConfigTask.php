@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -21,7 +21,7 @@ App::uses('AppShell', 'Console/Command');
 /**
  * Task class for creating and updating the database configuration file.
  *
- * @package       Cake.Console.Command.Task
+ * @package			 Cake.Console.Command.Task
  */
 class DbConfigTask extends AppShell {
 
@@ -210,29 +210,29 @@ class DbConfigTask extends AppShell {
 		$this->hr();
 		$this->out(__d('cake_console', 'The following database configuration will be created:'));
 		$this->hr();
-		$this->out(__d('cake_console', "Name:         %s", $name));
-		$this->out(__d('cake_console', "Datasource:   %s", $datasource));
-		$this->out(__d('cake_console', "Persistent:   %s", $persistent));
-		$this->out(__d('cake_console', "Host:         %s", $host));
+		$this->out(__d('cake_console', "Name:				 %s", $name));
+		$this->out(__d('cake_console', "Datasource:	 %s", $datasource));
+		$this->out(__d('cake_console', "Persistent:	 %s", $persistent));
+		$this->out(__d('cake_console', "Host:				 %s", $host));
 
 		if ($port) {
-			$this->out(__d('cake_console', "Port:         %s", $port));
+			$this->out(__d('cake_console', "Port:				 %s", $port));
 		}
 
-		$this->out(__d('cake_console', "User:         %s", $login));
-		$this->out(__d('cake_console', "Pass:         %s", str_repeat('*', strlen($password))));
-		$this->out(__d('cake_console', "Database:     %s", $database));
+		$this->out(__d('cake_console', "User:				 %s", $login));
+		$this->out(__d('cake_console', "Pass:				 %s", str_repeat('*', strlen($password))));
+		$this->out(__d('cake_console', "Database:		 %s", $database));
 
 		if ($prefix) {
 			$this->out(__d('cake_console', "Table prefix: %s", $prefix));
 		}
 
 		if ($schema) {
-			$this->out(__d('cake_console', "Schema:       %s", $schema));
+			$this->out(__d('cake_console', "Schema:			 %s", $schema));
 		}
 
 		if ($encoding) {
-			$this->out(__d('cake_console', "Encoding:     %s", $encoding));
+			$this->out(__d('cake_console', "Encoding:		 %s", $encoding));
 		}
 
 		$this->hr();

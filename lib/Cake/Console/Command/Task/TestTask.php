@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.3
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -23,7 +23,7 @@ App::uses('ClassRegistry', 'Utility');
 /**
  * Task class for creating and updating test files.
  *
- * @package       Cake.Console.Command.Task
+ * @package			 Cake.Console.Command.Task
  */
 class TestTask extends BakeTask {
 
@@ -332,7 +332,7 @@ class TestTask extends BakeTask {
  * Get the base class and package name for a given type.
  *
  * @param string $type The type the class having a test
- *   generated for is in.
+ *	 generated for is in.
  * @return array Array of (class, type)
  * @throws CakeException On invalid typename
  */

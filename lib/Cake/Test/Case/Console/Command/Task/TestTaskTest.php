@@ -6,17 +6,17 @@
  *
  * PHP 5
  *
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
+ * CakePHP :	Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command.Task
- * @since         CakePHP v 1.2.0.7726
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.Console.Command.Task
+ * @since				 CakePHP v 1.2.0.7726
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -31,8 +31,8 @@ App::uses('Model', 'Model');
 /**
  * Test Article model
  *
- * @package       Cake.Test.Case.Console.Command.Task
- * @package       Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
  */
 class TestTaskArticle extends Model {
 
@@ -105,8 +105,8 @@ class TestTaskArticle extends Model {
 /**
  * Tag Testing Model
  *
- * @package       Cake.Test.Case.Console.Command.Task
- * @package       Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
  */
 class TestTaskTag extends Model {
 
@@ -142,8 +142,8 @@ class TestTaskTag extends Model {
 /**
  * Simulated plugin
  *
- * @package       Cake.Test.Case.Console.Command.Task
- * @package       Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
  */
 class TestTaskAppModel extends Model {
 }
@@ -151,8 +151,8 @@ class TestTaskAppModel extends Model {
 /**
  * Testing AppMode (TaskComment)
  *
- * @package       Cake.Test.Case.Console.Command.Task
- * @package       Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
  */
 class TestTaskComment extends TestTaskAppModel {
 
@@ -186,8 +186,8 @@ class TestTaskComment extends TestTaskAppModel {
 /**
  * Test Task Comments Controller
  *
- * @package       Cake.Test.Case.Console.Command.Task
- * @package       Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
  */
 class TestTaskCommentsController extends Controller {
 
@@ -209,7 +209,7 @@ class TestTaskCommentsController extends Controller {
 /**
  * TestTaskTest class
  *
- * @package       Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
  */
 class TestTaskTest extends CakeTestCase {
 
@@ -425,7 +425,7 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
- * test baking files.  The conditionally run tests are known to fail in PHP4
+ * test baking files.	The conditionally run tests are known to fail in PHP4
  * as PHP4 classnames are all lower case, breaking the plugin path inflection.
  *
  * @return void

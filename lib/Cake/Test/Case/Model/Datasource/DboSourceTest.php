@@ -10,11 +10,11 @@
  *	Licensed under The Open Group Test Suite License
  *	Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model.Datasource
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Model.Datasource
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Model', 'Model');
@@ -86,7 +86,7 @@ class DboSecondTestSource extends DboSource {
 /**
  * DboSourceTest class
  *
- * @package       Cake.Test.Case.Model.Datasource
+ * @package			 Cake.Test.Case.Model.Datasource
  */
 class DboSourceTest extends CakeTestCase {
 
@@ -155,7 +155,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->conditions('');
 		$this->assertEquals(' WHERE 1 = 1', $result, '"" conditions failed %s');
 
-		$result = $this->testDb->conditions(' ', '"  " conditions failed %s');
+		$result = $this->testDb->conditions(' ', '"	" conditions failed %s');
 		$this->assertEquals(' WHERE 1 = 1', $result);
 	}
 
@@ -166,10 +166,10 @@ class DboSourceTest extends CakeTestCase {
  */
 	public function testBooleanEmptyConditionsParsing() {
 		$result = $this->testDb->conditions(array('OR' => array()));
-		$this->assertEquals(' WHERE  1 = 1', $result, 'empty conditions failed');
+		$this->assertEquals(' WHERE	1 = 1', $result, 'empty conditions failed');
 
 		$result = $this->testDb->conditions(array('OR' => array('OR' => array())));
-		$this->assertEquals(' WHERE  1 = 1', $result, 'nested empty conditions failed');
+		$this->assertEquals(' WHERE	1 = 1', $result, 'nested empty conditions failed');
 	}
 
 /**
@@ -838,7 +838,7 @@ class DboSourceTest extends CakeTestCase {
 		$Comment->find('all', array('recursive' => 2)); // ensure Model descriptions are saved
 		$this->db->getLog();
 
-		// case: Comment  belongsTo User and Article
+		// case: Comment	belongsTo User and Article
 		$Comment->unbindModel(array(
 			'hasOne' => array('Attachment')
 		));

@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Model.Datasource.Database
- * @since         CakePHP(tm) v 1.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Test.Case.Model.Datasource.Database
+ * @since				 CakePHP(tm) v 1.2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
@@ -26,7 +26,7 @@ require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 /**
  * DboMysqlTest class
  *
- * @package       Cake.Test.Case.Model.Datasource.Database
+ * @package			 Cake.Test.Case.Model.Datasource.Database
  */
 class MysqlTest extends CakeTestCase {
 
@@ -352,7 +352,7 @@ class MysqlTest extends CakeTestCase {
 			'comment' => 'test'
 		);
 		$result = $this->Dbo->buildColumn($data);
-		$expected = '`testName`  DEFAULT NULL COMMENT \'test\'';
+		$expected = '`testName`	DEFAULT NULL COMMENT \'test\'';
 		$this->assertEquals($expected, $result);
 
 		$data = array(
@@ -365,7 +365,7 @@ class MysqlTest extends CakeTestCase {
 			'collate' => 'utf8_unicode_ci'
 		);
 		$result = $this->Dbo->buildColumn($data);
-		$expected = '`testName`  CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL';
+		$expected = '`testName`	CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL';
 		$this->assertEquals($expected, $result);
 		$this->Dbo->columns = $restore;
 	}
@@ -571,7 +571,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertContains('ADD KEY `name_idx` (`name`),', $result);
 		$this->assertContains('ADD KEY `group_idx` (`group1`),', $result);
 		$this->assertContains('ADD KEY `compound_idx` (`group1`, `group2`),', $result);
-		$this->assertContains('ADD PRIMARY KEY  (`id`);', $result);
+		$this->assertContains('ADD PRIMARY KEY	(`id`);', $result);
 
 		//Test that the string is syntactically correct
 		$query = $this->Dbo->getConnection()->prepare($result);
@@ -799,7 +799,7 @@ class MysqlTest extends CakeTestCase {
 		$this->Dbo->virtualFieldSeparator = '_$_';
 		$result = $this->Dbo->fields($model, null, array('data', 'other__field'));
 
-		$expected = array('`BinaryTest`.`data`', '(SUM(id)) AS  `BinaryTest_$_other__field`');
+		$expected = array('`BinaryTest`.`data`', '(SUM(id)) AS	`BinaryTest_$_other__field`');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -912,7 +912,7 @@ class MysqlTest extends CakeTestCase {
 			)
 		);
 		$result = $this->Dbo->createSchema($schema, 'no_indexes');
-		$this->assertContains('PRIMARY KEY  (`id`)', $result);
+		$this->assertContains('PRIMARY KEY	(`id`)', $result);
 		$this->assertNotContains('UNIQUE KEY', $result);
 
 		$schema->tables = array(
@@ -926,7 +926,7 @@ class MysqlTest extends CakeTestCase {
 			)
 		);
 		$result = $this->Dbo->createSchema($schema, 'primary_index');
-		$this->assertContains('PRIMARY KEY  (`id`)', $result);
+		$this->assertContains('PRIMARY KEY	(`id`)', $result);
 		$this->assertContains('UNIQUE KEY `some_index` (`data`)', $result);
 
 		$schema->tables = array(
@@ -939,7 +939,7 @@ class MysqlTest extends CakeTestCase {
 			)
 		);
 		$result = $this->Dbo->createSchema($schema, 'primary_flag_has_index');
-		$this->assertContains('PRIMARY KEY  (`id`)', $result);
+		$this->assertContains('PRIMARY KEY	(`id`)', $result);
 		$this->assertContains('UNIQUE KEY `some_index` (`data`)', $result);
 	}
 
@@ -1036,7 +1036,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals(array('`Article`.`id`'), $result);
 
 		$test->expects($this->at(0))->method('execute')
-			->with('SELECT `Article`.`id` FROM ' . $test->fullTableName('articles') . ' AS `Article`   WHERE 1 = 1');
+			->with('SELECT `Article`.`id` FROM ' . $test->fullTableName('articles') . ' AS `Article`	 WHERE 1 = 1');
 
 		$result = $test->read($this->Model, array(
 			'fields' => $this->Model->escapeField(),
@@ -1052,7 +1052,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals(array('[Article].[id]'), $result);
 
 		$test->expects($this->at(0))->method('execute')
-			->with('SELECT [Article].[id] FROM ' . $test->fullTableName('articles') . ' AS [Article]   WHERE 1 = 1');
+			->with('SELECT [Article].[id] FROM ' . $test->fullTableName('articles') . ' AS [Article]	 WHERE 1 = 1');
 		$result = $test->read($this->Model, array(
 			'fields' => $this->Model->escapeField(),
 			'conditions' => null,
@@ -2912,7 +2912,7 @@ class MysqlTest extends CakeTestCase {
 			'PRIMARY' => array('column' => 'id')
 		);
 		$result = $this->Dbo->buildIndex($data);
-		$expected = array('PRIMARY KEY  (`id`)');
+		$expected = array('PRIMARY KEY	(`id`)');
 		$this->assertSame($expected, $result);
 
 		$data = array(
@@ -3118,9 +3118,9 @@ class MysqlTest extends CakeTestCase {
 			'`Article`.`published`',
 			'`Article`.`created`',
 			'`Article`.`updated`',
-			'(NOW()) AS  `Article__this_moment`',
-			'(1 + 1) AS  `Article__two`',
-			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS  `Article__comment_count`"
+			'(NOW()) AS	`Article__this_moment`',
+			'(1 + 1) AS	`Article__two`',
+			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS	`Article__comment_count`"
 		);
 
 		$this->assertEquals($expected, $result);
@@ -3128,39 +3128,39 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->fields($Article, null, array('this_moment', 'title'));
 		$expected = array(
 			'`Article`.`title`',
-			'(NOW()) AS  `Article__this_moment`',
+			'(NOW()) AS	`Article__this_moment`',
 		);
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->fields($Article, null, array('Article.title', 'Article.this_moment'));
 		$expected = array(
 			'`Article`.`title`',
-			'(NOW()) AS  `Article__this_moment`',
+			'(NOW()) AS	`Article__this_moment`',
 		);
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->fields($Article, null, array('Article.this_moment', 'Article.title'));
 		$expected = array(
 			'`Article`.`title`',
-			'(NOW()) AS  `Article__this_moment`',
+			'(NOW()) AS	`Article__this_moment`',
 		);
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->fields($Article, null, array('Article.*'));
 		$expected = array(
 			'`Article`.*',
-			'(NOW()) AS  `Article__this_moment`',
-			'(1 + 1) AS  `Article__two`',
-			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS  `Article__comment_count`"
+			'(NOW()) AS	`Article__this_moment`',
+			'(1 + 1) AS	`Article__two`',
+			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS	`Article__comment_count`"
 		);
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->fields($Article, null, array('*'));
 		$expected = array(
 			'*',
-			'(NOW()) AS  `Article__this_moment`',
-			'(1 + 1) AS  `Article__two`',
-			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS  `Article__comment_count`"
+			'(NOW()) AS	`Article__this_moment`',
+			'(1 + 1) AS	`Article__two`',
+			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS	`Article__comment_count`"
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -3641,17 +3641,17 @@ class MysqlTest extends CakeTestCase {
 		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
 
 		$this->Dbo->expects($this->at(0))->method('execute')
-			->with("UPDATE `$db`.`articles` SET `field1` = 'value1'  WHERE 1 = 1");
+			->with("UPDATE `$db`.`articles` SET `field1` = 'value1'	WHERE 1 = 1");
 
 		$this->Dbo->expects($this->at(1))->method('execute')
 			->with("UPDATE `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` ON " .
 				"(`Article`.`user_id` = `User`.`id`)" .
-				" SET `Article`.`field1` = 2  WHERE 2=2");
+				" SET `Article`.`field1` = 2	WHERE 2=2");
 
 		$this->Dbo->expects($this->at(2))->method('execute')
 			->with("UPDATE `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` ON " .
 				"(`Article`.`user_id` = `User`.`id`)" .
-				" SET `Article`.`field1` = 'value'  WHERE `index` = 'val'");
+				" SET `Article`.`field1` = 'value'	WHERE `index` = 'val'");
 
 		$Article = new Article();
 
@@ -3673,17 +3673,17 @@ class MysqlTest extends CakeTestCase {
 		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
 
 		$this->Dbo->expects($this->at(0))->method('execute')
-			->with("DELETE  FROM `$db`.`articles`  WHERE 1 = 1");
+			->with("DELETE	FROM `$db`.`articles`	WHERE 1 = 1");
 
 		$this->Dbo->expects($this->at(1))->method('execute')
 			->with("DELETE `Article` FROM `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` " .
 				"ON (`Article`.`user_id` = `User`.`id`)" .
-				"  WHERE 1 = 1");
+				"	WHERE 1 = 1");
 
 		$this->Dbo->expects($this->at(2))->method('execute')
 			->with("DELETE `Article` FROM `$db`.`articles` AS `Article` LEFT JOIN `$db`.`users` AS `User` " .
 				"ON (`Article`.`user_id` = `User`.`id`)" .
-				"  WHERE 2=2");
+				"	WHERE 2=2");
 		$Article = new Article();
 
 		$this->Dbo->delete($Article);

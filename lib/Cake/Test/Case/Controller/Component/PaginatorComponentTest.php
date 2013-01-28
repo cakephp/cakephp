@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller.Component
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Controller.Component
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Controller', 'Controller');
@@ -27,7 +27,7 @@ App::uses('CakeResponse', 'Network');
 /**
  * PaginatorTestController class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class PaginatorTestController extends Controller {
 
@@ -49,7 +49,7 @@ class PaginatorTestController extends Controller {
 /**
  * PaginatorControllerPost class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class PaginatorControllerPost extends CakeTestModel {
 
@@ -119,7 +119,7 @@ class PaginatorControllerPost extends CakeTestModel {
 /**
  * ControllerPaginateModel class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class ControllerPaginateModel extends CakeTestModel {
 
@@ -160,7 +160,7 @@ class ControllerPaginateModel extends CakeTestModel {
 /**
  * PaginatorControllerComment class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class PaginatorControllerComment extends CakeTestModel {
 
@@ -189,7 +189,7 @@ class PaginatorControllerComment extends CakeTestModel {
 /**
  * PaginatorAuthor class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class PaginatorAuthor extends CakeTestModel {
 
@@ -228,7 +228,7 @@ class PaginatorAuthor extends CakeTestModel {
 /**
  * PaginatorCustomPost class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class PaginatorCustomPost extends CakeTestModel {
 

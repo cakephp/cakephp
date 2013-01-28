@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Core
- * @since         CakePHP(tm) v 1.2.0.6001
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Core
+ * @since				 CakePHP(tm) v 1.2.0.6001
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -22,7 +22,7 @@
  *
  * ### Adding paths
  *
- * You can add paths to the search indexes App uses to find classes using `App::build()`.  Adding
+ * You can add paths to the search indexes App uses to find classes using `App::build()`.	Adding
  * additional controller paths for example would alter where CakePHP looks for controllers.
  * This allows you to split your application up across the filesystem.
  *
@@ -48,8 +48,8 @@
  *
  * ### Locating plugins and themes
  *
- * Plugins and Themes can be located with App as well.  Using App::pluginPath('DebugKit') for example, will
- * give you the full path to the DebugKit plugin.  App::themePath('purple'), would give the full path to the
+ * Plugins and Themes can be located with App as well.	Using App::pluginPath('DebugKit') for example, will
+ * give you the full path to the DebugKit plugin.	App::themePath('purple'), would give the full path to the
  * `purple` theme.
  *
  * ### Inspecting known objects
@@ -57,8 +57,8 @@
  * You can find out which objects App knows about using App::objects('Controller') for example to find
  * which application controllers App knows about.
  *
- * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/app.html
- * @package       Cake.Core
+ * @link					http://book.cakephp.org/2.0/en/core-utility-libraries/app.html
+ * @package			 Cake.Core
  */
 class App {
 
@@ -240,7 +240,7 @@ class App {
 
 /**
  * Get all the currently loaded paths from App. Useful for inspecting
- * or storing all paths App knows about.  For a paths to a specific package
+ * or storing all paths App knows about.	For a paths to a specific package
  * use App::path()
  *
  * @return array An array of packages and their associated paths.
@@ -365,7 +365,7 @@ class App {
 	}
 
 /**
- * Finds the path that a theme is on.  Searches through the defined theme paths.
+ * Finds the path that a theme is on.	Searches through the defined theme paths.
  *
  * Usage:
  *
@@ -420,7 +420,7 @@ class App {
  * @param string $type Type of object, i.e. 'Model', 'Controller', 'View/Helper', 'file', 'class' or 'plugin'
  * @param string|array $path Optional Scan only the path given. If null, paths for the chosen type will be used.
  * @param boolean $cache Set to false to rescan objects of the chosen type. Defaults to true.
- * @return mixed Either false on incorrect / miss.  Or an array of found objects.
+ * @return mixed Either false on incorrect / miss.	Or an array of found objects.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::objects
  */
 	public static function objects($type, $path = null, $cache = true) {
@@ -579,21 +579,21 @@ class App {
 	}
 
 /**
- * Finds classes based on $name or specific file(s) to search.  Calling App::import() will
+ * Finds classes based on $name or specific file(s) to search.	Calling App::import() will
  * not construct any classes contained in the files. It will only find and require() the file.
  *
- * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#including-files-with-app-import
+ * @link					http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#including-files-with-app-import
  * @param string|array $type The type of Class if passed as a string, or all params can be passed as
- *                    an single array to $type,
+ *										an single array to $type,
  * @param string $name Name of the Class or a unique name for the file
  * @param boolean|array $parent boolean true if Class Parent should be searched, accepts key => value
- *              array('parent' => $parent ,'file' => $file, 'search' => $search, 'ext' => '$ext');
- *              $ext allows setting the extension of the file name
- *              based on Inflector::underscore($name) . ".$ext";
+ *							array('parent' => $parent ,'file' => $file, 'search' => $search, 'ext' => '$ext');
+ *							$ext allows setting the extension of the file name
+ *							based on Inflector::underscore($name) . ".$ext";
  * @param array $search paths to search for files, array('path 1', 'path 2', 'path 3');
  * @param string $file full name of the file to search for including extension
  * @param boolean $return Return the loaded file, the file must have a return
- *                         statement in it to work: return $variable;
+ *												 statement in it to work: return $variable;
  * @return boolean true if Class is already in memory or if file is found and loaded, false if not
  */
 	public static function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {

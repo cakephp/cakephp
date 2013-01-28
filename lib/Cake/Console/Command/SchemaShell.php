@@ -6,10 +6,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.5550
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.2.0.5550
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -23,8 +23,8 @@ App::uses('CakeSchema', 'Model');
  * Schema is CakePHP's database management utility. This helps you maintain versions of
  * of your database.
  *
- * @package       Cake.Console.Command
- * @link          http://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html
+ * @package			 Cake.Console.Command
+ * @link					http://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html
  */
 class SchemaShell extends AppShell {
 
@@ -234,7 +234,7 @@ class SchemaShell extends AppShell {
 	}
 
 /**
- * Run database create commands.  Alias for run create.
+ * Run database create commands.	Alias for run create.
  *
  * @return void
  */
@@ -244,7 +244,7 @@ class SchemaShell extends AppShell {
 	}
 
 /**
- * Run database create commands.  Alias for run create.
+ * Run database create commands.	Alias for run create.
  *
  * @return void
  */

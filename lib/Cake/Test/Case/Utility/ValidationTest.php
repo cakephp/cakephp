@@ -10,18 +10,18 @@
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Utility
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Utility
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Validation', 'Utility');
 
 /**
  * CustomValidator class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class CustomValidator {
 
@@ -42,7 +42,7 @@ class CustomValidator {
  *
  * Used to test pass through of Validation
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class TestNlValidation {
 
@@ -72,7 +72,7 @@ class TestNlValidation {
  *
  * Used to test pass through of Validation
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class TestDeValidation {
 
@@ -91,7 +91,7 @@ class TestDeValidation {
 /**
  * Test Case for Validation Class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class ValidationTest extends CakeTestCase {
 
@@ -226,7 +226,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::blank("\n"));
 		$this->assertTrue(Validation::blank("\t"));
 		$this->assertTrue(Validation::blank("\r"));
-		$this->assertFalse(Validation::blank('    Blank'));
+		$this->assertFalse(Validation::blank('		Blank'));
 		$this->assertFalse(Validation::blank('Blank'));
 	}
 
@@ -241,7 +241,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::blank(array('check' => "\n")));
 		$this->assertTrue(Validation::blank(array('check' => "\t")));
 		$this->assertTrue(Validation::blank(array('check' => "\r")));
-		$this->assertFalse(Validation::blank(array('check' => '    Blank')));
+		$this->assertFalse(Validation::blank(array('check' => '		Blank')));
 		$this->assertFalse(Validation::blank(array('check' => 'Blank')));
 	}
 

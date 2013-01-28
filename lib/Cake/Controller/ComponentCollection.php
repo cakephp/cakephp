@@ -9,11 +9,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Controller
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ObjectCollection', 'Utility');
@@ -24,7 +24,7 @@ App::uses('CakeEventListener', 'Event');
  * Components collection is used as a registry for loaded components and handles loading
  * and constructing component class objects.
  *
- * @package       Cake.Controller
+ * @package			 Cake.Controller
  */
 class ComponentCollection extends ObjectCollection implements CakeEventListener {
 
@@ -63,16 +63,16 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
 	}
 
 /**
- * Loads/constructs a component.  Will return the instance in the registry if it already exists.
+ * Loads/constructs a component.	Will return the instance in the registry if it already exists.
  * You can use `$settings['enabled'] = false` to disable callbacks on a component when loading it.
- * Callbacks default to on.  Disabled component methods work as normal, only callbacks are disabled.
+ * Callbacks default to on.	Disabled component methods work as normal, only callbacks are disabled.
  *
  * You can alias your component as an existing component by setting the 'className' key, i.e.,
  * {{{
  * public $components = array(
- *   'Email' => array(
- *     'className' => 'AliasedEmail'
- *   );
+ *	 'Email' => array(
+ *		 'className' => 'AliasedEmail'
+ *	 );
  * );
  * }}}
  * All calls to the `Email` component would use `AliasedEmail` instead.

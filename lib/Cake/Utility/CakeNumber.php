@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP(tm) v 0.10.0.1076
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -24,13 +24,13 @@
  *
  * Methods to make numbers more readable.
  *
- * @package       Cake.Utility
+ * @package			 Cake.Utility
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html
  */
 class CakeNumber {
 
 /**
- * Currencies supported by the helper.  You can add additional currency formats
+ * Currencies supported by the helper.	You can add additional currency formats
  * with CakeNumber::addFormat
  *
  * @var array
@@ -118,7 +118,7 @@ class CakeNumber {
  *
  * @param float $number A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
- *   or array with places and before keys
+ *	 or array with places and before keys
  * @return string formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
@@ -193,32 +193,32 @@ class CakeNumber {
  * ### Options
  *
  * - `wholeSymbol` - The currency symbol to use for whole numbers,
- *   greater than 1, or less than -1.
+ *	 greater than 1, or less than -1.
  * - `wholePosition` - The position the whole symbol should be placed
- *   valid options are 'before' & 'after'.
+ *	 valid options are 'before' & 'after'.
  * - `fractionSymbol` - The currency symbol to use for fractional numbers.
  * - `fractionPosition` - The position the fraction symbol should be placed
- *   valid options are 'before' & 'after'.
+ *	 valid options are 'before' & 'after'.
  * - `before` - The currency symbol to place before whole numbers
- *   ie. '$'. `before` is an alias for `wholeSymbol`.
+ *	 ie. '$'. `before` is an alias for `wholeSymbol`.
  * - `after` - The currency symbol to place after decimal numbers
- *   ie. 'c'. Set to boolean false to use no decimal symbol.
- *   eg. 0.35 => $0.35.  `after` is an alias for `fractionSymbol`
+ *	 ie. 'c'. Set to boolean false to use no decimal symbol.
+ *	 eg. 0.35 => $0.35.	`after` is an alias for `fractionSymbol`
  * - `zero` - The text to use for zero values, can be a
- *   string or a number. ie. 0, 'Free!'
+ *	 string or a number. ie. 0, 'Free!'
  * - `places` - Number of decimal places to use. ie. 2
  * - `thousands` - Thousands separator ie. ','
  * - `decimals` - Decimal separator symbol ie. '.'
  * - `negative` - Symbol for negative numbers. If equal to '()',
- *   the number will be wrapped with ( and )
+ *	 the number will be wrapped with ( and )
  * - `escape` - Should the output be escaped for html special characters.
- *   The default value for this option is controlled by the currency settings.
- *   By default the EUR, and GBP contain HTML encoded symbols. If you require non HTML
- *   encoded symbols you will need to update the settings with the correct bytes.
+ *	 The default value for this option is controlled by the currency settings.
+ *	 By default the EUR, and GBP contain HTML encoded symbols. If you require non HTML
+ *	 encoded symbols you will need to update the settings with the correct bytes.
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are
- *   'USD', 'EUR', 'GBP', otherwise set at least 'before' and 'after' options.
+ *	 'USD', 'EUR', 'GBP', otherwise set at least 'before' and 'after' options.
  * @param array $options
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
@@ -274,7 +274,7 @@ class CakeNumber {
 	}
 
 /**
- * Add a currency format to the Number helper.  Makes reusing
+ * Add a currency format to the Number helper.	Makes reusing
  * currency formats easier.
  *
  * {{{ $number->addFormat('NOK', array('before' => 'Kr. ')); }}}

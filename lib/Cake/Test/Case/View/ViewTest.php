@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.View
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('View', 'View');
@@ -28,7 +28,7 @@ App::uses('ErrorHandler', 'Error');
 /**
  * ViewPostsController class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class ViewPostsController extends Controller {
 
@@ -74,7 +74,7 @@ class ViewPostsController extends Controller {
 /**
  * ThemePostsController class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class ThemePostsController extends Controller {
 
@@ -104,7 +104,7 @@ class ThemePostsController extends Controller {
 /**
  * TestThemeView class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class TestThemeView extends View {
 
@@ -144,7 +144,7 @@ class TestThemeView extends View {
 /**
  * TestView class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class TestView extends View {
 
@@ -193,7 +193,7 @@ class TestView extends View {
 /**
  * TestAfterHelper class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class TestAfterHelper extends Helper {
 
@@ -228,7 +228,7 @@ class TestAfterHelper extends Helper {
 /**
  * ViewTest class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class ViewTest extends CakeTestCase {
 

@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource.Database
- * @since         CakePHP(tm) v 0.9.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Datasource.Database
+ * @since				 CakePHP(tm) v 0.9.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('DboSource', 'Model/Datasource');
@@ -25,7 +25,7 @@ App::uses('String', 'Utility');
  *
  * A DboSource adapter for SQLite 3 using PDO
  *
- * @package       Cake.Model.Datasource.Database
+ * @package			 Cake.Model.Datasource.Database
  */
 class Sqlite extends DboSource {
 
@@ -379,7 +379,7 @@ class Sqlite extends DboSource {
  * Generate a database-native column schema string
  *
  * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
- *    where options can be 'default', 'length', or 'key'.
+ *		where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	public function buildColumn($column) {
@@ -539,8 +539,8 @@ class Sqlite extends DboSource {
  * Generate a "drop table" statement for the given Schema object
  *
  * @param CakeSchema $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
- *   Otherwise, all tables defined in the schema are generated.
+ * @param string $table Optional.	If specified only the table name given will be generated.
+ *	 Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	public function dropSchema(CakeSchema $schema, $table = null) {

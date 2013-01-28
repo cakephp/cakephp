@@ -10,18 +10,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Utility
- * @since         CakePHP(tm) v 1.2.0.5428
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Utility
+ * @since				 CakePHP(tm) v 1.2.0.5428
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Sanitize', 'Utility');
 
 /**
  * DataTest class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class SanitizeDataTest extends CakeTestModel {
 
@@ -43,7 +43,7 @@ class SanitizeDataTest extends CakeTestModel {
 /**
  * Article class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class SanitizeArticle extends CakeTestModel {
 
@@ -65,7 +65,7 @@ class SanitizeArticle extends CakeTestModel {
 /**
  * SanitizeTest class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class SanitizeTest extends CakeTestCase {
 
@@ -241,12 +241,12 @@ class SanitizeTest extends CakeTestCase {
  * @return void
  */
 	public function testStripWhitespace() {
-		$string = "This     sentence \t\t\t has lots of \n\n white\nspace \rthat \r\n needs to be    \t    \n trimmed.";
+		$string = "This		 sentence \t\t\t has lots of \n\n white\nspace \rthat \r\n needs to be		\t		\n trimmed.";
 		$expected = "This sentence has lots of whitespace that needs to be trimmed.";
 		$result = Sanitize::stripWhitespace($string);
 		$this->assertEquals($expected, $result);
 
-		$text = 'I    love  ßá†ö√    letters.';
+		$text = 'I		love	ßá†ö√		letters.';
 		$result = Sanitize::stripWhitespace($text);
 		$expected = 'I love ßá†ö√ letters.';
 		$this->assertEquals($expected, $result);
@@ -410,7 +410,7 @@ HTML;
 		$this->assertEquals($expected, $result);
 
 		$string = '<img src="http://google.com/images/logo.gif" onload="window.location=\'http://sam.com/\'" />' . "\n" .
-			"<p>This is ok      \t\n   text</p>\n" .
+			"<p>This is ok			\t\n	 text</p>\n" .
 			'<link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="my sheet" charset="utf-8">' . "\n" .
 			'<script src="xss.js" type="text/javascript" charset="utf-8"></script>';
 		$expected = '<p>This is ok text</p>';

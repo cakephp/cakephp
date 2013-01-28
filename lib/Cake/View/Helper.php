@@ -6,11 +6,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
- * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View
+ * @since				 CakePHP(tm) v 0.2.9
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Router', 'Routing');
@@ -19,7 +19,7 @@ App::uses('Router', 'Routing');
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
- * @package       Cake.View
+ * @package			 Cake.View
  */
 class Helper extends Object {
 
@@ -96,7 +96,7 @@ class Helper extends Object {
 
 /**
  * A list of strings that should be treated as suffixes, or
- * sub inputs for a parent input.  This is used for date/time
+ * sub inputs for a parent input.	This is used for date/time
  * inputs primarily.
  *
  * @var array
@@ -232,10 +232,10 @@ class Helper extends Object {
  * Returns a URL pointing at the provided parameters.
  *
  * @param string|array $url Either a relative string url like `/products/view/23` or
- *    an array of url parameters.  Using an array for urls will allow you to leverage
- *    the reverse routing features of CakePHP.
+ *		an array of url parameters.	Using an array for urls will allow you to leverage
+ *		the reverse routing features of CakePHP.
  * @param boolean $full If true, the full base URL will be prepended to the result
- * @return string  Full translated URL with base path.
+ * @return string	Full translated URL with base path.
  * @link http://book.cakephp.org/2.0/en/views/helpers.html
  */
 	public function url($url = null, $full = false) {
@@ -284,10 +284,10 @@ class Helper extends Object {
  *
  * @param string|array Path string or url array
  * @param array $options Options array. Possible keys:
- *   `fullBase` Return full url with domain name
- *   `pathPrefix` Path prefix for relative urls
- *   `ext` Asset extension to append
- *   `plugin` False value will prevent parsing path as a plugin
+ *	 `fullBase` Return full url with domain name
+ *	 `pathPrefix` Path prefix for relative urls
+ *	 `ext` Asset extension to append
+ *	 `plugin` False value will prevent parsing path as a plugin
  * @return string Generated url
  */
 	public function assetUrl($path, $options = array()) {
@@ -343,7 +343,7 @@ class Helper extends Object {
 
 /**
  * Adds a timestamp to a file based resource based on the value of `Asset.timestamp` in
- * Configure.  If Asset.timestamp is true and debug > 0, or Asset.timestamp == 'force'
+ * Configure.	If Asset.timestamp is true and debug > 0, or Asset.timestamp == 'force'
  * a timestamp will be added.
  *
  * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
@@ -383,8 +383,8 @@ class Helper extends Object {
 	}
 
 /**
- * Used to remove harmful tags from content.  Removes a number of well known XSS attacks
- * from content.  However, is not guaranteed to remove all possibilities.  Escaping
+ * Used to remove harmful tags from content.	Removes a number of well known XSS attacks
+ * from content.	However, is not guaranteed to remove all possibilities.	Escaping
  * content is the best way to prevent all possible attacks.
  *
  * @param string|array $output Either an array of strings to clean or a single string to clean.
@@ -435,7 +435,7 @@ class Helper extends Object {
  * If the value is not one of these 3, the parameter is not output.
  *
  * 'escape' is a special option in that it controls the conversion of
- *  attributes to their html-entity encoded equivalents.  Set to false to disable html-encoding.
+ *	attributes to their html-entity encoded equivalents.	Set to false to disable html-encoding.
  *
  * If value for any option key is set to `null` or `false`, that option will be excluded from output.
  *
@@ -532,7 +532,7 @@ class Helper extends Object {
 			$entity = $this->_modelScope . '.' . $entity;
 		}
 
-		// 0.name, 0.created.month style inputs.  Excludes inputs with the modelScope in them.
+		// 0.name, 0.created.month style inputs.	Excludes inputs with the modelScope in them.
 		if (
 			$count >= 2 &&
 			is_numeric($parts[0]) &&
@@ -611,10 +611,10 @@ class Helper extends Object {
  * Uses the current View::entity() settings to generate a CamelCased id attribute.
  *
  * @param array|string $options Either an array of html attributes to add $id into, or a string
- *   with a view entity path to get a domId for.
+ *	 with a view entity path to get a domId for.
  * @param string $id The name of the 'id' attribute.
- * @return mixed If $options was an array, an array will be returned with $id set.  If a string
- *   was supplied, a string will be returned.
+ * @return mixed If $options was an array, an array will be returned with $id set.	If a string
+ *	 was supplied, a string will be returned.
  */
 	public function domId($options = null, $id = 'id') {
 		if (is_array($options) && array_key_exists($id, $options) && $options[$id] === null) {
@@ -642,11 +642,11 @@ class Helper extends Object {
  * using CakePHP's data[Model][field] formatting.
  *
  * @param array|string $options If an array, should be an array of attributes that $key needs to be added to.
- *   If a string or null, will be used as the View entity.
+ *	 If a string or null, will be used as the View entity.
  * @param string $field
  * @param string $key The name of the attribute to be set, defaults to 'name'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
- *   If a string was supplied a string will be returned.
+ *	 If a string was supplied a string will be returned.
  */
 	protected function _name($options = array(), $field = null, $key = 'name') {
 		if ($options === null) {
@@ -685,11 +685,11 @@ class Helper extends Object {
  * Gets the data for the current tag
  *
  * @param array|string $options If an array, should be an array of attributes that $key needs to be added to.
- *   If a string or null, will be used as the View entity.
+ *	 If a string or null, will be used as the View entity.
  * @param string $field
  * @param string $key The name of the attribute to be set, defaults to 'value'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
- *   If a string was supplied a string will be returned.
+ *	 If a string was supplied a string will be returned.
  */
 	public function value($options = array(), $field = null, $key = 'value') {
 		if ($options === null) {
@@ -740,7 +740,7 @@ class Helper extends Object {
 	}
 
 /**
- * Sets the defaults for an input tag.  Will set the
+ * Sets the defaults for an input tag.	Will set the
  * name, value, and id attributes for an array of html attributes.
  *
  * @param string $field The field name to initialize.
@@ -800,7 +800,7 @@ class Helper extends Object {
 	}
 
 /**
- * After render callback.  afterRender is called after the view file is rendered
+ * After render callback.	afterRender is called after the view file is rendered
  * but before the layout has been rendered.
  *
  * Overridden in subclasses.
@@ -812,7 +812,7 @@ class Helper extends Object {
 	}
 
 /**
- * Before layout callback.  beforeLayout is called before the layout is rendered.
+ * Before layout callback.	beforeLayout is called before the layout is rendered.
  *
  * Overridden in subclasses.
  *
@@ -823,7 +823,7 @@ class Helper extends Object {
 	}
 
 /**
- * After layout callback.  afterLayout is called after the layout has rendered.
+ * After layout callback.	afterLayout is called after the layout has rendered.
  *
  * Overridden in subclasses.
  *

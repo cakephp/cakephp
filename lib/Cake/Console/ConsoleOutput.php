@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
  * Object wrapper for outputting information from a shell application.
@@ -37,10 +37,10 @@
  * `$this->out('<warning>Overwrite:</warning> foo.php was overwritten.');`
  *
  * This would create orange 'Overwrite:' text, while the rest of the text would remain the normal color.
- * See ConsoleOutput::styles() to learn more about defining your own styles.  Nested styles are not supported
+ * See ConsoleOutput::styles() to learn more about defining your own styles.	Nested styles are not supported
  * at this time.
  *
- * @package       Cake.Console
+ * @package			 Cake.Console
  */
 class ConsoleOutput {
 /**
@@ -249,9 +249,9 @@ class ConsoleOutput {
  *
  * @param string $style The style to get or create.
  * @param array $definition The array definition of the style to change or create a style
- *   or false to remove a style.
+ *	 or false to remove a style.
  * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
- *   styles true will be returned.
+ *	 styles true will be returned.
  */
 	public function styles($style = null, $definition = null) {
 		if ($style === null && $definition === null) {
@@ -269,9 +269,9 @@ class ConsoleOutput {
 	}
 
 /**
- * Get/Set the output type to use.  The output type how formatting tags are treated.
+ * Get/Set the output type to use.	The output type how formatting tags are treated.
  *
- * @param integer $type The output type to use.  Should be one of the class constants.
+ * @param integer $type The output type to use.	Should be one of the class constants.
  * @return mixed Either null or the value if getting.
  */
 	public function outputAs($type = null) {

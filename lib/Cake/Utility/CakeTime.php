@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP(tm) v 0.10.0.1076
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Multibyte', 'I18n');
@@ -24,7 +24,7 @@ App::uses('Multibyte', 'I18n');
  *
  * Manipulation of time data.
  *
- * @package       Cake.Utility
+ * @package			 Cake.Utility
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html
  */
 class CakeTime {
@@ -122,7 +122,7 @@ class CakeTime {
  * windows safe and i18n aware format.
  *
  * @param string $format Format with specifiers for strftime function.
- *    Accepts the special specifier %S which mimics the modifier S for date()
+ *		Accepts the special specifier %S which mimics the modifier S for date()
  * @param string $time UNIX timestamp
  * @return string windows safe and date() function compatible format for strftime
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
@@ -663,13 +663,13 @@ class CakeTime {
  *
  * - `format` => a fall back format if the relative time is longer than the duration specified by end
  * - `accuracy` => Specifies how accurate the date should be described (array)
- *    - year =>   The format if years > 0   (default "day")
- *    - month =>  The format if months > 0  (default "day")
- *    - week =>   The format if weeks > 0   (default "day")
- *    - day =>    The format if weeks > 0   (default "hour")
- *    - hour =>   The format if hours > 0   (default "minute")
- *    - minute => The format if minutes > 0 (default "minute")
- *    - second => The format if seconds > 0 (default "second")
+ *		- year =>	 The format if years > 0	 (default "day")
+ *		- month =>	The format if months > 0	(default "day")
+ *		- week =>	 The format if weeks > 0	 (default "day")
+ *		- day =>		The format if weeks > 0	 (default "hour")
+ *		- hour =>	 The format if hours > 0	 (default "minute")
+ *		- minute => The format if minutes > 0 (default "minute")
+ *		- second => The format if seconds > 0 (default "second")
  * - `end` => The end of relative time telling
  * - `userOffset` => Users offset from GMT (in hours) *Deprecated* use timezone intead.
  * - `timezone` => The user timezone the timestamp should be formatted in.
@@ -848,7 +848,7 @@ class CakeTime {
  * Returns true if specified datetime was within the interval specified, else false.
  *
  * @param string|integer $timeInterval the numeric value with space then time type.
- *    Example of valid types: 6 hours, 2 days, 1 minute.
+ *		Example of valid types: 6 hours, 2 days, 1 minute.
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return boolean
@@ -873,7 +873,7 @@ class CakeTime {
  * Returns true if specified datetime is within the interval specified, else false.
  *
  * @param string|integer $timeInterval the numeric value with space then time type.
- *    Example of valid types: 6 hours, 2 days, 1 minute.
+ *		Example of valid types: 6 hours, 2 days, 1 minute.
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return boolean
@@ -926,10 +926,10 @@ class CakeTime {
  * Create localized & formatted time:
  *
  * {{{
- *   CakeTime::format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
- *   CakeTime::format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
- *   CakeTime::format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
- *   CakeTime::format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
+ *	 CakeTime::format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
+ *	 CakeTime::format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
+ *	 CakeTime::format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
+ *	 CakeTime::format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
  * }}}
  *
  * @param integer|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)

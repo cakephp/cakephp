@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -23,7 +23,7 @@ App::uses('AppModel', 'Model');
 /**
  * Task class for creating and updating controller files.
  *
- * @package       Cake.Console.Command.Task
+ * @package			 Cake.Console.Command.Task
  */
 class ControllerTask extends BakeTask {
 
@@ -96,7 +96,7 @@ class ControllerTask extends BakeTask {
 	}
 
 /**
- * Bake All the controllers at once.  Will only bake controllers for models that exist.
+ * Bake All the controllers at once.	Will only bake controllers for models that exist.
  *
  * @return void
  */

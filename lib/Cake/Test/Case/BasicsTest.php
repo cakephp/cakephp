@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 require_once CAKE . 'basics.php';
@@ -24,7 +24,7 @@ App::uses('CakeResponse', 'Network');
 /**
  * BasicsTest class
  *
- * @package       Cake.Test.Case
+ * @package			 Cake.Test.Case
  */
 class BasicsTest extends CakeTestCase {
 
@@ -849,7 +849,7 @@ EXPECTED;
 		ob_start();
 		pr(array('this' => 'is', 'a' => 'test'));
 		$result = ob_get_clean();
-		$expected = "<pre>Array\n(\n    [this] => is\n    [a] => test\n)\n</pre>";
+		$expected = "<pre>Array\n(\n		[this] => is\n		[a] => test\n)\n</pre>";
 		$this->assertEquals($expected, $result);
 	}
 

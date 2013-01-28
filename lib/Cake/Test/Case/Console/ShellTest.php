@@ -6,17 +6,17 @@
  *
  * PHP 5
  *
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
+ * CakePHP :	Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command
- * @since         CakePHP v 1.2.0.7726
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.Console.Command
+ * @since				 CakePHP v 1.2.0.7726
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -26,7 +26,7 @@ App::uses('Folder', 'Utility');
 /**
  * ShellTestShell class
  *
- * @package       Cake.Test.Case.Console.Command
+ * @package			 Cake.Test.Case.Console.Command
  */
 class ShellTestShell extends Shell {
 
@@ -89,7 +89,7 @@ class ShellTestShell extends Shell {
 /**
  * Class for testing merging vars
  *
- * @package       Cake.Test.Case.Console.Command
+ * @package			 Cake.Test.Case.Console.Command
  */
 class TestMergeShell extends Shell {
 
@@ -102,7 +102,7 @@ class TestMergeShell extends Shell {
 /**
  * TestAppleTask class
  *
- * @package       Cake.Test.Case.Console.Command
+ * @package			 Cake.Test.Case.Console.Command
  */
 class TestAppleTask extends Shell {
 }
@@ -110,7 +110,7 @@ class TestAppleTask extends Shell {
 /**
  * TestBananaTask class
  *
- * @package       Cake.Test.Case.Console.Command
+ * @package			 Cake.Test.Case.Console.Command
  */
 class TestBananaTask extends Shell {
 }
@@ -118,7 +118,7 @@ class TestBananaTask extends Shell {
 /**
  * ShellTest class
  *
- * @package       Cake.Test.Case.Console.Command
+ * @package			 Cake.Test.Case.Console.Command
  */
 class ShellTest extends CakeTestCase {
 
@@ -780,11 +780,11 @@ This is the song that never ends.
 TEXT;
 		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 
-		$result = $this->Shell->wrapText($text, array('indent' => '  ', 'width' => 33));
+		$result = $this->Shell->wrapText($text, array('indent' => '	', 'width' => 33));
 		$expected = <<<TEXT
-  This is the song that never ends.
-  This is the song that never ends.
-  This is the song that never ends.
+	This is the song that never ends.
+	This is the song that never ends.
+	This is the song that never ends.
 TEXT;
 		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 	}

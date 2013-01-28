@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command.Task
- * @since         CakePHP v 1.3.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.Console.Command.Task
+ * @since				 CakePHP v 1.3.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -30,7 +30,7 @@ App::uses('File', 'Utility');
 /**
  * ProjectTask Test class
  *
- * @package       Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
  */
 class ProjectTaskTest extends CakeTestCase {
 
@@ -150,7 +150,7 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
- * test bake with CakePHP on the include path.  The constants should remain commented out.
+ * test bake with CakePHP on the include path.	The constants should remain commented out.
  *
  * @return void
  */
@@ -177,7 +177,7 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
- * test bake() method with -empty flag,  directory creation and empty files.
+ * test bake() method with -empty flag,	directory creation and empty files.
  *
  * @return void
  */

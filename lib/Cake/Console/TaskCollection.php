@@ -9,19 +9,19 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ObjectCollection', 'Utility');
 
 /**
- * Collection object for Tasks.  Provides features
+ * Collection object for Tasks.	Provides features
  * for lazily loading tasks, and firing callbacks on loaded tasks.
  *
- * @package       Cake.Console
+ * @package			 Cake.Console
  */
 class TaskCollection extends ObjectCollection {
 
@@ -49,7 +49,7 @@ class TaskCollection extends ObjectCollection {
 	}
 
 /**
- * Loads/constructs a task.  Will return the instance in the collection
+ * Loads/constructs a task.	Will return the instance in the collection
  * if it already exists.
  *
  * @param string $task Task name to load

@@ -6,11 +6,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller
- * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Controller
+ * @since				 CakePHP(tm) v 0.2.9
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeResponse', 'Network');
@@ -26,32 +26,32 @@ App::uses('CakeEventManager', 'Event');
  * Provides basic functionality, such as rendering views inside layouts,
  * automatic model availability, redirection, callbacks, and more.
  *
- * Controllers should provide a number of 'action' methods.  These are public methods on the controller
- * that are not prefixed with a '_' and not part of Controller.  Each action serves as an endpoint for
- * performing a specific action on a resource or collection of resources.  For example adding or editing a new
+ * Controllers should provide a number of 'action' methods.	These are public methods on the controller
+ * that are not prefixed with a '_' and not part of Controller.	Each action serves as an endpoint for
+ * performing a specific action on a resource or collection of resources.	For example adding or editing a new
  * object, or listing a set of objects.
  *
- * You can access request parameters, using `$this->request`.  The request object contains all the POST, GET and FILES
+ * You can access request parameters, using `$this->request`.	The request object contains all the POST, GET and FILES
  * that were part of the request.
  *
- * After performing the required actions, controllers are responsible for creating a response.  This usually
- * takes the form of a generated View, or possibly a redirection to another controller action.  In either case
+ * After performing the required actions, controllers are responsible for creating a response.	This usually
+ * takes the form of a generated View, or possibly a redirection to another controller action.	In either case
  * `$this->response` allows you to manipulate all aspects of the response.
  *
  * Controllers are created by Dispatcher based on request parameters and routing. By default controllers and actions
- * use conventional names.  For example `/posts/index` maps to `PostsController::index()`.  You can re-map urls
+ * use conventional names.	For example `/posts/index` maps to `PostsController::index()`.	You can re-map urls
  * using Router::connect().
  *
- * @package       Cake.Controller
- * @property      AclComponent $Acl
- * @property      AuthComponent $Auth
- * @property      CookieComponent $Cookie
- * @property      EmailComponent $Email
- * @property      PaginatorComponent $Paginator
- * @property      RequestHandlerComponent $RequestHandler
- * @property      SecurityComponent $Security
- * @property      SessionComponent $Session
- * @link          http://book.cakephp.org/2.0/en/controllers.html
+ * @package			 Cake.Controller
+ * @property			AclComponent $Acl
+ * @property			AuthComponent $Auth
+ * @property			CookieComponent $Cookie
+ * @property			EmailComponent $Email
+ * @property			PaginatorComponent $Paginator
+ * @property			RequestHandlerComponent $RequestHandler
+ * @property			SecurityComponent $Security
+ * @property			SessionComponent $Session
+ * @link					http://book.cakephp.org/2.0/en/controllers.html
  */
 class Controller extends Object implements CakeEventListener {
 
@@ -74,7 +74,7 @@ class Controller extends Object implements CakeEventListener {
  * - `array()` Use only models defined in the parent class.
  * - `false` Use no models at all, do not merge with parent class either.
  * - `array('Post', 'Comment')` Use only the Post and Comment models. Models
- *   Will also be merged with the parent class.
+ *	 Will also be merged with the parent class.
  *
  * The default value is `true`.
  *
@@ -311,7 +311,7 @@ class Controller extends Object implements CakeEventListener {
  * Constructor.
  *
  * @param CakeRequest $request Request object for this controller. Can be null for testing,
- *  but expect that features that use the request parameters will not work.
+ *	but expect that features that use the request parameters will not work.
  * @param CakeResponse $response Response object for this controller.
  */
 	public function __construct($request = null, $response = null) {
@@ -434,7 +434,7 @@ class Controller extends Object implements CakeEventListener {
 
 /**
  * Sets the request objects and configures a number of controller properties
- * based on the contents of the request.  The properties that get set are
+ * based on the contents of the request.	The properties that get set are
  *
  * - $this->request - To the $request parameter
  * - $this->plugin - To the $request->params['plugin']
@@ -463,14 +463,14 @@ class Controller extends Object implements CakeEventListener {
 	}
 
 /**
- * Dispatches the controller action.  Checks that the action
+ * Dispatches the controller action.	Checks that the action
  * exists and isn't private.
  *
  * @param CakeRequest $request
  * @return mixed The resulting response.
  * @throws PrivateActionException When actions are not public or prefixed by _
  * @throws MissingActionException When actions are not defined and scaffolding is
- *    not enabled.
+ *		not enabled.
  */
 	public function invokeAction(CakeRequest $request) {
 		try {
@@ -507,7 +507,7 @@ class Controller extends Object implements CakeEventListener {
 		$privateAction = (
 			$method->name[0] === '_' ||
 			!$method->isPublic() ||
-			!in_array($method->name,  $this->methods)
+			!in_array($method->name,	$this->methods)
 		);
 		$prefixes = Router::prefixes();
 
@@ -687,19 +687,19 @@ class Controller extends Object implements CakeEventListener {
  * Queries & sets valid HTTP response codes & messages.
  *
  * @param integer|array $code If $code is an integer, then the corresponding code/message is
- *        returned if it exists, null if it does not exist. If $code is an array,
- *        then the 'code' and 'message' keys of each nested array are added to the default
- *        HTTP codes. Example:
+ *				returned if it exists, null if it does not exist. If $code is an array,
+ *				then the 'code' and 'message' keys of each nested array are added to the default
+ *				HTTP codes. Example:
  *
- *        httpCodes(404); // returns array(404 => 'Not Found')
+ *				httpCodes(404); // returns array(404 => 'Not Found')
  *
- *        httpCodes(array(
- *            701 => 'Unicorn Moved',
- *            800 => 'Unexpected Minotaur'
- *        )); // sets these new values, and returns true
+ *				httpCodes(array(
+ *						701 => 'Unicorn Moved',
+ *						800 => 'Unexpected Minotaur'
+ *				)); // sets these new values, and returns true
  *
  * @return array Associative array of the HTTP codes as keys, and the message
- *    strings as values, or null of the given $code does not exist.
+ *		strings as values, or null of the given $code does not exist.
  * @deprecated Use CakeResponse::httpCodes();
  */
 	public function httpCodes($code = null) {
@@ -742,7 +742,7 @@ class Controller extends Object implements CakeEventListener {
  * Script execution is halted after the redirect.
  *
  * @param string|array $url A string or array-based URL pointing to another location within the app,
- *     or an absolute URL
+ *		 or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
  * @return mixed void if $exit = false. Terminates script if $exit = true
@@ -826,7 +826,7 @@ class Controller extends Object implements CakeEventListener {
  *
  * @param string|array $one A string or an array of data.
  * @param string|array $two Value in case $one is a string (which then works as the key).
- *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
+ *	 Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#interacting-with-views
  */
@@ -854,8 +854,8 @@ class Controller extends Object implements CakeEventListener {
  * }}}
  *
  * @param string $action The new action to be 'redirected' to
- * @param mixed  Any other parameters passed to this method will be passed as
- *    parameters to the new action.
+ * @param mixed	Any other parameters passed to this method will be passed as
+ *		parameters to the new action.
  * @return mixed Returns the return value of the called action
  */
 	public function setAction($action) {
@@ -1013,10 +1013,10 @@ class Controller extends Object implements CakeEventListener {
  *
  * @param array $data POST'ed data organized by model and field
  * @param string|array $op A string containing an SQL comparison operator, or an array matching operators
- *        to fields
+ *				to fields
  * @param string $bool SQL boolean operator: AND, OR, XOR, etc.
  * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be
- *        included in the returned conditions
+ *				included in the returned conditions
  * @return array An array of model conditions
  * @deprecated
  */
@@ -1082,7 +1082,7 @@ class Controller extends Object implements CakeEventListener {
 	}
 
 /**
- * Called before the controller action.  You can use this method to configure and customize components
+ * Called before the controller action.	You can use this method to configure and customize components
  * or perform logic that needs to happen before each controller action.
  *
  * @return void
@@ -1109,13 +1109,13 @@ class Controller extends Object implements CakeEventListener {
  * key 'url' and optionally 'status' and 'exit'.
  *
  * @param string|array $url A string or array-based URL pointing to another location within the app,
- *     or an absolute URL
+ *		 or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
  * @return mixed
- *   false to stop redirection event,
- *   string controllers a new redirection url or
- *   array with the keys url, status and exit to be used by the redirect method.
+ *	 false to stop redirection event,
+ *	 string controllers a new redirection url or
+ *	 array with the keys url, status and exit to be used by the redirect method.
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeRedirect($url, $status = null, $exit = true) {

@@ -8,9 +8,9 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Security', 'Utility');
 App::uses('Hash', 'Utility');
@@ -18,7 +18,7 @@ App::uses('Hash', 'Utility');
 /**
  * Base Authentication class with common methods and properties.
  *
- * @package       Cake.Controller.Component.Auth
+ * @package			 Cake.Controller.Component.Auth
  */
 abstract class BaseAuthenticate {
 
@@ -28,7 +28,7 @@ abstract class BaseAuthenticate {
  * - `fields` The fields to use to identify a user by.
  * - `userModel` The model name of the User, defaults to User.
  * - `scope` Additional conditions to use when looking up and authenticating users,
- *    i.e. `array('User.is_active' => 1).`
+ *		i.e. `array('User.is_active' => 1).`
  * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
  * - `contain` Extra models to contain and store in session.
  *
@@ -130,7 +130,7 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Get a user based on information in the request.  Primarily used by stateless authentication
+ * Get a user based on information in the request.	Primarily used by stateless authentication
  * systems like basic and digest auth.
  *
  * @param CakeRequest $request Request object.

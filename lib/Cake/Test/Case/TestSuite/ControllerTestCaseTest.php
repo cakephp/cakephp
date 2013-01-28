@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.TestSuite
- * @since         CakePHP v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.TestSuite
+ * @since				 CakePHP v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Controller', 'Controller');
@@ -29,13 +29,13 @@ require_once dirname(dirname(__FILE__)) . DS . 'Model' . DS . 'models.php';
 /**
  * AppController class
  *
- * @package       Cake.Test.Case.TestSuite
+ * @package			 Cake.Test.Case.TestSuite
  */
 if (!class_exists('AppController', false)) {
 /**
  * AppController class
  *
- * @package       Cake.Test.Case.TestSuite
+ * @package			 Cake.Test.Case.TestSuite
  */
 	class AppController extends Controller {
 
@@ -104,7 +104,7 @@ class ControllerTestCaseTestController extends AppController {
 /**
  * ControllerTestCaseTest
  *
- * @package       Cake.Test.Case.TestSuite
+ * @package			 Cake.Test.Case.TestSuite
  */
 class ControllerTestCaseTest extends CakeTestCase {
 

@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Behavior
- * @since         CakePHP(tm) v 1.2.0.5669
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Behavior
+ * @since				 CakePHP(tm) v 1.2.0.5669
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -24,7 +24,7 @@
  * used for a find call. Most useful for limiting the amount of associations and
  * data returned.
  *
- * @package       Cake.Model.Behavior
+ * @package			 Cake.Model.Behavior
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html
  */
 class ContainableBehavior extends ModelBehavior {
@@ -49,13 +49,13 @@ class ContainableBehavior extends ModelBehavior {
  * Available settings:
  *
  * - recursive: (boolean, optional) set to true to allow containable to automatically
- *   determine the recursiveness level needed to fetch specified models,
- *   and set the model recursiveness to this level. setting it to false
- *   disables this feature. DEFAULTS TO: true
+ *	 determine the recursiveness level needed to fetch specified models,
+ *	 and set the model recursiveness to this level. setting it to false
+ *	 disables this feature. DEFAULTS TO: true
  * - notices: (boolean, optional) issues E_NOTICES for bindings referenced in a
- *   containable call that are not valid. DEFAULTS TO: true
+ *	 containable call that are not valid. DEFAULTS TO: true
  * - autoFields: (boolean, optional) auto-add needed fields to fetch requested
- *   bindings. DEFAULTS TO: true
+ *	 bindings. DEFAULTS TO: true
  *
  * @param Model $Model Model using the behavior
  * @param array $settings Settings to override for model.

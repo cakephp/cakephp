@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
- * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View.Helper
+ * @since				 CakePHP(tm) v 1.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppHelper', 'View/Helper');
@@ -23,8 +23,8 @@ App::uses('Xml', 'Utility');
 /**
  * RSS Helper class for easy output RSS structures.
  *
- * @package       Cake.View.Helper
- * @property      TimeHelper $Time
+ * @package			 Cake.View.Helper
+ * @property			TimeHelper $Time
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html
  */
 class RssHelper extends AppHelper {
@@ -162,7 +162,7 @@ class RssHelper extends AppHelper {
  *
  * @param array $items The list of items to be mapped
  * @param string|array $callback A string function name, or array containing an object
- *     and a string method name
+ *		 and a string method name
  * @return string A set of RSS `<item />` elements
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::items
  */

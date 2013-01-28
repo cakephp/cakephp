@@ -10,18 +10,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View.Helper
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.View.Helper
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeTime', 'Utility');
 
 /**
  * CakeTimeTest class
  *
- * @package       Cake.Test.Case.View.Helper
+ * @package			 Cake.Test.Case.View.Helper
  */
 class CakeTimeTest extends CakeTestCase {
 
@@ -721,9 +721,9 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertTrue($this->Time->wasWithinLast('5 months', '-4 months'));
 
 		$this->assertTrue($this->Time->wasWithinLast('5 ', '-3 days'));
-		$this->assertTrue($this->Time->wasWithinLast('1   ', '-1 hour'));
-		$this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
-		$this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
+		$this->assertTrue($this->Time->wasWithinLast('1	 ', '-1 hour'));
+		$this->assertTrue($this->Time->wasWithinLast('1	 ', '-1 minute'));
+		$this->assertTrue($this->Time->wasWithinLast('1	 ', '-23 hours -59 minutes -59 seconds'));
 	}
 
 /**
@@ -766,9 +766,9 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertFalse($this->Time->isWithinNext('5 months', '-4 months'));
 
 		$this->assertFalse($this->Time->isWithinNext('5 ', '-3 days'));
-		$this->assertFalse($this->Time->isWithinNext('1   ', '-1 hour'));
-		$this->assertFalse($this->Time->isWithinNext('1   ', '-1 minute'));
-		$this->assertFalse($this->Time->isWithinNext('1   ', '-23 hours -59 minutes -59 seconds'));
+		$this->assertFalse($this->Time->isWithinNext('1	 ', '-1 hour'));
+		$this->assertFalse($this->Time->isWithinNext('1	 ', '-1 minute'));
+		$this->assertFalse($this->Time->isWithinNext('1	 ', '-23 hours -59 minutes -59 seconds'));
 
 		$this->assertTrue($this->Time->isWithinNext('7 days', '6 days, 23 hours, 59 minutes, 59 seconds'));
 		$this->assertFalse($this->Time->isWithinNext('7 days', '6 days, 23 hours, 59 minutes, 61 seconds'));

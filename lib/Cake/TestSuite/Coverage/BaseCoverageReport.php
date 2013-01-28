@@ -11,18 +11,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.TestSuite.Coverage
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.TestSuite.Coverage
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
  * Abstract class for common CoverageReport methods.
  * Provides several template methods for custom output.
  *
- * @package       Cake.TestSuite.Coverage
+ * @package			 Cake.TestSuite.Coverage
  */
 abstract class BaseCoverageReport {
 
@@ -48,7 +48,7 @@ abstract class BaseCoverageReport {
 	public $pluginTest = false;
 
 /**
- * Array of test case file names.  Used to do basename() matching with
+ * Array of test case file names.	Used to do basename() matching with
  * files that have coverage to decide which results to show on page load.
  *
  * @var array
@@ -110,7 +110,7 @@ abstract class BaseCoverageReport {
 	}
 
 /**
- * Filters the coverage data by path.  Files not in the provided path will be removed.
+ * Filters the coverage data by path.	Files not in the provided path will be removed.
  *
  * @param string $path Path to filter files by.
  * @return array Array of coverage data for files that match the given path.

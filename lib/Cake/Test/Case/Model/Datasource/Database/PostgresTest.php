@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Model.Datasource.Database
- * @since         CakePHP(tm) v 1.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Test.Case.Model.Datasource.Database
+ * @since				 CakePHP(tm) v 1.2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Model', 'Model');
@@ -26,7 +26,7 @@ require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 /**
  * DboPostgresTestDb class
  *
- * @package       Cake.Test.Case.Model.Datasource.Database
+ * @package			 Cake.Test.Case.Model.Datasource.Database
  */
 class DboPostgresTestDb extends Postgres {
 
@@ -62,7 +62,7 @@ class DboPostgresTestDb extends Postgres {
 /**
  * PostgresTestModel class
  *
- * @package       Cake.Test.Case.Model.Datasource.Database
+ * @package			 Cake.Test.Case.Model.Datasource.Database
  */
 class PostgresTestModel extends Model {
 
@@ -150,7 +150,7 @@ class PostgresTestModel extends Model {
 /**
  * PostgresClientTestModel class
  *
- * @package       Cake.Test.Case.Model.Datasource.Database
+ * @package			 Cake.Test.Case.Model.Datasource.Database
  */
 class PostgresClientTestModel extends Model {
 
@@ -188,7 +188,7 @@ class PostgresClientTestModel extends Model {
 /**
  * PostgresTest class
  *
- * @package       Cake.Test.Case.Model.Datasource.Database
+ * @package			 Cake.Test.Case.Model.Datasource.Database
  */
 class PostgresTest extends CakeTestCase {
 
@@ -469,7 +469,7 @@ class PostgresTest extends CakeTestCase {
 		dw"IÊÜπ<ôÿˆ%IG1ytÛDﬂXg|Éòa§˜}C˛¿ÿe°G´Ú±jÍm~¿/∂hã<#-¥•ıùe87€t˜õ6w}´{æ
 		m‹ê–	∆¡ 6⁄\
 		rAÀBùZ3aË‚r$G·$ó0ÑüâUY4È™¡%C∑Ÿ2rc<Iõ-cï.
-		[ŒöâFA†É‡+QglMÉîÉÄúÌ|¸»#x7¥«MgVÎ-GGÚ• I?Á‘”Lzw∞pHÅ¯◊nefqCî.nÕeè∆ÿÛy¡˙fb≤üŒHÜAëÕNq=´@	’cQdÖúAÉIqñŸ˘+2&∏  Àù.gÅ‚ƒœ3EPƒOi—‰:>ÍCäı
+		[ŒöâFA†É‡+QglMÉîÉÄúÌ|¸»#x7¥«MgVÎ-GGÚ• I?Á‘”Lzw∞pHÅ¯◊nefqCî.nÕeè∆ÿÛy¡˙fb≤üŒHÜAëÕNq=´@	’cQdÖúAÉIqñŸ˘+2&∏	Àù.gÅ‚ƒœ3EPƒOi—‰:>ÍCäı
 		=Õec=ëR˝”eñ=<V$ì˙+x+¢ïÒÕ<àeWå»–˚∫Õd§&£àf ]fPA´âtënöå∏◊ó„Ë@∆≠K´÷˘}a_CI˚©yòHg,ôSSVìBƒl4 L.ÈY…á,2∂íäÙ.$ó¸CäŸ*€óy
 		π?G,_√·ÆÎç=^Vkvo±ó{§ƒ2»±¨Ïüo»ëD-ãé ﬁó¥cVÙ\'™G~\'p¢%* ã˚÷
 		ªºnh˚ºO^∏…®[Ó“‚ÅfıÌ≥∫F!Eœ(π∑T6`¬tΩÆ0ì»rTÎ`»Ñ«

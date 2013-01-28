@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Utility
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Utility
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Set', 'Utility');
 App::uses('Model', 'Model');
@@ -22,7 +22,7 @@ App::uses('Model', 'Model');
 /**
  * SetTest class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class SetTest extends CakeTestCase {
 
@@ -1221,21 +1221,21 @@ class SetTest extends CakeTestCase {
 
 		$nonSequential = array(
 			'User' => array(
-				0  => array('id' => 1),
-				2  => array('id' => 2),
-				6  => array('id' => 3),
-				9  => array('id' => 4),
-				3  => array('id' => 5),
+				0	=> array('id' => 1),
+				2	=> array('id' => 2),
+				6	=> array('id' => 3),
+				9	=> array('id' => 4),
+				3	=> array('id' => 5),
 			),
 		);
 
 		$nonZero = array(
 			'User' => array(
-				2  => array('id' => 1),
-				4  => array('id' => 2),
-				6  => array('id' => 3),
-				9  => array('id' => 4),
-				3  => array('id' => 5),
+				2	=> array('id' => 1),
+				4	=> array('id' => 2),
+				6	=> array('id' => 3),
+				9	=> array('id' => 4),
+				3	=> array('id' => 5),
 			),
 		);
 
@@ -1693,7 +1693,7 @@ class SetTest extends CakeTestCase {
 
 		$result = Set::remove($a, 'files');
 		$expected = array(
-			'pages'     => array('name' => 'page')
+			'pages'		 => array('name' => 'page')
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -3114,7 +3114,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('one' => null, 'two' => null, 'three' => null);
 		$this->assertEquals($expected, $result);
 
-		$result = Set::normalize('one  ,  two   ,  three   ', true, ',', true);
+		$result = Set::normalize('one	,	two	 ,	three	 ', true, ',', true);
 		$expected = array('one' => null, 'two' => null, 'three' => null);
 		$this->assertEquals($expected, $result);
 	}

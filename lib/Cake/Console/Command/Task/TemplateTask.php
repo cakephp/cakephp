@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.3
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -23,7 +23,7 @@ App::uses('Folder', 'Utility');
  * Template Task can generate templated output Used in other Tasks.
  * Acts like a simplified View class.
  *
- * @package       Cake.Console.Command.Task
+ * @package			 Cake.Console.Command.Task
  */
 class TemplateTask extends AppShell {
 
@@ -43,7 +43,7 @@ class TemplateTask extends AppShell {
 	public $templatePaths = array();
 
 /**
- * Initialize callback.  Setup paths for the template task.
+ * Initialize callback.	Setup paths for the template task.
  *
  * @return void
  */
@@ -108,7 +108,7 @@ class TemplateTask extends AppShell {
  *
  * @param string|array $one A string or an array of data.
  * @param string|array $two Value in case $one is a string (which then works as the key).
- *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
+ *	 Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
  */
 	public function set($one, $two = null) {

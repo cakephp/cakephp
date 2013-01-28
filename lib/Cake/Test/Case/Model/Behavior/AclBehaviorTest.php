@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Model.Behavior
- * @since         CakePHP v 1.2.0.4487
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.Model.Behavior
+ * @since				 CakePHP v 1.2.0.4487
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AclBehavior', 'Model/Behavior');
@@ -29,7 +29,7 @@ App::uses('DbAcl', 'Model');
 /**
  * Test Person class - self joined model
  *
- * @package       Cake.Test.Case.Model.Behavior
+ * @package			 Cake.Test.Case.Model.Behavior
  */
 class AclPerson extends CakeTestModel {
 
@@ -104,7 +104,7 @@ class AclPerson extends CakeTestModel {
 /**
  * AclUser class
  *
- * @package       Cake.Test.Case.Model.Behavior
+ * @package			 Cake.Test.Case.Model.Behavior
  */
 class AclUser extends CakeTestModel {
 
@@ -142,7 +142,7 @@ class AclUser extends CakeTestModel {
 /**
  * AclPost class
  *
- * @package       Cake.Test.Case.Model.Behavior
+ * @package			 Cake.Test.Case.Model.Behavior
  */
 class AclPost extends CakeTestModel {
 
@@ -180,7 +180,7 @@ class AclPost extends CakeTestModel {
 /**
  * AclBehaviorTest class
  *
- * @package       Cake.Test.Case.Model.Behavior
+ * @package			 Cake.Test.Case.Model.Behavior
  */
 class AclBehaviorTest extends CakeTestCase {
 

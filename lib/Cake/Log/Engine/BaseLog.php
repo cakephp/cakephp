@@ -4,17 +4,17 @@
  *
  * PHP 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
+ * CakePHP(tm) :	Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package       Cake.Log.Engine
- * @since         CakePHP(tm) v 2.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @package			 Cake.Log.Engine
+ * @since				 CakePHP(tm) v 2.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeLogInterface', 'Log');
@@ -22,7 +22,7 @@ App::uses('CakeLogInterface', 'Log');
 /**
  * Base log engine class.
  *
- * @package       Cake.Log.Engine
+ * @package			 Cake.Log.Engine
  */
 abstract class BaseLog implements CakeLogInterface {
 
@@ -43,7 +43,7 @@ abstract class BaseLog implements CakeLogInterface {
 	}
 
 /**
- * Sets instance config.  When $config is null, returns config array
+ * Sets instance config.	When $config is null, returns config array
  *
  * Config
  *

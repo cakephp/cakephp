@@ -6,18 +6,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource
- * @since         CakePHP(tm) v 2.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Datasource
+ * @since				 CakePHP(tm) v 2.1
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
- * Interface for Session handlers.  Custom session handler classes should implement
+ * Interface for Session handlers.	Custom session handler classes should implement
  * this interface as it allows CakeSession know how to map methods to session_set_save_handler()
  *
- * @package       Cake.Model.Datasource.Session
+ * @package			 Cake.Model.Datasource.Session
  */
 interface CakeSessionHandlerInterface {
 
@@ -61,7 +61,7 @@ interface CakeSessionHandlerInterface {
 	public function destroy($id);
 
 /**
- * Run the Garbage collection on the session storage.  This method should vacuum all
+ * Run the Garbage collection on the session storage.	This method should vacuum all
  * expired or dead sessions.
  *
  * @param integer $expires Timestamp (defaults to current time)

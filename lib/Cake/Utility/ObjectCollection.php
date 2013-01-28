@@ -6,22 +6,22 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
- * Deals with Collections of objects.  Keeping registries of those objects,
+ * Deals with Collections of objects.	Keeping registries of those objects,
  * loading and constructing new objects and triggering callbacks. Each subclass needs
  * to implement its own load() functionality.
  *
  * All core subclasses of ObjectCollection by convention loaded objects are stored
- * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`.  In addition
+ * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`.	In addition
  * the all support an `enabled` option that controls the enabled/disabled state of the object
  * when loaded.
  *
- * @package       Cake.Utility
+ * @package			 Cake.Utility
  * @since CakePHP(tm) v 2.0
  */
 abstract class ObjectCollection {
@@ -61,31 +61,31 @@ abstract class ObjectCollection {
 
 /**
  * Trigger a callback method on every object in the collection.
- * Used to trigger methods on objects in the collection.  Will fire the methods in the
+ * Used to trigger methods on objects in the collection.	Will fire the methods in the
  * order they were attached.
  *
  * ### Options
  *
  * - `breakOn` Set to the value or values you want the callback propagation to stop on.
- *    Can either be a scalar value, or an array of values to break on. Defaults to `false`.
+ *		Can either be a scalar value, or an array of values to break on. Defaults to `false`.
  *
  * - `break` Set to true to enabled breaking. When a trigger is broken, the last returned value
- *    will be returned.  If used in combination with `collectReturn` the collected results will be returned.
- *    Defaults to `false`.
+ *		will be returned.	If used in combination with `collectReturn` the collected results will be returned.
+ *		Defaults to `false`.
  *
  * - `collectReturn` Set to true to collect the return of each object into an array.
- *    This array of return values will be returned from the trigger() call. Defaults to `false`.
+ *		This array of return values will be returned from the trigger() call. Defaults to `false`.
  *
  * - `modParams` Allows each object the callback gets called on to modify the parameters to the next object.
- *    Setting modParams to an integer value will allow you to modify the parameter with that index.
- *    Any non-null value will modify the parameter index indicated.
- *    Defaults to false.
+ *		Setting modParams to an integer value will allow you to modify the parameter with that index.
+ *		Any non-null value will modify the parameter index indicated.
+ *		Defaults to false.
  *
  *
  * @param string $callback|CakeEvent Method to fire on all the objects. Its assumed all the objects implement
- *   the method you are calling. If an instance of CakeEvent is provided, then then Event name will parsed to
- *   get the callback name. This is done by getting the last word after any dot in the event name
- *   (eg. `Model.afterSave` event will trigger the `afterSave` callback)
+ *	 the method you are calling. If an instance of CakeEvent is provided, then then Event name will parsed to
+ *	 get the callback name. This is done by getting the last word after any dot in the event name
+ *	 (eg. `Model.afterSave` event will trigger the `afterSave` callback)
  * @param array $params Array of parameters for the triggered callback.
  * @param array $options Array of options.
  * @return mixed Either the last result or all results if collectReturn is on.
@@ -233,7 +233,7 @@ abstract class ObjectCollection {
 	}
 
 /**
- * Disables callbacks on a object or array of objects.  Public object methods are still
+ * Disables callbacks on a object or array of objects.	Public object methods are still
  * callable as normal.
  *
  * @param string|array $name CamelCased name of the objects(s) to disable (string or array)
@@ -248,10 +248,10 @@ abstract class ObjectCollection {
 /**
  * Gets the list of currently-enabled objects, or, the current status of a single objects
  *
- * @param string $name Optional.  The name of the object to check the status of.  If omitted,
- *   returns an array of currently-enabled object
+ * @param string $name Optional.	The name of the object to check the status of.	If omitted,
+ *	 returns an array of currently-enabled object
  * @return mixed If $name is specified, returns the boolean status of the corresponding object.
- *   Otherwise, returns an array of all enabled objects.
+ *	 Otherwise, returns an array of all enabled objects.
  */
 	public function enabled($name = null) {
 		if (!empty($name)) {
@@ -263,10 +263,10 @@ abstract class ObjectCollection {
 /**
  * Gets the list of attached objects, or, whether the given object is attached
  *
- * @param string $name Optional.  The name of the behavior to check the status of.  If omitted,
- *   returns an array of currently-attached behaviors
+ * @param string $name Optional.	The name of the behavior to check the status of.	If omitted,
+ *	 returns an array of currently-attached behaviors
  * @return mixed If $name is specified, returns the boolean status of the corresponding behavior.
- *    Otherwise, returns an array of all attached behaviors.
+ *		Otherwise, returns an array of all attached behaviors.
  */
 	public function attached($name = null) {
 		if (!empty($name)) {

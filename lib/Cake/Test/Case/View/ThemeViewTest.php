@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.View
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('View', 'View');
 App::uses('ThemeView', 'View');
@@ -24,7 +24,7 @@ App::uses('Controller', 'Controller');
 /**
  * ThemePosts2Controller class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class ThemePosts2Controller extends Controller {
 
@@ -55,7 +55,7 @@ class ThemePosts2Controller extends Controller {
 /**
  * TestTheme2View class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class TestTheme2View extends ThemeView {
 
@@ -95,7 +95,7 @@ class TestTheme2View extends ThemeView {
 /**
  * ThemeViewTest class
  *
- * @package       Cake.Test.Case.View
+ * @package			 Cake.Test.Case.View
  */
 class ThemeViewTest extends CakeTestCase {
 

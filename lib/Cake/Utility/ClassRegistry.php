@@ -6,11 +6,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP(tm) v 0.9.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP(tm) v 0.9.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -27,7 +27,7 @@ App::uses('ConnectionManager', 'Model');
  * If you try to add an object with the same key twice, nothing will come of it.
  * If you need a second instance of an object, give it another key.
  *
- * @package       Cake.Utility
+ * @package			 Cake.Utility
  */
 class ClassRegistry {
 
@@ -77,7 +77,7 @@ class ClassRegistry {
  * Model Classes can accept optional ```array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);```
  *
  * When $class is a numeric keyed array, multiple class instances will be stored in the registry,
- *  no instance of the object will be returned
+ *	no instance of the object will be returned
  * {{{
  * array(
  *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry'),
@@ -86,7 +86,7 @@ class ClassRegistry {
  * );
  * }}}
  * @param string|array $class as a string or a single key => value array instance will be created,
- *  stored in the registry and returned.
+ *	stored in the registry and returned.
  * @param boolean $strict if set to true it will return false if the class was not found instead
  *	of trying to create an AppModel
  * @return object instance of ClassName.
@@ -274,11 +274,11 @@ class ClassRegistry {
 /**
  * Sets the default constructor parameter for an object type
  *
- * @param string $type Type of object.  If this parameter is omitted, defaults to "Model"
+ * @param string $type Type of object.	If this parameter is omitted, defaults to "Model"
  * @param array $param The parameter that will be passed to object constructors when objects
- *                      of $type are created
- * @return mixed Void if $param is being set.  Otherwise, if only $type is passed, returns
- *               the previously-set value of $param, or null if not set.
+ *											of $type are created
+ * @return mixed Void if $param is being set.	Otherwise, if only $type is passed, returns
+ *							 the previously-set value of $param, or null if not set.
  */
 	public static function config($type, $param = array()) {
 		$_this = ClassRegistry::getInstance();
@@ -304,7 +304,7 @@ class ClassRegistry {
  * @param string $class
  * @return boolean
  */
-	protected function &_duplicate($alias,  $class) {
+	protected function &_duplicate($alias,	$class) {
 		$duplicate = false;
 		if ($this->isKeySet($alias)) {
 			$model = $this->getObject($alias);

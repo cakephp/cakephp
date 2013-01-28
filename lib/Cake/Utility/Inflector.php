@@ -6,11 +6,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP(tm) v 0.2.9
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -19,8 +19,8 @@
  * Inflector pluralizes and singularizes English nouns.
  * Used by Cake's naming conventions throughout the framework.
  *
- * @package       Cake.Utility
- * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html
+ * @package			 Cake.Utility
+ * @link					http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html
  */
 class Inflector {
 
@@ -284,9 +284,9 @@ class Inflector {
  * {{{
  * Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
  * Inflector::rules('plural', array(
- *     'rules' => array('/^(inflect)ors$/i' => '\1ables'),
- *     'uninflected' => array('dontinflectme'),
- *     'irregular' => array('red' => 'redlings')
+ *		 'rules' => array('/^(inflect)ors$/i' => '\1ables'),
+ *		 'uninflected' => array('dontinflectme'),
+ *		 'irregular' => array('red' => 'redlings')
  * ));
  * Inflector::rules('transliteration', array('/å/' => 'aa'));
  * }}}
@@ -294,7 +294,7 @@ class Inflector {
  * @param string $type The type of inflection, either 'plural', 'singular' or 'transliteration'
  * @param array $rules Array of rules to be added.
  * @param boolean $reset If true, will unset default inflections for all
- *        new rules that are being defined in $rules.
+ *				new rules that are being defined in $rules.
  * @return void
  */
 	public static function rules($type, $rules, $reset = false) {

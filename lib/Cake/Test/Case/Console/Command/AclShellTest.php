@@ -4,17 +4,17 @@
  *
  * PHP 5
  *
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
+ * CakePHP :	Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command
- * @since         CakePHP v 1.2.0.7726
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.Console.Command
+ * @since				 CakePHP v 1.2.0.7726
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ConsoleOutput', 'Console');
@@ -27,7 +27,7 @@ App::uses('ComponentCollection', 'Controller');
 /**
  * AclShellTest class
  *
- * @package       Cake.Test.Case.Console.Command
+ * @package			 Cake.Test.Case.Console.Command
  */
 class AclShellTest extends CakeTestCase {
 
@@ -100,9 +100,9 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->args = array('aro', 'admins');
 
 		$this->Task->expects($this->at(0))->method('out')->with('Aro tree:');
-		$this->Task->expects($this->at(2))->method('out')->with('  [2] admins');
-		$this->Task->expects($this->at(3))->method('out')->with('    [3] Gandalf');
-		$this->Task->expects($this->at(4))->method('out')->with('    [4] Elrond');
+		$this->Task->expects($this->at(2))->method('out')->with('	[2] admins');
+		$this->Task->expects($this->at(3))->method('out')->with('		[3] Gandalf');
+		$this->Task->expects($this->at(4))->method('out')->with('		[4] Elrond');
 
 		$this->Task->view();
 	}
@@ -292,8 +292,8 @@ class AclShellTest extends CakeTestCase {
 		$second = $node[1]['Aro']['id'];
 		$last = $node[2]['Aro']['id'];
 		$this->Task->expects($this->at(2))->method('out')->with('[' . $last . '] ROOT');
-		$this->Task->expects($this->at(3))->method('out')->with('  [' . $second . '] admins');
-		$this->Task->expects($this->at(4))->method('out')->with('    [' . $first . '] Elrond');
+		$this->Task->expects($this->at(3))->method('out')->with('	[' . $second . '] admins');
+		$this->Task->expects($this->at(4))->method('out')->with('		[' . $first . '] Elrond');
 		$this->Task->getPath();
 	}
 

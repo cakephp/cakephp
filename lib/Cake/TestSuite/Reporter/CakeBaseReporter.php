@@ -10,24 +10,24 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.3
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 require_once 'PHPUnit/TextUI/ResultPrinter.php';
 
 /**
  * CakeBaseReporter contains common reporting features used in the CakePHP Test suite
  *
- * @package       Cake.TestSuite.Reporter
+ * @package			 Cake.TestSuite.Reporter
  */
 class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 
 	protected $_headerSent = false;
 
 /**
- * Array of request parameters.  Usually parsed GET params.
+ * Array of request parameters.	Usually parsed GET params.
  *
  * @var array
  */
@@ -124,9 +124,9 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 /**
  * An error occurred.
  *
- * @param  PHPUnit_Framework_Test $test
- * @param  Exception              $e
- * @param  float                  $time
+ * @param	PHPUnit_Framework_Test $test
+ * @param	Exception							$e
+ * @param	float									$time
  */
 	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
 		$this->paintException($e, $test);
@@ -135,9 +135,9 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 /**
  * A failure occurred.
  *
- * @param  PHPUnit_Framework_Test $test
- * @param  PHPUnit_Framework_AssertionFailedError $e
- * @param  float $time
+ * @param	PHPUnit_Framework_Test $test
+ * @param	PHPUnit_Framework_AssertionFailedError $e
+ * @param	float $time
  */
 	public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
 		$this->paintFail($e, $test);
@@ -146,9 +146,9 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 /**
  * Incomplete test.
  *
- * @param  PHPUnit_Framework_Test $test
- * @param  Exception $e
- * @param  float $time
+ * @param	PHPUnit_Framework_Test $test
+ * @param	Exception $e
+ * @param	float $time
  */
 	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
 		$this->paintSkip($e, $test);
@@ -157,9 +157,9 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 /**
  * Skipped test.
  *
- * @param  PHPUnit_Framework_Test $test
- * @param  Exception $e
- * @param  float $time
+ * @param	PHPUnit_Framework_Test $test
+ * @param	Exception $e
+ * @param	float $time
  */
 	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
 		$this->paintSkip($e, $test);
@@ -168,19 +168,19 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 /**
  * A test suite started.
  *
- * @param  PHPUnit_Framework_TestSuite $suite
+ * @param	PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
 		if (!$this->_headerSent) {
 			echo $this->paintHeader();
 		}
-		echo __d('cake_dev', 'Running  %s', $suite->getName()) . "\n";
+		echo __d('cake_dev', 'Running	%s', $suite->getName()) . "\n";
 	}
 
 /**
  * A test suite ended.
  *
- * @param  PHPUnit_Framework_TestSuite $suite
+ * @param	PHPUnit_Framework_TestSuite $suite
  */
 	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
 	}
@@ -188,7 +188,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 /**
  * A test started.
  *
- * @param  PHPUnit_Framework_Test $test
+ * @param	PHPUnit_Framework_Test $test
  */
 	public function startTest(PHPUnit_Framework_Test $test) {
 	}
@@ -196,8 +196,8 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 /**
  * A test ended.
  *
- * @param  PHPUnit_Framework_Test $test
- * @param  float $time
+ * @param	PHPUnit_Framework_Test $test
+ * @param	float $time
  */
 	public function endTest(PHPUnit_Framework_Test $test, $time) {
 		$this->numAssertions += $test->getNumAssertions();

@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command.Task
- * @since         CakePHP v 1.2.6
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.Console.Command.Task
+ * @since				 CakePHP v 1.2.6
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -30,7 +30,7 @@ App::uses('ModelTask', 'Console/Command/Task');
 /**
  * ModelTaskTest class
  *
- * @package	   Cake.Test.Case.Console.Command.Task
+ * @package		 Cake.Test.Case.Console.Command.Task
  */
 class ModelTaskTest extends CakeTestCase {
 
@@ -62,7 +62,7 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * Setup a mock that has out mocked.  Normally this is not used as it makes $this->at() really tricky.
+ * Setup a mock that has out mocked.	Normally this is not used as it makes $this->at() really tricky.
  *
  * @return void
  */

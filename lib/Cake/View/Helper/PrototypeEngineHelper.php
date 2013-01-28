@@ -13,11 +13,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
- * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View.Helper
+ * @since				 CakePHP(tm) v 1.3
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('JsBaseEngineHelper', 'View/Helper');
@@ -28,7 +28,7 @@ App::uses('JsBaseEngineHelper', 'View/Helper');
  * Provides Prototype specific Javascript for JsHelper. Requires at least
  * Prototype 1.6
  *
- * @package       Cake.View.Helper
+ * @package			 Cake.View.Helper
  */
 class PrototypeEngineHelper extends JsBaseEngineHelper {
 

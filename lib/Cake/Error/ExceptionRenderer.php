@@ -2,7 +2,7 @@
 /**
  * Exception Renderer
  *
- * Provides Exception rendering features.  Which allow exceptions to be rendered
+ * Provides Exception rendering features.	Which allow exceptions to be rendered
  * as HTML pages.
  *
  * PHP 5
@@ -13,11 +13,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Error
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Error
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Sanitize', 'Utility');
@@ -29,7 +29,7 @@ App::uses('Controller', 'Controller');
  * Exception Renderer.
  *
  * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
- * When debug < 1 a CakeException will render 404 or  500 errors.  If an uncaught exception is thrown
+ * When debug < 1 a CakeException will render 404 or	500 errors.	If an uncaught exception is thrown
  * and it is a type that ExceptionHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception rendering
@@ -41,8 +41,8 @@ App::uses('Controller', 'Controller');
  *
  * #### Using AppController::appError();
  *
- * This controller method is called instead of the default exception handling.  It receives the
- * thrown exception as its only argument.  You should implement your error handling in that method.
+ * This controller method is called instead of the default exception handling.	It receives the
+ * thrown exception as its only argument.	You should implement your error handling in that method.
  *
  * #### Using a subclass of ExceptionRenderer
  *
@@ -50,7 +50,7 @@ App::uses('Controller', 'Controller');
  * can configure your class in your core.php, with `Configure::write('Exception.renderer', 'MyClass');`
  * You should place any custom exception renderers in `app/Lib/Error`.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class ExceptionRenderer {
 

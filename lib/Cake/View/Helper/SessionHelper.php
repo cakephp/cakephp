@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
- * @since         CakePHP(tm) v 1.1.7.3328
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View.Helper
+ * @since				 CakePHP(tm) v 1.1.7.3328
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppHelper', 'View/Helper');
@@ -25,7 +25,7 @@ App::uses('CakeSession', 'Model/Datasource');
  *
  * Session reading from the view.
  *
- * @package       Cake.View.Helper
+ * @package			 Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html
  */
 class SessionHelper extends AppHelper {
@@ -75,7 +75,7 @@ class SessionHelper extends AppHelper {
  * In your view: $this->Session->flash('somekey');
  * Will default to flash if no param is passed
  *
- * You can pass additional information into the flash message generation.  This allows you
+ * You can pass additional information into the flash message generation.	This allows you
  * to consolidate all the parameters for a given type of flash message into the view.
  *
  * {{{
@@ -112,7 +112,7 @@ class SessionHelper extends AppHelper {
  *
  * @param string $key The [Message.]key you are rendering in the view.
  * @param array $attrs Additional attributes to use for the creation of this flash message.
- *    Supports the 'params', and 'element' keys that are used in the helper.
+ *		Supports the 'params', and 'element' keys that are used in the helper.
  * @return string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::flash
  */

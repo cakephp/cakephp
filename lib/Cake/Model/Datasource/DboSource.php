@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Datasource
+ * @since				 CakePHP(tm) v 0.10.0.1076
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('DataSource', 'Model/Datasource');
@@ -26,7 +26,7 @@ App::uses('View', 'View');
  *
  * Creates DBO-descendant objects from a given db connection configuration
  *
- * @package       Cake.Model.Datasource
+ * @package			 Cake.Model.Datasource
  */
 class DboSource extends DataSource {
 
@@ -52,8 +52,8 @@ class DboSource extends DataSource {
 	public $alias = 'AS ';
 
 /**
- * Caches result from query parsing operations.  Cached results for both DboSource::name() and
- * DboSource::conditions() will be stored here.  Method caching uses `md5()`. If you have
+ * Caches result from query parsing operations.	Cached results for both DboSource::name() and
+ * DboSource::conditions() will be stored here.	Method caching uses `md5()`. If you have
  * problems with collisions, set DboSource::$cacheMethods to false.
  *
  * @var array
@@ -62,7 +62,7 @@ class DboSource extends DataSource {
 
 /**
  * Whether or not to cache the results of DboSource::name() and DboSource::conditions()
- * into the memory cache.  Set to false to disable the use of the memory cache.
+ * into the memory cache.	Set to false to disable the use of the memory cache.
  *
  * @var boolean.
  */
@@ -379,7 +379,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Returns an object to represent a database expression in a query.  Expression objects
+ * Returns an object to represent a database expression in a query.	Expression objects
  * are not sanitized or escaped.
  *
  * @param string $expression An arbitrary SQL expression to be inserted into a query.
@@ -527,11 +527,11 @@ class DboSource extends DataSource {
  * @return resource Result resource identifier.
  */
 	public function query() {
-		$args	  = func_get_args();
-		$fields	  = null;
-		$order	  = null;
-		$limit	  = null;
-		$page	  = null;
+		$args		= func_get_args();
+		$fields		= null;
+		$order		= null;
+		$limit		= null;
+		$page		= null;
 		$recursive = null;
 
 		if (count($args) === 1) {
@@ -644,9 +644,9 @@ class DboSource extends DataSource {
  * ### Options
  *
  * - `cache` - Returns the cached version of the query, if exists and stores the result in cache.
- *   This is a non-persistent cache, and only lasts for a single request. This option
- *   defaults to true. If you are directly calling this method, you can disable caching
- *   by setting $options to `false`
+ *	 This is a non-persistent cache, and only lasts for a single request. This option
+ *	 defaults to true. If you are directly calling this method, you can disable caching
+ *	 by setting $options to `false`
  *
  * @param string $sql SQL statement
  * @param array $params parameters to be bound as values for the SQL statement
@@ -759,7 +759,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Cache a value into the methodCaches.  Will respect the value of DboSource::$cacheMethods.
+ * Cache a value into the methodCaches.	Will respect the value of DboSource::$cacheMethods.
  * Will retrieve a value from the cache if $value is null.
  *
  * If caching is disabled and a write is attempted, the $value will be returned.
@@ -788,12 +788,12 @@ class DboSource extends DataSource {
  * Returns a quoted name of $data for use in an SQL statement.
  * Strips fields out of SQL functions before quoting.
  *
- * Results of this method are stored in a memory cache.  This improves performance, but
+ * Results of this method are stored in a memory cache.	This improves performance, but
  * because the method uses a hashing algorithm it can have collisions.
  * Setting DboSource::$cacheMethods to false will disable the memory cache.
  *
  * @param mixed $data Either a string with a column to quote. An array of columns to quote or an
- *   object from DboSource::expression() or DboSource::identifier()
+ *	 object from DboSource::expression() or DboSource::identifier()
  * @return string SQL field
  */
 	public function name($data) {
@@ -888,7 +888,7 @@ class DboSource extends DataSource {
 
 /**
  * Outputs the contents of the queries log. If in a non-CLI environment the sql_log element
- * will be rendered and output.  If in a CLI environment, a plain text log is generated.
+ * will be rendered and output.	If in a CLI environment, a plain text log is generated.
  *
  * @param boolean $sorted Get the queries sorted by time taken, defaults to false.
  * @return void
@@ -976,9 +976,9 @@ class DboSource extends DataSource {
  *
  * @param Model $model Model object that the record is for.
  * @param array $fields An array of field names to insert. If null, $model->data will be
- *   used to generate field names.
+ *	 used to generate field names.
  * @param array $values An array of values with keys matching the fields. If null, $model->data will
- *   be used to generate values.
+ *	 be used to generate values.
  * @return boolean Success
  */
 	public function create(Model $model, $fields = null, $values = null) {
@@ -1024,7 +1024,7 @@ class DboSource extends DataSource {
  * @param Model $model A Model object that the query is for.
  * @param array $queryData An array of queryData information containing keys similar to Model::find()
  * @param integer $recursive Number of levels of association
- * @return mixed boolean false on error/failure.  An array of results on success.
+ * @return mixed boolean false on error/failure.	An array of results on success.
  */
 	public function read(Model $model, $queryData = array(), $recursive = null) {
 		$queryData = $this->_scrubQueryData($queryData);
@@ -1166,7 +1166,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Queries associations.  Used to fetch results on recursive models.
+ * Queries associations.	Used to fetch results on recursive models.
  *
  * @param Model $model Primary Model object
  * @param Model $linkModel Linked model that
@@ -1743,7 +1743,7 @@ class DboSource extends DataSource {
 /**
  * Renders a final SQL statement by putting together the component parts in the correct order
  *
- * @param string $type type of query being run.  e.g select, create, update, delete, schema, alter.
+ * @param string $type type of query being run.	e.g select, create, update, delete, schema, alter.
  * @param array $data Array of data to insert into the query.
  * @return string Rendered SQL expression to be run.
  */
@@ -2185,13 +2185,13 @@ class DboSource extends DataSource {
 
 /**
  * Creates a default set of conditions from the model if $conditions is null/empty.
- * If conditions are supplied then they will be returned.  If a model doesn't exist and no conditions
+ * If conditions are supplied then they will be returned.	If a model doesn't exist and no conditions
  * were provided either null or false will be returned based on what was input.
  *
  * @param Model $model
  * @param string|array|boolean $conditions Array of conditions, conditions string, null or false. If an array of conditions,
- *   or string conditions those conditions will be returned.  With other values the model's existence will be checked.
- *   If the model doesn't exist a null or false will be returned depending on the input value.
+ *	 or string conditions those conditions will be returned.	With other values the model's existence will be checked.
+ *	 If the model doesn't exist a null or false will be returned depending on the input value.
  * @param boolean $useAlias Use model aliases rather than table names when generating conditions
  * @return mixed Either null, false, $conditions or an array of default conditions to use.
  * @see DboSource::update()
@@ -2379,11 +2379,11 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Creates a WHERE clause by parsing given conditions data.  If an array or string
- * conditions are provided those conditions will be parsed and quoted.  If a boolean
- * is given it will be integer cast as condition.  Null will return 1 = 1.
+ * Creates a WHERE clause by parsing given conditions data.	If an array or string
+ * conditions are provided those conditions will be parsed and quoted.	If a boolean
+ * is given it will be integer cast as condition.	Null will return 1 = 1.
  *
- * Results of this method are stored in a memory cache.  This improves performance, but
+ * Results of this method are stored in a memory cache.	This improves performance, but
  * because the method uses a hashing algorithm it can have collisions.
  * Setting DboSource::$cacheMethods to false will disable the memory cache.
  *
@@ -2425,7 +2425,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Creates a WHERE clause by parsing given conditions array.  Used by DboSource::conditions().
+ * Creates a WHERE clause by parsing given conditions array.	Used by DboSource::conditions().
  *
  * @param array $conditions Array or string of conditions
  * @param boolean $quoteValues If true, values should be quoted
@@ -2892,9 +2892,9 @@ class DboSource extends DataSource {
  *
  * @param string $table The table being inserted into.
  * @param array $fields The array of field/column names being inserted.
- * @param array $values The array of values to insert.  The values should
- *   be an array of rows.  Each row should have values keyed by the column name.
- *   Each row must have the values in the same order as $fields.
+ * @param array $values The array of values to insert.	The values should
+ *	 be an array of rows.	Each row should have values keyed by the column name.
+ *	 Each row must have the values in the same order as $fields.
  * @return boolean
  */
 	public function insertMulti($table, $fields, $values) {
@@ -2950,8 +2950,8 @@ class DboSource extends DataSource {
  * Generate a database-native schema for the given Schema object
  *
  * @param Model $schema An instance of a subclass of CakeSchema
- * @param string $tableName Optional.  If specified only the table name given will be generated.
- *   Otherwise, all tables defined in the schema are generated.
+ * @param string $tableName Optional.	If specified only the table name given will be generated.
+ *	 Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	public function createSchema($schema, $tableName = null) {
@@ -3025,8 +3025,8 @@ class DboSource extends DataSource {
  * Generate a "drop table" statement for the given Schema object
  *
  * @param CakeSchema $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
- *   Otherwise, all tables defined in the schema are generated.
+ * @param string $table Optional.	If specified only the table name given will be generated.
+ *	 Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	public function dropSchema(CakeSchema $schema, $table = null) {
@@ -3044,7 +3044,7 @@ class DboSource extends DataSource {
  * Generate a database-native column schema string
  *
  * @param array $column An array structured like the following: array('name' => 'value', 'type' => 'value'[, options]),
- *   where options can be 'default', 'length', or 'key'.
+ *	 where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	public function buildColumn($column) {

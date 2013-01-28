@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.TestSuite
- * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.TestSuite
+ * @since				 CakePHP(tm) v 1.3
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'Case');
@@ -25,7 +25,7 @@ App::uses('CakeTestSuiteCommand', 'TestSuite');
 /**
  * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
  *
- * @package       Cake.TestSuite
+ * @package			 Cake.TestSuite
  */
 class CakeTestSuiteDispatcher {
 
@@ -55,7 +55,7 @@ class CakeTestSuiteDispatcher {
 	protected $_baseUrl;
 
 /**
- * Base dir of the request.  Used for accessing assets.
+ * Base dir of the request.	Used for accessing assets.
  *
  * @var string
  */
@@ -117,7 +117,7 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
- * Checks that PHPUnit is installed.  Will exit if it doesn't
+ * Checks that PHPUnit is installed.	Will exit if it doesn't
  *
  * @return void
  */

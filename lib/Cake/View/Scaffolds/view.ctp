@@ -9,11 +9,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Scaffolds
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View.Scaffolds
+ * @since				 CakePHP(tm) v 0.10.0.1076
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
 <div class="<?php echo $pluralVar; ?> view">
@@ -51,7 +51,7 @@ foreach ($scaffoldFields as $_field) {
 	<ul>
 <?php
 	echo "\t\t<li>";
-	echo $this->Html->link(__d('cake', 'Edit %s', $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey]));
+	echo $this->Html->link(__d('cake', 'Edit %s', $singularHumanName),	 array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey]));
 	echo " </li>\n";
 
 	echo "\t\t<li>";

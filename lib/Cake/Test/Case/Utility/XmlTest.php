@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Utility
- * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Utility
+ * @since				 CakePHP(tm) v 1.2.0.5432
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Xml', 'Utility');
 App::uses('CakeTestModel', 'TestSuite/Fixture');
@@ -22,7 +22,7 @@ App::uses('CakeTestModel', 'TestSuite/Fixture');
 /**
  * Article class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class XmlArticle extends CakeTestModel {
 
@@ -49,7 +49,7 @@ class XmlArticle extends CakeTestModel {
 /**
  * User class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class XmlUser extends CakeTestModel {
 
@@ -75,7 +75,7 @@ class XmlUser extends CakeTestModel {
 /**
  * XmlTest class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class XmlTest extends CakeTestCase {
 
@@ -646,7 +646,7 @@ XML;
 					),
 					'title' => 'The Bakery: ',
 					'link' => 'http://bakery.cakephp.org/',
-					'description' => 'Recent  Articles at The Bakery.',
+					'description' => 'Recent	Articles at The Bakery.',
 					'pubDate' => 'Sun, 12 Sep 2010 04:18:26 -0500',
 					'item' => array(
 						array(
@@ -669,7 +669,7 @@ XML;
 	<atom:link href="http://bakery.cakephp.org/articles/rss" rel="self" type="application/rss+xml"/>
 	<title>The Bakery: </title>
 	<link>http://bakery.cakephp.org/</link>
-	<description>Recent  Articles at The Bakery.</description>
+	<description>Recent	Articles at The Bakery.</description>
 	<pubDate>Sun, 12 Sep 2010 04:18:26 -0500</pubDate>
 	<item>
 		<title>CakePHP 1.3.4 released</title>
@@ -1049,9 +1049,9 @@ XML;
 		$file = CAKE . 'VERSION.txt';
 		$xml = <<<XML
 <!DOCTYPE cakephp [
-  <!ENTITY payload SYSTEM "file://$file" >]>
+	<!ENTITY payload SYSTEM "file://$file" >]>
 <request>
-  <xxe>&payload;</xxe>
+	<xxe>&payload;</xxe>
 </request>
 XML;
 		try {

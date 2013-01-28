@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Hash', 'Utility');
 
@@ -25,7 +25,7 @@ App::uses('Hash', 'Utility');
  *
  * `$request['controller']` or `$request->controller`.
  *
- * @package       Cake.Network
+ * @package			 Cake.Network
  */
 class CakeRequest implements ArrayAccess {
 
@@ -43,8 +43,8 @@ class CakeRequest implements ArrayAccess {
 	);
 
 /**
- * Array of POST data.  Will contain form data as well as uploaded files.
- * Inputs prefixed with 'data' will have the data prefix removed.  If there is
+ * Array of POST data.	Will contain form data as well as uploaded files.
+ * Inputs prefixed with 'data' will have the data prefix removed.	If there is
  * overlap between an input prefixed with data and one without, the 'data' prefixed
  * value will take precedence.
  *
@@ -115,7 +115,7 @@ class CakeRequest implements ArrayAccess {
 	);
 
 /**
- * Copy of php://input.  Since this stream can only be read once in most SAPI's
+ * Copy of php://input.	Since this stream can only be read once in most SAPI's
  * keep a copy of it so users don't need to know about that detail.
  *
  * @var string
@@ -125,7 +125,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Constructor
  *
- * @param string $url Trimmed url string to use.  Should not contain the application base path.
+ * @param string $url Trimmed url string to use.	Should not contain the application base path.
  * @param boolean $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
  */
 	public function __construct($url = null, $parseEnvironment = true) {
@@ -220,8 +220,8 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Get the request uri.  Looks in PATH_INFO first, as this is the exact value we need prepared
- * by PHP.  Following that, REQUEST_URI, PHP_SELF, HTTP_X_REWRITE_URL and argv are checked in that order.
+ * Get the request uri.	Looks in PATH_INFO first, as this is the exact value we need prepared
+ * by PHP.	Following that, REQUEST_URI, PHP_SELF, HTTP_X_REWRITE_URL and argv are checked in that order.
  * Each of these server variables have the base path, and query strings stripped off
  *
  * @return string URI The CakePHP request path that is being accessed.
@@ -367,7 +367,7 @@ class CakeRequest implements ArrayAccess {
  * Get the IP the client is using, or says they are using.
  *
  * @param boolean $safe Use safe = false when you think the user might manipulate their HTTP_CLIENT_IP
- *   header.  Setting $safe = false will will also look at HTTP_X_FORWARDED_FOR
+ *	 header.	Setting $safe = false will will also look at HTTP_X_FORWARDED_FOR
  * @return string The client IP.
  */
 	public function clientIp($safe = true) {
@@ -465,8 +465,8 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Check whether or not a Request is a certain type.  Uses the built in detection rules
- * as well as additional rules defined with CakeRequest::addDetector().  Any detector can be called
+ * Check whether or not a Request is a certain type.	Uses the built in detection rules
+ * as well as additional rules defined with CakeRequest::addDetector().	Any detector can be called
  * as `is($type)` or `is$Type()`.
  *
  * @param string $type The type of request you want to check.
@@ -520,14 +520,14 @@ class CakeRequest implements ArrayAccess {
  *
  * ### Option based comparison
  *
- * Option based comparisons use a list of options to create a regular expression.  Subsequent calls
+ * Option based comparisons use a list of options to create a regular expression.	Subsequent calls
  * to add an already defined options detector will merge the options.
  *
  * e.g `addDetector('mobile', array('env' => 'HTTP_USER_AGENT', 'options' => array('Fennec')));`
  *
  * ### Callback detectors
  *
- * Callback detectors allow you to provide a 'callback' type to handle the check.  The callback will
+ * Callback detectors allow you to provide a 'callback' type to handle the check.	The callback will
  * receive the request object as its only parameter.
  *
  * e.g `addDetector('custom', array('callback' => array('SomeClass', 'somemethod')));`
@@ -539,7 +539,7 @@ class CakeRequest implements ArrayAccess {
  * e.g `addDetector('post', array('param' => 'requested', 'value' => 1)`
  *
  * @param string $name The name of the detector.
- * @param array $options  The options for the detector definition.  See above.
+ * @param array $options	The options for the detector definition.	See above.
  * @return void
  */
 	public function addDetector($name, $options) {
@@ -563,7 +563,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Add paths to the requests' paths vars.  This will overwrite any existing paths.
+ * Add paths to the requests' paths vars.	This will overwrite any existing paths.
  * Provides an easy way to modify, here, webroot and base.
  *
  * @param array $paths Array of paths to merge in
@@ -579,7 +579,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Get the value of the current requests url.  Will include named parameters and querystring arguments.
+ * Get the value of the current requests url.	Will include named parameters and querystring arguments.
  *
  * @param boolean $base Include the base path, set to false to trim the base path off.
  * @return string the current request url including query string args.
@@ -639,7 +639,7 @@ class CakeRequest implements ArrayAccess {
  * Get the domain name and include $tldLength segments of the tld.
  *
  * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
- *   While `example.co.uk` contains 2.
+ *	 While `example.co.uk` contains 2.
  * @return string Domain name without subdomains.
  */
 	public function domain($tldLength = 1) {
@@ -652,7 +652,7 @@ class CakeRequest implements ArrayAccess {
  * Get the subdomains for a host.
  *
  * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
- *   While `example.co.uk` contains 2.
+ *	 While `example.co.uk` contains 2.
  * @return array of subdomains.
  */
 	public function subdomains($tldLength = 1) {
@@ -675,9 +675,9 @@ class CakeRequest implements ArrayAccess {
  * This method will order the returned content types by the preference values indicated
  * by the client.
  *
- * @param string $type The content type to check for.  Leave null to get all types a client accepts.
+ * @param string $type The content type to check for.	Leave null to get all types a client accepts.
  * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
- *   provided type.
+ *	 provided type.
  */
 	public function accepts($type = null) {
 		$raw = $this->parseAccept();
@@ -752,7 +752,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Provides a read/write accessor for `$this->data`.  Allows you
+ * Provides a read/write accessor for `$this->data`.	Allows you
  * to use a syntax similar to `CakeSession` for reading post data.
  *
  * ## Reading values.
@@ -795,8 +795,8 @@ class CakeRequest implements ArrayAccess {
  * Any additional parameters are applied to the callback in the order they are given.
  *
  * @param string $callback A decoding callback that will convert the string data to another
- *     representation. Leave empty to access the raw input data. You can also
- *     supply additional parameters for the decoding callback using var args, see above.
+ *		 representation. Leave empty to access the raw input data. You can also
+ *		 supply additional parameters for the decoding callback using var args, see above.
  * @return The decoded/processed request data.
  */
 	public function input($callback = null) {

@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Console.Command.Task
- * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Test.Case.Console.Command.Task
+ * @since				 CakePHP(tm) v 1.3
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ConsoleOutput', 'Console');
@@ -53,7 +53,7 @@ if (!$imported) {
 /**
  * ControllerTaskTest class
  *
- * @package       Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
  */
 class ControllerTaskTest extends CakeTestCase {
 
@@ -195,7 +195,7 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	public function testDoHelpersTrailingSpace() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne  '));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne	'));
 		$result = $this->Task->doHelpers();
 		$expected = array('Javascript', 'Ajax', 'CustomOne');
 		$this->assertEquals($expected, $result);
@@ -232,7 +232,7 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	public function testDoComponentsTrailingSpaces() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security  '));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security	'));
 
 		$result = $this->Task->doComponents();
 		$expected = array('RequestHandler', 'Security');
