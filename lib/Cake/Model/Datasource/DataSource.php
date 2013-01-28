@@ -10,17 +10,17 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource
- * @since         CakePHP(tm) v 0.10.5.1790
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Datasource
+ * @since				 CakePHP(tm) v 0.10.5.1790
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
  * DataSource base class
  *
- * @package       Cake.Model.Datasource
+ * @package			 Cake.Model.Datasource
  */
 class DataSource extends Object {
 
@@ -169,7 +169,7 @@ class DataSource extends Object {
 /**
  * Converts column types to basic types
  *
- * @param string $real Real  column type (i.e. "varchar(255)")
+ * @param string $real Real	column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
  */
 	public function column($real) {
@@ -264,7 +264,7 @@ class DataSource extends Object {
 
 /**
  * Check whether the conditions for the Datasource being available
- * are satisfied.  Often used from connect() to check for support
+ * are satisfied.	Often used from connect() to check for support
  * before establishing a connection.
  *
  * @return boolean Whether or not the Datasources conditions for use are met.

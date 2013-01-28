@@ -3,7 +3,7 @@
  * Request object for handling alternative HTTP requests
  *
  * Alternative HTTP requests can come from wireless units like mobile phones, palmtop computers,
- * and the like.  These units have no use for Ajax requests, and this Component can tell how Cake
+ * and the like.	These units have no use for Ajax requests, and this Component can tell how Cake
  * should respond to the different needs of a handheld computer and a desktop machine.
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
- * @since         CakePHP(tm) v 0.10.4.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Controller.Component
+ * @since				 CakePHP(tm) v 0.10.4.1076
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Xml', 'Utility');
@@ -28,7 +28,7 @@ App::uses('Xml', 'Utility');
  * and the like. These units have no use for Ajax requests, and this Component can tell how Cake
  * should respond to the different needs of a handheld computer and a desktop machine.
  *
- * @package       Cake.Controller.Component
+ * @package			 Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html
  *
  */
@@ -157,18 +157,18 @@ class RequestHandlerComponent extends Component {
  *
  * - Disabling layout rendering for Ajax requests (based on the HTTP_X_REQUESTED_WITH header)
  * - If Router::parseExtensions() is enabled, the layout and template type are
- *   switched based on the parsed extension or Accept-Type header.  For example, if `controller/action.xml`
- *   is requested, the view path becomes `app/View/Controller/xml/action.ctp`. Also if
- *   `controller/action` is requested with `Accept-Type: application/xml` in the headers
- *   the view path will become `app/View/Controller/xml/action.ctp`.  Layout and template
- *   types will only switch to mime-types recognized by CakeResponse.  If you need to declare
- *   additional mime-types, you can do so using CakeResponse::type() in your controllers beforeFilter()
- *   method.
+ *	 switched based on the parsed extension or Accept-Type header.	For example, if `controller/action.xml`
+ *	 is requested, the view path becomes `app/View/Controller/xml/action.ctp`. Also if
+ *	 `controller/action` is requested with `Accept-Type: application/xml` in the headers
+ *	 the view path will become `app/View/Controller/xml/action.ctp`.	Layout and template
+ *	 types will only switch to mime-types recognized by CakeResponse.	If you need to declare
+ *	 additional mime-types, you can do so using CakeResponse::type() in your controllers beforeFilter()
+ *	 method.
  * - If a helper with the same name as the extension exists, it is added to the controller.
  * - If the extension is of a type that RequestHandler understands, it will set that
- *   Content-type in the response header.
+ *	 Content-type in the response header.
  * - If the XML data is POSTed, the data is parsed into an XML object, which is assigned
- *   to the $data property of the controller, which can then be saved to a model object.
+ *	 to the $data property of the controller, which can then be saved to a model object.
  *
  * @param Controller $controller A reference to the controller
  * @return void
@@ -392,14 +392,14 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
- * Adds/sets the Content-type(s) for the given name.  This method allows
+ * Adds/sets the Content-type(s) for the given name.	This method allows
  * content-types to be mapped to friendly aliases (or extensions), which allows
  * RequestHandler to automatically respond to requests of that type in the
  * startup method.
  *
  * @param string $name The name of the Content-type, i.e. "html", "xml", "css"
  * @param string|array $type The Content-type or array of Content-types assigned to the name,
- *    i.e. "text/html", or "application/xml"
+ *		i.e. "text/html", or "application/xml"
  * @return void
  * @deprecated use `$this->response->type()` instead.
  */
@@ -422,14 +422,14 @@ class RequestHandlerComponent extends Component {
  *
  * @param boolean $safe
  * @return string Client IP address
- * @deprecated use $this->request->clientIp() from your,  controller instead.
+ * @deprecated use $this->request->clientIp() from your,	controller instead.
  */
 	public function getClientIP($safe = true) {
 		return $this->request->clientIp($safe);
 	}
 
 /**
- * Determines which content types the client accepts.  Acceptance is based on
+ * Determines which content types the client accepts.	Acceptance is based on
  * the file extension parsed by the Router (if present), and by the HTTP_ACCEPT
  * header. Unlike CakeRequest::accepts() this method deals entirely with mapped content types.
  *
@@ -444,11 +444,11 @@ class RequestHandlerComponent extends Component {
  * Returns true if the client accepts xml.
  *
  * @param string|array $type Can be null (or no parameter), a string type name, or an
- *   array of types
+ *	 array of types
  * @return mixed If null or no parameter is passed, returns an array of content
- *   types the client accepts.  If a string is passed, returns true
- *   if the client accepts it.  If an array is passed, returns true
- *   if the client accepts one or more elements in the array.
+ *	 types the client accepts.	If a string is passed, returns true
+ *	 if the client accepts it.	If an array is passed, returns true
+ *	 if the client accepts one or more elements in the array.
  * @see RequestHandlerComponent::setContent()
  */
 	public function accepts($type = null) {
@@ -475,9 +475,9 @@ class RequestHandlerComponent extends Component {
  * Determines the content type of the data the client has sent (i.e. in a POST request)
  *
  * @param string|array $type Can be null (or no parameter), a string type name, or an array of types
- * @return mixed If a single type is supplied a boolean will be returned.  If no type is provided
- *   The mapped value of CONTENT_TYPE will be returned. If an array is supplied the first type
- *   in the request content type will be returned.
+ * @return mixed If a single type is supplied a boolean will be returned.	If no type is provided
+ *	 The mapped value of CONTENT_TYPE will be returned. If an array is supplied the first type
+ *	 in the request content type will be returned.
  */
 	public function requestedWith($type = null) {
 		if (!$this->request->is('post') && !$this->request->is('put')) {
@@ -500,20 +500,20 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
- * Determines which content-types the client prefers.  If no parameters are given,
- * the single content-type that the client most likely prefers is returned.  If $type is
+ * Determines which content-types the client prefers.	If no parameters are given,
+ * the single content-type that the client most likely prefers is returned.	If $type is
  * an array, the first item in the array that the client accepts is returned.
  * Preference is determined primarily by the file extension parsed by the Router
  * if provided, and secondarily by the list of content-types provided in
  * HTTP_ACCEPT.
  *
  * @param string|array $type An optional array of 'friendly' content-type names, i.e.
- *   'html', 'xml', 'js', etc.
+ *	 'html', 'xml', 'js', etc.
  * @return mixed If $type is null or not provided, the first content-type in the
- *    list, based on preference, is returned.  If a single type is provided
- *    a boolean will be returned if that type is preferred.
- *    If an array of types are provided then the first preferred type is returned.
- *    If no type is provided the first preferred type is returned.
+ *		list, based on preference, is returned.	If a single type is provided
+ *		a boolean will be returned if that type is preferred.
+ *		If an array of types are provided then the first preferred type is returned.
+ *		If no type is provided the first preferred type is returned.
  * @see RequestHandlerComponent::setContent()
  */
 	public function prefers($type = null) {
@@ -618,16 +618,16 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
- * Sets the response header based on type map index name.  This wraps several methods
+ * Sets the response header based on type map index name.	This wraps several methods
  * available on CakeResponse. It also allows you to use Content-Type aliases.
  *
  * @param string|array $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
- *    like 'application/x-shockwave'.
+ *		like 'application/x-shockwave'.
  * @param array $options If $type is a friendly type name that is associated with
- *    more than one type of content, $index is used to select which content-type to use.
+ *		more than one type of content, $index is used to select which content-type to use.
  * @return boolean Returns false if the friendly type name given in $type does
- *    not exist in the type map, or if the Content-type header has
- *    already been set by this method.
+ *		not exist in the type map, or if the Content-type header has
+ *		already been set by this method.
  * @see RequestHandlerComponent::setContent()
  */
 	public function respondAs($type, $options = array()) {
@@ -694,8 +694,8 @@ class RequestHandlerComponent extends Component {
  * Maps a content type alias back to its mime-type(s)
  *
  * @param string|array $alias String alias to convert back into a content type. Or an array of aliases to map.
- * @return string Null on an undefined alias.  String value of the mapped alias type.  If an
- *   alias maps to more than one content type, the first one will be returned.
+ * @return string Null on an undefined alias.	String value of the mapped alias type.	If an
+ *	 alias maps to more than one content type, the first one will be returned.
  */
 	public function mapAlias($alias) {
 		if (is_array($alias)) {
@@ -712,13 +712,13 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
- * Add a new mapped input type.  Mapped input types are automatically
+ * Add a new mapped input type.	Mapped input types are automatically
  * converted by RequestHandlerComponent during the startup() callback.
  *
  * @param string $type The type alias being converted, ie. json
- * @param array $handler The handler array for the type.  The first index should
- *    be the handling callback, all other arguments should be additional parameters
- *    for the handler.
+ * @param array $handler The handler array for the type.	The first index should
+ *		be the handling callback, all other arguments should be additional parameters
+ *		for the handler.
  * @return void
  * @throws CakeException
  */

@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
- * @since         CakePHP(tm) v 2.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model
+ * @since				 CakePHP(tm) v 2.2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeValidationSet', 'Model/Validator');
@@ -28,8 +28,8 @@ App::uses('CakeValidationSet', 'Model/Validator');
  * Implements ArrayAccess to easily modify rules as usually done with `Model::$validate`
  * definition array
  *
- * @package       Cake.Model
- * @link          http://book.cakephp.org/2.0/en/data-validation.html
+ * @package			 Cake.Model
+ * @link					http://book.cakephp.org/2.0/en/data-validation.html
  */
 class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 
@@ -90,7 +90,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * Returns true if all fields pass validation. Will validate hasAndBelongsToMany associations
  * that use the 'with' key as well. Since `Model::_saveMulti` is incapable of exiting a save operation.
  *
- * Will validate the currently set data.  Use `Model::set()` or `Model::create()` to set the active data.
+ * Will validate the currently set data.	Use `Model::set()` or `Model::create()` to set the active data.
  *
  * @param array $options An optional array of custom options to be made available in the beforeValidate callback
  * @return boolean True if there are no errors
@@ -122,8 +122,8 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @param array $data Record data to validate. This should be an array indexed by association name.
  * @param array $options Options to use when validating record data (see above), See also $options of validates().
  * @return array|boolean If atomic: True on success, or false on failure.
- *    Otherwise: array similar to the $data array passed, but values are set to true/false
- *    depending on whether each record validated successfully.
+ *		Otherwise: array similar to the $data array passed, but values are set to true/false
+ *		depending on whether each record validated successfully.
  */
 	public function validateAssociated(&$data, $options = array()) {
 		$model = $this->getModel();
@@ -205,8 +205,8 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @param array $options Options to use when validating record data (see above), See also $options of validates().
  * @return boolean True on success, or false on failure.
  * @return mixed If atomic: True on success, or false on failure.
- *    Otherwise: array similar to the $data array passed, but values are set to true/false
- *    depending on whether each record validated successfully.
+ *		Otherwise: array similar to the $data array passed, but values are set to true/false
+ *		depending on whether each record validated successfully.
  */
 	public function validateMany(&$data, $options = array()) {
 		$model = $this->getModel();

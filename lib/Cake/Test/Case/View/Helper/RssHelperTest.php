@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View.Helper
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.View.Helper
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('View', 'View');
 App::uses('RssHelper', 'View/Helper');
@@ -24,7 +24,7 @@ App::uses('File', 'Utility');
 /**
  * RssHelperTest class
  *
- * @package       Cake.Test.Case.View.Helper
+ * @package			 Cake.Test.Case.View.Helper
  */
 class RssHelperTest extends CakeTestCase {
 
@@ -741,7 +741,7 @@ class RssHelperTest extends CakeTestCase {
 
 	public function testElementNamespaceWithPrefix() {
 		$item = array(
-				'title'   => 'Title',
+				'title'	 => 'Title',
 				'dc:creator' => 'Alex',
 				'xy:description' => 'descriptive words'
 			);

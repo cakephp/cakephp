@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
- * @since         CakePHP(tm) v 0.10.0.1232
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Controller.Component
+ * @since				 CakePHP(tm) v 0.10.0.1232
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Component', 'Controller');
@@ -25,7 +25,7 @@ App::uses('CakeSession', 'Model/Datasource');
  * page requests. It acts as a wrapper for the `$_SESSION` as well as providing
  * convenience methods for several `$_SESSION` related functions.
  *
- * @package       Cake.Controller.Component
+ * @package			 Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html
  * @link http://book.cakephp.org/2.0/en/development/sessions.html
  */
@@ -165,7 +165,7 @@ class SessionComponent extends Component {
  * Get/Set the session id.
  *
  * When fetching the session id, the session will be started
- * if it has not already been started.  When setting the session id,
+ * if it has not already been started.	When setting the session id,
  * the session will not be started.
  *
  * @param string $id Id to use (optional)

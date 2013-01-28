@@ -7,7 +7,7 @@ day	"<U65E5><U66DC><U65E5>";"<U6708><U66DC><U65E5>";/
 	"<U6728><U66DC><U65E5>";"<U91D1><U66DC><U65E5>";/
 	"<U571F><U66DC><U65E5>"
 
-week    7;19971130;7
+week		7;19971130;7
 first_weekday	1
 first_workday	2
 abmon	"<U0020><U0031><U6708>";"<U0020><U0032><U6708>";/

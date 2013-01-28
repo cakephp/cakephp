@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Configure
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Configure
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('PhpReader', 'Configure');
 
@@ -140,21 +140,21 @@ class PhpReaderTest extends CakeTestCase {
 		$expected = <<<PHP
 <?php
 \$config = array (
-  'One' => 
-  array (
-    'two' => 'value',
-    'three' => 
-    array (
-      'four' => 'value four',
-    ),
-    'is_null' => NULL,
-    'bool_false' => false,
-    'bool_true' => true,
-  ),
-  'Asset' => 
-  array (
-    'timestamp' => 'force',
-  ),
+	'One' =>
+	array (
+		'two' => 'value',
+		'three' =>
+		array (
+			'four' => 'value four',
+		),
+		'is_null' => NULL,
+		'bool_false' => false,
+		'bool_true' => true,
+	),
+	'Asset' =>
+	array (
+		'timestamp' => 'force',
+	),
 );
 PHP;
 		$file = TMP . 'test.php';

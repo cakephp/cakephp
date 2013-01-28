@@ -12,16 +12,16 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.Config
- * @since         CakePHP(tm) v 2.0.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 app.Config
+ * @since				 CakePHP(tm) v 2.0.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
  * In this file you set up your send email details.
  *
- * @package       cake.config
+ * @package			 cake.config
  */
 /**
  * Email configuration class.
@@ -33,7 +33,7 @@
  *		Debug		- Do not send the email, just return the result
  *
  * You can add custom transports (or override existing transports) by adding the
- * appropriate file to app/Network/Email.  Transports should be named 'YourTransport.php',
+ * appropriate file to app/Network/Email.	Transports should be named 'YourTransport.php',
  * where 'Your' is the name of the transport.
  *
  * from =>

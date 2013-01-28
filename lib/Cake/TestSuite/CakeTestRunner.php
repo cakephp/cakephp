@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 require_once 'PHPUnit/TextUI/TestRunner.php';
 
@@ -22,7 +22,7 @@ App::uses('CakeFixtureManager', 'TestSuite/Fixture');
 /**
  * A custom test runner for Cake's use of PHPUnit.
  *
- * @package       Cake.TestSuite
+ * @package			 Cake.TestSuite
  */
 class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 
@@ -37,7 +37,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 	}
 
 /**
- * Actually run a suite of tests.  Cake initializes fixtures here using the chosen fixture manager
+ * Actually run a suite of tests.	Cake initializes fixtures here using the chosen fixture manager
  *
  * @param PHPUnit_Framework_Test $suite
  * @param array $arguments

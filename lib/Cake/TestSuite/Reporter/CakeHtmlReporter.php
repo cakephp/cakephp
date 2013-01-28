@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.4433
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.2.0.4433
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeBaseReporter', 'TestSuite/Reporter');
 
@@ -21,7 +21,7 @@ App::uses('CakeBaseReporter', 'TestSuite/Reporter');
  * CakeHtmlReporter Reports Results of TestSuites and Test Cases
  * in an HTML format / context.
  *
- * @package       Cake.TestSuite.Reporter
+ * @package			 Cake.TestSuite.Reporter
  */
 class CakeHtmlReporter extends CakeBaseReporter {
 
@@ -241,7 +241,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * top level test.
  *
  * @param PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
- *   the context of the other tests.
+ *	 the context of the other tests.
  * @return void
  */
 	public function paintFail($message, $test) {
@@ -365,13 +365,13 @@ class CakeHtmlReporter extends CakeBaseReporter {
 /**
  * A test suite started.
  *
- * @param  PHPUnit_Framework_TestSuite $suite
+ * @param	PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
 		if (!$this->_headerSent) {
 			echo $this->paintHeader();
 		}
-		echo '<h2>' . __d('cake_dev', 'Running  %s', $suite->getName()) . '</h2>';
+		echo '<h2>' . __d('cake_dev', 'Running	%s', $suite->getName()) . '</h2>';
 	}
 
 }

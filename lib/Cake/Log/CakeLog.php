@@ -12,18 +12,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Log
- * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Log
+ * @since				 CakePHP(tm) v 0.2.9
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('LogEngineCollection', 'Log');
 
 /**
- * Logs messages to configured Log adapters.  One or more adapters
- * can be configured using CakeLogs's methods.  If you don't
+ * Logs messages to configured Log adapters.	One or more adapters
+ * can be configured using CakeLogs's methods.	If you don't
  * configure any adapters, and write to the logs a default
  * FileLog will be autoconfigured for you.
  *
@@ -40,7 +40,7 @@ App::uses('LogEngineCollection', 'Log');
  *
  * ### Writing to the log
  *
- * You write to the logs using CakeLog::write().  See its documentation for more
+ * You write to the logs using CakeLog::write().	See its documentation for more
  * information.
  *
  * ### Logging Levels
@@ -60,18 +60,18 @@ App::uses('LogEngineCollection', 'Log');
  * ### Logging scopes
  *
  * When logging messages and configuring log adapters, you can specify
- * 'scopes' that the logger will handle.  You can think of scopes as subsystems
- * in your application that may require different logging setups.  For
+ * 'scopes' that the logger will handle.	You can think of scopes as subsystems
+ * in your application that may require different logging setups.	For
  * example in an e-commerce application you may want to handle logged errors
  * in the cart and ordering subsystems differently than the rest of the
- * application.  By using scopes you can control logging for each part
+ * application.	By using scopes you can control logging for each part
  * of your application and still keep standard log levels.
  *
  *
  * See CakeLog::config() and CakeLog::write() for more information
  * on scopes
  *
- * @package       Cake.Log
+ * @package			 Cake.Log
  */
 class CakeLog {
 
@@ -132,14 +132,14 @@ class CakeLog {
  *
  * {{{
  * CakeLog::config('second_file', array(
- *     'engine' => 'FileLog',
- *     'path' => '/var/logs/my_app/'
+ *		 'engine' => 'FileLog',
+ *		 'path' => '/var/logs/my_app/'
  * ));
  * }}}
  *
  * Will configure a FileLog instance to use the specified path.
  * All options that are not `engine` are passed onto the logging adapter,
- * and handled there.  Any class can be configured as a logging
+ * and handled there.	Any class can be configured as a logging
  * adapter as long as it implements the methods in CakeLogInterface.
  *
  * ### Logging levels
@@ -149,9 +149,9 @@ class CakeLog {
  *
  * {{{
  * CakeLog::config('default', array(
- *     'engine' => 'File',
- *     'path' => LOGS,
- *     'levels' => array('error', 'critical', 'alert', 'emergency')
+ *		 'engine' => 'File',
+ *		 'path' => LOGS,
+ *		 'levels' => array('error', 'critical', 'alert', 'emergency')
  * ));
  * }}}
  *
@@ -161,14 +161,14 @@ class CakeLog {
  * ### Logging scopes
  *
  * When configuring loggers you can define the active scopes the logger
- * is for.  If defined only the listed scopes will be handled by the
- * logger.  If you don't define any scopes an adapter will catch
+ * is for.	If defined only the listed scopes will be handled by the
+ * logger.	If you don't define any scopes an adapter will catch
  * all scopes that match the handled levels.
  *
  * {{{
  * CakeLog::config('payments', array(
- *     'engine' => 'File',
- *     'scopes' => array('payment', 'order')
+ *		 'engine' => 'File',
+ *		 'scopes' => array('payment', 'order')
  * ));
  * }}}
  *
@@ -180,7 +180,7 @@ class CakeLog {
  * catching all log messages even if the scope is incorrect.
  *
  * @param string $key The keyname for this logger, used to remove the
- *    logger later.
+ *		logger later.
  * @param array $config Array of configuration information for the logger
  * @return boolean success of configuration.
  * @throws CakeLogException
@@ -229,11 +229,11 @@ class CakeLog {
  *
  * {{{
  * array(
- *     0 => 'emergency',
- *     1 => 'alert',
- *     ...
- *     8 => 'user0',
- *     9 => 'user1',
+ *		 0 => 'emergency',
+ *		 1 => 'alert',
+ *		 ...
+ *		 8 => 'user0',
+ *		 9 => 'user1',
  * );
  * }}}
  *
@@ -248,8 +248,8 @@ class CakeLog {
  *
  * {{{
  * array(
- *      0 => 'user0',
- *      1 => 'user1',
+ *			0 => 'user0',
+ *			1 => 'user1',
  * );
  * }}}
  *
@@ -286,7 +286,7 @@ class CakeLog {
 	}
 
 /**
- * Removes a stream from the active streams.  Once a stream has been removed
+ * Removes a stream from the active streams.	Once a stream has been removed
  * it will no longer have messages sent to it.
  *
  * @param string $streamName Key name of a configured stream to remove.
@@ -317,7 +317,7 @@ class CakeLog {
 	}
 
 /**
- * Enable stream.  Streams that were previously disabled
+ * Enable stream.	Streams that were previously disabled
  * can be re-enabled with this method.
  *
  * @param string $streamName to enable
@@ -335,7 +335,7 @@ class CakeLog {
 	}
 
 /**
- * Disable stream.  Disabling a stream will
+ * Disable stream.	Disabling a stream will
  * prevent that log stream from receiving any messages until
  * its re-enabled.
  *
@@ -389,9 +389,9 @@ class CakeLog {
  *
  * ### Types:
  *
- * -  LOG_EMERG => 'emergency',
- * -  LOG_ALERT => 'alert',
- * -  LOG_CRIT => 'critical',
+ * -	LOG_EMERG => 'emergency',
+ * -	LOG_ALERT => 'alert',
+ * -	LOG_CRIT => 'critical',
  * - `LOG_ERR` => 'error',
  * - `LOG_WARNING` => 'warning',
  * - `LOG_NOTICE` => 'notice',
@@ -405,11 +405,11 @@ class CakeLog {
  * `CakeLog::write('warning', 'Stuff is broken here');`
  *
  * @param integer|string $type Type of message being written. When value is an integer
- *    or a string matching the recognized levels, then it will
- *    be treated log levels. Otherwise it's treated as scope.
+ *		or a string matching the recognized levels, then it will
+ *		be treated log levels. Otherwise it's treated as scope.
  * @param string $message Message content to log
  * @param string|array $scope The scope(s) a log message is being created in.
- *    See CakeLog::config() for more information on logging scopes.
+ *		See CakeLog::config() for more information on logging scopes.
  * @return boolean Success
  */
 	public static function write($type, $message, $scope = array()) {
@@ -465,7 +465,7 @@ class CakeLog {
  *
  * @param string $message log message
  * @param string|array $scope The scope(s) a log message is being created in.
- *    See CakeLog::config() for more information on logging scopes.
+ *		See CakeLog::config() for more information on logging scopes.
  * @return boolean Success
  */
 	public static function emergency($message, $scope = array()) {
@@ -477,7 +477,7 @@ class CakeLog {
  *
  * @param string $message log message
  * @param string|array $scope The scope(s) a log message is being created in.
- *    See CakeLog::config() for more information on logging scopes.
+ *		See CakeLog::config() for more information on logging scopes.
  * @return boolean Success
  */
 	public static function alert($message, $scope = array()) {
@@ -489,7 +489,7 @@ class CakeLog {
  *
  * @param string $message log message
  * @param string|array $scope The scope(s) a log message is being created in.
- *    See CakeLog::config() for more information on logging scopes.
+ *		See CakeLog::config() for more information on logging scopes.
  * @return boolean Success
  */
 	public static function critical($message, $scope = array()) {
@@ -501,7 +501,7 @@ class CakeLog {
  *
  * @param string $message log message
  * @param string|array $scope The scope(s) a log message is being created in.
- *    See CakeLog::config() for more information on logging scopes.
+ *		See CakeLog::config() for more information on logging scopes.
  * @return boolean Success
  */
 	public static function error($message, $scope = array()) {
@@ -513,7 +513,7 @@ class CakeLog {
  *
  * @param string $message log message
  * @param string|array $scope The scope(s) a log message is being created in.
- *    See CakeLog::config() for more information on logging scopes.
+ *		See CakeLog::config() for more information on logging scopes.
  * @return boolean Success
  */
 	public static function warning($message, $scope = array()) {
@@ -525,7 +525,7 @@ class CakeLog {
  *
  * @param string $message log message
  * @param string|array $scope The scope(s) a log message is being created in.
- *    See CakeLog::config() for more information on logging scopes.
+ *		See CakeLog::config() for more information on logging scopes.
  * @return boolean Success
  */
 	public static function notice($message, $scope = array()) {
@@ -537,7 +537,7 @@ class CakeLog {
  *
  * @param string $message log message
  * @param string|array $scope The scope(s) a log message is being created in.
- *    See CakeLog::config() for more information on logging scopes.
+ *		See CakeLog::config() for more information on logging scopes.
  * @return boolean Success
  */
 	public static function debug($message, $scope = array()) {
@@ -549,7 +549,7 @@ class CakeLog {
  *
  * @param string $message log message
  * @param string|array $scope The scope(s) a log message is being created in.
- *    See CakeLog::config() for more information on logging scopes.
+ *		See CakeLog::config() for more information on logging scopes.
  * @return boolean Success
  */
 	public static function info($message, $scope = array()) {

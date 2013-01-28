@@ -1,6 +1,6 @@
 <?php
 /**
- * Validation Class.  Used for validation of model data
+ * Validation Class.	Used for validation of model data
  *
  * PHP Version 5.x
  *
@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP(tm) v 1.2.0.3830
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP(tm) v 1.2.0.3830
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Multibyte', 'I18n');
@@ -27,8 +27,8 @@ if (!function_exists('mb_strlen')) {
 /**
  * Offers different validation methods.
  *
- * @package       Cake.Utility
- * @since         CakePHP v 1.2.0.3830
+ * @package			 Cake.Utility
+ * @since				 CakePHP v 1.2.0.3830
  */
 class Validation {
 
@@ -131,8 +131,8 @@ class Validation {
  *
  * @param string|array $check credit card number to validate
  * @param string|array $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
- *    if an array is used only the values of the array are checked.
- *    Example: array('amex', 'bankcard', 'maestro')
+ *		if an array is used only the values of the array are checked.
+ *		Example: array('amex', 'bankcard', 'maestro')
  * @param boolean $deep set to true this will check the Luhn algorithm of the credit card.
  * @param string $regex A custom regex can also be passed, this will be used instead of the defined regex values
  * @return boolean Success
@@ -202,10 +202,10 @@ class Validation {
  * Used to compare 2 numeric values.
  *
  * @param string|array $check1 if string is passed for a string must also be passed for $check2
- *    used as an array it must be passed as array('check1' => value, 'operator' => 'value', 'check2' -> value)
+ *		used as an array it must be passed as array('check1' => value, 'operator' => 'value', 'check2' -> value)
  * @param string $operator Can be either a word or operand
- *    is greater >, is less <, greater or equal >=
- *    less or equal <=, is less <, equal to ==, not equal !=
+ *		is greater >, is less <, greater or equal >=
+ *		less or equal <=, is less <, equal to ==, not equal !=
  * @param integer $check2 only needed if $check1 is a string
  * @return boolean Success
  */
@@ -284,13 +284,13 @@ class Validation {
  *
  * @param string $check a valid date string
  * @param string|array $format Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)
- * 	      Keys: dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
- * 	            mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
- * 	            ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
- * 	            dMy 27 December 2006 or 27 Dec 2006
- * 	            Mdy December 27, 2006 or Dec 27, 2006 comma is optional
- * 	            My December 2006 or Dec 2006
- * 	            my 12/2006 separators can be a space, period, dash, forward slash
+ * 				Keys: dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
+ * 							mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
+ * 							ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
+ * 							dMy 27 December 2006 or 27 Dec 2006
+ * 							Mdy December 27, 2006 or Dec 27, 2006 comma is optional
+ * 							My December 2006 or Dec 2006
+ * 							my 12/2006 separators can be a space, period, dash, forward slash
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean Success
  */
@@ -328,7 +328,7 @@ class Validation {
  *	- dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
  *	- mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
  *	- ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
- *  - dMy 27 December 2006 or 27 Dec 2006
+ *	- dMy 27 December 2006 or 27 Dec 2006
  *	- Mdy December 27, 2006 or Dec 27, 2006 comma is optional
  *	- My December 2006 or Dec 2006
  * 	- my 12/2006 separators can be a space, period, dash, forward slash
@@ -615,7 +615,7 @@ class Validation {
 				case 'can':
 					// includes all NANPA members.
 					// see http://en.wikipedia.org/wiki/North_American_Numbering_Plan#List_of_NANPA_countries_and_territories
-					$regex  = '/^(?:\+?1)?[-. ]?\\(?[2-9][0-8][0-9]\\)?[-. ]?[2-9][0-9]{2}[-. ]?[0-9]{4}$/';
+					$regex	= '/^(?:\+?1)?[-. ]?\\(?[2-9][0-8][0-9]\\)?[-. ]?[2-9][0-9]{2}[-. ]?[0-9]{4}$/';
 				break;
 			}
 		}
@@ -641,20 +641,20 @@ class Validation {
 		if (is_null($regex)) {
 			switch ($country) {
 				case 'uk':
-					$regex  = '/\\A\\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\\b\\z/i';
+					$regex	= '/\\A\\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\\b\\z/i';
 					break;
 				case 'ca':
-					$regex  = '/\\A\\b[ABCEGHJKLMNPRSTVXY][0-9][A-Z] [0-9][A-Z][0-9]\\b\\z/i';
+					$regex	= '/\\A\\b[ABCEGHJKLMNPRSTVXY][0-9][A-Z] [0-9][A-Z][0-9]\\b\\z/i';
 					break;
 				case 'it':
 				case 'de':
-					$regex  = '/^[0-9]{5}$/i';
+					$regex	= '/^[0-9]{5}$/i';
 					break;
 				case 'be':
-					$regex  = '/^[1-9]{1}[0-9]{3}$/i';
+					$regex	= '/^[1-9]{1}[0-9]{3}$/i';
 					break;
 				case 'us':
-					$regex  = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
+					$regex	= '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
 					break;
 			}
 		}
@@ -700,13 +700,13 @@ class Validation {
 		if (is_null($regex)) {
 			switch ($country) {
 				case 'dk':
-					$regex  = '/\\A\\b[0-9]{6}-[0-9]{4}\\b\\z/i';
+					$regex	= '/\\A\\b[0-9]{6}-[0-9]{4}\\b\\z/i';
 					break;
 				case 'nl':
-					$regex  = '/\\A\\b[0-9]{9}\\b\\z/i';
+					$regex	= '/\\A\\b[0-9]{9}\\b\\z/i';
 					break;
 				case 'us':
-					$regex  = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
+					$regex	= '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
 					break;
 			}
 		}
@@ -723,8 +723,8 @@ class Validation {
  *
  * - a valid, optional, scheme
  * - a valid ip address OR
- *   a valid domain name as defined by section 2.3.1 of http://www.ietf.org/rfc/rfc1035.txt
- *   with an optional port number
+ *	 a valid domain name as defined by section 2.3.1 of http://www.ietf.org/rfc/rfc1035.txt
+ *	 with an optional port number
  * - an optional valid path
  * - an optional query string (get parameters)
  * - an optional fragment (anchor tag)
@@ -782,7 +782,7 @@ class Validation {
 
 /**
  * Attempts to pass unhandled Validation locales to a class starting with $classPrefix
- * and ending with Validation.  For example $classPrefix = 'nl', the class would be
+ * and ending with Validation.	For example $classPrefix = 'nl', the class would be
  * `NlValidation`.
  *
  * @param string $method The method to call on the other class.
@@ -921,7 +921,7 @@ class Validation {
  */
 	protected static function _populateIp() {
 		if (!isset(self::$_pattern['IPv6'])) {
-			$pattern  = '((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}';
+			$pattern	= '((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}';
 			$pattern .= '(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})';
 			$pattern .= '|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})';
 			$pattern .= '(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)';

@@ -11,11 +11,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model
- * @since         CakePHP(tm) v 1.2.0.5550
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Model
+ * @since				 CakePHP(tm) v 1.2.0.5550
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeSchema', 'Model');
@@ -24,7 +24,7 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
 /**
  * Test for Schema database management
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class MyAppSchema extends CakeSchema {
 
@@ -119,7 +119,7 @@ class MyAppSchema extends CakeSchema {
 /**
  * TestAppSchema class
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class TestAppSchema extends CakeSchema {
 
@@ -226,7 +226,7 @@ class TestAppSchema extends CakeSchema {
 /**
  * SchemaPost class
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class SchemaPost extends CakeTestModel {
 
@@ -262,7 +262,7 @@ class SchemaPost extends CakeTestModel {
 /**
  * SchemaComment class
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class SchemaComment extends CakeTestModel {
 
@@ -291,7 +291,7 @@ class SchemaComment extends CakeTestModel {
 /**
  * SchemaTag class
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class SchemaTag extends CakeTestModel {
 
@@ -320,7 +320,7 @@ class SchemaTag extends CakeTestModel {
 /**
  * SchemaDatatype class
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class SchemaDatatype extends CakeTestModel {
 
@@ -346,9 +346,9 @@ class SchemaDatatype extends CakeTestModel {
  * testSchemaCreateTable will fail if listSources has already been called and
  * its source cache populated - I.e. if the test is run within a group
  *
- * @uses          CakeTestModel
+ * @uses					CakeTestModel
  * @package
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class Testdescribe extends CakeTestModel {
 
@@ -363,7 +363,7 @@ class Testdescribe extends CakeTestModel {
 /**
  * SchemaCrossDatabase class
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class SchemaCrossDatabase extends CakeTestModel {
 
@@ -392,7 +392,7 @@ class SchemaCrossDatabase extends CakeTestModel {
 /**
  * SchemaCrossDatabaseFixture class
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class SchemaCrossDatabaseFixture extends CakeTestFixture {
 
@@ -433,7 +433,7 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
 /**
  * SchemaPrefixAuthUser class
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class SchemaPrefixAuthUser extends CakeTestModel {
 
@@ -462,7 +462,7 @@ class SchemaPrefixAuthUser extends CakeTestModel {
 /**
  * CakeSchemaTest
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class CakeSchemaTest extends CakeTestCase {
 

@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Network.Http
- * @since         CakePHP(tm) v 1.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Network.Http
+ * @since				 CakePHP(tm) v 1.2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeSocket', 'Network');
 App::uses('Router', 'Routing');
@@ -25,7 +25,7 @@ App::uses('Router', 'Routing');
  * Core base class for HTTP network communication. HttpSocket can be used as an
  * Object Oriented replacement for cURL in many places.
  *
- * @package       Cake.Network.Http
+ * @package			 Cake.Network.Http
  */
 class HttpSocket extends CakeSocket {
 
@@ -136,8 +136,8 @@ class HttpSocket extends CakeSocket {
  *
  * {{{
  * $http = new HttpSocket(array(
- *    'host' => 'cakephp.org',
- *    'timeout' => 20
+ *		'host' => 'cakephp.org',
+ *		'timeout' => 20
  * ));
  * }}}
  *
@@ -161,7 +161,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Set authentication settings.
  *
- * Accepts two forms of parameters.  If all you need is a username + password, as with
+ * Accepts two forms of parameters.	If all you need is a username + password, as with
  * Basic authentication you can do the following:
  *
  * {{{
@@ -424,8 +424,8 @@ class HttpSocket extends CakeSocket {
  *
  * {{{
  * $response = $http->get(
- *     array('host' => 'google.com', 'path' => '/search'),
- *     array('q' => 'cakephp', 'client' => 'safari')
+ *		 array('host' => 'google.com', 'path' => '/search'),
+ *		 array('q' => 'cakephp', 'client' => 'safari')
  * );
  * }}}
  *
@@ -456,8 +456,8 @@ class HttpSocket extends CakeSocket {
  *
  * {{{
  * $response = $http->post('http://example.com', array(
- *     'username' => 'batman',
- *     'password' => 'bruce_w4yne'
+ *		 'username' => 'batman',
+ *		 'password' => 'bruce_w4yne'
  * ));
  * }}}
  *
@@ -761,7 +761,7 @@ class HttpSocket extends CakeSocket {
  *
  * @param string|array $query A query string to parse into an array or an array to return directly "as is"
  * @return array The $query parsed into a possibly multi-level array. If an empty $query is
- *     given, an empty array is returned.
+ *		 given, an empty array is returned.
  */
 	protected function _parseQuery($query) {
 		if (is_array($query)) {

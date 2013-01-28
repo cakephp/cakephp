@@ -6,11 +6,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP(tm) v 2.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP(tm) v 2.2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('String', 'Utility');
@@ -20,11 +20,11 @@ App::uses('String', 'Utility');
  * from arrays or 'sets' of data.
  *
  * `Hash` provides an improved interface, more consistent and
- * predictable set of features over `Set`.  While it lacks the spotty
+ * predictable set of features over `Set`.	While it lacks the spotty
  * support for pseudo Xpath, its more fully featured dot notation provides
  * similar features in a more consistent implementation.
  *
- * @package       Cake.Utility
+ * @package			 Cake.Utility
  */
 class Hash {
 
@@ -35,7 +35,7 @@ class Hash {
  *
  * @param array $data Array of data to operate on.
  * @param string|array $path The path being searched for. Either a dot
- *   separated string, or an array of path segments.
+ *	 separated string, or an array of path segments.
  * @return mixed The value fetched from the array, or null.
  */
 	public static function get(array $data, $path) {
@@ -69,9 +69,9 @@ class Hash {
  *
  * There are a number of attribute operators:
  *
- *  - `=`, `!=` Equality.
- *  - `>`, `<`, `>=`, `<=` Value comparison.
- *  - `=/.../` Regular expression pattern match.
+ *	- `=`, `!=` Equality.
+ *	- `>`, `<`, `>=`, `<=` Value comparison.
+ *	- `=/.../` Regular expression pattern match.
  *
  * Given a set of User array data, from a `$User->find('all')` call:
  *
@@ -83,8 +83,8 @@ class Hash {
  *
  * @param array $data The data to extract from.
  * @param string $path The path to extract.
- * @return array An array of the extracted values.  Returns an empty array
- *   if there are no matches.
+ * @return array An array of the extracted values.	Returns an empty array
+ *	 if there are no matches.
  */
 	public static function extract(array $data, $path) {
 		if (empty($path)) {
@@ -479,8 +479,8 @@ class Hash {
  * Recursively filters a data set.
  *
  * @param array $data Either an array to filter, or value when in callback
- * @param callable $callback A function to filter the data with.  Defaults to
- *   `self::_filter()` Which strips out all non-zero empty values.
+ * @param callable $callback A function to filter the data with.	Defaults to
+ *	 `self::_filter()` Which strips out all non-zero empty values.
  * @return array Filtered array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::filter
  */
@@ -580,7 +580,7 @@ class Hash {
  * This function can be thought of as a hybrid between PHP's `array_merge` and `array_merge_recursive`.
  *
  * The difference between this method and the built-in ones, is that if an array key contains another array, then
- * Hash::merge() will behave in a recursive fashion (unlike `array_merge`).  But it will not act recursively for
+ * Hash::merge() will behave in a recursive fashion (unlike `array_merge`).	But it will not act recursively for
  * keys that contain scalar values (unlike `array_merge_recursive`).
  *
  * Note: This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
@@ -833,7 +833,7 @@ class Hash {
  * @param array $data First value
  * @param array $compare Second value
  * @return array Returns the key => value pairs that are not common in $data and $compare
- *    The expression for this function is ($data - $compare) + ($compare - ($data - $compare))
+ *		The expression for this function is ($data - $compare) + ($compare - ($data - $compare))
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::diff
  */
 	public static function diff(array $data, $compare) {
@@ -920,9 +920,9 @@ class Hash {
  *
  * - `children` The key name to use in the resultset for children.
  * - `idPath` The path to a key that identifies each entry. Should be
- *   compatible with Hash::extract(). Defaults to `{n}.$alias.id`
+ *	 compatible with Hash::extract(). Defaults to `{n}.$alias.id`
  * - `parentPath` The path to a key that identifies the parent of each entry.
- *   Should be compatible with Hash::extract(). Defaults to `{n}.$alias.parent_id`
+ *	 Should be compatible with Hash::extract(). Defaults to `{n}.$alias.parent_id`
  * - `root` The id of the desired top-most result.
  *
  * @param array $data The data to nest.

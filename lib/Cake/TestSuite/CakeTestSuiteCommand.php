@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.TestSuite
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.TestSuite
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 require_once 'PHPUnit/TextUI/Command.php';
@@ -29,7 +29,7 @@ App::uses('CakeTestModel', 'TestSuite/Fixture');
 /**
  * Class to customize loading of test suites from CLI
  *
- * @package       Cake.TestSuite
+ * @package			 Cake.TestSuite
  */
 class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 
@@ -55,7 +55,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 /**
  * Ugly hack to get around PHPUnit having a hard coded classname for the Runner. :(
  *
- * @param array   $argv
+ * @param array	 $argv
  * @param boolean $exit
  */
 	public function run(array $argv, $exit = true) {

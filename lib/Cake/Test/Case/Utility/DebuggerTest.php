@@ -6,17 +6,17 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
- * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP Project
+ * @since				 CakePHP(tm) v 1.2.0.5432
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Debugger', 'Utility');
 
 /**
  * DebugggerTestCaseDebuggger class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class DebuggerTestCaseDebugger extends Debugger {
 }
@@ -27,7 +27,7 @@ class DebuggerTestCaseDebugger extends Debugger {
  * !!! Be careful with changing code below as it may
  * !!! change line numbers which are used in the tests
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class DebuggerTest extends CakeTestCase {
 

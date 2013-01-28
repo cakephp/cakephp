@@ -8,10 +8,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v2.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v2.1
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
  * ViewBlock implements the concept of Blocks or Slots in the View layer.
@@ -24,7 +24,7 @@
 class ViewBlock {
 
 /**
- * Block content.  An array of blocks indexed by name.
+ * Block content.	An array of blocks indexed by name.
  *
  * @var array
  */
@@ -43,7 +43,7 @@ class ViewBlock {
  * Blocks allow you to create slots or blocks of dynamic content in the layout.
  * view files can implement some or all of a layout's slots.
  *
- * You can end capturing blocks using View::end().  Blocks can be output
+ * You can end capturing blocks using View::end().	Blocks can be output
  * using View::get();
  *
  * @param string $name The name of the block to capture for.
@@ -73,7 +73,7 @@ class ViewBlock {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new
+ * Append to an existing or new block.	Appending to a new
  * block will create the block.
  *
  * Calling append() without a value will create a new capturing
@@ -100,7 +100,7 @@ class ViewBlock {
 	}
 
 /**
- * Set the content for a block.  This will overwrite any
+ * Set the content for a block.	This will overwrite any
  * existing content.
  *
  * @param string $name Name of the block

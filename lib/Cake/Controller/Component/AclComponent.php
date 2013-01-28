@@ -6,11 +6,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Controller.Component
+ * @since				 CakePHP(tm) v 0.10.0.1076
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Component', 'Controller');
 App::uses('AclInterface', 'Controller/Component/Acl');
@@ -22,7 +22,7 @@ App::uses('AclInterface', 'Controller/Component/Acl');
  * You can define by changing `Configure::write('Acl.classname', 'DbAcl');` in your core.php. Concrete ACL
  * implementations should extend `AclBase` and implement the methods it defines.
  *
- * @package       Cake.Controller.Component
+ * @package			 Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html
  */
 class AclComponent extends Component {
@@ -96,7 +96,7 @@ class AclComponent extends Component {
 	}
 
 /**
- * Pass-thru function for ACL check instance.  Check methods
+ * Pass-thru function for ACL check instance.	Check methods
  * are used to check whether or not an ARO can access an ACO
  *
  * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats

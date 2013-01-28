@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Network.Email
- * @since         CakePHP(tm) v 2.0.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Network.Email
+ * @since				 CakePHP(tm) v 2.0.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Validation', 'Utility');
@@ -30,7 +30,7 @@ App::import('I18n', 'Multibyte');
  * This class is used for handling Internet Message Format based
  * based on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
  *
- * @package       Cake.Network.Email
+ * @package			 Cake.Network.Email
  */
 class CakeEmail {
 /**
@@ -1108,7 +1108,7 @@ class CakeEmail {
  * @param array $config
  * @return void
  * @throws ConfigureException When configuration file cannot be found, or is missing
- *   the named config.
+ *	 the named config.
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
@@ -1497,7 +1497,7 @@ class CakeEmail {
 /**
  * Gets the text body types that are in this email message
  *
- * @return array Array of types.  Valid types are 'text' and 'html'
+ * @return array Array of types.	Valid types are 'text' and 'html'
  */
 	protected function _getTypes() {
 		$types = array($this->_emailFormat);

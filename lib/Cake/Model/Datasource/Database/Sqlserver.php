@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource.Database
- * @since         CakePHP(tm) v 0.10.5.1790
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Datasource.Database
+ * @since				 CakePHP(tm) v 0.10.5.1790
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('DboSource', 'Model/Datasource');
@@ -22,10 +22,10 @@ App::uses('DboSource', 'Model/Datasource');
 /**
  * Dbo driver for SQLServer
  *
- * A Dbo driver for SQLServer 2008 and higher.  Requires the `sqlsrv`
+ * A Dbo driver for SQLServer 2008 and higher.	Requires the `sqlsrv`
  * and `pdo_sqlsrv` extensions to be enabled.
  *
- * @package       Cake.Model.Datasource.Database
+ * @package			 Cake.Model.Datasource.Database
  */
 class Sqlserver extends DboSource {
 
@@ -51,7 +51,7 @@ class Sqlserver extends DboSource {
 	public $endQuote = "]";
 
 /**
- * Creates a map between field aliases and numeric indexes.  Workaround for the
+ * Creates a map between field aliases and numeric indexes.	Workaround for the
  * SQL Server driver's 30-character column name limitation.
  *
  * @var array
@@ -282,7 +282,7 @@ class Sqlserver extends DboSource {
 
 					if (strpos($fields[$i], '.') === false) {
 						$this->_fieldMappings[$alias . '__' . $fields[$i]] = $alias . '.' . $fields[$i];
-						$fieldName  = $this->name($alias . '.' . $fields[$i]);
+						$fieldName	= $this->name($alias . '.' . $fields[$i]);
 						$fieldAlias = $this->name($alias . '__' . $fields[$i]);
 					} else {
 						$build = explode('.', $fields[$i]);
@@ -387,7 +387,7 @@ class Sqlserver extends DboSource {
  * Converts database-layer column types to basic types
  *
  * @param mixed $real Either the string value of the fields type.
- *    or the Result object from Sqlserver::describe()
+ *		or the Result object from Sqlserver::describe()
  * @return string Abstract column type (i.e. "string")
  */
 	public function column($real) {
@@ -643,8 +643,8 @@ class Sqlserver extends DboSource {
  * Generate a database-native column schema string
  *
  * @param array $column An array structured like the
- *   following: array('name'=>'value', 'type'=>'value'[, options]),
- *   where options can be 'default', 'length', or 'key'.
+ *	 following: array('name'=>'value', 'type'=>'value'[, options]),
+ *	 where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	public function buildColumn($column) {
@@ -763,8 +763,8 @@ class Sqlserver extends DboSource {
  * Generate a "drop table" statement for the given Schema object
  *
  * @param CakeSchema $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
- *   Otherwise, all tables defined in the schema are generated.
+ * @param string $table Optional.	If specified only the table name given will be generated.
+ *	 Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	public function dropSchema(CakeSchema $schema, $table = null) {

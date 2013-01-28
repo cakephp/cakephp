@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
- * @since         CakePHP(tm) v 0.9.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View.Helper
+ * @since				 CakePHP(tm) v 0.9.1
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppHelper', 'View/Helper');
@@ -25,7 +25,7 @@ App::uses('CakeResponse', 'Network');
  *
  * HtmlHelper encloses all methods needed while working with HTML pages.
  *
- * @package       Cake.View.Helper
+ * @package			 Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html
  */
 class HtmlHelper extends AppHelper {
@@ -185,14 +185,14 @@ class HtmlHelper extends AppHelper {
  *
  * Possible doctypes:
  *
- *  - html4-strict:  HTML4 Strict.
- *  - html4-trans:  HTML4 Transitional.
- *  - html4-frame:  HTML4 Frameset.
- *  - html5: HTML5. Default value.
- *  - xhtml-strict: XHTML1 Strict.
- *  - xhtml-trans: XHTML1 Transitional.
- *  - xhtml-frame: XHTML1 Frameset.
- *  - xhtml11: XHTML1.1.
+ *	- html4-strict:	HTML4 Strict.
+ *	- html4-trans:	HTML4 Transitional.
+ *	- html4-frame:	HTML4 Frameset.
+ *	- html5: HTML5. Default value.
+ *	- xhtml-strict: XHTML1 Strict.
+ *	- xhtml-trans: XHTML1 Transitional.
+ *	- xhtml-frame: XHTML1 Frameset.
+ *	- xhtml11: XHTML1.1.
  *
  * @param string $type Doctype to use.
  * @return string Doctype string
@@ -223,14 +223,14 @@ class HtmlHelper extends AppHelper {
  * ### Options
  *
  * - `inline` Whether or not the link element should be output inline. Set to false to
- *   have the meta tag included in `$scripts_for_layout`, and appended to the 'meta' view block.
- * - `block` Choose a custom block to append the meta tag to.  Using this option
- *   will override the inline option.
+ *	 have the meta tag included in `$scripts_for_layout`, and appended to the 'meta' view block.
+ * - `block` Choose a custom block to append the meta tag to.	Using this option
+ *	 will override the inline option.
  *
  * @param string $type The title of the external resource
  * @param string|array $url The address of the external resource or string for content attribute
  * @param array $options Other attributes for the generated tag. If the type attribute is html,
- *    rss, atom, or icon, the mime-type is returned.
+ *		rss, atom, or icon, the mime-type is returned.
  * @return string A completed `<link />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::meta
  */
@@ -297,7 +297,7 @@ class HtmlHelper extends AppHelper {
  * Returns a charset META-tag.
  *
  * @param string $charset The character set to be used in the meta tag. If empty,
- *  The App.encoding value will be used. Example: "utf-8".
+ *	The App.encoding value will be used. Example: "utf-8".
  * @return string A meta tag containing the specified character set.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::charset
  */
@@ -393,14 +393,14 @@ class HtmlHelper extends AppHelper {
  * ### Options
  *
  * - `inline` If set to false, the generated tag will be appended to the 'css' block,
- *   and included in the `$scripts_for_layout` layout variable. Defaults to true.
- * - `block` Set the name of the block link/style tag will be appended to.  This overrides the `inline`
- *   option.
+ *	 and included in the `$scripts_for_layout` layout variable. Defaults to true.
+ * - `block` Set the name of the block link/style tag will be appended to.	This overrides the `inline`
+ *	 option.
  * - `plugin` False value will prevent parsing path as a plugin
  *
  * @param string|array $path The name of a CSS style sheet or an array containing names of
- *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
- *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
+ *	 CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
+ *	 of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
  * @param string $rel Rel attribute. Defaults to "stylesheet". If equal to 'import' the stylesheet will be imported.
  * @param array $options Array of HTML attributes.
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
@@ -457,7 +457,7 @@ class HtmlHelper extends AppHelper {
  * Returns one or many `<script>` tags depending on the number of scripts given.
  *
  * If the filename is prefixed with "/", the path will be relative to the base path of your
- * application.  Otherwise, the path will be relative to your JavaScript path, usually webroot/js.
+ * application.	Otherwise, the path will be relative to your JavaScript path, usually webroot/js.
  *
  *
  * ### Usage
@@ -481,17 +481,17 @@ class HtmlHelper extends AppHelper {
  * ### Options
  *
  * - `inline` Whether script should be output inline or into `$scripts_for_layout`. When set to false,
- *   the script tag will be appended to the 'script' view block as well as `$scripts_for_layout`.
- * - `block` The name of the block you want the script appended to.  Leave undefined to output inline.
- *   Using this option will override the inline option.
+ *	 the script tag will be appended to the 'script' view block as well as `$scripts_for_layout`.
+ * - `block` The name of the block you want the script appended to.	Leave undefined to output inline.
+ *	 Using this option will override the inline option.
  * - `once` Whether or not the script should be checked for uniqueness. If true scripts will only be
- *   included once, use false to allow the same script to be included more than once per request.
+ *	 included once, use false to allow the same script to be included more than once per request.
  * - `plugin` False value will prevent parsing path as a plugin
  *
  * @param string|array $url String or array of javascript files to include
  * @param array|boolean $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
  * @return mixed String of `<script />` tags or null if $inline is false or if $once is true and the file has been
- *   included before.
+ *	 included before.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::script
  */
 	public function script($url, $options = array()) {
@@ -544,13 +544,13 @@ class HtmlHelper extends AppHelper {
  *
  * - `safe` (boolean) Whether or not the $script should be wrapped in <![CDATA[ ]]>
  * - `inline` (boolean) Whether or not the $script should be added to
- *   `$scripts_for_layout` / `script` block, or output inline. (Deprecated, use `block` instead)
+ *	 `$scripts_for_layout` / `script` block, or output inline. (Deprecated, use `block` instead)
  * - `block` Which block you want this script block appended to.
- *   Defaults to `script`.
+ *	 Defaults to `script`.
  *
  * @param string $script The script to wrap
  * @param array $options The options to use. Options not listed above will be
- *    treated as HTML attributes.
+ *		treated as HTML attributes.
  * @return mixed string or null depending on the value of `$options['block']`
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::scriptBlock
  */
@@ -653,7 +653,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $separator Text to separate crumbs.
  * @param string|array|boolean $startText This will be the first crumb, if false it defaults to first crumb in array. Can
- *   also be an array, see above for details.
+ *	 also be an array, see above for details.
  * @return string Composed bread crumbs
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
@@ -683,7 +683,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param array $options Array of html attributes to apply to the generated list elements.
  * @param string|array|boolean $startText This will be the first crumb, if false it defaults to first crumb in array. Can
- *   also be an array, see `HtmlHelper::getCrumbs` for details.
+ *	 also be an array, see `HtmlHelper::getCrumbs` for details.
  * @return string breadcrumbs html list
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
@@ -754,12 +754,12 @@ class HtmlHelper extends AppHelper {
  * ### Options:
  *
  * - `url` If provided an image link will be generated and the link will point at
- *   `$options['url']`.
+ *	 `$options['url']`.
  * - `fullBase` If true the src attribute will get a full address for the image file.
  * - `plugin` False value will prevent parsing path as a plugin
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
- * @param array $options Array of HTML attributes.  See above for special options.
+ * @param array $options Array of HTML attributes.	See above for special options.
  * @return string completed img tag
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::image
  */
@@ -789,7 +789,7 @@ class HtmlHelper extends AppHelper {
  * Returns a row of formatted and named TABLE headers.
  *
  * @param array $names Array of tablenames. Each tablename also can be a key that points to an array with a set
- *     of attributes to its specific tag
+ *		 of attributes to its specific tag
  * @param array $trOptions HTML options for TR elements.
  * @param array $thOptions HTML options for TH elements.
  * @return string Completed table headers
@@ -815,7 +815,7 @@ class HtmlHelper extends AppHelper {
  * @param array $evenTrOptions HTML options for even TR elements
  * @param boolean $useCount adds class "column-$i"
  * @param boolean $continueOddEven If false, will use a non-static $count variable,
- *    so that the odd/even count is reset to zero just for that call.
+ *		so that the odd/even count is reset to zero just for that call.
  * @return string Formatted HTML
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::tableCells
  */
@@ -870,7 +870,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $name Tag name.
  * @param string $text String content that will appear inside the div element.
- *   If null, only a start tag will be printed
+ *	 If null, only a start tag will be printed
  * @param array $options Additional HTML attributes of the DIV tag, see above.
  * @return string The formatted tag element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::tag
@@ -921,7 +921,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $class CSS class name of the div element.
  * @param string $text String content that will appear inside the div element.
- *   If null, only a start tag will be printed
+ *	 If null, only a start tag will be printed
  * @param array $options Additional HTML attributes of the DIV tag
  * @return string The formatted DIV element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::div
@@ -1009,7 +1009,7 @@ class HtmlHelper extends AppHelper {
  * - `fullBase` If provided the src attribute will get a full address including domain name
  *
  * @param string|array $path Path to the video file, relative to the webroot/{$options['pathPrefix']} directory.
- *  Or an array where each item itself can be a path string or an associate array containing keys `src` and `type`
+ *	Or an array where each item itself can be a path string or an associate array containing keys `src` and `type`
  * @param array $options Array of HTML attributes, and special options above.
  * @return string Generated media element
  */
@@ -1129,7 +1129,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Load Html tag configuration.
  *
- * Loads a file from APP/Config that contains tag data.  By default the file is expected
+ * Loads a file from APP/Config that contains tag data.	By default the file is expected
  * to be compatible with PhpReader:
  *
  * `$this->Html->loadConfig('tags.php');`

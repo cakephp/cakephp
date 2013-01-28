@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller
- * @since         CakePHP(tm) v 1.2.0.5436
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Controller
+ * @since				 CakePHP(tm) v 1.2.0.5436
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('PagesController', 'Controller');
@@ -22,7 +22,7 @@ App::uses('PagesController', 'Controller');
 /**
  * PagesControllerTest class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class PagesControllerTest extends CakeTestCase {
 

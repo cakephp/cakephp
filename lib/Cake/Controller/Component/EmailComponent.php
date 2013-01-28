@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
- * @since         CakePHP(tm) v 1.2.0.3467
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Controller.Component
+ * @since				 CakePHP(tm) v 1.2.0.3467
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Component', 'Controller');
@@ -27,7 +27,7 @@ App::uses('CakeEmail', 'Network/Email');
  * This component is used for handling Internet Message Format based
  * based on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
  *
- * @package       Cake.Controller.Component
+ * @package			 Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/email.html
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/email.html
  * @deprecated Use Network/CakeEmail
@@ -239,7 +239,7 @@ class EmailComponent extends Component {
  * it be handled by sendmail (or similar) or a string
  * to completely override the Message-ID.
  *
- * If you are sending Email from a shell, be sure to set this value.  As you
+ * If you are sending Email from a shell, be sure to set this value.	As you
  * could encounter delivery issues if you do not.
  *
  * @var mixed
@@ -280,7 +280,7 @@ class EmailComponent extends Component {
  * Send an email using the specified content, template and layout
  *
  * @param string|array $content Either an array of text lines, or a string with contents
- *  If you are rendering a template this variable will be sent to the templates as `$content`
+ *	If you are rendering a template this variable will be sent to the templates as `$content`
  * @param string $template Template to use when sending email
  * @param string $layout Layout to use to enclose email body
  * @return boolean Success
@@ -449,7 +449,7 @@ class EmailComponent extends Component {
  * @return string Stripped value
  */
 	protected function _strip($value, $message = false) {
-		$search  = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
+		$search	= '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
 		$search .= '|charset\=|mime-version\:|multipart/mixed|(?:[^a-z]to|b?cc)\:.*';
 
 		if ($message !== true) {

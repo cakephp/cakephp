@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright       Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link            http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.View.Helper
- * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright			 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link						http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.View.Helper
+ * @license				 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('View', 'View');
@@ -283,8 +283,8 @@ class PrototypeEngineHelperTest extends CakeTestCase {
 	}
 
 /**
- * test drag() method.  Scriptaculous lacks the ability to take an Array of Elements
- * in new Drag() when selection is a multiple type.  Iterate over the array.
+ * test drag() method.	Scriptaculous lacks the ability to take an Array of Elements
+ * in new Drag() when selection is a multiple type.	Iterate over the array.
  *
  * @return void
  */

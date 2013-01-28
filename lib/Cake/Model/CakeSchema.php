@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
- * @since         CakePHP(tm) v 1.2.0.5550
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model
+ * @since				 CakePHP(tm) v 1.2.0.5550
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Model', 'Model');
@@ -25,7 +25,7 @@ App::uses('File', 'Utility');
 /**
  * Base Class for Schema management
  *
- * @package       Cake.Model
+ * @package			 Cake.Model
  */
 class CakeSchema extends Object {
 
@@ -412,12 +412,12 @@ class CakeSchema extends Object {
 					}
 					$col = "\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
 					unset($value['type']);
-					$col .= join(', ',  $this->_values($value));
+					$col .= join(', ',	$this->_values($value));
 				} elseif ($field == 'indexes') {
 					$col = "\t\t'indexes' => array(\n\t\t\t";
 					$props = array();
 					foreach ((array)$value as $key => $index) {
-						$props[] = "'{$key}' => array(" . join(', ',  $this->_values($index)) . ")";
+						$props[] = "'{$key}' => array(" . join(', ',	$this->_values($index)) . ")";
 					}
 					$col .= join(",\n\t\t\t", $props) . "\n\t\t";
 				} elseif ($field == 'tableParameters') {
@@ -534,7 +534,7 @@ class CakeSchema extends Object {
  * @param array $array1 Base array
  * @param array $array2 Corresponding array checked for equality
  * @return array Difference as array with array(keys => values) from input array
- *     where match was not found.
+ *		 where match was not found.
  */
 	protected function _arrayDiffAssoc($array1, $array2) {
 		$difference = array();
@@ -574,7 +574,7 @@ class CakeSchema extends Object {
 		if (is_array($values)) {
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
-					$vals[] = "'{$key}' => array(" . implode(", ",  $this->_values($val)) . ")";
+					$vals[] = "'{$key}' => array(" . implode(", ",	$this->_values($val)) . ")";
 				} else {
 					$val = var_export($val, true);
 					if ($val === 'NULL') {

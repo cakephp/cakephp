@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.webroot
- * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 app.webroot
+ * @since				 CakePHP(tm) v 0.2.9
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
  * Use the DS to separate the directories in other defines
@@ -51,7 +51,7 @@ if (!defined('APP_DIR')) {
  * Un-comment this line to specify a fixed path to CakePHP.
  * This should point at the directory containing `Cake`.
  *
- * For ease of development CakePHP uses PHP's include_path.  If you
+ * For ease of development CakePHP uses PHP's include_path.	If you
  * cannot modify your include_path set this value.
  *
  * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
@@ -83,7 +83,7 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	}
 }
 if (!empty($failed)) {
-	trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
+	trigger_error("CakePHP core could not be found.	Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.	It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
 
 App::uses('Dispatcher', 'Routing');

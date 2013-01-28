@@ -9,11 +9,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('ObjectCollection', 'Utility');
@@ -23,7 +23,7 @@ App::uses('CakeEventListener', 'Event');
  * Helpers collection is used as a registry for loaded helpers and handles loading
  * and constructing helper class objects.
  *
- * @package       Cake.View
+ * @package			 Cake.View
  */
 class HelperCollection extends ObjectCollection implements CakeEventListener {
 
@@ -51,7 +51,7 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
  * @param string $helper The helper name to be loaded
  * @return boolean wheter the helper could be loaded or not
  * @throws MissingHelperException When a helper could not be found.
- *    App helpers are searched, and then plugin helpers.
+ *		App helpers are searched, and then plugin helpers.
  */
 	public function __isset($helper) {
 		if (parent::__isset($helper)) {
@@ -91,17 +91,17 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
 	}
 
 /**
- * Loads/constructs a helper.  Will return the instance in the registry if it already exists.
- * By setting `$enable` to false you can disable callbacks for a helper.  Alternatively you
- * can set `$settings['enabled'] = false` to disable callbacks.  This alias is provided so that when
+ * Loads/constructs a helper.	Will return the instance in the registry if it already exists.
+ * By setting `$enable` to false you can disable callbacks for a helper.	Alternatively you
+ * can set `$settings['enabled'] = false` to disable callbacks.	This alias is provided so that when
  * declaring $helpers arrays you can disable callbacks on helpers.
  *
  * You can alias your helper as an existing helper by setting the 'className' key, i.e.,
  * {{{
  * public $helpers = array(
- *   'Html' => array(
- *     'className' => 'AliasedHtml'
- *   );
+ *	 'Html' => array(
+ *		 'className' => 'AliasedHtml'
+ *	 );
  * );
  * }}}
  * All calls to the `Html` helper would use `AliasedHtml` instead.
@@ -163,31 +163,31 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
 
 /**
  * Trigger a callback method on every object in the collection.
- * Used to trigger methods on objects in the collection.  Will fire the methods in the
+ * Used to trigger methods on objects in the collection.	Will fire the methods in the
  * order they were attached.
  *
  * ### Options
  *
  * - `breakOn` Set to the value or values you want the callback propagation to stop on.
- *    Can either be a scalar value, or an array of values to break on. Defaults to `false`.
+ *		Can either be a scalar value, or an array of values to break on. Defaults to `false`.
  *
  * - `break` Set to true to enabled breaking. When a trigger is broken, the last returned value
- *    will be returned.  If used in combination with `collectReturn` the collected results will be returned.
- *    Defaults to `false`.
+ *		will be returned.	If used in combination with `collectReturn` the collected results will be returned.
+ *		Defaults to `false`.
  *
  * - `collectReturn` Set to true to collect the return of each object into an array.
- *    This array of return values will be returned from the trigger() call. Defaults to `false`.
+ *		This array of return values will be returned from the trigger() call. Defaults to `false`.
  *
  * - `modParams` Allows each object the callback gets called on to modify the parameters to the next object.
- *    Setting modParams to an integer value will allow you to modify the parameter with that index.
- *    Any non-null value will modify the parameter index indicated.
- *    Defaults to false.
+ *		Setting modParams to an integer value will allow you to modify the parameter with that index.
+ *		Any non-null value will modify the parameter index indicated.
+ *		Defaults to false.
  *
  *
  * @param string $callback|CakeEvent Method to fire on all the objects. Its assumed all the objects implement
- *   the method you are calling. If an instance of CakeEvent is provided, then then Event name will parsed to
- *   get the callback name. This is done by getting the last word after any dot in the event name
- *   (eg. `Model.afterSave` event will trigger the `afterSave` callback)
+ *	 the method you are calling. If an instance of CakeEvent is provided, then then Event name will parsed to
+ *	 get the callback name. This is done by getting the last word after any dot in the event name
+ *	 (eg. `Model.afterSave` event will trigger the `afterSave` callback)
  * @param array $params Array of parameters for the triggered callback.
  * @param array $options Array of options.
  * @return mixed Either the last result or all results if collectReturn is on.

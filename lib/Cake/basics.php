@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake
- * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake
+ * @since				 CakePHP(tm) v 0.2.9
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -123,7 +123,7 @@ if (!function_exists('sortByKey')) {
  *
  * @param array $array Array to sort
  * @param string $sortby Sort by this key
- * @param string $order  Sort order asc/desc (ascending or descending).
+ * @param string $order	Sort order asc/desc (ascending or descending).
  * @param integer $type Type of sorting to perform
  * @return mixed Sorted array
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#sortByKey
@@ -154,11 +154,11 @@ if (!function_exists('sortByKey')) {
 /**
  * Convenience method for htmlspecialchars.
  *
- * @param string|array|object $text Text to wrap through htmlspecialchars.  Also works with arrays, and objects.
- *    Arrays will be mapped and have all their elements escaped.  Objects will be string cast if they
- *    implement a `__toString` method.  Otherwise the class name will be used.
+ * @param string|array|object $text Text to wrap through htmlspecialchars.	Also works with arrays, and objects.
+ *		Arrays will be mapped and have all their elements escaped.	Objects will be string cast if they
+ *		implement a `__toString` method.	Otherwise the class name will be used.
  * @param boolean $double Encode existing html entities
- * @param string $charset Character set to use when escaping.  Defaults to config value in 'App.encoding' or 'UTF-8'
+ * @param string $charset Character set to use when escaping.	Defaults to config value in 'App.encoding' or 'UTF-8'
  * @return string Wrapped text
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#h
  */
@@ -201,7 +201,7 @@ function h($text, $double = true, $charset = null) {
  * @param string $name The name you want to plugin split.
  * @param boolean $dotAppend Set to true if you want the plugin to have a '.' appended to it.
  * @param string $plugin Optional default plugin to use if no plugin is found. Defaults to null.
- * @return array Array with 2 indexes.  0 => plugin name, 1 => classname
+ * @return array Array with 2 indexes.	0 => plugin name, 1 => classname
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
  */
 function pluginSplit($name, $dotAppend = false, $plugin = null) {
@@ -256,10 +256,10 @@ function am() {
 /**
  * Gets an environment variable from available sources, and provides emulation
  * for unsupported or inconsistent environment variables (i.e. DOCUMENT_ROOT on
- * IIS, or SCRIPT_NAME in CGI mode).  Also exposes some additional custom
+ * IIS, or SCRIPT_NAME in CGI mode).	Also exposes some additional custom
  * environment information.
  *
- * @param  string $key Environment variable name.
+ * @param	string $key Environment variable name.
  * @return string Environment variable setting.
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#env
  */
@@ -361,11 +361,11 @@ function env($key) {
 /**
  * Reads/writes temporary data to cache files or session.
  *
- * @param  string $path	File path within /tmp to save the file.
- * @param  mixed  $data	The data to save to the temporary file.
- * @param  mixed  $expires A valid strtotime string when the data expires.
- * @param  string $target  The target of the cached data; either 'cache' or 'public'.
- * @return mixed  The contents of the temporary file.
+ * @param	string $path	File path within /tmp to save the file.
+ * @param	mixed	$data	The data to save to the temporary file.
+ * @param	mixed	$expires A valid strtotime string when the data expires.
+ * @param	string $target	The target of the cached data; either 'cache' or 'public'.
+ * @return mixed	The contents of the temporary file.
  * @deprecated Please use Cache::write() instead
  */
 function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
@@ -422,8 +422,8 @@ function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
  * Used to delete files in the cache directories, or clear contents of cache directories
  *
  * @param string|array $params As String name to be searched for deletion, if name is a directory all files in
- *   directory will be deleted. If array, names to be searched for deletion. If clearCache() without params,
- *   all files in app/tmp/cache/views will be deleted
+ *	 directory will be deleted. If array, names to be searched for deletion. If clearCache() without params,
+ *	 all files in app/tmp/cache/views will be deleted
  * @param string $type Directory in tmp/cache defaults to view directory
  * @param string $ext The file extension you are deleting
  * @return true if files found and deleted false otherwise
@@ -610,15 +610,15 @@ function __dn($domain, $singular, $plural, $count, $args = null) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * Note that the category must be specified with a numeric value, instead of the constant name.	The values are:
  *
- * - LC_ALL       0
- * - LC_COLLATE   1
- * - LC_CTYPE     2
- * - LC_MONETARY  3
- * - LC_NUMERIC   4
- * - LC_TIME      5
- * - LC_MESSAGES  6
+ * - LC_ALL			 0
+ * - LC_COLLATE	 1
+ * - LC_CTYPE		 2
+ * - LC_MONETARY	3
+ * - LC_NUMERIC	 4
+ * - LC_TIME			5
+ * - LC_MESSAGES	6
  *
  * @param string $domain Domain
  * @param string $msg Message to translate
@@ -650,15 +650,15 @@ function __dc($domain, $msg, $category, $args = null) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * Note that the category must be specified with a numeric value, instead of the constant name.	The values are:
  *
- * - LC_ALL       0
- * - LC_COLLATE   1
- * - LC_CTYPE     2
- * - LC_MONETARY  3
- * - LC_NUMERIC   4
- * - LC_TIME      5
- * - LC_MESSAGES  6
+ * - LC_ALL			 0
+ * - LC_COLLATE	 1
+ * - LC_CTYPE		 2
+ * - LC_MONETARY	3
+ * - LC_NUMERIC	 4
+ * - LC_TIME			5
+ * - LC_MESSAGES	6
  *
  * @param string $domain Domain
  * @param string $singular Singular string to translate
@@ -687,15 +687,15 @@ function __dcn($domain, $singular, $plural, $count, $category, $args = null) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * Note that the category must be specified with a numeric value, instead of the constant name.	The values are:
  *
- * - LC_ALL       0
- * - LC_COLLATE   1
- * - LC_CTYPE     2
- * - LC_MONETARY  3
- * - LC_NUMERIC   4
- * - LC_TIME      5
- * - LC_MESSAGES  6
+ * - LC_ALL			 0
+ * - LC_COLLATE	 1
+ * - LC_CTYPE		 2
+ * - LC_MONETARY	3
+ * - LC_NUMERIC	 4
+ * - LC_TIME			5
+ * - LC_MESSAGES	6
  *
  * @param string $msg String to translate
  * @param integer $category Category

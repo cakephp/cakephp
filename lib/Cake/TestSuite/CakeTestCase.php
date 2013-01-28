@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.TestSuite
- * @since         CakePHP(tm) v 1.2.0.4667
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.TestSuite
+ * @since				 CakePHP(tm) v 1.2.0.4667
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeFixtureManager', 'TestSuite/Fixture');
 App::uses('CakeTestFixture', 'TestSuite/Fixture');
@@ -22,7 +22,7 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
 /**
  * CakeTestCase class
  *
- * @package       Cake.TestSuite
+ * @package			 Cake.TestSuite
  */
 abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 
@@ -67,7 +67,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * If no TestResult object is passed a new one will be created.
  * This method is run for each test method in this class
  *
- * @param  PHPUnit_Framework_TestResult $result
+ * @param	PHPUnit_Framework_TestResult $result
  * @return PHPUnit_Framework_TestResult
  * @throws InvalidArgumentException
  */
@@ -195,7 +195,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * Chooses which fixtures to load for a given test
  *
  * @param string $fixture Each parameter is a model name that corresponds to a
- *                        fixture, i.e. 'Post', 'Author', etc.
+ *												fixture, i.e. 'Post', 'Author', etc.
  * @return void
  * @see CakeTestCase::$autoFixtures
  * @throws Exception when no fixture manager is available.
@@ -353,8 +353,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * You can also specify a pattern expression as part of the attribute values, or the tag
  * being defined, if you prepend the value with preg: and enclose it with slashes, like so:
  *	array(
- *  	array('input' => array('name', 'id' => 'preg:/FieldName\d+/')),
- *  	'preg:/My\s+field/'
+ *		array('input' => array('name', 'id' => 'preg:/FieldName\d+/')),
+ *		'preg:/My\s+field/'
  *	)
  *
  * Important: This function is very forgiving about whitespace and also accepts any
@@ -394,7 +394,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 					}
 					$regex[] = array(
 						sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
-						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags,  strlen($match[0]))),
+						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags,	strlen($match[0]))),
 						$i,
 					);
 					continue;

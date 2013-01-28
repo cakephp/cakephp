@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller.Component
- * @since         CakePHP(tm) v 1.2.0.5435
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Controller.Component
+ * @since				 CakePHP(tm) v 1.2.0.5435
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Component', 'Controller');
@@ -25,7 +25,7 @@ App::uses('CookieComponent', 'Controller/Component');
 /**
  * CookieComponentTestController class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class CookieComponentTestController extends Controller {
 
@@ -55,7 +55,7 @@ class CookieComponentTestController extends Controller {
 /**
  * CookieComponentTest class
  *
- * @package       Cake.Test.Case.Controller.Component
+ * @package			 Cake.Test.Case.Controller.Component
  */
 class CookieComponentTest extends CakeTestCase {
 

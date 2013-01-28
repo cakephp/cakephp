@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.TestSuite
- * @since         CakePHP(tm) v 1.2.0.4667
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.TestSuite
+ * @since				 CakePHP(tm) v 1.2.0.4667
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('DboSource', 'Model/Datasource');
 App::uses('Model', 'Model');
@@ -23,7 +23,7 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
 /**
  * CakeTestFixtureTestFixture class
  *
- * @package       Cake.Test.Case.TestSuite
+ * @package			 Cake.Test.Case.TestSuite
  */
 class CakeTestFixtureTestFixture extends CakeTestFixture {
 
@@ -47,7 +47,7 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer',  'key' => 'primary'),
+		'id' => array('type' => 'integer',	'key' => 'primary'),
 		'name' => array('type' => 'string', 'length' => '255'),
 		'created' => array('type' => 'datetime')
 	);
@@ -67,8 +67,8 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
 /**
  * StringFieldsTestFixture class
  *
- * @package       Cake.Test.Case.TestSuite
- * @subpackage    cake.cake.tests.cases.libs
+ * @package			 Cake.Test.Case.TestSuite
+ * @subpackage		cake.cake.tests.cases.libs
  */
 class StringsTestFixture extends CakeTestFixture {
 
@@ -92,7 +92,7 @@ class StringsTestFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer',  'key' => 'primary'),
+		'id' => array('type' => 'integer',	'key' => 'primary'),
 		'name' => array('type' => 'string', 'length' => '255'),
 		'email' => array('type' => 'string', 'length' => '255'),
 		'age' => array('type' => 'integer', 'default' => 10)
@@ -114,7 +114,7 @@ class StringsTestFixture extends CakeTestFixture {
 /**
  * CakeTestFixtureImportFixture class
  *
- * @package       Cake.Test.Case.TestSuite
+ * @package			 Cake.Test.Case.TestSuite
  */
 class CakeTestFixtureImportFixture extends CakeTestFixture {
 
@@ -136,7 +136,7 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
 /**
  * CakeTestFixtureDefaultImportFixture class
  *
- * @package       Cake.Test.Case.TestSuite
+ * @package			 Cake.Test.Case.TestSuite
  */
 class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
 
@@ -151,8 +151,8 @@ class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
 /**
  * FixtureImportTestModel class
  *
- * @package       Cake.Test.Case.TestSuite
- * @package       Cake.Test.Case.TestSuite
+ * @package			 Cake.Test.Case.TestSuite
+ * @package			 Cake.Test.Case.TestSuite
  */
 class FixtureImportTestModel extends Model {
 
@@ -179,7 +179,7 @@ class FixturePrefixTest extends Model {
 /**
  * Test case for CakeTestFixture
  *
- * @package       Cake.Test.Case.TestSuite
+ * @package			 Cake.Test.Case.TestSuite
  */
 class CakeTestFixtureTest extends CakeTestCase {
 
@@ -352,7 +352,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 	}
 
 /**
- * test that importing with records works.  Make sure to try with postgres as its
+ * test that importing with records works.	Make sure to try with postgres as its
  * handling of aliases is a workaround at best.
  *
  * @return void

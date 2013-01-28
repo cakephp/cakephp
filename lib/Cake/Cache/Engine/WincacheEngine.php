@@ -12,17 +12,17 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Cache.Engine
- * @since         CakePHP(tm) v 1.2.0.4933
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Cache.Engine
+ * @since				 CakePHP(tm) v 1.2.0.4933
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
  * Wincache storage engine for cache
  *
- * @package       Cake.Cache.Engine
+ * @package			 Cake.Cache.Engine
  */
 class WincacheEngine extends CacheEngine {
 
@@ -77,7 +77,7 @@ class WincacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if
- *     there was an error fetching it
+ *		 there was an error fetching it
  */
 	public function read($key) {
 		$time = time();
@@ -121,11 +121,11 @@ class WincacheEngine extends CacheEngine {
 	}
 
 /**
- * Delete all keys from the cache.  This will clear every
+ * Delete all keys from the cache.	This will clear every
  * item in the cache matching the cache config prefix.
  *
  * @param boolean $check If true, nothing will be cleared, as entries will
- *   naturally expire in wincache..
+ *	 naturally expire in wincache..
  * @return boolean True Returns true.
  */
 	public function clear($check) {

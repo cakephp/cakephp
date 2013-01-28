@@ -6,10 +6,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.5012
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.2.0.5012
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -17,7 +17,7 @@ App::uses('AppShell', 'Console/Command');
 /**
  * Provides a very basic 'interactive' console for CakePHP apps.
  *
- * @package       Cake.Console.Command
+ * @package			 Cake.Console.Command
  */
 class ConsoleShell extends AppShell {
 
@@ -120,17 +120,17 @@ class ConsoleShell extends AppShell {
 			"\tRoute <url>",
 			"",
 			"where url is the path to your your action plus any query parameters,",
-			"minus the application's base path.  For example:",
+			"minus the application's base path.	For example:",
 			"",
 			"\tRoute /posts/view/1",
 			"",
 			"will return something like the following:",
 			"",
 			"\tarray(",
-			"\t  [...]",
-			"\t  'controller' => 'posts',",
-			"\t  'action' => 'view',",
-			"\t  [...]",
+			"\t	[...]",
+			"\t	'controller' => 'posts',",
+			"\t	'action' => 'view',",
+			"\t	[...]",
 			"\t)",
 			"",
 			'Alternatively, you can use simple array syntax to test reverse',

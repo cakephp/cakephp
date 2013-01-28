@@ -9,11 +9,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	  Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link		  http://cakephp.org CakePHP(tm) Project
- * @package		  Cake.Routing
- * @since		  CakePHP(tm) v 2.2
- * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link			http://cakephp.org CakePHP(tm) Project
+ * @package			Cake.Routing
+ * @since			CakePHP(tm) v 2.2
+ * @license			MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeEventListener', 'Event');
@@ -77,7 +77,7 @@ abstract class DispatcherFilter implements CakeEventListener {
  * If false is returned, the event will be stopped and no more listeners will be notified.
  * Alternatively you can call `$event->stopPropagation()` to acheive the same result.
  *
- * @param CakeEvent $event container object having the `request` and  `response`
+ * @param CakeEvent $event container object having the `request` and	`response`
  *	keys in the data property.
  * @return mixed boolean to stop the event dispatching or null to continue
  **/

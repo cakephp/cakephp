@@ -1,6 +1,6 @@
 <?php
 /**
- * Database Session save handler.  Allows saving session information into a model.
+ * Database Session save handler.	Allows saving session information into a model.
  *
  * PHP 5
  *
@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource.Session
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Datasource.Session
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeSessionHandlerInterface', 'Model/Datasource/Session');
@@ -23,7 +23,7 @@ App::uses('ClassRegistry', 'Utility');
 /**
  * DatabaseSession provides methods to be used with CakeSession.
  *
- * @package       Cake.Model.Datasource.Session
+ * @package			 Cake.Model.Datasource.Session
  */
 class DatabaseSession implements CakeSessionHandlerInterface {
 
@@ -42,7 +42,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 	protected $_timeout;
 
 /**
- * Constructor.  Looks at Session configuration information and
+ * Constructor.	Looks at Session configuration information and
  * sets up the session model.
  *
  */

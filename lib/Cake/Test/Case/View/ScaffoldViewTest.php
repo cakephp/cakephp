@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Controller
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Controller', 'Controller');
 App::uses('Scaffold', 'Controller');
@@ -26,7 +26,7 @@ require_once dirname(dirname(__FILE__)) . DS . 'Model' . DS . 'models.php';
 /**
  * TestScaffoldView class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class TestScaffoldView extends ScaffoldView {
 
@@ -45,7 +45,7 @@ class TestScaffoldView extends ScaffoldView {
 /**
  * ScaffoldViewMockController class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ScaffoldViewMockController extends Controller {
 
@@ -67,7 +67,7 @@ class ScaffoldViewMockController extends Controller {
 /**
  * ScaffoldViewTest class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ScaffoldViewTest extends CakeTestCase {
 

@@ -10,18 +10,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Model
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 
 /**
  * ModelValidationTest
  *
- * @package       Cake.Test.Case.Model
+ * @package			 Cake.Test.Case.Model
  */
 class ModelValidationTest extends BaseModelTest {
 
@@ -167,7 +167,7 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
- * Test that invalidFields() integrates well with save().  And that fieldList can be an empty type.
+ * Test that invalidFields() integrates well with save().	And that fieldList can be an empty type.
  *
  * @return void
  */
@@ -1701,7 +1701,7 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
- *  Tests that methods are refreshed when the list of behaviors change
+ *	Tests that methods are refreshed when the list of behaviors change
  *
  * @return void
  */

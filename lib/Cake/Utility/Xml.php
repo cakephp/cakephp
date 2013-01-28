@@ -12,11 +12,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP v .0.10.3.1400
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP v .0.10.3.1400
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('HttpSocket', 'Network/Http');
 
@@ -25,7 +25,7 @@ App::uses('HttpSocket', 'Network/Http');
  *
  * The methods in these classes enable the datasources that use XML to work.
  *
- * @package       Cake.Utility
+ * @package			 Cake.Utility
  */
 class Xml {
 
@@ -75,8 +75,8 @@ class Xml {
  * ### Options
  *
  * - `return` Can be 'simplexml' to return object of SimpleXMLElement or 'domdocument' to return DOMDocument.
- * - `loadEntities` Defaults to false.  Set to true to enable loading of `<!ENTITY` definitions.  This
- *   is disabled by default for security reasons.
+ * - `loadEntities` Defaults to false.	Set to true to enable loading of `<!ENTITY` definitions.	This
+ *	 is disabled by default for security reasons.
  * - If using array as input, you can pass `options` from Xml::fromArray.
  *
  * @param string|array $input XML string, a path to a file, an URL or an array
@@ -117,7 +117,7 @@ class Xml {
  * Parse the input data and create either a SimpleXmlElement object or a DOMDocument.
  *
  * @param string $input The input to load.
- * @param array  $options The options to use. See Xml::build()
+ * @param array	$options The options to use. See Xml::build()
  * @return SimpleXmlElement|DOMDocument.
  */
 	protected static function _loadXml($input, $options) {
@@ -153,17 +153,17 @@ class Xml {
  *
  * {{{
  * $value = array(
- *    'root' => array(
- *        'tag' => array(
- *            'id' => 1,
- *            'value' => 'defect',
- *            '@' => 'description'
- *         )
- *     )
+ *		'root' => array(
+ *				'tag' => array(
+ *						'id' => 1,
+ *						'value' => 'defect',
+ *						'@' => 'description'
+ *				 )
+ *		 )
  * );
  * }}}
  *
- * Calling `Xml::fromArray($value, 'tags');`  Will generate:
+ * Calling `Xml::fromArray($value, 'tags');`	Will generate:
  *
  * `<root><tag><id>1</id><value>defect</value>description</tag></root>`
  *
@@ -212,7 +212,7 @@ class Xml {
  * @param DOMDocument $dom Handler to DOMDocument
  * @param DOMElement $node Handler to DOMElement (child)
  * @param array $data Array of data to append to the $node.
- * @param string $format Either 'attribute' or 'tags'.  This determines where nested keys go.
+ * @param string $format Either 'attribute' or 'tags'.	This determines where nested keys go.
  * @return void
  * @throws XmlException
  */

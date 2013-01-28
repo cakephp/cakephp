@@ -2,7 +2,7 @@
 /**
  * This class helpes in indirectly testing the functionaliteies of CakeTestCase::assertTags
  *
- * @package       Cake.Test.Fixture
+ * @package			 Cake.Test.Fixture
  */
 class AssertTagsTestCase extends CakeTestCase {
 

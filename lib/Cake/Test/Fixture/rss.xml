@@ -4,7 +4,7 @@
 		<atom:link href="http://bakery.cakephp.org/articles/rss" rel="self" type="application/rss+xml" />
 		<title>The Bakery: </title>
 		<link>http://bakery.cakephp.org/</link>
-		<description>Recent  Articles at The Bakery.</description>
+		<description>Recent	Articles at The Bakery.</description>
 		<language>en-us</language>
 		<pubDate>Wed, 01 Sep 2010 12:09:25 -0500</pubDate>
 		<docs>http://validator.w3.org/feed/docs/rss2.html</docs>

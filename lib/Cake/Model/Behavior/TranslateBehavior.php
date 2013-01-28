@@ -6,11 +6,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Behavior
- * @since         CakePHP(tm) v 1.2.0.4525
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Behavior
+ * @since				 CakePHP(tm) v 1.2.0.4525
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('I18n', 'I18n');
@@ -19,7 +19,7 @@ App::uses('I18nModel', 'Model');
 /**
  * Translate behavior
  *
- * @package       Cake.Model.Behavior
+ * @package			 Cake.Model.Behavior
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/translate.html
  */
 class TranslateBehavior extends ModelBehavior {
@@ -128,7 +128,7 @@ class TranslateBehavior extends ModelBehavior {
 				'conditions' => array(
 					$Model->escapeField() => $db->identifier($RuntimeModel->escapeField('foreign_key')),
 					$RuntimeModel->escapeField('model') => $Model->name,
-					$RuntimeModel->escapeField('locale')  => $locale
+					$RuntimeModel->escapeField('locale')	=> $locale
 				)
 			);
 			$conditionFields = $this->_checkConditions($Model, $query);
@@ -331,7 +331,7 @@ class TranslateBehavior extends ModelBehavior {
  * beforeSave callback.
  *
  * Copies data into the runtime property when `$options['validate']` is
- * disabled.  Or the runtime data hasn't been set yet.
+ * disabled.	Or the runtime data hasn't been set yet.
  *
  * @param Model $Model Model save was called on.
  * @return boolean true.
@@ -505,7 +505,7 @@ class TranslateBehavior extends ModelBehavior {
  * Get instance of model for translations.
  *
  * If the model has a translateModel property set, this will be used as the class
- * name to find/use.  If no translateModel property is found 'I18nModel' will be used.
+ * name to find/use.	If no translateModel property is found 'I18nModel' will be used.
  *
  * @param Model $Model Model to get a translatemodel for.
  * @return Model
@@ -538,10 +538,10 @@ class TranslateBehavior extends ModelBehavior {
  * @param Model $Model instance of model
  * @param string|array $fields string with field or array(field1, field2=>AssocName, field3)
  * @param boolean $reset Leave true to have the fields only modified for the next operation.
- *   if false the field will be added for all future queries.
+ *	 if false the field will be added for all future queries.
  * @return boolean
- * @throws CakeException when attempting to bind a translating called name.  This is not allowed
- *   as it shadows Model::$name.
+ * @throws CakeException when attempting to bind a translating called name.	This is not allowed
+ *	 as it shadows Model::$name.
  */
 	public function bindTranslation(Model $Model, $fields, $reset = true) {
 		if (is_string($fields)) {
@@ -630,7 +630,7 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $Model instance of model
  * @param string|array $fields string with field, or array(field1, field2=>AssocName, field3), or null for
- *    unbind all original translations
+ *		unbind all original translations
  * @return boolean
  */
 	public function unbindTranslation(Model $Model, $fields = null) {

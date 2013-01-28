@@ -1,6 +1,6 @@
 <?php
 /**
- * Cache Session save handler.  Allows saving session information into Cache.
+ * Cache Session save handler.	Allows saving session information into Cache.
  *
  * PHP 5
  *
@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource.Session
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Datasource.Session
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Cache', 'Cache');
@@ -23,7 +23,7 @@ App::uses('CakeSessionHandlerInterface', 'Model/Datasource/Session');
 /**
  * CacheSession provides method for saving sessions into a Cache engine. Used with CakeSession
  *
- * @package       Cake.Model.Datasource.Session
+ * @package			 Cake.Model.Datasource.Session
  * @see CakeSession for configuration information.
  */
 class CacheSession implements CakeSessionHandlerInterface {

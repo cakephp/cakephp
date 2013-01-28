@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP(tm) v 0.2.9
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Folder', 'Utility');
@@ -22,7 +22,7 @@ App::uses('Folder', 'Utility');
 /**
  * Convenience class for reading, writing and appending to files.
  *
- * @package       Cake.Utility
+ * @package			 Cake.Utility
  */
 class File {
 
@@ -200,8 +200,8 @@ class File {
 	}
 
 /**
- * Prepares a ascii string for writing.  Converts line endings to the
- * correct terminator for the current platform.  If windows "\r\n" will be used
+ * Prepares a ascii string for writing.	Converts line endings to the
+ * correct terminator for the current platform.	If windows "\r\n" will be used
  * all other platforms will use "\n"
  *
  * @param string $data Data to prepare for writing.
@@ -546,7 +546,7 @@ class File {
 	}
 
 /**
- * Get the mime type of the file.  Uses the finfo extension if
+ * Get the mime type of the file.	Uses the finfo extension if
  * its available, otherwise falls back to mime_content_type
  *
  * @return false|string The mimetype of the file, or false if reading fails.

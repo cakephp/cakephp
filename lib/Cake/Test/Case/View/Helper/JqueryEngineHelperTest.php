@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright       Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link            http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.View.Helper
- * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright			 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link						http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.View.Helper
+ * @license				 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('HtmlHelper', 'View/Helper');

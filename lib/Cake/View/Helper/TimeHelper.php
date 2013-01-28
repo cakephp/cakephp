@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View.Helper
+ * @since				 CakePHP(tm) v 0.10.0.1076
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeTime', 'Utility');
@@ -26,7 +26,7 @@ App::uses('AppHelper', 'View/Helper');
  *
  * Manipulation of time data.
  *
- * @package       Cake.View.Helper
+ * @package			 Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html
  * @see CakeTime
  */
@@ -43,7 +43,7 @@ class TimeHelper extends AppHelper {
  * ### Settings:
  *
  * - `engine` Class name to use to replace CakeTime functionality
- *            The class needs to be placed in the `Utility` directory.
+ *						The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
  * @param array $settings Settings array Settings array
@@ -124,7 +124,7 @@ class TimeHelper extends AppHelper {
  * @see CakeTime::convertSpecifiers()
  *
  * @param string $format Format with specifiers for strftime function.
- *    Accepts the special specifier %S which mimics the modifier S for date()
+ *		Accepts the special specifier %S which mimics the modifier S for date()
  * @param string $time UNIX timestamp
  * @return string windows safe and date() function compatible format for strftime
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
@@ -346,10 +346,10 @@ class TimeHelper extends AppHelper {
  * ## Addition options
  *
  * - `element` - The element to wrap the formatted time in.
- *   Has a few additional options:
- *   - `tag` - The tag to use, defaults to 'span'.
- *   - `class` - The classname to use, defaults to `time-ago-in-words`.
- *   - `title` - Defaults to the $dateTime input.
+ *	 Has a few additional options:
+ *	 - `tag` - The tag to use, defaults to 'span'.
+ *	 - `class` - The classname to use, defaults to `time-ago-in-words`.
+ *	 - `title` - Defaults to the $dateTime input.
  *
  * @param integer|string|DateTime $dateTime UNIX timestamp, strtotime() valid string or DateTime object
  * @param array $options Default format if timestamp is used in $dateString
@@ -391,7 +391,7 @@ class TimeHelper extends AppHelper {
  * @see CakeTime::wasWithinLast()
  *
  * @param string|integer $timeInterval the numeric value with space then time type.
- *    Example of valid types: 6 hours, 2 days, 1 minute.
+ *		Example of valid types: 6 hours, 2 days, 1 minute.
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
  * @return boolean
@@ -405,7 +405,7 @@ class TimeHelper extends AppHelper {
  * @see CakeTime::isWithinLast()
  *
  * @param string|integer $timeInterval the numeric value with space then time type.
- *    Example of valid types: 6 hours, 2 days, 1 minute.
+ *		Example of valid types: 6 hours, 2 days, 1 minute.
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
  * @return boolean

@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.3
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeBaseReporter', 'TestSuite/Reporter');
 App::uses('TextCoverageReport', 'TestSuite/Coverage');
@@ -21,7 +21,7 @@ App::uses('TextCoverageReport', 'TestSuite/Coverage');
 /**
  * CakeTextReporter contains reporting features used for plain text based output
  *
- * @package       Cake.TestSuite.Reporter
+ * @package			 Cake.TestSuite.Reporter
  */
 class CakeTextReporter extends CakeBaseReporter {
 
@@ -49,7 +49,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * Paints a failing test.
  *
  * @param $message PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
- *   the context of the other tests.
+ *	 the context of the other tests.
  * @return void
  */
 	public function paintFail($message) {

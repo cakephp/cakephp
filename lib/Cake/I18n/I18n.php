@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.I18n
- * @since         CakePHP(tm) v 1.2.0.4116
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.I18n
+ * @since				 CakePHP(tm) v 1.2.0.4116
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -27,7 +27,7 @@ App::uses('Multibyte', 'I18n');
 /**
  * I18n handles translation of Text and time format strings.
  *
- * @package       Cake.I18n
+ * @package			 Cake.I18n
  */
 class I18n {
 
@@ -120,7 +120,7 @@ class I18n {
  *
  * @param string $singular String to translate
  * @param string $plural Plural string (if any)
- * @param string $domain Domain The domain of the translation.  Domains are often used by plugin translations
+ * @param string $domain Domain The domain of the translation.	Domains are often used by plugin translations
  * @param string $category Category The integer value of the category to use.
  * @param integer $count Count Count is used with $plural to choose the correct plural form.
  * @param string $language Language to translate string to.
@@ -218,7 +218,7 @@ class I18n {
 	}
 
 /**
- * Clears the domains internal data array.  Useful for testing i18n.
+ * Clears the domains internal data array.	Useful for testing i18n.
  *
  * @return void
  */

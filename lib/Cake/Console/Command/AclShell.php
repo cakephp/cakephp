@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.5012
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.2.0.5012
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -24,10 +24,10 @@ App::uses('DbAcl', 'Model');
 App::uses('Hash', 'Utility');
 
 /**
- * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode
- * being enabled.  Be sure to turn it off when using this shell.
+ * Shell for ACL management.	This console is known to have issues with zend.ze1_compatibility_mode
+ * being enabled.	Be sure to turn it off when using this shell.
  *
- * @package       Cake.Console.Command
+ * @package			 Cake.Console.Command
  */
 class AclShell extends AppShell {
 
@@ -218,7 +218,7 @@ class AclShell extends AppShell {
  * @return void
  */
 	protected function _outputNode($class, $node, $indent) {
-		$indent = str_repeat('  ', $indent);
+		$indent = str_repeat('	', $indent);
 		$data = $node[$class];
 		if ($data['alias']) {
 			$this->out($indent . "[" . $data['id'] . "] " . $data['alias']);
@@ -324,7 +324,7 @@ class AclShell extends AppShell {
 		$this->hr();
 
 		$stack = array();
-		$last  = null;
+		$last	= null;
 
 		foreach ($nodes as $n) {
 			$stack[] = $n;
@@ -501,8 +501,8 @@ class AclShell extends AppShell {
 					' - <model>.<id> - The node will be bound to a specific record of the given model.',
 					'',
 					' - <alias> - The node will be given a string alias (or path, in the case of <parent>)',
-					"   i.e. 'John'.  When used with <parent>, this takes the form of an alias path,",
-					"   i.e. <group>/<subgroup>/<parent>.",
+					"	 i.e. 'John'.	When used with <parent>, this takes the form of an alias path,",
+					"	 i.e. <group>/<subgroup>/<parent>.",
 					'',
 					"To add a node at the root level, enter 'root' or '/' as the <parent> parameter."
 				)
@@ -594,7 +594,7 @@ class AclShell extends AppShell {
 /**
  * Build data parameters based on node type
  *
- * @param string $type Node type  (ARO/ACO)
+ * @param string $type Node type	(ARO/ACO)
  * @return array Variables
  */
 	protected function _dataVars($type = null) {

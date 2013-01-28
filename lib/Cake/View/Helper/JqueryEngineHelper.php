@@ -4,7 +4,7 @@
  *
  * Provides jQuery specific Javascript for JsHelper.
  *
- * Implements the JsHelper interface for jQuery.  All $options arrays
+ * Implements the JsHelper interface for jQuery.	All $options arrays
  * support all options found in the JsHelper, as well as those in the jQuery
  * documentation.
  *
@@ -16,11 +16,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
- * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.View.Helper
+ * @since				 CakePHP(tm) v 1.3
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppHelper', 'View/Helper');
@@ -31,11 +31,11 @@ App::uses('JsBaseEngineHelper', 'View/Helper');
  *
  * Provides jQuery specific Javascript for JsHelper.
  *
- * Implements the JsHelper interface for jQuery.  All $options arrays
+ * Implements the JsHelper interface for jQuery.	All $options arrays
  * support all options found in the JsHelper, as well as those in the jQuery
  * documentation.
  *
- * @package       Cake.View.Helper
+ * @package			 Cake.View.Helper
  */
 class JqueryEngineHelper extends JsBaseEngineHelper {
 
@@ -187,9 +187,9 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 /**
  * Create a domReady event. For jQuery. This method does not
  * bind a 'traditional event' as `$(document).bind('ready', fn)`
- * Works in an entirely different fashion than  `$(document).ready()`
+ * Works in an entirely different fashion than	`$(document).ready()`
  * The first will not run the function when eval()'d as part of a response
- * The second will.  Because of the way that ajax pagination is done
+ * The second will.	Because of the way that ajax pagination is done
  * `$().ready()` is used.
  *
  * @param string $functionBody The code to run on domReady

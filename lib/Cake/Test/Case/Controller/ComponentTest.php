@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller
- * @since         CakePHP(tm) v 1.2.0.5436
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Controller
+ * @since				 CakePHP(tm) v 1.2.0.5436
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Controller', 'Controller');
@@ -23,7 +23,7 @@ App::uses('Component', 'Controller');
 /**
  * ParamTestComponent
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ParamTestComponent extends Component {
 
@@ -45,7 +45,7 @@ class ParamTestComponent extends Component {
 /**
  * ComponentTestController class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ComponentTestController extends Controller {
 
@@ -68,7 +68,7 @@ class ComponentTestController extends Controller {
 /**
  * AppleComponent class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class AppleComponent extends Component {
 
@@ -101,7 +101,7 @@ class AppleComponent extends Component {
 /**
  * OrangeComponent class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class OrangeComponent extends Component {
 
@@ -138,7 +138,7 @@ class OrangeComponent extends Component {
 /**
  * BananaComponent class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class BananaComponent extends Component {
 
@@ -164,7 +164,7 @@ class BananaComponent extends Component {
 /**
  * MutuallyReferencingOneComponent class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class MutuallyReferencingOneComponent extends Component {
 
@@ -179,7 +179,7 @@ class MutuallyReferencingOneComponent extends Component {
 /**
  * MutuallyReferencingTwoComponent class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class MutuallyReferencingTwoComponent extends Component {
 
@@ -194,7 +194,7 @@ class MutuallyReferencingTwoComponent extends Component {
 /**
  * SomethingWithEmailComponent class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class SomethingWithEmailComponent extends Component {
 
@@ -210,7 +210,7 @@ class SomethingWithEmailComponent extends Component {
 /**
  * ComponentTest class
  *
- * @package       Cake.Test.Case.Controller
+ * @package			 Cake.Test.Case.Controller
  */
 class ComponentTest extends CakeTestCase {
 

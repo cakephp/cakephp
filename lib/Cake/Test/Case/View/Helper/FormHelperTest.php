@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View.Helper
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.View.Helper
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('ClassRegistry', 'Utility');
 App::uses('Controller', 'Controller');
@@ -29,8 +29,8 @@ App::uses('Router', 'Routing');
 /**
  * ContactTestController class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class ContactTestController extends Controller {
 
@@ -52,8 +52,8 @@ class ContactTestController extends Controller {
 /**
  * Contact class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class Contact extends CakeTestModel {
 
@@ -157,8 +157,8 @@ class Contact extends CakeTestModel {
 /**
  * ContactTagsContact class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class ContactTagsContact extends CakeTestModel {
 
@@ -202,8 +202,8 @@ class ContactTagsContact extends CakeTestModel {
 /**
  * ContactNonStandardPk class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class ContactNonStandardPk extends Contact {
 
@@ -238,8 +238,8 @@ class ContactNonStandardPk extends Contact {
 /**
  * ContactTag class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class ContactTag extends Model {
 
@@ -266,8 +266,8 @@ class ContactTag extends Model {
 /**
  * UserForm class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class UserForm extends CakeTestModel {
 
@@ -321,8 +321,8 @@ class UserForm extends CakeTestModel {
 /**
  * OpenidUrl class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class OpenidUrl extends CakeTestModel {
 
@@ -391,8 +391,8 @@ class OpenidUrl extends CakeTestModel {
 /**
  * ValidateUser class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class ValidateUser extends CakeTestModel {
 
@@ -455,8 +455,8 @@ class ValidateUser extends CakeTestModel {
 /**
  * ValidateProfile class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class ValidateProfile extends CakeTestModel {
 
@@ -529,8 +529,8 @@ class ValidateProfile extends CakeTestModel {
 /**
  * ValidateItem class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class ValidateItem extends CakeTestModel {
 
@@ -593,8 +593,8 @@ class ValidateItem extends CakeTestModel {
 /**
  * TestMail class
  *
- * @package	   cake
- * @package       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @package			 Cake.Test.Case.View.Helper
  */
 class TestMail extends CakeTestModel {
 
@@ -623,8 +623,8 @@ class TestMail extends CakeTestModel {
 /**
  * FormHelperTest class
  *
- * @package	   cake
- * @subpackage       Cake.Test.Case.View.Helper
+ * @package		 cake
+ * @subpackage			 Cake.Test.Case.View.Helper
  * @property FormHelper $Form
  */
 class FormHelperTest extends CakeTestCase {
@@ -932,7 +932,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request['_Token'] = array('key' => $key);
 		$result = $this->Form->secure($fields);
 
-		$hash  = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
+		$hash	= '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
 		$hash .= '%7CModel.1.hidden%7CModel.1.valid';
 
 		$expected = array(
@@ -1069,7 +1069,7 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testFormSecurityMultipleInputFields method
  *
- * Test secure form creation with multiple row creation.  Checks hidden, text, checkbox field types
+ * Test secure form creation with multiple row creation.	Checks hidden, text, checkbox field types
  *
  * @return void
  */
@@ -7657,7 +7657,7 @@ class FormHelperTest extends CakeTestCase {
 		/*
 		 * #2 This is structurally identical to the test above (#1) - only the parent name has
 		 * changed, so we should expect the same select list data, just with a different name
-		 * for the parent.  As of #7117, this test fails because option 3 => 'Three' disappears.
+		 * for the parent.	As of #7117, this test fails because option 3 => 'Three' disappears.
 		 * This is where data corruption can occur, because when a select value is missing from
 		 * a list a form will substitute the first value in the list - without the user knowing.
 		 * If the optgroup name 'Parent' (above) is updated to 'Three' (below), this should not

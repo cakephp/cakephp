@@ -1,6 +1,6 @@
 <?php
 /**
- * Exceptions file.  Contains the various exceptions CakePHP will throw until they are
+ * Exceptions file.	Contains the various exceptions CakePHP will throw until they are
  * moved into their permanent location.
  *
  * PHP 5
@@ -11,11 +11,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html
- * @package       Cake.Error
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html
+ * @package			 Cake.Error
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -23,7 +23,7 @@
  * All HTTP status/error related exceptions should extend this class so
  * catch blocks can be specifically typed.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 if (!class_exists('HttpException')) {
 	class HttpException extends RuntimeException {
@@ -33,7 +33,7 @@ if (!class_exists('HttpException')) {
 /**
  * Represents an HTTP 400 error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class BadRequestException extends HttpException {
 
@@ -55,7 +55,7 @@ class BadRequestException extends HttpException {
 /**
  * Represents an HTTP 401 error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class UnauthorizedException extends HttpException {
 
@@ -77,7 +77,7 @@ class UnauthorizedException extends HttpException {
 /**
  * Represents an HTTP 403 error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class ForbiddenException extends HttpException {
 
@@ -99,7 +99,7 @@ class ForbiddenException extends HttpException {
 /**
  * Represents an HTTP 404 error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class NotFoundException extends HttpException {
 
@@ -121,7 +121,7 @@ class NotFoundException extends HttpException {
 /**
  * Represents an HTTP 405 error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MethodNotAllowedException extends HttpException {
 
@@ -143,7 +143,7 @@ class MethodNotAllowedException extends HttpException {
 /**
  * Represents an HTTP 500 error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class InternalErrorException extends HttpException {
 
@@ -166,7 +166,7 @@ class InternalErrorException extends HttpException {
  * CakeException is used a base class for CakePHP's internal exceptions.
  * In general framework errors are interpreted as 500 code errors.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class CakeException extends RuntimeException {
 
@@ -192,7 +192,7 @@ class CakeException extends RuntimeException {
  * when debug = 0.
  *
  * @param string|array $message Either the string of the error message, or an array of attributes
- *   that are made available in the view, and sprintf()'d into CakeException::$_messageTemplate
+ *	 that are made available in the view, and sprintf()'d into CakeException::$_messageTemplate
  * @param string $code The code of the error, is also the HTTP status code for the error.
  */
 	public function __construct($message, $code = 500) {
@@ -218,7 +218,7 @@ class CakeException extends RuntimeException {
  * Missing Controller exception - used when a controller
  * cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingControllerException extends CakeException {
 
@@ -236,7 +236,7 @@ class MissingControllerException extends CakeException {
  * Missing Action exception - used when a controller action
  * cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingActionException extends CakeException {
 
@@ -252,9 +252,9 @@ class MissingActionException extends CakeException {
 
 /**
  * Private Action exception - used when a controller action
- * starts with a  `_`.
+ * starts with a	`_`.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class PrivateActionException extends CakeException {
 
@@ -271,7 +271,7 @@ class PrivateActionException extends CakeException {
 /**
  * Used when a component cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingComponentException extends CakeException {
 
@@ -282,7 +282,7 @@ class MissingComponentException extends CakeException {
 /**
  * Used when a behavior cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingBehaviorException extends CakeException {
 
@@ -293,7 +293,7 @@ class MissingBehaviorException extends CakeException {
 /**
  * Used when a view file cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingViewException extends CakeException {
 
@@ -304,7 +304,7 @@ class MissingViewException extends CakeException {
 /**
  * Used when a layout file cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingLayoutException extends CakeException {
 
@@ -315,7 +315,7 @@ class MissingLayoutException extends CakeException {
 /**
  * Used when a helper cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingHelperException extends CakeException {
 
@@ -326,7 +326,7 @@ class MissingHelperException extends CakeException {
 /**
  * Runtime Exceptions for ConnectionManager
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingDatabaseException extends CakeException {
 
@@ -337,7 +337,7 @@ class MissingDatabaseException extends CakeException {
 /**
  * Used when no connections can be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingConnectionException extends CakeException {
 
@@ -355,7 +355,7 @@ class MissingConnectionException extends CakeException {
 /**
  * Used when a Task cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingTaskException extends CakeException {
 
@@ -366,7 +366,7 @@ class MissingTaskException extends CakeException {
 /**
  * Used when a shell method cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingShellMethodException extends CakeException {
 
@@ -377,7 +377,7 @@ class MissingShellMethodException extends CakeException {
 /**
  * Used when a shell cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingShellException extends CakeException {
 
@@ -388,7 +388,7 @@ class MissingShellException extends CakeException {
 /**
  * Exception class to be thrown when a datasource configuration is not found
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingDatasourceConfigException extends CakeException {
 
@@ -399,7 +399,7 @@ class MissingDatasourceConfigException extends CakeException {
 /**
  * Used when a datasource cannot be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingDatasourceException extends CakeException {
 
@@ -410,7 +410,7 @@ class MissingDatasourceException extends CakeException {
 /**
  * Exception class to be thrown when a database table is not found in the datasource
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingTableException extends CakeException {
 
@@ -421,7 +421,7 @@ class MissingTableException extends CakeException {
 /**
  * Exception raised when a Model could not be found.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingModelException extends CakeException {
 
@@ -432,7 +432,7 @@ class MissingModelException extends CakeException {
 /**
  * Exception raised when a test loader could not be found
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingTestLoaderException extends CakeException {
 
@@ -443,7 +443,7 @@ class MissingTestLoaderException extends CakeException {
 /**
  * Exception raised when a plugin could not be found
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingPluginException extends CakeException {
 
@@ -454,7 +454,7 @@ class MissingPluginException extends CakeException {
 /**
  * Exception raised when a Dispatcher filter could not be found
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class MissingDispatcherFilterException extends CakeException {
 
@@ -465,52 +465,52 @@ class MissingDispatcherFilterException extends CakeException {
 /**
  * Exception class for AclComponent and Interface implementations.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class AclException extends CakeException {
 }
 
 /**
- * Exception class for Cache.  This exception will be thrown from Cache when it
+ * Exception class for Cache.	This exception will be thrown from Cache when it
  * encounters an error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class CacheException extends CakeException {
 }
 
 /**
- * Exception class for Router.  This exception will be thrown from Router when it
+ * Exception class for Router.	This exception will be thrown from Router when it
  * encounters an error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class RouterException extends CakeException {
 }
 
 /**
- * Exception class for CakeLog.  This exception will be thrown from CakeLog when it
+ * Exception class for CakeLog.	This exception will be thrown from CakeLog when it
  * encounters an error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class CakeLogException extends CakeException {
 }
 
 /**
- * Exception class for CakeSession.  This exception will be thrown from CakeSession when it
+ * Exception class for CakeSession.	This exception will be thrown from CakeSession when it
  * encounters an error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class CakeSessionException extends CakeException {
 }
 
 /**
- * Exception class for Configure.  This exception will be thrown from Configure when it
+ * Exception class for Configure.	This exception will be thrown from Configure when it
  * encounters an error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class ConfigureException extends CakeException {
 }
@@ -519,25 +519,25 @@ class ConfigureException extends CakeException {
  * Exception class for Socket. This exception will be thrown from CakeSocket, CakeEmail, HttpSocket
  * SmtpTransport, MailTransport and HttpResponse when it encounters an error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class SocketException extends CakeException {
 }
 
 /**
- * Exception class for Xml.  This exception will be thrown from Xml when it
+ * Exception class for Xml.	This exception will be thrown from Xml when it
  * encounters an error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class XmlException extends CakeException {
 }
 
 /**
- * Exception class for Console libraries.  This exception will be thrown from Console library
+ * Exception class for Console libraries.	This exception will be thrown from Console library
  * classes when they encounter an error.
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class ConsoleException extends CakeException {
 }
@@ -545,7 +545,7 @@ class ConsoleException extends CakeException {
 /**
  * Represents a fatal error
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class FatalErrorException extends CakeException {
 
@@ -572,7 +572,7 @@ class FatalErrorException extends CakeException {
 /**
  * Not Implemented Exception - used when an API method is not implemented
  *
- * @package       Cake.Error
+ * @package			 Cake.Error
  */
 class NotImplementedException extends CakeException {
 

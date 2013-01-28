@@ -6,17 +6,17 @@
  *
  * PHP 5
  *
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
+ * CakePHP :	Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command.Task
- * @since         CakePHP v 1.2.0.7726
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Test.Case.Console.Command.Task
+ * @since				 CakePHP v 1.2.0.7726
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Folder', 'Utility');
@@ -29,7 +29,7 @@ App::uses('ExtractTask', 'Console/Command/Task');
 /**
  * ExtractTaskTest class
  *
- * @package       Cake.Test.Case.Console.Command.Task
+ * @package			 Cake.Test.Case.Console.Command.Task
  */
 class ExtractTaskTest extends CakeTestCase {
 
@@ -328,7 +328,7 @@ class ExtractTaskTest extends CakeTestCase {
 	}
 
 /**
- *  Tests that the task will inspect application models and extract the validation messages from them
+ *	Tests that the task will inspect application models and extract the validation messages from them
  *	while using a custom validation domain for the messages set on the model itself
  *
  * @return void
@@ -371,7 +371,7 @@ class ExtractTaskTest extends CakeTestCase {
 	}
 
 /**
- *  Test that the extract shell can obtain validation messages from models inside a specific plugin
+ *	Test that the extract shell can obtain validation messages from models inside a specific plugin
  *
  * @return void
  */
@@ -413,7 +413,7 @@ class ExtractTaskTest extends CakeTestCase {
 	}
 
 /**
- *  Test that the extract shell overwrites existing files with the overwrite parameter
+ *	Test that the extract shell overwrites existing files with the overwrite parameter
  *
  * @return void
  */
@@ -435,7 +435,7 @@ class ExtractTaskTest extends CakeTestCase {
 	}
 
 /**
- *  Test that the extract shell scans the core libs
+ *	Test that the extract shell scans the core libs
  *
  * @return void
  */

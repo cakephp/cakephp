@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource.Database
- * @since         CakePHP(tm) v 0.9.1.114
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Datasource.Database
+ * @since				 CakePHP(tm) v 0.9.1.114
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('DboSource', 'Model/Datasource');
@@ -22,7 +22,7 @@ App::uses('DboSource', 'Model/Datasource');
 /**
  * PostgreSQL layer for DBO.
  *
- * @package       Cake.Model.Datasource.Database
+ * @package			 Cake.Model.Datasource.Database
  */
 class Postgres extends DboSource {
 
@@ -34,7 +34,7 @@ class Postgres extends DboSource {
 	public $description = "PostgreSQL DBO Driver";
 
 /**
- * Base driver configuration settings.  Merged with user settings.
+ * Base driver configuration settings.	Merged with user settings.
  *
  * @var array
  */
@@ -188,7 +188,7 @@ class Postgres extends DboSource {
 				"SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type, is_nullable AS null,
 					column_default AS default, ordinal_position AS position, character_maximum_length AS char_length,
 					character_octet_length AS oct_length FROM information_schema.columns
-				WHERE table_name = ? AND table_schema = ?  ORDER BY position",
+				WHERE table_name = ? AND table_schema = ?	ORDER BY position",
 				array($table, $this->config['schema'])
 			);
 
@@ -298,7 +298,7 @@ class Postgres extends DboSource {
  *
  * @param string|Model $table A string or model class representing the table to be truncated
  * @param boolean $reset true for resetting the sequence, false to leave it as is.
- *    and if 1, sequences are not modified
+ *		and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table, $reset = false) {
@@ -385,7 +385,7 @@ class Postgres extends DboSource {
 						$fields[$i] = $prepend . $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $build[1]);
 					}
 				} else {
-					$fields[$i] = preg_replace_callback('/\(([\s\.\w]+)\)/',  array(&$this, '_quoteFunctionField'), $fields[$i]);
+					$fields[$i] = preg_replace_callback('/\(([\s\.\w]+)\)/',	array(&$this, '_quoteFunctionField'), $fields[$i]);
 				}
 				$result[] = $fields[$i];
 			}
@@ -432,7 +432,7 @@ class Postgres extends DboSource {
 		if ($table) {
 			$indexes = $this->query("SELECT c2.relname, i.indisprimary, i.indisunique, i.indisclustered, i.indisvalid, pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) as statement, c2.reltablespace
 			FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i
-			WHERE c.oid  = (
+			WHERE c.oid	= (
 				SELECT c.oid
 				FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
 				WHERE c.relname ~ '^(" . $table . ")$'
@@ -506,13 +506,13 @@ class Postgres extends DboSource {
 								$colList[] = 'ALTER COLUMN ' . $fieldName . ' TYPE ' . str_replace(array($fieldName, 'NOT NULL'), '', $this->buildColumn($col));
 								if (isset($nullable)) {
 									$nullable = ($nullable) ? 'DROP NOT NULL' : 'SET NOT NULL';
-									$colList[] = 'ALTER COLUMN ' . $fieldName . '  ' . $nullable;
+									$colList[] = 'ALTER COLUMN ' . $fieldName . '	' . $nullable;
 								}
 
 								if (isset($default)) {
-									$colList[] = 'ALTER COLUMN ' . $fieldName . '  SET DEFAULT ' . $this->value($default, $col['type']);
+									$colList[] = 'ALTER COLUMN ' . $fieldName . '	SET DEFAULT ' . $this->value($default, $col['type']);
 								} else {
-									$colList[] = 'ALTER COLUMN ' . $fieldName . '  DROP DEFAULT';
+									$colList[] = 'ALTER COLUMN ' . $fieldName . '	DROP DEFAULT';
 								}
 
 							}
@@ -792,8 +792,8 @@ class Postgres extends DboSource {
  * Generate a Postgres-native column schema string
  *
  * @param array $column An array structured like the following:
- *                      array('name'=>'value', 'type'=>'value'[, options]),
- *                      where options can be 'default', 'length', or 'key'.
+ *											array('name'=>'value', 'type'=>'value'[, options]),
+ *											where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	public function buildColumn($column) {
@@ -836,7 +836,7 @@ class Postgres extends DboSource {
 		}
 		foreach ($indexes as $name => $value) {
 			if ($name == 'PRIMARY') {
-				$out = 'PRIMARY KEY  (' . $this->name($value['column']) . ')';
+				$out = 'PRIMARY KEY	(' . $this->name($value['column']) . ')';
 			} else {
 				$out = 'CREATE ';
 				if (!empty($value['unique'])) {

@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Routing
- * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Routing
+ * @since				 CakePHP(tm) v 1.2.0.4206
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Dispatcher', 'Routing');
 
@@ -27,7 +27,7 @@ if (!class_exists('AppController', false)) {
 /**
  * A testing stub that doesn't send headers.
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class DispatcherMockCakeResponse extends CakeResponse {
 
@@ -40,7 +40,7 @@ class DispatcherMockCakeResponse extends CakeResponse {
 /**
  * TestDispatcher class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class TestDispatcher extends Dispatcher {
 
@@ -90,7 +90,7 @@ class TestDispatcher extends Dispatcher {
 /**
  * MyPluginAppController class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class MyPluginAppController extends AppController {
 }
@@ -110,7 +110,7 @@ interface DispatcherTestInterfaceController {
 /**
  * MyPluginController class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class MyPluginController extends MyPluginAppController {
 
@@ -161,7 +161,7 @@ class MyPluginController extends MyPluginAppController {
 /**
  * SomePagesController class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class SomePagesController extends AppController {
 
@@ -212,7 +212,7 @@ class SomePagesController extends AppController {
 /**
  * OtherPagesController class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class OtherPagesController extends MyPluginAppController {
 
@@ -254,7 +254,7 @@ class OtherPagesController extends MyPluginAppController {
 /**
  * TestDispatchPagesController class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class TestDispatchPagesController extends AppController {
 
@@ -295,7 +295,7 @@ class TestDispatchPagesController extends AppController {
 /**
  * ArticlesTestAppController class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class ArticlesTestAppController extends AppController {
 }
@@ -303,7 +303,7 @@ class ArticlesTestAppController extends AppController {
 /**
  * ArticlesTestController class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class ArticlesTestController extends ArticlesTestAppController {
 
@@ -344,7 +344,7 @@ class ArticlesTestController extends ArticlesTestAppController {
 /**
  * SomePostsController class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class SomePostsController extends AppController {
 
@@ -406,7 +406,7 @@ class SomePostsController extends AppController {
 /**
  * TestCachedPagesController class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class TestCachedPagesController extends Controller {
 
@@ -507,7 +507,7 @@ class TestCachedPagesController extends Controller {
 /**
  * TimesheetsController class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class TimesheetsController extends Controller {
 
@@ -539,7 +539,7 @@ class TimesheetsController extends Controller {
 /**
  * DispatcherTest class
  *
- * @package       Cake.Test.Case.Routing
+ * @package			 Cake.Test.Case.Routing
  */
 class DispatcherTest extends CakeTestCase {
 

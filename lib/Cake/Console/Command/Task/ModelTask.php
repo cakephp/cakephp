@@ -10,10 +10,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @since				 CakePHP(tm) v 1.2
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -25,7 +25,7 @@ App::uses('Validation', 'Utility');
 /**
  * Task class for creating and updating model files.
  *
- * @package	   Cake.Console.Command.Task
+ * @package		 Cake.Console.Command.Task
  */
 class ModelTask extends BakeTask {
 
@@ -249,13 +249,13 @@ class ModelTask extends BakeTask {
 		$this->hr();
 		$this->out(__d('cake_console', 'The following Model will be created:'));
 		$this->hr();
-		$this->out(__d('cake_console', "Name:       %s", $currentModelName));
+		$this->out(__d('cake_console', "Name:			 %s", $currentModelName));
 
 		if ($this->connection !== 'default') {
-			$this->out(__d('cake_console', "DB Config:  %s", $this->connection));
+			$this->out(__d('cake_console', "DB Config:	%s", $this->connection));
 		}
 		if ($fullTableName !== Inflector::tableize($currentModelName)) {
-			$this->out(__d('cake_console', 'DB Table:   %s', $fullTableName));
+			$this->out(__d('cake_console', 'DB Table:	 %s', $fullTableName));
 		}
 		if ($primaryKey != 'id') {
 			$this->out(__d('cake_console', 'Primary Key: %s', $primaryKey));

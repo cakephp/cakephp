@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
- * @since         CakePHP(tm) v 1.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Utility
+ * @since				 CakePHP(tm) v 1.2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('String', 'Utility');
@@ -23,7 +23,7 @@ App::uses('Hash', 'Utility');
 /**
  * Class used for manipulation of arrays.
  *
- * @package       Cake.Utility
+ * @package			 Cake.Utility
  */
 class Set {
 
@@ -32,7 +32,7 @@ class Set {
  * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
  * but does not do if for keys containing strings (unlike array_merge_recursive).
  *
- * Since this method emulates `array_merge`, it will re-order numeric keys.  When combined with out of
+ * Since this method emulates `array_merge`, it will re-order numeric keys.	When combined with out of
  * order numeric keys containing arrays, results can be lossy.
  *
  * Note: This function will work with an unlimited amount of arguments and typecasts non-array
@@ -185,7 +185,7 @@ class Set {
 /**
  * Checks to see if all the values in the array are numeric
  *
- * @param array $array The array to check.  If null, the value of the current Set object
+ * @param array $array The array to check.	If null, the value of the current Set object
  * @return boolean true if values are numeric, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::numeric
  */
@@ -197,7 +197,7 @@ class Set {
  * Return a value from an array list if the key exists.
  *
  * If a comma separated $list is passed arrays are numeric with the key of the first being 0
- * $list = 'no, yes' would translate to  $list = array(0 => 'no', 1 => 'yes');
+ * $list = 'no, yes' would translate to	$list = array(0 => 'no', 1 => 'yes');
  *
  * If an array is used, keys can be strings example: array('no' => 0, 'yes' => 1);
  *
@@ -456,7 +456,7 @@ class Set {
  * This function can be used to see if a single item or a given xpath match certain conditions.
  *
  * @param string|array $conditions An array of condition strings or an XPath expression
- * @param array $data  An array of data to execute the match on
+ * @param array $data	An array of data to execute the match on
  * @param integer $i Optional: The 'nth'-number of the item being matched.
  * @param integer $length
  * @return boolean
@@ -1002,9 +1002,9 @@ class Set {
  * See http://ca2.php.net/manual/en/language.pseudo-types.php#language.types.callback for examples
  * of callback formats.
  * @param array $options Options are:
- *                       - type : can be pass, map, or reduce. Map will handoff the given callback
- *                                to array_map, reduce will handoff to array_reduce, and pass will
- *                                use call_user_func_array().
+ *											 - type : can be pass, map, or reduce. Map will handoff the given callback
+ *																to array_map, reduce will handoff to array_reduce, and pass will
+ *																use call_user_func_array().
  * @return mixed Result of the callback when applied to extracted data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::apply
  */
@@ -1028,10 +1028,10 @@ class Set {
  *
  * @param mixed $data
  * @param array $options Options are:
- *      children   - the key name to use in the resultset for children
- *      idPath     - the path to a key that identifies each entry
- *      parentPath - the path to a key that identifies the parent of each entry
- *      root       - the id of the desired top-most result
+ *			children	 - the key name to use in the resultset for children
+ *			idPath		 - the path to a key that identifies each entry
+ *			parentPath - the path to a key that identifies the parent of each entry
+ *			root			 - the id of the desired top-most result
  * @return array of results, nested
  * @link
  */

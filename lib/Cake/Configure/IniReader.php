@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Configure
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Configure
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Hash', 'Utility');
 
@@ -25,7 +25,7 @@ App::uses('Hash', 'Utility');
  * class shares the same behavior, especially with regards to boolean and null values.
  *
  * In addition to the native `parse_ini_file` features, IniReader also allows you
- * to create nested array structures through usage of `.` delimited names.  This allows
+ * to create nested array structures through usage of `.` delimited names.	This allows
  * you to create nested arrays structures in an ini config file. For example:
  *
  * `db.password = secret` would turn into `array('db' => array('password' => 'secret'))`
@@ -49,7 +49,7 @@ App::uses('Hash', 'Utility');
  * 'yes', 'no', 'on', 'off', 'null' are handled. These values will be
  * converted to their boolean equivalents.
  *
- * @package       Cake.Configure
+ * @package			 Cake.Configure
  * @see http://php.net/parse_ini_file
  */
 class IniReader implements ConfigReaderInterface {
@@ -74,7 +74,7 @@ class IniReader implements ConfigReaderInterface {
  *
  * @param string $path Path to load ini config files from. Defaults to APP . 'Config' . DS
  * @param string $section Only get one section, leave null to parse and fetch
- *     all sections in the ini file.
+ *		 all sections in the ini file.
  */
 	public function __construct($path = null, $section = null) {
 		if (!$path) {
@@ -90,10 +90,10 @@ class IniReader implements ConfigReaderInterface {
  * For backwards compatibility, acl.ini.php will be treated specially until 3.0.
  *
  * @param string $key The identifier to read from. If the key has a . it will be treated
- *  as a plugin prefix. The chosen file must be on the reader's path.
+ *	as a plugin prefix. The chosen file must be on the reader's path.
  * @return array Parsed configuration values.
  * @throws ConfigureException when files don't exist.
- *  Or when files contain '..' as this could lead to abusive reads.
+ *	Or when files contain '..' as this could lead to abusive reads.
  * @throws ConfigureException
  */
 	public function read($key) {

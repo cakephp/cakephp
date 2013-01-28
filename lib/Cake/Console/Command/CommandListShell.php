@@ -6,11 +6,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Console.Command
- * @since         CakePHP v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP Project
+ * @package			 Cake.Console.Command
+ * @since				 CakePHP v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -19,7 +19,7 @@ App::uses('Inflector', 'Utility');
 /**
  * Shows a list of commands available from the console.
  *
- * @package       Cake.Console.Command
+ * @package			 Cake.Console.Command
  */
 class CommandListShell extends AppShell {
 

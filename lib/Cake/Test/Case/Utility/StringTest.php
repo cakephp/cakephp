@@ -10,18 +10,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Utility
- * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package			 Cake.Test.Case.Utility
+ * @since				 CakePHP(tm) v 1.2.0.5432
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('String', 'Utility');
 
 /**
  * StringTest class
  *
- * @package       Cake.Test.Case.Utility
+ * @package			 Cake.Test.Case.Utility
  */
 class StringTest extends CakeTestCase {
 
@@ -332,7 +332,7 @@ TEXT;
 This is the song th
 at never ends. This
  is the song that n
-ever ends. This is 
+ever ends. This is
 the song that never
  ends.
 TEXT;
@@ -416,7 +416,7 @@ articulo/primer/plano/Steve/era/distinto/elpepueconeg/
 20111009elpneglse_4/Tes">http://www.elpais.com/articulo/primer/plano/
 Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
 <p><span style="font-size: medium;">Ya se ha publicado la biografía de
-Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
+Steve Jobs escrita por Walter Isaacson	"<strong>Steve Jobs by Walter
 Isaacson</strong>", aquí os dejamos la dirección de amazon donde
 podeís adquirirla.</span></p>
 <p><span style="font-size: medium;"><a>http://www.amazon.com/Steve-
@@ -436,7 +436,7 @@ articulo/primer/plano/Steve/era/distinto/elpepueconeg/
 20111009elpneglse_4/Tes">http://www.elpais.com/articulo/primer/plano/
 Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
 <p><span style="font-size: medium;">Ya se ha publicado la biografía de
-Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
+Steve Jobs escrita por Walter Isaacson	"<strong>Steve Jobs by Walter
 Isaacson</strong>", aquí os dejamos la dirección de amazon donde
 podeís adquirirla.</span></p>
 <p><span style="font-size: medium;"><a>... </a></span></p>';

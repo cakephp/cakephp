@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource.Database
- * @since         CakePHP(tm) v 0.10.5.1790
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Model.Datasource.Database
+ * @since				 CakePHP(tm) v 0.10.5.1790
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('DboSource', 'Model/Datasource');
@@ -24,7 +24,7 @@ App::uses('DboSource', 'Model/Datasource');
  *
  * Provides connection and SQL generation for MySQL RDMS
  *
- * @package       Cake.Model.Datasource.Database
+ * @package			 Cake.Model.Datasource.Database
  */
 class Mysql extends DboSource {
 
@@ -521,8 +521,8 @@ class Mysql extends DboSource {
  * Generate a MySQL "drop table" statement for the given Schema object
  *
  * @param CakeSchema $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
- *                      Otherwise, all tables defined in the schema are generated.
+ * @param string $table Optional.	If specified only the table name given will be generated.
+ *											Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	public function dropSchema(CakeSchema $schema, $table = null) {

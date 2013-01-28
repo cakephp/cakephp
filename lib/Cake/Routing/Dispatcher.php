@@ -13,11 +13,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Routing
- * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Routing
+ * @since				 CakePHP(tm) v 0.2.9
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('Router', 'Routing');
@@ -32,11 +32,11 @@ App::uses('CakeEventManager', 'Event');
 App::uses('CakeEventListener', 'Event');
 
 /**
- * Dispatcher converts Requests into controller actions.  It uses the dispatched Request
- * to locate and load the correct controller.  If found, the requested action is called on
+ * Dispatcher converts Requests into controller actions.	It uses the dispatched Request
+ * to locate and load the correct controller.	If found, the requested action is called on
  * the controller.
  *
- * @package       Cake.Routing
+ * @package			 Cake.Routing
  */
 class Dispatcher implements CakeEventListener {
 
@@ -122,9 +122,9 @@ class Dispatcher implements CakeEventListener {
  * Dispatches and invokes given Request, handing over control to the involved controller. If the controller is set
  * to autoRender, via Controller::$autoRender, then Dispatcher will render the view.
  *
- * Actions in CakePHP can be any public method on a controller, that is not declared in Controller.  If you
+ * Actions in CakePHP can be any public method on a controller, that is not declared in Controller.	If you
  * want controller methods to be public and in-accessible by URL, then prefix them with a `_`.
- * For example `public function _loadPosts() { }` would not be accessible via URL.  Private and protected methods
+ * For example `public function _loadPosts() { }` would not be accessible via URL.	Private and protected methods
  * are also not accessible via URL.
  *
  * If no controller of given name can be found, invoke() will throw an exception.

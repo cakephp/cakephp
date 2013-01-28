@@ -10,11 +10,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Network
- * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright		 Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link					http://cakephp.org CakePHP(tm) Project
+ * @package			 Cake.Network
+ * @since				 CakePHP(tm) v 2.0
+ * @license			 MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -23,7 +23,7 @@
  * By default controllers will use this class to render their response. If you are going to use
  * a custom response class it should subclass this object in order to ensure compatibility.
  *
- * @package       Cake.Network
+ * @package			 Cake.Network
  */
 class CakeResponse {
 
@@ -496,7 +496,7 @@ class CakeResponse {
  *
  * Multiple calls for setting the same header name will have the same effect as setting the header once
  * with the last value sent for it
- *  e.g `header('WWW-Authenticate: Negotiate'); header('WWW-Authenticate: Not-Negotiate');`
+ *	e.g `header('WWW-Authenticate: Negotiate'); header('WWW-Authenticate: Not-Negotiate');`
  * will have the same effect as only doing `header('WWW-Authenticate: Not-Negotiate');`
  *
  * @param string|array $header. An array of header strings or a single header string
@@ -566,19 +566,19 @@ class CakeResponse {
  * Queries & sets valid HTTP response codes & messages.
  *
  * @param integer|array $code If $code is an integer, then the corresponding code/message is
- *        returned if it exists, null if it does not exist. If $code is an array,
- *        then the 'code' and 'message' keys of each nested array are added to the default
- *        HTTP codes. Example:
+ *				returned if it exists, null if it does not exist. If $code is an array,
+ *				then the 'code' and 'message' keys of each nested array are added to the default
+ *				HTTP codes. Example:
  *
- *        httpCodes(404); // returns array(404 => 'Not Found')
+ *				httpCodes(404); // returns array(404 => 'Not Found')
  *
- *        httpCodes(array(
- *            701 => 'Unicorn Moved',
- *            800 => 'Unexpected Minotaur'
- *        )); // sets these new values, and returns true
+ *				httpCodes(array(
+ *						701 => 'Unicorn Moved',
+ *						800 => 'Unexpected Minotaur'
+ *				)); // sets these new values, and returns true
  *
  * @return mixed associative array of the HTTP codes as keys, and the message
- *    strings as values, or null of the given $code does not exist.
+ *		strings as values, or null of the given $code does not exist.
  */
 	public function httpCodes($code = null) {
 		if (empty($code)) {
@@ -731,7 +731,7 @@ class CakeResponse {
  * This method controls the `public` or `private` directive in the Cache-Control
  * header
  *
- * @param boolean $public  if set to true, the Cache-Control header will be set as public
+ * @param boolean $public	if set to true, the Cache-Control header will be set as public
  * if set to false, the response will be set to private
  * if no value is provided, it will return whether the response is sharable or not
  * @param integer $time time in seconds after which the response should no longer be considered fresh
@@ -1081,7 +1081,7 @@ class CakeResponse {
 	}
 
 /**
- * String conversion.  Fetches the response body as a string.
+ * String conversion.	Fetches the response body as a string.
  * Does *not* send headers.
  *
  * @return string
@@ -1103,16 +1103,16 @@ class CakeResponse {
  * configuration to the cookie container.
  *
  * @param $options Either null to get all cookies, string for a specific cookie
- *  or array to set cookie.
+ *	or array to set cookie.
  *
  * ### Options (when setting a configuration)
- *  - name: The Cookie name
- *  - value: Value of the cookie
- *  - expire: Time the cookie expires in
- *  - path: Path the cookie applies to
- *  - domain: Domain the cookie is for.
- *  - secure: Is the cookie https?
- *  - httpOnly: Is the cookie available in the client?
+ *	- name: The Cookie name
+ *	- value: Value of the cookie
+ *	- expire: Time the cookie expires in
+ *	- path: Path the cookie applies to
+ *	- domain: Domain the cookie is for.
+ *	- secure: Is the cookie https?
+ *	- httpOnly: Is the cookie available in the client?
  *
  * ## Examples
  *
