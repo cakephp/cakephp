@@ -85,6 +85,10 @@ class ResponseTest extends TestCase {
 		$response = new Response([], $encoded);
 		$this->assertTrue(isset($response->json));
 		$this->assertEquals($data['property'], $response->json['property']);
+
+		$data = '';
+		$response = new Response([], $data);
+		$this->assertFalse(isset($response->json));
 	}
 
 /**
@@ -102,6 +106,10 @@ XML;
 		$response = new Response([], $data);
 		$this->assertTrue(isset($response->xml));
 		$this->assertEquals('Test', (string)$response->xml->test);
+
+		$data = '';
+		$response = new Response([], $data);
+		$this->assertFalse(isset($response->xml));
 	}
 
 /**

@@ -325,12 +325,12 @@ class Response extends Message {
  * @return null|SimpleXML
  */
 	protected function _getXml() {
-		try {
-			$data = new \SimpleXMLElement($this->_body);
-		} catch (Exception $e) {
-			return null;
+		$restore = libxml_use_internal_errors();
+		$data = simplexml_load_string($this->_body);
+		if ($data) {
+			return $data;
 		}
-		return $data;
+		return null;
 	}
 
 /**
