@@ -1328,7 +1328,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  **/
-	public function testSuqueryInSelect() {
+	public function testSubqueryInSelect() {
 		$this->_insertDateRecords();
 		$this->_insertTwoRecords();
 
@@ -1356,6 +1356,13 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$result = $query
 			->select(['id', 'name' => $subquery])
 			->from(['a' => 'dates'])->execute();
+
+		$expected = [
+			['id' => 1, 'name' => 'Chuck Norris'],
+			['id' => 2, 'name' => 'Chuck Norris'],
+			['id' => 3, 'name' => 'Chuck Norris']
+		];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
 
 /**
