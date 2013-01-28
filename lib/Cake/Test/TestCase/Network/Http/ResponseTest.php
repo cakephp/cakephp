@@ -73,6 +73,38 @@ class ResponseTest extends TestCase {
 	}
 
 /**
+ * Test accessor for json
+ *
+ * @return void
+ */
+	public function testBodyJson() {
+		$data = [
+			'property' => 'value'
+		];
+		$encoded = json_encode($data);
+		$response = new Response([], $encoded);
+		$this->assertTrue(isset($response->json));
+		$this->assertEquals($data['property'], $response->json['property']);
+	}
+
+/**
+ * Test accessor for xml
+ *
+ * @return void
+ */
+	public function testBodyXml() {
+		$data = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<test>Test</test>
+</root>
+XML;
+		$response = new Response([], $data);
+		$this->assertTrue(isset($response->xml));
+		$this->assertEquals('Test', (string)$response->xml->test);
+	}
+
+/**
  * Test isOk()
  *
  * @return void
