@@ -178,19 +178,30 @@ class Security {
 			trigger_error(__d('cake_dev', 'You cannot use an empty key for Security::cipher()'), E_USER_WARNING);
 			return '';
 		}
+		$suhosin = (constant("SUHOSIN_PATCH") != null || extension_loaded('suhosin'));
 
-		srand(Configure::read('Security.cipherSeed'));
+		if ($suhosin)
+			$key .= Configure::read('Security.cipherSeed');
+		else
+			srand(Configure::read('Security.cipherSeed'));
+
 		$out = '';
 		$keyLength = strlen($key);
 		for ($i = 0, $textLength = strlen($text); $i < $textLength; $i++) {
-			$j = ord(substr($key, $i % $keyLength, 1));
-			while ($j--) {
-				rand(0, 255);
+			if ($suhosin) {
+				$seed = md5($key . $key[($i) % $keyLength]);
+				$mask = hexdec($seed[6] . $seed[9]);
+			} else {
+				$j = ord(substr($key, $i % $keyLength, 1));
+				while ($j--) {
+					rand(0, 255);
+				}
+				$mask = rand(0, 255);
 			}
-			$mask = rand(0, 255);
 			$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
 		}
-		srand();
+		if(!$suhosin)
+			srand();
 		return $out;
 	}
 
