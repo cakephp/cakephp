@@ -24,6 +24,7 @@
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
+
 /**
  * These defines should only be edited if you have cake installed in
  * a directory layout other than the way it is distributed.
@@ -72,6 +73,9 @@ if (!defined('WWW_ROOT')) {
 
 // for built-in server
 if (php_sapi_name() == 'cli-server') {
+	if ($_SERVER['REQUEST_URI'] !== '/' && file_exists(WWW_ROOT . $_SERVER['REQUEST_URI'])) {
+		return false;
+	}
 	$_SERVER['PHP_SELF'] = '/' . basename(__FILE__);
 }
 
@@ -92,6 +96,7 @@ if (!empty($failed)) {
 }
 
 App::uses('Dispatcher', 'Routing');
+
 
 $Dispatcher = new Dispatcher();
 $Dispatcher->dispatch(new CakeRequest(), new CakeResponse());
