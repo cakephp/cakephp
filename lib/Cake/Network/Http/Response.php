@@ -49,6 +49,20 @@ use Cake\Network\Http\Message;
  *
  * `$content = $response->body;`
  *
+ * If your response body is in XML or JSON you can use
+ * special content type specific accessors to read the decoded data.
+ * JSON data will be returned as arrays, while XML data will be returned
+ * as SimpleXML nodes:
+ *
+ * {{{
+ * // Get as xml
+ * $content = $response->xml
+ * // Get as json
+ * $content = $response->json
+ * }}}
+ *
+ * If the response cannot be decoded, null will be returned.
+ *
  * ### Check the status code
  *
  * You can access the response status code using:
@@ -84,7 +98,9 @@ class Response extends Message {
 		'cookies' => '_cookies',
 		'headers' => '_headers',
 		'body' => '_body',
-		'code' => '_code'
+		'code' => '_code',
+		'json' => '_getJson',
+		'xml' => '_getXml'
 	];
 
 /**
@@ -291,6 +307,33 @@ class Response extends Message {
 	}
 
 /**
+ * Get the response body as JSON decoded data.
+ *
+ * @return null|array
+ */
+	protected function _getJson() {
+		$data = json_decode($this->_body, true);
+		if ($data) {
+			return $data;
+		}
+		return null;
+	}
+
+/**
+ * Get the response body as XML decoded data.
+ *
+ * @return null|SimpleXML
+ */
+	protected function _getXml() {
+		$restore = libxml_use_internal_errors();
+		$data = simplexml_load_string($this->_body);
+		if ($data) {
+			return $data;
+		}
+		return null;
+	}
+
+/**
  * Read values as properties.
  *
  * @param string $name
@@ -301,6 +344,9 @@ class Response extends Message {
 			return false;
 		}
 		$key = $this->_exposedProperties[$name];
+		if (substr($key, 0, 4) == '_get') {
+			return $this->{$key}();
+		}
 		return $this->{$key};
 	}
 
@@ -315,6 +361,10 @@ class Response extends Message {
 			return false;
 		}
 		$key = $this->_exposedProperties[$name];
+		if (substr($key, 0, 4) == '_get') {
+			$val = $this->{$key}();
+			return $val !== null;
+		}
 		return isset($this->$key);
 	}
 
