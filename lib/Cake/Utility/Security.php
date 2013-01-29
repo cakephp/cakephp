@@ -178,12 +178,13 @@ class Security {
 			trigger_error(__d('cake_dev', 'You cannot use an empty key for Security::cipher()'), E_USER_WARNING);
 			return '';
 		}
-		$suhosin = (constant("SUHOSIN_PATCH") != null || extension_loaded('suhosin'));
 
-		if ($suhosin)
+		$suhosin = ((constant("SUHOSIN_PATCH") != null) || extension_loaded('suhosin'));
+		if ($suhosin) {
 			$key .= Configure::read('Security.cipherSeed');
-		else
+		} else {
 			srand(Configure::read('Security.cipherSeed'));
+		}
 
 		$out = '';
 		$keyLength = strlen($key);
