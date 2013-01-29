@@ -18,7 +18,7 @@
 use Cake\Core\Configure;
 use Cake\Utility\Debugger;
 use Cake\Cache\Cache;
-use Cake\Model\ConnectionManager;
+use Cake\Model\Datasource\Database\Connection;
 use Cake\Utility\Validation;
 use Cake\Error;
 
@@ -97,16 +97,16 @@ endif;
 <p>
 	<?php
 		$filePresent = null;
-		if (file_exists(APP . 'Config/database.php')):
+		if (file_exists(APP . 'Config/datasources.php')):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your database configuration file is present.');
+				echo __d('cake_dev', 'Your datasources configuration file is present.');
 				$filePresent = true;
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your database configuration file is NOT present.');
+				echo __d('cake_dev', 'Your datasources configuration file is NOT present.');
 				echo '<br/>';
-				echo __d('cake_dev', 'Rename APP/Config/database.php.default to APP/Config/database.php');
+				echo __d('cake_dev', 'Rename APP/Config/datasources.default.php to APP/Config/datasources.php');
 			echo '</span>';
 		endif;
 	?>
@@ -114,14 +114,16 @@ endif;
 <?php
 if (isset($filePresent)):
 	try {
-		$connected = ConnectionManager::getDataSource('default');
+		require APP . 'Config/datasources.php';
+		$connection = new Connection(Configure::read('Datasource.default'));
+		$connected = $connection->connect();
 	} catch (Exception $connectionError) {
 		$connected = false;
 	}
 ?>
 <p>
 	<?php
-		if ($connected && $connected->isConnected()):
+		if ($connected):
 			echo '<span class="notice success">';
 	 			echo __d('cake_dev', 'Cake is able to connect to the database.');
 			echo '</span>';

@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * PHP Version 5.4
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -17,7 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database;
 
-trait SQLDialect {
+trait SqlDialect {
 
 /**
  *  String used to start a database identifier quoting to make it safe
