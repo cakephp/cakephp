@@ -329,6 +329,9 @@ class FormHelper extends AppHelper {
 
 		$key = null;
 		if ($model !== false) {
+			if (strpos($model, '.') !== false) {
+				$model = str_replace('.', '', $model);
+			}
 			$key = $this->_introspectModel($model, 'key');
 			$this->setEntity($model, true);
 		}
