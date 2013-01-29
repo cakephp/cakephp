@@ -30,7 +30,7 @@ abstract class Driver {
 
 /**
  * Returns correct connection resource or object that is internally used
- * If first argument is passed, 
+ * If first argument is passed,
  *
  * @return void
  **/
