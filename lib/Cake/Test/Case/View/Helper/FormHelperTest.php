@@ -2633,6 +2633,45 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testFormInputsPlugin method
+ *
+ * test correct results from form::inputs() with Plugin
+ *
+ * @return void
+ */
+    public function testFormInputsPlugin() {
+        $this->loadFixtures('Post');
+        App::build(array(
+            'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+        ));
+        CakePlugin::load('TestPlugin');
+        $this->Form->request['models'] = array('TestPluginPost' => array('plugin' => 'TestPlugin', 'className' => 'TestPluginPost'));
+        $this->Form->create('TestPlugin.Post');
+        $result = $this->Form->inputs();
+        $expected = array(
+            'fieldset' => array(),
+            'legend' => array(),
+            'New Test Plugin Post',
+            '/legend',
+            'input' => array('type' => 'hidden', 'name' => 'data[TestPluginPost][id]', 'id' => 'TestPluginPostId'),
+            array('div' => array('class' => 'input select')),
+            '*/div',
+            array('div' => array('class' => 'input text')),
+            '*/div',
+            array('div' => array('class' => 'input textarea')),
+            '*/div',
+            array('div' => array('class' => 'input text')),
+            '*/div',
+            array('div' => array('class' => 'input datetime')),
+            '*/div',
+            array('div' => array('class' => 'input datetime')),
+            '*/div',
+            '/fieldset'
+        );
+        $this->assertTags($result, $expected);
+    }
+
+/**
  * test that input() and a non standard primary key makes a hidden input by default.
  *
  * @return void
