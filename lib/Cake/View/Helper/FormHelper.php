@@ -2475,9 +2475,10 @@ class FormHelper extends AppHelper {
 			}
 
 			if ($name !== null) {
+				$isNumeric = is_numeric($name);
 				if (
 					(!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] == (string)$name) ||
-					($selectedIsArray && in_array($name, $attributes['value'], true))
+					($selectedIsArray && in_array($name, $attributes['value'], !$isNumeric))
 				) {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['checked'] = true;

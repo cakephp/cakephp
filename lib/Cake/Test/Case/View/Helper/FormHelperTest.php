@@ -4056,7 +4056,7 @@ class FormHelperTest extends CakeTestCase {
 			'Contact' => array(),
 			'ContactTag' => array(
 				array(
-					'id' => 1,
+					'id' => '1',
 					'name' => 'blue'
 				),
 				array(
