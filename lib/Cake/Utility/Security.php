@@ -201,8 +201,10 @@ class Security {
 			}
 			$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
 		}
-		if (!$suhosin)
+
+		if (!$suhosin) {
 			srand();
+		}
 		return $out;
 	}
 
