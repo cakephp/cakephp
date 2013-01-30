@@ -226,10 +226,11 @@ class Query implements Expression, IteratorAggregate {
  * }}}
  *
  * @param callback $builder a function or callable to be executed for each part
- * @return void
+ * @return Query
  */
 	public function build($builder) {
 		$this->{'_build' . ucFirst($this->_type)}($builder);
+		return $this;
 	}
 
 /**
@@ -249,6 +250,31 @@ class Query implements Expression, IteratorAggregate {
 		}
 	}
 
+/**
+ * Adds new fields to be returned by a SELECT statement when this query is
+ * executed. Fields can be passed as an array of strings, array of expression
+ * objects, a single expression or a single string.
+ *
+ * If an array is passed, keys will be used to alias fields using the value as the
+ * real field to be aliased. It is possible to alias strings, Expression objects or
+ * even other Query objects.
+ *
+ * By default this function will append any passed argument to the list of fields
+ * to be selected, unless the second argument is set to true.
+ *
+ * ##Examples:
+ *
+ * {{
+ *	$query->select(['id', 'title']); // Produces SELECT id, title
+ *	$query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
+ *	$query->select('id', true); // Resets the list: SELECT id
+ *	$query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
+ * }}
+ *
+ * @param array|Expression|string $fields fields to be added to the list
+ * @param boolean $overwrite whether to reset fields with passed list or not
+ * @return Query
+ */
 	public function select($fields = [], $overwrite = false) {
 		if ($fields === null) {
 			return $this->_parts['select'];
@@ -269,6 +295,31 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Adds a DISTINCT clause to the query to remove duplicates from the result set.
+ * This clause can only be used for select statements.
+ *
+ * If you wish to filter duplicates based of those rows sharing a particular field
+ * or set of fields, you may pass an array of fields to filter on. Beware that
+ * this option might not be fully supported in all database systems.
+ *
+ * ##Examples:
+ *
+ * {{
+ *  // Filters products with the same name and city
+ *	$query->select(['name', 'city'])->from('products')->distinct();
+ *
+ *  // Filters products in the same city
+ *	$query->distinct(['city']);
+ *
+ *  // Filter products with the same name
+ *	$query->distinct(['name'], true);
+ * }}
+ *
+ * @param array|Expression fields to be filtered on
+ * @param boolean $overwrite whether to reset fields with passed list or not
+ * @return Query
+ */
 	public function distinct($on = [], $overwrite = false) {
 		if ($on === []) {
 			$on = true;
@@ -287,6 +338,15 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Helper function used to build the string representation of a SELECT clause,
+ * it takes care of constructing the field list taking care of aliasing and
+ * converting expression objects to string. This function also constructs the
+ * DISTINCT clause for the query.
+ *
+ * @param array $parts list of fields to be transformed to string
+ * @return string
+ */
 	protected function _buildSelectPart($parts) {
 		$select = 'SELECT %s%s';
 		$distinct = null;
@@ -321,6 +381,33 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Adds a single or multiple tables to be used in the FROM clause for this query.
+ * Tables can be passed as an array of strings, array of expression
+ * objects, a single expression or a single string.
+ *
+ * If an array is passed, keys will be used to alias tables using the value as the
+ * real field to be aliased. It is possible to alias strings, Expression objects or
+ * even other Query objects.
+ *
+ * By default this function will append any passed argument to the list of fields
+ * to be selected, unless the second argument is set to true.
+ *
+ * This method can be used for select, update and delete statements.
+ *
+ * ##Examples:
+ *
+ * {{
+ *	$query->from(['p' => 'posts']); // Produces FROM posts p
+ *	$query->from('authors'); // Appends authors: FROM posts p, authors
+ *	$query->select(['products'], true); // Resets the list: FROM products
+ *	$query->select(['sub' => $countQuery]); // FROM (SELECT ...) sub
+ * }}
+ *
+ * @param array|Expression|string $tables tables to be added to the list
+ * @param boolean $overwrite whether to reset tables with passed list or not
+ * @return Query
+ */
 	public function from($tables = [], $overwrite = false) {
 		if (empty($tables)) {
 			return $this->_parts['from'];
