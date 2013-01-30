@@ -131,11 +131,11 @@ class CookieComponent extends Component {
  * Type of encryption to use.
  *
  * Currently two methods are available: cipher and rijndael
- * Defaults to Security::rijndael();
+ * Defaults to Security::cipher();
  *
  * @var string
  */
-	protected $_type = 'rijndael';
+	protected $_type = 'cipher';
 
 /**
  * Used to reset cookie time if $expire is passed to CookieComponent::write()
