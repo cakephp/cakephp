@@ -30,21 +30,21 @@ class Query implements Expression, IteratorAggregate {
  * Connection instance to be used to execute this query
  *
  * @var \Cake\Model\Datasource\Database\Connection
- **/
+ */
 	protected $_connection;
 
 /**
  * Type of this query (select, insert, update, delete)
  *
  * @var string
- **/
+ */
 	protected $_type;
 
 /**
  * List of SQL parts that will be used to build this query
  *
  * @var array
- **/
+ */
 	protected $_parts = [
 		'select' => [],
 		'distinct' => false,
@@ -60,6 +60,13 @@ class Query implements Expression, IteratorAggregate {
 		'union' => []
 	];
 
+/**
+ * List of sprintf templates that will be used for compiling the SQL for
+ * this query. There are some clauses that can be built as just as the
+ * direct concatenation of the internal parts, those are listed here.
+ *
+ * @var array
+ */
 	protected $_templates = [
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
@@ -69,42 +76,87 @@ class Query implements Expression, IteratorAggregate {
 		'offset' => ' OFFSET %s',
 	];
 
+/**
+ * When compiling a query to its SQL representation, the connection being used
+ * for its execution has the ability to internally change it or even create a 
+ * completely different Query object to save any differences with its dialect.
+ * This property holds a reference to the Query object that resulted from
+ * transforming this instance.
+ *
+ * @var Query
+ */
 	protected $_transformedQuery;
 
 /**
- * Indicates whether internal state of this query was changed and most recent
- * results 
+ * Indicates whether internal state of this query was changed, this is used to
+ * discard internal cached objects such as the transformed query or the reference
+ * to the executed statement
  *
- * @return void
- **/
+ * @var boolean
+ */
 	protected $_dirty = false;
 
 /**
- * A set of callback functions to be called to alter 
+ * A list of callback functions to be called to alter each row from resulting
+ * statement upon retrieval. Each one of the callback function will receive
+ * the row array as first argument
  *
- * @return void
- **/
+ * @var array
+ */
 	protected $_resultDecorators = [];
 
 /**
- * Iterator for statement results
+ * Statement object resulting from executing this query
  *
- * @var Iterator
- **/
+ * @var Statement
+ */
 	protected $_iterator;
 
+/**
+ * Constructor
+ *
+ * @param Cake\Model\Datasource\Database\Connection $connection The connection
+ * object to be used for transforming and executing this query
+ *
+ * @return void
+ */
 	public function __construct($connection) {
 		$this->connection($connection);
 	}
 
+/**
+ * Sets the connection instance to be used for executing and transforming this query
+ * When called with a null argument, it will return the current connection instance
+ *
+ * @param Cake\Model\Datasource\Database\Connection $connection instance
+ * @return Query|Cake\Model\Datasource\Database\Connection
+ */
 	public function connection($connection = null) {
 		if ($connection === null) {
 			return $this->_connection;
 		}
+		$this->_dirty = false;
 		$this->_connection = $connection;
 		return $this;
 	}
 
+/**
+ * Compiles the SQL representation of this query and executes it using the
+ * configured connection object. Returns the resulting statement object
+ *
+ * Executing a query internally executes several steps, the first one is
+ * letting the connection transform this object to fit its particular dialect,
+ * this might result in generating a different Query object that will be the one
+ * to actually be executed. Immediately after, literal values are passed to the
+ * connection so they are bound to the query in a safe way. Finally, the resulting
+ * statement is decorated with custom objects to execute callbacks for each row
+ * is retrieved if necessary.
+ *
+ * Resulting statement is traversable, so it can be used in any loop as you would
+ * with an array.
+ *
+ * @return Cake\Model\Datasource\Database\Statement
+ */
 	public function execute() {
 		$this->_transformedQuery = null;
 		$this->_dirty = false;
@@ -117,7 +169,23 @@ class Query implements Expression, IteratorAggregate {
 		return $query->_decorateResults($statement);
 	}
 
-	public function sql($transform = false) {
+/**
+ * Returns the SQL representation of this object.
+ *
+ * By default, this function will transform this query to make it compatible
+ * with the SQL dialect that is used by the connection, This process might
+ * add, remove or alter any query part or internal expression to make it
+ * executable in the target platform.
+ *
+ * Resulting query may have placeholders that will be replaced with the actual
+ * values when the query is executed, hence it is most suitable to use with
+ * prepared statements.
+ *
+ * @param boolean $transform Whether to let the connection transform the query
+ * to the specific dialect or not
+ * @return string
+ */
+	public function sql($transform = true) {
 		$sql = '';
 		$builder = function($parts, $name) use(&$sql) {
 			if (!count($parts)) {
@@ -138,28 +206,47 @@ class Query implements Expression, IteratorAggregate {
 		return $sql;
 	}
 
+/**
+ * Will iterate over every part that should be included for an specific query
+ * type and execute the passed builder function for each of them. Builder
+ * functions can aggregate results using variables in the closure or instance
+ * variables. This function is commonly used as a way for traversing all query parts that
+ * are going to be used for constructing a query.
+ * 
+ * The callback will receive 2 parameters, the first one is the value of the query
+ * part that is being iterated and the second the name of such part.
+ *
+ * ## Example:
+ * {{{
+ *	$query->select(['title'])->from('articles')->build(function($value, $clause) {
+ *		if ($clause === 'select') {
+ *			var_dump($value);
+ *		}
+ *	});
+ * }}}
+ *
+ * @param callback $builder a function or callable to be executed for each part
+ * @return void
+ */
 	public function build($builder) {
-		return $this->{'_build' . ucFirst($this->_type)}($builder);
+		$this->{'_build' . ucFirst($this->_type)}($builder);
 	}
 
+/**
+ * Helper function that will iterate over all query parts needed for a SELECT statement
+ * and execute the $builder callback for each of them.
+ *
+ * The callback will receive 2 parameters, the first one is the value of the query
+ * part that is being iterated and the second the name of such part.
+ *
+ * @param callback $builder a function or callable to be executed for each part
+ * @return void
+ */
 	protected function _buildSelect($builder) {
 		$parts = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit', 'offset', 'union'];
 		foreach ($parts as $name) {
 			$builder($this->_parts[$name], $name);
 		}
-	}
-
-	protected function _buildJoinPart($parts) {
-		$joins = '';
-		foreach ($parts as $join) {
-			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
-			if (isset($join['conditions']) && count($join['conditions'])) {
-				$joins .= sprintf(' ON %s', $join['conditions']);
-			} else {
-				$joins .= ' ON 1 = 1';
-			}
-		}
-		return $joins;
 	}
 
 	public function select($fields = [], $overwrite = false) {
@@ -298,6 +385,20 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+	protected function _buildJoinPart($parts) {
+		$joins = '';
+		foreach ($parts as $join) {
+			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
+			if (isset($join['conditions']) && count($join['conditions'])) {
+				$joins .= sprintf(' ON %s', $join['conditions']);
+			} else {
+				$joins .= ' ON 1 = 1';
+			}
+		}
+		return $joins;
+	}
+
+
 	public function where($conditions = null, $types = [], $overwrite = false) {
 		if ($overwrite) {
 			$this->_parts['where'] = $this->newExpr();
@@ -387,7 +488,7 @@ class Query implements Expression, IteratorAggregate {
  * Returns the type of this query (select, insert, update, delete)
  *
  * @return string
- **/
+ */
 	public function type() {
 		return $this->_type;
 	}
@@ -400,7 +501,7 @@ class Query implements Expression, IteratorAggregate {
  * Executes this query and returns a results iterator
  *
  * @return Iterator
- **/
+ */
 	public function getIterator() {
 		if (empty($this->_iterator)) {
 			$this->_iterator = $this->execute();
@@ -489,7 +590,7 @@ class Query implements Expression, IteratorAggregate {
  * transforming this query instance to conform to any dialect specifics
  *
  * @return void
- **/
+ */
 	protected function _transformQuery() {
 		if (isset($this->_transformedQuery) && !$this->_dirty) {
 			return $this->_transformedQuery;
@@ -504,7 +605,7 @@ class Query implements Expression, IteratorAggregate {
  * Returns string representation of this query (complete SQL statement)
  *
  * @return string
- **/
+ */
 	public function __toString() {
 		return sprintf('(%s)', $this->sql());
 	}
