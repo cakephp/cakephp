@@ -90,6 +90,20 @@ class Response extends Message {
 	protected $_body;
 
 /**
+ * Cached decoded XML data.
+ *
+ * @var SimpleXMLElement
+ */
+	protected $_xml;
+
+/**
+ * Cached decoded JSON data.
+ *
+ * @var SimpleXMLElement
+ */
+	protected $_json;
+
+/**
  * Map of public => property names for __get()
  *
  * @var array
@@ -312,9 +326,13 @@ class Response extends Message {
  * @return null|array
  */
 	protected function _getJson() {
+		if (!empty($this->_json)) {
+			return $this->_json;
+		}
 		$data = json_decode($this->_body, true);
 		if ($data) {
-			return $data;
+			$this->_json = $data;
+			return $this->_json;
 		}
 		return null;
 	}
@@ -325,10 +343,14 @@ class Response extends Message {
  * @return null|SimpleXML
  */
 	protected function _getXml() {
+		if (!empty($this->_xml)) {
+			return $this->_xml;
+		}
 		$restore = libxml_use_internal_errors();
 		$data = simplexml_load_string($this->_body);
 		if ($data) {
-			return $data;
+			$this->_xml = $data;
+			return $this->_xml;
 		}
 		return null;
 	}
