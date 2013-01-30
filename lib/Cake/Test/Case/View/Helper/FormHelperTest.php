@@ -2997,6 +2997,31 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Tests inputs() works with plugin models
+ *
+ * @return void
+ */
+	public function testInputsPluginModel() {
+		$this->loadFixtures('Post');
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestPlugin');
+		$this->Form->request['models'] = array(
+			'TestPluginPost' => array('plugin' => 'TestPlugin', 'className' => 'TestPluginPost')
+		);
+		$this->Form->create('TestPlugin.TestPluginPost');
+		$result = $this->Form->inputs();
+
+		$this->assertContains('data[TestPluginPost][id]', $result);
+		$this->assertContains('data[TestPluginPost][author_id]', $result);
+		$this->assertContains('data[TestPluginPost][title]', $result);
+		$this->assertTrue(ClassRegistry::isKeySet('TestPluginPost'));
+		$this->assertFalse(ClassRegistry::isKeySet('TestPlugin'));
+		$this->assertEquals('TestPluginPost', $this->Form->model());
+	}
+
+/**
  * testSelectAsCheckbox method
  *
  * test multi-select widget with checkbox formatting.
