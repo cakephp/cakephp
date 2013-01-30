@@ -199,6 +199,7 @@ class SecurityTest extends CakeTestCase {
  * @return void
  */
 	public function testCipher() {
+		$this->skipIf((constant("SUHOSIN_PATCH") != null) || extension_loaded('suhosin'), 'cipher not possible when Suhosin enabled');
 		$length = 10;
 		$txt = '';
 		for ($i = 0; $i < $length; $i++) {
@@ -231,6 +232,7 @@ class SecurityTest extends CakeTestCase {
  * @return void
  */
 	public function testCipherEmptyKey() {
+		$this->skipIf((constant("SUHOSIN_PATCH") != null) || extension_loaded('suhosin'), 'cipher not possible when Suhosin enabled');
 		$txt = 'some_text';
 		$key = '';
 		Security::cipher($txt, $key);

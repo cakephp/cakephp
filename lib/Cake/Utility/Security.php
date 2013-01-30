@@ -169,6 +169,8 @@ class Security {
 /**
  * Encrypts/Decrypts a text using the given key.
  *
+ * This method is triggers an error when Suhosin is enabled on the host
+ *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use
  * @return string Encrypted/Decrypted string
