@@ -2445,6 +2445,33 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => $disabled, 'options' => $options));
 		$this->assertTags($result, $expected);
+
+		// make sure 50 does only disable 50, and not 50f5c0cf
+		$options = array('50' => 'Fifty', '50f5c0cf' => 'Stringy');
+		$disabled = array(50);
+
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => "ContactMultiple")),
+			'Multiple',
+			'/label',
+			array('input' => array('type' => 'hidden', 'name' => "data[Contact][multiple]", 'value' => '', 'id' => "ContactMultiple")),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => "data[Contact][multiple][]", 'value' => 50, 'disabled' => 'disabled', 'id' => "ContactMultiple50")),
+			array('label' => array('for' => "ContactMultiple50")),
+			'Fifty',
+			'/label',
+			'/div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => "data[Contact][multiple][]", 'value' => '50f5c0cf', 'id' => "ContactMultiple50f5c0cf")),
+			array('label' => array('for' => "ContactMultiple50f5c0cf")),
+			'Stringy',
+			'/label',
+			'/div',
+			'/div'
+		);
+		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => $disabled, 'options' => $options));
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -4272,6 +4299,48 @@ class FormHelperTest extends CakeTestCase {
 			'red',
 			'/option',
 			array('option' => array('value' => '3', 'selected' => 'selected')),
+			'green',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		// make sure only 50 is selected, and not 50f5c0cf
+		$this->View->viewVars['contactTags'] = array(
+			'1' => 'blue',
+			'50f5c0cf' => 'red',
+			'50' => 'green'
+		);
+		$this->Form->request->data = array(
+			'Contact' => array(),
+			'ContactTag' => array(
+				array(
+					'id' => 1,
+					'name' => 'blue'
+				),
+				array(
+					'id' => 50,
+					'name' => 'green'
+				)
+			)
+		);
+		$this->Form->create('Contact');
+		$result = $this->Form->input('ContactTag', array('div' => false, 'label' => false));
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[ContactTag][ContactTag]', 'value' => '', 'id' => 'ContactTagContactTag_'
+			),
+			'select' => array(
+				'name' => 'data[ContactTag][ContactTag][]', 'id' => 'ContactTagContactTag',
+				'multiple' => 'multiple'
+			),
+			array('option' => array('value' => '1', 'selected' => 'selected')),
+			'blue',
+			'/option',
+			array('option' => array('value' => '50f5c0cf')),
+			'red',
+			'/option',
+			array('option' => array('value' => '50', 'selected' => 'selected')),
 			'green',
 			'/option',
 			'/select'

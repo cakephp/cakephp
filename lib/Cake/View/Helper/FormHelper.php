@@ -2631,19 +2631,21 @@ class FormHelper extends AppHelper {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;
 
-						$disabledType = null;
 						$hasDisabled = !empty($attributes['disabled']);
 						if ($hasDisabled) {
-							$disabledType = gettype($attributes['disabled']);
+							$disabledIsArray = is_array($attributes['disabled']);
+							if ($disabledIsArray) {
+								$disabledIsNumeric = is_numeric($htmlOptions['value']);
+							}
 						}
 						if (
 							$hasDisabled &&
-							$disabledType === 'array' &&
-							in_array($htmlOptions['value'], $attributes['disabled'])
+							$disabledIsArray &&
+							in_array($htmlOptions['value'], $attributes['disabled'], !$disabledIsNumeric)
 						) {
 							$htmlOptions['disabled'] = 'disabled';
 						}
-						if ($hasDisabled && $disabledType !== 'array') {
+						if ($hasDisabled && !$disabledIsArray) {
 							$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
 						}
 
