@@ -340,7 +340,7 @@ class Query implements Expression, IteratorAggregate {
 
 /**
  * Helper function used to build the string representation of a SELECT clause,
- * it takes care of constructing the field list taking care of aliasing and
+ * it constructs the field list taking care of aliasing and
  * converting expression objects to string. This function also constructs the
  * DISTINCT clause for the query.
  *
@@ -369,18 +369,6 @@ class Query implements Expression, IteratorAggregate {
 		return sprintf($select, $distinct, implode(', ', $normalized));
 	}
 
-	public function insert() {
-		return $this;
-	}
-
-	public function update() {
-		return $this;
-	}
-
-	public function delete() {
-		return $this;
-	}
-
 /**
  * Adds a single or multiple tables to be used in the FROM clause for this query.
  * Tables can be passed as an array of strings, array of expression
@@ -390,8 +378,8 @@ class Query implements Expression, IteratorAggregate {
  * real field to be aliased. It is possible to alias strings, Expression objects or
  * even other Query objects.
  *
- * By default this function will append any passed argument to the list of fields
- * to be selected, unless the second argument is set to true.
+ * By default this function will append any passed argument to the list of tables
+ * to be selected from, unless the second argument is set to true.
  *
  * This method can be used for select, update and delete statements.
  *
@@ -427,6 +415,14 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Helper function used to build the string representation of a FROM clause,
+ * it constructs the tables list taking care of aliasing and
+ * converting expression objects to string.
+ *
+ * @param array $parts list of tables to be transformed to string
+ * @return string
+ */
 	public function _buildFromPart($parts) {
 		$select = ' FROM %s';
 		$normalized = [];
@@ -439,7 +435,52 @@ class Query implements Expression, IteratorAggregate {
 		return sprintf($select, implode(', ', $normalized));
 	}
 
-
+/**
+ * Adds a single or multiple tables to be used as JOIN clauses this query.
+ * Tables can be passed as an array of strings, an array describing the
+ * join parts, an array with multiple join descriptions, or a single string.
+ *
+ * By default this function will append any passed argument to the list of tables
+ * to be joined, unless the third argument is set to true. 
+ *
+ * When no join type is specified an INNER JOIN is used by default:
+ * ``$query->join(['authors'])`` Will produce INNER JOIN authors ON (1 = 1)
+ *
+ * It is also possible to alias joins using the array key:
+ * ``$query->join(['a' => 'authors'])`` Will produce INNER JOIN authors a ON (1 = 1)
+ *
+ * A join can be fully described and aliased using the array notation:
+ * 
+ * {{
+ *	$query->join([
+ *		'a' => [
+ *			'table' => 'authors', 'type' => 'LEFT', 'conditions' => 'a.id = b.author_id'
+ *		]
+ *	]);
+ *  // Produces LEFT JOIN authors a ON (a.id = b.author_id)
+ * }}
+ *
+ * You can even specify multiple joins in an array, including the full description:
+ *
+ * {{
+ *	$query->join([
+ *		'a' => [
+ *			'table' => 'authors', 'type' => 'LEFT', 'conditions' => 'a.id = b.author_id'
+ *		],
+ *		'p' => [
+ *			'table' => 'products', 'type' => 'INNER', 'conditions' => 'a.owner_id = p.id
+ *		]
+ *	]);
+ *
+ * ## Using conditions and types
+ *
+ * @todo
+ *
+ * @param array|string $tables list of tables to be joined in the query
+ * @param array $types associative array of type names used to bind values to query
+ * @param boolean $overwrite whether to reset joins with passed list or not
+ * @return Query
+ */
 	public function join($tables = null, $types = [], $overwrite = false) {
 		if ($tables === null) {
 			return $this->_parts['join'];
@@ -451,7 +492,6 @@ class Query implements Expression, IteratorAggregate {
 
 		$joins = array();
 		foreach ($tables as $alias => $t) {
-			$hasAlias = is_string($alias);
 			if (!is_array($t)) {
 				$t = array('table' => $t, 'conditions' => $this->newExpr());
 			}
@@ -459,7 +499,7 @@ class Query implements Expression, IteratorAggregate {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}
 
-			$joins[] = $t + ['type' => 'INNER', 'alias' => $hasAlias ? $alias : null];
+			$joins[] = $t + ['type' => 'INNER', 'alias' => is_string($alias) ? $alias : null];
 		}
 
 		if ($overwrite) {
@@ -569,6 +609,18 @@ class Query implements Expression, IteratorAggregate {
 			return $p[0] === '(' ? trim($p, '()') : $p;
 		}, $parts);
 		return sprintf("\nUNION %s", implode("\nUNION ", $parts));
+	}
+
+	public function insert() {
+		return $this;
+	}
+
+	public function update() {
+		return $this;
+	}
+
+	public function delete() {
+		return $this;
 	}
 
 /**
