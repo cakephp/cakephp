@@ -147,6 +147,17 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test that querystrings which contain full url are handled correctly.
+ *
+ * @return void
+ */
+    public function testQueryStringContainProtocol(){
+        $_SERVER['REQUEST_URI'] = '/some/path?redirect=http://yourdomain.com/';
+        $request = new CakeRequest();
+        $this->assertEquals('some/path', $request->url);
+    }
+
+/**
  * test addParams() method
  *
  * @return void
