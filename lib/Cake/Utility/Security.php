@@ -179,32 +179,25 @@ class Security {
 			return '';
 		}
 
-		$suhosin = ((constant("SUHOSIN_PATCH") != null) || extension_loaded('suhosin'));
-		if ($suhosin) {
-			$key .= Configure::read('Security.cipherSeed');
-		} else {
-			srand(Configure::read('Security.cipherSeed'));
+		if ((constant("SUHOSIN_PATCH") != null) || extension_loaded('suhosin')) {
+			trigger_error(__d('cake_dev', 'You cannot use Security::cipher() when you have Suhosin enabled'), E_USER_WARNING);
+			return '';
 		}
+
+		srand(Configure::read('Security.cipherSeed'));
 
 		$out = '';
 		$keyLength = strlen($key);
 		for ($i = 0, $textLength = strlen($text); $i < $textLength; $i++) {
-			if ($suhosin) {
-				$seed = md5($key . $key[($i) % $keyLength]);
-				$mask = hexdec($seed[6] . $seed[9]);
-			} else {
-				$j = ord(substr($key, $i % $keyLength, 1));
-				while ($j--) {
-					rand(0, 255);
-				}
-				$mask = rand(0, 255);
+			$j = ord(substr($key, $i % $keyLength, 1));
+			while ($j--) {
+				rand(0, 255);
 			}
+			$mask = rand(0, 255);
 			$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
 		}
 
-		if (!$suhosin) {
-			srand();
-		}
+		srand();
 		return $out;
 	}
 
