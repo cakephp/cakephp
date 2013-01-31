@@ -329,7 +329,8 @@ class FormHelper extends AppHelper {
 
 		$key = null;
 		if ($model !== false) {
-			$key = $this->_introspectModel($model, 'key');
+			list($plugin, $model) = pluginSplit($model, true);
+			$key = $this->_introspectModel($plugin . $model, 'key');
 			$this->setEntity($model, true);
 		}
 
@@ -2612,9 +2613,10 @@ class FormHelper extends AppHelper {
 			}
 
 			if ($name !== null) {
+				$isNumeric = is_numeric($name);
 				if (
 					(!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] == (string)$name) ||
-					($selectedIsArray && in_array($name, $attributes['value'], true))
+					($selectedIsArray && in_array($name, $attributes['value'], !$isNumeric))
 				) {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['checked'] = true;
@@ -2629,19 +2631,21 @@ class FormHelper extends AppHelper {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;
 
-						$disabledType = null;
 						$hasDisabled = !empty($attributes['disabled']);
 						if ($hasDisabled) {
-							$disabledType = gettype($attributes['disabled']);
+							$disabledIsArray = is_array($attributes['disabled']);
+							if ($disabledIsArray) {
+								$disabledIsNumeric = is_numeric($htmlOptions['value']);
+							}
 						}
 						if (
 							$hasDisabled &&
-							$disabledType === 'array' &&
-							in_array($htmlOptions['value'], $attributes['disabled'])
+							$disabledIsArray &&
+							in_array($htmlOptions['value'], $attributes['disabled'], !$disabledIsNumeric)
 						) {
 							$htmlOptions['disabled'] = 'disabled';
 						}
-						if ($hasDisabled && $disabledType !== 'array') {
+						if ($hasDisabled && !$disabledIsArray) {
 							$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
 						}
 
