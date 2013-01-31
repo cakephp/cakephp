@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * PHP Version 5.4
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -137,14 +137,14 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(array('body' => 'another body', 'author_id' => 2), $result->fetch('assoc'));
 
 		//Append more tables to next execution
-		$result = $query->select('name')->from(array('authors'))->order(['name' => 'desc'])->execute();
+		$result = $query->select('name')->from(array('authors'))->order(['name' => 'desc', 'articles.id' => 'asc'])->execute();
 		$this->assertEquals(array('body' => 'a body', 'author_id' => 1, 'name' => 'Chuck Norris'), $result->fetch('assoc'));
 		$this->assertEquals(array('body' => 'another body', 'author_id' => 2, 'name' => 'Chuck Norris'), $result->fetch('assoc'));
 		$this->assertEquals(array('body' => 'a body', 'author_id' => 1, 'name' => 'Bruce Lee'), $result->fetch('assoc'));
 		$this->assertEquals(array('body' => 'another body', 'author_id' => 2, 'name' => 'Bruce Lee'), $result->fetch('assoc'));
 
 		//Overwrite tables and only fetch from authors
-		$result = $query->select('name', true)->from('authors', true)->execute();
+		$result = $query->select('name', true)->from('authors', true)->order(['name' => 'desc'], true)->execute();
 		$this->assertEquals(array('Chuck Norris'), $result->fetch());
 		$this->assertEquals(array('Bruce Lee'), $result->fetch());
 		$this->assertCount(2, $result);
@@ -196,7 +196,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['text' => 'another body', 'author_id' => 2], $result->fetch('assoc'));
 
 		$result = $query->select(['name' => 'b.name'])->from(['b' => 'authors'])
-			->order(['text' => 'desc'])
+			->order(['text' => 'desc', 'name' => 'desc'])
 			->execute();
 		$this->assertEquals(
 			['text' => 'another body', 'author_id' => 2, 'name' => 'Chuck Norris'],
@@ -907,7 +907,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('dates')
 			->where(function($exp) {
 				$and = $exp->and_(function($and) {
-					return $and->eq('id', 1)->gt('id', 0); 
+					return $and->eq('id', 1)->gt('id', 0);
 				});
 				return $exp->add($and);
 			})
