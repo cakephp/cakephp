@@ -1575,7 +1575,8 @@ class Model extends Object implements CakeEventListener {
  * @param mixed $value Value of the field
  * @param boolean|array $validate Either a boolean, or an array.
  *   If a boolean, indicates whether or not to validate before saving.
- *   If an array, allows control of 'validate' and 'callbacks' options.
+ *   If an array, allows control of 'validate', 'callbacks' and 'counterCache' options.
+ *   See Model::save() for details of each options.
  * @return boolean See Model::save()
  * @see Model::save()
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-savefield-string-fieldname-string-fieldvalue-validate-false
@@ -1598,13 +1599,20 @@ class Model extends Object implements CakeEventListener {
  * @param array $data Data to save.
  * @param boolean|array $validate Either a boolean, or an array.
  *   If a boolean, indicates whether or not to validate before saving.
- *   If an array, allows control of validate, callbacks, and fieldList
+ *   If an array, it can have one of the following options:
+ *   - validate: Boolean as mentioned above
+ *   - fieldList: See $fieldList parameter
+ *   - callbacks: Controls callbacks triggering. Valid values: true, false, 'before', 'after'
+ *   - counterCache: Boolean to control updating of counter caches (if any)
  * @param array $fieldList List of fields to allow to be written
  * @return mixed On success Model::$data if its not empty or true, false on failure
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
  */
 	public function save($data = null, $validate = true, $fieldList = array()) {
-		$defaults = array('validate' => true, 'fieldList' => array(), 'callbacks' => true);
+		$defaults = array(
+			'validate' => true, 'fieldList' => array(),
+			'callbacks' => true, 'counterCache' => true
+		);
 		$_whitelist = $this->whitelist;
 		$fields = array();
 
@@ -1738,7 +1746,7 @@ class Model extends Object implements CakeEventListener {
 				}
 			}
 
-			if ($success && !empty($this->belongsTo)) {
+			if ($success && $options['counterCache'] && !empty($this->belongsTo)) {
 				$this->updateCounterCache($cache, $created);
 			}
 		}
@@ -2019,7 +2027,9 @@ class Model extends Object implements CakeEventListener {
  *       'AssociatedModel' => array('field', 'otherfield')
  *   )
  *   }}}
- * - deep: see saveMany/saveAssociated
+ * - deep: See saveMany/saveAssociated
+ * - callbacks: See Model::save()
+ * - counterCache: See Model::save()
  *
  * @param array $data Record data to save. This can be either a numerically-indexed array (for saving multiple
  *     records of the same type), or an array indexed by association name.
@@ -2055,6 +2065,8 @@ class Model extends Object implements CakeEventListener {
  *   Should be set to false if database/table does not support transactions.
  * - fieldList: Equivalent to the $fieldList parameter in Model::save()
  * - deep: If set to true, all associated data will be saved as well.
+ * - callbacks: See Model::save()
+ * - counterCache: See Model::save()
  *
  * @param array $data Record data to save. This should be a numerically-indexed array
  * @param array $options Options to use when saving record data, See $options above.
@@ -2155,9 +2167,9 @@ class Model extends Object implements CakeEventListener {
  *
  * #### Options
  *
- * - `validate` Set to `false` to disable validation, `true` to validate each record before saving,
+ * - validate: Set to `false` to disable validation, `true` to validate each record before saving,
  *   'first' to validate *all* records before any are saved(default),
- * - `atomic` If true (default), will attempt to save all records in a single transaction.
+ * - atomic: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
  * - fieldList: Equivalent to the $fieldList parameter in Model::save().
  *   It should be an associate array with model name as key and array of fields as value. Eg.
@@ -2168,6 +2180,8 @@ class Model extends Object implements CakeEventListener {
  *   )
  *   }}}
  * - deep: If set to true, not only directly associated data is saved, but deeper nested associated data as well.
+ * - callbacks: See Model::save()
+ * - counterCache: See Model::save()
  *
  * @param array $data Record data to save. This should be an array indexed by association name.
  * @param array $options Options to use when saving record data, See $options above.
