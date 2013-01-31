@@ -184,7 +184,7 @@ class XmlTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidDataProvider
- * @expectedException Cake\Error\XmlException
+ * @expectedException Cake\Error\Exception
  * return void
  */
 	public function testBuildInvalidData($value) {
