@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * PHP Version 5.4
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -50,7 +50,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  * Tests creating a connection using an invalid driver throws an exception
  *
  * @expectedException Cake\Model\Datasource\Database\Exception\MissingDriverException
- * @expectedExceptionMessage Database driver \Foo\InvalidDriver could not be found. 
+ * @expectedExceptionMessage Database driver \Foo\InvalidDriver could not be found.
  * @return void
  **/
 	public function testMissingDriver() {
@@ -75,6 +75,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testWrongCredentials() {
+		$this->skipIf(Configure::read('Datasource.test.dsn'));
 		$connection = new Connection(['database' => 'foobar'] + Configure::read('Datasource.test'));
 		$connection->connect();
 		$this->skipIf($connection->driver() instanceof \Cake\Model\Datasource\Database\Driver\Sqlite);
@@ -403,7 +404,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->connection->delete('things', ['id' => 1]);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(1, $result);
-		
+
 		$this->connection->commit();
 		$this->connection->rollback();
 
@@ -525,6 +526,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testQuote() {
+		$this->skipIf(!$this->connection->supportsQuoting());
 		$expected = "'2012-01-01'";
 		$result =$this->connection->quote(new \DateTime('2012-01-01'), 'date');
 		$this->assertEquals($expected, $result);

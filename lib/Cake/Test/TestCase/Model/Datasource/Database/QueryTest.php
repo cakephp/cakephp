@@ -289,7 +289,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->select(['title', 'name'])
 			->from('articles')
 			->join(['a' => 'authors'])
-			->order(['name' => 'desc'])
+			->order(['name' => 'desc', 'articles.id' => 'asc'])
 			->execute();
 		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
 		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));

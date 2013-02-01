@@ -120,6 +120,13 @@ abstract class Driver {
 	public abstract function quote($value, $type);
 
 /**
+ * Checks if the driver supports quoting
+ *
+ * @return boolean
+ **/
+	public abstract function supportsQuoting();
+
+/**
  * Returns last id generated for a table or sequence in database
  *
  * @param string $table table name or sequence to get last insert value from

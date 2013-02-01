@@ -400,6 +400,16 @@ class Connection {
 	}
 
 /**
+ * Checks if the driver supports quoting
+ *
+ * @return boolean
+ */
+	public function supportsQuoting() {
+		$this->connect();
+		return $this->_driver->supportsQuoting();
+	}
+
+/**
  * Quotes a database identifier (a column name, table name, etc..) to
  * be used safely in queries without the risk of using reserver words
  *
