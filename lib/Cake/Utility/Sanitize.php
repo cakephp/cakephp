@@ -76,7 +76,7 @@ class Sanitize {
 			$start = 2;
 		}
 
-		return substr(substr($string, 1), 0, -1);
+		return substr(substr($string, $start), 0, -1);
 	}
 
 /**
