@@ -246,7 +246,7 @@
  *
  * Note: 'default' and other application caches should be configured in app/Config/bootstrap.php.
  *       Please check the comments in boostrap.php for more info on the cache engines available
- *       and their setttings.
+ *       and their settings.
  */
 $engine = 'File';
 
