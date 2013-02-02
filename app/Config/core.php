@@ -94,7 +94,7 @@
  *
  * And uncomment the App.baseUrl below. But keep in mind
  * that plugin assets such as images, CSS and Javascript files 
- * will not without url rewriting!
+ * will not work without url rewriting!
  */
 	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
 
