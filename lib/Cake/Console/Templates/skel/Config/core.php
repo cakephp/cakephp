@@ -92,7 +92,9 @@
  * /app/.htaccess
  * /app/webroot/.htaccess
  *
- * And uncomment the App.baseUrl below:
+  * And uncomment the App.baseUrl below. But keep in mind
+ * that plugin assets such as images, CSS and Javascript files 
+ * will not work without url rewriting!
  */
 	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
 
