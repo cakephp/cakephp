@@ -48,4 +48,16 @@ class ConsoleInput {
 		return fgets($this->_input);
 	}
 
+/**
+ * Checks if data is available on the stream
+ *
+ * @param integer $timeout An optional time to wait for data
+ * @return bool True for data available, false otherwise
+ */
+	public function dataAvailable($timeout = 0) {
+		$readFds = array($this->_input);
+		$readyFds = stream_select($readFds, $writeFds, $errorFds, $timeout);
+		return ($readyFds > 0);
+	}
+
 }
