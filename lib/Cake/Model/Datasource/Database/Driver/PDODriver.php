@@ -104,4 +104,13 @@ trait PDODriver {
 		return $this->connection()->lastInsertId();
 	}
 
+/**
+ * Checks if the driver supports quoting, as PDO_ODBC does not support it.
+ *
+ * @return boolean
+ **/
+	public function supportsQuoting() {
+		return $this->connection()->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
+	}
+
 }
