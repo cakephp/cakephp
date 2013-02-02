@@ -549,7 +549,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		CakePlugin::load('TestPlugin');
-		$result = $this->Html->css('TestPlugin.style', null, array('plugin' => false));
+		$result = $this->Html->css('TestPlugin.style', array('plugin' => false));
 		$expected['link']['href'] = 'preg:/.*css\/TestPlugin\.style\.css/';
 		$this->assertTags($result, $expected);
 		CakePlugin::unload('TestPlugin');
@@ -595,6 +595,49 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->View->expects($this->at(1))
 			->method('append')
 			->with('css', $this->matchesRegularExpression('/more_css_in_head.css/'));
+
+		$result = $this->Html->css('css_in_head', array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->css('more_css_in_head', array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->css('screen', array('rel' => 'import'));
+		$expected = array(
+			'style' => array('type' => 'text/css'),
+			'preg:/@import url\(.*css\/screen\.css\);/',
+			'/style'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test css link BC usage
+ *
+ * @return void
+ */
+	public function testCssLinkBC() {
+		Configure::write('Asset.filter.css', false);
+
+		CakePlugin::load('TestPlugin');
+		$result = $this->Html->css('TestPlugin.style', null, array('plugin' => false));
+		$expected = array(
+			'link' => array(
+				'rel' => 'stylesheet',
+				'type' => 'text/css',
+				'href' => 'preg:/.*css\/TestPlugin\.style\.css/'
+			)
+		);
+		$this->assertTags($result, $expected);
+		CakePlugin::unload('TestPlugin');
+
+		$result = $this->Html->css('screen', 'import');
+		$expected = array(
+			'style' => array('type' => 'text/css'),
+			'preg:/@import url\(.*css\/screen\.css\);/',
+			'/style'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->css('css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
