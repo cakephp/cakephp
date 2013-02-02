@@ -2879,6 +2879,14 @@ class DboSource extends DataSource {
  * @return string|boolean Converted boolean value
  */
 	public function boolean($data, $quote = false) {
+		if (is_string($data) && (bool)$data) {
+			$data = strtolower($data);
+			if ($data === 'true'){
+				$data = true;
+			} elseif ($data === 'false'){
+				$data = false;
+			}
+		}
 		if ($quote) {
 			return !empty($data) ? '1' : '0';
 		}
