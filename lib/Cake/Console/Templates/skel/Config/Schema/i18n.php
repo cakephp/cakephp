@@ -1,6 +1,4 @@
 <?php
-/*i18n schema generated on: 2007-11-25 07:11:25 : 1196004805*/
-
 /**
  * This is i18n Schema file
  *
@@ -26,6 +24,9 @@
 /*
  *
  * Using the Schema command line utility
+ *
+ * Use it to configure database for i18n
+ *
  * cake schema run create i18n
  */
 class i18nSchema extends CakeSchema {
