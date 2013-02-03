@@ -638,6 +638,27 @@ class Query implements Expression, IteratorAggregate {
  *
  * Other Query objects that be used as conditions for any field.
  *
+ * ## Adding conditions in multiple steps:
+ *
+ * You can use callable functions to construct complex expressions, functions
+ * receive as first argument a new QueryExpression object and this query instance
+ * as second argument. Functions must return an expression object, that will be
+ * added the list of conditions for the query using th AND operator
+ *
+ * {{
+ *	$query
+ *	->where(['title !=' => 'Hello World'])
+ *	->where(function($exp, $query) {
+ *		$or = $exp->or_(['id' => 1]);
+		$and = $exp->and_(['id >' => 2, 'id <' => 10]);
+		return $or->add($and);
+ *	});
+ * }}
+ *
+ * * The previous example produces:
+ *
+ * ``WHERE title != 'Hello World' AND (id = 1 OR (id > 2 AND id < 10))``
+ *
  * ## Conditions as strings:
  *
  * {{
