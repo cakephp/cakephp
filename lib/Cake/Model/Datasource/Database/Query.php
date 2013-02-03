@@ -477,11 +477,42 @@ class Query implements Expression, IteratorAggregate {
  *
  * ## Using conditions and types
  *
- * @todo
+ * Conditions can be expressed, as in the examples above, using a string for comparing
+ * columns, or string with already quoted literal values. Additionally it is
+ * possible to using conditions expressed in arrays or expression objects.
+ *
+ * When using arrays for expressing conditions, it is often desirable to convert
+ * the literal values to the correct database representation. This is achieved 
+ * using the second parameter of this function.
+ *
+ * {{
+ *	$query->join(['a' => [
+ *		'table' => 'articles',
+ *		'conditions' => [
+ *			'a.posted >=' => new DateTime('-3 days'),
+ *			'a.published' => true
+ *			'a.author_id = authors.id'
+ *		]
+ *	]], ['a.posted' => 'datetime', 'a.published' => 'boolean'])
+ * }}
+ *
+ * ## Overwriting joins
+ *
+ * When creating aliased joins using the array notation, you can override
+ * previous join definitions by using the same alias in consequent
+ * calls to this function or you can replace all previously defined joins
+ * with another list if the third parameter for this function is set to true
+ *
+ * {{
+ *	$query->join(['alias' => 'table']); // joins table with as alias
+ *	$query->join(['alias' => 'another_table']); // joins another_table with as alias
+ *	$query->join(['something' => 'different_table'], [], true); // resets joins list
+ * }}
  *
  * @param array|string $tables list of tables to be joined in the query
  * @param array $types associative array of type names used to bind values to query
  * @param boolean $overwrite whether to reset joins with passed list or not
+ * @see Cake\Model\Datasource\Database\Type
  * @return Query
  */
 	public function join($tables = null, $types = [], $overwrite = false) {
@@ -527,7 +558,6 @@ class Query implements Expression, IteratorAggregate {
 		}
 		return $joins;
 	}
-
 
 	public function where($conditions = null, $types = [], $overwrite = false) {
 		if ($overwrite) {
