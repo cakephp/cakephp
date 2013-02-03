@@ -124,7 +124,9 @@ abstract class Driver {
  *
  * @return boolean
  **/
-	public abstract function supportsQuoting();
+	public function supportsQuoting() {
+		return true;
+	}
 
 /**
  * Returns last id generated for a table or sequence in database

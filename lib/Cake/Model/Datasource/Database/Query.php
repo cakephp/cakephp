@@ -471,6 +471,9 @@ class Query implements Expression, IteratorAggregate {
  *			'table' => 'products', 'type' => 'INNER', 'conditions' => 'a.owner_id = p.id
  *		]
  *	]);
+ *	// LEFT JOIN authors a ON (a.id = b.author_id)
+ *	// INNER JOIN products p (a.owner_id = p.id)
+ * }}
  *
  * ## Using conditions and types
  *
