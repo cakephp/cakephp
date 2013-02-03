@@ -546,6 +546,15 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Helper function used to build the string representation of multiple JOIN clauses,
+ * it constructs the joins list taking care of aliasing and converting
+ * expression objects to string in both the table to be joined and the conditions
+ * to be used
+ *
+ * @param array $parts list of joins to be transformed to string
+ * @return string
+ */
 	protected function _buildJoinPart($parts) {
 		$joins = '';
 		foreach ($parts as $join) {
@@ -559,6 +568,99 @@ class Query implements Expression, IteratorAggregate {
 		return $joins;
 	}
 
+/**
+ * Adds a condition or set of conditions to be used in the WHERE clause for this
+ * query. Conditions can be expressed as an array of fields as keys with
+ * comparison operators in it, the values for the array will be used for comparing
+ * the field to such literal. Finally, conditions can be expressed as a single
+ * string or an array of strings.
+ *
+ * When using arrays, each entry will be joined to the rest of the conditions using
+ * an AND operator. Consecutive calls to this function will also join the new
+ * conditions specified using the AND operator. Additionally, values can be
+ * expressed using expression objects which can include other query objects.
+ *
+ * Any conditions created with this methods can be used with any SELECT, UPDATE
+ * and DELETE type of queries.
+ *
+ * ## Conditions using operators:
+ *
+ * {{
+ *	$query->where([
+ *		'posted >=' => new DateTime('3 days ago'),
+ *		'title LIKE' => 'Hello W%',
+ *		'author_id' => 1,
+ *	], ['posted' => 'datetime']);
+ * }}
+ *
+ * The previous example produces:
+ *
+ * ``WHERE posted >= 2012-01-27 AND title LIKE 'Hello W%' AND author_id = 1``
+ *
+ * Second parameter is used to specify what type is expected for each passed
+ * key. Valid types can be used from the mapped with Database\Type class.
+ *
+ * ## Nesting conditions with conjunctions:
+ *
+ * {{
+ *	$query->where([
+ *		'author_id !=' => 1,
+ *		'OR' => ['published' => true, 'posted <' => new DateTime('now')],
+ *		'NOT' => ['title' => 'Hello']
+ *	], ['published' => boolean, 'posted' => 'datetime']
+ * }}
+ *
+ * The previous example produces:
+ *
+ * ``WHERE author_id = 1 AND (published = 1 OR posted < '2012-02-01') AND NOT (title = 'Hello')``
+ *
+ * You can nest conditions using conjunctions as much as you like. Sometimes, you
+ * may want to define 2 different options for the same key, in that case, you can
+ * wrap each condition inside a new array:
+ *
+ * ``$query->where(['OR' => [['published' => false], ['published' => true]])``
+ *
+ * Keep in mind that every time you call where() with the third param set to false
+ * (default), it will join the passed conditions to the previous stored list using
+ * the AND operator. Also, using the same array key twice in consecutive calls to
+ * this method will not override the previous value.
+ *
+ * ## Using expressions objects:
+ *
+ * {{
+ *	$exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->type('OR');
+ *	$query->where(['published' => true], ['published' => 'boolean'])->where($exp);
+ * }}
+ *
+ * The previous example produces:
+ *
+ * ``WHERE (id != 100 OR author_id != 1) AND published = 1``
+ *
+ * Other Query objects that be used as conditions for any field.
+ *
+ * ## Conditions as strings:
+ *
+ * {{
+ *	$query->where(['articles.author_id = authors.id', 'modified IS NULL']);
+ * }}
+ *
+ * The previous example produces:
+ *
+ * ``WHERE articles.author_id = authors.id AND modified IS NULL``
+ *
+ * Please note that when using the array notation or the expression objects, all
+ * values will be correctly quoted and transformed to the correspondent database
+ * data type automatically for you, thus securing your application from SQL injections.
+ * If you use string conditions make sure that your values are correctly quoted.
+ * The safest thing you can do is to never use string conditions.
+ *
+ * @param string|array|Expression $conditions
+ * @param array $types associative array of type names used to bind values to query
+ * @param boolean $overwrite whether to reset conditions with passed list or not
+ * @see Cake\Model\Datasource\Database\Type
+ * @see Cake\Model\Datasource\Database\QueryExpression
+ * @return Query
+ */
 	public function where($conditions = null, $types = [], $overwrite = false) {
 		if ($overwrite) {
 			$this->_parts['where'] = $this->newExpr();
