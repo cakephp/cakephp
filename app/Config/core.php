@@ -97,7 +97,7 @@
  * will not work without url rewriting!
  * To work around this issue you should either symlink or copy 
  * the plugin assets into you app's webroot directory. This is 
- * ecommended even when you are using mod_rewrite. Handling static 
+ * recommended even when you are using mod_rewrite. Handling static
  * assets through the Dispatcher is incredibly inefficient and 
  * included primarily as a development convenience - and 
  * thus not recommended for production applications.
