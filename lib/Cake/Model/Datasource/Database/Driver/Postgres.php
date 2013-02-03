@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * PHP Version 5.4
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -78,7 +78,7 @@ class Postgres extends \Cake\Model\Datasource\Database\Driver {
  **/
 
 	public function enabled() {
-		return in_array('sqlite', PDO::getAvailableDrivers());
+		return in_array('pgsql', PDO::getAvailableDrivers());
 	}
 
 /**
