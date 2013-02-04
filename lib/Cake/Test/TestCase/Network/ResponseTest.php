@@ -218,7 +218,7 @@ class ResponseTest extends TestCase {
  * @dataProvider charsetTypeProvider
  */
 	public function testSendChangingContentType($original, $expected) {
-		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->type($original);
 		$response->body('the response body');
 		$response->expects($this->once())->method('_sendContent')->with('the response body');
