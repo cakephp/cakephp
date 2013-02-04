@@ -1769,6 +1769,26 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test using param()
+ *
+ * @return void
+ */
+	public function testReadingParams() {
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'controller' => 'posts',
+			'admin' => true,
+			'truthy' => 1,
+			'zero' => '0',
+		));
+		$this->assertFalse($request->param('not_set'));
+		$this->assertTrue($request->param('admin'));
+		$this->assertEquals(1, $request->param('truthy'));
+		$this->assertEquals('posts', $request->param('controller'));
+		$this->assertEquals('0', $request->param('zero'));
+	}
+
+/**
  * test the data() method reading
  *
  * @return void
