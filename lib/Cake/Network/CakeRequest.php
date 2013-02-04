@@ -806,6 +806,20 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Safely access the values in $this->params.
+ *
+ * @param string $name The name of the parameter to get.
+ * @return mixed The value of the provided parameter. Will
+ *   return false if the parameter doesn't exist or is falsey.
+ */
+	public function param($name) {
+		if (!isset($this->params[$name])) {
+			return false;
+		}
+		return $this->params[$name];
+	}
+
+/**
  * Read data from `php://input`. Useful when interacting with XML or JSON
  * request body content.
  *
