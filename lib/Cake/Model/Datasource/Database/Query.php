@@ -811,11 +811,55 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
-	public function order($clause, $overwrite = false) {
+/**
+ * Adds a single or multiple fields to be used in the ORDER clause for this query.
+ * Fields can be passed as an array of strings, array of expression
+ * objects, a single expression or a single string.
+ *
+ * If an array is passed, keys will be used as the field itself and the value will
+ * represent the order in which such field should be ordered. When called multiple
+ * times with the same fields as key, the last order definition will prevail over
+ * the others.
+ *
+ * By default this function will append any passed argument to the list of fields
+ * to be selected, unless the second argument is set to true.
+ *
+ * ##Examples:
+ *
+ * {{
+ *	$query->order(['title' => 'DESC', 'author_id' => 'ASC']);
+ * }}
+ *
+ * Produces:
+ *
+ * ``ORDER BY title DESC, author_id ASC``
+ *
+ * {{
+ *	$query->order(['title' => 'DESC NULLS FIRST'])->order('author_id');
+ * }}
+ *
+ * Will generate:
+ *
+ * ``ORDER BY title DESC NULLS FIRST, author_id``
+ *
+ * {{
+ *	$expression = $query->newExpr()->add(['id % 2 = 0']);
+ *	$query->order($expression)->order(['title' => 'ASC']);
+ * }}
+ *
+ * Will become:
+ *
+ * ``ORDER BY (id %2 = 0), title ASC``
+ *
+ * @param array|Expression|string $fields fields to be added to the list
+ * @param boolean $overwrite whether to reset order with field list or not
+ * @return Query
+ */
+	public function order($fields, $overwrite = false) {
 		if ($overwrite || !$this->_parts['order']) {
 			$this->_parts['order'] = new OrderByExpression;
 		}
-		$this->_conjugate('order', $clause, '', []);
+		$this->_conjugate('order', $fields, '', []);
 		return $this;
 	}
 
