@@ -17,7 +17,6 @@
  */
 namespace Cake\Model\Datasource\Database;
 
-use Iterator;
 use IteratorAggregate;
 use Cake\Model\Datasource\Database\Expression\QueryExpression;
 use Cake\Model\Datasource\Database\Expression\OrderByExpression;
@@ -675,7 +674,7 @@ class Query implements Expression, IteratorAggregate {
  * If you use string conditions make sure that your values are correctly quoted.
  * The safest thing you can do is to never use string conditions.
  *
- * @param string|array|Expression $conditions
+ * @param string|array|Expression|callback $conditions
  * @param array $types associative array of type names used to bind values to query
  * @param boolean $overwrite whether to reset conditions with passed list or not
  * @see Cake\Model\Datasource\Database\Type
@@ -690,6 +689,62 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Connects any previously defined set of conditions to the newly provided list
+ * using the AND operator. This function accepts the conditions list in the same
+ * format as the method `where` does, hence you can use arrays, expression objects
+ * callback functions or strings.
+ *
+ * It is important to notice that when calling this function, any previous set
+ * of conditions defined for this query will be treated as a single argument for
+ * the AND operator. This function will not only operate the most recently defined
+ * condition, but all the conditions as a whole.
+ *
+ * When using an array for defining conditions, the same rules for connecting each
+ * array entry as defined in the `where` function will be used. This means that
+ * each array entry will be joined to the other using the AND operator, unless
+ * you nest the conditions in the array using other operator.
+ *
+ * ##Examples:
+ *
+ * {{
+ *	$query->where(['title' => 'Hello World')->andWhere(['author_id' => 1]);
+ * }}
+ *
+ * Will produce:
+ *
+ * ``WHERE title = 'Hello World' AND author_id = 1``
+ *
+ * {{
+ *	$query
+ *		->where(['OR' => ['published' => false, 'published is NULL']])
+ *		->andWhere(['author_id' => 1, 'comments_count >' => 10])
+ * }}
+ *
+ * Produces:
+ *
+ * ``WHERE (published = 0 OR published IS NULL) AND author_id = 1 AND comments_count > 10``
+ *
+ * {{
+ *	$query
+ *		->where(['title' => 'Foo'])
+ *		->andWhere(function($exp, $query) {
+ *			return $exp
+ *			->add(['author_id' => 1])
+ *			->or_(['author_id' => 2]);
+ *		});
+ * }}
+ *
+ * Generates the following conditions:
+ *
+ * ``WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)``
+ *
+ * @param string|array|Expression|callback $conditions
+ * @param array $types associative array of type names used to bind values to query
+ * @see Cake\Model\Datasource\Database\Query::where()
+ * @see Cake\Model\Datasource\Database\Type
+ * @return Query
+ */
 	public function andWhere($conditions, $types = []) {
 		$this->_conjugate('where', $conditions, 'AND', $types);
 		return $this;
