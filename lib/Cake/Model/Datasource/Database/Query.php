@@ -896,6 +896,18 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Adds a condition or set of conditions to be used in the HAVING clause for this
+ * query. This method operates in exactly the same way as the method ``where()``
+ * does. Please refer to its documentation for an insight on how to using each
+ * parameter.
+ *
+ * @param string|array|Expression|callback $conditions
+ * @param array $types associative array of type names used to bind values to query
+ * @param boolean $overwrite whether to reset conditions with passed list or not
+ * @see Cake\Model\Datasource\Database\Query::where()
+ * @return Query
+ */
 	public function having($conditions = null, $types = [], $overwrite = false) {
 		if ($overwrite) {
 			$this->_parts['having'] = $this->newExpr();
@@ -904,11 +916,33 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Connects any previously defined set of conditions to the provided list
+ * using the AND operator in the HAVING clause. This method operates in exactly
+ * the same way as the method ``andWhere()`` does. Please refer to its
+ * documentation for an insight on how to using each parameter.
+ *
+ * @param string|array|Expression|callback $conditions
+ * @param array $types associative array of type names used to bind values to query
+ * @see Cake\Model\Datasource\Database\Query::andWhere()
+ * @return Query
+ */
 	public function andHaving($conditions, $types = []) {
 		$this->_conjugate('having', $conditions, 'AND', $types);
 		return $this;
 	}
 
+/**
+ * Connects any previously defined set of conditions to the provided list
+ * using the OR operator in the HAVING clause. This method operates in exactly
+ * the same way as the method ``orWhere()`` does. Please refer to its
+ * documentation for an insight on how to using each parameter.
+ *
+ * @param string|array|Expression|callback $conditions
+ * @param array $types associative array of type names used to bind values to query
+ * @see Cake\Model\Datasource\Database\Query::orWhere()
+ * @return Query
+ */
 	public function orHaving($conditions, $types = []) {
 		$this->_conjugate('having', $conditions, 'OR', $types);
 		return $this;
