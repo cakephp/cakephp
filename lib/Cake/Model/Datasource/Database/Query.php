@@ -863,6 +863,25 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Adds a single or multiple fields to be used in the GROUP BY clause for this query.
+ * Fields can be passed as an array of strings, array of expression
+ * objects, a single expression or a single string.
+ *
+ * By default this function will append any passed argument to the list of fields
+ * to be grouped, unless the second argument is set to true.
+ *
+ * ##Examples:
+ *
+ * {{
+ *	$query->group(['id', 'title']); // Produces GROUP BY id, title
+ *	$query->group('title'); // Produces GROUP BY title
+ * }}
+ *
+ * @param array|Expression|string $fields fields to be added to the list
+ * @param boolean $overwrite whether to reset fields with passed list or not
+ * @return Query
+ */
 	public function group($fields, $overwrite = false) {
 		if ($overwrite) {
 			$this->_parts['group'] = [];
