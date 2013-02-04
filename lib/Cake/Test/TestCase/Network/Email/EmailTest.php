@@ -848,9 +848,10 @@ class EmailTest extends TestCase {
 			"\r\n" .
 			"\r\n" .
 			"--$boundary\r\n" .
+			"Content-Disposition: attachment; filename=\"basics.php\"\r\n" .
 			"Content-Type: application/octet-stream\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
-			"Content-Disposition: attachment; filename=\"basics.php\"\r\n\r\n";
+			"\r\n";
 		$this->assertContains($expected, $result['message']);
 	}
 
@@ -892,9 +893,10 @@ class EmailTest extends TestCase {
 			"--alt-{$boundary}--\r\n" .
 			"\r\n" .
 			"--$boundary\r\n" .
+			"Content-Disposition: attachment; filename=\"VERSION.txt\"\r\n" .
 			"Content-Type: application/octet-stream\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
-			"Content-Disposition: attachment; filename=\"VERSION.txt\"\r\n\r\n";
+			"\r\n";
 		$this->assertContains($expected, $result['message']);
 	}
 
@@ -944,10 +946,11 @@ class EmailTest extends TestCase {
 			"--alt-{$boundary}--\r\n" .
 			"\r\n" .
 			"--rel-$boundary\r\n" .
+			"Content-Disposition: inline; filename=\"cake.png\"\r\n" .
 			"Content-Type: application/octet-stream\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"Content-ID: <abc123>\r\n" .
-			"Content-Disposition: inline; filename=\"cake.png\"\r\n\r\n";
+			"\r\n";
 		$this->assertContains($expected, $result['message']);
 		$this->assertContains('--rel-' . $boundary . '--', $result['message']);
 		$this->assertContains('--' . $boundary . '--', $result['message']);
@@ -1280,19 +1283,32 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->config(array());
 		$this->CakeEmail->attachments(array(CAKE . 'basics.php'));
 		$result = $this->CakeEmail->send('body');
-		$this->assertContains("Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"basics.php\"", $result['message']);
+		$expected = "Content-Disposition: attachment; filename=\"basics.php\"\r\n" .
+			"Content-Type: application/octet-stream\r\n" .
+			"Content-Transfer-Encoding: base64\r\n";
+		$this->assertContains($expected, $result['message']);
 
 		$this->CakeEmail->attachments(array('my.file.txt' => CAKE . 'basics.php'));
 		$result = $this->CakeEmail->send('body');
-		$this->assertContains("Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"my.file.txt\"", $result['message']);
+		$expected = "Content-Disposition: attachment; filename=\"my.file.txt\"\r\n" .
+			"Content-Type: application/octet-stream\r\n" .
+			"Content-Transfer-Encoding: base64\r\n";
+		$this->assertContains($expected, $result['message']);
 
 		$this->CakeEmail->attachments(array('file.txt' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain')));
 		$result = $this->CakeEmail->send('body');
-		$this->assertContains("Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"file.txt\"", $result['message']);
+		$expected = "Content-Disposition: attachment; filename=\"file.txt\"\r\n" .
+			"Content-Type: text/plain\r\n" .
+			"Content-Transfer-Encoding: base64\r\n";
+		$this->assertContains($expected, $result['message']);
 
 		$this->CakeEmail->attachments(array('file2.txt' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain', 'contentId' => 'a1b1c1')));
 		$result = $this->CakeEmail->send('body');
-		$this->assertContains("Content-Type: text/plain\r\nContent-Transfer-Encoding: base64\r\nContent-ID: <a1b1c1>\r\nContent-Disposition: inline; filename=\"file2.txt\"", $result['message']);
+		$expected = "Content-Disposition: inline; filename=\"file2.txt\"\r\n" .
+			"Content-Type: text/plain\r\n" .
+			"Content-Transfer-Encoding: base64\r\n" .
+			"Content-ID: <a1b1c1>\r\n";
+		$this->assertContains($expected, $result['message']);
 	}
 
 /**
