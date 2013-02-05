@@ -2954,7 +2954,7 @@ class DboSource extends DataSource {
  * @return array Fields in table. Keys are column and unique
  */
 	public function index($model) {
-		return false;
+		return array();
 	}
 
 /**
