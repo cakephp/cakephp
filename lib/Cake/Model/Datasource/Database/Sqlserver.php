@@ -20,10 +20,12 @@
 App::uses('DboSource', 'Model/Datasource');
 
 /**
- * Dbo driver for SQLServer
+ * Dbo layer for Mircosoft's offical SQLServer driver
  *
- * A Dbo driver for SQLServer 2008 and higher. Requires the `sqlsrv`
- * and `pdo_sqlsrv` extensions to be enabled.
+ * A Dbo layer for MS SQL Server 2005 and higher. Requires the
+ * `pdo_sqlsrv` extension to be enabled.
+ * 
+ * @link http://www.php.net/manual/en/ref.pdo-sqlsrv.php
  *
  * @package       Cake.Model.Datasource.Database
  */
