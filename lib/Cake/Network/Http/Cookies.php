@@ -13,9 +13,9 @@
  */
 namespace Cake\Network\Http;
 
-use DateTime;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
+use DateTime;
 
 /**
  * Container class for cookies used in Http\Client.

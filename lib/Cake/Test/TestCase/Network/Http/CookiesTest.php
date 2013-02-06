@@ -13,8 +13,8 @@
  */
 namespace Cake\Test\TestCase\Network\Http;
 
-use Cake\Network\Http\Response;
 use Cake\Network\Http\Cookies;
+use Cake\Network\Http\Response;
 use Cake\TestSuite\TestCase;
 
 /**

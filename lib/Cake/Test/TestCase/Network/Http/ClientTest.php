@@ -135,9 +135,9 @@ class ClientTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider urlProvider
-	 */
+/**
+ * @dataProvider urlProvider
+ */
 	public function testBuildUrl($expected, $url, $query, $opts) {
 		$http = new Client();
 
@@ -296,7 +296,6 @@ class ClientTest extends TestCase {
 		]);
 		$this->assertSame($result, $response);
 	}
-
 
 /**
  * Return a list of HTTP methods.

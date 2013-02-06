@@ -152,7 +152,6 @@ class FormDataTest extends TestCase {
 			'',
 		);
 		$this->assertEquals(implode("\r\n", $expected), $result);
-
 	}
 
 /**

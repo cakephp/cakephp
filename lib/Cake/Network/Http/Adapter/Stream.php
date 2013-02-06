@@ -14,9 +14,9 @@
 namespace Cake\Network\Http\Adapter;
 
 use Cake\Error;
+use Cake\Network\Http\FormData;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
-use Cake\Network\Http\FormData;
 
 /**
  * Implements sending Cake\Network\Http\Request

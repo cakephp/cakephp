@@ -398,6 +398,7 @@ class Client {
  *
  * @param string $type short type alias or full mimetype.
  * @return array Headers to set on the request.
+ * @throws Cake\Error\Exception When an unknown type alias is used.
  */
 	protected function _typeHeaders($type) {
 		if (strpos($type, '/') !== false) {

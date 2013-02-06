@@ -13,9 +13,9 @@
  */
 namespace Cake\Test\TestCase\Network\Http\Auth;
 
+use Cake\Network\Http\Auth\Digest;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
-use Cake\Network\Http\Auth\Digest;
 use Cake\TestSuite\TestCase;
 
 /**
