@@ -30,76 +30,76 @@ class ClassLoader {
  *
  * @var string
  */
-	protected $fileExtension = '.php';
+	protected $_fileExtension = '.php';
 
 /**
  * Registered namespace
  *
  * @var string
  */
-	protected $namespace;
+	protected $_namespace;
 
 /**
  * Store the namespace length for performance
  *
  * @var integer
  */
-	protected $namespaceLength;
+	protected $_namespaceLength;
 
 /**
  * Path with the classes
  *
  * @var string
  */
-	protected $includePath;
+	protected $_includePath;
 
 /**
  * Constructor
  *
- * @param string $ns The namespace to use.
+ * @param string $ns The _namespace to use.
  */
 	public function __construct($ns = null, $includePath = null) {
-		$this->namespace = rtrim($ns, '\\') . '\\';
-		$this->namespaceLength = strlen($this->namespace);
-		$this->includePath = $includePath;
+		$this->_namespace = rtrim($ns, '\\') . '\\';
+		$this->_namespaceLength = strlen($this->_namespace);
+		$this->_includePath = $includePath;
 	}
 
 /**
- * Sets the base include path for all class files in the namespace of this class loader.
+ * Sets the base include path for all class files in the _namespace of this class loader.
  *
  * @param string $includePath
  * @return void
  */
 	public function setIncludePath($includePath) {
-		$this->includePath = $includePath;
+		$this->_includePath = $includePath;
 	}
 
 /**
- * Gets the base include path for all class files in the namespace of this class loader.
+ * Gets the base include path for all class files in the _namespace of this class loader.
  *
  * @return string
  */
 	public function getIncludePath() {
-		return $this->includePath;
+		return $this->_includePath;
 	}
 
 /**
- * Sets the file extension of class files in the namespace of this class loader.
+ * Sets the file extension of class files in the _namespace of this class loader.
  *
  * @param string $fileExtension
  * @return void
  */
 	public function setFileExtension($fileExtension) {
-		$this->fileExtension = $fileExtension;
+		$this->_fileExtension = $fileExtension;
 	}
 
 /**
- * Gets the file extension of class files in the namespace of this class loader.
+ * Gets the file extension of class files in the _namespace of this class loader.
  *
  * @return string
  */
 	public function getFileExtension() {
-		return $this->fileExtension;
+		return $this->_fileExtension;
 	}
 
 /**
@@ -127,10 +127,10 @@ class ClassLoader {
  * @return boolean
  */
 	public function loadClass($className) {
-		if (substr($className, 0, $this->namespaceLength) !== $this->namespace) {
+		if (substr($className, 0, $this->_namespaceLength) !== $this->_namespace) {
 			return false;
 		}
-		$path = $this->includePath . DS . str_replace('\\', DS, $className) . $this->fileExtension;
+		$path = $this->_includePath . DS . str_replace('\\', DS, $className) . $this->_fileExtension;
 		if (!file_exists($path)) {
 			return false;
 		}
