@@ -7417,6 +7417,29 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.boolean_field', array('type' => 'checkbox', 'required' => true));
+		$expected = array(
+			'div' => array('class' => 'input checkbox required'),
+			array('input' => array(
+				'type' => 'hidden',
+				'name' => 'data[Contact][boolean_field]',
+				'id' => 'ContactBooleanField_',
+				'value' => '0'
+			)),
+			array('input' => array(
+				'type' => 'checkbox',
+				'name' => 'data[Contact][boolean_field]',
+				'value' => '1',
+				'id' => 'ContactBooleanField',
+				'required' => 'required'
+			)),
+			'label' => array('for' => 'ContactBooleanField'),
+			'Boolean Field',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

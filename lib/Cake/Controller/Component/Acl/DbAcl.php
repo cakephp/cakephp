@@ -14,6 +14,7 @@
  */
 App::uses('AclInterface', 'Controller/Component/Acl');
 App::uses('Hash', 'Utility');
+App::uses('ClassRegistry', 'Utility');
 
 /**
  * DbAcl implements an ACL control system in the database. ARO's and ACO's are

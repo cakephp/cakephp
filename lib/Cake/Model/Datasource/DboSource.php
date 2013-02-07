@@ -1691,9 +1691,8 @@ class DboSource extends DataSource {
 		if (!empty($data['conditions'])) {
 			$data['conditions'] = trim($this->conditions($data['conditions'], true, false));
 		}
-		if (!empty($data['table'])) {
-			$schema = !(is_string($data['table']) && strpos($data['table'], '(') === 0);
-			$data['table'] = $this->fullTableName($data['table'], true, $schema);
+		if (!empty($data['table']) && (!is_string($data['table']) || strpos($data['table'], '(') !== 0)) {
+			$data['table'] = $this->fullTableName($data['table']);
 		}
 		return $this->renderJoinStatement($data);
 	}
@@ -2955,7 +2954,7 @@ class DboSource extends DataSource {
  * @return array Fields in table. Keys are column and unique
  */
 	public function index($model) {
-		return false;
+		return array();
 	}
 
 /**

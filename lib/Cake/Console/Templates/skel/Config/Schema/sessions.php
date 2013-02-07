@@ -1,6 +1,4 @@
 <?php
-/*Sessions schema generated on: 2007-11-25 07:11:54 : 1196004714*/
-
 /**
  * This is Sessions Schema file
  *
