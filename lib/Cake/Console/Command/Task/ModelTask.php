@@ -623,9 +623,9 @@ class ModelTask extends BakeTask {
 			$offset = strpos($otherTable, $model->table . '_');
 			$otherOffset = strpos($otherTable, '_' . $model->table);
 
-			if ($offset === 0) {
+			if ($offset !== false) {
 				$tableName = substr($otherTable, strlen($model->table . '_'));
-			} elseif ($otherOffset === 0) {
+			} elseif ($otherOffset !== false) {
 				$tableName = substr($otherTable, 0, $otherOffset);
 			}
 			if ($tableName && in_array($tableName, $this->_tables)) {
