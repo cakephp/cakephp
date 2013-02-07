@@ -1510,7 +1510,8 @@ class FormHelper extends AppHelper {
 			if (isset($value) && strval($optValue) === strval($value)) {
 				$optionsHere['checked'] = 'checked';
 			}
-			if ($disabled && (!is_array($disabled) || in_array($optValue, $disabled))) {
+			$isNumeric = is_numeric($optValue);
+			if ($disabled && (!is_array($disabled) || in_array((string)$optValue, $disabled, !$isNumeric))) {
 				$optionsHere['disabled'] = true;
 			}
 			$tagName = Inflector::camelize(
@@ -2616,7 +2617,7 @@ class FormHelper extends AppHelper {
 				$isNumeric = is_numeric($name);
 				if (
 					(!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] == (string)$name) ||
-					($selectedIsArray && in_array($name, $attributes['value'], !$isNumeric))
+					($selectedIsArray && in_array((string)$name, $attributes['value'], !$isNumeric))
 				) {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['checked'] = true;
@@ -2628,26 +2629,26 @@ class FormHelper extends AppHelper {
 				if ($showParents || (!in_array($title, $parents))) {
 					$title = ($attributes['escape']) ? h($title) : $title;
 
+					$hasDisabled = !empty($attributes['disabled']);
+					if ($hasDisabled) {
+						$disabledIsArray = is_array($attributes['disabled']);
+						if ($disabledIsArray) {
+							$disabledIsNumeric = is_numeric($name);
+						}
+					}
+					if (
+						$hasDisabled &&
+						$disabledIsArray &&
+						in_array((string)$name, $attributes['disabled'], !$disabledIsNumeric)
+					) {
+						$htmlOptions['disabled'] = 'disabled';
+					}
+					if ($hasDisabled && !$disabledIsArray) {
+						$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
+					}
+
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;
-
-						$hasDisabled = !empty($attributes['disabled']);
-						if ($hasDisabled) {
-							$disabledIsArray = is_array($attributes['disabled']);
-							if ($disabledIsArray) {
-								$disabledIsNumeric = is_numeric($htmlOptions['value']);
-							}
-						}
-						if (
-							$hasDisabled &&
-							$disabledIsArray &&
-							in_array($htmlOptions['value'], $attributes['disabled'], !$disabledIsNumeric)
-						) {
-							$htmlOptions['disabled'] = 'disabled';
-						}
-						if ($hasDisabled && !$disabledIsArray) {
-							$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
-						}
 
 						$tagName = $attributes['id'] . Inflector::camelize(Inflector::slug($name));
 						$htmlOptions['id'] = $tagName;
