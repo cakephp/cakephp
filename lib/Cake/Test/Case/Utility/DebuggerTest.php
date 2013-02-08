@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -87,7 +88,7 @@ class DebuggerTest extends CakeTestCase {
 		$pattern = '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/';
 		$this->assertRegExp($pattern, $result[0]);
 
-		$result = Debugger::excerpt(__FILE__, 10, 2);
+		$result = Debugger::excerpt(__FILE__, 11, 2);
 		$this->assertEquals(5, count($result));
 
 		$pattern = '/<span style\="color\: \#\d{6}">\*<\/span>/';

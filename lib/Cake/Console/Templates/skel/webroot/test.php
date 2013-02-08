@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html
  * @package       app.webroot
  * @since         CakePHP(tm) v 1.2.0.4433
@@ -54,6 +55,9 @@ if (!defined('APP_DIR')) {
  * need to cannot modify your include_path, you can set this path.
  *
  * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
+ *
+ * The following line differs from its sibling
+ * /app/webroot/test.php
  */
 //define('CAKE_CORE_INCLUDE_PATH', __CAKE_PATH__);
 
@@ -73,11 +77,11 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	if (function_exists('ini_set')) {
 		ini_set('include_path', ROOT . DS . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
 	}
-	if (!include 'Cake' . DS . 'bootstrap.php') {
+	if (!include('Cake' . DS . 'bootstrap.php')) {
 		$failed = true;
 	}
 } else {
-	if (!include CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'bootstrap.php') {
+	if (!include(CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'bootstrap.php')) {
 		$failed = true;
 	}
 }
@@ -86,7 +90,7 @@ if (!empty($failed)) {
 }
 
 if (Configure::read('debug') < 1) {
-	exit(__d('cake_dev', 'Debug setting does not allow access to this url.'));
+	die(__d('cake_dev', 'Debug setting does not allow access to this url.'));
 }
 
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';

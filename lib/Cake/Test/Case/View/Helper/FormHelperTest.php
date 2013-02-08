@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -3493,7 +3494,15 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+	}
 
+/**
+ * Test radio inputs with between as string or array. Also ensure
+ * that an array with less between elements works.
+ *
+ * @return void
+ */
+	public function testRadioBetween() {
 		$result = $this->Form->radio(
 			'Model.field',
 			array('option A', 'option B'),
@@ -3569,6 +3578,73 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'between C',
 			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.field', array(
+			'options' => array('1' => 'first', '2' => 'second'),
+			'type' => 'radio',
+			'before' => '--before--',
+			'after' => '--after--',
+			'separator' => '--separator--',
+			'between' => array('--between first--', '--between second--')
+		));
+
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			'--before--',
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'ModelField_', 'value' => '')),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'first',
+			'/label',
+			'--between first--',
+			'--separator--',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '2', 'id' => 'ModelField2')),
+			array('label' => array('for' => 'ModelField2')),
+			'second',
+			'/label',
+			'--between second--',
+			'/fieldset',
+			'--after--',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.field', array(
+			'options' => array('1' => 'first', '2' => 'second'),
+			'type' => 'radio',
+			'before' => '--before--',
+			'after' => '--after--',
+			'separator' => '--separator--',
+			'between' => array('--between first--')
+		));
+
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			'--before--',
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'ModelField_', 'value' => '')),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'first',
+			'/label',
+			'--between first--',
+			'--separator--',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '2', 'id' => 'ModelField2')),
+			array('label' => array('for' => 'ModelField2')),
+			'second',
+			'/label',
+			'/fieldset',
+			'--after--',
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -3663,7 +3739,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->radio(
 			'Model.field',
 			array('option A', 'option B'),
-			array('disabled' => array('option A'), 'value' => '0')
+			array('disabled' => array(0), 'value' => '0')
 		);
 		$expected = array(
 			'fieldset' => array(),
@@ -3727,17 +3803,13 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Model.field', array(
-			'options' => array('1' => 'first', '2' => 'second'),
+			'options' => array(1 => 'first', 2 => 'second', '2x' => '2x', '3' => 'third', '3x' => '3x'),
 			'type' => 'radio',
-			'before' => '--before--',
-			'after' => '--after--',
-			'separator' => '--separator--',
-			'between' => array('--between first--', '--between second--')
+			'disabled' => array(2, '3x'),
 		));
 
 		$expected = array(
 			'div' => array('class' => 'input radio'),
-			'--before--',
 			'fieldset' => array(),
 			'legend' => array(),
 			'Field',
@@ -3747,50 +3819,26 @@ class FormHelperTest extends CakeTestCase {
 			array('label' => array('for' => 'ModelField1')),
 			'first',
 			'/label',
-			'--between first--',
-			'--separator--',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '2', 'id' => 'ModelField2')),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'disabled' => 'disabled', 'value' => '2', 'id' => 'ModelField2')),
 			array('label' => array('for' => 'ModelField2')),
 			'second',
 			'/label',
-			'--between second--',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '2x', 'id' => 'ModelField2x')),
+			array('label' => array('for' => 'ModelField2x')),
+			'2x',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '3', 'id' => 'ModelField3')),
+			array('label' => array('for' => 'ModelField3')),
+			'third',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'disabled' => 'disabled', 'value' => '3x', 'id' => 'ModelField3x')),
+			array('label' => array('for' => 'ModelField3x')),
+			'3x',
+			'/label',
 			'/fieldset',
-			'--after--',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Model.field', array(
-			'options' => array('1' => 'first', '2' => 'second'),
-			'type' => 'radio',
-			'before' => '--before--',
-			'after' => '--after--',
-			'separator' => '--separator--',
-			'between' => array('--between first--')
-		));
-
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-			'--before--',
-			'fieldset' => array(),
-			'legend' => array(),
-			'Field',
-			'/legend',
-			array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'ModelField_', 'value' => '')),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
-			array('label' => array('for' => 'ModelField1')),
-			'first',
-			'/label',
-			'--between first--',
-			'--separator--',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '2', 'id' => 'ModelField2')),
-			array('label' => array('for' => 'ModelField2')),
-			'second',
-			'/label',
-			'/fieldset',
-			'--after--',
-			'/div'
-		);
 	}
 
 /**
@@ -4254,6 +4302,98 @@ class FormHelperTest extends CakeTestCase {
 			'third',
 			'/option',
 			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$selected = array('2', '3x');
+		$result = $this->Form->select(
+			'Model.multi_field', $options, array('multiple' => true, 'value' => $selected)
+		);
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
+			),
+			'select' => array(
+				'name' => 'data[Model][multi_field][]', 'multiple' => 'multiple', 'id' => 'ModelMultiField'
+			),
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2', 'selected' => 'selected')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x', 'selected' => 'selected')),
+			'Stringy',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test generating multiple select with disabled elements.
+ *
+ * @return void
+ */
+	public function testSelectMultipleWithDisabledElements() {
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$disabled = array(2, 3);
+		$result = $this->Form->select('Contact.multiple', $options, array('multiple' => 'multiple', 'disabled' => $disabled));
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Contact][multiple]', 'value' => '', 'id' => 'ContactMultiple_'
+			),
+			'select' => array(
+				'name' => 'data[Contact][multiple][]', 'multiple' => 'multiple', 'id' => 'ContactMultiple'
+			),
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2', 'disabled' => 'disabled')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3', 'disabled' => 'disabled')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x')),
+			'Stringy',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$disabled = array('2', '3x');
+		$result = $this->Form->input('Contact.multiple', array('multiple' => 'multiple', 'disabled' => $disabled, 'options' => $options));
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => 'ContactMultiple')),
+			'Multiple',
+			'/label',
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Contact][multiple]', 'value' => '', 'id' => 'ContactMultiple_'
+			),
+			'select' => array(
+				'name' => 'data[Contact][multiple][]', 'multiple' => 'multiple', 'id' => 'ContactMultiple'
+			),
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2', 'disabled' => 'disabled')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x', 'disabled' => 'disabled')),
+			'Stringy',
+			'/option',
+			'/select',
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
