@@ -20,9 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-// @codingStandardsIgnoreStart
-
-/*
+/**
  *
  * Using the Schema command line utility
  *
@@ -30,9 +28,7 @@
  *
  * cake schema run create i18n
  */
-class i18nSchema extends CakeSchema {
-
-// @codingStandardsIgnoreEnd
+class I18nSchema extends CakeSchema {
 
 	public $name = 'i18n';
 
