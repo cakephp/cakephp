@@ -95,7 +95,7 @@
  *
  * And uncomment the App.baseUrl below. But keep in mind
  * that plugin assets such as images, CSS and Javascript files
- * will not work without url rewriting
+ * will not work without url rewriting!
  * To work around this issue you should either symlink or copy
  * the plugin assets into you app's webroot directory. This is
  * recommended even when you are using mod_rewrite. Handling static

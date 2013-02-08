@@ -18,13 +18,7 @@
  * @package       app.Config
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
- */
-/**
- * In this file you set up your send email details.
  *
- * @package       cake.config
- */
-/**
  * Email configuration class.
  * You can specify multiple configurations for production, development and testing.
  *
