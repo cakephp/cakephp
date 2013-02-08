@@ -23,10 +23,13 @@ $dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 
 if (function_exists('ini_set')) {
 	$root = dirname(dirname(dirname(__FILE__)));
+
+	// the following line differs from its sibling
+	// /lib/Cake/Console/Templates/skel/Console/cake.php
 	ini_set('include_path', $root . $ds . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
 }
 
-if (!include ($dispatcher)) {
+if (!include($dispatcher)) {
 	trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 }
 unset($paths, $path, $dispatcher, $root, $ds);

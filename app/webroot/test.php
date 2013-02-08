@@ -25,6 +25,7 @@ ini_set('display_errors', 1);
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
+
 /**
  * These defines should only be edited if you have cake installed in
  * a directory layout other than the way it is distributed.
@@ -38,6 +39,7 @@ if (!defined('DS')) {
 if (!defined('ROOT')) {
 	define('ROOT', dirname(dirname(dirname(__FILE__))));
 }
+
 /**
  * The actual directory name for the "app".
  *
@@ -49,12 +51,15 @@ if (!defined('APP_DIR')) {
 /**
  * The absolute path to the "Cake" directory, WITHOUT a trailing DS.
  *
- * For ease of development CakePHP uses PHP's include_path.  If you
+ * For ease of development CakePHP uses PHP's include_path. If you
  * need to cannot modify your include_path, you can set this path.
  *
  * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
+ *
+ * The following line differs from its sibling
+ * /lib/Cake/Console/Templates/skel/webroot/test.php
  */
-	//define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
+//define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
 
 /**
  * Editing below this line should not be necessary.
@@ -72,16 +77,16 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	if (function_exists('ini_set')) {
 		ini_set('include_path', ROOT . DS . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
 	}
-	if (!include ('Cake' . DS . 'bootstrap.php')) {
+	if (!include('Cake' . DS . 'bootstrap.php')) {
 		$failed = true;
 	}
 } else {
-	if (!include (CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'bootstrap.php')) {
+	if (!include(CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'bootstrap.php')) {
 		$failed = true;
 	}
 }
 if (!empty($failed)) {
-	trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
+	trigger_error("CakePHP core could not be found. Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php. It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
 
 if (Configure::read('debug') < 1) {

@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Errors
+ * @package       app.View.Errors
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,7 +23,7 @@
 	<?php echo __d('cake', 'An Internal Error Has Occurred.'); ?>
 </p>
 <?php
-if (Configure::read('debug') > 0 ):
+if (Configure::read('debug') > 0):
 	echo $this->element('exception_stack_trace');
 endif;
 ?>
