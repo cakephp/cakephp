@@ -129,7 +129,7 @@ class ServerShell extends AppShell {
 			$this->_host,
 			$this->_port,
 			$this->_documentRoot,
-			WEBROOT_DIR . '/index.php'
+			WWW_ROOT . '/index.php'
 		);
 
 		$port = ($this->_port == self::DEFAULT_PORT) ? '' : ':' . $this->_port;
