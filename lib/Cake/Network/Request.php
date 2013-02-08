@@ -278,7 +278,12 @@ class Request implements \ArrayAccess {
 		} elseif (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '://') === false) {
 			$uri = $_SERVER['REQUEST_URI'];
 		} elseif (isset($_SERVER['REQUEST_URI'])) {
-			$uri = substr($_SERVER['REQUEST_URI'], strlen(FULL_BASE_URL));
+			$qPosition = strpos($_SERVER['REQUEST_URI'], '?');
+			if ($qPosition !== false && strpos($_SERVER['REQUEST_URI'], '://') > $qPosition) {
+				$uri = $_SERVER['REQUEST_URI'];
+			} else {
+				$uri = substr($_SERVER['REQUEST_URI'], strlen(FULL_BASE_URL));
+			}
 		} elseif (isset($_SERVER['PHP_SELF']) && isset($_SERVER['SCRIPT_NAME'])) {
 			$uri = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
 		} elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
@@ -861,6 +866,20 @@ class Request implements \ArrayAccess {
 			return $this;
 		}
 		return Hash::get($this->data, $name);
+	}
+
+/**
+ * Safely access the values in $this->params.
+ *
+ * @param string $name The name of the parameter to get.
+ * @return mixed The value of the provided parameter. Will
+ *   return false if the parameter doesn't exist or is falsey.
+ */
+	public function param($name) {
+		if (!isset($this->params[$name])) {
+			return false;
+		}
+		return $this->params[$name];
 	}
 
 /**

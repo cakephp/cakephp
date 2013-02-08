@@ -414,7 +414,7 @@ class TreeBehavior extends ModelBehavior {
 			extract(array_merge(array('id' => null), $id));
 		}
 		$overrideRecursive = $recursive;
-		if (empty ($id)) {
+		if (empty($id)) {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
@@ -447,7 +447,7 @@ class TreeBehavior extends ModelBehavior {
 			extract(array_merge(array('id' => null), $id));
 		}
 		$overrideRecursive = $recursive;
-		if (empty ($id)) {
+		if (empty($id)) {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
@@ -486,7 +486,7 @@ class TreeBehavior extends ModelBehavior {
 		if (!$number) {
 			return false;
 		}
-		if (empty ($id)) {
+		if (empty($id)) {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
@@ -544,7 +544,7 @@ class TreeBehavior extends ModelBehavior {
 		if (!$number) {
 			return false;
 		}
-		if (empty ($id)) {
+		if (empty($id)) {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
@@ -869,7 +869,7 @@ class TreeBehavior extends ModelBehavior {
 		)));
 		$edge = $this->_getMax($Model, $scope, $right, $recursive, $created);
 
-		if (empty ($parentId)) {
+		if (empty($parentId)) {
 			$this->_sync($Model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right], $created);
 			$this->_sync($Model, $node[$right] - $node[$left] + 1, '-', '> ' . $node[$left], $created);
 		} else {

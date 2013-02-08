@@ -333,7 +333,8 @@ class FormHelper extends Helper {
 
 		$key = null;
 		if ($model !== false) {
-			$key = $this->_introspectModel($model, 'key');
+			list($plugin, $model) = pluginSplit($model, true);
+			$key = $this->_introspectModel($plugin . $model, 'key');
 			$this->setEntity($model, true);
 		}
 
@@ -437,7 +438,9 @@ class FormHelper extends Helper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();
-		$append .= $this->_csrfField();
+		if ($this->requestType !== 'get') {
+			$append .= $this->_csrfField();
+		}
 
 		if (!empty($append)) {
 			$append = $this->Html->useTag('hiddenblock', $append);
@@ -508,7 +511,11 @@ class FormHelper extends Helper {
 			}
 			$out .= $this->submit($submit, $submitOptions);
 		}
-		if (isset($this->request['_Token']) && !empty($this->request['_Token'])) {
+		if (
+			$this->requestType !== 'get' &&
+			isset($this->request['_Token']) &&
+			!empty($this->request['_Token'])
+		) {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
 		}
@@ -1127,6 +1134,10 @@ class FormHelper extends Helper {
 			$options['type'] = 'select';
 		} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
 			$options['type'] = 'password';
+		} elseif (in_array($fieldKey, array('tel', 'telephone', 'phone'))) {
+			$options['type'] = 'tel';
+		} elseif ($fieldKey === 'email') {
+			$options['type'] = 'email';
 		} elseif (isset($options['checked'])) {
 			$options['type'] = 'checkbox';
 		} elseif ($fieldDef = $this->_introspectModel($modelKey, 'fields', $fieldKey)) {
@@ -1233,7 +1244,9 @@ class FormHelper extends Helper {
 			is_scalar($fieldDef['length']) &&
 			$options['type'] !== 'select'
 		);
-		if ($autoLength && $options['type'] == 'text') {
+		if ($autoLength &&
+			in_array($options['type'], array('text', 'email', 'tel', 'url'))
+		) {
 			$options['maxlength'] = $fieldDef['length'];
 		}
 		if ($autoLength && $fieldDef['type'] == 'float') {
@@ -1383,9 +1396,10 @@ class FormHelper extends Helper {
 			unset($options['default']);
 		}
 
+		$options += array('required' => false);
 		$options = $this->_initInputField($fieldName, $options) + array('hiddenField' => true);
 		$value = current($this->value($valueOptions));
-		$output = "";
+		$output = '';
 
 		if (empty($options['value'])) {
 			$options['value'] = 1;
@@ -1420,7 +1434,8 @@ class FormHelper extends Helper {
  * ### Attributes:
  *
  * - `separator` - define the string in between the radio buttons
- * - `between` - the string between legend and input set
+ * - `between` - the string between legend and input set or array of strings to insert
+ *    strings between each input block
  * - `legend` - control whether or not the widget set has a fieldset & legend
  * - `value` - indicate a value that is should be checked
  * - `label` - boolean to indicate whether or not labels for widgets show be displayed
@@ -1509,6 +1524,9 @@ class FormHelper extends Helper {
 			if ($label) {
 				$optTitle = $this->Html->useTag('label', $tagName, '', $optTitle);
 			}
+			if (is_array($between)) {
+				$optTitle .= array_shift($between);
+			}
 			$allOptions = array_merge($attributes, $optionsHere);
 			$out[] = $this->Html->useTag('radio', $attributes['name'], $tagName,
 				array_diff_key($allOptions, array('name' => '', 'type' => '', 'id' => '')),
@@ -1526,6 +1544,9 @@ class FormHelper extends Helper {
 		}
 		$out = $hidden . implode($separator, $out);
 
+		if (is_array($between)) {
+			$between = '';
+		}
 		if ($legend) {
 			$out = $this->Html->useTag('fieldset', '', $this->Html->useTag('legend', $legend) . $between . $out);
 		}
@@ -2596,9 +2617,10 @@ class FormHelper extends Helper {
 			}
 
 			if ($name !== null) {
+				$isNumeric = is_numeric($name);
 				if (
 					(!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] == (string)$name) ||
-					($selectedIsArray && in_array($name, $attributes['value']))
+					($selectedIsArray && in_array($name, $attributes['value'], !$isNumeric))
 				) {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['checked'] = true;
@@ -2613,19 +2635,21 @@ class FormHelper extends Helper {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;
 
-						$disabledType = null;
 						$hasDisabled = !empty($attributes['disabled']);
 						if ($hasDisabled) {
-							$disabledType = gettype($attributes['disabled']);
+							$disabledIsArray = is_array($attributes['disabled']);
+							if ($disabledIsArray) {
+								$disabledIsNumeric = is_numeric($htmlOptions['value']);
+							}
 						}
 						if (
 							$hasDisabled &&
-							$disabledType === 'array' &&
-							in_array($htmlOptions['value'], $attributes['disabled'])
+							$disabledIsArray &&
+							in_array($htmlOptions['value'], $attributes['disabled'], !$disabledIsNumeric)
 						) {
 							$htmlOptions['disabled'] = 'disabled';
 						}
-						if ($hasDisabled && $disabledType !== 'array') {
+						if ($hasDisabled && !$disabledIsArray) {
 							$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
 						}
 

@@ -169,7 +169,7 @@ class ModelTaskTest extends TestCase {
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(99, 1));
 		$this->Task->expects($this->once())->method('err');
 
-		$result = $this->Task->getName('test');
+		$this->Task->getName('test');
 	}
 
 /**

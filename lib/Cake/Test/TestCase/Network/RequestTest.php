@@ -107,7 +107,15 @@ class RequestTest extends TestCase {
 
 		$_SERVER['REQUEST_URI'] = '/tasks/index/?ts=123456';
 		$request = Request::createFromGlobals();
-		$this->assertEquals('tasks/index/', $request->url);
+		$this->assertEquals('tasks/index', $request->url);
+
+		$_SERVER['REQUEST_URI'] = '/some/path?url=http://cakephp.org';
+		$request = Request::createFromGlobals();
+		$this->assertEquals('some/path', $request->url);
+
+		$_SERVER['REQUEST_URI'] = FULL_BASE_URL . '/other/path?url=http://cakephp.org';
+		$request = Request::createFromGlobals();
+		$this->assertEquals('other/path', $request->url);
 	}
 
 /**
@@ -1703,6 +1711,26 @@ class RequestTest extends TestCase {
 
 		$result = $request->query('test.2');
 		$this->assertNull($result);
+	}
+
+/**
+ * Test using param()
+ *
+ * @return void
+ */
+	public function testReadingParams() {
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'controller' => 'posts',
+			'admin' => true,
+			'truthy' => 1,
+			'zero' => '0',
+		));
+		$this->assertFalse($request->param('not_set'));
+		$this->assertTrue($request->param('admin'));
+		$this->assertEquals(1, $request->param('truthy'));
+		$this->assertEquals('posts', $request->param('controller'));
+		$this->assertEquals('0', $request->param('zero'));
 	}
 
 /**

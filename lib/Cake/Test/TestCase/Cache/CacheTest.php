@@ -124,8 +124,16 @@ class CacheTest extends TestCase {
  * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
-	public function testReadNonExistingConfig() {
-		$this->assertFalse(Cache::read('key', 'totally fake'));
+	public function testInvalidConfig() {
+		Cache::config('invalid', array(
+			'engine' => 'File',
+			'duration' => '+1 year',
+			'prefix' => 'testing_invalid_',
+			'path' => 'data/',
+			'serialize' => true,
+			'random' => 'wii'
+		));
+		Cache::read('Test', 'invalid');
 	}
 
 /**

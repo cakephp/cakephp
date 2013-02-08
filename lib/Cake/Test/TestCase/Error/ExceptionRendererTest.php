@@ -499,7 +499,7 @@ class ExceptionRendererTest extends TestCase {
 		$ExceptionRenderer->controller->response->expects($this->at(1))->method('_sendHeader')->with('Allow', 'POST, DELETE');
 		ob_start();
 		$ExceptionRenderer->render();
-		$result = ob_get_clean();
+		ob_get_clean();
 	}
 
 /**

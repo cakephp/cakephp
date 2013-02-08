@@ -123,10 +123,11 @@ class ServerShell extends AppShell {
  * @return void
  */
 	public function main() {
-		$command = sprintf("php -S %s:%d -t %s",
+		$command = sprintf("php -S %s:%d -t %s %s",
 			$this->_host,
 			$this->_port,
-			$this->_documentRoot
+			$this->_documentRoot,
+			WEBROOT_DIR . '/index.php'
 		);
 
 		$port = ($this->_port == static::DEFAULT_PORT) ? '' : ':' . $this->_port;

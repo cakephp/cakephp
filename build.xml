@@ -6,10 +6,10 @@
 	Uses phing to create releases, and pear packages.
 	Based off of build.xml in doctrine.
 
-	Requires the d51PearPkg2 to be installed:
+	Requires the cakephp/d51PearPkg2 to be installed:
 
 	pear channel-discover pear.domain51.com
-	pear install domain51/Phing_d51PearPkg2Task
+	pear install cakephp/Phing_d51PearPkg2Task
 
 	Use the `release` task to update VERSION.txt, and create a new tag.
 	Use the `build` task to create a pear package based on the current working copy.
@@ -151,6 +151,7 @@
 			</release>
 			<exceptions key="Cake/VERSION.txt">php</exceptions>
 			<exceptions key="Cake/LICENSE.txt">php</exceptions>
+			<exceptions key="Cake/Config/cacert.pem">php</exceptions>
 		</d51pearpkg2>
 	</target>
 

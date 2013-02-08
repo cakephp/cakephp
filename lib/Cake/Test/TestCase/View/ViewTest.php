@@ -677,7 +677,7 @@ class ViewTest extends TestCase {
  * @return void
  */
 	public function testElementInexistent() {
-		$result = $this->View->element('non_existent_element');
+		$this->View->element('non_existent_element');
 	}
 
 /**
@@ -687,7 +687,7 @@ class ViewTest extends TestCase {
  * @return void
  */
 	public function testElementInexistent2() {
-		$result = $this->View->element('TestPlugin.plugin_element', array(), array('plugin' => 'test_plugin'));
+		$this->View->element('TestPlugin.plugin_element', array(), array('plugin' => 'test_plugin'));
 	}
 
 /**
@@ -697,7 +697,7 @@ class ViewTest extends TestCase {
  * @return void
  */
 	public function testElementInexistent3() {
-		$result = $this->View->element('test_plugin.plugin_element');
+		$this->View->element('test_plugin.plugin_element');
 	}
 
 /**
@@ -740,7 +740,7 @@ class ViewTest extends TestCase {
 	public function testElementCacheHelperNoCache() {
 		$Controller = new ViewPostsController();
 		$View = new TestView($Controller);
-		$helpers = $View->loadHelpers();
+		$View->loadHelpers();
 		$result = $View->element('test_element', array('ram' => 'val', 'test' => array('foo', 'bar')));
 		$this->assertEquals('this is the test element', $result);
 	}

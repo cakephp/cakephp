@@ -58,7 +58,6 @@ class PhpAclTest extends TestCase {
 	}
 
 	public function testAroResolve() {
-		$map = $this->Acl->Aro->map;
 		$this->Acl->Aro->map = array(
 			'User' => 'FooModel/nickname',
 			'Role' => 'FooModel/role',

@@ -87,7 +87,7 @@ class GenericObjectCollection extends ObjectCollection {
  * @return array List of loaded objects
  */
 	public function load($object, $settings = array()) {
-		list($plugin, $name) = pluginSplit($object);
+		list(, $name) = pluginSplit($object);
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
@@ -360,7 +360,7 @@ class ObjectCollectionTest extends TestCase {
 		$this->Objects->TriggerMockSecond->expects($this->never())
 			->method('callback');
 
-		$result = $this->Objects->trigger(
+		$this->Objects->trigger(
 			'callback',
 			array(array('value')),
 			array('modParams' => 2)

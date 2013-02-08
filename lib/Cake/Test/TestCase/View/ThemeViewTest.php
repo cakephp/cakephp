@@ -219,7 +219,7 @@ class ThemeViewTest extends TestCase {
 
 		$View = new TestTheme2View($this->Controller);
 		ob_start();
-		$result = $View->getViewFileName('does_not_exist');
+		$View->getViewFileName('does_not_exist');
 		$expected = ob_get_clean();
 		$this->assertRegExp("/PagesController::/", $expected);
 		$this->assertRegExp("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)pages(\/|\\\)does_not_exist.ctp/", $expected);
@@ -240,7 +240,7 @@ class ThemeViewTest extends TestCase {
 
 		$View = new TestTheme2View($this->Controller);
 		ob_start();
-		$result = $View->getLayoutFileName();
+		$View->getLayoutFileName();
 		$expected = ob_get_clean();
 		$this->assertRegExp("/Missing Layout/", $expected);
 		$this->assertRegExp("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)layouts(\/|\\\)whatever.ctp/", $expected);

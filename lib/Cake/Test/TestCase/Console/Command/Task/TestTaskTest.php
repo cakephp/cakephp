@@ -342,7 +342,7 @@ class TestTaskTest extends TestCase {
 		));
 		$keys = ClassRegistry::keys();
 		$this->assertTrue(in_array('test_task_comment', $keys));
-		$object = $this->Task->buildTestSubject('Model', 'TestTaskComment');
+		$this->Task->buildTestSubject('Model', 'TestTaskComment');
 
 		$keys = ClassRegistry::keys();
 		$this->assertFalse(in_array('random', $keys));

@@ -409,6 +409,9 @@ class ControllerTest extends TestCase {
 			'TestPluginComment' => [
 				'className' => 'TestPlugin\Model\TestPluginComment'
 			],
+			'Post' => [
+				'className' => 'TestApp\Model\Post'
+			]
 		];
 		$this->assertEquals($expectedModels, $Controller->request->params['models']);
 	}

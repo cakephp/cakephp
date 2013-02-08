@@ -1162,10 +1162,12 @@ class DboSource extends DataSource {
 			}
 			$linkedModel = $model->{$className};
 			$filtering[] = $className;
-			foreach ($results as &$result) {
+			foreach ($results as $key => &$result) {
 				$data = $linkedModel->afterFind(array(array($className => $result[$className])), false);
 				if (isset($data[0][$className])) {
 					$result[$className] = $data[0][$className];
+				} else {
+					unset($results[$key]);
 				}
 			}
 		}
@@ -1698,9 +1700,8 @@ class DboSource extends DataSource {
 		if (!empty($data['conditions'])) {
 			$data['conditions'] = trim($this->conditions($data['conditions'], true, false));
 		}
-		if (!empty($data['table'])) {
-			$schema = !(is_string($data['table']) && strpos($data['table'], '(') === 0);
-			$data['table'] = $this->fullTableName($data['table'], true, $schema);
+		if (!empty($data['table']) && (!is_string($data['table']) || strpos($data['table'], '(') !== 0)) {
+			$data['table'] = $this->fullTableName($data['table']);
 		}
 		return $this->renderJoinStatement($data);
 	}
@@ -2457,7 +2458,7 @@ class DboSource extends DataSource {
 			if (is_numeric($key) && empty($value)) {
 				continue;
 			} elseif (is_numeric($key) && is_string($value)) {
-				$out[] = $not . $this->_quoteFields($value);
+				$out[] = $this->_quoteFields($value);
 			} elseif ((is_numeric($key) && is_array($value)) || in_array(strtolower(trim($key)), $bool)) {
 				if (in_array(strtolower(trim($key)), $bool)) {
 					$join = ' ' . strtoupper($key) . ' ';
@@ -2962,7 +2963,7 @@ class DboSource extends DataSource {
  * @return array Fields in table. Keys are column and unique
  */
 	public function index($model) {
-		return false;
+		return array();
 	}
 
 /**

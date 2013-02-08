@@ -81,7 +81,7 @@ class TaskCollectionTest extends TestCase {
  * @return void
  */
 	public function testLoadMissingTask() {
-		$result = $this->Tasks->load('ThisTaskShouldAlwaysBeMissing');
+		$this->Tasks->load('ThisTaskShouldAlwaysBeMissing');
 	}
 
 /**

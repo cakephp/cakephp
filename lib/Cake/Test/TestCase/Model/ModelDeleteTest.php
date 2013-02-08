@@ -435,6 +435,26 @@ class ModelDeleteTest extends BaseModelTest {
 	}
 
 /**
+ * testDeleteAllFailedFind method
+ *
+ * Eg: Behavior callback stops the event, find returns null
+ *
+ * @return void
+ */
+	public function testDeleteAllFailedFind() {
+		$this->loadFixtures('Article');
+		$this->getMock('Article', array('find'), array(), 'ArticleDeleteAll');
+
+		$TestModel = new ArticleDeleteAll();
+		$TestModel->expects($this->once())
+			->method('find')
+			->will($this->returnValue(null));
+
+		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
+		$this->assertFalse($result);
+	}
+
+/**
  * testRecursiveDel method
  *
  * @return void

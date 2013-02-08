@@ -1,5 +1,11 @@
 <?php
 /**
+ * This is i18n Schema file
+ *
+ * Use it to configure database for i18n
+ *
+ * PHP 5
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -15,6 +21,7 @@
 namespace App\Config\Schema;
 use Cake\Model\Schema;
 
+
 /**
  *
  * Using the Schema command line utility
@@ -23,9 +30,7 @@ use Cake\Model\Schema;
  *
  * cake schema run create i18n
  */
-// @codingStandardsIgnoreStart
 class I18nSchema extends Schema {
-// @codingStandardsIgnoreEnd
 
 	public $name = 'i18n';
 

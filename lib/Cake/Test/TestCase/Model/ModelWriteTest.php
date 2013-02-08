@@ -499,10 +499,6 @@ class ModelWriteTest extends BaseModelTest {
 		), false);
 
 		// Count Increase
-		$user = $User->find('first', array(
-			'conditions' => array('id' => 66),
-			'recursive' => -1
-		));
 		$data = array('Post' => array(
 			'id' => 22,
 			'title' => 'New Post',
@@ -536,6 +532,28 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $User->find('all',array('order' => 'User.id'));
 		$this->assertEquals(2, $result[0]['User']['post_count']);
 		$this->assertEquals(1, $result[1]['User']['posts_published']);
+	}
+
+/**
+ * Tests that counter caches are unchanged when using 'counterCache' => false
+ *
+ * @return void
+ */
+	public function testCounterCacheSkip() {
+		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
+		$User = new CounterCacheUser();
+		$Post = new CounterCachePost();
+
+		$data = $Post->find('first', array(
+			'conditions' => array('id' => 1),
+			'recursive' => -1
+		));
+		$data[$Post->alias]['user_id'] = 301;
+		$Post->save($data, array('counterCache' => false));
+
+		$users = $User->find('all', array('order' => 'User.id'));
+		$this->assertEquals(2, $users[0]['User']['post_count']);
+		$this->assertEquals(1, $users[1]['User']['post_count']);
 	}
 
 /**
@@ -2219,7 +2237,6 @@ class ModelWriteTest extends BaseModelTest {
 	public function testCreationWithMultipleDataSameModel() {
 		$this->loadFixtures('Article');
 		$Article = new Article();
-		$SecondaryArticle = new Article();
 
 		$result = $Article->field('title', array('id' => 1));
 		$this->assertEquals('First Article', $result);
@@ -2279,7 +2296,6 @@ class ModelWriteTest extends BaseModelTest {
 	public function testCreationWithMultipleDataSameModelManualInstances() {
 		$this->loadFixtures('PrimaryModel');
 		$Primary = new PrimaryModel();
-		$Secondary = new PrimaryModel();
 
 		$result = $Primary->field('primary_name', array('id' => 1));
 		$this->assertEquals('Primary Name Existing', $result);
@@ -4028,7 +4044,7 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAllAssociatedTransactionNoRollback() {
 		$testDb = ConnectionManager::getDataSource('test');
 
-		$mock = $this->getMock(
+		$this->getMock(
 			'DboSource',
 			array('connect', 'rollback', 'describe', 'create', 'update', 'begin'),
 			array(),
@@ -5455,7 +5471,7 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAssociatedTransactionNoRollback() {
 		$testDb = ConnectionManager::getDataSource('test');
 
-		$mock = $this->getMock(
+		$this->getMock(
 			'DboSource',
 			array('connect', 'rollback', 'describe', 'create', 'begin'),
 			array(),

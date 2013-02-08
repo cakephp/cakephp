@@ -100,7 +100,7 @@ class DatabaseSessionTest extends TestCase {
  */
 	public function testConstructionSettings() {
 		ClassRegistry::flush();
-		$storage = new DatabaseSession();
+		new DatabaseSession();
 
 		$session = ClassRegistry::getObject('session');
 		$this->assertInstanceOf('SessionTestModel', $session);

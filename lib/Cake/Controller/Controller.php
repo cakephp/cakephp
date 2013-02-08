@@ -877,12 +877,15 @@ class Controller extends Object implements EventListener {
 			return $this->response;
 		}
 
-		if ($this->viewClass === 'View') {
-			$viewClass = App::classname('View', 'View');
-		} else {
-			$viewClass = App::classname($this->viewClass, 'View', 'View');
+		if (!empty($this->uses) && is_array($this->uses)) {
+			foreach ($this->uses as $model) {
+				list(, $name) = pluginSplit($model);
+				$className = App::classname($model, 'Model');
+				$this->request->params['models'][$name] = compact('className');
+			}
 		}
-		$View = new $viewClass($this);
+
+		$this->View = $this->_getViewObject();
 
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {
@@ -890,13 +893,12 @@ class Controller extends Object implements EventListener {
 			if ($currentObject instanceof \Cake\Model\Model) {
 				$className = get_class($currentObject);
 				$this->request->params['models'][$currentObject->alias] = compact('className');
-				$View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
+				$this->View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
 			}
 		}
 
 		$this->autoRender = false;
-		$this->View = $View;
-		$this->response->body($View->render($view, $layout));
+		$this->response->body($this->View->render($view, $layout));
 		return $this->response;
 	}
 
@@ -1107,6 +1109,20 @@ class Controller extends Object implements EventListener {
  */
 	protected function _scaffoldError($method) {
 		return $this->scaffoldError($method);
+	}
+
+/**
+ * Constructs the view class instance based on the controller property
+ *
+ * @return View
+ */
+	protected function _getViewObject() {
+		$viewClass = $this->viewClass;
+		if ($this->viewClass !== 'View') {
+			list($plugin, $viewClass) = pluginSplit($viewClass, true);
+			$viewClass = App::classname($viewClass, 'View', 'View');
+		}
+		return new $viewClass($this);
 	}
 
 }

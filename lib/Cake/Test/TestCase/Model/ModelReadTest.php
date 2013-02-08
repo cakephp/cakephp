@@ -364,7 +364,7 @@ class ModelReadTest extends BaseModelTest {
 		$query .= '.published = ? AND ' . $this->db->fullTableName('articles') . '.user_id = ?';
 		$params = array('Y');
 
-		$result = $Article->query($query, $params);
+		$Article->query($query, $params);
 	}
 
 /**
@@ -384,7 +384,7 @@ class ModelReadTest extends BaseModelTest {
 			$this->db->fullTableName('articles') . '.published', 'Y'
 		);
 
-		$result = $Article->query($query, $param);
+		$Article->query($query, $param);
 	}
 
 /**
@@ -2996,7 +2996,6 @@ class ModelReadTest extends BaseModelTest {
 
 		$duplicateModel = new NodeAfterFind();
 		$duplicateModel->recursive = 3;
-		$duplicateModelData = $duplicateModel->find('all');
 
 		$noAfterFindModel = new NodeNoAfterFind();
 		$noAfterFindModel->recursive = 3;
@@ -3004,6 +3003,30 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertFalse($afterFindModel == $noAfterFindModel);
 		$this->assertEquals($afterFindData, $noAfterFindData);
+	}
+
+/**
+ * Test that afterFind can completely unset data.
+ *
+ * @return void
+ */
+	public function testAfterFindUnset() {
+		$this->loadFixtures('Article', 'Comment', 'User');
+		$model = new CustomArticle();
+		$model->bindModel(array(
+			'hasMany' => array(
+				'ModifiedComment' => array(
+					'className' => 'ModifiedComment',
+					'foreignKey' => 'article_id',
+				)
+			)
+		));
+		$model->ModifiedComment->remove = true;
+		$result = $model->find('all');
+		$this->assertTrue(
+			empty($result[0]['ModifiedComment']),
+			'Zeroith row should be removed by afterFind'
+		);
 	}
 
 /**

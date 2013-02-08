@@ -207,7 +207,7 @@ class TestFixture {
 
 		if (empty($this->fields['tableParameters']['engine'])) {
 			$canUseMemory = true;
-			foreach ($this->fields as $field => $args) {
+			foreach ($this->fields as $args) {
 
 				if (is_string($args)) {
 					$type = $args;

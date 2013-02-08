@@ -38,10 +38,10 @@ class Hash {
  * @return mixed The value fetched from the array, or null.
  */
 	public static function get(array $data, $path) {
-		if (empty($data) || empty($path)) {
+		if (empty($data)) {
 			return null;
 		}
-		if (is_string($path)) {
+		if (is_string($path) || is_numeric($path)) {
 			$parts = explode('.', $path);
 		} else {
 			$parts = $path;
@@ -731,10 +731,11 @@ class Hash {
  *
  * ## Sort types
  *
- * - `numeric` Sort by numeric value.
- * - `regular` Sort by numeric value.
- * - `string` Sort by numeric value.
- * - `natural` Sort by natural order.
+ * - `regular` For regular sorting (don't change types)
+ * - `numeric` Compare values numerically
+ * - `string` Compare values as strings
+ * - `natural` Compare items as strings using "natural ordering" in a human friendly way.
+ *   Will sort foo10 below foo2 as an example. Requires PHP 5.4 or greater or it will fallback to 'regular'
  *
  * @param array $data An array of data to sort
  * @param string $path A Set-compatible path to the array value

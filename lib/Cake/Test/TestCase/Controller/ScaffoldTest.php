@@ -228,7 +228,7 @@ class ScaffoldTest extends TestCase {
 		$this->Controller->theme = 'TestTheme';
 		$this->Controller->viewClass = 'Theme';
 		$this->Controller->constructClasses();
-		$Scaffold = new TestScaffoldMock($this->Controller, $this->Controller->request);
+		new TestScaffoldMock($this->Controller, $this->Controller->request);
 
 		$this->assertEquals('Scaffold', $this->Controller->viewClass);
 	}

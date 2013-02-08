@@ -228,7 +228,7 @@ class ClassRegistryTest extends TestCase {
  * @return void
  */
 	public function testClassRegistryFlush() {
-		$Tag = ClassRegistry::init('RegisterArticleTag');
+		ClassRegistry::init('RegisterArticleTag');
 
 		$ArticleTag = ClassRegistry::getObject('RegisterArticleTag');
 		$this->assertTrue(is_a($ArticleTag, 'RegisterArticleTag'));

@@ -517,6 +517,39 @@ class ControllerTaskTest extends TestCase {
 	}
 
 /**
+ * Test execute() with all and --admin
+ *
+ * @return void
+ */
+	public function testExecuteIntoAllAdmin() {
+		$count = count($this->Task->listAll('test'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('all');
+		$this->Task->params['admin'] = true;
+
+		$this->Task->Project->expects($this->any())
+			->method('getPrefix')
+			->will($this->returnValue('admin_'));
+		$this->Task->expects($this->any())
+			->method('_checkUnitTest')
+			->will($this->returnValue(true));
+		$this->Task->Test->expects($this->once())->method('bake');
+
+		$filename = '/my/path/BakeArticlesController.php';
+		$this->Task->expects($this->once())->method('createFile')->with(
+			$filename,
+			$this->stringContains('function admin_index')
+		)->will($this->returnValue(true));
+
+		$this->Task->execute();
+	}
+
+/**
  * test that `cake bake controller foos` works.
  *
  * @return void

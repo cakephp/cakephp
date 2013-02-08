@@ -537,7 +537,7 @@ class DbAclTest extends TestCase {
 			$values = array_map(array(&$this, '_pad'), $values);
 			$permissions[$key] = implode (' ', $values);
 		}
-		$permisssions = array_map(array(&$this, '_pad'), $permissions);
+		$permissions = array_map(array(&$this, '_pad'), $permissions);
 		array_unshift($permissions, 'Current Permissions :');
 		if ($printTreesToo) {
 			debug(array('aros' => $this->Acl->Aro->generateTreeList(), 'acos' => $this->Acl->Aco->generateTreeList()));

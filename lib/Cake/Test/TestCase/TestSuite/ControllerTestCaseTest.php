@@ -237,7 +237,7 @@ class ControllerTestCaseTest extends TestCase {
  * @return void
  */
 	public function testTestActionWithPlugin() {
-		$Controller = $this->Case->generate('TestPlugin.Tests');
+		$this->Case->generate('TestPlugin.Tests');
 		$this->Case->testAction('/test_plugin/tests/index');
 		$this->assertEquals('It is a variable', $this->Case->controller->viewVars['test_value']);
 	}
@@ -273,7 +273,7 @@ class ControllerTestCaseTest extends TestCase {
 		include CAKE . 'Test/TestApp/Config/routes.php';
 
 		$this->Case->loadRoutes = false;
-		$result = $this->Case->testAction('/tests_apps/missing_action.json', array('return' => 'view'));
+		$this->Case->testAction('/tests_apps/missing_action.json', array('return' => 'view'));
 	}
 
 /**
@@ -466,7 +466,7 @@ class ControllerTestCaseTest extends TestCase {
  * @return void
  */
 	public function testTestActionWithMultipleRedirect() {
-		$Controller = $this->Case->generate('TestsApps');
+		$this->Case->generate('TestsApps');
 
 		$options = array('method' => 'get');
 		$this->Case->testAction('/tests_apps/redirect_to', $options);

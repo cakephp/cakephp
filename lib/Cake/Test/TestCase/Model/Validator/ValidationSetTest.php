@@ -182,11 +182,6 @@ class ValidationSetTest extends TestCase {
 	public function testGetRule() {
 		$rules = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
 		$Field = new ValidationSet('title', $rules);
-		$data = array(
-			'title' => '',
-			'body' => 'a body'
-		);
-
 		$result = $Field->getRule('notEmpty');
 		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $result);
 		$this->assertEquals('notEmpty', $result->rule);

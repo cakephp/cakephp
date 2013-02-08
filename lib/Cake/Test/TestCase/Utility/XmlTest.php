@@ -1020,7 +1020,7 @@ XML;
 </records>
 </data>
 XML;
-		$result = $obj->asXML();
+		$obj->asXML();
 		$this->assertXmlStringEqualsXmlString($expected, $obj->asXML());
 	}
 

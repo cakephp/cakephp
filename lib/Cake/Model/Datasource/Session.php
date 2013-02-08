@@ -414,10 +414,11 @@ class Session {
  * @return void
  */
 	public static function destroy() {
-		if (static::started()) {
-			session_destroy();
+		if (!self::started()) {
+			self::start();
 		}
-		static::clear();
+		session_destroy();
+		self::clear();
 	}
 
 /**

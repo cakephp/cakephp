@@ -104,7 +104,7 @@ class HtmlReporter extends BaseReporter {
 			$buffer .= "<strong>EMPTY</strong>";
 		}
 
-		foreach ($testCases as $testCaseFile => $testCase) {
+		foreach ($testCases as $testCase) {
 			$title = explode(DS, str_replace('.test.php', '', $testCase));
 			$title[count($title) - 1] = Inflector::camelize($title[count($title) - 1]);
 			$title = implode(' / ', $title);

@@ -579,7 +579,6 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public function testBehaviorToggling() {
 		$Apple = new Apple();
-		$expected = $Apple->find('all');
 		$this->assertSame($Apple->Behaviors->enabled(), array());
 
 		$Apple->Behaviors->init('Apple', array('Test' => array('key' => 'value')));
@@ -686,22 +685,6 @@ class BehaviorCollectionTest extends CakeTestCase {
 
 		$Apple->Child->Behaviors->attach('Test', array('before' => 'test'));
 		$this->assertSame($expected, $Apple->find('all'));
-
-		$expected2 = array(
-			array(
-				'Apple' => array('id' => 1),
-				'Child' => array(
-					array('id' => 2, 'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))),
-			array(
-				'Apple' => array('id' => 2),
-				'Child' => array(
-					array('id' => 1, 'name' => 'Red Apple 1', 'mytime' => '22:57:17'),
-					array('id' => 3, 'name' => 'green blue', 'mytime' => '22:57:17'),
-					array('id' => 4, 'name' => 'Test Name', 'mytime' => '22:57:17'))),
-			array(
-				'Apple' => array('id' => 3),
-				'Child' => array())
-		);
 
 		$Apple->Child->Behaviors->attach('Test', array('before' => 'modify'));
 		$result = $Apple->find('all', array('fields' => array('Apple.id'), 'conditions' => array('Apple.id <' => '4')));
@@ -1118,7 +1101,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @return void
  */
 	public function testHasMethodBasic() {
-		$Sample = new Sample();
+		new Sample();
 		$Collection = new BehaviorCollection();
 		$Collection->init('Sample', array('Test', 'Test2'));
 
@@ -1134,7 +1117,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @return void
  */
 	public function testHasMethodMappedMethods() {
-		$Sample = new Sample();
+		new Sample();
 		$Collection = new BehaviorCollection();
 		$Collection->init('Sample', array('Test', 'Test2'));
 
@@ -1148,7 +1131,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  * @return void
  */
 	public function testHasMethodAsCallback() {
-		$Sample = new Sample();
+		new Sample();
 		$Collection = new BehaviorCollection();
 		$Collection->init('Sample', array('Test', 'Test2'));
 

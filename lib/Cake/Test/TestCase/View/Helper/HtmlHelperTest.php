@@ -439,7 +439,7 @@ class HtmlHelperTest extends TestCase {
 		$themeExists = is_dir(WWW_ROOT . 'theme');
 
 		$testfile = WWW_ROOT . 'theme/test_theme/img/__cake_test_image.gif';
-		$File = new File($testfile, true);
+		new File($testfile, true);
 
 		App::build(array(
 			'View' => array(CAKE . 'Test/TestApp/View/')
@@ -576,6 +576,49 @@ class HtmlHelperTest extends TestCase {
 		$this->View->expects($this->at(1))
 			->method('append')
 			->with('css', $this->matchesRegularExpression('/more_css_in_head.css/'));
+
+		$result = $this->Html->css('css_in_head', array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->css('more_css_in_head', array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->css('screen', array('rel' => 'import'));
+		$expected = array(
+			'style' => array('type' => 'text/css'),
+			'preg:/@import url\(.*css\/screen\.css\);/',
+			'/style'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test css link BC usage
+ *
+ * @return void
+ */
+	public function testCssLinkBC() {
+		Configure::write('Asset.filter.css', false);
+
+		Plugin::load('TestPlugin');
+		$result = $this->Html->css('TestPlugin.style', null, array('plugin' => false));
+		$expected = array(
+			'link' => array(
+				'rel' => 'stylesheet',
+				'type' => 'text/css',
+				'href' => 'preg:/.*css\/TestPlugin\.style\.css/'
+			)
+		);
+		$this->assertTags($result, $expected);
+		Plugin::unload('TestPlugin');
+
+		$result = $this->Html->css('screen', 'import');
+		$expected = array(
+			'style' => array('type' => 'text/css'),
+			'preg:/@import url\(.*css\/screen\.css\);/',
+			'/style'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->css('css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
@@ -937,7 +980,7 @@ class HtmlHelperTest extends TestCase {
 		$themeExists = is_dir(WWW_ROOT . 'theme');
 
 		$testfile = WWW_ROOT . 'theme/test_theme/js/__test_js.js';
-		$File = new File($testfile, true);
+		new File($testfile, true);
 
 		App::build(array(
 			'View' => array(CAKE . 'Test/TestApp/View/')
@@ -1907,7 +1950,7 @@ class HtmlHelperTest extends TestCase {
  * @expectedException Cake\Error\ConfigureException
  */
 	public function testLoadConfigWrongFile() {
-		$result = $this->Html->loadConfig('wrong_file');
+		$this->Html->loadConfig('wrong_file');
 	}
 
 /**
@@ -1918,7 +1961,7 @@ class HtmlHelperTest extends TestCase {
  */
 	public function testLoadConfigWrongReader() {
 		$path = CAKE . 'Test/TestApp/Config/';
-		$result = $this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
+		$this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
 	}
 
 /**

@@ -129,6 +129,6 @@ class DbConfigTaskTest extends TestCase {
 				$this->equalTo($expected));
 
 		Configure::write('Datasource', array());
-		$result = $this->Task->execute();
+		$this->Task->execute();
 	}
 }

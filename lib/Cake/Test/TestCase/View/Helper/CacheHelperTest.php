@@ -150,7 +150,7 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->action = 'view';
 
 		$View = new View($this->Controller);
-		$result = $View->render('index');
+		$View->render('index');
 
 		$filename = CACHE . 'views/posts_view_風街ろまん.php';
 		$this->assertTrue(file_exists($filename));
@@ -332,7 +332,7 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->cache_parsing();
 
 		$View = new View($this->Controller);
-		$result = $View->render('index');
+		$View->render('index');
 
 		$filename = CACHE . 'views/cachetest_cache_parsing.php';
 		$this->assertTrue(file_exists($filename));

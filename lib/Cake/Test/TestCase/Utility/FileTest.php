@@ -132,9 +132,7 @@ class FileTest extends TestCase {
 	public function testPermission() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows.');
 
-		$dir = TMP . 'tests/permissions/';
-		$Folder = new Folder($dir);
-
+		$dir = TMP . 'tests' . DS . 'permissions' . DS;
 		$old = umask();
 
 		umask(0002);

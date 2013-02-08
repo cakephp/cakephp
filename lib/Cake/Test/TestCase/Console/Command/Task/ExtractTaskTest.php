@@ -50,7 +50,7 @@ class ExtractTaskTest extends TestCase {
 			array($out, $out, $in)
 		);
 		$this->path = TMP . 'tests/extract_task_test';
-		$Folder = new Folder($this->path . DS . 'locale', true);
+		new Folder($this->path . DS . 'locale', true);
 	}
 
 /**

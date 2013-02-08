@@ -73,7 +73,7 @@ class SecurityTest extends TestCase {
  * @return void
  */
 	public function testHashInvalidSalt() {
-		$result = Security::hash('someKey', 'blowfish', true);
+		Security::hash('someKey', 'blowfish', true);
 	}
 
 /**
@@ -83,7 +83,7 @@ class SecurityTest extends TestCase {
  * @return void
  */
 	public function testHashAnotherInvalidSalt() {
-		$result = Security::hash('someKey', 'blowfish', '$1$lksdjoijfaoijs');
+		Security::hash('someKey', 'blowfish', '$1$lksdjoijfaoijs');
 	}
 
 /**
@@ -93,7 +93,7 @@ class SecurityTest extends TestCase {
  * @return void
  */
 	public function testHashYetAnotherInvalidSalt() {
-		$result = Security::hash('someKey', 'blowfish', '$2a$10$123');
+		Security::hash('someKey', 'blowfish', '$2a$10$123');
 	}
 
 /**
@@ -237,7 +237,7 @@ class SecurityTest extends TestCase {
 	public function testCipherEmptyKey() {
 		$txt = 'some_text';
 		$key = '';
-		$result = Security::cipher($txt, $key);
+		Security::cipher($txt, $key);
 	}
 
 /**
@@ -272,7 +272,7 @@ class SecurityTest extends TestCase {
 	public function testRijndaelInvalidOperation() {
 		$txt = 'The quick brown fox jumped over the lazy dog.';
 		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
-		$result = Security::rijndael($txt, $key, 'foo');
+		Security::rijndael($txt, $key, 'foo');
 	}
 
 /**
@@ -284,7 +284,7 @@ class SecurityTest extends TestCase {
 	public function testRijndaelInvalidKey() {
 		$txt = 'The quick brown fox jumped over the lazy dog.';
 		$key = 'too small';
-		$result = Security::rijndael($txt, $key, 'encrypt');
+		Security::rijndael($txt, $key, 'encrypt');
 	}
 
 }

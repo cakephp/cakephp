@@ -97,7 +97,7 @@ class HelperCollectionTest extends TestCase {
  * @return void
  */
 	public function testLazyLoadException() {
-		$result = $this->Helpers->NotAHelper;
+		$this->Helpers->NotAHelper;
 	}
 
 /**
@@ -149,7 +149,7 @@ class HelperCollectionTest extends TestCase {
  * @return void
  */
 	public function testLoadMissingHelper() {
-		$result = $this->Helpers->load('ThisHelperShouldAlwaysBeMissing');
+		$this->Helpers->load('ThisHelperShouldAlwaysBeMissing');
 	}
 
 /**
