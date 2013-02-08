@@ -305,7 +305,7 @@ class CakeRequest implements ArrayAccess {
 		$this->webroot = $base . '/';
 
 		$docRoot = env('DOCUMENT_ROOT');
-		$docRootContainsWebroot = strpos($docRoot, $dir . '/' . $webroot);
+		$docRootContainsWebroot = strpos($docRoot, $dir . DS . $webroot);
 
 		if (!empty($base) || !$docRootContainsWebroot) {
 			if (strpos($this->webroot, '/' . $dir . '/') === false) {
