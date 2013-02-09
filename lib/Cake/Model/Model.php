@@ -2678,14 +2678,39 @@ class Model extends Object implements CakeEventListener {
  * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html
  */
 	public function find($type = 'first', $query = array()) {
-		$this->findQueryType = $type;
-		$this->id = $this->getID();
-
-		$query = $this->buildQuery($type, $query);
+		$query = $this->_beforeFind($type, $query);
 		if (is_null($query)) {
 			return null;
 		}
 
+		return $this->_afterFind($type, $query);
+	}
+
+/**
+ * Before running a find
+ * 
+ * @param string $type the find type to run
+ * @param array $query the finds query params
+ * 
+ * @return array|null
+ */
+	protected function _beforeFind($type, $query) {
+		$this->findQueryType = $type;
+		$this->id = $this->getID();
+
+		return $this->buildQuery($type, $query);
+	}
+
+/**
+ * After running a find
+ * 
+ * @param string $type the find type to run
+ * @param array $query the finds query params
+ * @param array $results they results from the find
+ * 
+ * @return array|null
+ */
+	protected function _afterFind($type, $query) {
 		$results = $this->getDataSource()->read($this, $query);
 		$this->resetAssociations();
 
@@ -2702,6 +2727,7 @@ class Model extends Object implements CakeEventListener {
 		if ($this->findMethods[$type] === true) {
 			return $this->{'_find' . ucfirst($type)}('after', $query, $results);
 		}
+
 	}
 
 /**
