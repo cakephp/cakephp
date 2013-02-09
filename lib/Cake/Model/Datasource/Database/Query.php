@@ -263,12 +263,12 @@ class Query implements Expression, IteratorAggregate {
  *
  * ##Examples:
  *
- * {{
+ * {{{
  *	$query->select(['id', 'title']); // Produces SELECT id, title
  *	$query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
  *	$query->select('id', true); // Resets the list: SELECT id
  *	$query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
- * }}
+ * }}}
  *
  * @param array|Expression|string $fields fields to be added to the list
  * @param boolean $overwrite whether to reset fields with passed list or not
@@ -304,7 +304,7 @@ class Query implements Expression, IteratorAggregate {
  *
  * ##Examples:
  *
- * {{
+ * {{{
  *  // Filters products with the same name and city
  *	$query->select(['name', 'city'])->from('products')->distinct();
  *
@@ -313,7 +313,7 @@ class Query implements Expression, IteratorAggregate {
  *
  *  // Filter products with the same name
  *	$query->distinct(['name'], true);
- * }}
+ * }}}
  *
  * @param array|Expression fields to be filtered on
  * @param boolean $overwrite whether to reset fields with passed list or not
@@ -384,12 +384,12 @@ class Query implements Expression, IteratorAggregate {
  *
  * ##Examples:
  *
- * {{
+ * {{{
  *	$query->from(['p' => 'posts']); // Produces FROM posts p
  *	$query->from('authors'); // Appends authors: FROM posts p, authors
  *	$query->select(['products'], true); // Resets the list: FROM products
  *	$query->select(['sub' => $countQuery]); // FROM (SELECT ...) sub
- * }}
+ * }}}
  *
  * @param array|Expression|string $tables tables to be added to the list
  * @param boolean $overwrite whether to reset tables with passed list or not
@@ -450,18 +450,18 @@ class Query implements Expression, IteratorAggregate {
  *
  * A join can be fully described and aliased using the array notation:
  * 
- * {{
+ * {{{
  *	$query->join([
  *		'a' => [
  *			'table' => 'authors', 'type' => 'LEFT', 'conditions' => 'a.id = b.author_id'
  *		]
  *	]);
  *  // Produces LEFT JOIN authors a ON (a.id = b.author_id)
- * }}
+ * }}}
  *
  * You can even specify multiple joins in an array, including the full description:
  *
- * {{
+ * {{{
  *	$query->join([
  *		'a' => [
  *			'table' => 'authors', 'type' => 'LEFT', 'conditions' => 'a.id = b.author_id'
@@ -472,7 +472,7 @@ class Query implements Expression, IteratorAggregate {
  *	]);
  *	// LEFT JOIN authors a ON (a.id = b.author_id)
  *	// INNER JOIN products p (a.owner_id = p.id)
- * }}
+ * }}}
  *
  * ## Using conditions and types
  *
@@ -484,7 +484,7 @@ class Query implements Expression, IteratorAggregate {
  * the literal values to the correct database representation. This is achieved 
  * using the second parameter of this function.
  *
- * {{
+ * {{{
  *	$query->join(['a' => [
  *		'table' => 'articles',
  *		'conditions' => [
@@ -493,7 +493,7 @@ class Query implements Expression, IteratorAggregate {
  *			'a.author_id = authors.id'
  *		]
  *	]], ['a.posted' => 'datetime', 'a.published' => 'boolean'])
- * }}
+ * }}}
  *
  * ## Overwriting joins
  *
@@ -502,11 +502,11 @@ class Query implements Expression, IteratorAggregate {
  * calls to this function or you can replace all previously defined joins
  * with another list if the third parameter for this function is set to true
  *
- * {{
+ * {{{
  *	$query->join(['alias' => 'table']); // joins table with as alias
  *	$query->join(['alias' => 'another_table']); // joins another_table with as alias
  *	$query->join(['something' => 'different_table'], [], true); // resets joins list
- * }}
+ * }}}
  *
  * @param array|string $tables list of tables to be joined in the query
  * @param array $types associative array of type names used to bind values to query
@@ -584,13 +584,13 @@ class Query implements Expression, IteratorAggregate {
  *
  * ## Conditions using operators:
  *
- * {{
+ * {{{
  *	$query->where([
  *		'posted >=' => new DateTime('3 days ago'),
  *		'title LIKE' => 'Hello W%',
  *		'author_id' => 1,
  *	], ['posted' => 'datetime']);
- * }}
+ * }}}
  *
  * The previous example produces:
  *
@@ -601,13 +601,13 @@ class Query implements Expression, IteratorAggregate {
  *
  * ## Nesting conditions with conjunctions:
  *
- * {{
+ * {{{
  *	$query->where([
  *		'author_id !=' => 1,
  *		'OR' => ['published' => true, 'posted <' => new DateTime('now')],
  *		'NOT' => ['title' => 'Hello']
  *	], ['published' => boolean, 'posted' => 'datetime']
- * }}
+ * }}}
  *
  * The previous example produces:
  *
@@ -626,10 +626,10 @@ class Query implements Expression, IteratorAggregate {
  *
  * ## Using expressions objects:
  *
- * {{
+ * {{{
  *	$exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->type('OR');
  *	$query->where(['published' => true], ['published' => 'boolean'])->where($exp);
- * }}
+ * }}}
  *
  * The previous example produces:
  *
@@ -644,7 +644,7 @@ class Query implements Expression, IteratorAggregate {
  * as second argument. Functions must return an expression object, that will be
  * added the list of conditions for the query using th AND operator
  *
- * {{
+ * {{{
  *	$query
  *	->where(['title !=' => 'Hello World'])
  *	->where(function($exp, $query) {
@@ -652,7 +652,7 @@ class Query implements Expression, IteratorAggregate {
 		$and = $exp->and_(['id >' => 2, 'id <' => 10]);
 		return $or->add($and);
  *	});
- * }}
+ * }}}
  *
  * * The previous example produces:
  *
@@ -660,9 +660,9 @@ class Query implements Expression, IteratorAggregate {
  *
  * ## Conditions as strings:
  *
- * {{
+ * {{{
  *	$query->where(['articles.author_id = authors.id', 'modified IS NULL']);
- * }}
+ * }}}
  *
  * The previous example produces:
  *
@@ -707,25 +707,25 @@ class Query implements Expression, IteratorAggregate {
  *
  * ##Examples:
  *
- * {{
+ * {{{
  *	$query->where(['title' => 'Hello World')->andWhere(['author_id' => 1]);
- * }}
+ * }}}
  *
  * Will produce:
  *
  * ``WHERE title = 'Hello World' AND author_id = 1``
  *
- * {{
+ * {{{
  *	$query
  *		->where(['OR' => ['published' => false, 'published is NULL']])
  *		->andWhere(['author_id' => 1, 'comments_count >' => 10])
- * }}
+ * }}}
  *
  * Produces:
  *
  * ``WHERE (published = 0 OR published IS NULL) AND author_id = 1 AND comments_count > 10``
  *
- * {{
+ * {{{
  *	$query
  *		->where(['title' => 'Foo'])
  *		->andWhere(function($exp, $query) {
@@ -733,7 +733,7 @@ class Query implements Expression, IteratorAggregate {
  *			->add(['author_id' => 1])
  *			->or_(['author_id' => 2]);
  *		});
- * }}
+ * }}}
  *
  * Generates the following conditions:
  *
@@ -768,25 +768,25 @@ class Query implements Expression, IteratorAggregate {
  *
  * ##Examples:
  *
- * {{
+ * {{{
  *	$query->where(['title' => 'Hello World')->orWhere(['title' => 'Foo']);
- * }}
+ * }}}
  *
  * Will produce:
  *
  * ``WHERE title = 'Hello World' OR title = 'Foo'``
  *
- * {{
+ * {{{
  *	$query
  *		->where(['OR' => ['published' => false, 'published is NULL']])
  *		->orWhere(['author_id' => 1, 'comments_count >' => 10])
- * }}
+ * }}}
  *
  * Produces:
  *
  * ``WHERE (published = 0 OR published IS NULL) OR (author_id = 1 AND comments_count > 10)``
  *
- * {{
+ * {{{
  *	$query
  *		->where(['title' => 'Foo'])
  *		->orWhere(function($exp, $query) {
@@ -794,7 +794,7 @@ class Query implements Expression, IteratorAggregate {
  *			->add(['author_id' => 1])
  *			->or_(['author_id' => 2]);
  *		});
- * }}
+ * }}}
  *
  * Generates the following conditions:
  *
@@ -826,26 +826,26 @@ class Query implements Expression, IteratorAggregate {
  *
  * ##Examples:
  *
- * {{
+ * {{{
  *	$query->order(['title' => 'DESC', 'author_id' => 'ASC']);
- * }}
+ * }}}
  *
  * Produces:
  *
  * ``ORDER BY title DESC, author_id ASC``
  *
- * {{
+ * {{{
  *	$query->order(['title' => 'DESC NULLS FIRST'])->order('author_id');
- * }}
+ * }}}
  *
  * Will generate:
  *
  * ``ORDER BY title DESC NULLS FIRST, author_id``
  *
- * {{
+ * {{{
  *	$expression = $query->newExpr()->add(['id % 2 = 0']);
  *	$query->order($expression)->order(['title' => 'ASC']);
- * }}
+ * }}}
  *
  * Will become:
  *
@@ -873,10 +873,10 @@ class Query implements Expression, IteratorAggregate {
  *
  * ##Examples:
  *
- * {{
+ * {{{
  *	$query->group(['id', 'title']); // Produces GROUP BY id, title
  *	$query->group('title'); // Produces GROUP BY title
- * }}
+ * }}}
  *
  * @param array|Expression|string $fields fields to be added to the list
  * @param boolean $overwrite whether to reset fields with passed list or not
@@ -948,12 +948,34 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Sets the number of records that should be retrieved from database,
+ * accepts an integer or an expression object that evaluates to an integer.
+ * In some databases, this operation might not be supported or will require
+ * the query to be transformed in order to limit the result set size.
+ *
+ * ## Examples
+ *
+ * {{{
+ *	$query->limit(10) // generates LIMIT 10
+ *	$query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
+ * }}}
+ *
+ * @param integer|Expression $num number of records to be returned
+ * @return Query
+ */
 	public function limit($num) {
+		if (!is_object($num)) {
+			$num = (int)$num;
+		}
 		$this->_parts['limit'] = $num;
 		return $this;
 	}
 
 	public function offset($num) {
+		if (!is_object($num)) {
+			$num = (int)$num;
+		}
 		$this->_parts['offset'] = $num;
 		return $this;
 	}
