@@ -453,6 +453,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->authorize = false;
 		$this->Controller->request->addParams(Router::parse('auth_test/add'));
+		$this->Controller->Auth->initialize($this->Controller);
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result);
 
