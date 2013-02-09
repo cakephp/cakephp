@@ -1175,6 +1175,13 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Auxiliary function used to wrap the original statement from the driver with
+ * any registered callbacks.
+ *
+ * @param Cake\Model\Datasource\Database\Statement $statement to be decorated
+ * @return Cake\Model\Datasource\Database\Statement\CallbackStatement
+ */
 	protected function _decorateResults($statement) {
 		foreach ($this->_resultDecorators as $f) {
 			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
@@ -1182,6 +1189,16 @@ class Query implements Expression, IteratorAggregate {
 		return $statement;
 	}
 
+
+/**
+ * Helper function used to build conditions by composing QueryExpression objects
+ *
+ * @param string name of the query part to append the new part to
+ * @param string|array|Expression|callback $append
+ * @param sttring $conjunction type of conjunction to be used to operate part
+ * @param array $types associative array of type names used to bind values to query
+ * @return void
+ */
 	protected function _conjugate($part, $append, $conjunction, $types) {
 		$expression = $this->_parts[$part] ?: $this->newExpr();
 
@@ -1201,6 +1218,13 @@ class Query implements Expression, IteratorAggregate {
 		$this->_dirty = true;
 	}
 
+/**
+ * Traverses all QueryExpression objects stored in every relevant for this type
+ * of query and binds every value to the statement object for each placeholder.
+ *
+ * @param Cake\Model\Datasource\Database\Statement $statement
+ * @return void
+ */
 	protected function _bindParams($statement) {
 		$visitor = function($expression) use ($statement) {
 			$params = $types = [];
@@ -1242,7 +1266,7 @@ class Query implements Expression, IteratorAggregate {
  * Returns a query object as returned by the connection object as a result of
  * transforming this query instance to conform to any dialect specifics
  *
- * @return void
+ * @return Query
  */
 	protected function _transformQuery() {
 		if (isset($this->_transformedQuery) && !$this->_dirty) {
