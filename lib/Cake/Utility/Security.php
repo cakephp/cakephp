@@ -199,7 +199,7 @@ class Security {
  * Encrypts/Decrypts a text using the given key using rijndael method.
  *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
- * @param string $key Key to use
+ * @param string $key Key to use as the encryption key for encrypted data.
  * @param string $operation Operation to perform, encrypt or decrypt
  * @return string Encrypted/Descrypted string
  */
@@ -216,8 +216,8 @@ class Security {
 			trigger_error(__d('cake_dev', 'You must use a key larger than 32 bytes for Security::rijndael()'), E_USER_WARNING);
 			return '';
 		}
-		$algorithm = 'rijndael-256';
-		$mode = 'cbc';
+		$algorithm = MCRYPT_RIJNDAEL_256;
+		$mode = MCRYPT_MODE_CBC;
 		$cryptKey = substr($key, 0, 32);
 		$iv = substr($key, strlen($key) - 32, 32);
 
