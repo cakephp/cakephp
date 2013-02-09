@@ -1494,9 +1494,38 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$union = (new Query($this->connection))
 			->select(['id', 'title'])
 			->from(['c' => 'articles']);
-		$result = $query->select(['id', 'name'], true)->union($union, true)->execute();
+		$result = $query->select(['id', 'name'], true)->union($union, false, true)->execute();
 		$this->assertCount(5, $result);
 		$this->assertEquals($rows, $result->fetchAll());
+	}
+
+/**
+ * Tests that UNION ALL can be built by setting the second param of union() to true
+ *
+ * @return void
+ */
+	public function testUnionAll() {
+		$this->_insertTwoRecords();
+		$this->_insertDateRecords();
+		$union = (new Query($this->connection))->select(['id', 'title'])->from(['a' => 'articles']);
+		$query = new Query($this->connection);
+		$result = $query->select(['id', 'name'])
+			->from(['d' => 'dates'])
+			->union($union)
+			->execute();
+		$this->assertCount(5, $result);
+		$rows = $result->fetchAll();
+
+		$union->select(['foo' => 'id', 'bar' => 'title']);
+		$union = (new Query($this->connection))
+			->select(['id', 'name', 'other' => 'id', 'nameish' => 'name'])
+			->from(['b' => 'authors'])
+			->where(['id ' => 1])
+			->order(['id' => 'desc']);
+
+		$result = $query->select(['foo' => 'id', 'bar' => 'name'])->union($union, true)->execute();
+		$this->assertCount(6, $result);
+		$this->assertNotEquals($rows, $result->fetchAll());
 	}
 
 }

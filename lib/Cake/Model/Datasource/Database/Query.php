@@ -972,6 +972,23 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Sets the number of records that should be skipped from the original result set
+ * This is commonly used for paginating large results. Accepts an integer or an
+ * expression object that evaluates to an integer.
+ * In some databases, this operation might not be supported or will require
+ * the query to be transformed in order to limit the result set size.
+ *
+ * ## Examples
+ *
+ * {{{
+ *	$query->offset(10) // generates OFFSET 10
+ *	$query->limit($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
+ * }}}
+ *
+ * @param integer|Expression $num number of records to be skipped
+ * @return Query
+ */
 	public function offset($num) {
 		if (!is_object($num)) {
 			$num = (int)$num;
@@ -980,19 +997,59 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
-	public function union($query, $overwrite = false) {
+/**
+ * Adds a complete query to be used in conjunction with an UNION operator with
+ * this query. This is used to combine the result set of this query with the one
+ * that will be returned by the passed query. You can add as many queries as you
+ * required by calling multiple times this method with different queries.
+ *
+ * By default, the UNION operator will remove duplicate rows, if you wish to include
+ * every row for all queries, set the second argument to true.
+ *
+ * ## Examples
+ *
+ * {{{
+ *	$union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+ *	$query->select(['id', 'name'])->from(['d' => 'things'])->union($union);
+ * }}}
+ *
+ * Will produce:
+ *
+ * ``SELECT id, name FROM things d UNION SELECT id, title FROM articles a``
+ *
+ * {{{
+ *	$union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+ *	$query->select(['id', 'name'])->from(['d' => 'things'])->union($union, true);
+ * }}}
+ *
+ * Will produce:
+ *
+ * ``SELECT id, name FROM things d UNION ALL SELECT id, title FROM articles a``
+ *
+ * @param string|Query $query full SQL query to be used in UNION operator
+ * @param boolean $all whether to use UNION ALL or not
+ * @param boolean $overwrite whether to reset the list of queries to be operated or not
+ * @return Query
+ */
+	public function union($query, $all = false, $overwrite = false) {
 		if ($overwrite) {
 			$this->_parts['union'] = [];
 		}
-		$this->_parts['union'][] = $query;
+		$this->_parts['union'][] = compact('all', 'query');
 		$this->_dirty = true;
 		return $this;
 	}
 
+/**
+ * undocumented function
+ *
+ * @return void
+ */
 	protected function _buildUnionPart($parts) {
 		$parts = array_map(function($p) {
-			$p =(string)$p;
-			return $p[0] === '(' ? trim($p, '()') : $p;
+			$p['query'] =(string)$p['query'];
+			$p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
+			return $p['all'] ? 'ALL ' . $p['query'] : $p['query'];
 		}, $parts);
 		return sprintf("\nUNION %s", implode("\nUNION ", $parts));
 	}
