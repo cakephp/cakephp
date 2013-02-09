@@ -393,7 +393,7 @@ class AuthComponent extends Component {
  * @param CakeRequest $request The request to authenticate for. If empty, the current request will be used.
  * @return boolean True if $user is authorized, otherwise false
  */
-	public function isAuthorized($user = null, $request = null) {
+	public function isAuthorized($user = null, CakeRequest $request = null) {
 		if (empty($user) && !$this->user()) {
 			return false;
 		}
