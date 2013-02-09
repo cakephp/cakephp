@@ -307,7 +307,11 @@ class SecurityComponent extends Component {
 	}
 
 /**
- * Sets the actions that require an authenticated request, or empty for all actions
+ * Sets the actions that require whitelisted form submissions.
+ *
+ * Adding actions with this method will enforce the restrictions
+ * set in SecurityComponent::$allowedControllers and
+ * SecurityComponent::$allowedActions.
  *
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireAuth
