@@ -965,7 +965,7 @@ class Query implements Expression, IteratorAggregate {
  * @return Query
  */
 	public function limit($num) {
-		if (!is_object($num)) {
+		if ($num !== null && !is_object($num)) {
 			$num = (int)$num;
 		}
 		$this->_parts['limit'] = $num;
@@ -990,7 +990,7 @@ class Query implements Expression, IteratorAggregate {
  * @return Query
  */
 	public function offset($num) {
-		if (!is_object($num)) {
+		if ($num !== null && !is_object($num)) {
 			$num = (int)$num;
 		}
 		$this->_parts['offset'] = $num;
