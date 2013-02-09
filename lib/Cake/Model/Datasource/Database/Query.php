@@ -53,7 +53,7 @@ class Query implements Expression, IteratorAggregate {
 		'where' => null,
 		'group' => [],
 		'having' => null,
-		'order' => [],
+		'order' => null,
 		'limit' => null,
 		'offset' => null,
 		'union' => []
@@ -1041,9 +1041,12 @@ class Query implements Expression, IteratorAggregate {
 	}
 
 /**
- * undocumented function
+ * Builds the SQL string for all the UNION clauses in this query, when dealing
+ * with query objects it will also transform them using their configured SQL
+ * dialect.
  *
- * @return void
+ * @param array $parts list of queries to be operated with UNION
+ * @return string
  */
 	protected function _buildUnionPart($parts) {
 		$parts = array_map(function($p) {
@@ -1075,31 +1078,99 @@ class Query implements Expression, IteratorAggregate {
 		return $this->_type;
 	}
 
+/**
+ * Returns a new QueryExpression object. This is a handy function when
+ * building complex queries using a fluent interface. You can also override
+ * this function in subclasses to use a more specialized QueryExpression class
+ * if required.
+ *
+ * @return QueryExpression
+ */
 	public function newExpr() {
 		return new QueryExpression;
 	}
 
 /**
- * Executes this query and returns a results iterator
+ * Executes this query and returns a results iterator. This function is required
+ * for implementing the IteratorAggregate interface and allows the query to be
+ * iterated without having to call execute() manually, thus making it look like
+ * a result set instead of the query itself.
  *
  * @return Iterator
  */
 	public function getIterator() {
-		if (empty($this->_iterator)) {
+		if (empty($this->_iterator) || $this->_dirty) {
 			$this->_iterator = $this->execute();
 		}
 		return $this->_iterator;
 	}
 
+/**
+ * Returns any data that was stored in the specified clause. This is useful for
+ * modifying any internal part of the query and it is used by the SQL dialects
+ * to transform the query accordingly before it is executed. The valid clauses that
+ * can be retrieved are: select, distinct, from, join, set, where, group, having,
+ * order, limit, offset and union.
+ *
+ * The return value for each of those parts may vary. Some clauses use QueryExpression
+ * to internally store their state, some use arrays and others may use booleans or
+ * integers. This is summary of the return types for each clause
+ *
+ * - select: array, will return empty array when no fields are set
+ * - distinct: boolean
+ * - from: array of tables
+ * - join: array
+ * - set: array
+ * - where: QueryExpression, returns null when not set
+ * - group: array
+ * - having: QueryExpression, returns null when not set
+ * - order: OrderByExpression, returns null when not set
+ * - limit: integer or QueryExpression, null when not set
+ * - offset: integer or QueryExpression, null when not set
+ * - union: array
+ *
+ *
+ * @param string $name name of the clause to be returned
+ * @return mixed
+ */
 	public function clause($name) {
 		return $this->_parts[$name];
 	}
 
+/**
+ * Registers a callback to be executed for each result that is fetched from the
+ * result set, the callback function will receive as first parameter an array with
+ * the raw data from the database for every row that is fetched and must return the
+ * row with any possible modifications.
+ *
+ * Callbacks will be executed lazily, if only 3 rows are fetched for database it will
+ * called 3 times, event though there might be more rows to be fetched in the cursor.
+ *
+ * Callbacks are stacked in the order they are registered, if you wish to reset the stack
+ * the call this function with the second parameter set to true.
+ *
+ * If you wish to remove all decorators from the stack, set the first parameter
+ * to null and the second to true.
+ *
+ * ## Example
+ *
+ * {{{
+ *	$query->decorateResults(function($row) {
+ *		$row['order_total'] = $row['subtotal'] + ($row['subtotal'] * $row['tax']);
+ *		return $row;
+ *	});
+ * }}}
+ *
+ * @return Query
+ */
 	public function decorateResults($callback, $overwrite = false) {
 		if ($overwrite) {
 			$this->_resultDecorators = [];
 		}
-		$this->_resultDecorators[] = $callback;
+
+		if ($callback !== null) {
+			$this->_resultDecorators[] = $callback;
+		}
 
 		return $this;
 	}

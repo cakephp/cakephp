@@ -1528,4 +1528,51 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertNotEquals($rows, $result->fetchAll());
 	}
 
+/**
+ * Tests stacking decorators for results and resetting the list of decorators
+ *
+ * @return void
+ */
+	public function testDecorateResults() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id', 'title'])
+			->from('articles')
+			->order(['id' => 'ASC'])
+			->decorateResults(function($row) {
+				$row['modified_id'] = $row['id'] + 1;
+				return $row;
+			})
+			->execute();
+
+		while($row = $result->fetch('assoc')) {
+			$this->assertEquals($row['id'] + 1, $row['modified_id']);
+		}
+
+		$result = $query->decorateResults(function($row) {
+			$row['modified_id']--;
+			return $row;
+		})->execute();
+
+		while($row = $result->fetch('assoc')) {
+			$this->assertEquals($row['id'], $row['modified_id']);
+		}
+
+		$result = $query
+			->decorateResults(function($row) { $row['foo'] = 'bar'; return $row; }, true)
+			->execute();
+
+		while($row = $result->fetch('assoc')) {
+			$this->assertEquals('bar', $row['foo']);
+			$this->assertArrayNotHasKey('modified_id', $row);
+		}
+
+		$results = $query->decorateResults(null, true)->execute();
+		while($row = $result->fetch('assoc')) {
+			$this->assertArrayNotHasKey('foo', $row);
+			$this->assertArrayNotHasKey('modified_id', $row);
+		}
+	}
+
 }

@@ -28,7 +28,8 @@ class CallbackStatement extends \Cake\Model\Datasource\Database\Statement {
 
 	public function fetch($type = 'num') {
 		$callback = $this->_callback;
-		return $callback($this->_statement->fetch($type));
+		$row = $this->_statement->fetch($type);
+		return $row === false ? $row : $callback($row);
 	}
 
 	public function fetchAll($type = 'num') {
