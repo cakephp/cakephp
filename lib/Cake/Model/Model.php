@@ -2695,10 +2695,6 @@ class Model extends Object implements CakeEventListener {
 
 		$this->findQueryType = null;
 
-		if ($type === 'all') {
-			return $results;
-		}
-
 		if ($this->findMethods[$type] === true) {
 			return $this->{'_find' . ucfirst($type)}('after', $query, $results);
 		}
@@ -2721,7 +2717,7 @@ class Model extends Object implements CakeEventListener {
 			(array)$query
 		);
 
-		if ($type !== 'all' && $this->findMethods[$type] === true) {
+		if ($this->findMethods[$type] === true) {
 			$query = $this->{'_find' . ucfirst($type)}('before', $query);
 		}
 
@@ -2747,6 +2743,23 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		return $query;
+	}
+
+/**
+ * Handles the before/after filter logic for find('all') operations. Only called by Model::find().
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @param array $results
+ * @return array
+ * @see Model::find()
+ */
+	protected function _findAll($state, $query, $results = array()) {
+		if ($state === 'before') {
+			return $query;
+		} elseif ($state === 'after') {
+			return $results;
+		}
 	}
 
 /**
