@@ -745,7 +745,7 @@ class AuthComponent extends Component {
  * @return boolean true if the user is logged in, false otherwise
  */
 	public function loggedIn() {
-		return $this->user() != array();
+		return (boolean)$this->user();
 	}
 
 /**
