@@ -433,6 +433,7 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::size
  */
 	public function size() {
+		clearstatcache();
 		if ($this->exists()) {
 			return filesize($this->path);
 		}
