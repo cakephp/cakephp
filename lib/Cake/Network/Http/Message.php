@@ -34,6 +34,7 @@ class Message {
 	const METHOD_PUT = 'PUT';
 	const METHOD_DELETE = 'DELETE';
 	const METHOD_PATCH = 'PATCH';
+	const METHOD_HEAD = 'HEAD';
 
 /**
  * The array of headers in the response.

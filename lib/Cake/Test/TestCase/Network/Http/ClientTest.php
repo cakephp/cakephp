@@ -444,4 +444,32 @@ class ClientTest extends TestCase {
 		$http->get('/projects');
 	}
 
+/**
+ * test head request with querystring data
+ *
+ * @return void
+ */
+	public function testHeadQuerystring() {
+		$response = new Response();
+
+		$mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+		$mock->expects($this->once())
+			->method('send')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('Cake\Network\Http\Request'),
+				$this->attributeEqualTo('_method', Request::METHOD_HEAD),
+				$this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there')
+			))
+			->will($this->returnValue([$response]));
+
+		$http = new Client([
+			'host' => 'cakephp.org',
+			'adapter' => $mock
+		]);
+		$result = $http->head('/search', [
+			'q' => 'hi there',
+		]);
+		$this->assertSame($result, $response);
+	}
+
 }

@@ -278,6 +278,20 @@ class Client {
 	}
 
 /**
+ * Do a HEAD request.
+ *
+ * @param string $url The url or path you want to request.
+ * @param array $data The query string data you want to send.
+ * @param array $options Additional options for the request.
+ * @return Cake\Network\Http\Response
+ */
+	public function head($url, $data = [], $options = []) {
+		$options = $this->_mergeOptions($options);
+		$url = $this->buildUrl($url, $data, $options);
+		return $this->_doRequest(Request::METHOD_HEAD, $url, '', $options);
+	}
+
+/**
  * Helper method for doing non-GET requests.
  *
  * @param string $method HTTP method.
