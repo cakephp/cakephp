@@ -80,8 +80,6 @@ class FileLog extends BaseLog {
 			$filename = $this->_path . 'error.log';
 		} elseif (in_array($type, $debugTypes)) {
 			$filename = $this->_path . 'debug.log';
-		} elseif (in_array($type, $this->_config['scopes'])) {
-			$filename = $this->_path . $this->_file;
 		} else {
 			$filename = $this->_path . $type . '.log';
 		}
