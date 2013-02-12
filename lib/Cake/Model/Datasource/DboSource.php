@@ -3170,8 +3170,6 @@ class DboSource extends DataSource {
 			} else {
 				if (!empty($value['unique'])) {
 					$out .= 'UNIQUE ';
-				} elseif (!empty($value['type']) && strtoupper($value['type']) === 'FULLTEXT') {
-					$out .= 'FULLTEXT ';
 				}
 				$name = $this->startQuote . $name . $this->endQuote;
 			}

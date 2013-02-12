@@ -586,8 +586,11 @@ class Mysql extends DboSource {
 				}
 				$name = $this->startQuote . $name . $this->endQuote;
 			}
-			// length attribute only used for MySQL datasource, for TEXT/BLOB index columns
+			if (isset($value['type']) && strtolower($value['type']) === 'fulltext') {
+				$out .= 'FULLTEXT ';
+			}
 			$out .= 'KEY ' . $name . ' (';
+
 			if (is_array($value['column'])) {
 				if (isset($value['length'])) {
 					$vals = array();

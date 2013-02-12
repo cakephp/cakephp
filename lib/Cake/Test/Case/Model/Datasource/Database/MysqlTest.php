@@ -2984,6 +2984,7 @@ class MysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildIndex($data);
 		$expected = array('FULLTEXT KEY `MyFtIndex` (`name`, `description`)');
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			'MyTextIndex' => array('column' => 'text_field', 'length' => array('text_field' => 20))
