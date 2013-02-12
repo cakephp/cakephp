@@ -130,7 +130,7 @@ class File {
 		if (!$force && is_resource($this->handle)) {
 			return true;
 		}
-		clearstatcache();
+		$this->clearCache();
 		if ($this->exists() === false) {
 			if ($this->create() === false) {
 				return false;
@@ -278,11 +278,11 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::delete
  */
 	public function delete() {
-		clearstatcache();
 		if (is_resource($this->handle)) {
 			fclose($this->handle);
 			$this->handle = null;
 		}
+		$this->clearCache();
 		if ($this->exists()) {
 			return unlink($this->path);
 		}
@@ -433,7 +433,7 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::size
  */
 	public function size() {
-		clearstatcache();
+		$this->clearCache();
 		if ($this->exists()) {
 			return filesize($this->path);
 		}
@@ -565,6 +565,23 @@ class File {
 			return mime_content_type($this->pwd());
 		}
 		return false;
+	}
+
+/**
+ * Clear PHP's internal stat cache
+ *
+ * For 5.3 onwards its possible to clear cache for just a single file. Passing true
+ * will clear all the stat cache.
+ * 
+ * @param boolean $all Clear all cache or not
+ * @return void
+ */
+	public function clearCache($all = false) {
+		if ($all === false && floatval(phpversion()) >= 5.3) {
+			return clearstatcache(true, $this->path);
+		}
+
+		return clearstatcache();
 	}
 
 }
