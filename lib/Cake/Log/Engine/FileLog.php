@@ -59,7 +59,7 @@ class FileLog extends BaseLog {
 		$config = $this->config($config);
 		$this->_path = $config['path'];
 		$this->_file = $config['file'];
-		if (!empty($this->_file) && !preg_match('/\.log$/', $this->_file)) {
+		if (!empty($this->_file) && substr($this->_file, -4) !== '.log') {
 			$this->_file .= '.log';
 		}
 	}
