@@ -186,7 +186,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  * @throws BadMethodCallException when you call methods that don't exist.
  */
 	public function __call($name, $arguments) {
-		if ($name == 'testAction') {
+		if ($name === 'testAction') {
 			return call_user_func_array(array($this, '_testAction'), $arguments);
 		}
 		throw new BadMethodCallException("Method '{$name}' does not exist.");
@@ -226,7 +226,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 
 		$_SERVER['REQUEST_METHOD'] = strtoupper($options['method']);
 		if (is_array($options['data'])) {
-			if (strtoupper($options['method']) == 'GET') {
+			if (strtoupper($options['method']) === 'GET') {
 				$_GET = $options['data'];
 				$_POST = array();
 			} else {
@@ -263,7 +263,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$this->generate($plugin . Inflector::camelize($request->params['controller']));
 		}
 		$params = array();
-		if ($options['return'] == 'result') {
+		if ($options['return'] === 'result') {
 			$params['return'] = 1;
 			$params['bare'] = 1;
 			$params['requested'] = 1;

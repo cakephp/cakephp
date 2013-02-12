@@ -257,7 +257,7 @@ class Debugger {
 		);
 		echo $self->outputError($data);
 
-		if ($error == 'Fatal Error') {
+		if ($error === 'Fatal Error') {
 			exit();
 		}
 		return true;
@@ -326,9 +326,9 @@ class Debugger {
 			if (in_array($signature, $options['exclude'])) {
 				continue;
 			}
-			if ($options['format'] == 'points' && $trace['file'] != '[internal]') {
+			if ($options['format'] === 'points' && $trace['file'] !== '[internal]') {
 				$back[] = array('file' => $trace['file'], 'line' => $trace['line']);
-			} elseif ($options['format'] == 'array') {
+			} elseif ($options['format'] === 'array') {
 				$back[] = $trace;
 			} else {
 				if (isset($self->_templates[$options['format']]['traceLine'])) {
@@ -343,7 +343,7 @@ class Debugger {
 			}
 		}
 
-		if ($options['format'] == 'array' || $options['format'] == 'points') {
+		if ($options['format'] === 'array' || $options['format'] === 'points') {
 			return $back;
 		}
 		return implode("\n", $back);
@@ -847,7 +847,7 @@ class Debugger {
  * @return void
  */
 	public static function checkSecurityKeys() {
-		if (Configure::read('Security.salt') == 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
+		if (Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
 			trigger_error(__d('cake_dev', 'Please change the value of \'Security.salt\' in app/Config/core.php to a salt value specific to your application'), E_USER_NOTICE);
 		}
 

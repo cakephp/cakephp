@@ -323,9 +323,9 @@ class DboSource extends DataSource {
 				$data, array_fill(0, count($data), $column)
 			);
 		} elseif (is_object($data) && isset($data->type, $data->value)) {
-			if ($data->type == 'identifier') {
+			if ($data->type === 'identifier') {
 				return $this->name($data->value);
-			} elseif ($data->type == 'expression') {
+			} elseif ($data->type === 'expression') {
 				return $data->value;
 			}
 		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
@@ -899,7 +899,7 @@ class DboSource extends DataSource {
 		if (empty($log['log'])) {
 			return;
 		}
-		if (PHP_SAPI != 'cli') {
+		if (PHP_SAPI !== 'cli') {
 			$controller = null;
 			$View = new View($controller, false);
 			$View->set('logs', array($this->configKeyName => $log));
@@ -1878,7 +1878,7 @@ class DboSource extends DataSource {
 
 			if ($quoteValues) {
 				$update .= $this->value($value, $model->getColumnType($field));
-			} elseif ($model->getColumnType($field) == 'boolean' && (is_int($value) || is_bool($value))) {
+			} elseif ($model->getColumnType($field) === 'boolean' && (is_int($value) || is_bool($value))) {
 				$update .= $this->boolean($value, true);
 			} elseif (!$alias) {
 				$update .= str_replace($quotedAlias . '.', '', str_replace(

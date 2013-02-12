@@ -97,7 +97,7 @@ HTML;
 ###########################
 TEXT;
 			$template = $html;
-			if (php_sapi_name() == 'cli' || $showHtml === false) {
+			if (php_sapi_name() === 'cli' || $showHtml === false) {
 				$template = $text;
 				if ($showFrom) {
 					$lineInfo = sprintf('%s (line %s)', $file, $line);
@@ -141,7 +141,7 @@ if (!function_exists('sortByKey')) {
 			$sa[$key] = $val[$sortby];
 		}
 
-		if ($order == 'asc') {
+		if ($order === 'asc') {
 			asort($sa, $type);
 		} else {
 			arsort($sa, $type);

@@ -355,7 +355,7 @@ class Helper extends Object {
 
 /**
  * Adds a timestamp to a file based resource based on the value of `Asset.timestamp` in
- * Configure. If Asset.timestamp is true and debug > 0, or Asset.timestamp == 'force'
+ * Configure. If Asset.timestamp is true and debug > 0, or Asset.timestamp === 'force'
  * a timestamp will be added.
  *
  * @param string $path The file path to timestamp, the path must be inside WWW_ROOT

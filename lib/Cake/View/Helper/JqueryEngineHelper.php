@@ -150,7 +150,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @return JqueryEngineHelper instance of $this. Allows chained methods.
  */
 	public function get($selector) {
-		if ($selector == 'window' || $selector == 'document') {
+		if ($selector === 'window' || $selector === 'document') {
 			$this->selection = $this->jQueryObject . '(' . $selector . ')';
 		} else {
 			$this->selection = $this->jQueryObject . '("' . $selector . '")';
@@ -227,7 +227,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		switch ($name) {
 			case 'slideIn':
 			case 'slideOut':
-				$name = ($name == 'slideIn') ? 'slideDown' : 'slideUp';
+				$name = ($name === 'slideIn') ? 'slideDown' : 'slideUp';
 			case 'hide':
 			case 'show':
 			case 'fadeIn':

@@ -188,7 +188,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		$digest = env('PHP_AUTH_DIGEST');
 		if (empty($digest) && function_exists('apache_request_headers')) {
 			$headers = apache_request_headers();
-			if (!empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) == 'Digest ') {
+			if (!empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) === 'Digest ') {
 				$digest = substr($headers['Authorization'], 7);
 			}
 		}
@@ -205,7 +205,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  * @return array An array of digest authentication headers
  */
 	public function parseAuthData($digest) {
-		if (substr($digest, 0, 7) == 'Digest ') {
+		if (substr($digest, 0, 7) === 'Digest ') {
 			$digest = substr($digest, 7);
 		}
 		$keys = $match = array();

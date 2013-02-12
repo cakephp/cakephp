@@ -174,7 +174,7 @@ class I18n {
 			Cache::write($_this->domain, $_this->_domains[$domain][$_this->_lang], '_cake_core_');
 		}
 
-		if ($_this->category == 'LC_TIME') {
+		if ($_this->category === 'LC_TIME') {
 			return $_this->_translateTime($singular, $domain);
 		}
 
@@ -410,7 +410,7 @@ class I18n {
 			$header = unpack("L1magic/L1version/L1count/L1o_msg/L1o_trn", $header);
 			extract($header);
 
-			if ((dechex($magic) == '950412de' || dechex($magic) == 'ffffffff950412de') && !$version) {
+			if ((dechex($magic) === '950412de' || dechex($magic) === 'ffffffff950412de') && !$version) {
 				for ($n = 0; $n < $count; $n++) {
 					$r = unpack("L1len/L1offs", substr($data, $o_msg + $n * 8, 8));
 					$msgid = substr($data, $r["offs"], $r["len"]);

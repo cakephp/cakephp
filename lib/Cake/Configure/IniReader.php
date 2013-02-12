@@ -160,7 +160,7 @@ class IniReader implements ConfigReaderInterface {
 		$result = array();
 		foreach ($data as $k => $value) {
 			$isSection = false;
-			if ($k[0] != '[') {
+			if ($k[0] !== '[') {
 				$result[] = "[$k]";
 				$isSection = true;
 			}

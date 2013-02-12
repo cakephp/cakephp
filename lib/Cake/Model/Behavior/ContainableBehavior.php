@@ -200,7 +200,7 @@ class ContainableBehavior extends ModelBehavior {
 
 		if (!empty($mandatory[$Model->alias])) {
 			foreach ($mandatory[$Model->alias] as $field) {
-				if ($field == '--primaryKey--') {
+				if ($field === '--primaryKey--') {
 					$field = $Model->primaryKey;
 				} elseif (preg_match('/^.+\.\-\-[^-]+\-\-$/', $field)) {
 					list($modelName, $field) = explode('.', $field);
@@ -307,7 +307,7 @@ class ContainableBehavior extends ModelBehavior {
 				if (!$optionKey && is_string($key) && preg_match('/^[a-z(]/', $key) && (!isset($Model->{$key}) || !is_object($Model->{$key}))) {
 					$option = 'fields';
 					$val = array($key);
-					if ($key{0} == '(') {
+					if ($key{0} === '(') {
 						$val = preg_split('/\s*,\s*/', substr($key, 1, -1));
 					} elseif (preg_match('/ASC|DESC$/', $key)) {
 						$option = 'order';
@@ -374,9 +374,9 @@ class ContainableBehavior extends ModelBehavior {
 			foreach ($map as $parent => $children) {
 				foreach ($children as $type => $bindings) {
 					foreach ($bindings as $dependency) {
-						if ($type == 'hasAndBelongsToMany') {
+						if ($type === 'hasAndBelongsToMany') {
 							$fields[$parent][] = '--primaryKey--';
-						} elseif ($type == 'belongsTo') {
+						} elseif ($type === 'belongsTo') {
 							$fields[$parent][] = $dependency . '.--primaryKey--';
 						}
 					}

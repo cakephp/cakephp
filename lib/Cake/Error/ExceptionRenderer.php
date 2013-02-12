@@ -104,7 +104,7 @@ class ExceptionRenderer {
 
 		if ($exception instanceof CakeException && !$methodExists) {
 			$method = '_cakeError';
-			if (empty($template) || $template == 'internalError') {
+			if (empty($template) || $template === 'internalError') {
 				$template = 'error500';
 			}
 		} elseif ($exception instanceof PDOException) {
@@ -119,7 +119,7 @@ class ExceptionRenderer {
 		}
 
 		$isNotDebug = !Configure::read('debug');
-		if ($isNotDebug && $method == '_cakeError') {
+		if ($isNotDebug && $method === '_cakeError') {
 			$method = 'error400';
 		}
 		if ($isNotDebug && $code == 500) {

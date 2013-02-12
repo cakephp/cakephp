@@ -793,7 +793,7 @@ class FormHelper extends AppHelper {
 			} else {
 				$text = $fieldName;
 			}
-			if (substr($text, -3) == '_id') {
+			if (substr($text, -3) === '_id') {
 				$text = substr($text, 0, -3);
 			}
 			$text = __(Inflector::humanize(Inflector::underscore($text)));
@@ -993,7 +993,7 @@ class FormHelper extends AppHelper {
 		unset($options['type'], $options['before'], $options['between'], $options['after'], $options['format']);
 
 		$out['error'] = null;
-		if ($type != 'hidden' && $error !== false) {
+		if ($type !== 'hidden' && $error !== false) {
 			$errMsg = $this->error($fieldName, $error);
 			if ($errMsg) {
 				$divOptions = $this->addClass($divOptions, 'error');
@@ -1192,13 +1192,13 @@ class FormHelper extends AppHelper {
  * @return array
  */
 	protected function _getFormat($options) {
-		if ($options['type'] == 'hidden') {
+		if ($options['type'] === 'hidden') {
 			return array('input');
 		}
 		if (is_array($options['format']) && in_array('input', $options['format'])) {
 			return $options['format'];
 		}
-		if ($options['type'] == 'checkbox') {
+		if ($options['type'] === 'checkbox') {
 			return array('before', 'input', 'between', 'label', 'after', 'error');
 		}
 		return array('before', 'label', 'between', 'input', 'after', 'error');
@@ -1246,7 +1246,7 @@ class FormHelper extends AppHelper {
 		) {
 			$options['maxlength'] = $fieldDef['length'];
 		}
-		if ($autoLength && $fieldDef['type'] == 'float') {
+		if ($autoLength && $fieldDef['type'] === 'float') {
 			$options['maxlength'] = array_sum(explode(',', $fieldDef['length'])) + 1;
 		}
 		return $options;
@@ -2053,7 +2053,7 @@ class FormHelper extends AppHelper {
 			)
 		));
 
-		$template = ($style == 'checkbox') ? 'checkboxmultipleend' : 'selectend';
+		$template = ($style === 'checkbox') ? 'checkboxmultipleend' : 'selectend';
 		$select[] = $this->Html->useTag($template);
 		return implode("\n", $select);
 	}
@@ -2503,14 +2503,14 @@ class FormHelper extends AppHelper {
 		if (!empty($timeFormat)) {
 			$time = explode(':', $days[1]);
 
-			if ($time[0] >= '12' && $timeFormat == '12') {
+			if ($time[0] >= '12' && $timeFormat === '12') {
 				$meridian = 'pm';
-			} elseif ($time[0] == '00' && $timeFormat == '12') {
+			} elseif ($time[0] === '00' && $timeFormat === '12') {
 				$time[0] = 12;
 			} elseif ($time[0] >= 12) {
 				$meridian = 'pm';
 			}
-			if ($time[0] == 0 && $timeFormat == '12') {
+			if ($time[0] == 0 && $timeFormat === '12') {
 				$time[0] = 12;
 			}
 			$hour = $min = null;
@@ -2531,7 +2531,7 @@ class FormHelper extends AppHelper {
  * @return array
  */
 	protected function _name($options = array(), $field = null, $key = 'name') {
-		if ($this->requestType == 'get') {
+		if ($this->requestType === 'get') {
 			if ($options === null) {
 				$options = array();
 			} elseif (is_string($options)) {
@@ -2767,7 +2767,7 @@ class FormHelper extends AppHelper {
 				for ($i = $min; $i <= $max; $i++) {
 					$data[$i] = $i;
 				}
-				if ($options['order'] != 'asc') {
+				if ($options['order'] !== 'asc') {
 					$data = array_reverse($data, true);
 				}
 			break;

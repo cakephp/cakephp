@@ -100,7 +100,7 @@ class Permission extends AppModel {
 			return false;
 		}
 
-		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
+		if ($action !== '*' && !in_array('_' . $action, $permKeys)) {
 			trigger_error(__d('cake_dev', "ACO permissions key %s does not exist in DbAcl::check()", $action), E_USER_NOTICE);
 			return false;
 		}
@@ -126,7 +126,7 @@ class Permission extends AppModel {
 			} else {
 				$perms = Hash::extract($perms, '{n}.' . $this->alias);
 				foreach ($perms as $perm) {
-					if ($action == '*') {
+					if ($action === '*') {
 
 						foreach ($permKeys as $key) {
 							if (!empty($perm)) {

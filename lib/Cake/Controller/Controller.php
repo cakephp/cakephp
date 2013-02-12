@@ -963,7 +963,7 @@ class Controller extends Object implements CakeEventListener {
 		}
 
 		$referer = $this->request->referer($local);
-		if ($referer == '/' && $default) {
+		if ($referer === '/' && $default) {
 			return Router::url($default, true);
 		}
 		return $referer;
@@ -1048,13 +1048,13 @@ class Controller extends Object implements CakeEventListener {
 				if ($fieldOp === 'LIKE') {
 					$key = $key . ' LIKE';
 					$value = '%' . $value . '%';
-				} elseif ($fieldOp && $fieldOp != '=') {
+				} elseif ($fieldOp && $fieldOp !== '=') {
 					$key = $key . ' ' . $fieldOp;
 				}
 				$cond[$key] = $value;
 			}
 		}
-		if ($bool && strtoupper($bool) != 'AND') {
+		if ($bool && strtoupper($bool) !== 'AND') {
 			$cond = array($bool => $cond);
 		}
 		return $cond;

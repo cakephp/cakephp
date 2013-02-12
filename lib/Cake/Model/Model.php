@@ -818,7 +818,7 @@ class Model extends Object implements CakeEventListener {
 				$className = empty($this->__backAssociation[$type][$name]['className']) ?
 					$name : $this->__backAssociation[$type][$name]['className'];
 				break;
-			} elseif ($type == 'hasAndBelongsToMany') {
+			} elseif ($type === 'hasAndBelongsToMany') {
 				foreach ($this->{$type} as $k => $relation) {
 					if (empty($relation['with'])) {
 						continue;
@@ -1061,7 +1061,7 @@ class Model extends Object implements CakeEventListener {
 					break;
 
 					case 'foreignKey':
-						$data = (($type == 'belongsTo') ? Inflector::underscore($assocKey) : Inflector::singularize($this->table)) . '_id';
+						$data = (($type === 'belongsTo') ? Inflector::underscore($assocKey) : Inflector::singularize($this->table)) . '_id';
 					break;
 
 					case 'associationForeignKey':
@@ -1262,7 +1262,7 @@ class Model extends Object implements CakeEventListener {
 		if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] == 12 && 'am' == $data['meridian']) {
 			$data['hour'] = '00';
 		}
-		if ($type == 'time') {
+		if ($type === 'time') {
 			foreach ($timeFields as $key => $val) {
 				if (!isset($data[$val]) || $data[$val] === '0' || $data[$val] === '00') {
 					$data[$val] = '00';
@@ -1277,9 +1277,9 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
-		if ($type == 'datetime' || $type == 'timestamp' || $type == 'date') {
+		if ($type === 'datetime' || $type === 'timestamp' || $type === 'date') {
 			foreach ($dateFields as $key => $val) {
-				if ($val == 'hour' || $val == 'min' || $val == 'sec') {
+				if ($val === 'hour' || $val === 'min' || $val === 'sec') {
 					if (!isset($data[$val]) || $data[$val] === '0' || $data[$val] === '00') {
 						$data[$val] = '00';
 					} else {

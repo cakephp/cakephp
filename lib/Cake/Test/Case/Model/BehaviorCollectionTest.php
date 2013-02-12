@@ -61,7 +61,7 @@ class TestBehavior extends ModelBehavior {
  */
 	public function beforeFind(Model $model, $query) {
 		$settings = $this->settings[$model->alias];
-		if (!isset($settings['beforeFind']) || $settings['beforeFind'] == 'off') {
+		if (!isset($settings['beforeFind']) || $settings['beforeFind'] === 'off') {
 			return parent::beforeFind($model, $query);
 		}
 		switch ($settings['beforeFind']) {
@@ -86,7 +86,7 @@ class TestBehavior extends ModelBehavior {
  */
 	public function afterFind(Model $model, $results, $primary) {
 		$settings = $this->settings[$model->alias];
-		if (!isset($settings['afterFind']) || $settings['afterFind'] == 'off') {
+		if (!isset($settings['afterFind']) || $settings['afterFind'] === 'off') {
 			return parent::afterFind($model, $results, $primary);
 		}
 		switch ($settings['afterFind']) {
@@ -109,7 +109,7 @@ class TestBehavior extends ModelBehavior {
  */
 	public function beforeSave(Model $model) {
 		$settings = $this->settings[$model->alias];
-		if (!isset($settings['beforeSave']) || $settings['beforeSave'] == 'off') {
+		if (!isset($settings['beforeSave']) || $settings['beforeSave'] === 'off') {
 			return parent::beforeSave($model);
 		}
 		switch ($settings['beforeSave']) {
@@ -132,7 +132,7 @@ class TestBehavior extends ModelBehavior {
  */
 	public function afterSave(Model $model, $created) {
 		$settings = $this->settings[$model->alias];
-		if (!isset($settings['afterSave']) || $settings['afterSave'] == 'off') {
+		if (!isset($settings['afterSave']) || $settings['afterSave'] === 'off') {
 			return parent::afterSave($model, $created);
 		}
 		$string = 'modified after';
@@ -162,7 +162,7 @@ class TestBehavior extends ModelBehavior {
  */
 	public function beforeValidate(Model $model) {
 		$settings = $this->settings[$model->alias];
-		if (!isset($settings['validate']) || $settings['validate'] == 'off') {
+		if (!isset($settings['validate']) || $settings['validate'] === 'off') {
 			return parent::beforeValidate($model);
 		}
 		switch ($settings['validate']) {
@@ -189,7 +189,7 @@ class TestBehavior extends ModelBehavior {
  */
 	public function afterValidate(Model $model) {
 		$settings = $this->settings[$model->alias];
-		if (!isset($settings['afterValidate']) || $settings['afterValidate'] == 'off') {
+		if (!isset($settings['afterValidate']) || $settings['afterValidate'] === 'off') {
 			return parent::afterValidate($model);
 		}
 		switch ($settings['afterValidate']) {
@@ -210,7 +210,7 @@ class TestBehavior extends ModelBehavior {
  */
 	public function beforeDelete(Model $model, $cascade = true) {
 		$settings = $this->settings[$model->alias];
-		if (!isset($settings['beforeDelete']) || $settings['beforeDelete'] == 'off') {
+		if (!isset($settings['beforeDelete']) || $settings['beforeDelete'] === 'off') {
 			return parent::beforeDelete($model, $cascade);
 		}
 		switch ($settings['beforeDelete']) {
@@ -235,7 +235,7 @@ class TestBehavior extends ModelBehavior {
  */
 	public function afterDelete(Model $model) {
 		$settings = $this->settings[$model->alias];
-		if (!isset($settings['afterDelete']) || $settings['afterDelete'] == 'off') {
+		if (!isset($settings['afterDelete']) || $settings['afterDelete'] === 'off') {
 			return parent::afterDelete($model);
 		}
 		switch ($settings['afterDelete']) {
@@ -253,7 +253,7 @@ class TestBehavior extends ModelBehavior {
  */
 	public function onError(Model $model, $error) {
 		$settings = $this->settings[$model->alias];
-		if (!isset($settings['onError']) || $settings['onError'] == 'off') {
+		if (!isset($settings['onError']) || $settings['onError'] === 'off') {
 			return parent::onError($model, $error);
 		}
 		echo "onError trigger success";

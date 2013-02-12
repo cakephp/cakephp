@@ -122,7 +122,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  */
 	public function get($selector) {
 		$this->_multipleSelection = false;
-		if ($selector == 'window' || $selector == 'document') {
+		if ($selector === 'window' || $selector === 'document') {
 			$this->selection = "$(" . $selector . ")";
 			return $this;
 		}
@@ -195,9 +195,9 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 	public function effect($name, $options = array()) {
 		$speed = null;
 		if (isset($options['speed']) && in_array($options['speed'], array('fast', 'slow'))) {
-			if ($options['speed'] == 'fast') {
+			if ($options['speed'] === 'fast') {
 				$speed = '"short"';
-			} elseif ($options['speed'] == 'slow') {
+			} elseif ($options['speed'] === 'slow') {
 				$speed = '"long"';
 			}
 		}
@@ -239,7 +239,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_mapOptions('request', $options);
 		$type = $data = null;
 		if (isset($options['type']) || isset($options['update'])) {
-			if (isset($options['type']) && strtolower($options['type']) == 'json') {
+			if (isset($options['type']) && strtolower($options['type']) === 'json') {
 				$type = '.JSON';
 			}
 			if (isset($options['update'])) {

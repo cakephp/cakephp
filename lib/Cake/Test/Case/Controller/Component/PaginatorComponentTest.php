@@ -107,7 +107,7 @@ class PaginatorControllerPost extends CakeTestModel {
  * @return void
  */
 	public function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
-		if ($conditions == 'popular') {
+		if ($conditions === 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
 			$options = Hash::merge($fields, compact('conditions'));
 			return parent::find('all', $options);
@@ -278,7 +278,7 @@ class PaginatorCustomPost extends CakeTestModel {
  * @return array
  */
 	protected function _findTotals($state, $query, $results = array()) {
-		if ($state == 'before') {
+		if ($state === 'before') {
 			$query['fields'] = array('author_id');
 			$this->virtualFields['total_posts'] = "COUNT({$this->alias}.id)";
 			$query['fields'][] = 'total_posts';
@@ -296,7 +296,7 @@ class PaginatorCustomPost extends CakeTestModel {
  * @return array
  */
 	protected function _findTotalsOperation($state, $query, $results = array()) {
-		if ($state == 'before') {
+		if ($state === 'before') {
 			if (!empty($query['operation']) && $query['operation'] === 'count') {
 				unset($query['limit']);
 				$query['recursive'] = -1;

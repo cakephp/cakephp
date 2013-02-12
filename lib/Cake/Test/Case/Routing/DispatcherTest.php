@@ -376,7 +376,7 @@ class SomePostsController extends AppController {
  * @return void
  */
 	public function beforeFilter() {
-		if ($this->params['action'] == 'index') {
+		if ($this->params['action'] === 'index') {
 			$this->params['action'] = 'view';
 		} else {
 			$this->params['action'] = 'change';
@@ -1666,7 +1666,7 @@ class DispatcherTest extends CakeTestCase {
  */
 	protected function _cachePath($here) {
 		$path = $here;
-		if ($here == '/') {
+		if ($here === '/') {
 			$path = 'home';
 		}
 		$path = strtolower(Inflector::slug($path));

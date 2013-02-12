@@ -303,7 +303,7 @@ class FileTest extends CakeTestCase {
  */
 	public function testPrepare() {
 		$string = "some\nvery\ncool\r\nteststring here\n\n\nfor\r\r\n\n\r\n\nhere";
-		if (DS == '\\') {
+		if (DS === '\\') {
 			$expected = "some\r\nvery\r\ncool\r\nteststring here\r\n\r\n\r\n";
 			$expected .= "for\r\n\r\n\r\n\r\n\r\nhere";
 		} else {

@@ -165,7 +165,7 @@ class CakeTime {
 				break;
 			case 'c':
 				$format = __dc('cake', 'd_t_fmt', 5);
-				if ($format != 'd_t_fmt') {
+				if ($format !== 'd_t_fmt') {
 					return self::convertSpecifiers($format, self::$_time);
 				}
 				break;
@@ -206,12 +206,12 @@ class CakeTime {
 				$format = __dc('cake', 'am_pm', 5);
 				if (is_array($format)) {
 					$meridiem = $format[$meridiem];
-					return ($specifier[1] == 'P') ? strtolower($meridiem) : strtoupper($meridiem);
+					return ($specifier[1] === 'P') ? strtolower($meridiem) : strtoupper($meridiem);
 				}
 				break;
 			case 'r':
 				$complete = __dc('cake', 't_fmt_ampm', 5);
-				if ($complete != 't_fmt_ampm') {
+				if ($complete !== 't_fmt_ampm') {
 					return str_replace('%p', self::_translateSpecifier(array('%p', 'p')), $complete);
 				}
 				break;
@@ -225,13 +225,13 @@ class CakeTime {
 				return ($weekDay = date('w', self::$_time)) ? $weekDay : 7;
 			case 'x':
 				$format = __dc('cake', 'd_fmt', 5);
-				if ($format != 'd_fmt') {
+				if ($format !== 'd_fmt') {
 					return self::convertSpecifiers($format, self::$_time);
 				}
 				break;
 			case 'X':
 				$format = __dc('cake', 't_fmt', 5);
-				if ($format != 't_fmt') {
+				if ($format !== 't_fmt') {
 					return self::convertSpecifiers($format, self::$_time);
 				}
 				break;
