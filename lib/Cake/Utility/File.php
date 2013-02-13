@@ -130,7 +130,6 @@ class File {
 		if (!$force && is_resource($this->handle)) {
 			return true;
 		}
-		$this->clearCache();
 		if ($this->exists() === false) {
 			if ($this->create() === false) {
 				return false;
@@ -282,7 +281,6 @@ class File {
 			fclose($this->handle);
 			$this->handle = null;
 		}
-		$this->clearCache();
 		if ($this->exists()) {
 			return unlink($this->path);
 		}
@@ -410,6 +408,7 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::exists
  */
 	public function exists() {
+		$this->clearCache();
 		return (file_exists($this->path) && is_file($this->path));
 	}
 
@@ -433,7 +432,6 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::size
  */
 	public function size() {
-		$this->clearCache();
 		if ($this->exists()) {
 			return filesize($this->path);
 		}
