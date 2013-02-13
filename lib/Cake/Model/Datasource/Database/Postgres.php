@@ -526,6 +526,12 @@ class Postgres extends DboSource {
 								$default = isset($col['default']) ? $col['default'] : null;
 								$nullable = isset($col['null']) ? $col['null'] : null;
 								unset($col['default'], $col['null']);
+								if ($field !== $col['name']) {
+									$newName = $this->name($col['name']);
+									$out .= "\tRENAME {$fieldName} TO {$newName};\n";
+									$out .= 'ALTER TABLE ' . $this->fullTableName($curTable) . " \n";
+									$fieldName = $newName;
+								}
 								$colList[] = 'ALTER COLUMN ' . $fieldName . ' TYPE ' . str_replace(array($fieldName, 'NOT NULL'), '', $this->buildColumn($col));
 								if (isset($nullable)) {
 									$nullable = ($nullable) ? 'DROP NOT NULL' : 'SET NOT NULL';
