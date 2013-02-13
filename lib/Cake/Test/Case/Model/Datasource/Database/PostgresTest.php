@@ -740,6 +740,21 @@ class PostgresTest extends CakeTestCase {
 	}
 
 /**
+ * Test the alterSchema  RENAME statements
+ *
+ * @return void
+ */
+	public function testAlterSchemaRenameTo() {
+		$query = $this->Dbo->alterSchema(array(
+			'posts' => array('change' => array('title' => array('name' => 'subject', 'type' => 'string', 'null' => false)))
+			));
+		$this->assertRegExp('/RENAME "title" TO "subject";/i', $query);
+		$this->assertRegExp('/ALTER COLUMN "subject" TYPE /i', $query);
+		$this->assertNotRegExp('/;\n\tALTER COLUMN "subject" TYPE /i', $query);
+		$this->assertNotRegExp('/ALTER COLUMN "title" TYPE "subject"/i', $query);
+	}
+
+/**
  * Test it is possible to use virtual field with postgresql
  *
  * @return void
