@@ -767,7 +767,7 @@ EXPECTED;
 '<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
-		if (php_sapi_name() == 'cli') {
+		if (php_sapi_name() === 'cli') {
 			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
@@ -791,7 +791,7 @@ EXPECTED;
 '<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
-		if (php_sapi_name() == 'cli') {
+		if (php_sapi_name() === 'cli') {
 			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);

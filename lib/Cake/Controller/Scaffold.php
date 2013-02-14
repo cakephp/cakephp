@@ -227,7 +227,7 @@ class Scaffold {
 		}
 
 		if ($this->controller->beforeScaffold($action)) {
-			if ($action == 'edit') {
+			if ($action === 'edit') {
 				if (isset($request->params['pass'][0])) {
 					$this->ScaffoldModel->id = $request['pass'][0];
 				}
@@ -237,7 +237,7 @@ class Scaffold {
 			}
 
 			if (!empty($request->data)) {
-				if ($action == 'create') {
+				if ($action === 'create') {
 					$this->ScaffoldModel->create();
 				}
 
@@ -443,7 +443,7 @@ class Scaffold {
 				$associations[$type][$assocKey]['controller'] =
 					Inflector::pluralize(Inflector::underscore($model));
 
-				if ($type == 'hasAndBelongsToMany') {
+				if ($type === 'hasAndBelongsToMany') {
 					$associations[$type][$assocKey]['with'] = $assocData['with'];
 				}
 			}

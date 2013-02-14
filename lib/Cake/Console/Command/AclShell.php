@@ -122,14 +122,14 @@ class AclShell extends AppShell {
 		$class = ucfirst($this->args[0]);
 		$parent = $this->parseIdentifier($this->args[1]);
 
-		if (!empty($parent) && $parent != '/' && $parent != 'root') {
+		if (!empty($parent) && $parent !== '/' && $parent !== 'root') {
 			$parent = $this->_getNodeId($class, $parent);
 		} else {
 			$parent = null;
 		}
 
 		$data = $this->parseIdentifier($this->args[2]);
-		if (is_string($data) && $data != '/') {
+		if (is_string($data) && $data !== '/') {
 			$data = array('alias' => $data);
 		} elseif (is_string($data)) {
 			$this->error(__d('cake_console', '/ can not be used as an alias!') . __d('cake_console', "	/ is the root, please supply a sub alias"));
@@ -604,7 +604,7 @@ class AclShell extends AppShell {
 		}
 		$vars = array();
 		$class = ucwords($type);
-		$vars['secondary_id'] = (strtolower($class) == 'aro') ? 'foreign_key' : 'object_id';
+		$vars['secondary_id'] = (strtolower($class) === 'aro') ? 'foreign_key' : 'object_id';
 		$vars['data_name'] = $type;
 		$vars['table_name'] = $type . 's';
 		$vars['class'] = $class;

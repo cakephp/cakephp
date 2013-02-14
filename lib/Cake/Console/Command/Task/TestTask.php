@@ -198,7 +198,7 @@ class TestTask extends BakeTask {
 		}
 		$keys[] = 'q';
 		$selection = $this->in(__d('cake_console', 'Enter the type of object to bake a test for or (q)uit'), $keys, 'q');
-		if ($selection == 'q') {
+		if ($selection === 'q') {
 			return $this->_stop();
 		}
 		$types = array_keys($this->classTypes);
@@ -281,7 +281,7 @@ class TestTask extends BakeTask {
 		ClassRegistry::flush();
 		App::import($type, $class);
 		$class = $this->getRealClassName($type, $class);
-		if (strtolower($type) == 'model') {
+		if (strtolower($type) === 'model') {
 			$instance = ClassRegistry::init($class);
 		} else {
 			$instance = new $class();
@@ -298,7 +298,7 @@ class TestTask extends BakeTask {
  * @return string Real classname
  */
 	public function getRealClassName($type, $class) {
-		if (strtolower($type) == 'model' || empty($this->classTypes[$type])) {
+		if (strtolower($type) === 'model' || empty($this->classTypes[$type])) {
 			return $class;
 		}
 
@@ -358,7 +358,7 @@ class TestTask extends BakeTask {
 		$thisMethods = array_diff($classMethods, $parentMethods);
 		$out = array();
 		foreach ($thisMethods as $method) {
-			if (substr($method, 0, 1) != '_' && $method != strtolower($className)) {
+			if (substr($method, 0, 1) !== '_' && $method != strtolower($className)) {
 				$out[] = $method;
 			}
 		}
@@ -397,7 +397,7 @@ class TestTask extends BakeTask {
 			if (!isset($this->_fixtures[$className])) {
 				$this->_processModel($subject->{$alias});
 			}
-			if ($type == 'hasAndBelongsToMany') {
+			if ($type === 'hasAndBelongsToMany') {
 				if (!empty($subject->hasAndBelongsToMany[$alias]['with'])) {
 					list(, $joinModel) = pluginSplit($subject->hasAndBelongsToMany[$alias]['with']);
 				} else {
@@ -454,7 +454,7 @@ class TestTask extends BakeTask {
 	public function getUserFixtures() {
 		$proceed = $this->in(__d('cake_console', 'Bake could not detect fixtures, would you like to add some?'), array('y', 'n'), 'n');
 		$fixtures = array();
-		if (strtolower($proceed) == 'y') {
+		if (strtolower($proceed) === 'y') {
 			$fixtureList = $this->in(__d('cake_console', "Please provide a comma separated list of the fixtures names you'd like to use.\nExample: 'app.comment, app.post, plugin.forums.post'"));
 			$fixtureListTrimmed = str_replace(' ', '', $fixtureList);
 			$fixtures = explode(',', $fixtureListTrimmed);
@@ -472,7 +472,7 @@ class TestTask extends BakeTask {
  */
 	public function hasMockClass($type) {
 		$type = strtolower($type);
-		return $type == 'controller';
+		return $type === 'controller';
 	}
 
 /**
@@ -486,17 +486,17 @@ class TestTask extends BakeTask {
 	public function generateConstructor($type, $fullClassName, $plugin) {
 		$type = strtolower($type);
 		$pre = $construct = $post = '';
-		if ($type == 'model') {
+		if ($type === 'model') {
 			$construct = "ClassRegistry::init('{$plugin}$fullClassName');\n";
 		}
-		if ($type == 'behavior') {
+		if ($type === 'behavior') {
 			$construct = "new $fullClassName();\n";
 		}
-		if ($type == 'helper') {
+		if ($type === 'helper') {
 			$pre = "\$View = new View();\n";
 			$construct = "new {$fullClassName}(\$View);\n";
 		}
-		if ($type == 'component') {
+		if ($type === 'component') {
 			$pre = "\$Collection = new ComponentCollection();\n";
 			$construct = "new {$fullClassName}(\$Collection);\n";
 		}
@@ -514,11 +514,11 @@ class TestTask extends BakeTask {
 	public function generateUses($type, $realType, $className) {
 		$uses = array();
 		$type = strtolower($type);
-		if ($type == 'component') {
+		if ($type === 'component') {
 			$uses[] = array('ComponentCollection', 'Controller');
 			$uses[] = array('Component', 'Controller');
 		}
-		if ($type == 'helper') {
+		if ($type === 'helper') {
 			$uses[] = array('View', 'View');
 			$uses[] = array('Helper', 'View');
 		}

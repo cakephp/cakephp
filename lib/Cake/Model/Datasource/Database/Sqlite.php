@@ -357,7 +357,7 @@ class Sqlite extends DboSource {
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
 				$resultRow[$table][$column] = $row[$col];
-				if ($type == 'boolean' && !is_null($row[$col])) {
+				if ($type === 'boolean' && !is_null($row[$col])) {
 					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
 				}
 			}
@@ -412,7 +412,7 @@ class Sqlite extends DboSource {
 			return null;
 		}
 
-		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
+		if (isset($column['key']) && $column['key'] === 'primary' && $type === 'integer') {
 			return $this->name($name) . ' ' . $this->columns['primary_key']['name'];
 		}
 		return parent::buildColumn($column);
@@ -456,7 +456,7 @@ class Sqlite extends DboSource {
 
 		foreach ($indexes as $name => $value) {
 
-			if ($name == 'PRIMARY') {
+			if ($name === 'PRIMARY') {
 				continue;
 			}
 			$out = 'CREATE ';

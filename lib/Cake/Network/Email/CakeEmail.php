@@ -1512,7 +1512,7 @@ class CakeEmail {
  */
 	protected function _getTypes() {
 		$types = array($this->_emailFormat);
-		if ($this->_emailFormat == 'both') {
+		if ($this->_emailFormat === 'both') {
 			$types = array('html', 'text');
 		}
 		return $types;

@@ -237,7 +237,7 @@ class PaginatorHelper extends AppHelper {
 			$dir = strtolower(current($params['order']));
 		}
 
-		if ($dir == 'desc') {
+		if ($dir === 'desc') {
 			return 'desc';
 		}
 		return 'asc';
@@ -426,7 +426,7 @@ class PaginatorHelper extends AppHelper {
  * @return array converted url params.
  */
 	protected function _convertUrlKeys($url, $type) {
-		if ($type == 'named') {
+		if ($type === 'named') {
 			return $url;
 		}
 		if (!isset($url['?'])) {
@@ -479,7 +479,7 @@ class PaginatorHelper extends AppHelper {
 
 		if ($this->{$check}($model)) {
 			$url = array_merge(
-				array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)),
+				array('page' => $paging['page'] + ($which === 'Prev' ? $step * -1 : $step)),
 				$url
 			);
 			if ($tag === false) {

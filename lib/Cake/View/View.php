@@ -550,7 +550,7 @@ class View extends Object {
 		ob_start();
 		include ($filename);
 
-		if (Configure::read('debug') > 0 && $this->layout != 'xml') {
+		if (Configure::read('debug') > 0 && $this->layout !== 'xml') {
 			echo "<!-- Cached Render Time: " . round(microtime(true) - $timeStart, 4) . "s -->";
 		}
 		$out = ob_get_clean();

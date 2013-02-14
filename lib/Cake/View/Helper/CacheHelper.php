@@ -127,7 +127,7 @@ class CacheHelper extends AppHelper {
 				}
 			}
 
-			if (!isset($index) && $this->request->params['action'] == 'index') {
+			if (!isset($index) && $this->request->params['action'] === 'index') {
 				$index = 'index';
 			}
 

@@ -23,7 +23,7 @@ App::uses('BaseAuthorize', 'Controller/Component/Auth');
  * {{{
  *	public function isAuthorized($user) {
  *		if (!empty($this->request->params['admin'])) {
- *			return $user['role'] == 'admin';
+ *			return $user['role'] === 'admin';
  *		}
  *		return !empty($user);
  *	}

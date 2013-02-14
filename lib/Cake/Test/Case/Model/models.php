@@ -2574,7 +2574,7 @@ class NumberTree extends CakeTestModel {
 			$this->create($data);
 
 			if ($hierarchal) {
-				if ($this->name == 'UnconventionalTree') {
+				if ($this->name === 'UnconventionalTree') {
 					$data[$this->name]['join'] = $parentId;
 				} else {
 					$data[$this->name]['parent_id'] = $parentId;

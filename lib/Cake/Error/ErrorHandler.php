@@ -149,7 +149,7 @@ class ErrorHandler {
 				$message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
 			}
 		}
-		if (php_sapi_name() != 'cli') {
+		if (php_sapi_name() !== 'cli') {
 			$request = Router::getRequest();
 			if ($request) {
 				$message .= "\nRequest URL: " . $request->here();

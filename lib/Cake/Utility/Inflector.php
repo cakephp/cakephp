@@ -271,7 +271,7 @@ class Inflector {
 			return;
 		}
 		foreach (self::$_initialState as $key => $val) {
-			if ($key != '_initialState') {
+			if ($key !== '_initialState') {
 				self::${$key} = $val;
 			}
 		}

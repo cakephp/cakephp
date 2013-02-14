@@ -134,7 +134,7 @@ class CakeRequest implements ArrayAccess {
 		if (empty($url)) {
 			$url = $this->_url();
 		}
-		if ($url[0] == '/') {
+		if ($url[0] === '/') {
 			$url = substr($url, 1);
 		}
 		$this->url = $url;
@@ -255,7 +255,7 @@ class CakeRequest implements ArrayAccess {
 		if (strpos($uri, '?') !== false) {
 			list($uri) = explode('?', $uri, 2);
 		}
-		if (empty($uri) || $uri == '/' || $uri == '//' || $uri == '/index.php') {
+		if (empty($uri) || $uri === '/' || $uri === '//' || $uri === '/index.php') {
 			return '/';
 		}
 		return $uri;
@@ -412,7 +412,7 @@ class CakeRequest implements ArrayAccess {
 		if (!empty($ref) && !empty($base)) {
 			if ($local && strpos($ref, $base) === 0) {
 				$ref = substr($ref, strlen($base));
-				if ($ref[0] != '/') {
+				if ($ref[0] !== '/') {
 					$ref = '/' . $ref;
 				}
 				return $ref;
@@ -893,10 +893,10 @@ class CakeRequest implements ArrayAccess {
 		if (isset($this->params[$name])) {
 			return $this->params[$name];
 		}
-		if ($name == 'url') {
+		if ($name === 'url') {
 			return $this->query;
 		}
-		if ($name == 'data') {
+		if ($name === 'data') {
 			return $this->data;
 		}
 		return null;

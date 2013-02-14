@@ -228,7 +228,7 @@ class CacheTest extends CakeTestCase {
 			'duration' => 3600,
 			'probability' => 100,
 			'engine' => 'File',
-			'isWindows' => DIRECTORY_SEPARATOR == '\\',
+			'isWindows' => DIRECTORY_SEPARATOR === '\\',
 			'mask' => 0664,
 			'groups' => array()
 		);

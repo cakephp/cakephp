@@ -57,7 +57,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	public function testFullBaseURL() {
-		$skip = PHP_SAPI == 'cli';
+		$skip = PHP_SAPI === 'cli';
 		if ($skip) {
 			$this->markTestSkipped('Cannot validate base urls in CLI');
 		}
