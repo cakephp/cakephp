@@ -746,12 +746,16 @@ class PostgresTest extends CakeTestCase {
  */
 	public function testAlterSchemaRenameTo() {
 		$query = $this->Dbo->alterSchema(array(
-			'posts' => array('change' => array('title' => array('name' => 'subject', 'type' => 'string', 'null' => false)))
-			));
-		$this->assertRegExp('/RENAME "title" TO "subject";/i', $query);
-		$this->assertRegExp('/ALTER COLUMN "subject" TYPE /i', $query);
-		$this->assertNotRegExp('/;\n\tALTER COLUMN "subject" TYPE /i', $query);
-		$this->assertNotRegExp('/ALTER COLUMN "title" TYPE "subject"/i', $query);
+			'posts' => array(
+				'change' => array(
+					'title' => array('name' => 'subject', 'type' => 'string', 'null' => false)
+				)
+			)
+		));
+		$this->assertContains('RENAME "title" TO "subject";', $query);
+		$this->assertContains('ALTER COLUMN "subject" TYPE', $query);
+		$this->assertNotContains(";\n\tALTER COLUMN \"subject\" TYPE", $query);
+		$this->assertNotContains('ALTER COLUMN "title" TYPE "subject"', $query);
 	}
 
 /**
@@ -937,6 +941,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testNestedTransaction() {
+		$this->Dbo->useNestedTransactions = true;
 		$this->skipIf($this->Dbo->nestedTransactionSupported() === false, 'The Postgres server do not support nested transaction');
 
 		$this->loadFixtures('Article');
