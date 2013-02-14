@@ -1424,6 +1424,22 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::date('12 06', array('my')));
 	}
 
+	/**
+	 * testDateYmNumeric method
+	 *
+	 * @return void
+	 */
+	public function testDateYmNumeric() {
+		$this->assertTrue(Validation::date('2006/12', array('ym')));
+		$this->assertTrue(Validation::date('2006-12', array('ym')));
+		$this->assertTrue(Validation::date('2006-12', array('ym')));
+		$this->assertTrue(Validation::date('2006 12', array('ym')));
+		$this->assertFalse(Validation::date('06/12', array('ym')));
+		$this->assertFalse(Validation::date('06-12', array('ym')));
+		$this->assertFalse(Validation::date('06-12', array('ym')));
+		$this->assertFalse(Validation::date('06 12', array('ym')));
+	}
+
 /**
  * Test validating dates with multiple formats
  *
