@@ -69,7 +69,7 @@ App::uses('Debugger', 'Utility');
 <script type="text/javascript">
 function traceToggle(event, id) {
 	var el = document.getElementById(id);
-	el.style.display = (el.style.display == 'block') ? 'none' : 'block';
+	el.style.display = (el.style.display === 'block') ? 'none' : 'block';
 	event.preventDefault();
 	return false;
 }

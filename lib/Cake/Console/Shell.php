@@ -290,7 +290,7 @@ class Shell extends Object {
 			if (!$method->isPublic() || substr($name, 0, 1) === '_') {
 				return false;
 			}
-			if ($method->getDeclaringClass()->name == 'Shell') {
+			if ($method->getDeclaringClass()->name === 'Shell') {
 				return false;
 			}
 			return true;
@@ -403,7 +403,7 @@ class Shell extends Object {
  */
 	protected function _displayHelp($command) {
 		$format = 'text';
-		if (!empty($this->args[0]) && $this->args[0] == 'xml') {
+		if (!empty($this->args[0]) && $this->args[0] === 'xml') {
 			$format = 'xml';
 			$this->stdout->outputAs(ConsoleOutput::RAW);
 		} else {
@@ -654,10 +654,10 @@ class Shell extends Object {
 			$this->out(__d('cake_console', '<warning>File `%s` exists</warning>', $path));
 			$key = $this->in(__d('cake_console', 'Do you want to overwrite?'), array('y', 'n', 'q'), 'n');
 
-			if (strtolower($key) == 'q') {
+			if (strtolower($key) === 'q') {
 				$this->out(__d('cake_console', '<error>Quitting</error>.'), 2);
 				$this->_stop();
-			} elseif (strtolower($key) != 'y') {
+			} elseif (strtolower($key) !== 'y') {
 				$this->out(__d('cake_console', 'Skip `%s`', $path), 2);
 				return false;
 			}
@@ -695,7 +695,7 @@ class Shell extends Object {
 
 		$prompt = __d('cake_console', 'PHPUnit is not installed. Do you want to bake unit test files anyway?');
 		$unitTest = $this->in($prompt, array('y', 'n'), 'y');
-		$result = strtolower($unitTest) == 'y' || strtolower($unitTest) == 'yes';
+		$result = strtolower($unitTest) === 'y' || strtolower($unitTest) === 'yes';
 
 		if ($result) {
 			$this->out();

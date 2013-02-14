@@ -135,7 +135,7 @@ class CakeSocket {
 		}
 
 		$scheme = null;
-		if (isset($this->config['request']['uri']) && $this->config['request']['uri']['scheme'] == 'https') {
+		if (isset($this->config['request']['uri']) && $this->config['request']['uri']['scheme'] === 'https') {
 			$scheme = 'ssl://';
 		}
 

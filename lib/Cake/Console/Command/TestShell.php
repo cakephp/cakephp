@@ -326,7 +326,7 @@ class TestShell extends Shell {
 				break;
 			}
 
-			if ($choice == 'q') {
+			if ($choice === 'q') {
 				break;
 			}
 		}

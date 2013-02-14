@@ -157,14 +157,14 @@ HTML;
 		<script type="text/javascript">
 		function coverage_show_hide(selector) {
 			var element = document.getElementById(selector);
-			element.style.display = (element.style.display == 'none') ? '' : 'none';
+			element.style.display = (element.style.display === 'none') ? '' : 'none';
 		}
 		function coverage_toggle_all() {
 			var divs = document.querySelectorAll('div.coverage-container');
 			var i = divs.length;
 			while (i--) {
 				if (divs[i] && divs[i].className.indexOf('primary') == -1) {
-					divs[i].style.display = (divs[i].style.display == 'none') ? '' : 'none';
+					divs[i].style.display = (divs[i].style.display === 'none') ? '' : 'none';
 				}
 			}
 		}
@@ -183,7 +183,7 @@ HTML;
 		$filename = basename($filename);
 		list($file, $ext) = explode('.', $filename);
 		$display = in_array($file, $this->_testNames) ? 'block' : 'none';
-		$primary = $display == 'block' ? 'primary' : '';
+		$primary = $display === 'block' ? 'primary' : '';
 		return <<<HTML
 	<div class="coverage-container $primary" style="display:$display;">
 	<h4>

@@ -194,7 +194,7 @@ class CakeValidationRule {
  */
 	public function skip() {
 		if (!empty($this->on)) {
-			if ($this->on == 'create' && $this->isUpdate() || $this->on == 'update' && !$this->isUpdate()) {
+			if ($this->on === 'create' && $this->isUpdate() || $this->on === 'update' && !$this->isUpdate()) {
 				return true;
 			}
 		}

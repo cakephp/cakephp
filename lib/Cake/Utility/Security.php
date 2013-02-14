@@ -120,14 +120,14 @@ class Security {
 			$string = $salt . $string;
 		}
 
-		if (!$type || $type == 'sha1') {
+		if (!$type || $type === 'sha1') {
 			if (function_exists('sha1')) {
 				return sha1($string);
 			}
 			$type = 'sha256';
 		}
 
-		if ($type == 'sha256' && function_exists('mhash')) {
+		if ($type === 'sha256' && function_exists('mhash')) {
 			return bin2hex(mhash(MHASH_SHA256, $string));
 		}
 

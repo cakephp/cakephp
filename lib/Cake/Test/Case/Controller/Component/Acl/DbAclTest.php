@@ -504,12 +504,12 @@ class DbAclTest extends CakeTestCase {
 				$perms = '';
 				foreach ($rights as $right) {
 					if ($this->Acl->check($aro, $aco, $right)) {
-						if ($right == '*') {
+						if ($right === '*') {
 							$perms .= '****';
 							break;
 						}
 						$perms .= $right[0];
-					} elseif ($right != '*') {
+					} elseif ($right !== '*') {
 						$perms .= ' ';
 					}
 				}

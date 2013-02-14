@@ -138,7 +138,7 @@ class RssHelper extends AppHelper {
 		foreach ($elements as $elem => $data) {
 			$attributes = array();
 			if (is_array($data)) {
-				if (strtolower($elem) == 'cloud') {
+				if (strtolower($elem) === 'cloud') {
 					$attributes = $data;
 					$data = array();
 				} elseif (isset($data['attrib']) && is_array($data['attrib'])) {

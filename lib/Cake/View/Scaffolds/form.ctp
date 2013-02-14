@@ -27,7 +27,7 @@
 <div class="actions">
 	<h3><?php echo __d('cake', 'Actions'); ?></h3>
 	<ul>
-<?php if ($this->request->action != 'add'): ?>
+<?php if ($this->request->action !== 'add'): ?>
 		<li><?php echo $this->Form->postLink(
 			__d('cake', 'Delete'),
 			array('action' => 'delete', $this->Form->value($modelClass . '.' . $primaryKey)),

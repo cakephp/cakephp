@@ -130,7 +130,7 @@ class RequestHandlerComponent extends Component {
 		if (isset($this->request->params['ext'])) {
 			$this->ext = $this->request->params['ext'];
 		}
-		if (empty($this->ext) || $this->ext == 'html') {
+		if (empty($this->ext) || $this->ext === 'html') {
 			$this->_setExtension();
 		}
 		$this->params = $controller->params;
@@ -590,7 +590,7 @@ class RequestHandlerComponent extends Component {
 		}
 		$options = array_merge($defaults, $options);
 
-		if ($type == 'ajax') {
+		if ($type === 'ajax') {
 			$controller->layout = $this->ajaxLayout;
 			return $this->respondAs('html', $options);
 		}

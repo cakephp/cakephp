@@ -191,7 +191,7 @@ class Router {
  */
 	protected static function _validateRouteClass($routeClass) {
 		if (
-			$routeClass != 'CakeRoute' &&
+			$routeClass !== 'CakeRoute' &&
 			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'CakeRoute'))
 		) {
 			throw new RouterException(__d('cake_dev', 'Route classes must extend CakeRoute'));
@@ -332,7 +332,7 @@ class Router {
 			$routeClass = self::_validateRouteClass($routeClass);
 			unset($options['routeClass']);
 		}
-		if ($routeClass == 'RedirectRoute' && isset($defaults['redirect'])) {
+		if ($routeClass === 'RedirectRoute' && isset($defaults['redirect'])) {
 			$defaults = $defaults['redirect'];
 		}
 		self::$routes[] = new $routeClass($route, $defaults, $options);
@@ -715,7 +715,7 @@ class Router {
 			return;
 		}
 		foreach (self::$_initialState as $key => $val) {
-			if ($key != '_initialState') {
+			if ($key !== '_initialState') {
 				self::${$key} = $val;
 			}
 		}
@@ -1001,7 +1001,7 @@ class Router {
 
 		$out .= $addition;
 
-		if (isset($out[0]) && $out[0] != '?') {
+		if (isset($out[0]) && $out[0] !== '?') {
 			$out = '?' . $out;
 		}
 		return $out;

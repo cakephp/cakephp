@@ -750,7 +750,7 @@ class Multibyte {
 
 		$length = 75 - strlen($start) - strlen($end);
 		$length = $length - ($length % 4);
-		if ($charset == 'UTF-8') {
+		if ($charset === 'UTF-8') {
 			$parts = array();
 			$maxchars = floor(($length * 3) / 4);
 			$stringLength = strlen($string);
