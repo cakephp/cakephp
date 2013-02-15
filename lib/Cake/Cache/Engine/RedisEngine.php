@@ -6,12 +6,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Cache.Engine
  * @since         CakePHP(tm) v 2.2
@@ -62,6 +63,7 @@ class RedisEngine extends CacheEngine {
 			'prefix' => null,
 			'server' => '127.0.0.1',
 			'port' => 6379,
+			'password' => false,
 			'timeout' => 0,
 			'persistent' => true
 			), $settings)
@@ -86,6 +88,9 @@ class RedisEngine extends CacheEngine {
 			}
 		} catch (RedisException $e) {
 			return false;
+		}
+		if ($return && $this->settings['password']) {
+			$return = $this->_Redis->auth($this->settings['password']);
 		}
 		return $return;
 	}
@@ -182,7 +187,7 @@ class RedisEngine extends CacheEngine {
  * the group accordingly.
  *
  * @return array
- **/
+ */
 	public function groups() {
 		$result = array();
 		foreach ($this->settings['groups'] as $group) {
@@ -201,7 +206,7 @@ class RedisEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @return boolean success
- **/
+ */
 	public function clearGroup($group) {
 		return (bool)$this->_Redis->incr($this->settings['prefix'] . $group);
 	}
@@ -209,8 +214,8 @@ class RedisEngine extends CacheEngine {
 /**
  * Disconnects from the redis server
  *
- * @return voind
- **/
+ * @return void
+ */
 	public function __destruct() {
 		if (!$this->settings['persistent']) {
 			$this->_Redis->close();

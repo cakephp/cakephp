@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -245,7 +246,7 @@ class ExtractTask extends AppShell {
 		if (empty($this->_translations[$domain][$msgid])) {
 			$this->_translations[$domain][$msgid] = array(
 				'msgid_plural' => false
-			 );
+			);
 		}
 
 		if (isset($details['msgid_plural'])) {
@@ -387,14 +388,14 @@ class ExtractTask extends AppShell {
 			}
 
 			list($type, $string, $line) = $countToken;
-			if (($type == T_STRING) && ($string == $functionName) && ($firstParenthesis == '(')) {
+			if (($type == T_STRING) && ($string == $functionName) && ($firstParenthesis === '(')) {
 				$position = $count;
 				$depth = 0;
 
-				while ($depth == 0) {
-					if ($this->_tokens[$position] == '(') {
+				while (!$depth) {
+					if ($this->_tokens[$position] === '(') {
 						$depth++;
-					} elseif ($this->_tokens[$position] == ')') {
+					} elseif ($this->_tokens[$position] === ')') {
 						$depth--;
 					}
 					$position++;
@@ -480,7 +481,7 @@ class ExtractTask extends AppShell {
 		}
 
 		$dims = Hash::dimensions($rules);
-		if ($dims == 1 || ($dims == 2 && isset($rules['message']))) {
+		if ($dims === 1 || ($dims === 2 && isset($rules['message']))) {
 			$rules = array($rules);
 		}
 
@@ -523,7 +524,7 @@ class ExtractTask extends AppShell {
 					$occurrences[] = $file . ':' . implode(';', $lines);
 				}
 				$occurrences = implode("\n#: ", $occurrences);
-				$header = '#: ' . str_replace($paths, '', $occurrences) . "\n";
+				$header = '#: ' . str_replace(DS, '/', str_replace($paths, '', $occurrences)) . "\n";
 
 				if ($plural === false) {
 					$sentence = "msgid \"{$msgid}\"\n";
@@ -536,7 +537,7 @@ class ExtractTask extends AppShell {
 				}
 
 				$this->_store($domain, $header, $sentence);
-				if ($domain != 'default' && $this->_merge) {
+				if ($domain !== 'default' && $this->_merge) {
 					$this->_store('default', $header, $sentence);
 				}
 			}
@@ -591,7 +592,7 @@ class ExtractTask extends AppShell {
 				);
 				if (strtoupper($response) === 'N') {
 					$response = '';
-					while ($response == '') {
+					while (!$response) {
 						$response = $this->in(__d('cake_console', "What would you like to name this file?"), null, 'new_' . $filename);
 						$File = new File($this->_output . $response);
 						$filename = $response;
@@ -611,7 +612,7 @@ class ExtractTask extends AppShell {
  * @return string Translation template header
  */
 	protected function _writeHeader() {
-		$output  = "# LANGUAGE translation of CakePHP Application\n";
+		$output = "# LANGUAGE translation of CakePHP Application\n";
 		$output .= "# Copyright YEAR NAME <EMAIL@ADDRESS>\n";
 		$output .= "#\n";
 		$output .= "#, fuzzy\n";
@@ -639,11 +640,11 @@ class ExtractTask extends AppShell {
 	protected function _getStrings(&$position, $target) {
 		$strings = array();
 		$count = count($strings);
-		while ($count < $target && ($this->_tokens[$position] == ',' || $this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING)) {
+		while ($count < $target && ($this->_tokens[$position] === ',' || $this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING)) {
 			$count = count($strings);
-			if ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING && $this->_tokens[$position + 1] == '.') {
+			if ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING && $this->_tokens[$position + 1] === '.') {
 				$string = '';
-				while ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING || $this->_tokens[$position] == '.') {
+				while ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING || $this->_tokens[$position] === '.') {
 					if ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING) {
 						$string .= $this->_formatString($this->_tokens[$position][1]);
 					}
@@ -667,7 +668,7 @@ class ExtractTask extends AppShell {
 	protected function _formatString($string) {
 		$quote = substr($string, 0, 1);
 		$string = substr($string, 1, -1);
-		if ($quote == '"') {
+		if ($quote === '"') {
 			$string = stripcslashes($string);
 		} else {
 			$string = strtr($string, array("\\'" => "'", "\\\\" => "\\"));
@@ -696,11 +697,11 @@ class ExtractTask extends AppShell {
 				$this->out($this->_tokens[$count][1], false);
 			} else {
 				$this->out($this->_tokens[$count], false);
-				if ($this->_tokens[$count] == '(') {
+				if ($this->_tokens[$count] === '(') {
 					$parenthesis++;
 				}
 
-				if ($this->_tokens[$count] == ')') {
+				if ($this->_tokens[$count] === ')') {
 					$parenthesis--;
 				}
 			}

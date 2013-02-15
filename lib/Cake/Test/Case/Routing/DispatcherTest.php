@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Routing
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -375,7 +376,7 @@ class SomePostsController extends AppController {
  * @return void
  */
 	public function beforeFilter() {
-		if ($this->params['action'] == 'index') {
+		if ($this->params['action'] === 'index') {
 			$this->params['action'] = 'view';
 		} else {
 			$this->params['action'] = 'change';
@@ -617,7 +618,7 @@ class DispatcherTest extends CakeTestCase {
 		$request = new CakeRequest("/");
 		$event = new CakeEvent('DispatcherTest', $Dispatcher, array('request' => $request));
 		$Dispatcher->parseParams($event);
-		$test = $Dispatcher->parseParams($event);
+		$Dispatcher->parseParams($event);
 		$this->assertEquals("My Posted Content", $request['data']['testdata']);
 	}
 
@@ -1195,7 +1196,7 @@ class DispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testDispatcherFilterSuscriber() {
+	public function testDispatcherFilterSubscriber() {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS),
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
@@ -1574,7 +1575,7 @@ class DispatcherTest extends CakeTestCase {
 
 		$this->assertTextEquals($out, $cached);
 
-		$filename = $this->__cachePath($request->here());
+		$filename = $this->_cachePath($request->here());
 		unlink($filename);
 	}
 
@@ -1658,80 +1659,14 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
- * backupEnvironment method
- *
- * @return void
- */
-	protected function __backupEnvironment() {
-		return array(
-			'App' => Configure::read('App'),
-			'GET' => $_GET,
-			'POST' => $_POST,
-			'SERVER' => $_SERVER
-		);
-	}
-
-/**
- * reloadEnvironment method
- *
- * @return void
- */
-	protected function __reloadEnvironment() {
-		foreach ($_GET as $key => $val) {
-			unset($_GET[$key]);
-		}
-		foreach ($_POST as $key => $val) {
-			unset($_POST[$key]);
-		}
-		foreach ($_SERVER as $key => $val) {
-			unset($_SERVER[$key]);
-		}
-		Configure::write('App', array());
-	}
-
-/**
- * loadEnvironment method
- *
- * @param array $env
- * @return void
- */
-	protected function __loadEnvironment($env) {
-		if ($env['reload']) {
-			$this->__reloadEnvironment();
-		}
-
-		if (isset($env['App'])) {
-			Configure::write('App', $env['App']);
-		}
-
-		if (isset($env['GET'])) {
-			foreach ($env['GET'] as $key => $val) {
-				$_GET[$key] = $val;
-			}
-		}
-
-		if (isset($env['POST'])) {
-			foreach ($env['POST'] as $key => $val) {
-				$_POST[$key] = $val;
-			}
-		}
-
-		if (isset($env['SERVER'])) {
-			foreach ($env['SERVER'] as $key => $val) {
-				$_SERVER[$key] = $val;
-			}
-		}
-	}
-
-/**
  * cachePath method
  *
  * @param string $here
  * @return string
  */
-	protected function __cachePath($here) {
+	protected function _cachePath($here) {
 		$path = $here;
-		if ($here == '/') {
+		if ($here === '/') {
 			$path = 'home';
 		}
 		$path = strtolower(Inflector::slug($path));

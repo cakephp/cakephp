@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -642,13 +643,12 @@ class RssHelperTest extends CakeTestCase {
 			)
 		);
 		$result = $this->Rss->item(null, $item);
-		if (!function_exists('finfo_open') &&
-			(function_exists('mime_content_type') && false === mime_content_type($tmpFile))
-		) {
-			$type = false;
+		if (!function_exists('mime_content_type')) {
+			$type = null;
 		} else {
-			$type = 'text/plain';
+			$type = mime_content_type($tmpFile);
 		}
+
 		$expected = array(
 			'<item',
 			'<title',
@@ -679,6 +679,9 @@ class RssHelperTest extends CakeTestCase {
 			'/category',
 			'/item'
 		);
+		if ($type === null) {
+			unset($expected['enclosure']['type']);
+		}
 		$this->assertTags($result, $expected);
 
 		$File->delete();
@@ -741,7 +744,7 @@ class RssHelperTest extends CakeTestCase {
 
 	public function testElementNamespaceWithPrefix() {
 		$item = array(
-				'title'   => 'Title',
+				'title' => 'Title',
 				'dc:creator' => 'Alex',
 				'xy:description' => 'descriptive words'
 			);

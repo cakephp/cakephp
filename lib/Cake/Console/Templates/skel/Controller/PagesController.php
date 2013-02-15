@@ -7,17 +7,19 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Controller
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('AppController', 'Controller');
 
 /**
  * Static content controller
@@ -30,6 +32,13 @@
 class PagesController extends AppController {
 
 /**
+ * Controller name
+ *
+ * @var string
+ */
+	public $name = 'Pages';
+
+/**
  * This controller does not use a model
  *
  * @var array
@@ -39,7 +48,8 @@ class PagesController extends AppController {
 /**
  * Displays a view
  *
- * @param string What page to display
+ * @param mixed What page to display
+ * @return void
  */
 	public function display() {
 		$path = func_get_args();
@@ -48,7 +58,7 @@ class PagesController extends AppController {
 		if (!$count) {
 			$this->redirect('/');
 		}
-		$page = $subpage = $title = null;
+		$page = $subpage = $title_for_layout = null;
 
 		if (!empty($path[0])) {
 			$page = $path[0];
@@ -57,11 +67,9 @@ class PagesController extends AppController {
 			$subpage = $path[1];
 		}
 		if (!empty($path[$count - 1])) {
-			$title = Inflector::humanize($path[$count - 1]);
+			$title_for_layout = Inflector::humanize($path[$count - 1]);
 		}
-		$this->set(compact('page', 'subpage'));
-		$this->set('title_for_layout', $title);
+		$this->set(compact('page', 'subpage', 'title_for_layout'));
 		$this->render(implode('/', $path));
 	}
-
 }

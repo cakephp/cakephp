@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 2.0
@@ -279,7 +280,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		$this->assertRegExp('/<h2>View Scaffold Mock<\/h2>/', $result);
 		$this->assertRegExp('/<dl>/', $result);
-		//TODO: add specific tests for fields.
+
 		$this->assertRegExp('/<a href="\/scaffold_users\/view\/1">1<\/a>/', $result); //belongsTo links
 		$this->assertRegExp('/<li><a href="\/scaffold_mock\/edit\/1">Edit Scaffold Mock<\/a>\s<\/li>/', $result);
 		$this->assertRegExp('/<a href="\#" onclick="if[^>]*>Delete Scaffold Mock<\/a>\s<\/li>/', $result);
@@ -364,13 +365,13 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 
 		ob_start();
-		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
 		$this->assertRegExp('/<h2>Scaffold Mock<\/h2>/', $result);
 		$this->assertRegExp('/<table cellpadding="0" cellspacing="0">/', $result);
-		//TODO: add testing for table generation
+
 		$this->assertRegExp('/<li><a href="\/admin\/scaffold_mock\/add">New Scaffold Mock<\/a><\/li>/', $result);
 
 		Configure::write('Routing.prefixes', $_backAdmin);
@@ -407,7 +408,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 
 		ob_start();
-		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
@@ -448,13 +449,13 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 
 		ob_start();
-		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
 		$this->assertRegExp('/<h2>Scaffold Mock<\/h2>/', $result);
 		$this->assertRegExp('/<table cellpadding="0" cellspacing="0">/', $result);
-		//TODO: add testing for table generation
+
 		$this->assertRegExp('/<li><a href="\/member\/scaffold_mock\/add">New Scaffold Mock<\/a><\/li>/', $result);
 
 		Configure::write('Routing.prefixes', $_backAdmin);

@@ -5,12 +5,12 @@
  * PHP Version 5.x
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -1655,6 +1655,11 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::email('abc@example.travel'));
 		$this->assertTrue(Validation::email('someone@st.t-com.hr'));
 
+		// gTLD's
+		$this->assertTrue(Validation::email('example@host.local'));
+		$this->assertTrue(Validation::email('example@x.org'));
+		$this->assertTrue(Validation::email('example@host.xxx'));
+
 		// strange, but technically valid email addresses
 		$this->assertTrue(Validation::email('S=postmaster/OU=rz/P=uni-frankfurt/A=d400/C=de@gateway.d400.de'));
 		$this->assertTrue(Validation::email('customer/department=shipping@example.com'));
@@ -1669,7 +1674,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::email('abc.@example.com'));
 		$this->assertFalse(Validation::email('abc@example..com'));
 		$this->assertFalse(Validation::email('abc@example.com.a'));
-		$this->assertFalse(Validation::email('abc@example.toolong'));
 		$this->assertFalse(Validation::email('abc;@example.com'));
 		$this->assertFalse(Validation::email('abc@example.com;'));
 		$this->assertFalse(Validation::email('abc@efg@example.com'));
@@ -1839,11 +1843,11 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
 		$this->assertTrue(Validation::url('http://underscore_subdomain.example.org'));
 		$this->assertTrue(Validation::url('http://_jabber._tcp.gmail.com'));
+		$this->assertTrue(Validation::url('http://www.domain.longttldnotallowed'));
 		$this->assertFalse(Validation::url('ftps://256.168.0.1/pub/cake'));
 		$this->assertFalse(Validation::url('ftp://256.168.0.1/pub/cake'));
 		$this->assertFalse(Validation::url('http://w_w.domain.co_m'));
 		$this->assertFalse(Validation::url('http://www.domain.12com'));
-		$this->assertFalse(Validation::url('http://www.domain.longttldnotallowed'));
 		$this->assertFalse(Validation::url('http://www.-invaliddomain.tld'));
 		$this->assertFalse(Validation::url('http://www.domain.-invalidtld'));
 		$this->assertFalse(Validation::url('http://this-domain-is-too-loooooong-by-icann-rules-maximum-length-is-63.com'));
@@ -2167,7 +2171,7 @@ class ValidationTest extends CakeTestCase {
  *
  * @expectedException PHPUnit_Framework_Error
  * @return void
- **/
+ */
 	public function testPassThroughClassFailure() {
 		Validation::postal('text', null, 'AUTOFAIL');
 	}
@@ -2273,7 +2277,7 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * testMimeType method
+ * testUploadError method
  *
  * @return void
  */
@@ -2284,4 +2288,23 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::uploadError(2));
 		$this->assertFalse(Validation::uploadError(array('error' => 2)));
 	}
+
+/**
+ * testFileSize method
+ *
+ * @return void
+ */
+	public function testFileSize() {
+		$image = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$this->assertTrue(Validation::fileSize($image, '<', 1024));
+		$this->assertTrue(Validation::fileSize(array('tmp_name' => $image), 'isless', 1024));
+		$this->assertTrue(Validation::fileSize($image, '<', '1KB'));
+		$this->assertTrue(Validation::fileSize($image, '>=', 200));
+		$this->assertTrue(Validation::fileSize($image, '==', 201));
+		$this->assertTrue(Validation::fileSize($image, '==', '201B'));
+
+		$this->assertFalse(Validation::fileSize($image, 'isgreater', 1024));
+		$this->assertFalse(Validation::fileSize(array('tmp_name' => $image), '>', '1KB'));
+	}
+
 }

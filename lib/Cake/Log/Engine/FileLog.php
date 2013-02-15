@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       Cake.Log.Engine
  * @since         CakePHP(tm) v 1.3
@@ -18,9 +19,10 @@
  */
 
 App::uses('BaseLog', 'Log/Engine');
+App::uses('Hash', 'Utility');
 
 /**
- * File Storage stream for Logging.  Writes logs to different files
+ * File Storage stream for Logging. Writes logs to different files
  * based on the type of log it is.
  *
  * @package       Cake.Log.Engine
@@ -57,7 +59,7 @@ class FileLog extends BaseLog {
 		$config = $this->config($config);
 		$this->_path = $config['path'];
 		$this->_file = $config['file'];
-		if (!empty($this->_file) && !preg_match('/\.log$/', $this->_file)) {
+		if (!empty($this->_file) && substr($this->_file, -4) !== '.log') {
 			$this->_file .= '.log';
 		}
 	}
@@ -74,12 +76,10 @@ class FileLog extends BaseLog {
 
 		if (!empty($this->_file)) {
 			$filename = $this->_path . $this->_file;
-		} elseif ($type == 'error' || $type == 'warning') {
+		} elseif ($type === 'error' || $type === 'warning') {
 			$filename = $this->_path . 'error.log';
 		} elseif (in_array($type, $debugTypes)) {
 			$filename = $this->_path . 'debug.log';
-		} elseif (in_array($type, $this->_config['scopes'])) {
-			$filename = $this->_path . $this->_file;
 		} else {
 			$filename = $this->_path . $type . '.log';
 		}

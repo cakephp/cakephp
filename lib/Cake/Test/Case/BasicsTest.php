@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -67,7 +68,7 @@ class BasicsTest extends CakeTestCase {
 		$one = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$two = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$result = array_diff_key($one, $two);
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 	}
 
 /**
@@ -282,7 +283,9 @@ class BasicsTest extends CakeTestCase {
 
 		$result = cache('basics_test');
 		$this->assertEquals('simple cache write', $result);
-		@unlink(CACHE . 'basics_test');
+		if (file_exists(CACHE . 'basics_test')) {
+			unlink(CACHE . 'basics_test');
+		}
 
 		cache('basics_test', 'expired', '+1 second');
 		sleep(2);
@@ -603,7 +606,9 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	public function testLogError() {
-		@unlink(LOGS . 'error.log');
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
 
 		// disable stderr output for this test
 		if (CakeLog::stream('stderr')) {
@@ -762,7 +767,7 @@ EXPECTED;
 '<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
-		if (php_sapi_name() == 'cli') {
+		if (php_sapi_name() === 'cli') {
 			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
@@ -786,7 +791,7 @@ EXPECTED;
 '<div>this-is-a-test</div>'
 ###########################
 EXPECTED;
-		if (php_sapi_name() == 'cli') {
+		if (php_sapi_name() === 'cli') {
 			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
@@ -824,6 +829,18 @@ EXPECTED;
 
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
+###########################
+EXPECTED;
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		debug(false, false, false);
+		$result = ob_get_clean();
+		$expected = <<<EXPECTED
+
+########## DEBUG ##########
+false
 ###########################
 EXPECTED;
 		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);

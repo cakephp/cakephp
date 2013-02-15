@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model.Validator
  * @since         CakePHP(tm) v 2.2.0
@@ -24,7 +25,7 @@ App::uses('CakeValidationSet', 'Model/Validator');
  *
  * @package       Cake.Test.Case.Model.Validator
  */
-class CakeValidationSetTest  extends CakeTestCase {
+class CakeValidationSetTest extends CakeTestCase {
 
 /**
  * testValidate method
@@ -76,11 +77,6 @@ class CakeValidationSetTest  extends CakeTestCase {
 	public function testGetRule() {
 		$rules = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
 		$Field = new CakeValidationSet('title', $rules);
-		$data = array(
-			'title' => '',
-			'body' => 'a body'
-		);
-
 		$result = $Field->getRule('notEmpty');
 		$this->assertInstanceOf('CakeValidationRule', $result);
 		$this->assertEquals('notEmpty', $result->rule);
@@ -156,10 +152,22 @@ class CakeValidationSetTest  extends CakeTestCase {
 		$result = $Field->getRules();
 		$this->assertEquals(array('validEmail'), array_keys($result));
 
+		$Field->setRules(array('validEmail' => $rule), false);
+		$result = $Field->getRules();
+		$this->assertEquals(array('validEmail'), array_keys($result));
+		$this->assertTrue(array_pop($result) instanceof CakeValidationRule);
+
 		$rules = array('notEmpty' => $RuleEmpty);
 		$Field->setRules($rules, true);
 		$result = $Field->getRules();
 		$this->assertEquals(array('validEmail', 'notEmpty'), array_keys($result));
+
+		$rules = array('notEmpty' => array('rule' => 'notEmpty'));
+		$Field->setRules($rules, true);
+		$result = $Field->getRules();
+		$this->assertEquals(array('validEmail', 'notEmpty'), array_keys($result));
+		$this->assertTrue(array_pop($result) instanceof CakeValidationRule);
+		$this->assertTrue(array_pop($result) instanceof CakeValidationRule);
 	}
 
 /**

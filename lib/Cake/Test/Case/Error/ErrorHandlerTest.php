@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Error
  * @since         CakePHP(tm) v 1.2.0.5432
@@ -124,7 +125,9 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->_restoreError = true;
 
 		ob_start();
+		//@codingStandardsIgnoreStart
 		@include 'invalid.file';
+		//@codingStandardsIgnoreEnd
 		$result = ob_get_clean();
 		$this->assertTrue(empty($result));
 	}
@@ -138,7 +141,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		Configure::write('debug', 0);
 		Configure::write('Error.trace', false);
 		if (file_exists(LOGS . 'debug.log')) {
-			@unlink(LOGS . 'debug.log');
+			unlink(LOGS . 'debug.log');
 		}
 
 		set_error_handler('ErrorHandler::handleError');
@@ -152,7 +155,9 @@ class ErrorHandlerTest extends CakeTestCase {
 			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (Notice|Debug): Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
 			$result[0]
 		);
-		@unlink(LOGS . 'debug.log');
+		if (file_exists(LOGS . 'debug.log')) {
+			unlink(LOGS . 'debug.log');
+		}
 	}
 
 /**
@@ -164,7 +169,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		Configure::write('debug', 0);
 		Configure::write('Error.trace', true);
 		if (file_exists(LOGS . 'debug.log')) {
-			@unlink(LOGS . 'debug.log');
+			unlink(LOGS . 'debug.log');
 		}
 
 		set_error_handler('ErrorHandler::handleError');
@@ -179,7 +184,9 @@ class ErrorHandlerTest extends CakeTestCase {
 		);
 		$this->assertRegExp('/^Trace:/', $result[1]);
 		$this->assertRegExp('/^ErrorHandlerTest\:\:testHandleErrorLoggingTrace\(\)/', $result[2]);
-		@unlink(LOGS . 'debug.log');
+		if (file_exists(LOGS . 'debug.log')) {
+			unlink(LOGS . 'debug.log');
+		}
 	}
 
 /**
@@ -218,7 +225,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		$log = file(LOGS . 'error.log');
 		$this->assertRegExp('/\[NotFoundException\] Kaboom!/', $log[0], 'message missing.');
-		$this->assertRegExp('/\#0.*ErrorHandlerTest->testHandleExceptionLog/', $log[1], 'Stack trace missing.');
+		$this->assertRegExp('/\#0.*ErrorHandlerTest->testHandleExceptionLog/', $log[2], 'Stack trace missing.');
 	}
 
 /**

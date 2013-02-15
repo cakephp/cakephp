@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Network
  * @since         CakePHP(tm) v 2.0
@@ -28,7 +29,7 @@ class TestCakeRequest extends CakeRequest {
 		if (empty($url)) {
 			$url = $this->_url();
 		}
-		if ($url[0] == '/') {
+		if ($url[0] === '/') {
 			$url = substr($url, 1);
 		}
 		$this->url = $url;
@@ -136,6 +137,14 @@ class CakeRequestTest extends CakeTestCase {
 		$_SERVER['REQUEST_URI'] = '/tasks/index/page:1/?ts=123456';
 		$request = new CakeRequest();
 		$this->assertEquals('tasks/index/page:1/', $request->url);
+
+		$_SERVER['REQUEST_URI'] = '/some/path?url=http://cakephp.org';
+		$request = new CakeRequest();
+		$this->assertEquals('some/path', $request->url);
+
+		$_SERVER['REQUEST_URI'] = FULL_BASE_URL . '/other/path?url=http://cakephp.org';
+		$request = new CakeRequest();
+		$this->assertEquals('other/path', $request->url);
 	}
 
 /**
@@ -311,9 +320,10 @@ class CakeRequestTest extends CakeTestCase {
 
 		$request = $this->getMock('TestCakeRequest', array('_readInput'));
 		$request->expects($this->at(0))->method('_readInput')
-			->will($this->returnValue('{Article":["title"]}'));
+			->will($this->returnValue('{"Article":["title"]}'));
 		$request->reConstruct();
-		$this->assertEquals('{Article":["title"]}', $request->data);
+		$result = $request->input('json_decode', true);
+		$this->assertEquals(array('title'), $result['Article']);
 	}
 
 /**
@@ -980,7 +990,7 @@ class CakeRequestTest extends CakeTestCase {
  * @return void
  */
 	public function detectCallback($request) {
-		return $request->return == true;
+		return (bool)$request->return;
 	}
 
 /**
@@ -1336,7 +1346,7 @@ class CakeRequestTest extends CakeTestCase {
 		return array(
 			array(
 				'IIS - No rewrite base path',
-				 array(
+				array(
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/index.php',
@@ -1709,7 +1719,7 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function testEnvironmentDetection($name, $env, $expected) {
 		$_GET = array();
-		$this->__loadEnvironment($env);
+		$this->_loadEnvironment($env);
 
 		$request = new CakeRequest();
 		$this->assertEquals($expected['url'], $request->url, "url error");
@@ -1718,6 +1728,45 @@ class CakeRequestTest extends CakeTestCase {
 		if (isset($expected['urlParams'])) {
 			$this->assertEquals($expected['urlParams'], $request->query, "GET param mismatch");
 		}
+	}
+
+/**
+ * test the query() method
+ *
+ * @return void
+ */
+	public function testQuery() {
+		$_GET = array();
+		$_GET['foo'] = 'bar';
+
+		$request = new CakeRequest();
+
+		$result = $request->query('foo');
+		$this->assertEquals('bar', $result);
+
+		$result = $request->query('imaginary');
+		$this->assertNull($result);
+	}
+
+/**
+ * test the query() method with arrays passed via $_GET
+ *
+ * @return void
+ */
+	public function testQueryWithArray() {
+		$_GET = array();
+		$_GET['test'] = array('foo', 'bar');
+
+		$request = new CakeRequest();
+
+		$result = $request->query('test');
+		$this->assertEquals(array('foo', 'bar'), $result);
+
+		$result = $request->query('test.1');
+		$this->assertEquals('bar', $result);
+
+		$result = $request->query('test.2');
+		$this->assertNull($result);
 	}
 
 /**
@@ -1788,18 +1837,40 @@ class CakeRequestTest extends CakeTestCase {
  * @return void
  */
 	public function testAcceptLanguage() {
+		// Weird language
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
 		$result = CakeRequest::acceptLanguage();
 		$this->assertEquals(array('inexistent', 'en-ca'), $result, 'Languages do not match');
 
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx;en_ca';
+		// No qualifier
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx,en_ca';
 		$result = CakeRequest::acceptLanguage();
 		$this->assertEquals(array('es-mx', 'en-ca'), $result, 'Languages do not match');
+
+		// With qualifier
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.8,pt-BR;q=0.6,pt;q=0.4';
+		$result = CakeRequest::acceptLanguage();
+		$this->assertEquals(array('en-us', 'en', 'pt-br', 'pt'), $result, 'Languages do not match');
+
+		// With spaces
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'da, en-gb;q=0.8, en;q=0.7';
+		$result = CakeRequest::acceptLanguage();
+		$this->assertEquals(array('da', 'en-gb', 'en'), $result, 'Languages do not match');
+
+		// Checking if requested
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx,en_ca';
+		$result = CakeRequest::acceptLanguage();
 
 		$result = CakeRequest::acceptLanguage('en-ca');
 		$this->assertTrue($result);
 
+		$result = CakeRequest::acceptLanguage('en-CA');
+		$this->assertTrue($result);
+
 		$result = CakeRequest::acceptLanguage('en-us');
+		$this->assertFalse($result);
+
+		$result = CakeRequest::acceptLanguage('en-US');
 		$this->assertFalse($result);
 	}
 
@@ -1907,12 +1978,46 @@ XML;
 	}
 
 /**
+ * TestOnlyAllow
+ *
+ * @return void
+ */
+	public function testOnlyAllow() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$request = new CakeRequest('/posts/edit/1');
+
+		$this->assertTrue($request->onlyAllow(array('put')));
+
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$this->assertTrue($request->onlyAllow('post', 'delete'));
+	}
+
+/**
+ * TestOnlyAllow throwing exception
+ *
+ */
+	public function testOnlyAllowException() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$request = new CakeRequest('/posts/edit/1');
+
+		try {
+			$request->onlyAllow('POST', 'DELETE');
+			$this->fail('An expected exception has not been raised.');
+		} catch (MethodNotAllowedException $e) {
+			$this->assertEquals(array('Allow' => 'POST, DELETE'), $e->responseHeader());
+		}
+
+		$this->setExpectedException('MethodNotAllowedException');
+		$request->onlyAllow('POST');
+	}
+
+/**
  * loadEnvironment method
  *
  * @param array $env
  * @return void
  */
-	protected function __loadEnvironment($env) {
+	protected function _loadEnvironment($env) {
 		if (isset($env['App'])) {
 			Configure::write('App', $env['App']);
 		}

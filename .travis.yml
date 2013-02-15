@@ -10,6 +10,12 @@ env:
   - DB=pgsql
   - DB=sqlite
 
+matrix:
+  include:
+    - php: 5.4
+      env:
+        - PHPCS=1
+
 before_script:
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
@@ -23,6 +29,9 @@ before_script:
     server.listen(80, 'localhost');
     console.log('TCP server listening on port 80 at localhost.');" > app/tmp/socket.js
   - sudo node ./app/tmp/socket.js &
+  - pear channel-discover pear.cakephp.org
+  - pear install --alldeps cakephp/CakePHP_CodeSniffer
+  - phpenv rehash
   - set +H
   - echo "<?php
     class DATABASE_CONFIG {
@@ -105,7 +114,7 @@ before_script:
     }" > app/Config/database.php
 
 script:
-  - ./lib/Cake/Console/cake test core AllTests --stderr
+  - sh -c "if [ '$PHPCS' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi"
 
 notifications:
   email: false

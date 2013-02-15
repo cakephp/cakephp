@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Controller.Component.Acl
  * @since         CakePHP(tm) v 2.1
@@ -59,7 +60,6 @@ class PhpAclTest extends CakeTestCase {
 	}
 
 	public function testAroResolve() {
-		$map = $this->Acl->Aro->map;
 		$this->Acl->Aro->map = array(
 			'User' => 'FooModel/nickname',
 			'Role' => 'FooModel/role',
@@ -118,7 +118,7 @@ class PhpAclTest extends CakeTestCase {
 		$this->Acl->Aro->addAlias(array('Role/25' => 'Role/IT'));
 		$this->Acl->allow('Role/IT', '/rules/debugging/*');
 
-		$this->assertEquals(array(array('Role/IT', )), $this->Acl->Aro->roles($user));
+		$this->assertEquals(array(array('Role/IT')), $this->Acl->Aro->roles($user));
 		$this->assertTrue($this->Acl->check($user, '/rules/debugging/stats/pageload'));
 		$this->assertTrue($this->Acl->check($user, '/rules/debugging/sql/queries'));
 		// Role/default is allowed users dashboard, but not Role/IT

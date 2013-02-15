@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Core
  * @since         CakePHP(tm) v 1.2.0.5432
@@ -105,7 +106,7 @@ class RequestActionController extends Controller {
  * @return void
  */
 	public function paginate_request_action() {
-		$data = $this->paginate();
+		$this->paginate();
 		return true;
 	}
 
@@ -620,6 +621,24 @@ class ObjectTest extends CakeTestCase {
 	}
 
 /**
+ * Test that requestAction handles get parameters correctly.
+ *
+ * @return void
+ */
+	public function testRequestActionGetParameters() {
+		$result = $this->object->requestAction(
+			'/request_action/params_pass?get=value&limit=5'
+		);
+		$this->assertEquals('value', $result->query['get']);
+
+		$result = $this->object->requestAction(
+			array('controller' => 'request_action', 'action' => 'params_pass'),
+			array('url' => array('get' => 'value', 'limit' => 5))
+		);
+		$this->assertEquals('value', $result->query['get']);
+	}
+
+/**
  * test that requestAction does not fish data out of the POST
  * superglobal.
  *
@@ -632,7 +651,6 @@ class ObjectTest extends CakeTestCase {
 			'item' => 'value'
 		));
 		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass'));
-		$expected = null;
 		$this->assertEmpty($result);
 
 		$result = $this->object->requestAction(

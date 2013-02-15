@@ -7,12 +7,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.3
@@ -29,7 +30,9 @@ class JsEncodingObject {
 
 	protected $_title = 'Old thing';
 
+	//@codingStandardsIgnoreStart
 	private $__noshow = 'Never ever';
+	//@codingStandardsIgnoreEnd
 
 }
 
@@ -317,7 +320,7 @@ class JsHelperTest extends CakeTestCase {
 			->method('append')
 			->with('script', $this->matchesRegularExpression('#<script type="text\/javascript">window.app \= \{"foo"\:1\}\;<\/script>#'));
 
-		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'safe' => false));
+		$this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'safe' => false));
 	}
 
 /**
@@ -336,7 +339,7 @@ class JsHelperTest extends CakeTestCase {
 
 		$this->Js->buffer('alert("test");');
 		$this->Js->TestJsEngine->expects($this->never())->method('domReady');
-		$result = $this->Js->writeBuffer();
+		$this->Js->writeBuffer();
 
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 		if ($requestWith !== null) {
@@ -366,7 +369,9 @@ class JsHelperTest extends CakeTestCase {
 		$this->assertTrue(file_exists(WWW_ROOT . $filename[1]));
 		$contents = file_get_contents(WWW_ROOT . $filename[1]);
 		$this->assertRegExp('/one\s=\s1;\ntwo\s=\s2;/', $contents);
-		@unlink(WWW_ROOT . $filename[1]);
+		if (file_exists(WWW_ROOT . $filename[1])) {
+			unlink(WWW_ROOT . $filename[1]);
+		}
 
 		Configure::write('Cache.disable', true);
 		$this->Js->buffer('one = 1;');
@@ -904,7 +909,7 @@ class JsBaseEngineTest extends CakeTestCase {
 	public function testOptionMapping() {
 		$JsEngine = new OptionEngineHelper($this->View);
 		$result = $JsEngine->testMap();
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 
 		$result = $JsEngine->testMap(array('foo' => 'bar', 'baz' => 'sho'));
 		$this->assertEquals(array('foo' => 'bar', 'baz' => 'sho'), $result);

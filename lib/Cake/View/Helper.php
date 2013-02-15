@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View
  * @since         CakePHP(tm) v 0.2.9
@@ -14,6 +15,7 @@
  */
 
 App::uses('Router', 'Routing');
+App::uses('Hash', 'Utility');
 
 /**
  * Abstract base class for all other Helpers in CakePHP.
@@ -22,6 +24,13 @@ App::uses('Router', 'Routing');
  * @package       Cake.View
  */
 class Helper extends Object {
+
+/**
+ * Settings for this helper.
+ *
+ * @var array
+ */
+	public $settings = array();
 
 /**
  * List of helpers used by this helper
@@ -96,7 +105,7 @@ class Helper extends Object {
 
 /**
  * A list of strings that should be treated as suffixes, or
- * sub inputs for a parent input.  This is used for date/time
+ * sub inputs for a parent input. This is used for date/time
  * inputs primarily.
  *
  * @var array
@@ -137,7 +146,7 @@ class Helper extends Object {
 	protected $_minimizedAttributes = array(
 		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
 		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize',
-		'autoplay', 'controls', 'loop', 'muted'
+		'autoplay', 'controls', 'loop', 'muted', 'required', 'novalidate', 'formnovalidate'
 	);
 
 /**
@@ -163,6 +172,9 @@ class Helper extends Object {
 	public function __construct(View $View, $settings = array()) {
 		$this->_View = $View;
 		$this->request = $View->request;
+		if ($settings) {
+			$this->settings = Hash::merge($this->settings, $settings);
+		}
 		if (!empty($this->helpers)) {
 			$this->_helperMap = ObjectCollection::normalizeObjectArray($this->helpers);
 		}
@@ -232,7 +244,7 @@ class Helper extends Object {
  * Returns a URL pointing at the provided parameters.
  *
  * @param string|array $url Either a relative string url like `/products/view/23` or
- *    an array of url parameters.  Using an array for urls will allow you to leverage
+ *    an array of url parameters. Using an array for urls will allow you to leverage
  *    the reverse routing features of CakePHP.
  * @param boolean $full If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
@@ -292,42 +304,58 @@ class Helper extends Object {
  */
 	public function assetUrl($path, $options = array()) {
 		if (is_array($path)) {
-			$path = $this->url($path, !empty($options['fullBase']));
-		} elseif (strpos($path, '://') === false) {
-			if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
-				list($plugin, $path) = $this->_View->pluginSplit($path, false);
-			}
-			if (!empty($options['pathPrefix']) && $path[0] !== '/') {
-				$path = $options['pathPrefix'] . $path;
-			}
-			if (
-				!empty($options['ext']) &&
-				strpos($path, '?') === false &&
-				substr($path, -strlen($options['ext'])) !== $options['ext']
-			) {
-				$path .= $options['ext'];
-			}
-			if (isset($plugin)) {
-				$path = Inflector::underscore($plugin) . '/' . $path;
-			}
-			$path = h($this->assetTimestamp($this->webroot($path)));
-
-			if (!empty($options['fullBase'])) {
-				$base = $this->url('/', true);
-				$len = strlen($this->request->webroot);
-				if ($len) {
-					$base = substr($base, 0, -$len);
-				}
-				$path = $base . $path;
-			}
+			return $this->url($path, !empty($options['fullBase']));
 		}
+		if (strpos($path, '://') !== false) {
+			return $path;
+		}
+		if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
+			list($plugin, $path) = $this->_View->pluginSplit($path, false);
+		}
+		if (!empty($options['pathPrefix']) && $path[0] !== '/') {
+			$path = $options['pathPrefix'] . $path;
+		}
+		if (
+			!empty($options['ext']) &&
+			strpos($path, '?') === false &&
+			substr($path, -strlen($options['ext'])) !== $options['ext']
+		) {
+			$path .= $options['ext'];
+		}
+		if (isset($plugin)) {
+			$path = Inflector::underscore($plugin) . '/' . $path;
+		}
+		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
+		if (!empty($options['fullBase'])) {
+			$base = $this->url('/', true);
+			$len = strlen($this->request->webroot);
+			if ($len) {
+				$base = substr($base, 0, -$len);
+			}
+			$path = $base . $path;
+		}
 		return $path;
 	}
 
 /**
+ * Encodes a URL for use in HTML attributes.
+ *
+ * @param string $url The url to encode.
+ * @return string The url encoded for both URL & HTML contexts.
+ */
+	protected function _encodeUrl($url) {
+		$path = parse_url($url, PHP_URL_PATH);
+		$encoded = implode('/', array_map(
+			'rawurlencode',
+			explode('/', $path)
+		));
+		return h(str_replace($path, $encoded, $url));
+	}
+
+/**
  * Adds a timestamp to a file based resource based on the value of `Asset.timestamp` in
- * Configure.  If Asset.timestamp is true and debug > 0, or Asset.timestamp == 'force'
+ * Configure. If Asset.timestamp is true and debug > 0, or Asset.timestamp === 'force'
  * a timestamp will be added.
  *
  * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
@@ -340,20 +368,26 @@ class Helper extends Object {
 			$filepath = preg_replace('/^' . preg_quote($this->request->webroot, '/') . '/', '', $path);
 			$webrootPath = WWW_ROOT . str_replace('/', DS, $filepath);
 			if (file_exists($webrootPath)) {
+				//@codingStandardsIgnoreStart
 				return $path . '?' . @filemtime($webrootPath);
+				//@codingStandardsIgnoreEnd
 			}
 			$segments = explode('/', ltrim($filepath, '/'));
 			if ($segments[0] === 'theme') {
 				$theme = $segments[1];
 				unset($segments[0], $segments[1]);
 				$themePath = App::themePath($theme) . 'webroot' . DS . implode(DS, $segments);
+				//@codingStandardsIgnoreStart
 				return $path . '?' . @filemtime($themePath);
+				//@codingStandardsIgnoreEnd
 			} else {
 				$plugin = Inflector::camelize($segments[0]);
 				if (CakePlugin::loaded($plugin)) {
 					unset($segments[0]);
 					$pluginPath = CakePlugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
+					//@codingStandardsIgnoreStart
 					return $path . '?' . @filemtime($pluginPath);
+					//@codingStandardsIgnoreEnd
 				}
 			}
 		}
@@ -361,8 +395,8 @@ class Helper extends Object {
 	}
 
 /**
- * Used to remove harmful tags from content.  Removes a number of well known XSS attacks
- * from content.  However, is not guaranteed to remove all possibilities.  Escaping
+ * Used to remove harmful tags from content. Removes a number of well known XSS attacks
+ * from content. However, is not guaranteed to remove all possibilities. Escaping
  * content is the best way to prevent all possible attacks.
  *
  * @param string|array $output Either an array of strings to clean or a single string to clean.
@@ -385,22 +419,8 @@ class Helper extends Object {
 	}
 
 /**
- * Returns a space-delimited string with items of the $options array. If a
- * key of $options array happens to be one of:
- *
- * - 'compact'
- * - 'checked'
- * - 'declare'
- * - 'readonly'
- * - 'disabled'
- * - 'selected'
- * - 'defer'
- * - 'ismap'
- * - 'nohref'
- * - 'noshade'
- * - 'nowrap'
- * - 'multiple'
- * - 'noresize'
+ * Returns a space-delimited string with items of the $options array. If a key
+ * of $options array happens to be one of those listed in `Helper::$_minimizedAttributes`
  *
  * And its value is one of:
  *
@@ -413,7 +433,7 @@ class Helper extends Object {
  * If the value is not one of these 3, the parameter is not output.
  *
  * 'escape' is a special option in that it controls the conversion of
- *  attributes to their html-entity encoded equivalents.  Set to false to disable html-encoding.
+ *  attributes to their html-entity encoded equivalents. Set to false to disable html-encoding.
  *
  * If value for any option key is set to `null` or `false`, that option will be excluded from output.
  *
@@ -459,21 +479,21 @@ class Helper extends Object {
  * @deprecated This method will be moved to HtmlHelper in 3.0
  */
 	protected function _formatAttribute($key, $value, $escape = true) {
-		$attribute = '';
 		if (is_array($value)) {
 			$value = implode(' ' , $value);
 		}
-
 		if (is_numeric($key)) {
-			$attribute = sprintf($this->_minimizedAttributeFormat, $value, $value);
-		} elseif (in_array($key, $this->_minimizedAttributes)) {
-			if ($value === 1 || $value === true || $value === 'true' || $value === '1' || $value == $key) {
-				$attribute = sprintf($this->_minimizedAttributeFormat, $key, $key);
-			}
-		} else {
-			$attribute = sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
+			return sprintf($this->_minimizedAttributeFormat, $value, $value);
 		}
-		return $attribute;
+		$truthy = array(1, '1', true, 'true', $key);
+		$isMinimized = in_array($key, $this->_minimizedAttributes);
+		if ($isMinimized && in_array($value, $truthy, true)) {
+			return sprintf($this->_minimizedAttributeFormat, $key, $key);
+		}
+		if ($isMinimized) {
+			return '';
+		}
+		return sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
 	}
 
 /**
@@ -499,7 +519,7 @@ class Helper extends Object {
 
 		// Either 'body' or 'date.month' type inputs.
 		if (
-			($count === 1 && $this->_modelScope && $setScope == false) ||
+			($count === 1 && $this->_modelScope && !$setScope) ||
 			(
 				$count === 2 &&
 				in_array($lastPart, $this->_fieldSuffixes) &&
@@ -510,7 +530,7 @@ class Helper extends Object {
 			$entity = $this->_modelScope . '.' . $entity;
 		}
 
-		// 0.name, 0.created.month style inputs.  Excludes inputs with the modelScope in them.
+		// 0.name, 0.created.month style inputs. Excludes inputs with the modelScope in them.
 		if (
 			$count >= 2 &&
 			is_numeric($parts[0]) &&
@@ -525,12 +545,11 @@ class Helper extends Object {
 
 		$isHabtm = (
 			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) &&
-			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple' &&
-			$count == 1
+			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
 		);
 
 		// habtm models are special
-		if ($count == 1 && $isHabtm) {
+		if ($count === 1 && $isHabtm) {
 			$this->_association = $parts[0];
 			$entity = $parts[0] . '.' . $parts[0];
 		} else {
@@ -591,9 +610,8 @@ class Helper extends Object {
  * @param array|string $options Either an array of html attributes to add $id into, or a string
  *   with a view entity path to get a domId for.
  * @param string $id The name of the 'id' attribute.
- * @return mixed If $options was an array, an array will be returned with $id set.  If a string
+ * @return mixed If $options was an array, an array will be returned with $id set. If a string
  *   was supplied, a string will be returned.
- * @todo Refactor this method to not have as many input/output options.
  */
 	public function domId($options = null, $id = 'id') {
 		if (is_array($options) && array_key_exists($id, $options) && $options[$id] === null) {
@@ -606,7 +624,7 @@ class Helper extends Object {
 
 		$entity = $this->entity();
 		$model = array_shift($entity);
-		$dom = $model . join('', array_map(array('Inflector', 'camelize'), $entity));
+		$dom = $model . implode('', array_map(array('Inflector', 'camelize'), $entity));
 
 		if (is_array($options) && !array_key_exists($id, $options)) {
 			$options[$id] = $dom;
@@ -626,7 +644,6 @@ class Helper extends Object {
  * @param string $key The name of the attribute to be set, defaults to 'name'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
- * @todo Refactor this method to not have as many input/output options.
  */
 	protected function _name($options = array(), $field = null, $key = 'name') {
 		if ($options === null) {
@@ -670,7 +687,6 @@ class Helper extends Object {
  * @param string $key The name of the attribute to be set, defaults to 'value'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
- * @todo Refactor this method to not have as many input/output options.
  */
 	public function value($options = array(), $field = null, $key = 'value') {
 		if ($options === null) {
@@ -721,9 +737,8 @@ class Helper extends Object {
 	}
 
 /**
- * Sets the defaults for an input tag.  Will set the
- * name, value, and id attributes for an array of html attributes. Will also
- * add a 'form-error' class if the field contains validation errors.
+ * Sets the defaults for an input tag. Will set the
+ * name, value, and id attributes for an array of html attributes.
  *
  * @param string $field The field name to initialize.
  * @param array $options Array of options to use while initializing an input field.
@@ -749,7 +764,7 @@ class Helper extends Object {
  * @return array Array of options with $key set.
  */
 	public function addClass($options = array(), $class = null, $key = 'class') {
-		if (isset($options[$key]) && trim($options[$key]) != '') {
+		if (isset($options[$key]) && trim($options[$key])) {
 			$options[$key] .= ' ' . $class;
 		} else {
 			$options[$key] = $class;
@@ -782,7 +797,7 @@ class Helper extends Object {
 	}
 
 /**
- * After render callback.  afterRender is called after the view file is rendered
+ * After render callback. afterRender is called after the view file is rendered
  * but before the layout has been rendered.
  *
  * Overridden in subclasses.
@@ -794,7 +809,7 @@ class Helper extends Object {
 	}
 
 /**
- * Before layout callback.  beforeLayout is called before the layout is rendered.
+ * Before layout callback. beforeLayout is called before the layout is rendered.
  *
  * Overridden in subclasses.
  *
@@ -805,7 +820,7 @@ class Helper extends Object {
 	}
 
 /**
- * After layout callback.  afterLayout is called after the layout has rendered.
+ * After layout callback. afterLayout is called after the layout has rendered.
  *
  * Overridden in subclasses.
  *

@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 1.2.0.5436
@@ -102,7 +103,7 @@ class ControllerPost extends CakeTestModel {
  * @return void
  */
 	public function find($type = 'first', $options = array()) {
-		if ($type == 'popular') {
+		if ($type === 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
 			$options = Hash::merge($options, compact('conditions'));
 			return parent::find('all', $options);
@@ -543,8 +544,8 @@ class ControllerTest extends CakeTestCase {
 		$Controller->flash('this should work', '/flash');
 		$result = $Controller->response->body();
 
-		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-		<html xmlns="http://www.w3.org/1999/xhtml">
+		$expected = '<!DOCTYPE html>
+		<html>
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>this should work</title>
@@ -1254,7 +1255,7 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	public function testPropertyBackwardsCompatibility() {
-		$request = new CakeRequest('posts/index', null);
+		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
 		$request->data = array('Post' => array('id' => 1));
 		$request->here = '/posts/index';
@@ -1311,8 +1312,8 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEquals(array(1, 2, 3), $results);
 
 		$Controller->passedArgs = array();
-		$Controller->paginate = array('limit' => '-1');
-		$this->assertEquals(array('limit' => '-1'), $Controller->paginate);
+		$Controller->paginate = array('limit' => '1');
+		$this->assertEquals(array('limit' => '1'), $Controller->paginate);
 		$Controller->paginate('ControllerPost');
 		$this->assertSame($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertSame($Controller->params['paging']['ControllerPost']['pageCount'], 3);

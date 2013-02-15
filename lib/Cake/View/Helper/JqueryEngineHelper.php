@@ -4,19 +4,20 @@
  *
  * Provides jQuery specific Javascript for JsHelper.
  *
- * Implements the JsHelper interface for jQuery.  All $options arrays
+ * Implements the JsHelper interface for jQuery. All $options arrays
  * support all options found in the JsHelper, as well as those in the jQuery
  * documentation.
  *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 1.3
@@ -31,7 +32,7 @@ App::uses('JsBaseEngineHelper', 'View/Helper');
  *
  * Provides jQuery specific Javascript for JsHelper.
  *
- * Implements the JsHelper interface for jQuery.  All $options arrays
+ * Implements the JsHelper interface for jQuery. All $options arrays
  * support all options found in the JsHelper, as well as those in the jQuery
  * documentation.
  *
@@ -149,7 +150,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @return JqueryEngineHelper instance of $this. Allows chained methods.
  */
 	public function get($selector) {
-		if ($selector == 'window' || $selector == 'document') {
+		if ($selector === 'window' || $selector === 'document') {
 			$this->selection = $this->jQueryObject . '(' . $selector . ')';
 		} else {
 			$this->selection = $this->jQueryObject . '("' . $selector . '")';
@@ -189,7 +190,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * bind a 'traditional event' as `$(document).bind('ready', fn)`
  * Works in an entirely different fashion than  `$(document).ready()`
  * The first will not run the function when eval()'d as part of a response
- * The second will.  Because of the way that ajax pagination is done
+ * The second will. Because of the way that ajax pagination is done
  * `$().ready()` is used.
  *
  * @param string $functionBody The code to run on domReady
@@ -226,7 +227,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		switch ($name) {
 			case 'slideIn':
 			case 'slideOut':
-				$name = ($name == 'slideIn') ? 'slideDown' : 'slideUp';
+				$name = ($name === 'slideIn') ? 'slideDown' : 'slideUp';
 			case 'hide':
 			case 'show':
 			case 'fadeIn':
@@ -250,7 +251,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @see JsBaseEngineHelper::request() for options list.
  */
 	public function request($url, $options = array()) {
-		$url = $this->url($url);
+		$url = html_entity_decode($this->url($url), ENT_COMPAT, Configure::read('App.encoding'));
 		$options = $this->_mapOptions('request', $options);
 		if (isset($options['data']) && is_array($options['data'])) {
 			$options['data'] = $this->_toQuerystring($options['data']);

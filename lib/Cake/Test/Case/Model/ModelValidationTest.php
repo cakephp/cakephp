@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -167,7 +168,7 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
- * Test that invalidFields() integrates well with save().  And that fieldList can be an empty type.
+ * Test that invalidFields() integrates well with save(). And that fieldList can be an empty type.
  *
  * @return void
  */
@@ -711,25 +712,6 @@ class ModelValidationTest extends BaseModelTest {
 			)
 		);
 		$TestModel->invalidFields(array('fieldList' => array('title')));
-	}
-
-/**
- * Test that missing validation methods does not trigger errors in production mode.
- *
- * @return void
- */
-	public function testMissingValidationErrorNoTriggering() {
-		Configure::write('debug', 0);
-		$TestModel = new ValidationTest1();
-		$TestModel->create(array('title' => 'foo'));
-		$TestModel->validate = array(
-			'title' => array(
-				'rule' => array('thisOneBringsThePain'),
-				'required' => true
-			)
-		);
-		$TestModel->invalidFields(array('fieldList' => array('title')));
-		$this->assertEquals(array(), $TestModel->validationErrors);
 	}
 
 /**
@@ -2135,6 +2117,33 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
+ * Test that validator override works as expected
+ *
+ * @return void
+ */
+	public function testValidatorOverride() {
+		$TestModel = new Article();
+		$ValidatorA = new ModelValidator($TestModel);
+		$ValidatorB = new ModelValidator($TestModel);
+
+		$TestModel->validator($ValidatorA);
+		$TestModel->validator($ValidatorB);
+
+		$this->assertSame($ValidatorB, $TestModel->validator());
+		$this->assertNotSame($ValidatorA, $TestModel->validator());
+	}
+
+/**
+ * Test that type hint exception is thrown
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testValidatorTypehintException() {
+		new ModelValidator('asdasds');
+	}
+
+/**
  * Tests that altering data in a beforeValidate callback will lead to saving those
  * values in database, this time with belongsTo associations
  *
@@ -2169,7 +2178,7 @@ class ModelValidationTest extends BaseModelTest {
  * after a presentation made to show off this new feature
  *
  * @return void
- **/
+ */
 	public function testDynamicValidationRuleBuilding() {
 		$model = new Article;
 		$validator = $model->validator();
@@ -2225,6 +2234,126 @@ class ModelValidationTest extends BaseModelTest {
 
 		$model->set(array('title' => ''));
 		$this->assertFalse($model->validates());
+	}
+
+/**
+ * Test validateAssociated with atomic=false & deep=true
+ *
+ * @return void
+ */
+	public function testValidateAssociatedAtomicFalseDeepTrueWithErrors() {
+		$this->loadFixtures('Comment', 'Article', 'User', 'Attachment');
+		$Attachment = ClassRegistry::init('Attachment');
+		$Attachment->Comment->validator()->add('comment', array(
+			array('rule' => 'notEmpty')
+		));
+		$Attachment->Comment->User->bindModel(array(
+			'hasMany' => array(
+				'Article',
+				'Comment'
+			)),
+			false
+		);
+
+		$data = array(
+			'Attachment' => array(
+				'attachment' => 'text',
+				'Comment' => array(
+					'comment' => '',
+					'published' => 'N',
+					'User' => array(
+						'user' => 'Foo',
+						'password' => 'mypassword',
+						'Comment' => array(
+							array(
+								'comment' => ''
+							)
+						)
+					)
+				)
+			)
+		);
+		$result = $Attachment->validateAssociated($data, array('atomic' => false, 'deep' => true));
+
+		$result = $Attachment->validationErrors;
+		$expected = array(
+			'Comment' => array(
+				'comment' => array(
+					0 => 'This field cannot be left blank',
+				),
+				'User' => array(
+					'Comment' => array(
+						0 => array(
+							'comment' => array(
+								0 => 'This field cannot be left blank',
+							),
+						),
+					),
+				),
+			),
+		);
+		$this->assertEquals($result, $expected);
+	}
+
+/**
+ * Test validateMany with atomic=false & deep=true
+ *
+ * @return void
+ */
+	public function testValidateManyAtomicFalseDeepTrueWithErrors() {
+		$this->loadFixtures('Comment', 'Article', 'User');
+		$Article = ClassRegistry::init('Article');
+		$Article->Comment->validator()->add('comment', array(
+			array('rule' => 'notEmpty')
+		));
+
+		$data = array(
+			array(
+				'Article' => array(
+					'user_id' => 1,
+					'title' => 'Foo',
+					'body' => 'text',
+					'published' => 'N'
+				),
+				'Comment' => array(
+					array(
+						'user_id' => 1,
+						'comment' => 'Baz',
+						'published' => 'N',
+					)
+				),
+			),
+			array(
+				'Article' => array(
+					'user_id' => 1,
+					'title' => 'Bar',
+					'body' => 'text',
+					'published' => 'N'
+				),
+				'Comment' => array(
+					array(
+						'user_id' => 1,
+						'comment' => '',
+						'published' => 'N',
+					)
+				),
+			),
+		);
+		$Article->validateMany($data, array('atomic' => false, 'deep' => true));
+
+		$result = $Article->validationErrors;
+		$expected = array(
+			1 => array(
+				'Comment' => array(
+					0 => array(
+						'comment' => array(
+							0 => 'This field cannot be left blank',
+						),
+					),
+				),
+			),
+		);
+		$this->assertEquals($result, $expected);
 	}
 
 }

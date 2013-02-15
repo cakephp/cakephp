@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -319,8 +320,8 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
- 		$expected = array(
- 			'a' => array('href' => '#'),
+		$expected = array(
+			'a' => array('href' => '#'),
 			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
 			'/a'
 		);
@@ -336,6 +337,30 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->link('http://www.example.org?param1=value1&param2=value2');
 		$expected = array('a' => array('href' => 'http://www.example.org?param1=value1&amp;param2=value2'), 'http://www.example.org?param1=value1&amp;param2=value2', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('alert', 'javascript:alert(\'cakephp\');');
+		$expected = array('a' => array('href' => 'javascript:alert(&#039;cakephp&#039;);'), 'alert', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('write me', 'mailto:example@cakephp.org');
+		$expected = array('a' => array('href' => 'mailto:example@cakephp.org'), 'write me', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('call me on 0123465-798', 'tel:0123465-798');
+		$expected = array('a' => array('href' => 'tel:0123465-798'), 'call me on 0123465-798', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('text me on 0123465-798', 'sms:0123465-798');
+		$expected = array('a' => array('href' => 'sms:0123465-798'), 'text me on 0123465-798', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('say hello to 0123465-798', 'sms:0123465-798?body=hello there');
+		$expected = array('a' => array('href' => 'sms:0123465-798?body=hello there'), 'say hello to 0123465-798', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('say hello to 0123465-798', 'sms:0123465-798?body=hello "cakephp"');
+		$expected = array('a' => array('href' => 'sms:0123465-798?body=hello &quot;cakephp&quot;'), 'say hello to 0123465-798', '/a');
 		$this->assertTags($result, $expected);
 	}
 
@@ -425,7 +450,7 @@ class HtmlHelperTest extends CakeTestCase {
 		App::uses('File', 'Utility');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'img' . DS . '__cake_test_image.gif';
-		$File = new File($testfile, true);
+		new File($testfile, true);
 
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
@@ -963,7 +988,7 @@ class HtmlHelperTest extends CakeTestCase {
 		App::uses('File', 'Utility');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'js' . DS . '__test_js.js';
-		$File = new File($testfile, true);
+		new File($testfile, true);
 
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
@@ -1827,6 +1852,73 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test getCrumbList() in Twitter Bootstrap style.
+ *
+ * @return void
+ */
+	public function testCrumbListBootstrapStyle() {
+		$this->Html->addCrumb('Home', '/', array('class' => 'home'));
+		$this->Html->addCrumb('Library', '/lib');
+		$this->Html->addCrumb('Data');
+		$result = $this->Html->getCrumbList(array(
+			'class' => 'breadcrumb',
+			'separator' => '<span class="divider">-</span>',
+			'firstClass' => false,
+			'lastClass' => 'active'
+		));
+		$this->assertTags(
+			$result,
+			array(
+				array('ul' => array('class' => 'breadcrumb')),
+				'<li',
+				array('a' => array('class' => 'home', 'href' => '/')), 'Home', '/a',
+				array('span' => array('class' => 'divider')), '-', '/span',
+				'/li',
+				'<li',
+				array('a' => array('href' => '/lib')), 'Library', '/a',
+				array('span' => array('class' => 'divider')), '-', '/span',
+				'/li',
+				array('li' => array('class' => 'active')), 'Data', '/li',
+				'/ul'
+			)
+		);
+	}
+
+/**
+ * Test GetCrumbList using style of Zurb Foundation.
+ *
+ * @return void
+ */
+	public function testCrumbListZurbStyle() {
+		$this->Html->addCrumb('Home', '#');
+		$this->Html->addCrumb('Features', '#');
+		$this->Html->addCrumb('Gene Splicing', '#');
+		$this->Html->addCrumb('Home', '#');
+		$result = $this->Html->getCrumbList(
+			array('class' => 'breadcrumbs', 'firstClass' => false, 'lastClass' => 'current')
+		);
+		$this->assertTags(
+			$result,
+			array(
+				array('ul' => array('class' => 'breadcrumbs')),
+				'<li',
+				array('a' => array('href' => '#')), 'Home', '/a',
+				'/li',
+				'<li',
+				array('a' => array('href' => '#')), 'Features', '/a',
+				'/li',
+				'<li',
+				array('a' => array('href' => '#')), 'Gene Splicing', '/a',
+				'/li',
+				array('li' => array('class' => 'current')),
+				array('a' => array('href' => '#')), 'Home', '/a',
+				'/li',
+				'/ul'
+			), true
+		);
+	}
+
+/**
  * testLoadConfig method
  *
  * @return void
@@ -1839,7 +1931,8 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array(
 			'tags' => array(
 				'form' => 'start form',
-				'formend' => 'finish form'
+				'formend' => 'finish form',
+				'hiddenblock' => '<div class="hidden">%s</div>'
 			)
 		);
 		$this->assertEquals($expected, $result);
@@ -1863,7 +1956,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @expectedException ConfigureException
  */
 	public function testLoadConfigWrongFile() {
-		$result = $this->Html->loadConfig('wrong_file');
+		$this->Html->loadConfig('wrong_file');
 	}
 
 /**
@@ -1874,7 +1967,7 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	public function testLoadConfigWrongReader() {
 		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS;
-		$result = $this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
+		$this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
 	}
 
 /**

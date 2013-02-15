@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model.Validator
  * @since         CakePHP(tm) v 2.2.0
@@ -30,7 +31,7 @@ class CakeValidationRuleTest extends CakeTestCase {
  * Auxiliary method to test custom validators
  *
  * @return boolean
- **/
+ */
 	public function myTestRule() {
 		return false;
 	}
@@ -39,7 +40,7 @@ class CakeValidationRuleTest extends CakeTestCase {
  * Auxiliary method to test custom validators
  *
  * @return boolean
- **/
+ */
 	public function myTestRule2() {
 		return true;
 	}
@@ -48,7 +49,7 @@ class CakeValidationRuleTest extends CakeTestCase {
  * Auxiliary method to test custom validators
  *
  * @return string
- **/
+ */
 	public function myTestRule3() {
 		return 'string';
 	}
@@ -171,4 +172,29 @@ class CakeValidationRuleTest extends CakeTestCase {
 		$Rule->isUpdate(true);
 		$this->assertTrue($Rule->isEmptyAllowed());
 	}
+
+/**
+ * Test checkRequired method
+ *
+ * @return void
+ */
+	public function testCheckRequiredWhenRequiredAndAllowEmpty() {
+		$Rule = $this->getMock('CakeValidationRule', array('isRequired'));
+		$Rule->expects($this->any())
+			->method('isRequired')
+			->will($this->returnValue(true));
+		$Rule->allowEmpty = true;
+
+		$fieldname = 'field';
+		$data = array(
+			$fieldname => null
+		);
+
+		$this->assertFalse($Rule->checkRequired($fieldname, $data), "A null but present field should not fail requirement check if allowEmpty is true");
+
+		$Rule->allowEmpty = false;
+
+		$this->assertTrue($Rule->checkRequired($fieldname, $data), "A null but present field should fail requirement check if allowEmpty is false");
+	}
+
 }

@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Network
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -204,14 +205,147 @@ class CakeSocketTest extends CakeTestCase {
  */
 	public function testReset() {
 		$config = array(
-			'persistent'	=> true,
-			'host'			=> '127.0.0.1',
-			'protocol'		=> 'udp',
-			'port'			=> 80,
-			'timeout'		=> 20
+			'persistent' => true,
+			'host' => '127.0.0.1',
+			'protocol' => 'udp',
+			'port' => 80,
+			'timeout' => 20
 		);
 		$anotherSocket = new CakeSocket($config);
 		$anotherSocket->reset();
 		$this->assertEquals(array(), $anotherSocket->config);
 	}
+
+/**
+ * testEncrypt
+ *
+ * @expectedException SocketException
+ * @return void
+ */
+	public function testEnableCryptoSocketExceptionNoSsl() {
+		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+		$configNoSslOrTls = array('host' => 'localhost', 'port' => 80, 'timeout' => 0.1);
+
+		// testing exception on no ssl socket server for ssl and tls methods
+		$this->Socket = new CakeSocket($configNoSslOrTls);
+		$this->Socket->connect();
+		$this->Socket->enableCrypto('sslv3', 'client');
+	}
+
+/**
+ * testEnableCryptoSocketExceptionNoTls
+ *
+ * @expectedException SocketException
+ * @return void
+ */
+	public function testEnableCryptoSocketExceptionNoTls() {
+		$configNoSslOrTls = array('host' => 'localhost', 'port' => 80, 'timeout' => 0.1);
+
+		// testing exception on no ssl socket server for ssl and tls methods
+		$this->Socket = new CakeSocket($configNoSslOrTls);
+		$this->Socket->connect();
+		$this->Socket->enableCrypto('tls', 'client');
+	}
+
+/**
+ * _connectSocketToSslTls
+ *
+ * @return void
+ */
+	protected function _connectSocketToSslTls() {
+		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+		$configSslTls = array('host' => 'smtp.gmail.com', 'port' => 465, 'timeout' => 5);
+		$this->Socket = new CakeSocket($configSslTls);
+		$this->Socket->connect();
+	}
+
+/**
+ * testEnableCryptoBadMode
+ *
+ * @expectedException InvalidArgumentException
+ * @return void
+ */
+	public function testEnableCryptoBadMode() {
+		// testing wrong encryption mode
+		$this->_connectSocketToSslTls();
+		$this->Socket->enableCrypto('doesntExistMode', 'server');
+		$this->Socket->disconnect();
+	}
+
+/**
+ * testEnableCrypto
+ *
+ * @return void
+ */
+	public function testEnableCrypto() {
+		// testing on ssl server
+		$this->_connectSocketToSslTls();
+		$this->assertTrue($this->Socket->enableCrypto('sslv3', 'client'));
+		$this->Socket->disconnect();
+
+		// testing on tls server
+		$this->_connectSocketToSslTls();
+		$this->assertTrue($this->Socket->enableCrypto('tls', 'client'));
+		$this->Socket->disconnect();
+	}
+
+/**
+ * testEnableCryptoExceptionEnableTwice
+ *
+ * @expectedException SocketException
+ * @return void
+ */
+	public function testEnableCryptoExceptionEnableTwice() {
+		// testing on tls server
+		$this->_connectSocketToSslTls();
+		$this->Socket->enableCrypto('tls', 'client');
+		$this->Socket->enableCrypto('tls', 'client');
+	}
+
+/**
+ * testEnableCryptoExceptionDisableTwice
+ *
+ * @expectedException SocketException
+ * @return void
+ */
+	public function testEnableCryptoExceptionDisableTwice() {
+		// testing on tls server
+		$this->_connectSocketToSslTls();
+		$this->Socket->enableCrypto('tls', 'client', false);
+	}
+
+/**
+ * testEnableCryptoEnableStatus
+ *
+ * @return void
+ */
+	public function testEnableCryptoEnableStatus() {
+		// testing on tls server
+		$this->_connectSocketToSslTls();
+		$this->assertFalse($this->Socket->encrypted);
+		$this->Socket->enableCrypto('tls', 'client', true);
+		$this->assertTrue($this->Socket->encrypted);
+	}
+
+/**
+ * test getting the context for a socket.
+ *
+ * @return void
+ */
+	public function testGetContext() {
+		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+		$config = array(
+			'host' => 'smtp.gmail.com',
+			'port' => 465,
+			'timeout' => 5,
+			'context' => array(
+				'ssl' => array('capture_peer' => true)
+			)
+		);
+		$this->Socket = new CakeSocket($config);
+		$this->Socket->connect();
+		$result = $this->Socket->context();
+		$this->assertEquals($config['context'], $result);
+	}
+
 }

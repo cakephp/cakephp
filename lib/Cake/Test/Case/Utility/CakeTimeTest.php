@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -340,14 +341,14 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals(date('Y-d-m', $time), $this->Time->nice($time));
 		$this->assertEquals('%Y-%d-%m', $this->Time->niceFormat);
 
-		CakeTime::$niceFormat = '%Y-%d-%m %H:%M:%S';
-		$this->assertEquals(date('Y-d-m H:i:s', $time), $this->Time->nice($time));
-		$this->assertEquals('%Y-%d-%m %H:%M:%S', $this->Time->niceFormat);
+		CakeTime::$niceFormat = '%Y-%d-%m %H:%M';
+		$this->assertEquals(date('Y-d-m H:i', $time), $this->Time->nice($time));
+		$this->assertEquals('%Y-%d-%m %H:%M', $this->Time->niceFormat);
 
 		date_default_timezone_set('UTC');
 		$result = $this->Time->nice(null, 'America/New_York');
 		$expected = $this->Time->nice(time(), 'America/New_York');
-		$this->assertEquals($expected, $result);
+		$this->assertEquals(substr($expected, 0, -1), substr($result, 0, -1));
 
 		$this->_restoreSystemTimezone();
 	}
@@ -366,6 +367,12 @@ class CakeTimeTest extends CakeTestCase {
 
 		$time = time() + DAY;
 		$this->assertEquals('Tomorrow, ' . date('H:i', $time), $this->Time->niceShort($time));
+
+		$time = strtotime('+6 days');
+		$this->assertEquals('On ' . date('l F d, H:i', $time), $this->Time->niceShort($time));
+
+		$time = strtotime('-6 days');
+		$this->assertEquals(date('l F d, H:i', $time), $this->Time->niceShort($time));
 
 		date_default_timezone_set('Europe/London');
 		$result = $this->Time->niceShort('2005-01-15 10:00:00', new DateTimeZone('Europe/Brussels'));
@@ -474,7 +481,7 @@ class CakeTimeTest extends CakeTestCase {
 
 		date_default_timezone_set('UTC');
 
-		$serverTime = new DateTime('now');
+		$serverTime = new DateTime('2012-12-11 14:15:20');
 
 		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
 		foreach ($timezones as $timezone) {
@@ -509,17 +516,18 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function testToRss() {
-		$this->assertEquals(date('r'), $this->Time->toRss(time()));
+		$date = '2012-08-12 12:12:45';
+		$time = strtotime($date);
+		$this->assertEquals(date('r', $time), $this->Time->toRss($time));
 
-		if (!$this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.')) {
-			$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
-			foreach ($timezones as $timezone) {
-				$yourTimezone = new DateTimeZone($timezone);
-				$yourTime = new DateTime('now', $yourTimezone);
-				$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
-				$this->assertEquals($yourTime->format('r'), $this->Time->toRss(time(), $userOffset));
-				$this->assertEquals($yourTime->format('r'), $this->Time->toRss(time(), $timezone));
-			}
+		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
+		foreach ($timezones as $timezone) {
+			$yourTimezone = new DateTimeZone($timezone);
+			$yourTime = new DateTime($date, $yourTimezone);
+			$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
+			$time = $yourTime->format('U');
+			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $userOffset), "Failed on $timezone");
+			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
 		}
 	}
 
@@ -1054,7 +1062,7 @@ class CakeTimeTest extends CakeTestCase {
  * from one timezone to the other correctly
  *
  * @return void
- **/
+ */
 	public function testCorrectTimezoneConversion() {
 		date_default_timezone_set('UTC');
 		$date = '2012-01-01 10:00:00';

@@ -4,12 +4,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Scaffolds
  * @since         CakePHP(tm) v 0.10.0.1076
@@ -26,29 +27,28 @@
 	<th><?php echo __d('cake', 'Actions'); ?></th>
 </tr>
 <?php
-$i = 0;
 foreach (${$pluralVar} as ${$singularVar}):
-	echo "<tr>";
+	echo '<tr>';
 		foreach ($scaffoldFields as $_field) {
 			$isKey = false;
 			if (!empty($associations['belongsTo'])) {
 				foreach ($associations['belongsTo'] as $_alias => $_details) {
 					if ($_field === $_details['foreignKey']) {
 						$isKey = true;
-						echo "<td>" . $this->Html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "</td>";
+						echo '<td>' . $this->Html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . '</td>';
 						break;
 					}
 				}
 			}
 			if ($isKey !== true) {
-				echo "<td>" . h(${$singularVar}[$modelClass][$_field]) . "</td>";
+				echo '<td>' . h(${$singularVar}[$modelClass][$_field]) . '</td>';
 			}
 		}
 
 		echo '<td class="actions">';
 		echo $this->Html->link(__d('cake', 'View'), array('action' => 'view', ${$singularVar}[$modelClass][$primaryKey]));
-		echo $this->Html->link(__d('cake', 'Edit'), array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey]));
-		echo $this->Form->postLink(
+		echo ' ' . $this->Html->link(__d('cake', 'Edit'), array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey]));
+		echo ' ' . $this->Form->postLink(
 			__d('cake', 'Delete'),
 			array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]),
 			null,
@@ -83,8 +83,19 @@ endforeach;
 		foreach ($associations as $_type => $_data) {
 			foreach ($_data as $_alias => $_details) {
 				if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-					echo "<li>" . $this->Html->link(__d('cake', 'List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>";
-					echo "<li>" . $this->Html->link(__d('cake', 'New %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>";
+					echo '<li>';
+					echo $this->Html->link(
+						__d('cake', 'List %s', Inflector::humanize($_details['controller'])),
+						array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'index')
+					);
+					echo '</li>';
+
+					echo '<li>';
+					echo $this->Html->link(
+						__d('cake', 'New %s', Inflector::humanize(Inflector::underscore($_alias))),
+						array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'add')
+					);
+					echo '</li>';
 					$done[] = $_details['controller'];
 				}
 			}

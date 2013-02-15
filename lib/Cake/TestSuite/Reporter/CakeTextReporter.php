@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -48,7 +49,7 @@ class CakeTextReporter extends CakeBaseReporter {
 /**
  * Paints a failing test.
  *
- * @param $message PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
+ * @param PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
  *   the context of the other tests.
  * @return void
  */
@@ -71,10 +72,10 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintFooter($result) {
-		if ($result->failureCount() + $result->errorCount() == 0) {
-			echo "\nOK\n";
-		} else {
+		if ($result->failureCount() + $result->errorCount()) {
 			echo "FAILURES!!!\n";
+		} else {
+			echo "\nOK\n";
 		}
 
 		echo "Test cases run: " . $result->count() .
@@ -95,7 +96,6 @@ class CakeTextReporter extends CakeBaseReporter {
 /**
  * Paints the title only.
  *
- * @param string $test_name Name class of test.
  * @return void
  */
 	public function paintHeader() {
@@ -165,7 +165,7 @@ class CakeTextReporter extends CakeBaseReporter {
 			echo $buffer;
 		}
 
-		foreach ($testCases as $testCaseFile => $testCase) {
+		foreach ($testCases as $testCase) {
 			$buffer .= $_SERVER['SERVER_NAME'] . $this->baseUrl() . "?case=" . $testCase . "&output=text\n";
 		}
 
@@ -177,7 +177,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * Generates a Text summary of the coverage data.
  *
  * @param array $coverage Array of coverage data.
- * @return string
+ * @return void
  */
 	public function paintCoverage($coverage) {
 		$reporter = new TextCoverageReport($coverage, $this);
