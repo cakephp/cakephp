@@ -26,11 +26,6 @@
  */
 class CakeFixtureManagerTest extends CakeTestCase {
 
-	var $fixtures = array(
-		'core.article*',
-		'core.apple',
-		'core.aro*'
-	);
 	var $autoFixtures = false;
 
 /**
@@ -39,6 +34,14 @@ class CakeFixtureManagerTest extends CakeTestCase {
  * @return void
  */
 	function testFixtureExpand(){
+		$this->fixtures = array(
+			'core.article*',
+			'core.apple',
+			'core.aro*'
+		);
+		$fm = new CakeFixtureManager();
+		$fm->fixturize($this);
+
 		$excepted = array(
 			'core.article_featured',
 			'core.article_featureds_tags',
@@ -50,7 +53,25 @@ class CakeFixtureManagerTest extends CakeTestCase {
 			'core.aros_aco',
 			'core.aros_aco_two'
 		);
-		$this->assertEquals($excepted, $this->fixtureManager->getLoadedFixtures());
+		$this->assertEquals($excepted, $fm->getLoadedFixtures());
+	}
+
+/**
+ * test that fixture manager loads all article fixtures using * wildcard
+ *
+ * @return void
+ */
+	function testLoadAllFixtures(){
+		$this->fixtures = array(
+			'core.*',
+		);
+
+		$fm = new CakeFixtureManager();
+		$fm->fixturize($this);
+
+		$excepted = count(glob(CAKE . 'Test' . DS . 'Fixture' . DS . "*Fixture.php"));
+
+		$this->assertEquals($excepted, count($fm->getLoadedFixtures()));
 	}
 
 }

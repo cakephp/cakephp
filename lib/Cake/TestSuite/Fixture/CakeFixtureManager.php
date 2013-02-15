@@ -326,7 +326,7 @@ class CakeFixtureManager {
 			throw new CakeException("Bad fixture expression: {$fixtureExpr}");
 		}
 
-		$search = $path . Inflector::camelize($pattern) . '.php';
+		$search = $path . Inflector::camelize($pattern) . 'Fixture.php';
 		$files = glob($search);
 		$fixtures = array();
 		foreach($files as $file){
