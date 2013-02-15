@@ -151,13 +151,13 @@ class Object {
  * @param integer $type Error type constant. Defined in app/Config/core.php.
  * @return boolean Success of log write
  */
-	public function log($msg, $type = LOG_ERR) {
-		App::uses('CakeLog', 'Log');
-		if (!is_string($msg)) {
-			$msg = print_r($msg, true);
-		}
-		return CakeLog::write($type, $msg);
-	}
+  public function log($msg, $type = LOG_ERR, $scope = null) {
+    if (!is_string($msg)) {
+      $msg = print_r($msg, true);
+    }
+
+    return CakeLog::write($type, $msg, $scope);
+  }
 
 /**
  * Allows setting of multiple properties of the object in a single line of code. Will only set
