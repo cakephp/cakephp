@@ -1066,7 +1066,7 @@ class CakeEmail {
 		$contents = $this->transportClass()->send($this);
 		if (!empty($this->_config['log'])) {
 			$level = LOG_DEBUG;
-			$scope = null;
+			$scope = 'email';
 			if ($this->_config['log'] !== true) {
 				if (!is_array($this->_config['log'])) {
 					$this->_config['log'] = array('level' => $this->_config['log']);
