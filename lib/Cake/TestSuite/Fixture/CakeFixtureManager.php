@@ -344,7 +344,7 @@ class CakeFixtureManager {
  *
  * @return array
  */
-	function getLoadedFixtures() {
+	public function getLoadedFixtures() {
 		return array_keys($this->_loaded);
 	}
 }
