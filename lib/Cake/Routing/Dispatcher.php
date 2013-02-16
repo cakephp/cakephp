@@ -8,12 +8,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Routing
  * @since         CakePHP(tm) v 0.2.9
@@ -32,8 +33,8 @@ App::uses('CakeEventManager', 'Event');
 App::uses('CakeEventListener', 'Event');
 
 /**
- * Dispatcher converts Requests into controller actions.  It uses the dispatched Request
- * to locate and load the correct controller.  If found, the requested action is called on
+ * Dispatcher converts Requests into controller actions. It uses the dispatched Request
+ * to locate and load the correct controller. If found, the requested action is called on
  * the controller.
  *
  * @package       Cake.Routing
@@ -122,9 +123,9 @@ class Dispatcher implements CakeEventListener {
  * Dispatches and invokes given Request, handing over control to the involved controller. If the controller is set
  * to autoRender, via Controller::$autoRender, then Dispatcher will render the view.
  *
- * Actions in CakePHP can be any public method on a controller, that is not declared in Controller.  If you
+ * Actions in CakePHP can be any public method on a controller, that is not declared in Controller. If you
  * want controller methods to be public and in-accessible by URL, then prefix them with a `_`.
- * For example `public function _loadPosts() { }` would not be accessible via URL.  Private and protected methods
+ * For example `public function _loadPosts() { }` would not be accessible via URL. Private and protected methods
  * are also not accessible via URL.
  *
  * If no controller of given name can be found, invoke() will throw an exception.
@@ -209,12 +210,6 @@ class Dispatcher implements CakeEventListener {
 	public function parseParams($event) {
 		$request = $event->data['request'];
 		Router::setRequestInfo($request);
-		if (count(Router::$routes) == 0) {
-			$namedExpressions = Router::getNamedExpressions();
-			extract($namedExpressions);
-			$this->_loadRoutes();
-		}
-
 		$params = Router::parse($request->url);
 		$request->addParams($params);
 
@@ -267,15 +262,6 @@ class Dispatcher implements CakeEventListener {
 			}
 		}
 		return false;
-	}
-
-/**
- * Loads route configuration
- *
- * @return void
- */
-	protected function _loadRoutes() {
-		include APP . 'Config' . DS . 'routes.php';
 	}
 
 }

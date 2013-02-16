@@ -5,12 +5,12 @@
  * PHP Version 5.x
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -2171,7 +2171,7 @@ class ValidationTest extends CakeTestCase {
  *
  * @expectedException PHPUnit_Framework_Error
  * @return void
- **/
+ */
 	public function testPassThroughClassFailure() {
 		Validation::postal('text', null, 'AUTOFAIL');
 	}
@@ -2277,7 +2277,7 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * testMimeType method
+ * testUploadError method
  *
  * @return void
  */
@@ -2288,4 +2288,23 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::uploadError(2));
 		$this->assertFalse(Validation::uploadError(array('error' => 2)));
 	}
+
+/**
+ * testFileSize method
+ *
+ * @return void
+ */
+	public function testFileSize() {
+		$image = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
+		$this->assertTrue(Validation::fileSize($image, '<', 1024));
+		$this->assertTrue(Validation::fileSize(array('tmp_name' => $image), 'isless', 1024));
+		$this->assertTrue(Validation::fileSize($image, '<', '1KB'));
+		$this->assertTrue(Validation::fileSize($image, '>=', 200));
+		$this->assertTrue(Validation::fileSize($image, '==', 201));
+		$this->assertTrue(Validation::fileSize($image, '==', '201B'));
+
+		$this->assertFalse(Validation::fileSize($image, 'isgreater', 1024));
+		$this->assertFalse(Validation::fileSize(array('tmp_name' => $image), '>', '1KB'));
+	}
+
 }

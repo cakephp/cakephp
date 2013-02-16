@@ -4,12 +4,13 @@
  * and constructing helper class objects.
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View
  * @since         CakePHP(tm) v 2.0
@@ -91,9 +92,9 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
 	}
 
 /**
- * Loads/constructs a helper.  Will return the instance in the registry if it already exists.
- * By setting `$enable` to false you can disable callbacks for a helper.  Alternatively you
- * can set `$settings['enabled'] = false` to disable callbacks.  This alias is provided so that when
+ * Loads/constructs a helper. Will return the instance in the registry if it already exists.
+ * By setting `$enable` to false you can disable callbacks for a helper. Alternatively you
+ * can set `$settings['enabled'] = false` to disable callbacks. This alias is provided so that when
  * declaring $helpers arrays you can disable callbacks on helpers.
  *
  * You can alias your helper as an existing helper by setting the 'className' key, i.e.,
@@ -163,7 +164,7 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
 
 /**
  * Trigger a callback method on every object in the collection.
- * Used to trigger methods on objects in the collection.  Will fire the methods in the
+ * Used to trigger methods on objects in the collection. Will fire the methods in the
  * order they were attached.
  *
  * ### Options
@@ -172,7 +173,7 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
  *    Can either be a scalar value, or an array of values to break on. Defaults to `false`.
  *
  * - `break` Set to true to enabled breaking. When a trigger is broken, the last returned value
- *    will be returned.  If used in combination with `collectReturn` the collected results will be returned.
+ *    will be returned. If used in combination with `collectReturn` the collected results will be returned.
  *    Defaults to `false`.
  *
  * - `collectReturn` Set to true to collect the return of each object into an array.

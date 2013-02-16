@@ -7,12 +7,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model
  * @since         CakePHP(tm) v 1.2.0.0
@@ -63,7 +64,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 		$this->modelName = $modelName;
 
 		if (!empty($behaviors)) {
-			foreach (BehaviorCollection::normalizeObjectArray($behaviors) as $behavior => $config) {
+			foreach (BehaviorCollection::normalizeObjectArray($behaviors) as $config) {
 				$this->load($config['class'], $config['settings']);
 			}
 		}
@@ -183,7 +184,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  * @return void
  */
 	public function unload($name) {
-		list($plugin, $name) = pluginSplit($name);
+		list(, $name) = pluginSplit($name);
 		if (isset($this->_loaded[$name])) {
 			$this->_loaded[$name]->cleanup(ClassRegistry::getObject($this->modelName));
 			parent::unload($name);
@@ -207,7 +208,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 	}
 
 /**
- * Dispatches a behavior method.  Will call either normal methods or mapped methods.
+ * Dispatches a behavior method. Will call either normal methods or mapped methods.
  *
  * If a method is not handled by the BehaviorCollection, and $strict is false, a
  * special return of `array('unhandled')` will be returned to signal the method was not found.
@@ -249,13 +250,13 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 	}
 
 /**
- * Check to see if a behavior in this collection implements the provided method.  Will
+ * Check to see if a behavior in this collection implements the provided method. Will
  * also check mappedMethods.
  *
  * @param string $method The method to find.
  * @param boolean $callback Return the callback for the method.
  * @return mixed If $callback is false, a boolean will be returned, if its true, an array
- *   containing callback information will be returned.  For mapped methods the array will have 3 elements.
+ *   containing callback information will be returned. For mapped methods the array will have 3 elements.
  */
 	public function hasMethod($method, $callback = false) {
 		if (isset($this->_methods[$method])) {

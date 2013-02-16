@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -96,7 +97,7 @@ class ControllerTask extends BakeTask {
 	}
 
 /**
- * Bake All the controllers at once.  Will only bake controllers for models that exist.
+ * Bake All the controllers at once. Will only bake controllers for models that exist.
  *
  * @return void
  */
@@ -105,12 +106,22 @@ class ControllerTask extends BakeTask {
 		$this->listAll($this->connection, false);
 		ClassRegistry::config('Model', array('ds' => $this->connection));
 		$unitTestExists = $this->_checkUnitTest();
+
+		$admin = false;
+		if (!empty($this->params['admin'])) {
+			$admin = $this->Project->getPrefix();
+		}
+
 		foreach ($this->__tables as $table) {
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
 			App::uses($model, 'Model');
 			if (class_exists($model)) {
 				$actions = $this->bakeActions($controller);
+				if ($admin) {
+					$this->out(__d('cake_console', 'Adding %s methods', $admin));
+					$actions .= "\n" . $this->bakeActions($controller, $admin);
+				}
 				if ($this->bake($controller, $actions) && $unitTestExists) {
 					$this->bakeTest($controller);
 				}
@@ -349,7 +360,7 @@ class ControllerTask extends BakeTask {
 	public function doHelpers() {
 		return $this->_doPropertyChoices(
 			__d('cake_console', "Would you like this controller to use other helpers\nbesides HtmlHelper and FormHelper?"),
-			__d('cake_console', "Please provide a comma separated list of the other\nhelper names you'd like to use.\nExample: 'Ajax, Javascript, Time'")
+			__d('cake_console', "Please provide a comma separated list of the other\nhelper names you'd like to use.\nExample: 'Text, Js, Time'")
 		);
 	}
 
@@ -395,7 +406,7 @@ class ControllerTask extends BakeTask {
 		}
 		$this->__tables = $this->Model->getAllTables($useDbConfig);
 
-		if ($this->interactive == true) {
+		if ($this->interactive) {
 			$this->out(__d('cake_console', 'Possible Controllers based on your current database:'));
 			$this->hr();
 			$this->_controllerNames = array();
@@ -419,20 +430,20 @@ class ControllerTask extends BakeTask {
 		$controllers = $this->listAll($useDbConfig);
 		$enteredController = '';
 
-		while ($enteredController == '') {
+		while (!$enteredController) {
 			$enteredController = $this->in(__d('cake_console', "Enter a number from the list above,\ntype in the name of another controller, or 'q' to exit"), null, 'q');
 			if ($enteredController === 'q') {
 				$this->out(__d('cake_console', 'Exit'));
 				return $this->_stop();
 			}
 
-			if ($enteredController == '' || intval($enteredController) > count($controllers)) {
+			if (!$enteredController || intval($enteredController) > count($controllers)) {
 				$this->err(__d('cake_console', "The Controller name you supplied was empty,\nor the number you selected was not an option. Please try again."));
 				$enteredController = '';
 			}
 		}
 
-		if (intval($enteredController) > 0 && intval($enteredController) <= count($controllers) ) {
+		if (intval($enteredController) > 0 && intval($enteredController) <= count($controllers)) {
 			$controllerName = $controllers[intval($enteredController) - 1];
 		} else {
 			$controllerName = Inflector::camelize($enteredController);

@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network.Email
  * @since         CakePHP(tm) v 2.0.0
@@ -33,6 +34,7 @@ App::import('I18n', 'Multibyte');
  * @package       Cake.Network.Email
  */
 class CakeEmail {
+
 /**
  * Default X-Mailer
  *
@@ -85,7 +87,7 @@ class CakeEmail {
 /**
  * The sender email
  *
- * @var array();
+ * @var array
  */
 	protected $_sender = array();
 
@@ -946,12 +948,16 @@ class CakeEmail {
  * $email->attachments(array('custom_name.png' => array(
  *		'file' => 'path/to/file',
  *		'mimetype' => 'image/png',
- *		'contentId' => 'abc123'
+ *		'contentId' => 'abc123',
+ *		'contentDisposition' => false
  * ));
  * }}}
  *
  * The `contentId` key allows you to specify an inline attachment. In your email text, you
  * can use `<img src="cid:abc123" />` to display the image inline.
+ *
+ * The `contentDisposition` key allows you to disable the `Content-Disposition` header, this can improve
+ * attachment compatibility with outlook email clients.
  *
  * @param string|array $attachments String with the filename or array with filenames
  * @return array|CakeEmail Either the array of attachments when getting or $this when setting.
@@ -991,6 +997,7 @@ class CakeEmail {
  * @param string|array $attachments String with the filename or array with filenames
  * @return CakeEmail $this
  * @throws SocketException
+ * @see CakeEmail::attachments()
  */
 	public function addAttachments($attachments) {
 		$current = $this->_attachments;
@@ -1104,7 +1111,6 @@ class CakeEmail {
 /**
  * Apply the config to an instance
  *
- * @param CakeEmail $obj CakeEmail
  * @param array $config
  * @return void
  * @throws ConfigureException When configuration file cannot be found, or is missing
@@ -1358,7 +1364,12 @@ class CakeEmail {
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$msg[] = 'Content-Transfer-Encoding: base64';
-			$msg[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
+			if (
+				!isset($fileInfo['contentDisposition']) ||
+				$fileInfo['contentDisposition']
+			) {
+				$msg[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
+			}
 			$msg[] = '';
 			$msg[] = $data;
 			$msg[] = '';
@@ -1497,7 +1508,7 @@ class CakeEmail {
 /**
  * Gets the text body types that are in this email message
  *
- * @return array Array of types.  Valid types are 'text' and 'html'
+ * @return array Array of types. Valid types are 'text' and 'html'
  */
 	protected function _getTypes() {
 		$types = array($this->_emailFormat);
