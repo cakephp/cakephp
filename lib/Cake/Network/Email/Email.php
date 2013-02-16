@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Log\Log;
+use Cake\Network\Http\FormData\Part;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
 use Cake\Utility\Validation;
@@ -1162,7 +1163,7 @@ class Email {
 	}
 
 /**
- * Reset all EmailComponent internal variables to be able to send out a new email.
+ * Reset all the internal variables to be able to send out a new email.
  *
  * @return Cake\Network\Email\Email $this
  */
@@ -1352,18 +1353,21 @@ class Email {
 				continue;
 			}
 			$data = $this->_readFile($fileInfo['file']);
-
-			$msg[] = '--' . $boundary;
-			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
-			$msg[] = 'Content-Transfer-Encoding: base64';
-			if (
+			$hasDisposition = (
 				!isset($fileInfo['contentDisposition']) ||
 				$fileInfo['contentDisposition']
-			) {
-				$msg[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
+			);
+			$part = new Part(false, $data, false);
+
+			if ($hasDisposition) {
+				$part->disposition('attachment');
+				$part->filename($filename);
 			}
-			$msg[] = '';
-			$msg[] = $data;
+			$part->transferEncoding('base64');
+			$part->type($fileInfo['mimetype']);
+
+			$msg[] = '--' . $boundary;
+			$msg[] = (string)$part;
 			$msg[] = '';
 		}
 		return $msg;
@@ -1402,12 +1406,12 @@ class Email {
 			$data = $this->_readFile($fileInfo['file']);
 
 			$msg[] = '--' . $boundary;
-			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
-			$msg[] = 'Content-Transfer-Encoding: base64';
-			$msg[] = 'Content-ID: <' . $fileInfo['contentId'] . '>';
-			$msg[] = 'Content-Disposition: inline; filename="' . $filename . '"';
-			$msg[] = '';
-			$msg[] = $data;
+			$part = new Part(false, $data, 'inline');
+			$part->type($fileInfo['mimetype']);
+			$part->transferEncoding('base64');
+			$part->contentId($fileInfo['contentId']);
+			$part->filename($filename);
+			$msg[] = (string)$part;
 			$msg[] = '';
 		}
 		return $msg;
