@@ -2686,6 +2686,34 @@ class Model extends Object implements CakeEventListener {
 			return null;
 		}
 
+		return $this->_readDataSource($type, $query);
+	}
+
+/**
+ * Read from the datasource
+ *
+ * Model::_readDataSource() is used by all find() calls to read from the data source and can be overloaded to allow
+ * caching of datasource calls.
+ * 
+ * {{{
+ * protected function _readDataSource($type, $query) {
+ * 		$cacheName = md5(json_encode($query));
+ * 		$cache = Cache::read($cacheName, 'cache-config-name');
+ * 		if ($cache !== false) {
+ * 			return $cache;
+ * 		}
+ *
+ * 		$results = parent::_readDataSource($type, $query);
+ * 		Cache::write($cacheName, $results, 'cache-config-name');
+ * 		return $results;
+ * }
+ * }}}
+ * 
+ * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
+ * @return array
+ */
+	protected function _readDataSource($type, $query) {
 		$results = $this->getDataSource()->read($this, $query);
 		$this->resetAssociations();
 
