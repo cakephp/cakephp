@@ -283,16 +283,16 @@ class CakeFixtureManager {
  * @param array $fixtures
  * @return array with expanded fixtures
  */
-	protected function _expandFixtures($fixtures) {
+	protected function _expandFixtures ($fixtures) {
 		$expanded = array();
-		foreach($fixtures as $k => $v){
-			if(strpos($v, '*') !== false){
-				$expanded = array_merge($expanded, $this->_expandFixture($v));
-			}else{
+		foreach ($fixtures as $v) {
+			if (strpos ($v, '*') !== false) {
+				$expanded = array_merge ($expanded, $this->_expandFixture ($v));
+			} else {
 				$expanded[] = $v;
 			}
 		}
-		return array_unique($expanded);
+		return array_unique ($expanded);
 	}
 
 /**
@@ -302,34 +302,33 @@ class CakeFixtureManager {
  * @return array
  * @throws CakeException
  */
-	protected function _expandFixture($fixtureExpr) {
-
-		if(preg_match('/^(app\.)?([\w_\*]+)$/i', $fixtureExpr, $matches)){
+	protected function _expandFixture ($fixtureExpr) {
+		if (preg_match ('/^(app\.)?([\w_\*]+)$/i', $fixtureExpr, $matches)) {
 			$plugin = false;
 			$pattern = $matches[2];
 			$path = TESTS . 'Fixture' . DS;
 			$prefix = "app.";
-		}elseif(preg_match('/^(plugin\.)([\w_]+)\.([\w_\*]+)$/', $fixtureExpr, $matches)){
-			$plugin = ucfirst($matches[2]);
+		} elseif (preg_match ('/^(plugin\.)([\w_]+)\.([\w_\*]+)$/', $fixtureExpr, $matches)) {
+			$plugin = ucfirst ($matches[2]);
 			$pattern = $matches[3];
-			$path = CakePlugin::path($plugin) . 'Test' . DS . 'Fixture' . DS;
-			$prefix = strtolower("plugin.{$plugin}.");
-		}elseif(preg_match('/^(core\.)?([\w_\*]+)$/i', $fixtureExpr, $matches)){
+			$path = CakePlugin::path ($plugin) . 'Test' . DS . 'Fixture' . DS;
+			$prefix = strtolower ("plugin.{$plugin}.");
+		} elseif (preg_match ('/^(core\.)?([\w_\*]+)$/i', $fixtureExpr, $matches)) {
 			$plugin = false;
 			$pattern = $matches[2];
 			$path = CAKE . 'Test' . DS . 'Fixture' . DS;
 			$prefix = "core.";
-		}else{
+		} else {
 			throw new CakeException("Bad fixture expression: {$fixtureExpr}");
 		}
 
-		$search = $path . Inflector::camelize($pattern) . 'Fixture.php';
-		$files = glob($search);
+		$search = $path . Inflector::camelize ($pattern) . 'Fixture.php';
+		$files = glob ($search);
 		$fixtures = array();
-		foreach($files as $file){
-			$file = pathinfo($file, PATHINFO_FILENAME);
-			$f = preg_replace('/fixture$/i', '', $file);
-			$f = inflector::underscore($f);
+		foreach ($files as $file) {
+			$file = pathinfo ($file, PATHINFO_FILENAME);
+			$f = preg_replace ('/fixture$/i', '', $file);
+			$f = inflector::underscore ($f);
 			$fixtures[] = $prefix . $f;
 		}
 
@@ -341,7 +340,7 @@ class CakeFixtureManager {
  *
  * @return array
  */
-	public function getLoadedFixtures() {
-		return array_keys($this->_loaded);
+	public function getLoadedFixtures () {
+		return array_keys ($this->_loaded);
 	}
 }
