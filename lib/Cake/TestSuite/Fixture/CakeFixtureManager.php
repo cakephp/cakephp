@@ -76,7 +76,7 @@ class CakeFixtureManager {
 			$test->fixtures = array_map('trim', explode(',', $test->fixtures));
 		}
 		if (isset($test->fixtures)) {
-			$this->_loadFixtures($this->expandFixtures($test->fixtures));
+			$this->_loadFixtures($this->_expandFixtures($test->fixtures));
 		}
 
 		$this->_processed[get_class($test)] = true;
@@ -286,11 +286,11 @@ class CakeFixtureManager {
  * @param array $fixtures
  * @return array with expanded fixtures
  */
-	private function expandFixtures($fixtures){
+	protected function _expandFixtures($fixtures) {
 		$expanded = array();
 		foreach($fixtures as $k => $v){
 			if(strpos($v, '*') !== false){
-				$expanded = array_merge($expanded, $this->expandFixture($v));
+				$expanded = array_merge($expanded, $this->_expandFixture($v));
 			}else{
 				$expanded[] = $v;
 			}
@@ -305,7 +305,7 @@ class CakeFixtureManager {
  * @return array
  * @throws CakeException
  */
-	private function expandFixture($fixtureExpr){
+	protected function _expandFixture($fixtureExpr) {
 
 		if(preg_match('/^(app\.)?([\w_\*]+)$/i', $fixtureExpr, $matches)){
 			$plugin = false;
@@ -344,7 +344,7 @@ class CakeFixtureManager {
  *
  * @return array
  */
-	function getLoadedFixtures(){
+	function getLoadedFixtures() {
 		return array_keys($this->_loaded);
 	}
 }

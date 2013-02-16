@@ -33,7 +33,7 @@ class CakeFixtureManagerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testFixtureExpand(){
+	public function testFixtureExpand() {
 		$this->fixtures = array(
 			'core.article*',
 			'core.apple',
@@ -42,7 +42,7 @@ class CakeFixtureManagerTest extends CakeTestCase {
 		$fm = new CakeFixtureManager();
 		$fm->fixturize($this);
 
-		$excepted = array(
+		$expected = array(
 			'core.article_featured',
 			'core.article_featureds_tags',
 			'core.article',
@@ -53,7 +53,7 @@ class CakeFixtureManagerTest extends CakeTestCase {
 			'core.aros_aco',
 			'core.aros_aco_two'
 		);
-		$this->assertEquals($excepted, $fm->getLoadedFixtures());
+		$this->assertEquals($expected, $fm->getLoadedFixtures());
 	}
 
 /**
@@ -61,7 +61,7 @@ class CakeFixtureManagerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testLoadAllFixtures(){
+	public function testLoadAllFixtures() {
 		$this->fixtures = array(
 			'core.*',
 		);
@@ -69,9 +69,9 @@ class CakeFixtureManagerTest extends CakeTestCase {
 		$fm = new CakeFixtureManager();
 		$fm->fixturize($this);
 
-		$excepted = count(glob(CAKE . 'Test' . DS . 'Fixture' . DS . "*Fixture.php"));
+		$expected = count(glob(CAKE . 'Test' . DS . 'Fixture' . DS . "*Fixture.php"));
 
-		$this->assertEquals($excepted, count($fm->getLoadedFixtures()));
+		$this->assertEquals($expected, count($fm->getLoadedFixtures()));
 	}
 
 }
