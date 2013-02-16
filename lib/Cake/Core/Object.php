@@ -15,6 +15,7 @@
  */
 
 App::uses('Set', 'Utility');
+App::uses('CakeLog', 'Log');
 
 /**
  * Object class provides a few generic methods used in several subclasses.
@@ -152,7 +153,6 @@ class Object {
  * @return boolean Success of log write
  */
 	public function log($msg, $type = LOG_ERR, $scope = null) {
-		App::uses('CakeLog', 'Log');
 		if (!is_string($msg)) {
 			$msg = print_r($msg, true);
 		}
