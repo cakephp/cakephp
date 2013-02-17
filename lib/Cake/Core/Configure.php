@@ -271,7 +271,7 @@ class Configure {
  * @param array options (or boolean $merge for BC)
  * - boolean $merge If config files should be merged instead of simply overridden
  * - array $keys The name of the top-level keys you want to dump.
- *   This allows you save only some data stored in Configure.
+ *   This allows you to load only some data stored in the config file.
  * @return mixed false if file not found, void if load successful.
  * @throws ConfigureException Will throw any exceptions the reader raises.
  */
@@ -325,7 +325,7 @@ class Configure {
  *   This could be a filename or a cache key depending on the adapter being used.
  * @param string $config The name of the configured adapter to dump data with.
  * @param array $keys The name of the top-level keys you want to dump.
- *   This allows you save only some data stored in Configure.
+ *   This allows you to save only some data stored in Configure.
  * @return boolean success
  * @throws ConfigureException if the adapter does not implement a `dump` method.
  */
