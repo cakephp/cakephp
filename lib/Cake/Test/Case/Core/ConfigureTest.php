@@ -302,6 +302,45 @@ class ConfigureTest extends CakeTestCase {
 	}
 
 /**
+ * Test loading only some of the data.
+ *
+ * @return
+ */
+	public function testLoadPartial() {
+		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS));
+
+		$result = Configure::load('var_test2', 'test', array('keys' => array('Deep')));
+		$this->assertTrue($result);
+
+		$this->assertNull(Configure::read('Read'));
+		$this->assertEquals('buried', Configure::read('Deep.Deeper.Deepest'));
+		$this->assertEquals('buried2', Configure::read('Deep.Second.SecondDeepest'));
+	}
+
+/**
+ * Test loading only some of the data without merging.
+ *
+ * @return
+ */
+	public function testLoadPartialNoMerge() {
+		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS));
+
+		$result = Configure::load('var_test', 'test', array('keys' => array('Deep')));
+		$this->assertTrue($result);
+		$this->assertNull(Configure::read('Read'));
+
+ 		$expected = array('Deeper' => array('Deepest' => 'buried'));
+		$this->assertEquals($expected, Configure::read('Deep'));
+
+		$result = Configure::load('var_test2', 'test', array('merge' => false, 'keys' => array('Deep')));
+		$this->assertTrue($result);
+
+		$this->assertNull(Configure::read('Read'));
+		$this->assertEquals('buried2', Configure::read('Deep.Second.SecondDeepest'));
+		$this->assertNull(Configure::read('Deep.Deeper.Deepest'));
+	}
+
+/**
  * testLoad method
  *
  * @return void

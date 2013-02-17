@@ -268,16 +268,29 @@ class Configure {
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::load
  * @param string $key name of configuration resource to load.
  * @param string $config Name of the configured reader to use to read the resource identified by $key.
- * @param boolean $merge if config files should be merged instead of simply overridden
+ * @param array options (or boolean $merge for BC)
+ * - boolean $merge If config files should be merged instead of simply overridden
+ * - array $keys The name of the top-level keys you want to dump.
+ *   This allows you save only some data stored in Configure.
  * @return mixed false if file not found, void if load successful.
  * @throws ConfigureException Will throw any exceptions the reader raises.
  */
-	public static function load($key, $config = 'default', $merge = true) {
+	public static function load($key, $config = 'default', $options = array()) {
+		$merge = true;
+		$keys = array();
+		if (!is_array($options)) {
+			$options = array('merge' => $options);
+		}
+		extract($options);
+
 		$reader = self::_getReader($config);
 		if (!$reader) {
 			return false;
 		}
 		$values = $reader->read($key);
+		if (!empty($keys)) {
+			$values = array_intersect_key($values, array_flip($keys));
+		}
 
 		if ($merge) {
 			$keys = array_keys($values);
@@ -325,7 +338,7 @@ class Configure {
 			throw new ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a dump() method.', $config));
 		}
 		$values = self::$_values;
-		if (!empty($keys) && is_array($keys)) {
+		if (!empty($keys)) {
 			$values = array_intersect_key($values, array_flip($keys));
 		}
 		return (bool)$reader->dump($key, $values);
