@@ -309,6 +309,10 @@ class ConfigureTest extends CakeTestCase {
 	public function testLoadPartial() {
 		Configure::config('test', new PhpReader(CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS));
 
+		$result = Configure::load('var_test', 'test', array('keys' => array('Deep')));
+		$this->assertTrue($result);
+		$this->assertEquals('buried', Configure::read('Deep.Deeper.Deepest'));
+
 		$result = Configure::load('var_test2', 'test', array('keys' => array('Deep')));
 		$this->assertTrue($result);
 

@@ -276,23 +276,25 @@ class Configure {
  * @throws ConfigureException Will throw any exceptions the reader raises.
  */
 	public static function load($key, $config = 'default', $options = array()) {
-		$merge = true;
-		$keys = array();
+		$defaults = array(
+			'merge' => true,
+			'keys' => array()
+		);
 		if (!is_array($options)) {
 			$options = array('merge' => $options);
 		}
-		extract($options);
+		$options += $defaults;
 
 		$reader = self::_getReader($config);
 		if (!$reader) {
 			return false;
 		}
 		$values = $reader->read($key);
-		if (!empty($keys)) {
-			$values = array_intersect_key($values, array_flip($keys));
+		if (!empty($options['keys'])) {
+			$values = array_intersect_key($values, array_flip($options['keys']));
 		}
 
-		if ($merge) {
+		if ($options['merge']) {
 			$keys = array_keys($values);
 			foreach ($keys as $key) {
 				if (($c = self::read($key)) && is_array($values[$key]) && is_array($c)) {
