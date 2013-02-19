@@ -3124,8 +3124,8 @@ class Model extends Object implements CakeEventListener {
  *    be returned. If no validation key is provided, defaults to true.
  * @return void
  */
-	public function invalidate($field, $value = true) {
-		$this->validator()->invalidate($field, $value);
+	public function invalidate($field, $value = true, $last = false) {
+		$this->validator()->invalidate($field, $value, $last);
 	}
 
 /**

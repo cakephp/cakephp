@@ -39,6 +39,13 @@ class CakeValidationRule {
 	protected $_valid = true;
 
 /**
+ * Whether this validation rule should be skipped for the next validation run
+ *
+ * @var mixed
+ */
+	protected $_skip = false;
+
+/**
  * Holds whether the record being validated exists in datasource or not
  *
  * @var boolean
@@ -188,11 +195,20 @@ class CakeValidationRule {
 	}
 
 /**
- * Checks if the validation rule should be skipped
+ * Checks or sets if the validation rule should be skipped
  *
- * @return boolean True if the ValidationRule can be skipped
+ * @param boolean $value If the field should be skipped
+ * @return boolean True if the ValidationRule can be skipped or null if setting it
  */
-	public function skip() {
+	public function skip($value = null) {
+		if ($value !== null) {
+			$this->_skip = $value;
+			return;
+		}
+		if ($this->_skip) {
+			return true;
+		}
+
 		if (!empty($this->on)) {
 			if ($this->on == 'create' && $this->isUpdate() || $this->on == 'update' && !$this->isUpdate()) {
 				return true;
@@ -297,6 +313,7 @@ class CakeValidationRule {
 	public function reset() {
 		$this->_valid = true;
 		$this->_recordExists = false;
+		$this->_skip = false;
 	}
 
 /**
