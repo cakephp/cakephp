@@ -281,7 +281,10 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 			return;
 		}
 
-		$this->remove($field);
+		$rules = $this->_fields[$field]->getRules();
+		foreach ($rules as $rule) {
+			$rule->skip(true);
+		}
 	}
 
 /**
