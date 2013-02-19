@@ -195,9 +195,10 @@ class CakeValidationRule {
 	}
 
 /**
- * Checks if the validation rule should be skipped
+ * Checks or sets if the validation rule should be skipped
  *
- * @return boolean True if the ValidationRule can be skipped
+ * @param boolean $value If the field should be skipped
+ * @return boolean True if the ValidationRule can be skipped or null if setting it
  */
 	public function skip($value = null) {
 		if ($value !== null) {

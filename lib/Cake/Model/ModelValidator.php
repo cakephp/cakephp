@@ -273,6 +273,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param string $field The name of the field to invalidate
  * @param string $message Validation message explaining why the rule failed, defaults to true.
+ * @param boolean $last If this should be the last validation check for this validation run
  * @return void
  */
 	public function invalidate($field, $message = true, $last = false) {
