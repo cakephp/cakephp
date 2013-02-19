@@ -465,7 +465,7 @@ class App {
 			}
 
 			foreach ((array)$path as $dir) {
-				if ($dir != APP && is_dir($dir)) {
+				if ($dir !== APP && is_dir($dir)) {
 					$files = new RegexIterator(new DirectoryIterator($dir), $extension);
 					foreach ($files as $file) {
 						$fileName = basename($file);

@@ -141,7 +141,7 @@ class String {
 				} else {
 					$buffer .= $data{$tmpOffset};
 				}
-				if ($leftBound != $rightBound) {
+				if ($leftBound !== $rightBound) {
 					if ($data{$tmpOffset} == $leftBound) {
 						$depth++;
 					}

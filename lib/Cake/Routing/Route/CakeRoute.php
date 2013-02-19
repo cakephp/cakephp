@@ -515,7 +515,7 @@ class CakeRoute {
 			$string = null;
 			if (isset($params[$key])) {
 				$string = $params[$key];
-			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
+			} elseif (strpos($out, $key) !== strlen($out) - strlen($key)) {
 				$key .= '/';
 			}
 			$search[] = ':' . $key;

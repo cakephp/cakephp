@@ -216,7 +216,7 @@ class ApiShell extends AppShell {
 			if (!$method->isPublic() || strpos($method->getName(), '_') === 0) {
 				continue;
 			}
-			if ($method->getDeclaringClass()->getName() != $class) {
+			if ($method->getDeclaringClass()->getName() !== $class) {
 				continue;
 			}
 			$args = array();

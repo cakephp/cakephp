@@ -245,7 +245,7 @@ class CakeSchema extends Object {
 				}
 
 				$vars = get_class_vars($model);
-				if (empty($vars['useDbConfig']) || $vars['useDbConfig'] != $connection) {
+				if (empty($vars['useDbConfig']) || $vars['useDbConfig'] !== $connection) {
 					continue;
 				}
 

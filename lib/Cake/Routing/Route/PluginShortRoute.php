@@ -47,7 +47,7 @@ class PluginShortRoute extends CakeRoute {
  * @return mixed either false or a string url.
  */
 	public function match($url) {
-		if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] != $url['controller']) {
+		if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] !== $url['controller']) {
 			return false;
 		}
 		$this->defaults['controller'] = $url['controller'];

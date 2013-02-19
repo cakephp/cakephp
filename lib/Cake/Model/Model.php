@@ -1366,7 +1366,7 @@ class Model extends Object implements CakeEventListener {
 		if (strpos($column, '.')) {
 			list($model, $column) = explode('.', $column);
 		}
-		if ($model != $this->alias && isset($this->{$model})) {
+		if ($model !== $this->alias && isset($this->{$model})) {
 			return $this->{$model}->getColumnType($column);
 		}
 		if (isset($cols[$column]) && isset($cols[$column]['type'])) {
@@ -1945,7 +1945,7 @@ class Model extends Object implements CakeEventListener {
 					$recursive = (empty($conditions) ? -1 : 0);
 
 					if (isset($keys['old'][$foreignKey])) {
-						if ($keys['old'][$foreignKey] != $keys[$foreignKey]) {
+						if ($keys['old'][$foreignKey] !== $keys[$foreignKey]) {
 							$conditions[$fkQuoted] = $keys['old'][$foreignKey];
 							$count = intval($this->find('count', compact('conditions', 'recursive')));
 

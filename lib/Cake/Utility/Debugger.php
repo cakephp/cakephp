@@ -157,7 +157,7 @@ class Debugger {
 	public static function &getInstance($class = null) {
 		static $instance = array();
 		if (!empty($class)) {
-			if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
+			if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
 				$instance[0] = new $class();
 			}
 		}

@@ -4129,7 +4129,7 @@ class ModelWriteTest extends BaseModelTest {
 				'updated' => '2007-03-18 10:45:31'
 		)));
 
-		if (count($result) != 3) {
+		if (count($result) !== 3) {
 			// Database doesn't support transactions
 			$expected[] = array(
 				'Post' => array(
@@ -4197,7 +4197,7 @@ class ModelWriteTest extends BaseModelTest {
 				'updated' => '2007-03-18 10:45:31'
 		)));
 
-		if (count($result) != 3) {
+		if (count($result) !== 3) {
 			// Database doesn't support transactions
 			$expected[] = array(
 				'Post' => array(
@@ -5557,7 +5557,7 @@ class ModelWriteTest extends BaseModelTest {
 				'updated' => '2007-03-18 10:45:31'
 		)));
 
-		if (count($result) != 3) {
+		if (count($result) !== 3) {
 			// Database doesn't support transactions
 			$expected[] = array(
 				'Post' => array(
@@ -5627,7 +5627,7 @@ class ModelWriteTest extends BaseModelTest {
 				'updated' => '2007-03-18 10:45:31'
 		)));
 
-		if (count($result) != 3) {
+		if (count($result) !== 3) {
 			// Database doesn't support transactions
 			$expected[] = array(
 				'Post' => array(

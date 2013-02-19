@@ -280,7 +280,7 @@ class ShellDispatcher {
 			if ($params['working'][0] === '.') {
 				$params['working'] = realpath($params['working']);
 			}
-			if (empty($this->params['app']) && $params['working'] != $params['root']) {
+			if (empty($this->params['app']) && $params['working'] !== $params['root']) {
 				$params['root'] = dirname($params['working']);
 				$params['app'] = basename($params['working']);
 			} else {
