@@ -574,6 +574,7 @@ class ModelValidationTest extends BaseModelTest {
 		$result = $TestModel->validationErrors;
 		$this->assertEquals($expected, $result);
 
+		// invalidate a field with 'last' => true and stop further validation for this field
 		$TestModel->create($data);
 
 		$TestModel->invalidate('title', 'someCustomMessage', true);
