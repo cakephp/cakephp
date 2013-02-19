@@ -545,6 +545,50 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+	public function testInvalidate() {
+		$TestModel = new TestValidate();
+
+		$TestModel->validate = array(
+			'title' => array(
+				'tooShort' => array(
+					'rule' => array('minLength', 50),
+					'last' => false
+				),
+				'onlyLetters' => array('rule' => '/^[a-z]+$/i')
+			),
+		);
+		$data = array('TestValidate' => array(
+			'title' => 'I am a short string'
+		));
+		$TestModel->create($data);
+
+		$TestModel->invalidate('title', 'someCustomMessage');
+
+		$result = $TestModel->validates();
+		$this->assertFalse($result);
+		$result = $TestModel->validationErrors;
+		$expected = array(
+			'title' => array('someCustomMessage', 'tooShort', 'onlyLetters')
+		);
+		$this->assertEquals($expected, $result);
+		$result = $TestModel->validationErrors;
+		$this->assertEquals($expected, $result);
+
+		$TestModel->create($data);
+
+		$TestModel->invalidate('title', 'someCustomMessage', true);
+
+		$result = $TestModel->validates();
+		$this->assertFalse($result);
+		$result = $TestModel->validationErrors;
+		$expected = array(
+			'title' => array('someCustomMessage')
+		);
+		$this->assertEquals($expected, $result);
+		$result = $TestModel->validationErrors;
+		$this->assertEquals($expected, $result);
+	}
+
 /**
  * test that validates() checks all the 'with' associations as well for validation
  * as this can cause partial/wrong data insertion.

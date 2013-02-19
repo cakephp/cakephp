@@ -275,8 +275,13 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @param string $message Validation message explaining why the rule failed, defaults to true.
  * @return void
  */
-	public function invalidate($field, $message = true) {
+	public function invalidate($field, $message = true, $last = false) {
 		$this->getModel()->validationErrors[$field][] = $message;
+		if (!$last) {
+			return;
+		}
+
+		$this->remove($field);
 	}
 
 /**
