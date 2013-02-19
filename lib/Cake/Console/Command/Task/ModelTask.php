@@ -587,13 +587,13 @@ class ModelTask extends BakeTask {
 			}
 			foreach ($tempFieldNames as $fieldName) {
 				$assoc = false;
-				if ($fieldName != $model->primaryKey && $fieldName == $foreignKey) {
+				if ($fieldName !== $model->primaryKey && $fieldName === $foreignKey) {
 					$assoc = array(
 						'alias' => $tempOtherModel->name,
 						'className' => $tempOtherModel->name,
 						'foreignKey' => $fieldName
 					);
-				} elseif ($otherTable == $model->table && $fieldName === 'parent_id') {
+				} elseif ($otherTable === $model->table && $fieldName === 'parent_id') {
 					$assoc = array(
 						'alias' => 'Child' . $model->name,
 						'className' => $model->name,
@@ -657,7 +657,7 @@ class ModelTask extends BakeTask {
 					$prompt = "{$model->name} {$type} {$assoc['alias']}?";
 					$response = $this->in($prompt, array('y', 'n'), 'y');
 
-					if ('n' == strtolower($response)) {
+					if (strtolower($response) === 'n') {
 						unset($associations[$type][$i]);
 					} elseif ($type === 'hasMany') {
 						unset($associations['hasOne'][$i]);

@@ -718,7 +718,7 @@ class CakeResponse {
 		foreach ($this->_mimeTypes as $alias => $types) {
 			if (is_array($types) && in_array($ctype, $types)) {
 				return $alias;
-			} elseif (is_string($types) && $types == $ctype) {
+			} elseif (is_string($types) && $types === $ctype) {
 				return $alias;
 			}
 		}
@@ -1115,7 +1115,7 @@ class CakeResponse {
 			$etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
 		}
 		if ($modifiedSince) {
-			$timeMatches = strtotime($this->modified()) == strtotime($modifiedSince);
+			$timeMatches = strtotime($this->modified()) === strtotime($modifiedSince);
 		}
 		$checks = compact('etagMatches', 'timeMatches');
 		if (empty($checks)) {

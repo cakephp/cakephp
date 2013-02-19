@@ -583,7 +583,7 @@ class UpgradeShell extends AppShell {
 
 			$new = 'View' . DS . Inflector::camelize($old);
 			$old = 'View' . DS . $old;
-			if ($new == $old) {
+			if ($new === $old) {
 				continue;
 			}
 

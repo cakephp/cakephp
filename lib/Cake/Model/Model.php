@@ -1255,11 +1255,11 @@ class Model extends Object implements CakeEventListener {
 			isset($data['meridian']) &&
 			!empty($data['hour']) &&
 			$data['hour'] != 12 &&
-			'pm' == $data['meridian']
+			'pm' === $data['meridian']
 		) {
 			$data['hour'] = $data['hour'] + 12;
 		}
-		if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] == 12 && 'am' == $data['meridian']) {
+		if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] == 12 && 'am' === $data['meridian']) {
 			$data['hour'] = '00';
 		}
 		if ($type === 'time') {
@@ -1437,7 +1437,7 @@ class Model extends Object implements CakeEventListener {
 		}
 		if (strpos($field, '.') !== false) {
 			list($model, $field) = explode('.', $field);
-			if ($model == $this->alias && isset($this->virtualFields[$field])) {
+			if ($model === $this->alias && isset($this->virtualFields[$field])) {
 				return true;
 			}
 		}
@@ -3197,7 +3197,7 @@ class Model extends Object implements CakeEventListener {
 		if (!empty($oldConfig) && isset($db->config['prefix'])) {
 			$oldDb = ConnectionManager::getDataSource($oldConfig);
 
-			if (!isset($this->tablePrefix) || (!isset($oldDb->config['prefix']) || $this->tablePrefix == $oldDb->config['prefix'])) {
+			if (!isset($this->tablePrefix) || (!isset($oldDb->config['prefix']) || $this->tablePrefix === $oldDb->config['prefix'])) {
 				$this->tablePrefix = $db->config['prefix'];
 			}
 		} elseif (isset($db->config['prefix'])) {

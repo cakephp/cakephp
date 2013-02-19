@@ -216,7 +216,7 @@ class ConsoleShell extends AppShell {
 					$validCurrentAssociation = false;
 
 					foreach ($currentAssociations as $model => $currentAssociation) {
-						if ($model == $modelB && $association == $currentAssociation) {
+						if ($model === $modelB && $association === $currentAssociation) {
 							$validCurrentAssociation = true;
 						}
 					}
@@ -332,7 +332,7 @@ class ConsoleShell extends AppShell {
 				case preg_match("/^routes\s+show/i", $command, $tmp):
 					$this->out(print_r(Hash::combine(Router::$routes, '{n}.template', '{n}.defaults'), true));
 				break;
-				case (preg_match("/^route\s+(\(.*\))$/i", $command, $tmp) == true):
+				case preg_match("/^route\s+(\(.*\))$/i", $command, $tmp):
 					//@codingStandardsIgnoreStart
 					if ($url = eval('return array' . $tmp[1] . ';')) {
 						//@codingStandardsIgnoreEnd

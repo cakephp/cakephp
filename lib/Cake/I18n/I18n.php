@@ -544,10 +544,10 @@ class I18n {
 				continue;
 			}
 			$count = count($parts);
-			if ($count == 2) {
+			if ($count === 2) {
 				$currentToken = $parts[0];
 				$value = $parts[1];
-			} elseif ($count == 1) {
+			} elseif ($count === 1) {
 				$value .= $parts[0];
 			} else {
 				continue;

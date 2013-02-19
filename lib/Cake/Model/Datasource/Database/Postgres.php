@@ -226,7 +226,7 @@ class Postgres extends DboSource {
 					'length' => $length
 				);
 				if ($model instanceof Model) {
-					if ($c->name == $model->primaryKey) {
+					if ($c->name === $model->primaryKey) {
 						$fields[$c->name]['key'] = 'primary';
 						if ($fields[$c->name]['type'] !== 'string') {
 							$fields[$c->name]['length'] = 11;

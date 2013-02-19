@@ -495,7 +495,7 @@ class Mysql extends DboSource {
 		$colList = array();
 		foreach ($compare as $curTable => $types) {
 			$indexes = $tableParameters = $colList = array();
-			if (!$table || $table == $curTable) {
+			if (!$table || $table === $curTable) {
 				$out .= 'ALTER TABLE ' . $this->fullTableName($curTable) . " \n";
 				foreach ($types as $type => $column) {
 					if (isset($column['indexes'])) {

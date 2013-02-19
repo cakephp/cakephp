@@ -232,7 +232,7 @@ class CakeSchema extends Object {
 				}
 
 				if (isset($this->plugin)) {
-					if ($model == $this->plugin . 'AppModel') {
+					if ($model === $this->plugin . 'AppModel') {
 						continue;
 					}
 					$importModel = $model;
@@ -610,7 +610,7 @@ class CakeSchema extends Object {
 
 		$columns = array();
 		foreach ($fields as $name => $value) {
-			if ($Obj->primaryKey == $name) {
+			if ($Obj->primaryKey === $name) {
 				$value['key'] = 'primary';
 			}
 			if (!isset($db->columns[$value['type']])) {
