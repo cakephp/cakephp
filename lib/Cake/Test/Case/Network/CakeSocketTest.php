@@ -99,7 +99,7 @@ class CakeSocketTest extends CakeTestCase {
 			$this->Socket->connect();
 			$this->assertTrue($this->Socket->connected);
 		} catch (SocketException $e) {
-			$this->markTestAsSkipped('Cannot test network, skipping.');
+			$this->markTestSkipped('Cannot test network, skipping.');
 		}
 	}
 
@@ -148,7 +148,7 @@ class CakeSocketTest extends CakeTestCase {
 			$this->assertEquals(null, $this->Socket->lastError());
 			$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 		} catch (SocketException $e) {
-			$this->markTestAsSkipped('Cannot test network, skipping.');
+			$this->markTestSkipped('Cannot test network, skipping.');
 		}
 	}
 
@@ -267,7 +267,7 @@ class CakeSocketTest extends CakeTestCase {
 		try {
 			$this->Socket->connect();
 		} catch (SocketException $e) {
-			$this->markTestAsSkipped('Cannot test network, skipping.');
+			$this->markTestSkipped('Cannot test network, skipping.');
 		}
 	}
 
