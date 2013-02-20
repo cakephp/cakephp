@@ -87,16 +87,22 @@ class CakeSocketTest extends CakeTestCase {
 		$this->assertFalse($this->Socket->connected);
 		$this->Socket->disconnect();
 		$this->assertFalse($this->Socket->connected);
-		$this->Socket->connect();
-		$this->assertTrue($this->Socket->connected);
-		$this->Socket->connect();
-		$this->assertTrue($this->Socket->connected);
+		try {
+			$this->Socket->connect();
+			$this->assertTrue($this->Socket->connected);
+			$this->Socket->connect();
+			$this->assertTrue($this->Socket->connected);
 
-		$this->Socket->disconnect();
-		$config = array('persistent' => true);
-		$this->Socket = new CakeSocket($config);
-		$this->Socket->connect();
-		$this->assertTrue($this->Socket->connected);
+			$this->Socket->disconnect();
+			$config = array('persistent' => true);
+			$this->Socket = new CakeSocket($config);
+			$this->Socket->connect();
+			$this->assertTrue($this->Socket->connected);
+		} catch (SocketException $e) {
+			$connectionRefused = stripos($e->getMessage(), 'Connection refused') !== false;
+			$this->skipIf($connectionRefused, 'Cannot test network, skipping.');
+			throw $e;
+		}
 	}
 
 /**
@@ -129,19 +135,25 @@ class CakeSocketTest extends CakeTestCase {
  * @return void
  */
 	public function testSocketHost() {
-		$this->Socket = new CakeSocket();
-		$this->Socket->connect();
-		$this->assertEquals('127.0.0.1', $this->Socket->address());
-		$this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
-		$this->assertEquals(null, $this->Socket->lastError());
-		$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
+		try {
+			$this->Socket = new CakeSocket();
+			$this->Socket->connect();
+			$this->assertEquals('127.0.0.1', $this->Socket->address());
+			$this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
+			$this->assertEquals(null, $this->Socket->lastError());
+			$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 
-		$this->Socket = new CakeSocket(array('host' => '127.0.0.1'));
-		$this->Socket->connect();
-		$this->assertEquals('127.0.0.1', $this->Socket->address());
-		$this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
-		$this->assertEquals(null, $this->Socket->lastError());
-		$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
+			$this->Socket = new CakeSocket(array('host' => '127.0.0.1'));
+			$this->Socket->connect();
+			$this->assertEquals('127.0.0.1', $this->Socket->address());
+			$this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
+			$this->assertEquals(null, $this->Socket->lastError());
+			$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
+		} catch (SocketException $e) {
+			$connectionRefused = stripos($e->getMessage(), 'Connection refused') !== false;
+			$this->skipIf($connectionRefused, 'Cannot test network, skipping.');
+			throw $e;
+		}
 	}
 
 /**
@@ -256,7 +268,13 @@ class CakeSocketTest extends CakeTestCase {
 		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
 		$configSslTls = array('host' => 'smtp.gmail.com', 'port' => 465, 'timeout' => 5);
 		$this->Socket = new CakeSocket($configSslTls);
-		$this->Socket->connect();
+		try {
+			$this->Socket->connect();
+		} catch (SocketException $e) {
+			$connectionRefused = stripos($e->getMessage(), 'Connection refused') !== false;
+			$this->skipIf($connectionRefused, 'Cannot test network, skipping.');
+			throw $e;
+		}
 	}
 
 /**

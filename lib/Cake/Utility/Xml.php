@@ -102,12 +102,16 @@ class Xml {
 		} elseif (file_exists($input)) {
 			return self::_loadXml(file_get_contents($input), $options);
 		} elseif (strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
-			$socket = new HttpSocket(array('request' => array('redirect' => 10)));
-			$response = $socket->get($input);
-			if (!$response->isOk()) {
+			try {
+				$socket = new HttpSocket(array('request' => array('redirect' => 10)));
+				$response = $socket->get($input);
+				if (!$response->isOk()) {
+					throw new XmlException(__d('cake_dev', 'XML cannot be read.'));
+				}
+				return self::_loadXml($response->body, $options);
+			} catch (SocketException $e) {
 				throw new XmlException(__d('cake_dev', 'XML cannot be read.'));
 			}
-			return self::_loadXml($response->body, $options);
 		} elseif (!is_string($input)) {
 			throw new XmlException(__d('cake_dev', 'Invalid input.'));
 		}
