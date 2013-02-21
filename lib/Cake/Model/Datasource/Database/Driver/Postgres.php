@@ -40,7 +40,7 @@ class Postgres extends \Cake\Model\Datasource\Database\Driver {
 		'schema' => 'public',
 		'port' => 5432,
 		'encoding' => 'utf8',
-		'flags' => array(),
+		'flags' => [],
 		'dsn' => null
 	];
 

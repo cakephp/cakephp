@@ -21,7 +21,7 @@ class BufferedStatement extends \Cake\Model\Datasource\Database\Statement {
 
 	protected $_count = 0;
 
-	protected $_records = array();
+	protected $_records = [];
 
 	protected $_allFetched = true;
 
@@ -29,7 +29,7 @@ class BufferedStatement extends \Cake\Model\Datasource\Database\Statement {
 
 	public function execute($params = null) {
 		$this->_count = $this->_counter = 0;
-		$this->_records = array();
+		$this->_records = [];
 		$this->_allFetched = false;
 		return parent::execute($params);
 	}

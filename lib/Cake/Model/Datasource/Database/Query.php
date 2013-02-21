@@ -523,10 +523,10 @@ class Query implements Expression, IteratorAggregate {
 			$tables = [$tables];
 		}
 
-		$joins = array();
+		$joins = [];
 		foreach ($tables as $alias => $t) {
 			if (!is_array($t)) {
-				$t = array('table' => $t, 'conditions' => $this->newExpr());
+				$t = ['table' => $t, 'conditions' => $this->newExpr()];
 			}
 			if (!($t['conditions']) instanceof Expression) {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
