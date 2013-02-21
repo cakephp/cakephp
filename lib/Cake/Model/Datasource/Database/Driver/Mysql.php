@@ -20,7 +20,7 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 		'password' => '',
 		'database' => 'cake',
 		'port' => '3306',
-		'flags' => array(),
+		'flags' => [],
 		'encoding' => 'utf8',
 		'dsn' => null
 	];
