@@ -28,7 +28,7 @@ trait ViewVarsTrait {
  *
  * @var array
  */
-	public $viewVars = array();
+	public $viewVars = [];
 
 /**
  * Saves a variable for use inside a template.
@@ -47,7 +47,7 @@ trait ViewVarsTrait {
 				$data = $one;
 			}
 		} else {
-			$data = array($one => $two);
+			$data = [$one => $two];
 		}
 		$this->viewVars = $data + $this->viewVars;
 	}
