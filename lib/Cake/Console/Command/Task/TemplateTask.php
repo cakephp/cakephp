@@ -20,6 +20,7 @@ namespace Cake\Console\Command\Task;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Utility\Folder;
+use Cake\Utility\ViewVarsTrait;
 
 /**
  * Template Task can generate templated output Used in other Tasks.
@@ -29,12 +30,7 @@ use Cake\Utility\Folder;
  */
 class TemplateTask extends Shell {
 
-/**
- * variables to add to template scope
- *
- * @var array
- */
-	public $templateVars = array();
+	use ViewVarsTrait;
 
 /**
  * Paths to look for templates on.
@@ -106,31 +102,6 @@ class TemplateTask extends Shell {
 	}
 
 /**
- * Set variable values to the template scope
- *
- * @param string|array $one A string or an array of data.
- * @param string|array $two Value in case $one is a string (which then works as the key).
- *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
- * @return void
- */
-	public function set($one, $two = null) {
-		if (is_array($one)) {
-			if (is_array($two)) {
-				$data = array_combine($one, $two);
-			} else {
-				$data = $one;
-			}
-		} else {
-			$data = array($one => $two);
-		}
-
-		if (!$data) {
-			return false;
-		}
-		$this->templateVars = $data + $this->templateVars;
-	}
-
-/**
  * Runs the template
  *
  * @param string $directory directory / type of thing you want
@@ -148,7 +119,7 @@ class TemplateTask extends Shell {
 		$themePath = $this->getThemePath();
 		$templateFile = $this->_findTemplate($themePath, $directory, $filename);
 		if ($templateFile) {
-			extract($this->templateVars);
+			extract($this->viewVars);
 			ob_start();
 			ob_implicit_flush(0);
 			include $templateFile;
