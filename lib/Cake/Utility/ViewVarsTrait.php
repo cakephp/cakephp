@@ -23,6 +23,11 @@ namespace Cake\Utility;
  */
 trait ViewVarsTrait {
 
+/**
+ * Variables for the view
+ *
+ * @var array
+ */
 	public $viewVars = array();
 
 /**

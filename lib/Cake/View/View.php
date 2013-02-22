@@ -120,13 +120,6 @@ class View extends Object {
 	public $viewPath = null;
 
 /**
- * Variables for the view
- *
- * @var array
- */
-	public $viewVars = array();
-
-/**
  * Name of view to use with this View.
  *
  * @var string

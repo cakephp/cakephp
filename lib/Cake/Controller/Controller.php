@@ -148,13 +148,6 @@ class Controller extends Object implements EventListener {
 	public $layoutPath = null;
 
 /**
- * Contains variables to be handed to the view.
- *
- * @var array
- */
-	public $viewVars = array();
-
-/**
  * The name of the view file to render. The name specified
  * is the filename in /app/View/<SubFolder> without the .ctp extension.
  *
