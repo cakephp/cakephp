@@ -58,6 +58,20 @@ class Part {
 	protected $_filename;
 
 /**
+ * The encoding used in this part.
+ *
+ * @var string
+ */
+	protected $_transferEncoding;
+
+/**
+ * The contentId for the part
+ *
+ * @var string
+ */
+	protected $_contentId;
+
+/**
  * Constructor
  *
  * @param string $name The name of the data.
@@ -72,7 +86,39 @@ class Part {
 	}
 
 /**
+ * Get/set the disposition type
+ *
+ * By passing in `false` you can disable the disposition
+ * header from being added.
+ *
+ * @param null|string $disposition Use null to get/string to set.
+ * @return mixed
+ */
+	public function disposition($disposition = null) {
+		if ($disposition === null) {
+			return $this->_disposition;
+		}
+		$this->_disposition = $disposition;
+	}
+
+/**
+ * Get/set the contentId for a part.
+ *
+ * @param null|string $id The content id.
+ * @return mixed.
+ */
+	public function contentId($id = null) {
+		if ($id === null) {
+			return $this->_contentId = $id;
+		}
+		$this->_contentId = $id;
+	}
+
+/**
  * Get/set the filename.
+ *
+ * Setting the filname to `false` will exclude it from the
+ * generated output.
  *
  * @param null|string $filename Use null to get/string to set.
  * @return mixed
@@ -98,6 +144,21 @@ class Part {
 	}
 
 /**
+ * Set the transfer-encoding for multipart.
+ *
+ * Useful when content bodies are in encodings like base64.
+ *
+ * @param null|string $type The type of encoding the value has.
+ * @return mixed
+ */
+	public function transferEncoding($type) {
+		if ($type === null) {
+			return $this->_transferEncoding;
+		}
+		$this->_transferEncoding = $type;
+	}
+
+/**
  * Convert the part into a string.
  *
  * Creates a string suitable for use in HTTP requests.
@@ -106,13 +167,24 @@ class Part {
  */
 	public function __toString() {
 		$out = '';
-		$out .= sprintf('Content-Disposition: %s; name="%s"', $this->_disposition, $this->_name);
-		if ($this->_filename) {
-			$out .= '; filename="' . $this->_filename . '"';
+		if ($this->_disposition) {
+			$out .= 'Content-Disposition: ' . $this->_disposition;
+			if ($this->_name) {
+				$out .= '; name="' . $this->_name . '"';
+			}
+			if ($this->_filename) {
+				$out .= '; filename="' . $this->_filename . '"';
+			}
+			$out .= "\r\n";
 		}
-		$out .= "\r\n";
 		if ($this->_type) {
 			$out .= 'Content-Type: ' . $this->_type . "\r\n";
+		}
+		if ($this->_transferEncoding) {
+			$out .= 'Content-Transfer-Encoding: ' . $this->_transferEncoding . "\r\n";
+		}
+		if ($this->_contentId) {
+			$out .= 'Content-ID: <' . $this->_contentId . ">\r\n";
 		}
 		$out .= "\r\n";
 		$out .= (string)$this->_value;
