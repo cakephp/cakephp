@@ -1425,6 +1425,45 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
+ * testDateYmNumeric method
+ *
+ * @return void
+ */
+	public function testDateYmNumeric() {
+		$this->assertTrue(Validation::date('2006/12', array('ym')));
+		$this->assertTrue(Validation::date('2006-12', array('ym')));
+		$this->assertTrue(Validation::date('2006-12', array('ym')));
+		$this->assertTrue(Validation::date('2006 12', array('ym')));
+		$this->assertTrue(Validation::date('2006 12', array('ym')));
+		$this->assertTrue(Validation::date('1900-01', array('ym')));
+		$this->assertTrue(Validation::date('2153-01', array('ym')));
+		$this->assertFalse(Validation::date('2006/12 ', array('ym')));
+		$this->assertFalse(Validation::date('2006/12/', array('ym')));
+		$this->assertFalse(Validation::date('06/12', array('ym')));
+		$this->assertFalse(Validation::date('06-12', array('ym')));
+		$this->assertFalse(Validation::date('06-12', array('ym')));
+		$this->assertFalse(Validation::date('06 12', array('ym')));
+	}
+
+/**
+ * testDateY method
+ *
+ * @return void
+ */
+	public function testDateY() {
+		$this->assertTrue(Validation::date('1900', array('y')));
+		$this->assertTrue(Validation::date('1984', array('y')));
+		$this->assertTrue(Validation::date('2006', array('y')));
+		$this->assertTrue(Validation::date('2008', array('y')));
+		$this->assertTrue(Validation::date('2013', array('y')));
+		$this->assertTrue(Validation::date('2104', array('y')));
+		$this->assertFalse(Validation::date('20009', array('y')));
+		$this->assertFalse(Validation::date(' 2012', array('y')));
+		$this->assertFalse(Validation::date('3000', array('y')));
+		$this->assertFalse(Validation::date('1899', array('y')));
+	}
+
+/**
  * Test validating dates with multiple formats
  *
  * @return void
