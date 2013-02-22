@@ -95,6 +95,13 @@ class Postgres extends DboSource {
 	protected $_sequenceMap = array();
 
 /**
+ * The set of valid SQL operations usable in a WHERE statement
+ *
+ * @var array
+ */
+	protected $_sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', '~', '~*', '!~', '!~*', 'similar to');
+
+/**
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if successfully connected.
