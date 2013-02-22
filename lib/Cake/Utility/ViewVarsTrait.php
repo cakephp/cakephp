@@ -14,14 +14,16 @@
 namespace Cake\Utility;
 
 /**
- * Provides the set() method for collecting context.
+ * Provides the set() method for collecting template context.
  *
  * Once collected context data can be passed to another object.
  * This is done in Controller, TemplateTask and View for example.
  *
  * @package Cake.Utility
  */
-trait SetContextTrait {
+trait ViewVarsTrait {
+
+	public $viewVars = array();
 
 /**
  * Saves a variable for use inside a template.
