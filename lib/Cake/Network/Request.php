@@ -925,7 +925,7 @@ class Request implements \ArrayAccess {
 		return null;
 	}
 
-/*
+/**
  * Only allow certain HTTP request methods, if the request method does not match
  * a 405 error will be shown and the required "Allow" response header will be set.
  *

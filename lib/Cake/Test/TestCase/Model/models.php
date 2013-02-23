@@ -224,12 +224,12 @@ class User extends CakeTestModel {
  * beforeFind() callback used to run ContainableBehaviorTest::testLazyLoad()
  *
  * @return bool
- * @throws Exception
+ * @throws \Exception
  */
 	public function beforeFind($queryData) {
 		if (!empty($queryData['lazyLoad'])) {
 			if (!isset($this->Article, $this->Comment, $this->ArticleFeatured)) {
-				throw new Exception('Unavailable associations');
+				throw new \Exception('Unavailable associations');
 			}
 		}
 		return true;
