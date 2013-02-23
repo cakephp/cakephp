@@ -6,7 +6,7 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2013, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -37,7 +37,6 @@ trait ViewVarsTrait {
  * @param string|array $val Value in case $name is a string (which then works as the key).
  *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
  * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#interacting-with-views
  */
 	public function set($name, $val = null) {
 		if (is_array($name)) {
