@@ -1093,7 +1093,7 @@ class DboSource extends DataSource {
 
 		if ($model->recursive > -1) {
 			$joined = array();
-			if (isset($queryData['joins'][0]['alias'])) {
+			if (isset($queryData['joins'][0]) && is_array($queryData['joins'][0]) && isset($queryData['joins'][0]['alias'])) {
 				$joined[$model->alias] = (array)Hash::extract($queryData['joins'], '{n}.alias');
 			}
 			foreach ($_associations as $type) {
