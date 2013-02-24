@@ -419,6 +419,39 @@ class TestAliasBehavior extends TestBehavior {
 }
 
 /**
+ * FirstBehavior
+ */
+class FirstBehavior extends ModelBehavior {
+
+	public function beforeFind(Model $model, $query = array()) {
+		$model->called[] = get_class($this);
+		return $query;
+	}
+
+}
+
+/**
+ * SecondBehavior
+ */
+class SecondBehavior extends FirstBehavior {
+}
+
+/**
+ * ThirdBehavior
+ */
+class ThirdBehavior extends FirstBehavior {
+}
+
+/**
+ * Orangutan Model
+ */
+class Orangutan extends Monkey {
+
+	public $called = array();
+
+}
+
+/**
  * BehaviorCollection class
  *
  * @package       Cake.Test.Case.Model
@@ -432,7 +465,8 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public $fixtures = array(
 		'core.apple', 'core.sample', 'core.article', 'core.user', 'core.comment',
-		'core.attachment', 'core.tag', 'core.articles_tag', 'core.translate'
+		'core.attachment', 'core.tag', 'core.articles_tag', 'core.translate',
+		'core.device'
 	);
 
 /**
@@ -489,14 +523,14 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$this->assertEquals('testbehavior', strtolower(get_class($Apple->Behaviors->Test)));
 		$expected = array('beforeFind' => 'on', 'afterFind' => 'off', 'key' => 'value');
 		$this->assertEquals($expected, $Apple->Behaviors->Test->settings['Apple']);
-		$this->assertEquals(array('Apple'), array_keys($Apple->Behaviors->Test->settings));
+		$this->assertEquals(array('priority', 'Apple'), array_keys($Apple->Behaviors->Test->settings));
 
 		$this->assertSame($Apple->Sample->Behaviors->loaded(), array());
 		$Apple->Sample->Behaviors->attach('Test', array('key2' => 'value2'));
 		$this->assertSame($Apple->Sample->Behaviors->loaded(), array('Test'));
 		$this->assertEquals(array('beforeFind' => 'on', 'afterFind' => 'off', 'key2' => 'value2'), $Apple->Sample->Behaviors->Test->settings['Sample']);
 
-		$this->assertEquals(array('Apple', 'Sample'), array_keys($Apple->Behaviors->Test->settings));
+		$this->assertEquals(array('priority', 'Apple', 'Sample'), array_keys($Apple->Behaviors->Test->settings));
 		$this->assertSame(
 			$Apple->Sample->Behaviors->Test->settings,
 			$Apple->Behaviors->Test->settings
@@ -1147,6 +1181,79 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$result = $Collection->hasMethod('mappingRobotOnTheRoof', true);
 		$expected = array('Test2', 'mapped', 'mappingRobotOnTheRoof');
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that behavior priority
+ */
+	public function testBehaviorOrderCallbacks() {
+		$model = ClassRegistry::init('Orangutan');
+		$model->Behaviors->init('Orangutan', array(
+			'Second' => array('priority' => 9),
+			'Third',
+			'First' => array('priority' => 8),
+		));
+
+		$this->assertEmpty($model->called);
+
+		$model->find('first');
+		$expected = array(
+			'FirstBehavior',
+			'SecondBehavior',
+			'ThirdBehavior',
+		);
+		$this->assertEquals($expected, $model->called);
+
+		$model->called = array();
+		$model->Behaviors->load('Third', array('priority' => 1));
+
+		$model->find('first');
+		$expected = array(
+			'ThirdBehavior',
+			'FirstBehavior',
+			'SecondBehavior'
+		);
+		$this->assertEquals($expected, $model->called);
+
+		$model->called = array();
+		$model->Behaviors->load('First');
+
+		$model->find('first');
+		$expected = array(
+			'ThirdBehavior',
+			'SecondBehavior',
+			'FirstBehavior'
+		);
+		$this->assertEquals($expected, $model->called);
+
+		$model->called = array();
+		$model->Behaviors->unload('Third');
+
+		$model->find('first');
+		$expected = array(
+			'SecondBehavior',
+			'FirstBehavior'
+		);
+		$this->assertEquals($expected, $model->called);
+
+		$model->called = array();
+		$model->Behaviors->disable('Second');
+
+		$model->find('first');
+		$expected = array(
+			'FirstBehavior'
+		);
+		$this->assertEquals($expected, $model->called);
+
+		$model->called = array();
+		$model->Behaviors->enable('Second');
+
+		$model->find('first');
+		$expected = array(
+			'SecondBehavior',
+			'FirstBehavior'
+		);
+		$this->assertEquals($expected, $model->called);
 	}
 
 }
