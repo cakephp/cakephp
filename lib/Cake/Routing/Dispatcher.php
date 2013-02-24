@@ -192,7 +192,9 @@ class Dispatcher implements CakeEventListener {
 
 		if ($render && $controller->autoRender) {
 			$response = $controller->render();
-		} elseif ($response->body() === null) {
+		} elseif (!($result instanceof CakeResponse) &&
+			$response->body() === null
+		) {
 			$response->body($result);
 		}
 		$controller->shutdownProcess();
