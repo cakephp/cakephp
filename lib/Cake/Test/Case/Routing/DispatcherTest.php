@@ -208,6 +208,16 @@ class SomePagesController extends AppController {
 		return new CakeResponse(array('body' => 'new response'));
 	}
 
+/**
+ * Test file sending
+ *
+ * @return CakeResponse
+ */
+	public function sendfile() {
+		$this->response->file(CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css');
+		return $this->response;
+	}
+
 }
 
 /**
@@ -864,6 +874,40 @@ class DispatcherTest extends CakeTestCase {
 		$result = ob_get_clean();
 
 		$this->assertEquals('new response', $result);
+	}
+
+/**
+ * testDispatchActionSendsFile
+ *
+ * @return void
+ */
+	public function testDispatchActionSendsFile() {
+		Router::connect('/:controller/:action');
+		$Dispatcher = new Dispatcher();
+		$request = new CakeRequest('some_pages/sendfile');
+		$response = $this->getMock('CakeResponse', array(
+			'header',
+			'type',
+			'download',
+			'_sendHeader',
+			'_setContentType',
+			'_isActive',
+			'_clearBuffer',
+			'_flushBuffer'
+		));
+
+		$response->expects($this->never())
+			->method('body');
+
+		$response->expects($this->exactly(1))
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		ob_start();
+		$Dispatcher->dispatch($request, $response);
+		$result = ob_get_clean();
+
+		$this->assertEquals("/* this is the test asset css file */\n", $result);
 	}
 
 /**
