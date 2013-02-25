@@ -1187,37 +1187,6 @@ class ViewTest extends TestCase {
 	}
 
 /**
- * testSet method
- *
- * @return void
- */
-	public function testSet() {
-		$View = new TestView($this->PostsController);
-		$View->viewVars = array();
-		$View->set('somekey', 'someValue');
-		$this->assertSame($View->viewVars, array('somekey' => 'someValue'));
-		$this->assertSame($View->getVars(), array('somekey'));
-
-		$View->viewVars = array();
-		$keys = array('key1', 'key2');
-		$values = array('value1', 'value2');
-		$View->set($keys, $values);
-		$this->assertSame($View->viewVars, array('key1' => 'value1', 'key2' => 'value2'));
-		$this->assertSame($View->getVars(), array('key1', 'key2'));
-		$this->assertSame($View->getVar('key1'), 'value1');
-		$this->assertNull($View->getVar('key3'));
-
-		$View->set(array('key3' => 'value3'));
-		$this->assertSame($View->getVar('key3'), 'value3');
-
-		$View->viewVars = array();
-		$View->set(array(3 => 'three', 4 => 'four'));
-		$View->set(array(1 => 'one', 2 => 'two'));
-		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
-		$this->assertEquals($expected, $View->viewVars);
-	}
-
-/**
  * testBadExt method
  *
  * @expectedException Cake\Error\MissingViewException

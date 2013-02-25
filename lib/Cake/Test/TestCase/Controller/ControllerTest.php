@@ -320,48 +320,6 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * testControllerSet method
- *
- * @return void
- */
-	public function testControllerSet() {
-		$request = new Request('controller_posts/index');
-		$Controller = new Controller($request);
-
-		$Controller->set('variable_with_underscores', null);
-		$this->assertTrue(array_key_exists('variable_with_underscores', $Controller->viewVars));
-
-		$Controller->viewVars = array();
-		$viewVars = array('ModelName' => array('id' => 1, 'name' => 'value'));
-		$Controller->set($viewVars);
-		$this->assertTrue(array_key_exists('ModelName', $Controller->viewVars));
-
-		$Controller->viewVars = array();
-		$Controller->set('variable_with_underscores', 'value');
-		$this->assertTrue(array_key_exists('variable_with_underscores', $Controller->viewVars));
-
-		$Controller->viewVars = array();
-		$viewVars = array('ModelName' => 'name');
-		$Controller->set($viewVars);
-		$this->assertTrue(array_key_exists('ModelName', $Controller->viewVars));
-
-		$Controller->set('title', 'someTitle');
-		$this->assertSame($Controller->viewVars['title'], 'someTitle');
-		$this->assertTrue(empty($Controller->pageTitle));
-
-		$Controller->viewVars = array();
-		$expected = array('ModelName' => 'name', 'ModelName2' => 'name2');
-		$Controller->set(array('ModelName', 'ModelName2'), array('name', 'name2'));
-		$this->assertSame($expected, $Controller->viewVars);
-
-		$Controller->viewVars = array();
-		$Controller->set(array(3 => 'three', 4 => 'four'));
-		$Controller->set(array(1 => 'one', 2 => 'two'));
-		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
-		$this->assertEquals($expected, $Controller->viewVars);
-	}
-
-/**
  * testRender method
  *
  * @return void
