@@ -193,9 +193,9 @@ class DbAroUserTest extends CakeTestModel {
  * @return void
  */
 	public function bindNode($ref = null) {
-		if (Configure::read('DbAclbindMode') == 'string') {
+		if (Configure::read('DbAclbindMode') === 'string') {
 			return 'ROOT/admins/Gandalf';
-		} elseif (Configure::read('DbAclbindMode') == 'array') {
+		} elseif (Configure::read('DbAclbindMode') === 'array') {
 			return array('DbAroTest' => array('DbAroTest.model' => 'AuthUser', 'DbAroTest.foreign_key' => 2));
 		}
 	}

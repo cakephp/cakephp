@@ -38,7 +38,7 @@ foreach (array('hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany') as $asso
  */
 class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
 
-<?php if ($useDbConfig != 'default'): ?>
+<?php if ($useDbConfig !== 'default'): ?>
 /**
  * Use database config
  *

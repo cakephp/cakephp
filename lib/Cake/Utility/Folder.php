@@ -267,7 +267,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isWindowsPath
  */
 	public static function isWindowsPath($path) {
-		return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
+		return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\');
 	}
 
 /**
@@ -278,7 +278,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isAbsolute
  */
 	public static function isAbsolute($path) {
-		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
+		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\');
 	}
 
 /**
@@ -460,7 +460,7 @@ class Folder {
 		foreach ($iterator as $itemPath => $fsIterator) {
 			if ($skipHidden) {
 				$subPathName = $fsIterator->getSubPathname();
-				if ($subPathName{0} == '.' || strpos($subPathName, DS . '.') !== false) {
+				if ($subPathName{0} === '.' || strpos($subPathName, DS . '.') !== false) {
 					continue;
 				}
 			}

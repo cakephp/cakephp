@@ -103,7 +103,7 @@ class ControllerPost extends CakeTestModel {
  * @return void
  */
 	public function find($type = 'first', $options = array()) {
-		if ($type == 'popular') {
+		if ($type === 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
 			$options = Hash::merge($options, compact('conditions'));
 			return parent::find('all', $options);

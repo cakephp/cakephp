@@ -29,7 +29,7 @@ class TestCakeRequest extends CakeRequest {
 		if (empty($url)) {
 			$url = $this->_url();
 		}
-		if ($url[0] == '/') {
+		if ($url[0] === '/') {
 			$url = substr($url, 1);
 		}
 		$this->url = $url;

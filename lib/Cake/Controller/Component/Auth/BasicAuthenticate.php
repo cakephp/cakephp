@@ -107,7 +107,7 @@ class BasicAuthenticate extends BaseAuthenticate {
  * @param CakeRequest $request Request object.
  * @return mixed Either false or an array of user information
  */
-	public function getUser($request) {
+	public function getUser(CakeRequest $request) {
 		$username = env('PHP_AUTH_USER');
 		$pass = env('PHP_AUTH_PW');
 

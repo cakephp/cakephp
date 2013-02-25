@@ -110,7 +110,7 @@ class DbConfigTask extends AppShell {
 			$datasource = $this->in(__d('cake_console', 'Datasource:'), array('Mysql', 'Postgres', 'Sqlite', 'Sqlserver'), 'Mysql');
 
 			$persistent = $this->in(__d('cake_console', 'Persistent Connection?'), array('y', 'n'), 'n');
-			if (strtolower($persistent) == 'n') {
+			if (strtolower($persistent) === 'n') {
 				$persistent = 'false';
 			} else {
 				$persistent = 'true';
@@ -126,7 +126,7 @@ class DbConfigTask extends AppShell {
 				$port = $this->in(__d('cake_console', 'Port?'), null, 'n');
 			}
 
-			if (strtolower($port) == 'n') {
+			if (strtolower($port) === 'n') {
 				$port = null;
 			}
 
@@ -142,7 +142,7 @@ class DbConfigTask extends AppShell {
 
 				if (!$password) {
 					$blank = $this->in(__d('cake_console', 'The password you supplied was empty. Use an empty password?'), array('y', 'n'), 'n');
-					if ($blank == 'y') {
+					if ($blank === 'y') {
 						$blankPassword = true;
 					}
 				}
@@ -157,7 +157,7 @@ class DbConfigTask extends AppShell {
 			while (!$prefix) {
 				$prefix = $this->in(__d('cake_console', 'Table Prefix?'), null, 'n');
 			}
-			if (strtolower($prefix) == 'n') {
+			if (strtolower($prefix) === 'n') {
 				$prefix = null;
 			}
 
@@ -165,17 +165,17 @@ class DbConfigTask extends AppShell {
 			while (!$encoding) {
 				$encoding = $this->in(__d('cake_console', 'Table encoding?'), null, 'n');
 			}
-			if (strtolower($encoding) == 'n') {
+			if (strtolower($encoding) === 'n') {
 				$encoding = null;
 			}
 
 			$schema = '';
-			if ($datasource == 'postgres') {
+			if ($datasource === 'postgres') {
 				while (!$schema) {
 					$schema = $this->in(__d('cake_console', 'Table schema?'), null, 'n');
 				}
 			}
-			if (strtolower($schema) == 'n') {
+			if (strtolower($schema) === 'n') {
 				$schema = null;
 			}
 
@@ -188,7 +188,7 @@ class DbConfigTask extends AppShell {
 			$dbConfigs[] = $config;
 			$doneYet = $this->in(__d('cake_console', 'Do you wish to add another database configuration?'), null, 'n');
 
-			if (strtolower($doneYet == 'n')) {
+			if (strtolower($doneYet === 'n')) {
 				$done = true;
 			}
 		}
@@ -239,7 +239,7 @@ class DbConfigTask extends AppShell {
 		$this->hr();
 		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n'), 'y');
 
-		if (strtolower($looksGood) == 'y') {
+		if (strtolower($looksGood) === 'y') {
 			return $config;
 		}
 		return false;

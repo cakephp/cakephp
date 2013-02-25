@@ -201,7 +201,7 @@ class ShellDispatcher {
 		}
 		$methods = array_diff(get_class_methods($Shell), get_class_methods('Shell'));
 		$added = in_array($command, $methods);
-		$private = $command[0] == '_' && method_exists($Shell, $command);
+		$private = $command[0] === '_' && method_exists($Shell, $command);
 
 		if (!$private) {
 			if ($added) {
@@ -288,7 +288,7 @@ class ShellDispatcher {
 			}
 		}
 
-		if ($params['app'][0] == '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
+		if ($params['app'][0] === '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
 			$params['root'] = dirname($params['app']);
 		} elseif (strpos($params['app'], '/')) {
 			$params['root'] .= '/' . dirname($params['app']);

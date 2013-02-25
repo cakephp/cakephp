@@ -470,9 +470,9 @@ class ConsoleOptionParser {
 		$params = $args = array();
 		$this->_tokens = $argv;
 		while (($token = array_shift($this->_tokens)) !== null) {
-			if (substr($token, 0, 2) == '--') {
+			if (substr($token, 0, 2) === '--') {
 				$params = $this->_parseLongOption($token, $params);
-			} elseif (substr($token, 0, 1) == '-') {
+			} elseif (substr($token, 0, 1) === '-') {
 				$params = $this->_parseShortOption($token, $params);
 			} else {
 				$args = $this->_parseArg($token, $args);
@@ -521,9 +521,9 @@ class ConsoleOptionParser {
 			return $subparser->help(null, $format, $width);
 		}
 		$formatter = new HelpFormatter($this);
-		if ($format == 'text' || $format === true) {
+		if ($format === 'text' || $format === true) {
 			return $formatter->text($width);
-		} elseif ($format == 'xml') {
+		} elseif ($format === 'xml') {
 			return $formatter->xml();
 		}
 	}

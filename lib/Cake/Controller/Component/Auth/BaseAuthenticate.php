@@ -151,7 +151,7 @@ abstract class BaseAuthenticate {
  * @param CakeRequest $request Request object.
  * @return mixed Either false or an array of user information
  */
-	public function getUser($request) {
+	public function getUser(CakeRequest $request) {
 		return false;
 	}
 

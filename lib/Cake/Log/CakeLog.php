@@ -428,7 +428,7 @@ class CakeLog {
 		foreach (self::$_Collection->enabled() as $streamName) {
 			$logger = self::$_Collection->{$streamName};
 			$types = $scopes = $config = array();
-			if ($logger instanceof BaseLog) {
+			if (method_exists($logger, 'config')) {
 				$config = $logger->config();
 			}
 			if (isset($config['types'])) {

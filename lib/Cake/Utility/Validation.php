@@ -182,7 +182,7 @@ class Validation {
 					return self::luhn($check, $deep);
 				}
 			}
-		} elseif ($type == 'all') {
+		} elseif ($type === 'all') {
 			foreach ($cards['all'] as $value) {
 				$regex = $value;
 
@@ -533,7 +533,7 @@ class Validation {
  */
 	public static function money($check, $symbolPosition = 'left') {
 		$money = '(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?';
-		if ($symbolPosition == 'right') {
+		if ($symbolPosition === 'right') {
 			$regex = '/^' . $money . '(?<!\x{00a2})\p{Sc}?$/u';
 		} else {
 			$regex = '/^(?!\x{00a2})\p{Sc}?' . $money . '$/u';

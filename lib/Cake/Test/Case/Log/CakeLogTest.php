@@ -424,6 +424,18 @@ class CakeLogTest extends CakeTestCase {
 	public function testScopedLogging() {
 		$this->_resetLogConfig();
 		$this->_deleteLogs();
+
+		CakeLog::config('string-scope', array(
+			'engine' => 'FileLog',
+			'types' => array('info', 'notice', 'warning'),
+			'scopes' => 'string-scope',
+			'file' => 'string-scope.log'
+		));
+		CakeLog::write('info', 'info message', 'string-scope');
+		$this->assertTrue(file_exists(LOGS . 'string-scope.log'));
+
+		CakeLog::drop('string-scope');
+
 		CakeLog::config('shops', array(
 			'engine' => 'FileLog',
 			'types' => array('info', 'notice', 'warning'),

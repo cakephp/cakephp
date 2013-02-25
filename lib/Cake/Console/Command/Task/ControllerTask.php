@@ -66,7 +66,7 @@ class ControllerTask extends BakeTask {
 			if (!isset($this->connection)) {
 				$this->connection = 'default';
 			}
-			if (strtolower($this->args[0]) == 'all') {
+			if (strtolower($this->args[0]) === 'all') {
 				return $this->all();
 			}
 
@@ -162,13 +162,13 @@ class ControllerTask extends BakeTask {
 		}
 		$doItInteractive = $this->in(implode("\n", $question), array('y', 'n'), 'y');
 
-		if (strtolower($doItInteractive) == 'y') {
+		if (strtolower($doItInteractive) === 'y') {
 			$this->interactive = true;
 			$useDynamicScaffold = $this->in(
 				__d('cake_console', "Would you like to use dynamic scaffolding?"), array('y', 'n'), 'n'
 			);
 
-			if (strtolower($useDynamicScaffold) == 'y') {
+			if (strtolower($useDynamicScaffold) === 'y') {
 				$wannaBakeCrud = 'n';
 				$actions = 'scaffold';
 			} else {
@@ -185,12 +185,12 @@ class ControllerTask extends BakeTask {
 			list($wannaBakeCrud, $wannaBakeAdminCrud) = $this->_askAboutMethods();
 		}
 
-		if (strtolower($wannaBakeCrud) == 'y') {
-			$actions = $this->bakeActions($controllerName, null, strtolower($wannaUseSession) == 'y');
+		if (strtolower($wannaBakeCrud) === 'y') {
+			$actions = $this->bakeActions($controllerName, null, strtolower($wannaUseSession) === 'y');
 		}
-		if (strtolower($wannaBakeAdminCrud) == 'y') {
+		if (strtolower($wannaBakeAdminCrud) === 'y') {
 			$admin = $this->Project->getPrefix();
-			$actions .= $this->bakeActions($controllerName, $admin, strtolower($wannaUseSession) == 'y');
+			$actions .= $this->bakeActions($controllerName, $admin, strtolower($wannaUseSession) === 'y');
 		}
 
 		$baked = false;
@@ -198,7 +198,7 @@ class ControllerTask extends BakeTask {
 			$this->confirmController($controllerName, $useDynamicScaffold, $helpers, $components);
 			$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y','n'), 'y');
 
-			if (strtolower($looksGood) == 'y') {
+			if (strtolower($looksGood) === 'y') {
 				$baked = $this->bake($controllerName, $actions, $helpers, $components);
 				if ($baked && $this->_checkUnitTest()) {
 					$this->bakeTest($controllerName);
@@ -229,7 +229,7 @@ class ControllerTask extends BakeTask {
 		$this->hr();
 		$this->out(__d('cake_console', "Controller Name:\n\t%s", $controllerName));
 
-		if (strtolower($useDynamicScaffold) == 'y') {
+		if (strtolower($useDynamicScaffold) === 'y') {
 			$this->out("public \$scaffold;");
 		}
 
@@ -386,7 +386,7 @@ class ControllerTask extends BakeTask {
 	protected function _doPropertyChoices($prompt, $example) {
 		$proceed = $this->in($prompt, array('y','n'), 'n');
 		$property = array();
-		if (strtolower($proceed) == 'y') {
+		if (strtolower($proceed) === 'y') {
 			$propertyList = $this->in($example);
 			$propertyListTrimmed = str_replace(' ', '', $propertyList);
 			$property = explode(',', $propertyListTrimmed);

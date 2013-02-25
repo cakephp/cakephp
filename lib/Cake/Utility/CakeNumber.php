@@ -134,7 +134,7 @@ class CakeNumber {
 			return $size * pow(1024, $i + 1);
 		}
 
-		if (substr($size, -1) == 'B' && ctype_digit(substr($size, 0, -1))) {
+		if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {
 			$size = substr($size, 0, -1);
 			return (int)$size;
 		}
@@ -329,14 +329,14 @@ class CakeNumber {
 			}
 		}
 
-		$position = $options[$symbolKey . 'Position'] != 'after' ? 'before' : 'after';
+		$position = $options[$symbolKey . 'Position'] !== 'after' ? 'before' : 'after';
 		$options[$position] = $options[$symbolKey . 'Symbol'];
 
 		$abs = abs($value);
 		$result = self::format($abs, $options);
 
 		if ($value < 0) {
-			if ($options['negative'] == '()') {
+			if ($options['negative'] === '()') {
 				$result = '(' . $result . ')';
 			} else {
 				$result = $options['negative'] . $result;

@@ -380,7 +380,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 				$tags = (string)$tags;
 			}
 			$i++;
-			if (is_string($tags) && $tags{0} == '<') {
+			if (is_string($tags) && $tags{0} === '<') {
 				$tags = array(substr($tags, 1) => array());
 			} elseif (is_string($tags)) {
 				$tagsTrimmed = preg_replace('/\s+/m', '', $tags);
@@ -388,7 +388,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 				if (preg_match('/^\*?\//', $tags, $match) && $tagsTrimmed !== '//') {
 					$prefix = array(null, null);
 
-					if ($match[0] == '*/') {
+					if ($match[0] === '*/') {
 						$prefix = array('Anything, ', '.*?');
 					}
 					$regex[] = array(

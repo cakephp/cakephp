@@ -49,6 +49,7 @@ class SecurityComponent extends Component {
  * List of controller actions for which a POST request is required
  *
  * @var array
+ * @deprecated Use CakeRequest::onlyAllow() instead.
  * @see SecurityComponent::requirePost()
  */
 	public $requirePost = array();
@@ -57,6 +58,7 @@ class SecurityComponent extends Component {
  * List of controller actions for which a GET request is required
  *
  * @var array
+ * @deprecated Use CakeRequest::onlyAllow() instead.
  * @see SecurityComponent::requireGet()
  */
 	public $requireGet = array();
@@ -65,6 +67,7 @@ class SecurityComponent extends Component {
  * List of controller actions for which a PUT request is required
  *
  * @var array
+ * @deprecated Use CakeRequest::onlyAllow() instead.
  * @see SecurityComponent::requirePut()
  */
 	public $requirePut = array();
@@ -73,6 +76,7 @@ class SecurityComponent extends Component {
  * List of controller actions for which a DELETE request is required
  *
  * @var array
+ * @deprecated Use CakeRequest::onlyAllow() instead.
  * @see SecurityComponent::requireDelete()
  */
 	public $requireDelete = array();
@@ -131,7 +135,9 @@ class SecurityComponent extends Component {
 	public $unlockedFields = array();
 
 /**
- * Actions to exclude from any security checks
+ * Actions to exclude from CSRF and POST validation checks.
+ * Other checks like requireAuth(), requireSecure(),
+ * requirePost(), requireGet() etc. will still be applied.
  *
  * @var array
  */
@@ -248,6 +254,7 @@ class SecurityComponent extends Component {
  * Sets the actions that require a POST request, or empty for all actions
  *
  * @return void
+ * @deprecated Use CakeRequest::onlyAllow() instead.
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requirePost
  */
 	public function requirePost() {
@@ -258,6 +265,7 @@ class SecurityComponent extends Component {
 /**
  * Sets the actions that require a GET request, or empty for all actions
  *
+ * @deprecated Use CakeRequest::onlyAllow() instead.
  * @return void
  */
 	public function requireGet() {
@@ -268,6 +276,7 @@ class SecurityComponent extends Component {
 /**
  * Sets the actions that require a PUT request, or empty for all actions
  *
+ * @deprecated Use CakeRequest::onlyAllow() instead.
  * @return void
  */
 	public function requirePut() {
@@ -278,6 +287,7 @@ class SecurityComponent extends Component {
 /**
  * Sets the actions that require a DELETE request, or empty for all actions
  *
+ * @deprecated Use CakeRequest::onlyAllow() instead.
  * @return void
  */
 	public function requireDelete() {
@@ -297,7 +307,11 @@ class SecurityComponent extends Component {
 	}
 
 /**
- * Sets the actions that require an authenticated request, or empty for all actions
+ * Sets the actions that require whitelisted form submissions.
+ *
+ * Adding actions with this method will enforce the restrictions
+ * set in SecurityComponent::$allowedControllers and
+ * SecurityComponent::$allowedActions.
  *
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireAuth

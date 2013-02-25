@@ -1131,7 +1131,7 @@ class MysqlTest extends CakeTestCase {
 				$linkModel = $this->Model->Category2->{$assoc};
 				$external = isset($assocData['external']);
 
-				if ($this->Model->Category2->alias == $linkModel->alias && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
+				if ($this->Model->Category2->alias == $linkModel->alias && $type !== 'hasAndBelongsToMany' && $type !== 'hasMany') {
 					$result = $this->Dbo->generateAssociationQuery($this->Model->Category2, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
 					$this->assertFalse(empty($result));
 				} else {
@@ -2984,6 +2984,7 @@ class MysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildIndex($data);
 		$expected = array('FULLTEXT KEY `MyFtIndex` (`name`, `description`)');
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			'MyTextIndex' => array('column' => 'text_field', 'length' => array('text_field' => 20))

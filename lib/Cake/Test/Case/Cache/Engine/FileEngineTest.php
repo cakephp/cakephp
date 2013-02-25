@@ -412,7 +412,7 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 /**
- * Tests that deleteing from a groups-enabled config is possible
+ * Tests that deleting from a groups-enabled config is possible
  *
  * @return void
  */

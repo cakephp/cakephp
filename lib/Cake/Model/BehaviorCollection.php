@@ -108,7 +108,8 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 			$behavior = $config['className'];
 		}
 		$configDisabled = isset($config['enabled']) && $config['enabled'] === false;
-		unset($config['enabled'], $config['className']);
+		$priority = isset($config['priority']) ? $config['priority'] : $this->defaultPriority;
+		unset($config['enabled'], $config['className'], $config['priority']);
 
 		list($plugin, $name) = pluginSplit($behavior, true);
 		if (!isset($alias)) {
@@ -145,6 +146,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 		if (empty($config)) {
 			$config = array();
 		}
+		$this->_loaded[$alias]->settings['priority'] = $priority;
 		$this->_loaded[$alias]->setup(ClassRegistry::getObject($this->modelName), $config);
 
 		foreach ($this->_loaded[$alias]->mapMethods as $method => $methodAlias) {
@@ -160,7 +162,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 		foreach ($methods as $m) {
 			if (!isset($parentMethods[$m])) {
 				$methodAllowed = (
-					$m[0] != '_' && !array_key_exists($m, $this->_methods) &&
+					$m[0] !== '_' && !array_key_exists($m, $this->_methods) &&
 					!in_array($m, $callbacks)
 				);
 				if ($methodAllowed) {
@@ -169,11 +171,14 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 			}
 		}
 
-		if (!in_array($alias, $this->_enabled) && !$configDisabled) {
+		if ($configDisabled) {
+			$this->disable($alias);
+		} elseif (!$this->enabled($alias)) {
 			$this->enable($alias);
 		} else {
-			$this->disable($alias);
+			$this->setPriority($alias, $priority);
 		}
+
 		return true;
 	}
 
