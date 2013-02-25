@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -59,7 +60,7 @@ abstract class BaseLog implements LogInterface {
 		$config['scopes'] = (array)$config['scopes'];
 		$config['levels'] = (array)$config['levels'];
 		if (isset($config['types']) && empty($config['levels'])) {
-			$config['levels'] = $config['types'];
+			$config['levels'] = (array)$config['types'];
 		}
 		$this->_config = $config;
 		return $this->_config;

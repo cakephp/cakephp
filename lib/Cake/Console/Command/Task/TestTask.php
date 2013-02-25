@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -215,7 +216,7 @@ class TestTask extends BakeTask {
 		}
 		$keys[] = 'q';
 		$selection = $this->in(__d('cake_console', 'Enter the type of object to bake a test for or (q)uit'), $keys, 'q');
-		if ($selection == 'q') {
+		if ($selection === 'q') {
 			return $this->_stop();
 		}
 		$types = array_keys($this->classTypes);
@@ -291,7 +292,7 @@ class TestTask extends BakeTask {
 	public function buildTestSubject($type, $class) {
 		ClassRegistry::flush();
 		$class = $this->getRealClassName($type, $class);
-		if (strtolower($type) == 'model') {
+		if (strtolower($type) === 'model') {
 			$instance = ClassRegistry::init($class);
 		} else {
 			$instance = new $class();
@@ -381,7 +382,7 @@ class TestTask extends BakeTask {
 		$thisMethods = array_diff($classMethods, $parentMethods);
 		$out = array();
 		foreach ($thisMethods as $method) {
-			if (substr($method, 0, 1) != '_' && $method != strtolower($className)) {
+			if (substr($method, 0, 1) !== '_' && $method != strtolower($className)) {
 				$out[] = $method;
 			}
 		}
@@ -420,7 +421,7 @@ class TestTask extends BakeTask {
 			if (!isset($this->_fixtures[$className])) {
 				$this->_processModel($subject->{$alias});
 			}
-			if ($type == 'hasAndBelongsToMany') {
+			if ($type === 'hasAndBelongsToMany') {
 				if (!empty($subject->hasAndBelongsToMany[$alias]['with'])) {
 					list(, $joinModel) = pluginSplit($subject->hasAndBelongsToMany[$alias]['with']);
 				} else {
@@ -477,7 +478,7 @@ class TestTask extends BakeTask {
 	public function getUserFixtures() {
 		$proceed = $this->in(__d('cake_console', 'Bake could not detect fixtures, would you like to add some?'), array('y', 'n'), 'n');
 		$fixtures = array();
-		if (strtolower($proceed) == 'y') {
+		if (strtolower($proceed) === 'y') {
 			$fixtureList = $this->in(__d('cake_console', "Please provide a comma separated list of the fixtures names you'd like to use.\nExample: 'app.comment, app.post, plugin.forums.post'"));
 			$fixtureListTrimmed = str_replace(' ', '', $fixtureList);
 			$fixtures = explode(',', $fixtureListTrimmed);
@@ -495,7 +496,7 @@ class TestTask extends BakeTask {
  */
 	public function hasMockClass($type) {
 		$type = strtolower($type);
-		return $type == 'controller';
+		return $type === 'controller';
 	}
 
 /**
@@ -510,17 +511,17 @@ class TestTask extends BakeTask {
 		list($namespace, $className) = namespaceSplit($fullClassName);
 		$type = strtolower($type);
 		$pre = $construct = $post = '';
-		if ($type == 'model') {
+		if ($type === 'model') {
 			$construct = "ClassRegistry::init('{$plugin}$className');\n";
 		}
-		if ($type == 'behavior') {
-			$construct = "new $className();\n";
+		if ($type === 'behavior') {
+			$construct = "new {$className}();\n";
 		}
-		if ($type == 'helper') {
+		if ($type === 'helper') {
 			$pre = "\$View = new View();\n";
 			$construct = "new {$className}(\$View);\n";
 		}
-		if ($type == 'component') {
+		if ($type === 'component') {
 			$pre = "\$Collection = new ComponentCollection();\n";
 			$construct = "new {$className}(\$Collection);\n";
 		}
@@ -543,6 +544,14 @@ class TestTask extends BakeTask {
 		}
 		if ($type == 'helper') {
 			$uses[] = 'Cake\View\View';
+		}
+		$uses[] = $fullClassName;
+		return $uses;
+	}
+
+/**
+ * Make the filename for the test case. resolve the suffixes for controllers
+ * and get the plugin path if needed.
 		}
 		$uses[] = $fullClassName;
 		return $uses;

@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -464,9 +465,9 @@ class ConsoleOptionParser {
 		$params = $args = array();
 		$this->_tokens = $argv;
 		while (($token = array_shift($this->_tokens)) !== null) {
-			if (substr($token, 0, 2) == '--') {
+			if (substr($token, 0, 2) === '--') {
 				$params = $this->_parseLongOption($token, $params);
-			} elseif (substr($token, 0, 1) == '-') {
+			} elseif (substr($token, 0, 1) === '-') {
 				$params = $this->_parseShortOption($token, $params);
 			} else {
 				$args = $this->_parseArg($token, $args);
@@ -515,9 +516,9 @@ class ConsoleOptionParser {
 			return $subparser->help(null, $format, $width);
 		}
 		$formatter = new HelpFormatter($this);
-		if ($format == 'text' || $format === true) {
+		if ($format === 'text' || $format === true) {
 			return $formatter->text($width);
-		} elseif ($format == 'xml') {
+		} elseif ($format === 'xml') {
 			return $formatter->xml();
 		}
 	}

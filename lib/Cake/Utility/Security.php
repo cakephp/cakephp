@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v .0.10.0.1233
@@ -120,14 +121,14 @@ class Security {
 			$string = $salt . $string;
 		}
 
-		if (!$type || $type == 'sha1') {
+		if (!$type || $type === 'sha1') {
 			if (function_exists('sha1')) {
 				return sha1($string);
 			}
 			$type = 'sha256';
 		}
 
-		if ($type == 'sha256' && function_exists('mhash')) {
+		if ($type === 'sha256' && function_exists('mhash')) {
 			return bin2hex(mhash(MHASH_SHA256, $string));
 		}
 
@@ -198,8 +199,12 @@ class Security {
 /**
  * Encrypts/Decrypts a text using the given key using rijndael method.
  *
+ * Prior to 2.3.1, a fixed initialization vector was used. This was not
+ * secure. This method now uses a random iv, and will silently upgrade values when
+ * they are re-encrypted.
+ *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
- * @param string $key Key to use
+ * @param string $key Key to use as the encryption key for encrypted data.
  * @param string $operation Operation to perform, encrypt or decrypt
  * @return string Encrypted/Descrypted string
  */
@@ -216,14 +221,23 @@ class Security {
 			trigger_error(__d('cake_dev', 'You must use a key larger than 32 bytes for Security::rijndael()'), E_USER_WARNING);
 			return '';
 		}
-		$algorithm = 'rijndael-256';
-		$mode = 'cbc';
+		$algorithm = MCRYPT_RIJNDAEL_256;
+		$mode = MCRYPT_MODE_CBC;
+		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
+
 		$cryptKey = substr($key, 0, 32);
-		$iv = substr($key, strlen($key) - 32, 32);
 
 		if ($operation === 'encrypt') {
-			return mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
+			$iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
+			return $iv . '$$' . mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
 		}
+		// Backwards compatible decrypt with fixed iv
+		if (substr($text, $ivSize, 2) !== '$$') {
+			$iv = substr($key, strlen($key) - 32, 32);
+			return rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
+		}
+		$iv = substr($text, 0, $ivSize);
+		$text = substr($text, $ivSize + 2);
 		return rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
 	}
 

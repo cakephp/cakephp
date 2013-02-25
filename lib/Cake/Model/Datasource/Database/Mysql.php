@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Datasource.Database
  * @since         CakePHP(tm) v 0.10.5.1790
@@ -590,8 +591,11 @@ class Mysql extends DboSource {
 				}
 				$name = $this->startQuote . $name . $this->endQuote;
 			}
-			// length attribute only used for MySQL datasource, for TEXT/BLOB index columns
+			if (isset($value['type']) && strtolower($value['type']) === 'fulltext') {
+				$out .= 'FULLTEXT ';
+			}
 			$out .= 'KEY ' . $name . ' (';
+
 			if (is_array($value['column'])) {
 				if (isset($value['length'])) {
 					$vals = array();

@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Datasource.Database
  * @since         CakePHP(tm) v 0.10.5.1790
@@ -229,7 +230,7 @@ class Sqlserver extends DboSource {
 				$this->value($fields[$field]['default'], $fields[$field]['type']);
 			}
 
-			if ($fields[$field]['key'] !== false && $fields[$field]['type'] == 'integer') {
+			if ($fields[$field]['key'] !== false && $fields[$field]['type'] === 'integer') {
 				$fields[$field]['length'] = 11;
 			} elseif ($fields[$field]['key'] === false) {
 				unset($fields[$field]['key']);
@@ -237,7 +238,7 @@ class Sqlserver extends DboSource {
 			if (in_array($fields[$field]['type'], array('date', 'time', 'datetime', 'timestamp'))) {
 				$fields[$field]['length'] = null;
 			}
-			if ($fields[$field]['type'] == 'float' && !empty($column->Size)) {
+			if ($fields[$field]['type'] === 'float' && !empty($column->Size)) {
 				$fields[$field]['length'] = $fields[$field]['length'] . ',' . $column->Size;
 			}
 		}
@@ -273,7 +274,7 @@ class Sqlserver extends DboSource {
 				}
 
 				if (!preg_match('/\s+AS\s+/i', $fields[$i])) {
-					if (substr($fields[$i], -1) == '*') {
+					if (substr($fields[$i], -1) === '*') {
 						if (strpos($fields[$i], '.') !== false && $fields[$i] != $alias . '.*') {
 							$build = explode('.', $fields[$i]);
 							$AssociatedModel = $model->{$build[0]};
@@ -301,7 +302,7 @@ class Sqlserver extends DboSource {
 						$fieldName = $this->name($name);
 						$fieldAlias = $this->name($alias);
 					}
-					if ($model->getColumnType($fields[$i]) == 'datetime') {
+					if ($model->getColumnType($fields[$i]) === 'datetime') {
 						$fieldName = "CONVERT(VARCHAR(20), {$fieldName}, 20)";
 					}
 					$fields[$i] = "{$fieldName} AS {$fieldAlias}";
@@ -404,13 +405,13 @@ class Sqlserver extends DboSource {
 			$col = $real->Type;
 		}
 
-		if ($col == 'datetime2') {
+		if ($col === 'datetime2') {
 			return 'datetime';
 		}
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
 		}
-		if ($col == 'bit') {
+		if ($col === 'bit') {
 			return 'boolean';
 		}
 		if (strpos($col, 'bigint') !== false) {
@@ -428,7 +429,7 @@ class Sqlserver extends DboSource {
 		if (strpos($col, 'text') !== false) {
 			return 'text';
 		}
-		if (strpos($col, 'binary') !== false || $col == 'image') {
+		if (strpos($col, 'binary') !== false || $col === 'image') {
 			return 'binary';
 		}
 		if (in_array($col, array('float', 'real', 'decimal', 'numeric'))) {
@@ -483,7 +484,7 @@ class Sqlserver extends DboSource {
 			} else {
 				$map = array(0, $name);
 			}
-			$map[] = ($column['sqlsrv:decl_type'] == 'bit') ? 'boolean' : $column['native_type'];
+			$map[] = ($column['sqlsrv:decl_type'] === 'bit') ? 'boolean' : $column['native_type'];
 			$this->map[$index++] = $map;
 		}
 	}
@@ -685,7 +686,7 @@ class Sqlserver extends DboSource {
 		$join = array();
 
 		foreach ($indexes as $name => $value) {
-			if ($name == 'PRIMARY') {
+			if ($name === 'PRIMARY') {
 				$join[] = 'PRIMARY KEY (' . $this->name($value['column']) . ')';
 			} elseif (isset($value['unique']) && $value['unique']) {
 				$out = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE";
@@ -711,7 +712,7 @@ class Sqlserver extends DboSource {
 	protected function _getPrimaryKey($model) {
 		$schema = $this->describe($model);
 		foreach ($schema as $field => $props) {
-			if (isset($props['key']) && $props['key'] == 'primary') {
+			if (isset($props['key']) && $props['key'] === 'primary') {
 				return $field;
 			}
 		}

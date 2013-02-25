@@ -8,12 +8,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Error
  * @since         CakePHP(tm) v 2.0
@@ -112,7 +113,7 @@ class ExceptionRenderer {
 
 		if ($exception instanceof Exception && !$methodExists) {
 			$method = '_cakeError';
-			if (empty($template) || $template == 'internalError') {
+			if (empty($template) || $template === 'internalError') {
 				$template = 'error500';
 			}
 		} elseif ($exception instanceof \PDOException) {
@@ -127,7 +128,7 @@ class ExceptionRenderer {
 		}
 
 		$isNotDebug = !Configure::read('debug');
-		if ($isNotDebug && $method == '_cakeError') {
+		if ($isNotDebug && $method === '_cakeError') {
 			$method = 'error400';
 		}
 		if ($isNotDebug && $code == 500) {

@@ -3,12 +3,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -116,7 +117,7 @@ abstract class BaseAuthorize {
  * @param string $path
  * @return string the action path for the given request.
  */
-	public function action($request, $path = '/:plugin/:controller/:action') {
+	public function action(Request $request, $path = '/:plugin/:controller/:action') {
 		$plugin = empty($request['plugin']) ? null : Inflector::camelize($request['plugin']) . '/';
 		$path = str_replace(
 			array(':controller', ':action', ':plugin/'),

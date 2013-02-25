@@ -7,12 +7,13 @@
  * PHP versions 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model
  * @since         CakePHP(tm) v 0.10.0.0
@@ -820,7 +821,7 @@ class Model extends Object implements EventListener {
 				$className = empty($this->__backAssociation[$type][$name]['className']) ?
 					$name : $this->__backAssociation[$type][$name]['className'];
 				break;
-			} elseif ($type == 'hasAndBelongsToMany') {
+			} elseif ($type === 'hasAndBelongsToMany') {
 				foreach ($this->{$type} as $k => $relation) {
 					if (empty($relation['with'])) {
 						continue;
@@ -1064,7 +1065,7 @@ class Model extends Object implements EventListener {
 					break;
 
 					case 'foreignKey':
-						$data = (($type == 'belongsTo') ? Inflector::underscore($assocKey) : Inflector::singularize($this->table)) . '_id';
+						$data = (($type === 'belongsTo') ? Inflector::underscore($assocKey) : Inflector::singularize($this->table)) . '_id';
 					break;
 
 					case 'associationForeignKey':
@@ -1265,7 +1266,7 @@ class Model extends Object implements EventListener {
 		if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] == 12 && 'am' == $data['meridian']) {
 			$data['hour'] = '00';
 		}
-		if ($type == 'time') {
+		if ($type === 'time') {
 			foreach ($timeFields as $key => $val) {
 				if (!isset($data[$val]) || $data[$val] === '0' || $data[$val] === '00') {
 					$data[$val] = '00';
@@ -1280,9 +1281,9 @@ class Model extends Object implements EventListener {
 			}
 		}
 
-		if ($type == 'datetime' || $type == 'timestamp' || $type == 'date') {
+		if ($type === 'datetime' || $type === 'timestamp' || $type === 'date') {
 			foreach ($dateFields as $key => $val) {
-				if ($val == 'hour' || $val == 'min' || $val == 'sec') {
+				if ($val === 'hour' || $val === 'min' || $val === 'sec') {
 					if (!isset($data[$val]) || $data[$val] === '0' || $data[$val] === '00') {
 						$data[$val] = '00';
 					} else {
@@ -2688,6 +2689,34 @@ class Model extends Object implements EventListener {
 			return null;
 		}
 
+		return $this->_readDataSource($type, $query);
+	}
+
+/**
+ * Read from the datasource
+ *
+ * Model::_readDataSource() is used by all find() calls to read from the data source and can be overloaded to allow
+ * caching of datasource calls.
+ * 
+ * {{{
+ * protected function _readDataSource($type, $query) {
+ * 		$cacheName = md5(json_encode($query));
+ * 		$cache = Cache::read($cacheName, 'cache-config-name');
+ * 		if ($cache !== false) {
+ * 			return $cache;
+ * 		}
+ *
+ * 		$results = parent::_readDataSource($type, $query);
+ * 		Cache::write($cacheName, $results, 'cache-config-name');
+ * 		return $results;
+ * }
+ * }}}
+ * 
+ * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
+ * @return array
+ */
+	protected function _readDataSource($type, $query) {
 		$results = $this->getDataSource()->read($this, $query);
 		$this->resetAssociations();
 
@@ -2696,10 +2725,6 @@ class Model extends Object implements EventListener {
 		}
 
 		$this->findQueryType = null;
-
-		if ($type === 'all') {
-			return $results;
-		}
 
 		if ($this->findMethods[$type] === true) {
 			return $this->{'_find' . ucfirst($type)}('after', $query, $results);
@@ -2723,7 +2748,7 @@ class Model extends Object implements EventListener {
 			(array)$query
 		);
 
-		if ($type !== 'all' && $this->findMethods[$type] === true) {
+		if ($this->findMethods[$type] === true) {
 			$query = $this->{'_find' . ucfirst($type)}('before', $query);
 		}
 
@@ -2749,6 +2774,23 @@ class Model extends Object implements EventListener {
 		}
 
 		return $query;
+	}
+
+/**
+ * Handles the before/after filter logic for find('all') operations. Only called by Model::find().
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @param array $results
+ * @return array
+ * @see Model::find()
+ */
+	protected function _findAll($state, $query, $results = array()) {
+		if ($state === 'before') {
+			return $query;
+		} elseif ($state === 'after') {
+			return $results;
+		}
 	}
 
 /**

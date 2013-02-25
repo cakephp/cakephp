@@ -3,12 +3,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -137,7 +138,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  * @param Cake\Network\Request $request Request object.
  * @return mixed Either false or an array of user information
  */
-	public function getUser($request) {
+	public function getUser(Request $request) {
 		$digest = $this->_getDigest();
 		if (empty($digest)) {
 			return false;
@@ -191,7 +192,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		$digest = env('PHP_AUTH_DIGEST');
 		if (empty($digest) && function_exists('apache_request_headers')) {
 			$headers = apache_request_headers();
-			if (!empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) == 'Digest ') {
+			if (!empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) === 'Digest ') {
 				$digest = substr($headers['Authorization'], 7);
 			}
 		}
@@ -208,7 +209,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  * @return array An array of digest authentication headers
  */
 	public function parseAuthData($digest) {
-		if (substr($digest, 0, 7) == 'Digest ') {
+		if (substr($digest, 0, 7) === 'Digest ') {
 			$digest = substr($digest, 7);
 		}
 		$keys = $match = array();

@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -199,7 +200,7 @@ class ShellDispatcher {
 		}
 		$methods = array_diff(get_class_methods($Shell), get_class_methods('Cake\Console\Shell'));
 		$added = in_array($command, $methods);
-		$private = $command[0] == '_' && method_exists($Shell, $command);
+		$private = $command[0] === '_' && method_exists($Shell, $command);
 
 		if (!$private) {
 			if ($added) {
@@ -286,7 +287,7 @@ class ShellDispatcher {
 			}
 		}
 
-		if ($params['app'][0] == '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
+		if ($params['app'][0] === '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
 			$params['root'] = dirname($params['app']);
 		} elseif (strpos($params['app'], '/')) {
 			$params['root'] .= '/' . dirname($params['app']);

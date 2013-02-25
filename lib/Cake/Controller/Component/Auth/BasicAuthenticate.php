@@ -3,12 +3,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -109,7 +110,7 @@ class BasicAuthenticate extends BaseAuthenticate {
  * @param Cake\Network\Request $request Request object.
  * @return mixed Either false or an array of user information
  */
-	public function getUser($request) {
+	public function getUser(Request $request) {
 		$username = env('PHP_AUTH_USER');
 		$pass = env('PHP_AUTH_PW');
 

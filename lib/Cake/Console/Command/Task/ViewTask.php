@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -101,7 +102,7 @@ class ViewTask extends BakeTask {
 		$this->controllerName = $this->_controllerName($this->args[0]);
 
 		$this->Project->interactive = false;
-		if (strtolower($this->args[0]) == 'all') {
+		if (strtolower($this->args[0]) === 'all') {
 			return $this->all();
 		}
 
@@ -211,7 +212,7 @@ class ViewTask extends BakeTask {
 		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.", $this->controllerName);
 		$interactive = $this->in($prompt, array('y', 'n'), 'n');
 
-		if (strtolower($interactive) == 'n') {
+		if (strtolower($interactive) === 'n') {
 			$this->interactive = false;
 		}
 
@@ -220,13 +221,13 @@ class ViewTask extends BakeTask {
 
 		$wannaDoAdmin = $this->in(__d('cake_console', "Would you like to create the views for admin routing?"), array('y', 'n'), 'n');
 
-		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoAdmin) == 'y') {
+		if (strtolower($wannaDoScaffold) === 'y' || strtolower($wannaDoAdmin) === 'y') {
 			$vars = $this->_loadController();
-			if (strtolower($wannaDoScaffold) == 'y') {
+			if (strtolower($wannaDoScaffold) === 'y') {
 				$actions = $this->scaffoldActions;
 				$this->bakeActions($actions, $vars);
 			}
-			if (strtolower($wannaDoAdmin) == 'y') {
+			if (strtolower($wannaDoAdmin) === 'y') {
 				$admin = $this->Project->getPrefix();
 				$regularActions = $this->scaffoldActions;
 				$adminActions = array();
@@ -333,7 +334,7 @@ class ViewTask extends BakeTask {
 		$this->out(__d('cake_console', 'Path:            %s', $this->getPath() . $this->controllerName . DS . Inflector::underscore($action) . ".ctp"));
 		$this->hr();
 		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n'), 'y');
-		if (strtolower($looksGood) == 'y') {
+		if (strtolower($looksGood) === 'y') {
 			$this->bake($action, ' ');
 			$this->_stop();
 		} else {

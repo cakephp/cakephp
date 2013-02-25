@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.I18n
  * @since         CakePHP(tm) v 1.2.0.4116
@@ -178,7 +179,7 @@ class I18n {
 			Cache::write($_this->domain, $_this->_domains[$domain][$_this->_lang], '_cake_core_');
 		}
 
-		if ($_this->category == 'LC_TIME') {
+		if ($_this->category === 'LC_TIME') {
 			return $_this->_translateTime($singular, $domain);
 		}
 
@@ -414,7 +415,7 @@ class I18n {
 			$header = unpack("L1magic/L1version/L1count/L1o_msg/L1o_trn", $header);
 			extract($header);
 
-			if ((dechex($magic) == '950412de' || dechex($magic) == 'ffffffff950412de') && !$version) {
+			if ((dechex($magic) === '950412de' || dechex($magic) === 'ffffffff950412de') && !$version) {
 				for ($n = 0; $n < $count; $n++) {
 					$r = unpack("L1len/L1offs", substr($data, $o_msg + $n * 8, 8));
 					$msgid = substr($data, $r["offs"], $r["len"]);

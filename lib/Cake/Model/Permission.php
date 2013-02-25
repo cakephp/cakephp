@@ -4,12 +4,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model
  * @since         CakePHP(tm) v 0.2.9
@@ -101,7 +102,7 @@ class Permission extends Model {
 			return false;
 		}
 
-		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
+		if ($action !== '*' && !in_array('_' . $action, $permKeys)) {
 			trigger_error(__d('cake_dev', "ACO permissions key %s does not exist in DbAcl::check()", $action), E_USER_NOTICE);
 			return false;
 		}
@@ -127,7 +128,7 @@ class Permission extends Model {
 			} else {
 				$perms = Hash::extract($perms, '{n}.' . $this->alias);
 				foreach ($perms as $perm) {
-					if ($action == '*') {
+					if ($action === '*') {
 
 						foreach ($permKeys as $key) {
 							if (!empty($perm)) {

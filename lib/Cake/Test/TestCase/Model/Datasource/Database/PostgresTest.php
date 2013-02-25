@@ -492,6 +492,18 @@ class PostgresTest extends TestCase {
 	}
 
 /**
+ * Tests passing PostgreSQL regular expression operators when building queries
+ *
+ * @return void
+ */
+	public function testRegexpOperatorConditionsParsing() {
+		$this->assertSame(' WHERE "name" ~ \'[a-z_]+\'', $this->Dbo->conditions(array('name ~' => '[a-z_]+')));
+		$this->assertSame(' WHERE "name" ~* \'[a-z_]+\'', $this->Dbo->conditions(array('name ~*' => '[a-z_]+')));
+		$this->assertSame(' WHERE "name" !~ \'[a-z_]+\'', $this->Dbo->conditions(array('name !~' => '[a-z_]+')));
+		$this->assertSame(' WHERE "name" !~* \'[a-z_]+\'', $this->Dbo->conditions(array('name !~*' => '[a-z_]+')));
+	}
+
+/**
  * Tests the syntax of generated schema indexes
  *
  * @return void
@@ -745,6 +757,25 @@ class PostgresTest extends TestCase {
 	}
 
 /**
+ * Test the alterSchema  RENAME statements
+ *
+ * @return void
+ */
+	public function testAlterSchemaRenameTo() {
+		$query = $this->Dbo->alterSchema(array(
+			'posts' => array(
+				'change' => array(
+					'title' => array('name' => 'subject', 'type' => 'string', 'null' => false)
+				)
+			)
+		));
+		$this->assertContains('RENAME "title" TO "subject";', $query);
+		$this->assertContains('ALTER COLUMN "subject" TYPE', $query);
+		$this->assertNotContains(";\n\tALTER COLUMN \"subject\" TYPE", $query);
+		$this->assertNotContains('ALTER COLUMN "title" TYPE "subject"', $query);
+	}
+
+/**
  * Test it is possible to use virtual field with postgresql
  *
  * @return void
@@ -927,6 +958,7 @@ class PostgresTest extends TestCase {
  * @return void
  */
 	public function testNestedTransaction() {
+		$this->Dbo->useNestedTransactions = true;
 		$this->skipIf($this->Dbo->nestedTransactionSupported() === false, 'The Postgres server do not support nested transaction');
 
 		$this->loadFixtures('Article');

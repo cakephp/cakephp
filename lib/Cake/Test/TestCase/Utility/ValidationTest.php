@@ -1,12 +1,12 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -1422,6 +1422,45 @@ class ValidationTest extends TestCase {
 		$this->assertFalse(Validation::date('12-06', array('my')));
 		$this->assertFalse(Validation::date('12.06', array('my')));
 		$this->assertFalse(Validation::date('12 06', array('my')));
+	}
+
+/**
+ * testDateYmNumeric method
+ *
+ * @return void
+ */
+	public function testDateYmNumeric() {
+		$this->assertTrue(Validation::date('2006/12', array('ym')));
+		$this->assertTrue(Validation::date('2006-12', array('ym')));
+		$this->assertTrue(Validation::date('2006-12', array('ym')));
+		$this->assertTrue(Validation::date('2006 12', array('ym')));
+		$this->assertTrue(Validation::date('2006 12', array('ym')));
+		$this->assertTrue(Validation::date('1900-01', array('ym')));
+		$this->assertTrue(Validation::date('2153-01', array('ym')));
+		$this->assertFalse(Validation::date('2006/12 ', array('ym')));
+		$this->assertFalse(Validation::date('2006/12/', array('ym')));
+		$this->assertFalse(Validation::date('06/12', array('ym')));
+		$this->assertFalse(Validation::date('06-12', array('ym')));
+		$this->assertFalse(Validation::date('06-12', array('ym')));
+		$this->assertFalse(Validation::date('06 12', array('ym')));
+	}
+
+/**
+ * testDateY method
+ *
+ * @return void
+ */
+	public function testDateY() {
+		$this->assertTrue(Validation::date('1900', array('y')));
+		$this->assertTrue(Validation::date('1984', array('y')));
+		$this->assertTrue(Validation::date('2006', array('y')));
+		$this->assertTrue(Validation::date('2008', array('y')));
+		$this->assertTrue(Validation::date('2013', array('y')));
+		$this->assertTrue(Validation::date('2104', array('y')));
+		$this->assertFalse(Validation::date('20009', array('y')));
+		$this->assertFalse(Validation::date(' 2012', array('y')));
+		$this->assertFalse(Validation::date('3000', array('y')));
+		$this->assertFalse(Validation::date('1899', array('y')));
 	}
 
 /**

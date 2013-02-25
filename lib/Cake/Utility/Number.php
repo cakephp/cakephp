@@ -7,12 +7,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.10.0.1076
@@ -136,7 +137,7 @@ class Number {
 			return $size * pow(1024, $i + 1);
 		}
 
-		if (substr($size, -1) == 'B' && ctype_digit(substr($size, 0, -1))) {
+		if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {
 			$size = substr($size, 0, -1);
 			return (int)$size;
 		}
@@ -300,14 +301,14 @@ class Number {
 			}
 		}
 
-		$position = $options[$symbolKey . 'Position'] != 'after' ? 'before' : 'after';
+		$position = $options[$symbolKey . 'Position'] !== 'after' ? 'before' : 'after';
 		$options[$position] = $options[$symbolKey . 'Symbol'];
 
 		$abs = abs($value);
 		$result = static::format($abs, $options);
 
 		if ($value < 0) {
-			if ($options['negative'] == '()') {
+			if ($options['negative'] === '()') {
 				$result = '(' . $result . ')';
 			} else {
 				$result = $options['negative'] . $result;

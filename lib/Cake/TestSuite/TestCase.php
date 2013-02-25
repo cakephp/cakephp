@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 1.2.0.4667
@@ -383,7 +384,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 				$tags = (string)$tags;
 			}
 			$i++;
-			if (is_string($tags) && $tags{0} == '<') {
+			if (is_string($tags) && $tags{0} === '<') {
 				$tags = array(substr($tags, 1) => array());
 			} elseif (is_string($tags)) {
 				$tagsTrimmed = preg_replace('/\s+/m', '', $tags);
@@ -391,7 +392,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 				if (preg_match('/^\*?\//', $tags, $match) && $tagsTrimmed !== '//') {
 					$prefix = array(null, null);
 
-					if ($match[0] == '*/') {
+					if ($match[0] === '*/') {
 						$prefix = array('Anything, ', '.*?');
 					}
 					$regex[] = array(

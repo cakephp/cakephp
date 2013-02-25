@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Datasource
  * @since         CakePHP(tm) v 0.10.0.1076
@@ -331,9 +332,9 @@ class DboSource extends DataSource {
 				$data, array_fill(0, count($data), $column)
 			);
 		} elseif (is_object($data) && isset($data->type, $data->value)) {
-			if ($data->type == 'identifier') {
+			if ($data->type === 'identifier') {
 				return $this->name($data->value);
-			} elseif ($data->type == 'expression') {
+			} elseif ($data->type === 'expression') {
 				return $data->value;
 			}
 		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
@@ -907,7 +908,7 @@ class DboSource extends DataSource {
 		if (empty($log['log'])) {
 			return;
 		}
-		if (PHP_SAPI != 'cli') {
+		if (PHP_SAPI !== 'cli') {
 			$controller = null;
 			$View = new View($controller, false);
 			$View->set('logs', array($this->configKeyName => $log));
@@ -1886,7 +1887,7 @@ class DboSource extends DataSource {
 
 			if ($quoteValues) {
 				$update .= $this->value($value, $model->getColumnType($field));
-			} elseif ($model->getColumnType($field) == 'boolean' && (is_int($value) || is_bool($value))) {
+			} elseif ($model->getColumnType($field) === 'boolean' && (is_int($value) || is_bool($value))) {
 				$update .= $this->boolean($value, true);
 			} elseif (!$alias) {
 				$update .= str_replace($quotedAlias . '.', '', str_replace(
@@ -3178,8 +3179,6 @@ class DboSource extends DataSource {
 			} else {
 				if (!empty($value['unique'])) {
 					$out .= 'UNIQUE ';
-				} elseif (!empty($value['type']) && strtoupper($value['type']) === 'FULLTEXT') {
-					$out .= 'FULLTEXT ';
 				}
 				$name = $this->startQuote . $name . $this->endQuote;
 			}

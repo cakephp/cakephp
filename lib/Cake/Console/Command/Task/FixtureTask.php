@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -105,7 +106,7 @@ class FixtureTask extends BakeTask {
 			if (!isset($this->connection)) {
 				$this->connection = 'default';
 			}
-			if (strtolower($this->args[0]) == 'all') {
+			if (strtolower($this->args[0]) === 'all') {
 				return $this->all();
 			}
 			$model = $this->_modelName($this->args[0]);
@@ -157,17 +158,17 @@ class FixtureTask extends BakeTask {
 	public function importOptions($modelName) {
 		$options = array();
 		$doSchema = $this->in(__d('cake_console', 'Would you like to import schema for this fixture?'), array('y', 'n'), 'n');
-		if ($doSchema == 'y') {
+		if ($doSchema === 'y') {
 			$options['schema'] = $modelName;
 		}
 		$doRecords = $this->in(__d('cake_console', 'Would you like to use record importing for this fixture?'), array('y', 'n'), 'n');
-		if ($doRecords == 'y') {
+		if ($doRecords === 'y') {
 			$options['records'] = true;
 		}
-		if ($doRecords == 'n') {
+		if ($doRecords === 'n') {
 			$prompt = __d('cake_console', "Would you like to build this fixture with data from %s's table?", $modelName);
 			$fromTable = $this->in($prompt, array('y', 'n'), 'n');
-			if (strtolower($fromTable) == 'y') {
+			if (strtolower($fromTable) === 'y') {
 				$options['fromTable'] = true;
 			}
 		}
@@ -200,7 +201,7 @@ class FixtureTask extends BakeTask {
 			if (isset($importOptions['records'])) {
 				$importBits[] = "'records' => true";
 			}
-			if ($this->connection != 'default') {
+			if ($this->connection !== 'default') {
 				$importBits[] .= "'connection' => '{$this->connection}'";
 			}
 			if (!empty($importBits)) {
@@ -314,7 +315,7 @@ class FixtureTask extends BakeTask {
 					case 'string':
 					case 'binary':
 						$isPrimaryUuid = (
-							isset($fieldInfo['key']) && strtolower($fieldInfo['key']) == 'primary' &&
+							isset($fieldInfo['key']) && strtolower($fieldInfo['key']) === 'primary' &&
 							isset($fieldInfo['length']) && $fieldInfo['length'] == 36
 						);
 						if ($isPrimaryUuid) {
