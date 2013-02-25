@@ -60,29 +60,6 @@ class TemplateTaskTest extends TestCase {
 	}
 
 /**
- * test that set sets variables
- *
- * @return void
- */
-	public function testSet() {
-		$this->Task->set('one', 'two');
-		$this->assertTrue(isset($this->Task->templateVars['one']));
-		$this->assertEquals('two', $this->Task->templateVars['one']);
-
-		$this->Task->set(array('one' => 'three', 'four' => 'five'));
-		$this->assertTrue(isset($this->Task->templateVars['one']));
-		$this->assertEquals('three', $this->Task->templateVars['one']);
-		$this->assertTrue(isset($this->Task->templateVars['four']));
-		$this->assertEquals('five', $this->Task->templateVars['four']);
-
-		$this->Task->templateVars = array();
-		$this->Task->set(array(3 => 'three', 4 => 'four'));
-		$this->Task->set(array(1 => 'one', 2 => 'two'));
-		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
-		$this->assertEquals($expected, $this->Task->templateVars);
-	}
-
-/**
  * test finding themes installed in
  *
  * @return void

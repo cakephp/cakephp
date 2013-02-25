@@ -323,7 +323,6 @@ object(Cake\View\View) {
 		(int) 1 => 'Form'
 	)
 	viewPath => ''
-	viewVars => array()
 	view => null
 	layout => 'default'
 	layoutPath => null
@@ -339,6 +338,7 @@ object(Cake\View\View) {
 	response => object(Cake\Network\Response) {}
 	elementCache => 'default'
 	elementCacheSettings => array()
+	viewVars => array()
 	int => (int) 2
 	float => (float) 1.333
 	[protected] _passedVars => array(

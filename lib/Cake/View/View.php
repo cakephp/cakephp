@@ -34,6 +34,7 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\ObjectCollection;
+use Cake\Utility\ViewVarsTrait;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -67,6 +68,7 @@ use Cake\Utility\ObjectCollection;
 class View extends Object {
 
 	use RequestActionTrait;
+	use ViewVarsTrait;
 
 /**
  * Helpers collection
@@ -117,13 +119,6 @@ class View extends Object {
  * @var string Path to View
  */
 	public $viewPath = null;
-
-/**
- * Variables for the view
- *
- * @var array
- */
-	public $viewVars = array();
 
 /**
  * Name of view to use with this View.
@@ -796,32 +791,6 @@ class View extends Object {
 		}
 		$this->uuids[] = $hash;
 		return $hash;
-	}
-
-/**
- * Allows a template or element to set a variable that will be available in
- * a layout or other element. Analogous to Controller::set().
- *
- * @param string|array $one A string or an array of data.
- * @param string|array $two Value in case $one is a string (which then works as the key).
- *    Unused if $one is an associative array, otherwise serves as the values to $one's keys.
- * @return void
- */
-	public function set($one, $two = null) {
-		$data = null;
-		if (is_array($one)) {
-			if (is_array($two)) {
-				$data = array_combine($one, $two);
-			} else {
-				$data = $one;
-			}
-		} else {
-			$data = array($one => $two);
-		}
-		if (!$data) {
-			return false;
-		}
-		$this->viewVars = $data + $this->viewVars;
 	}
 
 /**

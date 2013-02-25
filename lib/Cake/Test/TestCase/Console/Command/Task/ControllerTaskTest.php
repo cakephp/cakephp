@@ -320,8 +320,8 @@ class ControllerTaskTest extends TestCase {
 		$result = $this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->assertContains("App::uses('ControllerTestAppController', 'ControllerTest.Controller');", $result);
-		$this->assertEquals('ControllerTest', $this->Task->Template->templateVars['plugin']);
-		$this->assertEquals('ControllerTest.', $this->Task->Template->templateVars['pluginPath']);
+		$this->assertEquals('ControllerTest', $this->Task->Template->viewVars['plugin']);
+		$this->assertEquals('ControllerTest.', $this->Task->Template->viewVars['pluginPath']);
 
 		Plugin::unload();
 	}
