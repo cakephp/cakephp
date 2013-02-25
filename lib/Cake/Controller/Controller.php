@@ -29,6 +29,7 @@ use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
+use Cake\Utility\ViewVarsTrait;
 use Cake\View\View;
 
 /**
@@ -67,6 +68,7 @@ class Controller extends Object implements EventListener {
 
 	use MergeVariablesTrait;
 	use RequestActionTrait;
+	use ViewVarsTrait;
 
 /**
  * The name of this controller. Controller names are plural, named after the model they manipulate.
@@ -145,13 +147,6 @@ class Controller extends Object implements EventListener {
  * @var string
  */
 	public $layoutPath = null;
-
-/**
- * Contains variables to be handed to the view.
- *
- * @var array
- */
-	public $viewVars = array();
 
 /**
  * The name of the view file to render. The name specified
@@ -774,28 +769,6 @@ class Controller extends Object implements EventListener {
  */
 	public function header($status) {
 		$this->response->header($status);
-	}
-
-/**
- * Saves a variable for use inside a view template.
- *
- * @param string|array $one A string or an array of data.
- * @param string|array $two Value in case $one is a string (which then works as the key).
- *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
- * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#interacting-with-views
- */
-	public function set($one, $two = null) {
-		if (is_array($one)) {
-			if (is_array($two)) {
-				$data = array_combine($one, $two);
-			} else {
-				$data = $one;
-			}
-		} else {
-			$data = array($one => $two);
-		}
-		$this->viewVars = $data + $this->viewVars;
 	}
 
 /**
