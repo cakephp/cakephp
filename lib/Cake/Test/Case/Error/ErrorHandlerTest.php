@@ -252,14 +252,16 @@ class ErrorHandlerTest extends CakeTestCase {
 /**
  * test handleFatalError generating a page.
  *
+ * These tests start two buffers as handleFatalError blows the outer one up.
+ *
  * @return void
  */
 	public function testHandleFatalErrorPage() {
 		$this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.');
 
-		$originalDebugLevel = Configure::read('debug');
 		$line = __LINE__;
 
+		ob_start();
 		ob_start();
 		Configure::write('debug', 1);
 		ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
@@ -269,14 +271,13 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertContains((string)$line, $result, 'line missing.');
 
 		ob_start();
+		ob_start();
 		Configure::write('debug', 0);
 		ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
 		$result = ob_get_clean();
 		$this->assertNotContains('Something wrong', $result, 'message must not appear.');
 		$this->assertNotContains(__FILE__, $result, 'filename must not appear.');
 		$this->assertContains('An Internal Error Has Occurred', $result);
-
-		Configure::write('debug', $originalDebugLevel);
 	}
 
 /**
