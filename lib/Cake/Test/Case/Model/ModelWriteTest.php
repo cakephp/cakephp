@@ -276,6 +276,22 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * test that save() resets whitelist on failed save
+ */
+	public function testSaveFieldListResetsWhitelistOnFailedSave() {
+		$this->loadFixtures('Bidding');
+		$model = new Bidding();
+		$whitelist = array('title');
+		$model->whitelist = $whitelist;
+		$result = $model->save(
+			array(),
+			array('fieldList' => array('body'))
+		);
+		$this->assertFalse($result);
+		$this->assertEquals($whitelist, $model->whitelist);
+	}
+
+/**
  * testSaveWithCounterCache method
  *
  * @return void

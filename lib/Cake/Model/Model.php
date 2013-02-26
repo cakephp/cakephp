@@ -1626,6 +1626,7 @@ class Model extends Object implements CakeEventListener {
 		$this->set($data);
 
 		if (empty($this->data) && !$this->hasField(array('created', 'updated', 'modified'))) {
+			$this->whitelist = $_whitelist;
 			return false;
 		}
 
