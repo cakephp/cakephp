@@ -1096,7 +1096,9 @@ class Controller extends Object implements CakeEventListener {
 
 /**
  * The beforeRedirect method is invoked when the controller's redirect method is called but before any
- * further action. If this method returns false the controller will not continue on to redirect the request.
+ * further action.
+ *
+ * If this method returns false the controller will not continue on to redirect the request.
  * The $url, $status and $exit variables have same meaning as for the controller's method. You can also
  * return a string which will be interpreted as the url to redirect to or return associative array with
  * key 'url' and optionally 'status' and 'exit'.

@@ -385,6 +385,8 @@ class AuthComponent extends Component {
 	}
 
 /**
+ * Check if the provided user is authorized for the request.
+ *
  * Uses the configured Authorization adapters to check whether or not a user is authorized.
  * Each adapter will be checked in sequence, if any of them return true, then the user will
  * be authorized for the request.
@@ -506,7 +508,9 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Maps action names to CRUD operations. Used for controller-based authentication. Make sure
+ * Maps action names to CRUD operations.
+ *
+ * Used for controller-based authentication. Make sure
  * to configure the authorize property before calling this method. As it delegates $map to all the
  * attached authorize objects.
  *
@@ -525,7 +529,9 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Log a user in. If a $user is provided that data will be stored as the logged in user. If `$user` is empty or not
+ * Log a user in.
+ *
+ * If a $user is provided that data will be stored as the logged in user. If `$user` is empty or not
  * specified, the request will be used to identify a user. If the identification was successful,
  * the user record is written to the session key specified in AuthComponent::$sessionKey. Logging in
  * will also change the session id in order to help mitigate session replays.
@@ -548,11 +554,13 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Logs a user out, and returns the login action to redirect to.
- * Triggers the logout() method of all the authenticate objects, so they can perform
- * custom logout logic. AuthComponent will remove the session data, so
- * there is no need to do that in an authentication object. Logging out
- * will also renew the session id. This helps mitigate issues with session replays.
+ * Log a user out. 
+ *
+ * Returns the login action to redirect to. Triggers the logout() method of
+ * all the authenticate objects, so they can perform custom logout logic.
+ * AuthComponent will remove the session data, so there is no need to do that
+ * in an authentication object. Logging out will also renew the session id.
+ * This helps mitigate issues with session replays.
  *
  * @return string AuthComponent::$logoutRedirect
  * @see AuthComponent::$logoutRedirect
@@ -635,6 +643,8 @@ class AuthComponent extends Component {
 	}
 
 /**
+ * Get the URL a use should be redirected to upon login.
+ *
  * If no parameter is passed, gets the authentication redirect URL. Pass a url in to
  * set the destination a user should be redirected to upon logging in. Will fallback to
  * AuthComponent::$loginRedirect if there is no stored redirect value.
