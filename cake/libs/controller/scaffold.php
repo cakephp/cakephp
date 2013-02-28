@@ -540,7 +540,7 @@ class Scaffold extends Object {
  * Scaffold View.
  *
  * @package       cake
- * @subpackage    cake.cake.libs.controller
+ * @subpackage    cake.cake.libs.view
 */
 if (!class_exists('ThemeView')) {
 	App::import('View', 'Theme');
@@ -549,7 +549,8 @@ if (!class_exists('ThemeView')) {
 /**
  * ScaffoldView provides specific view file loading features for scaffolded views.
  *
- * @package cake.libs.view
+ * @package       cake
+ * @subpackage    cake.cake.libs.view
  */
 class ScaffoldView extends ThemeView {
 

@@ -275,7 +275,7 @@ class Router {
 		}
 		$defaults += array('plugin' => null);
 		if (empty($options['action'])) {
-			$defaults += array('action' => 'index'); 
+			$defaults += array('action' => 'index');
 		}
 		$routeClass = 'CakeRoute';
 		if (isset($options['routeClass'])) {
@@ -326,10 +326,10 @@ class Router {
  * Router::connectNamed(
  *    array('page' => array('action' => 'index', 'controller' => 'pages')),
  *    array('default' => false, 'greedy' => false)
- * ); 
+ * );
  * }}}
  *
- * @param array $named A list of named parameters. Key value pairs are accepted where values are 
+ * @param array $named A list of named parameters. Key value pairs are accepted where values are
  *    either regex strings to match, or arrays as seen above.
  * @param array $options Allows to control all settings: separator, greedy, reset, default
  * @return array
@@ -612,7 +612,7 @@ class Router {
 
 /**
  * Takes parameter and path information back from the Dispatcher, sets these
- * parameters as the current request parameters that are merged with url arrays 
+ * parameters as the current request parameters that are merged with url arrays
  * created later in the request.
  *
  * @param array $params Parameters and path information
@@ -692,7 +692,7 @@ class Router {
 	}
 
 /**
- * Reloads default Router settings.  Resets all class variables and 
+ * Reloads default Router settings.  Resets all class variables and
  * removes all connected routes.
  *
  * @access public
@@ -741,7 +741,7 @@ class Router {
  * - A combination of controller/action - the method will find url for it.
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
- * 
+ *
  * - `base` - Set to false to remove the base path from the generated url. If your application
  *   is not in the root directory, this can be used to generate urls that are 'cake relative'.
  *   cake relative urls are required when using requestAction.
@@ -1247,7 +1247,8 @@ class Router {
  * Not normally created as a standalone.  Use Router::connect() to create
  * Routes for your application.
  *
- * @package cake.libs
+ * @package       cake
+ * @subpackage    cake.cake.libs
  * @since 1.3.0
  * @see Router::connect()
  */
@@ -1462,8 +1463,8 @@ class CakeRoute {
 	}
 
 /**
- * Apply persistent parameters to a url array. Persistant parameters are a special 
- * key used during route creation to force route parameters to persist when omitted from 
+ * Apply persistent parameters to a url array. Persistant parameters are a special
+ * key used during route creation to force route parameters to persist when omitted from
  * a url array.
  *
  * @param array $url The array to apply persistent parameters to.
@@ -1617,12 +1618,13 @@ class CakeRoute {
  * Plugin short route, that copies the plugin param to the controller parameters
  * It is used for supporting /:plugin routes.
  *
- * @package cake.libs
+ * @package       cake
+ * @subpackage    cake.cake.libs
  */
 class PluginShortRoute extends CakeRoute {
 
 /**
- * Parses a string url into an array.  If a plugin key is found, it will be copied to the 
+ * Parses a string url into an array.  If a plugin key is found, it will be copied to the
  * controller parameter
  *
  * @param string $url The url to parse

@@ -19,11 +19,17 @@
  * @copyright       Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link            http://cakephp.org CakePHP Project
  * @package         cake
- * @subpackage      cake.view.helpers
+ * @subpackage      cake.cake.libs.view.helpers
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Helper', 'Js');
 
+/**
+ * jQuery Engine Helper for JsHelper
+ *
+ * @package       cake
+ * @subpackage    cake.cake.libs.view.helpers
+ */
 class JqueryEngineHelper extends JsBaseEngineHelper {
 /**
  * Option mappings for jQuery
@@ -178,7 +184,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	}
 
 /**
- * Create a domReady event. For jQuery. This method does not 
+ * Create a domReady event. For jQuery. This method does not
  * bind a 'traditional event' as `$(document).bind('ready', fn)`
  * Works in an entirely different fashion than  `$(document).ready()`
  * The first will not run the function when eval()'d as part of a response
