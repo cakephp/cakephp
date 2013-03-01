@@ -626,7 +626,7 @@ class CakeSchema extends Object {
 				unset($value['limit']);
 			}
 
-			if (isset($value['default']) && ($value['default'] === '' || ($value['default'] === false && $value['type'] != 'boolean'))) {
+			if (isset($value['default']) && ($value['default'] === '' || ($value['default'] === false && $value['type'] !== 'boolean'))) {
 				unset($value['default']);
 			}
 			if (empty($value['length'])) {
