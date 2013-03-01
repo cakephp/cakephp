@@ -476,7 +476,8 @@ class CakeSchema extends Object {
 				continue;
 			}
 			if (!array_key_exists($table, $old)) {
-				$tables[$table]['add'] = $fields;
+				// It is a new table
+				$tables[$table]['create'] = $fields;
 			} else {
 				$diff = $this->_arrayDiffAssoc($fields, $old[$table]);
 				if (!empty($diff)) {
