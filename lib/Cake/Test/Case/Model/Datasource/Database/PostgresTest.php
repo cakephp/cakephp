@@ -1003,4 +1003,17 @@ class PostgresTest extends CakeTestCase {
 		$this->assertTrue($new['currval'] > $original['nextval'], 'Sequence did not update');
 	}
 
+	public function testDatestyleSetting() {
+		Configure::write('Cache.disable', true);
+		$this->Dbo = ConnectionManager::getDataSource('test');
+		$this->skipIf(!($this->Dbo instanceof Postgres));
+
+		$config2 = $this->Dbo->config;
+		$config2['datestyle'] = 'sql, dmy';
+		ConnectionManager::create('test2', $config2);
+		$this->Dbo2 = new Postgres($config2, true);
+		$expected = array(array('r' => date('d/m/Y')));
+		$r = $this->Dbo2->fetchRow('SELECT now()::date AS "r"');
+		$this->assertEquals($expected, $r);
+	}
 }
