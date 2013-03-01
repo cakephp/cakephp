@@ -129,6 +129,9 @@ class Postgres extends DboSource {
 			if (!empty($config['schema'])) {
 				$this->_execute('SET search_path TO ' . $config['schema']);
 			}
+			if (!empty($config['datestyle'])) {
+				$this->_execute("SET datestyle TO " . $config['datestyle']);
+			}
 		} catch (PDOException $e) {
 			throw new MissingConnectionException(array(
 				'class' => get_class($this),
