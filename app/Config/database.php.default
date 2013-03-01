@@ -52,6 +52,9 @@
  *
  * unix_socket =>
  * For MySQL to connect via socket specify the `unix_socket` parameter instead of `host` and `port`
+ * 
+ * datestyle =>
+ * For Postgres specifies how date and timestamps will be formatted in results
  */
 class DATABASE_CONFIG {
 
