@@ -365,17 +365,16 @@ class SchemaShell extends AppShell {
 
 		if (empty($table)) {
 			foreach ($compare as $table => $changes) {
-				// Table does not exist in DB, creates it !
-				if(isset($compare[$table]['create'])){
+				if (isset($compare[$table]['create'])) {
 					$contents[$table] = $db->createSchema($Schema, $table);
 				} else {
 					$contents[$table] = $db->alterSchema(array($table => $compare[$table]), $table);
 				}
 			}
 		} elseif (isset($compare[$table])) {
-			if(isset($compare[$table]['create'])){
+			if (isset($compare[$table]['create'])) {
 				$contents[$table] = $db->createSchema($Schema, $table);
-			}else {
+			} else {
 				$contents[$table] = $db->alterSchema(array($table => $compare[$table]), $table);
 			}
 		}
