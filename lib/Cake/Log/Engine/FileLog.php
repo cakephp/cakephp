@@ -44,7 +44,8 @@ class FileLog extends BaseLog {
  * - `types` string or array, levels the engine is interested in
  * - `scopes` string or array, scopes the engine is interested in
  * - `file` log file name
- * - `path` the path to save logs on.
+ * - `path` the path to save logs on
+ * - `mask` to apply special permissions on created file logs.
  *
  * @param array $options Options for the FileLog, see above.
  */
@@ -55,6 +56,7 @@ class FileLog extends BaseLog {
 			'file' => null,
 			'types' => null,
 			'scopes' => array(),
+			'mask' => null,
 			), $this->_config);
 		$config = $this->config($config);
 		$this->_path = $config['path'];
@@ -84,7 +86,19 @@ class FileLog extends BaseLog {
 			$filename = $this->_path . $type . '.log';
 		}
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $message . "\n";
-		return file_put_contents($filename, $output, FILE_APPEND);
+		// Save some I/O if mask is not specified
+		if(empty($this->_config['mask'])){
+			return file_put_contents($filename, $output, FILE_APPEND);
+		} else {
+			$exists = file_exists($filename);
+			$r = file_put_contents($filename, $output, FILE_APPEND);
+			if (!$exists && !chmod($filename, (int)$this->_config['mask'])) {
+				trigger_error(__d(
+				'cake_dev', 'Could not apply permission mask "%s" on log file "%s"',
+				array($filename, $this->_config['mask'])), E_USER_WARNING);
+			}
+			return $r;
+		}
 	}
 
 }
