@@ -108,6 +108,14 @@ class QueryExpression implements Expression, Countable {
 		}
 	}
 
+/**
+ * Changes the conjunction for the conditions at this level of the expression tree.
+ * If called with no arguments it will return the currently configured value.
+ *
+ * @param string $conjunction value to be used for joining conditions. If null it
+ * will not set any value, but return the currently stored one
+ * @return string
+ */
 	public function type($conjunction = null) {
 		if ($conjunction === null) {
 			return $this->_conjunction;
@@ -117,6 +125,25 @@ class QueryExpression implements Expression, Countable {
 		return $this;
 	}
 
+/**
+ * Adds one or more conditions to this expression object. Conditions can be
+ * expressed in a one dimensional array, that will cause all conditions to
+ * be added directly at this level of the tree or they can be nested arbitrarily
+ * making it create more expression objects that will be nested inside and
+ * configured to use the specified conjunction.
+ *
+ * If the type passed for any of the fields is expressed "type[]" (note braces)
+ * then it will cause the placeholder to be re-written dynamically so if the
+ * value is an array, it will create as many placeholders as values are in it.
+ *
+ * @param string|array $conditions single or multiple conditions to be added. When
+ * using and array and the key is 'OR' or 'AND' a new expression object will be
+ * created with that conjunction and internal array value passed as conditions.
+ * @param array associative array of fields pointing to the type of the values
+ * that are being passed. Used for correctly binding values to statements.
+ * @see Cake\Model\Datasource\Database\Query::where() for examples on conditions
+ * @return QueryExpression
+ */
 	public function add($conditions, $types = []) {
 		if (is_string($conditions)) {
 			$this->_conditions[] = $conditions;
@@ -132,50 +159,148 @@ class QueryExpression implements Expression, Countable {
 		return $this;
 	}
 
+/**
+ * Adds a new condition to the expression object in the form "field = value".
+ *
+ * @param string $field database field to be compared against value
+ * @param mixed $value the value to be bound to $field for comparison
+ * @param string $type the type name for $value as configured using the Type map.
+ * If it is suffixed with "[]" and the value is an array then multiple placeholders
+ * will be created, one per each value in the array.
+ * @return QueryExpression
+ */
 	public function eq($field, $value, $type = null) {
 		return $this->add([$field => $value], $type ? [$field => $type] : []);
 	}
 
+/**
+ * Adds a new condition to the expression object in the form "field != value".
+ *
+ * @param string $field database field to be compared against value
+ * @param mixed $value the value to be bound to $field for comparison
+ * @param string $type the type name for $value as configured using the Type map.
+ * If it is suffixed with "[]" and the value is an array then multiple placeholders
+ * will be created, one per each value in the array.
+ * @return QueryExpression
+ */
 	public function notEq($field, $value, $type = null) {
 		return $this->add([$field . ' !=' => $value], $type ? [$field => $type] : []);
 	}
 
+/**
+ * Adds a new condition to the expression object in the form "field > value".
+ *
+ * @param string $field database field to be compared against value
+ * @param mixed $value the value to be bound to $field for comparison
+ * @param string $type the type name for $value as configured using the Type map.
+ * @return QueryExpression
+ */
 	public function gt($field, $value, $type = null) {
 		return $this->add([$field . ' >' => $value], $type ? [$field => $type] : []);
 	}
 
+/**
+ * Adds a new condition to the expression object in the form "field < value".
+ *
+ * @param string $field database field to be compared against value
+ * @param mixed $value the value to be bound to $field for comparison
+ * @param string $type the type name for $value as configured using the Type map.
+ * @return QueryExpression
+ */
 	public function lt($field, $value, $type = null) {
 		return $this->add([$field . ' <' => $value], $type ? [$field => $type] : []);
 	}
 
+/**
+ * Adds a new condition to the expression object in the form "field >= value".
+ *
+ * @param string $field database field to be compared against value
+ * @param mixed $value the value to be bound to $field for comparison
+ * @param string $type the type name for $value as configured using the Type map.
+ * @return QueryExpression
+ */
 	public function gte($field, $value, $type = null) {
 		return $this->add([$field . ' >=' => $value], $type ? [$field => $type] : []);
 	}
 
+/**
+ * Adds a new condition to the expression object in the form "field <= value".
+ *
+ * @param string $field database field to be compared against value
+ * @param mixed $value the value to be bound to $field for comparison
+ * @param string $type the type name for $value as configured using the Type map.
+ * @return QueryExpression
+ */
 	public function lte($field, $value, $type = null) {
 		return $this->add([$field . ' <=' => $value], $type ? [$field => $type] : []);
 	}
 
+/**
+ * Adds a new condition to the expression object in the form "field IS NULL".
+ *
+ * @param string $field database field to be tested for null
+ * @return QueryExpression
+ */
 	public function isNull($field) {
 		return $this->add($field . ' IS NULL');
 	}
 
+/**
+ * Adds a new condition to the expression object in the form "field IS NOT NULL".
+ *
+ * @param string $field database field to be tested for not null
+ * @return QueryExpression
+ */
 	public function isNotNull($field) {
 		return $this->add($field . ' IS NOT NULL');
 	}
 
+/**
+ * Adds a new condition to the expression object in the form "field LIKE value".
+ *
+ * @param string $field database field to be compared against value
+ * @param mixed $value the value to be bound to $field for comparison
+ * @param string $type the type name for $value as configured using the Type map.
+ * @return QueryExpression
+ */
 	public function like($field, $value, $type = null) {
 		return $this->add([$field . ' LIKE' => $value], $type ? [$field => $type] : []);
 	}
 
+/**
+ * Adds a new condition to the expression object in the form "field NOT LIKE value".
+ *
+ * @param string $field database field to be compared against value
+ * @param mixed $value the value to be bound to $field for comparison
+ * @param string $type the type name for $value as configured using the Type map.
+ * @return QueryExpression
+ */
 	public function notLike($field, $value, $type = null) {
 		return $this->add([$field . ' NOT LIKE' => $value], $type ? [$field => $type] : []);
 	}
 
+/**
+ * Adds a new condition to the expression object in the form
+ * "field IN (value1, value2)".
+ *
+ * @param string $field database field to be compared against value
+ * @param array $value the value to be bound to $field for comparison
+ * @param string $type the type name for $value as configured using the Type map.
+ * @return QueryExpression
+ */
 	public function in($field, $values, $type = null) {
 		return $this->add([$field . ' IN' => $values], $type ? [$field => $type] : []);
 	}
 
+/**
+ * Adds a new condition to the expression object in the form
+ * "field NOT IN (value1, value2)".
+ *
+ * @param string $field database field to be compared against value
+ * @param array $value the value to be bound to $field for comparison
+ * @param string $type the type name for $value as configured using the Type map.
+ * @return QueryExpression
+ */
 	public function notIn($field, $values, $type = null) {
 		return $this->add([$field . ' NOT IN' => $values], $type ? [$field => $type] : []);
 	}
