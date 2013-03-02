@@ -21,20 +21,85 @@ use Cake\Model\Datasource\Database\Expression;
 use Cake\Model\Datasource\Database\Query;
 use \Countable;
 
+/**
+ * Represents a SQL Query expression. Internally it stores a tree of
+ * expressions that can be compiled by converting this object to string
+ * and will contain a correctly parenthesized and nested expression.
+ *
+ * This class also deals with internally binding values to parts of the expression,
+ * used for condition comparisons. When a string representation of an instance
+ * of this class is built any value bound will be expressed as a placeholder,
+ * thus this class exposes methods for getting the actual bound values for each of
+ * them so they can be used in statements or replaced directly.
+ */
 class QueryExpression implements Expression, Countable {
 
+/**
+ * String to be used for joining each of the internal expressions
+ * this object internally stores for example "AND", "OR", etc.
+ *
+ * @var string
+ */
 	protected $_conjunction;
 
+/**
+ * A list of strings or other expression objects that represent the "branches" of
+ * the expression tree. For example one key of the array might look like "sum > :value"
+ *
+ * @var array
+ */
 	protected $_conditions = [];
 
+/**
+ * Array containing a list of bound values to the conditions on this
+ * object. Each array entry is another array structure containing the actual
+ * bound value, its type and the placeholder it is bound to.
+ *
+ * @var array
+ */
 	protected $_bindings = [];
 
+/**
+ * An unique string that identifies this object. It is used to create unique
+ * placeholders.
+ * 
+ * @car string
+ */
 	protected $_identifier;
 
+/**
+ * A counter of the number of parameters bound in this expression object
+ *
+ * @var integer
+ */
 	protected $_bindingsCount = 0;
 
+/**
+ * Whether to process placeholders that are meant to bind multiple other
+ * placeholders out of an array of values. This value is automatically
+ * set to true when an "IN" condition is used or when a value is bound
+ * with an array type.
+ *
+ * @var boolean
+ */
 	protected $_replaceArrayParams = false;
 
+/**
+ * Constructor. A new expression object can be created without any params and
+ * be built dynamically. Otherwise it is possible to pass an array of conditions
+ * containing either a tree-like array structure to be parsed and/or other
+ * expression objects. Optionally, you can set the conjunction keyword to be used
+ * for joining each part of this level of the expression tree.
+ *
+ * @param array $conditions tree-like array structure containing all the conditions
+ * to be added or nested inside this expression object.
+ * @param array types associative array of types to be associated with the values
+ * passed in $conditions.
+ * @param string $conjunction the glue that will join all the string conditions at this
+ * level of the expression tree. For example "AND", "OR", "XOR"...
+ * @see QueryExpression::add() for more details on $conditions and $types
+ * @return void
+ */
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
 		$this->_conjunction = strtoupper($conjunction);
 		$this->_identifier = substr(spl_object_hash($this), 7, 9);
@@ -137,7 +202,7 @@ class QueryExpression implements Expression, Countable {
  * Associates a query placeholder to a value and a type for next execution
  *
  * @param string|integer $token placeholder to be replaced with quoted version
- *of $value
+ * of $value
  * @param mixed $value the value to be bound
  * @param string|integer $type the mapped type name, used for casting when sending
  * to database
