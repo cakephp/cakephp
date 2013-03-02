@@ -1014,6 +1014,35 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendWithLogAndScope method
+ *
+ * @return void
+ */
+	public function testSendWithLogAndScope() {
+		CakeLog::config('email', array(
+			'engine' => 'FileLog',
+			'path' => TMP,
+			'types' => array('cake_test_emails'),
+			'scopes' => array('email')
+		));
+		CakeLog::drop('default');
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->to('me@cakephp.org');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('log' => array('level' => 'cake_test_emails', 'scope' => 'email')));
+		$result = $this->CakeEmail->send("Logging This");
+
+		App::uses('File', 'Utility');
+		$File = new File(TMP . 'cake_test_emails.log');
+		$log = $File->read();
+		$this->assertTrue(strpos($log, $result['headers']) !== false);
+		$this->assertTrue(strpos($log, $result['message']) !== false);
+		$File->delete();
+		CakeLog::drop('email');
+	}
+
+/**
  * testSendRender method
  *
  * @return void

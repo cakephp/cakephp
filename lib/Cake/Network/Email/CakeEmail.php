@@ -1066,10 +1066,15 @@ class CakeEmail {
 		$contents = $this->transportClass()->send($this);
 		if (!empty($this->_config['log'])) {
 			$level = LOG_DEBUG;
+			$scope = 'email';
 			if ($this->_config['log'] !== true) {
-				$level = $this->_config['log'];
+				if (!is_array($this->_config['log'])) {
+					$this->_config['log'] = array('level' => $this->_config['log']);
+				}
+				$this->_config['log'] = array_merge(compact('level', 'scope'), $this->_config['log']);
+				extract($this->_config['log']);
 			}
-			CakeLog::write($level, PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message']);
+			CakeLog::write($level, PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message'], $scope);
 		}
 		return $contents;
 	}
