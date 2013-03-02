@@ -69,12 +69,12 @@ class Connection {
 	public function __construct($config) {
 		$this->_config = $config;
 		if (!class_exists($config['datasource'])) {
-			throw new MissingDriverException(array('driver' => $config['datasource']));
+			throw new MissingDriverException(['driver' => $config['datasource']]);
 		}
 
 		$this->driver($config['datasource']);
 		if (!$this->_driver->enabled()) {
-			throw new MissingExtensionException(array('driver' => get_class($this->_driver)));
+			throw new MissingExtensionException(['driver' => get_class($this->_driver)]);
 		}
 	}
 
@@ -110,7 +110,7 @@ class Connection {
 		try {
 			return $this->_connected = $this->_driver->connect($this->_config);
 		} catch(\Exception $e) {
-			throw new MissingConnectionException(array('reason' => $e->getMessage()));
+			throw new MissingConnectionException(['reason' => $e->getMessage()]);
 		}
 	}
 
@@ -153,7 +153,7 @@ class Connection {
  * @param array $types list or associative array of types to be used for casting values in query
  * @return \Cake\Model\Datasource\Database\Statement executed statement
  */
-	public function execute($query, array $params = array(), array $types = array()) {
+	public function execute($query, array $params = [], array $types = []) {
 		$this->connect();
 		if ($params) {
 			$statement = $this->prepare($query);
@@ -186,7 +186,7 @@ class Connection {
  * @param array $types list of associative array containing the types to be used for casting
  * @return \Cake\Model\Datasource\Database\Statement
  */
-	public function insert($table, array $data, array $types = array()) {
+	public function insert($table, array $data, array $types = []) {
 		$this->connect();
 		$keys = array_keys($data);
 		$sql = 'INSERT INTO %s (%s) VALUES (%s)';
@@ -209,7 +209,7 @@ class Connection {
  * @param array $types list of associative array containing the types to be used for casting
  * @return \Cake\Model\Datasource\Database\Statement
  */
-	public function update($table, array $data, array $conditions = array(), $types = array()) {
+	public function update($table, array $data, array $conditions = [], $types = []) {
 		$this->connect();
 		$keys = array_keys($data);
 		$conditionsKeys = array_keys($conditions);
@@ -241,7 +241,7 @@ class Connection {
  * @param array $types list of associative array containing the types to be used for casting
  * @return \Cake\Model\Datasource\Database\Statement
  */
-	public function delete($table, $conditions = array(), $types = array()) {
+	public function delete($table, $conditions = [], $types = []) {
 		$this->connect();
 		$conditionsKeys = array_keys($conditions);
 		$sql = 'DELETE FROM %s %s';
@@ -439,12 +439,12 @@ class Connection {
  * @return string
  */
 	protected function _parseConditions($conditions) {
-		$params = array();
+		$params = [];
 		if (empty($conditions)) {
-			return array('', $params);
+			return ['', $params];
 		}
 		$sql = 'WHERE %s';
-		$conds = array();
+		$conds = [];
 		foreach ($conditions as $key => $value) {
 			if (is_numeric($key)) {
 				$conds[] = $value;
@@ -453,7 +453,7 @@ class Connection {
 			$conds[] = $key . ' = ?';
 			$params[] = $value;
 		}
-		return array(sprintf($sql, implode(' AND ', $conds)), $params);
+		return [sprintf($sql, implode(' AND ', $conds)), $params];
 	}
 
 }

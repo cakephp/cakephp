@@ -450,7 +450,7 @@ class QueryExpression implements Expression, Countable {
  * @return void
  */
 	protected function _addConditions(array $conditions, array $types) {
-		$operators = array('and', 'or', 'xor');
+		$operators = ['and', 'or', 'xor'];
 
 		foreach ($conditions as $k => $c) {
 			$numericKey = is_numeric($k);
