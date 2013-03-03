@@ -94,11 +94,10 @@ class DigestAuthenticateTest extends CakeTestCase {
 	public function testAuthenticateNoData() {
 		$request = new CakeRequest('posts/index', false);
 
-		$this->response->expects($this->once())
-			->method('header')
-			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
+		$this->response->expects($this->never())
+			->method('header');
 
-		$this->assertFalse($this->auth->authenticate($request, $this->response));
+		$this->assertFalse($this->auth->getUser($request, $this->response));
 	}
 
 /**
@@ -133,7 +132,7 @@ DIGEST;
 		$this->response->expects($this->at(2))
 			->method('send');
 
-		$this->assertFalse($this->auth->authenticate($request, $this->response));
+		$this->assertTrue($this->auth->unauthenticated($request, $this->response));
 	}
 
 /**
@@ -156,8 +155,8 @@ DIGEST;
 		$this->response->expects($this->at(2))
 			->method('send');
 
-		$result = $this->auth->authenticate($request, $this->response);
-		$this->assertFalse($result);
+		$result = $this->auth->unauthenticated($request, $this->response);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -224,7 +223,7 @@ DIGEST;
 		$this->response->expects($this->at(2))
 			->method('send');
 
-		$this->assertFalse($this->auth->authenticate($request, $this->response));
+		$this->assertTrue($this->auth->unauthenticated($request, $this->response));
 	}
 
 /**

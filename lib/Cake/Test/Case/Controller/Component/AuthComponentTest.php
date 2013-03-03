@@ -1348,4 +1348,78 @@ class AuthComponentTest extends CakeTestCase {
 		$result = $this->Auth->user('is_admin');
 		$this->assertFalse($result);
 	}
+
+/**
+ * testStatelessAuthNoRedirect method
+ *
+ * @return void
+ */
+	public function testStatelessAuthNoRedirect() {
+		if (CakeSession::id()) {
+			session_destroy();
+			CakeSession::$id = null;
+		}
+		$_SESSION = null;
+
+		AuthComponent::$sessionKey = false;
+		$this->Auth->authenticate = array('Basic');
+		$this->Controller->request['action'] = 'admin_add';
+
+		$this->Auth->response->expects($this->once())
+			->method('statusCode')
+			->with(401);
+
+		$this->Auth->response->expects($this->once())
+			->method('send');
+
+		$result = $this->Auth->startup($this->Controller);
+		$this->assertFalse($result);
+
+		$this->assertNull($this->Controller->testUrl);
+		$this->assertNull(CakeSession::id());
+	}
+
+/**
+ * testStatelessAuthNoSessionStart method
+ *
+ * @return void
+ */
+	public function testStatelessAuthNoSessionStart() {
+		if (CakeSession::id()) {
+			session_destroy();
+			CakeSession::$id = null;
+		}
+		$_SESSION = null;
+
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'cake';
+
+		$this->Auth->authenticate = array(
+			'Basic' => array('userModel' => 'AuthUser')
+		);
+		$this->Controller->request['action'] = 'admin_add';
+
+		$result = $this->Auth->startup($this->Controller);
+		$this->assertTrue($result);
+
+		$this->assertNull(CakeSession::id());
+	}
+
+/**
+ * testStatelessAuthRedirect method
+ *
+ * @return void
+ */
+	public function testStatelessFollowedByStatefulAuth() {
+		$this->Auth->authenticate = array('Basic', 'Form');
+		$this->Controller->request['action'] = 'admin_add';
+
+		$this->Auth->response->expects($this->never())->method('statusCode');
+		$this->Auth->response->expects($this->never())->method('send');
+
+		$result = $this->Auth->startup($this->Controller);
+		$this->assertFalse($result);
+
+		$this->assertEquals('/users/login', $this->Controller->testUrl);
+	}
 }
