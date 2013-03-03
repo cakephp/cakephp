@@ -25,11 +25,22 @@ use Cake\Model\Datasource\Database\Expression\FunctionExpression;
  **/
 class FunctionExpressionTest extends \Cake\TestSuite\TestCase {
 
+/**
+ * Tests generating a function with no arguments
+ *
+ * @return void
+ */
 	public function testArityZero() {
 		$f = new FunctionExpression('MyFunction');
 		$this->assertEquals('MyFunction()', $f->sql());
 	}
 
+/**
+ * Tests generating a function one or multiple arguments and make sure
+ * they are correctly replaced by placeholders
+ *
+ * @return void
+ */
 	public function testArityMultiplePlainValues() {
 		$f = new FunctionExpression('MyFunction', ['foo', 'bar']);
 		$foo = $f->id() . '0';
@@ -45,12 +56,23 @@ class FunctionExpressionTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('bar', $f->bindings()[1]['value']);
 	}
 
+/**
+ * Tests that it is possible to use literal strings as arguments
+ *
+ * @return void
+ */
 	public function testLiteralParams() {
 		$f = new FunctionExpression('MyFunction', ['foo' => 'literal', 'bar']);
 		$bar = $f->id() . '0';
 		$this->assertEquals("MyFunction(foo, :c$bar)", $f->sql());
 	}
 
+/**
+ * Tests that it is possible to nest expression objects and pass them as arguments
+ * In particular nesting multiple FunctionExpression
+ *
+ * @return void
+ */
 	public function testFunctionNesting() {
 		$f = new FunctionExpression('MyFunction', ['foo', 'bar']);
 		$foo = ':c' . $f->id() . '0';
