@@ -20,7 +20,7 @@ namespace Cake\Model\Datasource\Database\Expression;
 
 use Cake\Model\Datasource\Database\Expression;
 
-class Comparisson extends QueryExpression {
+class Comparison extends QueryExpression {
 
 	protected $_field;
 

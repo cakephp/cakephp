@@ -20,7 +20,7 @@ namespace Cake\Model\Datasource\Database;
 use IteratorAggregate;
 use Cake\Model\Datasource\Database\Expression\QueryExpression;
 use Cake\Model\Datasource\Database\Expression\OrderByExpression;
-use Cake\Model\Datasource\Database\Expression\Comparisson;
+use Cake\Model\Datasource\Database\Expression\Comparison;
 use Cake\Model\Datasource\Database\Statement\CallbackStatement;
 
 /**
@@ -1264,7 +1264,7 @@ class Query implements Expression, IteratorAggregate {
 		$visitor = function($expression) use ($statement) {
 			$params = $types = [];
 
-			if ($expression instanceof Comparisson) {
+			if ($expression instanceof Comparison) {
 				if ($expression->getValue() instanceof self) {
 					$expression->getValue()->_bindParams($statement);
 				}
