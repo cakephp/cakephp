@@ -439,6 +439,14 @@ class QueryExpression implements ExpressionInterface, Countable {
 		$callable($this);
 	}
 
+	public function id($identifier = null) {
+		if ($identifier === null) {
+			return $this->_identifier;
+		}
+		$this->_identifier = $identifier;
+		return $this;
+	}
+
 /**
  * Auxiliary function used for decomposing a nested array of conditions and build
  * a tree structure inside this object to represent the full SQL expression.

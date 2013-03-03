@@ -22,7 +22,7 @@ use Cake\Model\Datasource\Database\Connection;
 use Cake\Model\Datasource\Database\Query;
 
 /**
- * Tests Connection class
+ * Tests Query class
  *
  */
 class QueryTest extends \Cake\TestSuite\TestCase {

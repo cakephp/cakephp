@@ -1276,6 +1276,19 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
+ * Returns a new instance of a FunctionExpression. This is used for generating
+ * arbitrary function calls in the final SQL string.
+ *
+ * @param string $name the name of the SQL function to constructed
+ * @param array $params list of params to be passed to the function
+ * @param array $types list of types for each function param
+ * @return FunctionExpression
+ */
+	public function func($name, $params = [], $types = []) {
+		return new FunctionExpression($name, $params, $types);
+	}
+
+/**
  * Executes this query and returns a results iterator. This function is required
  * for implementing the IteratorAggregate interface and allows the query to be
  * iterated without having to call execute() manually, thus making it look like
