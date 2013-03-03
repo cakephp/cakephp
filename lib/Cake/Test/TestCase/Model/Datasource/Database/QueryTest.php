@@ -1575,11 +1575,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Test a basic delete.
+ * Test a basic delete using from()
  *
  * @return void
  */
-	public function testDeleteSimple() {
+	public function testDeleteWithFrom() {
 		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 
@@ -1596,6 +1596,26 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test a basic delete with no from() call.
+ *
+ * @return void
+ */
+	public function testDeleteNoFrom() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+
+		$query->delete('authors')
+			->where('1 = 1');
+
+		$result = $query->sql(false);
+		$this->assertContains('DELETE FROM authors ', $result);
+
+		$result = $query->execute();
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertCount(2, $result);
+	}
+
+/**
  * Test setting select() & delete() modes.
  *
  * @return void
@@ -1604,8 +1624,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$result = $query->select()
-			->delete()
-			->from('authors')
+			->delete('authors')
 			->where('1 = 1');
 		$result = $query->sql(false);
 

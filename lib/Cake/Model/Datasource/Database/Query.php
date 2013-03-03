@@ -1092,11 +1092,15 @@ class Query implements Expression, IteratorAggregate {
  * Can be combined with from(), where() and other methods to
  * create delete queries with specific conditions.
  *
+ * @param string $table The table to use when deleting. This
  * @return Query
  */
-	public function delete() {
+	public function delete($table = null) {
 		$this->_dirty = true;
 		$this->_type = 'delete';
+		if ($table) {
+			$this->from($table);
+		}
 		return $this;
 	}
 
