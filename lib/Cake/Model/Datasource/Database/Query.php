@@ -194,7 +194,7 @@ class Query implements Expression, IteratorAggregate {
  */
 	public function sql($transform = true) {
 		$sql = '';
-		$builder = function($parts, $name) use(&$sql) {
+		$visitor = function($parts, $name) use(&$sql) {
 			if (!count($parts)) {
 				return;
 			}
@@ -209,13 +209,13 @@ class Query implements Expression, IteratorAggregate {
 		};
 
 		$query = $transform ? $this->_transformQuery() : $this;
-		$query->build($builder->bindTo($query));
+		$query->traverse($visitor->bindTo($query));
 		return $sql;
 	}
 
 /**
  * Will iterate over every part that should be included for an specific query
- * type and execute the passed builder function for each of them. Builder
+ * type and execute the passed visitor function for each of them. Traversing
  * functions can aggregate results using variables in the closure or instance
  * variables. This function is commonly used as a way for traversing all query parts that
  * are going to be used for constructing a query.
@@ -225,48 +225,48 @@ class Query implements Expression, IteratorAggregate {
  *
  * ## Example:
  * {{{
- *	$query->select(['title'])->from('articles')->build(function($value, $clause) {
+ *	$query->select(['title'])->from('articles')->traverse(function($value, $clause) {
  *		if ($clause === 'select') {
  *			var_dump($value);
  *		}
  *	});
  * }}}
  *
- * @param callback $builder a function or callable to be executed for each part
+ * @param callback $visitor a function or callable to be executed for each part
  * @return Query
  */
-	public function build($builder) {
-		$this->{'_build' . ucFirst($this->_type)}($builder);
+	public function traverse($visitor) {
+		$this->{'_traverse' . ucFirst($this->_type)}($visitor);
 		return $this;
 	}
 
 /**
  * Helper function that will iterate over all query parts needed for a SELECT statement
- * and execute the $builder callback for each of them.
+ * and execute the $visitor callback for each of them.
  *
  * The callback will receive 2 parameters, the first one is the value of the query
  * part that is being iterated and the second the name of such part.
  *
- * @param callable $builder a function or callable to be executed for each part
+ * @param callable $visitor a function or callable to be executed for each part
  * @return void
  */
-	protected function _buildSelect(callable $builder) {
+	protected function _traverseSelect(callable $visitor) {
 		$parts = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit', 'offset', 'union'];
 		foreach ($parts as $name) {
-			$builder($this->_parts[$name], $name);
+			$visitor($this->_parts[$name], $name);
 		}
 	}
 
 /**
  * Helper function that iterates the query parts needed for DELETE statements.
  *
- * @param callable $builder A callable to execute for each part of the query.
+ * @param callable $visitor A callable to execute for each part of the query.
  * @return void
  */
-	protected function _buildDelete(callable $builder) {
+	protected function _traverseDelete(callable $visitor) {
 		$parts = ['delete', 'from', 'where'];
 		foreach ($parts as $name) {
-			$builder($this->_parts[$name], $name);
+			$visitor($this->_parts[$name], $name);
 		}
 	}
 
@@ -1285,7 +1285,7 @@ class Query implements Expression, IteratorAggregate {
 			}
 
 			if ($expression instanceof self) {
-				return $expression->build($binder);
+				return $expression->traverse($binder);
 			}
 
 			if ($expression instanceof QueryExpression) {
@@ -1294,7 +1294,7 @@ class Query implements Expression, IteratorAggregate {
 			}
 		};
 
-		$this->_transformQuery()->build($binder);
+		$this->_transformQuery()->traverse($binder);
 	}
 
 /**
