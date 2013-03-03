@@ -101,8 +101,8 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return void
  */
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
-		$this->_conjunction = strtoupper($conjunction);
-		$this->_identifier = substr(spl_object_hash($this), 7, 9);
+		$this->type(strtoupper($conjunction));
+		$this->id(substr(spl_object_hash($this), 7, 9));
 		if (!empty($conditions)) {
 			$this->add($conditions, $types);
 		}
@@ -439,6 +439,15 @@ class QueryExpression implements ExpressionInterface, Countable {
 		$callable($this);
 	}
 
+/**
+ * Sets the unique identifier string for this object, which is used for generating
+ * placeholders. If called with no arguments it will return the currently defined
+ * identifier.
+ *
+ * @param string $identifier the string to be used as prefix for generating
+ * placeholders. If null current identifier is returned
+ * @return string|QueryExpression
+ */
 	public function id($identifier = null) {
 		if ($identifier === null) {
 			return $this->_identifier;
