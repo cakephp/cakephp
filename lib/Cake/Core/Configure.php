@@ -160,7 +160,7 @@ class Configure {
  * Configure::read('Name.key'); will return only the value of Configure::Name[key]
  * }}}
  *
- * @linkhttp://book.cakephp.org/2.0/en/development/configuration.html#Configure::read
+ * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::read
  * @param string $var Variable to obtain. Use '.' to access array elements.
  * @return mixed value stored in configure, or null.
  */
