@@ -24,9 +24,8 @@ use Cake\Model\Datasource\Database\Query;
 /**
  * Tests Connection class
  *
- **/
+ */
 class QueryTest extends \Cake\TestSuite\TestCase {
-
 
 	public function setUp() {
 		$this->connection = new Connection(Configure::read('Datasource.test'));
@@ -1573,6 +1572,45 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			$this->assertArrayNotHasKey('foo', $row);
 			$this->assertArrayNotHasKey('modified_id', $row);
 		}
+	}
+
+/**
+ * Test a basic delete.
+ *
+ * @return void
+ */
+	public function testDeleteSimple() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+
+		$query->delete()
+			->from('authors')
+			->where('1 = 1');
+
+		$result = $query->sql(false);
+		$this->assertContains('DELETE FROM authors', $result);
+
+		$result = $query->execute();
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertCount(2, $result);
+	}
+
+/**
+ * Test setting select() & delete() modes.
+ *
+ * @return void
+ */
+	public function testSelectAndDeleteOnSameQuery() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$result = $query->select()
+			->delete()
+			->from('authors')
+			->where('1 = 1');
+		$result = $query->sql(false);
+
+		$this->assertContains('DELETE FROM authors', $result);
+		$this->assertContains('authors WHERE 1 = 1', $result);
 	}
 
 }

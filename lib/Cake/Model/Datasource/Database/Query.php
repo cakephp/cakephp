@@ -51,6 +51,7 @@ class Query implements Expression, IteratorAggregate {
  * @var array
  */
 	protected $_parts = [
+		'delete' => true,
 		'select' => [],
 		'distinct' => false,
 		'from' => [],
@@ -73,6 +74,7 @@ class Query implements Expression, IteratorAggregate {
  * @var array
  */
 	protected $_templates = [
+		'delete' => 'DELETE',
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
@@ -245,11 +247,24 @@ class Query implements Expression, IteratorAggregate {
  * The callback will receive 2 parameters, the first one is the value of the query
  * part that is being iterated and the second the name of such part.
  *
- * @param callback $builder a function or callable to be executed for each part
+ * @param callable $builder a function or callable to be executed for each part
  * @return void
  */
-	protected function _buildSelect($builder) {
+	protected function _buildSelect(callable $builder) {
 		$parts = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit', 'offset', 'union'];
+		foreach ($parts as $name) {
+			$builder($this->_parts[$name], $name);
+		}
+	}
+
+/**
+ * Helper function that iterates the query parts needed for DELETE statements.
+ *
+ * @param callable $builder A callable to execute for each part of the query.
+ * @return void
+ */
+	protected function _buildDelete(callable $builder) {
+		$parts = ['delete', 'from', 'where'];
 		foreach ($parts as $name) {
 			$builder($this->_parts[$name], $name);
 		}
@@ -1071,7 +1086,17 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
+/**
+ * Convert the query into a delete query.
+ *
+ * Can be combined with from(), where() and other methods to
+ * create delete queries with specific conditions.
+ *
+ * @return Query
+ */
 	public function delete() {
+		$this->_dirty = true;
+		$this->_type = 'delete';
 		return $this;
 	}
 

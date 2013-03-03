@@ -82,6 +82,12 @@ trait SqlDialect {
 		};
 	}
 
+/**
+ * Apply translation steps to select queries.
+ *
+ * @param Query $query The query to translate
+ * @return Query The modified query
+ */
 	protected function _selectQueryTranslator($query) {
 		if (is_array($query->clause('distinct'))) {
 			$query->group($query->clause('distinct'), true);
@@ -91,5 +97,14 @@ trait SqlDialect {
 		return $query;
 	}
 
-}
+/**
+ * Apply translation steps to delete queries.
+ *
+ * @param Query $query The query to translate
+ * @return Query The modified query
+ */
+	protected function _deleteQueryTranslator($query) {
+		return $query;
+	}
 
+}
