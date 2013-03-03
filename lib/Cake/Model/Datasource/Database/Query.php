@@ -53,6 +53,7 @@ class Query implements Expression, IteratorAggregate {
 	protected $_parts = [
 		'delete' => true,
 		'select' => [],
+		'update' => [],
 		'distinct' => false,
 		'from' => [],
 		'join' => [],
@@ -75,6 +76,7 @@ class Query implements Expression, IteratorAggregate {
  */
 	protected $_templates = [
 		'delete' => 'DELETE',
+		'update' => 'UPDATE %s',
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
@@ -265,6 +267,19 @@ class Query implements Expression, IteratorAggregate {
  */
 	protected function _traverseDelete(callable $visitor) {
 		$parts = ['delete', 'from', 'where'];
+		foreach ($parts as $name) {
+			$visitor($this->_parts[$name], $name);
+		}
+	}
+
+/**
+ * Helper function that iterates the query parts needed for UPDATE statements.
+ *
+ * @param callable $visitor A callable to execute for each part of the query.
+ * @return void
+ */
+	protected function _traverseUpdate(callable $visitor) {
+		$parts = ['update', 'set', 'where'];
 		foreach ($parts as $name) {
 			$visitor($this->_parts[$name], $name);
 		}
@@ -589,6 +604,24 @@ class Query implements Expression, IteratorAggregate {
 	}
 
 /**
+ * Helper function to generate SQL for SET expressions.
+ *
+ * @param array $parts List of keys & values to set.
+ * @return string
+ */
+	protected function _buildSetPart($parts) {
+		$set = [];
+		foreach ($parts as $part) {
+			// TODO Hacking around with string values is a bit dirty.
+			if ($part[0] === '(') {
+				$part = substr($part, 1, -1);
+			}
+			$set[] = $part;
+		}
+		return ' SET ' . implode('', $set);
+	}
+
+/**
  * Adds a condition or set of conditions to be used in the WHERE clause for this
  * query. Conditions can be expressed as an array of fields as keys with
  * comparison operators in it, the values for the array will be used for comparing
@@ -670,8 +703,8 @@ class Query implements Expression, IteratorAggregate {
  *	->where(['title !=' => 'Hello World'])
  *	->where(function($exp, $query) {
  *		$or = $exp->or_(['id' => 1]);
-		$and = $exp->and_(['id >' => 2, 'id <' => 10]);
-		return $or->add($and);
+ *		$and = $exp->and_(['id >' => 2, 'id <' => 10]);
+ *	return $or->add($and);
  *	});
  * }}}
  *
@@ -1082,12 +1115,42 @@ class Query implements Expression, IteratorAggregate {
 		return $this;
 	}
 
-	public function update() {
+/**
+ * Create an update query.
+ *
+ * Can be combined with set() and where() methods to create update queries.
+ *
+ * @param string $table The table you want to update.
+ * @return Query
+ */
+	public function update($table) {
+		$this->_dirty = true;
+		$this->_type = 'update';
+		$this->_parts['update'][] = $table;
 		return $this;
 	}
 
 /**
- * Convert the query into a delete query.
+ * Set one or many fields to update.
+ *
+ * @param string|array $key The key or array of keys + values to set.
+ * @param mixed $value The value to update $key to.
+ * @return Query
+ */
+	public function set($key, $value = null) {
+		if (empty($this->_parts['set'])) {
+			$this->_parts['set'] = new QueryExpression([], [], ',');
+		}
+		$set = $key;
+		if (!is_array($key) && !($key instanceof QueryExpression)) {
+			$set = [$key => $value];
+		}
+		$this->_parts['set']->add($set, []);
+		return $this;
+	}
+
+/**
+ * Create a delete query.
  *
  * Can be combined with from(), where() and other methods to
  * create delete queries with specific conditions.
@@ -1223,7 +1286,6 @@ class Query implements Expression, IteratorAggregate {
 		}
 		return $statement;
 	}
-
 
 /**
  * Helper function used to build conditions by composing QueryExpression objects

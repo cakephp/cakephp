@@ -1632,4 +1632,93 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertContains('authors WHERE 1 = 1', $result);
 	}
 
+/**
+ * Test a simple update.
+ *
+ * @return void
+ */
+	public function testUpdateSimple() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$query->update('authors')
+			->set('name', 'mark')
+			->where(['id' => 1]);
+		$result = $query->sql(false);
+		$this->assertContains('UPDATE authors SET name = :', $result);
+
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+	}
+
+/**
+ * Test update with multiple fields.
+ *
+ * @return void
+ */
+	public function testUpdateMultipleFields() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$query->update('articles')
+			->set('title', 'mark')
+			->set('body', 'some text')
+			->where(['id' => 1]);
+		$result = $query->sql(false);
+
+		$this->assertRegExp(
+			'/UPDATE articles SET title = :[0-9a-z]+ , body = :[0-9a-z]+/',
+			$result
+		);
+		$this->assertContains('WHERE id = :', $result);
+
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+	}
+
+/**
+ * Test updating multiple fields with an array.
+ *
+ * @return void
+ */
+	public function testUpdateMultipleFieldsArray() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$query->update('articles')
+			->set([
+				'title' => 'mark',
+				'body' => 'some text'
+			])
+			->where(['id' => 1]);
+		$result = $query->sql(false);
+
+		$this->assertRegExp(
+			'/UPDATE articles SET title = :[0-9a-z]+ , body = :[0-9a-z]+/',
+			$result
+		);
+		$this->assertContains('WHERE id = :', $result);
+
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+	}
+
+	public function testUpdateWithExpression() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+
+		$expr = $query->newExpr();
+		$expr->add('title = author_id');
+
+		$query->update('articles')
+			->set($expr)
+			->where(['id' => 1]);
+		$result = $query->sql(false);
+
+		$this->assertContains(
+			'UPDATE articles SET title = author_id WHERE id = :',
+			$result
+		);
+
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+	}
+
 }
