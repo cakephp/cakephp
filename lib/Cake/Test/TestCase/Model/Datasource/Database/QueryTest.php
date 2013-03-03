@@ -1659,8 +1659,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$query->update('articles')
-			->set('title', 'mark')
-			->set('body', 'some text')
+			->set('title', 'mark', 'string')
+			->set('body', 'some text', 'string')
 			->where(['id' => 1]);
 		$result = $query->sql(false);
 
@@ -1686,7 +1686,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->set([
 				'title' => 'mark',
 				'body' => 'some text'
-			])
+			], ['title' => 'string', 'body' => 'string'])
 			->where(['id' => 1]);
 		$result = $query->sql(false);
 
@@ -1700,6 +1700,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(1, $result);
 	}
 
+/**
+ * Test updates with an expression.
+ *
+ * @return void
+ */
 	public function testUpdateWithExpression() {
 		$this->_insertTwoRecords();
 		$query = new Query($this->connection);

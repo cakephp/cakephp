@@ -1126,7 +1126,7 @@ class Query implements Expression, IteratorAggregate {
 	public function update($table) {
 		$this->_dirty = true;
 		$this->_type = 'update';
-		$this->_parts['update'][] = $table;
+		$this->_parts['update'][0] = $table;
 		return $this;
 	}
 
@@ -1135,19 +1135,24 @@ class Query implements Expression, IteratorAggregate {
  *
  * @param string|array|QueryExpression $key The column name or array of keys
  *    + values to set. This can also be a QueryExpression containing a SQL fragment.
- * @param mixed $value The value to update $key to. Can be null if $key is an 
- *    array or QueryExpression
+ * @param mixed $value The value to update $key to. Can be null if $key is an
+ *    array or QueryExpression. When $key is an array, this parameter will be
+ *    used as $types instead.
+ * @param array $types The column types to treat data as.
  * @return Query
  */
-	public function set($key, $value = null) {
+	public function set($key, $value = null, $types = []) {
 		if (empty($this->_parts['set'])) {
-			$this->_parts['set'] = new QueryExpression([], [], ',');
+			$this->_parts['set'] = $this->newExpr()->type(',');
 		}
-		$set = $key;
-		if (!is_array($key) && !($key instanceof QueryExpression)) {
-			$set = [$key => $value];
+		if (is_array($key) || $key instanceof QueryExpression) {
+			$this->_parts['set']->add($key, (array)$value);
+		} else {
+			if (is_string($types)) {
+				$types = [$key => $types];
+			}
+			$this->_parts['set']->add([$key => $value], $types);
 		}
-		$this->_parts['set']->add($set, []);
 		return $this;
 	}
 
