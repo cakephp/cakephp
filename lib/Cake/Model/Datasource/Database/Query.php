@@ -1133,8 +1133,10 @@ class Query implements Expression, IteratorAggregate {
 /**
  * Set one or many fields to update.
  *
- * @param string|array $key The key or array of keys + values to set.
- * @param mixed $value The value to update $key to.
+ * @param string|array|QueryExpression $key The column name or array of keys
+ *    + values to set. This can also be a QueryExpression containing a SQL fragment.
+ * @param mixed $value The value to update $key to. Can be null if $key is an 
+ *    array or QueryExpression
  * @return Query
  */
 	public function set($key, $value = null) {
