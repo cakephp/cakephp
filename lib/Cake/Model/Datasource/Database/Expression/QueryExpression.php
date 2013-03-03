@@ -518,7 +518,7 @@ class QueryExpression implements Expression, Countable {
 		}
 
 		if ($value instanceof Expression || $multi === false) {
-			return new Comparisson($expression, $value, $type, $operator);
+			return new Comparison($expression, $value, $type, $operator);
 		}
 
 		$placeholder = $this->_bindValue($field, $value, $type);
