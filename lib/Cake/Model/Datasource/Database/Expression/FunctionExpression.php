@@ -48,6 +48,14 @@ class FunctionExpression extends QueryExpression {
 		parent::__construct($params, $types, ',');
 	}
 
+	public function name($name = null) {
+		if ($name === null) {
+			return $this->_name;
+		}
+		$this->_name = $name;
+		return $this;
+	}
+
 /**
  * Adds one or more arguments for the function call.
  *
