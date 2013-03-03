@@ -331,6 +331,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			return $this->_parts['select'];
 		}
 
+		if (is_callable($fields)) {
+			$fields = $fields($this);
+		}
+
 		if (!is_array($fields)) {
 			$fields = [$fields];
 		}

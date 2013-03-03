@@ -135,6 +135,20 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that it is possible to pass a closure as fields in select()
+ *
+ * @return void
+ */
+	public function testSelectClosure() {
+		$query = new Query($this->connection);
+		$result = $query->select(function($q) use ($query) {
+			$this->assertSame($query, $q);
+			return ['1 + 2', '1 + 5'];
+		})->execute();
+		$this->assertEquals([3, 6], $result->fetch());
+	}
+
+/**
  * Tests it is possible to select fields from tables with no conditions
  *
  * @return void
