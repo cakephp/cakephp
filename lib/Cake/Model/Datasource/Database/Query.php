@@ -18,9 +18,10 @@
 namespace Cake\Model\Datasource\Database;
 
 use IteratorAggregate;
-use Cake\Model\Datasource\Database\Expression\QueryExpression;
-use Cake\Model\Datasource\Database\Expression\OrderByExpression;
 use Cake\Model\Datasource\Database\Expression\Comparison;
+use Cake\Model\Datasource\Database\Expression\OrderByExpression;
+use Cake\Model\Datasource\Database\Expression\QueryExpression;
+use Cake\Model\Datasource\Database\Expression\ValuesExpression;
 use Cake\Model\Datasource\Database\Statement\CallbackStatement;
 
 /**
@@ -52,12 +53,14 @@ class Query implements Expression, IteratorAggregate {
  */
 	protected $_parts = [
 		'delete' => true,
-		'select' => [],
 		'update' => [],
+		'set' => [],
+		'insert' => [],
+		'values' => [],
+		'select' => [],
 		'distinct' => false,
 		'from' => [],
 		'join' => [],
-		'set' => [],
 		'where' => null,
 		'group' => [],
 		'having' => null,
@@ -77,6 +80,7 @@ class Query implements Expression, IteratorAggregate {
 	protected $_templates = [
 		'delete' => 'DELETE',
 		'update' => 'UPDATE %s',
+		'values' => ' VALUES %s',
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
@@ -196,7 +200,7 @@ class Query implements Expression, IteratorAggregate {
  */
 	public function sql($transform = true) {
 		$sql = '';
-		$visitor = function($parts, $name) use(&$sql) {
+		$visitor = function($parts, $name) use (&$sql) {
 			if (!count($parts)) {
 				return;
 			}
@@ -206,8 +210,7 @@ class Query implements Expression, IteratorAggregate {
 			if (isset($this->_templates[$name])) {
 				return $sql .= sprintf($this->_templates[$name], implode(', ', (array)$parts));
 			}
-
-			return $sql .= $this->{'_build' . ucFirst($name) . 'Part'}($parts, $sql);
+			return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $sql);
 		};
 
 		$query = $transform ? $this->_transformQuery() : $this;
@@ -238,7 +241,7 @@ class Query implements Expression, IteratorAggregate {
  * @return Query
  */
 	public function traverse($visitor) {
-		$this->{'_traverse' . ucFirst($this->_type)}($visitor);
+		$this->{'_traverse' . ucfirst($this->_type)}($visitor);
 		return $this;
 	}
 
@@ -280,6 +283,19 @@ class Query implements Expression, IteratorAggregate {
  */
 	protected function _traverseUpdate(callable $visitor) {
 		$parts = ['update', 'set', 'where'];
+		foreach ($parts as $name) {
+			$visitor($this->_parts[$name], $name);
+		}
+	}
+
+/**
+ * Helper function that iterates the query parts needed for INSERT statements.
+ *
+ * @param callable $visitor A callable to execute for each part of the query.
+ * @return void
+ */
+	protected function _traverseInsert(callable $visitor) {
+		$parts = ['insert', 'values'];
 		foreach ($parts as $name) {
 			$visitor($this->_parts[$name], $name);
 		}
@@ -1111,7 +1127,71 @@ class Query implements Expression, IteratorAggregate {
 		return sprintf("\nUNION %s", implode("\nUNION ", $parts));
 	}
 
-	public function insert() {
+/**
+ * Builds the SQL fragment for INSERT INTO.
+ *
+ * @param array $parts
+ * @return string SQL fragment.
+ */
+	protected function _buildInsertPart($parts) {
+		$table = $parts[0];
+		$columns = $parts[1];
+		return sprintf('INSERT INTO %s (%s)', $table, implode(', ', $columns));
+	}
+
+/**
+ * Builds the SQL fragment for INSERT INTO.
+ *
+ * @param array $parts
+ * @return string SQL fragment.
+ */
+	protected function _buildValuesPart($parts) {
+		$columns = $this->_parts['insert'][1];
+		$defaults = array_fill_keys($columns, null);
+		$placeholders = [];
+		$values = [];
+		foreach ($parts as $part) {
+			if (is_array($part)) {
+				$values[] = array_values($part + $defaults);
+				$placeholders[] = implode(', ', array_fill(0, count($part), '?'));
+			}
+		}
+		return sprintf(
+			' VALUES (%s)',
+			implode('), (', $placeholders)
+		);
+	}
+
+/**
+ * Create an insert query.
+ *
+ * @param string $table The table name to insert into.
+ * @param array $columns The columns to insert into.
+ * @return Query
+ */
+	public function insert($table, $columns) {
+		$this->_dirty = true;
+		$this->_type = 'insert';
+		$this->_parts['insert'] = [$table, $columns];
+		return $this;
+	}
+
+/**
+ * Set the values for an insert query.
+ *
+ * Multi inserts can be performed by calling values() more than one time,
+ * or by providing an array of value sets. Additionally $data can be a Query
+ * instance to insert data from another SELECT statement.
+ *
+ * @param array|Query $data The data to insert.
+ * @return Query
+ */
+	public function values($data) {
+		if (empty($this->_parts['values'])) {
+			$this->_parts['values'] = new ValuesExpression();
+		}
+		$this->_dirty = true;
+		$this->_parts['values']->add($data);
 		return $this;
 	}
 
@@ -1214,13 +1294,17 @@ class Query implements Expression, IteratorAggregate {
  * Returns any data that was stored in the specified clause. This is useful for
  * modifying any internal part of the query and it is used by the SQL dialects
  * to transform the query accordingly before it is executed. The valid clauses that
- * can be retrieved are: select, distinct, from, join, set, where, group, having,
- * order, limit, offset and union.
+ * can be retrieved are: delete, update, set, insert, values, select, distinct, 
+ * from, join, set, where, group, having, order, limit, offset and union.
  *
  * The return value for each of those parts may vary. Some clauses use QueryExpression
  * to internally store their state, some use arrays and others may use booleans or
  * integers. This is summary of the return types for each clause
  *
+ * - update: string The name of the table to update
+ * - set: QueryExpression
+ * - insert: array, will return an array containing the table + columns.
+ * - values: ValuesExpression
  * - select: array, will return empty array when no fields are set
  * - distinct: boolean
  * - from: array of tables
@@ -1233,7 +1317,6 @@ class Query implements Expression, IteratorAggregate {
  * - limit: integer or QueryExpression, null when not set
  * - offset: integer or QueryExpression, null when not set
  * - union: array
- *
  *
  * @param string $name name of the clause to be returned
  * @return mixed
@@ -1358,8 +1441,11 @@ class Query implements Expression, IteratorAggregate {
 			}
 
 			if ($expression instanceof QueryExpression) {
-				//Visit all expressions and subexpressions to get every bound value
+				// Visit all expressions and subexpressions to get every bound value
 				$expression->traverse($visitor);
+			}
+			if ($expression instanceof ValuesExpression) {
+				$visitor($expression);
 			}
 		};
 

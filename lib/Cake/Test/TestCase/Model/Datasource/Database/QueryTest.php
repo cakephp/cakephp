@@ -1726,4 +1726,49 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(1, $result);
 	}
 
+/**
+ * Test inserting a single row.
+ *
+ * @return void
+ */
+	public function testInsertSimple() {
+		$this->_insertTwoRecords();
+
+		$query = new Query($this->connection);
+		$query->insert('articles', ['title', 'body'])
+			->values([
+				'title' => 'mark',
+				'body' => 'test insert'
+			]);
+		$result = $query->sql(false);
+		$this->assertEquals(
+			'INSERT INTO articles (title, body) VALUES (?, ?)',
+			$result
+		);
+
+		$result = $query->execute();
+		$this->assertCount(1, $result, '1 row should be inserted');
+
+		$result = (new Query($this->connection))->select('COUNT(*)')
+			->from('articles')
+			->execute();
+		$this->assertEquals(3, $result->fetch()[0]);
+	}
+
+	public function testInsertSparseRow() {
+		$this->markTestIncomplete();
+	}
+
+	public function testInsertMultipleRows() {
+		$this->markTestIncomplete();
+	}
+
+	public function testInsertMultipleRowsSparse() {
+		$this->markTestIncomplete();
+	}
+
+	public function testInsertFromSelect() {
+		$this->markTestIncomplete();
+	}
+
 }

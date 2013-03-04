@@ -117,4 +117,14 @@ trait SqlDialect {
 		return $query;
 	}
 
+/**
+ * Apply translation steps to insert queries.
+ *
+ * @param Query $query The query to translate
+ * @return Query The modified query
+ */
+	protected function _insertQueryTranslator($query) {
+		return $query;
+	}
+
 }
