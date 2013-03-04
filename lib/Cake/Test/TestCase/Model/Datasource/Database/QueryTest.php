@@ -35,13 +35,26 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test helper for creating tables.
+ *
+ * @return void
+ */
+	protected function _createAuthorsAndArticles() {
+		$table = 'CREATE TEMPORARY TABLE authors(id int, name varchar(50))';
+		$this->connection->execute($table);
+
+		$table = 'CREATE TEMPORARY TABLE articles(id int, title varchar(20), body varchar(50), author_id int)';
+		$this->connection->execute($table);
+	}
+
+/**
  * Auxiliary function to insert a couple rows in a newly created table
  *
  * @return void
- **/
+ */
 	protected function _insertTwoRecords() {
-		$table = 'CREATE TEMPORARY TABLE authors(id int, name varchar(50))';
-		$this->connection->execute($table);
+		$this->_createAuthorsAndArticles();
+
 		$data = ['id' => '1', 'name' =>  'Chuck Norris'];
 		$result = $this->connection->insert('authors', $data, ['id' => 'integer', 'name' => 'string']);
 
@@ -49,8 +62,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$result->bindValue(2, 'Bruce Lee');
 		$result->execute();
 
-		$table = 'CREATE TEMPORARY TABLE articles(id int, title varchar(20), body varchar(50), author_id int)';
-		$this->connection->execute($table);
 		$data = ['id' => '1', 'title' =>  'a title', 'body' =>  'a body', 'author_id' => 1];
 		$result = $this->connection->insert(
 			'articles',
@@ -1732,27 +1743,36 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testInsertSimple() {
-		$this->_insertTwoRecords();
+		$this->_createAuthorsAndArticles();
 
 		$query = new Query($this->connection);
-		$query->insert('articles', ['title', 'body'])
+		$query->insert('articles', ['id', 'title', 'body'])
 			->values([
+				'id' => 1,
 				'title' => 'mark',
 				'body' => 'test insert'
 			]);
 		$result = $query->sql(false);
 		$this->assertEquals(
-			'INSERT INTO articles (title, body) VALUES (?, ?)',
+			'INSERT INTO articles (id, title, body) VALUES (?, ?, ?)',
 			$result
 		);
 
 		$result = $query->execute();
 		$this->assertCount(1, $result, '1 row should be inserted');
 
-		$result = (new Query($this->connection))->select('COUNT(*)')
+		$result = (new Query($this->connection))->select('*')
 			->from('articles')
 			->execute();
-		$this->assertEquals(3, $result->fetch()[0]);
+		$this->assertCount(1, $result);
+
+		$expected = [
+			'id' => 1,
+			'author_id' => null,
+			'title' => 'mark',
+			'body' => 'test insert'
+		];
+		$this->assertEquals($expected, $result->fetchAll('assoc')[0]);
 	}
 
 	public function testInsertSparseRow() {
