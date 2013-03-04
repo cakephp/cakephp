@@ -121,7 +121,7 @@ class CacheHelper extends AppHelper {
 			$index = null;
 
 			foreach ($keys as $action) {
-				if ($action == $this->request->params['action']) {
+				if ($action === $this->request->params['action']) {
 					$index = $action;
 					break;
 				}

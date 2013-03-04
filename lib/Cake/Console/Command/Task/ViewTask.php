@@ -153,7 +153,7 @@ class ViewTask extends BakeTask {
 					unset($methods[$i]);
 				}
 			}
-			if ($method[0] === '_' || $method == strtolower($this->controllerName . 'Controller')) {
+			if ($method[0] === '_' || $method === strtolower($this->controllerName . 'Controller')) {
 				unset($methods[$i]);
 			}
 		}
@@ -389,10 +389,10 @@ class ViewTask extends BakeTask {
  * @return string template name
  */
 	public function getTemplate($action) {
-		if ($action != $this->template && in_array($action, $this->noTemplateActions)) {
+		if ($action !== $this->template && in_array($action, $this->noTemplateActions)) {
 			return false;
 		}
-		if (!empty($this->template) && $action != $this->template) {
+		if (!empty($this->template) && $action !== $this->template) {
 			return $this->template;
 		}
 		$themePath = $this->Template->getThemePath();

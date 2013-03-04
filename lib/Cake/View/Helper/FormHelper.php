@@ -1153,7 +1153,7 @@ class FormHelper extends AppHelper {
 			} elseif (isset($map[$type])) {
 				$options['type'] = $map[$type];
 			}
-			if ($fieldKey == $primaryKey) {
+			if ($fieldKey === $primaryKey) {
 				$options['type'] = 'hidden';
 			}
 			if (
@@ -2617,7 +2617,7 @@ class FormHelper extends AppHelper {
 			if ($name !== null) {
 				$isNumeric = is_numeric($name);
 				if (
-					(!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] == (string)$name) ||
+					(!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] === (string)$name) ||
 					($selectedIsArray && in_array((string)$name, $attributes['value'], !$isNumeric))
 				) {
 					if ($attributes['style'] === 'checkbox') {

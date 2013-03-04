@@ -388,7 +388,7 @@ class ExtractTask extends AppShell {
 			}
 
 			list($type, $string, $line) = $countToken;
-			if (($type == T_STRING) && ($string == $functionName) && ($firstParenthesis === '(')) {
+			if (($type == T_STRING) && ($string === $functionName) && ($firstParenthesis === '(')) {
 				$position = $count;
 				$depth = 0;
 
@@ -404,7 +404,7 @@ class ExtractTask extends AppShell {
 				$mapCount = count($map);
 				$strings = $this->_getStrings($position, $mapCount);
 
-				if ($mapCount == count($strings)) {
+				if ($mapCount === count($strings)) {
 					extract(array_combine($map, $strings));
 					$domain = isset($domain) ? $domain : 'default';
 					$details = array(

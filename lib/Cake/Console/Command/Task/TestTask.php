@@ -304,7 +304,7 @@ class TestTask extends BakeTask {
 
 		$position = strpos($class, $type);
 
-		if ($position !== false && strlen($class) - $position == strlen($type)) {
+		if ($position !== false && (strlen($class) - $position) === strlen($type)) {
 			return $class;
 		}
 		return $class . $type;
@@ -358,7 +358,7 @@ class TestTask extends BakeTask {
 		$thisMethods = array_diff($classMethods, $parentMethods);
 		$out = array();
 		foreach ($thisMethods as $method) {
-			if (substr($method, 0, 1) !== '_' && $method != strtolower($className)) {
+			if (substr($method, 0, 1) !== '_' && $method !== strtolower($className)) {
 				$out[] = $method;
 			}
 		}

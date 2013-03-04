@@ -73,7 +73,7 @@ class Multibyte {
 				$values[] = $value;
 
 				if (count($values) === $find) {
-					if ($find == 3) {
+					if ($find === 3) {
 						$map[] = (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64);
 					} else {
 						$map[] = (($values[0] % 32) * 64) + ($values[1] % 64);
@@ -616,7 +616,7 @@ class Multibyte {
 									$replace++;
 								}
 							}
-							if ($replace == $count) {
+							if ($replace === $count) {
 								$upperCase[] = $keys[$key]['upper'];
 								$replaced = array_merge($replaced, array_values($keys[$key]['lower']));
 								$matched = true;
@@ -636,7 +636,7 @@ class Multibyte {
 											$replace++;
 										}
 									}
-									if ($replace == $count) {
+									if ($replace === $count) {
 										$upperCase[] = $keys[$ii]['upper'];
 										$replaced = array_merge($replaced, array_values($keys[$ii]['lower']));
 										$matched = true;

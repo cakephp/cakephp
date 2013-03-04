@@ -70,7 +70,7 @@ foreach ($scaffoldFields as $_field) {
 	$done = array();
 	foreach ($associations as $_type => $_data) {
 		foreach ($_data as $_alias => $_details) {
-			if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
+			if ($_details['controller'] !== $this->name && !in_array($_details['controller'], $done)) {
 				echo "\t\t<li>";
 				echo $this->Html->link(
 					__d('cake', 'List %s', Inflector::humanize($_details['controller'])),

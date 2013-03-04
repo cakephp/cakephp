@@ -25,7 +25,7 @@ App::uses('DboSource', 'Model/Datasource');
  *
  * A Dbo layer for MS SQL Server 2005 and higher. Requires the
  * `pdo_sqlsrv` extension to be enabled.
- * 
+ *
  * @link http://www.php.net/manual/en/ref.pdo-sqlsrv.php
  *
  * @package       Cake.Model.Datasource.Database
@@ -272,7 +272,7 @@ class Sqlserver extends DboSource {
 
 				if (!preg_match('/\s+AS\s+/i', $fields[$i])) {
 					if (substr($fields[$i], -1) === '*') {
-						if (strpos($fields[$i], '.') !== false && $fields[$i] != $alias . '.*') {
+						if (strpos($fields[$i], '.') !== false && $fields[$i] !== $alias . '.*') {
 							$build = explode('.', $fields[$i]);
 							$AssociatedModel = $model->{$build[0]};
 						} else {

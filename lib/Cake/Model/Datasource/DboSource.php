@@ -995,7 +995,7 @@ class DboSource extends DataSource {
 		for ($i = 0; $i < $count; $i++) {
 			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]));
 			$fieldInsert[] = $this->name($fields[$i]);
-			if ($fields[$i] == $model->primaryKey) {
+			if ($fields[$i] === $model->primaryKey) {
 				$id = $values[$i];
 			}
 		}
@@ -2974,7 +2974,7 @@ class DboSource extends DataSource {
 		$out = '';
 
 		foreach ($schema->tables as $curTable => $columns) {
-			if (!$tableName || $tableName == $curTable) {
+			if (!$tableName || $tableName === $curTable) {
 				$cols = $indexes = $tableParameters = array();
 				$primary = null;
 				$table = $this->fullTableName($curTable);
@@ -3139,7 +3139,7 @@ class DboSource extends DataSource {
  */
 	protected function _buildFieldParameters($columnString, $columnData, $position) {
 		foreach ($this->fieldParameters as $paramName => $value) {
-			if (isset($columnData[$paramName]) && $value['position'] == $position) {
+			if (isset($columnData[$paramName]) && $value['position'] === $position) {
 				if (isset($value['options']) && !in_array($columnData[$paramName], $value['options'])) {
 					continue;
 				}

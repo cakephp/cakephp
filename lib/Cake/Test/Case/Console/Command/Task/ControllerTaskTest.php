@@ -116,7 +116,7 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	public function testListAll() {
 		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
+		if ($count !== count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
@@ -145,7 +145,7 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	public function testGetNameValidIndex() {
 		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
+		if ($count !== count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 		$this->Task->interactive = true;
@@ -434,7 +434,7 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	public function testInteractive() {
 		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
+		if ($count !== count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
@@ -469,7 +469,7 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	public function testInteractiveAdminMethodsNotInteractive() {
 		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
+		if ($count !== count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
@@ -511,7 +511,7 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	public function testExecuteIntoAll() {
 		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
+		if ($count !== count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
@@ -538,7 +538,7 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	public function testExecuteIntoAllAdmin() {
 		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
+		if ($count !== count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 

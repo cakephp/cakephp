@@ -263,11 +263,11 @@ class I18n {
 		if (strpos($header, "plurals=3")) {
 			if (strpos($header, "100!=11")) {
 				if (strpos($header, "10<=4")) {
-					return $n % 10 == 1 && $n % 100 != 11 ? 0 : ($n % 10 >= 2 && $n % 10 <= 4 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
+					return $n % 10 == 1 && $n % 100 !== 11 ? 0 : ($n % 10 >= 2 && $n % 10 <= 4 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
 				} elseif (strpos($header, "100<10")) {
-					return $n % 10 == 1 && $n % 100 != 11 ? 0 : ($n % 10 >= 2 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
+					return $n % 10 == 1 && $n % 100 !== 11 ? 0 : ($n % 10 >= 2 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
 				}
-				return $n % 10 == 1 && $n % 100 != 11 ? 0 : ($n != 0 ? 1 : 2);
+				return $n % 10 == 1 && $n % 100 !== 11 ? 0 : ($n != 0 ? 1 : 2);
 			} elseif (strpos($header, "n==2")) {
 				return $n == 1 ? 0 : ($n == 2 ? 1 : 2);
 			} elseif (strpos($header, "n==0")) {
@@ -544,10 +544,10 @@ class I18n {
 				continue;
 			}
 			$count = count($parts);
-			if ($count == 2) {
+			if ($count === 2) {
 				$currentToken = $parts[0];
 				$value = $parts[1];
-			} elseif ($count == 1) {
+			} elseif ($count === 1) {
 				$value .= $parts[0];
 			} else {
 				continue;

@@ -116,8 +116,8 @@ class AclNode extends Model {
 
 			if (
 				!isset($result[0][$type]) ||
-				(!empty($path) && $result[0][$type]['alias'] != $path[count($path) - 1]) ||
-				(empty($path) && $result[0][$type]['alias'] != $start)
+				(!empty($path) && $result[0][$type]['alias'] !== $path[count($path) - 1]) ||
+				(empty($path) && $result[0][$type]['alias'] !== $start)
 			) {
 				return false;
 			}

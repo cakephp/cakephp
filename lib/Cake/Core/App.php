@@ -465,7 +465,7 @@ class App {
 			}
 
 			foreach ((array)$path as $dir) {
-				if ($dir != APP && is_dir($dir)) {
+				if ($dir !== APP && is_dir($dir)) {
 					$files = new RegexIterator(new DirectoryIterator($dir), $extension);
 					foreach ($files as $file) {
 						$fileName = basename($file);
@@ -664,7 +664,7 @@ class App {
 			$type = 'Console';
 		} elseif (isset(self::$types[$originalType]['suffix'])) {
 			$suffix = self::$types[$originalType]['suffix'];
-			$name .= ($suffix == $name) ? '' : $suffix;
+			$name .= ($suffix === $name) ? '' : $suffix;
 		}
 		if ($parent && isset(self::$types[$originalType]['extends'])) {
 			$extends = self::$types[$originalType]['extends'];

@@ -198,7 +198,7 @@ class TreeBehavior extends ModelBehavior {
 				$Model->data[$Model->alias][$right] = $edge + 2;
 			}
 		} elseif (array_key_exists($parent, $Model->data[$Model->alias])) {
-			if ($Model->data[$Model->alias][$parent] != $Model->field($parent)) {
+			if ($Model->data[$Model->alias][$parent] !== $Model->field($parent)) {
 				$this->settings[$Model->alias]['__parentChange'] = true;
 			}
 			if (!$Model->data[$Model->alias][$parent]) {

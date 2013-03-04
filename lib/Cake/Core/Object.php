@@ -196,7 +196,7 @@ class Object {
 				isset($classProperties[$var]) &&
 				!empty($classProperties[$var]) &&
 				is_array($this->{$var}) &&
-				$this->{$var} != $classProperties[$var]
+				$this->{$var} !== $classProperties[$var]
 			) {
 				if ($normalize) {
 					$classProperties[$var] = Hash::normalize($classProperties[$var]);
