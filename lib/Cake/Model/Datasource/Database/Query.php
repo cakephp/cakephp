@@ -18,6 +18,7 @@
 namespace Cake\Model\Datasource\Database;
 
 use IteratorAggregate;
+use Cake\Error;
 use Cake\Model\Datasource\Database\Expression\Comparison;
 use Cake\Model\Datasource\Database\Expression\OrderByExpression;
 use Cake\Model\Datasource\Database\Expression\QueryExpression;
@@ -1165,6 +1166,9 @@ class Query implements Expression, IteratorAggregate {
 /**
  * Create an insert query.
  *
+ * Note calling this method will reset any data previously set
+ * with Query::values()
+ *
  * @param string $table The table name to insert into.
  * @param array $columns The columns to insert into.
  * @return Query
@@ -1173,6 +1177,7 @@ class Query implements Expression, IteratorAggregate {
 		$this->_dirty = true;
 		$this->_type = 'insert';
 		$this->_parts['insert'] = [$table, $columns];
+		$this->_parts['values'] = new ValuesExpression($columns);
 		return $this;
 	}
 
@@ -1185,10 +1190,19 @@ class Query implements Expression, IteratorAggregate {
  *
  * @param array|Query $data The data to insert.
  * @return Query
+ * @throws Cake\Error\Exception if you try to set values before declaring columns.
+ *   Or if you try to set values on non-insert queries.
  */
 	public function values($data) {
-		if (empty($this->_parts['values'])) {
-			$this->_parts['values'] = new ValuesExpression();
+		if ($this->_type !== 'insert') {
+			throw new Error\Exception(
+				__d('cake_dev', 'You cannot add values before defining columns to use.')
+			);
+		}
+		if (empty($this->_parts['insert'])) {
+			throw new Error\Exception(
+				__d('cake_dev', 'You cannot add values before defining columns to use.')
+			);
 		}
 		$this->_dirty = true;
 		$this->_parts['values']->add($data);

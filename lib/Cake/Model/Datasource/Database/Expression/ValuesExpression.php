@@ -30,6 +30,11 @@ use \Countable;
 class ValuesExpression implements Expression {
 
 	protected $_values = [];
+	protected $_columns = [];
+
+	public function __construct($columns) {
+		$this->_columns = $columns;
+	}
 
 /**
  * Add a row of data to be inserted.
@@ -49,7 +54,9 @@ class ValuesExpression implements Expression {
 	public function bindings() {
 		$bindings = [];
 		$i = 0;
+		$defaults = array_fill_keys($this->_columns, null);
 		foreach ($this->_values as $row) {
+			$row = array_merge($defaults, $row);
 			foreach ($row as $column => $value) {
 				$bindings[] = [
 					// TODO add types.
@@ -70,9 +77,10 @@ class ValuesExpression implements Expression {
  */
 	public function sql() {
 		$placeholders = [];
+		$numColumns = count($this->_columns);
 		foreach ($this->_values as $row) {
 			if (is_array($row)) {
-				$placeholders[] = implode(', ', array_fill(0, count($row), '?'));
+				$placeholders[] = implode(', ', array_fill(0, $numColumns, '?'));
 			}
 		}
 		return sprintf('(%s)', implode('), (', $placeholders));

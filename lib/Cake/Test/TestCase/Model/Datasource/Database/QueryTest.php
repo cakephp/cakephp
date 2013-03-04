@@ -1738,6 +1738,20 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * You cannot call values() before insert() it causes all sorts of pain.
+ *
+ * @expectedException Cake\Error\Exception
+ */
+	public function testInsertValuesBeforeInsertFailure() {
+		$query = new Query($this->connection);
+		$query->select('*')->values([
+				'id' => 1,
+				'title' => 'mark',
+				'body' => 'test insert'
+			]);
+	}
+
+/**
  * Test inserting a single row.
  *
  * @return void
@@ -1775,12 +1789,72 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result->fetchAll('assoc')[0]);
 	}
 
+/**
+ * Test an insert when not all the listed fields are provided.
+ * Columns should be matched up where possible.
+ *
+ * @return void
+ */
 	public function testInsertSparseRow() {
-		$this->markTestIncomplete();
+		$this->_createAuthorsAndArticles();
+
+		$query = new Query($this->connection);
+		$query->insert('articles', ['id', 'title', 'body'])
+			->values([
+				'body' => 'test insert',
+				'title' => 'mark',
+			]);
+		$result = $query->sql(false);
+		$this->assertEquals(
+			'INSERT INTO articles (id, title, body) VALUES (?, ?, ?)',
+			$result
+		);
+
+		$result = $query->execute();
+		$this->assertCount(1, $result, '1 row should be inserted');
+
+		$result = (new Query($this->connection))->select('*')
+			->from('articles')
+			->execute();
+		$this->assertCount(1, $result);
+
+		$expected = [
+			'id' => null,
+			'author_id' => null,
+			'title' => 'mark',
+			'body' => 'test insert'
+		];
+		$this->assertEquals($expected, $result->fetchAll('assoc')[0]);
 	}
 
+/**
+ * Test inserting multiple rows.
+ *
+ * @return void
+ */
 	public function testInsertMultipleRows() {
-		$this->markTestIncomplete();
+		$this->_createAuthorsAndArticles();
+
+		$query = new Query($this->connection);
+		$query->insert('articles', ['id', 'title', 'body'])
+			->values([
+				'id' => 1,
+				'title' => 'mark',
+				'body' => 'test insert'
+			])
+			->values([
+				'id' => 2,
+				'title' => 'jose',
+				'body' => 'test insert'
+			]);
+		$result = $query->sql(false);
+		$this->assertEquals(
+			'INSERT INTO articles (id, title, body) VALUES (?, ?, ?), (?, ?, ?)',
+			$result
+		);
+
+		$result = $query->execute();
+		$this->assertCount(2, $result, '2 row should be inserted');
 	}
 
 	public function testInsertMultipleRowsSparse() {
