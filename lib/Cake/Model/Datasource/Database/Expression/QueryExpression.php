@@ -336,7 +336,7 @@ class QueryExpression implements Expression, Countable {
 	}
 
 /**
- * Associates a query placeholder to a value and a type fro this level of the
+ * Associates a query placeholder to a value and a type for this level of the
  * expressions tree.
  *
  * If type is expressed as "atype[]" (note braces) then it will cause the
