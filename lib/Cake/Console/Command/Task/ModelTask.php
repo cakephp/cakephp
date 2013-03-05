@@ -568,7 +568,7 @@ class ModelTask extends BakeTask {
 	}
 
 /**
- * Find the hasOne and HasMany relations and add them to associations list
+ * Find the hasOne and hasMany relations and add them to associations list
  *
  * @param Model $model Model instance being generated
  * @param array $associations Array of in progress associations

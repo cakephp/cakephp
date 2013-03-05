@@ -16,7 +16,7 @@
 App::uses('DispatcherFilter', 'Routing');
 
 /**
- * This filter will check wheter the response was previously cached in the file system
+ * This filter will check whether the response was previously cached in the file system
  * and served it back to the client if appropriate.
  *
  * @package Cake.Routing.Filter

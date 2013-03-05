@@ -321,7 +321,7 @@ class PhpAco {
 			return array_map('strtolower', $aco);
 		}
 
-		// strip multiple occurences of '/'
+		// strip multiple occurrences of '/'
 		$aco = preg_replace('#/+#', '/', $aco);
 		// make case insensitive
 		$aco = ltrim(strtolower($aco), '/');
