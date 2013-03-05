@@ -2077,7 +2077,7 @@ class FormHelper extends AppHelper {
 		$attributes = $this->_dateTimeSelected('day', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
-			$attributes['value'] = date('d', strtotime($attributes['value']));
+			$attributes['value'] = date_create($attributes['value'])->format('d');
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
@@ -2123,7 +2123,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (strlen($attributes['value']) > 4 || $attributes['value'] === 'now') {
-			$attributes['value'] = date('Y', strtotime($attributes['value']));
+			$attributes['value'] = date_create($attributes['value'])->format('Y');
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
@@ -2159,7 +2159,7 @@ class FormHelper extends AppHelper {
 		$attributes = $this->_dateTimeSelected('month', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
-			$attributes['value'] = date('m', strtotime($attributes['value']));
+			$attributes['value'] = date_create($attributes['value'])->format('m');
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
@@ -2195,10 +2195,11 @@ class FormHelper extends AppHelper {
 		$attributes = $this->_dateTimeSelected('hour', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
+			$Date = new DateTime($attributes['value']);
 			if ($format24Hours) {
-				$attributes['value'] = date('H', strtotime($attributes['value']));
+				$attributes['value'] = $Date->format('H');
 			} else {
-				$attributes['value'] = date('g', strtotime($attributes['value']));
+				$attributes['value'] = $Date->format('g');
 			}
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
@@ -2234,7 +2235,7 @@ class FormHelper extends AppHelper {
 		$attributes = $this->_dateTimeSelected('min', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
-			$attributes['value'] = date('i', strtotime($attributes['value']));
+			$attributes['value'] = date_create($attributes['value'])->format('i');
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
@@ -2301,7 +2302,7 @@ class FormHelper extends AppHelper {
 						$attributes['value'] = date('a');
 					}
 				} else {
-					$attributes['value'] = date('a', strtotime($value));
+					$attributes['value'] = date_create($attributes['value'])->format('a');
 				}
 			}
 		}
