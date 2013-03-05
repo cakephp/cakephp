@@ -398,6 +398,30 @@ class SchemaShellTest extends CakeTestCase {
 	}
 
 /**
+ * test generate with excluded tables
+ *
+ * @return void
+ */
+	public function testGenerateExclude() {
+		$this->db->cacheSources = false;
+		$this->Shell->params = array(
+			'force' => false,
+			'overwrite' => true,
+			'exclude' => 'acos,aros'
+		);
+		$this->Shell->startup();
+		$this->Shell->Schema->path = TMP . 'tests' . DS;
+
+		$this->Shell->generate();
+		$this->file = new File(TMP . 'tests' . DS . 'schema.php');
+		$contents = $this->file->read();
+
+		$this->assertNotRegExp('/public \$aros = array\(/', $contents);
+		$this->assertNotRegExp('/public \$acos = array\(/', $contents);
+		$this->assertRegExp('/public \$aros_acos = array\(/', $contents);
+	}
+
+/**
  * Test schema run create with no table args.
  *
  * @return void
