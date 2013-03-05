@@ -194,7 +194,7 @@ class CakeSocket {
 /**
  * Get the connection context.
  *
- * @return null|array Null when there is no connnection, an array when there is.
+ * @return null|array Null when there is no connection, an array when there is.
  */
 	public function context() {
 		if (!$this->connection) {

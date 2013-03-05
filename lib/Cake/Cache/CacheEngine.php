@@ -30,7 +30,7 @@ abstract class CacheEngine {
 
 /**
  * Contains the compiled string with all groups
- * prefixes to be prepeded to every key in this cache engine
+ * prefixes to be prepended to every key in this cache engine
  *
  * @var string
  */
@@ -67,7 +67,7 @@ abstract class CacheEngine {
  *
  * Permanently remove all expired and deleted data
  *
- * @param integer $expires [optional] An expires timestamp, invalidataing all data before.
+ * @param integer $expires [optional] An expires timestamp, invalidating all data before.
  * @return void
  */
 	public function gc($expires = null) {
@@ -126,7 +126,7 @@ abstract class CacheEngine {
 	abstract public function clear($check);
 
 /**
- * Clears all values belonging to a group. Is upt to the implementing engine
+ * Clears all values belonging to a group. Is up to the implementing engine
  * to decide whether actually delete the keys or just simulate it to achieve
  * the same result.
  *

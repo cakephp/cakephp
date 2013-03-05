@@ -149,7 +149,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Resets interal state for all validation rules in this set
+ * Resets internal state for all validation rules in this set
  *
  * @return void
  */
@@ -235,7 +235,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * }}}
  *
  * @param array $rules The rules to be set
- * @param bolean $mergeVars [optional] If true, merges vars instead of replace. Defaults to true.
+ * @param boolean $mergeVars [optional] If true, merges vars instead of replace. Defaults to true.
  * @return ModelField
  */
 	public function setRules($rules = array(), $mergeVars = true) {
@@ -307,7 +307,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Returns wheter an index exists in the rule set
+ * Returns whether an index exists in the rule set
  *
  * @param string $index name of the rule
  * @return boolean

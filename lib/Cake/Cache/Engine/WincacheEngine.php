@@ -29,7 +29,7 @@ class WincacheEngine extends CacheEngine {
 
 /**
  * Contains the compiled group names
- * (prefixed witht the global configuration prefix)
+ * (prefixed with the global configuration prefix)
  *
  * @var array
  */

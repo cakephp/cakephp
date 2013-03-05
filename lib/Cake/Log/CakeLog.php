@@ -56,7 +56,7 @@ App::uses('LogEngineCollection', 'Log');
  * }}}
  *
  * If you require custom logging levels, you can use CakeLog::levels() to
- * append additoinal logging levels.
+ * append additional logging levels.
  *
  * ### Logging scopes
  *
@@ -301,7 +301,7 @@ class CakeLog {
 	}
 
 /**
- * Checks wether $streamName is enabled
+ * Checks whether $streamName is enabled
  *
  * @param string $streamName to check
  * @return bool
