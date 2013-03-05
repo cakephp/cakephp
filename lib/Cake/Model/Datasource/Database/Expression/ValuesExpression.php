@@ -30,11 +30,34 @@ use \Countable;
  */
 class ValuesExpression implements Expression {
 
+/**
+ * Array of values to insert.
+ *
+ * @var array
+ */
 	protected $_values = [];
+
+/**
+ * List of columns to ensure are part of the insert.
+ *
+ * @var array
+ */
 	protected $_columns = [];
+
+/**
+ * Flag for tracking whether or not the values are an instance of Query
+ *
+ * @var boolean
+ */
 	protected $_hasQuery = false;
 
-	public function __construct($columns) {
+/**
+ * Constructor
+ *
+ * @param array $columns The list of columns that are going to be part of the values.
+ * @return void
+ */
+	public function __construct(array $columns) {
 		$this->_columns = $columns;
 	}
 

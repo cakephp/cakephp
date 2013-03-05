@@ -1902,6 +1902,30 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test that an exception is raised when mixing query + array types.
+ *
+ * @expectedException Cake\Error\Exception
+ */
+	public function testInsertFailureMixingTypesArrayFirst() {
+		$query = new Query($this->connection);
+		$query->insert('articles', ['name'])
+			->values(['name' => 'mark'])
+			->values(new Query($this->connection));
+	}
+
+/**
+ * Test that an exception is raised when mixing query + array types.
+ *
+ * @expectedException Cake\Error\Exception
+ */
+	public function testInsertFailureMixingTypesQueryFirst() {
+		$query = new Query($this->connection);
+		$query->insert('articles', ['name'])
+			->values(new Query($this->connection))
+			->values(['name' => 'mark']);
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table
