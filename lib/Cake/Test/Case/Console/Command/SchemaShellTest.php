@@ -93,8 +93,9 @@ class SchemaShellTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.article', 'core.user', 'core.post', 'core.auth_user', 'core.author',
-		'core.comment', 'core.test_plugin_comment'
+	public $fixtures = array(
+		'core.article', 'core.user', 'core.post', 'core.auth_user', 'core.author',
+		'core.comment', 'core.test_plugin_comment', 'core.aco', 'core.aro', 'core.aros_aco',
 	);
 
 /**
@@ -405,9 +406,11 @@ class SchemaShellTest extends CakeTestCase {
 	public function testGenerateExclude() {
 		$this->db->cacheSources = false;
 		$this->Shell->params = array(
+			'connection' => 'test',
 			'force' => false,
+			'models' => 'Aro, Aco, Permission',
 			'overwrite' => true,
-			'exclude' => 'acos,aros'
+			'exclude' => 'acos, aros',
 		);
 		$this->Shell->startup();
 		$this->Shell->Schema->path = TMP . 'tests' . DS;
@@ -416,9 +419,9 @@ class SchemaShellTest extends CakeTestCase {
 		$this->file = new File(TMP . 'tests' . DS . 'schema.php');
 		$contents = $this->file->read();
 
-		$this->assertNotRegExp('/public \$aros = array\(/', $contents);
-		$this->assertNotRegExp('/public \$acos = array\(/', $contents);
-		$this->assertRegExp('/public \$aros_acos = array\(/', $contents);
+		$this->assertNotContains('public $acos = array(', $contents);
+		$this->assertNotContains('public $aros = array(', $contents);
+		$this->assertContains('public $aros_acos = array(', $contents);
 	}
 
 /**
