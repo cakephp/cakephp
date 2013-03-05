@@ -1,5 +1,20 @@
 <?php
-
+/**
+ * PHP Version 5.4
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       Cake.Model
+ * @since         CakePHP(tm) v 3.0.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 namespace Cake\Model\Datasource\Database\Driver;
 
 use Cake\Model\Datasource\Database\Statement;
@@ -12,7 +27,7 @@ trait PDODriver {
  *
  * @param array $config configuration to be used for creating connection
  * @return boolean true on success
- **/
+ */
 	public function connect(array $config) {
 		$connection = new PDO(
 			$config['dsn'],
@@ -30,7 +45,7 @@ trait PDODriver {
  * result to the value passed
  *
  * @return mixed connection object used internally
- **/
+ */
 	public  function connection($connection = null) {
 		if ($connection !== null) {
 			$this->_connection = $connection;
@@ -42,7 +57,7 @@ trait PDODriver {
  * Disconnects from database server
  *
  * @return void
- **/
+ */
 	public function disconnect() {
 		$this->_connection = null;
 	}
@@ -52,7 +67,7 @@ trait PDODriver {
  *
  * @param string $sql
  * @return Cake\Model\Datasource\Database\Statement
- **/
+ */
 	public  function prepare($sql) {
 		$statement = $this->connection()->prepare($sql);
 		return new Statement($statement, $this);
@@ -62,7 +77,7 @@ trait PDODriver {
  * Starts a transaction
  *
  * @return boolean true on success, false otherwise
- **/
+ */
 	public function beginTransaction() {
 		return $this->connection()->beginTransaction();
 	}
@@ -71,7 +86,7 @@ trait PDODriver {
  * Commits a transaction
  *
  * @return boolean true on success, false otherwise
- **/
+ */
 	public function commitTransaction() {
 		return $this->connection()->commit();
 	}
@@ -80,7 +95,7 @@ trait PDODriver {
  * Rollsback a transaction
  *
  * @return boolean true on success, false otherwise
- **/
+ */
 	public function rollbackTransaction() {
 		return $this->connection()->rollback();
 	}
@@ -89,7 +104,7 @@ trait PDODriver {
  * Returns a value in a safe representation to be used in a query string
  *
  * @return string
- **/
+ */
 	public function quote($value, $type) {
 		return $this->connection()->quote($value, $type);
 	}
@@ -99,7 +114,7 @@ trait PDODriver {
  *
  * @param string $table table name or sequence to get last insert value from
  * @return string|integer
- **/
+ */
 	public function lastInsertId($table = null) {
 		return $this->connection()->lastInsertId();
 	}
@@ -108,7 +123,7 @@ trait PDODriver {
  * Checks if the driver supports quoting, as PDO_ODBC does not support it.
  *
  * @return boolean
- **/
+ */
 	public function supportsQuoting() {
 		return $this->connection()->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
 	}

@@ -1,18 +1,18 @@
 <?php
 /**
- * 
- * PHP Version 5.x
+ * PHP Version 5.4
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
- * Licensed under The Open Group Test Suite License
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model.Datasource.Database
- * @since         CakePHP(tm) v 3.0
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       Cake.Model
+ * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Model\Datasource\Database;
@@ -23,7 +23,7 @@ use PDO;
 /**
  * Mock class for testing type registering
  *
- **/
+ */
 class FooType extends \Cake\Model\Datasource\Database\Type {
 
 }
@@ -31,21 +31,21 @@ class FooType extends \Cake\Model\Datasource\Database\Type {
 /**
  * Tests Type class
  *
- **/
+ */
 class TypeTest extends \Cake\TestSuite\TestCase {
 
 /**
  * Original type map
  *
  * @var array
- **/
+ */
 	protected $_originalMap = array();
 
 /**
  * Backup original Type class state
  *
  * @return void
- **/
+ */
 	public function setUp() {
 		$this->_originalMap = Type::map();
 		parent::setUp();
@@ -55,7 +55,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Restores Type class state
  *
  * @return void
- **/
+ */
 	public function tearDown() {
 		Type::map($this->_originalMap);
 	}
@@ -65,7 +65,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  *
  * @dataProvider basicTypesProvider
  * @return void
- **/
+ */
 	public function testBuildBasicTypes($name) {
 		$type = Type::build($name);
 		$this->assertInstanceOf('\Cake\Model\Datasource\Database\Type', $type);
@@ -76,7 +76,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * provides a basics type list to be used as data provided for a test
  *
  * @return void
- **/
+ */
 	public function basicTypesProvider() {
 		return array(
 			array('float'),
@@ -91,7 +91,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  *
  * @expectedException InvalidArgumentException
  * @return void
- **/
+ */
 	public function testBuildUnknownType() {
 		Type::build('foo');
 	}
@@ -101,7 +101,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * for future use
  *
  * @return void
- **/
+ */
 	public function testInstanceRecycling() {
 		$type = Type::build('integer');
 		$this->assertSame($type, Type::build('integer'));
@@ -111,7 +111,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Tests new types can be registered and built
  *
  * @return void
- **/
+ */
 	public function testMapAndBuild() {
 		$map = Type::map();
 		$this->assertNotEmpty($map);
@@ -132,7 +132,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Tests clear function in conjunction with map
  *
  * @return void
- **/
+ */
 	public function testClear() {
 		$map = Type::map();
 		$this->assertNotEmpty($map);
@@ -151,7 +151,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Tests floats from database are converted correctly to PHP
  *
  * @return void
- **/
+ */
 	public function testFloatToPHP() {
 		$type = Type::build('float');
 		$float = '3.14159';
@@ -165,7 +165,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Tests floats from PHP are converted correctly to statement value
  *
  * @return void
- **/
+ */
 
 	public function testFloatToStatement() {
 		$type = Type::build('float');
@@ -178,7 +178,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Tests integers from database are converted correctly to PHP
  *
  * @return void
- **/
+ */
 	public function testIntegerToPHP() {
 		$type = Type::build('integer');
 		$integer = '3';
@@ -192,7 +192,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Tests integers from PHP are converted correctly to statement value
  *
  * @return void
- **/
+ */
 	public function testIntegerToStatement() {
 		$type = Type::build('integer');
 		$integer = '3';
@@ -204,7 +204,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Tests integers from database are converted correctly to PHP
  *
  * @return void
- **/
+ */
 	public function testStringToPHP() {
 		$type = Type::build('string');
 		$string = 'foo';
@@ -218,7 +218,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Tests integers from PHP are converted correctly to statement value
  *
  * @return void
- **/
+ */
 	public function testStringToStatement() {
 		$type = Type::build('string');
 		$string = '3';
@@ -230,7 +230,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Tests integers from database are converted correctly to PHP
  *
  * @return void
- **/
+ */
 	public function testTextToPHP() {
 		$type = Type::build('string');
 		$string = 'foo';
@@ -244,7 +244,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * Tests integers from PHP are converted correctly to statement value
  *
  * @return void
- **/
+ */
 	public function testTextToStatement() {
 		$type = Type::build('string');
 		$string = '3';

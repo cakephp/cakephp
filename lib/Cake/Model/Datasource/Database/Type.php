@@ -1,5 +1,20 @@
 <?php
-
+/**
+ * PHP Version 5.4
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       Cake.Model
+ * @since         CakePHP(tm) v 3.0.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 namespace Cake\Model\Datasource\Database;
 
 use Cake\Model\Datasource\Database\Driver;
@@ -9,7 +24,7 @@ use PDO;
 /**
  * Encapsulates all conversion functions for values coming from database into PHP and
  * going from PHP into database.
- **/
+ */
 class Type {
 
 /**
@@ -18,7 +33,7 @@ class Type {
  * representing the class that will do actual type conversions.
  *
  * @var array
- **/
+ */
 	protected static $_types = [
 		'boolean' => '\Cake\Model\Datasource\Database\Type\BooleanType',
 		'binary' => '\Cake\Model\Datasource\Database\Type\BinaryType',
@@ -32,7 +47,7 @@ class Type {
  * for doing conversion on these
  *
  * @var array
- **/
+ */
 	protected static $_basicTypes = [
 		'float' => ['callback' => 'floatval'],
 		'integer' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
@@ -44,14 +59,14 @@ class Type {
  * Contains a map of type object instances to be reused if needed
  *
  * @var array
- **/
+ */
 	protected static $_builtTypes = [];
 
 /**
  * Identifier name for this type
  *
  * @var string
- **/
+ */
 	protected $_name = null;
 
 /**
@@ -59,7 +74,7 @@ class Type {
  *
  * @param string $name The name identifying this type
  * @return void
- **/
+ */
 	public function __construct($name = null) {
 		$this->_name = $name;
 	}
@@ -69,7 +84,7 @@ class Type {
  *
  * @param string $name type identifier
  * @return Type
- **/
+ */
 	public static function build($name) {
 		if (isset(self::$_builtTypes[$name])) {
 			return self::$_builtTypes[$name];
@@ -92,7 +107,7 @@ class Type {
  * @param string $className
  * @return array|string|null if $type is null then array with current map, if $className is null string
  * configured class name for give $type, null otherwise
- **/
+ */
 	public static function map($type = null, $className = null) {
 		if ($type === null) {
 			return self::$_types;
@@ -111,7 +126,7 @@ class Type {
  * Clears out all created instances and mapped types classes, useful for testing
  *
  * @return void
- **/
+ */
 	public static function clear() {
 		self::$_types = [];
 		self::$_builtTypes = [];
@@ -121,7 +136,7 @@ class Type {
  * Returns type identifier name for this object
  *
  * @return string
- **/
+ */
 	public function getName() {
 		return $this->_name;
 	}
@@ -132,7 +147,7 @@ class Type {
  * @param mixed $value value to be converted to database equivalent
  * @param Driver $driver object from which database preferences and configuration will be extracted
  * @return mixed
- **/
+ */
 	public function toDatabase($value, Driver $driver) {
 		return $this->_basicTypeCast($value, $driver);
 	}
@@ -143,7 +158,7 @@ class Type {
  * @param mixed $value value to be converted to PHP equivalent
  * @param Driver $driver object from which database preferences and configuration will be extracted
  * @return mixed
- **/
+ */
 	public function toPHP($value, Driver $driver) {
 		return $this->_basicTypeCast($value, $driver);
 	}
@@ -155,7 +170,7 @@ class Type {
  * @param mixed $value value to be converted to PHP equivalent
  * @param Driver $driver object from which database preferences and configuration will be extracted
  * @return mixed
- **/
+ */
 	protected function _basicTypeCast($value, Driver $driver) {
 		if (is_null($value)) {
 			return null;
@@ -176,7 +191,7 @@ class Type {
  * @param mixed $value value to be converted to PHP equivalent
  * @param Driver $driver object from which database preferences and configuration will be extracted
  * @return mixed
- **/
+ */
 	public function toStatement($value, Driver $driver) {
 		if (is_null($value)) {
 			return PDO::PARAM_NULL;
