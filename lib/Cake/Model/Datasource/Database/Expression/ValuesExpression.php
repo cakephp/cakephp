@@ -45,6 +45,13 @@ class ValuesExpression implements Expression {
 	protected $_columns = [];
 
 /**
+ * List of column types.
+ *
+ * @var array
+ */
+	protected $_types = [];
+
+/**
  * Flag for tracking whether or not the values are an instance of Query
  *
  * @var boolean
@@ -55,10 +62,12 @@ class ValuesExpression implements Expression {
  * Constructor
  *
  * @param array $columns The list of columns that are going to be part of the values.
+ * @param array $types A dictionary of column -> type names
  * @return void
  */
-	public function __construct(array $columns) {
+	public function __construct(array $columns, array $types = []) {
 		$this->_columns = $columns;
+		$this->_types = $types;
 	}
 
 /**
@@ -97,9 +106,9 @@ class ValuesExpression implements Expression {
 			if (is_array($row)) {
 				$row = array_merge($defaults, $row);
 				foreach ($row as $column => $value) {
+					$type = isset($this->_types[$column]) ? $this->_types[$column] : null;
 					$bindings[] = [
-						// TODO add types.
-						'type' => null,
+						'type' => $type,
 						'placeholder' => $i,
 						'value' => $value
 					];

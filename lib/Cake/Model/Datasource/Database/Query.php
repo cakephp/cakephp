@@ -1159,11 +1159,11 @@ class Query implements Expression, IteratorAggregate {
  * @param array $columns The columns to insert into.
  * @return Query
  */
-	public function insert($table, $columns) {
+	public function insert($table, $columns, $types = []) {
 		$this->_dirty = true;
 		$this->_type = 'insert';
 		$this->_parts['insert'] = [$table, $columns];
-		$this->_parts['values'] = new ValuesExpression($columns);
+		$this->_parts['values'] = new ValuesExpression($columns, $types);
 		return $this;
 	}
 

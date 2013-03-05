@@ -1878,8 +1878,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->where(['id' => 1]);
 
 		$query = new Query($this->connection);
-		$query->insert('articles', ['title', 'body', 'author_id'])
-			->values($select);
+		$query->insert(
+			'articles',
+			['title', 'body', 'author_id'],
+			['title' => 'string', 'body' => 'string', 'author_id' => 'integer']
+		)
+		->values($select);
 
 		$result = $query->sql(false);
 		$this->assertContains('INSERT INTO articles (title, body, author_id) SELECT', $result);
