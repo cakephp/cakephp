@@ -103,7 +103,9 @@ class CakeRoute {
 	}
 
 /**
- * Compiles the route's regular expression. Modifies defaults property so all necessary keys are set
+ * Compiles the route's regular expression.
+ *
+ * Modifies defaults property so all necessary keys are set
  * and populates $this->names with the named routing elements.
  *
  * @return array Returns a string regular expression of the compiled route.
@@ -117,8 +119,10 @@ class CakeRoute {
 	}
 
 /**
- * Builds a route regular expression. Uses the template, defaults and options
- * properties to compile a regular expression that can be used to parse request strings.
+ * Builds a route regular expression.
+ *
+ * Uses the template, defaults and options properties to compile a
+ * regular expression that can be used to parse request strings.
  *
  * @return void
  */
@@ -172,6 +176,7 @@ class CakeRoute {
 
 /**
  * Checks to see if the given URL can be parsed by this route.
+ *
  * If the route can be parsed an array of parameters will be returned; if not
  * false will be returned. String urls are parsed if they match a routes regular expression.
  *
@@ -324,8 +329,10 @@ class CakeRoute {
 	}
 
 /**
- * Return true if a given named $param's $val matches a given $rule depending on $context. Currently implemented
- * rule types are controller, action and match that can be combined with each other.
+ * Check if a named parameter matches the current rules.
+ *
+ * Return true if a given named $param's $val matches a given $rule depending on $context.
+ * Currently implemented rule types are controller, action and match that can be combined with each other.
  *
  * @param string $val The value of the named parameter
  * @param array $rule The rule(s) to apply, can also be a match string
@@ -379,7 +386,9 @@ class CakeRoute {
 	}
 
 /**
- * Attempt to match a url array. If the url matches the route parameters and settings, then
+ * Check if a url array matches this route instance.
+ *
+ * If the url matches the route parameters and settings, then
  * return a generated string url. If the url doesn't match the route parameters, false will be returned.
  * This method handles the reverse routing or conversion of url arrays into string urls.
  *
@@ -472,7 +481,9 @@ class CakeRoute {
 	}
 
 /**
- * Converts a matching route array into a url string. Composes the string url using the template
+ * Converts a matching route array into a url string.
+ *
+ * Composes the string url using the template
  * used to create the route.
  *
  * @param array $params The params to convert to a string url.

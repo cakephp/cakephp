@@ -1008,9 +1008,11 @@ class Router {
 	}
 
 /**
- * Reverses a parsed parameter array into a string. Works similarly to Router::url(), but
- * Since parsed URL's contain additional 'pass' and 'named' as well as 'url.url' keys.
- * Those keys need to be specially handled in order to reverse a params array into a string url.
+ * Reverses a parsed parameter array into a string.
+ *
+ * Works similarly to Router::url(), but since parsed URL's contain additional
+ * 'pass' and 'named' as well as 'url.url' keys. Those keys need to be specially
+ * handled in order to reverse a params array into a string url.
  *
  * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
  * are used for CakePHP internals and should not normally be part of an output url.
@@ -1043,9 +1045,10 @@ class Router {
 	}
 
 /**
- * Normalizes a URL for purposes of comparison. Will strip the base path off
- * and replace any double /'s. It will not unify the casing and underscoring
- * of the input value.
+ * Normalizes a URL for purposes of comparison.
+ *
+ * Will strip the base path off and replace any double /'s.
+ * It will not unify the casing and underscoring of the input value.
  *
  * @param array|string $url URL to normalize Either an array or a string url.
  * @return string Normalized URL
@@ -1115,8 +1118,9 @@ class Router {
 	}
 
 /**
- * Instructs the router to parse out file extensions from the URL. For example,
- * http://example.com/posts.rss would yield an file extension of "rss".
+ * Instructs the router to parse out file extensions from the URL.
+ *
+ * For example, http://example.com/posts.rss would yield an file extension of "rss".
  * The file extension itself is made available in the controller as
  * `$this->params['ext']`, and is used by the RequestHandler component to
  * automatically switch to alternate layouts and templates, and load helpers
@@ -1139,6 +1143,7 @@ class Router {
 
 /**
  * Get the list of extensions that can be parsed by Router.
+ *
  * To initially set extensions use `Router::parseExtensions()`
  * To add more see `setExtensions()`
  *
@@ -1154,6 +1159,7 @@ class Router {
 
 /**
  * Set/add valid extensions.
+ *
  * To have the extensions parsed you still need to call `Router::parseExtensions()`
  *
  * @param array $extensions List of extensions to be added as valid extension

@@ -495,8 +495,11 @@ class SchemaShellTest extends CakeTestCase {
 		);
 		$this->Shell->args = array('SchemaShellTest', 'articles');
 		$this->Shell->startup();
-		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
-		$this->Shell->expects($this->once())->method('_run')
+		$this->Shell->expects($this->any())
+			->method('in')
+			->will($this->returnValue('y'));
+		$this->Shell->expects($this->once())
+			->method('_run')
 			->with($this->arrayHasKey('articles'), 'update', $this->isInstanceOf('CakeSchema'));
 
 		$this->Shell->update();

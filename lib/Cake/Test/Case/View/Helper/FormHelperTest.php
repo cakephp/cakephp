@@ -6288,6 +6288,29 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testYearAutoExpandRange method
+ *
+ * @return void
+ */
+	public function testYearAutoExpandRange() {
+		$this->Form->request->data['User']['birthday'] = '1930-10-10';
+		$result = $this->Form->year('User.birthday');
+		preg_match_all('/<option value="([\d]+)"/', $result, $matches);
+
+		$result = $matches[1];
+		$expected = range(date('Y') + 20, 1930);
+		$this->assertEquals($result, $expected);
+
+		$this->Form->request->data['Project']['release'] = '2050-10-10';
+		$result = $this->Form->year('Project.release');
+		preg_match_all('/<option value="([\d]+)"/', $result, $matches);
+
+		$result = $matches[1];
+		$expected = range(2050, date('Y') - 20);
+		$this->assertEquals($result, $expected);
+	}
+
+/**
  * testTextArea method
  *
  * @return void

@@ -819,10 +819,8 @@ class Validation {
  */
 	protected static function _check($check, $regex) {
 		if (is_string($regex) && preg_match($regex, $check)) {
-			self::$errors[] = false;
 			return true;
 		} else {
-			self::$errors[] = true;
 			return false;
 		}
 	}
