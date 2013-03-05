@@ -81,7 +81,6 @@ class Query implements Expression, IteratorAggregate {
 	protected $_templates = [
 		'delete' => 'DELETE',
 		'update' => 'UPDATE %s',
-		'values' => ' VALUES %s',
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
@@ -1147,20 +1146,7 @@ class Query implements Expression, IteratorAggregate {
  * @return string SQL fragment.
  */
 	protected function _buildValuesPart($parts) {
-		$columns = $this->_parts['insert'][1];
-		$defaults = array_fill_keys($columns, null);
-		$placeholders = [];
-		$values = [];
-		foreach ($parts as $part) {
-			if (is_array($part)) {
-				$values[] = array_values($part + $defaults);
-				$placeholders[] = implode(', ', array_fill(0, count($part), '?'));
-			}
-		}
-		return sprintf(
-			' VALUES (%s)',
-			implode('), (', $placeholders)
-		);
+		return implode('', $parts);
 	}
 
 /**
@@ -1459,6 +1445,7 @@ class Query implements Expression, IteratorAggregate {
 				$expression->traverse($visitor);
 			}
 			if ($expression instanceof ValuesExpression) {
+				$expression->traverse($binder);
 				$visitor($expression);
 			}
 		};

@@ -1741,6 +1741,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * You cannot call values() before insert() it causes all sorts of pain.
  *
  * @expectedException Cake\Error\Exception
+ * @return void
  */
 	public function testInsertValuesBeforeInsertFailure() {
 		$query = new Query($this->connection);
@@ -1775,18 +1776,15 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$result = $query->execute();
 		$this->assertCount(1, $result, '1 row should be inserted');
 
-		$result = (new Query($this->connection))->select('*')
-			->from('articles')
-			->execute();
-		$this->assertCount(1, $result);
-
 		$expected = [
-			'id' => 1,
-			'author_id' => null,
-			'title' => 'mark',
-			'body' => 'test insert'
+			[
+				'id' => 1,
+				'author_id' => null,
+				'title' => 'mark',
+				'body' => 'test insert'
+			]
 		];
-		$this->assertEquals($expected, $result->fetchAll('assoc')[0]);
+		$this->assertTable('articles', 1, $expected);
 	}
 
 /**
@@ -1813,39 +1811,34 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$result = $query->execute();
 		$this->assertCount(1, $result, '1 row should be inserted');
 
-		$result = (new Query($this->connection))->select('*')
-			->from('articles')
-			->execute();
-		$this->assertCount(1, $result);
-
 		$expected = [
-			'id' => null,
-			'author_id' => null,
-			'title' => 'mark',
-			'body' => 'test insert'
+			[
+				'id' => null,
+				'author_id' => null,
+				'title' => 'mark',
+				'body' => 'test insert'
+			]
 		];
-		$this->assertEquals($expected, $result->fetchAll('assoc')[0]);
+		$this->assertTable('articles', 1, $expected);
 	}
 
 /**
- * Test inserting multiple rows.
+ * Test inserting multiple rows with sparse data.
  *
  * @return void
  */
-	public function testInsertMultipleRows() {
+	public function testInsertMultipleRowsSparse() {
 		$this->_createAuthorsAndArticles();
 
 		$query = new Query($this->connection);
 		$query->insert('articles', ['id', 'title', 'body'])
 			->values([
 				'id' => 1,
-				'title' => 'mark',
 				'body' => 'test insert'
 			])
 			->values([
 				'id' => 2,
 				'title' => 'jose',
-				'body' => 'test insert'
 			]);
 		$result = $query->sql(false);
 		$this->assertEquals(
@@ -1854,15 +1847,74 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		);
 
 		$result = $query->execute();
-		$this->assertCount(2, $result, '2 row should be inserted');
+		$this->assertCount(2, $result, '2 rows should be inserted');
+
+		$expected = [
+			[
+				'id' => 1,
+				'author_id' => null,
+				'title' => null,
+				'body' => 'test insert'
+			],
+			[
+				'id' => 2,
+				'author_id' => null,
+				'title' => 'jose',
+				'body' => null,
+			],
+		];
+		$this->assertTable('articles', 2, $expected);
 	}
 
-	public function testInsertMultipleRowsSparse() {
-		$this->markTestIncomplete();
-	}
-
+/**
+ * Test that INSERT INTO ... SELECT works.
+ *
+ * @return void
+ */
 	public function testInsertFromSelect() {
-		$this->markTestIncomplete();
+		$this->_insertTwoRecords();
+		$select = (new Query($this->connection))->select('name, "some text", 99')
+			->from('authors')
+			->where(['id' => 1]);
+
+		$query = new Query($this->connection);
+		$query->insert('articles', ['title', 'body', 'author_id'])
+			->values($select);
+
+		$result = $query->sql(false);
+		$this->assertContains('INSERT INTO articles (title, body, author_id) SELECT', $result);
+		$this->assertContains('SELECT name, "some text", 99 FROM authors', $result);
+		$result = $query->execute();
+
+		$this->assertCount(1, $result);
+		$result = (new Query($this->connection))->select('*')
+			->from('articles')
+			->where(['author_id' => 99])
+			->execute();
+		$this->assertCount(1, $result);
+		$expected = [
+			'id' => null,
+			'title' => 'Chuck Norris',
+			'body' => 'some text',
+			'author_id' => 99,
+		];
+		$this->assertEquals($expected, $result->fetch('assoc'));
+	}
+
+/**
+ * Assertion for comparing a table's contents with what is in it.
+ *
+ * @param string $table
+ * @param int $count
+ * @param array $rows
+ * @return void
+ */
+	protected function assertTable($table, $count, $rows) {
+		$result = (new Query($this->connection))->select('*')
+			->from($table)
+			->execute();
+		$this->assertCount($count, $result, 'Row count is incorrect');
+		$this->assertEquals($rows, $result->fetchAll('assoc'));
 	}
 
 }

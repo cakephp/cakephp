@@ -17,6 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database\Expression;
 
+use Cake\Error;
 use Cake\Model\Datasource\Database\Expression;
 use Cake\Model\Datasource\Database\Query;
 use \Countable;
@@ -31,6 +32,7 @@ class ValuesExpression implements Expression {
 
 	protected $_values = [];
 	protected $_columns = [];
+	protected $_hasQuery = false;
 
 	public function __construct($columns) {
 		$this->_columns = $columns;
@@ -39,10 +41,23 @@ class ValuesExpression implements Expression {
 /**
  * Add a row of data to be inserted.
  *
- * @param array $data Array of data to append into the insert.
+ * @param array|Query $data Array of data to append into the insert, or
+ *   a query for doing INSERT INTO .. SELECT style commands
  * @return void
+ * @throws Cake\Error\Exception When mixing array + Query data types.
  */
 	public function add($data) {
+		if (
+			count($this->_values) &&
+			($data instanceof Query || ($this->_hasQuery && is_array($data)))
+		) {
+			throw new Error\Exception(
+				__d('cake_dev', 'You cannot mix subqueries and array data in inserts.')
+			);
+		}
+		if ($data instanceof Query) {
+			$this->_hasQuery = true;
+		}
 		$this->_values[] = $data;
 	}
 
@@ -56,15 +71,17 @@ class ValuesExpression implements Expression {
 		$i = 0;
 		$defaults = array_fill_keys($this->_columns, null);
 		foreach ($this->_values as $row) {
-			$row = array_merge($defaults, $row);
-			foreach ($row as $column => $value) {
-				$bindings[] = [
-					// TODO add types.
-					'type' => null,
-					'placeholder' => $i,
-					'value' => $value
-				];
-				$i++;
+			if (is_array($row)) {
+				$row = array_merge($defaults, $row);
+				foreach ($row as $column => $value) {
+					$bindings[] = [
+						// TODO add types.
+						'type' => null,
+						'placeholder' => $i,
+						'value' => $value
+					];
+					$i++;
+				}
 			}
 		}
 		return $bindings;
@@ -76,14 +93,35 @@ class ValuesExpression implements Expression {
  * @return string
  */
 	public function sql() {
+		if (empty($this->_values)) {
+			return '';
+		}
+		if ($this->_hasQuery) {
+			return ' ' . $this->_values[0]->sql();
+		}
 		$placeholders = [];
 		$numColumns = count($this->_columns);
+
 		foreach ($this->_values as $row) {
-			if (is_array($row)) {
-				$placeholders[] = implode(', ', array_fill(0, $numColumns, '?'));
-			}
+			$placeholders[] = implode(', ', array_fill(0, $numColumns, '?'));
 		}
-		return sprintf('(%s)', implode('), (', $placeholders));
+		return sprintf(' VALUES (%s)', implode('), (', $placeholders));
+	}
+
+/**
+ * Traverse the values expression.
+ *
+ * This method will also traverse any queries that are to be used in the INSERT
+ * values.
+ *
+ * @param callable $visitor The visitor to traverse the expression with.
+ * @return void
+ */
+	public function traverse(callable $visitor) {
+		if (!$this->_hasQuery) {
+			return;
+		}
+		$this->_values[0]->traverse($visitor);
 	}
 
 }
