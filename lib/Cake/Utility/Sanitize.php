@@ -91,7 +91,7 @@ class Sanitize {
  * - remove (boolean) if true strips all HTML tags before encoding
  * - charset (string) the charset used to encode the string
  * - quotes (int) see http://php.net/manual/en/function.htmlentities.php
- * - double (boolean) doube encode html entities
+ * - double (boolean) double encode html entities
  *
  * @param string $string String from where to strip tags
  * @param array $options Array of options to use.

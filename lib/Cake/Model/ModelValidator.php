@@ -49,7 +49,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	protected $_model = array();
 
 /**
- * The validators $validate property, used for checking wheter validation
+ * The validators $validate property, used for checking whether validation
  * rules definition changed in the model and should be refreshed in this class
  *
  * @var array
@@ -463,7 +463,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Returns wheter a rule set is defined for a field or not
+ * Returns whether a rule set is defined for a field or not
  *
  * @param string $field name of the field to check
  * @return boolean
@@ -502,7 +502,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Unsets the rulset for a field
+ * Unsets the rule set for a field
  *
  * @param string $field name of the field to unset
  * @return void
@@ -533,7 +533,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 /**
- * Adds a new rule to a field's rule set. If second argumet is an array or instance of
+ * Adds a new rule to a field's rule set. If second argument is an array or instance of
  * CakeValidationSet then rules list for the field will be replaced with second argument and
  * third argument will be ignored.
  *
@@ -550,7 +550,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *		));
  * }}}
  *
- * @param string $field The name of the field from wich the rule will be removed
+ * @param string $field The name of the field from which the rule will be removed
  * @param string|array|CakeValidationSet $name name of the rule to be added or list of rules for the field
  * @param array|CakeValidationRule $rule or list of rules to be added to the field's rule set
  * @return ModelValidator this instance
@@ -590,7 +590,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *			->remove('user_id')
  * }}}
  *
- * @param string $field The name of the field from wich the rule will be removed
+ * @param string $field The name of the field from which the rule will be removed
  * @param string $rule the name of the rule to be removed
  * @return ModelValidator this instance
  */
