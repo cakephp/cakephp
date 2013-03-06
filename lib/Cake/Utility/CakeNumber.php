@@ -37,18 +37,30 @@ class CakeNumber {
  * @var array
  */
 	protected static $_currencies = array(
+		'AUD' => array(
+			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
+		),
+		'CAD' => array(
+			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
+		),
 		'USD' => array(
 			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
 			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
 		),
-		'GBP' => array(
-			'wholeSymbol' => '&#163;', 'wholePosition' => 'before', 'fractionSymbol' => 'p', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()','escape' => false
-		),
 		'EUR' => array(
-			'wholeSymbol' => '&#8364;', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => '.', 'decimals' => ',', 'negative' => '()', 'escape' => false
-		)
+			'wholeSymbol' => '€', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
+			'zero' => 0, 'places' => 2, 'thousands' => '.', 'decimals' => ',', 'negative' => '()', 'escape' => true
+		),
+		'GBP' => array(
+			'wholeSymbol' => '£', 'wholePosition' => 'before', 'fractionSymbol' => 'p', 'fractionPosition' => 'after',
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()','escape' => true
+		),
+		'JPY' => array(
+			'wholeSymbol' => '¥', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
+		),
 	);
 
 /**
@@ -189,7 +201,8 @@ class CakeNumber {
 
 		$escape = true;
 		if (is_array($options)) {
-			$options = array_merge(array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.'), $options);
+			$defaults = array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.');
+			$options += $defaults;
 			extract($options);
 		}
 
@@ -248,7 +261,7 @@ class CakeNumber {
 			$after = substr($value, $foundDecimal);
 			$value = substr($value, 0, $foundDecimal);
 		}
-		while (($foundThousand = preg_replace('/(\d+)(\d\d\d)/', '\1 \2', $value)) != $value) {
+		while (($foundThousand = preg_replace('/(\d+)(\d\d\d)/', '\1 \2', $value)) !== $value) {
 			$value = $foundThousand;
 		}
 		$value .= $after;
@@ -281,8 +294,8 @@ class CakeNumber {
  *   the number will be wrapped with ( and )
  * - `escape` - Should the output be escaped for html special characters.
  *   The default value for this option is controlled by the currency settings.
- *   By default the EUR, and GBP contain HTML encoded symbols. If you require non HTML
- *   encoded symbols you will need to update the settings with the correct bytes.
+ *   By default all currencies contain utf-8 symbols and don't need this changed. If you require
+ *   non HTML encoded symbols you will need to update the settings with the correct bytes.
  *
  * @param float $value
  * @param string $currency Shortcut to default options. Valid values are
