@@ -35,11 +35,11 @@ class Type {
  * @var array
  */
 	protected static $_types = [
-		'boolean' => '\Cake\Model\Datasource\Database\Type\BooleanType',
-		'binary' => '\Cake\Model\Datasource\Database\Type\BinaryType',
-		'date' => '\Cake\Model\Datasource\Database\Type\DateType',
-		'datetime' => '\Cake\Model\Datasource\Database\Type\DateTimeType',
-		'time' => '\Cake\Model\Datasource\Database\Type\TimeType'
+		'boolean' => 'Cake\Model\Datasource\Database\Type\BooleanType',
+		'binary' => 'Cake\Model\Datasource\Database\Type\BinaryType',
+		'date' => 'Cake\Model\Datasource\Database\Type\DateType',
+		'datetime' => 'Cake\Model\Datasource\Database\Type\DateTimeType',
+		'time' => 'Cake\Model\Datasource\Database\Type\TimeType'
 	];
 
 /**
@@ -86,16 +86,16 @@ class Type {
  * @return Type
  */
 	public static function build($name) {
-		if (isset(self::$_builtTypes[$name])) {
-			return self::$_builtTypes[$name];
+		if (isset(static::$_builtTypes[$name])) {
+			return static::$_builtTypes[$name];
 		}
-		if (isset(self::$_basicTypes[$name])) {
-			return self::$_builtTypes[$name] = new self($name);
+		if (isset(static::$_basicTypes[$name])) {
+			return static::$_builtTypes[$name] = new static($name);
 		}
-		if (!isset(self::$_types[$name])) {
-			throw new \InvalidArgumentException('No such type');
+		if (!isset(static::$_types[$name])) {
+			throw new \InvalidArgumentException(__d('cake_dev', 'Unknown type "%s"', $name));
 		}
-		return self::$_builtTypes[$name] = new self::$_types[$name]($name);
+		return static::$_builtTypes[$name] = new static::$_types[$name]($name);
 	}
 
 /**

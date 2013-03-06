@@ -18,11 +18,17 @@
 namespace Cake\Model\Datasource\Database\Type;
 
 use Cake\Model\Datasource\Database\Driver;
-
 use \DateTime;
 
 class DateType extends \Cake\Model\Datasource\Database\Type {
 
+/**
+ * Convert DateTime instance into strings.
+ *
+ * @param string|Datetime $value The value to convert.
+ * @param Driver $driver The driver instance to convert with.
+ * @return string
+ */
 	public function toDatabase($value, Driver $driver) {
 		if (is_string($value)) {
 			return $value;
@@ -30,12 +36,18 @@ class DateType extends \Cake\Model\Datasource\Database\Type {
 		return $value->format('Y-m-d');
 	}
 
+/**
+ * Convert strings into DateTime instances.
+ *
+ * @param string $value The value to convert.
+ * @param Driver $driver The driver instance to convert with.
+ * @return Datetime
+ */
 	public function toPHP($value, Driver $driver) {
 		if ($value === null) {
 			return null;
 		}
-		$value = DateTime::createFromFormat('Y-m-d', $value);
-		return $value;
+		return DateTime::createFromFormat('Y-m-d', $value);
 	}
 
 }
