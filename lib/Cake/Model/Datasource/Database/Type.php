@@ -53,6 +53,10 @@ class Type {
 		'integer' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
 		'string' => ['callback' => 'strval'],
 		'text' => ['callback' => 'strval'],
+		'boolean' => [
+			'callback' => '\Cake\Model\Datasource\Database\Type::boolval',
+			'pdo' => PDO::PARAM_BOOL
+		],
 	];
 
 /**
@@ -142,7 +146,7 @@ class Type {
 	}
 
 /**
- * Casts given value to one acceptable by database
+ * Casts given value from a PHP type to one acceptable by database
  *
  * @param mixed $value value to be converted to database equivalent
  * @param Driver $driver object from which database preferences and configuration will be extracted
@@ -153,7 +157,7 @@ class Type {
 	}
 
 /**
- * Casts given value to PHP equivalent
+ * Casts given value from a database type to PHP equivalent
  *
  * @param mixed $value value to be converted to PHP equivalent
  * @param Driver $driver object from which database preferences and configuration will be extracted
@@ -179,7 +183,7 @@ class Type {
 		if (!empty(self::$_basicTypes[$this->_name])) {
 			$typeInfo = self::$_basicTypes[$this->_name];
 			if (isset($typeInfo['callback'])) {
-				return $typeInfo['callback']($value);
+				return call_user_func($typeInfo['callback'], $value);
 			}
 		}
 		return $value;
@@ -203,6 +207,21 @@ class Type {
 		}
 
 		return PDO::PARAM_STR;
+	}
+
+/**
+ * Type converter for boolean values.
+ *
+ * Will convert string true/false into booleans.
+ *
+ * @param mixed $value The value to convert to a boolean.
+ * @return boolean
+ */
+	public static function boolval($value) {
+		if (is_string($value)) {
+			return strtolower($value) === 'true' ? true : false;
+		}
+		return !empty($value);
 	}
 
 }

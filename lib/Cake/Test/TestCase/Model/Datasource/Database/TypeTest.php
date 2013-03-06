@@ -30,7 +30,6 @@ class FooType extends \Cake\Model\Datasource\Database\Type {
 
 /**
  * Tests Type class
- *
  */
 class TypeTest extends \Cake\TestSuite\TestCase {
 
@@ -82,7 +81,8 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 			array('float'),
 			array('integer'),
 			array('string'),
-			array('text')
+			array('text'),
+			array('boolean')
 		);
 	}
 
@@ -250,6 +250,60 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 		$string = '3';
 		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
 		$this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
+	}
+
+/**
+ * Test convertring booleans to database types.
+ *
+ * @return void
+ */
+	public function testBooleanToDatabase() {
+		$type = Type::build('boolean');
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertTrue($type->toDatabase(true, $driver));
+
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertFalse($type->toDatabase(false, $driver));
+
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertTrue($type->toDatabase(1, $driver));
+
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertFalse($type->toDatabase(0, $driver));
+	}
+
+/**
+ * Test convertring booleans to PDO types.
+ *
+ * @return void
+ */
+	public function testBooleanToStatement() {
+		$type = Type::build('boolean');
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertEquals(PDO::PARAM_BOOL, $type->toStatement(true, $driver));
+
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertEquals(PDO::PARAM_BOOL, $type->toStatement(false, $driver));
+	}
+
+/**
+ * Test convertring string booleans to PHP values.
+ *
+ * @return void
+ */
+	public function testBooleanToPHP() {
+		$type = Type::build('boolean');
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+
+		$this->assertTrue($type->toPHP(true, $driver));
+		$this->assertTrue($type->toPHP(1, $driver));
+		$this->assertTrue($type->toPHP('TRUE', $driver));
+		$this->assertTrue($type->toPHP('true', $driver));
+
+		$this->assertFalse($type->toPHP(false, $driver));
+		$this->assertFalse($type->toPHP(0, $driver));
+		$this->assertFalse($type->toPHP('FALSE', $driver));
+		$this->assertFalse($type->toPHP('false', $driver));
 	}
 
 }
