@@ -5845,6 +5845,23 @@ class FormHelperTest extends CakeTestCase {
 			'*/select',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Project']['release'] = '2050-02-10';
+		$result = $this->Form->month('Project.release');
+
+		$expected = array(
+			array('select' => array('name' => 'data[Project][release][month]', 'id' => 'ProjectReleaseMonth')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '01')),
+			'January',
+			'/option',
+			array('option' => array('value' => '02', 'selected' => 'selected')),
+			'February',
+			'/option',
+			'*/select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -5917,6 +5934,28 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->day('Model.field', array('value' => true));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '01')),
+			'1',
+			'/option',
+			array('option' => array('value' => '02')),
+			'2',
+			'/option',
+			$daysRegex,
+			array('option' => array('value' => '10', 'selected' => 'selected')),
+			'10',
+			'/option',
+			$daysRegex,
+			'/select',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Project']['release'] = '2050-10-10';
+		$result = $this->Form->day('Project.release');
+
+		$expected = array(
+			array('select' => array('name' => 'data[Project][release][day]', 'id' => 'ProjectReleaseDay')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -6103,6 +6142,26 @@ class FormHelperTest extends CakeTestCase {
 		$thisHour = date('H');
 		$optValue = date('G');
 		$this->assertRegExp('/<option value="' . $thisHour . '" selected="selected">' . $optValue . '<\/option>/', $result);
+
+		$this->Form->request->data['Model']['field'] = '2050-10-10 01:12:32';
+		$result = $this->Form->hour('Model.field', true);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '00')),
+			'0',
+			'/option',
+			array('option' => array('value' => '01', 'selected' => 'selected')),
+			'1',
+			'/option',
+			array('option' => array('value' => '02')),
+			'2',
+			'/option',
+			$hoursRegex,
+			'/select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -6307,6 +6366,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $matches[1];
 		$expected = range(2050, date('Y') - 20);
+		$this->assertEquals($result, $expected);
+
+		$this->Form->request->data['Project']['release'] = '1881-10-10';
+		$result = $this->Form->year('Project.release', 1890, 1900);
+		preg_match_all('/<option value="([\d]+)"/', $result, $matches);
+
+		$result = $matches[1];
+		$expected = range(1900, 1881);
 		$this->assertEquals($result, $expected);
 	}
 
