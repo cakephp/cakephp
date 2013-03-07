@@ -1944,7 +1944,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * undocumented function
+ * Tests that functions are correctly transformed and their parameters are bound
  *
  * @group FunctionExpression
  * @return void
@@ -1952,17 +1952,19 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testSQLFunctions() {
 		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
-		$result = $query->select(function($q) { return ['total' => $q->count('*'), 'title']; })
+		$result = $query->select(function($q) { return ['total' => $q->count('*')]; })
 			->from('articles')
 			->execute();
-		$expected = [['total' => 2, 'title' => 'another title']];
+		$expected = [['total' => 2]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$query = new Query($this->connection);
-		$result = $query->select([$query->concat(['title' => 'literal', ' is appended'])])
+		$result = $query->select(['c' => $query->concat(['title' => 'literal', ' is appended'])])
 			->from('articles')
+			->order(['c' => 'ASC'])
 			->execute();
-		debug($result->fetchAll());
+		$expected = [['c' => 'a title is appended'], ['c' => 'another title is appended']];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
 
 

@@ -18,6 +18,7 @@
 namespace Cake\Model\Datasource\Database\Driver;
 
 use Cake\Model\Datasource\Database\Statement\BufferedStatement;
+use Cake\Model\Datasource\Database\Dialect\SqliteDialectTrait;
 use PDO;
 
 class Sqlite extends \Cake\Model\Datasource\Database\Driver {
@@ -25,6 +26,7 @@ class Sqlite extends \Cake\Model\Datasource\Database\Driver {
 	use PDODriverTrait {
 		connect as protected _connect;
 	}
+	use SqliteDialectTrait;
 
 /**
  * Base configuration settings for Sqlite driver

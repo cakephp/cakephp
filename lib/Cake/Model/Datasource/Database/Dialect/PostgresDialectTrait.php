@@ -19,7 +19,6 @@ namespace Cake\Model\Datasource\Database\Dialect;
 
 use Cake\Model\Datasource\Database\Expression\UnaryExpression;
 use Cake\Model\Datasource\Database\Query;
-use Cake\Model\Datasource\Database\SqlDialectTrait;
 
 trait PostgresDialectTrait {
 

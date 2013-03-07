@@ -34,7 +34,7 @@ class FunctionExpression extends QueryExpression {
  *
  * ``$f = new FunctionExpression('CONCAT', ['name' => 'literal', ' rules']);``
  *
- * Will produce ``CONCANT(name, ' rules')``
+ * Will produce ``CONCAT(name, ' rules')``
  *
  * @param string $name the name of the function to be constructed
  * @param array $params list of arguments to be passed to the function
