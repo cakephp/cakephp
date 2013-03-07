@@ -1449,11 +1449,27 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$statement->bind($params, $types);
 		};
 
+		$this->_transformQuery()->traverseExpressions($binder);
+	}
+
+/**
+ * This function works similar to the traverse() function, with the difference
+ * that it does a full depth traversal of all expression tree. This will execute
+ * the provided callback function for each ExpressionInterface object that is
+ * stored inside this query at any nesting depth in any part of the query.
+ *
+ * Callback will receive as first parameter the currently visited expression.
+ *
+ * @param callable $callback the function to be executed for each ExpressionInterface
+ * found inside this query.
+ * @return Query
+ */
+	protected function traverseExpressions(callable $callback) {
 		$refs = [];
-		$visitor = function($expression, $name = null) use ($statement, &$visitor, $binder, &$refs) {
+		$visitor = function($expression) use (&$visitor, &$refs, $callback) {
 			if (is_array($expression)) {
 				foreach ($expression as $e) {
-					$visitor($e, $name);
+					$visitor($e);
 				}
 				return;
 			}
@@ -1469,12 +1485,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
 				$expression->traverse($visitor);
 
 				if (!($expression instanceof self)) {
-					$binder($expression);
+					$callback($expression);
 				}
 			}
 		};
-
-		$this->_transformQuery()->traverse($visitor);
+		return $this->traverse($visitor);
 	}
 
 /**
