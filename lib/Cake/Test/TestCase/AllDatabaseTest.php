@@ -34,17 +34,10 @@ class AllDatabaseTest extends \PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new \PHPUnit_Framework_TestSuite('Connection, Datasources and Query builder');
+		$path = CORE_TEST_CASES . DS . 'Model/Datasource/Database';
 
-		$path = CORE_TEST_CASES . DS . 'Model/';
-		$tasks = array(
-			'Datasource/Database/Connection',
-			'Datasource/Database/Query',
-			'Datasource/Database/Type'
-		);
-		foreach ($tasks as $task) {
-			$suite->addTestFile($path . $task . 'Test.php');
-		}
+		$suite = new TestSuite('Connection, Datasources and Query builder');
+		$suite->addTestDirectoryRecursive($path);
 		return $suite;
 	}
 }
