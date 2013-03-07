@@ -17,7 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database;
 
-use \Cake\Model\Datasource\Database\SqlDialect;
+use \Cake\Model\Datasource\Database\SqlDialectTrait;
 
 /**
  * Represents a database diver containing all specificities for
@@ -26,7 +26,7 @@ use \Cake\Model\Datasource\Database\SqlDialect;
  **/
 abstract class Driver {
 
-	use SqlDialect;
+	use SqlDialectTrait;
 
 /**
  * Establishes a connection to the database server

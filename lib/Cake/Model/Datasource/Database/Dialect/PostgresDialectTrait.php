@@ -19,8 +19,9 @@ namespace Cake\Model\Datasource\Database\Dialect;
 
 use Cake\Model\Datasource\Database\Expression\UnaryExpression;
 use Cake\Model\Datasource\Database\Query;
+use Cake\Model\Datasource\Database\SqlDialectTrait;
 
-trait PostgresDialectTrait {
+trait PostgresDialectTrait extends SqlDialectTrait {
 
 	protected function _selectQueryTranslator($query) {
 		$limit = $query->clause('limit');

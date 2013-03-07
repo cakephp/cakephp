@@ -17,7 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database;
 
-trait SqlDialect {
+trait SqlDialectTrait {
 
 /**
  *  String used to start a database identifier quoting to make it safe
