@@ -33,6 +33,8 @@ use Cake\Model\Datasource\Database\Statement\CallbackStatement;
  */
 class Query implements ExpressionInterface, IteratorAggregate {
 
+	use FunctionsTrait;
+
 /**
  * Connection instance to be used to execute this query
  *

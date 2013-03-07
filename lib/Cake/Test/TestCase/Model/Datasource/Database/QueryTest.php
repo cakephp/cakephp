@@ -1959,4 +1959,19 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($rows, $result->fetchAll('assoc'));
 	}
 
+	public function testSQLFunctions() {
+		$this->_insertTwoRecords();
+		$query = new Query($this->connection);
+		$result = $query->select(function($q) { return ['total' => $q->count('*'), 'title']; })
+			->from('articles')
+			->execute();
+		$expected = [['total' => 2, 'title' => 'another title']];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query->select([$query->concat(['title' => 'literal', ' is appended'])])
+			->from('articles')
+			->execute();
+		debug($result->fetchAll());
+	}
 }
