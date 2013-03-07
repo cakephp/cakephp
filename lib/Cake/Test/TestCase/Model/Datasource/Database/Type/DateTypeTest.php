@@ -49,6 +49,9 @@ class DateTypeTest extends TestCase {
 		$this->assertEqual('2001', $result->format('Y'));
 		$this->assertEqual('01', $result->format('m'));
 		$this->assertEqual('04', $result->format('d'));
+
+		$result = $this->type->toPHP('2001-01-04 10:11:12', $this->driver);
+		$this->assertFalse($result);
 	}
 
 /**
@@ -62,6 +65,10 @@ class DateTypeTest extends TestCase {
 		$this->assertEquals($value, $result);
 
 		$date = new \DateTime('2013-08-12');
+		$result = $this->type->toDatabase($date, $this->driver);
+		$this->assertEquals('2013-08-12', $result);
+
+		$date = new \DateTime('2013-08-12 15:16:18');
 		$result = $this->type->toDatabase($date, $this->driver);
 		$this->assertEquals('2013-08-12', $result);
 	}
