@@ -21,7 +21,7 @@ use Cake\Model\Datasource\Database\Expression\UnaryExpression;
 use Cake\Model\Datasource\Database\Query;
 use Cake\Model\Datasource\Database\SqlDialectTrait;
 
-trait PostgresDialectTrait extends SqlDialectTrait {
+trait PostgresDialectTrait {
 
 	protected function _selectQueryTranslator($query) {
 		$limit = $query->clause('limit');
