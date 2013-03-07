@@ -20,7 +20,7 @@ namespace Cake\Model\Datasource\Database\Dialect;
 use Cake\Model\Datasource\Database\Expression\UnaryExpression;
 use Cake\Model\Datasource\Database\Query;
 
-trait PostgresDialect {
+trait PostgresDialectTrait {
 
 	protected function _selectQueryTranslator($query) {
 		$limit = $query->clause('limit');
@@ -51,7 +51,6 @@ trait PostgresDialect {
 
 		return $query;
 	}
-
 
 	protected function _rowNumberRemover() {
 		return function($row) {

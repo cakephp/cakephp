@@ -17,7 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database;
 
-trait TypeConverter {
+trait TypeConverterTrait {
 
 /**
  * Converts a give value to a suitable database value based on type

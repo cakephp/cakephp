@@ -21,7 +21,9 @@ use PDO;
 
 class Mysql extends \Cake\Model\Datasource\Database\Driver {
 
-	use PDODriver { connect as protected _connect; }
+	use PDODriverTrait {
+		connect as protected _connect;
+	}
 
 /**
  * Base configuration settings for MySQL driver

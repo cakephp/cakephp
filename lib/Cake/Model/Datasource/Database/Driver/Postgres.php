@@ -18,13 +18,15 @@
 namespace Cake\Model\Datasource\Database\Driver;
 
 use Cake\Model\Datasource\Database\Statement;
-use Cake\Model\Datasource\Database\Dialect\PostgresDialect;
+use Cake\Model\Datasource\Database\Dialect\PostgresDialectTrait;
 use PDO;
 
 class Postgres extends \Cake\Model\Datasource\Database\Driver {
 
-	use PDODriver { connect as protected _connect; }
-	use PostgresDialect;
+	use PDODriverTrait {
+		connect as protected _connect;
+	}
+	use PostgresDialectTrait;
 
 /**
  * Base configuration settings for Postgres driver

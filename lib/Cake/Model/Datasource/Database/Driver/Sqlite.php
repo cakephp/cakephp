@@ -22,7 +22,9 @@ use PDO;
 
 class Sqlite extends \Cake\Model\Datasource\Database\Driver {
 
-	use PDODriver { connect as protected _connect; }
+	use PDODriverTrait {
+		connect as protected _connect;
+	}
 
 /**
  * Base configuration settings for Sqlite driver

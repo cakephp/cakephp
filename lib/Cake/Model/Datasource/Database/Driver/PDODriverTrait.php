@@ -20,7 +20,7 @@ namespace Cake\Model\Datasource\Database\Driver;
 use Cake\Model\Datasource\Database\Statement;
 use PDO;
 
-trait PDODriver {
+trait PDODriverTrait {
 
 /**
  * Establishes a connection to the databse server

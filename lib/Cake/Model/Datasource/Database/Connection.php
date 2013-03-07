@@ -27,7 +27,7 @@ use Cake\Model\Datasource\Database\Exception\MissingExtensionException;
  */
 class Connection {
 
-	use TypeConverter;
+	use TypeConverterTrait;
 
 /**
  * Contains the configuration params for this connection

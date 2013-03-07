@@ -28,7 +28,7 @@ use PDO;
  */
 class Statement implements \IteratorAggregate, \Countable {
 
-	use TypeConverter;
+	use TypeConverterTrait;
 
 /**
  * Statement instance implementation, such as PDOStatement
