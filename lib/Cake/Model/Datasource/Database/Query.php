@@ -23,6 +23,7 @@ use Cake\Model\Datasource\Database\Expression\Comparison;
 use Cake\Model\Datasource\Database\Expression\OrderByExpression;
 use Cake\Model\Datasource\Database\Expression\QueryExpression;
 use Cake\Model\Datasource\Database\Expression\ValuesExpression;
+use Cake\Model\Datasource\Database\Expression\FunctionExpression;
 use Cake\Model\Datasource\Database\Statement\CallbackStatement;
 
 /**

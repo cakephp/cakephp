@@ -1,7 +1,7 @@
 <?php
 
 namespace Cake\Model\Datasource\Database\Expression;
-use Cake\Model\Datasource\Database\Expression;
+use Cake\Model\Datasource\Database\ExpressionInterface;
 
 /**
  * This class represents a function call string in a SQL statement. Calls can be
@@ -30,7 +30,7 @@ class FunctionExpression extends QueryExpression {
  *
  *	``$f = new FunctionExpression('CONCAT', ['CakePHP', ' rules']);``
  *
- * Previous line will generate ``CONCANT('CakePHP', ' rules')``
+ * Previous line will generate ``CONCAT('CakePHP', ' rules')``
  *
  * ``$f = new FunctionExpression('CONCAT', ['name' => 'literal', ' rules']);``
  *
@@ -73,7 +73,7 @@ class FunctionExpression extends QueryExpression {
 				continue;
 			}
 
-			if ($p instanceof Expression) {
+			if ($p instanceof ExpressionInterface) {
 				$this->_conditions[] = $p;
 				continue;
 			}
