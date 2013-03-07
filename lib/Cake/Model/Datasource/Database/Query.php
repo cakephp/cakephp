@@ -31,7 +31,7 @@ use Cake\Model\Datasource\Database\Statement\CallbackStatement;
  * for dynamically constructing each query part, execute it and transform it
  * to a specific SQL disalect.
  */
-class Query implements Expression, IteratorAggregate {
+class Query implements ExpressionInterface, IteratorAggregate {
 
 /**
  * Connection instance to be used to execute this query
@@ -204,7 +204,7 @@ class Query implements Expression, IteratorAggregate {
 			if (!count($parts)) {
 				return;
 			}
-			if ($parts instanceof Expression) {
+			if ($parts instanceof ExpressionInterface) {
 				$parts = [$parts->sql()];
 			}
 			if (isset($this->_templates[$name])) {
@@ -367,7 +367,7 @@ class Query implements Expression, IteratorAggregate {
  *	$query->distinct(['name'], true);
  * }}}
  *
- * @param array|Expression fields to be filtered on
+ * @param array|ExpressionInterface fields to be filtered on
  * @param boolean $overwrite whether to reset fields with passed list or not
  * @return Query
  */
@@ -426,7 +426,7 @@ class Query implements Expression, IteratorAggregate {
  * objects, a single expression or a single string.
  *
  * If an array is passed, keys will be used to alias tables using the value as the
- * real field to be aliased. It is possible to alias strings, Expression objects or
+ * real field to be aliased. It is possible to alias strings, ExpressionInterface objects or
  * even other Query objects.
  *
  * By default this function will append any passed argument to the list of tables
@@ -443,7 +443,7 @@ class Query implements Expression, IteratorAggregate {
  *	$query->select(['sub' => $countQuery]); // FROM (SELECT ...) sub
  * }}}
  *
- * @param array|Expression|string $tables tables to be added to the list
+ * @param array|ExpressionInterface|string $tables tables to be added to the list
  * @param boolean $overwrite whether to reset tables with passed list or not
  * @return Query
  */
@@ -580,7 +580,7 @@ class Query implements Expression, IteratorAggregate {
 			if (!is_array($t)) {
 				$t = ['table' => $t, 'conditions' => $this->newExpr()];
 			}
-			if (!($t['conditions']) instanceof Expression) {
+			if (!($t['conditions']) instanceof ExpressionInterface) {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}
 
@@ -744,7 +744,7 @@ class Query implements Expression, IteratorAggregate {
  * If you use string conditions make sure that your values are correctly quoted.
  * The safest thing you can do is to never use string conditions.
  *
- * @param string|array|Expression|callback $conditions
+ * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
  * @param boolean $overwrite whether to reset conditions with passed list or not
  * @see Cake\Model\Datasource\Database\Type
@@ -809,7 +809,7 @@ class Query implements Expression, IteratorAggregate {
  *
  * ``WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)``
  *
- * @param string|array|Expression|callback $conditions
+ * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
  * @see Cake\Model\Datasource\Database\Query::where()
  * @see Cake\Model\Datasource\Database\Type
@@ -870,7 +870,7 @@ class Query implements Expression, IteratorAggregate {
  *
  * ``WHERE (title = 'Foo') OR (author_id = 1 OR author_id = 2)``
  *
- * @param string|array|Expression|callback $conditions
+ * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
  * @see Cake\Model\Datasource\Database\Query::where()
  * @see Cake\Model\Datasource\Database\Type
@@ -921,7 +921,7 @@ class Query implements Expression, IteratorAggregate {
  *
  * ``ORDER BY (id %2 = 0), title ASC``
  *
- * @param array|Expression|string $fields fields to be added to the list
+ * @param array|ExpressionInterface|string $fields fields to be added to the list
  * @param boolean $overwrite whether to reset order with field list or not
  * @return Query
  */
@@ -948,7 +948,7 @@ class Query implements Expression, IteratorAggregate {
  *	$query->group('title'); // Produces GROUP BY title
  * }}}
  *
- * @param array|Expression|string $fields fields to be added to the list
+ * @param array|ExpressionInterface|string $fields fields to be added to the list
  * @param boolean $overwrite whether to reset fields with passed list or not
  * @return Query
  */
@@ -972,7 +972,7 @@ class Query implements Expression, IteratorAggregate {
  * does. Please refer to its documentation for an insight on how to using each
  * parameter.
  *
- * @param string|array|Expression|callback $conditions
+ * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
  * @param boolean $overwrite whether to reset conditions with passed list or not
  * @see Cake\Model\Datasource\Database\Query::where()
@@ -992,7 +992,7 @@ class Query implements Expression, IteratorAggregate {
  * the same way as the method ``andWhere()`` does. Please refer to its
  * documentation for an insight on how to using each parameter.
  *
- * @param string|array|Expression|callback $conditions
+ * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
  * @see Cake\Model\Datasource\Database\Query::andWhere()
  * @return Query
@@ -1008,7 +1008,7 @@ class Query implements Expression, IteratorAggregate {
  * the same way as the method ``orWhere()`` does. Please refer to its
  * documentation for an insight on how to using each parameter.
  *
- * @param string|array|Expression|callback $conditions
+ * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
  * @see Cake\Model\Datasource\Database\Query::orWhere()
  * @return Query
@@ -1031,7 +1031,7 @@ class Query implements Expression, IteratorAggregate {
  *	$query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
  * }}}
  *
- * @param integer|Expression $num number of records to be returned
+ * @param integer|ExpressionInterface $num number of records to be returned
  * @return Query
  */
 	public function limit($num) {
@@ -1056,7 +1056,7 @@ class Query implements Expression, IteratorAggregate {
  *	$query->limit($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
  * }}}
  *
- * @param integer|Expression $num number of records to be skipped
+ * @param integer|ExpressionInterface $num number of records to be skipped
  * @return Query
  */
 	public function offset($num) {

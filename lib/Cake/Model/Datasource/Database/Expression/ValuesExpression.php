@@ -18,7 +18,7 @@
 namespace Cake\Model\Datasource\Database\Expression;
 
 use Cake\Error;
-use Cake\Model\Datasource\Database\Expression;
+use Cake\Model\Datasource\Database\ExpressionInterface;
 use Cake\Model\Datasource\Database\Query;
 use \Countable;
 
@@ -28,7 +28,7 @@ use \Countable;
  * Helps generate SQL with the correct number of placeholders and bind
  * values correctly into the statement.
  */
-class ValuesExpression implements Expression {
+class ValuesExpression implements ExpressionInterface {
 
 /**
  * Array of values to insert.

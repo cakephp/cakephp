@@ -17,7 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database\Expression;
 
-use Cake\Model\Datasource\Database\Expression;
+use Cake\Model\Datasource\Database\ExpressionInterface;
 use Cake\Model\Datasource\Database\Query;
 use \Countable;
 
@@ -32,7 +32,7 @@ use \Countable;
  * thus this class exposes methods for getting the actual bound values for each of
  * them so they can be used in statements or replaced directly.
  */
-class QueryExpression implements Expression, Countable {
+class QueryExpression implements ExpressionInterface, Countable {
 
 /**
  * String to be used for joining each of the internal expressions
@@ -136,7 +136,7 @@ class QueryExpression implements Expression, Countable {
  * then it will cause the placeholder to be re-written dynamically so if the
  * value is an array, it will create as many placeholders as values are in it.
  *
- * @param string|array|Expression $conditions single or multiple conditions to
+ * @param string|array|QueryExpression $conditions single or multiple conditions to
  * be added. When using and array and the key is 'OR' or 'AND' a new expression
  * object will be created with that conjunction and internal array value passed
  * as conditions.
@@ -517,7 +517,7 @@ class QueryExpression implements Expression, Countable {
 			$multi = true;
 		}
 
-		if ($value instanceof Expression || $multi === false) {
+		if ($value instanceof ExpressionInterface || $multi === false) {
 			return new Comparison($expression, $value, $type, $operator);
 		}
 

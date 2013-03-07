@@ -17,7 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database\Expression;
 
-use Cake\Model\Datasource\Database\Expression;
+use Cake\Model\Datasource\Database\ExpressionInterface;
 
 class Comparison extends QueryExpression {
 
@@ -66,7 +66,7 @@ class Comparison extends QueryExpression {
 	public function sql() {
 		$value = $this->_value;
 		$template = '%s %s (%s)';
-		if (!($this->_value instanceof Expression)) {
+		if (!($this->_value instanceof ExpressionInterface)) {
 			$value = $this->_bindValue($this->_field, $value, $this->_type);
 			$template = '%s %s %s';
 		}

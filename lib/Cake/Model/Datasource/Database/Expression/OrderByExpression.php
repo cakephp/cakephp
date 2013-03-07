@@ -17,8 +17,6 @@
  */
 namespace Cake\Model\Datasource\Database\Expression;
 
-use Cake\Model\Datasource\Database\Expression;
-
 class OrderByExpression extends QueryExpression {
 
 	public function __construct($conditions = [], $types = [], $conjunction = '') {

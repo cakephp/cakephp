@@ -17,8 +17,16 @@
  */
 namespace Cake\Model\Datasource\Database;
 
-interface Expression {
+/**
+ * An interface used by Expression objects.
+ */
+interface ExpressionInterface {
 
+/**
+ * Converts the Node into a SQL string fragment.
+ *
+ * @return string
+ */
 	public function sql();
 
 }
