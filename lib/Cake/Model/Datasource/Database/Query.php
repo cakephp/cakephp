@@ -240,10 +240,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *	});
  * }}}
  *
- * @param callback $visitor a function or callable to be executed for each part
+ * @param callable $visitor a function or callable to be executed for each part
  * @return Query
  */
-	public function traverse($visitor) {
+	public function traverse(callable $visitor) {
 		$this->{'_traverse' . ucfirst($this->_type)}($visitor);
 		return $this;
 	}
@@ -1449,24 +1449,28 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$statement->bind($params, $types);
 		};
 
-		$binder = function($expression, $name) use ($statement, $visitor, &$binder) {
+		$refs = [];
+		$binder = function($expression, $name = null) use ($statement, $visitor, &$binder, &$refs) {
 			if (is_array($expression)) {
 				foreach ($expression as $e) {
 					$binder($e, $name);
 				}
+				return;
 			}
 
-			if ($expression instanceof self) {
-				return $expression->traverse($binder);
-			}
+			if ($expression instanceof ExpressionInterface) {
+				$id = spl_object_hash($expression);
 
-			if ($expression instanceof QueryExpression) {
-				// Visit all expressions and subexpressions to get every bound value
-				$expression->traverse($visitor);
-			}
-			if ($expression instanceof ValuesExpression) {
+				if (isset($refs[$id])) {
+					return;
+				}
+
+				$refs[$id] = 1;
 				$expression->traverse($binder);
-				$visitor($expression);
+
+				if (!($expression instanceof self)) {
+					$visitor($expression);
+				}
 			}
 		};
 

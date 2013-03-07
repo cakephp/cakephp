@@ -428,9 +428,10 @@ class QueryExpression implements ExpressionInterface, Countable {
  *
  * Callback function receives as only argument an instance of a QueryExpression
  *
+ * @param callable $callable
  * @return void
  */
-	public function traverse($callable) {
+	public function traverse(callable $callable) {
 		foreach ($this->_conditions as $c) {
 			if ($c instanceof self) {
 				$c->traverse($callable);

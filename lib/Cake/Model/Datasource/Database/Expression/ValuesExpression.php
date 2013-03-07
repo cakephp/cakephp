@@ -153,6 +153,12 @@ class ValuesExpression implements ExpressionInterface {
 		if (!$this->_hasQuery) {
 			return;
 		}
+
+		foreach ($this->_values as $v) {
+			if ($v instanceof ExpressionInterface) {
+				$v->traverse($visitor);
+			}
+		}
 		$this->_values[0]->traverse($visitor);
 	}
 

@@ -1944,21 +1944,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Assertion for comparing a table's contents with what is in it.
+ * undocumented function
  *
- * @param string $table
- * @param int $count
- * @param array $rows
+ * @group FunctionExpression
  * @return void
  */
-	protected function assertTable($table, $count, $rows) {
-		$result = (new Query($this->connection))->select('*')
-			->from($table)
-			->execute();
-		$this->assertCount($count, $result, 'Row count is incorrect');
-		$this->assertEquals($rows, $result->fetchAll('assoc'));
-	}
-
 	public function testSQLFunctions() {
 		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
@@ -1974,4 +1964,22 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->execute();
 		debug($result->fetchAll());
 	}
+
+
+/**
+ * Assertion for comparing a table's contents with what is in it.
+ *
+ * @param string $table
+ * @param int $count
+ * @param array $rows
+ * @return void
+ */
+	protected function assertTable($table, $count, $rows) {
+		$result = (new Query($this->connection))->select('*')
+			->from($table)
+			->execute();
+		$this->assertCount($count, $result, 'Row count is incorrect');
+		$this->assertEquals($rows, $result->fetchAll('assoc'));
+	}
+
 }
