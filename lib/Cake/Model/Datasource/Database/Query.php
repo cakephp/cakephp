@@ -1433,7 +1433,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _bindParams($statement) {
-		$visitor = function($expression) use ($statement) {
+		$binder = function($expression) use ($statement) {
 			$params = $types = [];
 
 			if ($expression instanceof Comparison) {
@@ -1450,10 +1450,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		};
 
 		$refs = [];
-		$binder = function($expression, $name = null) use ($statement, $visitor, &$binder, &$refs) {
+		$visitor = function($expression, $name = null) use ($statement, &$visitor, $binder, &$refs) {
 			if (is_array($expression)) {
 				foreach ($expression as $e) {
-					$binder($e, $name);
+					$visitor($e, $name);
 				}
 				return;
 			}
@@ -1466,15 +1466,15 @@ class Query implements ExpressionInterface, IteratorAggregate {
 				}
 
 				$refs[$id] = 1;
-				$expression->traverse($binder);
+				$expression->traverse($visitor);
 
 				if (!($expression instanceof self)) {
-					$visitor($expression);
+					$binder($expression);
 				}
 			}
 		};
 
-		$this->_transformQuery()->traverse($binder);
+		$this->_transformQuery()->traverse($visitor);
 	}
 
 /**
