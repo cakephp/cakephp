@@ -201,7 +201,33 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests integers from database are converted correctly to PHP
+ * Tests bigintegers from database are converted correctly to PHP
+ *
+ * @return void
+ */
+	public function testBigintegerToPHP() {
+		$type = Type::build('biginteger');
+		$integer = time() * time();
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertEquals($integer, $type->toPHP($integer, $driver));
+		$this->assertEquals($integer, $type->toPHP('' . $integer, $driver));
+		$this->assertEquals(3, $type->toPHP(3.57, $driver));
+	}
+
+/**
+ * Tests bigintegers from PHP are converted correctly to statement value
+ *
+ * @return void
+ */
+	public function testBigintegerToStatement() {
+		$type = Type::build('biginteger');
+		$integer = time() * time();
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertEquals(PDO::PARAM_INT, $type->toStatement($integer, $driver));
+	}
+
+/**
+ * Tests string from database are converted correctly to PHP
  *
  * @return void
  */

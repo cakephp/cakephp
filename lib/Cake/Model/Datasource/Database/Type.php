@@ -35,7 +35,6 @@ class Type {
  * @var array
  */
 	protected static $_types = [
-		'boolean' => 'Cake\Model\Datasource\Database\Type\BooleanType',
 		'binary' => 'Cake\Model\Datasource\Database\Type\BinaryType',
 		'date' => 'Cake\Model\Datasource\Database\Type\DateType',
 		'datetime' => 'Cake\Model\Datasource\Database\Type\DateTimeType',
@@ -51,6 +50,7 @@ class Type {
 	protected static $_basicTypes = [
 		'float' => ['callback' => 'floatval'],
 		'integer' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
+		'biginteger' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
 		'string' => ['callback' => 'strval'],
 		'text' => ['callback' => 'strval'],
 		'boolean' => [
