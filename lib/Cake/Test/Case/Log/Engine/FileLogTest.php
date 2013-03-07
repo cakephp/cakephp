@@ -81,4 +81,20 @@ class FileLogTest extends CakeTestCase {
 		unlink($path . 'error.log');
 	}
 
+	/**
+	 * test using the mask setting to write logs with special permissions.
+	 *
+	 * @return void
+	 */
+	public function testMaskSetting() {
+		$mask = 0666;
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
+	
+		$log = new FileLog(compact('mask'));
+		$log->write('warning', 'Test warning');
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+		unlink(LOGS . 'error.log');
+	}
 }
