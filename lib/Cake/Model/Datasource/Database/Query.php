@@ -1464,7 +1464,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * found inside this query.
  * @return Query
  */
-	protected function traverseExpressions(callable $callback) {
+	public function traverseExpressions(callable $callback) {
 		$refs = [];
 		$visitor = function($expression) use (&$visitor, &$refs, $callback) {
 			if (is_array($expression)) {
