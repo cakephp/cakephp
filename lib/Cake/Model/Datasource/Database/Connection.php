@@ -20,10 +20,10 @@ namespace Cake\Model\Datasource\Database;
 use Cake\Model\Datasource\Database\Exception\MissingConnectionException;
 use Cake\Model\Datasource\Database\Exception\MissingDriverException;
 use Cake\Model\Datasource\Database\Exception\MissingExtensionException;
+use Cake\Model\Datasource\Database\Query;
 
 /**
  * Represents a connection with a database server
- *
  */
 class Connection {
 
@@ -116,7 +116,7 @@ class Connection {
  * Connects to the configured database
  *
  * @throws MissingConnectionException if credentials are invalid
- * @return boolean true on success or false if already connected
+ * @return boolean true on success or false if already connected.
  */
 	public function connect() {
 		if ($this->_connected) {
@@ -203,16 +203,12 @@ class Connection {
  */
 	public function insert($table, array $data, array $types = []) {
 		$this->connect();
-		$keys = array_keys($data);
-		$sql = 'INSERT INTO %s (%s) VALUES (%s)';
-		$sql = sprintf(
-			$sql,
-			$table,
-			implode(',', $keys),
-			implode(',', array_fill(0, count($data), '?'))
-		);
-		$types = $this->matchTypes($keys, $types);
-		return $this->execute($sql, array_values($data), $types);
+
+		$columns = array_keys($data);
+		$query = new Query($this);
+		return $query->insert($table, $columns, $types)
+			->values($data)
+			->execute();
 	}
 
 /**
@@ -226,26 +222,13 @@ class Connection {
  */
 	public function update($table, array $data, array $conditions = [], $types = []) {
 		$this->connect();
-		$keys = array_keys($data);
-		$conditionsKeys = array_keys($conditions);
-		$sql = 'UPDATE %s SET %s %s';
-		list($conditions, $params) = $this->_parseConditions($conditions);
-		$sql = sprintf(
-			$sql,
-			$table,
-			implode(', ', array_map(function($k) {return $k . ' = ?';}, $keys)),
-			$conditions
-		);
-		if (!empty($types)) {
-			$originalTypes = $types;
-			$types = $this->matchTypes($keys, $types);
-			$paramTypes = $this->matchTypes($conditionsKeys, $originalTypes);
-			$total = count($types);
-			foreach ($paramTypes as $i => $t) {
-				$types[$total + $i + 1] = $t;
-			}
-		}
-		return $this->execute($sql, array_merge(array_values($data), $params), $types);
+		$columns = array_keys($data);
+
+		$query = new Query($this);
+		return $query->update($table)
+			->set($data, $types)
+			->where($conditions, $types)
+			->execute();
 	}
 
 /**
@@ -258,18 +241,10 @@ class Connection {
  */
 	public function delete($table, $conditions = [], $types = []) {
 		$this->connect();
-		$conditionsKeys = array_keys($conditions);
-		$sql = 'DELETE FROM %s %s';
-		list($conditions, $params) = $this->_parseConditions($conditions);
-		$sql = sprintf(
-			$sql,
-			$table,
-			$conditions
-		);
-		if (!empty($types)) {
-			$types = $this->matchTypes($conditionsKeys, $types);
-		}
-		return $this->execute($sql, $params, $types);
+		$query = new Query($this);
+		return $query->delete($table)
+			->where($conditions, $types)
+			->execute();
 	}
 
 /**
