@@ -159,7 +159,6 @@ class ValuesExpression implements ExpressionInterface {
 				$v->traverse($visitor);
 			}
 		}
-		$this->_values[0]->traverse($visitor);
 	}
 
 }
