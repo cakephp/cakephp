@@ -141,7 +141,7 @@ class FileLog extends BaseLog {
 		}
 
 		$exists = file_exists($pathname);
-		$r = file_put_contents($pathname, $output, FILE_APPEND);
+		$result = file_put_contents($pathname, $output, FILE_APPEND);
 		static $selfError = false;
 		if (!$selfError && !$exists && !chmod($pathname, (int)$this->_config['mask'])) {
 			$selfError = true;
@@ -150,7 +150,7 @@ class FileLog extends BaseLog {
 				array($pathname, $this->_config['mask'])), E_USER_WARNING);
 			$selfError = false;
 		}
-		return $r;
+		return $result;
 	}
 
 /**
