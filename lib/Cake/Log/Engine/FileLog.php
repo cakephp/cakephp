@@ -145,11 +145,12 @@ class FileLog extends BaseLog {
 		static $selfError = false;
 		if (!$selfError && !$exists && !chmod($pathname, (int)$this->_config['mask'])) {
 			$selfError = true;
-				trigger_error(__d(
+			trigger_error(__d(
 				'cake_dev', 'Could not apply permission mask "%s" on log file "%s"',
 				array($pathname, $this->_config['mask'])), E_USER_WARNING);
 			$selfError = false;
 		}
+		return $r;
 	}
 
 /**
