@@ -194,6 +194,15 @@ class Connection {
 	}
 
 /**
+ * Create a new Query instance for this connection.
+ *
+ * @return Query
+ */
+	public function newQuery() {
+		return new Query($this);
+	}
+
+/**
  * Executes an INSERT query on the specified table
  *
  * @param string $table the table to update values in
@@ -205,8 +214,7 @@ class Connection {
 		$this->connect();
 
 		$columns = array_keys($data);
-		$query = new Query($this);
-		return $query->insert($table, $columns, $types)
+		return $this->newQuery()->insert($table, $columns, $types)
 			->values($data)
 			->execute();
 	}
@@ -224,8 +232,7 @@ class Connection {
 		$this->connect();
 		$columns = array_keys($data);
 
-		$query = new Query($this);
-		return $query->update($table)
+		return $this->newQuery()->update($table)
 			->set($data, $types)
 			->where($conditions, $types)
 			->execute();
@@ -241,8 +248,7 @@ class Connection {
  */
 	public function delete($table, $conditions = [], $types = []) {
 		$this->connect();
-		$query = new Query($this);
-		return $query->delete($table)
+		return $this->newQuery()->delete($table)
 			->where($conditions, $types)
 			->execute();
 	}
