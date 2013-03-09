@@ -422,8 +422,8 @@ class QueryExpression implements ExpressionInterface, Countable {
 
 /**
  * Traverses the tree structure of this query expression by executing a callback
- * function for each of the conditions that are included in this object and once
- * for this object itself. Useful for compiling the final expression, or doing
+ * function for each of the conditions that are included in this object.
+ * Useful for compiling the final expression, or doing
  * introspection in the structure.
  *
  * Callback function receives as only argument an instance of a QueryExpression
@@ -434,10 +434,10 @@ class QueryExpression implements ExpressionInterface, Countable {
 	public function traverse(callable $callable) {
 		foreach ($this->_conditions as $c) {
 			if ($c instanceof self) {
+				$callable($c);
 				$c->traverse($callable);
 			}
 		}
-		$callable($this);
 	}
 
 /**

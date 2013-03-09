@@ -1465,8 +1465,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function traverseExpressions(callable $callback) {
-		$refs = [];
-		$visitor = function($expression) use (&$visitor, &$refs, $callback) {
+		$visitor = function($expression) use (&$visitor, $callback) {
 			if (is_array($expression)) {
 				foreach ($expression as $e) {
 					$visitor($e);
@@ -1475,13 +1474,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			}
 
 			if ($expression instanceof ExpressionInterface) {
-				$id = spl_object_hash($expression);
-
-				if (isset($refs[$id])) {
-					return;
-				}
-
-				$refs[$id] = 1;
 				$expression->traverse($visitor);
 
 				if (!($expression instanceof self)) {
