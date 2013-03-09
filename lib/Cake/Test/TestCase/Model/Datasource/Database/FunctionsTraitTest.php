@@ -69,11 +69,18 @@ class FunctionsTraitTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('COUNT(*)', (string)$function);
 	}
 
-	public function concat() {
+	public function testConcat() {
 		$function = $this->functions->concat(['title' => 'literal', ' is a string']);
 		$this->assertInstanceOf('\Cake\Model\Datasource\Database\Expression\FunctionExpression', $function);
-		$param = $function->bindings()[0]['placeholder'];
-		$this->assertEquals("CONCAT(title, $param)", (string)$function);
+		$param = $function->bindings()[1]['placeholder'];
+		$this->assertEquals("CONCAT(title, :$param)", (string)$function);
 	}
 
+	public function testCoalesce() {
+		$function = $this->functions->coalesce(['NULL' => 'literal', '1', '2']);
+		$this->assertInstanceOf('\Cake\Model\Datasource\Database\Expression\FunctionExpression', $function);
+		$param = $function->bindings()[1]['placeholder'];
+		$param2 = $function->bindings()[2]['placeholder'];
+		$this->assertEquals("COALESCE(NULL, :$param, :$param2)", (string)$function);
+	}
 }

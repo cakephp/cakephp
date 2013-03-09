@@ -1965,6 +1965,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->execute();
 		$expected = [['c' => 'a title is appended'], ['c' => 'another title is appended']];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['d' => $query->dateDiff(['2012-01-05', '2012-01-02'])])
+			->execute();
+		$this->assertEquals([['d' => '3.0']], $result->fetchAll('assoc'));
 	}
 
 

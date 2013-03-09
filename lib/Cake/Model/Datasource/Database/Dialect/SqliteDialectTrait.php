@@ -30,9 +30,19 @@ trait SqliteDialectTrait {
 	}
 
 	protected function _transformFunctionExpression(FunctionExpression $expression) {
-		if ($expression->name() === 'CONCAT') {
-			// CONCAT function is expressed as exp1 || exp2
-			$expression->name('')->type(' ||');
+		switch ($expression->name()) {
+			case 'CONCAT':
+				// CONCAT function is expressed as exp1 || exp2
+				$expression->name('')->type(' ||');
+				break;
+			case 'DATEDIFF':
+				$expression
+					->name('ROUND')
+					->type('-')
+					->iterateParts(function($p) {
+						return new FunctionExpression('JULIANDAY', [$p => 'literal']);
+					});
+				break;
 		}
 	}
 

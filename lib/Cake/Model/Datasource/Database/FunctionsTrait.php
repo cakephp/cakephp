@@ -66,4 +66,12 @@ trait FunctionsTrait {
 		return $this->func('CONCAT', $args, $types);
 	}
 
+	public function coalesce($args, $types = []) {
+		return $this->func('COALESCE', $args, $types);
+	}
+
+	public function dateDiff($dates, $types = []) {
+		return $this->func('DATEDIFF', $dates, $types);
+	}
+
 }
