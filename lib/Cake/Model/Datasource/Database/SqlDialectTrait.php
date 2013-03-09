@@ -76,10 +76,43 @@ trait SqlDialectTrait {
 		return $identifier;
 	}
 
+/**
+ * Returns a callable function that will be used to transform a passed Query object.
+ * This function, in turn, will return an instance of a Query object that has been
+ * transformed to accommodate any specificities of the SQL dialect in use.
+ *
+ * @param string $type the type of query to be transformed
+ * (select, insert, update, delete)
+ * @return callable
+ */
 	public function queryTranslator($type) {
 		return function($query) use ($type) {
-			return $this->{'_' . $type . 'QueryTranslator'}($query);
+			$query = $this->{'_' . $type . 'QueryTranslator'}($query);
+
+			if (!$this->_expressionTranslators()) {
+				return $query;
+			}
+
+			$query->traverseExpressions(function($expression) {
+				foreach ($this->_expressionTranslators() as $class => $method) {
+					if ($expression instanceof $class) {
+						$this->{$method}($expression);
+					}
+				}
+			});
+			return $query;
 		};
+	}
+
+/**
+ * Returns an associative array of methods that will transform Expression
+ * objects to conform with the specific SQL dialect. Keys are class names
+ * and values a method in this class.
+ *
+ * @return void
+ */
+	protected function _expressionTranslators() {
+		return [];
 	}
 
 /**

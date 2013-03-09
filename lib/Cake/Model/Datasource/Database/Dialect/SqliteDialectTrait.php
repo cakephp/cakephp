@@ -22,13 +22,11 @@ use Cake\Model\Datasource\Database\Query;
 
 trait SqliteDialectTrait {
 
-	protected function _selectQueryTranslator($query) {
-		return parent::_selectQueryTranslator($query)
-			->traverseExpressions(function($expression) {
-				if ($expression instanceof FunctionExpression) {
-					$this->_transformFunctionExpression($expression);
-				}
-			});
+	protected function _expressionTranslators() {
+		$namespace = 'Cake\Model\Datasource\Database\Expression';
+		return [
+			$namespace . '\FunctionExpression' => '_transformFunctionExpression'
+		];
 	}
 
 	protected function _transformFunctionExpression(FunctionExpression $expression) {
