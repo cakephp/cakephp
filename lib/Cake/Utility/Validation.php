@@ -111,7 +111,7 @@ class Validation {
 	}
 
 /**
- * Returns true if field is left blank -OR- only whitespace characters are present in it's value
+ * Returns true if field is left blank -OR- only whitespace characters are present in its value
  * Whitespace characters include Space, Tab, Carriage Return, Newline
  *
  * $check can be passed as an array:

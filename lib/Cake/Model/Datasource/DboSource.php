@@ -2942,7 +2942,7 @@ class DboSource extends DataSource {
  * This method should be implemented by datasources that require sequences to be used.
  *
  * @param string $table The name of the table to update.
- * @param string $column The column to use when reseting the sequence value.
+ * @param string $column The column to use when resetting the sequence value.
  * @return boolean|void success.
  */
 	public function resetSequence($table, $column) {

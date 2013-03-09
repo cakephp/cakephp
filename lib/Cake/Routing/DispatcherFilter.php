@@ -52,7 +52,7 @@ abstract class DispatcherFilter implements CakeEventListener {
 	}
 
 /**
- * Method called before the controller is instantiated and called to ser a request.
+ * Method called before the controller is instantiated and called to serve a request.
  * If used with default priority, it will be called after the Router has parsed the
  * url and set the routing params into the request object.
  *
@@ -61,7 +61,7 @@ abstract class DispatcherFilter implements CakeEventListener {
  * not calling the after event in the dispatcher.
  *
  * If false is returned, the event will be stopped and no more listeners will be notified.
- * Alternatively you can call `$event->stopPropagation()` to acheive the same result.
+ * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
  *
  * @param CakeEvent $event container object having the `request`, `response` and `additionalParams`
  *	keys in the data property.
@@ -72,11 +72,11 @@ abstract class DispatcherFilter implements CakeEventListener {
 
 /**
  * Method called after the controller served a request and generated a response.
- * It is posible to alter the response object at this point as it is not sent to the
+ * It is possible to alter the response object at this point as it is not sent to the
  * client yet.
  *
  * If false is returned, the event will be stopped and no more listeners will be notified.
- * Alternatively you can call `$event->stopPropagation()` to acheive the same result.
+ * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
  *
  * @param CakeEvent $event container object having the `request` and  `response`
  *	keys in the data property.

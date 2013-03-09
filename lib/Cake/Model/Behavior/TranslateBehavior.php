@@ -219,7 +219,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param string $field The field name being joined.
  * @param string $aliasField The aliased field name being joined.
  * @param string|array $locale The locale(s) having joins added.
- * @return array The modfied query
+ * @return array The modified query
  */
 	protected function _addJoin(Model $Model, $query, $field, $aliasField, $locale) {
 		$db = ConnectionManager::getDataSource($Model->useDbConfig);

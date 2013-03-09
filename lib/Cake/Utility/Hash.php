@@ -372,7 +372,7 @@ class Hash {
 	}
 
 /**
- * Returns a formated series of values extracted from `$data`, using
+ * Returns a formatted series of values extracted from `$data`, using
  * `$format` as the format and `$paths` as the values to extract.
  *
  * Usage:
@@ -629,7 +629,7 @@ class Hash {
  * Counts the dimensions of an array.
  * Only considers the dimension of the first element in the array.
  *
- * If you have an un-even or hetrogenous array, consider using Hash::maxDimensions()
+ * If you have an un-even or heterogenous array, consider using Hash::maxDimensions()
  * to get the dimensions of the array.
  *
  * @param array $array Array to count dimensions on
@@ -807,7 +807,7 @@ class Hash {
 
 /**
  * Helper method for sort()
- * Sqaushes an array to a single hash so it can be sorted.
+ * Squashes an array to a single hash so it can be sorted.
  *
  * @param array $data The data to squash.
  * @param string $key The key for the data.

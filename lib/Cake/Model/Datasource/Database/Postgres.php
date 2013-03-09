@@ -315,8 +315,8 @@ class Postgres extends DboSource {
  * for resetting sequences after using insertMulti().
  *
  * @param string $table The name of the table to update.
- * @param string $column The column to use when reseting the sequence value, the
- *   sequence name will be fetched using Postgres::getSequence();
+ * @param string $column The column to use when resetting the sequence value,
+ *   the sequence name will be fetched using Postgres::getSequence();
  * @return boolean success.
  */
 	public function resetSequence($table, $column) {
