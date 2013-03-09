@@ -1887,7 +1887,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  */
 	public function testInsertFromSelect() {
 		$this->_insertTwoRecords();
-		$select = (new Query($this->connection))->select('name, "some text", 99')
+		$select = (new Query($this->connection))->select("name, 'some text', 99")
 			->from('authors')
 			->where(['id' => 1]);
 
@@ -1901,7 +1901,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 
 		$result = $query->sql(false);
 		$this->assertContains('INSERT INTO articles (title, body, author_id) SELECT', $result);
-		$this->assertContains('SELECT name, "some text", 99 FROM authors', $result);
+		$this->assertContains("SELECT name, 'some text', 99 FROM authors", $result);
 		$result = $query->execute();
 
 		$this->assertCount(1, $result);

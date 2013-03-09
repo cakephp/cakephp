@@ -18,6 +18,7 @@
 namespace Cake\Model\Datasource\Database\Dialect;
 
 use Cake\Model\Datasource\Database\Expression\UnaryExpression;
+use Cake\Model\Datasource\Database\Expression\FunctionExpression;
 use Cake\Model\Datasource\Database\Query;
 
 trait PostgresDialectTrait {
@@ -61,6 +62,31 @@ trait PostgresDialectTrait {
 			}
 			return $row;
 		};
+	}
+
+
+	protected function _expressionTranslators() {
+		$namespace = 'Cake\Model\Datasource\Database\Expression';
+		return [
+			$namespace . '\FunctionExpression' => '_transformFunctionExpression'
+		];
+	}
+
+	protected function _transformFunctionExpression(FunctionExpression $expression) {
+		switch ($expression->name()) {
+			case 'CONCAT':
+				// CONCAT function is expressed as exp1 || exp2
+				$expression->name('')->type(' ||');
+				break;
+			case 'DATEDIFF':
+				$expression
+					->name('')
+					->type('-')
+					->iterateParts(function($p) {
+						return new FunctionExpression('DATE', [$p => 'literal']);
+					});
+				break;
+		}
 	}
 
 }
