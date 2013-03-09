@@ -264,9 +264,15 @@ class CakeFixtureManager {
 /**
  * Drop all fixture tables loaded by this class
  *
+ * This will also close the session, as failing to do so will cause
+ * fatal errors with database sessions.
+ *
  * @return void
  */
 	public function shutDown() {
+		if (session_id()) {
+			session_write_close();
+		}
 		foreach ($this->_loaded as $fixture) {
 			if (!empty($fixture->created)) {
 				foreach ($fixture->created as $ds) {
