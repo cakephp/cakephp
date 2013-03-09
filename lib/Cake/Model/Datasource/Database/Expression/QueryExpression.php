@@ -441,6 +441,28 @@ class QueryExpression implements ExpressionInterface, Countable {
 	}
 
 /**
+ * Executes a callable function for each of the parts that form this expression
+ * Callable function is required to return a value, which will the one with
+ * which the currently visited part will be replaced. If the callable function
+ * returns null then the part will be discarded completely from this expression
+ *
+ * @param callable $callable
+ * @return QueryExpression
+ */
+	public function iterateParts(callable $callable) {
+		$parts = [];
+		foreach ($this->_conditions as $c) {
+			$part = $callable($c);
+			if ($part !== null) {
+				$parts[] = $part;
+			}
+		}
+		$this->_conditions = $parts;
+
+		return $this;
+	}
+
+/**
  * Sets the unique identifier string for this object, which is used for generating
  * placeholders. If called with no arguments it will return the currently defined
  * identifier.
