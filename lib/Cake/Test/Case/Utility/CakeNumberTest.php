@@ -529,7 +529,7 @@ class CakeNumberTest extends CakeTestCase {
 		$expected = 'GBP650.1200';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency($value, 'GBP', array('before'=>'&#163; ', 'escape' => true));
+		$result = $this->Number->currency($value, 'GBP', array('before '=> '&#163; ', 'escape' => true));
 		$expected = '&amp;#163; 1,234,567.89';
 		$this->assertEquals($expected, $result);
 
@@ -537,7 +537,7 @@ class CakeNumberTest extends CakeTestCase {
 		$expected = '$0.35';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency('0.35', 'GBP', array('before'=>'&#163;', 'after' => false, 'escape' => false));
+		$result = $this->Number->currency('0.35', 'GBP', array('before' => '&#163;', 'after' => false, 'escape' => false));
 		$expected = '&#163;0.35';
 		$this->assertEquals($expected, $result);
 
