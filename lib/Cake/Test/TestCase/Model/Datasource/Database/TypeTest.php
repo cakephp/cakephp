@@ -332,4 +332,30 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($type->toPHP('false', $driver));
 	}
 
+/**
+ * Tests uuid from database are converted correctly to PHP
+ *
+ * @return void
+ */
+	public function testUuidToPHP() {
+		$type = Type::build('uuid');
+		$string = 'abc123-de456-fg789';
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertEquals($string, $type->toPHP($string, $driver));
+		$this->assertEquals('3', $type->toPHP(3, $driver));
+		$this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
+	}
+
+/**
+ * Tests integers from PHP are converted correctly to statement value
+ *
+ * @return void
+ */
+	public function testUuidToStatement() {
+		$type = Type::build('uuid');
+		$string = 'abc123-def456-ghi789';
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
+	}
+
 }

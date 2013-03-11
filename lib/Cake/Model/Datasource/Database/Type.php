@@ -52,6 +52,7 @@ class Type {
 		'integer' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
 		'biginteger' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
 		'string' => ['callback' => 'strval'],
+		'uuid' => ['callback' => 'strval'],
 		'text' => ['callback' => 'strval'],
 		'boolean' => [
 			'callback' => '\Cake\Model\Datasource\Database\Type::boolval',
