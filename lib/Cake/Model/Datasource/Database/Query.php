@@ -179,7 +179,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 		$query = $this->_transformQuery();
 		$statement = $this->_connection->prepare($query->sql(false));
-		$query->_bindParams($statement);
+		$query->_bindStatement($statement);
 		$statement->execute();
 
 		return $query->_decorateResults($statement);
@@ -193,12 +193,12 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * add, remove or alter any query part or internal expression to make it
  * executable in the target platform.
  *
- * Resulting query may have placeholders that will be replaced with the actual
+ * The resulting query may have placeholders that will be replaced with the actual
  * values when the query is executed, hence it is most suitable to use with
  * prepared statements.
  *
  * @param boolean $transform Whether to let the connection transform the query
- * to the specific dialect or not
+ *    to the specific dialect or not
  * @return string
  */
 	public function sql($transform = true) {
@@ -261,7 +261,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _traverseSelect(callable $visitor) {
 		$parts = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit', 'offset', 'union'];
 		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
+			call_user_func($visitor, $this->_parts[$name], $name);
 		}
 	}
 
@@ -274,7 +274,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _traverseDelete(callable $visitor) {
 		$parts = ['delete', 'from', 'where'];
 		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
+			call_user_func($visitor, $this->_parts[$name], $name);
 		}
 	}
 
@@ -287,7 +287,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _traverseUpdate(callable $visitor) {
 		$parts = ['update', 'set', 'where'];
 		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
+			call_user_func($visitor, $this->_parts[$name], $name);
 		}
 	}
 
@@ -300,7 +300,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _traverseInsert(callable $visitor) {
 		$parts = ['insert', 'values'];
 		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
+			call_user_func($visitor, $this->_parts[$name], $name);
 		}
 	}
 
@@ -335,7 +335,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		}
 
 		if (is_callable($fields)) {
-			$fields = $fields($this);
+			$fields = call_user_func($fields, $this);
 		}
 
 		if (!is_array($fields)) {
@@ -1410,7 +1410,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$expression = $this->_parts[$part] ?: $this->newExpr();
 
 		if (is_callable($append)) {
-			$append = $append($this->newExpr(), $this);
+			$append = call_user_func($append, $this->newExpr(), $this);
 		}
 
 		if ($expression->type() === $conjunction) {
@@ -1432,13 +1432,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param Cake\Model\Datasource\Database\Statement $statement
  * @return void
  */
-	protected function _bindParams($statement) {
+	protected function _bindStatement($statement) {
 		$binder = function($expression) use ($statement) {
 			$params = $types = [];
 
 			if ($expression instanceof Comparison) {
 				if ($expression->getValue() instanceof self) {
-					$expression->getValue()->_bindParams($statement);
+					$expression->getValue()->_bindStatement($statement);
 				}
 			}
 
@@ -1454,21 +1454,21 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 /**
  * This function works similar to the traverse() function, with the difference
- * that it does a full depth traversal of all expression tree. This will execute
+ * that it does a full depth traversal of the entire expression tree. This will execute
  * the provided callback function for each ExpressionInterface object that is
  * stored inside this query at any nesting depth in any part of the query.
  *
  * Callback will receive as first parameter the currently visited expression.
  *
  * @param callable $callback the function to be executed for each ExpressionInterface
- * found inside this query.
+ *   found inside this query.
  * @return Query
  */
 	public function traverseExpressions(callable $callback) {
 		$visitor = function($expression) use (&$visitor, $callback) {
 			if (is_array($expression)) {
 				foreach ($expression as $e) {
-					$visitor($e);
+					call_user_func($visitor, $e);
 				}
 				return;
 			}
@@ -1477,7 +1477,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 				$expression->traverse($visitor);
 
 				if (!($expression instanceof self)) {
-					$callback($expression);
+					call_user_func($callback, $expression);
 				}
 			}
 		};
