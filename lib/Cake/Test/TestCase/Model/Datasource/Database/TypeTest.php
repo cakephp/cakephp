@@ -358,4 +358,30 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
 	}
 
+/**
+ * Tests decimal from database are converted correctly to PHP
+ *
+ * @return void
+ */
+	public function testDecimalToPHP() {
+		$type = Type::build('decimal');
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+
+		$this->assertSame(3.14159, $type->toPHP('3.14159', $driver));
+		$this->assertSame(3.14159, $type->toPHP(3.14159, $driver));
+		$this->assertSame(3.0, $type->toPHP(3, $driver));
+	}
+
+/**
+ * Tests integers from PHP are converted correctly to statement value
+ *
+ * @return void
+ */
+	public function testDecimalToStatement() {
+		$type = Type::build('decimal');
+		$string = '12.55';
+		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
+		$this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
+	}
+
 }

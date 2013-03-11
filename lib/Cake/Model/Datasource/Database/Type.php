@@ -49,6 +49,7 @@ class Type {
  */
 	protected static $_basicTypes = [
 		'float' => ['callback' => 'floatval'],
+		'decimal' => ['callback' => 'floatval'],
 		'integer' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
 		'biginteger' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
 		'string' => ['callback' => 'strval'],
