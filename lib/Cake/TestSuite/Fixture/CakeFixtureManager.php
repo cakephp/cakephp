@@ -243,17 +243,18 @@ class CakeFixtureManager {
  *
  * @param string $name of the fixture
  * @param DataSource $db DataSource instance or leave null to get DataSource from the fixture
+ * @param boolean $dropTables Whether or not tables should be dropped and re-created.
  * @return void
  * @throws UnexpectedValueException if $name is not a previously loaded class
  */
-	public function loadSingle($name, $db = null) {
+	public function loadSingle($name, $db = null, $dropTables = true) {
 		$name .= 'Fixture';
 		if (isset($this->_fixtureMap[$name])) {
 			$fixture = $this->_fixtureMap[$name];
 			if (!$db) {
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
 			}
-			$this->_setupTable($fixture, $db);
+			$this->_setupTable($fixture, $db, $dropTables);
 			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
