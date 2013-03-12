@@ -43,7 +43,11 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	public $autoFixtures = true;
 
 /**
+ * Control table create/drops on each test method.
+ *
  * Set this to false to avoid tables to be dropped if they already exist
+ * between each test method. Tables will still be dropped at the
+ * end of each test runner execution.
  *
  * @var boolean
  */
@@ -205,7 +209,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 		$args = func_get_args();
 		foreach ($args as $class) {
-			$this->fixtureManager->loadSingle($class);
+			$this->fixtureManager->loadSingle($class, null, $this->dropTables);
 		}
 	}
 
