@@ -28,7 +28,7 @@ class CakeTestSuiteDispatcherTest extends CakeTestCase {
 
     try {
       $dispatcher->loadTestFramework();
-    } catch(Exception $ex) {
+    } catch (Exception $ex) {
       $exception = $ex;
     }
 
