@@ -82,23 +82,15 @@ class BasicAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Authenticate a user using basic HTTP auth. Will use the configured User model and attempt a
- * login using basic HTTP auth.
+ * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
+ * login using HTTP auth.
  *
  * @param CakeRequest $request The request to authenticate with.
  * @param CakeResponse $response The response to add headers to.
  * @return mixed Either false on failure, or an array of user data on success.
  */
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		$result = $this->getUser($request);
-
-		if (empty($result)) {
-			$response->header($this->loginHeaders());
-			$response->statusCode(401);
-			$response->send();
-			return false;
-		}
-		return $result;
+		return $this->getUser($request);
 	}
 
 /**
@@ -115,6 +107,20 @@ class BasicAuthenticate extends BaseAuthenticate {
 			return false;
 		}
 		return $this->_findUser($username, $pass);
+	}
+
+/**
+ * Handles an unauthenticated access attempt by sending appropriate login headers
+ *
+ * @param CakeRequest $request A request object.
+ * @param CakeResponse $response A response object.
+ * @return boolean True
+ */
+	public function unauthenticated(CakeRequest $request, CakeResponse $response) {
+		$response->header($this->loginHeaders());
+		$response->statusCode(401);
+		$response->send();
+		return true;
 	}
 
 /**
