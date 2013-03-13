@@ -441,7 +441,7 @@ class MissingDatasourceConfigException extends CakeException {
  */
 class MissingDatasourceException extends CakeException {
 
-	protected $_messageTemplate = 'Datasource class %s could not be found.';
+	protected $_messageTemplate = 'Datasource class %s could not be found. %s';
 
 }
 

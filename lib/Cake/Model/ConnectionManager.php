@@ -99,9 +99,17 @@ class ConnectionManager {
 		$conn = self::$_connectionsEnum[$name];
 		$class = $conn['classname'];
 
-		self::$_dataSources[$name] = new $class(self::$config->{$name});
-		self::$_dataSources[$name]->configKeyName = $name;
+		$instance = new $class(self::$config->{$name});
+		$instance->configKeyName = $name;
 
+		if (!$instance instanceof Datasource) {
+			throw new MissingDatasourceException(array(
+				'class' => $class,
+				'plugin' => null,
+				'message' => 'Only classes extending Datasource can be used as datasources.'
+			));
+		}
+		self::$_dataSources[$name] = $instance;
 		return self::$_dataSources[$name];
 	}
 
