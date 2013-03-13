@@ -403,11 +403,11 @@ XML;
 	}
 
 /**
- * testFromArrayFormatOutput method
+ * testFromArrayPretty method
  *
  * @return void
  */
-	public function testFromArrayFormatOutput() {
+	public function testFromArrayPretty() {
 		$xml = array(
 			'tags' => array(
 				'tag' => array(
@@ -428,7 +428,7 @@ XML;
 <tags><tag><id>1</id><name>defect</name></tag><tag><id>2</id><name>enhancement</name></tag></tags>
 
 XML;
-		$xmlResponse = Xml::fromArray($xml, array('formatOutput' => false));
+		$xmlResponse = Xml::fromArray($xml, array('pretty' => false));
 		$this->assertEquals($expected, $xmlResponse->asXML());
 
 		$expected = <<<XML
@@ -445,7 +445,7 @@ XML;
 </tags>
 
 XML;
-		$xmlResponse = Xml::fromArray($xml, array('formatOutput' => true));
+		$xmlResponse = Xml::fromArray($xml, array('pretty' => true));
 		$this->assertEquals($expected, $xmlResponse->asXML());
 
 				$xml = array(
@@ -468,7 +468,7 @@ XML;
 <tags><tag id="1" name="defect"/><tag id="2" name="enhancement"/></tags>
 
 XML;
-		$xmlResponse = Xml::fromArray($xml, array('formatOutput' => false, 'format' => 'attributes'));
+		$xmlResponse = Xml::fromArray($xml, array('pretty' => false, 'format' => 'attributes'));
 		$this->assertEquals($expected, $xmlResponse->asXML());
 
 		$expected = <<<XML
@@ -479,7 +479,7 @@ XML;
 </tags>
 
 XML;
-		$xmlResponse = Xml::fromArray($xml, array('formatOutput' => true, 'format' => 'attributes'));
+		$xmlResponse = Xml::fromArray($xml, array('pretty' => true, 'format' => 'attributes'));
 		$this->assertEquals($expected, $xmlResponse->asXML());
 	}
 

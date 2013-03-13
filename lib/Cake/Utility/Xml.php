@@ -150,7 +150,7 @@ class Xml {
  * ### Options
  *
  * - `format` If create childs ('tags') or attributes ('attribute').
- * - `formatOutput` Returns formatted Xml when set to `true`. Defaults to `false`
+ * - `pretty` Returns formatted Xml when set to `true`. Defaults to `false`
  * - `version` Version of XML document. Default is 1.0.
  * - `encoding` Encoding of XML document. If null remove from XML header. Default is the some of application.
  * - `return` If return object of SimpleXMLElement ('simplexml') or DOMDocument ('domdocument'). Default is SimpleXMLElement.
@@ -199,12 +199,12 @@ class Xml {
 			'version' => '1.0',
 			'encoding' => Configure::read('App.encoding'),
 			'return' => 'simplexml',
-			'formatOutput' => false
+			'pretty' => false
 		);
 		$options = array_merge($defaults, $options);
 
 		$dom = new DOMDocument($options['version'], $options['encoding']);
-		if ($options['formatOutput']) {
+		if ($options['pretty']) {
 			$dom->formatOutput = true;
 		}
 		self::_fromArray($dom, $dom, $input, $options['format']);
