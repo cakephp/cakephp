@@ -873,6 +873,10 @@ class HashTest extends CakeTestCase {
 		$result = Hash::extract($data, '{n}.Article[title=/^First/]');
 		$expected = array($data[0]['Article']);
 		$this->assertEquals($expected, $result);
+
+		$result = Hash::extract($data, '{n}.Article[title=/^Fir[a-z]+/]');
+		$expected = array($data[0]['Article']);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
