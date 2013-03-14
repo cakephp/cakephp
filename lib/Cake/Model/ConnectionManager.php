@@ -78,7 +78,6 @@ class ConnectionManager {
  *
  * @param string $name The name of the DataSource, as defined in app/Config/database.php
  * @return DataSource Instance
- * @throws MissingDatasourceConfigException
  * @throws MissingDatasourceException
  */
 	public static function getDataSource($name) {
@@ -99,17 +98,16 @@ class ConnectionManager {
 		$conn = self::$_connectionsEnum[$name];
 		$class = $conn['classname'];
 
-		$instance = new $class(self::$config->{$name});
-		$instance->configKeyName = $name;
-
-		if (!$instance instanceof Datasource) {
+		if (strpos(App::location($class), 'Datasource') === false) {
 			throw new MissingDatasourceException(array(
 				'class' => $class,
 				'plugin' => null,
-				'message' => 'Only classes extending Datasource can be used as datasources.'
+				'message' => 'Datasource is not found in Model/Datasource package.'
 			));
 		}
-		self::$_dataSources[$name] = $instance;
+		self::$_dataSources[$name] = new $class(self::$config->{$name});
+		self::$_dataSources[$name]->configKeyName = $name;
+
 		return self::$_dataSources[$name];
 	}
 
