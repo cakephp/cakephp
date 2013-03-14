@@ -2390,7 +2390,6 @@ class FormHelper extends AppHelper {
 			}
 			$change = (round($min * (1 / $interval)) * $interval) - $min;
 			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
-			$newTime = explode(' ', $current->format('Y m d H i a'));
 			$format = ($timeFormat == '12') ? 'Y m d h i a' : 'Y m d H i a';
 			$newTime = explode(' ', $current->format($format));
 			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
