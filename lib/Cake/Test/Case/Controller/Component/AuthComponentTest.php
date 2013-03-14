@@ -1109,20 +1109,6 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
- * Tests that shutdown destroys the redirect session var
- *
- * @return void
- */
-	public function testShutDown() {
-		$this->Auth->Session->write('Auth.User', 'not empty');
-		$this->Auth->Session->write('Auth.redirect', 'foo');
-		$this->Controller->Auth->loggedIn(true);
-
-		$this->Controller->Auth->shutdown($this->Controller);
-		$this->assertNull($this->Auth->Session->read('Auth.redirect'));
-	}
-
-/**
  * test $settings in Controller::$components
  *
  * @return void
