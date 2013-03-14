@@ -92,7 +92,7 @@ class Validation {
 		if (empty($check) && $check != '0') {
 			return false;
 		}
-		return self::_check($check, '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]+$/mu');
+		return self::_check($check, '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]+$/Du');
 	}
 
 /**
