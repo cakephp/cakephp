@@ -328,7 +328,7 @@ class HttpSocket extends CakeSocket {
 		$this->request['auth'] = $this->_auth;
 
 		if (is_array($this->request['body'])) {
-			$this->request['body'] = http_build_query($this->request['body']);
+			$this->request['body'] = http_build_query($this->request['body'], '', '&');
 		}
 
 		if (!empty($this->request['body']) && !isset($this->request['header']['Content-Type'])) {
@@ -696,7 +696,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$uri['path'] = preg_replace('/^\//', null, $uri['path']);
-		$uri['query'] = http_build_query($uri['query']);
+		$uri['query'] = http_build_query($uri['query'], '', '&');
 		$uri['query'] = rtrim($uri['query'], '=');
 		$stripIfEmpty = array(
 			'query' => '?%query',
