@@ -138,13 +138,14 @@ class CakeTestSuiteDispatcher {
  */
 	public function loadTestFramework() {
 		foreach (App::path('vendors') as $vendor) {
-			if (is_dir($vendor . 'PHPUnit')) {
+      $vendor = rtrim($vendor, DS);
+			if (is_dir($vendor . DS . 'PHPUnit')) {
 				ini_set('include_path', $vendor . PATH_SEPARATOR . ini_get('include_path'));
 				break;
 			}
 		}
 
-		return include 'PHPUnit' . DS . 'Autoload.php';
+		return (include('PHPUnit' . DS . 'Autoload.php')) !== false;
 	}
 
 /**
