@@ -7,19 +7,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\View\Helper;
+
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Utility\Hash;
@@ -54,7 +55,7 @@ class NumberHelper extends Helper {
  *
  * @param View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper
- * @throws CakeException When the engine class could not be found.
+ * @throws Cake\Error\Exception When the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
 		$settings = Hash::merge(array('engine' => 'Cake\Utility\Number'), $settings);
@@ -128,11 +129,12 @@ class NumberHelper extends Helper {
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
  *   set at least 'before' and 'after' options.
+ * 'USD' is the default currency, use CakeNumber::defaultCurrency() to change this default.
  * @param array $options
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
-	public function currency($number, $currency = 'USD', $options = array()) {
+	public function currency($number, $currency = null, $options = array()) {
 		return $this->_engine->currency($number, $currency, $options);
 	}
 
@@ -147,6 +149,17 @@ class NumberHelper extends Helper {
  */
 	public function addFormat($formatName, $options) {
 		return $this->_engine->addFormat($formatName, $options);
+	}
+
+/**
+ * @see CakeNumber::defaultCurrency()
+ *
+ * @param string $currency The currency to be used in the future.
+ * @return void
+ * @see NumberHelper::currency()
+ */
+	public function defaultCurrency($currency) {
+		return $this->_engine->defaultCurrency($currency);
 	}
 
 }

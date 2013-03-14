@@ -5,19 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Number;
 
@@ -254,6 +255,18 @@ class NumberTest extends TestCase {
 		$result = $this->Number->currency(0.5, null, array('fractionSymbol' => false, 'fractionPosition' => 'before', 'wholeSymbol' => '$'));
 		$expected = '$0.50';
 		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(0, 'GBP');
+		$expected = '&#163;0.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(0.00000, 'GBP');
+		$expected = '&#163;0.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency('0.00000', 'GBP');
+		$expected = '&#163;0.00';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -280,6 +293,39 @@ class NumberTest extends TestCase {
 		$result = $this->Number->currency(0.22, 'Other2');
 		$expected = '$ 0.22';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test default currency
+ *
+ * @return void
+ */
+	public function testDefaultCurrency() {
+		$result = $this->Number->defaultCurrency();
+		$this->assertEquals('USD', $result);
+		$this->Number->addFormat('NOK', array('before' => 'Kr. '));
+
+		$this->Number->defaultCurrency('NOK');
+		$result = $this->Number->defaultCurrency();
+		$this->assertEquals('NOK', $result);
+
+		$result = $this->Number->currency(1000);
+		$expected = 'Kr. 1,000.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(2000);
+		$expected = 'Kr. 2,000.00';
+		$this->assertEquals($expected, $result);
+		$this->Number->defaultCurrency('EUR');
+		$result = $this->Number->currency(1000);
+		$expected = '&#8364;1.000,00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency(2000);
+		$expected = '&#8364;2.000,00';
+		$this->assertEquals($expected, $result);
+
+		$this->Number->defaultCurrency('USD');
 	}
 
 /**
@@ -592,7 +638,7 @@ class NumberTest extends TestCase {
  * @return void
  */
 	public function testFromReadableSizeException() {
-		$result = $this->Number->fromReadableSize('bogus', false);
+		$this->Number->fromReadableSize('bogus', false);
 	}
 
 /**
@@ -610,6 +656,13 @@ class NumberTest extends TestCase {
 			array(array('size' => '1.5MB', 'default' => false), 1572864),
 			array(array('size' => '1GB', 'default' => false), 1073741824),
 			array(array('size' => '1.5GB', 'default' => false), 1610612736),
+			array(array('size' => '1K', 'default' => false), 1024),
+			array(array('size' => '1.5K', 'default' => false), 1536),
+			array(array('size' => '1M', 'default' => false), 1048576),
+			array(array('size' => '1m', 'default' => false), 1048576),
+			array(array('size' => '1.5M', 'default' => false), 1572864),
+			array(array('size' => '1G', 'default' => false), 1073741824),
+			array(array('size' => '1.5G', 'default' => false), 1610612736),
 			array(array('size' => '512', 'default' => 'Unknown type'), 512),
 			array(array('size' => '2VB', 'default' => 'Unknown type'), 'Unknown type')
 		);

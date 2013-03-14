@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 1.2.0.5551
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Utility;
+
 use Cake\Core\Configure;
 
 /**
@@ -136,7 +138,7 @@ class String {
 			}
 			if ($tmpOffset !== -1) {
 				$buffer .= substr($data, $offset, ($tmpOffset - $offset));
-				if ($data{$tmpOffset} == $separator && $depth == 0) {
+				if (!$depth && $data{$tmpOffset} == $separator) {
 					$results[] = $buffer;
 					$buffer = '';
 				} else {
@@ -229,13 +231,11 @@ class String {
 
 		asort($data);
 
-		$hashKeys = array();
-		foreach ($data as $key => $value) {
-			$hashKeys[] = crc32($key);
-		}
-
-		$tempData = array_combine(array_keys($data), array_values($hashKeys));
+		$dataKeys = array_keys($data);
+		$hashKeys = array_map('crc32', $dataKeys);
+		$tempData = array_combine($dataKeys, $hashKeys);
 		krsort($tempData);
+
 		foreach ($tempData as $key => $hashVal) {
 			$key = sprintf($format, preg_quote($key, '/'));
 			$str = preg_replace($key, $hashVal, $str);
@@ -322,7 +322,7 @@ class String {
  *
  * ### Options
  *
- * - `width` The width to wrap to.  Defaults to 72
+ * - `width` The width to wrap to. Defaults to 72
  * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
  * - `indent` String to indent with. Defaults to null.
  * - `indentAt` 0 based index to start indenting at. Defaults to 0.
@@ -476,8 +476,8 @@ class String {
 		);
 		if (isset($options['ending'])) {
 			$default['ellipsis'] = $options['ending'];
-		} elseif (!empty($options['html']) && Configure::read('App.encoding') == 'UTF-8') {
-			$default['ellipsis'] = chr(226);
+		} elseif (!empty($options['html']) && Configure::read('App.encoding') === 'UTF-8') {
+			$default['ellipsis'] = "\xe2\x80\xa6";
 		}
 		$options = array_merge($default, $options);
 		extract($options);
@@ -557,7 +557,7 @@ class String {
 						}
 					} else {
 						foreach ($droppedTags as $closingTag) {
-							array_push($openTags, $closingTag[1]);
+							$openTags[] = $closingTag[1];
 						}
 					}
 				}

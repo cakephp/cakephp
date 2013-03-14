@@ -4,12 +4,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake.libs.view.templates.pages
  * @since         CakePHP(tm) v 0.10.0.1076
@@ -41,7 +42,7 @@ use Cake\Core\Configure;
 				echo __d('cake', 'set up and initialized properly.');
 				$settings = Cache::settings();
 				echo '<p>' . $settings['engine'];
-				echo __d('cake', ' is being used to cache, to change this edit config/core.php ');
+				echo __d('cake', ' is being used to cache, to change this edit App/Config/cache.php ');
 				echo '</p>';
 
 				echo 'Settings: <ul>';
@@ -57,7 +58,7 @@ use Cake\Core\Configure;
 				echo __d('cake', 'NOT working.');
 				echo '<br />';
 				if (is_writable(TMP)):
-					echo __d('cake', 'Edit: config/core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
+					echo __d('cake', 'Edit: App/Config/cache.php to insure you have the newset version of this file and the variable $cakeCache set properly');
 				endif;
 			endif;
 		?>
@@ -66,15 +67,15 @@ use Cake\Core\Configure;
 <p>
 	<span class="notice">
 		<?php
-			echo __d('cake', 'Your database configuration file is ');
+			echo __d('cake', 'Your datasources configuration file is ');
 			$filePresent = null;
-			if (file_exists(APP . 'Config'.'database.php')):
+			if (file_exists(APP . 'Config'.'datasources.php')):
 				echo __d('cake', 'present.');
 				$filePresent = true;
 			else:
 				echo __d('cake', 'NOT present.');
 				echo '<br/>';
-				echo __d('cake', 'Rename config/database.php.default to config/database.php');
+				echo __d('cake', 'Rename App/Config/datasources.default.php to App/Config/datasources.php');
 			endif;
 		?>
 	</span>

@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.0.1076
@@ -29,8 +30,8 @@ use Cake\Utility\Inflector;
  * Access Control List factory class.
  *
  * Uses a strategy pattern to allow custom ACL implementations to be used with the same component interface.
- * You can define by changing `Configure::write('Acl.classname', 'DbAcl');` in your core.php. Concrete ACL
- * implementations should extend `AclBase` and implement the methods it defines.
+ * You can define by changing `Configure::write('Acl.classname', 'DbAcl');` in your App/Config/acl.php.
+ * Concrete ACL implementations should extend `AclBase` and implement the methods it defines.
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html
@@ -105,7 +106,7 @@ class AclComponent extends Component {
 	}
 
 /**
- * Pass-thru function for ACL check instance.  Check methods
+ * Pass-thru function for ACL check instance. Check methods
  * are used to check whether or not an ARO can access an ACO
  *
  * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats

@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
 use Cake\Utility\Folder;
@@ -131,9 +133,7 @@ class FileTest extends TestCase {
 	public function testPermission() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows.');
 
-		$dir = TMP . 'tests/permissions/';
-		$Folder = new Folder($dir);
-
+		$dir = TMP . 'tests' . DS . 'permissions' . DS;
 		$old = umask();
 
 		umask(0002);
@@ -306,7 +306,7 @@ class FileTest extends TestCase {
  */
 	public function testPrepare() {
 		$string = "some\nvery\ncool\r\nteststring here\n\n\nfor\r\r\n\n\r\n\nhere";
-		if (DS == '\\') {
+		if (DS === '\\') {
 			$expected = "some\r\nvery\r\ncool\r\nteststring here\r\n\r\n\r\n";
 			$expected .= "for\r\n\r\n\r\n\r\n\r\nhere";
 		} else {

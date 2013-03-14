@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.0.0.2277
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -57,7 +58,7 @@ class CacheHelper extends Helper {
  * @return boolean
  */
 	protected function _enabled() {
-		return (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
+		return $this->_View->cacheAction && (Configure::read('Cache.check') === true);
 	}
 
 /**
@@ -92,7 +93,7 @@ class CacheHelper extends Helper {
 	}
 
 /**
- * Parse a file + output.  Matches nocache tags between the current output and the current file
+ * Parse a file + output. Matches nocache tags between the current output and the current file
  * stores a reference of the file, so the generated can be swapped back with the file contents when
  * writing the cache file.
  *
@@ -130,7 +131,7 @@ class CacheHelper extends Helper {
 				}
 			}
 
-			if (!isset($index) && $this->request->params['action'] == 'index') {
+			if (!isset($index) && $this->request->params['action'] === 'index') {
 				$index = 'index';
 			}
 
@@ -152,7 +153,7 @@ class CacheHelper extends Helper {
 			$cacheTime = $cacheAction;
 		}
 
-		if ($cacheTime != '' && $cacheTime > 0) {
+		if ($cacheTime && $cacheTime > 0) {
 			$cached = $this->_parseOutput($out);
 			try {
 				$this->_writeFile($cached, $cacheTime, $useCallbacks);
@@ -292,8 +293,12 @@ class CacheHelper extends Helper {
 			$cacheTime = strtotime($timestamp, $now);
 		}
 		$path = $this->request->here();
-		if ($path == '/') {
+		if ($path === '/') {
 			$path = 'home';
+		}
+		$prefix = Configure::read('Cache.viewPrefix');
+		if ($prefix) {
+			$path = $prefix . '_' . $path;
 		}
 		$cache = strtolower(Inflector::slug($path));
 
@@ -330,7 +335,7 @@ class CacheHelper extends Helper {
 				Router::setRequestInfo($controller->request);
 				$this->request = $request;';
 
-		if ($useCallbacks == true) {
+		if ($useCallbacks) {
 			$file .= '
 				$controller->constructClasses();
 				$controller->startupProcess();';

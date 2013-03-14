@@ -14,8 +14,8 @@
  */
 namespace Cake\Routing;
 
-use Cake\Routing\Route\Route;
 use Cake\Network\Request;
+use Cake\Routing\Route\Route;
 
 /**
  * RouteCollection is used to operate on a set of routes.

@@ -774,7 +774,7 @@ class DispatcherTest extends TestCase {
 
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-			'Vendor' => array(CAKE . 'Test/TestApp/Vendor/'),
+			'Vendor' => array(CAKE . 'Test/TestApp/vendor/'),
 			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
@@ -892,7 +892,7 @@ class DispatcherTest extends TestCase {
 
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-			'Vendor' => array(CAKE . 'Test/TestApp/Vendor/'),
+			'Vendor' => array(CAKE . 'Test/TestApp/vendor/'),
 			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
 		Plugin::load(array('TestPlugin', 'PluginJs'));
@@ -911,25 +911,6 @@ class DispatcherTest extends TestCase {
 		$expected = filesize($path);
 		$headers = $response->header();
 		$this->assertEquals($expected, $headers['Content-Length']);
-	}
-
-/**
- * test that missing asset processors trigger a 404 with no response body.
- *
- * @return void
- */
-	public function testMissingAssetProcessor404() {
-		$response = $this->getMock('Cake\Network\Response', array('send'));
-		$Dispatcher = new TestDispatcher();
-		Configure::write('Asset.filter', array(
-			'js' => '',
-			'css' => null
-		));
-		Configure::write('Dispatcher.filters', array('AssetDispatcher'));
-
-		$request = new Request('ccss/cake.generic.css');
-		$Dispatcher->dispatch($request, $response);
-		$this->assertEquals('404', $response->statusCode());
 	}
 
 /**

@@ -1,23 +1,25 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	  Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright	  Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link		  http://cakephp.org CakePHP(tm) Project
  * @since		  CakePHP(tm) v 2.2
  * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Routing\Filter;
 
-use Cake\Routing\DispatcherFilter;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Event\Event;
 use Cake\Network\Response;
+use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
 
 /**
@@ -33,7 +35,7 @@ class AssetDispatcher extends DispatcherFilter {
  * This filter should run before the request gets parsed by router
  *
  * @var int
- **/
+ */
 	public $priority = 9;
 
 /**
@@ -42,15 +44,10 @@ class AssetDispatcher extends DispatcherFilter {
  * @param Cake\Event\Event $event containing the request and response object
  * @return Cake\Network\Response if the client is requesting a recognized asset, null otherwise
  */
-	public function beforeDispatch($event) {
+	public function beforeDispatch(Event $event) {
 		$url = $event->data['request']->url;
 		if (strpos($url, '..') !== false || strpos($url, '.') === false) {
 			return;
-		}
-
-		if ($result = $this->_filterAsset($event)) {
-			$event->stopPropagation();
-			return $result;
 		}
 
 		$assetFile = $this->_getAssetFile($url);
@@ -70,42 +67,6 @@ class AssetDispatcher extends DispatcherFilter {
 		$ext = array_pop($pathSegments);
 		$this->_deliverAsset($response, $assetFile, $ext);
 		return $response;
-	}
-
-/**
- * Checks if the client is requesting a filtered asset and runs the corresponding
- * filter if any is configured
- *
- * @param Cake\Event\Event $event containing the request and response object
- * @return Cake\Network\Response if the client is requesting a recognized asset, null otherwise
- */
-	protected function _filterAsset($event) {
-		$url = $event->data['request']->url;
-		$response = $event->data['response'];
-		$filters = Configure::read('Asset.filter');
-		$isCss = (
-			strpos($url, 'ccss/') === 0 ||
-			preg_match('#^(theme/([^/]+)/ccss/)|(([^/]+)(?<!css)/ccss)/#i', $url)
-		);
-		$isJs = (
-			strpos($url, 'cjs/') === 0 ||
-			preg_match('#^/((theme/[^/]+)/cjs/)|(([^/]+)(?<!js)/cjs)/#i', $url)
-		);
-
-		if (($isCss && empty($filters['css'])) || ($isJs && empty($filters['js']))) {
-			$response->statusCode(404);
-			return $response;
-		}
-
-		if ($isCss) {
-			include WWW_ROOT . DS . $filters['css'];
-			return $response;
-		}
-
-		if ($isJs) {
-			include WWW_ROOT . DS . $filters['js'];
-			return $response;
-		}
 	}
 
 /**

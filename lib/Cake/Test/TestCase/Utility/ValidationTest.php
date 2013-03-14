@@ -1,12 +1,12 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -1425,6 +1425,45 @@ class ValidationTest extends TestCase {
 	}
 
 /**
+ * testDateYmNumeric method
+ *
+ * @return void
+ */
+	public function testDateYmNumeric() {
+		$this->assertTrue(Validation::date('2006/12', array('ym')));
+		$this->assertTrue(Validation::date('2006-12', array('ym')));
+		$this->assertTrue(Validation::date('2006-12', array('ym')));
+		$this->assertTrue(Validation::date('2006 12', array('ym')));
+		$this->assertTrue(Validation::date('2006 12', array('ym')));
+		$this->assertTrue(Validation::date('1900-01', array('ym')));
+		$this->assertTrue(Validation::date('2153-01', array('ym')));
+		$this->assertFalse(Validation::date('2006/12 ', array('ym')));
+		$this->assertFalse(Validation::date('2006/12/', array('ym')));
+		$this->assertFalse(Validation::date('06/12', array('ym')));
+		$this->assertFalse(Validation::date('06-12', array('ym')));
+		$this->assertFalse(Validation::date('06-12', array('ym')));
+		$this->assertFalse(Validation::date('06 12', array('ym')));
+	}
+
+/**
+ * testDateY method
+ *
+ * @return void
+ */
+	public function testDateY() {
+		$this->assertTrue(Validation::date('1900', array('y')));
+		$this->assertTrue(Validation::date('1984', array('y')));
+		$this->assertTrue(Validation::date('2006', array('y')));
+		$this->assertTrue(Validation::date('2008', array('y')));
+		$this->assertTrue(Validation::date('2013', array('y')));
+		$this->assertTrue(Validation::date('2104', array('y')));
+		$this->assertFalse(Validation::date('20009', array('y')));
+		$this->assertFalse(Validation::date(' 2012', array('y')));
+		$this->assertFalse(Validation::date('3000', array('y')));
+		$this->assertFalse(Validation::date('1899', array('y')));
+	}
+
+/**
  * Test validating dates with multiple formats
  *
  * @return void
@@ -1655,6 +1694,11 @@ class ValidationTest extends TestCase {
 		$this->assertTrue(Validation::email('abc@example.travel'));
 		$this->assertTrue(Validation::email('someone@st.t-com.hr'));
 
+		// gTLD's
+		$this->assertTrue(Validation::email('example@host.local'));
+		$this->assertTrue(Validation::email('example@x.org'));
+		$this->assertTrue(Validation::email('example@host.xxx'));
+
 		// strange, but technically valid email addresses
 		$this->assertTrue(Validation::email('S=postmaster/OU=rz/P=uni-frankfurt/A=d400/C=de@gateway.d400.de'));
 		$this->assertTrue(Validation::email('customer/department=shipping@example.com'));
@@ -1669,7 +1713,6 @@ class ValidationTest extends TestCase {
 		$this->assertFalse(Validation::email('abc.@example.com'));
 		$this->assertFalse(Validation::email('abc@example..com'));
 		$this->assertFalse(Validation::email('abc@example.com.a'));
-		$this->assertFalse(Validation::email('abc@example.toolong'));
 		$this->assertFalse(Validation::email('abc;@example.com'));
 		$this->assertFalse(Validation::email('abc@example.com;'));
 		$this->assertFalse(Validation::email('abc@efg@example.com'));
@@ -1839,11 +1882,11 @@ class ValidationTest extends TestCase {
 		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
 		$this->assertTrue(Validation::url('http://underscore_subdomain.example.org'));
 		$this->assertTrue(Validation::url('http://_jabber._tcp.gmail.com'));
+		$this->assertTrue(Validation::url('http://www.domain.longttldnotallowed'));
 		$this->assertFalse(Validation::url('ftps://256.168.0.1/pub/cake'));
 		$this->assertFalse(Validation::url('ftp://256.168.0.1/pub/cake'));
 		$this->assertFalse(Validation::url('http://w_w.domain.co_m'));
 		$this->assertFalse(Validation::url('http://www.domain.12com'));
-		$this->assertFalse(Validation::url('http://www.domain.longttldnotallowed'));
 		$this->assertFalse(Validation::url('http://www.-invaliddomain.tld'));
 		$this->assertFalse(Validation::url('http://www.domain.-invalidtld'));
 		$this->assertFalse(Validation::url('http://this-domain-is-too-loooooong-by-icann-rules-maximum-length-is-63.com'));
@@ -2147,7 +2190,7 @@ class ValidationTest extends TestCase {
  * @return void
  */
 	public function testPhonePostalSsnPass() {
-		$this->assertTrue(Validation::postal('text', null,  __NAMESPACE__ . '\TestNlValidation'));
+		$this->assertTrue(Validation::postal('text', null, __NAMESPACE__ . '\TestNlValidation'));
 		$this->assertTrue(Validation::phone('text', null, __NAMESPACE__ . '\TestDeValidation'));
 		$this->assertTrue(Validation::ssn('text', null, __NAMESPACE__ . '\TestNlValidation'));
 	}
@@ -2167,7 +2210,7 @@ class ValidationTest extends TestCase {
  *
  * @expectedException PHPUnit_Framework_Error
  * @return void
- **/
+ */
 	public function testPassThroughClassFailure() {
 		Validation::postal('text', null, 'AUTOFAIL');
 	}

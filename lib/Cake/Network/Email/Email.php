@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network.Email
  * @since         CakePHP(tm) v 2.0.0
@@ -18,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Log\Log;
+use Cake\Network\Http\FormData\Part;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
 use Cake\Utility\Validation;
@@ -32,6 +34,7 @@ use Cake\View\View;
  * @package       Cake.Network.Email
  */
 class Email {
+
 /**
  * Default X-Mailer
  *
@@ -84,7 +87,7 @@ class Email {
 /**
  * The sender email
  *
- * @var array();
+ * @var array
  */
 	protected $_sender = array();
 
@@ -343,7 +346,7 @@ class Email {
  * @param string|array $email
  * @param string $name
  * @return array|Cake\Network\Email\Email
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function from($email = null, $name = null) {
 		if ($email === null) {
@@ -358,7 +361,7 @@ class Email {
  * @param string|array $email
  * @param string $name
  * @return array|Cake\Network\Email\Email
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function sender($email = null, $name = null) {
 		if ($email === null) {
@@ -373,7 +376,7 @@ class Email {
  * @param string|array $email
  * @param string $name
  * @return array|Cake\Network\Email\Email
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function replyTo($email = null, $name = null) {
 		if ($email === null) {
@@ -388,7 +391,7 @@ class Email {
  * @param string|array $email
  * @param string $name
  * @return array|Cake\Network\Email\Email
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function readReceipt($email = null, $name = null) {
 		if ($email === null) {
@@ -403,7 +406,7 @@ class Email {
  * @param string|array $email
  * @param string $name
  * @return array|Cake\Network\Email\Email
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function returnPath($email = null, $name = null) {
 		if ($email === null) {
@@ -524,7 +527,7 @@ class Email {
  * @param string|array $email
  * @param string $name
  * @return Cake\Network\Email\Email $this
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	protected function _setEmail($varName, $email, $name) {
 		if (!is_array($email)) {
@@ -624,7 +627,7 @@ class Email {
  *
  * @param array $headers Associative array containing headers to be set.
  * @return Cake\Network\Email\Email $this
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function setHeaders($headers) {
 		if (!is_array($headers)) {
@@ -639,7 +642,7 @@ class Email {
  *
  * @param array $headers
  * @return object $this
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function addHeaders($headers) {
 		if (!is_array($headers)) {
@@ -836,7 +839,7 @@ class Email {
  *
  * @param string $format
  * @return string|Cake\Network\Email\Email
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function emailFormat($format = null) {
 		if ($format === null) {
@@ -868,7 +871,7 @@ class Email {
  * Return the transport class
  *
  * @return Cake\Network\Email\Email
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function transportClass() {
 		if ($this->_transportClass) {
@@ -889,7 +892,7 @@ class Email {
  *
  * @param boolean|string $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
  * @return boolean|string|Cake\Network\Email\Email
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function messageId($message = null) {
 		if ($message === null) {
@@ -956,7 +959,7 @@ class Email {
  *
  * @param string|array $attachments String with the filename or array with filenames
  * @return array|Cake\Network\Email\Email Either the array of attachments when getting or $this when setting.
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function attachments($attachments = null) {
 		if ($attachments === null) {
@@ -991,7 +994,7 @@ class Email {
  *
  * @param string|array $attachments String with the filename or array with filenames
  * @return Cake\Network\Email\Email $this
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  * @see Cake\Network\Email\Email::attachments()
  */
 	public function addAttachments($attachments) {
@@ -1082,7 +1085,7 @@ class Email {
  * @param string|array $transportConfig String to use config from EmailConfig or array with configs
  * @param boolean $send Send the email or just return the instance pre-configured
  * @return Cake\Network\Email\Email Instance of Cake\Network\Email\Email
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
 		$class = __CLASS__;
@@ -1112,7 +1115,7 @@ class Email {
  *
  * @param array $config
  * @return void
- * @throws ConfigureException When configuration file cannot be found, or is missing
+ * @throws Cake\Error\ConfigureException When configuration file cannot be found, or is missing
  *   the named config.
  */
 	protected function _applyConfig($config) {
@@ -1161,7 +1164,7 @@ class Email {
 	}
 
 /**
- * Reset all EmailComponent internal variables to be able to send out a new email.
+ * Reset all the internal variables to be able to send out a new email.
  *
  * @return Cake\Network\Email\Email $this
  */
@@ -1234,7 +1237,7 @@ class Email {
  * @param string $message Message to wrap
  * @return array Wrapped message
  */
-	protected function _wrap($message) {
+	protected function _wrap($message, $wrapLength = Email::LINE_LENGTH_MUST) {
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
 		$lines = explode("\n", $message);
 		$formatted = array();
@@ -1245,7 +1248,10 @@ class Email {
 				continue;
 			}
 			if (!preg_match('/\<[a-z]/i', $line)) {
-				$formatted = array_merge($formatted, explode("\n", wordwrap($line, static::LINE_LENGTH_SHOULD, "\n")));
+				$formatted = array_merge(
+					$formatted,
+					explode("\n", wordwrap($line, $wrapLength, "\n"))
+				);
 				continue;
 			}
 
@@ -1258,7 +1264,7 @@ class Email {
 					$tag .= $char;
 					if ($char === '>') {
 						$tagLength = strlen($tag);
-						if ($tagLength + $tmpLineLength < static::LINE_LENGTH_SHOULD) {
+						if ($tagLength + $tmpLineLength < $wrapLength) {
 							$tmpLine .= $tag;
 							$tmpLineLength += $tagLength;
 						} else {
@@ -1267,7 +1273,7 @@ class Email {
 								$tmpLine = '';
 								$tmpLineLength = 0;
 							}
-							if ($tagLength > static::LINE_LENGTH_SHOULD) {
+							if ($tagLength > $wrapLength) {
 								$formatted[] = $tag;
 							} else {
 								$tmpLine = $tag;
@@ -1284,14 +1290,14 @@ class Email {
 					$tag = '<';
 					continue;
 				}
-				if ($char === ' ' && $tmpLineLength >= static::LINE_LENGTH_SHOULD) {
+				if ($char === ' ' && $tmpLineLength >= $wrapLength) {
 					$formatted[] = $tmpLine;
 					$tmpLineLength = 0;
 					continue;
 				}
 				$tmpLine .= $char;
 				$tmpLineLength++;
-				if ($tmpLineLength === static::LINE_LENGTH_SHOULD) {
+				if ($tmpLineLength === $wrapLength) {
 					$nextChar = $line[$i + 1];
 					if ($nextChar === ' ' || $nextChar === '<') {
 						$formatted[] = trim($tmpLine);
@@ -1348,18 +1354,21 @@ class Email {
 				continue;
 			}
 			$data = $this->_readFile($fileInfo['file']);
-
-			$msg[] = '--' . $boundary;
-			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
-			$msg[] = 'Content-Transfer-Encoding: base64';
-			if (
+			$hasDisposition = (
 				!isset($fileInfo['contentDisposition']) ||
 				$fileInfo['contentDisposition']
-			) {
-				$msg[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
+			);
+			$part = new Part(false, $data, false);
+
+			if ($hasDisposition) {
+				$part->disposition('attachment');
+				$part->filename($filename);
 			}
-			$msg[] = '';
-			$msg[] = $data;
+			$part->transferEncoding('base64');
+			$part->type($fileInfo['mimetype']);
+
+			$msg[] = '--' . $boundary;
+			$msg[] = (string)$part;
 			$msg[] = '';
 		}
 		return $msg;
@@ -1398,12 +1407,12 @@ class Email {
 			$data = $this->_readFile($fileInfo['file']);
 
 			$msg[] = '--' . $boundary;
-			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
-			$msg[] = 'Content-Transfer-Encoding: base64';
-			$msg[] = 'Content-ID: <' . $fileInfo['contentId'] . '>';
-			$msg[] = 'Content-Disposition: inline; filename="' . $filename . '"';
-			$msg[] = '';
-			$msg[] = $data;
+			$part = new Part(false, $data, 'inline');
+			$part->type($fileInfo['mimetype']);
+			$part->transferEncoding('base64');
+			$part->contentId($fileInfo['contentId']);
+			$part->filename($filename);
+			$msg[] = (string)$part;
 			$msg[] = '';
 		}
 		return $msg;
@@ -1496,11 +1505,11 @@ class Email {
 /**
  * Gets the text body types that are in this email message
  *
- * @return array Array of types.  Valid types are 'text' and 'html'
+ * @return array Array of types. Valid types are 'text' and 'html'
  */
 	protected function _getTypes() {
 		$types = array($this->_emailFormat);
-		if ($this->_emailFormat == 'both') {
+		if ($this->_emailFormat === 'both') {
 			$types = array('html', 'text');
 		}
 		return $types;

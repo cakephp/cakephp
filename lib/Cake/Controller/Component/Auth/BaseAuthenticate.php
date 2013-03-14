@@ -3,17 +3,18 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Controller\Component\Auth;
+
 use Cake\Controller\ComponentCollection;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -81,7 +82,7 @@ abstract class BaseAuthenticate {
  */
 	protected function _findUser($conditions, $password = null) {
 		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
+		list(, $model) = pluginSplit($userModel);
 		$fields = $this->settings['fields'];
 
 		if (!is_array($conditions)) {
@@ -99,7 +100,7 @@ abstract class BaseAuthenticate {
 		}
 		$result = ClassRegistry::init($userModel)->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => (int)$this->settings['recursive'],
+			'recursive' => $this->settings['recursive'],
 			'contain' => $this->settings['contain'],
 		));
 		if (empty($result) || empty($result[$model])) {
@@ -150,13 +151,13 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Get a user based on information in the request.  Primarily used by stateless authentication
+ * Get a user based on information in the request. Primarily used by stateless authentication
  * systems like basic and digest auth.
  *
  * @param Cake\Network\Request $request Request object.
  * @return mixed Either false or an array of user information
  */
-	public function getUser($request) {
+	public function getUser(Request $request) {
 		return false;
 	}
 

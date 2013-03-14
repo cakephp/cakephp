@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -176,6 +177,7 @@ class XmlTest extends TestCase {
 			array(null),
 			array(false),
 			array(''),
+			array('http://localhost/notthere.xml'),
 		);
 	}
 
@@ -183,7 +185,7 @@ class XmlTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidDataProvider
- * @expectedException Cake\Error\XmlException
+ * @expectedException Cake\Error\Exception
  * return void
  */
 	public function testBuildInvalidData($value) {
@@ -1019,7 +1021,7 @@ XML;
 </records>
 </data>
 XML;
-		$result = $obj->asXML();
+		$obj->asXML();
 		$this->assertXmlStringEqualsXmlString($expected, $obj->asXML());
 	}
 
@@ -1045,7 +1047,7 @@ XML;
  * @return void
  */
 	public function testNoEntityLoading() {
-		$file = CAKE . 'VERSION.txt';
+		$file = str_replace(' ' , '%20' , CAKE . 'VERSION.txt');
 		$xml = <<<XML
 <!DOCTYPE cakephp [
   <!ENTITY payload SYSTEM "file://$file" >]>

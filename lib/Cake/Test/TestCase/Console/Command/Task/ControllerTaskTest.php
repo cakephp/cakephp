@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP(tm) v 1.3
@@ -172,7 +173,7 @@ class ControllerTaskTest extends TestCase {
 	public function testDoHelpersNo() {
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
 		$result = $this->Task->doHelpers();
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 	}
 
 /**
@@ -209,7 +210,7 @@ class ControllerTaskTest extends TestCase {
 	public function testDoComponentsNo() {
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
 		$result = $this->Task->doComponents();
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 	}
 
 /**
@@ -319,8 +320,8 @@ class ControllerTaskTest extends TestCase {
 		$result = $this->Task->bake('Articles', '--actions--', array(), array(), array());
 
 		$this->assertContains("App::uses('ControllerTestAppController', 'ControllerTest.Controller');", $result);
-		$this->assertEquals('ControllerTest', $this->Task->Template->templateVars['plugin']);
-		$this->assertEquals('ControllerTest.', $this->Task->Template->templateVars['pluginPath']);
+		$this->assertEquals('ControllerTest', $this->Task->Template->viewVars['plugin']);
+		$this->assertEquals('ControllerTest.', $this->Task->Template->viewVars['pluginPath']);
 
 		Plugin::unload();
 	}
@@ -511,6 +512,39 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename,
 			$this->stringContains('class BakeArticlesController')
+		)->will($this->returnValue(true));
+
+		$this->Task->execute();
+	}
+
+/**
+ * Test execute() with all and --admin
+ *
+ * @return void
+ */
+	public function testExecuteIntoAllAdmin() {
+		$count = count($this->Task->listAll('test'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('all');
+		$this->Task->params['admin'] = true;
+
+		$this->Task->Project->expects($this->any())
+			->method('getPrefix')
+			->will($this->returnValue('admin_'));
+		$this->Task->expects($this->any())
+			->method('_checkUnitTest')
+			->will($this->returnValue(true));
+		$this->Task->Test->expects($this->once())->method('bake');
+
+		$filename = '/my/path/BakeArticlesController.php';
+		$this->Task->expects($this->once())->method('createFile')->with(
+			$filename,
+			$this->stringContains('function admin_index')
 		)->will($this->returnValue(true));
 
 		$this->Task->execute();

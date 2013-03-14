@@ -1,23 +1,23 @@
 <?php
 /**
- * Short description for campaign_fixture.php
- *
- * Long description for campaign_fixture.php
+ * Short description for file.
  *
  * PHP 5
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
+ * Redistributions of files must retain the above copyright notice
  *
- * @copyright     CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * @link          http://www.cakephp.org
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\Fixture;
+
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**

@@ -3,16 +3,18 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Controller\Component\Auth;
+
 use Cake\Controller\ComponentCollection;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -21,12 +23,12 @@ use Cake\Utility\ClassRegistry;
 /**
  * Digest Authentication adapter for AuthComponent.
  *
- * Provides Digest HTTP authentication support for AuthComponent.  Unlike most AuthComponent adapters,
- * DigestAuthenticate requires a special password hash that conforms to RFC2617.  You can create this
- * password using `DigestAuthenticate::password()`.  If you wish to use digest authentication alongside other
+ * Provides Digest HTTP authentication support for AuthComponent. Unlike most AuthComponent adapters,
+ * DigestAuthenticate requires a special password hash that conforms to RFC2617. You can create this
+ * password using `DigestAuthenticate::password()`. If you wish to use digest authentication alongside other
  * authentication methods, its recommended that you store the digest authentication separately.
  *
- * Clients using Digest Authentication  must support cookies.  Since AuthComponent identifies users based
+ * Clients using Digest Authentication  must support cookies. Since AuthComponent identifies users based
  * on Session contents, clients without support for cookies will not function properly.
  *
  * ### Using Digest auth
@@ -40,18 +42,18 @@ use Cake\Utility\ClassRegistry;
  *	);
  * }}}
  *
- * In your login function just call `$this->Auth->login()` without any checks for POST data.  This
+ * In your login function just call `$this->Auth->login()` without any checks for POST data. This
  * will send the authentication headers, and trigger the login dialog in the browser/client.
  *
  * ### Generating passwords compatible with Digest authentication.
  *
- * Due to the Digest authentication specification, digest auth requires a special password value.  You
+ * Due to the Digest authentication specification, digest auth requires a special password value. You
  * can generate this password using `DigestAuthenticate::password()`
  *
  * `$digestPass = DigestAuthenticate::password($username, env('SERVER_NAME'), $password);`
  *
  * Its recommended that you store this digest auth only password separate from password hashes used for other
- * login methods.  For example `User.digest_pass` could be used for a digest password, while `User.password` would
+ * login methods. For example `User.digest_pass` could be used for a digest password, while `User.password` would
  * store the password hash for use with other methods like Basic or Form.
  *
  * @package       Cake.Controller.Component.Auth
@@ -69,7 +71,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
  * - `contain` Extra models to contain and store in session.
  * - `realm` The realm authentication is for, Defaults to the servername.
- * - `nonce` A nonce used for authentication.  Defaults to `uniqid()`.
+ * - `nonce` A nonce used for authentication. Defaults to `uniqid()`.
  * - `qop` Defaults to auth, no other values are supported at this time.
  * - `opaque` A string that must be returned unchanged by clients.
  *    Defaults to `md5($settings['realm'])`
@@ -111,7 +113,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Authenticate a user using Digest HTTP auth.  Will use the configured User model and attempt a
+ * Authenticate a user using Digest HTTP auth. Will use the configured User model and attempt a
  * login using Digest HTTP auth.
  *
  * @param Cake\Network\Request $request The request to authenticate with.
@@ -131,12 +133,12 @@ class DigestAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Get a user based on information in the request.  Used by cookie-less auth for stateless clients.
+ * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
  *
  * @param Cake\Network\Request $request Request object.
  * @return mixed Either false or an array of user information
  */
-	public function getUser($request) {
+	public function getUser(Request $request) {
 		$digest = $this->_getDigest();
 		if (empty($digest)) {
 			return false;
@@ -162,7 +164,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  */
 	protected function _findUser($username, $password = null) {
 		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
+		list(, $model) = pluginSplit($userModel);
 		$fields = $this->settings['fields'];
 
 		$conditions = array(
@@ -173,7 +175,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		}
 		$result = ClassRegistry::init($userModel)->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => (int)$this->settings['recursive']
+			'recursive' => $this->settings['recursive']
 		));
 		if (empty($result) || empty($result[$model])) {
 			return false;
@@ -190,7 +192,7 @@ class DigestAuthenticate extends BaseAuthenticate {
 		$digest = env('PHP_AUTH_DIGEST');
 		if (empty($digest) && function_exists('apache_request_headers')) {
 			$headers = apache_request_headers();
-			if (!empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) == 'Digest ') {
+			if (!empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) === 'Digest ') {
 				$digest = substr($headers['Authorization'], 7);
 			}
 		}
@@ -207,7 +209,7 @@ class DigestAuthenticate extends BaseAuthenticate {
  * @return array An array of digest authentication headers
  */
 	public function parseAuthData($digest) {
-		if (substr($digest, 0, 7) == 'Digest ') {
+		if (substr($digest, 0, 7) === 'Digest ') {
 			$digest = substr($digest, 7);
 		}
 		$keys = $match = array();

@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network;
+
 use Cake\Error;
 use Cake\Utility\Validation;
 
@@ -103,6 +105,14 @@ class Socket {
 	);
 
 /**
+ * Used to capture connection warnings which can happen when there are
+ * SSL errors for example.
+ *
+ * @var array
+ */
+	protected $_connectionErrors = array();
+
+/**
  * Constructor.
  *
  * @param array $config Socket configuration, which will be merged with the base configuration
@@ -119,27 +129,48 @@ class Socket {
  * Connect the socket to the given host and port.
  *
  * @return boolean Success
- * @throws SocketException
+ * @throws Cake\Error\SocketException
  */
 	public function connect() {
-		if ($this->connection != null) {
+		if ($this->connection) {
 			$this->disconnect();
 		}
 
 		$scheme = null;
-		if (isset($this->config['request']) && $this->config['request']['uri']['scheme'] == 'https') {
+		if (isset($this->config['request']['uri']) && $this->config['request']['uri']['scheme'] === 'https') {
 			$scheme = 'ssl://';
 		}
 
-		if ($this->config['persistent'] == true) {
-			$this->connection = @pfsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+		if (!empty($this->config['context'])) {
+			$context = stream_context_create($this->config['context']);
 		} else {
-			$this->connection = @fsockopen($scheme . $this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$context = stream_context_create();
 		}
+
+		$connectAs = STREAM_CLIENT_CONNECT;
+		if ($this->config['persistent']) {
+			$connectAs |= STREAM_CLIENT_PERSISTENT;
+		}
+
+		set_error_handler(array($this, '_connectionErrorHandler'));
+		$this->connection = stream_socket_client(
+			$scheme . $this->config['host'] . ':' . $this->config['port'],
+			$errNum,
+			$errStr,
+			$this->config['timeout'],
+			$connectAs,
+			$context
+		);
+		restore_error_handler();
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errNum, $errStr);
 			throw new Error\SocketException($errStr, $errNum);
+		}
+
+		if (!$this->connection && $this->_connectionErrors) {
+			$message = implode("\n", $this->_connectionErrors);
+			throw new Error\SocketException($message, E_WARNING);
 		}
 
 		$this->connected = is_resource($this->connection);
@@ -147,6 +178,31 @@ class Socket {
 			stream_set_timeout($this->connection, $this->config['timeout']);
 		}
 		return $this->connected;
+	}
+
+/**
+ * socket_stream_client() does not populate errNum, or $errStr when there are
+ * connection errors, as in the case of SSL verification failure.
+ *
+ * Instead we need to handle those errors manually.
+ *
+ * @param int $code
+ * @param string $message
+ */
+	protected function _connectionErrorHandler($code, $message) {
+		$this->_connectionErrors[] = $message;
+	}
+
+/**
+ * Get the connection context.
+ *
+ * @return null|array Null when there is no connnection, an array when there is.
+ */
+	public function context() {
+		if (!$this->connection) {
+			return;
+		}
+		return stream_context_get_options($this->connection);
 	}
 
 /**
@@ -311,7 +367,7 @@ class Socket {
  * @param boolean $enable enable or disable encryption. Default is true (enable)
  * @return boolean True on success
  * @throws InvalidArgumentException When an invalid encryption scheme is chosen.
- * @throws SocketException When attempting to enable SSL/TLS fails
+ * @throws Cake\Error\SocketException When attempting to enable SSL/TLS fails
  * @see stream_socket_enable_crypto
  */
 	public function enableCrypto($type, $clientOrServer = 'client', $enable = true) {

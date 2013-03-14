@@ -5,20 +5,23 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command\Task;
+
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Utility\Folder;
+use Cake\Utility\ViewVarsTrait;
 
 /**
  * Template Task can generate templated output Used in other Tasks.
@@ -28,12 +31,7 @@ use Cake\Utility\Folder;
  */
 class TemplateTask extends Shell {
 
-/**
- * variables to add to template scope
- *
- * @var array
- */
-	public $templateVars = array();
+	use ViewVarsTrait;
 
 /**
  * Paths to look for templates on.
@@ -44,7 +42,7 @@ class TemplateTask extends Shell {
 	public $templatePaths = array();
 
 /**
- * Initialize callback.  Setup paths for the template task.
+ * Initialize callback. Setup paths for the template task.
  *
  * @return void
  */
@@ -79,7 +77,6 @@ class TemplateTask extends Shell {
 
 		$paths[] = $core;
 
-		// TEMPORARY TODO remove when all paths are DS terminated
 		foreach ($paths as $i => $path) {
 			$paths[$i] = rtrim($path, DS) . DS;
 		}
@@ -106,31 +103,6 @@ class TemplateTask extends Shell {
 	}
 
 /**
- * Set variable values to the template scope
- *
- * @param string|array $one A string or an array of data.
- * @param string|array $two Value in case $one is a string (which then works as the key).
- *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
- * @return void
- */
-	public function set($one, $two = null) {
-		if (is_array($one)) {
-			if (is_array($two)) {
-				$data = array_combine($one, $two);
-			} else {
-				$data = $one;
-			}
-		} else {
-			$data = array($one => $two);
-		}
-
-		if ($data == null) {
-			return false;
-		}
-		$this->templateVars = $data + $this->templateVars;
-	}
-
-/**
  * Runs the template
  *
  * @param string $directory directory / type of thing you want
@@ -148,7 +120,7 @@ class TemplateTask extends Shell {
 		$themePath = $this->getThemePath();
 		$templateFile = $this->_findTemplate($themePath, $directory, $filename);
 		if ($templateFile) {
-			extract($this->templateVars);
+			extract($this->viewVars);
 			ob_start();
 			ob_implicit_flush(0);
 			include $templateFile;
@@ -167,7 +139,7 @@ class TemplateTask extends Shell {
  * @return string returns the path to the selected theme.
  */
 	public function getThemePath() {
-		if (count($this->templatePaths) == 1) {
+		if (count($this->templatePaths) === 1) {
 			$paths = array_values($this->templatePaths);
 			return $paths[0];
 		}

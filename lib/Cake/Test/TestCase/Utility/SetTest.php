@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\Model\Model;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Set;
@@ -155,6 +157,9 @@ class SetTest extends TestCase {
 		$r = Set::merge('foo', 'bar');
 		$this->assertEquals(array('foo', 'bar'), $r);
 
+		$r = Set::merge(array('foo'), array(), array('bar'));
+		$this->assertEquals(array('foo', 'bar'), $r);
+
 		$r = Set::merge('foo', array('user' => 'bob', 'no-bar'), 'bar');
 		$this->assertEquals(array('foo', 'user' => 'bob', 'no-bar', 'bar'), $r);
 
@@ -225,6 +230,9 @@ class SetTest extends TestCase {
  * @return void
  */
 	public function testSort() {
+		$result = Set::sort(array(), '{n}.name', 'asc');
+		$this->assertEquals(array(), $result);
+
 		$a = array(
 			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
 			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))
@@ -1218,21 +1226,21 @@ class SetTest extends TestCase {
 
 		$nonSequential = array(
 			'User' => array(
-				0  => array('id' => 1),
-				2  => array('id' => 2),
-				6  => array('id' => 3),
-				9  => array('id' => 4),
-				3  => array('id' => 5),
+				0 => array('id' => 1),
+				2 => array('id' => 2),
+				6 => array('id' => 3),
+				9 => array('id' => 4),
+				3 => array('id' => 5),
 			),
 		);
 
 		$nonZero = array(
 			'User' => array(
-				2  => array('id' => 1),
-				4  => array('id' => 2),
-				6  => array('id' => 3),
-				9  => array('id' => 4),
-				3  => array('id' => 5),
+				2 => array('id' => 1),
+				4 => array('id' => 2),
+				6 => array('id' => 3),
+				9 => array('id' => 4),
+				3 => array('id' => 5),
 			),
 		);
 
@@ -1690,7 +1698,7 @@ class SetTest extends TestCase {
 
 		$result = Set::remove($a, 'files');
 		$expected = array(
-			'pages'     => array('name' => 'page')
+			'pages' => array('name' => 'page')
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -1970,7 +1978,7 @@ class SetTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Set::combine($a, 'fail', 'fail');
-		$this->assertEquals(array(), $result);
+		$this->assertSame(array(), $result);
 	}
 
 /**
@@ -3055,6 +3063,7 @@ class SetTest extends TestCase {
 /**
  * Tests Set::flatten
  *
+ * @see Hash test cases, as Set::flatten() is just a proxy.
  * @return void
  */
 	public function testFlatten() {
@@ -3065,6 +3074,21 @@ class SetTest extends TestCase {
 		$data[9] = 'Shemp';
 		$result = Set::flatten($data);
 		$this->assertEquals($data, $result);
+
+		$data = array(
+			array(
+				'Post' => array('id' => '1', 'author_id' => null, 'title' => 'First Post'),
+				'Author' => array(),
+			)
+		);
+		$result = Set::flatten($data);
+		$expected = array(
+			'0.Post.id' => '1',
+			'0.Post.author_id' => null,
+			'0.Post.title' => 'First Post',
+			'0.Author' => array()
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 1.2.0.4667
@@ -174,7 +175,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Announces the start of a test.
  *
- * @param string $method Test method just started.
  * @return void
  */
 	protected function assertPreConditions() {
@@ -185,7 +185,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Announces the end of a test.
  *
- * @param string $method Test method just finished.
  * @return void
  */
 	protected function assertPostConditions() {
@@ -385,7 +384,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 				$tags = (string)$tags;
 			}
 			$i++;
-			if (is_string($tags) && $tags{0} == '<') {
+			if (is_string($tags) && $tags{0} === '<') {
 				$tags = array(substr($tags, 1) => array());
 			} elseif (is_string($tags)) {
 				$tagsTrimmed = preg_replace('/\s+/m', '', $tags);
@@ -393,12 +392,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 				if (preg_match('/^\*?\//', $tags, $match) && $tagsTrimmed !== '//') {
 					$prefix = array(null, null);
 
-					if ($match[0] == '*/') {
+					if ($match[0] === '*/') {
 						$prefix = array('Anything, ', '.*?');
 					}
 					$regex[] = array(
 						sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
-						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags,  strlen($match[0]))),
+						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
 						$i,
 					);
 					continue;
@@ -500,6 +499,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * Generates all permutation of an array $items and returns them in a new array.
  *
  * @param array $items An array of items
+ * @param array $perms
  * @return array
  */
 	protected function _arrayPermute($items, $perms = array()) {
@@ -598,6 +598,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		return static::assertNotRegExp($pattern, $string, $message);
 	}
 
+/**
+ * assert no errors
+ */
 	protected function assertNoErrors() {
 	}
 
@@ -678,6 +681,28 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		}
 		return $condition;
 	}
-	// @codingStandardsIgnoreStop
+	// @codingStandardsIgnoreEnd
+
+/**
+ * Mock a model, maintain fixtures and table association
+ *
+ * @param string $model
+ * @param mixed $methods
+ * @param mixed $config
+ * @return Model
+ */
+	public function getMockForModel($model, $methods = array(), $config = null) {
+		if (is_null($config)) {
+			$config = ClassRegistry::config('Model');
+		}
+
+		$modelClass = App::className($model, 'Model');
+		list(, $name) = namespaceSplit($modelClass);
+		$config = array_merge((array)$config, array('name' => $name));
+		$mock = $this->getMock($modelClass, $methods, array($config));
+		ClassRegistry::removeObject($name);
+		ClassRegistry::addObject($name, $mock);
+		return $mock;
+	}
 
 }

@@ -1,19 +1,20 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
+ * @package       Cake.Controller.Component.Acl
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Controller\Component\Acl;
+
 use Cake\Controller\Component;
 use Cake\Controller\Component\Acl\AclInterface;
 use Cake\Core\Object;
@@ -21,8 +22,8 @@ use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
 
 /**
- * DbAcl implements an ACL control system in the database.  ARO's and ACO's are
- * structured into trees and a linking table is used to define permissions.  You
+ * DbAcl implements an ACL control system in the database. ARO's and ACO's are
+ * structured into trees and a linking table is used to define permissions. You
  * can install the schema for DbAcl with the Schema Shell.
  *
  * `$aco` and `$aro` parameters can be slash delimited paths to tree nodes.
@@ -37,7 +38,7 @@ use Cake\Utility\Hash;
  *			edit
  * }}}
  *
- * @package       Cake.Controller.Component
+ * @package       Cake.Controller.Component.Acl
  */
 class DbAcl extends Object implements AclInterface {
 

@@ -1,24 +1,19 @@
 <?php
 /**
- * ProjectTask Test file
- *
- * Test Case for project generation shell task
- *
- * PHP 5
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
+
 use Cake\Console\Command\Task\ProjectTask;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
@@ -57,7 +52,7 @@ class ProjectTaskTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 
-		$Folder = new Folder($this->Task->path . 'bake_test_app');
+		$Folder = new Folder($this->Task->path . 'BakeTestApp');
 		$Folder->delete();
 		unset($this->Task);
 	}
@@ -70,7 +65,7 @@ class ProjectTaskTest extends TestCase {
 	protected function _setupTestProject() {
 		$skel = CAKE . 'Console/Templates/skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
+		$this->Task->bake($this->Task->path . 'BakeTestApp', $skel);
 	}
 
 /**
@@ -80,7 +75,7 @@ class ProjectTaskTest extends TestCase {
  */
 	public function testBake() {
 		$this->_setupTestProject();
-		$path = $this->Task->path . 'bake_test_app';
+		$path = $this->Task->path . 'BakeTestApp';
 
 		$this->assertTrue(is_dir($path), 'No project dir %s');
 		$dirs = array(
@@ -103,8 +98,10 @@ class ProjectTaskTest extends TestCase {
 			'Test/TestCase/Controller/Component',
 			'Test/TestCase/Model',
 			'Test/TestCase/Model/Behavior',
+			'Test/TestCase/View',
+			'Test/TestCase/View/Helper',
 			'Test/Fixture',
-			'Vendor',
+			'vendor',
 			'View',
 			'View/Helper',
 			'tmp',
@@ -120,7 +117,6 @@ class ProjectTaskTest extends TestCase {
 			'webroot/files',
 			'webroot/img',
 			'webroot/js',
-
 		);
 		foreach ($dirs as $dir) {
 			$this->assertTrue(is_dir($path . DS . $dir), 'Missing ' . $dir);
@@ -133,22 +129,19 @@ class ProjectTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithAbsolutePath() {
-		$path = $this->Task->args[0] = TMP . 'tests/bake_test_app';
+		$path = $this->Task->args[0] = TMP . 'tests/BakeTestApp';
 		$this->Task->params['skel'] = CAKE . 'Console/Templates/skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->execute();
 
 		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
-		$File = new File($path . DS . 'webroot/index.php');
-		$contents = $File->read();
-		$this->assertRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
-		$File = new File($path . DS . 'webroot/test.php');
+		$File = new File($path . DS . 'Config/paths.php');
 		$contents = $File->read();
 		$this->assertRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
 	}
 
 /**
- * test bake with CakePHP on the include path.  The constants should remain commented out.
+ * test bake with CakePHP on the include path. The constants should remain commented out.
  *
  * @return void
  */
@@ -159,16 +152,13 @@ class ProjectTaskTest extends TestCase {
 		$restore = ini_get('include_path');
 		ini_set('include_path', CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . $restore);
 
-		$path = $this->Task->args[0] = TMP . 'tests/bake_test_app';
+		$path = $this->Task->args[0] = TMP . 'tests/BakeTestApp';
 		$this->Task->params['skel'] = CAKE . 'Console/Templates/skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->execute();
 
 		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
-		$contents = file_get_contents($path . DS . 'webroot/index.php');
-		$this->assertRegExp('#//define\(\'CAKE_CORE_INCLUDE_PATH#', $contents);
-
-		$contents = file_get_contents($path . DS . 'webroot/test.php');
+		$contents = file_get_contents($path . DS . 'Config/paths.php');
 		$this->assertRegExp('#//define\(\'CAKE_CORE_INCLUDE_PATH#', $contents);
 
 		ini_set('include_path', $restore);
@@ -182,7 +172,7 @@ class ProjectTaskTest extends TestCase {
 	public function testBakeEmptyFlag() {
 		$this->Task->params['empty'] = true;
 		$this->_setupTestProject();
-		$path = $this->Task->path . 'bake_test_app';
+		$path = $this->Task->path . 'BakeTestApp';
 
 		$empty = array(
 			'Console/Command/Task' => 'empty',
@@ -195,7 +185,7 @@ class ProjectTaskTest extends TestCase {
 			'Test/TestCase/Controller/Component' => 'empty',
 			'Test/TestCase/View/Helper' => 'empty',
 			'Test/Fixture' => 'empty',
-			'Vendor' => 'empty',
+			'vendor' => 'empty',
 			'View/Elements' => 'empty',
 			'View/Scaffolds' => 'empty',
 			'tmp/cache/models' => 'empty',
@@ -214,6 +204,34 @@ class ProjectTaskTest extends TestCase {
 	}
 
 /**
+ * test App.namespace and namespace
+ *
+ * @return void
+ */
+	public function testAppNamespace() {
+		$this->_setupTestProject();
+
+		$path = $this->Task->path . 'BakeTestApp/';
+		$result = $this->Task->appNamespace($path);
+		$this->assertTrue($result);
+
+		$File = new File($path . 'Config/app.php');
+		$contents = $File->read();
+		$this->assertRegExp('/\$namespace = \'BakeTestApp\';/', $contents);
+
+		$files = array(
+			'Config/bootstrap',
+			'Controller/AppController',
+			'Model/AppModel',
+			'View/Helper/AppHelper'
+		);
+		foreach ($files as $file) {
+			$file = $path . $file . '.php';
+			$this->assertRegExp('/namespace BakeTestApp\\\/', $contents);
+		}
+	}
+
+/**
  * test generation of Security.salt
  *
  * @return void
@@ -221,7 +239,7 @@ class ProjectTaskTest extends TestCase {
 	public function testSecuritySaltGeneration() {
 		$this->_setupTestProject();
 
-		$path = $this->Task->path . 'bake_test_app/';
+		$path = $this->Task->path . 'BakeTestApp/';
 		$result = $this->Task->securitySalt($path);
 		$this->assertTrue($result);
 
@@ -238,7 +256,7 @@ class ProjectTaskTest extends TestCase {
 	public function testSecurityCipherSeedGeneration() {
 		$this->_setupTestProject();
 
-		$path = $this->Task->path . 'bake_test_app/';
+		$path = $this->Task->path . 'BakeTestApp/';
 		$result = $this->Task->securityCipherSeed($path);
 		$this->assertTrue($result);
 
@@ -255,31 +273,28 @@ class ProjectTaskTest extends TestCase {
 	public function testCachePrefixGeneration() {
 		$this->_setupTestProject();
 
-		$path = $this->Task->path . 'bake_test_app/';
+		$path = $this->Task->path . 'BakeTestApp/';
 		$result = $this->Task->cachePrefix($path);
 		$this->assertTrue($result);
 
-		$File = new File($path . 'Config/core.php');
+		$File = new File($path . 'Config/cache.php');
 		$contents = $File->read();
 		$this->assertRegExp('/\$prefix = \'.+\';/', $contents, '$prefix is not defined');
 		$this->assertNotRegExp('/\$prefix = \'myapp_\';/', $contents, 'Default cache prefix left behind. %s');
 	}
 
 /**
- * Test that index.php is generated correctly.
+ * Test that Config/paths.php is generated correctly.
  *
  * @return void
  */
 	public function testIndexPhpGeneration() {
 		$this->_setupTestProject();
 
-		$path = $this->Task->path . 'bake_test_app/';
+		$path = $this->Task->path . 'BakeTestApp/';
 		$this->Task->corePath($path);
 
-		$File = new File($path . 'webroot/index.php');
-		$contents = $File->read();
-		$this->assertNotRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
-		$File = new File($path . 'webroot/test.php');
+		$File = new File($path . 'Config/paths.php');
 		$contents = $File->read();
 		$this->assertNotRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', ROOT/', $contents);
 	}
@@ -296,18 +311,18 @@ class ProjectTaskTest extends TestCase {
 
 		Configure::write('Routing.prefixes', null);
 		$this->_setupTestProject();
-		$this->Task->configPath = $this->Task->path . 'bake_test_app/Config/';
+		$this->Task->configPath = $this->Task->path . 'BakeTestApp/Config/';
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue('super_duper_admin'));
 
 		$result = $this->Task->getPrefix();
 		$this->assertEquals('super_duper_admin_', $result);
 
-		$File = new File($this->Task->configPath . 'core.php');
+		$File = new File($this->Task->configPath . 'routes.php');
 		$File->delete();
 	}
 
 /**
- * test cakeAdmin() writing core.php
+ * test cakeAdmin() writing routes.php
  *
  * @return void
  */
@@ -334,7 +349,7 @@ class ProjectTaskTest extends TestCase {
 	public function testGetPrefixWithMultiplePrefixes() {
 		Configure::write('Routing.prefixes', array('admin', 'ninja', 'shinobi'));
 		$this->_setupTestProject();
-		$this->Task->configPath = $this->Task->path . 'bake_test_app/Config/';
+		$this->Task->configPath = $this->Task->path . 'BakeTestApp/Config/';
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue(2));
 
 		$result = $this->Task->getPrefix();
@@ -350,9 +365,11 @@ class ProjectTaskTest extends TestCase {
 		$this->Task->params['skel'] = CAKE . 'Console/Templates/skel';
 		$this->Task->params['working'] = TMP . 'tests/';
 
-		$path = $this->Task->path . 'bake_test_app';
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue($path));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
+		$invalidPath = $this->Task->path . 'bake-test-app';
+		$path = $this->Task->path . 'BakeTestApp';
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue($invalidPath));
+		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue($path));
+		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue('y'));
 
 		$this->Task->execute();
 		$this->assertTrue(is_dir($path), 'No project dir');
@@ -364,22 +381,5 @@ class ProjectTaskTest extends TestCase {
 		$this->assertTrue(is_dir($path . DS . 'Test'), 'No tests dir');
 		$this->assertTrue(is_dir($path . DS . 'Test/TestCase'), 'No cases dir');
 		$this->assertTrue(is_dir($path . DS . 'Test/Fixture'), 'No fixtures dir');
-	}
-
-/**
- * test console path
- *
- * @return void
- */
-	public function testConsolePath() {
-		$this->_setupTestProject();
-
-		$path = $this->Task->path . 'bake_test_app/';
-		$result = $this->Task->consolePath($path);
-		$this->assertTrue($result);
-
-		$File = new File($path . 'Console/cake.php');
-		$contents = $File->read();
-		$this->assertNotRegExp('/__CAKE_PATH__/', $contents, 'Console path placeholder left behind.');
 	}
 }

@@ -1,18 +1,19 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Network
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestSuite\Network;
+namespace Cake\Test\TestCase\Network;
 
 use Cake\Core\Configure;
 use Cake\Error;
@@ -107,7 +108,15 @@ class RequestTest extends TestCase {
 
 		$_SERVER['REQUEST_URI'] = '/tasks/index/?ts=123456';
 		$request = Request::createFromGlobals();
-		$this->assertEquals('tasks/index/', $request->url);
+		$this->assertEquals('tasks/index', $request->url);
+
+		$_SERVER['REQUEST_URI'] = '/some/path?url=http://cakephp.org';
+		$request = Request::createFromGlobals();
+		$this->assertEquals('some/path', $request->url);
+
+		$_SERVER['REQUEST_URI'] = FULL_BASE_URL . '/other/path?url=http://cakephp.org';
+		$request = Request::createFromGlobals();
+		$this->assertEquals('other/path', $request->url);
 	}
 
 /**
@@ -224,11 +233,13 @@ class RequestTest extends TestCase {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/json';
 
-		$data = '{Article":["title"]}';
+		$data = '{"Article":["title"]}';
 		$request = new Request([
 			'input' => $data
 		]);
 		$this->assertEquals([], $request->data);
+		$result = $request->input('json_decode', true);
+		$this->assertEquals(['title'], $result['Article']);
 	}
 
 /**
@@ -485,6 +496,28 @@ class RequestTest extends TestCase {
 	}
 
 /**
+ * Test that files in the 0th index work.
+ *
+ * @return void
+ */
+	public function testFilesZeroithIndex() {
+		$files = array(
+			0 => array(
+				'name' => 'cake_sqlserver_patch.patch',
+				'type' => 'text/plain',
+				'tmp_name' => '/private/var/tmp/phpy05Ywj',
+				'error' => 0,
+				'size' => 6271,
+			),
+		);
+
+		$request = new Request([
+			'files' => $files
+		]);
+		$this->assertEquals($files, $request->data);
+	}
+
+/**
  * test method overrides coming in from POST data.
  *
  * @return void
@@ -516,7 +549,7 @@ class RequestTest extends TestCase {
 
 		$request->trustProxy = true;
 		$this->assertEquals('192.168.1.5', $request->clientIp());
-	
+
 		$request->trustProxy = false;
 		$this->assertEquals('192.168.1.2', $request->clientIp());
 
@@ -902,7 +935,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function detectCallback($request) {
-		return $request->return == true;
+		return (bool)$request->return;
 	}
 
 /**
@@ -1258,7 +1291,7 @@ class RequestTest extends TestCase {
 		return array(
 			array(
 				'IIS - No rewrite base path',
-				 array(
+				array(
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/index.php',
@@ -1569,6 +1602,30 @@ class RequestTest extends TestCase {
 				),
 			),
 			array(
+				'Apache - w/rewrite, document root set above top level cake dir, request root, absolute REQUEST_URI',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'App',
+						'webroot' => 'webroot'
+					),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost',
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
+						'REQUEST_URI' => FULL_BASE_URL . '/site/posts/index',
+						'SCRIPT_NAME' => '/site/App/webroot/index.php',
+						'PHP_SELF' => '/site/App/webroot/index.php',
+					),
+				),
+				array(
+					'url' => 'posts/index',
+					'base' => '/site',
+					'webroot' => '/site/',
+				),
+			),
+			array(
 				'Nginx - w/rewrite, document root set to webroot, request root, no PATH_INFO',
 				array(
 					'App' => array(
@@ -1624,10 +1681,9 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testQuery() {
-		$_GET = array();
-		$_GET['foo'] = 'bar';
-
-		$request = new Request();
+		$request = new Request([
+			'query' => ['foo' => 'bar']
+		]);
 
 		$result = $request->query('foo');
 		$this->assertEquals('bar', $result);
@@ -1642,10 +1698,11 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testQueryWithArray() {
-		$_GET = array();
-		$_GET['test'] = array('foo', 'bar');
+		$get['test'] = array('foo', 'bar');
 
-		$request = new Request();
+		$request = new Request([
+			'query' => $get
+		]);
 
 		$result = $request->query('test');
 		$this->assertEquals(array('foo', 'bar'), $result);
@@ -1655,6 +1712,26 @@ class RequestTest extends TestCase {
 
 		$result = $request->query('test.2');
 		$this->assertNull($result);
+	}
+
+/**
+ * Test using param()
+ *
+ * @return void
+ */
+	public function testReadingParams() {
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'controller' => 'posts',
+			'admin' => true,
+			'truthy' => 1,
+			'zero' => '0',
+		));
+		$this->assertFalse($request->param('not_set'));
+		$this->assertTrue($request->param('admin'));
+		$this->assertEquals(1, $request->param('truthy'));
+		$this->assertEquals('posts', $request->param('controller'));
+		$this->assertEquals('0', $request->param('zero'));
 	}
 
 /**
@@ -1886,12 +1963,12 @@ XML;
 		));
 		$result = $request->cookie('testing');
 		$this->assertEquals('A value in the cookie', $result);
-	
+
 		$result = $request->cookie('not there');
 		$this->assertNull($result);
 	}
 
- /*
+/**
  * TestOnlyAllow
  *
  * @return void

@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -308,8 +309,8 @@ class HtmlHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link($this->Html->image('../favicon.ico'), '#', array('escape' => false));
- 		$expected = array(
- 			'a' => array('href' => '#'),
+		$expected = array(
+			'a' => array('href' => '#'),
 			'img' => array('src' => 'img/../favicon.ico', 'alt' => ''),
 			'/a'
 		);
@@ -439,7 +440,7 @@ class HtmlHelperTest extends TestCase {
 		$themeExists = is_dir(WWW_ROOT . 'theme');
 
 		$testfile = WWW_ROOT . 'theme/test_theme/img/__cake_test_image.gif';
-		$File = new File($testfile, true);
+		new File($testfile, true);
 
 		App::build(array(
 			'View' => array(CAKE . 'Test/TestApp/View/')
@@ -527,8 +528,6 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testCssLink() {
-		Configure::write('Asset.filter.css', false);
-
 		$result = $this->Html->css('screen');
 		$expected = array(
 			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*css\/screen\.css/')
@@ -560,16 +559,9 @@ class HtmlHelperTest extends TestCase {
 		$expected['link']['href'] = 'preg:/http:\/\/.*\/screen\.css\?1234/';
 		$this->assertTags($result, $expected);
 
-		Configure::write('Asset.filter.css', 'css.php');
-		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/.*ccss\/cake\.generic\.css/';
-		$this->assertTags($result, $expected);
-
 		$result = $this->Html->css('//example.com/css/cake.generic.css');
 		$expected['link']['href'] = 'preg:/.*example\.com\/css\/cake\.generic\.css/';
 		$this->assertTags($result, $expected);
-
-		Configure::write('Asset.filter.css', false);
 
 		$result = explode("\n", trim($this->Html->css(array('cake.generic', 'vendor.generic'))));
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css/';
@@ -586,6 +578,49 @@ class HtmlHelperTest extends TestCase {
 			->method('append')
 			->with('css', $this->matchesRegularExpression('/more_css_in_head.css/'));
 
+		$result = $this->Html->css('css_in_head', array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->css('more_css_in_head', array('inline' => false));
+		$this->assertNull($result);
+
+		$result = $this->Html->css('screen', array('rel' => 'import'));
+		$expected = array(
+			'style' => array('type' => 'text/css'),
+			'preg:/@import url\(.*css\/screen\.css\);/',
+			'/style'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test css link BC usage
+ *
+ * @return void
+ */
+	public function testCssLinkBC() {
+		Configure::write('Asset.filter.css', false);
+
+		Plugin::load('TestPlugin');
+		$result = $this->Html->css('TestPlugin.style', null, array('plugin' => false));
+		$expected = array(
+			'link' => array(
+				'rel' => 'stylesheet',
+				'type' => 'text/css',
+				'href' => 'preg:/.*css\/TestPlugin\.style\.css/'
+			)
+		);
+		$this->assertTags($result, $expected);
+		Plugin::unload('TestPlugin');
+
+		$result = $this->Html->css('screen', 'import');
+		$expected = array(
+			'style' => array('type' => 'text/css'),
+			'preg:/@import url\(.*css\/screen\.css\);/',
+			'/style'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Html->css('css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
 
@@ -599,7 +634,6 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testPluginCssLink() {
-		Configure::write('Asset.filter.css', false);
 		Plugin::load('TestPlugin');
 
 		$result = $this->Html->css('TestPlugin.test_plugin_asset');
@@ -618,13 +652,6 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->css('TestPlugin.test_plugin_asset.css?1234');
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?1234/';
 		$this->assertTags($result, $expected);
-
-		Configure::write('Asset.filter.css', 'css.php');
-		$result = $this->Html->css('TestPlugin.test_plugin_asset');
-		$expected['link']['href'] = 'preg:/.*test_plugin\/ccss\/test_plugin_asset\.css/';
-		$this->assertTags($result, $expected);
-
-		Configure::write('Asset.filter.css', false);
 
 		$result = explode("\n", trim($this->Html->css(array('TestPlugin.test_plugin_asset', 'TestPlugin.vendor.generic'))));
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/';
@@ -945,27 +972,6 @@ class HtmlHelperTest extends TestCase {
 	}
 
 /**
- * Test that Asset.filter.js works.
- *
- * @return void
- */
-	public function testScriptAssetFilter() {
-		Configure::write('Asset.filter.js', 'js.php');
-
-		$result = $this->Html->script('jquery-1.3');
-		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'cjs/jquery-1.3.js')
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Html->script('//example.com/js/jquery-1.3.js');
-		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => '//example.com/js/jquery-1.3.js')
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * test a script file in the webroot/theme dir.
  *
  * @return void
@@ -975,7 +981,7 @@ class HtmlHelperTest extends TestCase {
 		$themeExists = is_dir(WWW_ROOT . 'theme');
 
 		$testfile = WWW_ROOT . 'theme/test_theme/js/__test_js.js';
-		$File = new File($testfile, true);
+		new File($testfile, true);
 
 		App::build(array(
 			'View' => array(CAKE . 'Test/TestApp/View/')
@@ -1841,6 +1847,73 @@ class HtmlHelperTest extends TestCase {
 	}
 
 /**
+ * test getCrumbList() in Twitter Bootstrap style.
+ *
+ * @return void
+ */
+	public function testCrumbListBootstrapStyle() {
+		$this->Html->addCrumb('Home', '/', array('class' => 'home'));
+		$this->Html->addCrumb('Library', '/lib');
+		$this->Html->addCrumb('Data');
+		$result = $this->Html->getCrumbList(array(
+			'class' => 'breadcrumb',
+			'separator' => '<span class="divider">-</span>',
+			'firstClass' => false,
+			'lastClass' => 'active'
+		));
+		$this->assertTags(
+			$result,
+			array(
+				array('ul' => array('class' => 'breadcrumb')),
+				'<li',
+				array('a' => array('class' => 'home', 'href' => '/')), 'Home', '/a',
+				array('span' => array('class' => 'divider')), '-', '/span',
+				'/li',
+				'<li',
+				array('a' => array('href' => '/lib')), 'Library', '/a',
+				array('span' => array('class' => 'divider')), '-', '/span',
+				'/li',
+				array('li' => array('class' => 'active')), 'Data', '/li',
+				'/ul'
+			)
+		);
+	}
+
+/**
+ * Test GetCrumbList using style of Zurb Foundation.
+ *
+ * @return void
+ */
+	public function testCrumbListZurbStyle() {
+		$this->Html->addCrumb('Home', '#');
+		$this->Html->addCrumb('Features', '#');
+		$this->Html->addCrumb('Gene Splicing', '#');
+		$this->Html->addCrumb('Home', '#');
+		$result = $this->Html->getCrumbList(
+			array('class' => 'breadcrumbs', 'firstClass' => false, 'lastClass' => 'current')
+		);
+		$this->assertTags(
+			$result,
+			array(
+				array('ul' => array('class' => 'breadcrumbs')),
+				'<li',
+				array('a' => array('href' => '#')), 'Home', '/a',
+				'/li',
+				'<li',
+				array('a' => array('href' => '#')), 'Features', '/a',
+				'/li',
+				'<li',
+				array('a' => array('href' => '#')), 'Gene Splicing', '/a',
+				'/li',
+				array('li' => array('class' => 'current')),
+				array('a' => array('href' => '#')), 'Home', '/a',
+				'/li',
+				'/ul'
+			), true
+		);
+	}
+
+/**
  * testLoadConfig method
  *
  * @return void
@@ -1878,7 +1951,7 @@ class HtmlHelperTest extends TestCase {
  * @expectedException Cake\Error\ConfigureException
  */
 	public function testLoadConfigWrongFile() {
-		$result = $this->Html->loadConfig('wrong_file');
+		$this->Html->loadConfig('wrong_file');
 	}
 
 /**
@@ -1889,7 +1962,7 @@ class HtmlHelperTest extends TestCase {
  */
 	public function testLoadConfigWrongReader() {
 		$path = CAKE . 'Test/TestApp/Config/';
-		$result = $this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
+		$this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
 	}
 
 /**

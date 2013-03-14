@@ -1,18 +1,20 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.9.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Utility;
+
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Model\ConnectionManager;
@@ -108,7 +110,7 @@ class ClassRegistry {
 		$count = count($objects);
 		$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
 
-		foreach ($objects as $key => $settings) {
+		foreach ($objects as $settings) {
 			if (is_numeric($settings)) {
 				trigger_error(__d('cake_dev', '(ClassRegistry::init() Attempted to create instance of a class with a numeric name'), E_USER_WARNING);
 				return false;
@@ -264,10 +266,10 @@ class ClassRegistry {
 /**
  * Sets the default constructor parameter for an object type
  *
- * @param string $type Type of object.  If this parameter is omitted, defaults to "Model"
+ * @param string $type Type of object. If this parameter is omitted, defaults to "Model"
  * @param array $param The parameter that will be passed to object constructors when objects
  *                      of $type are created
- * @return mixed Void if $param is being set.  Otherwise, if only $type is passed, returns
+ * @return mixed Void if $param is being set. Otherwise, if only $type is passed, returns
  *               the previously-set value of $param, or null if not set.
  */
 	public static function config($type, $param = array()) {
@@ -294,7 +296,7 @@ class ClassRegistry {
  * @param string $class
  * @return boolean
  */
-	protected function &_duplicate($alias,  $class) {
+	protected function &_duplicate($alias, $class) {
 		$duplicate = false;
 		if ($this->isKeySet($alias)) {
 			$model = $this->getObject($alias);

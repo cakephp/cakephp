@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -74,26 +75,9 @@ class ShellTestShell extends Shell {
 	}
 	//@codingStandardsIgnoreEnd
 
-	public function mergeVars($properties, $class, $normalize = true) {
-		return $this->_mergeVars($properties, $class, $normalize);
-	}
-
 	public function useLogger($enable = true) {
 		$this->_useLogger($enable);
 	}
-
-}
-
-/**
- * Class for testing merging vars
- *
- * @package       Cake.Test.Case.Console.Command
- */
-class TestMergeShell extends Shell {
-
-	public $tasks = array('DbConfig', 'Fixture');
-
-	public $uses = array('Comment');
 
 }
 
@@ -162,25 +146,6 @@ class ShellTest extends TestCase {
 		$this->assertInstanceOf('Cake\Console\ConsoleInput', $this->Shell->stdin);
 		$this->assertInstanceOf('Cake\Console\ConsoleOutput', $this->Shell->stdout);
 		$this->assertInstanceOf('Cake\Console\ConsoleOutput', $this->Shell->stderr);
-	}
-
-/**
- * test merging vars
- *
- * @return void
- */
-	public function testMergeVars() {
-		$this->Shell->tasks = array('DbConfig' => array('one', 'two'));
-		$this->Shell->uses = array('Posts');
-		$this->Shell->mergeVars(array('tasks'), __NAMESPACE__ . '\TestMergeShell');
-		$this->Shell->mergeVars(array('uses'), __NAMESPACE__ . '\TestMergeShell', false);
-
-		$expected = array('DbConfig' => null, 'Fixture' => null, 'DbConfig' => array('one', 'two'));
-		$this->assertEquals($expected, $this->Shell->tasks);
-
-		$expected = array('Fixture' => null, 'DbConfig' => array('one', 'two'));
-		$this->assertEquals($expected, Hash::normalize($this->Shell->tasks), 'Normalized results are wrong.');
-		$this->assertEquals(array('Comment', 'Posts'), $this->Shell->uses, 'Merged models are wrong.');
 	}
 
 /**
@@ -546,7 +511,7 @@ class ShellTest extends TestCase {
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
 
-		$Folder = new Folder($path, true);
+		new Folder($path, true);
 
 		$this->Shell->interactive = false;
 
@@ -573,7 +538,7 @@ class ShellTest extends TestCase {
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
-		$Folder = new Folder($path, true);
+		new Folder($path, true);
 
 		$this->Shell->interactive = true;
 
@@ -664,7 +629,6 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testRunCommandMain() {
-		$methods = get_class_methods('Cake\Console\Shell');
 		$Mock = $this->getMock('Cake\Console\Shell', array('main', 'startup'), array(), '', false);
 
 		$Mock->expects($this->once())->method('main')->will($this->returnValue(true));
@@ -678,7 +642,6 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testRunCommandWithMethod() {
-		$methods = get_class_methods('Cake\Console\Shell');
 		$Mock = $this->getMock('Cake\Console\Shell', array('hit_me', 'startup'), array(), '', false);
 
 		$Mock->expects($this->once())->method('hit_me')->will($this->returnValue(true));
@@ -701,7 +664,7 @@ class ShellTest extends TestCase {
 		$Mock->expects($this->never())->method('hr');
 		$Mock->expects($this->once())->method('out');
 
-		$result = $Mock->runCommand('hr', array());
+		$Mock->runCommand('hr', array());
 	}
 
 /**
@@ -710,7 +673,6 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testRunCommandMissingMethod() {
-		$methods = get_class_methods('Cake\Console\Shell');
 		$Mock = $this->getMock('Cake\Console\Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
 		$Parser = $this->getMock('Cake\Console\ConsoleOptionParser', array(), array(), '', false);
 
@@ -763,7 +725,7 @@ class ShellTest extends TestCase {
 
 		$Shell->RunCommand = $task;
 
-		$result = $Shell->runCommand('run_command', array('run_command', 'one', 'value'));
+		$Shell->runCommand('run_command', array('run_command', 'one', 'value'));
 	}
 
 /**
@@ -845,7 +807,7 @@ TEXT;
  * Tests that _useLogger works properly
  *
  * @return void
- **/
+ */
 	public function testProtectedUseLogger() {
 		Log::drop('stdout');
 		Log::drop('stderr');

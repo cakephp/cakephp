@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View\Helper;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -174,65 +176,91 @@ class TextHelperTest extends TestCase {
 	}
 
 /**
+ * Data provider for autoLinking
+ */
+	public static function autoLinkProvider() {
+		return array(
+			array(
+				'This is a test text',
+				'This is a test text',
+			),
+			array(
+				'This is a test that includes (www.cakephp.org)',
+				'This is a test that includes (<a href="http://www.cakephp.org">www.cakephp.org</a>)',
+			),
+			array(
+				'This is a test that includes www.cakephp.org:8080',
+				'This is a test that includes <a href="http://www.cakephp.org:8080">www.cakephp.org:8080</a>',
+			),
+			array(
+				'This is a test that includes http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment',
+				'This is a test that includes <a href="http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>',
+			),
+			array(
+				'This is a test that includes www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment',
+				'This is a test that includes <a href="http://www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>',
+			),
+			array(
+				'This is a test that includes http://example.com/test.php?foo=bar text',
+				'This is a test that includes <a href="http://example.com/test.php?foo=bar">http://example.com/test.php?foo=bar</a> text',
+			),
+			array(
+				'This is a test that includes www.example.com/test.php?foo=bar text',
+				'This is a test that includes <a href="http://www.example.com/test.php?foo=bar">www.example.com/test.php?foo=bar</a> text',
+			),
+			array(
+				'Text with a partial www.cakephp.org URL',
+				'Text with a partial <a href="http://www.cakephp.org">www.cakephp.org</a> URL',
+			),
+			array(
+				'Text with a partial WWW.cakephp.org URL',
+				'Text with a partial <a href="http://WWW.cakephp.org">WWW.cakephp.org</a> URL',
+			),
+			array(
+				'Text with a partial WWW.cakephp.org &copy, URL',
+				'Text with a partial <a href="http://WWW.cakephp.org">WWW.cakephp.org</a> &amp;copy, URL',
+			),
+			array(
+				'Text with a url www.cot.ag/cuIb2Q and more',
+				'Text with a url <a href="http://www.cot.ag/cuIb2Q">www.cot.ag/cuIb2Q</a> and more',
+			),
+			array(
+				'Text with a url http://www.does--not--work.com and more',
+				'Text with a url <a href="http://www.does--not--work.com">http://www.does--not--work.com</a> and more',
+			),
+			array(
+				'Text with a url http://www.not--work.com and more',
+				'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more',
+			),
+		);
+	}
+
+/**
  * testAutoLinkUrls method
+ *
+ * @dataProvider autoLinkProvider
+ * @return void
+ */
+	public function testAutoLinkUrls($text, $expected) {
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test the options for autoLinkUrls
  *
  * @return void
  */
-	public function testAutoLinkUrls() {
-		$text = 'This is a test text';
-		$expected = 'This is a test text';
-		$result = $this->Text->autoLinkUrls($text);
-		$this->assertEquals($expected, $result);
-
-		$text = 'This is a test that includes (www.cakephp.org)';
-		$expected = 'This is a test that includes (<a href="http://www.cakephp.org">www.cakephp.org</a>)';
-		$result = $this->Text->autoLinkUrls($text);
-		$this->assertEquals($expected, $result);
-
-		$text = 'This is a test that includes http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment';
-		$expected = 'This is a test that includes <a href="http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>';
-		$result = $this->Text->autoLinkUrls($text);
-		$this->assertEquals($expected, $result);
-
-		$text = 'This is a test that includes www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment';
-		$expected = 'This is a test that includes <a href="http://www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>';
-		$result = $this->Text->autoLinkUrls($text);
-		$this->assertEquals($expected, $result);
-
-		$text = 'Text with a partial www.cakephp.org URL';
-		$expected = 'Text with a partial <a href="http://www.cakephp.org"\s*>www.cakephp.org</a> URL';
-		$result = $this->Text->autoLinkUrls($text);
-		$this->assertRegExp('#^' . $expected . '$#', $result);
-
+	public function testAutoLinkUrlsOptions() {
 		$text = 'Text with a partial www.cakephp.org URL';
 		$expected = 'Text with a partial <a href="http://www.cakephp.org" \s*class="link">www.cakephp.org</a> URL';
 		$result = $this->Text->autoLinkUrls($text, array('class' => 'link'));
-		$this->assertRegExp('#^' . $expected . '$#', $result);
-
-		$text = 'Text with a partial WWW.cakephp.org URL';
-		$expected = 'Text with a partial <a href="http://WWW.cakephp.org"\s*>WWW.cakephp.org</a> URL';
-		$result = $this->Text->autoLinkUrls($text);
 		$this->assertRegExp('#^' . $expected . '$#', $result);
 
 		$text = 'Text with a partial WWW.cakephp.org &copy; URL';
 		$expected = 'Text with a partial <a href="http://WWW.cakephp.org"\s*>WWW.cakephp.org</a> &copy; URL';
 		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
 		$this->assertRegExp('#^' . $expected . '$#', $result);
-
-		$text = 'Text with a url www.cot.ag/cuIb2Q and more';
-		$expected = 'Text with a url <a href="http://www.cot.ag/cuIb2Q">www.cot.ag/cuIb2Q</a> and more';
-		$result = $this->Text->autoLinkUrls($text);
-		$this->assertEquals($expected, $result);
-
-		$text = 'Text with a url http://www.does--not--work.com and more';
-		$expected = 'Text with a url <a href="http://www.does--not--work.com">http://www.does--not--work.com</a> and more';
-		$result = $this->Text->autoLinkUrls($text);
-		$this->assertEquals($expected, $result);
-
-		$text = 'Text with a url http://www.not--work.com and more';
-		$expected = 'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more';
-		$result = $this->Text->autoLinkUrls($text);
-		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -316,4 +344,3 @@ class TextHelperTest extends TestCase {
 	}
 
 }
-

@@ -7,18 +7,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model\Behavior;
+
 use Cake\Model\Model;
 use Cake\Model\ModelBehavior;
 use Cake\Utility\Hash;
@@ -95,22 +97,24 @@ class ContainableBehavior extends ModelBehavior {
  */
 	public function beforeFind(Model $Model, $query) {
 		$reset = (isset($query['reset']) ? $query['reset'] : true);
-		$noContain = (
-			(isset($this->runtime[$Model->alias]['contain']) && empty($this->runtime[$Model->alias]['contain'])) ||
-			(isset($query['contain']) && empty($query['contain']))
-		);
+		$noContain = false;
 		$contain = array();
+
 		if (isset($this->runtime[$Model->alias]['contain'])) {
+			$noContain = empty($this->runtime[$Model->alias]['contain']);
 			$contain = $this->runtime[$Model->alias]['contain'];
 			unset($this->runtime[$Model->alias]['contain']);
 		}
+
 		if (isset($query['contain'])) {
-			$contain = array_merge($contain, (array)$query['contain']);
+			$noContain = $noContain || empty($query['contain']);
+			if ($query['contain'] !== false) {
+				$contain = array_merge($contain, (array)$query['contain']);
+			}
 		}
-		if (
-			$noContain || !$contain || in_array($contain, array(null, false), true) ||
-			(isset($contain[0]) && $contain[0] === null)
-		) {
+		$noContain = $noContain && empty($contain);
+
+		if ($noContain || empty($contain)) {
 			if ($noContain) {
 				$query['recursive'] = -1;
 			}
@@ -125,7 +129,7 @@ class ContainableBehavior extends ModelBehavior {
 		$map = $this->containmentsMap($containments);
 
 		$mandatory = array();
-		foreach ($containments['models'] as $name => $model) {
+		foreach ($containments['models'] as $model) {
 			$instance = $model['instance'];
 			$needed = $this->fieldDependencies($instance, $map, false);
 			if (!empty($needed)) {
@@ -200,7 +204,7 @@ class ContainableBehavior extends ModelBehavior {
 
 		if (!empty($mandatory[$Model->alias])) {
 			foreach ($mandatory[$Model->alias] as $field) {
-				if ($field == '--primaryKey--') {
+				if ($field === '--primaryKey--') {
 					$field = $Model->primaryKey;
 				} elseif (preg_match('/^.+\.\-\-[^-]+\-\-$/', $field)) {
 					list($modelName, $field) = explode('.', $field);
@@ -307,7 +311,7 @@ class ContainableBehavior extends ModelBehavior {
 				if (!$optionKey && is_string($key) && preg_match('/^[a-z(]/', $key) && (!isset($Model->{$key}) || !is_object($Model->{$key}))) {
 					$option = 'fields';
 					$val = array($key);
-					if ($key{0} == '(') {
+					if ($key{0} === '(') {
 						$val = preg_split('/\s*,\s*/', substr($key, 1, -1));
 					} elseif (preg_match('/ASC|DESC$/', $key)) {
 						$option = 'order';
@@ -374,9 +378,9 @@ class ContainableBehavior extends ModelBehavior {
 			foreach ($map as $parent => $children) {
 				foreach ($children as $type => $bindings) {
 					foreach ($bindings as $dependency) {
-						if ($type == 'hasAndBelongsToMany') {
+						if ($type === 'hasAndBelongsToMany') {
 							$fields[$parent][] = '--primaryKey--';
-						} elseif ($type == 'belongsTo') {
+						} elseif ($type === 'belongsTo') {
 							$fields[$parent][] = $dependency . '.--primaryKey--';
 						}
 					}

@@ -2,18 +2,19 @@
 /**
  * Exception Renderer
  *
- * Provides Exception rendering features.  Which allow exceptions to be rendered
+ * Provides Exception rendering features. Which allow exceptions to be rendered
  * as HTML pages.
  *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Error
  * @since         CakePHP(tm) v 2.0
@@ -36,7 +37,7 @@ use Cake\View\View;
  * Exception Renderer.
  *
  * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
- * When debug < 1 a Cake\Error\Exception will render 404 or  500 errors.  If an uncaught exception is thrown
+ * When debug < 1 a CakeException will render 404 or 500 errors. If an uncaught exception is thrown
  * and it is a type that ExceptionHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception rendering
@@ -48,18 +49,19 @@ use Cake\View\View;
  *
  * #### Using AppController::appError();
  *
- * This controller method is called instead of the default exception handling.  It receives the
- * thrown exception as its only argument.  You should implement your error handling in that method.
+ * This controller method is called instead of the default exception handling. It receives the
+ * thrown exception as its only argument. You should implement your error handling in that method.
  *
  * #### Using a subclass of ExceptionRenderer
  *
  * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you
- * can configure your class in your core.php, with `Configure::write('Exception.renderer', 'MyClass');`
+ * can configure your class in your App/Config/error.php, with `Configure::write('Exception.renderer', 'MyClass');`
  * You should place any custom exception renderers in `app/Lib/Error`.
  *
  * @package       Cake.Error
  */
 class ExceptionRenderer {
+
 /**
  * Controller instance.
  *
@@ -94,6 +96,7 @@ class ExceptionRenderer {
  * code error depending on the code used to construct the error.
  *
  * @param \Exception $exception Exception
+ * @return mixed Return void or value returned by controller's `appError()` function
  */
 	public function __construct(\Exception $exception) {
 		$this->controller = $this->_getController($exception);
@@ -110,7 +113,7 @@ class ExceptionRenderer {
 
 		if ($exception instanceof Exception && !$methodExists) {
 			$method = '_cakeError';
-			if (empty($template) || $template == 'internalError') {
+			if (empty($template) || $template === 'internalError') {
 				$template = 'error500';
 			}
 		} elseif ($exception instanceof \PDOException) {
@@ -124,8 +127,8 @@ class ExceptionRenderer {
 			}
 		}
 
-		$isNotDebug = (Configure::read('debug') == 0);
-		if ($isNotDebug && $method == '_cakeError') {
+		$isNotDebug = !Configure::read('debug');
+		if ($isNotDebug && $method === '_cakeError') {
 			$method = 'error400';
 		}
 		if ($isNotDebug && $code == 500) {
@@ -157,7 +160,13 @@ class ExceptionRenderer {
 
 		try {
 			$controller = new ErrorController($request, $response);
+			$controller->startupProcess();
 		} catch (\Exception $e) {
+			if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
+				$controller->RequestHandler->startup($controller);
+			}
+		}
+		if (empty($controller)) {
 			$controller = new Controller($request, $response);
 			$controller->viewPath = 'Errors';
 		}
@@ -204,7 +213,7 @@ class ExceptionRenderer {
  */
 	public function error400($error) {
 		$message = $error->getMessage();
-		if (Configure::read('debug') == 0 && $error instanceof Exception) {
+		if (!Configure::read('debug') && $error instanceof Exception) {
 			$message = __d('cake', 'Not Found');
 		}
 		$url = $this->controller->request->here();
@@ -226,7 +235,7 @@ class ExceptionRenderer {
  */
 	public function error500($error) {
 		$message = $error->getMessage();
-		if (Configure::read('debug') == 0) {
+		if (!Configure::read('debug')) {
 			$message = __d('cake', 'An Internal Error Has Occurred.');
 		}
 		$url = $this->controller->request->here();
@@ -273,10 +282,11 @@ class ExceptionRenderer {
 			$this->controller->afterFilter();
 			$this->controller->response->send();
 		} catch (Error\MissingViewException $e) {
-			try {
-				$this->_outputMessage('error500');
-			} catch (\Exception $e) {
+			$attributes = $e->getAttributes();
+			if (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false) {
 				$this->_outputMessageSafe('error500');
+			} else {
+				$this->_outputMessage('error500');
 			}
 		} catch (\Exception $e) {
 			$this->_outputMessageSafe('error500');

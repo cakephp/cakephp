@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network;
+
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Utility\File;
@@ -279,8 +281,8 @@ class Response {
 		'javascript' => 'application/javascript',
 		'form' => 'application/x-www-form-urlencoded',
 		'file' => 'multipart/form-data',
-		'xhtml'	=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
-		'xhtml-mobile'	=> 'application/vnd.wap.xhtml+xml',
+		'xhtml' => array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
+		'xhtml-mobile' => 'application/vnd.wap.xhtml+xml',
 		'atom' => 'application/atom+xml',
 		'amf' => 'application/x-amf',
 		'wap' => array('text/vnd.wap.wml', 'text/vnd.wap.wmlscript', 'image/vnd.wap.wbmp'),
@@ -446,7 +448,19 @@ class Response {
 		if (in_array($this->_status, array(304, 204))) {
 			return;
 		}
-		if (strpos($this->_contentType, 'text/') === 0) {
+		$whitelist = array(
+			'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
+		);
+
+		$charset = false;
+		if (
+			$this->_charset &&
+			(strpos($this->_contentType, 'text/') === 0 || in_array($this->_contentType, $whitelist))
+		) {
+			$charset = true;
+		}
+
+		if ($charset) {
 			$this->header('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
 		} else {
 			$this->header('Content-Type', "{$this->_contentType}");
@@ -792,7 +806,7 @@ class Response {
 			unset($this->_cacheDirectives['public']);
 			$this->maxAge($time);
 		}
-		if ($time == null) {
+		if (!$time) {
 			$this->_setCacheControl();
 		}
 		return (bool)$public;
@@ -931,7 +945,7 @@ class Response {
  * conflicting headers
  *
  * @return void
- **/
+ */
 	public function notModified() {
 		$this->statusCode(304);
 		$this->body('');
@@ -958,7 +972,7 @@ class Response {
  * @param string|array $cacheVariances a single Vary string or a array
  * containig the list for variances.
  * @return array
- **/
+ */
 	public function vary($cacheVariances = null) {
 		if ($cacheVariances !== null) {
 			$cacheVariances = (array)$cacheVariances;
@@ -990,7 +1004,7 @@ class Response {
  * @param boolean $weak whether the response is semantically the same as
  * other with th same hash or not
  * @return string
- **/
+ */
 	public function etag($tag = null, $weak = false) {
 		if ($tag !== null) {
 			$this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $tag);
@@ -1057,7 +1071,8 @@ class Response {
  * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
  * If called with no arguments, it will return the current configured protocol
  *
- * @return string protocol to be used for sending response
+ * @param string protocol to be used for sending response
+ * @return string protocol currently set
  */
 	public function protocol($protocol = null) {
 		if ($protocol !== null) {
@@ -1070,7 +1085,8 @@ class Response {
  * Sets the Content-Length header for the response
  * If called with no arguments returns the last Content-Length set
  *
- * @return int
+ * @param integer $bytes Number of bytes
+ * @return integer|null
  */
 	public function length($bytes = null) {
 		if ($bytes !== null) {
@@ -1089,9 +1105,10 @@ class Response {
  * is marked as so accordingly so the client can be informed of that.
  *
  * In order to mark a response as not modified, you need to set at least
- * the Last-Modified etag response header before calling this method.  Otherwise
+ * the Last-Modified etag response header before calling this method. Otherwise
  * a comparison will not be possible.
  *
+ * @param CakeRequest $request Request object
  * @return boolean whether the response was marked as not modified or not.
  */
 	public function checkNotModified(Request $request) {
@@ -1115,7 +1132,7 @@ class Response {
 	}
 
 /**
- * String conversion.  Fetches the response body as a string.
+ * String conversion. Fetches the response body as a string.
  * Does *not* send headers.
  *
  * @return string
@@ -1136,7 +1153,7 @@ class Response {
  * If the method is called with an array as argument, it will set the cookie
  * configuration to the cookie container.
  *
- * @param $options Either null to get all cookies, string for a specific cookie
+ * @param array $options Either null to get all cookies, string for a specific cookie
  *  or array to set cookie.
  *
  * ### Options (when setting a configuration)
@@ -1248,7 +1265,7 @@ class Response {
 
 			$httpRange = env('HTTP_RANGE');
 			if (isset($httpRange)) {
-				list($toss, $range) = explode('=', $httpRange);
+				list(, $range) = explode('=', $httpRange);
 
 				$size = $fileSize - 1;
 				$length = $fileSize - $range;
@@ -1311,7 +1328,9 @@ class Response {
  * @return boolean
  */
 	protected function _clearBuffer() {
+		//@codingStandardsIgnoreStart
 		return @ob_end_clean();
+		//@codingStandardsIgnoreEnd
 	}
 
 /**
@@ -1320,8 +1339,10 @@ class Response {
  * @return void
  */
 	protected function _flushBuffer() {
+		//@codingStandardsIgnoreStart
 		@flush();
 		@ob_flush();
+		//@codingStandardsIgnoreEnd
 	}
 
 }

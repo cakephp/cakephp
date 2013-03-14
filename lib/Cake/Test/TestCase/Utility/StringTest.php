@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\String;
@@ -383,17 +384,17 @@ TEXT;
 		$this->assertSame($this->Text->truncate($text3, 20), '<b>&copy; 2005-20...');
 		$this->assertSame($this->Text->truncate($text4, 15), '<img src="my...');
 		$this->assertSame($this->Text->truncate($text5, 6, array('ellipsis' => '')), '0<b>1<');
-		$this->assertSame($this->Text->truncate($text1, 15, array('html' => true)), 'The quick brow' . chr(226));
-		$this->assertSame($this->Text->truncate($text1, 15, array('exact' => false, 'html' => true)), 'The quick' . chr(226));
-		$this->assertSame($this->Text->truncate($text2, 10, array('html' => true)), 'Heiz&ouml;lr&uuml;c' . chr(226));
-		$this->assertSame($this->Text->truncate($text2, 10, array('exact' => false, 'html' => true)), chr(226));
-		$this->assertSame($this->Text->truncate($text3, 20, array('html' => true)), '<b>&copy; 2005-2007, Cake S' . chr(226) . '</b>');
-		$this->assertSame($this->Text->truncate($text4, 15, array('html' => true)), '<img src="mypic.jpg"> This image ta' . chr(226));
-		$this->assertSame($this->Text->truncate($text4, 45, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the' . chr(226) . '</b>');
-		$this->assertSame($this->Text->truncate($text4, 90, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great,' . chr(226));
+		$this->assertSame($this->Text->truncate($text1, 15, array('html' => true)), "The quick brow\xe2\x80\xa6");
+		$this->assertSame($this->Text->truncate($text1, 15, array('exact' => false, 'html' => true)), "The quick\xe2\x80\xa6");
+		$this->assertSame($this->Text->truncate($text2, 10, array('html' => true)), "Heiz&ouml;lr&uuml;c\xe2\x80\xa6");
+		$this->assertSame($this->Text->truncate($text2, 10, array('exact' => false, 'html' => true)), "\xe2\x80\xa6");
+		$this->assertSame($this->Text->truncate($text3, 20, array('html' => true)), "<b>&copy; 2005-2007, Cake S\xe2\x80\xa6</b>");
+		$this->assertSame($this->Text->truncate($text4, 15, array('html' => true)), "<img src=\"mypic.jpg\"> This image ta\xe2\x80\xa6");
+		$this->assertSame($this->Text->truncate($text4, 45, array('html' => true)), "<img src=\"mypic.jpg\"> This image tag is not XHTML conform!<br><hr/><b>But the\xe2\x80\xa6</b>");
+		$this->assertSame($this->Text->truncate($text4, 90, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great,' . "\xe2\x80\xa6");
 		$this->assertSame($this->Text->truncate($text5, 6, array('ellipsis' => '', 'html' => true)), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
 		$this->assertSame($this->Text->truncate($text5, 20, array('ellipsis' => '', 'html' => true)), $text5);
-		$this->assertSame($this->Text->truncate($text6, 57, array('exact' => false, 'html' => true)), "<p><strong>Extra dates have been announced for this year's" . chr(226) . "</strong></p>");
+		$this->assertSame($this->Text->truncate($text6, 57, array('exact' => false, 'html' => true)), "<p><strong>Extra dates have been announced for this year's\xe2\x80\xa6</strong></p>");
 		$this->assertSame($this->Text->truncate($text7, 255), $text7);
 		$this->assertSame($this->Text->truncate($text7, 15), 'El moño está...');
 		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R' . chr(195) . chr(169) . 'pu...');
@@ -967,9 +968,9 @@ podeís adquirirla.</span></p>
 								7716, 7718, 7720, 7722, 7724, 7726, 7728, 7730, 7732, 7734, 7736, 7738, 7740, 7742, 7744, 7746, 7748, 7750,
 								7752, 7754, 7756, 7758, 7760, 7762, 7764, 7766, 7768, 7770, 7772, 7774, 7776, 7778, 7780, 7782, 7784, 7786,
 								7788, 7790, 7792, 7794, 7796, 7798, 7800, 7802, 7804, 7806, 7808, 7810, 7812, 7814, 7816, 7818, 7820, 7822,
-								7824, 7826, 7828, 7830, 7831, 7832, 7833, 7834,       7840, 7842, 7844, 7846, 7848, 7850, 7852, 7854, 7856,
+								7824, 7826, 7828, 7830, 7831, 7832, 7833, 7834, 7840, 7842, 7844, 7846, 7848, 7850, 7852, 7854, 7856,
 								7858, 7860, 7862, 7864, 7866, 7868, 7870, 7872, 7874, 7876, 7878, 7880, 7882, 7884, 7886, 7888, 7890, 7892,
-								7894, 7896, 7898, 7900, 7902, 7904, 7906, 7908, 7910, 7912, 7914, 7916, 7918, 7920, 7922, 7924, 7926,  7928);
+								7894, 7896, 7898, 7900, 7902, 7904, 7906, 7908, 7910, 7912, 7914, 7916, 7918, 7920, 7922, 7924, 7926, 7928);
 		$this->assertEquals($expected, $result);
 
 		$string = 'ḁḃḅḇḉḋḍḏḑḓḕḗḙḛḝḟḡḣḥḧḩḫḭḯḱḳḵḷḹḻḽḿṁṃṅṇṉṋṍṏṑṓṕṗṙṛṝṟṡṣṥṧṩṫṭṯṱṳṵṷṹṻṽṿẁẃẅẇẉẋẍẏẑẓẕẖẗẘẙẚạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ';
@@ -1286,9 +1287,9 @@ podeís adquirirla.</span></p>
 								7716, 7718, 7720, 7722, 7724, 7726, 7728, 7730, 7732, 7734, 7736, 7738, 7740, 7742, 7744, 7746, 7748, 7750,
 								7752, 7754, 7756, 7758, 7760, 7762, 7764, 7766, 7768, 7770, 7772, 7774, 7776, 7778, 7780, 7782, 7784, 7786,
 								7788, 7790, 7792, 7794, 7796, 7798, 7800, 7802, 7804, 7806, 7808, 7810, 7812, 7814, 7816, 7818, 7820, 7822,
-								7824, 7826, 7828, 7830, 7831, 7832, 7833, 7834,       7840, 7842, 7844, 7846, 7848, 7850, 7852, 7854, 7856,
+								7824, 7826, 7828, 7830, 7831, 7832, 7833, 7834, 7840, 7842, 7844, 7846, 7848, 7850, 7852, 7854, 7856,
 								7858, 7860, 7862, 7864, 7866, 7868, 7870, 7872, 7874, 7876, 7878, 7880, 7882, 7884, 7886, 7888, 7890, 7892,
-								7894, 7896, 7898, 7900, 7902, 7904, 7906, 7908, 7910, 7912, 7914, 7916, 7918, 7920, 7922, 7924, 7926,  7928);
+								7894, 7896, 7898, 7900, 7902, 7904, 7906, 7908, 7910, 7912, 7914, 7916, 7918, 7920, 7922, 7924, 7926, 7928);
 		$result = String::ascii($input);
 		$expected = 'ḀḂḄḆḈḊḌḎḐḒḔḖḘḚḜḞḠḢḤḦḨḪḬḮḰḲḴḶḸḺḼḾṀṂṄṆṈṊṌṎṐṒṔṖṘṚṜṞṠṢṤṦṨṪṬṮṰṲṴṶṸṺṼṾẀẂẄẆẈẊẌẎẐẒẔẖẗẘẙẚẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼẾỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴỶỸ';
 		$this->assertEquals($expected, $result);

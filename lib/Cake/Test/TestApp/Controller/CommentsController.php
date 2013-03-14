@@ -23,5 +23,4 @@ use TestApp\Controller\AppController;
  */
 class CommentsController extends AppController {
 
-	protected $_mergeParent = 'ControllerTestAppController';
 }

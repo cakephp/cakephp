@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Datasource
  * @since         CakePHP(tm) v .0.10.0.1222
@@ -16,8 +17,8 @@ namespace Cake\Model\Datasource;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Model\Datasource\Session\SessionHandlerInterface;
 use Cake\Error;
+use Cake\Model\Datasource\Session\SessionHandlerInterface;
 use Cake\Utility\Hash;
 
 /**
@@ -126,7 +127,7 @@ class Session {
 		static::$time = time();
 
 		$checkAgent = Configure::read('Session.checkAgent');
-		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT') != null) {
+		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT')) {
 			static::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
 		static::_setPath($base);
@@ -147,10 +148,10 @@ class Session {
 			return;
 		}
 		if (strpos($base, 'index.php') !== false) {
-			 $base = str_replace('index.php', '', $base);
+			$base = str_replace('index.php', '', $base);
 		}
 		if (strpos($base, '?') !== false) {
-			 $base = str_replace('?', '', $base);
+			$base = str_replace('?', '', $base);
 		}
 		static::$path = $base;
 	}
@@ -242,7 +243,7 @@ class Session {
 	public static function delete($name) {
 		if (static::check($name)) {
 			static::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
-			return (static::check($name) == false);
+			return !static::check($name);
 		}
 		static::_setError(2, __d('cake_dev', "%s doesn't exist", $name));
 		return false;
@@ -313,7 +314,7 @@ class Session {
 /**
  * Tests that the user agent is valid and that the session hasn't 'timed out'.
  * Since timeouts are implemented in Session it checks the current static::$time
- * against the time the session is set to expire.  The User agent is only checked
+ * against the time the session is set to expire. The User agent is only checked
  * if Session.checkAgent == true.
  *
  * @return boolean
@@ -414,10 +415,11 @@ class Session {
  * @return void
  */
 	public static function destroy() {
-		if (static::started()) {
-			session_destroy();
+		if (!self::started()) {
+			self::start();
 		}
-		static::clear();
+		session_destroy();
+		self::clear();
 	}
 
 /**
@@ -658,7 +660,7 @@ class Session {
  */
 	public static function renew() {
 		if (session_id()) {
-			if (session_id() != '' || isset($_COOKIE[session_name()])) {
+			if (session_id() || isset($_COOKIE[session_name()])) {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, static::$path);
 			}
 			session_regenerate_id(true);

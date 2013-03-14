@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Core
  * @since         CakePHP(tm) v 1.2.0.6001
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Core;
+
 use Cake\Cache\Cache;
 use Cake\Error\ErrorHandler;
 use Cake\Utility\Inflector;
@@ -26,7 +28,7 @@ use Cake\Utility\Inflector;
  *
  * ### Adding paths
  *
- * You can add paths to the search indexes App uses to find classes using `App::build()`.  Adding
+ * You can add paths to the search indexes App uses to find classes using `App::build()`. Adding
  * additional controller paths for example would alter where CakePHP looks for controllers.
  * This allows you to split your application up across the filesystem.
  *
@@ -52,8 +54,8 @@ use Cake\Utility\Inflector;
  *
  * ### Locating plugins and themes
  *
- * Plugins and Themes can be located with App as well.  Using App::pluginPath('DebugKit') for example, will
- * give you the full path to the DebugKit plugin.  App::themePath('purple'), would give the full path to the
+ * Plugins and Themes can be located with App as well. Using App::pluginPath('DebugKit') for example, will
+ * give you the full path to the DebugKit plugin. App::themePath('purple'), would give the full path to the
  * `purple` theme.
  *
  * ### Inspecting known objects
@@ -229,7 +231,7 @@ class App {
 
 /**
  * Get all the currently loaded paths from App. Useful for inspecting
- * or storing all paths App knows about.  For a paths to a specific package
+ * or storing all paths App knows about. For a paths to a specific package
  * use App::path()
  *
  * @return array An array of packages and their associated paths.
@@ -344,7 +346,7 @@ class App {
 	}
 
 /**
- * Finds the path that a theme is on.  Searches through the defined theme paths.
+ * Finds the path that a theme is on. Searches through the defined theme paths.
  *
  * Usage:
  *
@@ -355,7 +357,7 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::themePath
  */
 	public static function themePath($theme) {
-		$themeDir = 'Themed/' . Inflector::camelize($theme);
+		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
 		foreach (static::$_packages['View'] as $path) {
 			if (is_dir($path . $themeDir)) {
 				return $path . $themeDir . DS;
@@ -399,7 +401,7 @@ class App {
  * @param string $type Type of object, i.e. 'Model', 'Controller', 'View/Helper', 'file', 'class' or 'Plugin'
  * @param string|array $path Optional Scan only the path given. If null, paths for the chosen type will be used.
  * @param boolean $cache Set to false to rescan objects of the chosen type. Defaults to true.
- * @return mixed Either false on incorrect / miss.  Or an array of found objects.
+ * @return mixed Either false on incorrect / miss. Or an array of found objects.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::objects
  */
 	public static function objects($type, $path = null, $cache = true) {
@@ -407,7 +409,7 @@ class App {
 		$includeDirectories = false;
 		$name = $type;
 
-		if ($type == 'Plugin') {
+		if ($type === 'Plugin') {
 			$extension = '/.*/';
 			$includeDirectories = true;
 		}
@@ -500,7 +502,7 @@ class App {
 			$paths[] = CAKE . $package . DS;
 		} else {
 			$pluginPath = static::pluginPath($plugin);
-			$paths[] = $pluginPath . 'Lib/' . $package . DS;
+			$paths[] = $pluginPath . 'Lib' . DS . $package . DS;
 			$paths[] = $pluginPath . $package . DS;
 		}
 
@@ -584,60 +586,60 @@ class App {
 		if (empty(static::$_packageFormat)) {
 			static::$_packageFormat = array(
 				'Model' => array(
-					'%s' . 'Model/'
+					'%s' . 'Model' . DS
 				),
 				'Model/Behavior' => array(
-					'%s' . 'Model/Behavior/'
+					'%s' . 'Model' . DS . 'Behavior' . DS
 				),
 				'Model/Datasource' => array(
-					'%s' . 'Model/Datasource/'
+					'%s' . 'Model' . DS . 'Datasource' . DS
 				),
 				'Model/Datasource/Database' => array(
-					'%s' . 'Model/Datasource/Database/'
+					'%s' . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
 				),
 				'Model/Datasource/Session' => array(
-					'%s' . 'Model/Datasource/Session/'
+					'%s' . 'Model' . DS . 'Datasource' . DS . 'Session' . DS
 				),
 				'Controller' => array(
-					'%s' . 'Controller/'
+					'%s' . 'Controller' . DS
 				),
 				'Controller/Component' => array(
-					'%s' . 'Controller/Component/'
+					'%s' . 'Controller' . DS . 'Component' . DS
 				),
 				'Controller/Component/Auth' => array(
-					'%s' . 'Controller/Component/Auth/'
+					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS
 				),
 				'Controller/Component/Acl' => array(
-					'%s' . 'Controller/Component/Acl/'
+					'%s' . 'Controller' . DS . 'Component' . DS . 'Acl' . DS
 				),
 				'View' => array(
-					'%s' . 'View/'
+					'%s' . 'View' . DS
 				),
 				'View/Helper' => array(
-					'%s' . 'View/Helper/'
+					'%s' . 'View' . DS . 'Helper' . DS
 				),
 				'Console' => array(
-					'%s' . 'Console/'
+					'%s' . 'Console' . DS
 				),
 				'Console/Command' => array(
-					'%s' . 'Console/Command/'
+					'%s' . 'Console' . DS . 'Command' . DS
 				),
 				'Console/Command/Task' => array(
-					'%s' . 'Console/Command/Task/'
+					'%s' . 'Console' . DS . 'Command' . DS . 'Task' . DS
 				),
 				'Lib' => array(
-					'%s' . 'Lib/'
+					'%s' . 'Lib' . DS
 				),
 				'Locale' => array(
-					'%s' . 'Locale/'
+					'%s' . 'Locale' . DS
 				),
 				'Vendor' => array(
-					'%s' . 'Vendor/',
-					dirname(dirname(CAKE)) . DS . 'vendors/',
+					'%s' . 'vendor' . DS,
+					dirname(dirname(CAKE)) . DS . 'vendors' . DS,
 				),
 				'Plugin' => array(
-					APP . 'Plugin/',
-					dirname(dirname(CAKE)) . DS . 'plugins/'
+					APP . 'Plugin' . DS,
+					dirname(dirname(CAKE)) . DS . 'plugins' . DS
 				)
 			);
 		}

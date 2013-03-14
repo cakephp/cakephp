@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.2.9
@@ -212,7 +213,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::find
  */
 	public function find($regexpPattern = '.*', $sort = false) {
-		list($dirs, $files) = $this->read($sort);
+		list(, $files) = $this->read($sort);
 		return array_values(preg_grep('/^' . $regexpPattern . '$/i', $files));
 	}
 
@@ -267,7 +268,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isWindowsPath
  */
 	public static function isWindowsPath($path) {
-		return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
+		return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\');
 	}
 
 /**
@@ -278,7 +279,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isAbsolute
  */
 	public static function isAbsolute($path) {
-		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
+		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\');
 	}
 
 /**
@@ -379,7 +380,9 @@ class Folder {
 		}
 
 		if ($recursive === false && is_dir($path)) {
+			//@codingStandardsIgnoreStart
 			if (@chmod($path, intval($mode, 8))) {
+				//@codingStandardsIgnoreEnd
 				$this->_messages[] = __d('cake_dev', '%s changed to %s', $path, $mode);
 				return true;
 			}
@@ -400,7 +403,9 @@ class Folder {
 						continue;
 					}
 
+					//@codingStandardsIgnoreStart
 					if (@chmod($fullpath, intval($mode, 8))) {
+						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s changed to %s', $fullpath, $mode);
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT changed to %s', $fullpath, $mode);
@@ -426,7 +431,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::tree
  */
 	public function tree($path = null, $exceptions = false, $type = null) {
-		if ($path == null) {
+		if (!$path) {
 			$path = $this->path;
 		}
 		$files = array();
@@ -456,7 +461,7 @@ class Folder {
 		foreach ($iterator as $itemPath => $fsIterator) {
 			if ($skipHidden) {
 				$subPathName = $fsIterator->getSubPathname();
-				if ($subPathName{0} == '.' || strpos($subPathName, DS . '.') !== false) {
+				if ($subPathName{0} === '.' || strpos($subPathName, DS . '.') !== false) {
 					continue;
 				}
 			}
@@ -584,13 +589,17 @@ class Folder {
 			foreach ($iterator as $item) {
 				$filePath = $item->getPathname();
 				if ($item->isFile() || $item->isLink()) {
+					//@codingStandardsIgnoreStart
 					if (@unlink($filePath)) {
+						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
 					}
 				} elseif ($item->isDir() && !$item->isDot()) {
+					//@codingStandardsIgnoreStart
 					if (@rmdir($filePath)) {
+						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
 					} else {
 						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
@@ -600,7 +609,9 @@ class Folder {
 			}
 
 			$path = rtrim($path, DS);
+			//@codingStandardsIgnoreStart
 			if (@rmdir($path)) {
+				//@codingStandardsIgnoreEnd
 				$this->_messages[] = __d('cake_dev', '%s removed', $path);
 			} else {
 				$this->_errors[] = __d('cake_dev', '%s NOT removed', $path);
@@ -625,7 +636,7 @@ class Folder {
  * @return boolean Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::copy
  */
-	public function copy($options = array()) {
+	public function copy($options) {
 		if (!$this->pwd()) {
 			return false;
 		}
@@ -655,7 +666,9 @@ class Folder {
 		}
 
 		$exceptions = array_merge(array('.', '..', '.svn'), $options['skip']);
+		//@codingStandardsIgnoreStart
 		if ($handle = @opendir($fromDir)) {
+			//@codingStandardsIgnoreEnd
 			while (($item = readdir($handle)) !== false) {
 				$to = Folder::addPathElement($toDir, $item);
 				if (($options['scheme'] != Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {

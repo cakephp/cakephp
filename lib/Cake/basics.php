@@ -7,12 +7,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake
  * @since         CakePHP(tm) v 0.2.9
@@ -48,20 +49,15 @@ if (!function_exists('config')) {
  */
 	function config() {
 		$args = func_get_args();
+		$count = count($args);
+		$included = 0;
 		foreach ($args as $arg) {
 			if (file_exists(APP . 'Config/' . $arg . '.php')) {
 				include_once APP . 'Config/' . $arg . '.php';
-
-				if (count($args) == 1) {
-					return true;
-				}
-			} else {
-				if (count($args) == 1) {
-					return false;
-				}
+				$included++;
 			}
 		}
-		return true;
+		return $included === $count;
 	}
 
 }
@@ -79,7 +75,7 @@ if (!function_exists('debug')) {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#basic-debugging
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#debug
  */
-	function debug($var = false, $showHtml = null, $showFrom = true) {
+	function debug($var, $showHtml = null, $showFrom = true) {
 		if (Configure::read('debug') > 0) {
 			$file = '';
 			$line = '';
@@ -104,7 +100,7 @@ HTML;
 ###########################
 TEXT;
 			$template = $html;
-			if (php_sapi_name() == 'cli' || $showHtml === false) {
+			if (php_sapi_name() === 'cli' || $showHtml === false) {
 				$template = $text;
 				if ($showFrom) {
 					$lineInfo = sprintf('%s (line %s)', $file, $line);
@@ -148,7 +144,7 @@ if (!function_exists('sortByKey')) {
 			$sa[$key] = $val[$sortby];
 		}
 
-		if ($order == 'asc') {
+		if ($order === 'asc') {
 			asort($sa, $type);
 		} else {
 			arsort($sa, $type);
@@ -167,11 +163,11 @@ if (!function_exists('h')) {
 /**
  * Convenience method for htmlspecialchars.
  *
- * @param string|array|object $text Text to wrap through htmlspecialchars.  Also works with arrays, and objects.
- *    Arrays will be mapped and have all their elements escaped.  Objects will be string cast if they
- *    implement a `__toString` method.  Otherwise the class name will be used.
+ * @param string|array|object $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
+ *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
+ *    implement a `__toString` method. Otherwise the class name will be used.
  * @param boolean $double Encode existing html entities
- * @param string $charset Character set to use when escaping.  Defaults to config value in 'App.encoding' or 'UTF-8'
+ * @param string $charset Character set to use when escaping. Defaults to config value in 'App.encoding' or 'UTF-8'
  * @return string Wrapped text
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#h
  */
@@ -202,7 +198,7 @@ if (!function_exists('h')) {
 		if (is_string($double)) {
 			$charset = $double;
 		}
-		return htmlspecialchars($text, ENT_QUOTES, ($charset) ? $charset : $defaultCharset, $double);
+		return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, ($charset) ? $charset : $defaultCharset, $double);
 	}
 
 }
@@ -218,7 +214,7 @@ if (!function_exists('pluginSplit')) {
  * @param string $name The name you want to plugin split.
  * @param boolean $dotAppend Set to true if you want the plugin to have a '.' appended to it.
  * @param string $plugin Optional default plugin to use if no plugin is found. Defaults to null.
- * @return array Array with 2 indexes.  0 => plugin name, 1 => classname
+ * @return array Array with 2 indexes. 0 => plugin name, 1 => classname
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
  */
 	function pluginSplit($name, $dotAppend = false, $plugin = null) {
@@ -234,7 +230,7 @@ if (!function_exists('pluginSplit')) {
 
 }
 
-if (!function_exists('pr')) {
+if (!function_exists('namespaceSplit')) {
 
 /**
  * Split the namespace from the classname.
@@ -244,13 +240,17 @@ if (!function_exists('pr')) {
  * @param string $class The full class name, ie `Cake\Core\App`
  * @return array Array with 2 indexes. 0 => namespace, 1 => classname
  */
-function namespaceSplit($class) {
-	$pos = strrpos($class, '\\');
-	if ($pos === false) {
-		return array('', $class);
+	function namespaceSplit($class) {
+		$pos = strrpos($class, '\\');
+		if ($pos === false) {
+			return array('', $class);
+		}
+		return array(substr($class, 0, $pos), substr($class, $pos + 1));
 	}
-	return array(substr($class, 0, $pos), substr($class, $pos + 1));
+
 }
+
+if (!function_exists('pr')) {
 
 /**
  * Print_r convenience function, which prints out <PRE> tags around
@@ -301,7 +301,7 @@ if (!function_exists('env')) {
 /**
  * Gets an environment variable from available sources, and provides emulation
  * for unsupported or inconsistent environment variables (i.e. DOCUMENT_ROOT on
- * IIS, or SCRIPT_NAME in CGI mode).  Also exposes some additional custom
+ * IIS, or SCRIPT_NAME in CGI mode). Also exposes some additional custom
  * environment information.
  *
  * @param  string $key Environment variable name.
@@ -356,13 +356,10 @@ if (!function_exists('env')) {
 					$offset = 4;
 				}
 				return substr($filename, 0, -(strlen($name) + $offset));
-				break;
 			case 'PHP_SELF':
 				return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
-				break;
 			case 'CGI_MODE':
 				return (PHP_SAPI === 'cgi');
-				break;
 			case 'HTTP_BASE':
 				$host = env('HTTP_HOST');
 				$parts = explode('.', $host);
@@ -402,7 +399,6 @@ if (!function_exists('env')) {
 				}
 				array_shift($parts);
 				return '.' . implode('.', $parts);
-				break;
 		}
 		return null;
 	}
@@ -446,19 +442,27 @@ if (!function_exists('cache')) {
 		$filetime = false;
 
 		if (file_exists($filename)) {
+			//@codingStandardsIgnoreStart
 			$filetime = @filemtime($filename);
+			//@codingStandardsIgnoreEnd
 		}
 
 		if ($data === null) {
 			if (file_exists($filename) && $filetime !== false) {
 				if ($filetime + $timediff < $now) {
+					//@codingStandardsIgnoreStart
 					@unlink($filename);
+					//@codingStandardsIgnoreEnd
 				} else {
+					//@codingStandardsIgnoreStart
 					$data = @file_get_contents($filename);
+					//@codingStandardsIgnoreEnd
 				}
 			}
 		} elseif (is_writable(dirname($filename))) {
+			//@codingStandardsIgnoreStart
 			@file_put_contents($filename, $data, LOCK_EX);
+			//@codingStandardsIgnoreEnd
 		}
 		return $data;
 	}
@@ -483,7 +487,9 @@ if (!function_exists('clearCache')) {
 			$cache = CACHE . $type . DS . $params;
 
 			if (is_file($cache . $ext)) {
+				//@codingStandardsIgnoreStart
 				@unlink($cache . $ext);
+				//@codingStandardsIgnoreEnd
 				return true;
 			} elseif (is_dir($cache)) {
 				$files = glob($cache . '*');
@@ -494,7 +500,9 @@ if (!function_exists('clearCache')) {
 
 				foreach ($files as $file) {
 					if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
+						//@codingStandardsIgnoreStart
 						@unlink($file);
+						//@codingStandardsIgnoreEnd
 					}
 				}
 				return true;
@@ -515,7 +523,9 @@ if (!function_exists('clearCache')) {
 				}
 				foreach ($files as $file) {
 					if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
+						//@codingStandardsIgnoreStart
 						@unlink($file);
+						//@codingStandardsIgnoreEnd
 					}
 				}
 				return true;
@@ -651,7 +661,7 @@ if (!function_exists('__dc')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * Note that the category must be specified with a numeric value, instead of the constant name. The values are:
  *
  * - LC_ALL       0
  * - LC_COLLATE   1
@@ -694,7 +704,7 @@ if (!function_exists('__dcn')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * Note that the category must be specified with a numeric value, instead of the constant name. The values are:
  *
  * - LC_ALL       0
  * - LC_COLLATE   1
@@ -734,7 +744,7 @@ if (!function_exists('__c')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * Note that the category must be specified with a numeric value, instead of the constant name. The values are:
  *
  * - LC_ALL       0
  * - LC_COLLATE   1

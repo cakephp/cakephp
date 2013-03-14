@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.TestSuite.Fixture
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite\Fixture;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -109,7 +111,7 @@ class FixtureManager {
  * @throws UnexpectedValueException when a referenced fixture does not exist.
  */
 	protected function _loadFixtures($fixtures) {
-		foreach ($fixtures as $index => $fixture) {
+		foreach ($fixtures as $fixture) {
 			$fixtureFile = null;
 			$fixtureIndex = $fixture;
 			if (isset($this->_loaded[$fixture])) {
@@ -160,7 +162,7 @@ class FixtureManager {
 			return;
 		}
 
-		$sources = $db->listSources();
+		$sources = (array)$db->listSources();
 		$table = $db->config['prefix'] . $fixture->table;
 		$exists = in_array($table, $sources);
 
@@ -185,23 +187,20 @@ class FixtureManager {
 			return;
 		}
 		$fixtures = $test->fixtures;
-		if (empty($fixtures) || $test->autoFixtures == false) {
+		if (empty($fixtures) || !$test->autoFixtures) {
 			return;
 		}
 
-		$nested = $test->db->useNestedTransactions;
-		$test->db->useNestedTransactions = false;
-		$test->db->begin();
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
+				$db->begin();
 				$this->_setupTable($fixture, $db, $test->dropTables);
 				$fixture->insert($db);
+				$db->commit();
 			}
 		}
-		$test->db->commit();
-		$test->db->useNestedTransactions = $nested;
 	}
 
 /**

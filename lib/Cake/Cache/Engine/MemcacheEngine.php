@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -18,8 +19,8 @@ use Cake\Error;
 use Cake\Utility\Inflector;
 
 /**
- * Memcache storage engine for cache.  Memcache has some limitations in the amount of
- * control you have over expire times far in the future.  See MemcacheEngine::write() for
+ * Memcache storage engine for cache. Memcache has some limitations in the amount of
+ * control you have over expire times far in the future. See MemcacheEngine::write() for
  * more information.
  *
  * @package       Cake.Cache.Engine
@@ -31,7 +32,7 @@ class MemcacheEngine extends CacheEngine {
  * (prefixed witht the global configuration prefix)
  *
  * @var array
- **/
+ */
 	protected $_compiledGroupNames = array();
 
 /**
@@ -97,17 +98,17 @@ class MemcacheEngine extends CacheEngine {
 	}
 
 /**
- * Parses the server address into the host/port.  Handles both IPv6 and IPv4
+ * Parses the server address into the host/port. Handles both IPv6 and IPv4
  * addresses and Unix sockets
  *
  * @param string $server The server address string.
  * @return array Array containing host, port
  */
 	protected function _parseServerString($server) {
-		if ($server[0] == 'u') {
+		if ($server[0] === 'u') {
 			return array($server, 0);
 		}
-		if (substr($server, 0, 1) == '[') {
+		if (substr($server, 0, 1) === '[') {
 			$position = strpos($server, ']:');
 			if ($position !== false) {
 				$position++;
@@ -125,7 +126,7 @@ class MemcacheEngine extends CacheEngine {
 	}
 
 /**
- * Write data for key into cache.  When using memcache as your cache engine
+ * Write data for key into cache. When using memcache as your cache engine
  * remember that the Memcache pecl extension does not support cache expiry times greater
  * than 30 days in the future. Any duration greater than 30 days will be treated as never expiring.
  *
@@ -158,7 +159,7 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
  * @return New incremented value, false otherwise
- * @throws CacheException when you try to increment with compress = true
+ * @throws Cake\Error\CacheException when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
 		if ($this->settings['compress']) {
@@ -175,7 +176,7 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
  * @return New decremented value, false otherwise
- * @throws CacheException when you try to decrement with compress = true
+ * @throws Cake\Error\CacheException when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
 		if ($this->settings['compress']) {
@@ -250,7 +251,7 @@ class MemcacheEngine extends CacheEngine {
  * the group accordingly.
  *
  * @return array
- **/
+ */
 	public function groups() {
 		if (empty($this->_compiledGroupNames)) {
 			foreach ($this->settings['groups'] as $group) {
@@ -283,7 +284,7 @@ class MemcacheEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @return boolean success
- **/
+ */
 	public function clearGroup($group) {
 		return (bool)$this->_Memcache->increment($this->settings['prefix'] . $group);
 	}

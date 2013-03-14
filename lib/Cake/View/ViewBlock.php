@@ -3,17 +3,19 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v2.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View;
+
 use Cake\Error;
 
 /**
@@ -41,7 +43,7 @@ class ViewBlock {
 	const PREPEND = 'prepend';
 
 /**
- * Block content.  An array of blocks indexed by name.
+ * Block content. An array of blocks indexed by name.
  *
  * @var array
  */
@@ -55,12 +57,21 @@ class ViewBlock {
 	protected $_active = array();
 
 /**
+ * Should the currently captured content be discarded on ViewBlock::end()
+ *
+ * @var boolean
+ * @see ViewBlock::end()
+ * @see ViewBlock::startIfEmpty()
+ */
+	protected $_discardActiveBufferOnEnd = false;
+
+/**
  * Start capturing output for a 'block'
  *
  * Blocks allow you to create slots or blocks of dynamic content in the layout.
  * view files can implement some or all of a layout's slots.
  *
- * You can end capturing blocks using View::end().  Blocks can be output
+ * You can end capturing blocks using View::end(). Blocks can be output
  * using View::get();
  *
  * @param string $name The name of the block to capture for.
@@ -72,12 +83,37 @@ class ViewBlock {
 	}
 
 /**
+ * Start capturing output for a 'block' if it is empty
+ *
+ * Blocks allow you to create slots or blocks of dynamic content in the layout.
+ * view files can implement some or all of a layout's slots.
+ *
+ * You can end capturing blocks using View::end(). Blocks can be output
+ * using View::get();
+ *
+ * @param string $name The name of the block to capture for.
+ * @return void
+ */
+	public function startIfEmpty($name) {
+		if (empty($this->_blocks[$name])) {
+			return $this->start($name);
+		}
+		$this->_discardActiveBufferOnEnd = true;
+		ob_start();
+	}
+
+/**
  * End a capturing block. The compliment to ViewBlock::start()
  *
  * @return void
  * @see ViewBlock::start()
  */
 	public function end() {
+		if ($this->_discardActiveBufferOnEnd) {
+			$this->_discardActiveBufferOnEnd = false;
+			ob_end_clean();
+			return;
+		}
 		if (!empty($this->_active)) {
 			$active = end($this->_active);
 			$content = ob_get_clean();
@@ -123,7 +159,7 @@ class ViewBlock {
 	}
 
 /**
- * Append to an existing or new block.  Appending to a new
+ * Append to an existing or new block. Appending to a new
  * block will create the block.
  *
  * Calling append() without a value will create a new capturing
@@ -141,7 +177,7 @@ class ViewBlock {
 	}
 
 /**
- * Set the content for a block.  This will overwrite any
+ * Set the content for a block. This will overwrite any
  * existing content.
  *
  * @param string $name Name of the block
@@ -160,6 +196,7 @@ class ViewBlock {
  * Get the content for a block.
  *
  * @param string $name Name of the block
+ * @param string $default Default string
  * @return string The block content or $default if the block does not exist.
  */
 	public function get($name, $default = '') {

@@ -15,7 +15,6 @@
 namespace App\Config;
 
 use Cake\Core\Configure;
-use Cake\Core\ClassLoader;
 
 /**
  * CakePHP Debug Level:
@@ -67,7 +66,7 @@ use Cake\Core\ClassLoader;
 	]);
 
 /**
- * Uncomment this line and correct your server timezone to fix 
+ * Uncomment this line and correct your server timezone to fix
  * any date & time related errors.
  */
 	//date_default_timezone_set('UTC');
@@ -77,12 +76,13 @@ use Cake\Core\ClassLoader;
  * The level of CakePHP security.
  *
  * - salt - A random string used in security hashing methods.
- * - cipherSeed - A random numeric string (digits only) used to seed 
+ * - cipherSeed - A random numeric string (digits only) used to seed
  *   the xor cipher functions in Security.
  */
-	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
-
-	Configure::write('Security.cipherSeed', '76859309657453542496749683645');
+	Configure::write('Security', [
+		'salt' => 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi',
+		'cipherSeed' => '76859309657453542496749683645',
+	]);
 
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).
@@ -109,3 +109,25 @@ use Cake\Core\ClassLoader;
 	$loader = new ClassLoader($namespace, dirname(APP));
 	$loader->register();
 	unset($loader, $namespace);
+
+/**
+ * Define the FULL_BASE_URL used for link generation.
+ * In most cases the code below will generate the correct hostname.
+ * However, you can manually define the hostname to resolve any issues.
+ */
+$s = null;
+if (env('HTTPS')) {
+	$s = 's';
+}
+
+$httpHost = env('HTTP_HOST');
+if (isset($httpHost)) {
+	define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost);
+}
+unset($httpHost, $s);
+
+/**
+ * Configure the mbstring extension to use the correct encoding.
+ */
+$encoding = Configure::read('App.encoding');
+mb_internal_encoding($encoding);

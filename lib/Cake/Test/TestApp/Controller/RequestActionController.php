@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       Cake.Test.TestApp.Controller
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,35 +20,36 @@ namespace TestApp\Controller;
 /**
  * RequestActionController class
  *
+ * @package Cake.Test.TestApp.Controller
  */
 class RequestActionController extends AppController {
 
 /**
-* uses property
-*
-* @var array
-* @access public
-*/
-	public $uses = array('RequestActionPost');
+ * uses property
+ *
+ * @var array
+ * @access public
+ */
+	public $uses = ['Post'];
 
 /**
-* test_request_action method
-*
-* @access public
-* @return void
-*/
+ * test_request_action method
+ *
+ * @access public
+ * @return void
+ */
 	public function test_request_action() {
 		return 'This is a test';
 	}
 
 /**
-* another_ra_test method
-*
-* @param mixed $id
-* @param mixed $other
-* @access public
-* @return void
-*/
+ * another_ra_test method
+ *
+ * @param mixed $id
+ * @param mixed $other
+ * @access public
+ * @return void
+ */
 	public function another_ra_test($id, $other) {
 		return $id + $other;
 	}

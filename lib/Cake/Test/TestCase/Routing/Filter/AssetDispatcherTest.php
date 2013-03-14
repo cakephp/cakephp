@@ -12,15 +12,15 @@
  * @since         CakePHP(tm) v 2.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\Routing\Filter;
-use Cake\TestSuite\TestCase;
-use Cake\Routing\Filter\AssetDispatcher;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\Filter\AssetDispatcher;
+use Cake\TestSuite\TestCase;
 
 class AssetDispatcherTest extends TestCase {
 
@@ -34,54 +34,6 @@ class AssetDispatcherTest extends TestCase {
 	}
 
 /**
- * test that asset filters work for theme and plugin assets
- *
- * @return void
- */
-	public function testAssetFilterForThemeAndPlugins() {
-		$filter = new AssetDispatcher();
-		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
-		Configure::write('Asset.filter', array(
-			'js' => '',
-			'css' => ''
-		));
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		), APP::RESET);
-
-		$request = new Request('theme/test_theme/ccss/cake.generic.css');
-		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
-		$this->assertSame($response, $filter->beforeDispatch($event));
-		$this->assertTrue($event->isStopped());
-
-		$request = new Request('theme/test_theme/cjs/debug_kit.js');
-		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
-		$this->assertSame($response, $filter->beforeDispatch($event));
-		$this->assertTrue($event->isStopped());
-
-		$request = new Request('test_plugin/ccss/cake.generic.css');
-		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
-		$this->assertSame($response, $filter->beforeDispatch($event));
-		$this->assertTrue($event->isStopped());
-
-		$request = new Request('test_plugin/cjs/debug_kit.js');
-		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
-		$this->assertSame($response, $filter->beforeDispatch($event));
-		$this->assertTrue($event->isStopped());
-
-		$request = new Request('css/ccss/debug_kit.css');
-		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
-		$this->assertNull($filter->beforeDispatch($event));
-		$this->assertFalse($event->isStopped());
-
-		$request = new Request('js/cjs/debug_kit.js');
-		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
-		$this->assertNull($filter->beforeDispatch($event));
-		$this->assertFalse($event->isStopped());
-	}
-
-/**
  * Tests that $response->checkNotModified() is called and bypasses
  * file dispatching
  *
@@ -89,10 +41,6 @@ class AssetDispatcherTest extends TestCase {
  */
 	public function testNotModified() {
 		$filter = new AssetDispatcher();
-		Configure::write('Asset.filter', array(
-			'js' => '',
-			'css' => ''
-		));
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
 			'View' => array(CAKE . 'Test/TestApp/View/')

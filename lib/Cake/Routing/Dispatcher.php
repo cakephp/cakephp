@@ -8,12 +8,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Routing
  * @since         CakePHP(tm) v 0.2.9
@@ -35,8 +36,8 @@ use Cake\Utility\Inflector;
 use Cake\View\View;
 
 /**
- * Dispatcher converts Requests into controller actions.  It uses the dispatched Request
- * to locate and load the correct controller.  If found, the requested action is called on
+ * Dispatcher converts Requests into controller actions. It uses the dispatched Request
+ * to locate and load the correct controller. If found, the requested action is called on
  * the controller.
  *
  * @package       Cake.Routing
@@ -91,7 +92,7 @@ class Dispatcher implements EventListener {
  *
  * @param Cake\Event\EventManager $manager
  * @return void
- * @throws MissingDispatcherFilterException
+ * @throws Cake\Error\MissingDispatcherFilterException
  */
 	protected function _attachFilters($manager) {
 		$filters = Configure::read('Dispatcher.filters');
@@ -124,9 +125,9 @@ class Dispatcher implements EventListener {
  * Dispatches and invokes given Request, handing over control to the involved controller. If the controller is set
  * to autoRender, via Controller::$autoRender, then Dispatcher will render the view.
  *
- * Actions in CakePHP can be any public method on a controller, that is not declared in Controller.  If you
+ * Actions in CakePHP can be any public method on a controller, that is not declared in Controller. If you
  * want controller methods to be public and in-accessible by URL, then prefix them with a `_`.
- * For example `public function _loadPosts() { }` would not be accessible via URL.  Private and protected methods
+ * For example `public function _loadPosts() { }` would not be accessible via URL. Private and protected methods
  * are also not accessible via URL.
  *
  * If no controller of given name can be found, invoke() will throw an exception.
@@ -136,7 +137,7 @@ class Dispatcher implements EventListener {
  * @param Cake\Network\Response $response Response object to put the results of the dispatch into.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return string|void if `$request['return']` is set then it returns response body, null otherwise
- * @throws MissingControllerException When the controller is missing.
+ * @throws Cake\Error\MissingControllerException When the controller is missing.
  */
 	public function dispatch(Request $request, Response $response, $additionalParams = array()) {
 		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response', 'additionalParams'));
@@ -194,7 +195,9 @@ class Dispatcher implements EventListener {
 
 		if ($render && $controller->autoRender) {
 			$response = $controller->render();
-		} elseif ($response->body() === null) {
+		} elseif (!($result instanceof CakeResponse) &&
+			$response->body() === null
+		) {
 			$response->body($result);
 		}
 		$controller->shutdownProcess();

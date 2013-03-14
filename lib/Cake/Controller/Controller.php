@@ -1,19 +1,19 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Controller;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
@@ -24,9 +24,12 @@ use Cake\Event\EventListener;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
+use Cake\Utility\MergeVariablesTrait;
+use Cake\Utility\ViewVarsTrait;
 use Cake\View\View;
 
 /**
@@ -34,20 +37,20 @@ use Cake\View\View;
  * Provides basic functionality, such as rendering views inside layouts,
  * automatic model availability, redirection, callbacks, and more.
  *
- * Controllers should provide a number of 'action' methods.  These are public methods on the controller
- * that are not prefixed with a '_' and not part of Controller.  Each action serves as an endpoint for
- * performing a specific action on a resource or collection of resources.  For example adding or editing a new
+ * Controllers should provide a number of 'action' methods. These are public methods on the controller
+ * that are not prefixed with a '_' and not part of Controller. Each action serves as an endpoint for
+ * performing a specific action on a resource or collection of resources. For example adding or editing a new
  * object, or listing a set of objects.
  *
- * You can access request parameters, using `$this->request`.  The request object contains all the POST, GET and FILES
+ * You can access request parameters, using `$this->request`. The request object contains all the POST, GET and FILES
  * that were part of the request.
  *
- * After performing the required actions, controllers are responsible for creating a response.  This usually
- * takes the form of a generated View, or possibly a redirection to another controller action.  In either case
+ * After performing the required actions, controllers are responsible for creating a response. This usually
+ * takes the form of a generated View, or possibly a redirection to another controller action. In either case
  * `$this->response` allows you to manipulate all aspects of the response.
  *
  * Controllers are created by Dispatcher based on request parameters and routing. By default controllers and actions
- * use conventional names.  For example `/posts/index` maps to `PostsController::index()`.  You can re-map urls
+ * use conventional names. For example `/posts/index` maps to `PostsController::index()`. You can re-map urls
  * using Router::connect().
  *
  * @package       Cake.Controller
@@ -62,6 +65,10 @@ use Cake\View\View;
  * @link          http://book.cakephp.org/2.0/en/controllers.html
  */
 class Controller extends Object implements EventListener {
+
+	use MergeVariablesTrait;
+	use RequestActionTrait;
+	use ViewVarsTrait;
 
 /**
  * The name of this controller. Controller names are plural, named after the model they manipulate.
@@ -140,13 +147,6 @@ class Controller extends Object implements EventListener {
  * @var string
  */
 	public $layoutPath = null;
-
-/**
- * Contains variables to be handed to the view.
- *
- * @var array
- */
-	public $viewVars = array();
 
 /**
  * The name of the view file to render. The name specified
@@ -299,15 +299,6 @@ class Controller extends Object implements EventListener {
 	public $validationErrors = null;
 
 /**
- * The class name of the parent class you wish to merge with.
- * Typically this is AppController, but you may wish to merge vars with a different
- * parent class.
- *
- * @var string
- */
-	protected $_mergeParent = null;
-
-/**
  * Instance of the Cake\Event\EventManager this controller is using
  * to dispatch inner events.
  *
@@ -328,15 +319,12 @@ class Controller extends Object implements EventListener {
 			$this->name = substr($this->name, 0, -10);
 		}
 
-		if ($this->viewPath == null) {
+		if (!$this->viewPath) {
 			$viewPath = $this->name;
 			if (isset($request->params['prefix'])) {
 				$viewPath = Inflector::camelize($request->params['prefix']) . DS . $viewPath;
 			}
 			$this->viewPath = $viewPath;
-		}
-		if ($this->_mergeParent === null) {
-			$this->_mergeParent = Configure::read('App.namespace') . '\Controller\Controller';
 		}
 
 		$this->modelClass = Inflector::singularize($this->name);
@@ -432,7 +420,7 @@ class Controller extends Object implements EventListener {
 
 /**
  * Sets the request objects and configures a number of controller properties
- * based on the contents of the request.  The properties that get set are
+ * based on the contents of the request. The properties that get set are
  *
  * - $this->request - To the $request parameter
  * - $this->plugin - To the $request->params['plugin']
@@ -452,7 +440,7 @@ class Controller extends Object implements EventListener {
 			$this->passedArgs = $request->params['pass'];
 		}
 
-		if (array_key_exists('return', $request->params) && $request->params['return'] == 1) {
+		if (!empty($request->params['return']) && $request->params['return'] == 1) {
 			$this->autoRender = false;
 		}
 		if (!empty($request->params['bare'])) {
@@ -461,13 +449,13 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Dispatches the controller action.  Checks that the action
+ * Dispatches the controller action. Checks that the action
  * exists and isn't private.
  *
  * @param Cake\Network\Request $request
  * @return mixed The resulting response.
- * @throws PrivateActionException When actions are not public or prefixed by _
- * @throws MissingActionException When actions are not defined and scaffolding is
+ * @throws Cake\Error\PrivateActionException When actions are not public or prefixed by _
+ * @throws Cake\Error\MissingActionException When actions are not defined and scaffolding is
  *    not enabled.
  */
 	public function invokeAction(Request $request) {
@@ -509,7 +497,7 @@ class Controller extends Object implements EventListener {
 		$privateAction = (
 			$method->name[0] === '_' ||
 			!$method->isPublic() ||
-			!in_array($method->name,  $this->methods)
+			!in_array($method->name, $this->methods)
 		);
 		$prefixes = Router::prefixes();
 
@@ -534,76 +522,37 @@ class Controller extends Object implements EventListener {
 
 /**
  * Merge components, helpers, and uses vars from
- * Controller::$_mergeParent and PluginAppController.
+ * parent classes.
  *
  * @return void
  */
 	protected function _mergeControllerVars() {
-		$pluginController = $pluginDot = null;
-		$mergeParent = is_subclass_of($this, $this->_mergeParent);
-		$pluginVars = array();
-		$appVars = array();
-
+		$pluginDot = null;
 		if (!empty($this->plugin)) {
-			$pluginController = Plugin::getNamespace($this->plugin) . '\Controller\Controller';
-			if (!is_subclass_of($this, $pluginController)) {
-				$pluginController = null;
-			}
 			$pluginDot = $this->plugin . '.';
 		}
-
-		if ($pluginController) {
-			$merge = array('components', 'helpers');
-			$this->_mergeVars($merge, $pluginController);
-		}
-
-		if ($mergeParent || !empty($pluginController)) {
-			$appVars = get_class_vars($this->_mergeParent);
-			$merge = array('components', 'helpers');
-			$this->_mergeVars($merge, $this->_mergeParent, true);
-		}
-
 		if ($this->uses === null) {
 			$this->uses = false;
 		}
-		if ($this->uses === true) {
-			$this->uses = array($pluginDot . $this->modelClass);
-		}
-		if (isset($appVars['uses']) && $appVars['uses'] === $this->uses) {
-			array_unshift($this->uses, $pluginDot . $this->modelClass);
-		}
-		if ($pluginController) {
-			$pluginVars = get_class_vars($pluginController);
-		}
-		if ($this->uses !== false) {
-			$this->_mergeUses($pluginVars);
-			$this->_mergeUses($appVars);
-		} else {
-			$this->uses = array();
+		if ($this->uses === false) {
+			$this->uses = [];
 			$this->modelClass = '';
 		}
-	}
-
-/**
- * Helper method for merging the $uses property together.
- *
- * Merges the elements not already in $this->uses into
- * $this->uses.
- *
- * @param array $merge The data to merge in.
- * @return void
- */
-	protected function _mergeUses($merge) {
-		if (!isset($merge['uses'])) {
-			return;
+		if ($this->uses === true) {
+			$this->uses = [$pluginDot . $this->modelClass];
 		}
-		if ($merge['uses'] === true) {
-			return;
-		}
-		$this->uses = array_merge(
-			$this->uses,
-			array_diff($merge['uses'], $this->uses)
+		$this->_mergeVars(
+			['components', 'helpers', 'uses'],
+			[
+				'associative' => ['components', 'helpers'],
+				'reverse' => ['uses']
+			]
 		);
+		$usesProperty = new \ReflectionProperty($this, 'uses');
+		if ($this->uses && $usesProperty->getDeclaringClass()->getName() !== get_class($this)) {
+			array_unshift($this->uses, $pluginDot . $this->modelClass);
+		}
+		$this->uses = array_unique($this->uses);
 	}
 
 /**
@@ -716,7 +665,7 @@ class Controller extends Object implements EventListener {
  * @param string $modelClass Name of model class to load
  * @param integer|string $id Initial ID the instanced model class should have
  * @return mixed true when single model found and instance created, error returned if model not found.
- * @throws MissingModelException if the model class cannot be found.
+ * @throws Cake\Error\MissingModelException if the model class cannot be found.
  */
 	public function loadModel($modelClass = null, $id = null) {
 		if ($modelClass === null) {
@@ -747,7 +696,7 @@ class Controller extends Object implements EventListener {
  *     or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
- * @return mixed void if $exit = false. Terminates script if $exit = true
+ * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::redirect
  */
 	public function redirect($url, $status = null, $exit = true) {
@@ -757,7 +706,6 @@ class Controller extends Object implements EventListener {
 			extract($status, EXTR_OVERWRITE);
 		}
 		$event = new Event('Controller.beforeRedirect', $this, array($url, $status, $exit));
-		//TODO: Remove the following line when the events are fully migrated to the Cake\Event\EventManager
 		list($event->break, $event->breakOn, $event->collectReturn) = array(true, false, true);
 		$this->getEventManager()->dispatch($event);
 
@@ -798,7 +746,7 @@ class Controller extends Object implements EventListener {
  * @return array Array with keys url, status and exit
  */
 	protected function _parseBeforeRedirect($response, $url, $status, $exit) {
-		if (is_array($response) && isset($response[0])) {
+		if (is_array($response) && array_key_exists(0, $response)) {
 			foreach ($response as $resp) {
 				if (is_array($resp) && isset($resp['url'])) {
 					extract($resp, EXTR_OVERWRITE);
@@ -824,28 +772,6 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Saves a variable for use inside a view template.
- *
- * @param string|array $one A string or an array of data.
- * @param string|array $two Value in case $one is a string (which then works as the key).
- *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
- * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#interacting-with-views
- */
-	public function set($one, $two = null) {
-		if (is_array($one)) {
-			if (is_array($two)) {
-				$data = array_combine($one, $two);
-			} else {
-				$data = $one;
-			}
-		} else {
-			$data = array($one => $two);
-		}
-		$this->viewVars = $data + $this->viewVars;
-	}
-
-/**
  * Internally redirects one action to another. Does not perform another HTTP request unlike Controller::redirect()
  *
  * Examples:
@@ -855,9 +781,8 @@ class Controller extends Object implements EventListener {
  * setAction('action_with_parameters', $parameter1);
  * }}}
  *
- * @param string $action The new action to be 'redirected' to
- * @param mixed  Any other parameters passed to this method will be passed as
- *    parameters to the new action.
+ * @param string $action The new action to be 'redirected' to.
+ *   Any other parameters passed to this method will be passed as parameters to the new action.
  * @return mixed Returns the return value of the called action
  */
 	public function setAction($action) {
@@ -926,12 +851,15 @@ class Controller extends Object implements EventListener {
 			return $this->response;
 		}
 
-		if ($this->viewClass === 'View') {
-			$viewClass = App::classname('View', 'View');
-		} else {
-			$viewClass = App::classname($this->viewClass, 'View', 'View');
+		if (!empty($this->uses) && is_array($this->uses)) {
+			foreach ($this->uses as $model) {
+				list(, $name) = pluginSplit($model);
+				$className = App::classname($model, 'Model');
+				$this->request->params['models'][$name] = compact('className');
+			}
 		}
-		$View = new $viewClass($this);
+
+		$this->View = $this->_getViewObject();
 
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {
@@ -939,13 +867,12 @@ class Controller extends Object implements EventListener {
 			if ($currentObject instanceof \Cake\Model\Model) {
 				$className = get_class($currentObject);
 				$this->request->params['models'][$currentObject->alias] = compact('className');
-				$View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
+				$this->View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
 			}
 		}
 
 		$this->autoRender = false;
-		$this->View = $View;
-		$this->response->body($View->render($view, $layout));
+		$this->response->body($this->View->render($view, $layout));
 		return $this->response;
 	}
 
@@ -958,14 +885,15 @@ class Controller extends Object implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::referer
  */
 	public function referer($default = null, $local = false) {
-		if ($this->request) {
-			$referer = $this->request->referer($local);
-			if ($referer == '/' && $default != null) {
-				return Router::url($default, true);
-			}
-			return $referer;
+		if (!$this->request) {
+			return '/';
 		}
-		return '/';
+
+		$referer = $this->request->referer($local);
+		if ($referer === '/' && $default) {
+			return Router::url($default, true);
+		}
+		return $referer;
 	}
 
 /**
@@ -988,7 +916,7 @@ class Controller extends Object implements EventListener {
  * @param string|array $url Relative string or array-based URL to redirect to after the time expires
  * @param integer $pause Time to show the message
  * @param string $layout Layout you want to use, defaults to 'flash'
- * @return void Renders flash layout
+ * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::flash
  */
 	public function flash($message, $url, $pause = 1, $layout = 'flash') {
@@ -1015,7 +943,7 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Called before the controller action.  You can use this method to configure and customize components
+ * Called before the controller action. You can use this method to configure and customize components
  * or perform logic that needs to happen before each controller action.
  *
  * @return void
@@ -1155,6 +1083,20 @@ class Controller extends Object implements EventListener {
  */
 	protected function _scaffoldError($method) {
 		return $this->scaffoldError($method);
+	}
+
+/**
+ * Constructs the view class instance based on the controller property
+ *
+ * @return View
+ */
+	protected function _getViewObject() {
+		$viewClass = $this->viewClass;
+		if ($this->viewClass !== 'View') {
+			list($plugin, $viewClass) = pluginSplit($viewClass, true);
+			$viewClass = App::classname($viewClass, 'View', 'View');
+		}
+		return new $viewClass($this);
 	}
 
 }

@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5435
@@ -372,7 +373,7 @@ class RequestHandlerComponentTest extends TestCase {
 
 		$this->Controller->viewPath = 'request_handler_test\\rss';
 		$this->RequestHandler->renderAs($this->Controller, 'js');
-		$this->assertEquals('request_handler_test/js', $this->Controller->viewPath);
+		$this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewPath);
 	}
 
 /**
@@ -455,11 +456,11 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testRenderAsCalledTwice() {
 		$this->RequestHandler->renderAs($this->Controller, 'print');
-		$this->assertEquals('RequestHandlerTest/print', $this->Controller->viewPath);
+		$this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewPath);
 		$this->assertEquals('print', $this->Controller->layoutPath);
 
 		$this->RequestHandler->renderAs($this->Controller, 'js');
-		$this->assertEquals('RequestHandlerTest/js', $this->Controller->viewPath);
+		$this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewPath);
 		$this->assertEquals('js', $this->Controller->layoutPath);
 		$this->assertTrue(in_array('Js', $this->Controller->helpers));
 	}
@@ -814,7 +815,7 @@ class RequestHandlerComponentTest extends TestCase {
 
 		ob_start();
 		$RequestHandler->beforeRedirect($controller, 'request_handler_test/param_method/first/second', 403);
-		$result = ob_get_clean();
+		ob_get_clean();
 	}
 
 /**
@@ -829,7 +830,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagStar() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = '*';
 		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
@@ -843,7 +844,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagExact() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
@@ -857,7 +858,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagAndTime() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
@@ -873,7 +874,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedNoInfo() {
 		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
 		$RequestHandler->response = $this->getMock('Cake\Network\Response', array('notModified'));

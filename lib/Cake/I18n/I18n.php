@@ -5,27 +5,28 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.I18n
  * @since         CakePHP(tm) v 1.2.0.4116
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\I18n;
+
 use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Model\Datasource\Session;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\String;
-
-mb_internal_encoding(Configure::read('App.encoding'));
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -93,6 +94,11 @@ class I18n {
 		'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
 	);
 
+/**
+ * Escape string
+ *
+ * @var string
+ */
 	protected $_escape = null;
 
 /**
@@ -123,7 +129,7 @@ class I18n {
  *
  * @param string $singular String to translate
  * @param string $plural Plural string (if any)
- * @param string $domain Domain The domain of the translation.  Domains are often used by plugin translations
+ * @param string $domain Domain The domain of the translation. Domains are often used by plugin translations
  * @param string $category Category The integer value of the category to use.
  * @param integer $count Count Count is used with $plural to choose the correct plural form.
  * @param string $language Language to translate string to.
@@ -145,9 +151,10 @@ class I18n {
 		}
 
 		if (empty($language)) {
-			if (!empty($_SESSION['Config']['language'])) {
-				$language = $_SESSION['Config']['language'];
-			} else {
+			if (Session::started()) {
+				$language = Session::read('Config.language');
+			}
+			if (empty($language)) {
 				$language = Configure::read('Config.language');
 			}
 		}
@@ -172,7 +179,7 @@ class I18n {
 			Cache::write($_this->domain, $_this->_domains[$domain][$_this->_lang], '_cake_core_');
 		}
 
-		if ($_this->category == 'LC_TIME') {
+		if ($_this->category === 'LC_TIME') {
 			return $_this->_translateTime($singular, $domain);
 		}
 
@@ -221,7 +228,7 @@ class I18n {
 	}
 
 /**
- * Clears the domains internal data array.  Useful for testing i18n.
+ * Clears the domains internal data array. Useful for testing i18n.
  *
  * @return void
  */
@@ -408,7 +415,7 @@ class I18n {
 			$header = unpack("L1magic/L1version/L1count/L1o_msg/L1o_trn", $header);
 			extract($header);
 
-			if ((dechex($magic) == '950412de' || dechex($magic) == 'ffffffff950412de') && $version == 0) {
+			if ((dechex($magic) === '950412de' || dechex($magic) === 'ffffffff950412de') && !$version) {
 				for ($n = 0; $n < $count; $n++) {
 					$r = unpack("L1len/L1offs", substr($data, $o_msg + $n * 8, 8));
 					$msgid = substr($data, $r["offs"], $r["len"]);
@@ -455,7 +462,7 @@ class I18n {
 
 		do {
 			$line = trim(fgets($file));
-			if ($line == "" || $line[0] == "#") {
+			if ($line === "" || $line[0] === "#") {
 				continue;
 			}
 			if (preg_match("/msgid[[:space:]]+\"(.+)\"$/i", $line, $regs)) {

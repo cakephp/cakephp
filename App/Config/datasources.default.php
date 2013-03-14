@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config
  * @since         CakePHP(tm) v3.0.0
@@ -17,6 +18,7 @@ namespace App\Config;
 use Cake\Core\Configure;
 
 /**
+ *
  * Database configuration class.
  * You can specify multiple configurations for production, development and testing.
  *
@@ -28,7 +30,7 @@ use Cake\Core\Configure;
  *  Database/Sqlserver  - Microsoft SQL Server 2005 and higher
  *
  * You can add custom database datasources (or override existing datasources) by adding the
- * appropriate file to app/Model/Datasource/Database.  Datasources should be named 'MyDatasource.php',
+ * appropriate file to app/Model/Datasource/Database. Datasources should be named 'MyDatasource.php',
  *
  * persistent => true / false
  * Determines whether or not the database should use a persistent connection
@@ -37,11 +39,13 @@ use Cake\Core\Configure;
  * the host you connect to the database. To add a socket or port number, use 'port' => #
  *
  * prefix =>
- * Uses the given prefix for all the tables in this database.  This setting can be overridden
+ * Uses the given prefix for all the tables in this database. This setting can be overridden
  * on a per-table basis with the Model::$tablePrefix property.
  *
  * schema =>
- * For Postgres specifies which schema you would like to use the tables in. Postgres defaults to 'public'.
+ * For Postgres/Sqlserver specifies which schema you would like to use the tables in.
+ * Postgres defaults to 'public'. For Sqlserver, it defaults to empty and use
+ * the connected user's default schema (typically 'dbo').
  *
  * encoding =>
  * For MySQL, Postgres specifies the character encoding to use when connecting to the

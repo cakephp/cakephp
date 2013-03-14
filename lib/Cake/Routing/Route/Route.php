@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -19,7 +20,7 @@ use Cake\Routing\Router;
  * A single Route used by the Router to connect requests to
  * parameter maps.
  *
- * Not normally created as a standalone.  Use Router::connect() to create
+ * Not normally created as a standalone. Use Router::connect() to create
  * Routes for your application.
  *
  * @package Cake.Routing.Route
@@ -78,7 +79,7 @@ class Route {
 	protected $_name = null;
 
 /**
- * HTTP header shortcut map.  Used for evaluating header-based route expressions.
+ * HTTP header shortcut map. Used for evaluating header-based route expressions.
  *
  * @var array
  */
@@ -141,7 +142,7 @@ class Route {
 	}
 
 /**
- * Compiles the route's regular expression.  Modifies defaults property so all necessary 
+ * Compiles the route's regular expression. Modifies defaults property so all necessary
  * keys are set and populates $this->names with the named routing elements.
  *
  * @return array Returns a string regular expression of the compiled route.
@@ -155,7 +156,7 @@ class Route {
 	}
 
 /**
- * Builds a route regular expression.  Uses the template, defaults and options
+ * Builds a route regular expression. Uses the template, defaults and options
  * properties to compile a regular expression that can be used to parse request strings.
  *
  * @return void
@@ -254,7 +255,7 @@ class Route {
 		}
 		list($url, $ext) = $this->_parseExtension($url);
 
-		if (!preg_match($this->_compiledRoute, $url, $route)) {
+		if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
 			return false;
 		}
 		foreach ($this->defaults as $key => $val) {
@@ -379,8 +380,8 @@ class Route {
 	}
 
 /**
- * Attempt to match a url array.  If the url matches the route parameters and settings, then
- * return a generated string url.  If the url doesn't match the route parameters, false will be returned.
+ * Attempt to match a url array. If the url matches the route parameters and settings, then
+ * return a generated string url. If the url doesn't match the route parameters, false will be returned.
  * This method handles the reverse routing or conversion of url arrays into string urls.
  *
  * @param array $url An array of parameters to check matching with.
@@ -521,7 +522,7 @@ class Route {
 			$out = $params['_base'] . $out;
 			unset($params['_base']);
 		}
-	
+
 		$out = str_replace('//', '/', $out);
 
 		if (

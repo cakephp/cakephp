@@ -1,17 +1,19 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 2.1.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View;
+
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Network\Request;
@@ -64,6 +66,36 @@ class JsonViewTest extends TestCase {
 	}
 
 /**
+ * testJsonpResponse method
+ *
+ * @return void
+ */
+	public function testJsonpResponse() {
+		$Request = new Request();
+		$Response = new Response();
+		$Controller = new Controller($Request, $Response);
+		$data = array('user' => 'fake', 'list' => array('item1', 'item2'));
+		$Controller->set(array('data' => $data, '_serialize' => 'data', '_jsonp' => true));
+		$View = new JsonView($Controller);
+		$output = $View->render(false);
+
+		$this->assertSame(json_encode($data), $output);
+		$this->assertSame('application/json', $Response->type());
+
+		$View->request->query = array('callback' => 'jfunc');
+		$output = $View->render(false);
+		$expected = 'jfunc(' . json_encode($data) . ')';
+		$this->assertSame($expected, $output);
+		$this->assertSame('application/javascript', $Response->type());
+
+		$View->request->query = array('jsonCallback' => 'jfunc');
+		$View->viewVars['_jsonp'] = 'jsonCallback';
+		$output = $View->render(false);
+		$expected = 'jfunc(' . json_encode($data) . ')';
+		$this->assertSame($expected, $output);
+	}
+
+/**
  * testRenderWithView method
  *
  * @return void
@@ -94,6 +126,21 @@ class JsonViewTest extends TestCase {
 		$expected = json_encode(['user' => 'fake', 'list' => ['item1', 'item2'], 'paging' => []]);
 		$this->assertSame($expected, $output);
 		$this->assertSame('application/json', $Response->type());
+
+		$View->request->query = array('jsonCallback' => 'jfunc');
+		$Controller->set('_jsonp', 'jsonCallback');
+		$View = new JsonView($Controller);
+		$View->helpers = array('Paginator');
+		$output = $View->render('index');
+
+		$expected = json_encode([
+			'user' => 'fake',
+			'list' => ['item1', 'item2'],
+			'paging' => ['?' => ['jsonCallback' => 'jfunc']]
+		]);
+		$expected = 'jfunc(' . $expected . ')';
+		$this->assertSame($expected, $output);
+		$this->assertSame('application/javascript', $Response->type());
 	}
 
 }

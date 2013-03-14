@@ -1,18 +1,20 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Cache
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Cache;
+
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
@@ -21,7 +23,7 @@ use Cake\Utility\Inflector;
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you
  * to use several different Cache engines, without coupling your application to a specific
- * implementation.  It also allows you to change out cache storage or configuration without effecting
+ * implementation. It also allows you to change out cache storage or configuration without effecting
  * the rest of your application.
  *
  * ### Configuring Cache engines
@@ -36,7 +38,7 @@ use Cake\Utility\Inflector;
  * ));
  * }}}
  *
- * This would configure an APC cache engine to the 'shared' alias.  You could then read and write
+ * This would configure an APC cache engine to the 'shared' alias. You could then read and write
  * to that cache alias by using it for the `$config` parameter in the various Cache methods.
  *
  * In general all Cache operations are supported by all cache engines.
@@ -62,43 +64,21 @@ use Cake\Utility\Inflector;
  *    handy for deleting a complete group from cache.
  * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
  *    with either another cache config or another application.
- * - `probability` Probability of hitting a cache gc cleanup.  Setting to 0 will disable
+ * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
  *    cache::gc from ever being called automatically.
  * - `servers' Used by memcache. Give the address of the memcached servers to use.
- * - `compress` Used by memcache.  Enables memcache's compressed format.
- * - `serialize` Used by FileCache.  Should cache objects be serialized first.
- * - `path` Used by FileCache.  Path to where cachefiles should be saved.
- * - `lock` Used by FileCache.  Should files be locked before writing to them?
- * - `user` Used by Xcache.  Username for XCache
- * - `password` Used by Xcache.  Password for XCache
+ * - `compress` Used by memcache. Enables memcache's compressed format.
+ * - `serialize` Used by FileCache. Should cache objects be serialized first.
+ * - `path` Used by FileCache. Path to where cachefiles should be saved.
+ * - `lock` Used by FileCache. Should files be locked before writing to them?
+ * - `user` Used by Xcache. Username for XCache
+ * - `password` Used by Xcache/Redis. Password for XCache/Redis
  *
- * ### Removing existing engines
- *
- * To remove an existing cache engine you can use:
- *
- * {{{
- * Cache::drop($configName);
- * }}}
- *
- * When an engine is dropped the connected engine will be deleted.
- *
- * ### Reconfiguring an engine
- *
- * If you need to change a connected engine at runtime, you can do one of two things.
- * Cache::set() will allow you to temporarily reconfigure an engine for one write operation.
- * If you need to permanetly alter a cache engine's configuration at runtime, you should drop it first 
- * and then update the configuration in Configure:
- *
- * {{{
- * Cache::drop('fast_cache');
- * Configure::write('Cache.fast_cache', [...]);
- * }}}
- *
- * Reconnecting an engine will reset any data stored in the engine instance as it
- * will be recreated.
- *
- * @package       Cake.Cache
- * @see app/Config/cache.php for configuration settings
+ * @see app/Config/core.php for configuration settings
+ * @param string $name Name of the configuration
+ * @param array $settings Optional associative array of settings passed to the engine
+ * @return array array(engine, settings) on success, false on failure
+ * @throws Cake\Error\Exception
  */
 class Cache {
 
@@ -151,20 +131,24 @@ class Cache {
 		}
 		$cacheClass = App::classname($config['engine'], 'Cache/Engine', 'Engine');
 		if (!$cacheClass) {
-			return false;
+			throw new Error\Exception(
+				__d('cake_dev', 'Cache engine %s is not available.', $name)
+			);
 		}
 		if (!is_subclass_of($cacheClass, 'Cake\Cache\CacheEngine')) {
 			throw new Error\Exception(__d('cake_dev', 'Cache engines must use Cake\Cache\CacheEngine as a base class.'));
 		}
 		$engine = new $cacheClass();
-		if ($engine->init($config)) {
-			if ($engine->settings['probability'] && time() % $engine->settings['probability'] === 0) {
-				$engine->gc();
-			}
-			static::$_engines[$name] = $engine;
-			return true;
+		if (!$engine->init($config)) {
+			throw new Error\Exception(
+				__d('cake_dev', 'Cache engine %s is not properly configured.', $name)
+			);
 		}
-		return false;
+		if ($engine->settings['probability'] && time() % $engine->settings['probability'] === 0) {
+			$engine->gc();
+		}
+		static::$_engines[$name] = $engine;
+		return true;
 	}
 
 /**
@@ -181,7 +165,7 @@ class Cache {
 /**
  * Drops a constructed cache engine.
  *
- * The engine's configuration will remain in Configure.  If you wish to re-configure a 
+ * The engine's configuration will remain in Configure. If you wish to re-configure a
  * cache engine you should drop it, change configuration and then re-use it.
  *
  * @param string $config A currently configured cache config you wish to remove.
@@ -232,7 +216,7 @@ class Cache {
 	}
 
 /**
- * Temporarily change the settings on a cache config.  The settings will persist for the next write
+ * Temporarily change the settings on a cache config. The settings will persist for the next write
  * operation (write, decrement, increment, clear). Any reads that are done before the write, will
  * use the modified settings. If `$settings` is empty, the settings will be reset to the
  * original configuration.

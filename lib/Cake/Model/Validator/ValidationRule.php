@@ -7,18 +7,18 @@
  * PHP versions 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Validator
  * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Model\Validator;
 
 /**
@@ -38,11 +38,11 @@ class ValidationRule {
 	protected $_valid = true;
 
 /**
- * Holds whether the record being validated exists in datasource or not
+ * Holds whether the record being validated is being created or updated
  *
  * @var boolean
  */
-	protected $_recordExists = false;
+	protected $_isUpdate = false;
 
 /**
  * Validation method
@@ -71,20 +71,6 @@ class ValidationRule {
  * @var mixed
  */
 	public $rule = 'blank';
-
-/**
- * The 'required' key
- *
- * @var mixed
- */
-	public $required = null;
-
-/**
- * The 'allowEmpty' key
- *
- * @var boolean
- */
-	public $allowEmpty = null;
 
 /**
  * The 'on' key
@@ -130,68 +116,13 @@ class ValidationRule {
 	}
 
 /**
- * Returns whether the field can be left blank according to this rule
- *
- * @return boolean
- */
-	public function isEmptyAllowed() {
-		return $this->skip() || $this->allowEmpty === true;
-	}
-
-/**
- * Checks if the field is required according to the `required` property
- *
- * @return boolean
- */
-	public function isRequired() {
-		if (in_array($this->required, array('create', 'update'), true)) {
-			if ($this->required === 'create' && !$this->isUpdate() || $this->required === 'update' && $this->isUpdate()) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		return $this->required;
-	}
-
-/**
- * Checks whether the field failed the `field should be present` validation
- *
- * @param array $data data to check rule against
- * @return boolean
- */
-	public function checkRequired($field, &$data) {
-		return (
-			(!isset($data[$field]) && $this->isRequired() === true) ||
-			(
-				isset($data[$field]) && (empty($data[$field]) &&
-				!is_numeric($data[$field])) && $this->allowEmpty === false
-			)
-		);
-	}
-
-/**
- * Checks if the allowEmpty key applies
- *
- * @param array $data data to check rule against
- * @return boolean
- */
-	public function checkEmpty($field, &$data) {
-		if (empty($data[$field]) && $data[$field] != '0' && $this->allowEmpty === true) {
-			return true;
-		}
-		return false;
-	}
-
-/**
  * Checks if the validation rule should be skipped
  *
  * @return boolean True if the ValidationRule can be skipped
  */
 	public function skip() {
 		if (!empty($this->on)) {
-			if ($this->on == 'create' && $this->isUpdate() || $this->on == 'update' && !$this->isUpdate()) {
+			if ($this->on === 'create' && $this->isUpdate() || $this->on === 'update' && !$this->isUpdate()) {
 				return true;
 			}
 		}
@@ -229,8 +160,6 @@ class ValidationRule {
 		}
 		return array(
 			'rule' => $rule,
-			'required' => $this->required,
-			'allowEmpty' => $this->allowEmpty,
 			'on' => $this->on,
 			'last' => $this->last,
 			'message' => $this->message
@@ -245,21 +174,25 @@ class ValidationRule {
  * If called with no parameters it will return whether this rule
  * is configured for update operations or not.
  *
+ * @param boolean $exists Boolean to indicate if records exists
  * @return boolean
- **/
+ */
 	public function isUpdate($exists = null) {
 		if ($exists === null) {
-			return $this->_recordExists;
+			return $this->_isUpdate;
 		}
-		return $this->_recordExists = $exists;
+		return $this->_isUpdate = $exists;
 	}
 
 /**
  * Dispatches the validation rule to the given validator method
  *
+ * @param string $field Field name
+ * @param array $data Data array
+ * @param array $methods Methods list
  * @return boolean True if the rule could be dispatched, false otherwise
  */
-	public function process($field, &$data, &$methods) {
+	public function process($field, $data, $methods) {
 		$this->_valid = true;
 		$this->_parseRule($field, $data);
 
@@ -286,17 +219,18 @@ class ValidationRule {
  * and it will set isUpdate() to false
  *
  * @return void
- **/
+ */
 	public function reset() {
 		$this->_valid = true;
-		$this->_recordExists = false;
+		$this->_isUpdate = false;
 	}
 
 /**
  * Returns passed options for this rule
  *
+ * @param string|integer $key Array index
  * @return array
- **/
+ */
 	public function getOptions($key) {
 		if (!isset($this->_passedOptions[$key])) {
 			return null;
@@ -316,7 +250,7 @@ class ValidationRule {
 		}
 		foreach ($validator as $key => $value) {
 			if (isset($value) || !empty($value)) {
-				if (in_array($key, array('rule', 'required', 'allowEmpty', 'on', 'message', 'last'))) {
+				if (in_array($key, array('rule', 'on', 'message', 'last'))) {
 					$this->{$key} = $validator[$key];
 				} else {
 					$this->_passedOptions[$key] = $value;
@@ -328,9 +262,11 @@ class ValidationRule {
 /**
  * Parses the rule and sets the rule and ruleParams
  *
+ * @param string $field Field name
+ * @param array $data Data array
  * @return void
  */
-	protected function _parseRule($field, &$data) {
+	protected function _parseRule($field, $data) {
 		if (is_array($this->rule)) {
 			$this->_rule = $this->rule[0];
 			$this->_ruleParams = array_merge(array($data[$field]), array_values(array_slice($this->rule, 1)));

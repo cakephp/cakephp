@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 1.2.0.5436
@@ -47,7 +48,7 @@ class ControllerTestAppController extends Controller {
  *
  * @var array
  */
-	public $uses = array('ControllerPost');
+	public $uses = ['Post'];
 
 /**
  * components property
@@ -57,69 +58,6 @@ class ControllerTestAppController extends Controller {
 	public $components = array('Cookie');
 }
 
-
-/**
- * ControllerPost class
- *
- * @package       Cake.Test.Case.Controller
- */
-class ControllerPost extends TestModel {
-
-/**
- * name property
- *
- * @var string 'ControllerPost'
- */
-	public $name = 'ControllerPost';
-
-/**
- * useTable property
- *
- * @var string 'posts'
- */
-	public $useTable = 'posts';
-
-/**
- * invalidFields property
- *
- * @var array
- */
-	public $invalidFields = array('name' => 'error_msg');
-
-/**
- * lastQuery property
- *
- * @var mixed null
- */
-	public $lastQuery = null;
-
-/**
- * beforeFind method
- *
- * @param mixed $query
- * @return void
- */
-	public function beforeFind($query) {
-		$this->lastQuery = $query;
-	}
-
-/**
- * find method
- *
- * @param string $type
- * @param array $options
- * @return void
- */
-	public function find($type = 'first', $options = array()) {
-		if ($type == 'popular') {
-			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
-			$options = Hash::merge($options, compact('conditions'));
-			return parent::find('all', $options);
-		}
-		return parent::find($type, $options);
-	}
-
-}
 
 /**
  * TestController class
@@ -154,8 +92,6 @@ class TestController extends ControllerTestAppController {
  * @var array
  */
 	public $uses = array('Comment');
-
-	protected $_mergeParent = 'ControllerTestAppController';
 
 /**
  * index method
@@ -218,19 +154,6 @@ class AnotherTestController extends ControllerTestAppController {
  */
 	public $name = 'AnotherTest';
 
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = false;
-
-/**
- * merge parent
- *
- * @var string
- */
-	protected $_mergeParent = 'ControllerTestAppController';
 }
 
 /**
@@ -367,8 +290,8 @@ class ControllerTest extends TestCase {
 		$Controller->flash('this should work', '/flash');
 		$result = $Controller->response->body();
 
-		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-		<html xmlns="http://www.w3.org/1999/xhtml">
+		$expected = '<!DOCTYPE html>
+		<html>
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>this should work</title>
@@ -395,48 +318,6 @@ class ControllerTest extends TestCase {
 		$result = $Controller->response->body();
 		$this->assertRegExp('/Ajax!/', $result);
 		App::build();
-	}
-
-/**
- * testControllerSet method
- *
- * @return void
- */
-	public function testControllerSet() {
-		$request = new Request('controller_posts/index');
-		$Controller = new Controller($request);
-
-		$Controller->set('variable_with_underscores', null);
-		$this->assertTrue(array_key_exists('variable_with_underscores', $Controller->viewVars));
-
-		$Controller->viewVars = array();
-		$viewVars = array('ModelName' => array('id' => 1, 'name' => 'value'));
-		$Controller->set($viewVars);
-		$this->assertTrue(array_key_exists('ModelName', $Controller->viewVars));
-
-		$Controller->viewVars = array();
-		$Controller->set('variable_with_underscores', 'value');
-		$this->assertTrue(array_key_exists('variable_with_underscores', $Controller->viewVars));
-
-		$Controller->viewVars = array();
-		$viewVars = array('ModelName' => 'name');
-		$Controller->set($viewVars);
-		$this->assertTrue(array_key_exists('ModelName', $Controller->viewVars));
-
-		$Controller->set('title', 'someTitle');
-		$this->assertSame($Controller->viewVars['title'], 'someTitle');
-		$this->assertTrue(empty($Controller->pageTitle));
-
-		$Controller->viewVars = array();
-		$expected = array('ModelName' => 'name', 'ModelName2' => 'name2');
-		$Controller->set(array('ModelName', 'ModelName2'), array('name', 'name2'));
-		$this->assertSame($expected, $Controller->viewVars);
-
-		$Controller->viewVars = array();
-		$Controller->set(array(3 => 'three', 4 => 'four'));
-		$Controller->set(array(1 => 'one', 2 => 'two'));
-		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
-		$this->assertEquals($expected, $Controller->viewVars);
 	}
 
 /**
@@ -487,6 +368,9 @@ class ControllerTest extends TestCase {
 			'TestPluginComment' => [
 				'className' => 'TestPlugin\Model\TestPluginComment'
 			],
+			'Post' => [
+				'className' => 'TestApp\Model\Post'
+			]
 		];
 		$this->assertEquals($expectedModels, $Controller->request->params['models']);
 	}
@@ -747,56 +631,40 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testMergeVars() {
-		$request = new Request('controller_posts/index');
+		$request = new Request();
 
 		$TestController = new TestController($request);
 		$TestController->constructClasses();
 
-		$testVars = get_class_vars(__NAMESPACE__ . '\TestController');
-		$appVars = get_class_vars(__NAMESPACE__ . '\ControllerTestAppController');
+		$expected = [
+			'Html' => null,
+			'Session' => null
+		];
+		$this->assertEquals($expected, $TestController->helpers);
 
-		$components = is_array($appVars['components'])
-						? array_merge($appVars['components'], $testVars['components'])
-						: $testVars['components'];
-		if (!in_array('Session', $components)) {
-			$components[] = 'Session';
-		}
-		$helpers = is_array($appVars['helpers'])
-					? array_merge($appVars['helpers'], $testVars['helpers'])
-					: $testVars['helpers'];
-		$uses = is_array($appVars['uses'])
-					? array_merge($appVars['uses'], $testVars['uses'])
-					: $testVars['uses'];
+		$expected = [
+			'Session' => null,
+			'Security' => null,
+			'Cookie' => null,
+		];
+		$this->assertEquals($expected, $TestController->components);
 
-		$this->assertEquals(0, count(array_diff_key($TestController->helpers, array_flip($helpers))));
-		$this->assertEquals(0, count(array_diff($TestController->uses, $uses)));
-		$this->assertEquals(count(array_diff_assoc(Hash::normalize($TestController->components), Hash::normalize($components))), 0);
-
-		$expected = array('Comment', 'ControllerPost');
-		$this->assertEquals($expected, $TestController->uses, '$uses was merged incorrectly, ControllerTestAppController models should be last.');
+		$expected = array('Comment', 'Post');
+		$this->assertEquals(
+			$expected,
+			$TestController->uses,
+			'$uses was merged incorrectly, ControllerTestAppController models should be last.'
+		);
 
 		$TestController = new AnotherTestController($request);
 		$TestController->constructClasses();
 
-		$appVars = get_class_vars(__NAMESPACE__ . '\ControllerTestAppController');
-		$testVars = get_class_vars(__NAMESPACE__ . '\AnotherTestController');
-
-		$this->assertTrue(in_array('ControllerPost', $appVars['uses']));
-		$this->assertFalse($testVars['uses']);
-
-		$this->assertFalse(property_exists($TestController, 'ControllerPost'));
-
-		$TestController = new ControllerCommentsController($request);
-		$TestController->constructClasses();
-
-		$appVars = get_class_vars(__NAMESPACE__ . '\ControllerTestAppController');
-		$testVars = get_class_vars(__NAMESPACE__ . '\ControllerCommentsController');
-
-		$this->assertTrue(in_array('ControllerPost', $appVars['uses']));
-		$this->assertEquals(array('ControllerPost'), $testVars['uses']);
-
-		$this->assertTrue(isset($TestController->ControllerPost));
-		$this->assertTrue(isset($TestController->ControllerComment));
+		$this->assertEquals('AnotherTest', $TestController->modelClass);
+		$this->assertEquals(
+			['AnotherTest', 'Post'],
+			$TestController->uses,
+			'Incorrect uses when controller does not define $uses.'
+		);
 	}
 
 /**
@@ -917,7 +785,7 @@ class ControllerTest extends TestCase {
 	public function testValidateErrorsOnArbitraryModels() {
 		$TestController = new TestController();
 
-		$Post = new ControllerPost();
+		$Post = new \TestApp\Model\Post();
 		$Post->validate = array('title' => 'notEmpty');
 		$Post->set('title', '');
 		$result = $TestController->validateErrors($Post);
@@ -1047,9 +915,8 @@ class ControllerTest extends TestCase {
 		$results = Hash::extract($Controller->paginate('Post'), '{n}.Post.id');
 		$this->assertEquals([1, 2, 3], $results);
 
-		$Controller->passedArgs = array();
-		$Controller->paginate = array('limit' => '-1');
-		$this->assertEquals(array('limit' => '-1'), $Controller->paginate);
+		$Controller->paginate = array('limit' => '1');
+		$this->assertEquals(array('limit' => '1'), $Controller->paginate);
 		$Controller->paginate('Post');
 		$this->assertSame($Controller->request->params['paging']['Post']['page'], 1);
 		$this->assertSame($Controller->request->params['paging']['Post']['pageCount'], 3);

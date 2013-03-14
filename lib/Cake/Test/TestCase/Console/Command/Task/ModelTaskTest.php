@@ -1,17 +1,19 @@
 <?php
 /**
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @since         CakePHP v 1.2.6
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
+
 use Cake\Console\Command\Task\ModelTask;
 use Cake\Console\Command\Task\TemplateTask;
 use Cake\Core\Plugin;
@@ -57,7 +59,7 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
- * Setup a mock that has out mocked.  Normally this is not used as it makes $this->at() really tricky.
+ * Setup a mock that has out mocked. Normally this is not used as it makes $this->at() really tricky.
  *
  * @return void
  */
@@ -168,7 +170,7 @@ class ModelTaskTest extends TestCase {
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(99, 1));
 		$this->Task->expects($this->once())->method('err');
 
-		$result = $this->Task->getName('test');
+		$this->Task->getName('test');
 	}
 
 /**
@@ -818,7 +820,7 @@ STRINGEND;
 		$this->Task->plugin = 'ControllerTest';
 
 		//fake plugin path
-		Plugin::load('ControllerTest', array('path' =>  APP . 'Plugin/ControllerTest/'));
+		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
 		$path = APP . 'Plugin/ControllerTest/Model/BakeArticle.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, $this->stringContains('BakeArticle extends ControllerTestAppModel'));
@@ -957,7 +959,7 @@ STRINGEND;
  *
  * @return void
  */
-    public function testExecuteIntoAllOddTables() {
+	public function testExecuteIntoAllOddTables() {
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
@@ -1012,7 +1014,7 @@ STRINGEND;
  *
  * @return void
  */
-    public function testExecuteIntoBakeOddTables() {
+	public function testExecuteIntoBakeOddTables() {
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',

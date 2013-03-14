@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -38,24 +39,31 @@ class Request implements \ArrayAccess {
 		'plugin' => null,
 		'controller' => null,
 		'action' => null,
-		'pass' => array(),
+		'pass' => [],
 	);
 
 /**
- * Array of POST data.  Will contain form data as well as uploaded files.
+ * Array of POST data. Will contain form data as well as uploaded files.
  * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
  * data.
  *
  * @var array
  */
-	public $data = array();
+	public $data = [];
 
 /**
  * Array of querystring arguments
  *
  * @var array
  */
-	public $query = array();
+	public $query = [];
+
+/**
+ * Array of cookie data.
+ *
+ * @var array
+ */
+	public $cookies = [];
 
 /**
  * The url string used for the request.
@@ -122,7 +130,7 @@ class Request implements \ArrayAccess {
 	);
 
 /**
- * Copy of php://input.  Since this stream can only be read once in most SAPI's
+ * Copy of php://input. Since this stream can only be read once in most SAPI's
  * keep a copy of it so users don't need to know about that detail.
  *
  * @var string
@@ -259,8 +267,8 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Get the request uri.  Looks in PATH_INFO first, as this is the exact value we need prepared
- * by PHP.  Following that, REQUEST_URI, PHP_SELF, HTTP_X_REWRITE_URL and argv are checked in that order.
+ * Get the request uri. Looks in PATH_INFO first, as this is the exact value we need prepared
+ * by PHP. Following that, REQUEST_URI, PHP_SELF, HTTP_X_REWRITE_URL and argv are checked in that order.
  * Each of these server variables have the base path, and query strings stripped off
  *
  * @return string URI The CakePHP request path that is being accessed.
@@ -268,8 +276,15 @@ class Request implements \ArrayAccess {
 	protected static function _url($config) {
 		if (!empty($_SERVER['PATH_INFO'])) {
 			return $_SERVER['PATH_INFO'];
-		} elseif (isset($_SERVER['REQUEST_URI'])) {
+		} elseif (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '://') === false) {
 			$uri = $_SERVER['REQUEST_URI'];
+		} elseif (isset($_SERVER['REQUEST_URI'])) {
+			$qPosition = strpos($_SERVER['REQUEST_URI'], '?');
+			if ($qPosition !== false && strpos($_SERVER['REQUEST_URI'], '://') > $qPosition) {
+				$uri = $_SERVER['REQUEST_URI'];
+			} else {
+				$uri = substr($_SERVER['REQUEST_URI'], strlen(FULL_BASE_URL));
+			}
 		} elseif (isset($_SERVER['PHP_SELF']) && isset($_SERVER['SCRIPT_NAME'])) {
 			$uri = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
 		} elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
@@ -286,7 +301,7 @@ class Request implements \ArrayAccess {
 		if (strpos($uri, '?') !== false) {
 			list($uri) = explode('?', $uri, 2);
 		}
-		if (empty($uri) || $uri == '/' || $uri == '//') {
+		if (empty($uri) || $uri === '/' || $uri === '//' || $uri === '/index.php') {
 			return '/';
 		}
 		return $uri;
@@ -331,7 +346,7 @@ class Request implements \ArrayAccess {
 		$webrootDir = $base . '/';
 
 		$docRoot = env('DOCUMENT_ROOT');
-		$docRootContainsWebroot = strpos($docRoot, $dir . '/' . $webroot);
+		$docRootContainsWebroot = strpos($docRoot, $dir . DS . $webroot);
 
 		if (!empty($base) || !$docRootContainsWebroot) {
 			if (strpos($webrootDir, '/' . $dir . '/') === false) {
@@ -354,7 +369,11 @@ class Request implements \ArrayAccess {
 	protected function _processFiles($post, $files) {
 		if (isset($files) && is_array($files)) {
 			foreach ($files as $key => $data) {
-				$this->_processFileData($post, '', $data, $key);
+				if (!is_numeric($key)) {
+					$this->_processFileData($post, '', $data, $key);
+				} else {
+					$post[$key] = $data;
+				}
 			}
 		}
 		return $post;
@@ -391,17 +410,17 @@ class Request implements \ArrayAccess {
  * @return string The client IP.
  */
 	public function clientIp() {
-		if ($this->trustProxy && env('HTTP_X_FORWARDED_FOR') != null) {
+		if ($this->trustProxy && env('HTTP_X_FORWARDED_FOR')) {
 			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
 		} else {
-			if (env('HTTP_CLIENT_IP') != null) {
+			if (env('HTTP_CLIENT_IP')) {
 				$ipaddr = env('HTTP_CLIENT_IP');
 			} else {
 				$ipaddr = env('REMOTE_ADDR');
 			}
 		}
 
-		if (env('HTTP_CLIENTADDRESS') != null) {
+		if (env('HTTP_CLIENTADDRESS')) {
 			$tmpipaddr = env('HTTP_CLIENTADDRESS');
 
 			if (!empty($tmpipaddr)) {
@@ -430,7 +449,7 @@ class Request implements \ArrayAccess {
 		if (!empty($ref) && !empty($base)) {
 			if ($local && strpos($ref, $base) === 0) {
 				$ref = substr($ref, strlen($base));
-				if ($ref[0] != '/') {
+				if ($ref[0] !== '/') {
 					$ref = '/' . $ref;
 				}
 				return $ref;
@@ -484,7 +503,7 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Check whether or not a Request is a certain type.  Uses the built in detection rules
+ * Check whether or not a Request is a certain type. Uses the built in detection rules
  * as well as additional rules defined with Cake\Network\Request::addDetector().  Any detector can be called
  * as `is($type)` or `is$Type()`.
  *
@@ -539,14 +558,14 @@ class Request implements \ArrayAccess {
  *
  * ### Option based comparison
  *
- * Option based comparisons use a list of options to create a regular expression.  Subsequent calls
+ * Option based comparisons use a list of options to create a regular expression. Subsequent calls
  * to add an already defined options detector will merge the options.
  *
  * e.g `addDetector('mobile', array('env' => 'HTTP_USER_AGENT', 'options' => array('Fennec')));`
  *
  * ### Callback detectors
  *
- * Callback detectors allow you to provide a 'callback' type to handle the check.  The callback will
+ * Callback detectors allow you to provide a 'callback' type to handle the check. The callback will
  * receive the request object as its only parameter.
  *
  * e.g `addDetector('custom', array('callback' => array('SomeClass', 'somemethod')));`
@@ -558,7 +577,7 @@ class Request implements \ArrayAccess {
  * e.g `addDetector('post', array('param' => 'requested', 'value' => 1)`
  *
  * @param string $name The name of the detector.
- * @param array $options  The options for the detector definition.  See above.
+ * @param array $options  The options for the detector definition. See above.
  * @return void
  */
 	public function addDetector($name, $options) {
@@ -582,7 +601,7 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Add paths to the requests' paths vars.  This will overwrite any existing paths.
+ * Add paths to the requests' paths vars. This will overwrite any existing paths.
  * Provides an easy way to modify, here, webroot and base.
  *
  * @param array $paths Array of paths to merge in
@@ -598,7 +617,7 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Get the value of the current requests url.  Will include named parameters and querystring arguments.
+ * Get the value of the current requests url. Will include named parameters and querystring arguments.
  *
  * @param boolean $base Include the base path, set to false to trim the base path off.
  * @return string the current request url including query string args.
@@ -720,7 +739,7 @@ class Request implements \ArrayAccess {
  * This method will order the returned content types by the preference values indicated
  * by the client.
  *
- * @param string $type The content type to check for.  Leave null to get all types a client accepts.
+ * @param string $type The content type to check for. Leave null to get all types a client accepts.
  * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
  *   provided type.
  */
@@ -766,7 +785,7 @@ class Request implements \ArrayAccess {
 	public static function acceptLanguage($language = null) {
 		$raw = static::_parseAcceptWithQualifier(static::header('Accept-Language'));
 		$accept = array();
-		foreach ($raw as $qualifier => $languages) {
+		foreach ($raw as $languages) {
 			foreach ($languages as &$lang) {
 				if (strpos($lang, '_')) {
 					$lang = str_replace('_', '-', $lang);
@@ -811,9 +830,10 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Provides a read accessor for `$this->query`.  Allows you
+ * Provides a read accessor for `$this->query`. Allows you
  * to use a syntax similar to `CakeSession` for reading url query data.
  *
+ * @param string $name Query string variable name
  * @return mixed The value being read
  */
 	public function query($name) {
@@ -821,7 +841,7 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Provides a read/write accessor for `$this->data`.  Allows you
+ * Provides a read/write accessor for `$this->data`. Allows you
  * to use a syntax similar to `Cake\Model\Datasource\Session` for reading post data.
  *
  * ## Reading values.
@@ -847,6 +867,20 @@ class Request implements \ArrayAccess {
 			return $this;
 		}
 		return Hash::get($this->data, $name);
+	}
+
+/**
+ * Safely access the values in $this->params.
+ *
+ * @param string $name The name of the parameter to get.
+ * @return mixed The value of the provided parameter. Will
+ *   return false if the parameter doesn't exist or is falsey.
+ */
+	public function param($name) {
+		if (!isset($this->params[$name])) {
+			return false;
+		}
+		return $this->params[$name];
 	}
 
 /**
@@ -892,7 +926,7 @@ class Request implements \ArrayAccess {
 		return null;
 	}
 
-/*
+/**
  * Only allow certain HTTP request methods, if the request method does not match
  * a 405 error will be shown and the required "Allow" response header will be set.
  *
@@ -949,10 +983,10 @@ class Request implements \ArrayAccess {
 		if (isset($this->params[$name])) {
 			return $this->params[$name];
 		}
-		if ($name == 'url') {
+		if ($name === 'url') {
 			return $this->query;
 		}
-		if ($name == 'data') {
+		if ($name === 'data') {
 			return $this->data;
 		}
 		return null;

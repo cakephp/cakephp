@@ -26,4 +26,19 @@ class Post extends AppModel {
 
 	public $name = 'Post';
 
+/**
+ * find method
+ *
+ * @param string $type
+ * @param array $options
+ * @return void
+ */
+	public function find($type = 'first', $options = array()) {
+		if ($type == 'popular') {
+			$conditions = array($this->name . '.' . $this->primaryKey . ' > ' => '1');
+			$options = Hash::merge($options, compact('conditions'));
+			return parent::find('all', $options);
+		}
+		return parent::find($type, $options);
+	}
 }

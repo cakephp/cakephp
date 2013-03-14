@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.5669
@@ -153,7 +154,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testInvalidContainments() {
-		$r = $this->_containments($this->Article, array('Comment', 'InvalidBinding'));
+		$this->_containments($this->Article, array('Comment', 'InvalidBinding'));
 	}
 
 /**
@@ -163,7 +164,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  */
 	public function testInvalidContainmentsNoNotices() {
 		$this->Article->Behaviors->attach('Containable', array('notices' => false));
-		$r = $this->_containments($this->Article, array('Comment', 'InvalidBinding'));
+		$this->_containments($this->Article, array('Comment', 'InvalidBinding'));
 	}
 
 /**
@@ -244,7 +245,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testBeforeFindWithNonExistingBinding() {
-		$r = $this->Article->find('all', array('contain' => array('Comment' => 'NonExistingBinding')));
+		$this->Article->find('all', array('contain' => array('Comment' => 'NonExistingBinding')));
 	}
 
 /**
@@ -284,6 +285,19 @@ class ContainableBehaviorTest extends CakeTestCase {
 			3 => '1'
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that mixing contain() and the contain find option.
+ *
+ * @return void
+ */
+	public function testContainAndContainOption() {
+		$this->Article->contain();
+		$r = $this->Article->find('all', array(
+			'contain' => array('Comment')
+		));
+		$this->assertTrue(isset($r[0]['Comment']), 'No comment returned');
 	}
 
 /**
@@ -3005,7 +3019,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 				'User' => array(
 					'fields' => array('user')
 				)
-			)
+			),
+			'order' => 'Article.id ASC',
 		));
 		$this->assertTrue(isset($result[0]['Article']['title']), 'title missing %s');
 		$this->assertTrue(isset($result[0]['Article']['body']), 'body missing %s');
@@ -3028,7 +3043,10 @@ class ContainableBehaviorTest extends CakeTestCase {
 				'conditions' => array('created >=' => '2007-03-18 12:24')
 			)
 		));
-		$result = $this->Article->find('all', array('fields' => array('title'), 'order' => array('Article.id' => 'ASC')));
+		$result = $this->Article->find('all', array(
+			'fields' => array('title'),
+			'order' => array('Article.id' => 'ASC')
+		));
 		$expected = array(
 			array(
 				'Article' => array('id' => 1, 'title' => 'First Article'),
@@ -3236,7 +3254,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$firstResult = $this->Article->Comment->find('all', $options);
 
-		$dummyResult = $this->Article->Comment->find('all', array(
+		$this->Article->Comment->find('all', array(
 			'conditions' => array(
 				'User.user' => 'mariano'
 			),
@@ -3450,18 +3468,18 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$articleHabtm = array(
 			'hasAndBelongsToMany' => array(
 				'Tag' => array(
-					'className'				=> 'Tag',
-					'joinTable'				=> 'articles_tags',
-					'foreignKey'			=> 'article_id',
+					'className' => 'Tag',
+					'joinTable' => 'articles_tags',
+					'foreignKey' => 'article_id',
 					'associationForeignKey' => 'tag_id'
 				),
 				'ShortTag' => array(
-					'className'				=> 'Tag',
-					'joinTable'				=> 'articles_tags',
-					'foreignKey'			=> 'article_id',
+					'className' => 'Tag',
+					'joinTable' => 'articles_tags',
+					'foreignKey' => 'article_id',
 					'associationForeignKey' => 'tag_id',
 					// LENGHT function mysql-only, using LIKE does almost the same
-					'conditions' 			=> "ShortTag.tag LIKE '???'"
+					'conditions' => "ShortTag.tag LIKE '???'"
 				)
 			)
 		);
@@ -3574,14 +3592,12 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testAutoFieldsWithMultipleDatabases() {
-		$config = new DATABASE_CONFIG();
-
 		$this->skipIf(
-			!isset($config->test) || !isset($config->test2),
+			!Configure::check('Datasource.test') || !Configure::check('Datasource.test2'),
 			'Primary and secondary test databases not configured, ' .
 			'skipping cross-database join tests. ' .
 			' To run these tests, you must define $test and $test2 ' .
-			'in your database configuration.'
+			'in your datasources configuration.'
 		);
 
 		$db = ConnectionManager::getDataSource('test2');

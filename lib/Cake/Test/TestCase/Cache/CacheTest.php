@@ -1,17 +1,19 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Cache;
+
 use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -54,6 +56,18 @@ class CacheTest extends TestCase {
 		Configure::write('Cache.test_config', $settings);
 		$engine = Cache::engine('test_config');
 		$this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
+	}
+
+/**
+ * testConfigInvalidEngine method
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testConfigInvalidEngine() {
+		$settings = array('engine' => 'Imaginary');
+		Configure::write('Cache.imaginary', $settings);
+		Cache::engine('imaginary');
 	}
 
 /**
@@ -111,8 +125,16 @@ class CacheTest extends TestCase {
  * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
-	public function testReadNonExistingConfig() {
-		$this->assertFalse(Cache::read('key', 'totally fake'));
+	public function testInvalidConfig() {
+		Cache::config('invalid', array(
+			'engine' => 'File',
+			'duration' => '+1 year',
+			'prefix' => 'testing_invalid_',
+			'path' => 'data/',
+			'serialize' => true,
+			'random' => 'wii'
+		));
+		Cache::read('Test', 'invalid');
 	}
 
 /**
@@ -208,7 +230,7 @@ class CacheTest extends TestCase {
 	public function testConfigured() {
 		Cache::drop('default');
 		$result = Cache::configured();
-		$this->assertContains('_cake_core_',  $result);
+		$this->assertContains('_cake_core_', $result);
 		$this->assertNotContains('default', $result, 'Unconnected engines should not display.');
 
 		Cache::engine('default');

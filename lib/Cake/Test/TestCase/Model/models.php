@@ -7,18 +7,20 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.6464
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Model;
+
 use Cake\Model\Model;
 use Cake\TestSuite\Fixture\TestModel as CakeTestModel;
 
@@ -223,12 +225,12 @@ class User extends CakeTestModel {
  * beforeFind() callback used to run ContainableBehaviorTest::testLazyLoad()
  *
  * @return bool
- * @throws Exception
+ * @throws \Exception
  */
 	public function beforeFind($queryData) {
 		if (!empty($queryData['lazyLoad'])) {
 			if (!isset($this->Article, $this->Comment, $this->ArticleFeatured)) {
-				throw new Exception('Unavailable associations');
+				throw new \Exception('Unavailable associations');
 			}
 		}
 		return true;
@@ -555,6 +557,13 @@ class ModifiedComment extends CakeTestModel {
 	public $useTable = 'comments';
 
 /**
+ * Property used to toggle filtering of results
+ *
+ * @var boolean
+ */
+	public $remove = false;
+
+/**
  * belongsTo property
  *
  * @var array
@@ -569,6 +578,9 @@ class ModifiedComment extends CakeTestModel {
 	public function afterFind($results, $primary = false) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['callback'] = 'Fire';
+		}
+		if ($this->remove) {
+			return array();
 		}
 		return $results;
 	}
@@ -2566,7 +2578,7 @@ class NumberTree extends CakeTestModel {
 			$this->create($data);
 
 			if ($hierarchal) {
-				if ($this->name == 'UnconventionalTree') {
+				if ($this->name === 'UnconventionalTree') {
 					$data[$this->name]['join'] = $parentId;
 				} else {
 					$data[$this->name]['parent_id'] = $parentId;
@@ -4979,7 +4991,7 @@ class CustomArticle extends AppModel {
  * Alters title data
  *
  * @return void
- **/
+ */
 	public function beforeValidate($options = array()) {
 		$this->data[$this->alias]['title'] = 'foo';
 		if ($this->findMethods['unPublished'] === true) {

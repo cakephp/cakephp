@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -22,11 +23,12 @@ use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Error;
-use Cake\Log\Log;
 use Cake\Log\Engine\ConsoleLog;
+use Cake\Log\Log;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;
+use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\String;
 
 /**
@@ -36,11 +38,20 @@ use Cake\Utility\String;
  */
 class Shell extends Object {
 
+	use MergeVariablesTrait;
 /**
- * Output constants for making verbose and quiet shells.
+ * Output constant making verbose shells.
  */
 	const VERBOSE = 2;
+
+/**
+ * Output constant for making normal shells.
+ */
 	const NORMAL = 1;
+
+/**
+ * Output constants for making quiet shells.
+ */
 	const QUIET = 0;
 
 /**
@@ -160,32 +171,21 @@ class Shell extends Object {
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
-		if ($this->name == null) {
+		if (!$this->name) {
 			list(, $class) = namespaceSplit(get_class($this));
 			$this->name = str_replace(array('Shell', 'Task'), '', $class);
 		}
 		$this->Tasks = new TaskCollection($this);
 
-		$this->stdout = $stdout;
-		$this->stderr = $stderr;
-		$this->stdin = $stdin;
-		if ($this->stdout == null) {
-			$this->stdout = new ConsoleOutput('php://stdout');
-		}
-		if ($this->stderr == null) {
-			$this->stderr = new ConsoleOutput('php://stderr');
-		}
-		if ($this->stdin == null) {
-			$this->stdin = new ConsoleInput('php://stdin');
-		}
+		$this->stdout = $stdout ? $stdout : new ConsoleOutput('php://stdout');
+		$this->stderr = $stderr ? $stderr : new ConsoleOutput('php://stderr');
+		$this->stdin = $stdin ? $stdin : new ConsoleInput('php://stdin');
+
 		$this->_useLogger();
-		$parent = get_parent_class($this);
-		if ($this->tasks !== null && $this->tasks !== false) {
-			$this->_mergeVars(array('tasks'), $parent, true);
-		}
-		if ($this->uses !== null && $this->uses !== false) {
-			$this->_mergeVars(array('uses'), $parent, false);
-		}
+		$this->_mergeVars(
+			['tasks', 'uses'],
+			['associative' => ['tasks']]
+		);
 	}
 
 /**
@@ -237,26 +237,23 @@ class Shell extends Object {
  * @return boolean
  */
 	protected function _loadModels() {
-		if ($this->uses === null || $this->uses === false) {
-			return;
+		if (empty($this->uses)) {
+			return false;
 		}
 
-		if ($this->uses !== true && !empty($this->uses)) {
-			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
+		$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 
-			$modelClass = $uses[0];
+		$modelClass = $uses[0];
+		$className = App::className($modelClass, 'Model');
+		list(, $modelClass) = namespaceSplit($className);
+		$this->modelClass = $modelClass;
+
+		foreach ($uses as $modelClass) {
 			$className = App::className($modelClass, 'Model');
 			list(, $modelClass) = namespaceSplit($className);
-			$this->modelClass = $modelClass;
-
-			foreach ($uses as $modelClass) {
-				$className = App::className($modelClass, 'Model');
-				list(, $modelClass) = namespaceSplit($className);
-				$this->{$modelClass} = ClassRegistry::init($className);
-			}
-			return true;
+			$this->{$modelClass} = ClassRegistry::init($className);
 		}
-		return false;
+		return true;
 	}
 
 /**
@@ -269,9 +266,7 @@ class Shell extends Object {
 			return true;
 		}
 		$this->_taskMap = TaskCollection::normalizeObjectArray((array)$this->tasks);
-		foreach ($this->_taskMap as $task => $properties) {
-			$this->taskNames[] = $task;
-		}
+		$this->taskNames = array_merge($this->taskNames, array_keys($this->_taskMap));
 		return true;
 	}
 
@@ -299,7 +294,7 @@ class Shell extends Object {
 			if (!$method->isPublic() || substr($name, 0, 1) === '_') {
 				return false;
 			}
-			if ($method->getDeclaringClass()->name == 'Cake\Console\Shell') {
+			if ($method->getDeclaringClass()->name === 'Cake\Console\Shell') {
 				return false;
 			}
 			return true;
@@ -331,7 +326,7 @@ class Shell extends Object {
  */
 	public function dispatchShell() {
 		$args = func_get_args();
-		if (is_string($args[0]) && count($args) == 1) {
+		if (is_string($args[0]) && count($args) === 1) {
 			$args = explode(' ', $args[0]);
 		}
 
@@ -378,7 +373,9 @@ class Shell extends Object {
 		if (!empty($this->params['quiet'])) {
 			$this->_useLogger(false);
 		}
-
+		if (!empty($this->params['plugin'])) {
+			CakePlugin::load($this->params['plugin']);
+		}
 		$this->command = $command;
 		if (!empty($this->params['help'])) {
 			return $this->_displayHelp($command);
@@ -410,7 +407,7 @@ class Shell extends Object {
  */
 	protected function _displayHelp($command) {
 		$format = 'text';
-		if (!empty($this->args[0]) && $this->args[0] == 'xml') {
+		if (!empty($this->args[0]) && $this->args[0] === 'xml') {
 			$format = 'xml';
 			$this->stdout->outputAs(ConsoleOutput::RAW);
 		} else {
@@ -527,7 +524,7 @@ class Shell extends Object {
  *
  * ### Options
  *
- * - `width` The width to wrap to.  Defaults to 72
+ * - `width` The width to wrap to. Defaults to 72
  * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
  * - `indent` Indent the text with the string provided. Defaults to null.
  *
@@ -547,9 +544,9 @@ class Shell extends Object {
  *
  * ### Output levels
  *
- * There are 3 built-in output level.  Shell::QUIET, Shell::NORMAL, Shell::VERBOSE.
+ * There are 3 built-in output level. Shell::QUIET, Shell::NORMAL, Shell::VERBOSE.
  * The verbose and quiet output levels, map to the `verbose` and `quiet` output switches
- * present in  most shells.  Using Shell::QUIET for a message means it will always display.
+ * present in  most shells. Using Shell::QUIET for a message means it will always display.
  * While using Shell::VERBOSE means it will only display when verbose output is toggled.
  *
  * @param string|array $message A string or a an array of strings to output
@@ -661,10 +658,10 @@ class Shell extends Object {
 			$this->out(__d('cake_console', '<warning>File `%s` exists</warning>', $path));
 			$key = $this->in(__d('cake_console', 'Do you want to overwrite?'), array('y', 'n', 'q'), 'n');
 
-			if (strtolower($key) == 'q') {
+			if (strtolower($key) === 'q') {
 				$this->out(__d('cake_console', '<error>Quitting</error>.'), 2);
 				$this->_stop();
-			} elseif (strtolower($key) != 'y') {
+			} elseif (strtolower($key) !== 'y') {
 				$this->out(__d('cake_console', 'Skip `%s`', $path), 2);
 				return false;
 			}
@@ -678,10 +675,10 @@ class Shell extends Object {
 			$File->write($data);
 			$this->out(__d('cake_console', '<success>Wrote</success> `%s`', $path));
 			return true;
-		} else {
-			$this->err(__d('cake_console', '<error>Could not write to `%s`</error>.', $path), 2);
-			return false;
 		}
+
+		$this->err(__d('cake_console', '<error>Could not write to `%s`</error>.', $path), 2);
+		return false;
 	}
 
 /**
@@ -692,15 +689,15 @@ class Shell extends Object {
 	protected function _checkUnitTest() {
 		if (class_exists('PHPUnit_Framework_TestCase')) {
 			return true;
+			//@codingStandardsIgnoreStart
 		} elseif (@include 'PHPUnit/Autoload.php') {
-			return true;
-		} elseif (App::import('Vendor', 'phpunit', array('file' => 'PHPUnit/Autoload.php'))) {
+			//@codingStandardsIgnoreEnd
 			return true;
 		}
 
 		$prompt = __d('cake_console', 'PHPUnit is not installed. Do you want to bake unit test files anyway?');
 		$unitTest = $this->in($prompt, array('y', 'n'), 'y');
-		$result = strtolower($unitTest) == 'y' || strtolower($unitTest) == 'yes';
+		$result = strtolower($unitTest) === 'y' || strtolower($unitTest) === 'yes';
 
 		if ($result) {
 			$this->out();
@@ -832,7 +829,7 @@ class Shell extends Object {
  *
  * @param boolean $enable wheter to enable Cake Log output or not
  * @return void
- **/
+ */
 	protected function _useLogger($enable = true) {
 		if (!$enable) {
 			Log::drop('stdout');

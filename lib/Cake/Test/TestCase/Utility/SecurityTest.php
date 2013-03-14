@@ -1,17 +1,19 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
+
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -72,7 +74,7 @@ class SecurityTest extends TestCase {
  * @return void
  */
 	public function testHashInvalidSalt() {
-		$result = Security::hash('someKey', 'blowfish', true);
+		Security::hash('someKey', 'blowfish', true);
 	}
 
 /**
@@ -82,7 +84,7 @@ class SecurityTest extends TestCase {
  * @return void
  */
 	public function testHashAnotherInvalidSalt() {
-		$result = Security::hash('someKey', 'blowfish', '$1$lksdjoijfaoijs');
+		Security::hash('someKey', 'blowfish', '$1$lksdjoijfaoijs');
 	}
 
 /**
@@ -92,7 +94,7 @@ class SecurityTest extends TestCase {
  * @return void
  */
 	public function testHashYetAnotherInvalidSalt() {
-		$result = Security::hash('someKey', 'blowfish', '$2a$10$123');
+		Security::hash('someKey', 'blowfish', '$2a$10$123');
 	}
 
 /**
@@ -103,7 +105,6 @@ class SecurityTest extends TestCase {
  */
 	public function testHashInvalidCost() {
 		Security::setCost(1000);
-		$result = Security::hash('somekey', 'blowfish', false);
 	}
 /**
  * testHash method
@@ -182,6 +183,18 @@ class SecurityTest extends TestCase {
 		$hashedPassword = Security::hash($submittedPassword, null, $storedPassword);
 		$this->assertNotSame($storedPassword, $hashedPassword);
 
+		$expected = sha1('customsaltsomevalue');
+		$result = Security::hash('somevalue', 'sha1', 'customsalt');
+		$this->assertSame($expected, $result);
+
+		$oldSalt = Configure::read('Security.salt');
+		Configure::write('Security.salt', 'customsalt');
+
+		$expected = sha1('customsaltsomevalue');
+		$result = Security::hash('somevalue', 'sha1', true);
+		$this->assertSame($expected, $result);
+
+		Configure::write('Security.salt', $oldSalt);
 		Security::setHash($_hashType);
 	}
 
@@ -225,7 +238,7 @@ class SecurityTest extends TestCase {
 	public function testCipherEmptyKey() {
 		$txt = 'some_text';
 		$key = '';
-		$result = Security::cipher($txt, $key);
+		Security::cipher($txt, $key);
 	}
 
 /**
@@ -247,8 +260,25 @@ class SecurityTest extends TestCase {
 		$result = Security::rijndael('', $key, 'encrypt');
 		$this->assertEquals('', Security::rijndael($result, $key, 'decrypt'));
 
-		$result = Security::rijndael($txt, $key = 'this is my key of over 32 chars, yes it is', 'encrypt');
+		$key = 'this is my key of over 32 chars, yes it is';
+		$result = Security::rijndael($txt, $key, 'encrypt');
 		$this->assertEquals($txt, Security::rijndael($result, $key, 'decrypt'));
+	}
+
+/**
+ * Test that rijndael() can still decrypt values with a fixed iv.
+ *
+ * @return
+ */
+	public function testRijndaelBackwardCompatibility() {
+		$this->skipIf(!function_exists('mcrypt_encrypt'));
+
+		$txt = 'The quick brown fox jumped over the lazy dog.';
+		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
+
+		// Encrypted before random iv
+		$value = base64_decode('1WPjnq96LMzLGwNgmudHF+cAIqVUN5DaUZEpf5tm1EzSgt5iYY9o3d66iRI/fKJLTlTVGsa8HzW0jDNitmVXoQ==');
+		$this->assertEquals($txt, Security::rijndael($value, $key, 'decrypt'));
 	}
 
 /**
@@ -260,7 +290,7 @@ class SecurityTest extends TestCase {
 	public function testRijndaelInvalidOperation() {
 		$txt = 'The quick brown fox jumped over the lazy dog.';
 		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
-		$result = Security::rijndael($txt, $key, 'foo');
+		Security::rijndael($txt, $key, 'foo');
 	}
 
 /**
@@ -272,7 +302,7 @@ class SecurityTest extends TestCase {
 	public function testRijndaelInvalidKey() {
 		$txt = 'The quick brown fox jumped over the lazy dog.';
 		$key = 'too small';
-		$result = Security::rijndael($txt, $key, 'encrypt');
+		Security::rijndael($txt, $key, 'encrypt');
 	}
 
 }

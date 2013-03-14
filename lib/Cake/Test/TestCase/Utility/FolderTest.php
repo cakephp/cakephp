@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -118,9 +119,9 @@ class FolderTest extends TestCase {
 		$this->assertTrue($result);
 
 		$result = $Folder->realpath('Test/');
-		$this->assertEquals($path . DS . 'Test/', $result);
+		$this->assertEquals($path . DS . 'Test' . DS, $result);
 
-		$result = $Folder->inPath('Test/');
+		$result = $Folder->inPath('Test' . DS);
 		$this->assertTrue($result);
 
 		$result = $Folder->inPath(DS . 'non-existing' . $inside);
@@ -137,7 +138,7 @@ class FolderTest extends TestCase {
  */
 	public function testCreation() {
 		$Folder = new Folder(TMP . 'tests');
-		$result = $Folder->create(TMP . 'tests/first/second/third');
+		$result = $Folder->create(TMP . 'tests' . DS . 'first' . DS . 'second' . DS . 'third');
 		$this->assertTrue($result);
 
 		rmdir(TMP . 'tests/first/second/third');
@@ -145,7 +146,7 @@ class FolderTest extends TestCase {
 		rmdir(TMP . 'tests/first');
 
 		$Folder = new Folder(TMP . 'tests');
-		$result = $Folder->create(TMP . 'tests/first');
+		$result = $Folder->create(TMP . 'tests' . DS . 'first');
 		$this->assertTrue($result);
 		rmdir(TMP . 'tests/first');
 	}
@@ -157,7 +158,7 @@ class FolderTest extends TestCase {
  */
 	public function testCreateWithTrailingDs() {
 		$Folder = new Folder(TMP);
-		$path = TMP . 'tests/trailing/dir/';
+		$path = TMP . 'tests' . DS . 'trailing' . DS . 'dir' . DS;
 		$result = $Folder->create($path);
 		$this->assertTrue($result);
 
@@ -341,11 +342,11 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testAddPathElement() {
-		$result = Folder::addPathElement(DS . 'some/dir', 'another_path');
-		$this->assertEquals(DS . 'some/dir/another_path', $result);
+		$result = Folder::addPathElement(DS . 'some' . DS . 'dir', 'another_path');
+		$this->assertEquals(DS . 'some' . DS . 'dir' . DS . 'another_path', $result);
 
-		$result = Folder::addPathElement(DS . 'some/dir/', 'another_path');
-		$this->assertEquals(DS . 'some/dir/another_path', $result);
+		$result = Folder::addPathElement(DS . 'some' . DS . 'dir' . DS, 'another_path');
+		$this->assertEquals(DS . 'some' . DS . 'dir' . DS . 'another_path', $result);
 	}
 
 /**
@@ -467,15 +468,15 @@ class FolderTest extends TestCase {
 			array(
 				$Folder->path,
 				$Folder->path . DS . 'visible_folder',
-				$Folder->path . DS . 'visible_folder/.git',
+				$Folder->path . DS . 'visible_folder' . DS . '.git',
 				$Folder->path . DS . '.svn',
-				$Folder->path . DS . '.svn/inhiddenfolder',
+				$Folder->path . DS . '.svn' . DS . 'inhiddenfolder',
 			),
 			array(
 				$Folder->path . DS . 'not_hidden.txt',
 				$Folder->path . DS . '.hidden.txt',
-				$Folder->path . DS . '.svn/inhiddenfolder/NestedInHiddenFolder.php',
-				$Folder->path . DS . '.svn/InHiddenFolder.php',
+				$Folder->path . DS . '.svn' . DS . 'inhiddenfolder' . DS . 'NestedInHiddenFolder.php',
+				$Folder->path . DS . '.svn' . DS . 'InHiddenFolder.php',
 			),
 		);
 
@@ -599,8 +600,8 @@ class FolderTest extends TestCase {
 		$result = $Folder->inCakePath($path);
 		$this->assertFalse($result);
 
-		$path = DS . 'lib/Cake/Config';
-		$Folder->cd(ROOT . DS . 'lib/Cake/Config');
+		$path = DS . 'lib' . DS . 'Cake' . DS . 'Config';
+		$Folder->cd(ROOT . DS . 'lib' . DS . 'Cake' . DS . 'Config');
 		$result = $Folder->inCakePath($path);
 		$this->assertTrue($result);
 	}
@@ -619,7 +620,7 @@ class FolderTest extends TestCase {
 		$this->assertSame(array_diff($expected, $result), array());
 
 		$result = $Folder->find('.*', true);
-		$expected = array('config.php', 'routes.php');
+		$expected = array('cacert.pem', 'config.php', 'routes.php');
 		$this->assertSame($expected, $result);
 
 		$result = $Folder->find('.*\.php');
@@ -669,8 +670,8 @@ class FolderTest extends TestCase {
 		$expected = array(
 			CAKE . 'Config/config.php'
 		);
-		$this->assertSame(array_diff($expected, $result), array());
-		$this->assertSame(array_diff($expected, $result), array());
+		$this->assertSame(array(), array_diff($expected, $result));
+		$this->assertSame(array(), array_diff($expected, $result));
 
 		$result = $Folder->findRecursive('(config|woot)\.php', true);
 		$expected = array(
@@ -698,8 +699,8 @@ class FolderTest extends TestCase {
 			TMP . 'testme/my.php',
 			TMP . 'testme/paths.php'
 		);
-		$this->assertSame(array_diff($expected, $result), array());
-		$this->assertSame(array_diff($expected, $result), array());
+		$this->assertSame(array(), array_diff($expected, $result));
+		$this->assertSame(array(), array_diff($expected, $result));
 
 		$result = $Folder->findRecursive('(paths|my)\.php', true);
 		$expected = array(
@@ -820,11 +821,11 @@ class FolderTest extends TestCase {
 
 		$expected = array(
 			$path . DS . 'file_1 removed',
-			$path . DS . 'level_1_1/file_1_1 removed',
-			$path . DS . 'level_1_1/level_2_1/file_2_1 removed',
-			$path . DS . 'level_1_1/level_2_1/file_2_2 removed',
-			$path . DS . 'level_1_1/level_2_1 removed',
-			$path . DS . 'level_1_1/level_2_2 removed',
+			$path . DS . 'level_1_1' . DS . 'file_1_1 removed',
+			$path . DS . 'level_1_1' . DS . 'level_2_1' . DS . 'file_2_1 removed',
+			$path . DS . 'level_1_1' . DS . 'level_2_1' . DS . 'file_2_2 removed',
+			$path . DS . 'level_1_1' . DS . 'level_2_1 removed',
+			$path . DS . 'level_1_1' . DS . 'level_2_2 removed',
 			$path . DS . 'level_1_1 removed',
 			$path . ' removed'
 		);

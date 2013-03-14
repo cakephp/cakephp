@@ -66,7 +66,6 @@ class SomePagesController extends Controller {
 	}
 
 	protected function _fail() {
-
 	}
 
 }

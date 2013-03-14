@@ -4,23 +4,25 @@
  * and constructing task class objects.
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console;
+
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Utility\ObjectCollection;
 
 /**
- * Collection object for Tasks.  Provides features
+ * Collection object for Tasks. Provides features
  * for lazily loading tasks, and firing callbacks on loaded tasks.
  *
  * @package       Cake.Console
@@ -51,13 +53,13 @@ class TaskCollection extends ObjectCollection {
 	}
 
 /**
- * Loads/constructs a task.  Will return the instance in the collection
+ * Loads/constructs a task. Will return the instance in the collection
  * if it already exists.
  *
  * @param string $task Task name to load
  * @param array $settings Settings for the task.
  * @return Task A task object, Either the existing loaded task or a new one.
- * @throws MissingTaskException when the task could not be found
+ * @throws Cake\Error\MissingTaskException when the task could not be found
  */
 	public function load($task, $settings = array()) {
 		list($plugin, $name) = pluginSplit($task, true);

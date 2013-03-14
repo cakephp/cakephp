@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Routing
  * @since         CakePHP(tm) v 0.2.9
@@ -19,22 +20,22 @@ use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\Route\Route;
 use Cake\Routing\RouteCollection;
+use Cake\Routing\Route\Route;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 /**
- * Parses the request URL into controller, action, and parameters.  Uses the connected routes
- * to match the incoming url string to parameters that will allow the request to be dispatched.  Also
- * handles converting parameter lists into url strings, using the connected routes.  Routing allows you to decouple
+ * Parses the request URL into controller, action, and parameters. Uses the connected routes
+ * to match the incoming url string to parameters that will allow the request to be dispatched. Also
+ * handles converting parameter lists into url strings, using the connected routes. Routing allows you to decouple
  * the way the world interacts with your application (urls) and the implementation (controllers and actions).
  *
  * ### Connecting routes
  *
- * Connecting routes is done using Router::connect().  When parsing incoming requests or reverse matching
- * parameters, routes are enumerated in the order they were connected.  You can modify the order of connected
- * routes using Router::promote().  For more information on routes and how to connect them see Router::connect().
+ * Connecting routes is done using Router::connect(). When parsing incoming requests or reverse matching
+ * parameters, routes are enumerated in the order they were connected. You can modify the order of connected
+ * routes using Router::promote(). For more information on routes and how to connect them see Router::connect().
  *
  * @package       Cake.Routing
  */
@@ -63,7 +64,7 @@ class Router {
 	protected static $_prefixes = array();
 
 /**
- * List of valid extensions to parse from a URL.  If null, any extension is allowed.
+ * List of valid extensions to parse from a URL. If null, any extension is allowed.
  *
  * @var array
  */
@@ -125,7 +126,7 @@ class Router {
 
 /**
  * Initial state is populated the first time reload() is called which is at the bottom
- * of this file.  This is a cheat as get_class_vars() returns the value of static vars even if they
+ * of this file. This is a cheat as get_class_vars() returns the value of static vars even if they
  * have changed.
  *
  * @var array
@@ -165,7 +166,7 @@ class Router {
 /**
  * Validates that the passed route class exists and is a subclass of Cake Route
  *
- * @param $routeClass
+ * @param string $routeClass Route class name
  * @return string
  * @throws Cake\Error\Exception
  */
@@ -204,7 +205,7 @@ class Router {
 /**
  * Resource map getter & setter.
  *
- * Allows you to define the default route configuration for REST routing and 
+ * Allows you to define the default route configuration for REST routing and
  * Router::mapResources()
  *
  * @param array $resourceMap Resource map
@@ -234,7 +235,7 @@ class Router {
  * it will match requests like `/posts/index` as well as requests
  * like `/posts/edit/1/foo/bar`.
  *
- * `Router::connect('/home-page', array('controller' => 'pages', 'action' => 'display', 'home'));`
+ * `Router::connect('/home-page', ['controller' => 'pages', 'action' => 'display', 'home']);`
  *
  * The above shows the use of route parameter defaults. And providing routing
  * parameters for a static route.
@@ -242,8 +243,8 @@ class Router {
  * {{{
  * Router::connect(
  *   '/:lang/:controller/:action/:id',
- *   array(),
- *   array('id' => '[0-9]+', 'lang' => '[a-z]{3}')
+ *   [],
+ *   ['id' => '[0-9]+', 'lang' => '[a-z]{3}']
  * );
  * }}}
  *
@@ -251,24 +252,37 @@ class Router {
  * providing patterns for those parameters. Patterns for routing parameters
  * do not need capturing groups, as one will be added for each route params.
  *
- * $options offers several 'special' keys that have special meaning 
+ * $options offers several 'special' keys that have special meaning
  * in the $options array.
  *
  * - `pass` is used to define which of the routed parameters should be shifted
- *   into the pass array.  Adding a parameter to pass will remove it from the
+ *   into the pass array. Adding a parameter to pass will remove it from the
  *   regular route array. Ex. `'pass' => array('slug')`.
  * - `routeClass` is used to extend and change how individual routes parse requests
  *   and handle reverse routing, via a custom routing class.
  *   Ex. `'routeClass' => 'SlugRoute'`
- * - `_name` Used to define a specific name for routes.  This can be used to optimize
+ * - `_name` Used to define a specific name for routes. This can be used to optimize
  *   reverse routing lookups. If undefined a name will be generated for each
  *   connected route.
+ *
+ * You can also add additional conditions for matching routes to the $defaults array.
+ * The following conditions can be used:
+ *
+ * - `[type]` Only match requests for specific content types.
+ * - `[method]` Only match requests with specific HTTP verbs.
+ * - `[server]` Only match when $_SERVER['SERVER_NAME'] matches the given value.
+ *
+ * Example of using the `[method]` condition:
+ *
+ * `Router::connect('/tasks', array('controller' => 'tasks', 'action' => 'index', '[method]' => 'GET'));`
+ *
+ * The above route will only be matched for GET requests. POST requests will fail to match this route.
  *
  * @param string $route A string describing the template of the route
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default
  *   and can supply routing parameters that are not dynamic. See above.
  * @param array $options An array matching the named elements in the route to regular expressions which that
- *   element should match.  Also contains additional parameters such as which routed parameters should be
+ *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
  * @see routes
@@ -316,7 +330,7 @@ class Router {
  *
  * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view'));`
  *
- * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the
+ * Redirects /home/* to /posts/view and passes the parameters to /posts/view. Using an array as the
  * redirect destination allows you to use other routes to define where a url string should be redirected to.
  *
  * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
@@ -326,13 +340,13 @@ class Router {
  * ### Options:
  *
  * - `status` Sets the HTTP status (default 301)
- * - `persist` Passes the params to the redirected route, if it can.  This is useful with greedy routes,
- *   routes that end in `*` are greedy.  As you can remap urls and not loose any passed args.
+ * - `persist` Passes the params to the redirected route, if it can. This is useful with greedy routes,
+ *   routes that end in `*` are greedy. As you can remap urls and not loose any passed args.
  *
  * @param string $route A string describing the template of the route
  * @param array $url A url to redirect to. Can be a string or a Cake array-based url
  * @param array $options An array matching the named elements in the route to regular expressions which that
- *   element should match.  Also contains additional parameters such as which routed parameters should be
+ *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
  * @see routes
  * @return array Array of routes
@@ -366,7 +380,7 @@ class Router {
  * Plugins will create lower_case underscored resource routes. e.g
  * `/comments/comment`
  *
- * Connect resource routes for the Posts controller in the 
+ * Connect resource routes for the Posts controller in the
  * Admin prefix:
  *
  * {{{
@@ -378,9 +392,9 @@ class Router {
  *
  * ### Options:
  *
- * - 'id' - The regular expression fragment to use when matching IDs.  By default, matches
+ * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
  *    integer values and UUIDs.
- * - 'prefix' - Routing prefix to use for the generated routes.  Defaults to ''.
+ * - 'prefix' - Routing prefix to use for the generated routes. Defaults to ''.
  *   Using this option will create prefixed routes, similar to using Routing.prefixes.
  *
  * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
@@ -440,7 +454,7 @@ class Router {
 	}
 
 /**
- * Parses given URL string.  Returns 'routing' parameters for that url.
+ * Parses given URL string. Returns 'routing' parameters for that url.
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
@@ -450,7 +464,7 @@ class Router {
 			static::_loadRoutes();
 		}
 
-		if ($url && strpos($url, '/') !== 0) {
+		if (strlen($url) && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
 		if (strpos($url, '?') !== false) {
@@ -474,8 +488,8 @@ class Router {
  * parameters as the current request parameters that are merged with url arrays
  * created later in the request.
  *
- * Nested requests will create a stack of requests.  You can remove requests using
- * Router::popRequest().  This is done automatically when using Object::requestAction().
+ * Nested requests will create a stack of requests. You can remove requests using
+ * Router::popRequest(). This is done automatically when using Object::requestAction().
  *
  * Will accept either a Cake\Network\Request object or an array of arrays. Support for
  * accepting arrays may be removed in the future.
@@ -543,7 +557,7 @@ class Router {
 	}
 
 /**
- * Reloads default Router settings.  Resets all class variables and
+ * Reloads default Router settings. Resets all class variables and
  * removes all connected routes.
  *
  * @return void
@@ -579,7 +593,7 @@ class Router {
  * Add a url filter to Router.
  *
  * Url filter functions are applied to every array $url provided to
- * Router::url() before the urls are sent to the route collection. 
+ * Router::url() before the urls are sent to the route collection.
  *
  * Callback functions should expect the following parameters:
  *
@@ -658,6 +672,7 @@ class Router {
  *   If an array accepts the following keys.  If used with a named route you can provide
  *   a list of query string parameters.
  * @return string Full translated URL with base path.
+ * @throws Cake\Error\Exception When the route name is not found
  */
 	public static function url($url = null, $options = array()) {
 		if (!static::$initialized) {
@@ -802,7 +817,7 @@ class Router {
  *
  * @param Cake\Network\Request|array $params The params array or
  *     Cake\Network\Request object that needs to be reversed.
- * @param boolean $full Set to true to include the full url including the 
+ * @param boolean $full Set to true to include the full url including the
  *     protocol when reversing the url.
  * @return string The string that is the reversed result of the array
  */
@@ -829,8 +844,8 @@ class Router {
 	}
 
 /**
- * Normalizes a URL for purposes of comparison.  Will strip the base path off
- * and replace any double /'s.  It will not unify the casing and underscoring
+ * Normalizes a URL for purposes of comparison. Will strip the base path off
+ * and replace any double /'s. It will not unify the casing and underscoring
  * of the input value.
  *
  * @param array|string $url URL to normalize Either an array or a string url.
@@ -873,7 +888,7 @@ class Router {
  * A list of valid extension can be passed to this method, i.e. Router::parseExtensions('rss', 'xml');
  * If no parameters are given, anything after the first . (dot) after the last / in the URL will be
  * parsed, excluding querystring parameters (i.e. ?q=...).
-*
+ *
  * @return void
  * @see RequestHandler::startup()
  */

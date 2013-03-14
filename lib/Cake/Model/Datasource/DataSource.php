@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Datasource
  * @since         CakePHP(tm) v 0.10.5.1790
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model\Datasource;
+
 use Cake\Cache\Cache;
 use Cake\Core\Object;
 use Cake\Model\ConnectionManager;
@@ -231,7 +233,7 @@ class DataSource extends Object {
  *
  * @param Model $model The model class having record(s) deleted
  * @param mixed $conditions The conditions to use for deleting.
- * @return void
+ * @return boolean Success
  */
 	public function delete(Model $model, $id = null) {
 		return false;
@@ -269,7 +271,7 @@ class DataSource extends Object {
 
 /**
  * Check whether the conditions for the Datasource being available
- * are satisfied.  Often used from connect() to check for support
+ * are satisfied. Often used from connect() to check for support
  * before establishing a connection.
  *
  * @return boolean Whether or not the Datasources conditions for use are met.
@@ -327,7 +329,6 @@ class DataSource extends Object {
  * @param Model $linkModel Instance of model to replace $__cakeForeignKey__$
  * @param array $stack
  * @return string String of query data with placeholders replaced.
- * @todo Remove and refactor $assocData, ensure uses of the method have the param removed too.
  */
 	public function insertQueryData($query, $data, $association, $assocData, Model $model, Model $linkModel, $stack) {
 		$keys = array('{$__cakeID__$}', '{$__cakeForeignKey__$}');
@@ -361,7 +362,7 @@ class DataSource extends Object {
 						$type = $model->getColumnType($model->primaryKey);
 					break;
 					case '{$__cakeForeignKey__$}':
-						foreach ($model->associations() as $id => $name) {
+						foreach ($model->associations() as $name) {
 							foreach ($model->$name as $assocName => $assoc) {
 								if ($assocName === $association) {
 									if (isset($assoc['foreignKey'])) {

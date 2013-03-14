@@ -7,12 +7,13 @@
  * PHP 5
  *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.0.7726
@@ -50,7 +51,7 @@ class ExtractTaskTest extends TestCase {
 			array($out, $out, $in)
 		);
 		$this->path = TMP . 'tests/extract_task_test';
-		$Folder = new Folder($this->path . DS . 'locale', true);
+		new Folder($this->path . DS . 'locale', true);
 	}
 
 /**
@@ -103,22 +104,22 @@ class ExtractTaskTest extends TestCase {
 		$pattern = '/msgid "Your tmp directory is NOT writable."\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/msgid "The %s is being used for caching. To change the config edit ';
-		$pattern .= 'APP\/config\/core.php "\nmsgstr ""\n/';
+		$pattern = '/msgid "The %s is being used for core caching. To change the config edit ';
+		$pattern .= 'APP\/Config\/cache.php"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/msgid "Your cache is NOT working. Please check ';
-		$pattern .= 'the settings in APP\/config\/core.php"\nmsgstr ""\n/';
+		$pattern .= 'the settings in APP\/Config\/cache.php"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/msgid "Your database configuration file is present."\nmsgstr ""\n/';
+		$pattern = '/msgid "Your datasources configuration file is present."\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/msgid "Your database configuration file is NOT present."\nmsgstr ""\n/';
+		$pattern = '/msgid "Your datasources configuration file is NOT present."\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/msgid "Rename config\/database.php.default to ';
-		$pattern .= 'config\/database.php"\nmsgstr ""\n/';
+		$pattern = '/msgid "Rename APP\/Config\/datasources.default.php to ';
+		$pattern .= 'APP\/Config\/datasources.php"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/msgid "Cake is able to connect to the database."\nmsgstr ""\n/';
@@ -130,10 +131,13 @@ class ExtractTaskTest extends TestCase {
 		$pattern = '/msgid "Editing this Page"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/msgid "To change the content of this page, create: APP\/views\/pages\/home\.ctp/';
+		$pattern = '/msgid "To change the content of this page, edit: APP\/View\/Pages\/home\.ctp/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/To change its layout, create: APP\/views\/layouts\/default\.ctp\./s';
+		$pattern = '/To change its layout, edit: APP\/View\/Layouts\/default\.ctp\./s';
+		$this->assertRegExp($pattern, $result);
+
+		$pattern = '/You can also add some CSS styles for your pages at: APP\/webroot\/css\."/';
 		$this->assertRegExp($pattern, $result);
 
 		// extract.ctp
@@ -149,7 +153,7 @@ class ExtractTaskTest extends TestCase {
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
-		$pattern .= '\#: (\\\\|\/)home\.ctp:101\n';
+		$pattern .= '\#: (\\\\|\/)home\.ctp:148\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
 

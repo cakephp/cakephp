@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Controller\Component;
+
 use Cake\Controller\Component\AuthComponent;
 
 /**
@@ -37,7 +38,7 @@ class TestAuthComponent extends AuthComponent {
  *
  * @return void
  */
-	function _stop($status = 0) {
+	protected function _stop($status = 0) {
 		$this->testStop = true;
 	}
 

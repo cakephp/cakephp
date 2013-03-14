@@ -1,18 +1,20 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Console.Command
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Console\Command;
+
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
 use Cake\Core\App;
@@ -103,7 +105,7 @@ class CommandListShell extends Shell {
  * @param string $type
  * @param array $shells
  * @param array $shellList
- * @return array
+ * @return void
  */
 	protected function _appendShells($type, $shells, &$shellList) {
 		foreach ($shells as $shell) {

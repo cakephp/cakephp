@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.2.9
@@ -64,6 +65,7 @@ class Inflector {
 			'brother' => 'brothers',
 			'cafe' => 'cafes',
 			'child' => 'children',
+			'cookie' => 'cookies',
 			'corpus' => 'corpuses',
 			'cow' => 'cows',
 			'ganglion' => 'ganglions',
@@ -177,7 +179,7 @@ class Inflector {
 		'/Ä/' => 'Ae',
 		'/Ü/' => 'Ue',
 		'/Ö/' => 'Oe',
-		'/À|Á|Â|Ã|Ä|Å|Ǻ|Ā|Ă|Ą|Ǎ/' => 'A',
+		'/À|Á|Â|Ã|Å|Ǻ|Ā|Ă|Ą|Ǎ/' => 'A',
 		'/à|á|â|ã|å|ǻ|ā|ă|ą|ǎ|ª/' => 'a',
 		'/Ç|Ć|Ĉ|Ċ|Č/' => 'C',
 		'/ç|ć|ĉ|ċ|č/' => 'c',
@@ -203,10 +205,10 @@ class Inflector {
 		'/ò|ó|ô|õ|ō|ŏ|ǒ|ő|ơ|ø|ǿ|º/' => 'o',
 		'/Ŕ|Ŗ|Ř/' => 'R',
 		'/ŕ|ŗ|ř/' => 'r',
-		'/Ś|Ŝ|Ş|Š/' => 'S',
-		'/ś|ŝ|ş|š|ſ/' => 's',
-		'/Ţ|Ť|Ŧ/' => 'T',
-		'/ţ|ť|ŧ/' => 't',
+		'/Ś|Ŝ|Ş|Ș|Š/' => 'S',
+		'/ś|ŝ|ş|ș|š|ſ/' => 's',
+		'/Ţ|Ț|Ť|Ŧ/' => 'T',
+		'/ţ|ț|ť|ŧ/' => 't',
 		'/Ù|Ú|Û|Ũ|Ū|Ŭ|Ů|Ű|Ų|Ư|Ǔ|Ǖ|Ǘ|Ǚ|Ǜ/' => 'U',
 		'/ù|ú|û|ũ|ū|ŭ|ů|ű|ų|ư|ǔ|ǖ|ǘ|ǚ|ǜ/' => 'u',
 		'/Ý|Ÿ|Ŷ/' => 'Y',
@@ -270,7 +272,7 @@ class Inflector {
 			return;
 		}
 		foreach (static::$_initialState as $key => $val) {
-			if ($key != '_initialState') {
+			if ($key !== '_initialState') {
 				static::${$key} = $val;
 			}
 		}

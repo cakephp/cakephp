@@ -1,16 +1,18 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View;
+
 use Cake\Controller\Controller;
 use Cake\Network\Response;
 use Cake\Utility\Set;
@@ -33,7 +35,7 @@ use Cake\Utility\Xml;
  *
  * **Note** The view variable you specify must be compatible with Xml::fromArray().
  *
- * You can also define `'_serialize'` as an array.  This will create an additional
+ * You can also define `'_serialize'` as an array. This will create an additional
  * top level element named `<response>` containing all the named view variables:
  *
  * {{{
@@ -45,7 +47,7 @@ use Cake\Utility\Xml;
  *
  * `<response><posts>...</posts><users>...</users></response>`
  *
- * If you don't use the `_serialize` key, you will need a view.  You can use extended
+ * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout like functionality.
  *
  * @package       Cake.View
@@ -54,7 +56,7 @@ use Cake\Utility\Xml;
 class XmlView extends View {
 
 /**
- * The subdirectory.  XML views are always in xml.
+ * The subdirectory. XML views are always in xml.
  *
  * @var string
  */
@@ -77,8 +79,8 @@ class XmlView extends View {
  * Render a XML view.
  *
  * Uses the special '_serialize' parameter to convert a set of
- * view variables into a XML response.  Makes generating simple
- * XML responses very easy.  You can omit the '_serialize' parameter,
+ * view variables into a XML response. Makes generating simple
+ * XML responses very easy. You can omit the '_serialize' parameter,
  * and use a normal view + layout as well.
  *
  * @param string $view The view being rendered.
@@ -89,7 +91,7 @@ class XmlView extends View {
 		if (isset($this->viewVars['_serialize'])) {
 			return $this->_serialize($this->viewVars['_serialize']);
 		}
-		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
+		if ($view !== false && $this->_getViewFileName($view)) {
 			return parent::render($view, false);
 		}
 	}
@@ -101,18 +103,20 @@ class XmlView extends View {
  * @return string The serialized data
  */
 	protected function _serialize($serialize) {
+		$rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'response';
+
 		if (is_array($serialize)) {
-			$data = array('response' => array());
+			$data = array($rootNode => array());
 			foreach ($serialize as $key) {
-				$data['response'][$key] = $this->viewVars[$key];
+				$data[$rootNode][$key] = $this->viewVars[$key];
 			}
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 			if (is_array($data) && Set::numeric(array_keys($data))) {
-				$data = array('response' => array($serialize => $data));
+				$data = array($rootNode => array($serialize => $data));
 			}
 		}
-		 return Xml::fromArray($data)->asXML();
+		return Xml::fromArray($data)->asXML();
 	}
 
 }

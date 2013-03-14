@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Core
  * @since         CakePHP(tm) v 2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Core;
+
 use Cake\Error;
 use Cake\Utility\Inflector;
 
@@ -67,7 +69,7 @@ class Plugin {
  *
  * @param string|array $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
  * @param array $config configuration options for the plugin
- * @throws MissingPluginException if the folder for the plugin to be loaded is not found
+ * @throws Cake\Error\MissingPluginException if the folder for the plugin to be loaded is not found
  * @return void
  */
 	public static function load($plugin, $config = array()) {
@@ -78,7 +80,7 @@ class Plugin {
 			}
 			return;
 		}
-		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin);
+		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false);
 		if (empty($config['path'])) {
 			$namespacePath = str_replace('\\', DS, $config['namespace']);
 			foreach (App::path('Plugin') as $path) {
@@ -139,7 +141,7 @@ class Plugin {
  *
  * @param string $plugin name of the plugin in CamelCase format
  * @return string path to the plugin folder
- * @throws MissingPluginException if the folder for plugin was not found or plugin has not been loaded
+ * @throws Cake\Error\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
  */
 	public static function path($plugin) {
 		if (empty(static::$_plugins[$plugin])) {
@@ -153,7 +155,7 @@ class Plugin {
  *
  * @param string $plugin name of the plugin in CamelCase format
  * @return string namespace to the plugin
- * @throws MissingPluginException if the namespace for plugin was not found or plugin has not been loaded
+ * @throws Cake\Error\MissingPluginException if the namespace for plugin was not found or plugin has not been loaded
  */
 	public static function getNamespace($plugin) {
 		if (empty(static::$_plugins[$plugin])) {
@@ -180,12 +182,18 @@ class Plugin {
 
 		$path = static::path($plugin);
 		if ($config['bootstrap'] === true) {
-			return include $path . 'Config/bootstrap.php';
+			return static::_includeFile(
+				$path . 'Config/bootstrap.php',
+				$config['ignoreMissing']
+			);
 		}
 
 		$bootstrap = (array)$config['bootstrap'];
 		foreach ($bootstrap as $file) {
-			include $path . 'Config/' . $file . '.php';
+			static::_includeFile(
+				$path . 'Config' . DS . $file . '.php',
+				$config['ignoreMissing']
+			);
 		}
 
 		return true;
@@ -209,7 +217,10 @@ class Plugin {
 		if ($config['routes'] === false) {
 			return false;
 		}
-		return (bool)include static::path($plugin) . 'Config/routes.php';
+		return (bool)static::_includeFile(
+			static::path($plugin) . 'Config' . DS . 'routes.php',
+			$config['ignoreMissing']
+		);
 	}
 
 /**
@@ -241,6 +252,20 @@ class Plugin {
 		} else {
 			unset(static::$_plugins[$plugin]);
 		}
+	}
+
+/**
+ * Include file, ignoring include error if needed if file is missing
+ *
+ * @param string $file File to include
+ * @param boolean $ignoreMissing Whether to ignore include error for missing files
+ * @return mixed
+ */
+	protected static function _includeFile($file, $ignoreMissing = false) {
+		if ($ignoreMissing && !is_file($file)) {
+			return false;
+		}
+		return include $file;
 	}
 
 }

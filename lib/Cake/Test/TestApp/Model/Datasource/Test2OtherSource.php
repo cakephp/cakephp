@@ -1,5 +1,6 @@
 <?php
 namespace TestApp\Model\Datasource;
+
 use Cake\Model\Datasource\DataSource;
 
 class Test2OtherSource extends DataSource {

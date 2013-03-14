@@ -3,16 +3,16 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of the files must retain the above copyright notice.
  *
- * @copyright	Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright	Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link	http://cakephp.org CakePHP(tm) Project
  * @license	MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Controller\Component\Auth;
 
 use Cake\Network\Request;
@@ -32,7 +32,10 @@ use Cake\Utility\Security;
  * }}}
  *
  * When  configuring BlowfishAuthenticate you can pass in settings to which fields, model and additional conditions
- * are used. See BlowfishAuthenticate::$settings for more information.
+ * are used. See FormAuthenticate::$settings for more information.
+ *
+ * For inital password hashing/creation see Security::hash(). Other than how the password is initally hashed,
+ * BlowfishAuthenticate works exactly the same way as FormAuthenticate.
  *
  * @package	Cake.Controller.Component.Auth
  * @since	CakePHP(tm) v 2.3
@@ -51,7 +54,7 @@ class BlowfishAuthenticate extends FormAuthenticate {
  */
 	public function authenticate(Request $request, Response $response) {
 		$userModel = $this->settings['userModel'];
-		list($plugin, $model) = pluginSplit($userModel);
+		list(, $model) = pluginSplit($userModel);
 
 		$fields = $this->settings['fields'];
 		if (!$this->_checkFields($request, $model, $fields)) {

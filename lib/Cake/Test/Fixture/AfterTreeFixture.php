@@ -9,6 +9,7 @@
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -18,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\Fixture;
+
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
@@ -53,11 +55,11 @@ class AfterTreeFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('parent_id' => null, 'lft' => 1,  'rght' => 2, 'name' => 'One'),
-		array('parent_id' => null, 'lft' => 3,  'rght' => 4, 'name' => 'Two'),
-		array('parent_id' => null, 'lft' => 5,  'rght' => 6, 'name' => 'Three'),
+		array('parent_id' => null, 'lft' => 1, 'rght' => 2, 'name' => 'One'),
+		array('parent_id' => null, 'lft' => 3, 'rght' => 4, 'name' => 'Two'),
+		array('parent_id' => null, 'lft' => 5, 'rght' => 6, 'name' => 'Three'),
 		array('parent_id' => null, 'lft' => 7, 'rght' => 12, 'name' => 'Four'),
-		array('parent_id' => null, 'lft' => 8,  'rght' => 9, 'name' => 'Five'),
+		array('parent_id' => null, 'lft' => 8, 'rght' => 9, 'name' => 'Five'),
 		array('parent_id' => null, 'lft' => 10, 'rght' => 11, 'name' => 'Six'),
 		array('parent_id' => null, 'lft' => 13, 'rght' => 14, 'name' => 'Seven')
 	);

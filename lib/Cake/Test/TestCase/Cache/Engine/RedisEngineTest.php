@@ -1,22 +1,23 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @since         CakePHP(tm) v 2.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Test\TestCase\Cache\Engine;
-use Cake\TestSuite\TestCase;
-use Cake\Cache\Engine\RedisEngine;
+
 use Cake\Cache\Cache;
+use Cake\Cache\Engine\RedisEngine;
 use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
 
 /**
  * RedisEngineTest class
@@ -70,7 +71,8 @@ class RegisEngineTest extends TestCase {
 			'server' => '127.0.0.1',
 			'port' => 6379,
 			'timeout' => 0,
-			'persistent' => true
+			'persistent' => true,
+			'password' => false,
 		);
 		$this->assertEquals($expecting, $settings);
 	}
@@ -310,7 +312,7 @@ class RegisEngineTest extends TestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Configure::write('Cache.redis_groups', [
 			'engine' => 'Redis',

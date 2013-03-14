@@ -7,12 +7,13 @@
  * PHP 5
  *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.0.7726
@@ -399,7 +400,7 @@ class ViewTaskTest extends TestCase {
 
 		//fake plugin path
 		Plugin::load('TestTest', array('path' => APP . 'Plugin/TestTest/'));
-		$path =  APP . 'Plugin/TestTest/View/ViewTaskComments/view.ctp';
+		$path = APP . 'Plugin/TestTest/View/ViewTaskComments/view.ctp';
 
 		$result = $this->Task->getContent('index');
 		$this->assertNotContains('List Test Test.view Task Articles', $result);
@@ -732,7 +733,7 @@ class ViewTaskTest extends TestCase {
 		$this->assertEquals('form', $result);
 
 		$this->Task->Template->templatePaths = array(
-			'test' => CAKE . 'Test/' .  'TestApp/Console/Templates/test/'
+			'test' => CAKE . 'Test/' . 'TestApp/Console/Templates/test/'
 		);
 		$this->Task->Template->params['theme'] = 'test';
 

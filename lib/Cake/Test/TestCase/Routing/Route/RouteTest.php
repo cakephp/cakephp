@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Routing.Route
  * @since         CakePHP(tm) v 2.0
@@ -45,7 +46,7 @@ class RouteTest extends TestCase {
  * Test the construction of a Route
  *
  * @return void
- **/
+ */
 	public function testConstruction() {
 		$route = new Route('/:controller/:action/:id', array(), array('id' => '[0-9]+'));
 
@@ -59,7 +60,7 @@ class RouteTest extends TestCase {
  * test Route compiling.
  *
  * @return void
- **/
+ */
 	public function testBasicRouteCompiling() {
 		$route = new Route('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$result = $route->compile();
@@ -140,7 +141,7 @@ class RouteTest extends TestCase {
  * test compiling routes with keys that have patterns
  *
  * @return void
- **/
+ */
 	public function testRouteCompilingWithParamPatterns() {
 		$route = new Route(
 			'/:controller/:action/:id',
@@ -328,7 +329,7 @@ class RouteTest extends TestCase {
 			'controller' => 'subscribe', 'prefix' => 'admin'
 		));
 
-		$url = array('controller' => 'subscribe', 'prefix' =>  'admin', 'action' => 'edit', 1);
+		$url = array('controller' => 'subscribe', 'prefix' => 'admin', 'action' => 'edit', 1);
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit/1';
 		$this->assertEquals($expected, $result);
@@ -545,7 +546,7 @@ class RouteTest extends TestCase {
 
 		$restore = ini_get('arg_separator.output');
 		ini_set('arg_separator.output', '&amp;');
-	
+
 		$result = $route->match(array(
 			'controller' => 'posts',
 			'action' => 'index',
@@ -645,7 +646,6 @@ class RouteTest extends TestCase {
 			'[method]' => 'POST',
 		];
 		$this->assertEquals($expected, $route->parse('/sample'));
-
 	}
 
 /**
@@ -671,7 +671,6 @@ class RouteTest extends TestCase {
 		];
 		$this->assertEquals($expected, $route->parse('/sample'));
 	}
-
 
 /**
  * Test that the [type] condition works.
@@ -850,6 +849,30 @@ class RouteTest extends TestCase {
 			array('plugin' => 'asset', 'controller' => 'assets', 'action' => 'get')
 		);
 		$this->assertEquals('asset.assets:get', $route->getName());
+	}
+
+/**
+ * test that utf-8 patterns work for :section
+ *
+ * @return void
+ */
+	public function testUTF8PatternOnSection() {
+		$route = new Route(
+			'/:section',
+			array('plugin' => 'blogs', 'controller' => 'posts' , 'action' => 'index' ),
+			array(
+				'persist' => array('section'),
+				'section' => 'آموزش|weblog'
+			)
+		);
+
+		$result = $route->parse('/%D8%A2%D9%85%D9%88%D8%B2%D8%B4');
+		$expected = array('section' => 'آموزش', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => array());
+		$this->assertEquals($expected, $result);
+
+		$result = $route->parse('/weblog');
+		$expected = array('section' => 'weblog', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => array());
+		$this->assertEquals($expected, $result);
 	}
 
 }

@@ -5,18 +5,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Network
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Network;
+
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -198,31 +200,27 @@ class ResponseTest extends TestCase {
 	}
 
 /**
- * Tests the send method and changing the content type
+ * Data provider for content type tests.
  *
+ * @return array
  */
-	public function testSendChangingContentYype() {
-		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', '_sendContent', '_setCookies'));
-		$response->type('mp3');
-		$response->body('the response body');
-		$response->expects($this->once())->method('_sendContent')->with('the response body');
-		$response->expects($this->at(0))->method('_setCookies');
-		$response->expects($this->at(1))
-			->method('_sendHeader')->with('HTTP/1.1 200 OK');
-		$response->expects($this->at(2))
-			->method('_sendHeader')->with('Content-Length', 17);
-		$response->expects($this->at(3))
-			->method('_sendHeader')->with('Content-Type', 'audio/mpeg');
-		$response->send();
+	public static function charsetTypeProvider() {
+		return array(
+			array('mp3', 'audio/mpeg'),
+			array('js', 'application/javascript; charset=UTF-8'),
+			array('json', 'application/json; charset=UTF-8'),
+			array('xml', 'application/xml; charset=UTF-8'),
+			array('txt', 'text/plain; charset=UTF-8'),
+		);
 	}
 
 /**
  * Tests the send method and changing the content type
- *
+ * @dataProvider charsetTypeProvider
  */
-	public function testSendChangingContentType() {
+	public function testSendChangingContentType($original, $expected) {
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', '_sendContent', '_setCookies'));
-		$response->type('mp3');
+		$response->type($original);
 		$response->body('the response body');
 		$response->expects($this->once())->method('_sendContent')->with('the response body');
 		$response->expects($this->at(0))->method('_setCookies');
@@ -231,7 +229,28 @@ class ResponseTest extends TestCase {
 		$response->expects($this->at(2))
 			->method('_sendHeader')->with('Content-Length', 17);
 		$response->expects($this->at(3))
-			->method('_sendHeader')->with('Content-Type', 'audio/mpeg');
+			->method('_sendHeader')->with('Content-Type', $expected);
+		$response->send();
+	}
+
+/**
+ * Tests the send method and changing the content type to JS without adding the charset
+ *
+ */
+	public function testSendChangingContentTypeWithoutCharset() {
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', '_sendContent', '_setCookies'));
+		$response->type('js');
+		$response->charset('');
+
+		$response->body('var $foo = "bar";');
+		$response->expects($this->once())->method('_sendContent')->with('var $foo = "bar";');
+		$response->expects($this->at(0))->method('_setCookies');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(3))
+			->method('_sendHeader')->with('Content-Type', 'application/javascript');
 		$response->send();
 	}
 
@@ -833,7 +852,7 @@ class ResponseTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagStar() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = '*';
 		$response = $this->getMock('Cake\Network\Response', array('notModified'));
@@ -846,7 +865,7 @@ class ResponseTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagExact() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$response = $this->getMock('Cake\Network\Response', array('notModified'));
@@ -859,7 +878,7 @@ class ResponseTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagAndTime() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
@@ -874,7 +893,7 @@ class ResponseTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagAndTimeMismatch() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
@@ -889,7 +908,7 @@ class ResponseTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByEtagMismatch() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something-else", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
@@ -904,7 +923,7 @@ class ResponseTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedByTime() {
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
 		$response = $this->getMock('Cake\Network\Response', array('notModified'));
@@ -917,7 +936,7 @@ class ResponseTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
- **/
+ */
 	public function testCheckNotModifiedNoHints() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
@@ -1051,7 +1070,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test/TestApp/Vendor/css/test_asset.css');
+		$response->file(CAKE . 'Test/TestApp/vendor/css/test_asset.css');
 
 		ob_start();
 		$result = $response->send();
@@ -1303,7 +1322,7 @@ class ResponseTest extends TestCase {
 		$response->expects($this->once())->method('_clearBuffer');
 		$response->expects($this->never())->method('_flushBuffer');
 
-		$response->file(CAKE . 'Test/TestApp/Vendor/css/test_asset.css');
+		$response->file(CAKE . 'Test/TestApp/vendor/css/test_asset.css');
 
 		$result = $response->send();
 		$this->assertNull($result);
@@ -1335,7 +1354,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test/TestApp/Vendor/img/test_2.JPG');
+		$response->file(CAKE . 'Test/TestApp/vendor/img/test_2.JPG');
 	}
 
 /**
@@ -1364,7 +1383,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CAKE . 'Test/TestApp/Vendor/img/test_2.JPG');
+		$response->file(CAKE . 'Test/TestApp/vendor/img/test_2.JPG');
 	}
 
 }
