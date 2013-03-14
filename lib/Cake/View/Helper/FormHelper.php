@@ -2208,6 +2208,9 @@ class FormHelper extends AppHelper {
 		if ($attributes['value'] > 12 && !$format24Hours) {
 			$attributes['value'] -= 12;
 		}
+		if ($attributes['value'] === '00' && !$format24Hours) {
+			$attributes['value'] = 12;
+		}
 
 		return $this->select(
 			$fieldName . ".hour",
