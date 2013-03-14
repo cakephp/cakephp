@@ -608,7 +608,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Log a user out. 
+ * Log a user out.
  *
  * Returns the login action to redirect to. Triggers the logout() method of
  * all the authenticate objects, so they can perform custom logout logic.
@@ -680,6 +680,7 @@ class AuthComponent extends Component {
 
 		$user = $this->user();
 		if ($user) {
+			$this->Session->delete('Auth.redirect');
 			return true;
 		}
 		return false;
@@ -789,18 +790,6 @@ class AuthComponent extends Component {
  */
 	public static function password($password) {
 		return Security::hash($password, null, true);
-	}
-
-/**
- * Component shutdown. If user is logged in, wipe out redirect.
- *
- * @param Controller $controller Instantiating controller
- * @return void
- */
-	public function shutdown(Controller $controller) {
-		if ($this->loggedIn()) {
-			$this->Session->delete('Auth.redirect');
-		}
 	}
 
 /**
