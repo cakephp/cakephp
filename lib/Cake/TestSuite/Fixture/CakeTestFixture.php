@@ -277,7 +277,6 @@ class CakeTestFixture {
 				$fields = array_unique($fields);
 				$default = array_fill_keys($fields, null);
 				foreach ($this->records as $record) {
-					$fields = array_keys($record);
 					$values[] = array_values(array_merge($default, $record));
 				}
 				$nested = $db->useNestedTransactions;

@@ -175,6 +175,7 @@ class ValidationTest extends CakeTestCase {
 
 		$this->assertFalse(Validation::alphaNumeric('12 234'));
 		$this->assertFalse(Validation::alphaNumeric('dfd 234'));
+		$this->assertFalse(Validation::alphaNumeric("0\n"));
 		$this->assertFalse(Validation::alphaNumeric("\n"));
 		$this->assertFalse(Validation::alphaNumeric("\t"));
 		$this->assertFalse(Validation::alphaNumeric("\r"));
