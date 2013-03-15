@@ -24,6 +24,7 @@ namespace Cake\Utility;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Http\Client;
+use \DOMDocument;
 
 /**
  * XML handling for Cake.

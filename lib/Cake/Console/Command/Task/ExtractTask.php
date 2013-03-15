@@ -183,17 +183,6 @@ class ExtractTask extends Shell {
 		}
 
 		if (!empty($this->params['exclude-plugins']) && $this->_isExtractingApp()) {
-			$this->_exclude = array_merge($this->_exclude, App::path('plugins'));
-		}
-
-		if (!empty($this->params['ignore-model-validation']) || (!$this->_isExtractingApp() && empty($plugin))) {
-			$this->_extractValidation = false;
-		}
-		if (!empty($this->params['validation-domain'])) {
-			$this->_validationDomain = $this->params['validation-domain'];
-		}
-
-		if (!empty($this->params['exclude-plugins']) && $this->_isExtractingApp()) {
 			$this->_exclude = array_merge($this->_exclude, App::path('Plugin'));
 		}
 

@@ -16,11 +16,23 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Folder;
 use Cake\Utility\Hash;
+
+/**
+ * Class for testing merging vars
+ */
+class MergeShell extends Shell {
+
+	public $tasks = array('DbConfig', 'Fixture');
+
+	public $uses = array('Comment');
+
+}
 
 /**
  * ShellTestShell class
@@ -158,6 +170,7 @@ class ShellTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
 			'Model' => array(CAKE . 'Test/TestApp/Model/')
 		), App::RESET);
+		Configure::write('App.namespace', 'TestApp');
 
 		Plugin::load('TestPlugin');
 		$this->Shell->uses = array('TestPlugin.TestPluginPost');
@@ -172,7 +185,7 @@ class ShellTest extends TestCase {
 		$this->Shell->initialize();
 		$this->assertTrue(isset($this->Shell->Comment));
 		$this->assertInstanceOf('TestApp\Model\Comment', $this->Shell->Comment);
-		$this->assertEquals('Comment', $this->Shell->modelClass);
+		$this->assertEquals('TestApp\Model\Comment', $this->Shell->modelClass);
 
 		App::build();
 	}
@@ -184,23 +197,24 @@ class ShellTest extends TestCase {
  */
 	public function testLoadModel() {
 		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
-			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS)
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
+			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS)
 		), App::RESET);
+		Configure::write('App.namespace', 'TestApp');
 
-		$Shell = new TestMergeShell();
+		$Shell = new MergeShell();
 		$this->assertEquals('Comment', $Shell->Comment->alias);
-		$this->assertInstanceOf('Comment', $Shell->Comment);
+		$this->assertInstanceOf('TestApp\Model\Comment', $Shell->Comment);
 		$this->assertEquals('Comment', $Shell->modelClass);
 
-		CakePlugin::load('TestPlugin');
+		Plugin::load('TestPlugin');
 		$this->Shell->loadModel('TestPlugin.TestPluginPost');
 		$this->assertTrue(isset($this->Shell->TestPluginPost));
-		$this->assertInstanceOf('TestPluginPost', $this->Shell->TestPluginPost);
+		$this->assertInstanceOf('TestPlugin\Model\TestPluginPost', $this->Shell->TestPluginPost);
 		$this->assertEquals('TestPluginPost', $this->Shell->modelClass);
-		CakePlugin::unload('TestPlugin');
 
 		App::build();
+		Plugin::unload('TestPlugin');
 	}
 
 /**

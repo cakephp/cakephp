@@ -263,6 +263,10 @@ class Shell extends Object {
 				if ($name === $class) {
 					return $this->loadModel($modelClass);
 				}
+				list(, $class) = namespaceSplit($modelClass);
+				if ($name === $class) {
+					return $this->loadModel($class);
+				}
 			}
 		}
 	}
@@ -291,7 +295,9 @@ class Shell extends Object {
 		}
 
 		$this->{$modelClass} = ClassRegistry::init(array(
-			'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
+			'class' => $plugin . $modelClass,
+			'alias' => $modelClass,
+			'id' => $id
 		));
 		if (!$this->{$modelClass}) {
 			throw new MissingModelException($modelClass);

@@ -92,18 +92,8 @@ class BasicAuthenticate extends BaseAuthenticate {
  * @param Cake\Network\Response $response The response to add headers to.
  * @return mixed Either false on failure, or an array of user data on success.
  */
-	public function authenticate(CakeRequest $request, CakeResponse $response) {
+	public function authenticate(Request $request, Response $response) {
 		return $this->getUser($request);
-	}
-
-/**
- * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
- *
- * @param CakeRequest $request Request object.
- * @return mixed Either false or an array of user information
- */
-	public function getUser(CakeRequest $request) {
-		$username = env('PHP_AUTH_USER');
 	}
 
 /**
@@ -129,7 +119,7 @@ class BasicAuthenticate extends BaseAuthenticate {
  * @param CakeResponse $response A response object.
  * @return boolean True
  */
-	public function unauthenticated(CakeRequest $request, CakeResponse $response) {
+	public function unauthenticated(Request $request, Response $response) {
 		$response->header($this->loginHeaders());
 		$response->statusCode(401);
 		$response->send();

@@ -248,7 +248,9 @@ class ExtractTaskTest extends TestCase {
 			array('_isExtractingApp', '_extractValidationMessages', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
-		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
+		$this->Task->expects($this->exactly(2))
+			->method('_isExtractingApp')
+			->will($this->returnValue(true));
 
 		$this->Task->params['paths'] = CAKE . 'Test/TestApp/';
 		$this->Task->params['output'] = $this->path . DS;
@@ -305,7 +307,9 @@ class ExtractTaskTest extends TestCase {
 			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
-		$this->Task->expects($this->exactly(2))->method('_isExtractingApp')->will($this->returnValue(true));
+		$this->Task->expects($this->exactly(2))
+			->method('_isExtractingApp')
+			->will($this->returnValue(true));
 
 		$this->Task->params['paths'] = CAKE . 'Test/TestApp/';
 		$this->Task->params['output'] = $this->path . DS;

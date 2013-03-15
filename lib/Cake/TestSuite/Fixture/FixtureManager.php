@@ -234,7 +234,6 @@ class FixtureManager {
  * @throws UnexpectedValueException if $name is not a previously loaded class
  */
 	public function loadSingle($name, $db = null, $dropTables = true) {
-		$name .= 'Fixture';
 		if (isset($this->_fixtureMap[$name])) {
 			$fixture = $this->_fixtureMap[$name];
 			if (!$db) {

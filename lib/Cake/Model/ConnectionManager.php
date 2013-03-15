@@ -98,7 +98,7 @@ class ConnectionManager {
 
 		$class = static::loadDataSource($name);
 
-		if (strpos(App::location($class), 'Datasource') === false) {
+		if (strpos($class, '\Datasource') === false) {
 			throw new Error\MissingDatasourceException(array(
 				'class' => $class,
 				'plugin' => null,

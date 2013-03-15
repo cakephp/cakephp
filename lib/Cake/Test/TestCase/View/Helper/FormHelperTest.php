@@ -5872,7 +5872,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->month('Project.release');
 
 		$expected = array(
-			array('select' => array('name' => 'data[Project][release][month]', 'id' => 'ProjectReleaseMonth')),
+			array('select' => array('name' => 'Project[release][month]', 'id' => 'ProjectReleaseMonth')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5977,7 +5977,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->day('Project.release');
 
 		$expected = array(
-			array('select' => array('name' => 'data[Project][release][day]', 'id' => 'ProjectReleaseDay')),
+			array('select' => array('name' => 'Project[release][day]', 'id' => 'ProjectReleaseDay')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -6168,7 +6168,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2050-10-10 01:12:32';
 		$result = $this->Form->hour('Model.field', true);
 		$expected = array(
-			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),

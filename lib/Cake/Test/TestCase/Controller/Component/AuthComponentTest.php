@@ -24,6 +24,7 @@ use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Model\Datasource\Session;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
@@ -1104,9 +1105,9 @@ class AuthComponentTest extends TestCase {
  * @return void
  */
 	public function testStatelessAuthNoRedirect() {
-		if (CakeSession::id()) {
+		if (Session::id()) {
 			session_destroy();
-			CakeSession::$id = null;
+			Session::$id = null;
 		}
 		$_SESSION = null;
 
@@ -1125,7 +1126,7 @@ class AuthComponentTest extends TestCase {
 		$this->assertFalse($result);
 
 		$this->assertNull($this->Controller->testUrl);
-		$this->assertNull(CakeSession::id());
+		$this->assertNull(Session::id());
 	}
 
 /**
@@ -1134,9 +1135,9 @@ class AuthComponentTest extends TestCase {
  * @return void
  */
 	public function testStatelessAuthNoSessionStart() {
-		if (CakeSession::id()) {
+		if (Session::id()) {
 			session_destroy();
-			CakeSession::$id = null;
+			Session::$id = null;
 		}
 		$_SESSION = null;
 
@@ -1151,7 +1152,7 @@ class AuthComponentTest extends TestCase {
 		$result = $this->Auth->startup($this->Controller);
 		$this->assertTrue($result);
 
-		$this->assertNull(CakeSession::id());
+		$this->assertNull(Session::id());
 	}
 
 /**
