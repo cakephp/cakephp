@@ -436,6 +436,10 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->insertMulti['table'] = $table;
 		$this->insertMulti['fields'] = $fields;
 		$this->insertMulti['values'] = $values;
+		$this->insertMulti['fields_values'] = array();
+		foreach($values as $record) {
+			$this->insertMulti['fields_values'][] = array_combine($fields, $record);
+		}
 		return true;
 	}
 
@@ -454,13 +458,31 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->assertTrue($this->criticDb->fullDebug);
 		$this->assertTrue($return);
 		$this->assertEquals('strings', $this->insertMulti['table']);
-		$this->assertEquals(array('email', 'name', 'age'), $this->insertMulti['fields']);
+		$this->assertEquals(array('name', 'email', 'age'), array_values($this->insertMulti['fields']));
 		$expected = array(
 			array('Mark Doe', 'mark.doe@email.com', null),
 			array('John Doe', 'john.doe@email.com', 20),
 			array('Jane Doe', 'jane.doe@email.com', 30),
 		);
 		$this->assertEquals($expected, $this->insertMulti['values']);
+		$expected = array(
+			array(
+				'name' => 'Mark Doe', 
+				'email' => 'mark.doe@email.com', 
+				'age' => null
+			),
+			array(
+				'name' => 'John Doe', 
+				'email' => 'john.doe@email.com', 
+				'age' => 20
+			),
+			array(
+				'name' => 'Jane Doe', 
+				'email' => 'jane.doe@email.com', 
+				'age' => 30
+			),
+		);
+		$this->assertEquals($expected, $this->insertMulti['fields_values']);
 	}
 
 /**
