@@ -20,6 +20,7 @@
 
 require_once __DIR__ . DS . 'ModelTestBase.php';
 App::uses('DboSource', 'Model/Datasource');
+App::uses('DboMock', 'Model/Datasource');
 
 /**
  * DboMock class

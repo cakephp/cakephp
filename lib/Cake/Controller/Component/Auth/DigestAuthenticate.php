@@ -16,6 +16,7 @@
 namespace Cake\Controller\Component\Auth;
 
 use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\Auth\BasicAuthenticate;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\ClassRegistry;
@@ -59,7 +60,7 @@ use Cake\Utility\ClassRegistry;
  * @package       Cake.Controller.Component.Auth
  * @since 2.0
  */
-class DigestAuthenticate extends BaseAuthenticate {
+class DigestAuthenticate extends BasicAuthenticate {
 
 /**
  * Settings for this object.
@@ -101,35 +102,12 @@ class DigestAuthenticate extends BaseAuthenticate {
  */
 	public function __construct(ComponentCollection $collection, $settings) {
 		parent::__construct($collection, $settings);
-		if (empty($this->settings['realm'])) {
-			$this->settings['realm'] = env('SERVER_NAME');
-		}
 		if (empty($this->settings['nonce'])) {
 			$this->settings['nonce'] = uniqid('');
 		}
 		if (empty($this->settings['opaque'])) {
 			$this->settings['opaque'] = md5($this->settings['realm']);
 		}
-	}
-
-/**
- * Authenticate a user using Digest HTTP auth. Will use the configured User model and attempt a
- * login using Digest HTTP auth.
- *
- * @param Cake\Network\Request $request The request to authenticate with.
- * @param Cake\Network\Response $response The response to add headers to.
- * @return mixed Either false on failure, or an array of user data on success.
- */
-	public function authenticate(Request $request, Response $response) {
-		$user = $this->getUser($request);
-
-		if (empty($user)) {
-			$response->header($this->loginHeaders());
-			$response->statusCode(401);
-			$response->send();
-			return false;
-		}
-		return $user;
 	}
 
 /**

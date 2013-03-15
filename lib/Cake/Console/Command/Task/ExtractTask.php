@@ -182,12 +182,15 @@ class ExtractTask extends Shell {
 			$this->_extractCore = strtolower($response) === 'y';
 		}
 
-		if ($this->_extractCore) {
-			$this->_paths[] = CAKE;
-			$this->_exclude = array_merge($this->_exclude, array(
-				CAKE . 'Test',
-				CAKE . 'Console/Templates'
-			));
+		if (!empty($this->params['exclude-plugins']) && $this->_isExtractingApp()) {
+			$this->_exclude = array_merge($this->_exclude, App::path('plugins'));
+		}
+
+		if (!empty($this->params['ignore-model-validation']) || (!$this->_isExtractingApp() && empty($plugin))) {
+			$this->_extractValidation = false;
+		}
+		if (!empty($this->params['validation-domain'])) {
+			$this->_validationDomain = $this->params['validation-domain'];
 		}
 
 		if (!empty($this->params['exclude-plugins']) && $this->_isExtractingApp()) {
@@ -199,6 +202,14 @@ class ExtractTask extends Shell {
 		}
 		if (!empty($this->params['validation-domain'])) {
 			$this->_validationDomain = $this->params['validation-domain'];
+		}
+
+		if ($this->_extractCore) {
+			$this->_paths[] = CAKE;
+			$this->_exclude = array_merge($this->_exclude, array(
+				CAKE . 'Test',
+				CAKE . 'Console' . DS . 'Templates'
+			));
 		}
 
 		if (isset($this->params['output'])) {

@@ -130,7 +130,7 @@ class ValidationRule {
 	}
 
 /**
- * Returns whethere this rule should break validation process for associated field
+ * Returns whether this rule should break validation process for associated field
  * after it fails
  *
  * @return boolean
@@ -168,7 +168,7 @@ class ValidationRule {
 
 /**
  * Sets the recordExists configuration value for this rule,
- * ir refers to wheter the model record it is validating exists
+ * ir refers to whether the model record it is validating exists
  * exists in the collection or not (create or update operation)
  *
  * If called with no parameters it will return whether this rule
@@ -215,7 +215,7 @@ class ValidationRule {
 	}
 
 /**
- * Resets interal state for this rule, by default it will become valid
+ * Resets internal state for this rule, by default it will become valid
  * and it will set isUpdate() to false
  *
  * @return void

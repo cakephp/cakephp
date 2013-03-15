@@ -284,13 +284,16 @@ class TestFixture {
 				$fields = array_unique($fields);
 				$default = array_fill_keys($fields, null);
 				foreach ($this->records as $record) {
-					$fields = array_keys($record);
 					$values[] = array_values(array_merge($default, $record));
 				}
 				$nested = $db->useNestedTransactions;
 				$db->useNestedTransactions = false;
 				$result = $db->insertMulti($this->table, $fields, $values);
-				if ($this->primaryKey && in_array($this->fields[$this->primaryKey]['type'], array('integer', 'biginteger'))) {
+				if (
+					$this->primaryKey &&
+					isset($this->fields[$this->primaryKey]['type']) &&
+					in_array($this->fields[$this->primaryKey]['type'], array('integer', 'biginteger'))
+				) {
 					$db->resetSequence($this->table, $this->primaryKey);
 				}
 				$db->useNestedTransactions = $nested;

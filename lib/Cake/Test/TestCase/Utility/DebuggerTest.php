@@ -486,8 +486,11 @@ TEXT;
 		ob_start();
 		Debugger::dump($var);
 		$result = ob_get_clean();
+
+		$open = php_sapi_name() == 'cli' ? "\n" : '<pre>';
+		$close = php_sapi_name() == 'cli' ? "\n" : '</pre>';
 		$expected = <<<TEXT
-<pre>array(
+{$open}array(
 	'People' => array(
 		(int) 0 => array(
 			'name' => 'joeseph',
@@ -500,7 +503,7 @@ TEXT;
 			'hair' => 'black'
 		)
 	)
-)</pre>
+){$close}
 TEXT;
 		$this->assertTextEquals($expected, $result);
 	}

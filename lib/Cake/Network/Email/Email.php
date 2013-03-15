@@ -1067,11 +1067,21 @@ class Email {
 
 		$contents = $this->transportClass()->send($this);
 		if (!empty($this->_config['log'])) {
-			$level = LOG_DEBUG;
+			$config = [
+				'level' => LOG_DEBUG,
+				'scope' => 'email'
+			];
 			if ($this->_config['log'] !== true) {
-				$level = $this->_config['log'];
+				if (!is_array($this->_config['log'])) {
+					$this->_config['log'] = ['level' => $this->_config['log']];
+				}
+				$config = array_merge($config, $this->_config['log']);
 			}
-			Log::write($level, PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message'], ['email']);
+			Log::write(
+				$config['level'],
+				PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message'],
+				$config['scope']
+			);
 		}
 		return $contents;
 	}

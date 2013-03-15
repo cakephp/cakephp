@@ -26,7 +26,7 @@ use Cake\Core\Configure;
 use Cake\TestSuite\TestSuiteDispatcher;
 
 if (Configure::read('debug') < 1) {
-	die(__d('cake_dev', 'Debug setting does not allow access to this url.'));
+	throw new NotFoundException(__d('cake_dev', 'Debug setting does not allow access to this url.'));
 }
 
 TestSuiteDispatcher::run();

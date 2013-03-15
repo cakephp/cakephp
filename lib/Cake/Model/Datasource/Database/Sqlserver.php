@@ -24,11 +24,11 @@ use Cake\Model\Datasource\DboSource;
 use \PDO;
 
 /**
- * Dbo layer for Mircosoft's offical SQLServer driver
+ * Dbo layer for Microsoft's official SQLServer driver
  *
  * A Dbo layer for MS SQL Server 2005 and higher. Requires the
  * `pdo_sqlsrv` extension to be enabled.
- * 
+ *
  * @link http://www.php.net/manual/en/ref.pdo-sqlsrv.php
  *
  * @package       Cake.Model.Datasource.Database
@@ -135,8 +135,13 @@ class Sqlserver extends DboSource {
 				$flags
 			);
 			$this->connected = true;
-		} catch (\PDOException $e) {
-			throw new Error\MissingConnectionException(array(
+			if (!empty($config['settings'])) {
+				foreach ($config['settings'] as $key => $value) {
+					$this->_execute("SET $key $value");
+				}
+			}
+		} catch (PDOException $e) {
+			throw new MissingConnectionException(array(
 				'class' => get_class($this),
 				'message' => $e->getMessage()
 			));

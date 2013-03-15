@@ -343,7 +343,7 @@ class ProjectTask extends Shell {
  * Generates and writes CAKE_CORE_INCLUDE_PATH
  *
  * @param string $path Project path
- * @param boolean $hardCode Wether or not define calls should be hardcoded.
+ * @param boolean $hardCode Whether or not define calls should be hardcoded.
  * @return boolean Success
  */
 	public function corePath($path, $hardCode = true) {

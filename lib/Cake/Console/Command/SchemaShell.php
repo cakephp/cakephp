@@ -58,6 +58,8 @@ class SchemaShell extends Shell {
 		$this->out('Cake Schema Shell');
 		$this->hr();
 
+		Configure::write('Cache.disable', 1);
+
 		$name = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
@@ -156,6 +158,13 @@ class SchemaShell extends Shell {
 		$content['file'] = $this->params['file'];
 
 		Configure::write('Cache.disable', $cacheDisable);
+
+		if (!empty($this->params['exclude']) && !empty($content)) {
+			$excluded = String::tokenize($this->params['exclude']);
+			foreach ($excluded as $table) {
+				unset($content['tables'][$table]);
+			}
+		}
 
 		if ($snapshot === true) {
 			$fileName = rtrim($this->params['file'], '.php');
@@ -310,7 +319,7 @@ class SchemaShell extends Shell {
  * @param string $table
  * @return void
  */
-	protected function _create($Schema, $table = null) {
+	protected function _create(CakeSchema $Schema, $table = null) {
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		$drop = $create = array();
@@ -400,7 +409,7 @@ class SchemaShell extends Shell {
  * @param Cake\Model\Schema $Schema
  * @return void
  */
-	protected function _run($contents, $event, &$Schema) {
+	protected function _run($contents, $event, CakeSchema $Schema) {
 		if (empty($contents)) {
 			$this->err(__d('cake_console', 'Sql could not be run'));
 			return;
@@ -484,6 +493,9 @@ class SchemaShell extends Shell {
 		$write = array(
 			'help' => __d('cake_console', 'Write the dumped SQL to a file.')
 		);
+		$exclude = array(
+			'help' => __d('cake_console', 'Tables to exclude as comma separated list.')
+		);
 
 		$parser = parent::getOptionParser();
 		$parser->description(
@@ -497,7 +509,7 @@ class SchemaShell extends Shell {
 		))->addSubcommand('generate', array(
 			'help' => __d('cake_console', 'Reads from --connection and writes to --path. Generate snapshots with -s'),
 			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force', 'models'),
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force', 'models', 'exclude'),
 				'arguments' => array(
 					'snapshot' => array('help' => __d('cake_console', 'Generate a snapshot.'))
 				)

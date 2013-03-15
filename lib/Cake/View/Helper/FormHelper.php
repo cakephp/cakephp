@@ -2081,7 +2081,7 @@ class FormHelper extends Helper {
 		$attributes = $this->_dateTimeSelected('day', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
-			$attributes['value'] = date('d', strtotime($attributes['value']));
+			$attributes['value'] = date_create($attributes['value'])->format('d');
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
@@ -2127,11 +2127,11 @@ class FormHelper extends Helper {
 		}
 
 		if (strlen($attributes['value']) > 4 || $attributes['value'] === 'now') {
-			$attributes['value'] = date('Y', strtotime($attributes['value']));
+			$attributes['value'] = date_create($attributes['value'])->format('Y');
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
-		$yearOptions = array('min' => $minYear, 'max' => $maxYear, 'order' => 'desc');
+		$yearOptions = array('value' => $attributes['value'], 'min' => $minYear, 'max' => $maxYear, 'order' => 'desc');
 		if (isset($attributes['orderYear'])) {
 			$yearOptions['order'] = $attributes['orderYear'];
 			unset($attributes['orderYear']);
@@ -2163,7 +2163,7 @@ class FormHelper extends Helper {
 		$attributes = $this->_dateTimeSelected('month', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
-			$attributes['value'] = date('m', strtotime($attributes['value']));
+			$attributes['value'] = date_create($attributes['value'])->format('m');
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
@@ -2199,10 +2199,11 @@ class FormHelper extends Helper {
 		$attributes = $this->_dateTimeSelected('hour', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
+			$Date = new DateTime($attributes['value']);
 			if ($format24Hours) {
-				$attributes['value'] = date('H', strtotime($attributes['value']));
+				$attributes['value'] = $Date->format('H');
 			} else {
-				$attributes['value'] = date('g', strtotime($attributes['value']));
+				$attributes['value'] = $Date->format('g');
 			}
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
@@ -2210,6 +2211,9 @@ class FormHelper extends Helper {
 
 		if ($attributes['value'] > 12 && !$format24Hours) {
 			$attributes['value'] -= 12;
+		}
+		if ($attributes['value'] === '00' && !$format24Hours) {
+			$attributes['value'] = 12;
 		}
 
 		return $this->select(
@@ -2238,7 +2242,7 @@ class FormHelper extends Helper {
 		$attributes = $this->_dateTimeSelected('min', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
-			$attributes['value'] = date('i', strtotime($attributes['value']));
+			$attributes['value'] = date_create($attributes['value'])->format('i');
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
@@ -2305,7 +2309,7 @@ class FormHelper extends Helper {
 						$attributes['value'] = date('a');
 					}
 				} else {
-					$attributes['value'] = date('a', strtotime($value));
+					$attributes['value'] = date_create($attributes['value'])->format('a');
 				}
 			}
 		}
@@ -2768,6 +2772,12 @@ class FormHelper extends Helper {
 				if ($min > $max) {
 					list($min, $max) = array($max, $min);
 				}
+				if (!empty($options['value']) && (int)$options['value'] < $min) {
+					$min = (int)$options['value'];
+				} elseif (!empty($options['value']) && (int)$options['value'] > $max) {
+					$max = (int)$options['value'];
+				}
+
 				for ($i = $min; $i <= $max; $i++) {
 					$data[$i] = $i;
 				}

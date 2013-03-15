@@ -34,7 +34,7 @@ use Cake\Utility\Security;
  * When  configuring BlowfishAuthenticate you can pass in settings to which fields, model and additional conditions
  * are used. See FormAuthenticate::$settings for more information.
  *
- * For inital password hashing/creation see Security::hash(). Other than how the password is initally hashed,
+ * For initial password hashing/creation see Security::hash(). Other than how the password is initially hashed,
  * BlowfishAuthenticate works exactly the same way as FormAuthenticate.
  *
  * @package	Cake.Controller.Component.Auth

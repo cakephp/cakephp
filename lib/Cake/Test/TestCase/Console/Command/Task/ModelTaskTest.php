@@ -186,7 +186,7 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
- * test gettting a custom table name.
+ * test getting a custom table name.
  *
  * @return void
  */
@@ -955,7 +955,7 @@ STRINGEND;
 	}
 
 /**
- * test that odd tablenames arent inflected back from modelname
+ * test that odd tablenames aren't inflected back from modelname
  *
  * @return void
  */
@@ -1010,7 +1010,7 @@ STRINGEND;
 	}
 
 /**
- * test that odd tablenames arent inflected back from modelname
+ * test that odd tablenames aren't inflected back from modelname
  *
  * @return void
  */

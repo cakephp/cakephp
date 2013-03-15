@@ -229,17 +229,18 @@ class FixtureManager {
  *
  * @param string $name of the fixture
  * @param DataSource $db DataSource instance or leave null to get DataSource from the fixture
+ * @param boolean $dropTables Whether or not tables should be dropped and re-created.
  * @return void
  * @throws UnexpectedValueException if $name is not a previously loaded class
  */
-	public function loadSingle($name, $db = null) {
-		$name = Inflector::camelize($name);
+	public function loadSingle($name, $db = null, $dropTables = true) {
+		$name .= 'Fixture';
 		if (isset($this->_fixtureMap[$name])) {
 			$fixture = $this->_fixtureMap[$name];
 			if (!$db) {
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
 			}
-			$this->_setupTable($fixture, $db);
+			$this->_setupTable($fixture, $db, $dropTables);
 			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
@@ -250,9 +251,15 @@ class FixtureManager {
 /**
  * Drop all fixture tables loaded by this class
  *
+ * This will also close the session, as failing to do so will cause
+ * fatal errors with database sessions.
+ *
  * @return void
  */
 	public function shutDown() {
+		if (session_id()) {
+			session_write_close();
+		}
 		foreach ($this->_loaded as $fixture) {
 			if (!empty($fixture->created)) {
 				foreach ($fixture->created as $ds) {

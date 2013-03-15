@@ -229,7 +229,7 @@ class ErrorHandler {
 		}
 
 		if (ob_get_level()) {
-			ob_clean();
+			ob_end_clean();
 		}
 
 		if (Configure::read('debug')) {

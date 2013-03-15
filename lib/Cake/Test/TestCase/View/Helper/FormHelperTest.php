@@ -2222,6 +2222,15 @@ class FormHelperTest extends TestCase {
 		$this->assertContains('<option value="06" selected="selected">6</option>', $result);
 		$this->assertContains('<option value="15" selected="selected">15</option>', $result);
 		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+
+		$result = $this->Form->input('published', array('type' => 'time'));
+		$now = strtotime('now');
+		$this->assertContains('<option value="' . date('h', $now) . '" selected="selected">' . date('g', $now) . '</option>', $result);
+
+		$now = strtotime('2013-03-09 00:42:21');
+		$result = $this->Form->input('published', array('type' => 'time', 'selected' => $now));
+		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
+		$this->assertContains('<option value="42" selected="selected">42</option>', $result);
 	}
 
 /**
@@ -5594,8 +5603,14 @@ class FormHelperTest extends TestCase {
 		$this->assertRegExp('/<option[^<>]+value="03"[^<>]+selected="selected"[^>]*>3<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="13"[^<>]+selected="selected"[^>]*>13<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="35"[^<>]+selected="selected"[^>]*>35<\/option>/', $result);
+	}
 
-		$this->assertNoErrors();
+/**
+ * Test that empty values don't trigger errors.
+ *
+ * @return void
+ */
+	public function testDateTimeNoErrorsOnEmptyData() {
 		$this->Form->request->data['Contact'] = array(
 			'date' => array(
 				'day' => '',
@@ -5607,6 +5622,7 @@ class FormHelperTest extends TestCase {
 			)
 		);
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('empty' => false));
+		$this->assertNotEmpty($result);
 	}
 
 /**
@@ -5851,6 +5867,23 @@ class FormHelperTest extends TestCase {
 			'*/select',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Project']['release'] = '2050-02-10';
+		$result = $this->Form->month('Project.release');
+
+		$expected = array(
+			array('select' => array('name' => 'data[Project][release][month]', 'id' => 'ProjectReleaseMonth')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '01')),
+			'January',
+			'/option',
+			array('option' => array('value' => '02', 'selected' => 'selected')),
+			'February',
+			'/option',
+			'*/select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -5923,6 +5956,28 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->day('Model.field', array('value' => true));
 		$expected = array(
 			array('select' => array('name' => 'Model[field][day]', 'id' => 'ModelFieldDay')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '01')),
+			'1',
+			'/option',
+			array('option' => array('value' => '02')),
+			'2',
+			'/option',
+			$daysRegex,
+			array('option' => array('value' => '10', 'selected' => 'selected')),
+			'10',
+			'/option',
+			$daysRegex,
+			'/select',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Project']['release'] = '2050-10-10';
+		$result = $this->Form->day('Project.release');
+
+		$expected = array(
+			array('select' => array('name' => 'data[Project][release][day]', 'id' => 'ProjectReleaseDay')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -6109,6 +6164,26 @@ class FormHelperTest extends TestCase {
 		$thisHour = date('H');
 		$optValue = date('G');
 		$this->assertRegExp('/<option value="' . $thisHour . '" selected="selected">' . $optValue . '<\/option>/', $result);
+
+		$this->Form->request->data['Model']['field'] = '2050-10-10 01:12:32';
+		$result = $this->Form->hour('Model.field', true);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '00')),
+			'0',
+			'/option',
+			array('option' => array('value' => '01', 'selected' => 'selected')),
+			'1',
+			'/option',
+			array('option' => array('value' => '02')),
+			'2',
+			'/option',
+			$hoursRegex,
+			'/select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -6291,6 +6366,37 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->year('published', array(), array(), array('empty' => false));
 		$this->assertContains('Contact[published][year]', $result);
+	}
+
+/**
+ * testYearAutoExpandRange method
+ *
+ * @return void
+ */
+	public function testYearAutoExpandRange() {
+		$this->Form->request->data['User']['birthday'] = '1930-10-10';
+		$result = $this->Form->year('User.birthday');
+		preg_match_all('/<option value="([\d]+)"/', $result, $matches);
+
+		$result = $matches[1];
+		$expected = range(date('Y') + 20, 1930);
+		$this->assertEquals($result, $expected);
+
+		$this->Form->request->data['Project']['release'] = '2050-10-10';
+		$result = $this->Form->year('Project.release');
+		preg_match_all('/<option value="([\d]+)"/', $result, $matches);
+
+		$result = $matches[1];
+		$expected = range(2050, date('Y') - 20);
+		$this->assertEquals($result, $expected);
+
+		$this->Form->request->data['Project']['release'] = '1881-10-10';
+		$result = $this->Form->year('Project.release', 1890, 1900);
+		preg_match_all('/<option value="([\d]+)"/', $result, $matches);
+
+		$result = $matches[1];
+		$expected = range(1900, 1881);
+		$this->assertEquals($result, $expected);
 	}
 
 /**

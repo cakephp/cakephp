@@ -129,8 +129,13 @@ class Postgres extends DboSource {
 			if (!empty($config['schema'])) {
 				$this->_execute('SET search_path TO ' . $config['schema']);
 			}
-		} catch (\PDOException $e) {
-			throw new Error\MissingConnectionException(array(
+			if (!empty($config['settings'])) {
+				foreach ($config['settings'] as $key => $value) {
+					$this->_execute("SET $key TO $value");
+				}
+			}
+		} catch (PDOException $e) {
+			throw new MissingConnectionException(array(
 				'class' => get_class($this),
 				'message' => $e->getMessage()
 			));
@@ -310,8 +315,8 @@ class Postgres extends DboSource {
  * for resetting sequences after using insertMulti().
  *
  * @param string $table The name of the table to update.
- * @param string $column The column to use when reseting the sequence value, the
- *   sequence name will be fetched using Postgres::getSequence();
+ * @param string $column The column to use when resetting the sequence value,
+ *   the sequence name will be fetched using Postgres::getSequence();
  * @return boolean success.
  */
 	public function resetSequence($table, $column) {

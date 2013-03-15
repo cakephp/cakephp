@@ -840,6 +840,7 @@ EXPECTED;
  * @return void
  */
 	public function testPr() {
+		$this->skipIf(php_sapi_name() == 'cli', 'Skipping web test in cli mode');
 		ob_start();
 		pr('this is a test');
 		$result = ob_get_clean();
@@ -851,6 +852,98 @@ EXPECTED;
 		$result = ob_get_clean();
 		$expected = "<pre>Array\n(\n    [this] => is\n    [a] => test\n)\n</pre>";
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test pr()
+ *
+ * @return void
+ */
+	public function testPrCli() {
+		$this->skipIf(php_sapi_name() != 'cli', 'Skipping cli test in web mode');
+		ob_start();
+		pr('this is a test');
+		$result = ob_get_clean();
+		$expected = "\nthis is a test\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pr(array('this' => 'is', 'a' => 'test'));
+		$result = ob_get_clean();
+		$expected = "\nArray\n(\n    [this] => is\n    [a] => test\n)\n\n";
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test stripslashes_deep()
+ *
+ * @return void
+ */
+	public function testStripslashesDeep() {
+		$this->skipIf(ini_get('magic_quotes_sybase') === '1', 'magic_quotes_sybase is on.');
+
+		$this->assertEquals(stripslashes_deep("tes\'t"), "tes't");
+		$this->assertEquals(stripslashes_deep('tes\\' . chr(0) . 't'), 'tes' . chr(0) . 't');
+		$this->assertEquals(stripslashes_deep('tes\"t'), 'tes"t');
+		$this->assertEquals(stripslashes_deep("tes\'t"), "tes't");
+		$this->assertEquals(stripslashes_deep('te\\st'), 'test');
+
+		$nested = array(
+			'a' => "tes\'t",
+			'b' => 'tes\\' . chr(0) . 't',
+			'c' => array(
+				'd' => 'tes\"t',
+				'e' => "te\'s\'t",
+				array('f' => "tes\'t")
+				),
+			'g' => 'te\\st'
+		);
+		$expected = array(
+			'a' => "tes't",
+			'b' => 'tes' . chr(0) . 't',
+			'c' => array(
+				'd' => 'tes"t',
+				'e' => "te's't",
+				array('f' => "tes't")
+				),
+			'g' => 'test'
+		);
+		$this->assertEquals($expected, stripslashes_deep($nested));
+	}
+
+/**
+ * test stripslashes_deep() with magic_quotes_sybase on
+ *
+ * @return void
+ */
+	public function testStripslashesDeepSybase() {
+		if (!(ini_get('magic_quotes_sybase') === '1')) {
+			$this->markTestSkipped('magic_quotes_sybase is off');
+		}
+
+		$this->assertEquals(stripslashes_deep("tes\'t"), "tes\'t");
+
+		$nested = array(
+			'a' => "tes't",
+			'b' => "tes''t",
+			'c' => array(
+				'd' => "tes'''t",
+				'e' => "tes''''t",
+				array('f' => "tes''t")
+				),
+			'g' => "te'''''st"
+			);
+		$expected = array(
+			'a' => "tes't",
+			'b' => "tes't",
+			'c' => array(
+				'd' => "tes''t",
+				'e' => "tes''t",
+				array('f' => "tes't")
+				),
+			'g' => "te'''st"
+			);
+		$this->assertEquals($expected, stripslashes_deep($nested));
 	}
 
 /**

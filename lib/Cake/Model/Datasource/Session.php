@@ -423,7 +423,7 @@ class Session {
 	}
 
 /**
- * Clears the session, the session id, and renew's the session.
+ * Clears the session, the session id, and renews the session.
  *
  * @return void
  */

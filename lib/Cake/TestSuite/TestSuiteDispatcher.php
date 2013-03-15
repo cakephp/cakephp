@@ -140,13 +140,14 @@ class TestSuiteDispatcher {
  */
 	public function loadTestFramework() {
 		foreach (App::path('Vendor') as $vendor) {
-			if (is_dir($vendor . 'PHPUnit')) {
+			$vendor = rtrim($vendor, DS);
+			if (is_dir($vendor . DS . 'PHPUnit')) {
 				ini_set('include_path', $vendor . PATH_SEPARATOR . ini_get('include_path'));
 				break;
 			}
 		}
 
-		return include 'PHPUnit/Autoload.php';
+		return (include('PHPUnit' . DS . 'Autoload.php')) !== false;
 	}
 
 /**

@@ -51,7 +51,7 @@ class ModelValidator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_model = array();
 
 /**
- * The validators $validate property, used for checking wheter validation
+ * The validators $validate property, used for checking whether validation
  * rules definition changed in the model and should be refreshed in this class
  *
  * @var array
@@ -465,7 +465,7 @@ class ModelValidator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * Returns wheter a rule set is defined for a field or not
+ * Returns whether a rule set is defined for a field or not
  *
  * @param string $field name of the field to check
  * @return boolean
@@ -504,7 +504,7 @@ class ModelValidator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * Unsets the rulset for a field
+ * Unsets the rule set for a field
  *
  * @param string $field name of the field to unset
  * @return void
@@ -592,7 +592,7 @@ class ModelValidator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *			->remove('user_id')
  * }}}
  *
- * @param string $field The name of the field from wich the rule will be removed
+ * @param string $field The name of the field from which the rule will be removed
  * @param string $rule the name of the rule to be removed
  * @return ModelValidator this instance
  */

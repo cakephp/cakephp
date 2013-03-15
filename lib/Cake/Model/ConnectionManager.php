@@ -80,7 +80,6 @@ class ConnectionManager {
  *
  * @param string $name The name of the DataSource, as defined in app/Config/datasources.php
  * @return DataSource Instance
- * @throws Cake\Error\MissingDatasourceConfigException
  * @throws Cake\Error\MissingDatasourceException
  */
 	public static function getDataSource($name) {
@@ -98,6 +97,14 @@ class ConnectionManager {
 		}
 
 		$class = static::loadDataSource($name);
+
+		if (strpos(App::location($class), 'Datasource') === false) {
+			throw new MissingDatasourceException(array(
+				'class' => $class,
+				'plugin' => null,
+				'message' => 'Datasource is not found in Model/Datasource package.'
+			));
+		}
 		static::$_dataSources[$name] = new $class(static::$config[$name]);
 		static::$_dataSources[$name]->configKeyName = $name;
 

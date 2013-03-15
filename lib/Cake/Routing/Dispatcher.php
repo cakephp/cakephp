@@ -64,7 +64,7 @@ class Dispatcher implements EventListener {
 
 /**
  * Returns the Cake\Event\EventManager instance or creates one if none was
- * creted. Attaches the default listeners and filters
+ * created. Attaches the default listeners and filters
  *
  * @return Cake\Event\EventManager
  */
@@ -78,7 +78,7 @@ class Dispatcher implements EventListener {
 	}
 
 /**
- * Returns the list of events this object listents to.
+ * Returns the list of events this object listens to.
  *
  * @return array
  */
@@ -180,7 +180,7 @@ class Dispatcher implements EventListener {
  * @param Controller $controller Controller to invoke
  * @param Cake\Network\Request $request The request object to invoke the controller for.
  * @param Cake\Network\Response $response The response object to receive the output
- * @return Cake\Network\Response te resulting response object
+ * @return Cake\Network\Response the resulting response object
  */
 	protected function _invoke(Controller $controller, Request $request, Response $response) {
 		$controller->constructClasses();

@@ -85,23 +85,25 @@ class BasicAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Authenticate a user using basic HTTP auth. Will use the configured User model and attempt a
- * login using basic HTTP auth.
+ * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
+ * login using HTTP auth.
  *
  * @param Cake\Network\Request $request The request to authenticate with.
  * @param Cake\Network\Response $response The response to add headers to.
  * @return mixed Either false on failure, or an array of user data on success.
  */
-	public function authenticate(Request $request, Response $response) {
-		$result = $this->getUser($request);
+	public function authenticate(CakeRequest $request, CakeResponse $response) {
+		return $this->getUser($request);
+	}
 
-		if (empty($result)) {
-			$response->header($this->loginHeaders());
-			$response->statusCode(401);
-			$response->send();
-			return false;
-		}
-		return $result;
+/**
+ * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
+ *
+ * @param CakeRequest $request Request object.
+ * @return mixed Either false or an array of user information
+ */
+	public function getUser(CakeRequest $request) {
+		$username = env('PHP_AUTH_USER');
 	}
 
 /**
@@ -118,6 +120,20 @@ class BasicAuthenticate extends BaseAuthenticate {
 			return false;
 		}
 		return $this->_findUser($username, $pass);
+	}
+
+/**
+ * Handles an unauthenticated access attempt by sending appropriate login headers
+ *
+ * @param CakeRequest $request A request object.
+ * @param CakeResponse $response A response object.
+ * @return boolean True
+ */
+	public function unauthenticated(CakeRequest $request, CakeResponse $response) {
+		$response->header($this->loginHeaders());
+		$response->statusCode(401);
+		$response->send();
+		return true;
 	}
 
 /**
