@@ -99,7 +99,7 @@ class ConnectionManager {
 		$class = static::loadDataSource($name);
 
 		if (strpos(App::location($class), 'Datasource') === false) {
-			throw new MissingDatasourceException(array(
+			throw new Error\MissingDatasourceException(array(
 				'class' => $class,
 				'plugin' => null,
 				'message' => 'Datasource is not found in Model/Datasource package.'

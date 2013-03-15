@@ -27,13 +27,14 @@ trait LogTrait {
  *
  * @param string $msg Log message
  * @param integer $type Error type constant. Defined in app/Config/logging.php.
+ * @param string $scope The name of the log scope.
  * @return boolean Success of log write
  */
-	public function log($msg, $type = LOG_ERR) {
+	public function log($msg, $type = LOG_ERR, $scope = null) {
 		if (!is_string($msg)) {
 			$msg = print_r($msg, true);
 		}
-		return Log::write($type, $msg);
+		return Log::write($type, $msg, $scope);
 	}
 
 }
