@@ -319,6 +319,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth = new TestAuthComponent($collection);
 		$this->Auth->request = $request;
 		$this->Auth->response = $this->getMock('CakeResponse');
+		AuthComponent::$sessionKey = 'Auth.User';
 
 		$this->Controller->Components->init($this->Controller);
 
@@ -439,6 +440,26 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->startup($this->Controller);
 		$redirect = $this->Auth->Session->read('Auth.redirect');
 		$this->assertNull($redirect);
+	}
+
+/**
+ * testRedirectVarClearing method
+ *
+ * @return void
+ */
+	public function testRedirectVarClearing() {
+		$this->Controller->request['controller'] = 'auth_test';
+		$this->Controller->request['action'] = 'admin_add';
+		$this->Controller->here = '/auth_test/admin_add';
+		$this->assertNull($this->Auth->Session->read('Auth.redirect'));
+
+		$this->Auth->authenticate = array('Form');
+		$this->Auth->startup($this->Controller);
+		$this->assertEquals('/auth_test/admin_add', $this->Auth->Session->read('Auth.redirect'));
+
+		$this->Auth->Session->write('Auth.User', array('username' => 'admad'));
+		$this->Auth->startup($this->Controller);
+		$this->assertNull($this->Auth->Session->read('Auth.redirect'));
 	}
 
 /**
