@@ -1982,13 +1982,21 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$result = $query
 			->select(['d' => $query->now('time')])
 			->execute();
-		$this->assertEquals([['d' => date('H:i:s')]], $result->fetchAll('assoc'));
+		$this->assertWithinMargin(
+			date('U'),
+			(new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
+			1
+		);
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['d' => $query->now()])
 			->execute();
-		$this->assertEquals([['d' => date('Y-m-d H:i:s')]], $result->fetchAll('assoc'));
+		$this->assertWithinMargin(
+			date('U'),
+			(new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
+			1
+		);
 	}
 
 

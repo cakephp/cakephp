@@ -86,6 +86,17 @@ trait PostgresDialectTrait {
 						return new FunctionExpression('DATE', [$p => 'literal']);
 					});
 				break;
+			case 'CURRENT_DATE':
+				$time = new FunctionExpression('LOCALTIMESTAMP', [' 0 ' => 'literal']);
+				$expression->name('CAST')->type(' AS ')->add([$time, 'date' => 'literal']);
+				break;
+			case 'CURRENT_TIME':
+				$time = new FunctionExpression('LOCALTIMESTAMP', [' 0 ' => 'literal']);
+				$expression->name('CAST')->type(' AS ')->add([$time, 'time' => 'literal']);
+				break;
+			case 'NOW':
+				$expression->name('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
+				break;
 		}
 	}
 
