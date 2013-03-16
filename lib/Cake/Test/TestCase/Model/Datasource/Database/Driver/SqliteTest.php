@@ -89,5 +89,3 @@ class SqliteTest extends \Cake\TestSuite\TestCase {
 	}
 
 }
-
-
