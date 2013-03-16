@@ -74,4 +74,16 @@ trait FunctionsTrait {
 		return $this->func('DATEDIFF', $dates, $types);
 	}
 
+	public function now($type = 'datetime') {
+		if ($type === 'datetime') {
+			return $this->func('NOW');
+		}
+		if ($type === 'date') {
+			return $this->func('CURRENT_DATE');
+		}
+		if ($type === 'time') {
+			return $this->func('CURRENT_TIME');
+		}
+	}
+
 }

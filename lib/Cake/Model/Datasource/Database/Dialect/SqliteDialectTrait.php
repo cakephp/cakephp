@@ -43,6 +43,15 @@ trait SqliteDialectTrait {
 						return new FunctionExpression('JULIANDAY', [$p => 'literal']);
 					});
 				break;
+			case 'NOW':
+				$expression->name('DATETIME')->add(["'now'" => 'literal']);
+				break;
+			case 'CURRENT_DATE':
+				$expression->name('DATE')->add(["'now'" => 'literal']);
+				break;
+			case 'CURRENT_TIME':
+				$expression->name('TIME')->add(["'now'" => 'literal']);
+				break;
 		}
 	}
 
