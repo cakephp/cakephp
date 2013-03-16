@@ -39,21 +39,30 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 		'port' => '3306',
 		'flags' => [],
 		'encoding' => 'utf8',
+		'timezone' => 'UTC',
+		'init' => [],
 		'dsn' => null
 	];
 
 /**
- * Establishes a connection to the databse server
+ * Establishes a connection to the database server
  *
  * @param array $config configuration to be used for creating connection
  * @return boolean true on success
  */
 	public function connect(array $config) {
 		$config += $this->_baseConfig;
+
+		if ($config['timezone'] === 'UTC') {
+			$config['timezone'] = '+0:00';
+		}
+
+		$config['init'][] = "SET time_zone = '+0:00'";
 		$config['flags'] += [
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+			PDO::MYSQL_ATTR_INIT_COMMAND => implode(';', (array)$config['init'])
 		];
 
 		if (empty($config['dsn'])) {
