@@ -83,4 +83,18 @@ class FunctionsTraitTest extends \Cake\TestSuite\TestCase {
 		$param2 = $function->bindings()[2]['placeholder'];
 		$this->assertEquals("COALESCE(NULL, :$param, :$param2)", (string)$function);
 	}
+
+	public function testNow() {
+		$function = $this->functions->now();
+		$this->assertInstanceOf('\Cake\Model\Datasource\Database\Expression\FunctionExpression', $function);
+		$this->assertEquals("NOW()", (string)$function);
+
+		$function = $this->functions->now('date');
+		$this->assertInstanceOf('\Cake\Model\Datasource\Database\Expression\FunctionExpression', $function);
+		$this->assertEquals("CURRENT_DATE()", (string)$function);
+
+		$function = $this->functions->now('time');
+		$this->assertInstanceOf('\Cake\Model\Datasource\Database\Expression\FunctionExpression', $function);
+		$this->assertEquals("CURRENT_TIME()", (string)$function);
+	}
 }
