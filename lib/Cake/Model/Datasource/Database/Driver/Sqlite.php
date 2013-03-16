@@ -38,6 +38,7 @@ class Sqlite extends \Cake\Model\Datasource\Database\Driver {
 		'database' => ':memory:',
 		'encoding' => 'utf8',
 		'flags' => [],
+		'init' => [],
 		'dsn' => null
 	];
 
@@ -58,7 +59,15 @@ class Sqlite extends \Cake\Model\Datasource\Database\Driver {
 			$config['dsn'] = "sqlite:{$config['database']}";
 		}
 
-		return $this->_connect($config);
+		$this->_connect($config);
+
+		if (!empty($config['init'])) {
+			foreach ((array)$config['init'] as $command) {
+				$this->connection()->exec($command);
+			}
+		}
+
+		return true;
 	}
 
 /**

@@ -20,37 +20,32 @@ namespace Cake\Test\TestCase\Model\Datasource\Database\Driver;
 use \PDO;
 
 /**
- * Tests Mysql driver
+ * Tests Sqlite driver
  *
  */
-class MysqlTest extends \Cake\TestSuite\TestCase {
+class SqliteTest extends \Cake\TestSuite\TestCase {
 
 /**
- * Test connecting to Mysql with default configuration
+ * Test connecting to Sqlite with default configuration
  *
  * @return void
  */
 	public function testConnectionConfigDefault() {
-		$driver = $this->getMock('Cake\Model\Datasource\Database\driver\Mysql', ['_connect']);
+		$driver = $this->getMock('Cake\Model\Datasource\Database\driver\Sqlite', ['_connect']);
 		$expected = [
-			'persistent' => true,
-			'host' => 'localhost',
-			'login' => 'root',
-			'password' => '',
-			'database' => 'cake',
-			'port' => '3306',
-			'flags' => [],
+			'persistent' => false,
+			'database' => ':memory:',
 			'encoding' => 'utf8',
-			'timezone' => '+0:00',
-			'init' => ["SET time_zone = '+0:00'"],
-			'dsn' => 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8'
+			'login' => null,
+			'password' => null,
+			'flags' => [],
+			'init' => [],
+			'dsn' => 'sqlite::memory:'
 		];
 
 		$expected['flags'] += [
-			PDO::ATTR_PERSISTENT => true,
-			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			PDO::MYSQL_ATTR_INIT_COMMAND => "SET time_zone = '+0:00'"
+			PDO::ATTR_PERSISTENT => false,
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		];
 		$driver->expects($this->once())->method('_connect')
 			->with($expected);
@@ -58,37 +53,41 @@ class MysqlTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Test connecting to Mysql with custom configuration
+ * Test connecting to Sqlite with custom configuration
  *
  * @return void
  */
 	public function testConnectionConfigCustom() {
-		$driver = $this->getMock('Cake\Model\Datasource\Database\driver\Mysql', ['_connect']);
+		$driver = $this->getMock('Cake\Model\Datasource\Database\driver\Sqlite', ['_connect', 'connection']);
 		$config = [
-			'persistent' => false,
+			'persistent' => true,
 			'host' => 'foo',
-			'database' => 'bar',
-			'login' => 'user',
-			'password' => 'pass',
-			'port' => 3440,
+			'database' => 'bar.db',
 			'flags' => [1 => true, 2 => false],
 			'encoding' => 'a-language',
-			'timezone' => 'Antartica',
 			'init' => ['Execute this', 'this too']
 		];
 
 		$expected = $config;
-		$expected['dsn'] = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
-		$expected['init'][] = "SET time_zone = '+0:00'";
+		$expected += ['login' => null, 'password' => null];
+		$expected['dsn'] = 'sqlite:bar.db';
 		$expected['flags'] += [
-			PDO::ATTR_PERSISTENT => false,
-			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			PDO::MYSQL_ATTR_INIT_COMMAND => "Execute this;this too;SET time_zone = '+0:00'"
+			PDO::ATTR_PERSISTENT => true,
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		];
+
+		$connection = $this->getMock('StdClass', ['exec']);
+		$connection->expects($this->at(0))->method('exec')->with('Execute this');
+		$connection->expects($this->at(1))->method('exec')->with('this too');
+		$connection->expects($this->exactly(2))->method('exec');
+
 		$driver->expects($this->once())->method('_connect')
 			->with($expected);
+		$driver->expects($this->any())->method('connection')
+			->will($this->returnValue($connection));
 		$driver->connect($config);
 	}
 
 }
+
+
