@@ -81,7 +81,6 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
  *
  * @return boolean true if it is valid to use this driver
  */
-
 	public function enabled() {
 		return in_array('mysql', PDO::getAvailableDrivers());
 	}

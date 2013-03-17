@@ -141,9 +141,9 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$result = $statement->fetch();
 		$this->assertTrue((bool)$result[0]);
 
-		$sql = "SELECT ? = '2012-01-01', ? = '2000-01-01 10:10:10', ? = 1.1";
-		$params = [new \DateTime('2012-01-01 10:10:10'), '2000-01-01 10:10:10', 1.1];
-		$statement = $this->connection->execute($sql, $params, ['date', 'string', 'float']);
+		$sql = "SELECT ? = '2012-01-01', ? = '2000-01-01 10:10:10', ? = 2";
+		$params = [new \DateTime('2012-01-01 10:10:10'), '2000-01-01 10:10:10', 2.1];
+		$statement = $this->connection->execute($sql, $params, ['date', 'string', 'integer']);
 		$result = $statement->fetch();
 		$this->assertEquals($result, array_filter($result));
 	}
