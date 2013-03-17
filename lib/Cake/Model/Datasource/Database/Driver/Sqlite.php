@@ -17,7 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database\Driver;
 
-use Cake\Model\Datasource\Database\Statement\BufferedStatement;
+use Cake\Model\Datasource\Database\Statement\SqliteStatement;
 use Cake\Model\Datasource\Database\Dialect\SqliteDialectTrait;
 use PDO;
 
@@ -38,6 +38,7 @@ class Sqlite extends \Cake\Model\Datasource\Database\Driver {
 		'database' => ':memory:',
 		'encoding' => 'utf8',
 		'flags' => [],
+		'init' => [],
 		'dsn' => null
 	];
 
@@ -58,7 +59,15 @@ class Sqlite extends \Cake\Model\Datasource\Database\Driver {
 			$config['dsn'] = "sqlite:{$config['database']}";
 		}
 
-		return $this->_connect($config);
+		$this->_connect($config);
+
+		if (!empty($config['init'])) {
+			foreach ((array)$config['init'] as $command) {
+				$this->connection()->exec($command);
+			}
+		}
+
+		return true;
 	}
 
 /**
@@ -79,7 +88,7 @@ class Sqlite extends \Cake\Model\Datasource\Database\Driver {
  */
 	public  function prepare($sql) {
 		$statement = $this->connection()->prepare($sql);
-		return new BufferedStatement($statement, $this);
+		return new SqliteStatement($statement, $this);
 	}
 
 }

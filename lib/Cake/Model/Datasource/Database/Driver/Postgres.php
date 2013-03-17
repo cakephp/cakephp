@@ -42,7 +42,9 @@ class Postgres extends \Cake\Model\Datasource\Database\Driver {
 		'schema' => 'public',
 		'port' => 5432,
 		'encoding' => 'utf8',
+		'timezone' => 'UTC',
 		'flags' => [],
+		'init' => [],
 		'dsn' => null
 	];
 
@@ -64,11 +66,21 @@ class Postgres extends \Cake\Model\Datasource\Database\Driver {
 		}
 
 		$this->_connect($config);
+		$connection = $this->connection();
 		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
+
 		if (!empty($config['schema'])) {
 			$this->setSchema($config['schema']);
+		}
+
+		if (!empty($config['timezone'])) {
+			$config['init'][] = sprintf("SET timezone = %s", $connection->quote($config['timezone']));
+		}
+
+		foreach ($config['init'] as $command) {
+			$connection->exec($command);
 		}
 		return true;
 	}
@@ -100,7 +112,8 @@ class Postgres extends \Cake\Model\Datasource\Database\Driver {
  * @return void
  */
 	public function setEncoding($encoding) {
-		$this->_connection->exec('SET NAMES ' . $this->_connection->quote($encoding));
+		$connection = $this->connection();
+		$connection->exec('SET NAMES ' . $connection->quote($encoding));
 	}
 
 /**
@@ -110,7 +123,8 @@ class Postgres extends \Cake\Model\Datasource\Database\Driver {
  * @return void
  */
 	public function setSchema($schema) {
-		$this->_connection->exec('SET search_path TO ' . $this->_connection->quote($schema));
+		$connection = $this->connection();
+		$connection->exec('SET search_path TO ' . $connection->quote($schema));
 	}
 
 }

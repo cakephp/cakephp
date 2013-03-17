@@ -83,7 +83,7 @@ class FunctionExpression extends QueryExpression {
  */
 	public function add($params, $types = []) {
 		foreach ($params as $k => $p) {
-			if (!is_numeric($k) && $p === 'literal') {
+			if (is_string($k) && $p === 'literal') {
 				$this->_conditions[] = $k;
 				continue;
 			}

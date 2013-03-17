@@ -1971,6 +1971,32 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->select(['d' => $query->dateDiff(['2012-01-05', '2012-01-02'])])
 			->execute();
 		$this->assertEquals([['d' => '3.0']], $result->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['d' => $query->now('date')])
+			->execute();
+		$this->assertEquals([['d' => date('Y-m-d')]], $result->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['d' => $query->now('time')])
+			->execute();
+		$this->assertWithinMargin(
+			date('U'),
+			(new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
+			1
+		);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['d' => $query->now()])
+			->execute();
+		$this->assertWithinMargin(
+			date('U'),
+			(new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
+			1
+		);
 	}
 
 
