@@ -17,7 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database\Driver;
 
-use Cake\Model\Datasource\Database\Statement\BufferedStatement;
+use Cake\Model\Datasource\Database\Statement\SqliteStatement;
 use Cake\Model\Datasource\Database\Dialect\SqliteDialectTrait;
 use PDO;
 
@@ -88,7 +88,7 @@ class Sqlite extends \Cake\Model\Datasource\Database\Driver {
  */
 	public  function prepare($sql) {
 		$statement = $this->connection()->prepare($sql);
-		return new BufferedStatement($statement, $this);
+		return new SqliteStatement($statement, $this);
 	}
 
 }
