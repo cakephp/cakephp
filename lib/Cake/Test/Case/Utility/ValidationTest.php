@@ -2126,6 +2126,10 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::postal('BAA 0ABC', null, 'ca'));
 		$this->assertFalse(Validation::postal('B2A AABC', null, 'ca'));
 		$this->assertFalse(Validation::postal('B2A 2AB', null, 'ca'));
+		$this->assertFalse(Validation::postal('K1A 1D1', null, 'ca'));
+		$this->assertFalse(Validation::postal('K1O 1Q1', null, 'ca'));
+		$this->assertFalse(Validation::postal('A1A 1U1', null, 'ca'));
+		$this->assertFalse(Validation::postal('A1F 1B1', null, 'ca'));
 		$this->assertTrue(Validation::postal('X0A 0A2', null, 'ca'));
 		$this->assertTrue(Validation::postal('G4V 4C3', null, 'ca'));
 

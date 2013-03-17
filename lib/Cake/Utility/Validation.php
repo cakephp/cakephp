@@ -646,7 +646,9 @@ class Validation {
 					$regex = '/\\A\\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\\b\\z/i';
 					break;
 				case 'ca':
-					$regex = '/\\A\\b[ABCEGHJKLMNPRSTVXY][0-9][A-Z] [0-9][A-Z][0-9]\\b\\z/i';
+					$district = '[ABCEGHJKLMNPRSTVYX]';
+					$letters = '[ABCEGHJKLMNPRSTVWXYZ]';
+					$regex = "/\\A\\b{$district}[0-9]{$letters} [0-9]{$letters}[0-9]\\b\\z/i";
 					break;
 				case 'it':
 				case 'de':
