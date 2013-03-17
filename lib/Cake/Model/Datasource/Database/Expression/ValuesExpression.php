@@ -94,6 +94,36 @@ class ValuesExpression implements ExpressionInterface {
 	}
 
 /**
+ * Sets the columns to be inserted. If no params are passed, then it returns
+ * the currently stored columns
+ *
+ * @param array $cols arrays with columns to be inserted
+ * @return array|ValuesExpression
+ */
+	public function columns($cols = null) {
+		if ($cols === null) {
+			return $this->_columns;
+		}
+		$this->_columns = $cols;
+		return $this;
+	}
+
+/**
+ * Sets the values to be inserted. If no params are passed, then it returns
+ * the currently stored values
+ *
+ * @param array $cols arrays with values to be inserted
+ * @return array|ValuesExpression
+ */
+	public function values($values = null) {
+		if ($values === null) {
+			return $this->_values;
+		}
+		$this->_values = $values;
+		return $this;
+	}
+
+/**
  * Convert the rows of data into a format that works with Query::_bindParams()
  *
  * @return array
@@ -128,7 +158,7 @@ class ValuesExpression implements ExpressionInterface {
 		if (empty($this->_values)) {
 			return '';
 		}
-		if ($this->_hasQuery) {
+		if ($this->_values[0] instanceof Query) {
 			return ' ' . $this->_values[0]->sql();
 		}
 		$placeholders = [];

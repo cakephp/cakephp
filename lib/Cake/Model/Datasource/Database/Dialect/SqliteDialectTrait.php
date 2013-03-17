@@ -17,6 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database\Dialect;
 
+use Cake\Model\Datasource\Database\Expression;
 use Cake\Model\Datasource\Database\Expression\FunctionExpression;
 use Cake\Model\Datasource\Database\Query;
 
@@ -66,6 +67,45 @@ trait SqliteDialectTrait {
 				$expression->name('TIME')->add(["'now'" => 'literal']);
 				break;
 		}
+	}
+
+/**
+ * Transforms an insert query that is meant to insert multiple tows at a time,
+ * otherwise it leaves the query untouched.
+ *
+ * The way SQLite works with multi insert is by having multiple select statements
+ * joined with UNION.
+ *
+ * @return Query
+ */
+	protected function _insertQueryTranslator($query) {
+		$v = $query->clause('values');
+		if (count($v->values()) === 1) {
+			return $query;
+		}
+
+		$cols = $v->columns();
+		$newQuery = $query->connection()->newQuery();
+		$values = [];
+		foreach ($v->values() as $k => $val) {
+			$values[] = $val;
+			$val = array_merge($val, array_fill(0, count($cols) - count($val), null));
+			$val = array_map(function($val) {
+				return $val instanceof Expression ? $val : '?';
+			}, $val);
+
+			if ($k === 0) {
+				array_unshift($values, $newQuery->select(array_combine($cols, $val)));
+				continue;
+			}
+
+			$q = $newQuery->connection()->newQuery();
+			$newQuery->union($q->select(array_combine($cols, $val)), true);
+		}
+
+		$v = clone $v;
+		$v->values($values);
+		return $query->values($v);
 	}
 
 }

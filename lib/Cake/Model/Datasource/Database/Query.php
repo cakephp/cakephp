@@ -174,9 +174,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Cake\Model\Datasource\Database\Statement
  */
 	public function execute() {
-		$this->_transformedQuery = null;
-		$this->_dirty = false;
-
 		$query = $this->_transformQuery();
 		$statement = $this->_connection->prepare($query->sql(false));
 		$query->_bindStatement($statement);
@@ -1197,7 +1194,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
 				__d('cake_dev', 'You cannot add values before defining columns to use.')
 			);
 		}
+
 		$this->_dirty = true;
+		if ($data instanceof ValuesExpression) {
+			$this->_parts['values'] = $data;
+			return $this;
+		}
+
 		$this->_parts['values']->add($data);
 		return $this;
 	}
@@ -1449,7 +1452,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$statement->bind($params, $types);
 		};
 
-		$this->_transformQuery()->traverseExpressions($binder);
+		$this->traverseExpressions($binder);
 	}
 
 /**
