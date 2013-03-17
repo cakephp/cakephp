@@ -21,8 +21,19 @@ use Cake\Model\Datasource\Database\Expression\UnaryExpression;
 use Cake\Model\Datasource\Database\Expression\FunctionExpression;
 use Cake\Model\Datasource\Database\Query;
 
+/**
+ * Contains functions that encapsulates the SQL dialect used by Postgres,
+ * including query translators and schema introspection.
+ */
 trait PostgresDialectTrait {
 
+/**
+ * Returns a query that has been transformed to the specific SQL dialect
+ * by changing or re-arranging SQL clauses as required.
+ *
+ * @param Cake\Model\Datasource\Database\Query $query
+ * @return Cake\Model\Datasource\Database\Query
+ */
 	protected function _selectQueryTranslator($query) {
 		$limit = $query->clause('limit');
 		$offset = $query->clause('offset');
@@ -53,6 +64,13 @@ trait PostgresDialectTrait {
 		return $query;
 	}
 
+/**
+ * Returns a function that will be used as a callback for a results decorator.
+ * this function is responsible for deleting the artificial column in results
+ * used for paginating the query.
+ *
+ * @return \Closure
+ */
 	protected function _rowNumberRemover() {
 		return function($row) {
 			if (isset($row['_cake_page_rownum_'])) {
@@ -65,6 +83,12 @@ trait PostgresDialectTrait {
 	}
 
 
+/**
+ * Returns an dictionary of expressions to be transformed when compiling a Query
+ * to SQL. Array keys are method names to be called in this class
+ *
+ * @return array
+ */
 	protected function _expressionTranslators() {
 		$namespace = 'Cake\Model\Datasource\Database\Expression';
 		return [
@@ -72,6 +96,13 @@ trait PostgresDialectTrait {
 		];
 	}
 
+/**
+ * Receives a FunctionExpression and changes it so that it conforms to this
+ * SQL dialect.
+ *
+ * @param Cake\Model\Datasource\Database\Expression\FunctionExpression
+ * @return void
+ */
 	protected function _transformFunctionExpression(FunctionExpression $expression) {
 		switch ($expression->name()) {
 			case 'CONCAT':
