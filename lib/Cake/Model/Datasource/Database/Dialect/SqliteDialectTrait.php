@@ -22,6 +22,12 @@ use Cake\Model\Datasource\Database\Query;
 
 trait SqliteDialectTrait {
 
+/**
+ * Returns an dictionary of expressions to be transformed when compiling a Query
+ * to SQL. Array keys are method names to be called in this class
+ *
+ * @return array
+ */
 	protected function _expressionTranslators() {
 		$namespace = 'Cake\Model\Datasource\Database\Expression';
 		return [
@@ -29,6 +35,13 @@ trait SqliteDialectTrait {
 		];
 	}
 
+/**
+ * Receives a FunctionExpression and changes it so that it conforms to this
+ * SQL dialect.
+ *
+ * @param Cake\Model\Datasource\Database\Expression\FunctionExpression
+ * @return void
+ */
 	protected function _transformFunctionExpression(FunctionExpression $expression) {
 		switch ($expression->name()) {
 			case 'CONCAT':
