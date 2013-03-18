@@ -2383,14 +2383,14 @@ class FormHelper extends AppHelper {
 				$current->setDate($year, $month, $day);
 			}
 			if ($hour !== null) {
-				if ($timeFormat == '12') {
+				if ($timeFormat === '12') {
 					$hour = date('H', strtotime("$hour:$min $meridian"));
 				}
 				$current->setTime($hour, $min);
 			}
 			$change = (round($min * (1 / $interval)) * $interval) - $min;
 			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
-			$format = ($timeFormat == '12') ? 'Y m d h i a' : 'Y m d H i a';
+			$format = ($timeFormat === '12') ? 'Y m d h i a' : 'Y m d H i a';
 			$newTime = explode(' ', $current->format($format));
 			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
 		}
