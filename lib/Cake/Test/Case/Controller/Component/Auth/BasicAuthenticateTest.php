@@ -137,15 +137,14 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('pass' => array(), 'named' => array()));
 
-		$this->response->expects($this->at(0))
-			->method('header')
-			->with('WWW-Authenticate: Basic realm="localhost"');
+		try {
+			$this->auth->unauthenticated($request, $this->response);
+		} catch (UnauthorizedException $e) {}
 
-		$this->response->expects($this->at(1))
-			->method('send');
+		$this->assertNotEmpty($e);
 
-		$result = $this->auth->unauthenticated($request, $this->response);
-		$this->assertTrue($result);
+		$expected = array('WWW-Authenticate: Basic realm="localhost"');
+		$this->assertEquals($expected, $e->responseHeader());
 	}
 
 /**
@@ -173,6 +172,8 @@ class BasicAuthenticateTest extends CakeTestCase {
 /**
  * test scope failure.
  *
+ * @expectedException UnauthorizedException
+ * @expectedExceptionCode 401
  * @return void
  */
 	public function testAuthenticateFailReChallenge() {
@@ -183,18 +184,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$_SERVER['PHP_AUTH_USER'] = 'mariano';
 		$_SERVER['PHP_AUTH_PW'] = 'password';
 
-		$this->response->expects($this->at(0))
-			->method('header')
-			->with('WWW-Authenticate: Basic realm="localhost"');
-
-		$this->response->expects($this->at(1))
-			->method('statusCode')
-			->with(401);
-
-		$this->response->expects($this->at(2))
-			->method('send');
-
-		$this->assertTrue($this->auth->unauthenticated($request, $this->response));
+		$this->auth->unauthenticated($request, $this->response);
 	}
 
 }
