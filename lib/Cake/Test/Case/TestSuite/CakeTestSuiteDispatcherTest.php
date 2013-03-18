@@ -22,37 +22,50 @@
 
 class CakeTestSuiteDispatcherTest extends CakeTestCase {
 
+/**
+ * setUp method
+ *
+ * @return void
+ */
 	public function setUp() {
 		$this->vendors = App::path('vendors');
 		$this->includePath = ini_get('include_path');
 	}
 
+/**
+ * tearDown method
+ *
+ * @return void
+ */
 	public function tearDown() {
 		App::build(array('Vendor' => $this->vendors), App::RESET);
 		ini_set('include_path', $this->includePath);
 	}
 
-	protected function clearPaths() {
+/**
+ * Helper method to set vendor path
+ *
+ * @return void
+ */
+	protected function _clearPaths() {
 		App::build(array('Vendor' => array('junk')), App::RESET);
 		ini_set('include_path', 'junk');
 	}
 
+/**
+ * testLoadTestFramework method
+ *
+ * @return void
+ */
 	public function testLoadTestFramework() {
 		$dispatcher = new CakeTestSuiteDispatcher();
 
 		$this->assertTrue($dispatcher->loadTestFramework());
 
-		$this->clearPaths();
+		$this->_clearPaths();
 
-		$exception = null;
-
-		try {
-			$dispatcher->loadTestFramework();
-		} catch (Exception $ex) {
-			$exception = $ex;
-		}
-
-		$this->assertEquals(get_class($exception), "PHPUnit_Framework_Error_Warning");
+		$this->setExpectedException('PHPUnit_Framework_Error_Warning');
+		$dispatcher->loadTestFramework();
 	}
 
 }
