@@ -566,8 +566,7 @@ class View extends Object {
 				if ($this->layout === 'xml') {
 					header('Content-type: text/xml');
 				}
-				$commentLength = strlen('<!--cachetime:' . $match['1'] . '-->');
-				return substr($out, $commentLength);
+				return substr($out, strlen($match[0]));
 			}
 		}
 	}
