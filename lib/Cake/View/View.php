@@ -560,7 +560,7 @@ class View extends Object {
 				//@codingStandardsIgnoreStart
 				@unlink($filename);
 				//@codingStandardsIgnoreEnd
-				unset ($out);
+				unset($out);
 				return false;
 			} else {
 				if ($this->layout === 'xml') {
