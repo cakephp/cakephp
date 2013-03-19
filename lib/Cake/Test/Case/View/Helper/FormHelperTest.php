@@ -2277,6 +2277,33 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test interval & timeFormat = 12
+ *
+ * @return void
+ */
+	public function testInputTimeWithIntervalAnd12HourFormat() {
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'timeFormat' => 12,
+			'interval' => 5,
+			'selected' => array('hour' => '4', 'min' => '30', 'meridian' => 'pm')
+		));
+		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
+		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'timeFormat' => '12',
+			'interval' => 5,
+			'selected' => '2013-04-19 16:30:00'
+		));
+		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
+		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+	}
+
+/**
  * test form->input() with datetime, date and time types
  *
  * @return void
