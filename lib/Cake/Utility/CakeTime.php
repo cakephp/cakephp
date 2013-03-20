@@ -476,7 +476,7 @@ class CakeTime {
  */
 	public static function isFuture($dateString, $timezone = null) {
 		$date = self::fromString($dateString, $timezone);
-		return date('Y-m-d hh:mm:ss', $date) < date('Y-m-d hh:mm:ss', time());
+		return date('Y-m-d h:i:s', $date) < date('Y-m-d h:i:s', time());
 	}
         
 /**
@@ -489,7 +489,7 @@ class CakeTime {
  */
 	public static function isPast($dateString, $timezone = null) {
 		$date = self::fromString($dateString, $timezone);
-		return date('Y-m-d hh:mm:ss', $date) > date('Y-m-d hh:mm:ss', time());
+		return date('Y-m-d h:i:s', $date) > date('Y-m-d h:i:s', time());
 	}
 
 /**
