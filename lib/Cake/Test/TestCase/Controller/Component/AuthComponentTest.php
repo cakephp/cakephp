@@ -982,7 +982,7 @@ class AuthComponentTest extends TestCase {
 			'username' => 'mariano',
 			'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'modified' => '2007-03-17 01:18:31'
 		);
 		$this->assertTrue($this->Auth->login($user));
 		$this->assertTrue($this->Auth->loggedIn());

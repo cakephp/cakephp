@@ -55,7 +55,7 @@ class ArmorsPlayerFixture extends TestFixture {
 		'armor_id' => array('type' => 'integer', 'null' => false),
 		'broken' => array('type' => 'boolean', 'null' => false, 'default' => false),
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'modified' => 'datetime'
 	);
 
 /**

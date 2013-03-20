@@ -302,14 +302,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'Comment' => array(
 					array(
@@ -319,7 +319,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '2',
@@ -328,7 +328,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Second Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:47:23',
-						'updated' => '2007-03-18 10:49:31'
+						'modified' => '2007-03-18 10:49:31'
 					),
 					array(
 						'id' => '3',
@@ -337,7 +337,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Third Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:49:23',
-						'updated' => '2007-03-18 10:51:31'
+						'modified' => '2007-03-18 10:51:31'
 					),
 					array(
 						'id' => '4',
@@ -346,20 +346,20 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Fourth Comment for First Article',
 						'published' => 'N',
 						'created' => '2007-03-18 10:51:23',
-						'updated' => '2007-03-18 10:53:31'
+						'modified' => '2007-03-18 10:53:31'
 				)),
 				'Tag' => array(
 					array(
 						'id' => '1',
 						'tag' => 'tag1',
 						'created' => '2007-03-18 12:22:23',
-						'updated' => '2007-03-18 12:24:31'
+						'modified' => '2007-03-18 12:24:31'
 					),
 					array(
 						'id' => '2',
 						'tag' => 'tag2',
 						'created' => '2007-03-18 12:24:23',
-						'updated' => '2007-03-18 12:26:31'
+						'modified' => '2007-03-18 12:26:31'
 			))),
 			array(
 				'Article' => array(
@@ -369,14 +369,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => '3',
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 				),
 				'Comment' => array(
 					array(
@@ -386,7 +386,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'First Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:53:23',
-						'updated' => '2007-03-18 10:55:31'
+						'modified' => '2007-03-18 10:55:31'
 					),
 					array(
 						'id' => '6',
@@ -395,20 +395,20 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:55:23',
-						'updated' => '2007-03-18 10:57:31'
+						'modified' => '2007-03-18 10:57:31'
 				)),
 				'Tag' => array(
 					array(
 						'id' => '1',
 						'tag' => 'tag1',
 						'created' => '2007-03-18 12:22:23',
-						'updated' => '2007-03-18 12:24:31'
+						'modified' => '2007-03-18 12:24:31'
 					),
 					array(
 						'id' => '3',
 						'tag' => 'tag3',
 						'created' => '2007-03-18 12:26:23',
-						'updated' => '2007-03-18 12:28:31'
+						'modified' => '2007-03-18 12:28:31'
 			))),
 			array(
 				'Article' => array(
@@ -418,14 +418,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Third Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'Comment' => array(),
 				'Tag' => array()
@@ -472,14 +472,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'comment' => 'First Comment for First Article',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:45:23',
-					'updated' => '2007-03-18 10:47:31'
+					'modified' => '2007-03-18 10:47:31'
 				),
 				'User' => array(
 					'id' => '2',
 					'user' => 'nate',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:18:23',
-					'updated' => '2007-03-17 01:20:31'
+					'modified' => '2007-03-17 01:20:31'
 				),
 				'Article' => array(
 					'id' => '1',
@@ -488,7 +488,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 			)),
 			array(
 				'Comment' => array(
@@ -498,14 +498,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'comment' => 'Second Comment for First Article',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:47:23',
-					'updated' => '2007-03-18 10:49:31'
+					'modified' => '2007-03-18 10:49:31'
 				),
 				'User' => array(
 					'id' => '4',
 					'user' => 'garrett',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:22:23',
-					'updated' => '2007-03-17 01:24:31'
+					'modified' => '2007-03-17 01:24:31'
 				),
 				'Article' => array(
 					'id' => '1',
@@ -514,7 +514,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 			)),
 			array(
 				'Comment' => array(
@@ -524,14 +524,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'comment' => 'Third Comment for First Article',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:49:23',
-					'updated' => '2007-03-18 10:51:31'
+					'modified' => '2007-03-18 10:51:31'
 				),
 				'User' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'Article' => array(
 					'id' => '1',
@@ -540,7 +540,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 			)),
 			array(
 				'Comment' => array(
@@ -550,14 +550,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'comment' => 'Fourth Comment for First Article',
 					'published' => 'N',
 					'created' => '2007-03-18 10:51:23',
-					'updated' => '2007-03-18 10:53:31'
+					'modified' => '2007-03-18 10:53:31'
 				),
 				'User' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'Article' => array(
 					'id' => '1',
@@ -566,7 +566,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 			)),
 			array(
 				'Comment' => array(
@@ -576,14 +576,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'comment' => 'First Comment for Second Article',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:53:23',
-					'updated' => '2007-03-18 10:55:31'
+					'modified' => '2007-03-18 10:55:31'
 				),
 				'User' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'Article' => array(
 					'id' => '2',
@@ -592,7 +592,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 			)),
 			array(
 				'Comment' => array(
@@ -602,14 +602,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'comment' => 'Second Comment for Second Article',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:55:23',
-					'updated' => '2007-03-18 10:57:31'
+					'modified' => '2007-03-18 10:57:31'
 				),
 				'User' => array(
 					'id' => '2',
 					'user' => 'nate',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:18:23',
-					'updated' => '2007-03-17 01:20:31'
+					'modified' => '2007-03-17 01:20:31'
 				),
 				'Article' => array(
 					'id' => '2',
@@ -618,7 +618,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 		)));
 		$this->assertEquals($expected, $TestModel->Comment->find('all'));
 	}
@@ -706,8 +706,8 @@ class ModelIntegrationTest extends BaseModelTest {
 		// tests that record is still identical prior to removal
 		$Site->id = 1;
 		$results = $Site->read();
-		unset($results['Domain'][0]['DomainsSite']['updated']);
-		unset($activated['DomainsSite']['updated']);
+		unset($results['Domain'][0]['DomainsSite']['modified']);
+		unset($activated['DomainsSite']['modified']);
 		$this->assertEquals($activated['DomainsSite'], $results['Domain'][0]['DomainsSite']);
 	}
 
@@ -893,7 +893,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$Post = new Post();
 
 		$result = $Post->schema();
-		$columns = array('id', 'author_id', 'title', 'body', 'published', 'created', 'updated');
+		$columns = array('id', 'author_id', 'title', 'body', 'published', 'created', 'modified');
 		$this->assertEquals($columns, array_keys($result));
 
 		$types = array('integer', 'integer', 'string', 'text', 'string', 'datetime', 'datetime');
@@ -1325,14 +1325,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Plugin Article Body',
 					'published' => 'Y',
 					'created' => '2008-09-24 10:39:23',
-					'updated' => '2008-09-24 10:41:31'
+					'modified' => '2008-09-24 10:41:31'
 				),
 				'User' => array(
 					'id' => 1,
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'TestPluginComment' => array(
 					array(
@@ -1342,7 +1342,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'First Comment for First Plugin Article',
 						'published' => 'Y',
 						'created' => '2008-09-24 10:45:23',
-						'updated' => '2008-09-24 10:47:31'
+						'modified' => '2008-09-24 10:47:31'
 					),
 					array(
 						'id' => 2,
@@ -1351,7 +1351,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Second Comment for First Plugin Article',
 						'published' => 'Y',
 						'created' => '2008-09-24 10:47:23',
-						'updated' => '2008-09-24 10:49:31'
+						'modified' => '2008-09-24 10:49:31'
 					),
 					array(
 						'id' => 3,
@@ -1360,7 +1360,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Third Comment for First Plugin Article',
 						'published' => 'Y',
 						'created' => '2008-09-24 10:49:23',
-						'updated' => '2008-09-24 10:51:31'
+						'modified' => '2008-09-24 10:51:31'
 					),
 					array(
 						'id' => 4,
@@ -1369,7 +1369,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Fourth Comment for First Plugin Article',
 						'published' => 'N',
 						'created' => '2008-09-24 10:51:23',
-						'updated' => '2008-09-24 10:53:31'
+						'modified' => '2008-09-24 10:53:31'
 			))),
 			array(
 				'TestPluginArticle' => array(
@@ -1379,14 +1379,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Second Plugin Article Body',
 					'published' => 'Y',
 					'created' => '2008-09-24 10:41:23',
-					'updated' => '2008-09-24 10:43:31'
+					'modified' => '2008-09-24 10:43:31'
 				),
 				'User' => array(
 					'id' => 3,
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 				),
 				'TestPluginComment' => array(
 					array(
@@ -1396,7 +1396,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'First Comment for Second Plugin Article',
 						'published' => 'Y',
 						'created' => '2008-09-24 10:53:23',
-						'updated' => '2008-09-24 10:55:31'
+						'modified' => '2008-09-24 10:55:31'
 					),
 					array(
 						'id' => 6,
@@ -1405,7 +1405,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Plugin Article',
 						'published' => 'Y',
 						'created' => '2008-09-24 10:55:23',
-						'updated' => '2008-09-24 10:57:31'
+						'modified' => '2008-09-24 10:57:31'
 			))),
 			array(
 				'TestPluginArticle' => array(
@@ -1415,14 +1415,14 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Third Plugin Article Body',
 					'published' => 'Y',
 					'created' => '2008-09-24 10:43:23',
-					'updated' => '2008-09-24 10:45:31'
+					'modified' => '2008-09-24 10:45:31'
 				),
 				'User' => array(
 					'id' => 1,
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'TestPluginComment' => array()
 		));
@@ -1642,7 +1642,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$model = new Test();
 		$this->assertEquals('integer', $model->getColumnType('id'));
 		$this->assertEquals('text', $model->getColumnType('notes'));
-		$this->assertEquals('datetime', $model->getColumnType('updated'));
+		$this->assertEquals('datetime', $model->getColumnType('modified'));
 		$this->assertEquals(null, $model->getColumnType('unknown'));
 
 		$model = new Article();
@@ -1709,7 +1709,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'Something' => array(
 					array(
@@ -1718,14 +1718,14 @@ class ModelIntegrationTest extends BaseModelTest {
 						'body' => 'Third Post Body',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:43:23',
-						'updated' => '2007-03-18 10:45:31',
+						'modified' => '2007-03-18 10:45:31',
 						'JoinThing' => array(
 							'id' => '3',
 							'something_id' => '3',
 							'something_else_id' => '1',
 							'doomed' => true,
 							'created' => '2007-03-18 10:43:23',
-							'updated' => '2007-03-18 10:45:31'
+							'modified' => '2007-03-18 10:45:31'
 			)))),
 			array(
 				'SomethingElse' => array(
@@ -1734,7 +1734,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Second Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				),
 				'Something' => array(
 					array(
@@ -1743,14 +1743,14 @@ class ModelIntegrationTest extends BaseModelTest {
 						'body' => 'First Post Body',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:39:23',
-						'updated' => '2007-03-18 10:41:31',
+						'modified' => '2007-03-18 10:41:31',
 						'JoinThing' => array(
 							'id' => '1',
 							'something_id' => '1',
 							'something_else_id' => '2',
 							'doomed' => true,
 							'created' => '2007-03-18 10:39:23',
-							'updated' => '2007-03-18 10:41:31'
+							'modified' => '2007-03-18 10:41:31'
 			)))),
 			array(
 				'SomethingElse' => array(
@@ -1759,7 +1759,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				),
 				'Something' => array(
 					array(
@@ -1768,14 +1768,14 @@ class ModelIntegrationTest extends BaseModelTest {
 						'body' => 'Second Post Body',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:41:23',
-						'updated' => '2007-03-18 10:43:31',
+						'modified' => '2007-03-18 10:43:31',
 						'JoinThing' => array(
 							'id' => '2',
 							'something_id' => '2',
 							'something_else_id' => '3',
 							'doomed' => false,
 							'created' => '2007-03-18 10:41:23',
-							'updated' => '2007-03-18 10:43:31'
+							'modified' => '2007-03-18 10:43:31'
 		)))));
 		$this->assertEquals($expected, $result);
 
@@ -1788,7 +1788,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'SomethingElse' => array(
 					array(
@@ -1797,7 +1797,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'body' => 'Second Post Body',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:41:23',
-						'updated' => '2007-03-18 10:43:31',
+						'modified' => '2007-03-18 10:43:31',
 						'JoinThing' => array(
 							'doomed' => true,
 							'something_id' => '1',
@@ -1810,7 +1810,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Second Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				),
 				'SomethingElse' => array(
 					array(
@@ -1819,7 +1819,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'body' => 'Third Post Body',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:43:23',
-						'updated' => '2007-03-18 10:45:31',
+						'modified' => '2007-03-18 10:45:31',
 						'JoinThing' => array(
 							'doomed' => false,
 							'something_id' => '2',
@@ -1832,7 +1832,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				),
 				'SomethingElse' => array(
 					array(
@@ -1841,7 +1841,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'body' => 'First Post Body',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:39:23',
-						'updated' => '2007-03-18 10:41:31',
+						'modified' => '2007-03-18 10:41:31',
 						'JoinThing' => array(
 							'doomed' => true,
 							'something_id' => '3',
@@ -1857,7 +1857,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				'body' => 'First Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:39:23',
-				'updated' => '2007-03-18 10:41:31'
+				'modified' => '2007-03-18 10:41:31'
 			),
 			'SomethingElse' => array(
 				array(
@@ -1866,7 +1866,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Second Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31',
+					'modified' => '2007-03-18 10:43:31',
 					'JoinThing' => array(
 						'doomed' => true,
 						'something_id' => '1',
@@ -1907,7 +1907,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31',
+					'modified' => '2007-03-18 10:41:31',
 					'JoinThing' => array(
 						'doomed' => true,
 						'something_id' => '1',
@@ -1920,7 +1920,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Second Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31',
+					'modified' => '2007-03-18 10:43:31',
 					'JoinThing' => array(
 						'doomed' => true,
 						'something_id' => '1',
@@ -1933,7 +1933,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31',
+					'modified' => '2007-03-18 10:45:31',
 					'JoinThing' => array(
 						'doomed' => false,
 						'something_id' => '1',
@@ -1941,8 +1941,8 @@ class ModelIntegrationTest extends BaseModelTest {
 					)
 				)
 			);
-		$this->assertEquals(static::date(), $result['Something']['updated']);
-		unset($result['Something']['updated']);
+		$this->assertEquals(static::date(), $result['Something']['modified']);
+		unset($result['Something']['modified']);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -2079,7 +2079,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'Comment' => array(
 					array(
@@ -2089,7 +2089,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '6',
@@ -2098,7 +2098,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:55:23',
-						'updated' => '2007-03-18 10:57:31'
+						'modified' => '2007-03-18 10:57:31'
 			))),
 			array(
 				'Article' => array(
@@ -2108,7 +2108,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				),
 				'Comment' => array(
 					array(
@@ -2118,7 +2118,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '6',
@@ -2127,7 +2127,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:55:23',
-						'updated' => '2007-03-18 10:57:31'
+						'modified' => '2007-03-18 10:57:31'
 			))),
 			array(
 				'Article' => array(
@@ -2137,7 +2137,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Third Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				),
 				'Comment' => array(
 					array(
@@ -2147,7 +2147,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '6',
@@ -2156,7 +2156,7 @@ class ModelIntegrationTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:55:23',
-						'updated' => '2007-03-18 10:57:31'
+						'modified' => '2007-03-18 10:57:31'
 		))));
 
 		$this->assertEquals($expected, $result);
@@ -2215,7 +2215,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				'default' => null,
 				'length' => null
 			),
-			'updated' => array(
+			'modified' => array(
 				'type' => 'datetime',
 				'null' => true,
 				'default' => null,

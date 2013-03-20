@@ -2048,7 +2048,7 @@ class ModelValidationTest extends BaseModelTest {
 				'created' => '2007-03-18 10:39:23'
 			),
 		);
-		unset($result['Article']['updated']);
+		unset($result['Article']['modified']);
 		$this->assertEquals($expected['Article'], $result['Article']);
 
 		$data = array(
@@ -2067,7 +2067,7 @@ class ModelValidationTest extends BaseModelTest {
 			'conditions' => array('Article.id' => 1)
 		));
 		$expected['Article']['title'] = 'First Article (modified)';
-		unset($result['Article']['updated']);
+		unset($result['Article']['modified']);
 		$this->assertEquals($expected['Article'], $result['Article']);
 	}
 

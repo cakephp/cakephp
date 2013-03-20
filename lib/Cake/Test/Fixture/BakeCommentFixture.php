@@ -47,7 +47,7 @@ class BakeCommentFixture extends TestFixture {
 		'comment' => 'text',
 		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'modified' => 'datetime'
 	);
 
 /**

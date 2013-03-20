@@ -1637,12 +1637,12 @@ class Model extends Object implements EventListener {
 		}
 		$this->set($data);
 
-		if (empty($this->data) && !$this->hasField(array('created', 'updated', 'modified'))) {
+		if (empty($this->data) && !$this->hasField(array('created', 'modified'))) {
 			$this->whitelist = $_whitelist;
 			return false;
 		}
 
-		foreach (array('created', 'updated', 'modified') as $field) {
+		foreach (array('created', 'modified') as $field) {
 			$keyPresentAndEmpty = (
 				isset($this->data[$this->alias]) &&
 				array_key_exists($field, $this->data[$this->alias]) &&
@@ -1654,7 +1654,7 @@ class Model extends Object implements EventListener {
 		}
 
 		$exists = $this->exists();
-		$dateFields = array('modified', 'updated');
+		$dateFields = array('modified');
 
 		if (!$exists) {
 			$dateFields[] = 'created';
@@ -1708,7 +1708,7 @@ class Model extends Object implements EventListener {
 				$joined[$n] = $v;
 			} else {
 				if ($n === $this->alias) {
-					foreach (array('created', 'updated', 'modified') as $field) {
+					foreach (array('created', 'modified') as $field) {
 						if (array_key_exists($field, $v) && empty($v[$field])) {
 							unset($v[$field]);
 						}
@@ -2710,7 +2710,7 @@ class Model extends Object implements EventListener {
  *
  * Model::_readDataSource() is used by all find() calls to read from the data source and can be overloaded to allow
  * caching of datasource calls.
- * 
+ *
  * {{{
  * protected function _readDataSource($type, $query) {
  * 		$cacheName = md5(json_encode($query));
@@ -2724,7 +2724,7 @@ class Model extends Object implements EventListener {
  * 		return $results;
  * }
  * }}}
- * 
+ *
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
  * @return array

@@ -46,7 +46,7 @@ class SomethingFixture extends TestFixture {
 		'body' => array('type' => 'text'),
 		'published' => array('type' => 'string', 'default' => ''),
 		'created' => array('type' => 'datetime', 'null' => true),
-		'updated' => array('type' => 'datetime', 'null' => true)
+		'modified' => array('type' => 'datetime', 'null' => true)
 	);
 
 /**
@@ -55,8 +55,8 @@ class SomethingFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-		array('title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-		array('title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')
+		array('title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'),
+		array('title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'),
+		array('title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31')
 	);
 }

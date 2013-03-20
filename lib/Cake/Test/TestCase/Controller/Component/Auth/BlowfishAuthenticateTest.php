@@ -153,7 +153,7 @@ class BlowfishAuthenticateTest extends TestCase {
 			'id' => 1,
 			'user' => 'mariano',
 			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31',
+			'modified' => '2007-03-17 01:18:31',
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -206,8 +206,8 @@ class BlowfishAuthenticateTest extends TestCase {
 			'username' => 'gwoo',
 			'created' => '2007-03-17 01:16:23'
 		);
-		$this->assertEquals(static::date(), $result['updated']);
-		unset($result['updated']);
+		$this->assertEquals(static::date(), $result['modified']);
+		unset($result['modified']);
 		$this->assertEquals($expected, $result);
 		Plugin::unload();
 	}

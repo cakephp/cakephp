@@ -60,7 +60,7 @@ class MyAppSchema extends Schema {
 		'comment' => array('type' => 'text', 'null' => false, 'default' => null),
 		'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
 
@@ -77,7 +77,7 @@ class MyAppSchema extends Schema {
 		'summary' => array('type' => 'text', 'null' => true),
 		'published' => array('type' => 'string', 'null' => true, 'default' => 'Y', 'length' => 1),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
 
@@ -147,7 +147,7 @@ class TestAppSchema extends Schema {
 		'comment' => array('type' => 'text', 'null' => true, 'default' => null),
 		'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		'tableParameters' => array(),
 	);
@@ -164,7 +164,7 @@ class TestAppSchema extends Schema {
 		'body' => array('type' => 'text', 'null' => true, 'default' => null),
 		'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		'tableParameters' => array(),
 	);
@@ -190,7 +190,7 @@ class TestAppSchema extends Schema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'tag' => array('type' => 'string', 'null' => false),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		'tableParameters' => array()
 	);
@@ -762,7 +762,7 @@ class SchemaTest extends TestCase {
 			'body' => array('type' => 'text', 'null' => true, 'default' => null),
 			'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1),
 			'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-			'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+			'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
 			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		);
 		$result = $this->Schema->generateTable('posts', $posts);
@@ -775,7 +775,7 @@ class SchemaTest extends TestCase {
 			'body' => array('type' => 'text', 'null' => true, 'default' => null),
 			'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1),
 			'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-			'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+			'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
 			'indexes' => array(
 				'PRIMARY' => array('column' => 'id', 'unique' => true),
 				'MyFtIndex' => array('column' => array('title', 'body'), 'type' => 'fulltext')

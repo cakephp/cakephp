@@ -65,7 +65,7 @@ class ModelReadTest extends BaseModelTest {
 				'something_else_id' => 2,
 				'doomed' => '0',
 				'created' => '2007-03-18 10:39:23',
-				'updated' => '2007-03-18 10:41:31'
+				'modified' => '2007-03-18 10:41:31'
 			)
 		);
 
@@ -3147,7 +3147,7 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => '0',
 					'name' => 'Category 1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'children' => array(
 					array(
@@ -3156,7 +3156,7 @@ class ModelReadTest extends BaseModelTest {
 							'parent_id' => '1',
 							'name' => 'Category 1.1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31'
+							'modified' => '2007-03-18 15:32:31'
 						),
 						'children' => array(
 							array('Category' => array(
@@ -3164,14 +3164,14 @@ class ModelReadTest extends BaseModelTest {
 								'parent_id' => '2',
 								'name' => 'Category 1.1.1',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31'),
+								'modified' => '2007-03-18 15:32:31'),
 								'children' => array()),
 							array('Category' => array(
 								'id' => '8',
 								'parent_id' => '2',
 								'name' => 'Category 1.1.2',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31'),
+								'modified' => '2007-03-18 15:32:31'),
 								'children' => array()))
 					),
 					array(
@@ -3180,7 +3180,7 @@ class ModelReadTest extends BaseModelTest {
 							'parent_id' => '1',
 							'name' => 'Category 1.2',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31'
+							'modified' => '2007-03-18 15:32:31'
 						),
 						'children' => array()
 					)
@@ -3192,7 +3192,7 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => '0',
 					'name' => 'Category 2',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'children' => array()
 			),
@@ -3202,7 +3202,7 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => '0',
 					'name' => 'Category 3',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'children' => array(
 					array(
@@ -3211,7 +3211,7 @@ class ModelReadTest extends BaseModelTest {
 							'parent_id' => '5',
 							'name' => 'Category 3.1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31'
+							'modified' => '2007-03-18 15:32:31'
 						),
 						'children' => array()
 					)
@@ -3231,7 +3231,7 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => '0',
 					'name' => 'Category 1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'children' => array(
 					array(
@@ -3240,7 +3240,7 @@ class ModelReadTest extends BaseModelTest {
 							'parent_id' => '1',
 							'name' => 'Category 1.1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31'
+							'modified' => '2007-03-18 15:32:31'
 						),
 						'children' => array(
 							array('Category' => array(
@@ -3248,14 +3248,14 @@ class ModelReadTest extends BaseModelTest {
 								'parent_id' => '2',
 								'name' => 'Category 1.1.1',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31'),
+								'modified' => '2007-03-18 15:32:31'),
 								'children' => array()),
 							array('Category' => array(
 								'id' => '8',
 								'parent_id' => '2',
 								'name' => 'Category 1.1.2',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31'),
+								'modified' => '2007-03-18 15:32:31'),
 								'children' => array()))
 					),
 					array(
@@ -3264,7 +3264,7 @@ class ModelReadTest extends BaseModelTest {
 							'parent_id' => '1',
 							'name' => 'Category 1.2',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31'
+							'modified' => '2007-03-18 15:32:31'
 						),
 						'children' => array()
 					)
@@ -3350,7 +3350,7 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => 0,
 					'name' => 'Category 3',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'children' => array(
 					array(
@@ -3359,7 +3359,7 @@ class ModelReadTest extends BaseModelTest {
 							'parent_id' => 5,
 							'name' => 'Category 3.1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31'
+							'modified' => '2007-03-18 15:32:31'
 						),
 						'children' => array()
 					)
@@ -3371,7 +3371,7 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => 0,
 					'name' => 'Category 2',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'children' => array()
 			),
@@ -3381,7 +3381,7 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => 0,
 					'name' => 'Category 1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'children' => array(
 					array(
@@ -3390,7 +3390,7 @@ class ModelReadTest extends BaseModelTest {
 							'parent_id' => 1,
 							'name' => 'Category 1.2',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31'
+							'modified' => '2007-03-18 15:32:31'
 						),
 						'children' => array()
 					),
@@ -3400,7 +3400,7 @@ class ModelReadTest extends BaseModelTest {
 							'parent_id' => 1,
 							'name' => 'Category 1.1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31'
+							'modified' => '2007-03-18 15:32:31'
 						),
 						'children' => array(
 							array('Category' => array(
@@ -3408,14 +3408,14 @@ class ModelReadTest extends BaseModelTest {
 								'parent_id' => '2',
 								'name' => 'Category 1.1.2',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31'),
+								'modified' => '2007-03-18 15:32:31'),
 								'children' => array()),
 							array('Category' => array(
 								'id' => '7',
 								'parent_id' => '2',
 								'name' => 'Category 1.1.1',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31'),
+								'modified' => '2007-03-18 15:32:31'),
 								'children' => array()))
 					)
 				)
@@ -3433,7 +3433,7 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => '0',
 					'name' => 'Category 3',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'children' => array(
 					array(
@@ -3442,7 +3442,7 @@ class ModelReadTest extends BaseModelTest {
 							'parent_id' => '5',
 							'name' => 'Category 3.1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31'
+							'modified' => '2007-03-18 15:32:31'
 						),
 						'children' => array()
 					)
@@ -3461,21 +3461,21 @@ class ModelReadTest extends BaseModelTest {
 						'parent_id' => '1',
 						'name' => 'Category 1.1',
 						'created' => '2007-03-18 15:30:23',
-						'updated' => '2007-03-18 15:32:31'),
+						'modified' => '2007-03-18 15:32:31'),
 						'children' => array(
 							array('Category' => array(
 								'id' => '7',
 								'parent_id' => '2',
 								'name' => 'Category 1.1.1',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31'),
+								'modified' => '2007-03-18 15:32:31'),
 								'children' => array()),
 							array('Category' => array(
 								'id' => '8',
 								'parent_id' => '2',
 								'name' => 'Category 1.1.2',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31'),
+								'modified' => '2007-03-18 15:32:31'),
 								'children' => array()))));
 		$this->assertEquals($expected, $result);
 
@@ -3661,7 +3661,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				)
 			)
 		);
@@ -3678,7 +3678,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				)
 			),
 			'next' => array(
@@ -3689,7 +3689,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Third Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				)
 			)
 		);
@@ -3706,7 +3706,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				)
 			),
 			'next' => null
@@ -4135,7 +4135,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				)
 			),
 			array(
@@ -4146,7 +4146,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				)
 			)
 		);
@@ -4170,7 +4170,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				)
 			),
 			array(
@@ -4181,7 +4181,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				)
 			),
 			array(
@@ -4192,7 +4192,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Third Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				)
 			)
 		);
@@ -4243,7 +4243,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Third Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:49:23',
-						'updated' => '2007-03-18 10:51:31'
+						'modified' => '2007-03-18 10:51:31'
 					),
 					array(
 						'id' => '4',
@@ -4252,7 +4252,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Fourth Comment for First Article',
 						'published' => 'N',
 						'created' => '2007-03-18 10:51:23',
-						'updated' => '2007-03-18 10:53:31'
+						'modified' => '2007-03-18 10:53:31'
 					),
 					array(
 						'id' => '5',
@@ -4261,7 +4261,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:53:23',
-						'updated' => '2007-03-18 10:55:31'
+						'modified' => '2007-03-18 10:55:31'
 			))),
 			array(
 				'User' => array(
@@ -4276,7 +4276,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '6',
@@ -4285,7 +4285,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:55:23',
-						'updated' => '2007-03-18 10:57:31'
+						'modified' => '2007-03-18 10:57:31'
 			))),
 			array(
 				'User' => array(
@@ -4307,7 +4307,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:47:23',
-						'updated' => '2007-03-18 10:49:31'
+						'modified' => '2007-03-18 10:49:31'
 		))));
 
 		$this->assertEquals($expected, $result);
@@ -4338,7 +4338,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Third Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:49:23',
-						'updated' => '2007-03-18 10:51:31'
+						'modified' => '2007-03-18 10:51:31'
 					),
 					array(
 						'id' => '4',
@@ -4347,7 +4347,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Fourth Comment for First Article',
 						'published' => 'N',
 						'created' => '2007-03-18 10:51:23',
-						'updated' => '2007-03-18 10:53:31'
+						'modified' => '2007-03-18 10:53:31'
 					),
 					array(
 						'id' => '5',
@@ -4356,7 +4356,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:53:23',
-						'updated' => '2007-03-18 10:55:31'
+						'modified' => '2007-03-18 10:55:31'
 			))),
 			array(
 				'User' => array(
@@ -4371,7 +4371,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '6',
@@ -4380,7 +4380,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:55:23',
-						'updated' => '2007-03-18 10:57:31'
+						'modified' => '2007-03-18 10:57:31'
 			))),
 			array(
 				'User' => array(
@@ -4402,7 +4402,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:47:23',
-						'updated' => '2007-03-18 10:49:31'
+						'modified' => '2007-03-18 10:49:31'
 		))));
 
 		$this->assertEquals($expected, $result);
@@ -4460,7 +4460,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Third Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:49:23',
-						'updated' => '2007-03-18 10:51:31'
+						'modified' => '2007-03-18 10:51:31'
 					),
 					array(
 						'id' => '4',
@@ -4469,7 +4469,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Fourth Comment for First Article',
 						'published' => 'N',
 						'created' => '2007-03-18 10:51:23',
-						'updated' => '2007-03-18 10:53:31'
+						'modified' => '2007-03-18 10:53:31'
 					),
 					array(
 						'id' => '5',
@@ -4478,7 +4478,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:53:23',
-						'updated' => '2007-03-18 10:55:31'
+						'modified' => '2007-03-18 10:55:31'
 			))),
 			array(
 				'User' => array(
@@ -4493,7 +4493,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '6',
@@ -4502,7 +4502,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:55:23',
-						'updated' => '2007-03-18 10:57:31'
+						'modified' => '2007-03-18 10:57:31'
 			))),
 			array(
 				'User' => array(
@@ -4525,7 +4525,7 @@ class ModelReadTest extends BaseModelTest {
 						'Second Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:47:23',
-						'updated' => '2007-03-18 10:49:31'
+						'modified' => '2007-03-18 10:49:31'
 		))));
 		$this->assertEquals($expected, $result);
 
@@ -4570,7 +4570,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Third Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:49:23',
-						'updated' => '2007-03-18 10:51:31'
+						'modified' => '2007-03-18 10:51:31'
 					),
 					array(
 						'id' => '5',
@@ -4579,7 +4579,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:53:23',
-						'updated' => '2007-03-18 10:55:31'
+						'modified' => '2007-03-18 10:55:31'
 			))),
 			array(
 				'User' => array(
@@ -4594,7 +4594,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '6',
@@ -4603,7 +4603,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:55:23',
-						'updated' => '2007-03-18 10:57:31'
+						'modified' => '2007-03-18 10:57:31'
 			))),
 			array(
 				'User' => array(
@@ -4625,7 +4625,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:47:23',
-						'updated' => '2007-03-18 10:49:31'
+						'modified' => '2007-03-18 10:49:31'
 		))));
 
 		$this->assertEquals($expected, $result);
@@ -4729,7 +4729,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Third Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:49:23',
-						'updated' => '2007-03-18 10:51:31'
+						'modified' => '2007-03-18 10:51:31'
 					),
 					array(
 						'id' => '4',
@@ -4738,7 +4738,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Fourth Comment for First Article',
 						'published' => 'N',
 						'created' => '2007-03-18 10:51:23',
-						'updated' => '2007-03-18 10:53:31'
+						'modified' => '2007-03-18 10:53:31'
 					),
 					array(
 						'id' => '5',
@@ -4747,7 +4747,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:53:23',
-						'updated' => '2007-03-18 10:55:31'
+						'modified' => '2007-03-18 10:55:31'
 			))),
 			array(
 				'User' => array(
@@ -4762,7 +4762,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '6',
@@ -4771,7 +4771,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:55:23',
-						'updated' => '2007-03-18 10:57:31'
+						'modified' => '2007-03-18 10:57:31'
 			))),
 			array(
 				'User' => array(
@@ -4793,7 +4793,7 @@ class ModelReadTest extends BaseModelTest {
 							'comment' => 'Second Comment for First Article',
 							'published' => 'Y',
 							'created' => '2007-03-18 10:47:23',
-							'updated' => '2007-03-18 10:49:31'
+							'modified' => '2007-03-18 10:49:31'
 		))));
 		$this->assertEquals($expected, $result);
 
@@ -4820,7 +4820,7 @@ class ModelReadTest extends BaseModelTest {
 						'body' => 'First Article Body',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:39:23',
-						'updated' => '2007-03-18 10:41:31'
+						'modified' => '2007-03-18 10:41:31'
 					),
 					array(
 						'id' => 3,
@@ -4829,7 +4829,7 @@ class ModelReadTest extends BaseModelTest {
 						'body' => 'Third Article Body',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:43:23',
-						'updated' => '2007-03-18 10:45:31'
+						'modified' => '2007-03-18 10:45:31'
 			))),
 			array(
 				'User' => array(
@@ -4851,7 +4851,7 @@ class ModelReadTest extends BaseModelTest {
 						'body' => 'Second Article Body',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:41:23',
-						'updated' => '2007-03-18 10:43:31'
+						'modified' => '2007-03-18 10:43:31'
 			))),
 			array(
 				'User' => array(
@@ -5004,14 +5004,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'Author' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31',
+					'modified' => '2007-03-17 01:18:31',
 					'test' => 'working'
 			)),
 			array(
@@ -5022,14 +5022,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				),
 				'Author' => array(
 					'id' => '3',
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31',
+					'modified' => '2007-03-17 01:22:31',
 					'test' => 'working'
 			)),
 			array(
@@ -5040,14 +5040,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				),
 				'Author' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31',
+					'modified' => '2007-03-17 01:18:31',
 					'test' => 'working'
 		)));
 		$this->assertEquals($expected, $result);
@@ -5073,7 +5073,7 @@ class ModelReadTest extends BaseModelTest {
 			'comment' => 'First Comment for First Article',
 			'published' => 'Y',
 			'created' => '2007-03-18 10:45:23',
-			'updated' => '2007-03-18 10:47:31',
+			'modified' => '2007-03-18 10:47:31',
 			'callback' => 'Fire'
 		);
 		$this->assertEquals($expected, $result[0]['Post'][0]['Comment'][0]);
@@ -5159,14 +5159,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'Author' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 			)),
 			array(
 				'Post' => array(
@@ -5176,14 +5176,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				),
 				'Author' => array(
 					'id' => '3',
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 			)),
 			array(
 				'Post' => array(
@@ -5193,14 +5193,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				),
 				'Author' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 		)));
 		$this->assertEquals($expected, $result);
 		unset($TestModel);
@@ -5226,7 +5226,7 @@ class ModelReadTest extends BaseModelTest {
 			'comment' => 'First Comment for First Article',
 			'published' => 'Y',
 			'created' => '2007-03-18 10:45:23',
-			'updated' => '2007-03-18 10:47:31'
+			'modified' => '2007-03-18 10:47:31'
 		);
 		$this->assertEquals($expected, $result[0]['Post'][0]['Comment'][0]);
 	}
@@ -5436,14 +5436,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'Author' => array(
 					'id' => 1,
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31',
+					'modified' => '2007-03-17 01:18:31',
 					'test' => 'working'
 				),
 				'Tag' => array(
@@ -5451,13 +5451,13 @@ class ModelReadTest extends BaseModelTest {
 						'id' => '1',
 						'tag' => 'tag1',
 						'created' => '2007-03-18 12:22:23',
-						'updated' => '2007-03-18 12:24:31'
+						'modified' => '2007-03-18 12:24:31'
 					),
 					array(
 						'id' => '2',
 						'tag' => 'tag2',
 						'created' => '2007-03-18 12:24:23',
-						'updated' => '2007-03-18 12:26:31'
+						'modified' => '2007-03-18 12:26:31'
 			))),
 			array(
 				'Post' => array(
@@ -5467,14 +5467,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				),
 				'Author' => array(
 					'id' => 3,
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31',
+					'modified' => '2007-03-17 01:22:31',
 					'test' => 'working'
 				),
 				'Tag' => array(
@@ -5482,13 +5482,13 @@ class ModelReadTest extends BaseModelTest {
 						'id' => '1',
 						'tag' => 'tag1',
 						'created' => '2007-03-18 12:22:23',
-						'updated' => '2007-03-18 12:24:31'
+						'modified' => '2007-03-18 12:24:31'
 						),
 					array(
 						'id' => '3',
 						'tag' => 'tag3',
 						'created' => '2007-03-18 12:26:23',
-						'updated' => '2007-03-18 12:28:31'
+						'modified' => '2007-03-18 12:28:31'
 			))),
 			array(
 				'Post' => array(
@@ -5498,14 +5498,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				),
 				'Author' => array(
 					'id' => 1,
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31',
+					'modified' => '2007-03-17 01:18:31',
 					'test' => 'working'
 				),
 				'Tag' => array()
@@ -5580,14 +5580,14 @@ class ModelReadTest extends BaseModelTest {
 				'body' => 'Second Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => '2007-03-18 10:43:31'
+				'modified' => '2007-03-18 10:43:31'
 			),
 			'User' => array(
 				'id' => '3',
 				'user' => 'larry',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 				'created' => '2007-03-17 01:20:23',
-				'updated' => '2007-03-17 01:22:31'
+				'modified' => '2007-03-17 01:22:31'
 			),
 			'Comment' => array(
 				array(
@@ -5597,7 +5597,7 @@ class ModelReadTest extends BaseModelTest {
 					'comment' => 'First Comment for Second Article',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:53:23',
-					'updated' => '2007-03-18 10:55:31'
+					'modified' => '2007-03-18 10:55:31'
 				),
 				array(
 					'id' => '6',
@@ -5606,20 +5606,20 @@ class ModelReadTest extends BaseModelTest {
 					'comment' => 'Second Comment for Second Article',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:55:23',
-					'updated' => '2007-03-18 10:57:31'
+					'modified' => '2007-03-18 10:57:31'
 			)),
 			'Tag' => array(
 				array(
 					'id' => '1',
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				array(
 					'id' => '3',
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 		)));
 
 		$this->assertEquals($expected, $result);
@@ -5768,13 +5768,13 @@ class ModelReadTest extends BaseModelTest {
 					'advertisement_id' => '1',
 					'title' => 'First Home',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'AnotherArticle' => array(
 					'id' => '1',
 					'title' => 'First Article',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31',
+					'modified' => '2007-03-18 10:41:31',
 					'Home' => array(
 						array(
 							'id' => '1',
@@ -5782,13 +5782,13 @@ class ModelReadTest extends BaseModelTest {
 							'advertisement_id' => '1',
 							'title' => 'First Home',
 							'created' => '2007-03-18 10:39:23',
-							'updated' => '2007-03-18 10:41:31'
+							'modified' => '2007-03-18 10:41:31'
 				))),
 				'Advertisement' => array(
 					'id' => '1',
 					'title' => 'First Ad',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31',
+					'modified' => '2007-03-18 10:41:31',
 					'Home' => array(
 						array(
 							'id' => '1',
@@ -5796,7 +5796,7 @@ class ModelReadTest extends BaseModelTest {
 							'advertisement_id' => '1',
 							'title' => 'First Home',
 							'created' => '2007-03-18 10:39:23',
-							'updated' => '2007-03-18 10:41:31'
+							'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => '2',
@@ -5804,7 +5804,7 @@ class ModelReadTest extends BaseModelTest {
 							'advertisement_id' => '1',
 							'title' => 'Second Home',
 							'created' => '2007-03-18 10:41:23',
-							'updated' => '2007-03-18 10:43:31'
+							'modified' => '2007-03-18 10:43:31'
 			)))),
 			array(
 				'Home' => array(
@@ -5813,13 +5813,13 @@ class ModelReadTest extends BaseModelTest {
 					'advertisement_id' => '1',
 					'title' => 'Second Home',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				),
 				'AnotherArticle' => array(
 					'id' => '3',
 					'title' => 'Third Article',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31',
+					'modified' => '2007-03-18 10:45:31',
 					'Home' => array(
 						array(
 							'id' => '2',
@@ -5827,13 +5827,13 @@ class ModelReadTest extends BaseModelTest {
 							'advertisement_id' => '1',
 							'title' => 'Second Home',
 							'created' => '2007-03-18 10:41:23',
-							'updated' => '2007-03-18 10:43:31'
+							'modified' => '2007-03-18 10:43:31'
 				))),
 				'Advertisement' => array(
 					'id' => '1',
 					'title' => 'First Ad',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31',
+					'modified' => '2007-03-18 10:41:31',
 					'Home' => array(
 						array(
 							'id' => '1',
@@ -5841,7 +5841,7 @@ class ModelReadTest extends BaseModelTest {
 							'advertisement_id' => '1',
 							'title' => 'First Home',
 							'created' => '2007-03-18 10:39:23',
-							'updated' => '2007-03-18 10:41:31'
+							'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => '2',
@@ -5849,7 +5849,7 @@ class ModelReadTest extends BaseModelTest {
 							'advertisement_id' => '1',
 							'title' => 'Second Home',
 							'created' => '2007-03-18 10:41:23',
-							'updated' => '2007-03-18 10:43:31'
+							'modified' => '2007-03-18 10:43:31'
 		)))));
 
 		$this->assertEquals($expected, $result);
@@ -5945,44 +5945,44 @@ class ModelReadTest extends BaseModelTest {
 				'parent_id' => 6,
 				'name' => 'Category 2.1',
 				'created' => '2007-03-18 15:30:23',
-				'updated' => '2007-03-18 15:32:31'
+				'modified' => '2007-03-18 15:32:31'
 			),
 			'ParentCategory' => array(
 				'id' => 6,
 				'parent_id' => 5,
 				'name' => 'Category 2',
 				'created' => '2007-03-18 15:30:23',
-				'updated' => '2007-03-18 15:32:31',
+				'modified' => '2007-03-18 15:32:31',
 				'ParentCategory' => array(
 					'id' => 5,
 					'parent_id' => 4,
 					'name' => 'Category 1.1.1.1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31',
+					'modified' => '2007-03-18 15:32:31',
 					'ParentCategory' => array(
 						'id' => 4,
 						'parent_id' => 3,
 						'name' => 'Category 1.1.2',
 						'created' => '2007-03-18 15:30:23',
-						'updated' => '2007-03-18 15:32:31',
+						'modified' => '2007-03-18 15:32:31',
 						'ParentCategory' => array(
 							'id' => 3,
 							'parent_id' => 2,
 							'name' => 'Category 1.1.1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31',
+							'modified' => '2007-03-18 15:32:31',
 							'ParentCategory' => array(
 								'id' => 2,
 								'parent_id' => 1,
 								'name' => 'Category 1.1',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31',
+								'modified' => '2007-03-18 15:32:31',
 								'ParentCategory' => array(
 									'id' => 1,
 									'parent_id' => 0,
 									'name' => 'Category 1',
 									'created' => '2007-03-18 15:30:23',
-									'updated' => '2007-03-18 15:32:31'
+									'modified' => '2007-03-18 15:32:31'
 		)))))));
 
 		$this->db->fullDebug = $fullDebug;
@@ -6009,44 +6009,44 @@ class ModelReadTest extends BaseModelTest {
 				'parent_id' => 6,
 				'name' => 'Category 2.1',
 				'created' => '2007-03-18 15:30:23',
-				'updated' => '2007-03-18 15:32:31'
+				'modified' => '2007-03-18 15:32:31'
 			),
 			'ParentCategory' => array(
 				'id' => 6,
 				'parent_id' => 5,
 				'name' => 'Category 2',
 				'created' => '2007-03-18 15:30:23',
-				'updated' => '2007-03-18 15:32:31',
+				'modified' => '2007-03-18 15:32:31',
 				'ParentCategory' => array(
 					'id' => 5,
 					'parent_id' => 4,
 					'name' => 'Category 1.1.1.1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31',
+					'modified' => '2007-03-18 15:32:31',
 					'ParentCategory' => array(
 						'id' => 4,
 						'parent_id' => 3,
 						'name' => 'Category 1.1.2',
 						'created' => '2007-03-18 15:30:23',
-						'updated' => '2007-03-18 15:32:31',
+						'modified' => '2007-03-18 15:32:31',
 						'ParentCategory' => array(
 							'id' => 3,
 							'parent_id' => 2,
 							'name' => 'Category 1.1.1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31',
+							'modified' => '2007-03-18 15:32:31',
 							'ParentCategory' => array(
 								'id' => 2,
 								'parent_id' => 1,
 								'name' => 'Category 1.1',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31',
+								'modified' => '2007-03-18 15:32:31',
 								'ParentCategory' => array(
 									'id' => 1,
 									'parent_id' => 0,
 									'name' => 'Category 1',
 									'created' => '2007-03-18 15:30:23',
-									'updated' => '2007-03-18 15:32:31'
+									'modified' => '2007-03-18 15:32:31'
 		)))))));
 
 		$this->db->fullDebug = $fullDebug;
@@ -6073,14 +6073,14 @@ class ModelReadTest extends BaseModelTest {
 				'parent_id' => 0,
 				'name' => 'Category 1',
 				'created' => '2007-03-18 15:30:23',
-				'updated' => '2007-03-18 15:32:31'
+				'modified' => '2007-03-18 15:32:31'
 				),
 				'ParentCategory' => array(
 					'id' => null,
 					'parent_id' => null,
 					'name' => null,
 					'created' => null,
-					'updated' => null,
+					'modified' => null,
 					'ParentCategory' => array()
 			)),
 			array(
@@ -6089,14 +6089,14 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => 1,
 					'name' => 'Category 1.1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'ParentCategory' => array(
 					'id' => 1,
 					'parent_id' => 0,
 					'name' => 'Category 1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31',
+					'modified' => '2007-03-18 15:32:31',
 					'ParentCategory' => array()
 				)),
 			array(
@@ -6105,20 +6105,20 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => 2,
 					'name' => 'Category 1.1.1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'ParentCategory' => array(
 					'id' => 2,
 					'parent_id' => 1,
 					'name' => 'Category 1.1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31',
+					'modified' => '2007-03-18 15:32:31',
 					'ParentCategory' => array(
 						'id' => 1,
 						'parent_id' => 0,
 						'name' => 'Category 1',
 						'created' => '2007-03-18 15:30:23',
-						'updated' => '2007-03-18 15:32:31',
+						'modified' => '2007-03-18 15:32:31',
 						'ParentCategory' => array()
 			))),
 			array(
@@ -6127,26 +6127,26 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => 3,
 					'name' => 'Category 1.1.2',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'ParentCategory' => array(
 					'id' => 3,
 					'parent_id' => 2,
 					'name' => 'Category 1.1.1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31',
+					'modified' => '2007-03-18 15:32:31',
 					'ParentCategory' => array(
 						'id' => 2,
 						'parent_id' => 1,
 						'name' => 'Category 1.1',
 						'created' => '2007-03-18 15:30:23',
-						'updated' => '2007-03-18 15:32:31',
+						'modified' => '2007-03-18 15:32:31',
 						'ParentCategory' => array(
 							'id' => 1,
 							'parent_id' => 0,
 							'name' => 'Category 1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31',
+							'modified' => '2007-03-18 15:32:31',
 							'ParentCategory' => array()
 			)))),
 			array(
@@ -6155,32 +6155,32 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => 4,
 					'name' => 'Category 1.1.1.1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'ParentCategory' => array(
 					'id' => 4,
 					'parent_id' => 3,
 					'name' => 'Category 1.1.2',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31',
+					'modified' => '2007-03-18 15:32:31',
 					'ParentCategory' => array(
 						'id' => 3,
 						'parent_id' => 2,
 						'name' => 'Category 1.1.1',
 						'created' => '2007-03-18 15:30:23',
-						'updated' => '2007-03-18 15:32:31',
+						'modified' => '2007-03-18 15:32:31',
 						'ParentCategory' => array(
 							'id' => 2,
 							'parent_id' => 1,
 							'name' => 'Category 1.1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31',
+							'modified' => '2007-03-18 15:32:31',
 							'ParentCategory' => array(
 								'id' => 1,
 								'parent_id' => 0,
 								'name' => 'Category 1',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31',
+								'modified' => '2007-03-18 15:32:31',
 								'ParentCategory' => array()
 			))))),
 			array(
@@ -6189,38 +6189,38 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => 5,
 					'name' => 'Category 2',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'ParentCategory' => array(
 					'id' => 5,
 					'parent_id' => 4,
 					'name' => 'Category 1.1.1.1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31',
+					'modified' => '2007-03-18 15:32:31',
 					'ParentCategory' => array(
 						'id' => 4,
 						'parent_id' => 3,
 						'name' => 'Category 1.1.2',
 						'created' => '2007-03-18 15:30:23',
-						'updated' => '2007-03-18 15:32:31',
+						'modified' => '2007-03-18 15:32:31',
 						'ParentCategory' => array(
 							'id' => 3,
 							'parent_id' => 2,
 							'name' => 'Category 1.1.1',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31',
+							'modified' => '2007-03-18 15:32:31',
 							'ParentCategory' => array(
 								'id' => 2,
 								'parent_id' => 1,
 								'name' => 'Category 1.1',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31',
+								'modified' => '2007-03-18 15:32:31',
 								'ParentCategory' => array(
 									'id' => 1,
 									'parent_id' => 0,
 									'name' => 'Category 1',
 									'created' => '2007-03-18 15:30:23',
-									'updated' => '2007-03-18 15:32:31',
+									'modified' => '2007-03-18 15:32:31',
 									'ParentCategory' => array()
 			)))))),
 			array(
@@ -6229,44 +6229,44 @@ class ModelReadTest extends BaseModelTest {
 					'parent_id' => 6,
 					'name' => 'Category 2.1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				),
 				'ParentCategory' => array(
 					'id' => 6,
 					'parent_id' => 5,
 					'name' => 'Category 2',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31',
+					'modified' => '2007-03-18 15:32:31',
 					'ParentCategory' => array(
 						'id' => 5,
 						'parent_id' => 4,
 						'name' => 'Category 1.1.1.1',
 						'created' => '2007-03-18 15:30:23',
-						'updated' => '2007-03-18 15:32:31',
+						'modified' => '2007-03-18 15:32:31',
 						'ParentCategory' => array(
 							'id' => 4,
 							'parent_id' => 3,
 							'name' => 'Category 1.1.2',
 							'created' => '2007-03-18 15:30:23',
-							'updated' => '2007-03-18 15:32:31',
+							'modified' => '2007-03-18 15:32:31',
 							'ParentCategory' => array(
 								'id' => 3,
 								'parent_id' => 2,
 								'name' => 'Category 1.1.1',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31',
+								'modified' => '2007-03-18 15:32:31',
 							'ParentCategory' => array(
 								'id' => 2,
 								'parent_id' => 1,
 								'name' => 'Category 1.1',
 								'created' => '2007-03-18 15:30:23',
-								'updated' => '2007-03-18 15:32:31',
+								'modified' => '2007-03-18 15:32:31',
 								'ParentCategory' => array(
 									'id' => 1,
 									'parent_id' => 0,
 									'name' => 'Category 1',
 									'created' => '2007-03-18 15:30:23',
-									'updated' => '2007-03-18 15:32:31'
+									'modified' => '2007-03-18 15:32:31'
 		))))))));
 
 		$this->db->fullDebug = $fullDebug;
@@ -6338,7 +6338,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 			)),
 			array(
 				'User' => array(
@@ -6346,7 +6346,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'nate',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:18:23',
-					'updated' => '2007-03-17 01:20:31'
+					'modified' => '2007-03-17 01:20:31'
 			)),
 			array(
 				'User' => array(
@@ -6354,7 +6354,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 			)),
 			array(
 				'User' => array(
@@ -6362,7 +6362,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'garrett',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:22:23',
-					'updated' => '2007-03-17 01:24:31'
+					'modified' => '2007-03-17 01:24:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -6374,7 +6374,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 			)),
 			array(
 				'User' => array(
@@ -6382,7 +6382,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'garrett',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:22:23',
-					'updated' => '2007-03-17 01:24:31'
+					'modified' => '2007-03-17 01:24:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -6396,7 +6396,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 			)),
 			array(
 				'User' => array(
@@ -6404,7 +6404,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'garrett',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:22:23',
-					'updated' => '2007-03-17 01:24:31'
+					'modified' => '2007-03-17 01:24:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -6423,7 +6423,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 			)),
 			array(
 				'User' => array(
@@ -6431,7 +6431,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'nate',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:18:23',
-					'updated' => '2007-03-17 01:20:31'
+					'modified' => '2007-03-17 01:20:31'
 			)),
 			array(
 				'User' => array(
@@ -6439,7 +6439,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 			)),
 			array(
 				'User' => array(
@@ -6447,7 +6447,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'garrett',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:22:23',
-					'updated' => '2007-03-17 01:24:31'
+					'modified' => '2007-03-17 01:24:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -6484,7 +6484,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 			)),
 			array(
 				'User' => array(
@@ -6492,7 +6492,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'nate',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:18:23',
-					'updated' => '2007-03-17 01:20:31'
+					'modified' => '2007-03-17 01:20:31'
 			)),
 			array(
 				'User' => array(
@@ -6500,7 +6500,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -6516,7 +6516,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 			)),
 			array(
 				'User' => array(
@@ -6524,7 +6524,7 @@ class ModelReadTest extends BaseModelTest {
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -6539,7 +6539,7 @@ class ModelReadTest extends BaseModelTest {
 						'user' => 'garrett',
 						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 						'created' => '2007-03-17 01:22:23',
-						'updated' => '2007-03-17 01:24:31'
+						'modified' => '2007-03-17 01:24:31'
 			)));
 			$this->assertEquals($expected, $result);
 
@@ -6612,7 +6612,7 @@ class ModelReadTest extends BaseModelTest {
 				'body' => 'First Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:39:23',
-				'updated' => '2007-03-18 10:41:31'
+				'modified' => '2007-03-18 10:41:31'
 			),
 			2 => array(
 				'id' => 2,
@@ -6621,7 +6621,7 @@ class ModelReadTest extends BaseModelTest {
 				'body' => 'Second Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => '2007-03-18 10:43:31'
+				'modified' => '2007-03-18 10:43:31'
 			),
 			3 => array(
 				'id' => 3,
@@ -6630,7 +6630,7 @@ class ModelReadTest extends BaseModelTest {
 				'body' => 'Third Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:43:23',
-				'updated' => '2007-03-18 10:45:31'
+				'modified' => '2007-03-18 10:45:31'
 		));
 
 		$this->assertEquals($expected, $result);
@@ -6650,7 +6650,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				3 => array(
 					'id' => 3,
@@ -6659,7 +6659,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Third Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				)),
 			3 => array(
 				2 => array(
@@ -6669,7 +6669,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 		)));
 
 		$this->assertEquals($expected, $result);
@@ -6994,7 +6994,7 @@ class ModelReadTest extends BaseModelTest {
 				'user' => 'mariano',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 				'created' => '2007-03-17 01:16:23',
-				'updated' => '2007-03-17 01:18:31'
+				'modified' => '2007-03-17 01:18:31'
 		));
 		$this->assertEquals($expected, $result);
 
@@ -7004,7 +7004,7 @@ class ModelReadTest extends BaseModelTest {
 			'user' => 'mariano',
 			'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'modified' => '2007-03-17 01:18:31'
 		));
 		$this->assertEquals($expected, $result);
 	}
@@ -7029,7 +7029,7 @@ class ModelReadTest extends BaseModelTest {
 				'user' => 'nate',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 				'created' => '2007-03-17 01:18:23',
-				'updated' => '2007-03-17 01:20:31'
+				'modified' => '2007-03-17 01:20:31'
 		));
 		$this->assertEquals($expected, $result);
 
@@ -7040,7 +7040,7 @@ class ModelReadTest extends BaseModelTest {
 				'user' => 'nate',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 				'created' => '2007-03-17 01:18:23',
-				'updated' => '2007-03-17 01:20:31'
+				'modified' => '2007-03-17 01:20:31'
 		));
 		$this->assertEquals($expected, $result);
 
@@ -7075,7 +7075,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				array(
 					'id' => '3',
@@ -7084,7 +7084,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Third Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 		)));
 		$this->assertEquals($expected, $result);
 	}
@@ -7131,7 +7131,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				array(
 					'id' => '3',
@@ -7140,7 +7140,7 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Third Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -7159,13 +7159,13 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31',
+					'modified' => '2007-03-18 10:43:31',
 					'User' => array(
 						'id' => '3',
 						'user' => 'larry',
 						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 						'created' => '2007-03-17 01:20:23',
-						'updated' => '2007-03-17 01:22:31'
+						'modified' => '2007-03-17 01:22:31'
 					),
 					'Comment' => array(
 						array(
@@ -7175,7 +7175,7 @@ class ModelReadTest extends BaseModelTest {
 							'comment' => 'First Comment for Second Article',
 							'published' => 'Y',
 							'created' => '2007-03-18 10:53:23',
-							'updated' => '2007-03-18 10:55:31'
+							'modified' => '2007-03-18 10:55:31'
 						),
 						array(
 							'id' => '6',
@@ -7184,20 +7184,20 @@ class ModelReadTest extends BaseModelTest {
 							'comment' => 'Second Comment for Second Article',
 							'published' => 'Y',
 							'created' => '2007-03-18 10:55:23',
-							'updated' => '2007-03-18 10:57:31'
+							'modified' => '2007-03-18 10:57:31'
 					)),
 					'Tag' => array(
 						array(
 							'id' => '1',
 							'tag' => 'tag1',
 							'created' => '2007-03-18 12:22:23',
-							'updated' => '2007-03-18 12:24:31'
+							'modified' => '2007-03-18 12:24:31'
 						),
 						array(
 							'id' => '3',
 							'tag' => 'tag3',
 							'created' => '2007-03-18 12:26:23',
-							'updated' => '2007-03-18 12:28:31'
+							'modified' => '2007-03-18 12:28:31'
 		)))));
 		$this->assertEquals($expected, $result);
 	}
@@ -7227,14 +7227,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'Comment' => array(
 					array(
@@ -7244,7 +7244,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '2',
@@ -7253,7 +7253,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:47:23',
-						'updated' => '2007-03-18 10:49:31'
+						'modified' => '2007-03-18 10:49:31'
 					),
 					array(
 						'id' => '3',
@@ -7262,7 +7262,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Third Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:49:23',
-						'updated' => '2007-03-18 10:51:31'
+						'modified' => '2007-03-18 10:51:31'
 					),
 					array(
 						'id' => '4',
@@ -7271,7 +7271,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Fourth Comment for First Article',
 						'published' => 'N',
 						'created' => '2007-03-18 10:51:23',
-						'updated' => '2007-03-18 10:53:31'
+						'modified' => '2007-03-18 10:53:31'
 					)
 				),
 				'Tag' => array(
@@ -7279,13 +7279,13 @@ class ModelReadTest extends BaseModelTest {
 						'id' => '1',
 						'tag' => 'tag1',
 						'created' => '2007-03-18 12:22:23',
-						'updated' => '2007-03-18 12:24:31'
+						'modified' => '2007-03-18 12:24:31'
 					),
 					array(
 						'id' => '2',
 						'tag' => 'tag2',
 						'created' => '2007-03-18 12:24:23',
-						'updated' => '2007-03-18 12:26:31'
+						'modified' => '2007-03-18 12:26:31'
 			))),
 			array(
 				'Article' => array(
@@ -7295,14 +7295,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Third Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'Comment' => array(),
 				'Tag' => array()
@@ -7325,14 +7325,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => '3',
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 				),
 				'Comment' => array(
 					array(
@@ -7342,7 +7342,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:53:23',
-						'updated' => '2007-03-18 10:55:31',
+						'modified' => '2007-03-18 10:55:31',
 						'Article' => array(
 							'id' => '2',
 							'user_id' => '3',
@@ -7350,21 +7350,21 @@ class ModelReadTest extends BaseModelTest {
 							'body' => 'Second Article Body',
 							'published' => 'Y',
 							'created' => '2007-03-18 10:41:23',
-							'updated' => '2007-03-18 10:43:31'
+							'modified' => '2007-03-18 10:43:31'
 						),
 						'User' => array(
 							'id' => '1',
 							'user' => 'mariano',
 							'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 							'created' => '2007-03-17 01:16:23',
-							'updated' => '2007-03-17 01:18:31'
+							'modified' => '2007-03-17 01:18:31'
 						),
 						'Attachment' => array(
 							'id' => '1',
 							'comment_id' => 5,
 							'attachment' => 'attachment.zip',
 							'created' => '2007-03-18 10:51:23',
-							'updated' => '2007-03-18 10:53:31'
+							'modified' => '2007-03-18 10:53:31'
 						)
 					),
 					array(
@@ -7374,7 +7374,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:55:23',
-						'updated' => '2007-03-18 10:57:31',
+						'modified' => '2007-03-18 10:57:31',
 						'Article' => array(
 							'id' => '2',
 							'user_id' => '3',
@@ -7382,14 +7382,14 @@ class ModelReadTest extends BaseModelTest {
 							'body' => 'Second Article Body',
 							'published' => 'Y',
 							'created' => '2007-03-18 10:41:23',
-							'updated' => '2007-03-18 10:43:31'
+							'modified' => '2007-03-18 10:43:31'
 						),
 						'User' => array(
 							'id' => '2',
 							'user' => 'nate',
 							'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 							'created' => '2007-03-17 01:18:23',
-							'updated' => '2007-03-17 01:20:31'
+							'modified' => '2007-03-17 01:20:31'
 						),
 						'Attachment' => array()
 					)
@@ -7399,13 +7399,13 @@ class ModelReadTest extends BaseModelTest {
 						'id' => '1',
 						'tag' => 'tag1',
 						'created' => '2007-03-18 12:22:23',
-						'updated' => '2007-03-18 12:24:31'
+						'modified' => '2007-03-18 12:24:31'
 					),
 					array(
 						'id' => '3',
 						'tag' => 'tag3',
 						'created' => '2007-03-18 12:26:23',
-						'updated' => '2007-03-18 12:28:31'
+						'modified' => '2007-03-18 12:28:31'
 		))));
 
 		$this->assertEquals($expected, $result);
@@ -7441,7 +7441,7 @@ class ModelReadTest extends BaseModelTest {
 					'published_date' => '2007-03-31 10:39:23',
 					'end_date' => '2007-05-15 10:39:23',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'ArticleFeatured' => array(
 					'id' => '1',
@@ -7453,7 +7453,7 @@ class ModelReadTest extends BaseModelTest {
 						'user' => 'mariano',
 						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 						'created' => '2007-03-17 01:16:23',
-						'updated' => '2007-03-17 01:18:31'
+						'modified' => '2007-03-17 01:18:31'
 					),
 					'Category' => array(),
 					'Featured' => array(
@@ -7463,14 +7463,14 @@ class ModelReadTest extends BaseModelTest {
 						'published_date' => '2007-03-31 10:39:23',
 						'end_date' => '2007-05-15 10:39:23',
 						'created' => '2007-03-18 10:39:23',
-						'updated' => '2007-03-18 10:41:31'
+						'modified' => '2007-03-18 10:41:31'
 				)),
 				'Category' => array(
 					'id' => '1',
 					'parent_id' => '0',
 					'name' => 'Category 1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 				)),
 			array(
 				'Featured' => array(
@@ -7480,7 +7480,7 @@ class ModelReadTest extends BaseModelTest {
 					'published_date' => '2007-03-31 10:39:23',
 					'end_date' => '2007-05-15 10:39:23',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'ArticleFeatured' => array(
 					'id' => '2',
@@ -7492,7 +7492,7 @@ class ModelReadTest extends BaseModelTest {
 						'user' => 'larry',
 						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 						'created' => '2007-03-17 01:20:23',
-						'updated' => '2007-03-17 01:22:31'
+						'modified' => '2007-03-17 01:22:31'
 					),
 					'Category' => array(),
 					'Featured' => array(
@@ -7502,14 +7502,14 @@ class ModelReadTest extends BaseModelTest {
 						'published_date' => '2007-03-31 10:39:23',
 						'end_date' => '2007-05-15 10:39:23',
 						'created' => '2007-03-18 10:39:23',
-						'updated' => '2007-03-18 10:41:31'
+						'modified' => '2007-03-18 10:41:31'
 				)),
 				'Category' => array(
 					'id' => '1',
 					'parent_id' => '0',
 					'name' => 'Category 1',
 					'created' => '2007-03-18 15:30:23',
-					'updated' => '2007-03-18 15:32:31'
+					'modified' => '2007-03-18 15:32:31'
 		)));
 		$this->assertEquals($expected, $result);
 	}
@@ -7537,14 +7537,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'First Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'Comment' => array(
 					array(
@@ -7554,7 +7554,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:45:23',
-						'updated' => '2007-03-18 10:47:31'
+						'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => '2',
@@ -7563,7 +7563,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'Second Comment for First Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:47:23',
-						'updated' => '2007-03-18 10:49:31'
+						'modified' => '2007-03-18 10:49:31'
 					),
 				),
 				'Tag' => array(
@@ -7571,13 +7571,13 @@ class ModelReadTest extends BaseModelTest {
 						'id' => '1',
 						'tag' => 'tag1',
 						'created' => '2007-03-18 12:22:23',
-						'updated' => '2007-03-18 12:24:31'
+						'modified' => '2007-03-18 12:24:31'
 					),
 					array(
 						'id' => '2',
 						'tag' => 'tag2',
 						'created' => '2007-03-18 12:24:23',
-						'updated' => '2007-03-18 12:26:31'
+						'modified' => '2007-03-18 12:26:31'
 			))),
 			array(
 				'Article' => array(
@@ -7587,14 +7587,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Third Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => '1',
 					'user' => 'mariano',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:16:23',
-					'updated' => '2007-03-17 01:18:31'
+					'modified' => '2007-03-17 01:18:31'
 				),
 				'Comment' => array(),
 				'Tag' => array()
@@ -7618,14 +7618,14 @@ class ModelReadTest extends BaseModelTest {
 					'body' => 'Second Article Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => '3',
 					'user' => 'larry',
 					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 					'created' => '2007-03-17 01:20:23',
-					'updated' => '2007-03-17 01:22:31'
+					'modified' => '2007-03-17 01:22:31'
 				),
 				'Comment' => array(
 					array(
@@ -7635,7 +7635,7 @@ class ModelReadTest extends BaseModelTest {
 						'comment' => 'First Comment for Second Article',
 						'published' => 'Y',
 						'created' => '2007-03-18 10:53:23',
-						'updated' => '2007-03-18 10:55:31',
+						'modified' => '2007-03-18 10:55:31',
 						'Article' => array(
 							'id' => '2',
 							'user_id' => '3',
@@ -7643,21 +7643,21 @@ class ModelReadTest extends BaseModelTest {
 							'body' => 'Second Article Body',
 							'published' => 'Y',
 							'created' => '2007-03-18 10:41:23',
-							'updated' => '2007-03-18 10:43:31'
+							'modified' => '2007-03-18 10:43:31'
 						),
 						'User' => array(
 							'id' => '1',
 							'user' => 'mariano',
 							'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 							'created' => '2007-03-17 01:16:23',
-							'updated' => '2007-03-17 01:18:31'
+							'modified' => '2007-03-17 01:18:31'
 						),
 						'Attachment' => array(
 							'id' => '1',
 							'comment_id' => 5,
 							'attachment' => 'attachment.zip',
 							'created' => '2007-03-18 10:51:23',
-							'updated' => '2007-03-18 10:53:31'
+							'modified' => '2007-03-18 10:53:31'
 						)
 					)
 				),
@@ -7666,13 +7666,13 @@ class ModelReadTest extends BaseModelTest {
 						'id' => '1',
 						'tag' => 'tag1',
 						'created' => '2007-03-18 12:22:23',
-						'updated' => '2007-03-18 12:24:31'
+						'modified' => '2007-03-18 12:24:31'
 					),
 					array(
 						'id' => '3',
 						'tag' => 'tag3',
 						'created' => '2007-03-18 12:26:23',
-						'updated' => '2007-03-18 12:28:31'
+						'modified' => '2007-03-18 12:28:31'
 					)
 				)
 			)

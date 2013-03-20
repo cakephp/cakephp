@@ -218,7 +218,7 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
 			),
 		);
 		unset($result['Player']['created']);
-		unset($result['Player']['updated']);
+		unset($result['Player']['modified']);
 		$this->assertEquals($expected, $result);
 
 		$spongebob = $Player->find('all', array(

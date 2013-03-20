@@ -165,7 +165,7 @@ class BasicAuthenticateTest extends TestCase {
 			'id' => 1,
 			'user' => 'mariano',
 			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'modified' => '2007-03-17 01:18:31'
 		);
 		$this->assertEquals($expected, $result);
 	}

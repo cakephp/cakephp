@@ -27,7 +27,7 @@ use Cake\Utility\Inflector;
 		foreach ($fields as $field) {
 			if (strpos($action, 'add') !== false && $field == $primaryKey) {
 				continue;
-			} elseif (!in_array($field, array('created', 'modified', 'updated'))) {
+			} elseif (!in_array($field, array('created', 'modified'))) {
 				echo "\t\techo \$this->Form->input('{$field}');\n";
 			}
 		}
