@@ -45,7 +45,7 @@ class CategoryThreadFixture extends TestFixture {
 		'parent_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'modified' => 'datetime'
 	);
 
 /**
@@ -54,12 +54,12 @@ class CategoryThreadFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-		array('parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-		array('parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-		array('parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-		array('parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-		array('parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-		array('parent_id' => 6, 'name' => 'Category 2.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')
+		array('parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'),
+		array('parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'),
+		array('parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'),
+		array('parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'),
+		array('parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'),
+		array('parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'),
+		array('parent_id' => 6, 'name' => 'Category 2.1', 'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31')
 	);
 }

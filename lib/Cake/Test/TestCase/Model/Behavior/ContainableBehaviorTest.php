@@ -206,12 +206,12 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Comment/comment', $r));
 		$this->assertFalse(Set::matches('/Comment/updated', $r));
 
-		$r = $this->Article->find('all', array('contain' => array('Comment' => array('fields' => array('comment', 'updated')))));
+		$r = $this->Article->find('all', array('contain' => array('Comment' => array('fields' => array('comment', 'modified')))));
 		$this->assertFalse(Set::matches('/Comment/created', $r));
 		$this->assertTrue(Set::matches('/Comment/comment', $r));
 		$this->assertTrue(Set::matches('/Comment/updated', $r));
 
-		$r = $this->Article->find('all', array('contain' => array('Comment' => array('comment', 'updated'))));
+		$r = $this->Article->find('all', array('contain' => array('Comment' => array('comment', 'modified'))));
 		$this->assertFalse(Set::matches('/Comment/created', $r));
 		$this->assertTrue(Set::matches('/Comment/comment', $r));
 		$this->assertTrue(Set::matches('/Comment/updated', $r));
@@ -310,15 +310,15 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$expected = array(
 			array('Article' => array(
 				'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-				'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			)),
 			array('Article' => array(
 				'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-				'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+				'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 			)),
 			array('Article' => array(
 				'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-				'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+				'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 			))
 		);
 		$this->assertEquals($expected, $result);
@@ -336,31 +336,31 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			)
 		);
@@ -372,59 +372,59 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'Comment' => array(
 					array(
 						'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31'
 					),
 					array(
 						'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31'
 					),
 					array(
 						'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 					)
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'Comment' => array(
 					array(
 						'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31'
 					),
 					array(
 						'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31'
 					)
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'Comment' => array()
 			)
@@ -443,31 +443,31 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			)
 		);
@@ -478,59 +478,59 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'Comment' => array(
 					array(
 						'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31'
 					),
 					array(
 						'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31'
 					),
 					array(
 						'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31'
 					),
 					array(
 						'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 					)
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'Comment' => array(
 					array(
 						'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31'
 					),
 					array(
 						'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31'
 					)
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'Comment' => array()
 			)
@@ -550,39 +550,39 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'Comment' => array(
 					array(
 						'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 						'User' => array(
 							'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+							'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 						)
 					),
 					array(
 						'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 						'User' => array(
 							'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+							'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 						)
 					),
 					array(
 						'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 						'User' => array(
 							'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+							'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 						)
 					),
 					array(
 						'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 						'User' => array(
 							'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+							'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 						)
 					)
 				)
@@ -590,23 +590,23 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'Comment' => array(
 					array(
 						'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 						'User' => array(
 							'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+							'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 						)
 					),
 					array(
 						'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 						'User' => array(
 							'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+							'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 						)
 					)
 				)
@@ -614,7 +614,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'Comment' => array()
 			)
@@ -627,19 +627,19 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					)
 				)
@@ -647,15 +647,15 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31',
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31',
 					'ArticleFeatured' => array(
 						array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 						)
 					)
 				)
@@ -663,19 +663,19 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					)
 				)
@@ -689,33 +689,33 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					),
 					'Comment' => array(
 						array(
 							'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-							'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31'
 						),
 						array(
 							'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-							'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+							'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 						),
 						array(
 							'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-							'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31'
 						)
 					)
 				)
@@ -723,15 +723,15 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31',
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31',
 					'ArticleFeatured' => array(
 						array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 						)
 					),
 					'Comment' => array()
@@ -740,33 +740,33 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					),
 					'Comment' => array(
 						array(
 							'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-							'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31'
 						),
 						array(
 							'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-							'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+							'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 						),
 						array(
 							'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-							'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31'
 						)
 					)
 				)
@@ -780,100 +780,100 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					)
 				),
 				'Comment' => array(
 					array(
 						'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 						'Attachment' => array()
 					),
 					array(
 						'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 						'Attachment' => array()
 					),
 					array(
 						'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 						'Attachment' => array()
 					),
 					array(
 						'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 						'Attachment' => array()
 					)
 				),
 				'Tag' => array(
-					array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+					array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'modified' => '2007-03-18 12:24:31'),
+					array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'modified' => '2007-03-18 12:26:31')
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31',
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31',
 					'ArticleFeatured' => array(
 						array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 						)
 					)
 				),
 				'Comment' => array(
 					array(
 						'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 						'Attachment' => array(
 							'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-							'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+							'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 						)
 					),
 					array(
 						'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 						'Attachment' => array()
 					)
 				),
 				'Tag' => array(
-					array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+					array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'modified' => '2007-03-18 12:24:31'),
+					array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'modified' => '2007-03-18 12:28:31')
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					)
 				),
@@ -895,39 +895,39 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'Comment' => array(
 					array(
 						'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 						'User' => array(
 							'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+							'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 						)
 					),
 					array(
 						'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 						'User' => array(
 							'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+							'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 						)
 					),
 					array(
 						'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 						'User' => array(
 							'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+							'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 						)
 					),
 					array(
 						'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 						'User' => array(
 							'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+							'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 						)
 					)
 				)
@@ -935,23 +935,23 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'Comment' => array(
 					array(
 						'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 						'User' => array(
 							'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+							'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 						)
 					),
 					array(
 						'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 						'User' => array(
 							'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-							'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+							'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 						)
 					)
 				)
@@ -959,7 +959,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'Comment' => array()
 			)
@@ -971,19 +971,19 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					)
 				)
@@ -991,15 +991,15 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31',
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31',
 					'ArticleFeatured' => array(
 						array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 						)
 					)
 				)
@@ -1007,19 +1007,19 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					)
 				)
@@ -1032,33 +1032,33 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					),
 					'Comment' => array(
 						array(
 							'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-							'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31'
 						),
 						array(
 							'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-							'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+							'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 						),
 						array(
 							'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-							'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31'
 						)
 					)
 				)
@@ -1066,15 +1066,15 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31',
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31',
 					'ArticleFeatured' => array(
 						array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 						)
 					),
 					'Comment' => array()
@@ -1083,33 +1083,33 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					),
 					'Comment' => array(
 						array(
 							'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-							'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31'
 						),
 						array(
 							'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-							'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+							'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 						),
 						array(
 							'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-							'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31'
 						)
 					)
 				)
@@ -1122,100 +1122,100 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'Article' => array(
 					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					)
 				),
 				'Comment' => array(
 					array(
 						'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 						'Attachment' => array()
 					),
 					array(
 						'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 						'Attachment' => array()
 					),
 					array(
 						'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 						'Attachment' => array()
 					),
 					array(
 						'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+						'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 						'Attachment' => array()
 					)
 				),
 				'Tag' => array(
-					array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+					array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'modified' => '2007-03-18 12:24:31'),
+					array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'modified' => '2007-03-18 12:26:31')
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 				),
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31',
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31',
 					'ArticleFeatured' => array(
 						array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 						)
 					)
 				),
 				'Comment' => array(
 					array(
 						'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 						'Attachment' => array(
 							'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-							'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+							'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 						)
 					),
 					array(
 						'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 						'Attachment' => array()
 					)
 				),
 				'Tag' => array(
-					array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+					array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'modified' => '2007-03-18 12:24:31'),
+					array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'modified' => '2007-03-18 12:28:31')
 				)
 			),
 			array(
 				'Article' => array(
 					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 				),
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'ArticleFeatured' => array(
 						array(
 							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 						),
 						array(
 							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 						)
 					)
 				),
@@ -1238,24 +1238,24 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						)
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array()
 					)
 				)
@@ -1263,25 +1263,25 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						)
 					)
@@ -1290,7 +1290,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -1303,54 +1303,54 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							)
@@ -1358,7 +1358,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array(),
 						'Comment' => array()
 					)
@@ -1367,46 +1367,46 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 								'Article' => array(
 									'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 								),
 								'Attachment' => array(
 									'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-									'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+									'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 								)
 							),
 							array(
 								'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 								'Article' => array(
 									'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 								),
 								'Attachment' => array()
 							)
@@ -1417,7 +1417,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -1430,56 +1430,56 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'Article' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 					)
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 								'Attachment' => array()
 							)
 						)
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array(),
 						'Comment' => array()
 					)
@@ -1488,7 +1488,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'Article' => array(),
 				'ArticleFeatured' => array()
@@ -1496,38 +1496,38 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'Article' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 					)
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 								'Attachment' => array(
 									'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-									'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+									'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 								)
 							),
 							array(
 								'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 								'Attachment' => array()
 							)
 						)
@@ -1537,7 +1537,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'Article' => array(),
 				'ArticleFeatured' => array()
@@ -1557,24 +1557,24 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						)
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array()
 					)
 				)
@@ -1582,25 +1582,25 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						)
 					)
@@ -1609,7 +1609,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -1621,54 +1621,54 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							)
@@ -1676,7 +1676,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array(),
 						'Comment' => array()
 					)
@@ -1685,46 +1685,46 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 								'Article' => array(
 									'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 								),
 								'Attachment' => array(
 									'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-									'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+									'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 								)
 							),
 							array(
 								'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 								'Article' => array(
 									'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 								),
 								'Attachment' => array()
 							)
@@ -1735,7 +1735,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -1747,56 +1747,56 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'Article' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 					)
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 								'Attachment' => array()
 							)
 						)
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array(),
 						'Comment' => array()
 					)
@@ -1805,7 +1805,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'Article' => array(),
 				'ArticleFeatured' => array()
@@ -1813,38 +1813,38 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'Article' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 					)
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 								'Attachment' => array(
 									'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-									'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+									'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 								)
 							),
 							array(
 								'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 								'Attachment' => array()
 							)
 						)
@@ -1854,7 +1854,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'Article' => array(),
 				'ArticleFeatured' => array()
@@ -1874,15 +1874,15 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'name' => 'Category 1'
 							)
@@ -1890,7 +1890,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array()
 					)
 				)
@@ -1898,22 +1898,22 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'name' => 'Category 1'
 							)
@@ -1924,7 +1924,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -1985,7 +1985,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
@@ -2006,14 +2006,14 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
@@ -2030,7 +2030,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -2055,7 +2055,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 				array(
 					'User' => array(
 						'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-						'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+						'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 					),
 					'ArticleFeatured' => array(
 						array(
@@ -2076,14 +2076,14 @@ class ContainableBehaviorTest extends CakeTestCase {
 				array(
 					'User' => array(
 						'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-						'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+						'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 					),
 					'ArticleFeatured' => array()
 				),
 				array(
 					'User' => array(
 						'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-						'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+						'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 					),
 					'ArticleFeatured' => array(
 						array(
@@ -2100,7 +2100,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 				array(
 					'User' => array(
 						'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-						'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+						'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 					),
 					'ArticleFeatured' => array()
 				)
@@ -2121,24 +2121,24 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						)
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array()
 					)
 				)
@@ -2146,25 +2146,25 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						)
 					)
@@ -2173,7 +2173,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -2188,54 +2188,54 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							)
@@ -2243,7 +2243,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array(),
 						'Comment' => array()
 					)
@@ -2252,46 +2252,46 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 								'Article' => array(
 									'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 								),
 								'Attachment' => array(
 									'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-									'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+									'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 								)
 							),
 							array(
 								'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 								'Article' => array(
 									'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 								),
 								'Attachment' => array()
 							)
@@ -2302,7 +2302,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -2317,56 +2317,56 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'Article' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 					)
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 								'Attachment' => array()
 							)
 						)
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array(),
 						'Comment' => array()
 					)
@@ -2375,7 +2375,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'Article' => array(),
 				'ArticleFeatured' => array()
@@ -2383,38 +2383,38 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'Article' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 					)
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 								'Attachment' => array(
 									'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-									'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+									'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 								)
 							),
 							array(
 								'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 								'Attachment' => array()
 							)
 						)
@@ -2424,7 +2424,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'Article' => array(),
 				'ArticleFeatured' => array()
@@ -2444,24 +2444,24 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						)
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array()
 					)
 				)
@@ -2469,25 +2469,25 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						)
 					)
@@ -2496,7 +2496,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -2519,54 +2519,54 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							)
@@ -2574,7 +2574,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array(),
 						'Comment' => array()
 					)
@@ -2583,46 +2583,46 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 								'Article' => array(
 									'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 								),
 								'Attachment' => array(
 									'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-									'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+									'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 								)
 							),
 							array(
 								'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 								'Article' => array(
 									'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 								),
 								'Attachment' => array()
 							)
@@ -2633,7 +2633,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -2656,54 +2656,54 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							),
 							array(
 								'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 								'Article' => array(
 									'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 								),
 								'Attachment' => array()
 							)
@@ -2711,7 +2711,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array(),
 						'Comment' => array()
 					)
@@ -2720,46 +2720,46 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'ArticleFeatured' => array()
 			),
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 								'Article' => array(
 									'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 								),
 								'Attachment' => array(
 									'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-									'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+									'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 								)
 							),
 							array(
 								'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 								'Article' => array(
 									'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+									'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 								),
 								'Attachment' => array()
 							)
@@ -2770,7 +2770,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'ArticleFeatured' => array()
 			)
@@ -2793,56 +2793,56 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'Article' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31'
 					)
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 						'Featured' => array(
 							'id' => 1, 'article_featured_id' => 1, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'modified' => '2007-03-18 10:47:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'modified' => '2007-03-18 10:49:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'modified' => '2007-03-18 10:51:31',
 								'Attachment' => array()
 							),
 							array(
 								'id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article',
-								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31',
+								'published' => 'N', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31',
 								'Attachment' => array()
 							)
 						)
 					),
 					array(
 						'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31',
 						'Featured' => array(),
 						'Comment' => array()
 					)
@@ -2851,7 +2851,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'
 				),
 				'Article' => array(),
 				'ArticleFeatured' => array()
@@ -2859,38 +2859,38 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					'created' => '2007-03-17 01:20:23', 'modified' => '2007-03-17 01:22:31'
 				),
 				'Article' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'
 					)
 				),
 				'ArticleFeatured' => array(
 					array(
 						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
-						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31',
 						'Featured' => array(
 							'id' => 2, 'article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23',
-							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+							'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31',
 							'Category' => array(
 								'id' => 1, 'parent_id' => 0, 'name' => 'Category 1',
-								'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'
+								'created' => '2007-03-18 15:30:23', 'modified' => '2007-03-18 15:32:31'
 							)
 						),
 						'Comment' => array(
 							array(
 								'id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'modified' => '2007-03-18 10:55:31',
 								'Attachment' => array(
 									'id' => 1, 'comment_id' => 5, 'attachment' => 'attachment.zip',
-									'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
+									'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31'
 								)
 							),
 							array(
 								'id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article',
-								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
+								'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'modified' => '2007-03-18 10:57:31',
 								'Attachment' => array()
 							)
 						)
@@ -2900,7 +2900,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			array(
 				'User' => array(
 					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					'created' => '2007-03-17 01:22:23', 'modified' => '2007-03-17 01:24:31'
 				),
 				'Article' => array(),
 				'ArticleFeatured' => array()

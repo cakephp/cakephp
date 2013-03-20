@@ -313,7 +313,7 @@ class SqliteTest extends TestCase {
 				'default' => null,
 				'length' => null,
 			),
-			'updated' => array(
+			'modified' => array(
 				'type' => 'datetime',
 				'null' => true,
 				'default' => null,

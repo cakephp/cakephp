@@ -72,7 +72,7 @@ class Contact extends TestModel {
 		'password' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null),
+		'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null),
 		'age' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => null)
 	);
 
@@ -278,7 +278,7 @@ class UserForm extends TestModel {
 		'something' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 255),
 		'active' => array('type' => 'boolean', 'null' => false, 'default' => false),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 }
 
@@ -373,7 +373,7 @@ class ValidateUser extends TestModel {
 		'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'balance' => array('type' => 'float', 'null' => false, 'length' => '5,2'),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 
 /**
@@ -414,7 +414,7 @@ class ValidateProfile extends TestModel {
 		'full_name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'city' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 
 /**
@@ -476,7 +476,7 @@ class ValidateItem extends TestModel {
 			'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'
 		),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 
 /**
@@ -5631,12 +5631,12 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDatetimeWithDefault() {
-		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array('value' => '2009-06-01 11:15:30'));
+		$result = $this->Form->dateTime('Contact.modified', 'DMY', '12', array('value' => '2009-06-01 11:15:30'));
 		$this->assertRegExp('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="01"[^<>]+selected="selected"[^>]*>1<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="06"[^<>]+selected="selected"[^>]*>June<\/option>/', $result);
 
-		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array(
+		$result = $this->Form->dateTime('Contact.modified', 'DMY', '12', array(
 			'default' => '2009-06-01 11:15:30'
 		));
 		$this->assertRegExp('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
@@ -5650,7 +5650,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeWithBogusData() {
-		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array('value' => 'CURRENT_TIMESTAMP'));
+		$result = $this->Form->dateTime('Contact.modified', 'DMY', '12', array('value' => 'CURRENT_TIMESTAMP'));
 		$this->assertNotRegExp('/selected="selected">\d/', $result);
 	}
 
@@ -5703,38 +5703,38 @@ class FormHelperTest extends TestCase {
 	public function testFormDateTimeMulti() {
 		extract($this->dateRegex);
 
-		$result = $this->Form->dateTime('Contact.1.updated');
+		$result = $this->Form->dateTime('Contact.1.modified');
 		$expected = array(
-			array('select' => array('name' => 'Contact[1][updated][day]', 'id' => 'Contact1UpdatedDay')),
+			array('select' => array('name' => 'Contact[1][modified][day]', 'id' => 'Contact1ModifiedDay')),
 			$daysRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'Contact[1][updated][month]', 'id' => 'Contact1UpdatedMonth')),
+			array('select' => array('name' => 'Contact[1][modified][month]', 'id' => 'Contact1ModifiedMonth')),
 			$monthsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'Contact[1][updated][year]', 'id' => 'Contact1UpdatedYear')),
+			array('select' => array('name' => 'Contact[1][modified][year]', 'id' => 'Contact1ModifiedYear')),
 			$yearsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
-			array('select' => array('name' => 'Contact[1][updated][hour]', 'id' => 'Contact1UpdatedHour')),
+			array('select' => array('name' => 'Contact[1][modified][hour]', 'id' => 'Contact1ModifiedHour')),
 			$hoursRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			':',
-			array('select' => array('name' => 'Contact[1][updated][min]', 'id' => 'Contact1UpdatedMin')),
+			array('select' => array('name' => 'Contact[1][modified][min]', 'id' => 'Contact1ModifiedMin')),
 			$minutesRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			' ',
-			array('select' => array('name' => 'Contact[1][updated][meridian]', 'id' => 'Contact1UpdatedMeridian')),
+			array('select' => array('name' => 'Contact[1][modified][meridian]', 'id' => 'Contact1ModifiedMeridian')),
 			$meridianRegex,
 			array('option' => array('value' => '')),
 			'/option',
@@ -5742,38 +5742,38 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->dateTime('Contact.2.updated');
+		$result = $this->Form->dateTime('Contact.2.modified');
 		$expected = array(
-			array('select' => array('name' => 'Contact[2][updated][day]', 'id' => 'Contact2UpdatedDay')),
+			array('select' => array('name' => 'Contact[2][modified][day]', 'id' => 'Contact2ModifiedDay')),
 			$daysRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'Contact[2][updated][month]', 'id' => 'Contact2UpdatedMonth')),
+			array('select' => array('name' => 'Contact[2][modified][month]', 'id' => 'Contact2ModifiedMonth')),
 			$monthsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			'-',
-			array('select' => array('name' => 'Contact[2][updated][year]', 'id' => 'Contact2UpdatedYear')),
+			array('select' => array('name' => 'Contact[2][modified][year]', 'id' => 'Contact2ModifiedYear')),
 			$yearsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
-			array('select' => array('name' => 'Contact[2][updated][hour]', 'id' => 'Contact2UpdatedHour')),
+			array('select' => array('name' => 'Contact[2][modified][hour]', 'id' => 'Contact2ModifiedHour')),
 			$hoursRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			':',
-			array('select' => array('name' => 'Contact[2][updated][min]', 'id' => 'Contact2UpdatedMin')),
+			array('select' => array('name' => 'Contact[2][modified][min]', 'id' => 'Contact2ModifiedMin')),
 			$minutesRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
 			' ',
-			array('select' => array('name' => 'Contact[2][updated][meridian]', 'id' => 'Contact2UpdatedMeridian')),
+			array('select' => array('name' => 'Contact[2][modified][meridian]', 'id' => 'Contact2ModifiedMeridian')),
 			$meridianRegex,
 			array('option' => array('value' => '')),
 			'/option',
@@ -7802,13 +7802,13 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.updated', array('div' => false));
+		$result = $this->Form->input('Contact.modified', array('div' => false));
 		$expected = array(
-			'label' => array('for' => 'ContactUpdatedMonth'),
-			'Updated',
+			'label' => array('for' => 'ContactModifiedMonth'),
+			'Modified',
 			'/label',
 			array('select' => array(
-				'name' => 'Contact[updated][month]', 'id' => 'ContactUpdatedMonth'
+				'name' => 'Contact[modified][month]', 'id' => 'ContactModifiedMonth'
 			)),
 			$monthsRegex,
 			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
@@ -7817,7 +7817,7 @@ class FormHelperTest extends TestCase {
 			'*/select',
 			'-',
 			array('select' => array(
-				'name' => 'Contact[updated][day]', 'id' => 'ContactUpdatedDay'
+				'name' => 'Contact[modified][day]', 'id' => 'ContactModifiedDay'
 			)),
 			$daysRegex,
 			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
@@ -7826,7 +7826,7 @@ class FormHelperTest extends TestCase {
 			'*/select',
 			'-',
 			array('select' => array(
-				'name' => 'Contact[updated][year]', 'id' => 'ContactUpdatedYear'
+				'name' => 'Contact[modified][year]', 'id' => 'ContactModifiedYear'
 			)),
 			$yearsRegex,
 			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),

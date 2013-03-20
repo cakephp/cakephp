@@ -45,7 +45,7 @@ class AttachmentFixture extends TestFixture {
 		'comment_id' => array('type' => 'integer', 'null' => false),
 		'attachment' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'modified' => 'datetime'
 	);
 
 /**
@@ -54,6 +54,6 @@ class AttachmentFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('comment_id' => 5, 'attachment' => 'attachment.zip', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')
+		array('comment_id' => 5, 'attachment' => 'attachment.zip', 'created' => '2007-03-18 10:51:23', 'modified' => '2007-03-18 10:53:31')
 	);
 }

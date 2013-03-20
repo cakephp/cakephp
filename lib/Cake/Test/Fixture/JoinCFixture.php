@@ -44,7 +44,7 @@ class JoinCFixture extends TestFixture {
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'default' => ''),
 		'created' => array('type' => 'datetime', 'null' => true),
-		'updated' => array('type' => 'datetime', 'null' => true)
+		'modified' => array('type' => 'datetime', 'null' => true)
 	);
 
 /**
@@ -53,8 +53,8 @@ class JoinCFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('name' => 'Join C 1', 'created' => '2008-01-03 10:56:11', 'updated' => '2008-01-03 10:56:11'),
-		array('name' => 'Join C 2', 'created' => '2008-01-03 10:56:12', 'updated' => '2008-01-03 10:56:12'),
-		array('name' => 'Join C 3', 'created' => '2008-01-03 10:56:13', 'updated' => '2008-01-03 10:56:13')
+		array('name' => 'Join C 1', 'created' => '2008-01-03 10:56:11', 'modified' => '2008-01-03 10:56:11'),
+		array('name' => 'Join C 2', 'created' => '2008-01-03 10:56:12', 'modified' => '2008-01-03 10:56:12'),
+		array('name' => 'Join C 3', 'created' => '2008-01-03 10:56:13', 'modified' => '2008-01-03 10:56:13')
 	);
 }

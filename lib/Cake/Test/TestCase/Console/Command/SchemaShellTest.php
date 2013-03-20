@@ -62,7 +62,7 @@ class SchemaShellTestSchema extends Schema {
 		'comment' => array('type' => 'text', 'null' => false, 'default' => null),
 		'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
 
@@ -79,7 +79,7 @@ class SchemaShellTestSchema extends Schema {
 		'summary' => array('type' => 'text', 'null' => true),
 		'published' => array('type' => 'string', 'null' => true, 'default' => 'Y', 'length' => 1),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
 }

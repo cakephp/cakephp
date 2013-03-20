@@ -47,7 +47,7 @@ class BakeArticleFixture extends TestFixture {
 		'body' => 'text',
 		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'modified' => 'datetime'
 	);
 
 /**

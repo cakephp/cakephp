@@ -429,7 +429,7 @@ class ModelTask extends BakeTask {
 			$prompt = __d('cake_console', "... or enter in a valid regex validation string.\n");
 			$methods = array_flip($this->_validations);
 			$guess = $defaultChoice;
-			if ($metaData['null'] != 1 && !in_array($fieldName, array($primaryKey, 'created', 'modified', 'updated'))) {
+			if ($metaData['null'] != 1 && !in_array($fieldName, array($primaryKey, 'created', 'modified'))) {
 				if ($fieldName === 'email') {
 					$guess = $methods['email'];
 				} elseif ($metaData['type'] === 'string' && $metaData['length'] == 36) {

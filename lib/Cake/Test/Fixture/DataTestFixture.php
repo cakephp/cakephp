@@ -45,7 +45,7 @@ class DataTestFixture extends TestFixture {
 		'count' => array('type' => 'integer', 'default' => 0),
 		'float' => array('type' => 'float', 'default' => 0),
 		'created' => array('type' => 'datetime', 'default' => null),
-		'updated' => array('type' => 'datetime', 'default' => null)
+		'modified' => array('type' => 'datetime', 'default' => null)
 	);
 
 /**
@@ -58,7 +58,7 @@ class DataTestFixture extends TestFixture {
 			'count' => 2,
 			'float' => 2.4,
 			'created' => '2010-09-06 12:28:00',
-			'updated' => '2010-09-06 12:28:00'
+			'modified' => '2010-09-06 12:28:00'
 		)
 	);
 }

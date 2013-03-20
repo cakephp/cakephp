@@ -46,7 +46,7 @@ class JoinABFixture extends TestFixture {
 		'join_b_id' => array('type' => 'integer', 'default' => null),
 		'other' => array('type' => 'string', 'default' => ''),
 		'created' => array('type' => 'datetime', 'null' => true),
-		'updated' => array('type' => 'datetime', 'null' => true)
+		'modified' => array('type' => 'datetime', 'null' => true)
 	);
 
 /**
@@ -55,8 +55,8 @@ class JoinABFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('join_a_id' => 1, 'join_b_id' => 2, 'other' => 'Data for Join A 1 Join B 2', 'created' => '2008-01-03 10:56:33', 'updated' => '2008-01-03 10:56:33'),
-		array('join_a_id' => 2, 'join_b_id' => 3, 'other' => 'Data for Join A 2 Join B 3', 'created' => '2008-01-03 10:56:34', 'updated' => '2008-01-03 10:56:34'),
-		array('join_a_id' => 3, 'join_b_id' => 1, 'other' => 'Data for Join A 3 Join B 1', 'created' => '2008-01-03 10:56:35', 'updated' => '2008-01-03 10:56:35')
+		array('join_a_id' => 1, 'join_b_id' => 2, 'other' => 'Data for Join A 1 Join B 2', 'created' => '2008-01-03 10:56:33', 'modified' => '2008-01-03 10:56:33'),
+		array('join_a_id' => 2, 'join_b_id' => 3, 'other' => 'Data for Join A 2 Join B 3', 'created' => '2008-01-03 10:56:34', 'modified' => '2008-01-03 10:56:34'),
+		array('join_a_id' => 3, 'join_b_id' => 1, 'other' => 'Data for Join A 3 Join B 1', 'created' => '2008-01-03 10:56:35', 'modified' => '2008-01-03 10:56:35')
 	);
 }

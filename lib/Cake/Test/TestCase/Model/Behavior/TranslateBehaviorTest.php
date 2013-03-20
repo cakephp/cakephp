@@ -1036,7 +1036,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'user_id' => 1,
 				'published' => 'Y',
 				'created' => '2007-03-18 10:39:23',
-				'updated' => '2007-03-18 10:41:31',
+				'modified' => '2007-03-18 10:41:31',
 				'locale' => 'eng',
 				'title' => 'Title (eng) #1',
 				'body' => 'Body (eng) #1'
@@ -1046,7 +1046,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'user' => 'mariano',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 				'created' => '2007-03-17 01:16:23',
-				'updated' => '2007-03-17 01:18:31'
+				'modified' => '2007-03-17 01:18:31'
 			),
 			'TranslatedItem' => array(
 				array(
@@ -1076,7 +1076,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 					'user_id' => 1,
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31',
+					'modified' => '2007-03-18 10:41:31',
 					'locale' => 'eng',
 					'title' => 'Title (eng) #1',
 					'body' => 'Body (eng) #1'
@@ -1088,7 +1088,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 					'user_id' => 3,
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31',
+					'modified' => '2007-03-18 10:43:31',
 					'locale' => 'eng',
 					'title' => 'Title (eng) #2',
 					'body' => 'Body (eng) #2'
@@ -1100,7 +1100,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 					'user_id' => 1,
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31',
+					'modified' => '2007-03-18 10:45:31',
 					'locale' => 'eng',
 					'title' => 'Title (eng) #3',
 					'body' => 'Body (eng) #3'
@@ -1118,7 +1118,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'user_id' => 1,
 				'published' => 'Y',
 				'created' => '2007-03-18 10:39:23',
-				'updated' => '2007-03-18 10:41:31',
+				'modified' => '2007-03-18 10:41:31',
 				'locale' => 'eng',
 				'title' => 'Title (eng) #1',
 				'body' => 'Body (eng) #1'

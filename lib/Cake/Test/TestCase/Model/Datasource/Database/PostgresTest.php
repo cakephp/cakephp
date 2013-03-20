@@ -144,7 +144,7 @@ class PostgresTestModel extends Model {
 			'comments' => array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
 			'last_login' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
 			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 		);
 	}
 
@@ -182,7 +182,7 @@ class PostgresClientTestModel extends Model {
 			'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 			'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
 			'created' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 		);
 	}
 
@@ -633,7 +633,7 @@ class PostgresTest extends TestCase {
 				'body' => array('type' => 'text'),
 				'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
 				'created' => array('type' => 'datetime'),
-				'updated' => array('type' => 'datetime'),
+				'modified' => array('type' => 'datetime'),
 			)
 		));
 		$this->Dbo->query($this->Dbo->createSchema($Old));
@@ -648,7 +648,7 @@ class PostgresTest extends TestCase {
 				'body' => array('type' => 'string', 'length' => 500),
 				'status' => array('type' => 'integer', 'length' => 3, 'default' => 1),
 				'created' => array('type' => 'datetime'),
-				'updated' => array('type' => 'datetime'),
+				'modified' => array('type' => 'datetime'),
 			)
 		));
 		$this->Dbo->query($this->Dbo->alterSchema($New->compare($Old), 'alter_posts'));
@@ -674,7 +674,7 @@ class PostgresTest extends TestCase {
 				'body' => array('type' => 'text'),
 				'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
 				'created' => array('type' => 'datetime'),
-				'updated' => array('type' => 'datetime'),
+				'modified' => array('type' => 'datetime'),
 			)
 		));
 		$result = $this->Dbo->alterSchema($New->compare($Old), 'alter_posts');

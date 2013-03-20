@@ -315,7 +315,7 @@ class TestFixtureTest extends TestCase {
 			'body',
 			'published',
 			'created',
-			'updated',
+			'modified',
 		];
 		$this->assertEquals($expected, array_keys($Fixture->fields));
 
@@ -346,7 +346,7 @@ class TestFixtureTest extends TestCase {
 			'body',
 			'published',
 			'created',
-			'updated',
+			'modified',
 		];
 		$this->assertEquals($expected, array_keys($Fixture->fields));
 		$this->assertFalse(empty($Fixture->records[0]), 'No records loaded on importing fixture.');

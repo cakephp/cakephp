@@ -61,7 +61,7 @@ class ModelWriteTest extends BaseModelTest {
 				'join_b_id' => 2,
 				'other' => 'Data for Join A 1 Join B 2',
 				'created' => '2008-01-03 10:56:33',
-				'updated' => '2008-01-03 10:56:33'
+				'modified' => '2008-01-03 10:56:33'
 		));
 		$this->assertEquals($expected, $result);
 
@@ -71,7 +71,7 @@ class ModelWriteTest extends BaseModelTest {
 			'join_b_id' => 1,
 			'other' => 'Data for Join A 1 Join B 1',
 			'created' => '2008-01-03 10:56:44',
-			'updated' => '2008-01-03 10:56:44'
+			'modified' => '2008-01-03 10:56:44'
 		);
 		$result = $TestModel->JoinAsJoinB->save($data);
 		$lastInsertId = $TestModel->JoinAsJoinB->getLastInsertID();
@@ -87,7 +87,7 @@ class ModelWriteTest extends BaseModelTest {
 				'join_b_id' => 2,
 				'other' => 'Data for Join A 1 Join B 2',
 				'created' => '2008-01-03 10:56:33',
-				'updated' => '2008-01-03 10:56:33'
+				'modified' => '2008-01-03 10:56:33'
 		));
 		$this->assertEquals($expected, $result);
 
@@ -170,7 +170,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->save(array('title' => 'Test record'));
 		$result = $TestModel->findByTitle('Test record');
 		$this->assertEquals(
-			array('id', 'title', 'count', 'created', 'updated'),
+			array('id', 'title', 'count', 'created', 'modified'),
 			array_keys($result['Uuid'])
 		);
 		$this->assertEquals(36, strlen($result['Uuid']['id']));
@@ -192,7 +192,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->save(array('title' => 'Test record', 'id' => null));
 		$result = $TestModel->findByTitle('Test record');
 		$this->assertEquals(
-			array('id', 'title', 'count', 'created', 'updated'),
+			array('id', 'title', 'count', 'created', 'modified'),
 			array_keys($result['Uuid'])
 		);
 		$this->assertEquals(36, strlen($result['Uuid']['id']));
@@ -440,7 +440,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->db->query('ALTER TABLE ' . $this->db->fullTableName('category_threads') . ' ADD ' . $column);
 		$this->db->flushMethodCache();
 		$Category = new CategoryThread();
-		$result = $Category->updateAll(array('CategoryThread.name' => "'updated'"), array('CategoryThread.parent_id' => 5));
+		$result = $Category->updateAll(array('CategoryThread.name' => "'modified'"), array('CategoryThread.parent_id' => 5));
 		$this->assertFalse(empty($result));
 
 		$Category = new CategoryThread();
@@ -782,7 +782,7 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'New Article',
 				'body' => 'New Article Body',
 				'created' => '2007-03-18 14:55:23',
-				'updated' => '2007-03-18 14:57:31'
+				'modified' => '2007-03-18 14:57:31'
 			),
 			'Tag' => array('Tag' => array(1, 3))
 		);
@@ -800,14 +800,14 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'New Article Body',
 				'published' => 'N',
 				'created' => '2007-03-18 14:55:23',
-				'updated' => '2007-03-18 14:57:31'
+				'modified' => '2007-03-18 14:57:31'
 			),
 			'User' => array(
 				'id' => '2',
 				'user' => 'nate',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 				'created' => '2007-03-17 01:18:23',
-				'updated' => '2007-03-17 01:20:31'
+				'modified' => '2007-03-17 01:20:31'
 			),
 			'Comment' => array(),
 			'Tag' => array(
@@ -815,13 +815,13 @@ class ModelWriteTest extends BaseModelTest {
 					'id' => '1',
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				array(
 					'id' => '3',
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -831,7 +831,7 @@ class ModelWriteTest extends BaseModelTest {
 			'comment' => 'Comment New Article',
 			'published' => 'Y',
 			'created' => '2007-03-18 14:57:23',
-			'updated' => '2007-03-18 14:59:31'
+			'modified' => '2007-03-18 14:59:31'
 		));
 		$result = $TestModel->Comment->create() && $TestModel->Comment->save($data);
 		$this->assertFalse(empty($result));
@@ -840,7 +840,7 @@ class ModelWriteTest extends BaseModelTest {
 			'comment_id' => '7',
 			'attachment' => 'newattachment.zip',
 			'created' => '2007-03-18 15:02:23',
-			'updated' => '2007-03-18 15:04:31'
+			'modified' => '2007-03-18 15:04:31'
 		));
 		$result = $TestModel->Comment->Attachment->save($data);
 		$this->assertFalse(empty($result));
@@ -855,14 +855,14 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'New Article Body',
 				'published' => 'N',
 				'created' => '2007-03-18 14:55:23',
-				'updated' => '2007-03-18 14:57:31'
+				'modified' => '2007-03-18 14:57:31'
 			),
 			'User' => array(
 				'id' => '2',
 				'user' => 'nate',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 				'created' => '2007-03-17 01:18:23',
-				'updated' => '2007-03-17 01:20:31'
+				'modified' => '2007-03-17 01:20:31'
 			),
 			'Comment' => array(
 				array(
@@ -872,7 +872,7 @@ class ModelWriteTest extends BaseModelTest {
 					'comment' => 'Comment New Article',
 					'published' => 'Y',
 					'created' => '2007-03-18 14:57:23',
-					'updated' => '2007-03-18 14:59:31',
+					'modified' => '2007-03-18 14:59:31',
 					'Article' => array(
 						'id' => '4',
 						'user_id' => '2',
@@ -880,34 +880,34 @@ class ModelWriteTest extends BaseModelTest {
 						'body' => 'New Article Body',
 						'published' => 'N',
 						'created' => '2007-03-18 14:55:23',
-						'updated' => '2007-03-18 14:57:31'
+						'modified' => '2007-03-18 14:57:31'
 					),
 					'User' => array(
 						'id' => '1',
 						'user' => 'mariano',
 						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 						'created' => '2007-03-17 01:16:23',
-						'updated' => '2007-03-17 01:18:31'
+						'modified' => '2007-03-17 01:18:31'
 					),
 					'Attachment' => array(
 						'id' => '2',
 						'comment_id' => '7',
 						'attachment' => 'newattachment.zip',
 						'created' => '2007-03-18 15:02:23',
-						'updated' => '2007-03-18 15:04:31'
+						'modified' => '2007-03-18 15:04:31'
 			))),
 			'Tag' => array(
 				array(
 					'id' => '1',
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				array(
 					'id' => '3',
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 		)));
 
 		$this->assertEquals($expected, $result);
@@ -1166,14 +1166,14 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Second Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => '2007-03-18 10:43:31'
+				'modified' => '2007-03-18 10:43:31'
 			),
 			'User' => array(
 				'id' => '3',
 				'user' => 'larry',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 				'created' => '2007-03-17 01:20:23',
-				'updated' => '2007-03-17 01:22:31'
+				'modified' => '2007-03-17 01:22:31'
 			),
 			'Comment' => array(
 				array(
@@ -1183,7 +1183,7 @@ class ModelWriteTest extends BaseModelTest {
 					'comment' => 'First Comment for Second Article',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:53:23',
-					'updated' => '2007-03-18 10:55:31'
+					'modified' => '2007-03-18 10:55:31'
 				),
 				array(
 					'id' => '6',
@@ -1192,20 +1192,20 @@ class ModelWriteTest extends BaseModelTest {
 					'comment' => 'Second Comment for Second Article',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:55:23',
-					'updated' => '2007-03-18 10:57:31'
+					'modified' => '2007-03-18 10:57:31'
 			)),
 			'Tag' => array(
 				array(
 					'id' => '1',
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				array(
 					'id' => '3',
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 				)
 			)
 		);
@@ -1239,13 +1239,13 @@ class ModelWriteTest extends BaseModelTest {
 					'id' => '1',
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				array(
 					'id' => '2',
 					'tag' => 'tag2',
 					'created' => '2007-03-18 12:24:23',
-					'updated' => '2007-03-18 12:26:31'
+					'modified' => '2007-03-18 12:26:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -1273,13 +1273,13 @@ class ModelWriteTest extends BaseModelTest {
 					'id' => '2',
 					'tag' => 'tag2',
 					'created' => '2007-03-18 12:24:23',
-					'updated' => '2007-03-18 12:26:31'
+					'modified' => '2007-03-18 12:26:31'
 				),
 				array(
 					'id' => '3',
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -1308,19 +1308,19 @@ class ModelWriteTest extends BaseModelTest {
 					'id' => '1',
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				array(
 					'id' => '2',
 					'tag' => 'tag2',
 					'created' => '2007-03-18 12:24:23',
-					'updated' => '2007-03-18 12:26:31'
+					'modified' => '2007-03-18 12:26:31'
 				),
 				array(
 					'id' => '3',
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -1378,13 +1378,13 @@ class ModelWriteTest extends BaseModelTest {
 					'id' => '2',
 					'tag' => 'tag2',
 					'created' => '2007-03-18 12:24:23',
-					'updated' => '2007-03-18 12:26:31'
+					'modified' => '2007-03-18 12:26:31'
 				),
 				array(
 					'id' => '3',
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -1418,13 +1418,13 @@ class ModelWriteTest extends BaseModelTest {
 					'id' => '1',
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				array(
 					'id' => '2',
 					'tag' => 'tag2',
 					'created' => '2007-03-18 12:24:23',
-					'updated' => '2007-03-18 12:26:31'
+					'modified' => '2007-03-18 12:26:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -1458,13 +1458,13 @@ class ModelWriteTest extends BaseModelTest {
 					'id' => '1',
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				array(
 					'id' => '2',
 					'tag' => 'tag2',
 					'created' => '2007-03-18 12:24:23',
-					'updated' => '2007-03-18 12:26:31'
+					'modified' => '2007-03-18 12:26:31'
 				)
 			)
 		);
@@ -1500,13 +1500,13 @@ class ModelWriteTest extends BaseModelTest {
 					'id' => '2',
 					'tag' => 'tag2',
 					'created' => '2007-03-18 12:24:23',
-					'updated' => '2007-03-18 12:26:31'
+					'modified' => '2007-03-18 12:26:31'
 				),
 				array(
 					'id' => '3',
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 				)
 			)
 		);
@@ -1542,13 +1542,13 @@ class ModelWriteTest extends BaseModelTest {
 					'id' => '1',
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				array(
 					'id' => '3',
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -1559,7 +1559,7 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'New Article With Tags and fieldList',
 				'body' => 'New Article Body with Tags and fieldList',
 				'created' => '2007-03-18 14:55:23',
-				'updated' => '2007-03-18 14:57:31'
+				'modified' => '2007-03-18 14:57:31'
 			),
 			'Tag' => array(
 				'Tag' => array(1, 2, 3)
@@ -1582,26 +1582,26 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => '',
 				'published' => 'N',
 				'created' => '',
-				'updated' => ''
+				'modified' => ''
 			),
 			'Tag' => array(
 				0 => array(
 					'id' => 1,
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				1 => array(
 					'id' => 2,
 					'tag' => 'tag2',
 					'created' => '2007-03-18 12:24:23',
-					'updated' => '2007-03-18 12:26:31'
+					'modified' => '2007-03-18 12:26:31'
 				),
 				2 => array(
 					'id' => 3,
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 		)));
 		$this->assertEquals($expected, $result);
 
@@ -1648,20 +1648,20 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Second Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => '2007-03-18 10:43:31'
+				'modified' => '2007-03-18 10:43:31'
 			),
 			'Tag' => array(
 				array(
 					'id' => '1',
 					'tag' => 'tag1',
 					'created' => '2007-03-18 12:22:23',
-					'updated' => '2007-03-18 12:24:31'
+					'modified' => '2007-03-18 12:24:31'
 				),
 				array(
 					'id' => '3',
 					'tag' => 'tag3',
 					'created' => '2007-03-18 12:26:23',
-					'updated' => '2007-03-18 12:28:31'
+					'modified' => '2007-03-18 12:28:31'
 				)
 			)
 		);
@@ -1680,14 +1680,14 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Second Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => static::date()
+				'modified' => static::date()
 			),
 			'Tag' => array(
 				array(
 					'id' => '2',
 					'tag' => 'tag2',
 					'created' => '2007-03-18 12:24:23',
-					'updated' => '2007-03-18 12:26:31'
+					'modified' => '2007-03-18 12:26:31'
 				)
 			)
 		);
@@ -1800,13 +1800,13 @@ class ModelWriteTest extends BaseModelTest {
 						'id' => 2,
 						'tag' => 'tag2',
 						'created' => '2007-03-18 12:24:23',
-						'updated' => '2007-03-18 12:26:31'
+						'modified' => '2007-03-18 12:26:31'
 					),
 					array(
 						'id' => 3,
 						'tag' => 'tag3',
 						'created' => '2007-03-18 12:26:23',
-						'updated' => '2007-03-18 12:28:31'
+						'modified' => '2007-03-18 12:28:31'
 			))),
 			array(
 				'Story' => array(
@@ -1971,7 +1971,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->save();
 		$this->assertTrue(isset($result['Author']['created']));
-		$this->assertTrue(isset($result['Author']['updated']));
+		$this->assertTrue(isset($result['Author']['modified']));
 		$this->assertEquals(1, $TestModel->find('count'));
 	}
 
@@ -2034,7 +2034,7 @@ class ModelWriteTest extends BaseModelTest {
 			'title' => 'My article',
 			'body' => 'Some text',
 			'created' => '1970-01-01 00:00:00',
-			'updated' => '1970-01-01 12:00:00',
+			'modified' => '1970-01-01 12:00:00',
 			'modified' => '1970-01-01 12:00:00'
 		);
 
@@ -2047,7 +2047,7 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'My article',
 				'body' => 'Some text',
 				'created' => '1970-01-01 00:00:00',
-				'updated' => '1970-01-01 12:00:00',
+				'modified' => '1970-01-01 12:00:00',
 				'modified' => '1970-01-01 12:00:00'
 		));
 		$this->assertEquals($expected, $result);
@@ -2056,7 +2056,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->create(array(
 			'Article' => array_diff_key($data, array(
 				'created' => true,
-				'updated' => true,
+				'modified' => true,
 				'modified' => true
 		))), true);
 		$expected = array(
@@ -2579,35 +2579,35 @@ class ModelWriteTest extends BaseModelTest {
 				'name' => 'Join A 1',
 				'body' => 'Join A 1 Body',
 				'created' => '2008-01-03 10:54:23',
-				'updated' => '2008-01-03 10:54:23'
+				'modified' => '2008-01-03 10:54:23'
 			),
 			'JoinB' => array(
 				0 => array(
 					'id' => 2,
 					'name' => 'Join B 2',
 					'created' => '2008-01-03 10:55:02',
-					'updated' => '2008-01-03 10:55:02',
+					'modified' => '2008-01-03 10:55:02',
 					'JoinAsJoinB' => array(
 						'id' => 1,
 						'join_a_id' => 1,
 						'join_b_id' => 2,
 						'other' => 'Data for Join A 1 Join B 2',
 						'created' => '2008-01-03 10:56:33',
-						'updated' => '2008-01-03 10:56:33'
+						'modified' => '2008-01-03 10:56:33'
 			))),
 			'JoinC' => array(
 				0 => array(
 					'id' => 2,
 					'name' => 'Join C 2',
 					'created' => '2008-01-03 10:56:12',
-					'updated' => '2008-01-03 10:56:12',
+					'modified' => '2008-01-03 10:56:12',
 					'JoinAsJoinC' => array(
 						'id' => 1,
 						'join_a_id' => 1,
 						'join_c_id' => 2,
 						'other' => 'Data for Join A 1 Join C 2',
 						'created' => '2008-01-03 10:57:22',
-						'updated' => '2008-01-03 10:57:22'
+						'modified' => '2008-01-03 10:57:22'
 		))));
 
 		$this->assertEquals($expected, $result);
@@ -2617,7 +2617,7 @@ class ModelWriteTest extends BaseModelTest {
 			'JoinA' => array(
 				'id' => '1',
 				'name' => 'New name for Join A 1',
-				'updated' => static::date()
+				'modified' => static::date()
 			),
 			'JoinB' => array(
 				array(
@@ -2625,7 +2625,7 @@ class ModelWriteTest extends BaseModelTest {
 					'join_b_id' => 2,
 					'other' => 'New data for Join A 1 Join B 2',
 					'created' => static::date(),
-					'updated' => static::date()
+					'modified' => static::date()
 			)),
 			'JoinC' => array(
 				array(
@@ -2633,7 +2633,7 @@ class ModelWriteTest extends BaseModelTest {
 					'join_c_id' => 2,
 					'other' => 'New data for Join A 1 Join C 2',
 					'created' => static::date(),
-					'updated' => static::date()
+					'modified' => static::date()
 		)));
 
 		$TestModel->set($data);
@@ -2646,35 +2646,35 @@ class ModelWriteTest extends BaseModelTest {
 				'name' => 'New name for Join A 1',
 				'body' => 'Join A 1 Body',
 				'created' => '2008-01-03 10:54:23',
-				'updated' => static::date()
+				'modified' => static::date()
 			),
 			'JoinB' => array(
 				0 => array(
 					'id' => 2,
 					'name' => 'Join B 2',
 					'created' => '2008-01-03 10:55:02',
-					'updated' => '2008-01-03 10:55:02',
+					'modified' => '2008-01-03 10:55:02',
 					'JoinAsJoinB' => array(
 						'id' => 1,
 						'join_a_id' => 1,
 						'join_b_id' => 2,
 						'other' => 'New data for Join A 1 Join B 2',
 						'created' => static::date(),
-						'updated' => static::date()
+						'modified' => static::date()
 			))),
 			'JoinC' => array(
 				0 => array(
 					'id' => 2,
 					'name' => 'Join C 2',
 					'created' => '2008-01-03 10:56:12',
-					'updated' => '2008-01-03 10:56:12',
+					'modified' => '2008-01-03 10:56:12',
 					'JoinAsJoinC' => array(
 						'id' => 1,
 						'join_a_id' => 1,
 						'join_c_id' => 2,
 						'other' => 'New data for Join A 1 Join C 2',
 						'created' => static::date(),
-						'updated' => static::date()
+						'modified' => static::date()
 		))));
 
 		$this->assertEquals($expected, $result);
@@ -2719,11 +2719,11 @@ class ModelWriteTest extends BaseModelTest {
 				'test' => 'working'
 		));
 		$this->assertEquals(static::date(), $result[3]['Post']['created']);
-		$this->assertEquals(static::date(), $result[3]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['modified']);
 		$this->assertEquals(static::date(), $result[3]['Author']['created']);
-		$this->assertEquals(static::date(), $result[3]['Author']['updated']);
-		unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
-		unset($result[3]['Author']['created'], $result[3]['Author']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Author']['modified']);
+		unset($result[3]['Post']['created'], $result[3]['Post']['modified']);
+		unset($result[3]['Author']['created'], $result[3]['Author']['modified']);
 		$this->assertEquals($expected, $result[3]);
 		$this->assertEquals(4, count($result));
 
@@ -2767,11 +2767,11 @@ class ModelWriteTest extends BaseModelTest {
 					'published' => 'N'
 		)));
 		$this->assertEquals(static::date(), $result[0]['Post']['created']);
-		$this->assertEquals(static::date(), $result[0]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[0]['Post']['modified']);
 		$this->assertEquals(static::date(), $result[1]['Post']['created']);
-		$this->assertEquals(static::date(), $result[1]['Post']['updated']);
-		unset($result[0]['Post']['created'], $result[0]['Post']['updated']);
-		unset($result[1]['Post']['created'], $result[1]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[1]['Post']['modified']);
+		unset($result[0]['Post']['created'], $result[0]['Post']['modified']);
+		unset($result[1]['Post']['created'], $result[1]['Post']['modified']);
 		$this->assertEquals($expected, $result);
 
 		$TestModel = new Comment();
@@ -2796,8 +2796,8 @@ class ModelWriteTest extends BaseModelTest {
 			'published' => 'Y'
 		);
 		$this->assertEquals(static::date(), $result[6]['Comment']['created']);
-		$this->assertEquals(static::date(), $result[6]['Comment']['updated']);
-		unset($result[6]['Comment']['created'], $result[6]['Comment']['updated']);
+		$this->assertEquals(static::date(), $result[6]['Comment']['modified']);
+		unset($result[6]['Comment']['created'], $result[6]['Comment']['modified']);
 		$this->assertEquals($expected, $result[6]['Comment']);
 
 		$expected = array(
@@ -2806,8 +2806,8 @@ class ModelWriteTest extends BaseModelTest {
 			'attachment' => 'some_file.tgz'
 		);
 		$this->assertEquals(static::date(), $result[6]['Attachment']['created']);
-		$this->assertEquals(static::date(), $result[6]['Attachment']['updated']);
-		unset($result[6]['Attachment']['created'], $result[6]['Attachment']['updated']);
+		$this->assertEquals(static::date(), $result[6]['Attachment']['modified']);
+		unset($result[6]['Attachment']['created'], $result[6]['Attachment']['modified']);
 		$this->assertEquals($expected, $result[6]['Attachment']);
 	}
 
@@ -3191,10 +3191,10 @@ class ModelWriteTest extends BaseModelTest {
 				'published' => 'Y',
 			)
 		);
-		unset($result['Attachment']['created'], $result['Attachment']['updated']);
+		unset($result['Attachment']['created'], $result['Attachment']['modified']);
 		$this->assertEquals($expected['Attachment'], $result['Attachment']);
 
-		unset($result['Comment']['created'], $result['Comment']['updated']);
+		unset($result['Comment']['created'], $result['Comment']['modified']);
 		$this->assertEquals($expected['Comment'], $result['Comment']);
 
 		$result = $TestModel->findById($result['Comment']['article_id']);
@@ -3222,9 +3222,9 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 		unset(
-			$result['Article']['created'], $result['Article']['updated'],
-			$result['User']['created'], $result['User']['updated'],
-			$result['Comment'][0]['created'], $result['Comment'][0]['updated']
+			$result['Article']['created'], $result['Article']['modified'],
+			$result['User']['created'], $result['User']['modified'],
+			$result['Comment'][0]['created'], $result['Comment'][0]['modified']
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -3694,10 +3694,10 @@ class ModelWriteTest extends BaseModelTest {
 				'published' => 'Y',
 			)
 		);
-		unset($result['Attachment']['created'], $result['Attachment']['updated']);
+		unset($result['Attachment']['created'], $result['Attachment']['modified']);
 		$this->assertEquals($expected['Attachment'], $result['Attachment']);
 
-		unset($result['Comment']['created'], $result['Comment']['updated']);
+		unset($result['Comment']['created'], $result['Comment']['modified']);
 		$this->assertEquals($expected['Comment'], $result['Comment']);
 	}
 
@@ -4146,7 +4146,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'First Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:39:23',
-				'updated' => '2007-03-18 10:41:31'
+				'modified' => '2007-03-18 10:41:31'
 			)),
 			array('Post' => array(
 				'id' => '2',
@@ -4155,7 +4155,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Second Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => '2007-03-18 10:43:31'
+				'modified' => '2007-03-18 10:43:31'
 			)),
 			array('Post' => array(
 				'id' => '3',
@@ -4164,7 +4164,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Third Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:43:23',
-				'updated' => '2007-03-18 10:45:31'
+				'modified' => '2007-03-18 10:45:31'
 		)));
 
 		if (count($result) != 3) {
@@ -4177,7 +4177,7 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => null,
 					'published' => 'N',
 					'created' => static::date(),
-					'updated' => static::date()
+					'modified' => static::date()
 			));
 
 			$expected[] = array(
@@ -4188,7 +4188,7 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => null,
 					'published' => 'N',
 					'created' => static::date(),
-					'updated' => static::date()
+					'modified' => static::date()
 			));
 
 			$this->assertEquals($expected, $result);
@@ -4214,7 +4214,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'First Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:39:23',
-				'updated' => '2007-03-18 10:41:31'
+				'modified' => '2007-03-18 10:41:31'
 			)),
 			array('Post' => array(
 				'id' => '2',
@@ -4223,7 +4223,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Second Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => '2007-03-18 10:43:31'
+				'modified' => '2007-03-18 10:43:31'
 			)),
 			array('Post' => array(
 				'id' => '3',
@@ -4232,7 +4232,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Third Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:43:23',
-				'updated' => '2007-03-18 10:45:31'
+				'modified' => '2007-03-18 10:45:31'
 		)));
 
 		if (count($result) != 3) {
@@ -4245,7 +4245,7 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'N',
 					'created' => static::date(),
-					'updated' => static::date()
+					'modified' => static::date()
 			));
 
 			$expected[] = array(
@@ -4256,7 +4256,7 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'N',
 					'created' => static::date(),
-					'updated' => static::date()
+					'modified' => static::date()
 			));
 		}
 		$this->assertEquals($expected, $result);
@@ -4371,7 +4371,7 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 			)),
 			array(
 				'Post' => array(
@@ -4381,12 +4381,12 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => 'Fourth post body',
 					'published' => 'N'
 		)));
-		$this->assertEquals(static::date(), $result[0]['Post']['updated']);
-		$this->assertEquals(static::date(), $result[1]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[0]['Post']['modified']);
+		$this->assertEquals(static::date(), $result[1]['Post']['modified']);
 		$this->assertEquals(static::date(), $result[3]['Post']['created']);
-		$this->assertEquals(static::date(), $result[3]['Post']['updated']);
-		unset($result[0]['Post']['updated'], $result[1]['Post']['updated']);
-		unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['modified']);
+		unset($result[0]['Post']['modified'], $result[1]['Post']['modified']);
+		unset($result[3]['Post']['created'], $result[3]['Post']['modified']);
 		$this->assertEquals($expected, $result);
 
 		$TestModel->validate = array('title' => 'notEmpty', 'author_id' => 'numeric');
@@ -4461,7 +4461,7 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 				)
 			),
 			array(
@@ -4475,13 +4475,13 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 
-		$this->assertEquals(static::date(), $result[0]['Post']['updated']);
-		$this->assertEquals(static::date(), $result[1]['Post']['updated']);
-		$this->assertEquals(static::date(), $result[3]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[0]['Post']['modified']);
+		$this->assertEquals(static::date(), $result[1]['Post']['modified']);
+		$this->assertEquals(static::date(), $result[3]['Post']['modified']);
 		$this->assertEquals(static::date(), $result[3]['Post']['created']);
 		unset(
-			$result[0]['Post']['updated'], $result[1]['Post']['updated'],
-			$result[3]['Post']['updated'], $result[3]['Post']['created']
+			$result[0]['Post']['modified'], $result[1]['Post']['modified'],
+			$result[3]['Post']['modified'], $result[3]['Post']['created']
 		);
 		$this->assertEquals($expected, $result);
 		$this->assertEquals($errors, $TestModel->validationErrors);
@@ -4502,8 +4502,8 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		unset(
-			$result[0]['Post']['updated'], $result[1]['Post']['updated'],
-			$result[3]['Post']['updated'], $result[3]['Post']['created']
+			$result[0]['Post']['modified'], $result[1]['Post']['modified'],
+			$result[3]['Post']['modified'], $result[3]['Post']['created']
 		);
 		$this->assertEquals($expected, $result);
 		$this->assertEquals($errors, $TestModel->validationErrors);
@@ -4859,13 +4859,13 @@ class ModelWriteTest extends BaseModelTest {
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf90',
 				'test' => 'working'
 		));
-		$this->assertEquals(static::date(), $result[3]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['modified']);
 		$this->assertEquals(static::date(), $result[3]['Post']['created']);
 		$this->assertEquals(static::date(), $result[3]['Author']['created']);
-		$this->assertEquals(static::date(), $result[3]['Author']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Author']['modified']);
 		unset(
-			$result[3]['Post']['updated'], $result[3]['Post']['created'],
-			$result[3]['Author']['updated'], $result[3]['Author']['created']
+			$result[3]['Post']['modified'], $result[3]['Post']['created'],
+			$result[3]['Author']['modified'], $result[3]['Author']['created']
 		);
 		$this->assertEquals($expected, $result[3]);
 		$this->assertEquals(4, count($result));
@@ -4891,9 +4891,9 @@ class ModelWriteTest extends BaseModelTest {
 			'comment' => 'New comment with attachment',
 			'published' => 'Y'
 		);
-		$this->assertEquals(static::date(), $result[6]['Comment']['updated']);
+		$this->assertEquals(static::date(), $result[6]['Comment']['modified']);
 		$this->assertEquals(static::date(), $result[6]['Comment']['created']);
-		unset($result[6]['Comment']['updated'], $result[6]['Comment']['created']);
+		unset($result[6]['Comment']['modified'], $result[6]['Comment']['created']);
 		$this->assertEquals($expected, $result[6]['Comment']);
 
 		$expected = array(
@@ -4901,9 +4901,9 @@ class ModelWriteTest extends BaseModelTest {
 			'comment_id' => '7',
 			'attachment' => 'some_file.tgz'
 		);
-		$this->assertEquals(static::date(), $result[6]['Attachment']['updated']);
+		$this->assertEquals(static::date(), $result[6]['Attachment']['modified']);
 		$this->assertEquals(static::date(), $result[6]['Attachment']['created']);
-		unset($result[6]['Attachment']['updated'], $result[6]['Attachment']['created']);
+		unset($result[6]['Attachment']['modified'], $result[6]['Attachment']['created']);
 		$this->assertEquals($expected, $result[6]['Attachment']);
 	}
 
@@ -5002,12 +5002,12 @@ class ModelWriteTest extends BaseModelTest {
 				)
 			)
 		);
-		$this->assertEquals(static::date(), $result[0]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[0]['Post']['modified']);
 		$this->assertEquals(static::date(), $result[0]['Post']['created']);
-		$this->assertEquals(static::date(), $result[1]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[1]['Post']['modified']);
 		$this->assertEquals(static::date(), $result[1]['Post']['created']);
-		unset($result[0]['Post']['updated'], $result[0]['Post']['created']);
-		unset($result[1]['Post']['updated'], $result[1]['Post']['created']);
+		unset($result[0]['Post']['modified'], $result[0]['Post']['created']);
+		unset($result[1]['Post']['modified'], $result[1]['Post']['created']);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -5574,7 +5574,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'First Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:39:23',
-				'updated' => '2007-03-18 10:41:31'
+				'modified' => '2007-03-18 10:41:31'
 			)),
 			array('Post' => array(
 				'id' => '2',
@@ -5583,7 +5583,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Second Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => '2007-03-18 10:43:31'
+				'modified' => '2007-03-18 10:43:31'
 			)),
 			array('Post' => array(
 				'id' => '3',
@@ -5592,7 +5592,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Third Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:43:23',
-				'updated' => '2007-03-18 10:45:31'
+				'modified' => '2007-03-18 10:45:31'
 		)));
 
 		if (count($result) != 3) {
@@ -5616,11 +5616,11 @@ class ModelWriteTest extends BaseModelTest {
 			));
 
 			$this->assertEquals(static::date(), $result[3]['Post']['created']);
-			$this->assertEquals(static::date(), $result[3]['Post']['updated']);
+			$this->assertEquals(static::date(), $result[3]['Post']['modified']);
 			$this->assertEquals(static::date(), $result[4]['Post']['created']);
-			$this->assertEquals(static::date(), $result[4]['Post']['updated']);
-			unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
-			unset($result[4]['Post']['created'], $result[4]['Post']['updated']);
+			$this->assertEquals(static::date(), $result[4]['Post']['modified']);
+			unset($result[3]['Post']['created'], $result[3]['Post']['modified']);
+			unset($result[4]['Post']['created'], $result[4]['Post']['modified']);
 			$this->assertEquals($expected, $result);
 			// Skip the rest of the transactional tests
 			return;
@@ -5644,7 +5644,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'First Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:39:23',
-				'updated' => '2007-03-18 10:41:31'
+				'modified' => '2007-03-18 10:41:31'
 			)),
 			array('Post' => array(
 				'id' => '2',
@@ -5653,7 +5653,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Second Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => '2007-03-18 10:43:31'
+				'modified' => '2007-03-18 10:43:31'
 			)),
 			array('Post' => array(
 				'id' => '3',
@@ -5662,7 +5662,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Third Post Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:43:23',
-				'updated' => '2007-03-18 10:45:31'
+				'modified' => '2007-03-18 10:45:31'
 		)));
 
 		if (count($result) != 3) {
@@ -5685,11 +5685,11 @@ class ModelWriteTest extends BaseModelTest {
 					'published' => 'N'
 			));
 			$this->assertEquals(static::date(), $result[3]['Post']['created']);
-			$this->assertEquals(static::date(), $result[3]['Post']['updated']);
+			$this->assertEquals(static::date(), $result[3]['Post']['modified']);
 			$this->assertEquals(static::date(), $result[4]['Post']['created']);
-			$this->assertEquals(static::date(), $result[4]['Post']['updated']);
-			unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
-			unset($result[4]['Post']['created'], $result[4]['Post']['updated']);
+			$this->assertEquals(static::date(), $result[4]['Post']['modified']);
+			unset($result[3]['Post']['created'], $result[3]['Post']['modified']);
+			unset($result[4]['Post']['created'], $result[4]['Post']['modified']);
 		}
 		$this->assertEquals($expected, $result);
 
@@ -5805,7 +5805,7 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'modified' => '2007-03-18 10:45:31'
 			)),
 			array(
 				'Post' => array(
@@ -5818,12 +5818,12 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 
-		$this->assertEquals(static::date(), $result[0]['Post']['updated']);
-		$this->assertEquals(static::date(), $result[1]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[0]['Post']['modified']);
+		$this->assertEquals(static::date(), $result[1]['Post']['modified']);
 		$this->assertEquals(static::date(), $result[3]['Post']['created']);
-		$this->assertEquals(static::date(), $result[3]['Post']['updated']);
-		unset($result[0]['Post']['updated'], $result[1]['Post']['updated']);
-		unset($result[3]['Post']['created'], $result[3]['Post']['updated']);
+		$this->assertEquals(static::date(), $result[3]['Post']['modified']);
+		unset($result[0]['Post']['modified'], $result[1]['Post']['modified']);
+		unset($result[3]['Post']['created'], $result[3]['Post']['modified']);
 		$this->assertEquals($expected, $result);
 
 		$TestModel->validate = array('title' => 'notEmpty', 'author_id' => 'numeric');
@@ -6545,14 +6545,14 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => null,
 				'published' => 'N',
 				'created' => static::date(),
-				'updated' => static::date(),
+				'modified' => static::date(),
 			),
 			'Author' => array (
 				'id' => '5',
 				'user' => 'bob',
 				'password' => null,
 				'created' => static::date(),
-				'updated' => static::date(),
+				'modified' => static::date(),
 				'test' => 'working',
 			),
 		);
@@ -6590,7 +6590,7 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => '',
 					'published' => 'N',
 					'created' => static::date(),
-					'updated' => static::date()
+					'modified' => static::date()
 				)
 			),
 			array(
@@ -6601,7 +6601,7 @@ class ModelWriteTest extends BaseModelTest {
 					'body' => '',
 					'published' => 'N',
 					'created' => static::date(),
-					'updated' => static::date()
+					'modified' => static::date()
 				)
 			)
 		);

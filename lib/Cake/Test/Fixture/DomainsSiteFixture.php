@@ -48,7 +48,7 @@ class DomainsSiteFixture extends TestFixture {
 		'site_id' => array('type' => 'integer', 'null' => false),
 		'active' => array('type' => 'boolean', 'null' => false, 'default' => false),
 		'created' => 'datetime',
-		'updated' => 'datetime',
+		'modified' => 'datetime',
 	);
 
 /**
@@ -58,11 +58,11 @@ class DomainsSiteFixture extends TestFixture {
  * @access public
  */
 	public $records = array(
-		array('site_id' => 1, 'domain_id' => 1, 'active' => true, 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-		array('site_id' => 1, 'domain_id' => 2, 'active' => true, 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-		array('site_id' => 2, 'domain_id' => 4, 'active' => true, 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
-		array('site_id' => 2, 'domain_id' => 5, 'active' => true, 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
-		array('site_id' => 3, 'domain_id' => 6, 'active' => true, 'created' => '2001-02-03 00:01:02', 'updated' => '2007-03-17 01:22:31'),
-		array('site_id' => 3, 'domain_id' => 7, 'active' => false, 'created' => '2001-02-03 00:01:02', 'updated' => '2007-03-17 01:22:31'),
+		array('site_id' => 1, 'domain_id' => 1, 'active' => true, 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'),
+		array('site_id' => 1, 'domain_id' => 2, 'active' => true, 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'),
+		array('site_id' => 2, 'domain_id' => 4, 'active' => true, 'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'),
+		array('site_id' => 2, 'domain_id' => 5, 'active' => true, 'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'),
+		array('site_id' => 3, 'domain_id' => 6, 'active' => true, 'created' => '2001-02-03 00:01:02', 'modified' => '2007-03-17 01:22:31'),
+		array('site_id' => 3, 'domain_id' => 7, 'active' => false, 'created' => '2001-02-03 00:01:02', 'modified' => '2007-03-17 01:22:31'),
 	);
 }

@@ -46,7 +46,7 @@ class DomainFixture extends TestFixture {
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'domain' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'modified' => 'datetime'
 	);
 
 /**
@@ -56,12 +56,12 @@ class DomainFixture extends TestFixture {
  * @access public
  */
 	public $records = array(
-		array('domain' => 'cakephp.org', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-		array('domain' => 'book.cakephp.org', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-		array('domain' => 'api.cakephp.org', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-		array('domain' => 'mark-story.com', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
-		array('domain' => 'tinadurocher.com', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
-		array('domain' => 'chavik.com', 'created' => '2001-02-03 00:01:02', 'updated' => '2007-03-17 01:22:31'),
-		array('domain' => 'xintesa.com', 'created' => '2001-02-03 00:01:02', 'updated' => '2007-03-17 01:22:31'),
+		array('domain' => 'cakephp.org', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'),
+		array('domain' => 'book.cakephp.org', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'),
+		array('domain' => 'api.cakephp.org', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'),
+		array('domain' => 'mark-story.com', 'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'),
+		array('domain' => 'tinadurocher.com', 'created' => '2007-03-17 01:18:23', 'modified' => '2007-03-17 01:20:31'),
+		array('domain' => 'chavik.com', 'created' => '2001-02-03 00:01:02', 'modified' => '2007-03-17 01:22:31'),
+		array('domain' => 'xintesa.com', 'created' => '2001-02-03 00:01:02', 'modified' => '2007-03-17 01:22:31'),
 	);
 }

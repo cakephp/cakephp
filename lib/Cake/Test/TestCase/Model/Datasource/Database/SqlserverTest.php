@@ -156,7 +156,7 @@ class SqlserverTestModel extends TestModel {
 		'comments' => array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
 		'last_login' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 
 /**
@@ -216,7 +216,7 @@ class SqlserverClientTestModel extends TestModel {
 		'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
 		'created'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'modified'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 }
 

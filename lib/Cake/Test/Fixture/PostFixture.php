@@ -47,7 +47,7 @@ class PostFixture extends TestFixture {
 		'body' => 'text',
 		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'modified' => 'datetime'
 	);
 
 /**
@@ -56,8 +56,8 @@ class PostFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('author_id' => 1, 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-		array('author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-		array('author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')
+		array('author_id' => 1, 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'),
+		array('author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'modified' => '2007-03-18 10:43:31'),
+		array('author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'modified' => '2007-03-18 10:45:31')
 	);
 }

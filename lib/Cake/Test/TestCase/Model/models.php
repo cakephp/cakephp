@@ -92,7 +92,7 @@ class Test extends CakeTestModel {
 		'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
 		'notes' => array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 
 }
@@ -136,7 +136,7 @@ class TestAlias extends CakeTestModel {
 		'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
 		'notes' => array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 }
 
@@ -3571,7 +3571,7 @@ class TestModel extends CakeTestModel {
 		'comments' => array('type' => 'text', 'null' => '1', 'default' => '', 'length' => '155'),
 		'last_login' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 
 /**
@@ -3722,7 +3722,7 @@ class TestModel4 extends CakeTestModel {
 				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+				'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			);
 		}
 		return $this->_schema;
@@ -3835,7 +3835,7 @@ class TestModel5 extends CakeTestModel {
 				'test_model4_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+				'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			);
 		}
 		return $this->_schema;
@@ -3895,7 +3895,7 @@ class TestModel6 extends CakeTestModel {
 				'test_model5_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+				'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			);
 		}
 		return $this->_schema;
@@ -3942,7 +3942,7 @@ class TestModel7 extends CakeTestModel {
 				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+				'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			);
 		}
 		return $this->_schema;
@@ -4003,7 +4003,7 @@ class TestModel8 extends CakeTestModel {
 				'test_model9_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+				'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			);
 		}
 		return $this->_schema;
@@ -4064,7 +4064,7 @@ class TestModel9 extends CakeTestModel {
 				'test_model8_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '11'),
 				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+				'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			);
 		}
 		return $this->_schema;
@@ -4729,7 +4729,7 @@ class MysqlTestModel extends Model {
 			'comments' => array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
 			'last_login' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
 			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 		);
 	}
 

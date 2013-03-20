@@ -215,7 +215,7 @@ class ScaffoldTest extends TestCase {
 		$this->assertEquals('title', $result['displayField']);
 		$this->assertEquals('scaffoldMock', $result['singularVar']);
 		$this->assertEquals('scaffoldMock', $result['pluralVar']);
-		$this->assertEquals(array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'), $result['scaffoldFields']);
+		$this->assertEquals(array('id', 'user_id', 'title', 'body', 'published', 'created', 'modified'), $result['scaffoldFields']);
 		$this->assertArrayHasKey('plugin', $result['associations']['belongsTo']['User']);
 	}
 
@@ -303,7 +303,7 @@ class ScaffoldTest extends TestCase {
 		$this->assertContains('name="ScaffoldTag[ScaffoldTag]"', $result);
 
 		$result = $Scaffold->controller->viewVars;
-		$this->assertEquals(array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'ScaffoldTag'), $result['scaffoldFields']);
+		$this->assertEquals(array('id', 'user_id', 'title', 'body', 'published', 'created', 'modified', 'ScaffoldTag'), $result['scaffoldFields']);
 	}
 
 /**

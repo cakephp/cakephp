@@ -42,9 +42,9 @@ class ViewVarsTraitTest extends TestCase {
 		$this->subject->set($data);
 		$this->assertEquals($data, $this->subject->viewVars);
 
-		$update = ['test' => 'updated'];
+		$update = ['test' => 'modified'];
 		$this->subject->set($update);
-		$this->assertEquals('updated', $this->subject->viewVars['test']);
+		$this->assertEquals('modified', $this->subject->viewVars['test']);
 	}
 
 /**

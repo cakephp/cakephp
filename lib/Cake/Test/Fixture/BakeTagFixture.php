@@ -44,7 +44,7 @@ class BakeTagFixture extends TestFixture {
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'tag' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'modified' => 'datetime'
 	);
 
 /**

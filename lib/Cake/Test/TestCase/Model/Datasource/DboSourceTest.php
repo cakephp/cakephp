@@ -196,21 +196,21 @@ class DboSourceTest extends TestCase {
 		$data = array('Article2' => array(
 				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
 				'body' => 'First Article Body', 'published' => 'Y',
-				'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 		));
 		$merge = array('Topic' => array(array(
 			'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'modified' => '2007-03-17 01:18:31'
 		)));
 		$expected = array(
 			'Article2' => array(
 				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
 				'body' => 'First Article Body', 'published' => 'Y',
-				'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			),
 			'Topic' => array(
 				'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23',
-				'updated' => '2007-03-17 01:18:31'
+				'modified' => '2007-03-17 01:18:31'
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Topic', 'hasOne');
@@ -219,21 +219,21 @@ class DboSourceTest extends TestCase {
 		$data = array('Article2' => array(
 				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
 				'body' => 'First Article Body', 'published' => 'Y',
-				'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 		));
 		$merge = array('User2' => array(array(
 			'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-			'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+			'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 		)));
 
 		$expected = array(
 			'Article2' => array(
 				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
 				'body' => 'First Article Body', 'published' => 'Y',
-				'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			),
 			'User2' => array(
-				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 			)
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'User2', 'belongsTo');
@@ -241,13 +241,13 @@ class DboSourceTest extends TestCase {
 
 		$data = array(
 			'Article2' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			)
 		);
 		$merge = array(array('Comment' => false));
 		$expected = array(
 			'Article2' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			),
 			'Comment' => array()
 		);
@@ -256,31 +256,31 @@ class DboSourceTest extends TestCase {
 
 		$data = array(
 			'Article' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			)
 		);
 		$merge = array(
 			array(
 				'Comment' => array(
-					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			),
 			array(
 				'Comment' => array(
-					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			)
 		);
 		$expected = array(
 			'Article' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			),
 			'Comment' => array(
 				array(
-					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				array(
-					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			)
 		);
@@ -289,42 +289,42 @@ class DboSourceTest extends TestCase {
 
 		$data = array(
 			'Article' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			)
 		);
 		$merge = array(
 			array(
 				'Comment' => array(
-					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'User2' => array(
-					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			),
 			array(
 				'Comment' => array(
-					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'User2' => array(
-					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			)
 		);
 		$expected = array(
 			'Article' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			),
 			'Comment' => array(
 				array(
-					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'User2' => array(
-						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 					)
 				),
 				array(
-					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'User2' => array(
-						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 					)
 				)
 			)
@@ -334,16 +334,16 @@ class DboSourceTest extends TestCase {
 
 		$data = array(
 			'Article' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			)
 		);
 		$merge = array(
 			array(
 				'Comment' => array(
-					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'User2' => array(
-					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'Tag' => array(
 					array('id' => 1, 'tag' => 'Tag 1'),
@@ -352,23 +352,23 @@ class DboSourceTest extends TestCase {
 			),
 			array(
 				'Comment' => array(
-					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'User2' => array(
-					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				'Tag' => array()
 			)
 		);
 		$expected = array(
 			'Article' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			),
 			'Comment' => array(
 				array(
-					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'User2' => array(
-						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 					),
 					'Tag' => array(
 						array('id' => 1, 'tag' => 'Tag 1'),
@@ -376,9 +376,9 @@ class DboSourceTest extends TestCase {
 					)
 				),
 				array(
-					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31',
 					'User2' => array(
-						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 					),
 					'Tag' => array()
 				)
@@ -389,39 +389,39 @@ class DboSourceTest extends TestCase {
 
 		$data = array(
 			'Article' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			)
 		);
 		$merge = array(
 			array(
 				'Tag' => array(
-					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			),
 			array(
 				'Tag' => array(
-					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			),
 			array(
 				'Tag' => array(
-					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			)
 		);
 		$expected = array(
 			'Article' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			),
 			'Tag' => array(
 				array(
-					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				array(
-					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				),
 				array(
-					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			)
 		);
@@ -430,31 +430,31 @@ class DboSourceTest extends TestCase {
 
 		$data = array(
 			'Article' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			)
 		);
 		$merge = array(
 			array(
 				'Tag' => array(
-					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			),
 			array(
 				'Tag' => array(
-					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			),
 			array(
 				'Tag' => array(
-					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31'
 				)
 			)
 		);
 		$expected = array(
 			'Article' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'modified' => '2007-03-18 10:41:31'
 			),
-			'Tag' => array('id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
+			'Tag' => array('id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'modified' => '2007-03-17 01:18:31')
 		);
 		$this->testDb->mergeAssociation($data, $merge, 'Tag', 'hasOne');
 		$this->assertEquals($expected, $data);
