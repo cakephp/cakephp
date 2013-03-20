@@ -596,6 +596,56 @@ class CakeTimeTest extends CakeTestCase {
 		$result = $this->Time->isToday('-1 day');
 		$this->assertFalse($result);
 	}
+        
+/**
+ * testIsFuture method
+ *
+ * @return void
+ */
+	public function testIsFuture() {
+		$result = $this->Time->isFuture('+1 month');
+		$this->assertTrue($result);
+		$result = $this->Time->isFuture('+1 days');
+		$this->assertTrue($result);
+		$result = $this->Time->isFuture('+1 minute');
+		$this->assertTrue($result);
+                $result = $this->Time->isFuture('+1 second');
+		$this->assertTrue($result);
+                
+                $result = $this->Time->isFuture('-1 second');
+		$this->assertFalse($result);
+		$result = $this->Time->isFuture('-1 day');
+		$this->assertFalse($result);
+                $result = $this->Time->isFuture('-1 week');
+		$this->assertFalse($result);
+                $result = $this->Time->isFuture('-1 month');
+		$this->assertFalse($result);
+	}
+        
+/**
+ * testIsPast method
+ *
+ * @return void
+ */
+	public function testIsPast() {
+		$result = $this->Time->isFuture('+1 month');
+		$this->assertFalse($result);
+		$result = $this->Time->isFuture('+1 days');
+		$this->assertFalse($result);
+		$result = $this->Time->isFuture('+1 minute');
+		$this->assertFalse($result);
+                $result = $this->Time->isFuture('+1 second');
+		$this->assertFalse($result);
+                
+                $result = $this->Time->isFuture('-1 second');
+		$this->assertTrue($result);
+		$result = $this->Time->isFuture('-1 day');
+		$this->assertTrue($result);
+                $result = $this->Time->isFuture('-1 week');
+		$this->assertTrue($result);
+                $result = $this->Time->isFuture('-1 month');
+		$this->assertTrue($result);
+	}
 
 /**
  * testIsThisWeek method
