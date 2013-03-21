@@ -22,6 +22,7 @@ App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');
 App::uses('ConsoleInputSubcommand', 'Console');
 App::uses('ConsoleOptionParser', 'Console');
+App::uses('ClassRegistry', 'Utility');
 App::uses('File', 'Utility');
 
 /**
@@ -234,7 +235,6 @@ class Shell extends Object {
 		if (empty($this->uses)) {
 			return false;
 		}
-		App::uses('ClassRegistry', 'Utility');
 
 		$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 
