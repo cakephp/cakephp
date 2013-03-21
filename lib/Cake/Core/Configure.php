@@ -268,18 +268,33 @@ class Configure {
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::load
  * @param string $key name of configuration resource to load.
  * @param string $config Name of the configured reader to use to read the resource identified by $key.
- * @param boolean $merge if config files should be merged instead of simply overridden
+ * @param array options (or boolean $merge for BC)
+ * - boolean $merge If config files should be merged instead of simply overridden
+ * - array $keys The name of the top-level keys you want to dump.
+ *   This allows you to load only some data stored in the config file.
  * @return mixed false if file not found, void if load successful.
  * @throws ConfigureException Will throw any exceptions the reader raises.
  */
-	public static function load($key, $config = 'default', $merge = true) {
+	public static function load($key, $config = 'default', $options = array()) {
+		$defaults = array(
+			'merge' => true,
+			'keys' => array()
+		);
+		if (!is_array($options)) {
+			$options = array('merge' => $options);
+		}
+		$options += $defaults;
+
 		$reader = self::_getReader($config);
 		if (!$reader) {
 			return false;
 		}
 		$values = $reader->read($key);
+		if (!empty($options['keys'])) {
+			$values = array_intersect_key($values, array_flip($options['keys']));
+		}
 
-		if ($merge) {
+		if ($options['merge']) {
 			$keys = array_keys($values);
 			foreach ($keys as $key) {
 				if (($c = self::read($key)) && is_array($values[$key]) && is_array($c)) {
@@ -312,7 +327,7 @@ class Configure {
  *   This could be a filename or a cache key depending on the adapter being used.
  * @param string $config The name of the configured adapter to dump data with.
  * @param array $keys The name of the top-level keys you want to dump.
- *   This allows you save only some data stored in Configure.
+ *   This allows you to save only some data stored in Configure.
  * @return boolean success
  * @throws ConfigureException if the adapter does not implement a `dump` method.
  */
@@ -325,7 +340,7 @@ class Configure {
 			throw new ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a dump() method.', $config));
 		}
 		$values = self::$_values;
-		if (!empty($keys) && is_array($keys)) {
+		if (!empty($keys)) {
 			$values = array_intersect_key($values, array_flip($keys));
 		}
 		return (bool)$reader->dump($key, $values);
