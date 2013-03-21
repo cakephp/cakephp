@@ -74,6 +74,16 @@ if ($displayField): ?>
 
 <?php endif;
 
+if (!empty($actsAs)): ?>
+/**
+ * Behaviors
+ *
+ * @var array
+ */
+	public $actsAs = array(<?php echo "\n\t"; foreach ($actsAs as $behavior): echo "\t"; var_export($behavior); echo ",\n\t"; endforeach; ?>);
+
+<?php endif;
+
 if (!empty($validate)):
 	echo "/**\n * Validation rules\n *\n * @var array\n */\n";
 	echo "\tpublic \$validate = array(\n";
