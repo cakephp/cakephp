@@ -300,10 +300,9 @@ class Xml {
 			$childValue = (string)$value;
 		}
 
+		$child = $dom->createElement($key);
 		if ($childValue) {
-			$child = $dom->createElement($key, $childValue);
-		} else {
-			$child = $dom->createElement($key);
+			$child->appendChild($dom->createTextNode($childValue));
 		}
 		if ($childNS) {
 			$child->setAttribute('xmlns', $childNS);
