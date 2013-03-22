@@ -1359,6 +1359,8 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * testStatelessAuthNoRedirect method
  *
+ * @expectedException UnauthorizedException
+ * @expectedExceptionCode 401
  * @return void
  */
 	public function testStatelessAuthNoRedirect() {
@@ -1372,18 +1374,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->authenticate = array('Basic');
 		$this->Controller->request['action'] = 'admin_add';
 
-		$this->Auth->response->expects($this->once())
-			->method('statusCode')
-			->with(401);
-
-		$this->Auth->response->expects($this->once())
-			->method('send');
-
-		$result = $this->Auth->startup($this->Controller);
-		$this->assertFalse($result);
-
-		$this->assertNull($this->Controller->testUrl);
-		$this->assertNull(CakeSession::id());
+		$this->Auth->startup($this->Controller);
 	}
 
 /**

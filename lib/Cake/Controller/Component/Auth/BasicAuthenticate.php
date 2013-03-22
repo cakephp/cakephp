@@ -114,13 +114,13 @@ class BasicAuthenticate extends BaseAuthenticate {
  *
  * @param CakeRequest $request A request object.
  * @param CakeResponse $response A response object.
- * @return boolean True
+ * @return void
+ * @throws UnauthorizedException
  */
 	public function unauthenticated(CakeRequest $request, CakeResponse $response) {
-		$response->header($this->loginHeaders());
-		$response->statusCode(401);
-		$response->send();
-		return true;
+		$Exception = new UnauthorizedException();
+		$Exception->responseHeader(array($this->loginHeaders()));
+		throw $Exception;
 	}
 
 /**
