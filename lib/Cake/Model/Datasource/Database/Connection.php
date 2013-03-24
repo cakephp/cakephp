@@ -427,29 +427,4 @@ class Connection {
 		return $this->_driver->lastInsertId($table);
 	}
 
-/**
- * Simple conditions parser joined by AND
- *
- * @param array $conditions key value array or list of conditions to be joined
- * to construct a WHERE clause
- * @return string
- */
-	protected function _parseConditions($conditions) {
-		$params = [];
-		if (empty($conditions)) {
-			return ['', $params];
-		}
-		$sql = 'WHERE %s';
-		$conds = [];
-		foreach ($conditions as $key => $value) {
-			if (is_numeric($key)) {
-				$conds[] = $value;
-				continue;
-			}
-			$conds[] = $key . ' = ?';
-			$params[] = $value;
-		}
-		return [sprintf($sql, implode(' AND ', $conds)), $params];
-	}
-
 }
