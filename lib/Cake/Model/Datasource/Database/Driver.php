@@ -97,35 +97,6 @@ abstract class Driver {
 		return true;
 	}
 
-/**
- * Returns a SQL snippet for creating a new transaction savepoint
- *
- * @param string save point name
- * @return string
- **/
-	public function savePointSQL($name) {
-		return 'SAVEPOINT LEVEL' . $name;
-	}
-
-/**
- * Returns a SQL snippet for releasing a previously created save point
- *
- * @param string save point name
- * @return string
- **/
-	public function releaseSavePointSQL($name) {
-		return 'RELEASE SAVEPOINT LEVEL' . $name;
-	}
-
-/**
- * Returns a SQL snippet for rollbacking a previously created save point
- *
- * @param string save point name
- * @return string
- **/
-	public function rollbackSavePointSQL($name) {
-		return 'ROLLBACK TO SAVEPOINT LEVEL' . $name;
-	}
 
 /**
  * Returns a value in a safe representation to be used in a query string
