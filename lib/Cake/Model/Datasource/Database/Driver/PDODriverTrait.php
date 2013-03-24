@@ -28,7 +28,7 @@ trait PDODriverTrait {
  * @param array $config configuration to be used for creating connection
  * @return boolean true on success
  */
-	public function connect(array $config) {
+	protected function _connect(array $config) {
 		$connection = new PDO(
 			$config['dsn'],
 			$config['login'],
@@ -46,7 +46,7 @@ trait PDODriverTrait {
  *
  * @return mixed connection object used internally
  */
-	public  function connection($connection = null) {
+	public function connection($connection = null) {
 		if ($connection !== null) {
 			$this->_connection = $connection;
 		}
