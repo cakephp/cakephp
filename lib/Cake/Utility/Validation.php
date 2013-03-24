@@ -617,8 +617,10 @@ class Validation {
 		if (is_null($regex)) {
 			switch ($country) {
 				case 'us':
-				case 'all':
+				case 'ca':
+				// deprecated three-letter-code
 				case 'can':
+				case 'all':
 					// includes all NANPA members.
 					// see http://en.wikipedia.org/wiki/North_American_Numbering_Plan#List_of_NANPA_countries_and_territories
 					$regex = '/^(?:\+?1)?[-. ]?\\(?[2-9][0-8][0-9]\\)?[-. ]?[2-9][0-9]{2}[-. ]?[0-9]{4}$/';
