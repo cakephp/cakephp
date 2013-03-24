@@ -17,6 +17,8 @@
  */
 namespace Cake\Test\TestCase\Model\Datasource\Database\Driver;
 
+use Cake\Core\Configure;
+use Cake\Model\Datasource\Database\Connection;
 use \PDO;
 
 /**
@@ -91,4 +93,38 @@ class MysqlTest extends \Cake\TestSuite\TestCase {
 		$driver->connect($config);
 	}
 
+	protected function _createTables($connection) {
+		$connection->execute('DROP TABLE IF EXISTS articles');
+		$connection->execute('DROP TABLE IF EXISTS authors');
+
+		$table = 'CREATE TABLE authors(id int, name varchar(50))';
+		$connection->execute($table);
+
+		$table = 'CREATE TABLE articles(id int, title varchar(20), body varchar(50), author_id int)';
+		$connection->execute($table);
+	}
+
+/**
+ * Test listing tables with Mysql
+ *
+ * @return void
+ */
+	public function testListTables() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$result = $connection->listTables();
+		$this->assertInternalType('array', $result);
+		$this->assertCount(2, $result);
+		$this->assertEquals('articles', $result[0]);
+		$this->assertEquals('authors', $result[1]);
+	}
+
+/**
+ * Test describing a table with Mysql
+ *
+ * @return void
+ */
+	public function testDescribeTable() {
+	}
 }

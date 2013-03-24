@@ -173,7 +173,7 @@ class Connection {
 		if ($params) {
 			$statement = $this->prepare($query);
 			$statement->bind($params, $types);
-			$result = $statement->execute();
+			$statement->execute();
 		} else {
 			$statement = $this->query($query);
 		}
@@ -425,6 +425,35 @@ class Connection {
 	public function lastInsertId($table) {
 		$this->connect();
 		return $this->_driver->lastInsertId($table);
+	}
+
+/**
+ * Get the list of tables available in the current connection.
+ *
+ * @return array The list of tables in the connected database/schema.
+ */
+	public function listTables() {
+		list($sql, $params) = $this->_driver->listTablesSql($this->_config);
+		$result = [];
+		$statement = $this->execute($sql, $params);
+		while ($row = $statement->fetch()) {
+			$result[] = $row[0];
+		}
+		return $result;
+	}
+
+/**
+ * Get the schema information for a given table/collection
+ *
+ * @param string $table The table/collection you want schema information for.
+ * @return array The schema data for the requested table.
+ */
+	public function describe($table) {
+		$this->connect();
+		$result = $this->execute($this->_driver->describeTableSql(), ['table' => $table]);
+		$schema = [];
+
+		return $schema;
 	}
 
 }
