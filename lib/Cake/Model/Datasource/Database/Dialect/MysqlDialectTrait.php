@@ -41,7 +41,7 @@ trait MysqlDialectTrait {
  * @return array An array of (sql, params) to execute.
  */
 	public function describeTableSql($table) {
-		return ["SHOW TABLES FROM `{$table}`", []];
+		return ["SHOW TABLES FROM " . $this->quoteIdentifier($table), []];
 	}
 
 }
