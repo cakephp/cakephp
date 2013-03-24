@@ -31,7 +31,7 @@ trait MysqlDialectTrait {
  * @return array An array of (sql, params) to execute.
  */
 	public function listTablesSql($config) {
-		return ["SHOW TABLES FROM `{$config['database']}`", []];
+		return ["SHOW TABLES FROM " . $this->quoteIdentifier($config['database']), []];
 	}
 
 /**
