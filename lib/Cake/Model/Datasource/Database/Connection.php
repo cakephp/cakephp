@@ -449,10 +449,20 @@ class Connection {
  * @return array The schema data for the requested table.
  */
 	public function describe($table) {
-		$this->connect();
-		$result = $this->execute($this->_driver->describeTableSql(), ['table' => $table]);
+		list($sql, $params) = $this->_driver->describeTableSql($table);
+		$statement = $this->execute($sql, $params);
 		$schema = [];
-
+		// TODO complete.
+		// TODO add tableParameters for platform specific features.
+		while ($row = $statement->fetch('assoc')) {
+			list($type, $length) = $this->_driver->columnType($row['Type']);
+			$schema[$row['Field']] = [
+				'type' => $type,
+				'null' => $row['Null'] === 'YES' ? true : false,
+				'default' => $row['Default'],
+				'length' => $length,
+			];
+		}
 		return $schema;
 	}
 

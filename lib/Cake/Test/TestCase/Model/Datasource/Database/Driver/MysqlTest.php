@@ -242,8 +242,7 @@ SQL;
 				'type' => 'biginteger',
 				'null' => false,
 				'default' => null,
-				'length' => 8,
-				'primary' => true
+				'length' => 20,
 			],
 			'title' => [
 				'type' => 'string',
