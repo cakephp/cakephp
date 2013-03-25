@@ -472,7 +472,7 @@ XML;
 			'thumbnail_image_URL' => 'http://example.com/thumb',
 			'brand' => 'Malte Lange & Co',
 			'availability' => 'in stock',
-			'authors' =>array(
+			'authors' => array(
 				'author' => array('Malte Lange & Co')
 			)
 		);
