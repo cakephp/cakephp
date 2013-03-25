@@ -26,8 +26,6 @@ use \Cake\Model\Datasource\Database\SqlDialectTrait;
  **/
 abstract class Driver {
 
-	use SqlDialectTrait;
-
 /**
  * Establishes a connection to the database server
  *

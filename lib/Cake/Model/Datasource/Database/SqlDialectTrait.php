@@ -20,20 +20,6 @@ namespace Cake\Model\Datasource\Database;
 trait SqlDialectTrait {
 
 /**
- *  String used to start a database identifier quoting to make it safe
- *
- * @var string
- **/
-	public $startQuote = '"';
-
-/**
- * String used to end a database identifier quoting to make it safe
- *
- * @var string
- **/
-	public $endQuote = '"';
-
-/**
  * Quotes a database identifier (a column name, table name, etc..) to
  * be used safely in queries without the risk of using reserver words
  *

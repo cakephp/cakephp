@@ -18,12 +18,29 @@
 namespace Cake\Model\Datasource\Database\Dialect;
 
 use Cake\Error;
+use Cake\Model\Datasource\Database\SqlDialectTrait;
 
 /**
  * Contains functions that encapsulates the SQL dialect used by MySQL,
  * including query translators and schema introspection.
  */
 trait MysqlDialectTrait {
+
+	use SqlDialectTrait;
+
+/**
+ *  String used to start a database identifier quoting to make it safe
+ *
+ * @var string
+ */
+	public $startQuote = '`';
+
+/**
+ * String used to end a database identifier quoting to make it safe
+ *
+ * @var string
+ */
+	public $endQuote = '`';
 
 /**
  * Get the SQL to list the tables in MySQL

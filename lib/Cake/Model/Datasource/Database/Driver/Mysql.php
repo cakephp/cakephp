@@ -26,20 +26,6 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 	use MysqlDialectTrait;
 
 /**
- *  String used to start a database identifier quoting to make it safe
- *
- * @var string
- **/
-	public $startQuote = '`';
-
-/**
- * String used to end a database identifier quoting to make it safe
- *
- * @var string
- **/
-	public $endQuote = '`';
-
-/**
  * Base configuration settings for MySQL driver
  *
  * @var array
