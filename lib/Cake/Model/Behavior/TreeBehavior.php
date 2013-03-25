@@ -654,14 +654,6 @@ class TreeBehavior extends ModelBehavior {
  * @return integer $counter
  */
 	protected function _recoverByParentId(Model $Model, $counter = 1, $parentId = null) {
-		if (!is_null($parentId)) {
-			$Model->updateAll(
-				array($this->settings[$Model->alias]['left'] => $counter),
-				array($Model->escapeField() => $parentId)
-			);
-			$counter++;
-		}
-
 		$params = array(
 			'conditions' => array(
 				$this->settings[$Model->alias]['parent'] => $parentId
@@ -677,17 +669,41 @@ class TreeBehavior extends ModelBehavior {
 			$conditions[] = $scope;
 		}
 
-		while ($rows = $Model->find('all', $params)) {
-			foreach ($rows as $row) {
-				$counter = $this->_recoverByParentId($Model, $counter, $row[$Model->alias][$Model->primaryKey]);
-			}
-			$params['page']++;
-			if (count($rows) !== $params['limit']) {
-				break;
+		$children = $Model->find('all', $params);
+		$hasChildren = (bool)$children;
+
+		if (!is_null($parentId)) {
+			if($hasChildren) {
+				$Model->updateAll(
+					array($this->settings[$Model->alias]['left'] => $counter),
+					array($Model->escapeField() => $parentId)
+				);
+				$counter++;
+			} else {
+				$Model->updateAll(
+					array(
+						$this->settings[$Model->alias]['left'] => $counter,
+						$this->settings[$Model->alias]['right'] => $counter + 1
+					),
+					array($Model->escapeField() => $parentId)
+				);
+				$counter += 2;
 			}
 		}
 
-		if (!is_null($parentId)) {
+		while ($children) {
+			foreach ($children as $row) {
+				$counter = $this->_recoverByParentId($Model, $counter, $row[$Model->alias][$Model->primaryKey]);
+			}
+
+			if (count($children) !== $params['limit']) {
+				break;
+			}
+			$params['page']++;
+			$children = $Model->find('all', $params);
+		}
+
+		if (!is_null($parentId) && $hasChildren) {
 			$Model->updateAll(
 				array($this->settings[$Model->alias]['right'] => $counter),
 				array($Model->escapeField() => $parentId)
