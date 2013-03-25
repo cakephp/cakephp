@@ -462,6 +462,9 @@ class Connection {
 				'default' => $row['Default'],
 				'length' => $length,
 			];
+			if (!empty($row['Key'])) {
+				$schema[$row['Field']]['key'] = $this->_driver->keyType($row['Key']);
+			}
 		}
 		return $schema;
 	}

@@ -243,6 +243,7 @@ SQL;
 				'null' => false,
 				'default' => null,
 				'length' => 20,
+				'key' => 'primary',
 			],
 			'title' => [
 				'type' => 'string',

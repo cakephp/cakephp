@@ -64,7 +64,27 @@ trait MysqlDialectTrait {
 	}
 
 /**
+ * Convert a platform specific index type to the abstract type
+ *
+ * @param string $key The key type to convert.
+ * @return string The abstract key type (primary, unique, index)
+ */
+	public function keyType($key) {
+		if ($key === 'PRI') {
+			return 'primary';
+		}
+		if ($key === 'MUL') {
+			return 'index';
+		}
+		if ($key === 'uni') {
+			return 'unique';
+		}
+	}
+
+/**
  * Convert a MySQL column type into an abstract type.
+ *
+ * The returnned type will be a type that Cake\Model\Datasource\Database\Type can handle.
  *
  * @param string $column The column type + length
  * @return array List of (type, length)
@@ -110,4 +130,5 @@ trait MysqlDialectTrait {
 		}
 		return 'text';
 	}
+
 }
