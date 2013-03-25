@@ -17,6 +17,8 @@
  */
 namespace Cake\Model\Datasource\Database\Dialect;
 
+use Cake\Error;
+
 /**
  * Contains functions that encapsulates the SQL dialect used by MySQL,
  * including query translators and schema introspection.
@@ -30,7 +32,7 @@ trait MysqlDialectTrait {
  *    getting tables from.
  * @return array An array of (sql, params) to execute.
  */
-	public function listTablesSql($config) {
+	public function listTablesSql(array $config) {
 		return ["SHOW TABLES FROM " . $this->quoteIdentifier($config['database']), []];
 	}
 
@@ -41,7 +43,54 @@ trait MysqlDialectTrait {
  * @return array An array of (sql, params) to execute.
  */
 	public function describeTableSql($table) {
-		return ["SHOW TABLES FROM " . $this->quoteIdentifier($table), []];
+		return ["SHOW FULL COLUMNS FROM " . $this->quoteIdentifier($table), []];
 	}
 
+/**
+ * Convert a MySQL column type into an abstract type.
+ *
+ * @param string $column The column type + length
+ * @return array List of (type, length)
+ */
+	public function columnType($column) {
+		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
+		if (empty($matches)) {
+			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+		}
+
+		$col = strtolower($matches[1]);
+		$length = null;
+		if (isset($matches[2])) {
+			$length = (int)$matches[2];
+		}
+
+		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
+			return [$col, $length];
+		}
+		if (($col === 'tinyint' && $length === 1) || $col === 'boolean') {
+			return ['boolean', null];
+		}
+		if (strpos($col, 'bigint') !== false || $col === 'bigint') {
+			return ['biginteger', $length];
+		}
+		if (strpos($col, 'int') !== false) {
+			return ['integer', $length];
+		}
+		if (strpos($col, 'char') !== false || $col === 'tinytext') {
+			return ['string', $length];
+		}
+		if (strpos($col, 'text') !== false) {
+			return ['text', $length];
+		}
+		if (strpos($col, 'blob') !== false || $col === 'binary') {
+			return ['binary', $length];
+		}
+		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false) {
+			return ['float', $length];
+		}
+		if (strpos($col, 'decimal') !== false) {
+			return ['decimal', null];
+		}
+		return 'text';
+	}
 }

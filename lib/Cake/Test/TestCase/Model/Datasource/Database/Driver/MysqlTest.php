@@ -28,12 +28,22 @@ use \PDO;
 class MysqlTest extends \Cake\TestSuite\TestCase {
 
 /**
+ * setUp
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$config = Configure::read('Datasource.test');
+		$this->skipIf(strpos($config['datasource'], 'Mysql') === false, 'Not using Mysql for test config');
+	}
+/**
  * Test connecting to Mysql with default configuration
  *
  * @return void
  */
 	public function testConnectionConfigDefault() {
-		$driver = $this->getMock('Cake\Model\Datasource\Database\driver\Mysql', ['_connect']);
+		$driver = $this->getMock('Cake\Model\Datasource\Database\Driver\Mysql', ['_connect']);
 		$expected = [
 			'persistent' => true,
 			'host' => 'localhost',
@@ -65,7 +75,7 @@ class MysqlTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testConnectionConfigCustom() {
-		$driver = $this->getMock('Cake\Model\Datasource\Database\driver\Mysql', ['_connect']);
+		$driver = $this->getMock('Cake\Model\Datasource\Database\Driver\Mysql', ['_connect']);
 		$config = [
 			'persistent' => false,
 			'host' => 'foo',
@@ -93,15 +103,112 @@ class MysqlTest extends \Cake\TestSuite\TestCase {
 		$driver->connect($config);
 	}
 
+/**
+ * Helper method for testing methods.
+ *
+ * @return void
+ */
 	protected function _createTables($connection) {
 		$connection->execute('DROP TABLE IF EXISTS articles');
 		$connection->execute('DROP TABLE IF EXISTS authors');
 
-		$table = 'CREATE TABLE authors(id int, name varchar(50))';
+		$table = <<<SQL
+CREATE TABLE authors(
+id INT(11) PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(50),
+bio TEXT,
+created DATETIME
+)
+SQL;
 		$connection->execute($table);
 
-		$table = 'CREATE TABLE articles(id int, title varchar(20), body varchar(50), author_id int)';
+		$table = <<<SQL
+CREATE TABLE articles(
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+title VARCHAR(20),
+body TEXT,
+author_id INT(11) NOT NULL,
+created DATETIME
+)
+SQL;
 		$connection->execute($table);
+	}
+
+/**
+ * Dataprovider for column testing
+ *
+ * @return array
+ */
+	public static function columnProvider() {
+		return [
+			[
+				'DATETIME',
+				['datetime', null]
+			],
+			[
+				'DATE',
+				['date', null]
+			],
+			[
+				'TIME',
+				['time', null]
+			],
+			[
+				'TINYINT(1)',
+				['boolean', null]
+			],
+			[
+				'TINYINT(2)',
+				['integer', 2]
+			],
+			[
+				'BIGINT',
+				['biginteger', null]
+			],
+			[
+				'VARCHAR(255)',
+				['string', 255]
+			],
+			[
+				'CHAR(25)',
+				['string', 25]
+			],
+			[
+				'TINYTEXT',
+				['string', null]
+			],
+			[
+				'BLOB',
+				['binary', null]
+			],
+			[
+				'MEDIUMBLOB',
+				['binary', null]
+			],
+			[
+				'FLOAT',
+				['float', null]
+			],
+			[
+				'DOUBLE',
+				['float', null]
+			],
+			[
+				'DECIMAL(11,2)',
+				['decimal', null]
+			],
+		];
+	}
+
+/**
+ * Test parsing MySQL column types.
+ *
+ * @dataProvider columnProvider
+ * @return void
+ */
+	public function testColumnType($input, $expected) {
+		$driver = $this->getMock('Cake\Model\Datasource\Database\Driver\Mysql', ['_connect']);
+		$this->assertEquals($driver->columnType($input), $expected);
 	}
 
 /**
@@ -126,5 +233,43 @@ class MysqlTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDescribeTable() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$result = $connection->describe('articles');
+		$expected = [
+			'id' => [
+				'type' => 'biginteger',
+				'null' => false,
+				'default' => null,
+				'length' => 8,
+				'primary' => true
+			],
+			'title' => [
+				'type' => 'string',
+				'null' => true,
+				'default' => null,
+				'length' => 20,
+			],
+			'body' => [
+				'type' => 'text',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+			],
+			'author_id' => [
+				'type' => 'integer',
+				'null' => false,
+				'default' => null,
+				'length' => 11,
+			],
+			'created' => [
+				'type' => 'datetime',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+			],
+		];
+		$this->assertEquals($expected, $result);
 	}
 }
