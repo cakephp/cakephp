@@ -131,4 +131,23 @@ trait MysqlDialectTrait {
 		return 'text';
 	}
 
+/**
+ * Get additional column meta data used in schema reflections.
+ *
+ * @return array
+ */
+	public function extraSchemaColumns() {
+		return [
+			'charset' => [
+				'column' => false,
+			],
+			'collate' => [
+				'column' => 'Collation',
+			],
+			'comment' => [
+				'column' => 'Comment',
+			]
+		];
+	}
+
 }

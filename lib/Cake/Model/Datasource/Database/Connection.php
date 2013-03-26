@@ -452,8 +452,9 @@ class Connection {
 		list($sql, $params) = $this->_driver->describeTableSql($table);
 		$statement = $this->execute($sql, $params);
 		$schema = [];
-		// TODO complete.
-		// TODO add tableParameters for platform specific features.
+
+		$fieldParams = $this->_driver->extraSchemaColumns();
+
 		while ($row = $statement->fetch('assoc')) {
 			list($type, $length) = $this->_driver->columnType($row['Type']);
 			$schema[$row['Field']] = [
@@ -464,6 +465,11 @@ class Connection {
 			];
 			if (!empty($row['Key'])) {
 				$schema[$row['Field']]['key'] = $this->_driver->keyType($row['Key']);
+			}
+			foreach ($fieldParams as $key => $metadata) {
+				if (!empty($row[$metadata['column']])) {
+					$schema[$row['Field']][$key] = $row[$metadata['column']];
+				}
 			}
 		}
 		return $schema;

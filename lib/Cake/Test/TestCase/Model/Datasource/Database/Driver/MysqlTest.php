@@ -129,7 +129,7 @@ title VARCHAR(20),
 body TEXT,
 author_id INT(11) NOT NULL,
 created DATETIME
-)
+) COLLATE=utf8_general_ci
 SQL;
 		$connection->execute($table);
 	}
@@ -250,12 +250,14 @@ SQL;
 				'null' => true,
 				'default' => null,
 				'length' => 20,
+				'collate' => 'utf8_general_ci',
 			],
 			'body' => [
 				'type' => 'text',
 				'null' => true,
 				'default' => null,
 				'length' => null,
+				'collate' => 'utf8_general_ci',
 			],
 			'author_id' => [
 				'type' => 'integer',
