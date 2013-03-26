@@ -627,19 +627,8 @@ class TreeBehavior extends ModelBehavior {
 					$Model->updateAll(array($Model->escapeField($parent) => $missingParentAction), array($Model->escapeField($Model->primaryKey) => array_flip($missingParents)));
 				}
 			}
-			$count = 1;
-			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey), 'order' => $left)) as $array) {
-				$lft = $count++;
-				$rght = $count++;
-				$Model->create(false);
-				$Model->id = $array[$Model->alias][$Model->primaryKey];
-				$Model->save(array($left => $lft, $right => $rght), array('callbacks' => false, 'validate' => false));
-			}
-			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
-				$Model->create(false);
-				$Model->id = $array[$Model->alias][$Model->primaryKey];
-				$this->_setParent($Model, $array[$Model->alias][$parent]);
-			}
+
+			$this->_recoverByParentId($Model);
 		} else {
 			$db = ConnectionManager::getDataSource($Model->useDbConfig);
 			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
@@ -652,6 +641,77 @@ class TreeBehavior extends ModelBehavior {
 			}
 		}
 		return true;
+	}
+
+/**
+ * _recoverByParentId
+ *
+ * Recursive helper function used by recover
+ *
+ * @param Model $Model
+ * @param integer $counter
+ * @param mixed $parentId
+ * @return integer $counter
+ */
+	protected function _recoverByParentId(Model $Model, $counter = 1, $parentId = null) {
+		$params = array(
+			'conditions' => array(
+				$this->settings[$Model->alias]['parent'] => $parentId
+			),
+			'fields' => array($Model->primaryKey),
+			'page' => 1,
+			'limit' => 100,
+			'order' => array($Model->primaryKey)
+		);
+
+		$scope = $this->settings[$Model->alias]['scope'];
+		if ($scope && ($scope !== '1 = 1' && $scope !== true)) {
+			$conditions[] = $scope;
+		}
+
+		$children = $Model->find('all', $params);
+		$hasChildren = (bool)$children;
+
+		if (!is_null($parentId)) {
+			if($hasChildren) {
+				$Model->updateAll(
+					array($this->settings[$Model->alias]['left'] => $counter),
+					array($Model->escapeField() => $parentId)
+				);
+				$counter++;
+			} else {
+				$Model->updateAll(
+					array(
+						$this->settings[$Model->alias]['left'] => $counter,
+						$this->settings[$Model->alias]['right'] => $counter + 1
+					),
+					array($Model->escapeField() => $parentId)
+				);
+				$counter += 2;
+			}
+		}
+
+		while ($children) {
+			foreach ($children as $row) {
+				$counter = $this->_recoverByParentId($Model, $counter, $row[$Model->alias][$Model->primaryKey]);
+			}
+
+			if (count($children) !== $params['limit']) {
+				break;
+			}
+			$params['page']++;
+			$children = $Model->find('all', $params);
+		}
+
+		if (!is_null($parentId) && $hasChildren) {
+			$Model->updateAll(
+				array($this->settings[$Model->alias]['right'] => $counter),
+				array($Model->escapeField() => $parentId)
+			);
+			$counter++;
+		}
+
+		return $counter;
 	}
 
 /**
