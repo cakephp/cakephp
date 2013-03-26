@@ -156,6 +156,79 @@ class Permission extends AppModel {
 		}
 		return false;
 	}
+	
+/**
+ * Checks if the given $aco is inherited from its parent element
+ *
+ * @param string $aro ARO The requesting object identifier.
+ * @param string $aco ACO The controlled object identifier.
+ * @param string $action Action (defaults to *)
+ * @return boolean Success (true if ACO is inherited from its parent, false otherwise)
+ */
+	public function isInherited($aro, $aco, $action = "*") {
+		if (!$aro || !$aco) {
+			return false;
+		}
+
+		$permKeys = $this->getAcoKeys($this->schema());
+		$aroPath = $this->Aro->node($aro);
+		$acoPath = $this->Aco->node($aco);
+
+		if (!$aroPath || !$acoPath) {
+			trigger_error(__d('cake_dev', "DbAcl::check() - Failed ARO/ACO node lookup in permissions check. Node references:\nAro: ") . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			return false;
+		}
+
+		if (!$acoPath) {
+			trigger_error(__d('cake_dev', "DbAcl::check() - Failed ACO node lookup in permissions check. Node references:\nAro: ") . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			return false;
+		}
+
+		if ($action !== '*' && !in_array('_' . $action, $permKeys)) {
+			trigger_error(__d('cake_dev', "ACO permissions key %s does not exist in DbAcl::check()", $action), E_USER_NOTICE);
+			return false;
+		}
+
+		$inherited = array();
+		$acoIDs = Hash::extract($acoPath, '{n}.' . $this->Aco->alias . '.id');
+
+		$aroPath = array_shift($aroPath);
+		$permAlias = $this->alias;
+
+		$perms = $this->find('all', array(
+			'conditions' => array(
+				"{$permAlias}.aro_id" => $aroPath[$this->Aro->alias]['id'],
+				"{$permAlias}.aco_id" => $acoIDs
+			),
+			'order' => array($this->Aco->alias . '.lft' => 'desc'),
+			'recursive' => 0
+		));
+
+		if (!empty($perms)) {
+			$perms = Hash::extract($perms, '{n}.' . $this->alias);
+			$perm = array_shift($perms);
+
+			if ($action === '*') {
+				foreach ($permKeys as $key) {
+					if (!empty($perm)) {
+						if ($perm[$key] == 0) {
+							$inherited[$key] = 1;
+						}
+					}
+				}
+
+				if (count($inherited) === count($permKeys)) {
+					return true;
+				}
+			} else {
+				if ($perm['_' . $action] == 0) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 
 /**
  * Allow $aro to have access to action $actions in $aco
