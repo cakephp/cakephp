@@ -2387,7 +2387,8 @@ class FormHelper extends AppHelper {
 			}
 			$change = (round($min * (1 / $interval)) * $interval) - $min;
 			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
-			$newTime = explode(' ', $current->format('Y m d H i a'));
+			$format = ($timeFormat === '12') ? 'Y m d h i a' : 'Y m d H i a';
+			$newTime = explode(' ', $current->format($format));
 			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
 		}
 
@@ -2507,14 +2508,14 @@ class FormHelper extends AppHelper {
 		if (!empty($timeFormat)) {
 			$time = explode(':', $days[1]);
 
-			if ($time[0] >= '12' && $timeFormat === '12') {
+			if ($time[0] >= 12 && $timeFormat == 12) {
 				$meridian = 'pm';
-			} elseif ($time[0] === '00' && $timeFormat === '12') {
+			} elseif ($time[0] === '00' && $timeFormat == 12) {
 				$time[0] = 12;
 			} elseif ($time[0] >= 12) {
 				$meridian = 'pm';
 			}
-			if ($time[0] == 0 && $timeFormat === '12') {
+			if ($time[0] == 0 && $timeFormat == 12) {
 				$time[0] = 12;
 			}
 			$hour = $min = null;

@@ -541,6 +541,41 @@ XML;
 	}
 
 /**
+ * Test that there are not unterminated errors when building xml
+ *
+ * @return void
+ */
+	public function testFromArrayUnterminatedError() {
+		$data = array(
+			'product_ID' => 'GENERT-DL',
+			'deeplink' => 'http://example.com/deep',
+			'image_URL' => 'http://example.com/image',
+			'thumbnail_image_URL' => 'http://example.com/thumb',
+			'brand' => 'Malte Lange & Co',
+			'availability' => 'in stock',
+			'authors' => array(
+				'author' => array('Malte Lange & Co')
+			)
+		);
+		$xml = Xml::fromArray(array('products' => $data), 'tags');
+		$expected = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<products>
+	<product_ID>GENERT-DL</product_ID>
+	<deeplink>http://example.com/deep</deeplink>
+	<image_URL>http://example.com/image</image_URL>
+	<thumbnail_image_URL>http://example.com/thumb</thumbnail_image_URL>
+	<brand>Malte Lange &amp; Co</brand>
+	<availability>in stock</availability>
+	<authors>
+		<author>Malte Lange &amp; Co</author>
+	</authors>
+</products>
+XML;
+		$this->assertXmlStringEqualsXmlString($expected, $xml->asXML());
+	}
+
+/**
  * testToArray method
  *
  * @return void

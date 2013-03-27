@@ -560,14 +560,13 @@ class View extends Object {
 				//@codingStandardsIgnoreStart
 				@unlink($filename);
 				//@codingStandardsIgnoreEnd
-				unset ($out);
+				unset($out);
 				return false;
 			} else {
 				if ($this->layout === 'xml') {
 					header('Content-type: text/xml');
 				}
-				$commentLength = strlen('<!--cachetime:' . $match['1'] . '-->');
-				return substr($out, $commentLength);
+				return substr($out, strlen($match[0]));
 			}
 		}
 	}

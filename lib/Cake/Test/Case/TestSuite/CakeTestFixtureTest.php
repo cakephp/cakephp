@@ -437,7 +437,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->insertMulti['fields'] = $fields;
 		$this->insertMulti['values'] = $values;
 		$this->insertMulti['fields_values'] = array();
-		foreach($values as $record) {
+		foreach ($values as $record) {
 			$this->insertMulti['fields_values'][] = array_combine($fields, $record);
 		}
 		return true;
@@ -467,18 +467,18 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->assertEquals($expected, $this->insertMulti['values']);
 		$expected = array(
 			array(
-				'name' => 'Mark Doe', 
-				'email' => 'mark.doe@email.com', 
+				'name' => 'Mark Doe',
+				'email' => 'mark.doe@email.com',
 				'age' => null
 			),
 			array(
-				'name' => 'John Doe', 
-				'email' => 'john.doe@email.com', 
+				'name' => 'John Doe',
+				'email' => 'john.doe@email.com',
 				'age' => 20
 			),
 			array(
-				'name' => 'Jane Doe', 
-				'email' => 'jane.doe@email.com', 
+				'name' => 'Jane Doe',
+				'email' => 'jane.doe@email.com',
 				'age' => 30
 			),
 		);
