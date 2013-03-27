@@ -109,7 +109,7 @@ class ClassRegistry {
 			$defaults = $_this->_config['Model'];
 		}
 		$count = count($objects);
-		$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
+		$availableDs = null;
 
 		foreach ($objects as $settings) {
 			if (is_numeric($settings)) {
@@ -153,6 +153,9 @@ class ClassRegistry {
 						$defaultProperties = $reflection->getDefaultProperties();
 						if (isset($defaultProperties['useDbConfig'])) {
 							$useDbConfig = $defaultProperties['useDbConfig'];
+							if ($availableDs === null) {
+								$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
+							}
 							if (in_array('test_' . $useDbConfig, $availableDs)) {
 								$useDbConfig = 'test_' . $useDbConfig;
 							}
