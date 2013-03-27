@@ -108,6 +108,19 @@ class AclComponent extends Component {
 	public function check($aro, $aco, $action = "*") {
 		return $this->_Instance->check($aro, $aco, $action);
 	}
+	
+/**
+ * Pass-thru function for ACL isInherited instance. isInherited methods
+ * are used to check whether or not an ARO is directly set or inherited from a parent element
+ *
+ * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
+ * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ */
+	public function isInherited($aro, $aco, $action = "*") {
+		return $this->_Instance->isInherited($aro, $aco, $action);
+	}
 
 /**
  * Pass-thru function for ACL allow instance. Allow methods

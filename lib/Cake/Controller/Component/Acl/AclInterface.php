@@ -30,6 +30,15 @@ interface AclInterface {
  * @param string $action Action (defaults to *)
  */
 	public function check($aro, $aco, $action = "*");
+	
+/**
+ * Empty method to be overridden in subclasses
+ *
+ * @param string $aro ARO The requesting object identifier.
+ * @param string $aco ACO The controlled object identifier.
+ * @param string $action Action (defaults to *)
+ */
+	public function isInherited($aro, $aco, $action = "*");
 
 /**
  * Allow methods are used to grant an ARO access to an ACO.

@@ -74,6 +74,19 @@ class DbAcl extends Object implements AclInterface {
 	}
 
 /**
+ * Checks if the given $aco is inherited from its parent element
+ *
+ * @param string $aro ARO The requesting object identifier.
+ * @param string $aco ACO The controlled object identifier.
+ * @param string $action Action (defaults to *)
+ * @return boolean Success (true if ACO is inherited from its parent, false otherwise)
+ */
+	public function isInherited($aro, $aco, $action = "*") {
+		return $this->Permission->isInherited($aro, $aco, $action);
+	}
+
+
+/**
  * Allow $aro to have access to action $actions in $aco
  *
  * @param string $aro ARO The requesting object identifier.
