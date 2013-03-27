@@ -17,6 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.6001
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('Inflector', 'Utility');
 
 /**
  * App is responsible for path management, class location and class loading.
