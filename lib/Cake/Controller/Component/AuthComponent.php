@@ -310,7 +310,7 @@ class AuthComponent extends Component {
 
 		if ($loginAction == $url) {
 			if (empty($request->data)) {
-				if (!$this->Session->check('Auth.redirect') && !$this->loginRedirect && env('HTTP_REFERER')) {
+				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
 					$this->Session->write('Auth.redirect', $controller->referer(null, true));
 				}
 			}
@@ -554,7 +554,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Log a user out. 
+ * Log a user out.
  *
  * Returns the login action to redirect to. Triggers the logout() method of
  * all the authenticate objects, so they can perform custom logout logic.
@@ -645,9 +645,17 @@ class AuthComponent extends Component {
 /**
  * Get the URL a use should be redirected to upon login.
  *
- * If no parameter is passed, gets the authentication redirect URL. Pass a url in to
- * set the destination a user should be redirected to upon logging in. Will fallback to
- * AuthComponent::$loginRedirect if there is no stored redirect value.
+ * Pass a url in to set the destination a user should be redirected to upon
+ * logging in.
+ *
+ * If no parameter is passed, gets the authentication redirect URL. The url
+ * returned is as per following rules:
+ *
+ *  - Returns the session Auth.redirect value if it is present and for the same
+ *    domain the current app is running on.
+ *  - If there is no session value and there is a $loginRedirect, the $loginRedirect
+ *    value is returned.
+ *  - If there is no session and no $loginRedirect, / is returned.
  *
  * @param string|array $url Optional URL to write as the login redirect URL.
  * @return string Redirect URL
@@ -663,8 +671,10 @@ class AuthComponent extends Component {
 			if (Router::normalize($redir) == Router::normalize($this->loginAction)) {
 				$redir = $this->loginRedirect;
 			}
-		} else {
+		} elseif ($this->loginRedirect) {
 			$redir = $this->loginRedirect;
+		} else {
+			$redir = '/';
 		}
 		return Router::normalize($redir);
 	}
