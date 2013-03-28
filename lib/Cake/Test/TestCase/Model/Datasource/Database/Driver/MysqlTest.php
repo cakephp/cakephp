@@ -206,9 +206,32 @@ SQL;
  * @dataProvider columnProvider
  * @return void
  */
-	public function testColumnType($input, $expected) {
+	public function testConvertColumnType($input, $expected) {
 		$driver = $this->getMock('Cake\Model\Datasource\Database\Driver\Mysql', ['_connect']);
-		$this->assertEquals($driver->columnType($input), $expected);
+		$this->assertEquals($driver->convertColumn($input), $expected);
+	}
+
+/**
+ * Provider for testing index conversion
+ *
+ * @return array
+ */
+	public static function convertIndexProvider() {
+		return [
+			['PRI', 'primary'],
+			['UNI', 'unique'],
+			['MUL', 'index'],
+		];
+	}
+/**
+ * Test parsing MySQL index types.
+ *
+ * @dataProvider convertIndexProvider
+ * @return void
+ */
+	public function testConvertIndex($input, $expected) {
+		$driver = $this->getMock('Cake\Model\Datasource\Database\Driver\Mysql', ['_connect']);
+		$this->assertEquals($driver->convertIndex($input), $expected);
 	}
 
 /**

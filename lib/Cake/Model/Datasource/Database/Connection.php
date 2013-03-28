@@ -454,23 +454,9 @@ class Connection {
 		$schema = [];
 
 		$fieldParams = $this->_driver->extraSchemaColumns();
-
-		while ($row = $statement->fetch('assoc')) {
-			list($type, $length) = $this->_driver->columnType($row['Type']);
-			$schema[$row['Field']] = [
-				'type' => $type,
-				'null' => $row['Null'] === 'YES' ? true : false,
-				'default' => $row['Default'],
-				'length' => $length,
-			];
-			if (!empty($row['Key'])) {
-				$schema[$row['Field']]['key'] = $this->_driver->keyType($row['Key']);
-			}
-			foreach ($fieldParams as $key => $metadata) {
-				if (!empty($row[$metadata['column']])) {
-					$schema[$row['Field']][$key] = $row[$metadata['column']];
-				}
-			}
+		$rows = $statement->fetchAll('assoc');
+		foreach ($rows as $row) {
+			$schema += $this->_driver->convertFieldDescription($row, $fieldParams);
 		}
 		return $schema;
 	}

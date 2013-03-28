@@ -69,14 +69,14 @@ trait MysqlDialectTrait {
  * @param string $key The key type to convert.
  * @return string The abstract key type (primary, unique, index)
  */
-	public function keyType($key) {
+	public function convertIndex($key) {
 		if ($key === 'PRI') {
 			return 'primary';
 		}
 		if ($key === 'MUL') {
 			return 'index';
 		}
-		if ($key === 'uni') {
+		if ($key === 'UNI') {
 			return 'unique';
 		}
 	}
@@ -89,7 +89,7 @@ trait MysqlDialectTrait {
  * @param string $column The column type + length
  * @return array List of (type, length)
  */
-	public function columnType($column) {
+	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
 			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
@@ -102,7 +102,7 @@ trait MysqlDialectTrait {
 		}
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
-			return [$col, $length];
+			return [$col, null];
 		}
 		if (($col === 'tinyint' && $length === 1) || $col === 'boolean') {
 			return ['boolean', null];
@@ -128,7 +128,32 @@ trait MysqlDialectTrait {
 		if (strpos($col, 'decimal') !== false) {
 			return ['decimal', null];
 		}
-		return 'text';
+		return ['text', null];
+	}
+
+/**
+ * Convert field description results into abstract schema fields.
+ *
+ * @return array An array of with the key/values of schema data.
+ */
+	public function convertFieldDescription($row, $fieldParams = []) {
+		list($type, $length) = $this->convertColumn($row['Type']);
+		$schema = [];
+		$schema[$row['Field']] = [
+			'type' => $type,
+			'null' => $row['Null'] === 'YES' ? true : false,
+			'default' => $row['Default'],
+			'length' => $length,
+		];
+		if (!empty($row['Key'])) {
+			$schema[$row['Field']]['key'] = $this->convertIndex($row['Key']);
+		}
+		foreach ($fieldParams as $key => $metadata) {
+			if (!empty($row[$metadata['column']])) {
+				$schema[$row['Field']][$key] = $row[$metadata['column']];
+			}
+		}
+		return $schema;
 	}
 
 /**
