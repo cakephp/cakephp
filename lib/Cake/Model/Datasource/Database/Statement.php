@@ -189,6 +189,9 @@ class Statement implements \IteratorAggregate, \Countable {
  * are left
  */
 	public function fetch($type = 'num') {
+		if ($this->_statement instanceof self) {
+			return $this->_statement->fetch($type);
+		}
 		switch ($type) {
 			case 'num':
 				return $this->_statement->fetch(PDO::FETCH_NUM);
@@ -212,6 +215,9 @@ class Statement implements \IteratorAggregate, \Countable {
  * @return array list of all results from database for this statement
  */
 	public function fetchAll($type = 'num') {
+		if ($this->_statement instanceof self) {
+			return $this->_statement->fetchAll($type);
+		}
 		switch ($type) {
 			case 'num':
 				return $this->_statement->fetchAll(PDO::FETCH_NUM);

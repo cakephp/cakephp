@@ -21,6 +21,8 @@ use Cake\Model\Datasource\Database\Exception\MissingConnectionException;
 use Cake\Model\Datasource\Database\Exception\MissingDriverException;
 use Cake\Model\Datasource\Database\Exception\MissingExtensionException;
 use Cake\Model\Datasource\Database\Query;
+use Cake\Model\Datasource\Database\Log\LoggingStatement;
+use Cake\Model\Datasource\Database\Log\QueryLogger;
 
 /**
  * Represents a connection with a database server
@@ -74,6 +76,20 @@ class Connection {
 	protected $_useSavePoints = false;
 
 /**
+ * Whether to log queries generated during this connection
+ *
+ * @var boolean
+ */
+	protected $_logQueries = false;
+
+/**
+ * Logger object instance
+ *
+ * @var QueryLogger
+ */
+	protected $_logger = null;
+
+/**
  * Constructor
  *
  * @param array $config configuration for connecting to database
@@ -90,6 +106,10 @@ class Connection {
 		$this->driver($config['datasource']);
 		if (!$this->_driver->enabled()) {
 			throw new MissingExtensionException(['driver' => get_class($this->_driver)]);
+		}
+
+		if (!empty($config['log'])) {
+			$this->logQueries($config['log']);
 		}
 	}
 
@@ -156,7 +176,13 @@ class Connection {
  */
 	public function prepare($sql) {
 		$this->connect();
-		return $this->_driver->prepare($sql);
+		$statement = $this->_driver->prepare($sql);
+
+		if ($this->_logQueries) {
+			$statement = $this->_newLogger($statement);
+		}
+
+		return $statement;
 	}
 
 /**
@@ -327,7 +353,7 @@ class Connection {
  * only if driver the allows it.
  *
  * If you are trying to enable this feature, make sure you check the return value of this
- * function to verify it was enabled successfuly
+ * function to verify it was enabled successfully
  *
  * ## Example:
  *
@@ -425,6 +451,46 @@ class Connection {
 	public function lastInsertId($table) {
 		$this->connect();
 		return $this->_driver->lastInsertId($table);
+	}
+
+/**
+ * Enables or disables query logging for this connection.
+ *
+ * @param boolean $enable whether to turn logging on or disable it
+ * @return void
+ */
+	public function logQueries($enable) {
+		$this->_logQueries = $enable;
+	}
+
+/**
+ * Sets the logger object instance. When called with no arguments
+ * it returns the currently setup logger instance
+ *
+ * @param object $instance logger object instance
+ * @return object logger instance
+ */
+	public function logger($instance = null) {
+		if ($instance === null) {
+			if ($this->_logger === null) {
+				$this->_logger = new QueryLogger;
+			}
+			return $this->_logger;
+		}
+		$this->_logger = $instance;
+	}
+
+/**
+ * Returns a new statement object that will log the activity
+ * for the passed original statement instance.
+ *
+ * @param Statement $statement the instance to be decorated
+ * @return Statement
+ */
+	protected function _newLogger($statement) {
+		$log = new LoggingStatement($statement, $this->driver());
+		$log->logger($this->logger());
+		return $log;
 	}
 
 }
