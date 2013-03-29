@@ -18,7 +18,7 @@
  */
 
 /**
- * Represents the transport class of events across the system, it receives a name, and subject and an optional
+ * Represents the transport class of events across the system, it receives a name, and is subject and an optional
  * payload. The name can be any string that uniquely identifies the event across the application, while the subject
  * represents the object that the event applies to.
  *
@@ -34,7 +34,7 @@ class CakeEvent {
 	protected $_name = null;
 
 /**
- * The object this event applies to (usually the same object that generates the event)
+ * The object that this event applies to (usually the same object that generates the event)
  *
  * @var object
  */
