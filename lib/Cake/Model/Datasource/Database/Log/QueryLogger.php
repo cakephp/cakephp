@@ -49,7 +49,7 @@ class QueryLogger {
  * @return void
  */
 	protected function _log($query) {
-		Log::write('debug', $query, ['sqlLog']);
+		Log::write('debug', $query, ['queriesLog']);
 	}
 
 /**
