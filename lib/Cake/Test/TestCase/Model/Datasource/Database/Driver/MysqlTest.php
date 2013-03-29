@@ -125,7 +125,7 @@ SQL;
 		$table = <<<SQL
 CREATE TABLE articles(
 id BIGINT PRIMARY KEY AUTO_INCREMENT,
-title VARCHAR(20),
+title VARCHAR(20) COMMENT 'A title',
 body TEXT,
 author_id INT(11) NOT NULL,
 created DATETIME
@@ -274,6 +274,7 @@ SQL;
 				'default' => null,
 				'length' => 20,
 				'collate' => 'utf8_general_ci',
+				'comment' => 'A title',
 			],
 			'body' => [
 				'type' => 'text',
