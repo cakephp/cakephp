@@ -1153,7 +1153,7 @@ class FormHelper extends AppHelper {
 			} elseif (isset($map[$type])) {
 				$options['type'] = $map[$type];
 			}
-			if ($fieldKey == $primaryKey) {
+			if ($fieldKey == $primaryKey && false !== $options['hiddenField']) {
 				$options['type'] = 'hidden';
 			}
 			if (
