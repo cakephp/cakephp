@@ -19,8 +19,25 @@ namespace Cake\Model\Datasource\Database\Dialect;
 
 use Cake\Model\Datasource\Database\Expression\FunctionExpression;
 use Cake\Model\Datasource\Database\Query;
+use Cake\Model\Datasource\Database\SqlDialectTrait;
 
 trait SqliteDialectTrait {
+
+	use SqlDialectTrait;
+
+/**
+ *  String used to start a database identifier quoting to make it safe
+ *
+ * @var string
+ **/
+	public $startQuote = '"';
+
+/**
+ * String used to end a database identifier quoting to make it safe
+ *
+ * @var string
+ **/
+	public $endQuote = '"';
 
 /**
  * Returns an dictionary of expressions to be transformed when compiling a Query
