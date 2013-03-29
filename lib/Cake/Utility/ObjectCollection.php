@@ -18,8 +18,8 @@
  * to implement its own load() functionality.
  *
  * All core subclasses of ObjectCollection by convention loaded objects are stored
- * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`. In addition
- * the all support an `enabled` option that controls the enabled/disabled state of the object
+ * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`. In addition,
+ * they all support an `enabled` option that controls the enabled/disabled state of the object
  * when loaded.
  *
  * @package       Cake.Utility
