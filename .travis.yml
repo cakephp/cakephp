@@ -40,7 +40,7 @@ before_script:
     }
     \$identities = array(
       'mysql' => array(
-        'datasource' => 'Database/Mysql',
+        'datasource' => 'Cake\Model\Datasource\Database\Driver\Mysql',
         'host' => '0.0.0.0',
         'login' => 'travis',
         'database' => array(
@@ -51,7 +51,7 @@ before_script:
         ),
       ),
       'pgsql' => array(
-        'datasource' => 'Database/Postgres',
+        'datasource' => 'Cake\Model\Datasource\Database\Driver\\Postgres',
         'host' => '127.0.0.1',
         'login' => 'postgres',
         'database' => 'cakephp_test',
@@ -63,7 +63,7 @@ before_script:
         )
       ),
       'sqlite' => array(
-        'datasource' => 'Database/Sqlite',
+        'datasource' => 'Cake\Model\Datasource\Database\Driver\Sqlite',
         'database' => array(
           'default' => ':memory:',
           'test' => ':memory:',
