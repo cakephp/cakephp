@@ -1421,7 +1421,7 @@ class FormHelper extends AppHelper {
 		}
 		unset($options['hiddenField']);
 
-		return $output . $this->Html->useTag('checkbox', $options['name'], array_diff_key($options, array('name' => '')));
+		return $output . $this->Html->useTag('checkbox', $options['name'], array_diff_key($options, array('name' => null)));
 	}
 
 /**
@@ -1527,7 +1527,7 @@ class FormHelper extends AppHelper {
 			}
 			$allOptions = array_merge($attributes, $optionsHere);
 			$out[] = $this->Html->useTag('radio', $attributes['name'], $tagName,
-				array_diff_key($allOptions, array('name' => '', 'type' => '', 'id' => '')),
+				array_diff_key($allOptions, array('name' => null, 'type' => null, 'id' => null)),
 				$optTitle
 			);
 		}
@@ -1584,7 +1584,7 @@ class FormHelper extends AppHelper {
 			$options['type'] = $method;
 		}
 		$options = $this->_initInputField($params[0], $options);
-		return $this->Html->useTag('input', $options['name'], array_diff_key($options, array('name' => '')));
+		return $this->Html->useTag('input', $options['name'], array_diff_key($options, array('name' => null)));
 	}
 
 /**
@@ -1610,7 +1610,7 @@ class FormHelper extends AppHelper {
 			}
 			unset($options['value']);
 		}
-		return $this->Html->useTag('textarea', $options['name'], array_diff_key($options, array('type' => '', 'name' => '')), $value);
+		return $this->Html->useTag('textarea', $options['name'], array_diff_key($options, array('type' => null, 'name' => null)), $value);
 	}
 
 /**
@@ -1636,7 +1636,7 @@ class FormHelper extends AppHelper {
 			$this->_secure(true, null, '' . $options['value']);
 		}
 
-		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => '')));
+		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => null)));
 	}
 
 /**
@@ -1659,7 +1659,7 @@ class FormHelper extends AppHelper {
 			$this->_secure($secure, array_merge($field, array($suffix)));
 		}
 
-		$exclude = array('name' => '', 'value' => '');
+		$exclude = array('name' => null, 'value' => null);
 		return $this->Html->useTag('file', $options['name'], array_diff_key($options, $exclude));
 	}
 
@@ -2020,7 +2020,7 @@ class FormHelper extends AppHelper {
 			) {
 				$this->_secure(true);
 			}
-			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => '', 'value' => '')));
+			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => null, 'value' => null)));
 		}
 		$emptyMulti = (
 			$showEmpty !== null && $showEmpty !== false && !(
