@@ -47,7 +47,7 @@ class ConnectionManager {
 	protected static $_dataSources = array();
 
 /**
- * Contains a list of all file and class names used in Connection settings
+ * Contains a list of all files and class names used in Connection settings
  *
  * @var array
  */
