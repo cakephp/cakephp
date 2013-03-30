@@ -1071,7 +1071,7 @@ class HttpSocketTest extends CakeTestCase {
 			'method' => 'GET',
 			'uri' => 'http://example.com/test',
 			'auth' => array(
-				'method'=>'Basic',
+				'method' => 'Basic',
 				'user' => 'joel',
 				'pass' => 'hunter2'
 			)
