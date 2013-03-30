@@ -27,8 +27,19 @@ use Cake\Model\Datasource\Database\Log\QueryLogger;
  **/
 class QueryLoggerTest extends \Cake\TestSuite\TestCase {
 
+/**
+ * Contains a list of disabled logging engines that will be re-enabled
+ * on tearDown
+ *
+ * @var array
+ */
 	protected $_disabledEngines = [];
 
+/**
+ * Set up
+ *
+ * @return void
+ */
 	public function setUp() {
 		foreach (Log::configured() as $e) {
 			if (Log::enabled($e)) {
@@ -38,13 +49,24 @@ class QueryLoggerTest extends \Cake\TestSuite\TestCase {
 		}
 	}
 
+/**
+ * Tear down
+ *
+ * @return void
+ */
 	public function tearDown() {
 		Log::drop('queryLoggerTest');
+		Log::drop('queryLoggerTest2');
 		foreach ($this->_disabledEngines as $e) {
 			Log::enable($e);
 		}
 	}
 
+/**
+ * Tests that query placeholders are replaced when logged
+ *
+ * @return void
+ */
 	public function testStingInterpolation() {
 		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger', ['_log']);
 		$query = new LoggedQuery;
@@ -57,6 +79,11 @@ class QueryLoggerTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, (string)$query);
 	}
 
+/**
+ * Tests that positional placeholders are replaced when logging a query
+ *
+ * @return void
+ */
 	public function testStingInterpolation2() {
 		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger', ['_log']);
 		$query = new LoggedQuery;
@@ -69,6 +96,12 @@ class QueryLoggerTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, (string)$query);
 	}
 
+/**
+ * Tests that the logged query object is passed to the built-in logger using
+ * the correct scope
+ *
+ * @return void
+ */
 	public function testLogFunction() {
 		$logger = new QueryLogger;
 		$query = new LoggedQuery;
@@ -76,7 +109,9 @@ class QueryLoggerTest extends \Cake\TestSuite\TestCase {
 		$query->params = ['string', '3',  null];
 		$engine = $this->getMock('\Cake\Log\Engine\BaseLog', ['write'], ['scopes' => ['queriesLog']]);
 		Log::engine('queryLoggerTest', $engine);
-		$engine->expects($this->once())->method('write')->with('debug', $query);
+		$engine2 = $this->getMock('\Cake\Log\Engine\BaseLog', ['write'], ['scopes' => ['foo']]);
+		Log::engine('queryLoggerTest2', $engine);
+		$engine2->expects($this->never())->method('write');
 		$logger->write($query);
 	}
 
