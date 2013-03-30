@@ -17,13 +17,13 @@
  */
 namespace Cake\Model\Datasource\Database\Driver;
 
+use Cake\Model\Datasource\Database\Dialect\MysqlDialectTrait;
 use PDO;
 
 class Mysql extends \Cake\Model\Datasource\Database\Driver {
 
-	use PDODriverTrait {
-		connect as protected _connect;
-	}
+	use PDODriverTrait;
+	use MysqlDialectTrait;
 
 /**
  * Base configuration settings for MySQL driver
