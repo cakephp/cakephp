@@ -1065,6 +1065,19 @@ class HttpSocketTest extends CakeTestCase {
 		$socket->configAuth('Test', 'mark', 'passwd');
 		$socket->get('http://example.com/test');
 		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Test mark.passwd') !== false);
+
+		$socket->configAuth(false);
+		$socket->request(array(
+			'method' => 'GET',
+			'uri' => 'http://example.com/test',
+			'auth' => array(
+				'method'=>'Basic',
+				'user' => 'joel',
+				'pass' => 'hunter2'
+			)
+		));
+		$this->assertEquals($socket->request['auth'],array('Basic' => array('user' => 'joel', 'pass' => 'hunter2')));
+		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic am9lbDpodW50ZXIy') !== false);
 	}
 
 /**
