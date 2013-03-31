@@ -112,7 +112,7 @@ class ErrorHandler {
 		$config = Configure::read('Exception');
 		self::_log($exception, $config);
 
-		$renderer = $config['renderer'];
+		$renderer = isset($config['renderer']) ? $config['renderer'] : 'ExceptionRenderer';
 		if ($renderer !== 'ExceptionRenderer') {
 			list($plugin, $renderer) = pluginSplit($renderer, true);
 			App::uses($renderer, $plugin . 'Error');
