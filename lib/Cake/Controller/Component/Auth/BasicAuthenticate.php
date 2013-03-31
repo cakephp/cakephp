@@ -16,6 +16,7 @@
 namespace Cake\Controller\Component\Auth;
 
 use Cake\Controller\ComponentCollection;
+use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
 
@@ -117,13 +118,13 @@ class BasicAuthenticate extends BaseAuthenticate {
  *
  * @param CakeRequest $request A request object.
  * @param CakeResponse $response A response object.
- * @return boolean True
+ * @return void
+ * @throws Cake\Error\UnauthorizedException
  */
 	public function unauthenticated(Request $request, Response $response) {
-		$response->header($this->loginHeaders());
-		$response->statusCode(401);
-		$response->send();
-		return true;
+		$Exception = new Error\UnauthorizedException();
+		$Exception->responseHeader(array($this->loginHeaders()));
+		throw $Exception;
 	}
 
 /**

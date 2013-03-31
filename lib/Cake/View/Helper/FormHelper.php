@@ -1426,7 +1426,7 @@ class FormHelper extends Helper {
 		}
 		unset($options['hiddenField']);
 
-		return $output . $this->Html->useTag('checkbox', $options['name'], array_diff_key($options, array('name' => '')));
+		return $output . $this->Html->useTag('checkbox', $options['name'], array_diff_key($options, array('name' => null)));
 	}
 
 /**
@@ -1532,7 +1532,7 @@ class FormHelper extends Helper {
 			}
 			$allOptions = array_merge($attributes, $optionsHere);
 			$out[] = $this->Html->useTag('radio', $attributes['name'], $tagName,
-				array_diff_key($allOptions, array('name' => '', 'type' => '', 'id' => '')),
+				array_diff_key($allOptions, array('name' => null, 'type' => null, 'id' => null)),
 				$optTitle
 			);
 		}
@@ -1589,7 +1589,7 @@ class FormHelper extends Helper {
 			$options['type'] = $method;
 		}
 		$options = $this->_initInputField($params[0], $options);
-		return $this->Html->useTag('input', $options['name'], array_diff_key($options, array('name' => '')));
+		return $this->Html->useTag('input', $options['name'], array_diff_key($options, array('name' => null)));
 	}
 
 /**
@@ -1615,7 +1615,7 @@ class FormHelper extends Helper {
 			}
 			unset($options['value']);
 		}
-		return $this->Html->useTag('textarea', $options['name'], array_diff_key($options, array('type' => '', 'name' => '')), $value);
+		return $this->Html->useTag('textarea', $options['name'], array_diff_key($options, array('type' => null, 'name' => null)), $value);
 	}
 
 /**
@@ -1641,7 +1641,7 @@ class FormHelper extends Helper {
 			$this->_secure(true, null, '' . $options['value']);
 		}
 
-		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => '')));
+		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => null)));
 	}
 
 /**
@@ -1664,7 +1664,7 @@ class FormHelper extends Helper {
 			$this->_secure($secure, array_merge($field, array($suffix)));
 		}
 
-		$exclude = array('name' => '', 'value' => '');
+		$exclude = array('name' => null, 'value' => null);
 		return $this->Html->useTag('file', $options['name'], array_diff_key($options, $exclude));
 	}
 
@@ -2025,7 +2025,7 @@ class FormHelper extends Helper {
 			) {
 				$this->_secure(true);
 			}
-			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => '', 'value' => '')));
+			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => null, 'value' => null)));
 		}
 		$emptyMulti = (
 			$showEmpty !== null && $showEmpty !== false && !(
@@ -2392,7 +2392,8 @@ class FormHelper extends Helper {
 			}
 			$change = (round($min * (1 / $interval)) * $interval) - $min;
 			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
-			$newTime = explode(' ', $current->format('Y m d H i a'));
+			$format = ($timeFormat === '12') ? 'Y m d h i a' : 'Y m d H i a';
+			$newTime = explode(' ', $current->format($format));
 			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
 		}
 
@@ -2512,14 +2513,14 @@ class FormHelper extends Helper {
 		if (!empty($timeFormat)) {
 			$time = explode(':', $days[1]);
 
-			if ($time[0] >= '12' && $timeFormat === '12') {
+			if ($time[0] >= 12 && $timeFormat == 12) {
 				$meridian = 'pm';
-			} elseif ($time[0] === '00' && $timeFormat === '12') {
+			} elseif ($time[0] === '00' && $timeFormat == 12) {
 				$time[0] = 12;
 			} elseif ($time[0] >= 12) {
 				$meridian = 'pm';
 			}
-			if ($time[0] == 0 && $timeFormat === '12') {
+			if ($time[0] == 0 && $timeFormat == 12) {
 				$time[0] = 12;
 			}
 			$hour = $min = null;

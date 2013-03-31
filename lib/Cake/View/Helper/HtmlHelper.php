@@ -405,6 +405,7 @@ class HtmlHelper extends Helper {
  *   This overrides the `inline` option.
  * - `plugin` False value will prevent parsing path as a plugin
  * - `rel` Defaults to 'stylesheet'. If equal to 'import' the stylesheet will be imported.
+ * - `fullBase` If true the url will get a full address for the css file.
  *
  * @param string|array $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
@@ -447,6 +448,14 @@ class HtmlHelper extends Helper {
 			$url = $path;
 		} else {
 			$url = $this->assetUrl($path, $options + array('pathPrefix' => CSS_URL, 'ext' => '.css'));
+			$options = array_diff_key($options, array('fullBase' => null));
+
+			if (Configure::read('Asset.filter.css')) {
+				$pos = strpos($url, CSS_URL);
+				if ($pos !== false) {
+					$url = substr($url, 0, $pos) . 'ccss/' . substr($url, $pos + strlen(CSS_URL));
+				}
+			}
 		}
 
 		if ($options['rel'] == 'import') {
@@ -505,6 +514,7 @@ class HtmlHelper extends Helper {
  * - `once` Whether or not the script should be checked for uniqueness. If true scripts will only be
  *   included once, use false to allow the same script to be included more than once per request.
  * - `plugin` False value will prevent parsing path as a plugin
+ * - `fullBase` If true the url will get a full address for the script file.
  *
  * @param string|array $url String or array of javascript files to include
  * @param array|boolean $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
@@ -540,6 +550,11 @@ class HtmlHelper extends Helper {
 
 		if (strpos($url, '//') === false) {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => JS_URL, 'ext' => '.js'));
+			$options = array_diff_key($options, array('fullBase' => null));
+
+			if (Configure::read('Asset.filter.js')) {
+				$url = str_replace(JS_URL, 'cjs/', $url);
+			}
 		}
 		$attributes = $this->_parseAttributes($options, array('block', 'once'), ' ');
 		$out = sprintf($this->_tags['javascriptlink'], $url, $attributes);
@@ -794,7 +809,7 @@ class HtmlHelper extends Helper {
  */
 	public function image($path, $options = array()) {
 		$path = $this->assetUrl($path, $options + array('pathPrefix' => IMAGES_URL));
-		$options = array_diff_key($options, array('fullBase' => '', 'pathPrefix' => ''));
+		$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 
 		if (!isset($options['alt'])) {
 			$options['alt'] = '';
@@ -1098,10 +1113,10 @@ class HtmlHelper extends Helper {
 		$text = $options['text'];
 
 		$options = array_diff_key($options, array(
-			'tag' => '',
-			'fullBase' => '',
-			'pathPrefix' => '',
-			'text' => ''
+			'tag' => null,
+			'fullBase' => null,
+			'pathPrefix' => null,
+			'text' => null
 		));
 		return $this->tag($tag, $text, $options);
 	}

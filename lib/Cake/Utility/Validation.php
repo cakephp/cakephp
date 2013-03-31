@@ -613,8 +613,10 @@ class Validation {
 		if (is_null($regex)) {
 			switch ($country) {
 				case 'us':
-				case 'all':
+				case 'ca':
+				// deprecated three-letter-code
 				case 'can':
+				case 'all':
 					// includes all NANPA members.
 					// see http://en.wikipedia.org/wiki/North_American_Numbering_Plan#List_of_NANPA_countries_and_territories
 					$regex = '/^(?:\+?1)?[-. ]?\\(?[2-9][0-8][0-9]\\)?[-. ]?[2-9][0-9]{2}[-. ]?[0-9]{4}$/';
@@ -646,7 +648,9 @@ class Validation {
 					$regex = '/\\A\\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\\b\\z/i';
 					break;
 				case 'ca':
-					$regex = '/\\A\\b[ABCEGHJKLMNPRSTVXY][0-9][A-Z] [0-9][A-Z][0-9]\\b\\z/i';
+					$district = '[ABCEGHJKLMNPRSTVYX]';
+					$letters = '[ABCEGHJKLMNPRSTVWXYZ]';
+					$regex = "/\\A\\b{$district}[0-9]{$letters} [0-9]{$letters}[0-9]\\b\\z/i";
 					break;
 				case 'it':
 				case 'de':
@@ -778,8 +782,8 @@ class Validation {
  * @return boolean Success
  */
 	public static function uuid($check) {
-		$regex = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i';
-		return static::_check($check, $regex);
+		$regex = '/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[1-5][a-fA-F0-9]{3}-[89aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$/';
+		return self::_check($check, $regex);
 	}
 
 /**

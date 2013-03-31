@@ -139,15 +139,18 @@ class TestSuiteDispatcher {
  * @return boolean true if found, false otherwise
  */
 	public function loadTestFramework() {
-		foreach (App::path('Vendor') as $vendor) {
+		if (class_exists('PHPUnit_Framework_TestCase')) {
+			return true;
+		}
+		foreach (App::path('vendors') as $vendor) {
 			$vendor = rtrim($vendor, DS);
 			if (is_dir($vendor . DS . 'PHPUnit')) {
 				ini_set('include_path', $vendor . PATH_SEPARATOR . ini_get('include_path'));
 				break;
 			}
 		}
-
-		return (include('PHPUnit' . DS . 'Autoload.php')) !== false;
+		include 'PHPUnit' . DS . 'Autoload.php';
+		return class_exists('PHPUnit_Framework_TestCase');
 	}
 
 /**

@@ -405,6 +405,10 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::objects
  */
 	public static function objects($type, $path = null, $cache = true) {
+		if (empty(static::$_objects) && $cache === true) {
+			static::$_objects = (array)Cache::read('object_map', '_cake_core_');
+		}
+
 		$extension = '/\.php$/';
 		$includeDirectories = false;
 		$name = $type;
@@ -421,10 +425,6 @@ class App {
 		} elseif ($type === 'file') {
 			$extension = '/\.php$/';
 			$name = $type . str_replace(DS, '', $path);
-		}
-
-		if (empty(static::$_objects) && $cache === true) {
-			static::$_objects = (array)Cache::read('object_map', '_cake_core_');
 		}
 
 		$cacheLocation = empty($plugin) ? 'app' : $plugin;
@@ -662,7 +662,6 @@ class App {
 		if (static::$_objectCacheChange) {
 			Cache::write('object_map', static::$_objects, '_cake_core_');
 		}
-
 		static::_checkFatalError();
 	}
 

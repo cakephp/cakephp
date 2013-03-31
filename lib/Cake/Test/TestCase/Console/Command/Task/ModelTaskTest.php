@@ -36,7 +36,7 @@ class ModelTaskTest extends TestCase {
  */
 	public $fixtures = array(
 		'core.bake_article', 'core.bake_comment', 'core.bake_articles_bake_tag',
-		'core.bake_tag', 'core.category_thread'
+		'core.bake_tag', 'core.category_thread', 'core.number_tree'
 	);
 
 /**
@@ -620,6 +620,20 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
+ * test non interactive doActsAs
+ *
+ * @return void
+ */
+	public function testDoActsAs() {
+		$this->Task->connection = 'test';
+		$this->Task->interactive = false;
+		$model = new Model(array('ds' => 'test', 'name' => 'NumberTree'));
+		$result = $this->Task->doActsAs($model);
+
+		$this->assertEquals(array('Tree'), $result);
+	}
+
+/**
  * Ensure that the fixture object is correctly called.
  *
  * @return void
@@ -833,6 +847,27 @@ STRINGEND;
 	}
 
 /**
+ * test bake() for models with behaviors
+ *
+ * @return void
+ */
+	public function testBakeWithBehaviors() {
+		$result = $this->Task->bake('NumberTree', array('actsAs' => array('Tree', 'PluginName.Sluggable')));
+		$expected = <<<TEXT
+/**
+ * Behaviors
+ *
+ * @var array
+ */
+	public \$actsAs = array(
+		'Tree',
+		'PluginName.Sluggable',
+	);
+TEXT;
+		$this->assertTextContains($expected, $result);
+	}
+
+/**
  * test that execute passes runs bake depending with named model.
  *
  * @return void
@@ -980,10 +1015,10 @@ STRINGEND;
 
 		$this->Task->execute();
 
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'createFile'),
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ModelTask',
+			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'doActsAs', 'createFile'),
 			array($out, $out, $in)
 		);
 		$this->_setupOtherMocks();
@@ -997,6 +1032,7 @@ STRINGEND;
 		$this->Task->expects($this->once())->method('_getModelObject')->will($this->returnValue($object));
 		$this->Task->expects($this->once())->method('doAssociations')->will($this->returnValue(array()));
 		$this->Task->expects($this->once())->method('doValidation')->will($this->returnValue(array()));
+		$this->Task->expects($this->once())->method('doActsAs')->will($this->returnValue(array()));
 
 		$filename = '/my/path/BakeOdd.php';
 		$this->Task->expects($this->once())->method('createFile')
@@ -1035,10 +1071,10 @@ STRINGEND;
 
 		$this->Task->execute();
 
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'createFile'),
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Task = $this->getMock('ModelTask',
+			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'doActsAs', 'createFile'),
 			array($out, $out, $in)
 		);
 		$this->_setupOtherMocks();
@@ -1052,6 +1088,7 @@ STRINGEND;
 		$this->Task->expects($this->once())->method('_getModelObject')->will($this->returnValue($object));
 		$this->Task->expects($this->once())->method('doAssociations')->will($this->returnValue(array()));
 		$this->Task->expects($this->once())->method('doValidation')->will($this->returnValue(array()));
+		$this->Task->expects($this->once())->method('doActsAs')->will($this->returnValue(array()));
 
 		$filename = '/my/path/BakeOdd.php';
 		$this->Task->expects($this->once())->method('createFile')

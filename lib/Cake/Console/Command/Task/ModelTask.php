@@ -166,7 +166,7 @@ class ModelTask extends BakeTask {
  * @param array $options Array of options to use for the selections. indexes must start at 0
  * @param string $prompt Prompt to use for options list.
  * @param integer $default The default option for the given prompt.
- * @return integer result of user choice.
+ * @return integer Result of user choice.
  */
 	public function inOptions($options, $prompt = null, $default = null) {
 		$valid = false;
@@ -349,7 +349,7 @@ class ModelTask extends BakeTask {
  * @return array $validate Array of user selected validations.
  */
 	public function doValidation($model) {
-		if (!is_object($model)) {
+		if (!$model instanceof Model) {
 			return false;
 		}
 		$fields = $model->schema();
@@ -492,10 +492,10 @@ class ModelTask extends BakeTask {
  * Handles associations
  *
  * @param Model $model
- * @return array $associations
+ * @return array Associations
  */
 	public function doAssociations($model) {
-		if (!is_object($model)) {
+		if (!$model instanceof Model) {
 			return false;
 		}
 		if ($this->interactive === true) {
@@ -541,11 +541,35 @@ class ModelTask extends BakeTask {
 	}
 
 /**
+ * Handles behaviors
+ *
+ * @param Model $model
+ * @return array Behaviors
+ */
+	public function doActsAs($model) {
+		if (!$model instanceof Model) {
+			return false;
+		}
+		$behaviors = array();
+		$fields = $model->schema(true);
+		if (empty($fields)) {
+			return array();
+		}
+
+		if (isset($fields['lft']) && $fields['lft']['type'] === 'integer' &&
+			isset($fields['rght']) && $fields['rght']['type'] === 'integer' &&
+			isset($fields['parent_id'])) {
+			$behaviors[] = 'Tree';
+		}
+		return $behaviors;
+	}
+
+/**
  * Find belongsTo relations and add them to the associations list.
  *
  * @param Model $model Model instance of model being generated.
  * @param array $associations Array of in progress associations
- * @return array $associations with belongsTo added in.
+ * @return array Associations with belongsTo added in.
  */
 	public function findBelongsTo(Model $model, $associations) {
 		$fieldNames = array_keys($model->schema(true));
@@ -574,7 +598,7 @@ class ModelTask extends BakeTask {
  *
  * @param Model $model Model instance being generated
  * @param array $associations Array of in progress associations
- * @return array $associations with hasOne and hasMany added in.
+ * @return array Associations with hasOne and hasMany added in.
  */
 	public function findHasOneAndMany(Model $model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
@@ -617,7 +641,7 @@ class ModelTask extends BakeTask {
  *
  * @param Model $model Model instance being generated
  * @param array $associations Array of in-progress associations
- * @return array $associations with hasAndBelongsToMany added in.
+ * @return array Associations with hasAndBelongsToMany added in.
  */
 	public function findHasAndBelongsToMany(Model $model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
@@ -749,7 +773,7 @@ class ModelTask extends BakeTask {
 /**
  * Finds all possible keys to use on custom associations.
  *
- * @return array array of tables and possible keys
+ * @return array Array of tables and possible keys
  */
 	protected function _generatePossibleKeys() {
 		$possible = array();
@@ -773,11 +797,12 @@ class ModelTask extends BakeTask {
  * @return string
  */
 	public function bake($name, $data = array()) {
-		if (is_object($name)) {
+		if ($name instanceof Model) {
 			if (!$data) {
 				$data = array();
 				$data['associations'] = $this->doAssociations($name);
 				$data['validate'] = $this->doValidation($name);
+				$data['actsAs'] = $this->doActsAs($name);
 			}
 			$data['primaryKey'] = $name->primaryKey;
 			$data['useTable'] = $name->table;
@@ -786,8 +811,10 @@ class ModelTask extends BakeTask {
 		} else {
 			$data['name'] = $name;
 		}
+
 		$defaults = array(
 			'associations' => array(),
+			'actsAs' => array(),
 			'validate' => array(),
 			'primaryKey' => 'id',
 			'useTable' => null,
@@ -922,7 +949,7 @@ class ModelTask extends BakeTask {
  * Forces the user to specify the model he wants to bake, and returns the selected model name.
  *
  * @param string $useDbConfig Database config name
- * @return string the model name
+ * @return string The model name
  */
 	public function getName($useDbConfig = null) {
 		$this->listAll($useDbConfig);

@@ -1431,7 +1431,7 @@ class Email {
 /**
  * Render the body of the email.
  *
- * @param string $content Content to render
+ * @param array $content Content to render
  * @return array Email body ready to be sent
  */
 	protected function _render($content) {

@@ -20,6 +20,7 @@
 namespace Cake\Test\TestCase\Controller\Component\Auth;
 
 use Cake\Controller\Component\Auth\DigestAuthenticate;
+use Cake\Error;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
@@ -104,6 +105,8 @@ class DigestAuthenticateTest extends TestCase {
 /**
  * test the authenticate method
  *
+ * @expectedException Cake\Error\UnauthorizedException
+ * @expectedExceptionCode 401
  * @return void
  */
 	public function testAuthenticateWrongUsername() {
@@ -122,18 +125,7 @@ response="6629fae49393a05397450978507c4ef1",
 opaque="123abc"
 DIGEST;
 
-		$this->response->expects($this->at(0))
-			->method('header')
-			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
-
-		$this->response->expects($this->at(1))
-			->method('statusCode')
-			->with(401);
-
-		$this->response->expects($this->at(2))
-			->method('send');
-
-		$this->assertTrue($this->auth->unauthenticated($request, $this->response));
+		$this->auth->unauthenticated($request, $this->response);
 	}
 
 /**
@@ -145,19 +137,14 @@ DIGEST;
 		$request = new Request('posts/index');
 		$request->addParams(array('pass' => array()));
 
-		$this->response->expects($this->at(0))
-			->method('header')
-			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
+		try {
+			$this->auth->unauthenticated($request, $this->response);
+		} catch (Error\UnauthorizedException $e) {}
 
-		$this->response->expects($this->at(1))
-			->method('statusCode')
-			->with(401);
+		$this->assertNotEmpty($e);
 
-		$this->response->expects($this->at(2))
-			->method('send');
-
-		$result = $this->auth->unauthenticated($request, $this->response);
-		$this->assertTrue($result);
+		$expected = array('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
+		$this->assertEquals($expected, $e->responseHeader());
 	}
 
 /**
@@ -194,6 +181,8 @@ DIGEST;
 /**
  * test scope failure.
  *
+ * @expectedException Cake\Error\UnauthorizedException
+ * @expectedExceptionCode 401
  * @return void
  */
 	public function testAuthenticateFailReChallenge() {
@@ -213,18 +202,7 @@ response="6629fae49393a05397450978507c4ef1",
 opaque="123abc"
 DIGEST;
 
-		$this->response->expects($this->at(0))
-			->method('header')
-			->with('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
-
-		$this->response->expects($this->at(1))
-			->method('statusCode')
-			->with(401);
-
-		$this->response->expects($this->at(2))
-			->method('send');
-
-		$this->assertTrue($this->auth->unauthenticated($request, $this->response));
+		$this->auth->unauthenticated($request, $this->response);
 	}
 
 /**

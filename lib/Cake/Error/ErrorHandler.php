@@ -113,9 +113,9 @@ class ErrorHandler {
  */
 	public static function handleException(\Exception $exception) {
 		$config = Configure::read('Exception');
-		if (!empty($config['log'])) {
-			Log::write(LOG_ERR, static::_getMessage($exception));
-		}
+		self::_log($exception, $config);
+
+		$renderer = isset($config['renderer']) ? $config['renderer'] : 'ExceptionRenderer';
 		$renderer = App::classname($config['renderer'], 'Error');
 		try {
 			if (!$renderer) {
@@ -159,6 +159,28 @@ class ErrorHandler {
 		}
 		$message .= "\nStack Trace:\n" . $exception->getTraceAsString();
 		return $message;
+	}
+
+/**
+ * Handles exception logging
+ *
+ * @param Exception $exception
+ * @param array $config
+ * @return boolean
+ */
+	protected static function _log(\Exception $exception, $config) {
+		if (empty($config['log'])) {
+			return false;
+		}
+
+		if (!empty($config['skipLog'])) {
+			foreach ((array)$config['skipLog'] as $class) {
+				if ($exception instanceof $class) {
+					return false;
+				}
+			}
+		}
+		return Log::write(LOG_ERR, self::_getMessage($exception));
 	}
 
 /**

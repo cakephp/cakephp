@@ -453,7 +453,16 @@ class SqlserverTest extends TestCase {
 				'Length' => 72,
 				'Null' => 'NO',
 				'Size' => ''
-			)
+			),
+			(object)array(
+				'Default' => null,
+				'Field' => 'parent_id',
+				'Key' => '0',
+				'Type' => 'bigint',
+				'Length' => 8,
+				'Null' => 'YES',
+				'Size' => '0',
+			),
 		));
 		$this->db->executeResultsStack = array($SqlserverTableDescription);
 		$dummyModel = $this->model;
@@ -483,9 +492,16 @@ class SqlserverTest extends TestCase {
 				'default' => '',
 				'length' => 36,
 				'key' => 'primary'
-			)
+			),
+			'parent_id' => array(
+				'type' => 'biginteger',
+				'null' => true,
+				'default' => null,
+				'length' => 8,
+			),
 		);
 		$this->assertEquals($expected, $result);
+		$this->assertSame($expected['parent_id'], $result['parent_id']);
 	}
 
 /**
