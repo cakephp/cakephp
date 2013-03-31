@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Model\Datasource\Database\Driver;
 
 use Cake\Core\Configure;
 use Cake\Model\Datasource\Database\Connection;
+use Cake\Model\Datasource\Database\Driver\Mysql;
 use \PDO;
 
 /**
@@ -214,7 +215,7 @@ SQL;
  * @return void
  */
 	public function testConvertColumnType($input, $expected) {
-		$driver = $this->getMock('Cake\Model\Datasource\Database\Driver\Mysql', ['_connect']);
+		$driver = new Mysql();
 		$this->assertEquals($driver->convertColumn($input), $expected);
 	}
 
@@ -237,7 +238,7 @@ SQL;
  * @return void
  */
 	public function testConvertIndex($input, $expected) {
-		$driver = $this->getMock('Cake\Model\Datasource\Database\Driver\Mysql', ['_connect']);
+		$driver = new Mysql();
 		$this->assertEquals($driver->convertIndex($input), $expected);
 	}
 
