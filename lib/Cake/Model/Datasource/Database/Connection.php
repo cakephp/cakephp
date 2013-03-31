@@ -22,6 +22,7 @@ use Cake\Model\Datasource\Database\Exception\MissingExtensionException;
 use Cake\Model\Datasource\Database\Query;
 use Cake\Model\Datasource\Database\Log\LoggingStatement;
 use Cake\Model\Datasource\Database\Log\QueryLogger;
+use Cake\Model\Datasource\Database\Log\LoggedQuery;
 
 /**
  * Represents a connection with a database server
@@ -286,6 +287,9 @@ class Connection {
 	public function begin() {
 		$this->connect();
 		if (!$this->_transactionStarted) {
+			if ($this->_logQueries) {
+				$this->log('BEGIN');
+			}
 			$this->_driver->beginTransaction();
 			$this->_transactionLevel = 0;
 			$this->_transactionStarted = true;
@@ -311,6 +315,9 @@ class Connection {
 
 		if ($this->_transactionLevel === 0) {
 			$this->_transactionStarted = false;
+			if ($this->_logQueries) {
+				$this->log('COMMIT');
+			}
 			return $this->_driver->commitTransaction();
 		}
 		if ($this->useSavePoints()) {
@@ -336,6 +343,9 @@ class Connection {
 		if ($this->_transactionLevel === 0 || !$useSavePoint) {
 			$this->_transactionLevel = 0;
 			$this->_transactionStarted = false;
+			if ($this->_logQueries) {
+				$this->log('ROLLBACK');
+			}
 			$this->_driver->rollbackTransaction();
 			return true;
 		}
@@ -477,6 +487,18 @@ class Connection {
 			return $this->_logger;
 		}
 		$this->_logger = $instance;
+	}
+
+/**
+ * Logs a Query string using the configured logger object
+ *
+ * @param string $sql string to be logged
+ * @return void
+ */
+	public function log($sql) {
+		$logged = new LoggedQuery;
+		$logged->query = $sql;
+		$this->logger()->write($logged);
 	}
 
 /**

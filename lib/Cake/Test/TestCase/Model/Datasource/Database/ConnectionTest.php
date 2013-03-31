@@ -637,7 +637,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testLoggerDecorator() {
-		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
+		$logger = new \Cake\Model\Datasource\Database\Log\QueryLogger;
 		$this->connection->logQueries(true);
 		$this->connection->logger($logger);
 		$st = $this->connection->prepare('SELECT 1');
@@ -647,6 +647,64 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->connection->logQueries(false);
 		$st = $this->connection->prepare('SELECT 1');
 		$this->assertNotInstanceOf('\Cake\Model\Datasource\Database\Log\LoggingStatement', $st);
+	}
+
+/**
+ * Tests that log() function writes to the configured query logger
+ *
+ * @return void
+ */
+	public function testLogFunction() {
+		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
+		$this->connection->logger($logger);
+		$logger->expects($this->once())->method('write')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
+				$this->attributeEqualTo('query', 'SELECT 1')
+			));
+		$this->connection->log('SELECT 1');
+	}
+
+/**
+ * Tests that begin and rollback are also logged
+ *
+ * @return void
+ */
+	public function testLogBeginRollbackTransaction() {
+		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
+		$this->connection->logger($logger);
+		$logger->expects($this->at(0))->method('write')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
+				$this->attributeEqualTo('query', 'BEGIN')
+			));
+		$logger->expects($this->at(1))->method('write')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
+				$this->attributeEqualTo('query', 'ROLLBACK')
+			));
+		$this->connection->logQueries(true);
+		$this->connection->begin();
+		$this->connection->begin(); //This one will not be logged
+		$this->connection->rollback();
+	}
+
+/**
+ * Tests that commits are logged
+ *
+ * @return void
+ */
+	public function testLogCommitTransaction() {
+		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
+		$this->connection->logger($logger);
+		$logger->expects($this->at(1))->method('write')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
+				$this->attributeEqualTo('query', 'COMMIT')
+			));
+		$this->connection->logQueries(true);
+		$this->connection->begin();
+		$this->connection->commit();
 	}
 
 }
