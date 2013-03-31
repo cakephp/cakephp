@@ -171,6 +171,7 @@ class I18n {
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
 
 		if (!isset($_this->_domains[$domain][$_this->_lang])) {
+			$_this->_domains[$domain][$_this->_lang] = [];
 			$_this->_domains[$domain][$_this->_lang] = Cache::read($_this->domain, '_cake_core_');
 		}
 
