@@ -17,13 +17,26 @@
  */
 namespace Cake\Test\TestCase\Model\Datasource\Database\Driver;
 
+use Cake\Core\Configure;
+use Cake\Model\Datasource\Database\Driver\Sqlite;
+use Cake\Testsuite\TestCase;
 use \PDO;
 
 /**
  * Tests Sqlite driver
- *
  */
-class SqliteTest extends \Cake\TestSuite\TestCase {
+class SqliteTest extends TestCase {
+
+/**
+ * setup method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$config = Configure::read('Datasource.test');
+		$this->skipIf(strpos($config['datasource'], 'Sqlite') === false, 'Not using Sqlite for test config');
+	}
 
 /**
  * Test connecting to Sqlite with default configuration
@@ -86,6 +99,87 @@ class SqliteTest extends \Cake\TestSuite\TestCase {
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 		$driver->connect($config);
+	}
+
+/**
+ * Dataprovider for column testing
+ *
+ * @return array
+ */
+	public static function columnProvider() {
+		return [
+			[
+				'DATETIME',
+				['datetime', null]
+			],
+			[
+				'DATE',
+				['date', null]
+			],
+			[
+				'TIME',
+				['time', null]
+			],
+			[
+				'BOOLEAN',
+				['boolean', null]
+			],
+			[
+				'BIGINT',
+				['biginteger', null]
+			],
+			[
+				'VARCHAR(255)',
+				['string', 255]
+			],
+			[
+				'CHAR(25)',
+				['string', 25]
+			],
+			[
+				'BLOB',
+				['binary', null]
+			],
+			[
+				'INTEGER(11)',
+				['integer', 11]
+			],
+			[
+				'TINYINT(5)',
+				['integer', 5]
+			],
+			[
+				'MEDIUMINT(10)',
+				['integer', 10]
+			],
+			[
+				'FLOAT',
+				['float', null]
+			],
+			[
+				'DOUBLE',
+				['float', null]
+			],
+			[
+				'REAL',
+				['float', null]
+			],
+			[
+				'DECIMAL(11,2)',
+				['decimal', null]
+			],
+		];
+	}
+
+/**
+ * Test parsing SQLite column types.
+ *
+ * @dataProvider columnProvider
+ * @return void
+ */
+	public function testConvertColumnType($input, $expected) {
+		$driver = new Sqlite();
+		$this->assertEquals($driver->convertColumn($input), $expected);
 	}
 
 }

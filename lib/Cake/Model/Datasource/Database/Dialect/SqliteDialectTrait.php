@@ -85,4 +85,61 @@ trait SqliteDialectTrait {
 		}
 	}
 
+/**
+ * Convert a column definition to the abstract types.
+ *
+ * The returned type will be a type that
+ * Cake\Model\Datasource\Database\Type can handle.
+ *
+ * @param string $column The column type + length
+ * @return array List of (type, length)
+ */
+	public function convertColumn($column) {
+		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
+		if (empty($matches)) {
+			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+		}
+		$col = strtolower($matches[1]);
+		$length = null;
+		if (isset($matches[2])) {
+			$length = (int)$matches[2];
+		}
+
+		if ($col === 'bigint') {
+			return ['biginteger', $length];
+		}
+		if (in_array($col, ['blob', 'clob'])) {
+			return ['binary', null];
+		}
+		if (in_array($col, ['date', 'time', 'timestamp', 'datetime'])) {
+			return [$col, null];
+		}
+		if (strpos($col, 'decimal') !== false) {
+			return ['decimal', null];
+		}
+
+		if (strpos($col, 'boolean') !== false) {
+			return ['boolean', null];
+		}
+		if (strpos($col, 'int') !== false) {
+			return ['integer', $length];
+		}
+		if (strpos($col, 'char') !== false) {
+			return ['string', $length];
+		}
+		if (in_array($col, ['float', 'real', 'double'])) {
+			return ['float', null];
+		}
+		return ['text', null];
+	}
+
+/**
+ * Additional metadata columns in table descriptions.
+ *
+ * @return array
+ */
+	public function extraSchemaColumns() {
+		return [];
+	}
+
 }
