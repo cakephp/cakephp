@@ -302,6 +302,8 @@ class PaginatorHelper extends AppHelper {
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
  * - `direction` The default direction to use when this link isn't active.
+ * - `classAsc` The default class to use when this link is in asc direction.
+ * - `classDesc` The default class to use when this link is in desc direction.
  *
  * @param string $key The name of the key that the recordset should be sorted.
  * @param string $title Title for the link. If $title is null $key will be used
@@ -312,7 +314,7 @@ class PaginatorHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sort
  */
 	public function sort($key, $title = null, $options = array()) {
-		$options = array_merge(array('url' => array(), 'model' => null), $options);
+		$options = array_merge(array('url' => array(), 'model' => null, 'classAsc' => 'asc', 'classDesc' => 'desc'), $options);
 		$url = $options['url'];
 		unset($options['url']);
 
@@ -338,7 +340,7 @@ class PaginatorHelper extends AppHelper {
 
 		if ($isSorted) {
 			$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
-			$class = $dir === 'asc' ? 'desc' : 'asc';
+			$class = $dir === 'asc' ? $options['classDesc'] : $options['classAsc'];
 			if (!empty($options['class'])) {
 				$options['class'] .= ' ' . $class;
 			} else {
