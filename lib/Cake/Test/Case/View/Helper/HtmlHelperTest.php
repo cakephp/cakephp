@@ -605,6 +605,22 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testCssWithFullBase method
+ *
+ * @return void
+ */
+	public function testCssWithFullBase() {
+		Configure::write('Asset.filter.css', false);
+		$here = $this->Html->url('/', true);
+
+		$result = $this->Html->css('screen', null, array('fullBase' => true));
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => $here . 'css/screen.css')
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testPluginCssLink method
  *
  * @return void
@@ -972,6 +988,30 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->script('//example.com/js/jquery-1.3.js');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => '//example.com/js/jquery-1.3.js')
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * testScriptWithFullBase method
+ *
+ * @return void
+ */
+	public function testScriptWithFullBase() {
+		$here = $this->Html->url('/', true);
+
+		$result = $this->Html->script('foo', array('fullBase' => true));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => $here . 'js/foo.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script(array('foobar', 'bar'), array('fullBase' => true));
+		$expected = array(
+			array('script' => array('type' => 'text/javascript', 'src' => $here . 'js/foobar.js')),
+			'/script',
+			array('script' => array('type' => 'text/javascript', 'src' => $here . 'js/bar.js')),
+			'/script',
 		);
 		$this->assertTags($result, $expected);
 	}
