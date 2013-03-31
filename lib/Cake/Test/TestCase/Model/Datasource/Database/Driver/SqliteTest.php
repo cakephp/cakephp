@@ -18,6 +18,7 @@
 namespace Cake\Test\TestCase\Model\Datasource\Database\Driver;
 
 use Cake\Core\Configure;
+use Cake\Model\Datasource\Database\Connection;
 use Cake\Model\Datasource\Database\Driver\Sqlite;
 use Cake\Testsuite\TestCase;
 use \PDO;
@@ -180,6 +181,56 @@ class SqliteTest extends TestCase {
 	public function testConvertColumnType($input, $expected) {
 		$driver = new Sqlite();
 		$this->assertEquals($driver->convertColumn($input), $expected);
+	}
+
+/**
+ * Creates tables for testing listTables/describe()
+ *
+ * @param Connection $connection
+ * @return void
+ */
+	protected function _createTables($connection) {
+		$connection->execute('DROP TABLE IF EXISTS articles');
+		$connection->execute('DROP TABLE IF EXISTS authors');
+
+		$table = <<<SQL
+CREATE TABLE authors(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name VARCHAR(50),
+bio TEXT,
+created DATETIME
+)
+SQL;
+		$connection->execute($table);
+
+		$table = <<<SQL
+CREATE TABLE articles(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+title VARCHAR(20),
+body TEXT,
+author_id INT(11) NOT NULL,
+published BOOLEAN,
+created DATETIME
+)
+SQL;
+		$connection->execute($table);
+	}
+
+/**
+ * Test listing tables with Sqlite
+ *
+ * @return void
+ */
+	public function testListTables() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$result = $connection->listTables();
+		$this->assertInternalType('array', $result);
+		$this->assertCount(3, $result);
+		$this->assertEquals('articles', $result[0]);
+		$this->assertEquals('authors', $result[1]);
+		$this->assertEquals('sqlite_sequence', $result[2]);
 	}
 
 }

@@ -142,4 +142,15 @@ trait SqliteDialectTrait {
 		return [];
 	}
 
+/**
+ * Get the SQL to list the tables in Sqlite
+ *
+ * @param array $config The connection configuration to use for
+ *    getting tables from.
+ * @return array An array of (sql, params) to execute.
+ */
+	public function listTablesSql() {
+		return ["SELECT name FROM sqlite_master WHERE type='table' ORDER BY name", []];
+	}
+
 }
