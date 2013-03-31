@@ -11,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,7 +26,7 @@ class LoggingStatement extends \Cake\Model\Datasource\Database\Statement {
 /**
  * Logger instance responsible for actually doing the logging task
  *
- * @var SqlLogger
+ * @var QueryLogger
  */
 	protected $_logger;
 
