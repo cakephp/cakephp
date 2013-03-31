@@ -609,4 +609,44 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Tests default return vale for logger() function
+ *
+ * @return void
+ */
+	public function testLoggerDefault() {
+		$logger = $this->connection->logger();
+		$this->assertInstanceOf('\Cake\Model\Datasource\Database\Log\QueryLogger', $logger);
+		$this->assertSame($logger, $this->connection->logger());
+	}
+
+/**
+ * Tests that a custom logger object can be set
+ *
+ * @return void
+ */
+	public function testSetLogger() {
+		$logger = new \Cake\Model\Datasource\Database\Log\QueryLogger;
+		$this->connection->logger($logger);
+		$this->assertSame($logger, $this->connection->logger());
+	}
+
+/**
+ * Tests that statements are decorated with a logger when logQueries is set to true
+ *
+ * @return void
+ */
+	public function testLoggerDecorator() {
+		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
+		$this->connection->logQueries(true);
+		$this->connection->logger($logger);
+		$st = $this->connection->prepare('SELECT 1');
+		$this->assertInstanceOf('\Cake\Model\Datasource\Database\Log\LoggingStatement', $st);
+		$this->assertSame($logger, $st->logger());
+
+		$this->connection->logQueries(false);
+		$st = $this->connection->prepare('SELECT 1');
+		$this->assertNotInstanceOf('\Cake\Model\Datasource\Database\Log\LoggingStatement', $st);
+	}
+
 }
