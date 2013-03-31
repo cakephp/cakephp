@@ -74,8 +74,9 @@ class Configure {
 				'www_root' => WWW_ROOT
 			));
 
-			if (!include APP . 'Config' . DS . 'core.php') {
-				trigger_error(__d('cake_dev', "Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
+			$pathToCore = APP . 'Config' . DS;
+			if (@!include $pathToCore . 'core.php') {
+				trigger_error(__d('cake_dev', "Can't find application core file. Please create the <b>core.php</b> file (most likely by renaming %s<b>core.php.default</b> to %s<b>core.php</b>), and make sure it is readable by PHP.", $pathToCore, $pathToCore, $pathToCore), E_USER_ERROR);
 			}
 			App::$bootstrapping = false;
 			App::init();
