@@ -134,6 +134,17 @@ trait SqliteDialectTrait {
 	}
 
 /**
+ * Get the SQL to list the tables in Sqlite
+ *
+ * @param array $config The connection configuration to use for
+ *    getting tables from.
+ * @return array An array of (sql, params) to execute.
+ */
+	public function listTablesSql() {
+		return ["SELECT name FROM sqlite_master WHERE type='table' ORDER BY name", []];
+	}
+
+/**
  * Additional metadata columns in table descriptions.
  *
  * @return array
@@ -143,14 +154,34 @@ trait SqliteDialectTrait {
 	}
 
 /**
- * Get the SQL to list the tables in Sqlite
+ * Get the SQL to describe a table in Sqlite.
  *
- * @param array $config The connection configuration to use for
- *    getting tables from.
+ * @param string $table The table name to describe
  * @return array An array of (sql, params) to execute.
  */
-	public function listTablesSql() {
-		return ["SELECT name FROM sqlite_master WHERE type='table' ORDER BY name", []];
+	public function describeTableSql($table) {
+		return ["PRAGMA table_info(" . $this->quoteIdentifier($table) . ")", []];
+	}
+
+/**
+ * Convert field description results into abstract schema fields.
+ *
+ * @return array An array of with the key/values of schema data.
+ */
+	public function convertFieldDescription($row, $fieldParams = []) {
+		list($type, $length) = $this->convertColumn($row['type']);
+		$schema = [];
+		$schema[$row['name']] = [
+			'type' => $type,
+			'null' => !$row['notnull'],
+			'default' => $row['dflt_value'] === null ? null : trim($row['dflt_value'], "'"),
+			'length' => $length,
+		];
+		if ($row['pk'] == true) {
+			$schema[$row['name']]['key'] = 'primary';
+			$schema[$row['name']]['null'] = false;
+		}
+		return $schema;
 	}
 
 }

@@ -29,12 +29,11 @@ use \PDO;
 class SqliteTest extends TestCase {
 
 /**
- * setup method
+ * Helper method for skipping tests that need a real connection.
  *
  * @return void
  */
-	public function setUp() {
-		parent::setUp();
+	protected function _needsConnection() {
 		$config = Configure::read('Datasource.test');
 		$this->skipIf(strpos($config['datasource'], 'Sqlite') === false, 'Not using Sqlite for test config');
 	}
@@ -190,6 +189,7 @@ class SqliteTest extends TestCase {
  * @return void
  */
 	protected function _createTables($connection) {
+		$this->_needsConnection();
 		$connection->execute('DROP TABLE IF EXISTS articles');
 		$connection->execute('DROP TABLE IF EXISTS authors');
 
@@ -206,10 +206,10 @@ SQL;
 		$table = <<<SQL
 CREATE TABLE articles(
 id INTEGER PRIMARY KEY AUTOINCREMENT,
-title VARCHAR(20),
+title VARCHAR(20) DEFAULT 'testing',
 body TEXT,
 author_id INT(11) NOT NULL,
-published BOOLEAN,
+published BOOLEAN DEFAULT 0,
 created DATETIME
 )
 SQL;
@@ -231,6 +231,58 @@ SQL;
 		$this->assertEquals('articles', $result[0]);
 		$this->assertEquals('authors', $result[1]);
 		$this->assertEquals('sqlite_sequence', $result[2]);
+	}
+
+/**
+ * Test describing a table with Sqlite
+ *
+ * @return void
+ */
+	public function testDescribeTable() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$result = $connection->describe('articles');
+		$expected = [
+			'id' => [
+				'type' => 'integer',
+				'null' => false,
+				'default' => null,
+				'length' => null,
+				'key' => 'primary',
+			],
+			'title' => [
+				'type' => 'string',
+				'null' => true,
+				'default' => 'testing',
+				'length' => 20,
+			],
+			'body' => [
+				'type' => 'text',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+			],
+			'author_id' => [
+				'type' => 'integer',
+				'null' => false,
+				'default' => null,
+				'length' => 11,
+			],
+			'published' => [
+				'type' => 'boolean',
+				'null' => true,
+				'default' => 0,
+				'length' => null,
+			],
+			'created' => [
+				'type' => 'datetime',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+			],
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 }
