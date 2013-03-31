@@ -465,7 +465,7 @@ class CakeTime {
 		$timestamp = self::fromString($dateString, $timezone);
 		return date('Y-m-d', $timestamp) == date('Y-m-d', time());
 	}
-                
+
 /**
  * Returns true if given datetime string is in the future.
  *
@@ -475,10 +475,10 @@ class CakeTime {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public static function isFuture($dateString, $timezone = null) {
-		$date = self::fromString($dateString, $timezone);
-		return date('Y-m-d H:i:s', $date) < date('Y-m-d H:i:s', time());
+		$timestamp = self::fromString($dateString, $timezone);
+		return $timestamp > time();
 	}
-        
+
 /**
  * Returns true if given datetime string is in the past.
  *
@@ -488,8 +488,8 @@ class CakeTime {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public static function isPast($dateString, $timezone = null) {
-		$date = self::fromString($dateString, $timezone);
-		return date('Y-m-d H:i:s', $date) > date('Y-m-d H:i:s', time());
+		$timestamp = self::fromString($dateString, $timezone);
+		return $timestamp < time();
 	}
 
 /**
