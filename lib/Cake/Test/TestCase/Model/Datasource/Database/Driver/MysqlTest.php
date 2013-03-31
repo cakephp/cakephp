@@ -28,12 +28,11 @@ use \PDO;
 class MysqlTest extends \Cake\TestSuite\TestCase {
 
 /**
- * setUp
+ * Helper method for skipping tests that need a real connection.
  *
  * @return void
  */
-	public function setUp() {
-		parent::setUp();
+	protected function _needsConnection() {
 		$config = Configure::read('Datasource.test');
 		$this->skipIf(strpos($config['datasource'], 'Mysql') === false, 'Not using Mysql for test config');
 	}
@@ -110,6 +109,7 @@ class MysqlTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	protected function _createTables($connection) {
+		$this->_needsConnection();
 		$connection->execute('DROP TABLE IF EXISTS articles');
 		$connection->execute('DROP TABLE IF EXISTS authors');
 
