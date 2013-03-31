@@ -37,6 +37,7 @@ class MysqlTest extends \Cake\TestSuite\TestCase {
 		$config = Configure::read('Datasource.test');
 		$this->skipIf(strpos($config['datasource'], 'Mysql') === false, 'Not using Mysql for test config');
 	}
+
 /**
  * Test connecting to Mysql with default configuration
  *
@@ -160,6 +161,10 @@ SQL;
 			[
 				'TINYINT(2)',
 				['integer', 2]
+			],
+			[
+				'INTEGER(11)',
+				['integer', 11]
 			],
 			[
 				'BIGINT',
