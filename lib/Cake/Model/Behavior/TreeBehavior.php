@@ -673,7 +673,7 @@ class TreeBehavior extends ModelBehavior {
 		$hasChildren = (bool)$children;
 
 		if (!is_null($parentId)) {
-			if($hasChildren) {
+			if ($hasChildren) {
 				$Model->updateAll(
 					array($this->settings[$Model->alias]['left'] => $counter),
 					array($Model->escapeField() => $parentId)

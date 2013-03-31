@@ -139,7 +139,8 @@ class BasicAuthenticateTest extends CakeTestCase {
 
 		try {
 			$this->auth->unauthenticated($request, $this->response);
-		} catch (UnauthorizedException $e) {}
+		} catch (UnauthorizedException $e) {
+		}
 
 		$this->assertNotEmpty($e);
 

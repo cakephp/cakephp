@@ -137,7 +137,8 @@ DIGEST;
 
 		try {
 			$this->auth->unauthenticated($request, $this->response);
-		} catch (UnauthorizedException $e) {}
+		} catch (UnauthorizedException $e) {
+		}
 
 		$this->assertNotEmpty($e);
 

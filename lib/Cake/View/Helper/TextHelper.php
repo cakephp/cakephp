@@ -250,7 +250,7 @@ class TextHelper extends AppHelper {
 		}
 		return $text;
 	}
-  
+
 /**
  * @see String::stripLinks()
  *
