@@ -129,6 +129,8 @@ id BIGINT PRIMARY KEY AUTO_INCREMENT,
 title VARCHAR(20) COMMENT 'A title',
 body TEXT,
 author_id INT(11) NOT NULL,
+published BOOLEAN DEFAULT 0,
+allow_comments TINYINT(1) DEFAULT 0,
 created DATETIME
 ) COLLATE=utf8_general_ci
 SQL;
@@ -293,6 +295,18 @@ SQL;
 				'null' => false,
 				'default' => null,
 				'length' => 11,
+			],
+			'published' => [
+				'type' => 'boolean',
+				'null' => true,
+				'default' => 0,
+				'length' => null,
+			],
+			'allow_comments' => [
+				'type' => 'boolean',
+				'null' => true,
+				'default' => 0,
+				'length' => null,
 			],
 			'created' => [
 				'type' => 'datetime',
