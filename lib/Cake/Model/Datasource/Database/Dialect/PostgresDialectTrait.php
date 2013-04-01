@@ -20,12 +20,29 @@ namespace Cake\Model\Datasource\Database\Dialect;
 use Cake\Model\Datasource\Database\Expression\UnaryExpression;
 use Cake\Model\Datasource\Database\Expression\FunctionExpression;
 use Cake\Model\Datasource\Database\Query;
+use Cake\Model\Datasource\Database\SqlDialectTrait;
 
 /**
  * Contains functions that encapsulates the SQL dialect used by Postgres,
  * including query translators and schema introspection.
  */
 trait PostgresDialectTrait {
+
+	use SqlDialectTrait;
+
+/**
+ *  String used to start a database identifier quoting to make it safe
+ *
+ * @var string
+ **/
+	public $startQuote = '"';
+
+/**
+ * String used to end a database identifier quoting to make it safe
+ *
+ * @var string
+ **/
+	public $endQuote = '"';
 
 /**
  * Returns a query that has been transformed to the specific SQL dialect
