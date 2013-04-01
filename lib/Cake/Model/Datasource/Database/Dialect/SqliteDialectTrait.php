@@ -17,6 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database\Dialect;
 
+use Cake\Model\Datasource\Database\ExpressionInterface;
 use Cake\Model\Datasource\Database\Expression\FunctionExpression;
 use Cake\Model\Datasource\Database\Query;
 use Cake\Model\Datasource\Database\SqlDialectTrait;
@@ -107,7 +108,7 @@ trait SqliteDialectTrait {
 			$values[] = $val;
 			$val = array_merge($val, array_fill(0, count($cols) - count($val), null));
 			$val = array_map(function($val) {
-				return $val instanceof Expression ? $val : '?';
+				return $val instanceof ExpressionInterface ? $val : '?';
 			}, $val);
 
 			if ($k === 0) {
