@@ -496,9 +496,9 @@ class Connection {
  * @return void
  */
 	public function log($sql) {
-		$logged = new LoggedQuery;
-		$logged->query = $sql;
-		$this->logger()->write($logged);
+		$query = new LoggedQuery;
+		$query->query = $sql;
+		$this->logger()->log($query);
 	}
 
 /**

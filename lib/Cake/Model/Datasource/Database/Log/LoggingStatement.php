@@ -48,12 +48,12 @@ class LoggingStatement extends \Cake\Model\Datasource\Database\Statement {
 		$t = microtime(true);
 		$result = parent::execute($params);
 
-		$logged = new LoggedQuery;
-		$logged->took = round((microtime(true) - $t) * 1000, 0);
-		$logged->numRows = $this->rowCount();
-		$logged->params = $params ?: $this->_compiledParams;
-		$logged->query = $this->queryString;
-		$this->logger()->write($logged);
+		$query = new LoggedQuery;
+		$query->took = round((microtime(true) - $t) * 1000, 0);
+		$query->numRows = $this->rowCount();
+		$query->params = $params ?: $this->_compiledParams;
+		$query->query = $this->queryString;
+		$this->logger()->log($query);
 
 		return $result;
 	}

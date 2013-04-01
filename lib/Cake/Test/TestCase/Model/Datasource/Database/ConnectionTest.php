@@ -650,14 +650,14 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that log() function writes to the configured query logger
+ * Tests that log() function logs to the configured query logger
  *
  * @return void
  */
 	public function testLogFunction() {
 		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
 		$this->connection->logger($logger);
-		$logger->expects($this->once())->method('write')
+		$logger->expects($this->once())->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'SELECT 1')
@@ -673,12 +673,12 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	public function testLogBeginRollbackTransaction() {
 		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
 		$this->connection->logger($logger);
-		$logger->expects($this->at(0))->method('write')
+		$logger->expects($this->at(0))->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'BEGIN')
 			));
-		$logger->expects($this->at(1))->method('write')
+		$logger->expects($this->at(1))->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'ROLLBACK')
@@ -697,7 +697,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	public function testLogCommitTransaction() {
 		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
 		$this->connection->logger($logger);
-		$logger->expects($this->at(1))->method('write')
+		$logger->expects($this->at(1))->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'COMMIT')

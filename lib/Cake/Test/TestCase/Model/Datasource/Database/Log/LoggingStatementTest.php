@@ -35,7 +35,7 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 		$inner->expects($this->once())->method('rowCount')->will($this->returnValue(3));
 		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
 		$logger->expects($this->once())
-			->method('write')
+			->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'SELECT bar FROM foo'),
@@ -59,7 +59,7 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 		$inner->expects($this->once())->method('rowCount')->will($this->returnValue(4));
 		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
 		$logger->expects($this->once())
-			->method('write')
+			->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'SELECT bar FROM foo'),
@@ -83,7 +83,7 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 		$inner->expects($this->any())->method('rowCount')->will($this->returnValue(4));
 		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
 		$logger->expects($this->at(0))
-			->method('write')
+			->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'SELECT bar FROM foo'),
@@ -92,7 +92,7 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 				$this->attributeEqualTo('params', ['a' => 1, 'b' => '2013-01-01'])
 			));
 		$logger->expects($this->at(1))
-			->method('write')
+			->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'SELECT bar FROM foo'),

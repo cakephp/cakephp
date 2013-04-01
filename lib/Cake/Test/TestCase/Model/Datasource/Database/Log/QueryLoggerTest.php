@@ -74,7 +74,7 @@ class QueryLoggerTest extends \Cake\TestSuite\TestCase {
 		$query->params = ['p1' =>  'string', 'p2' => 3, 'p3' => null];
 
 		$logger->expects($this->once())->method('_log')->with($query);
-		$logger->write($query);
+		$logger->log($query);
 		$expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL";
 		$this->assertEquals($expected, (string)$query);
 	}
@@ -91,7 +91,7 @@ class QueryLoggerTest extends \Cake\TestSuite\TestCase {
 		$query->params = ['string', '3',  null];
 
 		$logger->expects($this->once())->method('_log')->with($query);
-		$logger->write($query);
+		$logger->log($query);
 		$expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL";
 		$this->assertEquals($expected, (string)$query);
 	}
@@ -112,7 +112,7 @@ class QueryLoggerTest extends \Cake\TestSuite\TestCase {
 		$engine2 = $this->getMock('\Cake\Log\Engine\BaseLog', ['write'], ['scopes' => ['foo']]);
 		Log::engine('queryLoggerTest2', $engine);
 		$engine2->expects($this->never())->method('write');
-		$logger->write($query);
+		$logger->log($query);
 	}
 
 

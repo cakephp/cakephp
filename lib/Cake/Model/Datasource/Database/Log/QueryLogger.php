@@ -33,7 +33,7 @@ class QueryLogger {
  * @param LoggedQuery $query to be written in log
  * @return void
  */
-	public function write(LoggedQuery $query) {
+	public function log(LoggedQuery $query) {
 		if (!empty($query->params)) {
 			$query->query = $this->_interpolate($query);
 		}
