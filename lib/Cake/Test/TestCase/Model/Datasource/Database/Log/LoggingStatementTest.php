@@ -100,14 +100,15 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 				$this->attributeEqualTo('numRows', 4),
 				$this->attributeEqualTo('params', ['a' => 1, 'b' => '2014-01-01'])
 			));
+		$date = new \DateTime('2013-01-01');
 		$inner->expects($this->at(0))->method('bindValue')->with('a', 1);
-		$inner->expects($this->at(1))->method('bindValue')->with('b', '2013-01-01');
+		$inner->expects($this->at(1))->method('bindValue')->with('b', $date);
 		$driver = $this->getMock('\Cake\Model\Datasource\Database\Driver');
 		$st = new LoggingStatement($inner, $driver);
 		$st->queryString = 'SELECT bar FROM foo';
 		$st->logger($logger);
 		$st->bindValue('a', 1);
-		$st->bindValue('b', new \DateTime('2013-01-01'), 'date');
+		$st->bindValue('b', $date, 'date');
 		$st->execute();
 		$st->bindValue('b', new \DateTime('2014-01-01'), 'date');
 		$st->execute();

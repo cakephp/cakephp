@@ -17,7 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database\Driver;
 
-use Cake\Model\Datasource\Database\Statement;
+use Cake\Model\Datasource\Database\Statement\PDOStatement;
 use PDO;
 
 trait PDODriverTrait {
@@ -70,7 +70,7 @@ trait PDODriverTrait {
  */
 	public  function prepare($sql) {
 		$statement = $this->connection()->prepare($sql);
-		return new Statement($statement, $this);
+		return new PDOStatement($statement, $this);
 	}
 
 /**

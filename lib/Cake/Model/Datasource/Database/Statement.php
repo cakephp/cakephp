@@ -16,14 +16,14 @@
  */
 namespace Cake\Model\Datasource\Database;
 
-use PDO;
-
 /**
  * Represents a database statement. Statements contains queries that can be
  * executed multiple times by binding different values on each call. This class
  * also helps convert values to their valid representation for the corresponding
  * types.
  *
+ * This class is but a decorator of an actual statement implementation, such as
+ * PDOStatement.
  */
 class Statement implements \IteratorAggregate, \Countable {
 
@@ -43,16 +43,6 @@ class Statement implements \IteratorAggregate, \Countable {
  * @var Cake\Model\Datasource\Database\Driver
  */
 	protected $_driver;
-
-/**
- * Human readable fetch type names to PDO equivalents
- *
- * @var array
- */
-	protected $_fetchMap = [
-		'num' => PDO::FETCH_NUM,
-		'assoc' => PDO::FETCH_ASSOC
-	];
 
 /**
  * Constructor
@@ -82,31 +72,20 @@ class Statement implements \IteratorAggregate, \Countable {
  * positional variables you need to start with index one, if using named params then
  * just use the name in any order.
  *
- * You can pass PDO compatible constants for binding values with a type or optionally
- * any type name registered in the Type class. Any value will be converted to the valid type
- * representation if needed.
- *
  * It is not allowed to combine positional and named variables in the same statement
  *
  * ## Examples:
  *
  *	`$statement->bindValue(1, 'a title');`
- *	`$statement->bindValue(2, 5, PDO::INT);`
  *	`$statement->bindValue('active', true, 'boolean');`
  *	`$statement->bindValue(5, new \DateTime(), 'date');`
  *
  * @param string|integer $column name or param position to be bound
  * @param mixed $value the value to bind to variable in query
- * @param string|integer $type PDO type or name of configured Type class
+ * @param string $type name of configured Type class
  * @return void
  */
 	public function bindValue($column, $value, $type = 'string') {
-		if ($type === null) {
-			$type = 'string';
-		}
-		if (!ctype_digit($type)) {
-			list($value, $type) = $this->cast($value, $type);
-		}
 		$this->_statement->bindValue($column, $value, $type);
 	}
 
@@ -188,15 +167,7 @@ class Statement implements \IteratorAggregate, \Countable {
  * are left
  */
 	public function fetch($type = 'num') {
-		if ($this->_statement instanceof self) {
-			return $this->_statement->fetch($type);
-		}
-		switch ($type) {
-			case 'num':
-				return $this->_statement->fetch(PDO::FETCH_NUM);
-			case 'assoc':
-				return $this->_statement->fetch(PDO::FETCH_ASSOC);
-		}
+		return $this->_statement->fetch($type);
 	}
 
 /**
@@ -214,15 +185,7 @@ class Statement implements \IteratorAggregate, \Countable {
  * @return array list of all results from database for this statement
  */
 	public function fetchAll($type = 'num') {
-		if ($this->_statement instanceof self) {
-			return $this->_statement->fetchAll($type);
-		}
-		switch ($type) {
-			case 'num':
-				return $this->_statement->fetchAll(PDO::FETCH_NUM);
-			case 'assoc':
-				return $this->_statement->fetchAll(PDO::FETCH_ASSOC);
-		}
+		return $this->_statement->fetchAll($type);
 	}
 
 /**
