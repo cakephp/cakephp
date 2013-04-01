@@ -17,6 +17,9 @@
  */
 namespace Cake\Test\TestCase\Model\Datasource\Database\Driver;
 
+use Cake\Core\Configure;
+use Cake\Model\Datasource\Database\Connection;
+use Cake\Model\Datasource\Database\Driver\Postgres;
 use \PDO;
 
 /**
@@ -124,6 +127,67 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($connection));
 
 		$driver->connect($config);
+	}
+
+/**
+ * Helper method for skipping tests that need a real connection.
+ *
+ * @return void
+ */
+	protected function _needsConnection() {
+		$config = Configure::read('Datasource.test');
+		$this->skipIf(strpos($config['datasource'], 'Postgres') === false, 'Not using Postgres for test config');
+	}
+
+/**
+ * Helper method for testing methods.
+ *
+ * @return void
+ */
+	protected function _createTables($connection) {
+		$this->_needsConnection();
+		$connection->execute('DROP TABLE IF EXISTS articles');
+		$connection->execute('DROP TABLE IF EXISTS authors');
+
+		$table = <<<SQL
+CREATE TABLE authors(
+id SERIAL,
+name VARCHAR(50),
+bio DATE,
+created TIMESTAMP
+)
+SQL;
+		$connection->execute($table);
+
+		$table = <<<SQL
+CREATE TABLE articles(
+id BIGINT PRIMARY KEY,
+title VARCHAR(20),
+body TEXT,
+author_id INTEGER NOT NULL,
+published BOOLEAN DEFAULT false,
+views SMALLINT DEFAULT 0,
+created TIMESTAMP
+)
+SQL;
+		$connection->execute($table);
+		$connection->execute('COMMENT ON COLUMN "articles"."title" IS \'a title\'');
+	}
+
+/**
+ * Test listing tables with Postgres
+ *
+ * @return void
+ */
+	public function testListTables() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$result = $connection->listTables();
+		$this->assertInternalType('array', $result);
+		$this->assertCount(2, $result);
+		$this->assertEquals('articles', $result[0]);
+		$this->assertEquals('authors', $result[1]);
 	}
 
 }

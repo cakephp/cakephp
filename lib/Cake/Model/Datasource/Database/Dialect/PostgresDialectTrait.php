@@ -148,4 +148,55 @@ trait PostgresDialectTrait {
 		}
 	}
 
+/**
+ * Get the SQL to list the tables
+ *
+ * @param array $config The connection configuration to use for
+ *    getting tables from.
+ * @return array An array of (sql, params) to execute.
+ */
+	public function listTablesSql() {
+		$sql = "SELECT table_name as name FROM INFORMATION_SCHEMA.tables WHERE table_schema = ? ORDER BY name";
+		$schema = empty($config['schema']) ? 'public' : $config['schema'];
+		return [$sql, [$schema]];
+	}
+
+/**
+ * Get the SQL to describe a table in Sqlite.
+ *
+ * @param string $table The table name to describe
+ * @return array An array of (sql, params) to execute.
+ */
+	public function describeTableSql($table) {
+	}
+
+
+/**
+ * Convert a column definition to the abstract types.
+ *
+ * The returned type will be a type that
+ * Cake\Model\Datasource\Database\Type can handle.
+ *
+ * @param string $column The column type + length
+ * @return array List of (type, length)
+ */
+	public function convertColumn($column) {
+	}
+
+/**
+ * Additional metadata columns in table descriptions.
+ *
+ * @return array
+ */
+	public function extraSchemaColumns() {
+	}
+
+/**
+ * Convert field description results into abstract schema fields.
+ *
+ * @return array An array of with the key/values of schema data.
+ */
+	public function convertFieldDescription($row, $fieldParams = []) {
+	}
+
 }
