@@ -179,7 +179,7 @@ class SqliteTest extends TestCase {
  */
 	public function testConvertColumnType($input, $expected) {
 		$driver = new Sqlite();
-		$this->assertEquals($driver->convertColumn($input), $expected);
+		$this->assertEquals($expected, $driver->convertColumn($input));
 	}
 
 /**

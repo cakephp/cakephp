@@ -216,7 +216,7 @@ SQL;
  */
 	public function testConvertColumnType($input, $expected) {
 		$driver = new Mysql();
-		$this->assertEquals($driver->convertColumn($input), $expected);
+		$this->assertEquals($expected, $driver->convertColumn($input));
 	}
 
 /**
@@ -239,7 +239,7 @@ SQL;
  */
 	public function testConvertIndex($input, $expected) {
 		$driver = new Mysql();
-		$this->assertEquals($driver->convertIndex($input), $expected);
+		$this->assertEquals($expected, $driver->convertIndex($input));
 	}
 
 /**
