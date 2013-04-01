@@ -175,6 +175,100 @@ SQL;
 	}
 
 /**
+ * Dataprovider for column testing
+ *
+ * @return array
+ */
+	public static function columnProvider() {
+		return [
+			[
+				'TIMESTAMP',
+				['datetime', null]
+			],
+			[
+				'TIMESTAMP WITHOUT TIME ZONE',
+				['datetime', null]
+			],
+			[
+				'DATE',
+				['date', null]
+			],
+			[
+				'TIME',
+				['time', null]
+			],
+			[
+				'SMALLINT',
+				['integer', 5]
+			],
+			[
+				'INTEGER',
+				['integer', 10]
+			],
+			[
+				'SERIAL',
+				['integer', 10]
+			],
+			[
+				'BIGINT',
+				['biginteger', 20]
+			],
+			[
+				'NUMERIC',
+				['decimal', null]
+			],
+			[
+				'VARCHAR',
+				['string', null]
+			],
+			[
+				'CHARACTER VARYING',
+				['string', null]
+			],
+			[
+				'CHAR',
+				['string', null]
+			],
+			[
+				'CHARACTER',
+				['string', null]
+			],
+			[
+				'TEXT',
+				['text', null]
+			],
+			[
+				'BYTEA',
+				['binary', null]
+			],
+			[
+				'REAL',
+				['float', null]
+			],
+			[
+				'DOUBLE PRECISION',
+				['float', null]
+			],
+			[
+				'BIGSERIAL',
+				['biginteger', 20]
+			],
+		];
+	}
+
+/**
+ * Test parsing Postgres column types.
+ *
+ * @dataProvider columnProvider
+ * @return void
+ */
+	public function testConvertColumnType($input, $expected) {
+		$driver = new Postgres();
+		$this->assertEquals($expected, $driver->convertColumn($input));
+	}
+
+
+/**
  * Test listing tables with Postgres
  *
  * @return void
@@ -188,6 +282,65 @@ SQL;
 		$this->assertCount(2, $result);
 		$this->assertEquals('articles', $result[0]);
 		$this->assertEquals('authors', $result[1]);
+	}
+
+/**
+ * Test describing a table with Postgres
+ *
+ * @return void
+ */
+	public function testDescribeTable() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$result = $connection->describe('articles');
+		$expected = [
+			'id' => [
+				'type' => 'biginteger',
+				'null' => false,
+				'default' => null,
+				'length' => 20,
+				'key' => 'primary',
+			],
+			'title' => [
+				'type' => 'string',
+				'null' => true,
+				'default' => null,
+				'length' => 20,
+				'comment' => 'a title',
+			],
+			'body' => [
+				'type' => 'text',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+			],
+			'author_id' => [
+				'type' => 'integer',
+				'null' => false,
+				'default' => null,
+				'length' => 10,
+			],
+			'published' => [
+				'type' => 'boolean',
+				'null' => true,
+				'default' => 0,
+				'length' => null,
+			],
+			'views' => [
+				'type' => 'integer',
+				'null' => true,
+				'default' => 0,
+				'length' => 5,
+			],
+			'created' => [
+				'type' => 'datetime',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+			],
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 }

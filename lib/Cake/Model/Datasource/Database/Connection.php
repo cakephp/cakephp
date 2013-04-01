@@ -449,7 +449,7 @@ class Connection {
  * @return array The schema data for the requested table.
  */
 	public function describe($table) {
-		list($sql, $params) = $this->_driver->describeTableSql($table);
+		list($sql, $params) = $this->_driver->describeTableSql($table, $this->_config);
 		$statement = $this->execute($sql, $params);
 		$schema = [];
 
