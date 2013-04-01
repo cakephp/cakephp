@@ -57,7 +57,7 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 			$config['timezone'] = '+0:00';
 		}
 
-		$config['init'][] = "SET time_zone = '+0:00'";
+		$config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
 		$config['flags'] += [
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
