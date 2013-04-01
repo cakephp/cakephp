@@ -316,7 +316,9 @@ class PaginatorHelper extends AppHelper {
 	public function sort($key, $title = null, $options = array()) {
 		$options = array_merge(array('url' => array(), 'model' => null, 'classAsc' => 'asc', 'classDesc' => 'desc'), $options);
 		$url = $options['url'];
-		unset($options['url']);
+		$classAsc = $options['classAsc'];
+		$classDesc = $options['classDesc'];
+		unset($options['url'], $options['classAsc'], $options['classDesc']);
 
 		if (empty($title)) {
 			$title = $key;
@@ -340,7 +342,7 @@ class PaginatorHelper extends AppHelper {
 
 		if ($isSorted) {
 			$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
-			$class = $dir === 'asc' ? $options['classDesc'] : $options['classAsc'];
+			$class = $dir === 'asc' ? $classDesc : $classAsc;
 			if (!empty($options['class'])) {
 				$options['class'] .= ' ' . $class;
 			} else {
