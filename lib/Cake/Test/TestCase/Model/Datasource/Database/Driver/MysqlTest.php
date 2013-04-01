@@ -92,12 +92,12 @@ class MysqlTest extends \Cake\TestSuite\TestCase {
 
 		$expected = $config;
 		$expected['dsn'] = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
-		$expected['init'][] = "SET time_zone = '+0:00'";
+		$expected['init'][] = "SET time_zone = 'Antartica'";
 		$expected['flags'] += [
 			PDO::ATTR_PERSISTENT => false,
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			PDO::MYSQL_ATTR_INIT_COMMAND => "Execute this;this too;SET time_zone = '+0:00'"
+			PDO::MYSQL_ATTR_INIT_COMMAND => "Execute this;this too;SET time_zone = 'Antartica'"
 		];
 		$driver->expects($this->once())->method('_connect')
 			->with($expected);
