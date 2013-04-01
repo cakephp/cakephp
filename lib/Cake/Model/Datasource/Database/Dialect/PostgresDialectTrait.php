@@ -162,7 +162,7 @@ trait PostgresDialectTrait {
 	}
 
 /**
- * Get the SQL to describe a table in Sqlite.
+ * Get the SQL to describe a table in Postgres.
  *
  * @param string $table The table name to describe
  * @param array $config The connection configuration to use
