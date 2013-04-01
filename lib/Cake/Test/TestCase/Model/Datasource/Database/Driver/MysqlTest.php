@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Model\Datasource\Database\Driver;
 
 use Cake\Core\Configure;
 use Cake\Model\Datasource\Database\Connection;
+use Cake\Model\Datasource\Database\Driver\Mysql;
 use \PDO;
 
 /**
@@ -28,15 +29,15 @@ use \PDO;
 class MysqlTest extends \Cake\TestSuite\TestCase {
 
 /**
- * setUp
+ * Helper method for skipping tests that need a real connection.
  *
  * @return void
  */
-	public function setUp() {
-		parent::setUp();
+	protected function _needsConnection() {
 		$config = Configure::read('Datasource.test');
 		$this->skipIf(strpos($config['datasource'], 'Mysql') === false, 'Not using Mysql for test config');
 	}
+
 /**
  * Test connecting to Mysql with default configuration
  *
@@ -109,6 +110,7 @@ class MysqlTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	protected function _createTables($connection) {
+		$this->_needsConnection();
 		$connection->execute('DROP TABLE IF EXISTS articles');
 		$connection->execute('DROP TABLE IF EXISTS authors');
 
@@ -128,6 +130,8 @@ id BIGINT PRIMARY KEY AUTO_INCREMENT,
 title VARCHAR(20) COMMENT 'A title',
 body TEXT,
 author_id INT(11) NOT NULL,
+published BOOLEAN DEFAULT 0,
+allow_comments TINYINT(1) DEFAULT 0,
 created DATETIME
 ) COLLATE=utf8_general_ci
 SQL;
@@ -160,6 +164,10 @@ SQL;
 			[
 				'TINYINT(2)',
 				['integer', 2]
+			],
+			[
+				'INTEGER(11)',
+				['integer', 11]
 			],
 			[
 				'BIGINT',
@@ -207,8 +215,8 @@ SQL;
  * @return void
  */
 	public function testConvertColumnType($input, $expected) {
-		$driver = $this->getMock('Cake\Model\Datasource\Database\Driver\Mysql', ['_connect']);
-		$this->assertEquals($driver->convertColumn($input), $expected);
+		$driver = new Mysql();
+		$this->assertEquals($expected, $driver->convertColumn($input));
 	}
 
 /**
@@ -230,8 +238,8 @@ SQL;
  * @return void
  */
 	public function testConvertIndex($input, $expected) {
-		$driver = $this->getMock('Cake\Model\Datasource\Database\Driver\Mysql', ['_connect']);
-		$this->assertEquals($driver->convertIndex($input), $expected);
+		$driver = new Mysql();
+		$this->assertEquals($expected, $driver->convertIndex($input));
 	}
 
 /**
@@ -288,6 +296,18 @@ SQL;
 				'null' => false,
 				'default' => null,
 				'length' => 11,
+			],
+			'published' => [
+				'type' => 'boolean',
+				'null' => true,
+				'default' => 0,
+				'length' => null,
+			],
+			'allow_comments' => [
+				'type' => 'boolean',
+				'null' => true,
+				'default' => 0,
+				'length' => null,
 			],
 			'created' => [
 				'type' => 'datetime',
