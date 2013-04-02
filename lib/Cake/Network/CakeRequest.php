@@ -510,6 +510,22 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Check that a request matches all the given types.
+ *
+ * Allows you to test multiple types and union the results.
+ * See CakeRequest::is() for how to add additional types and the
+ * built-in types.
+ *
+ * @param array $types The types to check.
+ * @return boolean Success.
+ * @see CakeRequest::is()
+ */
+	public function isAll(array $types) {
+		$result = array_filter(array_map(array($this, 'is'), $types));
+		return count($result) === count($types);
+	}
+
+/**
  * Add a new detector to the list of detectors that a request can use.
  * There are several different formats and types of detectors that can be set.
  *
