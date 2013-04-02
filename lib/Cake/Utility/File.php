@@ -408,7 +408,7 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::exists
  */
 	public function exists() {
-		$this->clearCache();
+		$this->clearStatCache();
 		return (file_exists($this->path) && is_file($this->path));
 	}
 
@@ -574,8 +574,8 @@ class File {
  * @param boolean $all Clear all cache or not
  * @return void
  */
-	public function clearCache($all = false) {
-		if ($all === false && floatval(phpversion()) >= 5.3) {
+	public function clearStatCache($all = false) {
+		if ($all === false && version_compare(PHP_VERSION, '5.3.0') >= 0) {
 			return clearstatcache(true, $this->path);
 		}
 
