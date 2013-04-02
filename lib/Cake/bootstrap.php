@@ -62,17 +62,23 @@ if (!defined('APP')) {
 /**
  * Path to the public CSS directory.
  */
+if (!defined('CSS')) {
 	define('CSS', WWW_ROOT . 'css' . DS);
+}
 
 /**
  * Path to the public JavaScript directory.
  */
+if (!defined('JS')) {
 	define('JS', WWW_ROOT . 'js' . DS);
+}
 
 /**
  * Path to the public images directory.
  */
+if (!defined('IMAGES')) {
 	define('IMAGES', WWW_ROOT . 'img' . DS);
+}
 
 /**
  * Path to the tests directory.
