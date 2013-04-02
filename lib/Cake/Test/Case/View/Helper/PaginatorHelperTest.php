@@ -40,6 +40,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$controller = null;
 		$this->View = new View($controller);
 		$this->Paginator = new PaginatorHelper($this->View);
@@ -584,8 +585,6 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testUrlGenerationWithPrefixes() {
-		$_back = Configure::read('Routing');
-
 		Configure::write('Routing.prefixes', array('members'));
 		Router::reload();
 
@@ -642,8 +641,6 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->url($options);
 		$expected = '/posts/index/page:2/sort:Article.name/direction:desc';
 		$this->assertEquals($expected, $result);
-
-		Configure::write('Routing', $_back);
 	}
 
 /**
