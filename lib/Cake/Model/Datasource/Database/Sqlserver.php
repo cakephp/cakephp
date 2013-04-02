@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Datasource.Database
  * @since         CakePHP(tm) v 0.10.5.1790
@@ -20,10 +21,12 @@
 App::uses('DboSource', 'Model/Datasource');
 
 /**
- * Dbo driver for SQLServer
+ * Dbo layer for Microsoft's official SQLServer driver
  *
- * A Dbo driver for SQLServer 2008 and higher.  Requires the `sqlsrv`
- * and `pdo_sqlsrv` extensions to be enabled.
+ * A Dbo layer for MS SQL Server 2005 and higher. Requires the
+ * `pdo_sqlsrv` extension to be enabled.
+ *
+ * @link http://www.php.net/manual/en/ref.pdo-sqlsrv.php
  *
  * @package       Cake.Model.Datasource.Database
  */
@@ -51,7 +54,7 @@ class Sqlserver extends DboSource {
 	public $endQuote = "]";
 
 /**
- * Creates a map between field aliases and numeric indexes.  Workaround for the
+ * Creates a map between field aliases and numeric indexes. Workaround for the
  * SQL Server driver's 30-character column name limitation.
  *
  * @var array
@@ -86,16 +89,17 @@ class Sqlserver extends DboSource {
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),
-		'string'	=> array('name' => 'nvarchar', 'limit' => '255'),
-		'text'		=> array('name' => 'nvarchar', 'limit' => 'MAX'),
-		'integer'	=> array('name' => 'int', 'formatter' => 'intval'),
-		'float'		=> array('name' => 'numeric', 'formatter' => 'floatval'),
-		'datetime'	=> array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'string' => array('name' => 'nvarchar', 'limit' => '255'),
+		'text' => array('name' => 'nvarchar', 'limit' => 'MAX'),
+		'integer' => array('name' => 'int', 'formatter' => 'intval'),
+		'biginteger' => array('name' => 'bigint'),
+		'float' => array('name' => 'numeric', 'formatter' => 'floatval'),
+		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-		'time'		=> array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
-		'date'		=> array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
-		'binary'	=> array('name' => 'varbinary'),
-		'boolean'	=> array('name' => 'bit')
+		'time' => array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
+		'date' => array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
+		'binary' => array('name' => 'varbinary'),
+		'boolean' => array('name' => 'bit')
 	);
 
 /**
@@ -186,7 +190,7 @@ class Sqlserver extends DboSource {
 	public function describe($model) {
 		$table = $this->fullTableName($model, false);
 		$cache = parent::describe($table);
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$fields = array();
@@ -212,18 +216,24 @@ class Sqlserver extends DboSource {
 			$fields[$field] = array(
 				'type' => $this->column($column),
 				'null' => ($column->Null === 'YES' ? true : false),
-				'default' => preg_replace("/^[(]{1,2}'?([^')]*)?'?[)]{1,2}$/", "$1", $column->Default),
+				'default' => $column->Default,
 				'length' => $this->length($column),
 				'key' => ($column->Key == '1') ? 'primary' : false
 			);
 
 			if ($fields[$field]['default'] === 'null') {
 				$fields[$field]['default'] = null;
-			} else {
+			}
+			if ($fields[$field]['default'] !== null) {
+				$fields[$field]['default'] = preg_replace(
+					"/^[(]{1,2}'?([^')]*)?'?[)]{1,2}$/",
+					"$1",
+					$fields[$field]['default']
+				);
 				$this->value($fields[$field]['default'], $fields[$field]['type']);
 			}
 
-			if ($fields[$field]['key'] !== false && $fields[$field]['type'] == 'integer') {
+			if ($fields[$field]['key'] !== false && $fields[$field]['type'] === 'integer') {
 				$fields[$field]['length'] = 11;
 			} elseif ($fields[$field]['key'] === false) {
 				unset($fields[$field]['key']);
@@ -231,7 +241,7 @@ class Sqlserver extends DboSource {
 			if (in_array($fields[$field]['type'], array('date', 'time', 'datetime', 'timestamp'))) {
 				$fields[$field]['length'] = null;
 			}
-			if ($fields[$field]['type'] == 'float' && !empty($column->Size)) {
+			if ($fields[$field]['type'] === 'float' && !empty($column->Size)) {
 				$fields[$field]['length'] = $fields[$field]['length'] . ',' . $column->Size;
 			}
 		}
@@ -267,7 +277,7 @@ class Sqlserver extends DboSource {
 				}
 
 				if (!preg_match('/\s+AS\s+/i', $fields[$i])) {
-					if (substr($fields[$i], -1) == '*') {
+					if (substr($fields[$i], -1) === '*') {
 						if (strpos($fields[$i], '.') !== false && $fields[$i] != $alias . '.*') {
 							$build = explode('.', $fields[$i]);
 							$AssociatedModel = $model->{$build[0]};
@@ -282,7 +292,7 @@ class Sqlserver extends DboSource {
 
 					if (strpos($fields[$i], '.') === false) {
 						$this->_fieldMappings[$alias . '__' . $fields[$i]] = $alias . '.' . $fields[$i];
-						$fieldName  = $this->name($alias . '.' . $fields[$i]);
+						$fieldName = $this->name($alias . '.' . $fields[$i]);
 						$fieldAlias = $this->name($alias . '__' . $fields[$i]);
 					} else {
 						$build = explode('.', $fields[$i]);
@@ -295,7 +305,7 @@ class Sqlserver extends DboSource {
 						$fieldName = $this->name($name);
 						$fieldAlias = $this->name($alias);
 					}
-					if ($model->getColumnType($fields[$i]) == 'datetime') {
+					if ($model->getColumnType($fields[$i]) === 'datetime') {
 						$fieldName = "CONVERT(VARCHAR(20), {$fieldName}, 20)";
 					}
 					$fields[$i] = "{$fieldName} AS {$fieldAlias}";
@@ -398,14 +408,17 @@ class Sqlserver extends DboSource {
 			$col = $real->Type;
 		}
 
-		if ($col == 'datetime2') {
+		if ($col === 'datetime2') {
 			return 'datetime';
 		}
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
 		}
-		if ($col == 'bit') {
+		if ($col === 'bit') {
 			return 'boolean';
+		}
+		if (strpos($col, 'bigint') !== false) {
+			return 'biginteger';
 		}
 		if (strpos($col, 'int') !== false) {
 			return 'integer';
@@ -419,7 +432,7 @@ class Sqlserver extends DboSource {
 		if (strpos($col, 'text') !== false) {
 			return 'text';
 		}
-		if (strpos($col, 'binary') !== false || $col == 'image') {
+		if (strpos($col, 'binary') !== false || $col === 'image') {
 			return 'binary';
 		}
 		if (in_array($col, array('float', 'real', 'decimal', 'numeric'))) {
@@ -474,7 +487,7 @@ class Sqlserver extends DboSource {
 			} else {
 				$map = array(0, $name);
 			}
-			$map[] = ($column['sqlsrv:decl_type'] == 'bit') ? 'boolean' : $column['native_type'];
+			$map[] = ($column['sqlsrv:decl_type'] === 'bit') ? 'boolean' : $column['native_type'];
 			$this->map[$index++] = $map;
 		}
 	}
@@ -623,7 +636,7 @@ class Sqlserver extends DboSource {
  */
 	public function insertMulti($table, $fields, $values) {
 		$primaryKey = $this->_getPrimaryKey($table);
-		$hasPrimaryKey = $primaryKey != null && (
+		$hasPrimaryKey = $primaryKey && (
 			(is_array($fields) && in_array($primaryKey, $fields)
 			|| (is_string($fields) && strpos($fields, $this->startQuote . $primaryKey . $this->endQuote) !== false))
 		);
@@ -649,7 +662,7 @@ class Sqlserver extends DboSource {
  */
 	public function buildColumn($column) {
 		$result = parent::buildColumn($column);
-		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', $result);
+		$result = preg_replace('/(bigint|int|integer)\([0-9]+\)/i', '$1', $result);
 		$result = preg_replace('/(bit)\([0-9]+\)/i', '$1', $result);
 		if (strpos($result, 'DEFAULT NULL') !== false) {
 			if (isset($column['default']) && $column['default'] === '') {
@@ -676,7 +689,7 @@ class Sqlserver extends DboSource {
 		$join = array();
 
 		foreach ($indexes as $name => $value) {
-			if ($name == 'PRIMARY') {
+			if ($name === 'PRIMARY') {
 				$join[] = 'PRIMARY KEY (' . $this->name($value['column']) . ')';
 			} elseif (isset($value['unique']) && $value['unique']) {
 				$out = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE";
@@ -702,7 +715,7 @@ class Sqlserver extends DboSource {
 	protected function _getPrimaryKey($model) {
 		$schema = $this->describe($model);
 		foreach ($schema as $field => $props) {
-			if (isset($props['key']) && $props['key'] == 'primary') {
+			if (isset($props['key']) && $props['key'] === 'primary') {
 				return $field;
 			}
 		}
@@ -736,7 +749,7 @@ class Sqlserver extends DboSource {
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$this->_lastAffected = false;
-		if (strncasecmp($sql, 'SELECT', 6) == 0 || preg_match('/^EXEC(?:UTE)?\s/mi', $sql) > 0) {
+		if (strncasecmp($sql, 'SELECT', 6) === 0 || preg_match('/^EXEC(?:UTE)?\s/mi', $sql) > 0) {
 			$prepareOptions += array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL);
 			return parent::_execute($sql, $params, $prepareOptions);
 		}
@@ -760,21 +773,13 @@ class Sqlserver extends DboSource {
 	}
 
 /**
- * Generate a "drop table" statement for the given Schema object
+ * Generate a "drop table" statement for the given table
  *
- * @param CakeSchema $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
- *   Otherwise, all tables defined in the schema are generated.
- * @return string
+ * @param type $table Name of the table to drop
+ * @return string Drop table SQL statement
  */
-	public function dropSchema(CakeSchema $schema, $table = null) {
-		$out = '';
-		foreach ($schema->tables as $curTable => $columns) {
-			if (!$table || $table == $curTable) {
-				$out .= "IF OBJECT_ID('" . $this->fullTableName($curTable, false) . "', 'U') IS NOT NULL DROP TABLE " . $this->fullTableName($curTable) . ";\n";
-			}
-		}
-		return $out;
+	protected function _dropTable($table) {
+		return "IF OBJECT_ID('" . $this->fullTableName($table, false) . "', 'U') IS NOT NULL DROP TABLE " . $this->fullTableName($table) . ";";
 	}
 
 /**

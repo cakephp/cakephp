@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Model.Datasource.Database
  * @since         CakePHP(tm) v 1.2.0
@@ -77,7 +78,7 @@ class SqliteTest extends CakeTestCase {
  *
  * @var object
  */
-	public $fixtures = array('core.user', 'core.uuid');
+	public $fixtures = array('core.user', 'core.uuid', 'core.datatype');
 
 /**
  * Actual DB connection used in testing
@@ -164,7 +165,6 @@ class SqliteTest extends CakeTestCase {
 		$dbName = 'db' . rand() . '$(*%&).db';
 		$this->assertFalse(file_exists(TMP . $dbName));
 
-		$config = $this->Dbo->config;
 		$db = new Sqlite(array_merge($this->Dbo->config, array('database' => TMP . $dbName)));
 		$this->assertTrue(file_exists(TMP . $dbName));
 
@@ -253,6 +253,16 @@ class SqliteTest extends CakeTestCase {
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" integer(10) DEFAULT 10 NOT NULL';
 		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'name' => 'huge',
+			'type' => 'biginteger',
+			'length' => 20,
+			'null' => false,
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '"huge" bigint(20) NOT NULL';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -262,7 +272,11 @@ class SqliteTest extends CakeTestCase {
  */
 	public function testDescribe() {
 		$this->loadFixtures('User');
-		$Model = new Model(array('name' => 'User', 'ds' => 'test', 'table' => 'users'));
+		$Model = new Model(array(
+			'name' => 'User',
+			'ds' => 'test',
+			'table' => 'users'
+		));
 
 		$this->Dbo->cacheSources = true;
 		Configure::write('Cache.disable', false);
@@ -308,6 +322,49 @@ class SqliteTest extends CakeTestCase {
 
 		$result = Cache::read('test_users', '_cake_model_');
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that datatypes are reflected
+ *
+ * @return void
+ */
+	public function testDatatypes() {
+		$this->loadFixtures('Datatype');
+		$Model = new Model(array(
+			'name' => 'Datatype',
+			'ds' => 'test',
+			'table' => 'datatypes'
+		));
+		$result = $this->Dbo->describe($Model);
+		$expected = array(
+			'id' => array(
+				'type' => 'integer',
+				'null' => false,
+				'default' => '',
+				'length' => 11,
+				'key' => 'primary',
+			),
+			'float_field' => array(
+				'type' => 'float',
+				'null' => false,
+				'default' => '',
+				'length' => '5,2',
+			),
+			'huge_int' => array(
+				'type' => 'biginteger',
+				'null' => true,
+				'default' => null,
+				'length' => 20,
+			),
+			'bool' => array(
+				'type' => 'boolean',
+				'null' => false,
+				'default' => '0',
+				'length' => null
+			),
+		);
+		$this->assertSame($expected, $result);
 	}
 
 /**

@@ -7,12 +7,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Console.Templates.default.classes
  * @since         CakePHP(tm) v 1.3
@@ -37,7 +38,7 @@ foreach (array('hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany') as $asso
  */
 class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
 
-<?php if ($useDbConfig != 'default'): ?>
+<?php if ($useDbConfig !== 'default'): ?>
 /**
  * Use database config
  *
@@ -48,9 +49,9 @@ class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
 <?php endif;
 
 if ($useTable && $useTable !== Inflector::tableize($name)):
-    $table = "'$useTable'";
-    echo "/**\n * Use table\n *\n * @var mixed False or table name\n */\n";
-    echo "\tpublic \$useTable = $table;\n\n";
+	$table = "'$useTable'";
+	echo "/**\n * Use table\n *\n * @var mixed False or table name\n */\n";
+	echo "\tpublic \$useTable = $table;\n\n";
 endif;
 
 if ($primaryKey !== 'id'): ?>

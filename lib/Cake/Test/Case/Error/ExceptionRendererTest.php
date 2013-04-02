@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Error
  * @since         CakePHP(tm) v 2.0
@@ -480,6 +481,27 @@ class ExceptionRendererTest extends CakeTestCase {
 	}
 
 /**
+ * testExceptionResponseHeader method
+ *
+ * @return void
+ */
+	public function testExceptionResponseHeader() {
+		$exception = new MethodNotAllowedException('Only allowing POST and DELETE');
+		$exception->responseHeader(array('Allow: POST, DELETE'));
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+
+		//Replace response object with mocked object add back the original headers which had been set in ExceptionRenderer constructor
+		$headers = $ExceptionRenderer->controller->response->header();
+		$ExceptionRenderer->controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$ExceptionRenderer->controller->response->header($headers);
+
+		$ExceptionRenderer->controller->response->expects($this->at(1))->method('_sendHeader')->with('Allow', 'POST, DELETE');
+		ob_start();
+		$ExceptionRenderer->render();
+		ob_get_clean();
+	}
+
+/**
  * testMissingController method
  *
  * @return void
@@ -792,7 +814,7 @@ class ExceptionRendererTest extends CakeTestCase {
 
 		$this->assertContains('<h2>Database Error</h2>', $result);
 		$this->assertContains('There was an error in the SQL query', $result);
-		$this->assertContains('SELECT * from poo_query < 5 and :seven', $result);
+		$this->assertContains(h('SELECT * from poo_query < 5 and :seven'), $result);
 		$this->assertContains("'seven' => (int) 7", $result);
 	}
 }

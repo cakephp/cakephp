@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Controller.Component.Acl
  * @since         CakePHP(tm) v 2.0
@@ -503,12 +504,12 @@ class DbAclTest extends CakeTestCase {
 				$perms = '';
 				foreach ($rights as $right) {
 					if ($this->Acl->check($aro, $aco, $right)) {
-						if ($right == '*') {
+						if ($right === '*') {
 							$perms .= '****';
 							break;
 						}
 						$perms .= $right[0];
-					} elseif ($right != '*') {
+					} elseif ($right !== '*') {
 						$perms .= ' ';
 					}
 				}
@@ -521,7 +522,7 @@ class DbAclTest extends CakeTestCase {
 			$values = array_map(array(&$this, '_pad'), $values);
 			$permissions[$key] = implode (' ', $values);
 		}
-		$permisssions = array_map(array(&$this, '_pad'), $permissions);
+		$permissions = array_map(array(&$this, '_pad'), $permissions);
 		array_unshift($permissions, 'Current Permissions :');
 		if ($printTreesToo) {
 			debug(array('aros' => $this->Acl->Aro->generateTreeList(), 'acos' => $this->Acl->Aco->generateTreeList()));

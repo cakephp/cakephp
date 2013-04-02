@@ -6,12 +6,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.5550
@@ -198,6 +199,7 @@ class TestAppSchema extends CakeSchema {
 	public $datatypes = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'float_field' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => ''),
+		'huge_int' => array('type' => 'biginteger'),
 		'bool' => array('type' => 'boolean', 'null' => false, 'default' => false),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		'tableParameters' => array()
@@ -595,7 +597,7 @@ class CakeSchemaTest extends CakeTestCase {
 		ConnectionManager::drop('default');
 		ConnectionManager::create('default', $connections['test']);
 		try {
-			$read = $this->Schema->read(array(
+			$this->Schema->read(array(
 				'connection' => 'default',
 				'name' => 'TestApp',
 				'models' => array('AppModel')
@@ -636,8 +638,6 @@ class CakeSchemaTest extends CakeTestCase {
 	public function testSchemaReadWithTablePrefix() {
 		$config = ConnectionManager::getDataSource('test')->config;
 		$this->skipIf(!empty($config['prefix']), 'This test can not be executed with datasource prefix set.');
-
-		$model = new SchemaPrefixAuthUser();
 
 		$Schema = new CakeSchema();
 		$read = $Schema->read(array(
@@ -762,6 +762,23 @@ class CakeSchemaTest extends CakeTestCase {
 		);
 		$result = $this->Schema->generateTable('posts', $posts);
 		$this->assertRegExp('/public \$posts/', $result);
+
+		$posts = array(
+			'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+			'author_id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'null' => false),
+			'body' => array('type' => 'text', 'null' => true, 'default' => null),
+			'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1),
+			'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+			'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+			'indexes' => array(
+				'PRIMARY' => array('column' => 'id', 'unique' => true),
+				'MyFtIndex' => array('column' => array('title', 'body'), 'type' => 'fulltext')
+			)
+		);
+		$result = $this->Schema->generateTable('fields', $posts);
+		$this->assertRegExp('/public \$fields/', $result);
+		$this->assertPattern('/\'type\' \=\> \'fulltext\'/', $result);
 	}
 
 /**

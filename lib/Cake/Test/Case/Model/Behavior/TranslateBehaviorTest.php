@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -624,6 +625,76 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'locale' => 'spa',
 				'content' => '',
 			) + $data
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that all fields are create with partial data + multiple locales.
+ *
+ * @return void
+ */
+	public function testSavePartialFieldMultipleLocales() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel = new TranslatedItem();
+		$TestModel->locale = 'eng';
+		$data = array(
+			'slug' => 'fifth_translated',
+			'title' => array('eng' => 'Title #5', 'spa' => 'Leyenda #5'),
+		);
+		$TestModel->create($data);
+		$TestModel->save();
+		$TestModel->unbindTranslation();
+
+		$translations = array('title' => 'Title', 'content' => 'Content');
+		$TestModel->bindTranslation($translations, false);
+		$result = $TestModel->read(null, $TestModel->id);
+		$expected = array(
+			'TranslatedItem' => array(
+				'id' => '4',
+				'translated_article_id' => null,
+				'slug' => 'fifth_translated',
+				'locale' => 'eng',
+				'title' => 'Title #5',
+				'content' => ''
+			),
+			'Title' => array(
+				0 => array(
+					'id' => '19',
+					'locale' => 'eng',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'title',
+					'content' => 'Title #5'
+				),
+				1 => array(
+					'id' => '20',
+					'locale' => 'spa',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'title',
+					'content' => 'Leyenda #5'
+				)
+			),
+			'Content' => array(
+				0 => array(
+					'id' => '21',
+					'locale' => 'eng',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'content',
+					'content' => ''
+				),
+				1 => array(
+					'id' => '22',
+					'locale' => 'spa',
+					'model' => 'TranslatedItem',
+					'foreign_key' => '4',
+					'field' => 'content',
+					'content' => ''
+				)
+			)
 		);
 		$this->assertEquals($expected, $result);
 	}

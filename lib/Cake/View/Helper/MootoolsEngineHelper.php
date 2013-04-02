@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 1.3
@@ -121,7 +122,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  */
 	public function get($selector) {
 		$this->_multipleSelection = false;
-		if ($selector == 'window' || $selector == 'document') {
+		if ($selector === 'window' || $selector === 'document') {
 			$this->selection = "$(" . $selector . ")";
 			return $this;
 		}
@@ -194,9 +195,9 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 	public function effect($name, $options = array()) {
 		$speed = null;
 		if (isset($options['speed']) && in_array($options['speed'], array('fast', 'slow'))) {
-			if ($options['speed'] == 'fast') {
+			if ($options['speed'] === 'fast') {
 				$speed = '"short"';
-			} elseif ($options['speed'] == 'slow') {
+			} elseif ($options['speed'] === 'slow') {
 				$speed = '"long"';
 			}
 		}
@@ -226,7 +227,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Create an new Request.
  *
- * Requires `Request`.  If you wish to use 'update' key you must have ```Request.HTML```
+ * Requires `Request`. If you wish to use 'update' key you must have ```Request.HTML```
  * if you wish to do Json requests you will need ```JSON``` and ```Request.JSON```.
  *
  * @param string|array $url
@@ -238,7 +239,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_mapOptions('request', $options);
 		$type = $data = null;
 		if (isset($options['type']) || isset($options['update'])) {
-			if (isset($options['type']) && strtolower($options['type']) == 'json') {
+			if (isset($options['type']) && strtolower($options['type']) === 'json') {
 				$type = '.JSON';
 			}
 			if (isset($options['update'])) {
@@ -295,8 +296,8 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  *
  * Requires the `Drag` and `Drag.Move` plugins from MootoolsMore
  *
- * Droppables in Mootools function differently from other libraries.  Droppables
- * are implemented as an extension of Drag.  So in addition to making a get() selection for
+ * Droppables in Mootools function differently from other libraries. Droppables
+ * are implemented as an extension of Drag. So in addition to making a get() selection for
  * the droppable element. You must also provide a selector rule to the draggable element. Furthermore,
  * Mootools droppables inherit all options from Drag.
  *

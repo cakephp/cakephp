@@ -4,27 +4,27 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Pages
+ * @package       app.View.Pages
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (Configure::read('debug') == 0):
+if (!Configure::read('debug')):
 	throw new NotFoundException();
 endif;
 App::uses('Debugger', 'Utility');
 ?>
-<iframe src="http://cakephp.org/bake-banner" width="830" height="160" style="overflow:hidden; border:none;">
-	<p>For updates and important announcements, visit http://cakefest.org</p>
-</iframe>
 <h2><?php echo __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
-<a href="http://cakephp.org/changelogs/<?php echo Configure::version(); ?>"><?php echo __d('cake_dev', 'Read the changelog'); ?> </a>
+<p>
+	<a href="http://cakephp.org/changelogs/<?php echo Configure::version(); ?>"><?php echo __d('cake_dev', 'Read the changelog'); ?> </a>
+</p>
 <?php
 if (Configure::read('debug') > 0):
 	Debugger::checkSecurityKeys();
@@ -32,7 +32,7 @@ endif;
 ?>
 <p id="url-rewriting-warning" style="background-color:#e32; color:#fff;">
 	<?php echo __d('cake_dev', 'URL rewriting is not properly configured on your server.'); ?>
-	1) <a target="_blank" href="http://book.cakephp.org/2.0/en/installation/advanced-installation.html#apache-and-mod-rewrite-and-htaccess" style="color:#fff;">Help me configure it</a>
+	1) <a target="_blank" href="http://book.cakephp.org/2.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
 	2) <a target="_blank" href="http://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
 </p>
 <p>
@@ -99,6 +99,13 @@ if (isset($filePresent)):
 		$connected = ConnectionManager::getDataSource('default');
 	} catch (Exception $connectionError) {
 		$connected = false;
+		$errorMsg = $connectionError->getMessage();
+		if (method_exists($connectionError, 'getAttributes')) {
+			$attributes = $connectionError->getAttributes();
+			if (isset($errorMsg['message'])) {
+				$errorMsg .= '<br />' . $attributes['message'];
+			}
+		}
 	}
 ?>
 <p>
@@ -111,12 +118,12 @@ if (isset($filePresent)):
 			echo '<span class="notice">';
 				echo __d('cake_dev', 'Cake is NOT able to connect to the database.');
 				echo '<br /><br />';
-				echo $connectionError->getMessage();
+				echo $errorMsg;
 			echo '</span>';
 		endif;
 	?>
 </p>
-<?php endif;?>
+<?php endif; ?>
 <?php
 	App::uses('Validation', 'Utility');
 	if (!Validation::alphaNumeric('cakephp')) {
@@ -127,6 +134,23 @@ if (isset($filePresent)):
 		echo '</span></p>';
 	}
 ?>
+
+<p>
+	<?php
+		if (CakePlugin::loaded('DebugKit')):
+			echo '<span class="notice success">';
+				echo __d('cake_dev', 'DebugKit plugin is present');
+			echo '</span>';
+		else:
+			echo '<span class="notice">';
+				echo __d('cake_dev', 'DebugKit is not installed. It will help you inspect and debug different aspects of your application.');
+				echo '<br/>';
+				echo __d('cake_dev', 'You can install it from %s', $this->Html->link('github', 'https://github.com/cakephp/debug_kit'));
+			echo '</span>';
+		endif;
+	?>
+</p>
+
 <h3><?php echo __d('cake_dev', 'Editing this Page'); ?></h3>
 <p>
 <?php
@@ -156,6 +180,20 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 	?>
 </p>
 
+<h3><?php echo __d('cake_dev', 'Official Plugins'); ?></h3>
+<p>
+<ul>
+	<li>
+		<?php echo $this->Html->link('DebugKit', 'https://github.com/cakephp/debug_kit') ?>:
+		<?php echo __d('cake_dev', 'provides a debugging toolbar and enhanced debugging tools for CakePHP applications.'); ?>
+	</li>
+	<li>
+		<?php echo $this->Html->link('Localized', 'https://github.com/cakephp/localized') ?>:
+		<?php echo __d('cake_dev', 'contains various localized validation classes and translations for specific countries'); ?>
+	</li>
+</ul>
+</p>
+
 <h3><?php echo __d('cake_dev', 'More about Cake'); ?></h3>
 <p>
 <?php echo __d('cake_dev', 'CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
@@ -171,12 +209,12 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 	<ul><li><?php echo __d('cake_dev', 'The Rapid Development Framework'); ?></li></ul></li>
 	<li><a href="http://book.cakephp.org"><?php echo __d('cake_dev', 'CakePHP Documentation'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Your Rapid Development Cookbook'); ?></li></ul></li>
-	<li><a href="http://api20.cakephp.org"><?php echo __d('cake_dev', 'CakePHP API'); ?> </a>
+	<li><a href="http://api.cakephp.org/"><?php echo __d('cake_dev', 'CakePHP API'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Quick Reference'); ?></li></ul></li>
 	<li><a href="http://bakery.cakephp.org"><?php echo __d('cake_dev', 'The Bakery'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Everything CakePHP'); ?></li></ul></li>
-	<li><a href="http://live.cakephp.org"><?php echo __d('cake_dev', 'The Show'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'The Show is a live and archived internet radio broadcast CakePHP-related topics and answer questions live via IRC, Skype, and telephone.'); ?></li></ul></li>
+	<li><a href="http://plugins.cakephp.org"><?php echo __d('cake_dev', 'CakePHP plugins repo'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'A comprehensive list of all CakePHP plugins created by the community'); ?></li></ul></li>
 	<li><a href="http://groups.google.com/group/cake-php"><?php echo __d('cake_dev', 'CakePHP Google Group'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Community mailing list'); ?></li></ul></li>
 	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>

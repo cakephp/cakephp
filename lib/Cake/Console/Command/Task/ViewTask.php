@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -63,7 +64,7 @@ class ViewTask extends BakeTask {
 	public $scaffoldActions = array('index', 'view', 'add', 'edit');
 
 /**
- * An array of action names that don't require templates.  These
+ * An array of action names that don't require templates. These
  * actions will not emit errors when doing bakeActions()
  *
  * @var array
@@ -99,7 +100,7 @@ class ViewTask extends BakeTask {
 		$this->controllerName = $this->_controllerName($this->args[0]);
 
 		$this->Project->interactive = false;
-		if (strtolower($this->args[0]) == 'all') {
+		if (strtolower($this->args[0]) === 'all') {
 			return $this->all();
 		}
 
@@ -207,10 +208,10 @@ class ViewTask extends BakeTask {
 		$this->Controller->connection = $this->connection;
 		$this->controllerName = $this->Controller->getName();
 
-		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.",  $this->controllerName);
+		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.", $this->controllerName);
 		$interactive = $this->in($prompt, array('y', 'n'), 'n');
 
-		if (strtolower($interactive) == 'n') {
+		if (strtolower($interactive) === 'n') {
 			$this->interactive = false;
 		}
 
@@ -219,13 +220,13 @@ class ViewTask extends BakeTask {
 
 		$wannaDoAdmin = $this->in(__d('cake_console', "Would you like to create the views for admin routing?"), array('y', 'n'), 'n');
 
-		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoAdmin) == 'y') {
+		if (strtolower($wannaDoScaffold) === 'y' || strtolower($wannaDoAdmin) === 'y') {
 			$vars = $this->_loadController();
-			if (strtolower($wannaDoScaffold) == 'y') {
+			if (strtolower($wannaDoScaffold) === 'y') {
 				$actions = $this->scaffoldActions;
 				$this->bakeActions($actions, $vars);
 			}
-			if (strtolower($wannaDoAdmin) == 'y') {
+			if (strtolower($wannaDoAdmin) === 'y') {
 				$admin = $this->Project->getPrefix();
 				$regularActions = $this->scaffoldActions;
 				$adminActions = array();
@@ -316,9 +317,9 @@ class ViewTask extends BakeTask {
  */
 	public function customAction() {
 		$action = '';
-		while ($action == '') {
+		while (!$action) {
 			$action = $this->in(__d('cake_console', 'Action Name? (use lowercase_underscored function name)'));
-			if ($action == '') {
+			if (!$action) {
 				$this->out(__d('cake_console', 'The action name you supplied was empty. Please try again.'));
 			}
 		}
@@ -331,7 +332,7 @@ class ViewTask extends BakeTask {
 		$this->out(__d('cake_console', 'Path:            %s', $this->getPath() . $this->controllerName . DS . Inflector::underscore($action) . ".ctp"));
 		$this->hr();
 		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n'), 'y');
-		if (strtolower($looksGood) == 'y') {
+		if (strtolower($looksGood) === 'y') {
 			$this->bake($action, ' ');
 			$this->_stop();
 		} else {
@@ -423,7 +424,7 @@ class ViewTask extends BakeTask {
 		return $parser->description(
 			__d('cake_console', 'Bake views for a controller, using built-in or custom templates.')
 		)->addArgument('controller', array(
-			'help' => __d('cake_console', 'Name of the controller views to bake.  Can be Plugin.name as a shortcut for plugin baking.')
+			'help' => __d('cake_console', 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.')
 		))->addArgument('action', array(
 			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
 		))->addArgument('alias', array(
@@ -452,9 +453,9 @@ class ViewTask extends BakeTask {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 
-		foreach ($keys as $key => $type) {
+		foreach ($keys as $type) {
 			foreach ($model->{$type} as $assocKey => $assocData) {
-				list($plugin, $modelClass) = pluginSplit($assocData['className']);
+				list(, $modelClass) = pluginSplit($assocData['className']);
 				$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
 				$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
 				$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];

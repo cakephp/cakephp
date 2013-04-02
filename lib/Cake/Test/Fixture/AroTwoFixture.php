@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.4667
@@ -56,11 +57,11 @@ class AroTwoFixture extends CakeTestFixture {
 		array('parent_id' => 1, 'model' => 'Group', 'foreign_key' => '1', 'alias' => 'admin',		'lft' => '2',	'rght' => '5'),
 		array('parent_id' => 1, 'model' => 'Group', 'foreign_key' => '2', 'alias' => 'managers',	'lft' => '6',	'rght' => '9'),
 		array('parent_id' => 1, 'model' => 'Group', 'foreign_key' => '3', 'alias' => 'users',		'lft' => '10',	'rght' => '19'),
-		array('parent_id' => 2, 'model' => 'User',  'foreign_key' => '1', 'alias' => 'Bobs',		'lft' => '3',	'rght' => '4'),
-		array('parent_id' => 3, 'model' => 'User',  'foreign_key' => '2', 'alias' => 'Lumbergh',	'lft' => '7' ,	'rght' => '8'),
-		array('parent_id' => 4, 'model' => 'User',  'foreign_key' => '3', 'alias' => 'Samir',		'lft' => '11' ,	'rght' => '12'),
-		array('parent_id' => 4, 'model' => 'User',  'foreign_key' => '4', 'alias' => 'Micheal',		'lft' => '13',	'rght' => '14'),
-		array('parent_id' => 4, 'model' => 'User',  'foreign_key' => '5', 'alias' => 'Peter',		'lft' => '15',	'rght' => '16'),
-		array('parent_id' => 4, 'model' => 'User',  'foreign_key' => '6', 'alias' => 'Milton',		'lft' => '17',	'rght' => '18'),
+		array('parent_id' => 2, 'model' => 'User', 'foreign_key' => '1', 'alias' => 'Bobs',			'lft' => '3',	'rght' => '4'),
+		array('parent_id' => 3, 'model' => 'User', 'foreign_key' => '2', 'alias' => 'Lumbergh',		'lft' => '7' ,	'rght' => '8'),
+		array('parent_id' => 4, 'model' => 'User', 'foreign_key' => '3', 'alias' => 'Samir',		'lft' => '11' ,	'rght' => '12'),
+		array('parent_id' => 4, 'model' => 'User', 'foreign_key' => '4', 'alias' => 'Micheal',		'lft' => '13',	'rght' => '14'),
+		array('parent_id' => 4, 'model' => 'User', 'foreign_key' => '5', 'alias' => 'Peter',		'lft' => '15',	'rght' => '16'),
+		array('parent_id' => 4, 'model' => 'User', 'foreign_key' => '6', 'alias' => 'Milton',		'lft' => '17',	'rght' => '18'),
 	);
 }

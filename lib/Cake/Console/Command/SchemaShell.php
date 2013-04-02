@@ -1,12 +1,13 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -52,6 +53,8 @@ class SchemaShell extends AppShell {
 		$this->out('Cake Schema Shell');
 		$this->hr();
 
+		Configure::write('Cache.disable', 1);
+
 		$name = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
@@ -89,6 +92,7 @@ class SchemaShell extends AppShell {
 				$name = $plugin;
 			}
 		}
+		$name = Inflector::classify($name);
 		$this->Schema = new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
@@ -120,7 +124,9 @@ class SchemaShell extends AppShell {
 		$this->out(__d('cake_console', 'Generating Schema...'));
 		$options = array();
 		if ($this->params['force']) {
-			$options = array('models' => false);
+			$options['models'] = false;
+		} elseif (!empty($this->params['models'])) {
+			$options['models'] = String::tokenize($this->params['models']);
 		}
 
 		$snapshot = false;
@@ -234,7 +240,7 @@ class SchemaShell extends AppShell {
 	}
 
 /**
- * Run database create commands.  Alias for run create.
+ * Run database create commands. Alias for run create.
  *
  * @return void
  */
@@ -244,7 +250,7 @@ class SchemaShell extends AppShell {
 	}
 
 /**
- * Run database create commands.  Alias for run create.
+ * Run database create commands. Alias for run create.
  *
  * @return void
  */
@@ -301,7 +307,7 @@ class SchemaShell extends AppShell {
  * @param string $table
  * @return void
  */
-	protected function _create($Schema, $table = null) {
+	protected function _create(CakeSchema $Schema, $table = null) {
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		$drop = $create = array();
@@ -391,7 +397,7 @@ class SchemaShell extends AppShell {
  * @param CakeSchema $Schema
  * @return void
  */
-	protected function _run($contents, $event, &$Schema) {
+	protected function _run($contents, $event, CakeSchema $Schema) {
 		if (empty($contents)) {
 			$this->err(__d('cake_console', 'Sql could not be run'));
 			return;
@@ -459,6 +465,10 @@ class SchemaShell extends AppShell {
 			'short' => 's',
 			'help' => __d('cake_console', 'Snapshot number to use/make.')
 		);
+		$models = array(
+			'short' => 'm',
+			'help' => __d('cake_console', 'Specify models as comma separated list.'),
+		);
 		$dry = array(
 			'help' => __d('cake_console', 'Perform a dry run on create and update commands. Queries will be output instead of run.'),
 			'boolean' => true
@@ -484,7 +494,7 @@ class SchemaShell extends AppShell {
 		))->addSubcommand('generate', array(
 			'help' => __d('cake_console', 'Reads from --connection and writes to --path. Generate snapshots with -s'),
 			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force'),
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force', 'models'),
 				'arguments' => array(
 					'snapshot' => array('help' => __d('cake_console', 'Generate a snapshot.'))
 				)

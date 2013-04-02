@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.5432
@@ -456,6 +457,41 @@ XML;
 		} catch (Exception $e) {
 			$this->assertTrue(true, 'Caught exception.');
 		}
+	}
+
+/**
+ * Test that there are not unterminated errors when building xml
+ *
+ * @return void
+ */
+	public function testFromArrayUnterminatedError() {
+		$data = array(
+			'product_ID' => 'GENERT-DL',
+			'deeplink' => 'http://example.com/deep',
+			'image_URL' => 'http://example.com/image',
+			'thumbnail_image_URL' => 'http://example.com/thumb',
+			'brand' => 'Malte Lange & Co',
+			'availability' => 'in stock',
+			'authors' => array(
+				'author' => array('Malte Lange & Co')
+			)
+		);
+		$xml = Xml::fromArray(array('products' => $data), 'tags');
+		$expected = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<products>
+	<product_ID>GENERT-DL</product_ID>
+	<deeplink>http://example.com/deep</deeplink>
+	<image_URL>http://example.com/image</image_URL>
+	<thumbnail_image_URL>http://example.com/thumb</thumbnail_image_URL>
+	<brand>Malte Lange &amp; Co</brand>
+	<availability>in stock</availability>
+	<authors>
+		<author>Malte Lange &amp; Co</author>
+	</authors>
+</products>
+XML;
+		$this->assertXmlStringEqualsXmlString($expected, $xml->asXML());
 	}
 
 /**
@@ -1020,7 +1056,7 @@ XML;
 </records>
 </data>
 XML;
-		$result = $obj->asXML();
+		$obj->asXML();
 		$this->assertXmlStringEqualsXmlString($expected, $obj->asXML());
 	}
 

@@ -5,12 +5,13 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -432,6 +433,26 @@ class ModelDeleteTest extends BaseModelTest {
 		$TestModel = new Article();
 		$result = $TestModel->deleteAll(array('Article.non_existent_field' => 999));
 		$this->assertFalse($result, 'deleteAll returned true when find query generated sql error. %s');
+	}
+
+/**
+ * testDeleteAllFailedFind method
+ *
+ * Eg: Behavior callback stops the event, find returns null
+ *
+ * @return void
+ */
+	public function testDeleteAllFailedFind() {
+		$this->loadFixtures('Article');
+		$this->getMock('Article', array('find'), array(), 'ArticleDeleteAll');
+
+		$TestModel = new ArticleDeleteAll();
+		$TestModel->expects($this->once())
+			->method('find')
+			->will($this->returnValue(null));
+
+		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
+		$this->assertFalse($result);
 	}
 
 /**
