@@ -227,6 +227,16 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
 		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'desc', 'class' => 'foo'));
 		$this->assertRegExp('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="foo asc">Title<\/a>$/', $result);
+
+		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
+		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
+		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'desc', 'classAsc' => 'customAsc'));
+		$this->assertRegExp('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="customAsc">Title<\/a>$/', $result);
+
+		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
+		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
+		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'desc', 'classDesc' => 'customDesc'));
+		$this->assertRegExp('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc" class="customDesc">Title<\/a>$/', $result);
 	}
 
 /**
