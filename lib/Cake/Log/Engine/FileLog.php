@@ -42,7 +42,8 @@ class FileLog extends BaseLog {
 		'types' => null,
 		'scopes' => array(),
 		'rotate' => 10,
-		'size' => 10485760 // 10MB
+		'size' => 10485760, // 10MB
+		'mask' => null,
 	);
 
 /**
@@ -81,6 +82,8 @@ class FileLog extends BaseLog {
  *   human reabable string values like '10MB', '100KB' etc.
  * - `rotate` Log files are rotated specified times before being removed.
  *   If value is 0, old versions are removed rather then rotated.
+ * - `mask` A mask is applied when log files are created. Left empty no chmod
+ *   is made.
  *
  * @param array $options Options for the FileLog, see above.
  */
@@ -132,7 +135,22 @@ class FileLog extends BaseLog {
 			$this->_rotateFile($filename);
 		}
 
-		return file_put_contents($this->_path . $filename, $output, FILE_APPEND);
+		$pathname = $this->_path . $filename;
+		if (empty($this->_config['mask'])) {
+			return file_put_contents($pathname, $output, FILE_APPEND);
+		}
+
+		$exists = file_exists($pathname);
+		$result = file_put_contents($pathname, $output, FILE_APPEND);
+		static $selfError = false;
+		if (!$selfError && !$exists && !chmod($pathname, (int)$this->_config['mask'])) {
+			$selfError = true;
+			trigger_error(__d(
+				'cake_dev', 'Could not apply permission mask "%s" on log file "%s"',
+				array($this->_config['mask'], $pathname)), E_USER_WARNING);
+			$selfError = false;
+		}
+		return $result;
 	}
 
 /**
