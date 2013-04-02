@@ -466,14 +466,21 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Check whether or not a Request is a certain type. Uses the built in detection rules
- * as well as additional rules defined with CakeRequest::addDetector(). Any detector can be called
+ * Check whether or not a Request is a certain type.
+ *
+ * Uses the built in detection rules as well as additional rules
+ * defined with CakeRequest::addDetector(). Any detector can be called
  * as `is($type)` or `is$Type()`.
  *
- * @param string $type The type of request you want to check.
+ * @param string|array $type The type of request you want to check. If an array
+ *   this method will return true if the request matches any type.
  * @return boolean Whether or not the request is the type you are checking.
  */
 	public function is($type) {
+		if (is_array($type)) {
+			$result = array_map(array($this, 'is'), $type);
+			return count(array_filter($result)) > 0;
+		}
 		$type = strtolower($type);
 		if (!isset($this->_detectors[$type])) {
 			return false;
