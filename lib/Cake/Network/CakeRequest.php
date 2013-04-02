@@ -466,14 +466,21 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Check whether or not a Request is a certain type. Uses the built in detection rules
- * as well as additional rules defined with CakeRequest::addDetector(). Any detector can be called
+ * Check whether or not a Request is a certain type.
+ *
+ * Uses the built in detection rules as well as additional rules
+ * defined with CakeRequest::addDetector(). Any detector can be called
  * as `is($type)` or `is$Type()`.
  *
- * @param string $type The type of request you want to check.
+ * @param string|array $type The type of request you want to check. If an array
+ *   this method will return true if the request matches any type.
  * @return boolean Whether or not the request is the type you are checking.
  */
 	public function is($type) {
+		if (is_array($type)) {
+			$result = array_map(array($this, 'is'), $type);
+			return count(array_filter($result)) > 0;
+		}
 		$type = strtolower($type);
 		if (!isset($this->_detectors[$type])) {
 			return false;
@@ -500,6 +507,22 @@ class CakeRequest implements ArrayAccess {
 			return call_user_func($detect['callback'], $this);
 		}
 		return false;
+	}
+
+/**
+ * Check that a request matches all the given types.
+ *
+ * Allows you to test multiple types and union the results.
+ * See CakeRequest::is() for how to add additional types and the
+ * built-in types.
+ *
+ * @param array $types The types to check.
+ * @return boolean Success.
+ * @see CakeRequest::is()
+ */
+	public function isAll(array $types) {
+		$result = array_filter(array_map(array($this, 'is'), $types));
+		return count($result) === count($types);
 	}
 
 /**
