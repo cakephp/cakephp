@@ -2797,6 +2797,9 @@ class FormHelper extends AppHelper {
  *   Disabling the field using the `disabled` option, will also omit the field from being
  *   part of the hashed key.
  *
+ * This method will convert a numerically indexed 'disabled' into a associative
+ * value. FormHelper's internals expect associative options.
+ *
  * @param string $field Name of the field to initialize options for.
  * @param array $options Array of options to append options into.
  * @return array Array of options for the input.
@@ -2807,6 +2810,12 @@ class FormHelper extends AppHelper {
 			unset($options['secure']);
 		} else {
 			$secure = (isset($this->request['_Token']) && !empty($this->request['_Token']));
+		}
+
+		$disabledIndex = array_search('disabled', $options, true);
+		if ($disabledIndex !== false) {
+			unset($options[$disabledIndex]);
+			$options['disabled'] = true;
 		}
 
 		$result = parent::_initInputField($field, $options);
