@@ -36,7 +36,7 @@ class AllDatabaseTest extends \PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$path = CORE_TEST_CASES . DS . 'Model/Datasource/Database';
+		$path = CORE_TEST_CASES . DS . 'Database';
 
 		$suite = new TestSuite('Connection, Datasources and Query builder');
 		$suite->addTestDirectoryRecursive($path);
