@@ -79,6 +79,14 @@ class SchemaShellTestSchema extends CakeSchema {
 		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
+
+	public $newone = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+		'testit' => array('type' => 'string', 'null' => false, 'default' => 'Title'),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
+	);
 }
 
 /**
@@ -504,6 +512,34 @@ class SchemaShellTest extends CakeTestCase {
 			->method('_run')
 			->with($this->arrayHasKey('articles'), 'update', $this->isInstanceOf('CakeSchema'));
 
+		$this->Shell->update();
+	}
+
+	/**
+	 * test run update with a table arg. and checks that a CREATE statement is issued
+	 * table creation
+	 * @return void
+	 */
+	public function testUpdateWithTableCreate() {
+		$this->Shell = $this->getMock(
+			'SchemaShell',
+			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '_run'),
+			array(&$this->Dispatcher)
+		);
+	
+		$this->Shell->params = array(
+			'connection' => 'test',
+			'force' => true
+		);
+		$this->Shell->args = array('SchemaShellTest', 'newone');
+		$this->Shell->startup();
+		$this->Shell->expects($this->any())
+			->method('in')
+			->will($this->returnValue('y'));
+		$r = $this->Shell->expects($this->once())
+			->method('_run')
+			->with($this->arrayHasKey('newone'), 'update', $this->isInstanceOf('CakeSchema'));
+	
 		$this->Shell->update();
 	}
 
