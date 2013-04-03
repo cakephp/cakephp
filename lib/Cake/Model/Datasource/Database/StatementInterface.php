@@ -11,105 +11,36 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model\Datasource\Database;
 
-use PDO;
-
 /**
- * Represents a database statement. Statements contains queries that can be
- * executed multiple times by binding different values on each call. This class
- * also helps convert values to their valid representation for the corresponding
- * types.
- *
+ * Represents a database statement. Concrete implementations
+ * can either use PDOStatement or a native driver
  */
-class Statement implements \IteratorAggregate, \Countable {
-
-	use TypeConverterTrait;
-
-/**
- * Statement instance implementation, such as PDOStatement
- * or any other custom implementation
- *
- * @var mixed
- */
-	protected $_statement;
-
-/**
- * Reference to the driver object associated to this statement
- *
- * @var Cake\Model\Datasource\Database\Driver
- */
-	protected $_driver;
-
-/**
- * Human readable fetch type names to PDO equivalents
- *
- * @var array
- */
-	protected $_fetchMap = [
-		'num' => PDO::FETCH_NUM,
-		'assoc' => PDO::FETCH_ASSOC
-	];
-
-/**
- * Constructor
- *
- * @param Statement implementation such as PDOStatement
- * @return void
- */
-	public function __construct($statement = null, $driver = null) {
-		$this->_statement = $statement;
-		$this->_driver = $driver;
-	}
-
-/**
- * Magic getter to return $queryString as read-only
- *
- * @param string $property internal property to get
- * @return mixed
- */
-	public function __get($property) {
-		if ($property === 'queryString') {
-			return $this->_statement->queryString;
-		}
-	}
+interface StatementInterface {
 
 /**
  * Assign a value to an positional or named variable in prepared query. If using
  * positional variables you need to start with index one, if using named params then
  * just use the name in any order.
  *
- * You can pass PDO compatible constants for binding values with a type or optionally
- * any type name registered in the Type class. Any value will be converted to the valid type
- * representation if needed.
- *
  * It is not allowed to combine positional and named variables in the same statement
  *
  * ## Examples:
  *
  *	`$statement->bindValue(1, 'a title');`
- *	`$statement->bindValue(2, 5, PDO::INT);`
  *	`$statement->bindValue('active', true, 'boolean');`
  *	`$statement->bindValue(5, new \DateTime(), 'date');`
  *
  * @param string|integer $column name or param position to be bound
  * @param mixed $value the value to bind to variable in query
- * @param string|integer $type PDO type or name of configured Type class
+ * @param string $type name of configured Type class
  * @return void
  */
-	public function bindValue($column, $value, $type = 'string') {
-		if ($type === null) {
-			$type = 'string';
-		}
-		if (!ctype_digit($type)) {
-			list($value, $type) = $this->cast($value, $type);
-		}
-		$this->_statement->bindValue($column, $value, $type);
-	}
+	public function bindValue($column, $value, $type = 'string');
 
 /**
  * Closes a cursor in the database, freeing up any resources and memory
@@ -118,9 +49,7 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * @return void
  */
-	public function closeCursor() {
-		$this->_statement->closeCursor();
-	}
+	public function closeCursor();
 
 /**
  * Returns the number of columns this statement's results will contain
@@ -135,18 +64,14 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * @return integer
  */
-	public function columnCount() {
-		return $this->_statement->columnCount();
-	}
+	public function columnCount();
 
 /**
  * Returns the error code for the last error that occurred when executing this statement
  *
  * @return integer|string
  */
-	public function errorCode() {
-		return $this->_statement->errorCode();
-	}
+	public function errorCode();
 
 /**
  * Returns the error information for the last error that occurred when executing
@@ -154,9 +79,7 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * @return array
  */
-	public function errorInfo() {
-		return $this->_statement->errorInfo();
-	}
+	public function errorInfo();
 
 /**
  * Executes the statement by sending the SQL query to the database. It can optionally
@@ -167,9 +90,7 @@ class Statement implements \IteratorAggregate, \Countable {
  * $param array $params list of values to be bound to query
  * @return boolean true on success, false otherwise
  */
-	public function execute($params = null) {
-		return $this->_statement->execute($params);
-	}
+	public function execute($params = null);
 
 /**
  * Returns the next row for the result set after executing this statement.
@@ -188,14 +109,7 @@ class Statement implements \IteratorAggregate, \Countable {
  * @return mixed|boolean result array containing columns and values or false if no results
  * are left
  */
-	public function fetch($type = 'num') {
-		switch ($type) {
-			case 'num':
-				return $this->_statement->fetch(PDO::FETCH_NUM);
-			case 'assoc':
-				return $this->_statement->fetch(PDO::FETCH_ASSOC);
-		}
-	}
+	public function fetch($type = 'num');
 
 /**
  * Returns an array with all rows resulting from executing this statement
@@ -211,14 +125,7 @@ class Statement implements \IteratorAggregate, \Countable {
  * @param string $type num for fetching columns as positional keys or assoc for column names as keys
  * @return array list of all results from database for this statement
  */
-	public function fetchAll($type = 'num') {
-		switch ($type) {
-			case 'num':
-				return $this->_statement->fetchAll(PDO::FETCH_NUM);
-			case 'assoc':
-				return $this->_statement->fetchAll(PDO::FETCH_ASSOC);
-		}
-	}
+	public function fetchAll($type = 'num');
 
 /**
  * Returns the number of rows affected by this SQL statement
@@ -233,29 +140,7 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * @return integer
  */
-	public function rowCount() {
-		return $this->_statement->rowCount();
-	}
-
-/**
- * Statements are iterable as arrays, this method will return
- * the iterator object for traversing all items in the result.
- *
- * ## Example:
- *
- * {{{
- *	$statement = $connection->prepare('SELECT id, title from articles');
- *	$statement->execute();
- *	foreach ($statement as $row) {
- *		//do stuff
- *	}
- * }}}
- *
- * @return Iterator
- */
-	public function getIterator() {
-		return $this->_statement;
-	}
+	public function rowCount();
 
 /**
  * Statements can be passed as argument for count()
@@ -263,9 +148,7 @@ class Statement implements \IteratorAggregate, \Countable {
  *
  * @return integer
  */
-	public function count() {
-		return $this->rowCount();
-	}
+	public function count();
 
 /**
  * Binds a set of values to statement object with corresponding type
@@ -274,23 +157,6 @@ class Statement implements \IteratorAggregate, \Countable {
  * @param array $types list of types to be used, keys should match those in $params
  * @return void
  */
-	public function bind($params, $types) {
-		if (empty($params)) {
-			return;
-		}
-
-		$annonymousParams = is_int(key($params)) ? true : false;
-		$offset = 1;
-		foreach ($params as $index => $value) {
-			$type = null;
-			if (isset($types[$index])) {
-				$type = $types[$index];
-			}
-			if ($annonymousParams) {
-				$index += $offset;
-			}
-			$this->bindValue($index, $value, $type);
-		}
-	}
+	public function bind($params, $types);
 
 }

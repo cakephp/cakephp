@@ -11,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -101,7 +100,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	public function testPrepare() {
 		$sql = 'SELECT 1 + 1';
 		$result = $this->connection->prepare($sql);
-		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\StatementInterface', $result);
 		$this->assertEquals($sql, $result->queryString);
 	}
 
@@ -186,7 +185,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 			$data,
 			['id' => 'integer', 'title' => 'string', 'body' => 'string']
 		);
-		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\StatementInterface', $result);
 		$result = $this->connection->execute('SELECT * from things');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
@@ -207,7 +206,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 			$data,
 			['integer', 'string', 'string']
 		);
-		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\StatementInterface', $result);
 		$result = $this->connection->execute('SELECT * from things');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
@@ -608,6 +607,104 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$result = $this->connection->quoteIdentifier('Model.name as y');
 		$expected = '"Model"."name" AS "y"';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Tests default return vale for logger() function
+ *
+ * @return void
+ */
+	public function testLoggerDefault() {
+		$logger = $this->connection->logger();
+		$this->assertInstanceOf('\Cake\Model\Datasource\Database\Log\QueryLogger', $logger);
+		$this->assertSame($logger, $this->connection->logger());
+	}
+
+/**
+ * Tests that a custom logger object can be set
+ *
+ * @return void
+ */
+	public function testSetLogger() {
+		$logger = new \Cake\Model\Datasource\Database\Log\QueryLogger;
+		$this->connection->logger($logger);
+		$this->assertSame($logger, $this->connection->logger());
+	}
+
+/**
+ * Tests that statements are decorated with a logger when logQueries is set to true
+ *
+ * @return void
+ */
+	public function testLoggerDecorator() {
+		$logger = new \Cake\Model\Datasource\Database\Log\QueryLogger;
+		$this->connection->logQueries(true);
+		$this->connection->logger($logger);
+		$st = $this->connection->prepare('SELECT 1');
+		$this->assertInstanceOf('\Cake\Model\Datasource\Database\Log\LoggingStatement', $st);
+		$this->assertSame($logger, $st->logger());
+
+		$this->connection->logQueries(false);
+		$st = $this->connection->prepare('SELECT 1');
+		$this->assertNotInstanceOf('\Cake\Model\Datasource\Database\Log\LoggingStatement', $st);
+	}
+
+/**
+ * Tests that log() function logs to the configured query logger
+ *
+ * @return void
+ */
+	public function testLogFunction() {
+		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
+		$this->connection->logger($logger);
+		$logger->expects($this->once())->method('log')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
+				$this->attributeEqualTo('query', 'SELECT 1')
+			));
+		$this->connection->log('SELECT 1');
+	}
+
+/**
+ * Tests that begin and rollback are also logged
+ *
+ * @return void
+ */
+	public function testLogBeginRollbackTransaction() {
+		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
+		$this->connection->logger($logger);
+		$logger->expects($this->at(0))->method('log')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
+				$this->attributeEqualTo('query', 'BEGIN')
+			));
+		$logger->expects($this->at(1))->method('log')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
+				$this->attributeEqualTo('query', 'ROLLBACK')
+			));
+		$this->connection->logQueries(true);
+		$this->connection->begin();
+		$this->connection->begin(); //This one will not be logged
+		$this->connection->rollback();
+	}
+
+/**
+ * Tests that commits are logged
+ *
+ * @return void
+ */
+	public function testLogCommitTransaction() {
+		$logger = $this->getMock('\Cake\Model\Datasource\Database\Log\QueryLogger');
+		$this->connection->logger($logger);
+		$logger->expects($this->at(1))->method('log')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('\Cake\Model\Datasource\Database\Log\LoggedQuery'),
+				$this->attributeEqualTo('query', 'COMMIT')
+			));
+		$this->connection->logQueries(true);
+		$this->connection->begin();
+		$this->connection->commit();
 	}
 
 }
