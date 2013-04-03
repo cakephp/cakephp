@@ -23,9 +23,7 @@ use PDO;
 
 class Postgres extends \Cake\Model\Datasource\Database\Driver {
 
-	use PDODriverTrait {
-		connect as protected _connect;
-	}
+	use PDODriverTrait;
 	use PostgresDialectTrait;
 
 /**

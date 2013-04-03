@@ -16,13 +16,13 @@
  */
 namespace Cake\Model\Datasource\Database\Driver;
 
+use Cake\Model\Datasource\Database\Dialect\MysqlDialectTrait;
 use PDO;
 
 class Mysql extends \Cake\Model\Datasource\Database\Driver {
 
-	use PDODriverTrait {
-		connect as protected _connect;
-	}
+	use PDODriverTrait;
+	use MysqlDialectTrait;
 
 /**
  * Base configuration settings for MySQL driver
@@ -56,7 +56,7 @@ class Mysql extends \Cake\Model\Datasource\Database\Driver {
 			$config['timezone'] = '+0:00';
 		}
 
-		$config['init'][] = "SET time_zone = '+0:00'";
+		$config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
 		$config['flags'] += [
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
