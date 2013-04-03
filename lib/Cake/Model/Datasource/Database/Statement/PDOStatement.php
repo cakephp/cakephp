@@ -23,12 +23,12 @@ use \PDOStatement as Statement;
  * Decorator for \PDOStatement class mainly used for converting human readable
  * fetch modes into PDO constants.
  */
-class PDOStatement extends \Cake\Model\Datasource\Database\Statement {
+class PDOStatement extends StatementDecorator {
 
 /**
  * Constructor
  *
- * @param Statement implementation such as PDOStatement
+ * @param \PDOStatement original statement to be decorated
  * @return void
  */
 	public function __construct(Statement $statement = null, $driver = null) {

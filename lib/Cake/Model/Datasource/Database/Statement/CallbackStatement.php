@@ -17,7 +17,7 @@
  */
 namespace Cake\Model\Datasource\Database\Statement;
 
-class CallbackStatement extends \Cake\Model\Datasource\Database\Statement {
+class CallbackStatement extends StatementDecorator {
 
 	protected $_callback;
 

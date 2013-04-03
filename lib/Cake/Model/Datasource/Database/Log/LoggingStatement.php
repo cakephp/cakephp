@@ -16,12 +16,14 @@
  */
 namespace Cake\Model\Datasource\Database\Log;
 
+use Cake\Model\Datasource\Database\Statement\StatementDecorator;
+
 /**
  * Statement decorator used to 
  *
  * @return void
  */
-class LoggingStatement extends \Cake\Model\Datasource\Database\Statement {
+class LoggingStatement extends StatementDecorator {
 
 /**
  * Logger instance responsible for actually doing the logging task

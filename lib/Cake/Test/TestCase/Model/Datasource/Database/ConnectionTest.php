@@ -100,7 +100,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	public function testPrepare() {
 		$sql = 'SELECT 1 + 1';
 		$result = $this->connection->prepare($sql);
-		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\StatementInterface', $result);
 		$this->assertEquals($sql, $result->queryString);
 	}
 
@@ -185,7 +185,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 			$data,
 			['id' => 'integer', 'title' => 'string', 'body' => 'string']
 		);
-		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\StatementInterface', $result);
 		$result = $this->connection->execute('SELECT * from things');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
@@ -206,7 +206,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 			$data,
 			['integer', 'string', 'string']
 		);
-		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\StatementInterface', $result);
 		$result = $this->connection->execute('SELECT * from things');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');

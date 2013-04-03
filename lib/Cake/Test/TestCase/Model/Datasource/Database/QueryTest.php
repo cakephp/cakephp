@@ -121,12 +121,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testSelectFieldsOnly() {
 		$query = new Query($this->connection);
 		$result = $query->select('1 + 1')->execute();
-		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\StatementInterface', $result);
 		$this->assertEquals([2], $result->fetch());
 
 		//This new field should be appended
 		$result = $query->select(array('1 + 3'))->execute();
-		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\StatementInterface', $result);
 		$this->assertEquals([2, 4], $result->fetch());
 
 		//This should now overwrite all previous fields
@@ -1616,7 +1616,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertContains('DELETE FROM authors', $result);
 
 		$result = $query->execute();
-		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\StatementInterface', $result);
 		$this->assertCount(2, $result);
 	}
 
@@ -1636,7 +1636,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertContains('DELETE FROM authors ', $result);
 
 		$result = $query->execute();
-		$this->assertInstanceOf('Cake\Model\Datasource\Database\Statement', $result);
+		$this->assertInstanceOf('Cake\Model\Datasource\Database\StatementInterface', $result);
 		$this->assertCount(2, $result);
 	}
 

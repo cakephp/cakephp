@@ -96,17 +96,6 @@ class Postgres extends \Cake\Model\Datasource\Database\Driver {
 	}
 
 /**
- * Prepares a sql statement to be executed
- *
- * @param string $sql
- * @return Cake\Model\Datasource\Database\Statement
- */
-	public  function prepare($sql) {
-		$statement = $this->connection()->prepare($sql);
-		return new Statement($statement, $this);
-	}
-
-/**
  * Sets connection encoding
  *
  * @return void

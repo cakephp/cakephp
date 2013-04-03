@@ -16,7 +16,7 @@
  */
 namespace Cake\Model\Datasource\Database\Statement;
 
-class BufferedStatement extends \Cake\Model\Datasource\Database\Statement {
+class BufferedStatement extends StatementDecorator {
 
 	protected $_count = 0;
 
