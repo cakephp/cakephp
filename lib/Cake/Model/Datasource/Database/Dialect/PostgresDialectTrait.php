@@ -250,8 +250,12 @@ trait PostgresDialectTrait {
 		list($type, $length) = $this->convertColumn($row['type']);
 
 		if ($type === 'boolean') {
-			$row['default'] = $row['default'] === 'false' ? 0 : $row['default'];
-			$row['default'] = $row['default'] === 'true' ? 1 : $row['default'];
+			if ($row['default'] === 'true') {
+				$row['default'] = 1;
+			}
+			if ($row['default'] === 'false') {
+				$row['default'] = 0;
+			}
 		}
 
 		$schema = [];
