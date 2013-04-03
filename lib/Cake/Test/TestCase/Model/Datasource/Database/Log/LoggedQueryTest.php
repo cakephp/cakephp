@@ -15,25 +15,25 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Model\Datasource\Database\Statement;
+namespace Cake\Test\TestCase\Model\Datasource\Database\Log;
 
-class CallbackStatement extends StatementDecorator {
+use Cake\Model\Datasource\Database\Log\LoggedQuery;
 
-	protected $_callback;
+/**
+ * Tests LoggedQuery class
+ *
+ **/
+class LoggedQueryTest extends \Cake\TestSuite\TestCase {
 
-	public function __construct($statement, $driver, $callback) {
-		parent::__construct($statement, $driver);
-		$this->_callback = $callback;
-	}
-
-	public function fetch($type = 'num') {
-		$callback = $this->_callback;
-		$row = $this->_statement->fetch($type);
-		return $row === false ? $row : $callback($row);
-	}
-
-	public function fetchAll($type = 'num') {
-		return array_map($this->_callback, $this->_statement->fetchAll($type));
+/**
+ * Tests that LoggedQuery can be converted to string
+ *
+ * @return void
+ */
+	public function testStringConversion() {
+		$logged = new LoggedQuery;
+		$logged->query = 'SELECT foo FROM bar';
+		$this->assertEquals('SELECT foo FROM bar', (string)$logged);
 	}
 
 }
