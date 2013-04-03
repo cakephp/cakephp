@@ -1,10 +1,6 @@
 <?php
 /**
- * Index
- *
- * The Front Controller for handling every request
- *
- * PHP 5
+ * PHP Version 5.4
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -15,23 +11,17 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.webroot
- * @since         CakePHP(tm) v 0.2.9
+ * @package       Cake.Model
+ * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-// for built-in server
-if (php_sapi_name() == 'cli-server') {
-	$_SERVER['PHP_SELF'] = '/' . basename(__FILE__);
+namespace Cake\Database\Expression;
+
+class UnaryExpression extends QueryExpression {
+
+	public function sql() {
+		reset($this->_conditions);
+		return $this->_conjunction . ' (' . ((string)current($this->_conditions)) . ')';
+	}
+
 }
-require dirname(__DIR__) . '/Config/bootstrap.php';
-
-use Cake\Core\Configure;
-use Cake\Network\Request;
-use Cake\Network\Response;
-use Cake\Routing\Dispatcher;
-
-$Dispatcher = new Dispatcher();
-$Dispatcher->dispatch(
-	Request::createFromGlobals(),
-	new Response()
-);

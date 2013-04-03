@@ -20,7 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Utility\Debugger;
 use Cake\Cache\Cache;
-use Cake\Model\ConnectionManager;
+use Cake\Model\Datasource\Database\Connection;
 use Cake\Utility\Validation;
 use Cake\Error;
 
@@ -115,7 +115,9 @@ endif;
 <?php
 if (isset($filePresent)):
 	try {
-		$connected = ConnectionManager::getDataSource('default');
+		require APP . 'Config/datasources.php';
+		$connection = new Connection(Configure::read('Datasource.default'));
+		$connected = $connection->connect();
 	} catch (Exception $connectionError) {
 		$connected = false;
 		$errorMsg = $connectionError->getMessage();
@@ -129,7 +131,7 @@ if (isset($filePresent)):
 ?>
 <p>
 	<?php
-		if ($connected && $connected->isConnected()):
+		if ($connected):
 			echo '<span class="notice success">';
 	 			echo __d('cake_dev', 'Cake is able to connect to the database.');
 			echo '</span>';

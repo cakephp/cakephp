@@ -36,25 +36,10 @@ class AllDatabaseTest extends \PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new \PHPUnit_Framework_TestSuite('Datasources, Schema and DbAcl tests');
+		$path = CORE_TEST_CASES . DS . 'Database';
 
-		$path = CORE_TEST_CASES . DS . 'Model/';
-		$tasks = array(
-			'AclNode',
-			'Schema',
-			'ConnectionManager',
-			'Datasource/DboSource',
-			'Datasource/Database/Mysql',
-			'Datasource/Database/Postgres',
-			'Datasource/Database/Sqlite',
-			'Datasource/Database/Sqlserver',
-			'Datasource/Session',
-			'Datasource/Session/CacheSession',
-			'Datasource/Session/DatabaseSession',
-		);
-		foreach ($tasks as $task) {
-			$suite->addTestFile($path . $task . 'Test.php');
-		}
+		$suite = new TestSuite('Connection, Datasources and Query builder');
+		$suite->addTestDirectoryRecursive($path);
 		return $suite;
 	}
 }

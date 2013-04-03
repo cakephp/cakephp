@@ -1,10 +1,6 @@
 <?php
 /**
- * Index
- *
- * The Front Controller for handling every request
- *
- * PHP 5
+ * PHP Version 5.4
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -15,23 +11,31 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.webroot
- * @since         CakePHP(tm) v 0.2.9
+ * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-// for built-in server
-if (php_sapi_name() == 'cli-server') {
-	$_SERVER['PHP_SELF'] = '/' . basename(__FILE__);
+namespace Cake\Database\Statement;
+
+/**
+ * Statement class meant to be used by an Sqlite driver
+ *
+ */
+class SqliteStatement extends BufferedStatement {
+
+/**
+ * Returns the number of rows returned of affected by last execution
+ *
+ * @return int
+ */
+	public function rowCount() {
+		if (preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)) {
+			$changes = $this->_driver->prepare('SELECT CHANGES()');
+			$changes->execute();
+			return $changes->fetch()[0];
+		}
+		return parent::rowCount();
+	}
+
 }
-require dirname(__DIR__) . '/Config/bootstrap.php';
 
-use Cake\Core\Configure;
-use Cake\Network\Request;
-use Cake\Network\Response;
-use Cake\Routing\Dispatcher;
 
-$Dispatcher = new Dispatcher();
-$Dispatcher->dispatch(
-	Request::createFromGlobals(),
-	new Response()
-);
