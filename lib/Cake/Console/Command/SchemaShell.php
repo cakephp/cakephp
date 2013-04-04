@@ -374,10 +374,18 @@ class SchemaShell extends AppShell {
 
 		if (empty($table)) {
 			foreach ($compare as $table => $changes) {
-				$contents[$table] = $db->alterSchema(array($table => $changes), $table);
+				if (isset($compare[$table]['create'])) {
+					$contents[$table] = $db->createSchema($Schema, $table);
+				} else {
+					$contents[$table] = $db->alterSchema(array($table => $compare[$table]), $table);
+				}
 			}
 		} elseif (isset($compare[$table])) {
-			$contents[$table] = $db->alterSchema(array($table => $compare[$table]), $table);
+			if (isset($compare[$table]['create'])) {
+				$contents[$table] = $db->createSchema($Schema, $table);
+			} else {
+				$contents[$table] = $db->alterSchema(array($table => $compare[$table]), $table);
+			}
 		}
 
 		if (empty($contents)) {
