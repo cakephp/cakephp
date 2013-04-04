@@ -515,18 +515,18 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->update();
 	}
 
-	/**
-	 * test run update with a table arg. and checks that a CREATE statement is issued
-	 * table creation
-	 * @return void
-	 */
+/**
+ * test run update with a table arg. and checks that a CREATE statement is issued
+ * table creation
+ * @return void
+ */
 	public function testUpdateWithTableCreate() {
 		$this->Shell = $this->getMock(
 			'SchemaShell',
 			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '_run'),
 			array(&$this->Dispatcher)
 		);
-	
+
 		$this->Shell->params = array(
 			'connection' => 'test',
 			'force' => true
@@ -539,7 +539,7 @@ class SchemaShellTest extends CakeTestCase {
 		$r = $this->Shell->expects($this->once())
 			->method('_run')
 			->with($this->arrayHasKey('newone'), 'update', $this->isInstanceOf('CakeSchema'));
-	
+
 		$this->Shell->update();
 	}
 
