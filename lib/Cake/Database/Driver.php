@@ -85,7 +85,6 @@ abstract class Driver {
  **/
 	public abstract function rollbackTransaction();
 
-
 /**
  * Returns whether this driver supports save points for nested transactions
  *
@@ -94,7 +93,6 @@ abstract class Driver {
 	public function supportsSavePoints() {
 		return true;
 	}
-
 
 /**
  * Returns a value in a safe representation to be used in a query string

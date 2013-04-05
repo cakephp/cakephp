@@ -552,14 +552,6 @@ class TestTask extends BakeTask {
 /**
  * Make the filename for the test case. resolve the suffixes for controllers
  * and get the plugin path if needed.
-		}
-		$uses[] = $fullClassName;
-		return $uses;
-	}
-
-/**
- * Make the filename for the test case. resolve the suffixes for controllers
- * and get the plugin path if needed.
  *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $className the Classname of the class the test is being generated for.

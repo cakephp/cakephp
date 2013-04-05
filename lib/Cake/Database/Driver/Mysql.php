@@ -21,8 +21,8 @@ use PDO;
 
 class Mysql extends \Cake\Database\Driver {
 
-	use PDODriverTrait;
 	use MysqlDialectTrait;
+	use PDODriverTrait;
 
 /**
  * Base configuration settings for MySQL driver
@@ -83,6 +83,5 @@ class Mysql extends \Cake\Database\Driver {
 	public function enabled() {
 		return in_array('mysql', PDO::getAvailableDrivers());
 	}
-
 
 }

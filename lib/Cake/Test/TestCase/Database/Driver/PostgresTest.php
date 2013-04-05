@@ -267,7 +267,6 @@ SQL;
 		$this->assertEquals($expected, $driver->convertColumn($input));
 	}
 
-
 /**
  * Test listing tables with Postgres
  *

@@ -62,7 +62,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 /**
  * An unique string that identifies this object. It is used to create unique
  * placeholders.
- * 
+ *
  * @car string
  */
 	protected $_identifier;
@@ -562,7 +562,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 		}
 
 		$placeholder = $this->_bindValue($field, $value, $type);
-		return sprintf('%s %s (%s)', $expression,  $operator, $placeholder);
+		return sprintf('%s %s (%s)', $expression, $operator, $placeholder);
 	}
 
 /**

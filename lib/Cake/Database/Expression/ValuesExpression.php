@@ -17,9 +17,9 @@
  */
 namespace Cake\Database\Expression;
 
-use Cake\Error;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Error;
 use \Countable;
 
 /**

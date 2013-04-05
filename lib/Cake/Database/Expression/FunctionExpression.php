@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Expression;
+
 use Cake\Database\ExpressionInterface;
 
 /**
@@ -110,7 +111,7 @@ class FunctionExpression extends QueryExpression {
  */
 	public function sql() {
 		return $this->_name . sprintf('(%s)', implode(
-			$this->_conjunction. ' ',
+			$this->_conjunction . ' ',
 			$this->_conditions
 		));
 	}
