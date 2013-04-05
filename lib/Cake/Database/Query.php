@@ -17,14 +17,14 @@
  */
 namespace Cake\Database;
 
-use IteratorAggregate;
-use Cake\Error;
 use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
-use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\Error;
+use IteratorAggregate;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -94,7 +94,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 /**
  * When compiling a query to its SQL representation, the connection being used
- * for its execution has the ability to internally change it or even create a 
+ * for its execution has the ability to internally change it or even create a
  * completely different Query object to save any differences with its dialect.
  * This property holds a reference to the Query object that resulted from
  * transforming this instance.
@@ -224,7 +224,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * functions can aggregate results using variables in the closure or instance
  * variables. This function is commonly used as a way for traversing all query parts that
  * are going to be used for constructing a query.
- * 
+ *
  * The callback will receive 2 parameters, the first one is the value of the query
  * part that is being iterated and the second the name of such part.
  *
@@ -463,7 +463,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		if ($overwrite) {
 			$this->_parts['from'] = $tables;
 		} else {
-			$this->_parts['from'] =  array_merge($this->_parts['from'], $tables);
+			$this->_parts['from'] = array_merge($this->_parts['from'], $tables);
 		}
 
 		$this->_dirty = true;
@@ -478,7 +478,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $parts list of tables to be transformed to string
  * @return string
  */
-	public function _buildFromPart($parts) {
+	protected function _buildFromPart($parts) {
 		$select = ' FROM %s';
 		$normalized = [];
 		foreach ($parts as $k => $p) {
@@ -496,7 +496,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * join parts, an array with multiple join descriptions, or a single string.
  *
  * By default this function will append any passed argument to the list of tables
- * to be joined, unless the third argument is set to true. 
+ * to be joined, unless the third argument is set to true.
  *
  * When no join type is specified an INNER JOIN is used by default:
  * ``$query->join(['authors'])`` Will produce INNER JOIN authors ON (1 = 1)
@@ -505,7 +505,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * ``$query->join(['a' => 'authors'])`` Will produce INNER JOIN authors a ON (1 = 1)
  *
  * A join can be fully described and aliased using the array notation:
- * 
+ *
  * {{{
  *	$query->join([
  *		'a' => [
@@ -537,7 +537,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * possible to using conditions expressed in arrays or expression objects.
  *
  * When using arrays for expressing conditions, it is often desirable to convert
- * the literal values to the correct database representation. This is achieved 
+ * the literal values to the correct database representation. This is achieved
  * using the second parameter of this function.
  *
  * {{{
@@ -1124,7 +1124,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  */
 	protected function _buildUnionPart($parts) {
 		$parts = array_map(function($p) {
-			$p['query'] =(string)$p['query'];
+			$p['query'] = (string)$p['query'];
 			$p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
 			return $p['all'] ? 'ALL ' . $p['query'] : $p['query'];
 		}, $parts);
@@ -1317,7 +1317,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Returns any data that was stored in the specified clause. This is useful for
  * modifying any internal part of the query and it is used by the SQL dialects
  * to transform the query accordingly before it is executed. The valid clauses that
- * can be retrieved are: delete, update, set, insert, values, select, distinct, 
+ * can be retrieved are: delete, update, set, insert, values, select, distinct,
  * from, join, set, where, group, having, order, limit, offset and union.
  *
  * The return value for each of those parts may vary. Some clauses use QueryExpression

@@ -253,7 +253,7 @@ class TextHelper extends Helper {
 		}
 		return $text;
 	}
-  
+
 /**
  * @see String::stripLinks()
  *

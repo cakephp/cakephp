@@ -68,7 +68,7 @@ trait PDODriverTrait {
  * @param string $sql
  * @return Cake\Database\Statement
  */
-	public  function prepare($sql) {
+	public function prepare($sql) {
 		$statement = $this->connection()->prepare($sql);
 		return new PDOStatement($statement, $this);
 	}

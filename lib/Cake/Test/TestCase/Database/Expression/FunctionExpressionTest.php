@@ -49,7 +49,7 @@ class FunctionExpressionTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertEquals('foo', $f->bindings()[1]['value']);
 		$this->assertEquals('bar', $f->bindings()[2]['value']);
-		
+
 		$f = new FunctionExpression('MyFunction', ['bar']);
 		$bar = $f->id() . '0';
 		$this->assertEquals("MyFunction(:c$bar)", $f->sql());

@@ -55,14 +55,14 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	protected function _insertTwoRecords() {
 		$this->_createAuthorsAndArticles();
 
-		$data = ['id' => '1', 'name' =>  'Chuck Norris'];
+		$data = ['id' => '1', 'name' => 'Chuck Norris'];
 		$result = $this->connection->insert('authors', $data, ['id' => 'integer', 'name' => 'string']);
 
 		$result->bindValue(1, '2', 'integer');
 		$result->bindValue(2, 'Bruce Lee');
 		$result->execute();
 
-		$data = ['id' => '1', 'title' =>  'a title', 'body' =>  'a body', 'author_id' => 1];
+		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body', 'author_id' => 1];
 		$result = $this->connection->insert(
 			'articles',
 			$data,
@@ -88,7 +88,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->connection->execute($table);
 		$data = [
 			'id' => '1',
-			'name' =>  'Chuck Norris',
+			'name' => 'Chuck Norris',
 			'posted' => new \DateTime('2012-12-21 12:00'),
 			'visible' => 'Y'
 		];
@@ -665,7 +665,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->where(function($exp) {
 				return $exp
 					->eq('id', 1)
-					->eq('posted',  new \DateTime('2012-12-21 12:00'), 'datetime');
+					->eq('posted', new \DateTime('2012-12-21 12:00'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(1, $result);
@@ -678,7 +678,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->where(function($exp) {
 				return $exp
 					->eq('id', 1)
-					->eq('posted',  new \DateTime('2021-12-30 15:00'), 'datetime');
+					->eq('posted', new \DateTime('2021-12-30 15:00'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(0, $result);
@@ -698,7 +698,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('dates')
 			->where(['id' => '1'])
 			->andWhere(function($exp) {
-				return $exp->eq('posted',  new \DateTime('2012-12-21 12:00'), 'datetime');
+				return $exp->eq('posted', new \DateTime('2012-12-21 12:00'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(1, $result);
@@ -710,7 +710,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('dates')
 			->where(['id' => '1'])
 			->andWhere(function($exp) {
-				return $exp->eq('posted',  new \DateTime('2022-12-21 12:00'), 'datetime');
+				return $exp->eq('posted', new \DateTime('2022-12-21 12:00'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(0, $result);
@@ -730,7 +730,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->from('dates')
 			->where(['id' => '1'])
 			->orWhere(function($exp) {
-				return $exp->eq('posted',  new \DateTime('2012-12-22 12:00'), 'datetime');
+				return $exp->eq('posted', new \DateTime('2012-12-22 12:00'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(2, $result);
@@ -744,8 +744,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->where(['id' => '1'])
 			->orWhere(function($exp) {
 				return $exp
-					->eq('posted',  new \DateTime('2012-12-22 12:00'), 'datetime')
-					->eq('id',  3);
+					->eq('posted', new \DateTime('2012-12-22 12:00'), 'datetime')
+					->eq('id', 3);
 			})
 			->execute();
 		$this->assertCount(1, $result);
@@ -1593,7 +1593,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		}
 
 		$results = $query->decorateResults(null, true)->execute();
-		while($row = $result->fetch('assoc')) {
+		while ($row = $result->fetch('assoc')) {
 			$this->assertArrayNotHasKey('foo', $row);
 			$this->assertArrayNotHasKey('modified_id', $row);
 		}
@@ -1998,7 +1998,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			1
 		);
 	}
-
 
 /**
  * Assertion for comparing a table's contents with what is in it.

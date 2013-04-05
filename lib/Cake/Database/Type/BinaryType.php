@@ -16,8 +16,8 @@
  */
 namespace Cake\Database\Type;
 
-use Cake\Error;
 use Cake\Database\Driver;
+use Cake\Error;
 use \PDO;
 
 /**

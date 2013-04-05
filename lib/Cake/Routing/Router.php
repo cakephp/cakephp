@@ -46,7 +46,7 @@ class Router {
  *
  * @var Cake\Routing\RouteCollection
  */
-	public static $_routes;
+	protected static $_routes;
 
 /**
  * Have routes been loaded

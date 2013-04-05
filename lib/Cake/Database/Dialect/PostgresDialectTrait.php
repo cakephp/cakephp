@@ -17,8 +17,8 @@
  */
 namespace Cake\Database\Dialect;
 
-use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\Query;
 use Cake\Database\SqlDialectTrait;
 
@@ -98,7 +98,6 @@ trait PostgresDialectTrait {
 			return $row;
 		};
 	}
-
 
 /**
  * Returns an dictionary of expressions to be transformed when compiling a Query
