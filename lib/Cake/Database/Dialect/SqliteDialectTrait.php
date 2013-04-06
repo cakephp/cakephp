@@ -21,6 +21,7 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Query;
 use Cake\Database\SqlDialectTrait;
+use Cake\Error;
 
 trait SqliteDialectTrait {
 
@@ -132,6 +133,7 @@ trait SqliteDialectTrait {
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
+ * @throws Cake\Error\Exception
  * @return array List of (type, length)
  */
 	public function convertColumn($column) {

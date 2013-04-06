@@ -117,7 +117,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 		$this->assertNotEmpty($map);
 		$this->assertFalse(isset($map['foo']));
 
-		$fooType =  __NAMESPACE__ . '\FooType';
+		$fooType = __NAMESPACE__ . '\FooType';
 		Type::map('foo', $fooType);
 		$map = Type::map();
 		$this->assertEquals($fooType, $map['foo']);

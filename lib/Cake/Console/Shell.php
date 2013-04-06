@@ -277,7 +277,7 @@ class Shell extends Object {
  * @param string $modelClass Name of model class to load
  * @param mixed $id Initial ID the instanced model class should have
  * @return mixed true when single model found and instance created, error returned if model not found.
- * @throws MissingModelException if the model class cannot be found.
+ * @throws Cake\Error\MissingModelException if the model class cannot be found.
  */
 	public function loadModel($modelClass = null, $id = null) {
 		if ($modelClass === null) {
@@ -300,7 +300,7 @@ class Shell extends Object {
 			'id' => $id
 		));
 		if (!$this->{$modelClass}) {
-			throw new MissingModelException($modelClass);
+			throw new Error\MissingModelException($modelClass);
 		}
 		return true;
 	}

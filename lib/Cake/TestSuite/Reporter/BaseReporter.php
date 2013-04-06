@@ -132,7 +132,6 @@ class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 		$this->paintFooter($result);
 	}
 
-
 /**
  * An error occurred.
  *

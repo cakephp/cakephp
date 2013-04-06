@@ -115,7 +115,7 @@ class Xml {
 				}
 				return static::_loadXml($response->body, $options);
 			} catch (Error\SocketException $e) {
-				throw new XmlException(__d('cake_dev', 'XML cannot be read.'));
+				throw new Error\XmlException(__d('cake_dev', 'XML cannot be read.'));
 			}
 		} elseif (!is_string($input)) {
 			throw new Error\XmlException(__d('cake_dev', 'Invalid input.'));

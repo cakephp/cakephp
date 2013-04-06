@@ -35,7 +35,7 @@ class BufferedStatement extends StatementDecorator {
 
 	public function fetch($type = 'num') {
 		if ($this->_allFetched) {
-			$row =  ($this->_counter <= $this->_count) ? $this->_records[$this->_counter++] : false;
+			$row = ($this->_counter <= $this->_count) ? $this->_records[$this->_counter++] : false;
 			$row = ($row && $type === 'num') ? array_values($row) : $row;
 			return $row;
 		}

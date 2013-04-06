@@ -16,9 +16,9 @@
  */
 namespace Cake\Database\Driver;
 
+use Cake\Database\Dialect\SqliteDialectTrait;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
-use Cake\Database\Dialect\SqliteDialectTrait;
 use PDO;
 
 class Sqlite extends \Cake\Database\Driver {
@@ -84,7 +84,7 @@ class Sqlite extends \Cake\Database\Driver {
  * @param string $sql
  * @return Cake\Database\Statement
  */
-	public  function prepare($sql) {
+	public function prepare($sql) {
 		$statement = $this->connection()->prepare($sql);
 		return new SqliteStatement(new PDOStatement($statement, $this), $this);
 	}

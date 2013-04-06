@@ -25,7 +25,6 @@ use Cake\Database\Connection;
  **/
 class ConnectionTest extends \Cake\TestSuite\TestCase {
 
-
 	public function setUp() {
 		$this->connection = new Connection(Configure::read('Datasource.test'));
 	}
@@ -53,7 +52,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testMissingDriver() {
-		$connection = new Connection(['datasource' =>  '\Foo\InvalidDriver']);
+		$connection = new Connection(['datasource' => '\Foo\InvalidDriver']);
 	}
 
 /**
@@ -117,13 +116,13 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals([2], $result);
 
 		$sql = 'SELECT 1 + ? + ? AS total';
-		$statement = $this->connection->execute($sql, [2, 3],  array('integer', 'integer'));
+		$statement = $this->connection->execute($sql, [2, 3], array('integer', 'integer'));
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch('assoc');
 		$this->assertEquals(['total' => 6], $result);
 
 		$sql = 'SELECT 1 + :one + :two AS total';
-		$statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3],  array('one' => 'integer', 'two' => 'integer'));
+		$statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3], array('one' => 'integer', 'two' => 'integer'));
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch('assoc');
 		$this->assertEquals(['total' => 6], $result);
@@ -179,7 +178,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	public function testInsertWithMatchingTypes() {
 		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
 		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' =>  'a title', 'body' =>  'a body'];
+		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
@@ -200,7 +199,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	public function testInsertWithPositionalTypes() {
 		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
 		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' =>  'a title', 'body' =>  'a body'];
+		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
@@ -221,7 +220,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	protected function _insertTwoRecords() {
 		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
 		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' =>  'a title', 'body' =>  'a body'];
+		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
@@ -246,7 +245,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$total = $total->fetch('assoc');
 		$this->assertEquals(2, $total['total']);
 
-		$result =  $this->connection->execute('SELECT title, body  FROM things');
+		$result = $this->connection->execute('SELECT title, body  FROM things');
 		$row = $result->fetch('assoc');
 		$this->assertEquals('a title', $row['title']);
 		$this->assertEquals('a body', $row['body']);
@@ -308,7 +307,7 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$title = 'changed the title!';
 		$body = new \DateTime('2012-01-01');
 		$values = compact('title', 'body');
-		$this->connection->update('things', $values, [], ['body' =>  'date']);
+		$this->connection->update('things', $values, [], ['body' => 'date']);
 		$result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
 		$this->assertCount(2, $result);
 		$row = $result->fetch('assoc');
@@ -345,7 +344,6 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(0, $result);
 	}
-
 
 /**
  * Tests delete from table with conditions
@@ -527,15 +525,15 @@ class ConnectionTest extends \Cake\TestSuite\TestCase {
 	public function testQuote() {
 		$this->skipIf(!$this->connection->supportsQuoting());
 		$expected = "'2012-01-01'";
-		$result =$this->connection->quote(new \DateTime('2012-01-01'), 'date');
+		$result = $this->connection->quote(new \DateTime('2012-01-01'), 'date');
 		$this->assertEquals($expected, $result);
 
 		$expected = "'1'";
-		$result =$this->connection->quote(1, 'string');
+		$result = $this->connection->quote(1, 'string');
 		$this->assertEquals($expected, $result);
 
 		$expected = "'hello'";
-		$result =$this->connection->quote('hello', 'string');
+		$result = $this->connection->quote('hello', 'string');
 		$this->assertEquals($expected, $result);
 	}
 

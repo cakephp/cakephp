@@ -17,8 +17,8 @@
  */
 namespace Cake\Database\Dialect;
 
-use Cake\Error;
 use Cake\Database\SqlDialectTrait;
+use Cake\Error;
 
 /**
  * Contains functions that encapsulates the SQL dialect used by MySQL,
