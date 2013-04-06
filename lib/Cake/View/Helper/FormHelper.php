@@ -845,7 +845,10 @@ class FormHelper extends AppHelper {
 		$modelFields = array();
 		$model = $this->model();
 		if ($model) {
-			$modelFields = array_keys($this->_introspectModel($model, 'fields'));
+			$mfTmp = $this->_introspectModel($model, 'fields');
+			if($mfTmp){
+				$modelFields = array_keys( $mfTmp );
+			}
 		}
 		if (is_array($fields)) {
 			if (array_key_exists('legend', $fields) && !in_array('legend', $modelFields)) {
