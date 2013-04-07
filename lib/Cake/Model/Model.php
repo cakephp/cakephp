@@ -1600,12 +1600,15 @@ class Model extends Object implements CakeEventListener {
  * @param array $data Data to save.
  * @param boolean|array $validate Either a boolean, or an array.
  *   If a boolean, indicates whether or not to validate before saving.
- *   If an array, it can have one of the following options:
- *   - validate: Boolean as mentioned above
- *   - fieldList: See $fieldList parameter
- *   - callbacks: Controls callbacks triggering. Valid values: true, false, 'before', 'after'
- *   - counterCache: Boolean to control updating of counter caches (if any)
- * @param array $fieldList List of fields to allow to be written
+ *   If an array, can have following keys:
+ *
+ *   - `validate`: Set to true/false to enable or disable validation.
+ *   - `fieldList`: An array of fields you want to allow for saving.
+ *   - `callbacks`: Set to false to disable callbacks. Using 'before' or 'after'
+ *      will enable only those callbacks.
+ *   - `counterCache`: Boolean to control updating of counter caches (if any)
+ *
+ * @param array $fieldList List of fields to allow to be saved
  * @return mixed On success Model::$data if its not empty or true, false on failure
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
  */
