@@ -643,11 +643,11 @@ class Model extends Object implements CakeEventListener {
  *
  * If `$id` is an array it can be used to pass several options into the model.
  *
- * - id - The id to start the model on.
- * - table - The table to use for this model.
- * - ds - The connection name this model is connected to.
- * - name - The name of the model eg. Post.
- * - alias - The alias of the model, this is used for registering the instance in the `ClassRegistry`.
+ * - `id`: The id to start the model on.
+ * - `table`: The table to use for this model.
+ * - `ds`: The connection name this model is connected to.
+ * - `name`: The name of the model eg. Post.
+ * - `alias`: The alias of the model, this is used for registering the instance in the `ClassRegistry`.
  *   eg. `ParentThread`
  *
  * ### Overriding Model's __construct method.
@@ -1202,7 +1202,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Normalize Xml::toArray() to use in Model::save()
+ * Normalize `Xml::toArray()` to use in `Model::save()`
  *
  * @param array $xml XML as array
  * @return array
@@ -1601,9 +1601,9 @@ class Model extends Object implements CakeEventListener {
  *   If a boolean, indicates whether or not to validate before saving.
  *   If an array, can have following keys:
  *
- *   - `validate`: Set to true/false to enable or disable validation.
- *   - `fieldList`: An array of fields you want to allow for saving.
- *   - `callbacks`: Set to false to disable callbacks. Using 'before' or 'after'
+ *   - validate: Set to true/false to enable or disable validation.
+ *   - fieldList: An array of fields you want to allow for saving.
+ *   - callbacks: Set to false to disable callbacks. Using 'before' or 'after'
  *      will enable only those callbacks.
  *
  * @param array $fieldList List of fields to allow to be saved
@@ -1979,7 +1979,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Helper method for Model::updateCounterCache(). Checks the fields to be updated for
+ * Helper method for `Model::updateCounterCache()`. Checks the fields to be updated for
  *
  * @param array $data The fields of the record that will be updated
  * @return array Returns updated foreign key values, along with an 'old' key containing the old
@@ -2014,12 +2014,12 @@ class Model extends Object implements CakeEventListener {
  *
  * #### Options
  *
- * - validate: Set to false to disable validation, true to validate each record before saving,
+ * - `validate`: Set to false to disable validation, true to validate each record before saving,
  *   'first' to validate *all* records before any are saved (default),
  *   or 'only' to only validate the records, but not save them.
- * - atomic: If true (default), will attempt to save all records in a single transaction.
+ * - `atomic`: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save().
+ * - `fieldList`: Equivalent to the $fieldList parameter in Model::save().
  *   It should be an associate array with model name as key and array of fields as value. Eg.
  *   {{{
  *   array(
@@ -2027,7 +2027,7 @@ class Model extends Object implements CakeEventListener {
  *       'AssociatedModel' => array('field', 'otherfield')
  *   )
  *   }}}
- * - deep: see saveMany/saveAssociated
+ * - `deep`: see saveMany/saveAssociated
  *
  * @param array $data Record data to save. This can be either a numerically-indexed array (for saving multiple
  *     records of the same type), or an array indexed by association name.
@@ -2057,12 +2057,12 @@ class Model extends Object implements CakeEventListener {
  *
  * #### Options
  *
- * - validate: Set to false to disable validation, true to validate each record before saving,
+ * - `validate`: Set to false to disable validation, true to validate each record before saving,
  *   'first' to validate *all* records before any are saved (default),
- * - atomic: If true (default), will attempt to save all records in a single transaction.
+ * - `atomic`: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save()
- * - deep: If set to true, all associated data will be saved as well.
+ * - `fieldList`: Equivalent to the $fieldList parameter in Model::save()
+ * - `deep`: If set to true, all associated data will be saved as well.
  *
  * @param array $data Record data to save. This should be a numerically-indexed array
  * @param array $options Options to use when saving record data, See $options above.
@@ -2140,9 +2140,9 @@ class Model extends Object implements CakeEventListener {
  *
  * #### Options
  *
- * - atomic: If true (default), returns boolean. If false returns array.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save()
- * - deep: If set to true, all associated data will be validated as well.
+ * - `atomic`: If true (default), returns boolean. If false returns array.
+ * - `fieldList`: Equivalent to the $fieldList parameter in Model::save()
+ * - `deep`: If set to true, all associated data will be validated as well.
  *
  * Warning: This method could potentially change the passed argument `$data`,
  * If you do not want this to happen, make a copy of `$data` before passing it
@@ -2163,11 +2163,11 @@ class Model extends Object implements CakeEventListener {
  *
  * #### Options
  *
- * - `validate` Set to `false` to disable validation, `true` to validate each record before saving,
+ * - `validate`: Set to `false` to disable validation, `true` to validate each record before saving,
  *   'first' to validate *all* records before any are saved(default),
- * - `atomic` If true (default), will attempt to save all records in a single transaction.
+ * - `atomic`: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save().
+ * - `fieldList`: Equivalent to the $fieldList parameter in Model::save().
  *   It should be an associate array with model name as key and array of fields as value. Eg.
  *   {{{
  *   array(
@@ -2175,7 +2175,7 @@ class Model extends Object implements CakeEventListener {
  *       'AssociatedModel' => array('field', 'otherfield')
  *   )
  *   }}}
- * - deep: If set to true, not only directly associated data is saved, but deeper nested associated data as well.
+ * - `deep`: If set to true, not only directly associated data is saved, but deeper nested associated data as well.
  *
  * @param array $data Record data to save. This should be an array indexed by association name.
  * @param array $options Options to use when saving record data, See $options above.
@@ -2347,9 +2347,9 @@ class Model extends Object implements CakeEventListener {
  *
  * #### Options
  *
- * - atomic: If true (default), returns boolean. If false returns array.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save()
- * - deep: If set to true, not only directly associated data , but deeper nested associated data is validated as well.
+ * - `atomic`: If true (default), returns boolean. If false returns array.
+ * - `fieldList`: Equivalent to the $fieldList parameter in Model::save()
+ * - `deep`: If set to true, not only directly associated data , but deeper nested associated data is validated as well.
  *
  * Warning: This method could potentially change the passed argument `$data`,
  * If you do not want this to happen, make a copy of `$data` before passing it
@@ -2581,8 +2581,8 @@ class Model extends Object implements CakeEventListener {
 /**
  * Returns true if a record with particular ID exists.
  *
- * If $id is not passed it calls Model::getID() to obtain the current record ID,
- * and then performs a Model::find('count') on the currently configured datasource
+ * If $id is not passed it calls `Model::getID()` to obtain the current record ID,
+ * and then performs a `Model::find('count')` on the currently configured datasource
  * to ascertain the existence of the record in persistent storage.
  *
  * @param integer|string $id ID of record to check for existence
