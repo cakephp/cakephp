@@ -23,7 +23,6 @@ use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
-use Cake\Error;
 
 /**
  * Represents a connection with a database server
@@ -94,19 +93,19 @@ class Connection {
  * Constructor
  *
  * @param array $config configuration for connecting to database
- * @throws Cake\Error\MissingDriverException if driver class can not be found
- * @throws Cake\Error\MissingExtensionException if driver cannot be used
+ * @throws Cake\Database\Exception\MissingDriverException if driver class can not be found
+ * @throws Cake\Database\Exception\MissingExtensionException if driver cannot be used
  * @return self
  */
 	public function __construct($config) {
 		$this->_config = $config;
 		if (!class_exists($config['datasource'])) {
-			throw new Error\MissingDriverException(['driver' => $config['datasource']]);
+			throw new MissingDriverException(['driver' => $config['datasource']]);
 		}
 
 		$this->driver($config['datasource']);
 		if (!$this->_driver->enabled()) {
-			throw new Error\MissingExtensionException(['driver' => get_class($this->_driver)]);
+			throw new MissingExtensionException(['driver' => get_class($this->_driver)]);
 		}
 
 		if (!empty($config['log'])) {
@@ -136,7 +135,7 @@ class Connection {
 /**
  * Connects to the configured database
  *
- * @throws Cake\Error\MissingConnectionException if credentials are invalid
+ * @throws Cake\Database\Exception\MissingConnectionException if credentials are invalid
  * @return boolean true on success or false if already connected.
  */
 	public function connect() {
@@ -146,7 +145,7 @@ class Connection {
 		try {
 			return $this->_connected = $this->_driver->connect($this->_config);
 		} catch(\Exception $e) {
-			throw new Error\MissingConnectionException(['reason' => $e->getMessage()]);
+			throw new MissingConnectionException(['reason' => $e->getMessage()]);
 		}
 	}
 
