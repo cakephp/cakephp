@@ -652,6 +652,7 @@ class Validation {
 					break;
 				case 'it':
 				case 'de':
+				case 'fr':
 					$regex = '/^[0-9]{5}$/i';
 					break;
 				case 'be':
