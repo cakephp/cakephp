@@ -209,6 +209,12 @@ trait PostgresDialectTrait {
 		if ($col === 'smallint') {
 			return ['integer', 5];
 		}
+		if ($col === 'inet') {
+			return ['string', 39];
+		}
+		if ($col === 'uuid') {
+			return ['string', 36];
+		}
 		if (strpos($col, 'char') !== false) {
 			return ['string', null];
 		}
@@ -221,7 +227,11 @@ trait PostgresDialectTrait {
 		if ($col === 'real' || strpos($col, 'double') !== false) {
 			return ['float', null];
 		}
-		if (strpos($col, 'numeric') !== false) {
+		if (
+			strpos($col, 'numeric') !== false ||
+			strpos($col, 'money') !== false ||
+			strpos($col, 'decimal') !== false
+		) {
 			return ['decimal', null];
 		}
 		return ['text', null];

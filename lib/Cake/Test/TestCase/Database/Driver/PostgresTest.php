@@ -218,6 +218,14 @@ SQL;
 				['decimal', null]
 			],
 			[
+				'DECIMAL(10,2)',
+				['decimal', null]
+			],
+			[
+				'MONEY',
+				['decimal', null]
+			],
+			[
 				'VARCHAR',
 				['string', null]
 			],
@@ -230,8 +238,16 @@ SQL;
 				['string', null]
 			],
 			[
+				'UUID',
+				['string', 36]
+			],
+			[
 				'CHARACTER',
 				['string', null]
+			],
+			[
+				'INET',
+				['string', 39]
 			],
 			[
 				'TEXT',
