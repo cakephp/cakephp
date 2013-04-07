@@ -162,7 +162,7 @@ class FixtureManager {
 			return;
 		}
 
-		$sources = (array)$db->listSources();
+		$sources = (array)$db->listTables();
 		$table = $db->config['prefix'] . $fixture->table;
 		$exists = in_array($table, $sources);
 

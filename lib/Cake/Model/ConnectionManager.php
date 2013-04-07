@@ -23,6 +23,7 @@ namespace Cake\Model;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Database\Connection;
 use Cake\Error;
 
 /**
@@ -88,8 +89,7 @@ class ConnectionManager {
 		}
 
 		if (!empty(static::$_dataSources[$name])) {
-			$return = static::$_dataSources[$name];
-			return $return;
+			return static::$_dataSources[$name];
 		}
 
 		if (empty(static::$_connectionsEnum[$name])) {
@@ -98,15 +98,24 @@ class ConnectionManager {
 
 		$class = static::loadDataSource($name);
 
-		if (strpos($class, '\Datasource') === false) {
+		if (
+			strpos($class, '\Datasource') === false &&
+			strpos($class, '\Database') === false
+		) {
 			throw new Error\MissingDatasourceException(array(
 				'class' => $class,
 				'plugin' => null,
 				'message' => 'Datasource is not found in Model/Datasource package.'
 			));
 		}
-		static::$_dataSources[$name] = new $class(static::$config[$name]);
-		static::$_dataSources[$name]->configKeyName = $name;
+		// TODO fix this once the datasource interface &
+		// internals are solved.
+		if (strpos($class, '\Database') !== false) {
+			static::$_dataSources[$name] = new Connection(static::$config[$name]);
+		} else {
+			static::$_dataSources[$name] = new $class(static::$config[$name]);
+			static::$_dataSources[$name]->configKeyName = $name;
+		}
 
 		return static::$_dataSources[$name];
 	}
@@ -164,7 +173,7 @@ class ConnectionManager {
 			$conn = static::$_connectionsEnum[$connName];
 		}
 
-		if (class_exists($conn['classname'], false)) {
+		if (class_exists($conn['classname'])) {
 			return $conn['classname'];
 		}
 
