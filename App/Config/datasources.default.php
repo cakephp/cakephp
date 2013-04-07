@@ -66,7 +66,7 @@ use Cake\Core\Configure;
  * by all models.
  */
 Configure::write('Datasource.default', [
-	'datasource' => 'Database/Mysql',
+	'datasource' => 'Cake\Database\Driver\Mysql',
 	'persistent' => false,
 	'host' => 'localhost',
 	'login' => 'user',
@@ -81,7 +81,7 @@ Configure::write('Datasource.default', [
  * while running unit and integration tests.
  */
 Configure::write('Datasource.test', [
-	'datasource' => 'Database/Mysql',
+	'datasource' => 'Cake\Database\Driver\Mysql',
 	'persistent' => false,
 	'host' => 'localhost',
 	'login' => 'user',
