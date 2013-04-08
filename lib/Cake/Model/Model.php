@@ -2733,7 +2733,7 @@ class Model extends Object implements CakeEventListener {
 		if (!is_numeric($query['page']) || intval($query['page']) < 1) {
 			$query['page'] = 1;
 		}
-		if ($query['page'] > 1 && !empty($query['limit'])) {
+		if (!isset($query['offset']) && $query['page'] > 1 && !empty($query['limit'])) {
 			$query['offset'] = ($query['page'] - 1) * $query['limit'];
 		}
 		if ($query['order'] === null && $this->order !== null) {
