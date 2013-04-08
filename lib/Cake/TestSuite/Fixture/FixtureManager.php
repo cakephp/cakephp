@@ -186,6 +186,9 @@ class FixtureManager {
 		if (empty($test->fixtures)) {
 			return;
 		}
+		// TODO Re-enable once fixtures are working.
+		return;
+
 		$fixtures = $test->fixtures;
 		if (empty($fixtures) || !$test->autoFixtures) {
 			return;
