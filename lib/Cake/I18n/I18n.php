@@ -575,10 +575,14 @@ class I18n {
 				$val = str_replace($replacements, $mustEscape, $val);
 				$value[$i] = $val;
 			}
+			$value = array_filter($value);
 			if (count($value) == 1) {
 				$definitions[$currentToken] = array_pop($value);
 			} else {
 				$definitions[$currentToken] = $value;
+			}
+			if (empty($value)) {
+				$value = '';
 			}
 		}
 
