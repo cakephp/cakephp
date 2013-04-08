@@ -122,12 +122,6 @@ class ExtractTaskTest extends TestCase {
 		$pattern .= 'APP\/Config\/datasources.php"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/msgid "Cake is able to connect to the database."\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/msgid "Cake is NOT able to connect to the database."\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
 		$pattern = '/msgid "Editing this Page"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
@@ -153,7 +147,7 @@ class ExtractTaskTest extends TestCase {
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
-		$pattern .= '\#: (\\\\|\/)home\.ctp:148\n';
+		$pattern .= '\#: (\\\\|\/)home\.ctp:136\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
 

@@ -16,13 +16,13 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Utility\Debugger;
-use Cake\Cache\Cache;
-use Cake\Model\Datasource\Database\Connection;
-use Cake\Utility\Validation;
+use Cake\Model\ConnectionManager;
 use Cake\Error;
+use Cake\Utility\Debugger;
+use Cake\Utility\Validation;
 
 if (Configure::read('debug') == 0):
 	throw new Error\NotFoundException();
@@ -115,8 +115,7 @@ endif;
 <?php
 if (isset($filePresent)):
 	try {
-		require APP . 'Config/datasources.php';
-		$connection = new Connection(Configure::read('Datasource.default'));
+		$connection = ConnectionManager::getDataSource('default');
 		$connected = $connection->connect();
 	} catch (Exception $connectionError) {
 		$connected = false;
