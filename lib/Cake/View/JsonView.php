@@ -105,7 +105,7 @@ class JsonView extends View {
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 		}
-		return json_encode($data);
+		return json_encode($data, JSON_NUMERIC_CHECK);
 	}
 
 }
