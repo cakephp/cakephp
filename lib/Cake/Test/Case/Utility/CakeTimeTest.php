@@ -846,7 +846,7 @@ class CakeTimeTest extends CakeTestCase {
 		$date = new DateTime('+1 hour', new DateTimeZone('America/New_York'));
 		$result = $this->Time->fromString($date, 'UTC');
 		$date->setTimezone(new DateTimeZone('UTC'));
-		$expected = $date->getTimestamp() + $date->getOffset();
+		$expected = $date->format('U') + $date->getOffset();
 
 		$this->assertWithinMargin($expected, $result, 1);
 
@@ -871,7 +871,7 @@ class CakeTimeTest extends CakeTestCase {
 		Configure::write('Config.timezone', date_default_timezone_get());
 		$date = new DateTime('2013-04-09');
 		$result = $this->Time->fromString($date);
-		$this->assertEquals($result, $date->getTimestamp());
+		$this->assertEquals($result, $date->format('U'));
 	}
 
 /**
