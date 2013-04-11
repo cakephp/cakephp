@@ -3045,7 +3045,11 @@ class Model extends Object implements CakeEventListener {
 /**
  * Returns a resultset for a given SQL statement. Custom SQL queries should be performed with this method.
  *
- * @param string $sql,... SQL statement
+ * @param string $sql SQL statement
+ * @param boolean|array $params Either a boolean to control query caching or an array of parameters
+ *    for use with prepared statement placeholders.
+ * @param boolean $cache If $params is provided, a boolean flag for enabling/disabled
+ *    query caching.
  * @return mixed Resultset array or boolean indicating success / failure depending on the query executed
  * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html#model-query
  */
