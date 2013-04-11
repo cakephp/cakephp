@@ -1242,12 +1242,9 @@ class FormHelper extends AppHelper {
 			$options['type'] !== 'select'
 		);
 		if ($autoLength &&
-			in_array($options['type'], array('text', 'email', 'tel', 'url'))
+			in_array($options['type'], array('text', 'email', 'tel', 'url', 'search'))
 		) {
 			$options['maxlength'] = $fieldDef['length'];
-		}
-		if ($autoLength && $fieldDef['type'] === 'float') {
-			$options['maxlength'] = array_sum(explode(',', $fieldDef['length'])) + 1;
 		}
 		return $options;
 	}
