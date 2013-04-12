@@ -551,7 +551,8 @@ class Router {
 			$url = '/' . $url;
 		}
 		if (strpos($url, '?') !== false) {
-			$url = substr($url, 0, strpos($url, '?'));
+			list($url, $queryParameters) = explode('?', $url, 2);
+			parse_str($queryParameters, $queryParameters);
 		}
 
 		extract(self::_parseExtension($url));
@@ -571,6 +572,10 @@ class Router {
 
 		if (!empty($ext) && !isset($out['ext'])) {
 			$out['ext'] = $ext;
+		}
+
+		if (!empty($queryParameters) && !isset($out['?'])) {
+			$out['?'] = $queryParameters;
 		}
 		return $out;
 	}
