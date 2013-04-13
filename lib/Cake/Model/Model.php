@@ -647,11 +647,11 @@ class Model extends Object implements EventListener {
  *
  * If `$id` is an array it can be used to pass several options into the model.
  *
- * - id - The id to start the model on.
- * - table - The table to use for this model.
- * - ds - The connection name this model is connected to.
- * - name - The name of the model eg. Post.
- * - alias - The alias of the model, this is used for registering the instance in the `ClassRegistry`.
+ * - `id`: The id to start the model on.
+ * - `table`: The table to use for this model.
+ * - `ds`: The connection name this model is connected to.
+ * - `name`: The name of the model eg. Post.
+ * - `alias`: The alias of the model, this is used for registering the instance in the `ClassRegistry`.
  *   eg. `ParentThread`
  *
  * ### Overriding Model's __construct method.
@@ -1206,7 +1206,7 @@ class Model extends Object implements EventListener {
 	}
 
 /**
- * Normalize Xml::toArray() to use in Model::save()
+ * Normalize `Xml::toArray()` to use in `Model::save()`
  *
  * @param array $xml XML as array
  * @return array
@@ -1604,12 +1604,15 @@ class Model extends Object implements EventListener {
  * @param array $data Data to save.
  * @param boolean|array $validate Either a boolean, or an array.
  *   If a boolean, indicates whether or not to validate before saving.
- *   If an array, it can have one of the following options:
- *   - validate: Boolean as mentioned above
- *   - fieldList: See $fieldList parameter
- *   - callbacks: Controls callbacks triggering. Valid values: true, false, 'before', 'after'
- *   - counterCache: Boolean to control updating of counter caches (if any)
- * @param array $fieldList List of fields to allow to be written
+ *   If an array, can have following keys:
+ *
+ *   - validate: Set to true/false to enable or disable validation.
+ *   - fieldList: An array of fields you want to allow for saving.
+ *   - callbacks: Set to false to disable callbacks. Using 'before' or 'after'
+ *      will enable only those callbacks.
+ *   - `counterCache`: Boolean to control updating of counter caches (if any)
+ *
+ * @param array $fieldList List of fields to allow to be saved
  * @return mixed On success Model::$data if its not empty or true, false on failure
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
  */
@@ -1985,7 +1988,7 @@ class Model extends Object implements EventListener {
 	}
 
 /**
- * Helper method for Model::updateCounterCache(). Checks the fields to be updated for
+ * Helper method for `Model::updateCounterCache()`. Checks the fields to be updated for
  *
  * @param array $data The fields of the record that will be updated
  * @return array Returns updated foreign key values, along with an 'old' key containing the old
@@ -2020,12 +2023,12 @@ class Model extends Object implements EventListener {
  *
  * #### Options
  *
- * - validate: Set to false to disable validation, true to validate each record before saving,
+ * - `validate`: Set to false to disable validation, true to validate each record before saving,
  *   'first' to validate *all* records before any are saved (default),
  *   or 'only' to only validate the records, but not save them.
- * - atomic: If true (default), will attempt to save all records in a single transaction.
+ * - `atomic`: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save().
+ * - `fieldList`: Equivalent to the $fieldList parameter in Model::save().
  *   It should be an associate array with model name as key and array of fields as value. Eg.
  *   {{{
  *   array(
@@ -2033,9 +2036,9 @@ class Model extends Object implements EventListener {
  *       'AssociatedModel' => array('field', 'otherfield')
  *   )
  *   }}}
- * - deep: See saveMany/saveAssociated
- * - callbacks: See Model::save()
- * - counterCache: See Model::save()
+ * - `deep`: See saveMany/saveAssociated
+ * - `callbacks`: See Model::save()
+ * - `counterCache`: See Model::save()
  *
  * @param array $data Record data to save. This can be either a numerically-indexed array (for saving multiple
  *     records of the same type), or an array indexed by association name.
@@ -2065,14 +2068,14 @@ class Model extends Object implements EventListener {
  *
  * #### Options
  *
- * - validate: Set to false to disable validation, true to validate each record before saving,
+ * - `validate`: Set to false to disable validation, true to validate each record before saving,
  *   'first' to validate *all* records before any are saved (default),
- * - atomic: If true (default), will attempt to save all records in a single transaction.
+ * - `atomic`: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save()
- * - deep: If set to true, all associated data will be saved as well.
- * - callbacks: See Model::save()
- * - counterCache: See Model::save()
+ * - `fieldList`: Equivalent to the $fieldList parameter in Model::save()
+ * - `deep`: If set to true, all associated data will be saved as well.
+ * - `callbacks`: See Model::save()
+ * - `counterCache`: See Model::save()
  *
  * @param array $data Record data to save. This should be a numerically-indexed array
  * @param array $options Options to use when saving record data, See $options above.
@@ -2150,9 +2153,9 @@ class Model extends Object implements EventListener {
  *
  * #### Options
  *
- * - atomic: If true (default), returns boolean. If false returns array.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save()
- * - deep: If set to true, all associated data will be validated as well.
+ * - `atomic`: If true (default), returns boolean. If false returns array.
+ * - `fieldList`: Equivalent to the $fieldList parameter in Model::save()
+ * - `deep`: If set to true, all associated data will be validated as well.
  *
  * Warning: This method could potentially change the passed argument `$data`,
  * If you do not want this to happen, make a copy of `$data` before passing it
@@ -2173,11 +2176,11 @@ class Model extends Object implements EventListener {
  *
  * #### Options
  *
- * - validate: Set to `false` to disable validation, `true` to validate each record before saving,
+ * - `validate`: Set to `false` to disable validation, `true` to validate each record before saving,
  *   'first' to validate *all* records before any are saved(default),
- * - atomic: If true (default), will attempt to save all records in a single transaction.
+ * - `atomic`: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save().
+ * - `fieldList`: Equivalent to the $fieldList parameter in Model::save().
  *   It should be an associate array with model name as key and array of fields as value. Eg.
  *   {{{
  *   array(
@@ -2185,9 +2188,9 @@ class Model extends Object implements EventListener {
  *       'AssociatedModel' => array('field', 'otherfield')
  *   )
  *   }}}
- * - deep: If set to true, not only directly associated data is saved, but deeper nested associated data as well.
- * - callbacks: See Model::save()
- * - counterCache: See Model::save()
+ * - `deep`: If set to true, not only directly associated data is saved, but deeper nested associated data as well.
+ * - `callbacks`: See Model::save()
+ * - `counterCache`: See Model::save()
  *
  * @param array $data Record data to save. This should be an array indexed by association name.
  * @param array $options Options to use when saving record data, See $options above.
@@ -2359,9 +2362,9 @@ class Model extends Object implements EventListener {
  *
  * #### Options
  *
- * - atomic: If true (default), returns boolean. If false returns array.
- * - fieldList: Equivalent to the $fieldList parameter in Model::save()
- * - deep: If set to true, not only directly associated data , but deeper nested associated data is validated as well.
+ * - `atomic`: If true (default), returns boolean. If false returns array.
+ * - `fieldList`: Equivalent to the $fieldList parameter in Model::save()
+ * - `deep`: If set to true, not only directly associated data , but deeper nested associated data is validated as well.
  *
  * Warning: This method could potentially change the passed argument `$data`,
  * If you do not want this to happen, make a copy of `$data` before passing it
@@ -2592,8 +2595,8 @@ class Model extends Object implements EventListener {
 /**
  * Returns true if a record with particular ID exists.
  *
- * If $id is not passed it calls Model::getID() to obtain the current record ID,
- * and then performs a Model::find('count') on the currently configured datasource
+ * If $id is not passed it calls `Model::getID()` to obtain the current record ID,
+ * and then performs a `Model::find('count')` on the currently configured datasource
  * to ascertain the existence of the record in persistent storage.
  *
  * @param integer|string $id ID of record to check for existence
@@ -3097,7 +3100,11 @@ class Model extends Object implements EventListener {
 /**
  * Returns a resultset for a given SQL statement. Custom SQL queries should be performed with this method.
  *
- * @param string $sql,... SQL statement
+ * @param string $sql SQL statement
+ * @param boolean|array $params Either a boolean to control query caching or an array of parameters
+ *    for use with prepared statement placeholders.
+ * @param boolean $cache If $params is provided, a boolean flag for enabling/disabled
+ *    query caching.
  * @return mixed Resultset array or boolean indicating success / failure depending on the query executed
  * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html#model-query
  */

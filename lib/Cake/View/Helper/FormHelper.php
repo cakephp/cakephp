@@ -9,7 +9,7 @@
  *
  * @copyright   Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link        http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
+ * @package     Cake.View.Helper
  * @since       CakePHP(tm) v 0.10.0.1076
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -850,7 +850,7 @@ class FormHelper extends Helper {
 		$modelFields = array();
 		$model = $this->model();
 		if ($model) {
-			$modelFields = array_keys($this->_introspectModel($model, 'fields'));
+			$modelFields = array_keys((array)$this->_introspectModel($model, 'fields'));
 		}
 		if (is_array($fields)) {
 			if (array_key_exists('legend', $fields) && !in_array('legend', $modelFields)) {
@@ -1247,12 +1247,9 @@ class FormHelper extends Helper {
 			$options['type'] !== 'select'
 		);
 		if ($autoLength &&
-			in_array($options['type'], array('text', 'email', 'tel', 'url'))
+			in_array($options['type'], array('text', 'email', 'tel', 'url', 'search'))
 		) {
 			$options['maxlength'] = $fieldDef['length'];
-		}
-		if ($autoLength && $fieldDef['type'] === 'float') {
-			$options['maxlength'] = array_sum(explode(',', $fieldDef['length'])) + 1;
 		}
 		return $options;
 	}
@@ -2023,7 +2020,7 @@ class FormHelper extends Helper {
 				empty($attributes['disabled']) &&
 				(!empty($attributes['multiple']) || $hasOptions)
 			) {
-				$this->_secure(true);
+				$this->_secure(true, $this->_secureFieldName($attributes));
 			}
 			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => null, 'value' => null)));
 		}
@@ -2802,6 +2799,9 @@ class FormHelper extends Helper {
  *   Disabling the field using the `disabled` option, will also omit the field from being
  *   part of the hashed key.
  *
+ * This method will convert a numerically indexed 'disabled' into a associative
+ * value. FormHelper's internals expect associative options.
+ *
  * @param string $field Name of the field to initialize options for.
  * @param array $options Array of options to append options into.
  * @return array Array of options for the input.
@@ -2812,6 +2812,12 @@ class FormHelper extends Helper {
 			unset($options['secure']);
 		} else {
 			$secure = (isset($this->request['_Token']) && !empty($this->request['_Token']));
+		}
+
+		$disabledIndex = array_search('disabled', $options, true);
+		if ($disabledIndex !== false) {
+			unset($options[$disabledIndex]);
+			$options['disabled'] = true;
 		}
 
 		$result = parent::_initInputField($field, $options);
@@ -2827,13 +2833,27 @@ class FormHelper extends Helper {
 			$result['required'] = true;
 		}
 
-		$fieldName = null;
-		if (!empty($options['name'])) {
-			$fieldName = str_replace(array('[', ']'), array('.', ''), $options['name']);
-		}
-
-		$this->_secure($secure, $fieldName);
+		$this->_secure($secure, $this->_secureFieldName($options));
 		return $result;
+	}
+
+/**
+ * Get the field name for use with _secure().
+ *
+ * Parses the name attribute to create a dot separated name value for use
+ * in secured field hash.
+ *
+ * @param array $options An array of options possibly containing a name key.
+ * @return string|null
+ */
+	protected function _secureFieldName($options) {
+		if (isset($options['name'])) {
+			preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
+			if (isset($matches[1])) {
+				return $matches[1];
+			}
+		}
+		return null;
 	}
 
 /**

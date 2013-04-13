@@ -46,6 +46,7 @@ class PaginatorHelperTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$controller = null;
 		$this->View = new View($controller);
 		$this->Paginator = new PaginatorHelper($this->View);

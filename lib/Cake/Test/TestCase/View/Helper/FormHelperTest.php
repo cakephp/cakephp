@@ -760,7 +760,7 @@ class FormHelperTest extends TestCase {
 			'type' => 'float',
 			'null' => false,
 			'default' => null,
-			'length' => null
+			'length' => 10
 		)));
 
 		$this->Form->create('Contact');
@@ -1212,7 +1212,8 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->hidden('UserForm.stuff');
-		$expected = array('input' => array(
+		$expected = array(
+			'input' => array(
 				'type' => 'hidden', 'name' => 'UserForm[stuff]',
 				'id' => 'UserFormStuff'
 		));
@@ -1269,6 +1270,30 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test secured inputs with custom names.
+ *
+ * @return void
+ */
+	public function testSecuredInputCustomName() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->assertEquals(array(), $this->Form->fields);
+
+		$this->Form->input('text_input', array(
+			'name' => 'data[Option][General.default_role]',
+		));
+		$expected = array('Option.General.default_role');
+		$this->assertEquals($expected, $this->Form->fields);
+
+		$this->Form->input('select_box', array(
+			'name' => 'data[Option][General.select_role]',
+			'type' => 'select',
+			'options' => array(1, 2),
+		));
+		$expected = array('Option.General.default_role', 'Option.General.select_role');
+		$this->assertEquals($expected, $this->Form->fields);
+	}
+
+/**
  * Tests that the correct keys are added to the field hash index
  *
  * @return void
@@ -1316,6 +1341,27 @@ class FormHelperTest extends TestCase {
 
 		$this->Form->radio('Test.test', $options);
 		$expected = array('Test.test');
+		$this->assertEquals($expected, $this->Form->fields);
+	}
+
+/**
+ * Test that when disabled is in a list based attribute array it works.
+ *
+ * @return void
+ */
+	public function testFormSecuredAndDisabledNotAssoc() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+
+		$this->Form->select('Model.select', array(1, 2), array('disabled'));
+		$this->Form->checkbox('Model.checkbox', array('disabled'));
+		$this->Form->text('Model.text', array('disabled'));
+		$this->Form->textarea('Model.textarea', array('disabled'));
+		$this->Form->password('Model.password', array('disabled'));
+		$this->Form->radio('Model.radio', array(1, 2), array('disabled'));
+
+		$expected = array(
+			'Model.radio' => ''
+		);
 		$this->assertEquals($expected, $this->Form->fields);
 	}
 
@@ -1832,7 +1878,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for'),
 			'Balance',
 			'/label',
-			'input' => array('name', 'type' => 'number', 'maxlength' => 8, 'id'),
+			'input' => array('name', 'type' => 'number', 'id'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
