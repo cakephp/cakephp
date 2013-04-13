@@ -112,7 +112,7 @@ class Time {
 
 /**
  * Magic set method for backward compatibility.
- * 
+ *
  * Used by TimeHelper to get static variables in this class.
  *
  * @param string $name Variable name
@@ -322,10 +322,15 @@ class Time {
 
 		if (is_int($dateString) || is_numeric($dateString)) {
 			$date = intval($dateString);
-		} elseif (is_object($dateString) && $dateString instanceof \DateTime) {
+		} elseif (
+			$dateString instanceof \DateTime &&
+			$dateString->getTimezone()->getName() != date_default_timezone_get()
+		) {
 			$clone = clone $dateString;
 			$clone->setTimezone(new \DateTimeZone(date_default_timezone_get()));
 			$date = (int)$clone->format('U') + $clone->getOffset();
+		} elseif ($dateString instanceof \DateTime) {
+			$date = (int)$dateString->format('U');
 		} else {
 			$date = strtotime($dateString);
 		}

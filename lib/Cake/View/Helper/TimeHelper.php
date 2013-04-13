@@ -53,7 +53,7 @@ class TimeHelper extends Helper {
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
- * @param array $settings Settings array Settings array
+ * @param array $settings Settings array
  * @throws Cake\Error\Exception When the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {

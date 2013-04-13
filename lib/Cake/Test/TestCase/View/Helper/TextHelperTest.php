@@ -370,6 +370,8 @@ TEXT;
 <p> test text</p>
 
 TEXT;
+		$result = $this->Text->autoParagraph($text);
+		$this->assertEquals($expected, $result);
 		$text = <<<TEXT
 This is a test text.
 This is a line return.
