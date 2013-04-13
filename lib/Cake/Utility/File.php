@@ -570,7 +570,7 @@ class File {
  *
  * For 5.3 onwards its possible to clear cache for just a single file. Passing true
  * will clear all the stat cache.
- * 
+ *
  * @param boolean $all Clear all cache or not
  * @return void
  */

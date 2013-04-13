@@ -748,7 +748,7 @@ class FormHelperTest extends CakeTestCase {
 			'type' => 'float',
 			'null' => false,
 			'default' => null,
-			'length' => null
+			'length' => 10
 		)));
 
 		$this->Form->create('Contact');
@@ -1200,7 +1200,8 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->hidden('UserForm.stuff');
-		$expected = array('input' => array(
+		$expected = array(
+			'input' => array(
 				'type' => 'hidden', 'name' => 'data[UserForm][stuff]',
 				'id' => 'UserFormStuff'
 		));
@@ -1254,6 +1255,30 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test secured inputs with custom names.
+ *
+ * @return void
+ */
+	public function testSecuredInputCustomName() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->assertEquals(array(), $this->Form->fields);
+
+		$this->Form->input('text_input', array(
+			'name' => 'data[Option][General.default_role]',
+		));
+		$expected = array('Option.General.default_role');
+		$this->assertEquals($expected, $this->Form->fields);
+
+		$this->Form->input('select_box', array(
+			'name' => 'data[Option][General.select_role]',
+			'type' => 'select',
+			'options' => array(1, 2),
+		));
+		$expected = array('Option.General.default_role', 'Option.General.select_role');
+		$this->assertEquals($expected, $this->Form->fields);
 	}
 
 /**
@@ -1841,7 +1866,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for'),
 			'Balance',
 			'/label',
-			'input' => array('name', 'type' => 'number', 'maxlength' => 8, 'id'),
+			'input' => array('name', 'type' => 'number', 'id'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
