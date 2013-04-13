@@ -433,16 +433,24 @@ class FileTest extends CakeTestCase {
 		$TmpFile = new File($tmpFile);
 		$this->assertFalse(file_exists($tmpFile));
 
-		$fragments = array('CakePHP\'s', ' test suite', ' was here ...', '');
+		$fragments = array('CakePHP\'s', ' test suite', ' was here ...');
 		$data = null;
+		$size = 0;
 		foreach ($fragments as $fragment) {
 			$r = $TmpFile->append($fragment);
 			$this->assertTrue($r);
 			$this->assertTrue(file_exists($tmpFile));
 			$data = $data . $fragment;
 			$this->assertEquals($data, file_get_contents($tmpFile));
+			$newSize = $TmpFile->size();
+			$this->assertTrue($newSize > $size);
+			$size = $newSize;
 			$TmpFile->close();
 		}
+
+		$TmpFile->append('');
+		$this->assertEquals($data, file_get_contents($tmpFile));
+		$TmpFile->close();
 	}
 
 /**
