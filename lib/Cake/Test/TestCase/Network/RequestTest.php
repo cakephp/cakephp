@@ -108,7 +108,7 @@ class RequestTest extends TestCase {
 
 		$_SERVER['REQUEST_URI'] = '/tasks/index/?ts=123456';
 		$request = Request::createFromGlobals();
-		$this->assertEquals('tasks/index', $request->url);
+		$this->assertEquals('tasks/index/', $request->url);
 
 		$_SERVER['REQUEST_URI'] = '/some/path?url=http://cakephp.org';
 		$request = Request::createFromGlobals();
@@ -639,7 +639,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testIsMultiple() {
-		$request = new CakeRequest('some/path');
+		$request = new Request();
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->assertTrue($request->is(array('get', 'post')));
@@ -657,7 +657,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testIsAll() {
-		$request = new CakeRequest('some/path');
+		$request = new Request();
 
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -1754,7 +1754,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testReadingParams() {
-		$request = new CakeRequest();
+		$request = new Request();
 		$request->addParams(array(
 			'controller' => 'posts',
 			'admin' => true,

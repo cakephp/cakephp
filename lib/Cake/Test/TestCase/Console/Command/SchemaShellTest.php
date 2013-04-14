@@ -539,7 +539,7 @@ class SchemaShellTest extends TestCase {
 			->will($this->returnValue('y'));
 		$r = $this->Shell->expects($this->once())
 			->method('_run')
-			->with($this->arrayHasKey('newone'), 'update', $this->isInstanceOf('CakeSchema'));
+			->with($this->arrayHasKey('newone'), 'update', $this->isInstanceOf('Cake\Model\Schema'));
 
 		$this->Shell->update();
 	}

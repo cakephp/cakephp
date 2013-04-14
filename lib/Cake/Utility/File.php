@@ -567,14 +567,12 @@ class File {
 /**
  * Clear PHP's internal stat cache
  *
- * For 5.3 onwards its possible to clear cache for just a single file. Passing true
- * will clear all the stat cache.
- *
- * @param boolean $all Clear all cache or not
+ * @param boolean $all Clear all cache or not. Passing false will clear
+ *   the stat cache for the current path only.
  * @return void
  */
 	public function clearStatCache($all = false) {
-		if ($all === false && version_compare(PHP_VERSION, '5.3.0') >= 0) {
+		if ($all === false) {
 			return clearstatcache(true, $this->path);
 		}
 
