@@ -110,7 +110,7 @@ class I18n {
  *
  * @return I18n
  */
-	public static function &getInstance() {
+	public static function getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] = new I18n();

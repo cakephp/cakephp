@@ -58,7 +58,7 @@ class ClassRegistry {
  *
  * @return ClassRegistry instance
  */
-	public static function &getInstance() {
+	public static function getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] = new ClassRegistry();
@@ -259,7 +259,7 @@ class ClassRegistry {
  * @param string $key Key of object to look for
  * @return mixed Object stored in registry or boolean false if the object does not exist.
  */
-	public static function &getObject($key) {
+	public static function getObject($key) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 		$return = false;
