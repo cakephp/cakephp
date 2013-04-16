@@ -277,7 +277,7 @@ class TestTask extends BakeTask {
  * @param string $class the Classname of the class the test is being generated for.
  * @return object And instance of the class that is going to be tested.
  */
-	public function &buildTestSubject($type, $class) {
+	public function buildTestSubject($type, $class) {
 		ClassRegistry::flush();
 		App::import($type, $class);
 		$class = $this->getRealClassName($type, $class);
