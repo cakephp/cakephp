@@ -14,7 +14,7 @@
  * You can specify multiple configurations for production, development and testing.
  *
  * transport => The name of a supported transport; valid options are as follows:
- *		Mail 		- Send using PHP mail function
+ *		Mail		- Send using PHP mail function
  *		Smtp		- Send using SMTP
  *		Debug		- Do not send the email, just return the result
  *
