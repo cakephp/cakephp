@@ -7944,7 +7944,7 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
- * test that checks for error when != condition passed in key and a 1 element array value
+ * test to assert that != in key together with a single element array will work
  *
  * @return void
  */
