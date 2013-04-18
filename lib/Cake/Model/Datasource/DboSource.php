@@ -2496,7 +2496,7 @@ class DboSource extends DataSource {
 						$count = count($value);
 						if ($count === 1 && !preg_match("/\s+NOT$/", $key)) {
 							$data = $this->_quoteFields($key);
-							if(!preg_match("/\s+!=$/", $key)) {
+							if (!preg_match('/\s+!=$/', $key)) {
 								$data .= ' =';
 							}
 							$data .= ' (';
