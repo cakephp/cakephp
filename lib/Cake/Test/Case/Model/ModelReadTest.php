@@ -7944,6 +7944,27 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * test that checks for error when != condition passed in key and a 1 element array value
+ *
+ * @return void
+ */
+	public function testNotEqualsInArrayWithOneValue() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+		$Article->recursive = -1;
+
+		$result = $Article->find(
+			'all',
+			array(
+				'conditions' => array(
+					'Article.id !=' => array(1)
+				)
+			)
+		);
+		$this->assertTrue(is_array($result) && !empty($result));
+	}	
+
+/**
  * test custom find method
  *
  * @return void
