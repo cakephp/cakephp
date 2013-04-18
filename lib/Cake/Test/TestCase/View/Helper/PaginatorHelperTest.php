@@ -124,7 +124,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$this->Paginator->request->params['paging']['Article']['prevPage'] = false;
-		$result = $this->Paginator->prev('prev', array('update' => 'theList', 'indicator' => 'loading', 'url' => array('controller' => 'posts')), null, array('class' => 'disabled', 'tag' => 'span'));
+		$result = $this->Paginator->prev('prev', array('url' => array('controller' => 'posts')), null, array('class' => 'disabled', 'tag' => 'span'));
 		$expected = array(
 			'span' => array('class' => 'disabled'), 'prev', '/span'
 		);
@@ -678,9 +678,6 @@ class PaginatorHelperTest extends TestCase {
  * @return void
  */
 	public function testOptions() {
-		$this->Paginator->options('myDiv');
-		$this->assertEquals('myDiv', $this->Paginator->options['update']);
-
 		$this->Paginator->options = array();
 		$this->Paginator->request->params = array();
 
@@ -2349,61 +2346,6 @@ class PaginatorHelperTest extends TestCase {
 			'/span',
 		);
 		$this->assertTags($result, $expected);
-	}
-
-/**
- * Ensure that the internal link class object is called when the update key is present
- *
- * @return void
- */
-	public function testAjaxLinkGenerationNumbers() {
-		$this->Paginator->Js->expectCallCount('link', 2);
-		$this->Paginator->numbers(array(
-			'modulus' => '2',
-			'url' => array('controller' => 'projects', 'action' => 'sort'),
-			'update' => 'list'
-		));
-	}
-
-/**
- * test that paginatorHelper::link() uses JsHelper to make links when 'update' key is present
- *
- * @return void
- */
-	public function testAjaxLinkGenerationLink() {
-		$this->Paginator->Js->expects($this->once())
-			->method('link')
-			->will($this->returnValue('I am a link'));
-
-		$result = $this->Paginator->link('test', array('controller' => 'posts'), array('update' => '#content'));
-		$this->assertEquals('I am a link', $result);
-	}
-
-/**
- * test that mock classes injected into paginatorHelper are called when using link()
- *
- * @expectedException Cake\Error\Exception
- * @return void
- */
-	public function testMockAjaxProviderClassInjection() {
-		$mock = $this->getMock('Cake\View\Helper\PaginatorHelper', array(), array($this->View), 'PaginatorMockJsHelper');
-		$Paginator = new PaginatorHelper($this->View, array('ajax' => 'PaginatorMockJs'));
-		$Paginator->request->params['paging'] = array(
-			'Article' => array(
-				'current' => 9,
-				'count' => 62,
-				'prevPage' => false,
-				'nextPage' => true,
-				'pageCount' => 7,
-				'defaults' => array(),
-				'options' => array(),
-			)
-		);
-		$Paginator->PaginatorMockJs = $mock;
-		$Paginator->PaginatorMockJs->expects($this->once())->method('link');
-		$Paginator->link('Page 2', array('page' => 2), array('update' => '#content'));
-
-		new PaginatorHelper($this->View, array('ajax' => 'Form'));
 	}
 
 /**
