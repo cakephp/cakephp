@@ -1652,7 +1652,9 @@ class ModelWriteTest extends BaseModelTest {
 
 		$TestModel->id = 2;
 		$data = array('Tag' => array('Tag' => array(2)));
-		$TestModel->save($data);
+		$result = $TestModel->save($data);
+
+		$this->assertEquals($data['Tag'], $result['Tag']);
 
 		$result = $TestModel->findById(2);
 		$expected = array(
