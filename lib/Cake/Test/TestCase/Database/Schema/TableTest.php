@@ -38,6 +38,10 @@ class TableTest extends TestCase {
 		]);
 		$this->assertSame($table, $result);
 		$this->assertEquals(['title'], $table->columns());
+
+		$result = $table->addColumn('body', 'text');
+		$this->assertSame($table, $result);
+		$this->assertEquals(['title', 'body'], $table->columns());
 	}
 
 /**
@@ -57,8 +61,38 @@ class TableTest extends TestCase {
 			'default' => null,
 			'null' => null,
 			'fixed' => null,
+			'comment' => null,
+			'collate' => null,
+			'charset' => null,
 		];
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test adding an index.
+ *
+ * @return void
+ */
+	public function testAddIndex() {
+		$table = new Table('articles');
+		$table->addColumn('id', [
+			'type' => 'integer'
+		]);
+		$result = $table->addIndex('primary', [
+			'type' => 'primary',
+			'columns' => ['id']
+		]);
+		$this->assertSame($result, $table);
+		$this->assertEquals(['primary'], $table->indexes());
+	}
+
+	public function testAddIndexErrorWhenFieldIsMissing() {
+	}
+
+	public function testAddIndexForeign() {
+	}
+
+	public function testAddIndexTypes() {
 	}
 
 }

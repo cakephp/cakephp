@@ -42,12 +42,28 @@ class Table {
  */
 	protected $_columns = [];
 
+/**
+ * Indexes + Keys in the table.
+ *
+ * @var array
+ */
+	protected $_indexes = [];
+
+/**
+ * The valid keys that can be used in a column
+ * definition.
+ *
+ * @var array
+ */
 	protected $_columnKeys = [
 		'type' => null,
 		'length' => null,
 		'null' => null,
 		'default' => null,
 		'fixed' => null,
+		'comment' => null,
+		'collate' => null,
+		'charset' => null,
 	];
 
 	public function __construct($table) {
@@ -57,11 +73,32 @@ class Table {
 /**
  * Add a column to the table.
  *
+ * ### Attributes
+ *
+ * Columns can have several attributes:
+ *
+ * - `type` The type of the column. This should be
+ *   one of CakePHP's abstract types.
+ * - `length` The length of the column.
+ * - `default` The default value of the column.
+ * - `null` Whether or not the column can hold nulls.
+ * - `fixed` Whether or not the column is a fixed length column.
+ *
+ * In addition to the above keys, the following keys are
+ * implemented in some database dialects, but not all:
+ *
+ * - `comment` The comment for the column.
+ * - `charset` The charset for the column.
+ * - `collate` The collation for the column.
+ *
  * @param string $name The name of the column
  * @param array $attrs The attributes for the column.
  * @return Table $this
  */
 	public function addColumn($name, $attrs) {
+		if (is_string($attrs)) {
+			$attrs = ['type' => $attrs];
+		}
 		$attrs = array_intersect_key($attrs, $this->_columnKeys);
 		$this->_columns[$name] = $attrs + $this->_columnKeys;
 		return $this;
@@ -87,6 +124,27 @@ class Table {
 			return null;
 		}
 		return $this->_columns[$name];
+	}
+
+/**
+ * Add an index or key.
+ *
+ * @param string $name The name of the index.
+ * @param array $attrs The attributes for the index.
+ * @return Table $this
+ */
+	public function addIndex($name, $attrs) {
+		$this->_indexes[$name] = $attrs;
+		return $this;
+	}
+
+/**
+ * Get the names of all the indexes in the table.
+ *
+ * @return array
+ */
+	public function indexes() {
+		return array_keys($this->_indexes);
 	}
 
 }
