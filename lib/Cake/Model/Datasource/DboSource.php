@@ -2588,7 +2588,7 @@ class DboSource extends DataSource {
 		}
 
 		if (!preg_match($operatorMatch, trim($operator))) {
-			$operator .= ' =';
+			$operator .= is_array($value) ? ' IN' :  ' =';
 		}
 		$operator = trim($operator);
 
