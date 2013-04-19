@@ -936,6 +936,9 @@ class HttpSocket extends CakeSocket {
 /**
  * Builds cookie headers for a request.
  *
+ * Cookies can either be in the format returned in responses, or
+ * a simple key => value pair.
+ *
  * @param array $cookies Array of cookies to send with the request.
  * @return string Cookie header string to be sent with the request.
  */
