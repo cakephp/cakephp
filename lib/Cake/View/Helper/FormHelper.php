@@ -2380,11 +2380,12 @@ class FormHelper extends AppHelper {
 				$current->setDate($year, $month, $day);
 			}
 			if ($hour !== null) {
+				$hour = $timeFormat == 12 && $hour == 12 ? 0 : $hour;
 				$current->setTime($hour, $min);
 			}
 			$change = (round($min * (1 / $interval)) * $interval) - $min;
 			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
-			$format = ($timeFormat === '12') ? 'Y m d h i a' : 'Y m d H i a';
+			$format = ($timeFormat == 12) ? 'Y m d h i a' : 'Y m d H i a';
 			$newTime = explode(' ', $current->format($format));
 			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
 		}
@@ -2505,6 +2506,7 @@ class FormHelper extends AppHelper {
 		if (!empty($timeFormat)) {
 			$time = explode(':', $days[1]);
 
+			// TODO this code is stupid.
 			if ($time[0] >= 12 && $timeFormat == 12) {
 				$meridian = 'pm';
 			} elseif ($time[0] === '00' && $timeFormat == 12) {
