@@ -16,6 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Error;
+
 /**
  * Represents a single table in a database schema.
  *
@@ -66,6 +68,39 @@ class Table {
 		'charset' => null,
 	];
 
+/**
+ * The valid keys that can be used in an index
+ * definition.
+ *
+ * @var array
+ */
+	protected $_indexKeys = [
+		'type' => null,
+		'columns' => [],
+	];
+
+/**
+ * Names of the valid index types.
+ *
+ * @var array
+ */
+	protected $_validIndexTypes = [
+		self::INDEX_PRIMARY,
+		self::INDEX_INDEX,
+		self::INDEX_UNIQUE,
+		self::INDEX_FOREIGN,
+	];
+
+	const INDEX_PRIMARY = 'primary';
+	const INDEX_INDEX = 'index';
+	const INDEX_UNIQUE = 'unique';
+	const INDEX_FOREIGN = 'foreign';
+
+/**
+ * Constructor.
+ *
+ * @param string $table The table name.
+ */
 	public function __construct($table) {
 		$this->_table = $table;
 	}
@@ -129,11 +164,34 @@ class Table {
 /**
  * Add an index or key.
  *
+ * Used to add primary keys, indexes, and foreign keys 
+ * to a table.
+ *
+ * ### Attributes
+ *
+ * - `type` The type of index being added.
+ * - `columns` The columns in the index.
+ *
  * @param string $name The name of the index.
  * @param array $attrs The attributes for the index.
  * @return Table $this
+ * @throws Cake\Error\Exception
  */
 	public function addIndex($name, $attrs) {
+		if (is_string($attrs)) {
+			$attrs = ['type' => $attrs];
+		}
+		$attrs = array_intersect_key($attrs, $this->_indexKeys);
+		$attrs = $attrs + $this->_indexKeys;
+
+		if (!in_array($attrs['type'], $this->_validIndexTypes, true)) {
+			throw new Error\Exception(__d('cake_dev', 'Invalid index type'));
+		}
+		foreach ($attrs['columns'] as $field) {
+			if (empty($this->_columns[$field])) {
+				throw new Error\Exception(__d('cake_dev', 'Columns used in indexes must already exist.'));
+			}
+		}
 		$this->_indexes[$name] = $attrs;
 		return $this;
 	}

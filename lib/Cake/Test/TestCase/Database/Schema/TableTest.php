@@ -86,13 +86,57 @@ class TableTest extends TestCase {
 		$this->assertEquals(['primary'], $table->indexes());
 	}
 
+/**
+ * Test that an exception is raised when indexes
+ * are added for fields that do not exist.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
 	public function testAddIndexErrorWhenFieldIsMissing() {
+		$table = new Table('articles');
+		$table->addIndex('author_idx', [
+			'columns' => ['author_id']
+		]);
+	}
+/**
+ * Test that exceptions are raised when indexes
+ * are added with invalid types
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testAddIndexErrorWrongType() {
+		$table = new Table('articles');
+		$table->addColumn('author_id', 'integer')
+			->addIndex('author_idx', [
+				'type' => 'derp',
+				'columns' => ['author_id']
+			]);
 	}
 
-	public function testAddIndexForeign() {
-	}
-
+/**
+ * Test adding different kinds of indexes.
+ *
+ * @return void
+ */
 	public function testAddIndexTypes() {
+		$table = new Table('articles');
+		$table->addColumn('title', 'string')
+			->addColumn('author_id', 'integer');
+
+		$table->addIndex('author_idx', [
+			'fields' => ['author_id'],
+			'type' => 'unique'
+		]);
+	}
+
+/**
+ * Test adding foreign keys.
+ *
+ * @return void
+ */
+	public function testAddIndexForeign() {
 	}
 
 }
