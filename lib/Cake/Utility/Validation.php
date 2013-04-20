@@ -654,6 +654,9 @@ class Validation {
 				case 'de':
 					$regex = '/^[0-9]{5}$/i';
 					break;
+				case 'nl':
+					$regex = '/^[1-9]{1}[0-9]{3} ?[a-zA-Z]{2}$/i';
+					break;
 				case 'be':
 					$regex = '/^[1-9]{1}[0-9]{3}$/i';
 					break;
