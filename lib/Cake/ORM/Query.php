@@ -13,6 +13,7 @@ class Query extends DatabaseQuery {
 			return $this->_table;
 		}
 		$this->_table = $table;
+		$this->_addDefaultTypes($table);
 		return $this;
 	}
 
@@ -63,6 +64,15 @@ class Query extends DatabaseQuery {
 			$aliased[$alias] = $field;
 		}
 		$this->select($aliased, true);
+	}
+
+	protected function _addDefaultTypes(Table $table) {
+		$alias = $table->alias();
+		$fields = [];
+		foreach ($table->schema() as $f => $meta) {
+			$fields[$f] = $fields[$alias . '.' . $f] = $meta['type'];
+		}
+		$this->defaultTypes($this->defaultTypes() + $fields);
 	}
 
 }

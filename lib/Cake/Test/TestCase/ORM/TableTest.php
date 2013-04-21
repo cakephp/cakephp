@@ -32,6 +32,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 	public function tearDown() {
 		$this->connection->execute('DROP TABLE IF EXISTS things');
+		$this->connection->execute('DROP TABLE IF EXISTS dates');
 	}
 
 /**
@@ -39,7 +40,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  **/
-	protected function _createTables() {
+	protected function _createThingsTable() {
 		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
 		$this->connection->execute($table);
 		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
@@ -55,8 +56,43 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$result->execute();
 	}
 
+/**
+ * Auxiliary function to insert a couple rows in a newly created table containing dates
+ *
+ * @return void
+ **/
+	protected function _createDatesTable() {
+		$table = 'CREATE TEMPORARY TABLE dates(id int, name varchar(50), posted timestamp, visible char(1))';
+		$this->connection->execute($table);
+		$data = [
+			'id' => '1',
+			'name' => 'Chuck Norris',
+			'posted' => new \DateTime('2012-12-21 12:00'),
+			'visible' => 'Y'
+		];
+		$result = $this->connection->insert(
+			'dates',
+			$data,
+			['id' => 'integer', 'name' => 'string', 'posted' => 'datetime', 'visible' => 'string']
+		);
+
+		$result->bindValue(1, '2', 'integer');
+		$result->bindValue(2, 'Bruce Lee');
+		$result->bindValue(3, new \DateTime('2012-12-22 12:00'), 'datetime');
+		$result->bindValue(4, 'N');
+		$result->execute();
+
+		$result->bindValue(1, 3, 'integer');
+		$result->bindValue(2, 'Jet Li');
+		$result->bindValue(3, new \DateTime('2012-12-25 12:00'), 'datetime');
+		$result->bindValue(4, null);
+		$result->execute();
+
+		return $result;
+	}
+
 	public function testFindAllNoFields() {
-		$this->_createTables();
+		$this->_createThingsTable();
 		$table = new Table(['name' => 'things', 'connection' => $this->connection]);
 		$results = $table->find('all')->toArray();
 		$expected = [
@@ -67,7 +103,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 	public function testFindAllSomeFields() {
-		$this->_createTables();
+		$this->_createThingsTable();
 		$table = new Table(['name' => 'things', 'connection' => $this->connection]);
 		$results = $table->find('all')->select(['id', 'title'])->toArray();
 		$expected = [
@@ -84,4 +120,22 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $results);
 	}
 
+	public function testFindAllConditionAutoTypes() {
+		$this->_createDatesTable();
+		$table = new Table(['name' => 'dates', 'connection' => $this->connection]);
+		$query = $table->find('all')
+			->select(['id', 'name'])
+			->where(['posted >=' => new \DateTime('2012-12-22 12:01')]);
+		$expected = [
+			['dates' => ['id' => 3, 'name' => 'Jet Li']]
+		];
+		$this->assertSame($expected, $query->toArray());
+
+		$query->orWhere(['dates.posted' => new \DateTime('2012-12-22 12:00')]);
+		$expected = [
+			['dates' => ['id' => 2, 'name' => 'Bruce Lee']],
+			['dates' => ['id' => 3, 'name' => 'Jet Li']]
+		];
+		$this->assertSame($expected, $query->toArray());
+	}
 }
