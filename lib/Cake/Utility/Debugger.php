@@ -156,7 +156,7 @@ class Debugger {
  * @param string $class
  * @return object
  */
-	public static function &getInstance($class = null) {
+	public static function getInstance($class = null) {
 		static $instance = array();
 		if (!empty($class)) {
 			if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
