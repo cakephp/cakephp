@@ -37,6 +37,8 @@ class ResultSet implements Iterator {
 
 	protected $_defaultTable;
 
+	protected $_map;
+
 	public function __construct($query, $statement) {
 		$this->_query = $query;
 		$this->_statement = $statement;
@@ -78,13 +80,21 @@ class ResultSet implements Iterator {
 	protected function _groupResult() {
 		$results = [];
 		foreach ($this->_current as $key => $value) {
-			$parts = explode('__', $key);
 			$table = $this->_defaultTable;
 			$field = $key;
-			if (count($parts) > 1) {
-				list($table, $field) = $parts;
+
+			if (empty($this->_map[$key])) {
+				$parts = explode('__', $key);
+				if (count($parts) > 1) {
+					$this->_map[$key] = $parts;
+				}
+			}
+
+			if (!empty($this->_map[$key])) {
+				list($table, $field) = $this->_map[$key];
 				$value = $this->_castValue($table, $field, $value);
 			}
+
 			$results[$table][$field] = $value;
 		}
 		return $results;

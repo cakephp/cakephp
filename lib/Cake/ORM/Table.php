@@ -70,6 +70,18 @@ class Table {
 	}
 
 	public function find($type, $options = []) {
+		return $this->{'find' . ucfirst($type)}($this->buildQuery(), $options);
+	}
+
+	public function findAll(Query $query, array $options = []) {
+		return $query;
+	}
+
+	public function findFirst(Query $query, array $options = []) {
+		return $query->limit(1);
+	}
+
+	protected function buildQuery() {
 		$query = new Query($this->connection());
 		return $query
 			->repository($this)
