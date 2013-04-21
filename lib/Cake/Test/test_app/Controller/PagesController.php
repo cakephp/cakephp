@@ -51,6 +51,8 @@ class PagesController extends AppController {
  *
  * @param mixed What page to display
  * @return void
+ * @throws NotFoundException When the view file could not be found
+ *	or MissingViewException in debug mode.
  */
 	public function display() {
 		$path = func_get_args();
@@ -75,7 +77,15 @@ class PagesController extends AppController {
 			'subpage' => $subpage,
 			'title_for_layout' => $titleForLayout
 		));
-		$this->render(implode('/', $path));
+
+		try {
+			$this->render(implode('/', $path));
+		} catch (MissingViewException $e) {
+			if (Configure::read('debug')) {
+				throw $e;
+			}
+			throw new NotFoundException();
+		}
 	}
 
 }
