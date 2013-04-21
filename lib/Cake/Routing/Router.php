@@ -175,7 +175,7 @@ class Router {
 			$routeClass != 'Cake\Routing\Route\Route' &&
 			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route'))
 		) {
-			throw new Error\Exception(__d('cake_dev', 'Route classes must extend Cake\Routing\Route\Route'));
+			throw new Error\Exception(__d('cake_dev', 'Route class not found, or route class is not a subclass of Cake\Routing\Route\Route'));
 		}
 		return $routeClass;
 	}
