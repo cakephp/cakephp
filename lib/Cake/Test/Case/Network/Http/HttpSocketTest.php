@@ -1590,9 +1590,10 @@ class HttpSocketTest extends CakeTestCase {
 			'people' => array(
 				'value' => 'jim,jack,johnny;',
 				'path' => '/accounts'
-			)
+			),
+			'key' => 'value'
 		);
-		$expect = "Cookie: foo=bar; people=jim,jack,johnny\";\"\r\n";
+		$expect = "Cookie: foo=bar; people=jim,jack,johnny\";\"; key=value\r\n";
 		$result = $this->Socket->buildCookies($cookies);
 		$this->assertEquals($expect, $result);
 	}

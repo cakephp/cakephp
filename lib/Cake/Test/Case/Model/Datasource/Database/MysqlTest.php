@@ -2446,6 +2446,11 @@ class MysqlTest extends CakeTestCase {
 		$expected = " WHERE `id` IN (2, 5, 6, 9, 12, 45, 78, 43, 76)";
 		$this->assertEquals($expected, $result);
 
+		$conditions = array('`Correction`.`source` collate utf8_bin' => array('kiwi', 'pear'));
+		$result = $this->Dbo->conditions($conditions);
+		$expected = " WHERE `Correction`.`source` collate utf8_bin IN ('kiwi', 'pear')";
+		$this->assertEquals($expected, $result);
+
 		$conditions = array('title' => 'user(s)');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `title` = 'user(s)'";
@@ -2496,6 +2501,23 @@ class MysqlTest extends CakeTestCase {
 			'? BETWEEN Model.field1 AND Model.field2' => '2009-03-04'
 		)));
 		$expected = " WHERE '2009-03-04' BETWEEN Model.field1 AND Model.field2";
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that array conditions with only one element work.
+ *
+ * @return
+ */
+	public function testArrayConditionsOneElement() {
+		$conditions = array('id' => array(1));
+		$result = $this->Dbo->conditions($conditions);
+		$expected = " WHERE id = (1)";
+		$this->assertEquals($expected, $result);
+
+		$conditions = array('id NOT' => array(1));
+		$result = $this->Dbo->conditions($conditions);
+		$expected = " WHERE NOT (id = (1))";
 		$this->assertEquals($expected, $result);
 	}
 

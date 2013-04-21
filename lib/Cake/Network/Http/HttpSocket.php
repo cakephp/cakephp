@@ -936,13 +936,21 @@ class HttpSocket extends CakeSocket {
 /**
  * Builds cookie headers for a request.
  *
+ * Cookies can either be in the format returned in responses, or
+ * a simple key => value pair.
+ *
  * @param array $cookies Array of cookies to send with the request.
  * @return string Cookie header string to be sent with the request.
  */
 	public function buildCookies($cookies) {
 		$header = array();
 		foreach ($cookies as $name => $cookie) {
-			$header[] = $name . '=' . $this->_escapeToken($cookie['value'], array(';'));
+			if (is_array($cookie)) {
+				$value = $this->_escapeToken($cookie['value'], array(';'));
+			} else {
+				$value = $this->_escapeToken($cookie, array(';'));
+			}
+			$header[] = $name . '=' . $value;
 		}
 		return $this->_buildHeader(array('Cookie' => implode('; ', $header)), 'pragmatic');
 	}

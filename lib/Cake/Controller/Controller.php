@@ -723,7 +723,7 @@ class Controller extends Object implements CakeEventListener {
 		}
 
 		$this->uses = ($this->uses) ? (array)$this->uses : array();
-		if (!in_array($modelClass, $this->uses)) {
+		if (!in_array($modelClass, $this->uses, true)) {
 			$this->uses[] = $modelClass;
 		}
 

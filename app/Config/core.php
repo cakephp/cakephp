@@ -154,12 +154,6 @@
 	//Configure::write('Cache.viewPrefix', 'prefix');
 
 /**
- * Defines the default error type when using the log() function. Used for
- * differentiating error logging and debugging. Currently PHP supports LOG_DEBUG.
- */
-	define('LOG_ERROR', LOG_ERR);
-
-/**
  * Session configuration.
  *
  * Contains an array of settings to use for session configuration. The defaults key is

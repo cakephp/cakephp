@@ -447,11 +447,24 @@ class ControllerTest extends CakeTestCase {
 
 		$result = $Controller->loadModel('ControllerPost');
 		$this->assertTrue($result);
-		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
-		$this->assertTrue(in_array('ControllerPost', $Controller->uses));
+		$this->assertInstanceOf('ControllerPost', $Controller->ControllerPost);
+		$this->assertContains('ControllerPost', $Controller->uses);
+	}
 
-		ClassRegistry::flush();
-		unset($Controller);
+/**
+ * Test loadModel() when uses = true.
+ *
+ * @return void
+ */
+	public function testLoadModelUsesTrue() {
+		$request = new CakeRequest('controller_posts/index');
+		$response = $this->getMock('CakeResponse');
+		$Controller = new Controller($request, $response);
+		$Controller->uses = true;
+
+		$Controller->loadModel('ControllerPost');
+		$this->assertInstanceOf('ControllerPost', $Controller->ControllerPost);
+		$this->assertContains('ControllerPost', $Controller->uses);
 	}
 
 /**
