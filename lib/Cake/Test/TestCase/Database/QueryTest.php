@@ -1999,6 +1999,38 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that default types are passed to functions accepting a $types param
+ *
+ * @return void
+ */
+	public function testDefaultTypes() {
+		$query = new Query($this->connection);
+		$this->assertEquals([], $query->defaultTypes());
+		$types = ['id' => 'integer', 'posted' => 'datetime'];
+		$this->assertSame($query, $query->defaultTypes($types));
+		$this->assertSame($types, $query->defaultTypes());
+
+		$this->_insertDateRecords();
+		$results = $query->select(['id', 'name'])
+			->from('dates')
+			->where(['posted >=' => new \DateTime('2012-12-22 12:01')])
+			->execute();
+		$expected = [['id' => '3', 'name' => 'Jet Li']];
+		$this->assertEquals($expected, $results->fetchAll('assoc'));
+
+		// Now test default can be overridden
+		$types = ['posted' => 'date'];
+		$results = $query
+			->where(['posted >=' => new \DateTime('2012-12-22 12:01')], $types, true)
+			->execute();
+		$expected = [
+			['id' => '2', 'name' => 'Bruce Lee'],
+			['id' => '3', 'name' => 'Jet Li']
+		];
+		$this->assertEquals($expected, $results->fetchAll('assoc'));
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table
