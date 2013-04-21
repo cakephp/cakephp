@@ -150,10 +150,13 @@ trait SqliteDialectTrait {
 		if ($col === 'bigint') {
 			return ['biginteger', $length];
 		}
+		if ($col === 'timestamp') {
+			return ['datetime', null];
+		}
 		if (in_array($col, ['blob', 'clob'])) {
 			return ['binary', null];
 		}
-		if (in_array($col, ['date', 'time', 'timestamp', 'datetime'])) {
+		if (in_array($col, ['date', 'time', 'datetime'])) {
 			return [$col, null];
 		}
 		if (strpos($col, 'decimal') !== false) {
