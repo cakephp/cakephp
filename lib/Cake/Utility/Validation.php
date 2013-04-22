@@ -528,7 +528,7 @@ class Validation {
  * @return boolean Success
  */
 	public static function money($check, $symbolPosition = 'left') {
-		$money = '(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{1})?';
+		$money = '(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{1,2})?';
 		if ($symbolPosition === 'right') {
 			$regex = '/^' . $money . '(?<!\x{00a2})\p{Sc}?$/u';
 		} else {
