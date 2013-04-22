@@ -73,7 +73,7 @@ class ClassRegistry {
  * Examples
  * Simple Use: Get a Post model instance ```ClassRegistry::init('Post');```
  *
- * Expanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model');```
+ * Expanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry');```
  *
  * Model Classes can accept optional ```array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);```
  *
