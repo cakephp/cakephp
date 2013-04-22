@@ -1368,6 +1368,7 @@ class AuthComponentTest extends CakeTestCase {
 		$_SERVER['PHP_AUTH_USER'] = 'mariano';
 		$_SERVER['PHP_AUTH_PW'] = 'cake';
 
+		AuthComponent::$sessionKey = false;
 		$this->Auth->authenticate = array(
 			'Basic' => array('userModel' => 'AuthUser')
 		);
