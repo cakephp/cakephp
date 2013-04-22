@@ -1689,6 +1689,8 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
+		$db = $this->getDataSource();
+
 		if (empty($this->data[$this->alias][$this->primaryKey])) {
 			unset($this->data[$this->alias][$this->primaryKey]);
 		}
