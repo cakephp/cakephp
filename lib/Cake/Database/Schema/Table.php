@@ -172,6 +172,7 @@ class Table {
  * - `type` The type of index being added.
  * - `columns` The columns in the index.
  *
+ * @TODO implement foreign keys.
  * @param string $name The name of the index.
  * @param array $attrs The attributes for the index.
  * @return Table $this

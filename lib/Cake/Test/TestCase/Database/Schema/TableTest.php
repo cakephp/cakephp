@@ -131,12 +131,4 @@ class TableTest extends TestCase {
 		]);
 	}
 
-/**
- * Test adding foreign keys.
- *
- * @return void
- */
-	public function testAddIndexForeign() {
-	}
-
 }
