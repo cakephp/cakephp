@@ -31,8 +31,14 @@ foreach ($paths as $path) {
 }
 
 if (!$found) {
-	$root = dirname(dirname(dirname(__FILE__)));
-	if (!include $root . $ds . $dispatcher) {
+	$rootInstall = dirname(dirname(dirname(__FILE__))) . $ds . $dispatcher;
+	$composerInstall = dirname(dirname(__FILE__)) . $ds. $dispatcher;
+
+	if (file_exists($composerInstall)) {
+		include $composerInstall;
+	} elseif (file_exists($rootInstall)) {
+		include $rootInstall;
+	} else {
 		trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 	}
 } else {
