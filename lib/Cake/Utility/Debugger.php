@@ -421,7 +421,7 @@ class Debugger {
 	}
 
 /**
- * Wraps the highlight_string funciton in case the server API does not
+ * Wraps the highlight_string function in case the server API does not
  * implement the function as it is the case of the HipHop interpreter
  *
  * @param string $str the string to convert

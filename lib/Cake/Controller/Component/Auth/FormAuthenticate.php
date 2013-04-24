@@ -49,11 +49,11 @@ class FormAuthenticate extends BaseAuthenticate {
 		if (empty($request->data[$model])) {
 			return false;
 		}
-		if (
-			empty($request->data[$model][$fields['username']]) ||
-			empty($request->data[$model][$fields['password']])
-		) {
-			return false;
+		foreach (array($fields['username'], $fields['password']) as $field) {
+			$value = $request->data($model . '.' . $field);
+			if (empty($value) || !is_string($value)) {
+				return false;
+			}
 		}
 		return true;
 	}

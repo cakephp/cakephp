@@ -116,6 +116,28 @@ class FormAuthenticateTest extends CakeTestCase {
 	}
 
 /**
+ * test authenticate field is not string
+ *
+ * @return void
+ */
+	public function testAuthenticateFieldsAreNotString() {
+		$request = new CakeRequest('posts/index', false);
+		$request->data = array(
+			'User' => array(
+				'user' => array('mariano', 'phpnut'),
+				'password' => 'my password'
+		));
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
+
+		$request->data = array(
+			'User' => array(
+				'user' => 'mariano',
+				'password' => array('password1', 'password2')
+		));
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
+	}
+
+/**
  * test the authenticate method
  *
  * @return void

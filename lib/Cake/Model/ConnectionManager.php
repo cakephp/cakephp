@@ -86,8 +86,7 @@ class ConnectionManager {
 		}
 
 		if (!empty(self::$_dataSources[$name])) {
-			$return = self::$_dataSources[$name];
-			return $return;
+			return self::$_dataSources[$name];
 		}
 
 		if (empty(self::$_connectionsEnum[$name])) {
