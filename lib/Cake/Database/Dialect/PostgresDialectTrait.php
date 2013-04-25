@@ -285,4 +285,15 @@ trait PostgresDialectTrait {
 		return $schema;
 	}
 
+/**
+ * Get the schema dialect.
+ *
+ * Used by Cake\Schema package to reflect schema and
+ * generate schema.
+ *
+ * @return Cake\Database\Schema\Dialect\Postgres
+ */
+	public function schemaDialect() {
+		return new \Cake\Database\Schema\Dialect\Postgres($this);
+	}
 }

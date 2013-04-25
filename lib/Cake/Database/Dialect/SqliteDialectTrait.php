@@ -226,4 +226,16 @@ trait SqliteDialectTrait {
 		return $schema;
 	}
 
+/**
+ * Get the schema dialect.
+ *
+ * Used by Cake\Schema package to reflect schema and
+ * generate schema.
+ *
+ * @return Cake\Database\Schema\Dialect\Sqlite
+ */
+	public function schemaDialect() {
+		return new \Cake\Database\Schema\Dialect\Sqlite($this);
+	}
+
 }
