@@ -18,6 +18,11 @@ namespace Cake\Database\Schema\Dialect;
 
 class Mysql {
 
+/**
+ * The driver instance being used.
+ *
+ * @var Cake\Database\Driver\Mysql
+ */
 	protected $driver;
 
 	public function __construct($driver) {
@@ -32,7 +37,7 @@ class Mysql {
  * @return array An array of (sql, params) to execute.
  */
 	public function listTablesSql(array $config) {
-		return ["SHOW TABLES FROM " . $this->quoteIdentifier($config['database']), []];
+		return ["SHOW TABLES FROM " . $this->_driver->quoteIdentifier($config['database']), []];
 	}
 
 /**
@@ -42,7 +47,7 @@ class Mysql {
  * @return array An array of (sql, params) to execute.
  */
 	public function describeTableSql($table) {
-		return ["SHOW FULL COLUMNS FROM " . $this->quoteIdentifier($table), []];
+		return ["SHOW FULL COLUMNS FROM " . $this->_driver->quoteIdentifier($table), []];
 	}
 
 /**

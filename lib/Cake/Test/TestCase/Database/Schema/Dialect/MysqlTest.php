@@ -17,7 +17,10 @@
 namespace Cake\Test\TestCase\Database\Schema\Dialect;
 
 use Cake\Core\Configure;
+use Cake\Database\Connection;
+use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\Dialect\Mysql;
+use Cake\Database\Schema\Driver\Mysql as MysqlDriver;
 use Cake\TestSuite\TestCase;
 
 
@@ -140,6 +143,120 @@ class MysqlTest extends TestCase {
 		$driver = $this->getMock('Cake\Database\Driver\Mysql');
 		$dialect = new Mysql($driver);
 		$this->assertEquals($expected, $dialect->convertIndex($input));
+	}
+
+/**
+ * Helper method for testing methods.
+ *
+ * @return void
+ */
+	protected function _createTables($connection) {
+		$this->_needsConnection();
+		$connection->execute('DROP TABLE IF EXISTS articles');
+		$connection->execute('DROP TABLE IF EXISTS authors');
+
+		$table = <<<SQL
+CREATE TABLE authors(
+id INT(11) PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(50),
+bio TEXT,
+created DATETIME
+)
+SQL;
+		$connection->execute($table);
+
+		$table = <<<SQL
+CREATE TABLE articles(
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+title VARCHAR(20) COMMENT 'A title',
+body TEXT,
+author_id INT(11) NOT NULL,
+published BOOLEAN DEFAULT 0,
+allow_comments TINYINT(1) DEFAULT 0,
+created DATETIME
+) COLLATE=utf8_general_ci
+SQL;
+		$connection->execute($table);
+	}
+
+/**
+ * Integration test for SchemaCollection & MysqlDialect.
+ *
+ * @return void
+ */
+	public function testListTables() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->listTables();
+
+		$this->assertInternalType('array', $result);
+		$this->assertCount(2, $result);
+		$this->assertEquals('articles', $result[0]);
+		$this->assertEquals('authors', $result[1]);
+	}
+
+/**
+ * Test describing a table with Mysql
+ *
+ * @return void
+ */
+	public function testDescribeTable() {
+		$this->markTestIncomplete('Needs migration to new schema system');
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$result = $connection->describe('articles');
+		$expected = [
+			'id' => [
+				'type' => 'biginteger',
+				'null' => false,
+				'default' => null,
+				'length' => 20,
+				'key' => 'primary',
+			],
+			'title' => [
+				'type' => 'string',
+				'null' => true,
+				'default' => null,
+				'length' => 20,
+				'collate' => 'utf8_general_ci',
+				'comment' => 'A title',
+			],
+			'body' => [
+				'type' => 'text',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+				'collate' => 'utf8_general_ci',
+			],
+			'author_id' => [
+				'type' => 'integer',
+				'null' => false,
+				'default' => null,
+				'length' => 11,
+			],
+			'published' => [
+				'type' => 'boolean',
+				'null' => true,
+				'default' => 0,
+				'length' => null,
+			],
+			'allow_comments' => [
+				'type' => 'boolean',
+				'null' => true,
+				'default' => 0,
+				'length' => null,
+			],
+			'created' => [
+				'type' => 'datetime',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+			],
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 }

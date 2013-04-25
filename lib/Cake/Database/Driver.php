@@ -89,7 +89,7 @@ abstract class Driver {
  * Returns whether this driver supports save points for nested transactions
  *
  * @return boolean true if save points are supported, false otherwise
- **/
+ */
 	public function supportsSavePoints() {
 		return true;
 	}
@@ -98,7 +98,7 @@ abstract class Driver {
  * Returns a value in a safe representation to be used in a query string
  *
  * @return string
- **/
+ */
 	public abstract function quote($value, $type);
 
 /**

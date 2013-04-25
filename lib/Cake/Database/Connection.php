@@ -114,6 +114,15 @@ class Connection {
 	}
 
 /**
+ * Get the configuration data used to create the connection.
+ *
+ * @return array
+ */
+	public function config() {
+		return $this->_config;
+	}
+
+/**
  * Sets the driver instance. If an string is passed it will be treated
  * as a class name and will be instantiated.
  *
@@ -460,21 +469,6 @@ class Connection {
 	public function lastInsertId($table) {
 		$this->connect();
 		return $this->_driver->lastInsertId($table);
-	}
-
-/**
- * Get the list of tables available in the current connection.
- *
- * @return array The list of tables in the connected database/schema.
- */
-	public function listTables() {
-		list($sql, $params) = $this->_driver->listTablesSql($this->_config);
-		$result = [];
-		$statement = $this->execute($sql, $params);
-		while ($row = $statement->fetch()) {
-			$result[] = $row[0];
-		}
-		return $result;
 	}
 
 /**

@@ -27,7 +27,19 @@ use Cake\Error;
  */
 class Collection {
 
+/**
+ * Connection object
+ *
+ * @var Cake\Database\Connection
+ */
 	protected $_connection;
+
+/**
+ * Schema dialect instance.
+ *
+ * @var
+ */
+	protected $_dialect;
 
 /**
  * Constructor.
@@ -36,14 +48,22 @@ class Collection {
  */
 	public function __construct(Connection $connection) {
 		$this->_connection = $connection;
+		$this->_dialect = $connection->driver()->schemaDialect();
 	}
 
 /**
- * Get the list of tables in the connection's database.
+ * Get the list of tables available in the current connection.
  *
- * @return array A list of table names.
+ * @return array The list of tables in the connected database/schema.
  */
 	public function listTables() {
+		list($sql, $params) = $this->_dialect->listTablesSql($this->_connection->config());
+		$result = [];
+		$statement = $this->_connection->execute($sql, $params);
+		while ($row = $statement->fetch()) {
+			$result[] = $row[0];
+		}
+		return $result;
 	}
 
 /**
