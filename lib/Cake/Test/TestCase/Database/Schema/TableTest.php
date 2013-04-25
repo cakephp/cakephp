@@ -25,6 +25,26 @@ use Cake\TestSuite\TestCase;
 class TableTest extends TestCase {
 
 /**
+ * Test construction with columns
+ *
+ * @return void
+ */
+	public function testConstructWithColumns() {
+		$columns = [
+			'id' => [
+				'type' => 'integer',
+				'length' => 11,
+			],
+			'title' => [
+				'type' => 'string',
+				'length' => 255
+			]
+		];
+		$table = new Table('articles', $columns);
+		$this->assertEquals(['id', 'title'], $table->columns());
+	}
+
+/**
  * Test adding columns.
  *
  * @return void

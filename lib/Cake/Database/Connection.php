@@ -472,25 +472,6 @@ class Connection {
 	}
 
 /**
- * Get the schema information for a given table/collection
- *
- * @param string $table The table/collection you want schema information for.
- * @return array The schema data for the requested table.
- */
-	public function describe($table) {
-		list($sql, $params) = $this->_driver->describeTableSql($table, $this->_config);
-		$statement = $this->execute($sql, $params);
-		$schema = [];
-
-		$fieldParams = $this->_driver->extraSchemaColumns();
-		$rows = $statement->fetchAll('assoc');
-		foreach ($rows as $row) {
-			$schema += $this->_driver->convertFieldDescription($row, $fieldParams);
-		}
-		return $schema;
-	}
-
-/**
  * Enables or disables query logging for this connection.
  *
  * @param boolean $enable whether to turn logging on or disable it

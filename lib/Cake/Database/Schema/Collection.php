@@ -17,6 +17,7 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
+use Cake\Database\Schema\Table;
 use Cake\Error;
 
 /**
@@ -69,12 +70,27 @@ class Collection {
 /**
  * Get the column metadata for a table.
  *
- *
- * @param string $name The name of the table to describe
- * @return Cake\Schema\Table object with column metdata.
+ * @param string $name The name of the table to describe.
+ * @return Cake\Schema\Table|null Object with column metadata, or null.
  * @see Collection::fullDescribe()
  */
 	public function describe($name) {
+		list($sql, $params) = $this->_dialect->describeTableSql(
+			$name,
+			$this->_connection->config()
+		);
+		$statement = $this->_connection->execute($sql, $params);
+		if (count($statement) == 0) {
+			return null;
+		}
+
+		$columns = [];
+		$fieldParams = $this->_dialect->extraSchemaColumns();
+		$rows = $statement->fetchAll('assoc');
+		foreach ($rows as $row) {
+			$columns += $this->_dialect->convertFieldDescription($row, $fieldParams);
+		}
+		return new Table($name, $columns);
 	}
 
 /**

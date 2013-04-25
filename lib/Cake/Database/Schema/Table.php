@@ -100,9 +100,13 @@ class Table {
  * Constructor.
  *
  * @param string $table The table name.
+ * @param array $columns The list of columns for the schema.
  */
-	public function __construct($table) {
+	public function __construct($table, $columns = array()) {
 		$this->_table = $table;
+		foreach ($columns as $field => $definition) {
+			$this->addColumn($field, $definition);
+		}
 	}
 
 /**

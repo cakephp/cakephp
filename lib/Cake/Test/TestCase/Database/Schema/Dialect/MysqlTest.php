@@ -203,18 +203,22 @@ SQL;
  * @return void
  */
 	public function testDescribeTable() {
-		$this->markTestIncomplete('Needs migration to new schema system');
 		$connection = new Connection(Configure::read('Datasource.test'));
 		$this->_createTables($connection);
 
-		$result = $connection->describe('articles');
+		$schema = new SchemaCollection($connection);
+		$result = $schema->describe('articles');
+		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
 		$expected = [
 			'id' => [
 				'type' => 'biginteger',
 				'null' => false,
 				'default' => null,
 				'length' => 20,
-				'key' => 'primary',
+				'fixed' => null,
+				'comment' => null,
+				'collate' => null,
+				'charset' => null,
 			],
 			'title' => [
 				'type' => 'string',
@@ -223,6 +227,8 @@ SQL;
 				'length' => 20,
 				'collate' => 'utf8_general_ci',
 				'comment' => 'A title',
+				'fixed' => null,
+				'charset' => null,
 			],
 			'body' => [
 				'type' => 'text',
@@ -230,33 +236,54 @@ SQL;
 				'default' => null,
 				'length' => null,
 				'collate' => 'utf8_general_ci',
+				'fixed' => null,
+				'comment' => null,
+				'charset' => null,
 			],
 			'author_id' => [
 				'type' => 'integer',
 				'null' => false,
 				'default' => null,
 				'length' => 11,
+				'fixed' => null,
+				'comment' => null,
+				'collate' => null,
+				'charset' => null,
 			],
 			'published' => [
 				'type' => 'boolean',
 				'null' => true,
 				'default' => 0,
 				'length' => null,
+				'fixed' => null,
+				'comment' => null,
+				'collate' => null,
+				'charset' => null,
 			],
 			'allow_comments' => [
 				'type' => 'boolean',
 				'null' => true,
 				'default' => 0,
 				'length' => null,
+				'fixed' => null,
+				'comment' => null,
+				'collate' => null,
+				'charset' => null,
 			],
 			'created' => [
 				'type' => 'datetime',
 				'null' => true,
 				'default' => null,
 				'length' => null,
+				'fixed' => null,
+				'comment' => null,
+				'collate' => null,
+				'charset' => null,
 			],
 		];
-		$this->assertEquals($expected, $result);
+		foreach ($expected as $field => $definition) {
+			$this->assertEquals($definition, $result->column($field));
+		}
 	}
 
 }
