@@ -1093,7 +1093,8 @@ class Router {
  * @return CakeRoute Matching route object.
  */
 	public static function currentRoute() {
-		return self::$_currentRoute[count(self::$_currentRoute) - 1];
+		$count = count(self::$_currentRoute) - 1;
+		return ($count >= 0) ? self::$_currentRoute[$count] : false;
 	}
 
 /**
