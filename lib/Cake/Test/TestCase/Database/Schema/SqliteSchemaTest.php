@@ -14,20 +14,19 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Database\Schema\Dialect;
+namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Schema\Collection as SchemaCollection;
-use Cake\Database\Schema\Dialect\Mysql;
-use Cake\Database\Schema\Driver\Mysql as MysqlDriver;
+use Cake\Database\Schema\SqliteSchema;
 use Cake\TestSuite\TestCase;
 
 
 /**
- * Test case for Mysql Schema Dialect.
+ * Test case for Sqlite Schema Dialect.
  */
-class MysqlTest extends TestCase {
+class SqliteSchemaTest extends TestCase {
 
 /**
  * Helper method for skipping tests that need a real connection.
@@ -36,7 +35,7 @@ class MysqlTest extends TestCase {
  */
 	protected function _needsConnection() {
 		$config = Configure::read('Datasource.test');
-		$this->skipIf(strpos($config['datasource'], 'Mysql') === false, 'Not using Mysql for test config');
+		$this->skipIf(strpos($config['datasource'], 'Sqlite') === false, 'Not using Sqlite for test config');
 	}
 
 /**
@@ -59,16 +58,8 @@ class MysqlTest extends TestCase {
 				['time', null]
 			],
 			[
-				'TINYINT(1)',
+				'BOOLEAN',
 				['boolean', null]
-			],
-			[
-				'TINYINT(2)',
-				['integer', 2]
-			],
-			[
-				'INTEGER(11)',
-				['integer', 11]
 			],
 			[
 				'BIGINT',
@@ -83,16 +74,20 @@ class MysqlTest extends TestCase {
 				['string', 25]
 			],
 			[
-				'TINYTEXT',
-				['string', null]
-			],
-			[
 				'BLOB',
 				['binary', null]
 			],
 			[
-				'MEDIUMBLOB',
-				['binary', null]
+				'INTEGER(11)',
+				['integer', 11]
+			],
+			[
+				'TINYINT(5)',
+				['integer', 5]
+			],
+			[
+				'MEDIUMINT(10)',
+				['integer', 10]
 			],
 			[
 				'FLOAT',
@@ -103,6 +98,10 @@ class MysqlTest extends TestCase {
 				['float', null]
 			],
 			[
+				'REAL',
+				['float', null]
+			],
+			[
 				'DECIMAL(11,2)',
 				['decimal', null]
 			],
@@ -110,44 +109,21 @@ class MysqlTest extends TestCase {
 	}
 
 /**
- * Test parsing MySQL column types.
+ * Test parsing SQLite column types.
  *
  * @dataProvider columnProvider
  * @return void
  */
 	public function testConvertColumnType($input, $expected) {
-		$driver = $this->getMock('Cake\Database\Driver\Mysql');
-		$dialect = new Mysql($driver);
+		$driver = $this->getMock('Cake\Database\Driver\Sqlite');
+		$dialect = new SqliteSchema($driver);
 		$this->assertEquals($expected, $dialect->convertColumn($input));
 	}
 
 /**
- * Provider for testing index conversion
+ * Creates tables for testing listTables/describe()
  *
- * @return array
- */
-	public static function convertIndexProvider() {
-		return [
-			['PRI', 'primary'],
-			['UNI', 'unique'],
-			['MUL', 'index'],
-		];
-	}
-/**
- * Test parsing MySQL index types.
- *
- * @dataProvider convertIndexProvider
- * @return void
- */
-	public function testConvertIndex($input, $expected) {
-		$driver = $this->getMock('Cake\Database\Driver\Mysql');
-		$dialect = new Mysql($driver);
-		$this->assertEquals($expected, $dialect->convertIndex($input));
-	}
-
-/**
- * Helper method for testing methods.
- *
+ * @param Connection $connection
  * @return void
  */
 	protected function _createTables($connection) {
@@ -157,7 +133,7 @@ class MysqlTest extends TestCase {
 
 		$table = <<<SQL
 CREATE TABLE authors(
-id INT(11) PRIMARY KEY AUTO_INCREMENT,
+id INTEGER PRIMARY KEY AUTOINCREMENT,
 name VARCHAR(50),
 bio TEXT,
 created DATETIME
@@ -167,20 +143,19 @@ SQL;
 
 		$table = <<<SQL
 CREATE TABLE articles(
-id BIGINT PRIMARY KEY AUTO_INCREMENT,
-title VARCHAR(20) COMMENT 'A title',
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+title VARCHAR(20) DEFAULT 'testing',
 body TEXT,
 author_id INT(11) NOT NULL,
 published BOOLEAN DEFAULT 0,
-allow_comments TINYINT(1) DEFAULT 0,
 created DATETIME
-) COLLATE=utf8_general_ci
+)
 SQL;
 		$connection->execute($table);
 	}
 
 /**
- * Integration test for SchemaCollection & MysqlDialect.
+ * Test SchemaCollection listing tables with Sqlite
  *
  * @return void
  */
@@ -192,13 +167,14 @@ SQL;
 		$result = $schema->listTables();
 
 		$this->assertInternalType('array', $result);
-		$this->assertCount(2, $result);
+		$this->assertCount(3, $result);
 		$this->assertEquals('articles', $result[0]);
 		$this->assertEquals('authors', $result[1]);
+		$this->assertEquals('sqlite_sequence', $result[2]);
 	}
 
 /**
- * Test describing a table with Mysql
+ * Test describing a table with Sqlite
  *
  * @return void
  */
@@ -208,37 +184,36 @@ SQL;
 
 		$schema = new SchemaCollection($connection);
 		$result = $schema->describe('articles');
-		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
 		$expected = [
 			'id' => [
-				'type' => 'biginteger',
+				'type' => 'integer',
 				'null' => false,
 				'default' => null,
-				'length' => 20,
+				'length' => null,
 				'fixed' => null,
+				'charset' => null,
 				'comment' => null,
 				'collate' => null,
-				'charset' => null,
 			],
 			'title' => [
 				'type' => 'string',
 				'null' => true,
-				'default' => null,
+				'default' => 'testing',
 				'length' => 20,
-				'collate' => 'utf8_general_ci',
-				'comment' => 'A title',
 				'fixed' => null,
 				'charset' => null,
+				'comment' => null,
+				'collate' => null,
 			],
 			'body' => [
 				'type' => 'text',
 				'null' => true,
 				'default' => null,
 				'length' => null,
-				'collate' => 'utf8_general_ci',
 				'fixed' => null,
-				'comment' => null,
 				'charset' => null,
+				'comment' => null,
+				'collate' => null,
 			],
 			'author_id' => [
 				'type' => 'integer',
@@ -246,9 +221,9 @@ SQL;
 				'default' => null,
 				'length' => 11,
 				'fixed' => null,
+				'charset' => null,
 				'comment' => null,
 				'collate' => null,
-				'charset' => null,
 			],
 			'published' => [
 				'type' => 'boolean',
@@ -256,19 +231,9 @@ SQL;
 				'default' => 0,
 				'length' => null,
 				'fixed' => null,
+				'charset' => null,
 				'comment' => null,
 				'collate' => null,
-				'charset' => null,
-			],
-			'allow_comments' => [
-				'type' => 'boolean',
-				'null' => true,
-				'default' => 0,
-				'length' => null,
-				'fixed' => null,
-				'comment' => null,
-				'collate' => null,
-				'charset' => null,
 			],
 			'created' => [
 				'type' => 'datetime',
@@ -276,14 +241,14 @@ SQL;
 				'default' => null,
 				'length' => null,
 				'fixed' => null,
+				'charset' => null,
 				'comment' => null,
 				'collate' => null,
-				'charset' => null,
 			],
 		];
+		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}
 	}
-
 }

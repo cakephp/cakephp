@@ -48,10 +48,10 @@ trait MysqlDialectTrait {
  * Used by Cake\Schema package to reflect schema and
  * generate schema.
  *
- * @return Cake\Database\Schema\Dialect\Mysql
+ * @return Cake\Database\Schema\MysqlSchema
  */
 	public function schemaDialect() {
-		return new \Cake\Database\Schema\Dialect\Mysql($this);
+		return new \Cake\Database\Schema\MysqlSchema($this);
 	}
 
 }

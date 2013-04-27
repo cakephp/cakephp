@@ -14,20 +14,18 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Database\Schema\Dialect;
+namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Schema\Collection as SchemaCollection;
-use Cake\Database\Schema\Dialect\Sqlite;
-use Cake\Database\Schema\Driver\Sqlite as SqliteDriver;
+use Cake\Database\Schema\PostgresSchema;
 use Cake\TestSuite\TestCase;
 
-
 /**
- * Test case for Sqlite Schema Dialect.
+ * Postgres schema test case.
  */
-class SqliteTest extends TestCase {
+class PostgresSchemaTest extends TestCase {
 
 /**
  * Helper method for skipping tests that need a real connection.
@@ -36,7 +34,43 @@ class SqliteTest extends TestCase {
  */
 	protected function _needsConnection() {
 		$config = Configure::read('Datasource.test');
-		$this->skipIf(strpos($config['datasource'], 'Sqlite') === false, 'Not using Sqlite for test config');
+		$this->skipIf(strpos($config['datasource'], 'Postgres') === false, 'Not using Postgres for test config');
+	}
+
+/**
+ * Helper method for testing methods.
+ *
+ * @return void
+ */
+	protected function _createTables($connection) {
+		$this->_needsConnection();
+
+		$connection->execute('DROP TABLE IF EXISTS articles');
+		$connection->execute('DROP TABLE IF EXISTS authors');
+
+		$table = <<<SQL
+CREATE TABLE authors(
+id SERIAL,
+name VARCHAR(50),
+bio DATE,
+created TIMESTAMP
+)
+SQL;
+		$connection->execute($table);
+
+		$table = <<<SQL
+CREATE TABLE articles(
+id BIGINT PRIMARY KEY,
+title VARCHAR(20),
+body TEXT,
+author_id INTEGER NOT NULL,
+published BOOLEAN DEFAULT false,
+views SMALLINT DEFAULT 0,
+created TIMESTAMP
+)
+SQL;
+		$connection->execute($table);
+		$connection->execute('COMMENT ON COLUMN "articles"."title" IS \'a title\'');
 	}
 
 /**
@@ -47,7 +81,11 @@ class SqliteTest extends TestCase {
 	public static function columnProvider() {
 		return [
 			[
-				'DATETIME',
+				'TIMESTAMP',
+				['datetime', null]
+			],
+			[
+				'TIMESTAMP WITHOUT TIME ZONE',
 				['datetime', null]
 			],
 			[
@@ -59,104 +97,94 @@ class SqliteTest extends TestCase {
 				['time', null]
 			],
 			[
-				'BOOLEAN',
-				['boolean', null]
-			],
-			[
-				'BIGINT',
-				['biginteger', null]
-			],
-			[
-				'VARCHAR(255)',
-				['string', 255]
-			],
-			[
-				'CHAR(25)',
-				['string', 25]
-			],
-			[
-				'BLOB',
-				['binary', null]
-			],
-			[
-				'INTEGER(11)',
-				['integer', 11]
-			],
-			[
-				'TINYINT(5)',
+				'SMALLINT',
 				['integer', 5]
 			],
 			[
-				'MEDIUMINT(10)',
+				'INTEGER',
 				['integer', 10]
 			],
 			[
-				'FLOAT',
-				['float', null]
+				'SERIAL',
+				['integer', 10]
 			],
 			[
-				'DOUBLE',
-				['float', null]
+				'BIGINT',
+				['biginteger', 20]
+			],
+			[
+				'NUMERIC',
+				['decimal', null]
+			],
+			[
+				'DECIMAL(10,2)',
+				['decimal', null]
+			],
+			[
+				'MONEY',
+				['decimal', null]
+			],
+			[
+				'VARCHAR',
+				['string', null]
+			],
+			[
+				'CHARACTER VARYING',
+				['string', null]
+			],
+			[
+				'CHAR',
+				['string', null]
+			],
+			[
+				'UUID',
+				['string', 36]
+			],
+			[
+				'CHARACTER',
+				['string', null]
+			],
+			[
+				'INET',
+				['string', 39]
+			],
+			[
+				'TEXT',
+				['text', null]
+			],
+			[
+				'BYTEA',
+				['binary', null]
 			],
 			[
 				'REAL',
 				['float', null]
 			],
 			[
-				'DECIMAL(11,2)',
-				['decimal', null]
+				'DOUBLE PRECISION',
+				['float', null]
+			],
+			[
+				'BIGSERIAL',
+				['biginteger', 20]
 			],
 		];
 	}
 
 /**
- * Test parsing SQLite column types.
+ * Test parsing Postgres column types.
  *
  * @dataProvider columnProvider
  * @return void
  */
 	public function testConvertColumnType($input, $expected) {
-		$driver = $this->getMock('Cake\Database\Driver\Sqlite');
-		$dialect = new Sqlite($driver);
+		$driver = $this->getMock('Cake\Database\Driver\Postgres');
+		$dialect = new PostgresSchema($driver);
 		$this->assertEquals($expected, $dialect->convertColumn($input));
 	}
 
 /**
- * Creates tables for testing listTables/describe()
- *
- * @param Connection $connection
- * @return void
- */
-	protected function _createTables($connection) {
-		$this->_needsConnection();
-		$connection->execute('DROP TABLE IF EXISTS articles');
-		$connection->execute('DROP TABLE IF EXISTS authors');
-
-		$table = <<<SQL
-CREATE TABLE authors(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-name VARCHAR(50),
-bio TEXT,
-created DATETIME
-)
-SQL;
-		$connection->execute($table);
-
-		$table = <<<SQL
-CREATE TABLE articles(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-title VARCHAR(20) DEFAULT 'testing',
-body TEXT,
-author_id INT(11) NOT NULL,
-published BOOLEAN DEFAULT 0,
-created DATETIME
-)
-SQL;
-		$connection->execute($table);
-	}
-
-/**
- * Test SchemaCollection listing tables with Sqlite
+ * Test listing tables with Postgres
  *
  * @return void
  */
@@ -166,16 +194,14 @@ SQL;
 
 		$schema = new SchemaCollection($connection);
 		$result = $schema->listTables();
-
 		$this->assertInternalType('array', $result);
-		$this->assertCount(3, $result);
+		$this->assertCount(2, $result);
 		$this->assertEquals('articles', $result[0]);
 		$this->assertEquals('authors', $result[1]);
-		$this->assertEquals('sqlite_sequence', $result[2]);
 	}
 
 /**
- * Test describing a table with Sqlite
+ * Test describing a table with Postgres
  *
  * @return void
  */
@@ -187,24 +213,24 @@ SQL;
 		$result = $schema->describe('articles');
 		$expected = [
 			'id' => [
-				'type' => 'integer',
+				'type' => 'biginteger',
 				'null' => false,
 				'default' => null,
-				'length' => null,
+				'length' => 20,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
 				'collate' => null,
+				'charset' => null,
 			],
 			'title' => [
 				'type' => 'string',
 				'null' => true,
-				'default' => 'testing',
+				'default' => null,
 				'length' => 20,
+				'comment' => 'a title',
 				'fixed' => null,
-				'charset' => null,
-				'comment' => null,
 				'collate' => null,
+				'charset' => null,
 			],
 			'body' => [
 				'type' => 'text',
@@ -212,19 +238,19 @@ SQL;
 				'default' => null,
 				'length' => null,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
 				'collate' => null,
+				'charset' => null,
 			],
 			'author_id' => [
 				'type' => 'integer',
 				'null' => false,
 				'default' => null,
-				'length' => 11,
+				'length' => 10,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
 				'collate' => null,
+				'charset' => null,
 			],
 			'published' => [
 				'type' => 'boolean',
@@ -232,9 +258,19 @@ SQL;
 				'default' => 0,
 				'length' => null,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
 				'collate' => null,
+				'charset' => null,
+			],
+			'views' => [
+				'type' => 'integer',
+				'null' => true,
+				'default' => 0,
+				'length' => 5,
+				'fixed' => null,
+				'comment' => null,
+				'collate' => null,
+				'charset' => null,
 			],
 			'created' => [
 				'type' => 'datetime',
@@ -242,12 +278,11 @@ SQL;
 				'default' => null,
 				'length' => null,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
 				'collate' => null,
+				'charset' => null,
 			],
 		];
-		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}

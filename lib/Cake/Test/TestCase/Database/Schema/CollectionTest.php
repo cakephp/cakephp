@@ -44,16 +44,7 @@ class CollectionTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		$this->connection->disconnect();
 		unset($this->connection);
-	}
-
-/**
- * Test getting table listings.
- *
- * @return void
- */
-	public function testListTables() {
 	}
 
 /**

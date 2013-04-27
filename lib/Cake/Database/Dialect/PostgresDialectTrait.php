@@ -153,9 +153,9 @@ trait PostgresDialectTrait {
  * Used by Cake\Schema package to reflect schema and
  * generate schema.
  *
- * @return Cake\Database\Schema\Dialect\Postgres
+ * @return Cake\Database\Schema\PostgresSchema
  */
 	public function schemaDialect() {
-		return new \Cake\Database\Schema\Dialect\Postgres($this);
+		return new \Cake\Database\Schema\PostgresSchema($this);
 	}
 }
