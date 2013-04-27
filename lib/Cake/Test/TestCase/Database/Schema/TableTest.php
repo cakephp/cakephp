@@ -119,6 +119,7 @@ class TableTest extends TestCase {
 			'columns' => ['author_id']
 		]);
 	}
+
 /**
  * Test that exceptions are raised when indexes
  * are added with invalid types
@@ -142,13 +143,42 @@ class TableTest extends TestCase {
  */
 	public function testAddIndexTypes() {
 		$table = new Table('articles');
-		$table->addColumn('title', 'string')
+		$table->addColumn('id', 'integer')
+			->addColumn('title', 'string')
 			->addColumn('author_id', 'integer');
 
 		$table->addIndex('author_idx', [
-			'fields' => ['author_id'],
+			'columns' => ['author_id'],
 			'type' => 'unique'
-		]);
+			])->addIndex('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+
+		$this->assertEquals(
+			['author_idx', 'primary'],
+			$table->indexes()
+		);
+	}
+
+/**
+ * Test getting the primary key.
+ *
+ * @return void
+ */
+	public function testPrimaryKey() {
+		$table = new Table('articles');
+		$table->addColumn('id', 'integer')
+			->addColumn('title', 'string')
+			->addColumn('author_id', 'integer')
+			->addIndex('author_idx', [
+				'columns' => ['author_id'],
+				'type' => 'unique'
+			])->addIndex('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+		$this->assertEquals(['id'], $table->primaryKey());
 	}
 
 }

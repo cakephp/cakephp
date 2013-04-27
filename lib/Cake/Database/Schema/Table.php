@@ -210,4 +210,32 @@ class Table {
 		return array_keys($this->_indexes);
 	}
 
+/**
+ * Read information about an index based on name.
+ *
+ * @param string $name The name of the index.
+ * @return array|null Array of index data, or null
+ */
+	public function index($name) {
+		if (!isset($this->_indexes[$name])) {
+			return null;
+		}
+		return $this->_indexes[$name];
+	}
+
+/**
+ * Get the column(s) used for the primary key.
+ *
+ * @return array|null Column name(s) for the primary key.
+ *   Null will be returned if a table has no primary key.
+ */
+	public function primaryKey() {
+		foreach ($this->_indexes as $name => $data) {
+			if ($data['type'] === self::INDEX_PRIMARY) {
+				return $data['columns'];
+			}
+		}
+		return null;
+	}
+
 }
