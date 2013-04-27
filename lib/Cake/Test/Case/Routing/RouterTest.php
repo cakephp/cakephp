@@ -2162,6 +2162,16 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * testCurrentRouteWhenNonExistentRoute
+ *
+ * @return void
+ */
+	public function testCurrentRouteWhenNonExistentRoute() {
+		$route = Router::currentRoute();
+		$this->assertFalse($route);
+	}
+
+/**
  * testCurrentRoute
  *
  * This test needs some improvement and actual requestAction() usage

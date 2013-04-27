@@ -8697,7 +8697,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->inputDefaults(array('required' => false));
 		$result = $this->Form->input('Contact.imrequired');
 		$expected = array(
-			'div' => array('class' => 'input text required'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ContactImrequired'),
 			'Imrequired',
 			'/label',
@@ -8710,6 +8710,23 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.imrequired', array('required' => false));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequired', array('required' => true));
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequired'),
+			'Imrequired',
+			'/label',
+			'input' => array(
+				'required' => 'required', 'type' => 'text', 'name' => 'data[Contact][imrequired]',
+				'id' => 'ContactImrequired'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequired', array('required' => null));
 		$this->assertTags($result, $expected);
 	}
 
