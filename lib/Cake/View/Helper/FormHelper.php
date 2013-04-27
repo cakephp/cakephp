@@ -1276,8 +1276,10 @@ class FormHelper extends Helper {
 		} elseif (is_array($div)) {
 			$divOptions = array_merge($divOptions, $div);
 		}
-
-		if ($this->_introspectModel($this->model(), 'validates', $this->field())) {
+		if (
+			$this->_extractOption('required', $options) !== false &&
+			$this->_introspectModel($this->model(), 'validates', $this->field())
+		) {
 			$divOptions = $this->addClass($divOptions, 'required');
 		}
 		if (!isset($divOptions['tag'])) {
@@ -2009,6 +2011,14 @@ class FormHelper extends Helper {
 			}
 		} else {
 			$tag = 'selectstart';
+		}
+
+		if ($tag !== 'checkboxmultiplestart' &&
+			!isset($attributes['required']) &&
+			empty($attributes['disabled']) &&
+			$this->_introspectModel($this->model(), 'validates', $this->field())
+		) {
+			$attributes['required'] = true;
 		}
 
 		if (!empty($tag) || isset($template)) {
