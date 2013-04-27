@@ -114,6 +114,20 @@ class Connection {
 	}
 
 /**
+ * Destructor
+ *
+ * Disconnects the driver to release the connection.
+ *
+ * @return void
+ */
+	public function __destruct() {
+		if ($this->_connected) {
+			$this->_driver->disconnect();
+		}
+		unset($this->_driver);
+	}
+
+/**
  * Get the configuration data used to create the connection.
  *
  * @return array

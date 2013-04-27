@@ -15,18 +15,19 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Model\Datasource\Database\Driver;
+namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
+use Cake\TestSuite\TestCase;
 use \PDO;
 
 /**
  * Tests Mysql driver
  *
  */
-class MysqlTest extends \Cake\TestSuite\TestCase {
+class MysqlTest extends TestCase {
 
 /**
  * Helper method for skipping tests that need a real connection.

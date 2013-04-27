@@ -16,7 +16,9 @@
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Core\Configure;
 use Cake\Database\Schema\Table;
+use Cake\Database\Connection;
 use Cake\Database\Schema\Collection;
 use Cake\TestSuite\TestCase;
 
@@ -24,6 +26,27 @@ use Cake\TestSuite\TestCase;
  * Test case for Collection
  */
 class CollectionTest extends TestCase {
+
+/**
+ * Setup function
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->connection = new Connection(Configure::read('Datasource.test'));
+	}
+
+/**
+ * Teardown function
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		$this->connection->disconnect();
+		unset($this->connection);
+	}
 
 /**
  * Test getting table listings.
@@ -42,10 +65,11 @@ class CollectionTest extends TestCase {
 	}
 
 /**
- * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testDescribeIncorrectTable() {
+		$schema = new Collection($this->connection);
+		$this->assertNull($schema->describe('derp'));
 	}
 
 }

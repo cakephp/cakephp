@@ -45,6 +45,7 @@ class PostgresTest extends TestCase {
  */
 	protected function _createTables($connection) {
 		$this->_needsConnection();
+
 		$connection->execute('DROP TABLE IF EXISTS articles');
 		$connection->execute('DROP TABLE IF EXISTS authors');
 

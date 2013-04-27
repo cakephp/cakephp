@@ -25,6 +25,11 @@ class Mysql {
  */
 	protected $driver;
 
+/**
+ * Constructor
+ *
+ * @param Cake\Database\Driver $driver The driver to use.
+ */
 	public function __construct($driver) {
 		$this->_driver = $driver;
 	}

@@ -79,8 +79,9 @@ class Collection {
 			$name,
 			$this->_connection->config()
 		);
-		$statement = $this->_connection->execute($sql, $params);
-		if (count($statement) == 0) {
+		try {
+			$statement = $this->_connection->execute($sql, $params);
+		} catch (\PDOException $e) {
 			return null;
 		}
 
