@@ -18,7 +18,11 @@ namespace Cake\ORM;
 
 class Table {
 
-	protected $_name;
+	protected static $_instances = [];
+
+	protected static $_tablesMap = [];
+
+	protected $_table;
 
 	protected $_alias;
 
@@ -27,14 +31,14 @@ class Table {
 	protected $_schema;
 
 	public function __construct($config = array()) {
-		if (!empty($config['name'])) {
-			$this->_name = $config['name'];
+		if (!empty($config['table'])) {
+			$this->_table = $config['table'];
 		}
 
 		if (!empty($config['alias'])) {
 			$this->alias($config['alias']);
 		} else {
-			$this->alias($this->_name);
+			$this->alias($this->_table);
 		}
 
 		if (!empty($config['connection'])) {
@@ -44,6 +48,49 @@ class Table {
 			$this->schema($config['schema']);
 		}
 	}
+
+	public static function build($alias, array $options = []) {
+		if (isset(static::$_instances[$alias])) {
+			return static::$_instances[$alias];
+		}
+		if (!empty($options['table']) && isset(static::$_tablesMap[$options['table']])) {
+			$options = array_merge(static::$_tablesMap[$options['table']], $options);
+		}
+
+		$options = ['alias' => $alias] + $options;
+		if (empty($options['className'])) {
+			$options['className'] = get_called_class();
+		}
+
+		return static::$_instances[$alias] = new $options['className']($options);
+	}
+
+	public static function map($alias = null, array $options = null) {
+		if ($alias === null) {
+			return static::$_tablesMap;
+		}
+		if (!is_string($alias)) {
+			static::$_tablesMap = $alias;
+			return;
+		}
+		if ($options === null) {
+			return isset(static::$_tablesMap[$alias]) ? static::$_tablesMap[$alias] : null;
+		}
+		static::$_tablesMap[$alias] = $options;
+	}
+
+	public function clearRegistry() {
+		static::$_instances = [];
+		static::$_tablesMap = [];
+	}
+
+	public function table($table = null) {
+		if ($table !== null) {
+			$this->_table = $table;
+		}
+		return $this->_table;
+	}
+
 
 	public function alias($alias = null) {
 		if ($alias !== null) {
@@ -62,7 +109,7 @@ class Table {
 	public function schema($schema = null) {
 		if ($schema === null) {
 			if ($this->_schema === null) {
-				$this->_schema = $this->connection()->describe($this->_name);
+				$this->_schema = $this->connection()->describe($this->_table);
 			}
 			return $this->_schema;
 		}
@@ -86,7 +133,7 @@ class Table {
 		return $query
 			->repository($this)
 			->select()
-			->from([$this->_alias => $this->_name]);
+			->from([$this->_alias => $this->_table]);
 	}
 
 }

@@ -91,9 +91,32 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		return $result;
 	}
 
+/**
+ * Tests that table options can be pre-configured for the factory method
+ *
+ * @return void
+ */
+	public function testMapAndBuild() {
+		$map = Table::map();
+		$this->assertEquals([], $map);
+
+		$options = ['connection' => $this->connection];
+		Table::map('things', $options);
+		$map = Table::map();
+		$this->assertEquals(['things' => $options], $map);
+		$this->assertEquals($options, Table::map('things'));
+
+		$options += ['schema' => ['id' => ['rubbish']]];
+
+		$table = Table::build('foo', ['table' => 'things']);
+		$this->assertInstanceOf('Cake\ORM\Table', $table);
+		$this->assertEquals('things', $table->table());
+		$this->assertEquals('foo', $table->alias());
+	}
+
 	public function testFindAllNoFields() {
 		$this->_createThingsTable();
-		$table = new Table(['name' => 'things', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'things', 'connection' => $this->connection]);
 		$results = $table->find('all')->toArray();
 		$expected = [
 			['things' => ['id' => 1, 'title' => 'a title', 'body' => 'a body']],
@@ -104,7 +127,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 	public function testFindAllSomeFields() {
 		$this->_createThingsTable();
-		$table = new Table(['name' => 'things', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'things', 'connection' => $this->connection]);
 		$results = $table->find('all')->select(['id', 'title'])->toArray();
 		$expected = [
 			['things' => ['id' => 1, 'title' => 'a title']],
@@ -122,7 +145,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 	public function testFindAllConditionAutoTypes() {
 		$this->_createDatesTable();
-		$table = new Table(['name' => 'dates', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'dates', 'connection' => $this->connection]);
 		$query = $table->find('all')
 			->select(['id', 'name'])
 			->where(['posted >=' => new \DateTime('2012-12-22 12:01')]);
@@ -138,4 +161,5 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertSame($expected, $query->toArray());
 	}
+
 }
