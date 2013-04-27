@@ -48,15 +48,11 @@ class CollectionTest extends TestCase {
 	}
 
 /**
- * Test getting simple descriptions for tables.
+ * Test that describing non-existent tables fails.
  *
- * @return void
- */
-	public function testDescribe() {
-
-	}
-
-/**
+ * Tests for positive describe() calls are in each platformSchema
+ * test case.
+ *
  * @return void
  */
 	public function testDescribeIncorrectTable() {

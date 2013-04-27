@@ -93,14 +93,4 @@ class Collection {
 		return $table;
 	}
 
-/**
- * Get column & index metadata for a table.
- *
- * @param string $name The name of the table to describe
- * @return Cake\Schema\Table object for table
- * @see Collection::describe()
- */
-	public function fullDescribe($table) {
-	}
-
 }
