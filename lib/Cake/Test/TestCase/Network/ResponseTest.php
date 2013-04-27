@@ -364,7 +364,7 @@ class ResponseTest extends TestCase {
 	public function testHttpCodes() {
 		$response = new Response();
 		$result = $response->httpCodes();
-		$this->assertEquals(39, count($result));
+		$this->assertEquals(40, count($result));
 
 		$result = $response->httpCodes(100);
 		$expected = array(100 => 'Continue');
@@ -377,7 +377,7 @@ class ResponseTest extends TestCase {
 
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEquals(41, count($response->httpCodes()));
+		$this->assertEquals(42, count($response->httpCodes()));
 
 		$result = $response->httpCodes(1337);
 		$expected = array(1337 => 'Undefined Unicorn');
@@ -386,7 +386,7 @@ class ResponseTest extends TestCase {
 		$codes = array(404 => 'Sorry Bro');
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEquals(41, count($response->httpCodes()));
+		$this->assertEquals(42, count($response->httpCodes()));
 
 		$result = $response->httpCodes(404);
 		$expected = array(404 => 'Sorry Bro');

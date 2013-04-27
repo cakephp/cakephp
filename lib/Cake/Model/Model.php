@@ -1698,6 +1698,8 @@ class Model extends Object implements EventListener {
 			}
 		}
 
+		$db = $this->getDataSource();
+
 		if (empty($this->data[$this->alias][$this->primaryKey])) {
 			unset($this->data[$this->alias][$this->primaryKey]);
 		}
