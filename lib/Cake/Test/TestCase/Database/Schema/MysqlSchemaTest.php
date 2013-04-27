@@ -121,30 +121,6 @@ class MysqlSchemaTest extends TestCase {
 	}
 
 /**
- * Provider for testing index conversion
- *
- * @return array
- */
-	public static function convertIndexProvider() {
-		return [
-			['PRI', 'primary'],
-			['UNI', 'unique'],
-			['MUL', 'index'],
-		];
-	}
-/**
- * Test parsing MySQL index types.
- *
- * @dataProvider convertIndexProvider
- * @return void
- */
-	public function testConvertIndex($input, $expected) {
-		$driver = $this->getMock('Cake\Database\Driver\Mysql');
-		$dialect = new MysqlSchema($driver);
-		$this->assertEquals($expected, $dialect->convertIndex($input));
-	}
-
-/**
  * Helper method for testing methods.
  *
  * @return void
@@ -280,6 +256,7 @@ SQL;
 				'charset' => null,
 			],
 		];
+		$this->assertEquals(['id'], $result->primaryKey());
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}

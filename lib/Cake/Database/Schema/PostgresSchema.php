@@ -16,6 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Schema\Table;
+
 class PostgresSchema {
 
 /**
@@ -135,9 +137,12 @@ class PostgresSchema {
 /**
  * Convert field description results into abstract schema fields.
  *
- * @return array An array of with the key/values of schema data.
+ * @param Cake\Database\Schema\Table $table The table object to append fields to.
+ * @param array $row The row data from describeTableSql
+ * @param array $fieldParams Additional field parameters to parse.
+ * @return void
  */
-	public function convertFieldDescription($row, $fieldParams = []) {
+	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
 		list($type, $length) = $this->convertColumn($row['type']);
 
 		if ($type === 'boolean') {
@@ -149,22 +154,24 @@ class PostgresSchema {
 			}
 		}
 
-		$schema = [];
-		$schema[$row['name']] = [
+		$field = [
 			'type' => $type,
 			'null' => $row['null'] === 'YES' ? true : false,
 			'default' => $row['default'],
 			'length' => $row['char_length'] ?: $length,
 		];
-		if (!empty($row['pk'])) {
-			$schema[$row['name']]['key'] = 'primary';
-		}
 		foreach ($fieldParams as $key => $metadata) {
 			if (!empty($row[$metadata['column']])) {
-				$schema[$row['name']][$key] = $row[$metadata['column']];
+				$field[$key] = $row[$metadata['column']];
 			}
 		}
-		return $schema;
+		$table->addColumn($row['name'], $field);
+		if (!empty($row['pk'])) {
+			$table->addIndex('primary', [
+				'type' => Table::INDEX_PRIMARY,
+				'columns' => [$row['name']]
+			]);
+		}
 	}
 
 }

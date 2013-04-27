@@ -16,6 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Schema\Table;
+
 class MysqlSchema {
 
 /**
@@ -56,27 +58,9 @@ class MysqlSchema {
 	}
 
 /**
- * Convert a platform specific index type to the abstract type
- *
- * @param string $key The key type to convert.
- * @return string The abstract key type (primary, unique, index)
- */
-	public function convertIndex($key) {
-		if ($key === 'PRI') {
-			return 'primary';
-		}
-		if ($key === 'MUL') {
-			return 'index';
-		}
-		if ($key === 'UNI') {
-			return 'unique';
-		}
-	}
-
-/**
  * Convert a MySQL column type into an abstract type.
  *
- * The returnned type will be a type that Cake\Database\Type can handle.
+ * The returned type will be a type that Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
  * @return array List of (type, length)
@@ -126,26 +110,31 @@ class MysqlSchema {
 /**
  * Convert field description results into abstract schema fields.
  *
- * @return array An array of with the key/values of schema data.
+ * @param Cake\Database\Schema\Table $table The table object to append fields to.
+ * @param array $row The row data from describeTableSql
+ * @param array $fieldParams Additional field parameters to parse.
+ * @return void
  */
-	public function convertFieldDescription($row, $fieldParams = []) {
+	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
 		list($type, $length) = $this->convertColumn($row['Type']);
-		$schema = [];
-		$schema[$row['Field']] = [
+		$field = [
 			'type' => $type,
 			'null' => $row['Null'] === 'YES' ? true : false,
 			'default' => $row['Default'],
 			'length' => $length,
 		];
-		if (!empty($row['Key'])) {
-			$schema[$row['Field']]['key'] = $this->convertIndex($row['Key']);
-		}
 		foreach ($fieldParams as $key => $metadata) {
 			if (!empty($row[$metadata['column']])) {
-				$schema[$row['Field']][$key] = $row[$metadata['column']];
+				$field[$key] = $row[$metadata['column']];
 			}
 		}
-		return $schema;
+		$table->addColumn($row['Field'], $field);
+		if (!empty($row['Key']) && $row['Key'] === 'PRI') {
+			$table->addIndex('primary', [
+				'type' => Table::INDEX_PRIMARY,
+				'columns' => [$row['Field']]
+			]);
+		}
 	}
 
 /**

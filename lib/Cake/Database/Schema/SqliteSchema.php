@@ -16,6 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Schema\Table;
+
 class SqliteSchema {
 
 /**
@@ -111,22 +113,28 @@ class SqliteSchema {
 /**
  * Convert field description results into abstract schema fields.
  *
- * @return array An array of with the key/values of schema data.
+ * @param Cake\Database\Schema\Table $table The table object to append fields to.
+ * @param array $row The row data from describeTableSql
+ * @param array $fieldParams Additional field parameters to parse.
  */
-	public function convertFieldDescription($row, $fieldParams = []) {
+	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
 		list($type, $length) = $this->convertColumn($row['type']);
-		$schema = [];
-		$schema[$row['name']] = [
+		$field = [
 			'type' => $type,
 			'null' => !$row['notnull'],
 			'default' => $row['dflt_value'] === null ? null : trim($row['dflt_value'], "'"),
 			'length' => $length,
 		];
 		if ($row['pk'] == true) {
-			$schema[$row['name']]['key'] = 'primary';
-			$schema[$row['name']]['null'] = false;
+			$field['null'] = false;
 		}
-		return $schema;
+		$table->addColumn($row['name'], $field);
+		if ($row['pk'] == true) {
+			$table->addIndex('primary', [
+				'type' => Table::INDEX_PRIMARY,
+				'columns' => [$row['name']]
+			]);
+		}
 	}
 
 }

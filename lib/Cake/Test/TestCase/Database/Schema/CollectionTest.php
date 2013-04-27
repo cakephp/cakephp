@@ -53,6 +53,7 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testDescribe() {
+
 	}
 
 /**

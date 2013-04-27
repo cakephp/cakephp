@@ -283,6 +283,7 @@ SQL;
 				'charset' => null,
 			],
 		];
+		$this->assertEquals(['id'], $result->primaryKey());
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}

@@ -85,13 +85,12 @@ class Collection {
 			return null;
 		}
 
-		$columns = [];
+		$table = new Table($name);
 		$fieldParams = $this->_dialect->extraSchemaColumns();
-		$rows = $statement->fetchAll('assoc');
-		foreach ($rows as $row) {
-			$columns += $this->_dialect->convertFieldDescription($row, $fieldParams);
+		foreach ($statement->fetchAll('assoc') as $row) {
+			$this->_dialect->convertFieldDescription($table, $row, $fieldParams);
 		}
-		return new Table($name, $columns);
+		return $table;
 	}
 
 /**
