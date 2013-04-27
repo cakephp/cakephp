@@ -408,6 +408,33 @@ class FileEngineTest extends TestCase {
 	}
 
 /**
+ * Test that clearing with repeat writes works properly
+ */
+	public function testClearingWithRepeatWrites() {
+		Configure::write('Cache.repeat', [
+			'engine' => 'File',
+			'groups' => array('users')
+		]);
+
+		$this->assertTrue(Cache::write('user', 'rchavik', 'repeat'));
+		$this->assertEquals('rchavik', Cache::read('user', 'repeat'));
+
+		Cache::delete('user', 'repeat');
+		$this->assertEquals(false, Cache::read('user', 'repeat'));
+
+		$this->assertTrue(Cache::write('user', 'ADmad', 'repeat'));
+		$this->assertEquals('ADmad', Cache::read('user', 'repeat'));
+
+		Cache::clearGroup('users', 'repeat');
+		$this->assertEquals(false, Cache::read('user', 'repeat'));
+
+		$this->assertTrue(Cache::write('user', 'markstory', 'repeat'));
+		$this->assertEquals('markstory', Cache::read('user', 'repeat'));
+
+		Cache::drop('repeat');
+	}
+
+/**
  * Tests that deleting from a groups-enabled config is possible
  *
  * @return void

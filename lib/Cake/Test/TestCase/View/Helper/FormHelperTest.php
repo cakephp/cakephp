@@ -2340,7 +2340,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputTimeWithIntervalAnd12HourFormat() {
-		/*
 		$result = $this->Form->input('Model.start_time', array(
 			'type' => 'time',
 			'timeFormat' => 12,
@@ -2360,7 +2359,6 @@ class FormHelperTest extends TestCase {
 		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
 		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
 		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
-		*/
 
 		$result = $this->Form->input('Model.start_time', array(
 			'type' => 'time',
@@ -4199,6 +4197,32 @@ class FormHelperTest extends TestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select('Contact.required_one', array('option A'));
+		$expected = array(
+			'select' => array(
+				'name' => 'data[Contact][required_one]',
+				'id' => 'ContactRequiredOne',
+				'required' => 'required'
+			),
+			array('option' => array('value' => '')), '/option',
+			array('option' => array('value' => '0')), 'option A', '/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select('Contact.required_one', array('option A'), array('disabled' => true));
+		$expected = array(
+			'select' => array(
+				'name' => 'data[Contact][required_one]',
+				'id' => 'ContactRequiredOne',
+				'disabled' => 'disabled'
+			),
+			array('option' => array('value' => '', 'disabled' => 'disabled')), '/option',
+			array('option' => array('value' => '0', 'disabled' => 'disabled')), 'option A', '/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -4449,6 +4473,26 @@ class FormHelperTest extends TestCase {
 			array('option' => array('value' => '3x', 'selected' => 'selected')),
 			'Stringy',
 			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select('Contact.required_one', array(
+			'1' => 'option A',
+			'2' => 'option B'
+		), array('multiple' => true));
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Contact][required_one]', 'value' => '', 'id' => 'ContactRequiredOne_'
+			),
+			'select' => array(
+				'name' => 'data[Contact][required_one][]',
+				'id' => 'ContactRequiredOne',
+				'required' => 'required',
+				'multiple' => 'multiple'
+			),
+			array('option' => array('value' => '1')), 'option A', '/option',
+			array('option' => array('value' => '2')), 'option B', '/option',
 			'/select'
 		);
 		$this->assertTags($result, $expected);
@@ -8712,7 +8756,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->inputDefaults(array('required' => false));
 		$result = $this->Form->input('Contact.imrequired');
 		$expected = array(
-			'div' => array('class' => 'input text required'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ContactImrequired'),
 			'Imrequired',
 			'/label',
@@ -8725,6 +8769,23 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.imrequired', array('required' => false));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequired', array('required' => true));
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequired'),
+			'Imrequired',
+			'/label',
+			'input' => array(
+				'required' => 'required', 'type' => 'text', 'name' => 'data[Contact][imrequired]',
+				'id' => 'ContactImrequired'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequired', array('required' => null));
 		$this->assertTags($result, $expected);
 	}
 

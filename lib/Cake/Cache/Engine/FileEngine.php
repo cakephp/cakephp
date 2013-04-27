@@ -373,6 +373,7 @@ class FileEngine extends CacheEngine {
 				unlink($object->getPathName());
 			}
 		}
+		$this->_File = null;
 		return true;
 	}
 }
