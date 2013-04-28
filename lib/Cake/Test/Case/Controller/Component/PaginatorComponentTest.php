@@ -969,10 +969,12 @@ class PaginatorComponentTest extends CakeTestCase {
 		$model->alias = 'model';
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
-		$options = array('order' => array(
-			'author_id' => 'asc',
-			'title' => 'asc'
-		));
+		$options = array(
+			'order' => array(
+				'author_id' => 'asc',
+				'title' => 'asc'
+			)
+		);
 		$result = $this->Paginator->validateSort($model, $options);
 		$expected = array(
 			'model.author_id' => 'asc',
@@ -1000,6 +1002,21 @@ class PaginatorComponentTest extends CakeTestCase {
 		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
 
 		$this->assertEquals($options['order'], $result['order']);
+	}
+
+/**
+ * Test sorting with incorrect aliases on valid fields.
+ *
+ * @return void
+ */
+	public function testValidateSortInvalidAlias() {
+		$model = $this->getMock('Model');
+		$model->alias = 'Model';
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array('sort' => 'Derp.id');
+		$result = $this->Paginator->validateSort($model, $options);
+		$this->assertEquals(array('Model.id' => 'asc'), $result['order']);
 	}
 
 /**

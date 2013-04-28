@@ -328,12 +328,7 @@ class Helper extends Object {
 		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
 		if (!empty($options['fullBase'])) {
-			$base = $this->url('/', true);
-			$len = strlen($this->request->webroot);
-			if ($len) {
-				$base = substr($base, 0, -$len);
-			}
-			$path = $base . $path;
+			$path = rtrim(FULL_BASE_URL, '/') . '/' . ltrim($path, '/');
 		}
 		return $path;
 	}
