@@ -1020,7 +1020,7 @@ class Controller extends Object {
 			if (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
 				$options['order'][$alias . '.' . $field] = $value;
 			} elseif ($object->hasField($field)) {
-				$options['order'][$alias . '.' . $field] = $value;
+				$options['order'][$object->alias . '.' . $field] = $value;
 			}
 		}
 		$vars = array('fields', 'order', 'limit', 'page', 'recursive');
