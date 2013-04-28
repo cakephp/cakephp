@@ -659,6 +659,21 @@ class HelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test assetUrl with no rewriting.
+ *
+ * @return void
+ */
+	public function testAssetUrlNoRewrite() {
+		$this->Helper->request->addPaths(array(
+			'base' => '/cake_dev/index.php',
+			'webroot' => '/cake_dev/app/webroot/',
+			'here' => '/cake_dev/index.php/tasks',
+		));
+		$result = $this->Helper->assetUrl('img/cake.icon.png', array('fullBase' => true));
+		$this->assertEquals('http://localhost/cake_dev/app/webroot/img/cake.icon.png', $result);
+	}
+
+/**
  * Test assetUrl with plugins.
  *
  * @return void
