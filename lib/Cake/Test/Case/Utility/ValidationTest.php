@@ -1965,7 +1965,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::money('100.111,1'));
 		$this->assertTrue(Validation::money('100.111,11'));
 		$this->assertFalse(Validation::money('100.111,111'));
-		$this->assertFalse(Validation::money('text'));
 
 		$this->assertTrue(Validation::money('$100'));
 		$this->assertTrue(Validation::money('$100.11'));
