@@ -57,7 +57,7 @@ class PluginShortRouteTest extends CakeTestCase {
 	}
 
 /**
- * test the reverse routing of the plugin shortcut urls.
+ * test the reverse routing of the plugin shortcut URLs.
  *
  * @return void
  */

@@ -141,7 +141,7 @@ require CAKE . 'Core' . DS . 'App.php';
 require CAKE . 'Error' . DS . 'exceptions.php';
 
 /**
- * Full url prefix
+ * Full URL prefix
  */
 if (!defined('FULL_BASE_URL')) {
 	$s = null;

@@ -40,7 +40,7 @@ App::uses('CakeEventManager', 'Event');
  * `$this->response` allows you to manipulate all aspects of the response.
  *
  * Controllers are created by Dispatcher based on request parameters and routing. By default controllers and actions
- * use conventional names. For example `/posts/index` maps to `PostsController::index()`. You can re-map urls
+ * use conventional names. For example `/posts/index` maps to `PostsController::index()`. You can re-map URLs
  * using Router::connect().
  *
  * @package       Cake.Controller
@@ -259,7 +259,7 @@ class Controller extends Object implements CakeEventListener {
 
 /**
  * Holds current methods of the controller. This is a list of all the methods reachable
- * via url. Modifying this array, will allow you to change which methods can be reached.
+ * via URL. Modifying this array, will allow you to change which methods can be reached.
  *
  * @var array
  */
