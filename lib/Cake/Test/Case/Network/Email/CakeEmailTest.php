@@ -1082,6 +1082,30 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendRenderWithHTML method and assert line length is kept below the required limit
+ *
+ * @return void
+ */
+	public function testSendRenderWithHTML() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->emailFormat('html');
+		$this->CakeEmail->template('html', 'default');
+		$result = $this->CakeEmail->send();
+
+		$this->assertTextContains('<h1>HTML Ipsum Presents</h1>', $result['message']);
+		$lines = explode("\n", $result['message']);
+		foreach ($lines as $line) {
+			$this->assertTrue(strlen($line) <= CakeEmail::LINE_LENGTH_MUST);
+		}
+	}
+
+/**
  * testSendRenderWithVars method
  *
  * @return void

@@ -319,8 +319,8 @@ class CakeEmail {
 
 /**
  * Constructor
- * @param array|string $config Array of configs, or string to load configs from email.php
  *
+ * @param array|string $config Array of configs, or string to load configs from email.php
  */
 	public function __construct($config = null) {
 		$this->_appCharset = Configure::read('App.encoding');
@@ -1565,6 +1565,12 @@ class CakeEmail {
 			$render = $View->render($template, $layout);
 			$render = str_replace(array("\r\n", "\r"), "\n", $render);
 			$rendered[$type] = $this->_encodeString($render, $this->charset);
+		}
+
+		foreach ($rendered as $type => $content) {
+			$rendered[$type] = $this->_wrap($content);
+			$rendered[$type] = implode("\n", $rendered[$type]);
+			$rendered[$type] = rtrim($rendered[$type], "\n");
 		}
 		return $rendered;
 	}
