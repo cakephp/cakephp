@@ -173,7 +173,7 @@ class AuthComponent extends Component {
 	protected static $_user = array();
 
 /**
- * A URL (defined as a string or array) to the controller action that handles
+ * An URL (defined as a string or array) to the controller action that handles
  * logins. Defaults to `/users/login`
  *
  * @var mixed
@@ -217,9 +217,9 @@ class AuthComponent extends Component {
 
 /**
  * Controls handling of unauthorized access.
- * - For default value `true` unauthorized user is redirected to the referrer url
+ * - For default value `true` unauthorized user is redirected to the referrer URL
  *   or AuthComponent::$loginRedirect or '/'.
- * - If set to a string or array the value is used as an url to redirect to.
+ * - If set to a string or array the value is used as an URL to redirect to.
  * - If set to false a ForbiddenException exception is thrown instead of redirecting.
  *
  * @var mixed
@@ -645,10 +645,10 @@ class AuthComponent extends Component {
 /**
  * Get the URL a use should be redirected to upon login.
  *
- * Pass a url in to set the destination a user should be redirected to upon
+ * Pass an URL in to set the destination a user should be redirected to upon
  * logging in.
  *
- * If no parameter is passed, gets the authentication redirect URL. The url
+ * If no parameter is passed, gets the authentication redirect URL. The URL
  * returned is as per following rules:
  *
  *  - Returns the session Auth.redirect value if it is present and for the same

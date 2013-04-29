@@ -142,8 +142,8 @@ class Component extends Object {
 	}
 
 /**
- * Called before Controller::redirect(). Allows you to replace the url that will
- * be redirected to with a new url. The return of this method can either be an array or a string.
+ * Called before Controller::redirect(). Allows you to replace the URL that will
+ * be redirected to with a new URL. The return of this method can either be an array or a string.
  *
  * If the return is an array and contains a 'url' key. You may also supply the following:
  *
@@ -151,10 +151,10 @@ class Component extends Object {
  * - `exit` Whether or not the redirect should exit.
  *
  * If your response is a string or an array that does not contain a 'url' key it will
- * be used as the new url to redirect to.
+ * be used as the new URL to redirect to.
  *
  * @param Controller $controller Controller with components to beforeRedirect
- * @param string|array $url Either the string or url array that is being redirected to.
+ * @param string|array $url Either the string or URL array that is being redirected to.
  * @param integer $status The status code of the redirect
  * @param boolean $exit Will the script exit.
  * @return array|void Either an array or null.

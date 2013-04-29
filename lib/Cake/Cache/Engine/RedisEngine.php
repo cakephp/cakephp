@@ -36,7 +36,7 @@ class RedisEngine extends CacheEngine {
 /**
  * Settings
  *
- *  - server = string url or ip to the Redis server host
+ *  - server = string URL or ip to the Redis server host
  *  - port = integer port number to the Redis server (default: 6379)
  *  - timeout = float timeout in seconds (default: 0)
  *  - persistent = bool Connects to the Redis server with a persistent connection (default: true)
