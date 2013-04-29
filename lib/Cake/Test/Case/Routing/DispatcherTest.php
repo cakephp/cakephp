@@ -1128,7 +1128,7 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
- * test plugin shortcut urls with controllers that need to be loaded,
+ * test plugin shortcut URLs with controllers that need to be loaded,
  * the above test uses a controller that has already been included.
  *
  * @return void

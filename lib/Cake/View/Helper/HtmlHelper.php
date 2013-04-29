@@ -1024,7 +1024,7 @@ class HtmlHelper extends AppHelper {
  * - `tag` Type of media element to generate, either "audio" or "video".
  * 	If tag is not provided it's guessed based on file's mime type.
  * - `text` Text to include inside the audio/video tag
- * - `pathPrefix` Path prefix to use for relative urls, defaults to 'files/'
+ * - `pathPrefix` Path prefix to use for relative URLs, defaults to 'files/'
  * - `fullBase` If provided the src attribute will get a full address including domain name
  *
  * @param string|array $path Path to the video file, relative to the webroot/{$options['pathPrefix']} directory.

@@ -801,8 +801,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 /**
  * test that the beforeRedirect callback properly converts
- * array urls into their correct string ones, and adds base => false so
- * the correct urls are generated.
+ * array URLs into their correct string ones, and adds base => false so
+ * the correct URLs are generated.
  *
  * @link http://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
  * @return void
