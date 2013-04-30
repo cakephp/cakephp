@@ -113,7 +113,7 @@
 		Define the package.xml.  Using xml to make xml is fun!
 	-->
 	<target name="define-pear-package" depends="copy-files">
-		<d51pearpkg2 baseinstalldir="/" dir="${build.dir}/${pear.package}">
+		<d51pearpkg2 addhiddenfiles="true" baseinstalldir="/" dir="${build.dir}/${pear.package}">
 			<name>CakePHP</name>
 			<summary>CakePHP Rapid Development Framework</summary>
 			<channel>pear.cakephp.org</channel>
@@ -152,6 +152,8 @@
 			<exceptions key="Cake/VERSION.txt">php</exceptions>
 			<exceptions key="Cake/LICENSE.txt">php</exceptions>
 			<exceptions key="Cake/Config/cacert.pem">php</exceptions>
+			<exceptions key="Cake/Console/Templates/skel/.htaccess">php</exceptions>
+			<exceptions key="Cake/Console/Templates/skel/webroot/.htaccess">php</exceptions>
 		</d51pearpkg2>
 	</target>
 
