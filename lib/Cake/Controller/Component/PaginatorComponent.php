@@ -384,10 +384,11 @@ class PaginatorComponent extends Component {
 				if (strpos($key, '.') !== false) {
 					list($alias, $field) = explode('.', $key);
 				}
+				$correctAlias = ($object->alias == $alias);
 
-				if ($object->hasField($field)) {
+				if ($correctAlias && $object->hasField($field)) {
 					$order[$object->alias . '.' . $field] = $value;
-				} elseif ($object->hasField($key, true)) {
+				} elseif ($correctAlias && $object->hasField($key, true)) {
 					$order[$field] = $value;
 				} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field, true)) {
 					$order[$alias . '.' . $field] = $value;

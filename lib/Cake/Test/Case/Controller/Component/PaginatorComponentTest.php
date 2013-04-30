@@ -960,6 +960,30 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that sorting fields is alias specific
+ *
+ * @return void
+ */
+	public function testValidateSortSharedFields() {
+		$model = $this->getMock('Model');
+		$model->alias = 'Parent';
+		$model->Child = $this->getMock('Model');
+		$model->Child->alias = 'Child';
+
+		$model->expects($this->never())
+			->method('hasField');
+
+		$model->Child->expects($this->at(0))
+			->method('hasField')
+			->with('something')
+			->will($this->returnValue(true));
+
+		$options = array('sort' => 'Child.something', 'direction' => 'desc');
+		$result = $this->Paginator->validateSort($model, $options);
+
+		$this->assertEquals('desc', $result['order']['Child.something']);
+	}
+/**
  * test that multiple sort works.
  *
  * @return void
@@ -1016,7 +1040,7 @@ class PaginatorComponentTest extends CakeTestCase {
 
 		$options = array('sort' => 'Derp.id');
 		$result = $this->Paginator->validateSort($model, $options);
-		$this->assertEquals(array('Model.id' => 'asc'), $result['order']);
+		$this->assertEquals(array(), $result['order']);
 	}
 
 /**
