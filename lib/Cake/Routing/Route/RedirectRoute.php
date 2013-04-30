@@ -34,7 +34,7 @@ class RedirectRoute extends CakeRoute {
 	public $response = null;
 
 /**
- * The location to redirect to. Either a string or a cake array URL.
+ * The location to redirect to. Either a string or a CakePHP array URL.
  *
  * @var mixed
  */
