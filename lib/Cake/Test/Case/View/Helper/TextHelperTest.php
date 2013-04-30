@@ -297,6 +297,18 @@ class TextHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test autoLinkUrls with query strings.
+ *
+ * @return void
+ */
+	public function testAutoLinkUrlsQueryString() {
+		$text = 'Text with a partial http://www.cakephp.org?product_id=123&foo=bar link';
+		$expected = 'Text with a partial <a href="http://www.cakephp.org?product_id=123&amp;foo=bar">http://www.cakephp.org?product_id=123&amp;foo=bar</a> link';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testAutoLinkEmails method
  *
  * @return void
