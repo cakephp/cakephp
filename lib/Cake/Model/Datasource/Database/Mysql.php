@@ -157,6 +157,11 @@ class Mysql extends DboSource {
 				$flags
 			);
 			$this->connected = true;
+			if (!empty($config['settings'])) {
+				foreach ($config['settings'] as $key => $value) {
+					$this->_execute("SET $key=$value");
+				}
+			}
 		} catch (PDOException $e) {
 			throw new MissingConnectionException(array(
 				'class' => get_class($this),

@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('BaseAuthenticate', 'Controller/Component/Auth');
+App::uses('BasicAuthenticate', 'Controller/Component/Auth');
 
 /**
  * Digest Authentication adapter for AuthComponent.
@@ -55,7 +55,7 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * @package       Cake.Controller.Component.Auth
  * @since 2.0
  */
-class DigestAuthenticate extends BaseAuthenticate {
+class DigestAuthenticate extends BasicAuthenticate {
 
 /**
  * Settings for this object.
@@ -97,35 +97,12 @@ class DigestAuthenticate extends BaseAuthenticate {
  */
 	public function __construct(ComponentCollection $collection, $settings) {
 		parent::__construct($collection, $settings);
-		if (empty($this->settings['realm'])) {
-			$this->settings['realm'] = env('SERVER_NAME');
-		}
 		if (empty($this->settings['nonce'])) {
 			$this->settings['nonce'] = uniqid('');
 		}
 		if (empty($this->settings['opaque'])) {
 			$this->settings['opaque'] = md5($this->settings['realm']);
 		}
-	}
-
-/**
- * Authenticate a user using Digest HTTP auth. Will use the configured User model and attempt a
- * login using Digest HTTP auth.
- *
- * @param CakeRequest $request The request to authenticate with.
- * @param CakeResponse $response The response to add headers to.
- * @return mixed Either false on failure, or an array of user data on success.
- */
-	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		$user = $this->getUser($request);
-
-		if (empty($user)) {
-			$response->header($this->loginHeaders());
-			$response->statusCode(401);
-			$response->send();
-			return false;
-		}
-		return $user;
 	}
 
 /**

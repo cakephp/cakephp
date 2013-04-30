@@ -724,6 +724,40 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test is() with multiple types.
+ *
+ * @return void
+ */
+	public function testIsMultiple() {
+		$request = new CakeRequest('some/path');
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$this->assertTrue($request->is(array('get', 'post')));
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$this->assertTrue($request->is(array('get', 'post')));
+
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$this->assertFalse($request->is(array('get', 'post')));
+	}
+
+/**
+ * Test isAll()
+ *
+ * @return void
+ */
+	public function testIsAll() {
+		$request = new CakeRequest('some/path');
+
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+
+		$this->assertTrue($request->isAll(array('ajax', 'get')));
+		$this->assertFalse($request->isAll(array('post', 'get')));
+		$this->assertFalse($request->isAll(array('ajax', 'post')));
+	}
+
+/**
  * test the method() method.
  *
  * @return void
@@ -1767,6 +1801,26 @@ class CakeRequestTest extends CakeTestCase {
 
 		$result = $request->query('test.2');
 		$this->assertNull($result);
+	}
+
+/**
+ * Test using param()
+ *
+ * @return void
+ */
+	public function testReadingParams() {
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'controller' => 'posts',
+			'admin' => true,
+			'truthy' => 1,
+			'zero' => '0',
+		));
+		$this->assertFalse($request->param('not_set'));
+		$this->assertTrue($request->param('admin'));
+		$this->assertEquals(1, $request->param('truthy'));
+		$this->assertEquals('posts', $request->param('controller'));
+		$this->assertEquals('0', $request->param('zero'));
 	}
 
 /**

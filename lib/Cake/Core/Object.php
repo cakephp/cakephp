@@ -15,6 +15,7 @@
  */
 
 App::uses('Set', 'Utility');
+App::uses('CakeLog', 'Log');
 
 /**
  * Object class provides a few generic methods used in several subclasses.
@@ -151,12 +152,12 @@ class Object {
  * @param integer $type Error type constant. Defined in app/Config/core.php.
  * @return boolean Success of log write
  */
-	public function log($msg, $type = LOG_ERR) {
-		App::uses('CakeLog', 'Log');
+	public function log($msg, $type = LOG_ERR, $scope = null) {
 		if (!is_string($msg)) {
 			$msg = print_r($msg, true);
 		}
-		return CakeLog::write($type, $msg);
+
+		return CakeLog::write($type, $msg, $scope);
 	}
 
 /**

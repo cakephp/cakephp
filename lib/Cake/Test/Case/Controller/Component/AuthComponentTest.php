@@ -319,6 +319,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth = new TestAuthComponent($collection);
 		$this->Auth->request = $request;
 		$this->Auth->response = $this->getMock('CakeResponse');
+		AuthComponent::$sessionKey = 'Auth.User';
 
 		$this->Controller->Components->init($this->Controller);
 
@@ -415,6 +416,26 @@ class AuthComponentTest extends CakeTestCase {
 
 		$this->assertTrue($this->Auth->loggedIn());
 		$this->assertEquals($user, $this->Auth->user());
+	}
+
+/**
+ * testRedirectVarClearing method
+ *
+ * @return void
+ */
+	public function testRedirectVarClearing() {
+		$this->Controller->request['controller'] = 'auth_test';
+		$this->Controller->request['action'] = 'admin_add';
+		$this->Controller->here = '/auth_test/admin_add';
+		$this->assertNull($this->Auth->Session->read('Auth.redirect'));
+
+		$this->Auth->authenticate = array('Form');
+		$this->Auth->startup($this->Controller);
+		$this->assertEquals('/auth_test/admin_add', $this->Auth->Session->read('Auth.redirect'));
+
+		$this->Auth->Session->write('Auth.User', array('username' => 'admad'));
+		$this->Auth->startup($this->Controller);
+		$this->assertNull($this->Auth->Session->read('Auth.redirect'));
 	}
 
 /**
@@ -1085,20 +1106,6 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
- * Tests that shutdown destroys the redirect session var
- *
- * @return void
- */
-	public function testShutDown() {
-		$this->Auth->Session->write('Auth.User', 'not empty');
-		$this->Auth->Session->write('Auth.redirect', 'foo');
-		$this->Controller->Auth->loggedIn(true);
-
-		$this->Controller->Auth->shutdown($this->Controller);
-		$this->assertNull($this->Auth->Session->read('Auth.redirect'));
-	}
-
-/**
  * test $settings in Controller::$components
  *
  * @return void
@@ -1323,5 +1330,71 @@ class AuthComponentTest extends CakeTestCase {
 
 		$result = $this->Auth->user('is_admin');
 		$this->assertFalse($result);
+	}
+
+/**
+ * testStatelessAuthNoRedirect method
+ *
+ * @expectedException UnauthorizedException
+ * @expectedExceptionCode 401
+ * @return void
+ */
+	public function testStatelessAuthNoRedirect() {
+		if (CakeSession::id()) {
+			session_destroy();
+			CakeSession::$id = null;
+		}
+		$_SESSION = null;
+
+		AuthComponent::$sessionKey = false;
+		$this->Auth->authenticate = array('Basic');
+		$this->Controller->request['action'] = 'admin_add';
+
+		$this->Auth->startup($this->Controller);
+	}
+
+/**
+ * testStatelessAuthNoSessionStart method
+ *
+ * @return void
+ */
+	public function testStatelessAuthNoSessionStart() {
+		if (CakeSession::id()) {
+			session_destroy();
+			CakeSession::$id = null;
+		}
+		$_SESSION = null;
+
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'cake';
+
+		AuthComponent::$sessionKey = false;
+		$this->Auth->authenticate = array(
+			'Basic' => array('userModel' => 'AuthUser')
+		);
+		$this->Controller->request['action'] = 'admin_add';
+
+		$result = $this->Auth->startup($this->Controller);
+		$this->assertTrue($result);
+
+		$this->assertNull(CakeSession::id());
+	}
+
+/**
+ * testStatelessAuthRedirect method
+ *
+ * @return void
+ */
+	public function testStatelessFollowedByStatefulAuth() {
+		$this->Auth->authenticate = array('Basic', 'Form');
+		$this->Controller->request['action'] = 'admin_add';
+
+		$this->Auth->response->expects($this->never())->method('statusCode');
+		$this->Auth->response->expects($this->never())->method('send');
+
+		$result = $this->Auth->startup($this->Controller);
+		$this->assertFalse($result);
+
+		$this->assertEquals('/users/login', $this->Controller->testUrl);
 	}
 }
