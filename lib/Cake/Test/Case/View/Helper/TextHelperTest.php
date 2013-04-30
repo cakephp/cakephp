@@ -147,6 +147,11 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org" class="link" id="MyLink">http://www.cakephp.org</a>';
 		$result = $this->Text->autoLink($text, array('class' => 'link', 'id' => 'MyLink'));
 		$this->assertEquals($expected, $result);
+
+		$text = 'This is a test text with URL http://www.cakephp.org?product_id=666&foo=bar&something=breaking';
+		$expected = 'This is a test text with URL <a href="http://www.cakephp.org?product_id=666&foo=bar&something=breaking" class="link" id="MyLink">http://www.cakephp.org?product_id=666&foo=bar&something=breaking</a>';
+		$result = $this->Text->autoLink($text, array('class' => 'link', 'id' => 'MyLink'));
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -162,6 +167,11 @@ class TextHelperTest extends CakeTestCase {
 
 		$text = 'This is a <b>test</b> text with URL http://www.cakephp.org';
 		$expected = 'This is a <b>test</b> text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>';
+		$result = $this->Text->autoLink($text, array('escape' => false));
+		$this->assertEquals($expected, $result);
+
+		$text = 'This is a <b>test</b> text with URL http://www.cakephp.org?page=5433&section=foobar';
+		$expected = 'This is a <b>test</b> text with URL <a href="http://www.cakephp.org?page=5433&section=foobar">http://www.cakephp.org?page=5433&section=foobar</a>';
 		$result = $this->Text->autoLink($text, array('escape' => false));
 		$this->assertEquals($expected, $result);
 	}
