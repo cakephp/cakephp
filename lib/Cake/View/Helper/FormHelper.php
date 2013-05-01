@@ -1749,7 +1749,7 @@ class FormHelper extends AppHelper {
 			unset($options['confirm']);
 		}
 
-		$formName = uniqid('post_');
+		$formName = str_replace('.', '', uniqid('post_', true));
 		$formUrl = $this->url($url);
 		$formOptions = array(
 			'name' => $formName,
