@@ -14,23 +14,27 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Model\Datasource\Database;
+namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests Connection class
  *
  **/
-class ConnectionTest extends \Cake\TestSuite\TestCase {
+class ConnectionTest extends TestCase {
 
 	public function setUp() {
+		parent::setUp();
 		$this->connection = new Connection(Configure::read('Datasource.test'));
 	}
 
 	public function tearDown() {
+		parent::tearDown();
 		$this->connection->execute('DROP TABLE IF EXISTS things');
+		unset($this->connection);
 	}
 
 /**
