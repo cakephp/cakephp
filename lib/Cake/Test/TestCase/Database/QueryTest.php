@@ -11,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -651,7 +650,7 @@ class QueryTest extends TestCase {
  * conditions and return the expression to be used
  *
  * @return void
- **/
+ */
 	public function testSelectWhereUsingClosure() {
 		$this->_insertDateRecords();
 		$query = new Query($this->connection);
@@ -772,16 +771,59 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['title'])
 			->from('articles')
-			->where(function($exp) { return $exp->gt('id', 1); })
+			->where(function($exp) {
+				return $exp->gt('id', 1);
+			})
 			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(array('title' => 'another title'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
+		$result = $query->select(['title'])
+			->from('articles')
+			->where(function($exp) {
+				return $exp->lt('id', 2);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query->select(['title'])
+			->from('articles')
+			->where(function($exp) {
+				return $exp->lte('id', 2);
+			})
+			->execute();
+		$this->assertCount(2, $result);
+
+		$query = new Query($this->connection);
 		$result = $query
 			->select(['title'])
 			->from('articles')
-			->where(function($exp) { return $exp->lt('id', 2); })
+			->where(function($exp) {
+				return $exp->gte('id', 1);
+			})
+			->execute();
+		$this->assertCount(2, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(function($exp) {
+				return $exp->lte('id', 1);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(function($exp) {
+				return $exp->notEq('id', 2);
+			})
 			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
@@ -790,31 +832,9 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['title'])
 			->from('articles')
-			->where(function($exp) { return $exp->lte('id', 2); })
-			->execute();
-		$this->assertCount(2, $result);
-
-		$query = new Query($this->connection);
-		$result = $query
-			->select(['title'])
-			->from('articles')
-			->where(function($exp) { return $exp->gte('id', 1); })
-			->execute();
-		$this->assertCount(2, $result);
-
-		$query = new Query($this->connection);
-		$result = $query
-			->select(['title'])
-			->from('articles')
-			->where(function($exp) { return $exp->lte('id', 1); })
-			->execute();
-		$this->assertCount(1, $result);
-
-		$query = new Query($this->connection);
-		$result = $query
-			->select(['title'])
-			->from('articles')
-			->where(function($exp) { return $exp->notEq('id', 2); })
+			->where(function($exp) {
+				return $exp->like('title', 'a title');
+			})
 			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
@@ -823,16 +843,9 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['title'])
 			->from('articles')
-			->where(function($exp) { return $exp->like('title', 'a title'); })
-			->execute();
-		$this->assertCount(1, $result);
-		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
-
-		$query = new Query($this->connection);
-		$result = $query
-			->select(['title'])
-			->from('articles')
-			->where(function($exp) { return $exp->like('title', '%title%'); })
+			->where(function($exp) {
+				return $exp->like('title', '%title%');
+			})
 			->execute();
 		$this->assertCount(2, $result);
 
@@ -840,7 +853,9 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['title'])
 			->from('articles')
-			->where(function($exp) { return $exp->notLike('title', '%title%'); })
+			->where(function($exp) {
+				return $exp->notLike('title', '%title%');
+			})
 			->execute();
 		$this->assertCount(0, $result);
 
@@ -848,7 +863,9 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['id'])
 			->from('dates')
-			->where(function($exp) { return $exp->isNull('visible'); })
+			->where(function($exp) {
+				return $exp->isNull('visible');
+			})
 			->execute();
 		$this->assertCount(1, $result);
 
@@ -856,7 +873,9 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['id'])
 			->from('dates')
-			->where(function($exp) { return $exp->isNotNull('visible'); })
+			->where(function($exp) {
+				return $exp->isNotNull('visible');
+			})
 			->execute();
 		$this->assertCount(2, $result);
 
@@ -1577,7 +1596,7 @@ class QueryTest extends TestCase {
 			})
 			->execute();
 
-		while($row = $result->fetch('assoc')) {
+		while ($row = $result->fetch('assoc')) {
 			$this->assertEquals($row['id'] + 1, $row['modified_id']);
 		}
 
@@ -1586,15 +1605,18 @@ class QueryTest extends TestCase {
 			return $row;
 		})->execute();
 
-		while($row = $result->fetch('assoc')) {
+		while ($row = $result->fetch('assoc')) {
 			$this->assertEquals($row['id'], $row['modified_id']);
 		}
 
 		$result = $query
-			->decorateResults(function($row) { $row['foo'] = 'bar'; return $row; }, true)
+			->decorateResults(function($row) {
+				$row['foo'] = 'bar';
+				return $row;
+			}, true)
 			->execute();
 
-		while($row = $result->fetch('assoc')) {
+		while ($row = $result->fetch('assoc')) {
 			$this->assertEquals('bar', $row['foo']);
 			$this->assertArrayNotHasKey('modified_id', $row);
 		}
@@ -2014,7 +2036,7 @@ class QueryTest extends TestCase {
  * @param array $rows
  * @return void
  */
-	protected function assertTable($table, $count, $rows) {
+	public function assertTable($table, $count, $rows) {
 		$result = (new Query($this->connection))->select('*')
 			->from($table)
 			->execute();

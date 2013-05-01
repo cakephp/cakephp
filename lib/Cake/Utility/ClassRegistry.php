@@ -57,7 +57,7 @@ class ClassRegistry {
  *
  * @return ClassRegistry instance
  */
-	public static function &getInstance() {
+	public static function getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] = new ClassRegistry();
@@ -72,7 +72,7 @@ class ClassRegistry {
  * Examples
  * Simple Use: Get a Post model instance ```ClassRegistry::init('Post');```
  *
- * Expanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model');```
+ * Expanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry');```
  *
  * Model Classes can accept optional ```array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);```
  *
@@ -251,7 +251,7 @@ class ClassRegistry {
  * @param string $key Key of object to look for
  * @return mixed Object stored in registry or boolean false if the object does not exist.
  */
-	public static function &getObject($key) {
+	public static function getObject($key) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 		$return = false;

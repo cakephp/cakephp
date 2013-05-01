@@ -671,6 +671,12 @@ class AuthComponent extends Component {
  * @return boolean true if a user can be found, false if one cannot.
  */
 	protected function _getUser() {
+		$user = $this->user();
+		if ($user) {
+			$this->Session->delete('Auth.redirect');
+			return true;
+		}
+
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
@@ -682,11 +688,6 @@ class AuthComponent extends Component {
 			}
 		}
 
-		$user = $this->user();
-		if ($user) {
-			$this->Session->delete('Auth.redirect');
-			return true;
-		}
 		return false;
 	}
 

@@ -462,7 +462,6 @@ class RequestHandlerComponentTest extends TestCase {
 		$this->RequestHandler->renderAs($this->Controller, 'js');
 		$this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewPath);
 		$this->assertEquals('js', $this->Controller->layoutPath);
-		$this->assertTrue(in_array('Js', $this->Controller->helpers));
 	}
 
 /**

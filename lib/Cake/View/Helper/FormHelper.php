@@ -1276,8 +1276,10 @@ class FormHelper extends Helper {
 		} elseif (is_array($div)) {
 			$divOptions = array_merge($divOptions, $div);
 		}
-
-		if ($this->_introspectModel($this->model(), 'validates', $this->field())) {
+		if (
+			$this->_extractOption('required', $options) !== false &&
+			$this->_introspectModel($this->model(), 'validates', $this->field())
+		) {
 			$divOptions = $this->addClass($divOptions, 'required');
 		}
 		if (!isset($divOptions['tag'])) {
@@ -2011,6 +2013,14 @@ class FormHelper extends Helper {
 			$tag = 'selectstart';
 		}
 
+		if ($tag !== 'checkboxmultiplestart' &&
+			!isset($attributes['required']) &&
+			empty($attributes['disabled']) &&
+			$this->_introspectModel($this->model(), 'validates', $this->field())
+		) {
+			$attributes['required'] = true;
+		}
+
 		if (!empty($tag) || isset($template)) {
 			$hasOptions = (count($options) > 0 || $showEmpty);
 			// Secure the field if there are options, or its a multi select.
@@ -2379,6 +2389,10 @@ class FormHelper extends Helper {
 		$monthNames = $attributes['monthNames'];
 		$attributes = array_diff_key($attributes, $defaults);
 
+		if ($timeFormat == 12 && $hour == 12) {
+			$hour = 0;
+		}
+
 		if (!empty($interval) && $interval > 1 && !empty($min)) {
 			$current = new \DateTime();
 			if ($year !== null) {
@@ -2389,7 +2403,7 @@ class FormHelper extends Helper {
 			}
 			$change = (round($min * (1 / $interval)) * $interval) - $min;
 			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
-			$format = ($timeFormat === '12') ? 'Y m d h i a' : 'Y m d H i a';
+			$format = ($timeFormat == 12) ? 'Y m d h i a' : 'Y m d H i a';
 			$newTime = explode(' ', $current->format($format));
 			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
 		}
@@ -2510,15 +2524,8 @@ class FormHelper extends Helper {
 		if (!empty($timeFormat)) {
 			$time = explode(':', $days[1]);
 
-			if ($time[0] >= 12 && $timeFormat == 12) {
+			if ($time[0] >= 12) {
 				$meridian = 'pm';
-			} elseif ($time[0] === '00' && $timeFormat == 12) {
-				$time[0] = 12;
-			} elseif ($time[0] >= 12) {
-				$meridian = 'pm';
-			}
-			if ($time[0] == 0 && $timeFormat == 12) {
-				$time[0] = 12;
 			}
 			$hour = $min = null;
 			if (isset($time[1])) {

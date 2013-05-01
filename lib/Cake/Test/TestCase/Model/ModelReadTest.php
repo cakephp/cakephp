@@ -7765,7 +7765,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals(4, $result[0][0]['other_field']);
 
 		ClassRegistry::flush();
-		$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'), 'Model');
+		$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'));
 		$Writing->virtualFields = array('two' => "1 + 1");
 		$result = $Writing->find('first');
 		$this->assertEquals(2, $result['Writing']['two']);
