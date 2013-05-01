@@ -127,106 +127,15 @@ trait SqliteDialectTrait {
 	}
 
 /**
- * Convert a column definition to the abstract types.
+ * Get the schema dialect.
  *
- * The returned type will be a type that
- * Cake\Database\Type can handle.
+ * Used by Cake\Schema package to reflect schema and
+ * generate schema.
  *
- * @param string $column The column type + length
- * @throws Cake\Error\Exception
- * @return array List of (type, length)
+ * @return Cake\Database\Schema\SqliteSchema
  */
-	public function convertColumn($column) {
-		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
-		if (empty($matches)) {
-			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
-		}
-		$col = strtolower($matches[1]);
-		$length = null;
-		if (isset($matches[2])) {
-			$length = (int)$matches[2];
-		}
-
-		if ($col === 'bigint') {
-			return ['biginteger', $length];
-		}
-		if ($col === 'timestamp') {
-			return ['datetime', null];
-		}
-		if (in_array($col, ['blob', 'clob'])) {
-			return ['binary', null];
-		}
-		if (in_array($col, ['date', 'time', 'datetime'])) {
-			return [$col, null];
-		}
-		if (strpos($col, 'decimal') !== false) {
-			return ['decimal', null];
-		}
-
-		if (strpos($col, 'boolean') !== false) {
-			return ['boolean', null];
-		}
-		if (strpos($col, 'int') !== false) {
-			return ['integer', $length];
-		}
-		if (strpos($col, 'char') !== false) {
-			return ['string', $length];
-		}
-		if (in_array($col, ['float', 'real', 'double'])) {
-			return ['float', null];
-		}
-		return ['text', null];
-	}
-
-/**
- * Get the SQL to list the tables in Sqlite
- *
- * @param array $config The connection configuration to use for
- *    getting tables from.
- * @return array An array of (sql, params) to execute.
- */
-	public function listTablesSql() {
-		return ["SELECT name FROM sqlite_master WHERE type='table' ORDER BY name", []];
-	}
-
-/**
- * Additional metadata columns in table descriptions.
- *
- * @return array
- */
-	public function extraSchemaColumns() {
-		return [];
-	}
-
-/**
- * Get the SQL to describe a table in Sqlite.
- *
- * @param string $table The table name to describe
- * @return array An array of (sql, params) to execute.
- */
-	public function describeTableSql($table) {
-		return ["PRAGMA table_info(" . $this->quoteIdentifier($table) . ")", []];
-	}
-
-/**
- * Convert field description results into abstract schema fields.
- *
- * @return array An array of with the key/values of schema data.
- */
-	public function convertFieldDescription($row, $fieldParams = []) {
-		list($type, $length) = $this->convertColumn($row['type']);
-		$schema = [];
-		$schema[$row['name']] = [
-			'type' => $type,
-			'null' => !$row['notnull'],
-			'default' => $row['dflt_value'] === null ? null : trim($row['dflt_value'], "'"),
-			'length' => $length,
-		];
-		if ($row['pk'] == true) {
-			$schema[$row['name']]['key'] = 'primary';
-			$schema[$row['name']]['null'] = false;
-		}
-		return $schema;
+	public function schemaDialect() {
+		return new \Cake\Database\Schema\SqliteSchema($this);
 	}
 
 }

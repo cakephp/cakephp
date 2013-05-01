@@ -14,23 +14,30 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Model\Datasource\Database;
+namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Query;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests Query class
  *
  */
-class QueryTest extends \Cake\TestSuite\TestCase {
+class QueryTest extends TestCase {
 
 	public function setUp() {
+		parent::setUp();
 		$this->connection = new Connection(Configure::read('Datasource.test'));
 		$this->connection->execute('DROP TABLE IF EXISTS articles');
 		$this->connection->execute('DROP TABLE IF EXISTS authors');
 		$this->connection->execute('DROP TABLE IF EXISTS dates');
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+		unset($this->connection);
 	}
 
 /**

@@ -14,7 +14,7 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Model\Datasource\Database\Type;
+namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
 use Cake\Database\Type\DateTimeType;

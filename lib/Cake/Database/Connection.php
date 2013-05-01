@@ -114,6 +114,29 @@ class Connection {
 	}
 
 /**
+ * Destructor
+ *
+ * Disconnects the driver to release the connection.
+ *
+ * @return void
+ */
+	public function __destruct() {
+		if ($this->_connected) {
+			$this->_driver->disconnect();
+		}
+		unset($this->_driver);
+	}
+
+/**
+ * Get the configuration data used to create the connection.
+ *
+ * @return array
+ */
+	public function config() {
+		return $this->_config;
+	}
+
+/**
  * Sets the driver instance. If an string is passed it will be treated
  * as a class name and will be instantiated.
  *
@@ -460,40 +483,6 @@ class Connection {
 	public function lastInsertId($table) {
 		$this->connect();
 		return $this->_driver->lastInsertId($table);
-	}
-
-/**
- * Get the list of tables available in the current connection.
- *
- * @return array The list of tables in the connected database/schema.
- */
-	public function listTables() {
-		list($sql, $params) = $this->_driver->listTablesSql($this->_config);
-		$result = [];
-		$statement = $this->execute($sql, $params);
-		while ($row = $statement->fetch()) {
-			$result[] = $row[0];
-		}
-		return $result;
-	}
-
-/**
- * Get the schema information for a given table/collection
- *
- * @param string $table The table/collection you want schema information for.
- * @return array The schema data for the requested table.
- */
-	public function describe($table) {
-		list($sql, $params) = $this->_driver->describeTableSql($table, $this->_config);
-		$statement = $this->execute($sql, $params);
-		$schema = [];
-
-		$fieldParams = $this->_driver->extraSchemaColumns();
-		$rows = $statement->fetchAll('assoc');
-		foreach ($rows as $row) {
-			$schema += $this->_driver->convertFieldDescription($row, $fieldParams);
-		}
-		return $schema;
 	}
 
 /**
