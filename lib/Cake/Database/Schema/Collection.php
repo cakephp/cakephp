@@ -84,6 +84,9 @@ class Collection {
 		} catch (\PDOException $e) {
 			return null;
 		}
+		if (count($statement) == 0) {
+			return null;
+		}
 
 		$table = new Table($name);
 		$fieldParams = $this->_dialect->extraSchemaColumns();
