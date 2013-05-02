@@ -108,7 +108,7 @@ class PostgresSchema {
 			return ['type' => 'string', 'length' => 39];
 		}
 		if ($col === 'uuid') {
-			return ['type' => 'string', 'length' => 36];
+			return ['type' => 'string', 'fixed' => true, 'length' => 36];
 		}
 		if ($col === 'char' || $col === 'character') {
 			return ['type' => 'string', 'fixed' => true, 'length' => $length];
