@@ -890,6 +890,24 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that a really REALLY large page number gets clamped to the max page size.
+ * 
+ *
+ * @expectedException NotFoundException
+ * @return void
+ */
+	public function testOutOfVeryBigRangePageNumberGetsClamped() {
+		$Controller = new PaginatorTestController($this->request);
+		$Controller->uses = array('PaginatorControllerPost');
+		$Controller->params['named'] = array(
+			'page' => 3000000000000000000000000,
+		);
+		$Controller->constructClasses();
+		$Controller->PaginatorControllerPost->recursive = 0;
+		$Controller->Paginator->paginate('PaginatorControllerPost');
+	}	
+
+/**
  * testOutOfRangePageNumberAndPageCountZero
  *
  * @return void
