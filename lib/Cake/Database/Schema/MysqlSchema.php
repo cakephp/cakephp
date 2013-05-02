@@ -66,7 +66,7 @@ class MysqlSchema {
  * The returned type will be a type that Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
- * @return array List of (type, length)
+ * @return array Array of column information.
  */
 	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
@@ -91,6 +91,9 @@ class MysqlSchema {
 		}
 		if (strpos($col, 'int') !== false) {
 			return ['type' => 'integer', 'length' => $length];
+		}
+		if ($col === 'char') {
+			return ['type' => 'string', 'fixed' => true, 'length' => $length];
 		}
 		if (strpos($col, 'char') !== false || $col === 'tinytext') {
 			return ['type' => 'string', 'length' => $length];

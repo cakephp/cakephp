@@ -74,10 +74,21 @@ class PostgresSchema {
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
+ * @throws Cake\Error\Exception when column cannot be parsed.
  * @return array Array of column information.
  */
 	public function convertColumn($column) {
-		$col = strtolower($column);
+		preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
+		if (empty($matches)) {
+			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+		}
+
+		$col = strtolower($matches[1]);
+		$length = null;
+		if (isset($matches[2])) {
+			$length = (int)$matches[2];
+		}
+
 		if (in_array($col, array('date', 'time', 'boolean'))) {
 			return ['type' =>$col, 'length' => null];
 		}
@@ -99,8 +110,11 @@ class PostgresSchema {
 		if ($col === 'uuid') {
 			return ['type' => 'string', 'length' => 36];
 		}
+		if ($col === 'char' || $col === 'character') {
+			return ['type' => 'string', 'fixed' => true, 'length' => $length];
+		}
 		if (strpos($col, 'char') !== false) {
-			return ['type' => 'string', 'length' => null];
+			return ['type' => 'string', 'length' => $length];
 		}
 		if (strpos($col, 'text') !== false) {
 			return ['type' => 'text', 'length' => null];

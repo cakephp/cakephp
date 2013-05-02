@@ -129,20 +129,28 @@ SQL;
 				['type' => 'string', 'length' => null]
 			],
 			[
+				'VARCHAR(10)',
+				['type' => 'string', 'length' => 10]
+			],
+			[
 				'CHARACTER VARYING',
 				['type' => 'string', 'length' => null]
 			],
 			[
-				'CHAR',
-				['type' => 'string', 'length' => null]
+				'CHARACTER VARYING(10)',
+				['type' => 'string', 'length' => 10]
+			],
+			[
+				'CHAR(10)',
+				['type' => 'string', 'fixed' => true, 'length' => 10]
+			],
+			[
+				'CHARACTER(10)',
+				['type' => 'string', 'fixed' => true, 'length' => 10]
 			],
 			[
 				'UUID',
 				['type' => 'string', 'length' => 36]
-			],
-			[
-				'CHARACTER',
-				['type' => 'string', 'length' => null]
 			],
 			[
 				'INET',

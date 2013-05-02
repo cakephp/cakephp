@@ -79,7 +79,7 @@ class MysqlSchemaTest extends TestCase {
 			],
 			[
 				'CHAR(25)',
-				['type' => 'string', 'length' => 25]
+				['type' => 'string', 'length' => 25, 'fixed' => true]
 			],
 			[
 				'TINYTEXT',
