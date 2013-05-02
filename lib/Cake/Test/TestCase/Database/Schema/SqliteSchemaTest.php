@@ -47,63 +47,63 @@ class SqliteSchemaTest extends TestCase {
 		return [
 			[
 				'DATETIME',
-				['datetime', null]
+				['type' => 'datetime', 'length' => null]
 			],
 			[
 				'DATE',
-				['date', null]
+				['type' => 'date', 'length' => null]
 			],
 			[
 				'TIME',
-				['time', null]
+				['type' => 'time', 'length' => null]
 			],
 			[
 				'BOOLEAN',
-				['boolean', null]
+				['type' => 'boolean', 'length' => null]
 			],
 			[
 				'BIGINT',
-				['biginteger', null]
+				['type' => 'biginteger', 'length' => null]
 			],
 			[
 				'VARCHAR(255)',
-				['string', 255]
+				['type' => 'string', 'length' => 255]
 			],
 			[
 				'CHAR(25)',
-				['string', 25]
+				['type' => 'string', 'fixed' => true, 'length' => 25]
 			],
 			[
 				'BLOB',
-				['binary', null]
+				['type' => 'binary', 'length' => null]
 			],
 			[
 				'INTEGER(11)',
-				['integer', 11]
+				['type' => 'integer', 'length' => 11]
 			],
 			[
 				'TINYINT(5)',
-				['integer', 5]
+				['type' => 'integer', 'length' => 5]
 			],
 			[
 				'MEDIUMINT(10)',
-				['integer', 10]
+				['type' => 'integer', 'length' => 10]
 			],
 			[
 				'FLOAT',
-				['float', null]
+				['type' => 'float', 'length' => null]
 			],
 			[
 				'DOUBLE',
-				['float', null]
+				['type' => 'float', 'length' => null]
 			],
 			[
 				'REAL',
-				['float', null]
+				['type' => 'float', 'length' => null]
 			],
 			[
 				'DECIMAL(11,2)',
-				['decimal', null]
+				['type' => 'decimal', 'length' => null]
 			],
 		];
 	}
