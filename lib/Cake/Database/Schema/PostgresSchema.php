@@ -74,51 +74,51 @@ class PostgresSchema {
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
- * @return array List of (type, length)
+ * @return array Array of column information.
  */
 	public function convertColumn($column) {
 		$col = strtolower($column);
 		if (in_array($col, array('date', 'time', 'boolean'))) {
-			return [$col, null];
+			return ['type' =>$col, 'length' => null];
 		}
 		if (strpos($col, 'timestamp') !== false) {
-			return ['datetime', null];
+			return ['type' => 'datetime', 'length' => null];
 		}
 		if ($col === 'serial' || $col === 'integer') {
-			return ['integer', 10];
+			return ['type' => 'integer', 'length' => 10];
 		}
 		if ($col === 'bigserial' || $col === 'bigint') {
-			return ['biginteger', 20];
+			return ['type' => 'biginteger', 'length' => 20];
 		}
 		if ($col === 'smallint') {
-			return ['integer', 5];
+			return ['type' => 'integer', 'length' => 5];
 		}
 		if ($col === 'inet') {
-			return ['string', 39];
+			return ['type' => 'string', 'length' => 39];
 		}
 		if ($col === 'uuid') {
-			return ['string', 36];
+			return ['type' => 'string', 'length' => 36];
 		}
 		if (strpos($col, 'char') !== false) {
-			return ['string', null];
+			return ['type' => 'string', 'length' => null];
 		}
 		if (strpos($col, 'text') !== false) {
-			return ['text', null];
+			return ['type' => 'text', 'length' => null];
 		}
 		if ($col === 'bytea') {
-			return ['binary', null];
+			return ['type' => 'binary', 'length' => null];
 		}
 		if ($col === 'real' || strpos($col, 'double') !== false) {
-			return ['float', null];
+			return ['type' => 'float', 'length' => null];
 		}
 		if (
 			strpos($col, 'numeric') !== false ||
 			strpos($col, 'money') !== false ||
 			strpos($col, 'decimal') !== false
 		) {
-			return ['decimal', null];
+			return ['type' => 'decimal', 'length' => null];
 		}
-		return ['text', null];
+		return ['type' => 'text', 'length' => null];
 	}
 
 /**
@@ -143,9 +143,9 @@ class PostgresSchema {
  * @return void
  */
 	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
-		list($type, $length) = $this->convertColumn($row['type']);
+		$field = $this->convertColumn($row['type']);
 
-		if ($type === 'boolean') {
+		if ($field['type'] === 'boolean') {
 			if ($row['default'] === 'true') {
 				$row['default'] = 1;
 			}
@@ -154,12 +154,11 @@ class PostgresSchema {
 			}
 		}
 
-		$field = [
-			'type' => $type,
+		$field += [
 			'null' => $row['null'] === 'YES' ? true : false,
 			'default' => $row['default'],
-			'length' => $row['char_length'] ?: $length,
 		];
+		$field['length'] = $row['char_length'] ?: $field['length'];
 		foreach ($fieldParams as $key => $metadata) {
 			if (!empty($row[$metadata['column']])) {
 				$field[$key] = $row[$metadata['column']];

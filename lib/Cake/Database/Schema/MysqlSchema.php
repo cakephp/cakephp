@@ -18,6 +18,9 @@ namespace Cake\Database\Schema;
 
 use Cake\Database\Schema\Table;
 
+/**
+ * Schema dialect/support for MySQL
+ */
 class MysqlSchema {
 
 /**
@@ -78,33 +81,33 @@ class MysqlSchema {
 		}
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
-			return [$col, null];
+			return ['type' => $col, 'length' => null];
 		}
 		if (($col === 'tinyint' && $length === 1) || $col === 'boolean') {
-			return ['boolean', null];
+			return ['type' => 'boolean', 'length' => null];
 		}
 		if (strpos($col, 'bigint') !== false || $col === 'bigint') {
-			return ['biginteger', $length];
+			return ['type' => 'biginteger', 'length' => $length];
 		}
 		if (strpos($col, 'int') !== false) {
-			return ['integer', $length];
+			return ['type' => 'integer', 'length' => $length];
 		}
 		if (strpos($col, 'char') !== false || $col === 'tinytext') {
-			return ['string', $length];
+			return ['type' => 'string', 'length' => $length];
 		}
 		if (strpos($col, 'text') !== false) {
-			return ['text', $length];
+			return ['type' => 'text', 'length' => $length];
 		}
 		if (strpos($col, 'blob') !== false || $col === 'binary') {
-			return ['binary', $length];
+			return ['type' => 'binary', 'length' => $length];
 		}
 		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false) {
-			return ['float', $length];
+			return ['type' => 'float', 'length' => $length];
 		}
 		if (strpos($col, 'decimal') !== false) {
-			return ['decimal', null];
+			return ['type' => 'decimal', 'length' => null];
 		}
-		return ['text', null];
+		return ['type' => 'text', 'length' => null];
 	}
 
 /**
@@ -116,12 +119,10 @@ class MysqlSchema {
  * @return void
  */
 	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
-		list($type, $length) = $this->convertColumn($row['Type']);
-		$field = [
-			'type' => $type,
+		$field = $this->convertColumn($row['Type']);
+		$field += [
 			'null' => $row['Null'] === 'YES' ? true : false,
 			'default' => $row['Default'],
-			'length' => $length,
 		];
 		foreach ($fieldParams as $key => $metadata) {
 			if (!empty($row[$metadata['column']])) {

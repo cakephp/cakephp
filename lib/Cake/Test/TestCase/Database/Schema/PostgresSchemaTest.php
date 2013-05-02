@@ -82,91 +82,91 @@ SQL;
 		return [
 			[
 				'TIMESTAMP',
-				['datetime', null]
+				['type' => 'datetime', 'length' => null]
 			],
 			[
 				'TIMESTAMP WITHOUT TIME ZONE',
-				['datetime', null]
+				['type' => 'datetime', 'length' => null]
 			],
 			[
 				'DATE',
-				['date', null]
+				['type' => 'date', 'length' => null]
 			],
 			[
 				'TIME',
-				['time', null]
+				['type' => 'time', 'length' => null]
 			],
 			[
 				'SMALLINT',
-				['integer', 5]
+				['type' => 'integer', 'length' => 5]
 			],
 			[
 				'INTEGER',
-				['integer', 10]
+				['type' => 'integer', 'length' => 10]
 			],
 			[
 				'SERIAL',
-				['integer', 10]
+				['type' => 'integer', 'length' => 10]
 			],
 			[
 				'BIGINT',
-				['biginteger', 20]
+				['type' => 'biginteger', 'length' => 20]
 			],
 			[
 				'NUMERIC',
-				['decimal', null]
+				['type' => 'decimal', 'length' => null]
 			],
 			[
 				'DECIMAL(10,2)',
-				['decimal', null]
+				['type' => 'decimal', 'length' => null]
 			],
 			[
 				'MONEY',
-				['decimal', null]
+				['type' => 'decimal', 'length' => null]
 			],
 			[
 				'VARCHAR',
-				['string', null]
+				['type' => 'string', 'length' => null]
 			],
 			[
 				'CHARACTER VARYING',
-				['string', null]
+				['type' => 'string', 'length' => null]
 			],
 			[
 				'CHAR',
-				['string', null]
+				['type' => 'string', 'length' => null]
 			],
 			[
 				'UUID',
-				['string', 36]
+				['type' => 'string', 'length' => 36]
 			],
 			[
 				'CHARACTER',
-				['string', null]
+				['type' => 'string', 'length' => null]
 			],
 			[
 				'INET',
-				['string', 39]
+				['type' => 'string', 'length' => 39]
 			],
 			[
 				'TEXT',
-				['text', null]
+				['type' => 'text', 'length' => null]
 			],
 			[
 				'BYTEA',
-				['binary', null]
+				['type' => 'binary', 'length' => null]
 			],
 			[
 				'REAL',
-				['float', null]
+				['type' => 'float', 'length' => null]
 			],
 			[
 				'DOUBLE PRECISION',
-				['float', null]
+				['type' => 'float', 'length' => null]
 			],
 			[
 				'BIGSERIAL',
-				['biginteger', 20]
+				['type' => 'biginteger', 'length' => 20]
 			],
 		];
 	}

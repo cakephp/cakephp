@@ -47,63 +47,63 @@ class MysqlSchemaTest extends TestCase {
 		return [
 			[
 				'DATETIME',
-				['datetime', null]
+				['type' => 'datetime', 'length' => null]
 			],
 			[
 				'DATE',
-				['date', null]
+				['type' =>  'date', 'length' => null]
 			],
 			[
 				'TIME',
-				['time', null]
+				['type' => 'time', 'length' => null]
 			],
 			[
 				'TINYINT(1)',
-				['boolean', null]
+				['type' => 'boolean', 'length' => null]
 			],
 			[
 				'TINYINT(2)',
-				['integer', 2]
+				['type' => 'integer', 'length' => 2]
 			],
 			[
 				'INTEGER(11)',
-				['integer', 11]
+				['type' => 'integer', 'length' => 11]
 			],
 			[
 				'BIGINT',
-				['biginteger', null]
+				['type' => 'biginteger', 'length' => null]
 			],
 			[
 				'VARCHAR(255)',
-				['string', 255]
+				['type' => 'string', 'length' => 255]
 			],
 			[
 				'CHAR(25)',
-				['string', 25]
+				['type' => 'string', 'length' => 25]
 			],
 			[
 				'TINYTEXT',
-				['string', null]
+				['type' => 'string', 'length' => null]
 			],
 			[
 				'BLOB',
-				['binary', null]
+				['type' => 'binary', 'length' => null]
 			],
 			[
 				'MEDIUMBLOB',
-				['binary', null]
+				['type' => 'binary', 'length' => null]
 			],
 			[
 				'FLOAT',
-				['float', null]
+				['type' => 'float', 'length' => null]
 			],
 			[
 				'DOUBLE',
-				['float', null]
+				['type' => 'float', 'length' => null]
 			],
 			[
 				'DECIMAL(11,2)',
-				['decimal', null]
+				['type' => 'decimal', 'length' => null]
 			],
 		];
 	}
