@@ -250,7 +250,6 @@ class CakeSession {
 			self::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
 			return !self::check($name);
 		}
-		self::_setError(2, __d('cake_dev', "%s doesn't exist", $name));
 		return false;
 	}
 
@@ -370,7 +369,6 @@ class CakeSession {
 		if (isset($result)) {
 			return $result;
 		}
-		self::_setError(2, "$name doesn't exist");
 		return null;
 	}
 
