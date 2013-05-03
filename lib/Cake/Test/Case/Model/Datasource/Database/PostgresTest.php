@@ -1003,4 +1003,28 @@ class PostgresTest extends CakeTestCase {
 		$this->assertTrue($new['currval'] > $original['nextval'], 'Sequence did not update');
 	}
 
+/**
+ * Test the limit function.
+ *
+ * @return void
+ */
+	public function testLimit() {
+		$db = $this->Dbo;
+
+		$result = $db->limit('0');
+		$this->assertNull($result);
+
+		$result = $db->limit('10');
+		$this->assertEquals(' LIMIT 10', $result);
+
+		$result = $db->limit('FARTS', 'BOOGERS');
+		$this->assertEquals(' LIMIT 0 OFFSET 0', $result);
+
+		$result = $db->limit(20, 10);
+		$this->assertEquals(' LIMIT 20 OFFSET 10', $result);
+
+		$result = $db->limit(10, 300000000000000000000000000000);
+		$this->assertEquals(' LIMIT 10 OFFSET 0', $result);
+	}
+
 }
