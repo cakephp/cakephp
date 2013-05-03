@@ -896,44 +896,35 @@ class PaginatorComponentTest extends CakeTestCase {
  * @expectedException NotFoundException
  * @return void
  */
-	public function testOutOfVeryBigRangePageNumberGetsClamped() {
+	public function testOutOfVeryBigPageNumberGetsClamped() {
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
 		$Controller->params['named'] = array(
-			'page' => 3000000000000000000000000,
+			'page' => '3000000000000000000000000',
 		);
 		$Controller->constructClasses();
 		$Controller->PaginatorControllerPost->recursive = 0;
 		$Controller->Paginator->paginate('PaginatorControllerPost');
-	}	
+	}
 
 /**
  * testOutOfRangePageNumberAndPageCountZero
  *
+ * @expectedException NotFoundException
  * @return void
  */
 	public function testOutOfRangePageNumberAndPageCountZero() {
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
 		$Controller->params['named'] = array(
-			'page' => 3000,
+			'page' => '3000',
 		);
 		$Controller->constructClasses();
 		$Controller->PaginatorControllerPost->recursive = 0;
 		$Controller->paginate = array(
 			'conditions' => array('PaginatorControllerPost.id >' => 100)
 		);
-		try {
-			$Controller->Paginator->paginate('PaginatorControllerPost');
-		} catch (NotFoundException $e) {
-			$this->assertEquals(
-				1,
-				$Controller->request->params['paging']['PaginatorControllerPost']['page'],
-				'Page number should not be 0'
-			);
-			return;
-		}
-		$this->fail();
+		$Controller->Paginator->paginate('PaginatorControllerPost');
 	}
 
 /**

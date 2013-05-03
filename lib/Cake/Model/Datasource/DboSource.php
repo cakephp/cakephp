@@ -2672,16 +2672,13 @@ class DboSource extends DataSource {
  */
 	public function limit($limit, $offset = null) {
 		if ($limit) {
-			$rt = '';
-			if (!strpos(strtolower($limit), 'limit')) {
-				$rt = ' LIMIT';
-			}
+			$rt = ' LIMIT';
 
 			if ($offset) {
-				$rt .= ' ' . $offset . ',';
+				$rt .= sprintf(' %u,', $offset);
 			}
 
-			$rt .= ' ' . $limit;
+			$rt .= sprintf(' %u', $limit);
 			return $rt;
 		}
 		return null;
