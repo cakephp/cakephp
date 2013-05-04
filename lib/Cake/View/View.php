@@ -56,7 +56,6 @@ use Cake\Utility\ViewVarsTrait;
  * @property      CacheHelper $Cache
  * @property      FormHelper $Form
  * @property      HtmlHelper $Html
- * @property      JsHelper $Js
  * @property      NumberHelper $Number
  * @property      PaginatorHelper $Paginator
  * @property      RssHelper $Rss
