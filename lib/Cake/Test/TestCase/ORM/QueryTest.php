@@ -31,12 +31,16 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->connection = new Connection(Configure::read('Datasource.test'));
 	}
 
+	public function tearDown() {
+		Table::clearRegistry();
+	}
+
 /**
  * Tests that fully defined belongsTo and hasOne relationships are joined correctly
  *
  * @return void
  **/
-	public function testContainToJoins() {
+	public function testContainToJoinsOneLevel() {
 		$contains = ['client' => [
 			'associationType' => 'belongsTo',
 			'table' => 'clients',
@@ -116,10 +120,35 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			]])
 			->will($this->returnValue($query));
 
-		$query
+		$s = $query
 			->select('foo.id')
 			->repository($table)
 			->contain($contains)->sql();
+	}
+
+	public function testContainToFieldsPredefined() {
+		$contains = ['client' => [
+			'associationType' => 'belongsTo',
+			'fields' => ['name', 'company_id', 'client.telephone'],
+			'table' => 'clients',
+			'order' => [
+				'associationType' => 'hasOne',
+				'fields' => ['total', 'placed']
+			]
+		]];
+	
+		$table = Table::build('foo', ['schema' => ['id' => ['type' => 'integer']]]);
+		$query = new Query($this->connection);
+
+		$query->select('foo.id')->repository($table)->contain($contains)->sql();
+		$select = $query->clause('select');
+		$expected = [
+			'foo__id' => 'foo.id', 'client__name' => 'client.name',
+			'client__company_id' => 'client.company_id',
+			'client__telephone' => 'client.telephone',
+			'order__total' => 'order.total', 'order__placed' => 'order.placed'
+		];
+		$this->assertEquals($expected, $select);
 	}
 
 }

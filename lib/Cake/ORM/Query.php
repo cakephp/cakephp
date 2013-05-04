@@ -41,17 +41,28 @@ class Query extends DatabaseQuery {
 		return $this->execute()->toArray();
 	}
 
-	public function aliasField($field) {
-		if (strpos($field, '.') !== false) {
-			list($alias, $field) = explode('.', $field);
-		} else {
-			$alias = $this->repository()->alias();
-		}
-		return sprintf('%s__%s', $alias, $field);
+	public function aliasedTable() {
+		return $this->repository();
 	}
 
-	public function aliasedTable($alias) {
-		return $this->repository();
+	public function aliasField($field, $alias = null) {
+		$namespaced = strpos($field, '.') !== false;
+		$_field = $field;
+
+		if ($namespaced) {
+			list($alias, $field) = explode('.', $field);
+		}
+
+		if (!$alias) {
+			$alias = $this->repository()->alias();
+		}
+
+		$key = sprintf('%s__%s', $alias, $field);
+		if (!$namespaced) {
+			$_field = $alias . '.' . $field;
+		}
+
+		return [$key => $_field];
 	}
 
 	protected function _transformQuery() {
@@ -59,8 +70,8 @@ class Query extends DatabaseQuery {
 			return parent::_transformQuery();
 		}
 
+		$this->_addDefaultFields();
 		$this->_addContainments();
-		$this->_aliasFields();
 		return parent::_transformQuery();
 	}
 
@@ -156,26 +167,35 @@ class Query extends DatabaseQuery {
 
 	protected function _addJoin($alias, $options) {
 		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$options = array_intersect_key($options, $joinOptions);
-		$this->join([$alias => $options]);
+		$this->join([$alias => array_intersect_key($options, $joinOptions)]);
+
+		if (!empty($options['fields'])) {
+			$this->select($this->_aliasFields($options['fields'], $alias));
+		}
 	}
 
-	protected function _aliasFields() {
-		$select = $this->clause('select');
-		$schema = $this->repository()->schema();
-
-		if (!count($select)) {
-			$this->select(array_keys($schema));
-			$select = $this->clause('select');
-		}
-
+	protected function _aliasFields($fields, $defaultAlias = null) {
 		$aliased = [];
-		foreach ($select as $alias => $field) {
+		foreach ($fields as $alias => $field) {
 			if (is_numeric($alias) && is_string($field)) {
-				$alias = $this->aliasField($field);
+				$aliased += $this->aliasField($field, $defaultAlias);
+				continue;
 			}
 			$aliased[$alias] = $field;
 		}
+
+		return $aliased;
+	}
+
+	protected function _addDefaultFields() {
+		$select = $this->clause('select');
+
+		if (!count($select)) {
+			$this->select(array_keys($this->repository()->schema()));
+			$select = $this->clause('select');
+		}
+
+		$aliased = $this->_aliasFields($select, $this->repository()->alias());
 		$this->select($aliased, true);
 	}
 
