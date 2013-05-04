@@ -279,4 +279,19 @@ class TextHelper extends AppHelper {
 		return $this->_engine->toList($list, $and, $separator);
 	}
 
+/**
+ * Give the plural form of a word
+ * depending on $count. Usefull when displaying
+ * the number of comment associate to a post for example
+ *
+ * @param string $word Word to pluralize
+ * @param integer $count The amout of $word
+ * @return string Modified string
+ */
+	public function pluralize($word, $count){
+		if( $count > 1 ){
+			return $count . ' ' . Inflector::pluralize( $word );
+		}
+		return $count . ' ' . $word;
+	}
 }
