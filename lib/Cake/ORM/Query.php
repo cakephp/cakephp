@@ -11,6 +11,8 @@ class Query extends DatabaseQuery {
 
 	protected $_containments;
 
+	protected $_hasFields;
+
 	public function repository(Table $table = null) {
 		if ($table === null) {
 			return $this->_table;
@@ -119,9 +121,13 @@ class Query extends DatabaseQuery {
 		];
 		$config = $this->_resolveForeignKeyConditions($table, $parent, $config);
 
-		if (empty($config['fields']) || $config['fields'] !== false) {
-			$config['fields'] = array_keys($table->schema());
+		if (empty($config['fields'])) {
+			$f = isset($config['fields']) ? $config['fields'] : null;
+			if (!$this->_hasFields && ($f === null || $f !== false)) {
+				$config['fields'] = array_keys($table->schema());
+			}
 		}
+
 		foreach ($extra as $t => $assoc) {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
 		}
@@ -192,8 +198,10 @@ class Query extends DatabaseQuery {
 
 	protected function _addDefaultFields() {
 		$select = $this->clause('select');
+		$this->_hasFields = true;
 
 		if (!count($select)) {
+			$this->_hasFields = false;
 			$this->select(array_keys($this->repository()->schema()));
 			$select = $this->clause('select');
 		}

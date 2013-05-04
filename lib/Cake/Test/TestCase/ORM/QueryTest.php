@@ -202,5 +202,25 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			'order__placed' => 'order.placed'
 		];
 		$this->assertEquals($expected, $select);
+
+		$contains['client']['fields'] = ['name'];
+		$query = new Query($this->connection);
+		$query->select('foo.id')->repository($table)->contain($contains)->sql();
+		$select = $query->clause('select');
+		$expected = ['foo__id' => 'foo.id', 'client__name' => 'client.name'];
+		$this->assertEquals($expected, $select);
+
+		$contains['client']['fields'] = [];
+		$contains['client']['order']['fields'] = false;
+		$query = new Query($this->connection);
+		$query->select()->repository($table)->contain($contains)->sql();
+		$select = $query->clause('select');
+		$expected = [
+			'foo__id' => 'foo.id',
+			'client__id' => 'client.id',
+			'client__name' => 'client.name',
+			'client__phone' => 'client.phone',
+		];
+		$this->assertEquals($expected, $select);
 	}
 }
