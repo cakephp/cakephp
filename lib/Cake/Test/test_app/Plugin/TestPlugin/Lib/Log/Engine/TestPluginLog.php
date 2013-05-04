@@ -20,8 +20,7 @@
 
 App::uses('CakeLogInterface', 'Log');
 
-class TestPluginLog implements CakeLogInterface
-{
+class TestPluginLog implements CakeLogInterface {
 
 	public function write($type, $message) {
 	}
