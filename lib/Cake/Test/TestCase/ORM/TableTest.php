@@ -21,6 +21,14 @@ use Cake\Database\Connection;
 use Cake\ORM\Table;
 
 /**
+ * Used to test correct class is instantiated when using Table::build();
+ *
+ **/
+class DatesTable extends Table {
+
+}
+
+/**
  * Tests Table class
  *
  */
@@ -33,6 +41,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function tearDown() {
 		$this->connection->execute('DROP TABLE IF EXISTS things');
 		$this->connection->execute('DROP TABLE IF EXISTS dates');
+		Table::clearRegistry();
 	}
 
 /**
@@ -106,12 +115,35 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['things' => $options], $map);
 		$this->assertEquals($options, Table::map('things'));
 
-		$options += ['schema' => ['id' => ['rubbish']]];
+		$schema = ['id' => ['rubbish']];
+		$options += ['schema' => $schema];
+		Table::map('things', $options);
 
 		$table = Table::build('foo', ['table' => 'things']);
 		$this->assertInstanceOf('Cake\ORM\Table', $table);
 		$this->assertEquals('things', $table->table());
 		$this->assertEquals('foo', $table->alias());
+		$this->assertSame($this->connection, $table->connection());
+		$this->assertEquals($schema, $table->schema());
+
+		Table::clearRegistry();
+		$this->assertEmpty(Table::map());
+
+		$options['className'] = __NAMESPACE__ . '\DatesTable';
+		Table::map('dates', $options);
+		$table = Table::build('foo', ['table' => 'dates']);
+		$this->assertInstanceOf(__NAMESPACE__ . '\DatesTable', $table);
+		$this->assertEquals('dates', $table->table());
+		$this->assertEquals('foo', $table->alias());
+		$this->assertSame($this->connection, $table->connection());
+		$this->assertEquals($schema, $table->schema());
+	}
+
+	public function testInstance() {
+		$this->assertNull(Table::instance('things'));
+		$table = new Table(['table' => 'things']);
+		Table::instance('things', $table);
+		$this->assertSame($table, Table::instance('things'));
 	}
 
 	public function testFindAllNoFields() {

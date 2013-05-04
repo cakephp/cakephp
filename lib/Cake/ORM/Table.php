@@ -16,6 +16,8 @@
  */
 namespace Cake\ORM;
 
+use Cake\Utility\Inflector;
+
 class Table {
 
 	protected static $_instances = [];
@@ -58,11 +60,23 @@ class Table {
 		}
 
 		$options = ['alias' => $alias] + $options;
+
+		if (empty($options['table'])) {
+			$options['table'] = Inflector::tableize($alias);
+		}
+
 		if (empty($options['className'])) {
 			$options['className'] = get_called_class();
 		}
 
 		return static::$_instances[$alias] = new $options['className']($options);
+	}
+
+	public static function instance($alias, self $object = null) {
+		if ($object === null) {
+			return isset(static::$_instances[$alias]) ? static::$_instances[$alias] : null;
+		}
+		return static::$_instances[$alias] = $object;
 	}
 
 	public static function map($alias = null, array $options = null) {
@@ -79,7 +93,7 @@ class Table {
 		static::$_tablesMap[$alias] = $options;
 	}
 
-	public function clearRegistry() {
+	public static function clearRegistry() {
 		static::$_instances = [];
 		static::$_tablesMap = [];
 	}
