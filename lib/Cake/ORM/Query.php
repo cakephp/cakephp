@@ -13,6 +13,8 @@ class Query extends DatabaseQuery {
 
 	protected $_hasFields;
 
+	protected $_aliasMap = [];
+
 	public function repository(Table $table = null) {
 		if ($table === null) {
 			return $this->_table;
@@ -43,8 +45,8 @@ class Query extends DatabaseQuery {
 		return $this->execute()->toArray();
 	}
 
-	public function aliasedTable() {
-		return $this->repository();
+	public function aliasedTable($alias) {
+		return $this->_aliasMap[$alias];
 	}
 
 	public function aliasField($field, $alias = null) {
@@ -72,6 +74,8 @@ class Query extends DatabaseQuery {
 			return parent::_transformQuery();
 		}
 
+		$this->from([$this->_table->alias() => $this->_table->table()]);
+		$this->_aliasMap[$this->_table->alias()] = $this->_table;
 		$this->_addDefaultFields();
 		$this->_addContainments();
 		return parent::_transformQuery();
@@ -107,6 +111,7 @@ class Query extends DatabaseQuery {
 			'fields' => 1
 		];
 		$table = Table::build($alias);
+		$this->_aliasMap[$alias] = $table;
 
 		if (is_string($options)) {
 			//TODO: finish extracting 

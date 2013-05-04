@@ -24,6 +24,8 @@ class Table {
 
 	protected static $_tablesMap = [];
 
+	protected static $_aliasMap = [];
+
 	protected $_table;
 
 	protected $_alias;
@@ -55,6 +57,11 @@ class Table {
 		if (isset(static::$_instances[$alias])) {
 			return static::$_instances[$alias];
 		}
+
+		if (isset(static::$_aliasMap[$alias])) {
+			$options += ['table' => static::$_aliasMap[$alias]];
+		}
+
 		if (!empty($options['table']) && isset(static::$_tablesMap[$options['table']])) {
 			$options = array_merge(static::$_tablesMap[$options['table']], $options);
 		}
@@ -69,7 +76,13 @@ class Table {
 			$options['className'] = get_called_class();
 		}
 
+		static::map($alias, $options['table']);
+
 		return static::$_instances[$alias] = new $options['className']($options);
+	}
+
+	public static function map($alias, $table) {
+		static::$_aliasMap[$alias] = $table;
 	}
 
 	public static function instance($alias, self $object = null) {
@@ -79,18 +92,18 @@ class Table {
 		return static::$_instances[$alias] = $object;
 	}
 
-	public static function map($alias = null, array $options = null) {
-		if ($alias === null) {
+	public static function config($table = null, array $options = null) {
+		if ($table === null) {
 			return static::$_tablesMap;
 		}
-		if (!is_string($alias)) {
-			static::$_tablesMap = $alias;
+		if (!is_string($table)) {
+			static::$_tablesMap = $table;
 			return;
 		}
 		if ($options === null) {
-			return isset(static::$_tablesMap[$alias]) ? static::$_tablesMap[$alias] : null;
+			return isset(static::$_tablesMap[$table]) ? static::$_tablesMap[$table] : null;
 		}
-		static::$_tablesMap[$alias] = $options;
+		static::$_tablesMap[$table] = $options;
 	}
 
 	public static function clearRegistry() {
@@ -146,8 +159,7 @@ class Table {
 		$query = new Query($this->connection());
 		return $query
 			->repository($this)
-			->select()
-			->from([$this->_alias => $this->_table]);
+			->select();
 	}
 
 }

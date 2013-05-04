@@ -105,19 +105,19 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testMapAndBuild() {
-		$map = Table::map();
+	public function testConfigAndBuild() {
+		$map = Table::config();
 		$this->assertEquals([], $map);
 
 		$options = ['connection' => $this->connection];
-		Table::map('things', $options);
-		$map = Table::map();
+		Table::config('things', $options);
+		$map = Table::config();
 		$this->assertEquals(['things' => $options], $map);
-		$this->assertEquals($options, Table::map('things'));
+		$this->assertEquals($options, Table::config'things'));
 
 		$schema = ['id' => ['rubbish']];
 		$options += ['schema' => $schema];
-		Table::map('things', $options);
+		Table::config('things', $options);
 
 		$table = Table::build('foo', ['table' => 'things']);
 		$this->assertInstanceOf('Cake\ORM\Table', $table);
@@ -127,10 +127,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($schema, $table->schema());
 
 		Table::clearRegistry();
-		$this->assertEmpty(Table::map());
+		$this->assertEmpty(Table::config());
 
 		$options['className'] = __NAMESPACE__ . '\DatesTable';
-		Table::map('dates', $options);
+		Table::config('dates', $options);
 		$table = Table::build('foo', ['table' => 'dates']);
 		$this->assertInstanceOf(__NAMESPACE__ . '\DatesTable', $table);
 		$this->assertEquals('dates', $table->table());

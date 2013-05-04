@@ -32,7 +32,57 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 	public function tearDown() {
+		$this->connection->execute('DROP TABLE IF EXISTS articles');
+		$this->connection->execute('DROP TABLE IF EXISTS authors');
 		Table::clearRegistry();
+	}
+
+
+/**
+ * Test helper for creating tables.
+ *
+ * @return void
+ */
+	protected function _createAuthorsAndArticles() {
+		$table = 'CREATE TEMPORARY TABLE authors(id int, name varchar(50))';
+		$this->connection->execute($table);
+
+		$table = 'CREATE TEMPORARY TABLE articles(id int, title varchar(20), body varchar(50), author_id int)';
+		$this->connection->execute($table);
+
+		Table::config('authors', ['connection' => $this->connection]);
+		Table::config('articles', ['connection' => $this->connection]);
+	}
+
+/**
+ * Auxiliary function to insert a couple rows in a newly created table
+ *
+ * @return void
+ */
+	protected function _insertTwoRecords() {
+		$this->_createAuthorsAndArticles();
+
+		$data = ['id' => '1', 'name' => 'Chuck Norris'];
+		$result = $this->connection->insert('authors', $data, ['id' => 'integer', 'name' => 'string']);
+
+		$result->bindValue(1, '2', 'integer');
+		$result->bindValue(2, 'Bruce Lee');
+		$result->execute();
+
+		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body', 'author_id' => 1];
+		$result = $this->connection->insert(
+			'articles',
+			$data,
+			['id' => 'integer', 'title' => 'string', 'body' => 'string', 'author_id' => 'integer']
+		);
+
+		$result->bindValue(1, '2', 'integer');
+		$result->bindValue(2, 'another title');
+		$result->bindValue(3, 'another body');
+		$result->bindValue(4, 2);
+		$result->execute();
+
+		return $result;
 	}
 
 /**
@@ -223,4 +273,48 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertEquals($expected, $select);
 	}
+
+/**
+ * Tests that results are grouped correctly when using contain()
+ *
+ * @return void
+ **/
+	public function testContainResultFetchingOneLevel() {
+		$this->_insertTwoRecords();
+		Table::map('author', 'authors');
+
+		$query = new Query($this->connection);
+		$contain = ['author' => ['associationType' => 'belongsTo']];
+
+		$table = Table::build('article', ['table' => 'articles']);
+		$results = $query->repository($table)->select()->contain($contain)->toArray();
+		$expected = [
+			[
+				'article' => [
+					'id' => (int) 1,
+					'title' => 'a title',
+					'body' => 'a body',
+					'author_id' => (int) 1
+				],
+				'author' => [
+					'id' => (int) 1,
+					'name' => 'Chuck Norris'
+				]
+			],
+			[
+				'article' => [
+					'id' => (int) 2,
+					'title' => 'another title',
+					'body' => 'another body',
+					'author_id' => (int) 2
+				],
+				'author' => [
+					'id' => (int) 2,
+					'name' => 'Bruce Lee'
+				]
+			]
+		];
+		$this->assertSame($expected, $results);
+	}
+
 }
