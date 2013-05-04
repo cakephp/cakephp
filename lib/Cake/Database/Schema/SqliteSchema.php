@@ -39,7 +39,7 @@ class SqliteSchema {
  *
  * @param string $column The column type + length
  * @throws Cake\Error\Exception
- * @return array List of (type, length)
+ * @return array Array of column information.
  */
 	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
@@ -53,31 +53,34 @@ class SqliteSchema {
 		}
 
 		if ($col === 'bigint') {
-			return ['biginteger', $length];
+			return ['type' => 'biginteger', 'length' => $length];
 		}
 		if (in_array($col, ['blob', 'clob'])) {
-			return ['binary', null];
+			return ['type' => 'binary', 'length' => null];
 		}
 		if (in_array($col, ['date', 'time', 'timestamp', 'datetime'])) {
-			return [$col, null];
+			return ['type' => $col, 'length' => null];
 		}
 		if (strpos($col, 'decimal') !== false) {
-			return ['decimal', null];
+			return ['type' => 'decimal', 'length' => null];
 		}
 
 		if (strpos($col, 'boolean') !== false) {
-			return ['boolean', null];
+			return ['type' => 'boolean', 'length' => null];
 		}
 		if (strpos($col, 'int') !== false) {
-			return ['integer', $length];
+			return ['type' => 'integer', 'length' => $length];
+		}
+		if ($col === 'char') {
+			return ['type' => 'string', 'fixed' => true, 'length' => $length];
 		}
 		if (strpos($col, 'char') !== false) {
-			return ['string', $length];
+			return ['type' => 'string', 'length' => $length];
 		}
 		if (in_array($col, ['float', 'real', 'double'])) {
-			return ['float', null];
+			return ['type' => 'float', 'length' => null];
 		}
-		return ['text', null];
+		return ['type' => 'text', 'length' => null];
 	}
 
 /**
@@ -118,12 +121,10 @@ class SqliteSchema {
  * @param array $fieldParams Additional field parameters to parse.
  */
 	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
-		list($type, $length) = $this->convertColumn($row['type']);
-		$field = [
-			'type' => $type,
+		$field = $this->convertColumn($row['type']);
+		$field += [
 			'null' => !$row['notnull'],
 			'default' => $row['dflt_value'] === null ? null : trim($row['dflt_value'], "'"),
-			'length' => $length,
 		];
 		if ($row['pk'] == true) {
 			$field['null'] = false;
