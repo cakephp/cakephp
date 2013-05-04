@@ -44,19 +44,24 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$contains = ['client' => [
 			'associationType' => 'belongsTo',
 			'table' => 'clients',
+			'fields' => false,
 			'order' => [
 				'associationType' => 'hasOne',
-				'orderType' => ['associationType' => 'belongsTo'],
+				'orderType' => ['associationType' => 'belongsTo', 'fields' => false],
+				'fields' => false,
 				'stuff' => [
-					'associationType' => 'hasOne', 'table' => 'things',
-					'stuffType' => ['associationType' => 'belongsTo']
+					'associationType' => 'hasOne',
+					'table' => 'things',
+					'fields' => false,
+					'stuffType' => ['associationType' => 'belongsTo', 'fields' => false]
 				]
 			],
 			'company' => [
 				'associationType' => 'belongsTo',
+				'fields' => false,
 				'table' => 'organizations',
 				'foreignKey' => 'organization_id',
-				'category' => ['associationType' => 'belongsTo']
+				'category' => ['associationType' => 'belongsTo', 'fields' => false]
 			]
 		]];
 	
@@ -126,6 +131,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->contain($contains)->sql();
 	}
 
+/**
+ * Test that fields for contained models are aliased and added to the select clause
+ *
+ * @return void
+ **/
 	public function testContainToFieldsPredefined() {
 		$contains = ['client' => [
 			'associationType' => 'belongsTo',
@@ -151,4 +161,46 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $select);
 	}
 
+
+/**
+ * Tests that default fields for associations are added to the select clause when
+ * none is specified
+ *
+ * @return void
+ **/
+	public function testContainToFieldsDefault() {
+		$contains = [
+			'client' => [
+				'associationType' => 'belongsTo',
+				'order' => [
+					'associationType' => 'hasOne',
+				]
+			]
+		];
+
+		$schema1 = [
+			'id' => ['type' => 'integer'],
+			'name' => ['type' => 'string'],
+			'phone' => ['type' => 'string']
+		];
+		$schema2 = [
+			'id' => ['type' => 'integer'],
+			'total' => ['type' => 'string'],
+			'placed' => ['type' => 'datetime']
+		];
+		$table = Table::build('foo', ['schema' => ['id' => ['type' => 'integer']]]);
+		Table::build('client', ['schema' => $schema1]);
+		Table::build('order', ['schema' => $schema2]);
+
+		$query = new Query($this->connection);
+		$query->select()->repository($table)->contain($contains)->sql();
+		$select = $query->clause('select');
+		$expected = [
+			'foo__id' => 'foo.id', 'client__name' => 'client.name',
+			'client__id' => 'client.id', 'client__phone' => 'client.phone',
+			'order__id' => 'order.id', 'order__total' => 'order.total',
+			'order__placed' => 'order.placed'
+		];
+		$this->assertEquals($expected, $select);
+	}
 }

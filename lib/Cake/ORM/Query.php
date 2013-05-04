@@ -119,6 +119,9 @@ class Query extends DatabaseQuery {
 		];
 		$config = $this->_resolveForeignKeyConditions($table, $parent, $config);
 
+		if (empty($config['fields']) || $config['fields'] !== false) {
+			$config['fields'] = array_keys($table->schema());
+		}
 		foreach ($extra as $t => $assoc) {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
 		}
