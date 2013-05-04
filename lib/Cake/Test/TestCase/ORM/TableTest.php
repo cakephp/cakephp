@@ -113,7 +113,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		Table::config('things', $options);
 		$map = Table::config();
 		$this->assertEquals(['things' => $options], $map);
-		$this->assertEquals($options, Table::config'things'));
+		$this->assertEquals($options, Table::config('things'));
 
 		$schema = ['id' => ['rubbish']];
 		$options += ['schema' => $schema];
