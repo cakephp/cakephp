@@ -291,25 +291,25 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$expected = [
 			[
 				'article' => [
-					'id' => (int) 1,
+					'id' => 1,
 					'title' => 'a title',
 					'body' => 'a body',
-					'author_id' => (int) 1
+					'author_id' => 1
 				],
 				'author' => [
-					'id' => (int) 1,
+					'id' => 1,
 					'name' => 'Chuck Norris'
 				]
 			],
 			[
 				'article' => [
-					'id' => (int) 2,
+					'id' => 2,
 					'title' => 'another title',
 					'body' => 'another body',
-					'author_id' => (int) 2
+					'author_id' => 2
 				],
 				'author' => [
-					'id' => (int) 2,
+					'id' => 2,
 					'name' => 'Bruce Lee'
 				]
 			]
