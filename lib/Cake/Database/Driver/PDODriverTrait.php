@@ -23,6 +23,13 @@ use PDO;
 trait PDODriverTrait {
 
 /**
+ * Instance of PDO.
+ *
+ * @var \PDO
+ */
+	protected $_connection;
+
+/**
  * Establishes a connection to the databse server
  *
  * @param array $config configuration to be used for creating connection
@@ -69,7 +76,8 @@ trait PDODriverTrait {
  * @return Cake\Database\Statement
  */
 	public function prepare($sql) {
-		$statement = $this->connection()->prepare($sql);
+		$this->connect();
+		$statement = $this->_connection->prepare($sql);
 		return new PDOStatement($statement, $this);
 	}
 
@@ -79,7 +87,8 @@ trait PDODriverTrait {
  * @return boolean true on success, false otherwise
  */
 	public function beginTransaction() {
-		return $this->connection()->beginTransaction();
+		$this->connect();
+		return $this->_connection->beginTransaction();
 	}
 
 /**
@@ -88,7 +97,8 @@ trait PDODriverTrait {
  * @return boolean true on success, false otherwise
  */
 	public function commitTransaction() {
-		return $this->connection()->commit();
+		$this->connect();
+		return $this->_connection->commit();
 	}
 
 /**
@@ -97,7 +107,8 @@ trait PDODriverTrait {
  * @return boolean true on success, false otherwise
  */
 	public function rollbackTransaction() {
-		return $this->connection()->rollback();
+		$this->connect();
+		return $this->_connection->rollback();
 	}
 
 /**
@@ -106,7 +117,8 @@ trait PDODriverTrait {
  * @return string
  */
 	public function quote($value, $type) {
-		return $this->connection()->quote($value, $type);
+		$this->connect();
+		return $this->_connection->quote($value, $type);
 	}
 
 /**
@@ -116,7 +128,8 @@ trait PDODriverTrait {
  * @return string|integer
  */
 	public function lastInsertId($table = null) {
-		return $this->connection()->lastInsertId();
+		$this->connect();
+		return $this->_connection->lastInsertId();
 	}
 
 /**
@@ -125,7 +138,8 @@ trait PDODriverTrait {
  * @return boolean
  */
 	public function supportsQuoting() {
-		return $this->connection()->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
+		$this->connect();
+		return $this->_connection->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
 	}
 
 }

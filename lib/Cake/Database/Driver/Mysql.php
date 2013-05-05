@@ -46,11 +46,13 @@ class Mysql extends \Cake\Database\Driver {
 /**
  * Establishes a connection to the database server
  *
- * @param array $config configuration to be used for creating connection
  * @return boolean true on success
  */
-	public function connect(array $config) {
-		$config += $this->_baseConfig;
+	public function connect() {
+		if ($this->_connection) {
+			return true;
+		}
+		$config = $this->_config;
 
 		if ($config['timezone'] === 'UTC') {
 			$config['timezone'] = '+0:00';

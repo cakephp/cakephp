@@ -77,7 +77,6 @@ class MysqlTest extends TestCase {
  * @return void
  */
 	public function testConnectionConfigCustom() {
-		$driver = $this->getMock('Cake\Database\Driver\Mysql', ['_connect']);
 		$config = [
 			'persistent' => false,
 			'host' => 'foo',
@@ -90,7 +89,11 @@ class MysqlTest extends TestCase {
 			'timezone' => 'Antartica',
 			'init' => ['Execute this', 'this too']
 		];
-
+		$driver = $this->getMock(
+			'Cake\Database\Driver\Mysql',
+			['_connect'],
+			[$config]
+		);
 		$expected = $config;
 		$expected['dsn'] = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
 		$expected['init'][] = "SET time_zone = 'Antartica'";
@@ -102,7 +105,7 @@ class MysqlTest extends TestCase {
 		];
 		$driver->expects($this->once())->method('_connect')
 			->with($expected);
-		$driver->connect($config);
+		$driver->connect();
 	}
 
 }
