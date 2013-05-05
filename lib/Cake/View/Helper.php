@@ -249,10 +249,10 @@ class Helper extends Object {
 /**
  * Finds URL for specified action.
  *
- * Returns a URL pointing at the provided parameters.
+ * Returns an URL pointing at the provided parameters.
  *
  * @param string|array $url Either a relative string url like `/products/view/23` or
- *    an array of url parameters. Using an array for urls will allow you to leverage
+ *    an array of url parameters. Using an array for URLs will allow you to leverage
  *    the reverse routing features of CakePHP.
  * @param boolean $full If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
@@ -305,7 +305,7 @@ class Helper extends Object {
  * @param string|array Path string or url array
  * @param array $options Options array. Possible keys:
  *   `fullBase` Return full url with domain name
- *   `pathPrefix` Path prefix for relative urls
+ *   `pathPrefix` Path prefix for relative URLs
  *   `ext` Asset extension to append
  *   `plugin` False value will prevent parsing path as a plugin
  * @return string Generated url
@@ -336,18 +336,13 @@ class Helper extends Object {
 		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
 		if (!empty($options['fullBase'])) {
-			$base = $this->url('/', true);
-			$len = strlen($this->request->webroot);
-			if ($len) {
-				$base = substr($base, 0, -$len);
-			}
-			$path = $base . $path;
+			$path = rtrim(FULL_BASE_URL, '/') . '/' . ltrim($path, '/');
 		}
 		return $path;
 	}
 
 /**
- * Encodes a URL for use in HTML attributes.
+ * Encodes an URL for use in HTML attributes.
  *
  * @param string $url The url to encode.
  * @return string The url encoded for both URL & HTML contexts.

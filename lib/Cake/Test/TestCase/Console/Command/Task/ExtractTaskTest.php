@@ -147,7 +147,7 @@ class ExtractTaskTest extends TestCase {
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
-		$pattern .= '\#: (\\\\|\/)home\.ctp:136\n';
+		$pattern .= '\#: (\\\\|\/)home\.ctp:119\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
 

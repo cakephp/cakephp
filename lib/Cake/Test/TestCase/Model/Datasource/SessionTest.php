@@ -349,21 +349,6 @@ class SessionTest extends TestCase {
 	}
 
 /**
- * testError method
- *
- * @return void
- */
-	public function testError() {
-		TestCakeSession::read('Does.not.exist');
-		$result = TestCakeSession::error();
-		$this->assertEquals("Does.not.exist doesn't exist", $result);
-
-		TestCakeSession::delete('Failing.delete');
-		$result = TestCakeSession::error();
-		$this->assertEquals("Failing.delete doesn't exist", $result);
-	}
-
-/**
  * testDel method
  *
  * @return void

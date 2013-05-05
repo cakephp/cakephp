@@ -590,8 +590,27 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * Test that a really REALLY large page number gets clamped to the max page size.
+ *
+ *
+ * @expectedException NotFoundException
+ * @return void
+ */
+	public function testOutOfVeryBigPageNumberGetsClamped() {
+		$Controller = new PaginatorTestController($this->request);
+		$Controller->uses = array('PaginatorControllerPost');
+		$Controller->params['named'] = array(
+			'page' => '3000000000000000000000000',
+		);
+		$Controller->constructClasses();
+		$Controller->PaginatorControllerPost->recursive = 0;
+		$Controller->Paginator->paginate('PaginatorControllerPost');
+	}
+
+/**
  * testOutOfRangePageNumberAndPageCountZero
  *
+ * @expectedException NotFoundException
  * @return void
  */
 	public function testOutOfRangePageNumberAndPageCountZero() {
@@ -658,6 +677,30 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * test that sorting fields is alias specific
+ *
+ * @return void
+ */
+	public function testValidateSortSharedFields() {
+		$model = $this->getMock('Model');
+		$model->alias = 'Parent';
+		$model->Child = $this->getMock('Model');
+		$model->Child->alias = 'Child';
+
+		$model->expects($this->never())
+			->method('hasField');
+
+		$model->Child->expects($this->at(0))
+			->method('hasField')
+			->with('something')
+			->will($this->returnValue(true));
+
+		$options = array('sort' => 'Child.something', 'direction' => 'desc');
+		$result = $this->Paginator->validateSort($model, $options);
+
+		$this->assertEquals('desc', $result['order']['Child.something']);
+	}
+/**
  * test that multiple sort works.
  *
  * @return void
@@ -667,10 +710,12 @@ class PaginatorComponentTest extends TestCase {
 		$model->alias = 'model';
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
-		$options = array('order' => array(
-			'author_id' => 'asc',
-			'title' => 'asc'
-		));
+		$options = array(
+			'order' => array(
+				'author_id' => 'asc',
+				'title' => 'asc'
+			)
+		);
 		$result = $this->Paginator->validateSort($model, $options);
 		$expected = array(
 			'model.author_id' => 'asc',
@@ -698,6 +743,21 @@ class PaginatorComponentTest extends TestCase {
 		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
 
 		$this->assertEquals($options['order'], $result['order']);
+	}
+
+/**
+ * Test sorting with incorrect aliases on valid fields.
+ *
+ * @return void
+ */
+	public function testValidateSortInvalidAlias() {
+		$model = $this->getMock('Model');
+		$model->alias = 'Model';
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array('sort' => 'Derp.id');
+		$result = $this->Paginator->validateSort($model, $options);
+		$this->assertEquals(array(), $result['order']);
 	}
 
 /**

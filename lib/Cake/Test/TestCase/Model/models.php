@@ -1319,7 +1319,7 @@ class NodeNoAfterFind extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Model
  */
-class Node extends CakeTestModel{
+class Node extends CakeTestModel {
 
 /**
  * name property

@@ -298,7 +298,7 @@ class FormHelper extends Helper {
  *
  * - `type` Form method defaults to POST
  * - `action`  The controller action the form submits to, (optional).
- * - `url`  The url the form submits to. Can be a string or a url array. If you use 'url'
+ * - `url`  The URL the form submits to. Can be a string or an URL array. If you use 'url'
  *    you should leave 'action' undefined.
  * - `default`  Allows for the creation of Ajax forms. Set this to false to prevent the default event handler.
  *   Will create an onsubmit attribute if it doesn't not exist. If it does, default action suppression
@@ -1754,7 +1754,7 @@ class FormHelper extends Helper {
 			unset($options['confirm']);
 		}
 
-		$formName = uniqid('post_');
+		$formName = str_replace('.', '', uniqid('post_', true));
 		$formUrl = $this->url($url);
 		$formOptions = array(
 			'name' => $formName,
@@ -2220,7 +2220,7 @@ class FormHelper extends Helper {
 		if ($attributes['value'] > 12 && !$format24Hours) {
 			$attributes['value'] -= 12;
 		}
-		if ($attributes['value'] === '00' && !$format24Hours) {
+		if (($attributes['value'] === 0 || $attributes['value'] === '00') && !$format24Hours) {
 			$attributes['value'] = 12;
 		}
 
