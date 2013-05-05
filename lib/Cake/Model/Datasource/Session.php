@@ -245,7 +245,6 @@ class Session {
 			static::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
 			return !static::check($name);
 		}
-		static::_setError(2, __d('cake_dev', "%s doesn't exist", $name));
 		return false;
 	}
 
@@ -365,7 +364,6 @@ class Session {
 		if (isset($result)) {
 			return $result;
 		}
-		static::_setError(2, "$name doesn't exist");
 		return null;
 	}
 

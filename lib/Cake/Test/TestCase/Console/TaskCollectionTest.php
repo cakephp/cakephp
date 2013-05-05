@@ -125,4 +125,30 @@ class TaskCollectionTest extends TestCase {
 		$this->assertEquals(array('Extract'), $result, 'loaded tasks is wrong');
 	}
 
+/**
+ * Tests loading as an alias
+ *
+ * @return void
+ */
+	public function testLoadWithAlias() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
+		));
+		Plugin::load('TestPlugin');
+
+		$result = $this->Tasks->load('DbConfigAliased', array('className' => 'DbConfig'));
+		$this->assertInstanceOf('Cake\Console\Command\Task\DbConfigTask', $result);
+		$this->assertInstanceOf('Cake\Console\Command\Task\DbConfigTask', $this->Tasks->DbConfigAliased);
+
+		$result = $this->Tasks->loaded();
+		$this->assertEquals(array('DbConfigAliased'), $result, 'loaded() results are wrong.');
+
+		$result = $this->Tasks->load('SomeTask', array('className' => 'TestPlugin.OtherTask'));
+		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $result);
+		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $this->Tasks->SomeTask);
+
+		$result = $this->Tasks->loaded();
+		$this->assertEquals(array('DbConfigAliased', 'SomeTask'), $result, 'loaded() results are wrong.');
+	}
+
 }

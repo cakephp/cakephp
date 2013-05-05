@@ -249,9 +249,9 @@ class Route {
  * Checks to see if the given URL can be parsed by this route.
  *
  * If the route can be parsed an array of parameters will be returned; if not
- * false will be returned. String urls are parsed if they match a routes regular expression.
+ * false will be returned. String URLs are parsed if they match a routes regular expression.
  *
- * @param string $url The url to attempt to parse.
+ * @param string $url The URL to attempt to parse.
  * @return mixed Boolean false on failure, otherwise an array or parameters
  */
 	public function parse($url) {
@@ -388,11 +388,11 @@ class Route {
 	}
 
 /**
- * Check if a url array matches this route instance.
+ * Check if an URL array matches this route instance.
  *
- * If the url matches the route parameters and settings, then
- * return a generated string url. If the url doesn't match the route parameters, false will be returned.
- * This method handles the reverse routing or conversion of url arrays into string urls.
+ * If the URL matches the route parameters and settings, then
+ * return a generated string URL. If the URL doesn't match the route parameters, false will be returned.
+ * This method handles the reverse routing or conversion of URL arrays into string URLs.
  *
  * @param array $url An array of parameters to check matching with.
  * @param array $context An array of the current request context.
@@ -499,9 +499,9 @@ class Route {
 	}
 
 /**
- * Converts a matching route array into a url string.
+ * Converts a matching route array into an URL string.
  *
- * Composes the string url using the template
+ * Composes the string URL using the template
  * used to create the route.
  *
  * @param array $params The params to convert to a string url.

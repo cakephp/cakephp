@@ -65,6 +65,10 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testFullBaseURL() {
+		$skip = PHP_SAPI === 'cli';
+		if ($skip) {
+			$this->markTestSkipped('Cannot validate base URLs in CLI');
+		}
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('_full' => true)));
@@ -365,6 +369,8 @@ class RouterTest extends TestCase {
 
 /**
  * Test generating urls with base paths.
+ *
+ * @return void
  */
 	public function testUrlGenerationWithBasePath() {
 		Router::connect('/:controller/:action/*');

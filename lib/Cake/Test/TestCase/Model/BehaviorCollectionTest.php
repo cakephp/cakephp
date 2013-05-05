@@ -349,7 +349,7 @@ class Test2Behavior extends TestBehavior {
  *
  * @package       Cake.Test.Case.Model
  */
-class Test3Behavior extends TestBehavior{
+class Test3Behavior extends TestBehavior {
 }
 
 /**
@@ -357,7 +357,7 @@ class Test3Behavior extends TestBehavior{
  *
  * @package       Cake.Test.Case.Model
  */
-class Test4Behavior extends ModelBehavior{
+class Test4Behavior extends ModelBehavior {
 
 	public function setup(Model $model, $config = null) {
 		$model->bindModel(
@@ -372,7 +372,7 @@ class Test4Behavior extends ModelBehavior{
  *
  * @package       Cake.Test.Case.Model
  */
-class Test5Behavior extends ModelBehavior{
+class Test5Behavior extends ModelBehavior {
 
 	public function setup(Model $model, $config = null) {
 		$model->bindModel(
@@ -387,7 +387,7 @@ class Test5Behavior extends ModelBehavior{
  *
  * @package       Cake.Test.Case.Model
  */
-class Test6Behavior extends ModelBehavior{
+class Test6Behavior extends ModelBehavior {
 
 	public function setup(Model $model, $config = null) {
 		$model->bindModel(
@@ -402,7 +402,7 @@ class Test6Behavior extends ModelBehavior{
  *
  * @package       Cake.Test.Case.Model
  */
-class Test7Behavior extends ModelBehavior{
+class Test7Behavior extends ModelBehavior {
 
 	public function setup(Model $model, $config = null) {
 		$model->bindModel(
