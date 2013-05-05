@@ -74,7 +74,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 
-		$driver->connect([]);
+		$driver->connect();
 	}
 
 /**
@@ -83,7 +83,6 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testConnectionConfigCustom() {
-		$driver = $this->getMock('Cake\Database\driver\Postgres', ['_connect', 'connection']);
 		$config = [
 			'persistent' => false,
 			'host' => 'foo',
@@ -97,6 +96,11 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			'schema' => 'fooblic',
 			'init' => ['Execute this', 'this too']
 		];
+		$driver = $this->getMock(
+			'Cake\Database\driver\Postgres',
+			['_connect', 'connection'],
+			[$config]
+		);
 
 		$expected = $config;
 		$expected['dsn'] = 'pgsql:host=foo;port=3440;dbname=bar';
@@ -121,12 +125,14 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 		$connection->expects($this->at(7))->method('exec')->with('SET timezone = Antartica');
 		$connection->expects($this->exactly(5))->method('exec');
 
+		$driver->connection($connection);
 		$driver->expects($this->once())->method('_connect')
 			->with($expected);
+
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 
-		$driver->connect($config);
+		$driver->connect();
 	}
 
 }
