@@ -61,7 +61,6 @@ class SqliteTest extends TestCase {
  * @return void
  */
 	public function testConnectionConfigCustom() {
-		$driver = $this->getMock('Cake\Database\driver\Sqlite', ['_connect', 'connection']);
 		$config = [
 			'persistent' => true,
 			'host' => 'foo',
@@ -70,6 +69,11 @@ class SqliteTest extends TestCase {
 			'encoding' => 'a-language',
 			'init' => ['Execute this', 'this too']
 		];
+		$driver = $this->getMock(
+			'Cake\Database\driver\Sqlite',
+			['_connect', 'connection'],
+			[$config]
+		);
 
 		$expected = $config;
 		$expected += ['login' => null, 'password' => null];

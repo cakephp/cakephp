@@ -23,22 +23,47 @@ use \Cake\Database\SqlDialectTrait;
  * Represents a database diver containing all specificities for
  * a database engine including its SQL dialect
  *
- **/
+ */
 abstract class Driver {
+
+/**
+ * Configuration data.
+ *
+ * @var array
+ */
+	protected $_config;
+
+/**
+ * Base configuration that is merged into the user
+ * supplied configuration data.
+ *
+ * @var array
+ */
+	protected $_baseConfig = [];
+
+/**
+ * Constructor
+ *
+ * @param array $config The configuration for the driver.
+ * @return void
+ */
+	public function __construct($config = []) {
+		$config += $this->_baseConfig;
+		$this->_config = $config;
+	}
 
 /**
  * Establishes a connection to the database server
  *
- * @param array $config configuration to be used for creating connection
  * @return boolean true con success
- **/
-	public abstract function connect(array $config);
+ */
+	public abstract function connect();
 
 /**
  * Disconnects from database server
  *
  * @return void
- **/
+ */
 	public abstract function disconnect();
 
 /**
@@ -46,14 +71,14 @@ abstract class Driver {
  * If first argument is passed,
  *
  * @return void
- **/
+ */
 	public abstract function connection($connection = null);
 
 /**
  * Returns whether php is able to use this driver for connecting to database
  *
  * @return boolean true if it is valid to use this driver
- **/
+ */
 	public abstract function enabled();
 
 /**
@@ -61,28 +86,28 @@ abstract class Driver {
  *
  * @param string $sql
  * @return Cake\Database\Statement
- **/
+ */
 	public abstract function prepare($sql);
 
 /**
  * Starts a transaction
  *
  * @return boolean true on success, false otherwise
- **/
+ */
 	public abstract function beginTransaction();
 
 /**
  * Commits a transaction
  *
  * @return boolean true on success, false otherwise
- **/
+ */
 	public abstract function commitTransaction();
 
 /**
  * Rollsback a transaction
  *
  * @return boolean true on success, false otherwise
- **/
+ */
 	public abstract function rollbackTransaction();
 
 /**
@@ -105,7 +130,7 @@ abstract class Driver {
  * Checks if the driver supports quoting
  *
  * @return boolean
- **/
+ */
 	public function supportsQuoting() {
 		return true;
 	}
@@ -115,9 +140,27 @@ abstract class Driver {
  *
  * @param string $table table name or sequence to get last insert value from
  * @return string|integer
- **/
+ */
 	public function lastInsertId($table = null) {
 		return $this->_connection->lastInsertId($table);
+	}
+
+/**
+ * Check whether or not the driver is connected.
+ *
+ * @return boolean
+ */
+	public function isConnected() {
+		return $this->_connection !== null;
+	}
+
+/**
+ * Destructor
+ *
+ * @return void
+ */
+	public function __destruct() {
+		$this->_connection = null;
 	}
 
 }
