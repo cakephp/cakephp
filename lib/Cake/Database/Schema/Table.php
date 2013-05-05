@@ -16,6 +16,7 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Connection;
 use Cake\Error;
 
 /**
@@ -236,6 +237,27 @@ class Table {
 			}
 		}
 		return null;
+	}
+
+/**
+ * Generate the SQL to create the Table.
+ *
+ * Uses the connection to access the schema dialect
+ * to generate platform specific SQL.
+ *
+ * @param Connection $connection The connection to generate SQL for
+ * @return string SQL statement to create the table.
+ */
+	public function createTableSql(Connection $connection) {
+		$dialect = $connection->driver()->schemaDialect();
+		$lines = [];
+		foreach ($this->_columns as $name => $data) {
+			$lines[] = $dialect->columnSql($name, $data);
+		}
+		foreach ($this->_indexes as $name => $data) {
+			$lines[] = $dialect->indexSql($name, $data);
+		}
+		return $dialect->createTableSql($this->_table, $lines);
 	}
 
 }

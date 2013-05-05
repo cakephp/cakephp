@@ -160,4 +160,97 @@ class MysqlSchema {
 		];
 	}
 
+	public function createTableSql($table, $lines) {
+
+	}
+
+/**
+ * Generate the SQL fragment for a single column in MySQL
+ *
+ * @param string $name The name of the column.
+ * @param array $data The attributes for the column.
+ * @return string SQL fragment.
+ */
+	public function columnSql($name, $data) {
+		$out = $this->_driver->quoteIdentifier($name);
+		switch ($data['type']) {
+			case 'string':
+				$out .= !empty($data['fixed']) ? ' CHAR' : ' VARCHAR';
+				if (!isset($data['length'])) {
+					$data['length'] = 255;
+				}
+			break;
+			case 'integer':
+				$out .= ' INT';
+			break;
+			case 'biginteger':
+				$out .= ' BIGINT';
+			break;
+			case 'boolean':
+				$out .= ' BOOLEAN';
+			break;
+			case 'text':
+				$out .= ' TEXT';
+			break;
+			case 'datetime':
+				$out .= ' DATETIME';
+			break;
+			break;
+		}
+		$hasLength = [
+			'integer', 'string', 'float'
+		];
+		if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
+			$out .= '(' . $data['length'] . ')';
+		}
+		if (isset($data['null']) && $data['null'] === false) {
+			$out .= ' NOT NULL';
+		}
+		if (isset($data['default'])) {
+			$out .= ' DEFAULT ' . $this->_value($data['default']);
+		}
+		if (isset($data['comment'])) {
+			$out .= ' COMMENT ' . $this->_value($data['comment']);
+		}
+		return $out;
+	}
+
+/**
+ * Escapes values for use in schema definitions.
+ *
+ * @param mixed $value The value to escape.
+ * @return string String for use in schema definitions.
+ */
+	protected function _value($value) {
+		if (is_null($value)) {
+			return 'NULL';
+		}
+		if ($value === false) {
+			return 'FALSE';
+		}
+		if ($value === true) {
+			return 'TRUE';
+		}
+		if (is_float($value)) {
+			return str_replace(',', '.', strval($value));
+		}
+		if ((is_int($value) || $value === '0') || (
+			is_numeric($value) && strpos($value, ',') === false &&
+			$value[0] != '0' && strpos($value, 'e') === false)
+		) {
+			return $value;
+		}
+		return $this->_driver->quote($value, \PDO::PARAM_STR);
+	}
+
+/**
+ * Generate the SQL fragment for a single index in MySQL
+ *
+ * @param string $name The name of the column.
+ * @param array $data The attributes for the column.
+ * @return string SQL fragment.
+ */
+	public function indexSql($name, $data) {
+	}
+
 }

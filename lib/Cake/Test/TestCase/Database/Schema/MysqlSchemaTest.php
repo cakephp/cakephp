@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\MysqlSchema;
+use Cake\Database\Schema\Table;
 use Cake\TestSuite\TestCase;
 
 
@@ -260,6 +261,129 @@ SQL;
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}
+	}
+
+/**
+ * Column provider for creating column sql
+ *
+ * @return array
+ */
+	public static function columnSqlProvider() {
+		return [
+			// strings
+			[
+				'title',
+				['type' => 'string', 'length' => 25, 'null' => false],
+				'`title` VARCHAR(25) NOT NULL'
+			],
+			[
+				'id',
+				['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
+				'`id` CHAR(32) NOT NULL'
+			],
+			[
+				'role',
+				['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
+				'`role` VARCHAR(10) NOT NULL DEFAULT "admin"'
+			],
+			[
+				'title',
+				['type' => 'string'],
+				'`title` VARCHAR(255)'
+			],
+			// Text
+			[
+				'body',
+				['type' => 'text', 'null' => false],
+				'`body` TEXT NOT NULL'
+			],
+			// Integers
+			[
+				'post_id',
+				['type' => 'integer', 'length' => 11],
+				'`post_id` INT(11)'
+			],
+			[
+				'post_id',
+				['type' => 'biginteger', 'length' => 20],
+				'`post_id` BIGINT'
+			],
+			// Boolean
+			[
+				'checked',
+				['type' => 'boolean', 'default' => false],
+				'`checked` BOOLEAN DEFAULT FALSE'
+			],
+			[
+				'checked',
+				['type' => 'boolean', 'default' => true, 'null' => false],
+				'`checked` BOOLEAN NOT NULL DEFAULT TRUE'
+			],
+			// datetimes
+			[
+				'created',
+				['type' => 'datetime', 'comment' => 'Created timestamp'],
+				'`created` DATETIME COMMENT "Created timestamp"'
+			],
+			// timestamps
+			// TODO add timestamps including CURRENT_TIMESTAMP
+		];
+	}
+
+/**
+ * Test generating column definitions
+ *
+ * @dataProvider columnSqlProvider
+ * @return void
+ */
+	public function testColumnSql($name, $data, $expected) {
+		$driver = new \Cake\Database\Driver\Mysql();
+		$dialect = new MysqlSchema($driver);
+		$this->assertEquals($expected, $dialect->columnSql($name, $data));
+	}
+
+/**
+ * Integration test for converting a Schema\Table into MySQL table creates.
+ *
+ * @return void
+ */
+	public function testCreateTableSql() {
+		$table = (new Table('posts'))->addColumn('id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addColumn('title', [
+				'type' => 'string',
+				'null' => false,
+				'comment' => 'The title'
+			])
+			->addColumn('body', ['type' => 'text'])
+			->addColumn('created', 'datetime')
+			->addIndex('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+
+		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$driver = $this->getMock('Cake\Database\Driver\Mysql');
+		$dialect = new MysqlSchema($driver);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+		$driver->expects($this->any())
+			->method('schemaDialect')
+			->will($this->returnValue($dialect));
+
+		$result = $table->createTableSql($connection);
+		$expected = <<<SQL
+CREATE TABLE `posts` (
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`title` VARCHAR(255) NOT NULL COMMENT 'The title',
+	`body` TEXT,
+	`created` DATETIME,
+	PRIMARY KEY (`id`)
+);
+SQL;
+		$this->assertEquals($expected, $result);
 	}
 
 }

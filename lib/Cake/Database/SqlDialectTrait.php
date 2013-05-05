@@ -25,7 +25,7 @@ trait SqlDialectTrait {
  *
  * @param string $identifier
  * @return string
- **/
+ */
 	public function quoteIdentifier($identifier) {
 		$identifier = trim($identifier);
 
