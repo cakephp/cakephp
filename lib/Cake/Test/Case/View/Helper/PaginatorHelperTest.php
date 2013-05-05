@@ -2474,7 +2474,7 @@ class PaginatorHelperTest extends CakeTestCase {
 	}
 
 /**
- * test that querystring urls can be generated.
+ * test that query string URLs can be generated.
  *
  * @return void
  */
@@ -2490,7 +2490,7 @@ class PaginatorHelperTest extends CakeTestCase {
 	}
 
 /**
- * test querystring paging link.
+ * test query string paging link.
  *
  * @return void
  */

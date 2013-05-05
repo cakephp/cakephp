@@ -1229,4 +1229,28 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEquals($expected, $result[0]);
 	}
 
+/**
+ * Test the limit function.
+ *
+ * @return void
+ */
+	public function testLimit() {
+		$db = new DboTestSource;
+
+		$result = $db->limit('0');
+		$this->assertNull($result);
+
+		$result = $db->limit('10');
+		$this->assertEquals(' LIMIT 10', $result);
+
+		$result = $db->limit('FARTS', 'BOOGERS');
+		$this->assertEquals(' LIMIT 0, 0', $result);
+
+		$result = $db->limit(20, 10);
+		$this->assertEquals(' LIMIT 10, 20', $result);
+
+		$result = $db->limit(10, 300000000000000000000000000000);
+		$this->assertEquals(' LIMIT 0, 10', $result);
+	}
+
 }

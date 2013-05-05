@@ -97,7 +97,7 @@ class AppTest extends CakeTestCase {
 	}
 
 /**
- * tests that it is possible to set up paths using the cake 1.3 notation for them (models, behaviors, controllers...)
+ * tests that it is possible to set up paths using the CakePHP 1.3 notation for them (models, behaviors, controllers...)
  *
  * @return void
  */

@@ -1,7 +1,5 @@
 <?php
 /**
- * Validation Class. Used for validation of model data
- *
  * PHP Version 5.x
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -13,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
  * @since         CakePHP(tm) v 1.2.0.3830
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,16 +18,18 @@
 App::uses('Multibyte', 'I18n');
 App::uses('File', 'Utility');
 App::uses('CakeNumber', 'Utility');
+
 // Load multibyte if the extension is missing.
 if (!function_exists('mb_strlen')) {
 	class_exists('Multibyte');
 }
 
 /**
+ * Validation Class. Used for validation of model data
+ *
  * Offers different validation methods.
  *
  * @package       Cake.Utility
- * @since         CakePHP v 1.2.0.3830
  */
 class Validation {
 
@@ -40,7 +39,7 @@ class Validation {
  * @var array
  */
 	protected static $_pattern = array(
-		'hostname' => '(?:[-_a-z0-9][-_a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})'
+		'hostname' => '(?:[_a-z0-9][-_a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})'
 	);
 
 /**
@@ -532,7 +531,7 @@ class Validation {
  * @return boolean Success
  */
 	public static function money($check, $symbolPosition = 'left') {
-		$money = '(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?';
+		$money = '(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{1,2})?';
 		if ($symbolPosition === 'right') {
 			$regex = '/^' . $money . '(?<!\x{00a2})\p{Sc}?$/u';
 		} else {

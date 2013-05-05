@@ -593,7 +593,7 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
- * Test urls like http://cakephp.org/index.php?somestring without key/value pair for query
+ * Test URLs like http://cakephp.org/index.php?somestring without key/value pair for query
  *
  * @return void
  */
@@ -780,7 +780,7 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
- * Test that redirect urls are urldecoded
+ * Test that redirect URLs are urldecoded
  *
  * @return void
  */

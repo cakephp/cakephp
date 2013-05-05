@@ -212,6 +212,9 @@ class PaginatorComponent extends Component {
 		$pageCount = intval(ceil($count / $limit));
 		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
+		if ($requestedPage > $page) {
+			throw new NotFoundException();
+		}
 
 		$paging = array(
 			'page' => $page,
@@ -233,10 +236,6 @@ class PaginatorComponent extends Component {
 			(array)$this->Controller->request['paging'],
 			array($object->alias => $paging)
 		);
-
-		if ($requestedPage > $page) {
-			throw new NotFoundException();
-		}
 
 		if (
 			!in_array('Paginator', $this->Controller->helpers) &&
@@ -384,10 +383,11 @@ class PaginatorComponent extends Component {
 				if (strpos($key, '.') !== false) {
 					list($alias, $field) = explode('.', $key);
 				}
+				$correctAlias = ($object->alias == $alias);
 
-				if ($object->hasField($field)) {
+				if ($correctAlias && $object->hasField($field)) {
 					$order[$object->alias . '.' . $field] = $value;
-				} elseif ($object->hasField($key, true)) {
+				} elseif ($correctAlias && $object->hasField($key, true)) {
 					$order[$field] = $value;
 				} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field, true)) {
 					$order[$alias . '.' . $field] = $value;

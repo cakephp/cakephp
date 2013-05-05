@@ -890,32 +890,41 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that a really REALLY large page number gets clamped to the max page size.
+ * 
+ *
+ * @expectedException NotFoundException
+ * @return void
+ */
+	public function testOutOfVeryBigPageNumberGetsClamped() {
+		$Controller = new PaginatorTestController($this->request);
+		$Controller->uses = array('PaginatorControllerPost');
+		$Controller->params['named'] = array(
+			'page' => '3000000000000000000000000',
+		);
+		$Controller->constructClasses();
+		$Controller->PaginatorControllerPost->recursive = 0;
+		$Controller->Paginator->paginate('PaginatorControllerPost');
+	}
+
+/**
  * testOutOfRangePageNumberAndPageCountZero
  *
+ * @expectedException NotFoundException
  * @return void
  */
 	public function testOutOfRangePageNumberAndPageCountZero() {
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
 		$Controller->params['named'] = array(
-			'page' => 3000,
+			'page' => '3000',
 		);
 		$Controller->constructClasses();
 		$Controller->PaginatorControllerPost->recursive = 0;
 		$Controller->paginate = array(
 			'conditions' => array('PaginatorControllerPost.id >' => 100)
 		);
-		try {
-			$Controller->Paginator->paginate('PaginatorControllerPost');
-		} catch (NotFoundException $e) {
-			$this->assertEquals(
-				1,
-				$Controller->request->params['paging']['PaginatorControllerPost']['page'],
-				'Page number should not be 0'
-			);
-			return;
-		}
-		$this->fail();
+		$Controller->Paginator->paginate('PaginatorControllerPost');
 	}
 
 /**
@@ -959,6 +968,30 @@ class PaginatorComponentTest extends CakeTestCase {
 		$this->assertEquals('desc', $result['order']['something']);
 	}
 
+/**
+ * test that sorting fields is alias specific
+ *
+ * @return void
+ */
+	public function testValidateSortSharedFields() {
+		$model = $this->getMock('Model');
+		$model->alias = 'Parent';
+		$model->Child = $this->getMock('Model');
+		$model->Child->alias = 'Child';
+
+		$model->expects($this->never())
+			->method('hasField');
+
+		$model->Child->expects($this->at(0))
+			->method('hasField')
+			->with('something')
+			->will($this->returnValue(true));
+
+		$options = array('sort' => 'Child.something', 'direction' => 'desc');
+		$result = $this->Paginator->validateSort($model, $options);
+
+		$this->assertEquals('desc', $result['order']['Child.something']);
+	}
 /**
  * test that multiple sort works.
  *
@@ -1016,7 +1049,7 @@ class PaginatorComponentTest extends CakeTestCase {
 
 		$options = array('sort' => 'Derp.id');
 		$result = $this->Paginator->validateSort($model, $options);
-		$this->assertEquals(array('Model.id' => 'asc'), $result['order']);
+		$this->assertEquals(array(), $result['order']);
 	}
 
 /**

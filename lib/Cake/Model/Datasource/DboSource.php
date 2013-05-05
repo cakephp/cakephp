@@ -1529,7 +1529,6 @@ class DboSource extends DataSource {
 		if (empty($assocData['offset']) && !empty($assocData['page'])) {
 			$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
 		}
-		$assocData['limit'] = $this->limit($assocData['limit'], $assocData['offset']);
 
 		switch ($type) {
 			case 'hasOne':
@@ -1555,7 +1554,6 @@ class DboSource extends DataSource {
 						'alias' => $association,
 						'group' => null
 					));
-					$query += array('order' => $assocData['order'], 'limit' => $assocData['limit']);
 				} else {
 					$join = array(
 						'table' => $linkModel,
@@ -1586,6 +1584,7 @@ class DboSource extends DataSource {
 					'alias' => $association,
 					'order' => $assocData['order'],
 					'limit' => $assocData['limit'],
+					'offset' => $assocData['offset'],
 					'group' => null
 				);
 			break;
@@ -1613,6 +1612,7 @@ class DboSource extends DataSource {
 				$query = array(
 					'conditions' => $assocData['conditions'],
 					'limit' => $assocData['limit'],
+					'offset' => $assocData['offset'],
 					'table' => $this->fullTableName($linkModel),
 					'alias' => $association,
 					'fields' => array_merge($this->fields($linkModel, $association, $assocData['fields']), $joinFields),
@@ -2672,16 +2672,13 @@ class DboSource extends DataSource {
  */
 	public function limit($limit, $offset = null) {
 		if ($limit) {
-			$rt = '';
-			if (!strpos(strtolower($limit), 'limit')) {
-				$rt = ' LIMIT';
-			}
+			$rt = ' LIMIT';
 
 			if ($offset) {
-				$rt .= ' ' . $offset . ',';
+				$rt .= sprintf(' %u,', $offset);
 			}
 
-			$rt .= ' ' . $limit;
+			$rt .= sprintf(' %u', $limit);
 			return $rt;
 		}
 		return null;

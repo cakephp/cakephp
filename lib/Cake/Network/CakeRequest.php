@@ -603,10 +603,10 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Get the value of the current requests url. Will include named parameters and querystring arguments.
+ * Get the value of the current requests URL. Will include named parameters and querystring arguments.
  *
  * @param boolean $base Include the base path, set to false to trim the base path off.
- * @return string the current request url including query string args.
+ * @return string the current request URL including query string args.
  */
 	public function here($base = true) {
 		$url = $this->here;

@@ -285,7 +285,7 @@ class JsHelper extends AppHelper {
  * - `buffer` - Disable the buffering and return a script tag in addition to the link.
  *
  * @param string $title Title for the link.
- * @param string|array $url Mixed either a string URL or an cake url array.
+ * @param string|array $url Mixed either a string URL or a CakePHP URL array.
  * @param array $options Options for both the HTML element and Js::request()
  * @return string Completed link. If buffering is disabled a script tag will be returned as well.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::link
