@@ -891,7 +891,7 @@ class PaginatorComponentTest extends CakeTestCase {
 
 /**
  * Test that a really REALLY large page number gets clamped to the max page size.
- * 
+ *
  *
  * @expectedException NotFoundException
  * @return void
@@ -1138,7 +1138,9 @@ class PaginatorComponentTest extends CakeTestCase {
 		);
 		$Controller->passedArgs = array('sort' => 'PaginatorControllerPost.title', 'dir' => 'asc');
 		$result = $Controller->paginate('PaginatorControllerComment');
-		$this->assertEquals(array(1, 2, 3, 4, 5, 6), Hash::extract($result, '{n}.PaginatorControllerComment.id'));
+		$result = Hash::extract($result, '{n}.PaginatorControllerComment.id');
+		sort($result);
+		$this->assertEquals(array(1, 2, 3, 4, 5, 6), $result);
 	}
 
 /**
