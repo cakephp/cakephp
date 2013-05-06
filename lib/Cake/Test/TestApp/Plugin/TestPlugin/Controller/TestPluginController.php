@@ -1,6 +1,6 @@
 <?php
 /**
- * TestPluginController used by Dispatcher test to test plugin shortcut urls.
+ * TestPluginController used by Dispatcher test to test plugin shortcut URLs.
  *
  * PHP 5
  *

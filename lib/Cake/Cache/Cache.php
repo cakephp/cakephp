@@ -92,6 +92,13 @@ class Cache {
 	protected static $_config = array();
 
 /**
+ * Group to Config mapping
+ *
+ * @var array
+ */
+	protected static $_groups = array();
+
+/**
  * Whether to reset the settings with the next call to Cache::set();
  *
  * @var array
@@ -148,6 +155,15 @@ class Cache {
 			$engine->gc();
 		}
 		static::$_engines[$name] = $engine;
+
+		if (!empty($config['groups'])) {
+			foreach ($config['groups'] as $group) {
+				static::$_groups[$group][] = $name;
+				sort(static::$_groups[$group]);
+				static::$_groups[$group] = array_unique(static::$_groups[$group]);
+			}
+		}
+
 		return true;
 	}
 
@@ -185,7 +201,7 @@ class Cache {
  * If the engine does not exist, configuration data will be read from
  * `Configure`.
  *
- * If the cache engine & configuration are missing an error will be 
+ * If the cache engine & configuration are missing an error will be
  * triggered.
  *
  * @param string $config The configuration name you want an engine.
@@ -517,6 +533,32 @@ class Cache {
 			return [];
 		}
 		return $engine->settings();
+	}
+
+/**
+ * Retrieve group names to config mapping.
+ *
+ * {{{
+ *	Cache::config('daily', ['duration' => '1 day', 'groups' => ['posts']]);
+ *	Cache::config('weekly', ['duration' => '1 week', 'groups' => ['posts', 'archive']]);
+ *	$configs = Cache::groupConfigs('posts');
+ * }}}
+ *
+ * $config will equal to `['posts' => ['daily', 'weekly']]`
+ *
+ * @param string $group group name or null to retrieve all group mappings
+ * @return array map of group and all configuration that has the same group
+ * @throws Cake\Error\Exception
+ */
+	public static function groupConfigs($group = null) {
+		if ($group == null) {
+			return static::$_groups;
+		}
+		if (isset(static::$_groups[$group])) {
+			return [$group => static::$_groups[$group]];
+		} else {
+			throw new Error\Exception(__d('cake_dev', 'Invalid cache group %s', $group));
+		}
 	}
 
 }

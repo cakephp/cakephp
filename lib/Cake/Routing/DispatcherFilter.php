@@ -57,7 +57,7 @@ abstract class DispatcherFilter implements EventListener {
 /**
  * Method called before the controller is instantiated and called to serve a request.
  * If used with default priority, it will be called after the Router has parsed the
- * url and set the routing params into the request object.
+ * URL and set the routing params into the request object.
  *
  * If a Cake\Network\Response object instance is returned, it will be served at the end of the
  * event cycle, not calling any controller as a result. This will also have the effect of
