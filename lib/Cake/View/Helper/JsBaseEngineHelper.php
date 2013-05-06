@@ -550,7 +550,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 			if (!empty($callbackOptions[$callback])) {
 				$args = $callbackOptions[$callback];
 			}
-			$options[$callback] = 'function (' . $args . ') {' . $options[$callback] . '}';
+			$options[$callback] = 'function (' . $args . ') {return ' . $options[$callback] . '}';
 		}
 		return $options;
 	}
