@@ -160,8 +160,16 @@ class MysqlSchema {
 		];
 	}
 
+/**
+ * Generate the SQL to create a table.
+ *
+ * @param string $table The name of the table.
+ * @param array $lines The lines (columns + indexes) to go inside the table.
+ * @return string A complete CREATE TABLE statement
+ */
 	public function createTableSql($table, $lines) {
-
+		$content = implode(",\n", $lines);
+		return sprintf("CREATE TABLE `%s` (\n%s\n);", $table, $content);
 	}
 
 /**
@@ -181,7 +189,7 @@ class MysqlSchema {
 				}
 			break;
 			case 'integer':
-				$out .= ' INT';
+				$out .= ' INTEGER';
 			break;
 			case 'biginteger':
 				$out .= ' BIGINT';
@@ -195,6 +203,8 @@ class MysqlSchema {
 			case 'datetime':
 				$out .= ' DATETIME';
 			break;
+			case 'timestamp':
+				$out .= ' TIMESTAMP';
 			break;
 		}
 		$hasLength = [
@@ -206,8 +216,19 @@ class MysqlSchema {
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';
 		}
-		if (isset($data['default'])) {
+		if (isset($data['null']) && $data['null'] === true) {
+			$out .= $data['type'] === 'timestamp' ? ' NULL' : ' DEFAULT NULL';
+			unset($data['default']);
+		}
+		if (isset($data['default']) && $data['type'] !== 'timestamp') {
 			$out .= ' DEFAULT ' . $this->_value($data['default']);
+		}
+		if (
+			isset($data['default']) &&
+			$data['type'] === 'timestamp' &&
+			strtolower($data['default']) === 'current_timestamp'
+		) {
+			$out .= ' DEFAULT CURRENT_TIMESTAMP';
 		}
 		if (isset($data['comment'])) {
 			$out .= ' COMMENT ' . $this->_value($data['comment']);

@@ -277,6 +277,11 @@ SQL;
 				'`title` VARCHAR(25) NOT NULL'
 			],
 			[
+				'title',
+				['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
+				'`title` VARCHAR(25) DEFAULT NULL'
+			],
+			[
 				'id',
 				['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
 				'`id` CHAR(32) NOT NULL'
@@ -301,7 +306,7 @@ SQL;
 			[
 				'post_id',
 				['type' => 'integer', 'length' => 11],
-				'`post_id` INT(11)'
+				'`post_id` INTEGER(11)'
 			],
 			[
 				'post_id',
@@ -326,7 +331,16 @@ SQL;
 				'`created` DATETIME COMMENT "Created timestamp"'
 			],
 			// timestamps
-			// TODO add timestamps including CURRENT_TIMESTAMP
+			[
+				'created',
+				['type' => 'timestamp', 'null' => true],
+				'`created` TIMESTAMP NULL'
+			],
+			[
+				'created',
+				['type' => 'timestamp', 'null' => false, 'default' => 'current_timestamp'],
+				'`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP'
+			],
 		];
 	}
 
@@ -338,6 +352,15 @@ SQL;
  */
 	public function testColumnSql($name, $data, $expected) {
 		$driver = new \Cake\Database\Driver\Mysql();
+
+		$mock = $this->getMock('FakePdo', ['quote']);
+		$mock->expects($this->any())
+			->method('quote')
+			->will($this->returnCallback(function ($value) {
+				return '"' . $value . '"';
+			}));
+
+		$driver->connection($mock);
 		$dialect = new MysqlSchema($driver);
 		$this->assertEquals($expected, $dialect->columnSql($name, $data));
 	}
@@ -365,25 +388,33 @@ SQL;
 			]);
 
 		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
-		$driver = $this->getMock('Cake\Database\Driver\Mysql');
+		$driver = new \Cake\Database\Driver\Mysql();
+		$mock = $this->getMock('FakePdo', ['quote']);
+		$driver->connection($mock);
+
 		$dialect = new MysqlSchema($driver);
+
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
-		$driver->expects($this->any())
-			->method('schemaDialect')
-			->will($this->returnValue($dialect));
+
+		$mock->expects($this->any())
+			->method('quote')
+			->will($this->returnCallback(function ($value) {
+				return '"' . $value . '"';
+			}));
 
 		$result = $table->createTableSql($connection);
 		$expected = <<<SQL
 CREATE TABLE `posts` (
-	`id` INTEGER NOT NULL AUTO_INCREMENT,
-	`title` VARCHAR(255) NOT NULL COMMENT 'The title',
-	`body` TEXT,
-	`created` DATETIME,
-	PRIMARY KEY (`id`)
+`id` INTEGER NOT NULL AUTO_INCREMENT,
+`title` VARCHAR(255) NOT NULL COMMENT "The title",
+`body` TEXT,
+`created` DATETIME,
+PRIMARY KEY (`id`)
 );
 SQL;
 		$this->assertEquals($expected, $result);
 	}
+
 
 }
