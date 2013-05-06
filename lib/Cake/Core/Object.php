@@ -14,6 +14,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('CakeLog', 'Log');
+App::uses('Dispatcher', 'Routing');
 App::uses('Set', 'Utility');
 
 /**
@@ -68,7 +70,6 @@ class Object {
 		if (empty($url)) {
 			return false;
 		}
-		App::uses('Dispatcher', 'Routing');
 		if (($index = array_search('return', $extra)) !== false) {
 			$extra['return'] = 0;
 			$extra['autoRender'] = 1;
@@ -147,12 +148,13 @@ class Object {
  * Convenience method to write a message to CakeLog. See CakeLog::write()
  * for more information on writing to logs.
  *
- * @param string $msg Log message
- * @param integer $type Error type constant. Defined in app/Config/core.php.
- * @return boolean Success of log write
+ * @param string $msg Log message.
+ * @param integer|string $type Type of message being written. Either a valid
+ *    LOG_* constant or a string matching the recognized levels.
+ * @return boolean Success of log write.
+ * @see CakeLog::write()
  */
 	public function log($msg, $type = LOG_ERR) {
-		App::uses('CakeLog', 'Log');
 		if (!is_string($msg)) {
 			$msg = print_r($msg, true);
 		}
