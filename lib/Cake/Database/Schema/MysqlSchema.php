@@ -296,13 +296,17 @@ class MysqlSchema {
 		if ($data['type'] === Table::INDEX_FULLTEXT) {
 			$out = 'FULLTEXT KEY ';
 		}
-		// TODO finish MySQL indexes with length
 		$out .= $this->_driver->quoteIdentifier($name);
 
 		$columns = array_map(
 			[$this->_driver, 'quoteIdentifier'],
 			$data['columns']
 		);
+		foreach ($data['columns'] as $i => $column) {
+			if (isset($data['length'][$column])) {
+				$columns[$i] .= sprintf('(%d)', $data['length'][$column]);
+			}
+		}
 		return $out . ' (' . implode(', ', $columns) . ')';
 	}
 

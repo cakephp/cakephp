@@ -461,6 +461,7 @@ CREATE TABLE `articles_authors` (
 UNIQUE KEY `unique_idx` (`author_id`, `article_id`)
 );
 SQL;
+
 		$simpleKey = (new Table('things'))
 			->addColumn('thing_id', [
 				'type' => 'integer',
@@ -490,11 +491,34 @@ CREATE TABLE `things` (
 FULLTEXT KEY `stuff_idx` (`stuff`)
 );
 SQL;
+
+		$keyLength = (new Table('articles_authors'))
+			->addColumn('author_id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addColumn('article_id', [
+				'type' => 'integer',
+				'null' => false,
+			])
+			->addIndex('unique_idx', [
+				'type' => 'unique',
+				'columns' => ['author_id', 'article_id'],
+				'length' => ['author_id' => 5, 'article_id' => 4],
+			]);
+		$keyLengthExpected = <<<SQL
+CREATE TABLE `articles_authors` (
+`author_id` INTEGER NOT NULL,
+`article_id` INTEGER NOT NULL,
+UNIQUE KEY `unique_idx` (`author_id`(5), `article_id`(4))
+);
+SQL;
 		return [
 			[$basic, $basicExpected],
 			[$uniqueKey, $uniqueExpected],
 			[$fullText, $fullTextExpected],
 			[$simpleKey, $simpleKeyExpected],
+			[$keyLength, $keyLengthExpected],
 		];
 	}
 

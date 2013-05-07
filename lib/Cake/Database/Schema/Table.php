@@ -78,6 +78,7 @@ class Table {
 	protected $_indexKeys = [
 		'type' => null,
 		'columns' => [],
+		'length' => [],
 	];
 
 /**
