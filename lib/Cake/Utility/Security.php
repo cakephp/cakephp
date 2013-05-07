@@ -170,6 +170,8 @@ class Security {
 /**
  * Encrypts/Decrypts a text using the given key.
  *
+ * This method encrypts and decrypts different when having Suhosin with 'suhosin.srand.ignore' enabled.
+ *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use
  * @return string Encrypted/Decrypted string
@@ -178,6 +180,20 @@ class Security {
 		if (empty($key)) {
 			trigger_error(__d('cake_dev', 'You cannot use an empty key for Security::cipher()'), E_USER_WARNING);
 			return '';
+		}
+
+		if (((constant("SUHOSIN_PATCH") != null) || extension_loaded('suhosin')) && (ini_get('suhosin.srand.ignore') == '1')) {
+			$key .= Configure::read('Security.cipherSeed');
+
+			$out = '';
+			$keyLength = strlen($key);
+			$k = 0;  
+			for ($i = 0, $textLength = strlen($text); $i < $textLength; $i++) {
+				$seed = md5($key . $key[($k++) % $keyLength]);
+				$mask = hexdec($seed[6] . $seed[9]);
+				$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
+			}
+			return $out;
 		}
 
 		srand(Configure::read('Security.cipherSeed'));
