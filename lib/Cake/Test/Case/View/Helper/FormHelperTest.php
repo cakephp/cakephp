@@ -2205,6 +2205,28 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('User.disabled', array(
+			'label' => 'Disabled',
+			'type' => 'checkbox',
+			'data-foo' => 'disabled'
+		));
+		$expected = array(
+			'div' => array('class' => 'input checkbox'),
+			'input' => array('type' => 'hidden', 'name' => 'data[User][disabled]', 'value' => '0', 'id' => 'UserDisabled_'),
+			array('input' => array(
+				'type' => 'checkbox',
+				'name' => 'data[User][disabled]',
+				'value' => '1',
+				'id' => 'UserDisabled',
+				'data-foo' => 'disabled'
+			)),
+			'label' => array('for' => 'UserDisabled'),
+			'Disabled',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
