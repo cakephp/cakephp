@@ -368,7 +368,8 @@ SQL;
  * @return void
  */
 	public function testColumnSql($name, $data, $expected) {
-		$schema = $this->_getMockedSchema();
+		$driver = $this->_getMockedDriver();
+		$schema = new MysqlSchema($driver);
 
 		$table = (new Table('articles'))->addColumn($name, $data);
 		$this->assertEquals($expected, $schema->columnSql($table, $name));
@@ -380,7 +381,8 @@ SQL;
  * @return void
  */
 	public function testColumnSqlPrimaryKey() {
-		$schema = $this->_getMockedSchema();
+		$driver = $this->_getMockedDriver();
+		$schema = new MysqlSchema($driver);
 
 		$table = new Table('articles');
 		$table->addColumn('id', [
@@ -429,21 +431,10 @@ SQL;
 				'columns' => ['id']
 			]);
 
+		$driver = $this->_getMockedDriver();
 		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
-		$driver = new \Cake\Database\Driver\Mysql();
-		$mock = $this->getMock('FakePdo', ['quote']);
-		$driver->connection($mock);
-
-		$dialect = new MysqlSchema($driver);
-
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
-
-		$mock->expects($this->any())
-			->method('quote')
-			->will($this->returnCallback(function ($value) {
-				return '"' . $value . '"';
-			}));
 
 		$result = $table->createTableSql($connection);
 		$expected = <<<SQL
@@ -463,16 +454,16 @@ SQL;
  *
  * @return MysqlSchema
  */
-	protected function _getMockedSchema() {
+	protected function _getMockedDriver() {
 		$driver = new \Cake\Database\Driver\Mysql();
-		$mock = $this->getMock('FakePdo', ['quote']);
+		$mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
 		$mock->expects($this->any())
 			->method('quote')
 			->will($this->returnCallback(function ($value) {
 				return '"' . $value . '"';
 			}));
 		$driver->connection($mock);
-		return new MysqlSchema($driver);
+		return $driver;
 	}
 
 }

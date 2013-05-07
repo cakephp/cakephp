@@ -274,11 +274,19 @@ class MysqlSchema {
 /**
  * Generate the SQL fragment for a single index in MySQL
  *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
- * @param array $data The attributes for the column.
  * @return string SQL fragment.
  */
-	public function indexSql($name, $data) {
+	public function indexSql(Table $table, $name) {
+		$data = $table->index($name);
+		if ($data['type'] === Table::INDEX_PRIMARY) {
+			$columns = array_map(
+				[$this->_driver, 'quoteIdentifier'],
+				$data['columns']
+			);
+			return sprintf('PRIMARY KEY (%s)', implode(', ', $columns));
+		}
 	}
 
 }
