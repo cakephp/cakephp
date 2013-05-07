@@ -16,6 +16,7 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Connection;
 use Cake\Error;
 
 /**
@@ -77,6 +78,7 @@ class Table {
 	protected $_indexKeys = [
 		'type' => null,
 		'columns' => [],
+		'length' => [],
 	];
 
 /**
@@ -89,11 +91,13 @@ class Table {
 		self::INDEX_INDEX,
 		self::INDEX_UNIQUE,
 		self::INDEX_FOREIGN,
+		self::INDEX_FULLTEXT,
 	];
 
 	const INDEX_PRIMARY = 'primary';
 	const INDEX_INDEX = 'index';
 	const INDEX_UNIQUE = 'unique';
+	const INDEX_FULLTEXT = 'fulltext';
 	const INDEX_FOREIGN = 'foreign';
 
 /**
@@ -236,6 +240,27 @@ class Table {
 			}
 		}
 		return null;
+	}
+
+/**
+ * Generate the SQL to create the Table.
+ *
+ * Uses the connection to access the schema dialect
+ * to generate platform specific SQL.
+ *
+ * @param Connection $connection The connection to generate SQL for
+ * @return string SQL statement to create the table.
+ */
+	public function createTableSql(Connection $connection) {
+		$dialect = $connection->driver()->schemaDialect();
+		$lines = [];
+		foreach (array_keys($this->_columns) as $name) {
+			$lines[] = $dialect->columnSql($this, $name);
+		}
+		foreach (array_keys($this->_indexes) as $name) {
+			$lines[] = $dialect->indexSql($this, $name);
+		}
+		return $dialect->createTableSql($this->_table, $lines);
 	}
 
 }

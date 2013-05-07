@@ -17,6 +17,7 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Schema\Table;
+use Cake\Error;
 
 /**
  * Schema dialect/support for MySQL
@@ -28,7 +29,7 @@ class MysqlSchema {
  *
  * @var Cake\Database\Driver\Mysql
  */
-	protected $driver;
+	protected $_driver;
 
 /**
  * Constructor
@@ -67,6 +68,7 @@ class MysqlSchema {
  *
  * @param string $column The column type + length
  * @return array Array of column information.
+ * @throws Cake\Error\Exception When column type cannot be parsed.
  */
 	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
@@ -158,6 +160,156 @@ class MysqlSchema {
 				'column' => 'Comment',
 			]
 		];
+	}
+
+/**
+ * Generate the SQL to create a table.
+ *
+ * @param string $table The name of the table.
+ * @param array $lines The lines (columns + indexes) to go inside the table.
+ * @return string A complete CREATE TABLE statement
+ */
+	public function createTableSql($table, $lines) {
+		$content = implode(",\n", $lines);
+		return sprintf("CREATE TABLE `%s` (\n%s\n);", $table, $content);
+	}
+
+/**
+ * Generate the SQL fragment for a single column in MySQL
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function columnSql(Table $table, $name) {
+		$data = $table->column($name);
+		$out = $this->_driver->quoteIdentifier($name);
+		$typeMap = [
+			'integer' => ' INTEGER',
+			'biginteger' => ' BIGINT',
+			'boolean' => ' BOOLEAN',
+			'binary' => ' BLOB',
+			'float' => ' FLOAT',
+			'decimal' => ' DECIMAL',
+			'text' => ' TEXT',
+			'date' => ' DATE',
+			'time' => ' TIME',
+			'datetime' => ' DATETIME',
+			'timestamp' => ' TIMESTAMP',
+		];
+		$specialMap = [
+			'string' => true,
+		];
+		if (isset($typeMap[$data['type']])) {
+			$out .= $typeMap[$data['type']];
+		}
+		if (isset($specialMap[$data['type']])) {
+			switch ($data['type']) {
+				case 'string':
+					$out .= !empty($data['fixed']) ? ' CHAR' : ' VARCHAR';
+					if (!isset($data['length'])) {
+						$data['length'] = 255;
+					}
+				break;
+			}
+		}
+		$hasLength = [
+			'integer', 'string', 'float'
+		];
+		if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
+			$out .= '(' . $data['length'] . ')';
+		}
+		if (isset($data['null']) && $data['null'] === false) {
+			$out .= ' NOT NULL';
+		}
+		if (in_array($data['type'], ['integer', 'biginteger']) && in_array($name, (array)$table->primaryKey())) {
+			$out .= ' AUTO_INCREMENT';
+		}
+		if (isset($data['null']) && $data['null'] === true) {
+			$out .= $data['type'] === 'timestamp' ? ' NULL' : ' DEFAULT NULL';
+			unset($data['default']);
+		}
+		if (isset($data['default']) && $data['type'] !== 'timestamp') {
+			$out .= ' DEFAULT ' . $this->_value($data['default']);
+		}
+		if (
+			isset($data['default']) &&
+			$data['type'] === 'timestamp' &&
+			strtolower($data['default']) === 'current_timestamp'
+		) {
+			$out .= ' DEFAULT CURRENT_TIMESTAMP';
+		}
+		if (isset($data['comment'])) {
+			$out .= ' COMMENT ' . $this->_value($data['comment']);
+		}
+		return $out;
+	}
+
+/**
+ * Escapes values for use in schema definitions.
+ *
+ * @param mixed $value The value to escape.
+ * @return string String for use in schema definitions.
+ */
+	protected function _value($value) {
+		if (is_null($value)) {
+			return 'NULL';
+		}
+		if ($value === false) {
+			return 'FALSE';
+		}
+		if ($value === true) {
+			return 'TRUE';
+		}
+		if (is_float($value)) {
+			return str_replace(',', '.', strval($value));
+		}
+		if ((is_int($value) || $value === '0') || (
+			is_numeric($value) && strpos($value, ',') === false &&
+			$value[0] != '0' && strpos($value, 'e') === false)
+		) {
+			return $value;
+		}
+		return $this->_driver->quote($value, \PDO::PARAM_STR);
+	}
+
+/**
+ * Generate the SQL fragment for a single index in MySQL
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function indexSql(Table $table, $name) {
+		$data = $table->index($name);
+		if ($data['type'] === Table::INDEX_PRIMARY) {
+			$columns = array_map(
+				[$this->_driver, 'quoteIdentifier'],
+				$data['columns']
+			);
+			return sprintf('PRIMARY KEY (%s)', implode(', ', $columns));
+		}
+		if ($data['type'] === Table::INDEX_UNIQUE) {
+			$out = 'UNIQUE KEY ';
+		}
+		if ($data['type'] === Table::INDEX_INDEX) {
+			$out = 'KEY ';
+		}
+		if ($data['type'] === Table::INDEX_FULLTEXT) {
+			$out = 'FULLTEXT KEY ';
+		}
+		$out .= $this->_driver->quoteIdentifier($name);
+
+		$columns = array_map(
+			[$this->_driver, 'quoteIdentifier'],
+			$data['columns']
+		);
+		foreach ($data['columns'] as $i => $column) {
+			if (isset($data['length'][$column])) {
+				$columns[$i] .= sprintf('(%d)', $data['length'][$column]);
+			}
+		}
+		return $out . ' (' . implode(', ', $columns) . ')';
 	}
 
 }

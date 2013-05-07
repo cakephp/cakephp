@@ -95,5 +95,4 @@ class SqliteTest extends TestCase {
 		$driver->connect($config);
 	}
 
-
 }
