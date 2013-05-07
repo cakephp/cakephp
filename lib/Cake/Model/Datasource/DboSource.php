@@ -2561,7 +2561,7 @@ class DboSource extends DataSource {
 			$key = $this->_quoteFields($model->getVirtualField($key));
 			$virtual = true;
 		}
-		
+
 		if (is_object($model) && $virtual === false && strpos($key, '.') !== false) {
 			list($modelField, $field) = explode('.', $key);
 			if ( $modelField == $model->alias && $model->isVirtualField($field)) {
@@ -2570,7 +2570,7 @@ class DboSource extends DataSource {
 			}
 			unset($modelField,$field);
 		}
-		
+
 		$type = is_object($model) ? $model->getColumnType($key) : null;
 		$null = $value === null || (is_array($value) && empty($value));
 
