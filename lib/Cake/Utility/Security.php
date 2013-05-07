@@ -168,11 +168,19 @@ class Security {
 	}
 
 /**
- * Encrypts/Decrypts a text using the given key.
+ * Runs $text through a XOR cipher.
+ *
+ * *Note* This is not a cryptographically strong method and should not be used
+ * for sensitive data. Additionally this method does *not* work in environments
+ * where suhosin is enabled.
+ *
+ * Instead you should use Security::rijndael() when you need strong
+ * encryption.
  *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use
  * @return string Encrypted/Decrypted string
+ * @deprecated This method will be removed in 3.x
  */
 	public static function cipher($text, $key) {
 		if (empty($key)) {
