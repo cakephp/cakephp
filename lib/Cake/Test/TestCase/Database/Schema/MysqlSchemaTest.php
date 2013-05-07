@@ -351,18 +351,43 @@ SQL;
  * @return void
  */
 	public function testColumnSql($name, $data, $expected) {
-		$driver = new \Cake\Database\Driver\Mysql();
+		$schema = $this->_getMockedSchema();
 
-		$mock = $this->getMock('FakePdo', ['quote']);
-		$mock->expects($this->any())
-			->method('quote')
-			->will($this->returnCallback(function ($value) {
-				return '"' . $value . '"';
-			}));
+		$table = (new Table('articles'))->addColumn($name, $data);
+		$this->assertEquals($expected, $schema->columnSql($table, $name));
+	}
 
-		$driver->connection($mock);
-		$dialect = new MysqlSchema($driver);
-		$this->assertEquals($expected, $dialect->columnSql($name, $data));
+/**
+ * Test generating a column that is a primary key.
+ *
+ * @return void
+ */
+	public function testColumnSqlPrimaryKey() {
+		$schema = $this->_getMockedSchema();
+
+		$table = new Table('articles');
+		$table->addColumn('id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addIndex('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+		$result = $schema->columnSql($table, 'id');
+		$this->assertEquals($result, '`id` INTEGER NOT NULL AUTO_INCREMENT');
+
+		$table = new Table('articles');
+		$table->addColumn('id', [
+				'type' => 'biginteger',
+				'null' => false
+			])
+			->addIndex('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+		$result = $schema->columnSql($table, 'id');
+		$this->assertEquals($result, '`id` BIGINT NOT NULL AUTO_INCREMENT');
 	}
 
 /**
@@ -416,5 +441,21 @@ SQL;
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Get a schema instance with a mocked driver/pdo instances
+ *
+ * @return MysqlSchema
+ */
+	protected function _getMockedSchema() {
+		$driver = new \Cake\Database\Driver\Mysql();
+		$mock = $this->getMock('FakePdo', ['quote']);
+		$mock->expects($this->any())
+			->method('quote')
+			->will($this->returnCallback(function ($value) {
+				return '"' . $value . '"';
+			}));
+		$driver->connection($mock);
+		return new MysqlSchema($driver);
+	}
 
 }

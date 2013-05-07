@@ -251,11 +251,11 @@ class Table {
 	public function createTableSql(Connection $connection) {
 		$dialect = $connection->driver()->schemaDialect();
 		$lines = [];
-		foreach ($this->_columns as $name => $data) {
-			$lines[] = $dialect->columnSql($name, $data);
+		foreach (array_keys($this->_columns) as $name) {
+			$lines[] = $dialect->columnSql($this, $name);
 		}
-		foreach ($this->_indexes as $name => $data) {
-			$lines[] = $dialect->indexSql($name, $data);
+		foreach (array_keys($this->_indexes) as $name) {
+			$lines[] = $dialect->indexSql($this, $name);
 		}
 		return $dialect->createTableSql($this->_table, $lines);
 	}

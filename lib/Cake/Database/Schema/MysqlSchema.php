@@ -175,11 +175,12 @@ class MysqlSchema {
 /**
  * Generate the SQL fragment for a single column in MySQL
  *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
- * @param array $data The attributes for the column.
  * @return string SQL fragment.
  */
-	public function columnSql($name, $data) {
+	public function columnSql(Table $table, $name) {
+		$data = $table->column($name);
 		$out = $this->_driver->quoteIdentifier($name);
 		switch ($data['type']) {
 			case 'string':
@@ -215,6 +216,9 @@ class MysqlSchema {
 		}
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';
+		}
+		if (in_array($data['type'], ['integer', 'biginteger']) && in_array($name, (array)$table->primaryKey())) {
+			$out .= ' AUTO_INCREMENT';
 		}
 		if (isset($data['null']) && $data['null'] === true) {
 			$out .= $data['type'] === 'timestamp' ? ' NULL' : ' DEFAULT NULL';
