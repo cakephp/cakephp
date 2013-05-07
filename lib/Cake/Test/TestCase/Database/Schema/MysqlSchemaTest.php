@@ -52,7 +52,7 @@ class MysqlSchemaTest extends TestCase {
 			],
 			[
 				'DATE',
-				['type' =>  'date', 'length' => null]
+				['type' => 'date', 'length' => null]
 			],
 			[
 				'TIME',

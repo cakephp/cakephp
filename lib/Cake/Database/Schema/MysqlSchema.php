@@ -17,6 +17,7 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Schema\Table;
+use Cake\Error;
 
 /**
  * Schema dialect/support for MySQL
@@ -28,7 +29,7 @@ class MysqlSchema {
  *
  * @var Cake\Database\Driver\Mysql
  */
-	protected $driver;
+	protected $_driver;
 
 /**
  * Constructor
@@ -67,6 +68,7 @@ class MysqlSchema {
  *
  * @param string $column The column type + length
  * @return array Array of column information.
+ * @throws Cake\Error\Exception When column type cannot be parsed.
  */
 	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);

@@ -17,6 +17,7 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Schema\Table;
+use Cake\Error;
 
 class PostgresSchema {
 
@@ -25,7 +26,7 @@ class PostgresSchema {
  *
  * @var Cake\Database\Driver\Postgres
  */
-	protected $driver;
+	protected $_driver;
 
 	public function __construct($driver) {
 		$this->_driver = $driver;
@@ -90,7 +91,7 @@ class PostgresSchema {
 		}
 
 		if (in_array($col, array('date', 'time', 'boolean'))) {
-			return ['type' =>$col, 'length' => null];
+			return ['type' => $col, 'length' => null];
 		}
 		if (strpos($col, 'timestamp') !== false) {
 			return ['type' => 'datetime', 'length' => null];

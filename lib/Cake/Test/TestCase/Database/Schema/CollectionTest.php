@@ -17,8 +17,8 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
-use Cake\Database\Schema\Table;
 use Cake\Database\Connection;
+use Cake\Database\Schema\Table;
 use Cake\Database\Schema\Collection;
 use Cake\TestSuite\TestCase;
 
