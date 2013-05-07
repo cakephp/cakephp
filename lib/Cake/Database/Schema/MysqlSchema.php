@@ -304,45 +304,6 @@ class MysqlSchema {
 			$data['columns']
 		);
 		return $out . ' (' . implode(', ', $columns) . ')';
-		/*
-			$out = '';
-			if ($name === 'PRIMARY') {
-				$out .= 'PRIMARY ';
-				$name = null;
-			} else {
-				if (!empty($value['unique'])) {
-					$out .= 'UNIQUE ';
-				}
-				$name = $this->startQuote . $name . $this->endQuote;
-			}
-			if (isset($value['type']) && strtolower($value['type']) === 'fulltext') {
-				$out .= 'FULLTEXT ';
-			}
-			$out .= 'KEY ' . $name . ' (';
-
-			if (is_array($value['column'])) {
-				if (isset($value['length'])) {
-					$vals = array();
-					foreach ($value['column'] as $column) {
-						$name = $this->name($column);
-						if (isset($value['length'])) {
-							$name .= $this->_buildIndexSubPart($value['length'], $column);
-						}
-						$vals[] = $name;
-					}
-					$out .= implode(', ', $vals);
-				} else {
-					$out .= implode(', ', array_map(array(&$this, 'name'), $value['column']));
-				}
-			} else {
-				$out .= $this->name($value['column']);
-				if (isset($value['length'])) {
-					$out .= $this->_buildIndexSubPart($value['length'], $value['column']);
-				}
-			}
-			$out .= ')';
-			$join[] = $out;
-		*/
 	}
 
 }
