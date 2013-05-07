@@ -410,12 +410,12 @@ SQL;
 	}
 
 /**
- * Integration test for converting a Schema\Table into MySQL table creates.
+ * Provider for table creation tests.
  *
- * @return void
+ * @return array
  */
-	public function testCreateTableSql() {
-		$table = (new Table('posts'))->addColumn('id', [
+	public static function createTableProvider() {
+		$basic = (new Table('posts'))->addColumn('id', [
 				'type' => 'integer',
 				'null' => false
 			])
@@ -431,13 +431,7 @@ SQL;
 				'columns' => ['id']
 			]);
 
-		$driver = $this->_getMockedDriver();
-		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
-		$connection->expects($this->any())->method('driver')
-			->will($this->returnValue($driver));
-
-		$result = $table->createTableSql($connection);
-		$expected = <<<SQL
+		$basicExpected = <<<SQL
 CREATE TABLE `posts` (
 `id` INTEGER NOT NULL AUTO_INCREMENT,
 `title` VARCHAR(255) NOT NULL COMMENT "The title",
@@ -446,6 +440,77 @@ CREATE TABLE `posts` (
 PRIMARY KEY (`id`)
 );
 SQL;
+
+		$uniqueKey = (new Table('articles_authors'))
+			->addColumn('author_id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addColumn('article_id', [
+				'type' => 'integer',
+				'null' => false,
+			])
+			->addIndex('unique_idx', [
+				'type' => 'unique',
+				'columns' => ['author_id', 'article_id']
+			]);
+		$uniqueExpected = <<<SQL
+CREATE TABLE `articles_authors` (
+`author_id` INTEGER NOT NULL,
+`article_id` INTEGER NOT NULL,
+UNIQUE KEY `unique_idx` (`author_id`, `article_id`)
+);
+SQL;
+		$simpleKey = (new Table('things'))
+			->addColumn('thing_id', [
+				'type' => 'integer',
+			])
+			->addIndex('thing_id_idx', [
+				'type' => 'index',
+				'columns' => ['thing_id']
+			]);
+		$simpleKeyExpected = <<<SQL
+CREATE TABLE `things` (
+`thing_id` INTEGER,
+KEY `thing_id_idx` (`thing_id`)
+);
+SQL;
+
+		$fullText = (new Table('things'))
+			->addColumn('stuff', [
+				'type' => 'text',
+			])
+			->addIndex('stuff_idx', [
+				'type' => 'fulltext',
+				'columns' => ['stuff']
+			]);
+		$fullTextExpected = <<<SQL
+CREATE TABLE `things` (
+`stuff` TEXT,
+FULLTEXT KEY `stuff_idx` (`stuff`)
+);
+SQL;
+		return [
+			[$basic, $basicExpected],
+			[$uniqueKey, $uniqueExpected],
+			[$fullText, $fullTextExpected],
+			[$simpleKey, $simpleKeyExpected],
+		];
+	}
+
+/**
+ * Integration test for converting a Schema\Table into MySQL table creates.
+ *
+ * @dataProvider createTableProvider
+ * @return void
+ */
+	public function testCreateTableSql($table, $expected) {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$result = $table->createTableSql($connection);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -461,6 +526,11 @@ SQL;
 			->method('quote')
 			->will($this->returnCallback(function ($value) {
 				return '"' . $value . '"';
+			}));
+		$mock->expects($this->any())
+			->method('quoteIdentifier')
+			->will($this->returnCallback(function ($value) {
+				return '`' . $value . '`';
 			}));
 		$driver->connection($mock);
 		return $driver;

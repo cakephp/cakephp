@@ -90,11 +90,13 @@ class Table {
 		self::INDEX_INDEX,
 		self::INDEX_UNIQUE,
 		self::INDEX_FOREIGN,
+		self::INDEX_FULLTEXT,
 	];
 
 	const INDEX_PRIMARY = 'primary';
 	const INDEX_INDEX = 'index';
 	const INDEX_UNIQUE = 'unique';
+	const INDEX_FULLTEXT = 'fulltext';
 	const INDEX_FOREIGN = 'foreign';
 
 /**
