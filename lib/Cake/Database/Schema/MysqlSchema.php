@@ -182,31 +182,34 @@ class MysqlSchema {
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
 		$out = $this->_driver->quoteIdentifier($name);
-		switch ($data['type']) {
-			case 'string':
-				$out .= !empty($data['fixed']) ? ' CHAR' : ' VARCHAR';
-				if (!isset($data['length'])) {
-					$data['length'] = 255;
-				}
-			break;
-			case 'integer':
-				$out .= ' INTEGER';
-			break;
-			case 'biginteger':
-				$out .= ' BIGINT';
-			break;
-			case 'boolean':
-				$out .= ' BOOLEAN';
-			break;
-			case 'text':
-				$out .= ' TEXT';
-			break;
-			case 'datetime':
-				$out .= ' DATETIME';
-			break;
-			case 'timestamp':
-				$out .= ' TIMESTAMP';
-			break;
+		$typeMap = [
+			'integer' => ' INTEGER',
+			'biginteger' => ' BIGINT',
+			'boolean' => ' BOOLEAN',
+			'binary' => ' BLOB',
+			'float' => ' FLOAT',
+			'decimal' => ' DECIMAL',
+			'text' => ' TEXT',
+			'date' => ' DATE',
+			'time' => ' TIME',
+			'datetime' => ' DATETIME',
+			'timestamp' => ' TIMESTAMP',
+		];
+		$specialMap = [
+			'string' => true,
+		];
+		if (isset($typeMap[$data['type']])) {
+			$out .= $typeMap[$data['type']];
+		}
+		if (isset($specialMap[$data['type']])) {
+			switch ($data['type']) {
+				case 'string':
+					$out .= !empty($data['fixed']) ? ' CHAR' : ' VARCHAR';
+					if (!isset($data['length'])) {
+						$data['length'] = 255;
+					}
+				break;
+			}
 		}
 		$hasLength = [
 			'integer', 'string', 'float'

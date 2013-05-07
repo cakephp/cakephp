@@ -313,6 +313,12 @@ SQL;
 				['type' => 'biginteger', 'length' => 20],
 				'`post_id` BIGINT'
 			],
+			// Float
+			[
+				'value',
+				['type' => 'float'],
+				'`value` FLOAT'
+			],
 			// Boolean
 			[
 				'checked',
@@ -329,6 +335,17 @@ SQL;
 				'created',
 				['type' => 'datetime', 'comment' => 'Created timestamp'],
 				'`created` DATETIME COMMENT "Created timestamp"'
+			],
+			// Date & Time
+			[
+				'start_date',
+				['type' => 'date'],
+				'`start_date` DATE'
+			],
+			[
+				'start_time',
+				['type' => 'time'],
+				'`start_time` TIME'
 			],
 			// timestamps
 			[
