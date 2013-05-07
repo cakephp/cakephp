@@ -116,7 +116,11 @@ class DigestAuthenticate extends BasicAuthenticate {
 		if (empty($digest)) {
 			return false;
 		}
-		$user = $this->_findUser($digest['username']);
+
+		list(, $model) = pluginSplit($this->settings['userModel']);
+		$user = $this->_findUser(array(
+			$model . '.' . $this->settings['fields']['username'] => $digest['username']
+		));
 		if (empty($user)) {
 			return false;
 		}
@@ -126,34 +130,6 @@ class DigestAuthenticate extends BasicAuthenticate {
 			return $user;
 		}
 		return false;
-	}
-
-/**
- * Find a user record using the standard options.
- *
- * @param string $username The username/identifier.
- * @param string $password Unused password, digest doesn't require passwords.
- * @return Mixed Either false on failure, or an array of user data.
- */
-	protected function _findUser($username, $password = null) {
-		$userModel = $this->settings['userModel'];
-		list(, $model) = pluginSplit($userModel);
-		$fields = $this->settings['fields'];
-
-		$conditions = array(
-			$model . '.' . $fields['username'] => $username,
-		);
-		if (!empty($this->settings['scope'])) {
-			$conditions = array_merge($conditions, $this->settings['scope']);
-		}
-		$result = ClassRegistry::init($userModel)->find('first', array(
-			'conditions' => $conditions,
-			'recursive' => $this->settings['recursive']
-		));
-		if (empty($result) || empty($result[$model])) {
-			return false;
-		}
-		return $result[$model];
 	}
 
 /**
