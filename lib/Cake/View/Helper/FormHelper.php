@@ -2817,7 +2817,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$disabledIndex = array_search('disabled', $options, true);
-		if ($disabledIndex !== false) {
+		if (is_int($disabledIndex)) {
 			unset($options[$disabledIndex]);
 			$options['disabled'] = true;
 		}

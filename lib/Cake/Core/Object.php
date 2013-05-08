@@ -14,6 +14,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('CakeLog', 'Log');
+App::uses('Dispatcher', 'Routing');
 App::uses('Set', 'Utility');
 App::uses('CakeLog', 'Log');
 
@@ -69,7 +71,6 @@ class Object {
 		if (empty($url)) {
 			return false;
 		}
-		App::uses('Dispatcher', 'Routing');
 		if (($index = array_search('return', $extra)) !== false) {
 			$extra['return'] = 0;
 			$extra['autoRender'] = 1;

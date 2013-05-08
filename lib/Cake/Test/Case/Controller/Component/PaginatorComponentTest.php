@@ -570,7 +570,7 @@ class PaginatorComponentTest extends CakeTestCase {
 	public function testPaginateSpecialType() {
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
-		$Controller->passedArgs[] = '1';
+		$Controller->request->params['pass'][] = '1';
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 
@@ -891,7 +891,7 @@ class PaginatorComponentTest extends CakeTestCase {
 
 /**
  * Test that a really REALLY large page number gets clamped to the max page size.
- * 
+ *
  *
  * @expectedException NotFoundException
  * @return void
@@ -1083,7 +1083,7 @@ class PaginatorComponentTest extends CakeTestCase {
 		$Controller = new Controller($this->request);
 
 		$Controller->uses = array('PaginatorControllerPost', 'ControllerComment');
-		$Controller->passedArgs[] = '1';
+		$Controller->request->params['pass'][] = '1';
 		$Controller->constructClasses();
 
 		$Controller->request->params['named'] = array(
@@ -1134,11 +1134,26 @@ class PaginatorComponentTest extends CakeTestCase {
 		), false);
 
 		$Controller->paginate = array(
-			'fields' => array('PaginatorControllerComment.id', 'title', 'PaginatorControllerPost.title'),
+			'fields' => array(
+				'PaginatorControllerComment.id',
+				'title',
+				'PaginatorControllerPost.title'
+			),
 		);
-		$Controller->passedArgs = array('sort' => 'PaginatorControllerPost.title', 'dir' => 'asc');
-		$result = $Controller->paginate('PaginatorControllerComment');
-		$this->assertEquals(array(1, 2, 3, 4, 5, 6), Hash::extract($result, '{n}.PaginatorControllerComment.id'));
+		$Controller->request->params['named'] = array(
+			'sort' => 'PaginatorControllerPost.title',
+			'direction' => 'desc'
+		);
+		$result = Hash::extract(
+			$Controller->paginate('PaginatorControllerComment'),
+			'{n}.PaginatorControllerComment.id'
+		);
+		$result1 = array_splice($result, 0, 2);
+		sort($result1);
+		$this->assertEquals(array(5, 6), $result1);
+
+		sort($result);
+		$this->assertEquals(array(1, 2, 3, 4), $result);
 	}
 
 /**
