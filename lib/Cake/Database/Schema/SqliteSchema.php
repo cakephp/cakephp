@@ -17,6 +17,7 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Schema\Table;
+use Cake\Error;
 
 class SqliteSchema {
 
@@ -25,7 +26,7 @@ class SqliteSchema {
  *
  * @var Cake\Database\Driver\Sqlite
  */
-	protected $driver;
+	protected $_driver;
 
 	public function __construct($driver) {
 		$this->_driver = $driver;
@@ -72,7 +73,7 @@ class SqliteSchema {
 			return ['type' => 'integer', 'length' => $length];
 		}
 		if ($col === 'char') {
-			return ['type' => 'string', 'fixed' => true, 'length' => $length];
+			return ['type' => 'string', 'fixed', 'length' => $length];
 		}
 		if (strpos($col, 'char') !== false) {
 			return ['type' => 'string', 'length' => $length];

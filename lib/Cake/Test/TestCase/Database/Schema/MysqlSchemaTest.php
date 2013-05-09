@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\MysqlSchema;
+use Cake\Database\Schema\Table;
 use Cake\TestSuite\TestCase;
 
 
@@ -51,7 +52,7 @@ class MysqlSchemaTest extends TestCase {
 			],
 			[
 				'DATE',
-				['type' =>  'date', 'length' => null]
+				['type' => 'date', 'length' => null]
 			],
 			[
 				'TIME',
@@ -260,6 +261,303 @@ SQL;
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}
+	}
+
+/**
+ * Column provider for creating column sql
+ *
+ * @return array
+ */
+	public static function columnSqlProvider() {
+		return [
+			// strings
+			[
+				'title',
+				['type' => 'string', 'length' => 25, 'null' => false],
+				'`title` VARCHAR(25) NOT NULL'
+			],
+			[
+				'title',
+				['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
+				'`title` VARCHAR(25) DEFAULT NULL'
+			],
+			[
+				'id',
+				['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
+				'`id` CHAR(32) NOT NULL'
+			],
+			[
+				'role',
+				['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
+				'`role` VARCHAR(10) NOT NULL DEFAULT "admin"'
+			],
+			[
+				'title',
+				['type' => 'string'],
+				'`title` VARCHAR(255)'
+			],
+			// Text
+			[
+				'body',
+				['type' => 'text', 'null' => false],
+				'`body` TEXT NOT NULL'
+			],
+			// Integers
+			[
+				'post_id',
+				['type' => 'integer', 'length' => 11],
+				'`post_id` INTEGER(11)'
+			],
+			[
+				'post_id',
+				['type' => 'biginteger', 'length' => 20],
+				'`post_id` BIGINT'
+			],
+			// Float
+			[
+				'value',
+				['type' => 'float'],
+				'`value` FLOAT'
+			],
+			// Boolean
+			[
+				'checked',
+				['type' => 'boolean', 'default' => false],
+				'`checked` BOOLEAN DEFAULT FALSE'
+			],
+			[
+				'checked',
+				['type' => 'boolean', 'default' => true, 'null' => false],
+				'`checked` BOOLEAN NOT NULL DEFAULT TRUE'
+			],
+			// datetimes
+			[
+				'created',
+				['type' => 'datetime', 'comment' => 'Created timestamp'],
+				'`created` DATETIME COMMENT "Created timestamp"'
+			],
+			// Date & Time
+			[
+				'start_date',
+				['type' => 'date'],
+				'`start_date` DATE'
+			],
+			[
+				'start_time',
+				['type' => 'time'],
+				'`start_time` TIME'
+			],
+			// timestamps
+			[
+				'created',
+				['type' => 'timestamp', 'null' => true],
+				'`created` TIMESTAMP NULL'
+			],
+			[
+				'created',
+				['type' => 'timestamp', 'null' => false, 'default' => 'current_timestamp'],
+				'`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP'
+			],
+		];
+	}
+
+/**
+ * Test generating column definitions
+ *
+ * @dataProvider columnSqlProvider
+ * @return void
+ */
+	public function testColumnSql($name, $data, $expected) {
+		$driver = $this->_getMockedDriver();
+		$schema = new MysqlSchema($driver);
+
+		$table = (new Table('articles'))->addColumn($name, $data);
+		$this->assertEquals($expected, $schema->columnSql($table, $name));
+	}
+
+/**
+ * Test generating a column that is a primary key.
+ *
+ * @return void
+ */
+	public function testColumnSqlPrimaryKey() {
+		$driver = $this->_getMockedDriver();
+		$schema = new MysqlSchema($driver);
+
+		$table = new Table('articles');
+		$table->addColumn('id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addIndex('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+		$result = $schema->columnSql($table, 'id');
+		$this->assertEquals($result, '`id` INTEGER NOT NULL AUTO_INCREMENT');
+
+		$table = new Table('articles');
+		$table->addColumn('id', [
+				'type' => 'biginteger',
+				'null' => false
+			])
+			->addIndex('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+		$result = $schema->columnSql($table, 'id');
+		$this->assertEquals($result, '`id` BIGINT NOT NULL AUTO_INCREMENT');
+	}
+
+/**
+ * Provider for table creation tests.
+ *
+ * @return array
+ */
+	public static function createTableProvider() {
+		$basic = (new Table('posts'))->addColumn('id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addColumn('title', [
+				'type' => 'string',
+				'null' => false,
+				'comment' => 'The title'
+			])
+			->addColumn('body', ['type' => 'text'])
+			->addColumn('created', 'datetime')
+			->addIndex('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+
+		$basicExpected = <<<SQL
+CREATE TABLE `posts` (
+`id` INTEGER NOT NULL AUTO_INCREMENT,
+`title` VARCHAR(255) NOT NULL COMMENT "The title",
+`body` TEXT,
+`created` DATETIME,
+PRIMARY KEY (`id`)
+);
+SQL;
+
+		$uniqueKey = (new Table('articles_authors'))
+			->addColumn('author_id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addColumn('article_id', [
+				'type' => 'integer',
+				'null' => false,
+			])
+			->addIndex('unique_idx', [
+				'type' => 'unique',
+				'columns' => ['author_id', 'article_id']
+			]);
+		$uniqueExpected = <<<SQL
+CREATE TABLE `articles_authors` (
+`author_id` INTEGER NOT NULL,
+`article_id` INTEGER NOT NULL,
+UNIQUE KEY `unique_idx` (`author_id`, `article_id`)
+);
+SQL;
+
+		$simpleKey = (new Table('things'))
+			->addColumn('thing_id', [
+				'type' => 'integer',
+			])
+			->addIndex('thing_id_idx', [
+				'type' => 'index',
+				'columns' => ['thing_id']
+			]);
+		$simpleKeyExpected = <<<SQL
+CREATE TABLE `things` (
+`thing_id` INTEGER,
+KEY `thing_id_idx` (`thing_id`)
+);
+SQL;
+
+		$fullText = (new Table('things'))
+			->addColumn('stuff', [
+				'type' => 'text',
+			])
+			->addIndex('stuff_idx', [
+				'type' => 'fulltext',
+				'columns' => ['stuff']
+			]);
+		$fullTextExpected = <<<SQL
+CREATE TABLE `things` (
+`stuff` TEXT,
+FULLTEXT KEY `stuff_idx` (`stuff`)
+);
+SQL;
+
+		$keyLength = (new Table('articles_authors'))
+			->addColumn('author_id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addColumn('article_id', [
+				'type' => 'integer',
+				'null' => false,
+			])
+			->addIndex('unique_idx', [
+				'type' => 'unique',
+				'columns' => ['author_id', 'article_id'],
+				'length' => ['author_id' => 5, 'article_id' => 4],
+			]);
+		$keyLengthExpected = <<<SQL
+CREATE TABLE `articles_authors` (
+`author_id` INTEGER NOT NULL,
+`article_id` INTEGER NOT NULL,
+UNIQUE KEY `unique_idx` (`author_id`(5), `article_id`(4))
+);
+SQL;
+		return [
+			[$basic, $basicExpected],
+			[$uniqueKey, $uniqueExpected],
+			[$fullText, $fullTextExpected],
+			[$simpleKey, $simpleKeyExpected],
+			[$keyLength, $keyLengthExpected],
+		];
+	}
+
+/**
+ * Integration test for converting a Schema\Table into MySQL table creates.
+ *
+ * @dataProvider createTableProvider
+ * @return void
+ */
+	public function testCreateTableSql($table, $expected) {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$result = $table->createTableSql($connection);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Get a schema instance with a mocked driver/pdo instances
+ *
+ * @return MysqlSchema
+ */
+	protected function _getMockedDriver() {
+		$driver = new \Cake\Database\Driver\Mysql();
+		$mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+		$mock->expects($this->any())
+			->method('quote')
+			->will($this->returnCallback(function ($value) {
+				return '"' . $value . '"';
+			}));
+		$mock->expects($this->any())
+			->method('quoteIdentifier')
+			->will($this->returnCallback(function ($value) {
+				return '`' . $value . '`';
+			}));
+		$driver->connection($mock);
+		return $driver;
 	}
 
 }
