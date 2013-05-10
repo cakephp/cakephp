@@ -34,11 +34,13 @@ class TestTable extends Table {
 class AssociationTest extends \Cake\TestSuite\TestCase {
 
 	public function setUp() {
+		$this->source = new TestTable;
 		$config = [
 			'className' => '\Cake\Test\TestCase\ORM\TestTable',
 			'foreignKey' => 'a_key',
 			'conditions' => ['field' => 'value'],
-			'dependent' => true
+			'dependent' => true,
+			'sourceTable' => $this->source
 		];
 		$this->association = $this->getMock(
 			'\Cake\ORM\Association',
@@ -103,17 +105,31 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that repository() returns the correct Table object
+ * Tests that target() returns the correct Table object
  *
  * @return void
  */
-	public function testRepository() {
-		$table = $this->association->repository();
+	public function testTarget() {
+		$table = $this->association->target();
 		$this->assertInstanceOf(__NAMESPACE__ . '\TestTable', $table);
 
 		$other = new Table;
-		$this->association->repository($other);
-		$this->assertSame($other, $this->association->repository());
+		$this->association->target($other);
+		$this->assertSame($other, $this->association->target());
+	}
+
+/**
+ * Tests that source() returns the correct Table object
+ *
+ * @return void
+ */
+	public function testSource() {
+		$table = $this->association->source();
+		$this->assertSame($this->source, $table);
+
+		$other = new Table;
+		$this->association->source($other);
+		$this->assertSame($other, $this->association->source());
 	}
 
 }

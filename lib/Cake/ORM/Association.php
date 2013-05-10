@@ -71,6 +71,13 @@ abstract class Association {
 	protected $_dependent = false;
 
 /**
+ * Source table instance
+ *
+ * @var Cake\ORM\Table
+ */
+	protected $_sourceTable;
+
+/**
  * Target table instance
  *
  * @var Cake\ORM\Table
@@ -86,7 +93,7 @@ abstract class Association {
  * @return void
  */
 	public function __construct($name, array $options = []) {
-		$defaults = ['className', 'foreignKey', 'conditions',  'dependent'];
+		$defaults = ['className', 'foreignKey', 'conditions', 'dependent', 'sourceTable'];
 		foreach ($defaults as $property) {
 			if (isset($options[$property])) {
 				$this->{'_' . $property} = $options[$property];
@@ -116,13 +123,27 @@ abstract class Association {
 	}
 
 /**
+ * Sets the table instance for the source side of the association. If no arguments
+ * are passed, the current configured table instance is returned
+ *
+ * @param Cake\ORM\Table $table the instance to be assigned as source side
+ * @return Cake\ORM\Table
+ */
+	public function source(Table $table = null) {
+		if ($table === null) {
+			return $this->_sourceTable;
+		}
+		return $this->_sourceTable = $table;
+	}
+
+/**
  * Sets the table instance for the target side of the association. If no arguments
  * are passed, the current configured table instance is returned
  *
  * @param Cake\ORM\Table $table the instance to be assigned as target side
  * @return Cake\ORM\Table
  */
-	public function repository(Table $table = null) {
+	public function target(Table $table = null) {
 		if ($table === null && $this->_targetTable) {
 			return $this->_targetTable;
 		}
