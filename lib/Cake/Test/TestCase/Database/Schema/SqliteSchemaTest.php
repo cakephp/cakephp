@@ -190,60 +190,54 @@ SQL;
 				'null' => false,
 				'default' => null,
 				'length' => null,
+				'precision' => null,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
-				'collate' => null,
 			],
 			'title' => [
 				'type' => 'string',
 				'null' => true,
 				'default' => 'testing',
 				'length' => 20,
+				'precision' => null,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
-				'collate' => null,
 			],
 			'body' => [
 				'type' => 'text',
 				'null' => true,
 				'default' => null,
 				'length' => null,
+				'precision' => null,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
-				'collate' => null,
 			],
 			'author_id' => [
 				'type' => 'integer',
 				'null' => false,
 				'default' => null,
 				'length' => 11,
+				'precision' => null,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
-				'collate' => null,
 			],
 			'published' => [
 				'type' => 'boolean',
 				'null' => true,
 				'default' => 0,
 				'length' => null,
+				'precision' => null,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
-				'collate' => null,
 			],
 			'created' => [
 				'type' => 'datetime',
 				'null' => true,
 				'default' => null,
 				'length' => null,
+				'precision' => null,
 				'fixed' => null,
-				'charset' => null,
 				'comment' => null,
-				'collate' => null,
 			],
 		];
 		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
@@ -252,4 +246,5 @@ SQL;
 			$this->assertEquals($definition, $result->column($field));
 		}
 	}
+
 }
