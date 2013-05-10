@@ -96,15 +96,23 @@ class MysqlSchemaTest extends TestCase {
 			],
 			[
 				'FLOAT',
-				['type' => 'float', 'length' => null]
+				['type' => 'float', 'length' => null, 'precision' => null]
 			],
 			[
 				'DOUBLE',
-				['type' => 'float', 'length' => null]
+				['type' => 'float', 'length' => null, 'precision' => null]
 			],
 			[
 				'DECIMAL(11,2)',
-				['type' => 'decimal', 'length' => null]
+				['type' => 'decimal', 'length' => 11, 'precision' => 2]
+			],
+			[
+				'FLOAT(11,2)',
+				['type' => 'float', 'length' => 11, 'precision' => 2]
+			],
+			[
+				'DOUBLE(10,4)',
+				['type' => 'float', 'length' => 10, 'precision' => 4]
 			],
 		];
 	}
@@ -191,70 +199,63 @@ SQL;
 				'null' => false,
 				'default' => null,
 				'length' => 20,
+				'precision' => null,
 				'fixed' => null,
 				'comment' => null,
-				'collate' => null,
-				'charset' => null,
 			],
 			'title' => [
 				'type' => 'string',
 				'null' => true,
 				'default' => null,
 				'length' => 20,
-				'collate' => 'utf8_general_ci',
+				'precision' => null,
 				'comment' => 'A title',
 				'fixed' => null,
-				'charset' => null,
 			],
 			'body' => [
 				'type' => 'text',
 				'null' => true,
 				'default' => null,
 				'length' => null,
-				'collate' => 'utf8_general_ci',
+				'precision' => null,
 				'fixed' => null,
 				'comment' => null,
-				'charset' => null,
 			],
 			'author_id' => [
 				'type' => 'integer',
 				'null' => false,
 				'default' => null,
 				'length' => 11,
+				'precision' => null,
 				'fixed' => null,
 				'comment' => null,
-				'collate' => null,
-				'charset' => null,
 			],
 			'published' => [
 				'type' => 'boolean',
 				'null' => true,
 				'default' => 0,
 				'length' => null,
+				'precision' => null,
 				'fixed' => null,
 				'comment' => null,
-				'collate' => null,
-				'charset' => null,
 			],
 			'allow_comments' => [
 				'type' => 'boolean',
 				'null' => true,
 				'default' => 0,
 				'length' => null,
+				'precision' => null,
 				'fixed' => null,
 				'comment' => null,
-				'collate' => null,
-				'charset' => null,
 			],
 			'created' => [
 				'type' => 'datetime',
 				'null' => true,
 				'default' => null,
 				'length' => null,
+				'precision' => null,
 				'fixed' => null,
 				'comment' => null,
-				'collate' => null,
-				'charset' => null,
 			],
 		];
 		$this->assertEquals(['id'], $result->primaryKey());
@@ -313,11 +314,32 @@ SQL;
 				['type' => 'biginteger', 'length' => 20],
 				'`post_id` BIGINT'
 			],
+			// Decimal
+			[
+				'value',
+				['type' => 'decimal'],
+				'`value` DECIMAL'
+			],
+			[
+				'value',
+				['type' => 'decimal', 'length' => 11],
+				'`value` FLOAT(11, 3)'
+			],
+			[
+				'value',
+				['type' => 'decimal', 'length' => 12, 'precision' => 5],
+				'`value` FLOAT(12, 5)'
+			],
 			// Float
 			[
 				'value',
 				['type' => 'float'],
 				'`value` FLOAT'
+			],
+			[
+				'value',
+				['type' => 'float', 'length' => 11],
+				'`value` FLOAT(11, 3)'
 			],
 			// Boolean
 			[

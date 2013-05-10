@@ -61,12 +61,11 @@ class Table {
 	protected $_columnKeys = [
 		'type' => null,
 		'length' => null,
+		'precision' => null,
 		'null' => null,
 		'default' => null,
 		'fixed' => null,
 		'comment' => null,
-		'collate' => null,
-		'charset' => null,
 	];
 
 /**

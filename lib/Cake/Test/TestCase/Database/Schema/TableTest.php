@@ -78,12 +78,11 @@ class TableTest extends TestCase {
 		$expected = [
 			'type' => 'string',
 			'length' => null,
+			'precision' => null,
 			'default' => null,
 			'null' => null,
 			'fixed' => null,
 			'comment' => null,
-			'collate' => null,
-			'charset' => null,
 		];
 		$this->assertEquals($expected, $result);
 	}

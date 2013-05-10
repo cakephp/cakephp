@@ -77,9 +77,14 @@ class MysqlSchema {
 		}
 
 		$col = strtolower($matches[1]);
-		$length = null;
+		$length = $precision = null;
 		if (isset($matches[2])) {
-			$length = (int)$matches[2];
+			$length = $matches[2];
+			if (strpos($matches[2], ',') !== false) {
+				list($length, $precision) = explode(',', $length);
+			}
+			$length = (int)$length;
+			$precision = (int)$precision;
 		}
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
@@ -107,10 +112,10 @@ class MysqlSchema {
 			return ['type' => 'binary', 'length' => $length];
 		}
 		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false) {
-			return ['type' => 'float', 'length' => $length];
+			return ['type' => 'float', 'length' => $length, 'precision' => $precision];
 		}
 		if (strpos($col, 'decimal') !== false) {
-			return ['type' => 'decimal', 'length' => null];
+			return ['type' => 'decimal', 'length' => $length, 'precision' => $precision];
 		}
 		return ['type' => 'text', 'length' => null];
 	}
@@ -213,11 +218,17 @@ class MysqlSchema {
 				break;
 			}
 		}
-		$hasLength = [
-			'integer', 'string', 'float'
-		];
+		$hasLength = ['integer', 'string'];
 		if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
-			$out .= '(' . $data['length'] . ')';
+			$out .= '(' . (int)$data['length'] . ')';
+		}
+		$hasPrecision = ['float', 'decimal'];
+		if (
+			in_array($data['type'], $hasPrecision, true) &&
+			(isset($data['length']) || isset($data['precision']))
+		) {
+			$data += ['length' => 11, 'precision' => 3];
+			$out .= '(' . (int)$data['length'] . ', ' . (int)$data['precision'] . ')';
 		}
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';
