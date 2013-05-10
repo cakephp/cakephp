@@ -1101,6 +1101,15 @@ class CakeRequestTest extends CakeTestCase {
 		Configure::write('App.baseUrl', false);
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
+		$_SERVER['PHP_SELF'] = '/urlencode me/app/webroot/index.php';
+		$_SERVER['PATH_INFO'] = '/posts/view/1';
+
+		$request = new CakeRequest();
+		$this->assertEquals('/urlencode%20me', $request->base);
+		$this->assertEquals('/urlencode%20me/', $request->webroot);
+		$this->assertEquals('posts/view/1', $request->url);
+
+		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
 		$_SERVER['PHP_SELF'] = '/1.2.x.x/app/webroot/index.php';
 		$_SERVER['PATH_INFO'] = '/posts/view/1';
 

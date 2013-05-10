@@ -292,7 +292,7 @@ class CakeRequest implements ArrayAccess {
 			if ($base === DS || $base === '.') {
 				$base = '';
 			}
-
+			$base = implode('/', array_map('rawurlencode', explode('/', $base)));
 			$this->webroot = $base . '/';
 			return $this->base = $base;
 		}
