@@ -73,7 +73,7 @@ class SqliteSchema {
 			return ['type' => 'integer', 'length' => $length];
 		}
 		if ($col === 'char') {
-			return ['type' => 'string', 'fixed', 'length' => $length];
+			return ['type' => 'string', 'fixed' => true, 'length' => $length];
 		}
 		if (strpos($col, 'char') !== false) {
 			return ['type' => 'string', 'length' => $length];
