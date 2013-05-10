@@ -122,16 +122,17 @@ class Table {
  * - `type` The type of the column. This should be
  *   one of CakePHP's abstract types.
  * - `length` The length of the column.
+ * - `precision` The number of decimal places to store
+ *   for float and decimal types.
  * - `default` The default value of the column.
  * - `null` Whether or not the column can hold nulls.
  * - `fixed` Whether or not the column is a fixed length column.
+ *   this is only useful for string colums.
  *
  * In addition to the above keys, the following keys are
  * implemented in some database dialects, but not all:
  *
  * - `comment` The comment for the column.
- * - `charset` The charset for the column.
- * - `collate` The collation for the column.
  *
  * @param string $name The name of the column
  * @param array $attrs The attributes for the column.
