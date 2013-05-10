@@ -55,10 +55,10 @@ App::uses('Debugger', 'Utility');
 			'<a href="#" onclick="traceToggle(event, \'trace-args-%s\')">%s(%s)</a> ',
 			$i,
 			$called,
-			implode(', ', $args)
+			h(implode(', ', $args))
 		);
 		$arguments = sprintf('<div id="trace-args-%s" class="cake-code-dump" style="display: none;"><pre>', $i);
-		$arguments .= implode("\n", $params);
+		$arguments .= h(implode("\n", $params));
 		$arguments .= '</pre></div>';
 	endif;
 	echo $excerpt;
