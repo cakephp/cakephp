@@ -227,8 +227,7 @@ class MysqlSchema {
 			in_array($data['type'], $hasPrecision, true) &&
 			(isset($data['length']) || isset($data['precision']))
 		) {
-			$data += ['length' => 11, 'precision' => 3];
-			$out .= '(' . (int)$data['length'] . ', ' . (int)$data['precision'] . ')';
+			$out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
 		}
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';

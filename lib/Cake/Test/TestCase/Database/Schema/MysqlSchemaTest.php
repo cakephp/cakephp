@@ -323,12 +323,12 @@ SQL;
 			[
 				'value',
 				['type' => 'decimal', 'length' => 11],
-				'`value` FLOAT(11, 3)'
+				'`value` DECIMAL(11,0)'
 			],
 			[
 				'value',
 				['type' => 'decimal', 'length' => 12, 'precision' => 5],
-				'`value` FLOAT(12, 5)'
+				'`value` DECIMAL(12,5)'
 			],
 			// Float
 			[
@@ -338,8 +338,8 @@ SQL;
 			],
 			[
 				'value',
-				['type' => 'float', 'length' => 11],
-				'`value` FLOAT(11, 3)'
+				['type' => 'float', 'length' => 11, 'precision' => 3],
+				'`value` FLOAT(11,3)'
 			],
 			// Boolean
 			[
