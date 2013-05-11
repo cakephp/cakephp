@@ -170,7 +170,7 @@ class Hash {
  */
 	protected static function _matches(array $data, $selector) {
 		preg_match_all(
-			'/(\[ (?<attr>[^=><!]+?) (\s* (?<op>[><!]?[=]|[><]) \s* (?<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
+			'/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
 			$selector,
 			$conditions,
 			PREG_SET_ORDER
