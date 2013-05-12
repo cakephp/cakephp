@@ -39,7 +39,12 @@ class Query extends DatabaseQuery {
 		if ($associations === null) {
 			return $this->_containments;
 		}
-		foreach ($associations as $table => $options) {
+
+		foreach ((array)$associations as $table => $options) {
+			if (is_string($options)) {
+				$table = $options;
+				$options = [];
+			}
 			$this->_containments[$table] = $options;
 		}
 		return $this;
@@ -139,7 +144,12 @@ class Query extends DatabaseQuery {
 			'associations' => [],
 			'config' => array_diff_key($options, $extra)
 		];
+
 		foreach ($extra as $t => $assoc) {
+			if (is_numeric($t)) {
+				$t = $assoc;
+				$assoc = [];
+			}
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
 		}
 		return $config;

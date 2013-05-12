@@ -121,15 +121,13 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testContainToJoinsOneLevel() {
 		$contains = [
 			'client' => [
-				'order' => [
-					'orderType' => ['fields' => false],
-					'stuff' => [
-						'stuffType' => ['fields' => false]
-					]
+			'order' => [
+					'orderType',
+					'stuff' => ['stuffType']
 				],
 				'company' => [
 					'foreignKey' => 'organization_id',
-					'category' => ['fields' => false]
+					'category'
 				]
 			]
 		];
@@ -205,12 +203,14 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testContainToFieldsPredefined() {
-		$contains = ['client' => [
-			'fields' => ['name', 'company_id', 'client.telephone'],
-			'order' => [
-				'fields' => ['total', 'placed']
+		$contains = [
+			'client' => [
+				'fields' => ['name', 'company_id', 'client.telephone'],
+				'order' => [
+					'fields' => ['total', 'placed']
+				]
 			]
-		]];
+		];
 
 		$table = Table::build('foo', ['schema' => ['id' => ['type' => 'integer']]]);
 		$query = new Query($this->connection);
@@ -234,9 +234,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testContainToFieldsDefault() {
-		$contains = [
-			'client' => ['order' => []]
-		];
+		$contains = ['client' => ['order']];
 
 		$query = new Query($this->connection);
 		$query->select()->repository($this->table)->contain($contains)->sql();
@@ -279,12 +277,10 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->_insertTwoRecords();
 
 		$query = new Query($this->connection);
-		$contain = ['author' => []];
-
 		$table = Table::build('article', ['table' => 'articles']);
 		Table::build('author', ['connection' => $this->connection]);
 		$table->belongsTo('author');
-		$results = $query->repository($table)->select()->contain($contain)->toArray();
+		$results = $query->repository($table)->select()->contain('author')->toArray();
 		$expected = [
 			[
 				'article' => [
