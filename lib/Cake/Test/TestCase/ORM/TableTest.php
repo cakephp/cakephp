@@ -194,4 +194,38 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 	}
 
+/**
+ * Tests that belongsTo() creates and configures correctly the association
+ *
+ * @return void
+ */
+	public function testBelongsTo() {
+		$options = ['foreignKey' => 'fake_id', 'conditions' => ['a' => 'b']];
+		$table = new Table(['table' => 'dates']);
+		$belongsTo = $table->belongsTo('user', $options);
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsTo', $belongsTo);
+		$this->assertSame($belongsTo, $table->association('user'));
+		$this->assertEquals('user', $belongsTo->name());
+		$this->assertEquals('fake_id', $belongsTo->foreignKey());
+		$this->assertEquals(['a' => 'b'], $belongsTo->conditions());
+		$this->assertSame($table, $belongsTo->source());
+	}
+
+/**
+ * Tests that hasOne() creates and configures correctly the association
+ *
+ * @return void
+ */
+	public function testHasOne() {
+		$options = ['foreignKey' => 'user_id', 'conditions' => ['b' => 'c']];
+		$table = new Table(['table' => 'users']);
+		$hasOne = $table->hasOne('profile', $options);
+		$this->assertInstanceOf('\Cake\ORM\Association\HasOne', $hasOne);
+		$this->assertSame($hasOne, $table->association('profile'));
+		$this->assertEquals('profile', $hasOne->name());
+		$this->assertEquals('user_id', $hasOne->foreignKey());
+		$this->assertEquals(['b' => 'c'], $hasOne->conditions());
+		$this->assertSame($table, $hasOne->source());
+	}
+
 }

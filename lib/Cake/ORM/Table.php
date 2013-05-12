@@ -16,6 +16,8 @@
  */
 namespace Cake\ORM;
 
+use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Association\HasOne;
 use Cake\Utility\Inflector;
 
 class Table {
@@ -33,6 +35,10 @@ class Table {
 	protected $_connection;
 
 	protected $_schema;
+
+	protected $_primaryKey = 'id';
+
+	protected $_associations = [];
 
 	public function __construct($config = array()) {
 		if (!empty($config['table'])) {
@@ -141,6 +147,89 @@ class Table {
 			return $this->_schema;
 		}
 		return $this->_schema = $schema;
+	}
+
+	public function primaryKey($key = null) {
+		if ($key !== null) {
+			$this->_primaryKey = $key;
+		}
+		return $this->_primaryKey;
+	}
+
+/**
+ * Returns a association objected configured for the specified alias if any
+ *
+ * @param string $name the alias used for the association
+ * @return Cake\ORM\Association
+ */
+	public function association($name) {
+		if (isset($this->_associations[$name])) {
+			return $this->_associations[$name];
+		}
+
+		return null;
+	}
+
+/**
+ * Creates a new BelongsTo association between this table and a target
+ * table. A "belongs to" association is a 1-N relationship where this table
+ * is the N side, and where there is a single associated record in the target
+ * table for each one in this table.
+ *
+ * Target table can be inferred by its name, which is provided in the
+ * first argument, or you can either pass the class name to be instantiated or
+ * an instance of it directly.
+ *
+ * The options array accept the following keys:
+ *
+ * - className: The class name of the target table object
+ * - targetTable: An instance of a table object to be used as the target table
+ * - foreignKey: The name of the field to use as foreign key, if false none
+ *   will be used
+ * - conditions: array with a list of conditions to filter the join with
+ * - joinType: The type of join to be used (e.g. INNER)
+ *
+ * This method will return the recently built association object
+ *
+ * @param string $associated the alias for the target table. This is used to
+ * uniquely identify the association
+ * @param array $options list of options to configure the association definition
+ * @return Cake\ORM\Association\BelongsTo
+ */
+	public function belongsTo($associated, array $options = []) {
+		$options += ['sourceTable' => $this];
+		$association = new BelongsTo($associated, $options);
+		return $this->_associations[$association->name()] = $association;
+	}
+
+/**
+ * Creates a new HasOne association between this table and a target
+ * table. A "has one" association is a 1-1 relationship.
+ *
+ * Target table can be inferred by its name, which is provided in the
+ * first argument, or you can either pass the class name to be instantiated or
+ * an instance of it directly.
+ *
+ * The options array accept the following keys:
+ *
+ * - className: The class name of the target table object
+ * - targetTable: An instance of a table object to be used as the target table
+ * - foreignKey: The name of the field to use as foreign key, if false none
+ *   will be used
+ * - conditions: array with a list of conditions to filter the join with
+ * - joinType: The type of join to be used (e.g. LEFT)
+ *
+ * This method will return the recently built association object
+ *
+ * @param string $associated the alias for the target table. This is used to
+ * uniquely identify the association
+ * @param array $options list of options to configure the association definition
+ * @return Cake\ORM\Association\HasOne
+ */
+	public function hasOne($associated, array $options = []) {
+		$options += ['sourceTable' => $this];
+		$association = new HasOne($associated, $options);
+		return $this->_associations[$association->name()] = $association;
 	}
 
 	public function find($type, $options = []) {

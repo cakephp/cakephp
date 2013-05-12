@@ -66,7 +66,7 @@ class HasOne extends Association {
  *
  * - includeFields: Whether to include target model fields in the result or not
  * - foreignKey: The name of the field to use as foreign key, if false none
- *   will be sued
+ *   will be used
  * - conditions: array with a list of conditions to filter the join with
  * - fields: a list of fields in the target table to include in the result
  * - type: The type of join to be used (e.g. INNER)
