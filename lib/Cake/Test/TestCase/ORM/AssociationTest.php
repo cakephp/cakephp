@@ -45,7 +45,8 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 			'foreignKey' => 'a_key',
 			'conditions' => ['field' => 'value'],
 			'dependent' => true,
-			'sourceTable' => $this->source
+			'sourceTable' => $this->source,
+			'joinType' => 'INNER'
 		];
 		$this->association = $this->getMock(
 			'\Cake\ORM\Association',
@@ -144,6 +145,17 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 		$other = new Table;
 		$this->association->source($other);
 		$this->assertSame($other, $this->association->source());
+	}
+
+/**
+ * Tests joinType method
+ *
+ * @return void
+ */
+	public function testJoinType() {
+		$this->assertEquals('INNER', $this->association->joinType());
+		$this->association->joinType('LEFT');
+		$this->assertEquals('LEFT', $this->association->joinType());
 	}
 
 }

@@ -82,10 +82,13 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new BelongsTo('Company', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Company' => ['conditions' => [
-				'Company.is_active' => true,
-				'Company.id = Client.company_id',
-			]]
+			'Company' => [
+				'conditions' => [
+					'Company.is_active' => true,
+					'Company.id = Client.company_id',
+				],
+				'type' => 'LEFT'
+			]
 		]);
 		$query->expects($this->once())->method('select')->with([
 			'Company__id' => 'Company.id',
@@ -108,9 +111,12 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new BelongsTo('Company', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Company' => ['conditions' => [
-				'Company.is_active' => false
-			]]
+			'Company' => [
+				'conditions' => [
+					'Company.is_active' => false
+				],
+				'type' => 'LEFT'
+			]
 		]);
 		$query->expects($this->once())->method('select')->with([
 			'Company__company_name' => 'Company.company_name'
@@ -138,10 +144,13 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new BelongsTo('Company', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Company' => ['conditions' => [
-				'Company.is_active' => true,
-				'Company.id = Client.company_id',
-			]]
+			'Company' => [
+				'conditions' => [
+					'Company.is_active' => true,
+					'Company.id = Client.company_id',
+				],
+				'type' => 'LEFT'
+			]
 		]);
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);

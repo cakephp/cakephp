@@ -82,10 +82,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new HasOne('Profile', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Profile' => ['conditions' => [
-				'Profile.is_active' => true,
-				'User.id = Profile.user_id',
-			]]
+			'Profile' => [
+				'conditions' => [
+					'Profile.is_active' => true,
+					'User.id = Profile.user_id',
+				],
+				'type' => 'INNER'
+			]
 		]);
 		$query->expects($this->once())->method('select')->with([
 			'Profile__id' => 'Profile.id',
@@ -110,9 +113,12 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new HasOne('Profile', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Profile' => ['conditions' => [
-				'Profile.is_active' => false
-			]]
+			'Profile' => [
+				'conditions' => [
+					'Profile.is_active' => false
+				],
+				'type' => 'INNER'
+			]
 		]);
 		$query->expects($this->once())->method('select')->with([
 			'Profile__first_name' => 'Profile.first_name'
@@ -140,10 +146,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new HasOne('Profile', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Profile' => ['conditions' => [
-				'Profile.is_active' => true,
-				'User.id = Profile.user_id',
-			]]
+			'Profile' => [
+				'conditions' => [
+					'Profile.is_active' => true,
+					'User.id = Profile.user_id',
+				],
+				'type' => 'INNER'
+			]
 		]);
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);

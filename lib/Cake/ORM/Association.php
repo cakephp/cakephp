@@ -85,6 +85,14 @@ abstract class Association {
 	protected $_targetTable;
 
 /**
+ * The type of join to be used when adding the association to a query
+ *
+ * @var string
+ */
+	protected $_joinType = 'LEFT';
+
+
+/**
  * Constructor. Subclasses can override _options function to get the original
  * list of passed options if expecting any other special key
  *
@@ -99,7 +107,8 @@ abstract class Association {
 			'conditions',
 			'dependent',
 			'sourceTable',
-			'targetTable'
+			'targetTable',
+			'joinType'
 		];
 		foreach ($defaults as $property) {
 			if (isset($options[$property])) {
@@ -220,6 +229,20 @@ abstract class Association {
  */
 	public function canBeJoined() {
 		return $this->_canBeJoined;
+	}
+
+/**
+ * Sets the type of join to be used when adding the association to a query.
+ * If no arguments are passed, currently configured type is returned.
+ *
+ * @param string $type the join type to be used (e.g. INNER)
+ * @return string
+ */
+	public function joinType($type = null) {
+		if ($type === null) {
+			return $this->_joinType;
+		}
+		return $this->_joinType = $type;
 	}
 
 /**

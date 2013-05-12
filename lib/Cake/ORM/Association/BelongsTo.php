@@ -62,6 +62,7 @@ class BelongsTo extends Association {
  *   will be sued
  * - conditions: array with a list of conditions to filter the join with
  * - fields: a list of fields in the target table to include in the result
+ * - type: The type of join to be used (e.g. INNER)
  *
  * @param Query $query the query to be altered to include the target table data
  * @param array $options Any extra options or overrides to be taken in account
@@ -73,7 +74,8 @@ class BelongsTo extends Association {
 		$options += [
 			'includeFields' => true,
 			'foreignKey' => $this->foreignKey(),
-			'conditions' => []
+			'conditions' => [],
+			'type' => $this->joinType()
 		];
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 

@@ -35,6 +35,13 @@ class HasOne extends Association {
 	protected $_canBeJoined = true;
 
 /**
+ * The type of join to be used when adding the association to a query
+ *
+ * @var string
+ */
+	protected $_joinType = 'INNER';
+
+/**
  * Sets the name of the field representing the foreign key to the target table.
  * If no parameters are passed current field is returned
  *
@@ -62,6 +69,7 @@ class HasOne extends Association {
  *   will be sued
  * - conditions: array with a list of conditions to filter the join with
  * - fields: a list of fields in the target table to include in the result
+ * - type: The type of join to be used (e.g. INNER)
  *
  * @param Query $query the query to be altered to include the target table data
  * @param array $options Any extra options or overrides to be taken in account
@@ -73,7 +81,8 @@ class HasOne extends Association {
 		$options += [
 			'includeFields' => true,
 			'foreignKey' => $this->foreignKey(),
-			'conditions' => []
+			'conditions' => [],
+			'type' => $this->joinType()
 		];
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 
