@@ -3,7 +3,6 @@
 namespace Cake\ORM;
 
 use Cake\Database\Query as DatabaseQuery;
-use Cake\Utility\Inflector;
 
 class Query extends DatabaseQuery {
 
@@ -20,8 +19,17 @@ class Query extends DatabaseQuery {
 			return $this->_table;
 		}
 		$this->_table = $table;
-		$this->_addDefaultTypes($table);
+		$this->addDefaultTypes($table);
 		return $this;
+	}
+
+	public function addDefaultTypes(Table $table) {
+		$alias = $table->alias();
+		$fields = [];
+		foreach ($table->schema() as $f => $meta) {
+			$fields[$f] = $fields[$alias . '.' . $f] = $meta['type'];
+		}
+		$this->defaultTypes($this->defaultTypes() + $fields);
 	}
 
 	public function contain($associations = null) {
@@ -69,6 +77,20 @@ class Query extends DatabaseQuery {
 		return [$key => $_field];
 	}
 
+	public function aliasFields($fields, $defaultAlias = null) {
+		$aliased = [];
+		foreach ($fields as $alias => $field) {
+			if (is_numeric($alias) && is_string($field)) {
+				$aliased += $this->aliasField($field, $defaultAlias);
+				continue;
+			}
+			$aliased[$alias] = $field;
+		}
+
+		return $aliased;
+	}
+
+
 	protected function _transformQuery() {
 		if (!$this->_dirty) {
 			return parent::_transformQuery();
@@ -89,116 +111,58 @@ class Query extends DatabaseQuery {
 		$contain = [];
 		foreach ($this->_containments as $table => $options) {
 			$contain[$table] = $this->_normalizeContain(
-				$this->repository(),
+				$this->_table,
 				$table,
 				$options
 			);
 		}
 
-		$firstLevelJoins = $this->_resolveFirstLevel($contain);
-		foreach ($firstLevelJoins as $table => $options) {
-			$this->_addJoin($table, $options);
+		$firstLevelJoins = $this->_resolveFirstLevel($this->_table, $contain);
+		foreach ($firstLevelJoins as $options) {
+			$this->_addJoin($options['association'], $options['options']);
 		}
 	}
 
 	protected function _normalizeContain(Table $parent, $alias, $options) {
 		$defaults = [
-			'table' => 1,
-			'associationType' => 1,
 			'associations' => 1,
 			'foreignKey' => 1,
 			'conditions' => 1,
 			'fields' => 1
 		];
-		$table = Table::build($alias);
+
+		$table = $parent->association($alias)->target();
 		$this->_aliasMap[$alias] = $table;
 
-		if (is_string($options)) {
-			//TODO: finish extracting 
-			$options = $table->associated($options);
-		}
-
 		$extra = array_diff_key($options, $defaults);
-		$config = array_diff_key($options, $extra) + [
+		$config = [
 			'associations' => [],
-			'table' => $table->table(),
-			'type' => 'left'
+			'config' => array_diff_key($options, $extra)
 		];
-		$config = $this->_resolveForeignKeyConditions($table, $parent, $config);
-
-		if (empty($config['fields'])) {
-			$f = isset($config['fields']) ? $config['fields'] : null;
-			if (!$this->_hasFields && ($f === null || $f !== false)) {
-				$config['fields'] = array_keys($table->schema());
-			}
-		}
-
 		foreach ($extra as $t => $assoc) {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
 		}
 		return $config;
 	}
 
-	protected function _resolveForeignKeyConditions(Table $table, Table $parent, array $config) {
-		if (!isset($config['foreignKey']) || $config['foreignKey'] !== false) {
-			$target = $config['associationType'] === 'belongsTo' ? $table : $parent;
-			$config['foreignKey'] = Inflector::underscore($target->alias()) . '_id';
-		}
-
-		if (!empty($config['foreignKey'])) {
-			if ($config['associationType'] === 'belongsTo') {
-				$config['conditions'][] =  sprintf('%s.%s = %s.%s',
-					$table->alias(),
-					'id',
-					$parent->alias(),
-					$config['foreignKey']
-				);
-			}
-			if ($config['associationType'] === 'hasOne') {
-				$config['conditions'][] = sprintf('%s.%s = %s.%s', 
-					$table->alias(),
-					$config['foreignKey'],
-					$parent->alias(),
-					'id'
-				);
-			}
-		}
-		return $config;
-	}
-
-	protected function _resolveFirstLevel($associations) {
+	protected function _resolveFirstLevel($source, $associations) {
 		$result = [];
 		foreach ($associations as $table => $options) {
-			foreach (['belongsTo', 'hasOne'] as $type) {
-				if ($options['associationType'] === $type) {
-					$result += [$table => array_diff_key($options, ['associations' => 1])];
-					$result += $this->_resolveFirstLevel($options['associations']);
-				}
+			$associated = $source->association($table);
+			if ($associated && $associated->canBeJoined()) {
+				$result[$table] =  [
+					'association' => $associated,
+					'options' => $options['config']
+				];
+				$result += $this->_resolveFirstLevel($associated->target(), $options['associations']);
 			}
+			//TODO: If it is not associated assume a HasOne association (like in the popular Linkable plugin)
 		}
 		return $result;
 	}
 
-	protected function _addJoin($alias, $options) {
-		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$this->join([$alias => array_intersect_key($options, $joinOptions)]);
-
-		if (!empty($options['fields'])) {
-			$this->select($this->_aliasFields($options['fields'], $alias));
-		}
-	}
-
-	protected function _aliasFields($fields, $defaultAlias = null) {
-		$aliased = [];
-		foreach ($fields as $alias => $field) {
-			if (is_numeric($alias) && is_string($field)) {
-				$aliased += $this->aliasField($field, $defaultAlias);
-				continue;
-			}
-			$aliased[$alias] = $field;
-		}
-
-		return $aliased;
+	protected function _addJoin($association, $options) {
+		$association->attachTo($this, $options + ['includeFields' => !$this->_hasFields]);
 	}
 
 	protected function _addDefaultFields() {
@@ -211,17 +175,8 @@ class Query extends DatabaseQuery {
 			$select = $this->clause('select');
 		}
 
-		$aliased = $this->_aliasFields($select, $this->repository()->alias());
+		$aliased = $this->aliasFields($select, $this->repository()->alias());
 		$this->select($aliased, true);
-	}
-
-	protected function _addDefaultTypes(Table $table) {
-		$alias = $table->alias();
-		$fields = [];
-		foreach ($table->schema() as $f => $meta) {
-			$fields[$f] = $fields[$alias . '.' . $f] = $meta['type'];
-		}
-		$this->defaultTypes($this->defaultTypes() + $fields);
 	}
 
 }

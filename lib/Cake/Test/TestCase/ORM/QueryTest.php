@@ -29,6 +29,34 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 
 	public function setUp() {
 		$this->connection = new Connection(Configure::read('Datasource.test'));
+		$schema = ['id' => ['type' => 'integer']];
+		$schema1 = [
+			'id' => ['type' => 'integer'],
+			'name' => ['type' => 'string'],
+			'phone' => ['type' => 'string']
+		];
+		$schema2 = [
+			'id' => ['type' => 'integer'],
+			'total' => ['type' => 'string'],
+			'placed' => ['type' => 'datetime']
+		];
+
+		$this->table = $table = Table::build('foo', ['schema' => $schema]);
+		$clients = Table::build('client', ['schema' => $schema1]);
+		$orders = Table::build('order', ['schema' => $schema2]);
+		$companies = Table::build('company', ['schema' => $schema, 'table' => 'organizations']);
+		$orderTypes = Table::build('orderType', ['schema' => $schema]);
+		$stuff = Table::build('stuff', ['schema' => $schema, 'table' => 'things']);
+		$stuffTypes = Table::build('stuffType', ['schema' => $schema]);
+		$categories = Table::build('category', ['schema' => $schema]);
+
+		$table->belongsTo('client');
+		$clients->hasOne('order');
+		$clients->belongsTo('company');
+		$orders->belongsTo('orderType');
+		$orders->hasOne('stuff');
+		$stuff->belongsTo('stuffType');
+		$companies->belongsTo('category');
 	}
 
 	public function tearDown() {
@@ -91,37 +119,27 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testContainToJoinsOneLevel() {
-		$contains = ['client' => [
-			'associationType' => 'belongsTo',
-			'table' => 'clients',
-			'fields' => false,
-			'order' => [
-				'associationType' => 'hasOne',
-				'orderType' => ['associationType' => 'belongsTo', 'fields' => false],
-				'fields' => false,
-				'stuff' => [
-					'associationType' => 'hasOne',
-					'table' => 'things',
-					'fields' => false,
-					'stuffType' => ['associationType' => 'belongsTo', 'fields' => false]
+		$contains = [
+			'client' => [
+				'order' => [
+					'orderType' => ['fields' => false],
+					'stuff' => [
+						'stuffType' => ['fields' => false]
+					]
+				],
+				'company' => [
+					'foreignKey' => 'organization_id',
+					'category' => ['fields' => false]
 				]
-			],
-			'company' => [
-				'associationType' => 'belongsTo',
-				'fields' => false,
-				'table' => 'organizations',
-				'foreignKey' => 'organization_id',
-				'category' => ['associationType' => 'belongsTo', 'fields' => false]
 			]
-		]];
-	
-		$table = Table::build('foo', ['schema' => ['id' => ['type' => 'integer']]]);
+		];
+
 		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection]);
 
 		$query->expects($this->at(0))->method('join')
 			->with(['client' => [
 				'table' => 'clients',
-				'type' => 'left',
+				'type' => 'LEFT',
 				'conditions' => ['client.id = foo.client_id']
 			]])
 			->will($this->returnValue($query));
@@ -129,15 +147,15 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->at(1))->method('join')
 			->with(['order' => [
 				'table' => 'orders',
-				'type' => 'left',
-				'conditions' => ['order.client_id = client.id']
+				'type' => 'INNER',
+				'conditions' => ['client.id = order.client_id']
 			]])
 			->will($this->returnValue($query));
 
 		$query->expects($this->at(2))->method('join')
 			->with(['orderType' => [
 				'table' => 'order_types',
-				'type' => 'left',
+				'type' => 'LEFT',
 				'conditions' => ['orderType.id = order.order_type_id']
 			]])
 			->will($this->returnValue($query));
@@ -145,8 +163,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->at(3))->method('join')
 			->with(['stuff' => [
 				'table' => 'things',
-				'type' => 'left',
-				'conditions' => ['stuff.order_id = order.id']
+				'type' => 'INNER',
+				'conditions' => ['order.id = stuff.order_id']
 			]])
 			->will($this->returnValue($query));
 
@@ -154,7 +172,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->at(4))->method('join')
 			->with(['stuffType' => [
 				'table' => 'stuff_types',
-				'type' => 'left',
+				'type' => 'LEFT',
 				'conditions' => ['stuffType.id = stuff.stuff_type_id']
 			]])
 			->will($this->returnValue($query));
@@ -162,22 +180,22 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->at(5))->method('join')
 			->with(['company' => [
 				'table' => 'organizations',
-				'type' => 'left',
-				'conditions' => ['company.id = client.company_id']
+				'type' => 'LEFT',
+				'conditions' => ['company.id = client.organization_id']
 			]])
 			->will($this->returnValue($query));
 
 		$query->expects($this->at(6))->method('join')
 			->with(['category' => [
 				'table' => 'categories',
-				'type' => 'left',
+				'type' => 'LEFT',
 				'conditions' => ['category.id = company.category_id']
 			]])
 			->will($this->returnValue($query));
 
 		$s = $query
 			->select('foo.id')
-			->repository($table)
+			->repository($this->table)
 			->contain($contains)->sql();
 	}
 
@@ -188,15 +206,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  **/
 	public function testContainToFieldsPredefined() {
 		$contains = ['client' => [
-			'associationType' => 'belongsTo',
 			'fields' => ['name', 'company_id', 'client.telephone'],
-			'table' => 'clients',
 			'order' => [
-				'associationType' => 'hasOne',
 				'fields' => ['total', 'placed']
 			]
 		]];
-	
+
 		$table = Table::build('foo', ['schema' => ['id' => ['type' => 'integer']]]);
 		$query = new Query($this->connection);
 
@@ -220,30 +235,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  **/
 	public function testContainToFieldsDefault() {
 		$contains = [
-			'client' => [
-				'associationType' => 'belongsTo',
-				'order' => [
-					'associationType' => 'hasOne',
-				]
-			]
+			'client' => ['order' => []]
 		];
-
-		$schema1 = [
-			'id' => ['type' => 'integer'],
-			'name' => ['type' => 'string'],
-			'phone' => ['type' => 'string']
-		];
-		$schema2 = [
-			'id' => ['type' => 'integer'],
-			'total' => ['type' => 'string'],
-			'placed' => ['type' => 'datetime']
-		];
-		$table = Table::build('foo', ['schema' => ['id' => ['type' => 'integer']]]);
-		Table::build('client', ['schema' => $schema1]);
-		Table::build('order', ['schema' => $schema2]);
 
 		$query = new Query($this->connection);
-		$query->select()->repository($table)->contain($contains)->sql();
+		$query->select()->repository($this->table)->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
 			'foo__id' => 'foo.id', 'client__name' => 'client.name',
@@ -255,7 +251,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 
 		$contains['client']['fields'] = ['name'];
 		$query = new Query($this->connection);
-		$query->select('foo.id')->repository($table)->contain($contains)->sql();
+		$query->select('foo.id')->repository($this->table)->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = ['foo__id' => 'foo.id', 'client__name' => 'client.name'];
 		$this->assertEquals($expected, $select);
@@ -263,7 +259,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$contains['client']['fields'] = [];
 		$contains['client']['order']['fields'] = false;
 		$query = new Query($this->connection);
-		$query->select()->repository($table)->contain($contains)->sql();
+		$query->select()->repository($this->table)->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
 			'foo__id' => 'foo.id',
@@ -281,12 +277,13 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  **/
 	public function testContainResultFetchingOneLevel() {
 		$this->_insertTwoRecords();
-		Table::map('author', 'authors');
 
 		$query = new Query($this->connection);
-		$contain = ['author' => ['associationType' => 'belongsTo']];
+		$contain = ['author' => []];
 
 		$table = Table::build('article', ['table' => 'articles']);
+		Table::build('author', ['connection' => $this->connection]);
+		$table->belongsTo('author');
 		$results = $query->repository($table)->select()->contain($contain)->toArray();
 		$expected = [
 			[
