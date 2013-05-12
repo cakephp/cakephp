@@ -82,7 +82,8 @@ class HasOne extends Association {
 			'includeFields' => true,
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
-			'type' => $this->joinType()
+			'type' => $this->joinType(),
+			'table' => $target->table()
 		];
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 

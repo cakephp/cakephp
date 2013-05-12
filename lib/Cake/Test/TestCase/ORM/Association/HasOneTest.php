@@ -87,7 +87,8 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 					'Profile.is_active' => true,
 					'User.id = Profile.user_id',
 				],
-				'type' => 'INNER'
+				'type' => 'INNER',
+				'table' => 'profiles'
 			]
 		]);
 		$query->expects($this->once())->method('select')->with([
@@ -117,7 +118,8 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 				'conditions' => [
 					'Profile.is_active' => false
 				],
-				'type' => 'INNER'
+				'type' => 'INNER',
+				'table' => 'profiles'
 			]
 		]);
 		$query->expects($this->once())->method('select')->with([
@@ -151,7 +153,8 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 					'Profile.is_active' => true,
 					'User.id = Profile.user_id',
 				],
-				'type' => 'INNER'
+				'type' => 'INNER',
+				'table' => 'profiles'
 			]
 		]);
 		$query->expects($this->never())->method('select');

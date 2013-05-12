@@ -87,6 +87,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 					'Company.is_active' => true,
 					'Company.id = Client.company_id',
 				],
+				'table' => 'companies',
 				'type' => 'LEFT'
 			]
 		]);
@@ -115,7 +116,8 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => [
 					'Company.is_active' => false
 				],
-				'type' => 'LEFT'
+				'type' => 'LEFT',
+				'table' => 'companies',
 			]
 		]);
 		$query->expects($this->once())->method('select')->with([
@@ -149,7 +151,8 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 					'Company.is_active' => true,
 					'Company.id = Client.company_id',
 				],
-				'type' => 'LEFT'
+				'type' => 'LEFT',
+				'table' => 'companies',
 			]
 		]);
 		$query->expects($this->never())->method('select');
