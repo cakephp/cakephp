@@ -188,37 +188,9 @@ class SqliteSchema {
 			unset($data['default']);
 		}
 		if (isset($data['default'])) {
-			$out .= ' DEFAULT ' . $this->_value($data['default']);
+			$out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
 		}
 		return $out;
-	}
-
-/**
- * Escapes values for use in schema definitions.
- *
- * @param mixed $value The value to escape.
- * @return string String for use in schema definitions.
- */
-	protected function _value($value) {
-		if (is_null($value)) {
-			return 'NULL';
-		}
-		if ($value === false) {
-			return 'FALSE';
-		}
-		if ($value === true) {
-			return 'TRUE';
-		}
-		if (is_float($value)) {
-			return str_replace(',', '.', strval($value));
-		}
-		if ((is_int($value) || $value === '0') || (
-			is_numeric($value) && strpos($value, ',') === false &&
-			$value[0] != '0' && strpos($value, 'e') === false)
-		) {
-			return $value;
-		}
-		return $this->_driver->quote($value, \PDO::PARAM_STR);
 	}
 
 /**
