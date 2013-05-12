@@ -96,7 +96,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 
 /**
  * Tests that default config defined in the association can be overridden
- * 
+ *
  * @return void
  */
 	public function testAttachToConfigOverride() {
@@ -132,7 +132,6 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 	public function testAttachToNoFields() {
 		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
 		$config = [
-			'foreignKey' => 'company_id',
 			'sourceTable' => $this->client,
 			'targetTable' => $this->company,
 			'conditions' => ['Company.is_active' => true]

@@ -80,7 +80,7 @@ class BelongsTo extends Association {
 		if (!empty($options['foreignKey'])) {
 			$options['conditions'][] =  sprintf('%s.%s = %s.%s',
 				$target->alias(),
-				$source->primaryKey(),
+				$target->primaryKey(),
 				$source->alias(),
 				$options['foreignKey']
 			);
