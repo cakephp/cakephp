@@ -724,6 +724,16 @@ XML;
 			)
 		);
 		$this->assertEquals($expected, Xml::toArray($obj));
+
+		$xml = '<tag type="myType">0</tag>';
+		$obj = Xml::build($xml);
+		$expected = array(
+			'tag' => array(
+				'@type' => 'myType',
+				'@' => 0
+			)
+		);
+		$this->assertEquals($expected, Xml::toArray($obj));
 	}
 
 /**
