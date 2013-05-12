@@ -380,6 +380,7 @@ class AclShell extends Shell {
 				'help' => __d('cake_console', 'Create a new ACL node'),
 				'parser' => array(
 					'description' => __d('cake_console', 'Creates a new ACL object <node> under the parent'),
+					'epilog' => __d('cake_console', 'You can use `root` as the parent when creating nodes to create top level nodes.'),
 					'arguments' => array(
 						'type' => $type,
 						'parent' => array(

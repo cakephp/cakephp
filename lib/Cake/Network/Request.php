@@ -334,6 +334,7 @@ class Request implements \ArrayAccess {
 			if ($base === DS || $base === '.') {
 				$base = '';
 			}
+			$base = implode('/', array_map('rawurlencode', explode('/', $base)));
 			return array($base, $base . '/');
 		}
 
