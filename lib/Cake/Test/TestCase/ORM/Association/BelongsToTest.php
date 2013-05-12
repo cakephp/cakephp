@@ -77,11 +77,15 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'foreignKey' => 'company_id',
 			'sourceTable' => $this->client,
-			'targetTable' => $this->company
+			'targetTable' => $this->company,
+			'conditions' => ['Company.is_active' => true]
 		];
 		$association = new BelongsTo('Company', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Company' => ['conditions' => ['Company.id = Client.company_id']]
+			'Company' => ['conditions' => [
+				'Company.is_active' => true,
+				'Company.id = Client.company_id',
+			]]
 		]);
 		$query->expects($this->once())->method('select')->with([
 			'Company__id' => 'Company.id',
@@ -89,5 +93,59 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		]);
 		$association->attachTo($query);
 	}
-}
 
+/**
+ * Tests that default config defined in the association can be overridden
+ * 
+ * @return void
+ */
+	public function testAttachToConfigOverride() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'conditions' => ['Company.is_active' => true]
+		];
+		$association = new BelongsTo('Company', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Company' => ['conditions' => [
+				'Company.is_active' => false
+			]]
+		]);
+		$query->expects($this->once())->method('select')->with([
+			'Company__company_name' => 'Company.company_name'
+		]);
+
+		$override = [
+			'conditions' => ['Company.is_active' => false],
+			'foreignKey' => false,
+			'fields' => ['company_name']
+		];
+		$association->attachTo($query, $override);
+	}
+
+/**
+ * Tests that it is possible to avoid fields inclusion for the associated table
+ *
+ * @return void
+ */
+	public function testAttachToNoFields() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company,
+			'conditions' => ['Company.is_active' => true]
+		];
+		$association = new BelongsTo('Company', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Company' => ['conditions' => [
+				'Company.is_active' => true,
+				'Company.id = Client.company_id',
+			]]
+		]);
+		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+}

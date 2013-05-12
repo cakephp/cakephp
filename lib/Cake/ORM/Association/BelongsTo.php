@@ -20,10 +20,27 @@ use Cake\ORM\Association;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 
+/**
+ * Represents an 1 - N relationship where the source side of the relation is
+ * related to only one record in the target table.
+ *
+ */
 class BelongsTo extends Association {
 
+/**
+ * Whether this association can be expressed directly in a query join
+ *
+ * @var boolean
+ */
 	protected $_canBeJoined = true;
 
+/**
+ * Sets the name of the field representing the foreign key to the target table.
+ * If no parameters are passed current field is returned
+ *
+ * @param string $key the key to be used to link both tables together
+ * @return string
+ */
 	public function foreignKey($key = null) {
 		if ($key === null) {
 			if ($this->_foreignKey === null) {
@@ -34,10 +51,31 @@ class BelongsTo extends Association {
 		return parent::foreignKey($key);
 	}
 
+/**
+ * Alters a Query object to include the associated target table data in the final
+ * result
+ *
+ * The options array accept the following keys:
+ *
+ * - includeFields: Whether to include target model fields in the result or not
+ * - foreignKey: The name of the field to use as foreign key, if false none
+ *   will be sued
+ * - conditions: array with a list of conditions to filter the join with
+ * - fields: a list of fields in the target table to include in the result
+ *
+ * @param Query $query the query to be altered to include the target table data
+ * @param array $options Any extra options or overrides to be taken in account
+ * @return void
+ */
 	public function attachTo(Query $query, array $options = []) {
 		$target = $this->target();
 		$source = $this->source();
-		$options += ['includeFields' => true, 'foreignKey' => $this->foreignKey()];
+		$options += [
+			'includeFields' => true,
+			'foreignKey' => $this->foreignKey(),
+			'conditions' => []
+		];
+		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 
 		if (!empty($options['foreignKey'])) {
 			$options['conditions'][] =  sprintf('%s.%s = %s.%s',

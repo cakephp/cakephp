@@ -33,6 +33,11 @@ class TestTable extends Table {
  */
 class AssociationTest extends \Cake\TestSuite\TestCase {
 
+/**
+ * Set up
+ *
+ * @return void
+ */
 	public function setUp() {
 		$this->source = new TestTable;
 		$config = [
@@ -47,6 +52,15 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 			['_options', 'attachTo'],
 			['Foo', $config]
 		);
+	}
+
+/**
+ * Tear down
+ *
+ * @return void
+ */
+	public function tearDown() {
+		Table::clearRegistry();
 	}
 
 /**
