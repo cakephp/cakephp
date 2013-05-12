@@ -93,7 +93,14 @@ abstract class Association {
  * @return void
  */
 	public function __construct($name, array $options = []) {
-		$defaults = ['className', 'foreignKey', 'conditions', 'dependent', 'sourceTable'];
+		$defaults = [
+			'className',
+			'foreignKey',
+			'conditions',
+			'dependent',
+			'sourceTable',
+			'targetTable'
+		];
 		foreach ($defaults as $property) {
 			if (isset($options[$property])) {
 				$this->{'_' . $property} = $options[$property];
