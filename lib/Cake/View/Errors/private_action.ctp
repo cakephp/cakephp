@@ -20,7 +20,7 @@
 <h2><?php echo __d('cake_dev', 'Private Method in %s', $controller); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', '%s%s cannot be accessed directly.', '<em>' . $controller . '::</em>', '<em>' . $action . '()</em>'); ?>
+	<?php echo __d('cake_dev', '%s%s cannot be accessed directly.', '<em>' . h($controller) . '::</em>', '<em>' . h($action) . '()</em>'); ?>
 </p>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>

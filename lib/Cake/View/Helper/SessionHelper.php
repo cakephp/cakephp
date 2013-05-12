@@ -65,7 +65,7 @@ class SessionHelper extends Helper {
  * In your view: `$this->Session->error();`
  *
  * @return string last error
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#displaying-notifcations-or-flash-messages
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#displaying-notifications-or-flash-messages
  */
 	public function error() {
 		return Session::error();

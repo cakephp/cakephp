@@ -32,28 +32,28 @@ if (!empty($plugin)) {
 	$namespace = $plugin;
 }
 if (empty($plugin)) {
-	$path = APP_DIR . DS . 'Controller' . DS . $prefixPath . $class . 'Controller.php' ;
+	$path = APP_DIR . DS . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php' ;
 } else {
-	$path = Plugin::path($plugin) . 'Controller' . DS . $prefixPath . $class . 'Controller.php';
+	$path = Plugin::path($plugin) . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php';
 }
 
 ?>
 <h2><?php echo __d('cake_dev', 'Missing Controller'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . $pluginDot . $class . 'Controller</em>'); ?>
+	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . h($pluginDot . $class) . 'Controller</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . $class . 'Controller</em>', $path); ?>
+	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . h($class) . 'Controller</em>', $path); ?>
 </p>
 <pre>
 &lt;?php
-namespace <?= $namespace; ?>\Controller<?= $prefixNs; ?>;
+namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
 
-use <?= $namespace; ?>\Controller\AppController;
+use <?= h($namespace); ?>\Controller\AppController;
 
-class <?php echo $class . 'Controller extends ' . $plugin; ?>AppController {
+class <?php echo h($class) . 'Controller extends ' . h($plugin); ?>AppController {
 
 }
 </pre>

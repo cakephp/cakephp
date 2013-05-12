@@ -614,6 +614,10 @@ class HelperTest extends TestCase {
 
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 0);
+
+		$result = $this->Helper->assetTimestamp('/%3Cb%3E/cake.generic.css');
+		$this->assertEquals('/%3Cb%3E/cake.generic.css', $result);
+
 		$result = $this->Helper->assetTimestamp(CSS_URL . 'cake.generic.css');
 		$this->assertEquals(CSS_URL . 'cake.generic.css', $result);
 

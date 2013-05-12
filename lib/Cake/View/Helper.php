@@ -349,10 +349,9 @@ class Helper extends Object {
  */
 	protected function _encodeUrl($url) {
 		$path = parse_url($url, PHP_URL_PATH);
-		$encoded = implode('/', array_map(
-			'rawurlencode',
-			explode('/', $path)
-		));
+		$parts = array_map('urldecode', explode('/', $path));
+		$parts = array_map('rawurlencode', $parts);
+		$encoded = implode('/', $parts);
 		return h(str_replace($path, $encoded, $url));
 	}
 
@@ -368,7 +367,11 @@ class Helper extends Object {
 		$stamp = Configure::read('Asset.timestamp');
 		$timestampEnabled = $stamp === 'force' || ($stamp === true && Configure::read('debug') > 0);
 		if ($timestampEnabled && strpos($path, '?') === false) {
-			$filepath = preg_replace('/^' . preg_quote($this->request->webroot, '/') . '/', '', $path);
+			$filepath = preg_replace(
+				'/^' . preg_quote($this->request->webroot, '/') . '/',
+				'',
+				urldecode($path)
+			);
 			$webrootPath = WWW_ROOT . str_replace('/', DS, $filepath);
 			if (file_exists($webrootPath)) {
 				//@codingStandardsIgnoreStart
