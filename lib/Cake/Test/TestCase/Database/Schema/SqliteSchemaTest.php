@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqliteSchema;
+use Cake\Database\Schema\Table;
 use Cake\TestSuite\TestCase;
 
 
@@ -245,6 +246,156 @@ SQL;
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}
+	}
+
+/**
+ * Column provider for creating column sql
+ *
+ * @return array
+ */
+	public static function columnSqlProvider() {
+		return [
+			// strings
+			[
+				'title',
+				['type' => 'string', 'length' => 25, 'null' => false],
+				'"title" VARCHAR(25) NOT NULL'
+			],
+			[
+				'title',
+				['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
+				'"title" VARCHAR(25) DEFAULT NULL'
+			],
+			[
+				'id',
+				['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
+				'"id" VARCHAR(32) NOT NULL'
+			],
+			[
+				'role',
+				['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
+				'"role" VARCHAR(10) NOT NULL DEFAULT "admin"'
+			],
+			[
+				'title',
+				['type' => 'string'],
+				'"title" VARCHAR'
+			],
+			// Text
+			[
+				'body',
+				['type' => 'text', 'null' => false],
+				'"body" TEXT NOT NULL'
+			],
+			// Integers
+			[
+				'post_id',
+				['type' => 'integer', 'length' => 11],
+				'"post_id" INTEGER(11)'
+			],
+			[
+				'post_id',
+				['type' => 'biginteger', 'length' => 20],
+				'"post_id" BIGINT'
+			],
+			// Decimal
+			[
+				'value',
+				['type' => 'decimal'],
+				'"value" DECIMAL'
+			],
+			[
+				'value',
+				['type' => 'decimal', 'length' => 11],
+				'"value" DECIMAL(11,0)'
+			],
+			[
+				'value',
+				['type' => 'decimal', 'length' => 12, 'precision' => 5],
+				'"value" DECIMAL(12,5)'
+			],
+			// Float
+			[
+				'value',
+				['type' => 'float'],
+				'"value" FLOAT'
+			],
+			[
+				'value',
+				['type' => 'float', 'length' => 11, 'precision' => 3],
+				'"value" FLOAT(11,3)'
+			],
+			// Boolean
+			[
+				'checked',
+				['type' => 'boolean', 'default' => false],
+				'"checked" BOOLEAN DEFAULT FALSE'
+			],
+			[
+				'checked',
+				['type' => 'boolean', 'default' => true, 'null' => false],
+				'"checked" BOOLEAN NOT NULL DEFAULT TRUE'
+			],
+			// datetimes
+			[
+				'created',
+				['type' => 'datetime'],
+				'"created" DATETIME'
+			],
+			// Date & Time
+			[
+				'start_date',
+				['type' => 'date'],
+				'"start_date" DATE'
+			],
+			[
+				'start_time',
+				['type' => 'time'],
+				'"start_time" TIME'
+			],
+			// timestamps
+			[
+				'created',
+				['type' => 'timestamp', 'null' => true],
+				'"created" TIMESTAMP DEFAULT NULL'
+			],
+		];
+	}
+
+/**
+ * Test generating column definitions
+ *
+ * @dataProvider columnSqlProvider
+ * @return void
+ */
+	public function testColumnSql($name, $data, $expected) {
+		$driver = $this->_getMockedDriver();
+		$schema = new SqliteSchema($driver);
+
+		$table = (new Table('articles'))->addColumn($name, $data);
+		$this->assertEquals($expected, $schema->columnSql($table, $name));
+	}
+
+/**
+ * Get a schema instance with a mocked driver/pdo instances
+ *
+ * @return MysqlSchema
+ */
+	protected function _getMockedDriver() {
+		$driver = new \Cake\Database\Driver\Sqlite();
+		$mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+		$mock->expects($this->any())
+			->method('quote')
+			->will($this->returnCallback(function ($value) {
+				return '"' . $value . '"';
+			}));
+		$mock->expects($this->any())
+			->method('quoteIdentifier')
+			->will($this->returnCallback(function ($value) {
+				return '"' . $value . '"';
+			}));
+		$driver->connection($mock);
+		return $driver;
 	}
 
 }
