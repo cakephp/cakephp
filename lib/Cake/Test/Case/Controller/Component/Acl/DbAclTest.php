@@ -520,7 +520,7 @@ class DbAclTest extends CakeTestCase {
 		foreach ($permissions as $key => $values) {
 			array_unshift($values, $key);
 			$values = array_map(array(&$this, '_pad'), $values);
-			$permissions[$key] = implode (' ', $values);
+			$permissions[$key] = implode(' ', $values);
 		}
 		$permissions = array_map(array(&$this, '_pad'), $permissions);
 		array_unshift($permissions, 'Current Permissions :');
