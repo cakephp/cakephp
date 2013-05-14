@@ -1456,11 +1456,10 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testTagIsInvalid() {
 		$Contact = ClassRegistry::getObject('Contact');
-		$Contact->validationErrors[0]['email'] = array('Please provide an email');
+		$Contact->validationErrors[0]['email'] = $expected = array('Please provide an email');
 
 		$this->Form->setEntity('Contact.0.email');
 		$result = $this->Form->tagIsInvalid();
-		$expected = array('Please provide an email');
 		$this->assertEquals($expected, $result);
 
 		$this->Form->setEntity('Contact.1.email');
@@ -1470,6 +1469,26 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->setEntity('Contact.0.name');
 		$result = $this->Form->tagIsInvalid();
 		$this->assertFalse($result);
+	}
+
+/**
+ * Test tagIsInvalid with validation errors from a saveMany
+ *
+ * @return void
+ */
+	public function testTagIsInvalidSaveMany() {
+		$Contact = ClassRegistry::getObject('Contact');
+		$Contact->validationErrors[0]['email'] = $expected = array('Please provide an email');
+
+		$this->Form->create('Contact');
+
+		$this->Form->setEntity('0.email');
+		$result = $this->Form->tagIsInvalid();
+		$this->assertEquals($expected, $result);
+
+		$this->Form->setEntity('0.Contact.email');
+		$result = $this->Form->tagIsInvalid();
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -8483,6 +8502,24 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 
 		$result = $this->Form->error('2.city');
+		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
+	}
+
+/**
+ * test the correct display of multi-record form validation errors.
+ *
+ * @return void
+ */
+	public function testSaveManyRecordFormValidationErrors() {
+		$this->Form->create('ValidateUser');
+		$ValidateUser = ClassRegistry::getObject('ValidateUser');
+		$ValidateUser->validationErrors[0]['ValidateItem']['name'] = array('Error in field name');
+
+		$result = $this->Form->error('0.ValidateUser.ValidateItem.name');
+		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
+
+		$ValidateUser->validationErrors[0]['city'] = array('Error in field city');
+		$result = $this->Form->error('ValidateUser.0.city');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 	}
 

@@ -272,6 +272,13 @@ class FormHelper extends AppHelper {
 	public function tagIsInvalid() {
 		$entity = $this->entity();
 		$model = array_shift($entity);
+
+		// 0.Model.field. Fudge entity path
+		if (empty($model) || is_numeric($model)) {
+			array_splice($entity, 1, 0, $model);
+			$model = array_shift($entity);
+		}
+
 		$errors = array();
 		if (!empty($entity) && isset($this->validationErrors[$model])) {
 			$errors = $this->validationErrors[$model];
