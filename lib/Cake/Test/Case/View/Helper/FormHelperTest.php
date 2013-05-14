@@ -536,6 +536,7 @@ class FormHelperTest extends CakeTestCase {
 		parent::setUp();
 
 		Configure::write('App.base', '');
+		Configure::delete('Asset');
 		$this->Controller = new ContactTestController();
 		$this->View = new View($this->Controller);
 
