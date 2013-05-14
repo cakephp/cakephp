@@ -183,7 +183,7 @@ class SqliteSchema {
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';
 		}
-		if (in_array($data['type'], ['integer']) && in_array($name, (array)$table->primaryKey())) {
+		if ($data['type'] === 'integer' && $name == $table->primaryKey()[0]) {
 			$out .= ' PRIMARY KEY AUTOINCREMENT';
 		}
 		if (isset($data['null']) && $data['null'] === true) {
