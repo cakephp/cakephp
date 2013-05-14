@@ -113,6 +113,7 @@ class SqliteTest extends TestCase {
 			['farts', '"farts"'],
 		];
 	}
+
 /**
  * Test the schemaValue method on Driver.
  *
