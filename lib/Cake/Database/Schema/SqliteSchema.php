@@ -202,6 +202,19 @@ class SqliteSchema {
  */
 	public function indexSql(Table $table, $name) {
 		$data = $table->index($name);
+		$out = 'CONSTRAINT ';
+		$out .= $this->_driver->quoteIdentifier($name);
+		if ($data['type'] === Table::INDEX_PRIMARY) {
+			$out .= ' PRIMARY KEY';
+		}
+		if ($data['type'] === Table::INDEX_UNIQUE) {
+			$out .= ' UNIQUE';
+		}
+		$columns = array_map(
+			[$this->_driver, 'quoteIdentifier'],
+			$data['columns']
+		);
+		return $out . ' (' . implode(', ', $columns) . ')';
 	}
 
 /**

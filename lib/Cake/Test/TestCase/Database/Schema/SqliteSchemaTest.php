@@ -377,6 +377,45 @@ SQL;
 	}
 
 /**
+ * Provide data for testing indexSql
+ *
+ * @return array
+ */
+	public static function indexSqlProvider() {
+		return [
+			[
+				'primary',
+				['type' => 'primary', 'columns' => ['title']],
+				'CONSTRAINT "primary" PRIMARY KEY ("title")'
+			],
+			[
+				'unique_idx',
+				['type' => 'unique', 'columns' => ['title', 'author_id']],
+				'CONSTRAINT "unique_idx" UNIQUE ("title", "author_id")'
+			],
+		];
+	}
+
+/**
+ * Test the indexSql method.
+ *
+ * @dataProvider indexSqlProvider
+ */
+	public function testIndexSql($name, $data, $expected) {
+		$driver = $this->_getMockedDriver();
+		$schema = new SqliteSchema($driver);
+
+		$table = (new Table('articles'))->addColumn('title', [
+			'type' => 'string',
+			'length' => 255
+		])->addColumn('author_id', [
+			'type' => 'integer',
+		])->addIndex($name, $data);
+
+		$this->assertEquals($expected, $schema->indexSql($table, $name));
+	}
+
+/**
  * Get a schema instance with a mocked driver/pdo instances
  *
  * @return MysqlSchema
