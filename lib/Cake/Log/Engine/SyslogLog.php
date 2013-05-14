@@ -131,7 +131,7 @@ class SyslogLog extends BaseLog {
  * @param sting $output
  * @return void
  */
-	public function _open($ident, $options, $facility) {
+	protected function _open($ident, $options, $facility) {
 		openlog($ident, $options, $facility);
 	}
 
