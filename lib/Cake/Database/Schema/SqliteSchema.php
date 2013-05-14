@@ -183,6 +183,9 @@ class SqliteSchema {
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';
 		}
+		if (in_array($data['type'], ['integer']) && in_array($name, (array)$table->primaryKey())) {
+			$out .= ' PRIMARY KEY AUTOINCREMENT';
+		}
 		if (isset($data['null']) && $data['null'] === true) {
 			$out .= ' DEFAULT NULL';
 			unset($data['default']);
@@ -196,12 +199,23 @@ class SqliteSchema {
 /**
  * Generate the SQL fragment for a single index in MySQL
  *
+ * Note integer primary keys will return ''. This is intentional as Sqlite requires
+ * that integer primary keys be defined in the column definition.
+ *
  * @param Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
  */
 	public function indexSql(Table $table, $name) {
 		$data = $table->index($name);
+
+		if (
+			count($data['columns']) === 1 &&
+			$table->column($data['columns'][0])['type'] === 'integer'
+		) {
+			return '';
+		}
+
 		$out = 'CONSTRAINT ';
 		$out .= $this->_driver->quoteIdentifier($name);
 		if ($data['type'] === Table::INDEX_PRIMARY) {
@@ -225,7 +239,7 @@ class SqliteSchema {
  * @return string A complete CREATE TABLE statement
  */
 	public function createTableSql($table, $lines) {
-		$content = implode(",\n", $lines);
+		$content = implode(",\n", array_filter($lines));
 		return sprintf("CREATE TABLE \"%s\" (\n%s\n);", $table, $content);
 	}
 }

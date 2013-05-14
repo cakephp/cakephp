@@ -377,6 +377,31 @@ SQL;
 	}
 
 /**
+ * Test generating a column that is a primary key.
+ *
+ * @return void
+ */
+	public function testColumnSqlPrimaryKey() {
+		$driver = $this->_getMockedDriver();
+		$schema = new SqliteSchema($driver);
+
+		$table = new Table('articles');
+		$table->addColumn('id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addIndex('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+		$result = $schema->columnSql($table, 'id');
+		$this->assertEquals($result, '"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT');
+
+		$result = $schema->indexSql($table, 'primary');
+		$this->assertEquals('', $result, 'Integer primary keys are special in sqlite.');
+	}
+
+/**
  * Provide data for testing indexSql
  *
  * @return array
@@ -413,6 +438,44 @@ SQL;
 		])->addIndex($name, $data);
 
 		$this->assertEquals($expected, $schema->indexSql($table, $name));
+	}
+
+/**
+ * Integration test for converting a Schema\Table into MySQL table creates.
+ *
+ * @return void
+ */
+	public function testCreateTableSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = (new Table('articles'))->addColumn('id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addColumn('title', [
+				'type' => 'string',
+				'null' => false,
+			])
+			->addColumn('body', ['type' => 'text'])
+			->addColumn('created', 'datetime')
+			->addIndex('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+
+		$expected = <<<SQL
+CREATE TABLE "articles" (
+"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+"title" VARCHAR NOT NULL,
+"body" TEXT,
+"created" DATETIME
+);
+SQL;
+		$result = $table->createTableSql($connection);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
