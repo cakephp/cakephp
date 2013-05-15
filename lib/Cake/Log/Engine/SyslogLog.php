@@ -36,7 +36,10 @@ class SyslogLog extends BaseLog {
  * this logger
  *
  * If you wish to include a prefix to all messages, for instance to identify the
- * application or the web server, then use the prefix option.
+ * application or the web server, then use the prefix option. Please keep in mind
+ * the prefix is shared by all streams using syslog, as it is dependent of
+ * the running process. For a local prefix, to be used only by one stream, you
+ * can use the format key.
  *
  * ## Example:
  *
@@ -127,8 +130,9 @@ class SyslogLog extends BaseLog {
 /**
  * Wrapper for openlog call
  *
- * @param int $priority
- * @param sting $output
+ * @param string $ident the prefix to add to all messages logged
+ * @param int $options the options flags to be used for logged messages
+ * @param int $facility the stream or facility to log to
  * @return void
  */
 	protected function _open($ident, $options, $facility) {
@@ -139,11 +143,11 @@ class SyslogLog extends BaseLog {
  * Wrapper for syslog call
  *
  * @param int $priority
- * @param sting $output
+ * @param string $message
  * @return bool
  */
-	protected function _write($priority, $output) {
-		return syslog($priority, $output);
+	protected function _write($priority, $message) {
+		return syslog($priority, $message);
 	}
 
 /**
