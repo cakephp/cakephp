@@ -1359,7 +1359,7 @@ class CakeEmail {
 			if (!empty($fileInfo['contentId'])) {
 				continue;
 			}
-			$data = $this->_readFile($fileInfo['file']);
+			$data = $this->readFile($fileInfo['file']);
 
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
@@ -1383,7 +1383,7 @@ class CakeEmail {
  * @param string $file The file to read.
  * @return string File contents in base64 encoding
  */
-	protected function _readFile($file) {
+	public function readFile($file) {
 		$handle = fopen($file, 'rb');
 		$data = fread($handle, filesize($file));
 		$data = chunk_split(base64_encode($data));
@@ -1407,7 +1407,7 @@ class CakeEmail {
 			if (empty($fileInfo['contentId'])) {
 				continue;
 			}
-			$data = $this->_readFile($fileInfo['file']);
+			$data = $this->readFile($fileInfo['file']);
 
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
