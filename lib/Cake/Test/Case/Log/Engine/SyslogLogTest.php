@@ -1,6 +1,5 @@
 <?php
 /**
- * FileLogTest file
  *
  * PHP 5
  *
