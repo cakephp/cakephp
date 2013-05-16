@@ -128,7 +128,8 @@ class SyslogLog extends BaseLog {
 	}
 
 /**
- * Wrapper for openlog call
+ * Extracts the call to openlog() in order to run unit tests on it. This function
+ * will initialize the connection to the system logger
  *
  * @param string $ident the prefix to add to all messages logged
  * @param int $options the options flags to be used for logged messages
@@ -140,7 +141,8 @@ class SyslogLog extends BaseLog {
 	}
 
 /**
- * Wrapper for syslog call
+ * Extracts the call to syslog() in order to run unit tests on it. This function
+ * will perform the actual write in the system logger
  *
  * @param int $priority
  * @param string $message
