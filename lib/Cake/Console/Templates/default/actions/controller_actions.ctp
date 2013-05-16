@@ -167,7 +167,16 @@
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$conditions = array();
 			foreach ($this->data['<?php echo $currentModelName;?>'] as $key => $value) {
-				if ($value != "") {
+				$empty = true;
+				if ((substr($key, -3) == "_id")) { // associated input have _id suffix
+					if ($value != 0)
+						$empty = false;
+				} else {
+					if ($value != "")
+						$empty = false;
+				}
+				
+				if (!$empty) {
 					if (strstr($value, "*")) {
 						$conditions[] = array(
 							'<?php echo $currentModelName;?>.'.$key." LIKE" => str_replace('*', '%', $value)
