@@ -181,6 +181,21 @@ class File {
 	}
 
 /**
+ * Read the file contents and return a base64 version of the file contents.
+ *
+ * @param string $file The file to read.
+ * @return string File contents in base64 encoding
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::readAndBase64Encode
+ */
+	public static function readAndBase64Encode($file) {
+		$handle = fopen($file, 'rb');
+		$data = fread($handle, filesize($file));
+		$data = chunk_split(base64_encode($data));
+		fclose($handle);
+		return $data;
+	}
+
+/**
  * Sets or gets the offset for the currently opened file.
  *
  * @param integer|boolean $offset The $offset in bytes to seek. If set to false then the current offset is returned.

@@ -21,6 +21,7 @@
 App::uses('Validation', 'Utility');
 App::uses('Multibyte', 'I18n');
 App::uses('AbstractTransport', 'Network/Email');
+App::uses('File', 'Utility');
 App::uses('String', 'Utility');
 App::uses('View', 'View');
 App::import('I18n', 'Multibyte');
@@ -1359,7 +1360,7 @@ class CakeEmail {
 			if (!empty($fileInfo['contentId'])) {
 				continue;
 			}
-			$data = $this->readFile($fileInfo['file']);
+			$data = $this->_readFile($fileInfo['file']);
 
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
@@ -1383,12 +1384,8 @@ class CakeEmail {
  * @param string $file The file to read.
  * @return string File contents in base64 encoding
  */
-	public function readFile($file) {
-		$handle = fopen($file, 'rb');
-		$data = fread($handle, filesize($file));
-		$data = chunk_split(base64_encode($data));
-		fclose($handle);
-		return $data;
+	protected function _readFile($file) {
+		return File::readAndBase64Encode($file);
 	}
 
 /**
@@ -1407,7 +1404,7 @@ class CakeEmail {
 			if (empty($fileInfo['contentId'])) {
 				continue;
 			}
-			$data = $this->readFile($fileInfo['file']);
+			$data = $this->_readFile($fileInfo['file']);
 
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
