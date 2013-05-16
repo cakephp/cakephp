@@ -76,6 +76,7 @@
 	<h3><?php echo "<?php echo __('Actions'); ?>"; ?></h3>
 	<ul>
 		<li><?php echo "<?php echo \$this->Html->link(__('New " . $singularHumanName . "'), array('action' => 'add')); ?>"; ?></li>
+		<li><?php echo "<?php echo \$this->Html->link(__('Search " . $singularHumanName . "'), array('action' => 'search')); ?>"; ?></li>
 <?php
 	$done = array();
 	foreach ($associations as $type => $data) {
