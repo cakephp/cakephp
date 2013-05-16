@@ -157,3 +157,53 @@
 <?php endif; ?>
 		$this->redirect(array('action' => 'index'));
 	}
+	
+/**
+ * search method
+ *
+ * @return void
+ */
+	public function search() {
+		if ($this->request->is('post') || $this->request->is('put')) {
+			$conditions = array();
+			foreach ($this->data['<?php echo $currentModelName;?>'] as $key => $value) {
+				if ($value != "") {
+					if (strstr($value, "*")) {
+						$conditions[] = array(
+							'<?php echo $currentModelName;?>.'.$key." LIKE" => str_replace('*', '%', $value)
+						);
+					} else {
+						$conditions[] = array(
+							'<?php echo $currentModelName;?>.'.$key => $value
+						);
+					}
+				}
+			}
+			
+			if (count($conditions) > 1) {
+				$conditions = array(
+					'AND' => $conditions
+				);
+			}
+			$this-><?php echo $currentModelName ?>->recursive = 0;
+			$this->set('<?php echo $pluralName;?>', $this->paginate('<?php echo $currentModelName;?>', $conditions));
+			$this->render('index');
+		}
+		<?php
+		foreach (array('belongsTo', 'hasAndBelongsToMany') as $assoc):
+			foreach ($modelObj->{$assoc} as $associationName => $relation):
+				if (!empty($associationName)):
+					$otherModelName = $this->_modelName($associationName);
+					$otherPluralName = $this->_pluralName($associationName);
+					echo "\t\t\${$otherPluralName} = \$this->{$currentModelName}->{$otherModelName}->find('list');\n";
+					echo "\t\t\${$otherPluralName}[0] = '';\n";
+					$compact[] = "'{$otherPluralName}'";
+				endif;
+			endforeach;
+		endforeach;
+		if (!empty($compact)):
+			echo "\t\t\$this->set(compact(".join(', ', $compact)."));\n";
+		endif;
+		?>
+	}
+

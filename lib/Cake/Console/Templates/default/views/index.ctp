@@ -84,6 +84,8 @@
 				echo "\t\t<li><?php echo \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "'), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
 				echo "\t\t<li><?php echo \$this->Html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "'), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
 				$done[] = $details['controller'];
+				echo "\t\t<li><?php echo \$this->Html->link(__('Search " . Inflector::humanize(Inflector::underscore($alias)) . "'), array('controller' => '{$details['controller']}', 'action' => 'search')); ?> </li>\n";
+				$done[] = $details['controller'];
 			}
 		}
 	}
