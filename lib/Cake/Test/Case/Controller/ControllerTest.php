@@ -360,6 +360,13 @@ class TestComponent extends Object {
 
 class Test2Component extends TestComponent {
 
+	public $model;
+
+	public function __construct(ComponentCollection $collection, $settings) {
+		$this->controller = $collection->getController();
+		$this->model = $this->controller->modelClass;
+	}
+
 	public function beforeRender(Controller $controller) {
 		return false;
 	}
@@ -524,6 +531,22 @@ class ControllerTest extends CakeTestCase {
 
 		$this->assertTrue(isset($Controller->TestPluginPost));
 		$this->assertTrue(is_a($Controller->TestPluginPost, 'TestPluginPost'));
+	}
+
+/**
+ * testConstructClassesWithComponents method
+ *
+ * @return void
+ */
+	public function testConstructClassesWithComponents() {
+		$Controller = new TestPluginController(new CakeRequest(), new CakeResponse());
+		$Controller->uses = array('NameTest');
+		$Controller->components[] = 'Test2';
+
+		$Controller->constructClasses();
+		$this->assertEquals('NameTest', $Controller->Test2->model);
+		$this->assertEquals('Name', $Controller->NameTest->name);
+		$this->assertEquals('Name', $Controller->NameTest->alias);
 	}
 
 /**
