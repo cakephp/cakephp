@@ -412,6 +412,23 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that redirects with ajax and no url don't do anything.
+ *
+ * @return void
+ */
+	public function testAjaxRedirectWithNoUrl() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->Controller->response = $this->getMock('CakeResponse');
+
+		$this->Controller->response->expects($this->never())
+			->method('body');
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->RequestHandler->startup($this->Controller);
+		$this->assertNull($this->RequestHandler->beforeRedirect($this->Controller, null));
+	}
+
+/**
  * testRenderAs method
  *
  * @return void
