@@ -19,6 +19,9 @@ namespace Cake\Database\Schema;
 use Cake\Database\Schema\Table;
 use Cake\Error;
 
+/**
+ * Schema management/reflection features for Postgres.
+ */
 class PostgresSchema {
 
 /**
@@ -28,6 +31,12 @@ class PostgresSchema {
  */
 	protected $_driver;
 
+/**
+ * Constructor
+ *
+ * @param Cake\Database\Driver\Postgres $driver Driver to use.
+ * @return void
+ */
 	public function __construct($driver) {
 		$this->_driver = $driver;
 	}

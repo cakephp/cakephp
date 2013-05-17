@@ -19,6 +19,9 @@ namespace Cake\Database\Schema;
 use Cake\Database\Schema\Table;
 use Cake\Error;
 
+/**
+ * Schema management/reflection features for Sqlite
+ */
 class SqliteSchema {
 
 /**
@@ -28,6 +31,12 @@ class SqliteSchema {
  */
 	protected $_driver;
 
+/**
+ * Constructor
+ *
+ * @param Cake\Database\Driver\Sqlite $driver Driver to use.
+ * @return void
+ */
 	public function __construct($driver) {
 		$this->_driver = $driver;
 	}
@@ -103,15 +112,6 @@ class SqliteSchema {
  */
 	public function describeTableSql($table) {
 		return ["PRAGMA table_info(" . $this->_driver->quoteIdentifier($table) . ")", []];
-	}
-
-/**
- * Additional metadata columns in table descriptions.
- *
- * @return array
- */
-	public function extraSchemaColumns() {
-		return [];
 	}
 
 /**
@@ -197,7 +197,7 @@ class SqliteSchema {
 	}
 
 /**
- * Generate the SQL fragment for a single index in MySQL
+ * Generate the SQL fragment for a single index.
  *
  * Note integer primary keys will return ''. This is intentional as Sqlite requires
  * that integer primary keys be defined in the column definition.

@@ -481,7 +481,7 @@ SQL;
 /**
  * Get a schema instance with a mocked driver/pdo instances
  *
- * @return MysqlSchema
+ * @return Driver
  */
 	protected function _getMockedDriver() {
 		$driver = new \Cake\Database\Driver\Sqlite();

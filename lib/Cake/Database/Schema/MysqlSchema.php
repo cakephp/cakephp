@@ -20,7 +20,7 @@ use Cake\Database\Schema\Table;
 use Cake\Error;
 
 /**
- * Schema dialect/support for MySQL
+ * Schema management/reflection features for MySQL
  */
 class MysqlSchema {
 
@@ -35,6 +35,7 @@ class MysqlSchema {
  * Constructor
  *
  * @param Cake\Database\Driver $driver The driver to use.
+ * @return void
  */
 	public function __construct($driver) {
 		$this->_driver = $driver;
