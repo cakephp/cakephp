@@ -1623,7 +1623,7 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 	public function testWrapLongLine() {
-		$message = '<a href="http://cakephp.org">' . str_repeat('1234567890', 100) . "</a>";
+		$message = '<a href="http://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST) . "</a>";
 
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('Debug');
@@ -1632,7 +1632,27 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->subject('Wordwrap Test');
 		$this->CakeEmail->config(array('empty'));
 		$result = $this->CakeEmail->send($message);
-		$expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('1234567890', 100) . "\r\n</a>\r\n\r\n";
+		$expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST) . "\r\n</a>\r\n\r\n";
+		$this->assertEquals($expected, $result['message']);
+	}
+
+	public function testWrapIncludeTag() {
+		$message = '<a href="http://cakephp.org">CakePHP</a>';
+
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('Wordwrap Test');
+		$this->CakeEmail->config(array('empty'));
+		$result = $this->CakeEmail->send($message);
+		$expected = "{$message}\r\n\r\n";
+		$this->assertEquals($expected, $result['message']);
+
+		$message = 'foo<bar';
+
+		$result = $this->CakeEmail->send($message);
+		$expected = "{$message}\r\n\r\n";
 		$this->assertEquals($expected, $result['message']);
 	}
 
