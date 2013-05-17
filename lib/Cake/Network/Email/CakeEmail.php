@@ -1385,7 +1385,8 @@ class CakeEmail {
  * @return string File contents in base64 encoding
  */
 	protected function _readFile($file) {
-		return File::readAndBase64Encode($file);
+		$f = new File($file);
+		return $f->readBase64();
 	}
 
 /**
