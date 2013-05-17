@@ -185,7 +185,7 @@ class File {
  * The string is split into smaller chunks to match RFC 2045 semantics.
  *
  * @return string File contents in base64 encoding
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::readAndBase64Encode
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::readBase64
  */
 	public function readBase64() {
 		return chunk_split(base64_encode($this->read()));
