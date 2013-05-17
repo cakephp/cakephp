@@ -136,6 +136,34 @@ abstract class Driver {
 	}
 
 /**
+ * Escapes values for use in schema definitions.
+ *
+ * @param mixed $value The value to escape.
+ * @return string String for use in schema definitions.
+ */
+	public function schemaValue($value) {
+		if (is_null($value)) {
+			return 'NULL';
+		}
+		if ($value === false) {
+			return 'FALSE';
+		}
+		if ($value === true) {
+			return 'TRUE';
+		}
+		if (is_float($value)) {
+			return str_replace(',', '.', strval($value));
+		}
+		if ((is_int($value) || $value === '0') || (
+			is_numeric($value) && strpos($value, ',') === false &&
+			$value[0] != '0' && strpos($value, 'e') === false)
+		) {
+			return $value;
+		}
+		return $this->_connection->quote($value, \PDO::PARAM_STR);
+	}
+
+/**
  * Returns last id generated for a table or sequence in database
  *
  * @param string $table table name or sequence to get last insert value from

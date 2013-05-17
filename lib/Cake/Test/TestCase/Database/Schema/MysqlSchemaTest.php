@@ -398,6 +398,64 @@ SQL;
 	}
 
 /**
+ * Provide data for testing indexSql
+ *
+ * @return array
+ */
+	public static function indexSqlProvider() {
+		return [
+			[
+				'primary',
+				['type' => 'primary', 'columns' => ['title']],
+				'PRIMARY KEY (`title`)'
+			],
+			[
+				'unique_idx',
+				['type' => 'unique', 'columns' => ['title', 'author_id']],
+				'UNIQUE KEY `unique_idx` (`title`, `author_id`)'
+			],
+			[
+				'key_key',
+				['type' => 'index', 'columns' => ['author_id']],
+				'KEY `key_key` (`author_id`)'
+			],
+			[
+				'full_text',
+				['type' => 'fulltext', 'columns' => ['title']],
+				'FULLTEXT KEY `full_text` (`title`)'
+			],
+			[
+				'length_idx',
+				[
+					'type' => 'unique',
+					'columns' => ['author_id', 'title'],
+					'length' => ['author_id' => 5, 'title' => 4]
+				],
+				'UNIQUE KEY `length_idx` (`author_id`(5), `title`(4))'
+			],
+		];
+	}
+
+/**
+ * Test the indexSql method.
+ *
+ * @dataProvider indexSqlProvider
+ */
+	public function testIndexSql($name, $data, $expected) {
+		$driver = $this->_getMockedDriver();
+		$schema = new MysqlSchema($driver);
+
+		$table = (new Table('articles'))->addColumn('title', [
+			'type' => 'string',
+			'length' => 255
+		])->addColumn('author_id', [
+			'type' => 'integer',
+		])->addIndex($name, $data);
+
+		$this->assertEquals($expected, $schema->indexSql($table, $name));
+	}
+
+/**
  * Test generating a column that is a primary key.
  *
  * @return void
@@ -432,12 +490,17 @@ SQL;
 	}
 
 /**
- * Provider for table creation tests.
+ * Integration test for converting a Schema\Table into MySQL table creates.
  *
- * @return array
+ * @return void
  */
-	public static function createTableProvider() {
-		$basic = (new Table('posts'))->addColumn('id', [
+	public function testCreateTableSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = (new Table('posts'))->addColumn('id', [
 				'type' => 'integer',
 				'null' => false
 			])
@@ -453,7 +516,7 @@ SQL;
 				'columns' => ['id']
 			]);
 
-		$basicExpected = <<<SQL
+		$expected = <<<SQL
 CREATE TABLE `posts` (
 `id` INTEGER NOT NULL AUTO_INCREMENT,
 `title` VARCHAR(255) NOT NULL COMMENT "The title",
@@ -462,100 +525,6 @@ CREATE TABLE `posts` (
 PRIMARY KEY (`id`)
 );
 SQL;
-
-		$uniqueKey = (new Table('articles_authors'))
-			->addColumn('author_id', [
-				'type' => 'integer',
-				'null' => false
-			])
-			->addColumn('article_id', [
-				'type' => 'integer',
-				'null' => false,
-			])
-			->addIndex('unique_idx', [
-				'type' => 'unique',
-				'columns' => ['author_id', 'article_id']
-			]);
-		$uniqueExpected = <<<SQL
-CREATE TABLE `articles_authors` (
-`author_id` INTEGER NOT NULL,
-`article_id` INTEGER NOT NULL,
-UNIQUE KEY `unique_idx` (`author_id`, `article_id`)
-);
-SQL;
-
-		$simpleKey = (new Table('things'))
-			->addColumn('thing_id', [
-				'type' => 'integer',
-			])
-			->addIndex('thing_id_idx', [
-				'type' => 'index',
-				'columns' => ['thing_id']
-			]);
-		$simpleKeyExpected = <<<SQL
-CREATE TABLE `things` (
-`thing_id` INTEGER,
-KEY `thing_id_idx` (`thing_id`)
-);
-SQL;
-
-		$fullText = (new Table('things'))
-			->addColumn('stuff', [
-				'type' => 'text',
-			])
-			->addIndex('stuff_idx', [
-				'type' => 'fulltext',
-				'columns' => ['stuff']
-			]);
-		$fullTextExpected = <<<SQL
-CREATE TABLE `things` (
-`stuff` TEXT,
-FULLTEXT KEY `stuff_idx` (`stuff`)
-);
-SQL;
-
-		$keyLength = (new Table('articles_authors'))
-			->addColumn('author_id', [
-				'type' => 'integer',
-				'null' => false
-			])
-			->addColumn('article_id', [
-				'type' => 'integer',
-				'null' => false,
-			])
-			->addIndex('unique_idx', [
-				'type' => 'unique',
-				'columns' => ['author_id', 'article_id'],
-				'length' => ['author_id' => 5, 'article_id' => 4],
-			]);
-		$keyLengthExpected = <<<SQL
-CREATE TABLE `articles_authors` (
-`author_id` INTEGER NOT NULL,
-`article_id` INTEGER NOT NULL,
-UNIQUE KEY `unique_idx` (`author_id`(5), `article_id`(4))
-);
-SQL;
-		return [
-			[$basic, $basicExpected],
-			[$uniqueKey, $uniqueExpected],
-			[$fullText, $fullTextExpected],
-			[$simpleKey, $simpleKeyExpected],
-			[$keyLength, $keyLengthExpected],
-		];
-	}
-
-/**
- * Integration test for converting a Schema\Table into MySQL table creates.
- *
- * @dataProvider createTableProvider
- * @return void
- */
-	public function testCreateTableSql($table, $expected) {
-		$driver = $this->_getMockedDriver();
-		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
-		$connection->expects($this->any())->method('driver')
-			->will($this->returnValue($driver));
-
 		$result = $table->createTableSql($connection);
 		$this->assertEquals($expected, $result);
 	}

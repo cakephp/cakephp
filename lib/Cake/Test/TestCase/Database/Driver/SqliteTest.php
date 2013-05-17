@@ -95,4 +95,41 @@ class SqliteTest extends TestCase {
 		$driver->connect($config);
 	}
 
+/**
+ * Data provider for schemaValue()
+ *
+ * @return array
+ */
+	public static function schemaValueProvider() {
+		return [
+			[null, 'NULL'],
+			[false, 'FALSE'],
+			[true, 'TRUE'],
+			[3.14159, '3.14159'],
+			['33', '33'],
+			[66, 66],
+			[0, 0],
+			[10e5, '1000000'],
+			['farts', '"farts"'],
+		];
+	}
+
+/**
+ * Test the schemaValue method on Driver.
+ *
+ * @dataProvider schemaValueProvider
+ * @return void
+ */
+	public function testSchemaValue($input, $expected) {
+		$driver = new Sqlite();
+		$mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+		$mock->expects($this->any())
+			->method('quote')
+			->will($this->returnCallback(function ($value) {
+				return '"' . $value . '"';
+			}));
+		$driver->connection($mock);
+		$this->assertEquals($expected, $driver->schemaValue($input));
+	}
+
 }
