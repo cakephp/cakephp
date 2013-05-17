@@ -2069,6 +2069,34 @@ class FormHelper extends Helper {
 		$select[] = $this->Html->useTag($template);
 		return implode("\n", $select);
 	}
+	
+/**
+ * Returns a formatted SELECT element for choosing local timezone
+ *
+ * ### Attributes:
+ *
+ * - `showParents` - If included in the array and set to true, an additional option element
+ *   will be added for the parent of each option group. You can set an option with the same name
+ *   and it's key will be used for the value of the option.
+ * - `multiple` - show a multiple select box. If set to 'checkbox' multiple checkboxes will be
+ *   created instead.
+ * - `empty` - If true, the empty select option is shown. If a string,
+ *   that string is displayed as the empty element.
+ * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
+ * - `value` The selected value of the input.
+ * - `class` - When using multiple = checkbox the classname to apply to the divs. Defaults to 'checkbox'.
+ * - `disabled` - Control the disabled attribute. When creating a select box, set to true to disable the
+ *   select box. When creating checkboxes, `true` will disable all checkboxes. You can also set disabled
+ *   to a list of values you want to disable when creating checkboxes.
+ *
+ * @param string $fieldName Name attribute of the timezone SELECT
+ * @param array $attributes The HTML attributes of the timezone select element.
+ * @return string Formatted SELECT element to choose world timezone
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
+ */
+	public function timezone($fieldName, $attributes = array()) {	
+		return $this->select($fieldName, array(), $attributes = array());
+	}	
 
 /**
  * Returns a SELECT element for days.
