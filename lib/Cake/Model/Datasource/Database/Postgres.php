@@ -62,6 +62,7 @@ class Postgres extends DboSource {
 		'integer' => array('name' => 'integer', 'formatter' => 'intval'),
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
+		'decimal' => array('name' => 'float', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),

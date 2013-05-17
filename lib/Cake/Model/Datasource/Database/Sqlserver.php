@@ -94,6 +94,7 @@ class Sqlserver extends DboSource {
 		'integer' => array('name' => 'int', 'formatter' => 'intval'),
 		'biginteger' => array('name' => 'bigint'),
 		'float' => array('name' => 'numeric', 'formatter' => 'floatval'),
+		'decimal' => array('name' => 'numeric', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time' => array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
