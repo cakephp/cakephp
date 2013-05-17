@@ -404,7 +404,7 @@ class ProjectTask extends AppShell {
 		}
 		if ($this->interactive) {
 			$this->hr();
-			$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/Config/core.php to use prefix routing.'));
+			$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\', array(\'admin\')) in /app/Config/core.php to use prefix routing.'));
 			$this->out(__d('cake_console', 'What would you like the prefix route to be?'));
 			$this->out(__d('cake_console', 'Example: www.example.com/admin/controller'));
 			while (!$admin) {
@@ -412,7 +412,7 @@ class ProjectTask extends AppShell {
 			}
 			if ($this->cakeAdmin($admin) !== true) {
 				$this->out(__d('cake_console', '<error>Unable to write to</error> /app/Config/core.php.'));
-				$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/Config/core.php to use prefix routing.'));
+				$this->out(__d('cake_console', 'You need to enable Configure::write(\'Routing.prefixes\', array(\'admin\')) in /app/Config/core.php to use prefix routing.'));
 				$this->_stop();
 			}
 			return $admin . '_';

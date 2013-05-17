@@ -1076,7 +1076,7 @@ class HttpSocketTest extends CakeTestCase {
 				'pass' => 'hunter2'
 			)
 		));
-		$this->assertEquals($socket->request['auth'],array('Basic' => array('user' => 'joel', 'pass' => 'hunter2')));
+		$this->assertEquals($socket->request['auth'], array('Basic' => array('user' => 'joel', 'pass' => 'hunter2')));
 		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic am9lbDpodW50ZXIy') !== false);
 	}
 
