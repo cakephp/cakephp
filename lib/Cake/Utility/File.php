@@ -182,6 +182,7 @@ class File {
 
 /**
  * Return the contents of this File as a base64 version of the file contents.
+ * The string is split into smaller chunks to match RFC 2045 semantics.
  *
  * @return string File contents in base64 encoding
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::readAndBase64Encode
