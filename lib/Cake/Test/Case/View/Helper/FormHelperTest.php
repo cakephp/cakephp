@@ -3472,10 +3472,10 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create('ValidateProfile');
 		$ValidateProfile = ClassRegistry::getObject('ValidateProfile');
 		$ValidateProfile->validationErrors['city'] = array('required<br>');
-		$result = $this->Form->input('city',array('error' => array('attributes' => array('escape' => true))));
+		$result = $this->Form->input('city', array('error' => array('attributes' => array('escape' => true))));
 		$this->assertRegExp('/required&lt;br&gt;/', $result);
 
-		$result = $this->Form->input('city',array('error' => array('attributes' => array('escape' => false))));
+		$result = $this->Form->input('city', array('error' => array('attributes' => array('escape' => false))));
 		$this->assertRegExp('/required<br>/', $result);
 	}
 
@@ -8428,7 +8428,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.created',array('empty' => true));
+		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.created', array('empty' => true));
 		$expected = array(
 			'div' => array('class' => 'input date'),
 			'label' => array('for' => 'ValidateProfile1ValidateItem2CreatedMonth'),
