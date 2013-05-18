@@ -1067,6 +1067,16 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->scriptBlock('window.foo = 2;', array('type' => 'text/x-handlebars-template'));
+		$expected = array(
+			'script' => array('type' => 'text/x-handlebars-template'),
+			$this->cDataStart,
+			'window.foo = 2;',
+			$this->cDataEnd,
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false));
 		$expected = array(
 			'script' => array('type' => 'text/javascript'),
