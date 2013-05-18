@@ -1381,12 +1381,12 @@ class CakeEmail {
 /**
  * Read the file contents and return a base64 version of the file contents.
  *
- * @param string $file The file to read.
+ * @param string $path The absolute path to the file to read.
  * @return string File contents in base64 encoding
  */
-	protected function _readFile($file) {
-		$f = new File($file);
-		return $f->readBase64();
+	protected function _readFile($path) {
+		$File = new File($path);
+		return $File->readBase64();
 	}
 
 /**
