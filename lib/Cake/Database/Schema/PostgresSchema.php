@@ -146,19 +146,6 @@ class PostgresSchema {
 	}
 
 /**
- * Get additional column meta data used in schema reflections.
- *
- * @return array
- */
-	public function extraSchemaColumns() {
-		return [
-			'comment' => [
-				'column' => 'comment',
-			]
-		];
-	}
-
-/**
  * Convert field description results into abstract schema fields.
  *
  * @param Cake\Database\Schema\Table $table The table object to append fields to.
@@ -195,6 +182,103 @@ class PostgresSchema {
 				'columns' => [$row['name']]
 			]);
 		}
+	}
+
+/**
+ * Generate the SQL fragment for a single column.
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function columnSql(Table $table, $name) {
+		$data = $table->column($name);
+		$out = $this->_driver->quoteIdentifier($name);
+		$typeMap = [
+			'biginteger' => ' BIGINT',
+			'boolean' => ' BOOLEAN',
+			'binary' => ' BYTEA',
+			'float' => ' FLOAT',
+			'decimal' => ' DECIMAL',
+			'text' => ' TEXT',
+			'date' => ' DATE',
+			'time' => ' TIME',
+			'datetime' => ' TIMESTAMP',
+			'timestamp' => ' TIMESTAMP',
+		];
+
+		if (isset($typeMap[$data['type']])) {
+			$out .= $typeMap[$data['type']];
+		}
+
+		if ($data['type'] === 'integer') {
+			$type = ' INTEGER';
+			if (in_array($name, (array)$table->primaryKey())) {
+				$type = ' SERIAL';
+				unset($data['null'], $data['default']);
+			}
+			$out .= $type;
+		}
+
+		if ($data['type'] === 'string') {
+			$isFixed = !empty($data['fixed']);
+			$type = ' VARCHAR';
+			if ($isFixed) {
+				$type = ' CHAR';
+			}
+			if ($isFixed && isset($data['length']) && $data['length'] == 36) {
+				$type = ' UUID';
+			}
+			$out .= $type;
+			if (isset($data['length']) && $data['length'] != 36) {
+				$out .= '(' . (int)$data['length'] . ')';
+			}
+		}
+
+		if ($data['type'] === 'float' && isset($data['precision'])) {
+			$out .= '(' . (int)$data['precision'] . ')';
+		}
+
+		if ($data['type'] === 'decimal' &&
+			(isset($data['length']) || isset($data['precision']))
+		) {
+			$out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
+		}
+
+		if (isset($data['null']) && $data['null'] === false) {
+			$out .= ' NOT NULL';
+		}
+		if (isset($data['null']) && $data['null'] === true) {
+			$out .= ' DEFAULT NULL';
+			unset($data['default']);
+		}
+		if (isset($data['default']) && $data['type'] !== 'timestamp') {
+			$out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
+		}
+		return $out;
+	}
+
+/**
+ * Generate the SQL fragment for a single index.
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function indexSql(Table $table, $name) {
+		$data = $table->index($name);
+	}
+
+/**
+ * Generate the SQL to create a table.
+ *
+ * @param string $table The name of the table.
+ * @param array $lines The lines (columns + indexes) to go inside the table.
+ * @return string A complete CREATE TABLE statement
+ */
+	public function createTableSql($table, $lines) {
+		$content = implode(",\n", array_filter($lines));
+		return sprintf("CREATE TABLE \"%s\" (\n%s\n);", $table, $content);
 	}
 
 }
