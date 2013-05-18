@@ -1150,6 +1150,20 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->scriptStart(array('safe' => true, 'type' => 'text/x-handlebars-template'));
+		$this->assertNull($result);
+		echo 'this is some template';
+
+		$result = $this->Html->scriptEnd();
+		$expected = array(
+			'script' => array('type' => 'text/x-handlebars-template'),
+			$this->cDataStart,
+			'this is some template',
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+
 		$this->View->expects($this->once())
 			->method('append');
 		$result = $this->Html->scriptStart(array('safe' => false, 'inline' => false));

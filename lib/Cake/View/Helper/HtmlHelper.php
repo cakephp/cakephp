@@ -99,7 +99,7 @@ class HtmlHelper extends AppHelper {
 		'li' => '<li%s>%s</li>',
 		'error' => '<div%s>%s</div>',
 		'javascriptblock' => '<script%s>%s</script>',
-		'javascriptstart' => '<script type="text/javascript">',
+		'javascriptstart' => '<script>',
 		'javascriptlink' => '<script type="text/javascript" src="%s"%s></script>',
 		'javascriptend' => '</script>'
 	);
