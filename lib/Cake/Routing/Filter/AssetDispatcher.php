@@ -124,7 +124,7 @@ class AssetDispatcher extends DispatcherFilter {
 		}
 
 		$plugin = Inflector::camelize($parts[0]);
-		if (CakePlugin::loaded($plugin)) {
+		if ($plugin && CakePlugin::loaded($plugin)) {
 			unset($parts[0]);
 			$fileFragment = urldecode(implode(DS, $parts));
 			$pluginWebroot = CakePlugin::path($plugin) . 'webroot' . DS;
