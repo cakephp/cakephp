@@ -310,4 +310,55 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $results);
 	}
 
+/**
+ * Tests that results are grouped correctly when using contain()
+ *
+ * @return void
+ **/
+	public function testThing() {
+		$this->_insertTwoRecords();
+
+		$query = new Query($this->connection);
+		$table = Table::build('author', ['connection' => $this->connection]);
+		Table::build('article', ['connection' => $this->connection]);
+		$table->hasMany('article');
+
+		$results = $query->repository($table)->select()->contain('article')->toArray();
+		$expected = [
+			[
+				'author' => [
+					'id' => 1,
+					'name' => 'Chuck Norris',
+					'article' => [
+						[
+							'article' => [
+								'id' => 1,
+								'title' => 'a title',
+								'body' => 'a body',
+								'author_id' => 1
+							]
+						]
+					]
+				]
+			],
+			[
+				'author' => [
+					'id' => 2,
+					'name' => 'Bruce Lee',
+						'article' => [
+							[
+								'article' => [
+									'id' => 2,
+									'title' => 'another title',
+									'body' => 'another body',
+									'author_id' => 2
+								]
+							]
+						]
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
+
 }

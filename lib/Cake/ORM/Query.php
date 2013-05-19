@@ -3,9 +3,17 @@
 namespace Cake\ORM;
 
 use Cake\Database\Query as DatabaseQuery;
+use Cake\Database\Statement\BufferedStatement;
+use Cake\Database\Statement\CallbackStatement;
+use Cake\Utility\Hash;
 
 class Query extends DatabaseQuery {
 
+/**
+ * Instance of a table object this query is bound to
+ *
+ * @var \Cake\ORM\Table
+ */
 	protected $_table;
 
 	protected $_containments;
@@ -13,6 +21,10 @@ class Query extends DatabaseQuery {
 	protected $_hasFields;
 
 	protected $_aliasMap = [];
+
+	protected $_eagerLoading = false;
+
+	protected $_loadEagerly = [];
 
 	public function repository(Table $table = null) {
 		if ($table === null) {
@@ -95,6 +107,25 @@ class Query extends DatabaseQuery {
 		return $aliased;
 	}
 
+/**
+ * Auxiliary function used to wrap the original statement from the driver with
+ * any registered callbacks. This will also setup the correct statement class
+ * in order to eager load deep associations.
+ *
+ * @param Cake\Database\Statement $statement to be decorated
+ * @return Cake\Database\Statement
+ */
+	protected function _decorateResults($statement) {
+		$statement = parent::_decorateResults($statement);
+		if ($this->_eagerLoading) {
+			if (!($statement instanceof BufferedStatement)) {
+				$statement = new BufferedStatement($statement, $this->connection()->driver());
+			}
+			$statement = $this->_eagerLoad($statement);
+		}
+
+		return $statement;
+	}
 
 	protected function _transformQuery() {
 		if (!$this->_dirty) {
@@ -109,6 +140,8 @@ class Query extends DatabaseQuery {
 	}
 
 	protected function _addContainments() {
+		$this->_eagerLoading = false;
+		$this->_loadEagerly = [];
 		if (empty($this->_containments)) {
 			return;
 		}
@@ -125,6 +158,14 @@ class Query extends DatabaseQuery {
 		$firstLevelJoins = $this->_resolveFirstLevel($this->_table, $contain);
 		foreach ($firstLevelJoins as $options) {
 			$this->_addJoin($options['association'], $options['options']);
+		}
+
+		foreach ($contain as $relation => $meta) {
+			$associated = $this->_table->association($relation);
+			if (!$associated->canBeJoined()) {
+				$this->_eagerLoading = true;
+				$this->_loadEagerly[$relation] = [$associated, $meta];
+			}
 		}
 	}
 
@@ -173,6 +214,23 @@ class Query extends DatabaseQuery {
 
 	protected function _addJoin($association, $options) {
 		$association->attachTo($this, $options + ['includeFields' => !$this->_hasFields]);
+	}
+
+	protected function _eagerLoad($statement) {
+		$keys = [];
+		$alias = $this->_table->alias();
+		$pkField = key($this->aliasField($this->_table->primaryKey()));
+		while($result = $statement->fetch('assoc')) {
+			$keys[$alias][] = $result[$pkField];
+		}
+
+		$statement->rewind();
+		foreach ($this->_loadEagerly as $association => $meta) {
+			$f = $meta[0]->eagerLoader($keys[$alias], $meta[1]);
+			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
+		}
+
+		return $statement;
 	}
 
 	protected function _addDefaultFields() {
