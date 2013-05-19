@@ -812,7 +812,7 @@ class PaginatorHelper extends AppHelper {
  *
  * ### Options:
  *
- * - `tag` The tag wrapping tag you want to use, defaults to 'span'
+ * - `tag` The tag wrapping tag you want to use, defaults to 'span'. Set this to false to disable this option
  * - `after` Content to insert after the link/tag
  * - `model` The model to use defaults to PaginatorHelper::defaultModel()
  * - `separator` Content between the generated links, defaults to ' | '
@@ -852,7 +852,12 @@ class PaginatorHelper extends AppHelper {
 				$after = $ellipsis;
 			}
 			for ($i = 1; $i <= $first; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'));
+				$url = array('page' => $i);
+				if ($tag === false) {
+					$out .= $this->link($i, $url, array_merge($options, array('class' => $class)));
+				} else {
+					$out .= $this->Html->tag($tag, $this->link($i, $url, $options), compact('class'));
+				}
 				if ($i != $first) {
 					$out .= $separator;
 				}
@@ -860,7 +865,11 @@ class PaginatorHelper extends AppHelper {
 			$out .= $after;
 		} elseif ($params['page'] > 1 && is_string($first)) {
 			$options += array('rel' => 'first');
-			$out = $this->Html->tag($tag, $this->link($first, array('page' => 1), $options), compact('class')) . $after;
+			$url = array('page' => 1);
+			if ($tag === false) {
+				return $this->link($first, $url, array_merge($options, array('class' => $class))) . $after;
+			}
+			$out = $this->Html->tag($tag, $this->link($first, $url, $options), compact('class')) . $after;
 		}
 		return $out;
 	}
@@ -878,7 +887,7 @@ class PaginatorHelper extends AppHelper {
  *
  * ### Options:
  *
- * - `tag` The tag wrapping tag you want to use, defaults to 'span'
+ * - `tag` The tag wrapping tag you want to use, defaults to 'span'. Set this to false to disable this option
  * - `before` Content to insert before the link/tag
  * - `model` The model to use defaults to PaginatorHelper::defaultModel()
  * - `separator` Content between the generated links, defaults to ' | '
@@ -919,7 +928,12 @@ class PaginatorHelper extends AppHelper {
 				$before = $ellipsis;
 			}
 			for ($i = $lower; $i <= $params['pageCount']; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'));
+				$url = array('page' => $i);
+				if ($tag === false) {
+					$out .= $this->link($i, $url, array_merge($options, array('class' => $class)));
+				} else {
+					$out .= $this->Html->tag($tag, $this->link($i, $url, $options), compact('class'));
+				}
 				if ($i != $params['pageCount']) {
 					$out .= $separator;
 				}
@@ -927,9 +941,11 @@ class PaginatorHelper extends AppHelper {
 			$out = $before . $out;
 		} elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
 			$options += array('rel' => 'last');
-			$out = $before . $this->Html->tag(
-				$tag, $this->link($last, array('page' => $params['pageCount']), $options), compact('class')
-			);
+			$url = array('page' => $params['pageCount']);
+			if ($tag === false) {
+				return $before . $this->link($last, $url, array_merge($options, array('class' => $class)));
+			}
+			$out = $before . $this->Html->tag($tag, $this->link($last, $url, $options), compact('class'));
 		}
 		return $out;
 	}
