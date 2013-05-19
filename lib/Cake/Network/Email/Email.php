@@ -1257,7 +1257,7 @@ class Email {
 				$formatted[] = '';
 				continue;
 			}
-			if (!preg_match('/\<[a-z]/i', $line)) {
+			if (!preg_match('/<[a-z]+.+>/i', $line)) {
 				$formatted = array_merge(
 					$formatted,
 					explode("\n", wordwrap($line, $wrapLength, "\n"))

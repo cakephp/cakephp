@@ -251,6 +251,9 @@ class RequestHandlerComponent extends Component {
 		if (!$this->request->is('ajax')) {
 			return;
 		}
+		if (empty($url)) {
+			return;
+		}
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		foreach ($_POST as $key => $val) {
 			unset($_POST[$key]);

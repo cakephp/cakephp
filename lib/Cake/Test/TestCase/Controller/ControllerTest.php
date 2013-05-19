@@ -142,6 +142,73 @@ class TestController extends ControllerTestAppController {
 }
 
 /**
+ * TestComponent class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class TestComponent extends Object {
+
+/**
+ * beforeRedirect method
+ *
+ * @return void
+ */
+	public function beforeRedirect() {
+	}
+
+/**
+ * initialize method
+ *
+ * @return void
+ */
+	public function initialize(Controller $controller) {
+	}
+
+/**
+ * startup method
+ *
+ * @return void
+ */
+	public function startup(Controller $controller) {
+	}
+
+/**
+ * shutdown method
+ *
+ * @return void
+ */
+	public function shutdown(Controller $controller) {
+	}
+
+/**
+ * beforeRender callback
+ *
+ * @return void
+ */
+	public function beforeRender(Controller $controller) {
+		if ($this->viewclass) {
+			$controller->viewClass = $this->viewclass;
+		}
+	}
+
+}
+
+class Test2Component extends TestComponent {
+
+	public $model;
+
+	public function __construct(ComponentCollection $collection, $settings) {
+		$this->controller = $collection->getController();
+		$this->model = $this->controller->modelClass;
+	}
+
+	public function beforeRender(Controller $controller) {
+		return false;
+	}
+
+}
+
+/**
  * AnotherTestController class
  *
  * @package       Cake.Test.Case.Controller
@@ -223,7 +290,8 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testLoadModelUsesTrue() {
-		$request = new CakeRequest('controller_posts/index');
+		Configure::write('App.namespace', 'TestApp');
+		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
 		$Controller = new Controller($request, $response);
 		$Controller->uses = true;
@@ -293,6 +361,40 @@ class ControllerTest extends TestCase {
 
 		$this->assertTrue(isset($Controller->TestPluginPost));
 		$this->assertInstanceOf('TestPlugin\Model\TestPluginPost', $Controller->TestPluginPost);
+	}
+
+/**
+ * testConstructClassesWithComponents method
+ *
+ * @return void
+ */
+	public function testConstructClassesWithComponents() {
+		Configure::write('App.namespace', 'TestApp');
+		$Controller = new TestPluginController(new Request(), new Response());
+		$Controller->uses = ['NameTest'];
+		$Controller->components[] = 'Test2';
+
+		$Controller->constructClasses();
+		$this->assertEquals('NameTest', $Controller->Test2->model);
+		$this->assertEquals('Name', $Controller->NameTest->name);
+		$this->assertEquals('Name', $Controller->NameTest->alias);
+	}
+
+/**
+ * testAliasName method
+ *
+ * @return void
+ */
+	public function testAliasName() {
+		$request = new Request('controller_posts/index');
+		$Controller = new Controller($request);
+		$Controller->uses = ['NameTest'];
+		$Controller->constructClasses();
+
+		$this->assertEquals('Name', $Controller->NameTest->name);
+		$this->assertEquals('Name', $Controller->NameTest->alias);
+
+		unset($Controller);
 	}
 
 /**

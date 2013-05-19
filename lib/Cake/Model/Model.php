@@ -1079,7 +1079,7 @@ class Model extends Object implements EventListener {
 
 					case 'joinTable':
 						$tables = array($this->table, $this->{$class}->table);
-						sort ($tables);
+						sort($tables);
 						$data = $tables[0] . '_' . $tables[1];
 					break;
 

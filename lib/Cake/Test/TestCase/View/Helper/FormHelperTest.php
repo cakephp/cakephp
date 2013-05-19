@@ -548,7 +548,7 @@ class FormHelperTest extends TestCase {
 
 		Configure::write('App.base', '');
 		Configure::write('App.namespace', 'Cake\Test\TestCase\View\Helper');
-
+		Configure::delete('Asset');
 		$this->Controller = new ContactTestController();
 		$this->View = new View($this->Controller);
 
@@ -1467,22 +1467,39 @@ class FormHelperTest extends TestCase {
  */
 	public function testTagIsInvalid() {
 		$Contact = ClassRegistry::getObject('Contact');
-		$Contact->validationErrors[0]['email'] = array('Please provide an email');
+		$Contact->validationErrors[0]['email'] = $expected = array('Please provide an email');
 
 		$this->Form->setEntity('Contact.0.email');
 		$result = $this->Form->tagIsInvalid();
-		$expected = array('Please provide an email');
 		$this->assertEquals($expected, $result);
 
 		$this->Form->setEntity('Contact.1.email');
 		$result = $this->Form->tagIsInvalid();
-		$expected = false;
-		$this->assertSame($expected, $result);
+		$this->assertFalse($result);
 
 		$this->Form->setEntity('Contact.0.name');
 		$result = $this->Form->tagIsInvalid();
-		$expected = false;
-		$this->assertSame($expected, $result);
+		$this->assertFalse($result);
+	}
+
+/**
+ * Test tagIsInvalid with validation errors from a saveMany
+ *
+ * @return void
+ */
+	public function testTagIsInvalidSaveMany() {
+		$Contact = ClassRegistry::getObject('Contact');
+		$Contact->validationErrors[0]['email'] = $expected = array('Please provide an email');
+
+		$this->Form->create('Contact');
+
+		$this->Form->setEntity('0.email');
+		$result = $this->Form->tagIsInvalid();
+		$this->assertEquals($expected, $result);
+
+		$this->Form->setEntity('0.Contact.email');
+		$result = $this->Form->tagIsInvalid();
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -3466,10 +3483,10 @@ class FormHelperTest extends TestCase {
 		$this->Form->create('ValidateProfile');
 		$ValidateProfile = ClassRegistry::getObject('ValidateProfile');
 		$ValidateProfile->validationErrors['city'] = array('required<br>');
-		$result = $this->Form->input('city',array('error' => array('attributes' => array('escape' => true))));
+		$result = $this->Form->input('city', array('error' => array('attributes' => array('escape' => true))));
 		$this->assertRegExp('/required&lt;br&gt;/', $result);
 
-		$result = $this->Form->input('city',array('error' => array('attributes' => array('escape' => false))));
+		$result = $this->Form->input('city', array('error' => array('attributes' => array('escape' => false))));
 		$this->assertRegExp('/required<br>/', $result);
 	}
 
@@ -8464,7 +8481,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.created',array('empty' => true));
+		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.created', array('empty' => true));
 		$expected = array(
 			'div' => array('class' => 'input date'),
 			'label' => array('for' => 'ValidateProfile1ValidateItem2CreatedMonth'),
@@ -8538,6 +8555,24 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 
 		$result = $this->Form->error('2.city');
+		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
+	}
+
+/**
+ * test the correct display of multi-record form validation errors.
+ *
+ * @return void
+ */
+	public function testSaveManyRecordFormValidationErrors() {
+		$this->Form->create('ValidateUser');
+		$ValidateUser = ClassRegistry::getObject('ValidateUser');
+		$ValidateUser->validationErrors[0]['ValidateItem']['name'] = array('Error in field name');
+
+		$result = $this->Form->error('0.ValidateUser.ValidateItem.name');
+		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
+
+		$ValidateUser->validationErrors[0]['city'] = array('Error in field city');
+		$result = $this->Form->error('ValidateUser.0.city');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 	}
 

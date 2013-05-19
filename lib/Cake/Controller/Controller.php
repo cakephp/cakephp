@@ -582,11 +582,11 @@ class Controller extends Object implements EventListener {
  */
 	public function constructClasses() {
 		$this->_mergeControllerVars();
-		$this->Components->init($this);
 		if ($this->uses) {
 			$this->uses = (array)$this->uses;
 			list(, $this->modelClass) = pluginSplit(current($this->uses));
 		}
+		$this->Components->init($this);
 		return true;
 	}
 

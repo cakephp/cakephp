@@ -86,7 +86,7 @@ class AssetDispatcher extends DispatcherFilter {
 		}
 
 		$plugin = Inflector::camelize($parts[0]);
-		if (Plugin::loaded($plugin)) {
+		if ($plugin && Plugin::loaded($plugin)) {
 			unset($parts[0]);
 			$fileFragment = urldecode(implode(DS, $parts));
 			$pluginWebroot = Plugin::path($plugin) . 'webroot' . DS;
