@@ -521,6 +521,26 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that passing an array type to any where condition will replace
+ * the passed array accordingly as a proper IN condition
+ *
+ * @return void
+ */
+	public function testSelectWhereArrayType() {
+		$this->_insertDateRecords();
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['id' => ['1', '3']], ['id' => 'integer[]'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+	}
+
+/**
  * Tests that Query::orWhere() can be used to concatenate conditions with OR
  *
  * @return void

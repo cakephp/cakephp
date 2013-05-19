@@ -551,9 +551,12 @@ class QueryExpression implements ExpressionInterface, Countable {
 		$type = isset($types[$expression]) ? $types[$expression] : null;
 		$multi = false;
 
-		if (in_array(strtolower(trim($operator)), ['in', 'not in'])) {
+		$typeMultiple = strpos($type, '[]') !== false;
+		if (in_array(strtolower(trim($operator)), ['in', 'not in']) || $typeMultiple) {
 			$type = $type ?: 'string';
-			$type .= strpos($type, '[]') === false ? '[]' : null;
+			$type .= $typeMultiple ? null : '[]';
+			$operator = $operator == '=' ? 'in' : $operator;
+			$operator = $operator == '!=' ? 'not in' : $operator;
 			$multi = true;
 		}
 
@@ -593,13 +596,12 @@ class QueryExpression implements ExpressionInterface, Countable {
 			if (strpos($b['type'], '[]') === false) {
 				continue;
 			}
-			$type = str_replace('[]', '', $b['type']);
-			$params = [];
-			foreach ($b['value'] as $value) {
-				$params[] = $this->_bindValue($b['placeholder'], $value, $type);
-			}
 			$token = ':' . $b['placeholder'];
-			$replacements[$token] = implode(', ', $params);
+			$replacements[$token] = $this->_makeMultiplePlaceholders(
+				$b['placeholder'],
+				$b['value'],
+				$b['type']
+			);
 			unset($this->_bindings[$n]);
 		}
 
@@ -611,6 +613,23 @@ class QueryExpression implements ExpressionInterface, Countable {
 				$this->_conditions[$k] = str_replace($token, $r, $condition);
 			}
 		}
+	}
+
+/**
+ * Returns an array of placeholders that will have a bound value corresponding
+ * to each value in the first argument.
+ *
+ * @param array $values
+ * @param string $type the type to be used to bind the values
+ * @return array
+ */
+	protected function _makeMultiplePlaceholders($field, $values, $type) {
+		$type = str_replace('[]', '', $type);
+		$params = [];
+		foreach ($values as $value) {
+			$params[] = $this->_bindValue($field, $value, $type);
+		}
+		return implode(', ', $params);
 	}
 
 /**
