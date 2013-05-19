@@ -151,8 +151,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = new Table(['table' => 'things', 'connection' => $this->connection]);
 		$results = $table->find('all')->toArray();
 		$expected = [
-			['things' => ['id' => 1, 'title' => 'a title', 'body' => 'a body']],
-			['things' => ['id' => 2, 'title' => 'another title', 'body' => 'another body']]
+			['id' => 1, 'title' => 'a title', 'body' => 'a body'],
+			['id' => 2, 'title' => 'another title', 'body' => 'another body']
 		];
 		$this->assertSame($expected, $results);
 	}
@@ -162,15 +162,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = new Table(['table' => 'things', 'connection' => $this->connection]);
 		$results = $table->find('all')->select(['id', 'title'])->toArray();
 		$expected = [
-			['things' => ['id' => 1, 'title' => 'a title']],
-			['things' => ['id' => 2, 'title' => 'another title']]
+			['id' => 1, 'title' => 'a title'],
+			['id' => 2, 'title' => 'another title']
 		];
 		$this->assertSame($expected, $results);
 
 		$results = $table->find('all')->select(['id', 'foo' => 'title'])->toArray();
 		$expected = [
-			['things' => ['id' => 1, 'foo' => 'a title']],
-			['things' => ['id' => 2, 'foo' => 'another title']]
+			['id' => 1, 'foo' => 'a title'],
+			['id' => 2, 'foo' => 'another title']
 		];
 		$this->assertSame($expected, $results);
 	}
@@ -182,14 +182,14 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->select(['id', 'name'])
 			->where(['posted >=' => new \DateTime('2012-12-22 12:01')]);
 		$expected = [
-			['dates' => ['id' => 3, 'name' => 'Jet Li']]
+			['id' => 3, 'name' => 'Jet Li']
 		];
 		$this->assertSame($expected, $query->toArray());
 
 		$query->orWhere(['dates.posted' => new \DateTime('2012-12-22 12:00')]);
 		$expected = [
-			['dates' => ['id' => 2, 'name' => 'Bruce Lee']],
-			['dates' => ['id' => 3, 'name' => 'Jet Li']]
+			['id' => 2, 'name' => 'Bruce Lee'],
+			['id' => 3, 'name' => 'Jet Li']
 		];
 		$this->assertSame($expected, $query->toArray());
 	}

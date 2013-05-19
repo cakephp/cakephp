@@ -94,9 +94,11 @@ class ResultSet implements Iterator {
 				}
 			}
 
-			$parts = $this->_map[$key];
-			list($table, $field) = $parts;
-			$value = $this->_castValue($table, $field, $value);
+			if (!empty($this->_map[$key])) {
+				$parts = $this->_map[$key];
+				list($table, $field) = $parts;
+				$value = $this->_castValue($table, $field, $value);
+			}
 
 			if (!empty($parts[2])) {
 				$results[$parts[2]][$field] = $value;
