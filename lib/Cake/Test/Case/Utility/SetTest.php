@@ -282,15 +282,15 @@ class SetTest extends CakeTestCase {
 		$this->assertEquals($a, $b);
 
 		$a = array(
-			array(7,6,4),
-			array(3,4,5),
-			array(3,2,array(1,1,1)),
+			array(7, 6, 4),
+			array(3, 4, 5),
+			array(3, 2, array(1, 1, 1)),
 		);
 
 		$b = array(
-			array(3,2,array(1,1,1)),
-			array(3,4,5),
-			array(7,6,4),
+			array(3, 2, array(1, 1, 1)),
+			array(3, 4, 5),
+			array(7, 6, 4),
 		);
 
 		$a = Set::sort($a, '{n}', 'asc');

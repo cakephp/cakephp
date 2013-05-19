@@ -1651,6 +1651,58 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertContains('ってテーブルを作ってやってたらう', $result['message']);
 	}
 
+	public function testWrapLongLine() {
+		$message = '<a href="http://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST) . "</a>";
+
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('Wordwrap Test');
+		$this->CakeEmail->config(array('empty'));
+		$result = $this->CakeEmail->send($message);
+		$expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST) . "\r\n</a>\r\n\r\n";
+		$this->assertEquals($expected, $result['message']);
+	}
+
+	public function testWrapIncludeTag() {
+		$message = '<a href="http://cakephp.org">CakePHP</a>';
+
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('Wordwrap Test');
+		$this->CakeEmail->config(array('empty'));
+		$result = $this->CakeEmail->send($message);
+		$expected = "{$message}\r\n\r\n";
+		$this->assertEquals($expected, $result['message']);
+
+		$message = 'foo<bar';
+
+		$result = $this->CakeEmail->send($message);
+		$expected = "{$message}\r\n\r\n";
+		$this->assertEquals($expected, $result['message']);
+	}
+
+	public function testWrapForJapaneseEncoding() {
+		$this->skipIf(!function_exists('mb_convert_encoding'));
+
+		$message = mb_convert_encoding('受け付けました', 'iso-2022-jp', 'UTF-8');
+
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('Wordwrap Test');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->charset('iso-2022-jp');
+		$this->CakeEmail->headerCharset('iso-2022-jp');
+		$result = $this->CakeEmail->send($message);
+		$expected = "{$message}\r\n\r\n";
+		$this->assertEquals($expected, $result['message']);
+	}
+
 /**
  * Tests that the body is encoded using the configured charset
  *

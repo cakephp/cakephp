@@ -1046,7 +1046,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 			array($modelClass => array('name' => '1.2')));
 		$this->assertEquals($children, $expects);
 
-		$topNodes = $this->Tree->children(false, true,array('name'));
+		$topNodes = $this->Tree->children(false, true, array('name'));
 		$expects = array(array($modelClass => array('name' => '1. Root')),
 			array($modelClass => array('name' => '1.1')));
 		$this->assertEquals($topNodes, $expects);
@@ -1077,7 +1077,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->assertEquals($initialCount, $laterCount);
 		$this->assertEquals($initialTopNodes, $laterTopNodes);
 
-		$topNodes = $this->Tree->children(false, true,array('name'));
+		$topNodes = $this->Tree->children(false, true, array('name'));
 		$expects = array(array($modelClass => array('name' => '1.1')),
 			array($modelClass => array('name' => '1.2')),
 			array($modelClass => array('name' => '1. Root')));
@@ -1148,7 +1148,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		);
 		$this->assertEquals($children, $expects);
 
-		$topNodes = $this->Tree->children(false, true,array('name'));
+		$topNodes = $this->Tree->children(false, true, array('name'));
 		$expects = array(array($modelClass => array('name' => '1. Root')));
 		$this->assertEquals($topNodes, $expects);
 

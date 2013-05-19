@@ -396,7 +396,7 @@ class ModelWriteTest extends BaseModelTest {
 		$data[$Post->alias]['user_id'] = 301;
 		$Post->save($data);
 
-		$users = $User->find('all',array('order' => 'User.id'));
+		$users = $User->find('all', array('order' => 'User.id'));
 		$this->assertEquals(1, $users[0]['User']['post_count']);
 		$this->assertEquals(2, $users[1]['User']['post_count']);
 	}
@@ -423,7 +423,7 @@ class ModelWriteTest extends BaseModelTest {
 		$data[$Post->alias]['uid'] = 301;
 		$Post->save($data);
 
-		$users = $User->find('all',array('order' => 'User.uid'));
+		$users = $User->find('all', array('order' => 'User.uid'));
 		$this->assertEquals(1, $users[0]['User']['post_count']);
 		$this->assertEquals(2, $users[1]['User']['post_count']);
 	}
@@ -551,7 +551,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$data[$Post->alias]['user_id'] = 301;
 		$Post->save($data);
-		$result = $User->find('all',array('order' => 'User.id'));
+		$result = $User->find('all', array('order' => 'User.id'));
 		$this->assertEquals(2, $result[0]['User']['post_count']);
 		$this->assertEquals(1, $result[1]['User']['posts_published']);
 	}
