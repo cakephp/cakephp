@@ -283,24 +283,20 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$results = $query->repository($table)->select()->contain('author')->toArray();
 		$expected = [
 			[
-				'article' => [
-					'id' => 1,
-					'title' => 'a title',
-					'body' => 'a body',
-					'author_id' => 1
-				],
+				'id' => 1,
+				'title' => 'a title',
+				'body' => 'a body',
+				'author_id' => 1,
 				'author' => [
 					'id' => 1,
 					'name' => 'Chuck Norris'
 				]
 			],
 			[
-				'article' => [
-					'id' => 2,
-					'title' => 'another title',
-					'body' => 'another body',
-					'author_id' => 2
-				],
+				'id' => 2,
+				'title' => 'another title',
+				'body' => 'another body',
+				'author_id' => 2,
 				'author' => [
 					'id' => 2,
 					'name' => 'Bruce Lee'
@@ -321,39 +317,31 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article');
+		$table->hasMany('article', ['property' => 'articles']);
 
 		$results = $query->repository($table)->select()->contain('article')->toArray();
 		$expected = [
 			[
-				'author' => [
-					'id' => 1,
-					'name' => 'Chuck Norris',
-					'article' => [
-						[
-							'article' => [
-								'id' => 1,
-								'title' => 'a title',
-								'body' => 'a body',
-								'author_id' => 1
-							]
-						]
+				'id' => 1,
+				'name' => 'Chuck Norris',
+				'articles' => [
+					[
+						'id' => 1,
+						'title' => 'a title',
+						'body' => 'a body',
+						'author_id' => 1
 					]
 				]
 			],
 			[
-				'author' => [
-					'id' => 2,
-					'name' => 'Bruce Lee',
-					'article' => [
-						[
-							'article' => [
-								'id' => 2,
-								'title' => 'another title',
-								'body' => 'another body',
-								'author_id' => 2
-							]
-						]
+				'id' => 2,
+				'name' => 'Bruce Lee',
+				'articles' => [
+					[
+						'id' => 2,
+						'title' => 'another title',
+						'body' => 'another body',
+						'author_id' => 2
 					]
 				]
 			]

@@ -84,14 +84,14 @@ class HasMany extends Association {
 		$resultMap = [];
 		$key = $target->primaryKey();
 		foreach ($fetchQuery->execute() as $result) {
-			$resultMap[$result[$alias][$key]][] = $result;
+			$resultMap[$result[$key]][] = $result;
 		}
 
 		$sourceKey = key($fetchQuery->aliasField(
 			$source->primaryKey(),
 			$source->alias()
 		));
-		$targetKey = key($fetchQuery->aliasField($alias, $source->alias()));
+		$targetKey = key($fetchQuery->aliasField($this->property(), $source->alias()));
 		return function($row) use ($alias, $resultMap, $sourceKey, $targetKey) {
 			if (isset($resultMap[$row[$sourceKey]])) {
 				$row[$targetKey] = $resultMap[$row[$sourceKey]];

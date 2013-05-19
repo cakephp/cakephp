@@ -91,6 +91,13 @@ abstract class Association {
  */
 	protected $_joinType = 'LEFT';
 
+/**
+ * The property name that should be filled with data from the target table
+ * in the source table record.
+ *
+ * @var string
+ */
+	protected $_property;
 
 /**
  * Constructor. Subclasses can override _options function to get the original
@@ -108,7 +115,8 @@ abstract class Association {
 			'dependent',
 			'sourceTable',
 			'targetTable',
-			'joinType'
+			'joinType',
+			'property'
 		];
 		foreach ($defaults as $property) {
 			if (isset($options[$property])) {
@@ -121,6 +129,10 @@ abstract class Association {
 
 		if (empty($this->_className)) {
 			$this->_className = $this->_name;
+		}
+
+		if (empty($this->_property)) {
+			$this->property($name);
 		}
 	}
 
@@ -243,6 +255,20 @@ abstract class Association {
 			return $this->_joinType;
 		}
 		return $this->_joinType = $type;
+	}
+
+/**
+ * Sets the property name that should be filled with data from the target table
+ * in the source table record.
+ * If no arguments are passed, currently configured type is returned.
+ *
+ * @return string
+ */
+	function property($name = null) {
+		if ($name !== null) {
+			$this->_property = $name;
+		}
+		return $this->_property;
 	}
 
 /**

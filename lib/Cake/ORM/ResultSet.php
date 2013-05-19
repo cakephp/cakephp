@@ -86,17 +86,25 @@ class ResultSet implements Iterator {
 			if (empty($this->_map[$key])) {
 				$parts = explode('__', $key);
 				if (count($parts) > 1) {
+					if ($parts[0] !== $table) {
+						$assoc = $this->_query->repository()->association($parts[0]);
+						$parts[2] = $assoc->property();
+					}
 					$this->_map[$key] = $parts;
 				}
 			}
 
-			if (!empty($this->_map[$key])) {
-				list($table, $field) = $this->_map[$key];
-				$value = $this->_castValue($table, $field, $value);
-			}
+			$parts = $this->_map[$key];
+			list($table, $field) = $parts;
+			$value = $this->_castValue($table, $field, $value);
 
-			$results[$table][$field] = $value;
+			if (!empty($parts[2])) {
+				$results[$parts[2]][$field] = $value;
+			} else {
+				$results[$field] = $value;
+			}
 		}
+
 		return $results;
 	}
 

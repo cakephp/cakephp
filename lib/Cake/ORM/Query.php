@@ -161,10 +161,9 @@ class Query extends DatabaseQuery {
 		}
 
 		foreach ($contain as $relation => $meta) {
-			$associated = $this->_table->association($relation);
-			if (!$associated->canBeJoined()) {
+			if ($meta['instance'] && !$meta['instance']->canBeJoined()) {
 				$this->_eagerLoading = true;
-				$this->_loadEagerly[$relation] = [$associated, $meta];
+				$this->_loadEagerly[$relation] = $meta;
 			}
 		}
 	}
@@ -177,12 +176,14 @@ class Query extends DatabaseQuery {
 			'fields' => 1
 		];
 
-		$table = $parent->association($alias)->target();
+		$instance = $parent->association($alias);
+		$table = $instance->target();
 		$this->_aliasMap[$alias] = $table;
 
 		$extra = array_diff_key($options, $defaults);
 		$config = [
 			'associations' => [],
+			'instance' => $instance,
 			'config' => array_diff_key($options, $extra)
 		];
 
@@ -199,7 +200,7 @@ class Query extends DatabaseQuery {
 	protected function _resolveFirstLevel($source, $associations) {
 		$result = [];
 		foreach ($associations as $table => $options) {
-			$associated = $source->association($table);
+			$associated = $options['instance'];
 			if ($associated && $associated->canBeJoined()) {
 				$result[$table] =  [
 					'association' => $associated,
@@ -226,7 +227,7 @@ class Query extends DatabaseQuery {
 
 		$statement->rewind();
 		foreach ($this->_loadEagerly as $association => $meta) {
-			$f = $meta[0]->eagerLoader($keys[$alias], $meta[1]);
+			$f = $meta['instance']->eagerLoader($keys[$alias], $meta);
 			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
 		}
 
