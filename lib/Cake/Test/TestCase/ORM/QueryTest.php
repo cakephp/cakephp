@@ -311,11 +311,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that results are grouped correctly when using contain()
+ * Tests that HasMany associations are correctly eager loaded
  *
  * @return void
  **/
-	public function testThing() {
+	public function testHasManyEagerLoading() {
 		$this->_insertTwoRecords();
 
 		$query = new Query($this->connection);
@@ -345,16 +345,16 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 				'author' => [
 					'id' => 2,
 					'name' => 'Bruce Lee',
-						'article' => [
-							[
-								'article' => [
-									'id' => 2,
-									'title' => 'another title',
-									'body' => 'another body',
-									'author_id' => 2
-								]
+					'article' => [
+						[
+							'article' => [
+								'id' => 2,
+								'title' => 'another title',
+								'body' => 'another body',
+								'author_id' => 2
 							]
 						]
+					]
 				]
 			]
 		];
