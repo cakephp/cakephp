@@ -2043,6 +2043,14 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Paginator->first('<<', array('tag' => false, 'class' => 'first'));
+		$expected = array(
+			'a' => array('href' => '/index/page:1', 'rel' => 'first', 'class' => 'first'),
+			'&lt;&lt;',
+			'/a',
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Paginator->last(2, array('tag' => 'li', 'class' => 'last'));
 		$expected = array(
 			'...',
@@ -2053,6 +2061,15 @@ class PaginatorHelperTest extends CakeTestCase {
 			array('li' => array('class' => 'last')),
 			array('a' => array('href' => '/index/page:7')), '7', '/a',
 			'/li',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->last(2, array('tag' => false, 'class' => 'last'));
+		$expected = array(
+			'...',
+			array('a' => array('href' => '/index/page:6', 'class' => 'last')), '6', '/a',
+			' | ',
+			array('a' => array('href' => '/index/page:7', 'class' => 'last')), '7', '/a',
 		);
 		$this->assertTags($result, $expected);
 	}
