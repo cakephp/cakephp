@@ -129,6 +129,15 @@ class Table {
 	}
 
 /**
+ * Get the name of the table.
+ *
+ * @return string
+ */
+	public function name() {
+		return $this->_table;
+	}
+
+/**
  * Add a column to the table.
  *
  * ### Attributes
