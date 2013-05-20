@@ -22,8 +22,6 @@ class Query extends DatabaseQuery {
 
 	protected $_aliasMap = [];
 
-	protected $_eagerLoading = false;
-
 	protected $_loadEagerly = [];
 
 	public function repository(Table $table = null) {
@@ -117,7 +115,7 @@ class Query extends DatabaseQuery {
  */
 	protected function _decorateResults($statement) {
 		$statement = parent::_decorateResults($statement);
-		if ($this->_eagerLoading) {
+		if ($this->_loadEagerly) {
 			if (!($statement instanceof BufferedStatement)) {
 				$statement = new BufferedStatement($statement, $this->connection()->driver());
 			}
@@ -140,7 +138,6 @@ class Query extends DatabaseQuery {
 	}
 
 	protected function _addContainments() {
-		$this->_eagerLoading = false;
 		$this->_loadEagerly = [];
 		if (empty($this->_containments)) {
 			return;
@@ -159,19 +156,25 @@ class Query extends DatabaseQuery {
 			);
 		}
 
-		$firstLevelJoins = $this->_resolveFirstLevel($this->_table, $contain);
-		foreach ($firstLevelJoins as $options) {
-			$table = $options['association']->target();
-			$this->_aliasMap[$table->alias()] = $table;
-			$this->_addJoin($options['association'], $options['options']);
-		}
-
 		foreach ($contain as $relation => $meta) {
 			if ($meta['instance'] && !$meta['instance']->canBeJoined()) {
-				$this->_eagerLoading = true;
 				$this->_loadEagerly[$relation] = $meta;
 			}
 		}
+
+		$firstLevelJoins = $this->_resolveFirstLevel($this->_table, $contain);
+		foreach ($firstLevelJoins as $options) {
+			$table = $options['association']->target();
+			$alias = $table->alias();
+			$this->_aliasMap[$alias] = $table;
+			$this->_addJoin($options['association'], $options['options']);
+			foreach ($options['associations'] as $relation => $meta) {
+				if ($meta['instance'] && !$meta['instance']->canBeJoined()) {
+					$this->_loadEagerly[$relation] = $meta;
+				}
+			}
+		}
+
 	}
 
 	protected function _normalizeContain(Table $parent, $alias, $options) {
@@ -210,6 +213,7 @@ class Query extends DatabaseQuery {
 			if ($associated && $associated->canBeJoined()) {
 				$result[$table] =  [
 					'association' => $associated,
+					'associations' => $options['associations'],
 					'options' => $options['config']
 				];
 				$result += $this->_resolveFirstLevel($associated->target(), $options['associations']);
@@ -224,18 +228,26 @@ class Query extends DatabaseQuery {
 	}
 
 	protected function _eagerLoad($statement) {
+		$collectKeys = [];
+		foreach ($this->_loadEagerly as $association => $meta) {
+			$source = $meta['instance']->source();
+			$alias = $source->alias();
+			$pkField = key($this->aliasField($source->primaryKey(), $alias));
+			$collectKeys[] = [$alias, $pkField];
+		}
+
 		$keys = [];
-		$alias = $this->_table->alias();
-		$pkField = key($this->aliasField($this->_table->primaryKey()));
 		while($result = $statement->fetch('assoc')) {
-			$keys[$alias][] = $result[$pkField];
+			foreach ($collectKeys as $parts) {
+				$keys[$parts[0]][] = $result[$parts[1]];
+			}
 		}
 
 		$statement->rewind();
 		foreach ($this->_loadEagerly as $association => $meta) {
 			$contain = $meta['associations'];
 			$f = $meta['instance']->eagerLoader(
-				$keys[$alias],
+				$keys[$meta['instance']->source()->alias()],
 				$meta['config'] + compact('contain')
 			);
 			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);

@@ -62,6 +62,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function tearDown() {
 		$this->connection->execute('DROP TABLE IF EXISTS articles');
 		$this->connection->execute('DROP TABLE IF EXISTS authors');
+		$this->connection->execute('DROP TABLE IF EXISTS publications');
 		Table::clearRegistry();
 	}
 
@@ -70,15 +71,19 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	protected function _createAuthorsAndArticles() {
+	protected function _createTables() {
 		$table = 'CREATE TEMPORARY TABLE authors(id int, name varchar(50))';
 		$this->connection->execute($table);
 
 		$table = 'CREATE TEMPORARY TABLE articles(id int, title varchar(20), body varchar(50), author_id int)';
 		$this->connection->execute($table);
 
+		$table = 'CREATE TEMPORARY TABLE publications(id int, title varchar(20), body varchar(50), author_id int)';
+		$this->connection->execute($table);
+
 		Table::config('authors', ['connection' => $this->connection]);
 		Table::config('articles', ['connection' => $this->connection]);
+		Table::config('publications', ['connection' => $this->connection]);
 	}
 
 /**
@@ -86,14 +91,27 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	protected function _insertTwoRecords() {
-		$this->_createAuthorsAndArticles();
+	protected function _insertRecords() {
+		$this->_createTables();
 
 		$data = ['id' => '1', 'name' => 'Chuck Norris'];
 		$result = $this->connection->insert('authors', $data, ['id' => 'integer', 'name' => 'string']);
 
 		$result->bindValue(1, '2', 'integer');
 		$result->bindValue(2, 'Bruce Lee');
+		$result->execute();
+
+		$data = ['id' => '2', 'title' => 'a publication', 'body' => 'a body', 'author_id' => 1];
+		$result = $this->connection->insert(
+			'publications',
+			$data,
+			['id' => 'integer', 'title' => 'string', 'body' => 'string', 'author_id' => 'integer']
+		);
+
+		$result->bindValue(1, 3, 'integer');
+		$result->bindValue(2, 'another publication');
+		$result->bindValue(3, 'another body');
+		$result->bindValue(4, 2);
 		$result->execute();
 
 		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body', 'author_id' => 1];
@@ -272,7 +290,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testContainResultFetchingOneLevel() {
-		$this->_insertTwoRecords();
+		$this->_insertRecords();
 
 		$query = new Query($this->connection);
 		$table = Table::build('article', ['table' => 'articles']);
@@ -310,7 +328,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoading() {
-		$this->_insertTwoRecords();
+		$this->_insertRecords();
 
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -361,7 +379,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingFields() {
-		$this->_insertTwoRecords();
+		$this->_insertRecords();
 
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -397,7 +415,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingOrder() {
-		$statement = $this->_insertTwoRecords();
+		$statement = $this->_insertRecords();
 		$statement->bindValue(1, 3, 'integer');
 		$statement->bindValue(2, 'a fine title');
 		$statement->bindValue(3, 'a fine body');
@@ -439,12 +457,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that deep associations can be eagerly laoded
+ * Tests that deep associations can be eagerly loaded
  *
  * @return void
  **/
 	public function testHasManyEagerLoadingDeep() {
-		$this->_insertTwoRecords();
+		$this->_insertRecords();
 
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -476,6 +494,62 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 						'author_id' => 2,
 						'body' => 'another body',
 						'author' => ['id' => 2 , 'name' => 'Bruce Lee']
+					]
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests that hasMany associations can be loaded even when related to a secondary
+ * model in the query
+ *
+ * @return void
+ **/
+	public function testHasManyEagerLoadingFromSecondaryTable() {
+		$this->_insertRecords();
+
+		$query = new Query($this->connection);
+		$author = Table::build('author', ['connection' => $this->connection]);
+		$article = Table::build('article', ['connection' => $this->connection]);
+		$publication = Table::build('publication', ['connection' => $this->connection]);
+
+		$author->hasMany('publication', ['property' => 'publications']);
+		$article->belongsTo('author');
+
+		$results = $query->repository($article)
+			->select()
+			->contain(['author' => ['publication']])
+			->toArray();
+		$expected = [
+			[
+				'id' => 1,
+				'title' => 'a title',
+				'body' => 'a body',
+				'author_id' => 1,
+				'author' => [
+					'id' => 1, 'name' => 'Chuck Norris',
+					'publications' => [
+						[
+							'id' => '2', 'title' => 'a publication',
+							'body' => 'a body', 'author_id' => 1
+						]
+					]
+				]
+			],
+			[
+				'id' => 2,
+				'title' => 'another title',
+				'body' => 'another body',
+				'author_id' => 2,
+				'author' => [
+					'id' => 2, 'name' => 'Bruce Lee',
+					'publications' => [
+						[
+							'id' => 3, 'title' => 'another publication',
+							'body' => 'another body', 'author_id' => 2
+						]
 					]
 				]
 			]
