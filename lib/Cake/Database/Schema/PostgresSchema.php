@@ -261,12 +261,28 @@ class PostgresSchema {
 /**
  * Generate the SQL fragment for a single index.
  *
+ * Handles creating index types that can be defined in a table create
+ * statement. Primary keys + unique constraints are handled here.
+ * Other index types are handled in indexSql().
+ *
  * @param Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
  */
 	public function indexSql(Table $table, $name) {
 		$data = $table->index($name);
+		$out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
+		if ($data['type'] === Table::INDEX_PRIMARY) {
+			$out = 'PRIMARY KEY ';
+		}
+		if ($data['type'] === Table::INDEX_UNIQUE) {
+			$out .= ' UNIQUE ';
+		}
+		$columns = array_map(
+			[$this->_driver, 'quoteIdentifier'],
+			$data['columns']
+		);
+		return $out . '(' . implode(', ', $columns) . ')';
 	}
 
 /**

@@ -462,7 +462,7 @@ SQL;
 			[
 				'primary',
 				['type' => 'primary', 'columns' => ['title']],
-				'CONSTRAINT "primary" PRIMARY KEY ("title")'
+				'PRIMARY KEY ("title")'
 			],
 			[
 				'unique_idx',
@@ -522,7 +522,8 @@ CREATE TABLE "articles" (
 "id" SERIAL,
 "title" VARCHAR NOT NULL,
 "body" TEXT,
-"created" TIMESTAMP
+"created" TIMESTAMP,
+PRIMARY KEY ("id")
 );
 SQL;
 		$result = $table->createTableSql($connection);
