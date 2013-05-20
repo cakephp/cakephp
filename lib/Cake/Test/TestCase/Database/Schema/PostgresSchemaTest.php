@@ -444,7 +444,7 @@ SQL;
 				'type' => 'integer',
 				'null' => false
 			])
-			->addIndex('primary', [
+			->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
 			]);
@@ -486,7 +486,7 @@ SQL;
 			'length' => 255
 		])->addColumn('author_id', [
 			'type' => 'integer',
-		])->addIndex($name, $data);
+		])->addConstraint($name, $data);
 
 		$this->assertEquals($expected, $schema->constraintSql($table, $name));
 	}
@@ -512,9 +512,13 @@ SQL;
 			])
 			->addColumn('body', ['type' => 'text'])
 			->addColumn('created', 'datetime')
-			->addIndex('primary', [
+			->addConstraint('primary', [
 				'type' => 'primary',
-				'columns' => ['id']
+				'columns' => ['id'],
+			])
+			->addIndex('title_idx', [
+				'type' => 'index',
+				'columns' => ['title'],
 			]);
 
 		$expected = <<<SQL
@@ -524,10 +528,16 @@ CREATE TABLE "articles" (
 "body" TEXT,
 "created" TIMESTAMP,
 PRIMARY KEY ("id")
-);
+)
 SQL;
 		$result = $table->createTableSql($connection);
-		$this->assertEquals($expected, $result);
+
+		$this->assertCount(2, $result);
+		$this->assertEquals($expected, $result[0]);
+		$this->assertEquals(
+			'CREATE INDEX "title_idx" ON "atricles" ("title")',
+			$result[1]
+		);
 	}
 
 /**
