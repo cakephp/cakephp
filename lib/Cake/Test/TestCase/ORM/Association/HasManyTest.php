@@ -21,7 +21,7 @@ use Cake\ORM\Table;
 use Cake\ORM\Query;
 
 /**
- * Tests HasOne class
+ * Tests HasMany class
  *
  */
 class HasOneTest extends \Cake\TestSuite\TestCase {
@@ -87,8 +87,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 	public function testEagerLoader() {
 		$config = [
 			'sourceTable' => $this->author,
-			'targetTable' => $this->article,
-			'conditions' => ['Article.is_active' => true]
+			'targetTable' => $this->article
 		];
 		$association = new HasMany('Article', $config);
 		$keys = [1, 2, 3, 4];
@@ -117,4 +116,49 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			];
 		$this->assertEquals($row, $result);
 	}
+
+/**
+ * Test the eager loader method with default query clauses
+ *
+ * @return void
+ */
+	public function testEagerLoaderWithDefaults() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Article.is_active' => true],
+			'sort' => ['id' => 'ASC']
+		];
+		$association = new HasMany('Article', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['execute', 'where', 'andWhere', 'order'],
+			[null]
+		);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+
+		$query->expects($this->once())->method('execute')
+			->will($this->returnValue($results));
+
+		$query->expects($this->once())->method('where')
+			->with(['Article.is_active' => true])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('andWhere')
+			->with(['Article.author_id in' => $keys])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('order')
+			->with(['id' => 'ASC'])
+			->will($this->returnValue($query));
+
+		$association->eagerLoader($keys);
+	}
+
 }

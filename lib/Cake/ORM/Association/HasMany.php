@@ -138,7 +138,7 @@ class HasMany extends Association {
  */
 	protected function _options(array $opts) {
 		if (isset($opts['sort'])) {
-			$this->order($opts['sort']);
+			$this->sort($opts['sort']);
 		}
 	}
 
