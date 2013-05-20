@@ -172,12 +172,14 @@ class MysqlSchema {
  * Generate the SQL to create a table.
  *
  * @param string $table The name of the table.
- * @param array $lines The lines (columns + indexes) to go inside the table.
- * @return string A complete CREATE TABLE statement
+ * @param array $columns The columns to go inside the table.
+ * @param array $constraints The constraints for the table.
+ * @param array $indexes The indexes for the table.
+ * @return array A complete CREATE TABLE statement(s)
  */
-	public function createTableSql($table, $lines) {
-		$content = implode(",\n", $lines);
-		return sprintf("CREATE TABLE `%s` (\n%s\n);", $table, $content);
+	public function createTableSql($table, $columns, $constraints, $indexes) {
+		$content = implode(",\n", array_merge($columns, $constraints, $indexes));
+		return [sprintf("CREATE TABLE `%s` (\n%s\n);", $table, $content)];
 	}
 
 /**
@@ -265,22 +267,16 @@ class MysqlSchema {
  * @return string SQL fragment.
  */
 	public function constraintSql(Table $table, $name) {
-		$data = $table->index($name);
-		if ($data['type'] === Table::INDEX_PRIMARY) {
+		$data = $table->constraint($name);
+		if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
 			$columns = array_map(
 				[$this->_driver, 'quoteIdentifier'],
 				$data['columns']
 			);
 			return sprintf('PRIMARY KEY (%s)', implode(', ', $columns));
 		}
-		if ($data['type'] === Table::INDEX_UNIQUE) {
+		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
 			$out = 'UNIQUE KEY ';
-		}
-		if ($data['type'] === Table::INDEX_INDEX) {
-			$out = 'KEY ';
-		}
-		if ($data['type'] === Table::INDEX_FULLTEXT) {
-			$out = 'FULLTEXT KEY ';
 		}
 		$out .= $this->_driver->quoteIdentifier($name);
 
@@ -304,7 +300,25 @@ class MysqlSchema {
  * @return string SQL fragment.
  */
 	public function indexSql(Table $table, $name) {
-		return '';
+		$data = $table->index($name);
+		if ($data['type'] === Table::INDEX_INDEX) {
+			$out = 'KEY ';
+		}
+		if ($data['type'] === Table::INDEX_FULLTEXT) {
+			$out = 'FULLTEXT KEY ';
+		}
+		$out .= $this->_driver->quoteIdentifier($name);
+
+		$columns = array_map(
+			[$this->_driver, 'quoteIdentifier'],
+			$data['columns']
+		);
+		foreach ($data['columns'] as $i => $column) {
+			if (isset($data['length'][$column])) {
+				$columns[$i] .= sprintf('(%d)', $data['length'][$column]);
+			}
+		}
+		return $out . ' (' . implode(', ', $columns) . ')';
 	}
 
 }

@@ -415,16 +415,6 @@ SQL;
 				'UNIQUE KEY `unique_idx` (`title`, `author_id`)'
 			],
 			[
-				'key_key',
-				['type' => 'index', 'columns' => ['author_id']],
-				'KEY `key_key` (`author_id`)'
-			],
-			[
-				'full_text',
-				['type' => 'fulltext', 'columns' => ['title']],
-				'FULLTEXT KEY `full_text` (`title`)'
-			],
-			[
 				'length_idx',
 				[
 					'type' => 'unique',
@@ -450,9 +440,48 @@ SQL;
 			'length' => 255
 		])->addColumn('author_id', [
 			'type' => 'integer',
-		])->addIndex($name, $data);
+		])->addConstraint($name, $data);
 
 		$this->assertEquals($expected, $schema->constraintSql($table, $name));
+	}
+
+/**
+ * Test provider for indexSql()
+ *
+ * @return array
+ */
+	public static function indexSqlProvider() {
+		return [
+			[
+				'key_key',
+				['type' => 'index', 'columns' => ['author_id']],
+				'KEY `key_key` (`author_id`)'
+			],
+			[
+				'full_text',
+				['type' => 'fulltext', 'columns' => ['title']],
+				'FULLTEXT KEY `full_text` (`title`)'
+			],
+		];
+	}
+
+/**
+ * Test the indexSql method.
+ *
+ * @dataProvider indexSqlProvider
+ */
+	public function testIndexSql($name, $data, $expected) {
+		$driver = $this->_getMockedDriver();
+		$schema = new MysqlSchema($driver);
+
+		$table = (new Table('articles'))->addColumn('title', [
+			'type' => 'string',
+			'length' => 255
+		])->addColumn('author_id', [
+			'type' => 'integer',
+		])->addIndex($name, $data);
+
+		$this->assertEquals($expected, $schema->indexSql($table, $name));
 	}
 
 /**
@@ -469,7 +498,7 @@ SQL;
 				'type' => 'integer',
 				'null' => false
 			])
-			->addIndex('primary', [
+			->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
 			]);
@@ -481,7 +510,7 @@ SQL;
 				'type' => 'biginteger',
 				'null' => false
 			])
-			->addIndex('primary', [
+			->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
 			]);
@@ -511,7 +540,7 @@ SQL;
 			])
 			->addColumn('body', ['type' => 'text'])
 			->addColumn('created', 'datetime')
-			->addIndex('primary', [
+			->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
 			]);
@@ -526,7 +555,8 @@ PRIMARY KEY (`id`)
 );
 SQL;
 		$result = $table->createTableSql($connection);
-		$this->assertEquals($expected, $result);
+		$this->assertCount(1, $result);
+		$this->assertEquals($expected, $result[0]);
 	}
 
 /**
