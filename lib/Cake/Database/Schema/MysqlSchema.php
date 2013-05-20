@@ -279,17 +279,7 @@ class MysqlSchema {
 			$out = 'UNIQUE KEY ';
 		}
 		$out .= $this->_driver->quoteIdentifier($name);
-
-		$columns = array_map(
-			[$this->_driver, 'quoteIdentifier'],
-			$data['columns']
-		);
-		foreach ($data['columns'] as $i => $column) {
-			if (isset($data['length'][$column])) {
-				$columns[$i] .= sprintf('(%d)', $data['length'][$column]);
-			}
-		}
-		return $out . ' (' . implode(', ', $columns) . ')';
+		return $this->_keySql($out, $data);
 	}
 
 /**
@@ -308,7 +298,17 @@ class MysqlSchema {
 			$out = 'FULLTEXT KEY ';
 		}
 		$out .= $this->_driver->quoteIdentifier($name);
+		return $this->_keySql($out, $data);
+	}
 
+/**
+ * Helper method for generating key SQL snippets.
+ *
+ * @param string $prefix The key prefix
+ * @param array $data Key data.
+ * @return string
+ */
+	protected function _keySql($prefix, $data) {
 		$columns = array_map(
 			[$this->_driver, 'quoteIdentifier'],
 			$data['columns']
@@ -318,7 +318,7 @@ class MysqlSchema {
 				$columns[$i] .= sprintf('(%d)', $data['length'][$column]);
 			}
 		}
-		return $out . ' (' . implode(', ', $columns) . ')';
+		return $prefix . ' (' . implode(', ', $columns) . ')';
 	}
 
 }
