@@ -379,15 +379,35 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testNl() {
-		$newLine = "\n";
-		if (DS === '\\') {
-			$newLine = "\r\n";
-		}
-		$this->assertEquals($this->Shell->nl(), $newLine);
-		$this->assertEquals($this->Shell->nl(true), $newLine);
-		$this->assertEquals("", $this->Shell->nl(false));
-		$this->assertEquals($this->Shell->nl(2), $newLine . $newLine);
-		$this->assertEquals($this->Shell->nl(1), $newLine);
+		$this->Shell->stdout->expects($this->at(0))
+			->method('write')
+			->with('', 1);
+
+		$this->Shell->stdout->expects($this->at(1))
+			->method('write')
+			->with('', 2);
+
+		$this->Shell->stdout->expects($this->at(2))
+			->method('write')
+			->with('', 1);
+
+		$this->Shell->stdout->expects($this->at(3))
+			->method('write')
+			->with('', true);
+
+		$this->Shell->stdout->expects($this->at(4))
+			->method('write')
+			->with('', false);
+			
+		$this->Shell->nl();
+		
+		$this->Shell->nl(2);
+		
+		$this->Shell->nl(1);
+		
+		$this->Shell->nl(true);
+		
+		$this->Shell->nl(false);
 	}
 
 /**
