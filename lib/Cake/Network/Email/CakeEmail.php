@@ -1386,7 +1386,7 @@ class CakeEmail {
  */
 	protected function _readFile($path) {
 		$File = new File($path);
-		return $File->readBase64();
+		return chunk_split(base64_encode($File->read()));
 	}
 
 /**
