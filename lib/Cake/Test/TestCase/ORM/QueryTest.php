@@ -394,28 +394,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that not selecting the foreignKey for a hasMany association will
- * throw an exception
- *
- * @expectedException \InvalidArgumentException
- * @expectedExceptionMessage You are required to select the "article.author_id"
- * @return void
- **/
-	public function testHasManyEagerLoadingFieldsError() {
-		$this->_insertTwoRecords();
-
-		$query = new Query($this->connection);
-		$table = Table::build('author', ['connection' => $this->connection]);
-		Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article', ['property' => 'articles']);
-
-		$results = $query->repository($table)
-			->select()
-			->contain(['article' => ['fields' => ['title']]])
-			->toArray();
-	}
-
-/**
  * Tests that it is possible to set an order in a hasMany result set
  *
  * @return void

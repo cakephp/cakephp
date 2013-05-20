@@ -161,4 +161,89 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$association->eagerLoader($keys);
 	}
 
+/**
+ * Test the eager loader method with overridden query clauses
+ *
+ * @return void
+ */
+	public function testEagerLoaderWithOverrides() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Article.is_active' => true],
+			'sort' => ['id' => 'ASC']
+		];
+		$association = new HasMany('Article', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['execute', 'where', 'andWhere', 'order', 'select'],
+			[null]
+		);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+
+		$query->expects($this->once())->method('execute')
+			->will($this->returnValue($results));
+
+		$query->expects($this->once())->method('where')
+			->with(['Article.is_active' => true, 'Article.id !=' => 3])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('andWhere')
+			->with(['Article.author_id in' => $keys])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('order')
+			->with(['title' => 'DESC'])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('order')
+			->with(['title' => 'DESC'])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('select')
+			->with([
+				'Article__title' => 'Article.title',
+				'Article__author_id' => 'Article.author_id'
+			])
+			->will($this->returnValue($query));
+
+		$association->eagerLoader($keys, [
+			'conditions' => ['Article.id !=' => 3],
+			'sort' => ['title' => 'DESC'],
+			'fields' => ['title', 'author_id']
+		]);
+	}
+
+/**
+ * Test that failing to add the foreignKey to the list of fields will throw an
+ * exception
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage You are required to select the "Article.author_id"
+ * @return void
+ */
+	public function testEagerLoaderFieldsException() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+		];
+		$association = new HasMany('Article', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['execute'],
+			[null]
+		);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+
+		$association->eagerLoader($keys, ['fields' => ['id', 'title']]);
+	}
+
 }
