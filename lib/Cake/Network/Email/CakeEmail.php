@@ -21,6 +21,7 @@
 App::uses('Validation', 'Utility');
 App::uses('Multibyte', 'I18n');
 App::uses('AbstractTransport', 'Network/Email');
+App::uses('File', 'Utility');
 App::uses('String', 'Utility');
 App::uses('View', 'View');
 App::import('I18n', 'Multibyte');
@@ -1380,15 +1381,12 @@ class CakeEmail {
 /**
  * Read the file contents and return a base64 version of the file contents.
  *
- * @param string $file The file to read.
+ * @param string $path The absolute path to the file to read.
  * @return string File contents in base64 encoding
  */
-	protected function _readFile($file) {
-		$handle = fopen($file, 'rb');
-		$data = fread($handle, filesize($file));
-		$data = chunk_split(base64_encode($data));
-		fclose($handle);
-		return $data;
+	protected function _readFile($path) {
+		$File = new File($path);
+		return chunk_split(base64_encode($File->read()));
 	}
 
 /**
