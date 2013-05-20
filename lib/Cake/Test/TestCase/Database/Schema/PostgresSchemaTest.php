@@ -509,6 +509,7 @@ SQL;
 			->addColumn('title', [
 				'type' => 'string',
 				'null' => false,
+				'comment' => 'This is the title',
 			])
 			->addColumn('body', ['type' => 'text'])
 			->addColumn('created', 'datetime')
@@ -532,11 +533,15 @@ PRIMARY KEY ("id")
 SQL;
 		$result = $table->createTableSql($connection);
 
-		$this->assertCount(2, $result);
+		$this->assertCount(3, $result);
 		$this->assertEquals($expected, $result[0]);
 		$this->assertEquals(
-			'CREATE INDEX "title_idx" ON "atricles" ("title")',
+			'CREATE INDEX "title_idx" ON "articles" ("title")',
 			$result[1]
+		);
+		$this->assertEquals(
+			'COMMENT ON COLUMN "articles"."title" IS "This is the title"',
+			$result[2]
 		);
 	}
 

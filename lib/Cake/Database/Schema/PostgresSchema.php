@@ -313,10 +313,21 @@ class PostgresSchema {
 	public function createTableSql($table, $columns, $constraints, $indexes) {
 		$content = array_merge($columns, $constraints);
 		$content = implode(",\n", array_filter($content));
+		$tableName = $this->_driver->quoteIdentifier($table->name());
 		$out = [];
-		$out[] = sprintf("CREATE TABLE \"%s\" (\n%s\n)", $table, $content);
+		$out[] = sprintf("CREATE TABLE %s (\n%s\n)", $tableName, $content);
 		foreach ($indexes as $index) {
 			$out[] = $index;
+		}
+		foreach ($table->columns() as $column) {
+			$columnData = $table->column($column);
+			if (isset($columnData['comment'])) {
+				$out[] = sprintf('COMMENT ON COLUMN %s.%s IS %s',
+					$tableName,
+					$this->_driver->quoteIdentifier($column),
+					$this->_driver->schemaValue($columnData['comment'])
+				);
+			}
 		}
 		return $out;
 	}
