@@ -40,6 +40,13 @@ class HasMany extends Association {
 	protected $_joinType = 'INNER';
 
 /**
+ * Order in which target records should be returned
+ *
+ * @var mixed
+ */
+	protected $_sort;
+
+/**
  * Sets the name of the field representing the foreign key to the target table.
  * If no parameters are passed current field is returned
  *
@@ -56,6 +63,19 @@ class HasMany extends Association {
 		return parent::foreignKey($key);
 	}
 
+/**
+ * Sets the sort order in which target records should be returned.
+ * If no arguments are passed the currently configured value is returned
+ *
+ * @return string
+ */
+	function sort($sort = null) {
+		if ($sort !== null) {
+			$this->_sort = $sort;
+		}
+		return $this->_sort;
+	}
+
 	public function attachTo(Query $query, array $options = []) {
 		return false;
 	}
@@ -67,7 +87,8 @@ class HasMany extends Association {
 		$fetchQuery = $target->find('all');
 		$options += [
 			'foreignKey' => $this->foreignKey(),
-			'conditions' => []
+			'conditions' => [],
+			'sort' => $this->sort()
 		];
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 		$key = sprintf('%s.%s in', $alias, $options['foreignKey']);
@@ -84,6 +105,10 @@ class HasMany extends Association {
 				);
 			}
 			$fetchQuery->select($fields);
+		}
+
+		if (!empty($options['sort'])) {
+			$fetchQuery->order($options['sort']);
 		}
 
 		$resultMap = [];
@@ -103,6 +128,18 @@ class HasMany extends Association {
 			}
 			return $row;
 		};
+	}
+
+/**
+ * Parse extra options passed in the constructor.
+ * @param array $opts original list of options passed in constructor
+ *
+ * @return void
+ */
+	protected function _options(array $opts) {
+		if (isset($opts['sort'])) {
+			$this->order($opts['sort']);
+		}
 	}
 
 }

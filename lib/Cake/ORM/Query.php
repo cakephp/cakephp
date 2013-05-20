@@ -173,7 +173,8 @@ class Query extends DatabaseQuery {
 			'associations' => 1,
 			'foreignKey' => 1,
 			'conditions' => 1,
-			'fields' => 1
+			'fields' => 1,
+			'sort' => 1
 		];
 
 		$instance = $parent->association($alias);

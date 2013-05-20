@@ -415,4 +415,51 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->toArray();
 	}
 
+/**
+ * Tests that it is possible to set an order in a hasMany result set
+ *
+ * @return void
+ **/
+	public function testHasManyEagerLoadingOrder() {
+		$statement = $this->_insertTwoRecords();
+		$statement->bindValue(1, 3, 'integer');
+		$statement->bindValue(2, 'a fine title');
+		$statement->bindValue(3, 'a fine body');
+		$statement->bindValue(4, 2);
+		$statement->execute();
+
+		$query = new Query($this->connection);
+		$table = Table::build('author', ['connection' => $this->connection]);
+		Table::build('article', ['connection' => $this->connection]);
+		$table->hasMany('article', ['property' => 'articles']);
+
+		$results = $query->repository($table)
+			->select()
+			->contain([
+				'article' => [
+					'fields' => ['title', 'author_id'],
+					'sort' => ['id' => 'DESC']
+				]
+			])
+			->toArray();
+		$expected = [
+			[
+				'id' => 1,
+				'name' => 'Chuck Norris',
+				'articles' => [
+					['title' => 'a title', 'author_id' => 1]
+				]
+			],
+			[
+				'id' => 2,
+				'name' => 'Bruce Lee',
+				'articles' => [
+					['title' => 'a fine title', 'author_id' => 2],
+					['title' => 'another title', 'author_id' => 2],
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
+
 }
