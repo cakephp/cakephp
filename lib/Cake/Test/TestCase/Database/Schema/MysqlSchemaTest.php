@@ -552,7 +552,7 @@ CREATE TABLE `posts` (
 `body` TEXT,
 `created` DATETIME,
 PRIMARY KEY (`id`)
-);
+)
 SQL;
 		$result = $table->createTableSql($connection);
 		$this->assertCount(1, $result);

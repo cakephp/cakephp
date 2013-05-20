@@ -336,9 +336,9 @@ class Table {
  */
 	public function createTableSql(Connection $connection) {
 		$dialect = $connection->driver()->schemaDialect();
-		$lines = $constraints = $indexes = [];
+		$columns = $constraints = $indexes = [];
 		foreach (array_keys($this->_columns) as $name) {
-			$lines[] = $dialect->columnSql($this, $name);
+			$columns[] = $dialect->columnSql($this, $name);
 		}
 		foreach (array_keys($this->_constraints) as $name) {
 			$constraints[] = $dialect->constraintSql($this, $name);
@@ -346,7 +346,7 @@ class Table {
 		foreach (array_keys($this->_indexes) as $name) {
 			$indexes[] = $dialect->indexSql($this, $name);
 		}
-		return $dialect->createTableSql($this->_table, $lines, $constraints, $indexes);
+		return $dialect->createTableSql($this, $columns, $constraints, $indexes);
 	}
 
 }

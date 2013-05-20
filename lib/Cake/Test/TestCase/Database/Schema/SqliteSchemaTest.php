@@ -510,13 +510,13 @@ CREATE TABLE "articles" (
 "title" VARCHAR NOT NULL,
 "body" TEXT,
 "created" DATETIME
-);
+)
 SQL;
 		$result = $table->createTableSql($connection);
 		$this->assertCount(2, $result);
 		$this->assertEquals($expected, $result[0]);
 		$this->assertEquals(
-			'CREATE INDEX "title_idx" ON "articles" ("title");',
+			'CREATE INDEX "title_idx" ON "articles" ("title")',
 			$result[1]
 		);
 	}

@@ -254,7 +254,7 @@ class SqliteSchema {
 /**
  * Generate the SQL to create a table.
  *
- * @param string $table The name of the table.
+ * @param Table $table Table instance
  * @param array $columns The columns to go inside the table.
  * @param array $constraints The constraints for the table.
  * @param array $indexes The indexes for the table.
@@ -263,10 +263,10 @@ class SqliteSchema {
 	public function createTableSql($table, $columns, $constraints, $indexes) {
 		$lines = array_merge($columns, $constraints);
 		$content = implode(",\n", array_filter($lines));
-		$table = sprintf("CREATE TABLE \"%s\" (\n%s\n);", $table, $content);
+		$table = sprintf("CREATE TABLE \"%s\" (\n%s\n)", $table->name(), $content);
 		$out = [$table];
 		foreach ($indexes as $index) {
-			$out[] = $index . ";";
+			$out[] = $index;
 		}
 		return $out;
 	}

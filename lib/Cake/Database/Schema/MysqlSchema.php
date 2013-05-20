@@ -171,7 +171,7 @@ class MysqlSchema {
 /**
  * Generate the SQL to create a table.
  *
- * @param string $table The name of the table.
+ * @param Table $table Table instance
  * @param array $columns The columns to go inside the table.
  * @param array $constraints The constraints for the table.
  * @param array $indexes The indexes for the table.
@@ -179,7 +179,7 @@ class MysqlSchema {
  */
 	public function createTableSql($table, $columns, $constraints, $indexes) {
 		$content = implode(",\n", array_merge($columns, $constraints, $indexes));
-		return [sprintf("CREATE TABLE `%s` (\n%s\n);", $table, $content)];
+		return [sprintf("CREATE TABLE `%s` (\n%s\n)", $table->name(), $content)];
 	}
 
 /**
