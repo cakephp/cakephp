@@ -46,11 +46,18 @@ class Table {
 	protected $_columns = [];
 
 /**
- * Indexes + Keys in the table.
+ * Indexes in the table.
  *
  * @var array
  */
 	protected $_indexes = [];
+
+/**
+ * Constraints in the table.
+ *
+ * @var array
+ */
+	protected $_constraints = [];
 
 /**
  * The valid keys that can be used in a column
@@ -86,18 +93,27 @@ class Table {
  * @var array
  */
 	protected $_validIndexTypes = [
-		self::INDEX_PRIMARY,
 		self::INDEX_INDEX,
-		self::INDEX_UNIQUE,
-		self::INDEX_FOREIGN,
 		self::INDEX_FULLTEXT,
 	];
 
-	const INDEX_PRIMARY = 'primary';
+/**
+ * Names of the valid constraint types.
+ *
+ * @var array
+ */
+	protected $_validConstraintTypes = [
+		self::CONSTRAINT_PRIMARY,
+		self::CONSTRAINT_UNIQUE,
+		self::CONSTRAINT_FOREIGN,
+	];
+
+	const CONSTRAINT_PRIMARY = 'primary';
+	const CONSTRAINT_UNIQUE = 'unique';
+	const CONSTRAINT_FOREIGN = 'foreign';
+
 	const INDEX_INDEX = 'index';
-	const INDEX_UNIQUE = 'unique';
 	const INDEX_FULLTEXT = 'fulltext';
-	const INDEX_FOREIGN = 'foreign';
 
 /**
  * Constructor.
@@ -170,17 +186,16 @@ class Table {
 	}
 
 /**
- * Add an index or key.
+ * Add an index.
  *
- * Used to add primary keys, indexes, and foreign keys 
- * to a table.
+ * Used to add indexes, and full text indexes in platforms that support
+ * them.
  *
  * ### Attributes
  *
  * - `type` The type of index being added.
  * - `columns` The columns in the index.
  *
- * @TODO implement foreign keys.
  * @param string $name The name of the index.
  * @param array $attrs The attributes for the index.
  * @return Table $this
@@ -194,7 +209,7 @@ class Table {
 		$attrs = $attrs + $this->_indexKeys;
 
 		if (!in_array($attrs['type'], $this->_validIndexTypes, true)) {
-			throw new Error\Exception(__d('cake_dev', 'Invalid index type'));
+			throw new Error\Exception(__d('cake_dev', 'Invalid index type "%s"', $attrs['type']));
 		}
 		foreach ($attrs['columns'] as $field) {
 			if (empty($this->_columns[$field])) {
@@ -234,12 +249,70 @@ class Table {
  *   Null will be returned if a table has no primary key.
  */
 	public function primaryKey() {
-		foreach ($this->_indexes as $name => $data) {
-			if ($data['type'] === self::INDEX_PRIMARY) {
+		foreach ($this->_constraints as $name => $data) {
+			if ($data['type'] === self::CONSTRAINT_PRIMARY) {
 				return $data['columns'];
 			}
 		}
 		return null;
+	}
+
+/**
+ * Add a constraint.
+ *
+ * Used to add constraints to a table. For example primary keys, unique
+ * keys and foriegn keys.
+ *
+ * ### Attributes
+ *
+ * - `type` The type of constraint being added.
+ * - `columns` The columns in the index.
+ *
+ * @TODO implement foreign keys.
+ * @param string $name The name of the constraint.
+ * @param array $attrs The attributes for the constraint.
+ * @return Table $this
+ * @throws Cake\Error\Exception
+ */
+	public function addConstraint($name, $attrs) {
+		if (is_string($attrs)) {
+			$attrs = ['type' => $attrs];
+		}
+		$attrs = array_intersect_key($attrs, $this->_indexKeys);
+		$attrs = $attrs + $this->_indexKeys;
+
+		if (!in_array($attrs['type'], $this->_validConstraintTypes, true)) {
+			throw new Error\Exception(__d('cake_dev', 'Invalid constraint type "%s"', $attrs['type']));
+		}
+		foreach ($attrs['columns'] as $field) {
+			if (empty($this->_columns[$field])) {
+				throw new Error\Exception(__d('cake_dev', 'Columns used in constraints must already exist.'));
+			}
+		}
+		$this->_constraints[$name] = $attrs;
+		return $this;
+	}
+
+/**
+ * Get the names of all the constraints in the table.
+ *
+ * @return array
+ */
+	public function constraints() {
+		return array_keys($this->_constraints);
+	}
+
+/**
+ * Read information about an constraint based on name.
+ *
+ * @param string $name The name of the constraint.
+ * @return array|null Array of constraint data, or null
+ */
+	public function constraint($name) {
+		if (!isset($this->_constraints[$name])) {
+			return null;
+		}
+		return $this->_constraints[$name];
 	}
 
 /**
@@ -249,18 +322,22 @@ class Table {
  * to generate platform specific SQL.
  *
  * @param Connection $connection The connection to generate SQL for
- * @return string SQL statement to create the table.
+ * @return array List of SQL statements to create the table and the
+ *    required indexes.
  */
 	public function createTableSql(Connection $connection) {
 		$dialect = $connection->driver()->schemaDialect();
-		$lines = [];
+		$lines = $constraints = $indexes = [];
 		foreach (array_keys($this->_columns) as $name) {
 			$lines[] = $dialect->columnSql($this, $name);
 		}
-		foreach (array_keys($this->_indexes) as $name) {
-			$lines[] = $dialect->indexSql($this, $name);
+		foreach (array_keys($this->_constraints) as $name) {
+			$constraints[] = $dialect->constraintSql($this, $name);
 		}
-		return $dialect->createTableSql($this->_table, $lines);
+		foreach (array_keys($this->_indexes) as $name) {
+			$indexes[] = $dialect->indexSql($this, $name);
+		}
+		return $dialect->createTableSql($this->_table, $lines, $constraints, $indexes);
 	}
 
 }

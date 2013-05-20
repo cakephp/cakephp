@@ -197,7 +197,7 @@ class SqliteSchema {
 	}
 
 /**
- * Generate the SQL fragment for a single index.
+ * Generate the SQL fragments for defining table constraints.
  *
  * Note integer primary keys will return ''. This is intentional as Sqlite requires
  * that integer primary keys be defined in the column definition.
@@ -206,18 +206,15 @@ class SqliteSchema {
  * @param string $name The name of the column.
  * @return string SQL fragment.
  */
-	public function indexSql(Table $table, $name) {
+	public function constraintSql(Table $table, $name) {
 		$data = $table->index($name);
-
 		if (
 			count($data['columns']) === 1 &&
 			$table->column($data['columns'][0])['type'] === 'integer'
 		) {
 			return '';
 		}
-
-		$out = 'CONSTRAINT ';
-		$out .= $this->_driver->quoteIdentifier($name);
+		$out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
 		if ($data['type'] === Table::INDEX_PRIMARY) {
 			$out .= ' PRIMARY KEY';
 		}
@@ -229,6 +226,17 @@ class SqliteSchema {
 			$data['columns']
 		);
 		return $out . ' (' . implode(', ', $columns) . ')';
+	}
+
+/**
+ * Generate the SQL fragment for a single index.
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function indexSql(Table $table, $name) {
+		return '';
 	}
 
 /**

@@ -259,17 +259,24 @@ class PostgresSchema {
 	}
 
 /**
- * Generate the SQL fragment for a single index.
- *
- * Handles creating index types that can be defined in a table create
- * statement. Primary keys + unique constraints are handled here.
- * Other index types are handled in indexSql().
+ * Generate the SQL fragment for a single index
  *
  * @param Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
  */
 	public function indexSql(Table $table, $name) {
+		return '';
+	}
+
+/**
+ * Generate the SQL fragment for a single constraint
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function constraintSql(Table $table, $name) {
 		$data = $table->index($name);
 		$out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
 		if ($data['type'] === Table::INDEX_PRIMARY) {

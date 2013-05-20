@@ -397,16 +397,16 @@ SQL;
 		$result = $schema->columnSql($table, 'id');
 		$this->assertEquals($result, '"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT');
 
-		$result = $schema->indexSql($table, 'primary');
+		$result = $schema->constraintSql($table, 'primary');
 		$this->assertEquals('', $result, 'Integer primary keys are special in sqlite.');
 	}
 
 /**
- * Provide data for testing indexSql
+ * Provide data for testing constraintSql
  *
  * @return array
  */
-	public static function indexSqlProvider() {
+	public static function constraintSqlProvider() {
 		return [
 			[
 				'primary',
@@ -422,11 +422,11 @@ SQL;
 	}
 
 /**
- * Test the indexSql method.
+ * Test the constraintSql method.
  *
- * @dataProvider indexSqlProvider
+ * @dataProvider constraintSqlProvider
  */
-	public function testIndexSql($name, $data, $expected) {
+	public function testConstraintSql($name, $data, $expected) {
 		$driver = $this->_getMockedDriver();
 		$schema = new SqliteSchema($driver);
 
@@ -437,7 +437,7 @@ SQL;
 			'type' => 'integer',
 		])->addIndex($name, $data);
 
-		$this->assertEquals($expected, $schema->indexSql($table, $name));
+		$this->assertEquals($expected, $schema->constraintSql($table, $name));
 	}
 
 /**

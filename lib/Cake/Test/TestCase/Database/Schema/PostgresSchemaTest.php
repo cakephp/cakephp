@@ -453,11 +453,11 @@ SQL;
 	}
 
 /**
- * Provide data for testing indexSql
+ * Provide data for testing constraintSql
  *
  * @return array
  */
-	public static function indexSqlProvider() {
+	public static function constraintSqlProvider() {
 		return [
 			[
 				'primary',
@@ -475,9 +475,9 @@ SQL;
 /**
  * Test the indexSql method.
  *
- * @dataProvider indexSqlProvider
+ * @dataProvider constraintSqlProvider
  */
-	public function testIndexSql($name, $data, $expected) {
+	public function testConstraintSql($name, $data, $expected) {
 		$driver = $this->_getMockedDriver();
 		$schema = new PostgresSchema($driver);
 
@@ -488,7 +488,7 @@ SQL;
 			'type' => 'integer',
 		])->addIndex($name, $data);
 
-		$this->assertEquals($expected, $schema->indexSql($table, $name));
+		$this->assertEquals($expected, $schema->constraintSql($table, $name));
 	}
 
 /**

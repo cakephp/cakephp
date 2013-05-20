@@ -256,14 +256,15 @@ class MysqlSchema {
 		return $out;
 	}
 
+
 /**
- * Generate the SQL fragment for a single index in MySQL
+ * Generate the SQL fragments for defining table constraints.
  *
  * @param Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
  */
-	public function indexSql(Table $table, $name) {
+	public function constraintSql(Table $table, $name) {
 		$data = $table->index($name);
 		if ($data['type'] === Table::INDEX_PRIMARY) {
 			$columns = array_map(
@@ -293,6 +294,17 @@ class MysqlSchema {
 			}
 		}
 		return $out . ' (' . implode(', ', $columns) . ')';
+	}
+
+/**
+ * Generate the SQL fragment for a single index in MySQL
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function indexSql(Table $table, $name) {
+		return '';
 	}
 
 }
