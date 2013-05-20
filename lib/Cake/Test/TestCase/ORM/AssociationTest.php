@@ -158,4 +158,32 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('LEFT', $this->association->joinType());
 	}
 
+/**
+ * Tests property method
+ *
+ * @return void
+ */
+	public function testProperty() {
+		$this->assertEquals('Foo', $this->association->property());
+		$this->association->property('thing');
+		$this->assertEquals('thing', $this->association->property());
+	}
+
+/**
+ * Tests strategy method
+ *
+ * @return void
+ */
+	public function testStrategy() {
+		$this->assertEquals('join', $this->association->strategy());
+		$this->association->strategy('thing');
+		$this->assertEquals('join', $this->association->strategy());
+		$this->association->strategy('select');
+		$this->assertEquals('select', $this->association->strategy());
+		$this->association->strategy('subquery');
+		$this->assertEquals('subquery', $this->association->strategy());
+		$this->association->strategy('anotherThing');
+		$this->assertEquals('subquery', $this->association->strategy());
+	}
+
 }

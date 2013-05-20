@@ -42,8 +42,9 @@ class Query extends DatabaseQuery {
 		$this->defaultTypes($this->defaultTypes() + $fields);
 	}
 
-	public function contain($associations = null) {
-		if ($this->_containments === null) {
+	public function contain($associations = null, $override = false) {
+		if ($this->_containments === null || $override) {
+			$this->_dirty = true;
 			$this->_containments = new \ArrayObject;
 		}
 		if ($associations === null) {
@@ -57,6 +58,7 @@ class Query extends DatabaseQuery {
 			}
 			$this->_containments[$table] = $options;
 		}
+		$this->_dirty = true;
 		return $this;
 	}
 
@@ -162,8 +164,7 @@ class Query extends DatabaseQuery {
 			}
 		}
 
-		$firstLevelJoins = $this->_resolveFirstLevel($this->_table, $contain);
-		foreach ($firstLevelJoins as $options) {
+		foreach ($this->_resolveFirstLevel($this->_table, $contain) as $options) {
 			$table = $options['instance']->target();
 			$alias = $table->alias();
 			$this->_aliasMap[$alias] = $table;
@@ -243,8 +244,9 @@ class Query extends DatabaseQuery {
 		foreach ($this->_loadEagerly as $association => $meta) {
 			$contain = $meta['associations'];
 			$f = $meta['instance']->eagerLoader(
-				$keys[$meta['instance']->source()->alias()],
-				$meta['config'] + compact('contain')
+				$this,
+				$meta['config'] + compact('contain'),
+				$keys[$meta['instance']->source()->alias()]
 			);
 			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
 		}

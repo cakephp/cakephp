@@ -47,6 +47,14 @@ class HasMany extends Association {
 	protected $_sort;
 
 /**
+ * The strategy name to be used to fetch associated records. Some association
+ * types might not implement but one strategy to fetch records.
+ *
+ * @var string
+ */
+	protected $_strategy = parent::STRATEGY_SUBQUERY;
+
+/**
  * Sets the name of the field representing the foreign key to the target table.
  * If no parameters are passed current field is returned
  *
@@ -80,13 +88,19 @@ class HasMany extends Association {
 		return false;
 	}
 
-	public function eagerLoader($parentKeys, $options = []) {
+	public function requiresKeys($options = []) {
+		$strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+		return $strategy !== parent::STRATEGY_SUBQUERY;
+	}
+
+	public function eagerLoader($parentQuery, $options = [], $parentKeys = null) {
 		$options += [
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
-			'sort' => $this->sort()
+			'sort' => $this->sort(),
+			'strategy' => $this->strategy()
 		];
-		$fetchQuery = $this->_buildQuery($parentKeys, $options);
+		$fetchQuery = $this->_buildQuery($parentQuery, $options, $parentKeys);
 		$resultMap = [];
 		$key = $options['foreignKey'];
 		foreach ($fetchQuery->execute() as $result) {
@@ -108,15 +122,19 @@ class HasMany extends Association {
 		};
 	}
 
-	protected function _buildQuery($parentKeys, $options) {
+	protected function _buildQuery($parentQuery, $options, $parentKeys = null) {
 		$target = $this->target();
 		$alias = $target->alias();
 		$fetchQuery = $target->find('all');
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
-		$key = sprintf('%s.%s in', $alias, $options['foreignKey']);
+		$key = sprintf('%s.%s', $alias, $options['foreignKey']);
+
+		$filter = ($options['strategy'] == parent::STRATEGY_SUBQUERY) ?
+			$this->_buildSubquery($parentQuery, $key) : $parentKeys;
+
 		$fetchQuery
 			->where($options['conditions'])
-			->andWhere([$key => $parentKeys]);
+			->andWhere([$key . ' in' => $filter]);
 
 		if (!empty($options['fields'])) {
 			$fields = $fetchQuery->aliasFields($options['fields'], $alias);
@@ -150,6 +168,28 @@ class HasMany extends Association {
 		if (isset($opts['sort'])) {
 			$this->sort($opts['sort']);
 		}
+	}
+
+/**
+ * Builds a query to be used as a condition for filtering records in in the
+ * target table, it is constructed by cloning the original query that was used
+ * to load records in the source table.
+ *
+ * @param Cake\ORM\Query $query the original query used to load source records
+ * @param strong $foreignKey the field to be selected in the query
+ * @return Cake\ORM\Query
+ */
+	protected function _buildSubquery($query, $foreignKey) {
+		$filterQuery = clone $query;
+		$filterQuery->contain([], true);
+		$joins = $filterQuery->join();
+		foreach ($joins as $i => $join) {
+			if (strtolower($join['type']) !== 'inner') {
+				unset($joins[$i]);
+			}
+		}
+		$filterQuery->join($joins, [], true);
+		return $filterQuery->select($foreignKey, true);
 	}
 
 }

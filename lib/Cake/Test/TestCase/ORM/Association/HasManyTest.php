@@ -87,7 +87,8 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 	public function testEagerLoader() {
 		$config = [
 			'sourceTable' => $this->author,
-			'targetTable' => $this->article
+			'targetTable' => $this->article,
+			'strategy' => 'select'
 		];
 		$association = new HasMany('Article', $config);
 		$keys = [1, 2, 3, 4];
@@ -101,7 +102,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$callable = $association->eagerLoader($keys);
+		$callable = $association->eagerLoader(null, [], $keys);
 		$row = ['Author__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
 		$row['Author__Article'] = [
@@ -127,7 +128,8 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
 			'conditions' => ['Article.is_active' => true],
-			'sort' => ['id' => 'ASC']
+			'sort' => ['id' => 'ASC'],
+			'strategy' => 'select'
 		];
 		$association = new HasMany('Article', $config);
 		$keys = [1, 2, 3, 4];
@@ -158,7 +160,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			->with(['id' => 'ASC'])
 			->will($this->returnValue($query));
 
-		$association->eagerLoader($keys);
+		$association->eagerLoader(null, [], $keys);
 	}
 
 /**
@@ -171,7 +173,8 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
 			'conditions' => ['Article.is_active' => true],
-			'sort' => ['id' => 'ASC']
+			'sort' => ['id' => 'ASC'],
+			'strategy' => 'select'
 		];
 		$association = new HasMany('Article', $config);
 		$keys = [1, 2, 3, 4];
@@ -219,12 +222,12 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			])
 			->will($this->returnValue($query));
 
-		$association->eagerLoader($keys, [
+		$association->eagerLoader(null, [
 			'conditions' => ['Article.id !=' => 3],
 			'sort' => ['title' => 'DESC'],
 			'fields' => ['title', 'author_id'],
 			'contain' => ['Category' => ['fields' => ['a', 'b']]]
-		]);
+		], $keys);
 	}
 
 /**
@@ -239,6 +242,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
+			'strategy' => 'select'
 		];
 		$association = new HasMany('Article', $config);
 		$keys = [1, 2, 3, 4];
@@ -250,7 +254,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$this->article->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 
-		$association->eagerLoader($keys, ['fields' => ['id', 'title']]);
+		$association->eagerLoader(null, ['fields' => ['id', 'title']], $keys);
 	}
 
 }

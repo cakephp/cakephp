@@ -25,6 +25,27 @@ namespace Cake\ORM;
 abstract class Association {
 
 /**
+ * Strategy name to use joins for fetching associated records
+ *
+ * @var string
+ */
+	const STRATEGY_JOIN = 'join';
+
+/**
+ * Strategy name to use a subquery for fetching associated records
+ *
+ * @var string
+ */
+	const STRATEGY_SUBQUERY = 'subquery';
+
+/**
+ * Strategy name to use a  select for fetching associated records
+ *
+ * @var string
+ */
+	const STRATEGY_SELECT = 'select';
+
+/**
  * Name given to the association, it usually represents the alias
  * assigned to the target associated table
  *
@@ -100,6 +121,14 @@ abstract class Association {
 	protected $_property;
 
 /**
+ * The strategy name to be used to fetch associated records. Some association
+ * types might not implement but one strategy to fetch records.
+ *
+ * @var string
+ */
+	protected $_strategy = self::STRATEGY_JOIN;
+
+/**
  * Constructor. Subclasses can override _options function to get the original
  * list of passed options if expecting any other special key
  *
@@ -133,6 +162,10 @@ abstract class Association {
 
 		if (empty($this->_property)) {
 			$this->property($name);
+		}
+
+		if (!empty($options['strategy'])) {
+			$this->strategy($options['strategy']);
 		}
 	}
 
@@ -262,6 +295,7 @@ abstract class Association {
  * in the source table record.
  * If no arguments are passed, currently configured type is returned.
  *
+ * @param string $name
  * @return string
  */
 	function property($name = null) {
@@ -269,6 +303,25 @@ abstract class Association {
 			$this->_property = $name;
 		}
 		return $this->_property;
+	}
+
+/**
+ * Sets the strategy name to be used to fetch associated records. Keep in mind
+ * that some association types might not implement but a default strategy,
+ * rendering any changes to this setting void.
+ * If no arguments are passed, currently configured strategy is returned.
+ *
+ * @param string $name
+ * @return string
+ */
+	function strategy($name = null) {
+		if ($name !== null) {
+			$valid = [self::STRATEGY_JOIN, self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
+			if (in_array($name, $valid)) {
+				$this->_strategy = $name;
+			}
+		}
+		return $this->_strategy;
 	}
 
 /**
