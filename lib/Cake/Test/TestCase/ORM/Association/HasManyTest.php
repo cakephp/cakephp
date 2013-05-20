@@ -257,4 +257,65 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$association->eagerLoader(null, ['fields' => ['id', 'title']], $keys);
 	}
 
+/**
+ * Tests eager loading using subquery
+ *
+ * @return void
+ */
+	public function testEagerLoaderSubquery() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+		];
+		$association = new HasMany('Article', $config);
+		$parent = (new Query(null))
+			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
+			->join(['bar' => ['table' => 'bar', 'type' => 'left', 'conditions' => []]]);
+
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['execute', 'where', 'andWhere', 'order', 'select', 'contain'],
+			[null]
+		);
+
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+		$query->expects($this->once())->method('execute')
+			->will($this->returnValue($results));
+
+		$query->expects($this->once())->method('where')
+			->with([])
+			->will($this->returnValue($query));
+
+		$expected = clone $parent;
+		$joins = $expected->join();
+		unset($joins[1]);
+		$expected
+			->contain([], true)
+			->select('Article.author_id', true)
+			->join($joins, [], true);
+		$query->expects($this->once())->method('andWhere')
+			->with(['Article.author_id in' => $expected])
+			->will($this->returnValue($query));
+
+		$callable = $association->eagerLoader($parent);
+		$row = ['Author__id' => 1, 'username' => 'author 1'];
+		$result = $callable($row);
+		$row['Author__Article'] = [
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+			];
+		$this->assertEquals($row, $result);
+
+		$row = ['Author__id' => 2, 'username' => 'author 2'];
+		$result = $callable($row);
+		$row['Author__Article'] = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
+			];
+		$this->assertEquals($row, $result);
+	}
+
 }
