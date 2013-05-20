@@ -67,22 +67,27 @@ class HasMany extends Association {
 		$fetchQuery = $target->find('all');
 		$options += [
 			'foreignKey' => $this->foreignKey(),
-			'conditions' => [],
+			'conditions' => []
 		];
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
-		$fetchQuery->where($options['conditions']);
-
-		if (!empty($options['foreignKey'])) {
-			$key = sprintf('%s.%s in', $alias, $options['foreignKey']);
-			$fetchQuery->where([$key => $results]);
-		}
+		$key = sprintf('%s.%s in', $alias, $options['foreignKey']);
+		$fetchQuery
+			->where($options['conditions'])
+			->andWhere([$key => $results]);
 
 		if (!empty($options['fields'])) {
-			$fetchQuery->select($query->aliasFields($options['fields'], $alias));
+			$fields = $fetchQuery->aliasFields($options['fields'], $alias);
+			$required = $alias . '.' . $options['foreignKey'];
+			if (!in_array($required, $fields)) {
+				throw new \InvalidArgumentException(
+					sprintf('You are required to select the "%s" field', $required)
+				);
+			}
+			$fetchQuery->select($fields);
 		}
 
 		$resultMap = [];
-		$key = $target->primaryKey();
+		$key = $options['foreignKey'];
 		foreach ($fetchQuery->execute() as $result) {
 			$resultMap[$result[$key]][] = $result;
 		}

@@ -227,7 +227,7 @@ class Query extends DatabaseQuery {
 
 		$statement->rewind();
 		foreach ($this->_loadEagerly as $association => $meta) {
-			$f = $meta['instance']->eagerLoader($keys[$alias], $meta);
+			$f = $meta['instance']->eagerLoader($keys[$alias], $meta['config']);
 			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
 		}
 

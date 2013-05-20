@@ -347,6 +347,72 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			]
 		];
 		$this->assertEquals($expected, $results);
+
+		$results = $query->repository($table)
+			->select()
+			->contain(['article' => ['conditions' => ['id' => 2]]])
+			->toArray();
+		unset($expected[0]['articles']);
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests that it is possible to select only certain fields on
+ * eagerly loaded has many associations
+ *
+ * @return void
+ **/
+	public function testHasManyEagerLoadingFields() {
+		$this->_insertTwoRecords();
+
+		$query = new Query($this->connection);
+		$table = Table::build('author', ['connection' => $this->connection]);
+		Table::build('article', ['connection' => $this->connection]);
+		$table->hasMany('article', ['property' => 'articles']);
+
+		$results = $query->repository($table)
+			->select()
+			->contain(['article' => ['fields' => ['title', 'author_id']]])
+			->toArray();
+		$expected = [
+			[
+				'id' => 1,
+				'name' => 'Chuck Norris',
+				'articles' => [
+					['title' => 'a title', 'author_id' => 1]
+				]
+			],
+			[
+				'id' => 2,
+				'name' => 'Bruce Lee',
+				'articles' => [
+					['title' => 'another title', 'author_id' => 2]
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests that not selecting the foreignKey for a hasMany association will
+ * throw an exception
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage You are required to select the "article.author_id"
+ * @return void
+ **/
+	public function testHasManyEagerLoadingFieldsError() {
+		$this->_insertTwoRecords();
+
+		$query = new Query($this->connection);
+		$table = Table::build('author', ['connection' => $this->connection]);
+		Table::build('article', ['connection' => $this->connection]);
+		$table->hasMany('article', ['property' => 'articles']);
+
+		$results = $query->repository($table)
+			->select()
+			->contain(['article' => ['fields' => ['title']]])
+			->toArray();
 	}
 
 }
