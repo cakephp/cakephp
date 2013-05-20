@@ -228,25 +228,30 @@ class Query extends DatabaseQuery {
 		$collectKeys = [];
 		foreach ($this->_loadEagerly as $association => $meta) {
 			$source = $meta['instance']->source();
-			$alias = $source->alias();
-			$pkField = key($this->aliasField($source->primaryKey(), $alias));
-			$collectKeys[] = [$alias, $pkField];
-		}
-
-		$keys = [];
-		while($result = $statement->fetch('assoc')) {
-			foreach ($collectKeys as $parts) {
-				$keys[$parts[0]][] = $result[$parts[1]];
+			if ($meta['instance']->requiresKeys($meta['config'])) {
+				$alias = $source->alias();
+				$pkField = key($this->aliasField($source->primaryKey(), $alias));
+				$collectKeys[] = [$alias, $pkField];
 			}
 		}
 
-		$statement->rewind();
+		$keys = [];
+		if (!empty($collectKeys)) {
+			while($result = $statement->fetch('assoc')) {
+				foreach ($collectKeys as $parts) {
+					$keys[$parts[0]][] = $result[$parts[1]];
+				}
+			}
+			$statement->rewind();
+		}
+
 		foreach ($this->_loadEagerly as $association => $meta) {
 			$contain = $meta['associations'];
+			$alias = $meta['instance']->source()->alias();
 			$f = $meta['instance']->eagerLoader(
 				$this,
 				$meta['config'] + compact('contain'),
-				$keys[$meta['instance']->source()->alias()]
+				isset($keys[$alias]) ? $keys[$alias] : null
 			);
 			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
 		}
