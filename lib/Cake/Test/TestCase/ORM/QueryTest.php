@@ -65,7 +65,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		Table::clearRegistry();
 	}
 
-
 /**
  * Test helper for creating tables.
  *
@@ -225,7 +224,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertEquals($expected, $select);
 	}
-
 
 /**
  * Tests that default fields for associations are added to the select clause when

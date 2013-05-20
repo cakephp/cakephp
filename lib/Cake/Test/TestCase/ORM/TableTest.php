@@ -228,4 +228,26 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($table, $hasOne->source());
 	}
 
+/**
+ * Tests that hasMany() creates and configures correctly the association
+ *
+ * @return void
+ */
+	public function testHasMany() {
+		$options = [
+			'foreignKey' => 'author_id',
+			'conditions' => ['b' => 'c'],
+			'sort' => ['foo' => 'asc']
+		];
+		$table = new Table(['table' => 'authors']);
+		$hasMany = $table->hasMany('article', $options);
+		$this->assertInstanceOf('\Cake\ORM\Association\HasMany', $hasMany);
+		$this->assertSame($hasMany, $table->association('article'));
+		$this->assertEquals('article', $hasMany->name());
+		$this->assertEquals('author_id', $hasMany->foreignKey());
+		$this->assertEquals(['b' => 'c'], $hasMany->conditions());
+		$this->assertEquals(['foo' => 'asc'], $hasMany->sort());
+		$this->assertSame($table, $hasMany->source());
+	}
+
 }
