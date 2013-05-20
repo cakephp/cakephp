@@ -5203,6 +5203,20 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+	
+
+
+/**
+* testTimeZoneSelect method
+*
+* Test for proposed new Form::timezone() option 
+*
+* @return void
+*/	
+	public function testTimeZoneSelect() {
+		$this->markTestIncomplete("Test for proposed new Form::timezone() option");
+	}
+	
 
 /**
  * testCheckbox method
