@@ -202,10 +202,10 @@ class TableTest extends TestCase {
 		$table->addColumn('id', 'integer')
 			->addColumn('title', 'string')
 			->addColumn('author_id', 'integer')
-			->addIndex('author_idx', [
+			->addConstraint('author_idx', [
 				'columns' => ['author_id'],
 				'type' => 'unique'
-			])->addIndex('primary', [
+			])->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
 			]);
