@@ -214,18 +214,21 @@ class SqliteSchema {
 		) {
 			return '';
 		}
-		$out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
 		if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
-			$out .= ' PRIMARY KEY';
+			$type = 'PRIMARY KEY';
 		}
 		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
-			$out .= ' UNIQUE';
+			$type = 'UNIQUE';
 		}
 		$columns = array_map(
 			[$this->_driver, 'quoteIdentifier'],
 			$data['columns']
 		);
-		return $out . ' (' . implode(', ', $columns) . ')';
+		return sprintf('CONSTRAINT %s %s (%s)',
+			$this->_driver->quoteIdentifier($name),
+			$type,
+			implode(', ', $columns)
+		);
 	}
 
 /**
