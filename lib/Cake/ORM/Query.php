@@ -164,10 +164,10 @@ class Query extends DatabaseQuery {
 
 		$firstLevelJoins = $this->_resolveFirstLevel($this->_table, $contain);
 		foreach ($firstLevelJoins as $options) {
-			$table = $options['association']->target();
+			$table = $options['instance']->target();
 			$alias = $table->alias();
 			$this->_aliasMap[$alias] = $table;
-			$this->_addJoin($options['association'], $options['options']);
+			$this->_addJoin($options['instance'], $options['config']);
 			foreach ($options['associations'] as $relation => $meta) {
 				if ($meta['instance'] && !$meta['instance']->canBeJoined()) {
 					$this->_loadEagerly[$relation] = $meta;
@@ -211,11 +211,7 @@ class Query extends DatabaseQuery {
 		foreach ($associations as $table => $options) {
 			$associated = $options['instance'];
 			if ($associated && $associated->canBeJoined()) {
-				$result[$table] =  [
-					'association' => $associated,
-					'associations' => $options['associations'],
-					'options' => $options['config']
-				];
+				$result[$table] = $options;
 				$result += $this->_resolveFirstLevel($associated->target(), $options['associations']);
 			}
 			//TODO: If it is not associated assume a HasOne association (like in the popular Linkable plugin)
