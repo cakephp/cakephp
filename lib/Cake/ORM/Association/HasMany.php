@@ -80,21 +80,43 @@ class HasMany extends Association {
 		return false;
 	}
 
-	public function eagerLoader($results, $options = []) {
-		$target = $this->target();
-		$source = $this->source();
-		$alias = $target->alias();
-		$fetchQuery = $target->find('all');
+	public function eagerLoader($parentKeys, $options = []) {
 		$options += [
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
 			'sort' => $this->sort()
 		];
+		$fetchQuery = $this->_buildQuery($parentKeys, $options);
+		$resultMap = [];
+		$key = $options['foreignKey'];
+		foreach ($fetchQuery->execute() as $result) {
+			$resultMap[$result[$key]][] = $result;
+		}
+
+		$source = $this->source();
+		$sourceKey = key($fetchQuery->aliasField(
+			$source->primaryKey(),
+			$source->alias()
+		));
+		$alias = $this->target()->alias();
+		$targetKey = key($fetchQuery->aliasField($this->property(), $source->alias()));
+		return function($row) use ($alias, $resultMap, $sourceKey, $targetKey) {
+			if (isset($resultMap[$row[$sourceKey]])) {
+				$row[$targetKey] = $resultMap[$row[$sourceKey]];
+			}
+			return $row;
+		};
+	}
+
+	protected function _buildQuery($parentKeys, $options) {
+		$target = $this->target();
+		$alias = $target->alias();
+		$fetchQuery = $target->find('all');
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 		$key = sprintf('%s.%s in', $alias, $options['foreignKey']);
 		$fetchQuery
 			->where($options['conditions'])
-			->andWhere([$key => $results]);
+			->andWhere([$key => $parentKeys]);
 
 		if (!empty($options['fields'])) {
 			$fields = $fetchQuery->aliasFields($options['fields'], $alias);
@@ -111,23 +133,11 @@ class HasMany extends Association {
 			$fetchQuery->order($options['sort']);
 		}
 
-		$resultMap = [];
-		$key = $options['foreignKey'];
-		foreach ($fetchQuery->execute() as $result) {
-			$resultMap[$result[$key]][] = $result;
+		if (!empty($options['contain'])) {
+			$fetchQuery->contain($options['contain']);
 		}
 
-		$sourceKey = key($fetchQuery->aliasField(
-			$source->primaryKey(),
-			$source->alias()
-		));
-		$targetKey = key($fetchQuery->aliasField($this->property(), $source->alias()));
-		return function($row) use ($alias, $resultMap, $sourceKey, $targetKey) {
-			if (isset($resultMap[$row[$sourceKey]])) {
-				$row[$targetKey] = $resultMap[$row[$sourceKey]];
-			}
-			return $row;
-		};
+		return $fetchQuery;
 	}
 
 /**

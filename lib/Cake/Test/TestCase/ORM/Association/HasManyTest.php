@@ -177,7 +177,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock(
 			'Cake\ORM\Query',
-			['execute', 'where', 'andWhere', 'order', 'select'],
+			['execute', 'where', 'andWhere', 'order', 'select', 'contain'],
 			[null]
 		);
 		$this->article->expects($this->once())->method('find')->with('all')
@@ -213,10 +213,17 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			])
 			->will($this->returnValue($query));
 
+		$query->expects($this->once())->method('contain')
+			->with([
+				'Category' => ['fields' => ['a', 'b']],
+			])
+			->will($this->returnValue($query));
+
 		$association->eagerLoader($keys, [
 			'conditions' => ['Article.id !=' => 3],
 			'sort' => ['title' => 'DESC'],
-			'fields' => ['title', 'author_id']
+			'fields' => ['title', 'author_id'],
+			'contain' => ['Category' => ['fields' => ['a', 'b']]]
 		]);
 	}
 

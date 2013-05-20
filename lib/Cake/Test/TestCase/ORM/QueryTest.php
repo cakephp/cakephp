@@ -438,4 +438,49 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $results);
 	}
 
+/**
+ * Tests that deep associations can be eagerly laoded
+ *
+ * @return void
+ **/
+	public function testHasManyEagerLoadingDeep() {
+		$this->_insertTwoRecords();
+
+		$query = new Query($this->connection);
+		$table = Table::build('author', ['connection' => $this->connection]);
+		$article = Table::build('article', ['connection' => $this->connection]);
+		$table->hasMany('article', ['property' => 'articles']);
+		$article->belongsTo('author');
+
+		$results = $query->repository($table)
+			->select()
+			->contain(['article' => ['author']])
+			->toArray();
+		$expected = [
+			[
+				'id' => 1,
+				'name' => 'Chuck Norris',
+				'articles' => [
+					[
+						'id' => 1, 'title' => 'a title', 'author_id' => 1, 'body' => 'a body',
+						'author' => ['id' => 1 , 'name' => 'Chuck Norris']
+					]
+				]
+			],
+			[
+				'id' => 2,
+				'name' => 'Bruce Lee',
+				'articles' => [
+					[
+						'id' => 2, 'title' => 'another title',
+						'author_id' => 2,
+						'body' => 'another body',
+						'author' => ['id' => 2 , 'name' => 'Bruce Lee']
+					]
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
+
 }

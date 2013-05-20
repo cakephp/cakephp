@@ -148,6 +148,10 @@ class Query extends DatabaseQuery {
 
 		$contain = [];
 		foreach ($this->_containments as $table => $options) {
+			if (!empty($options['instance'])) {
+				$contain = (array)$this->_containments;
+				break;
+			}
 			$contain[$table] = $this->_normalizeContain(
 				$this->_table,
 				$table,
@@ -157,6 +161,8 @@ class Query extends DatabaseQuery {
 
 		$firstLevelJoins = $this->_resolveFirstLevel($this->_table, $contain);
 		foreach ($firstLevelJoins as $options) {
+			$table = $options['association']->target();
+			$this->_aliasMap[$table->alias()] = $table;
 			$this->_addJoin($options['association'], $options['options']);
 		}
 
@@ -179,7 +185,6 @@ class Query extends DatabaseQuery {
 
 		$instance = $parent->association($alias);
 		$table = $instance->target();
-		$this->_aliasMap[$alias] = $table;
 
 		$extra = array_diff_key($options, $defaults);
 		$config = [
@@ -228,7 +233,11 @@ class Query extends DatabaseQuery {
 
 		$statement->rewind();
 		foreach ($this->_loadEagerly as $association => $meta) {
-			$f = $meta['instance']->eagerLoader($keys[$alias], $meta['config']);
+			$contain = $meta['associations'];
+			$f = $meta['instance']->eagerLoader(
+				$keys[$alias],
+				$meta['config'] + compact('contain')
+			);
 			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
 		}
 
