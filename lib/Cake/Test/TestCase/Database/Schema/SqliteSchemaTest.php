@@ -390,7 +390,7 @@ SQL;
 				'type' => 'integer',
 				'null' => false
 			])
-			->addIndex('primary', [
+			->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
 			]);
@@ -435,9 +435,43 @@ SQL;
 			'length' => 255
 		])->addColumn('author_id', [
 			'type' => 'integer',
-		])->addIndex($name, $data);
+		])->addConstraint($name, $data);
 
 		$this->assertEquals($expected, $schema->constraintSql($table, $name));
+	}
+
+/**
+ * Provide data for testing indexSql
+ *
+ * @return array
+ */
+	public static function indexSqlProvider() {
+		return [
+			[
+				'author_idx',
+				['type' => 'index', 'columns' => ['title', 'author_id']],
+				'CREATE INDEX "author_idx" ON "articles" ("title", "author_id")'
+			],
+		];
+	}
+
+/**
+ * Test the indexSql method.
+ *
+ * @dataProvider indexSqlProvider
+ */
+	public function testIndexSql($name, $data, $expected) {
+		$driver = $this->_getMockedDriver();
+		$schema = new SqliteSchema($driver);
+
+		$table = (new Table('articles'))->addColumn('title', [
+			'type' => 'string',
+			'length' => 255
+		])->addColumn('author_id', [
+			'type' => 'integer',
+		])->addIndex($name, $data);
+
+		$this->assertEquals($expected, $schema->indexSql($table, $name));
 	}
 
 /**
@@ -461,9 +495,13 @@ SQL;
 			])
 			->addColumn('body', ['type' => 'text'])
 			->addColumn('created', 'datetime')
-			->addIndex('primary', [
+			->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
+			])
+			->addIndex('title_idx', [
+				'type' => 'index',
+				'columns' => ['title']
 			]);
 
 		$expected = <<<SQL
@@ -475,7 +513,12 @@ CREATE TABLE "articles" (
 );
 SQL;
 		$result = $table->createTableSql($connection);
-		$this->assertEquals($expected, $result);
+		$this->assertCount(2, $result);
+		$this->assertEquals($expected, $result[0]);
+		$this->assertEquals(
+			'CREATE INDEX "title_idx" ON "articles" ("title");',
+			$result[1]
+		);
 	}
 
 /**

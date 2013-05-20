@@ -132,8 +132,8 @@ class SqliteSchema {
 		}
 		$table->addColumn($row['name'], $field);
 		if ($row['pk'] == true) {
-			$table->addIndex('primary', [
-				'type' => Table::INDEX_PRIMARY,
+			$table->addConstraint('primary', [
+				'type' => Table::CONSTRAINT_PRIMARY,
 				'columns' => [$row['name']]
 			]);
 		}
@@ -207,7 +207,7 @@ class SqliteSchema {
  * @return string SQL fragment.
  */
 	public function constraintSql(Table $table, $name) {
-		$data = $table->index($name);
+		$data = $table->constraint($name);
 		if (
 			count($data['columns']) === 1 &&
 			$table->column($data['columns'][0])['type'] === 'integer'
@@ -215,10 +215,10 @@ class SqliteSchema {
 			return '';
 		}
 		$out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
-		if ($data['type'] === Table::INDEX_PRIMARY) {
+		if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
 			$out .= ' PRIMARY KEY';
 		}
-		if ($data['type'] === Table::INDEX_UNIQUE) {
+		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
 			$out .= ' UNIQUE';
 		}
 		$columns = array_map(
@@ -236,18 +236,35 @@ class SqliteSchema {
  * @return string SQL fragment.
  */
 	public function indexSql(Table $table, $name) {
-		return '';
+		$data = $table->index($name);
+		$columns = array_map(
+			[$this->_driver, 'quoteIdentifier'],
+			$data['columns']
+		);
+		return sprintf('CREATE INDEX %s ON %s (%s)',
+			$this->_driver->quoteIdentifier($name),
+			$this->_driver->quoteIdentifier($table->name()),
+			implode(', ', $columns)
+		);
 	}
 
 /**
  * Generate the SQL to create a table.
  *
  * @param string $table The name of the table.
- * @param array $lines The lines (columns + indexes) to go inside the table.
- * @return string A complete CREATE TABLE statement
+ * @param array $columns The columns to go inside the table.
+ * @param array $constraints The constraints for the table.
+ * @param array $indexes The indexes for the table.
+ * @return array A complete CREATE TABLE statement(s)S
  */
-	public function createTableSql($table, $lines) {
+	public function createTableSql($table, $columns, $constraints, $indexes) {
+		$lines = array_merge($columns, $constraints);
 		$content = implode(",\n", array_filter($lines));
-		return sprintf("CREATE TABLE \"%s\" (\n%s\n);", $table, $content);
+		$table = sprintf("CREATE TABLE \"%s\" (\n%s\n);", $table, $content);
+		$out = [$table];
+		foreach ($indexes as $index) {
+			$out[] = $index . ";";
+		}
+		return $out;
 	}
 }
