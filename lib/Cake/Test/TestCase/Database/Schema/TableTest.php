@@ -88,21 +88,53 @@ class TableTest extends TestCase {
 	}
 
 /**
+ * Test adding an constraint.
+ *
+ * @return void
+ */
+	public function testAddConstraint() {
+		$table = new Table('articles');
+		$table->addColumn('id', [
+			'type' => 'integer'
+		]);
+		$result = $table->addConstraint('primary', [
+			'type' => 'primary',
+			'columns' => ['id']
+		]);
+		$this->assertSame($result, $table);
+		$this->assertEquals(['primary'], $table->constraints());
+	}
+
+/**
+ * Test that an exception is raised when constraintes
+ * are added for fields that do not exist.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testAddConstraintErrorWhenFieldIsMissing() {
+		$table = new Table('articles');
+		$table->addConstraint('author_idx', [
+			'columns' => ['author_id']
+		]);
+	}
+
+/**
  * Test adding an index.
  *
  * @return void
  */
 	public function testAddIndex() {
 		$table = new Table('articles');
-		$table->addColumn('id', [
-			'type' => 'integer'
+		$table->addColumn('title', [
+			'type' => 'string'
 		]);
-		$result = $table->addIndex('primary', [
-			'type' => 'primary',
-			'columns' => ['id']
+		$result = $table->addIndex('faster', [
+			'type' => 'index',
+			'columns' => ['title']
 		]);
 		$this->assertSame($result, $table);
-		$this->assertEquals(['primary'], $table->indexes());
+		$this->assertEquals(['faster'], $table->indexes());
 	}
 
 /**
@@ -147,15 +179,15 @@ class TableTest extends TestCase {
 			->addColumn('author_id', 'integer');
 
 		$table->addIndex('author_idx', [
-			'columns' => ['author_id'],
-			'type' => 'unique'
-			])->addIndex('primary', [
-				'type' => 'primary',
-				'columns' => ['id']
+				'columns' => ['author_id'],
+				'type' => 'index'
+			])->addIndex('texty', [
+				'type' => 'fulltext',
+				'columns' => ['title']
 			]);
 
 		$this->assertEquals(
-			['author_idx', 'primary'],
+			['author_idx', 'texty'],
 			$table->indexes()
 		);
 	}
@@ -170,10 +202,10 @@ class TableTest extends TestCase {
 		$table->addColumn('id', 'integer')
 			->addColumn('title', 'string')
 			->addColumn('author_id', 'integer')
-			->addIndex('author_idx', [
+			->addConstraint('author_idx', [
 				'columns' => ['author_id'],
 				'type' => 'unique'
-			])->addIndex('primary', [
+			])->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
 			]);

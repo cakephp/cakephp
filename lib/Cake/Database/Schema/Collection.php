@@ -89,7 +89,10 @@ class Collection {
 		}
 
 		$table = new Table($name);
-		$fieldParams = $this->_dialect->extraSchemaColumns();
+		$fieldParams = [];
+		if (method_exists($this->_dialect, 'extraSchemaColumn')) {
+			$fieldParams = $this->_dialect->extraSchemaColumns();
+		}
 		foreach ($statement->fetchAll('assoc') as $row) {
 			$this->_dialect->convertFieldDescription($table, $row, $fieldParams);
 		}
