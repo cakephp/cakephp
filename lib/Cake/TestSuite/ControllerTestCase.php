@@ -363,8 +363,9 @@ abstract class ControllerTestCase extends CakeTestCase {
 					'class' => $componentClass
 				));
 			}
-			$componentObj = $this->getMock($componentClass, $methods, array(), '', false);
+			$componentObj = $this->getMock($componentClass, $methods, array($controllerObj->Components));
 			$controllerObj->Components->set($name, $componentObj);
+			$controllerObj->Components->enable($name);
 		}
 
 		$controllerObj->constructClasses();
