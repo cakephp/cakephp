@@ -171,11 +171,11 @@ class MysqlSchema {
 /**
  * Generate the SQL to create a table.
  *
- * @param Table $table Table instance
+ * @param Cake\Database\Schema\Table $table Table instance
  * @param array $columns The columns to go inside the table.
  * @param array $constraints The constraints for the table.
  * @param array $indexes The indexes for the table.
- * @return array A complete CREATE TABLE statement(s)
+ * @return array Complete CREATE TABLE statement(s)
  */
 	public function createTableSql($table, $columns, $constraints, $indexes) {
 		$content = implode(",\n", array_merge($columns, $constraints, $indexes));

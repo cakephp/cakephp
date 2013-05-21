@@ -304,13 +304,13 @@ class PostgresSchema {
 /**
  * Generate the SQL to create a table.
  *
- * @param string $table The name of the table.
+ * @param Cake\Database\Schema\Table $table Table instance.
  * @param array $columns The columns to go inside the table.
  * @param array $constraints The constraints for the table.
  * @param array $indexes The indexes for the table.
- * @return string A complete CREATE TABLE statement
+ * @return string Complete CREATE TABLE statement
  */
-	public function createTableSql($table, $columns, $constraints, $indexes) {
+	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = array_merge($columns, $constraints);
 		$content = implode(",\n", array_filter($content));
 		$tableName = $this->_driver->quoteIdentifier($table->name());
