@@ -52,7 +52,7 @@ foreach (${$pluralVar} as ${$singularVar}):
 			__d('cake', 'Delete'),
 			array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]),
 			null,
-			__d('cake', 'Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey]
+			__d('cake', 'Are you sure you want to delete # %s?', ${$singularVar}[$modelClass][$primaryKey])
 		);
 		echo '</td>';
 	echo '</tr>';
