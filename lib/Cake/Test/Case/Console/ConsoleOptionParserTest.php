@@ -512,14 +512,15 @@ class ConsoleOptionParserTest extends CakeTestCase {
 
 		$parser = new ConsoleOptionParser('mycommand', false);
 		$parser->addSubcommand('method', array(
-				'help' => 'This is another command',
+				'help' => 'This is another very long command help text to check if the sub commands also display their help when they are supposed to do so.',
 				'parser' => $subParser
 			))
 			->addOption('test', array('help' => 'A test option.'));
 
 		$result = $parser->help('method');
 		$expected = <<<TEXT
-This is another command
+method This is another very long command help text to check if the sub commands
+       also display their help when they are supposed to do so.
 
 <info>Usage:</info>
 cake mycommand method [-h] [--connection]

@@ -84,18 +84,28 @@ class ConsoleInputSubcommand {
  * Generate the help for this this subcommand.
  *
  * @param integer $width The width to make the name of the subcommand if you want to prepend it to the help text.
+ + @param integer $maxWidth The maximal width the help text should be wrapped with.
  * @return string
  */
-	public function help($width = 0) {
-		if ($width === 0) {
-			return $this->_help;
-		}
-
+	public function help($width = 0, $maxWidth = 0) {
 		$name = $this->_name;
+		if ($width === 0) {
+			$name = '';
+		}
 		if (strlen($name) < $width) {
 			$name = str_pad($name, $width, ' ');
 		}
-		return $name . $this->_help;
+		if ($name) {
+			$name .= ' ';
+		}
+
+		$out[] = String::wrap($this->_help, array(
+			'width' => $maxWidth,
+			'indent' => str_repeat(' ', strlen($name)),
+			'indentAt' => 1
+		));
+
+		return $name . implode("\n", $out);
 	}
 
 /**
