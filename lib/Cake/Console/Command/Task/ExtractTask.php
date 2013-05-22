@@ -687,7 +687,7 @@ class ExtractTask extends AppShell {
  * @return void
  */
 	protected function _markerError($file, $line, $marker, $count) {
-		$this->out(__d('cake_console', "Invalid marker content in %s:%s\n* %s(", $file, $line, $marker), true);
+		$this->out(__d('cake_console', "Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
 		$count += 2;
 		$tokenCount = count($this->_tokens);
 		$parenthesis = 1;
