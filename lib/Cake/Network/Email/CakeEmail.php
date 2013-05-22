@@ -1166,7 +1166,7 @@ class CakeEmail {
 	}
 
 /**
- * Reset all EmailComponent internal variables to be able to send out a new email.
+ * Reset all CakeEmail internal variables to be able to send out a new email.
  *
  * @return CakeEmail $this
  */
