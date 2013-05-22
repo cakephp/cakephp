@@ -71,9 +71,12 @@ class SmtpTransport extends AbstractTransport {
  * Set the configuration
  *
  * @param array $config
- * @return void
+ * @return array Returns configs
  */
-	public function config($config = array()) {
+	public function config($config = null) {
+		if ($config === null) {
+			return $this->_config;
+		}
 		$default = array(
 			'host' => 'localhost',
 			'port' => 25,
@@ -83,7 +86,8 @@ class SmtpTransport extends AbstractTransport {
 			'client' => null,
 			'tls' => false
 		);
-		$this->_config = $config + $default;
+		$this->_config = empty($config) ? $this->_config + $default : $config + $default;
+		return $this->_config;
 	}
 
 /**
