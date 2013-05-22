@@ -84,7 +84,7 @@ class ConsoleInputSubcommand {
  * Generate the help for this this subcommand.
  *
  * @param integer $width The width to make the name of the subcommand if you want to prepend it to the help text.
- + @param integer $maxWidth The maximal width the help text should be wrapped with.
+ + @param integer $maxWidth The maximum width the help text should be wrapped with.
  * @return string
  */
 	public function help($width = 0, $maxWidth = 0) {
