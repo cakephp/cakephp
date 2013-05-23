@@ -1026,6 +1026,16 @@ class CakeEmail {
 /**
  * Configuration to use when send email
  *
+ * ### Usage
+ *
+ * Load configuration from `app/Config/email.php`:
+ *
+ * `$email->config('default');`
+ *
+ * Merge an array of configuration into the instance:
+ *
+ * `$email->config(array('to' => 'bill@example.com'));`
+ *
  * @param string|array $config String with configuration name (from email.php), array with config or null to return current config
  * @return string|array|CakeEmail
  */
