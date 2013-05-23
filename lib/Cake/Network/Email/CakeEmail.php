@@ -1248,6 +1248,7 @@ class CakeEmail {
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
 		$lines = explode("\n", $message);
 		$formatted = array();
+		$cut = ($wrapLength == CakeEmail::LINE_LENGTH_MUST) ? true : false;
 
 		foreach ($lines as $line) {
 			if (empty($line)) {
@@ -1261,7 +1262,7 @@ class CakeEmail {
 			if (!preg_match('/<[a-z]+.*>/i', $line)) {
 				$formatted = array_merge(
 					$formatted,
-					explode("\n", wordwrap($line, $wrapLength, "\n"))
+					explode("\n", wordwrap($line, $wrapLength, "\n", $cut))
 				);
 				continue;
 			}
@@ -1280,7 +1281,10 @@ class CakeEmail {
 							$tmpLineLength += $tagLength;
 						} else {
 							if ($tmpLineLength > 0) {
-								$formatted[] = trim($tmpLine);
+								$formatted = array_merge(
+									$formatted,
+									explode("\n", wordwrap(trim($tmpLine), $wrapLength, "\n", $cut))
+								);
 								$tmpLine = '';
 								$tmpLineLength = 0;
 							}
