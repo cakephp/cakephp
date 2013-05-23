@@ -390,23 +390,23 @@ SQL;
 				'type' => 'integer',
 				'null' => false
 			])
-			->addIndex('primary', [
+			->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
 			]);
 		$result = $schema->columnSql($table, 'id');
 		$this->assertEquals($result, '"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT');
 
-		$result = $schema->indexSql($table, 'primary');
+		$result = $schema->constraintSql($table, 'primary');
 		$this->assertEquals('', $result, 'Integer primary keys are special in sqlite.');
 	}
 
 /**
- * Provide data for testing indexSql
+ * Provide data for testing constraintSql
  *
  * @return array
  */
-	public static function indexSqlProvider() {
+	public static function constraintSqlProvider() {
 		return [
 			[
 				'primary',
@@ -417,6 +417,40 @@ SQL;
 				'unique_idx',
 				['type' => 'unique', 'columns' => ['title', 'author_id']],
 				'CONSTRAINT "unique_idx" UNIQUE ("title", "author_id")'
+			],
+		];
+	}
+
+/**
+ * Test the constraintSql method.
+ *
+ * @dataProvider constraintSqlProvider
+ */
+	public function testConstraintSql($name, $data, $expected) {
+		$driver = $this->_getMockedDriver();
+		$schema = new SqliteSchema($driver);
+
+		$table = (new Table('articles'))->addColumn('title', [
+			'type' => 'string',
+			'length' => 255
+		])->addColumn('author_id', [
+			'type' => 'integer',
+		])->addConstraint($name, $data);
+
+		$this->assertEquals($expected, $schema->constraintSql($table, $name));
+	}
+
+/**
+ * Provide data for testing indexSql
+ *
+ * @return array
+ */
+	public static function indexSqlProvider() {
+		return [
+			[
+				'author_idx',
+				['type' => 'index', 'columns' => ['title', 'author_id']],
+				'CREATE INDEX "author_idx" ON "articles" ("title", "author_id")'
 			],
 		];
 	}
@@ -461,9 +495,13 @@ SQL;
 			])
 			->addColumn('body', ['type' => 'text'])
 			->addColumn('created', 'datetime')
-			->addIndex('primary', [
+			->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
+			])
+			->addIndex('title_idx', [
+				'type' => 'index',
+				'columns' => ['title']
 			]);
 
 		$expected = <<<SQL
@@ -472,16 +510,21 @@ CREATE TABLE "articles" (
 "title" VARCHAR NOT NULL,
 "body" TEXT,
 "created" DATETIME
-);
+)
 SQL;
 		$result = $table->createTableSql($connection);
-		$this->assertEquals($expected, $result);
+		$this->assertCount(2, $result);
+		$this->assertEquals($expected, $result[0]);
+		$this->assertEquals(
+			'CREATE INDEX "title_idx" ON "articles" ("title")',
+			$result[1]
+		);
 	}
 
 /**
  * Get a schema instance with a mocked driver/pdo instances
  *
- * @return MysqlSchema
+ * @return Driver
  */
 	protected function _getMockedDriver() {
 		$driver = new \Cake\Database\Driver\Sqlite();

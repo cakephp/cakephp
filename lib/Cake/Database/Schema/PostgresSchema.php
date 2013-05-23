@@ -19,6 +19,9 @@ namespace Cake\Database\Schema;
 use Cake\Database\Schema\Table;
 use Cake\Error;
 
+/**
+ * Schema management/reflection features for Postgres.
+ */
 class PostgresSchema {
 
 /**
@@ -28,6 +31,12 @@ class PostgresSchema {
  */
 	protected $_driver;
 
+/**
+ * Constructor
+ *
+ * @param Cake\Database\Driver\Postgres $driver Driver to use.
+ * @return void
+ */
 	public function __construct($driver) {
 		$this->_driver = $driver;
 	}
@@ -137,19 +146,6 @@ class PostgresSchema {
 	}
 
 /**
- * Get additional column meta data used in schema reflections.
- *
- * @return array
- */
-	public function extraSchemaColumns() {
-		return [
-			'comment' => [
-				'column' => 'comment',
-			]
-		];
-	}
-
-/**
  * Convert field description results into abstract schema fields.
  *
  * @param Cake\Database\Schema\Table $table The table object to append fields to.
@@ -181,11 +177,159 @@ class PostgresSchema {
 		}
 		$table->addColumn($row['name'], $field);
 		if (!empty($row['pk'])) {
-			$table->addIndex('primary', [
-				'type' => Table::INDEX_PRIMARY,
+			$table->addConstraint('primary', [
+				'type' => Table::CONSTRAINT_PRIMARY,
 				'columns' => [$row['name']]
 			]);
 		}
+	}
+
+/**
+ * Generate the SQL fragment for a single column.
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function columnSql(Table $table, $name) {
+		$data = $table->column($name);
+		$out = $this->_driver->quoteIdentifier($name);
+		$typeMap = [
+			'biginteger' => ' BIGINT',
+			'boolean' => ' BOOLEAN',
+			'binary' => ' BYTEA',
+			'float' => ' FLOAT',
+			'decimal' => ' DECIMAL',
+			'text' => ' TEXT',
+			'date' => ' DATE',
+			'time' => ' TIME',
+			'datetime' => ' TIMESTAMP',
+			'timestamp' => ' TIMESTAMP',
+		];
+
+		if (isset($typeMap[$data['type']])) {
+			$out .= $typeMap[$data['type']];
+		}
+
+		if ($data['type'] === 'integer') {
+			$type = ' INTEGER';
+			if (in_array($name, (array)$table->primaryKey())) {
+				$type = ' SERIAL';
+				unset($data['null'], $data['default']);
+			}
+			$out .= $type;
+		}
+
+		if ($data['type'] === 'string') {
+			$isFixed = !empty($data['fixed']);
+			$type = ' VARCHAR';
+			if ($isFixed) {
+				$type = ' CHAR';
+			}
+			if ($isFixed && isset($data['length']) && $data['length'] == 36) {
+				$type = ' UUID';
+			}
+			$out .= $type;
+			if (isset($data['length']) && $data['length'] != 36) {
+				$out .= '(' . (int)$data['length'] . ')';
+			}
+		}
+
+		if ($data['type'] === 'float' && isset($data['precision'])) {
+			$out .= '(' . (int)$data['precision'] . ')';
+		}
+
+		if ($data['type'] === 'decimal' &&
+			(isset($data['length']) || isset($data['precision']))
+		) {
+			$out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
+		}
+
+		if (isset($data['null']) && $data['null'] === false) {
+			$out .= ' NOT NULL';
+		}
+		if (isset($data['null']) && $data['null'] === true) {
+			$out .= ' DEFAULT NULL';
+			unset($data['default']);
+		}
+		if (isset($data['default']) && $data['type'] !== 'timestamp') {
+			$out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
+		}
+		return $out;
+	}
+
+/**
+ * Generate the SQL fragment for a single index
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function indexSql(Table $table, $name) {
+		$data = $table->index($name);
+		$columns = array_map(
+			[$this->_driver, 'quoteIdentifier'],
+			$data['columns']
+		);
+		return sprintf('CREATE INDEX %s ON %s (%s)',
+			$this->_driver->quoteIdentifier($name),
+			$this->_driver->quoteIdentifier($table->name()),
+			implode(', ', $columns)
+		);
+	}
+
+/**
+ * Generate the SQL fragment for a single constraint
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function constraintSql(Table $table, $name) {
+		$data = $table->constraint($name);
+		$out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
+		if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
+			$out = 'PRIMARY KEY ';
+		}
+		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
+			$out .= ' UNIQUE ';
+		}
+		$columns = array_map(
+			[$this->_driver, 'quoteIdentifier'],
+			$data['columns']
+		);
+		return $out . '(' . implode(', ', $columns) . ')';
+	}
+
+/**
+ * Generate the SQL to create a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance.
+ * @param array $columns The columns to go inside the table.
+ * @param array $constraints The constraints for the table.
+ * @param array $indexes The indexes for the table.
+ * @return string Complete CREATE TABLE statement
+ */
+	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
+		$content = array_merge($columns, $constraints);
+		$content = implode(",\n", array_filter($content));
+		$tableName = $this->_driver->quoteIdentifier($table->name());
+		$out = [];
+		$out[] = sprintf("CREATE TABLE %s (\n%s\n)", $tableName, $content);
+		foreach ($indexes as $index) {
+			$out[] = $index;
+		}
+		foreach ($table->columns() as $column) {
+			$columnData = $table->column($column);
+			if (isset($columnData['comment'])) {
+				$out[] = sprintf('COMMENT ON COLUMN %s.%s IS %s',
+					$tableName,
+					$this->_driver->quoteIdentifier($column),
+					$this->_driver->schemaValue($columnData['comment'])
+				);
+			}
+		}
+		return $out;
 	}
 
 }

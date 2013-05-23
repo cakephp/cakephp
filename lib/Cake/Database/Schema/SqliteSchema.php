@@ -19,6 +19,9 @@ namespace Cake\Database\Schema;
 use Cake\Database\Schema\Table;
 use Cake\Error;
 
+/**
+ * Schema management/reflection features for Sqlite
+ */
 class SqliteSchema {
 
 /**
@@ -28,6 +31,12 @@ class SqliteSchema {
  */
 	protected $_driver;
 
+/**
+ * Constructor
+ *
+ * @param Cake\Database\Driver\Sqlite $driver Driver to use.
+ * @return void
+ */
 	public function __construct($driver) {
 		$this->_driver = $driver;
 	}
@@ -106,15 +115,6 @@ class SqliteSchema {
 	}
 
 /**
- * Additional metadata columns in table descriptions.
- *
- * @return array
- */
-	public function extraSchemaColumns() {
-		return [];
-	}
-
-/**
  * Convert field description results into abstract schema fields.
  *
  * @param Cake\Database\Schema\Table $table The table object to append fields to.
@@ -132,8 +132,8 @@ class SqliteSchema {
 		}
 		$table->addColumn($row['name'], $field);
 		if ($row['pk'] == true) {
-			$table->addIndex('primary', [
-				'type' => Table::INDEX_PRIMARY,
+			$table->addConstraint('primary', [
+				'type' => Table::CONSTRAINT_PRIMARY,
 				'columns' => [$row['name']]
 			]);
 		}
@@ -197,7 +197,7 @@ class SqliteSchema {
 	}
 
 /**
- * Generate the SQL fragment for a single index in MySQL
+ * Generate the SQL fragments for defining table constraints.
  *
  * Note integer primary keys will return ''. This is intentional as Sqlite requires
  * that integer primary keys be defined in the column definition.
@@ -206,40 +206,68 @@ class SqliteSchema {
  * @param string $name The name of the column.
  * @return string SQL fragment.
  */
-	public function indexSql(Table $table, $name) {
-		$data = $table->index($name);
-
+	public function constraintSql(Table $table, $name) {
+		$data = $table->constraint($name);
 		if (
 			count($data['columns']) === 1 &&
 			$table->column($data['columns'][0])['type'] === 'integer'
 		) {
 			return '';
 		}
-
-		$out = 'CONSTRAINT ';
-		$out .= $this->_driver->quoteIdentifier($name);
-		if ($data['type'] === Table::INDEX_PRIMARY) {
-			$out .= ' PRIMARY KEY';
+		if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
+			$type = 'PRIMARY KEY';
 		}
-		if ($data['type'] === Table::INDEX_UNIQUE) {
-			$out .= ' UNIQUE';
+		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
+			$type = 'UNIQUE';
 		}
 		$columns = array_map(
 			[$this->_driver, 'quoteIdentifier'],
 			$data['columns']
 		);
-		return $out . ' (' . implode(', ', $columns) . ')';
+		return sprintf('CONSTRAINT %s %s (%s)',
+			$this->_driver->quoteIdentifier($name),
+			$type,
+			implode(', ', $columns)
+		);
+	}
+
+/**
+ * Generate the SQL fragment for a single index.
+ *
+ * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param string $name The name of the column.
+ * @return string SQL fragment.
+ */
+	public function indexSql(Table $table, $name) {
+		$data = $table->index($name);
+		$columns = array_map(
+			[$this->_driver, 'quoteIdentifier'],
+			$data['columns']
+		);
+		return sprintf('CREATE INDEX %s ON %s (%s)',
+			$this->_driver->quoteIdentifier($name),
+			$this->_driver->quoteIdentifier($table->name()),
+			implode(', ', $columns)
+		);
 	}
 
 /**
  * Generate the SQL to create a table.
  *
- * @param string $table The name of the table.
- * @param array $lines The lines (columns + indexes) to go inside the table.
- * @return string A complete CREATE TABLE statement
+ * @param Table $table Cake\Database\Schema\Table instance
+ * @param array $columns The columns to go inside the table.
+ * @param array $constraints The constraints for the table.
+ * @param array $indexes The indexes for the table.
+ * @return array Complete CREATE TABLE statement(s)S
  */
-	public function createTableSql($table, $lines) {
+	public function createTableSql($table, $columns, $constraints, $indexes) {
+		$lines = array_merge($columns, $constraints);
 		$content = implode(",\n", array_filter($lines));
-		return sprintf("CREATE TABLE \"%s\" (\n%s\n);", $table, $content);
+		$table = sprintf("CREATE TABLE \"%s\" (\n%s\n)", $table->name(), $content);
+		$out = [$table];
+		foreach ($indexes as $index) {
+			$out[] = $index;
+		}
+		return $out;
 	}
 }
