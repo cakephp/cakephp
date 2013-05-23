@@ -718,6 +718,11 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->CakeEmail->config(array());
 		$this->assertSame($transportClass->config(), array());
+
+		$config = array('test' => 'test@example.com');
+		$this->CakeEmail->config($config);
+		$expected = array('test' => 'test@example.com', 'test2' => true);
+		$this->assertSame($expected, $this->CakeEmail->config());
 	}
 
 /**

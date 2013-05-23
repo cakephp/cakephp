@@ -1138,7 +1138,7 @@ class CakeEmail {
 			}
 			$config = $configs->{$config};
 		}
-		$this->_config += $config;
+		$this->_config = array_merge($this->_config, $config);
 		if (!empty($config['charset'])) {
 			$this->charset = $config['charset'];
 		}
