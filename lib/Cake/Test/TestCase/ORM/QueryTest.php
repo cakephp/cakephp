@@ -323,17 +323,29 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that HasMany associations are correctly eager loaded
+ * Data provider for the two types of strategies HasMany implements
  *
  * @return void
+ */
+	public function strategiesProvider() {
+		return [['subquery', 'select']];
+	}
+
+/**
+ * Tests that HasMany associations are correctly eager loaded.
+ * Also that the query object passes the correct parent model keys to the
+ * association objects in order to perform eager loading with select strategy
+ *
+ * @dataProvider strategiesProvider
+ * @return void
  **/
-	public function testHasManyEagerLoading() {
+	public function testHasManyEagerLoading($strategy) {
 		$this->_insertRecords();
 
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article', ['property' => 'articles']);
+		$table->hasMany('article', ['property' => 'articles', 'strategy' => $strategy]);
 
 		$results = $query->repository($table)->select()->contain('article')->toArray();
 		$expected = [
@@ -370,6 +382,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->toArray();
 		unset($expected[0]['articles']);
 		$this->assertEquals($expected, $results);
+		$this->assertEquals($table->association('article')->strategy(), $strategy);
 	}
 
 /**
