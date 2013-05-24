@@ -16,43 +16,26 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\App;
+use Cake\Database\Connection;
+use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\Table;
 use Cake\Error;
 use Cake\Log\Log;
-use Cake\Model\ConnectionManager;
-use Cake\Model\Model;
-use Cake\Model\Schema;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 /**
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
- *
- * @package       Cake.TestSuite.Fixture
  */
 class TestFixture {
-
-/**
- * Name of the object
- *
- * @var string
- */
-	public $name = null;
-
-/**
- * Cake's DBO driver (e.g: DboMysql).
- *
- * @var object
- */
-	public $db = null;
 
 /**
  * Fixture Datasource
  *
  * @var string
  */
-	public $useDbConfig = 'test';
+	public $connection = 'test';
 
 /**
  * Full Table Name
@@ -70,7 +53,10 @@ class TestFixture {
 
 /**
  * Fields / Schema for the fixture.
- * This array should match the output of Model::schema()
+ *
+ * This array should be compatible with Cake\Database\Schema\Table.
+ * The `constraints` and `indexes` keys are reserved for defining 
+ * constraints and indexes respectively.
  *
  * @var array
  */
@@ -84,11 +70,11 @@ class TestFixture {
 	public $records = array();
 
 /**
- * The primary key for the table this fixture represents.
+ * The Cake\Database\Schema\Table for this fixture.
  *
- * @var string
+ * @var Cake\Database\Schema\Table;
  */
-	public $primaryKey = null;
+	protected $_schema;
 
 /**
  * Instantiate the fixture.
@@ -96,16 +82,9 @@ class TestFixture {
  * @throws Cake\Error\Exception on invalid datasource usage.
  */
 	public function __construct() {
-		if ($this->name === null) {
-			if (preg_match('/^(.*)Fixture$/', get_class($this), $matches)) {
-				$this->name = $matches[1];
-			} else {
-				$this->name = get_class($this);
-			}
-		}
 		$connection = 'test';
-		if (!empty($this->useDbConfig)) {
-			$connection = $this->useDbConfig;
+		if (!empty($this->connection)) {
+			$connection = $this->connection;
 			if (strpos($connection, 'test') !== 0) {
 				$message = __d(
 					'cake_dev',
@@ -116,7 +95,6 @@ class TestFixture {
 				throw new Error\Exception($message);
 			}
 		}
-		$this->Schema = new Schema(array('name' => 'TestSuite', 'connection' => $connection));
 		$this->init();
 	}
 
@@ -127,6 +105,20 @@ class TestFixture {
  * @throws Cake\Error\MissingModelException Whe importing from a model that does not exist.
  */
 	public function init() {
+		if ($this->table === null) {
+			list($namespace, $class) = namespaceSplit(get_class($this));
+			preg_match('/^(.*)Fixture$/', $class, $matches);
+			$table = $class;
+			if (isset($matches[1])) {
+				$table = $matches[1];
+			}
+			$this->table = Inflector::tableize(Inflector::pluralize($table));
+		}
+
+		if (empty($this->import) && !empty($this->fields)) {
+			$this->_schemaFromFields();
+		}
+
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
 			$import = array_merge(
 				array('connection' => 'default', 'records' => false),
@@ -134,23 +126,7 @@ class TestFixture {
 			);
 
 			$this->Schema->connection = $import['connection'];
-			if (isset($import['model'])) {
-				$modelClass = App::classname($import['model'], 'Model');
-				if (!class_exists($modelClass)) {
-					throw new Error\MissingModelException(array('class' => $modelClass));
-				}
-				$model = new $modelClass(null, null, $import['connection']);
-				$db = $model->getDataSource();
-				if (empty($model->tablePrefix)) {
-					$model->tablePrefix = $db->config['prefix'];
-				}
-				$this->fields = $model->schema(true);
-				$this->fields[$model->primaryKey]['key'] = 'primary';
-				$this->table = $db->fullTableName($model, false, false);
-				$this->primaryKey = $model->primaryKey;
-				ClassRegistry::config(array('ds' => 'test'));
-				ClassRegistry::flush();
-			} elseif (isset($import['table'])) {
+			if (isset($import['table'])) {
 				$model = new Model(null, $import['table'], $import['connection']);
 				$db = ConnectionManager::getDataSource($import['connection']);
 				$db->cacheSources = false;
@@ -166,33 +142,41 @@ class TestFixture {
 			if (!empty($db->config['prefix']) && strpos($this->table, $db->config['prefix']) === 0) {
 				$this->table = str_replace($db->config['prefix'], '', $this->table);
 			}
+		}
+	}
 
-			if (isset($import['records']) && $import['records'] !== false && isset($model) && isset($db)) {
-				$this->records = array();
-				$query = array(
-					'fields' => $db->fields($model, null, array_keys($this->fields)),
-					'table' => $db->fullTableName($model),
-					'alias' => $model->alias,
-					'conditions' => array(),
-					'order' => null,
-					'limit' => null,
-					'group' => null
-				);
-				$records = $db->fetchAll($db->buildStatement($query, $model), false, $model->alias);
-
-				if ($records !== false && !empty($records)) {
-					$this->records = Hash::extract($records, '{n}.' . $model->alias);
-				}
+/**
+ * Build the fixtures table schema from the fields property.
+ *
+ * @return void
+ */
+	protected function _schemaFromFields() {
+		$this->_schema = new Table($this->table);
+		foreach ($this->fields as $field => $data) {
+			if ($field === 'constraints' || $field === 'indexes') {
+				continue;
+			}
+			$this->_schema->addColumn($field, $data);
+		}
+		if (!empty($this->fields['constraints'])) {
+			foreach ($this->fields['constraints'] as $name => $data) {
+				$this->_schema->addConstraint($name, $data);
 			}
 		}
-
-		if (!isset($this->table)) {
-			$this->table = Inflector::underscore(Inflector::pluralize($this->name));
+		if (!empty($this->fields['indexes'])) {
+			foreach ($this->fields['indexes'] as $name => $data) {
+				$this->_schema->addIndex($name, $data);
+			}
 		}
+	}
 
-		if (!isset($this->primaryKey) && isset($this->fields['id'])) {
-			$this->primaryKey = 'id';
-		}
+/**
+ * Get the Cake\Database\Schema\Table instance used by this fixture.
+ *
+ * @return Cake\Database\Schema\Table
+ */
+	public function schema() {
+		return $this->_schema;
 	}
 
 /**
@@ -289,6 +273,7 @@ class TestFixture {
 				$nested = $db->useNestedTransactions;
 				$db->useNestedTransactions = false;
 				$result = $db->insertMulti($this->table, $fields, $values);
+				// TODO use Table instance to get primary key.
 				if (
 					$this->primaryKey &&
 					isset($this->fields[$this->primaryKey]['type']) &&
