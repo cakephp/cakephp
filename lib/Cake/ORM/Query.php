@@ -248,10 +248,9 @@ class Query extends DatabaseQuery {
 		foreach ($this->_loadEagerly as $association => $meta) {
 			$contain = $meta['associations'];
 			$alias = $meta['instance']->source()->alias();
+			$keys = isset($keys[$alias]) ? $keys[$alias] : null;
 			$f = $meta['instance']->eagerLoader(
-				$this,
-				$meta['config'] + compact('contain'),
-				isset($keys[$alias]) ? $keys[$alias] : null
+				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
 			);
 			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
 		}

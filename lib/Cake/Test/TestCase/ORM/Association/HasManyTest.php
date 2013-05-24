@@ -116,7 +116,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$callable = $association->eagerLoader(null, [], $keys);
+		$callable = $association->eagerLoader(compact('keys'));
 		$row = ['Author__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
 		$row['Author__Article'] = [
@@ -174,7 +174,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			->with(['id' => 'ASC'])
 			->will($this->returnValue($query));
 
-		$association->eagerLoader(null, [], $keys);
+		$association->eagerLoader(compact('keys'));
 	}
 
 /**
@@ -236,12 +236,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			])
 			->will($this->returnValue($query));
 
-		$association->eagerLoader(null, [
+		$association->eagerLoader([
 			'conditions' => ['Article.id !=' => 3],
 			'sort' => ['title' => 'DESC'],
 			'fields' => ['title', 'author_id'],
-			'contain' => ['Category' => ['fields' => ['a', 'b']]]
-		], $keys);
+			'contain' => ['Category' => ['fields' => ['a', 'b']]],
+			'keys' => $keys
+		]);
 	}
 
 /**
@@ -268,7 +269,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$this->article->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 
-		$association->eagerLoader(null, ['fields' => ['id', 'title']], $keys);
+		$association->eagerLoader(['fields' => ['id', 'title'], 'keys' => $keys]);
 	}
 
 /**
@@ -316,7 +317,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			->with(['Article.author_id in' => $expected])
 			->will($this->returnValue($query));
 
-		$callable = $association->eagerLoader($parent);
+		$callable = $association->eagerLoader(['query' => $parent]);
 		$row = ['Author__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
 		$row['Author__Article'] = [

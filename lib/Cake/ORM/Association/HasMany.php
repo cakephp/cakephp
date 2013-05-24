@@ -19,6 +19,7 @@ namespace Cake\ORM\Association;
 use Cake\ORM\Association;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
+
 /**
  * Represents an N - 1 relationship. Where the target side of the relationship
  * will have one or multiple records per each one in the source side.
@@ -84,23 +85,63 @@ class HasMany extends Association {
 		return $this->_sort;
 	}
 
+/**
+ * Not implemented
+ *
+ * @return boolean false
+ */
 	public function attachTo(Query $query, array $options = []) {
 		return false;
 	}
 
+/**
+ * Returns true if the eager loading process will require a set of parent table's
+ * primary keys in order to use them as a filter in the finder query.
+ *
+ * @return boolean true if a list of keys will be required
+ */
 	public function requiresKeys($options = []) {
 		$strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
 		return $strategy !== parent::STRATEGY_SUBQUERY;
 	}
 
-	public function eagerLoader($parentQuery, $options = [], $parentKeys = null) {
+/**
+ * Eager loads a list of records in the target table that are related to another
+ * set of records in the source table. Source records can specified in two ways:
+ * first one is by passing a Query object setup to find on the source table and
+ * the other way is by explicitly passing an array of primary key values from
+ * the source table.
+ *
+ * The required way of passing related source records is controlled by "strategy"
+ * By default the subquery strategy is used, which requires a query on the source
+ * When using the select strategy, the list of primary keys will be used.
+ *
+ * Returns a closure that should be run for each record returned in an specific
+ * Query. This callable will be responsible for injecting the fields that are
+ * related to each specific passed row.
+ *
+ * Options array accept the following keys:
+ *
+ * - query: Query object setup to find the source table records
+ * - keys: List of primary key values from the source table
+ * - foreignKey: The name of the field used to relate both tables
+ * - conditions: List of conditions to be passed to the query where() method
+ * - sort: The direction in which the records should be returned
+ * - fields: List of fields to select from the target table
+ * - contain: List of related tables to eager load associated to the target table
+ * - strategy: The name of strategy to use for finding target table records
+ *
+ * @param array $options
+ * @return \Closure
+ */
+	public function eagerLoader(array $options) {
 		$options += [
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
 			'sort' => $this->sort(),
 			'strategy' => $this->strategy()
 		];
-		$fetchQuery = $this->_buildQuery($parentQuery, $options, $parentKeys);
+		$fetchQuery = $this->_buildQuery($options);
 		$resultMap = [];
 		$key = $options['foreignKey'];
 		foreach ($fetchQuery->execute() as $result) {
@@ -122,7 +163,15 @@ class HasMany extends Association {
 		};
 	}
 
-	protected function _buildQuery($parentQuery, $options, $parentKeys = null) {
+/**
+ * Auxiliary function to construct a new Query object to return all the records
+ * in the target table that are associated to those specified in $options from
+ * the source table
+ *
+ * @param array $options options accepted by eagerLoader()
+ * @return Cake\ORM\Query
+ */
+	protected function _buildQuery($options) {
 		$target = $this->target();
 		$alias = $target->alias();
 		$fetchQuery = $target->find('all');
@@ -130,7 +179,7 @@ class HasMany extends Association {
 		$key = sprintf('%s.%s', $alias, $options['foreignKey']);
 
 		$filter = ($options['strategy'] == parent::STRATEGY_SUBQUERY) ?
-			$this->_buildSubquery($parentQuery, $key) : $parentKeys;
+			$this->_buildSubquery($options['query'], $key) : $options['keys'];
 
 		$fetchQuery
 			->where($options['conditions'])
