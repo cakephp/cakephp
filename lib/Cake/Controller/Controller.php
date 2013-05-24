@@ -634,7 +634,7 @@ class Controller extends Object implements CakeEventListener {
 		$this->_mergeControllerVars();
 		if ($this->uses) {
 			$this->uses = (array)$this->uses;
-			list(, $this->modelClass) = pluginSplit(current($this->uses));
+			list(, $this->modelClass) = pluginSplit(reset($this->uses));
 		}
 		$this->Components->init($this);
 		return true;

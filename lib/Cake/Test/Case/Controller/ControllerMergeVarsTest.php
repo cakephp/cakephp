@@ -250,4 +250,17 @@ class ControllerMergeVarsTest extends CakeTestCase {
 
 		$this->assertFalse(isset($Controller->Session));
 	}
+
+/**
+ * Ensure that $modelClass is correct even when Controller::$uses
+ * has been iterated, eg: by a Component, or event handlers.
+ */
+	public function testMergeVarsModelClass() {
+		$Controller = new MergeVariablescontroller();
+		$Controller->uses = array('Test', 'TestAlias');
+		$lastModel = end($Controller->uses);
+		$Controller->constructClasses();
+		$this->assertEquals($Controller->uses[0], $Controller->modelClass);
+	}
+
 }
