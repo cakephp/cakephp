@@ -80,6 +80,20 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests requiresKeys() method
+ *
+ * @return void
+ */
+	public function testRequiresKeys() {
+		$assoc = new HasMany('Test');
+		$this->assertFalse($assoc->requiresKeys());
+		$assoc->strategy(HasMany::STRATEGY_SELECT);
+		$this->assertTrue($assoc->requiresKeys());
+		$assoc->strategy(HasMany::STRATEGY_SUBQUERY);
+		$this->assertFalse($assoc->requiresKeys());
+	}
+
+/**
  * Test the eager loader method with no extra options
  *
  * @return void
