@@ -16,14 +16,14 @@
  * @since         CakePHP(tm) v 2.4
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('SyslogLog', 'Log/Engine');
+namespace Cake\Test\TestCase\Log\Engine;
+
+use Cake\TestSuite\TestCase;
 
 /**
  * SyslogLogTest class
- *
- * @package       Cake.Test.Case.Log.Engine
  */
-class SyslogLogTest extends CakeTestCase {
+class SyslogLogTest extends TestCase {
 
 /**
  * Tests that the connection to the logger is open with the right arguments
@@ -31,11 +31,11 @@ class SyslogLogTest extends CakeTestCase {
  * @return void
  */
 	public function testOpenLog() {
-		$log = $this->getMock('SyslogLog', array('_open', '_write'));
+		$log = $this->getMock('Cake\Log\Engine\SyslogLog', array('_open', '_write'));
 		$log->expects($this->once())->method('_open')->with('', LOG_ODELAY, LOG_USER);
 		$log->write('debug', 'message');
 
-		$log = $this->getMock('SyslogLog', array('_open', '_write'));
+		$log = $this->getMock('Cake\Log\Engine\SyslogLog', array('_open', '_write'));
 		$log->config(array(
 			'prefix' => 'thing',
 			'flag' => LOG_NDELAY,
@@ -54,7 +54,7 @@ class SyslogLogTest extends CakeTestCase {
  * @return void
  */
 	public function testWriteOneLine($type, $expected) {
-		$log = $this->getMock('SyslogLog', array('_open', '_write'));
+		$log = $this->getMock('Cake\Log\Engine\SyslogLog', array('_open', '_write'));
 		$log->expects($this->once())->method('_write')->with($expected, $type . ': Foo');
 		$log->write($type, 'Foo');
 	}
@@ -65,7 +65,7 @@ class SyslogLogTest extends CakeTestCase {
  * @return void
  */
 	public function testWriteMultiLine() {
-		$log = $this->getMock('SyslogLog', array('_open', '_write'));
+		$log = $this->getMock('Cake\Log\Engine\SyslogLog', array('_open', '_write'));
 		$log->expects($this->at(1))->method('_write')->with(LOG_DEBUG, 'debug: Foo');
 		$log->expects($this->at(2))->method('_write')->with(LOG_DEBUG, 'debug: Bar');
 		$log->expects($this->exactly(2))->method('_write');

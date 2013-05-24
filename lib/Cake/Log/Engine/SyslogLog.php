@@ -17,20 +17,19 @@
  * @since         CakePHP(tm) v 2.4
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Log\Engine;
 
-App::uses('BaseLog', 'Log/Engine');
+use Cake\Log\Engine\BaseLog;
 
 /**
  * Syslog stream for Logging. Writes logs to the system logger
- *
- * @package       Cake.Log.Engine
  */
 class SyslogLog extends BaseLog {
 
 /**
  *
  * By default messages are formatted as:
- * 	type: message
+ * type: message
  *
  * To override the log format (e.g. to add your own info) define the format key when configuring
  * this logger
