@@ -475,7 +475,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public function testLoadDisabled() {
 		$Apple = new Apple();
-		$this->assertSame(array(), $Apple->Behaviors->loaded());
+		$this->assertSame(array('CounterCache'), $Apple->Behaviors->loaded());
 
 		$Apple->Behaviors->load('Translate', array('enabled' => false));
 		$this->assertTrue($Apple->Behaviors->loaded('Translate'));
@@ -487,10 +487,10 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public function testLoadAlias() {
 		$Apple = new Apple();
-		$this->assertSame(array(), $Apple->Behaviors->loaded());
+		$this->assertSame(array('CounterCache'), $Apple->Behaviors->loaded());
 
 		$Apple->Behaviors->load('Test', array('className' => 'TestAlias', 'somesetting' => true));
-		$this->assertSame(array('Test'), $Apple->Behaviors->loaded());
+		$this->assertSame(array('CounterCache', 'Test'), $Apple->Behaviors->loaded());
 		$this->assertInstanceOf('TestAliasBehavior', $Apple->Behaviors->Test);
 		$this->assertTrue($Apple->Behaviors->Test->settings['Apple']['somesetting']);
 
@@ -504,7 +504,7 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$this->assertInstanceOf('TestPluginPersisterOneBehavior', $Apple->Behaviors->SomeOther);
 
 		$result = $Apple->Behaviors->loaded();
-		$this->assertEquals(array('Test', 'SomeOther'), $result, 'loaded() results are wrong.');
+		$this->assertEquals(array('CounterCache', 'Test', 'SomeOther'), $result, 'loaded() results are wrong.');
 		App::build();
 		CakePlugin::unload();
 	}
@@ -516,18 +516,18 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public function testBehaviorBinding() {
 		$Apple = new Apple();
-		$this->assertSame(array(), $Apple->Behaviors->loaded());
+		$this->assertSame(array('CounterCache'), $Apple->Behaviors->loaded());
 
 		$Apple->Behaviors->attach('Test', array('key' => 'value'));
-		$this->assertSame(array('Test'), $Apple->Behaviors->loaded());
+		$this->assertSame(array('CounterCache', 'Test'), $Apple->Behaviors->loaded());
 		$this->assertEquals('testbehavior', strtolower(get_class($Apple->Behaviors->Test)));
 		$expected = array('beforeFind' => 'on', 'afterFind' => 'off', 'key' => 'value');
 		$this->assertEquals($expected, $Apple->Behaviors->Test->settings['Apple']);
 		$this->assertEquals(array('priority', 'Apple'), array_keys($Apple->Behaviors->Test->settings));
 
-		$this->assertSame($Apple->Sample->Behaviors->loaded(), array());
+		$this->assertSame($Apple->Sample->Behaviors->loaded(), array('CounterCache'));
 		$Apple->Sample->Behaviors->attach('Test', array('key2' => 'value2'));
-		$this->assertSame($Apple->Sample->Behaviors->loaded(), array('Test'));
+		$this->assertSame(array('CounterCache', 'Test'), $Apple->Sample->Behaviors->loaded());
 		$this->assertEquals(array('beforeFind' => 'on', 'afterFind' => 'off', 'key2' => 'value2'), $Apple->Sample->Behaviors->Test->settings['Sample']);
 
 		$this->assertEquals(array('priority', 'Apple', 'Sample'), array_keys($Apple->Behaviors->Test->settings));
@@ -583,17 +583,17 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$Apple = new Apple();
 		$Apple->Behaviors->attach('Plugin.Test');
 		$this->assertTrue(isset($Apple->Behaviors->Test), 'Missing behavior');
-		$this->assertEquals(array('Test'), $Apple->Behaviors->loaded());
+		$this->assertEquals(array('CounterCache', 'Test'), $Apple->Behaviors->loaded());
 
 		$Apple->Behaviors->detach('Plugin.Test');
-		$this->assertEquals(array(), $Apple->Behaviors->loaded());
+		$this->assertEquals(array('CounterCache'), $Apple->Behaviors->loaded());
 
 		$Apple->Behaviors->attach('Plugin.Test');
 		$this->assertTrue(isset($Apple->Behaviors->Test), 'Missing behavior');
-		$this->assertEquals(array('Test'), $Apple->Behaviors->loaded());
+		$this->assertEquals(array('CounterCache', 'Test'), $Apple->Behaviors->loaded());
 
 		$Apple->Behaviors->detach('Test');
-		$this->assertEquals(array(), $Apple->Behaviors->loaded());
+		$this->assertEquals(array('CounterCache'), $Apple->Behaviors->loaded());
 	}
 
 /**
@@ -614,31 +614,31 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public function testBehaviorToggling() {
 		$Apple = new Apple();
-		$this->assertSame($Apple->Behaviors->enabled(), array());
+		$this->assertSame(array('CounterCache'), $Apple->Behaviors->enabled());
 
 		$Apple->Behaviors->init('Apple', array('Test' => array('key' => 'value')));
-		$this->assertSame($Apple->Behaviors->enabled(), array('Test'));
+		$this->assertSame(array('CounterCache', 'Test'), $Apple->Behaviors->enabled());
 
 		$Apple->Behaviors->disable('Test');
-		$this->assertSame(array('Test'), $Apple->Behaviors->loaded());
-		$this->assertSame($Apple->Behaviors->enabled(), array());
+		$this->assertSame(array('CounterCache', 'Test'), $Apple->Behaviors->loaded());
+		$this->assertSame(array('CounterCache'), $Apple->Behaviors->enabled());
 
 		$Apple->Sample->Behaviors->attach('Test');
-		$this->assertSame($Apple->Sample->Behaviors->enabled('Test'), true);
-		$this->assertSame($Apple->Behaviors->enabled(), array());
+		$this->assertTrue($Apple->Sample->Behaviors->enabled('Test'));
+		$this->assertSame(array('CounterCache'), $Apple->Behaviors->enabled());
 
 		$Apple->Behaviors->enable('Test');
-		$this->assertSame($Apple->Behaviors->loaded('Test'), true);
-		$this->assertSame($Apple->Behaviors->enabled(), array('Test'));
+		$this->assertTrue($Apple->Behaviors->loaded('Test'));
+		$this->assertSame(array('CounterCache', 'Test'), $Apple->Behaviors->enabled());
 
 		$Apple->Behaviors->disable('Test');
-		$this->assertSame($Apple->Behaviors->enabled(), array());
+		$this->assertSame(array('CounterCache'), $Apple->Behaviors->enabled());
 		$Apple->Behaviors->attach('Test', array('enabled' => true));
-		$this->assertSame($Apple->Behaviors->enabled(), array('Test'));
+		$this->assertSame(array('CounterCache', 'Test'), $Apple->Behaviors->enabled());
 		$Apple->Behaviors->attach('Test', array('enabled' => false));
-		$this->assertSame($Apple->Behaviors->enabled(), array());
+		$this->assertSame(array('CounterCache'), $Apple->Behaviors->enabled());
 		$Apple->Behaviors->detach('Test');
-		$this->assertSame($Apple->Behaviors->enabled(), array());
+		$this->assertSame(array('CounterCache'), $Apple->Behaviors->enabled());
 	}
 
 /**
@@ -1122,6 +1122,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	public function testBehaviorAttachAndDetach() {
 		$Sample = new Sample();
+		$Sample->Behaviors->unload('CounterCache');
 		$Sample->actsAs = array('Test3' => array('bar'), 'Test2' => array('foo', 'bar'));
 		$Sample->Behaviors->init($Sample->alias, $Sample->actsAs);
 		$Sample->Behaviors->attach('Test2');

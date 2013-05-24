@@ -4638,7 +4638,6 @@ class ModelReadTest extends BaseModelTest {
 			'conditions' => '',
 			'fields' => '',
 			'order' => '',
-			'counterCache' => ''
 		);
 		$this->assertEquals($expected, $TestModel2->belongsTo['FeatureSet']);
 

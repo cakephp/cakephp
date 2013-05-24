@@ -310,11 +310,6 @@ class Model extends Object implements CakeEventListener {
  * - `fields`: A list of fields to be retrieved when the associated model data is
  *   fetched. Returns all fields by default.
  * - `order`: An SQL fragment that defines the sorting order for the returned associated rows.
- * - `counterCache`: If set to true the associated Model will automatically increase or
- *   decrease the "[singular_model_name]_count" field in the foreign table whenever you do
- *   a save() or delete(). If its a string then its the field name to use. The value in the
- *   counter field represents the number of related rows.
- * - `counterScope`: Optional conditions array to use for updating counter cache field.
  *
  * @var array
  * @link http://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#belongsto
@@ -483,7 +478,7 @@ class Model extends Object implements CakeEventListener {
  * @var array
  * @link http://book.cakephp.org/2.0/en/models/behaviors.html#using-behaviors
  */
-	public $actsAs = null;
+	public $actsAs = array('CounterCache');
 
 /**
  * Holds the Behavior objects currently bound to this model.
@@ -553,7 +548,7 @@ class Model extends Object implements CakeEventListener {
  * @var array
  */
 	protected $_associationKeys = array(
-		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
+		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order'),
 		'hasOne' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'dependent'),
 		'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
 		'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')
@@ -1606,7 +1601,6 @@ class Model extends Object implements CakeEventListener {
  *   - fieldList: An array of fields you want to allow for saving.
  *   - callbacks: Set to false to disable callbacks. Using 'before' or 'after'
  *      will enable only those callbacks.
- *   - `counterCache`: Boolean to control updating of counter caches (if any)
  *
  * @param array $fieldList List of fields to allow to be saved
  * @return mixed On success Model::$data if its not empty or true, false on failure
@@ -1615,7 +1609,7 @@ class Model extends Object implements CakeEventListener {
 	public function save($data = null, $validate = true, $fieldList = array()) {
 		$defaults = array(
 			'validate' => true, 'fieldList' => array(),
-			'callbacks' => true, 'counterCache' => true
+			'callbacks' => true
 		);
 		$_whitelist = $this->whitelist;
 		$fields = array();
@@ -1652,12 +1646,6 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
-		$exists = $this->exists();
-		$dateFields = array('modified', 'updated');
-
-		if (!$exists) {
-			$dateFields[] = 'created';
-		}
 		if (isset($this->data[$this->alias])) {
 			$fields = array_keys($this->data[$this->alias]);
 		}
@@ -1667,6 +1655,13 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$db = $this->getDataSource();
+
+		$exists = $this->exists();
+		$dateFields = array('modified', 'updated');
+
+		if (!$exists) {
+			$dateFields[] = 'created';
+		}
 
 		foreach ($dateFields as $updateCol) {
 			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
@@ -1699,30 +1694,7 @@ class Model extends Object implements CakeEventListener {
 		if (empty($this->data[$this->alias][$this->primaryKey])) {
 			unset($this->data[$this->alias][$this->primaryKey]);
 		}
-		$fields = $values = array();
-
-		foreach ($this->data as $n => $v) {
-			if (isset($this->hasAndBelongsToMany[$n])) {
-				if (isset($v[$n])) {
-					$v = $v[$n];
-				}
-				$joined[$n] = $v;
-			} else {
-				if ($n === $this->alias) {
-					foreach (array('created', 'updated', 'modified') as $field) {
-						if (array_key_exists($field, $v) && empty($v[$field])) {
-							unset($v[$field]);
-						}
-					}
-
-					foreach ($v as $x => $y) {
-						if ($this->hasField($x) && (empty($this->whitelist) || in_array($x, $this->whitelist))) {
-							list($fields[], $values[]) = array($x, $y);
-						}
-					}
-				}
-			}
-		}
+		list($fields, $values, $joined) = $this->getUpdateFields();
 		$count = count($fields);
 
 		if (!$exists && $count > 0) {
@@ -1732,8 +1704,6 @@ class Model extends Object implements CakeEventListener {
 		$created = false;
 
 		if ($count > 0) {
-			$cache = $this->_prepareUpdateFields(array_combine($fields, $values));
-
 			if (!empty($this->id)) {
 				$success = (bool)$db->update($this, $fields, $values);
 			} else {
@@ -1752,21 +1722,17 @@ class Model extends Object implements CakeEventListener {
 					$created = true;
 				}
 			}
-
-			if ($success && $options['counterCache'] && !empty($this->belongsTo)) {
-				$this->updateCounterCache($cache, $created);
-			}
 		}
 
 		if (!empty($joined) && $success === true) {
 			$this->_saveMulti($joined, $this->id, $db);
 		}
 
-		if ($success && $count === 0) {
-			$success = false;
+		if ($count === 0) {
+			return false;
 		}
 
-		if ($success && $count > 0) {
+		if ($success) {
 			if (!empty($this->data)) {
 				if ($created) {
 					$this->data[$this->alias][$this->primaryKey] = $this->id;
@@ -1785,6 +1751,40 @@ class Model extends Object implements CakeEventListener {
 		}
 		$this->whitelist = $_whitelist;
 		return $success;
+	}
+
+/**
+ * Helper method to extract the fields and values to update from `$this->data`
+ *
+ * @return array Array with fields, values and habtm data
+ */
+	public function getUpdateFields() {
+		$fields = $values = $joined = array();
+
+		foreach ($this->data as $n => $v) {
+			if (isset($this->hasAndBelongsToMany[$n])) {
+				if (isset($v[$n])) {
+					$v = $v[$n];
+				}
+				$joined[$n] = $v;
+				continue;
+			}
+
+			if ($n === $this->alias) {
+				foreach (array('created', 'updated', 'modified') as $field) {
+					if (array_key_exists($field, $v) && empty($v[$field])) {
+						unset($v[$field]);
+					}
+				}
+
+				foreach ($v as $x => $y) {
+					if ($this->hasField($x) && (empty($this->whitelist) || in_array($x, $this->whitelist))) {
+						list($fields[], $values[]) = array($x, $y);
+					}
+				}
+			}
+		}
+		return array($fields, $values, $joined);
 	}
 
 /**
@@ -1916,103 +1916,6 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Updates the counter cache of belongsTo associations after a save or delete operation
- *
- * @param array $keys Optional foreign key data, defaults to the information $this->data
- * @param boolean $created True if a new record was created, otherwise only associations with
- *   'counterScope' defined get updated
- * @return void
- */
-	public function updateCounterCache($keys = array(), $created = false) {
-		$keys = empty($keys) ? $this->data[$this->alias] : $keys;
-		$keys['old'] = isset($keys['old']) ? $keys['old'] : array();
-
-		foreach ($this->belongsTo as $parent => $assoc) {
-			if (!empty($assoc['counterCache'])) {
-				if (!is_array($assoc['counterCache'])) {
-					if (isset($assoc['counterScope'])) {
-						$assoc['counterCache'] = array($assoc['counterCache'] => $assoc['counterScope']);
-					} else {
-						$assoc['counterCache'] = array($assoc['counterCache'] => array());
-					}
-				}
-
-				$foreignKey = $assoc['foreignKey'];
-				$fkQuoted = $this->escapeField($assoc['foreignKey']);
-
-				foreach ($assoc['counterCache'] as $field => $conditions) {
-					if (!is_string($field)) {
-						$field = Inflector::underscore($this->alias) . '_count';
-					}
-					if (!$this->{$parent}->hasField($field)) {
-						continue;
-					}
-					if ($conditions === true) {
-						$conditions = array();
-					} else {
-						$conditions = (array)$conditions;
-					}
-
-					if (!array_key_exists($foreignKey, $keys)) {
-						$keys[$foreignKey] = $this->field($foreignKey);
-					}
-					$recursive = (empty($conditions) ? -1 : 0);
-
-					if (isset($keys['old'][$foreignKey])) {
-						if ($keys['old'][$foreignKey] != $keys[$foreignKey]) {
-							$conditions[$fkQuoted] = $keys['old'][$foreignKey];
-							$count = intval($this->find('count', compact('conditions', 'recursive')));
-
-							$this->{$parent}->updateAll(
-								array($field => $count),
-								array($this->{$parent}->escapeField() => $keys['old'][$foreignKey])
-							);
-						}
-					}
-					$conditions[$fkQuoted] = $keys[$foreignKey];
-
-					if ($recursive === 0) {
-						$conditions = array_merge($conditions, (array)$conditions);
-					}
-					$count = intval($this->find('count', compact('conditions', 'recursive')));
-
-					$this->{$parent}->updateAll(
-						array($field => $count),
-						array($this->{$parent}->escapeField() => $keys[$foreignKey])
-					);
-				}
-			}
-		}
-	}
-
-/**
- * Helper method for `Model::updateCounterCache()`. Checks the fields to be updated for
- *
- * @param array $data The fields of the record that will be updated
- * @return array Returns updated foreign key values, along with an 'old' key containing the old
- *     values, or empty if no foreign keys are updated.
- */
-	protected function _prepareUpdateFields($data) {
-		$foreignKeys = array();
-		foreach ($this->belongsTo as $assoc => $info) {
-			if ($info['counterCache']) {
-				$foreignKeys[$assoc] = $info['foreignKey'];
-			}
-		}
-		$included = array_intersect($foreignKeys, array_keys($data));
-
-		if (empty($included) || empty($this->id)) {
-			return array();
-		}
-		$old = $this->find('first', array(
-			'conditions' => array($this->alias . '.' . $this->primaryKey => $this->id),
-			'fields' => array_values($included),
-			'recursive' => -1
-		));
-		return array_merge($data, array('old' => $old[$this->alias]));
-	}
-
-/**
  * Backwards compatible passthrough method for:
  * saveMany(), validateMany(), saveAssociated() and validateAssociated()
  *
@@ -2036,7 +1939,6 @@ class Model extends Object implements CakeEventListener {
  *   }}}
  * - `deep`: See saveMany/saveAssociated
  * - `callbacks`: See Model::save()
- * - `counterCache`: See Model::save()
  *
  * @param array $data Record data to save. This can be either a numerically-indexed array (for saving multiple
  *     records of the same type), or an array indexed by association name.
@@ -2073,7 +1975,6 @@ class Model extends Object implements CakeEventListener {
  * - `fieldList`: Equivalent to the $fieldList parameter in Model::save()
  * - `deep`: If set to true, all associated data will be saved as well.
  * - `callbacks`: See Model::save()
- * - `counterCache`: See Model::save()
  *
  * @param array $data Record data to save. This should be a numerically-indexed array
  * @param array $options Options to use when saving record data, See $options above.
@@ -2188,7 +2089,6 @@ class Model extends Object implements CakeEventListener {
  *   }}}
  * - `deep`: If set to true, not only directly associated data is saved, but deeper nested associated data as well.
  * - `callbacks`: See Model::save()
- * - `counterCache`: See Model::save()
  *
  * @param array $data Record data to save. This should be an array indexed by association name.
  * @param array $options Options to use when saving record data, See $options above.
@@ -2419,29 +2319,10 @@ class Model extends Object implements CakeEventListener {
 		$this->_deleteLinks($id);
 		$this->id = $id;
 
-		if (!empty($this->belongsTo)) {
-			foreach ($this->belongsTo as $assoc) {
-				if (empty($assoc['counterCache'])) {
-					continue;
-				}
-
-				$keys = $this->find('first', array(
-					'fields' => $this->_collectForeignKeys(),
-					'conditions' => array($this->alias . '.' . $this->primaryKey => $id),
-					'recursive' => -1,
-					'callbacks' => false
-				));
-				break;
-			}
-		}
-
 		if (!$this->getDataSource()->delete($this, array($this->alias . '.' . $this->primaryKey => $id))) {
 			return false;
 		}
 
-		if (!empty($keys[$this->alias])) {
-			$this->updateCounterCache($keys[$this->alias]);
-		}
 		$this->getEventManager()->dispatch(new CakeEvent('Model.afterDelete', $this));
 		$this->_clearCache();
 		$this->id = false;
@@ -2575,23 +2456,6 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Collects foreign keys from associations.
- *
- * @param string $type
- * @return array
- */
-	protected function _collectForeignKeys($type = 'belongsTo') {
-		$result = array();
-
-		foreach ($this->{$type} as $assoc => $data) {
-			if (isset($data['foreignKey']) && is_string($data['foreignKey'])) {
-				$result[$assoc] = $data['foreignKey'];
-			}
-		}
-		return $result;
-	}
-
-/**
  * Returns true if a record with particular ID exists.
  *
  * If $id is not passed it calls `Model::getID()` to obtain the current record ID,
@@ -2712,7 +2576,7 @@ class Model extends Object implements CakeEventListener {
  *
  * Model::_readDataSource() is used by all find() calls to read from the data source and can be overloaded to allow
  * caching of datasource calls.
- * 
+ *
  * {{{
  * protected function _readDataSource($type, $query) {
  * 		$cacheName = md5(json_encode($query));
@@ -2726,7 +2590,7 @@ class Model extends Object implements CakeEventListener {
  * 		return $results;
  * }
  * }}}
- * 
+ *
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
  * @return array
