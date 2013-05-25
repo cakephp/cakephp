@@ -578,8 +578,19 @@ SQL;
 
 /**
  * Test truncateSql()
+ *
+ * @return void
  */
 	public function testTruncateSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = new Table('articles');
+		$result = $table->truncateSql($connection);
+		$this->assertCount(1, $result);
+		$this->assertEquals('TRUNCATE TABLE `articles`', $result[0]);
 	}
 
 /**

@@ -371,7 +371,7 @@ class Table {
  */
 	public function truncateSql(Connection $connection) {
 		$dialect = $connection->driver()->schemaDialect();
-		return $dialect->truncateSql($this);
+		return $dialect->truncateTableSql($this);
 	}
 
 }

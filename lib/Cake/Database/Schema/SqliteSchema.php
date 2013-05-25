@@ -281,4 +281,18 @@ class SqliteSchema {
 		return [sprintf('DROP TABLE "%s"', $table->name())];
 	}
 
+/**
+ * Generate the SQL to truncate a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return array SQL statements to drop truncate a table.
+ */
+	public function truncateTableSql(Table $table) {
+		$name = $table->name();
+		return [
+			sprintf('DELETE FROM sqlite_sequence WHERE name="%s"', $name),
+			sprintf('DELETE FROM "%s"', $name)
+		];
+	}
+
 }

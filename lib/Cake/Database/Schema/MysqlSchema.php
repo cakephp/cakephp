@@ -169,6 +169,16 @@ class MysqlSchema {
 	}
 
 /**
+ * Generate the SQL to truncate a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return array TRUNCATE TABLE sql
+ */
+	public function truncateTableSql(Table $table) {
+		return [sprintf("TRUNCATE TABLE `%s`", $table->name())];
+	}
+
+/**
  * Generate the SQL to drop a table.
  *
  * @param Cake\Database\Schema\Table $table Table instance
