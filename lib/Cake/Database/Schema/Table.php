@@ -349,4 +349,17 @@ class Table {
 		return $dialect->createTableSql($this, $columns, $constraints, $indexes);
 	}
 
+/**
+ * Generate the SQL to drop a table.
+ *
+ * Uses the connection to access the schema dialect to generate platform
+ * specific SQL.
+ *
+ * @param Connection $connection The connection to generate SQL for.
+ * @return string SQL to drop a table.
+ */
+	public function dropTableSql(Connection $connection) {
+		$dialect = $connection->driver()->schemaDialect();
+		return $dialect->dropTableSql($this);
+	}
 }

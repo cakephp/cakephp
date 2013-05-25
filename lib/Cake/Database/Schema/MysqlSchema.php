@@ -169,6 +169,16 @@ class MysqlSchema {
 	}
 
 /**
+ * Generate the SQL to drop a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return string DROP TABLE sql
+ */
+	public function dropTableSql(Table $table) {
+		return sprintf("DROP TABLE `%s`", $table->name());
+	}
+
+/**
  * Generate the SQL to create a table.
  *
  * @param Cake\Database\Schema\Table $table Table instance
@@ -177,7 +187,7 @@ class MysqlSchema {
  * @param array $indexes The indexes for the table.
  * @return array Complete CREATE TABLE statement(s)
  */
-	public function createTableSql($table, $columns, $constraints, $indexes) {
+	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = implode(",\n", array_merge($columns, $constraints, $indexes));
 		return [sprintf("CREATE TABLE `%s` (\n%s\n)", $table->name(), $content)];
 	}
