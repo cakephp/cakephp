@@ -278,7 +278,7 @@ class SqliteSchema {
  * @return string DROP TABLE sql
  */
 	public function dropTableSql(Table $table) {
-		return sprintf('DROP TABLE "%s"', $table->name());
+		return [sprintf('DROP TABLE "%s"', $table->name())];
 	}
 
 }

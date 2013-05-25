@@ -572,7 +572,8 @@ SQL;
 
 		$table = new Table('articles');
 		$result = $table->dropSql($connection);
-		$this->assertEquals('DROP TABLE `articles`', $result);
+		$this->assertCount(1, $result);
+		$this->assertEquals('DROP TABLE `articles`', $result[0]);
 	}
 
 /**

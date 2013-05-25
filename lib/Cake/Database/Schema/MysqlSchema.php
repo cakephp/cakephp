@@ -172,10 +172,10 @@ class MysqlSchema {
  * Generate the SQL to drop a table.
  *
  * @param Cake\Database\Schema\Table $table Table instance
- * @return string DROP TABLE sql
+ * @return array DROP TABLE sql
  */
 	public function dropTableSql(Table $table) {
-		return sprintf("DROP TABLE `%s`", $table->name());
+		return [sprintf("DROP TABLE `%s`", $table->name())];
 	}
 
 /**
