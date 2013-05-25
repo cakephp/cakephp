@@ -32,6 +32,13 @@ class Connection {
 	use TypeConverterTrait;
 
 /**
+ * The configuration name used for this connection.
+ *
+ * @var string
+ */
+	public $configKeyName = null;
+
+/**
  * Contains the configuration params for this connection
  *
  * @var array
