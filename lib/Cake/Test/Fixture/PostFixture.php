@@ -41,13 +41,16 @@ class PostFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer'),
 		'author_id' => array('type' => 'integer', 'null' => false),
 		'title' => array('type' => 'string', 'null' => false),
 		'body' => 'text',
 		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'constraints' => [
+			'primary' => ['type' => 'primary', 'columns' => ['id']]
+		]
 	);
 
 /**
