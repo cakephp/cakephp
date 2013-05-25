@@ -335,17 +335,36 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testCreate() {
-		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
-		$Fixture = new TestFixtureTestFixture();
-		$this->criticDb->expects($this->atLeastOnce())->method('execute');
-		$this->criticDb->expects($this->atLeastOnce())->method('createSchema');
-		$return = $Fixture->create($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
-		$this->assertTrue($return);
+		$fixture = new ArticleFixture();
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+		$table->expects($this->once())
+			->method('createTableSql')
+			->with($db)
+			->will($this->returnValue(['sql', 'sql']));
+		$fixture->schema($table);
 
-		unset($Fixture->fields);
-		$return = $Fixture->create($this->criticDb);
-		$this->assertFalse($return);
+		$db->expects($this->exactly(2))->method('execute');
+		$this->assertTrue($fixture->create($db));
+	}
+
+/**
+ * test create method, trigger error
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testCreateError() {
+		$fixture = new ArticleFixture();
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+		$table->expects($this->once())
+			->method('createTableSql')
+			->with($db)
+			->will($this->throwException(new \Exception('oh noes')));
+		$fixture->schema($table);
+
+		$fixture->create($db);
 	}
 
 /**
@@ -354,44 +373,33 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInsert() {
-		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
-		$Fixture = new TestFixtureTestFixture();
-		$this->criticDb->expects($this->atLeastOnce())
-			->method('insertMulti')
-			->will($this->returnCallback(array($this, 'insertCallback')));
+		$fixture = new ArticleFixture();
 
-		$return = $Fixture->insert($this->criticDb);
-		$this->assertTrue(!empty($this->insertMulti));
-		$this->assertTrue($this->criticDb->fullDebug);
-		$this->assertTrue($return);
-		$this->assertEquals('fixture_tests', $this->insertMulti['table']);
-		$this->assertEquals(array('name', 'created'), $this->insertMulti['fields']);
-		$expected = array(
-			array('Gandalf', '2009-04-28 19:20:00'),
-			array('Captain Picard', '2009-04-28 19:20:00'),
-			array('Chewbacca', '2009-04-28 19:20:00')
-		);
-		$this->assertEquals($expected, $this->insertMulti['values']);
-	}
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$query = $this->getMock('Cake\Database\Query', [], [$db]);
+		$db->expects($this->once())
+			->method('newQuery')
+			->will($this->returnValue($query));
 
-/**
- * Helper function to be used as callback and store the parameters of an insertMulti call
- *
- * @param string $table
- * @param string $fields
- * @param string $values
- * @return boolean true
- */
-	public function insertCallback($table, $fields, $values) {
-		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
-		$this->insertMulti['table'] = $table;
-		$this->insertMulti['fields'] = $fields;
-		$this->insertMulti['values'] = $values;
-		$this->insertMulti['fields_values'] = array();
-		foreach ($values as $record) {
-			$this->insertMulti['fields_values'][] = array_combine($fields, $record);
-		}
-		return true;
+		$query->expects($this->once())
+			->method('insert')
+			->with('articles', ['name', 'created'], ['string', 'datetime'])
+			->will($this->returnSelf());
+		$expected = [
+			['Gandalf', '2009-04-28 19:20:00'],
+			['Captain Picard', '2009-04-28 19:20:00'],
+			['Chewbacca', '2009-04-28 19:20:00']
+		];
+		$query->expects($this->once())
+			->method('values')
+			->with($expected)
+			->will($this->returnSelf());
+
+		$query->expects($this->once())
+			->method('execute')
+			->will($this->returnValue(true));
+
+		$this->assertTrue($fixture->insert($db));
 	}
 
 /**
@@ -400,41 +408,34 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInsertStrings() {
-		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
-		$Fixture = new StringsTestFixture();
-		$this->criticDb->expects($this->atLeastOnce())
-			->method('insertMulti')
-			->will($this->returnCallback(array($this, 'insertCallback')));
+		$fixture = new StringsTestFixture();
 
-		$return = $Fixture->insert($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
-		$this->assertTrue($return);
-		$this->assertEquals('strings', $this->insertMulti['table']);
-		$this->assertEquals(array('name', 'email', 'age'), array_values($this->insertMulti['fields']));
-		$expected = array(
-			array('Mark Doe', 'mark.doe@email.com', null),
-			array('John Doe', 'john.doe@email.com', 20),
-			array('Jane Doe', 'jane.doe@email.com', 30),
-		);
-		$this->assertEquals($expected, $this->insertMulti['values']);
-		$expected = array(
-			array(
-				'name' => 'Mark Doe',
-				'email' => 'mark.doe@email.com',
-				'age' => null
-			),
-			array(
-				'name' => 'John Doe',
-				'email' => 'john.doe@email.com',
-				'age' => 20
-			),
-			array(
-				'name' => 'Jane Doe',
-				'email' => 'jane.doe@email.com',
-				'age' => 30
-			),
-		);
-		$this->assertEquals($expected, $this->insertMulti['fields_values']);
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$query = $this->getMock('Cake\Database\Query', [], [$db]);
+		$db->expects($this->once())
+			->method('newQuery')
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())
+			->method('insert')
+			->with('strings', ['name', 'email', 'age'], ['string', 'string', 'integer'])
+			->will($this->returnSelf());
+
+		$expected = [
+			['Mark Doe', 'mark.doe@email.com', null],
+			['John Doe', 'john.doe@email.com', 20],
+			['Jane Doe', 'jane.doe@email.com', 30],
+		];
+		$query->expects($this->once())
+			->method('values')
+			->with($expected)
+			->will($this->returnSelf());
+
+		$query->expects($this->once())
+			->method('execute')
+			->will($this->returnValue(true));
+
+		$this->assertTrue($fixture->insert($db));
 	}
 
 /**

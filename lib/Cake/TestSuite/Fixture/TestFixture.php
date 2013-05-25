@@ -171,25 +171,31 @@ class TestFixture {
 	}
 
 /**
- * Get the Cake\Database\Schema\Table instance used by this fixture.
+ * Get/Set the Cake\Database\Schema\Table instance used by this fixture.
  *
- * @return Cake\Database\Schema\Table
+ * @param Cake\Database\Schema\Table $schema The table to set.
+ * @return Cake\Database\Schema\Table|null
  */
-	public function schema() {
+	public function schema(Table $schema = null) {
+		if ($schema) {
+			$this->_schema = $schema;
+			return;
+		}
 		return $this->_schema;
 	}
 
 /**
  * Run before all tests execute, should return SQL statement to create table for this fixture could be executed successfully.
  *
- * @param DboSource $db An instance of the database object used to create the fixture table
+ * @param Connection $db An instance of the database object used to create the fixture table
  * @return boolean True on success, false on failure
  */
-	public function create($db) {
-		if (!isset($this->fields) || empty($this->fields)) {
+	public function create(Connection $db) {
+		if (empty($this->_schema)) {
 			return false;
 		}
 
+		// TODO figure this out as Table does not have tableOptions completed.
 		if (empty($this->fields['tableParameters']['engine'])) {
 			$canUseMemory = true;
 			foreach ($this->fields as $args) {
@@ -212,11 +218,14 @@ class TestFixture {
 				$this->fields['tableParameters']['engine'] = 'MEMORY';
 			}
 		}
-		$this->Schema->build(array($this->table => $this->fields));
+
 		try {
-			$db->execute($db->createSchema($this->Schema), array('log' => false));
+			$queries = $this->_schema->createTableSql($db);
+			foreach ($queries as $query) {
+				$db->execute($query);
+			}
 			$this->created[] = $db->configKeyName;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$msg = __d(
 				'cake_dev',
 				'Fixture creation for "%s" failed "%s"',
@@ -254,38 +263,49 @@ class TestFixture {
  * Run before each tests is executed, should return a set of SQL statements to insert records for the table
  * of this fixture could be executed successfully.
  *
- * @param DboSource $db An instance of the database into which the records will be inserted
+ * @param Connection $db An instance of the database into which the records will be inserted
  * @return boolean on success or if there are no records to insert, or false on failure
  */
-	public function insert($db) {
-		if (!isset($this->_insert)) {
-			$values = array();
-			if (isset($this->records) && !empty($this->records)) {
-				$fields = array();
-				foreach ($this->records as $record) {
-					$fields = array_merge($fields, array_keys(array_intersect_key($record, $this->fields)));
-				}
-				$fields = array_unique($fields);
-				$default = array_fill_keys($fields, null);
-				foreach ($this->records as $record) {
-					$values[] = array_values(array_merge($default, $record));
-				}
-				$nested = $db->useNestedTransactions;
-				$db->useNestedTransactions = false;
-				$result = $db->insertMulti($this->table, $fields, $values);
-				// TODO use Table instance to get primary key.
-				if (
-					$this->primaryKey &&
-					isset($this->fields[$this->primaryKey]['type']) &&
-					in_array($this->fields[$this->primaryKey]['type'], array('integer', 'biginteger'))
-				) {
-					$db->resetSequence($this->table, $this->primaryKey);
-				}
-				$db->useNestedTransactions = $nested;
-				return $result;
+	public function insert(Connection $db) {
+		if (isset($this->records) && !empty($this->records)) {
+			list($fields, $values, $types) = $this->_getRecords();
+			$query = $db->newQuery()
+				->insert($this->table, $fields, $types)
+				->values($values);
+
+			$result = $query->execute();
+
+			$primary = $this->_schema->primaryKey();
+			if (
+				count($primary) == 1 &&
+				in_array($this->_schema->column($primary[0])['type'], ['integer', 'biginteger'])
+			) {
+				$db->resetSequence($this->table, $primary[0]);
 			}
-			return true;
+			return $result;
 		}
+		return true;
+	}
+
+/**
+ * Converts the internal records into data used to generate a query.
+ *
+ * @return array
+ */
+	protected function _getRecords() {
+		$fields = $values = $types = [];
+		foreach ($this->records as $record) {
+			$fields = array_merge($fields, array_keys(array_intersect_key($record, $this->fields)));
+		}
+		$fields = array_values(array_unique($fields));
+		foreach ($fields as $field) {
+			$types[] = $this->_schema->column($field)['type'];
+		}
+		$default = array_fill_keys($fields, null);
+		foreach ($this->records as $record) {
+			$values[] = array_values(array_merge($default, $record));
+		}
+		return [$fields, $values, $types];
 	}
 
 /**
