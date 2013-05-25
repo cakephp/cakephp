@@ -232,7 +232,7 @@ class ExtractTask extends AppShell {
 
 		$this->_output = rtrim($this->_output, DS) . DS;
 		if (!$this->_isPathUsable($this->_output)) {
-			$this->out(__d('cake_console', 'The output directory %s was not found or writable.', $this->_output));
+			$this->err(__d('cake_console', 'The output directory %s was not found or writable.', $this->_output));
 			return $this->_stop();
 		}
 
