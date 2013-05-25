@@ -563,6 +563,29 @@ SQL;
 	}
 
 /**
+ * Test truncateSql()
+ *
+ * @return void
+ */
+	public function testTruncateSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = new Table('articles');
+		$table->addColumn('id', 'integer')
+			->addConstraint('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+		$result = $table->truncateSql($connection);
+		$this->assertCount(2, $result);
+		$this->assertEquals('ALTER SEQUENCE "articles"."primary" RESTART WITH 1', $result[0]);
+		$this->assertEquals('DELETE FROM "articles"', $result[1]);
+	}
+
+/**
  * Get a schema instance with a mocked driver/pdo instances
  *
  * @return Driver

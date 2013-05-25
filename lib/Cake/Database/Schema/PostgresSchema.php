@@ -342,4 +342,32 @@ class PostgresSchema {
 		return [sprintf('DROP TABLE "%s"', $table->name())];
 	}
 
+/**
+ * Generate the SQL to truncate a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return array SQL statements to drop truncate a table.
+ */
+	public function truncateTableSql(Table $table) {
+		$name = $this->_driver->quoteIdentifier($table->name());
+		$sequence = null;
+		foreach ($table->constraints() as $seq) {
+			if ($table->constraint($seq)['type'] == Table::CONSTRAINT_PRIMARY) {
+				$sequence = $this->_driver->quoteIdentifier($seq);
+				break;
+			}
+		}
+
+		$out = [];
+		if ($sequence) {
+			$out[] = sprintf(
+				'ALTER SEQUENCE %s.%s RESTART WITH 1',
+				$name,
+				$sequence
+			);
+		}
+		$out[] = sprintf('DELETE FROM %s', $name);
+		return $out;
+	}
+
 }
