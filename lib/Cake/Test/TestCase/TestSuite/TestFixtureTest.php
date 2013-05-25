@@ -339,7 +339,7 @@ class TestFixtureTest extends TestCase {
 		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
 		$table->expects($this->once())
-			->method('createTableSql')
+			->method('createSql')
 			->with($db)
 			->will($this->returnValue(['sql', 'sql']));
 		$fixture->schema($table);
@@ -359,7 +359,7 @@ class TestFixtureTest extends TestCase {
 		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
 		$table->expects($this->once())
-			->method('createTableSql')
+			->method('createSql')
 			->with($db)
 			->will($this->throwException(new \Exception('oh noes')));
 		$fixture->schema($table);
@@ -444,27 +444,21 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testDrop() {
-		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
-		$Fixture = new TestFixtureTestFixture();
-		$this->criticDb->expects($this->at(1))
+		$fixture = new ArticleFixture();
+
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$db->expects($this->once())
 			->method('execute')
-			->will($this->returnValue(true));
-		$this->criticDb->expects($this->at(3))
-			->method('execute')
-			->will($this->returnValue(false));
-		$this->criticDb->expects($this->exactly(2))
-			->method('dropSchema');
+			->with('sql');
 
-		$return = $Fixture->drop($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
-		$this->assertTrue($return);
+		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+		$table->expects($this->once())
+			->method('dropSql')
+			->with($db)
+			->will($this->returnValue(['sql']));
+		$fixture->schema($table);
 
-		$return = $Fixture->drop($this->criticDb);
-		$this->assertTrue($return);
-
-		unset($Fixture->fields);
-		$return = $Fixture->drop($this->criticDb);
-		$this->assertFalse($return);
+		$this->assertTrue($fixture->drop($db));
 	}
 
 /**
@@ -473,10 +467,21 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testTruncate() {
-		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
-		$Fixture = new TestFixtureTestFixture();
-		$this->criticDb->expects($this->atLeastOnce())->method('truncate');
-		$Fixture->truncate($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
+		$fixture = new ArticleFixture();
+
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$db->expects($this->once())
+			->method('execute')
+			->with('sql');
+
+		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+		$table->expects($this->once())
+			->method('truncateSql')
+			->with($db)
+			->will($this->returnValue(['sql']));
+		$fixture->schema($table);
+
+		$this->assertTrue($fixture->truncate($db));
 	}
+
 }

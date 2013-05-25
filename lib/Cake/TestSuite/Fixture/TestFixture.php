@@ -220,7 +220,7 @@ class TestFixture {
 		}
 
 		try {
-			$queries = $this->_schema->createTableSql($db);
+			$queries = $this->_schema->createSql($db);
 			foreach ($queries as $query) {
 				$db->execute($query);
 			}
@@ -242,18 +242,21 @@ class TestFixture {
 /**
  * Run after all tests executed, should return SQL statement to drop table for this fixture.
  *
- * @param DboSource $db An instance of the database object used to create the fixture table
+ * @param Connection $db An instance of the database object used to create the fixture table
  * @return boolean True on success, false on failure
  */
-	public function drop($db) {
-		if (empty($this->fields)) {
+	public function drop(Connection $db) {
+		if (empty($this->_schema)) {
 			return false;
 		}
-		$this->Schema->build(array($this->table => $this->fields));
 		try {
-			$db->execute($db->dropSchema($this->Schema), array('log' => false));
-			$this->created = array_diff($this->created, array($db->configKeyName));
+			$sql = $this->_schema->dropSql($db);
+			foreach ($sql as $stmt) {
+				$db->execute($stmt);
+			}
+			$this->created = array_diff($this->created, [$db->configKeyName]);
 		} catch (\Exception $e) {
+			var_dump($e);
 			return false;
 		}
 		return true;
@@ -312,15 +315,15 @@ class TestFixture {
  * Truncates the current fixture. Can be overwritten by classes extending
  * CakeFixture to trigger other events before / after truncate.
  *
- * @param DboSource $db A reference to a db instance
+ * @param Connection DboSource $db A reference to a db instance
  * @return boolean
  */
-	public function truncate($db) {
-		$fullDebug = $db->fullDebug;
-		$db->fullDebug = false;
-		$return = $db->truncate($this->table);
-		$db->fullDebug = $fullDebug;
-		return $return;
+	public function truncate(Connection $db) {
+		$sql = $this->_schema->truncateSql($db);
+		foreach ($sql as $stmt) {
+			$db->execute($stmt);
+		}
+		return true;
 	}
 
 }
