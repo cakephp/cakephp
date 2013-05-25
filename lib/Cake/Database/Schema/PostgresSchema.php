@@ -332,4 +332,14 @@ class PostgresSchema {
 		return $out;
 	}
 
+/**
+ * Generate the SQL to drop a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return string DROP TABLE sql
+ */
+	public function dropTableSql(Table $table) {
+		return sprintf('DROP TABLE "%s"', $table->name());
+	}
+
 }

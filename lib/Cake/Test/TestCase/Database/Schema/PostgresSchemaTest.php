@@ -546,6 +546,22 @@ SQL;
 	}
 
 /**
+ * test dropTableSql
+ *
+ * @return void
+ */
+	public function testDropTableSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = new Table('articles');
+		$result = $table->dropTableSql($connection);
+		$this->assertEquals('DROP TABLE "articles"', $result);
+	}
+
+/**
  * Get a schema instance with a mocked driver/pdo instances
  *
  * @return Driver
