@@ -523,7 +523,7 @@ SQL;
  *
  * @return void
  */
-	public function testCreateTableSql() {
+	public function testCreateSql() {
 		$driver = $this->_getMockedDriver();
 		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
 		$connection->expects($this->any())->method('driver')
@@ -554,25 +554,31 @@ CREATE TABLE `posts` (
 PRIMARY KEY (`id`)
 )
 SQL;
-		$result = $table->createTableSql($connection);
+		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);
 		$this->assertEquals($expected, $result[0]);
 	}
 
 /**
- * test dropTableSql
+ * test dropSql
  *
  * @return void
  */
-	public function testDropTableSql() {
+	public function testDropSql() {
 		$driver = $this->_getMockedDriver();
 		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
 		$table = new Table('articles');
-		$result = $table->dropTableSql($connection);
+		$result = $table->dropSql($connection);
 		$this->assertEquals('DROP TABLE `articles`', $result);
+	}
+
+/**
+ * Test truncateSql()
+ */
+	public function testTruncateSql() {
 	}
 
 /**

@@ -334,7 +334,7 @@ class Table {
  * @return array List of SQL statements to create the table and the
  *    required indexes.
  */
-	public function createTableSql(Connection $connection) {
+	public function createSql(Connection $connection) {
 		$dialect = $connection->driver()->schemaDialect();
 		$columns = $constraints = $indexes = [];
 		foreach (array_keys($this->_columns) as $name) {
@@ -358,8 +358,20 @@ class Table {
  * @param Connection $connection The connection to generate SQL for.
  * @return string SQL to drop a table.
  */
-	public function dropTableSql(Connection $connection) {
+	public function dropSql(Connection $connection) {
 		$dialect = $connection->driver()->schemaDialect();
 		return $dialect->dropTableSql($this);
 	}
+
+/**
+ * Generate the SQL statements to truncate a table
+ *
+ * @param Connection $connection The connection to generate SQL for.
+ * @return array SQL to drop a table.
+ */
+	public function truncateSql(Connection $connection) {
+		$dialect = $connection->driver()->schemaDialect();
+		return $dialect->truncateSql($this);
+	}
+
 }
