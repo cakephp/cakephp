@@ -481,7 +481,7 @@ SQL;
  */
 	public function testCreateSql() {
 		$driver = $this->_getMockedDriver();
-		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
@@ -529,7 +529,7 @@ SQL;
  */
 	public function testDropSql() {
 		$driver = $this->_getMockedDriver();
-		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
@@ -546,7 +546,7 @@ SQL;
  */
 	public function testTruncateSql() {
 		$driver = $this->_getMockedDriver();
-		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
