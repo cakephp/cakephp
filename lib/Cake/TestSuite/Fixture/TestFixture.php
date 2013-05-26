@@ -282,16 +282,7 @@ class TestFixture {
 				$query->values($row);
 			}
 
-			$result = $query->execute();
-
-			$primary = $this->_schema->primaryKey();
-			if (
-				count($primary) == 1 &&
-				in_array($this->_schema->column($primary[0])['type'], ['integer', 'biginteger'])
-			) {
-				$db->resetSequence($this->table, $primary[0]);
-			}
-			return $result;
+			return $query->execute();
 		}
 		return true;
 	}

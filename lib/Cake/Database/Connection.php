@@ -432,19 +432,6 @@ class Connection {
 	}
 
 /**
- * Reset a sequence.
- *
- * Useful with database platforms that support sequences.
- *
- * @param string $table The table to reset.
- * @param string $key The key to reset.
- * @return boolean
- */
-	public function resetSequence($table, $key) {
-		// TODO implement this.
-	}
-
-/**
  * Quotes value to be used safely in database query
  *
  * @param mixed $value
