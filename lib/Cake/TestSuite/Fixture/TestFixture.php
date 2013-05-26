@@ -156,7 +156,8 @@ class TestFixture {
 			if ($field === 'constraints' || $field === 'indexes') {
 				continue;
 			}
-			// TODO issue E_USER_NOTICE if a column defines 'key'
+			// TODO issue E_USER_NOTICE if a column defines 'key'?
+			// Or handle the case correctly?
 			$this->_schema->addColumn($field, $data);
 		}
 		if (!empty($this->fields['constraints'])) {
@@ -165,6 +166,8 @@ class TestFixture {
 			}
 		}
 		if (!empty($this->fields['indexes'])) {
+			// TODO 2.x indexes contains indexes + constraints.
+			// Should we issue an error or handle the case?
 			foreach ($this->fields['indexes'] as $name => $data) {
 				$this->_schema->addIndex($name, $data);
 			}

@@ -22,8 +22,10 @@ namespace Cake\TestSuite\Fixture;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Database\Connection;
 use Cake\Model\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Fixture\TestFixture;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 
@@ -146,24 +148,24 @@ class FixtureManager {
  * Runs the drop and create commands on the fixtures if necessary.
  *
  * @param Cake\TestSuite\Fixture\TestFixture $fixture the fixture object to create
- * @param DataSource $db the datasource instance to use
+ * @param Connection $db the datasource instance to use
  * @param boolean $drop whether drop the fixture if it is already created or not
  * @return void
  */
-	protected function _setupTable($fixture, $db = null, $drop = true) {
+	protected function _setupTable(TestFixture $fixture, Connection $db = null, $drop = true) {
 		if (!$db) {
-			if (!empty($fixture->useDbConfig)) {
-				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
-			} else {
-				$db = $this->_db;
+			$db = $this->_db;
+			if (!empty($fixture->connection)) {
+				$db = ConnectionManager::getDataSource($fixture->connection);
 			}
 		}
 		if (!empty($fixture->created) && in_array($db->configKeyName, $fixture->created)) {
 			return;
 		}
 
-		$sources = (array)$db->listTables();
-		$table = $db->config['prefix'] . $fixture->table;
+		$schemaCollection = $db->schemaCollection();
+		$sources = (array)$schemaCollection->listTables();
+		$table = $fixture->table;
 		$exists = in_array($table, $sources);
 
 		if ($drop && $exists) {
@@ -186,8 +188,6 @@ class FixtureManager {
 		if (empty($test->fixtures)) {
 			return;
 		}
-		// TODO Re-enable once fixtures are working.
-		return;
 
 		$fixtures = $test->fixtures;
 		if (empty($fixtures) || !$test->autoFixtures) {
@@ -197,7 +197,7 @@ class FixtureManager {
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
-				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
+				$db = ConnectionManager::getDataSource($fixture->connection);
 				$db->begin();
 				$this->_setupTable($fixture, $db, $test->dropTables);
 				$fixture->insert($db);
