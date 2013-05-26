@@ -88,7 +88,7 @@ trait SqliteDialectTrait {
 	}
 
 /**
- * Transforms an insert query that is meant to insert multiple tows at a time,
+ * Transforms an insert query that is meant to insert multiple rows at a time,
  * otherwise it leaves the query untouched.
  *
  * The way SQLite works with multi insert is by having multiple select statements
@@ -105,9 +105,13 @@ trait SqliteDialectTrait {
 		$cols = $v->columns();
 		$newQuery = $query->connection()->newQuery();
 		$values = [];
+		debug($cols);
 		foreach ($v->values() as $k => $val) {
 			$values[] = $val;
-			$val = array_merge($val, array_fill(0, count($cols) - count($val), null));
+			$fillLength = count($cols) - count($val);
+			if ($fillLength > 0) {
+				$val = array_merge($val, array_fill(0, $fillLength, null));
+			}
 			$val = array_map(function($val) {
 				return $val instanceof ExpressionInterface ? $val : '?';
 			}, $val);
