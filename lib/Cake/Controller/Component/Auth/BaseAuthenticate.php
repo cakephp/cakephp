@@ -16,6 +16,7 @@
 namespace Cake\Controller\Component\Auth;
 
 use Cake\Controller\ComponentCollection;
+use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\ClassRegistry;
@@ -137,7 +138,7 @@ abstract class BaseAuthenticate {
  * Return password hasher object
  *
  * @return AbstractPasswordHasher Password hasher instance
- * @throws CakeException If password hasher class not found or
+ * @throws Cake\Error\Exception If password hasher class not found or
  *   it does not extend AbstractPasswordHasher
  */
 	public function passwordHasher() {
@@ -154,13 +155,12 @@ abstract class BaseAuthenticate {
 			unset($config['className']);
 		}
 		list($plugin, $class) = pluginSplit($class, true);
-		$className = $class . 'PasswordHasher';
-		App::uses($className, $plugin . 'Controller/Component/Auth');
+		$className = App::classname($class, 'Controller/Component/Auth', 'PasswordHasher');
 		if (!class_exists($className)) {
-			throw new CakeException(__d('cake_dev', 'Password hasher class "%s" was not found.', $class));
+			throw new Error\Exception(__d('cake_dev', 'Password hasher class "%s" was not found.', $class));
 		}
 		if (!is_subclass_of($className, 'AbstractPasswordHasher')) {
-			throw new CakeException(__d('cake_dev', 'Password hasher must extend AbstractPasswordHasher class.'));
+			throw new Error\Exception(__d('cake_dev', 'Password hasher must extend AbstractPasswordHasher class.'));
 		}
 		$this->_passwordHasher = new $className($config);
 		return $this->_passwordHasher;

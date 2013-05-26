@@ -255,7 +255,7 @@ class FormAuthenticateTest extends TestCase {
 			array('User.user' => 'mariano')
 		);
 
-		$request = new CakeRequest('posts/index', false);
+		$request = new Request('posts/index');
 		$request->data = array('User' => array(
 			'user' => 'mariano',
 			'password' => 'mypass'

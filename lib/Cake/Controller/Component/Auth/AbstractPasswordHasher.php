@@ -13,6 +13,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Cake\Controller\Component\Auth;
 
 /**
  * Abstract password hashing class

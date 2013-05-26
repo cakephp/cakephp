@@ -198,8 +198,8 @@ class BasicAuthenticateTest extends TestCase {
 		$hash = Security::hash('password', 'blowfish');
 		$this->skipIf(strpos($hash, '$2a$') === false, 'Skipping blowfish tests as hashing is not working');
 
-		$request = new CakeRequest('posts/index', false);
-		$request->addParams(array('pass' => array(), 'named' => array()));
+		$request = new Request('posts/index');
+		$request->addParams(array('pass' => array()));
 
 		$_SERVER['PHP_AUTH_USER'] = 'mariano';
 		$_SERVER['PHP_AUTH_PW'] = 'password';

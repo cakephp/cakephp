@@ -13,8 +13,10 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('AbstractPasswordHasher', 'Controller/Component/Auth');
-App::uses('Security', 'Utility');
+namespace Cake\Controller\Component\Auth;
+
+use Cake\Controller\Component\Auth\AbstractPasswordHasher;
+use Cake\Utility\Security;
 
 /**
  * Blowfish password hashing class.
