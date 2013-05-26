@@ -797,7 +797,7 @@ class AuthComponent extends Component {
  *
  * @param string $password Password to hash
  * @return string Hashed password
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#hashing-passwords
+ * @deprecated Since 2.4. Use Security::hash() directly or a password hasher object.
  */
 	public static function password($password) {
 		return Security::hash($password, null, true);
