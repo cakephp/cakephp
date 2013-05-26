@@ -182,7 +182,7 @@ $otherSingularVar = Inflector::variable($_alias);
 				__d('cake', 'Delete'),
 				array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'delete', ${$otherSingularVar}[$_details['primaryKey']]),
 				null,
-				__d('cake', 'Are you sure you want to delete', true) .' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'
+				__d('cake', 'Are you sure you want to delete # %s?', ${$otherSingularVar}[$_details['primaryKey']])
 			);
 			echo "\n";
 			echo "\t\t\t</td>\n";

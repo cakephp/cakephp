@@ -134,7 +134,7 @@ class ProjectTask extends Shell {
 			$Folder = new Folder($path);
 			if (!$Folder->chmod($path . 'tmp', 0777)) {
 				$this->err(__d('cake_console', 'Could not set permissions on %s', $path . DS . 'tmp'));
-				$this->out(__d('cake_console', 'chmod -R 0777 %s', $path . DS . 'tmp'));
+				$this->out('chmod -R 0777 ' . $path . DS . 'tmp');
 				$success = false;
 			}
 			if ($success) {

@@ -91,7 +91,7 @@ class AclShell extends Shell {
 
 		if ($this->command) {
 			if (Configure::check('Datasource') === null) {
-				$this->out(__d('cake_console', 'Your datasources configuration was not found. Take a moment to create one.'), true);
+				$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'));
 				$this->args = null;
 				return $this->DbConfig->execute();
 			}
@@ -182,9 +182,9 @@ class AclShell extends Shell {
 		);
 		$this->Acl->{$class}->create();
 		if (!$this->Acl->{$class}->save($data)) {
-			$this->out(__d('cake_console', 'Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.'), true);
+			$this->out(__d('cake_console', 'Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.'));
 		} else {
-			$this->out(__d('cake_console', 'Node parent set to %s', $this->args[2]) . "\n", true);
+			$this->out(__d('cake_console', 'Node parent set to %s', $this->args[2]) . "\n");
 		}
 	}
 
@@ -240,9 +240,9 @@ class AclShell extends Shell {
 		extract($this->_getParams());
 
 		if ($this->Acl->check($aro, $aco, $action)) {
-			$this->out(__d('cake_console', '%s is <success>allowed</success>.', $aroName), true);
+			$this->out(__d('cake_console', '%s is <success>allowed</success>.', $aroName));
 		} else {
-			$this->out(__d('cake_console', '%s is <error>not allowed</error>.', $aroName), true);
+			$this->out(__d('cake_console', '%s is <error>not allowed</error>.', $aroName));
 		}
 	}
 
@@ -255,9 +255,9 @@ class AclShell extends Shell {
 		extract($this->_getParams());
 
 		if ($this->Acl->allow($aro, $aco, $action)) {
-			$this->out(__d('cake_console', 'Permission <success>granted</success>.'), true);
+			$this->out(__d('cake_console', 'Permission <success>granted</success>.'));
 		} else {
-			$this->out(__d('cake_console', 'Permission was <error>not granted</error>.'), true);
+			$this->out(__d('cake_console', 'Permission was <error>not granted</error>.'));
 		}
 	}
 
@@ -270,9 +270,9 @@ class AclShell extends Shell {
 		extract($this->_getParams());
 
 		if ($this->Acl->deny($aro, $aco, $action)) {
-			$this->out(__d('cake_console', 'Permission denied.'), true);
+			$this->out(__d('cake_console', 'Permission denied.'));
 		} else {
-			$this->out(__d('cake_console', 'Permission was not denied.'), true);
+			$this->out(__d('cake_console', 'Permission was not denied.'));
 		}
 	}
 
@@ -285,9 +285,9 @@ class AclShell extends Shell {
 		extract($this->_getParams());
 
 		if ($this->Acl->inherit($aro, $aco, $action)) {
-			$this->out(__d('cake_console', 'Permission inherited.'), true);
+			$this->out(__d('cake_console', 'Permission inherited.'));
 		} else {
-			$this->out(__d('cake_console', 'Permission was not inherited.'), true);
+			$this->out(__d('cake_console', 'Permission was not inherited.'));
 		}
 	}
 

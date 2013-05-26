@@ -1136,7 +1136,7 @@ class Email {
 				throw new Error\ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $name));
 			}
 		}
-		$this->_config += $config;
+		$this->_config = array_merge($this->_config, $config);
 		if (!empty($config['charset'])) {
 			$this->charset = $config['charset'];
 		}
@@ -1257,7 +1257,11 @@ class Email {
 				$formatted[] = '';
 				continue;
 			}
-			if (!preg_match('/<[a-z]+.+>/i', $line)) {
+			if (strlen($line) < $wrapLength) {
+				$formatted[] = $line;
+				continue;
+			}
+			if (!preg_match('/<[a-z]+.*>/i', $line)) {
 				$formatted = array_merge(
 					$formatted,
 					explode("\n", wordwrap($line, $wrapLength, "\n"))
@@ -1387,15 +1391,12 @@ class Email {
 /**
  * Read the file contents and return a base64 version of the file contents.
  *
- * @param string $file The file to read.
+ * @param string $path The absolute path to the file to read.
  * @return string File contents in base64 encoding
  */
-	protected function _readFile($file) {
-		$handle = fopen($file, 'rb');
-		$data = fread($handle, filesize($file));
-		$data = chunk_split(base64_encode($data));
-		fclose($handle);
-		return $data;
+	protected function _readFile($path) {
+		$File = new File($path);
+		return chunk_split(base64_encode($File->read()));
 	}
 
 /**

@@ -822,6 +822,22 @@ class ControllerTest extends TestCase {
 	}
 
 /**
+ * Ensure that $modelClass is correct even when Controller::$uses
+ * has been iterated, eg: by a Component, or event handlers.
+ *
+ * @return void
+ */
+	public function testMergeVarsModelClass() {
+		$request = new Request();
+
+		$Controller = new Controller($request);
+		$Controller->uses = array('Test', 'TestAlias');
+		$lastModel = end($Controller->uses);
+		$Controller->constructClasses();
+		$this->assertEquals($Controller->uses[0], $Controller->modelClass);
+	}
+
+/**
  * testReferer method
  *
  * @return void

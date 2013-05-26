@@ -104,8 +104,8 @@ class HtmlHelper extends Helper {
 		'ol' => '<ol%s>%s</ol>',
 		'li' => '<li%s>%s</li>',
 		'error' => '<div%s>%s</div>',
-		'javascriptblock' => '<script type="text/javascript"%s>%s</script>',
-		'javascriptstart' => '<script type="text/javascript">',
+		'javascriptblock' => '<script%s>%s</script>',
+		'javascriptstart' => '<script>',
 		'javascriptlink' => '<script type="text/javascript" src="%s"%s></script>',
 		'javascriptend' => '</script>'
 	);
@@ -584,7 +584,7 @@ class HtmlHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::scriptBlock
  */
 	public function scriptBlock($script, $options = array()) {
-		$options += array('safe' => true, 'inline' => true);
+		$options += array('type' => 'text/javascript', 'safe' => true, 'inline' => true);
 		if ($options['safe']) {
 			$script = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
 		}
@@ -920,6 +920,9 @@ class HtmlHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::tag
  */
 	public function tag($name, $text = null, $options = array()) {
+		if (empty($name)) {
+			return $text;
+		}
 		if (is_array($options) && isset($options['escape']) && $options['escape']) {
 			$text = h($text);
 			unset($options['escape']);

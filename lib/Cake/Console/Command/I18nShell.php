@@ -54,7 +54,7 @@ class I18nShell extends Shell {
 
 		if ($this->command && !in_array($this->command, array('help'))) {
 			if (!config('database')) {
-				$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'), true);
+				$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'));
 				return $this->DbConfig->execute();
 			}
 		}

@@ -54,7 +54,7 @@ class CommandListShell extends Shell {
 			$this->out("");
 			$this->out(__d('cake_console', "<info>Changing Paths:</info>"), 2);
 			$this->out(__d('cake_console', "Your working path should be the same as your application path. To change your path use the '-app' param."));
-			$this->out(__d('cake_console', "Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp"), 2);
+			$this->out(__d('cake_console', "Example: %s or %s", '-app relative/path/to/myapp', '-app /absolute/path/to/myapp'), 2);
 
 			$this->out(__d('cake_console', "<info>Available Shells:</info>"), 2);
 		}

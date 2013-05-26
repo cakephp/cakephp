@@ -1081,6 +1081,16 @@ class HtmlHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->scriptBlock('window.foo = 2;', array('type' => 'text/x-handlebars-template'));
+		$expected = array(
+			'script' => array('type' => 'text/x-handlebars-template'),
+			$this->cDataStart,
+			'window.foo = 2;',
+			$this->cDataEnd,
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false));
 		$expected = array(
 			'script' => array('type' => 'text/javascript'),
@@ -1150,6 +1160,20 @@ class HtmlHelperTest extends TestCase {
 		$expected = array(
 			'script' => array('type' => 'text/javascript'),
 			'this is some javascript',
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->scriptStart(array('safe' => true, 'type' => 'text/x-handlebars-template'));
+		$this->assertNull($result);
+		echo 'this is some template';
+
+		$result = $this->Html->scriptEnd();
+		$expected = array(
+			'script' => array('type' => 'text/x-handlebars-template'),
+			$this->cDataStart,
+			'this is some template',
+			$this->cDataEnd,
 			'/script'
 		);
 		$this->assertTags($result, $expected);
@@ -1710,6 +1734,15 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->tag('div', '<text>', array('class' => 'class-name', 'escape' => true));
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
+
+		$result = $this->Html->tag(false, '<em>stuff</em>');
+		$this->assertEquals($result, '<em>stuff</em>');
+
+		$result = $this->Html->tag(null, '<em>stuff</em>');
+		$this->assertEquals($result, '<em>stuff</em>');
+
+		$result = $this->Html->tag('', '<em>stuff</em>');
+		$this->assertEquals($result, '<em>stuff</em>');
 	}
 
 /**
