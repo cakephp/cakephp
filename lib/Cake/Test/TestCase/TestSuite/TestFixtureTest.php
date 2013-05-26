@@ -159,15 +159,6 @@ class TestFixtureTest extends TestCase {
 	}
 
 /**
- * test initializing an import fixture.
- *
- * @return void
- */
-	public function testInitImportFixture() {
-		$this->markTestIncomplete('not done');
-	}
-
-/**
  * test that init() correctly sets the fixture table when the connection
  * or model have prefixes defined.
  *
@@ -268,11 +259,11 @@ class TestFixtureTest extends TestCase {
 	}
 
 /**
- * testImport
+ * test import fixture initialization
  *
  * @return void
  */
-	public function testImport() {
+	public function testInitImport() {
 		$fixture = new ImportFixture();
 		$fixture->fields = $fixture->records = null;
 		$fixture->import = [
