@@ -21,6 +21,7 @@
 App::uses('Validation', 'Utility');
 App::uses('Multibyte', 'I18n');
 App::uses('AbstractTransport', 'Network/Email');
+App::uses('File', 'Utility');
 App::uses('String', 'Utility');
 App::uses('View', 'View');
 App::import('I18n', 'Multibyte');
@@ -1025,6 +1026,16 @@ class CakeEmail {
 /**
  * Configuration to use when send email
  *
+ * ### Usage
+ *
+ * Load configuration from `app/Config/email.php`:
+ *
+ * `$email->config('default');`
+ *
+ * Merge an array of configuration into the instance:
+ *
+ * `$email->config(array('to' => 'bill@example.com'));`
+ *
  * @param string|array $config String with configuration name (from email.php), array with config or null to return current config
  * @return string|array|CakeEmail
  */
@@ -1137,7 +1148,7 @@ class CakeEmail {
 			}
 			$config = $configs->{$config};
 		}
-		$this->_config += $config;
+		$this->_config = array_merge($this->_config, $config);
 		if (!empty($config['charset'])) {
 			$this->charset = $config['charset'];
 		}
@@ -1175,7 +1186,7 @@ class CakeEmail {
 	}
 
 /**
- * Reset all EmailComponent internal variables to be able to send out a new email.
+ * Reset all CakeEmail internal variables to be able to send out a new email.
  *
  * @return CakeEmail $this
  */
@@ -1263,7 +1274,11 @@ class CakeEmail {
 				$formatted[] = '';
 				continue;
 			}
-			if (!preg_match('/<[a-z]+.+>/i', $line)) {
+			if (strlen($line) < $wrapLength) {
+				$formatted[] = $line;
+				continue;
+			}
+			if (!preg_match('/<[a-z]+.*>/i', $line)) {
 				$formatted = array_merge(
 					$formatted,
 					explode("\n", wordwrap($line, $wrapLength, "\n"))
@@ -1390,15 +1405,12 @@ class CakeEmail {
 /**
  * Read the file contents and return a base64 version of the file contents.
  *
- * @param string $file The file to read.
+ * @param string $path The absolute path to the file to read.
  * @return string File contents in base64 encoding
  */
-	protected function _readFile($file) {
-		$handle = fopen($file, 'rb');
-		$data = fread($handle, filesize($file));
-		$data = chunk_split(base64_encode($data));
-		fclose($handle);
-		return $data;
+	protected function _readFile($path) {
+		$File = new File($path);
+		return chunk_split(base64_encode($File->read()));
 	}
 
 /**

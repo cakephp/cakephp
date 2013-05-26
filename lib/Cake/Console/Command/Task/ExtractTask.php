@@ -208,7 +208,7 @@ class ExtractTask extends AppShell {
 				if (strtoupper($response) === 'Q') {
 					$this->out(__d('cake_console', 'Extract Aborted'));
 					$this->_stop();
-				} elseif (is_dir($response)) {
+				} elseif ($this->_isPathUsable($response)) {
 					$this->_output = $response . DS;
 					break;
 				} else {
@@ -229,7 +229,13 @@ class ExtractTask extends AppShell {
 		if (empty($this->_files)) {
 			$this->_searchFiles();
 		}
+
 		$this->_output = rtrim($this->_output, DS) . DS;
+		if (!$this->_isPathUsable($this->_output)) {
+			$this->err(__d('cake_console', 'The output directory %s was not found or writable.', $this->_output));
+			return $this->_stop();
+		}
+
 		$this->_extract();
 	}
 
@@ -687,7 +693,7 @@ class ExtractTask extends AppShell {
  * @return void
  */
 	protected function _markerError($file, $line, $marker, $count) {
-		$this->out(__d('cake_console', "Invalid marker content in %s:%s\n* %s(", $file, $line, $marker), true);
+		$this->out(__d('cake_console', "Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
 		$count += 2;
 		$tokenCount = count($this->_tokens);
 		$parenthesis = 1;
@@ -752,4 +758,13 @@ class ExtractTask extends AppShell {
 		return $this->_paths === array(APP);
 	}
 
+/**
+ * Checks whether or not a given path is usable for writing.
+ *
+ * @param string $path Path to folder
+ * @return boolean true if it exists and is writable, false otherwise
+ */
+	protected function _isPathUsable($path) {
+		return is_dir($path) && is_writable($path);
+	}
 }

@@ -329,11 +329,11 @@ abstract class ControllerTestCase extends CakeTestCase {
 		), (array)$mocks);
 
 		list($plugin, $name) = pluginSplit($controller);
-		$_controller = $this->getMock($name . 'Controller', $mocks['methods'], array(), '', false);
-		$_controller->name = $name;
+		$controllerObj = $this->getMock($name . 'Controller', $mocks['methods'], array(), '', false);
+		$controllerObj->name = $name;
 		$request = $this->getMock('CakeRequest');
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
-		$_controller->__construct($request, $response);
+		$controllerObj->__construct($request, $response);
 
 		$config = ClassRegistry::config('Model');
 		foreach ($mocks['models'] as $model => $methods) {
@@ -363,14 +363,15 @@ abstract class ControllerTestCase extends CakeTestCase {
 					'class' => $componentClass
 				));
 			}
-			$_component = $this->getMock($componentClass, $methods, array(), '', false);
-			$_controller->Components->set($name, $_component);
+			$componentObj = $this->getMock($componentClass, $methods, array($controllerObj->Components));
+			$controllerObj->Components->set($name, $componentObj);
+			$controllerObj->Components->enable($name);
 		}
 
-		$_controller->constructClasses();
+		$controllerObj->constructClasses();
 		$this->_dirtyController = false;
 
-		$this->controller = $_controller;
+		$this->controller = $controllerObj;
 		return $this->controller;
 	}
 

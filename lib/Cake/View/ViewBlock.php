@@ -139,7 +139,7 @@ class ViewBlock {
 	public function concat($name, $value = null, $mode = ViewBlock::APPEND) {
 		if (isset($value)) {
 			if (!is_string($value)) {
-				throw new CakeException(__d('cake_dev', '$value must be a string.'));
+				throw new CakeException(__d('cake_dev', '%s must be a string.', '$value'));
 			}
 			if (!isset($this->_blocks[$name])) {
 				$this->_blocks[$name] = '';
