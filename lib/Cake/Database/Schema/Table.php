@@ -356,7 +356,7 @@ class Table {
  * specific SQL.
  *
  * @param Connection $connection The connection to generate SQL for.
- * @return string SQL to drop a table.
+ * @return array SQL to drop a table.
  */
 	public function dropSql(Connection $connection) {
 		$dialect = $connection->driver()->schemaDialect();
