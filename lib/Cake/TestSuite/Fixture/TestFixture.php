@@ -156,6 +156,7 @@ class TestFixture {
 			if ($field === 'constraints' || $field === 'indexes') {
 				continue;
 			}
+			// TODO issue E_USER_NOTICE if a column defines 'key'
 			$this->_schema->addColumn($field, $data);
 		}
 		if (!empty($this->fields['constraints'])) {
@@ -256,7 +257,6 @@ class TestFixture {
 			}
 			$this->created = array_diff($this->created, [$db->configKeyName]);
 		} catch (\Exception $e) {
-			var_dump($e);
 			return false;
 		}
 		return true;
@@ -273,8 +273,11 @@ class TestFixture {
 		if (isset($this->records) && !empty($this->records)) {
 			list($fields, $values, $types) = $this->_getRecords();
 			$query = $db->newQuery()
-				->insert($this->table, $fields, $types)
-				->values($values);
+				->insert($this->table, $fields, $types);
+
+			foreach ($values as $row) {
+				$query->values($row);
+			}
 
 			$result = $query->execute();
 
@@ -306,7 +309,7 @@ class TestFixture {
 		}
 		$default = array_fill_keys($fields, null);
 		foreach ($this->records as $record) {
-			$values[] = array_values(array_merge($default, $record));
+			$values[] = array_merge($default, $record);
 		}
 		return [$fields, $values, $types];
 	}

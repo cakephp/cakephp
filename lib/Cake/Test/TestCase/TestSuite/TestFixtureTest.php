@@ -386,13 +386,21 @@ class TestFixtureTest extends TestCase {
 			->with('articles', ['name', 'created'], ['string', 'datetime'])
 			->will($this->returnSelf());
 		$expected = [
-			['Gandalf', '2009-04-28 19:20:00'],
-			['Captain Picard', '2009-04-28 19:20:00'],
-			['Chewbacca', '2009-04-28 19:20:00']
+			['name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'],
+			['name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'],
+			['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00']
 		];
-		$query->expects($this->once())
+		$query->expects($this->at(1))
 			->method('values')
-			->with($expected)
+			->with($expected[0])
+			->will($this->returnSelf());
+		$query->expects($this->at(2))
+			->method('values')
+			->with($expected[1])
+			->will($this->returnSelf());
+		$query->expects($this->at(3))
+			->method('values')
+			->with($expected[2])
 			->will($this->returnSelf());
 
 		$query->expects($this->once())
@@ -422,13 +430,21 @@ class TestFixtureTest extends TestCase {
 			->will($this->returnSelf());
 
 		$expected = [
-			['Mark Doe', 'mark.doe@email.com', null],
-			['John Doe', 'john.doe@email.com', 20],
-			['Jane Doe', 'jane.doe@email.com', 30],
+			['name' => 'Mark Doe', 'email' => 'mark.doe@email.com', 'age' => null],
+			['name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20],
+			['name' => 'Jane Doe', 'email' => 'jane.doe@email.com', 'age' => 30],
 		];
-		$query->expects($this->once())
+		$query->expects($this->at(1))
 			->method('values')
-			->with($expected)
+			->with($expected[0])
+			->will($this->returnSelf());
+		$query->expects($this->at(2))
+			->method('values')
+			->with($expected[1])
+			->will($this->returnSelf());
+		$query->expects($this->at(3))
+			->method('values')
+			->with($expected[2])
 			->will($this->returnSelf());
 
 		$query->expects($this->once())
