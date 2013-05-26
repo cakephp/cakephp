@@ -64,6 +64,17 @@ class TestFixture {
 	public $fields = array();
 
 /**
+ * Configuration for importing fixture schema
+ *
+ * Accepts a `connection` and `table` key, to define
+ * which table and which connection contain the schema to be
+ * imported.
+ *
+ * @var array
+ */
+	public $import = null;
+
+/**
  * Fixture records to be inserted.
  *
  * @var array
