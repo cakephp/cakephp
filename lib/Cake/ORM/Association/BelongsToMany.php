@@ -61,6 +61,13 @@ class BelongsToMany extends Association {
 	protected $_pivotTable;
 
 /**
+ * The physical name of the pivot table
+ *
+ * @var string
+ */
+	protected $_joinTable;
+
+/**
  * Sets the table instance for the pivot relation. If no arguments
  * are passed, the current configured table instance is returned
  *
@@ -70,12 +77,15 @@ class BelongsToMany extends Association {
 	public function pivot($table = null) {
 		$target = $this->target();
 		$source = $this->source();
-		$sourceAlias = $source->alias();
-		$targetAlias = $target->alias();
+		$sAlias = $source->alias();
+		$tAlias = $target->alias();
 
 		if ($table === null) {
 			if (empty($this->_pivotTable)) {
-				$table = Table::build($sourceAlias . $targetAlias);
+				$table = Table::instance($sAlias . $tAlias);
+				$table = $table ?: Table::build($sAlias . $tAlias, [
+					'table' => $this->_joinTableName()
+				]);
 			} else {
 				return $this->_pivotTable;
 			}
@@ -85,16 +95,16 @@ class BelongsToMany extends Association {
 			$table = Table::build($table);
 		}
 
-		if (!$table->association($sourceAlias)) {
-			$table->belongsTo($sourceAlias)->source($this->source());
+		if (!$table->association($sAlias)) {
+			$table->belongsTo($sAlias)->source($this->source());
 		}
 
-		if (!$table->association($targetAlias)) {
-			$table->belongsTo($targetAlias)->target($this->target());
+		if (!$table->association($tAlias)) {
+			$table->belongsTo($tAlias)->target($this->target());
 		}
 
 		if (!$target->association($table->alias())) {
-			$target->belongsToMany($sourceAlias);
+			$target->belongsToMany($sAlias);
 			$target->hasMany($table->alias())->target($table);
 		}
 
@@ -198,6 +208,28 @@ class BelongsToMany extends Association {
 	}
 
 /**
+ * Sets the name of the pivot table.
+ * If no arguments are passed the current configured name is returned. A default
+ * name based of the associated tables will be generated if none found.
+ *
+ * @param string $name
+ * @return string
+ */
+	protected function _joinTableName($name = null) {
+		if ($name === null) {
+			if (empty($this->_joinTableName)) {
+				$aliases = array_map('\Cake\Utility\Inflector::tableize', [
+					$sAlias = $this->source()->alias(),
+					$tAlias = $this->target()->alias()
+				]);
+				sort($aliases);
+				$name = implode('_', $aliases);
+			}
+		}
+		return $this->_joinTable = $name;
+	}
+
+/**
  * Parse extra options passed in the constructor.
  * @param array $opts original list of options passed in constructor
  *
@@ -206,6 +238,9 @@ class BelongsToMany extends Association {
 	protected function _options(array $opts) {
 		if (!empty($opts['through'])) {
 			$this->pivot($opts['through']);
+		}
+		if (!empty($opts['joinTable'])) {
+			$this->_joinTableName($opts['joinTable']);
 		}
 		$this->_externalOptions($opts);
 	}

@@ -93,6 +93,13 @@ trait ExternalAssociationTrait {
  */
 	public abstract function eagerLoader(array $options);
 
+/**
+ * Returns a single or multiple conditions to be appended to the generated join
+ * clause for getting the results on the target table.
+ *
+ * @param array $options list of options passed to attachTo method
+ * @return string|array
+ */
 	protected function _joinCondition(array $options) {
 		return sprintf('%s.%s = %s.%s',
 				$this->_sourceTable->alias(),

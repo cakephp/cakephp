@@ -32,19 +32,17 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function setUp() {
-		$this->author = Table::build('Author', [
+		$this->tag = Table::build('Tag', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
-				'username' => ['type' => 'string'],
+				'name' => ['type' => 'string'],
 			]
 		]);
-		$this->article = $this->getMock(
-			'Cake\ORM\Table', ['find'], [['alias' => 'Article']]
-		);
-		$this->article->schema([
-			'id' => ['type' => 'integer'],
-			'title' => ['type' => 'string'],
-			'author_id' => ['type' => 'integer'],
+		$this->article = Table::build('Article', [
+			'schema' => [
+				'id' => ['type' => 'integer'],
+				'name' => ['type' => 'string'],
+			]
 		]);
 	}
 
@@ -93,4 +91,41 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($assoc->requiresKeys());
 	}
 
+/**
+ * Tests the pivot method
+ *
+ * @return void
+ */
+	public function testPivot() {
+		$assoc = new BelongsToMany('Test', [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag
+		]);
+		$pivot = $assoc->pivot();
+		$this->assertInstanceOf('\Cake\ORM\Table', $pivot);
+		$this->assertEquals('ArticleTag', $pivot->alias());
+		$this->assertEquals('articles_tags', $pivot->table());
+		$this->assertSame($this->article, $pivot->association('Article')->source());
+		$this->assertSame($this->tag, $pivot->association('Tag')->target());
+
+		$belongsTo = '\Cake\ORM\Association\BelongsTo';
+		$this->assertInstanceOf($belongsTo, $pivot->association('Article'));
+		$this->assertInstanceOf($belongsTo, $pivot->association('Tag'));
+
+		$this->assertSame($pivot, $this->tag->association('ArticleTag')->target());
+		$this->assertSame($this->article, $this->tag->association('Article')->target());
+
+		$hasMany = '\Cake\ORM\Association\HasMany';
+		$belongsToMany = '\Cake\ORM\Association\BelongsToMany';
+		$this->assertInstanceOf($belongsToMany, $this->tag->association('Article'));
+		$this->assertInstanceOf($hasMany, $this->tag->association('ArticleTag'));
+
+		$this->assertSame($pivot, $assoc->pivot());
+		$pivot2 = Table::build('Foo');
+		$assoc->pivot($pivot2);
+		$this->assertSame($pivot2, $assoc->pivot());
+
+		$assoc->pivot('ArticleTag');
+		$this->assertSame($pivot, $assoc->pivot());
+	}
 }
