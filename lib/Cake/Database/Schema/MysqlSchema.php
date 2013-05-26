@@ -142,8 +142,8 @@ class MysqlSchema {
 		}
 		$table->addColumn($row['Field'], $field);
 		if (!empty($row['Key']) && $row['Key'] === 'PRI') {
-			$table->addIndex('primary', [
-				'type' => Table::INDEX_PRIMARY,
+			$table->addConstraint('primary', [
+				'type' => Table::CONSTRAINT_PRIMARY,
 				'columns' => [$row['Field']]
 			]);
 		}
