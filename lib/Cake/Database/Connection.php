@@ -244,6 +244,15 @@ class Connection {
 	}
 
 /**
+ * Get a Schema\Collection object for this connection.
+ *
+ * @return Cake\Database\Schema\Collection
+ */
+	public function schemaCollection() {
+		return new \Cake\Database\Schema\Collection($this);
+	}
+
+/**
  * Executes an INSERT query on the specified table
  *
  * @param string $table the table to update values in
