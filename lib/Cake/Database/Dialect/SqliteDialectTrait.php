@@ -102,32 +102,33 @@ trait SqliteDialectTrait {
 			return $query;
 		}
 
-		$cols = $v->columns();
 		$newQuery = $query->connection()->newQuery();
+		$cols = $v->columns();
 		$values = [];
-		debug($cols);
 		foreach ($v->values() as $k => $val) {
 			$values[] = $val;
 			$fillLength = count($cols) - count($val);
 			if ($fillLength > 0) {
 				$val = array_merge($val, array_fill(0, $fillLength, null));
 			}
+			// TODO this doesn't work all columns are inserted as null.
 			$val = array_map(function($val) {
 				return $val instanceof ExpressionInterface ? $val : '?';
 			}, $val);
 
+			$select = array_combine($cols, $val);
 			if ($k === 0) {
-				array_unshift($values, $newQuery->select(array_combine($cols, $val)));
+				array_unshift($values, $newQuery->select($select));
 				continue;
 			}
 
 			$q = $newQuery->connection()->newQuery();
-			$newQuery->union($q->select(array_combine($cols, $val)), true);
+			$newQuery->union($q->select($select), true);
 		}
 
-		$v = clone $v;
-		$v->values($values);
-		return $query->values($v);
+		$v->values([$newQuery]);
+		$query->values($v);
+		return $query;
 	}
 
 /**
