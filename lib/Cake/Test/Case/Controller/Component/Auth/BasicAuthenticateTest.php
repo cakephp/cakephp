@@ -188,4 +188,37 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$this->auth->unauthenticated($request, $this->response);
 	}
 
+/**
+ * testAuthenticateWithBlowfish
+ *
+ * @return void
+ */
+	public function testAuthenticateWithBlowfish() {
+		$hash = Security::hash('password', 'blowfish');
+		$this->skipIf(strpos($hash, '$2a$') === false, 'Skipping blowfish tests as hashing is not working');
+
+		$request = new CakeRequest('posts/index', false);
+		$request->addParams(array('pass' => array(), 'named' => array()));
+
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'password';
+
+		$User = ClassRegistry::init('User');
+		$User->updateAll(
+			array('password' => $User->getDataSource()->value($hash)),
+			array('User.user' => 'mariano')
+		);
+
+		$this->auth->settings['passwordHasher'] = 'Blowfish';
+
+		$result = $this->auth->authenticate($request, $this->response);
+		$expected = array(
+			'id' => 1,
+			'user' => 'mariano',
+			'created' => '2007-03-17 01:16:23',
+			'updated' => '2007-03-17 01:18:31'
+		);
+		$this->assertEquals($expected, $result);
+	}
+
 }
