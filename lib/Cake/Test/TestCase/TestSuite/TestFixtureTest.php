@@ -273,15 +273,13 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testImport() {
-		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
-		Configure::write('App.namespace', 'TestApp');
-		$Fixture = new ImportFixture();
-		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = [
-			'model' => 'Post',
+		$fixture = new ImportFixture();
+		$fixture->fields = $fixture->records = null;
+		$fixture->import = [
+			'table' => 'posts',
 			'connection' => 'test',
 		];
-		$Fixture->init();
+		$fixture->init();
 
 		$expected = [
 			'id',
@@ -292,10 +290,7 @@ class TestFixtureTest extends TestCase {
 			'created',
 			'updated',
 		];
-		$this->assertEquals($expected, array_keys($Fixture->fields));
-
-		$keys = array_flip(ClassRegistry::keys());
-		$this->assertFalse(array_key_exists('post', $keys));
+		$this->assertEquals($expected, $fixture->schema()->columns());
 	}
 
 /**

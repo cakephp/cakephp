@@ -21,6 +21,7 @@ use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\Table;
 use Cake\Error;
 use Cake\Log\Log;
+use Cake\Model\ConnectionManager;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
@@ -119,29 +120,8 @@ class TestFixture {
 			$this->_schemaFromFields();
 		}
 
-		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
-			$import = array_merge(
-				array('connection' => 'default', 'records' => false),
-				is_array($this->import) ? $this->import : array('model' => $this->import)
-			);
-
-			$this->Schema->connection = $import['connection'];
-			if (isset($import['table'])) {
-				$model = new Model(null, $import['table'], $import['connection']);
-				$db = ConnectionManager::getDataSource($import['connection']);
-				$db->cacheSources = false;
-				$model->useDbConfig = $import['connection'];
-				$model->name = Inflector::camelize(Inflector::singularize($import['table']));
-				$model->table = $import['table'];
-				$model->tablePrefix = $db->config['prefix'];
-				$this->fields = $model->schema(true);
-				$this->primaryKey = $model->primaryKey;
-				ClassRegistry::flush();
-			}
-
-			if (!empty($db->config['prefix']) && strpos($this->table, $db->config['prefix']) === 0) {
-				$this->table = str_replace($db->config['prefix'], '', $this->table);
-			}
+		if (!empty($this->import)) {
+			$this->_schemaFromImport();
 		}
 	}
 
@@ -172,6 +152,30 @@ class TestFixture {
 				$this->_schema->addIndex($name, $data);
 			}
 		}
+	}
+
+/**
+ * Build fixture schema from a table in another datasource.
+ *
+ * @return void
+ */
+	protected function _schemaFromImport() {
+		if (!is_array($this->import)) {
+			return;
+		}
+		$import = array_merge(
+			array('connection' => 'default', 'records' => false, 'table' => null),
+			$this->import
+		);
+
+		if (empty($import['table'])) {
+			throw new Error\Exception(__d('cake_dev', 'Cannot import from undefined table.'));
+		}
+
+		$db = ConnectionManager::getDataSource($import['connection']);
+		$schemaCollection = $db->schemaCollection();
+		$table = $schemaCollection->describe($import['table']);
+		$this->_schema = $table;
 	}
 
 /**
