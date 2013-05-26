@@ -63,6 +63,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->connection->execute('DROP TABLE IF EXISTS articles');
 		$this->connection->execute('DROP TABLE IF EXISTS authors');
 		$this->connection->execute('DROP TABLE IF EXISTS publications');
+		$this->connection->execute('DROP TABLE IF EXISTS articles_tags');
+		$this->connection->execute('DROP TABLE IF EXISTS tags');
 		Table::clearRegistry();
 	}
 
@@ -81,9 +83,17 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$table = 'CREATE TEMPORARY TABLE publications(id int, title varchar(20), body varchar(50), author_id int)';
 		$this->connection->execute($table);
 
+		$table = 'CREATE TEMPORARY TABLE tags(id int, name varchar(20))';
+		$this->connection->execute($table);
+
+		$table = 'CREATE TEMPORARY TABLE articles_tags(article_id int, tag_id int)';
+		$this->connection->execute($table);
+
 		Table::config('authors', ['connection' => $this->connection]);
 		Table::config('articles', ['connection' => $this->connection]);
 		Table::config('publications', ['connection' => $this->connection]);
+		Table::config('tags', ['connection' => $this->connection]);
+		Table::config('articles_tags', ['connection' => $this->connection]);
 	}
 
 /**
@@ -112,6 +122,28 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$result->bindValue(2, 'another publication');
 		$result->bindValue(3, 'another body');
 		$result->bindValue(4, 2);
+		$result->execute();
+
+		$data = ['id' => '5', 'name' => 'one'];
+		$result = $this->connection->insert(
+			'tags',
+			$data,
+			['id' => 'integer', 'name' => 'string']
+		);
+
+		$result->bindValue(1, 6, 'integer');
+		$result->bindValue(2, 'two');
+		$result->execute();
+
+		$data = ['article_id' => '1', 'tag_id' => 5];
+		$result = $this->connection->insert(
+			'articles_tags',
+			$data,
+			['article_id' => 'integer', 'tag_id' => 'integer']
+		);
+
+		$result->bindValue(1, 2);
+		$result->bindValue(2, 6);
 		$result->execute();
 
 		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body', 'author_id' => 1];
@@ -568,6 +600,66 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			]
 		];
 		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests that BelongsToMany associations are correctly eager loaded.
+ * Also that the query object passes the correct parent model keys to the
+ * association objects in order to perform eager loading with select strategy
+ *
+ * @dataProvider strategiesProvider
+ * @return void
+ **/
+	public function testBelongsToManyEagerLoading($strategy) {
+		$this->_insertRecords();
+
+		$query = new Query($this->connection);
+		$table =  Table::build('Article', ['connection' => $this->connection]);
+		Table::build('Tag', ['connection' => $this->connection]);
+		Table::build('ArticleTag', [
+			'connection' => $this->connection,
+			'table' => 'articles_tags'
+		]);
+		$table->belongsToMany('Tag', ['property' => 'tags', 'strategy' => $strategy]);
+
+		$results = $query->repository($table)->select()->contain('Tag')->toArray();
+		$expected = [
+			[
+				'id' => 1,
+				'title' => 'a title',
+				'body' => 'a body',
+				'author_id' => 1,
+				'tags' => [
+					[
+						'id' => 5,
+						'name' => 'one',
+						'ArticleTag' => ['article_id' => 1, 'tag_id' => 5]
+					]
+				]
+			],
+			[
+				'id' => 2,
+				'title' => 'another title',
+				'body' => 'another body',
+				'author_id' => 2,
+				'tags' => [
+					[
+						'id' => 6,
+						'name' => 'two',
+						'ArticleTag' => ['article_id' => 2, 'tag_id' => 6]
+					]
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+
+		$results = $query->repository($table)
+			->select()
+			->contain(['Tag' => ['conditions' => ['id' => 6]]])
+			->toArray();
+		unset($expected[0]['tags']);
+		$this->assertEquals($expected, $results);
+		$this->assertEquals($table->association('Tag')->strategy(), $strategy);
 	}
 
 }

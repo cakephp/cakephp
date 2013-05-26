@@ -19,6 +19,7 @@ namespace Cake\ORM;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Association\HasMany;
+use Cake\ORM\Association\BelongsToMany;
 use Cake\Utility\Inflector;
 
 class Table {
@@ -239,6 +240,11 @@ class Table {
 		return $this->_associations[$association->name()] = $association;
 	}
 
+	public function belongsToMany($associated, array $options = []) {
+		$options += ['sourceTable' => $this];
+		$association = new BelongsToMany($associated, $options);
+		return $this->_associations[$association->name()] = $association;
+	}
 
 	public function find($type, $options = []) {
 		return $this->{'find' . ucfirst($type)}($this->buildQuery(), $options);

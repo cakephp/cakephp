@@ -270,9 +270,10 @@ abstract class Association {
 /**
  * Whether this association can be expressed directly in a query join
  *
+ * @param array $options custom options key that could alter the return value
  * @return boolean
  */
-	public function canBeJoined() {
+	public function canBeJoined($options = []) {
 		return $this->_canBeJoined;
 	}
 

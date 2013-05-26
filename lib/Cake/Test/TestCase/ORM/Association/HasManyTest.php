@@ -24,7 +24,7 @@ use Cake\ORM\Query;
  * Tests HasMany class
  *
  */
-class HasOneTest extends \Cake\TestSuite\TestCase {
+class HasManyTest extends \Cake\TestSuite\TestCase {
 
 /**
  * Set up

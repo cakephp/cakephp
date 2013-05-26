@@ -159,7 +159,7 @@ class Query extends DatabaseQuery {
 		}
 
 		foreach ($contain as $relation => $meta) {
-			if ($meta['instance'] && !$meta['instance']->canBeJoined()) {
+			if ($meta['instance'] && !$meta['instance']->canBeJoined($meta['config'])) {
 				$this->_loadEagerly[$relation] = $meta;
 			}
 		}
@@ -170,7 +170,7 @@ class Query extends DatabaseQuery {
 			$this->_aliasMap[$alias] = $table;
 			$this->_addJoin($options['instance'], $options['config']);
 			foreach ($options['associations'] as $relation => $meta) {
-				if ($meta['instance'] && !$meta['instance']->canBeJoined()) {
+				if ($meta['instance'] && !$meta['instance']->canBeJoined($meta['config'])) {
 					$this->_loadEagerly[$relation] = $meta;
 				}
 			}
@@ -184,10 +184,17 @@ class Query extends DatabaseQuery {
 			'foreignKey' => 1,
 			'conditions' => 1,
 			'fields' => 1,
-			'sort' => 1
+			'sort' => 1,
+			'filtering' => 1
 		];
 
 		$instance = $parent->association($alias);
+		if (!$instance) {
+			throw new \InvalidArgumentException(
+				sprintf('%s is not associated with %s', $parent->alias(), $alias)
+			);
+		}
+
 		$table = $instance->target();
 
 		$extra = array_diff_key($options, $defaults);
@@ -211,7 +218,7 @@ class Query extends DatabaseQuery {
 		$result = [];
 		foreach ($associations as $table => $options) {
 			$associated = $options['instance'];
-			if ($associated && $associated->canBeJoined()) {
+			if ($associated && $associated->canBeJoined($options['config'])) {
 				$result[$table] = $options;
 				$result += $this->_resolveFirstLevel($associated->target(), $options['associations']);
 			}
