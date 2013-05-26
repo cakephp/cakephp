@@ -350,24 +350,10 @@ class PostgresSchema {
  */
 	public function truncateTableSql(Table $table) {
 		$name = $this->_driver->quoteIdentifier($table->name());
-		$sequence = null;
-		foreach ($table->constraints() as $seq) {
-			if ($table->constraint($seq)['type'] == Table::CONSTRAINT_PRIMARY) {
-				$sequence = $this->_driver->quoteIdentifier($seq);
-				break;
-			}
-		}
 
-		$out = [];
-		if ($sequence) {
-			$out[] = sprintf(
-				'ALTER SEQUENCE %s.%s RESTART WITH 1',
-				$name,
-				$sequence
-			);
-		}
-		$out[] = sprintf('DELETE FROM %s', $name);
-		return $out;
+		return [
+			sprintf("TRUNCATE %s RESTART IDENTITY", $name)
+		];
 	}
 
 }

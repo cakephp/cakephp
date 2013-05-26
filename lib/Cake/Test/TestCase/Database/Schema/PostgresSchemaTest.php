@@ -580,9 +580,8 @@ SQL;
 				'columns' => ['id']
 			]);
 		$result = $table->truncateSql($connection);
-		$this->assertCount(2, $result);
-		$this->assertEquals('ALTER SEQUENCE "articles"."primary" RESTART WITH 1', $result[0]);
-		$this->assertEquals('DELETE FROM "articles"', $result[1]);
+		$this->assertCount(1, $result);
+		$this->assertEquals('TRUNCATE "articles" RESTART IDENTITY', $result[0]);
 	}
 
 /**
