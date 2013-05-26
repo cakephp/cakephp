@@ -128,4 +128,21 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$assoc->pivot('ArticleTag');
 		$this->assertSame($pivot, $assoc->pivot());
 	}
+
+/**
+ * Tests it is possible to set the table name for the join table
+ *
+ * @return void
+ */
+	public function testPivotWithDefaultTableName() {
+		$assoc = new BelongsToMany('Test', [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'joinTable' => 'tags_articles'
+		]);
+		$pivot = $assoc->pivot();
+		$this->assertEquals('ArticleTag', $pivot->alias());
+		$this->assertEquals('tags_articles', $pivot->table());
+	}
+
 }

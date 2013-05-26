@@ -217,14 +217,15 @@ class BelongsToMany extends Association {
  */
 	protected function _joinTableName($name = null) {
 		if ($name === null) {
-			if (empty($this->_joinTableName)) {
+			if (empty($this->_joinTable)) {
 				$aliases = array_map('\Cake\Utility\Inflector::tableize', [
 					$sAlias = $this->source()->alias(),
 					$tAlias = $this->target()->alias()
 				]);
 				sort($aliases);
-				$name = implode('_', $aliases);
+				$this->_joinTable = implode('_', $aliases);
 			}
+			return $this->_joinTable;
 		}
 		return $this->_joinTable = $name;
 	}
