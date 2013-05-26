@@ -339,10 +339,56 @@ abstract class Association {
  * Alters a Query object to include the associated target table data in the final
  * result
  *
+ * The options array accept the following keys:
+ *
+ * - includeFields: Whether to include target model fields in the result or not
+ * - foreignKey: The name of the field to use as foreign key, if false none
+ *   will be used
+ * - conditions: array with a list of conditions to filter the join with
+ * - fields: a list of fields in the target table to include in the result
+ * - type: The type of join to be used (e.g. INNER)
+ *
  * @param Query $query the query to be altered to include the target table data
  * @param array $options Any extra options or overrides to be taken in account
  * @return void
  */
-	public abstract function attachTo(Query $query, array $options = []);
+	public function attachTo(Query $query, array $options = []) {
+		$target = $this->target();
+		$source = $this->source();
+		$options += [
+			'includeFields' => true,
+			'foreignKey' => $this->foreignKey(),
+			'conditions' => [],
+			'type' => $this->joinType(),
+			'table' => $target->table()
+		];
+		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 
+		if (!empty($options['foreignKey'])) {
+			$options['conditions'][] = $this->_joinCondition($options);
+		}
+
+		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
+		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
+
+		if (empty($options['fields'])) {
+			$f = isset($options['fields']) ? $options['fields'] : null;
+			if ($options['includeFields'] && ($f === null || $f !== false)) {
+				$options['fields'] = array_keys($target->schema());
+			}
+		}
+
+		if (!empty($options['fields'])) {
+			$query->select($query->aliasFields($options['fields'], $target->alias()));
+		}
+	}
+
+/**
+ * Returns a single or multiple conditions to be appended to the generated join
+ * clause for getting the results on the target table.
+ *
+ * @param array $options list of options passed to attachTo method
+ * @return string|array
+ */
+	protected abstract function _joinCondition(array $options);
 }

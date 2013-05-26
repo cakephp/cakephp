@@ -52,55 +52,19 @@ class BelongsTo extends Association {
 	}
 
 /**
- * Alters a Query object to include the associated target table data in the final
- * result
+ * Returns a single or multiple conditions to be appended to the generated join
+ * clause for getting the results on the target table.
  *
- * The options array accept the following keys:
- *
- * - includeFields: Whether to include target model fields in the result or not
- * - foreignKey: The name of the field to use as foreign key, if false none
- *   will be used
- * - conditions: array with a list of conditions to filter the join with
- * - joinType: The type of join to be used (e.g. INNER)
- *
- * @param Query $query the query to be altered to include the target table data
- * @param array $options Any extra options or overrides to be taken in account
- * @return void
+ * @param array $options list of options passed to attachTo method
+ * @return string|array
  */
-	public function attachTo(Query $query, array $options = []) {
-		$target = $this->target();
-		$source = $this->source();
-		$options += [
-			'includeFields' => true,
-			'foreignKey' => $this->foreignKey(),
-			'conditions' => [],
-			'type' => $this->joinType(),
-			'table' => $target->table()
-		];
-		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
-
-		if (!empty($options['foreignKey'])) {
-			$options['conditions'][] =  sprintf('%s.%s = %s.%s',
-				$target->alias(),
-				$target->primaryKey(),
-				$source->alias(),
+	protected function _joinCondition(array $options) {
+		return sprintf('%s.%s = %s.%s',
+				$this->_targetTable->alias(),
+				$this->_targetTable->primaryKey(),
+				$this->_sourceTable->alias(),
 				$options['foreignKey']
 			);
-		}
-
-		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
-
-		if (empty($options['fields'])) {
-			$f = isset($options['fields']) ? $options['fields'] : null;
-			if ($options['includeFields'] && ($f === null || $f !== false)) {
-				$options['fields'] = array_keys($target->schema());
-			}
-		}
-
-		if (!empty($options['fields'])) {
-			$query->select($query->aliasFields($options['fields'], $target->alias()));
-		}
 	}
 
 }

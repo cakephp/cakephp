@@ -74,47 +74,6 @@ trait ExternalAssociationTrait {
 	}
 
 /**
- * Not implemented
- *
- * @return boolean false
- */
-	public function attachTo(Query $query, array $options = []) {
-		$target = $this->target();
-		$source = $this->source();
-		$options += [
-			'includeFields' => true,
-			'foreignKey' => $this->foreignKey(),
-			'conditions' => [],
-			'type' => $this->joinType(),
-			'table' => $target->table()
-		];
-		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
-
-		if (!empty($options['foreignKey'])) {
-			$options['conditions'][] =  sprintf('%s.%s = %s.%s',
-				$source->alias(),
-				$source->primaryKey(),
-				$target->alias(),
-				$options['foreignKey']
-			);
-		}
-
-		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
-
-		if (empty($options['fields'])) {
-			$f = isset($options['fields']) ? $options['fields'] : null;
-			if ($options['includeFields'] && ($f === null || $f !== false)) {
-				$options['fields'] = array_keys($target->schema());
-			}
-		}
-
-		if (!empty($options['fields'])) {
-			$query->select($query->aliasFields($options['fields'], $target->alias()));
-		}
-	}
-
-/**
  * Returns true if the eager loading process will require a set of parent table's
  * primary keys in order to use them as a filter in the finder query.
  *
@@ -133,6 +92,15 @@ trait ExternalAssociationTrait {
  * @return \Closure
  */
 	public abstract function eagerLoader(array $options);
+
+	protected function _joinCondition(array $options) {
+		return sprintf('%s.%s = %s.%s',
+				$this->_sourceTable->alias(),
+				$this->_sourceTable->primaryKey(),
+				$this->_targetTable->alias(),
+				$options['foreignKey']
+			);
+	}
 
 /**
  * Returns a callable to be used for each row in a query result set
