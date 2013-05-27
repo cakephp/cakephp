@@ -32,14 +32,14 @@ class UpgradeShell extends Shell {
  *
  * @var array
  */
-	protected $_files = array();
+	protected $_files = [];
 
 /**
  * Paths
  *
  * @var array
  */
-	protected $_paths = array();
+	protected $_paths = [];
 
 /**
  * Shell startup, prints info message about dry run.
@@ -294,6 +294,15 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Update fixtures
+ *
+ * @return void
+ */
+	public function fixtures() {
+		$path = $this->_getPath();
+	}
+
+/**
  * Filter paths to remove webroot, Plugin, tmp directories
  */
 	protected function _filterPaths($paths, $directories) {
@@ -450,8 +459,8 @@ class UpgradeShell extends Shell {
 			'default' => '',
 		];
 		$path = [
-			'help' => __d('cake_console', 'The path to update fixtures on.'),
-			'default' => APP . 'Test' . DS . 'Fixture' . DS,
+			'help' => __d('cake_console', 'The path to operate on. Will default to APP or the plugin option.'),
+			'required' => false,
 		];
 
 		return parent::getOptionParser()
@@ -463,7 +472,7 @@ class UpgradeShell extends Shell {
 			])
 			->addSubcommand('locations', [
 				'help' => __d('cake_console', 'Move files/directories around. Run this *before* adding namespaces with the namespaces command.'),
-				'parser' => ['options' => compact('plugin', 'dryRun', 'git')]
+				'parser' => ['options' => compact('plugin', 'dryRun', 'git'), 'arguments' => compact('path')]
 			])
 			->addSubcommand('namespaces', [
 				'help' => __d('cake_console', 'Add namespaces to files based on their file path. Only run this *after* you have moved files.'),
@@ -475,15 +484,15 @@ class UpgradeShell extends Shell {
 			])
 			->addSubcommand('fixtures', [
 				'help' => __d('cake_console', 'Update fixtures to use new index/constraint features. This is necessary before running tests.'),
-				'parser' => ['options' => compact('plugin', 'dryRun', 'path')],
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')],
 			])
 			->addSubcommand('cache', [
 				'help' => __d('cake_console', "Replace Cache::config() with Configure."),
-				'parser' => ['options' => compact('plugin', 'dryRun')]
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			])
 			->addSubcommand('log', [
 				'help' => __d('cake_console', "Replace CakeLog::config() with Configure."),
-				'parser' => ['options' => compact('plugin', 'dryRun')]
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			]);
 	}
 
