@@ -111,7 +111,6 @@ trait SqliteDialectTrait {
 			if ($fillLength > 0) {
 				$val = array_merge($val, array_fill(0, $fillLength, null));
 			}
-			// TODO this doesn't work all columns are inserted as null.
 			$val = array_map(function($val) {
 				return $val instanceof ExpressionInterface ? $val : '?';
 			}, $val);
@@ -126,8 +125,7 @@ trait SqliteDialectTrait {
 			$newQuery->union($q->select($select), true);
 		}
 
-		$v->values([$newQuery]);
-		$query->values($v);
+		$v->values($values);
 		return $query;
 	}
 
