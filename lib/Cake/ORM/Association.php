@@ -365,7 +365,10 @@ abstract class Association {
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 
 		if (!empty($options['foreignKey'])) {
-			$options['conditions'][] = $this->_joinCondition($options);
+			$joinCondition = $this->_joinCondition($options);
+			if ($joinCondition) {
+				$options['conditions'][] = $joinCondition;
+			}
 		}
 
 		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
@@ -385,10 +388,11 @@ abstract class Association {
 
 /**
  * Returns a single or multiple conditions to be appended to the generated join
- * clause for getting the results on the target table.
+ * clause for getting the results on the target table. If false is returned then
+ * it will not attach any new conditions to the join clause
  *
  * @param array $options list of options passed to attachTo method
- * @return string|array
+ * @return string|array|boolean
  */
 	protected abstract function _joinCondition(array $options);
 }

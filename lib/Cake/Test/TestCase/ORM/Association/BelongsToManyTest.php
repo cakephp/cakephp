@@ -145,4 +145,96 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('tags_articles', $pivot->table());
 	}
 
+/**
+ * Tests that the correct join and fields are attached to a query depending on
+ * the association config
+ *
+ * @return void
+ */
+	public function testAttachTo() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'conditions' => ['Tag.name' => 'cake']
+		];
+		Table::build('ArticleTag', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer']
+			]
+		]);
+		$association = new BelongsToMany('Tag', $config);
+		$query->expects($this->at(0))->method('join')->with([
+			'Tag' => [
+				'conditions' => [
+					'Tag.name' => 'cake'
+				],
+				'type' => 'INNER',
+				'table' => 'tags'
+			]
+		]);
+		$query->expects($this->at(2))->method('join')->with([
+			'ArticleTag' => [
+				'conditions' => [
+					'Tag.id = ArticleTag.tag_id'
+				],
+				'type' => 'INNER',
+				'table' => 'articles_tags'
+			]
+		]);
+		$query->expects($this->at(1))->method('select')->with([
+			'Tag__id' => 'Tag.id',
+			'Tag__name' => 'Tag.name',
+		]);
+		$query->expects($this->at(3))->method('select')->with([
+			'ArticleTag__article_id' => 'ArticleTag.article_id',
+			'ArticleTag__tag_id' => 'ArticleTag.tag_id',
+		]);
+		$association->attachTo($query);
+	}
+
+/**
+ * Tests that it is possible to avoid fields inclusion for the associated table
+ *
+ * @return void
+ */
+	public function testAttachToNoFields() {
+				$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'conditions' => ['Tag.name' => 'cake']
+		];
+		Table::build('ArticleTag', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer']
+			]
+		]);
+		$association = new BelongsToMany('Tag', $config);
+		$query->expects($this->at(0))->method('join')->with([
+			'Tag' => [
+				'conditions' => [
+					'Tag.name' => 'cake'
+				],
+				'type' => 'INNER',
+				'table' => 'tags'
+			]
+		]);
+		$query->expects($this->at(1))->method('join')->with([
+			'ArticleTag' => [
+				'conditions' => [
+					'Tag.id = ArticleTag.tag_id'
+				],
+				'type' => 'INNER',
+				'table' => 'articles_tags'
+			]
+		]);
+		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
 }

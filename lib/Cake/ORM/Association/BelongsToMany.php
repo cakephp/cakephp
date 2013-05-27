@@ -112,6 +112,40 @@ class BelongsToMany extends Association {
 	}
 
 /**
+ * Alters a Query object to include the associated target table data in the final
+ * result
+ *
+ * The options array accept the following keys:
+ *
+ * - includeFields: Whether to include target model fields in the result or not
+ * - foreignKey: The name of the field to use as foreign key, if false none
+ *   will be used
+ * - conditions: array with a list of conditions to filter the join with
+ * - fields: a list of fields in the target table to include in the result
+ * - type: The type of join to be used (e.g. INNER)
+ *
+ * @param Query $query the query to be altered to include the target table data
+ * @param array $options Any extra options or overrides to be taken in account
+ * @return void
+ */
+	public function attachTo(Query $query, array $options = []) {
+		parent::attachTo($query, $options);
+		$this->target()
+			->association($this->pivot()->alias())
+			->attachTo($query, $options);
+	}
+
+/**
+ * Return false as join conditions are defined in the pivot table
+ * 
+ * @param array $options list of options passed to attachTo method
+ * @return boolean false
+ */
+	protected function _joinCondition(array $options) {
+		return false;
+	}
+
+/**
  * Eager loads a list of records in the target table that are related to another
  * set of records in the source table. Source records can specified in two ways:
  * first one is by passing a Query object setup to find on the source table and
