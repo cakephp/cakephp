@@ -41,7 +41,7 @@ class ArticleFixture extends TestFixture {
  * @var array
  */
 	public $fields = [
-		'id' => ['type' => 'integer', 'key' => 'primary'],
+		'id' => ['type' => 'integer'],
 		'name' => ['type' => 'string', 'length' => '255'],
 		'created' => ['type' => 'datetime'],
 		'constraints' => [
@@ -82,7 +82,7 @@ class StringsTestFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer'),
 		'name' => array('type' => 'string', 'length' => '255'),
 		'email' => array('type' => 'string', 'length' => '255'),
 		'age' => array('type' => 'integer', 'default' => 10)

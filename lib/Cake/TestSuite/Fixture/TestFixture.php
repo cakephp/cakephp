@@ -147,8 +147,11 @@ class TestFixture {
 			if ($field === 'constraints' || $field === 'indexes') {
 				continue;
 			}
-			// TODO issue E_USER_NOTICE if a column defines 'key'?
-			// Or handle the case correctly?
+			// Trigger errors on deprecated usage.
+			if (is_array($data) && isset($data['key'])) {
+				$msg = __d('cake_dev', 'Usage of the `key` options in columns is not supported. Try using the upgrade shell to migrate your fixtures.`');
+				trigger_error($msg, E_USER_NOTICE);
+			}
 			$this->_schema->addColumn($field, $data);
 		}
 		if (!empty($this->fields['constraints'])) {
@@ -157,8 +160,11 @@ class TestFixture {
 			}
 		}
 		if (!empty($this->fields['indexes'])) {
-			// TODO 2.x indexes contains indexes + constraints.
-			// Should we issue an error or handle the case?
+			// Trigger errors on deprecated usage.
+			if (empty($data['type'])) {
+				$msg = __d('cake_dev', 'Indexes must define a type. Try using the upgrade shell to migrate your fixtures.');
+				trigger_error($msg, E_USER_NOTICE);
+			}
 			foreach ($this->fields['indexes'] as $name => $data) {
 				$this->_schema->addIndex($name, $data);
 			}
