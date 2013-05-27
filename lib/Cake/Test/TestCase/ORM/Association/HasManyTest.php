@@ -39,7 +39,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			]
 		]);
 		$this->article = $this->getMock(
-			'Cake\ORM\Table', ['find'], [['alias' => 'Article']]
+			'Cake\ORM\Table', ['find'], [['alias' => 'Article', 'table' => 'articles']]
 		);
 		$this->article->schema([
 			'id' => ['type' => 'integer'],
@@ -333,4 +333,96 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($row, $result);
 	}
 
+/**
+ * Tests that the correct join and fields are attached to a query depending on
+ * the association config
+ *
+ * @return void
+ */
+	public function testAttachTo() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Article.is_active' => true]
+		];
+		$association = new HasMany('Article', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Article' => [
+				'conditions' => [
+					'Article.is_active' => true,
+					'Author.id = Article.author_id',
+				],
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->once())->method('select')->with([
+			'Article__id' => 'Article.id',
+			'Article__title' => 'Article.title',
+			'Article__author_id' => 'Article.author_id'
+		]);
+		$association->attachTo($query);
+	}
+
+/**
+ * Tests that default config defined in the association can be overridden
+ *
+ * @return void
+ */
+	public function testAttachToConfigOverride() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Article.is_active' => true]
+		];
+		$association = new HasMany('Article', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Article' => [
+				'conditions' => [
+					'Article.is_active' => false
+				],
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->once())->method('select')->with([
+			'Article__title' => 'Article.title'
+		]);
+
+		$override = [
+			'conditions' => ['Article.is_active' => false],
+			'foreignKey' => false,
+			'fields' => ['title']
+		];
+		$association->attachTo($query, $override);
+	}
+
+/**
+ * Tests that it is possible to avoid fields inclusion for the associated table
+ *
+ * @return void
+ */
+	public function testAttachToNoFields() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Article.is_active' => true]
+		];
+		$association = new HasMany('Article', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Article' => [
+				'conditions' => [
+					'Article.is_active' => true,
+					'Author.id = Article.author_id',
+				],
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
 }

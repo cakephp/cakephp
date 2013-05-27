@@ -162,4 +162,3 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 	}
 
 }
-
