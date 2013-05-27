@@ -322,6 +322,9 @@ class Helper extends Object {
 		) {
 			$path .= $options['ext'];
 		}
+		if (strpos($path, '://') !== false) {
+			return $path;
+		}
 		if (isset($plugin)) {
 			$path = Inflector::underscore($plugin) . '/' . $path;
 		}

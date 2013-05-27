@@ -1218,6 +1218,42 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test assets in a CDN server
+ *
+ * @return void
+ */
+	public function testAssetsInCDN() {
+		$helper = new HtmlHelper($this->View, array(
+			'defaultCssPathPrefix' => '//css_server/',
+			'defaultJsPathPrefix' => 'http://js_server/build-123/',
+			'defaultImgPathPrefix' => 'https://img_server/',
+			'defaultMediaPathPrefix' => 'https://media_server/'
+		));
+
+		// CSS
+		$expects = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => '//css_server/custom.css')
+		);
+		$this->assertTags($helper->css('custom'), $expects);
+
+		// JS
+		$expects = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'http://js_server/build-123/custom.js')
+		);
+		$this->assertTags($helper->script('custom'), $expects);
+
+		// Images
+		$expects = array(
+			'img' => array('src' => 'https://img_server/cake.png', 'alt' => '')
+		);
+		$this->assertTags($helper->image('cake.png'), $expects);
+
+		// Media files
+		$expected = array('video' => array('src' => 'https://media_server/video.webm'), '/video');
+		$this->assertTags($helper->media('video.webm'), $expected);
+	}
+
+/**
  * testCharsetTag method
  *
  * @return void
