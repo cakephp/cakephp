@@ -131,16 +131,23 @@ class Xml {
 		if ($hasDisable && !$options['loadEntities']) {
 			libxml_disable_entity_loader(true);
 		}
-		if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-			$xml = new SimpleXMLElement($input, LIBXML_NOCDATA);
-		} else {
-			$xml = new DOMDocument();
-			$xml->loadXML($input);
+		try {
+			if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+				$xml = new SimpleXMLElement($input, LIBXML_NOCDATA);
+			} else {
+				$xml = new DOMDocument();
+				$xml->loadXML($input);
+			}
+		} catch (Exception $e) {
+			$xml = null;
 		}
 		if ($hasDisable && !$options['loadEntities']) {
 			libxml_disable_entity_loader(false);
 		}
 		libxml_use_internal_errors($internalErrors);
+		if ($xml === null) {
+			throw new XmlException(__d('cake_dev', 'Xml cannot be read.'));
+		}
 		return $xml;
 	}
 
