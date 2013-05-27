@@ -39,6 +39,18 @@ class HtmlHelper extends AppHelper {
 	public $response;
 
 /**
+ * Settings for this helper.
+ *
+ * @var array
+ */
+	public $settings = array(
+		'defaultCssPathPrefix' => CSS_URL,
+		'defaultJsPathPrefix' => JS_URL,
+		'defaultImgPathPrefix' => IMAGES_URL,
+		'defaultMediaPathPrefix' => 'files/'
+	);
+
+/**
  * html tags used by this helper.
  *
  * @var array
@@ -441,7 +453,7 @@ class HtmlHelper extends AppHelper {
 		if (strpos($path, '//') !== false) {
 			$url = $path;
 		} else {
-			$url = $this->assetUrl($path, $options + array('pathPrefix' => CSS_URL, 'ext' => '.css'));
+			$url = $this->assetUrl($path, $options + array('pathPrefix' => $this->settings['defaultCssPathPrefix'], 'ext' => '.css'));
 			$options = array_diff_key($options, array('fullBase' => null));
 
 			if (Configure::read('Asset.filter.css')) {
@@ -543,7 +555,7 @@ class HtmlHelper extends AppHelper {
 		$this->_includedScripts[$url] = true;
 
 		if (strpos($url, '//') === false) {
-			$url = $this->assetUrl($url, $options + array('pathPrefix' => JS_URL, 'ext' => '.js'));
+			$url = $this->assetUrl($url, $options + array('pathPrefix' => $this->settings['defaultJsPathPrefix'], 'ext' => '.js'));
 			$options = array_diff_key($options, array('fullBase' => null));
 
 			if (Configure::read('Asset.filter.js')) {
@@ -802,7 +814,7 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::image
  */
 	public function image($path, $options = array()) {
-		$path = $this->assetUrl($path, $options + array('pathPrefix' => IMAGES_URL));
+		$path = $this->assetUrl($path, $options + array('pathPrefix' => $this->settings['defaultImgPathPrefix']));
 		$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 
 		if (!isset($options['alt'])) {
@@ -1056,7 +1068,7 @@ class HtmlHelper extends AppHelper {
 	public function media($path, $options = array()) {
 		$options += array(
 			'tag' => null,
-			'pathPrefix' => 'files/',
+			'pathPrefix' => $this->settings['defaultMediaPathPrefix'],
 			'text' => ''
 		);
 
@@ -1105,7 +1117,7 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if (isset($options['poster'])) {
-			$options['poster'] = $this->assetUrl($options['poster'], array('pathPrefix' => IMAGES_URL) + $options);
+			$options['poster'] = $this->assetUrl($options['poster'], array('pathPrefix' => $this->settings['defaultImgPathPrefix']) + $options);
 		}
 		$text = $options['text'];
 
