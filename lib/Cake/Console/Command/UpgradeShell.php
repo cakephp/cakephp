@@ -300,10 +300,104 @@ class UpgradeShell extends Shell {
  */
 	public function fixtures() {
 		$path = $this->_getPath();
+
+		$app = rtrim(APP, DS);
+		if ($path == $app || !empty($this->params['plugin'])) {
+			$path .= DS . 'Test' . DS . 'Fixture' . DS;
+		}
+		$this->out(__d('cake_console', 'Processing fixtures on %s', $path));
+		$this->_paths[] = realpath($path);
+		$this->_findFiles('php');
+		foreach ($this->_files as $file) {
+			$this->out(__d('cake_console', 'Updating %s...', $file), 1, Shell::VERBOSE);
+			$content = $this->_processFixture(file_get_contents($file));
+			if (empty($this->params['dryRun'])) {
+				file_put_contents($file, $content);
+			}
+		}
+	}
+
+/**
+ * Process fixture content and update it for 3.x
+ *
+ * @param string $content Fixture content.
+ * @return string
+ */
+	protected function _processFixture($content) {
+		// Serializes data from PHP data into PHP code.
+		// Basically a code style conformant version of var_export()
+		$export = function ($values) use (&$export) {
+			$vals = [];
+			if (!is_array($values)) {
+				return $vals;
+			}
+			foreach ($values as $key => $val) {
+				if (is_array($val)) {
+					$vals[] = "'{$key}' => [" . implode(", ", $export($val)) . "]";
+				} else {
+					$val = var_export($val, true);
+					if ($val === 'NULL') {
+						$val = 'null';
+					}
+					if (!is_numeric($key)) {
+						$vals[] = "'{$key}' => {$val}";
+					} else {
+						$vals[] = "{$val}";
+					}
+				}
+			}
+			return $vals;
+		};
+
+		// Process field property.
+		$processor = function ($matches) use ($export) {
+			eval('$data = [' . $matches[2] . '];');
+			$out = [];
+			foreach ($data as $field => $properties) {
+				// Move 'key' into a constraint
+				if (isset($properties['key']) && $properties['key'] === 'primary') {
+					$out['constraints']['primary'] = [
+						'type' => 'primary',
+						'columns' => [$field]
+					];
+					unset($properties['key']);
+				}
+				if ($field !== 'indexes') {
+					$out[$field] = $properties;
+				}
+			}
+
+			// Process indexes. Unique keys work differently now.
+			if (isset($data['indexes'])) {
+				foreach ($data['indexes'] as $index => $indexProps) {
+					// Move unique indexes over
+					if (!empty($indexProps['unique'])) {
+						unset($indexProps['unique']);
+						$out['constraints'][$index] = ['type' => 'unique'] + $indexProps;
+						continue;
+					}
+					$out['indexes'][$index] = $indexProps;
+				}
+			}
+			return $matches[1] . "\n\t\t" . implode(",\n\t\t", $export($out)) . "\n\t" . $matches[3];
+		};
+		$content = preg_replace_callback(
+			'/(public \$fields\s+=\s+(?:array\(|\[))(.*?)(\);|\];)/ms',
+			$processor,
+			$content,
+			-1,
+			$count
+		);
+		if ($count) {
+			$this->out(__d('cake_console', 'Updated $fields property'), 1, Shell::VERBOSE);
+		}
+		return $content;
 	}
 
 /**
  * Filter paths to remove webroot, Plugin, tmp directories
+ *
+ * @return array
  */
 	protected function _filterPaths($paths, $directories) {
 		return array_filter($paths, function ($path) use ($directories) {
