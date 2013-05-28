@@ -2494,7 +2494,7 @@ class DboSource extends DataSource {
 					$keys = array_keys($value);
 					if ($keys === array_values($keys)) {
 						$count = count($value);
-						if ($count === 1 && !preg_match("/\s+NOT$/", $key)) {
+						if ($count === 1 && !preg_match('/\s+(?:NOT|\!=)$/', $key)) {
 							$data = $this->_quoteFields($key) . ' = (';
 							if ($quoteValues) {
 								if (is_object($model)) {
