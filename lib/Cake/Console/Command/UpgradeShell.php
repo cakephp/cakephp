@@ -312,7 +312,7 @@ class UpgradeShell extends Shell {
 			$this->out(__d('cake_console', 'Updating %s...', $file), 1, Shell::VERBOSE);
 			$content = $this->_processFixture(file_get_contents($file));
 			if (empty($this->params['dryRun'])) {
-				// file_put_contents($file, $content);
+				file_put_contents($file, $content);
 			}
 		}
 	}
@@ -362,7 +362,9 @@ class UpgradeShell extends Shell {
 						'columns' => [$field]
 					];
 				}
-				unset($properties['key']);
+				if (isset($properties['key'])) {
+					unset($properties['key']);
+				}
 				if ($field !== 'indexes') {
 					$out[$field] = $properties;
 				}
@@ -371,6 +373,10 @@ class UpgradeShell extends Shell {
 			// Process indexes. Unique keys work differently now.
 			if (isset($data['indexes'])) {
 				foreach ($data['indexes'] as $index => $indexProps) {
+					if (isset($indexProps['column'])) {
+						$indexProps['columns'] = $indexProp['column'];
+						unset($indexProp['column']);
+					}
 					// Move unique indexes over
 					if (!empty($indexProps['unique'])) {
 						unset($indexProps['unique']);

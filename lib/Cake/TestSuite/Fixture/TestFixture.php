@@ -181,7 +181,7 @@ class TestFixture {
 			return;
 		}
 		$import = array_merge(
-			array('connection' => 'default', 'records' => false, 'table' => null),
+			array('connection' => 'default', 'table' => null),
 			$this->import
 		);
 
