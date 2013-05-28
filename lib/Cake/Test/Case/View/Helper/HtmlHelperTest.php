@@ -414,6 +414,9 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('test.gif', array('pathPrefix' => 'http://cakephp.org/assets/img/'));
 		$this->assertTags($result, array('img' => array('src' => 'http://cakephp.org/assets/img/test.gif', 'alt' => '')));
+
+		$result = $this->Html->image('test.gif', array('pathPrefix' => '//cakephp.org/assets/img/'));
+		$this->assertTags($result, array('img' => array('src' => '//cakephp.org/assets/img/test.gif', 'alt' => '')));
 	}
 
 /**
