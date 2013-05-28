@@ -312,7 +312,7 @@ class UpgradeShell extends Shell {
 			$this->out(__d('cake_console', 'Updating %s...', $file), 1, Shell::VERBOSE);
 			$content = $this->_processFixture(file_get_contents($file));
 			if (empty($this->params['dryRun'])) {
-				file_put_contents($file, $content);
+				// file_put_contents($file, $content);
 			}
 		}
 	}
@@ -355,14 +355,14 @@ class UpgradeShell extends Shell {
 			$constraints = [];
 			$out = [];
 			foreach ($data as $field => $properties) {
-				// Move 'key' into a constraint
+				// Move primary key into a constraint
 				if (isset($properties['key']) && $properties['key'] === 'primary') {
 					$constraints['primary'] = [
 						'type' => 'primary',
 						'columns' => [$field]
 					];
-					unset($properties['key']);
 				}
+				unset($properties['key']);
 				if ($field !== 'indexes') {
 					$out[$field] = $properties;
 				}
