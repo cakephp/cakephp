@@ -352,11 +352,12 @@ class UpgradeShell extends Shell {
 		// Process field property.
 		$processor = function ($matches) use ($export) {
 			eval('$data = [' . $matches[2] . '];');
+			$constraints = [];
 			$out = [];
 			foreach ($data as $field => $properties) {
 				// Move 'key' into a constraint
 				if (isset($properties['key']) && $properties['key'] === 'primary') {
-					$out['constraints']['primary'] = [
+					$constraints['primary'] = [
 						'type' => 'primary',
 						'columns' => [$field]
 					];
@@ -373,11 +374,14 @@ class UpgradeShell extends Shell {
 					// Move unique indexes over
 					if (!empty($indexProps['unique'])) {
 						unset($indexProps['unique']);
-						$out['constraints'][$index] = ['type' => 'unique'] + $indexProps;
+						$constraints[$index] = ['type' => 'unique'] + $indexProps;
 						continue;
 					}
 					$out['indexes'][$index] = $indexProps;
 				}
+			}
+			if (count($constraints)) {
+				$out['constraints'] = $constraints;
 			}
 			return $matches[1] . "\n\t\t" . implode(",\n\t\t", $export($out)) . "\n\t" . $matches[3];
 		};
