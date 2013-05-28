@@ -1973,7 +1973,7 @@ HTML;
 		$lines = explode("\r\n", $message);
 		foreach ($lines as $line) {
 			$this->assertTrue(strlen($line) <= CakeEmail::LINE_LENGTH_MUST,
-				__d('cake_dev', 'Line length exceeds the max. limit of %s', 'CakeEmail::LINE_LENGTH_MUST'));
+				'Line length exceeds the max. limit of CakeEmail::LINE_LENGTH_MUST');
 		}
 	}
 
