@@ -445,7 +445,7 @@ class HtmlHelper extends AppHelper {
 			$url = $path;
 		} else {
 			$url = $this->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css'));
-			$options = array_diff_key($options, array('fullBase' => null));
+			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 
 			if (Configure::read('Asset.filter.css')) {
 				$pos = strpos($url, Configure::read('App.cssBaseUrl'));
@@ -546,7 +546,7 @@ class HtmlHelper extends AppHelper {
 
 		if (strpos($url, '//') === false) {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
-			$options = array_diff_key($options, array('fullBase' => null));
+			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 
 			if (Configure::read('Asset.filter.js')) {
 				$url = str_replace(Configure::read('App.jsBaseUrl'), 'cjs/', $url);

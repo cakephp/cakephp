@@ -408,6 +408,12 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('test.gif?one=two&three=four');
 		$this->assertTags($result, array('img' => array('src' => 'img/test.gif?one=two&amp;three=four', 'alt' => '')));
+
+		$result = $this->Html->image('test.gif', array('pathPrefix' => '/my/custom/path/'));
+		$this->assertTags($result, array('img' => array('src' => '/my/custom/path/test.gif', 'alt' => '')));
+
+		$result = $this->Html->image('test.gif', array('pathPrefix' => 'http://cakephp.org/assets/img/'));
+		$this->assertTags($result, array('img' => array('src' => 'http://cakephp.org/assets/img/test.gif', 'alt' => '')));
 	}
 
 /**
@@ -591,6 +597,14 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->css('http://whatever.com/screen.css?1234');
 		$expected['link']['href'] = 'preg:/http:\/\/.*\/screen\.css\?1234/';
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('cake.generic', array('pathPrefix' => '/my/custom/path/'));
+		$expected['link']['href'] = '/my/custom/path/cake.generic.css';
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('cake.generic', array('pathPrefix' => 'http://cakephp.org/assets/css/'));
+		$expected['link']['href'] = 'http://cakephp.org/assets/css/cake.generic.css';
 		$this->assertTags($result, $expected);
 
 		Configure::write('Asset.filter.css', 'css.php');
@@ -923,6 +937,18 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->script('test.json.js?foo=bar&other=test');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js?foo=bar&amp;other=test')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('foo2', array('pathPrefix' => '/my/custom/path/'));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => '/my/custom/path/foo2.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('foo3', array('pathPrefix' => 'http://cakephp.org/assets/js/'));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'http://cakephp.org/assets/js/foo3.js')
 		);
 		$this->assertTags($result, $expected);
 
