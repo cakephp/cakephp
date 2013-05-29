@@ -32,18 +32,21 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function setUp() {
-		$this->tag = Table::build('Tag', [
-			'schema' => [
-				'id' => ['type' => 'integer'],
-				'name' => ['type' => 'string'],
-			]
+		$this->tag = $this->getMock(
+			'Cake\ORM\Table', ['find'], [['alias' => 'Tag', 'table' => 'tags']]
+		);
+		$this->tag->schema([
+			'id' => ['type' => 'integer'],
+			'name' => ['type' => 'string'],
 		]);
-		$this->article = Table::build('Article', [
-			'schema' => [
-				'id' => ['type' => 'integer'],
-				'name' => ['type' => 'string'],
-			]
+		$this->article = $this->getMock(
+			'Cake\ORM\Table', ['find'], [['alias' => 'Article', 'table' => 'articles']]
+		);
+		$this->article->schema([
+			'id' => ['type' => 'integer'],
+			'name' => ['type' => 'string'],
 		]);
+		Table::instance('Article', $this->article);
 	}
 
 /**
@@ -201,7 +204,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToNoFields() {
-				$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
@@ -236,5 +239,109 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);
 	}
+
+/**
+ * Test the eager loader method with no extra options
+ *
+ * @return void
+ */
+	public function testEagerLoader() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+		];
+		Table::build('ArticleTag', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer']
+			]
+		]);
+		$association = new BelongsToMany('Tag', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock('Cake\ORM\Query', ['execute', 'contain'], [null]);
+		$this->tag->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
+		];
+		$query->expects($this->once())->method('execute')
+			->will($this->returnValue($results));
+
+		$query->expects($this->once())->method('contain')->with([
+			'ArticleTag' => [
+				'conditions' => ['ArticleTag.article_id in' => $keys],
+				'filtering' => true
+			]
+		]);
+
+		$callable = $association->eagerLoader(compact('keys'));
+		$row = ['Article__id' => 1, 'title' => 'article 1'];
+		$result = $callable($row);
+		$row['Article__Tag'] = [
+			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]]
+		];
+		$this->assertEquals($row, $result);
+
+		$row = ['Article__id' => 2, 'title' => 'article 2'];
+		$result = $callable($row);
+		$row['Article__Tag'] = [
+			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
+		];
+		$this->assertEquals($row, $result);
+	}
+
+
+/**
+ * Test the eager loader method with default query clauses
+ *
+ * @return void
+ */
+	public function testEagerLoaderWithDefaults() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'conditions' => ['Tag.name' => 'foo'],
+			'sort' => ['id' => 'ASC'],
+		];
+		Table::build('ArticleTag', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer']
+			]
+		]);
+		$association = new BelongsToMany('Tag', $config);
+		$keys = [1, 2, 3, 4];
+		$methods = ['execute', 'contain', 'where', 'order'];
+		$query = $this->getMock('Cake\ORM\Query', $methods, [null]);
+		$this->tag->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
+		];
+		$query->expects($this->once())->method('execute')
+			->will($this->returnValue($results));
+
+		$query->expects($this->once())->method('contain')->with([
+			'ArticleTag' => [
+				'conditions' => ['ArticleTag.article_id in' => $keys],
+				'filtering' => true
+			]
+		]);
+
+		$query->expects($this->once())->method('where')
+			->with(['Tag.name' => 'foo'])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('order')
+			->with(['id' => 'ASC'])
+			->will($this->returnValue($query));
+
+		$callable = $association->eagerLoader(compact('keys'));
+	}
+
 
 }
