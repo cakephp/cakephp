@@ -95,6 +95,7 @@ HTML;
 ########## DEBUG ##########
 %s
 ###########################
+
 TEXT;
 			$template = $html;
 			if (php_sapi_name() === 'cli' || $showHtml === false) {
@@ -231,8 +232,8 @@ if (!function_exists('pr')) {
 
 /**
  * print_r() convenience function
- * 
- * In terminals this will act the same as using print_r() directly, when not run on cli 
+ *
+ * In terminals this will act the same as using print_r() directly, when not run on cli
  * print_r() will wrap <PRE> tags around the output of given array. Similar to debug().
  *
  * @see	debug()
