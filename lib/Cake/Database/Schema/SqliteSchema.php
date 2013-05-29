@@ -163,7 +163,7 @@ class SqliteSchema {
 			'timestamp' => ' TIMESTAMP',
 		];
 		if (!isset($typeMap[$data['type']])) {
-			throw new Error\Exception(__d('cake_dev', 'Unknown column type "%s"', $data['type']));
+			throw new Error\Exception(__d('cake_dev', 'Unknown column type for "%s"', $name));
 		}
 
 		$out = $this->_driver->quoteIdentifier($name);
