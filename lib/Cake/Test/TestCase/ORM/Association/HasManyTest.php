@@ -86,11 +86,11 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  */
 	public function testRequiresKeys() {
 		$assoc = new HasMany('Test');
-		$this->assertFalse($assoc->requiresKeys());
-		$assoc->strategy(HasMany::STRATEGY_SELECT);
 		$this->assertTrue($assoc->requiresKeys());
 		$assoc->strategy(HasMany::STRATEGY_SUBQUERY);
 		$this->assertFalse($assoc->requiresKeys());
+		$assoc->strategy(HasMany::STRATEGY_SELECT);
+		$this->assertTrue($assoc->requiresKeys());
 	}
 
 /**
@@ -317,19 +317,21 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->with(['Article.author_id in' => $expected])
 			->will($this->returnValue($query));
 
-		$callable = $association->eagerLoader(['query' => $parent]);
+		$callable = $association->eagerLoader([
+			'query' => $parent, 'strategy' => HasMany::STRATEGY_SUBQUERY
+		]);
 		$row = ['Author__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
 		$row['Author__Article'] = [
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
-			];
+		];
 		$this->assertEquals($row, $result);
 
 		$row = ['Author__id' => 2, 'username' => 'author 2'];
 		$result = $callable($row);
 		$row['Author__Article'] = [
 			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
-			];
+		];
 		$this->assertEquals($row, $result);
 	}
 

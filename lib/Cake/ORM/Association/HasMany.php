@@ -35,12 +35,11 @@ class HasMany extends Association {
 	protected $_joinType = 'INNER';
 
 /**
- * The strategy name to be used to fetch associated records. Some association
- * types might not implement but one strategy to fetch records.
+ * The strategy name to be used to fetch associated records.
  *
  * @var string
  */
-	protected $_strategy = parent::STRATEGY_SUBQUERY;
+	protected $_strategy = parent::STRATEGY_SELECT;
 
 /**
  * Eager loads a list of records in the target table that are related to another

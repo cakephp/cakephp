@@ -84,11 +84,11 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  */
 	public function testRequiresKeys() {
 		$assoc = new BelongsToMany('Test');
-		$this->assertFalse($assoc->requiresKeys());
-		$assoc->strategy(BelongsToMany::STRATEGY_SELECT);
 		$this->assertTrue($assoc->requiresKeys());
 		$assoc->strategy(BelongsToMany::STRATEGY_SUBQUERY);
 		$this->assertFalse($assoc->requiresKeys());
+		$assoc->strategy(BelongsToMany::STRATEGY_SELECT);
+		$this->assertTrue($assoc->requiresKeys());
 	}
 
 /**
