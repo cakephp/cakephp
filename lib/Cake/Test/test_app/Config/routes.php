@@ -4,7 +4,7 @@
  *
  * Routes for test app
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
