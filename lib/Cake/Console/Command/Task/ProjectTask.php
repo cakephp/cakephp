@@ -439,6 +439,7 @@ class ProjectTask extends AppShell {
 				'boolean' => true,
 				'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
 			))->addOption('theme', array(
+				'short' => 't',
 				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addOption('skel', array(
 				'default' => current(App::core('Console')) . 'Templates' . DS . 'skel',

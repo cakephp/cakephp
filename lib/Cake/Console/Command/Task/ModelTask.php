@@ -993,6 +993,7 @@ class ModelTask extends BakeTask {
 				'short' => 'p',
 				'help' => __d('cake_console', 'Plugin to bake the model into.')
 			))->addOption('theme', array(
+				'short' => 't',
 				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addOption('connection', array(
 				'short' => 'c',

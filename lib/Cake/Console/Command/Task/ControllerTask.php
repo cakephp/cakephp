@@ -475,6 +475,7 @@ class ControllerTask extends BakeTask {
 				'short' => 'c',
 				'help' => __d('cake_console', 'The connection the controller\'s model is on.')
 			))->addOption('theme', array(
+				'short' => 't',
 				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addSubcommand('all', array(
 				'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
