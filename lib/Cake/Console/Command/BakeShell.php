@@ -244,6 +244,7 @@ class BakeShell extends AppShell {
 			'short' => 'c',
 			'default' => 'default'
 		))->addOption('theme', array(
+			'short' => 't',
 			'help' => __d('cake_console', 'Theme to use when baking code.')
 		));
 	}
