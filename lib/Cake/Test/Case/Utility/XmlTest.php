@@ -187,10 +187,21 @@ class XmlTest extends CakeTestCase {
  *
  * @dataProvider invalidDataProvider
  * @expectedException XmlException
- * return void
+ * @return void
  */
 	public function testBuildInvalidData($value) {
 		Xml::build($value);
+	}
+
+/**
+ * Test that building SimpleXmlElement with invalid XML causes the right exception.
+ *
+ * @expectedException XmlException
+ * @return void
+ */
+	public function testBuildInvalidDataSimpleXml() {
+		$input = '<derp';
+		$xml = Xml::build($input, array('return' => 'simplexml'));
 	}
 
 /**
