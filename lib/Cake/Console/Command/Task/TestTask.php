@@ -563,6 +563,8 @@ class TestTask extends BakeTask {
 				)
 			))->addArgument('name', array(
 				'help' => __d('cake_console', 'An existing class to bake tests for.')
+			))->addOption('theme', array(
+				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addOption('plugin', array(
 				'short' => 'p',
 				'help' => __d('cake_console', 'CamelCased name of the plugin to bake tests for.')

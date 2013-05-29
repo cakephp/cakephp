@@ -992,6 +992,8 @@ class ModelTask extends BakeTask {
 			))->addOption('plugin', array(
 				'short' => 'p',
 				'help' => __d('cake_console', 'Plugin to bake the model into.')
+			))->addOption('theme', array(
+				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addOption('connection', array(
 				'short' => 'c',
 				'help' => __d('cake_console', 'The connection the model table is on.')
