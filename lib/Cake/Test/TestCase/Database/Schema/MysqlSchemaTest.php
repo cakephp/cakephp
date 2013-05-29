@@ -543,6 +543,11 @@ SQL;
 			->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
+			])
+			->options([
+				'engine' => 'InnoDB',
+				'charset' => 'utf8',
+				'collate' => 'utf8_general_ci',
 			]);
 
 		$expected = <<<SQL
@@ -552,7 +557,7 @@ CREATE TABLE `posts` (
 `body` TEXT,
 `created` DATETIME,
 PRIMARY KEY (`id`)
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
 SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);

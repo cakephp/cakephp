@@ -199,7 +199,18 @@ class MysqlSchema {
  */
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = implode(",\n", array_merge($columns, $constraints, $indexes));
-		return [sprintf("CREATE TABLE `%s` (\n%s\n)", $table->name(), $content)];
+		$content = sprintf("CREATE TABLE `%s` (\n%s\n)", $table->name(), $content);
+		$options = $table->options();
+		if (isset($options['engine'])) {
+			$content .= sprintf(" ENGINE=%s", $options['engine']);
+		}
+		if (isset($options['charset'])) {
+			$content .= sprintf(" DEFAULT CHARSET=%s", $options['charset']);
+		}
+		if (isset($options['collate'])) {
+			$content .= sprintf(" COLLATE=%s", $options['collate']);
+		}
+		return [$content];
 	}
 
 /**
