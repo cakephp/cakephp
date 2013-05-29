@@ -56,8 +56,8 @@ class TestFixture {
  * Fields / Schema for the fixture.
  *
  * This array should be compatible with Cake\Database\Schema\Table.
- * The `constraints` and `indexes` keys are reserved for defining 
- * constraints and indexes respectively.
+ * The `_constraints`, `_options` and `_indexes` keys are reserved for defining 
+ * constraints, options and indexes respectively.
  *
  * @var array
  */
@@ -144,7 +144,7 @@ class TestFixture {
 	protected function _schemaFromFields() {
 		$this->_schema = new Table($this->table);
 		foreach ($this->fields as $field => $data) {
-			if ($field === 'constraints' || $field === 'indexes') {
+			if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
 				continue;
 			}
 			// Trigger errors on deprecated usage.
@@ -154,20 +154,23 @@ class TestFixture {
 			}
 			$this->_schema->addColumn($field, $data);
 		}
-		if (!empty($this->fields['constraints'])) {
-			foreach ($this->fields['constraints'] as $name => $data) {
+		if (!empty($this->fields['_constraints'])) {
+			foreach ($this->fields['_constraints'] as $name => $data) {
 				$this->_schema->addConstraint($name, $data);
 			}
 		}
-		if (!empty($this->fields['indexes'])) {
+		if (!empty($this->fields['_indexes'])) {
 			// Trigger errors on deprecated usage.
 			if (empty($data['type'])) {
 				$msg = __d('cake_dev', 'Indexes must define a type. Try using the upgrade shell to migrate your fixtures.');
 				trigger_error($msg, E_USER_NOTICE);
 			}
-			foreach ($this->fields['indexes'] as $name => $data) {
+			foreach ($this->fields['_indexes'] as $name => $data) {
 				$this->_schema->addIndex($name, $data);
 			}
+		}
+		if (!empty($this->fields['_options'])) {
+			$this->_schema->options($this->fields['_options']);
 		}
 	}
 

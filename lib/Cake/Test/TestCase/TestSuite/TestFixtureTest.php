@@ -44,7 +44,7 @@ class ArticleFixture extends TestFixture {
 		'id' => ['type' => 'integer'],
 		'name' => ['type' => 'string', 'length' => '255'],
 		'created' => ['type' => 'datetime'],
-		'constraints' => [
+		'_constraints' => [
 			'primary' => ['type' => 'primary', 'columns' => ['id']]
 		]
 	];
@@ -148,13 +148,13 @@ class TestFixtureTest extends TestCase {
 		$this->assertInstanceOf('Cake\Database\Schema\Table', $schema);
 
 		$fields = $Fixture->fields;
-		unset($fields['constraints'], $fields['indexes']);
+		unset($fields['_constraints'], $fields['_indexes']);
 		$this->assertEquals(
 			array_keys($fields),
 			$schema->columns(),
 			'Fields do not match'
 		);
-		$this->assertEquals(array_keys($Fixture->fields['constraints']), $schema->constraints());
+		$this->assertEquals(array_keys($Fixture->fields['_constraints']), $schema->constraints());
 		$this->assertEmpty($schema->indexes());
 	}
 
