@@ -12,8 +12,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       cake
- * @subpackage    cake.tests.fixtures
+ * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 2.1
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -21,8 +20,7 @@
 /**
  * Short description for class.
  *
- * @package       cake
- * @subpackage    cake.tests.fixtures
+ * @package       Cake.Test.Fixture
  */
 class DomainsSiteFixture extends CakeTestFixture {
 
