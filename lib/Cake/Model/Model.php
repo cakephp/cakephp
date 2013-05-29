@@ -2449,7 +2449,7 @@ class Model extends Object implements CakeEventListener {
 			return;
 		}
 		if (!empty($this->__backAssociation)) {
-			$savedAssociatons = $this->__backAssociation;
+			$savedAssociations = $this->__backAssociation;
 			$this->__backAssociation = array();
 		}
 
@@ -2485,8 +2485,8 @@ class Model extends Object implements CakeEventListener {
 				}
 			}
 		}
-		if (isset($savedAssociatons)) {
-			$this->__backAssociation = $savedAssociatons;
+		if (isset($savedAssociations)) {
+			$this->__backAssociation = $savedAssociations;
 		}
 	}
 
