@@ -219,10 +219,6 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->with(['title' => 'DESC'])
 			->will($this->returnValue($query));
 
-		$query->expects($this->once())->method('order')
-			->with(['title' => 'DESC'])
-			->will($this->returnValue($query));
-
 		$query->expects($this->once())->method('select')
 			->with([
 				'Article__title' => 'Article.title',
