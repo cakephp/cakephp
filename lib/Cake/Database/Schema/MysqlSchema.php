@@ -142,8 +142,8 @@ class MysqlSchema {
 		}
 		$table->addColumn($row['Field'], $field);
 		if (!empty($row['Key']) && $row['Key'] === 'PRI') {
-			$table->addIndex('primary', [
-				'type' => Table::INDEX_PRIMARY,
+			$table->addConstraint('primary', [
+				'type' => Table::CONSTRAINT_PRIMARY,
 				'columns' => [$row['Field']]
 			]);
 		}
@@ -169,6 +169,26 @@ class MysqlSchema {
 	}
 
 /**
+ * Generate the SQL to truncate a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return array TRUNCATE TABLE sql
+ */
+	public function truncateTableSql(Table $table) {
+		return [sprintf("TRUNCATE TABLE `%s`", $table->name())];
+	}
+
+/**
+ * Generate the SQL to drop a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return array DROP TABLE sql
+ */
+	public function dropTableSql(Table $table) {
+		return [sprintf("DROP TABLE `%s`", $table->name())];
+	}
+
+/**
  * Generate the SQL to create a table.
  *
  * @param Cake\Database\Schema\Table $table Table instance
@@ -177,9 +197,20 @@ class MysqlSchema {
  * @param array $indexes The indexes for the table.
  * @return array Complete CREATE TABLE statement(s)
  */
-	public function createTableSql($table, $columns, $constraints, $indexes) {
+	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = implode(",\n", array_merge($columns, $constraints, $indexes));
-		return [sprintf("CREATE TABLE `%s` (\n%s\n)", $table->name(), $content)];
+		$content = sprintf("CREATE TABLE `%s` (\n%s\n)", $table->name(), $content);
+		$options = $table->options();
+		if (isset($options['engine'])) {
+			$content .= sprintf(" ENGINE=%s", $options['engine']);
+		}
+		if (isset($options['charset'])) {
+			$content .= sprintf(" DEFAULT CHARSET=%s", $options['charset']);
+		}
+		if (isset($options['collate'])) {
+			$content .= sprintf(" COLLATE=%s", $options['collate']);
+		}
+		return [$content];
 	}
 
 /**

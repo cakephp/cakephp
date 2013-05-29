@@ -479,9 +479,9 @@ SQL;
  *
  * @return void
  */
-	public function testCreateTableSql() {
+	public function testCreateSql() {
 		$driver = $this->_getMockedDriver();
-		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
@@ -512,13 +512,49 @@ CREATE TABLE "articles" (
 "created" DATETIME
 )
 SQL;
-		$result = $table->createTableSql($connection);
+		$result = $table->createSql($connection);
 		$this->assertCount(2, $result);
 		$this->assertEquals($expected, $result[0]);
 		$this->assertEquals(
 			'CREATE INDEX "title_idx" ON "articles" ("title")',
 			$result[1]
 		);
+	}
+
+
+/**
+ * test dropSql
+ *
+ * @return void
+ */
+	public function testDropSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = new Table('articles');
+		$result = $table->dropSql($connection);
+		$this->assertCount(1, $result);
+		$this->assertEquals('DROP TABLE "articles"', $result[0]);
+	}
+
+/**
+ * Test truncateSql()
+ *
+ * @return void
+ */
+	public function testTruncateSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = new Table('articles');
+		$result = $table->truncateSql($connection);
+		$this->assertCount(2, $result);
+		$this->assertEquals('DELETE FROM sqlite_sequence WHERE name="articles"', $result[0]);
+		$this->assertEquals('DELETE FROM "articles"', $result[1]);
 	}
 
 /**

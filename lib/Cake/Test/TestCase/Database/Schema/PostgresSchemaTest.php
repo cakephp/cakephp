@@ -496,9 +496,9 @@ SQL;
  *
  * @return void
  */
-	public function testCreateTableSql() {
+	public function testCreateSql() {
 		$driver = $this->_getMockedDriver();
-		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
@@ -531,7 +531,7 @@ CREATE TABLE "articles" (
 PRIMARY KEY ("id")
 )
 SQL;
-		$result = $table->createTableSql($connection);
+		$result = $table->createSql($connection);
 
 		$this->assertCount(3, $result);
 		$this->assertEquals($expected, $result[0]);
@@ -543,6 +543,45 @@ SQL;
 			'COMMENT ON COLUMN "articles"."title" IS "This is the title"',
 			$result[2]
 		);
+	}
+
+/**
+ * test dropSql
+ *
+ * @return void
+ */
+	public function testDropSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = new Table('articles');
+		$result = $table->dropSql($connection);
+		$this->assertCount(1, $result);
+		$this->assertEquals('DROP TABLE "articles"', $result[0]);
+	}
+
+/**
+ * Test truncateSql()
+ *
+ * @return void
+ */
+	public function testTruncateSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = new Table('articles');
+		$table->addColumn('id', 'integer')
+			->addConstraint('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+		$result = $table->truncateSql($connection);
+		$this->assertCount(1, $result);
+		$this->assertEquals('TRUNCATE "articles" RESTART IDENTITY', $result[0]);
 	}
 
 /**

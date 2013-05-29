@@ -163,7 +163,7 @@ class SqliteSchema {
 			'timestamp' => ' TIMESTAMP',
 		];
 		if (!isset($typeMap[$data['type']])) {
-			throw new Error\Exception(__d('cake_dev', 'Unknown column type "%s"', $data['type']));
+			throw new Error\Exception(__d('cake_dev', 'Unknown column type for "%s"', $name));
 		}
 
 		$out = $this->_driver->quoteIdentifier($name);
@@ -270,4 +270,29 @@ class SqliteSchema {
 		}
 		return $out;
 	}
+
+/**
+ * Generate the SQL to drop a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return string DROP TABLE sql
+ */
+	public function dropTableSql(Table $table) {
+		return [sprintf('DROP TABLE "%s"', $table->name())];
+	}
+
+/**
+ * Generate the SQL to truncate a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return array SQL statements to drop truncate a table.
+ */
+	public function truncateTableSql(Table $table) {
+		$name = $table->name();
+		return [
+			sprintf('DELETE FROM sqlite_sequence WHERE name="%s"', $name),
+			sprintf('DELETE FROM "%s"', $name)
+		];
+	}
+
 }

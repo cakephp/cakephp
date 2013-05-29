@@ -60,6 +60,13 @@ class Table {
 	protected $_constraints = [];
 
 /**
+ * Options for the table.
+ *
+ * @var array
+ */
+	protected $_options = [];
+
+/**
  * The valid keys that can be used in a column
  * definition.
  *
@@ -325,6 +332,23 @@ class Table {
 	}
 
 /**
+ * Get/set the options for a table.
+ *
+ * Table options allow you to set platform specific table level options.
+ * For example the engine type in MySQL.
+ *
+ * @param array|null $options The options to set, or null to read options.
+ * @return this|array Either the table instance, or an array of options when reading.
+ */
+	public function options($options = null) {
+		if ($options === null) {
+			return $this->_options;
+		}
+		$this->_options = array_merge($this->_options, $options);
+		return $this;
+	}
+
+/**
  * Generate the SQL to create the Table.
  *
  * Uses the connection to access the schema dialect
@@ -334,7 +358,7 @@ class Table {
  * @return array List of SQL statements to create the table and the
  *    required indexes.
  */
-	public function createTableSql(Connection $connection) {
+	public function createSql(Connection $connection) {
 		$dialect = $connection->driver()->schemaDialect();
 		$columns = $constraints = $indexes = [];
 		foreach (array_keys($this->_columns) as $name) {
@@ -347,6 +371,31 @@ class Table {
 			$indexes[] = $dialect->indexSql($this, $name);
 		}
 		return $dialect->createTableSql($this, $columns, $constraints, $indexes);
+	}
+
+/**
+ * Generate the SQL to drop a table.
+ *
+ * Uses the connection to access the schema dialect to generate platform
+ * specific SQL.
+ *
+ * @param Connection $connection The connection to generate SQL for.
+ * @return array SQL to drop a table.
+ */
+	public function dropSql(Connection $connection) {
+		$dialect = $connection->driver()->schemaDialect();
+		return $dialect->dropTableSql($this);
+	}
+
+/**
+ * Generate the SQL statements to truncate a table
+ *
+ * @param Connection $connection The connection to generate SQL for.
+ * @return array SQL to drop a table.
+ */
+	public function truncateSql(Connection $connection) {
+		$dialect = $connection->driver()->schemaDialect();
+		return $dialect->truncateTableSql($this);
 	}
 
 }
