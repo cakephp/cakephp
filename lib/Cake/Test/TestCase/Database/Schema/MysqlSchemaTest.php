@@ -523,9 +523,9 @@ SQL;
  *
  * @return void
  */
-	public function testCreateTableSql() {
+	public function testCreateSql() {
 		$driver = $this->_getMockedDriver();
-		$connection = $this->getMock('Cake\Database\Connection', array(), array(), '', false);
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
@@ -543,6 +543,11 @@ SQL;
 			->addConstraint('primary', [
 				'type' => 'primary',
 				'columns' => ['id']
+			])
+			->options([
+				'engine' => 'InnoDB',
+				'charset' => 'utf8',
+				'collate' => 'utf8_general_ci',
 			]);
 
 		$expected = <<<SQL
@@ -552,11 +557,45 @@ CREATE TABLE `posts` (
 `body` TEXT,
 `created` DATETIME,
 PRIMARY KEY (`id`)
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
 SQL;
-		$result = $table->createTableSql($connection);
+		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);
 		$this->assertEquals($expected, $result[0]);
+	}
+
+/**
+ * test dropSql
+ *
+ * @return void
+ */
+	public function testDropSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = new Table('articles');
+		$result = $table->dropSql($connection);
+		$this->assertCount(1, $result);
+		$this->assertEquals('DROP TABLE `articles`', $result[0]);
+	}
+
+/**
+ * Test truncateSql()
+ *
+ * @return void
+ */
+	public function testTruncateSql() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = new Table('articles');
+		$result = $table->truncateSql($connection);
+		$this->assertCount(1, $result);
+		$this->assertEquals('TRUNCATE TABLE `articles`', $result[0]);
 	}
 
 /**

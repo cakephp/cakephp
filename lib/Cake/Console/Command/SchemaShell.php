@@ -58,6 +58,8 @@ class SchemaShell extends Shell {
 		$this->out('Cake Schema Shell');
 		$this->hr();
 
+		throw new \Cake\Error\Exception('Schema shell is not working at this time.');
+
 		Configure::write('Cache.disable', 1);
 
 		$name = $path = $connection = $plugin = null;

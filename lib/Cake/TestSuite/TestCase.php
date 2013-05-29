@@ -133,10 +133,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		if (!empty($this->fixtures)) {
-			$this->markTestIncomplete('Tests skipped because of fixture issues.');
-		}
-
 		if (empty($this->_configure)) {
 			$this->_configure = Configure::read();
 		}

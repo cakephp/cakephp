@@ -32,6 +32,13 @@ class Connection {
 	use TypeConverterTrait;
 
 /**
+ * The configuration name used for this connection.
+ *
+ * @var string
+ */
+	public $configKeyName = null;
+
+/**
  * Contains the configuration params for this connection
  *
  * @var array
@@ -237,6 +244,15 @@ class Connection {
 	}
 
 /**
+ * Get a Schema\Collection object for this connection.
+ *
+ * @return Cake\Database\Schema\Collection
+ */
+	public function schemaCollection() {
+		return new \Cake\Database\Schema\Collection($this);
+	}
+
+/**
  * Executes an INSERT query on the specified table
  *
  * @param string $table the table to update values in
@@ -406,7 +422,7 @@ class Connection {
 	}
 
 /**
- * Rollsback a save point by its name
+ * Rollback a save point by its name
  *
  * @param string $name
  * @return void

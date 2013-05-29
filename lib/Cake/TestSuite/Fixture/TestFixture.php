@@ -16,43 +16,27 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\App;
+use Cake\Database\Connection;
+use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\Table;
 use Cake\Error;
 use Cake\Log\Log;
 use Cake\Model\ConnectionManager;
-use Cake\Model\Model;
-use Cake\Model\Schema;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 /**
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
- *
- * @package       Cake.TestSuite.Fixture
  */
 class TestFixture {
-
-/**
- * Name of the object
- *
- * @var string
- */
-	public $name = null;
-
-/**
- * Cake's DBO driver (e.g: DboMysql).
- *
- * @var object
- */
-	public $db = null;
 
 /**
  * Fixture Datasource
  *
  * @var string
  */
-	public $useDbConfig = 'test';
+	public $connection = 'test';
 
 /**
  * Full Table Name
@@ -70,11 +54,25 @@ class TestFixture {
 
 /**
  * Fields / Schema for the fixture.
- * This array should match the output of Model::schema()
+ *
+ * This array should be compatible with Cake\Database\Schema\Table.
+ * The `_constraints`, `_options` and `_indexes` keys are reserved for defining 
+ * constraints, options and indexes respectively.
  *
  * @var array
  */
 	public $fields = array();
+
+/**
+ * Configuration for importing fixture schema
+ *
+ * Accepts a `connection` and `table` key, to define
+ * which table and which connection contain the schema to be
+ * imported.
+ *
+ * @var array
+ */
+	public $import = null;
 
 /**
  * Fixture records to be inserted.
@@ -84,11 +82,11 @@ class TestFixture {
 	public $records = array();
 
 /**
- * The primary key for the table this fixture represents.
+ * The Cake\Database\Schema\Table for this fixture.
  *
- * @var string
+ * @var Cake\Database\Schema\Table;
  */
-	public $primaryKey = null;
+	protected $_schema;
 
 /**
  * Instantiate the fixture.
@@ -96,16 +94,9 @@ class TestFixture {
  * @throws Cake\Error\Exception on invalid datasource usage.
  */
 	public function __construct() {
-		if ($this->name === null) {
-			if (preg_match('/^(.*)Fixture$/', get_class($this), $matches)) {
-				$this->name = $matches[1];
-			} else {
-				$this->name = get_class($this);
-			}
-		}
 		$connection = 'test';
-		if (!empty($this->useDbConfig)) {
-			$connection = $this->useDbConfig;
+		if (!empty($this->connection)) {
+			$connection = $this->connection;
 			if (strpos($connection, 'test') !== 0) {
 				$message = __d(
 					'cake_dev',
@@ -116,7 +107,6 @@ class TestFixture {
 				throw new Error\Exception($message);
 			}
 		}
-		$this->Schema = new Schema(array('name' => 'TestSuite', 'connection' => $connection));
 		$this->init();
 	}
 
@@ -127,85 +117,113 @@ class TestFixture {
  * @throws Cake\Error\MissingModelException Whe importing from a model that does not exist.
  */
 	public function init() {
-		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
-			$import = array_merge(
-				array('connection' => 'default', 'records' => false),
-				is_array($this->import) ? $this->import : array('model' => $this->import)
-			);
-
-			$this->Schema->connection = $import['connection'];
-			if (isset($import['model'])) {
-				$modelClass = App::classname($import['model'], 'Model');
-				if (!class_exists($modelClass)) {
-					throw new Error\MissingModelException(array('class' => $modelClass));
-				}
-				$model = new $modelClass(null, null, $import['connection']);
-				$db = $model->getDataSource();
-				if (empty($model->tablePrefix)) {
-					$model->tablePrefix = $db->config['prefix'];
-				}
-				$this->fields = $model->schema(true);
-				$this->fields[$model->primaryKey]['key'] = 'primary';
-				$this->table = $db->fullTableName($model, false, false);
-				$this->primaryKey = $model->primaryKey;
-				ClassRegistry::config(array('ds' => 'test'));
-				ClassRegistry::flush();
-			} elseif (isset($import['table'])) {
-				$model = new Model(null, $import['table'], $import['connection']);
-				$db = ConnectionManager::getDataSource($import['connection']);
-				$db->cacheSources = false;
-				$model->useDbConfig = $import['connection'];
-				$model->name = Inflector::camelize(Inflector::singularize($import['table']));
-				$model->table = $import['table'];
-				$model->tablePrefix = $db->config['prefix'];
-				$this->fields = $model->schema(true);
-				$this->primaryKey = $model->primaryKey;
-				ClassRegistry::flush();
+		if ($this->table === null) {
+			list($namespace, $class) = namespaceSplit(get_class($this));
+			preg_match('/^(.*)Fixture$/', $class, $matches);
+			$table = $class;
+			if (isset($matches[1])) {
+				$table = $matches[1];
 			}
-
-			if (!empty($db->config['prefix']) && strpos($this->table, $db->config['prefix']) === 0) {
-				$this->table = str_replace($db->config['prefix'], '', $this->table);
-			}
-
-			if (isset($import['records']) && $import['records'] !== false && isset($model) && isset($db)) {
-				$this->records = array();
-				$query = array(
-					'fields' => $db->fields($model, null, array_keys($this->fields)),
-					'table' => $db->fullTableName($model),
-					'alias' => $model->alias,
-					'conditions' => array(),
-					'order' => null,
-					'limit' => null,
-					'group' => null
-				);
-				$records = $db->fetchAll($db->buildStatement($query, $model), false, $model->alias);
-
-				if ($records !== false && !empty($records)) {
-					$this->records = Hash::extract($records, '{n}.' . $model->alias);
-				}
-			}
+			$this->table = Inflector::tableize(Inflector::pluralize($table));
 		}
 
-		if (!isset($this->table)) {
-			$this->table = Inflector::underscore(Inflector::pluralize($this->name));
+		if (empty($this->import) && !empty($this->fields)) {
+			$this->_schemaFromFields();
 		}
 
-		if (!isset($this->primaryKey) && isset($this->fields['id'])) {
-			$this->primaryKey = 'id';
+		if (!empty($this->import)) {
+			$this->_schemaFromImport();
 		}
+	}
+
+/**
+ * Build the fixtures table schema from the fields property.
+ *
+ * @return void
+ */
+	protected function _schemaFromFields() {
+		$this->_schema = new Table($this->table);
+		foreach ($this->fields as $field => $data) {
+			if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
+				continue;
+			}
+			// Trigger errors on deprecated usage.
+			if (is_array($data) && isset($data['key'])) {
+				$msg = __d('cake_dev', 'Usage of the `key` options in columns is not supported. Try using the upgrade shell to migrate your fixtures.`');
+				trigger_error($msg, E_USER_NOTICE);
+			}
+			$this->_schema->addColumn($field, $data);
+		}
+		if (!empty($this->fields['_constraints'])) {
+			foreach ($this->fields['_constraints'] as $name => $data) {
+				$this->_schema->addConstraint($name, $data);
+			}
+		}
+		if (!empty($this->fields['_indexes'])) {
+			// Trigger errors on deprecated usage.
+			if (empty($data['type'])) {
+				$msg = __d('cake_dev', 'Indexes must define a type. Try using the upgrade shell to migrate your fixtures.');
+				trigger_error($msg, E_USER_NOTICE);
+			}
+			foreach ($this->fields['_indexes'] as $name => $data) {
+				$this->_schema->addIndex($name, $data);
+			}
+		}
+		if (!empty($this->fields['_options'])) {
+			$this->_schema->options($this->fields['_options']);
+		}
+	}
+
+/**
+ * Build fixture schema from a table in another datasource.
+ *
+ * @return void
+ */
+	protected function _schemaFromImport() {
+		if (!is_array($this->import)) {
+			return;
+		}
+		$import = array_merge(
+			array('connection' => 'default', 'table' => null),
+			$this->import
+		);
+
+		if (empty($import['table'])) {
+			throw new Error\Exception(__d('cake_dev', 'Cannot import from undefined table.'));
+		}
+
+		$db = ConnectionManager::getDataSource($import['connection']);
+		$schemaCollection = $db->schemaCollection();
+		$table = $schemaCollection->describe($import['table']);
+		$this->_schema = $table;
+	}
+
+/**
+ * Get/Set the Cake\Database\Schema\Table instance used by this fixture.
+ *
+ * @param Cake\Database\Schema\Table $schema The table to set.
+ * @return Cake\Database\Schema\Table|null
+ */
+	public function schema(Table $schema = null) {
+		if ($schema) {
+			$this->_schema = $schema;
+			return;
+		}
+		return $this->_schema;
 	}
 
 /**
  * Run before all tests execute, should return SQL statement to create table for this fixture could be executed successfully.
  *
- * @param DboSource $db An instance of the database object used to create the fixture table
+ * @param Connection $db An instance of the database object used to create the fixture table
  * @return boolean True on success, false on failure
  */
-	public function create($db) {
-		if (!isset($this->fields) || empty($this->fields)) {
+	public function create(Connection $db) {
+		if (empty($this->_schema)) {
 			return false;
 		}
 
+		// TODO figure this out as Table does not have tableOptions completed.
 		if (empty($this->fields['tableParameters']['engine'])) {
 			$canUseMemory = true;
 			foreach ($this->fields as $args) {
@@ -228,11 +246,14 @@ class TestFixture {
 				$this->fields['tableParameters']['engine'] = 'MEMORY';
 			}
 		}
-		$this->Schema->build(array($this->table => $this->fields));
+
 		try {
-			$db->execute($db->createSchema($this->Schema), array('log' => false));
+			$queries = $this->_schema->createSql($db);
+			foreach ($queries as $query) {
+				$db->execute($query);
+			}
 			$this->created[] = $db->configKeyName;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$msg = __d(
 				'cake_dev',
 				'Fixture creation for "%s" failed "%s"',
@@ -249,17 +270,19 @@ class TestFixture {
 /**
  * Run after all tests executed, should return SQL statement to drop table for this fixture.
  *
- * @param DboSource $db An instance of the database object used to create the fixture table
+ * @param Connection $db An instance of the database object used to create the fixture table
  * @return boolean True on success, false on failure
  */
-	public function drop($db) {
-		if (empty($this->fields)) {
+	public function drop(Connection $db) {
+		if (empty($this->_schema)) {
 			return false;
 		}
-		$this->Schema->build(array($this->table => $this->fields));
 		try {
-			$db->execute($db->dropSchema($this->Schema), array('log' => false));
-			$this->created = array_diff($this->created, array($db->configKeyName));
+			$sql = $this->_schema->dropSql($db);
+			foreach ($sql as $stmt) {
+				$db->execute($stmt);
+			}
+			$this->created = array_diff($this->created, [$db->configKeyName]);
 		} catch (\Exception $e) {
 			return false;
 		}
@@ -270,52 +293,58 @@ class TestFixture {
  * Run before each tests is executed, should return a set of SQL statements to insert records for the table
  * of this fixture could be executed successfully.
  *
- * @param DboSource $db An instance of the database into which the records will be inserted
+ * @param Connection $db An instance of the database into which the records will be inserted
  * @return boolean on success or if there are no records to insert, or false on failure
  */
-	public function insert($db) {
-		if (!isset($this->_insert)) {
-			$values = array();
-			if (isset($this->records) && !empty($this->records)) {
-				$fields = array();
-				foreach ($this->records as $record) {
-					$fields = array_merge($fields, array_keys(array_intersect_key($record, $this->fields)));
-				}
-				$fields = array_unique($fields);
-				$default = array_fill_keys($fields, null);
-				foreach ($this->records as $record) {
-					$values[] = array_values(array_merge($default, $record));
-				}
-				$nested = $db->useNestedTransactions;
-				$db->useNestedTransactions = false;
-				$result = $db->insertMulti($this->table, $fields, $values);
-				if (
-					$this->primaryKey &&
-					isset($this->fields[$this->primaryKey]['type']) &&
-					in_array($this->fields[$this->primaryKey]['type'], array('integer', 'biginteger'))
-				) {
-					$db->resetSequence($this->table, $this->primaryKey);
-				}
-				$db->useNestedTransactions = $nested;
-				return $result;
+	public function insert(Connection $db) {
+		if (isset($this->records) && !empty($this->records)) {
+			list($fields, $values, $types) = $this->_getRecords();
+			$query = $db->newQuery()
+				->insert($this->table, $fields, $types);
+
+			foreach ($values as $row) {
+				$query->values($row);
 			}
-			return true;
+
+			return $query->execute();
 		}
+		return true;
+	}
+
+/**
+ * Converts the internal records into data used to generate a query.
+ *
+ * @return array
+ */
+	protected function _getRecords() {
+		$fields = $values = $types = [];
+		foreach ($this->records as $record) {
+			$fields = array_merge($fields, array_keys(array_intersect_key($record, $this->fields)));
+		}
+		$fields = array_values(array_unique($fields));
+		foreach ($fields as $field) {
+			$types[] = $this->_schema->column($field)['type'];
+		}
+		$default = array_fill_keys($fields, null);
+		foreach ($this->records as $record) {
+			$values[] = array_merge($default, $record);
+		}
+		return [$fields, $values, $types];
 	}
 
 /**
  * Truncates the current fixture. Can be overwritten by classes extending
  * CakeFixture to trigger other events before / after truncate.
  *
- * @param DboSource $db A reference to a db instance
+ * @param Connection DboSource $db A reference to a db instance
  * @return boolean
  */
-	public function truncate($db) {
-		$fullDebug = $db->fullDebug;
-		$db->fullDebug = false;
-		$return = $db->truncate($this->table);
-		$db->fullDebug = $fullDebug;
-		return $return;
+	public function truncate(Connection $db) {
+		$sql = $this->_schema->truncateSql($db);
+		foreach ($sql as $stmt) {
+			$db->execute($stmt);
+		}
+		return true;
 	}
 
 }

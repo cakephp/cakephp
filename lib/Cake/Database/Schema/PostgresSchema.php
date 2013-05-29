@@ -332,4 +332,28 @@ class PostgresSchema {
 		return $out;
 	}
 
+/**
+ * Generate the SQL to drop a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return array SQL statements to drop DROP a table.
+ */
+	public function dropTableSql(Table $table) {
+		return [sprintf('DROP TABLE "%s"', $table->name())];
+	}
+
+/**
+ * Generate the SQL to truncate a table.
+ *
+ * @param Cake\Database\Schema\Table $table Table instance
+ * @return array SQL statements to drop truncate a table.
+ */
+	public function truncateTableSql(Table $table) {
+		$name = $this->_driver->quoteIdentifier($table->name());
+
+		return [
+			sprintf("TRUNCATE %s RESTART IDENTITY", $name)
+		];
+	}
+
 }
