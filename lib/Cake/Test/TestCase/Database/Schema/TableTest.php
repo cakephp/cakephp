@@ -212,4 +212,19 @@ class TableTest extends TestCase {
 		$this->assertEquals(['id'], $table->primaryKey());
 	}
 
+/**
+ * Test the options method.
+ *
+ * @return void
+ */
+	public function testOptions() {
+		$table = new Table('articles');
+		$options = [
+			'engine' => 'InnoDB'
+		];
+		$return = $table->options($options);
+		$this->assertInstanceOf('Cake\Database\Schema\Table', $return);
+		$this->assertEquals($options, $table->options());
+	}
+
 }

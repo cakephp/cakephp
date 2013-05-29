@@ -60,6 +60,13 @@ class Table {
 	protected $_constraints = [];
 
 /**
+ * Options for the table.
+ *
+ * @var array
+ */
+	protected $_options = [];
+
+/**
  * The valid keys that can be used in a column
  * definition.
  *
@@ -322,6 +329,23 @@ class Table {
 			return null;
 		}
 		return $this->_constraints[$name];
+	}
+
+/**
+ * Get/set the options for a table.
+ *
+ * Table options allow you to set platform specific table level options.
+ * For example the engine type in MySQL.
+ *
+ * @param array|null $options The options to set, or null to read options.
+ * @return this|array Either the table instance, or an array of options when reading.
+ */
+	public function options($options = null) {
+		if ($options === null) {
+			return $this->_options;
+		}
+		$this->_options = array_merge($this->_options, $options);
+		return $this;
 	}
 
 /**
