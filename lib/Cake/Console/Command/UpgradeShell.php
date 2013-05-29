@@ -365,7 +365,7 @@ class UpgradeShell extends Shell {
 				if (isset($properties['key'])) {
 					unset($properties['key']);
 				}
-				if ($field !== 'indexes') {
+				if ($field !== 'indexes' && $field !== 'tableParameters') {
 					$out[$field] = $properties;
 				}
 			}
@@ -388,6 +388,11 @@ class UpgradeShell extends Shell {
 			}
 			if (count($constraints)) {
 				$out['_constraints'] = $constraints;
+			}
+
+			// Process table parameters
+			if (isset($data['tableParameters'])) {
+				$out['_options'] = $data['tableParameters'];
 			}
 			return $matches[1] . "\n\t\t" . implode(",\n\t\t", $export($out)) . "\n\t" . $matches[3];
 		};
