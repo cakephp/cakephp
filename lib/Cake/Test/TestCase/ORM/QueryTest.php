@@ -421,15 +421,16 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * Tests that it is possible to select only certain fields on
  * eagerly loaded has many associations
  *
+ * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoadingFields() {
+	public function testHasManyEagerLoadingFields($strategy) {
 		$this->_insertRecords();
 
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article', ['property' => 'articles']);
+		$table->hasMany('article', ['property' => 'articles'] + compact('strategy'));
 
 		$results = $query->repository($table)
 			->select()
@@ -457,6 +458,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that it is possible to set an order in a hasMany result set
  *
+ * @dataProvider strategiesProvider
  * @return void
  **/
 	public function testHasManyEagerLoadingOrder() {
@@ -470,7 +472,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article', ['property' => 'articles']);
+		$table->hasMany('article', ['property' => 'articles'] + compact('strategy'));
 
 		$results = $query->repository($table)
 			->select()
@@ -504,6 +506,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that deep associations can be eagerly loaded
  *
+ * @dataProvider strategiesProvider
  * @return void
  **/
 	public function testHasManyEagerLoadingDeep() {
@@ -512,7 +515,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		$article = Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article', ['property' => 'articles']);
+		$table->hasMany('article', ['property' => 'articles'] + compact('strategy'));
 		$article->belongsTo('author');
 
 		$results = $query->repository($table)
@@ -550,6 +553,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * Tests that hasMany associations can be loaded even when related to a secondary
  * model in the query
  *
+ * @dataProvider strategiesProvider
  * @return void
  **/
 	public function testHasManyEagerLoadingFromSecondaryTable() {
@@ -560,7 +564,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$article = Table::build('article', ['connection' => $this->connection]);
 		$publication = Table::build('publication', ['connection' => $this->connection]);
 
-		$author->hasMany('publication', ['property' => 'publications']);
+		$author->hasMany('publication', ['property' => 'publications'] + compact('strategy'));
 		$article->belongsTo('author');
 
 		$results = $query->repository($article)
