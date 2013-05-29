@@ -374,8 +374,8 @@ class UpgradeShell extends Shell {
 			if (isset($data['indexes'])) {
 				foreach ($data['indexes'] as $index => $indexProps) {
 					if (isset($indexProps['column'])) {
-						$indexProps['columns'] = $indexProp['column'];
-						unset($indexProp['column']);
+						$indexProps['columns'] = $indexProps['column'];
+						unset($indexProps['column']);
 					}
 					// Move unique indexes over
 					if (!empty($indexProps['unique'])) {
@@ -383,11 +383,11 @@ class UpgradeShell extends Shell {
 						$constraints[$index] = ['type' => 'unique'] + $indexProps;
 						continue;
 					}
-					$out['indexes'][$index] = $indexProps;
+					$out['_indexes'][$index] = $indexProps;
 				}
 			}
 			if (count($constraints)) {
-				$out['constraints'] = $constraints;
+				$out['_constraints'] = $constraints;
 			}
 			return $matches[1] . "\n\t\t" . implode(",\n\t\t", $export($out)) . "\n\t" . $matches[3];
 		};
