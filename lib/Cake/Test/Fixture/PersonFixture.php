@@ -41,14 +41,12 @@ class PersonFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => false, 'length' => 32),
-		'mother_id' => array('type' => 'integer', 'null' => false, 'key' => 'index'),
-		'father_id' => array('type' => 'integer', 'null' => false),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'mother_id' => array('column' => array('mother_id', 'father_id'), 'unique' => 0)
-		)
+		'id' => ['type' => 'integer', 'null' => false],
+		'name' => ['type' => 'string', 'null' => false, 'length' => 32],
+		'mother_id' => ['type' => 'integer', 'null' => false],
+		'father_id' => ['type' => 'integer', 'null' => false],
+		'_indexes' => ['mother_id' => ['unique' => 0, 'columns' => ['mother_id', 'father_id']]],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']], 'PRIMARY' => ['type' => 'unique', 'columns' => 'id']]
 	);
 
 /**

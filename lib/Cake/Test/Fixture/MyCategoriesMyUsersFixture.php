@@ -41,8 +41,8 @@ class MyCategoriesMyUsersFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'my_category_id' => array('type' => 'integer'),
-		'my_user_id' => array('type' => 'integer'),
+		'my_category_id' => ['type' => 'integer'],
+		'my_user_id' => ['type' => 'integer']
 	);
 
 /**

@@ -33,7 +33,8 @@ class PrefixTestFixture extends TestFixture {
 	public $table = 'prefix_prefix_tests';
 
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => ['type' => 'integer'],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 }

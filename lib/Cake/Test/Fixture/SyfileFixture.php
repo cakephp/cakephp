@@ -41,10 +41,11 @@ class SyfileFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'image_id' => array('type' => 'integer', 'null' => true),
-		'name' => array('type' => 'string', 'null' => false),
-		'item_count' => array('type' => 'integer', 'null' => true)
+		'id' => ['type' => 'integer'],
+		'image_id' => ['type' => 'integer', 'null' => true],
+		'name' => ['type' => 'string', 'null' => false],
+		'item_count' => ['type' => 'integer', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

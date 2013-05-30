@@ -41,9 +41,9 @@ class PostsTagFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'post_id' => array('type' => 'integer', 'null' => false),
-		'tag_id' => array('type' => 'string', 'null' => false),
-		'indexes' => array('posts_tag' => array('column' => array('tag_id', 'post_id'), 'unique' => 1))
+		'post_id' => ['type' => 'integer', 'null' => false],
+		'tag_id' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['posts_tag' => ['type' => 'unique', 'columns' => ['tag_id', 'post_id']]]
 	);
 
 /**

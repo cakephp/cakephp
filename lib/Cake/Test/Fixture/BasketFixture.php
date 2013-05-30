@@ -41,11 +41,12 @@ class BasketFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'type' => array('type' => 'string', 'length' => 255),
-		'name' => array('type' => 'string', 'length' => 255),
-		'object_id' => array('type' => 'integer'),
-		'user_id' => array('type' => 'integer'),
+		'id' => ['type' => 'integer'],
+		'type' => ['type' => 'string', 'length' => 255],
+		'name' => ['type' => 'string', 'length' => 255],
+		'object_id' => ['type' => 'integer'],
+		'user_id' => ['type' => 'integer'],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

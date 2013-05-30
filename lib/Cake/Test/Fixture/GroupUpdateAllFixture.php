@@ -33,10 +33,10 @@ class GroupUpdateAllFixture extends TestFixture {
 	public $table = 'group_update_all';
 
 	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => false, 'length' => 29),
-		'code' => array('type' => 'integer', 'null' => false, 'length' => 4),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
+		'id' => ['type' => 'integer', 'null' => false, 'default' => null],
+		'name' => ['type' => 'string', 'null' => false, 'length' => 29],
+		'code' => ['type' => 'integer', 'null' => false, 'length' => 4],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']], 'PRIMARY' => ['type' => 'unique', 'columns' => 'id']]
 	);
 
 	public $records = array(

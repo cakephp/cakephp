@@ -41,8 +41,9 @@ class BiddingMessageFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'bidding' => array('type' => 'string', 'null' => false, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => false)
+		'bidding' => ['type' => 'string', 'null' => false],
+		'name' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bidding']]]
 	);
 
 /**

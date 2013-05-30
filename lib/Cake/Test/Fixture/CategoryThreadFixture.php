@@ -41,11 +41,12 @@ class CategoryThreadFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'parent_id' => array('type' => 'integer', 'null' => false),
-		'name' => array('type' => 'string', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'parent_id' => ['type' => 'integer', 'null' => false],
+		'name' => ['type' => 'string', 'null' => false],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

@@ -41,9 +41,10 @@ class UuiditemFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
-		'published' => array('type' => 'boolean', 'null' => false),
-		'name' => array('type' => 'string', 'null' => false)
+		'id' => ['type' => 'string', 'length' => 36],
+		'published' => ['type' => 'boolean', 'null' => false],
+		'name' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

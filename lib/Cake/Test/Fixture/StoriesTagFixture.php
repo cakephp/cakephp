@@ -41,9 +41,9 @@ class StoriesTagFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'story' => array('type' => 'integer', 'null' => false),
-		'tag_id' => array('type' => 'integer', 'null' => false),
-		'indexes' => array('UNIQUE_STORY_TAG' => array('column' => array('story', 'tag_id'), 'unique' => 1))
+		'story' => ['type' => 'integer', 'null' => false],
+		'tag_id' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['UNIQUE_STORY_TAG' => ['type' => 'unique', 'columns' => ['story', 'tag_id']]]
 	);
 
 /**

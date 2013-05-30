@@ -41,15 +41,16 @@ class DeviceTypeFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'device_type_category_id' => array('type' => 'integer', 'null' => false),
-		'feature_set_id' => array('type' => 'integer', 'null' => false),
-		'exterior_type_category_id' => array('type' => 'integer', 'null' => false),
-		'image_id' => array('type' => 'integer', 'null' => false),
-		'extra1_id' => array('type' => 'integer', 'null' => false),
-		'extra2_id' => array('type' => 'integer', 'null' => false),
-		'name' => array('type' => 'string', 'null' => false),
-		'order' => array('type' => 'integer', 'null' => false)
+		'id' => ['type' => 'integer'],
+		'device_type_category_id' => ['type' => 'integer', 'null' => false],
+		'feature_set_id' => ['type' => 'integer', 'null' => false],
+		'exterior_type_category_id' => ['type' => 'integer', 'null' => false],
+		'image_id' => ['type' => 'integer', 'null' => false],
+		'extra1_id' => ['type' => 'integer', 'null' => false],
+		'extra2_id' => ['type' => 'integer', 'null' => false],
+		'name' => ['type' => 'string', 'null' => false],
+		'order' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

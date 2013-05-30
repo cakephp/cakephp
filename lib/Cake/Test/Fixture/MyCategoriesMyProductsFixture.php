@@ -41,8 +41,8 @@ class MyCategoriesMyProductsFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'my_category_id' => array('type' => 'integer'),
-		'my_product_id' => array('type' => 'integer'),
+		'my_category_id' => ['type' => 'integer'],
+		'my_product_id' => ['type' => 'integer']
 	);
 
 /**

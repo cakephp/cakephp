@@ -43,9 +43,10 @@ class ContentAccountFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'iContentAccountsId' => array('type' => 'integer', 'key' => 'primary'),
-		'iContentId' => array('type' => 'integer'),
-		'iAccountId' => array('type' => 'integer')
+		'iContentAccountsId' => ['type' => 'integer'],
+		'iContentId' => ['type' => 'integer'],
+		'iAccountId' => ['type' => 'integer'],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['iContentAccountsId']]]
 	);
 
 /**

@@ -45,10 +45,11 @@ class NumberTreeFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id'	=> array('type' => 'integer','key' => 'primary'),
-		'name'	=> array('type' => 'string','null' => false),
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'null' => false],
 		'parent_id' => 'integer',
-		'lft'	=> array('type' => 'integer','null' => false),
-		'rght'	=> array('type' => 'integer','null' => false)
+		'lft' => ['type' => 'integer', 'null' => false],
+		'rght' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 }

@@ -41,11 +41,9 @@ class FruitsUuidTagFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'fruit_id' => array('type' => 'string', 'null' => false, 'length' => 36, 'key' => 'primary'),
-		'uuid_tag_id' => array('type' => 'string', 'null' => false, 'length' => 36, 'key' => 'primary'),
-		'indexes' => array(
-			'unique_fruits_tags' => array('unique' => true, 'column' => array('fruit_id', 'uuid_tag_id')),
-		),
+		'fruit_id' => ['type' => 'string', 'null' => false, 'length' => 36],
+		'uuid_tag_id' => ['type' => 'string', 'null' => false, 'length' => 36],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['uuid_tag_id']], 'unique_fruits_tags' => ['type' => 'unique', 'columns' => ['fruit_id', 'uuid_tag_id']]]
 	);
 
 /**

@@ -41,9 +41,10 @@ class ItemsPortfolioFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'item_id' => array('type' => 'integer', 'null' => false),
-		'portfolio_id' => array('type' => 'integer', 'null' => false)
+		'id' => ['type' => 'integer'],
+		'item_id' => ['type' => 'integer', 'null' => false],
+		'portfolio_id' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

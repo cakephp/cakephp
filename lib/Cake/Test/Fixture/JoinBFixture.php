@@ -41,10 +41,11 @@ class JoinBFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'default' => ''),
-		'created' => array('type' => 'datetime', 'null' => true),
-		'updated' => array('type' => 'datetime', 'null' => true)
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'default' => ''],
+		'created' => ['type' => 'datetime', 'null' => true],
+		'updated' => ['type' => 'datetime', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**
