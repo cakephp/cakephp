@@ -185,7 +185,7 @@ class Query extends DatabaseQuery {
 			'conditions' => 1,
 			'fields' => 1,
 			'sort' => 1,
-			'filtering' => 1
+			'matching' => 1
 		];
 
 		$instance = $parent->association($alias);

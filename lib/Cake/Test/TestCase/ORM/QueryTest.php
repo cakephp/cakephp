@@ -666,4 +666,40 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($table->association('Tag')->strategy(), $strategy);
 	}
 
+/**
+ * Tests that tables results can be filtered by the result of a HasMany
+ *
+ * @return void
+ */
+	public function testFilteringByHasMany() {
+		$this->_insertRecords();
+
+		$query = new Query($this->connection);
+		$table = Table::build('author', ['connection' => $this->connection]);
+		Table::build('article', ['connection' => $this->connection]);
+		$table->hasMany('article', ['property' => 'articles']);
+
+		$results = $query->repository($table)
+			->select()
+			->contain(['article' => [
+				'matching' => true,
+				'conditions' => ['Article.id' => 2]
+			]])
+			->toArray();
+		$expected = [
+			[
+				'id' => 2,
+				'name' => 'Bruce Lee',
+				'articles' => [
+					'id' => 2,
+					'title' => 'another title',
+					'body' => 'another body',
+					'author_id' => 2
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
+
+
 }

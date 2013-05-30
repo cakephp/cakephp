@@ -36,11 +36,11 @@ trait ExternalAssociationTrait {
  * Whether this association can be expressed directly in a query join
  *
  * @param array $options custom options key that could alter the return value
- * @return boolean if the 'filtering' key in $option is true then this function
+ * @return boolean if the 'matching' key in $option is true then this function
  * will return true, false otherwise
  */
 	public function canBeJoined($options = []) {
-		return !empty($options['filtering']);
+		return !empty($options['matching']);
 	}
 
 /**

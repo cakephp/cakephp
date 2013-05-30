@@ -272,7 +272,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('contain')->with([
 			'ArticleTag' => [
 				'conditions' => ['ArticleTag.article_id in' => $keys],
-				'filtering' => true
+				'matching' => true
 			]
 		]);
 
@@ -327,7 +327,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('contain')->with([
 			'ArticleTag' => [
 				'conditions' => ['ArticleTag.article_id in' => $keys],
-				'filtering' => true
+				'matching' => true
 			]
 		]);
 
@@ -377,7 +377,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('contain')->with([
 			'ArticleTag' => [
 				'conditions' => ['ArticleTag.article_id in' => $keys],
-				'filtering' => true
+				'matching' => true
 			]
 		]);
 
@@ -501,7 +501,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('contain')->with([
 			'ArticleTag' => [
 				'conditions' => ['ArticleTag.article_id in' => $expected],
-				'filtering' => true
+				'matching' => true
 			]
 		]);
 

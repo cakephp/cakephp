@@ -215,7 +215,7 @@ class BelongsToMany extends Association {
 
 		$options['contain'][$pivotAlias] = [
 			'conditions' => [$key . ' in' => $filter],
-			'filtering' => true
+			'matching' => true
 		];
 
 		if (!empty($options['fields'])) {
