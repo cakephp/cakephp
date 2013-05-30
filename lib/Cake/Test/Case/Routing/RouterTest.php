@@ -49,6 +49,7 @@ class RouterTest extends CakeTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		CakePlugin::unload();
+		Router::baseURL('');
 	}
 
 /**
@@ -57,14 +58,23 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	public function testFullBaseURL() {
-		$skip = PHP_SAPI === 'cli';
-		if ($skip) {
-			$this->markTestSkipped('Cannot validate base URLs in CLI');
-		}
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('full_base' => true)));
 		$this->assertSame(FULL_BASE_URL . '/', Router::url(array('full_base' => true)));
+	}
+
+/**
+ * Tests that the base URL can be changed at runtime
+ *
+ * @return void
+ */
+	public function testBaseURL() {
+		$this->assertEquals(FULL_BASE_URL, Router::baseUrl());
+		Router::baseURL('http://example.com');
+		$this->assertEquals('http://example.com/', Router::url('/', true));
+		Router::baseURL('https://example.com');
+		$this->assertEquals('https://example.com/', Router::url('/', true));
 	}
 
 /**
