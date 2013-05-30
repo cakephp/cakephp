@@ -255,6 +255,7 @@ class HttpSocketTest extends CakeTestCase {
 			'port' => 23,
 			'timeout' => 30,
 			'ssl_verify_peer' => true,
+			'ssl_allow_self_signed' => false,
 			'ssl_verify_depth' => 5,
 			'ssl_verify_host' => true,
 			'request' => array(
@@ -283,6 +284,7 @@ class HttpSocketTest extends CakeTestCase {
 			'port' => 80,
 			'timeout' => 30,
 			'ssl_verify_peer' => true,
+			'ssl_allow_self_signed' => false,
 			'ssl_verify_depth' => 5,
 			'ssl_verify_host' => true,
 			'request' => array(
@@ -321,6 +323,7 @@ class HttpSocketTest extends CakeTestCase {
 		$context = array(
 			'ssl' => array(
 				'verify_peer' => true,
+				'allow_self_signed' => false,
 				'verify_depth' => 5,
 				'CN_match' => 'www.cakephp.org',
 				'cafile' => CAKE . 'Config' . DS . 'cacert.pem'
@@ -1708,9 +1711,11 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->reset();
 		$this->Socket->request('http://example.com');
 		$this->assertTrue($this->Socket->config['context']['ssl']['verify_peer']);
+		$this->assertFalse($this->Socket->config['context']['ssl']['allow_self_signed']);
 		$this->assertEquals(5, $this->Socket->config['context']['ssl']['verify_depth']);
 		$this->assertEquals('example.com', $this->Socket->config['context']['ssl']['CN_match']);
 		$this->assertArrayNotHasKey('ssl_verify_peer', $this->Socket->config);
+		$this->assertArrayNotHasKey('ssl_allow_self_signed', $this->Socket->config);
 		$this->assertArrayNotHasKey('ssl_verify_host', $this->Socket->config);
 		$this->assertArrayNotHasKey('ssl_verify_depth', $this->Socket->config);
 	}
