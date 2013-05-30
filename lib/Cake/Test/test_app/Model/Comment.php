@@ -15,14 +15,30 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.test_app.Model
+ * @package       Cake.Test.TestApp.Model
  * @since         CakePHP v 1.2.0.7726
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+
+/**
+ * Comment Model
+ *
+ * @package       Cake.Test.TestApp.Model
  */
 class Comment extends AppModel {
 
+/**
+ * Table name
+ *
+ * @var string
+ */
 	public $useTable = 'comments';
 
+/**
+ * Model name
+ *
+ * @var string
+ */
 	public $name = 'Comment';
 
 }

@@ -15,9 +15,15 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.test_app.Plugin.TestPlugin.Config.Schema
+ * @package       Cake.Test.TestApp.Plugin.TestPlugin.Config.Schema
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+
+/**
+ * Class TestPluginAppSchema
+ *
+ * @package       Cake.Test.TestApp.Plugin.TestPlugin.Config.Schema
  */
 class TestPluginAppSchema extends CakeSchema {
 

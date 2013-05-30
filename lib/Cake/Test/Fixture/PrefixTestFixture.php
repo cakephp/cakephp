@@ -14,11 +14,11 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.4667
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       http://www.opensource.org/licenses/opengroup.php Open Group Test Suite License
  */
 
 /**
- * Short description for class.
+ * PrefixTestFixture
  *
  * @package       Cake.Test.Fixture
  */

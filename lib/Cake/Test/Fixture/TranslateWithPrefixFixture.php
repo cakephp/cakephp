@@ -20,10 +20,10 @@
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 /**
- * Short description for class.
+ * Class TranslateWithPrefixFixture
  *
  * @package       Cake.Test.Fixture
  */

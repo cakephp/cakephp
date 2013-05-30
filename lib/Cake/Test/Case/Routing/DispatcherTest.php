@@ -15,8 +15,9 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Routing
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('Dispatcher', 'Routing');
 
 if (!class_exists('AppController', false)) {
@@ -96,12 +97,18 @@ class TestDispatcher extends Dispatcher {
 class MyPluginAppController extends AppController {
 }
 
+/**
+ * Abstract Class DispatcherTestAbstractController
+ */
 abstract class DispatcherTestAbstractController extends Controller {
 
 	abstract public function index();
 
 }
 
+/**
+ * Interface DispatcherTestInterfaceController
+ */
 interface DispatcherTestInterfaceController {
 
 	public function index();

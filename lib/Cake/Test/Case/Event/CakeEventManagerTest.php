@@ -17,7 +17,7 @@
  * @link		  http://cakephp.org CakePHP Project
  * @package		  Cake.Test.Case.Event
  * @since		  CakePHP v 2.1
- * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CakeEvent', 'Event');
