@@ -554,7 +554,6 @@ class FormHelper extends AppHelper {
 		sort($unlockedFields, SORT_STRING);
 		sort($fields, SORT_STRING);
 		ksort($locked, SORT_STRING);
-		$fields += $locked;
 
 		$locked = implode(array_keys($locked), '|');
 		$unlocked = implode($unlockedFields, '|');
