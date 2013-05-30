@@ -41,13 +41,14 @@ class AroFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'parent_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'model' => array('type' => 'string', 'null' => true),
-		'foreign_key' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'alias' => array('type' => 'string', 'default' => ''),
-		'lft' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'rght' => array('type' => 'integer', 'length' => 10, 'null' => true)
+		'id' => ['type' => 'integer'],
+		'parent_id' => ['type' => 'integer', 'length' => 10, 'null' => true],
+		'model' => ['type' => 'string', 'null' => true],
+		'foreign_key' => ['type' => 'integer', 'length' => 10, 'null' => true],
+		'alias' => ['type' => 'string', 'default' => ''],
+		'lft' => ['type' => 'integer', 'length' => 10, 'null' => true],
+		'rght' => ['type' => 'integer', 'length' => 10, 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

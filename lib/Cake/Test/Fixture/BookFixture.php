@@ -41,12 +41,13 @@ class BookFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'isbn' => array('type' => 'string', 'length' => 13),
-		'title' => array('type' => 'string', 'length' => 255),
-		'author' => array('type' => 'string', 'length' => 255),
-		'year' => array('type' => 'integer', 'null' => true),
-		'pages' => array('type' => 'integer', 'null' => true)
+		'id' => ['type' => 'integer'],
+		'isbn' => ['type' => 'string', 'length' => 13],
+		'title' => ['type' => 'string', 'length' => 255],
+		'author' => ['type' => 'string', 'length' => 255],
+		'year' => ['type' => 'integer', 'null' => true],
+		'pages' => ['type' => 'integer', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

@@ -240,7 +240,7 @@ class FixtureManager {
 		if (isset($this->_fixtureMap[$name])) {
 			$fixture = $this->_fixtureMap[$name];
 			if (!$db) {
-				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
+				$db = ConnectionManager::getDataSource($fixture->connection);
 			}
 			$this->_setupTable($fixture, $db, $dropTables);
 			$fixture->truncate($db);

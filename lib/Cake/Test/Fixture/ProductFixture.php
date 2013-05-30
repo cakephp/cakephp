@@ -41,10 +41,11 @@ class ProductFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'length' => 255, 'null' => false),
-		'type' => array('type' => 'string', 'length' => 255, 'null' => false),
-		'price' => array('type' => 'integer', 'null' => false)
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'type' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'price' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

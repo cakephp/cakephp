@@ -15,6 +15,7 @@
  */
 namespace Cake\Controller\Component\Auth;
 
+use Cake\Controller\ComponentCollection;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Security;

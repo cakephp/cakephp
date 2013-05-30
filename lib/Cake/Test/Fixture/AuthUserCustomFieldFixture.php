@@ -41,11 +41,12 @@ class AuthUserCustomFieldFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'email' => array('type' => 'string', 'null' => false),
-		'password' => array('type' => 'string', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'email' => ['type' => 'string', 'null' => false],
+		'password' => ['type' => 'string', 'null' => false],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

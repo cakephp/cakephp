@@ -31,9 +31,10 @@ class CounterCacheUserNonstandardPrimaryKeyFixture extends TestFixture {
 	public $name = 'CounterCacheUserNonstandardPrimaryKey';
 
 	public $fields = array(
-		'uid' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'length' => 255, 'null' => false),
-		'post_count' => array('type' => 'integer', 'null' => true)
+		'uid' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'post_count' => ['type' => 'integer', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['uid']]]
 	);
 
 	public $records = array(

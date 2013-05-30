@@ -41,14 +41,15 @@ class AppleFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'apple_id' => array('type' => 'integer', 'null' => true),
-		'color' => array('type' => 'string', 'length' => 40, 'null' => false),
-		'name' => array('type' => 'string', 'length' => 40, 'null' => false),
+		'id' => ['type' => 'integer'],
+		'apple_id' => ['type' => 'integer', 'null' => true],
+		'color' => ['type' => 'string', 'length' => 40, 'null' => false],
+		'name' => ['type' => 'string', 'length' => 40, 'null' => false],
 		'created' => 'datetime',
 		'date' => 'date',
 		'modified' => 'datetime',
-		'mytime' => 'time'
+		'mytime' => 'time',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

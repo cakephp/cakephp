@@ -41,11 +41,12 @@ class DataTestFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'count' => array('type' => 'integer', 'default' => 0),
-		'float' => array('type' => 'float', 'default' => 0),
-		'created' => array('type' => 'datetime', 'default' => null),
-		'updated' => array('type' => 'datetime', 'default' => null)
+		'id' => ['type' => 'integer'],
+		'count' => ['type' => 'integer', 'default' => 0],
+		'float' => ['type' => 'float', 'default' => 0],
+		'created' => ['type' => 'datetime', 'default' => null],
+		'updated' => ['type' => 'datetime', 'default' => null],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

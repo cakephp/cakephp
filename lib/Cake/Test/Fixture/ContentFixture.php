@@ -43,8 +43,9 @@ class ContentFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'iContentId' => array('type' => 'integer', 'key' => 'primary'),
-		'cDescription' => array('type' => 'string', 'length' => 50, 'null' => true)
+		'iContentId' => ['type' => 'integer'],
+		'cDescription' => ['type' => 'string', 'length' => 50, 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['iContentId']]]
 	);
 
 /**

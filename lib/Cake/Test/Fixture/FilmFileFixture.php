@@ -41,8 +41,9 @@ class FilmFileFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'length' => 255)
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'length' => 255],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

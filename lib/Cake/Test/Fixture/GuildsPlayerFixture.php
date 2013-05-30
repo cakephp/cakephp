@@ -43,9 +43,10 @@ class GuildsPlayerFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'player_id' => array('type' => 'integer', 'null' => false),
-		'guild_id' => array('type' => 'integer', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'player_id' => ['type' => 'integer', 'null' => false],
+		'guild_id' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

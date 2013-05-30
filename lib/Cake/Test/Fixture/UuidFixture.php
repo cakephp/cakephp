@@ -41,11 +41,12 @@ class UuidFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
+		'id' => ['type' => 'string', 'length' => 36],
 		'title' => 'string',
-		'count' => array('type' => 'integer', 'default' => 0),
+		'count' => ['type' => 'integer', 'default' => 0],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

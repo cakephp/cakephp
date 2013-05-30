@@ -43,12 +43,13 @@ class DomainsSiteFixture extends TestFixture {
  * @access public
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'domain_id' => array('type' => 'integer', 'null' => false),
-		'site_id' => array('type' => 'integer', 'null' => false),
-		'active' => array('type' => 'boolean', 'null' => false, 'default' => false),
+		'id' => ['type' => 'integer'],
+		'domain_id' => ['type' => 'integer', 'null' => false],
+		'site_id' => ['type' => 'integer', 'null' => false],
+		'active' => ['type' => 'boolean', 'null' => false, 'default' => false],
 		'created' => 'datetime',
 		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

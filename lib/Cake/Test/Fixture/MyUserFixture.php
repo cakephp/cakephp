@@ -41,8 +41,9 @@ class MyUserFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'firstname' => array('type' => 'string', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'firstname' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

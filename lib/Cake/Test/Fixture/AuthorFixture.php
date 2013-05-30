@@ -41,11 +41,12 @@ class AuthorFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'user' => array('type' => 'string', 'default' => null),
-		'password' => array('type' => 'string', 'default' => null),
+		'id' => ['type' => 'integer'],
+		'user' => ['type' => 'string', 'default' => null],
+		'password' => ['type' => 'string', 'default' => null],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

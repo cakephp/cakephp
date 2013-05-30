@@ -41,8 +41,9 @@ class SecondaryModelFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'secondary_name' => array('type' => 'string', 'null' => false)
+		'id' => ['type' => 'integer'],
+		'secondary_name' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

@@ -41,12 +41,13 @@ class JoinABFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'join_a_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'join_b_id' => array('type' => 'integer', 'default' => null),
-		'other' => array('type' => 'string', 'default' => ''),
-		'created' => array('type' => 'datetime', 'null' => true),
-		'updated' => array('type' => 'datetime', 'null' => true)
+		'id' => ['type' => 'integer'],
+		'join_a_id' => ['type' => 'integer', 'length' => 10, 'null' => true],
+		'join_b_id' => ['type' => 'integer', 'default' => null],
+		'other' => ['type' => 'string', 'default' => ''],
+		'created' => ['type' => 'datetime', 'null' => true],
+		'updated' => ['type' => 'datetime', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

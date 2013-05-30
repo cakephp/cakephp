@@ -41,11 +41,10 @@ class InnoFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => true),
-		'tableParameters' => array(
-			'engine' => 'InnoDB'
-		)
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+		'_options' => ['engine' => 'InnoDB']
 	);
 
 /**

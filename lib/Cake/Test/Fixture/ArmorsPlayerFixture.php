@@ -50,12 +50,13 @@ class ArmorsPlayerFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'player_id' => array('type' => 'integer', 'null' => false),
-		'armor_id' => array('type' => 'integer', 'null' => false),
-		'broken' => array('type' => 'boolean', 'null' => false, 'default' => false),
+		'id' => ['type' => 'integer'],
+		'player_id' => ['type' => 'integer', 'null' => false],
+		'armor_id' => ['type' => 'integer', 'null' => false],
+		'broken' => ['type' => 'boolean', 'null' => false, 'default' => false],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

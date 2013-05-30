@@ -41,10 +41,11 @@ class DatatypeFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
-		'float_field' => array('type' => 'float', 'length' => '5,2', 'null' => false, 'default' => null),
-		'huge_int' => array('type' => 'biginteger'),
-		'bool' => array('type' => 'boolean', 'null' => false, 'default' => false),
+		'id' => ['type' => 'integer', 'null' => false, 'default' => 0],
+		'float_field' => ['type' => 'float', 'length' => '5,2', 'null' => false, 'default' => null],
+		'huge_int' => ['type' => 'biginteger'],
+		'bool' => ['type' => 'boolean', 'null' => false, 'default' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**
