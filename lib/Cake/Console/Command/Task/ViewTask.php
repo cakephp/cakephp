@@ -61,7 +61,7 @@ class ViewTask extends BakeTask {
  *
  * @var array
  */
-	public $scaffoldActions = array('index', 'view', 'add', 'edit');
+	public $scaffoldActions = array('index', 'view', 'add', 'edit', 'search');
 
 /**
  * An array of action names that don't require templates. These
@@ -215,7 +215,7 @@ class ViewTask extends BakeTask {
 			$this->interactive = false;
 		}
 
-		$prompt = __d('cake_console', "Would you like to create some CRUD views\n(index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller\nand model classes (including associated models).");
+		$prompt = __d('cake_console', "Would you like to create some CRUD views\n(index, add, view, edit, search) for this controller?\nNOTE: Before doing so, you'll need to create your controller\nand model classes (including associated models).");
 		$wannaDoScaffold = $this->in($prompt, array('y', 'n'), 'y');
 
 		$wannaDoAdmin = $this->in(__d('cake_console', "Would you like to create the views for admin routing?"), array('y', 'n'), 'n');
@@ -426,7 +426,7 @@ class ViewTask extends BakeTask {
 		)->addArgument('controller', array(
 			'help' => __d('cake_console', 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.')
 		))->addArgument('action', array(
-			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
+			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view, search)")
 		))->addArgument('alias', array(
 			'help' => __d('cake_console', 'Will bake the template in <action> but create the filename after <alias>.')
 		))->addOption('plugin', array(
