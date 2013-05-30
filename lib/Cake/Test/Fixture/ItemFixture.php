@@ -41,10 +41,11 @@ class ItemFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'syfile_id' => array('type' => 'integer', 'null' => false),
-		'published' => array('type' => 'boolean', 'null' => false),
-		'name' => array('type' => 'string', 'null' => false)
+		'id' => ['type' => 'integer'],
+		'syfile_id' => ['type' => 'integer', 'null' => false],
+		'published' => ['type' => 'boolean', 'null' => false],
+		'name' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

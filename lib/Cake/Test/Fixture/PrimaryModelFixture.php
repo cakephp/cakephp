@@ -41,8 +41,9 @@ class PrimaryModelFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'primary_name' => array('type' => 'string', 'null' => false)
+		'id' => ['type' => 'integer'],
+		'primary_name' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

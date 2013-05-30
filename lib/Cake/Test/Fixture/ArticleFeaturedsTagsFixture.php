@@ -41,8 +41,8 @@ class ArticleFeaturedsTagsFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'article_featured_id' => array('type' => 'integer', 'null' => false),
-		'tag_id' => array('type' => 'integer', 'null' => false),
-		'indexes' => array('UNIQUE_FEATURED' => array('column' => array('article_featured_id', 'tag_id'), 'unique' => 1))
+		'article_featured_id' => ['type' => 'integer', 'null' => false],
+		'tag_id' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['UNIQUE_FEATURED' => ['type' => 'unique', 'columns' => ['article_featured_id', 'tag_id']]]
 	);
 }

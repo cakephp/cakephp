@@ -42,10 +42,11 @@ class UuidTreeFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id'	=> array('type' => 'string', 'length' => 36, 'key' => 'primary'),
-		'name'	=> array('type' => 'string','null' => false),
-		'parent_id' => array('type' => 'string', 'length' => 36, 'null' => true),
-		'lft'	=> array('type' => 'integer','null' => false),
-		'rght'	=> array('type' => 'integer','null' => false)
+		'id' => ['type' => 'string', 'length' => 36],
+		'name' => ['type' => 'string', 'null' => false],
+		'parent_id' => ['type' => 'string', 'length' => 36, 'null' => true],
+		'lft' => ['type' => 'integer', 'null' => false],
+		'rght' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 }

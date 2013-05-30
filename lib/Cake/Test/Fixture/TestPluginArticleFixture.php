@@ -41,13 +41,14 @@ class TestPluginArticleFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'user_id' => array('type' => 'integer', 'null' => false),
-		'title' => array('type' => 'string', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'user_id' => ['type' => 'integer', 'null' => false],
+		'title' => ['type' => 'string', 'null' => false],
 		'body' => 'text',
-		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
+		'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

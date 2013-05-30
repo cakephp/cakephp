@@ -43,10 +43,11 @@ class DomainFixture extends TestFixture {
  * @access public
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'domain' => array('type' => 'string', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'domain' => ['type' => 'string', 'null' => false],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

@@ -41,8 +41,9 @@ class StoryFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'story' => array('type' => 'integer', 'key' => 'primary'),
-		'title' => array('type' => 'string', 'null' => false)
+		'story' => ['type' => 'integer'],
+		'title' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['story']]]
 	);
 
 /**

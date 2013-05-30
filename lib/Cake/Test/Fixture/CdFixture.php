@@ -41,10 +41,11 @@ class CdFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'title' => array('type' => 'string', 'length' => 255),
-		'artist' => array('type' => 'string', 'length' => 255, 'null' => true),
-		'genre' => array('type' => 'string', 'length' => 255, 'null' => true)
+		'id' => ['type' => 'integer'],
+		'title' => ['type' => 'string', 'length' => 255],
+		'artist' => ['type' => 'string', 'length' => 255, 'null' => true],
+		'genre' => ['type' => 'string', 'length' => 255, 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

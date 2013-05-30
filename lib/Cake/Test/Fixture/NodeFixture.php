@@ -42,9 +42,10 @@ class NodeFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => ['type' => 'integer'],
 		'name' => 'string',
-		'state' => 'integer'
+		'state' => 'integer',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

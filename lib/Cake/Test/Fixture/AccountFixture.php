@@ -43,8 +43,9 @@ class AccountFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'iAccountId'		=> array('type' => 'integer', 'key' => 'primary'),
-		'cDescription'	=> array('type' => 'string', 'length' => 10, 'null' => true)
+		'iAccountId' => ['type' => 'integer'],
+		'cDescription' => ['type' => 'string', 'length' => 10, 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['iAccountId']]]
 	);
 
 /**

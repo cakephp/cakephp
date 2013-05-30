@@ -31,10 +31,11 @@ class CounterCachePostFixture extends TestFixture {
 	public $name = 'CounterCachePost';
 
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'title' => array('type' => 'string', 'length' => 255),
-		'user_id' => array('type' => 'integer', 'null' => true),
-		'published' => array('type' => 'boolean', 'null' => false, 'default' => 0)
+		'id' => ['type' => 'integer'],
+		'title' => ['type' => 'string', 'length' => 255],
+		'user_id' => ['type' => 'integer', 'null' => true],
+		'published' => ['type' => 'boolean', 'null' => false, 'default' => 0],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 	public $records = array(

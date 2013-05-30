@@ -42,11 +42,12 @@ class AfterTreeFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'parent_id' => array('type' => 'integer'),
-		'lft' => array('type' => 'integer'),
-		'rght' => array('type' => 'integer'),
-		'name' => array('type' => 'string', 'length' => 255, 'null' => false)
+		'id' => ['type' => 'integer'],
+		'parent_id' => ['type' => 'integer'],
+		'lft' => ['type' => 'integer'],
+		'rght' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

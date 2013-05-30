@@ -41,9 +41,10 @@ class TranslatedItemFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'translated_article_id' => array('type' => 'integer'),
-		'slug' => array('type' => 'string', 'null' => false)
+		'id' => ['type' => 'integer'],
+		'translated_article_id' => ['type' => 'integer'],
+		'slug' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

@@ -41,10 +41,11 @@ class OverallFavoriteFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'model_type' => array('type' => 'string', 'length' => 255),
-		'model_id' => array('type' => 'integer'),
-		'priority' => array('type' => 'integer')
+		'id' => ['type' => 'integer'],
+		'model_type' => ['type' => 'string', 'length' => 255],
+		'model_id' => ['type' => 'integer'],
+		'priority' => ['type' => 'integer'],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

@@ -41,9 +41,10 @@ class UuiditemsUuidportfolioFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
-		'uuiditem_id' => array('type' => 'string', 'length' => 36, 'null' => false),
-		'uuidportfolio_id' => array('type' => 'string', 'length' => 36, 'null' => false)
+		'id' => ['type' => 'string', 'length' => 36],
+		'uuiditem_id' => ['type' => 'string', 'length' => 36, 'null' => false],
+		'uuidportfolio_id' => ['type' => 'string', 'length' => 36, 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

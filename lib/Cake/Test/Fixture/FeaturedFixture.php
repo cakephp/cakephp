@@ -41,13 +41,14 @@ class FeaturedFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'article_featured_id' => array('type' => 'integer', 'null' => false),
-		'category_id' => array('type' => 'integer', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'article_featured_id' => ['type' => 'integer', 'null' => false],
+		'category_id' => ['type' => 'integer', 'null' => false],
 		'published_date' => 'datetime',
 		'end_date' => 'datetime',
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

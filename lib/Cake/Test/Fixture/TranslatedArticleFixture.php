@@ -41,11 +41,12 @@ class TranslatedArticleFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'user_id' => array('type' => 'integer', 'null' => false),
-		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
+		'id' => ['type' => 'integer'],
+		'user_id' => ['type' => 'integer', 'null' => false],
+		'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

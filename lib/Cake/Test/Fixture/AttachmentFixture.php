@@ -41,11 +41,12 @@ class AttachmentFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'comment_id' => array('type' => 'integer', 'null' => false),
-		'attachment' => array('type' => 'string', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'comment_id' => ['type' => 'integer', 'null' => false],
+		'attachment' => ['type' => 'string', 'null' => false],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**
