@@ -15,14 +15,25 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Log.Engine
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('ConsoleLog', 'Log/Engine');
 
+/**
+ * Class TestConsoleLog
+ *
+ * @package       Cake.Test.Case.Log.Engine
+ */
 class TestConsoleLog extends ConsoleLog {
 
 }
 
+/**
+ * Class TestCakeLog
+ *
+ * @package       Cake.Test.Case.Log.Engine
+ */
 class TestCakeLog extends CakeLog {
 
 	public static function replace($key, &$engine) {

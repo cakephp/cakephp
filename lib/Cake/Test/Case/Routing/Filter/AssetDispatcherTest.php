@@ -10,13 +10,18 @@
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Routing.Filter
  * @since         CakePHP(tm) v 2.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AssetDispatcher', 'Routing/Filter');
 App::uses('CakeEvent', 'Event');
 App::uses('CakeResponse', 'Network');
 
+/**
+ * Class AssetDispatcherTest
+ *
+ * @package       Cake.Test.Case.Routing.Filter
+ */
 class AssetDispatcherTest extends CakeTestCase {
 
 /**

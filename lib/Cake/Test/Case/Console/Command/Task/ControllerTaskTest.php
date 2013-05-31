@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('ConsoleOutput', 'Console');
@@ -40,6 +40,9 @@ $imported = class_exists('BakeArticle') || class_exists('BakeComment') || class_
 if (!$imported) {
 	define('ARTICLE_MODEL_CREATED', true);
 
+	/**
+	 * Class BakeArticle
+	 */
 	class BakeArticle extends Model {
 
 		public $name = 'BakeArticle';
