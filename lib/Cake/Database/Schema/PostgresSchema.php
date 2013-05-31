@@ -185,6 +185,29 @@ class PostgresSchema {
 	}
 
 /**
+ * Get the SQL to describe the indexes in a table.
+ *
+ * @param string $table The table name to get information on.
+ * @return array An array of (sql, params) to execute.
+ */
+	public function describeIndexSql($table) {
+		$sql = '';
+		return [$sql, []];
+	}
+
+/**
+ * Convert an index into the abstract description.
+ *
+ * @param Cake\Database\Schema\Table $table The table object to append
+ *    an index or constraint to.
+ * @param array $row The row data from describeIndexSql
+ * @return void
+ */
+	public function convertIndexDescription(Table $table, $row) {
+	}
+
+
+/**
  * Generate the SQL fragment for a single column.
  *
  * @param Cake\Database\Schema\Table $table The table object the column is in.
