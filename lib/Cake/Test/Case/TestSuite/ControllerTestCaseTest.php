@@ -69,11 +69,11 @@ if (!class_exists('AppController', false)) {
  */
 if (!class_exists('PostsController')) {
 
-	/**
-	 * Class PostsController
-	 *
-	 * @package       Cake.Test.Case.TestSuite
-	 */
+/**
+ * Class PostsController
+ *
+ * @package       Cake.Test.Case.TestSuite
+ */
 	class PostsController extends AppController {
 
 	/**

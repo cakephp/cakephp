@@ -40,9 +40,9 @@ $imported = class_exists('BakeArticle') || class_exists('BakeComment') || class_
 if (!$imported) {
 	define('ARTICLE_MODEL_CREATED', true);
 
-	/**
-	 * Class BakeArticle
-	 */
+/**
+ * Class BakeArticle
+ */
 	class BakeArticle extends Model {
 
 		public $name = 'BakeArticle';
