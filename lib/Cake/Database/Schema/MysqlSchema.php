@@ -190,7 +190,11 @@ class MysqlSchema {
 		if (!empty($row['Sub_part'])) {
 			$length[$row['Column_name']] = $row['Sub_part'];
 		}
-		if ($type == 'index' || $type == 'fulltext') {
+		$isIndex = (
+			$type == 'index' ||
+			$type == 'fulltext'
+		);
+		if ($isIndex) {
 			$existing = $table->index($name);
 		} else {
 			$existing = $table->constraint($name);
@@ -202,7 +206,7 @@ class MysqlSchema {
 			$columns = array_merge($existing['columns'], $columns);
 			$length = array_merge($existing['length'], $length);
 		}
-		if ($type == 'index' || $type == 'fulltext') {
+		if ($isIndex) {
 			$table->addIndex($name, [
 				'type' => $type,
 				'columns' => $columns,
