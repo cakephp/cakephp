@@ -161,7 +161,7 @@ class MysqlSchema {
 	}
 
 /**
- * Convert an index into the abstrac description.
+ * Convert an index into the abstract description.
  *
  * @param Cake\Database\Schema\Table $table The table object to append
  *    an index or constraint to.
