@@ -13,9 +13,9 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.test_app.Plugin.TestPlugin.Vendor
+ * @package       Cake.Test.TestApp.Plugin.TestPlugin.Vendor
  * @since         CakePHP(tm) v 1.2.0.7629
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
 This is the welcome.php file in test_plugin/vendors directory

@@ -16,12 +16,11 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       Open Group Test Suite License (http://www.opensource.org/licenses/opengroup.php)
+ * @license       http://www.opensource.org/licenses/opengroup.php Open Group Test Suite License
  */
 
 /**
  * Included libraries.
- *
  */
 App::uses('Inflector', 'Utility');
 

@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5347
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Controller', 'Controller');
@@ -26,7 +26,6 @@ App::uses('FormAuthenticate', 'Controller/Component/Auth');
 /**
  * TestAuthComponent class
  *
- * @package       Cake.Test.Case.Controller.Component
  * @package       Cake.Test.Case.Controller.Component
  */
 class TestAuthComponent extends AuthComponent {
@@ -57,7 +56,6 @@ class TestAuthComponent extends AuthComponent {
  * AuthUser class
  *
  * @package       Cake.Test.Case.Controller.Component
- * @package       Cake.Test.Case.Controller.Component
  */
 class AuthUser extends CakeTestModel {
 
@@ -80,7 +78,6 @@ class AuthUser extends CakeTestModel {
 /**
  * AuthTestController class
  *
- * @package       Cake.Test.Case.Controller.Component
  * @package       Cake.Test.Case.Controller.Component
  */
 class AuthTestController extends Controller {
@@ -274,7 +271,6 @@ class AjaxAuthController extends Controller {
 /**
  * AuthComponentTest class
  *
- * @package       Cake.Test.Case.Controller.Component
  * @package       Cake.Test.Case.Controller.Component
  */
 class AuthComponentTest extends CakeTestCase {
