@@ -90,11 +90,24 @@ class Collection {
 
 		$table = new Table($name);
 		$fieldParams = [];
-		if (method_exists($this->_dialect, 'extraSchemaColumn')) {
+		if (method_exists($this->_dialect, 'extraSchemaColumns')) {
 			$fieldParams = $this->_dialect->extraSchemaColumns();
 		}
 		foreach ($statement->fetchAll('assoc') as $row) {
 			$this->_dialect->convertFieldDescription($table, $row, $fieldParams);
+		}
+
+		list($sql, $params) = $this->_dialect->describeIndexSql(
+			$name,
+			$this->_connection->config()
+		);
+		try {
+			$statement = $this->_connection->execute($sql, $params);
+		} catch (\PDOException $e) {
+			return null;
+		}
+		foreach ($statement->fetchAll('assoc') as $row) {
+			$this->_dialect->convertIndexDescription($table, $row);
 		}
 		return $table;
 	}
