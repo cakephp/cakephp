@@ -5,4 +5,8 @@
 	width: 300px;
 	height: 80px;
 }</code></pre>
-<p>Some more <b>Bold</b> test.</p>
+<table>
+<th align="right" valign="top"
+        style="font-weight: bold">The tag is across multiple lines - <?php echo str_repeat('x', CakeEmail::LINE_LENGTH_MUST); ?></th>
+</table>
+<p>Some more <?php echo str_repeat('x', CakeEmail::LINE_LENGTH_MUST); ?> <b>Bold</b> test.</p>
