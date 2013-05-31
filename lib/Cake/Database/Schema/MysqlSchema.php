@@ -63,6 +63,17 @@ class MysqlSchema {
 	}
 
 /**
+ * Get the SQL to describe the indexes in a table.
+ *
+ * @param string $table The table name to get information on.
+ * @return array An array of (sql, params) to execute.
+ */
+	public function describeIndexSql($table) {
+		$sql = sprintf('SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($table));
+		return [$sql, []];
+	}
+
+/**
  * Convert a MySQL column type into an abstract type.
  *
  * The returned type will be a type that Cake\Database\Type can handle.
@@ -145,6 +156,63 @@ class MysqlSchema {
 			$table->addConstraint('primary', [
 				'type' => Table::CONSTRAINT_PRIMARY,
 				'columns' => [$row['Field']]
+			]);
+		}
+	}
+
+/**
+ * Convert an index into the abstrac description.
+ *
+ * @param Cake\Database\Schema\Table $table The table object to append
+ *    an index or constraint to.
+ * @param array $row The row data from describeIndexSql
+ * @return void
+ */
+	public function convertIndexDescription(Table $table, $row) {
+		$type = null;
+		$columns = $length = [];
+
+		$name = $row['Key_name'];
+		if ($name === 'PRIMARY') {
+			$name = $type = 'primary';
+		}
+
+		$columns[] = $row['Column_name'];
+
+		if ($row['Index_type'] === 'FULLTEXT') {
+			$type = strtolower($row['Index_type']);
+		} elseif ($row['Non_unique'] == 0 && $type !== 'primary') {
+			$type = 'unique';
+		} else {
+			$type = 'index';
+		}
+
+		if (!empty($row['Sub_part'])) {
+			$length[$row['Column_name']] = $row['Sub_part'];
+		}
+		if ($type == 'index' || $type == 'fulltext') {
+			$existing = $table->index($name);
+		} else {
+			$existing = $table->constraint($name);
+		}
+
+		// MySQL multi column indexes come back
+		// as multiple rows.
+		if (!empty($existing)) {
+			$columns = array_merge($existing['columns'], $columns);
+			$length = array_merge($existing['length'], $length);
+		}
+		if ($type == 'index' || $type == 'fulltext') {
+			$table->addIndex($name, [
+				'type' => $type,
+				'columns' => $columns,
+				'length' => $length
+			]);
+		} else {
+			$table->addConstraint($name, [
+				'type' => $type,
+				'columns' => $columns,
+				'length' => $length
 			]);
 		}
 	}
