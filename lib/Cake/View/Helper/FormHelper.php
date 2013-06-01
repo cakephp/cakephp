@@ -2652,7 +2652,7 @@ class FormHelper extends AppHelper {
 					) {
 						$htmlOptions['disabled'] = 'disabled';
 					}
-					if ($hasDisabled && !$disabledIsArray && $attributes['style'] === 'checkbox') {
+					if ($hasDisabled && !$disabledIsArray) {
 						$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
 					}
 
