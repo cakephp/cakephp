@@ -4537,6 +4537,125 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$disabled = true;
+		$result = $this->Form->input('Contact.multiple', array('multiple' => 'multiple', 'disabled' => $disabled, 'options' => $options));
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => 'ContactMultiple')),
+			'Multiple',
+			'/label',
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Contact][multiple]', 'value' => '', 'id' => 'ContactMultiple_'
+			),
+			'select' => array(
+				'name' => 'data[Contact][multiple][]', 'disabled' => 'disabled', 'multiple' => 'multiple', 'id' => 'ContactMultiple'
+			),
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x')),
+			'Stringy',
+			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test generating select with disabled elements.
+ *
+ * @return void
+ */
+	public function testSelectWithDisabledElements() {
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$disabled = array(2, 3);
+		$result = $this->Form->select('Model.field', $options, array('disabled' => $disabled));
+		$expected = array(
+			'select' => array(
+				'name' => 'data[Model][field]', 'id' => 'ModelField'
+			),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2', 'disabled' => 'disabled')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3', 'disabled' => 'disabled')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x')),
+			'Stringy',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$disabled = array('2', '3x');
+		$result = $this->Form->input('Model.field', array('disabled' => $disabled, 'options' => $options));
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => 'ModelField')),
+			'Field',
+			'/label',
+			'select' => array(
+				'name' => 'data[Model][field]', 'id' => 'ModelField'
+			),
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2', 'disabled' => 'disabled')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x', 'disabled' => 'disabled')),
+			'Stringy',
+			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$disabled = true;
+		$result = $this->Form->input('Model.field', array('disabled' => $disabled, 'options' => $options));
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => 'ModelField')),
+			'Field',
+			'/label',
+			'select' => array(
+				'name' => 'data[Model][field]', 'id' => 'ModelField', 'disabled' => 'disabled'
+			),
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x')),
+			'Stringy',
+			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
