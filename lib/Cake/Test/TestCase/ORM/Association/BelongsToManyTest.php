@@ -108,7 +108,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf('\Cake\ORM\Table', $pivot);
 		$this->assertEquals('ArticleTag', $pivot->alias());
 		$this->assertEquals('articles_tags', $pivot->table());
-		$this->assertSame($this->article, $pivot->association('Article')->source());
+		$this->assertSame($this->article, $pivot->association('Article')->target());
 		$this->assertSame($this->tag, $pivot->association('Tag')->target());
 
 		$belongsTo = '\Cake\ORM\Association\BelongsTo';
@@ -181,6 +181,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->at(2))->method('join')->with([
 			'ArticleTag' => [
 				'conditions' => [
+					'Article.id = ArticleTag.article_id',
 					'Tag.id = ArticleTag.tag_id'
 				],
 				'type' => 'INNER',
@@ -230,6 +231,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->at(1))->method('join')->with([
 			'ArticleTag' => [
 				'conditions' => [
+					'Article.id = ArticleTag.article_id',
 					'Tag.id = ArticleTag.tag_id'
 				],
 				'type' => 'INNER',

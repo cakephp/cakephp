@@ -95,7 +95,7 @@ class BelongsToMany extends Association {
 		}
 
 		if (!$table->association($sAlias)) {
-			$table->belongsTo($sAlias)->source($this->source());
+			$table->belongsTo($sAlias)->target($this->source());
 		}
 
 		if (!$table->association($tAlias)) {
@@ -105,6 +105,10 @@ class BelongsToMany extends Association {
 		if (!$target->association($table->alias())) {
 			$target->belongsToMany($sAlias);
 			$target->hasMany($table->alias())->target($table);
+		}
+
+		if (!$source->association($table->alias())) {
+			$source->hasMany($table->alias())->target($table);
 		}
 
 		return $this->_pivotTable = $table;
@@ -129,6 +133,15 @@ class BelongsToMany extends Association {
  */
 	public function attachTo(Query $query, array $options = []) {
 		parent::attachTo($query, $options);
+		$pivot = $this->pivot();
+		$belongsTo = $pivot->association($this->source()->alias());
+		$cond = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->foreignKey()]);
+
+		if (isset($options['includeFields'])) {
+			$includeFields = $options['includeFields'];
+		}
+
+		$options = ['conditions' => [$cond]] + compact('includeFields');
 		$this->target()
 			->association($this->pivot()->alias())
 			->attachTo($query, $options);

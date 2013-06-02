@@ -701,5 +701,66 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $results);
 	}
 
+/**
+ * Tests that BelongsToMany associations are correctly eager loaded.
+ * Also that the query object passes the correct parent model keys to the
+ * association objects in order to perform eager loading with select strategy
+ *
+ * @return void
+ **/
+	public function testFilteringByBelongsToMany() {
+		$this->_insertRecords();
+
+		$query = new Query($this->connection);
+		$table =  Table::build('Article', ['connection' => $this->connection]);
+		Table::build('Tag', ['connection' => $this->connection]);
+		Table::build('ArticleTag', [
+			'connection' => $this->connection,
+			'table' => 'articles_tags'
+		]);
+		$table->belongsToMany('Tag', ['property' => 'tags']);
+
+		$results = $query->repository($table)->select()
+			->contain(['Tag' => [
+				'matching' => true,
+				'conditions' => ['Tag.id' => 5]
+			]])
+			->toArray();
+		$expected = [
+			[
+				'id' => 1,
+				'title' => 'a title',
+				'body' => 'a body',
+				'author_id' => 1,
+				'tags' => [
+					'id' => 5,
+					'name' => 'one'
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+
+		$query = new Query($this->connection);
+		$results = $query->repository($table)
+			->select()
+			->contain(['Tag' => [
+				'matching' => true,
+				'conditions' => ['Tag.name' => 'two']]
+			])
+			->toArray();
+		$expected = [
+			[
+				'id' => 2,
+				'title' => 'another title',
+				'body' => 'another body',
+				'author_id' => 2,
+				'tags' => [
+					'id' => 6,
+					'name' => 'two'
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
 
 }
