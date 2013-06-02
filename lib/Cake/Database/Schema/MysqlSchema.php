@@ -137,20 +137,16 @@ class MysqlSchema {
  *
  * @param Cake\Database\Schema\Table $table The table object to append fields to.
  * @param array $row The row data from describeTableSql
- * @param array $fieldParams Additional field parameters to parse.
  * @return void
  */
-	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
+	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->convertColumn($row['Type']);
 		$field += [
 			'null' => $row['Null'] === 'YES' ? true : false,
 			'default' => $row['Default'],
+			'collate' => $row['Collation'],
+			'comment' => $row['Comment'],
 		];
-		foreach ($fieldParams as $key => $metadata) {
-			if (!empty($row[$metadata['column']])) {
-				$field[$key] = $row[$metadata['column']];
-			}
-		}
 		$table->addColumn($row['Field'], $field);
 		if (!empty($row['Key']) && $row['Key'] === 'PRI') {
 			$table->addConstraint('primary', [
@@ -219,25 +215,6 @@ class MysqlSchema {
 				'length' => $length
 			]);
 		}
-	}
-
-/**
- * Get additional column meta data used in schema reflections.
- *
- * @return array
- */
-	public function extraSchemaColumns() {
-		return [
-			'charset' => [
-				'column' => false,
-			],
-			'collate' => [
-				'column' => 'Collation',
-			],
-			'comment' => [
-				'column' => 'Comment',
-			]
-		];
 	}
 
 /**

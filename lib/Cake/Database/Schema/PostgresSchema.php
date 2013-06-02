@@ -150,10 +150,9 @@ class PostgresSchema {
  *
  * @param Cake\Database\Schema\Table $table The table object to append fields to.
  * @param array $row The row data from describeTableSql
- * @param array $fieldParams Additional field parameters to parse.
  * @return void
  */
-	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
+	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->convertColumn($row['type']);
 
 		if ($field['type'] === 'boolean') {
