@@ -14,7 +14,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Scaffolds
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
 ?>
@@ -182,7 +182,7 @@ $otherSingularVar = Inflector::variable($_alias);
 				__d('cake', 'Delete'),
 				array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'delete', ${$otherSingularVar}[$_details['primaryKey']]),
 				null,
-				__d('cake', 'Are you sure you want to delete', true) .' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'
+				__d('cake', 'Are you sure you want to delete # %s?', ${$otherSingularVar}[$_details['primaryKey']])
 			);
 			echo "\n";
 			echo "\t\t\t</td>\n";

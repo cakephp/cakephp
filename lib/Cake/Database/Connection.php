@@ -32,6 +32,13 @@ class Connection {
 	use TypeConverterTrait;
 
 /**
+ * The configuration name used for this connection.
+ *
+ * @var string
+ */
+	public $configKeyName = null;
+
+/**
  * Contains the configuration params for this connection
  *
  * @var array
@@ -45,13 +52,6 @@ class Connection {
  * @var \Cake\Database\Driver
  */
 	protected $_driver;
-
-/**
- * Whether connection was established or not
- *
- * @var boolean
- */
-	protected $_connected = false;
 
 /**
  * Contains how many nested transactions have been started
@@ -103,7 +103,7 @@ class Connection {
 			throw new MissingDriverException(['driver' => $config['datasource']]);
 		}
 
-		$this->driver($config['datasource']);
+		$this->driver($config['datasource'], $config);
 		if (!$this->_driver->enabled()) {
 			throw new MissingExtensionException(['driver' => get_class($this->_driver)]);
 		}
@@ -114,20 +114,41 @@ class Connection {
 	}
 
 /**
+ * Destructor
+ *
+ * Disconnects the driver to release the connection.
+ *
+ * @return void
+ */
+	public function __destruct() {
+		unset($this->_driver);
+	}
+
+/**
+ * Get the configuration data used to create the connection.
+ *
+ * @return array
+ */
+	public function config() {
+		return $this->_config;
+	}
+
+/**
  * Sets the driver instance. If an string is passed it will be treated
  * as a class name and will be instantiated.
  *
  * If no params are passed it will return the current driver instance
  *
  * @param string|Driver $driver
+ * @param array|null $config Either config for a new driver or null.
  * @return Driver
  */
-	public function driver($driver = null) {
+	public function driver($driver = null, $config = null) {
 		if ($driver === null) {
 			return $this->_driver;
 		}
 		if (is_string($driver)) {
-			$driver = new $driver;
+			$driver = new $driver($config);
 		}
 		return $this->_driver = $driver;
 	}
@@ -139,11 +160,9 @@ class Connection {
  * @return boolean true on success or false if already connected.
  */
 	public function connect() {
-		if ($this->_connected) {
-			return false;
-		}
 		try {
-			return $this->_connected = $this->_driver->connect($this->_config);
+			$this->_driver->connect();
+			return true;
 		} catch(\Exception $e) {
 			throw new MissingConnectionException(['reason' => $e->getMessage()]);
 		}
@@ -156,7 +175,6 @@ class Connection {
  */
 	public function disconnect() {
 		$this->_driver->disconnect();
-		$this->_connected = false;
 	}
 
 /**
@@ -165,7 +183,7 @@ class Connection {
  * @return boolean
  */
 	public function isConnected() {
-		return $this->_connected;
+		return $this->_driver->isConnected();
 	}
 
 /**
@@ -175,7 +193,6 @@ class Connection {
  * @return \Cake\Database\Statement
  */
 	public function prepare($sql) {
-		$this->connect();
 		$statement = $this->_driver->prepare($sql);
 
 		if ($this->_logQueries) {
@@ -195,7 +212,6 @@ class Connection {
  * @return \Cake\Database\Statement executed statement
  */
 	public function execute($query, array $params = [], array $types = []) {
-		$this->connect();
 		if ($params) {
 			$statement = $this->prepare($query);
 			$statement->bind($params, $types);
@@ -213,7 +229,6 @@ class Connection {
  * @return \Cake\Database\Statement
  */
 	public function query($sql) {
-		$this->connect();
 		$statement = $this->prepare($sql);
 		$statement->execute();
 		return $statement;
@@ -229,6 +244,15 @@ class Connection {
 	}
 
 /**
+ * Get a Schema\Collection object for this connection.
+ *
+ * @return Cake\Database\Schema\Collection
+ */
+	public function schemaCollection() {
+		return new \Cake\Database\Schema\Collection($this);
+	}
+
+/**
  * Executes an INSERT query on the specified table
  *
  * @param string $table the table to update values in
@@ -237,8 +261,6 @@ class Connection {
  * @return \Cake\Database\Statement
  */
 	public function insert($table, array $data, array $types = []) {
-		$this->connect();
-
 		$columns = array_keys($data);
 		return $this->newQuery()->insert($table, $columns, $types)
 			->values($data)
@@ -255,7 +277,6 @@ class Connection {
  * @return \Cake\Database\Statement
  */
 	public function update($table, array $data, array $conditions = [], $types = []) {
-		$this->connect();
 		$columns = array_keys($data);
 
 		return $this->newQuery()->update($table)
@@ -273,7 +294,6 @@ class Connection {
  * @return \Cake\Database\Statement
  */
 	public function delete($table, $conditions = [], $types = []) {
-		$this->connect();
 		return $this->newQuery()->delete($table)
 			->where($conditions, $types)
 			->execute();
@@ -285,7 +305,6 @@ class Connection {
  * @return void
  */
 	public function begin() {
-		$this->connect();
 		if (!$this->_transactionStarted) {
 			if ($this->_logQueries) {
 				$this->log('BEGIN');
@@ -311,7 +330,6 @@ class Connection {
 		if (!$this->_transactionStarted) {
 			return false;
 		}
-		$this->connect();
 
 		if ($this->_transactionLevel === 0) {
 			$this->_transactionStarted = false;
@@ -337,7 +355,6 @@ class Connection {
 		if (!$this->_transactionStarted) {
 			return false;
 		}
-		$this->connect();
 
 		$useSavePoint = $this->useSavePoints();
 		if ($this->_transactionLevel === 0 || !$useSavePoint) {
@@ -391,7 +408,6 @@ class Connection {
  * @return void
  */
 	public function createSavePoint($name) {
-		$this->connect();
 		$this->execute($this->_driver->savePointSQL($name));
 	}
 
@@ -402,18 +418,16 @@ class Connection {
  * @return void
  */
 	public function releaseSavePoint($name) {
-		$this->connect();
 		$this->execute($this->_driver->releaseSavePointSQL($name));
 	}
 
 /**
- * Rollsback a save point by its name
+ * Rollback a save point by its name
  *
  * @param string $name
  * @return void
  */
 	public function rollbackSavepoint($name) {
-		$this->connect();
 		$this->execute($this->_driver->rollbackSavePointSQL($name));
 	}
 
@@ -425,7 +439,6 @@ class Connection {
  * @return mixed quoted value
  */
 	public function quote($value, $type = null) {
-		$this->connect();
 		list($value, $type) = $this->cast($value, $type);
 		return $this->_driver->quote($value, $type);
 	}
@@ -436,7 +449,6 @@ class Connection {
  * @return boolean
  */
 	public function supportsQuoting() {
-		$this->connect();
 		return $this->_driver->supportsQuoting();
 	}
 
@@ -458,42 +470,7 @@ class Connection {
  * @return string|integer
  */
 	public function lastInsertId($table) {
-		$this->connect();
 		return $this->_driver->lastInsertId($table);
-	}
-
-/**
- * Get the list of tables available in the current connection.
- *
- * @return array The list of tables in the connected database/schema.
- */
-	public function listTables() {
-		list($sql, $params) = $this->_driver->listTablesSql($this->_config);
-		$result = [];
-		$statement = $this->execute($sql, $params);
-		while ($row = $statement->fetch()) {
-			$result[] = $row[0];
-		}
-		return $result;
-	}
-
-/**
- * Get the schema information for a given table/collection
- *
- * @param string $table The table/collection you want schema information for.
- * @return array The schema data for the requested table.
- */
-	public function describe($table) {
-		list($sql, $params) = $this->_driver->describeTableSql($table, $this->_config);
-		$statement = $this->execute($sql, $params);
-		$schema = [];
-
-		$fieldParams = $this->_driver->extraSchemaColumns();
-		$rows = $statement->fetchAll('assoc');
-		foreach ($rows as $row) {
-			$schema += $this->_driver->convertFieldDescription($row, $fieldParams);
-		}
-		return $schema;
 	}
 
 /**

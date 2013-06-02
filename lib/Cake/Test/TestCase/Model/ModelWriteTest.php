@@ -15,9 +15,10 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 require_once __DIR__ . DS . 'ModelTestBase.php';
+
 /**
  * ModelWriteTest
  *
@@ -391,7 +392,7 @@ class ModelWriteTest extends BaseModelTest {
 		$data[$Post->alias]['user_id'] = 301;
 		$Post->save($data);
 
-		$users = $User->find('all',array('order' => 'User.id'));
+		$users = $User->find('all', array('order' => 'User.id'));
 		$this->assertEquals(1, $users[0]['User']['post_count']);
 		$this->assertEquals(2, $users[1]['User']['post_count']);
 	}
@@ -418,7 +419,7 @@ class ModelWriteTest extends BaseModelTest {
 		$data[$Post->alias]['uid'] = 301;
 		$Post->save($data);
 
-		$users = $User->find('all',array('order' => 'User.uid'));
+		$users = $User->find('all', array('order' => 'User.uid'));
 		$this->assertEquals(1, $users[0]['User']['post_count']);
 		$this->assertEquals(2, $users[1]['User']['post_count']);
 	}
@@ -546,7 +547,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$data[$Post->alias]['user_id'] = 301;
 		$Post->save($data);
-		$result = $User->find('all',array('order' => 'User.id'));
+		$result = $User->find('all', array('order' => 'User.id'));
 		$this->assertEquals(2, $result[0]['User']['post_count']);
 		$this->assertEquals(1, $result[1]['User']['posts_published']);
 	}
@@ -1669,7 +1670,9 @@ class ModelWriteTest extends BaseModelTest {
 
 		$TestModel->id = 2;
 		$data = array('Tag' => array('Tag' => array(2)));
-		$TestModel->save($data);
+		$result = $TestModel->save($data);
+
+		$this->assertEquals($data['Tag'], $result['Tag']);
 
 		$result = $TestModel->findById(2);
 		$expected = array(

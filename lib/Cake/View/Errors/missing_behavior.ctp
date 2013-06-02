@@ -14,7 +14,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Errors
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Core\Plugin;
 
@@ -23,15 +23,15 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 <h2><?php echo __d('cake_dev', 'Missing Behavior'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . $pluginDot . $class . '</em>'); ?>
+	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . h($pluginDot . $class) . '</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . $class . '</em>', (empty($plugin) ? APP_DIR . DS : Plugin::path($plugin)) . 'Model' . DS . 'Behavior' . DS . $class . '.php'); ?>
+	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . h($class) . '</em>', (empty($plugin) ? APP_DIR . DS : Plugin::path($plugin)) . 'Model' . DS . 'Behavior' . DS . h($class) . '.php'); ?>
 </p>
 <pre>
 &lt;?php
-class <?php echo $class; ?> extends ModelBehavior {
+class <?php echo h($class); ?> extends ModelBehavior {
 
 }
 </pre>

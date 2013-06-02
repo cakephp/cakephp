@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
 
@@ -46,31 +46,6 @@ use Cake\Network\Response;
  * @since 2.0
  */
 class BasicAuthenticate extends BaseAuthenticate {
-
-/**
- * Settings for this object.
- *
- * - `fields` The fields to use to identify a user by.
- * - `userModel` The model name of the User, defaults to User.
- * - `scope` Additional conditions to use when looking up and authenticating users,
- *    i.e. `array('User.is_active' => 1).`
- * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
- * - `contain` Extra models to contain and store in session.
- * - `realm` The realm authentication is for. Defaults the server name.
- *
- * @var array
- */
-	public $settings = array(
-		'fields' => array(
-			'username' => 'username',
-			'password' => 'password'
-		),
-		'userModel' => 'User',
-		'scope' => array(),
-		'recursive' => 0,
-		'contain' => null,
-		'realm' => '',
-	);
 
 /**
  * Constructor, completes configuration for basic authentication.

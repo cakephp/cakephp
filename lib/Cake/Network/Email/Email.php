@@ -11,7 +11,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network.Email
  * @since         CakePHP(tm) v 2.0.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Network\Email;
 
@@ -319,8 +319,8 @@ class Email {
 
 /**
  * Constructor
- * @param array|string $config Array of configs, or string to load configs from email.php
  *
+ * @param array|string $config Array of configs, or string to load configs from email.php
  */
 	public function __construct($config = null) {
 		$this->_appCharset = Configure::read('App.encoding');
@@ -1136,7 +1136,7 @@ class Email {
 				throw new Error\ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $name));
 			}
 		}
-		$this->_config += $config;
+		$this->_config = array_merge($this->_config, $config);
 		if (!empty($config['charset'])) {
 			$this->charset = $config['charset'];
 		}
@@ -1251,16 +1251,21 @@ class Email {
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
 		$lines = explode("\n", $message);
 		$formatted = array();
+		$cut = ($wrapLength == CakeEmail::LINE_LENGTH_MUST) ? true : false;
 
 		foreach ($lines as $line) {
 			if (empty($line)) {
 				$formatted[] = '';
 				continue;
 			}
-			if (!preg_match('/\<[a-z]/i', $line)) {
+			if (strlen($line) < $wrapLength) {
+				$formatted[] = $line;
+				continue;
+			}
+			if (!preg_match('/<[a-z]+.*>/i', $line)) {
 				$formatted = array_merge(
 					$formatted,
-					explode("\n", wordwrap($line, $wrapLength, "\n"))
+					explode("\n", wordwrap($line, $wrapLength, "\n", $cut))
 				);
 				continue;
 			}
@@ -1279,7 +1284,10 @@ class Email {
 							$tmpLineLength += $tagLength;
 						} else {
 							if ($tmpLineLength > 0) {
-								$formatted[] = trim($tmpLine);
+								$formatted = array_merge(
+									$formatted,
+									explode("\n", wordwrap(trim($tmpLine), $wrapLength, "\n", $cut))
+								);
 								$tmpLine = '';
 								$tmpLineLength = 0;
 							}
@@ -1387,15 +1395,12 @@ class Email {
 /**
  * Read the file contents and return a base64 version of the file contents.
  *
- * @param string $file The file to read.
+ * @param string $path The absolute path to the file to read.
  * @return string File contents in base64 encoding
  */
-	protected function _readFile($file) {
-		$handle = fopen($file, 'rb');
-		$data = fread($handle, filesize($file));
-		$data = chunk_split(base64_encode($data));
-		fclose($handle);
-		return $data;
+	protected function _readFile($path) {
+		$File = new File($path);
+		return chunk_split(base64_encode($File->read()));
 	}
 
 /**
@@ -1573,6 +1578,12 @@ class Email {
 			$render = $View->render($template, $layout);
 			$render = str_replace(array("\r\n", "\r"), "\n", $render);
 			$rendered[$type] = $this->_encodeString($render, $this->charset);
+		}
+
+		foreach ($rendered as $type => $content) {
+			$rendered[$type] = $this->_wrap($content);
+			$rendered[$type] = implode("\n", $rendered[$type]);
+			$rendered[$type] = rtrim($rendered[$type], "\n");
 		}
 		return $rendered;
 	}

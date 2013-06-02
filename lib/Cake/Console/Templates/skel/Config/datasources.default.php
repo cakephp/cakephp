@@ -1,21 +1,15 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * This is core configuration file.
  *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
+ * Use it to configure core behaviour of Cake.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * PHP 5
+ *
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config
- * @since         CakePHP(tm) v3.0.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @since         CakePHP(tm) v 0.2.9
  */
-namespace App\Config;
-
-use Cake\Core\Configure;
 
 /**
  * Database configuration class.
@@ -23,10 +17,10 @@ use Cake\Core\Configure;
  *
  * datasource => The name of a supported datasource; valid options are as follows:
  *
- *  Database/Mysql      - MySQL 4 & 5,
- *  Database/Sqlite     - SQLite (PHP5 only),
- *  Database/Postgres   - PostgreSQL 7 and higher,
- *  Database/Sqlserver  - Microsoft SQL Server 2005 and higher
+ *  Cake\Datasource\Driver\Mysql      - MySQL 4 & 5,
+ *  Cake\Datasource\Driver\Sqlite     - SQLite (PHP5 only),
+ *  Cake\Datasource\Driver\Postgres   - PostgreSQL 7 and higher,
+ *  Cake\Datasource\Driver\Sqlserver  - Microsoft SQL Server 2005 and higher
  *
  * You can add custom database datasources (or override existing datasources) by adding the
  * appropriate file to app/Model/Datasource/Database. Datasources should be named 'MyDatasource.php',

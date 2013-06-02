@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 namespace Cake\Cache\Engine;
@@ -34,7 +34,7 @@ class RedisEngine extends CacheEngine {
 /**
  * Settings
  *
- *  - server = string url or ip to the Redis server host
+ *  - server = string URL or ip to the Redis server host
  *  - port = integer port number to the Redis server (default: 6379)
  *  - timeout = float timeout in seconds (default: 0)
  *  - persistent = bool Connects to the Redis server with a persistent connection (default: true)

@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.4667
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
 
@@ -41,8 +41,8 @@ class ArticleFeaturedsTagsFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'article_featured_id' => array('type' => 'integer', 'null' => false),
-		'tag_id' => array('type' => 'integer', 'null' => false),
-		'indexes' => array('UNIQUE_FEATURED' => array('column' => array('article_featured_id', 'tag_id'), 'unique' => 1))
+		'article_featured_id' => ['type' => 'integer', 'null' => false],
+		'tag_id' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['UNIQUE_FEATURED' => ['type' => 'unique', 'columns' => ['article_featured_id', 'tag_id']]]
 	);
 }

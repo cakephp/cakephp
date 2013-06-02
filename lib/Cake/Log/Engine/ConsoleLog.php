@@ -9,8 +9,9 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @package       Cake.Log.Engine
+ * @since         CakePHP(tm) v 2.2
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Log\Engine;
 

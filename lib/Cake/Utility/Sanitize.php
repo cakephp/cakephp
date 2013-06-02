@@ -17,7 +17,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
 
@@ -59,27 +59,6 @@ class Sanitize {
 		}
 
 		return $cleaned;
-	}
-
-/**
- * Makes a string SQL-safe.
- *
- * @param string $string String to sanitize
- * @param string $connection Database connection being used
- * @return string SQL safe string
- */
-	public static function escape($string, $connection = 'default') {
-		$db = ConnectionManager::getDataSource($connection);
-		if (is_numeric($string) || $string === null || is_bool($string)) {
-			return $string;
-		}
-		$string = $db->value($string, 'string');
-		$start = 1;
-		if ($string{0} === 'N') {
-			$start = 2;
-		}
-
-		return substr(substr($string, $start), 0, -1);
 	}
 
 /**
@@ -210,13 +189,13 @@ class Sanitize {
  * - dollar - Escape `$` with `\$`
  * - carriage - Remove `\r`
  * - unicode -
- * - escape - Should the string be SQL escaped.
  * - backslash -
  * - remove_html - Strip HTML with strip_tags. `encode` must be true for this option to work.
  *
  * @param string|array $data Data to sanitize
  * @param string|array $options If string, DB connection being used, otherwise set of options
  * @return mixed Sanitized data
+ * @deprecated This method will be removed.
  */
 	public static function clean($data, $options = array()) {
 		if (empty($data)) {
@@ -235,7 +214,6 @@ class Sanitize {
 			'dollar' => true,
 			'carriage' => true,
 			'unicode' => true,
-			'escape' => true,
 			'backslash' => true
 		), $options);
 
@@ -260,9 +238,6 @@ class Sanitize {
 		}
 		if ($options['unicode']) {
 			$data = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $data);
-		}
-		if ($options['escape']) {
-			$data = Sanitize::escape($data, $options['connection']);
 		}
 		if ($options['backslash']) {
 			$data = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $data);

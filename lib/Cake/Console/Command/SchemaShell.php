@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.5550
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command;
 
@@ -57,6 +57,8 @@ class SchemaShell extends Shell {
 		$this->_welcome();
 		$this->out('Cake Schema Shell');
 		$this->hr();
+
+		throw new \Cake\Error\Exception('Schema shell is not working at this time.');
 
 		Configure::write('Cache.disable', 1);
 

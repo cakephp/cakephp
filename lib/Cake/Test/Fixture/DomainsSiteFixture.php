@@ -14,7 +14,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 2.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/opengroup.php Open Group Test Suite License
  */
 namespace Cake\Test\Fixture;
 
@@ -23,8 +23,7 @@ use Cake\TestSuite\Fixture\TestFixture;
 /**
  * Short description for class.
  *
- * @package       cake
- * @subpackage    cake.tests.fixtures
+ * @package       Cake.Test.Fixture
  */
 class DomainsSiteFixture extends TestFixture {
 
@@ -43,12 +42,13 @@ class DomainsSiteFixture extends TestFixture {
  * @access public
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'domain_id' => array('type' => 'integer', 'null' => false),
-		'site_id' => array('type' => 'integer', 'null' => false),
-		'active' => array('type' => 'boolean', 'null' => false, 'default' => false),
+		'id' => ['type' => 'integer'],
+		'domain_id' => ['type' => 'integer', 'null' => false],
+		'site_id' => ['type' => 'integer', 'null' => false],
+		'active' => ['type' => 'boolean', 'null' => false, 'default' => false],
 		'created' => 'datetime',
 		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

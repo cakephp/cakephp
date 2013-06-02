@@ -1,5 +1,9 @@
 <?php
 /**
+ * ValidationTest file
+ *
+ * PHP 5
+ *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -9,7 +13,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
 
@@ -1895,6 +1899,7 @@ class ValidationTest extends TestCase {
 		$this->assertFalse(Validation::url('http://_jabber._tcp.g_mail.com'));
 		$this->assertFalse(Validation::url('http://en.(wikipedia).org/'));
 		$this->assertFalse(Validation::url('http://www.domain.com/fakeenco%ode'));
+		$this->assertFalse(Validation::url('--.example.com'));
 		$this->assertFalse(Validation::url('www.cakephp.org', true));
 
 		$this->assertTrue(Validation::url('http://example.com/~userdir/subdir/index.html'));
@@ -1997,29 +2002,37 @@ class ValidationTest extends TestCase {
  * @return void
  */
 	public function testMoney() {
+		$this->assertTrue(Validation::money('100'));
+		$this->assertTrue(Validation::money('100.11'));
+		$this->assertTrue(Validation::money('100.112'));
+		$this->assertTrue(Validation::money('100.1'));
+		$this->assertTrue(Validation::money('100.111,1'));
+		$this->assertTrue(Validation::money('100.111,11'));
+		$this->assertFalse(Validation::money('100.111,111'));
+
 		$this->assertTrue(Validation::money('$100'));
 		$this->assertTrue(Validation::money('$100.11'));
 		$this->assertTrue(Validation::money('$100.112'));
-		$this->assertFalse(Validation::money('$100.1'));
+		$this->assertTrue(Validation::money('$100.1'));
 		$this->assertFalse(Validation::money('$100.1111'));
 		$this->assertFalse(Validation::money('text'));
 
 		$this->assertTrue(Validation::money('100', 'right'));
 		$this->assertTrue(Validation::money('100.11$', 'right'));
 		$this->assertTrue(Validation::money('100.112$', 'right'));
-		$this->assertFalse(Validation::money('100.1$', 'right'));
+		$this->assertTrue(Validation::money('100.1$', 'right'));
 		$this->assertFalse(Validation::money('100.1111$', 'right'));
 
 		$this->assertTrue(Validation::money('€100'));
 		$this->assertTrue(Validation::money('€100.11'));
 		$this->assertTrue(Validation::money('€100.112'));
-		$this->assertFalse(Validation::money('€100.1'));
+		$this->assertTrue(Validation::money('€100.1'));
 		$this->assertFalse(Validation::money('€100.1111'));
 
 		$this->assertTrue(Validation::money('100', 'right'));
 		$this->assertTrue(Validation::money('100.11€', 'right'));
 		$this->assertTrue(Validation::money('100.112€', 'right'));
-		$this->assertFalse(Validation::money('100.1€', 'right'));
+		$this->assertTrue(Validation::money('100.1€', 'right'));
 		$this->assertFalse(Validation::money('100.1111€', 'right'));
 	}
 

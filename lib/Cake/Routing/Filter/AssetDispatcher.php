@@ -10,7 +10,7 @@
  * @copyright	  Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link		  http://cakephp.org CakePHP(tm) Project
  * @since		  CakePHP(tm) v 2.2
- * @license		  MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing\Filter;
 
@@ -86,7 +86,7 @@ class AssetDispatcher extends DispatcherFilter {
 		}
 
 		$plugin = Inflector::camelize($parts[0]);
-		if (Plugin::loaded($plugin)) {
+		if ($plugin && Plugin::loaded($plugin)) {
 			unset($parts[0]);
 			$fileFragment = urldecode(implode(DS, $parts));
 			$pluginWebroot = Plugin::path($plugin) . 'webroot' . DS;

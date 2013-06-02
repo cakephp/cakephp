@@ -17,7 +17,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.4.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
 
@@ -249,6 +249,9 @@ class RequestHandlerComponent extends Component {
  */
 	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
 		if (!$this->request->is('ajax')) {
+			return;
+		}
+		if (empty($url)) {
 			return;
 		}
 		$_SERVER['REQUEST_METHOD'] = 'GET';

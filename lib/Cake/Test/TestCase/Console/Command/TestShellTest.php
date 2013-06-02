@@ -15,13 +15,18 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\Command\TestShell;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Class TestTestShell
+ *
+ * @package       Cake.Test.Case.Console.Command
+ */
 class TestTestShell extends TestShell {
 
 	public function mapFileToCase($file, $category, $throwOnMissingFile = true) {
@@ -34,6 +39,11 @@ class TestTestShell extends TestShell {
 
 }
 
+/**
+ * Class TestShellTest
+ *
+ * @package       Cake.Test.Case.Console.Command
+ */
 class TestShellTest extends TestCase {
 
 /**

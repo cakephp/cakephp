@@ -15,7 +15,7 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Model\Datasource\Database\Driver;
+namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
@@ -27,16 +27,6 @@ use \PDO;
  * Tests Sqlite driver
  */
 class SqliteTest extends TestCase {
-
-/**
- * Helper method for skipping tests that need a real connection.
- *
- * @return void
- */
-	protected function _needsConnection() {
-		$config = Configure::read('Datasource.test');
-		$this->skipIf(strpos($config['datasource'], 'Sqlite') === false, 'Not using Sqlite for test config');
-	}
 
 /**
  * Test connecting to Sqlite with default configuration
@@ -71,7 +61,6 @@ class SqliteTest extends TestCase {
  * @return void
  */
 	public function testConnectionConfigCustom() {
-		$driver = $this->getMock('Cake\Database\driver\Sqlite', ['_connect', 'connection']);
 		$config = [
 			'persistent' => true,
 			'host' => 'foo',
@@ -80,6 +69,11 @@ class SqliteTest extends TestCase {
 			'encoding' => 'a-language',
 			'init' => ['Execute this', 'this too']
 		];
+		$driver = $this->getMock(
+			'Cake\Database\driver\Sqlite',
+			['_connect', 'connection'],
+			[$config]
+		);
 
 		$expected = $config;
 		$expected += ['login' => null, 'password' => null];
@@ -102,187 +96,40 @@ class SqliteTest extends TestCase {
 	}
 
 /**
- * Dataprovider for column testing
+ * Data provider for schemaValue()
  *
  * @return array
  */
-	public static function columnProvider() {
+	public static function schemaValueProvider() {
 		return [
-			[
-				'DATETIME',
-				['datetime', null]
-			],
-			[
-				'DATE',
-				['date', null]
-			],
-			[
-				'TIME',
-				['time', null]
-			],
-			[
-				'BOOLEAN',
-				['boolean', null]
-			],
-			[
-				'BIGINT',
-				['biginteger', null]
-			],
-			[
-				'VARCHAR(255)',
-				['string', 255]
-			],
-			[
-				'CHAR(25)',
-				['string', 25]
-			],
-			[
-				'BLOB',
-				['binary', null]
-			],
-			[
-				'INTEGER(11)',
-				['integer', 11]
-			],
-			[
-				'TINYINT(5)',
-				['integer', 5]
-			],
-			[
-				'MEDIUMINT(10)',
-				['integer', 10]
-			],
-			[
-				'FLOAT',
-				['float', null]
-			],
-			[
-				'DOUBLE',
-				['float', null]
-			],
-			[
-				'REAL',
-				['float', null]
-			],
-			[
-				'DECIMAL(11,2)',
-				['decimal', null]
-			],
+			[null, 'NULL'],
+			[false, 'FALSE'],
+			[true, 'TRUE'],
+			[3.14159, '3.14159'],
+			['33', '33'],
+			[66, 66],
+			[0, 0],
+			[10e5, '1000000'],
+			['farts', '"farts"'],
 		];
 	}
 
 /**
- * Test parsing SQLite column types.
+ * Test the schemaValue method on Driver.
  *
- * @dataProvider columnProvider
+ * @dataProvider schemaValueProvider
  * @return void
  */
-	public function testConvertColumnType($input, $expected) {
+	public function testSchemaValue($input, $expected) {
 		$driver = new Sqlite();
-		$this->assertEquals($expected, $driver->convertColumn($input));
-	}
-
-/**
- * Creates tables for testing listTables/describe()
- *
- * @param Connection $connection
- * @return void
- */
-	protected function _createTables($connection) {
-		$this->_needsConnection();
-		$connection->execute('DROP TABLE IF EXISTS articles');
-		$connection->execute('DROP TABLE IF EXISTS authors');
-
-		$table = <<<SQL
-CREATE TABLE authors(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-name VARCHAR(50),
-bio TEXT,
-created DATETIME
-)
-SQL;
-		$connection->execute($table);
-
-		$table = <<<SQL
-CREATE TABLE articles(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-title VARCHAR(20) DEFAULT 'testing',
-body TEXT,
-author_id INT(11) NOT NULL,
-published BOOLEAN DEFAULT 0,
-created DATETIME
-)
-SQL;
-		$connection->execute($table);
-	}
-
-/**
- * Test listing tables with Sqlite
- *
- * @return void
- */
-	public function testListTables() {
-		$connection = new Connection(Configure::read('Datasource.test'));
-		$this->_createTables($connection);
-
-		$result = $connection->listTables();
-		$this->assertInternalType('array', $result);
-		$this->assertCount(3, $result);
-		$this->assertEquals('articles', $result[0]);
-		$this->assertEquals('authors', $result[1]);
-		$this->assertEquals('sqlite_sequence', $result[2]);
-	}
-
-/**
- * Test describing a table with Sqlite
- *
- * @return void
- */
-	public function testDescribeTable() {
-		$connection = new Connection(Configure::read('Datasource.test'));
-		$this->_createTables($connection);
-
-		$result = $connection->describe('articles');
-		$expected = [
-			'id' => [
-				'type' => 'integer',
-				'null' => false,
-				'default' => null,
-				'length' => null,
-				'key' => 'primary',
-			],
-			'title' => [
-				'type' => 'string',
-				'null' => true,
-				'default' => 'testing',
-				'length' => 20,
-			],
-			'body' => [
-				'type' => 'text',
-				'null' => true,
-				'default' => null,
-				'length' => null,
-			],
-			'author_id' => [
-				'type' => 'integer',
-				'null' => false,
-				'default' => null,
-				'length' => 11,
-			],
-			'published' => [
-				'type' => 'boolean',
-				'null' => true,
-				'default' => 0,
-				'length' => null,
-			],
-			'created' => [
-				'type' => 'datetime',
-				'null' => true,
-				'default' => null,
-				'length' => null,
-			],
-		];
-		$this->assertEquals($expected, $result);
+		$mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+		$mock->expects($this->any())
+			->method('quote')
+			->will($this->returnCallback(function ($value) {
+				return '"' . $value . '"';
+			}));
+		$driver->connection($mock);
+		$this->assertEquals($expected, $driver->schemaValue($input));
 	}
 
 }

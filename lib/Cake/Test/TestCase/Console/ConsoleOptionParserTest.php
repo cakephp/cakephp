@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Console
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console;
 
@@ -25,6 +25,11 @@ use Cake\Console\ConsoleInputSubcommand;
 use Cake\Console\ConsoleOptionParser;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Class ConsoleOptionParserTest
+ *
+ * @package       Cake.Test.Case.Console
+ */
 class ConsoleOptionParserTest extends TestCase {
 
 /**

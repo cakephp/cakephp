@@ -15,25 +15,23 @@
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\Command\SchemaShell;
 use Cake\Core\App;
+use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Model\ConnectionManager;
-use Cake\Model\Schema;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;
 
 /**
  * Test for Schema database management
- *
- * @package       Cake.Test.Case.Console.Command
  */
-class SchemaShellTestSchema extends Schema {
+class SchemaShellTestSchema extends Object {
 
 /**
  * name property

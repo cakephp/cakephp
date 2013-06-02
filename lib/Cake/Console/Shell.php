@@ -14,7 +14,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.5012
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
 
@@ -423,7 +423,7 @@ class Shell extends Object {
 			$this->_useLogger(false);
 		}
 		if (!empty($this->params['plugin'])) {
-			CakePlugin::load($this->params['plugin']);
+			Plugin::load($this->params['plugin']);
 		}
 		$this->command = $command;
 		if (!empty($this->params['help'])) {

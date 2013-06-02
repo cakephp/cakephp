@@ -11,7 +11,7 @@
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Console.Command
  * @since         CakePHP v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command;
 
@@ -53,8 +53,8 @@ class CommandListShell extends Shell {
 			$this->out(" -core: " . rtrim(CORE_PATH, DS));
 			$this->out("");
 			$this->out(__d('cake_console', "<info>Changing Paths:</info>"), 2);
-			$this->out(__d('cake_console', "Your working path should be the same as your application path to change your path use the '-app' param."));
-			$this->out(__d('cake_console', "Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp"), 2);
+			$this->out(__d('cake_console', "Your working path should be the same as your application path. To change your path use the '-app' param."));
+			$this->out(__d('cake_console', "Example: %s or %s", '-app relative/path/to/myapp', '-app /absolute/path/to/myapp'), 2);
 
 			$this->out(__d('cake_console', "<info>Available Shells:</info>"), 2);
 		}

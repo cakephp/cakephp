@@ -14,17 +14,17 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Errors
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
 <h2><?php echo __d('cake_dev', 'Missing Layout'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'The layout file %s can not be found or does not exist.', '<em>' . $file . '</em>'); ?>
+	<?php echo __d('cake_dev', 'The layout file %s can not be found or does not exist.', '<em>' . h($file) . '</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', '<em>' . $file . '</em>'); ?>
+	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', '<em>' . h($file) . '</em>'); ?>
 </p>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>

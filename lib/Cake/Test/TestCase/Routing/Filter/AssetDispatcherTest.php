@@ -74,4 +74,21 @@ class AssetDispatcherTest extends TestCase {
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
 	}
+
+/**
+ * Test that no exceptions are thrown for //index.php type urls.
+ *
+ * @return void
+ */
+	public function test404OnDoubleSlash() {
+		$filter = new AssetDispatcher();
+
+		$response = $this->getMock('Response', array('_sendHeader'));
+		$request = new Request('//index.php');
+		$event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
+
+		$this->assertNull($filter->beforeDispatch($event));
+		$this->assertFalse($event->isStopped());
+	}
+
 }

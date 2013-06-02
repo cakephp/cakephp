@@ -17,7 +17,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 1.2.4560
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
 
@@ -156,7 +156,7 @@ class Debugger {
  * @param string $class
  * @return object
  */
-	public static function &getInstance($class = null) {
+	public static function getInstance($class = null) {
 		static $instance = array();
 		if (!empty($class)) {
 			if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
@@ -423,7 +423,7 @@ class Debugger {
 	}
 
 /**
- * Wraps the highlight_string funciton in case the server API does not
+ * Wraps the highlight_string function in case the server API does not
  * implement the function as it is the case of the HipHop interpreter
  *
  * @param string $str the string to convert

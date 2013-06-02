@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Routing.Route
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Routing\Route;
 
@@ -61,7 +61,7 @@ class PluginShortRouteTest extends TestCase {
 	}
 
 /**
- * test the reverse routing of the plugin shortcut urls.
+ * test the reverse routing of the plugin shortcut URLs.
  *
  * @return void
  */

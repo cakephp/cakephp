@@ -49,11 +49,13 @@ class Postgres extends \Cake\Database\Driver {
 /**
  * Establishes a connection to the databse server
  *
- * @param array $config configuration to be used for creating connection
  * @return boolean true on success
  */
-	public function connect(array $config) {
-		$config += $this->_baseConfig;
+	public function connect() {
+		if ($this->_connection) {
+			return true;
+		}
+		$config = $this->_config;
 		$config['flags'] += [
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -64,7 +66,7 @@ class Postgres extends \Cake\Database\Driver {
 		}
 
 		$this->_connect($config);
-		$connection = $this->connection();
+		$this->_connection = $connection = $this->connection();
 		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
@@ -88,7 +90,6 @@ class Postgres extends \Cake\Database\Driver {
  *
  * @return boolean true if it is valid to use this driver
  */
-
 	public function enabled() {
 		return in_array('pgsql', PDO::getAvailableDrivers());
 	}
@@ -99,8 +100,8 @@ class Postgres extends \Cake\Database\Driver {
  * @return void
  */
 	public function setEncoding($encoding) {
-		$connection = $this->connection();
-		$connection->exec('SET NAMES ' . $connection->quote($encoding));
+		$this->connect();
+		$this->_connection->exec('SET NAMES ' . $this->_connection->quote($encoding));
 	}
 
 /**
@@ -110,8 +111,8 @@ class Postgres extends \Cake\Database\Driver {
  * @return void
  */
 	public function setSchema($schema) {
-		$connection = $this->connection();
-		$connection->exec('SET search_path TO ' . $connection->quote($schema));
+		$this->connect();
+		$this->_connection->exec('SET search_path TO ' . $this->_connection->quote($schema));
 	}
 
 }

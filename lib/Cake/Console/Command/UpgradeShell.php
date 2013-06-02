@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command;
 
@@ -32,14 +32,14 @@ class UpgradeShell extends Shell {
  *
  * @var array
  */
-	protected $_files = array();
+	protected $_files = [];
 
 /**
  * Paths
  *
  * @var array
  */
-	protected $_paths = array();
+	protected $_paths = [];
 
 /**
  * Shell startup, prints info message about dry run.
@@ -294,7 +294,125 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Update fixtures
+ *
+ * @return void
+ */
+	public function fixtures() {
+		$path = $this->_getPath();
+
+		$app = rtrim(APP, DS);
+		if ($path == $app || !empty($this->params['plugin'])) {
+			$path .= DS . 'Test' . DS . 'Fixture' . DS;
+		}
+		$this->out(__d('cake_console', 'Processing fixtures on %s', $path));
+		$this->_paths[] = realpath($path);
+		$this->_findFiles('php');
+		foreach ($this->_files as $file) {
+			$this->out(__d('cake_console', 'Updating %s...', $file), 1, Shell::VERBOSE);
+			$content = $this->_processFixture(file_get_contents($file));
+			if (empty($this->params['dryRun'])) {
+				file_put_contents($file, $content);
+			}
+		}
+	}
+
+/**
+ * Process fixture content and update it for 3.x
+ *
+ * @param string $content Fixture content.
+ * @return string
+ */
+	protected function _processFixture($content) {
+		// Serializes data from PHP data into PHP code.
+		// Basically a code style conformant version of var_export()
+		$export = function ($values) use (&$export) {
+			$vals = [];
+			if (!is_array($values)) {
+				return $vals;
+			}
+			foreach ($values as $key => $val) {
+				if (is_array($val)) {
+					$vals[] = "'{$key}' => [" . implode(", ", $export($val)) . "]";
+				} else {
+					$val = var_export($val, true);
+					if ($val === 'NULL') {
+						$val = 'null';
+					}
+					if (!is_numeric($key)) {
+						$vals[] = "'{$key}' => {$val}";
+					} else {
+						$vals[] = "{$val}";
+					}
+				}
+			}
+			return $vals;
+		};
+
+		// Process field property.
+		$processor = function ($matches) use ($export) {
+			eval('$data = [' . $matches[2] . '];');
+			$constraints = [];
+			$out = [];
+			foreach ($data as $field => $properties) {
+				// Move primary key into a constraint
+				if (isset($properties['key']) && $properties['key'] === 'primary') {
+					$constraints['primary'] = [
+						'type' => 'primary',
+						'columns' => [$field]
+					];
+				}
+				if (isset($properties['key'])) {
+					unset($properties['key']);
+				}
+				if ($field !== 'indexes' && $field !== 'tableParameters') {
+					$out[$field] = $properties;
+				}
+			}
+
+			// Process indexes. Unique keys work differently now.
+			if (isset($data['indexes'])) {
+				foreach ($data['indexes'] as $index => $indexProps) {
+					if (isset($indexProps['column'])) {
+						$indexProps['columns'] = $indexProps['column'];
+						unset($indexProps['column']);
+					}
+					// Move unique indexes over
+					if (!empty($indexProps['unique'])) {
+						unset($indexProps['unique']);
+						$constraints[$index] = ['type' => 'unique'] + $indexProps;
+						continue;
+					}
+					$out['_indexes'][$index] = $indexProps;
+				}
+			}
+			if (count($constraints)) {
+				$out['_constraints'] = $constraints;
+			}
+
+			// Process table parameters
+			if (isset($data['tableParameters'])) {
+				$out['_options'] = $data['tableParameters'];
+			}
+			return $matches[1] . "\n\t\t" . implode(",\n\t\t", $export($out)) . "\n\t" . $matches[3];
+		};
+		$content = preg_replace_callback(
+			'/(public \$fields\s+=\s+(?:array\(|\[))(.*?)(\);|\];)/ms',
+			$processor,
+			$content,
+			-1,
+			$count
+		);
+		if ($count) {
+			$this->out(__d('cake_console', 'Updated $fields property'), 1, Shell::VERBOSE);
+		}
+		return $content;
+	}
+
+/**
  * Filter paths to remove webroot, Plugin, tmp directories
+ *
+ * @return array
  */
 	protected function _filterPaths($paths, $directories) {
 		return array_filter($paths, function ($path) use ($directories) {
@@ -449,34 +567,42 @@ class UpgradeShell extends Shell {
 			'help' => __d('cake_console', 'Comma separated list of top level diretories to exclude.'),
 			'default' => '',
 		];
+		$path = [
+			'help' => __d('cake_console', 'The path to operate on. Will default to APP or the plugin option.'),
+			'required' => false,
+		];
 
 		return parent::getOptionParser()
 			->description(__d('cake_console', "A shell to help automate upgrading from CakePHP 3.0 to 2.x. \n" .
 				"Be sure to have a backup of your application before running these commands."))
-			->addSubcommand('all', array(
+			->addSubcommand('all', [
 				'help' => __d('cake_console', 'Run all upgrade commands.'),
 				'parser' => ['options' => compact('plugin', 'dryRun')]
-			))
-			->addSubcommand('locations', array(
+			])
+			->addSubcommand('locations', [
 				'help' => __d('cake_console', 'Move files/directories around. Run this *before* adding namespaces with the namespaces command.'),
-				'parser' => ['options' => compact('plugin', 'dryRun', 'git')]
-			))
-			->addSubcommand('namespaces', array(
+				'parser' => ['options' => compact('plugin', 'dryRun', 'git'), 'arguments' => compact('path')]
+			])
+			->addSubcommand('namespaces', [
 				'help' => __d('cake_console', 'Add namespaces to files based on their file path. Only run this *after* you have moved files.'),
 				'parser' => ['options' => compact('plugin', 'dryRun', 'namespace', 'exclude')]
-			))
-			->addSubcommand('app_uses', array(
+			])
+			->addSubcommand('app_uses', [
 				'help' => __d('cake_console', 'Replace App::uses() with use statements'),
 				'parser' => ['options' => compact('plugin', 'dryRun')]
-			))
-			->addSubcommand('cache', array(
+			])
+			->addSubcommand('fixtures', [
+				'help' => __d('cake_console', 'Update fixtures to use new index/constraint features. This is necessary before running tests.'),
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')],
+			])
+			->addSubcommand('cache', [
 				'help' => __d('cake_console', "Replace Cache::config() with Configure."),
-				'parser' => ['options' => compact('plugin', 'dryRun')]
-			))
-			->addSubcommand('log', array(
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
+			])
+			->addSubcommand('log', [
 				'help' => __d('cake_console', "Replace CakeLog::config() with Configure."),
-				'parser' => ['options' => compact('plugin', 'dryRun')]
-			));
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
+			]);
 	}
 
 }

@@ -15,14 +15,14 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.7953
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
+ * Fruit Fixtures
  *
  * @package       Cake.Test.Fixture
  */
@@ -41,11 +41,12 @@ class FruitFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'length' => 255),
-		'color' => array('type' => 'string', 'length' => 13),
-		'shape' => array('type' => 'string', 'length' => 255),
-		'taste' => array('type' => 'string', 'length' => 255)
+		'id' => ['type' => 'string', 'length' => 36],
+		'name' => ['type' => 'string', 'length' => 255],
+		'color' => ['type' => 'string', 'length' => 13],
+		'shape' => ['type' => 'string', 'length' => 255],
+		'taste' => ['type' => 'string', 'length' => 255],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

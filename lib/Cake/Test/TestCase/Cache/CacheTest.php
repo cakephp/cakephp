@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Cache;
 
@@ -222,8 +222,66 @@ class CacheTest extends TestCase {
 	}
 
 /**
- * test that configured returns an array of the currently constrcuted cache
- * engines
+ * testGroupConfigs method
+ */
+	public function testGroupConfigs() {
+		Configure::write('Cache.latest', [
+			'duration' => 300,
+			'engine' => 'File',
+			'groups' => ['posts', 'comments'],
+		]);
+
+		$expected = [
+			'posts' => ['latest'],
+			'comments' => ['latest'],
+		];
+		$engine = Cache::engine('latest');
+		$result = Cache::groupConfigs();
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::groupConfigs('posts');
+		$this->assertEquals(['posts' => ['latest']], $result);
+
+		Configure::write('Cache.page', [
+			'duration' => 86400,
+			'engine' => 'File',
+			'groups' => ['posts', 'archive'],
+		]);
+
+		$engine = Cache::engine('page');
+		$result = Cache::groupConfigs();
+		$expected = [
+			'posts' => ['latest', 'page'],
+			'comments' => ['latest'],
+			'archive' => ['page']
+		];
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::groupConfigs('archive');
+		$this->assertEquals(['archive' => ['page']], $result);
+
+		Configure::write('Cache.archive', [
+			'duration' => 86400 * 30,
+			'engine' => 'File',
+			'groups' => ['posts', 'archive', 'comments'],
+		]);
+
+		$engine = Cache::engine('archive');
+		$result = Cache::groupConfigs('archive');
+		$this->assertEquals(['archive' => ['archive', 'page']], $result);
+	}
+
+/**
+ * testGroupConfigsThrowsException method
+ * @expectedException Cake\Error\Exception
+ */
+	public function testGroupConfigsThrowsException() {
+		Cache::groupConfigs('bogus');
+	}
+
+/**
+ * test that configured returns an array of the currently configured cache
+ * settings
  *
  * @return void
  */

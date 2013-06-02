@@ -15,14 +15,14 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.5669
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
+ * Class TranslateFixture
  *
  * @package       Cake.Test.Fixture
  */
@@ -48,12 +48,13 @@ class TranslateFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'locale' => array('type' => 'string', 'length' => 6, 'null' => false),
-		'model' => array('type' => 'string', 'null' => false),
-		'foreign_key' => array('type' => 'integer', 'null' => false),
-		'field' => array('type' => 'string', 'null' => false),
-		'content' => array('type' => 'text')
+		'id' => ['type' => 'integer'],
+		'locale' => ['type' => 'string', 'length' => 6, 'null' => false],
+		'model' => ['type' => 'string', 'null' => false],
+		'foreign_key' => ['type' => 'integer', 'null' => false],
+		'field' => ['type' => 'string', 'null' => false],
+		'content' => ['type' => 'text'],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

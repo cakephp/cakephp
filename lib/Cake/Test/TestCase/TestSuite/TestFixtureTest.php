@@ -22,36 +22,32 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 
 /**
- * TestFixtureTestFixture class
+ * ArticleFixture class
  *
  * @package       Cake.Test.TestCase.TestSuite
  */
-class TestFixtureTestFixture extends TestFixture {
-
-/**
- * Name property
- *
- * @var string
- */
-	public $name = 'FixtureTest';
+class ArticleFixture extends TestFixture {
 
 /**
  * Table property
  *
  * @var string
  */
-	public $table = 'fixture_tests';
+	public $table = 'articles';
 
 /**
  * Fields array
  *
  * @var array
  */
-	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'length' => '255'),
-		'created' => array('type' => 'datetime')
-	);
+	public $fields = [
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'length' => '255'],
+		'created' => ['type' => 'datetime'],
+		'_constraints' => [
+			'primary' => ['type' => 'primary', 'columns' => ['id']]
+		]
+	];
 
 /**
  * Records property
@@ -74,13 +70,6 @@ class TestFixtureTestFixture extends TestFixture {
 class StringsTestFixture extends TestFixture {
 
 /**
- * Name property
- *
- * @var string
- */
-	public $name = 'Strings';
-
-/**
  * Table property
  *
  * @var string
@@ -93,7 +82,7 @@ class StringsTestFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer'),
 		'name' => array('type' => 'string', 'length' => '255'),
 		'email' => array('type' => 'string', 'length' => '255'),
 		'age' => array('type' => 'integer', 'default' => 10)
@@ -120,13 +109,6 @@ class StringsTestFixture extends TestFixture {
 class ImportFixture extends TestFixture {
 
 /**
- * Name property
- *
- * @var string
- */
-	public $name = 'ImportFixture';
-
-/**
  * Import property
  *
  * @var mixed
@@ -149,164 +131,46 @@ class TestFixtureTest extends TestCase {
 	public $fixtures = ['core.post'];
 
 /**
- * setUp method
+ * test initializing a static fixture
  *
  * @return void
  */
-	public function setUp() {
-		parent::setUp();
-		$methods = array_diff(get_class_methods('Cake\Model\Datasource\DboSource'), array('enabled'));
-		$methods[] = 'connect';
+	public function testInitStaticFixture() {
+		$Fixture = new ArticleFixture();
+		$this->assertEquals('articles', $Fixture->table);
 
-		$this->criticDb = $this->getMock('Cake\Model\Datasource\DboSource', $methods);
-		$this->criticDb->fullDebug = true;
-		$this->db = ConnectionManager::getDataSource('test');
-		$this->_backupConfig = $this->db->config;
+		$Fixture = new ArticleFixture();
+		$Fixture->table = null;
+		$Fixture->init();
+		$this->assertEquals('articles', $Fixture->table);
+
+		$schema = $Fixture->schema();
+		$this->assertInstanceOf('Cake\Database\Schema\Table', $schema);
+
+		$fields = $Fixture->fields;
+		unset($fields['_constraints'], $fields['_indexes']);
+		$this->assertEquals(
+			array_keys($fields),
+			$schema->columns(),
+			'Fields do not match'
+		);
+		$this->assertEquals(array_keys($Fixture->fields['_constraints']), $schema->constraints());
+		$this->assertEmpty($schema->indexes());
 	}
 
 /**
- * tearDown
+ * test import fixture initialization
  *
  * @return void
  */
-	public function tearDown() {
-		parent::tearDown();
-		unset($this->criticDb);
-		$this->db->config = $this->_backupConfig;
-	}
-
-/**
- * testInit
- *
- * @return void
- */
-	public function testInit() {
-		$Fixture = new TestFixtureTestFixture();
-		unset($Fixture->table);
-		$Fixture->init();
-		$this->assertEquals('fixture_tests', $Fixture->table);
-		$this->assertEquals('id', $Fixture->primaryKey);
-
-		$Fixture = new TestFixtureTestFixture();
-		$Fixture->primaryKey = 'my_random_key';
-		$Fixture->init();
-		$this->assertEquals('my_random_key', $Fixture->primaryKey);
-	}
-
-/**
- * test that init() correctly sets the fixture table when the connection
- * or model have prefixes defined.
- *
- * @return void
- */
-	public function testInitDbPrefix() {
-		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
-
-		$db = ConnectionManager::getDataSource('test');
-		$Source = new TestFixtureTestFixture();
-		$Source->drop($db);
-		$Source->create($db);
-		$Source->insert($db);
-
-		$Fixture = new TestFixtureTestFixture();
-		$expected = array('id', 'name', 'created');
-		$this->assertEquals($expected, array_keys($Fixture->fields));
-
-		$config = $db->config;
-		$config['prefix'] = 'fixture_test_suite_';
-		ConnectionManager::create('fixture_test_suite', $config);
-
-		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = array('table' => 'fixture_tests', 'connection' => 'test', 'records' => true);
-		$Fixture->init();
-		$this->assertEquals(count($Fixture->records), count($Source->records));
-		$Fixture->create(ConnectionManager::getDataSource('fixture_test_suite'));
-
-		$Fixture = new TestFixtureImportFixture();
-		$Fixture->fields = $Fixture->records = $Fixture->table = null;
-		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test');
-		$Fixture->init();
-		$this->assertEquals(array('id', 'name', 'created'), array_keys($Fixture->fields));
-		$this->assertEquals('fixture_tests', $Fixture->table);
-
-		$keys = array_flip(ClassRegistry::keys());
-		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
-
-		$Fixture->drop(ConnectionManager::getDataSource('fixture_test_suite'));
-		$Source->drop($db);
-	}
-
-/**
- * test that fixtures don't duplicate the test db prefix.
- *
- * @return void
- */
-	public function testInitDbPrefixDuplication() {
-		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
-
-		$this->skipIf($this->db instanceof Sqlite, 'Cannot open 2 connections to Sqlite');
-		$db = ConnectionManager::getDataSource('test');
-		$backPrefix = $db->config['prefix'];
-		$db->config['prefix'] = 'cake_fixture_test_';
-		ConnectionManager::create('fixture_test_suite', $db->config);
-		$newDb = ConnectionManager::getDataSource('fixture_test_suite');
-		$newDb->config['prefix'] = 'cake_fixture_test_';
-
-		$Source = new TestFixtureTestFixture();
-		$Source->create($db);
-		$Source->insert($db);
-
-		$Fixture = new TestFixtureImportFixture();
-		$Fixture->fields = $Fixture->records = $Fixture->table = null;
-		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test');
-
-		$Fixture->init();
-		$this->assertEquals(array('id', 'name', 'created'), array_keys($Fixture->fields));
-		$this->assertEquals('fixture_tests', $Fixture->table);
-
-		$Source->drop($db);
-		$db->config['prefix'] = $backPrefix;
-	}
-
-/**
- * test init with a model that has a tablePrefix declared.
- *
- * @return void
- */
-	public function testInitModelTablePrefix() {
-		$this->markTestSkipped('Skipped for now as table prefixes need to be re-worked.');
-
-		$Source = new TestFixtureTestFixture();
-		$Source->create($this->db);
-		$Source->insert($this->db);
-
-		$Fixture = new TestFixtureTestFixture();
-		unset($Fixture->table);
-		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = array('model' => 'FixturePrefixTest', 'connection' => 'test', 'records' => false);
-		$Fixture->init();
-		$this->assertEquals('fixture_tests', $Fixture->table);
-
-		$keys = array_flip(ClassRegistry::keys());
-		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
-
-		$Source->drop($this->db);
-	}
-
-/**
- * testImport
- *
- * @return void
- */
-	public function testImport() {
-		Configure::write('App.namespace', 'TestApp');
-		$Fixture = new ImportFixture();
-		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = [
-			'model' => 'Post',
+	public function testInitImport() {
+		$fixture = new ImportFixture();
+		$fixture->fields = $fixture->records = null;
+		$fixture->import = [
+			'table' => 'posts',
 			'connection' => 'test',
 		];
-		$Fixture->init();
+		$fixture->init();
 
 		$expected = [
 			'id',
@@ -317,40 +181,7 @@ class TestFixtureTest extends TestCase {
 			'created',
 			'updated',
 		];
-		$this->assertEquals($expected, array_keys($Fixture->fields));
-
-		$keys = array_flip(ClassRegistry::keys());
-		$this->assertFalse(array_key_exists('post', $keys));
-	}
-
-/**
- * test that importing with records works. Make sure to try with postgres as its
- * handling of aliases is a workaround at best.
- *
- * @return void
- */
-	public function testImportWithRecords() {
-		Configure::write('App.namespace', 'TestApp');
-		$Fixture = new ImportFixture();
-		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = [
-			'model' => 'Post',
-			'connection' => 'test',
-			'records' => true
-		];
-		$Fixture->init();
-		$expected = [
-			'id',
-			'author_id',
-			'title',
-			'body',
-			'published',
-			'created',
-			'updated',
-		];
-		$this->assertEquals($expected, array_keys($Fixture->fields));
-		$this->assertFalse(empty($Fixture->records[0]), 'No records loaded on importing fixture.');
-		$this->assertTrue(isset($Fixture->records[0]['title']), 'No title loaded for first record');
+		$this->assertEquals($expected, $fixture->schema()->columns());
 	}
 
 /**
@@ -359,16 +190,36 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testCreate() {
-		$Fixture = new TestFixtureTestFixture();
-		$this->criticDb->expects($this->atLeastOnce())->method('execute');
-		$this->criticDb->expects($this->atLeastOnce())->method('createSchema');
-		$return = $Fixture->create($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
-		$this->assertTrue($return);
+		$fixture = new ArticleFixture();
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+		$table->expects($this->once())
+			->method('createSql')
+			->with($db)
+			->will($this->returnValue(['sql', 'sql']));
+		$fixture->schema($table);
 
-		unset($Fixture->fields);
-		$return = $Fixture->create($this->criticDb);
-		$this->assertFalse($return);
+		$db->expects($this->exactly(2))->method('execute');
+		$this->assertTrue($fixture->create($db));
+	}
+
+/**
+ * test create method, trigger error
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	public function testCreateError() {
+		$fixture = new ArticleFixture();
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+		$table->expects($this->once())
+			->method('createSql')
+			->with($db)
+			->will($this->throwException(new \Exception('oh noes')));
+		$fixture->schema($table);
+
+		$fixture->create($db);
 	}
 
 /**
@@ -377,42 +228,41 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInsert() {
-		$Fixture = new TestFixtureTestFixture();
-		$this->criticDb->expects($this->atLeastOnce())
-			->method('insertMulti')
-			->will($this->returnCallback(array($this, 'insertCallback')));
+		$fixture = new ArticleFixture();
 
-		$return = $Fixture->insert($this->criticDb);
-		$this->assertTrue(!empty($this->insertMulti));
-		$this->assertTrue($this->criticDb->fullDebug);
-		$this->assertTrue($return);
-		$this->assertEquals('fixture_tests', $this->insertMulti['table']);
-		$this->assertEquals(array('name', 'created'), $this->insertMulti['fields']);
-		$expected = array(
-			array('Gandalf', '2009-04-28 19:20:00'),
-			array('Captain Picard', '2009-04-28 19:20:00'),
-			array('Chewbacca', '2009-04-28 19:20:00')
-		);
-		$this->assertEquals($expected, $this->insertMulti['values']);
-	}
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$query = $this->getMock('Cake\Database\Query', [], [$db]);
+		$db->expects($this->once())
+			->method('newQuery')
+			->will($this->returnValue($query));
 
-/**
- * Helper function to be used as callback and store the parameters of an insertMulti call
- *
- * @param string $table
- * @param string $fields
- * @param string $values
- * @return boolean true
- */
-	public function insertCallback($table, $fields, $values) {
-		$this->insertMulti['table'] = $table;
-		$this->insertMulti['fields'] = $fields;
-		$this->insertMulti['values'] = $values;
-		$this->insertMulti['fields_values'] = array();
-		foreach ($values as $record) {
-			$this->insertMulti['fields_values'][] = array_combine($fields, $record);
-		}
-		return true;
+		$query->expects($this->once())
+			->method('insert')
+			->with('articles', ['name', 'created'], ['string', 'datetime'])
+			->will($this->returnSelf());
+		$expected = [
+			['name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'],
+			['name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'],
+			['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00']
+		];
+		$query->expects($this->at(1))
+			->method('values')
+			->with($expected[0])
+			->will($this->returnSelf());
+		$query->expects($this->at(2))
+			->method('values')
+			->with($expected[1])
+			->will($this->returnSelf());
+		$query->expects($this->at(3))
+			->method('values')
+			->with($expected[2])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())
+			->method('execute')
+			->will($this->returnValue(true));
+
+		$this->assertTrue($fixture->insert($db));
 	}
 
 /**
@@ -421,40 +271,42 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInsertStrings() {
-		$Fixture = new StringsTestFixture();
-		$this->criticDb->expects($this->atLeastOnce())
-			->method('insertMulti')
-			->will($this->returnCallback(array($this, 'insertCallback')));
+		$fixture = new StringsTestFixture();
 
-		$return = $Fixture->insert($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
-		$this->assertTrue($return);
-		$this->assertEquals('strings', $this->insertMulti['table']);
-		$this->assertEquals(array('name', 'email', 'age'), array_values($this->insertMulti['fields']));
-		$expected = array(
-			array('Mark Doe', 'mark.doe@email.com', null),
-			array('John Doe', 'john.doe@email.com', 20),
-			array('Jane Doe', 'jane.doe@email.com', 30),
-		);
-		$this->assertEquals($expected, $this->insertMulti['values']);
-		$expected = array(
-			array(
-				'name' => 'Mark Doe',
-				'email' => 'mark.doe@email.com',
-				'age' => null
-			),
-			array(
-				'name' => 'John Doe',
-				'email' => 'john.doe@email.com',
-				'age' => 20
-			),
-			array(
-				'name' => 'Jane Doe',
-				'email' => 'jane.doe@email.com',
-				'age' => 30
-			),
-		);
-		$this->assertEquals($expected, $this->insertMulti['fields_values']);
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$query = $this->getMock('Cake\Database\Query', [], [$db]);
+		$db->expects($this->once())
+			->method('newQuery')
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())
+			->method('insert')
+			->with('strings', ['name', 'email', 'age'], ['string', 'string', 'integer'])
+			->will($this->returnSelf());
+
+		$expected = [
+			['name' => 'Mark Doe', 'email' => 'mark.doe@email.com', 'age' => null],
+			['name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20],
+			['name' => 'Jane Doe', 'email' => 'jane.doe@email.com', 'age' => 30],
+		];
+		$query->expects($this->at(1))
+			->method('values')
+			->with($expected[0])
+			->will($this->returnSelf());
+		$query->expects($this->at(2))
+			->method('values')
+			->with($expected[1])
+			->will($this->returnSelf());
+		$query->expects($this->at(3))
+			->method('values')
+			->with($expected[2])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())
+			->method('execute')
+			->will($this->returnValue(true));
+
+		$this->assertTrue($fixture->insert($db));
 	}
 
 /**
@@ -463,26 +315,21 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testDrop() {
-		$Fixture = new TestFixtureTestFixture();
-		$this->criticDb->expects($this->at(1))
+		$fixture = new ArticleFixture();
+
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$db->expects($this->once())
 			->method('execute')
-			->will($this->returnValue(true));
-		$this->criticDb->expects($this->at(3))
-			->method('execute')
-			->will($this->returnValue(false));
-		$this->criticDb->expects($this->exactly(2))
-			->method('dropSchema');
+			->with('sql');
 
-		$return = $Fixture->drop($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
-		$this->assertTrue($return);
+		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+		$table->expects($this->once())
+			->method('dropSql')
+			->with($db)
+			->will($this->returnValue(['sql']));
+		$fixture->schema($table);
 
-		$return = $Fixture->drop($this->criticDb);
-		$this->assertTrue($return);
-
-		unset($Fixture->fields);
-		$return = $Fixture->drop($this->criticDb);
-		$this->assertFalse($return);
+		$this->assertTrue($fixture->drop($db));
 	}
 
 /**
@@ -491,9 +338,21 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testTruncate() {
-		$Fixture = new TestFixtureTestFixture();
-		$this->criticDb->expects($this->atLeastOnce())->method('truncate');
-		$Fixture->truncate($this->criticDb);
-		$this->assertTrue($this->criticDb->fullDebug);
+		$fixture = new ArticleFixture();
+
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$db->expects($this->once())
+			->method('execute')
+			->with('sql');
+
+		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+		$table->expects($this->once())
+			->method('truncateSql')
+			->with($db)
+			->will($this->returnValue(['sql']));
+		$fixture->schema($table);
+
+		$this->assertTrue($fixture->truncate($db));
 	}
+
 }

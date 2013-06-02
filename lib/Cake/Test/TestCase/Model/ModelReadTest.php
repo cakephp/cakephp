@@ -15,9 +15,10 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 require_once __DIR__ . DS . 'ModelTestBase.php';
+
 /**
  * ModelReadTest
  *
@@ -27,7 +28,7 @@ class ModelReadTest extends BaseModelTest {
 
 /**
  * testExists function
- * @retun void
+ * @return void
  */
 	public function testExists() {
 		$this->loadFixtures('User');
@@ -232,7 +233,7 @@ class ModelReadTest extends BaseModelTest {
 			array('Product' => array('type' => 'Music'), array('price' => 4)),
 			array('Product' => array('type' => 'Toy'), array('price' => 3))
 		);
-		$result = $Product->find('all',array(
+		$result = $Product->find('all', array(
 			'fields' => array('Product.type', 'MIN(Product.price) as price'),
 			'group' => 'Product.type',
 			'order' => 'Product.type ASC'
@@ -7717,34 +7718,34 @@ class ModelReadTest extends BaseModelTest {
 			$this->assertFalse((bool)$result['Author']['false']);
 		}
 
-		$result = $Post->find('first',array('fields' => array('author_id')));
+		$result = $Post->find('first', array('fields' => array('author_id')));
 		$this->assertFalse(isset($result['Post']['two']));
 		$this->assertFalse(isset($result['Author']['false']));
 
-		$result = $Post->find('first',array('fields' => array('author_id', 'two')));
+		$result = $Post->find('first', array('fields' => array('author_id', 'two')));
 		$this->assertEquals(2, $result['Post']['two']);
 		$this->assertFalse(isset($result['Author']['false']));
 
-		$result = $Post->find('first',array('fields' => array('two')));
+		$result = $Post->find('first', array('fields' => array('two')));
 		$this->assertEquals(2, $result['Post']['two']);
 
 		$Post->id = 1;
 		$result = $Post->field('two');
 		$this->assertEquals(2, $result);
 
-		$result = $Post->find('first',array(
+		$result = $Post->find('first', array(
 			'conditions' => array('two' => 2),
 			'limit' => 1
 		));
 		$this->assertEquals(2, $result['Post']['two']);
 
-		$result = $Post->find('first',array(
+		$result = $Post->find('first', array(
 			'conditions' => array('two <' => 3),
 			'limit' => 1
 		));
 		$this->assertEquals(2, $result['Post']['two']);
 
-		$result = $Post->find('first',array(
+		$result = $Post->find('first', array(
 			'conditions' => array('NOT' => array('two >' => 3)),
 			'limit' => 1
 		));
@@ -7765,7 +7766,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals(4, $result[0][0]['other_field']);
 
 		ClassRegistry::flush();
-		$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'), 'Model');
+		$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'));
 		$Writing->virtualFields = array('two' => "1 + 1");
 		$result = $Writing->find('first');
 		$this->assertEquals(2, $result['Writing']['two']);
@@ -7937,6 +7938,27 @@ class ModelReadTest extends BaseModelTest {
 			array(
 				'conditions' => array(
 					'Article.id NOT' => array(1)
+				)
+			)
+		);
+		$this->assertTrue(is_array($result) && !empty($result));
+	}
+
+/**
+ * test to assert that != in key together with a single element array will work
+ *
+ * @return void
+ */
+	public function testNotEqualsInArrayWithOneValue() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+		$Article->recursive = -1;
+
+		$result = $Article->find(
+			'all',
+			array(
+				'conditions' => array(
+					'Article.id !=' => array(1)
 				)
 			)
 		);

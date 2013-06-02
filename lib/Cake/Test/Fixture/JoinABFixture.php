@@ -15,14 +15,14 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.6317
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
+ * Class JoinABFixture
  *
  * @package       Cake.Test.Fixture
  */
@@ -41,12 +41,13 @@ class JoinABFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'join_a_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'join_b_id' => array('type' => 'integer', 'default' => null),
-		'other' => array('type' => 'string', 'default' => ''),
-		'created' => array('type' => 'datetime', 'null' => true),
-		'updated' => array('type' => 'datetime', 'null' => true)
+		'id' => ['type' => 'integer'],
+		'join_a_id' => ['type' => 'integer', 'length' => 10, 'null' => true],
+		'join_b_id' => ['type' => 'integer', 'default' => null],
+		'other' => ['type' => 'string', 'default' => ''],
+		'created' => ['type' => 'datetime', 'null' => true],
+		'updated' => ['type' => 'datetime', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

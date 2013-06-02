@@ -14,7 +14,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model
  * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Model;
 
@@ -164,9 +164,10 @@ class Permission extends Model {
  *
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
- * @param string $actions Action (defaults to *)
+ * @param string $actions Action (defaults to *) Invalid permissions will result in an exception
  * @param integer $value Value to indicate access type (1 to give access, -1 to deny, 0 to inherit)
  * @return boolean Success
+ * @throws AclException on Invalid permission key.
  */
 	public function allow($aro, $aco, $actions = "*", $value = 1) {
 		$perms = $this->getAclLink($aro, $aco);
@@ -187,15 +188,14 @@ class Permission extends Model {
 			if (!is_array($actions)) {
 				$actions = array('_' . $actions);
 			}
-			if (is_array($actions)) {
-				foreach ($actions as $action) {
-					if ($action{0} !== '_') {
-						$action = '_' . $action;
-					}
-					if (in_array($action, $permKeys)) {
-						$save[$action] = $value;
-					}
+			foreach ($actions as $action) {
+				if ($action{0} !== '_') {
+					$action = '_' . $action;
 				}
+				if (!in_array($action, $permKeys, true)) {
+					throw new AclException(__d('cake_dev', 'Invalid permission key "%s"', $action));
+				}
+				$save[$action] = $value;
 			}
 		}
 		list($save['aro_id'], $save['aco_id']) = array($perms['aro'], $perms['aco']);

@@ -15,7 +15,13 @@
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Model
  * @since         CakePHP v 1.2.0.4487
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+
+/**
+ * Class TestPluginAuthUser
+ *
+ * @package       Cake.Test.TestApp.Plugin.TestPlugin.Model
  */
 namespace TestPlugin\Model;
 

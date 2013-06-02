@@ -15,27 +15,28 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Elements
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 if (!class_exists('ConnectionManager') || Configure::read('debug') < 2) {
 	return false;
 }
-$noLogs = !isset($logs);
+$noLogs = !isset($sqlLogs);
 if ($noLogs):
 	$sources = ConnectionManager::sourceList();
 
-	$logs = array();
+	$sqlLogs = array();
 	foreach ($sources as $source):
 		$db = ConnectionManager::getDataSource($source);
 		if (!method_exists($db, 'getLog')):
 			continue;
 		endif;
-		$logs[$source] = $db->getLog();
+		$sqlLogs[$source] = $db->getLog();
 	endforeach;
 endif;
 
 if ($noLogs || isset($_forced_from_dbo_)):
-	foreach ($logs as $source => $logInfo):
+	foreach ($sqlLogs as $source => $logInfo):
 		$text = $logInfo['count'] > 1 ? 'queries' : 'query';
 		printf(
 			'<table class="cake-sql-log" id="cakeSqlLog_%s" summary="Cake SQL Log" cellspacing="0">',
@@ -71,5 +72,5 @@ if ($noLogs || isset($_forced_from_dbo_)):
 	<?php
 	endforeach;
 else:
-	echo '<p>Encountered unexpected $logs cannot generate SQL log</p>';
+	echo '<p>Encountered unexpected $sqlLogs cannot generate SQL log</p>';
 endif;

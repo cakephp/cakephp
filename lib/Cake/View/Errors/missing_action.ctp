@@ -11,7 +11,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Errors
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
@@ -27,29 +27,29 @@ if (!empty($prefix)) {
 	$prefixNs = '\\' . $prefix;
 }
 if (empty($plugin)) {
-	$path = APP_DIR . DS . 'Controller' . DS . $prefix . DS . $controller . '.php' ;
+	$path = APP_DIR . DS . 'Controller' . DS . $prefix . DS . h($controller) . '.php' ;
 } else {
-	$path = Plugin::path($plugin) . 'Controller' . DS . $prefix . DS . $class . '.php';
+	$path = Plugin::path($plugin) . 'Controller' . DS . $prefix . DS . h($class) . '.php';
 }
 ?>
-<h2><?php echo __d('cake_dev', 'Missing Method in %s', $controller); ?></h2> <p class="error">
+<h2><?php echo __d('cake_dev', 'Missing Method in %s', h($controller)); ?></h2> <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'The action %1$s is not defined in controller %2$s', '<em>' . $action . '</em>', '<em>' . $controller . '</em>'); ?>
+	<?php echo __d('cake_dev', 'The action %1$s is not defined in controller %2$s', '<em>' . h($action) . '</em>', '<em>' . h($controller) . '</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create %1$s%2$s in file: %3$s.', '<em>' . $controller . '::</em>', '<em>' . $action . '()</em>', $path); ?>
+	<?php echo __d('cake_dev', 'Create %1$s%2$s in file: %3$s.', '<em>' . h($controller) . '::</em>', '<em>' . h($action) . '()</em>', $path); ?>
 </p>
 <pre>
 &lt;?php
-namespace <?= $namespace; ?>\Controller<?= $prefixNs ?>;
+namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
 
-use <?= $namespace; ?>\Controller\AppController;
+use <?= h($namespace); ?>\Controller\AppController;
 
-class <?php echo $controller; ?> extends AppController {
+class <?php echo h($controller); ?> extends AppController {
 
 <strong>
-	public function <?php echo $action; ?>() {
+	public function <?php echo h($action); ?>() {
 
 	}
 </strong>

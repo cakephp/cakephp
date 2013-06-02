@@ -17,7 +17,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
 
@@ -180,7 +180,7 @@ class AuthComponent extends Component {
 	protected static $_user = array();
 
 /**
- * A URL (defined as a string or array) to the controller action that handles
+ * An URL (defined as a string or array) to the controller action that handles
  * logins. Defaults to `/users/login`
  *
  * @var mixed
@@ -224,9 +224,9 @@ class AuthComponent extends Component {
 
 /**
  * Controls handling of unauthorized access.
- * - For default value `true` unauthorized user is redirected to the referrer url
+ * - For default value `true` unauthorized user is redirected to the referrer URL
  *   or AuthComponent::$loginRedirect or '/'.
- * - If set to a string or array the value is used as an url to redirect to.
+ * - If set to a string or array the value is used as an URL to redirect to.
  * - If set to false a ForbiddenException exception is thrown instead of redirecting.
  *
  * @var mixed
@@ -671,6 +671,12 @@ class AuthComponent extends Component {
  * @return boolean true if a user can be found, false if one cannot.
  */
 	protected function _getUser() {
+		$user = $this->user();
+		if ($user) {
+			$this->Session->delete('Auth.redirect');
+			return true;
+		}
+
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
@@ -682,11 +688,6 @@ class AuthComponent extends Component {
 			}
 		}
 
-		$user = $this->user();
-		if ($user) {
-			$this->Session->delete('Auth.redirect');
-			return true;
-		}
 		return false;
 	}
 
@@ -704,10 +705,10 @@ class AuthComponent extends Component {
 /**
  * Get the URL a use should be redirected to upon login.
  *
- * Pass a url in to set the destination a user should be redirected to upon
+ * Pass an URL in to set the destination a user should be redirected to upon
  * logging in.
  *
- * If no parameter is passed, gets the authentication redirect URL. The url
+ * If no parameter is passed, gets the authentication redirect URL. The URL
  * returned is as per following rules:
  *
  *  - Returns the session Auth.redirect value if it is present and for the same
@@ -798,7 +799,7 @@ class AuthComponent extends Component {
  *
  * @param string $password Password to hash
  * @return string Hashed password
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#hashing-passwords
+ * @deprecated Since 2.4. Use Security::hash() directly or a password hasher object.
  */
 	public static function password($password) {
 		return Security::hash($password, null, true);

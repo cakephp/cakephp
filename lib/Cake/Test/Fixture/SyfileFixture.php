@@ -15,14 +15,14 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.4667
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
+ * Class SyfileFixture
  *
  * @package       Cake.Test.Fixture
  */
@@ -41,10 +41,11 @@ class SyfileFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'image_id' => array('type' => 'integer', 'null' => true),
-		'name' => array('type' => 'string', 'null' => false),
-		'item_count' => array('type' => 'integer', 'null' => true)
+		'id' => ['type' => 'integer'],
+		'image_id' => ['type' => 'integer', 'null' => true],
+		'name' => ['type' => 'string', 'null' => false],
+		'item_count' => ['type' => 'integer', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

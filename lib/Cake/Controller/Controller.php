@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller;
 
@@ -50,7 +50,7 @@ use Cake\View\View;
  * `$this->response` allows you to manipulate all aspects of the response.
  *
  * Controllers are created by Dispatcher based on request parameters and routing. By default controllers and actions
- * use conventional names. For example `/posts/index` maps to `PostsController::index()`. You can re-map urls
+ * use conventional names. For example `/posts/index` maps to `PostsController::index()`. You can re-map URLs
  * using Router::connect().
  *
  * @package       Cake.Controller
@@ -266,7 +266,7 @@ class Controller extends Object implements EventListener {
 
 /**
  * Holds current methods of the controller. This is a list of all the methods reachable
- * via url. Modifying this array, will allow you to change which methods can be reached.
+ * via URL. Modifying this array, will allow you to change which methods can be reached.
  *
  * @var array
  */
@@ -582,11 +582,11 @@ class Controller extends Object implements EventListener {
  */
 	public function constructClasses() {
 		$this->_mergeControllerVars();
-		$this->Components->init($this);
 		if ($this->uses) {
 			$this->uses = (array)$this->uses;
-			list(, $this->modelClass) = pluginSplit(current($this->uses));
+			list(, $this->modelClass) = pluginSplit(reset($this->uses));
 		}
+		$this->Components->init($this);
 		return true;
 	}
 
@@ -673,7 +673,7 @@ class Controller extends Object implements EventListener {
 		}
 
 		$this->uses = ($this->uses) ? (array)$this->uses : array();
-		if (!in_array($modelClass, $this->uses)) {
+		if (!in_array($modelClass, $this->uses, true)) {
 			$this->uses[] = $modelClass;
 		}
 

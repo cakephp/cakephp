@@ -15,14 +15,14 @@
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 2.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
+ * Class InnoFixture
  *
  * @package       Cake.Test.Fixture
  */
@@ -41,11 +41,10 @@ class InnoFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => true),
-		'tableParameters' => array(
-			'engine' => 'InnoDB'
-		)
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+		'_options' => ['engine' => 'InnoDB']
 	);
 
 /**

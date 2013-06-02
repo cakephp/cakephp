@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\TestSuite;
 
@@ -368,8 +368,9 @@ abstract class ControllerTestCase extends TestCase {
 					'class' => $name . 'Component'
 				));
 			}
-			$component = $this->getMock($componentClass, $methods, array(), '', false);
+			$component = $this->getMock($componentClass, $methods, array($controller->Components));
 			$controller->Components->set($name, $component);
+			$controller->Components->enable($name);
 		}
 
 		$controller->constructClasses();

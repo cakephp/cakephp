@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Network;
 
@@ -77,7 +77,8 @@ class Response {
 		501 => 'Not Implemented',
 		502 => 'Bad Gateway',
 		503 => 'Service Unavailable',
-		504 => 'Gateway Time-out'
+		504 => 'Gateway Time-out',
+		505 => 'Unsupported Version'
 	);
 
 /**
@@ -719,9 +720,7 @@ class Response {
 		}
 
 		foreach ($this->_mimeTypes as $alias => $types) {
-			if (is_array($types) && in_array($ctype, $types)) {
-				return $alias;
-			} elseif (is_string($types) && $types == $ctype) {
+			if (in_array($ctype, (array)$types)) {
 				return $alias;
 			}
 		}

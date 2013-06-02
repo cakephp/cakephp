@@ -11,7 +11,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Routing
  * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing;
 
@@ -27,9 +27,9 @@ use Cake\Utility\Inflector;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes
- * to match the incoming url string to parameters that will allow the request to be dispatched. Also
- * handles converting parameter lists into url strings, using the connected routes. Routing allows you to decouple
- * the way the world interacts with your application (urls) and the implementation (controllers and actions).
+ * to match the incoming URL string to parameters that will allow the request to be dispatched. Also
+ * handles converting parameter lists into URL strings, using the connected routes. Routing allows you to decouple
+ * the way the world interacts with your application (URLs) and the implementation (controllers and actions).
  *
  * ### Connecting routes
  *
@@ -175,7 +175,7 @@ class Router {
 			$routeClass != 'Cake\Routing\Route\Route' &&
 			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route'))
 		) {
-			throw new Error\Exception(__d('cake_dev', 'Route classes must extend Cake\Routing\Route\Route'));
+			throw new Error\Exception(__d('cake_dev', 'Route class not found, or route class is not a subclass of Cake\Routing\Route\Route'));
 		}
 		return $routeClass;
 	}
@@ -331,7 +331,7 @@ class Router {
  * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view'));`
  *
  * Redirects /home/* to /posts/view and passes the parameters to /posts/view. Using an array as the
- * redirect destination allows you to use other routes to define where a url string should be redirected to.
+ * redirect destination allows you to use other routes to define where an URL string should be redirected to.
  *
  * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
  *
@@ -344,7 +344,7 @@ class Router {
  *   routes that end in `*` are greedy. As you can remap urls and not loose any passed args.
  *
  * @param string $route A string describing the template of the route
- * @param array $url A url to redirect to. Can be a string or a Cake array-based url
+ * @param array $url An URL to redirect to. Can be a string or a Cake array-based URL
  * @param array $options An array matching the named elements in the route to regular expressions which that
  *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
@@ -815,7 +815,7 @@ class Router {
  * handled in order to reverse a params array into a string url.
  *
  * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
- * are used for CakePHP internals and should not normally be part of an output url.
+ * are used for CakePHP internals and should not normally be part of an output URL.
  *
  * @param Cake\Network\Request|array $params The params array or
  *     Cake\Network\Request object that needs to be reversed.
@@ -846,12 +846,12 @@ class Router {
 	}
 
 /**
- * Normalizes a URL for purposes of comparison.
+ * Normalizes an URL for purposes of comparison.
  *
  * Will strip the base path off and replace any double /'s.
  * It will not unify the casing and underscoring of the input value.
  *
- * @param array|string $url URL to normalize Either an array or a string url.
+ * @param array|string $url URL to normalize Either an array or a string URL.
  * @return string Normalized URL
  */
 	public static function normalize($url = '/') {

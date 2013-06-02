@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component\Acl;
 
@@ -310,6 +310,16 @@ class DbAclTest extends TestCase {
 	}
 
 /**
+ * Test that allow() with an invalid permission name triggers an error.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testAllowInvalidPermission() {
+		$this->Acl->allow('Micheal', 'tpsReports', 'derp');
+	}
+
+/**
  * testAllowInvalidNode method
  *
  * @expectedException PHPUnit_Framework_Error_Warning
@@ -536,7 +546,7 @@ class DbAclTest extends TestCase {
 		foreach ($permissions as $key => $values) {
 			array_unshift($values, $key);
 			$values = array_map(array(&$this, '_pad'), $values);
-			$permissions[$key] = implode (' ', $values);
+			$permissions[$key] = implode(' ', $values);
 		}
 		$permissions = array_map(array(&$this, '_pad'), $permissions);
 		array_unshift($permissions, 'Current Permissions :');

@@ -7,11 +7,11 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright   Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link        http://cakephp.org CakePHP(tm) Project
- * @package     Cake.View.Helper
- * @since       CakePHP(tm) v 0.10.0.1076
- * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       Cake.View.Helper
+ * @since         CakePHP(tm) v 0.10.0.1076
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View\Helper;
 
@@ -277,6 +277,13 @@ class FormHelper extends Helper {
 	public function tagIsInvalid() {
 		$entity = $this->entity();
 		$model = array_shift($entity);
+
+		// 0.Model.field. Fudge entity path
+		if (empty($model) || is_numeric($model)) {
+			array_splice($entity, 1, 0, $model);
+			$model = array_shift($entity);
+		}
+
 		$errors = array();
 		if (!empty($entity) && isset($this->validationErrors[$model])) {
 			$errors = $this->validationErrors[$model];
@@ -298,7 +305,7 @@ class FormHelper extends Helper {
  *
  * - `type` Form method defaults to POST
  * - `action`  The controller action the form submits to, (optional).
- * - `url`  The url the form submits to. Can be a string or a url array. If you use 'url'
+ * - `url`  The URL the form submits to. Can be a string or an URL array. If you use 'url'
  *    you should leave 'action' undefined.
  * - `default`  Allows for the creation of Ajax forms. Set this to false to prevent the default event handler.
  *   Will create an onsubmit attribute if it doesn't not exist. If it does, default action suppression
@@ -1276,8 +1283,10 @@ class FormHelper extends Helper {
 		} elseif (is_array($div)) {
 			$divOptions = array_merge($divOptions, $div);
 		}
-
-		if ($this->_introspectModel($this->model(), 'validates', $this->field())) {
+		if (
+			$this->_extractOption('required', $options) !== false &&
+			$this->_introspectModel($this->model(), 'validates', $this->field())
+		) {
 			$divOptions = $this->addClass($divOptions, 'required');
 		}
 		if (!isset($divOptions['tag'])) {
@@ -1752,7 +1761,7 @@ class FormHelper extends Helper {
 			unset($options['confirm']);
 		}
 
-		$formName = uniqid('post_');
+		$formName = str_replace('.', '', uniqid('post_', true));
 		$formUrl = $this->url($url);
 		$formOptions = array(
 			'name' => $formName,
@@ -2011,6 +2020,14 @@ class FormHelper extends Helper {
 			$tag = 'selectstart';
 		}
 
+		if ($tag !== 'checkboxmultiplestart' &&
+			!isset($attributes['required']) &&
+			empty($attributes['disabled']) &&
+			$this->_introspectModel($this->model(), 'validates', $this->field())
+		) {
+			$attributes['required'] = true;
+		}
+
 		if (!empty($tag) || isset($template)) {
 			$hasOptions = (count($options) > 0 || $showEmpty);
 			// Secure the field if there are options, or its a multi select.
@@ -2210,7 +2227,7 @@ class FormHelper extends Helper {
 		if ($attributes['value'] > 12 && !$format24Hours) {
 			$attributes['value'] -= 12;
 		}
-		if ($attributes['value'] === '00' && !$format24Hours) {
+		if (($attributes['value'] === 0 || $attributes['value'] === '00') && !$format24Hours) {
 			$attributes['value'] = 12;
 		}
 
@@ -2379,6 +2396,10 @@ class FormHelper extends Helper {
 		$monthNames = $attributes['monthNames'];
 		$attributes = array_diff_key($attributes, $defaults);
 
+		if ($timeFormat == 12 && $hour == 12) {
+			$hour = 0;
+		}
+
 		if (!empty($interval) && $interval > 1 && !empty($min)) {
 			$current = new \DateTime();
 			if ($year !== null) {
@@ -2389,7 +2410,7 @@ class FormHelper extends Helper {
 			}
 			$change = (round($min * (1 / $interval)) * $interval) - $min;
 			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
-			$format = ($timeFormat === '12') ? 'Y m d h i a' : 'Y m d H i a';
+			$format = ($timeFormat == 12) ? 'Y m d h i a' : 'Y m d H i a';
 			$newTime = explode(' ', $current->format($format));
 			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
 		}
@@ -2510,15 +2531,8 @@ class FormHelper extends Helper {
 		if (!empty($timeFormat)) {
 			$time = explode(':', $days[1]);
 
-			if ($time[0] >= 12 && $timeFormat == 12) {
+			if ($time[0] >= 12) {
 				$meridian = 'pm';
-			} elseif ($time[0] === '00' && $timeFormat == 12) {
-				$time[0] = 12;
-			} elseif ($time[0] >= 12) {
-				$meridian = 'pm';
-			}
-			if ($time[0] == 0 && $timeFormat == 12) {
-				$time[0] = 12;
 			}
 			$hour = $min = null;
 			if (isset($time[1])) {
@@ -2815,7 +2829,7 @@ class FormHelper extends Helper {
 		}
 
 		$disabledIndex = array_search('disabled', $options, true);
-		if ($disabledIndex !== false) {
+		if (is_int($disabledIndex)) {
 			unset($options[$disabledIndex]);
 			$options['disabled'] = true;
 		}

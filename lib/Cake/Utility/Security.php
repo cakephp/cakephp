@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v .0.10.0.1233
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
 
@@ -169,11 +169,19 @@ class Security {
 	}
 
 /**
- * Encrypts/Decrypts a text using the given key.
+ * Runs $text through a XOR cipher.
+ *
+ * *Note* This is not a cryptographically strong method and should not be used
+ * for sensitive data. Additionally this method does *not* work in environments
+ * where suhosin is enabled.
+ *
+ * Instead you should use Security::rijndael() when you need strong
+ * encryption.
  *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use
  * @return string Encrypted/Decrypted string
+ * @deprecated This method will be removed in 3.x
  */
 	public static function cipher($text, $key) {
 		if (empty($key)) {

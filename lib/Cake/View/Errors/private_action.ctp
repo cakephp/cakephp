@@ -14,13 +14,13 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Errors
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
 <h2><?php echo __d('cake_dev', 'Private Method in %s', $controller); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', '%s%s cannot be accessed directly.', '<em>' . $controller . '::</em>', '<em>' . $action . '()</em>'); ?>
+	<?php echo __d('cake_dev', '%s%s cannot be accessed directly.', '<em>' . h($controller) . '::</em>', '<em>' . h($action) . '()</em>'); ?>
 </p>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>

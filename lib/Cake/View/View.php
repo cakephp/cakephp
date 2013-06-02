@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
 
@@ -56,7 +56,6 @@ use Cake\Utility\ViewVarsTrait;
  * @property      CacheHelper $Cache
  * @property      FormHelper $Form
  * @property      HtmlHelper $Html
- * @property      JsHelper $Js
  * @property      NumberHelper $Number
  * @property      PaginatorHelper $Paginator
  * @property      RssHelper $Rss

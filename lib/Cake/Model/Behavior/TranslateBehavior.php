@@ -11,7 +11,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.4525
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Model\Behavior;
 
@@ -544,7 +544,7 @@ class TranslateBehavior extends ModelBehavior {
 				$className = $Model->translateModel;
 			}
 
-			$this->runtime[$Model->alias]['model'] = ClassRegistry::init($className, 'Model');
+			$this->runtime[$Model->alias]['model'] = ClassRegistry::init($className);
 		}
 		if (!empty($Model->translateTable) && $Model->translateTable !== $this->runtime[$Model->alias]['model']->useTable) {
 			$this->runtime[$Model->alias]['model']->setSource($Model->translateTable);

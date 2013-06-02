@@ -14,7 +14,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 2.0.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Network\Email;
 
@@ -329,6 +329,23 @@ class SmtpTransportTest extends TestCase {
 	public function testQuit() {
 		$this->socket->expects($this->at(0))->method('write')->with("QUIT\r\n");
 		$this->SmtpTransport->disconnect();
+	}
+
+/**
+ * testEmptyConfigArray method
+ *
+ * @return void
+ */
+	public function testEmptyConfigArray() {
+		$expected = $this->SmtpTransport->config(array(
+			'client' => 'myhost.com',
+			'port' => 666
+		));
+
+		$this->assertEquals(666, $expected['port']);
+
+		$result = $this->SmtpTransport->config(array());
+		$this->assertEquals($expected, $result);
 	}
 
 }

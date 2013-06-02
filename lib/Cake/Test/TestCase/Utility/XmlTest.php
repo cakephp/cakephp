@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
 
@@ -186,10 +186,21 @@ class XmlTest extends TestCase {
  *
  * @dataProvider invalidDataProvider
  * @expectedException Cake\Error\Exception
- * return void
+ * @return void
  */
 	public function testBuildInvalidData($value) {
 		Xml::build($value);
+	}
+
+/**
+ * Test that building SimpleXmlElement with invalid XML causes the right exception.
+ *
+ * @expectedException Cake\Error\XmlException
+ * @return void
+ */
+	public function testBuildInvalidDataSimpleXml() {
+		$input = '<derp';
+		$xml = Xml::build($input, array('return' => 'simplexml'));
 	}
 
 /**
@@ -721,6 +732,16 @@ XML;
 			'root' => array(
 				'tag' => 'defect',
 				'cake:bug' => 1
+			)
+		);
+		$this->assertEquals($expected, Xml::toArray($obj));
+
+		$xml = '<tag type="myType">0</tag>';
+		$obj = Xml::build($xml);
+		$expected = array(
+			'tag' => array(
+				'@type' => 'myType',
+				'@' => 0
 			)
 		);
 		$this->assertEquals($expected, Xml::toArray($obj));

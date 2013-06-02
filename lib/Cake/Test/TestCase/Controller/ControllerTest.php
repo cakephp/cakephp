@@ -11,7 +11,7 @@
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 1.2.0.5436
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller;
 
@@ -142,6 +142,73 @@ class TestController extends ControllerTestAppController {
 }
 
 /**
+ * TestComponent class
+ *
+ * @package       Cake.Test.Case.Controller
+ */
+class TestComponent extends Object {
+
+/**
+ * beforeRedirect method
+ *
+ * @return void
+ */
+	public function beforeRedirect() {
+	}
+
+/**
+ * initialize method
+ *
+ * @return void
+ */
+	public function initialize(Controller $controller) {
+	}
+
+/**
+ * startup method
+ *
+ * @return void
+ */
+	public function startup(Controller $controller) {
+	}
+
+/**
+ * shutdown method
+ *
+ * @return void
+ */
+	public function shutdown(Controller $controller) {
+	}
+
+/**
+ * beforeRender callback
+ *
+ * @return void
+ */
+	public function beforeRender(Controller $controller) {
+		if ($this->viewclass) {
+			$controller->viewClass = $this->viewclass;
+		}
+	}
+
+}
+
+class Test2Component extends TestComponent {
+
+	public $model;
+
+	public function __construct(ComponentCollection $collection, $settings) {
+		$this->controller = $collection->getController();
+		$this->model = $this->controller->modelClass;
+	}
+
+	public function beforeRender(Controller $controller) {
+		return false;
+	}
+
+}
+
+/**
  * AnotherTestController class
  *
  * @package       Cake.Test.Case.Controller
@@ -180,6 +247,8 @@ class ControllerTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		App::objects('Plugin', null, false);
 		App::build();
 		Router::reload();
@@ -211,7 +280,27 @@ class ControllerTest extends TestCase {
 		$result = $Controller->loadModel('Post');
 		$this->assertTrue($result);
 		$this->assertInstanceOf('TestApp\Model\Post', $Controller->Post);
-		$this->assertTrue(in_array('Post', $Controller->uses));
+		$this->assertContains('Post', $Controller->uses);
+
+		ClassRegistry::flush();
+		unset($Controller);
+	}
+
+/**
+ * Test loadModel() when uses = true.
+ *
+ * @return void
+ */
+	public function testLoadModelUsesTrue() {
+		Configure::write('App.namespace', 'TestApp');
+		$request = new Request('controller_posts/index');
+		$response = $this->getMock('Cake\Network\Response');
+		$Controller = new Controller($request, $response);
+		$Controller->uses = true;
+
+		$Controller->loadModel('Post');
+		$this->assertInstanceOf('Post', $Controller->Post);
+		$this->assertContains('Post', $Controller->uses);
 
 		ClassRegistry::flush();
 		unset($Controller);
@@ -274,6 +363,40 @@ class ControllerTest extends TestCase {
 
 		$this->assertTrue(isset($Controller->TestPluginPost));
 		$this->assertInstanceOf('TestPlugin\Model\TestPluginPost', $Controller->TestPluginPost);
+	}
+
+/**
+ * testConstructClassesWithComponents method
+ *
+ * @return void
+ */
+	public function testConstructClassesWithComponents() {
+		Configure::write('App.namespace', 'TestApp');
+		$Controller = new TestPluginController(new Request(), new Response());
+		$Controller->uses = ['NameTest'];
+		$Controller->components[] = 'Test2';
+
+		$Controller->constructClasses();
+		$this->assertEquals('NameTest', $Controller->Test2->model);
+		$this->assertEquals('Name', $Controller->NameTest->name);
+		$this->assertEquals('Name', $Controller->NameTest->alias);
+	}
+
+/**
+ * testAliasName method
+ *
+ * @return void
+ */
+	public function testAliasName() {
+		$request = new Request('controller_posts/index');
+		$Controller = new Controller($request);
+		$Controller->uses = ['NameTest'];
+		$Controller->constructClasses();
+
+		$this->assertEquals('Name', $Controller->NameTest->name);
+		$this->assertEquals('Name', $Controller->NameTest->alias);
+
+		unset($Controller);
 	}
 
 /**
@@ -698,6 +821,22 @@ class ControllerTest extends TestCase {
 		$Controller->constructClasses();
 
 		$this->assertFalse(isset($Controller->Session));
+	}
+
+/**
+ * Ensure that $modelClass is correct even when Controller::$uses
+ * has been iterated, eg: by a Component, or event handlers.
+ *
+ * @return void
+ */
+	public function testMergeVarsModelClass() {
+		$request = new Request();
+
+		$Controller = new Controller($request);
+		$Controller->uses = array('Test', 'TestAlias');
+		$lastModel = end($Controller->uses);
+		$Controller->constructClasses();
+		$this->assertEquals($Controller->uses[0], $Controller->modelClass);
 	}
 
 /**

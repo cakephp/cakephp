@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.5428
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
 
@@ -89,37 +89,6 @@ class SanitizeTest extends TestCase {
 	public $fixtures = array('core.data_test', 'core.article');
 
 /**
- * testEscapeAlphaNumeric method
- *
- * @return void
- */
-	public function testEscapeAlphaNumeric() {
-		$resultAlpha = Sanitize::escape('abc', 'test');
-		$this->assertEquals('abc', $resultAlpha);
-
-		$resultNumeric = Sanitize::escape('123', 'test');
-		$this->assertEquals('123', $resultNumeric);
-
-		$resultNumeric = Sanitize::escape(1234, 'test');
-		$this->assertEquals(1234, $resultNumeric);
-
-		$resultNumeric = Sanitize::escape(1234.23, 'test');
-		$this->assertEquals(1234.23, $resultNumeric);
-
-		$resultNumeric = Sanitize::escape('#1234.23', 'test');
-		$this->assertEquals('#1234.23', $resultNumeric);
-
-		$resultNull = Sanitize::escape(null, 'test');
-		$this->assertEquals(null, $resultNull);
-
-		$resultNull = Sanitize::escape(false, 'test');
-		$this->assertEquals(false, $resultNull);
-
-		$resultNull = Sanitize::escape(true, 'test');
-		$this->assertEquals(true, $resultNull);
-	}
-
-/**
  * testClean method
  *
  * @return void
@@ -131,7 +100,7 @@ class SanitizeTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$string = 'test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line';
-		$expected = 'test & ' . Sanitize::escape('"quote"', 'test') . ' ' . Sanitize::escape('\'other\'', 'test') . ' ;.$ symbol.another line';
+		$expected = 'test & "quote" \'other\' ;.$ symbol.another line';
 		$result = Sanitize::clean($string, array('encode' => false, 'connection' => 'test'));
 		$this->assertEquals($expected, $result);
 

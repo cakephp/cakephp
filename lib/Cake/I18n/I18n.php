@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.I18n
  * @since         CakePHP(tm) v 1.2.0.4116
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\I18n;
 
@@ -115,7 +115,7 @@ class I18n {
  *
  * @return I18n
  */
-	public static function &getInstance() {
+	public static function getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] = new I18n();
@@ -596,7 +596,7 @@ class I18n {
 		$string = $string[1];
 		if (substr($string, 0, 2) === $this->_escape . 'x') {
 			$delimiter = $this->_escape . 'x';
-			return implode('', array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
+			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
 		if (substr($string, 0, 2) === $this->_escape . 'd') {
 			$delimiter = $this->_escape . 'd';

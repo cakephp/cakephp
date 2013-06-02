@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
 
@@ -286,15 +286,15 @@ class SetTest extends TestCase {
 		$this->assertEquals($a, $b);
 
 		$a = array(
-			array(7,6,4),
-			array(3,4,5),
-			array(3,2,array(1,1,1)),
+			array(7, 6, 4),
+			array(3, 4, 5),
+			array(3, 2, array(1, 1, 1)),
 		);
 
 		$b = array(
-			array(3,2,array(1,1,1)),
-			array(3,4,5),
-			array(7,6,4),
+			array(3, 2, array(1, 1, 1)),
+			array(3, 4, 5),
+			array(7, 6, 4),
 		);
 
 		$a = Set::sort($a, '{n}', 'asc');

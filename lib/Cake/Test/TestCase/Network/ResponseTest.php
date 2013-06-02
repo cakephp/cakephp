@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Network
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Network;
 
@@ -23,6 +23,11 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Class CakeResponseTest
+ *
+ * @package       Cake.Test.Case.Network
+ */
 class ResponseTest extends TestCase {
 
 /**
@@ -364,7 +369,7 @@ class ResponseTest extends TestCase {
 	public function testHttpCodes() {
 		$response = new Response();
 		$result = $response->httpCodes();
-		$this->assertEquals(39, count($result));
+		$this->assertEquals(40, count($result));
 
 		$result = $response->httpCodes(100);
 		$expected = array(100 => 'Continue');
@@ -377,7 +382,7 @@ class ResponseTest extends TestCase {
 
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEquals(41, count($response->httpCodes()));
+		$this->assertEquals(42, count($response->httpCodes()));
 
 		$result = $response->httpCodes(1337);
 		$expected = array(1337 => 'Undefined Unicorn');
@@ -386,7 +391,7 @@ class ResponseTest extends TestCase {
 		$codes = array(404 => 'Sorry Bro');
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEquals(41, count($response->httpCodes()));
+		$this->assertEquals(42, count($response->httpCodes()));
 
 		$result = $response->httpCodes(404);
 		$expected = array(404 => 'Sorry Bro');

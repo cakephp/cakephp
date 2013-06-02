@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Controller.Component.Auth
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
 
@@ -23,6 +23,11 @@ use Cake\Controller\Component\Auth\ActionsAuthorize;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Class ActionsAuthorizeTest
+ *
+ * @package       Cake.Test.Case.Controller.Component.Auth
+ */
 class ActionsAuthorizeTest extends TestCase {
 
 /**

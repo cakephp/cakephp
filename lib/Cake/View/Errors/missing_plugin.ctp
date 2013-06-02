@@ -14,21 +14,21 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Errors
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
 <h2><?php echo __d('cake_dev', 'Missing Plugin'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'The application is trying to load a file from the %s plugin', '<em>' . $plugin . '</em>'); ?>
+	<?php echo __d('cake_dev', 'The application is trying to load a file from the %s plugin', '<em>' . h($plugin) . '</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Make sure your plugin %s is in the ' . APP_DIR . DS . 'Plugin directory and was loaded', $plugin); ?>
+	<?php echo __d('cake_dev', 'Make sure your plugin %s is in the ' . APP_DIR . DS . 'Plugin directory and was loaded', h($plugin)); ?>
 </p>
 <pre>
 &lt;?php
-Plugin::load('<?php echo $plugin?>');
+Plugin::load('<?php echo h($plugin)?>');
 
 </pre>
 <p class="notice">

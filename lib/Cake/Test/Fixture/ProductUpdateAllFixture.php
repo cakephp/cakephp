@@ -15,14 +15,14 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.4667
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
+ * Class ProductUpdateAllFixture
  *
  * @package       Cake.Test.Fixture
  */
@@ -33,11 +33,11 @@ class ProductUpdateAllFixture extends TestFixture {
 	public $table = 'product_update_all';
 
 	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => false, 'length' => 29),
-		'groupcode' => array('type' => 'integer', 'null' => false, 'length' => 4),
-		'group_id' => array('type' => 'integer', 'null' => false, 'length' => 8),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
+		'id' => ['type' => 'integer', 'null' => false, 'default' => null],
+		'name' => ['type' => 'string', 'null' => false, 'length' => 29],
+		'groupcode' => ['type' => 'integer', 'null' => false, 'length' => 4],
+		'group_id' => ['type' => 'integer', 'null' => false, 'length' => 8],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']], 'PRIMARY' => ['type' => 'unique', 'columns' => 'id']]
 	);
 
 	public $records = array(

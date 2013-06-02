@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase;
 
@@ -690,8 +690,9 @@ class BasicsTest extends TestCase {
 ########## DEBUG ##########
 'this-is-a-test'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 
 		$this->assertEquals($expected, $result);
 
@@ -753,9 +754,10 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
 		if (php_sapi_name() === 'cli') {
-			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
+			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
 		}
@@ -777,9 +779,10 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
 		if (php_sapi_name() === 'cli') {
-			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
+			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
 		}
@@ -793,8 +796,9 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -805,8 +809,9 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -817,8 +822,9 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -829,8 +835,9 @@ EXPECTED;
 ########## DEBUG ##########
 false
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 	}
 

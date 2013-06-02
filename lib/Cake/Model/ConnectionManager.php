@@ -17,7 +17,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model
  * @since         CakePHP(tm) v 0.10.x.1402
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Model;
 
@@ -114,8 +114,8 @@ class ConnectionManager {
 			static::$_dataSources[$name] = new Connection(static::$config[$name]);
 		} else {
 			static::$_dataSources[$name] = new $class(static::$config[$name]);
-			static::$_dataSources[$name]->configKeyName = $name;
 		}
+		static::$_dataSources[$name]->configKeyName = $name;
 
 		return static::$_dataSources[$name];
 	}

@@ -14,7 +14,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command\Task;
 
@@ -476,6 +476,9 @@ class ControllerTask extends BakeTask {
 			))->addOption('connection', array(
 				'short' => 'c',
 				'help' => __d('cake_console', 'The connection the controller\'s model is on.')
+			))->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addSubcommand('all', array(
 				'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
 			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));

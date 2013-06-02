@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 2.3.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
 
@@ -41,9 +41,10 @@ class CakeSessionFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'string', 'length' => 128, 'key' => 'primary'),
-		'data' => array('type' => 'text','null' => true),
-		'expires' => array('type' => 'integer', 'length' => 11, 'null' => true)
+		'id' => ['type' => 'string', 'length' => 128],
+		'data' => ['type' => 'text', 'null' => true],
+		'expires' => ['type' => 'integer', 'length' => 11, 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**
