@@ -85,6 +85,26 @@ trait ExternalAssociationTrait {
 	}
 
 /**
+ * Correctly nests a result row associated values into the correct array keys inside the
+ * source results.
+ *
+ * @param array $result
+ * @return array
+ */
+	public function transformRow($row) {
+		$sourceAlias = $this->source()->alias();
+		$targetAlias = $this->target()->alias();
+		$values = $row[$this->_name];
+
+		if (isset($values[$this->_name]) && is_array($values[$this->_name])) {
+			$values = $values[$this->_name];
+		}
+
+		$row[$sourceAlias][$this->property()] = $values;
+		return $row;
+	}
+
+/**
  * Eager loads a list of records in the target table that are related to another
  * set of records in the source table.
  *
@@ -124,11 +144,12 @@ trait ExternalAssociationTrait {
 			$source->primaryKey(),
 			$source->alias()
 		));
+
 		$alias = $this->target()->alias();
-		$targetKey = key($fetchQuery->aliasField($this->property(), $source->alias()));
-		return function($row) use ($alias, $resultMap, $sourceKey, $targetKey) {
+		$nestKey =  $alias . '__' . $alias;
+		return function($row) use ($resultMap, $sourceKey, $nestKey) {
 			if (isset($resultMap[$row[$sourceKey]])) {
-				$row[$targetKey] = $resultMap[$row[$sourceKey]];
+				$row[$nestKey] = $resultMap[$row[$sourceKey]];
 			}
 			return $row;
 		};

@@ -279,14 +279,14 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$callable = $association->eagerLoader(compact('keys'));
 		$row = ['Article__id' => 1, 'title' => 'article 1'];
 		$result = $callable($row);
-		$row['Article__Tag'] = [
+		$row['Tag__Tag'] = [
 			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]]
 		];
 		$this->assertEquals($row, $result);
 
 		$row = ['Article__id' => 2, 'title' => 'article 2'];
 		$result = $callable($row);
-		$row['Article__Tag'] = [
+		$row['Tag__Tag'] = [
 			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
 		];
 		$this->assertEquals($row, $result);
@@ -509,14 +509,14 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'query' => $parent, 'strategy' => BelongsToMany::STRATEGY_SUBQUERY
 		]);
 
-		$row['Article__Tag'] = [
+		$row['Tag__Tag'] = [
 			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]]
 		];
 		$row['Article__id'] = 1;
 		$result = $callable($row);
 		$this->assertEquals($row, $result);
 
-		$row['Article__Tag'] = [
+		$row['Tag__Tag'] = [
 			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
 		];
 		$row['Article__id'] = 2;

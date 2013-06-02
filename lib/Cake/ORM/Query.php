@@ -18,6 +18,8 @@ class Query extends DatabaseQuery {
 
 	protected $_containments;
 
+	protected $_normalizedContainments;
+
 	protected $_hasFields;
 
 	protected $_aliasMap = [];
@@ -58,8 +60,30 @@ class Query extends DatabaseQuery {
 			}
 			$this->_containments[$table] = $options;
 		}
+		$this->_normalizedContainments = null;
 		$this->_dirty = true;
 		return $this;
+	}
+
+	public function normalizedContainments() {
+		if ($this->_normalizedContainments !== null || empty($this->_containments)) {
+			return $this->_normalizedContainments;
+		}
+
+		$contain = [];
+		foreach ($this->_containments as $table => $options) {
+			if (!empty($options['instance'])) {
+				$contain = (array)$this->_containments;
+				break;
+			}
+			$contain[$table] = $this->_normalizeContain(
+				$this->_table,
+				$table,
+				$options
+			);
+		}
+
+		return $this->_normalizedContainments = $contain;
 	}
 
 	public function execute() {
@@ -145,19 +169,7 @@ class Query extends DatabaseQuery {
 			return;
 		}
 
-		$contain = [];
-		foreach ($this->_containments as $table => $options) {
-			if (!empty($options['instance'])) {
-				$contain = (array)$this->_containments;
-				break;
-			}
-			$contain[$table] = $this->_normalizeContain(
-				$this->_table,
-				$table,
-				$options
-			);
-		}
-
+		$contain = $this->normalizedContainments();
 		foreach ($contain as $relation => $meta) {
 			if ($meta['instance'] && !$meta['instance']->canBeJoined($meta['config'])) {
 				$this->_loadEagerly[$relation] = $meta;

@@ -37,6 +37,10 @@ class ResultSet implements Iterator {
 
 	protected $_defaultTable;
 
+	protected $_defaultAlias;
+
+	protected $_associationMap = [];
+
 	protected $_map;
 
 	public function __construct($query, $statement) {
@@ -44,6 +48,27 @@ class ResultSet implements Iterator {
 		$this->_statement = $statement;
 		$this->_defaultTable = $this->_query->repository();
 		$this->_defaultAlias = $this->_defaultTable->alias();
+		$this->_calculateAssociationMap();
+	}
+
+	public function _calculateAssociationMap() {
+		$contain = $this->_query->normalizedContainments();
+
+		if (!$contain) {
+			return;
+		}
+
+		$map = [];
+		$visitor = function($level) use (&$visitor, &$map) {
+			foreach ($level as $assoc => $meta) {
+				$map[$assoc] = $meta['instance'];
+				if (!empty($meta['associations'])) {
+					$visitor($meta['associations']);
+				}
+			}
+		};
+		$visitor($contain, []);
+		$this->_associationMap = $map;
 	}
 
 	public function toArray() {
@@ -103,14 +128,12 @@ class ResultSet implements Iterator {
 			$results[$this->_defaultAlias]
 		);
 
-		foreach ($results as $table => $values) {
-			if ($table === $this->_defaultAlias) {
+		foreach (array_reverse($this->_associationMap) as $alias => $assoc) {
+			if (!isset($results[$alias])) {
 				continue;
 			}
-			if ($assoc = $this->_defaultTable->association($table)) {
-				$results[$table] = $this->_castValues($assoc->target(), $values);
-				$results = $assoc->transformRow($results);
-			}
+			$results[$alias] = $this->_castValues($assoc->target(), $results[$alias]);
+			$results = $assoc->transformRow($results);
 		}
 
 		return $results[$this->_defaultAlias];

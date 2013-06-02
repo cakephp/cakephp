@@ -119,14 +119,14 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$callable = $association->eagerLoader(compact('keys'));
 		$row = ['Author__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
-		$row['Author__Article'] = [
+		$row['Article__Article'] = [
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
 			];
 		$this->assertEquals($row, $result);
 
 		$row = ['Author__id' => 2, 'username' => 'author 2'];
 		$result = $callable($row);
-		$row['Author__Article'] = [
+		$row['Article__Article'] = [
 			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
 			];
 		$this->assertEquals($row, $result);
@@ -318,14 +318,14 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		]);
 		$row = ['Author__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
-		$row['Author__Article'] = [
+		$row['Article__Article'] = [
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
 		];
 		$this->assertEquals($row, $result);
 
 		$row = ['Author__id' => 2, 'username' => 'author 2'];
 		$result = $callable($row);
-		$row['Author__Article'] = [
+		$row['Article__Article'] = [
 			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
 		];
 		$this->assertEquals($row, $result);
