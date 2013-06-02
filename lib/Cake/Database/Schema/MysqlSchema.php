@@ -148,12 +148,6 @@ class MysqlSchema {
 			'comment' => $row['Comment'],
 		];
 		$table->addColumn($row['Field'], $field);
-		if (!empty($row['Key']) && $row['Key'] === 'PRI') {
-			$table->addConstraint('primary', [
-				'type' => Table::CONSTRAINT_PRIMARY,
-				'columns' => [$row['Field']]
-			]);
-		}
 	}
 
 /**
@@ -170,25 +164,25 @@ class MysqlSchema {
 
 		$name = $row['Key_name'];
 		if ($name === 'PRIMARY') {
-			$name = $type = 'primary';
+			$name = $type = Table::CONSTRAINT_PRIMARY;
 		}
 
 		$columns[] = $row['Column_name'];
 
 		if ($row['Index_type'] === 'FULLTEXT') {
-			$type = strtolower($row['Index_type']);
+			$type = Table::INDEX_FULLTEXT;
 		} elseif ($row['Non_unique'] == 0 && $type !== 'primary') {
-			$type = 'unique';
+			$type = Table::CONSTRAINT_UNIQUE;
 		} elseif ($type !== 'primary') {
-			$type = 'index';
+			$type = Table::INDEX_INDEX;
 		}
 
 		if (!empty($row['Sub_part'])) {
 			$length[$row['Column_name']] = $row['Sub_part'];
 		}
 		$isIndex = (
-			$type == 'index' ||
-			$type == 'fulltext'
+			$type == Table::INDEX_INDEX ||
+			$type == Table::INDEX_FULLTEXT
 		);
 		if ($isIndex) {
 			$existing = $table->index($name);
@@ -199,7 +193,7 @@ class MysqlSchema {
 		// MySQL multi column indexes come back
 		// as multiple rows.
 		if (!empty($existing)) {
-			$columns = array_unique(array_merge($existing['columns'], $columns));
+			$columns = array_merge($existing['columns'], $columns);
 			$length = array_merge($existing['length'], $length);
 		}
 		if ($isIndex) {

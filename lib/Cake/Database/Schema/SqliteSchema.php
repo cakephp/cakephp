@@ -178,12 +178,12 @@ class SqliteSchema {
 		}
 		if ($row['unique']) {
 			$table->addConstraint($row['name'], [
-				'type' => 'unique',
+				'type' => Table::CONSTRAINT_UNIQUE,
 				'columns' => $columns
 			]);
 		} else {
 			$table->addIndex($row['name'], [
-				'type' => 'index',
+				'type' => Table::INDEX_INDEX,
 				'columns' => $columns
 			]);
 		}

@@ -171,12 +171,6 @@ class PostgresSchema {
 		];
 		$field['length'] = $row['char_length'] ?: $field['length'];
 		$table->addColumn($row['name'], $field);
-		if (!empty($row['pk'])) {
-			$table->addConstraint('primary', [
-				'type' => Table::CONSTRAINT_PRIMARY,
-				'columns' => [$row['name']]
-			]);
-		}
 	}
 
 /**
