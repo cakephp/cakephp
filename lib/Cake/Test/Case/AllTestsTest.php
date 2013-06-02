@@ -15,8 +15,9 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 /**
  * AllTests class
  *

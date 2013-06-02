@@ -14,8 +14,9 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Errors
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 ?>
 <h2><?php echo __d('cake_dev', 'Missing Behavior'); ?></h2>

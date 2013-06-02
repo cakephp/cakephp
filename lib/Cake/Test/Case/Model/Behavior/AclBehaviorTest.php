@@ -17,7 +17,7 @@
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Model.Behavior
  * @since         CakePHP v 1.2.0.4487
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AclBehavior', 'Model/Behavior');
@@ -25,7 +25,6 @@ App::uses('Aco', 'Model');
 App::uses('Aro', 'Model');
 App::uses('AclNode', 'Model');
 App::uses('DbAcl', 'Model');
-
 
 /**
  * Test Person class - self joined model

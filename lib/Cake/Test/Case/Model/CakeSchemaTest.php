@@ -16,7 +16,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.5550
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CakeSchema', 'Model');
@@ -349,7 +349,6 @@ class SchemaDatatype extends CakeTestModel {
  * its source cache populated - I.e. if the test is run within a group
  *
  * @uses          CakeTestModel
- * @package
  * @package       Cake.Test.Case.Model
  */
 class Testdescribe extends CakeTestModel {

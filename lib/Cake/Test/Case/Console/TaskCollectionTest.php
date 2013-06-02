@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Console
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('TaskCollection', 'Console');
@@ -26,6 +26,11 @@ App::uses('Shell', 'Console');
 class DbConfigAliasedTask extends Shell {
 }
 
+/**
+ * Class TaskCollectionTest
+ *
+ * @package       Cake.Test.Case.Console
+ */
 class TaskCollectionTest extends CakeTestCase {
 
 /**

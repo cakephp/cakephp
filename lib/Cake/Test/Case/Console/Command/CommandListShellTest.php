@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CommandListShell', 'Console/Command');
@@ -23,7 +23,11 @@ App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
 
-
+/**
+ * Class TestStringOutput
+ *
+ * @package       Cake.Test.Case.Console.Command
+ */
 class TestStringOutput extends ConsoleOutput {
 
 	public $output = '';
@@ -34,6 +38,11 @@ class TestStringOutput extends ConsoleOutput {
 
 }
 
+/**
+ * Class CommandListShellTest
+ *
+ * @package       Cake.Test.Case.Console.Command
+ */
 class CommandListShellTest extends CakeTestCase {
 
 /**

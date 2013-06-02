@@ -17,7 +17,7 @@
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.0.7726
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -32,7 +32,6 @@ App::uses('Model', 'Model');
 /**
  * Test Article model
  *
- * @package       Cake.Test.Case.Console.Command.Task
  * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskArticle extends Model {
@@ -107,7 +106,6 @@ class TestTaskArticle extends Model {
  * Tag Testing Model
  *
  * @package       Cake.Test.Case.Console.Command.Task
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskTag extends Model {
 
@@ -144,7 +142,6 @@ class TestTaskTag extends Model {
  * Simulated plugin
  *
  * @package       Cake.Test.Case.Console.Command.Task
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskAppModel extends Model {
 }
@@ -152,7 +149,6 @@ class TestTaskAppModel extends Model {
 /**
  * Testing AppMode (TaskComment)
  *
- * @package       Cake.Test.Case.Console.Command.Task
  * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskComment extends TestTaskAppModel {
@@ -187,7 +183,6 @@ class TestTaskComment extends TestTaskAppModel {
 /**
  * Test Task Comments Controller
  *
- * @package       Cake.Test.Case.Console.Command.Task
  * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskCommentsController extends Controller {

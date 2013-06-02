@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Controller.Component.Auth
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AuthComponent', 'Controller/Component');
@@ -33,6 +33,11 @@ require_once CAKE . 'Test' . DS . 'Case' . DS . 'Model' . DS . 'models.php';
  */
 class FormAuthenticateTest extends CakeTestCase {
 
+/**
+ * Fixtrues
+ *
+ * @var array
+ */
 	public $fixtures = array('core.user', 'core.auth_user');
 
 /**
