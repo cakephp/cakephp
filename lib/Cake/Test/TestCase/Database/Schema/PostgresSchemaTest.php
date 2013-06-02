@@ -67,11 +67,13 @@ body TEXT,
 author_id INTEGER NOT NULL,
 published BOOLEAN DEFAULT false,
 views SMALLINT DEFAULT 0,
-created TIMESTAMP
+created TIMESTAMP,
+CONSTRAINT "content_idx" UNIQUE ("title", "body")
 )
 SQL;
 		$connection->execute($table);
 		$connection->execute('COMMENT ON COLUMN "articles"."title" IS \'a title\'');
+		$connection->execute('CREATE INDEX "author_idx" ON "articles" ("author_id")');
 	}
 
 /**
@@ -282,13 +284,50 @@ SQL;
 				'length' => null,
 				'precision' => null,
 				'fixed' => null,
-				'collate' => null,
+				'comment' => null,
 			],
 		];
 		$this->assertEquals(['id'], $result->primaryKey());
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}
+	}
+
+/**
+ * Test describing a table with indexes
+ *
+ * @return void
+ */
+	public function testDescribeTableIndexes() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->describe('articles');
+		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+		$expected = [
+			'primary' => [
+				'type' => 'primary',
+				'columns' => ['id'],
+				'length' => []
+			],
+			'content_idx' => [
+				'type' => 'unique',
+				'columns' => ['title', 'body'],
+				'length' => []
+			]
+		];
+		$this->assertCount(2, $result->constraints());
+		$this->assertEquals($expected['primary'], $result->constraint('primary'));
+		$this->assertEquals($expected['content_idx'], $result->constraint('content_idx'));
+
+		$this->assertCount(1, $result->indexes());
+		$expected = [
+			'type' => 'index',
+			'columns' => ['author_id'],
+			'length' => []
+		];
+		$this->assertEquals($expected, $result->index('author_idx'));
 	}
 
 /**
@@ -473,7 +512,7 @@ SQL;
 	}
 
 /**
- * Test the indexSql method.
+ * Test the constraintSql method.
  *
  * @dataProvider constraintSqlProvider
  */

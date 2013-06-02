@@ -168,13 +168,9 @@ class PostgresSchema {
 		$field += [
 			'null' => $row['null'] === 'YES' ? true : false,
 			'default' => $row['default'],
+			'comment' => $row['comment']
 		];
 		$field['length'] = $row['char_length'] ?: $field['length'];
-		foreach ($fieldParams as $key => $metadata) {
-			if (!empty($row[$metadata['column']])) {
-				$field[$key] = $row[$metadata['column']];
-			}
-		}
 		$table->addColumn($row['name'], $field);
 		if (!empty($row['pk'])) {
 			$table->addConstraint('primary', [
@@ -188,11 +184,34 @@ class PostgresSchema {
  * Get the SQL to describe the indexes in a table.
  *
  * @param string $table The table name to get information on.
+ * @param array $config The configuration containing the schema name.
  * @return array An array of (sql, params) to execute.
  */
-	public function describeIndexSql($table) {
-		$sql = '';
-		return [$sql, []];
+	public function describeIndexSql($table, $config) {
+		$sql = "SELECT
+			c2.relname,
+			i.indisprimary,
+			i.indisunique,
+			i.indisvalid,
+			pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) AS statement
+		FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i
+		WHERE c.oid  = (
+			SELECT c.oid
+			FROM pg_catalog.pg_class c
+			LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+			WHERE c.relname = ?
+				AND pg_catalog.pg_table_is_visible(c.oid)
+				AND n.nspname = ?
+		)
+		AND c.oid = i.indrelid
+		AND i.indexrelid = c2.oid
+		ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname";
+
+		$schema = 'public';
+		if (!empty($config['schema'])) {
+			$schema = $config['schema'];
+		}
+		return [$sql, [$table, $schema]];
 	}
 
 /**
@@ -204,6 +223,27 @@ class PostgresSchema {
  * @return void
  */
 	public function convertIndexDescription(Table $table, $row) {
+		$type = Table::INDEX_INDEX;
+		$name = $row['relname'];
+		if ($row['indisprimary']) {
+			$name = $type = Table::CONSTRAINT_PRIMARY;
+		}
+		if ($row['indisunique'] && $type === Table::INDEX_INDEX) {
+			$type = Table::CONSTRAINT_UNIQUE;
+		}
+		preg_match('/\(([^\)]+)\)/', $row['statement'], $matches);
+		$columns = explode(', ', $matches[1]);
+		if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
+			$table->addConstraint($name, [
+				'type' => $type,
+				'columns' => $columns
+			]);
+		} else {
+			$table->addIndex($name, [
+				'type' => $type,
+				'columns' => $columns
+			]);
+		}
 	}
 
 
@@ -373,7 +413,6 @@ class PostgresSchema {
  */
 	public function truncateTableSql(Table $table) {
 		$name = $this->_driver->quoteIdentifier($table->name());
-
 		return [
 			sprintf("TRUNCATE %s RESTART IDENTITY", $name)
 		];
