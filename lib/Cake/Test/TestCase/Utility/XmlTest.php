@@ -195,7 +195,7 @@ class XmlTest extends TestCase {
 /**
  * Test that building SimpleXmlElement with invalid XML causes the right exception.
  *
- * @expectedException XmlException
+ * @expectedException Cake\Error\XmlException
  * @return void
  */
 	public function testBuildInvalidDataSimpleXml() {

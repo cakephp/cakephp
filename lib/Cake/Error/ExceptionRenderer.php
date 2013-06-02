@@ -158,14 +158,12 @@ class ExceptionRenderer {
 			$response->header($exception->responseHeader());
 		}
 
-		if (class_exists('AppController')) {
-			try {
-				$controller = new ErrorController($request, $response);
-				$controller->startupProcess();
-			} catch (\Exception $e) {
-				if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
-					$controller->RequestHandler->startup($controller);
-				}
+		try {
+			$controller = new ErrorController($request, $response);
+			$controller->startupProcess();
+		} catch (\Exception $e) {
+			if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
+				$controller->RequestHandler->startup($controller);
 			}
 		}
 		if (empty($controller)) {
