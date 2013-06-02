@@ -417,7 +417,7 @@ class TranslateBehavior extends ModelBehavior {
 		}
 
 		unset($this->runtime[$Model->alias]['beforeValidate'], $this->runtime[$Model->alias]['beforeSave']);
-		$conditions = array('model' => $Model->alias, 'foreign_key' => $Model->id);
+		$conditions = array('model' => $Model->name, 'foreign_key' => $Model->id);
 		$RuntimeModel = $this->translateModel($Model);
 
 		if ($created) {
@@ -502,7 +502,7 @@ class TranslateBehavior extends ModelBehavior {
  */
 	public function afterDelete(Model $Model) {
 		$RuntimeModel = $this->translateModel($Model);
-		$conditions = array('model' => $Model->alias, 'foreign_key' => $Model->id);
+		$conditions = array('model' => $Model->name, 'foreign_key' => $Model->id);
 		$RuntimeModel->deleteAll($conditions);
 	}
 
@@ -611,7 +611,7 @@ class TranslateBehavior extends ModelBehavior {
 					}
 				}
 				$associations[$association] = array_merge($default, array('conditions' => array(
-					'model' => $Model->alias,
+					'model' => $Model->name,
 					$RuntimeModel->displayField => $field
 				)));
 			}
