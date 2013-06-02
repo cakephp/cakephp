@@ -276,7 +276,10 @@ SQL;
 		];
 		$this->assertCount(2, $result->constraints());
 		$this->assertEquals($expected['primary'], $result->constraint('primary'));
-		$this->assertEquals($expected['sqlite_autoindex_articles_1'], $result->constraint('sqlite_autoindex_articles_1'));
+		$this->assertEquals(
+			$expected['sqlite_autoindex_articles_1'],
+			$result->constraint('sqlite_autoindex_articles_1')
+		);
 
 		$this->assertCount(1, $result->indexes());
 		$expected = [
