@@ -19,8 +19,14 @@ namespace Cake\ORM;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
-use Cake\Utility\Hash;
 
+/**
+ * Extends the base Query class to provide new methods related to association
+ * loading, automatic fields selection, automatic type casting and to wrap results
+ * into an specific iterator that will be responsible for hydrating results if
+ * required.
+ *
+ */
 class Query extends DatabaseQuery {
 
 /**
@@ -30,13 +36,29 @@ class Query extends DatabaseQuery {
  */
 	protected $_table;
 
+/**
+ * Nested array describing the association to be fetched
+ * and the options to apply for each of them, if any
+ *
+ * @var \ArrayObject
+ */
 	protected $_containments;
 
+/**
+ * Contains a nested array with the compiled containments tree
+ * This is a normalized version of the user provided containments array.
+ *
+ * @var array
+ */
 	protected $_normalizedContainments;
 
+/**
+ * Whether the user select any fields before being executed, this is used
+ * to determined if any fields should be automatically be selected.
+ *
+ * @var boolean
+ */
 	protected $_hasFields;
-
-	protected $_aliasMap = [];
 
 	protected $_loadEagerly = [];
 
@@ -109,10 +131,6 @@ class Query extends DatabaseQuery {
 		return $this->execute()->toArray();
 	}
 
-	public function aliasedTable($alias) {
-		return $this->_aliasMap[$alias];
-	}
-
 	public function aliasField($field, $alias = null) {
 		$namespaced = strpos($field, '.') !== false;
 		$_field = $field;
@@ -172,7 +190,6 @@ class Query extends DatabaseQuery {
 		}
 
 		$this->from([$this->_table->alias() => $this->_table->table()]);
-		$this->_aliasMap[$this->_table->alias()] = $this->_table;
 		$this->_addDefaultFields();
 		$this->_addContainments();
 		return parent::_transformQuery();
@@ -194,7 +211,6 @@ class Query extends DatabaseQuery {
 		foreach ($this->_resolveFirstLevel($this->_table, $contain) as $options) {
 			$table = $options['instance']->target();
 			$alias = $table->alias();
-			$this->_aliasMap[$alias] = $table;
 			$this->_addJoin($options['instance'], $options['config']);
 			foreach ($options['associations'] as $relation => $meta) {
 				if ($meta['instance'] && !$meta['instance']->canBeJoined($meta['config'])) {
