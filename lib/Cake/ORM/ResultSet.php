@@ -42,7 +42,8 @@ class ResultSet implements Iterator {
 	public function __construct($query, $statement) {
 		$this->_query = $query;
 		$this->_statement = $statement;
-		$this->_defaultTable = $this->_query->repository()->alias();
+		$this->_defaultTable = $this->_query->repository();
+		$this->_defaultAlias = $this->_defaultTable->alias();
 	}
 
 	public function toArray() {
@@ -80,46 +81,60 @@ class ResultSet implements Iterator {
 	protected function _groupResult() {
 		$results = [];
 		foreach ($this->_current as $key => $value) {
-			$table = $this->_defaultTable;
+			$table = $this->_defaultAlias;
 			$field = $key;
 
 			if (empty($this->_map[$key])) {
 				$parts = explode('__', $key);
 				if (count($parts) > 1) {
-					if ($parts[0] !== $table) {
-						$assoc = $this->_query->repository()->association($parts[0]);
-						$parts[2] = $assoc->property();
-					}
 					$this->_map[$key] = $parts;
 				}
 			}
 
 			if (!empty($this->_map[$key])) {
-				$parts = $this->_map[$key];
-				list($table, $field) = $parts;
-				$value = $this->_castValue($table, $field, $value);
+				list($table, $field) = $this->_map[$key];
 			}
 
-			if (!empty($parts[2])) {
-				$results[$parts[2]][$field] = $value;
-			} else {
-				$results[$field] = $value;
+			$results[$table][$field] = $value;
+		}
+
+		$results[$this->_defaultAlias] = $this->_castValues(
+			$this->_defaultTable,
+			$results[$this->_defaultAlias]
+		);
+
+		foreach ($results as $table => $values) {
+			if ($table === $this->_defaultAlias) {
+				continue;
+			}
+			if ($assoc = $this->_defaultTable->association($table)) {
+				$results[$table] = $this->_castValues($assoc->target(), $values);
+				$results = $assoc->transformRow($results);
 			}
 		}
 
-		return $results;
+		return $results[$this->_defaultAlias];
 	}
 
-	protected function _castValue($table, $field, $value) {
-		$schema = $this->_query->aliasedTable($table)->schema();
-		if (!isset($schema[$field])) {
-			return $value;
+	protected function _castValues($table, $values) {
+		$alias = $table->alias();
+		$driver = $this->_query->connection()->driver();
+		if (empty($this->types[$alias])) {
+			$this->types[$alias] = array_map(function($f) {
+				return $f['type'];
+			}, $table->schema());
 		}
 
-		$key = $table . '.' . $value;
-		if (!isset($this->types[$key])) {
-			$this->types[$key] = Type::build($schema[$field]['type']);
+		foreach ($values as $field => $value) {
+			if (!isset($this->types[$alias][$field])) {
+				continue;
+			}
+			if (is_string($this->types[$alias][$field])) {
+				$this->types[$alias][$field] = Type::build($this->types[$alias][$field]);
+			}
+			$values[$field] = $this->types[$alias][$field]->toPHP($value, $driver);
 		}
-		return $this->types[$key]->toPHP($value, $this->_query->connection()->driver());
+
+		return $values;
 	}
 }

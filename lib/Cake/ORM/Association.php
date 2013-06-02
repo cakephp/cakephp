@@ -387,6 +387,20 @@ abstract class Association {
 	}
 
 /**
+ * Correctly nests a result row associated values into the correct array keys inside the
+ * source results.
+ *
+ * @param array $result
+ * @return array
+ */
+	public function transformRow($row) {
+		$sourceAlias = $this->source()->alias();
+		$targetAlias = $this->target()->alias();
+		$row[$sourceAlias][$this->property()] = $row[$targetAlias];
+		return $row;
+	}
+
+/**
  * Returns a single or multiple conditions to be appended to the generated join
  * clause for getting the results on the target table. If false is returned then
  * it will not attach any new conditions to the join clause
