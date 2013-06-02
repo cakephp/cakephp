@@ -149,10 +149,12 @@ title VARCHAR(20) DEFAULT 'testing',
 body TEXT,
 author_id INT(11) NOT NULL,
 published BOOLEAN DEFAULT 0,
-created DATETIME
-)
+created DATETIME,
+CONSTRAINT "title_idx" UNIQUE ("title", "body")
+);
 SQL;
 		$connection->execute($table);
+		$connection->execute('CREATE INDEX "created_idx" ON "articles" ("created")');
 	}
 
 /**
@@ -246,6 +248,43 @@ SQL;
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}
+	}
+
+/**
+ * Test describing a table with indexes
+ *
+ * @return void
+ */
+	public function testDescribeTableIndexes() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->describe('articles');
+		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+		$expected = [
+			'primary' => [
+				'type' => 'primary',
+				'columns' => ['id'],
+				'length' => []
+			],
+			'sqlite_autoindex_articles_1' => [
+				'type' => 'unique',
+				'columns' => ['title', 'body'],
+				'length' => []
+			]
+		];
+		$this->assertCount(2, $result->constraints());
+		$this->assertEquals($expected['primary'], $result->constraint('primary'));
+		$this->assertEquals($expected['sqlite_autoindex_articles_1'], $result->constraint('sqlite_autoindex_articles_1'));
+
+		$this->assertCount(1, $result->indexes());
+		$expected = [
+			'type' => 'index',
+			'columns' => ['created'],
+			'length' => []
+		];
+		$this->assertEquals($expected, $result->index('created_idx'));
 	}
 
 /**

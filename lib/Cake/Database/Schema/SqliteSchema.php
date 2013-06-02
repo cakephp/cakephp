@@ -146,12 +146,20 @@ class SqliteSchema {
  * @return array An array of (sql, params) to execute.
  */
 	public function describeIndexSql($table) {
-		$sql = '';
+		$sql = sprintf(
+			'PRAGMA index_list(%s)',
+			$this->_driver->quoteIdentifier($table)
+		);
 		return [$sql, []];
 	}
 
 /**
  * Convert an index into the abstract description.
+ *
+ * Since Sqlite does not have a way to get metadata about all indexes at once,
+ * additional queries are done here. Sqlite constraint names are not
+ * stable, and the names for constraints will not match those used to create
+ * the table. This is a limitation in Sqlite's metadata features.
  *
  * @param Cake\Database\Schema\Table $table The table object to append
  *    an index or constraint to.
@@ -159,6 +167,27 @@ class SqliteSchema {
  * @return void
  */
 	public function convertIndexDescription(Table $table, $row) {
+		$sql = sprintf(
+			'PRAGMA index_info(%s)',
+			$this->_driver->quoteIdentifier($row['name'])
+		);
+		$statement = $this->_driver->prepare($sql);
+		$statement->execute();
+		$columns = [];
+		foreach ($statement->fetchAll('assoc') as $column) {
+			$columns[] = $column['name'];
+		}
+		if ($row['unique']) {
+			$table->addConstraint($row['name'], [
+				'type' => 'unique',
+				'columns' => $columns
+			]);
+		} else {
+			$table->addIndex($row['name'], [
+				'type' => 'index',
+				'columns' => $columns
+			]);
+		}
 	}
 
 /**
