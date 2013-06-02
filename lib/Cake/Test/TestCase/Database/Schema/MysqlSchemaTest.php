@@ -282,6 +282,8 @@ SQL;
 		$schema = new SchemaCollection($connection);
 		$result = $schema->describe('articles');
 		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+
+		$this->assertCount(2, $result->constraints());
 		$expected = [
 			'primary' => [
 				'type' => 'primary',
@@ -296,13 +298,16 @@ SQL;
 				]
 			]
 		];
-		foreach ($expected as $name => $props) {
-			$this->assertEquals(
-				$props,
-				$result->constraint($name),
-				'Index definition does not match for ' . $name
-			);
-		}
+		$this->assertEquals($expected['primary'], $result->constraint('primary'));
+		$this->assertEquals($expected['length_idx'], $result->constraint('length_idx'));
+
+		$this->assertCount(1, $result->indexes());
+		$expected = [
+			'type' => 'index',
+			'columns' => ['author_id'],
+			'length' => []
+		];
+		$this->assertEquals($expected, $result->index('author_idx'));
 	}
 
 /**

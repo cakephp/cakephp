@@ -183,7 +183,7 @@ class MysqlSchema {
 			$type = strtolower($row['Index_type']);
 		} elseif ($row['Non_unique'] == 0 && $type !== 'primary') {
 			$type = 'unique';
-		} else {
+		} elseif ($type !== 'primary') {
 			$type = 'index';
 		}
 
@@ -203,7 +203,7 @@ class MysqlSchema {
 		// MySQL multi column indexes come back
 		// as multiple rows.
 		if (!empty($existing)) {
-			$columns = array_merge($existing['columns'], $columns);
+			$columns = array_unique(array_merge($existing['columns'], $columns));
 			$length = array_merge($existing['length'], $length);
 		}
 		if ($isIndex) {
