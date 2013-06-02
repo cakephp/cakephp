@@ -143,17 +143,15 @@ class ResultSet implements Iterator {
 		$alias = $table->alias();
 		$driver = $this->_query->connection()->driver();
 		if (empty($this->types[$alias])) {
-			$this->types[$alias] = array_map(function($f) {
-				return $f['type'];
-			}, $table->schema());
+			$schema = $table->schema();
+			foreach ($schema->columns() as $col) {
+				$this->types[$alias][$col] =  Type::build($schema->column($col)['type']);
+			}
 		}
 
 		foreach ($values as $field => $value) {
 			if (!isset($this->types[$alias][$field])) {
 				continue;
-			}
-			if (is_string($this->types[$alias][$field])) {
-				$this->types[$alias][$field] = Type::build($this->types[$alias][$field]);
 			}
 			$values[$field] = $this->types[$alias][$field]->toPHP($value, $driver);
 		}

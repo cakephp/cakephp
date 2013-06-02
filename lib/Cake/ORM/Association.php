@@ -377,7 +377,7 @@ abstract class Association {
 		if (empty($options['fields'])) {
 			$f = isset($options['fields']) ? $options['fields'] : null;
 			if ($options['includeFields'] && ($f === null || $f !== false)) {
-				$options['fields'] = array_keys($target->schema());
+				$options['fields'] = $target->schema()->columns();
 			}
 		}
 

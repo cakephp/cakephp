@@ -124,7 +124,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('things', $table->table());
 		$this->assertEquals('foo', $table->alias());
 		$this->assertSame($this->connection, $table->connection());
-		$this->assertEquals($schema, $table->schema());
+		$this->assertEquals(array_keys($schema), $table->schema()->columns());
 
 		Table::clearRegistry();
 		$this->assertEmpty(Table::config());
@@ -136,7 +136,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('dates', $table->table());
 		$this->assertEquals('foo', $table->alias());
 		$this->assertSame($this->connection, $table->connection());
-		$this->assertEquals($schema, $table->schema());
+		$this->assertEquals(array_keys($schema), $table->schema()->columns());
 	}
 
 	public function testInstance() {

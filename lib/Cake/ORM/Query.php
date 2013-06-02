@@ -37,9 +37,10 @@ class Query extends DatabaseQuery {
 
 	public function addDefaultTypes(Table $table) {
 		$alias = $table->alias();
+		$schema = $table->schema();
 		$fields = [];
-		foreach ($table->schema() as $f => $meta) {
-			$fields[$f] = $fields[$alias . '.' . $f] = $meta['type'];
+		foreach ($schema->columns() as $f) {
+			$fields[$f] = $fields[$alias . '.' . $f] = $schema->column($f)['type'];
 		}
 		$this->defaultTypes($this->defaultTypes() + $fields);
 	}
@@ -283,7 +284,7 @@ class Query extends DatabaseQuery {
 
 		if (!count($select)) {
 			$this->_hasFields = false;
-			$this->select(array_keys($this->repository()->schema()));
+			$this->select($this->repository()->schema()->columns());
 			$select = $this->clause('select');
 		}
 

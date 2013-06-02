@@ -21,6 +21,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\Utility\Inflector;
+use Cake\Database\Schema\Table as Schema;
 
 class Table {
 
@@ -144,9 +145,14 @@ class Table {
 	public function schema($schema = null) {
 		if ($schema === null) {
 			if ($this->_schema === null) {
-				$this->_schema = $this->connection()->describe($this->_table);
+				$this->_schema = $this->connection()
+					->schemaCollection()
+					->describe($this->_table);
 			}
 			return $this->_schema;
+		}
+		if (is_array($schema)) {
+			$schema = new Schema($this->table(), $schema);
 		}
 		return $this->_schema = $schema;
 	}
