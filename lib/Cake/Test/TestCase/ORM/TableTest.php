@@ -115,7 +115,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['things' => $options], $map);
 		$this->assertEquals($options, Table::config('things'));
 
-		$schema = ['id' => ['rubbish']];
+		$schema = ['id' => ['type' => 'rubbish']];
 		$options += ['schema' => $schema];
 		Table::config('things', $options);
 
@@ -125,6 +125,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('foo', $table->alias());
 		$this->assertSame($this->connection, $table->connection());
 		$this->assertEquals(array_keys($schema), $table->schema()->columns());
+		$this->assertEquals($schema['id']['type'], $table->schema()->column('id')['type']);
 
 		Table::clearRegistry();
 		$this->assertEmpty(Table::config());
