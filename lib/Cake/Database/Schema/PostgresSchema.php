@@ -239,7 +239,6 @@ class PostgresSchema {
 		}
 	}
 
-
 /**
  * Generate the SQL fragment for a single column.
  *

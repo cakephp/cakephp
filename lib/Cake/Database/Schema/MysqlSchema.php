@@ -332,7 +332,6 @@ class MysqlSchema {
 		return $out;
 	}
 
-
 /**
  * Generate the SQL fragments for defining table constraints.
  *

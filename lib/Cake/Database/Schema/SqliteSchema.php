@@ -195,6 +195,7 @@ class SqliteSchema {
  * @param Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
+ * @throws Cake\Error\Exception On unknown column types.
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
