@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command\Task;
 
@@ -86,6 +86,9 @@ class FixtureTask extends BakeTask {
 			'help' => __d('cake_console', 'Importing schema for fixtures rather than hardcoding it.'),
 			'short' => 's',
 			'boolean' => true
+		))->addOption('theme', array(
+			'short' => 't',
+			'help' => __d('cake_console', 'Theme to use when baking code.')
 		))->addOption('records', array(
 			'help' => __d('cake_console', 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10.'),
 			'short' => 'r',

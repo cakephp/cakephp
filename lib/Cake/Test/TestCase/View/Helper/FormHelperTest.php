@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
 
@@ -32,7 +32,7 @@ use Cake\View\View;
 /**
  * ContactTestController class
  *
- * @package Cake.Test.Case.View.Helper
+ * @package       Cake.Test.Case.View.Helper
  */
 class ContactTestController extends Controller {
 
@@ -47,7 +47,6 @@ class ContactTestController extends Controller {
 /**
  * Contact class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class Contact extends TestModel {
@@ -149,7 +148,6 @@ class Contact extends TestModel {
 /**
  * ContactTagsContact class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ContactTagsContact extends TestModel {
@@ -187,7 +185,6 @@ class ContactTagsContact extends TestModel {
 /**
  * ContactNonStandardPk class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ContactNonStandardPk extends Contact {
@@ -216,7 +213,6 @@ class ContactNonStandardPk extends Contact {
 /**
  * ContactTag class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ContactTag extends Model {
@@ -244,7 +240,6 @@ class ContactTag extends Model {
 /**
  * UserForm class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class UserForm extends TestModel {
@@ -285,7 +280,6 @@ class UserForm extends TestModel {
 /**
  * OpenidUrl class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class OpenidUrl extends TestModel {
@@ -341,7 +335,6 @@ class OpenidUrl extends TestModel {
 /**
  * ValidateUser class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ValidateUser extends TestModel {
@@ -391,7 +384,6 @@ class ValidateUser extends TestModel {
 /**
  * ValidateProfile class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ValidateProfile extends TestModel {
@@ -451,7 +443,6 @@ class ValidateProfile extends TestModel {
 /**
  * ValidateItem class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ValidateItem extends TestModel {
@@ -501,7 +492,6 @@ class ValidateItem extends TestModel {
 /**
  * TestMail class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class TestMail extends TestModel {
@@ -518,8 +508,7 @@ class TestMail extends TestModel {
 /**
  * FormHelperTest class
  *
- * @package	   cake
- * @subpackage       Cake.Test.Case.View.Helper
+ * @package       Cake.Test.Case.View.Helper
  * @property FormHelper $Form
  */
 class FormHelperTest extends TestCase {

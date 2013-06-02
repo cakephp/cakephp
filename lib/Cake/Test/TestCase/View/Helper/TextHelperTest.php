@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
 
@@ -26,6 +26,11 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TextHelper;
 use Cake\View\View;
 
+/**
+ * Class TextHelperTestObject
+ *
+ * @package       Cake.Test.Case.View.Helper
+ */
 class TextHelperTestObject extends TextHelper {
 
 	public function attach(StringMock $string) {
@@ -40,6 +45,8 @@ class TextHelperTestObject extends TextHelper {
 
 /**
  * StringMock class
+ *
+ * @package       Cake.Test.Case.View.Helper
  */
 class StringMock {
 }

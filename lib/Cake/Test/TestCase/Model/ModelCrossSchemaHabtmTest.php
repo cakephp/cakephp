@@ -17,10 +17,15 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 2.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 require_once __DIR__ . DS . 'ModelTestBase.php';
 
+/**
+ * Class ModelCrossSchemaHabtmTest
+ *
+ * @package       Cake.Test.Case.Model
+ */
 class ModelCrossSchemaHabtmTest extends BaseModelTest {
 
 /**

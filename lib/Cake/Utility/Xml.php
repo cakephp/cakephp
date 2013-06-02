@@ -17,7 +17,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP v .0.10.3.1400
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
 
@@ -129,6 +129,7 @@ class Xml {
  * @param string $input The input to load.
  * @param array $options The options to use. See Xml::build()
  * @return SimpleXmlElement|DOMDocument
+ * @throws Cake\Error\XmlException
  */
 	protected static function _loadXml($input, $options) {
 		$hasDisable = function_exists('libxml_disable_entity_loader');
@@ -136,16 +137,23 @@ class Xml {
 		if ($hasDisable && !$options['loadEntities']) {
 			libxml_disable_entity_loader(true);
 		}
-		if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-			$xml = new \SimpleXMLElement($input, LIBXML_NOCDATA);
-		} else {
-			$xml = new \DOMDocument();
-			$xml->loadXML($input);
+		try {
+			if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+				$xml = new \SimpleXMLElement($input, LIBXML_NOCDATA);
+			} else {
+				$xml = new \DOMDocument();
+				$xml->loadXML($input);
+			}
+		} catch (\Exception $e) {
+			$xml = null;
 		}
 		if ($hasDisable && !$options['loadEntities']) {
 			libxml_disable_entity_loader(false);
 		}
 		libxml_use_internal_errors($internalErrors);
+		if ($xml === null) {
+			throw new Error\XmlException(__d('cake_dev', 'Xml cannot be read.'));
+		}
 		return $xml;
 	}
 

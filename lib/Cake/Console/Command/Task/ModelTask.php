@@ -14,7 +14,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command\Task;
 
@@ -994,6 +994,9 @@ class ModelTask extends BakeTask {
 			))->addOption('plugin', array(
 				'short' => 'p',
 				'help' => __d('cake_console', 'Plugin to bake the model into.')
+			))->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addOption('connection', array(
 				'short' => 'c',
 				'help' => __d('cake_console', 'The connection the model table is on.')

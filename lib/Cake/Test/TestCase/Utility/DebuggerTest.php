@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
 
@@ -22,7 +22,7 @@ use Cake\Utility\Debugger;
 use Cake\View\View;
 
 /**
- * DebugggerTestCaseDebuggger class
+ * DebuggerTestCaseDebugger class
  *
  * @package       Cake.Test.Case.Utility
  */

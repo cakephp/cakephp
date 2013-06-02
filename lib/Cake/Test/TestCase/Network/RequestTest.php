@@ -11,7 +11,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Network
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Network;
 
@@ -22,6 +22,11 @@ use Cake\Routing\Dispatcher;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
 
+/**
+ * Class TestCakeRequest
+ *
+ * @package       Cake.Test.Case.Network
+ */
 class RequestTest extends TestCase {
 
 /**

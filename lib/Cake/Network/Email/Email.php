@@ -11,7 +11,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network.Email
  * @since         CakePHP(tm) v 2.0.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Network\Email;
 
@@ -1251,6 +1251,7 @@ class Email {
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
 		$lines = explode("\n", $message);
 		$formatted = array();
+		$cut = ($wrapLength == CakeEmail::LINE_LENGTH_MUST) ? true : false;
 
 		foreach ($lines as $line) {
 			if (empty($line)) {
@@ -1264,7 +1265,7 @@ class Email {
 			if (!preg_match('/<[a-z]+.*>/i', $line)) {
 				$formatted = array_merge(
 					$formatted,
-					explode("\n", wordwrap($line, $wrapLength, "\n"))
+					explode("\n", wordwrap($line, $wrapLength, "\n", $cut))
 				);
 				continue;
 			}
@@ -1283,7 +1284,10 @@ class Email {
 							$tmpLineLength += $tagLength;
 						} else {
 							if ($tmpLineLength > 0) {
-								$formatted[] = trim($tmpLine);
+								$formatted = array_merge(
+									$formatted,
+									explode("\n", wordwrap(trim($tmpLine), $wrapLength, "\n", $cut))
+								);
 								$tmpLine = '';
 								$tmpLineLength = 0;
 							}

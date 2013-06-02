@@ -15,9 +15,10 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 require_once __DIR__ . DS . 'ModelTestBase.php';
+
 /**
  * ModelReadTest
  *
@@ -27,7 +28,7 @@ class ModelReadTest extends BaseModelTest {
 
 /**
  * testExists function
- * @retun void
+ * @return void
  */
 	public function testExists() {
 		$this->loadFixtures('User');
@@ -7937,6 +7938,27 @@ class ModelReadTest extends BaseModelTest {
 			array(
 				'conditions' => array(
 					'Article.id NOT' => array(1)
+				)
+			)
+		);
+		$this->assertTrue(is_array($result) && !empty($result));
+	}
+
+/**
+ * test to assert that != in key together with a single element array will work
+ *
+ * @return void
+ */
+	public function testNotEqualsInArrayWithOneValue() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+		$Article->recursive = -1;
+
+		$result = $Article->find(
+			'all',
+			array(
+				'conditions' => array(
+					'Article.id !=' => array(1)
 				)
 			)
 		);

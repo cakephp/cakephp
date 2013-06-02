@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Model\Datasource;
 
@@ -23,6 +23,11 @@ use Cake\Model\Datasource\Session\CacheSession;
 use Cake\Model\Datasource\Session\DatabaseSession;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Class TestCakeSession
+ *
+ * @package       Cake.Test.Case.Model.Datasource
+ */
 class TestCakeSession extends Session {
 
 	public static function setUserAgent($value) {
@@ -35,6 +40,11 @@ class TestCakeSession extends Session {
 
 }
 
+/**
+ * Class TestCacheSession
+ *
+ * @package       Cake.Test.Case.Model.Datasource
+ */
 class TestCacheSession extends CacheSession {
 
 	protected function _writeSession() {
@@ -43,6 +53,11 @@ class TestCacheSession extends CacheSession {
 
 }
 
+/**
+ * Class TestDatabaseSession
+ *
+ * @package       Cake.Test.Case.Model.Datasource
+ */
 class TestDatabaseSession extends DatabaseSession {
 
 	protected function _writeSession() {

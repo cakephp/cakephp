@@ -15,7 +15,7 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Configure
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Configure;
 
@@ -24,6 +24,11 @@ use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Class PhpReaderTest
+ *
+ * @package       Cake.Test.Case.Configure
+ */
 class PhpReaderTest extends TestCase {
 
 /**
@@ -146,10 +151,10 @@ class PhpReaderTest extends TestCase {
 		$expected = <<<PHP
 <?php
 \$config = array (
-  'One' => 
+  'One' =>
   array (
     'two' => 'value',
-    'three' => 
+    'three' =>
     array (
       'four' => 'value four',
     ),
@@ -157,7 +162,7 @@ class PhpReaderTest extends TestCase {
     'bool_false' => false,
     'bool_true' => true,
   ),
-  'Asset' => 
+  'Asset' =>
   array (
     'timestamp' => 'force',
   ),

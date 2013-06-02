@@ -18,7 +18,13 @@
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+
+/**
+ * Class TestPluginAuthors
+ *
+ * @package       Cake.Test.TestApp.Plugin.TestPlugin.Model
  */
 namespace TestPlugin\Model;
 

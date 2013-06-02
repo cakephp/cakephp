@@ -18,7 +18,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Error
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Error;
 
@@ -158,12 +158,14 @@ class ExceptionRenderer {
 			$response->header($exception->responseHeader());
 		}
 
-		try {
-			$controller = new ErrorController($request, $response);
-			$controller->startupProcess();
-		} catch (\Exception $e) {
-			if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
-				$controller->RequestHandler->startup($controller);
+		if (class_exists('AppController')) {
+			try {
+				$controller = new ErrorController($request, $response);
+				$controller->startupProcess();
+			} catch (\Exception $e) {
+				if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
+					$controller->RequestHandler->startup($controller);
+				}
 			}
 		}
 		if (empty($controller)) {

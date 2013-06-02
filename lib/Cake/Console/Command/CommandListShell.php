@@ -11,7 +11,7 @@
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Console.Command
  * @since         CakePHP v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command;
 

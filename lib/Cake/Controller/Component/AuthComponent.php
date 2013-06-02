@@ -17,7 +17,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
 
@@ -799,7 +799,7 @@ class AuthComponent extends Component {
  *
  * @param string $password Password to hash
  * @return string Hashed password
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#hashing-passwords
+ * @deprecated Since 2.4. Use Security::hash() directly or a password hasher object.
  */
 	public static function password($password) {
 		return Security::hash($password, null, true);

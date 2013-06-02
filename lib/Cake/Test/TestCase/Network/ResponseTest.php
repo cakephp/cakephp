@@ -15,7 +15,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Network
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Network;
 
@@ -23,6 +23,11 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Class CakeResponseTest
+ *
+ * @package       Cake.Test.Case.Network
+ */
 class ResponseTest extends TestCase {
 
 /**

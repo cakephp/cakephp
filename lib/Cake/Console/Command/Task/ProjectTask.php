@@ -10,7 +10,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command\Task;
 
@@ -464,6 +464,9 @@ class ProjectTask extends Shell {
 			))->addOption('empty', array(
 				'boolean' => true,
 				'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
+			))->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addOption('skel', array(
 				'default' => current(App::core('Console')) . 'Templates' . DS . 'skel',
 				'help' => __d('cake_console', 'The directory layout to use for the new application skeleton. Defaults to cake/Console/Templates/skel of CakePHP used to create the project.')

@@ -17,7 +17,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake
  * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Core\Configure;
 use Cake\I18n\I18n;
@@ -98,6 +98,7 @@ HTML;
 ########## DEBUG ##########
 %s
 ###########################
+
 TEXT;
 			$template = $html;
 			if (php_sapi_name() === 'cli' || $showHtml === false) {
@@ -254,8 +255,8 @@ if (!function_exists('pr')) {
 
 /**
  * print_r() convenience function
- * 
- * In terminals this will act the same as using print_r() directly, when not run on cli 
+ *
+ * In terminals this will act the same as using print_r() directly, when not run on cli
  * print_r() will wrap <PRE> tags around the output of given array. Similar to debug().
  *
  * @see	debug()
