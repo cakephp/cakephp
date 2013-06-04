@@ -231,12 +231,12 @@ class PostgresSchema {
 				'type' => $type,
 				'columns' => $columns
 			]);
-		} else {
-			$table->addIndex($name, [
-				'type' => $type,
-				'columns' => $columns
-			]);
+			return;
 		}
+		$table->addIndex($name, [
+			'type' => $type,
+			'columns' => $columns
+		]);
 	}
 
 /**

@@ -155,7 +155,7 @@ class SqliteSchema {
 /**
  * Convert an index into the abstract description.
  *
- * Since Sqlite does not have a way to get metadata about all indexes at once,
+ * Since SQLite does not have a way to get metadata about all indexes at once,
  * additional queries are done here. Sqlite constraint names are not
  * stable, and the names for constraints will not match those used to create
  * the table. This is a limitation in Sqlite's metadata features.
