@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database;
+
 use Cake\Database\Expression\FunctionExpression;
 
 /**

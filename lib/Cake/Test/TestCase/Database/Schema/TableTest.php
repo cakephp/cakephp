@@ -109,7 +109,7 @@ class TableTest extends TestCase {
  * Test that an exception is raised when constraintes
  * are added for fields that do not exist.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException Cake\Database\Exception
  * @return void
  */
 	public function testAddConstraintErrorWhenFieldIsMissing() {
@@ -141,7 +141,7 @@ class TableTest extends TestCase {
  * Test that an exception is raised when indexes
  * are added for fields that do not exist.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException Cake\Database\Exception
  * @return void
  */
 	public function testAddIndexErrorWhenFieldIsMissing() {
@@ -155,7 +155,7 @@ class TableTest extends TestCase {
  * Test that exceptions are raised when indexes
  * are added with invalid types
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException Cake\Database\Exception
  * @return void
  */
 	public function testAddIndexErrorWrongType() {

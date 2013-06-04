@@ -16,8 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
-use Cake\Error;
 
 /**
  * Schema management/reflection features for Sqlite
@@ -48,13 +48,13 @@ class SqliteSchema {
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
- * @throws Cake\Error\Exception
+ * @throws Cake\Database\Exception
  * @return array Array of column information.
  */
 	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
-			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
 		}
 		$col = strtolower($matches[1]);
 		$length = null;
@@ -119,9 +119,8 @@ class SqliteSchema {
  *
  * @param Cake\Database\Schema\Table $table The table object to append fields to.
  * @param array $row The row data from describeTableSql
- * @param array $fieldParams Additional field parameters to parse.
  */
-	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
+	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->convertColumn($row['type']);
 		$field += [
 			'null' => !$row['notnull'],
@@ -140,11 +139,63 @@ class SqliteSchema {
 	}
 
 /**
+ * Get the SQL to describe the indexes in a table.
+ *
+ * @param string $table The table name to get information on.
+ * @return array An array of (sql, params) to execute.
+ */
+	public function describeIndexSql($table) {
+		$sql = sprintf(
+			'PRAGMA index_list(%s)',
+			$this->_driver->quoteIdentifier($table)
+		);
+		return [$sql, []];
+	}
+
+/**
+ * Convert an index into the abstract description.
+ *
+ * Since SQLite does not have a way to get metadata about all indexes at once,
+ * additional queries are done here. Sqlite constraint names are not
+ * stable, and the names for constraints will not match those used to create
+ * the table. This is a limitation in Sqlite's metadata features.
+ *
+ * @param Cake\Database\Schema\Table $table The table object to append
+ *    an index or constraint to.
+ * @param array $row The row data from describeIndexSql
+ * @return void
+ */
+	public function convertIndexDescription(Table $table, $row) {
+		$sql = sprintf(
+			'PRAGMA index_info(%s)',
+			$this->_driver->quoteIdentifier($row['name'])
+		);
+		$statement = $this->_driver->prepare($sql);
+		$statement->execute();
+		$columns = [];
+		foreach ($statement->fetchAll('assoc') as $column) {
+			$columns[] = $column['name'];
+		}
+		if ($row['unique']) {
+			$table->addConstraint($row['name'], [
+				'type' => Table::CONSTRAINT_UNIQUE,
+				'columns' => $columns
+			]);
+		} else {
+			$table->addIndex($row['name'], [
+				'type' => Table::INDEX_INDEX,
+				'columns' => $columns
+			]);
+		}
+	}
+
+/**
  * Generate the SQL fragment for a single column in Sqlite
  *
  * @param Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
+ * @throws Cake\Database\Exception On unknown column types.
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
@@ -163,7 +214,7 @@ class SqliteSchema {
 			'timestamp' => ' TIMESTAMP',
 		];
 		if (!isset($typeMap[$data['type']])) {
-			throw new Error\Exception(__d('cake_dev', 'Unknown column type for "%s"', $name));
+			throw new Exception(__d('cake_dev', 'Unknown column type for "%s"', $name));
 		}
 
 		$out = $this->_driver->quoteIdentifier($name);

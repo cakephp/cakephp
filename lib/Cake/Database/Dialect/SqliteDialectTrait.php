@@ -21,7 +21,6 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Query;
 use Cake\Database\SqlDialectTrait;
-use Cake\Error;
 
 trait SqliteDialectTrait {
 

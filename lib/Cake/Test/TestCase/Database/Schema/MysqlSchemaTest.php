@@ -140,7 +140,7 @@ class MysqlSchemaTest extends TestCase {
 		$connection->execute('DROP TABLE IF EXISTS authors');
 
 		$table = <<<SQL
-CREATE TABLE authors(
+CREATE TABLE authors (
 id INT(11) PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(50),
 bio TEXT,
@@ -150,14 +150,16 @@ SQL;
 		$connection->execute($table);
 
 		$table = <<<SQL
-CREATE TABLE articles(
+CREATE TABLE articles (
 id BIGINT PRIMARY KEY AUTO_INCREMENT,
 title VARCHAR(20) COMMENT 'A title',
 body TEXT,
 author_id INT(11) NOT NULL,
 published BOOLEAN DEFAULT 0,
 allow_comments TINYINT(1) DEFAULT 0,
-created DATETIME
+created DATETIME,
+KEY `author_idx` (`author_id`),
+UNIQUE KEY `length_idx` (`title`(4))
 ) COLLATE=utf8_general_ci
 SQL;
 		$connection->execute($table);
@@ -260,8 +262,52 @@ SQL;
 		];
 		$this->assertEquals(['id'], $result->primaryKey());
 		foreach ($expected as $field => $definition) {
-			$this->assertEquals($definition, $result->column($field));
+			$this->assertEquals(
+				$definition,
+				$result->column($field),
+				'Field definition does not match for ' . $field
+			);
 		}
+	}
+
+/**
+ * Test describing a table with indexes in Mysql
+ *
+ * @return void
+ */
+	public function testDescribeTableIndexes() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->describe('articles');
+		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+
+		$this->assertCount(2, $result->constraints());
+		$expected = [
+			'primary' => [
+				'type' => 'primary',
+				'columns' => ['id'],
+				'length' => []
+			],
+			'length_idx' => [
+				'type' => 'unique',
+				'columns' => ['title'],
+				'length' => [
+					'title' => 4,
+				]
+			]
+		];
+		$this->assertEquals($expected['primary'], $result->constraint('primary'));
+		$this->assertEquals($expected['length_idx'], $result->constraint('length_idx'));
+
+		$this->assertCount(1, $result->indexes());
+		$expected = [
+			'type' => 'index',
+			'columns' => ['author_id'],
+			'length' => []
+		];
+		$this->assertEquals($expected, $result->index('author_idx'));
 	}
 
 /**

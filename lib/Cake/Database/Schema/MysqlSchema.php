@@ -16,8 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
-use Cake\Error;
 
 /**
  * Schema management/reflection features for MySQL
@@ -63,18 +63,29 @@ class MysqlSchema {
 	}
 
 /**
+ * Get the SQL to describe the indexes in a table.
+ *
+ * @param string $table The table name to get information on.
+ * @return array An array of (sql, params) to execute.
+ */
+	public function describeIndexSql($table) {
+		$sql = sprintf('SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($table));
+		return [$sql, []];
+	}
+
+/**
  * Convert a MySQL column type into an abstract type.
  *
  * The returned type will be a type that Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
  * @return array Array of column information.
- * @throws Cake\Error\Exception When column type cannot be parsed.
+ * @throws Cake\Database\Exception When column type cannot be parsed.
  */
 	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
-			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
 		}
 
 		$col = strtolower($matches[1]);
@@ -126,46 +137,78 @@ class MysqlSchema {
  *
  * @param Cake\Database\Schema\Table $table The table object to append fields to.
  * @param array $row The row data from describeTableSql
- * @param array $fieldParams Additional field parameters to parse.
  * @return void
  */
-	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
+	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->convertColumn($row['Type']);
 		$field += [
 			'null' => $row['Null'] === 'YES' ? true : false,
 			'default' => $row['Default'],
+			'collate' => $row['Collation'],
+			'comment' => $row['Comment'],
 		];
-		foreach ($fieldParams as $key => $metadata) {
-			if (!empty($row[$metadata['column']])) {
-				$field[$key] = $row[$metadata['column']];
-			}
-		}
 		$table->addColumn($row['Field'], $field);
-		if (!empty($row['Key']) && $row['Key'] === 'PRI') {
-			$table->addConstraint('primary', [
-				'type' => Table::CONSTRAINT_PRIMARY,
-				'columns' => [$row['Field']]
-			]);
-		}
 	}
 
 /**
- * Get additional column meta data used in schema reflections.
+ * Convert an index into the abstract description.
  *
- * @return array
+ * @param Cake\Database\Schema\Table $table The table object to append
+ *    an index or constraint to.
+ * @param array $row The row data from describeIndexSql
+ * @return void
  */
-	public function extraSchemaColumns() {
-		return [
-			'charset' => [
-				'column' => false,
-			],
-			'collate' => [
-				'column' => 'Collation',
-			],
-			'comment' => [
-				'column' => 'Comment',
-			]
-		];
+	public function convertIndexDescription(Table $table, $row) {
+		$type = null;
+		$columns = $length = [];
+
+		$name = $row['Key_name'];
+		if ($name === 'PRIMARY') {
+			$name = $type = Table::CONSTRAINT_PRIMARY;
+		}
+
+		$columns[] = $row['Column_name'];
+
+		if ($row['Index_type'] === 'FULLTEXT') {
+			$type = Table::INDEX_FULLTEXT;
+		} elseif ($row['Non_unique'] == 0 && $type !== 'primary') {
+			$type = Table::CONSTRAINT_UNIQUE;
+		} elseif ($type !== 'primary') {
+			$type = Table::INDEX_INDEX;
+		}
+
+		if (!empty($row['Sub_part'])) {
+			$length[$row['Column_name']] = $row['Sub_part'];
+		}
+		$isIndex = (
+			$type == Table::INDEX_INDEX ||
+			$type == Table::INDEX_FULLTEXT
+		);
+		if ($isIndex) {
+			$existing = $table->index($name);
+		} else {
+			$existing = $table->constraint($name);
+		}
+
+		// MySQL multi column indexes come back
+		// as multiple rows.
+		if (!empty($existing)) {
+			$columns = array_merge($existing['columns'], $columns);
+			$length = array_merge($existing['length'], $length);
+		}
+		if ($isIndex) {
+			$table->addIndex($name, [
+				'type' => $type,
+				'columns' => $columns,
+				'length' => $length
+			]);
+		} else {
+			$table->addConstraint($name, [
+				'type' => $type,
+				'columns' => $columns,
+				'length' => $length
+			]);
+		}
 	}
 
 /**
@@ -288,7 +331,6 @@ class MysqlSchema {
 		}
 		return $out;
 	}
-
 
 /**
  * Generate the SQL fragments for defining table constraints.

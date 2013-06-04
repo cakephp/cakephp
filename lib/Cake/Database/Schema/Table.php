@@ -16,8 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Exception;
 use Cake\Database\Connection;
-use Cake\Error;
 
 /**
  * Represents a single table in a database schema.
@@ -215,7 +215,7 @@ class Table {
  * @param string $name The name of the index.
  * @param array $attrs The attributes for the index.
  * @return Table $this
- * @throws Cake\Error\Exception
+ * @throws Cake\Database\Exception
  */
 	public function addIndex($name, $attrs) {
 		if (is_string($attrs)) {
@@ -225,11 +225,11 @@ class Table {
 		$attrs = $attrs + $this->_indexKeys;
 
 		if (!in_array($attrs['type'], $this->_validIndexTypes, true)) {
-			throw new Error\Exception(__d('cake_dev', 'Invalid index type "%s"', $attrs['type']));
+			throw new Exception(__d('cake_dev', 'Invalid index type "%s"', $attrs['type']));
 		}
 		foreach ($attrs['columns'] as $field) {
 			if (empty($this->_columns[$field])) {
-				throw new Error\Exception(__d('cake_dev', 'Columns used in indexes must already exist.'));
+				throw new Exception(__d('cake_dev', 'Columns used in indexes must already exist.'));
 			}
 		}
 		$this->_indexes[$name] = $attrs;
@@ -288,7 +288,7 @@ class Table {
  * @param string $name The name of the constraint.
  * @param array $attrs The attributes for the constraint.
  * @return Table $this
- * @throws Cake\Error\Exception
+ * @throws Cake\Database\Exception
  */
 	public function addConstraint($name, $attrs) {
 		if (is_string($attrs)) {
@@ -298,11 +298,11 @@ class Table {
 		$attrs = $attrs + $this->_indexKeys;
 
 		if (!in_array($attrs['type'], $this->_validConstraintTypes, true)) {
-			throw new Error\Exception(__d('cake_dev', 'Invalid constraint type "%s"', $attrs['type']));
+			throw new Exception(__d('cake_dev', 'Invalid constraint type "%s"', $attrs['type']));
 		}
 		foreach ($attrs['columns'] as $field) {
 			if (empty($this->_columns[$field])) {
-				throw new Error\Exception(__d('cake_dev', 'Columns used in constraints must already exist.'));
+				throw new Exception(__d('cake_dev', 'Columns used in constraints must already exist.'));
 			}
 		}
 		$this->_constraints[$name] = $attrs;
