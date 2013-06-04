@@ -387,20 +387,20 @@ class CookieComponent extends Component {
  * @return integer Unix timestamp
  */
 	protected function _expire($expires = null) {
-		$now = time();
 		if (is_null($expires)) {
 			return $this->_expires;
 		}
 		$this->_reset = $this->_expires;
-
 		if (!$expires) {
 			return $this->_expires = 0;
 		}
+		$now = new DateTime();
 
 		if (is_int($expires) || is_numeric($expires)) {
-			return $this->_expires = $now + intval($expires);
+			return $this->_expires = $now->format('U') + intval($expires);
 		}
-		return $this->_expires = strtotime($expires, $now);
+		$now->modify($expires);
+		return $this->_expires = $now->format('U');
 	}
 
 /**
