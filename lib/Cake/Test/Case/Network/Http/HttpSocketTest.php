@@ -1148,6 +1148,30 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
+ * testPatch
+ *
+ * @return void
+ */
+	public function testPatch() {
+		$this->RequestSocket->reset();
+		$this->RequestSocket->expects($this->at(0))
+			->method('request')
+			->with(array('method' => 'PATCH', 'uri' => 'http://www.google.com/', 'body' => array()));
+
+		$this->RequestSocket->expects($this->at(1))
+			->method('request')
+			->with(array('method' => 'PATCH', 'uri' => 'http://www.google.com/', 'body' => array('Foo' => 'bar')));
+
+		$this->RequestSocket->expects($this->at(2))
+			->method('request')
+			->with(array('method' => 'PATCH', 'uri' => 'http://www.google.com/', 'body' => null, 'line' => 'Hey Server'));
+
+		$this->RequestSocket->patch('http://www.google.com/');
+		$this->RequestSocket->patch('http://www.google.com/', array('Foo' => 'bar'));
+		$this->RequestSocket->patch('http://www.google.com/', null, array('line' => 'Hey Server'));
+	}
+
+/**
  * testDelete
  *
  * @return void
