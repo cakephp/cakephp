@@ -16,6 +16,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Exception;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -1179,17 +1180,17 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param array|Query $data The data to insert.
  * @return Query
- * @throws Cake\Error\Exception if you try to set values before declaring columns.
+ * @throws Cake\Database\Exception if you try to set values before declaring columns.
  *   Or if you try to set values on non-insert queries.
  */
 	public function values($data) {
 		if ($this->_type !== 'insert') {
-			throw new Error\Exception(
+			throw new Exception(
 				__d('cake_dev', 'You cannot add values before defining columns to use.')
 			);
 		}
 		if (empty($this->_parts['insert'])) {
-			throw new Error\Exception(
+			throw new Exception(
 				__d('cake_dev', 'You cannot add values before defining columns to use.')
 			);
 		}
