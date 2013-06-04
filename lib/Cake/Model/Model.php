@@ -1497,6 +1497,14 @@ class Model extends Object implements CakeEventListener {
 		}
 		return $this->data;
 	}
+	
+/**
+ * This function is a convenient wrapper class to create(false) and, as the name suggests, clears the id, data, and validation errors.
+ * 
+ * @return array The current Model::data; after clearing via create(false)
+ * @see Model::create()
+ */
+	public function clear() { return $this->create(false); }
 
 /**
  * Returns a list of fields from the database, and sets the current model
