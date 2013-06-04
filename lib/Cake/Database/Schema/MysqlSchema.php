@@ -16,8 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
-use Cake\Error;
 
 /**
  * Schema management/reflection features for MySQL
@@ -80,12 +80,12 @@ class MysqlSchema {
  *
  * @param string $column The column type + length
  * @return array Array of column information.
- * @throws Cake\Error\Exception When column type cannot be parsed.
+ * @throws Cake\Database\Exception When column type cannot be parsed.
  */
 	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
-			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
 		}
 
 		$col = strtolower($matches[1]);

@@ -17,8 +17,8 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
+use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
-use Cake\Error;
 
 /**
  * Represents a database schema collection
@@ -72,7 +72,7 @@ class Collection {
  *
  * @param string $name The name of the table to describe.
  * @return Cake\Schema\Table|null Object with column metadata, or null.
- * @throws Cake\Error\Exception when table cannot be described.
+ * @throws Cake\Database\Exception when table cannot be described.
  */
 	public function describe($name) {
 		list($sql, $params) = $this->_dialect->describeTableSql(
@@ -82,10 +82,10 @@ class Collection {
 		try {
 			$statement = $this->_connection->execute($sql, $params);
 		} catch (\PDOException $e) {
-			throw new Error\Exception($e->getMessage(), 500, $e);
+			throw new Exception($e->getMessage(), 500, $e);
 		}
 		if (count($statement) === 0) {
-			throw new Error\Exception(__d('cake_dev', 'Cannot describe %s. It has 0 columns.', $name));
+			throw new Exception(__d('cake_dev', 'Cannot describe %s. It has 0 columns.', $name));
 		}
 
 		$table = new Table($name);
@@ -100,7 +100,7 @@ class Collection {
 		try {
 			$statement = $this->_connection->execute($sql, $params);
 		} catch (\PDOException $e) {
-			throw new Error\Exception($e->getMessage(), 500, $e);
+			throw new Exception($e->getMessage(), 500, $e);
 		}
 		foreach ($statement->fetchAll('assoc') as $row) {
 			$this->_dialect->convertIndexDescription($table, $row);

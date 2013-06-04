@@ -16,8 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
-use Cake\Error;
 
 /**
  * Schema management/reflection features for Sqlite
@@ -48,13 +48,13 @@ class SqliteSchema {
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
- * @throws Cake\Error\Exception
+ * @throws Cake\Database\Exception
  * @return array Array of column information.
  */
 	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
-			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
 		}
 		$col = strtolower($matches[1]);
 		$length = null;
@@ -195,7 +195,7 @@ class SqliteSchema {
  * @param Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
- * @throws Cake\Error\Exception On unknown column types.
+ * @throws Cake\Database\Exception On unknown column types.
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
@@ -214,7 +214,7 @@ class SqliteSchema {
 			'timestamp' => ' TIMESTAMP',
 		];
 		if (!isset($typeMap[$data['type']])) {
-			throw new Error\Exception(__d('cake_dev', 'Unknown column type for "%s"', $name));
+			throw new Exception(__d('cake_dev', 'Unknown column type for "%s"', $name));
 		}
 
 		$out = $this->_driver->quoteIdentifier($name);
