@@ -160,7 +160,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 	}
 
 /**
- * test authenticate sucesss
+ * test authenticate success
  *
  * @return void
  */
