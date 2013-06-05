@@ -14,6 +14,7 @@
 
 App::uses('View', 'View');
 App::uses('Xml', 'Utility');
+App::uses('Hash', 'Utility');
 
 /**
  * A view class that is used for creating XML responses.
@@ -104,8 +105,13 @@ class XmlView extends View {
 
 		if (is_array($serialize)) {
 			$data = array($rootNode => array());
-			foreach ($serialize as $key) {
-				$data[$rootNode][$key] = $this->viewVars[$key];
+			$serialize = Hash::normalize($serialize);
+			foreach ($serialize as $key => $alias) {
+				if (empty($alias)) {
+					$alias = $key;
+				}
+
+				$data[$rootNode][$alias] = $this->viewVars[$key];
 			}
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
