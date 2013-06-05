@@ -497,6 +497,19 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
+ * Issues a PATCH request to the specified URI, query, and request.
+ *
+ * @param string|array $uri URI to request, See HttpSocket::_parseUri()
+ * @param array $data Array of PATCH data keys and values.
+ * @param array $request An indexed array with indexes such as 'method' or uri
+ * @return mixed Result of request
+ */
+	public function patch($uri = null, $data = array(), $request = array()) {
+		$request = Hash::merge(array('method' => 'PATCH', 'uri' => $uri, 'body' => $data), $request);
+		return $this->request($request);
+	}
+
+/**
  * Issues a DELETE request to the specified URI, query, and request.
  *
  * @param string|array $uri URI to request (see {@link _parseUri()})
