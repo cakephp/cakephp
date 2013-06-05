@@ -80,7 +80,13 @@ class Plugin {
 			}
 			return;
 		}
-		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false);
+
+		$namespace = $plugin;
+		if (strpos($namespace, '\\', 1)) {
+			$plugin = substr($plugin, strrpos($plugin, '\\') + 1);
+		}
+		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $namespace, 'ignoreMissing' => false);
+
 		if (empty($config['path'])) {
 			$namespacePath = str_replace('\\', DS, $config['namespace']);
 			foreach (App::path('Plugin') as $path) {
@@ -100,7 +106,15 @@ class Plugin {
 		if (empty(static::$_plugins[$plugin]['path'])) {
 			throw new Error\MissingPluginException(array('plugin' => $plugin));
 		}
-		$loader = new ClassLoader($plugin, dirname(static::$_plugins[$plugin]['path']));
+
+		$path = dirname(static::$_plugins[$plugin]['path']);
+		$nsCount = substr_count($config['namespace'], '\\');
+		while ($nsCount) {
+			$path = dirname($path);
+			$nsCount--;
+		}
+
+		$loader = new ClassLoader($config['namespace'], $path);
 		$loader->register();
 		if (!empty(static::$_plugins[$plugin]['bootstrap'])) {
 			static::bootstrap($plugin);
