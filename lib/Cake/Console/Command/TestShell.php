@@ -171,8 +171,8 @@ class TestShell extends Shell {
  */
 	public function initialize() {
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
-		$sucess = $this->_dispatcher->loadTestFramework();
-		if (!$sucess) {
+		$success = $this->_dispatcher->loadTestFramework();
+		if (!$success) {
 			throw new Exception(__d('cake_dev', 'Please install PHPUnit framework <info>(http://www.phpunit.de)</info>'));
 		}
 	}
