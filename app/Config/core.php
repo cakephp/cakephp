@@ -109,6 +109,15 @@
 	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
 
 /**
+ * To configure CakePHP to use a particular domain URL
+ * for any URL generation inside the application, set the following
+ * configuration variable to the http(s) address to your domain. This
+ * will override the automatic detection of full base URL and can be
+ * useful when generating links from the CLI (e.g. sending emails)
+ */
+	//Configure::write('App.fullBaseURL', 'http://example.com');
+
+/**
  * Uncomment the define below to use CakePHP prefix routes.
  *
  * The value of the define determines the names of the routes
