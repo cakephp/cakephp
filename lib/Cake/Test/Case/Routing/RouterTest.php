@@ -50,6 +50,7 @@ class RouterTest extends CakeTestCase {
 		parent::tearDown();
 		CakePlugin::unload();
 		Router::baseURL('');
+		Configure::write('App.fullBaseURL', 'http://localhost');
 	}
 
 /**
@@ -73,8 +74,10 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals(FULL_BASE_URL, Router::baseUrl());
 		Router::baseURL('http://example.com');
 		$this->assertEquals('http://example.com/', Router::url('/', true));
+		$this->assertEquals('http://example.com', Configure::read('App.fullBaseURL'));
 		Router::baseURL('https://example.com');
 		$this->assertEquals('https://example.com/', Router::url('/', true));
+		$this->assertEquals('https://example.com', Configure::read('App.fullBaseURL'));
 	}
 
 /**

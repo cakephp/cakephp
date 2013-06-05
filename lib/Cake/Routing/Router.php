@@ -920,6 +920,7 @@ class Router {
 	public static function baseURL($base = null) {
 		if ($base !== null) {
 			self::$_baseURL = $base;
+			Configure::write('App.fullBaseURL', $base);
 		}
 		if (empty(self::$_baseURL)) {
 			self::$_baseURL = Configure::read('App.fullBaseURL');
