@@ -68,6 +68,16 @@ class PluginTest extends TestCase {
 		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('CustomPlugin'));
 	}
 
+	public function testLoadNamespacedPlugin() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin2' . DS)
+		), App::RESET);
+
+		Plugin::load('Company\TestPluginThree');
+		$expected = array('TestPluginThree');
+		$this->assertEquals($expected, Plugin::loaded());
+	}
+
 /**
  * Tests loading a single plugin
  *
