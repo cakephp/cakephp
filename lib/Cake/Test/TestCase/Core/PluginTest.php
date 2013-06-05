@@ -73,9 +73,14 @@ class PluginTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin2' . DS)
 		), App::RESET);
 
-		Plugin::load('Company\TestPluginThree');
+		$mock = $this->getMock('Cake\Core\Plugin', array('_addClassLoader'));
+		$mock->staticExpects($this->once())
+			->method('_addClassLoader')
+			->with('Company\TestPluginThree', CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin2');
+		$mock::load('Company\TestPluginThree');
+
 		$expected = array('TestPluginThree');
-		$this->assertEquals($expected, Plugin::loaded());
+		$this->assertEquals($expected, $mock::loaded());
 	}
 
 /**

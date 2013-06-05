@@ -114,8 +114,7 @@ class Plugin {
 			$nsCount--;
 		}
 
-		$loader = new ClassLoader($config['namespace'], $path);
-		$loader->register();
+		static::_addClassLoader($config['namespace'], $path);
 		if (!empty(static::$_plugins[$plugin]['bootstrap'])) {
 			static::bootstrap($plugin);
 		}
@@ -266,6 +265,18 @@ class Plugin {
 		} else {
 			unset(static::$_plugins[$plugin]);
 		}
+	}
+
+/**
+ * Add a class loader instance for the specified namespace and path
+ *
+ * @param string $namespace
+ * @param string $path
+ * @return void
+ */
+	protected static function _addClassLoader($ns, $path) {
+		$loader = new ClassLoader($ns, $path);
+		$loader->register();
 	}
 
 /**
