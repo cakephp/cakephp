@@ -805,7 +805,7 @@ class Router {
 		if (empty($url)) {
 			$output = isset($path['here']) ? $path['here'] : '/';
 			if ($full) {
-				$output =  self::baseURL() . $output;
+				$output = self::baseURL() . $output;
 			}
 			return $output;
 		} elseif (is_array($url)) {
