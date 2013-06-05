@@ -210,7 +210,7 @@ class HtmlHelperTest extends CakeTestCase {
 		Router::reload();
 
 		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', 'full_base' => true));
-		$expected = array('a' => array('href' => FULL_BASE_URL . '/posts'), 'Posts', '/a');
+		$expected = array('a' => array('href' => Router::baseURL() . '/posts'), 'Posts', '/a');
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link('Home', '/home', array('confirm' => 'Are you sure you want to do this?'));

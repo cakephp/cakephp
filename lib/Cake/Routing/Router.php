@@ -57,6 +57,14 @@ class Router {
 	public static $initialized = false;
 
 /**
+ * Contains the base string that will be applied to all generated URLs
+ * For example `https://example.com`
+ *
+ * @var string
+ */
+	protected static $_baseURL;
+
+/**
  * List of action prefixes used in connected routes.
  * Includes admin prefix
  *
@@ -759,7 +767,7 @@ class Router {
  *   cake relative URLs are required when using requestAction.
  * - `?` - Takes an array of query string parameters
  * - `#` - Allows you to set URL hash fragments.
- * - `full_base` - If true the `FULL_BASE_URL` constant will be prepended to generated URLs.
+ * - `full_base` - If true the `Router::baseURL()` value will be prepended to generated URLs.
  *
  * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  *   or an array specifying any of the following: 'controller', 'action',
@@ -796,8 +804,8 @@ class Router {
 
 		if (empty($url)) {
 			$output = isset($path['here']) ? $path['here'] : '/';
-			if ($full && defined('FULL_BASE_URL')) {
-				$output = FULL_BASE_URL . $output;
+			if ($full) {
+				$output = self::baseURL() . $output;
 			}
 			return $output;
 		} elseif (is_array($url)) {
@@ -884,14 +892,40 @@ class Router {
 		if ($protocol === 0) {
 			$output = str_replace('//', '/', $base . '/' . $output);
 
-			if ($full && defined('FULL_BASE_URL')) {
-				$output = FULL_BASE_URL . $output;
+			if ($full) {
+				$output = self::baseURL() . $output;
 			}
 			if (!empty($extension)) {
 				$output = rtrim($output, '/');
 			}
 		}
 		return $output . $extension . self::queryString($q, array(), $escape) . $frag;
+	}
+
+/**
+ * Sets the full base url that will be used as a prefix for generating
+ * fully qualified URLs for this application. If not parameters are passed,
+ * the currently configured value is returned
+ *
+ * ## Note:
+ *
+ * If you change during runtime the configuration value ``App.fullBaseURL``
+ * and expect the router to produce links using the new setting, you are
+ * required to call this method passing such value again.
+ *
+ * @param string $base the prefix for URLs generated containing the domain.
+ * For example: ``http://example.com``
+ * @return string
+ */
+	public static function baseURL($base = null) {
+		if ($base !== null) {
+			self::$_baseURL = $base;
+			Configure::write('App.fullBaseURL', $base);
+		}
+		if (empty(self::$_baseURL)) {
+			self::$_baseURL = Configure::read('App.fullBaseURL');
+		}
+		return self::$_baseURL;
 	}
 
 /**
