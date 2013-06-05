@@ -134,6 +134,6 @@ class ClassLoader {
 		if (!file_exists($path)) {
 			return false;
 		}
-		return require $path;
+		return require_once $path;
 	}
 }
