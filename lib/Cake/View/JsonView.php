@@ -13,6 +13,7 @@
  */
 
 App::uses('View', 'View');
+App::uses('Hash', 'Utility');
 
 /**
  * A view class that is used for JSON responses.
@@ -118,9 +119,14 @@ class JsonView extends View {
  */
 	protected function _serialize($serialize) {
 		if (is_array($serialize)) {
+			$serialize = Hash::normalize($serialize);
 			$data = array();
-			foreach ($serialize as $key) {
-				$data[$key] = $this->viewVars[$key];
+			foreach ($serialize as $key => $alias) {
+				if (empty($alias)) {
+					$alias = $key;
+				}
+
+				$data[$alias] = $this->viewVars[$key];
 			}
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
