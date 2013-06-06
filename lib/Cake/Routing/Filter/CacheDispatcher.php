@@ -60,6 +60,7 @@ class CacheDispatcher extends DispatcherFilter {
 		if (file_exists($filename)) {
 			$controller = null;
 			$view = new View($controller);
+			$view->response = $event->data['response'];
 			$result = $view->renderCache($filename, microtime(true));
 			if ($result !== false) {
 				$event->stopPropagation();
