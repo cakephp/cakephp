@@ -79,11 +79,7 @@ class Collection {
 			$name,
 			$this->_connection->config()
 		);
-		try {
-			$statement = $this->_connection->execute($sql, $params);
-		} catch (\PDOException $e) {
-			throw new Exception($e->getMessage(), 500, $e);
-		}
+		$statement = $this->_executeSql($sql, $params);
 		if (count($statement) === 0) {
 			throw new Exception(__d('cake_dev', 'Cannot describe %s. It has 0 columns.', $name));
 		}
@@ -97,15 +93,37 @@ class Collection {
 			$name,
 			$this->_connection->config()
 		);
-		try {
-			$statement = $this->_connection->execute($sql, $params);
-		} catch (\PDOException $e) {
-			throw new Exception($e->getMessage(), 500, $e);
-		}
+		$statement = $this->_executeSql($sql, $params);
 		foreach ($statement->fetchAll('assoc') as $row) {
 			$this->_dialect->convertIndexDescription($table, $row);
 		}
+
+		list($sql, $params) = $this->_dialect->describeForeignKeySql(
+			$name,
+			$this->_connection->config()
+		);
+		$statement = $this->_executeSql($sql, $params);
+		foreach ($statement->fetchAll('assoc') as $row) {
+			$this->_dialect->convertForeignKeyDescription($table, $row);
+		}
 		return $table;
+	}
+
+/**
+ * Helper method to run queries and convert Exceptions to the correct types.
+ *
+ * @param string $sql The sql to run.
+ * @param array $params Parameters for the statement.
+ * @return Cake\Database\Statement Prepared statement
+ * @throws Cake\Database\Exception on query failure.
+ */
+	protected function _executeSql($sql, $params) {
+		try {
+			$statement = $this->_connection->execute($sql, $params);
+			return $statement;
+		} catch (\PDOException $e) {
+			throw new Exception($e->getMessage(), 500, $e);
+		}
 	}
 
 }
