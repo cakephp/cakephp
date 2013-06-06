@@ -92,9 +92,9 @@ class Table {
 		'type' => null,
 		'columns' => [],
 		'length' => [],
-		'references' => null,
-		'update' => null,
-		'delete' => null,
+		'references' => [],
+		'update' => 'cascade',
+		'delete' => 'cascade',
 	];
 
 /**
@@ -328,11 +328,6 @@ class Table {
  * @return array
  */
 	protected function _checkForeignKey($attrs) {
-		$attrs += [
-			'references' => [],
-			'update' => 'cascade',
-			'delete' => 'cascade',
-		];
 		if (count($attrs['references']) < 2) {
 			throw new Exception(__d('cake_dev', 'References must contain a table and column.'));
 		}
