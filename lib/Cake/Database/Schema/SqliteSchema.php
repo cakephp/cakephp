@@ -260,26 +260,60 @@ class SqliteSchema {
 	public function constraintSql(Table $table, $name) {
 		$data = $table->constraint($name);
 		if (
+			$data['type'] === Table::CONSTRAINT_PRIMARY &&
 			count($data['columns']) === 1 &&
 			$table->column($data['columns'][0])['type'] === 'integer'
 		) {
 			return '';
 		}
+		$clause = '';
 		if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
 			$type = 'PRIMARY KEY';
 		}
 		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
 			$type = 'UNIQUE';
 		}
+		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+			$type = 'FOREIGN KEY';
+			$clause = sprintf(
+				' REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
+				$this->_driver->quoteIdentifier($data['references'][0]),
+				$this->_driver->quoteIdentifier($data['references'][1]),
+				$this->_foreignOnClause($data['update']),
+				$this->_foreignOnClause($data['delete'])
+			);
+		}
 		$columns = array_map(
 			[$this->_driver, 'quoteIdentifier'],
 			$data['columns']
 		);
-		return sprintf('CONSTRAINT %s %s (%s)',
+		return sprintf('CONSTRAINT %s %s (%s)%s',
 			$this->_driver->quoteIdentifier($name),
 			$type,
-			implode(', ', $columns)
+			implode(', ', $columns),
+			$clause
 		);
+	}
+
+/**
+ * Generate an ON clause for a foreign key.
+ *
+ * @param string|null $on The on clause
+ * @return string
+ */
+	protected function _foreignOnClause($on) {
+		if ($on === null) {
+			return 'SET NULL';
+		}
+		if ($on === 'cascade') {
+			return 'CASCADE';
+		}
+		if ($on === 'restrict') {
+			return 'RESTRICT';
+		}
+		if ($on === 'none') {
+			return 'NO ACTION';
+		}
 	}
 
 /**

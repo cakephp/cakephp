@@ -460,6 +460,30 @@ SQL;
 				['type' => 'unique', 'columns' => ['title', 'author_id']],
 				'CONSTRAINT "unique_idx" UNIQUE ("title", "author_id")'
 			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE CASCADE'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE CASCADE'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => null],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE CASCADE'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'none'],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE CASCADE'
+			],
 		];
 	}
 
