@@ -1024,7 +1024,8 @@ class PostgresTest extends CakeTestCase {
 		$this->assertEquals(' LIMIT 20 OFFSET 10', $result);
 
 		$result = $db->limit(10, 300000000000000000000000000000);
-		$this->assertEquals(' LIMIT 10 OFFSET 0', $result);
+		$scientificNotation = sprintf('%.1E', 300000000000000000000000000000);
+		$this->assertNotContains($scientificNotation, $result);
 	}
 
 }
