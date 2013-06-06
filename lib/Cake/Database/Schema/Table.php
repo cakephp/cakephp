@@ -93,8 +93,8 @@ class Table {
 		'columns' => [],
 		'length' => [],
 		'references' => [],
-		'update' => 'cascade',
-		'delete' => 'cascade',
+		'update' => 'restrict',
+		'delete' => 'restrict',
 	];
 
 /**

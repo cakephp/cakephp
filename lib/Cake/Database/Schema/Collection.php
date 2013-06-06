@@ -119,8 +119,7 @@ class Collection {
  */
 	protected function _executeSql($sql, $params) {
 		try {
-			$statement = $this->_connection->execute($sql, $params);
-			return $statement;
+			return $this->_connection->execute($sql, $params);
 		} catch (\PDOException $e) {
 			throw new Exception($e->getMessage(), 500, $e);
 		}

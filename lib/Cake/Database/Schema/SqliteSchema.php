@@ -231,9 +231,7 @@ class SqliteSchema {
 		if ($clause === 'NO ACTION') {
 			return 'none';
 		}
-		if ($clause === 'SET NULL') {
-			return null;
-		}
+		return null;
 	}
 
 /**
