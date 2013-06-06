@@ -1270,7 +1270,8 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEquals(' LIMIT 10, 20', $result);
 
 		$result = $db->limit(10, 300000000000000000000000000000);
-		$this->assertEquals(' LIMIT 0, 10', $result);
+		$scientificNotation = sprintf('%.1E', 300000000000000000000000000000);
+		$this->assertNotContains($scientificNotation, $result);
 	}
 
 }
