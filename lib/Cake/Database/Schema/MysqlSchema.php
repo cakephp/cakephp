@@ -229,6 +229,7 @@ class MysqlSchema {
  */
 	public function convertForeignKey(Table $table, $row) {
 	}
+
 /**
  * Generate the SQL to truncate a table.
  *
