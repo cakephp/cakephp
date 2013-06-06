@@ -92,6 +92,9 @@ class Table {
 		'type' => null,
 		'columns' => [],
 		'length' => [],
+		'references' => null,
+		'update' => null,
+		'delete' => null,
 	];
 
 /**
@@ -223,6 +226,7 @@ class Table {
 		}
 		$attrs = array_intersect_key($attrs, $this->_indexKeys);
 		$attrs = $attrs + $this->_indexKeys;
+		unset($attrs['references'], $attrs['update'], $attrs['delete']);
 
 		if (!in_array($attrs['type'], $this->_validIndexTypes, true)) {
 			throw new Exception(__d('cake_dev', 'Invalid index type "%s"', $attrs['type']));
@@ -283,8 +287,12 @@ class Table {
  *
  * - `type` The type of constraint being added.
  * - `columns` The columns in the index.
+ * - `references` The table, column a foreign key references.
+ * - `update` The behavior on update. Options are 'restrict', `null`, 'cascade', 'none'.
+ * - `delete` The behavior on delete. Options are 'restrict', `null`, 'cascade', 'none'.
  *
- * @TODO implement foreign keys.
+ * The default for 'update' & 'delete' is 'cascade'.
+ *
  * @param string $name The name of the constraint.
  * @param array $attrs The attributes for the constraint.
  * @return Table $this
@@ -296,7 +304,6 @@ class Table {
 		}
 		$attrs = array_intersect_key($attrs, $this->_indexKeys);
 		$attrs = $attrs + $this->_indexKeys;
-
 		if (!in_array($attrs['type'], $this->_validConstraintTypes, true)) {
 			throw new Exception(__d('cake_dev', 'Invalid constraint type "%s"', $attrs['type']));
 		}
@@ -305,8 +312,38 @@ class Table {
 				throw new Exception(__d('cake_dev', 'Columns used in constraints must already exist.'));
 			}
 		}
+		if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
+			$attrs = $this->_checkForeignKey($attrs);
+		} else {
+			unset($attrs['references'], $attrs['update'], $attrs['delete']);
+		}
 		$this->_constraints[$name] = $attrs;
 		return $this;
+	}
+
+/**
+ * Helper method to check/validate foreign keys.
+ *
+ * @param array $attrs Attributes to set.
+ * @return array
+ */
+	protected function _checkForeignKey($attrs) {
+		$attrs += [
+			'references' => [],
+			'update' => 'cascade',
+			'delete' => 'cascade',
+		];
+		if (count($attrs['references']) < 2) {
+			throw new Exception(__d('cake_dev', 'References must contain a table and column.'));
+		}
+		$validActions = ['cascade', 'restrict', null, 'none'];
+		if (!in_array($attrs['update'], $validActions)) {
+			throw new Exception(__d('cake_dev', 'Update action is invalid.'));
+		}
+		if (!in_array($attrs['delete'], $validActions)) {
+			throw new Exception(__d('cake_dev', 'Delete action is invalid.'));
+		}
+		return $attrs;
 	}
 
 /**
