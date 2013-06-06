@@ -151,7 +151,7 @@ author_id INT(11) NOT NULL,
 published BOOLEAN DEFAULT 0,
 created DATETIME,
 CONSTRAINT "title_idx" UNIQUE ("title", "body")
-CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE CASCADE
+CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
 SQL;
 		$connection->execute($table);
@@ -273,13 +273,25 @@ SQL;
 				'type' => 'unique',
 				'columns' => ['title', 'body'],
 				'length' => []
+			],
+			'author_id_fk' => [
+				'type' => 'foreign',
+				'columns' => ['author_id'],
+				'references' => ['schema_authors', 'id'],
+				'length' => [],
+				'update' => 'cascade',
+				'delete' => 'restrict',
 			]
 		];
-		$this->assertCount(2, $result->constraints());
+		$this->assertCount(3, $result->constraints());
 		$this->assertEquals($expected['primary'], $result->constraint('primary'));
 		$this->assertEquals(
 			$expected['sqlite_autoindex_schema_articles_1'],
 			$result->constraint('sqlite_autoindex_schema_articles_1')
+		);
+		$this->assertEquals(
+			$expected['author_id_fk'],
+			$result->constraint('author_id_fk')
 		);
 
 		$this->assertCount(1, $result->indexes());

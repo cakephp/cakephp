@@ -195,7 +195,8 @@ class SqliteSchema {
  * @return array List of sql, params
  */
 	public function describeForeignKeySql($table) {
-		return ['', []];
+		$sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($table));
+		return [$sql, []];
 	}
 
 /**
@@ -206,6 +207,33 @@ class SqliteSchema {
  * @return void
  */
 	public function convertForeignKey(Table $table, $row) {
+		$data = [
+			'type' => Table::CONSTRAINT_FOREIGN,
+			'columns' => [$row['from']],
+			'references' => [$row['table'], $row['to']],
+			'update' => $this->_convertOnClause($row['on_update']),
+			'delete' => $this->_convertOnClause($row['on_delete']),
+		];
+		$name = $row['from'] . '_fk';
+		$table->addConstraint($name, $data);
+	}
+
+/**
+ * Convert Sqlite on clauses to the abstract ones.
+ *
+ * @param string $clause
+ * @return string|null
+ */
+	protected function _convertOnClause($clause) {
+		if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
+			return strtolower($clause);
+		}
+		if ($clause === 'NO ACTION') {
+			return 'none';
+		}
+		if ($clause === 'SET NULL') {
+			return null;
+		}
 	}
 
 /**

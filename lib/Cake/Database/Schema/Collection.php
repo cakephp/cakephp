@@ -104,7 +104,7 @@ class Collection {
 		);
 		$statement = $this->_executeSql($sql, $params);
 		foreach ($statement->fetchAll('assoc') as $row) {
-			$this->_dialect->convertForeignKeyDescription($table, $row);
+			$this->_dialect->convertForeignKey($table, $row);
 		}
 		return $table;
 	}
