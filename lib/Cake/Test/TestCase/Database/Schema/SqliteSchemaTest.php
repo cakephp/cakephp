@@ -493,13 +493,13 @@ SQL;
 			],
 			[
 				'author_id_idx',
-				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => null],
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
 				'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT'
 			],
 			[
 				'author_id_idx',
-				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'none'],
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
 				'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT'
 			],

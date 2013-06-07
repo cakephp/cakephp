@@ -331,12 +331,12 @@ class Table {
 		if (count($attrs['references']) < 2) {
 			throw new Exception(__d('cake_dev', 'References must contain a table and column.'));
 		}
-		$validActions = ['cascade', 'restrict', null, 'none'];
+		$validActions = ['cascade', 'restrict', 'setNull', 'noAction'];
 		if (!in_array($attrs['update'], $validActions)) {
-			throw new Exception(__d('cake_dev', 'Update action is invalid.'));
+			throw new Exception(__d('cake_dev', 'Update action is invalid. Must be one of %s', implode(',', $validActions)));
 		}
 		if (!in_array($attrs['delete'], $validActions)) {
-			throw new Exception(__d('cake_dev', 'Delete action is invalid.'));
+			throw new Exception(__d('cake_dev', 'Delete action is invalid. Must be one of %s', implode(',', $validActions)));
 		}
 		return $attrs;
 	}
