@@ -212,6 +212,25 @@ class MysqlSchema {
 	}
 
 /**
+ * Generate the SQL to describe the foreign keys on a table.
+ *
+ * @return array List of sql, params
+ */
+	public function describeForeignKeySql($table) {
+		return ['', []];
+	}
+
+/**
+ * Convert a foreign key description into constraints on the Table object.
+ *
+ * @param Cake\Database\Table $table The table instance to populate.
+ * @param array $row The row of data.
+ * @return void
+ */
+	public function convertForeignKey(Table $table, $row) {
+	}
+
+/**
  * Generate the SQL to truncate a table.
  *
  * @param Cake\Database\Schema\Table $table Table instance

@@ -190,6 +190,51 @@ class SqliteSchema {
 	}
 
 /**
+ * Generate the SQL to describe the foreign keys on a table.
+ *
+ * @return array List of sql, params
+ */
+	public function describeForeignKeySql($table) {
+		$sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($table));
+		return [$sql, []];
+	}
+
+/**
+ * Convert a foreign key description into constraints on the Table object.
+ *
+ * @param Cake\Database\Table $table The table instance to populate.
+ * @param array $row The row of data.
+ * @return void
+ */
+	public function convertForeignKey(Table $table, $row) {
+		$data = [
+			'type' => Table::CONSTRAINT_FOREIGN,
+			'columns' => [$row['from']],
+			'references' => [$row['table'], $row['to']],
+			'update' => $this->_convertOnClause($row['on_update']),
+			'delete' => $this->_convertOnClause($row['on_delete']),
+		];
+		$name = $row['from'] . '_fk';
+		$table->addConstraint($name, $data);
+	}
+
+/**
+ * Convert Sqlite on clauses to the abstract ones.
+ *
+ * @param string $clause
+ * @return string|null
+ */
+	protected function _convertOnClause($clause) {
+		if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
+			return strtolower($clause);
+		}
+		if ($clause === 'NO ACTION') {
+			return Table::ACTION_NO_ACTION;
+		}
+		return Table::ACTION_SET_NULL;
+	}
+
+/**
  * Generate the SQL fragment for a single column in Sqlite
  *
  * @param Cake\Database\Schema\Table $table The table object the column is in.
@@ -260,26 +305,60 @@ class SqliteSchema {
 	public function constraintSql(Table $table, $name) {
 		$data = $table->constraint($name);
 		if (
+			$data['type'] === Table::CONSTRAINT_PRIMARY &&
 			count($data['columns']) === 1 &&
 			$table->column($data['columns'][0])['type'] === 'integer'
 		) {
 			return '';
 		}
+		$clause = '';
 		if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
 			$type = 'PRIMARY KEY';
 		}
 		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
 			$type = 'UNIQUE';
 		}
+		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+			$type = 'FOREIGN KEY';
+			$clause = sprintf(
+				' REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
+				$this->_driver->quoteIdentifier($data['references'][0]),
+				$this->_driver->quoteIdentifier($data['references'][1]),
+				$this->_foreignOnClause($data['update']),
+				$this->_foreignOnClause($data['delete'])
+			);
+		}
 		$columns = array_map(
 			[$this->_driver, 'quoteIdentifier'],
 			$data['columns']
 		);
-		return sprintf('CONSTRAINT %s %s (%s)',
+		return sprintf('CONSTRAINT %s %s (%s)%s',
 			$this->_driver->quoteIdentifier($name),
 			$type,
-			implode(', ', $columns)
+			implode(', ', $columns),
+			$clause
 		);
+	}
+
+/**
+ * Generate an ON clause for a foreign key.
+ *
+ * @param string|null $on The on clause
+ * @return string
+ */
+	protected function _foreignOnClause($on) {
+		if ($on === Table::ACTION_SET_NULL) {
+			return 'SET NULL';
+		}
+		if ($on === Table::ACTION_CASCADE) {
+			return 'CASCADE';
+		}
+		if ($on === Table::ACTION_RESTRICT) {
+			return 'RESTRICT';
+		}
+		if ($on === Table::ACTION_NO_ACTION) {
+			return 'NO ACTION';
+		}
 	}
 
 /**
