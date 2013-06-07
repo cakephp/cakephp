@@ -229,9 +229,9 @@ class SqliteSchema {
 			return strtolower($clause);
 		}
 		if ($clause === 'NO ACTION') {
-			return 'noAction';
+			return Table::ACTION_NO_ACTION;
 		}
-		return 'setNull';
+		return Table::ACTION_SET_NULL;
 	}
 
 /**
@@ -347,16 +347,16 @@ class SqliteSchema {
  * @return string
  */
 	protected function _foreignOnClause($on) {
-		if ($on === 'setNull') {
+		if ($on === Table::ACTION_SET_NULL) {
 			return 'SET NULL';
 		}
-		if ($on === 'cascade') {
+		if ($on === Table::ACTION_CASCADE) {
 			return 'CASCADE';
 		}
-		if ($on === 'restrict') {
+		if ($on === Table::ACTION_RESTRICT) {
 			return 'RESTRICT';
 		}
-		if ($on === 'noAction') {
+		if ($on === Table::ACTION_NO_ACTION) {
 			return 'NO ACTION';
 		}
 	}

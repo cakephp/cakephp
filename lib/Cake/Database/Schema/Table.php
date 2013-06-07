@@ -125,6 +125,11 @@ class Table {
 	const INDEX_INDEX = 'index';
 	const INDEX_FULLTEXT = 'fulltext';
 
+	const ACTION_CASCADE = 'cascade';
+	const ACTION_SET_NULL = 'setNull';
+	const ACTION_NO_ACTION = 'noAction';
+	const ACTION_RESTRICT = 'restrict';
+
 /**
  * Constructor.
  *
@@ -288,8 +293,8 @@ class Table {
  * - `type` The type of constraint being added.
  * - `columns` The columns in the index.
  * - `references` The table, column a foreign key references.
- * - `update` The behavior on update. Options are 'restrict', `null`, 'cascade', 'none'.
- * - `delete` The behavior on delete. Options are 'restrict', `null`, 'cascade', 'none'.
+ * - `update` The behavior on update. Options are 'restrict', 'setNull', 'cascade', 'noAction'.
+ * - `delete` The behavior on delete. Options are 'restrict', 'setNull', 'cascade', 'noAction'.
  *
  * The default for 'update' & 'delete' is 'cascade'.
  *
@@ -331,7 +336,7 @@ class Table {
 		if (count($attrs['references']) < 2) {
 			throw new Exception(__d('cake_dev', 'References must contain a table and column.'));
 		}
-		$validActions = ['cascade', 'restrict', 'setNull', 'noAction'];
+		$validActions = [static::ACTION_CASCADE, static::ACTION_RESTRICT, static::ACTION_SET_NULL, static::ACTION_NO_ACTION];
 		if (!in_array($attrs['update'], $validActions)) {
 			throw new Exception(__d('cake_dev', 'Update action is invalid. Must be one of %s', implode(',', $validActions)));
 		}
