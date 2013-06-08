@@ -19,30 +19,86 @@ namespace Cake\ORM;
 use \Iterator;
 use Cake\Database\Type;
 
+/**
+ * Represents the results obtained after executing a query for an specific table
+ * This object is responsible for correctly nesting result keys reported from
+ * the query, casting each field to the correct type and executing the extra
+ * queries required for eager loading external associations.
+ *
+ */
 class ResultSet implements Iterator {
 
+/**
+ * Original query from where results where generated
+ *
+ * @var Query
+ */
 	protected $_query;
 
+/**
+ * Database statement holding the results
+ *
+ * @var \Cake\Database\Statement
+ */
 	protected $_statement;
 
-	protected $_getNext = false;
-
+/**
+ * Points to the next record number that should be fetched
+ *
+ * @var integer
+ */
 	protected $_count = 0;
 
+/**
+ * Points to the last record number that was fetched
+ *
+ * @var integer
+ */
 	protected $_counter = -1;
 
+/**
+ * Last record fetched from the statement
+ *
+ * @var array
+ */
 	protected $_current;
 
-	protected $_types = [];
-
+/**
+ * Default table instance
+ *
+ * @var \Cake\ORM\Table
+ */
 	protected $_defaultTable;
 
+/**
+ * Default table alias
+ *
+ * @var string
+ */
 	protected $_defaultAlias;
 
+/**
+ * List of associations that should be eager loaded
+ *
+ * @var array
+ */
 	protected $_associationMap = [];
 
+/**
+ * Map of fields that are fetched from the statement with
+ * their type and the table they belong to
+ *
+ * @var string
+ */
 	protected $_map;
 
+/**
+ * Constructor
+ *
+ * @param Query from where results come
+ * @param \Cake\Database\Statement $statement
+ * @return void
+ */
 	public function __construct($query, $statement) {
 		$this->_query = $query;
 		$this->_statement = $statement;
@@ -51,6 +107,68 @@ class ResultSet implements Iterator {
 		$this->_calculateAssociationMap();
 	}
 
+/**
+ * Returns an array representation of the results
+ *
+ * @return array
+ */
+	public function toArray() {
+		return iterator_to_array($this);
+	}
+
+/**
+ * Returns the current record in the result iterator
+ *
+ * @return array|object
+ */
+	public function current() {
+		return $this->_groupResult($this->_current);
+	}
+
+/**
+ * Returns the key of the current record in the iterator
+ *
+ * @return integer
+ */
+	public function key() {
+		return $this->_count;
+	}
+
+/**
+ * Advances the iterator pointer to the next record
+ *
+ * @return void
+ */
+	public function next() {
+		$this->_count++;
+		$this->_fetchResult();
+	}
+
+/**
+ * Not implemented
+ *
+ * @return void
+ */
+	public function rewind() {
+	}
+
+/**
+ * Whether there are more results to be fetched from the iterator
+ *
+ * @return boolean
+ */
+	public function valid() {
+		$this->_fetchResult();
+		return $this->_current !== false;
+	}
+
+
+/**
+ * Calculates the list of associations that should get eager loaded
+ * when fetching each record
+ *
+ * @return void
+ */
 	public function _calculateAssociationMap() {
 		$contain = $this->_query->normalizedContainments();
 
@@ -71,31 +189,12 @@ class ResultSet implements Iterator {
 		$this->_associationMap = $map;
 	}
 
-	public function toArray() {
-		return iterator_to_array($this);
-	}
-
-	public function current() {
-		return $this->_groupResult($this->_current);
-	}
-
-	public function key() {
-		return $this->_count;
-	}
-
-	public function next() {
-		$this->_count++;
-		$this->_fetchResult();
-	}
-
-	public function rewind() {
-	}
-
-	public function valid() {
-		$this->_fetchResult();
-		return $this->_current !== false;
-	}
-
+/**
+ * Helper function to fetch the next result from the statement and update all
+ * internal counters.
+ *
+ * @return void
+ */
 	protected function _fetchResult() {
 		if ($this->_counter < $this->_count) {
 			$this->_current = $this->_statement->fetch('assoc');
@@ -103,6 +202,11 @@ class ResultSet implements Iterator {
 		}
 	}
 
+/**
+ * Correctly nest results keys including those coming from associations
+ *
+ * @return array
+ */
 	protected function _groupResult() {
 		$results = [];
 		foreach ($this->_current as $key => $value) {
@@ -139,6 +243,14 @@ class ResultSet implements Iterator {
 		return $results[$this->_defaultAlias];
 	}
 
+/**
+ * Casts all values from a row brought from a table to the correct
+ * PHP type.
+ *
+ * @param Table $table
+ * @param array $values
+ * @return array
+ */
 	protected function _castValues($table, $values) {
 		$alias = $table->alias();
 		$driver = $this->_query->connection()->driver();
