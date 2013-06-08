@@ -267,6 +267,17 @@ class Query extends DatabaseQuery {
 		return $this;
 	}
 
+/**
+ * Returns the fully normalized array of associations that should be eagerly
+ * loaded. The normalized array will restructure the original one by sorting
+ * all associations under one key and special options under another.
+ *
+ * Additionally it will set an 'instance' key per association containing the
+ * association instance from the corresponding source table
+ *
+ *
+ * @return array
+ */
 	public function normalizedContainments() {
 		if ($this->_normalizedContainments !== null || empty($this->_containments)) {
 			return $this->_normalizedContainments;
@@ -292,7 +303,7 @@ class Query extends DatabaseQuery {
  * Compiles the SQL representation of this query and executes it using the
  * configured connection object. Returns a ResultSet iterator object
  *
- * Resulting statement is traversable, so it can be used in any loop as you would
+ * Resulting object is traversable, so it can be used in any loop as you would
  * with an array.
  *
  * @return Cake\ORM\ResultSet
@@ -301,10 +312,27 @@ class Query extends DatabaseQuery {
 		return new ResultSet($this, parent::execute());
 	}
 
+/**
+ * Returns an array representation of the results after executing the query.
+ *
+ * @return array
+ */
 	public function toArray() {
 		return $this->execute()->toArray();
 	}
 
+/**
+ * Returns a key => value array representing a single aliased field
+ * that can be passed directly to the select() method.
+ * The key will contain the alias and the value the actual field name.
+ *
+ * If the field is already aliased, then it will not be changed.
+ * If no $alias is passed, the default table for this query will be used.
+ *
+ * @param string $field
+ * @param string $alias the alias used to prefix the field
+ * @return array
+ */
 	public function aliasField($field, $alias = null) {
 		$namespaced = strpos($field, '.') !== false;
 		$_field = $field;
@@ -325,6 +353,14 @@ class Query extends DatabaseQuery {
 		return [$key => $_field];
 	}
 
+/**
+ * Runs `aliasfield()` for each field in the provided list and returns
+ * the result under a single array.
+ *
+ * @param array $fields
+ * @param string $defaultAlias
+ * @return array
+ */
 	public function aliasFields($fields, $defaultAlias = null) {
 		$aliased = [];
 		foreach ($fields as $alias => $field) {
@@ -358,6 +394,14 @@ class Query extends DatabaseQuery {
 		return $statement;
 	}
 
+/**
+ * Applies some defaults to the query object before it is executed.
+ * Specifically add the FROM clause, adds default table fields if none is
+ * specified and applies the joins required to eager load associations defined
+ * using `contain`
+ *
+ * @return Query
+ */
 	protected function _transformQuery() {
 		if (!$this->_dirty) {
 			return parent::_transformQuery();
