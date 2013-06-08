@@ -123,13 +123,6 @@ interface DispatcherTestInterfaceController {
 class MyPluginController extends MyPluginAppController {
 
 /**
- * name property
- *
- * @var string 'MyPlugin'
- */
-	public $name = 'MyPlugin';
-
-/**
  * uses property
  *
  * @var array
@@ -172,13 +165,6 @@ class MyPluginController extends MyPluginAppController {
  * @package       Cake.Test.Case.Routing
  */
 class SomePagesController extends AppController {
-
-/**
- * name property
- *
- * @var string 'SomePages'
- */
-	public $name = 'SomePages';
 
 /**
  * uses property
@@ -235,13 +221,6 @@ class SomePagesController extends AppController {
 class OtherPagesController extends MyPluginAppController {
 
 /**
- * name property
- *
- * @var string 'OtherPages'
- */
-	public $name = 'OtherPages';
-
-/**
  * uses property
  *
  * @var array
@@ -275,13 +254,6 @@ class OtherPagesController extends MyPluginAppController {
  * @package       Cake.Test.Case.Routing
  */
 class TestDispatchPagesController extends AppController {
-
-/**
- * name property
- *
- * @var string 'TestDispatchPages'
- */
-	public $name = 'TestDispatchPages';
 
 /**
  * uses property
@@ -326,13 +298,6 @@ class ArticlesTestAppController extends AppController {
 class ArticlesTestController extends ArticlesTestAppController {
 
 /**
- * name property
- *
- * @var string 'ArticlesTest'
- */
-	public $name = 'ArticlesTest';
-
-/**
  * uses property
  *
  * @var array
@@ -365,13 +330,6 @@ class ArticlesTestController extends ArticlesTestAppController {
  * @package       Cake.Test.Case.Routing
  */
 class SomePostsController extends AppController {
-
-/**
- * name property
- *
- * @var string 'SomePosts'
- */
-	public $name = 'SomePosts';
 
 /**
  * uses property
@@ -429,13 +387,6 @@ class SomePostsController extends AppController {
 class TestCachedPagesController extends Controller {
 
 /**
- * name property
- *
- * @var string 'TestCachedPages'
- */
-	public $name = 'TestCachedPages';
-
-/**
  * uses property
  *
  * @var array
@@ -470,7 +421,7 @@ class TestCachedPagesController extends Controller {
 /**
  * viewPath property
  *
- * @var string 'posts'
+ * @var string
  */
 	public $viewPath = 'Posts';
 
@@ -528,13 +479,6 @@ class TestCachedPagesController extends Controller {
  * @package       Cake.Test.Case.Routing
  */
 class TimesheetsController extends Controller {
-
-/**
- * name property
- *
- * @var string 'Timesheets'
- */
-	public $name = 'Timesheets';
 
 /**
  * uses property

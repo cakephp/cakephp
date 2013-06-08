@@ -31,7 +31,7 @@ class XmlArticle extends CakeTestModel {
 /**
  * name property
  *
- * @var string 'Article'
+ * @var string
  */
 	public $name = 'Article';
 
@@ -58,7 +58,7 @@ class XmlUser extends CakeTestModel {
 /**
  * name property
  *
- * @var string 'User'
+ * @var string
  */
 	public $name = 'User';
 

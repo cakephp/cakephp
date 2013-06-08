@@ -34,13 +34,6 @@ App::uses('DbAcl', 'Model');
 class AclPerson extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string
- */
-	public $name = 'AclPerson';
-
-/**
  * useTable property
  *
  * @var string

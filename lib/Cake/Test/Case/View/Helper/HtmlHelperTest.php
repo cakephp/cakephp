@@ -40,7 +40,7 @@ class TheHtmlTestController extends Controller {
 /**
  * name property
  *
- * @var string 'TheTest'
+ * @var string
  */
 	public $name = 'TheTest';
 
