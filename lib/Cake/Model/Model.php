@@ -2068,6 +2068,7 @@ class Model extends Object implements CakeEventListener {
  *
  * - `validate`: Set to false to disable validation, true to validate each record before saving,
  *   'first' to validate *all* records before any are saved (default),
+ *    or 'only' to only validate the records, but not save them.
  * - `atomic`: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
  * - `fieldList`: Equivalent to the $fieldList parameter in Model::save()
@@ -2096,6 +2097,10 @@ class Model extends Object implements CakeEventListener {
 				return array(!empty($result));
 			}
 			return !empty($result);
+		}
+		
+		if ($options['validate'] === 'only') {
+			return $this->validateMany($data, $options);
 		}
 
 		if ($options['validate'] === 'first') {
@@ -2176,6 +2181,7 @@ class Model extends Object implements CakeEventListener {
  *
  * - `validate`: Set to `false` to disable validation, `true` to validate each record before saving,
  *   'first' to validate *all* records before any are saved(default),
+ *    or 'only' to only validate the records, but not save them.
  * - `atomic`: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
  * - `fieldList`: Equivalent to the $fieldList parameter in Model::save().
@@ -2211,6 +2217,10 @@ class Model extends Object implements CakeEventListener {
 				return array(!empty($result));
 			}
 			return !empty($result);
+		}
+		
+		if ($options['validate'] === 'only') {
+			return $this->validateAssociated($data, $options);
 		}
 
 		if ($options['validate'] === 'first') {
