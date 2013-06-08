@@ -42,6 +42,7 @@ class CakeTimeTest extends CakeTestCase {
 	public function setUp() {
 		$this->Time = new CakeTime();
 		$this->_systemTimezoneIdentifier = date_default_timezone_get();
+		Configure::write('Config.language', 'eng');
 	}
 
 /**
