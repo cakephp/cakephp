@@ -413,6 +413,12 @@ class Query extends DatabaseQuery {
 		return parent::_transformQuery();
 	}
 
+/**
+ * Helper function used to add the required joins for associations defined using
+ * `contain()`
+ *
+ * @return void
+ */
 	protected function _addContainments() {
 		$this->_loadEagerly = [];
 		if (empty($this->_containments)) {
@@ -438,6 +444,15 @@ class Query extends DatabaseQuery {
 		}
 	}
 
+/**
+ * Auxiliary function responsible for fully normalizing deep associations defined
+ * using `contain()`
+ *
+ * @param Table $parent owning side of the association
+ * @param string $alias name of the association to be loaded
+ * @param array $options list of extra options to use for this association
+ * @return array normalized associations
+ */
 	protected function _normalizeContain(Table $parent, $alias, $options) {
 		$defaults = $this->_containOptions;
 		$instance = $parent->association($alias);
@@ -462,6 +477,14 @@ class Query extends DatabaseQuery {
 		return $config;
 	}
 
+/**
+ * Helper function used to compile a list of all associations that can be
+ * joined in this query.
+ *
+ * @param Table $source the owning side of the association
+ * @param array $associations list of associations for $source
+ * @return array
+ */
 	protected function _resolveFirstLevel($source, $associations) {
 		$result = [];
 		foreach ($associations as $table => $options) {
@@ -470,15 +493,29 @@ class Query extends DatabaseQuery {
 				$result[$table] = $options;
 				$result += $this->_resolveFirstLevel($associated->target(), $options['associations']);
 			}
-			//TODO: If it is not associated assume a HasOne association (like in the popular Linkable plugin)
 		}
 		return $result;
 	}
 
+/**
+ * Adds a join based on a particular association and some custom options
+ *
+ * @param Association $association
+ * @param array $options
+ * @return void
+ */
 	protected function _addJoin($association, $options) {
 		$association->attachTo($this, $options + ['includeFields' => !$this->_hasFields]);
 	}
 
+/**
+ * Helper method that will calculate those associations that cannot be joined
+ * directly in this query and will setup the required extra queries for fetching
+ * the extra data.
+ *
+ * @param Statement $statement original query statement
+ * @return CallbackStatement $statement modified statement with extra loaders
+ */
 	protected function _eagerLoad($statement) {
 		$collectKeys = [];
 		foreach ($this->_loadEagerly as $association => $meta) {
@@ -513,6 +550,12 @@ class Query extends DatabaseQuery {
 		return $statement;
 	}
 
+/**
+ * Inspects if there are any set fields for selecting, otherwise adds all
+ * the fields for the default table.
+ *
+ * @return void
+ */
 	protected function _addDefaultFields() {
 		$select = $this->clause('select');
 		$this->_hasFields = true;
