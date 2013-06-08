@@ -67,13 +67,6 @@ class DboPostgresTestDb extends Postgres {
 class PostgresTestModel extends Model {
 
 /**
- * name property
- *
- * @var string 'PostgresTestModel'
- */
-	public $name = 'PostgresTestModel';
-
-/**
  * useTable property
  *
  * @var bool false
@@ -153,13 +146,6 @@ class PostgresTestModel extends Model {
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
 class PostgresClientTestModel extends Model {
-
-/**
- * name property
- *
- * @var string 'PostgresClientTestModel'
- */
-	public $name = 'PostgresClientTestModel';
 
 /**
  * useTable property

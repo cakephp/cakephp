@@ -94,13 +94,6 @@ class DebugCompTransport extends AbstractTransport {
 class EmailTestController extends Controller {
 
 /**
- * name property
- *
- * @var string 'EmailTest'
- */
-	public $name = 'EmailTest';
-
-/**
  * uses property
  *
  * @var mixed null
@@ -133,7 +126,7 @@ class EmailComponentTest extends CakeTestCase {
 /**
  * name property
  *
- * @var string 'Email'
+ * @var string
  */
 	public $name = 'Email';
 

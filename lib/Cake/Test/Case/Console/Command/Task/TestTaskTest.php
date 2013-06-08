@@ -37,13 +37,6 @@ App::uses('Model', 'Model');
 class TestTaskArticle extends Model {
 
 /**
- * Model name
- *
- * @var string
- */
-	public $name = 'TestTaskArticle';
-
-/**
  * Table name to use
  *
  * @var string
@@ -110,13 +103,6 @@ class TestTaskArticle extends Model {
 class TestTaskTag extends Model {
 
 /**
- * Model name
- *
- * @var string
- */
-	public $name = 'TestTaskTag';
-
-/**
  * Table name
  *
  * @var string
@@ -154,13 +140,6 @@ class TestTaskAppModel extends Model {
 class TestTaskComment extends TestTaskAppModel {
 
 /**
- * Model name
- *
- * @var string
- */
-	public $name = 'TestTaskComment';
-
-/**
  * Table name
  *
  * @var string
@@ -186,13 +165,6 @@ class TestTaskComment extends TestTaskAppModel {
  * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskCommentsController extends Controller {
-
-/**
- * Controller Name
- *
- * @var string
- */
-	public $name = 'TestTaskComments';
 
 /**
  * Models to use

@@ -45,8 +45,6 @@ if (!$imported) {
  */
 	class BakeArticle extends Model {
 
-		public $name = 'BakeArticle';
-
 		public $hasMany = array('BakeComment');
 
 		public $hasAndBelongsToMany = array('BakeTag');
