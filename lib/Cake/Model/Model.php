@@ -2098,7 +2098,7 @@ class Model extends Object implements CakeEventListener {
 			}
 			return !empty($result);
 		}
-		
+
 		if ($options['validate'] === 'only') {
 			return $this->validateMany($data, $options);
 		}
@@ -2218,7 +2218,7 @@ class Model extends Object implements CakeEventListener {
 			}
 			return !empty($result);
 		}
-		
+
 		if ($options['validate'] === 'only') {
 			return $this->validateAssociated($data, $options);
 		}
