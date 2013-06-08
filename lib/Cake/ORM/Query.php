@@ -126,7 +126,107 @@ class Query extends DatabaseQuery {
 
 /**
  * Sets the list of associations that should be eagerly loaded along with this
- * query.
+ * query. The list of associated tables passed must have been previously set as
+ * associations using the Table API.
+ *
+ * ### Example:
+ *
+ * {{{
+ *	// Bring articles' author information
+ *	$query->contain('Author');
+ *
+ *	// Also bring the category and tags associated to each article
+ *	$query->contain(['Category', 'Tag']);
+ * }}}
+ *
+ * Associations can be arbitrarily nested using arrays, this allows this object to
+ * calculate joins or any additional queries that must be executed to bring the
+ * required associated data.
+ *
+ * ### Example:
+ *
+ * {{{
+ *	// Eager load the product info, and for each product load other 2 associations
+ *	$query->contain(['Product' => ['Manufacturer', 'Distributor']);
+ *
+ *	// For an author query, load his region, state and country
+ *	$query->contain(['Region' => ['State' => 'Country']);
+ * }}}
+ *
+ * Each association might define special options when eager loaded, the allowed
+ * options that can be set per association are:
+ *
+ * - foreignKey: Used to set a different field to match both tables, if set to false
+ *   no join conditions will be generated automatically
+ * - conditions: An array of conditions that will be passed to either a query or
+ *   join conditions. See `where` method for the valid format.
+ * - fields: An array with the fields that should be fetched from the association
+ * - sort: for associations that are not joined directly, the order they should
+ *   appear in the resulting set
+ * - matching: A boolean indicating if the parent association records should be
+ *   filtered by those matching the conditions in the target association.
+ *
+ * ### Example:
+ *
+ * {{{
+ *  // Set options for the articles that will be eagerly loaded for an author
+ *	$query->contain([
+ *		'Article' => [
+ *			'field' => ['title'],
+ *			'conditions' => ['read_count >' => 100],
+ *			'sort' => ['published' => 'DESC']
+ *		]
+ *	]);
+ *
+ *	// Use special join conditions for getting an article author's 'likes'
+ *	$query->contain([
+ *		'Like' => [
+ *			'foreignKey' => false,
+ *			'conditions' => ['Article.author_id = Like.user_id']
+ *		]
+ *	]);
+ *
+ *	// Bring only articles that were tagged with 'cake'
+ *	$query->contain([
+ *		'Tag' => [
+ *			'matching' => true,
+ *			'conditions' => ['Tag.name' => 'cake']
+ *		]
+ *	]);
+ * }}}
+ *
+ * If called with no arguments, this function will return an ArrayObject with
+ * with the list of previously configured associations to be contained in the
+ * result. This object can be modified directly as the reference is kept inside
+ * the query.
+ *
+ * The resulting ArrayObject will always have association aliases as keys, and
+ * options as values, if no options are passed, the values will be set to an empty
+ * array
+ *
+ * ### Example:
+ *
+ * {{{
+ *	// Set some associations
+ *	$query->contain(['Article', 'Author' => ['fields' => ['Author.name']);
+ *
+ *  // Let's now add another field to Author
+ *	$query->contain()['Author']['fields'][] = 'Author.email';
+ *
+ *	// Let's also add Article's tags
+ *	$query->contain()['Article']['Tag'] = [];
+ * }}}
+ *
+ * Please note that when modifying directly the containments array, you are
+ * required to maintain the structure. That is, association names as keys
+ * having array values. Failing to do so will result in an error
+ *
+ * If called with an empty first argument and $override is set to true, the
+ * previous list will be emptied.
+ *
+ * @param array|string $associations list of table aliases to be queried
+ * @param boolean $override whether override previous list with the one passed
+ * defaults to merging previous list with the new one.
  * @return \ArrayObject|Query
  */
 	public function contain($associations = null, $override = false) {
@@ -160,12 +260,7 @@ class Query extends DatabaseQuery {
 		};
 
 		$old = $this->_containments->getArrayCopy();
-		$associations = $normalizer($associations);
-
-		if (!$override) {
-			$associations = array_merge($old, $associations);
-		}
-
+		$associations = array_merge($old, $normalizer($associations));
 		$this->_containments->exchangeArray($associations);
 		$this->_normalizedContainments = null;
 		$this->_dirty = true;
