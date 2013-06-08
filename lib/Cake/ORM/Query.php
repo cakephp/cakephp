@@ -60,8 +60,38 @@ class Query extends DatabaseQuery {
  */
 	protected $_hasFields;
 
+/**
+ * A list of associations that should be eagerly loaded
+ *
+ * @var array
+ */
 	protected $_loadEagerly = [];
 
+/**
+ * List of options accepted by associations in contain()
+ * index by key for faster access
+ *
+ * @var array
+ */
+	protected $_containOptions = [
+		'associations' => 1,
+		'foreignKey' => 1,
+		'conditions' => 1,
+		'fields' => 1,
+		'sort' => 1,
+		'matching' => 1
+	];
+
+/**
+ * Returns the default table object that will be used by this query,
+ * that is, the table that will appear in the from clause.
+ *
+ * When called with a Table argument, the default table object will be set
+ * and this query object will be returned for chaining.
+ *
+ * @param \Cake\ORM\Table $table The default table object to use
+ * @var \Cake\ORM\Table|Query
+ */
 	public function repository(Table $table = null) {
 		if ($table === null) {
 			return $this->_table;
@@ -71,6 +101,17 @@ class Query extends DatabaseQuery {
 		return $this;
 	}
 
+/**
+ * Hints this object to associate the correct types when casting conditions
+ * for the database. This is done by extracting the field types from the schema
+ * associated to the passed table object. This prevents the user from repeating
+ * himself when specifying conditions.
+ *
+ * This method returns the same query object for chaining.
+ *
+ * @param \Cake\ORM\Table $table
+ * @return Query
+ */
 	public function addDefaultTypes(Table $table) {
 		$alias = $table->alias();
 		$schema = $table->schema();
@@ -79,24 +120,53 @@ class Query extends DatabaseQuery {
 			$fields[$f] = $fields[$alias . '.' . $f] = $schema->column($f)['type'];
 		}
 		$this->defaultTypes($this->defaultTypes() + $fields);
+
+		return $this;
 	}
 
+/**
+ * Sets the list of associations that should be eagerly loaded along with this
+ * query.
+ * @return \ArrayObject|Query
+ */
 	public function contain($associations = null, $override = false) {
 		if ($this->_containments === null || $override) {
 			$this->_dirty = true;
 			$this->_containments = new \ArrayObject;
 		}
+
 		if ($associations === null) {
 			return $this->_containments;
 		}
 
-		foreach ((array)$associations as $table => $options) {
-			if (is_string($options)) {
-				$table = $options;
-				$options = [];
-			}
-			$this->_containments[$table] = $options;
+		$associations = (array)$associations;
+		if (isset(current($associations)['instance'])) {
+			$this->_containments = $this->_normalizedContainments = $associations;
+			return $this;
 		}
+
+		$normalizer = function($associations) use (&$normalizer) {
+			$result = [];
+			foreach ((array)$associations as $table => $options) {
+				if (is_int($table)) {
+					$table = $options;
+					$options = [];
+				} elseif (is_array($options) && !isset($this->_containOptions[$table])) {
+					$options = $normalizer($options);
+				}
+				$result[$table] = $options;
+			}
+			return $result;
+		};
+
+		$old = $this->_containments->getArrayCopy();
+		$associations = $normalizer($associations);
+
+		if (!$override) {
+			$associations = array_merge($old, $associations);
+		}
+
+		$this->_containments->exchangeArray($associations);
 		$this->_normalizedContainments = null;
 		$this->_dirty = true;
 		return $this;
@@ -123,6 +193,15 @@ class Query extends DatabaseQuery {
 		return $this->_normalizedContainments = $contain;
 	}
 
+/**
+ * Compiles the SQL representation of this query and executes it using the
+ * configured connection object. Returns a ResultSet iterator object
+ *
+ * Resulting statement is traversable, so it can be used in any loop as you would
+ * with an array.
+ *
+ * @return Cake\ORM\ResultSet
+ */
 	public function execute() {
 		return new ResultSet($this, parent::execute());
 	}
@@ -218,19 +297,10 @@ class Query extends DatabaseQuery {
 				}
 			}
 		}
-
 	}
 
 	protected function _normalizeContain(Table $parent, $alias, $options) {
-		$defaults = [
-			'associations' => 1,
-			'foreignKey' => 1,
-			'conditions' => 1,
-			'fields' => 1,
-			'sort' => 1,
-			'matching' => 1
-		];
-
+		$defaults = $this->_containOptions;
 		$instance = $parent->association($alias);
 		if (!$instance) {
 			throw new \InvalidArgumentException(
@@ -248,10 +318,6 @@ class Query extends DatabaseQuery {
 		];
 
 		foreach ($extra as $t => $assoc) {
-			if (is_numeric($t)) {
-				$t = $assoc;
-				$assoc = [];
-			}
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
 		}
 		return $config;
