@@ -30,16 +30,9 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
 class MyAppSchema extends CakeSchema {
 
 /**
- * name property
- *
- * @var string 'MyApp'
- */
-	public $name = 'MyApp';
-
-/**
  * connection property
  *
- * @var string 'test'
+ * @var string
  */
 	public $connection = 'test';
 
@@ -127,7 +120,7 @@ class TestAppSchema extends CakeSchema {
 /**
  * name property
  *
- * @var string 'MyApp'
+ * @var string
  */
 	public $name = 'MyApp';
 
@@ -233,16 +226,9 @@ class TestAppSchema extends CakeSchema {
 class SchemaPost extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'SchemaPost'
- */
-	public $name = 'SchemaPost';
-
-/**
  * useTable property
  *
- * @var string 'posts'
+ * @var string
  */
 	public $useTable = 'posts';
 
@@ -269,16 +255,9 @@ class SchemaPost extends CakeTestModel {
 class SchemaComment extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'SchemaComment'
- */
-	public $name = 'SchemaComment';
-
-/**
  * useTable property
  *
- * @var string 'comments'
+ * @var string
  */
 	public $useTable = 'comments';
 
@@ -298,16 +277,9 @@ class SchemaComment extends CakeTestModel {
 class SchemaTag extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'SchemaTag'
- */
-	public $name = 'SchemaTag';
-
-/**
  * useTable property
  *
- * @var string 'tags'
+ * @var string
  */
 	public $useTable = 'tags';
 
@@ -327,16 +299,9 @@ class SchemaTag extends CakeTestModel {
 class SchemaDatatype extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'SchemaDatatype'
- */
-	public $name = 'SchemaDatatype';
-
-/**
  * useTable property
  *
- * @var string 'datatypes'
+ * @var string
  */
 	public $useTable = 'datatypes';
 }
@@ -352,13 +317,6 @@ class SchemaDatatype extends CakeTestModel {
  * @package       Cake.Test.Case.Model
  */
 class Testdescribe extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string 'Testdescribe'
- */
-	public $name = 'Testdescribe';
 }
 
 /**
@@ -369,23 +327,16 @@ class Testdescribe extends CakeTestModel {
 class SchemaCrossDatabase extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'SchemaCrossDatabase'
- */
-	public $name = 'SchemaCrossDatabase';
-
-/**
  * useTable property
  *
- * @var string 'posts'
+ * @var string
  */
 	public $useTable = 'cross_database';
 
 /**
  * useDbConfig property
  *
- * @var string 'test2'
+ * @var string
  */
 	public $useDbConfig = 'test2';
 }
@@ -400,13 +351,14 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
 /**
  * name property
  *
- * @var string 'CrossDatabase'
+ * @var string
  */
 	public $name = 'CrossDatabase';
 
 /**
  * table property
  *
+ * @var string
  */
 	public $table = 'cross_database';
 
@@ -437,13 +389,6 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
  * @package       Cake.Test.Case.Model
  */
 class SchemaPrefixAuthUser extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string
- */
-	public $name = 'SchemaPrefixAuthUser';
 
 /**
  * table prefix

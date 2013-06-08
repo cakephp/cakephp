@@ -33,16 +33,9 @@ App::uses('SchemaShell', 'Console/Command');
 class SchemaShellTestSchema extends CakeSchema {
 
 /**
- * name property
- *
- * @var string 'MyApp'
- */
-	public $name = 'SchemaShellTest';
-
-/**
  * connection property
  *
- * @var string 'test'
+ * @var string
  */
 	public $connection = 'test';
 

@@ -29,13 +29,6 @@ App::uses('Component', 'Controller');
 class ParamTestComponent extends Component {
 
 /**
- * name property
- *
- * @var string 'ParamTest'
- */
-	public $name = 'ParamTest';
-
-/**
  * components property
  *
  * @var array
@@ -49,13 +42,6 @@ class ParamTestComponent extends Component {
  * @package       Cake.Test.Case.Controller
  */
 class ComponentTestController extends Controller {
-
-/**
- * name property
- *
- * @var string 'ComponentTest'
- */
-	public $name = 'ComponentTest';
 
 /**
  * uses property
@@ -146,7 +132,7 @@ class BananaComponent extends Component {
 /**
  * testField property
  *
- * @var string 'BananaField'
+ * @var string
  */
 	public $testField = 'BananaField';
 

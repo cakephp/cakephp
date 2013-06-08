@@ -59,16 +59,9 @@ class ControllerTestAppController extends Controller {
 class ControllerPost extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'ControllerPost'
- */
-	public $name = 'ControllerPost';
-
-/**
  * useTable property
  *
- * @var string 'posts'
+ * @var string
  */
 	public $useTable = 'posts';
 
@@ -121,13 +114,6 @@ class ControllerPost extends CakeTestModel {
  */
 class ControllerCommentsController extends ControllerTestAppController {
 
-/**
- * name property
- *
- * @var string 'ControllerPost'
- */
-	public $name = 'ControllerComments';
-
 	protected $_mergeParent = 'ControllerTestAppController';
 }
 
@@ -141,14 +127,14 @@ class ControllerComment extends CakeTestModel {
 /**
  * name property
  *
- * @var string 'ControllerComment'
+ * @var string
  */
 	public $name = 'Comment';
 
 /**
  * useTable property
  *
- * @var string 'comments'
+ * @var string
  */
 	public $useTable = 'comments';
 
@@ -162,7 +148,7 @@ class ControllerComment extends CakeTestModel {
 /**
  * alias property
  *
- * @var string 'ControllerComment'
+ * @var string
  */
 	public $alias = 'ControllerComment';
 }
@@ -175,23 +161,16 @@ class ControllerComment extends CakeTestModel {
 class ControllerAlias extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'ControllerAlias'
- */
-	public $name = 'ControllerAlias';
-
-/**
  * alias property
  *
- * @var string 'ControllerSomeAlias'
+ * @var string
  */
 	public $alias = 'ControllerSomeAlias';
 
 /**
  * useTable property
  *
- * @var string 'posts'
+ * @var string
  */
 	public $useTable = 'posts';
 }
@@ -205,20 +184,20 @@ class NameTest extends CakeTestModel {
 
 /**
  * name property
- * @var string 'Name'
+ * @var string
  */
 	public $name = 'Name';
 
 /**
  * useTable property
- * @var string 'names'
+ * @var string
  */
 	public $useTable = 'comments';
 
 /**
  * alias property
  *
- * @var string 'ControllerComment'
+ * @var string
  */
 	public $alias = 'Name';
 }
@@ -229,12 +208,6 @@ class NameTest extends CakeTestModel {
  * @package       Cake.Test.Case.Controller
  */
 class TestController extends ControllerTestAppController {
-
-/**
- * name property
- * @var string 'Name'
- */
-	public $name = 'Test';
 
 /**
  * helpers property
@@ -380,12 +353,6 @@ class Test2Component extends TestComponent {
  * @package       Cake.Test.Case.Controller
  */
 class AnotherTestController extends ControllerTestAppController {
-
-/**
- * name property
- * @var string 'Name'
- */
-	public $name = 'AnotherTest';
 
 /**
  * uses property

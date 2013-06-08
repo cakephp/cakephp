@@ -34,13 +34,6 @@ require_once dirname(dirname(__FILE__)) . DS . 'Model' . DS . 'models.php';
 class ScaffoldMockController extends Controller {
 
 /**
- * name property
- *
- * @var string 'ScaffoldMock'
- */
-	public $name = 'ScaffoldMock';
-
-/**
  * scaffold property
  *
  * @var mixed
@@ -58,7 +51,7 @@ class ScaffoldMockControllerWithFields extends Controller {
 /**
  * name property
  *
- * @var string 'ScaffoldMock'
+ * @var string
  */
 	public $name = 'ScaffoldMock';
 

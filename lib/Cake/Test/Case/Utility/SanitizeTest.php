@@ -28,16 +28,9 @@ App::uses('Sanitize', 'Utility');
 class SanitizeDataTest extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'SanitizeDataTest'
- */
-	public $name = 'SanitizeDataTest';
-
-/**
  * useTable property
  *
- * @var string 'data_tests'
+ * @var string
  */
 	public $useTable = 'data_tests';
 }
@@ -50,16 +43,9 @@ class SanitizeDataTest extends CakeTestModel {
 class SanitizeArticle extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'Article'
- */
-	public $name = 'SanitizeArticle';
-
-/**
  * useTable property
  *
- * @var string 'articles'
+ * @var string
  */
 	public $useTable = 'articles';
 }

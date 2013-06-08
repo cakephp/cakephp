@@ -31,13 +31,6 @@ App::uses('Router', 'Routing');
 class AuthBlueberryUser extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'AuthBlueberryUser'
- */
-	public $name = 'AuthBlueberryUser';
-
-/**
  * useTable property
  *
  * @var string

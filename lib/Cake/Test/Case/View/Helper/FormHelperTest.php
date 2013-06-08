@@ -181,7 +181,7 @@ class ContactNonStandardPk extends Contact {
 /**
  * primaryKey property
  *
- * @var string 'pk'
+ * @var string
  */
 	public $primaryKey = 'pk';
 

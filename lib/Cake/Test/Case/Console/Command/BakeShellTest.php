@@ -31,9 +31,6 @@ App::uses('Controller', 'Controller');
 
 if (!class_exists('UsersController')) {
 	class UsersController extends Controller {
-
-		public $name = 'Users';
-
 	}
 }
 
