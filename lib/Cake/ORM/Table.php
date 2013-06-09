@@ -101,7 +101,7 @@ class Table {
  * - alias: Alias to be assigned to this table (default to table name)
  * - connection: The connection instance to use
  * - schema: A \Cake\Database\Schema\Table object or an array that can be
- *   passed to it
+ *   passed to it.
  *
  * @param array config Lsit of options for this table
  * @return void
@@ -125,19 +125,37 @@ class Table {
 		}
 	}
 
+/**
+ * A factory method to build a new Table instance. Once created, the instance
+ * will be registered so it can be re-used if tried to build again for the same
+ * alias.
+ *
+ * The options that can be passed are the same as in `__construct()`, but the
+ * key `className` is also recognized.
+ *
+ * When $options contains `className` this method will try to instantiate an
+ * object of that class instead of this default Table class.
+ *
+ * If no `table` option is passed, the table name will be the tableized version
+ * of the provided $alias.
+ *
+ * @param string $alias the alias for the table
+ * @param array $options a list of options as accepted by `__construct()`
+ * @return Table
+ */
 	public static function build($alias, array $options = []) {
 		if (isset(static::$_instances[$alias])) {
 			return static::$_instances[$alias];
-		}
-
-		if (!empty($options['table']) && isset(static::$_tablesMap[$options['table']])) {
-			$options = array_merge(static::$_tablesMap[$options['table']], $options);
 		}
 
 		$options = ['alias' => $alias] + $options;
 
 		if (empty($options['table'])) {
 			$options['table'] = Inflector::tableize($alias);
+		}
+
+		if (isset(static::$_tablesMap[$options['table']])) {
+			$options = array_merge(static::$_tablesMap[$options['table']], $options);
 		}
 
 		if (empty($options['className'])) {
@@ -147,6 +165,15 @@ class Table {
 		return static::$_instances[$alias] = new $options['className']($options);
 	}
 
+/**
+ * Returns the Table object associated to the provided alias, if any.
+ * If a Table is passed as second parameter it will be associated to the
+ * passed $alias even if another object was associated before.
+ *
+ * @param string $alias
+ * @param Table $object
+ * @return Table
+ */
 	public static function instance($alias, self $object = null) {
 		if ($object === null) {
 			return isset(static::$_instances[$alias]) ? static::$_instances[$alias] : null;
@@ -154,25 +181,49 @@ class Table {
 		return static::$_instances[$alias] = $object;
 	}
 
+/**
+ * Stores a list of options to be used when instantiating an object for the table
+ * with the same name as $table. The options that can be stored are those that
+ * are recognized by `build()`
+ *
+ * If second argument is omitted, it will return the current settings for $table
+ *
+ * If no arguments are passed it will return the full configuration array for
+ * all tables
+ *
+ * @param string $table name of the table
+ * @param array $options list of options for the table
+ * @return array
+ */
 	public static function config($table = null, array $options = null) {
 		if ($table === null) {
 			return static::$_tablesMap;
 		}
 		if (!is_string($table)) {
-			static::$_tablesMap = $table;
-			return;
+			return static::$_tablesMap = $table;
 		}
 		if ($options === null) {
-			return isset(static::$_tablesMap[$table]) ? static::$_tablesMap[$table] : null;
+			return isset(static::$_tablesMap[$table]) ? static::$_tablesMap[$table] : [];
 		}
-		static::$_tablesMap[$table] = $options;
+		return static::$_tablesMap[$table] = $options;
 	}
 
+/**
+ * Clears the registry of instantiated tables and default configurations
+ *
+ * @return void
+ */
 	public static function clearRegistry() {
 		static::$_instances = [];
 		static::$_tablesMap = [];
 	}
 
+/**
+ * Returns the database table name or sets a new one
+ *
+ * @param string $table the new table name
+ * @return string
+ */
 	public function table($table = null) {
 		if ($table !== null) {
 			$this->_table = $table;
@@ -180,14 +231,26 @@ class Table {
 		return $this->_table;
 	}
 
-
+/**
+ * Returns the table alias or sets a new one
+ *
+ * @param string $table the new table alias
+ * @return string
+ */
 	public function alias($alias = null) {
 		if ($alias !== null) {
 			$this->_alias = $alias;
+			static::instance($alias, $this);
 		}
 		return $this->_alias;
 	}
 
+/**
+ * Returns the connection instance or sets a new one
+ *
+ * @param \Cake\Database\Connection $conn the new connection instance
+ * @return \Cake\Database\Connection
+ */
 	public function connection($conn = null) {
 		if ($conn === null) {
 			return $this->_connection;
@@ -195,6 +258,18 @@ class Table {
 		return $this->_connection = $conn;
 	}
 
+/**
+ * Returns the schema table object describing this table's properties.
+ *
+ * If an \Cake\Database\Schema\Table is passed, it will be used for this table
+ * instead of the default one.
+ *
+ * If an array is passed, a new \Cake\Database\Schema\Table will be constructed
+ * out of it and used as the schema for this table.
+ *
+ * @param array|\Cake\Database\Schema\Table new schema to be used for this table
+ * @return \Cake\Database\Schema\Table
+ */
 	public function schema($schema = null) {
 		if ($schema === null) {
 			if ($this->_schema === null) {
@@ -210,6 +285,12 @@ class Table {
 		return $this->_schema = $schema;
 	}
 
+/**
+ * Returns the primary key field name or sets a new one
+ *
+ * @param string $key sets a new name to be used as primary key
+ * @return string
+ */
 	public function primaryKey($key = null) {
 		if ($key !== null) {
 			$this->_primaryKey = $key;
@@ -250,7 +331,7 @@ class Table {
  * - conditions: array with a list of conditions to filter the join with
  * - joinType: The type of join to be used (e.g. INNER)
  *
- * This method will return the recently built association object
+ * This method will return the association object that was built.
  *
  * @param string $associated the alias for the target table. This is used to
  * uniquely identify the association
@@ -280,7 +361,7 @@ class Table {
  * - conditions: array with a list of conditions to filter the join with
  * - joinType: The type of join to be used (e.g. LEFT)
  *
- * This method will return the recently built association object
+ * This method will return the association object that was built.
  *
  * @param string $associated the alias for the target table. This is used to
  * uniquely identify the association
