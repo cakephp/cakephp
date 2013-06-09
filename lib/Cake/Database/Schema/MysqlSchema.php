@@ -370,6 +370,9 @@ class MysqlSchema {
 		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
 			$out = 'UNIQUE KEY ';
 		}
+		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+			$out = 'CONSTRAINT ';
+		}
 		$out .= $this->_driver->quoteIdentifier($name);
 		return $this->_keySql($out, $data);
 	}
@@ -410,7 +413,39 @@ class MysqlSchema {
 				$columns[$i] .= sprintf('(%d)', $data['length'][$column]);
 			}
 		}
+		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+			return $prefix . sprintf(
+				' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
+				implode(', ', $columns),
+				$this->_driver->quoteIdentifier($data['references'][0]),
+				$this->_driver->quoteIdentifier($data['references'][1]),
+				$this->_foreignOnClause($data['update']),
+				$this->_foreignOnClause($data['delete'])
+			);
+		}
 		return $prefix . ' (' . implode(', ', $columns) . ')';
 	}
+
+/**
+ * Generate an ON clause for a foreign key.
+ *
+ * @param string|null $on The on clause
+ * @return string
+ */
+	protected function _foreignOnClause($on) {
+		if ($on === Table::ACTION_SET_NULL) {
+			return 'SET NULL';
+		}
+		if ($on === Table::ACTION_CASCADE) {
+			return 'CASCADE';
+		}
+		if ($on === Table::ACTION_RESTRICT) {
+			return 'RESTRICT';
+		}
+		if ($on === Table::ACTION_NO_ACTION) {
+			return 'NO ACTION';
+		}
+	}
+
 
 }
