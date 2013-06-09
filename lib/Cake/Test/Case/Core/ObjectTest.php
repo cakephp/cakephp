@@ -31,16 +31,9 @@ App::uses('Model', 'Model');
 class RequestActionPost extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'ControllerPost'
- */
-	public $name = 'RequestActionPost';
-
-/**
  * useTable property
  *
- * @var string 'posts'
+ * @var string
  */
 	public $useTable = 'posts';
 }
@@ -149,14 +142,14 @@ class TestObject extends Object {
 /**
  * firstName property
  *
- * @var string 'Joel'
+ * @var string
  */
 	public $firstName = 'Joel';
 
 /**
  * lastName property
  *
- * @var string 'Moss'
+ * @var string
  */
 	public $lastName = 'Moss';
 
@@ -281,8 +274,6 @@ class TestObject extends Object {
 class ObjectTestModel extends CakeTestModel {
 
 	public $useTable = false;
-
-	public $name = 'ObjectTestModel';
 
 }
 

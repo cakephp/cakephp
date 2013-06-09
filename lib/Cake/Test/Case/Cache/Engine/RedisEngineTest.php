@@ -26,7 +26,7 @@ App::uses('RedisEngine', 'Cache/Engine');
  *
  * @package       Cake.Test.Case.Cache.Engine
  */
-class RegisEngineTest extends CakeTestCase {
+class RedisEngineTest extends CakeTestCase {
 
 /**
  * setUp method

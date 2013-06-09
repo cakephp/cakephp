@@ -40,13 +40,6 @@ App::uses('Controller', 'Controller');
 class ViewTaskComment extends Model {
 
 /**
- * Model name
- *
- * @var string
- */
-	public $name = 'ViewTaskComment';
-
-/**
  * Table name
  *
  * @var string
@@ -74,13 +67,6 @@ class ViewTaskComment extends Model {
 class ViewTaskArticle extends Model {
 
 /**
- * Model name
- *
- * @var string
- */
-	public $name = 'ViewTaskArticle';
-
-/**
  * Table name
  *
  * @var string
@@ -94,13 +80,6 @@ class ViewTaskArticle extends Model {
  * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskCommentsController extends Controller {
-
-/**
- * Controller name
- *
- * @var string
- */
-	public $name = 'ViewTaskComments';
 
 /**
  * Testing public controller action
@@ -126,13 +105,6 @@ class ViewTaskCommentsController extends Controller {
  * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskArticlesController extends Controller {
-
-/**
- * Controller name
- *
- * @var string
- */
-	public $name = 'ViewTaskArticles';
 
 /**
  * Test public controller action

@@ -116,13 +116,6 @@ class SqlserverTestDb extends Sqlserver {
 class SqlserverTestModel extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'SqlserverTestModel'
- */
-	public $name = 'SqlserverTestModel';
-
-/**
  * useTable property
  *
  * @var bool false
@@ -187,13 +180,6 @@ class SqlserverTestModel extends CakeTestModel {
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
 class SqlserverClientTestModel extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string 'SqlserverAssociatedTestModel'
- */
-	public $name = 'SqlserverClientTestModel';
 
 /**
  * useTable property

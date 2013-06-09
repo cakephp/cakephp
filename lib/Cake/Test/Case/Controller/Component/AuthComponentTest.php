@@ -60,16 +60,9 @@ class TestAuthComponent extends AuthComponent {
 class AuthUser extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'AuthUser'
- */
-	public $name = 'AuthUser';
-
-/**
  * useDbConfig property
  *
- * @var string 'test'
+ * @var string
  */
 	public $useDbConfig = 'test';
 
@@ -81,13 +74,6 @@ class AuthUser extends CakeTestModel {
  * @package       Cake.Test.Case.Controller.Component
  */
 class AuthTestController extends Controller {
-
-/**
- * name property
- *
- * @var string 'AuthTest'
- */
-	public $name = 'AuthTest';
 
 /**
  * uses property
@@ -204,13 +190,6 @@ class AuthTestController extends Controller {
 class AjaxAuthController extends Controller {
 
 /**
- * name property
- *
- * @var string 'AjaxAuth'
- */
-	public $name = 'AjaxAuth';
-
-/**
  * components property
  *
  * @var array
@@ -278,7 +257,7 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * name property
  *
- * @var string 'Auth'
+ * @var string
  */
 	public $name = 'Auth';
 

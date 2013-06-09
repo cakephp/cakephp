@@ -202,6 +202,31 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test write with distant future cookies
+ *
+ * @return void
+ */
+	public function testWriteFarFuture() {
+		$this->Cookie->write('Testing', 'value', false, '+90 years');
+		$future = new DateTime('now');
+		$future->modify('+90 years');
+
+		$expected = array(
+			'name' => $this->Cookie->name . '[Testing]',
+			'value' => 'value',
+			'path' => '/',
+			'domain' => '',
+			'secure' => false,
+			'httpOnly' => false);
+		$result = $this->Controller->response->cookie($this->Cookie->name . '[Testing]');
+
+		$this->assertEquals($future->format('U'), $result['expire'], '', 3);
+		unset($result['expire']);
+
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test write with httpOnly cookies
  *
  * @return void

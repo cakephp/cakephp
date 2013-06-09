@@ -54,7 +54,7 @@ class ScaffoldViewMockController extends Controller {
 /**
  * name property
  *
- * @var string 'ScaffoldMock'
+ * @var string
  */
 	public $name = 'ScaffoldMock';
 
