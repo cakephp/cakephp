@@ -26,6 +26,13 @@ use Cake\ORM\Table;
  **/
 class DatesTable extends Table {
 
+/**
+ * Overrides default table name
+ *
+ * @var string
+ */
+	public $_table = 'my_dates';
+
 }
 
 /**
@@ -130,11 +137,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		Table::clearRegistry();
 		$this->assertEmpty(Table::config());
 
-		$options['className'] = __NAMESPACE__ . '\DatesTable';
-		Table::config('dates', $options);
-		$table = Table::build('foo', ['table' => 'dates']);
+		Table::config('my_dates', $options);
+		$table = Table::build('foo', ['className' => __NAMESPACE__ . '\DatesTable']);
 		$this->assertInstanceOf(__NAMESPACE__ . '\DatesTable', $table);
-		$this->assertEquals('dates', $table->table());
+		$this->assertEquals('my_dates', $table->table());
 		$this->assertEquals('foo', $table->alias());
 		$this->assertSame($this->connection, $table->connection());
 		$this->assertEquals(array_keys($schema), $table->schema()->columns());

@@ -108,13 +108,16 @@ class Table {
  */
 	public function __construct($config = array()) {
 		if (!empty($config['table'])) {
-			$this->_table = $config['table'];
+			$this->table($config['table']);
 		}
 
 		if (!empty($config['alias'])) {
 			$this->alias($config['alias']);
-		} else {
-			$this->alias($this->_table);
+		}
+
+		$table = $this->table();
+		if (isset(static::$_tablesMap[$table])) {
+			$config = array_merge(static::$_tablesMap[$table], $config);
 		}
 
 		if (!empty($config['connection'])) {
@@ -149,15 +152,6 @@ class Table {
 		}
 
 		$options = ['alias' => $alias] + $options;
-
-		if (empty($options['table'])) {
-			$options['table'] = Inflector::tableize($alias);
-		}
-
-		if (isset(static::$_tablesMap[$options['table']])) {
-			$options = array_merge(static::$_tablesMap[$options['table']], $options);
-		}
-
 		if (empty($options['className'])) {
 			$options['className'] = get_called_class();
 		}
@@ -228,6 +222,14 @@ class Table {
 		if ($table !== null) {
 			$this->_table = $table;
 		}
+		if ($this->_table === null) {
+			$table = explode('\\', get_class($this));
+			$table = substr(end($table), 0, -5);
+			if (empty($table)) {
+				$table = $this->alias();
+			}
+			$this->_table = Inflector::tableize($table);
+		}
 		return $this->_table;
 	}
 
@@ -241,6 +243,11 @@ class Table {
 		if ($alias !== null) {
 			$this->_alias = $alias;
 			static::instance($alias, $this);
+		}
+		if ($this->_alias === null) {
+			$alias = explode('\\', get_class($this));
+			$alias = substr(end($alias), 0, -5) ?: $this->_table;
+			$this->_alias = $alias;
 		}
 		return $this->_alias;
 	}
