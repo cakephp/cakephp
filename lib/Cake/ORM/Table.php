@@ -321,12 +321,12 @@ class Table {
 
 /**
  * Creates a new BelongsTo association between this table and a target
- * table. A "belongs to" association is a 1-N relationship where this table
+ * table. A "belongs to" association is a N-1 relationship where this table
  * is the N side, and where there is a single associated record in the target
  * table for each one in this table.
  *
  * Target table can be inferred by its name, which is provided in the
- * first argument, or you can either pass the class name to be instantiated or
+ * first argument, or you can either pass the to be instantiated or
  * an instance of it directly.
  *
  * The options array accept the following keys:
@@ -381,12 +381,71 @@ class Table {
 		return $this->_associations[$association->name()] = $association;
 	}
 
+/**
+ * Creates a new HasMany association between this table and a target
+ * table. A "has many" association is a 1-N relationship.
+ *
+ * Target table can be inferred by its name, which is provided in the
+ * first argument, or you can either pass the class name to be instantiated or
+ * an instance of it directly.
+ *
+ * The options array accept the following keys:
+ *
+ * - className: The class name of the target table object
+ * - targetTable: An instance of a table object to be used as the target table
+ * - foreignKey: The name of the field to use as foreign key, if false none
+ *   will be used
+ * - conditions: array with a list of conditions to filter the join with
+ * - sort: The order in which results for this association should be returned
+ * - strategy: The strategy to be used for selecting results Either 'select'
+ *   or 'subquery'. If subquery is selected the query used to return results
+ *   in the source table will be used as conditions for getting rows in the
+ *   target table.
+ *
+ * This method will return the association object that was built.
+ *
+ * @param string $associated the alias for the target table. This is used to
+ * uniquely identify the association
+ * @param array $options list of options to configure the association definition
+ * @return Cake\ORM\Association\HasMany
+ */
 	public function hasMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasMany($associated, $options);
 		return $this->_associations[$association->name()] = $association;
 	}
 
+/**
+ * Creates a new BelongsToMany association between this table and a target
+ * table. A "belongs to many" association is a M-N relationship.
+ *
+ * Target table can be inferred by its name, which is provided in the
+ * first argument, or you can either pass the class name to be instantiated or
+ * an instance of it directly.
+ *
+ * The options array accept the following keys:
+ *
+ * - className: The class name of the target table object
+ * - targetTable: An instance of a table object to be used as the target table
+ * - foreignKey: The name of the field to use as foreign key
+ * - joinTable: The name of the table representing the link between the two
+ * - through: If you choose to use an already instantiated link table, set this
+ *   key to a configured Table instance containing associations to both the source
+ *   and target tables in this association.
+ * - conditions: array with a list of conditions to filter the join with
+ * - sort: The order in which results for this association should be returned
+ * - strategy: The strategy to be used for selecting results Either 'select'
+ *   or 'subquery'. If subquery is selected the query used to return results
+ *   in the source table will be used as conditions for getting rows in the
+ *   target table.
+ *
+ * This method will return the association object that was built.
+ *
+ * @param string $associated the alias for the target table. This is used to
+ * uniquely identify the association
+ * @param array $options list of options to configure the association definition
+ * @return Cake\ORM\Association\BelongsToMany
+ */
 	public function belongsToMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsToMany($associated, $options);
