@@ -182,7 +182,7 @@ class CookieComponentTest extends TestCase {
  */
 	public function testWriteFarFuture() {
 		$this->Cookie->write('Testing', 'value', false, '+90 years');
-		$future = new DateTime('now');
+		$future = new \DateTime('now');
 		$future->modify('+90 years');
 
 		$expected = array(
