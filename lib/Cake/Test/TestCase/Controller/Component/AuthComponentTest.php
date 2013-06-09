@@ -48,7 +48,7 @@ class AuthComponentTest extends TestCase {
 /**
  * name property
  *
- * @var string 'Auth'
+ * @var string
  */
 	public $name = 'Auth';
 

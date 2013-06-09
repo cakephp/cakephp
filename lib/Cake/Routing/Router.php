@@ -56,6 +56,14 @@ class Router {
 	public static $initialized = false;
 
 /**
+ * Contains the base string that will be applied to all generated URLs
+ * For example `https://example.com`
+ *
+ * @var string
+ */
+	protected static $_baseURL;
+
+/**
  * List of action prefixes used in connected routes.
  * Includes admin prefix
  *
@@ -661,7 +669,7 @@ class Router {
  *   to the current scheme.
  * - `_host` - Set the host to use for the link.  Defaults to the current host.
  * - `_port` - Set the port if you need to create links on non-standard ports.
- * - `_full` - If true the `FULL_BASE_URL` constant will be prepended to generated urls.
+ * - `_full` - If true the `Router::baseURL()` constant will be prepended to generated urls.
  * - `#` - Allows you to set url hash fragments.
  * - `ssl` - Set to true to convert the generated url to https, or false to force http.
  *
@@ -715,8 +723,8 @@ class Router {
 
 		if (empty($url)) {
 			$output = isset($here) ? $here : '/';
-			if ($full && defined('FULL_BASE_URL')) {
-				$output = FULL_BASE_URL . $base . $output;
+			if ($full) {
+				$output = static::baseURL() . $base . $output;
 			}
 			return $output;
 		} elseif ($urlType === 'array') {
@@ -800,11 +808,37 @@ class Router {
 		$protocol = preg_match('#^[a-z][a-z0-9+-.]*\://#i', $output);
 		if ($protocol === 0) {
 			$output = str_replace('//', '/', '/' . $output);
-			if ($full && defined('FULL_BASE_URL')) {
-				$output = FULL_BASE_URL . $output;
+			if ($full) {
+				$output = static::baseURL() . $output;
 			}
 		}
 		return $output . $frag;
+	}
+
+/**
+ * Sets the full base url that will be used as a prefix for generating
+ * fully qualified URLs for this application. If not parameters are passed,
+ * the currently configured value is returned
+ *
+ * ## Note:
+ *
+ * If you change during runtime the configuration value ``App.fullBaseURL``
+ * and expect the router to produce links using the new setting, you are
+ * required to call this method passing such value again.
+ *
+ * @param string $base the prefix for URLs generated containing the domain.
+ * For example: ``http://example.com``
+ * @return string
+ */
+	public static function baseURL($base = null) {
+		if ($base !== null) {
+			static::$_baseURL = $base;
+			Configure::write('App.fullBaseURL', $base);
+		}
+		if (empty(static::$_baseURL)) {
+			static::$_baseURL = Configure::read('App.fullBaseURL');
+		}
+		return static::$_baseURL;
 	}
 
 /**

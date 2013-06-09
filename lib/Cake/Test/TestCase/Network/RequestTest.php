@@ -119,7 +119,7 @@ class RequestTest extends TestCase {
 		$request = Request::createFromGlobals();
 		$this->assertEquals('some/path', $request->url);
 
-		$_SERVER['REQUEST_URI'] = FULL_BASE_URL . '/other/path?url=http://cakephp.org';
+		$_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseURL') . '/other/path?url=http://cakephp.org';
 		$request = Request::createFromGlobals();
 		$this->assertEquals('other/path', $request->url);
 	}
@@ -585,19 +585,19 @@ class RequestTest extends TestCase {
 		$result = $request->referer();
 		$this->assertSame($result, '/');
 
-		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
 		$result = $request->referer(false);
-		$this->assertSame($result, FULL_BASE_URL . '/some/path');
+		$this->assertSame($result, Configure::read('App.fullBaseURL') . '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL . '/recipes/add';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/recipes/add';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/recipes/add');
 
@@ -1662,7 +1662,7 @@ class RequestTest extends TestCase {
 						'SERVER_NAME' => 'localhost',
 						'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
 						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-						'REQUEST_URI' => FULL_BASE_URL . '/site/posts/index',
+						'REQUEST_URI' => '/site/posts/index',
 						'SCRIPT_NAME' => '/site/App/webroot/index.php',
 						'PHP_SELF' => '/site/App/webroot/index.php',
 					),

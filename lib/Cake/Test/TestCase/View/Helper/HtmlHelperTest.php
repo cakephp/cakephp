@@ -199,7 +199,7 @@ class HtmlHelperTest extends TestCase {
 		Router::connect('/:controller/:action/*');
 
 		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', '_full' => true));
-		$expected = array('a' => array('href' => FULL_BASE_URL . '/posts'), 'Posts', '/a');
+		$expected = array('a' => array('href' => Router::baseURL() . '/posts'), 'Posts', '/a');
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link('Home', '/home', array('confirm' => 'Are you sure you want to do this?'));

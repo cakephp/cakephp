@@ -31,16 +31,9 @@ use Cake\Utility\Sanitize;
 class SanitizeDataTest extends TestModel {
 
 /**
- * name property
- *
- * @var string 'SanitizeDataTest'
- */
-	public $name = 'SanitizeDataTest';
-
-/**
  * useTable property
  *
- * @var string 'data_tests'
+ * @var string
  */
 	public $useTable = 'data_tests';
 }
@@ -53,16 +46,9 @@ class SanitizeDataTest extends TestModel {
 class SanitizeArticle extends TestModel {
 
 /**
- * name property
- *
- * @var string 'Article'
- */
-	public $name = 'SanitizeArticle';
-
-/**
  * useTable property
  *
- * @var string 'articles'
+ * @var string
  */
 	public $useTable = 'articles';
 }

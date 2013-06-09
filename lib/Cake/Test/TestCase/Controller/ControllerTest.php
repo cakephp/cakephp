@@ -58,19 +58,12 @@ class ControllerTestAppController extends Controller {
 	public $components = array('Cookie');
 }
 
-
 /**
  * TestController class
  *
  * @package       Cake.Test.Case.Controller
  */
 class TestController extends ControllerTestAppController {
-
-/**
- * name property
- * @var string 'Name'
- */
-	public $name = 'Test';
 
 /**
  * helpers property
@@ -214,13 +207,6 @@ class Test2Component extends TestComponent {
  * @package       Cake.Test.Case.Controller
  */
 class AnotherTestController extends ControllerTestAppController {
-
-/**
- * name property
- * @var string 'Name'
- */
-	public $name = 'AnotherTest';
-
 }
 
 /**

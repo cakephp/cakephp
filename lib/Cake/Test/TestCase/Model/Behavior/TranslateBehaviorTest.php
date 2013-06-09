@@ -536,6 +536,36 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * test saving/deleting with an alias, uses the model name.
+ *
+ * @return void
+ */
+	public function testSaveDeleteIgnoreAlias() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel = new TranslatedItem(array('alias' => 'SomethingElse'));
+		$TestModel->locale = 'spa';
+		$data = array(
+			'slug' => 'fourth_translated',
+			'title' => 'Leyenda #4',
+			'content' => 'Contenido #4',
+			'translated_article_id' => 1,
+		);
+		$TestModel->create($data);
+		$TestModel->save();
+		$id = $TestModel->id;
+		$result = $TestModel->read();
+		$expected = array($TestModel->alias => array_merge($data, array('id' => $id, 'locale' => 'spa')));
+		$this->assertEquals($expected, $result);
+
+		$TestModel->delete($id);
+		$result = $TestModel->translateModel()->find('count', array(
+			'conditions' => array('foreign_key' => $id)
+		));
+		$this->assertEquals(0, $result);
+	}
+
+/**
  * test save multiple locales method
  *
  * @return void

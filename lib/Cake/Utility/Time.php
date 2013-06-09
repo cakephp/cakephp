@@ -471,7 +471,8 @@ class Time {
  */
 	public static function isToday($dateString, $timezone = null) {
 		$timestamp = static::fromString($dateString, $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', time());
+		$now = static::fromString('now', $timezone);
+		return date('Y-m-d', $timestamp) == date('Y-m-d', $now);
 	}
 
 /**
@@ -483,7 +484,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public static function isFuture($dateString, $timezone = null) {
-		$timestamp = self::fromString($dateString, $timezone);
+		$timestamp = static::fromString($dateString, $timezone);
 		return $timestamp > time();
 	}
 
@@ -496,7 +497,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
  */
 	public static function isPast($dateString, $timezone = null) {
-		$timestamp = self::fromString($dateString, $timezone);
+		$timestamp = static::fromString($dateString, $timezone);
 		return $timestamp < time();
 	}
 
@@ -510,7 +511,8 @@ class Time {
  */
 	public static function isThisWeek($dateString, $timezone = null) {
 		$timestamp = static::fromString($dateString, $timezone);
-		return date('W o', $timestamp) == date('W o', time());
+		$now = static::fromString('now', $timezone);
+		return date('W o', $timestamp) == date('W o', $now);
 	}
 
 /**
@@ -523,7 +525,8 @@ class Time {
  */
 	public static function isThisMonth($dateString, $timezone = null) {
 		$timestamp = static::fromString($dateString, $timezone);
-		return date('m Y', $timestamp) == date('m Y', time());
+		$now = static::fromString('now', $timezone);
+		return date('m Y', $timestamp) == date('m Y', $now);
 	}
 
 /**
@@ -536,7 +539,8 @@ class Time {
  */
 	public static function isThisYear($dateString, $timezone = null) {
 		$timestamp = static::fromString($dateString, $timezone);
-		return date('Y', $timestamp) == date('Y', time());
+		$now = static::fromString('now', $timezone);
+		return date('Y', $timestamp) == date('Y', $now);
 	}
 
 /**
@@ -550,7 +554,8 @@ class Time {
  */
 	public static function wasYesterday($dateString, $timezone = null) {
 		$timestamp = static::fromString($dateString, $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', strtotime('yesterday'));
+		$yesterday = static::fromString('yesterday', $timezone);
+		return date('Y-m-d', $timestamp) == date('Y-m-d',$yesterday);
 	}
 
 /**
@@ -563,7 +568,8 @@ class Time {
  */
 	public static function isTomorrow($dateString, $timezone = null) {
 		$timestamp = static::fromString($dateString, $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', strtotime('tomorrow'));
+		$tomorrow = static::fromString('tomorrow', $timezone);
+		return date('Y-m-d', $timestamp) == date('Y-m-d', $tomorrow);
 	}
 
 /**
@@ -909,8 +915,9 @@ class Time {
 
 		$date = static::fromString($dateString, $timezone);
 		$interval = static::fromString('-' . $timeInterval);
+		$now = static::fromString('now', $timezone);
 
-		return $date >= $interval && $date <= time();
+		return $date >= $interval && $date <= $now;
 	}
 
 /**
@@ -931,8 +938,9 @@ class Time {
 
 		$date = static::fromString($dateString, $timezone);
 		$interval = static::fromString('+' . $timeInterval);
+		$now = static::fromString('now', $timezone);
 
-		return $date <= $interval && $date >= time();
+		return $date <= $interval && $date >= $now;
 	}
 
 /**
