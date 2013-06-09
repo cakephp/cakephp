@@ -156,10 +156,6 @@ abstract class Association {
 		$this->_name = $name;
 		$this->_options($options);
 
-		if (empty($this->_className)) {
-			$this->_className = $this->_name;
-		}
-
 		if (empty($this->_property)) {
 			$this->property($name);
 		}
@@ -213,11 +209,9 @@ abstract class Association {
 			return $this->_targetTable = $table;
 		}
 
-		if ($table === null && $this->_className !== null) {
-			$this->_targetTable = Table::build(
-				$this->_name,
-				['className' => $this->_className]
-			);
+		if ($table === null) {
+			$className = $this->_className;
+			$this->_targetTable = Table::build($this->_name, compact('className'));
 		}
 		return $this->_targetTable;
 	}

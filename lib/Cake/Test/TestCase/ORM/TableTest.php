@@ -146,6 +146,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(array_keys($schema), $table->schema()->columns());
 	}
 
+/**
+ * Tests getting and setting a Table instance in the registry
+ *
+ * @return void
+ */
 	public function testInstance() {
 		$this->assertNull(Table::instance('things'));
 		$table = new Table(['table' => 'things']);
@@ -153,6 +158,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($table, Table::instance('things'));
 	}
 
+/**
+ * Tests that all fields for a table are added by default in a find when no
+ * other fields are specified
+ *
+ * @return void
+ */
 	public function testFindAllNoFields() {
 		$this->_createThingsTable();
 		$table = new Table(['table' => 'things', 'connection' => $this->connection]);
@@ -164,6 +175,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $results);
 	}
 
+/**
+ * Tests that it is possible to select only a few fields when finding over a table
+ *
+ * @return void
+ */
 	public function testFindAllSomeFields() {
 		$this->_createThingsTable();
 		$table = new Table(['table' => 'things', 'connection' => $this->connection]);
@@ -182,6 +198,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $results);
 	}
 
+/**
+ * Tests that the query will automatically casts complex conditions to the correct
+ * types when the columns belong to the default table
+ *
+ * @return void
+ */
 	public function testFindAllConditionAutoTypes() {
 		$this->_createDatesTable();
 		$table = new Table(['table' => 'dates', 'connection' => $this->connection]);
@@ -255,6 +277,30 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['b' => 'c'], $hasMany->conditions());
 		$this->assertEquals(['foo' => 'asc'], $hasMany->sort());
 		$this->assertSame($table, $hasMany->source());
+	}
+
+/**
+ * Tests that BelongsToMany() creates and configures correctly the association
+ *
+ * @return void
+ */
+	public function testBelongsToMany() {
+		$options = [
+			'foreignKey' => 'thing_id',
+			'joinTable' => 'things_tags',
+			'conditions' => ['b' => 'c'],
+			'sort' => ['foo' => 'asc']
+		];
+		$table = new Table(['table' => 'authors']);
+		$belongsToMany = $table->belongsToMany('tag', $options);
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $belongsToMany);
+		$this->assertSame($belongsToMany, $table->association('tag'));
+		$this->assertEquals('tag', $belongsToMany->name());
+		$this->assertEquals('thing_id', $belongsToMany->foreignKey());
+		$this->assertEquals(['b' => 'c'], $belongsToMany->conditions());
+		$this->assertEquals(['foo' => 'asc'], $belongsToMany->sort());
+		$this->assertSame($table, $belongsToMany->source());
+		$this->assertSame('things_tags', $belongsToMany->pivot()->table());
 	}
 
 }

@@ -149,7 +149,7 @@ class BelongsToMany extends Association {
 
 /**
  * Return false as join conditions are defined in the pivot table
- * 
+ *
  * @param array $options list of options passed to attachTo method
  * @return boolean false
  */
