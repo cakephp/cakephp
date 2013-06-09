@@ -233,7 +233,7 @@ class FixtureTask extends BakeTask {
 		$this->_Schema = new Schema();
 		$data = $this->_Schema->read(array('models' => false, 'connection' => $this->connection));
 		if (!isset($data['tables'][$useTable])) {
-			$this->err('Could not find your selected table ' . $useTable);
+			$this->error('Could not find your selected table ' . $useTable);
 			return false;
 		}
 

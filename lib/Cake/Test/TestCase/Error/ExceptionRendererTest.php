@@ -33,13 +33,6 @@ use Cake\TestSuite\TestCase;
 class AuthBlueberryUser extends TestModel {
 
 /**
- * name property
- *
- * @var string 'AuthBlueberryUser'
- */
-	public $name = 'AuthBlueberryUser';
-
-/**
  * useTable property
  *
  * @var string

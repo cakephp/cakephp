@@ -655,13 +655,13 @@ class HelperTest extends TestCase {
 			),
 			array('fullBase' => true)
 		);
-		$this->assertEquals(FULL_BASE_URL . '/js/post.js', $result);
+		$this->assertEquals(Router::baseURL() . '/js/post.js', $result);
 
 		$result = $this->Helper->assetUrl('foo.jpg', array('pathPrefix' => 'img/'));
 		$this->assertEquals('img/foo.jpg', $result);
 
 		$result = $this->Helper->assetUrl('foo.jpg', array('fullBase' => true));
-		$this->assertEquals(FULL_BASE_URL . '/foo.jpg', $result);
+		$this->assertEquals(Router::baseURL() . '/foo.jpg', $result);
 
 		$result = $this->Helper->assetUrl('style', array('ext' => '.css'));
 		$this->assertEquals('style.css', $result);

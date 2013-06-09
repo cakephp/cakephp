@@ -41,7 +41,7 @@ class ViewPostsController extends Controller {
 /**
  * name property
  *
- * @var string 'Posts'
+ * @var string
  */
 	public $name = 'Posts';
 
@@ -83,13 +83,6 @@ class ViewPostsController extends Controller {
  * @package       Cake.Test.Case.View
  */
 class ThemePostsController extends Controller {
-
-/**
- * name property
- *
- * @var string 'ThemePosts'
- */
-	public $name = 'ThemePosts';
 
 	public $theme = null;
 
@@ -206,7 +199,7 @@ class TestAfterHelper extends Helper {
 /**
  * property property
  *
- * @var string ''
+ * @var string
  */
 	public $property = '';
 

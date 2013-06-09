@@ -34,16 +34,9 @@ use Cake\Utility\Inflector;
 class SchemaShellTestSchema extends Object {
 
 /**
- * name property
- *
- * @var string 'MyApp'
- */
-	public $name = 'SchemaShellTest';
-
-/**
  * connection property
  *
- * @var string 'test'
+ * @var string
  */
 	public $connection = 'test';
 

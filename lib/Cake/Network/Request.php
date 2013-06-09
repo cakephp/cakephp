@@ -283,7 +283,7 @@ class Request implements \ArrayAccess {
 			if ($qPosition !== false && strpos($_SERVER['REQUEST_URI'], '://') > $qPosition) {
 				$uri = $_SERVER['REQUEST_URI'];
 			} else {
-				$uri = substr($_SERVER['REQUEST_URI'], strlen(FULL_BASE_URL));
+				$uri = substr($_SERVER['REQUEST_URI'], strlen(Configure::read('App.fullBaseURL')));
 			}
 		} elseif (isset($_SERVER['PHP_SELF']) && isset($_SERVER['SCRIPT_NAME'])) {
 			$uri = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
@@ -443,10 +443,7 @@ class Request implements \ArrayAccess {
 			$ref = env('HTTP_X_FORWARDED_HOST');
 		}
 
-		$base = '';
-		if (defined('FULL_BASE_URL')) {
-			$base = FULL_BASE_URL . $this->webroot;
-		}
+		$base = Configure::read('App.fullBaseURL') . $this->webroot;
 		if (!empty($ref) && !empty($base)) {
 			if ($local && strpos($ref, $base) === 0) {
 				$ref = substr($ref, strlen($base));

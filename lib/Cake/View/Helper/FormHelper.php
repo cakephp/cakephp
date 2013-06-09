@@ -2665,7 +2665,7 @@ class FormHelper extends Helper {
 					) {
 						$htmlOptions['disabled'] = 'disabled';
 					}
-					if ($hasDisabled && !$disabledIsArray) {
+					if ($hasDisabled && !$disabledIsArray && $attributes['style'] === 'checkbox') {
 						$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
 					}
 

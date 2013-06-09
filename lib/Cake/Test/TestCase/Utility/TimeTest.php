@@ -45,8 +45,10 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->Time = new Time();
 		$this->_systemTimezoneIdentifier = date_default_timezone_get();
+		Configure::write('Config.language', 'eng');
 	}
 
 /**

@@ -369,7 +369,8 @@ class FileEngine extends CacheEngine {
 		$contents = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::CHILD_FIRST);
 		foreach ($contents as $object) {
 			$containsGroup = strpos($object->getPathName(), DS . $group . DS) !== false;
-			if ($object->isFile() && $containsGroup) {
+			$hasPrefix = strpos($object->getBaseName(), $this->settings['prefix']) === 0;
+			if ($object->isFile() && $containsGroup && $hasPrefix) {
 				unlink($object->getPathName());
 			}
 		}
