@@ -178,6 +178,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table = new Table(['alias' => 'LoveBoat']);
 		$this->assertEquals('love_boats', $table->table());
+
+		$table->table('other');
+		$this->assertEquals('other', $table->table());
 	}
 
 /**
@@ -200,6 +203,57 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->setMockClassName('SpecialThingTable')
 			->getMock();
 		$this->assertEquals('SpecialThing', $table->alias());
+
+		$table->alias('AnotherOne');
+		$this->assertEquals('AnotherOne', $table->alias());
+	}
+
+/**
+ * Tests connection method
+ *
+ * @return void
+ */
+	public function testConnection() {
+		$table = new Table(['table' => 'things']);
+		$this->assertNull($table->connection());
+		$table->connection($this->connection);
+		$this->assertSame($this->connection, $table->connection());
+	}
+
+/**
+ * Tests primaryKey method
+ *
+ * @return void
+ */
+	public function testPrimaryKey() {
+		$table = new Table(['table' => 'things']);
+		$this->assertEquals('id', $table->primaryKey());
+		$table->primaryKey('thingID');
+		$this->assertEquals('thingID', $table->primaryKey());
+	}
+
+/**
+ * Tests schema method
+ *
+ * @return void
+ */
+	public function testSchema() {
+		$this->_createThingsTable();
+		$schema = $this->connection->schemaCollection()->describe('things');
+		$table = new Table(['table' => 'things', 'connection' => $this->connection]);
+		$this->assertEquals($schema, $table->schema());
+
+		$table = new Table(['table' => 'stuff']);
+		$table->schema($schema);
+		$this->assertSame($schema, $table->schema());
+
+		$table = new Table(['table' => 'another']);
+		$schema = ['id' => ['type' => 'integer']];
+		$table->schema($schema);
+		$this->assertEquals(
+			new \Cake\Database\Schema\Table('another', $schema),
+			$table->schema()
+		);
 	}
 
 /**
