@@ -53,13 +53,6 @@ class TestSecurityComponent extends SecurityComponent {
 class SecurityTestController extends Controller {
 
 /**
- * name property
- *
- * @var string 'SecurityTest'
- */
-	public $name = 'SecurityTest';
-
-/**
  * components property
  *
  * @var array

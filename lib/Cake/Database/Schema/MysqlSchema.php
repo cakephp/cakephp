@@ -16,8 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
-use Cake\Error;
 
 /**
  * Schema management/reflection features for MySQL
@@ -63,18 +63,29 @@ class MysqlSchema {
 	}
 
 /**
+ * Get the SQL to describe the indexes in a table.
+ *
+ * @param string $table The table name to get information on.
+ * @return array An array of (sql, params) to execute.
+ */
+	public function describeIndexSql($table) {
+		$sql = sprintf('SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($table));
+		return [$sql, []];
+	}
+
+/**
  * Convert a MySQL column type into an abstract type.
  *
  * The returned type will be a type that Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
  * @return array Array of column information.
- * @throws Cake\Error\Exception When column type cannot be parsed.
+ * @throws Cake\Database\Exception When column type cannot be parsed.
  */
 	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
-			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
 		}
 
 		$col = strtolower($matches[1]);
@@ -126,46 +137,127 @@ class MysqlSchema {
  *
  * @param Cake\Database\Schema\Table $table The table object to append fields to.
  * @param array $row The row data from describeTableSql
- * @param array $fieldParams Additional field parameters to parse.
  * @return void
  */
-	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
+	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->convertColumn($row['Type']);
 		$field += [
 			'null' => $row['Null'] === 'YES' ? true : false,
 			'default' => $row['Default'],
+			'collate' => $row['Collation'],
+			'comment' => $row['Comment'],
 		];
-		foreach ($fieldParams as $key => $metadata) {
-			if (!empty($row[$metadata['column']])) {
-				$field[$key] = $row[$metadata['column']];
-			}
-		}
 		$table->addColumn($row['Field'], $field);
-		if (!empty($row['Key']) && $row['Key'] === 'PRI') {
-			$table->addConstraint('primary', [
-				'type' => Table::CONSTRAINT_PRIMARY,
-				'columns' => [$row['Field']]
+	}
+
+/**
+ * Convert an index into the abstract description.
+ *
+ * @param Cake\Database\Schema\Table $table The table object to append
+ *    an index or constraint to.
+ * @param array $row The row data from describeIndexSql
+ * @return void
+ */
+	public function convertIndexDescription(Table $table, $row) {
+		$type = null;
+		$columns = $length = [];
+
+		$name = $row['Key_name'];
+		if ($name === 'PRIMARY') {
+			$name = $type = Table::CONSTRAINT_PRIMARY;
+		}
+
+		$columns[] = $row['Column_name'];
+
+		if ($row['Index_type'] === 'FULLTEXT') {
+			$type = Table::INDEX_FULLTEXT;
+		} elseif ($row['Non_unique'] == 0 && $type !== 'primary') {
+			$type = Table::CONSTRAINT_UNIQUE;
+		} elseif ($type !== 'primary') {
+			$type = Table::INDEX_INDEX;
+		}
+
+		if (!empty($row['Sub_part'])) {
+			$length[$row['Column_name']] = $row['Sub_part'];
+		}
+		$isIndex = (
+			$type == Table::INDEX_INDEX ||
+			$type == Table::INDEX_FULLTEXT
+		);
+		if ($isIndex) {
+			$existing = $table->index($name);
+		} else {
+			$existing = $table->constraint($name);
+		}
+
+		// MySQL multi column indexes come back
+		// as multiple rows.
+		if (!empty($existing)) {
+			$columns = array_merge($existing['columns'], $columns);
+			$length = array_merge($existing['length'], $length);
+		}
+		if ($isIndex) {
+			$table->addIndex($name, [
+				'type' => $type,
+				'columns' => $columns,
+				'length' => $length
+			]);
+		} else {
+			$table->addConstraint($name, [
+				'type' => $type,
+				'columns' => $columns,
+				'length' => $length
 			]);
 		}
 	}
 
 /**
- * Get additional column meta data used in schema reflections.
+ * Generate the SQL to describe the foreign keys on a table.
  *
- * @return array
+ * @return array List of sql, params
  */
-	public function extraSchemaColumns() {
-		return [
-			'charset' => [
-				'column' => false,
-			],
-			'collate' => [
-				'column' => 'Collation',
-			],
-			'comment' => [
-				'column' => 'Comment',
-			]
+	public function describeForeignKeySql($table, $config) {
+		$sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
+			INNER JOIN information_schema.referential_constraints AS rc
+			ON (kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME)
+			WHERE kcu.TABLE_SCHEMA = ?
+			AND kcu.TABLE_NAME = ?';
+		return [$sql, [$config['database'], $table]];
+	}
+
+/**
+ * Convert a foreign key description into constraints on the Table object.
+ *
+ * @param Cake\Database\Table $table The table instance to populate.
+ * @param array $row The row of data.
+ * @return void
+ */
+	public function convertForeignKey(Table $table, $row) {
+		$data = [
+			'type' => Table::CONSTRAINT_FOREIGN,
+			'columns' => [$row['COLUMN_NAME']],
+			'references' => [$row['REFERENCED_TABLE_NAME'], $row['REFERENCED_COLUMN_NAME']],
+			'update' => $this->_convertOnClause($row['UPDATE_RULE']),
+			'delete' => $this->_convertOnClause($row['DELETE_RULE']),
 		];
+		$name = $row['CONSTRAINT_NAME'];
+		$table->addConstraint($name, $data);
+	}
+
+/**
+ * Convert MySQL on clauses to the abstract ones.
+ *
+ * @param string $clause
+ * @return string|null
+ */
+	protected function _convertOnClause($clause) {
+		if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
+			return strtolower($clause);
+		}
+		if ($clause === 'NO ACTION') {
+			return Table::ACTION_NO_ACTION;
+		}
+		return Table::ACTION_SET_NULL;
 	}
 
 /**
@@ -289,7 +381,6 @@ class MysqlSchema {
 		return $out;
 	}
 
-
 /**
  * Generate the SQL fragments for defining table constraints.
  *
@@ -308,6 +399,9 @@ class MysqlSchema {
 		}
 		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
 			$out = 'UNIQUE KEY ';
+		}
+		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+			$out = 'CONSTRAINT ';
 		}
 		$out .= $this->_driver->quoteIdentifier($name);
 		return $this->_keySql($out, $data);
@@ -349,7 +443,39 @@ class MysqlSchema {
 				$columns[$i] .= sprintf('(%d)', $data['length'][$column]);
 			}
 		}
+		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+			return $prefix . sprintf(
+				' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
+				implode(', ', $columns),
+				$this->_driver->quoteIdentifier($data['references'][0]),
+				$this->_driver->quoteIdentifier($data['references'][1]),
+				$this->_foreignOnClause($data['update']),
+				$this->_foreignOnClause($data['delete'])
+			);
+		}
 		return $prefix . ' (' . implode(', ', $columns) . ')';
 	}
+
+/**
+ * Generate an ON clause for a foreign key.
+ *
+ * @param string|null $on The on clause
+ * @return string
+ */
+	protected function _foreignOnClause($on) {
+		if ($on === Table::ACTION_SET_NULL) {
+			return 'SET NULL';
+		}
+		if ($on === Table::ACTION_CASCADE) {
+			return 'CASCADE';
+		}
+		if ($on === Table::ACTION_RESTRICT) {
+			return 'RESTRICT';
+		}
+		if ($on === Table::ACTION_NO_ACTION) {
+			return 'NO ACTION';
+		}
+	}
+
 
 }

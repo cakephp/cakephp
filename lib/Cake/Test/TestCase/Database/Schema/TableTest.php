@@ -109,7 +109,7 @@ class TableTest extends TestCase {
  * Test that an exception is raised when constraintes
  * are added for fields that do not exist.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException Cake\Database\Exception
  * @return void
  */
 	public function testAddConstraintErrorWhenFieldIsMissing() {
@@ -141,7 +141,7 @@ class TableTest extends TestCase {
  * Test that an exception is raised when indexes
  * are added for fields that do not exist.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException Cake\Database\Exception
  * @return void
  */
 	public function testAddIndexErrorWhenFieldIsMissing() {
@@ -155,7 +155,7 @@ class TableTest extends TestCase {
  * Test that exceptions are raised when indexes
  * are added with invalid types
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException Cake\Database\Exception
  * @return void
  */
 	public function testAddIndexErrorWrongType() {
@@ -225,6 +225,66 @@ class TableTest extends TestCase {
 		$return = $table->options($options);
 		$this->assertInstanceOf('Cake\Database\Schema\Table', $return);
 		$this->assertEquals($options, $table->options());
+	}
+
+/**
+ * Add a basic foreign key constraint.
+ *
+ * @return void
+ */
+	public function testAddConstraintForeignKey() {
+		$table = new Table('articles');
+		$table->addColumn('author_id', 'integer')
+			->addConstraint('author_id_idx', [
+				'type' => Table::CONSTRAINT_FOREIGN,
+				'columns' => ['author_id'],
+				'references' => ['authors', 'id'],
+				'update' => 'cascade',
+				'delete' => 'cascade',
+			]);
+		$this->assertEquals(['author_id_idx'], $table->constraints());
+	}
+
+/**
+ * Provider for exceptionally bad foreign key data.
+ *
+ * @return array
+ */
+	public static function badForeignKeyProvider()
+	{
+		return [
+			'references is bad' => [[
+				'type' => Table::CONSTRAINT_FOREIGN,
+				'columns' => ['author_id'],
+				'references' => ['authors'],
+				'delete' => 'derp',
+			]],
+			'bad update value' => [[
+				'type' => Table::CONSTRAINT_FOREIGN,
+				'columns' => ['author_id'],
+				'references' => ['authors', 'id'],
+				'update' => 'derp',
+			]],
+			'bad delete value' => [[
+				'type' => Table::CONSTRAINT_FOREIGN,
+				'columns' => ['author_id'],
+				'references' => ['authors', 'id'],
+				'delete' => 'derp',
+			]],
+		];
+	}
+
+/**
+ * Add a foreign key constraint with bad data
+ *
+ * @dataProvider badForeignKeyProvider
+ * @expectedException Cake\Database\Exception
+ * @return void
+ */
+	public function testAddConstraintForeignKeyBadData($data) {
+		$table = new Table('articles');
+		$table->addColumn('author_id', 'integer')
+			->addConstraint('author_id_idx', $data);
 	}
 
 }

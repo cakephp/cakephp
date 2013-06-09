@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
  *
  * @package       Cake.Test.Case.Cache.Engine
  */
-class RegisEngineTest extends TestCase {
+class RedisEngineTest extends TestCase {
 
 /**
  * setUp method

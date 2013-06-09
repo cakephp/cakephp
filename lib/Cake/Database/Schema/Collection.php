@@ -17,8 +17,8 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
+use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
-use Cake\Error;
 
 /**
  * Represents a database schema collection
@@ -72,31 +72,57 @@ class Collection {
  *
  * @param string $name The name of the table to describe.
  * @return Cake\Schema\Table|null Object with column metadata, or null.
- * @see Collection::fullDescribe()
+ * @throws Cake\Database\Exception when table cannot be described.
  */
 	public function describe($name) {
 		list($sql, $params) = $this->_dialect->describeTableSql(
 			$name,
 			$this->_connection->config()
 		);
-		try {
-			$statement = $this->_connection->execute($sql, $params);
-		} catch (\PDOException $e) {
-			return null;
-		}
-		if (count($statement) == 0) {
-			return null;
+		$statement = $this->_executeSql($sql, $params);
+		if (count($statement) === 0) {
+			throw new Exception(__d('cake_dev', 'Cannot describe %s. It has 0 columns.', $name));
 		}
 
 		$table = new Table($name);
-		$fieldParams = [];
-		if (method_exists($this->_dialect, 'extraSchemaColumn')) {
-			$fieldParams = $this->_dialect->extraSchemaColumns();
-		}
 		foreach ($statement->fetchAll('assoc') as $row) {
-			$this->_dialect->convertFieldDescription($table, $row, $fieldParams);
+			$this->_dialect->convertFieldDescription($table, $row);
+		}
+
+		list($sql, $params) = $this->_dialect->describeIndexSql(
+			$name,
+			$this->_connection->config()
+		);
+		$statement = $this->_executeSql($sql, $params);
+		foreach ($statement->fetchAll('assoc') as $row) {
+			$this->_dialect->convertIndexDescription($table, $row);
+		}
+
+		list($sql, $params) = $this->_dialect->describeForeignKeySql(
+			$name,
+			$this->_connection->config()
+		);
+		$statement = $this->_executeSql($sql, $params);
+		foreach ($statement->fetchAll('assoc') as $row) {
+			$this->_dialect->convertForeignKey($table, $row);
 		}
 		return $table;
+	}
+
+/**
+ * Helper method to run queries and convert Exceptions to the correct types.
+ *
+ * @param string $sql The sql to run.
+ * @param array $params Parameters for the statement.
+ * @return Cake\Database\Statement Prepared statement
+ * @throws Cake\Database\Exception on query failure.
+ */
+	protected function _executeSql($sql, $params) {
+		try {
+			return $this->_connection->execute($sql, $params);
+		} catch (\PDOException $e) {
+			throw new Exception($e->getMessage(), 500, $e);
+		}
 	}
 
 }

@@ -33,8 +33,6 @@ use Cake\Utility\ClassRegistry;
  */
 class SessionTestModel extends Model {
 
-	public $name = 'SessionTestModel';
-
 	public $useTable = 'sessions';
 
 }

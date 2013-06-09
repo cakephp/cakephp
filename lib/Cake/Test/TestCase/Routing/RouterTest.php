@@ -23,8 +23,8 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
+use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
 if (!defined('FULL_BASE_URL')) {
@@ -57,6 +57,8 @@ class RouterTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload();
+		Router::baseURL('');
+		Configure::write('App.fullBaseURL', 'http://localhost');
 	}
 
 /**
@@ -65,13 +67,35 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testFullBaseURL() {
-		$skip = PHP_SAPI === 'cli';
-		if ($skip) {
-			$this->markTestSkipped('Cannot validate base URLs in CLI');
-		}
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('_full' => true)));
+		$this->assertSame(FULL_BASE_URL . '/', Router::url(array('_full' => true)));
+	}
+
+/**
+ * Tests that the base URL can be changed at runtime
+ *
+ * @return void
+ */
+	public function testBaseURL() {
+		$this->assertEquals(FULL_BASE_URL, Router::baseUrl());
+		Router::baseURL('http://example.com');
+		$this->assertEquals('http://example.com/', Router::url('/', true));
+		$this->assertEquals('http://example.com', Configure::read('App.fullBaseURL'));
+		Router::baseURL('https://example.com');
+		$this->assertEquals('https://example.com/', Router::url('/', true));
+		$this->assertEquals('https://example.com', Configure::read('App.fullBaseURL'));
+	}
+
+/**
+ * testRouteDefaultParams method
+ *
+ * @return void
+ */
+	public function testRouteDefaultParams() {
+		Router::connect('/:controller', array('controller' => 'posts'));
+		$this->assertEquals(Router::url(array('action' => 'index')), '/');
 	}
 
 /**

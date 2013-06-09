@@ -30,13 +30,6 @@ use Cake\Utility\Hash;
 class PaginatorTestController extends Controller {
 
 /**
- * name property
- *
- * @var string 'PaginatorTest'
- */
-	public $name = 'PaginatorTest';
-
-/**
  * components property
  *
  * @var array

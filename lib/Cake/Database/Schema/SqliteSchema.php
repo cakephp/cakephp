@@ -16,8 +16,8 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
-use Cake\Error;
 
 /**
  * Schema management/reflection features for Sqlite
@@ -48,13 +48,13 @@ class SqliteSchema {
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
- * @throws Cake\Error\Exception
+ * @throws Cake\Database\Exception
  * @return array Array of column information.
  */
 	public function convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
-			throw new Error\Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
 		}
 		$col = strtolower($matches[1]);
 		$length = null;
@@ -119,9 +119,8 @@ class SqliteSchema {
  *
  * @param Cake\Database\Schema\Table $table The table object to append fields to.
  * @param array $row The row data from describeTableSql
- * @param array $fieldParams Additional field parameters to parse.
  */
-	public function convertFieldDescription(Table $table, $row, $fieldParams = []) {
+	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->convertColumn($row['type']);
 		$field += [
 			'null' => !$row['notnull'],
@@ -140,11 +139,108 @@ class SqliteSchema {
 	}
 
 /**
+ * Get the SQL to describe the indexes in a table.
+ *
+ * @param string $table The table name to get information on.
+ * @return array An array of (sql, params) to execute.
+ */
+	public function describeIndexSql($table) {
+		$sql = sprintf(
+			'PRAGMA index_list(%s)',
+			$this->_driver->quoteIdentifier($table)
+		);
+		return [$sql, []];
+	}
+
+/**
+ * Convert an index into the abstract description.
+ *
+ * Since SQLite does not have a way to get metadata about all indexes at once,
+ * additional queries are done here. Sqlite constraint names are not
+ * stable, and the names for constraints will not match those used to create
+ * the table. This is a limitation in Sqlite's metadata features.
+ *
+ * @param Cake\Database\Schema\Table $table The table object to append
+ *    an index or constraint to.
+ * @param array $row The row data from describeIndexSql
+ * @return void
+ */
+	public function convertIndexDescription(Table $table, $row) {
+		$sql = sprintf(
+			'PRAGMA index_info(%s)',
+			$this->_driver->quoteIdentifier($row['name'])
+		);
+		$statement = $this->_driver->prepare($sql);
+		$statement->execute();
+		$columns = [];
+		foreach ($statement->fetchAll('assoc') as $column) {
+			$columns[] = $column['name'];
+		}
+		if ($row['unique']) {
+			$table->addConstraint($row['name'], [
+				'type' => Table::CONSTRAINT_UNIQUE,
+				'columns' => $columns
+			]);
+		} else {
+			$table->addIndex($row['name'], [
+				'type' => Table::INDEX_INDEX,
+				'columns' => $columns
+			]);
+		}
+	}
+
+/**
+ * Generate the SQL to describe the foreign keys on a table.
+ *
+ * @return array List of sql, params
+ */
+	public function describeForeignKeySql($table) {
+		$sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($table));
+		return [$sql, []];
+	}
+
+/**
+ * Convert a foreign key description into constraints on the Table object.
+ *
+ * @param Cake\Database\Table $table The table instance to populate.
+ * @param array $row The row of data.
+ * @return void
+ */
+	public function convertForeignKey(Table $table, $row) {
+		$data = [
+			'type' => Table::CONSTRAINT_FOREIGN,
+			'columns' => [$row['from']],
+			'references' => [$row['table'], $row['to']],
+			'update' => $this->_convertOnClause($row['on_update']),
+			'delete' => $this->_convertOnClause($row['on_delete']),
+		];
+		$name = $row['from'] . '_fk';
+		$table->addConstraint($name, $data);
+	}
+
+/**
+ * Convert Sqlite on clauses to the abstract ones.
+ *
+ * @param string $clause
+ * @return string|null
+ */
+	protected function _convertOnClause($clause) {
+		if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
+			return strtolower($clause);
+		}
+		if ($clause === 'NO ACTION') {
+			return Table::ACTION_NO_ACTION;
+		}
+		return Table::ACTION_SET_NULL;
+	}
+
+/**
  * Generate the SQL fragment for a single column in Sqlite
  *
  * @param Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
+ * @throws Cake\Database\Exception On unknown column types.
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
@@ -163,7 +259,7 @@ class SqliteSchema {
 			'timestamp' => ' TIMESTAMP',
 		];
 		if (!isset($typeMap[$data['type']])) {
-			throw new Error\Exception(__d('cake_dev', 'Unknown column type for "%s"', $name));
+			throw new Exception(__d('cake_dev', 'Unknown column type for "%s"', $name));
 		}
 
 		$out = $this->_driver->quoteIdentifier($name);
@@ -209,26 +305,60 @@ class SqliteSchema {
 	public function constraintSql(Table $table, $name) {
 		$data = $table->constraint($name);
 		if (
+			$data['type'] === Table::CONSTRAINT_PRIMARY &&
 			count($data['columns']) === 1 &&
 			$table->column($data['columns'][0])['type'] === 'integer'
 		) {
 			return '';
 		}
+		$clause = '';
 		if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
 			$type = 'PRIMARY KEY';
 		}
 		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
 			$type = 'UNIQUE';
 		}
+		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+			$type = 'FOREIGN KEY';
+			$clause = sprintf(
+				' REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
+				$this->_driver->quoteIdentifier($data['references'][0]),
+				$this->_driver->quoteIdentifier($data['references'][1]),
+				$this->_foreignOnClause($data['update']),
+				$this->_foreignOnClause($data['delete'])
+			);
+		}
 		$columns = array_map(
 			[$this->_driver, 'quoteIdentifier'],
 			$data['columns']
 		);
-		return sprintf('CONSTRAINT %s %s (%s)',
+		return sprintf('CONSTRAINT %s %s (%s)%s',
 			$this->_driver->quoteIdentifier($name),
 			$type,
-			implode(', ', $columns)
+			implode(', ', $columns),
+			$clause
 		);
+	}
+
+/**
+ * Generate an ON clause for a foreign key.
+ *
+ * @param string|null $on The on clause
+ * @return string
+ */
+	protected function _foreignOnClause($on) {
+		if ($on === Table::ACTION_SET_NULL) {
+			return 'SET NULL';
+		}
+		if ($on === Table::ACTION_CASCADE) {
+			return 'CASCADE';
+		}
+		if ($on === Table::ACTION_RESTRICT) {
+			return 'RESTRICT';
+		}
+		if ($on === Table::ACTION_NO_ACTION) {
+			return 'NO ACTION';
+		}
 	}
 
 /**

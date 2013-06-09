@@ -89,7 +89,7 @@ class Type {
  * Returns a Type object capable of converting a type identified by $name
  *
  * @param string $name type identifier
- * @throws InvalidArgumentException If type identifier is unknown
+ * @throws \InvalidArgumentException If type identifier is unknown
  * @return Type
  */
 	public static function build($name) {

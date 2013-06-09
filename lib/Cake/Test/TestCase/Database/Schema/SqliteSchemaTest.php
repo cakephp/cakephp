@@ -129,11 +129,11 @@ class SqliteSchemaTest extends TestCase {
  */
 	protected function _createTables($connection) {
 		$this->_needsConnection();
-		$connection->execute('DROP TABLE IF EXISTS articles');
-		$connection->execute('DROP TABLE IF EXISTS authors');
+		$connection->execute('DROP TABLE IF EXISTS schema_articles');
+		$connection->execute('DROP TABLE IF EXISTS schema_authors');
 
 		$table = <<<SQL
-CREATE TABLE authors(
+CREATE TABLE schema_authors (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 name VARCHAR(50),
 bio TEXT,
@@ -143,16 +143,19 @@ SQL;
 		$connection->execute($table);
 
 		$table = <<<SQL
-CREATE TABLE articles(
+CREATE TABLE schema_articles (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 title VARCHAR(20) DEFAULT 'testing',
 body TEXT,
 author_id INT(11) NOT NULL,
 published BOOLEAN DEFAULT 0,
-created DATETIME
-)
+created DATETIME,
+CONSTRAINT "title_idx" UNIQUE ("title", "body")
+CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
+);
 SQL;
 		$connection->execute($table);
+		$connection->execute('CREATE INDEX "created_idx" ON "schema_articles" ("created")');
 	}
 
 /**
@@ -169,8 +172,8 @@ SQL;
 
 		$this->assertInternalType('array', $result);
 		$this->assertCount(3, $result);
-		$this->assertEquals('articles', $result[0]);
-		$this->assertEquals('authors', $result[1]);
+		$this->assertEquals('schema_articles', $result[0]);
+		$this->assertEquals('schema_authors', $result[1]);
 		$this->assertEquals('sqlite_sequence', $result[2]);
 	}
 
@@ -184,7 +187,7 @@ SQL;
 		$this->_createTables($connection);
 
 		$schema = new SchemaCollection($connection);
-		$result = $schema->describe('articles');
+		$result = $schema->describe('schema_articles');
 		$expected = [
 			'id' => [
 				'type' => 'integer',
@@ -246,6 +249,58 @@ SQL;
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}
+	}
+
+/**
+ * Test describing a table with indexes
+ *
+ * @return void
+ */
+	public function testDescribeTableIndexes() {
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$this->_createTables($connection);
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->describe('schema_articles');
+		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+		$expected = [
+			'primary' => [
+				'type' => 'primary',
+				'columns' => ['id'],
+				'length' => []
+			],
+			'sqlite_autoindex_schema_articles_1' => [
+				'type' => 'unique',
+				'columns' => ['title', 'body'],
+				'length' => []
+			],
+			'author_id_fk' => [
+				'type' => 'foreign',
+				'columns' => ['author_id'],
+				'references' => ['schema_authors', 'id'],
+				'length' => [],
+				'update' => 'cascade',
+				'delete' => 'restrict',
+			]
+		];
+		$this->assertCount(3, $result->constraints());
+		$this->assertEquals($expected['primary'], $result->constraint('primary'));
+		$this->assertEquals(
+			$expected['sqlite_autoindex_schema_articles_1'],
+			$result->constraint('sqlite_autoindex_schema_articles_1')
+		);
+		$this->assertEquals(
+			$expected['author_id_fk'],
+			$result->constraint('author_id_fk')
+		);
+
+		$this->assertCount(1, $result->indexes());
+		$expected = [
+			'type' => 'index',
+			'columns' => ['created'],
+			'length' => []
+		];
+		$this->assertEquals($expected, $result->index('created_idx'));
 	}
 
 /**
@@ -417,6 +472,36 @@ SQL;
 				'unique_idx',
 				['type' => 'unique', 'columns' => ['title', 'author_id']],
 				'CONSTRAINT "unique_idx" UNIQUE ("title", "author_id")'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT'
 			],
 		];
 	}

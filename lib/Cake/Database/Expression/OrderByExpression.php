@@ -19,16 +19,28 @@ namespace Cake\Database\Expression;
 
 class OrderByExpression extends QueryExpression {
 
+/**
+ * Constructor
+ *
+ * @param array $conditions
+ * @param array $types
+ * @param string $conjunction The glue used to join conditions together.
+ */
 	public function __construct($conditions = [], $types = [], $conjunction = '') {
 		parent::__construct($conditions, $types, $conjunction);
 	}
 
+/**
+ * Convert the expression into a SQL fragment.
+ *
+ * @return string
+ */
 	public function sql() {
 		$order = [];
 		foreach ($this->_conditions as $k => $direction) {
 			$order[] = is_numeric($k) ? $direction : sprintf('%s %s', $k, $direction);
 		}
-		return sprintf ('ORDER BY %s', implode(', ', $order));
+		return sprintf('ORDER BY %s', implode(', ', $order));
 	}
 
 	protected function _addConditions(array $conditions, array $types) {

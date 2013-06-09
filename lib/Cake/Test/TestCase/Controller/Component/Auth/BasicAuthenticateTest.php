@@ -157,7 +157,7 @@ class BasicAuthenticateTest extends TestCase {
 	}
 
 /**
- * test authenticate sucesss
+ * test authenticate success
  *
  * @return void
  */
