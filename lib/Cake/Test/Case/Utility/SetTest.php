@@ -2443,8 +2443,8 @@ class SetTest extends CakeTestCase {
 		$expected->hash = '68a9f053b19526d08e36c6a9ad150737933816a5';
 		$expected->get_vars = '';
 		$expected->redirect = '';
-		$expected->created = "1195055503";
-		$expected->updated = "1195055503";
+		$expected->created = '1195055503';
+		$expected->updated = '1195055503';
 		// @codingStandardsIgnoreEnd
 		$this->assertEquals($expected, $mapped[1]);
 
@@ -2492,9 +2492,9 @@ class SetTest extends CakeTestCase {
 		$expected->Author->id = '1';
 		$expected->Author->user = 'mariano';
 		$expected->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
-		$expected->Author->created = "2007-03-17 01:16:23";
-		$expected->Author->updated = "2007-03-17 01:18:31";
-		$expected->Author->test = "working";
+		$expected->Author->created = '2007-03-17 01:16:23';
+		$expected->Author->updated = '2007-03-17 01:18:31';
+		$expected->Author->test = 'working';
 		$expected->Author->_name_ = 'Author';
 
 		$expected2 = new stdClass;
@@ -2511,9 +2511,9 @@ class SetTest extends CakeTestCase {
 		$expected2->Author->id = '3';
 		$expected2->Author->user = 'larry';
 		$expected2->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
-		$expected2->Author->created = "2007-03-17 01:20:23";
-		$expected2->Author->updated = "2007-03-17 01:22:31";
-		$expected2->Author->test = "working";
+		$expected2->Author->created = '2007-03-17 01:20:23';
+		$expected2->Author->updated = '2007-03-17 01:22:31';
+		$expected2->Author->test = 'working';
 		$expected2->Author->_name_ = 'Author';
 		// @codingStandardsIgnoreEnd
 
@@ -2546,7 +2546,7 @@ class SetTest extends CakeTestCase {
 		$expected->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
 		$expected->Author->created = "2007-03-17 01:16:23";
 		$expected->Author->updated = "2007-03-17 01:18:31";
-		$expected->Author->test = "working";
+		$expected->Author->test = 'working';
 		$expected->Author->_name_ = 'Author';
 		// @codingStandardsIgnoreEnd
 		$this->assertEquals($expected, $result);

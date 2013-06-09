@@ -988,7 +988,7 @@ class AuthComponentTest extends CakeTestCase {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
-		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 
 		App::uses('Dispatcher', 'Routing');
 
