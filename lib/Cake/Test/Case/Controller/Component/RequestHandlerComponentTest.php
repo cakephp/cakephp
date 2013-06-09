@@ -857,7 +857,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 		$controller = $this->getMock('Controller', array('header'));
 		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
-		$RequestHandler->response = $this->getMock('CakeResponse', array('_sendHeader','statusCode'));
+		$RequestHandler->response = $this->getMock('CakeResponse', array('_sendHeader', 'statusCode'));
 		$RequestHandler->request = $this->getMock('CakeRequest');
 		$RequestHandler->request->expects($this->once())->method('is')
 			->with('ajax')

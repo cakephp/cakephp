@@ -373,7 +373,7 @@ class I18n {
 			$head = $this->_domains[$domain][$this->_lang][$this->category][""];
 
 			foreach (explode("\n", $head) as $line) {
-				$header = strtok($line,":");
+				$header = strtok($line, ':');
 				$line = trim(strtok("\n"));
 				$this->_domains[$domain][$this->_lang][$this->category]["%po-header"][strtolower($header)] = $line;
 			}
@@ -407,7 +407,7 @@ class I18n {
 		if ($data = file_get_contents($filename)) {
 			$translations = array();
 			$header = substr($data, 0, 20);
-			$header = unpack("L1magic/L1version/L1count/L1o_msg/L1o_trn", $header);
+			$header = unpack('L1magic/L1version/L1count/L1o_msg/L1o_trn', $header);
 			extract($header);
 
 			if ((dechex($magic) === '950412de' || dechex($magic) === 'ffffffff950412de') && !$version) {
@@ -445,19 +445,19 @@ class I18n {
  * @return mixed Array of translations on success or false on failure
  */
 	public static function loadPo($filename) {
-		if (!$file = fopen($filename, "r")) {
+		if (!$file = fopen($filename, 'r')) {
 			return false;
 		}
 
 		$type = 0;
 		$translations = array();
-		$translationKey = "";
+		$translationKey = '';
 		$plural = 0;
-		$header = "";
+		$header = '';
 
 		do {
 			$line = trim(fgets($file));
-			if ($line === "" || $line[0] === "#") {
+			if ($line === '' || $line[0] === '#') {
 				continue;
 			}
 			if (preg_match("/msgid[[:space:]]+\"(.+)\"$/i", $line, $regs)) {
@@ -465,7 +465,7 @@ class I18n {
 				$translationKey = stripcslashes($regs[1]);
 			} elseif (preg_match("/msgid[[:space:]]+\"\"$/i", $line, $regs)) {
 				$type = 2;
-				$translationKey = "";
+				$translationKey = '';
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && ($type == 1 || $type == 2 || $type == 3)) {
 				$type = 3;
 				$translationKey .= stripcslashes($regs[1]);
@@ -474,7 +474,7 @@ class I18n {
 				$type = 4;
 			} elseif (preg_match("/msgstr[[:space:]]+\"\"$/i", $line, $regs) && ($type == 1 || $type == 3) && $translationKey) {
 				$type = 4;
-				$translations[$translationKey] = "";
+				$translations[$translationKey] = '';
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 4 && $translationKey) {
 				$translations[$translationKey] .= stripcslashes($regs[1]);
 			} elseif (preg_match("/msgid_plural[[:space:]]+\".*\"$/i", $line, $regs)) {
@@ -487,7 +487,7 @@ class I18n {
 				$type = 7;
 			} elseif (preg_match("/msgstr\[(\d+)\][[:space:]]+\"\"$/i", $line, $regs) && ($type == 6 || $type == 7) && $translationKey) {
 				$plural = $regs[1];
-				$translations[$translationKey][$plural] = "";
+				$translations[$translationKey][$plural] = '';
 				$type = 7;
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 7 && $translationKey) {
 				$translations[$translationKey][$plural] .= stripcslashes($regs[1]);
@@ -495,20 +495,20 @@ class I18n {
 				$header .= stripcslashes($regs[1]);
 				$type = 5;
 			} elseif (preg_match("/msgstr[[:space:]]+\"\"$/i", $line, $regs) && !$translationKey) {
-				$header = "";
+				$header = '';
 				$type = 5;
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 5) {
 				$header .= stripcslashes($regs[1]);
 			} else {
 				unset($translations[$translationKey]);
 				$type = 0;
-				$translationKey = "";
+				$translationKey = '';
 				$plural = 0;
 			}
 		} while (!feof($file));
 		fclose($file);
 
-		$merge[""] = $header;
+		$merge[''] = $header;
 		return array_merge($merge, $translations);
 	}
 
@@ -519,7 +519,7 @@ class I18n {
  * @return mixed Array of definitions on success or false on failure
  */
 	public static function loadLocaleDefinition($filename) {
-		if (!$file = fopen($filename, "r")) {
+		if (!$file = fopen($filename, 'r')) {
 			return false;
 		}
 
