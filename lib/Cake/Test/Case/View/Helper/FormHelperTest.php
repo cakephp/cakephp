@@ -4241,8 +4241,8 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'ContactRequiredOne',
 				'disabled' => 'disabled'
 			),
-			array('option' => array('value' => '', 'disabled' => 'disabled')), '/option',
-			array('option' => array('value' => '0', 'disabled' => 'disabled')), 'option A', '/option',
+			array('option' => array('value' => '')), '/option',
+			array('option' => array('value' => '0')), 'option A', '/option',
 			'/select'
 		);
 		$this->assertTags($result, $expected);
