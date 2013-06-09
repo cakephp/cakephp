@@ -216,8 +216,13 @@ class MysqlSchema {
  *
  * @return array List of sql, params
  */
-	public function describeForeignKeySql($table) {
-		return ['', []];
+	public function describeForeignKeySql($table, $config) {
+		$sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
+			INNER JOIN information_schema.referential_constraints AS rc
+			ON (kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME)
+			WHERE kcu.TABLE_SCHEMA = ?
+			AND kcu.TABLE_NAME = ?';
+		return [$sql, [$config['database'], $table]];
 	}
 
 /**
@@ -228,6 +233,31 @@ class MysqlSchema {
  * @return void
  */
 	public function convertForeignKey(Table $table, $row) {
+		$data = [
+			'type' => Table::CONSTRAINT_FOREIGN,
+			'columns' => [$row['COLUMN_NAME']],
+			'references' => [$row['REFERENCED_TABLE_NAME'], $row['REFERENCED_COLUMN_NAME']],
+			'update' => $this->_convertOnClause($row['UPDATE_RULE']),
+			'delete' => $this->_convertOnClause($row['DELETE_RULE']),
+		];
+		$name = $row['CONSTRAINT_NAME'];
+		$table->addConstraint($name, $data);
+	}
+
+/**
+ * Convert MySQL on clauses to the abstract ones.
+ *
+ * @param string $clause
+ * @return string|null
+ */
+	protected function _convertOnClause($clause) {
+		if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
+			return strtolower($clause);
+		}
+		if ($clause === 'NO ACTION') {
+			return Table::ACTION_NO_ACTION;
+		}
+		return Table::ACTION_SET_NULL;
 	}
 
 /**
