@@ -136,21 +136,21 @@ class MysqlSchemaTest extends TestCase {
  */
 	protected function _createTables($connection) {
 		$this->_needsConnection();
-		$connection->execute('DROP TABLE IF EXISTS articles');
-		$connection->execute('DROP TABLE IF EXISTS authors');
+		$connection->execute('DROP TABLE IF EXISTS schema_articles');
+		$connection->execute('DROP TABLE IF EXISTS schema_authors');
 
 		$table = <<<SQL
-CREATE TABLE authors (
+CREATE TABLE schema_authors (
 id INT(11) PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(50),
 bio TEXT,
 created DATETIME
-)
+)ENGINE=InnoDB
 SQL;
 		$connection->execute($table);
 
 		$table = <<<SQL
-CREATE TABLE articles (
+CREATE TABLE schema_articles (
 id BIGINT PRIMARY KEY AUTO_INCREMENT,
 title VARCHAR(20) COMMENT 'A title',
 body TEXT,
@@ -159,8 +159,9 @@ published BOOLEAN DEFAULT 0,
 allow_comments TINYINT(1) DEFAULT 0,
 created DATETIME,
 KEY `author_idx` (`author_id`),
-UNIQUE KEY `length_idx` (`title`(4))
-) COLLATE=utf8_general_ci
+UNIQUE KEY `length_idx` (`title`(4)),
+FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB COLLATE=utf8_general_ci
 SQL;
 		$connection->execute($table);
 	}
@@ -179,8 +180,8 @@ SQL;
 
 		$this->assertInternalType('array', $result);
 		$this->assertCount(2, $result);
-		$this->assertEquals('articles', $result[0]);
-		$this->assertEquals('authors', $result[1]);
+		$this->assertEquals('schema_articles', $result[0]);
+		$this->assertEquals('schema_authors', $result[1]);
 	}
 
 /**
@@ -193,7 +194,7 @@ SQL;
 		$this->_createTables($connection);
 
 		$schema = new SchemaCollection($connection);
-		$result = $schema->describe('articles');
+		$result = $schema->describe('schema_articles');
 		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
 		$expected = [
 			'id' => [
@@ -280,10 +281,10 @@ SQL;
 		$this->_createTables($connection);
 
 		$schema = new SchemaCollection($connection);
-		$result = $schema->describe('articles');
+		$result = $schema->describe('schema_articles');
 		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
 
-		$this->assertCount(2, $result->constraints());
+		$this->assertCount(3, $result->constraints());
 		$expected = [
 			'primary' => [
 				'type' => 'primary',
@@ -296,10 +297,19 @@ SQL;
 				'length' => [
 					'title' => 4,
 				]
+			],
+			'schema_articles_ibfk_1' => [
+				'type' => 'foreign',
+				'columns' => ['author_id'],
+				'references' => ['schema_authors', 'id'],
+				'length' => [],
+				'update' => 'cascade',
+				'delete' => 'restrict',
 			]
 		];
 		$this->assertEquals($expected['primary'], $result->constraint('primary'));
 		$this->assertEquals($expected['length_idx'], $result->constraint('length_idx'));
+		$this->assertEquals($expected['schema_articles_ibfk_1'], $result->constraint('schema_articles_ibfk_1'));
 
 		$this->assertCount(1, $result->indexes());
 		$expected = [
@@ -468,6 +478,36 @@ SQL;
 					'length' => ['author_id' => 5, 'title' => 4]
 				],
 				'UNIQUE KEY `length_idx` (`author_id`(5), `title`(4))'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
+				'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
+				'REFERENCES `authors` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
+				'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
+				'REFERENCES `authors` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
+				'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
+				'REFERENCES `authors` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
+				'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
+				'REFERENCES `authors` (`id`) ON UPDATE SET NULL ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
+				'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
+				'REFERENCES `authors` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT'
 			],
 		];
 	}
