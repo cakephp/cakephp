@@ -443,7 +443,11 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Cache::config('file_groups', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_a', 'group_b')));
+		Cache::config('file_groups', array(
+			'engine' => 'File',
+			'duration' => 3600,
+			'groups' => array('group_a', 'group_b')
+		));
 		$this->assertTrue(Cache::write('test_groups', 'value', 'file_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'file_groups'));
 		$this->assertTrue(Cache::delete('test_groups', 'file_groups'));
@@ -459,24 +463,29 @@ class FileEngineTest extends CakeTestCase {
 	public function testGroupClear() {
 		Cache::config('file_groups', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_a', 'group_b')));
 		Cache::config('file_groups2', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_b')));
-		Cache::config('file_groups3', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_a')));
+		Cache::config('file_groups3', array(
+			'engine' => 'File',
+			'duration' => 3600,
+			'groups' => array('group_b'),
+			'prefix' => 'leading_',
+		));
 
 		$this->assertTrue(Cache::write('test_groups', 'value', 'file_groups'));
-		$this->assertTrue(Cache::write('test_groups2', 'value', 'file_groups2'));
-		$this->assertTrue(Cache::write('test_groups3', 'value', 'file_groups3'));
+		$this->assertTrue(Cache::write('test_groups2', 'value 2', 'file_groups2'));
+		$this->assertTrue(Cache::write('test_groups3', 'value 3', 'file_groups3'));
 
-		$this->assertTrue(Cache::clearGroup('group_a', 'file_groups'));
+		$this->assertTrue(Cache::clearGroup('group_b', 'file_groups'));
 		$this->assertFalse(Cache::read('test_groups', 'file_groups'));
-		$this->assertEquals('value', Cache::read('test_groups2', 'file_groups2'));
-		$this->assertFalse(Cache::read('test_groups3', 'file_groups3'));
+		$this->assertFalse(Cache::read('test_groups2', 'file_groups2'));
+		$this->assertEquals('value 3', Cache::read('test_groups3', 'file_groups3'));
 
 		$this->assertTrue(Cache::write('test_groups4', 'value', 'file_groups'));
-		$this->assertTrue(Cache::write('test_groups5', 'value', 'file_groups2'));
-		$this->assertTrue(Cache::write('test_groups6', 'value', 'file_groups3'));
+		$this->assertTrue(Cache::write('test_groups5', 'value 2', 'file_groups2'));
+		$this->assertTrue(Cache::write('test_groups6', 'value 3', 'file_groups3'));
 
 		$this->assertTrue(Cache::clearGroup('group_b', 'file_groups'));
 		$this->assertFalse(Cache::read('test_groups4', 'file_groups'));
 		$this->assertFalse(Cache::read('test_groups5', 'file_groups2'));
-		$this->assertEquals('value', Cache::read('test_groups6', 'file_groups3'));
+		$this->assertEquals('value 3', Cache::read('test_groups6', 'file_groups3'));
 	}
 }
