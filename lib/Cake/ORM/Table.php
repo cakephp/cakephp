@@ -242,7 +242,6 @@ class Table {
 	public function alias($alias = null) {
 		if ($alias !== null) {
 			$this->_alias = $alias;
-			static::instance($alias, $this);
 		}
 		if ($this->_alias === null) {
 			$alias = explode('\\', get_class($this));

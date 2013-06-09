@@ -159,6 +159,50 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests the table method
+ *
+ * @return void
+ */
+	public function testTableMethod() {
+		$table = new Table(['table' => 'things']);
+		$this->assertEquals('things', $table->table());
+
+		$table = new DatesTable;
+		$this->assertEquals('my_dates', $table->table());
+
+		$table = $this->getMockBuilder('\Cake\ORM\Table')
+			->setMethods(['find'])
+			->setMockClassName('SpecialThingTable')
+			->getMock();
+		$this->assertEquals('special_things', $table->table());
+
+		$table = new Table(['alias' => 'LoveBoat']);
+		$this->assertEquals('love_boats', $table->table());
+	}
+
+/**
+ * Tests the alias method
+ *
+ * @return void
+ */
+	public function testAliasMethod() {
+		$table = new Table(['alias' => 'things']);
+		$this->assertEquals('things', $table->alias());
+
+		$table = new Table(['table' => 'stuffs']);
+		$this->assertEquals('stuffs', $table->alias());
+
+		$table = new DatesTable;
+		$this->assertEquals('Dates', $table->alias());
+
+		$table = $this->getMockBuilder('\Cake\ORM\Table')
+			->setMethods(['find'])
+			->setMockClassName('SpecialThingTable')
+			->getMock();
+		$this->assertEquals('SpecialThing', $table->alias());
+	}
+
+/**
  * Tests that all fields for a table are added by default in a find when no
  * other fields are specified
  *
