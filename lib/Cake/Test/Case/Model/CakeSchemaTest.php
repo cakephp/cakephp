@@ -130,7 +130,7 @@ class TestAppSchema extends CakeSchema {
  * @var array
  */
 	public $comments = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => 0,'key' => 'primary'),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'article_id' => array('type' => 'integer', 'null' => false),
 		'user_id' => array('type' => 'integer', 'null' => false),
 		'comment' => array('type' => 'text', 'null' => true, 'default' => null),
