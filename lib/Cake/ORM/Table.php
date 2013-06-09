@@ -16,33 +16,96 @@
  */
 namespace Cake\ORM;
 
-use Cake\ORM\Association\BelongsTo;
-use Cake\ORM\Association\HasOne;
-use Cake\ORM\Association\HasMany;
-use Cake\ORM\Association\BelongsToMany;
-use Cake\Utility\Inflector;
 use Cake\Database\Schema\Table as Schema;
+use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Association\BelongsToMany;
+use Cake\ORM\Association\HasMany;
+use Cake\ORM\Association\HasOne;
+use Cake\Utility\Inflector;
 
+/**
+ * Represents a single database table. Exposes methods for retrieving data out
+ * of it  and manages the associations it has to other tables. Multiple
+ * instances of this class can be created for the same database table with
+ * different aliases, this allows you to address your database structure in a
+ * richer and more expressive way.
+ */
 class Table {
 
+/**
+ * A list of all table instances that has been built using the factory
+ * method. Instances are indexed by alias
+ *
+ * @var array
+ */
 	protected static $_instances = [];
 
+/**
+ * A collection of default options to apply to each table built with the
+ * factory method. Indexed by table name
+ *
+ * @var array
+ */
 	protected static $_tablesMap = [];
 
-	protected static $_aliasMap = [];
-
+/**
+ * Name of the table as it can be found in the database
+ *
+ * @var string
+ */
 	protected $_table;
 
+/**
+ * Human name giving to this particular instance. Multiple objects representing
+ * the same database table can exist by using different aliases.
+ *
+ * @var string
+ */
 	protected $_alias;
 
+/**
+ * Connection instance
+ *
+ * @var \Cake\Database\Connection
+ */
 	protected $_connection;
 
+/**
+ * The schema object containing a description of this table fields
+ *
+ * @var \Cake\Database\Schema\Table
+ */
 	protected $_schema;
 
+/**
+ * The name of the field that represents the primary key in the table
+ *
+ * @var string
+ */
 	protected $_primaryKey = 'id';
 
+/**
+ * The list of associations for this table. Indexed by association name,
+ * values are Association object instances.
+ *
+ * @var array
+ */
 	protected $_associations = [];
 
+/**
+ * Initializes a new instance
+ *
+ * The $config array understands the following keys:
+ *
+ * - table: Name of the database table to represent
+ * - alias: Alias to be assigned to this table (default to table name)
+ * - connection: The connection instance to use
+ * - schema: A \Cake\Database\Schema\Table object or an array that can be
+ *   passed to it
+ *
+ * @param array config Lsit of options for this table
+ * @return void
+ */
 	public function __construct($config = array()) {
 		if (!empty($config['table'])) {
 			$this->_table = $config['table'];
@@ -67,10 +130,6 @@ class Table {
 			return static::$_instances[$alias];
 		}
 
-		if (isset(static::$_aliasMap[$alias])) {
-			$options += ['table' => static::$_aliasMap[$alias]];
-		}
-
 		if (!empty($options['table']) && isset(static::$_tablesMap[$options['table']])) {
 			$options = array_merge(static::$_tablesMap[$options['table']], $options);
 		}
@@ -85,13 +144,7 @@ class Table {
 			$options['className'] = get_called_class();
 		}
 
-		static::map($alias, $options['table']);
-
 		return static::$_instances[$alias] = new $options['className']($options);
-	}
-
-	public static function map($alias, $table) {
-		static::$_aliasMap[$alias] = $table;
 	}
 
 	public static function instance($alias, self $object = null) {

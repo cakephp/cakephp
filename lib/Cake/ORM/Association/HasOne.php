@@ -74,5 +74,4 @@ class HasOne extends Association {
 			);
 	}
 
-
 }
