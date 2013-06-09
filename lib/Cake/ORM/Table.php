@@ -452,18 +452,35 @@ class Table {
 		return $this->_associations[$association->name()] = $association;
 	}
 
+/**
+ * Creates a new Query for this table and applies some defaults based on the
+ * type of search that was selected
+ *
+ * @param string $type the type of query to perform
+ * @param array $options
+ * @return \Cake\ORM\Query
+ */
 	public function find($type, $options = []) {
 		return $this->{'find' . ucfirst($type)}($this->buildQuery(), $options);
 	}
 
+/**
+ * Applies the options required to find all records on this table based
+ * on the passed options.
+ *
+ * @param \Cake\ORM\Query $query
+ * @param array $options
+ * @return \Cake\ORM\Query
+ */
 	public function findAll(Query $query, array $options = []) {
 		return $query;
 	}
 
-	public function findFirst(Query $query, array $options = []) {
-		return $query->limit(1);
-	}
-
+/**
+ * Creates a new Query instance for this table
+ *
+ * @return \Cake\ORM\Query
+ */
 	protected function buildQuery() {
 		$query = new Query($this->connection());
 		return $query
