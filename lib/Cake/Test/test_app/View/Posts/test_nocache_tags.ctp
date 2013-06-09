@@ -67,7 +67,7 @@ if (!empty($filePresent)):
 	<span class="notice">
 		<?php echo __d('cake', 'Cake');
 			if ($connected->isConnected()):
-		 		__d('cake', ' is able to ');
+				__d('cake', ' is able to ');
 			else:
 				__d('cake', ' is NOT able to ');
 			endif;
