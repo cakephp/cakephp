@@ -176,12 +176,19 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
  */
 	public function testStrategy() {
 		$this->assertEquals('join', $this->association->strategy());
-		$this->association->strategy('thing');
-		$this->assertEquals('join', $this->association->strategy());
 		$this->association->strategy('select');
 		$this->assertEquals('select', $this->association->strategy());
 		$this->association->strategy('subquery');
 		$this->assertEquals('subquery', $this->association->strategy());
+	}
+
+/**
+ * Tests that providing an invalid strategy throws an exception
+ *
+ * @expectedException \InvalidArgumentException
+ * @return void
+ */
+	public function testInvalidStrategy() {
 		$this->association->strategy('anotherThing');
 		$this->assertEquals('subquery', $this->association->strategy());
 	}

@@ -311,9 +311,12 @@ abstract class Association {
 	function strategy($name = null) {
 		if ($name !== null) {
 			$valid = [self::STRATEGY_JOIN, self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
-			if (in_array($name, $valid)) {
-				$this->_strategy = $name;
+			if (!in_array($name, $valid)) {
+				throw new \InvalidArgumentException(
+					sprintf(__d('cake_dev', 'Invalid strategy "%s" was provided'), $name)
+				);
 			}
+			$this->_strategy = $name;
 		}
 		return $this->_strategy;
 	}
