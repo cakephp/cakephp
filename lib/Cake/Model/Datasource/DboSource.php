@@ -1327,7 +1327,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * A more efficient way to fetch associations.	Woohoo!
+ * A more efficient way to fetch associations.
  *
  * @param Model $model Primary model object
  * @param string $query Association query
@@ -1343,8 +1343,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * mergeHasMany - Merge the results of hasMany relations.
- *
+ * Merge the results of hasMany relations.
  *
  * @param array $resultSet Data to merge into
  * @param array $merge Data to merge
@@ -1670,7 +1669,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Builds and generates a JOIN statement from an array.	 Handles final clean-up before conversion.
+ * Builds and generates a JOIN statement from an array. Handles final clean-up before conversion.
  *
  * @param array $join An array defining a JOIN statement in a query
  * @return string An SQL JOIN statement to be used in a query
@@ -1698,7 +1697,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Builds and generates an SQL statement from an array.	 Handles final clean-up before conversion.
+ * Builds and generates an SQL statement from an array. Handles final clean-up before conversion.
  *
  * @param array $query An array defining an SQL query
  * @param Model $model The model object which initiated the query
@@ -1916,7 +1915,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Gets a list of record IDs for the given conditions.	Used for multi-record updates and deletes
+ * Gets a list of record IDs for the given conditions. Used for multi-record updates and deletes
  * in databases that do not support aliases in UPDATE/DELETE queries.
  *
  * @param Model $model
