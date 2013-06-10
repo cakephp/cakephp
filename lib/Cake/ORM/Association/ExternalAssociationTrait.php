@@ -166,16 +166,14 @@ trait ExternalAssociationTrait {
 	protected function _buildQuery($options) {
 		$target = $this->target();
 		$alias = $target->alias();
-		$fetchQuery = $target->find('all');
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
-		$key = sprintf('%s.%s', $alias, $options['foreignKey']);
+		$key = $this->_linkField($options);
 
 		$filter = ($options['strategy'] == parent::STRATEGY_SUBQUERY) ?
 			$this->_buildSubquery($options['query'], $key) : $options['keys'];
 
-		$fetchQuery
-			->where($options['conditions'])
-			->andWhere([$key . ' in' => $filter]);
+		$fetchQuery = $target->find('all')->where($options['conditions']);
+		$fetchQuery = $this->_addFilteringCondition($fetchQuery, $key, $filter);
 
 		if (!empty($options['fields'])) {
 			$fields = $fetchQuery->aliasFields($options['fields'], $alias);
@@ -196,6 +194,30 @@ trait ExternalAssociationTrait {
 		}
 
 		return $fetchQuery;
+	}
+
+/**
+ * Appends any conditions required to load the relevant set of records in the
+ * target table query given a filter key and some filtering values.
+ *
+ * @param \Cake\ORM\Query taget table's query
+ * @param string $key the fields that should be used for filtering
+ * @param mixed $filter the value that should be used to match for $key
+ * @return \Cake\ORM\Query
+ */
+	protected function _addFilteringCondition($query, $key, $filter) {
+		return $query->andWhere([$key . ' in' => $filter]);
+	}
+
+/**
+ * Generates a string used as a table field that contains the values upon
+ * which the filter should be applied
+ *
+ * params array $options
+ * @return string
+ */
+	protected function _linkField($options) {
+		return sprintf('%s.%s', $this->target()->alias(), $options['foreignKey']);
 	}
 
 /**

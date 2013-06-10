@@ -271,12 +271,14 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('contain')->with([
-			'ArticleTag' => [
-				'conditions' => ['ArticleTag.article_id in' => $keys],
-				'matching' => true
-			]
-		]);
+		$query->expects($this->once())->method('contain')
+			->with([
+				'ArticleTag' => [
+					'conditions' => ['ArticleTag.article_id in' => $keys],
+					'matching' => true
+				]
+			])
+			->will($this->returnSelf());
 
 		$callable = $association->eagerLoader(compact('keys'));
 		$row = ['Article__id' => 1, 'title' => 'article 1'];
@@ -326,12 +328,14 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('contain')->with([
-			'ArticleTag' => [
-				'conditions' => ['ArticleTag.article_id in' => $keys],
-				'matching' => true
-			]
-		]);
+		$query->expects($this->once())->method('contain')
+			->with([
+				'ArticleTag' => [
+					'conditions' => ['ArticleTag.article_id in' => $keys],
+					'matching' => true
+				]
+			])
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('where')
 			->with(['Tag.name' => 'foo'])
@@ -376,12 +380,14 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('contain')->with([
-			'ArticleTag' => [
-				'conditions' => ['ArticleTag.article_id in' => $keys],
-				'matching' => true
-			]
-		]);
+		$query->expects($this->once())->method('contain')
+			->with([
+				'ArticleTag' => [
+					'conditions' => ['ArticleTag.article_id in' => $keys],
+					'matching' => true
+				]
+			])
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('where')
 			->with([
@@ -436,6 +442,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
+		$query->expects($this->any())->method('contain')->will($this->returnSelf());
 
 		$query->expects($this->once())->method('where')->will($this->returnSelf());
 
@@ -500,12 +507,14 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			->with(['Tag.name' => 'foo'])
 			->will($this->returnValue($query));
 
-		$query->expects($this->once())->method('contain')->with([
-			'ArticleTag' => [
-				'conditions' => ['ArticleTag.article_id in' => $expected],
-				'matching' => true
-			]
-		]);
+		$query->expects($this->once())->method('contain')
+			->with([
+				'ArticleTag' => [
+					'conditions' => ['ArticleTag.article_id in' => $expected],
+					'matching' => true
+				]
+			])
+			->will($this->returnSelf());
 
 		$callable = $association->eagerLoader([
 			'query' => $parent, 'strategy' => BelongsToMany::STRATEGY_SUBQUERY

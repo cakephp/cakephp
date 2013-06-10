@@ -209,49 +209,32 @@ class BelongsToMany extends Association {
 	}
 
 /**
- * Auxiliary function to construct a new Query object to return all the records
- * in the target table that are associated to those specified in $options from
- * the source table
+ * Appends any conditions required to load the relevant set of records in the
+ * target table query given a filter key and some filtering values.
  *
- * @param array $options options accepted by eagerLoader()
-	 * @return Cake\ORM\Query
+ * @param \Cake\ORM\Query taget table's query
+ * @param string $key the fields that should be used for filtering
+ * @param mixed $filter the value that should be used to match for $key
+ * @return \Cake\ORM\Query
  */
-	protected function _buildQuery($options) {
-		$target = $this->target();
-		$pivot = $this->pivot();
-		$alias = $target->alias();
-		$pivotAlias = $pivot->alias();
-		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
-		$key = sprintf('%s.%s', $pivotAlias, $options['foreignKey']);
-		$fetchQuery = $target->find('all')->where($options['conditions']);
+	protected function _addFilteringCondition($query, $key, $filter) {
+		return $query->contain([
+			$this->pivot()->alias() => [
+				'conditions' => [$key . ' in' => $filter],
+				'matching' => true
+			]
+		]);
+	}
 
-		$filter = ($options['strategy'] == parent::STRATEGY_SUBQUERY) ?
-			$this->_buildSubquery($options['query'], $key) : $options['keys'];
-
-		$options['contain'][$pivotAlias] = [
-			'conditions' => [$key . ' in' => $filter],
-			'matching' => true
-		];
-
-		if (!empty($options['fields'])) {
-			$fields = $fetchQuery->aliasFields($options['fields'], $alias);
-			if (!in_array($key, $fields)) {
-				throw new \InvalidArgumentException(
-					sprintf('You are required to select the "%s" field', $key)
-				);
-			}
-			$fetchQuery->select($fields);
-		}
-
-		if (!empty($options['sort'])) {
-			$fetchQuery->order($options['sort']);
-		}
-
-		if (!empty($options['contain'])) {
-			$fetchQuery->contain($options['contain']);
-		}
-
-		return $fetchQuery;
+/**
+ * Generates a string used as a table field that contains the values upon
+ * which the filter should be applied
+ *
+ * params array $options
+ * @return string
+ */
+	protected function _linkField($options) {
+		return sprintf('%s.%s', $this->pivot()->alias(), $options['foreignKey']);
 	}
 
 /**
