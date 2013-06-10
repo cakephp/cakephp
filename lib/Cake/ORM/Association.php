@@ -38,7 +38,7 @@ abstract class Association {
 	const STRATEGY_SUBQUERY = 'subquery';
 
 /**
- * Strategy name to use a  select for fetching associated records
+ * Strategy name to use a select for fetching associated records
  *
  * @var string
  */
