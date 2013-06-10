@@ -235,10 +235,9 @@ class BelongsToMany extends Association {
 
 		if (!empty($options['fields'])) {
 			$fields = $fetchQuery->aliasFields($options['fields'], $alias);
-			$required = $pivotAlias . '.' . $options['foreignKey'];
-			if (!in_array($required, $fields)) {
+			if (!in_array($key, $fields)) {
 				throw new \InvalidArgumentException(
-					sprintf('You are required to select the "%s" field', $required)
+					sprintf('You are required to select the "%s" field', $key)
 				);
 			}
 			$fetchQuery->select($fields);
