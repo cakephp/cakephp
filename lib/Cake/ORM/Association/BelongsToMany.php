@@ -24,6 +24,8 @@ use Cake\Utility\Inflector;
 /**
  * Represents an M - N relationship where there exists a pivot - or join - table
  * that contains the association fields between the source and the target table.
+ *
+ * An example of a BelongsToMany association would be Article belongs to many Tags.
  */
 class BelongsToMany extends Association {
 

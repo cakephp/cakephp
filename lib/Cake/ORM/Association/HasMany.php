@@ -22,6 +22,8 @@ use Cake\ORM\Query;
 /**
  * Represents an N - 1 relationship where the target side of the relationship
  * will have one or multiple records per each one in the source side.
+ *
+ * An example of a HasMany association would be Author has many Articles.
  */
 class HasMany extends Association {
 

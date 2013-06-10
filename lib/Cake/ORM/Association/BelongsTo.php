@@ -24,6 +24,7 @@ use Cake\Utility\Inflector;
  * Represents an 1 - N relationship where the source side of the relation is
  * related to only one record in the target table.
  *
+ * An example of a BelongsTo association would be Article belongs to Author.
  */
 class BelongsTo extends Association {
 

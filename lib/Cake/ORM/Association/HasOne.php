@@ -24,6 +24,7 @@ use Cake\Utility\Inflector;
  * Represents an 1 - 1 relationship where the source side of the relation is
  * related to only one record in the target table and vice versa.
  *
+ * An example of a HasOne association would be User has one Profile.
  */
 class HasOne extends Association {
 
