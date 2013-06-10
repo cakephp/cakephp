@@ -1872,8 +1872,8 @@ class SetTest extends CakeTestCase {
 		$result = Set::combine($a, '{n}.User.id', '{n}.User.Data');
 		$expected = array(
 			2 => array('user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'),
-			14 => array('user' => 'phpnut',	'name' => 'Larry E. Masters'),
-			25 => array('user' => 'gwoo',	'name' => 'The Gwoo'));
+			14 => array('user' => 'phpnut', 'name' => 'Larry E. Masters'),
+			25 => array('user' => 'gwoo', 'name' => 'The Gwoo'));
 		$this->assertEquals($expected, $result);
 
 		$result = Set::combine($a, '{n}.User.id', '{n}.User.Data.name');
