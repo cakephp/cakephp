@@ -597,7 +597,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 				continue;
 			}
 			$token = ':' . $b['placeholder'];
-			$replacements[$token] = $this->_makeMultiplePlaceholders(
+			$replacements[$token] = $this->_bindMultiplePlaceholders(
 				$b['placeholder'],
 				$b['value'],
 				$b['type']
@@ -623,7 +623,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @param string $type the type to be used to bind the values
  * @return array
  */
-	protected function _makeMultiplePlaceholders($field, $values, $type) {
+	protected function _bindMultiplePlaceholders($field, $values, $type) {
 		$type = str_replace('[]', '', $type);
 		$params = [];
 		foreach ($values as $value) {
