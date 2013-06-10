@@ -18,8 +18,7 @@ namespace Cake\ORM;
 
 /**
  * An Association is a relationship established between two tables and is used
- * as a configuration place for customizing the way interconnected records are
- * retrieved.
+ * to configure and customize the way interconnected records are retrieved.
  *
  */
 abstract class Association {
@@ -338,7 +337,8 @@ abstract class Association {
  * - includeFields: Whether to include target model fields in the result or not
  * - foreignKey: The name of the field to use as foreign key, if false none
  *   will be used
- * - conditions: array with a list of conditions to filter the join with
+ * - conditions: array with a list of conditions to filter the join with, this
+ *   will be merged with any conditions originally configured for this association
  * - fields: a list of fields in the target table to include in the result
  * - type: The type of join to be used (e.g. INNER)
  *
