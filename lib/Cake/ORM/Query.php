@@ -433,7 +433,7 @@ class Query extends DatabaseQuery {
 
 		$contain = $this->normalizedContainments();
 		foreach ($contain as $relation => $meta) {
-			if ($meta['instance'] && !$meta['instance']->canBeJoined($meta['config'])) {
+			if ($meta['instance'] && !$meta['canBeJoined']) {
 				$this->_loadEagerly[$relation] = $meta;
 			}
 		}
@@ -443,7 +443,7 @@ class Query extends DatabaseQuery {
 			$alias = $table->alias();
 			$this->_addJoin($options['instance'], $options['config']);
 			foreach ($options['associations'] as $relation => $meta) {
-				if ($meta['instance'] && !$meta['instance']->canBeJoined($meta['config'])) {
+				if ($meta['instance'] && !$meta['canBeJoined']) {
 					$this->_loadEagerly[$relation] = $meta;
 				}
 			}
@@ -476,6 +476,7 @@ class Query extends DatabaseQuery {
 			'instance' => $instance,
 			'config' => array_diff_key($options, $extra)
 		];
+		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
 
 		foreach ($extra as $t => $assoc) {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
@@ -495,7 +496,7 @@ class Query extends DatabaseQuery {
 		$result = [];
 		foreach ($associations as $table => $options) {
 			$associated = $options['instance'];
-			if ($associated && $associated->canBeJoined($options['config'])) {
+			if ($options['canBeJoined']) {
 				$result[$table] = $options;
 				$result += $this->_resolveJoins($associated->target(), $options['associations']);
 			}
