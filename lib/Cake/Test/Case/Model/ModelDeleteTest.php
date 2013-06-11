@@ -151,7 +151,7 @@ class ModelDeleteTest extends BaseModelTest {
  * @return void
  */
 	public function testDeleteDependentWithConditions() {
-		$this->loadFixtures('Cd','Book','OverallFavorite');
+		$this->loadFixtures('Cd', 'Book', 'OverallFavorite');
 
 		$Cd = new Cd();
 		$Book = new Book();

@@ -2091,7 +2091,7 @@ class ModelWriteTest extends BaseModelTest {
 		$Comment = new Comment();
 
 		$articles = $Article->find('all', array(
-			'fields' => array('id','title'),
+			'fields' => array('id', 'title'),
 			'recursive' => -1,
 			'order' => array('Article.id' => 'ASC')
 		));
@@ -2111,7 +2111,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $articles);
 
 		$comments = $Comment->find('all', array(
-			'fields' => array('id','article_id','user_id','comment','published'),
+			'fields' => array('id', 'article_id', 'user_id', 'comment', 'published'),
 			'recursive' => -1,
 			'order' => array('Comment.id' => 'ASC')
 		));
@@ -2178,7 +2178,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 
 		$articles = $Article->find('all', array(
-			'fields' => array('id','title'),
+			'fields' => array('id', 'title'),
 			'recursive' => -1,
 			'order' => array('Article.id' => 'ASC')
 		));
@@ -2198,7 +2198,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $articles);
 
 		$comments = $Comment->find('all', array(
-			'fields' => array('id','article_id','user_id','comment','published'),
+			'fields' => array('id', 'article_id', 'user_id', 'comment', 'published'),
 			'recursive' => -1,
 			'order' => array('Comment.id' => 'ASC')
 		));
@@ -2289,7 +2289,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals('First Article', $result);
 
 		$articles = $Article->find('all', array(
-			'fields' => array('id','title'),
+			'fields' => array('id', 'title'),
 			'recursive' => -1,
 			'order' => array('Article.id' => 'ASC')
 		));
@@ -4280,7 +4280,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->find('all', array(
 			'recursive' => -1,
-			'fields' => array('author_id', 'title','body','published'),
+			'fields' => array('author_id', 'title', 'body', 'published'),
 			'order' => array('Post.created' => 'ASC')
 		));
 
@@ -5712,7 +5712,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->find('all', array(
 			'recursive' => -1,
-			'fields' => array('author_id', 'title','body','published'),
+			'fields' => array('author_id', 'title', 'body', 'published'),
 			'order' => array('Post.created' => 'ASC')
 		));
 

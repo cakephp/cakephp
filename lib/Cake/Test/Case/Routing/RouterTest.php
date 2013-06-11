@@ -1565,7 +1565,7 @@ class RouterTest extends CakeTestCase {
 		Router::setRequestInfo(
 			$request->addParams(array(
 				'plugin' => null, 'controller' => 'images', 'action' => 'index',
-				'prefix' => null, 'admin' => false,'url' => array('url' => 'images/index')
+				'prefix' => null, 'admin' => false, 'url' => array('url' => 'images/index')
 			))->addPaths(array(
 				'base' => '',
 				'here' => '/images/index',
@@ -2604,22 +2604,22 @@ class RouterTest extends CakeTestCase {
 	public function testResourceMap() {
 		$default = Router::resourceMap();
 		$expected = array(
-			array('action' => 'index',	'method' => 'GET',		'id' => false),
-			array('action' => 'view',	'method' => 'GET',		'id' => true),
-			array('action' => 'add',	'method' => 'POST',		'id' => false),
-			array('action' => 'edit',	'method' => 'PUT',		'id' => true),
-			array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
-			array('action' => 'edit',	'method' => 'POST',		'id' => true)
+			array('action' => 'index', 'method' => 'GET', 'id' => false),
+			array('action' => 'view', 'method' => 'GET', 'id' => true),
+			array('action' => 'add', 'method' => 'POST', 'id' => false),
+			array('action' => 'edit', 'method' => 'PUT', 'id' => true),
+			array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
+			array('action' => 'edit', 'method' => 'POST', 'id' => true)
 		);
 		$this->assertEquals($default, $expected);
 
 		$custom = array(
-			array('action' => 'index',	'method' => 'GET',		'id' => false),
-			array('action' => 'view',	'method' => 'GET',		'id' => true),
-			array('action' => 'add',	'method' => 'POST',		'id' => false),
-			array('action' => 'edit',	'method' => 'PUT',		'id' => true),
-			array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
-			array('action' => 'update',	'method' => 'POST',		'id' => true)
+			array('action' => 'index', 'method' => 'GET', 'id' => false),
+			array('action' => 'view', 'method' => 'GET', 'id' => true),
+			array('action' => 'add', 'method' => 'POST', 'id' => false),
+			array('action' => 'edit', 'method' => 'PUT', 'id' => true),
+			array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
+			array('action' => 'update', 'method' => 'POST', 'id' => true)
 		);
 		Router::resourceMap($custom);
 		$this->assertEquals(Router::resourceMap(), $custom);

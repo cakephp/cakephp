@@ -154,7 +154,7 @@ class ShellDispatcherTest extends CakeTestCase {
 			'app' => 'new',
 			'webroot' => 'webroot',
 			'working' => str_replace('/', DS, '/var/www/htdocs/new'),
-			'root' => str_replace('/', DS,'/var/www/htdocs')
+			'root' => str_replace('/', DS, '/var/www/htdocs')
 		);
 		$Dispatcher->parseParams($params);
 		$this->assertEquals($expected, $Dispatcher->params);
@@ -380,7 +380,7 @@ class ShellDispatcherTest extends CakeTestCase {
 			'app' => 'old',
 			'webroot' => 'webroot',
 			'working' => str_replace('/', DS, '/var/www/htdocs/old'),
-			'root' => str_replace('/', DS,'/var/www/htdocs')
+			'root' => str_replace('/', DS, '/var/www/htdocs')
 		);
 		$Dispatcher->parseParams($params);
 		$this->assertEquals($expected, $Dispatcher->params);

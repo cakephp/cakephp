@@ -162,7 +162,7 @@ class CakeTextReporter extends CakeBaseReporter {
 		}
 
 		if (1 > count($testCases)) {
-			$buffer .= "EMPTY";
+			$buffer .= 'EMPTY';
 			echo $buffer;
 		}
 
