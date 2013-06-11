@@ -23,7 +23,6 @@ use Cake\Database\Schema\MysqlSchema;
 use Cake\Database\Schema\Table;
 use Cake\TestSuite\TestCase;
 
-
 /**
  * Test case for Mysql Schema Dialect.
  */
