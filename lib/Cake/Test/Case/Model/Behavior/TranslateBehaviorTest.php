@@ -942,6 +942,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testValidation() {
+		Configure::write('Config.language', 'eng');
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel = new TranslatedItem();
