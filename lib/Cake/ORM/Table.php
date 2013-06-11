@@ -223,7 +223,7 @@ class Table {
 			$this->_table = $table;
 		}
 		if ($this->_table === null) {
-			$table = explode('\\', get_class($this));
+			$table = namespaceSplit(get_class($this));
 			$table = substr(end($table), 0, -5);
 			if (empty($table)) {
 				$table = $this->alias();
@@ -244,7 +244,7 @@ class Table {
 			$this->_alias = $alias;
 		}
 		if ($this->_alias === null) {
-			$alias = explode('\\', get_class($this));
+			$alias = namespaceSplit(get_class($this));
 			$alias = substr(end($alias), 0, -5) ?: $this->_table;
 			$this->_alias = $alias;
 		}
