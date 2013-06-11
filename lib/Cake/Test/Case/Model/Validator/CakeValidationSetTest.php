@@ -28,6 +28,16 @@ App::uses('CakeValidationSet', 'Model/Validator');
 class CakeValidationSetTest extends CakeTestCase {
 
 /**
+ * override locale to the default (eng).
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		Configure::write('Config.language', 'eng');
+	}
+
+/**
  * testValidate method
  *
  * @return void
