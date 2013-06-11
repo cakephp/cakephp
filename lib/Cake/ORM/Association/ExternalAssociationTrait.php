@@ -238,7 +238,6 @@ trait ExternalAssociationTrait {
 				unset($joins[$i]);
 			}
 		}
-
 		$filterQuery->join($joins, [], true);
 		return $filterQuery->select($foreignKey, true);
 	}
