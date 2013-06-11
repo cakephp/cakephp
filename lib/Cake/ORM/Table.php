@@ -25,7 +25,7 @@ use Cake\Utility\Inflector;
 
 /**
  * Represents a single database table. Exposes methods for retrieving data out
- * of it  and manages the associations it has to other tables. Multiple
+ * of it and manages the associations it has to other tables. Multiple
  * instances of this class can be created for the same database table with
  * different aliases, this allows you to address your database structure in a
  * richer and more expressive way.

@@ -32,6 +32,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->tag = $this->getMock(
 			'Cake\ORM\Table', ['find'], [['alias' => 'Tag', 'table' => 'tags']]
 		);
@@ -55,6 +56,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		Table::clearRegistry();
 	}
 

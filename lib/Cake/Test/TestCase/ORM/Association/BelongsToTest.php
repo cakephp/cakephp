@@ -32,6 +32,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->company = Table::build('Company', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
@@ -53,6 +54,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		Table::clearRegistry();
 	}
 

@@ -275,7 +275,6 @@ class Query extends DatabaseQuery {
  * Additionally it will set an 'instance' key per association containing the
  * association instance from the corresponding source table
  *
- *
  * @return array
  */
 	public function normalizedContainments() {
@@ -335,7 +334,7 @@ class Query extends DatabaseQuery {
  */
 	public function aliasField($field, $alias = null) {
 		$namespaced = strpos($field, '.') !== false;
-		$_field = $field;
+		$aliasedField = $field;
 
 		if ($namespaced) {
 			list($alias, $field) = explode('.', $field);
@@ -347,10 +346,10 @@ class Query extends DatabaseQuery {
 
 		$key = sprintf('%s__%s', $alias, $field);
 		if (!$namespaced) {
-			$_field = $alias . '.' . $field;
+			$aliasedField = $alias . '.' . $field;
 		}
 
-		return [$key => $_field];
+		return [$key => $aliasedField];
 	}
 
 /**
@@ -529,7 +528,7 @@ class Query extends DatabaseQuery {
 
 		$keys = [];
 		if (!empty($collectKeys)) {
-			while($result = $statement->fetch('assoc')) {
+			while ($result = $statement->fetch('assoc')) {
 				foreach ($collectKeys as $parts) {
 					$keys[$parts[0]][] = $result[$parts[1]];
 				}
