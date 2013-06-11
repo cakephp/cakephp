@@ -61,7 +61,7 @@ class BelongsTo extends Association {
  */
 	protected function _joinCondition(array $options) {
 		return sprintf('%s.%s = %s.%s',
-				$this->target()->alias(),
+				$this->_name,
 				$this->_targetTable->primaryKey(),
 				$this->_sourceTable->alias(),
 				$options['foreignKey']

@@ -76,19 +76,19 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	protected function _createTables() {
-		$table = 'CREATE TEMPORARY TABLE authors(id int, name varchar(50))';
+		$table = 'CREATE TABLE authors(id int, name varchar(50))';
 		$this->connection->execute($table);
 
-		$table = 'CREATE TEMPORARY TABLE articles(id int, title varchar(20), body varchar(50), author_id int)';
+		$table = 'CREATE TABLE articles(id int, title varchar(20), body varchar(50), author_id int)';
 		$this->connection->execute($table);
 
-		$table = 'CREATE TEMPORARY TABLE publications(id int, title varchar(20), body varchar(50), author_id int)';
+		$table = 'CREATE TABLE publications(id int, title varchar(20), body varchar(50), author_id int)';
 		$this->connection->execute($table);
 
-		$table = 'CREATE TEMPORARY TABLE tags(id int, name varchar(20))';
+		$table = 'CREATE TABLE tags(id int, name varchar(20))';
 		$this->connection->execute($table);
 
-		$table = 'CREATE TEMPORARY TABLE articles_tags(article_id int, tag_id int)';
+		$table = 'CREATE TABLE articles_tags(article_id int, tag_id int)';
 		$this->connection->execute($table);
 
 		Table::config('authors', ['connection' => $this->connection]);
@@ -362,7 +362,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function strategiesProvider() {
-		return [['subquery', 'select']];
+		return [['subquery'], ['select']];
 	}
 
 /**
@@ -463,7 +463,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoadingOrder() {
+	public function testHasManyEagerLoadingOrder($strategy) {
 		$statement = $this->_insertRecords();
 		$statement->bindValue(1, 3, 'integer');
 		$statement->bindValue(2, 'a fine title');
@@ -511,7 +511,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoadingDeep() {
+	public function testHasManyEagerLoadingDeep($strategy) {
 		$this->_insertRecords();
 
 		$query = new Query($this->connection);
@@ -558,7 +558,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoadingFromSecondaryTable() {
+	public function testHasManyEagerLoadingFromSecondaryTable($strategy) {
 		$this->_insertRecords();
 
 		$query = new Query($this->connection);

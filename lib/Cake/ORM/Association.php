@@ -369,7 +369,7 @@ abstract class Association {
 		}
 
 		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
+		$query->join([$this->_name => array_intersect_key($options, $joinOptions)]);
 
 		if (empty($options['fields'])) {
 			$f = isset($options['fields']) ? $options['fields'] : null;
@@ -379,7 +379,7 @@ abstract class Association {
 		}
 
 		if (!empty($options['fields'])) {
-			$query->select($query->aliasFields($options['fields'], $target->alias()));
+			$query->select($query->aliasFields($options['fields'], $this->_name));
 		}
 	}
 
@@ -392,8 +392,7 @@ abstract class Association {
  */
 	public function transformRow($row) {
 		$sourceAlias = $this->source()->alias();
-		$targetAlias = $this->target()->alias();
-		$row[$sourceAlias][$this->property()] = $row[$targetAlias];
+		$row[$sourceAlias][$this->property()] = $row[$this->_name];
 		return $row;
 	}
 
