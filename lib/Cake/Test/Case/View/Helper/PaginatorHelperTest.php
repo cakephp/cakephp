@@ -42,6 +42,7 @@ class PaginatorHelperTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		Configure::write('Config.language', 'eng');
 		$controller = null;
 		$this->View = new View($controller);
 		$this->Paginator = new PaginatorHelper($this->View);
