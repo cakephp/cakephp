@@ -28,6 +28,7 @@ use Cake\ORM\Table;
 class QueryTest extends \Cake\TestSuite\TestCase {
 
 	public function setUp() {
+		parent::setUp();
 		$this->connection = new Connection(Configure::read('Datasource.test'));
 		$schema = ['id' => ['type' => 'integer']];
 		$schema1 = [
@@ -60,6 +61,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 	public function tearDown() {
+		parent::tearDown();
 		$this->connection->execute('DROP TABLE IF EXISTS articles');
 		$this->connection->execute('DROP TABLE IF EXISTS authors');
 		$this->connection->execute('DROP TABLE IF EXISTS publications');

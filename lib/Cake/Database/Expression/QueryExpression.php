@@ -555,8 +555,8 @@ class QueryExpression implements ExpressionInterface, Countable {
 		if (in_array(strtolower(trim($operator)), ['in', 'not in']) || $typeMultiple) {
 			$type = $type ?: 'string';
 			$type .= $typeMultiple ? null : '[]';
-			$operator = $operator == '=' ? 'in' : $operator;
-			$operator = $operator == '!=' ? 'not in' : $operator;
+			$operator = $operator == '=' ? 'IN' : $operator;
+			$operator = $operator == '!=' ? 'NOT IN' : $operator;
 			$multi = true;
 		}
 
