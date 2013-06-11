@@ -213,6 +213,10 @@ class CakeNumberTest extends CakeTestCase {
 		$expected = '£100,100,100.00';
 		$this->assertEquals($expected, $result);
 
+		$result = $this->Number->currency($value, 'PHP');
+		$expected = '₱100,100,100.00';
+		$this->assertEquals($expected, $result);
+
 		$options = array('thousands' => ' ', 'wholeSymbol' => 'EUR ', 'wholePosition' => 'before',
 			'decimals' => ',', 'zero' => 'Gratuit');
 		$result = $this->Number->currency($value, '', $options);
