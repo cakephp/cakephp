@@ -438,7 +438,7 @@ class Query extends DatabaseQuery {
 			}
 		}
 
-		foreach ($this->_resolveFirstLevel($this->_table, $contain) as $options) {
+		foreach ($this->_resolveJoins($this->_table, $contain) as $options) {
 			$table = $options['instance']->target();
 			$alias = $table->alias();
 			$this->_addJoin($options['instance'], $options['config']);
@@ -491,13 +491,13 @@ class Query extends DatabaseQuery {
  * @param array $associations list of associations for $source
  * @return array
  */
-	protected function _resolveFirstLevel($source, $associations) {
+	protected function _resolveJoins($source, $associations) {
 		$result = [];
 		foreach ($associations as $table => $options) {
 			$associated = $options['instance'];
 			if ($associated && $associated->canBeJoined($options['config'])) {
 				$result[$table] = $options;
-				$result += $this->_resolveFirstLevel($associated->target(), $options['associations']);
+				$result += $this->_resolveJoins($associated->target(), $options['associations']);
 			}
 		}
 		return $result;
