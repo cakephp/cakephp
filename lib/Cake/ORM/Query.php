@@ -245,26 +245,33 @@ class Query extends DatabaseQuery {
 			return $this;
 		}
 
-		$normalizer = function($associations) use (&$normalizer) {
-			$result = [];
-			foreach ((array)$associations as $table => $options) {
-				if (is_int($table)) {
-					$table = $options;
-					$options = [];
-				} elseif (is_array($options) && !isset($this->_containOptions[$table])) {
-					$options = $normalizer($options);
-				}
-				$result[$table] = $options;
-			}
-			return $result;
-		};
-
 		$old = $this->_containments->getArrayCopy();
-		$associations = array_merge($old, $normalizer($associations));
+		$associations = array_merge($old, $this->_reformatContain($associations));
 		$this->_containments->exchangeArray($associations);
 		$this->_normalizedContainments = null;
 		$this->_dirty = true;
 		return $this;
+	}
+
+/**
+ * Formats the containments array so that associations are always set as keys
+ * in the array.
+ *
+ * @param array $associations user provided containments array
+ * @return array
+ */
+	protected function _reformatContain($associations) {
+		$result = [];
+		foreach ((array)$associations as $table => $options) {
+			if (is_int($table)) {
+				$table = $options;
+				$options = [];
+			} elseif (is_array($options) && !isset($this->_containOptions[$table])) {
+				$options = $this->_reformatContain($options);
+			}
+			$result[$table] = $options;
+		}
+		return $result;
 	}
 
 /**
@@ -405,8 +412,9 @@ class Query extends DatabaseQuery {
 		if (!$this->_dirty) {
 			return parent::_transformQuery();
 		}
-
-		$this->from([$this->_table->alias() => $this->_table->table()]);
+		if (empty($this->_parts['from'])) {
+			$this->from([$this->_table->alias() => $this->_table->table()]);
+		}
 		$this->_addDefaultFields();
 		$this->_addContainments();
 		return parent::_transformQuery();
@@ -426,17 +434,17 @@ class Query extends DatabaseQuery {
 
 		$contain = $this->normalizedContainments();
 		foreach ($contain as $relation => $meta) {
-			if ($meta['instance'] && !$meta['instance']->canBeJoined($meta['config'])) {
+			if ($meta['instance'] && !$meta['canBeJoined']) {
 				$this->_loadEagerly[$relation] = $meta;
 			}
 		}
 
-		foreach ($this->_resolveFirstLevel($this->_table, $contain) as $options) {
+		foreach ($this->_resolveJoins($this->_table, $contain) as $options) {
 			$table = $options['instance']->target();
 			$alias = $table->alias();
 			$this->_addJoin($options['instance'], $options['config']);
 			foreach ($options['associations'] as $relation => $meta) {
-				if ($meta['instance'] && !$meta['instance']->canBeJoined($meta['config'])) {
+				if ($meta['instance'] && !$meta['canBeJoined']) {
 					$this->_loadEagerly[$relation] = $meta;
 				}
 			}
@@ -469,6 +477,7 @@ class Query extends DatabaseQuery {
 			'instance' => $instance,
 			'config' => array_diff_key($options, $extra)
 		];
+		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
 
 		foreach ($extra as $t => $assoc) {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
@@ -484,13 +493,13 @@ class Query extends DatabaseQuery {
  * @param array $associations list of associations for $source
  * @return array
  */
-	protected function _resolveFirstLevel($source, $associations) {
+	protected function _resolveJoins($source, $associations) {
 		$result = [];
 		foreach ($associations as $table => $options) {
 			$associated = $options['instance'];
-			if ($associated && $associated->canBeJoined($options['config'])) {
+			if ($options['canBeJoined']) {
 				$result[$table] = $options;
-				$result += $this->_resolveFirstLevel($associated->target(), $options['associations']);
+				$result += $this->_resolveJoins($associated->target(), $options['associations']);
 			}
 		}
 		return $result;
