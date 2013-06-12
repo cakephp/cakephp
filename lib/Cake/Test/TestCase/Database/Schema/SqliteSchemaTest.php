@@ -23,7 +23,6 @@ use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\Schema\Table;
 use Cake\TestSuite\TestCase;
 
-
 /**
  * Test case for Sqlite Schema Dialect.
  */
@@ -605,7 +604,6 @@ SQL;
 			$result[1]
 		);
 	}
-
 
 /**
  * test dropSql

@@ -27,10 +27,6 @@ use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
-if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', 'http://cakephp.org');
-}
-
 /**
  * RouterTest class
  *
@@ -47,6 +43,8 @@ class RouterTest extends TestCase {
 		parent::setUp();
 		Configure::write('Routing', array('admin' => null, 'prefixes' => array()));
 		Router::reload();
+		Router::baseURL('');
+		Configure::write('App.fullBaseURL', 'http://localhost');
 	}
 
 /**
@@ -70,7 +68,6 @@ class RouterTest extends TestCase {
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('_full' => true)));
-		$this->assertSame(FULL_BASE_URL . '/', Router::url(array('_full' => true)));
 	}
 
 /**
@@ -79,7 +76,6 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testBaseURL() {
-		$this->assertEquals(FULL_BASE_URL, Router::baseUrl());
 		Router::baseURL('http://example.com');
 		$this->assertEquals('http://example.com/', Router::url('/', true));
 		$this->assertEquals('http://example.com', Configure::read('App.fullBaseURL'));
@@ -2438,7 +2434,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($url, Router::url($url));
 		$url = '/posts/index#here';
 
-		$expected = FULL_BASE_URL . '/posts/index#here';
+		$expected = Configure::read('App.fullBaseURL') . '/posts/index#here';
 		$this->assertEquals($expected, Router::url($url, true));
 	}
 

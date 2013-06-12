@@ -136,7 +136,7 @@ class SocketTest extends TestCase {
  */
 	public function testSocketHost() {
 		try {
-			$this->Socket = new CakeSocket();
+			$this->Socket = new Socket();
 			$this->Socket->connect();
 			$this->assertEquals('127.0.0.1', $this->Socket->address());
 			$this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
@@ -180,7 +180,7 @@ class SocketTest extends TestCase {
 			$this->assertEquals(null, $this->Socket->read(26));
 
 			$config = array('host' => 'google.com', 'port' => 80, 'timeout' => 1);
-			$this->Socket = new CakeSocket($config);
+			$this->Socket = new Socket($config);
 			$this->assertTrue($this->Socket->connect());
 			$this->assertEquals(null, $this->Socket->read(26));
 			$this->assertEquals('2: ' . __d('cake_dev', 'Connection timed out'), $this->Socket->lastError());
@@ -201,7 +201,7 @@ class SocketTest extends TestCase {
 			$this->assertTrue($this->Socket->connect());
 
 			$config = array('host' => '127.0.0.1', 'timeout' => 0.00001);
-			$this->Socket = new CakeSocket($config);
+			$this->Socket = new Socket($config);
 			$this->assertFalse($this->Socket->read(1024 * 1024));
 			$this->assertEquals('2: ' . __d('cake_dev', 'Connection timed out'), $this->Socket->lastError());
 		} catch (Error\SocketException $e) {

@@ -250,8 +250,7 @@ class TableTest extends TestCase {
  *
  * @return array
  */
-	public static function badForeignKeyProvider()
-	{
+	public static function badForeignKeyProvider() {
 		return [
 			'references is bad' => [[
 				'type' => Table::CONSTRAINT_FOREIGN,

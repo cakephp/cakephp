@@ -22,8 +22,8 @@ namespace Cake\Test\TestCase\Routing\Route;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Network\Response;
-use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Router;
+use Cake\Routing\Route\RedirectRoute;
 use Cake\TestSuite\TestCase;
 
 /**

@@ -21,8 +21,8 @@ namespace Cake\Test\TestCase\Routing\Route;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Routing\Route\PluginShortRoute;
 use Cake\Routing\Router;
+use Cake\Routing\Route\PluginShortRoute;
 use Cake\TestSuite\TestCase;
 
 /**

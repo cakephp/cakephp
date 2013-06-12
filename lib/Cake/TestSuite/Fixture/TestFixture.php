@@ -178,6 +178,7 @@ class TestFixture {
  * Build fixture schema from a table in another datasource.
  *
  * @return void
+ * @throws Cake\Error\Exception when trying to import from an empty table.
  */
 	protected function _schemaFromImport() {
 		if (!is_array($this->import)) {

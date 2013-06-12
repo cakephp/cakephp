@@ -42,7 +42,7 @@ class TestEmail extends Email {
  * Wrap to protected method
  *
  */
-	public function wrap($text, $length = CakeEmail::LINE_LENGTH_MUST) {
+	public function wrap($text, $length = Email::LINE_LENGTH_MUST) {
 		return parent::_wrap($text, $length);
 	}
 
@@ -1037,27 +1037,25 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testSendWithLogAndScope() {
-		CakeLog::config('email', array(
+		Configure::write('Log.email', array(
 			'engine' => 'FileLog',
 			'path' => TMP,
-			'types' => array('cake_test_emails'),
+			'file' => 'cake_test_emails',
 			'scopes' => array('email')
 		));
-		CakeLog::drop('default');
+		Log::reset();
 		$this->CakeEmail->transport('Debug');
 		$this->CakeEmail->to('me@cakephp.org');
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
-		$this->CakeEmail->config(array('log' => array('level' => 'cake_test_emails', 'scope' => 'email')));
+		$this->CakeEmail->config(array('log' => array('scope' => 'email')));
 		$result = $this->CakeEmail->send("Logging This");
 
-		App::uses('File', 'Utility');
 		$File = new File(TMP . 'cake_test_emails.log');
 		$log = $File->read();
 		$this->assertTrue(strpos($log, $result['headers']) !== false);
 		$this->assertTrue(strpos($log, $result['message']) !== false);
 		$File->delete();
-		CakeLog::drop('email');
 	}
 
 /**
@@ -1920,7 +1918,7 @@ class EmailTest extends TestCase {
 	}
 
 	public function testWrapLongLine() {
-		$message = '<a href="http://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST) . "</a>";
+		$message = '<a href="http://cakephp.org">' . str_repeat('x', Email::LINE_LENGTH_MUST) . "</a>";
 
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('Debug');
@@ -1929,7 +1927,7 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->subject('Wordwrap Test');
 		$this->CakeEmail->config(array('empty'));
 		$result = $this->CakeEmail->send($message);
-		$expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - 26) . "\r\n" .
+		$expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Email::LINE_LENGTH_MUST - 26) . "\r\n" .
 			str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
 		$this->assertEquals($expected, $result['message']);
 		$this->assertLineLengths($result['message']);
@@ -1937,24 +1935,24 @@ class EmailTest extends TestCase {
 		$str1 = "a ";
 		$str2 = " b";
 		$length = strlen($str1) + strlen($str2);
-		$message = $str1 . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - $length - 1) . $str2;
+		$message = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length - 1) . $str2;
 
 		$result = $this->CakeEmail->send($message);
 		$expected = "{$message}\r\n\r\n";
 		$this->assertEquals($expected, $result['message']);
 		$this->assertLineLengths($result['message']);
 
-		$message = $str1 . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - $length) . $str2;
+		$message = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length) . $str2;
 
 		$result = $this->CakeEmail->send($message);
 		$expected = "{$message}\r\n\r\n";
 		$this->assertEquals($expected, $result['message']);
 		$this->assertLineLengths($result['message']);
 
-		$message = $str1 . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - $length + 1) . $str2;
+		$message = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length + 1) . $str2;
 
 		$result = $this->CakeEmail->send($message);
-		$expected = $str1 . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
+		$expected = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
 		$this->assertEquals($expected, $result['message']);
 		$this->assertLineLengths($result['message']);
 	}
@@ -1967,7 +1965,7 @@ class EmailTest extends TestCase {
 </table>
 HTML;
 		$length = strlen($str);
-		$message = $str . str_repeat('x', CakeEmail::LINE_LENGTH_MUST + 1);
+		$message = $str . str_repeat('x', Email::LINE_LENGTH_MUST + 1);
 
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('Debug');
@@ -1986,7 +1984,7 @@ HTML;
 	public function testWrapIncludeLessThanSign() {
 		$str = 'foo<bar';
 		$length = strlen($str);
-		$message = $str . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - $length + 1);
+		$message = $str . str_repeat('x', Email::LINE_LENGTH_MUST - $length + 1);
 
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('Debug');
@@ -2028,8 +2026,8 @@ HTML;
 	public function assertLineLengths($message) {
 		$lines = explode("\r\n", $message);
 		foreach ($lines as $line) {
-			$this->assertTrue(strlen($line) <= CakeEmail::LINE_LENGTH_MUST,
-				'Line length exceeds the max. limit of CakeEmail::LINE_LENGTH_MUST');
+			$this->assertTrue(strlen($line) <= Email::LINE_LENGTH_MUST,
+				'Line length exceeds the max. limit of Email::LINE_LENGTH_MUST');
 		}
 	}
 

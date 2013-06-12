@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Log\Log;
 use Cake\Network\Http\FormData\Part;
+use Cake\Utility\File;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
 use Cake\Utility\Validation;
@@ -1251,7 +1252,7 @@ class Email {
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
 		$lines = explode("\n", $message);
 		$formatted = array();
-		$cut = ($wrapLength == CakeEmail::LINE_LENGTH_MUST) ? true : false;
+		$cut = ($wrapLength == Email::LINE_LENGTH_MUST) ? true : false;
 
 		foreach ($lines as $line) {
 			if (empty($line)) {
