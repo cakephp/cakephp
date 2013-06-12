@@ -117,7 +117,7 @@ class Query extends DatabaseQuery {
 		$schema = $table->schema();
 		$fields = [];
 		foreach ($schema->columns() as $f) {
-			$fields[$f] = $fields[$alias . '.' . $f] = $schema->column($f)['type'];
+			$fields[$f] = $fields[$alias . '.' . $f] = $schema->columnType($f);
 		}
 		$this->defaultTypes($this->defaultTypes() + $fields);
 

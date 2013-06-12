@@ -257,7 +257,7 @@ class ResultSet implements Iterator {
 		if (empty($this->types[$alias])) {
 			$schema = $table->schema();
 			foreach ($schema->columns() as $col) {
-				$this->types[$alias][$col] =  Type::build($schema->column($col)['type']);
+				$this->types[$alias][$col] =  Type::build($schema->columnType($col));
 			}
 		}
 
