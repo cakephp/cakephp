@@ -65,6 +65,22 @@ class TableTest extends TestCase {
 	}
 
 /**
+ * Test columnType method
+ *
+ * @return void
+ */
+	public function testColumnType() {
+		$table = new Table('articles');
+		$table->addColumn('title', [
+			'type' => 'string',
+			'length' => 25,
+			'null' => false
+		]);
+		$this->assertEquals('string', $table->columnType('title'));
+		$this->assertNull($table->columnType('not there'));
+	}
+
+/**
  * Attribute keys should be filtered and have defaults set.
  *
  * @return void
