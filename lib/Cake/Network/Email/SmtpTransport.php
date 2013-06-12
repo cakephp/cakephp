@@ -161,7 +161,10 @@ class SmtpTransport extends AbstractTransport {
  * @throws SocketException
  */
 	protected function _sendRcpt() {
-		$from = $this->_cakeEmail->from();
+		$from = $this->_cakeEmail->returnPath();
+		if (empty($from)) {
+			$from = $this->_cakeEmail->from();
+		}
 		$this->_smtpSend('MAIL FROM:<' . key($from) . '>');
 
 		$to = $this->_cakeEmail->to();
@@ -182,7 +185,7 @@ class SmtpTransport extends AbstractTransport {
 	protected function _sendData() {
 		$this->_smtpSend('DATA', '354');
 
-		$headers = $this->_cakeEmail->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject'));
+		$headers = $this->_cakeEmail->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject'));
 		$headers = $this->_headersToString($headers);
 		$lines = $this->_cakeEmail->message();
 		$messages = array();
