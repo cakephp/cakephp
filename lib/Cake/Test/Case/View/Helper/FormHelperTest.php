@@ -6629,6 +6629,102 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testInputDateMaxYear method
+ *
+ * @return void
+ */
+	public function testInputDateMaxYear() {
+                // Let's say we want to only allow users born from
+                // 2006 to 2008 to register
+                // This beeing the first singup page, we still don't have any data
+                $this->Form->request->data = array();
+                $this->Form->create('User');
+                $result = $this->Form->input('birthday', 
+                        array(
+                            'label' => false, 
+                            'div' => false, 
+                            'type' => 'date', 
+                            'dateFormat' => 'DMY', 
+                            'minYear' => 2006,
+                            'maxYear' => 2008
+                        )
+                );
+                
+                $selected = array('selected' => 'selected');
+                $day = array();
+                $month = array();
+
+                for($i = 1; $i <= 31; $i++) {
+                    array_push($day, array('value' => ($i < 10?'0'.$i:$i)));
+                    if($i < 13)
+                        array_push($month, array('value' => ($i < 10?'0'.$i:$i)));
+                }
+                
+                $day[date('d')-1] = array_merge($day[date('d')-1], $selected);
+                $month[date('m')-1] = array_merge($day[date('m')-1], $selected);
+                
+                $expected = array(
+                    array('select' => array('name' => 'data[User][birthday][day]', 'id' => 'UserBirthdayDay')),
+			array('option' => $day[0]),  '1', '/option',
+			array('option' => $day[1]),  '2', '/option',
+			array('option' => $day[2]),  '3', '/option',
+			array('option' => $day[3]),  '4', '/option',
+			array('option' => $day[4]),  '5', '/option',
+			array('option' => $day[5]),  '6', '/option',
+			array('option' => $day[6]),  '7', '/option',
+			array('option' => $day[7]),  '8', '/option',
+			array('option' => $day[8]),  '9', '/option',
+			array('option' => $day[9]),  '10', '/option',
+			array('option' => $day[10]), '11', '/option',
+			array('option' => $day[11]), '12', '/option',
+			array('option' => $day[12]), '13', '/option',
+			array('option' => $day[13]), '14', '/option',
+			array('option' => $day[14]), '15', '/option',
+			array('option' => $day[15]), '16', '/option',
+			array('option' => $day[16]), '17', '/option',
+			array('option' => $day[17]), '18', '/option',
+			array('option' => $day[18]), '19', '/option',
+			array('option' => $day[19]), '20', '/option',
+			array('option' => $day[20]), '21', '/option',
+			array('option' => $day[21]), '22', '/option',
+			array('option' => $day[22]), '23', '/option',
+			array('option' => $day[23]), '24', '/option',
+			array('option' => $day[24]), '25', '/option',
+			array('option' => $day[25]), '26', '/option',
+			array('option' => $day[26]), '27', '/option',
+			array('option' => $day[27]), '28', '/option',
+			array('option' => $day[28]), '29', '/option',
+			array('option' => $day[29]), '30', '/option',
+			array('option' => $day[30]), '31', '/option',
+                    '/select',
+                    '-',                   
+                    array('select' => array('name' => 'data[User][birthday][month]', 'id' => 'UserBirthdayMonth')),
+			array('option' => $month[0]), 'January', '/option',
+			array('option' => $month[1]), 'February', '/option',
+			array('option' => $month[2]), 'March', '/option',
+			array('option' => $month[3]), 'April', '/option',
+			array('option' => $month[4]), 'May', '/option',
+			array('option' => $month[5]), 'June', '/option',
+			array('option' => $month[6]), 'July', '/option',
+			array('option' => $month[7]), 'August', '/option',
+			array('option' => $month[8]), 'September', '/option',
+			array('option' => $month[9]), 'October', '/option',
+			array('option' => $month[10]), 'November', '/option',
+			array('option' => $month[11]), 'December', '/option',
+                    '/select',
+                    '-',                   
+                    array('select' => array('name' => 'data[User][birthday][year]', 'id' => 'UserBirthdayYear')),
+			array('option' => array('value' => '2008', 'selected' => 'selected')), '2008', '/option',
+			array('option' => array('value' => '2007')), '2007', '/option',
+			array('option' => array('value' => '2006')), '2006', '/option',
+                    '/select',
+                    
+                    );
+
+		$this->assertTags($result, $expected, true);
+	}
+
+/**
  * testTextArea method
  *
  * @return void
