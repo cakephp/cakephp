@@ -565,9 +565,6 @@ class View extends Object {
 				unset($out);
 				return false;
 			} else {
-				if ($this->layout === 'xml') {
-					$response->type('xml');
-				}
 				return substr($out, strlen($match[0]));
 			}
 		}
