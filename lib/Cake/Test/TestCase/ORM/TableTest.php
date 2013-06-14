@@ -23,15 +23,15 @@ use Cake\ORM\Table;
 /**
  * Used to test correct class is instantiated when using Table::build();
  *
- **/
-class DatesTable extends Table {
+ */
+class UsersTable extends Table {
 
 /**
  * Overrides default table name
  *
  * @var string
  */
-	public $_table = 'my_dates';
+	public $_table = 'users';
 
 }
 
@@ -41,72 +41,17 @@ class DatesTable extends Table {
  */
 class TableTest extends \Cake\TestSuite\TestCase {
 
+	public $fixtures = ['core.user'];
+
 	public function setUp() {
+		parent::setUp();
 		$this->connection = new Connection(Configure::read('Datasource.test'));
 	}
 
 	public function tearDown() {
-		$this->connection->execute('DROP TABLE IF EXISTS things');
-		$this->connection->execute('DROP TABLE IF EXISTS dates');
+		parent::tearDown();
 		Table::clearRegistry();
 	}
-
-/**
- * Auxiliary function to insert a couple rows in a newly created table
- *
- * @return void
- **/
-	protected function _createThingsTable() {
-		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
-		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
-		$result = $this->connection->insert(
-			'things',
-			$data,
-			['id' => 'integer', 'title' => 'string', 'body' => 'string']
-		);
-
-		$result->bindValue(1, '2', 'integer');
-		$result->bindValue(2, 'another title');
-		$result->bindValue(3, 'another body');
-		$result->execute();
-	}
-
-/**
- * Auxiliary function to insert a couple rows in a newly created table containing dates
- *
- * @return void
- **/
-	protected function _createDatesTable() {
-		$table = 'CREATE TEMPORARY TABLE dates(id int, name varchar(50), posted timestamp, visible char(1))';
-		$this->connection->execute($table);
-		$data = [
-			'id' => '1',
-			'name' => 'Chuck Norris',
-			'posted' => new \DateTime('2012-12-21 12:00'),
-			'visible' => 'Y'
-		];
-		$result = $this->connection->insert(
-			'dates',
-			$data,
-			['id' => 'integer', 'name' => 'string', 'posted' => 'datetime', 'visible' => 'string']
-		);
-
-		$result->bindValue(1, '2', 'integer');
-		$result->bindValue(2, 'Bruce Lee');
-		$result->bindValue(3, new \DateTime('2012-12-22 12:00'), 'datetime');
-		$result->bindValue(4, 'N');
-		$result->execute();
-
-		$result->bindValue(1, 3, 'integer');
-		$result->bindValue(2, 'Jet Li');
-		$result->bindValue(3, new \DateTime('2012-12-25 12:00'), 'datetime');
-		$result->bindValue(4, null);
-		$result->execute();
-
-		return $result;
-	}
-
 /**
  * Tests that table options can be pre-configured for the factory method
  *
@@ -117,18 +62,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals([], $map);
 
 		$options = ['connection' => $this->connection];
-		Table::config('things', $options);
+		Table::config('users', $options);
 		$map = Table::config();
-		$this->assertEquals(['things' => $options], $map);
-		$this->assertEquals($options, Table::config('things'));
+		$this->assertEquals(['users' => $options], $map);
+		$this->assertEquals($options, Table::config('users'));
 
 		$schema = ['id' => ['type' => 'rubbish']];
 		$options += ['schema' => $schema];
-		Table::config('things', $options);
+		Table::config('users', $options);
 
-		$table = Table::build('foo', ['table' => 'things']);
+		$table = Table::build('foo', ['table' => 'users']);
 		$this->assertInstanceOf('Cake\ORM\Table', $table);
-		$this->assertEquals('things', $table->table());
+		$this->assertEquals('users', $table->table());
 		$this->assertEquals('foo', $table->alias());
 		$this->assertSame($this->connection, $table->connection());
 		$this->assertEquals(array_keys($schema), $table->schema()->columns());
@@ -137,10 +82,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		Table::clearRegistry();
 		$this->assertEmpty(Table::config());
 
-		Table::config('my_dates', $options);
-		$table = Table::build('foo', ['className' => __NAMESPACE__ . '\DatesTable']);
-		$this->assertInstanceOf(__NAMESPACE__ . '\DatesTable', $table);
-		$this->assertEquals('my_dates', $table->table());
+		Table::config('users', $options);
+		$table = Table::build('foo', ['className' => __NAMESPACE__ . '\UsersTable']);
+		$this->assertInstanceOf(__NAMESPACE__ . '\UsersTable', $table);
+		$this->assertEquals('users', $table->table());
 		$this->assertEquals('foo', $table->alias());
 		$this->assertSame($this->connection, $table->connection());
 		$this->assertEquals(array_keys($schema), $table->schema()->columns());
@@ -152,10 +97,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testInstance() {
-		$this->assertNull(Table::instance('things'));
-		$table = new Table(['table' => 'things']);
-		Table::instance('things', $table);
-		$this->assertSame($table, Table::instance('things'));
+		$this->assertNull(Table::instance('users'));
+		$table = new Table(['table' => 'users']);
+		Table::instance('users', $table);
+		$this->assertSame($table, Table::instance('users'));
 	}
 
 /**
@@ -164,11 +109,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testTableMethod() {
-		$table = new Table(['table' => 'things']);
-		$this->assertEquals('things', $table->table());
+		$table = new Table(['table' => 'users']);
+		$this->assertEquals('users', $table->table());
 
-		$table = new DatesTable;
-		$this->assertEquals('my_dates', $table->table());
+		$table = new UsersTable;
+		$this->assertEquals('users', $table->table());
 
 		$table = $this->getMockBuilder('\Cake\ORM\Table')
 			->setMethods(['find'])
@@ -189,14 +134,14 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAliasMethod() {
-		$table = new Table(['alias' => 'things']);
-		$this->assertEquals('things', $table->alias());
+		$table = new Table(['alias' => 'users']);
+		$this->assertEquals('users', $table->alias());
 
 		$table = new Table(['table' => 'stuffs']);
 		$this->assertEquals('stuffs', $table->alias());
 
-		$table = new DatesTable;
-		$this->assertEquals('Dates', $table->alias());
+		$table = new UsersTable;
+		$this->assertEquals('Users', $table->alias());
 
 		$table = $this->getMockBuilder('\Cake\ORM\Table')
 			->setMethods(['find'])
@@ -214,7 +159,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testConnection() {
-		$table = new Table(['table' => 'things']);
+		$table = new Table(['table' => 'users']);
 		$this->assertNull($table->connection());
 		$table->connection($this->connection);
 		$this->assertSame($this->connection, $table->connection());
@@ -226,7 +171,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testPrimaryKey() {
-		$table = new Table(['table' => 'things']);
+		$table = new Table(['table' => 'users']);
 		$this->assertEquals('id', $table->primaryKey());
 		$table->primaryKey('thingID');
 		$this->assertEquals('thingID', $table->primaryKey());
@@ -238,9 +183,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testSchema() {
-		$this->_createThingsTable();
-		$schema = $this->connection->schemaCollection()->describe('things');
-		$table = new Table(['table' => 'things', 'connection' => $this->connection]);
+		$schema = $this->connection->schemaCollection()->describe('users');
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
 		$this->assertEquals($schema, $table->schema());
 
 		$table = new Table(['table' => 'stuff']);
@@ -263,14 +207,25 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindAllNoFields() {
-		$this->_createThingsTable();
-		$table = new Table(['table' => 'things', 'connection' => $this->connection]);
-		$results = $table->find('all')->toArray();
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$results = $table->find('all')->where(['id IN' => [1, 2]])->order('id')->toArray();
 		$expected = [
-			['id' => 1, 'title' => 'a title', 'body' => 'a body'],
-			['id' => 2, 'title' => 'another title', 'body' => 'another body']
+			[
+				'id' => 1,
+				'user' => 'mariano',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => new \DateTime('2007-03-17 01:16:23'),
+				'updated' => new \DateTime('2007-03-17 01:18:31'),
+			],
+			[
+				'id' => 2,
+				'user' => 'nate',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => new \DateTime('2008-03-17 01:18:23'),
+				'updated' => new \DateTime('2008-03-17 01:20:31'),
+			],
 		];
-		$this->assertSame($expected, $results);
+		$this->assertEquals($expected, $results);
 	}
 
 /**
@@ -279,19 +234,22 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindAllSomeFields() {
-		$this->_createThingsTable();
-		$table = new Table(['table' => 'things', 'connection' => $this->connection]);
-		$results = $table->find('all')->select(['id', 'title'])->toArray();
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$results = $table->find('all')->select(['user', 'password'])->order('user')->toArray();
 		$expected = [
-			['id' => 1, 'title' => 'a title'],
-			['id' => 2, 'title' => 'another title']
+			['user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
 		];
 		$this->assertSame($expected, $results);
 
-		$results = $table->find('all')->select(['id', 'foo' => 'title'])->toArray();
+		$results = $table->find('all')->select(['foo' => 'user', 'password'])->order('user')->toArray();
 		$expected = [
-			['id' => 1, 'foo' => 'a title'],
-			['id' => 2, 'foo' => 'another title']
+			['foo' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['foo' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['foo' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['foo' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
 		];
 		$this->assertSame($expected, $results);
 	}
@@ -303,20 +261,22 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindAllConditionAutoTypes() {
-		$this->_createDatesTable();
-		$table = new Table(['table' => 'dates', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
 		$query = $table->find('all')
-			->select(['id', 'name'])
-			->where(['posted >=' => new \DateTime('2012-12-22 12:01')]);
+			->select(['id', 'user'])
+			->where(['created >=' => new \DateTime('2010-01-22 00:00')])
+			->order('id');
 		$expected = [
-			['id' => 3, 'name' => 'Jet Li']
+			['id' => 3, 'user' => 'larry'],
+			['id' => 4, 'user' => 'garrett']
 		];
 		$this->assertSame($expected, $query->toArray());
 
-		$query->orWhere(['dates.posted' => new \DateTime('2012-12-22 12:00')]);
+		$query->orWhere(['users.created' => new \DateTime('2008-03-17 01:18:23')]);
 		$expected = [
-			['id' => 2, 'name' => 'Bruce Lee'],
-			['id' => 3, 'name' => 'Jet Li']
+			['id' => 2, 'user' => 'nate'],
+			['id' => 3, 'user' => 'larry'],
+			['id' => 4, 'user' => 'garrett']
 		];
 		$this->assertSame($expected, $query->toArray());
 	}
