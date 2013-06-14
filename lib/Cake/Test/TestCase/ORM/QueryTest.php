@@ -251,26 +251,39 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$expected = [
 			[
 				'id' => 1,
-				'title' => 'a title',
-				'body' => 'a body',
+				'title' => 'First Article',
+				'body' => 'First Article Body',
 				'author_id' => 1,
+				'published' => 'Y',
 				'author' => [
 					'id' => 1,
-					'name' => 'Chuck Norris'
+					'name' => 'mariano'
 				]
 			],
 			[
 				'id' => 2,
-				'title' => 'another title',
-				'body' => 'another body',
-				'author_id' => 2,
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'author_id' => 3,
+				'published' => 'Y',
 				'author' => [
-					'id' => 2,
-					'name' => 'Bruce Lee'
+					'id' => 3,
+					'name' => 'larry'
 				]
-			]
+			],
+			[
+				'id' => 3,
+				'title' => 'Third Article',
+				'body' => 'Third Article Body',
+				'author_id' => 1,
+				'published' => 'Y',
+				'author' => [
+					'id' => 1,
+					'name' => 'mariano'
+				]
+			],
 		];
-		$this->assertSame($expected, $results);
+		$this->assertEquals($expected, $results);
 	}
 
 /**
@@ -302,27 +315,44 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$expected = [
 			[
 				'id' => 1,
-				'name' => 'Chuck Norris',
+				'name' => 'mariano',
 				'articles' => [
 					[
 						'id' => 1,
-						'title' => 'a title',
-						'body' => 'a body',
-						'author_id' => 1
-					]
+						'title' => 'First Article',
+						'body' => 'First Article Body',
+						'author_id' => 1,
+						'published' => 'Y',
+					],
+					[
+						'id' => 3,
+						'title' => 'Third Article',
+						'body' => 'Third Article Body',
+						'author_id' => 1,
+						'published' => 'Y',
+					],
 				]
 			],
 			[
 				'id' => 2,
-				'name' => 'Bruce Lee',
+				'name' => 'nate',
+			],
+			[
+				'id' => 3,
+				'name' => 'larry',
 				'articles' => [
 					[
 						'id' => 2,
-						'title' => 'another title',
-						'body' => 'another body',
-						'author_id' => 2
+						'title' => 'Second Article',
+						'body' => 'Second Article Body',
+						'author_id' => 3,
+						'published' => 'Y'
 					]
 				]
+			],
+			[
+				'id' => 4,
+				'name' => 'garrett',
 			]
 		];
 		$this->assertEquals($expected, $results);
@@ -337,56 +367,13 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that it is possible to select only certain fields on
- * eagerly loaded has many associations
+ * Tests that it is possible to set fields & order in a hasMany result set
  *
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoadingFields($strategy) {
+	public function testHasManyEagerLoadingFieldsAndOrder($strategy) {
 		$this->_createTables();
-
-		$query = new Query($this->connection);
-		$table = Table::build('author', ['connection' => $this->connection]);
-		Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article', ['property' => 'articles'] + compact('strategy'));
-
-		$results = $query->repository($table)
-			->select()
-			->contain(['article' => ['fields' => ['title', 'author_id']]])
-			->toArray();
-		$expected = [
-			[
-				'id' => 1,
-				'name' => 'Chuck Norris',
-				'articles' => [
-					['title' => 'a title', 'author_id' => 1]
-				]
-			],
-			[
-				'id' => 2,
-				'name' => 'Bruce Lee',
-				'articles' => [
-					['title' => 'another title', 'author_id' => 2]
-				]
-			]
-		];
-		$this->assertEquals($expected, $results);
-	}
-
-/**
- * Tests that it is possible to set an order in a hasMany result set
- *
- * @dataProvider strategiesProvider
- * @return void
- **/
-	public function testHasManyEagerLoadingOrder($strategy) {
-		$statement = $this->_createTables();
-		$statement->bindValue(1, 3, 'integer');
-		$statement->bindValue(2, 'a fine title');
-		$statement->bindValue(3, 'a fine body');
-		$statement->bindValue(4, 2);
-		$statement->execute();
 
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -405,19 +392,27 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$expected = [
 			[
 				'id' => 1,
-				'name' => 'Chuck Norris',
+				'name' => 'mariano',
 				'articles' => [
-					['title' => 'a title', 'author_id' => 1]
+					['title' => 'Third Article', 'author_id' => 1],
+					['title' => 'First Article', 'author_id' => 1],
 				]
 			],
 			[
 				'id' => 2,
-				'name' => 'Bruce Lee',
+				'name' => 'nate',
+			],
+			[
+				'id' => 3,
+				'name' => 'larry',
 				'articles' => [
-					['title' => 'a fine title', 'author_id' => 2],
-					['title' => 'another title', 'author_id' => 2],
+					['title' => 'Second Article', 'author_id' => 3],
 				]
-			]
+			],
+			[
+				'id' => 4,
+				'name' => 'garrett',
+			],
 		];
 		$this->assertEquals($expected, $results);
 	}
@@ -444,24 +439,52 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$expected = [
 			[
 				'id' => 1,
-				'name' => 'Chuck Norris',
+				'name' => 'mariano',
 				'articles' => [
 					[
-						'id' => 1, 'title' => 'a title', 'author_id' => 1, 'body' => 'a body',
-						'author' => ['id' => 1 , 'name' => 'Chuck Norris']
-					]
+						'id' => 1,
+						'title' => 'First Article',
+						'author_id' => 1,
+						'body' => 'First Article Body',
+						'published' => 'Y',
+						'author' => ['id' => 1 , 'name' => 'mariano']
+					],
+					[
+						'id' => 3,
+						'title' => 'Third Article',
+						'author_id' => 1,
+						'body' => 'Third Article Body',
+						'published' => 'Y',
+						'author' => ['id' => 1, 'name' => 'mariano']
+					],
 				]
 			],
 			[
 				'id' => 2,
-				'name' => 'Bruce Lee',
+				'name' => 'nate',
+				'articles' => [
+					'author' => ['id' => 2, 'name' => 'nate']
+				]
+			],
+			[
+				'id' => 3,
+				'name' => 'larry',
 				'articles' => [
 					[
-						'id' => 2, 'title' => 'another title',
-						'author_id' => 2,
-						'body' => 'another body',
-						'author' => ['id' => 2 , 'name' => 'Bruce Lee']
-					]
+						'id' => 2,
+						'title' => 'Second Article',
+						'author_id' => 3,
+						'body' => 'Second Article Body',
+						'published' => 'Y',
+						'author' => ['id' => 3, 'name' => 'larry']
+					],
+				]
+			],
+			[
+				'id' => 4,
+				'name' => 'garrett',
+				'articles' => [
+					'author' => ['id' => 4, 'name' => 'garrett']
 				]
 			]
 		];
@@ -581,7 +604,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->_createTables();
 
 		$query = new Query($this->connection);
-		$table =  Table::build('Article', ['connection' => $this->connection]);
+		$table = Table::build('Article', ['connection' => $this->connection]);
 		Table::build('Tag', ['connection' => $this->connection]);
 		Table::build('ArticleTag', [
 			'connection' => $this->connection,
@@ -593,38 +616,86 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$expected = [
 			[
 				'id' => 1,
-				'title' => 'a title',
-				'body' => 'a body',
 				'author_id' => 1,
+				'title' => 'First Article',
+				'body' => 'First Article Body',
+				'published' => 'Y',
 				'tags' => [
 					[
-						'id' => 5,
-						'name' => 'one',
-						'ArticleTag' => ['article_id' => 1, 'tag_id' => 5]
+						'id' => 1,
+						'name' => 'tag1',
+						'ArticleTag' => ['article_id' => 1, 'tag_id' => 1]
+					],
+					[
+						'id' => 2,
+						'name' => 'tag2',
+						'ArticleTag' => ['article_id' => 1, 'tag_id' => 2]
 					]
 				]
 			],
 			[
 				'id' => 2,
-				'title' => 'another title',
-				'body' => 'another body',
-				'author_id' => 2,
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'author_id' => 3,
+				'published' => 'Y',
 				'tags' => [
 					[
-						'id' => 6,
-						'name' => 'two',
-						'ArticleTag' => ['article_id' => 2, 'tag_id' => 6]
+						'id' => 1,
+						'name' => 'tag1',
+						'ArticleTag' => ['article_id' => 2, 'tag_id' => 1]
+					],
+					[
+						'id' => 3,
+						'name' => 'tag3',
+						'ArticleTag' => ['article_id' => 2, 'tag_id' => 3]
 					]
 				]
-			]
+			],
+			[
+				'id' => 3,
+				'title' => 'Third Article',
+				'body' => 'Third Article Body',
+				'author_id' => 1,
+				'published' => 'Y',
+			],
 		];
 		$this->assertEquals($expected, $results);
 
 		$results = $query->repository($table)
 			->select()
-			->contain(['Tag' => ['conditions' => ['id' => 6]]])
+			->contain(['Tag' => ['conditions' => ['id' => 3]]])
 			->toArray();
-		unset($expected[0]['tags']);
+		$expected = [
+			[
+				'id' => 1,
+				'author_id' => 1,
+				'title' => 'First Article',
+				'body' => 'First Article Body',
+				'published' => 'Y',
+			],
+			[
+				'id' => 2,
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'author_id' => 3,
+				'published' => 'Y',
+				'tags' => [
+					[
+						'id' => 3,
+						'name' => 'tag3',
+						'ArticleTag' => ['article_id' => 2, 'tag_id' => 3]
+					]
+				]
+			],
+			[
+				'id' => 3,
+				'title' => 'Third Article',
+				'body' => 'Third Article Body',
+				'author_id' => 1,
+				'published' => 'Y',
+			],
+		];
 		$this->assertEquals($expected, $results);
 		$this->assertEquals($table->association('Tag')->strategy(), $strategy);
 	}
@@ -651,13 +722,14 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->toArray();
 		$expected = [
 			[
-				'id' => 2,
-				'name' => 'Bruce Lee',
+				'id' => 3,
+				'name' => 'larry',
 				'articles' => [
 					'id' => 2,
-					'title' => 'another title',
-					'body' => 'another body',
-					'author_id' => 2
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'author_id' => 3,
+					'published' => 'Y',
 				]
 			]
 		];
@@ -675,7 +747,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->_createTables();
 
 		$query = new Query($this->connection);
-		$table =  Table::build('Article', ['connection' => $this->connection]);
+		$table = Table::build('Article', ['connection' => $this->connection]);
 		Table::build('Tag', ['connection' => $this->connection]);
 		Table::build('ArticleTag', [
 			'connection' => $this->connection,
@@ -686,18 +758,19 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$results = $query->repository($table)->select()
 			->contain(['Tag' => [
 				'matching' => true,
-				'conditions' => ['Tag.id' => 5]
+				'conditions' => ['Tag.id' => 3]
 			]])
 			->toArray();
 		$expected = [
 			[
-				'id' => 1,
-				'title' => 'a title',
-				'body' => 'a body',
-				'author_id' => 1,
+				'id' => 2,
+				'author_id' => 3,
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'published' => 'Y',
 				'tags' => [
-					'id' => 5,
-					'name' => 'one'
+					'id' => 3,
+					'name' => 'tag3'
 				]
 			]
 		];
@@ -708,18 +781,19 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->select()
 			->contain(['Tag' => [
 				'matching' => true,
-				'conditions' => ['Tag.name' => 'two']]
+				'conditions' => ['Tag.name' => 'tag2']]
 			])
 			->toArray();
 		$expected = [
 			[
-				'id' => 2,
-				'title' => 'another title',
-				'body' => 'another body',
-				'author_id' => 2,
+				'id' => 1,
+				'title' => 'First Article',
+				'body' => 'First Article Body',
+				'author_id' => 1,
+				'published' => 'Y',
 				'tags' => [
-					'id' => 6,
-					'name' => 'two'
+					'id' => 2,
+					'name' => 'tag2'
 				]
 			]
 		];

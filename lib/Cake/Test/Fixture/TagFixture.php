@@ -36,8 +36,6 @@ class TagFixture extends TestFixture {
 	public $fields = array(
 		'id' => ['type' => 'integer'],
 		'name' => ['type' => 'string', 'null' => false],
-		'created' => 'datetime',
-		'updated' => 'datetime',
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
@@ -47,8 +45,8 @@ class TagFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('name' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-		array('name' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-		array('name' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+		array('name' => 'tag1'),
+		array('name' => 'tag2'),
+		array('name' => 'tag3')
 	);
 }
