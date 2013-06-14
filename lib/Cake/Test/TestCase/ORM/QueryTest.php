@@ -27,6 +27,9 @@ use Cake\ORM\Table;
  */
 class QueryTest extends \Cake\TestSuite\TestCase {
 
+	public $fixtures = ['core.article', 'core.author', 'core.tag',
+		'core.articles_tag', 'core.post'];
+
 	public function setUp() {
 		parent::setUp();
 		$this->connection = new Connection(Configure::read('Datasource.test'));
@@ -62,11 +65,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 
 	public function tearDown() {
 		parent::tearDown();
-		$this->connection->execute('DROP TABLE IF EXISTS articles');
-		$this->connection->execute('DROP TABLE IF EXISTS authors');
-		$this->connection->execute('DROP TABLE IF EXISTS publications');
-		$this->connection->execute('DROP TABLE IF EXISTS articles_tags');
-		$this->connection->execute('DROP TABLE IF EXISTS tags');
 		Table::clearRegistry();
 	}
 
@@ -76,92 +74,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	protected function _createTables() {
-		$table = 'CREATE TABLE authors(id int, name varchar(50))';
-		$this->connection->execute($table);
-
-		$table = 'CREATE TABLE articles(id int, title varchar(20), body varchar(50), author_id int)';
-		$this->connection->execute($table);
-
-		$table = 'CREATE TABLE publications(id int, title varchar(20), body varchar(50), author_id int)';
-		$this->connection->execute($table);
-
-		$table = 'CREATE TABLE tags(id int, name varchar(20))';
-		$this->connection->execute($table);
-
-		$table = 'CREATE TABLE articles_tags(article_id int, tag_id int)';
-		$this->connection->execute($table);
-
 		Table::config('authors', ['connection' => $this->connection]);
 		Table::config('articles', ['connection' => $this->connection]);
 		Table::config('publications', ['connection' => $this->connection]);
 		Table::config('tags', ['connection' => $this->connection]);
 		Table::config('articles_tags', ['connection' => $this->connection]);
-	}
-
-/**
- * Auxiliary function to insert a couple rows in a newly created table
- *
- * @return void
- */
-	protected function _insertRecords() {
-		$this->_createTables();
-
-		$data = ['id' => '1', 'name' => 'Chuck Norris'];
-		$result = $this->connection->insert('authors', $data, ['id' => 'integer', 'name' => 'string']);
-
-		$result->bindValue(1, '2', 'integer');
-		$result->bindValue(2, 'Bruce Lee');
-		$result->execute();
-
-		$data = ['id' => '2', 'title' => 'a publication', 'body' => 'a body', 'author_id' => 1];
-		$result = $this->connection->insert(
-			'publications',
-			$data,
-			['id' => 'integer', 'title' => 'string', 'body' => 'string', 'author_id' => 'integer']
-		);
-
-		$result->bindValue(1, 3, 'integer');
-		$result->bindValue(2, 'another publication');
-		$result->bindValue(3, 'another body');
-		$result->bindValue(4, 2);
-		$result->execute();
-
-		$data = ['id' => '5', 'name' => 'one'];
-		$result = $this->connection->insert(
-			'tags',
-			$data,
-			['id' => 'integer', 'name' => 'string']
-		);
-
-		$result->bindValue(1, 6, 'integer');
-		$result->bindValue(2, 'two');
-		$result->execute();
-
-		$data = ['article_id' => '1', 'tag_id' => 5];
-		$result = $this->connection->insert(
-			'articles_tags',
-			$data,
-			['article_id' => 'integer', 'tag_id' => 'integer']
-		);
-
-		$result->bindValue(1, 2);
-		$result->bindValue(2, 6);
-		$result->execute();
-
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body', 'author_id' => 1];
-		$result = $this->connection->insert(
-			'articles',
-			$data,
-			['id' => 'integer', 'title' => 'string', 'body' => 'string', 'author_id' => 'integer']
-		);
-
-		$result->bindValue(1, '2', 'integer');
-		$result->bindValue(2, 'another title');
-		$result->bindValue(3, 'another body');
-		$result->bindValue(4, 2);
-		$result->execute();
-
-		return $result;
 	}
 
 /**
@@ -324,7 +241,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testContainResultFetchingOneLevel() {
-		$this->_insertRecords();
+		$this->_createTables();
 
 		$query = new Query($this->connection);
 		$table = Table::build('article', ['table' => 'articles']);
@@ -374,7 +291,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoading($strategy) {
-		$this->_insertRecords();
+		$this->_createTables();
 
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -427,7 +344,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingFields($strategy) {
-		$this->_insertRecords();
+		$this->_createTables();
 
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -464,7 +381,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingOrder($strategy) {
-		$statement = $this->_insertRecords();
+		$statement = $this->_createTables();
 		$statement->bindValue(1, 3, 'integer');
 		$statement->bindValue(2, 'a fine title');
 		$statement->bindValue(3, 'a fine body');
@@ -512,7 +429,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingDeep($strategy) {
-		$this->_insertRecords();
+		$this->_createTables();
 
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -559,51 +476,95 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingFromSecondaryTable($strategy) {
-		$this->_insertRecords();
+		$this->_createTables();
 
 		$query = new Query($this->connection);
 		$author = Table::build('author', ['connection' => $this->connection]);
 		$article = Table::build('article', ['connection' => $this->connection]);
-		$publication = Table::build('publication', ['connection' => $this->connection]);
+		$post = Table::build('post', ['connection' => $this->connection]);
 
-		$author->hasMany('publication', ['property' => 'publications'] + compact('strategy'));
+		$author->hasMany('post', ['property' => 'posts'] + compact('strategy'));
 		$article->belongsTo('author');
 
 		$results = $query->repository($article)
 			->select()
-			->contain(['author' => ['publication']])
+			->contain(['author' => ['post']])
 			->toArray();
 		$expected = [
 			[
 				'id' => 1,
-				'title' => 'a title',
-				'body' => 'a body',
+				'title' => 'First Article',
+				'body' => 'First Article Body',
 				'author_id' => 1,
+				'published' => 'Y',
 				'author' => [
-					'id' => 1, 'name' => 'Chuck Norris',
-					'publications' => [
+					'id' => 1,
+					'name' => 'mariano',
+					'posts' => [
 						[
-							'id' => '2', 'title' => 'a publication',
-							'body' => 'a body', 'author_id' => 1
-						]
+							'id' => '1',
+							'title' => 'First Post',
+							'body' => 'First Post Body',
+							'author_id' => 1,
+							'published' => 'Y',
+						],
+						[
+							'id' => '3',
+							'title' => 'Third Post',
+							'body' => 'Third Post Body',
+							'author_id' => 1,
+							'published' => 'Y',
+						],
 					]
 				]
 			],
 			[
 				'id' => 2,
-				'title' => 'another title',
-				'body' => 'another body',
-				'author_id' => 2,
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'author_id' => 3,
+				'published' => 'Y',
 				'author' => [
-					'id' => 2, 'name' => 'Bruce Lee',
-					'publications' => [
+					'id' => 3,
+					'name' => 'larry',
+					'posts' => [
 						[
-							'id' => 3, 'title' => 'another publication',
-							'body' => 'another body', 'author_id' => 2
+							'id' => 2,
+							'title' => 'Second Post',
+							'body' => 'Second Post Body',
+							'author_id' => 3,
+							'published' => 'Y',
 						]
 					]
 				]
-			]
+			],
+			[
+				'id' => 3,
+				'title' => 'Third Article',
+				'body' => 'Third Article Body',
+				'author_id' => 1,
+				'published' => 'Y',
+				'author' => [
+					'id' => 1,
+					'name' => 'mariano',
+					'posts' => [
+						[
+							'id' => '1',
+							'title' => 'First Post',
+							'body' => 'First Post Body',
+							'author_id' => 1,
+							'published' => 'Y',
+						],
+						[
+							'id' => '3',
+							'title' => 'Third Post',
+							'body' => 'Third Post Body',
+							'author_id' => 1,
+							'published' => 'Y',
+						],
+					]
+				]
+			],
 		];
 		$this->assertEquals($expected, $results);
 	}
@@ -617,7 +578,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testBelongsToManyEagerLoading($strategy) {
-		$this->_insertRecords();
+		$this->_createTables();
 
 		$query = new Query($this->connection);
 		$table =  Table::build('Article', ['connection' => $this->connection]);
@@ -674,7 +635,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFilteringByHasMany() {
-		$this->_insertRecords();
+		$this->_createTables();
 
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -711,7 +672,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
  * @return void
  **/
 	public function testFilteringByBelongsToMany() {
-		$this->_insertRecords();
+		$this->_createTables();
 
 		$query = new Query($this->connection);
 		$table =  Table::build('Article', ['connection' => $this->connection]);
