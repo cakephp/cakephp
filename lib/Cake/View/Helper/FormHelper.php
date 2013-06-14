@@ -2359,12 +2359,12 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($attributes['value'] === null && $attributes['empty'] != true) {
-      if(!empty($attributes['maxYear']))
-          $attributes['value'] = strtotime(date($attributes['maxYear'].'-m-d'));
-      else
-          $attributes['value'] = time();
+			if(!empty($attributes['maxYear']))
+				$attributes['value'] = strtotime(date($attributes['maxYear'] . '-m-d'));
+			else
+				$attributes['value'] = time();
 		}
-		
+
 		if (!empty($attributes['value'])) {
 			list($year, $month, $day, $hour, $min, $meridian) = $this->_getDateTimeValue(
 				$attributes['value'],
