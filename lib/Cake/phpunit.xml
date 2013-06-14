@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit backupGlobals="false"
-	backupStaticAttributes="false"
+<phpunit
 	colors="true"
-	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true"
 	processIsolation="false"
 	stopOnFailure="false"
 	syntaxCheck="false"
@@ -21,6 +17,7 @@
 			<directory>./Test/TestCase/</directory>
 			<exclude>./Test/TestCase/Model/</exclude>
 			<exclude>./Test/TestCase/Network/Email</exclude>
+			<exclude>./Test/TestCase/Network/SocketTest.php</exclude>
 			<exclude>./Test/TestCase/Error/ErrorHandlerTest.php</exclude>
 		</testsuite>
 	</testsuites>
