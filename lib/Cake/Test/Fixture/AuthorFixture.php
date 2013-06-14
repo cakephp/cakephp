@@ -29,23 +29,13 @@ use Cake\TestSuite\Fixture\TestFixture;
 class AuthorFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Author'
- */
-	public $name = 'Author';
-
-/**
  * fields property
  *
  * @var array
  */
 	public $fields = array(
 		'id' => ['type' => 'integer'],
-		'user' => ['type' => 'string', 'default' => null],
-		'password' => ['type' => 'string', 'default' => null],
-		'created' => 'datetime',
-		'updated' => 'datetime',
+		'name' => ['type' => 'string', 'default' => null],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
@@ -55,9 +45,9 @@ class AuthorFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-		array('user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
-		array('user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
-		array('user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'),
+		array('name' => 'mariano'),
+		array('name' => 'nate'),
+		array('name' => 'larry'),
+		array('name' => 'garrett'),
 	);
 }

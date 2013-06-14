@@ -29,25 +29,16 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ArticleFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Article'
- */
-	public $name = 'Article';
-
-/**
  * fields property
  *
  * @var array
  */
 	public $fields = array(
 		'id' => ['type' => 'integer'],
-		'user_id' => ['type' => 'integer', 'null' => true],
+		'author_id' => ['type' => 'integer', 'null' => true],
 		'title' => ['type' => 'string', 'null' => true],
 		'body' => 'text',
 		'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
-		'created' => 'datetime',
-		'updated' => 'datetime',
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
@@ -57,9 +48,9 @@ class ArticleFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-		array('user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-		array('user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')
+		array('author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'),
+		array('author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'),
+		array('author_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y')
 	);
 
 }

@@ -29,20 +29,13 @@ use Cake\TestSuite\Fixture\TestFixture;
 class TagFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Tag'
- */
-	public $name = 'Tag';
-
-/**
  * fields property
  *
  * @var array
  */
 	public $fields = array(
 		'id' => ['type' => 'integer'],
-		'tag' => ['type' => 'string', 'null' => false],
+		'name' => ['type' => 'string', 'null' => false],
 		'created' => 'datetime',
 		'updated' => 'datetime',
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
@@ -54,8 +47,8 @@ class TagFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-		array('tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-		array('tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+		array('name' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+		array('name' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+		array('name' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 	);
 }
