@@ -9,15 +9,19 @@
 	processIsolation="false"
 	stopOnFailure="false"
 	syntaxCheck="false"
-	bootstrap="../../App/Config/bootstrap.php"
+	bootstrap="./Test/init.php"
 >
 	<php>
 		<ini name="memory_limit" value="-1"/>
+		<ini name="apc.enable_cli" value="1"/>
 	</php>
 
 	<testsuites>
 		<testsuite name="CakePHP Test Suite">
 			<directory>./Test/TestCase/</directory>
+			<exclude>./Test/TestCase/Model/</exclude>
+			<exclude>./Test/TestCase/Network/Email</exclude>
+			<exclude>./Test/TestCase/Error/ErrorHandlerTest.php</exclude>
 		</testsuite>
 	</testsuites>
 </phpunit>

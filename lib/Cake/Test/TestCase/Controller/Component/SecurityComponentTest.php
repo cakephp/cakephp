@@ -146,6 +146,9 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->blackHoleCallback = 'fail';
 		$this->Security = $this->Controller->Security;
 		$this->Security->csrfCheck = false;
+		Configure::write('Session', [
+			'defaults' => 'php'
+		]);
 
 		Configure::write('Security.salt', 'foo!');
 	}
