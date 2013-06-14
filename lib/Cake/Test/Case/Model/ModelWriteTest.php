@@ -7078,4 +7078,19 @@ class ModelWriteTest extends BaseModelTest {
 			'conditions' => array('Item.id' => 1)));
 		$this->assertEquals(true, $result['Item']['published']);
 	}
+
+/**
+ * Test the clear() method.
+ *
+ * @return void
+ */
+	public function testClear() {
+		$this->loadFixtures('Bid');
+		$model = ClassRegistry::init('Bid');
+		$model->set(array('name' => 'Testing', 'message_id' => 3));
+		$this->assertTrue(isset($model->data['Bid']['name']));
+		$this->assertTrue($model->clear());
+		$this->assertFalse(isset($model->data['Bid']['name']));
+		$this->assertFalse(isset($model->data['Bid']['message_id']));
+	}
 }
