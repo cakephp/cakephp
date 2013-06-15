@@ -314,7 +314,6 @@ class Table {
 		if (isset($this->_associations[$name])) {
 			return $this->_associations[$name];
 		}
-
 		return null;
 	}
 

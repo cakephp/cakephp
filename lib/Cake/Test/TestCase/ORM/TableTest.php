@@ -22,7 +22,6 @@ use Cake\ORM\Table;
 
 /**
  * Used to test correct class is instantiated when using Table::build();
- *
  */
 class UsersTable extends Table {
 
@@ -31,7 +30,21 @@ class UsersTable extends Table {
  *
  * @var string
  */
-	public $_table = 'users';
+	protected $_table = 'users';
+
+}
+
+/**
+ * Used to test correct class is instantiated when using Table::build();
+ */
+class MyUsersTable extends Table {
+
+/**
+ * Overrides default table name
+ *
+ * @var string
+ */
+	protected $_table = 'users';
 
 }
 
@@ -83,8 +96,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEmpty(Table::config());
 
 		Table::config('users', $options);
-		$table = Table::build('foo', ['className' => __NAMESPACE__ . '\UsersTable']);
-		$this->assertInstanceOf(__NAMESPACE__ . '\UsersTable', $table);
+		$table = Table::build('foo', ['className' => __NAMESPACE__ . '\MyUsersTable']);
+		$this->assertInstanceOf(__NAMESPACE__ . '\MyUsersTable', $table);
 		$this->assertEquals('users', $table->table());
 		$this->assertEquals('foo', $table->alias());
 		$this->assertSame($this->connection, $table->connection());
