@@ -6,7 +6,7 @@
 	stopOnFailure="false"
 	syntaxCheck="false"
 	bootstrap="./Test/init.php"
->
+	>
 	<php>
 		<ini name="memory_limit" value="-1"/>
 		<ini name="apc.enable_cli" value="1"/>
@@ -21,4 +21,11 @@
 			<exclude>./Test/TestCase/Error/ErrorHandlerTest.php</exclude>
 		</testsuite>
 	</testsuites>
+	<listeners>
+		<listener class="\Cake\TestSuite\Fixture\FixtureInjector" file="./TestSuite/Fixture/FixtureInjector.php">
+			<arguments>
+				<object class="\Cake\TestSuite\Fixture\FixtureManager" />
+			</arguments>
+		</listener>
+	</listeners>
 </phpunit>
