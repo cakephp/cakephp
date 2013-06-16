@@ -835,7 +835,7 @@ class Postgres extends DboSource {
  * @return string
  */
 	public function buildColumn($column) {
-		if(preg_match('/^[[:graph:]]+(\[[[:digit:]]*\])+$/', $column['type'])){
+		if (preg_match('/^[[:graph:]]+(\[[[:digit:]]*\])+$/', $column['type'])) {
 			$this->columns[$column['type']] = array('name' => $column['type']);
 		}
 		$col = $this->columns[$column['type']];
