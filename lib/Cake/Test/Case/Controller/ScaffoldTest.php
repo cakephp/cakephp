@@ -129,6 +129,7 @@ class ScaffoldTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		Configure::write('Config.language', 'eng');
 		$request = new CakeRequest(null, false);
 		$this->Controller = new ScaffoldMockController($request);
 		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));

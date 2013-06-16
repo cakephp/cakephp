@@ -524,6 +524,7 @@ class FormHelperTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 
+		Configure::write('Config.language', 'eng');
 		Configure::write('App.base', '');
 		Configure::delete('Asset');
 		$this->Controller = new ContactTestController();

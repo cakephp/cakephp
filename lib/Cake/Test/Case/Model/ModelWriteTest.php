@@ -33,6 +33,16 @@ require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 class ModelWriteTest extends BaseModelTest {
 
 /**
+ * override locale to the default (eng).
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		Configure::write('Config.language', 'eng');
+	}
+
+/**
  * Test save() failing when there is no data.
  *
  * @return void

@@ -322,11 +322,6 @@ if (!function_exists('env')) {
 		}
 
 		switch ($key) {
-			case 'SCRIPT_FILENAME':
-				if (defined('SERVER_IIS') && SERVER_IIS === true) {
-					return str_replace('\\\\', '\\', env('PATH_TRANSLATED'));
-				}
-				break;
 			case 'DOCUMENT_ROOT':
 				$name = env('SCRIPT_NAME');
 				$filename = env('SCRIPT_FILENAME');

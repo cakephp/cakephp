@@ -28,6 +28,16 @@ require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 class ModelValidationTest extends BaseModelTest {
 
 /**
+ * override locale to the default (eng).
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		Configure::write('Config.language', 'eng');
+	}
+
+/**
  * Tests validation parameter order in custom validation methods
  *
  * @return void
