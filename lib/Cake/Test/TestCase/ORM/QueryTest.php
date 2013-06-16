@@ -721,7 +721,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			->select()
 			->contain(['article' => [
 				'matching' => true,
-				'conditions' => ['Article.id' => 2]
+				'conditions' => ['article.id' => 2]
 			]])
 			->toArray();
 		$expected = [
