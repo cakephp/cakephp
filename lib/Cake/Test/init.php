@@ -60,13 +60,16 @@ Cake\Core\Configure::write('Cache._cake_core_', [
 ]);
 
 Cake\Core\Configure::write('Datasource.test', [
-	'datasource' => 'Cake\Database\Driver\Sqlite'
+	'datasource' => getenv('db_class'),
+	'dsn' => getenv('db_dsn'),
+	'database' => getenv('db_database'),
+	'login' => getenv('db_login'),
+	'password' => getenv('db_password')
 ]);
 
 Cake\Core\Configure::write('Session', [
 	'defaults' => 'php'
 ]);
-
 
 Cake\Core\Configure::write('Log.debug', [
 	'engine' => 'Cake\Log\Engine\FileLog',
