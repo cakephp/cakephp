@@ -56,7 +56,7 @@ class TestFixture {
  * Fields / Schema for the fixture.
  *
  * This array should be compatible with Cake\Database\Schema\Table.
- * The `_constraints`, `_options` and `_indexes` keys are reserved for defining 
+ * The `_constraints`, `_options` and `_indexes` keys are reserved for defining
  * constraints, options and indexes respectively.
  *
  * @var array
