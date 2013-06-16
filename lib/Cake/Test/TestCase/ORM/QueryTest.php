@@ -246,7 +246,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$table = Table::build('article', ['table' => 'articles']);
 		Table::build('author', ['connection' => $this->connection]);
 		$table->belongsTo('author');
-		$results = $query->repository($table)->select()->contain('author')->toArray();
+		$results = $query->repository($table)
+			->select()
+			->contain('author')
+			->order(['article.id' => 'asc'])
+			->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -511,6 +515,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$results = $query->repository($article)
 			->select()
 			->contain(['author' => ['post']])
+			->order(['article.id' => 'ASC'])
 			->toArray();
 		$expected = [
 			[
