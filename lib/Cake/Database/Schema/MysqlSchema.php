@@ -477,5 +477,4 @@ class MysqlSchema {
 		}
 	}
 
-
 }

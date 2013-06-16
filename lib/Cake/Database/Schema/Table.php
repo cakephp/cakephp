@@ -344,7 +344,7 @@ class Table {
  *
  * @param array $attrs Attributes to set.
  * @return array
- * @throw Cake\Database\Exception When foreign key definition is not valid.
+ * @throws Cake\Database\Exception When foreign key definition is not valid.
  */
 	protected function _checkForeignKey($attrs) {
 		if (count($attrs['references']) < 2) {

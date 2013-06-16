@@ -16,8 +16,8 @@
  */
 namespace Cake\ORM;
 
-use \Iterator;
 use Cake\Database\Type;
+use \Iterator;
 
 /**
  * Represents the results obtained after executing a query for an specific table
@@ -162,14 +162,13 @@ class ResultSet implements Iterator {
 		return $this->_current !== false;
 	}
 
-
 /**
  * Calculates the list of associations that should get eager loaded
  * when fetching each record
  *
  * @return void
  */
-	public function _calculateAssociationMap() {
+	protected function _calculateAssociationMap() {
 		$contain = $this->_query->normalizedContainments();
 
 		if (!$contain) {
@@ -257,7 +256,7 @@ class ResultSet implements Iterator {
 		if (empty($this->types[$alias])) {
 			$schema = $table->schema();
 			foreach ($schema->columns() as $col) {
-				$this->types[$alias][$col] =  Type::build($schema->columnType($col));
+				$this->types[$alias][$col] = Type::build($schema->columnType($col));
 			}
 		}
 

@@ -87,7 +87,7 @@ class BufferedStatement extends StatementDecorator {
 		$this->_counter = 0;
 	}
 
-	public function _reset() {
+	protected function _reset() {
 		$this->_count = $this->_counter = 0;
 		$this->_records = [];
 		$this->_allFetched = false;

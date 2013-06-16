@@ -17,8 +17,8 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\ORM\Association\BelongsToMany;
-use Cake\ORM\Table;
 use Cake\ORM\Query;
+use Cake\ORM\Table;
 
 /**
  * Tests BelongsToMany class

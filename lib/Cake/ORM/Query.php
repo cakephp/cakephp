@@ -459,6 +459,7 @@ class Query extends DatabaseQuery {
  * @param string $alias name of the association to be loaded
  * @param array $options list of extra options to use for this association
  * @return array normalized associations
+ * @throws \InvalidArgumentException When containments refer to associations that do not exist.
  */
 	protected function _normalizeContain(Table $parent, $alias, $options) {
 		$defaults = $this->_containOptions;

@@ -134,7 +134,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			]])
 			->will($this->returnValue($query));
 
-
 		$query->expects($this->at(4))->method('join')
 			->with(['stuffType' => [
 				'table' => 'stuff_types',

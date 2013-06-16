@@ -53,7 +53,7 @@ trait ExternalAssociationTrait {
 	public function foreignKey($key = null) {
 		if ($key === null) {
 			if ($this->_foreignKey === null) {
-				$this->_foreignKey =  Inflector::underscore($this->source()->alias()) . '_id';
+				$this->_foreignKey = Inflector::underscore($this->source()->alias()) . '_id';
 			}
 			return $this->_foreignKey;
 		}
@@ -146,7 +146,7 @@ trait ExternalAssociationTrait {
 		));
 
 		$alias = $this->target()->alias();
-		$nestKey =  $alias . '__' . $alias;
+		$nestKey = $alias . '__' . $alias;
 		return function($row) use ($resultMap, $sourceKey, $nestKey) {
 			if (isset($resultMap[$row[$sourceKey]])) {
 				$row[$nestKey] = $resultMap[$row[$sourceKey]];
@@ -162,6 +162,7 @@ trait ExternalAssociationTrait {
  *
  * @param array $options options accepted by eagerLoader()
  * @return Cake\ORM\Query
+ * @throws \InvalidArgumentException When a key is required for associations but not selected.
  */
 	protected function _buildQuery($options) {
 		$target = $this->target();

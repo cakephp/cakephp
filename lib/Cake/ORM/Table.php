@@ -459,7 +459,7 @@ class Table {
  * @return \Cake\ORM\Query
  */
 	public function find($type, $options = []) {
-		return $this->{'find' . ucfirst($type)}($this->buildQuery(), $options);
+		return $this->{'find' . ucfirst($type)}($this->_buildQuery(), $options);
 	}
 
 /**
@@ -479,7 +479,7 @@ class Table {
  *
  * @return \Cake\ORM\Query
  */
-	protected function buildQuery() {
+	protected function _buildQuery() {
 		$query = new Query($this->connection());
 		return $query
 			->repository($this)

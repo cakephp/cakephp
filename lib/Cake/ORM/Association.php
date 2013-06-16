@@ -292,7 +292,7 @@ abstract class Association {
  * @param string $name
  * @return string
  */
-	function property($name = null) {
+	public function property($name = null) {
 		if ($name !== null) {
 			$this->_property = $name;
 		}
@@ -307,8 +307,9 @@ abstract class Association {
  *
  * @param string $name
  * @return string
+ * @throws \InvalidArgumentException When an invalid strategy is provided.
  */
-	function strategy($name = null) {
+	public function strategy($name = null) {
 		if ($name !== null) {
 			$valid = [self::STRATEGY_JOIN, self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
 			if (!in_array($name, $valid)) {
@@ -328,7 +329,7 @@ abstract class Association {
  * @param array $options List of options used for initialization
  * @return void
  */
-	protected  function _options(array $options) {
+	protected function _options(array $options) {
 	}
 
 /**
