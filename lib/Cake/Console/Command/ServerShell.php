@@ -27,7 +27,7 @@ use Cake\Core\Configure;
  *
  * @package       Cake.Console.Command
  */
-class ServerShell extends AppShell {
+class ServerShell extends Shell {
 
 /**
  * Default ServerHost
