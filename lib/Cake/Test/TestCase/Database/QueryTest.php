@@ -528,6 +528,26 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that passing an array type to any where condition will replace
+ * the passed array accordingly as a proper IN condition
+ *
+ * @return void
+ */
+	public function testSelectWhereArrayType() {
+		$this->_insertDateRecords();
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('dates')
+			->where(['id' => ['1', '3']], ['id' => 'integer[]'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+	}
+
+/**
  * Tests that Query::orWhere() can be used to concatenate conditions with OR
  *
  * @return void
@@ -2026,6 +2046,38 @@ class QueryTest extends TestCase {
 			(new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
 			1
 		);
+	}
+
+/**
+ * Tests that default types are passed to functions accepting a $types param
+ *
+ * @return void
+ */
+	public function testDefaultTypes() {
+		$query = new Query($this->connection);
+		$this->assertEquals([], $query->defaultTypes());
+		$types = ['id' => 'integer', 'posted' => 'datetime'];
+		$this->assertSame($query, $query->defaultTypes($types));
+		$this->assertSame($types, $query->defaultTypes());
+
+		$this->_insertDateRecords();
+		$results = $query->select(['id', 'name'])
+			->from('dates')
+			->where(['posted >=' => new \DateTime('2012-12-22 12:01')])
+			->execute();
+		$expected = [['id' => '3', 'name' => 'Jet Li']];
+		$this->assertEquals($expected, $results->fetchAll('assoc'));
+
+		// Now test default can be overridden
+		$types = ['posted' => 'date'];
+		$results = $query
+			->where(['posted >=' => new \DateTime('2012-12-22 12:01')], $types, true)
+			->execute();
+		$expected = [
+			['id' => '2', 'name' => 'Bruce Lee'],
+			['id' => '3', 'name' => 'Jet Li']
+		];
+		$this->assertEquals($expected, $results->fetchAll('assoc'));
 	}
 
 /**

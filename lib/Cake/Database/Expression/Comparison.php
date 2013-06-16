@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * PHP Version 5.4
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -65,10 +65,9 @@ class Comparison extends QueryExpression {
 
 	public function sql() {
 		$value = $this->_value;
-		$template = '%s %s (%s)';
+		$template = '%s %s %s';
 		if (!($this->_value instanceof ExpressionInterface)) {
 			$value = $this->_bindValue($this->_field, $value, $this->_type);
-			$template = '%s %s %s';
 		}
 
 		return sprintf($template, $this->_field, $this->_conjunction, $value);
