@@ -34,7 +34,7 @@ class SqliteTest extends TestCase {
  * @return void
  */
 	public function testConnectionConfigDefault() {
-		$driver = $this->getMock('Cake\Database\driver\Sqlite', ['_connect']);
+		$driver = $this->getMock('Cake\Database\Driver\Sqlite', ['_connect']);
 		$expected = [
 			'persistent' => false,
 			'database' => ':memory:',
