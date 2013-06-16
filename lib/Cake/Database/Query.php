@@ -129,6 +129,15 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected $_iterator;
 
 /**
+ * Associative array with the default fields and their types this query might contain
+ * used to avoid repetition when calling multiple times functions inside this class that
+ * may require a custom type for a specific field
+ *
+ * @var array
+ */
+	protected $_defaultTypes = [];
+
+/**
  * Constructor
  *
  * @param Cake\Database\Connection $connection The connection
@@ -579,6 +588,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$tables = [$tables];
 		}
 
+		$types += $this->defaultTypes();
 		$joins = [];
 		foreach ($tables as $alias => $t) {
 			if (!is_array($t)) {
@@ -759,7 +769,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		if ($overwrite) {
 			$this->_parts['where'] = $this->newExpr();
 		}
-		$this->_conjugate('where', $conditions, 'AND', $types);
+		$this->_conjugate('where', $conditions, 'AND', $types + $this->defaultTypes());
 		return $this;
 	}
 
@@ -820,7 +830,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function andWhere($conditions, $types = []) {
-		$this->_conjugate('where', $conditions, 'AND', $types);
+		$this->_conjugate('where', $conditions, 'AND', $types + $this->defaultTypes());
 		return $this;
 	}
 
@@ -881,7 +891,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function orWhere($conditions, $types = []) {
-		$this->_conjugate('where', $conditions, 'OR', $types);
+		$this->_conjugate('where', $conditions, 'OR', $types + $this->defaultTypes());
 		return $this;
 	}
 
@@ -986,7 +996,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		if ($overwrite) {
 			$this->_parts['having'] = $this->newExpr();
 		}
-		$this->_conjugate('having', $conditions, 'AND', $types);
+		$this->_conjugate('having', $conditions, 'AND', $types + $this->defaultTypes());
 		return $this;
 	}
 
@@ -1002,7 +1012,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function andHaving($conditions, $types = []) {
-		$this->_conjugate('having', $conditions, 'AND', $types);
+		$this->_conjugate('having', $conditions, 'AND', $types + $this->defaultTypes());
 		return $this;
 	}
 
@@ -1018,7 +1028,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function orHaving($conditions, $types = []) {
-		$this->_conjugate('having', $conditions, 'OR', $types);
+		$this->_conjugate('having', $conditions, 'OR', $types + $this->defaultTypes());
 		return $this;
 	}
 
@@ -1167,7 +1177,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$this->_dirty = true;
 		$this->_type = 'insert';
 		$this->_parts['insert'] = [$table, $columns];
-		$this->_parts['values'] = new ValuesExpression($columns, $types);
+		$this->_parts['values'] = new ValuesExpression($columns, $types + $this->defaultTypes());
 		return $this;
 	}
 
@@ -1241,7 +1251,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			if (is_string($types)) {
 				$types = [$key => $types];
 			}
-			$this->_parts['set']->add([$key => $value], $types);
+			$this->_parts['set']->add([$key => $value], $types + $this->defaultTypes());
 		}
 		return $this;
 	}
@@ -1387,6 +1397,64 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
+ * This function works similar to the traverse() function, with the difference
+ * that it does a full depth traversal of the entire expression tree. This will execute
+ * the provided callback function for each ExpressionInterface object that is
+ * stored inside this query at any nesting depth in any part of the query.
+ *
+ * Callback will receive as first parameter the currently visited expression.
+ *
+ * @param callable $callback the function to be executed for each ExpressionInterface
+ *   found inside this query.
+ * @return Query
+ */
+	public function traverseExpressions(callable $callback) {
+		$visitor = function($expression) use (&$visitor, $callback) {
+			if (is_array($expression)) {
+				foreach ($expression as $e) {
+					call_user_func($visitor, $e);
+				}
+				return;
+			}
+
+			if ($expression instanceof ExpressionInterface) {
+				$expression->traverse($visitor);
+
+				if (!($expression instanceof self)) {
+					call_user_func($callback, $expression);
+				}
+			}
+		};
+		return $this->traverse($visitor);
+	}
+
+/**
+ * Configures a map of default fields and their associated types to be
+ * used as the default list of types for every function in this class
+ * with a $types param. Useful to avoid repetition when calling the same
+ * functions using the same fields and types.
+ *
+ * If called with no arguments it will return the currently configured types.
+ *
+ * ## Example
+ *
+ * {{{
+ *	$query->defaultTypes(['created' => 'datetime', 'is_visible' => 'boolean']);
+ * }}}
+ *
+ * @param array $types associative array where keys are field names and values
+ * are the correspondent type.
+ * @return Query|array
+ */
+	public function defaultTypes(array $types = null) {
+		if ($types === null) {
+			return $this->_defaultTypes;
+		}
+		$this->_defaultTypes = $types;
+		return $this;
+	}
+
+/**
  * Auxiliary function used to wrap the original statement from the driver with
  * any registered callbacks.
  *
@@ -1453,38 +1521,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		};
 
 		$this->traverseExpressions($binder);
-	}
-
-/**
- * This function works similar to the traverse() function, with the difference
- * that it does a full depth traversal of the entire expression tree. This will execute
- * the provided callback function for each ExpressionInterface object that is
- * stored inside this query at any nesting depth in any part of the query.
- *
- * Callback will receive as first parameter the currently visited expression.
- *
- * @param callable $callback the function to be executed for each ExpressionInterface
- *   found inside this query.
- * @return Query
- */
-	public function traverseExpressions(callable $callback) {
-		$visitor = function($expression) use (&$visitor, $callback) {
-			if (is_array($expression)) {
-				foreach ($expression as $e) {
-					call_user_func($visitor, $e);
-				}
-				return;
-			}
-
-			if ($expression instanceof ExpressionInterface) {
-				$expression->traverse($visitor);
-
-				if (!($expression instanceof self)) {
-					call_user_func($callback, $expression);
-				}
-			}
-		};
-		return $this->traverse($visitor);
 	}
 
 /**

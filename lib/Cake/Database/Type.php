@@ -37,6 +37,7 @@ class Type {
 		'binary' => 'Cake\Database\Type\BinaryType',
 		'date' => 'Cake\Database\Type\DateType',
 		'datetime' => 'Cake\Database\Type\DateTimeType',
+		'timestamp' => 'Cake\Database\Type\DateTimeType',
 		'time' => 'Cake\Database\Type\TimeType'
 	];
 
