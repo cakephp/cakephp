@@ -902,6 +902,11 @@ class AuthComponentTest extends CakeTestCase {
 			array('on', 'redirect'),
 			array($CakeRequest, $CakeResponse)
 		);
+		$this->Auth->Session = $this->getMock(
+			'SessionComponent',
+			array('setFlash'),
+			array($Controller->Components)
+		);
 
 		$expected = array(
 			'controller' => 'no_can_do', 'action' => 'jack'
@@ -909,6 +914,47 @@ class AuthComponentTest extends CakeTestCase {
 		$Controller->expects($this->once())
 			->method('redirect')
 			->with($this->equalTo($expected));
+		$this->Auth->Session->expects($this->once())
+			->method('setFlash');
+		$this->Auth->startup($Controller);
+	}
+
+/**
+ * testRedirectToUnauthorizedRedirectSuppressedAuthError
+ *
+ * @return void
+ */
+	public function testRedirectToUnauthorizedRedirectSuppressedAuthError() {
+		$url = '/party/on';
+		$this->Auth->request = $CakeRequest = new CakeRequest($url);
+		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->authorize = array('Controller');
+		$this->Auth->login(array('username' => 'admad', 'password' => 'cake'));
+		$this->Auth->unauthorizedRedirect = array(
+			'controller' => 'no_can_do', 'action' => 'jack'
+		);
+		$this->Auth->authError = false;
+
+		$CakeResponse = new CakeResponse();
+		$Controller = $this->getMock(
+			'Controller',
+			array('on', 'redirect'),
+			array($CakeRequest, $CakeResponse)
+		);
+		$this->Auth->Session = $this->getMock(
+			'SessionComponent',
+			array('setFlash'),
+			array($Controller->Components)
+		);
+
+		$expected = array(
+			'controller' => 'no_can_do', 'action' => 'jack'
+		);
+		$Controller->expects($this->once())
+			->method('redirect')
+			->with($this->equalTo($expected));
+		$this->Auth->Session->expects($this->never())
+			->method('setFlash');
 		$this->Auth->startup($Controller);
 	}
 
