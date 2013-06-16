@@ -27,6 +27,16 @@ require_once __DIR__ . DS . 'ModelTestBase.php';
 class ModelWriteTest extends BaseModelTest {
 
 /**
+ * override locale to the default (eng).
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		Configure::write('Config.language', 'eng');
+	}
+
+/**
  * Test save() failing when there is no data.
  *
  * @return void
@@ -2085,7 +2095,7 @@ class ModelWriteTest extends BaseModelTest {
 		$Comment = new Comment();
 
 		$articles = $Article->find('all', array(
-			'fields' => array('id','title'),
+			'fields' => array('id', 'title'),
 			'recursive' => -1,
 			'order' => array('Article.id' => 'ASC')
 		));
@@ -2105,7 +2115,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $articles);
 
 		$comments = $Comment->find('all', array(
-			'fields' => array('id','article_id','user_id','comment','published'),
+			'fields' => array('id', 'article_id', 'user_id', 'comment', 'published'),
 			'recursive' => -1,
 			'order' => array('Comment.id' => 'ASC')
 		));
@@ -2172,7 +2182,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 
 		$articles = $Article->find('all', array(
-			'fields' => array('id','title'),
+			'fields' => array('id', 'title'),
 			'recursive' => -1,
 			'order' => array('Article.id' => 'ASC')
 		));
@@ -2192,7 +2202,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals($expected, $articles);
 
 		$comments = $Comment->find('all', array(
-			'fields' => array('id','article_id','user_id','comment','published'),
+			'fields' => array('id', 'article_id', 'user_id', 'comment', 'published'),
 			'recursive' => -1,
 			'order' => array('Comment.id' => 'ASC')
 		));
@@ -2283,7 +2293,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals('First Article', $result);
 
 		$articles = $Article->find('all', array(
-			'fields' => array('id','title'),
+			'fields' => array('id', 'title'),
 			'recursive' => -1,
 			'order' => array('Article.id' => 'ASC')
 		));
@@ -4274,7 +4284,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->find('all', array(
 			'recursive' => -1,
-			'fields' => array('author_id', 'title','body','published'),
+			'fields' => array('author_id', 'title', 'body', 'published'),
 			'order' => array('Post.created' => 'ASC')
 		));
 
@@ -5706,7 +5716,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->find('all', array(
 			'recursive' => -1,
-			'fields' => array('author_id', 'title','body','published'),
+			'fields' => array('author_id', 'title', 'body', 'published'),
 			'order' => array('Post.created' => 'ASC')
 		));
 
@@ -7071,5 +7081,20 @@ class ModelWriteTest extends BaseModelTest {
 			'fields' => array('id', 'published'),
 			'conditions' => array('Item.id' => 1)));
 		$this->assertEquals(true, $result['Item']['published']);
+	}
+
+/**
+ * Test the clear() method.
+ *
+ * @return void
+ */
+	public function testClear() {
+		$this->loadFixtures('Bid');
+		$model = ClassRegistry::init('Bid');
+		$model->set(array('name' => 'Testing', 'message_id' => 3));
+		$this->assertTrue(isset($model->data['Bid']['name']));
+		$this->assertTrue($model->clear());
+		$this->assertFalse(isset($model->data['Bid']['name']));
+		$this->assertFalse(isset($model->data['Bid']['message_id']));
 	}
 }

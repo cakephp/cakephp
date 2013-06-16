@@ -1252,7 +1252,7 @@ class Email {
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
 		$lines = explode("\n", $message);
 		$formatted = array();
-		$cut = ($wrapLength == Email::LINE_LENGTH_MUST) ? true : false;
+		$cut = ($wrapLength == Email::LINE_LENGTH_MUST);
 
 		foreach ($lines as $line) {
 			if (empty($line)) {

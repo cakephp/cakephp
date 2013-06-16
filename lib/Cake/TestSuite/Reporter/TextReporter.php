@@ -163,7 +163,7 @@ class TextReporter extends BaseReporter {
 		}
 
 		if (1 > count($testCases)) {
-			$buffer .= "EMPTY";
+			$buffer .= 'EMPTY';
 			echo $buffer;
 		}
 

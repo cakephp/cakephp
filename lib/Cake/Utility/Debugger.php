@@ -552,7 +552,7 @@ class Debugger {
 				// Sniff for globals as !== explodes in < 5.4
 				if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
 					$val = '[recursion]';
-				} else if ($val !== $var) {
+				} elseif ($val !== $var) {
 					$val = static::_export($val, $depth, $indent);
 				}
 				$vars[] = $break . static::exportVar($key) .

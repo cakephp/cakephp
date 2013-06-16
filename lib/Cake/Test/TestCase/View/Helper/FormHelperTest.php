@@ -536,6 +536,7 @@ class FormHelperTest extends TestCase {
 		parent::setUp();
 		$this->markTestIncomplete('Need to revisit once models work again.');
 
+		Configure::write('Config.language', 'eng');
 		Configure::write('App.base', '');
 		Configure::write('App.namespace', 'Cake\Test\TestCase\View\Helper');
 		Configure::delete('Asset');
@@ -1680,7 +1681,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id','accept-charset' => $encoding),
+			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id', 'accept-charset' => $encoding),
 			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
@@ -2282,7 +2283,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('prueba', array(
 			'type' => 'time', 'timeFormat' => 24 , 'dateFormat' => 'DMY' , 'minYear' => 2008,
-			'maxYear' => date('Y') + 1 ,'interval' => 15
+			'maxYear' => date('Y') + 1 , 'interval' => 15
 		));
 		$result = explode(':', $result);
 		$this->assertNotRegExp('#<option value="12"[^>]*>12</option>#', $result[1]);
@@ -4247,8 +4248,8 @@ class FormHelperTest extends TestCase {
 				'id' => 'ContactRequiredOne',
 				'disabled' => 'disabled'
 			),
-			array('option' => array('value' => '', 'disabled' => 'disabled')), '/option',
-			array('option' => array('value' => '0', 'disabled' => 'disabled')), 'option A', '/option',
+			array('option' => array('value' => '')), '/option',
+			array('option' => array('value' => '0')), 'option A', '/option',
 			'/select'
 		);
 		$this->assertTags($result, $expected);
@@ -7305,7 +7306,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'form' => array(
 				'id' => 'ContactNonStandardPkEditForm', 'method' => 'post',
-				'action' => '/contact_non_standard_pks/edit/1','accept-charset' => $encoding
+				'action' => '/contact_non_standard_pks/edit/1', 'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
@@ -7535,7 +7536,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testCreateWithAcceptCharset() {
 		$result = $this->Form->create('UserForm', array(
-				'type' => 'post', 'action' => 'login','encoding' => 'iso-8859-1'
+				'type' => 'post', 'action' => 'login', 'encoding' => 'iso-8859-1'
 			)
 		);
 		$expected = array(

@@ -108,7 +108,7 @@ class TextHelper extends Helper {
 		$this->_placeholders = array();
 		$options += array('escape' => true);
 
-		$pattern = '#(?<!href="|src="|">)((?:https?|ftp|nntp)://[a-z0-9.\-:]+(?:[/?][^\s]*)?)#i';
+		$pattern = '#(?<!href="|src="|">)((?:https?|ftp|nntp)://[a-z0-9.\-:]+(?:[/?][^\s<]*)?)#i';
 		$text = preg_replace_callback(
 			$pattern,
 			array(&$this, '_insertPlaceHolder'),

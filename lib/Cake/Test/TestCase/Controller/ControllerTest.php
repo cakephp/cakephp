@@ -908,6 +908,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testValidateErrorsOnArbitraryModels() {
+		Configure::write('Config.language', 'eng');
 		$TestController = new TestController();
 
 		$Post = new \TestApp\Model\Post();

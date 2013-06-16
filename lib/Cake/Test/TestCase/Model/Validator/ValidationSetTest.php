@@ -19,6 +19,7 @@
  */
 namespace Cake\Test\TestCase\Model\Validator;
 
+use Cake\Core\Configure;
 use Cake\Model\Validator\ValidationRule;
 use Cake\Model\Validator\ValidationSet;
 use Cake\TestSuite\TestCase;
@@ -29,6 +30,16 @@ use Cake\TestSuite\TestCase;
  * @package       Cake.Test.TestCase.Model.Validator
  */
 class ValidationSetTest extends TestCase {
+
+/**
+ * override locale to the default (eng).
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		Configure::write('Config.language', 'eng');
+	}
 
 /**
  * testValidate method

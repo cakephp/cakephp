@@ -325,7 +325,7 @@ class CacheHelper extends Helper {
 
 		$file .= '
 				$request = unserialize(base64_decode(\'' . base64_encode(serialize($this->request)) . '\'));
-				$response = new \Cake\Network\Response();
+				$response->type(\'' . $this->_View->response->type() . '\');
 				$controller = new ' . $this->_View->name . 'Controller($request, $response);
 				$controller->plugin = $this->plugin = \'' . $this->_View->plugin . '\';
 				$controller->helpers = $this->helpers = unserialize(base64_decode(\'' . base64_encode(serialize($this->_View->helpers)) . '\'));
