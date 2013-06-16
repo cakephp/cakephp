@@ -250,8 +250,16 @@ class CakeRequest implements ArrayAccess {
 
 		$base = $this->base;
 
-		if (strlen($base) > 0 && strpos($uri, $base) === 0) {
-			$uri = substr($uri, strlen($base));
+		if (strlen($base) > 0) {
+			if (stripos(PHP_OS, 'win') === 0) {
+				if (strpos(strtolower($uri), strtolower($base)) === 0) {
+					$uri = substr($uri, strlen($base));
+				}
+			} else {
+				if (strpos($uri, $base) === 0) {
+					$uri = substr($uri, strlen($base));
+				}
+			}
 		}
 		if (strpos($uri, '?') !== false) {
 			list($uri) = explode('?', $uri, 2);
