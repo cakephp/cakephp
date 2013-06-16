@@ -299,7 +299,7 @@ class DbAclTest extends TestCase {
 		$this->assertTrue($this->Acl->check('Samir', 'view', 'read'));
 		$this->assertTrue($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/view', 'update'));
 
-		$this->assertFalse($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/update','*'));
+		$this->assertFalse($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/update', '*'));
 		$this->assertTrue($this->Acl->allow('root/users/Samir', 'ROOT/tpsReports/update', '*'));
 		$this->assertTrue($this->Acl->check('Samir', 'update', 'read'));
 		$this->assertTrue($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/update', 'update'));

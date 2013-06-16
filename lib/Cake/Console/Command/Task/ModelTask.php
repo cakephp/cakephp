@@ -236,13 +236,13 @@ class ModelTask extends BakeTask {
 			}
 
 			$prompt = __d('cake_console', "Would you like to supply validation criteria \nfor the fields in your model?");
-			$wannaDoValidation = $this->in($prompt, array('y','n'), 'y');
+			$wannaDoValidation = $this->in($prompt, array('y', 'n'), 'y');
 			if (array_search($useTable, $this->_tables) !== false && strtolower($wannaDoValidation) === 'y') {
 				$validate = $this->doValidation($tempModel);
 			}
 
 			$prompt = __d('cake_console', "Would you like to define model associations\n(hasMany, hasOne, belongsTo, etc.)?");
-			$wannaDoAssoc = $this->in($prompt, array('y','n'), 'y');
+			$wannaDoAssoc = $this->in($prompt, array('y', 'n'), 'y');
 			if (strtolower($wannaDoAssoc) === 'y') {
 				$associations = $this->doAssociations($tempModel);
 			}

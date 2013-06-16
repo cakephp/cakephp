@@ -1503,6 +1503,17 @@ class Model extends Object implements EventListener {
 	}
 
 /**
+ * This function is a convenient wrapper class to create(false) and, as the name suggests, clears the id, data, and validation errors.
+ *
+ * @return always boolean TRUE upon success
+ * @see Model::create()
+ */
+	public function clear() {
+		$this->create(false);
+		return true;
+	}
+
+/**
  * Returns a list of fields from the database, and sets the current model
  * data (Model::$data) with the record found.
  *
@@ -1671,13 +1682,14 @@ class Model extends Object implements EventListener {
 		}
 
 		$db = $this->getDataSource();
+		$now = time();
 
 		foreach ($dateFields as $updateCol) {
 			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
 				$default = array('formatter' => 'date');
 				$colType = array_merge($default, $db->columns[$this->getColumnType($updateCol)]);
 				if (!array_key_exists('format', $colType)) {
-					$time = strtotime('now');
+					$time = $now;
 				} else {
 					$time = call_user_func($colType['formatter'], $colType['format']);
 				}

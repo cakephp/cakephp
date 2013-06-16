@@ -796,7 +796,7 @@ class AuthComponentTest extends TestCase {
 		App::build(array(
 			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
-		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 
 		ob_start();
 		$Dispatcher = new Dispatcher();

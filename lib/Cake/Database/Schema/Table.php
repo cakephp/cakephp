@@ -210,6 +210,19 @@ class Table {
 	}
 
 /**
+ * Convenience method for getting the type of a given column.
+ *
+ * @param string $name The column to get the type of.
+ * @return string|null Either the column type or null.
+ */
+	public function columnType($name) {
+		if (!isset($this->_columns[$name])) {
+			return null;
+		}
+		return $this->_columns[$name]['type'];
+	}
+
+/**
  * Add an index.
  *
  * Used to add indexes, and full text indexes in platforms that support
@@ -331,7 +344,7 @@ class Table {
  *
  * @param array $attrs Attributes to set.
  * @return array
- * @throw Cake\Database\Exception When foreign key definition is not valid.
+ * @throws Cake\Database\Exception When foreign key definition is not valid.
  */
 	protected function _checkForeignKey($attrs) {
 		if (count($attrs['references']) < 2) {

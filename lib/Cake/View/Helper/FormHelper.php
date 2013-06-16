@@ -1739,6 +1739,7 @@ class FormHelper extends Helper {
  * ### Options:
  *
  * - `data` - Array with key/value to pass in input hidden
+ * - `method` - Request method to use. Set to 'delete' to simulate HTTP/1.1 DELETE request. Defaults to 'post'.
  * - `confirm` - Can be used instead of $confirmMessage.
  * - Other options is the same of HtmlHelper::link() method.
  * - The option `onclick` will be replaced.

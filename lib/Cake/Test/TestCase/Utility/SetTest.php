@@ -235,10 +235,10 @@ class SetTest extends TestCase {
 
 		$a = array(
 			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
-			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))
+			1 => array('Person' => array('name' => 'Tracy'), 'Friend' => array(array('name' => 'Lindsay')))
 		);
 		$b = array(
-			0 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay'))),
+			0 => array('Person' => array('name' => 'Tracy'), 'Friend' => array(array('name' => 'Lindsay'))),
 			1 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate')))
 
 		);
@@ -247,10 +247,10 @@ class SetTest extends TestCase {
 
 		$b = array(
 			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
-			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))
+			1 => array('Person' => array('name' => 'Tracy'), 'Friend' => array(array('name' => 'Lindsay')))
 		);
 		$a = array(
-			0 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay'))),
+			0 => array('Person' => array('name' => 'Tracy'), 'Friend' => array(array('name' => 'Lindsay'))),
 			1 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate')))
 
 		);
@@ -260,12 +260,12 @@ class SetTest extends TestCase {
 		$a = array(
 			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
 			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay'))),
-			2 => array('Person' => array('name' => 'Adam'),'Friend' => array(array('name' => 'Bob')))
+			2 => array('Person' => array('name' => 'Adam'), 'Friend' => array(array('name' => 'Bob')))
 		);
 		$b = array(
-			0 => array('Person' => array('name' => 'Adam'),'Friend' => array(array('name' => 'Bob'))),
+			0 => array('Person' => array('name' => 'Adam'), 'Friend' => array(array('name' => 'Bob'))),
 			1 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
-			2 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))
+			2 => array('Person' => array('name' => 'Tracy'), 'Friend' => array(array('name' => 'Lindsay')))
 		);
 		$a = Set::sort($a, '{n}.Person.name', 'asc');
 		$this->assertEquals($a, $b);
@@ -883,11 +883,11 @@ class SetTest extends TestCase {
 				)
 			)
 		);
-		$expected = array(array('name' => 'zipfile2.zip','type' => 'application/x-zip-compressed','tmp_name' => '/tmp/php179.tmp','error' => 0,'size' => '354784'));
+		$expected = array(array('name' => 'zipfile2.zip', 'type' => 'application/x-zip-compressed', 'tmp_name' => '/tmp/php179.tmp', 'error' => 0, 'size' => '354784'));
 		$r = Set::extract('/file/.[type=application/x-zip-compressed]', $f);
 		$this->assertEquals($expected, $r);
 
-		$expected = array(array('name' => 'zipfile.zip','type' => 'application/zip','tmp_name' => '/tmp/php178.tmp','error' => 0,'size' => '564647'));
+		$expected = array(array('name' => 'zipfile.zip', 'type' => 'application/zip','tmp_name' => '/tmp/php178.tmp', 'error' => 0, 'size' => '564647'));
 		$r = Set::extract('/file/.[type=application/zip]', $f);
 		$this->assertEquals($expected, $r);
 
@@ -920,13 +920,13 @@ class SetTest extends TestCase {
 				)
 			)
 		);
-		$expected = array(array('name' => 'zipfile2.zip','type' => 'application/x zip compressed','tmp_name' => '/tmp/php179.tmp','error' => 0,'size' => '354784'));
+		$expected = array(array('name' => 'zipfile2.zip', 'type' => 'application/x zip compressed', 'tmp_name' => '/tmp/php179.tmp', 'error' => 0, 'size' => '354784'));
 		$r = Set::extract('/file/.[type=application/x zip compressed]', $f);
 		$this->assertEquals($expected, $r);
 
 		$expected = array(
-			array('name' => 'zipfile.zip','type' => 'application/zip','tmp_name' => '/tmp/php178.tmp','error' => 0,'size' => '564647'),
-			array('name' => 'zipfile2.zip','type' => 'application/x zip compressed','tmp_name' => '/tmp/php179.tmp','error' => 0,'size' => '354784')
+			array('name' => 'zipfile.zip','type' => 'application/zip', 'tmp_name' => '/tmp/php178.tmp', 'error' => 0, 'size' => '564647'),
+			array('name' => 'zipfile2.zip','type' => 'application/x zip compressed', 'tmp_name' => '/tmp/php179.tmp', 'error' => 0, 'size' => '354784')
 		);
 		$r = Set::extract('/file/.[tmp_name=/tmp\/php17/]', $f);
 		$this->assertEquals($expected, $r);
@@ -1563,7 +1563,7 @@ class SetTest extends TestCase {
 			0 => array('name' => 'zero')
 		);
 		$result = Set::extract($a, '{s}.name');
-		$expected = array('page','fruit');
+		$expected = array('page', 'fruit');
 		$this->assertEquals($expected, $result);
 
 		$a = array(
@@ -1863,7 +1863,7 @@ class SetTest extends TestCase {
 			array('User' => array('id' => 14, 'group_id' => 2,
 				'Data' => array('user' => 'phpnut', 'name' => 'Larry E. Masters'))),
 			array('User' => array('id' => 25, 'group_id' => 1,
-				'Data' => array('user' => 'gwoo','name' => 'The Gwoo'))));
+				'Data' => array('user' => 'gwoo', 'name' => 'The Gwoo'))));
 		$result = Set::combine($a, '{n}.User.id');
 		$expected = array(2 => null, 14 => null, 25 => null);
 		$this->assertEquals($expected, $result);
@@ -1874,9 +1874,9 @@ class SetTest extends TestCase {
 
 		$result = Set::combine($a, '{n}.User.id', '{n}.User.Data');
 		$expected = array(
-			2 => array('user' => 'mariano.iglesias',	'name' => 'Mariano Iglesias'),
-			14 => array('user' => 'phpnut',	'name' => 'Larry E. Masters'),
-			25 => array('user' => 'gwoo',	'name' => 'The Gwoo'));
+			2 => array('user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'),
+			14 => array('user' => 'phpnut', 'name' => 'Larry E. Masters'),
+			25 => array('user' => 'gwoo', 'name' => 'The Gwoo'));
 		$this->assertEquals($expected, $result);
 
 		$result = Set::combine($a, '{n}.User.id', '{n}.User.Data.name');
@@ -1964,11 +1964,11 @@ class SetTest extends TestCase {
 		$b = new \stdClass();
 		$b->users = array(
 			array('User' => array('id' => 2, 'group_id' => 1,
-				'Data' => array('user' => 'mariano.iglesias','name' => 'Mariano Iglesias'))),
+				'Data' => array('user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'))),
 			array('User' => array('id' => 14, 'group_id' => 2,
 				'Data' => array('user' => 'phpnut', 'name' => 'Larry E. Masters'))),
 			array('User' => array('id' => 25, 'group_id' => 1,
-				'Data' => array('user' => 'gwoo','name' => 'The Gwoo'))));
+				'Data' => array('user' => 'gwoo', 'name' => 'The Gwoo'))));
 		$result = Set::combine($b, 'users.{n}.User.id');
 		$expected = array(2 => null, 14 => null, 25 => null);
 		$this->assertEquals($expected, $result);
@@ -2035,7 +2035,7 @@ class SetTest extends TestCase {
 
 		$expected = array(
 		'Array1' => array(
-				'Array1Data1' => 'Array1Data1 value 1', 'Array1Data2' => 'Array1Data2 value 2', 'Array1Data3' => 'Array1Data3 value 3','Array1Data4' => 'Array1Data4 value 4',
+				'Array1Data1' => 'Array1Data1 value 1', 'Array1Data2' => 'Array1Data2 value 2', 'Array1Data3' => 'Array1Data3 value 3', 'Array1Data4' => 'Array1Data4 value 4',
 				'Array1Data5' => 'Array1Data5 value 5', 'Array1Data6' => 'Array1Data6 value 6', 'Array1Data7' => 'Array1Data7 value 7', 'Array1Data8' => 'Array1Data8 value 8'),
 		'string' => 1,
 		'another' => 'string',
@@ -2058,7 +2058,7 @@ class SetTest extends TestCase {
 
 		$expected = array(
 		'Array1' => array(
-				'Array1Data1' => 'Array1Data1 value 1', 'Array1Data2' => 'Array1Data2 value 2', 'Array1Data3' => 'Array1Data3 value 3','Array1Data4' => 'Array1Data4 value 4',
+				'Array1Data1' => 'Array1Data1 value 1', 'Array1Data2' => 'Array1Data2 value 2', 'Array1Data3' => 'Array1Data3 value 3', 'Array1Data4' => 'Array1Data4 value 4',
 				'Array1Data5' => 'Array1Data5 value 5', 'Array1Data6' => 'Array1Data6 value 6', 'Array1Data7' => 'Array1Data7 value 7', 'Array1Data8' => 'Array1Data8 value 8'),
 		'string' => 1,
 		'another' => 'string',
@@ -2360,7 +2360,7 @@ class SetTest extends TestCase {
 							'Content-Length' => "50210",
 					),
 					'meta' => array(
-							'keywords' => array('testing','tests'),
+							'keywords' => array('testing', 'tests'),
 							'description' => 'describe me',
 					),
 					'get_vars' => '',
@@ -2387,7 +2387,7 @@ class SetTest extends TestCase {
 						'Content-Length' => "50210",
 					),
 					'meta' => array(
-							'keywords' => array('testing','tests'),
+							'keywords' => array('testing', 'tests'),
 							'description' => 'describe me',
 					),
 					'get_vars' => '',
@@ -2446,8 +2446,8 @@ class SetTest extends TestCase {
 		$expected->hash = '68a9f053b19526d08e36c6a9ad150737933816a5';
 		$expected->get_vars = '';
 		$expected->redirect = '';
-		$expected->created = "1195055503";
-		$expected->updated = "1195055503";
+		$expected->created = '1195055503';
+		$expected->updated = '1195055503';
 		// @codingStandardsIgnoreEnd
 		$this->assertEquals($expected, $mapped[1]);
 
@@ -2495,9 +2495,9 @@ class SetTest extends TestCase {
 		$expected->Author->id = '1';
 		$expected->Author->user = 'mariano';
 		$expected->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
-		$expected->Author->created = "2007-03-17 01:16:23";
-		$expected->Author->updated = "2007-03-17 01:18:31";
-		$expected->Author->test = "working";
+		$expected->Author->created = '2007-03-17 01:16:23';
+		$expected->Author->updated = '2007-03-17 01:18:31';
+		$expected->Author->test = 'working';
 		$expected->Author->_name_ = 'Author';
 
 		$expected2 = new \stdClass;
@@ -2514,9 +2514,9 @@ class SetTest extends TestCase {
 		$expected2->Author->id = '3';
 		$expected2->Author->user = 'larry';
 		$expected2->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
-		$expected2->Author->created = "2007-03-17 01:20:23";
-		$expected2->Author->updated = "2007-03-17 01:22:31";
-		$expected2->Author->test = "working";
+		$expected2->Author->created = '2007-03-17 01:20:23';
+		$expected2->Author->updated = '2007-03-17 01:22:31';
+		$expected2->Author->test = 'working';
 		$expected2->Author->_name_ = 'Author';
 		// @codingStandardsIgnoreEnd
 
@@ -2549,7 +2549,7 @@ class SetTest extends TestCase {
 		$expected->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
 		$expected->Author->created = "2007-03-17 01:16:23";
 		$expected->Author->updated = "2007-03-17 01:18:31";
-		$expected->Author->test = "working";
+		$expected->Author->test = 'working';
 		$expected->Author->_name_ = 'Author';
 		// @codingStandardsIgnoreEnd
 		$this->assertEquals($expected, $result);

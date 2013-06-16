@@ -150,6 +150,7 @@ class ExceptionRendererTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		Configure::write('Config.language', 'eng');
 		App::build(array(
 			'View' => array(
 				CAKE . 'Test/TestApp/View/'

@@ -26,16 +26,25 @@ class BufferedStatement extends StatementDecorator {
 
 	protected $_counter = 0;
 
+/**
+ * Constructor
+ *
+ * @param Statement implementation such as PDOStatement
+ * @return void
+ */
+	public function __construct($statement = null, $driver = null) {
+		parent::__construct($statement, $driver);
+		$this->_reset();
+	}
+
 	public function execute($params = null) {
-		$this->_count = $this->_counter = 0;
-		$this->_records = [];
-		$this->_allFetched = false;
+		$this->_reset();
 		return parent::execute($params);
 	}
 
 	public function fetch($type = 'num') {
 		if ($this->_allFetched) {
-			$row = ($this->_counter <= $this->_count) ? $this->_records[$this->_counter++] : false;
+			$row = ($this->_counter < $this->_count) ? $this->_records[$this->_counter++] : false;
 			$row = ($row && $type === 'num') ? array_values($row) : $row;
 			return $row;
 		}
@@ -72,6 +81,16 @@ class BufferedStatement extends StatementDecorator {
 		}
 
 		return $this->_count;
+	}
+
+	public function rewind() {
+		$this->_counter = 0;
+	}
+
+	protected function _reset() {
+		$this->_count = $this->_counter = 0;
+		$this->_records = [];
+		$this->_allFetched = false;
 	}
 
 }

@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ArticlesTagFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'ArticlesTag'
- */
-	public $name = 'ArticlesTag';
-
-/**
  * fields property
  *
  * @var array

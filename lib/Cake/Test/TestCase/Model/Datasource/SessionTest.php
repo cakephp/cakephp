@@ -261,7 +261,7 @@ class SessionTest extends TestCase {
 		$result = TestCakeSession::read('testing');
 		$this->assertEquals('1,2,3', $result);
 
-		TestCakeSession::write('testing', array('1' => 'one', '2' => 'two','3' => 'three'));
+		TestCakeSession::write('testing', array('1' => 'one', '2' => 'two', '3' => 'three'));
 		$result = TestCakeSession::read('testing.1');
 		$this->assertEquals('one', $result);
 

@@ -243,12 +243,12 @@ class SanitizeTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$string = "x' AND 1=(SELECT COUNT(*) FROM users); --";
-		$expected = "xAND1SELECTCOUNTFROMusers";
+		$expected = 'xAND1SELECTCOUNTFROMusers';
 		$result = Sanitize::paranoid($string);
 		$this->assertEquals($expected, $result);
 
 		$string = "x'; DROP TABLE members; --";
-		$expected = "xDROPTABLEmembers";
+		$expected = 'xDROPTABLEmembers';
 		$result = Sanitize::paranoid($string);
 		$this->assertEquals($expected, $result);
 	}

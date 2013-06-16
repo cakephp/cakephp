@@ -552,10 +552,12 @@ class View extends Object {
  * @return boolean Success of rendering the cached file.
  */
 	public function renderCache($filename, $timeStart) {
+		$response = $this->response;
 		ob_start();
 		include ($filename);
 
-		if (Configure::read('debug') > 0 && $this->layout !== 'xml') {
+		$type = $response->mapType($response->type());
+		if (Configure::read('debug') > 0 && $type === 'html') {
 			echo "<!-- Cached Render Time: " . round(microtime(true) - $timeStart, 4) . "s -->";
 		}
 		$out = ob_get_clean();
@@ -568,9 +570,6 @@ class View extends Object {
 				unset($out);
 				return false;
 			} else {
-				if ($this->layout === 'xml') {
-					header('Content-type: text/xml');
-				}
 				return substr($out, strlen($match[0]));
 			}
 		}
