@@ -55,8 +55,9 @@ Cake\Core\Configure::write('App', [
 ]);
 
 Cake\Core\Configure::write('Cache._cake_core_', [
-	'engine' => 'Apc',
-	'prefix' => 'cake_core_'
+	'engine' => 'File',
+	'prefix' => 'cake_core_',
+	'serialize' => true
 ]);
 
 Cake\Core\Configure::write('Datasource.test', [
