@@ -1085,7 +1085,7 @@ class RequestTest extends TestCase {
 		Configure::write('App.baseUrl', false);
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['PHP_SELF'] = '/urlencode me/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/urlencode me/App/webroot/index.php';
 		$_SERVER['PATH_INFO'] = '/posts/view/1';
 
 		$request = Request::createFromGlobals();
@@ -1094,7 +1094,7 @@ class RequestTest extends TestCase {
 		$this->assertEquals('posts/view/1', $request->url);
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['PHP_SELF'] = '/1.2.x.x/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/1.2.x.x/App/webroot/index.php';
 		$_SERVER['PATH_INFO'] = '/posts/view/1';
 
 		$request = Request::createFromGlobals();
