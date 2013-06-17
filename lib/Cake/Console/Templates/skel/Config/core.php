@@ -106,6 +106,22 @@
 	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
 
 /**
+ * To configure CakePHP to accept case insensitive paths,
+ * e.g. on Windows hosts, uncomment the following setting.
+ *
+ * Once set to true the application will treat urls like
+ * http://www.myhost.com/MyApp/
+ * http://www.myhost.com/myapp/
+ * http://www.myhost.com/MYAPP/
+ * as they were the same.
+ *
+ * The controller, action, parameter and query string will be
+ * treated case sensitive as before.
+ */
+
+	//Configure::write('App.caseInsensitive', true);
+
+/**
  * Uncomment the define below to use CakePHP prefix routes.
  *
  * The value of the define determines the names of the routes
