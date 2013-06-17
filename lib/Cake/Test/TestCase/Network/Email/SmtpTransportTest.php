@@ -278,7 +278,7 @@ class SmtpTransportTest extends TestCase {
  * @return void
  */
 	public function testRcptWithReturnPath() {
-		$email = new CakeEmail();
+		$email = new Email();
 		$email->from('noreply@cakephp.org', 'CakePHP Test');
 		$email->to('cake@cakephp.org', 'CakePHP');
 		$email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
