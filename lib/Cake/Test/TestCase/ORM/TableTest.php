@@ -17,7 +17,6 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
-use Cake\Database\Connection;
 use Cake\Model\ConnectionManager;
 use Cake\ORM\Table;
 

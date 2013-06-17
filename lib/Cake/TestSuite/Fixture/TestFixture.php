@@ -224,30 +224,6 @@ class TestFixture {
 			return false;
 		}
 
-		// TODO figure this out as Table does not have tableOptions completed.
-		if (empty($this->fields['tableParameters']['engine'])) {
-			$canUseMemory = true;
-			foreach ($this->fields as $args) {
-
-				if (is_string($args)) {
-					$type = $args;
-				} elseif (!empty($args['type'])) {
-					$type = $args['type'];
-				} else {
-					continue;
-				}
-
-				if (in_array($type, array('blob', 'text', 'binary'))) {
-					$canUseMemory = false;
-					break;
-				}
-			}
-
-			if ($canUseMemory) {
-				$this->fields['tableParameters']['engine'] = 'MEMORY';
-			}
-		}
-
 		try {
 			$queries = $this->_schema->createSql($db);
 			foreach ($queries as $query) {
