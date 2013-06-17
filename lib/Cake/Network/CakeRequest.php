@@ -250,7 +250,11 @@ class CakeRequest implements ArrayAccess {
 
 		$base = $this->base;
 
-		if (strlen($base) > 0 && strpos($uri, $base) === 0) {
+		$caseInsensitive = Configure::read('App.caseInsensitive');
+
+		if (!empty($base) &&
+			(($caseInsensitive === true && stripos($uri, $base) === 0) ||
+			strpos($uri, $base) === 0)) {
 			$uri = substr($uri, strlen($base));
 		}
 		if (strpos($uri, '?') !== false) {
