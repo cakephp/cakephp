@@ -16,8 +16,6 @@
 		<testsuite name="CakePHP Test Suite">
 			<directory>./Test/TestCase/</directory>
 			<exclude>./Test/TestCase/Model/</exclude>
-			<exclude>./Test/TestCase/Network/Email</exclude>
-			<exclude>./Test/TestCase/Network/SocketTest.php</exclude>
 			<exclude>./Test/TestCase/Error/ErrorHandlerTest.php</exclude>
 		</testsuite>
 	</testsuites>
