@@ -374,4 +374,42 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame('things_tags', $belongsToMany->pivot()->table());
 	}
 
+/**
+ * Test basic multi row updates.
+ *
+ * @return void
+ */
+	public function testUpdate() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$fields = ['user' => 'mark'];
+		$result = $table->update($fields, ['id <' => 4]);
+		$this->assertTrue($result);
+
+		$result = $table->find('all')->select(['user'])->toArray();
+		$expected = array_fill(0, 3, $fields);
+		$expected[] = ['user' => 'garrett'];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that exceptions from the Query bubble up.
+ *
+ * @expectedException Cake\Database\Exception
+ */
+	public function testUpdateFailure() {
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['_buildQuery'],
+			['table' => 'users', 'connection' => $this->connection]
+		);
+		$query = $this->getMock('Cake\ORM\Query', ['execute'], [$this->connection]);
+		$table->expects($this->once())
+			->method('_buildQuery')
+			->will($this->returnValue($query));
+		$query->expects($this->once())
+			->method('execute')
+			->will($this->throwException(new \Cake\Database\Exception('Not good')));
+		$table->update(['user' => 'mark'], []);
+	}
+
 }
