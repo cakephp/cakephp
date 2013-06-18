@@ -250,7 +250,7 @@ class UpgradeShell extends Shell {
  *
  * @return void
  */
-	public function log() {
+	public function log_config() {
 		$path = $this->_getPath();
 
 		$Folder = new Folder($path);
@@ -274,7 +274,7 @@ class UpgradeShell extends Shell {
  *
  * @return void
  */
-	public function cache() {
+	public function cache_config() {
 		$path = $this->_getPath();
 
 		$Folder = new Folder($path);
@@ -595,11 +595,11 @@ class UpgradeShell extends Shell {
 				'help' => __d('cake_console', 'Update fixtures to use new index/constraint features. This is necessary before running tests.'),
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')],
 			])
-			->addSubcommand('cache', [
+			->addSubcommand('cache_config', [
 				'help' => __d('cake_console', "Replace Cache::config() with Configure."),
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			])
-			->addSubcommand('log', [
+			->addSubcommand('log_config', [
 				'help' => __d('cake_console', "Replace CakeLog::config() with Configure."),
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			]);
