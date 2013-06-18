@@ -2272,8 +2272,8 @@ class FormHelper extends AppHelper {
  */
 	protected function _dateTimeSelected($select, $fieldName, $attributes) {
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
-			if (is_array($value) && isset($value[$select])) {
-				$attributes['value'] = $value[$select];
+			if (is_array($value)) {
+				$attributes['value'] = isset($value[$select]) ? $value[$select] : null;
 			} else {
 				if (empty($value)) {
 					if (!$attributes['empty']) {
