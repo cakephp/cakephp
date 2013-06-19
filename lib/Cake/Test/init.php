@@ -12,6 +12,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+use Cake\Core\Configure;
+
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(dirname(dirname(__DIR__))));
 define('APP_DIR', 'App');
@@ -42,8 +44,8 @@ require CORE_PATH . 'Cake/bootstrap.php';
 
 mb_internal_encoding('UTF-8');
 
-Cake\Core\Configure::write('debug', 2);
-Cake\Core\Configure::write('App', [
+Configure::write('debug', 2);
+Configure::write('App', [
 	'namespace' => 'App',
 	'encoding' => 'UTF-8',
 	'base' => false,
@@ -54,13 +56,13 @@ Cake\Core\Configure::write('App', [
 	'fullBaseURL' => 'http://localhost'
 ]);
 
-Cake\Core\Configure::write('Cache._cake_core_', [
+Configure::write('Cache._cake_core_', [
 	'engine' => 'File',
 	'prefix' => 'cake_core_',
 	'serialize' => true
 ]);
 
-Cake\Core\Configure::write('Datasource.test', [
+Configure::write('Datasource.test', [
 	'datasource' => getenv('db_class'),
 	'dsn' => getenv('db_dsn'),
 	'database' => getenv('db_database'),
@@ -68,17 +70,17 @@ Cake\Core\Configure::write('Datasource.test', [
 	'password' => getenv('db_password')
 ]);
 
-Cake\Core\Configure::write('Session', [
+Configure::write('Session', [
 	'defaults' => 'php'
 ]);
 
-Cake\Core\Configure::write('Log.debug', [
+Configure::write('Log.debug', [
 	'engine' => 'Cake\Log\Engine\FileLog',
 	'levels' => ['notice', 'info', 'debug'],
 	'file' => 'debug',
 ]);
 
-Cake\Core\Configure::write('Log.error', [
+Configure::write('Log.error', [
 	'engine' => 'Cake\Log\Engine\FileLog',
 	'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
 	'file' => 'error',
