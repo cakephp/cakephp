@@ -6629,6 +6629,30 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testInputDateMaxYear method
+ *
+ * Let's say we want to only allow users born from 2006 to 2008 to register
+ * This being the first singup page, we still don't have any data
+ *
+ * @return void
+ */
+	public function testInputDateMaxYear() {
+		$this->Form->request->data = array();
+		$this->Form->create('User');
+		$result = $this->Form->input('birthday',
+				array(
+					'label' => false,
+					'div' => false,
+					'type' => 'date',
+					'dateFormat' => 'DMY',
+					'minYear' => 2006,
+					'maxYear' => 2008
+				)
+		);
+		$this->assertContains('value="2008" selected="selected"', $result);
+	}
+
+/**
  * testTextArea method
  *
  * @return void
