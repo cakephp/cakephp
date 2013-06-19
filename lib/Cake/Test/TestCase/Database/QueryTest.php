@@ -17,8 +17,8 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
-use Cake\Database\Connection;
 use Cake\Database\Query;
+use Cake\Model\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -27,12 +27,15 @@ use Cake\TestSuite\TestCase;
  */
 class QueryTest extends TestCase {
 
+	public $fixtures = ['core.article', 'core.author', 'core.comment'];
+
+	const ARTICLE_COUNT = 3;
+	const AUTHOR_COUNT = 4;
+	const COMMENT_COUNT = 6;
+
 	public function setUp() {
 		parent::setUp();
-		$this->connection = new Connection(Configure::read('Datasource.test'));
-		$this->connection->execute('DROP TABLE IF EXISTS articles');
-		$this->connection->execute('DROP TABLE IF EXISTS authors');
-		$this->connection->execute('DROP TABLE IF EXISTS dates');
+		$this->connection = ConnectionManager::getDataSource('test');
 	}
 
 	public function tearDown() {
@@ -41,89 +44,10 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test helper for creating tables.
- *
- * @return void
- */
-	protected function _createAuthorsAndArticles() {
-		$table = 'CREATE TEMPORARY TABLE authors(id int, name varchar(50))';
-		$this->connection->execute($table);
-
-		$table = 'CREATE TEMPORARY TABLE articles(id int, title varchar(20), body varchar(50), author_id int)';
-		$this->connection->execute($table);
-	}
-
-/**
- * Auxiliary function to insert a couple rows in a newly created table
- *
- * @return void
- */
-	protected function _insertTwoRecords() {
-		$this->_createAuthorsAndArticles();
-
-		$data = ['id' => '1', 'name' => 'Chuck Norris'];
-		$result = $this->connection->insert('authors', $data, ['id' => 'integer', 'name' => 'string']);
-
-		$result->bindValue(1, '2', 'integer');
-		$result->bindValue(2, 'Bruce Lee');
-		$result->execute();
-
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body', 'author_id' => 1];
-		$result = $this->connection->insert(
-			'articles',
-			$data,
-			['id' => 'integer', 'title' => 'string', 'body' => 'string', 'author_id' => 'integer']
-		);
-
-		$result->bindValue(1, '2', 'integer');
-		$result->bindValue(2, 'another title');
-		$result->bindValue(3, 'another body');
-		$result->bindValue(4, 2);
-		$result->execute();
-
-		return $result;
-	}
-
-/**
- * Auxiliary function to insert a couple rows in a newly created table containing dates
- *
- * @return void
- **/
-	protected function _insertDateRecords() {
-		$table = 'CREATE TEMPORARY TABLE dates(id int, name varchar(50), posted timestamp, visible char(1))';
-		$this->connection->execute($table);
-		$data = [
-			'id' => '1',
-			'name' => 'Chuck Norris',
-			'posted' => new \DateTime('2012-12-21 12:00'),
-			'visible' => 'Y'
-		];
-		$result = $this->connection->insert(
-			'dates',
-			$data,
-			['id' => 'integer', 'name' => 'string', 'posted' => 'datetime', 'visible' => 'string']
-		);
-
-		$result->bindValue(1, '2', 'integer');
-		$result->bindValue(2, 'Bruce Lee');
-		$result->bindValue(3, new \DateTime('2012-12-22 12:00'), 'datetime');
-		$result->bindValue(4, 'N');
-		$result->execute();
-
-		$result->bindValue(1, 3, 'integer');
-		$result->bindValue(2, 'Jet Li');
-		$result->bindValue(3, new \DateTime('2012-12-25 12:00'), 'datetime');
-		$result->bindValue(4, null);
-		$result->execute();
-
-		return $result;
-	}
-
-/**
  * Tests that it is possible to obtain expression results from a query
  *
  * @return void
- **/
+ */
 	public function testSelectFieldsOnly() {
 		$query = new Query($this->connection);
 		$result = $query->select('1 + 1')->execute();
@@ -158,82 +82,78 @@ class QueryTest extends TestCase {
  * Tests it is possible to select fields from tables with no conditions
  *
  * @return void
- **/
+ */
 	public function testSelectFieldsFromTable() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$result = $query->select(array('body', 'author_id'))->from('articles')->execute();
-		$this->assertEquals(array('body' => 'a body', 'author_id' => 1), $result->fetch('assoc'));
-		$this->assertEquals(array('body' => 'another body', 'author_id' => 2), $result->fetch('assoc'));
+		$this->assertEquals(array('body' => 'First Article Body', 'author_id' => 1), $result->fetch('assoc'));
+		$this->assertEquals(array('body' => 'Second Article Body', 'author_id' => 3), $result->fetch('assoc'));
 
 		//Append more tables to next execution
 		$result = $query->select('name')->from(array('authors'))->order(['name' => 'desc', 'articles.id' => 'asc'])->execute();
-		$this->assertEquals(array('body' => 'a body', 'author_id' => 1, 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('body' => 'another body', 'author_id' => 2, 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('body' => 'a body', 'author_id' => 1, 'name' => 'Bruce Lee'), $result->fetch('assoc'));
-		$this->assertEquals(array('body' => 'another body', 'author_id' => 2, 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+		$this->assertEquals(array('body' => 'First Article Body', 'author_id' => 1, 'name' => 'nate'), $result->fetch('assoc'));
+		$this->assertEquals(array('body' => 'Second Article Body', 'author_id' => 3, 'name' => 'nate'), $result->fetch('assoc'));
+		$this->assertEquals(array('body' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'), $result->fetch('assoc'));
 
 		//Overwrite tables and only fetch from authors
 		$result = $query->select('name', true)->from('authors', true)->order(['name' => 'desc'], true)->execute();
-		$this->assertEquals(array('Chuck Norris'), $result->fetch());
-		$this->assertEquals(array('Bruce Lee'), $result->fetch());
-		$this->assertCount(2, $result);
+		$this->assertEquals(array('nate'), $result->fetch());
+		$this->assertEquals(array('mariano'), $result->fetch());
+		$this->assertCount(4, $result);
 	}
 
 /**
  * Tests it is possible to select aliased fields
  *
  * @return void
- **/
+ */
 	public function testSelectAliasedFieldsFromTable() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$result = $query->select(['text' => 'body', 'author_id'])->from('articles')->execute();
-		$this->assertEquals(array('text' => 'a body', 'author_id' => 1), $result->fetch('assoc'));
-		$this->assertEquals(array('text' => 'another body', 'author_id' => 2), $result->fetch('assoc'));
+		$this->assertEquals(array('text' => 'First Article Body', 'author_id' => 1), $result->fetch('assoc'));
+		$this->assertEquals(array('text' => 'Second Article Body', 'author_id' => 3), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query->select(['text' => 'body', 'author' => 'author_id'])->from('articles')->execute();
-		$this->assertEquals(array('text' => 'a body', 'author' => 1), $result->fetch('assoc'));
-		$this->assertEquals(array('text' => 'another body', 'author' => 2), $result->fetch('assoc'));
+		$this->assertEquals(array('text' => 'First Article Body', 'author' => 1), $result->fetch('assoc'));
+		$this->assertEquals(array('text' => 'Second Article Body', 'author' => 3), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$query->select(['text' => 'body'])->select(['author_id', 'foo' => 'body']);
 		$result = $query->from('articles')->execute();
-		$this->assertEquals(array('foo' => 'a body', 'text' => 'a body', 'author_id' => 1), $result->fetch('assoc'));
-		$this->assertEquals(array('foo' => 'another body', 'text' => 'another body', 'author_id' => 2), $result->fetch('assoc'));
+		$this->assertEquals(array('foo' => 'First Article Body', 'text' => 'First Article Body', 'author_id' => 1), $result->fetch('assoc'));
+		$this->assertEquals(array('foo' => 'Second Article Body', 'text' => 'Second Article Body', 'author_id' => 3), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$exp = $query->newExpr()->add('1 + 1');
 		$comp = $query->newExpr()->add(['author_id +' => 2]);
 		$result = $query->select(['text' => 'body', 'two' => $exp, 'three' => $comp])
 			->from('articles')->execute();
-		$this->assertEquals(array('text' => 'a body', 'two' => 2, 'three' => 3), $result->fetch('assoc'));
-		$this->assertEquals(array('text' => 'another body', 'two' => 2, 'three' => 4), $result->fetch('assoc'));
+		$this->assertEquals(array('text' => 'First Article Body', 'two' => 2, 'three' => 3), $result->fetch('assoc'));
+		$this->assertEquals(array('text' => 'Second Article Body', 'two' => 2, 'three' => 5), $result->fetch('assoc'));
 	}
 
 /**
  * Tests that tables can also be aliased and referenced in the select clause using such alias
  *
  * @return void
- **/
+ */
 	public function testSelectAliasedTables() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$result = $query->select(['text' => 'a.body', 'a.author_id'])
 			->from(['a' => 'articles'])->execute();
-		$this->assertEquals(['text' => 'a body', 'author_id' => 1], $result->fetch('assoc'));
-		$this->assertEquals(['text' => 'another body', 'author_id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['text' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['text' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
 
 		$result = $query->select(['name' => 'b.name'])->from(['b' => 'authors'])
 			->order(['text' => 'desc', 'name' => 'desc'])
 			->execute();
 		$this->assertEquals(
-			['text' => 'another body', 'author_id' => 2, 'name' => 'Chuck Norris'],
+			['text' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'],
 			$result->fetch('assoc')
 		);
 		$this->assertEquals(
-			['text' => 'another body', 'author_id' => 2, 'name' => 'Bruce Lee'],
+			['text' => 'Third Article Body', 'author_id' => 1, 'name' => 'mariano'],
 			$result->fetch('assoc')
 		);
 	}
@@ -242,9 +162,8 @@ class QueryTest extends TestCase {
  * Tests it is possible to add joins to a select query
  *
  * @return void
- **/
+ */
 	public function testSelectWithJoins() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['title', 'name'])
@@ -252,68 +171,64 @@ class QueryTest extends TestCase {
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->execute();
 
-		$this->assertCount(2, $result);
-		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'another title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+		$this->assertCount(3, $result);
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
 
 		$result = $query->join('authors', [], true)->execute();
-		$this->assertCount(4, $result);
+		$this->assertCount(12, $result, 'Cross join results in 12 records');
 
 		$result = $query->join([
 			['table' => 'authors', 'type' => 'INNER', 'conditions' => 'author_id = 1']
 		], [], true)->execute();
-		$this->assertCount(2, $result);
-		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'a title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+		$this->assertCount(8, $result);
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'nate'), $result->fetch('assoc'));
 	}
 
 /**
  * Tests it is possible to add joins to a select query using array or expression as conditions
  *
  * @return void
- **/
+ */
 	public function testSelectWithJoinsConditions() {
-		$this->_insertTwoRecords();
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['title', 'name'])
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => ['author_id' => 1]])
 			->execute();
-		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'a title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'nate'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$conditions = $query->newExpr()->add(['author_id' => 2]);
+		$conditions = $query->newExpr()->add('author_id = a.id');
 		$result = $query
 			->select(['title', 'name'])
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $conditions])
 			->execute();
-		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'another title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$time = new \DateTime('2012-12-21 12:00');
-		$types = ['posted' => 'datetime'];
+		$time = new \DateTime('2007-03-18 10:50:00');
+		$types = ['created' => 'datetime'];
 		$result = $query
-			->select(['title', 'name' => 'd.name'])
+			->select(['title', 'comment' => 'c.comment'])
 			->from('articles')
-			->join(['table' => 'dates', 'alias' => 'd', 'conditions' => ['posted' => $time]], $types)
+			->join(['table' => 'comments', 'alias' => 'c', 'conditions' => ['created <=' => $time]], $types)
 			->execute();
-		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
+		$this->assertEquals(['title' => 'First Article', 'comment' => 'First Comment for First Article'], $result->fetch('assoc'));
+		$this->assertEquals(['title' => 'Second Article', 'comment' => 'First Comment for First Article'], $result->fetch('assoc'));
 	}
 
 /**
  * Tests that joins can be aliased using array keys
  *
  * @return void
- **/
+ */
 	public function testSelectAliasedJoins() {
-		$this->_insertTwoRecords();
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['title', 'name'])
@@ -321,43 +236,41 @@ class QueryTest extends TestCase {
 			->join(['a' => 'authors'])
 			->order(['name' => 'desc', 'articles.id' => 'asc'])
 			->execute();
-		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'nate'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'Second Article', 'name' => 'nate'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$conditions = $query->newExpr()->add(['author_id' => 2]);
+		$conditions = $query->newExpr()->add('author_id = a.id');
 		$result = $query
 			->select(['title', 'name'])
 			->from('articles')
 			->join(['a' => ['table' => 'authors', 'conditions' => $conditions]])
 			->execute();
-		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'another title', 'name' => 'Bruce Lee'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$time = new \DateTime('2012-12-21 12:00');
-		$types = ['posted' => 'datetime'];
+		$time = new \DateTime('2007-03-18 10:45:23');
+		$types = ['created' => 'datetime'];
 		$result = $query
-			->select(['title', 'name' => 'd.name'])
+			->select(['title', 'name' => 'c.comment'])
 			->from('articles')
-			->join(['d' => ['table' => 'dates', 'conditions' => ['posted' => $time]]], $types)
+			->join(['c' => ['table' => 'comments', 'conditions' => ['created' => $time]]], $types)
 			->execute();
-		$this->assertEquals(array('title' => 'a title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'another title', 'name' => 'Chuck Norris'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'First Comment for First Article'), $result->fetch('assoc'));
 	}
 
 /**
  * Tests it is possible to filter a query by using simple AND joined conditions
  *
  * @return void
- **/
+ */
 	public function testSelectSimpleWhere() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['title'])
 			->from('articles')
-			->where(['id' => 1, 'title' => 'a title'])
+			->where(['id' => 1, 'title' => 'First Article'])
 			->execute();
 		$this->assertCount(1, $result);
 
@@ -374,17 +287,16 @@ class QueryTest extends TestCase {
  * Tests using where conditions with operators and scalar values works
  *
  * @return void
- **/
+ */
 	public function testSelectWhereOperators() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['title'])
 			->from('articles')
 			->where(['id >' => 1])
 			->execute();
-		$this->assertCount(1, $result);
-		$this->assertEquals(array('title' => 'another title'), $result->fetch('assoc'));
+		$this->assertCount(2, $result);
+		$this->assertEquals(array('title' => 'Second Article'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
@@ -393,7 +305,7 @@ class QueryTest extends TestCase {
 			->where(['id <' => 2])
 			->execute();
 		$this->assertCount(1, $result);
-		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
@@ -409,7 +321,7 @@ class QueryTest extends TestCase {
 			->from('articles')
 			->where(['id >=' => 1])
 			->execute();
-		$this->assertCount(2, $result);
+		$this->assertCount(3, $result);
 
 		$query = new Query($this->connection);
 		$result = $query
@@ -425,31 +337,31 @@ class QueryTest extends TestCase {
 			->from('articles')
 			->where(['id !=' => 2])
 			->execute();
-		$this->assertCount(1, $result);
-		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
-
-		$query = new Query($this->connection);
-		$result = $query
-			->select(['title'])
-			->from('articles')
-			->where(['title like' => 'a title'])
-			->execute();
-		$this->assertCount(1, $result);
-		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
-
-		$query = new Query($this->connection);
-		$result = $query
-			->select(['title'])
-			->from('articles')
-			->where(['title like' => '%title%'])
-			->execute();
 		$this->assertCount(2, $result);
+		$this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['title'])
 			->from('articles')
-			->where(['title not like' => '%title%'])
+			->where(['title LIKE' => 'First Article'])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['title like' => '%Article%'])
+			->execute();
+		$this->assertCount(3, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['title not like' => '%Article%'])
 			->execute();
 		$this->assertCount(0, $result);
 	}
@@ -460,13 +372,11 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectWhereTypes() {
-		$this->_insertDateRecords();
-
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
-			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->from('comments')
+			->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
 			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
@@ -474,38 +384,38 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
-			->where(['posted >' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->from('comments')
+			->where(['created >' => new \DateTime('2007-03-18 10:46:00')], ['created' => 'datetime'])
 			->execute();
-		$this->assertCount(2, $result);
+		$this->assertCount(5, $result);
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(
 				[
-					'posted >' => new \DateTime('2012-12-21 12:00'),
-					'posted <' => new \DateTime('2012-12-23 12:00')
+					'created >' => new \DateTime('2007-03-18 10:40:00'),
+					'created <' => new \DateTime('2007-03-18 10:46:00')
 				],
-				['posted' => 'datetime']
+				['created' => 'datetime']
 			)
 			->execute();
 		$this->assertCount(1, $result);
-		$this->assertEquals(array('id' => 2), $result->fetch('assoc'));
+		$this->assertEquals(array('id' => 1), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(
 				[
 					'id' => '3something-crazy',
-					'posted <' => new \DateTime('2013-01-01 12:00')
+					'created <' => new \DateTime('2013-01-01 12:00')
 				],
-				['posted' => 'datetime', 'id' => 'integer']
+				['created' => 'datetime', 'id' => 'integer']
 			)
 			->execute();
 		$this->assertCount(1, $result);
@@ -514,13 +424,13 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(
 				[
 					'id' => '1something-crazy',
-					'posted <' => new \DateTime('2013-01-01 12:00')
+					'created <' => new \DateTime('2013-01-01 12:00')
 				],
-				['posted' => 'datetime', 'id' => 'float']
+				['created' => 'datetime', 'id' => 'float']
 			)
 			->execute();
 		$this->assertCount(1, $result);
@@ -534,12 +444,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testSelectWhereArrayType() {
-		$this->_insertDateRecords();
-
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(['id' => ['1', '3']], ['id' => 'integer[]'])
 			->execute();
 		$this->assertCount(2, $result);
@@ -553,13 +461,12 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectOrWhere() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
-			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
-			->orWhere(['posted' => new \DateTime('2012-12-22 12:00')], ['posted' => 'datetime'])
+			->from('comments')
+			->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
+			->orWhere(['created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
 			->execute();
 		$this->assertCount(2, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
@@ -572,12 +479,11 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectAndWhere() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
-			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->from('comments')
+			->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
 			->andWhere(['id' => 1])
 			->execute();
 		$this->assertCount(1, $result);
@@ -586,8 +492,8 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
-			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->from('comments')
+			->where(['created' => new \DateTime('2007-03-18 10:50:55')], ['created' => 'datetime'])
 			->andWhere(['id' => 2])
 			->execute();
 		$this->assertCount(0, $result);
@@ -600,14 +506,13 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectExpressionNesting() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
-			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->from('comments')
+			->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
 			->orWhere(['id' => 2])
-			->andWhere(['posted >=' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->andWhere(['created >=' => new \DateTime('2007-03-18 10:40:00')], ['created' => 'datetime'])
 			->execute();
 		$this->assertCount(2, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
@@ -616,11 +521,11 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
-			->where(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->from('comments')
+			->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
 			->orWhere(['id' => 2])
-			->andWhere(['posted >=' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
-			->orWhere(['posted' => new \DateTime('2012-12-25 12:00')], ['posted' => 'datetime'])
+			->andWhere(['created >=' => new \DateTime('2007-03-18 10:40:00')], ['created' => 'datetime'])
+			->orWhere(['created' => new \DateTime('2007-03-18 10:49:23')], ['created' => 'datetime'])
 			->execute();
 		$this->assertCount(3, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
@@ -634,13 +539,12 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectOrWhereNoPreviousCondition() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
-			->orWhere(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
-			->orWhere(['posted' => new \DateTime('2012-12-22 12:00')], ['posted' => 'datetime'])
+			->from('comments')
+			->orWhere(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
+			->orWhere(['created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
 			->execute();
 		$this->assertCount(2, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
@@ -653,12 +557,11 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectAndWhereNoPreviousCondition() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
-			->andWhere(['posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+			->from('comments')
+			->andWhere(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
 			->andWhere(['id' => 1])
 			->execute();
 		$this->assertCount(1, $result);
@@ -672,11 +575,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testSelectWhereUsingClosure() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				return $exp->eq('id', 1);
 			})
@@ -687,11 +589,11 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				return $exp
 					->eq('id', 1)
-					->eq('posted', new \DateTime('2012-12-21 12:00'), 'datetime');
+					->eq('created', new \DateTime('2007-03-18 10:45:23'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(1, $result);
@@ -700,11 +602,11 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				return $exp
 					->eq('id', 1)
-					->eq('posted', new \DateTime('2021-12-30 15:00'), 'datetime');
+					->eq('created', new \DateTime('2021-12-30 15:00'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(0, $result);
@@ -715,16 +617,15 @@ class QueryTest extends TestCase {
  * conditions and return the expression to be used
  *
  * @return void
- **/
+ */
 	public function testSelectAndWhereUsingClosure() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(['id' => '1'])
 			->andWhere(function($exp) {
-				return $exp->eq('posted', new \DateTime('2012-12-21 12:00'), 'datetime');
+				return $exp->eq('created', new \DateTime('2007-03-18 10:45:23'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(1, $result);
@@ -733,10 +634,10 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(['id' => '1'])
 			->andWhere(function($exp) {
-				return $exp->eq('posted', new \DateTime('2022-12-21 12:00'), 'datetime');
+				return $exp->eq('created', new \DateTime('2022-12-21 12:00'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(0, $result);
@@ -747,16 +648,15 @@ class QueryTest extends TestCase {
  * conditions and return the expression to be used
  *
  * @return void
- **/
+ */
 	public function testSelectOrWhereUsingClosure() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(['id' => '1'])
 			->orWhere(function($exp) {
-				return $exp->eq('posted', new \DateTime('2012-12-22 12:00'), 'datetime');
+				return $exp->eq('created', new \DateTime('2007-03-18 10:47:23'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(2, $result);
@@ -766,11 +666,11 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(['id' => '1'])
 			->orWhere(function($exp) {
 				return $exp
-					->eq('posted', new \DateTime('2012-12-22 12:00'), 'datetime')
+					->eq('created', new \DateTime('2012-12-22 12:00'), 'datetime')
 					->eq('id', 3);
 			})
 			->execute();
@@ -782,11 +682,8 @@ class QueryTest extends TestCase {
  * Tests using where conditions with operator methods
  *
  * @return void
- **/
+ */
 	public function testSelectWhereOperatorMethods() {
-		$this->_insertTwoRecords();
-		$this->_insertDateRecords();
-
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['title'])
@@ -795,8 +692,8 @@ class QueryTest extends TestCase {
 				return $exp->gt('id', 1);
 			})
 			->execute();
-		$this->assertCount(1, $result);
-		$this->assertEquals(array('title' => 'another title'), $result->fetch('assoc'));
+		$this->assertCount(2, $result);
+		$this->assertEquals(array('title' => 'Second Article'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query->select(['title'])
@@ -806,7 +703,7 @@ class QueryTest extends TestCase {
 			})
 			->execute();
 		$this->assertCount(1, $result);
-		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query->select(['title'])
@@ -825,7 +722,7 @@ class QueryTest extends TestCase {
 				return $exp->gte('id', 1);
 			})
 			->execute();
-		$this->assertCount(2, $result);
+		$this->assertCount(3, $result);
 
 		$query = new Query($this->connection);
 		$result = $query
@@ -845,36 +742,36 @@ class QueryTest extends TestCase {
 				return $exp->notEq('id', 2);
 			})
 			->execute();
-		$this->assertCount(1, $result);
-		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
-
-		$query = new Query($this->connection);
-		$result = $query
-			->select(['title'])
-			->from('articles')
-			->where(function($exp) {
-				return $exp->like('title', 'a title');
-			})
-			->execute();
-		$this->assertCount(1, $result);
-		$this->assertEquals(array('title' => 'a title'), $result->fetch('assoc'));
-
-		$query = new Query($this->connection);
-		$result = $query
-			->select(['title'])
-			->from('articles')
-			->where(function($exp) {
-				return $exp->like('title', '%title%');
-			})
-			->execute();
 		$this->assertCount(2, $result);
+		$this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['title'])
 			->from('articles')
 			->where(function($exp) {
-				return $exp->notLike('title', '%title%');
+				return $exp->like('title', 'First Article');
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(function($exp) {
+				return $exp->like('title', '%Article%');
+			})
+			->execute();
+		$this->assertCount(3, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(function($exp) {
+				return $exp->notLike('title', '%Article%');
 			})
 			->execute();
 		$this->assertCount(0, $result);
@@ -882,41 +779,41 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
-				return $exp->isNull('visible');
+				return $exp->isNull('published');
 			})
 			->execute();
-		$this->assertCount(1, $result);
+		$this->assertCount(0, $result);
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
-				return $exp->isNotNull('visible');
+				return $exp->isNotNull('published');
 			})
 			->execute();
-		$this->assertCount(2, $result);
+		$this->assertCount(6, $result);
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
-				return $exp->in('visible', ['Y', 'N']);
+				return $exp->in('published', ['Y', 'N']);
 			})
 			->execute();
-		$this->assertCount(2, $result);
+		$this->assertCount(6, $result);
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				return $exp->in(
-					'posted',
-					[new \DateTime('2012-12-21 12:00'), new \DateTime('2012-12-22 12:00')],
+					'created',
+					[new \DateTime('2007-03-18 10:45:23'), new \DateTime('2007-03-18 10:47:23')],
 					'datetime'
 				);
 			})
@@ -928,16 +825,16 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				return $exp->notIn(
-					'posted',
-					[new \DateTime('2012-12-21 12:00'), new \DateTime('2012-12-22 12:00')],
+					'created',
+					[new \DateTime('2007-03-18 10:45:23'), new \DateTime('2007-03-18 10:47:23')],
 					'datetime'
 				);
 			})
 			->execute();
-		$this->assertCount(1, $result);
+		$this->assertCount(4, $result);
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 	}
 
@@ -947,11 +844,10 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectExpressionComposition() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				$and = $exp->and_(['id' => 2, 'id >' => 1]);
 				return $exp->add($and);
@@ -963,7 +859,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				$and = $exp->and_(['id' => 2, 'id <' => 2]);
 				return $exp->add($and);
@@ -974,7 +870,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				$and = $exp->and_(function($and) {
 					return $and->eq('id', 1)->gt('id', 0);
@@ -988,7 +884,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				$or = $exp->or_(['id' => 1]);
 				$and = $exp->and_(['id >' => 2, 'id <' => 4]);
@@ -1002,7 +898,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				$or = $exp->or_(function($or) {
 					return $or->eq('id', 1)->eq('id', 2);
@@ -1022,37 +918,36 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectWhereNot() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				return $exp->not(
-					$exp->and_(['id' => 2, 'posted' => new \DateTime('2012-12-22 12:00')], ['posted' => 'datetime'])
+					$exp->and_(['id' => 2, 'created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
 				);
 			})
 			->execute();
-		$this->assertCount(2, $result);
+		$this->assertCount(5, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('comments')
 			->where(function($exp) {
 				return $exp->not(
-					$exp->and_(['id' => 2, 'posted' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime'])
+					$exp->and_(['id' => 2, 'created' => new \DateTime('2012-12-21 12:00')], ['created' => 'datetime'])
 				);
 			})
 			->execute();
-		$this->assertCount(3, $result);
+		$this->assertCount(6, $result);
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('articles')
 			->where([
 				'not' => ['or' => ['id' => 1, 'id >' => 2], 'id' => 3]
 			])
@@ -1068,11 +963,10 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectOrderBy() {
-		$statement = $this->_insertDateRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from('dates')
+			->from('articles')
 			->order(['id' => 'desc'])
 			->execute();
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
@@ -1084,52 +978,34 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
-		$result = $query->order(['name' => 'asc'])->execute();
+		$result = $query->order(['title' => 'asc'])->execute();
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
-		$result = $query->order(['name' => 'asc'], true)->execute();
-		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$result = $query->order(['title' => 'asc'], true)->execute();
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
-		$statement->bindValue(1, 4, 'integer');
-		$statement->bindValue(2, 'Chuck Norris');
-		$statement->bindValue(3, new \DateTime('2012-12-21 12:00'), 'datetime');
-		$statement->bindValue(4, 'N');
-		$statement->execute();
-
-		$statement->bindValue(1, 5, 'integer');
-		$statement->bindValue(2, 'Chuck Norris');
-		$statement->bindValue(3, new \DateTime('2012-12-20 12:00'), 'datetime');
-		$statement->bindValue(4, 'N');
-		$statement->execute();
-
-		$result = $query->order(['name' => 'asc', 'posted' => 'desc', 'visible' => 'asc'], true)
+		$result = $query->order(['title' => 'asc', 'published' => 'asc'], true)
 			->execute();
-		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
-		$this->assertEquals(['id' => 4], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
-		$this->assertEquals(['id' => 5], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
 		$expression = $query->newExpr()
 			->add(['(id + :offset) % 2 = 0'])
 			->bind(':offset', 1, null);
 		$result = $query->order([$expression, 'id' => 'desc'], true)->execute();
-		$this->assertEquals(['id' => 4], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
-		$this->assertEquals(['id' => 5], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
 		$result = $query->order($expression, true)->order(['id' => 'asc'])->execute();
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
-		$this->assertEquals(['id' => 4], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
-		$this->assertEquals(['id' => 5], $result->fetch('assoc'));
 	}
 
 /**
@@ -1139,13 +1015,6 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectGroup() {
-		$statement = $this->_insertTwoRecords();
-		$statement->bindValue(1, 3);
-		$statement->bindValue(2, 'another title');
-		$statement->bindValue(3, 'another body');
-		$statement->bindValue(4, 2);
-		$statement->execute();
-
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['total' => 'count(author_id)', 'author_id'])
@@ -1153,14 +1022,14 @@ class QueryTest extends TestCase {
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
 			->execute();
-		$expected = [['total' => 1, 'author_id' => 1], ['total' => '2', 'author_id' => 2]];
+		$expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$result = $query->select(['total' => 'count(title)', 'name'], true)
 			->group(['name'], true)
 			->order(['total' => 'asc'])
 			->execute();
-		$expected = [['total' => 1, 'name' => 'Chuck Norris'], ['total' => 2, 'name' => 'Bruce Lee']];
+		$expected = [['total' => 1, 'name' => 'larry'], ['total' => 2, 'name' => 'mariano']];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$result = $query->select(['articles.id'])
@@ -1174,15 +1043,8 @@ class QueryTest extends TestCase {
  * this is testing that there is an specific implementation for DISTINCT ON
  *
  * @return void
- **/
+ */
 	public function testSelectDistinct() {
-		$result = $this->_insertTwoRecords();
-		$result->bindValue(1, '3', 'integer');
-		$result->bindValue(2, 'another title');
-		$result->bindValue(3, 'another body');
-		$result->bindValue(4, 2);
-		$result->execute();
-
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['author_id'])
@@ -1204,15 +1066,8 @@ class QueryTest extends TestCase {
  * Tests that having() behaves pretty much the same as the where() method
  *
  * @return void
- **/
+ */
 	public function testSelectHaving() {
-		$statement = $this->_insertTwoRecords();
-		$statement->bindValue(1, 3);
-		$statement->bindValue(2, 'another title');
-		$statement->bindValue(3, 'another body');
-		$statement->bindValue(4, 2);
-		$statement->execute();
-
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['total' => 'count(author_id)', 'author_id'])
@@ -1221,17 +1076,17 @@ class QueryTest extends TestCase {
 			->group('author_id')
 			->having(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
 			->execute();
-		$expected = [['total' => 1, 'author_id' => 1]];
+		$expected = [['total' => 1, 'author_id' => 3]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$result = $query->having(['count(author_id)' => 2], ['count(author_id)' => 'integer'], true)
 			->execute();
-		$expected = [['total' => 2, 'author_id' => 2]];
+		$expected = [['total' => 2, 'author_id' => 1]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$result = $query->having(function($e) { return $e->add('count(author_id) = 1 + 1'); }, [], true)
 			->execute();
-		$expected = [['total' => 2, 'author_id' => 2]];
+		$expected = [['total' => 2, 'author_id' => 1]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
 
@@ -1240,15 +1095,8 @@ class QueryTest extends TestCase {
  * in the having clause
  *
  * @return void
- **/
+ */
 	public function testSelectOrHaving() {
-		$statement = $this->_insertTwoRecords();
-		$statement->bindValue(1, 3);
-		$statement->bindValue(2, 'another title');
-		$statement->bindValue(3, 'another body');
-		$statement->bindValue(4, 2);
-		$statement->execute();
-
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['total' => 'count(author_id)', 'author_id'])
@@ -1258,7 +1106,7 @@ class QueryTest extends TestCase {
 			->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
 			->orHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
 			->execute();
-		$expected = [['total' => 1, 'author_id' => 1]];
+		$expected = [['total' => 1, 'author_id' => 3]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$query = new Query($this->connection);
@@ -1270,7 +1118,7 @@ class QueryTest extends TestCase {
 			->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
 			->orHaving(['count(author_id) <=' => 2], ['count(author_id)' => 'integer'])
 			->execute();
-		$expected = [['total' => 1, 'author_id' => 1], ['total' => 2, 'author_id' => 2]];
+		$expected = [['total' => 2, 'author_id' => 1], ['total' => 1, 'author_id' => 3]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$query = new Query($this->connection);
@@ -1282,7 +1130,7 @@ class QueryTest extends TestCase {
 			->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
 			->orHaving(function($e) { return $e->add('count(author_id) = 1 + 1'); })
 			->execute();
-		$expected = [['total' => 2, 'author_id' => 2]];
+		$expected = [['total' => 2, 'author_id' => 1]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
 
@@ -1291,15 +1139,8 @@ class QueryTest extends TestCase {
  * in the having clause
  *
  * @return void
- **/
+ */
 	public function testSelectAndHaving() {
-		$statement = $this->_insertTwoRecords();
-		$statement->bindValue(1, 3);
-		$statement->bindValue(2, 'another title');
-		$statement->bindValue(3, 'another body');
-		$statement->bindValue(4, 2);
-		$statement->execute();
-
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['total' => 'count(author_id)', 'author_id'])
@@ -1320,7 +1161,7 @@ class QueryTest extends TestCase {
 			->having(['count(author_id)' => 2], ['count(author_id)' => 'integer'])
 			->andHaving(['count(author_id) >' => 1], ['count(author_id)' => 'integer'])
 			->execute();
-		$expected = [['total' => 2, 'author_id' => 2]];
+		$expected = [['total' => 2, 'author_id' => 1]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$query = new Query($this->connection);
@@ -1331,7 +1172,7 @@ class QueryTest extends TestCase {
 			->group('author_id')
 			->andHaving(function($e) { return $e->add('count(author_id) = 2 - 1'); })
 			->execute();
-		$expected = [['total' => 1, 'author_id' => 1]];
+		$expected = [['total' => 1, 'author_id' => 3]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
 
@@ -1341,9 +1182,8 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectLimit() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
-		$result = $query->select('id')->from('dates')->limit(1)->execute();
+		$result = $query->select('id')->from('articles')->limit(1)->execute();
 		$this->assertCount(1, $result);
 
 		$result = $query->limit(null)->execute();
@@ -1362,9 +1202,8 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testSelectOffset() {
-		$this->_insertDateRecords();
 		$query = new Query($this->connection);
-		$result = $query->select('id')->from('dates')
+		$result = $query->select('id')->from('comments')
 			->limit(1)
 			->offset(0)->execute();
 		$this->assertCount(1, $result);
@@ -1379,7 +1218,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$result = $query->select('id')->from('dates')
+		$result = $query->select('id')->from('articles')
 			->order(['id' => 'desc'])
 			->limit(1)
 			->offset(0)->execute();
@@ -1397,11 +1236,8 @@ class QueryTest extends TestCase {
  * and be used as a normal field, including binding any passed parameter
  *
  * @return void
- **/
+ */
 	public function testSubqueryInSelect() {
-		$this->_insertDateRecords();
-		$this->_insertTwoRecords();
-
 		$query = new Query($this->connection);
 		$subquery = (new Query($this->connection))
 			->select('name')
@@ -1409,12 +1245,15 @@ class QueryTest extends TestCase {
 			->where(['b.id = a.id']);
 		$result = $query
 			->select(['id', 'name' => $subquery])
-			->from(['a' => 'dates'])->execute();
+			->from(['a' => 'comments'])->execute();
 
 		$expected = [
-			['id' => 1, 'name' => 'Chuck Norris'],
-			['id' => 2, 'name' => 'Bruce Lee'],
-			['id' => 3, 'name' => null]
+			['id' => 1, 'name' => 'mariano'],
+			['id' => 2, 'name' => 'nate'],
+			['id' => 3, 'name' => 'larry'],
+			['id' => 4, 'name' => 'garrett'],
+			['id' => 5, 'name' => null],
+			['id' => 6, 'name' => null],
 		];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
@@ -1422,15 +1261,15 @@ class QueryTest extends TestCase {
 		$subquery = (new Query($this->connection))
 			->select('name')
 			->from(['b' => 'authors'])
-			->where(['name' => 'Chuck Norris'], ['name' => 'string']);
+			->where(['name' => 'mariano'], ['name' => 'string']);
 		$result = $query
 			->select(['id', 'name' => $subquery])
-			->from(['a' => 'dates'])->execute();
+			->from(['a' => 'articles'])->execute();
 
 		$expected = [
-			['id' => 1, 'name' => 'Chuck Norris'],
-			['id' => 2, 'name' => 'Chuck Norris'],
-			['id' => 3, 'name' => 'Chuck Norris']
+			['id' => 1, 'name' => 'mariano'],
+			['id' => 2, 'name' => 'mariano'],
+			['id' => 3, 'name' => 'mariano'],
 		];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
@@ -1440,24 +1279,24 @@ class QueryTest extends TestCase {
  * and be used as a normal table, including binding any passed parameter
  *
  * @return void
- **/
+ */
 	public function testSuqueryInFrom() {
-		$this->_insertDateRecords();
-		$this->_insertTwoRecords();
-
 		$query = new Query($this->connection);
 		$subquery = (new Query($this->connection))
-			->select(['id', 'name'])
-			->from('dates')
-			->where(['posted >' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime']);
+			->select(['id', 'comment'])
+			->from('comments')
+			->where(['created >' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime']);
 		$result = $query
-			->select(['name'])
+			->select(['comment'])
 			->from(['b' => $subquery])
 			->where(['id !=' => 3])
 			->execute();
 
 		$expected = [
-			['name' => 'Bruce Lee'],
+			['comment' => 'Second Comment for First Article'],
+			['comment' => 'Fourth Comment for First Article'],
+			['comment' => 'First Comment for Second Article'],
+			['comment' => 'Second Comment for Second Article'],
 		];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
@@ -1467,11 +1306,8 @@ class QueryTest extends TestCase {
  * and be used as a normal condition, including binding any passed parameter
  *
  * @return void
- **/
-	public function testSuqueryInWhere() {
-		$this->_insertDateRecords();
-		$this->_insertTwoRecords();
-
+ */
+	public function testSubqueryInWhere() {
 		$query = new Query($this->connection);
 		$subquery = (new Query($this->connection))
 			->select(['id'])
@@ -1479,21 +1315,22 @@ class QueryTest extends TestCase {
 			->where(['id >' => 1]);
 		$result = $query
 			->select(['name'])
-			->from(['dates'])
+			->from(['authors'])
 			->where(['id !=' => $subquery])
 			->execute();
 
 		$expected = [
-			['name' => 'Chuck Norris'],
-			['name' => 'Jet Li']
+			['name' => 'mariano'],
+			['name' => 'larry'],
+			['name' => 'garrett'],
 		];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$query = new Query($this->connection);
 		$subquery = (new Query($this->connection))
 			->select(['id'])
-			->from('dates')
-			->where(['posted >' => new \DateTime('2012-12-21 12:00')], ['posted' => 'datetime']);
+			->from('comments')
+			->where(['created >' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime']);
 		$result = $query
 			->select(['name'])
 			->from(['authors'])
@@ -1501,7 +1338,7 @@ class QueryTest extends TestCase {
 			->execute();
 
 		$expected = [
-			['name' => 'Chuck Norris'],
+			['name' => 'mariano'],
 		];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
@@ -1510,10 +1347,8 @@ class QueryTest extends TestCase {
  * Tests that it is possible to use a subquery in a join clause
  *
  * @return void
- **/
+ */
 	public function testSubqueyInJoin() {
-		$this->_insertTwoRecords();
-		$this->_insertDateRecords();
 		$subquery = (new Query($this->connection))->select('*')->from('authors');
 
 		$query = new Query($this->connection);
@@ -1522,11 +1357,11 @@ class QueryTest extends TestCase {
 			->from('articles')
 			->join(['b' => $subquery])
 			->execute();
-		$this->assertCount(4, $result);
+		$this->assertCount(self::ARTICLE_COUNT * self::AUTHOR_COUNT, $result, 'Cross join causes multiplication');
 
 		$subquery->where(['id' => 1]);
 		$result = $query->execute();
-		$this->assertCount(2, $result);
+		$this->assertCount(3, $result);
 
 		$query->join(['b' => ['table' => $subquery, 'conditions' => ['b.id = articles.id']]], [], true);
 		$result = $query->execute();
@@ -1537,17 +1372,15 @@ class QueryTest extends TestCase {
  * Tests that it is possible to one or multiple UNION statements in a query
  *
  * @return void
- **/
+ */
 	public function testUnion() {
-		$this->_insertTwoRecords();
-		$this->_insertDateRecords();
 		$union = (new Query($this->connection))->select(['id', 'title'])->from(['a' => 'articles']);
 		$query = new Query($this->connection);
-		$result = $query->select(['id', 'name'])
-			->from(['d' => 'dates'])
+		$result = $query->select(['id', 'comment'])
+			->from(['c' => 'comments'])
 			->union($union)
 			->execute();
-		$this->assertCount(5, $result);
+		$this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
 		$rows = $result->fetchAll();
 
 		$union->select(['foo' => 'id', 'bar' => 'title']);
@@ -1557,15 +1390,17 @@ class QueryTest extends TestCase {
 			->where(['id ' => 1])
 			->order(['id' => 'desc']);
 
-		$result = $query->select(['foo' => 'id', 'bar' => 'name'])->union($union)->execute();
-		$this->assertCount(5, $result);
+		$query->select(['foo' => 'id', 'bar' => 'comment'])->union($union);
+		$result = $query->execute();
+		$this->assertCount(self::COMMENT_COUNT + self::AUTHOR_COUNT, $result);
 		$this->assertNotEquals($rows, $result->fetchAll());
 
 		$union = (new Query($this->connection))
 			->select(['id', 'title'])
 			->from(['c' => 'articles']);
-		$result = $query->select(['id', 'name'], true)->union($union, false, true)->execute();
-		$this->assertCount(5, $result);
+		$query->select(['id', 'comment'], true)->union($union, false, true);
+		$result = $query->execute();
+		$this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
 		$this->assertEquals($rows, $result->fetchAll());
 	}
 
@@ -1575,15 +1410,13 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testUnionAll() {
-		$this->_insertTwoRecords();
-		$this->_insertDateRecords();
 		$union = (new Query($this->connection))->select(['id', 'title'])->from(['a' => 'articles']);
 		$query = new Query($this->connection);
-		$result = $query->select(['id', 'name'])
-			->from(['d' => 'dates'])
+		$result = $query->select(['id', 'comment'])
+			->from(['c' => 'comments'])
 			->union($union)
 			->execute();
-		$this->assertCount(5, $result);
+		$this->assertCount(self::ARTICLE_COUNT + self::COMMENT_COUNT, $result);
 		$rows = $result->fetchAll();
 
 		$union->select(['foo' => 'id', 'bar' => 'title']);
@@ -1593,8 +1426,9 @@ class QueryTest extends TestCase {
 			->where(['id ' => 1])
 			->order(['id' => 'desc']);
 
-		$result = $query->select(['foo' => 'id', 'bar' => 'name'])->union($union, true)->execute();
-		$this->assertCount(6, $result);
+		$query->select(['foo' => 'id', 'bar' => 'comment'])->union($union, true);
+		$result = $query->execute();
+		$this->assertCount(1 + self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
 		$this->assertNotEquals($rows, $result->fetchAll());
 	}
 
@@ -1604,7 +1438,6 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testDecorateResults() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id', 'title'])
@@ -1654,7 +1487,6 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testDeleteWithFrom() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 
 		$query->delete()
@@ -1666,7 +1498,7 @@ class QueryTest extends TestCase {
 
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-		$this->assertCount(2, $result);
+		$this->assertCount(self::AUTHOR_COUNT, $result);
 	}
 
 /**
@@ -1675,7 +1507,6 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testDeleteNoFrom() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 
 		$query->delete('authors')
@@ -1686,7 +1517,7 @@ class QueryTest extends TestCase {
 
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-		$this->assertCount(2, $result);
+		$this->assertCount(self::AUTHOR_COUNT, $result);
 	}
 
 /**
@@ -1695,7 +1526,6 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testSelectAndDeleteOnSameQuery() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$result = $query->select()
 			->delete('authors')
@@ -1712,7 +1542,6 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testUpdateSimple() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$query->update('authors')
 			->set('name', 'mark')
@@ -1730,7 +1559,6 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testUpdateMultipleFields() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$query->update('articles')
 			->set('title', 'mark', 'string')
@@ -1754,7 +1582,6 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testUpdateMultipleFieldsArray() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$query->update('articles')
 			->set([
@@ -1780,7 +1607,6 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testUpdateWithExpression() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 
 		$expr = $query->newExpr();
@@ -1821,18 +1647,15 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertSimple() {
-		$this->_createAuthorsAndArticles();
-
 		$query = new Query($this->connection);
-		$query->insert('articles', ['id', 'title', 'body'])
+		$query->insert('articles', ['title', 'body'])
 			->values([
-				'id' => 1,
 				'title' => 'mark',
 				'body' => 'test insert'
 			]);
 		$result = $query->sql(false);
 		$this->assertEquals(
-			'INSERT INTO articles (id, title, body) VALUES (?, ?, ?)',
+			'INSERT INTO articles (title, body) VALUES (?, ?)',
 			$result
 		);
 
@@ -1841,13 +1664,14 @@ class QueryTest extends TestCase {
 
 		$expected = [
 			[
-				'id' => 1,
+				'id' => 4,
 				'author_id' => null,
 				'title' => 'mark',
-				'body' => 'test insert'
+				'body' => 'test insert',
+				'published' => 'N',
 			]
 		];
-		$this->assertTable('articles', 1, $expected);
+		$this->assertTable('articles', 1, $expected, ['id >=' => 4]);
 	}
 
 /**
@@ -1857,17 +1681,14 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertSparseRow() {
-		$this->_createAuthorsAndArticles();
-
 		$query = new Query($this->connection);
-		$query->insert('articles', ['id', 'title', 'body'])
+		$query->insert('articles', ['title', 'body'])
 			->values([
-				'body' => 'test insert',
 				'title' => 'mark',
 			]);
 		$result = $query->sql(false);
 		$this->assertEquals(
-			'INSERT INTO articles (id, title, body) VALUES (?, ?, ?)',
+			'INSERT INTO articles (title, body) VALUES (?, ?)',
 			$result
 		);
 
@@ -1876,13 +1697,14 @@ class QueryTest extends TestCase {
 
 		$expected = [
 			[
-				'id' => null,
+				'id' => 4,
 				'author_id' => null,
 				'title' => 'mark',
-				'body' => 'test insert'
+				'body' => null,
+				'published' => 'N',
 			]
 		];
-		$this->assertTable('articles', 1, $expected);
+		$this->assertTable('articles', 1, $expected, ['id >= 4']);
 	}
 
 /**
@@ -1891,21 +1713,17 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertMultipleRowsSparse() {
-		$this->_createAuthorsAndArticles();
-
 		$query = new Query($this->connection);
-		$query->insert('articles', ['id', 'title', 'body'])
+		$query->insert('articles', ['title', 'body'])
 			->values([
-				'id' => 1,
 				'body' => 'test insert'
 			])
 			->values([
-				'id' => 2,
 				'title' => 'jose',
 			]);
 		$result = $query->sql(false);
 		$this->assertEquals(
-			'INSERT INTO articles (id, title, body) VALUES (?, ?, ?), (?, ?, ?)',
+			'INSERT INTO articles (title, body) VALUES (?, ?), (?, ?)',
 			$result
 		);
 
@@ -1914,19 +1732,21 @@ class QueryTest extends TestCase {
 
 		$expected = [
 			[
-				'id' => 1,
+				'id' => 4,
 				'author_id' => null,
 				'title' => null,
-				'body' => 'test insert'
+				'body' => 'test insert',
+				'published' => 'N',
 			],
 			[
-				'id' => 2,
+				'id' => 5,
 				'author_id' => null,
 				'title' => 'jose',
 				'body' => null,
+				'published' => 'N',
 			],
 		];
-		$this->assertTable('articles', 2, $expected);
+		$this->assertTable('articles', 2, $expected, ['id >=' => 4]);
 	}
 
 /**
@@ -1935,7 +1755,6 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertFromSelect() {
-		$this->_insertTwoRecords();
 		$select = (new Query($this->connection))->select("name, 'some text', 99")
 			->from('authors')
 			->where(['id' => 1]);
@@ -1960,10 +1779,11 @@ class QueryTest extends TestCase {
 			->execute();
 		$this->assertCount(1, $result);
 		$expected = [
-			'id' => null,
-			'title' => 'Chuck Norris',
+			'id' => 4,
+			'title' => 'mariano',
 			'body' => 'some text',
 			'author_id' => 99,
+			'published' => 'N',
 		];
 		$this->assertEquals($expected, $result->fetch('assoc'));
 	}
@@ -1999,12 +1819,11 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testSQLFunctions() {
-		$this->_insertTwoRecords();
 		$query = new Query($this->connection);
 		$result = $query->select(function($q) { return ['total' => $q->count('*')]; })
 			->from('articles')
 			->execute();
-		$expected = [['total' => 2]];
+		$expected = [['total' => 3]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$query = new Query($this->connection);
@@ -2012,7 +1831,11 @@ class QueryTest extends TestCase {
 			->from('articles')
 			->order(['c' => 'ASC'])
 			->execute();
-		$expected = [['c' => 'a title is appended'], ['c' => 'another title is appended']];
+		$expected = [
+			['c' => 'First Article is appended'],
+			['c' => 'Second Article is appended'],
+			['c' => 'Third Article is appended']
+		];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$query = new Query($this->connection);
@@ -2056,28 +1879,23 @@ class QueryTest extends TestCase {
 	public function testDefaultTypes() {
 		$query = new Query($this->connection);
 		$this->assertEquals([], $query->defaultTypes());
-		$types = ['id' => 'integer', 'posted' => 'datetime'];
+		$types = ['id' => 'integer', 'created' => 'datetime'];
 		$this->assertSame($query, $query->defaultTypes($types));
 		$this->assertSame($types, $query->defaultTypes());
 
-		$this->_insertDateRecords();
-		$results = $query->select(['id', 'name'])
-			->from('dates')
-			->where(['posted >=' => new \DateTime('2012-12-22 12:01')])
+		$results = $query->select(['id', 'comment'])
+			->from('comments')
+			->where(['created >=' => new \DateTime('2007-03-18 10:55:00')])
 			->execute();
-		$expected = [['id' => '3', 'name' => 'Jet Li']];
+		$expected = [['id' => '6', 'comment' => 'Second Comment for Second Article']];
 		$this->assertEquals($expected, $results->fetchAll('assoc'));
 
 		// Now test default can be overridden
-		$types = ['posted' => 'date'];
+		$types = ['created' => 'date'];
 		$results = $query
-			->where(['posted >=' => new \DateTime('2012-12-22 12:01')], $types, true)
+			->where(['created >=' => new \DateTime('2007-03-18 10:50:00')], $types, true)
 			->execute();
-		$expected = [
-			['id' => '2', 'name' => 'Bruce Lee'],
-			['id' => '3', 'name' => 'Jet Li']
-		];
-		$this->assertEquals($expected, $results->fetchAll('assoc'));
+		$this->assertCount(6, $results, 'All 6 rows should match.');
 	}
 
 /**
@@ -2088,9 +1906,10 @@ class QueryTest extends TestCase {
  * @param array $rows
  * @return void
  */
-	public function assertTable($table, $count, $rows) {
+	public function assertTable($table, $count, $rows, $conditions = []) {
 		$result = (new Query($this->connection))->select('*')
 			->from($table)
+			->where($conditions)
 			->execute();
 		$this->assertCount($count, $result, 'Row count is incorrect');
 		$this->assertEquals($rows, $result->fetchAll('assoc'));
