@@ -150,29 +150,29 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel->set(array('title' => '$$', 'name' => '##'));
 		$TestModel->invalidFields(array('fieldList' => array('title')));
 		$expected = array(
-			'title' => array('This field cannot be left blank')
+			'title' => array('This field is invalid')
 		);
 		$this->assertEquals($expected, $TestModel->validationErrors);
 		$TestModel->validationErrors = array();
 
 		$TestModel->invalidFields(array('fieldList' => array('name')));
 		$expected = array(
-			'name' => array('This field cannot be left blank')
+			'name' => array('This field is invalid')
 		);
 		$this->assertEquals($expected, $TestModel->validationErrors);
 		$TestModel->validationErrors = array();
 
 		$TestModel->invalidFields(array('fieldList' => array('name', 'title')));
 		$expected = array(
-			'name' => array('This field cannot be left blank'),
-			'title' => array('This field cannot be left blank')
+			'name' => array('This field is invalid'),
+			'title' => array('This field is invalid')
 		);
 		$this->assertEquals($expected, $TestModel->validationErrors);
 		$TestModel->validationErrors = array();
 
 		$TestModel->whitelist = array('name');
 		$TestModel->invalidFields();
-		$expected = array('name' => array('This field cannot be left blank'));
+		$expected = array('name' => array('This field is invalid'));
 		$this->assertEquals($expected, $TestModel->validationErrors);
 
 		$this->assertEquals($TestModel->validate, $validate);
@@ -198,7 +198,7 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel->whitelist = array('name');
 		$TestModel->save(array('name' => '#$$#', 'title' => '$$$$'));
 
-		$expected = array('name' => array('This field cannot be left blank'));
+		$expected = array('name' => array('This field is invalid'));
 		$this->assertEquals($expected, $TestModel->validationErrors);
 	}
 
@@ -581,7 +581,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
 
-		$expectedError = array('doomed' => array('This field cannot be left blank'));
+		$expectedError = array('doomed' => array('This field is invalid'));
 
 		$Something->create();
 		$result = $Something->save($data);
@@ -634,7 +634,7 @@ class ModelValidationTest extends BaseModelTest {
 		$JoinThing = $Something->JoinThing;
 
 		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
-		$expectedError = array('doomed' => array('This field cannot be left blank'));
+		$expectedError = array('doomed' => array('This field is invalid'));
 
 		$Something->create();
 		$result = $Something->saveAll($data, array('validate' => 'only'));
@@ -1177,7 +1177,7 @@ class ModelValidationTest extends BaseModelTest {
 			'Comment' => array(
 				1 => array(
 					'Attachment' => array(
-						'attachment' => array('This field cannot be left blank')
+						'attachment' => array('This field is invalid')
 					)
 				)
 			)
@@ -1247,7 +1247,7 @@ class ModelValidationTest extends BaseModelTest {
 			'Comment' => array(
 				'Article' => array(
 					'User' => array(
-						'user' => array('This field cannot be left blank')
+						'user' => array('This field is invalid')
 					)
 				)
 			)
@@ -1273,9 +1273,9 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array(
 			'Comment' => array(
 				'Article' => array(
-					'body' => array('This field cannot be left blank'),
+					'body' => array('This field is invalid'),
 					'User' => array(
-						'user' => array('This field cannot be left blank')
+						'user' => array('This field is invalid')
 					)
 				)
 			)
@@ -1300,11 +1300,11 @@ class ModelValidationTest extends BaseModelTest {
 		$result = $TestModel->Comment->Attachment->validationErrors;
 		$expected = array(
 			'Comment' => array(
-				'comment' => array('This field cannot be left blank'),
+				'comment' => array('This field is invalid'),
 				'Article' => array(
-					'body' => array('This field cannot be left blank'),
+					'body' => array('This field is invalid'),
 					'User' => array(
-						'user' => array('This field cannot be left blank')
+						'user' => array('This field is invalid')
 					)
 				)
 			)
@@ -1328,13 +1328,13 @@ class ModelValidationTest extends BaseModelTest {
 
 		$result = $TestModel->Comment->Attachment->validationErrors;
 		$expected = array(
-			'attachment' => array('This field cannot be left blank'),
+			'attachment' => array('This field is invalid'),
 			'Comment' => array(
-				'comment' => array('This field cannot be left blank'),
+				'comment' => array('This field is invalid'),
 				'Article' => array(
-					'body' => array('This field cannot be left blank'),
+					'body' => array('This field is invalid'),
 					'User' => array(
-						'user' => array('This field cannot be left blank')
+						'user' => array('This field is invalid')
 					)
 				)
 			)
@@ -1343,11 +1343,11 @@ class ModelValidationTest extends BaseModelTest {
 
 		$result = $TestModel->Comment->validationErrors;
 		$expected = array(
-			'comment' => array('This field cannot be left blank'),
+			'comment' => array('This field is invalid'),
 			'Article' => array(
-					'body' => array('This field cannot be left blank'),
+					'body' => array('This field is invalid'),
 					'User' => array(
-						'user' => array('This field cannot be left blank')
+						'user' => array('This field is invalid')
 					)
 				)
 		);
@@ -1389,7 +1389,7 @@ class ModelValidationTest extends BaseModelTest {
 		$result = $TestModel->validateAssociated($data, array('deep' => false));
 		$this->assertFalse($result);
 
-		$expected = array('body' => array('This field cannot be left blank'));
+		$expected = array('body' => array('This field is invalid'));
 		$result = $TestModel->validationErrors;
 		$this->assertSame($expected, $result);
 
@@ -1608,8 +1608,8 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertSame($expected, $result);
 
 		$expected = array('Comment' => array(
-			0 => array('comment' => array('This field cannot be left blank')),
-			2 => array('comment' => array('This field cannot be left blank'))
+			0 => array('comment' => array('This field is invalid')),
+			2 => array('comment' => array('This field is invalid'))
 		));
 		$this->assertEquals($expected['Comment'], $TestModel->Comment->validationErrors);
 
@@ -1619,9 +1619,9 @@ class ModelValidationTest extends BaseModelTest {
 		$model->Attachment->validate = array('attachment' => 'notEmpty');
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')));
 		$expected = array(
-			'comment' => array('This field cannot be left blank'),
+			'comment' => array('This field is invalid'),
 			'Attachment' => array(
-				'attachment' => array('This field cannot be left blank')
+				'attachment' => array('This field is invalid')
 			)
 		);
 
@@ -1651,7 +1651,7 @@ class ModelValidationTest extends BaseModelTest {
 			2 => array('title' => 'title 2'),
 		);
 		$expected = array(
-			0 => array('title' => array('This field cannot be left blank')),
+			0 => array('title' => array('This field is invalid')),
 		);
 
 		$result = $TestModel->saveAll($data, array('validate' => 'only'));
@@ -1667,7 +1667,7 @@ class ModelValidationTest extends BaseModelTest {
 			2 => array('title' => 'title 2'),
 		);
 		$expected = array(
-			1 => array('title' => array('This field cannot be left blank')),
+			1 => array('title' => array('This field is invalid')),
 		);
 		$result = $TestModel->saveAll($data, array('validate' => 'only'));
 		$this->assertFalse($result);
@@ -2290,13 +2290,13 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array(
 			'Comment' => array(
 				'comment' => array(
-					0 => 'This field cannot be left blank',
+					0 => 'This field is invalid',
 				),
 				'User' => array(
 					'Comment' => array(
 						0 => array(
 							'comment' => array(
-								0 => 'This field cannot be left blank',
+								0 => 'This field is invalid',
 							),
 						),
 					),
@@ -2358,7 +2358,7 @@ class ModelValidationTest extends BaseModelTest {
 				'Comment' => array(
 					0 => array(
 						'comment' => array(
-							0 => 'This field cannot be left blank',
+							0 => 'This field is invalid',
 						),
 					),
 				),
