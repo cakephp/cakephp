@@ -19,7 +19,7 @@
  */
 namespace Cake\Test\TestCase\Controller;
 
-use App\Controller\PagesController;
+use TestApp\Controller\PagesController;
 use Cake\Core\App;
 use Cake\Network\Request;
 use Cake\Network\Response;
