@@ -47,6 +47,11 @@ class ContainableBehavior extends ModelBehavior {
 	public $runtime = array();
 
 /**
+ *  Rebind model array
+ */
+ 	public $rebinds = array();
+
+/**
  * Initiate behavior for the model using specified settings.
  *
  * Available settings:
@@ -152,6 +157,12 @@ class ContainableBehavior extends ModelBehavior {
 						if (!$reset && empty($instance->__backOriginalAssociation)) {
 							$instance->__backOriginalAssociation = $backupBindings;
 						}
+						foreach ($unbind as $className) {
+							$this->rebinds[] = array
+							( 'model' => $instance, 'type' => $type
+							, 'className' => $className, 'link' => &$instance->{$type}[$className]
+							);
+						}
 						$instance->unbindModel(array($type => $unbind), $reset);
 					}
 					foreach ($instance->{$type} as $assoc => $options) {
@@ -220,6 +231,19 @@ class ContainableBehavior extends ModelBehavior {
 		}
 		$query['fields'] = array_unique($query['fields']);
 		return $query;
+	}
+
+
+/**
+ *  Runs after a find() operation. Used to allow 'contain' restoring some settings
+ *  altered during beforeFind Event
+ */
+
+	public function afterFind($model, $results, $primary) {
+		while (count($this->rebinds) > 0) {
+			$link = array_pop($this->rebinds);
+			$link['model']->{$link['type']}[$link['className']] = &$link['link'];
+		}
 	}
 
 /**
