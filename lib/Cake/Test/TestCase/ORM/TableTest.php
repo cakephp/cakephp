@@ -379,10 +379,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testUpdate() {
+	public function testUpdateAll() {
 		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
 		$fields = ['user' => 'mark'];
-		$result = $table->update($fields, ['id <' => 4]);
+		$result = $table->updateAll($fields, ['id <' => 4]);
 		$this->assertTrue($result);
 
 		$result = $table->find('all')->select(['user'])->toArray();
@@ -396,7 +396,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @expectedException Cake\Database\Exception
  */
-	public function testUpdateFailure() {
+	public function testUpdateAllFailure() {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
 			['_buildQuery'],
@@ -409,7 +409,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())
 			->method('execute')
 			->will($this->throwException(new \Cake\Database\Exception('Not good')));
-		$table->update(['user' => 'mark'], []);
+		$table->updateAll(['user' => 'mark'], []);
 	}
 
 }

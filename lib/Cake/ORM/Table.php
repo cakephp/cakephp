@@ -487,7 +487,7 @@ class Table {
 	}
 
 /**
- * Update one or many rows.
+ * Update all matching rows.
  *
  * Sets the $fields to the provided values based on $conditions.
  * This method will *not* trigger beforeSave/afterSave events. If you need those
@@ -497,7 +497,7 @@ class Table {
  * @param array $conditions An array of conditions, similar to those used with find()
  * @return boolean Success
  */
-	public function update($fields, $conditions) {
+	public function updateAll($fields, $conditions) {
 		$query = $this->_buildQuery();
 		$query->update($this->table())
 			->set($fields)
