@@ -174,7 +174,7 @@ class Log {
  */
 	protected static function _loadConfig() {
 		$loggers = Configure::read('Log');
-		foreach ($loggers as $key => $config) {
+		foreach ((array)$loggers as $key => $config) {
 			static::$_Collection->load($key, $config);
 		}
 	}

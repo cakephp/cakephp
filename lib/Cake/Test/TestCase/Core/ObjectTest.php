@@ -22,6 +22,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
+use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
@@ -198,6 +199,8 @@ class ObjectTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 		Configure::write('Security.salt', 'not-the-default');
 		Configure::write('Security.cipherSeed', '123456');
+		Log::disable('stdout');
+		Log::disable('stderr');
 	}
 
 /**

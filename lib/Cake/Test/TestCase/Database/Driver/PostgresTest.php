@@ -34,7 +34,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testConnectionConfigDefault() {
-		$driver = $this->getMock('Cake\Database\driver\Postgres', ['_connect', 'connection']);
+		$driver = $this->getMock('Cake\Database\Driver\Postgres', ['_connect', 'connection']);
 		$expected = [
 			'persistent' => true,
 			'host' => 'localhost',
@@ -97,7 +97,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			'init' => ['Execute this', 'this too']
 		];
 		$driver = $this->getMock(
-			'Cake\Database\driver\Postgres',
+			'Cake\Database\Driver\Postgres',
 			['_connect', 'connection'],
 			[$config]
 		);

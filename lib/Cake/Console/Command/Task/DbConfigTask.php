@@ -253,6 +253,7 @@ class DbConfigTask extends Shell {
 		}
 
 		$filename = $this->path . 'datasources.php';
+		$oldConfigs = [];
 		if (file_exists($filename)) {
 			$oldConfigs = Configure::read('Datasource');
 

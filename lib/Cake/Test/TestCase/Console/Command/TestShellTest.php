@@ -324,7 +324,7 @@ class TestShellTest extends TestCase {
 
 		$this->Shell->expects($this->once())->method('_run');
 		$this->Shell->available();
-		$this->assertEquals(array('core', 'AllBehaviors'), $this->Shell->args);
+		$this->assertEquals(array('core', 'Basics'), $this->Shell->args);
 	}
 
 /**

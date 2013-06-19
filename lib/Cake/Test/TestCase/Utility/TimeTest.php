@@ -925,7 +925,7 @@ class TimeTest extends TestCase {
 		App::build(array(
 			'Locale' => array(CAKE . 'Test/TestApp/Locale/')
 		), App::RESET);
-		Configure::write('Config.language', 'time_test');
+		Configure::write('Config.language', 'es');
 		$time = strtotime('Thu Jan 14 11:43:39 2010');
 
 		$result = $this->Time->convertSpecifiers('%a', $time);
@@ -1032,7 +1032,7 @@ class TimeTest extends TestCase {
 		App::build(array(
 			'Locale' => array(CAKE . 'Test/TestApp/Locale/')
 		), App::RESET);
-		Configure::write('Config.language', 'time_test');
+		Configure::write('Config.language', 'es');
 
 		$time = strtotime('Thu Jan 14 13:59:28 2010');
 

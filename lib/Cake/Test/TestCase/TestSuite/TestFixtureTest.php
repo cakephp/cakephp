@@ -177,9 +177,7 @@ class TestFixtureTest extends TestCase {
 			'author_id',
 			'title',
 			'body',
-			'published',
-			'created',
-			'updated',
+			'published'
 		];
 		$this->assertEquals($expected, $fixture->schema()->columns());
 	}
