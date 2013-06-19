@@ -2359,7 +2359,11 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($attributes['value'] === null && $attributes['empty'] != true) {
-			$attributes['value'] = time();
+			if(!empty($attributes['maxYear']) && $attributes['maxYear'] < date('Y')) {
+				$attributes['value'] = strtotime(date($attributes['maxYear'] . '-m-d'));
+			} else {
+				$attributes['value'] = time();
+			}
 		}
 
 		if (!empty($attributes['value'])) {
