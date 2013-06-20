@@ -92,27 +92,25 @@ trait PostgresDialectTrait {
  */
 	protected function _updateQueryTranslator($query) {
 		$joins = $query->clause('join');
-		if ($joins) {
-			$sql = '';
-			foreach ($joins as $i => $join) {
-				if ($i == 0) {
-					$sql .= sprintf('%s %s', $join['table'], $join['alias']);
-					if (isset($join['conditions']) && count($join['conditions'])) {
-						$query->where($join['conditions']);
-					}
-					continue;
-				}
-				$sql .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
-				if (isset($join['conditions']) && count($join['conditions'])) {
-					$sql .= sprintf(' ON %s', $join['conditions']);
-				} else {
-					$sql .= ' ON 1 = 1';
-				}
-			}
-			$expr = $query->newExpr()->add($sql);
-			$query->join([], [], true);
-			$query->from([$expr]);
+		if (empty($joins)) {
+			return $query;
 		}
+		$first = array_shift($joins);
+		$sql = sprintf('%s %s', $first['table'], $first['alias']);
+		if (isset($first['conditions']) && count($first['conditions'])) {
+			$query->where($first['conditions']);
+		}
+		foreach ($joins as $i => $join) {
+			$sql .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
+			if (isset($join['conditions']) && count($join['conditions'])) {
+				$sql .= sprintf(' ON %s', $join['conditions']);
+			} else {
+				$sql .= ' ON 1 = 1';
+			}
+		}
+		$expr = $query->newExpr()->add($sql);
+		$query->join([], [], true);
+		$query->from([$expr]);
 		return $query;
 	}
 

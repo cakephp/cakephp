@@ -622,11 +622,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _buildJoinPart($parts) {
 		$joins = '';
 		foreach ($parts as $join) {
-			if ($join instanceof ExpressionInterface) {
-				$joins .= $join->sql();
-				continue;
-			}
-
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
 			if (isset($join['conditions']) && count($join['conditions'])) {
 				$joins .= sprintf(' ON %s', $join['conditions']);

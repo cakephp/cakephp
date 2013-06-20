@@ -1315,7 +1315,7 @@ class QueryTest extends TestCase {
 		$subquery = (new Query($this->connection))
 			->select(['id'])
 			->from('authors')
-			->where(['id =' => 1]);
+			->where(['id' => 1]);
 		$result = $query
 			->select(['name'])
 			->from(['authors'])
