@@ -1627,6 +1627,32 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Test updates with joins.
+ *
+ * @return void
+ */
+	public function testUpdateWithJoins() {
+		$query = new Query($this->connection);
+
+		$query->update('articles')
+			->set('title', 'New title')
+			->join([
+				'table' => 'authors',
+				'alias' => 'a',
+				'conditions' => 'author_id = a.id'
+			])
+			->where(['articles.id' => 1]);
+		$result = $query->sql(false);
+
+		$this->assertContains('UPDATE articles INNER JOIN authors a ON author_id = a.id', $result);
+		$this->assertContains('SET title = :', $result);
+		$this->assertContains('WHERE articles.id = :', $result);
+
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+	}
+
+/**
  * You cannot call values() before insert() it causes all sorts of pain.
  *
  * @expectedException Cake\Error\Exception
