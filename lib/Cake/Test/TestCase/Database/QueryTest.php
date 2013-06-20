@@ -169,6 +169,7 @@ class QueryTest extends TestCase {
 			->select(['title', 'name'])
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->order(['title' => 'asc'])
 			->execute();
 
 		$this->assertCount(3, $result);
@@ -179,11 +180,11 @@ class QueryTest extends TestCase {
 		$this->assertCount(12, $result, 'Cross join results in 12 records');
 
 		$result = $query->join([
-			['table' => 'authors', 'type' => 'INNER', 'conditions' => 'author_id = 1']
+			['table' => 'authors', 'type' => 'INNER', 'conditions' => 'author_id = authors.id']
 		], [], true)->execute();
-		$this->assertCount(8, $result);
+		$this->assertCount(3, $result);
 		$this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'First Article', 'name' => 'nate'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
 	}
 
 /**
@@ -196,10 +197,11 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['title', 'name'])
 			->from('articles')
-			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => ['author_id' => 1]])
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => ['author_id = a.id']])
+			->order(['title' => 'asc'])
 			->execute();
 		$this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
-		$this->assertEquals(array('title' => 'First Article', 'name' => 'nate'), $result->fetch('assoc'));
+		$this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
 		$conditions = $query->newExpr()->add('author_id = a.id');
@@ -207,6 +209,7 @@ class QueryTest extends TestCase {
 			->select(['title', 'name'])
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $conditions])
+			->order(['title' => 'asc'])
 			->execute();
 		$this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
 		$this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
@@ -220,7 +223,6 @@ class QueryTest extends TestCase {
 			->join(['table' => 'comments', 'alias' => 'c', 'conditions' => ['created <=' => $time]], $types)
 			->execute();
 		$this->assertEquals(['title' => 'First Article', 'comment' => 'First Comment for First Article'], $result->fetch('assoc'));
-		$this->assertEquals(['title' => 'Second Article', 'comment' => 'First Comment for First Article'], $result->fetch('assoc'));
 	}
 
 /**
@@ -245,6 +247,7 @@ class QueryTest extends TestCase {
 			->select(['title', 'name'])
 			->from('articles')
 			->join(['a' => ['table' => 'authors', 'conditions' => $conditions]])
+			->order(['title' => 'asc'])
 			->execute();
 		$this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
 		$this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
@@ -1312,7 +1315,7 @@ class QueryTest extends TestCase {
 		$subquery = (new Query($this->connection))
 			->select(['id'])
 			->from('authors')
-			->where(['id >' => 1]);
+			->where(['id =' => 1]);
 		$result = $query
 			->select(['name'])
 			->from(['authors'])
@@ -1320,7 +1323,7 @@ class QueryTest extends TestCase {
 			->execute();
 
 		$expected = [
-			['name' => 'mariano'],
+			['name' => 'nate'],
 			['name' => 'larry'],
 			['name' => 'garrett'],
 		];
@@ -1632,6 +1635,9 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testUpdateWithJoins() {
+		$config = Configure::read('Datasource.test');
+		$this->skipIf(strpos($config['datasource'], 'Sqlite') !== false, 'Sqlite update with join does not work.');
+
 		$query = new Query($this->connection);
 
 		$query->update('articles')
