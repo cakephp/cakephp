@@ -291,7 +291,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _traverseUpdate(callable $visitor) {
-		$parts = ['update', 'join', 'set', 'where'];
+		$parts = ['update', 'join', 'set', 'from', 'where'];
 		foreach ($parts as $name) {
 			call_user_func($visitor, $this->_parts[$name], $name);
 		}
@@ -597,7 +597,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			if (!($t['conditions']) instanceof ExpressionInterface) {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}
-
 			$joins[] = $t + ['type' => 'INNER', 'alias' => is_string($alias) ? $alias : null];
 		}
 
@@ -623,6 +622,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _buildJoinPart($parts) {
 		$joins = '';
 		foreach ($parts as $join) {
+			if ($join instanceof ExpressionInterface) {
+				$joins .= $join->sql();
+				continue;
+			}
+
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
 			if (isset($join['conditions']) && count($join['conditions'])) {
 				$joins .= sprintf(' ON %s', $join['conditions']);

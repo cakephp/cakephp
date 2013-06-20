@@ -20,6 +20,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
+use Cake\Database\Query;
 use \PDO;
 
 /**
@@ -133,6 +134,30 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($connection));
 
 		$driver->connect();
+	}
+
+	public function testUpdateWithJoin() {
+		$driver = $this->getMock('Cake\Database\driver\Postgres', ['_connect', 'connection']);
+		$connection = new Connection(Configure::read('Datasource.test'));
+		$connection->driver($driver);
+
+		$query = new Query($connection);
+
+		$query->update('articles')
+			->set('title', 'New title')
+			->join([
+				'table' => 'authors',
+				'alias' => 'a',
+				'conditions' => 'author_id = a.id'
+			])
+			->join('comments')
+			->where(['articles.id' => 1]);
+		$result = $query->sql(true);
+
+		$this->assertContains('UPDATE articles SET title = :', $result);
+		$this->assertContains('FROM authors a INNER JOIN comments  ON 1 = 1', $result);
+		$this->assertContains('WHERE (articles.id = :', $result);
+		$this->assertContains('AND author_id = a.id)', $result);
 	}
 
 }
