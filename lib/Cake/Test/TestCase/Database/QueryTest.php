@@ -1493,7 +1493,7 @@ class QueryTest extends TestCase {
 			->from('authors')
 			->where('1 = 1');
 
-		$result = $query->sql(false);
+		$result = $query->sql();
 		$this->assertContains('DELETE FROM authors', $result);
 
 		$result = $query->execute();
@@ -1512,7 +1512,7 @@ class QueryTest extends TestCase {
 		$query->delete('authors')
 			->where('1 = 1');
 
-		$result = $query->sql(false);
+		$result = $query->sql();
 		$this->assertContains('DELETE FROM authors ', $result);
 
 		$result = $query->execute();
@@ -1530,7 +1530,7 @@ class QueryTest extends TestCase {
 		$result = $query->select()
 			->delete('authors')
 			->where('1 = 1');
-		$result = $query->sql(false);
+		$result = $query->sql();
 
 		$this->assertContains('DELETE FROM authors', $result);
 		$this->assertContains('authors WHERE 1 = 1', $result);
@@ -1546,7 +1546,7 @@ class QueryTest extends TestCase {
 		$query->update('authors')
 			->set('name', 'mark')
 			->where(['id' => 1]);
-		$result = $query->sql(false);
+		$result = $query->sql();
 		$this->assertContains('UPDATE authors SET name = :', $result);
 
 		$result = $query->execute();
@@ -1564,7 +1564,7 @@ class QueryTest extends TestCase {
 			->set('title', 'mark', 'string')
 			->set('body', 'some text', 'string')
 			->where(['id' => 1]);
-		$result = $query->sql(false);
+		$result = $query->sql();
 
 		$this->assertRegExp(
 			'/UPDATE articles SET title = :[0-9a-z]+ , body = :[0-9a-z]+/',
@@ -1589,7 +1589,7 @@ class QueryTest extends TestCase {
 				'body' => 'some text'
 			], ['title' => 'string', 'body' => 'string'])
 			->where(['id' => 1]);
-		$result = $query->sql(false);
+		$result = $query->sql();
 
 		$this->assertRegExp(
 			'/UPDATE articles SET title = :[0-9a-z]+ , body = :[0-9a-z]+/',
@@ -1615,7 +1615,7 @@ class QueryTest extends TestCase {
 		$query->update('articles')
 			->set($expr)
 			->where(['id' => 1]);
-		$result = $query->sql(false);
+		$result = $query->sql();
 
 		$this->assertContains(
 			'UPDATE articles SET title = author_id WHERE id = :',
@@ -1653,7 +1653,7 @@ class QueryTest extends TestCase {
 				'title' => 'mark',
 				'body' => 'test insert'
 			]);
-		$result = $query->sql(false);
+		$result = $query->sql();
 		$this->assertEquals(
 			'INSERT INTO articles (title, body) VALUES (?, ?)',
 			$result
@@ -1686,7 +1686,7 @@ class QueryTest extends TestCase {
 			->values([
 				'title' => 'mark',
 			]);
-		$result = $query->sql(false);
+		$result = $query->sql();
 		$this->assertEquals(
 			'INSERT INTO articles (title, body) VALUES (?, ?)',
 			$result
@@ -1721,11 +1721,6 @@ class QueryTest extends TestCase {
 			->values([
 				'title' => 'jose',
 			]);
-		$result = $query->sql(false);
-		$this->assertEquals(
-			'INSERT INTO articles (title, body) VALUES (?, ?), (?, ?)',
-			$result
-		);
 
 		$result = $query->execute();
 		$this->assertCount(2, $result, '2 rows should be inserted');
@@ -1767,7 +1762,7 @@ class QueryTest extends TestCase {
 		)
 		->values($select);
 
-		$result = $query->sql(false);
+		$result = $query->sql();
 		$this->assertContains('INSERT INTO articles (title, body, author_id) SELECT', $result);
 		$this->assertContains("SELECT name, 'some text', 99 FROM authors", $result);
 		$result = $query->execute();
