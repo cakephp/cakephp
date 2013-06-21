@@ -52,12 +52,12 @@ class ConsoleLogTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		CakeLog::config('debug', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('notice', 'info', 'debug'),
 			'file' => 'debug',
 		));
 		CakeLog::config('error', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('error', 'warning'),
 			'file' => 'error',
 		));
