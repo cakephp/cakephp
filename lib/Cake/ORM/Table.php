@@ -506,4 +506,27 @@ class Table {
 		return true;
 	}
 
+/**
+ * Delete all matching rows.
+ *
+ * Deletes all rows matching the provided conditions.
+ *
+ * This method will *not* trigger beforeDelete/afterDelete events. If you
+ * need those first load a collection of records and delete them.
+ *
+ * This method will *not* execute on associations `cascade` attribute. You should
+ * use database foreign keys + ON CASCADE rules if you need cascading deletes combined
+ * with this method.
+ *
+ * @param array $conditions An array of conditions, similar to those used with find()
+ * @return boolean Success
+ */
+	public function deleteAll($conditions) {
+		$query = $this->_buildQuery();
+		$query->delete($this->table())
+			->where($conditions);
+		$query->execute();
+		return true;
+	}
+
 }
