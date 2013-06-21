@@ -120,7 +120,7 @@ class SmtpTransport extends AbstractTransport {
 				$this->_socket->enableCrypto('tls');
 				$this->_smtpSend("EHLO {$host}", '250');
 			}
-		} catch (Errpr\SocketException $e) {
+		} catch (Error\SocketException $e) {
 			if ($this->_config['tls']) {
 				throw new Error\SocketException(__d('cake_dev', 'SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.'));
 			}
