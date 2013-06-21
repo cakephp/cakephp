@@ -678,7 +678,7 @@ class HelperTest extends CakeTestCase {
 		));
 		$result = $this->Helper->assetUrl('img/cake.icon.png', array('fullBase' => true));
 
-		$this->assertEquals($result, 'http://' . $_SERVER['HTTP_HOST'] . '/cake_dev/app/webroot/img/cake.icon.png');
+		$this->assertEquals($result, FULL_BASE_URL . '/cake_dev/app/webroot/img/cake.icon.png');
 	}
 
 /**
