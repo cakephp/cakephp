@@ -878,12 +878,12 @@ class Shell extends Object {
 			return;
 		}
 		CakeLog::config('stdout', array(
-			'engine' => 'ConsoleLog',
+			'engine' => 'Console',
 			'types' => array('notice', 'info'),
 			'stream' => $this->stdout,
 		));
 		CakeLog::config('stderr', array(
-			'engine' => 'ConsoleLog',
+			'engine' => 'Console',
 			'types' => array('emergency', 'alert', 'critical', 'error', 'warning', 'debug'),
 			'stream' => $this->stderr,
 		));

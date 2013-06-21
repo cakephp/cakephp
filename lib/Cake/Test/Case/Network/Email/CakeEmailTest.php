@@ -999,7 +999,7 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testSendWithLog() {
 		CakeLog::config('email', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'path' => TMP
 		));
 		CakeLog::drop('default');
@@ -1026,7 +1026,7 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testSendWithLogAndScope() {
 		CakeLog::config('email', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'path' => TMP,
 			'types' => array('cake_test_emails'),
 			'scopes' => array('email')
