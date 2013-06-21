@@ -6533,7 +6533,9 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$TestModel->saveAll($data, array('fieldList' => $fieldList));
 
-		$result = $TestModel->find('all');
+		$result = $TestModel->find('all', array(
+			'order' => 'Post.id ASC',
+		));
 		$expected = array(
 			'Post' => array (
 				'id' => '4',
