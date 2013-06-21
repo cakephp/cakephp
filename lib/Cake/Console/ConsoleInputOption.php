@@ -5,15 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -47,7 +48,7 @@ class ConsoleInputOption {
 	protected $_help;
 
 /**
- * Is the option a boolean option.  Boolean options do not consume a parameter.
+ * Is the option a boolean option. Boolean options do not consume a parameter.
  *
  * @var boolean
  */
@@ -73,7 +74,7 @@ class ConsoleInputOption {
  * @param string|array $name The long name of the option, or an array with all the properties.
  * @param string $short The short alias for this option
  * @param string $help The help text for this option
- * @param boolean $boolean Whether this option is a boolean option.  Boolean options don't consume extra tokens
+ * @param boolean $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
  * @param string $default The default value for this option.
  * @param array $choices Valid choices for this option.
  * @throws ConsoleException

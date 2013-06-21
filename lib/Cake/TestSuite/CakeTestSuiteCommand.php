@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 require_once 'PHPUnit/TextUI/Command.php';
@@ -36,6 +37,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 /**
  * Construct method
  *
+ * @param mixed $loader
  * @param array $params list of options to be used for this run
  * @throws MissingTestLoaderException When a loader class could not be found.
  */
@@ -82,7 +84,9 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 			$result = $skeleton->generate(true);
 
 			if (!$result['incomplete']) {
+				//@codingStandardsIgnoreStart
 				eval(str_replace(array('<?php', '?>'), '', $result['code']));
+				//@codingStandardsIgnoreEnd
 				$suite = new PHPUnit_Framework_TestSuite(
 					$this->arguments['test'] . 'Test'
 				);
@@ -127,11 +131,11 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 /**
  * Create a runner for the command.
  *
- * @param $loader The loader to be used for the test run.
+ * @param mixed $loader The loader to be used for the test run.
  * @return CakeTestRunner
  */
 	public function getRunner($loader) {
- 		return new CakeTestRunner($loader, $this->_params);
+		return new CakeTestRunner($loader, $this->_params);
 	}
 
 /**
@@ -147,12 +151,12 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 /**
  * Handles output flag used to change printing on webrunner.
  *
+ * @param string $reporter
  * @return void
  */
 	public function handleReporter($reporter) {
 		$object = null;
 
-		$type = strtolower($reporter);
 		$reporter = ucwords($reporter);
 		$coreClass = 'Cake' . $reporter . 'Reporter';
 		App::uses($coreClass, 'TestSuite/Reporter');

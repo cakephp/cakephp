@@ -1,15 +1,16 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.5012
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -120,7 +121,7 @@ class ConsoleShell extends AppShell {
 			"\tRoute <url>",
 			"",
 			"where url is the path to your your action plus any query parameters,",
-			"minus the application's base path.  For example:",
+			"minus the application's base path. For example:",
 			"",
 			"\tRoute /posts/view/1",
 			"",
@@ -238,7 +239,9 @@ class ConsoleShell extends AppShell {
 
 					if ($this->_isValidModel($modelToCheck)) {
 						$findCommand = "\$data = \$this->$command;";
+						//@codingStandardsIgnoreStart
 						@eval($findCommand);
+						//@codingStandardsIgnoreEnd
 
 						if (is_array($data)) {
 							foreach ($data as $idx => $results) {
@@ -291,10 +294,12 @@ class ConsoleShell extends AppShell {
 
 					if ($this->_isValidModel($modelToSave)) {
 						// Extract the array of data we are trying to build
-						list($foo, $data) = explode("->save", $command);
+						list(, $data) = explode("->save", $command);
 						$data = preg_replace('/^\(*(array)?\(*(.+?)\)*$/i', '\\2', $data);
 						$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
+						//@codingStandardsIgnoreStart
 						@eval($saveCommand);
+						//@codingStandardsIgnoreEnd
 						$this->out(__d('cake_console', 'Saved record for %s', $modelToSave));
 					}
 				break;
@@ -304,7 +309,9 @@ class ConsoleShell extends AppShell {
 					if ($this->_isValidModel($modelToCheck)) {
 						// Get the column info for this model
 						$fieldsCommand = "\$data = \$this->{$modelToCheck}->getColumnTypes();";
+						//@codingStandardsIgnoreStart
 						@eval($fieldsCommand);
+						//@codingStandardsIgnoreEnd
 
 						if (is_array($data)) {
 							foreach ($data as $field => $type) {
@@ -325,8 +332,10 @@ class ConsoleShell extends AppShell {
 				case preg_match("/^routes\s+show/i", $command, $tmp):
 					$this->out(print_r(Hash::combine(Router::$routes, '{n}.template', '{n}.defaults'), true));
 				break;
-				case preg_match("/^route\s+(\(.*\))$/i", $command, $tmp):
+				case (preg_match("/^route\s+(\(.*\))$/i", $command, $tmp) == true):
+					//@codingStandardsIgnoreStart
 					if ($url = eval('return array' . $tmp[1] . ';')) {
+						//@codingStandardsIgnoreEnd
 						$this->out(Router::url($url));
 					}
 				break;
@@ -362,7 +371,9 @@ class ConsoleShell extends AppShell {
 		Router::reload();
 		extract(Router::getNamedExpressions());
 
+		//@codingStandardsIgnoreStart
 		if (!@include APP . 'Config' . DS . 'routes.php') {
+			//@codingStandardsIgnoreEnd
 			return false;
 		}
 		CakePlugin::routes();

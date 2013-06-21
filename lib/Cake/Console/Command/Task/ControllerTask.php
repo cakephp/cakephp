@@ -5,15 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -65,7 +66,7 @@ class ControllerTask extends BakeTask {
 			if (!isset($this->connection)) {
 				$this->connection = 'default';
 			}
-			if (strtolower($this->args[0]) == 'all') {
+			if (strtolower($this->args[0]) === 'all') {
 				return $this->all();
 			}
 
@@ -96,7 +97,7 @@ class ControllerTask extends BakeTask {
 	}
 
 /**
- * Bake All the controllers at once.  Will only bake controllers for models that exist.
+ * Bake All the controllers at once. Will only bake controllers for models that exist.
  *
  * @return void
  */
@@ -105,12 +106,22 @@ class ControllerTask extends BakeTask {
 		$this->listAll($this->connection, false);
 		ClassRegistry::config('Model', array('ds' => $this->connection));
 		$unitTestExists = $this->_checkUnitTest();
+
+		$admin = false;
+		if (!empty($this->params['admin'])) {
+			$admin = $this->Project->getPrefix();
+		}
+
 		foreach ($this->__tables as $table) {
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
 			App::uses($model, 'Model');
 			if (class_exists($model)) {
 				$actions = $this->bakeActions($controller);
+				if ($admin) {
+					$this->out(__d('cake_console', 'Adding %s methods', $admin));
+					$actions .= "\n" . $this->bakeActions($controller, $admin);
+				}
 				if ($this->bake($controller, $actions) && $unitTestExists) {
 					$this->bakeTest($controller);
 				}
@@ -151,13 +162,13 @@ class ControllerTask extends BakeTask {
 		}
 		$doItInteractive = $this->in(implode("\n", $question), array('y', 'n'), 'y');
 
-		if (strtolower($doItInteractive) == 'y') {
+		if (strtolower($doItInteractive) === 'y') {
 			$this->interactive = true;
 			$useDynamicScaffold = $this->in(
 				__d('cake_console', "Would you like to use dynamic scaffolding?"), array('y', 'n'), 'n'
 			);
 
-			if (strtolower($useDynamicScaffold) == 'y') {
+			if (strtolower($useDynamicScaffold) === 'y') {
 				$wannaBakeCrud = 'n';
 				$actions = 'scaffold';
 			} else {
@@ -167,27 +178,27 @@ class ControllerTask extends BakeTask {
 				$components = $this->doComponents();
 
 				$wannaUseSession = $this->in(
-					__d('cake_console', "Would you like to use Session flash messages?"), array('y','n'), 'y'
+					__d('cake_console', "Would you like to use Session flash messages?"), array('y', 'n'), 'y'
 				);
 			}
 		} else {
 			list($wannaBakeCrud, $wannaBakeAdminCrud) = $this->_askAboutMethods();
 		}
 
-		if (strtolower($wannaBakeCrud) == 'y') {
-			$actions = $this->bakeActions($controllerName, null, strtolower($wannaUseSession) == 'y');
+		if (strtolower($wannaBakeCrud) === 'y') {
+			$actions = $this->bakeActions($controllerName, null, strtolower($wannaUseSession) === 'y');
 		}
-		if (strtolower($wannaBakeAdminCrud) == 'y') {
+		if (strtolower($wannaBakeAdminCrud) === 'y') {
 			$admin = $this->Project->getPrefix();
-			$actions .= $this->bakeActions($controllerName, $admin, strtolower($wannaUseSession) == 'y');
+			$actions .= $this->bakeActions($controllerName, $admin, strtolower($wannaUseSession) === 'y');
 		}
 
 		$baked = false;
 		if ($this->interactive === true) {
 			$this->confirmController($controllerName, $useDynamicScaffold, $helpers, $components);
-			$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y','n'), 'y');
+			$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n'), 'y');
 
-			if (strtolower($looksGood) == 'y') {
+			if (strtolower($looksGood) === 'y') {
 				$baked = $this->bake($controllerName, $actions, $helpers, $components);
 				if ($baked && $this->_checkUnitTest()) {
 					$this->bakeTest($controllerName);
@@ -218,7 +229,7 @@ class ControllerTask extends BakeTask {
 		$this->hr();
 		$this->out(__d('cake_console', "Controller Name:\n\t%s", $controllerName));
 
-		if (strtolower($useDynamicScaffold) == 'y') {
+		if (strtolower($useDynamicScaffold) === 'y') {
 			$this->out("public \$scaffold;");
 		}
 
@@ -252,11 +263,11 @@ class ControllerTask extends BakeTask {
 	protected function _askAboutMethods() {
 		$wannaBakeCrud = $this->in(
 			__d('cake_console', "Would you like to create some basic class methods \n(index(), add(), view(), edit())?"),
-			array('y','n'), 'n'
+			array('y', 'n'), 'n'
 		);
 		$wannaBakeAdminCrud = $this->in(
 			__d('cake_console', "Would you like to create the basic class methods for admin routing?"),
-			array('y','n'), 'n'
+			array('y', 'n'), 'n'
 		);
 		return array($wannaBakeCrud, $wannaBakeAdminCrud);
 	}
@@ -373,9 +384,9 @@ class ControllerTask extends BakeTask {
  * @return array Array of values for property.
  */
 	protected function _doPropertyChoices($prompt, $example) {
-		$proceed = $this->in($prompt, array('y','n'), 'n');
+		$proceed = $this->in($prompt, array('y', 'n'), 'n');
 		$property = array();
-		if (strtolower($proceed) == 'y') {
+		if (strtolower($proceed) === 'y') {
 			$propertyList = $this->in($example);
 			$propertyListTrimmed = str_replace(' ', '', $propertyList);
 			$property = explode(',', $propertyListTrimmed);
@@ -463,6 +474,9 @@ class ControllerTask extends BakeTask {
 			))->addOption('connection', array(
 				'short' => 'c',
 				'help' => __d('cake_console', 'The connection the controller\'s model is on.')
+			))->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addSubcommand('all', array(
 				'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
 			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));

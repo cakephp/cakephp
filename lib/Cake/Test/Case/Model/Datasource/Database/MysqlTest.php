@@ -5,17 +5,19 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Model.Datasource.Database
  * @since         CakePHP(tm) v 1.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
 App::uses('Mysql', 'Model/Datasource/Database');
@@ -328,6 +330,26 @@ class MysqlTest extends CakeTestCase {
 			'MyFtIndex' => array('column' => array('name', 'description'), 'type' => 'fulltext')
 		);
 		$result = $this->Dbo->index('with_fulltext', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
+
+		$name = $this->Dbo->fullTableName('with_text_index');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, text_field text, primary key(id), KEY `text_index` ( `text_field`(20) ));');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'text_index' => array('column' => 'text_field', 'unique' => 0, 'length' => array('text_field' => 20)),
+		);
+		$result = $this->Dbo->index('with_text_index', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
+
+		$name = $this->Dbo->fullTableName('with_compound_text_index');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, text_field1 text, text_field2 text, primary key(id), KEY `text_index` ( `text_field1`(20), `text_field2`(20) ));');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'text_index' => array('column' => array('text_field1', 'text_field2'), 'unique' => 0, 'length' => array('text_field1' => 20, 'text_field2' => 20)),
+		);
+		$result = $this->Dbo->index('with_compound_text_index', false);
 		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEquals($expected, $result);
 	}
@@ -1110,7 +1132,7 @@ class MysqlTest extends CakeTestCase {
 				$linkModel = $this->Model->Category2->{$assoc};
 				$external = isset($assocData['external']);
 
-				if ($this->Model->Category2->alias == $linkModel->alias && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
+				if ($this->Model->Category2->alias == $linkModel->alias && $type !== 'hasAndBelongsToMany' && $type !== 'hasMany') {
 					$result = $this->Dbo->generateAssociationQuery($this->Model->Category2, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
 					$this->assertFalse(empty($result));
 				} else {
@@ -1190,7 +1212,7 @@ class MysqlTest extends CakeTestCase {
  */
 	protected function _buildRelatedModels(Model $model) {
 		foreach ($model->associations() as $type) {
-			foreach ($model->{$type} as $assoc => $assocData) {
+			foreach ($model->{$type} as $assocData) {
 				if (is_string($assocData)) {
 					$className = $assocData;
 				} elseif (isset($assocData['className'])) {
@@ -2256,6 +2278,12 @@ class MysqlTest extends CakeTestCase {
 		$expected = " WHERE `HardCandy`.`name` LIKE 'to be or%' AND `Candy`.`name` LIKE '%not to be%'";
 		$this->assertEquals($expected, $result);
 
+		$result = $this->Dbo->conditions(array(
+			"Person.name || ' ' || Person.surname ILIKE" => '%mark%'
+		));
+		$expected = " WHERE `Person`.`name` || ' ' || `Person`.`surname` ILIKE '%mark%'";
+		$this->assertEquals($expected, $result);
+
 		$result = $this->Dbo->conditions(array('score BETWEEN ? AND ?' => array(90.1, 95.7)));
 		$expected = " WHERE `score` BETWEEN 90.1 AND 95.7";
 		$this->assertEquals($expected, $result);
@@ -2419,6 +2447,11 @@ class MysqlTest extends CakeTestCase {
 		$expected = " WHERE `id` IN (2, 5, 6, 9, 12, 45, 78, 43, 76)";
 		$this->assertEquals($expected, $result);
 
+		$conditions = array('`Correction`.`source` collate utf8_bin' => array('kiwi', 'pear'));
+		$result = $this->Dbo->conditions($conditions);
+		$expected = " WHERE `Correction`.`source` collate utf8_bin IN ('kiwi', 'pear')";
+		$this->assertEquals($expected, $result);
+
 		$conditions = array('title' => 'user(s)');
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE `title` = 'user(s)'";
@@ -2469,6 +2502,23 @@ class MysqlTest extends CakeTestCase {
 			'? BETWEEN Model.field1 AND Model.field2' => '2009-03-04'
 		)));
 		$expected = " WHERE '2009-03-04' BETWEEN Model.field1 AND Model.field2";
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that array conditions with only one element work.
+ *
+ * @return
+ */
+	public function testArrayConditionsOneElement() {
+		$conditions = array('id' => array(1));
+		$result = $this->Dbo->conditions($conditions);
+		$expected = " WHERE id = (1)";
+		$this->assertEquals($expected, $result);
+
+		$conditions = array('id NOT' => array(1));
+		$result = $this->Dbo->conditions($conditions);
+		$expected = " WHERE NOT (id = (1))";
 		$this->assertEquals($expected, $result);
 	}
 
@@ -2753,7 +2803,7 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testDropSchemaNoSchema() {
-		$result = $this->Dbo->dropSchema(null);
+		$this->Dbo->dropSchema(null);
 	}
 
 /**
@@ -2958,6 +3008,20 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->buildIndex($data);
 		$expected = array('FULLTEXT KEY `MyFtIndex` (`name`, `description`)');
 		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'MyTextIndex' => array('column' => 'text_field', 'length' => array('text_field' => 20))
+		);
+		$result = $this->Dbo->buildIndex($data);
+		$expected = array('KEY `MyTextIndex` (`text_field`(20))');
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'MyMultiTextIndex' => array('column' => array('text_field1', 'text_field2'), 'length' => array('text_field1' => 20, 'text_field2' => 20))
+		);
+		$result = $this->Dbo->buildIndex($data);
+		$expected = array('KEY `MyMultiTextIndex` (`text_field1`(20), `text_field2`(20))');
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -3028,7 +3092,7 @@ class MysqlTest extends CakeTestCase {
 			'type' => 'timestamp',
 			'default' => 'current_timestamp',
 			'null' => false,
- 		);
+		);
 		$result = $this->Dbo->buildColumn($data);
 		$expected = '`created` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL';
 		$this->assertEquals($expected, $result);
@@ -3635,7 +3699,7 @@ class MysqlTest extends CakeTestCase {
  * @return void
  */
 	public function testExceptionOnBrokenConnection() {
-		$dbo = new Mysql(array(
+		new Mysql(array(
 			'driver' => 'mysql',
 			'host' => 'imaginary_host',
 			'login' => 'mark',

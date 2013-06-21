@@ -6,10 +6,10 @@
 	Uses phing to create releases, and pear packages.
 	Based off of build.xml in doctrine.
 
-	Requires the d51PearPkg2 to be installed:
+	Requires the cakephp/d51PearPkg2 to be installed:
 
 	pear channel-discover pear.domain51.com
-	pear install domain51/Phing_d51PearPkg2Task
+	pear install cakephp/Phing_d51PearPkg2Task
 
 	Use the `release` task to update VERSION.txt, and create a new tag.
 	Use the `build` task to create a pear package based on the current working copy.
@@ -40,6 +40,9 @@
 		<include name="cake" />
 	</fileset>
 
+	<fileset id="non-tests" dir="./lib/Cake">
+		<exclude name=".lib/Cake/Test" />
+	</fileset>
 
 	<!-- start fresh each time.  Remove the dist and build dirs -->
 	<target name="clean">
@@ -110,7 +113,7 @@
 		Define the package.xml.  Using xml to make xml is fun!
 	-->
 	<target name="define-pear-package" depends="copy-files">
-		<d51pearpkg2 baseinstalldir="/" dir="${build.dir}/${pear.package}">
+		<d51pearpkg2 addhiddenfiles="true" baseinstalldir="/" dir="${build.dir}/${pear.package}">
 			<name>CakePHP</name>
 			<summary>CakePHP Rapid Development Framework</summary>
 			<channel>pear.cakephp.org</channel>
@@ -148,6 +151,9 @@
 			</release>
 			<exceptions key="Cake/VERSION.txt">php</exceptions>
 			<exceptions key="Cake/LICENSE.txt">php</exceptions>
+			<exceptions key="Cake/Config/cacert.pem">php</exceptions>
+			<exceptions key="Cake/Console/Templates/skel/.htaccess">php</exceptions>
+			<exceptions key="Cake/Console/Templates/skel/webroot/.htaccess">php</exceptions>
 		</d51pearpkg2>
 	</target>
 
@@ -197,7 +203,7 @@
 	<!--
 		Upload to pirum pear channel.
 	-->
-	<target name="distribute" depends="prepare">
+	<target name="distribute" depends="prepare" description="Upload pear packages to pear.cakephp.org">
 		<echo msg="Uploading tgz file to cakephp.org" />
 		<exec command="scp ${dist.dir}/${pear.package}.tgz cakephp@cakephp.org:${pirum.dir}" dir="." checkreturn="true"  />
 
@@ -205,10 +211,43 @@
 		<exec command="ssh cakephp@cakephp.org pirum add ${pirum.dir} ${pirum.dir}/${pear.package}.tgz" checkreturn="true" />
 	</target>
 
+	<target name="codestyle" description="Check codestyle (human readable format)">
+		<phpcodesniffer
+			standard="CakePHP"
+			allowedFileExtensions="php">
+			<fileset refid="libs" />
+		</phpcodesniffer>
+	</target>
+
+	<target name="reports-ci">
+		<phpcodesniffer
+			standard="CakePHP"
+			allowedFileExtensions="php">
+			<fileset refid="libs" />
+			<formatter type="checkstyle" outfile="checkstyle.xml" />
+		</phpcodesniffer>
+		<phpcpd
+			minLines="4"
+			minTokens="50">
+			<fileset refid="libs" />
+			<formatter type="pmd" outfile="pmd-cpd.xml"/>
+		</phpcpd>
+		<phpdepend>
+			<fileset refid="non-tests" />
+			<logger type="jdepend-xml" outfile="jdepend.xml"/>
+		</phpdepend>
+		<phpmd rulesets="codesize,unusedcode,design">
+			<fileset refid="non-tests" />
+			<formatter type="xml" outfile="reports/pmd.html"/>
+		</phpmd>
+	</target>
+
 	<!--
 		Top level easy to type targets
 	-->
-	<target name="build" depends="generate-package" />
-	<target name="release" depends="release-commit,build,distribute" />
+	<target name="build" depends="generate-package" description="Generate a pear package" />
+	<target name="release" depends="release-commit,build,distribute" description="Release a new version of CakePHP" />
+	<target name="code-reports" depends="reports-ci"
+		description="Run the code reports, generating XML output for CI server use." />
 
 </project>

@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -32,16 +33,9 @@ App::uses('SchemaShell', 'Console/Command');
 class SchemaShellTestSchema extends CakeSchema {
 
 /**
- * name property
- *
- * @var string 'MyApp'
- */
-	public $name = 'SchemaShellTest';
-
-/**
  * connection property
  *
- * @var string 'test'
+ * @var string
  */
 	public $connection = 'test';
 
@@ -78,6 +72,14 @@ class SchemaShellTestSchema extends CakeSchema {
 		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
+
+	public $newone = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+		'testit' => array('type' => 'string', 'null' => false, 'default' => 'Title'),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
+	);
 }
 
 /**
@@ -92,8 +94,9 @@ class SchemaShellTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.article', 'core.user', 'core.post', 'core.auth_user', 'core.author',
-		'core.comment', 'core.test_plugin_comment'
+	public $fixtures = array(
+		'core.article', 'core.user', 'core.post', 'core.auth_user', 'core.author',
+		'core.comment', 'core.test_plugin_comment', 'core.aco', 'core.aro', 'core.aros_aco',
 	);
 
 /**
@@ -294,7 +297,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->Schema->path = TMP;
 		$this->Shell->Schema->expects($this->never())->method('read');
 
-		$result = $this->Shell->generate();
+		$this->Shell->generate();
 		unlink(TMP . 'schema.php');
 	}
 
@@ -397,6 +400,33 @@ class SchemaShellTest extends CakeTestCase {
 	}
 
 /**
+ * test generate with excluded tables
+ *
+ * @return void
+ */
+	public function testGenerateExclude() {
+		Configure::write('Acl.database', 'test');
+		$this->db->cacheSources = false;
+		$this->Shell->params = array(
+			'connection' => 'test',
+			'force' => false,
+			'models' => 'Aro, Aco, Permission',
+			'overwrite' => true,
+			'exclude' => 'acos, aros',
+		);
+		$this->Shell->startup();
+		$this->Shell->Schema->path = TMP . 'tests' . DS;
+
+		$this->Shell->generate();
+		$this->file = new File(TMP . 'tests' . DS . 'schema.php');
+		$contents = $this->file->read();
+
+		$this->assertNotContains('public $acos = array(', $contents);
+		$this->assertNotContains('public $aros = array(', $contents);
+		$this->assertContains('public $aros_acos = array(', $contents);
+	}
+
+/**
  * Test schema run create with no table args.
  *
  * @return void
@@ -428,15 +458,15 @@ class SchemaShellTest extends CakeTestCase {
 	public function testCreateWithTableArgs() {
 		$db = ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
-		if (in_array('acos', $sources)) {
-			$this->markTestSkipped('acos table already exists, cannot try to create it again.');
+		if (in_array('i18n', $sources)) {
+			$this->markTestSkipped('i18n table already exists, cannot try to create it again.');
 		}
 		$this->Shell->params = array(
 			'connection' => 'test',
-			'name' => 'DbAcl',
+			'name' => 'I18n',
 			'path' => APP . 'Config' . DS . 'Schema'
 		);
-		$this->Shell->args = array('DbAcl', 'acos');
+		$this->Shell->args = array('I18n', 'i18n');
 		$this->Shell->startup();
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
@@ -444,12 +474,10 @@ class SchemaShellTest extends CakeTestCase {
 		$db = ConnectionManager::getDataSource('test');
 		$db->cacheSources = false;
 		$sources = $db->listSources();
-		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources), 'acos should be present.');
-		$this->assertFalse(in_array($db->config['prefix'] . 'aros', $sources), 'aros should not be found.');
-		$this->assertFalse(in_array('aros_acos', $sources), 'aros_acos should not be found.');
+		$this->assertTrue(in_array($db->config['prefix'] . 'i18n', $sources), 'i18n should be present.');
 
-		$schema = new DbAclSchema();
-		$db->execute($db->dropSchema($schema, 'acos'));
+		$schema = new I18nSchema();
+		$db->execute($db->dropSchema($schema, 'i18n'));
 	}
 
 /**
@@ -470,9 +498,40 @@ class SchemaShellTest extends CakeTestCase {
 		);
 		$this->Shell->args = array('SchemaShellTest', 'articles');
 		$this->Shell->startup();
-		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
-		$this->Shell->expects($this->once())->method('_run')
+		$this->Shell->expects($this->any())
+			->method('in')
+			->will($this->returnValue('y'));
+		$this->Shell->expects($this->once())
+			->method('_run')
 			->with($this->arrayHasKey('articles'), 'update', $this->isInstanceOf('CakeSchema'));
+
+		$this->Shell->update();
+	}
+
+/**
+ * test run update with a table arg. and checks that a CREATE statement is issued
+ * table creation
+ * @return void
+ */
+	public function testUpdateWithTableCreate() {
+		$this->Shell = $this->getMock(
+			'SchemaShell',
+			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '_run'),
+			array(&$this->Dispatcher)
+		);
+
+		$this->Shell->params = array(
+			'connection' => 'test',
+			'force' => true
+		);
+		$this->Shell->args = array('SchemaShellTest', 'newone');
+		$this->Shell->startup();
+		$this->Shell->expects($this->any())
+			->method('in')
+			->will($this->returnValue('y'));
+		$r = $this->Shell->expects($this->once())
+			->method('_run')
+			->with($this->arrayHasKey('newone'), 'update', $this->isInstanceOf('CakeSchema'));
 
 		$this->Shell->update();
 	}

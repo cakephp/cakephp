@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 1.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('String', 'Utility');
@@ -32,7 +33,7 @@ class Set {
  * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
  * but does not do if for keys containing strings (unlike array_merge_recursive).
  *
- * Since this method emulates `array_merge`, it will re-order numeric keys.  When combined with out of
+ * Since this method emulates `array_merge`, it will re-order numeric keys. When combined with out of
  * order numeric keys containing arrays, results can be lossy.
  *
  * Note: This function will work with an unlimited amount of arguments and typecasts non-array
@@ -45,7 +46,7 @@ class Set {
  */
 	public static function merge($data, $merge = null) {
 		$args = func_get_args();
-		if (empty($args[1])) {
+		if (empty($args[1]) && count($args) <= 2) {
 			return (array)$args[0];
 		}
 		if (!is_array($args[0])) {
@@ -185,7 +186,7 @@ class Set {
 /**
  * Checks to see if all the values in the array are numeric
  *
- * @param array $array The array to check.  If null, the value of the current Set object
+ * @param array $array The array to check. If null, the value of the current Set object
  * @return boolean true if values are numeric, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::numeric
  */
@@ -203,7 +204,7 @@ class Set {
  *
  * $list defaults to 0 = no 1 = yes if param is not passed
  *
- * @param array $select Key in $list to return
+ * @param string $select Key in $list to return
  * @param array|string $list can be an array or a comma-separated list.
  * @return string the value of the array key or null if no match
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::enum
@@ -467,7 +468,7 @@ class Set {
 			return true;
 		}
 		if (is_string($conditions)) {
-			return !!Set::extract($conditions, $data);
+			return (bool)Set::extract($conditions, $data);
 		}
 		foreach ($conditions as $condition) {
 			if ($condition === ':last') {
@@ -956,6 +957,9 @@ class Set {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::sort
  */
 	public static function sort($data, $path, $dir) {
+		if (empty($data)) {
+			return $data;
+		}
 		$originalKeys = array_keys($data);
 		$numeric = false;
 		if (is_numeric(implode('', $originalKeys))) {

@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Console.Command
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -631,8 +632,8 @@ class UpgradeShell extends AppShell {
 /**
  * Move application php files to where they now should be
  *
- * Find all php files in the folder (honoring recursive) and determine where cake expects the file to be
- * If the file is not exactly where cake expects it - move it.
+ * Find all php files in the folder (honoring recursive) and determine where CakePHP expects the file to be
+ * If the file is not exactly where CakePHP expects it - move it.
  *
  * @param string $path
  * @param array $options array(recursive, checkFolder)

@@ -1,22 +1,27 @@
 <?php
 /**
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Routing.Filter
  * @since         CakePHP(tm) v 2.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AssetDispatcher', 'Routing/Filter');
 App::uses('CakeEvent', 'Event');
 App::uses('CakeResponse', 'Network');
 
+/**
+ * Class AssetDispatcherTest
+ *
+ * @package       Cake.Test.Case.Routing.Filter
+ */
 class AssetDispatcherTest extends CakeTestCase {
 
 /**
@@ -121,4 +126,21 @@ class AssetDispatcherTest extends CakeTestCase {
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
 	}
+
+/**
+ * Test that no exceptions are thrown for //index.php type urls.
+ *
+ * @return void
+ */
+	public function test404OnDoubleSlash() {
+		$filter = new AssetDispatcher();
+
+		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$request = new CakeRequest('//index.php');
+		$event = new CakeEvent('Dispatcher.beforeRequest', $this, compact('request', 'response'));
+
+		$this->assertNull($filter->beforeDispatch($event));
+		$this->assertFalse($event->isStopped());
+	}
+
 }

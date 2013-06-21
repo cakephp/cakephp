@@ -5,27 +5,29 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('Component', 'Controller');
 App::uses('Hash', 'Utility');
 
 /**
- * This component is used to handle automatic model data pagination.  The primary way to use this
+ * This component is used to handle automatic model data pagination. The primary way to use this
  * component is to call the paginate() method. There is a convenience wrapper on Controller as well.
  *
  * ### Configuring pagination
  *
- * You configure pagination using the PaginatorComponent::$settings.  This allows you to configure
+ * You configure pagination using the PaginatorComponent::$settings. This allows you to configure
  * the default pagination behavior in general or for a specific model. General settings are used when there
  * are no specific model configuration, or the model you are paginating does not have specific settings.
  *
@@ -36,7 +38,7 @@ App::uses('Hash', 'Utility');
  *	);
  * }}}
  *
- * The above settings will be used to paginate any model.  You can configure model specific settings by
+ * The above settings will be used to paginate any model. You can configure model specific settings by
  * keying the settings with the model name.
  *
  * {{{
@@ -71,11 +73,11 @@ App::uses('Hash', 'Utility');
 class PaginatorComponent extends Component {
 
 /**
- * Pagination settings.  These settings control pagination at a general level.
+ * Pagination settings. These settings control pagination at a general level.
  * You can also define sub arrays for pagination settings for specific models.
  *
  * - `maxLimit` The maximum limit users can choose to view. Defaults to 100
- * - `limit` The initial number of items per page.  Defaults to 20.
+ * - `limit` The initial number of items per page. Defaults to 20.
  * - `page` The starting page, defaults to 1.
  * - `paramType` What type of parameters you want pagination to use?
  *      - `named` Use named parameters / routed parameters.
@@ -91,7 +93,7 @@ class PaginatorComponent extends Component {
 	);
 
 /**
- * A list of parameters users are allowed to set using request parameters.  Modifying
+ * A list of parameters users are allowed to set using request parameters. Modifying
  * this list will allow users to have more influence over pagination,
  * be careful with what you permit.
  *
@@ -118,10 +120,11 @@ class PaginatorComponent extends Component {
  *
  * @param Model|string $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
  * @param string|array $scope Additional find conditions to use while paginating
- * @param array $whitelist List of allowed fields for ordering.  This allows you to prevent ordering
+ * @param array $whitelist List of allowed fields for ordering. This allows you to prevent ordering
  *   on non-indexed, or undesirable columns.
  * @return array Model query results
  * @throws MissingModelException
+ * @throws NotFoundException
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
 		if (is_array($object)) {
@@ -196,7 +199,9 @@ class PaginatorComponent extends Component {
 		$defaults = $this->getDefaults($object->alias);
 		unset($defaults[0]);
 
-		if ($object->hasMethod('paginateCount')) {
+		if (!$results) {
+			$count = 0;
+		} elseif ($object->hasMethod('paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive, $extra);
 		} else {
 			$parameters = compact('conditions');
@@ -206,7 +211,11 @@ class PaginatorComponent extends Component {
 			$count = $object->find('count', array_merge($parameters, $extra));
 		}
 		$pageCount = intval(ceil($count / $limit));
+		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
+		if ($requestedPage > $page) {
+			throw new NotFoundException();
+		}
 
 		$paging = array(
 			'page' => $page,
@@ -220,6 +229,7 @@ class PaginatorComponent extends Component {
 			'options' => Hash::diff($options, $defaults),
 			'paramType' => $options['paramType']
 		);
+
 		if (!isset($this->Controller->request['paging'])) {
 			$this->Controller->request['paging'] = array();
 		}
@@ -289,7 +299,7 @@ class PaginatorComponent extends Component {
  * - Model specific settings.
  * - Request parameters
  *
- * The result of this method is the aggregate of all the option sets combined together.  You can change
+ * The result of this method is the aggregate of all the option sets combined together. You can change
  * PaginatorComponent::$whitelist to modify which options/values can be set using request parameters.
  *
  * @param string $alias Model alias being paginated, if the general settings has a key with this value
@@ -311,7 +321,7 @@ class PaginatorComponent extends Component {
 	}
 
 /**
- * Get the default settings for a $model.  If there are no settings for a specific model, the general settings
+ * Get the default settings for a $model. If there are no settings for a specific model, the general settings
  * will be used.
  *
  * @param string $alias Model name to get default settings for.
@@ -322,6 +332,11 @@ class PaginatorComponent extends Component {
 		if (isset($this->settings[$alias])) {
 			$defaults = $this->settings[$alias];
 		}
+		if (isset($defaults['limit']) &&
+			(empty($defaults['maxLimit']) || $defaults['limit'] > $defaults['maxLimit'])
+		) {
+			$defaults['maxLimit'] = $defaults['limit'];
+		}
 		return array_merge(
 			array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named'),
 			$defaults
@@ -329,8 +344,8 @@ class PaginatorComponent extends Component {
 	}
 
 /**
- * Validate that the desired sorting can be performed on the $object.  Only fields or
- * virtualFields can be sorted on.  The direction param will also be sanitized.  Lastly
+ * Validate that the desired sorting can be performed on the $object. Only fields or
+ * virtualFields can be sorted on. The direction param will also be sanitized. Lastly
  * sort + direction keys will be converted into the model friendly order key.
  *
  * You can use the whitelist parameter to control which columns/fields are available for sorting.
@@ -338,7 +353,7 @@ class PaginatorComponent extends Component {
  *
  * @param Model $object The model being paginated.
  * @param array $options The pagination options being used for this request.
- * @param array $whitelist The list of columns that can be used for sorting.  If empty all keys are allowed.
+ * @param array $whitelist The list of columns that can be used for sorting. If empty all keys are allowed.
  * @return array An array of options with sort + direction removed and replaced with order if possible.
  */
 	public function validateSort(Model $object, array $options, array $whitelist = array()) {
@@ -357,6 +372,7 @@ class PaginatorComponent extends Component {
 			$field = key($options['order']);
 			if (!in_array($field, $whitelist)) {
 				$options['order'] = null;
+				return $options;
 			}
 		}
 
@@ -368,10 +384,11 @@ class PaginatorComponent extends Component {
 				if (strpos($key, '.') !== false) {
 					list($alias, $field) = explode('.', $key);
 				}
+				$correctAlias = ($object->alias == $alias);
 
-				if ($object->hasField($field)) {
-					$order[$alias . '.' . $field] = $value;
-				} elseif ($object->hasField($key, true)) {
+				if ($correctAlias && $object->hasField($field)) {
+					$order[$object->alias . '.' . $field] = $value;
+				} elseif ($correctAlias && $object->hasField($key, true)) {
 					$order[$field] = $value;
 				} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field, true)) {
 					$order[$alias . '.' . $field] = $value;

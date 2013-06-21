@@ -4,19 +4,20 @@
  *
  * Test Case for CakeTestCase class
  *
- * PHP version 5
+ * PHP 5
  *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.TestSuite
  * @since         CakePHP v 1.2.0.4487
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Controller', 'Controller');
@@ -28,6 +29,13 @@ App::uses('CakeHtmlReporter', 'TestSuite/Reporter');
  * @package       Cake.Test.Case.TestSuite
  */
 class CakeTestCaseTest extends CakeTestCase {
+
+/**
+ * fixtures property
+ *
+ * @var array
+ */
+	public $fixtures = array('core.post', 'core.author', 'core.test_plugin_comment');
 
 	public static function setUpBeforeClass() {
 		require_once CAKE . 'Test' . DS . 'Fixture' . DS . 'AssertTagsTestCase.php';
@@ -339,4 +347,46 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertTextNotContains("different\rlines", $stringDirty);
 	}
 
+/**
+ * test getMockForModel()
+ *
+ * @return void
+ */
+	public function testGetMockForModel() {
+		$Post = $this->getMockForModel('Post');
+
+		$this->assertInstanceOf('Post', $Post);
+		$this->assertNull($Post->save(array()));
+		$this->assertNull($Post->find('all'));
+		$this->assertEquals('posts', $Post->useTable);
+
+		$Post = $this->getMockForModel('Post', array('save'));
+
+		$this->assertNull($Post->save(array()));
+		$this->assertInternalType('array', $Post->find('all'));
+	}
+
+/**
+ * test getMockForModel() with plugin models
+ *
+ * @return void
+ */
+	public function testGetMockForModelWithPlugin() {
+		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComment');
+
+		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
+		$this->assertInstanceOf('TestPluginComment', $result);
+
+		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComment', array('save'));
+
+		$this->assertInstanceOf('TestPluginComment', $TestPluginComment);
+		$TestPluginComment->expects($this->at(0))
+			->method('save')
+			->will($this->returnValue(true));
+		$TestPluginComment->expects($this->at(1))
+			->method('save')
+			->will($this->returnValue(false));
+		$this->assertTrue($TestPluginComment->save(array()));
+		$this->assertFalse($TestPluginComment->save(array()));
+	}
 }

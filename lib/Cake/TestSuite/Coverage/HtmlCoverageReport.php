@@ -5,16 +5,17 @@
  * PHP5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.TestSuite.Coverage
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('BaseCoverageReport', 'TestSuite/Coverage');
@@ -122,6 +123,10 @@ HTML;
 /**
  * Renders the html for a single line in the html diff.
  *
+ * @param string $line
+ * @param integer $linenumber
+ * @param string $class
+ * @param array $coveringTests
  * @return void
  */
 	protected function _paintLine($line, $linenumber, $class, $coveringTests) {
@@ -152,14 +157,14 @@ HTML;
 		<script type="text/javascript">
 		function coverage_show_hide(selector) {
 			var element = document.getElementById(selector);
-			element.style.display = (element.style.display == 'none') ? '' : 'none';
+			element.style.display = (element.style.display === 'none') ? '' : 'none';
 		}
 		function coverage_toggle_all() {
 			var divs = document.querySelectorAll('div.coverage-container');
 			var i = divs.length;
 			while (i--) {
 				if (divs[i] && divs[i].className.indexOf('primary') == -1) {
-					divs[i].style.display = (divs[i].style.display == 'none') ? '' : 'none';
+					divs[i].style.display = (divs[i].style.display === 'none') ? '' : 'none';
 				}
 			}
 		}
@@ -170,13 +175,15 @@ HTML;
 /**
  * Generate an HTML snippet for coverage headers
  *
+ * @param string $filename
+ * @param string $percent
  * @return void
  */
 	public function coverageHeader($filename, $percent) {
 		$filename = basename($filename);
 		list($file, $ext) = explode('.', $filename);
 		$display = in_array($file, $this->_testNames) ? 'block' : 'none';
-		$primary = $display == 'block' ? 'primary' : '';
+		$primary = $display === 'block' ? 'primary' : '';
 		return <<<HTML
 	<div class="coverage-container $primary" style="display:$display;">
 	<h4>

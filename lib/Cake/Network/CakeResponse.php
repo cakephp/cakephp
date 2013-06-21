@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('File', 'Utility');
@@ -73,7 +74,8 @@ class CakeResponse {
 		501 => 'Not Implemented',
 		502 => 'Bad Gateway',
 		503 => 'Service Unavailable',
-		504 => 'Gateway Time-out'
+		504 => 'Gateway Time-out',
+		505 => 'Unsupported Version'
 	);
 
 /**
@@ -277,8 +279,8 @@ class CakeResponse {
 		'javascript' => 'application/javascript',
 		'form' => 'application/x-www-form-urlencoded',
 		'file' => 'multipart/form-data',
-		'xhtml'	=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
-		'xhtml-mobile'	=> 'application/vnd.wap.xhtml+xml',
+		'xhtml' => array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
+		'xhtml-mobile' => 'application/vnd.wap.xhtml+xml',
 		'atom' => 'application/atom+xml',
 		'amf' => 'application/x-amf',
 		'wap' => array('text/vnd.wap.wml', 'text/vnd.wap.wmlscript', 'image/vnd.wap.wbmp'),
@@ -444,7 +446,19 @@ class CakeResponse {
 		if (in_array($this->_status, array(304, 204))) {
 			return;
 		}
-		if (strpos($this->_contentType, 'text/') === 0) {
+		$whitelist = array(
+			'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
+		);
+
+		$charset = false;
+		if (
+			$this->_charset &&
+			(strpos($this->_contentType, 'text/') === 0 || in_array($this->_contentType, $whitelist))
+		) {
+			$charset = true;
+		}
+
+		if ($charset) {
 			$this->header('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
 		} else {
 			$this->header('Content-Type', "{$this->_contentType}");
@@ -703,9 +717,7 @@ class CakeResponse {
 		}
 
 		foreach ($this->_mimeTypes as $alias => $types) {
-			if (is_array($types) && in_array($ctype, $types)) {
-				return $alias;
-			} elseif (is_string($types) && $types == $ctype) {
+			if (in_array($ctype, (array)$types)) {
 				return $alias;
 			}
 		}
@@ -839,9 +851,9 @@ class CakeResponse {
 /**
  * Sets the Cache-Control must-revalidate directive.
  * must-revalidate indicates that the response should not be served
- * stale by a cache under any cirumstance without first revalidating
+ * stale by a cache under any circumstance without first revalidating
  * with the origin.
- * If called with no parameters, this function will return wheter must-revalidate is present.
+ * If called with no parameters, this function will return whether must-revalidate is present.
  *
  * @param integer $seconds if null, the method will return the current
  * must-revalidate value
@@ -929,7 +941,7 @@ class CakeResponse {
  * conflicting headers
  *
  * @return void
- **/
+ */
 	public function notModified() {
 		$this->statusCode(304);
 		$this->body('');
@@ -954,9 +966,9 @@ class CakeResponse {
  * value is returned
  *
  * @param string|array $cacheVariances a single Vary string or a array
- * containig the list for variances.
+ * containing the list for variances.
  * @return array
- **/
+ */
 	public function vary($cacheVariances = null) {
 		if ($cacheVariances !== null) {
 			$cacheVariances = (array)$cacheVariances;
@@ -970,13 +982,13 @@ class CakeResponse {
 
 /**
  * Sets the response Etag, Etags are a strong indicative that a response
- * can be cached by a HTTP client. A bad way of generaing Etags is
+ * can be cached by a HTTP client. A bad way of generating Etags is
  * creating a hash of the response output, instead generate a unique
  * hash of the unique components that identifies a request, such as a
  * modification time, a resource Id, and anything else you consider it
  * makes it unique.
  *
- * Second parameter is used to instuct clients that the content has
+ * Second parameter is used to instruct clients that the content has
  * changed, but sematicallly, it can be used as the same thing. Think
  * for instance of a page with a hit counter, two different page views
  * are equivalent, but they differ by a few bytes. This leaves off to
@@ -984,11 +996,11 @@ class CakeResponse {
  *
  * If no parameters are passed, current Etag header is returned.
  *
- * @param string $hash the unique has that identifies this resposnse
+ * @param string $hash the unique has that identifies this response
  * @param boolean $weak whether the response is semantically the same as
- * other with th same hash or not
+ * other with the same hash or not
  * @return string
- **/
+ */
 	public function etag($tag = null, $weak = false) {
 		if ($tag !== null) {
 			$this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $tag);
@@ -1055,7 +1067,8 @@ class CakeResponse {
  * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
  * If called with no arguments, it will return the current configured protocol
  *
- * @return string protocol to be used for sending response
+ * @param string protocol to be used for sending response
+ * @return string protocol currently set
  */
 	public function protocol($protocol = null) {
 		if ($protocol !== null) {
@@ -1068,7 +1081,8 @@ class CakeResponse {
  * Sets the Content-Length header for the response
  * If called with no arguments returns the last Content-Length set
  *
- * @return int
+ * @param integer $bytes Number of bytes
+ * @return integer|null
  */
 	public function length($bytes = null) {
 		if ($bytes !== null) {
@@ -1087,9 +1101,10 @@ class CakeResponse {
  * is marked as so accordingly so the client can be informed of that.
  *
  * In order to mark a response as not modified, you need to set at least
- * the Last-Modified etag response header before calling this method.  Otherwise
+ * the Last-Modified etag response header before calling this method. Otherwise
  * a comparison will not be possible.
  *
+ * @param CakeRequest $request Request object
  * @return boolean whether the response was marked as not modified or not.
  */
 	public function checkNotModified(CakeRequest $request) {
@@ -1113,7 +1128,7 @@ class CakeResponse {
 	}
 
 /**
- * String conversion.  Fetches the response body as a string.
+ * String conversion. Fetches the response body as a string.
  * Does *not* send headers.
  *
  * @return string
@@ -1134,7 +1149,7 @@ class CakeResponse {
  * If the method is called with an array as argument, it will set the cookie
  * configuration to the cookie container.
  *
- * @param $options Either null to get all cookies, string for a specific cookie
+ * @param array $options Either null to get all cookies, string for a specific cookie
  *  or array to set cookie.
  *
  * ### Options (when setting a configuration)
@@ -1246,7 +1261,7 @@ class CakeResponse {
 
 			$httpRange = env('HTTP_RANGE');
 			if (isset($httpRange)) {
-				list($toss, $range) = explode('=', $httpRange);
+				list(, $range) = explode('=', $httpRange);
 
 				$size = $fileSize - 1;
 				$length = $fileSize - $range;
@@ -1309,7 +1324,9 @@ class CakeResponse {
  * @return boolean
  */
 	protected function _clearBuffer() {
+		//@codingStandardsIgnoreStart
 		return @ob_end_clean();
+		//@codingStandardsIgnoreEnd
 	}
 
 /**
@@ -1318,8 +1335,10 @@ class CakeResponse {
  * @return void
  */
 	protected function _flushBuffer() {
+		//@codingStandardsIgnoreStart
 		@flush();
 		@ob_flush();
+		//@codingStandardsIgnoreEnd
 	}
 
 }

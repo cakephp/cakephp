@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CakeTime', 'Utility');
@@ -34,6 +35,8 @@ class TimeHelper extends AppHelper {
 
 /**
  * CakeTime instance
+ *
+ * @var stdClass
  */
 	protected $_engine = null;
 
@@ -46,7 +49,7 @@ class TimeHelper extends AppHelper {
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
- * @param array $settings Settings array Settings array
+ * @param array $settings Settings array
  * @throws CakeException When the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
@@ -66,7 +69,7 @@ class TimeHelper extends AppHelper {
  *
  * @param string $name Name of the attribute to set.
  * @param string $value Value of the attribute to set.
- * @return mixed
+ * @return void
  */
 	public function __set($name, $value) {
 		switch ($name) {

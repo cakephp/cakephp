@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Folder', 'Utility');
@@ -129,7 +130,6 @@ class File {
 		if (!$force && is_resource($this->handle)) {
 			return true;
 		}
-		clearstatcache();
 		if ($this->exists() === false) {
 			if ($this->create() === false) {
 				return false;
@@ -200,8 +200,8 @@ class File {
 	}
 
 /**
- * Prepares a ascii string for writing.  Converts line endings to the
- * correct terminator for the current platform.  If windows "\r\n" will be used
+ * Prepares a ascii string for writing. Converts line endings to the
+ * correct terminator for the current platform. If windows "\r\n" will be used
  * all other platforms will use "\n"
  *
  * @param string $data Data to prepare for writing.
@@ -211,7 +211,7 @@ class File {
  */
 	public static function prepare($data, $forceWindows = false) {
 		$lineBreak = "\n";
-		if (DIRECTORY_SEPARATOR == '\\' || $forceWindows === true) {
+		if (DIRECTORY_SEPARATOR === '\\' || $forceWindows === true) {
 			$lineBreak = "\r\n";
 		}
 		return strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
@@ -277,7 +277,6 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::delete
  */
 	public function delete() {
-		clearstatcache();
 		if (is_resource($this->handle)) {
 			fclose($this->handle);
 			$this->handle = null;
@@ -409,6 +408,7 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::exists
  */
 	public function exists() {
+		$this->clearStatCache();
 		return (file_exists($this->path) && is_file($this->path));
 	}
 
@@ -526,7 +526,7 @@ class File {
  * @return Folder Current folder
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::Folder
  */
-	public function &folder() {
+	public function folder() {
 		return $this->Folder;
 	}
 
@@ -546,7 +546,7 @@ class File {
 	}
 
 /**
- * Get the mime type of the file.  Uses the finfo extension if
+ * Get the mime type of the file. Uses the finfo extension if
  * its available, otherwise falls back to mime_content_type
  *
  * @return false|string The mimetype of the file, or false if reading fails.
@@ -563,6 +563,23 @@ class File {
 			return mime_content_type($this->pwd());
 		}
 		return false;
+	}
+
+/**
+ * Clear PHP's internal stat cache
+ *
+ * For 5.3 onwards its possible to clear cache for just a single file. Passing true
+ * will clear all the stat cache.
+ *
+ * @param boolean $all Clear all cache or not
+ * @return void
+ */
+	public function clearStatCache($all = false) {
+		if ($all === false && version_compare(PHP_VERSION, '5.3.0') >= 0) {
+			return clearstatcache(true, $this->path);
+		}
+
+		return clearstatcache();
 	}
 
 }

@@ -7,16 +7,17 @@
  * PHP 5
  *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.6
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -41,7 +42,7 @@ class ModelTaskTest extends CakeTestCase {
  */
 	public $fixtures = array(
 		'core.bake_article', 'core.bake_comment', 'core.bake_articles_bake_tag',
-		'core.bake_tag', 'core.category_thread'
+		'core.bake_tag', 'core.category_thread', 'core.number_tree'
 	);
 
 /**
@@ -62,7 +63,7 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * Setup a mock that has out mocked.  Normally this is not used as it makes $this->at() really tricky.
+ * Setup a mock that has out mocked. Normally this is not used as it makes $this->at() really tricky.
  *
  * @return void
  */
@@ -173,7 +174,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(99, 1));
 		$this->Task->expects($this->once())->method('err');
 
-		$result = $this->Task->getName('test');
+		$this->Task->getName('test');
 	}
 
 /**
@@ -189,7 +190,7 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * test gettting a custom table name.
+ * test getting a custom table name.
  *
  * @return void
  */
@@ -623,6 +624,20 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test non interactive doActsAs
+ *
+ * @return void
+ */
+	public function testDoActsAs() {
+		$this->Task->connection = 'test';
+		$this->Task->interactive = false;
+		$model = new Model(array('ds' => 'test', 'name' => 'NumberTree'));
+		$result = $this->Task->doActsAs($model);
+
+		$this->assertEquals(array('Tree'), $result);
+	}
+
+/**
  * Ensure that the fixture object is correctly called.
  *
  * @return void
@@ -836,6 +851,27 @@ STRINGEND;
 	}
 
 /**
+ * test bake() for models with behaviors
+ *
+ * @return void
+ */
+	public function testBakeWithBehaviors() {
+		$result = $this->Task->bake('NumberTree', array('actsAs' => array('Tree', 'PluginName.Sluggable')));
+		$expected = <<<TEXT
+/**
+ * Behaviors
+ *
+ * @var array
+ */
+	public \$actsAs = array(
+		'Tree',
+		'PluginName.Sluggable',
+	);
+TEXT;
+		$this->assertTextContains($expected, $result);
+	}
+
+/**
  * test that execute passes runs bake depending with named model.
  *
  * @return void
@@ -958,7 +994,7 @@ STRINGEND;
 	}
 
 /**
- * test that odd tablenames arent inflected back from modelname
+ * test that odd tablenames aren't inflected back from modelname
  *
  * @return void
  */
@@ -986,7 +1022,7 @@ STRINGEND;
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'createFile'),
+			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'doActsAs', 'createFile'),
 			array($out, $out, $in)
 		);
 		$this->_setupOtherMocks();
@@ -1000,6 +1036,7 @@ STRINGEND;
 		$this->Task->expects($this->once())->method('_getModelObject')->will($this->returnValue($object));
 		$this->Task->expects($this->once())->method('doAssociations')->will($this->returnValue(array()));
 		$this->Task->expects($this->once())->method('doValidation')->will($this->returnValue(array()));
+		$this->Task->expects($this->once())->method('doActsAs')->will($this->returnValue(array()));
 
 		$filename = '/my/path/BakeOdd.php';
 		$this->Task->expects($this->once())->method('createFile')
@@ -1013,7 +1050,7 @@ STRINGEND;
 	}
 
 /**
- * test that odd tablenames arent inflected back from modelname
+ * test that odd tablenames aren't inflected back from modelname
  *
  * @return void
  */
@@ -1041,7 +1078,7 @@ STRINGEND;
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'createFile'),
+			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'doActsAs', 'createFile'),
 			array($out, $out, $in)
 		);
 		$this->_setupOtherMocks();
@@ -1055,6 +1092,7 @@ STRINGEND;
 		$this->Task->expects($this->once())->method('_getModelObject')->will($this->returnValue($object));
 		$this->Task->expects($this->once())->method('doAssociations')->will($this->returnValue(array()));
 		$this->Task->expects($this->once())->method('doValidation')->will($this->returnValue(array()));
+		$this->Task->expects($this->once())->method('doActsAs')->will($this->returnValue(array()));
 
 		$filename = '/my/path/BakeOdd.php';
 		$this->Task->expects($this->once())->method('createFile')

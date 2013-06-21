@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Model.Datasource.Database
  * @since         CakePHP(tm) v 1.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Model', 'Model');
@@ -115,13 +116,6 @@ class SqlserverTestDb extends Sqlserver {
 class SqlserverTestModel extends CakeTestModel {
 
 /**
- * name property
- *
- * @var string 'SqlserverTestModel'
- */
-	public $name = 'SqlserverTestModel';
-
-/**
  * useTable property
  *
  * @var bool false
@@ -186,13 +180,6 @@ class SqlserverTestModel extends CakeTestModel {
  * @package       Cake.Test.Case.Model.Datasource.Database
  */
 class SqlserverClientTestModel extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string 'SqlserverAssociatedTestModel'
- */
-	public $name = 'SqlserverClientTestModel';
 
 /**
  * useTable property
@@ -447,7 +434,16 @@ class SqlserverTest extends CakeTestCase {
 				'Length' => 72,
 				'Null' => 'NO',
 				'Size' => ''
-			)
+			),
+			(object)array(
+				'Default' => null,
+				'Field' => 'parent_id',
+				'Key' => '0',
+				'Type' => 'bigint',
+				'Length' => 8,
+				'Null' => 'YES',
+				'Size' => '0',
+			),
 		));
 		$this->db->executeResultsStack = array($SqlserverTableDescription);
 		$dummyModel = $this->model;
@@ -477,9 +473,16 @@ class SqlserverTest extends CakeTestCase {
 				'default' => '',
 				'length' => 36,
 				'key' => 'primary'
-			)
+			),
+			'parent_id' => array(
+				'type' => 'biginteger',
+				'null' => true,
+				'default' => null,
+				'length' => 8,
+			),
 		);
 		$this->assertEquals($expected, $result);
+		$this->assertSame($expected['parent_id'], $result['parent_id']);
 	}
 
 /**

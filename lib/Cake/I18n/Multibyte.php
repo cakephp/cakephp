@@ -6,16 +6,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.I18n
  * @since         CakePHP(tm) v 1.2.0.6833
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -732,7 +733,6 @@ class Multibyte {
  * @param string $charset charset to use for encoding. defaults to UTF-8
  * @param string $newline
  * @return string
- * @TODO: add support for 'Q'('Quoted Printable') encoding
  */
 	public static function mimeEncode($string, $charset = null, $newline = "\r\n") {
 		if (!Multibyte::checkMultibyte($string) && strlen($string) < 75) {
@@ -750,7 +750,7 @@ class Multibyte {
 
 		$length = 75 - strlen($start) - strlen($end);
 		$length = $length - ($length % 4);
-		if ($charset == 'UTF-8') {
+		if ($charset === 'UTF-8') {
 			$parts = array();
 			$maxchars = floor(($length * 3) / 4);
 			$stringLength = strlen($string);

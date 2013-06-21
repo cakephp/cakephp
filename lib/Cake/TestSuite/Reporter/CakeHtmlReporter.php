@@ -5,16 +5,18 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.4433
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('CakeBaseReporter', 'TestSuite/Reporter');
 
 /**
@@ -99,7 +101,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 			$buffer .= "<strong>EMPTY</strong>";
 		}
 
-		foreach ($testCases as $testCaseFile => $testCase) {
+		foreach ($testCases as $testCase) {
 			$title = explode(DS, str_replace('.test.php', '', $testCase));
 			$title[count($title) - 1] = Inflector::camelize($title[count($title) - 1]);
 			$title = implode(' / ', $title);
@@ -169,6 +171,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 /**
  * Paints a code coverage report.
  *
+ * @param array $coverage
  * @return void
  */
 	public function paintCoverage(array $coverage) {
@@ -242,6 +245,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
  *   the context of the other tests.
+ * @param mixed $test
  * @return void
  */
 	public function paintFail($message, $test) {
@@ -249,11 +253,11 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$testName = get_class($test) . '(' . $test->getName() . ')';
 
 		$actualMsg = $expectedMsg = null;
-		if (method_exists($message, 'comparisonFailure')) {
-			$failure = $message->comparisonFailure();
+		if (method_exists($message, 'getComparisonFailure')) {
+			$failure = $message->getComparisonFailure();
 			if (is_object($failure)) {
-				$actualMsg = $message->getComparisonFailure()->getActualAsString();
-				$expectedMsg = $message->getComparisonFailure()->getExpectedAsString();
+				$actualMsg = $failure->getActualAsString();
+				$expectedMsg = $failure->getExpectedAsString();
 			}
 		}
 
@@ -294,6 +298,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * Paints a PHP exception.
  *
  * @param Exception $exception Exception to display.
+ * @param mixed $test
  * @return void
  */
 	public function paintException($message, $test) {

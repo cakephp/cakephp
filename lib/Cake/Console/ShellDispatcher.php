@@ -5,15 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -48,12 +49,10 @@ class ShellDispatcher {
  */
 	public function __construct($args = array(), $bootstrap = true) {
 		set_time_limit(0);
+		$this->parseParams($args);
 
 		if ($bootstrap) {
 			$this->_initConstants();
-		}
-		$this->parseParams($args);
-		if ($bootstrap) {
 			$this->_initEnvironment();
 		}
 	}
@@ -124,7 +123,7 @@ class ShellDispatcher {
 		define('APP_DIR', $this->params['app']);
 		define('APP', $this->params['working'] . DS);
 		define('WWW_ROOT', APP . $this->params['webroot'] . DS);
-		if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp')) {
+		if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp') && !defined('TMP')) {
 			define('TMP', CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'tmp' . DS);
 		}
 		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'Config' . DS . 'bootstrap.php');
@@ -138,7 +137,9 @@ class ShellDispatcher {
 		$this->setErrorHandlers();
 
 		if (!defined('FULL_BASE_URL')) {
-			define('FULL_BASE_URL', 'http://localhost');
+			$url = Configure::read('App.fullBaseURL');
+			define('FULL_BASE_URL', $url ? $url : 'http://localhost');
+			Configure::write('App.fullBaseURL', FULL_BASE_URL);
 		}
 
 		return true;
@@ -202,7 +203,7 @@ class ShellDispatcher {
 		}
 		$methods = array_diff(get_class_methods($Shell), get_class_methods('Shell'));
 		$added = in_array($command, $methods);
-		$private = $command[0] == '_' && method_exists($Shell, $command);
+		$private = $command[0] === '_' && method_exists($Shell, $command);
 
 		if (!$private) {
 			if ($added) {
@@ -289,7 +290,7 @@ class ShellDispatcher {
 			}
 		}
 
-		if ($params['app'][0] == '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
+		if ($params['app'][0] === '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
 			$params['root'] = dirname($params['app']);
 		} elseif (strpos($params['app'], '/')) {
 			$params['root'] .= '/' . dirname($params['app']);
@@ -339,7 +340,7 @@ class ShellDispatcher {
 	}
 
 /**
- * Shows console help.  Performs an internal dispatch to the CommandList Shell
+ * Shows console help. Performs an internal dispatch to the CommandList Shell
  *
  * @return void
  */

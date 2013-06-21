@@ -5,15 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('TaskCollection', 'Console');
@@ -27,22 +28,22 @@ App::uses('HelpFormatter', 'Console');
 
 /**
  * Handles parsing the ARGV in the command line and provides support
- * for GetOpt compatible option definition.  Provides a builder pattern implementation
+ * for GetOpt compatible option definition. Provides a builder pattern implementation
  * for creating shell option parsers.
  *
  * ### Options
  *
  * Named arguments come in two forms, long and short. Long arguments are preceded
  * by two - and give a more verbose option name. i.e. `--version`. Short arguments are
- * preceded by one - and are only one character long.  They usually match with a long option,
+ * preceded by one - and are only one character long. They usually match with a long option,
  * and provide a more terse alternative.
  *
  * ### Using Options
  *
- * Options can be defined with both long and short forms.  By using `$parser->addOption()`
- * you can define new options.  The name of the option is used as its long form, and you
+ * Options can be defined with both long and short forms. By using `$parser->addOption()`
+ * you can define new options. The name of the option is used as its long form, and you
  * can supply an additional short form, with the `short` option. Short options should
- * only be one letter long.  Using more than one letter for a short option will raise an exception.
+ * only be one letter long. Using more than one letter for a short option will raise an exception.
  *
  * Calling options can be done using syntax similar to most *nix command line tools. Long options
  * cane either include an `=` or leave it out.
@@ -53,8 +54,8 @@ App::uses('HelpFormatter', 'Console');
  *
  * `cake myshell command -cn`
  *
- * Short options can be combined into groups as seen above.  Each letter in a group
- * will be treated as a separate option.  The previous example is equivalent to:
+ * Short options can be combined into groups as seen above. Each letter in a group
+ * will be treated as a separate option. The previous example is equivalent to:
  *
  * `cake myshell command -c -n`
  *
@@ -64,8 +65,8 @@ App::uses('HelpFormatter', 'Console');
  *
  * ### Positional arguments
  *
- * If no positional arguments are defined, all of them will be parsed.  If you define positional
- * arguments any arguments greater than those defined will cause exceptions.  Additionally you can
+ * If no positional arguments are defined, all of them will be parsed. If you define positional
+ * arguments any arguments greater than those defined will cause exceptions. Additionally you can
  * declare arguments as optional, by setting the required param to false.
  *
  * `$parser->addArgument('model', array('required' => false));`
@@ -73,7 +74,7 @@ App::uses('HelpFormatter', 'Console');
  * ### Providing Help text
  *
  * By providing help text for your positional arguments and named arguments, the ConsoleOptionParser
- * can generate a help display for you.  You can view the help for shells by using the `--help` or `-h` switch.
+ * can generate a help display for you. You can view the help for shells by using the `--help` or `-h` switch.
  *
  * @package       Cake.Console
  */
@@ -136,7 +137,7 @@ class ConsoleOptionParser {
 /**
  * Construct an OptionParser so you can define its behavior
  *
- * @param string $command The command name this parser is for.  The command name is used for generating help.
+ * @param string $command The command name this parser is for. The command name is used for generating help.
  * @param boolean $defaultOptions Whether you want the verbose and quiet options set. Setting
  *  this to false will prevent the addition of `--verbose` & `--quiet` options.
  */
@@ -165,7 +166,7 @@ class ConsoleOptionParser {
 /**
  * Static factory method for creating new OptionParsers so you can chain methods off of them.
  *
- * @param string $command The command name this parser is for.  The command name is used for generating help.
+ * @param string $command The command name this parser is for. The command name is used for generating help.
  * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
@@ -248,7 +249,7 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Get or set an epilog to the parser.  The epilog is added to the end of
+ * Get or set an epilog to the parser. The epilog is added to the end of
  * the options and arguments listing when help is generated.
  *
  * @param string|array $text Text when setting or null when reading. If an array the text will be imploded with "\n"
@@ -272,14 +273,14 @@ class ConsoleOptionParser {
  * ### Options
  *
  * - `short` - The single letter variant for this option, leave undefined for none.
- * - `help` - Help text for this option.  Used when generating help for the option.
+ * - `help` - Help text for this option. Used when generating help for the option.
  * - `default` - The default value for this option. Defaults are added into the parsed params when the
- *    attached option is not provided or has no value.  Using default and boolean together will not work.
+ *    attached option is not provided or has no value. Using default and boolean together will not work.
  *    are added into the parsed parameters when the option is undefined. Defaults to null.
  * - `boolean` - The option uses no value, its just a boolean switch. Defaults to false.
- *    If an option is defined as boolean, it will always be added to the parsed params.  If no present
+ *    If an option is defined as boolean, it will always be added to the parsed params. If no present
  *    it will be false, if present it will be true.
- * - `choices` A list of valid choices for this option.  If left empty all values are valid..
+ * - `choices` A list of valid choices for this option. If left empty all values are valid..
  *   An exception will be raised when parse() encounters an invalid value.
  *
  * @param ConsoleInputOption|string $name The long name you want to the value to be parsed out as when options are parsed.
@@ -320,10 +321,10 @@ class ConsoleOptionParser {
  * - `index` The index for the arg, if left undefined the argument will be put
  *   onto the end of the arguments. If you define the same index twice the first
  *   option will be overwritten.
- * - `choices` A list of valid choices for this argument.  If left empty all values are valid..
+ * - `choices` A list of valid choices for this argument. If left empty all values are valid..
  *   An exception will be raised when parse() encounters an invalid value.
  *
- * @param ConsoleInputArgument|string $name The name of the argument.  Will also accept an instance of ConsoleInputArgument
+ * @param ConsoleInputArgument|string $name The name of the argument. Will also accept an instance of ConsoleInputArgument
  * @param array $params Parameters for the argument, see above.
  * @return ConsoleOptionParser $this.
  */
@@ -345,6 +346,7 @@ class ConsoleOptionParser {
 			$arg = new ConsoleInputArgument($options);
 		}
 		$this->_args[$index] = $arg;
+		ksort($this->_args);
 		return $this;
 	}
 
@@ -385,8 +387,8 @@ class ConsoleOptionParser {
  * ### Options
  *
  * - `help` - Help text for the subcommand.
- * - `parser` - A ConsoleOptionParser for the subcommand.  This allows you to create method
- *    specific option parsers.  When help is generated for a subcommand, if a parser is present
+ * - `parser` - A ConsoleOptionParser for the subcommand. This allows you to create method
+ *    specific option parsers. When help is generated for a subcommand, if a parser is present
  *    it will be used.
  *
  * @param ConsoleInputSubcommand|string $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
@@ -451,12 +453,12 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Parse the argv array into a set of params and args.  If $command is not null
+ * Parse the argv array into a set of params and args. If $command is not null
  * and $command is equal to a subcommand that has a parser, that parser will be used
  * to parse the $argv
  *
  * @param array $argv Array of args (argv) to parse.
- * @param string $command The subcommand to use.  If this parameter is a subcommand, that has a parser,
+ * @param string $command The subcommand to use. If this parameter is a subcommand, that has a parser,
  *    That parser will be used to parse $argv instead.
  * @return Array array($params, $args)
  * @throws ConsoleException When an invalid parameter is encountered.
@@ -468,9 +470,9 @@ class ConsoleOptionParser {
 		$params = $args = array();
 		$this->_tokens = $argv;
 		while (($token = array_shift($this->_tokens)) !== null) {
-			if (substr($token, 0, 2) == '--') {
+			if (substr($token, 0, 2) === '--') {
 				$params = $this->_parseLongOption($token, $params);
-			} elseif (substr($token, 0, 1) == '-') {
+			} elseif (substr($token, 0, 1) === '-') {
 				$params = $this->_parseShortOption($token, $params);
 			} else {
 				$args = $this->_parseArg($token, $args);
@@ -519,15 +521,15 @@ class ConsoleOptionParser {
 			return $subparser->help(null, $format, $width);
 		}
 		$formatter = new HelpFormatter($this);
-		if ($format == 'text' || $format === true) {
+		if ($format === 'text' || $format === true) {
 			return $formatter->text($width);
-		} elseif ($format == 'xml') {
+		} elseif ($format === 'xml') {
 			return $formatter->xml();
 		}
 	}
 
 /**
- * Parse the value for a long option out of $this->_tokens.  Will handle
+ * Parse the value for a long option out of $this->_tokens. Will handle
  * options with an `=` in them.
  *
  * @param string $option The option to parse.
@@ -584,7 +586,8 @@ class ConsoleOptionParser {
 		$option = $this->_options[$name];
 		$isBoolean = $option->isBoolean();
 		$nextValue = $this->_nextToken();
-		if (!$isBoolean && !empty($nextValue) && !$this->_optionExists($nextValue)) {
+		$emptyNextValue = (empty($nextValue) && $nextValue !== '0');
+		if (!$isBoolean && !$emptyNextValue && !$this->_optionExists($nextValue)) {
 			array_shift($this->_tokens);
 			$value = $nextValue;
 		} elseif ($isBoolean) {
@@ -625,7 +628,7 @@ class ConsoleOptionParser {
  */
 	protected function _parseArg($argument, $args) {
 		if (empty($this->_args)) {
-			array_push($args, $argument);
+			$args[] = $argument;
 			return $args;
 		}
 		$next = count($args);
@@ -634,7 +637,7 @@ class ConsoleOptionParser {
 		}
 
 		if ($this->_args[$next]->validChoice($argument)) {
-			array_push($args, $argument);
+			$args[] = $argument;
 			return $args;
 		}
 	}

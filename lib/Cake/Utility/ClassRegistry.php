@@ -1,16 +1,17 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.9.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -57,7 +58,7 @@ class ClassRegistry {
  *
  * @return ClassRegistry instance
  */
-	public static function &getInstance() {
+	public static function getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] = new ClassRegistry();
@@ -72,7 +73,7 @@ class ClassRegistry {
  * Examples
  * Simple Use: Get a Post model instance ```ClassRegistry::init('Post');```
  *
- * Expanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model');```
+ * Expanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry');```
  *
  * Model Classes can accept optional ```array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);```
  *
@@ -108,9 +109,9 @@ class ClassRegistry {
 			$defaults = $_this->_config['Model'];
 		}
 		$count = count($objects);
-		$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
+		$availableDs = null;
 
-		foreach ($objects as $key => $settings) {
+		foreach ($objects as $settings) {
 			if (is_numeric($settings)) {
 				trigger_error(__d('cake_dev', '(ClassRegistry::init() Attempted to create instance of a class with a numeric name'), E_USER_WARNING);
 				return false;
@@ -152,6 +153,9 @@ class ClassRegistry {
 						$defaultProperties = $reflection->getDefaultProperties();
 						if (isset($defaultProperties['useDbConfig'])) {
 							$useDbConfig = $defaultProperties['useDbConfig'];
+							if ($availableDs === null) {
+								$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
+							}
 							if (in_array('test_' . $useDbConfig, $availableDs)) {
 								$useDbConfig = 'test_' . $useDbConfig;
 							}
@@ -182,7 +186,7 @@ class ClassRegistry {
 					}
 
 					if (!isset($instance)) {
-						trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
+						trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %s', $class), E_USER_WARNING);
 						return false;
 					}
 				}
@@ -255,7 +259,7 @@ class ClassRegistry {
  * @param string $key Key of object to look for
  * @return mixed Object stored in registry or boolean false if the object does not exist.
  */
-	public static function &getObject($key) {
+	public static function getObject($key) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 		$return = false;
@@ -273,10 +277,10 @@ class ClassRegistry {
 /**
  * Sets the default constructor parameter for an object type
  *
- * @param string $type Type of object.  If this parameter is omitted, defaults to "Model"
+ * @param string $type Type of object. If this parameter is omitted, defaults to "Model"
  * @param array $param The parameter that will be passed to object constructors when objects
  *                      of $type are created
- * @return mixed Void if $param is being set.  Otherwise, if only $type is passed, returns
+ * @return mixed Void if $param is being set. Otherwise, if only $type is passed, returns
  *               the previously-set value of $param, or null if not set.
  */
 	public static function config($type, $param = array()) {

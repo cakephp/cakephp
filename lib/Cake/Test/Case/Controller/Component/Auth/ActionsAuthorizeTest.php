@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Controller.Component.Auth
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('ActionsAuthorize', 'Controller/Component/Auth');
@@ -23,6 +24,11 @@ App::uses('AclComponent', 'Controller/Component');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 
+/**
+ * Class ActionsAuthorizeTest
+ *
+ * @package       Cake.Test.Case.Controller.Component.Auth
+ */
 class ActionsAuthorizeTest extends CakeTestCase {
 
 /**
@@ -164,11 +170,12 @@ class ActionsAuthorizeTest extends CakeTestCase {
  */
 	public function testActionNoDoubleSlash() {
 		$this->auth->settings['actionPath'] = '/controllers/';
-		$request = array(
+		$request = new CakeRequest('/posts/index', false);
+		$request->addParams(array(
 			'plugin' => null,
 			'controller' => 'posts',
 			'action' => 'index'
-		);
+		));
 		$result = $this->auth->action($request);
 		$this->assertEquals('controllers/Posts/index', $result);
 	}

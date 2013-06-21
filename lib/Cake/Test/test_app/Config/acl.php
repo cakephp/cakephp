@@ -6,46 +6,45 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The MIT License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.test_app.Config
+ * @package       Cake.Test.TestApp.Config
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www/opensource/org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 
 // -------------------------------------
 // Roles
 // -------------------------------------
 $config['roles'] = array(
-	'Role/admin' 				=> null,
-	'Role/data_acquirer' 		=> null,
-	'Role/accounting' 			=> null,
+	'Role/admin'				=> null,
+	'Role/data_acquirer'		=> null,
+	'Role/accounting'			=> null,
 	'Role/database_manager'		=> null,
-	'Role/sales' 				=> null,
-	'Role/data_analyst' 		=> 'Role/data_acquirer, Role/database_manager',
-	'Role/reports' 				=> 'Role/data_analyst',
+	'Role/sales'				=> null,
+	'Role/data_analyst'			=> 'Role/data_acquirer, Role/database_manager',
+	'Role/reports'				=> 'Role/data_analyst',
 	// allow inherited roles to be defined as an array or comma separated list
-	'Role/manager' 				=> array(
+	'Role/manager'				=> array(
 		'Role/accounting',
 		'Role/sales',
 	),
-	'Role/accounting_manager' 	=> 'Role/accounting',
+	'Role/accounting_manager'	=> 'Role/accounting',
 	// managers
 	'User/hardy'				=> 'Role/accounting_manager, Role/reports',
-	'User/stan' 				=> 'Role/manager',
+	'User/stan'					=> 'Role/manager',
 	// accountants
-	'User/peter' 				=> 'Role/accounting',
-	'User/jeff' 				=> 'Role/accounting',
+	'User/peter'				=> 'Role/accounting',
+	'User/jeff'					=> 'Role/accounting',
 	// admins
 	'User/jan'					=> 'Role/admin',
 	// database
-	'User/db_manager_1' 		=> 'Role/database_manager',
+	'User/db_manager_1'			=> 'Role/database_manager',
 	'User/db_manager_2'			=> 'Role/database_manager',
 );
 
@@ -66,9 +65,9 @@ $config['rules']['allow'] = array(
 );
 $config['rules']['deny'] = array(
 	// accountants and sales should not delete anything
-	'/controllers/*/delete' 	=> array(
+	'/controllers/*/delete' => array(
 		'Role/sales',
 		'Role/accounting'
 	),
-	'/controllers/db/drop'  	=> 'User/db_manager_2',
+	'/controllers/db/drop' => 'User/db_manager_2',
 );

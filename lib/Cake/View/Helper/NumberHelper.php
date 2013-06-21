@@ -7,16 +7,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CakeNumber', 'Utility');
@@ -73,7 +74,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::precision()
+ * @see CakeNumber::precision()
  *
  * @param float $number	A floating point number.
  * @param integer $precision The precision of the returned number.
@@ -85,7 +86,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::toReadableSize()
+ * @see CakeNumber::toReadableSize()
  *
  * @param integer $size Size in bytes
  * @return string Human readable size
@@ -96,7 +97,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::toPercentage()
+ * @see CakeNumber::toPercentage()
  *
  * @param float $number A floating point number
  * @param integer $precision The precision of the returned number
@@ -108,7 +109,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::format()
+ * @see CakeNumber::format()
  *
  * @param float $number A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
@@ -121,7 +122,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::currency()
+ * @see CakeNumber::currency()
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
@@ -136,7 +137,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::addFormat()
+ * @see CakeNumber::addFormat()
  *
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
@@ -149,7 +150,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see: CakeNumber::defaultCurrency()
+ * @see CakeNumber::defaultCurrency()
  *
  * @param string $currency The currency to be used in the future.
  * @return void
