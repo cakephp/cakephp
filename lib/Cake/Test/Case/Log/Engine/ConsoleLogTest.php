@@ -78,7 +78,7 @@ class ConsoleLogTest extends CakeTestCase {
  */
 	public function testConsoleOutputWrites() {
 		TestCakeLog::config('test_console_log', array(
-			'engine' => 'TestConsoleLog',
+			'engine' => 'TestConsole',
 			));
 
 		$mock = $this->getMock('TestConsoleLog', array('write'), array(
@@ -97,7 +97,7 @@ class ConsoleLogTest extends CakeTestCase {
  */
 	public function testCombinedLogWriting() {
 		TestCakeLog::config('test_console_log', array(
-			'engine' => 'TestConsoleLog',
+			'engine' => 'TestConsole',
 			));
 		$mock = $this->getMock('TestConsoleLog', array('write'), array(
 			array('types' => 'error'),
@@ -133,7 +133,7 @@ class ConsoleLogTest extends CakeTestCase {
  */
 	public function testDefaultOutputAs() {
 		TestCakeLog::config('test_console_log', array(
-			'engine' => 'TestConsoleLog',
+			'engine' => 'TestConsole',
 			));
 		if (DS === '\\' && !(bool)env('ANSICON')) {
 			$expected = ConsoleOutput::PLAIN;
