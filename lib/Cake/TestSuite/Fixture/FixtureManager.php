@@ -194,15 +194,22 @@ class FixtureManager {
 			return;
 		}
 
+		$dbs = [];
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
-				$db = ConnectionManager::getDataSource($fixture->connection);
-				$db->begin();
+				$dbs[$fixture->connection][$f] = $fixture;
+			}
+		}
+
+		foreach ($dbs as $db => $fixtures) {
+			$db = ConnectionManager::getDataSource($fixture->connection);
+			$db->begin();
+			foreach ($fixtures as $fixture) {
 				$this->_setupTable($fixture, $db, $test->dropTables);
 				$fixture->insert($db);
-				$db->commit();
 			}
+			$db->commit();
 		}
 	}
 

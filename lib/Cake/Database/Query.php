@@ -160,7 +160,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		if ($connection === null) {
 			return $this->_connection;
 		}
-		$this->_dirty = false;
+		$this->_dirty = true;
 		$this->_connection = $connection;
 		return $this;
 	}
@@ -184,7 +184,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  */
 	public function execute() {
 		$query = $this->_transformQuery();
-		$statement = $this->_connection->prepare($query->sql(false));
+		$statement = $this->_connection->prepare($query->sql());
 		$query->_bindStatement($statement);
 		$statement->execute();
 
@@ -194,7 +194,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Returns the SQL representation of this object.
  *
- * By default, this function will transform this query to make it compatible
+ * This function will compile this query to make it compatible
  * with the SQL dialect that is used by the connection, This process might
  * add, remove or alter any query part or internal expression to make it
  * executable in the target platform.
@@ -203,11 +203,9 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * values when the query is executed, hence it is most suitable to use with
  * prepared statements.
  *
- * @param boolean $transform Whether to let the connection transform the query
- *    to the specific dialect or not
  * @return string
  */
-	public function sql($transform = true) {
+	public function sql() {
 		$sql = '';
 		$visitor = function($parts, $name) use (&$sql) {
 			if (!count($parts)) {
@@ -222,7 +220,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $sql);
 		};
 
-		$query = $transform ? $this->_transformQuery() : $this;
+		$query = $this->_transformQuery();
 		$query->traverse($visitor->bindTo($query));
 		return $sql;
 	}
@@ -1535,7 +1533,9 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		// TODO: Should Query actually get the driver or just let the connection decide where
 		// to get the query translator?
 		$translator = $this->connection()->driver()->queryTranslator($this->_type);
-		return $this->_transformedQuery = $translator($this);
+		$transformed = $this->_transformedQuery = $translator($this);
+		$transformed->_dirty = false;
+		return $transformed;
 	}
 
 /**
