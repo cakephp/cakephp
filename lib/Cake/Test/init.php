@@ -86,5 +86,5 @@ Configure::write('Log.error', [
 	'file' => 'error',
 ]);
 
-$autoloader = new  Cake\Core\ClassLoader('TestApp', dirname(__DIR__) . '/Test');
+$autoloader = new Cake\Core\ClassLoader('TestApp', dirname(__DIR__) . '/Test');
 $autoloader->register();

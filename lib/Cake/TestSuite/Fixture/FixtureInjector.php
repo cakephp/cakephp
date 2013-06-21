@@ -16,9 +16,9 @@
  */
 namespace Cake\TestSuite\Fixture;
 
-use \Exception;
 use \Cake\TestSuite\TestCase;
 use \Cake\TestSuite\Fixture\FixtureManager;
+use \Exception;
 use \PHPUnit_Framework_AssertionFailedError;
 use \PHPUnit_Framework_Test;
 use \PHPUnit_Framework_TestSuite;
@@ -78,7 +78,7 @@ class FixtureInjector implements \PHPUnit_Framework_TestListener {
  *
  * @return void
  */
-	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time){
+	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
 	}
 
 /**
@@ -94,7 +94,7 @@ class FixtureInjector implements \PHPUnit_Framework_TestListener {
  *
  * @return void
  */
-	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time){
+	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
 	}
 
 /**

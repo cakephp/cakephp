@@ -24,8 +24,8 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Connection;
 use Cake\Model\ConnectionManager;
-use Cake\TestSuite\TestCase;
 use Cake\TestSuite\Fixture\TestFixture;
+use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 

@@ -19,11 +19,11 @@
  */
 namespace Cake\Test\TestCase\Controller;
 
-use TestApp\Controller\PagesController;
 use Cake\Core\App;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
+use TestApp\Controller\PagesController;
 
 /**
  * PagesControllerTest class

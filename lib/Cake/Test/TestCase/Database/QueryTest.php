@@ -1087,7 +1087,9 @@ class QueryTest extends TestCase {
 		$expected = [['total' => 2, 'author_id' => 1]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
-		$result = $query->having(function($e) { return $e->add('count(author_id) = 1 + 1'); }, [], true)
+		$result = $query->having(function($e) {
+			return $e->add('count(author_id) = 1 + 1'); 
+		}, [], true)
 			->execute();
 		$expected = [['total' => 2, 'author_id' => 1]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -1131,7 +1133,9 @@ class QueryTest extends TestCase {
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
 			->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
-			->orHaving(function($e) { return $e->add('count(author_id) = 1 + 1'); })
+			->orHaving(function($e) {
+				return $e->add('count(author_id) = 1 + 1');
+			})
 			->execute();
 		$expected = [['total' => 2, 'author_id' => 1]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -1173,7 +1177,9 @@ class QueryTest extends TestCase {
 			->from('articles')
 			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
 			->group('author_id')
-			->andHaving(function($e) { return $e->add('count(author_id) = 2 - 1'); })
+			->andHaving(function($e) {
+				return $e->add('count(author_id) = 2 - 1');
+			})
 			->execute();
 		$expected = [['total' => 1, 'author_id' => 3]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
