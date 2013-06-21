@@ -459,7 +459,9 @@ class Table {
  * @return \Cake\ORM\Query
  */
 	public function find($type, $options = []) {
-		return $this->{'find' . ucfirst($type)}($this->_buildQuery(), $options);
+		$query = $this->_buildQuery();
+		$query->select();
+		return $this->{'find' . ucfirst($type)}($query, $options);
 	}
 
 /**
@@ -481,9 +483,27 @@ class Table {
  */
 	protected function _buildQuery() {
 		$query = new Query($this->connection());
-		return $query
-			->repository($this)
-			->select();
+		return $query->repository($this);
+	}
+
+/**
+ * Update all matching rows.
+ *
+ * Sets the $fields to the provided values based on $conditions.
+ * This method will *not* trigger beforeSave/afterSave events. If you need those
+ * first load a collection of records and update them.
+ *
+ * @param array $fields A hash of field => new value.
+ * @param array $conditions An array of conditions, similar to those used with find()
+ * @return boolean Success
+ */
+	public function updateAll($fields, $conditions) {
+		$query = $this->_buildQuery();
+		$query->update($this->table())
+			->set($fields)
+			->where($conditions);
+		$query->execute();
+		return true;
 	}
 
 }

@@ -412,11 +412,13 @@ class Query extends DatabaseQuery {
 		if (!$this->_dirty) {
 			return parent::_transformQuery();
 		}
-		if (empty($this->_parts['from'])) {
-			$this->from([$this->_table->alias() => $this->_table->table()]);
+		if ($this->_type === 'select') {
+			if (empty($this->_parts['from'])) {
+				$this->from([$this->_table->alias() => $this->_table->table()]);
+			}
+			$this->_addDefaultFields();
+			$this->_addContainments();
 		}
-		$this->_addDefaultFields();
-		$this->_addContainments();
 		return parent::_transformQuery();
 	}
 
