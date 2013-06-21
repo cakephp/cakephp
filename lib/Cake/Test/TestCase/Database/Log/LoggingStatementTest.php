@@ -39,7 +39,7 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'SELECT bar FROM foo'),
-				$this->attributeEqualTo('took', 5, 5),
+				$this->attributeEqualTo('took', 5, 60),
 				$this->attributeEqualTo('numRows', 3),
 				$this->attributeEqualTo('params', [])
 			));

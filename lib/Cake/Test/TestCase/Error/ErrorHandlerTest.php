@@ -57,9 +57,6 @@ class ErrorHandlerTest extends TestCase {
 		$request->base = '';
 		Router::setRequestInfo($request);
 		Configure::write('debug', 2);
-
-		Log::disable('stdout');
-		Log::disable('stderr');
 	}
 
 /**
@@ -72,8 +69,6 @@ class ErrorHandlerTest extends TestCase {
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}
-		Log::enable('stdout');
-		Log::enable('stderr');
 	}
 
 /**
@@ -204,6 +199,12 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function testHandleException() {
 		$error = new Error\NotFoundException('Kaboom!');
+		Configure::write('Exception', [
+			'handler' => 'Cake\Error\ErrorHandler::handleException',
+			'renderer' => 'Cake\Error\ExceptionRenderer'
+		]);
+
+		$this->_restoreError = true;
 		ob_start();
 		ErrorHandler::handleException($error);
 		$result = ob_get_clean();
@@ -219,7 +220,11 @@ class ErrorHandlerTest extends TestCase {
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}
-		Configure::write('Exception.log', true);
+		Configure::write('Exception', [
+			'handler' => 'Cake\Error\ErrorHandler::handleException',
+			'renderer' => 'Cake\Error\ExceptionRenderer',
+			'log' => true
+		]);
 		$error = new Error\NotFoundException('Kaboom!');
 
 		ob_start();
@@ -241,8 +246,12 @@ class ErrorHandlerTest extends TestCase {
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}
-		Configure::write('Exception.log', true);
-		Configure::write('Exception.skipLog', array('Cake\Error\NotFoundException'));
+		Configure::write('Exception', [
+			'handler' => 'Cake\Error\ErrorHandler::handleException',
+			'renderer' => 'Cake\Error\ExceptionRenderer',
+			'log' => true,
+			'skipLog' => ['Cake\Error\NotFoundException']
+		]);
 		$notFound = new Error\NotFoundException('Kaboom!');
 		$forbidden = new Error\ForbiddenException('Fooled you!');
 
@@ -291,6 +300,10 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function testHandleFatalErrorPage() {
 		$line = __LINE__;
+		Configure::write('Exception', [
+			'handler' => 'Cake\Error\ErrorHandler::handleException',
+			'renderer' => 'Cake\Error\ExceptionRenderer',
+		]);
 
 		ob_start();
 		ob_start();
@@ -320,6 +333,11 @@ class ErrorHandlerTest extends TestCase {
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}
+		Configure::write('Exception', [
+			'handler' => 'Cake\Error\ErrorHandler::handleException',
+			'renderer' => 'Cake\Error\ExceptionRenderer',
+			'log' => true
+		]);
 
 		ob_start();
 		ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
