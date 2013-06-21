@@ -643,7 +643,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Get the URL a use should be redirected to upon login.
+ * Get the URL a user should be redirected to upon login.
  *
  * Pass an URL in to set the destination a user should be redirected to upon
  * logging in.
