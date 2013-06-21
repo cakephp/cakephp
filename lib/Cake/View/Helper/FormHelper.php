@@ -2280,8 +2280,8 @@ class FormHelper extends AppHelper {
  */
 	protected function _dateTimeSelected($select, $fieldName, $attributes) {
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
-			if (is_array($value) && isset($value[$select])) {
-				$attributes['value'] = $value[$select];
+			if (is_array($value)) {
+				$attributes['value'] = isset($value[$select]) ? $value[$select] : null;
 			} else {
 				if (empty($value)) {
 					if (!$attributes['empty']) {
@@ -2368,6 +2368,9 @@ class FormHelper extends AppHelper {
 
 		if ($attributes['value'] === null && $attributes['empty'] != true) {
 			$attributes['value'] = time();
+			if (!empty($attributes['maxYear']) && $attributes['maxYear'] < date('Y')) {
+				$attributes['value'] = strtotime(date($attributes['maxYear'] . '-m-d'));
+			}
 		}
 
 		if (!empty($attributes['value'])) {
