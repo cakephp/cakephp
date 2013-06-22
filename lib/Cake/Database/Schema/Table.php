@@ -249,6 +249,10 @@ class Table {
 		if (!in_array($attrs['type'], $this->_validIndexTypes, true)) {
 			throw new Exception(__d('cake_dev', 'Invalid index type "%s"', $attrs['type']));
 		}
+		if (empty($attrs['columns'])) {
+			throw new Exception(__d('cake_dev', 'Indexes must define columns.'));
+		}
+		$attrs['columns'] = (array)$attrs['columns'];
 		foreach ($attrs['columns'] as $field) {
 			if (empty($this->_columns[$field])) {
 				throw new Exception(__d('cake_dev', 'Columns used in indexes must already exist.'));
@@ -325,6 +329,10 @@ class Table {
 		if (!in_array($attrs['type'], $this->_validConstraintTypes, true)) {
 			throw new Exception(__d('cake_dev', 'Invalid constraint type "%s"', $attrs['type']));
 		}
+		if (empty($attrs['columns'])) {
+			throw new Exception(__d('cake_dev', 'Constraints must define columns.'));
+		}
+		$attrs['columns'] = (array)$attrs['columns'];
 		foreach ($attrs['columns'] as $field) {
 			if (empty($this->_columns[$field])) {
 				throw new Exception(__d('cake_dev', 'Columns used in constraints must already exist.'));

@@ -122,17 +122,35 @@ class TableTest extends TestCase {
 	}
 
 /**
- * Test that an exception is raised when constraintes
+ * Dataprovider for invalid addConstraint calls.
+ *
+ * @return array
+ */
+	public static function addConstaintErrorProvider() {
+		return [
+			// No properties
+			[[]],
+			// Empty columns
+			[['columns' => '']],
+			[['columns' => []]],
+			// Missing column
+			[['columns' => ['derp']]],
+			// Invalid type
+			[['columns' => 'author_id', 'type' => 'derp']],
+		];
+	}
+/**
+ * Test that an exception is raised when constraints
  * are added for fields that do not exist.
  *
+ * @dataProvider addConstaintErrorProvider
  * @expectedException Cake\Database\Exception
  * @return void
  */
-	public function testAddConstraintErrorWhenFieldIsMissing() {
+	public function testAddConstraintError($props) {
 		$table = new Table('articles');
-		$table->addConstraint('author_idx', [
-			'columns' => ['author_id']
-		]);
+		$table->addColumn('author_id', 'integer');
+		$table->addConstraint('author_idx', $props);
 	}
 
 /**
@@ -154,33 +172,36 @@ class TableTest extends TestCase {
 	}
 
 /**
- * Test that an exception is raised when indexes
- * are added for fields that do not exist.
+ * Dataprovider for invalid addIndex calls
  *
- * @expectedException Cake\Database\Exception
- * @return void
+ * @return array
  */
-	public function testAddIndexErrorWhenFieldIsMissing() {
-		$table = new Table('articles');
-		$table->addIndex('author_idx', [
-			'columns' => ['author_id']
-		]);
+	public static function addIndexErrorProvider() {
+		return [
+			// Empty
+			[[]],
+			// No columns
+			[['columns' => '']],
+			[['columns' => []]],
+			// Missing column
+			[['columns' => ['not_there']]],
+			// Invalid type
+			[['columns' => 'author_id', 'type' => 'derp']],
+		];
 	}
 
 /**
- * Test that exceptions are raised when indexes
- * are added with invalid types
+ * Test that an exception is raised when indexes
+ * are added for fields that do not exist.
  *
+ * @dataProvider addIndexErrorProvider
  * @expectedException Cake\Database\Exception
  * @return void
  */
-	public function testAddIndexErrorWrongType() {
+	public function testAddIndexError($props) {
 		$table = new Table('articles');
-		$table->addColumn('author_id', 'integer')
-			->addIndex('author_idx', [
-				'type' => 'derp',
-				'columns' => ['author_id']
-			]);
+		$table->addColumn('author_id', 'integer');
+		$table->addIndex('author_idx', $props);
 	}
 
 /**
