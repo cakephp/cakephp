@@ -19,14 +19,19 @@
  * @since         CakePHP(tm) v 2.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-require_once __DIR__ . DS . 'ModelTestBase.php';
+namespace Cake\Test\TestCase\Model;
+
+use Cake\Model\Model;
+use Cake\Model\ModelBehavior;
+use Cake\Test\TestCase\Model\ModelTestBase;
+use Cake\TestSuite\TestCase;
 
 /**
  * Class ModelCrossSchemaHabtmTest
  *
  * @package       Cake.Test.Case.Model
  */
-class ModelCrossSchemaHabtmTest extends BaseModelTest {
+class ModelCrossSchemaHabtmTest extends ModelTestBase {
 
 /**
  * Fixtures to be used

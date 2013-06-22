@@ -19,19 +19,22 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\TestSuite\Model\Behavior;
 
-App::uses('AclBehavior', 'Model/Behavior');
-App::uses('Aco', 'Model');
-App::uses('Aro', 'Model');
-App::uses('AclNode', 'Model');
-App::uses('DbAcl', 'Model');
+use Cake\Core\App;
+use Cake\Model\AclNode;
+use Cake\Model\Aco;
+use Cake\Model\Aro;
+use Cake\Model\Behavior\AclBehavior;
+use Cake\TestSuite\Fixture\TestModel;
+use Cake\TestSuite\TestCase;
 
 /**
  * Test Person class - self joined model
  *
  * @package       Cake.Test.Case.Model.Behavior
  */
-class AclPerson extends CakeTestModel {
+class AclPerson extends TestModel {
 
 /**
  * useTable property
@@ -99,7 +102,7 @@ class AclPerson extends CakeTestModel {
  *
  * @package       Cake.Test.Case.Model.Behavior
  */
-class AclUser extends CakeTestModel {
+class AclUser extends TestModel {
 
 /**
  * name property
@@ -134,10 +137,8 @@ class AclUser extends CakeTestModel {
 
 /**
  * AclPost class
- *
- * @package       Cake.Test.Case.Model.Behavior
  */
-class AclPost extends CakeTestModel {
+class AclPost extends TestModel {
 
 /**
  * name property
@@ -172,10 +173,8 @@ class AclPost extends CakeTestModel {
 
 /**
  * AclBehaviorTest class
- *
- * @package       Cake.Test.Case.Model.Behavior
  */
-class AclBehaviorTest extends CakeTestCase {
+class AclBehaviorTest extends TestCase {
 
 /**
  * Aco property

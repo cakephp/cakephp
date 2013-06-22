@@ -17,39 +17,21 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\TestCase\Model;
 
-require_once __DIR__ . DS . 'ModelTestBase.php';
-App::uses('DboSource', 'Model/Datasource');
-App::uses('DboMock', 'Model/Datasource');
-
-/**
- * DboMock class
- * A Dbo Source driver to mock a connection and a identity name() method
- */
-class DboMock extends DboSource {
-
-/**
- * Returns the $field without modifications
- */
-	public function name($field) {
-		return $field;
-	}
-
-/**
- * Returns true to fake a database connection
- */
-	public function connect() {
-		return true;
-	}
-
-}
+use Cake\Model\ConnectionManager;
+use Cake\Model\Model;
+use Cake\Model\ModelBehavior;
+use Cake\Test\TestCase\Model\ModelTestBase;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\Hash;
 
 /**
  * ModelIntegrationTest
  *
  * @package       Cake.Test.Case.Model
  */
-class ModelIntegrationTest extends BaseModelTest {
+class ModelIntegrationTest extends ModelTestBase {
 
 /**
  * testAssociationLazyLoading
@@ -927,7 +909,7 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	public static function timeProvider() {
 		$db = ConnectionManager::getDataSource('test');
-		$now = $db->expression('NOW()');
+		$now = 'NOW()';
 		return array(
 			// blank
 			array(

@@ -17,14 +17,19 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-require_once __DIR__ . DS . 'ModelTestBase.php';
+namespace Cake\Test\TestCase\Model;
+
+use Cake\Model\Model;
+use Cake\Model\ModelBehavior;
+use Cake\Test\TestCase\Model\ModelTestBase;
+use Cake\TestSuite\TestCase;
 
 /**
  * ModelDeleteTest
  *
  * @package       Cake.Test.Case.Model
  */
-class ModelDeleteTest extends BaseModelTest {
+class ModelDeleteTest extends ModelTestBase {
 
 /**
  * testDeleteHabtmReferenceWithConditions method

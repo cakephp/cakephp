@@ -17,6 +17,11 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\TestCase\Model\Behavior;
+
+use Cake\Model\Model;
+use Cake\TestSuite\TestCase;
+use Cake\TestSuite\TestSuite;
 
 /**
  * Tree Behavior test
@@ -25,7 +30,7 @@
  *
  * @package       Cake.Test.Case.Model.Behavior
  */
-class TreeBehaviorTest extends PHPUnit_Framework_TestSuite {
+class TreeBehaviorTest extends \PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -33,7 +38,7 @@ class TreeBehaviorTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('TreeBehavior tests');
+		$suite = new TestSuite('TreeBehavior tests');
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/Behavior/TreeBehaviorNumberTest.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'Model/Behavior/TreeBehaviorScopedTest.php');

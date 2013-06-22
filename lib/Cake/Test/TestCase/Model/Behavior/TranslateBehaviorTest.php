@@ -12,9 +12,11 @@
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\TestCase\Model\Behavior;
 
-App::uses('Model', 'Model');
-App::uses('AppModel', 'Model');
+use Cake\Model\Model;
+use Cake\TestSuite\TestCase;
+
 require_once dirname(__DIR__) . DS . 'models.php';
 
 /**
@@ -22,7 +24,7 @@ require_once dirname(__DIR__) . DS . 'models.php';
  *
  * @package       Cake.Test.Case.Model.Behavior
  */
-class TranslateBehaviorTest extends CakeTestCase {
+class TranslateBehaviorTest extends TestCase {
 
 /**
  * autoFixtures property

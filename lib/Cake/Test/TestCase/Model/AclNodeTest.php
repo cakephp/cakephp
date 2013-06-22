@@ -19,9 +19,9 @@
  */
 namespace Cake\Test\TestCase\Model;
 
+use Cake\Core\App;
 use Cake\Controller\Component\Acl\DbAcl;
 use Cake\Model\AclNode;
-use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -219,8 +219,8 @@ class AclNodeTest extends TestCase {
  * @return void
  */
 	public function setUp() {
-		parent::setUp();
 		$this->markTestIncomplete('Not runnable until Models are fixed.');
+		parent::setUp();
 		Configure::write('Acl.classname', 'TestDbAcl');
 		Configure::write('Acl.database', 'test');
 	}
