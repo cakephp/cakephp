@@ -180,8 +180,8 @@ class PluginTask extends Shell {
 	protected function _modifyBootstrap($plugin) {
 		$bootstrap = new File($this->bootstrap, false);
 		$contents = $bootstrap->read();
-		if (!preg_match("@\n\s*CakePlugin::loadAll@", $contents)) {
-			$bootstrap->append("\nCakePlugin::load('$plugin', array('bootstrap' => false, 'routes' => false));\n");
+		if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
+			$bootstrap->append("\nPlugin::load('$plugin', array('bootstrap' => false, 'routes' => false));\n");
 			$this->out('');
 			$this->out(__d('cake_dev', '%s modified', $this->bootstrap));
 		}
