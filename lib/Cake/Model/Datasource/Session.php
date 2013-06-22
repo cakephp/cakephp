@@ -208,7 +208,7 @@ class Session {
  * @return boolean True if variable is there
  */
 	public static function check($name = null) {
-		if (!static::started() && !static::start()) {
+		if (!static::start()) {
 			return false;
 		}
 		if (empty($name)) {
@@ -218,9 +218,17 @@ class Session {
 	}
 
 /**
- * Returns the Session id
+ * Returns the session id.
+ * Calling this method will not auto start the session. You might have to manually
+ * assert a started session.
  *
- * @param string $id
+ * Passing an id into it, you can also replace the session id if the session
+ * has not already been started.
+ * Note that depending on the session handler, not all characters are allowed
+ * within the session id. For example, the file session handler only allows
+ * characters in the range a-z A-Z 0-9 , (comma) and - (minus).
+ *
+ * @param string $id Id to replace the current session id
  * @return string Session id
  */
 	public static function id($id = null) {
@@ -249,7 +257,7 @@ class Session {
 	}
 
 /**
- * Used to write new data to _SESSION, since PHP doesn't like us setting the _SESSION var itself
+ * Used to write new data to _SESSION, since PHP doesn't like us setting the _SESSION var itself.
  *
  * @param array $old Set of old variables => values
  * @param array $new New set of variable => value
@@ -328,10 +336,10 @@ class Session {
 	}
 
 /**
- * Get / Set the userAgent
+ * Get / Set the user agent
  *
- * @param string $userAgent Set the userAgent
- * @return void
+ * @param string $userAgent Set the user agent
+ * @return string Current user agent
  */
 	public static function userAgent($userAgent = null) {
 		if ($userAgent) {
@@ -350,7 +358,7 @@ class Session {
  * @return mixed The value of the session variable
  */
 	public static function read($name = null) {
-		if (!static::started() && !static::start()) {
+		if (!static::start()) {
 			return false;
 		}
 		if (is_null($name)) {
@@ -388,7 +396,7 @@ class Session {
  * @return boolean True if the write was successful, false if the write failed
  */
 	public static function write($name, $value = null) {
-		if (!static::started() && !static::start()) {
+		if (!static::start()) {
 			return false;
 		}
 		if (empty($name)) {
@@ -413,9 +421,7 @@ class Session {
  * @return void
  */
 	public static function destroy() {
-		if (!self::started()) {
-			self::start();
-		}
+		self::start();
 		session_destroy();
 		self::clear();
 	}
@@ -618,7 +624,7 @@ class Session {
  * @return void
  */
 	protected static function _checkValid() {
-		if (!static::started() && !static::start()) {
+		if (!static::start()) {
 			static::$valid = false;
 			return false;
 		}

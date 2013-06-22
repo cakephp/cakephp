@@ -217,7 +217,7 @@ class AuthComponent extends Component {
  * Error to display when user attempts to access an object or action to which they do not have
  * access.
  *
- * @var string
+ * @var string|bool Error message or boolean false to suppress flash message
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#AuthComponent::$authError
  */
 	public $authError = null;
@@ -437,7 +437,7 @@ class AuthComponent extends Component {
 			'authError' => __d('cake', 'You are not authorized to access that location.')
 		);
 		foreach ($defaults as $key => $value) {
-			if (empty($this->{$key})) {
+			if (!isset($this->{$key}) || $this->{$key} === true) {
 				$this->{$key} = $value;
 			}
 		}
@@ -703,7 +703,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Get the URL a use should be redirected to upon login.
+ * Get the URL a user should be redirected to upon login.
  *
  * Pass an URL in to set the destination a user should be redirected to upon
  * logging in.
@@ -821,6 +821,9 @@ class AuthComponent extends Component {
  * @return void
  */
 	public function flash($message) {
+		if ($message === false) {
+			return;
+		}
 		$this->Session->setFlash($message, $this->flash['element'], $this->flash['params'], $this->flash['key']);
 	}
 
