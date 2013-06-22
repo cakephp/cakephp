@@ -45,8 +45,10 @@ class PersonFixture extends TestFixture {
 		'name' => ['type' => 'string', 'null' => false, 'length' => 32],
 		'mother_id' => ['type' => 'integer', 'null' => false],
 		'father_id' => ['type' => 'integer', 'null' => false],
-		'_indexes' => ['mother_id' => ['unique' => 0, 'columns' => ['mother_id', 'father_id']]],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']], 'PRIMARY' => ['type' => 'unique', 'columns' => 'id']]
+		'_constraints' => [
+			'primary' => ['type' => 'primary', 'columns' => ['id']],
+			'mother_idx' => ['type' => 'unique', 'columns' => ['mother_id', 'father_id']]
+		]
 	);
 
 /**
