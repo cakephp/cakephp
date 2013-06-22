@@ -1775,7 +1775,7 @@ class FormHelperTest extends TestCase {
 	public function testFormValidationMultiRecord() {
 		$Contact = ClassRegistry::getObject('Contact');
 		$Contact->validationErrors[2] = array(
-			'name' => array('This field cannot be left blank')
+			'name' => array('This field is invalid')
 		);
 		$result = $this->Form->input('Contact.2.name');
 		$expected = array(
@@ -1788,7 +1788,7 @@ class FormHelperTest extends TestCase {
 				'class' => 'form-error', 'maxlength' => 255
 			),
 			array('div' => array('class' => 'error-message')),
-			'This field cannot be left blank',
+			'This field is invalid',
 			'/div',
 			'/div'
 		);
