@@ -961,7 +961,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 		);
 		$TestModel->create();
 		$this->assertFalse($TestModel->save($data));
-		$this->assertEquals(array('This field is invalid'), $TestModel->validationErrors['title']);
+		$this->assertEquals(array('The provided value is invalid'), $TestModel->validationErrors['title']);
 
 		$TestModel->locale = 'eng';
 		$TestModel->validate['title'] = '/Only this title/';
