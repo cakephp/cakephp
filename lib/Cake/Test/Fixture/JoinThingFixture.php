@@ -44,7 +44,7 @@ class JoinThingFixture extends TestFixture {
 		'id' => ['type' => 'integer'],
 		'something_id' => ['type' => 'integer', 'length' => 10, 'null' => true],
 		'something_else_id' => ['type' => 'integer', 'default' => null],
-		'doomed' => ['type' => 'boolean', 'default' => '0'],
+		'doomed' => ['type' => 'boolean', 'default' => false],
 		'created' => ['type' => 'datetime', 'null' => true],
 		'updated' => ['type' => 'datetime', 'null' => true],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
