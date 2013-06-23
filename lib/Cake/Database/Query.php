@@ -180,7 +180,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Resulting statement is traversable, so it can be used in any loop as you would
  * with an array.
  *
- * @return Cake\Database\Statement
+ * @return Cake\Database\StatementInterface
  */
 	public function execute() {
 		$query = $this->_transformQuery();

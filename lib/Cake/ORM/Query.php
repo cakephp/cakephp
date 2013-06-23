@@ -307,7 +307,7 @@ class Query extends DatabaseQuery {
 
 /**
  * Compiles the SQL representation of this query and executes it using the
- * configured connection object. Returns a ResultSet iterator object
+ * provided connection object. Returns a ResultSet iterator object
  *
  * Resulting object is traversable, so it can be used in any loop as you would
  * with an array.
@@ -316,6 +316,16 @@ class Query extends DatabaseQuery {
  */
 	public function execute() {
 		return new ResultSet($this, parent::execute());
+	}
+
+/**
+ * Compiles the SQL representation of this query ane executes it using
+ * the provided connection object.
+ *
+ * @return Cake\Database\StatementInterface
+ */
+	public function executeStatement() {
+		return parent::execute();
 	}
 
 /**

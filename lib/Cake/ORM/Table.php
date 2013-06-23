@@ -495,15 +495,15 @@ class Table {
  *
  * @param array $fields A hash of field => new value.
  * @param array $conditions An array of conditions, similar to those used with find()
- * @return boolean Success
+ * @return boolean Success Returns true if one or more rows are effected.
  */
 	public function updateAll($fields, $conditions) {
 		$query = $this->_buildQuery();
 		$query->update($this->table())
 			->set($fields)
 			->where($conditions);
-		$query->execute();
-		return true;
+		$statement = $query->executeStatement();
+		return $statement->rowCount() > 0;
 	}
 
 /**
@@ -519,14 +519,14 @@ class Table {
  * with this method.
  *
  * @param array $conditions An array of conditions, similar to those used with find()
- * @return boolean Success
+ * @return boolean Success Returns true if one or more rows are effected.
  */
 	public function deleteAll($conditions) {
 		$query = $this->_buildQuery();
 		$query->delete($this->table())
 			->where($conditions);
-		$query->execute();
-		return true;
+		$statement = $query->executeStatement();
+		return $statement->rowCount() > 0;
 	}
 
 }
