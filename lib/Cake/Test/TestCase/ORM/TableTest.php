@@ -402,14 +402,50 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['_buildQuery'],
 			['table' => 'users', 'connection' => $this->connection]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['execute'], [$this->connection]);
+		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection]);
 		$table->expects($this->once())
 			->method('_buildQuery')
 			->will($this->returnValue($query));
 		$query->expects($this->once())
-			->method('execute')
+			->method('executeStatement')
 			->will($this->throwException(new \Cake\Database\Exception('Not good')));
 		$table->updateAll(['username' => 'mark'], []);
+	}
+
+/**
+ * Test deleting many records.
+ *
+ * @return void
+ */
+	public function testDeleteAll() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$result = $table->deleteAll(['id <' => 4]);
+		$this->assertTrue($result);
+
+		$result = $table->find('all')->toArray();
+		$this->assertCount(1, $result, 'Only one record should remain');
+		$this->assertEquals(4, $result[0]['id']);
+	}
+
+/**
+ * Test that exceptions from the Query bubble up.
+ *
+ * @expectedException Cake\Database\Exception
+ */
+	public function testDeleteAllFailure() {
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['_buildQuery'],
+			['table' => 'users', 'connection' => $this->connection]
+		);
+		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection]);
+		$table->expects($this->once())
+			->method('_buildQuery')
+			->will($this->returnValue($query));
+		$query->expects($this->once())
+			->method('executeStatement')
+			->will($this->throwException(new \Cake\Database\Exception('Not good')));
+		$table->deleteAll(['id >' => 4]);
 	}
 
 }
