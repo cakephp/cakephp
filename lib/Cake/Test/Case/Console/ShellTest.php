@@ -855,7 +855,7 @@ TEXT;
 			array('types' => 'error'),
 		));
 		TestCakeLog::config('console', array(
-			'engine' => 'ConsoleLog',
+			'engine' => 'Console',
 			'stream' => 'php://stderr',
 			));
 		TestCakeLog::replace('console', $mock);
