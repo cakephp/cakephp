@@ -26,8 +26,7 @@ require CAKE . 'basics.php';
 
 if (!class_exists('Cake\Core\App')) {
 	require CAKE . 'Core/ClassLoader.php';
-	$loader = new \Cake\Core\ClassLoader('Cake', CORE_PATH);
-	$loader->register();
+	(new \Cake\Core\ClassLoader('Cake', CORE_PATH))->register();
 }
 
 use Cake\Core\App;
