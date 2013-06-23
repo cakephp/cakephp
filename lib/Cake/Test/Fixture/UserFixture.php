@@ -42,7 +42,7 @@ class UserFixture extends TestFixture {
  */
 	public $fields = array(
 		'id' => ['type' => 'integer'],
-		'user' => ['type' => 'string', 'null' => true],
+		'username' => ['type' => 'string', 'null' => true],
 		'password' => ['type' => 'string', 'null' => true],
 		'created' => 'datetime',
 		'updated' => 'datetime',
@@ -55,9 +55,9 @@ class UserFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-		array('user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2008-03-17 01:18:23', 'updated' => '2008-03-17 01:20:31'),
-		array('user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2010-05-10 01:20:23', 'updated' => '2010-05-10 01:22:31'),
-		array('user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2012-06-10 01:22:23', 'updated' => '2012-06-12 01:24:31'),
+		array('username' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+		array('username' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2008-03-17 01:18:23', 'updated' => '2008-03-17 01:20:31'),
+		array('username' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2010-05-10 01:20:23', 'updated' => '2010-05-10 01:22:31'),
+		array('username' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2012-06-10 01:22:23', 'updated' => '2012-06-12 01:24:31'),
 	);
 }

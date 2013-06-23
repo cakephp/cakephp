@@ -225,14 +225,14 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$expected = [
 			[
 				'id' => 1,
-				'user' => 'mariano',
+				'username' => 'mariano',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 				'created' => new \DateTime('2007-03-17 01:16:23'),
 				'updated' => new \DateTime('2007-03-17 01:18:31'),
 			],
 			[
 				'id' => 2,
-				'user' => 'nate',
+				'username' => 'nate',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
 				'created' => new \DateTime('2008-03-17 01:18:23'),
 				'updated' => new \DateTime('2008-03-17 01:20:31'),
@@ -248,16 +248,16 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testFindAllSomeFields() {
 		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
-		$results = $table->find('all')->select(['user', 'password'])->order('user')->toArray();
+		$results = $table->find('all')->select(['username', 'password'])->order('username')->toArray();
 		$expected = [
-			['user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
-			['user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
-			['user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
-			['user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['username' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['username' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['username' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['username' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
 		];
 		$this->assertSame($expected, $results);
 
-		$results = $table->find('all')->select(['foo' => 'user', 'password'])->order('user')->toArray();
+		$results = $table->find('all')->select(['foo' => 'username', 'password'])->order('username')->toArray();
 		$expected = [
 			['foo' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
 			['foo' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
@@ -276,20 +276,20 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testFindAllConditionAutoTypes() {
 		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
 		$query = $table->find('all')
-			->select(['id', 'user'])
+			->select(['id', 'username'])
 			->where(['created >=' => new \DateTime('2010-01-22 00:00')])
 			->order('id');
 		$expected = [
-			['id' => 3, 'user' => 'larry'],
-			['id' => 4, 'user' => 'garrett']
+			['id' => 3, 'username' => 'larry'],
+			['id' => 4, 'username' => 'garrett']
 		];
 		$this->assertSame($expected, $query->toArray());
 
 		$query->orWhere(['users.created' => new \DateTime('2008-03-17 01:18:23')]);
 		$expected = [
-			['id' => 2, 'user' => 'nate'],
-			['id' => 3, 'user' => 'larry'],
-			['id' => 4, 'user' => 'garrett']
+			['id' => 2, 'username' => 'nate'],
+			['id' => 3, 'username' => 'larry'],
+			['id' => 4, 'username' => 'garrett']
 		];
 		$this->assertSame($expected, $query->toArray());
 	}
@@ -381,13 +381,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testUpdateAll() {
 		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
-		$fields = ['user' => 'mark'];
+		$fields = ['username' => 'mark'];
 		$result = $table->updateAll($fields, ['id <' => 4]);
 		$this->assertTrue($result);
 
-		$result = $table->find('all')->select(['user'])->toArray();
+		$result = $table->find('all')->select(['username'])->toArray();
 		$expected = array_fill(0, 3, $fields);
-		$expected[] = ['user' => 'garrett'];
+		$expected[] = ['username' => 'garrett'];
 		$this->assertEquals($expected, $result);
 	}
 
@@ -409,7 +409,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())
 			->method('execute')
 			->will($this->throwException(new \Cake\Database\Exception('Not good')));
-		$table->updateAll(['user' => 'mark'], []);
+		$table->updateAll(['username' => 'mark'], []);
 	}
 
 }
