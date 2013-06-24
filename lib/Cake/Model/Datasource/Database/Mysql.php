@@ -226,7 +226,7 @@ class Mysql extends DboSource {
 
 		while ($numFields-- > 0) {
 			$column = $results->getColumnMeta($index);
-			if ($column['len'] === 1 && $column['native_type'] === 'TINY') {
+			if ($column['len'] === 1 && (empty($column['native_type']) || $column['native_type'] === 'TINY')) {
 				$type = 'boolean';
 			} else {
 				$type = $column['native_type'];
