@@ -6629,6 +6629,61 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testInputDate method
+ *
+ * Test various inputs with type date and different dateFormat values
+ *
+ * @return void
+ */
+	public function testInputDate() {
+		$this->Form->request->data = array();
+		$this->Form->create('User');
+		$result = $this->Form->input('month_year',
+				array(
+					'label' => false,
+					'div' => false,
+					'type' => 'date',
+					'dateFormat' => 'MY',
+					'minYear' => 2006,
+					'maxYear' => 2008
+				)
+		);
+		$this->assertContains('value="' . date('m') . '" selected="selected"', $result);
+		$this->assertContains('value="2008" selected="selected"', $result);
+
+		$result = $this->Form->input('just_year',
+			array(
+				'type' => 'date',
+				'label' => false,
+				'dateFormat' => 'Y',
+				'minYear' => date('Y'),
+				'maxYear' => date('Y', strtotime('+20 years'))
+			)
+		);
+		$this->assertContains('value="' . date('Y') . '" selected="selected"', $result);
+
+		$result = $this->Form->input('just_month',
+			array(
+				'type' => 'date',
+				'label' => false,
+				'dateFormat' => 'M',
+				'empty' => false,
+			)
+		);
+		$this->assertContains('value="' . date('m') . '" selected="selected"', $result);
+
+		$result = $this->Form->input('just_day',
+			array(
+				'type' => 'date',
+				'label' => false,
+				'dateFormat' => 'D',
+				'empty' => false,
+			)
+		);
+		$this->assertContains('value="' . date('d') . '" selected="selected"', $result);
+	}
+
+/**
  * testInputDateMaxYear method
  *
  * Let's say we want to only allow users born from 2006 to 2008 to register
