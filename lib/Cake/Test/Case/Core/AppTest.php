@@ -597,7 +597,7 @@ class AppTest extends CakeTestCase {
  * test that building helper paths actually works.
  *
  * @return void
- * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/410
+ * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/410
  */
 	public function testImportingHelpersFromAlternatePaths() {
 		$this->assertFalse(class_exists('BananaHelper', false), 'BananaHelper exists, cannot test importing it.');
