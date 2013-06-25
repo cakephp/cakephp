@@ -133,7 +133,7 @@
 			<license>MIT License</license>
 			<version release="${pear.version}" api="${pear.version}" />
 			<stability release="${pear.stability}" api="${pear.stability}" />
-			<notes>http://github.com/cakephp/cakephp/blob/master/README</notes>
+			<notes>https://github.com/cakephp/cakephp/blob/master/README</notes>
 			<dependencies>
 				<php minimum_version="5.2.8" />
 				<pear minimum_version="1.9.0" recommended_version="1.9.4" />

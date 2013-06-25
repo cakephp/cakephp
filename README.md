@@ -26,13 +26,13 @@ Some Handy Links
 Get Support!
 ------------
 
-[Our Google Group](http://groups.google.com/group/cake-php) - community mailing list and forum
+[Our Google Group](https://groups.google.com/group/cake-php) - community mailing list and forum
 
 [#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
 
 [Q & A](http://ask.cakephp.org/) - Ask questions here, all questions welcome
 
-[Lighthouse](http://cakephp.lighthouseapp.com/) - Got issues? Please tell us!
+[Lighthouse](https://cakephp.lighthouseapp.com/) - Got issues? Please tell us!
 
 [![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=master)](http://travis-ci.org/cakephp/cakephp)
 
