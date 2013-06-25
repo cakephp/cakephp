@@ -6631,12 +6631,21 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testInputDate method
  *
- * Test various inputs with type date and different dateFormat values
+ * Test various inputs with type date and different dateFormat values.
+ * Failing to provide a dateFormat key should not error.
+ * It should simply not pre-select any value then.
  *
  * @return void
  */
 	public function testInputDate() {
-		$this->Form->request->data = array();
+		$this->Form->request->data = array(
+			'User' => array(
+				'month_year' => array('month' => date('m')),
+				'just_year' => array('month' => date('m')),
+				'just_month' => array('year' => date('Y')),
+				'just_day' => array('month' => date('m')),
+			)
+		);
 		$this->Form->create('User');
 		$result = $this->Form->input('month_year',
 				array(
@@ -6649,7 +6658,7 @@ class FormHelperTest extends CakeTestCase {
 				)
 		);
 		$this->assertContains('value="' . date('m') . '" selected="selected"', $result);
-		$this->assertContains('value="2008" selected="selected"', $result);
+		$this->assertNotContains('value="2008" selected="selected"', $result);
 
 		$result = $this->Form->input('just_year',
 			array(
@@ -6660,7 +6669,7 @@ class FormHelperTest extends CakeTestCase {
 				'maxYear' => date('Y', strtotime('+20 years'))
 			)
 		);
-		$this->assertContains('value="' . date('Y') . '" selected="selected"', $result);
+		$this->assertNotContains('value="' . date('Y') . '" selected="selected"', $result);
 
 		$result = $this->Form->input('just_month',
 			array(
@@ -6670,7 +6679,7 @@ class FormHelperTest extends CakeTestCase {
 				'empty' => false,
 			)
 		);
-		$this->assertContains('value="' . date('m') . '" selected="selected"', $result);
+		$this->assertNotContains('value="' . date('m') . '" selected="selected"', $result);
 
 		$result = $this->Form->input('just_day',
 			array(
@@ -6680,7 +6689,7 @@ class FormHelperTest extends CakeTestCase {
 				'empty' => false,
 			)
 		);
-		$this->assertContains('value="' . date('d') . '" selected="selected"', $result);
+		$this->assertNotContains('value="' . date('d') . '" selected="selected"', $result);
 	}
 
 /**
