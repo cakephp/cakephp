@@ -1114,6 +1114,11 @@ class Controller extends Object {
 			$options['limit'] = $options['show'];
 		}
 
+		if (isset($options['order']) && empty($options['sort'])) {
+			$options['sort'] = $options['order'];
+			unset($options['order']);
+		}
+
 		if (isset($options['sort'])) {
 			$direction = null;
 			if (isset($options['direction'])) {
