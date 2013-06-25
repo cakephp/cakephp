@@ -1001,7 +1001,7 @@ class PostgresTest extends CakeTestCase {
 		$expected = array(array('r' => date('d/m/Y')));
 		$r = $dbo2->fetchRow('SELECT now()::date AS "r"');
 		$this->assertEquals($expected, $r);
-		$dbo2->execute('SET DATESTYLE TO SQL');
+		$dbo2->execute('SET DATESTYLE TO ISO');
 		$dbo2->disconnect();
 	}
 
