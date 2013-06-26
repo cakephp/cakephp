@@ -363,17 +363,60 @@ class PostgresSchema {
 		$data = $table->constraint($name);
 		$out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
 		if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
-			$out = 'PRIMARY KEY ';
+			$out = 'PRIMARY KEY';
 		}
 		if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
-			$out .= ' UNIQUE ';
+			$out .= ' UNIQUE';
 		}
+		return $this->_keySql($out, $data);
+	}
+
+/**
+ * Helper method for generating key SQL snippets.
+ *
+ * @param string $prefix The key prefix
+ * @param array $data Key data.
+ * @return string
+ */
+	protected function _keySql($prefix, $data) {
 		$columns = array_map(
 			[$this->_driver, 'quoteIdentifier'],
 			$data['columns']
 		);
-		return $out . '(' . implode(', ', $columns) . ')';
+		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+			return $prefix . sprintf(
+				' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
+				implode(', ', $columns),
+				$this->_driver->quoteIdentifier($data['references'][0]),
+				$this->_driver->quoteIdentifier($data['references'][1]),
+				$this->_foreignOnClause($data['update']),
+				$this->_foreignOnClause($data['delete'])
+			);
+		}
+		return $prefix . ' (' . implode(', ', $columns) . ')';
 	}
+
+/**
+ * Generate an ON clause for a foreign key.
+ *
+ * @param string|null $on The on clause
+ * @return string
+ */
+	protected function _foreignOnClause($on) {
+		if ($on === Table::ACTION_SET_NULL) {
+			return 'SET NULL';
+		}
+		if ($on === Table::ACTION_CASCADE) {
+			return 'CASCADE';
+		}
+		if ($on === Table::ACTION_RESTRICT) {
+			return 'RESTRICT';
+		}
+		if ($on === Table::ACTION_NO_ACTION) {
+			return 'NO ACTION';
+		}
+	}
+
 
 /**
  * Generate the SQL to create a table.
