@@ -1071,7 +1071,6 @@ class CakeEmail {
 		}
 
 		$this->_textMessage = $this->_htmlMessage = '';
-		$this->_createBoundary();
 		$this->_message = $this->_render($this->_wrap($content));
 
 		$contents = $this->transportClass()->send($this);
@@ -1447,6 +1446,7 @@ class CakeEmail {
 		$content = implode("\n", $content);
 		$rendered = $this->_renderTemplates($content);
 
+		$this->_createBoundary();
 		$msg = array();
 
 		$contentIds = array_filter((array)Hash::extract($this->_attachments, '{s}.contentId'));
