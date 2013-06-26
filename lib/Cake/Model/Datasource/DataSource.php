@@ -21,6 +21,9 @@
 /**
  * DataSource base class
  *
+ * DataSources are the link between models and the source of data that models represent.
+ *
+ * @link          http://book.cakephp.org/2.0/en/models/datasources.html#basic-api-for-datasources
  * @package       Cake.Model.Datasource
  */
 class DataSource extends Object {
