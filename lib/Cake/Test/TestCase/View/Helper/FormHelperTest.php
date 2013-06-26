@@ -1775,7 +1775,7 @@ class FormHelperTest extends TestCase {
 	public function testFormValidationMultiRecord() {
 		$Contact = ClassRegistry::getObject('Contact');
 		$Contact->validationErrors[2] = array(
-			'name' => array('The provided value is invalid')
+			'name' => array('The value you have provided is invalid')
 		);
 		$result = $this->Form->input('Contact.2.name');
 		$expected = array(
@@ -1788,7 +1788,7 @@ class FormHelperTest extends TestCase {
 				'class' => 'form-error', 'maxlength' => 255
 			),
 			array('div' => array('class' => 'error-message')),
-			'The provided value is invalid',
+			'The value you have provided is invalid',
 			'/div',
 			'/div'
 		);

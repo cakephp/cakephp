@@ -149,29 +149,29 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel->set(array('title' => '$$', 'name' => '##'));
 		$TestModel->invalidFields(array('fieldList' => array('title')));
 		$expected = array(
-			'title' => array('The provided value is invalid')
+			'title' => array('The value you have provided is invalid')
 		);
 		$this->assertEquals($expected, $TestModel->validationErrors);
 		$TestModel->validationErrors = array();
 
 		$TestModel->invalidFields(array('fieldList' => array('name')));
 		$expected = array(
-			'name' => array('The provided value is invalid')
+			'name' => array('The value you have provided is invalid')
 		);
 		$this->assertEquals($expected, $TestModel->validationErrors);
 		$TestModel->validationErrors = array();
 
 		$TestModel->invalidFields(array('fieldList' => array('name', 'title')));
 		$expected = array(
-			'name' => array('The provided value is invalid'),
-			'title' => array('The provided value is invalid')
+			'name' => array('The value you have provided is invalid'),
+			'title' => array('The value you have provided is invalid')
 		);
 		$this->assertEquals($expected, $TestModel->validationErrors);
 		$TestModel->validationErrors = array();
 
 		$TestModel->whitelist = array('name');
 		$TestModel->invalidFields();
-		$expected = array('name' => array('The provided value is invalid'));
+		$expected = array('name' => array('The value you have provided is invalid'));
 		$this->assertEquals($expected, $TestModel->validationErrors);
 
 		$this->assertEquals($TestModel->validate, $validate);
@@ -197,7 +197,7 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel->whitelist = array('name');
 		$TestModel->save(array('name' => '#$$#', 'title' => '$$$$'));
 
-		$expected = array('name' => array('The provided value is invalid'));
+		$expected = array('name' => array('The value you have provided is invalid'));
 		$this->assertEquals($expected, $TestModel->validationErrors);
 	}
 
@@ -580,7 +580,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
 
-		$expectedError = array('doomed' => array('The provided value is invalid'));
+		$expectedError = array('doomed' => array('The value you have provided is invalid'));
 
 		$Something->create();
 		$result = $Something->save($data);
@@ -633,7 +633,7 @@ class ModelValidationTest extends BaseModelTest {
 		$JoinThing = $Something->JoinThing;
 
 		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
-		$expectedError = array('doomed' => array('The provided value is invalid'));
+		$expectedError = array('doomed' => array('The value you have provided is invalid'));
 
 		$Something->create();
 		$result = $Something->saveAll($data, array('validate' => 'only'));
@@ -1176,7 +1176,7 @@ class ModelValidationTest extends BaseModelTest {
 			'Comment' => array(
 				1 => array(
 					'Attachment' => array(
-						'attachment' => array('The provided value is invalid')
+						'attachment' => array('The value you have provided is invalid')
 					)
 				)
 			)
@@ -1246,7 +1246,7 @@ class ModelValidationTest extends BaseModelTest {
 			'Comment' => array(
 				'Article' => array(
 					'User' => array(
-						'user' => array('The provided value is invalid')
+						'user' => array('The value you have provided is invalid')
 					)
 				)
 			)
@@ -1272,9 +1272,9 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array(
 			'Comment' => array(
 				'Article' => array(
-					'body' => array('The provided value is invalid'),
+					'body' => array('The value you have provided is invalid'),
 					'User' => array(
-						'user' => array('The provided value is invalid')
+						'user' => array('The value you have provided is invalid')
 					)
 				)
 			)
@@ -1299,11 +1299,11 @@ class ModelValidationTest extends BaseModelTest {
 		$result = $TestModel->Comment->Attachment->validationErrors;
 		$expected = array(
 			'Comment' => array(
-				'comment' => array('The provided value is invalid'),
+				'comment' => array('The value you have provided is invalid'),
 				'Article' => array(
-					'body' => array('The provided value is invalid'),
+					'body' => array('The value you have provided is invalid'),
 					'User' => array(
-						'user' => array('The provided value is invalid')
+						'user' => array('The value you have provided is invalid')
 					)
 				)
 			)
@@ -1327,13 +1327,13 @@ class ModelValidationTest extends BaseModelTest {
 
 		$result = $TestModel->Comment->Attachment->validationErrors;
 		$expected = array(
-			'attachment' => array('The provided value is invalid'),
+			'attachment' => array('The value you have provided is invalid'),
 			'Comment' => array(
-				'comment' => array('The provided value is invalid'),
+				'comment' => array('The value you have provided is invalid'),
 				'Article' => array(
-					'body' => array('The provided value is invalid'),
+					'body' => array('The value you have provided is invalid'),
 					'User' => array(
-						'user' => array('The provided value is invalid')
+						'user' => array('The value you have provided is invalid')
 					)
 				)
 			)
@@ -1342,11 +1342,11 @@ class ModelValidationTest extends BaseModelTest {
 
 		$result = $TestModel->Comment->validationErrors;
 		$expected = array(
-			'comment' => array('The provided value is invalid'),
+			'comment' => array('The value you have provided is invalid'),
 			'Article' => array(
-					'body' => array('The provided value is invalid'),
+					'body' => array('The value you have provided is invalid'),
 					'User' => array(
-						'user' => array('The provided value is invalid')
+						'user' => array('The value you have provided is invalid')
 					)
 				)
 		);
@@ -1388,7 +1388,7 @@ class ModelValidationTest extends BaseModelTest {
 		$result = $TestModel->validateAssociated($data, array('deep' => false));
 		$this->assertFalse($result);
 
-		$expected = array('body' => array('The provided value is invalid'));
+		$expected = array('body' => array('The value you have provided is invalid'));
 		$result = $TestModel->validationErrors;
 		$this->assertSame($expected, $result);
 
@@ -1607,8 +1607,8 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertSame($expected, $result);
 
 		$expected = array('Comment' => array(
-			0 => array('comment' => array('The provided value is invalid')),
-			2 => array('comment' => array('The provided value is invalid'))
+			0 => array('comment' => array('The value you have provided is invalid')),
+			2 => array('comment' => array('The value you have provided is invalid'))
 		));
 		$this->assertEquals($expected['Comment'], $TestModel->Comment->validationErrors);
 
@@ -1618,9 +1618,9 @@ class ModelValidationTest extends BaseModelTest {
 		$model->Attachment->validate = array('attachment' => 'notEmpty');
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')));
 		$expected = array(
-			'comment' => array('The provided value is invalid'),
+			'comment' => array('The value you have provided is invalid'),
 			'Attachment' => array(
-				'attachment' => array('The provided value is invalid')
+				'attachment' => array('The value you have provided is invalid')
 			)
 		);
 
@@ -1650,7 +1650,7 @@ class ModelValidationTest extends BaseModelTest {
 			2 => array('title' => 'title 2'),
 		);
 		$expected = array(
-			0 => array('title' => array('The provided value is invalid')),
+			0 => array('title' => array('The value you have provided is invalid')),
 		);
 
 		$result = $TestModel->saveAll($data, array('validate' => 'only'));
@@ -1666,7 +1666,7 @@ class ModelValidationTest extends BaseModelTest {
 			2 => array('title' => 'title 2'),
 		);
 		$expected = array(
-			1 => array('title' => array('The provided value is invalid')),
+			1 => array('title' => array('The value you have provided is invalid')),
 		);
 		$result = $TestModel->saveAll($data, array('validate' => 'only'));
 		$this->assertFalse($result);
@@ -2289,13 +2289,13 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array(
 			'Comment' => array(
 				'comment' => array(
-					0 => 'The provided value is invalid',
+					0 => 'The value you have provided is invalid',
 				),
 				'User' => array(
 					'Comment' => array(
 						0 => array(
 							'comment' => array(
-								0 => 'The provided value is invalid',
+								0 => 'The value you have provided is invalid',
 							),
 						),
 					),
@@ -2357,7 +2357,7 @@ class ModelValidationTest extends BaseModelTest {
 				'Comment' => array(
 					0 => array(
 						'comment' => array(
-							0 => 'The provided value is invalid',
+							0 => 'The value you have provided is invalid',
 						),
 					),
 				),
