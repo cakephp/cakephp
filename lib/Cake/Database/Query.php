@@ -289,7 +289,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _traverseUpdate(callable $visitor) {
-		$parts = ['update', 'join', 'set', 'from', 'where'];
+		$parts = ['update', 'set', 'where'];
 		foreach ($parts as $name) {
 			call_user_func($visitor, $this->_parts[$name], $name);
 		}

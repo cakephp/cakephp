@@ -81,40 +81,6 @@ trait PostgresDialectTrait {
 	}
 
 /**
- * Returns an update query that has been transformed for Postgres.
- *
- * Postgres requires joins to be defined in the FROM list instead of
- * as standard joins. This translator will erase joins and replace them with
- * an expression object in the FROM clause.
- *
- * @param Cake\Database\Query $query
- * @return Cake\Database\Query
- */
-	protected function _updateQueryTranslator($query) {
-		$joins = $query->clause('join');
-		if (empty($joins)) {
-			return $query;
-		}
-		$first = array_shift($joins);
-		$sql = sprintf('%s %s', $first['table'], $first['alias']);
-		if (isset($first['conditions']) && count($first['conditions'])) {
-			$query->where($first['conditions']);
-		}
-		foreach ($joins as $i => $join) {
-			$sql .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
-			if (isset($join['conditions']) && count($join['conditions'])) {
-				$sql .= sprintf(' ON %s', $join['conditions']);
-			} else {
-				$sql .= ' ON 1 = 1';
-			}
-		}
-		$expr = $query->newExpr()->add($sql);
-		$query->join([], [], true);
-		$query->from([$expr]);
-		return $query;
-	}
-
-/**
  * Returns a function that will be used as a callback for a results decorator.
  * this function is responsible for deleting the artificial column in results
  * used for paginating the query.
