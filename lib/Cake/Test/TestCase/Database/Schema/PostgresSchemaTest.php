@@ -331,7 +331,7 @@ SQL;
 				'columns' => ['title', 'body'],
 				'length' => []
 			],
-			'schema_articles_fk_1' => [
+			'author_idx' => [
 				'type' => 'foreign',
 				'columns' => ['author_id'],
 				'references' => ['schema_authors', 'id'],
@@ -342,7 +342,7 @@ SQL;
 		];
 		$this->assertEquals($expected['primary'], $result->constraint('primary'));
 		$this->assertEquals($expected['content_idx'], $result->constraint('content_idx'));
-		$this->assertEquals($expected['schema_articles_fk_1'], $result->constraint('schema_articles_fk_1'));
+		$this->assertEquals($expected['author_idx'], $result->constraint('author_idx'));
 
 		$this->assertCount(1, $result->indexes());
 		$expected = [

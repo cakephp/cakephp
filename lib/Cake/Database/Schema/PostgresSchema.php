@@ -187,11 +187,13 @@ class PostgresSchema {
 			i.indisunique,
 			i.indisvalid,
 			pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) AS statement
-		FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i
+		FROM pg_catalog.pg_class AS c,
+			pg_catalog.pg_class AS c2,
+			pg_catalog.pg_index AS i
 		WHERE c.oid  = (
 			SELECT c.oid
 			FROM pg_catalog.pg_class c
-			LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+			LEFT JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
 			WHERE c.relname = ?
 				AND pg_catalog.pg_table_is_visible(c.oid)
 				AND n.nspname = ?
@@ -244,8 +246,24 @@ class PostgresSchema {
  *
  * @return array List of sql, params
  */
-	public function describeForeignKeySql($table) {
-		return ['', []];
+	public function describeForeignKeySql($table, $config = []) {
+		$sql = "SELECT
+			r.conname AS name,
+			r.confupdtype AS update_type,
+			r.confdeltype AS delete_type,
+			pg_catalog.pg_get_constraintdef(r.oid, true) AS definition
+			FROM pg_catalog.pg_constraint AS r
+			WHERE r.conrelid = (
+				SELECT c.oid
+				FROM pg_catalog.pg_class AS c,
+				pg_catalog.pg_namespace AS n
+				WHERE c.relname = ?
+				AND n.nspname = ?
+				AND n.oid = c.relnamespace
+			)
+			AND r.contype = 'f'";
+		$schema = empty($config['schema']) ? 'public' : $config['schema'];
+		return [$sql, [$table, $schema]];
 	}
 
 /**
@@ -256,6 +274,41 @@ class PostgresSchema {
  * @return void
  */
 	public function convertForeignKey(Table $table, $row) {
+		preg_match('/REFERENCES ([^\)]+)\(([^\)]+)\)/', $row['definition'], $matches);
+		$tableName = $matches[1];
+		$column = $matches[2];
+
+		preg_match('/FOREIGN KEY \(([^\)]+)\) REFERENCES/', $row['definition'], $matches);
+		$columns = explode(',', $matches[1]);
+
+		$data = [
+			'type' => Table::CONSTRAINT_FOREIGN,
+			'columns' => $columns,
+			'references' => [$tableName, $column],
+			'update' => $this->_convertOnClause($row['update_type']),
+			'delete' => $this->_convertOnClause($row['delete_type']),
+		];
+		$name = $row['name'];
+		$table->addConstraint($name, $data);
+	}
+
+/**
+ * Convert Postgres on clauses to the abstract ones.
+ *
+ * @param string $clause
+ * @return string|null
+ */
+	protected function _convertOnClause($clause) {
+		if ($clause === 'r') {
+			return Table::ACTION_RESTRICT;
+		}
+		if ($clause === 'a') {
+			return Table::ACTION_NO_ACTION;
+		}
+		if ($clause === 'c') {
+			return Table::ACTION_CASCADE;
+		}
+		return Table::ACTION_SET_NULL;
 	}
 
 /**
