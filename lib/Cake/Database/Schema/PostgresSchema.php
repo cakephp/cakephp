@@ -22,7 +22,7 @@ use Cake\Database\Schema\Table;
 /**
  * Schema management/reflection features for Postgres.
  */
-class PostgresSchema {
+class PostgresSchema extends BaseSchema {
 
 /**
  * The driver instance being used.
@@ -449,27 +449,6 @@ class PostgresSchema {
 		return $prefix . ' (' . implode(', ', $columns) . ')';
 	}
 
-/**
- * Generate an ON clause for a foreign key.
- *
- * @param string|null $on The on clause
- * @return string
- */
-	protected function _foreignOnClause($on) {
-		if ($on === Table::ACTION_SET_NULL) {
-			return 'SET NULL';
-		}
-		if ($on === Table::ACTION_CASCADE) {
-			return 'CASCADE';
-		}
-		if ($on === Table::ACTION_RESTRICT) {
-			return 'RESTRICT';
-		}
-		if ($on === Table::ACTION_NO_ACTION) {
-			return 'NO ACTION';
-		}
-	}
-
 
 /**
  * Generate the SQL to create a table.
@@ -500,16 +479,6 @@ class PostgresSchema {
 			}
 		}
 		return $out;
-	}
-
-/**
- * Generate the SQL to drop a table.
- *
- * @param Cake\Database\Schema\Table $table Table instance
- * @return array SQL statements to drop DROP a table.
- */
-	public function dropTableSql(Table $table) {
-		return [sprintf('DROP TABLE "%s"', $table->name())];
 	}
 
 /**
