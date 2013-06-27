@@ -870,7 +870,7 @@ class Router {
 				$output = self::_handleNoRoute($url);
 			}
 		} else {
-			if (preg_match('/:\/\/|^(javascript|mailto|tel|sms):|^\#/i', $url)) {
+			if (preg_match('/^([a-z][a-z0-9.+\-]+:|:?\/\/|[#?])/i', $url)) {
 				return $url;
 			}
 			if (substr($url, 0, 1) === '/') {
@@ -888,7 +888,7 @@ class Router {
 				$output .= Inflector::underscore($params['controller']) . '/' . $url;
 			}
 		}
-		$protocol = preg_match('#^[a-z][a-z0-9+-.]*\://#i', $output);
+		$protocol = preg_match('#^[a-z][a-z0-9+\-.]*\://#i', $output);
 		if ($protocol === 0) {
 			$output = str_replace('//', '/', $base . '/' . $output);
 

@@ -2555,6 +2555,9 @@ class RouterTest extends CakeTestCase {
 		$url = '://example.com';
 		$this->assertEquals($url, Router::url($url));
 
+		$url = '//example.com';
+		$this->assertEquals($url, Router::url($url));
+
 		$url = 'javascript:void(0)';
 		$this->assertEquals($url, Router::url($url));
 
@@ -2566,6 +2569,10 @@ class RouterTest extends CakeTestCase {
 
 		$url = '#here';
 		$this->assertEquals($url, Router::url($url));
+
+		$url = '?param=0';
+		$this->assertEquals($url, Router::url($url));
+
 		$url = 'posts/index#here';
 		$expected = FULL_BASE_URL . '/posts/index#here';
 		$this->assertEquals($expected, Router::url($url, true));
