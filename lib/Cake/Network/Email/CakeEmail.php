@@ -953,6 +953,16 @@ class CakeEmail {
  *		'contentDisposition' => false
  * ));
  * }}}
+ * 
+ * Attach a file from string and specify additional properties:
+ *
+ * {{{
+ * $email->attachments(array('custom_name.png' => array(
+ *		'data' => file_get_contents('path/to/file'),
+ *		'mimetype' => 'image/png',
+ *		'contentId' => 'abc123'
+ * ));
+ * }}}
  *
  * The `contentId` key allows you to specify an inline attachment. In your email text, you
  * can use `<img src="cid:abc123" />` to display the image inline.
@@ -974,14 +984,20 @@ class CakeEmail {
 				$fileInfo = array('file' => $fileInfo);
 			}
 			if (!isset($fileInfo['file'])) {
-				throw new SocketException(__d('cake_dev', 'File not specified.'));
-			}
-			$fileInfo['file'] = realpath($fileInfo['file']);
-			if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
-				throw new SocketException(__d('cake_dev', 'File not found: "%s"', $fileInfo['file']));
-			}
-			if (is_int($name)) {
-				$name = basename($fileInfo['file']);
+			  if (!isset($fileInfo['data'])) {
+			    throw new SocketException(__d('cake_dev', 'No file or data specified.'));
+			  }
+			  if (is_int($name)) {
+			    throw new SocketException(__d('cake_dev', 'No filename specified.'));
+			  }
+			} else {  
+  			$fileInfo['file'] = realpath($fileInfo['file']);
+  			if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
+  				throw new SocketException(__d('cake_dev', 'File not found: "%s"', $fileInfo['file']));
+  			}
+  			if (is_int($name)) {
+  				$name = basename($fileInfo['file']);
+  			}
 			}
 			if (!isset($fileInfo['mimetype'])) {
 				$fileInfo['mimetype'] = 'application/octet-stream';
@@ -1388,8 +1404,8 @@ class CakeEmail {
 			if (!empty($fileInfo['contentId'])) {
 				continue;
 			}
-			$data = $this->_readFile($fileInfo['file']);
-
+			$data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
+			
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$msg[] = 'Content-Transfer-Encoding: base64';
@@ -1433,8 +1449,8 @@ class CakeEmail {
 			if (empty($fileInfo['contentId'])) {
 				continue;
 			}
-			$data = $this->_readFile($fileInfo['file']);
-
+			$data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
+			
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$msg[] = 'Content-Transfer-Encoding: base64';
