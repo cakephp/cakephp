@@ -1404,7 +1404,7 @@ class CakeEmail {
 			if (!empty($fileInfo['contentId'])) {
 				continue;
 			}
-			$data = isset($fileInfo['data'])?$fileInfo['data']:$this->_readFile($fileInfo['file']);
+			$data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
 			
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
@@ -1449,7 +1449,7 @@ class CakeEmail {
 			if (empty($fileInfo['contentId'])) {
 				continue;
 			}
-			$data = isset($fileInfo['data'])?$fileInfo['data']:$this->_readFile($fileInfo['file']);
+			$data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
 			
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
