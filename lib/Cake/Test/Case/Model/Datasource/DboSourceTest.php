@@ -569,7 +569,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * testReconnect method
+ * Tests if the connection can be re-established and that the new (optional) config is set.
  *
  * @return void
  */
