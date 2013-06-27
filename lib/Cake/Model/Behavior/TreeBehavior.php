@@ -862,7 +862,8 @@ class TreeBehavior extends ModelBehavior {
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $Model->id),
 			'fields' => array($Model->primaryKey, $parent, $left, $right),
-			'recursive' => $recursive
+			'recursive' => $recursive,
+			'callbacks' => false
 		)));
 		$edge = $this->_getMax($Model, $scope, $right, $recursive, $created);
 
@@ -873,7 +874,8 @@ class TreeBehavior extends ModelBehavior {
 			$values = $Model->find('first', array(
 				'conditions' => array($scope, $Model->escapeField() => $parentId),
 				'fields' => array($Model->primaryKey, $left, $right),
-				'recursive' => $recursive
+				'recursive' => $recursive,
+				'callbacks' => false
 			));
 
 			if ($values === false) {
