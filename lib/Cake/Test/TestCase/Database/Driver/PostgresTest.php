@@ -25,7 +25,6 @@ use \PDO;
 
 /**
  * Tests Postgres driver
- *
  */
 class PostgresTest extends \Cake\TestSuite\TestCase {
 
