@@ -319,6 +319,14 @@ class CakeEmail {
 	);
 
 /**
+ * Regex for email validation
+ * If null, it will use built in regex
+ *
+ * @var string
+ */
+	protected $_emailRegex = null;
+
+/**
  * Constructor
  *
  * @param array|string $config Array of configs, or string to load configs from email.php
@@ -519,6 +527,20 @@ class CakeEmail {
 			return $this->headerCharset;
 		}
 		return $this->headerCharset = $charset;
+	}
+
+/**
+ * EmailRegex setter/getter
+ *
+ * @param string $regexp
+ * @return string|CakeEmail
+ */
+	public function emailRegex($regex = false) {
+		if ($regex === false) {
+			return $this->_emailRegex;
+		}
+		$this->_emailRegex = $regex;
+		return $this;
 	}
 
 /**
@@ -1161,7 +1183,7 @@ class CakeEmail {
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'domain', 'subject', 'viewRender', 'viewVars', 'attachments',
-			'transport', 'emailFormat', 'theme', 'helpers'
+			'transport', 'emailFormat', 'theme', 'helpers', 'emailRegex'
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
@@ -1218,6 +1240,7 @@ class CakeEmail {
 		$this->headerCharset = null;
 		$this->_attachments = array();
 		$this->_config = array();
+		$this->_emailRegex = null;
 		return $this;
 	}
 

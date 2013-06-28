@@ -265,6 +265,28 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * test emailRegex method
+ *
+ * @return void
+ */
+	public function testEmailRegex() {
+		$regex = '/.+@.+\..+/i';
+		$this->assertNull($this->CakeEmail->emailRegex());
+		$this->assertSame($regex, $this->CakeEmail->emailRegex($regex)->emailRegex());
+	}
+
+/**
+ * Tests that it is possible to set email regex configuration to a CakeEmail object
+ *
+ * @return void
+ */
+	public function testConfigEmailRegex() {
+		$regex = '/.+@.+\..+/i';
+		$email = new CakeEmail(array('emailRegex' => $regex));
+		$this->assertSame($regex, $email->emailRegex());
+	}
+
+/**
  * testFormatAddress method
  *
  * @return void
@@ -1427,11 +1449,13 @@ class CakeEmailTest extends CakeTestCase {
 	public function testReset() {
 		$this->CakeEmail->to('cake@cakephp.org');
 		$this->CakeEmail->theme('TestTheme');
+		$this->CakeEmail->emailRegex('/.+@.+\..+/i');
 		$this->assertSame($this->CakeEmail->to(), array('cake@cakephp.org' => 'cake@cakephp.org'));
 
 		$this->CakeEmail->reset();
 		$this->assertSame($this->CakeEmail->to(), array());
 		$this->assertSame(null, $this->CakeEmail->theme());
+		$this->assertSame(null, $this->CakeEmail->emailRegex());
 	}
 
 /**
