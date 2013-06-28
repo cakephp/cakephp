@@ -449,7 +449,6 @@ class PostgresSchema extends BaseSchema {
 		return $prefix . ' (' . implode(', ', $columns) . ')';
 	}
 
-
 /**
  * Generate the SQL to create a table.
  *

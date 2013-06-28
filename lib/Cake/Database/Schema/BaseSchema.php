@@ -61,7 +61,6 @@ class BaseSchema {
 		return Table::ACTION_SET_NULL;
 	}
 
-
 /**
  * Generate the SQL to drop a table.
  *
