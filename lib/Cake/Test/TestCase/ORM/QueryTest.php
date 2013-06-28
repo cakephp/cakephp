@@ -312,7 +312,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article', ['property' => 'articles', 'strategy' => $strategy]);
+		$table->hasMany('article', [
+			'property' => 'articles',
+			'strategy' => $strategy,
+			'sort' => ['article.id' => 'asc']
+		]);
 
 		$results = $query->repository($table)->select()->contain('article')->toArray();
 		$expected = [
@@ -432,7 +436,11 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		$article = Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article', ['property' => 'articles'] + compact('strategy'));
+		$table->hasMany('article', [
+			'property' => 'articles',
+			'stratgey' => $strategy,
+			'sort' => ['article.id' => 'asc']
+		]);
 		$article->belongsTo('author');
 
 		$results = $query->repository($table)
