@@ -410,12 +410,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return string
  */
 	protected function _buildSelectPart($parts) {
+		$driver = $this->_connection->driver();
 		$select = 'SELECT %s%s';
 		$distinct = null;
 		$normalized = [];
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
-				$p = $p . ' AS ' . $k;
+				$p = $p . ' AS ' . $driver->quoteIdentifier($k);
 			}
 			$normalized[] = $p;
 		}
