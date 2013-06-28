@@ -46,21 +46,22 @@ class PostgresSchemaTest extends TestCase {
 	protected function _createTables($connection) {
 		$this->_needsConnection();
 
-		$connection->execute('DROP TABLE IF EXISTS articles');
-		$connection->execute('DROP TABLE IF EXISTS authors');
+		$connection->execute('DROP TABLE IF EXISTS schema_articles');
+		$connection->execute('DROP TABLE IF EXISTS schema_authors');
 
 		$table = <<<SQL
-CREATE TABLE authors(
+CREATE TABLE schema_authors (
 id SERIAL,
 name VARCHAR(50),
 bio DATE,
-created TIMESTAMP
+created TIMESTAMP,
+PRIMARY KEY (id)
 )
 SQL;
 		$connection->execute($table);
 
 		$table = <<<SQL
-CREATE TABLE articles(
+CREATE TABLE schema_articles (
 id BIGINT PRIMARY KEY,
 title VARCHAR(20),
 body TEXT,
@@ -68,12 +69,13 @@ author_id INTEGER NOT NULL,
 published BOOLEAN DEFAULT false,
 views SMALLINT DEFAULT 0,
 created TIMESTAMP,
-CONSTRAINT "content_idx" UNIQUE ("title", "body")
+CONSTRAINT "content_idx" UNIQUE ("title", "body"),
+CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE 
 )
 SQL;
 		$connection->execute($table);
-		$connection->execute('COMMENT ON COLUMN "articles"."title" IS \'a title\'');
-		$connection->execute('CREATE INDEX "author_idx" ON "articles" ("author_id")');
+		$connection->execute('COMMENT ON COLUMN "schema_articles"."title" IS \'a title\'');
+		$connection->execute('CREATE INDEX "author_idx" ON "schema_articles" ("author_id")');
 	}
 
 /**
@@ -207,8 +209,8 @@ SQL;
 		$result = $schema->listTables();
 		$this->assertInternalType('array', $result);
 		$this->assertCount(2, $result);
-		$this->assertEquals('articles', $result[0]);
-		$this->assertEquals('authors', $result[1]);
+		$this->assertEquals('schema_articles', $result[0]);
+		$this->assertEquals('schema_authors', $result[1]);
 	}
 
 /**
@@ -221,7 +223,7 @@ SQL;
 		$this->_createTables($connection);
 
 		$schema = new SchemaCollection($connection);
-		$result = $schema->describe('articles');
+		$result = $schema->describe('schema_articles');
 		$expected = [
 			'id' => [
 				'type' => 'biginteger',
@@ -303,7 +305,7 @@ SQL;
 		$this->_createTables($connection);
 
 		$schema = new SchemaCollection($connection);
-		$result = $schema->describe('articles');
+		$result = $schema->describe('schema_articles');
 		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
 		$expected = [
 			'primary' => [
@@ -317,9 +319,30 @@ SQL;
 				'length' => []
 			]
 		];
-		$this->assertCount(2, $result->constraints());
+		$this->assertCount(3, $result->constraints());
+		$expected = [
+			'primary' => [
+				'type' => 'primary',
+				'columns' => ['id'],
+				'length' => []
+			],
+			'content_idx' => [
+				'type' => 'unique',
+				'columns' => ['title', 'body'],
+				'length' => []
+			],
+			'author_idx' => [
+				'type' => 'foreign',
+				'columns' => ['author_id'],
+				'references' => ['schema_authors', 'id'],
+				'length' => [],
+				'update' => 'cascade',
+				'delete' => 'restrict',
+			]
+		];
 		$this->assertEquals($expected['primary'], $result->constraint('primary'));
 		$this->assertEquals($expected['content_idx'], $result->constraint('content_idx'));
+		$this->assertEquals($expected['author_idx'], $result->constraint('author_idx'));
 
 		$this->assertCount(1, $result->indexes());
 		$expected = [
@@ -465,7 +488,7 @@ SQL;
 		$driver = $this->_getMockedDriver();
 		$schema = new PostgresSchema($driver);
 
-		$table = (new Table('articles'))->addColumn($name, $data);
+		$table = (new Table('schema_articles'))->addColumn($name, $data);
 		$this->assertEquals($expected, $schema->columnSql($table, $name));
 	}
 
@@ -478,7 +501,7 @@ SQL;
 		$driver = $this->_getMockedDriver();
 		$schema = new PostgresSchema($driver);
 
-		$table = new Table('articles');
+		$table = new Table('schema_articles');
 		$table->addColumn('id', [
 				'type' => 'integer',
 				'null' => false
@@ -508,6 +531,36 @@ SQL;
 				['type' => 'unique', 'columns' => ['title', 'author_id']],
 				'CONSTRAINT "unique_idx" UNIQUE ("title", "author_id")'
 			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT'
+			],
+			[
+				'author_id_idx',
+				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
+				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+				'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT'
+			],
 		];
 	}
 
@@ -520,7 +573,7 @@ SQL;
 		$driver = $this->_getMockedDriver();
 		$schema = new PostgresSchema($driver);
 
-		$table = (new Table('articles'))->addColumn('title', [
+		$table = (new Table('schema_articles'))->addColumn('title', [
 			'type' => 'string',
 			'length' => 255
 		])->addColumn('author_id', [
@@ -541,7 +594,7 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
-		$table = (new Table('articles'))->addColumn('id', [
+		$table = (new Table('schema_articles'))->addColumn('id', [
 				'type' => 'integer',
 				'null' => false
 			])
@@ -562,7 +615,7 @@ SQL;
 			]);
 
 		$expected = <<<SQL
-CREATE TABLE "articles" (
+CREATE TABLE "schema_articles" (
 "id" SERIAL,
 "title" VARCHAR NOT NULL,
 "body" TEXT,
@@ -575,11 +628,11 @@ SQL;
 		$this->assertCount(3, $result);
 		$this->assertEquals($expected, $result[0]);
 		$this->assertEquals(
-			'CREATE INDEX "title_idx" ON "articles" ("title")',
+			'CREATE INDEX "title_idx" ON "schema_articles" ("title")',
 			$result[1]
 		);
 		$this->assertEquals(
-			'COMMENT ON COLUMN "articles"."title" IS "This is the title"',
+			'COMMENT ON COLUMN "schema_articles"."title" IS "This is the title"',
 			$result[2]
 		);
 	}
@@ -595,10 +648,10 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
-		$table = new Table('articles');
+		$table = new Table('schema_articles');
 		$result = $table->dropSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('DROP TABLE "articles"', $result[0]);
+		$this->assertEquals('DROP TABLE "schema_articles"', $result[0]);
 	}
 
 /**
@@ -612,7 +665,7 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
-		$table = new Table('articles');
+		$table = new Table('schema_articles');
 		$table->addColumn('id', 'integer')
 			->addConstraint('primary', [
 				'type' => 'primary',
@@ -620,7 +673,7 @@ SQL;
 			]);
 		$result = $table->truncateSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('TRUNCATE "articles" RESTART IDENTITY', $result[0]);
+		$this->assertEquals('TRUNCATE "schema_articles" RESTART IDENTITY', $result[0]);
 	}
 
 /**
