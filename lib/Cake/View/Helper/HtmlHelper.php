@@ -355,9 +355,7 @@ class HtmlHelper extends AppHelper {
 			unset($options['confirm']);
 		}
 		if ($confirmMessage) {
-			$confirmMessage = str_replace("'", "\'", $confirmMessage);
-			$confirmMessage = str_replace('"', '\"', $confirmMessage);
-			$options['onclick'] = "return confirm('{$confirmMessage}');";
+			$options['onclick'] = $this->_confirmHandler($confirmMessage);
 		} elseif (isset($options['default']) && !$options['default']) {
 			if (isset($options['onclick'])) {
 				$options['onclick'] .= ' event.returnValue = false; return false;';
@@ -367,6 +365,16 @@ class HtmlHelper extends AppHelper {
 			unset($options['default']);
 		}
 		return sprintf($this->_tags['link'], $url, $this->_parseAttributes($options), $title);
+	}
+
+/**
+ * Returns a string to be used as onclick handler for confirm dialogs.
+ *
+ * @param string $message Message to be displayed
+ */
+	protected function _confirmHandler($message) {
+		$message = str_replace(array("'", '"'), array("\'", '\"'), $message);
+		return "return confirm('{$message}');";
 	}
 
 /**
