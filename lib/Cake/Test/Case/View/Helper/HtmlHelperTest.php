@@ -291,6 +291,17 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->link('Next >', '#', array(
+			'title' => 'Next >',
+			'escapeTitle' => false
+		));
+		$expected = array(
+			'a' => array('href' => '#', 'title' => 'Next &gt;'),
+			'Next >',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Html->link('Original size', array(
 			'controller' => 'images', 'action' => 'view', 3, '?' => array('height' => 100, 'width' => 200)
 		));
@@ -306,6 +317,17 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->link($this->Html->image('test.gif'), '#', array('escape' => false));
 		$expected = array(
 			'a' => array('href' => '#'),
+			'img' => array('src' => 'img/test.gif', 'alt' => ''),
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link($this->Html->image('test.gif'), '#', array(
+			'title' => 'hey "howdy"',
+			'escapeTitle' => false
+		));
+		$expected = array(
+			'a' => array('href' => '#', 'title' => 'hey &quot;howdy&quot;'),
 			'img' => array('src' => 'img/test.gif', 'alt' => ''),
 			'/a'
 		);
