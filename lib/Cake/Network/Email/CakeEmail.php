@@ -535,8 +535,8 @@ class CakeEmail {
  * @param string $regexp
  * @return string|CakeEmail
  */
-	public function emailRegex($regex = false) {
-		if ($regex === false) {
+	public function emailRegex($regex = null) {
+		if ($regex === null) {
 			return $this->_emailRegex;
 		}
 		$this->_emailRegex = $regex;
