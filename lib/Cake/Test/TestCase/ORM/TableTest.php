@@ -385,7 +385,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$result = $table->updateAll($fields, ['id <' => 4]);
 		$this->assertTrue($result);
 
-		$result = $table->find('all')->select(['username'])->toArray();
+		$result = $table->find('all')
+			->select(['username'])
+			->order(['id' => 'asc'])
+			->toArray();
 		$expected = array_fill(0, 3, $fields);
 		$expected[] = ['username' => 'garrett'];
 		$this->assertEquals($expected, $result);
