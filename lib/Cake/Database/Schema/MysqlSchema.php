@@ -22,7 +22,7 @@ use Cake\Database\Schema\Table;
 /**
  * Schema management/reflection features for MySQL
  */
-class MysqlSchema {
+class MysqlSchema extends BaseSchema {
 
 /**
  * The driver instance being used.
@@ -245,22 +245,6 @@ class MysqlSchema {
 	}
 
 /**
- * Convert MySQL on clauses to the abstract ones.
- *
- * @param string $clause
- * @return string|null
- */
-	protected function _convertOnClause($clause) {
-		if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
-			return strtolower($clause);
-		}
-		if ($clause === 'NO ACTION') {
-			return Table::ACTION_NO_ACTION;
-		}
-		return Table::ACTION_SET_NULL;
-	}
-
-/**
  * Generate the SQL to truncate a table.
  *
  * @param Cake\Database\Schema\Table $table Table instance
@@ -268,16 +252,6 @@ class MysqlSchema {
  */
 	public function truncateTableSql(Table $table) {
 		return [sprintf("TRUNCATE TABLE `%s`", $table->name())];
-	}
-
-/**
- * Generate the SQL to drop a table.
- *
- * @param Cake\Database\Schema\Table $table Table instance
- * @return array DROP TABLE sql
- */
-	public function dropTableSql(Table $table) {
-		return [sprintf("DROP TABLE `%s`", $table->name())];
 	}
 
 /**
@@ -454,27 +428,6 @@ class MysqlSchema {
 			);
 		}
 		return $prefix . ' (' . implode(', ', $columns) . ')';
-	}
-
-/**
- * Generate an ON clause for a foreign key.
- *
- * @param string|null $on The on clause
- * @return string
- */
-	protected function _foreignOnClause($on) {
-		if ($on === Table::ACTION_SET_NULL) {
-			return 'SET NULL';
-		}
-		if ($on === Table::ACTION_CASCADE) {
-			return 'CASCADE';
-		}
-		if ($on === Table::ACTION_RESTRICT) {
-			return 'RESTRICT';
-		}
-		if ($on === Table::ACTION_NO_ACTION) {
-			return 'NO ACTION';
-		}
 	}
 
 }

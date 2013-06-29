@@ -18,17 +18,17 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
+use Cake\Model\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests Connection class
- *
- **/
+ */
 class ConnectionTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->connection = new Connection(Configure::read('Datasource.test'));
+		$this->connection = ConnectionManager::getDataSource('test');
 	}
 
 	public function tearDown() {
@@ -673,8 +673,13 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testLogBeginRollbackTransaction() {
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['connect'],
+			[Configure::read('Datasource.test')]
+		);
 		$logger = $this->getMock('\Cake\Database\Log\QueryLogger');
-		$this->connection->logger($logger);
+		$connection->logger($logger);
 		$logger->expects($this->at(0))->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
@@ -685,10 +690,10 @@ class ConnectionTest extends TestCase {
 				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'ROLLBACK')
 			));
-		$this->connection->logQueries(true);
-		$this->connection->begin();
-		$this->connection->begin(); //This one will not be logged
-		$this->connection->rollback();
+		$connection->logQueries(true);
+		$connection->begin();
+		$connection->begin(); //This one will not be logged
+		$connection->rollback();
 	}
 
 /**
@@ -698,15 +703,20 @@ class ConnectionTest extends TestCase {
  */
 	public function testLogCommitTransaction() {
 		$logger = $this->getMock('\Cake\Database\Log\QueryLogger');
-		$this->connection->logger($logger);
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['connect'],
+			[Configure::read('Datasource.test')]
+		);
+		$connection->logger($logger);
 		$logger->expects($this->at(1))->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'COMMIT')
 			));
-		$this->connection->logQueries(true);
-		$this->connection->begin();
-		$this->connection->commit();
+		$connection->logQueries(true);
+		$connection->begin();
+		$connection->commit();
 	}
 
 }

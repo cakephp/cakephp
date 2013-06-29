@@ -22,7 +22,7 @@ use Cake\Database\Schema\Table;
 /**
  * Schema management/reflection features for Sqlite
  */
-class SqliteSchema {
+class SqliteSchema extends BaseSchema {
 
 /**
  * The driver instance being used.
@@ -219,22 +219,6 @@ class SqliteSchema {
 	}
 
 /**
- * Convert Sqlite on clauses to the abstract ones.
- *
- * @param string $clause
- * @return string|null
- */
-	protected function _convertOnClause($clause) {
-		if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
-			return strtolower($clause);
-		}
-		if ($clause === 'NO ACTION') {
-			return Table::ACTION_NO_ACTION;
-		}
-		return Table::ACTION_SET_NULL;
-	}
-
-/**
  * Generate the SQL fragment for a single column in Sqlite
  *
  * @param Cake\Database\Schema\Table $table The table object the column is in.
@@ -341,27 +325,6 @@ class SqliteSchema {
 	}
 
 /**
- * Generate an ON clause for a foreign key.
- *
- * @param string|null $on The on clause
- * @return string
- */
-	protected function _foreignOnClause($on) {
-		if ($on === Table::ACTION_SET_NULL) {
-			return 'SET NULL';
-		}
-		if ($on === Table::ACTION_CASCADE) {
-			return 'CASCADE';
-		}
-		if ($on === Table::ACTION_RESTRICT) {
-			return 'RESTRICT';
-		}
-		if ($on === Table::ACTION_NO_ACTION) {
-			return 'NO ACTION';
-		}
-	}
-
-/**
  * Generate the SQL fragment for a single index.
  *
  * @param Cake\Database\Schema\Table $table The table object the column is in.
@@ -399,16 +362,6 @@ class SqliteSchema {
 			$out[] = $index;
 		}
 		return $out;
-	}
-
-/**
- * Generate the SQL to drop a table.
- *
- * @param Cake\Database\Schema\Table $table Table instance
- * @return string DROP TABLE sql
- */
-	public function dropTableSql(Table $table) {
-		return [sprintf('DROP TABLE "%s"', $table->name())];
 	}
 
 /**

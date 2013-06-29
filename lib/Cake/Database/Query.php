@@ -289,7 +289,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _traverseUpdate(callable $visitor) {
-		$parts = ['update', 'join', 'set', 'from', 'where'];
+		$parts = ['update', 'set', 'where'];
 		foreach ($parts as $name) {
 			call_user_func($visitor, $this->_parts[$name], $name);
 		}
@@ -410,12 +410,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return string
  */
 	protected function _buildSelectPart($parts) {
+		$driver = $this->_connection->driver();
 		$select = 'SELECT %s%s';
 		$distinct = null;
 		$normalized = [];
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
-				$p = $p . ' AS ' . $k;
+				$p = $p . ' AS ' . $driver->quoteIdentifier($k);
 			}
 			$normalized[] = $p;
 		}
