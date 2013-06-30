@@ -265,14 +265,14 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
- * test emailRegex method
+ * test emailPattern method
  *
  * @return void
  */
-	public function testEmailRegex() {
+	public function testEmailPattern() {
 		$regex = '/.+@.+\..+/i';
-		$this->assertNull($this->CakeEmail->emailRegex());
-		$this->assertSame($regex, $this->CakeEmail->emailRegex($regex)->emailRegex());
+		$this->assertNull($this->CakeEmail->emailPattern());
+		$this->assertSame($regex, $this->CakeEmail->emailPattern($regex)->emailPattern());
 	}
 
 /**
@@ -280,10 +280,10 @@ class CakeEmailTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testConfigEmailRegex() {
+	public function testConfigEmailPattern() {
 		$regex = '/.+@.+\..+/i';
-		$email = new CakeEmail(array('emailRegex' => $regex));
-		$this->assertSame($regex, $email->emailRegex());
+		$email = new CakeEmail(array('emailPattern' => $regex));
+		$this->assertSame($regex, $email->emailPattern());
 	}
 
 /**
@@ -292,7 +292,7 @@ class CakeEmailTest extends CakeTestCase {
 	public function testCustomEmailValidation() {
 		$regex = '/^[\.a-z0-9!#$%&\'*+\/=?^_`{|}~-]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]{2,6}$/i';
 
-		$this->CakeEmail->emailRegex($regex)->to('pass.@example.com');
+		$this->CakeEmail->emailPattern($regex)->to('pass.@example.com');
 		$this->assertSame(array(
 			'pass.@example.com' => 'pass.@example.com',
 		), $this->CakeEmail->to());
@@ -312,7 +312,7 @@ class CakeEmailTest extends CakeTestCase {
 			'.extend.@example.com',
 			'.docomo@example.com'
 		);
-		$this->CakeEmail->emailRegex($regex)->to($emails);
+		$this->CakeEmail->emailPattern($regex)->to($emails);
 		$this->assertSame(array(
 			'pass.@example.com' => 'pass.@example.com',
 			'pass..old.docomo@example.com' => 'pass..old.docomo@example.com',
@@ -1490,13 +1490,13 @@ class CakeEmailTest extends CakeTestCase {
 	public function testReset() {
 		$this->CakeEmail->to('cake@cakephp.org');
 		$this->CakeEmail->theme('TestTheme');
-		$this->CakeEmail->emailRegex('/.+@.+\..+/i');
+		$this->CakeEmail->emailPattern('/.+@.+\..+/i');
 		$this->assertSame($this->CakeEmail->to(), array('cake@cakephp.org' => 'cake@cakephp.org'));
 
 		$this->CakeEmail->reset();
 		$this->assertSame($this->CakeEmail->to(), array());
 		$this->assertSame(null, $this->CakeEmail->theme());
-		$this->assertSame(null, $this->CakeEmail->emailRegex());
+		$this->assertSame(null, $this->CakeEmail->emailPattern());
 	}
 
 /**

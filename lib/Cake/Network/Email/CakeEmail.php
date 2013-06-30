@@ -324,7 +324,7 @@ class CakeEmail {
  *
  * @var string
  */
-	protected $_emailRegex = null;
+	protected $_emailPattern = null;
 
 /**
  * Constructor
@@ -530,16 +530,16 @@ class CakeEmail {
 	}
 
 /**
- * EmailRegex setter/getter
+ * EmailPattern setter/getter
  *
- * @param string $regexp
+ * @param string $regex for email address validation
  * @return string|CakeEmail
  */
-	public function emailRegex($regex = null) {
+	public function emailPattern($regex = null) {
 		if ($regex === null) {
-			return $this->_emailRegex;
+			return $this->_emailPattern;
 		}
-		$this->_emailRegex = $regex;
+		$this->_emailPattern = $regex;
 		return $this;
 	}
 
@@ -554,7 +554,7 @@ class CakeEmail {
  */
 	protected function _setEmail($varName, $email, $name) {
 		if (!is_array($email)) {
-			if (!Validation::email($email, false, $this->_emailRegex)) {
+			if (!Validation::email($email, false, $this->_emailPattern)) {
 				throw new SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
 			}
 			if ($name === null) {
@@ -568,7 +568,7 @@ class CakeEmail {
 			if (is_int($key)) {
 				$key = $value;
 			}
-			if (!Validation::email($key, false, $this->_emailRegex)) {
+			if (!Validation::email($key, false, $this->_emailPattern)) {
 				throw new SocketException(__d('cake_dev', 'Invalid email: "%s"', $key));
 			}
 			$list[$key] = $value;
@@ -608,7 +608,7 @@ class CakeEmail {
  */
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
-			if (!Validation::email($email, false, $this->_emailRegex)) {
+			if (!Validation::email($email, false, $this->_emailPattern)) {
 				throw new SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
 			}
 			if ($name === null) {
@@ -622,7 +622,7 @@ class CakeEmail {
 			if (is_int($key)) {
 				$key = $value;
 			}
-			if (!Validation::email($key, false, $this->_emailRegex)) {
+			if (!Validation::email($key, false, $this->_emailPattern)) {
 				throw new SocketException(__d('cake_dev', 'Invalid email: "%s"', $key));
 			}
 			$list[$key] = $value;
@@ -1183,7 +1183,7 @@ class CakeEmail {
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'domain', 'subject', 'viewRender', 'viewVars', 'attachments',
-			'transport', 'emailFormat', 'theme', 'helpers', 'emailRegex'
+			'transport', 'emailFormat', 'theme', 'helpers', 'emailPattern'
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
@@ -1240,7 +1240,7 @@ class CakeEmail {
 		$this->headerCharset = null;
 		$this->_attachments = array();
 		$this->_config = array();
-		$this->_emailRegex = null;
+		$this->_emailPattern = null;
 		return $this;
 	}
 
