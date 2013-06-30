@@ -33,15 +33,15 @@ trait PostgresDialectTrait {
  *  String used to start a database identifier quoting to make it safe
  *
  * @var string
- **/
-	public $startQuote = '"';
+ */
+	protected $_startQuote = '"';
 
 /**
  * String used to end a database identifier quoting to make it safe
  *
  * @var string
- **/
-	public $endQuote = '"';
+ */
+	protected $_endQuote = '"';
 
 /**
  * Returns a query that has been transformed to the specific SQL dialect

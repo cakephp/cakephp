@@ -35,14 +35,14 @@ trait SqlDialectTrait {
 
 		if (preg_match('/^[\w-]+(?:\.[^ \*]*)*$/', $identifier)) { // string, string.string
 			if (strpos($identifier, '.') === false) { // string
-				return $this->startQuote . $identifier . $this->endQuote;
+				return $this->_startQuote . $identifier . $this->_endQuote;
 			}
 			$items = explode('.', $identifier);
-			return $this->startQuote . implode($this->endQuote . '.' . $this->startQuote, $items) . $this->endQuote;
+			return $this->_startQuote . implode($this->_endQuote . '.' . $this->_startQuote, $items) . $this->_endQuote;
 		}
 
 		if (preg_match('/^[\w-]+\.\*$/', $identifier)) { // string.*
-			return $this->startQuote . str_replace('.*', $this->endQuote . '.*', $identifier);
+			return $this->_startQuote . str_replace('.*', $this->_endQuote . '.*', $identifier);
 		}
 
 		if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) { // Functions
@@ -56,7 +56,7 @@ trait SqlDialectTrait {
 		}
 
 		if (preg_match('/^[\w-_\s]*[\w-_]+/', $identifier)) {
-			return $this->startQuote . $identifier . $this->endQuote;
+			return $this->_startQuote . $identifier . $this->_endQuote;
 		}
 
 		return $identifier;

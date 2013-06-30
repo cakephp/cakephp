@@ -32,14 +32,14 @@ trait MysqlDialectTrait {
  *
  * @var string
  */
-	public $startQuote = '`';
+	protected $_startQuote = '`';
 
 /**
  * String used to end a database identifier quoting to make it safe
  *
  * @var string
  */
-	public $endQuote = '`';
+	protected $_endQuote = '`';
 
 /**
  * Get the schema dialect.

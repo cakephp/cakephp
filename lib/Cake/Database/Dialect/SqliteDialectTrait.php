@@ -30,15 +30,15 @@ trait SqliteDialectTrait {
  *  String used to start a database identifier quoting to make it safe
  *
  * @var string
- **/
-	public $startQuote = '"';
+ */
+	protected $_startQuote = '"';
 
 /**
  * String used to end a database identifier quoting to make it safe
  *
  * @var string
- **/
-	public $endQuote = '"';
+ */
+	protected $_endQuote = '"';
 
 /**
  * Returns an dictionary of expressions to be transformed when compiling a Query

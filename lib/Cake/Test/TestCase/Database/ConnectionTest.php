@@ -41,9 +41,8 @@ class ConnectionTest extends TestCase {
  * Tests connecting to database
  *
  * @return void
- **/
+ */
 	public function testConnect() {
-		$this->assertFalse($this->connection->isConnected());
 		$this->assertTrue($this->connection->connect());
 		$this->assertTrue($this->connection->isConnected());
 	}
@@ -54,7 +53,7 @@ class ConnectionTest extends TestCase {
  * @expectedException Cake\Database\Exception\MissingDriverException
  * @expectedExceptionMessage Database driver \Foo\InvalidDriver could not be found.
  * @return void
- **/
+ */
 	public function testMissingDriver() {
 		$connection = new Connection(['datasource' => '\Foo\InvalidDriver']);
 	}
@@ -547,66 +546,67 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testQuoteIdentifier() {
-		$driver = $this->connection->driver();
-		$driver->startQuote = '"';
-		$driver->endQuote = '"';
+		$connection = new Connection(Configure::read('Datasource.test'));
 
-		$result = $this->connection->quoteIdentifier('name');
+		$driver = $this->getObjectForTrait('\Cake\Database\Dialect\SqliteDialectTrait');
+		$connection->driver($driver);
+
+		$result = $connection->quoteIdentifier('name');
 		$expected = '"name"';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('Model.*');
+		$result = $connection->quoteIdentifier('Model.*');
 		$expected = '"Model".*';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('MTD()');
+		$result = $connection->quoteIdentifier('MTD()');
 		$expected = 'MTD()';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('(sm)');
+		$result = $connection->quoteIdentifier('(sm)');
 		$expected = '(sm)';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('name AS x');
+		$result = $connection->quoteIdentifier('name AS x');
 		$expected = '"name" AS "x"';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('Model.name AS x');
+		$result = $connection->quoteIdentifier('Model.name AS x');
 		$expected = '"Model"."name" AS "x"';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('Function(Something.foo)');
+		$result = $connection->quoteIdentifier('Function(Something.foo)');
 		$expected = 'Function("Something"."foo")';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('Function(SubFunction(Something.foo))');
+		$result = $connection->quoteIdentifier('Function(SubFunction(Something.foo))');
 		$expected = 'Function(SubFunction("Something"."foo"))';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('Function(Something.foo) AS x');
+		$result = $connection->quoteIdentifier('Function(Something.foo) AS x');
 		$expected = 'Function("Something"."foo") AS "x"';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('name-with-minus');
+		$result = $connection->quoteIdentifier('name-with-minus');
 		$expected = '"name-with-minus"';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('my-name');
+		$result = $connection->quoteIdentifier('my-name');
 		$expected = '"my-name"';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('Foo-Model.*');
+		$result = $connection->quoteIdentifier('Foo-Model.*');
 		$expected = '"Foo-Model".*';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('Team.P%');
+		$result = $connection->quoteIdentifier('Team.P%');
 		$expected = '"Team"."P%"';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->connection->quoteIdentifier('Team.G/G');
+		$result = $connection->quoteIdentifier('Team.G/G');
 		$expected = '"Team"."G/G"';
 
-		$result = $this->connection->quoteIdentifier('Model.name as y');
+		$result = $connection->quoteIdentifier('Model.name as y');
 		$expected = '"Model"."name" AS "y"';
 		$this->assertEquals($expected, $result);
 	}
