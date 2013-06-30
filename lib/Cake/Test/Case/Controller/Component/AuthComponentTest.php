@@ -1236,6 +1236,23 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test redirectUrl with duplicate base.
+ *
+ * @return void
+ */
+	public function testRedirectSessionReadDuplicateBase() {
+		$this->Auth->request->webroot = '/waves/';
+		$this->Auth->request->base = '/waves';
+
+		Router::setRequestInfo($this->Auth->request);
+
+		$this->Auth->Session->write('Auth.redirect', '/waves/add');
+
+		$result = $this->Auth->redirectUrl();
+		$this->assertEquals('/waves/add', $result);
+	}
+
+/**
  * test that redirect does not return loginAction if that is what's stored in Auth.redirect.
  * instead loginRedirect should be used.
  *
