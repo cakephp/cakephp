@@ -133,7 +133,7 @@
 			<license>MIT License</license>
 			<version release="${pear.version}" api="${pear.version}" />
 			<stability release="${pear.stability}" api="${pear.stability}" />
-			<notes>http://github.com/cakephp/cakephp/blob/master/README</notes>
+			<notes>https://github.com/cakephp/cakephp/blob/master/README</notes>
 			<dependencies>
 				<php minimum_version="5.2.8" />
 				<pear minimum_version="1.9.0" recommended_version="1.9.4" />
@@ -165,6 +165,17 @@
 	</target>
 
 	<!--
+		Updates the local copy to the latest head.
+	-->
+	<target name="update-branch">
+		<echo msg="Updating to latest master." />
+		<exec executable="git pull">
+			<arg value="${git.remote}" />
+			<arg value="master" />
+		</exec>
+	</target>
+
+	<!--
 		Bump the version number and commit that.
 	-->
 	<target name="next-version" depends="current-version">
@@ -182,7 +193,7 @@
 	<!--
 		Create the release commit that updates the version number and pushes the commits.
 	-->
-	<target name="release-commit" depends="next-version,prepare">
+	<target name="release-commit" depends="update-branch,next-version,prepare">
 		<echo msg="Creating new release commit" />
 		<exec command="git add ./lib/Cake/VERSION.txt" logoutput="true" checkreturn="true" />
 		<exec command="git commit -m 'Update version number to ${release_version}'" logoutput="true" checkreturn="true" />

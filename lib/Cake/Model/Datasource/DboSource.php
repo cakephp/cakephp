@@ -280,7 +280,7 @@ class DboSource extends DataSource {
 /**
  * Disconnects from database.
  *
- * @return boolean True if the database could be disconnected, else false
+ * @return boolean Always true
  */
 	public function disconnect() {
 		if ($this->_result instanceof PDOStatement) {

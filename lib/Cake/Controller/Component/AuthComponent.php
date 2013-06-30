@@ -707,8 +707,8 @@ class AuthComponent extends Component {
  * If no parameter is passed, gets the authentication redirect URL. The URL
  * returned is as per following rules:
  *
- *  - Returns the session Auth.redirect value if it is present and for the same
- *    domain the current app is running on.
+ *  - Returns the normalized URL from session Auth.redirect value if it is
+ *    present and for the same domain the current app is running on.
  *  - If there is no session value and there is a $loginRedirect, the $loginRedirect
  *    value is returned.
  *  - If there is no session and no $loginRedirect, / is returned.
@@ -722,6 +722,7 @@ class AuthComponent extends Component {
 			$this->Session->write('Auth.redirect', $redir);
 		} elseif ($this->Session->check('Auth.redirect')) {
 			$redir = $this->Session->read('Auth.redirect');
+			$redir = is_string($redir) ? ltrim($redir, '/') : $redir;
 			$this->Session->delete('Auth.redirect');
 
 			if (Router::normalize($redir) == Router::normalize($this->loginAction)) {

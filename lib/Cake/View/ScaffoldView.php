@@ -20,14 +20,14 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-App::uses('ThemeView', 'View');
+App::uses('View', 'View');
 
 /**
  * ScaffoldView provides specific view file loading features for scaffolded views.
  *
  * @package       Cake.View
  */
-class ScaffoldView extends ThemeView {
+class ScaffoldView extends View {
 
 /**
  * Override _getViewFileName Appends special scaffolding views in.

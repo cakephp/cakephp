@@ -2122,6 +2122,7 @@ class FormHelper extends AppHelper {
 		$attributes += array('empty' => true, 'value' => null);
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
+				$year = null;
 				extract($value);
 				$attributes['value'] = $year;
 			} else {
@@ -2313,6 +2314,7 @@ class FormHelper extends AppHelper {
 		$attributes += array('empty' => true, 'value' => null);
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
+				$meridian = null;
 				extract($value);
 				$attributes['value'] = $meridian;
 			} else {
