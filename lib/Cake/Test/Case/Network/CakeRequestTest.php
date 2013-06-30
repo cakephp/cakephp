@@ -701,6 +701,25 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test referer() with a base path that duplicates the
+ * first segment.
+ *
+ * @return void
+ */
+	public function testRefererBasePath() {
+		$request = new CakeRequest('some/path');
+		$request->url = 'users/login';
+		$request->webroot = '/waves/';
+		$request->base = '/waves';
+		$request->here = '/waves/users/login';
+
+		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL . '/waves/waves/add';
+
+		$result = $request->referer(true);
+		$this->assertSame($result, '/waves/add');
+	}
+
+/**
  * test the simple uses of is()
  *
  * @return void
