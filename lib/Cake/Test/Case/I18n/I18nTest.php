@@ -1855,6 +1855,18 @@ class I18nTest extends CakeTestCase {
 	}
 
 /**
+ * testLoadLocaleDefinition method
+ *
+ * @return void
+ */
+	public function testLoadLocaleDefinition() {
+		$path = current(App::path('locales'));
+		$result = I18n::loadLocaleDefinition($path . 'nld' . DS . 'LC_TIME');
+		$expected = array('zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag');
+		$this->assertSame($expected, $result['day']);
+	}
+
+/**
  * Singular method
  *
  * @return void
