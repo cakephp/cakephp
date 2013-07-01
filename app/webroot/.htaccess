@@ -1,6 +1,9 @@
+ErrorDocument 404 /404-not-found
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^/(app/webroot/)?(img|css|js)/(.*)$
     RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
