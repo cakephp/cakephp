@@ -504,7 +504,7 @@ class Shell extends Object {
 		$result = $this->stdin->read();
 
 		if ($result === false) {
-			$this->_stop(1);
+			return $this->_stop(1);
 		}
 		$result = trim($result);
 
@@ -618,7 +618,7 @@ class Shell extends Object {
 		if (!empty($message)) {
 			$this->err($message);
 		}
-		$this->_stop(1);
+		return $this->_stop(1);
 	}
 
 /**
@@ -656,7 +656,7 @@ class Shell extends Object {
 
 			if (strtolower($key) === 'q') {
 				$this->out(__d('cake_console', '<error>Quitting</error>.'), 2);
-				$this->_stop();
+				return $this->_stop();
 			} elseif (strtolower($key) !== 'y') {
 				$this->out(__d('cake_console', 'Skip `%s`', $path), 2);
 				return false;
