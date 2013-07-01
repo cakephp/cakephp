@@ -22,7 +22,7 @@ App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
 
 /**
- * The Plugin Task handles creating an empty plugin, ready to be used
+ * The Plugin Task handles Creating an empty plugin, ready to be used
  *
  * @package       Cake.Console.Command.Task
  */
@@ -93,79 +93,76 @@ class PluginTask extends AppShell {
  * Bake the plugin, create directories and files
  *
  * @param string $plugin Name of the plugin in CamelCased format
+ * @param string $skel
+ * @param array $skip File names not to copy
  * @return boolean
  */
-	public function bake($plugin) {
+	public function bake($plugin, $skel = null, $skip = array('empty')) {
 		$pathOptions = App::path('plugins');
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
-		$this->hr();
-		$this->out(__d('cake_console', "<info>Plugin Name:</info> %s", $plugin));
-		$this->out(__d('cake_console', "<info>Plugin Directory:</info> %s", $this->path . $plugin));
-		$this->hr();
 
-		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
-
-		if (strtolower($looksGood) === 'y') {
-			$Folder = new Folder($this->path . $plugin);
-			$directories = array(
-				'Config' . DS . 'Schema',
-				'Model' . DS . 'Behavior',
-				'Model' . DS . 'Datasource',
-				'Console' . DS . 'Command' . DS . 'Task',
-				'Controller' . DS . 'Component',
-				'Lib',
-				'View' . DS . 'Helper',
-				'Test' . DS . 'Case' . DS . 'Controller' . DS . 'Component',
-				'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper',
-				'Test' . DS . 'Case' . DS . 'Model' . DS . 'Behavior',
-				'Test' . DS . 'Fixture',
-				'Vendor',
-				'webroot'
+		if (!$skel && !empty($this->params['skel'])) {
+			$skel = $this->params['skel'];
+		}
+		while (!$skel) {
+			$skel = $this->in(
+				__d('cake_console', "What is the path to the directory layout you wish to copy?"),
+				null,
+				CAKE . 'Console' . DS . 'Templates' . DS . 'plugin'
 			);
-
-			foreach ($directories as $directory) {
-				$dirPath = $this->path . $plugin . DS . $directory;
-				$Folder->create($dirPath);
-				new File($dirPath . DS . 'empty', true);
-			}
-
-			foreach ($Folder->messages() as $message) {
-				$this->out($message, 1, Shell::VERBOSE);
-			}
-
-			$errors = $Folder->errors();
-			if (!empty($errors)) {
-				foreach ($errors as $message) {
-					$this->error($message);
+			if (!$skel) {
+				$this->err(__d('cake_console', 'The directory path you supplied was empty. Please try again.'));
+			} else {
+				while (is_dir($skel) === false) {
+					$skel = $this->in(
+						__d('cake_console', 'Directory path does not exist please choose another:'),
+						null,
+						CAKE . 'Console' . DS . 'Templates' . DS . 'skel'
+					);
 				}
-				return false;
 			}
-
-			$controllerFileName = $plugin . 'AppController.php';
-
-			$out = "<?php\n\n";
-			$out .= "App::uses('AppController', 'Controller');\n\n";
-			$out .= "class {$plugin}AppController extends AppController {\n\n";
-			$out .= "}\n";
-			$this->createFile($this->path . $plugin . DS . 'Controller' . DS . $controllerFileName, $out);
-
-			$modelFileName = $plugin . 'AppModel.php';
-
-			$out = "<?php\n\n";
-			$out .= "App::uses('AppModel', 'Model');\n\n";
-			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
-			$out .= "}\n";
-			$this->createFile($this->path . $plugin . DS . 'Model' . DS . $modelFileName, $out);
-
-			$this->_modifyBootstrap($plugin);
-
-			$this->hr();
-			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $plugin), 2);
 		}
 
-		return true;
+		$path = $this->path . $plugin;
+
+		$this->hr();
+		$this->out(__d('cake_console', "<info>Plugin Name:</info> %s", $plugin));
+		$this->out(__d('cake_console', '<info>Skel Directory</info>: %s', $skel));
+		$this->out(__d('cake_console', '<info>Will be copied to</info>: %s', $path));
+		$this->hr();
+		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
+
+		switch (strtolower($looksGood)) {
+			case 'y':
+				if (!empty($this->params['empty'])) {
+					$skip = array();
+				}
+
+				$replacements = array(
+					'__PLUGIN__' => $plugin,
+					'__SINGULAR__' => Inflector::singularize($plugin),
+					'__PLURAL__' => Inflector::pluralize($plugin)
+				);
+
+				if ($this->_copy($skel, $path, $skip, $replacements)) {
+					$this->hr();
+					$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path));
+					$this->hr();
+				} else {
+					$this->err(__d('cake_console', "<error>Could not create</error> '%s' properly.", $plugin));
+					return false;
+				}
+				return true;
+			case 'n':
+				unset($this->args[0]);
+				$this->execute();
+				return false;
+			case 'q':
+				$this->out(__d('cake_console', '<error>Bake Aborted.</error>'));
+				return false;
+		}
 	}
 
 /**
@@ -223,7 +220,131 @@ class PluginTask extends AppShell {
 			'Can create plugins in any of your bootstrapped plugin paths.'
 		))->addArgument('name', array(
 			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
+		))->addOption('empty', array(
+			'boolean' => true,
+			'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
+		))->addOption('skel', array(
+			'default' => current(App::core('Console')) . 'Templates' . DS . 'plugin',
+			'help' => __d('cake_console', 'The directory layout to use for the new plugin skeleton.')
 		));
 	}
 
+/**
+ * Copy one folder to another location recursively.
+ *
+ * @param string $from Source path
+ * @param string $to Target path
+ * @param array $skip File name/patterns not to copy
+ * @param array $replacements find-and-replace pairs applied to paths and contents
+ * @return boolean
+ */
+	protected function _copy($from, $to, $skip, $replacements = array()) {
+		$copy = array(
+			'dir' => array(),
+			'file' => array()
+		);
+
+		$from = realpath($from);
+		$fromLen = strlen($from);
+
+		$Folder = new Folder($from);
+		list($folders, $files) = $Folder->Tree($from, $skip);
+
+		$toFolder = new Folder($to);
+		if (!file_exists($to) && !$toFolder->create($to)) {
+			$this->error(__d('cake_console', "Unable to create folder: %s", $to));
+			return false;
+		}
+		$toFolder->cd($to);
+		$to = $toFolder->pwd();
+
+		foreach ($folders as $source) {
+			$relative = realpath($source);
+			$relative = trim(substr($relative, $fromLen), DS);
+			if (!$relative) {
+				continue;
+			}
+
+			$success = $this->_create(
+				$source,
+				Folder::addPathElement($to, $relative),
+				'dir',
+				$replacements
+			);
+
+			if (!$success) {
+				return false;
+			}
+		}
+
+		foreach ($files as $source) {
+			$relative = realpath($source);
+			$relative = trim(substr($relative, $fromLen), DS);
+			if (!$relative) {
+				continue;
+			}
+
+			$success = $this->_create(
+				$source,
+				Folder::addPathElement($to, $relative),
+				'file',
+				$replacements
+			);
+
+			if (!$success) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+/**
+ * Create a single file or folder
+ *
+ * @param string $from Source path
+ * @param string $to Target path
+ * @param string $type 'dir' or 'file'
+ * @param array $replacements find-and-replace pairs applied to paths and contents
+ * @return boolean
+ */
+	protected function _create($from, $to, $type, $replacements) {
+		$to = str_replace(
+			array_keys($replacements),
+			array_values($replacements),
+			$to
+		);
+
+		if ($type === 'dir') {
+			$Folder = new Folder($to);
+
+			if (file_exists($to)) {
+				return true;
+			} elseif($Folder->create($to)) {
+				$Folder->cd($to);
+				$this->out(sprintf(' * %s created', $Folder->pwd()), 1, Shell::VERBOSE);
+				return true;
+			}
+
+			$this->error(__d('cake_console', "Error creating folder: %s", $to));
+			return false;
+		}
+
+		$contents = file_get_contents($from);
+		$contents = str_replace(
+			array_keys($replacements),
+			array_values($replacements),
+			$contents
+		);
+
+		$File = new File($to, true);
+
+		if ($File->write($contents)) {
+			$this->out(sprintf(' * %s created', $File->pwd()), 1, Shell::VERBOSE);
+			return true;
+		}
+
+		$this->error(__d('cake_console', "Error creating file: %s", $to));
+		return false;
+	}
 }
