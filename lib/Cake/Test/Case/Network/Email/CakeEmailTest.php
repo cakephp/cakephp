@@ -65,6 +65,14 @@ class TestCakeEmail extends CakeEmail {
 		return $this->_encode($text);
 	}
 
+/**
+ * Render to protected method
+ *
+ */
+	public function render($content) {
+		return $this->_render($content);
+	}
+
 }
 
 /*
@@ -1482,6 +1490,22 @@ class CakeEmailTest extends CakeTestCase {
 			''
 		);
 		$this->assertSame($expected, $result);
+	}
+
+/**
+ * testRender method
+ *
+ * @return void
+ */
+	public function testRenderWithLayoutAndAttachment() {
+		$this->CakeEmail->emailFormat('html');
+		$this->CakeEmail->template('html', 'default');
+		$this->CakeEmail->attachments(array(CAKE . 'basics.php'));
+		$result = $this->CakeEmail->render(array());
+		$this->assertNotEmpty($result);
+
+		$result = $this->CakeEmail->getBoundary();
+		$this->assertNotEmpty($result);
 	}
 
 /**
