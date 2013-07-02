@@ -592,25 +592,23 @@ class DboSource extends DataSource {
 					$recursive = $params[5 + $off];
 				}
 				return $args[2]->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
+			}
+			if (isset($params[3 + $off])) {
+				$recursive = $params[3 + $off];
+			}
+			return $args[2]->find('first', compact('conditions', 'fields', 'order', 'recursive'));
+		}
+		if (isset($args[1]) && $args[1] === true) {
+			return $this->fetchAll($args[0], true);
+		} elseif (isset($args[1]) && !is_array($args[1])) {
+			return $this->fetchAll($args[0], false);
+		} elseif (isset($args[1]) && is_array($args[1])) {
+			if (isset($args[2])) {
+				$cache = $args[2];
 			} else {
-				if (isset($params[3 + $off])) {
-					$recursive = $params[3 + $off];
-				}
-				return $args[2]->find('first', compact('conditions', 'fields', 'order', 'recursive'));
+				$cache = true;
 			}
-		} else {
-			if (isset($args[1]) && $args[1] === true) {
-				return $this->fetchAll($args[0], true);
-			} elseif (isset($args[1]) && !is_array($args[1])) {
-				return $this->fetchAll($args[0], false);
-			} elseif (isset($args[1]) && is_array($args[1])) {
-				if (isset($args[2])) {
-					$cache = $args[2];
-				} else {
-					$cache = true;
-				}
-				return $this->fetchAll($args[0], $args[1], array('cache' => $cache));
-			}
+			return $this->fetchAll($args[0], $args[1], array('cache' => $cache));
 		}
 	}
 
@@ -632,9 +630,8 @@ class DboSource extends DataSource {
 				$this->fetchVirtualField($resultRow);
 			}
 			return $resultRow;
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 /**

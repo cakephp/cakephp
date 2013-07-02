@@ -205,9 +205,8 @@ class FormHelper extends AppHelper {
 				return $this->fieldset[$model]['fields'];
 			} elseif (isset($this->fieldset[$model]['fields'][$field])) {
 				return $this->fieldset[$model]['fields'][$field];
-			} else {
-				return isset($object->hasAndBelongsToMany[$field]) ? array('type' => 'multiple') : null;
 			}
+			return isset($object->hasAndBelongsToMany[$field]) ? array('type' => 'multiple') : null;
 		}
 
 		if ($key === 'errors' && !isset($this->validationErrors[$model])) {
@@ -232,10 +231,9 @@ class FormHelper extends AppHelper {
 		if ($key === 'validates') {
 			if (empty($field)) {
 				return $this->fieldset[$model]['validates'];
-			} else {
-				return isset($this->fieldset[$model]['validates'][$field]) ?
-					$this->fieldset[$model]['validates'] : null;
 			}
+			return isset($this->fieldset[$model]['validates'][$field]) ?
+				$this->fieldset[$model]['validates'] : null;
 		}
 	}
 
@@ -2572,9 +2570,8 @@ class FormHelper extends AppHelper {
 			if (is_array($options)) {
 				$options[$key] = $name;
 				return $options;
-			} else {
-				return $name;
 			}
+			return $name;
 		}
 		return parent::_name($options, $field, $key);
 	}

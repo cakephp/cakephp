@@ -300,9 +300,8 @@ class Postgres extends DboSource {
 		}
 		if (isset($this->_sequenceMap[$table][$field])) {
 			return $this->_sequenceMap[$table][$field];
-		} else {
-			return "{$table}_{$field}_seq";
 		}
+		return "{$table}_{$field}_seq";
 	}
 
 /**

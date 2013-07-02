@@ -195,17 +195,16 @@ class Mysql extends DboSource {
 		if (!$result) {
 			$result->closeCursor();
 			return array();
-		} else {
-			$tables = array();
-
-			while ($line = $result->fetch(PDO::FETCH_NUM)) {
-				$tables[] = $line[0];
-			}
-
-			$result->closeCursor();
-			parent::listSources($tables);
-			return $tables;
 		}
+		$tables = array();
+
+		while ($line = $result->fetch(PDO::FETCH_NUM)) {
+			$tables[] = $line[0];
+		}
+
+		$result->closeCursor();
+		parent::listSources($tables);
+		return $tables;
 	}
 
 /**
@@ -679,24 +678,23 @@ class Mysql extends DboSource {
 		if (!$result) {
 			$result->closeCursor();
 			return array();
-		} else {
-			$tables = array();
-			foreach ($result as $row) {
-				$tables[$row['Name']] = (array)$row;
-				unset($tables[$row['Name']]['queryString']);
-				if (!empty($row['Collation'])) {
-					$charset = $this->getCharsetName($row['Collation']);
-					if ($charset) {
-						$tables[$row['Name']]['charset'] = $charset;
-					}
+		}
+		$tables = array();
+		foreach ($result as $row) {
+			$tables[$row['Name']] = (array)$row;
+			unset($tables[$row['Name']]['queryString']);
+			if (!empty($row['Collation'])) {
+				$charset = $this->getCharsetName($row['Collation']);
+				if ($charset) {
+					$tables[$row['Name']]['charset'] = $charset;
 				}
 			}
-			$result->closeCursor();
-			if (is_string($name) && isset($tables[$name])) {
-				return $tables[$name];
-			}
-			return $tables;
 		}
+		$result->closeCursor();
+		if (is_string($name) && isset($tables[$name])) {
+			return $tables[$name];
+		}
+		return $tables;
 	}
 
 /**
