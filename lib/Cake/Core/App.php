@@ -535,7 +535,7 @@ class App {
 		if (!isset(self::$_classMap[$className])) {
 			return false;
 		}
-		if (strpos($className, '..')) {
+		if (strpos($className, '..') !== false) {
 			return false;
 		}
 
