@@ -261,7 +261,10 @@ class CakeRequest implements ArrayAccess {
 		}
 		$endsWithIndex = '/webroot/index.php';
 		$endsWithLength = strlen($endsWithIndex);
-		if (strlen($uri) >= $endsWithLength && substr_compare($uri, $endsWithIndex, -$endsWithLength, $endsWithLength) === 0) {
+		if (
+			strlen($uri) >= $endsWithLength &&
+			substr($uri, -$endsWithLength) == $endsWithIndex
+		) {
 			$uri = '/';
 		}
 		return $uri;
