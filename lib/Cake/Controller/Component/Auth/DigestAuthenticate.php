@@ -86,7 +86,8 @@ class DigestAuthenticate extends BasicAuthenticate {
 		'realm' => '',
 		'qop' => 'auth',
 		'nonce' => '',
-		'opaque' => ''
+		'opaque' => '',
+		'passwordHasher' => 'Simple',
 	);
 
 /**
