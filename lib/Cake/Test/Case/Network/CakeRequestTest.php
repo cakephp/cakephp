@@ -1237,7 +1237,7 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function testBaseUrlWithModRewriteAndIndexPhp() {
 		$_SERVER['REQUEST_URI'] = '/cakephp/app/webroot/index.php';
-		$_SERVER['PHP_SELF'] 	= '/cakephp/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/cakephp/app/webroot/index.php';
 		unset($_SERVER['PATH_INFO']);
 		$request = new CakeRequest();
 
@@ -1247,8 +1247,8 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals('/cakephp/', $request->here);
 
 		$_SERVER['REQUEST_URI'] = '/cakephp/app/webroot/index.php/';
-		$_SERVER['PHP_SELF']	= '/cakephp/app/webroot/index.php/';
-		$_SERVER['PATH_INFO']	= '/';
+		$_SERVER['PHP_SELF'] = '/cakephp/app/webroot/index.php/';
+		$_SERVER['PATH_INFO'] = '/';
 		$request = new CakeRequest();
 
 		$this->assertEquals('/cakephp', $request->base);
@@ -1257,8 +1257,8 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals('/cakephp/', $request->here);
 
 		$_SERVER['REQUEST_URI'] = '/cakephp/app/webroot/index.php/apples';
-		$_SERVER['PHP_SELF']	= '/cakephp/app/webroot/index.php/apples';
-		$_SERVER['PATH_INFO']	= '/apples';
+		$_SERVER['PHP_SELF'] = '/cakephp/app/webroot/index.php/apples';
+		$_SERVER['PATH_INFO'] = '/apples';
 		$request = new CakeRequest();
 
 		$this->assertEquals('/cakephp', $request->base);
@@ -1267,8 +1267,8 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals('/cakephp/apples', $request->here);
 
 		$_SERVER['REQUEST_URI'] = '/cakephp/app/webroot/index.php/melons/share/';
-		$_SERVER['PHP_SELF']	= '/cakephp/app/webroot/index.php/melons/share/';
-		$_SERVER['PATH_INFO']	= '/melons/share/';
+		$_SERVER['PHP_SELF'] = '/cakephp/app/webroot/index.php/melons/share/';
+		$_SERVER['PATH_INFO'] = '/melons/share/';
 		$request = new CakeRequest();
 
 		$this->assertEquals('/cakephp', $request->base);
@@ -1277,8 +1277,8 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals('/cakephp/melons/share/', $request->here);
 
 		$_SERVER['REQUEST_URI'] = '/cakephp/app/webroot/index.php/bananas/eat/tasty_banana';
-		$_SERVER['PHP_SELF']	= '/cakephp/app/webroot/index.php/bananas/eat/tasty_banana';
-		$_SERVER['PATH_INFO']	= '/bananas/eat/tasty_banana';
+		$_SERVER['PHP_SELF'] = '/cakephp/app/webroot/index.php/bananas/eat/tasty_banana';
+		$_SERVER['PATH_INFO'] = '/bananas/eat/tasty_banana';
 		$request = new CakeRequest();
 
 		$this->assertEquals('/cakephp', $request->base);
@@ -1311,7 +1311,7 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals('posts/index', $request->url);
 	}
 
-	/**
+/**
  * Test baseUrl and webroot with baseUrl
  *
  * @return void
