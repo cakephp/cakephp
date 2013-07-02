@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
+use Cake\Event\EventListener;
 use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
@@ -31,7 +32,7 @@ use Cake\Utility\ObjectCollection;
  *
  * @package       Cake.View
  */
-class Helper extends Object {
+class Helper extends Object implements EventListener {
 
 /**
  * Settings for this helper.
@@ -861,6 +862,35 @@ class Helper extends Object {
  * @return void
  */
 	public function afterRenderFile($viewfile, $content) {
+	}
+
+/**
+ * Get the View callbacks this helper is interested in.
+ *
+ * By defining one of the callback methods a helper is assumed
+ * to be interested in the related event.
+ *
+ * Override this method if you need to add non-conventional event listeners.
+ * Or if you want helpers to listen to non-standard events.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		$eventMap = [
+			'View.beforeRenderFile' => 'beforeRenderFile',
+			'View.afterRenderFile' => 'afterRenderFile',
+			'View.beforeRender' => 'beforeRender',
+			'View.afterRender' => 'afterRender',
+			'View.beforeLayout' => 'beforeLayout',
+			'View.afterLayout' => 'afterLayout'
+		];
+		$events = [];
+		foreach ($eventMap as $event => $method) {
+			if (method_exists($this, $method)) {
+				$events[$event] = $method;
+			}
+		}
+		return $events;
 	}
 
 /**

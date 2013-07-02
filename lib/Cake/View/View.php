@@ -305,13 +305,6 @@ class View extends Object {
 	protected $_eventManager = null;
 
 /**
- * Whether the event manager was already configured for this object
- *
- * @var boolean
- */
-	protected $_eventManagerConfigured = false;
-
-/**
  * Constant for view file type 'view'
  */
 	const TYPE_VIEW = 'view';
@@ -365,10 +358,6 @@ class View extends Object {
 	public function getEventManager() {
 		if (empty($this->_eventManager)) {
 			$this->_eventManager = new EventManager();
-		}
-		if (!$this->_eventManagerConfigured) {
-			$this->_eventManager->attach($this->Helpers);
-			$this->_eventManagerConfigured = true;
 		}
 		return $this->_eventManager;
 	}

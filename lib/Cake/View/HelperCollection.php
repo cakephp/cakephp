@@ -20,9 +20,7 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Error;
-use Cake\Event\Event;
-use Cake\Event\EventListener;
-use Cake\Utility\ObjectCollection;
+use Cake\Event\EventManager;
 use Cake\View\View;
 
 /**
@@ -31,7 +29,14 @@ use Cake\View\View;
  *
  * @package       Cake.View
  */
-class HelperCollection extends ObjectCollection implements EventListener {
+class HelperCollection {
+
+/**
+ * Hash of already loaded helpers.
+ *
+ * @var array
+ */
+	protected $_loaded = [];
 
 /**
  * View object to use when making helpers.
@@ -40,6 +45,16 @@ class HelperCollection extends ObjectCollection implements EventListener {
  */
 	protected $_View;
 
+
+/**
+ * EventManager instance.
+ *
+ * Helpers constructed by this object will be subscribed to this manager.
+ *
+ * @var Cake\Event\EventManager
+ */
+	protected $_eventManager;
+
 /**
  * Constructor
  *
@@ -47,6 +62,8 @@ class HelperCollection extends ObjectCollection implements EventListener {
  */
 	public function __construct(View $view) {
 		$this->_View = $view;
+		$eventManager = $view->getEventManager();
+		$this->_eventManager = $eventManager;
 	}
 
 /**
@@ -60,7 +77,7 @@ class HelperCollection extends ObjectCollection implements EventListener {
  *    App helpers are searched, and then plugin helpers.
  */
 	public function __isset($helper) {
-		if (parent::__isset($helper)) {
+		if (isset($this->_loaded[$helper])) {
 			return true;
 		}
 
@@ -87,8 +104,8 @@ class HelperCollection extends ObjectCollection implements EventListener {
  * @return mixed
  */
 	public function __get($name) {
-		if ($result = parent::__get($name)) {
-			return $result;
+		if (isset($this->_loaded[$name])) {
+			return $this->_loaded[$name];
 		}
 		if ($this->__isset($name)) {
 			return $this->_loaded[$name];
@@ -134,72 +151,33 @@ class HelperCollection extends ObjectCollection implements EventListener {
 				'plugin' => substr($plugin, 0, -1)
 			));
 		}
-		$this->_loaded[$name] = new $helperClass($this->_View, $settings);
+		$helperObject = new $helperClass($this->_View, $settings);
 
 		$vars = array('request', 'theme', 'plugin');
 		foreach ($vars as $var) {
-			$this->_loaded[$name]->{$var} = $this->_View->{$var};
+			$helperObject->{$var} = $this->_View->{$var};
 		}
+
+		$this->_loaded[$name] = $helperObject;
+
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable) {
-			$this->enable($name);
+			$this->_eventManager->attach($helperObject);
 		}
-		return $this->_loaded[$name];
+		return $helperObject;
 	}
 
 /**
- * Returns a list of all events that will fire in the View during it's lifecycle.
+ * Get the loaded helpers list, or get the helper instance at a given name.
  *
- * @return array
+ * @param null|string $name The helper name to get or null.
+ * @return array|Helper Either a list of helper names, or a loaded helper.
  */
-	public function implementedEvents() {
-		return array(
-			'View.beforeRenderFile' => 'trigger',
-			'View.afterRenderFile' => 'trigger',
-			'View.beforeRender' => 'trigger',
-			'View.afterRender' => 'trigger',
-			'View.beforeLayout' => 'trigger',
-			'View.afterLayout' => 'trigger'
-		);
-	}
-
-/**
- * Trigger a callback method on every object in the collection.
- * Used to trigger methods on objects in the collection. Will fire the methods in the
- * order they were attached.
- *
- * ### Options
- *
- * - `breakOn` Set to the value or values you want the callback propagation to stop on.
- *    Can either be a scalar value, or an array of values to break on. Defaults to `false`.
- *
- * - `break` Set to true to enabled breaking. When a trigger is broken, the last returned value
- *    will be returned. If used in combination with `collectReturn` the collected results will be returned.
- *    Defaults to `false`.
- *
- * - `collectReturn` Set to true to collect the return of each object into an array.
- *    This array of return values will be returned from the trigger() call. Defaults to `false`.
- *
- * - `modParams` Allows each object the callback gets called on to modify the parameters to the next object.
- *    Setting modParams to an integer value will allow you to modify the parameter with that index.
- *    Any non-null value will modify the parameter index indicated.
- *    Defaults to false.
- *
- *
- * @param string|Cake\Event\Event $callback Method to fire on all the objects. Its assumed all the objects implement
- *   the method you are calling. If an instance of Cake\Event\Event is provided, then then Event name will parsed to
- *   get the callback name. This is done by getting the last word after any dot in the event name
- *   (eg. `Model.afterSave` event will trigger the `afterSave` callback)
- * @param array $params Array of parameters for the triggered callback.
- * @param array $options Array of options.
- * @return mixed Either the last result or all results if collectReturn is on.
- * @throws CakeException when modParams is used with an index that does not exist.
- */
-	public function trigger($callback, $params = array(), $options = array()) {
-		if ($callback instanceof Event) {
-			$callback->omitSubject = true;
+	public function loaded($name = null) {
+		if (!empty($name)) {
+			return isset($this->_loaded[$name]);
 		}
-		return parent::trigger($callback, $params, $options);
+		return array_keys($this->_loaded);
 	}
 
 }
