@@ -76,16 +76,15 @@ class I18nShell extends AppShell {
 		switch ($choice) {
 			case 'e':
 				$this->Extract->execute();
-			break;
+				break;
 			case 'i':
 				$this->initdb();
-			break;
+				break;
 			case 'h':
 				$this->out($this->OptionParser->help());
-			break;
+				break;
 			case 'q':
-				exit(0);
-			break;
+				return $this->_stop();
 			default:
 				$this->out(__d('cake_console', 'You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.'));
 		}

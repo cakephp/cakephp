@@ -304,7 +304,7 @@ class FixtureTask extends BakeTask {
 					case 'integer':
 					case 'float':
 						$insert = $i + 1;
-					break;
+						break;
 					case 'string':
 					case 'binary':
 						$isPrimaryUuid = (
@@ -319,22 +319,22 @@ class FixtureTask extends BakeTask {
 								$insert = substr($insert, 0, (int)$fieldInfo['length'] - 2);
 							}
 						}
-					break;
+						break;
 					case 'timestamp':
 						$insert = time();
-					break;
+						break;
 					case 'datetime':
 						$insert = date('Y-m-d H:i:s');
-					break;
+						break;
 					case 'date':
 						$insert = date('Y-m-d');
-					break;
+						break;
 					case 'time':
 						$insert = date('H:i:s');
-					break;
+						break;
 					case 'boolean':
 						$insert = 1;
-					break;
+						break;
 					case 'text':
 						$insert = "Lorem ipsum dolor sit amet, aliquet feugiat.";
 						$insert .= " Convallis morbi fringilla gravida,";
@@ -343,7 +343,7 @@ class FixtureTask extends BakeTask {
 						$insert .= " vestibulum massa neque ut et, id hendrerit sit,";
 						$insert .= " feugiat in taciti enim proin nibh, tempor dignissim, rhoncus";
 						$insert .= " duis vestibulum nunc mattis convallis.";
-					break;
+						break;
 				}
 				$record[$field] = $insert;
 			}

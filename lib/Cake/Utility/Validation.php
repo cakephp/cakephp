@@ -255,7 +255,6 @@ class Validation {
 				break;
 			default:
 				self::$errors[] = __d('cake_dev', 'You must define the $operator parameter for Validation::comparison()');
-				break;
 		}
 		return false;
 	}

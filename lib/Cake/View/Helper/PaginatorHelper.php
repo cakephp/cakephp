@@ -628,10 +628,10 @@ class PaginatorHelper extends AppHelper {
 				}
 				$out = $start . $options['separator'][0] . $end . $options['separator'][1];
 				$out .= $paging['count'];
-			break;
+				break;
 			case 'pages':
 				$out = $paging['page'] . $options['separator'] . $paging['pageCount'];
-			break;
+				break;
 			default:
 				$map = array(
 					'%page%' => $paging['page'],
@@ -648,7 +648,6 @@ class PaginatorHelper extends AppHelper {
 					'{:page}', '{:pages}', '{:current}', '{:count}', '{:start}', '{:end}', '{:model}'
 				);
 				$out = str_replace($newKeys, array_values($map), $out);
-			break;
 		}
 		return $out;
 	}

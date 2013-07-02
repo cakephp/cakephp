@@ -1058,34 +1058,34 @@ class Model extends Object implements CakeEventListener {
 				switch ($key) {
 					case 'fields':
 						$data = '';
-					break;
+						break;
 
 					case 'foreignKey':
 						$data = (($type === 'belongsTo') ? Inflector::underscore($assocKey) : Inflector::singularize($this->table)) . '_id';
-					break;
+						break;
 
 					case 'associationForeignKey':
 						$data = Inflector::singularize($this->{$class}->table) . '_id';
-					break;
+						break;
 
 					case 'with':
 						$data = Inflector::camelize(Inflector::singularize($this->{$type}[$assocKey]['joinTable']));
 						$dynamicWith = true;
-					break;
+						break;
 
 					case 'joinTable':
 						$tables = array($this->table, $this->{$class}->table);
 						sort($tables);
 						$data = $tables[0] . '_' . $tables[1];
-					break;
+						break;
 
 					case 'className':
 						$data = $class;
-					break;
+						break;
 
 					case 'unique':
 						$data = true;
-					break;
+						break;
 				}
 				$this->{$type}[$assocKey][$key] = $data;
 			}
@@ -2281,7 +2281,7 @@ class Model extends Object implements CakeEventListener {
 							$validationErrors[$association] = $this->{$association}->validationErrors;
 						}
 						$return[$association] = $validates;
-					break;
+						break;
 					case 'hasMany':
 						foreach ($values as $i => $value) {
 							if (isset($values[$i][$association])) {
@@ -2297,7 +2297,7 @@ class Model extends Object implements CakeEventListener {
 							$validates = false;
 						}
 						$return[$association] = $_return;
-					break;
+						break;
 				}
 			}
 		}

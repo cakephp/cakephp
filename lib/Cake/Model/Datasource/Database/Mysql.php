@@ -516,13 +516,13 @@ class Mysql extends DboSource {
 								}
 								$colList[] = $alter;
 							}
-						break;
+							break;
 						case 'drop':
 							foreach ($column as $field => $col) {
 								$col['name'] = $field;
 								$colList[] = 'DROP ' . $this->name($field);
 							}
-						break;
+							break;
 						case 'change':
 							foreach ($column as $field => $col) {
 								if (!isset($col['name'])) {
@@ -530,7 +530,7 @@ class Mysql extends DboSource {
 								}
 								$colList[] = 'CHANGE ' . $this->name($field) . ' ' . $this->buildColumn($col);
 							}
-						break;
+							break;
 					}
 				}
 				$colList = array_merge($colList, $this->_alterIndexes($curTable, $indexes));

@@ -107,11 +107,10 @@ class SchemaShell extends AppShell {
 		if ($File->exists()) {
 			$this->out($File->read());
 			return $this->_stop();
-		} else {
-			$file = $this->Schema->path . DS . $this->params['file'];
-			$this->err(__d('cake_console', 'Schema file (%s) could not be found.', $file));
-			return $this->_stop();
 		}
+		$file = $this->Schema->path . DS . $this->params['file'];
+		$this->err(__d('cake_console', 'Schema file (%s) could not be found.', $file));
+		return $this->_stop();
 	}
 
 /**
@@ -185,10 +184,9 @@ class SchemaShell extends AppShell {
 		if ($this->Schema->write($content)) {
 			$this->out(__d('cake_console', 'Schema file: %s generated', $content['file']));
 			return $this->_stop();
-		} else {
-			$this->err(__d('cake_console', 'Schema file: %s generated'));
-			return $this->_stop();
 		}
+		$this->err(__d('cake_console', 'Schema file: %s generated'));
+		return $this->_stop();
 	}
 
 /**

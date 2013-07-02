@@ -1569,7 +1569,7 @@ class DboSource extends DataSource {
 					}
 					return true;
 				}
-			break;
+				break;
 			case 'hasMany':
 				$assocData['fields'] = $this->fields($linkModel, $association, $assocData['fields']);
 				if (!empty($assocData['foreignKey'])) {
@@ -1585,7 +1585,7 @@ class DboSource extends DataSource {
 					'offset' => $assocData['offset'],
 					'group' => null
 				);
-			break;
+				break;
 			case 'hasAndBelongsToMany':
 				$joinFields = array();
 				$joinAssoc = null;
@@ -1622,7 +1622,7 @@ class DboSource extends DataSource {
 						'conditions' => $this->getConstraint('hasAndBelongsToMany', $model, $linkModel, $joinAlias, $assocData, $association)
 					))
 				);
-			break;
+				break;
 		}
 		if (isset($query)) {
 			return $this->buildStatement($query, $model);
@@ -2596,22 +2596,22 @@ class DboSource extends DataSource {
 			switch ($operator) {
 				case '=':
 					$operator = 'IN';
-				break;
+					break;
 				case '!=':
 				case '<>':
 					$operator = 'NOT IN';
-				break;
+					break;
 			}
 			$value = "({$value})";
 		} elseif ($null || $value === 'NULL') {
 			switch ($operator) {
 				case '=':
 					$operator = 'IS';
-				break;
+					break;
 				case '!=':
 				case '<>':
 					$operator = 'IS NOT';
-				break;
+					break;
 			}
 		}
 		if ($virtual) {

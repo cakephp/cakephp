@@ -402,13 +402,13 @@ if (!function_exists('cache')) {
 		switch (strtolower($target)) {
 			case 'cache':
 				$filename = CACHE . $path;
-			break;
+				break;
 			case 'public':
 				$filename = WWW_ROOT . $path;
-			break;
+				break;
 			case 'tmp':
 				$filename = TMP . $path;
-			break;
+				break;
 		}
 		$timediff = $expires - $now;
 		$filetime = false;
