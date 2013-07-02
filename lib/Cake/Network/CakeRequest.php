@@ -263,7 +263,7 @@ class CakeRequest implements ArrayAccess {
 		$endsWithLength = strlen($endsWithIndex);
 		if (
 			strlen($uri) >= $endsWithLength &&
-			substr($uri, -$endsWithLength) == $endsWithIndex
+			substr($uri, -$endsWithLength) === $endsWithIndex
 		) {
 			$uri = '/';
 		}
