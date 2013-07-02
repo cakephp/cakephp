@@ -231,7 +231,7 @@ class Query extends DatabaseQuery {
  */
 	public function contain($associations = null, $override = false) {
 		if ($this->_containments === null || $override) {
-			$this->_dirty = true;
+			$this->_dirty();
 			$this->_containments = new \ArrayObject;
 		}
 
@@ -249,7 +249,7 @@ class Query extends DatabaseQuery {
 		$associations = array_merge($old, $this->_reformatContain($associations));
 		$this->_containments->exchangeArray($associations);
 		$this->_normalizedContainments = null;
-		$this->_dirty = true;
+		$this->_dirty();
 		return $this;
 	}
 

@@ -160,7 +160,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		if ($connection === null) {
 			return $this->_connection;
 		}
-		$this->_dirty = true;
+		$this->_dirty();
 		$this->_connection = $connection;
 		return $this;
 	}
@@ -352,7 +352,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$this->_parts['select'] = array_merge($this->_parts['select'], $fields);
 		}
 
-		$this->_dirty = true;
+		$this->_dirty();
 		$this->_type = 'select';
 		return $this;
 	}
@@ -396,7 +396,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		}
 
 		$this->_parts['distinct'] = $on;
-		$this->_dirty = true;
+		$this->_dirty();
 		return $this;
 	}
 
@@ -474,7 +474,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$this->_parts['from'] = array_merge($this->_parts['from'], $tables);
 		}
 
-		$this->_dirty = true;
+		$this->_dirty();
 		return $this;
 	}
 
@@ -605,7 +605,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$this->_parts['join'] = array_merge($this->_parts['join'], array_values($joins));
 		}
 
-		$this->_dirty = true;
+		$this->_dirty();
 		return $this;
 	}
 
@@ -974,7 +974,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		}
 
 		$this->_parts['group'] = array_merge($this->_parts['group'], array_values($fields));
-		$this->_dirty = true;
+		$this->_dirty();
 		return $this;
 	}
 
@@ -1118,7 +1118,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$this->_parts['union'] = [];
 		}
 		$this->_parts['union'][] = compact('all', 'query');
-		$this->_dirty = true;
+		$this->_dirty();
 		return $this;
 	}
 
@@ -1172,7 +1172,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function insert($table, $columns, $types = []) {
-		$this->_dirty = true;
+		$this->_dirty();
 		$this->_type = 'insert';
 		$this->_parts['insert'] = [$table, $columns];
 		$this->_parts['values'] = new ValuesExpression($columns, $types + $this->defaultTypes());
@@ -1203,7 +1203,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			);
 		}
 
-		$this->_dirty = true;
+		$this->_dirty();
 		if ($data instanceof ValuesExpression) {
 			$this->_parts['values'] = $data;
 			return $this;
@@ -1222,7 +1222,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function update($table) {
-		$this->_dirty = true;
+		$this->_dirty();
 		$this->_type = 'update';
 		$this->_parts['update'][0] = $table;
 		return $this;
@@ -1264,7 +1264,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function delete($table = null) {
-		$this->_dirty = true;
+		$this->_dirty();
 		$this->_type = 'delete';
 		if ($table) {
 			$this->from($table);
@@ -1491,7 +1491,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		}
 
 		$this->_parts[$part] = $expression;
-		$this->_dirty = true;
+		$this->_dirty();
 	}
 
 /**
@@ -1538,6 +1538,17 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$transformed = $this->_transformedQuery = $translator($this);
 		$transformed->_transformedQuery = $transformed->_dirty = false;
 		return $transformed;
+	}
+
+/**
+ * Marks a query as dirty, removing any preprocessed information
+ * from in memory caching
+ *
+ * @return void
+ */
+	protected function _dirty() {
+		$this->_dirty = true;
+		$this->_transformedQuery = null;
 	}
 
 /**
