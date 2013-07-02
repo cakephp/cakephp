@@ -221,10 +221,10 @@ class Mysql extends DboSource {
 
 		while ($numFields-- > 0) {
 			$column = $results->getColumnMeta($index);
-			if (empty($column['native_type'])) {
-				$type = ($column['len'] == 1) ? 'boolean' : 'string';
+			if ($column['len'] === 1 && (empty($column['native_type']) || $column['native_type'] === 'TINY')) {
+				$type = 'boolean';
 			} else {
-				$type = $column['native_type'];
+				$type = empty($column['native_type']) ? 'string' : $column['native_type'];
 			}
 			if (!empty($column['table']) && strpos($column['name'], $this->virtualFieldSeparator) === false) {
 				$this->map[$index++] = array($column['table'], $column['name'], $type);
