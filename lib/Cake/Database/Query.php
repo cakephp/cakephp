@@ -1528,14 +1528,15 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	protected function _transformQuery() {
-		if (isset($this->_transformedQuery) && !$this->_dirty) {
+		if (!empty($this->_transformedQuery) && !$this->_dirty) {
 			return $this->_transformedQuery;
 		}
-		// TODO: Should Query actually get the driver or just let the connection decide where
-		// to get the query translator?
+		if ($this->_transformedQuery === false) {
+			return $this;
+		}
 		$translator = $this->connection()->driver()->queryTranslator($this->_type);
 		$transformed = $this->_transformedQuery = $translator($this);
-		$transformed->_dirty = false;
+		$transformed->_transformedQuery = $transformed->_dirty = false;
 		return $transformed;
 	}
 
