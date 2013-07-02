@@ -537,7 +537,6 @@ class Sqlserver extends DboSource {
 				} else {
 					return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order}";
 				}
-			break;
 			case "schema":
 				extract($data);
 
