@@ -3672,11 +3672,10 @@ class ContainableBehaviorTest extends CakeTestCase {
 		if (!is_array($Model)) {
 			$result = $Model->containments($contain);
 			return $this->_containments($result['models']);
-		} else {
-			$result = $Model;
-			foreach ($result as $i => $containment) {
-				$result[$i] = array_diff_key($containment, array('instance' => true));
-			}
+		}
+		$result = $Model;
+		foreach ($result as $i => $containment) {
+			$result[$i] = array_diff_key($containment, array('instance' => true));
 		}
 		return $result;
 	}

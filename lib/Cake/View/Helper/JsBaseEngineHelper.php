@@ -147,25 +147,24 @@ abstract class JsBaseEngineHelper extends AppHelper {
 		switch (true) {
 			case (is_array($val) || is_object($val)):
 				$val = $this->object($val);
-			break;
+				break;
 			case ($val === null):
 				$val = 'null';
-			break;
+				break;
 			case (is_bool($val)):
 				$val = ($val === true) ? 'true' : 'false';
-			break;
+				break;
 			case (is_int($val)):
 				$val = $val;
-			break;
+				break;
 			case (is_float($val)):
 				$val = sprintf("%.11f", $val);
-			break;
+				break;
 			default:
 				$val = $this->escape($val);
 				if ($quoteString) {
 					$val = '"' . $val . '"';
 				}
-			break;
 		}
 		return $val;
 	}

@@ -123,33 +123,32 @@ class Permission extends AppModel {
 
 			if (empty($perms)) {
 				continue;
-			} else {
-				$perms = Hash::extract($perms, '{n}.' . $this->alias);
-				foreach ($perms as $perm) {
-					if ($action === '*') {
+			}
+			$perms = Hash::extract($perms, '{n}.' . $this->alias);
+			foreach ($perms as $perm) {
+				if ($action === '*') {
 
-						foreach ($permKeys as $key) {
-							if (!empty($perm)) {
-								if ($perm[$key] == -1) {
-									return false;
-								} elseif ($perm[$key] == 1) {
-									$inherited[$key] = 1;
-								}
+					foreach ($permKeys as $key) {
+						if (!empty($perm)) {
+							if ($perm[$key] == -1) {
+								return false;
+							} elseif ($perm[$key] == 1) {
+								$inherited[$key] = 1;
 							}
 						}
+					}
 
-						if (count($inherited) === count($permKeys)) {
+					if (count($inherited) === count($permKeys)) {
+						return true;
+					}
+				} else {
+					switch ($perm['_' . $action]) {
+						case -1:
+							return false;
+						case 0:
+							continue;
+						case 1:
 							return true;
-						}
-					} else {
-						switch ($perm['_' . $action]) {
-							case -1:
-								return false;
-							case 0:
-								continue;
-							case 1:
-								return true;
-						}
 					}
 				}
 			}

@@ -97,13 +97,12 @@ class CakeTime {
  *
  * @param string $name Variable name
  * @param mixes $value Variable value
+ * @return void
  */
 	public function __set($name, $value) {
 		switch ($name) {
 			case 'niceFormat':
 				self::${$name} = $value;
-				break;
-			default:
 				break;
 		}
 	}

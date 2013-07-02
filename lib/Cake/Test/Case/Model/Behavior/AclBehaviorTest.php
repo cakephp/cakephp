@@ -87,9 +87,8 @@ class AclPerson extends CakeTestModel {
 		}
 		if (!$motherId) {
 			return null;
-		} else {
-			return array('AclPerson' => array('id' => $motherId));
 		}
+		return array('AclPerson' => array('id' => $motherId));
 	}
 
 }

@@ -235,7 +235,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			case 'slideDown':
 			case 'slideUp':
 				$effect = ".$name($speed);";
-			break;
+				break;
 		}
 		return $this->selection . $effect;
 	}
