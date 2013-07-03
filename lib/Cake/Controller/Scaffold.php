@@ -252,10 +252,9 @@ class Scaffold {
 						return $this->_sendMessage($message);
 					}
 					return $this->controller->afterScaffoldSaveError($action);
-				} else {
-					if ($this->_validSession) {
-						$this->controller->Session->setFlash(__d('cake', 'Please correct errors below.'));
-					}
+				}
+				if ($this->_validSession) {
+					$this->controller->Session->setFlash(__d('cake', 'Please correct errors below.'));
 				}
 			}
 
