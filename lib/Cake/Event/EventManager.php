@@ -82,7 +82,7 @@ class EventManager {
 	}
 
 /**
- * Adds a new listener to an event. Listeners
+ * Adds a new listener to an event.
  *
  * @param callback|Cake\Event\EventListener $callable PHP valid callback type or instance of Cake\Event\EventListener to be called
  * when the event named with $eventKey is triggered. If a Cake\Event\EventListener instance is passed, then the `implementedEvents`
@@ -92,10 +92,9 @@ class EventManager {
  * @param string $eventKey The event unique identifier name with which the callback will be associated. If $callable
  * is an instance of Cake\Event\EventListener this argument will be ignored
  *
- * @param array $options used to set the `priority` and `passParams` flags to the listener.
+ * @param array $options used to set the `priority` flag to the listener. In the future more options may be added.
  * Priorities are handled like queues, and multiple attachments added to the same priority queue will be treated in
- * the order of insertion. `passParams` means that the event data property will be converted to function arguments
- * when the listener is called. If $called is an instance of Cake\Event\EventListener, this parameter will be ignored
+ * the order of insertion. 
  *
  * @return void
  * @throws InvalidArgumentException When event key is missing or callable is not an
@@ -109,10 +108,9 @@ class EventManager {
 			$this->_attachSubscriber($callable);
 			return;
 		}
-		$options = $options + array('priority' => static::$defaultPriority, 'passParams' => false);
+		$options = $options + array('priority' => static::$defaultPriority);
 		$this->_listeners[$eventKey][$options['priority']][] = array(
 			'callable' => $callable,
-			'passParams' => $options['passParams'],
 		);
 	}
 
@@ -243,8 +241,10 @@ class EventManager {
 			if ($event->isStopped()) {
 				break;
 			}
-			if ($listener['passParams'] === true) {
-				$result = call_user_func_array($listener['callable'], $event->data);
+			$data = $event->data();
+			if ($data !== null) {
+				array_unshift($data, $event);
+				$result = call_user_func_array($listener['callable'], $data);
 			} else {
 				$result = call_user_func($listener['callable'], $event);
 			}
