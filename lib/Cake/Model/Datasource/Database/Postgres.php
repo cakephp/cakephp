@@ -305,9 +305,8 @@ class Postgres extends DboSource {
 		}
 		if (isset($this->_sequenceMap[$table][$field])) {
 			return $this->_sequenceMap[$table][$field];
-		} else {
-			return "{$table}_{$field}_seq";
 		}
+		return "{$table}_{$field}_seq";
 	}
 
 /**
@@ -521,13 +520,13 @@ class Postgres extends DboSource {
 								$col['name'] = $field;
 								$colList[] = 'ADD COLUMN ' . $this->buildColumn($col);
 							}
-						break;
+							break;
 						case 'drop':
 							foreach ($column as $field => $col) {
 								$col['name'] = $field;
 								$colList[] = 'DROP COLUMN ' . $this->name($field);
 							}
-						break;
+							break;
 						case 'change':
 							foreach ($column as $field => $col) {
 								if (!isset($col['name'])) {
@@ -557,7 +556,7 @@ class Postgres extends DboSource {
 								}
 
 							}
-						break;
+							break;
 					}
 				}
 				if (isset($indexes['drop']['PRIMARY'])) {
@@ -753,21 +752,19 @@ class Postgres extends DboSource {
 				switch ($type) {
 					case 'bool':
 						$resultRow[$table][$column] = is_null($row[$index]) ? null : $this->boolean($row[$index]);
-					break;
+						break;
 					case 'binary':
 					case 'bytea':
 						$resultRow[$table][$column] = is_null($row[$index]) ? null : stream_get_contents($row[$index]);
-					break;
+						break;
 					default:
 						$resultRow[$table][$column] = $row[$index];
-					break;
 				}
 			}
 			return $resultRow;
-		} else {
-			$this->_result->closeCursor();
-			return false;
 		}
+		$this->_result->closeCursor();
+		return false;
 	}
 
 /**
@@ -793,7 +790,6 @@ class Postgres extends DboSource {
 				break;
 			default:
 				$result = (bool)$data;
-			break;
 		}
 
 		if ($quote) {

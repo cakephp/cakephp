@@ -205,9 +205,8 @@ class FormHelper extends AppHelper {
 				return $this->fieldset[$model]['fields'];
 			} elseif (isset($this->fieldset[$model]['fields'][$field])) {
 				return $this->fieldset[$model]['fields'][$field];
-			} else {
-				return isset($object->hasAndBelongsToMany[$field]) ? array('type' => 'multiple') : null;
 			}
+			return isset($object->hasAndBelongsToMany[$field]) ? array('type' => 'multiple') : null;
 		}
 
 		if ($key === 'errors' && !isset($this->validationErrors[$model])) {
@@ -232,10 +231,9 @@ class FormHelper extends AppHelper {
 		if ($key === 'validates') {
 			if (empty($field)) {
 				return $this->fieldset[$model]['validates'];
-			} else {
-				return isset($this->fieldset[$model]['validates'][$field]) ?
-					$this->fieldset[$model]['validates'] : null;
 			}
+			return isset($this->fieldset[$model]['validates'][$field]) ?
+				$this->fieldset[$model]['validates'] : null;
 		}
 	}
 
@@ -407,7 +405,7 @@ class FormHelper extends AppHelper {
 		switch (strtolower($options['type'])) {
 			case 'get':
 				$htmlAttributes['method'] = 'get';
-			break;
+				break;
 			case 'file':
 				$htmlAttributes['enctype'] = 'multipart/form-data';
 				$options['type'] = ($created) ? 'put' : 'post';
@@ -420,7 +418,6 @@ class FormHelper extends AppHelper {
 				));
 			default:
 				$htmlAttributes['method'] = 'post';
-			break;
 		}
 		$this->requestType = strtolower($options['type']);
 
@@ -734,9 +731,8 @@ class FormHelper extends AppHelper {
 			$tag = is_string($options['wrap']) ? $options['wrap'] : 'div';
 			unset($options['wrap']);
 			return $this->Html->tag($tag, $error, $options);
-		} else {
-			return $error;
 		}
+		return $error;
 	}
 
 /**
@@ -2464,16 +2460,16 @@ class FormHelper extends AppHelper {
 					$selects[] = $this->year(
 						$fieldName, $minYear, $maxYear, $attrs['Year']
 					);
-				break;
+					break;
 				case 'M':
 					$attrs['Month']['value'] = $month;
 					$attrs['Month']['monthNames'] = $monthNames;
 					$selects[] = $this->month($fieldName, $attrs['Month']);
-				break;
+					break;
 				case 'D':
 					$attrs['Day']['value'] = $day;
 					$selects[] = $this->day($fieldName, $attrs['Day']);
-				break;
+					break;
 			}
 		}
 		$opt = implode($separator, $selects);
@@ -2485,7 +2481,7 @@ class FormHelper extends AppHelper {
 				$attrs['Minute']['value'] = $min;
 				$opt .= $this->hour($fieldName, true, $attrs['Hour']) . ':' .
 				$this->minute($fieldName, $attrs['Minute']);
-			break;
+				break;
 			case '12':
 				$attrs['Hour']['value'] = $hour;
 				$attrs['Minute']['value'] = $min;
@@ -2493,7 +2489,7 @@ class FormHelper extends AppHelper {
 				$opt .= $this->hour($fieldName, false, $attrs['Hour']) . ':' .
 				$this->minute($fieldName, $attrs['Minute']) . ' ' .
 				$this->meridian($fieldName, $attrs['Meridian']);
-			break;
+				break;
 		}
 		return $opt;
 	}
@@ -2581,9 +2577,8 @@ class FormHelper extends AppHelper {
 			if (is_array($options)) {
 				$options[$key] = $name;
 				return $options;
-			} else {
-				return $name;
 			}
+			return $name;
 		}
 		return parent::_name($options, $field, $key);
 	}
@@ -2727,20 +2722,20 @@ class FormHelper extends AppHelper {
 					$data[sprintf('%02d', $i)] = sprintf('%02d', $i);
 					$i += $interval;
 				}
-			break;
+				break;
 			case 'hour':
 				for ($i = 1; $i <= 12; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
 				}
-			break;
+				break;
 			case 'hour24':
 				for ($i = 0; $i <= 23; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
 				}
-			break;
+				break;
 			case 'meridian':
 				$data = array('am' => 'am', 'pm' => 'pm');
-			break;
+				break;
 			case 'day':
 				$min = 1;
 				$max = 31;
@@ -2755,7 +2750,7 @@ class FormHelper extends AppHelper {
 				for ($i = $min; $i <= $max; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
 				}
-			break;
+				break;
 			case 'month':
 				if ($options['monthNames'] === true) {
 					$data['01'] = __d('cake', 'January');
@@ -2777,7 +2772,7 @@ class FormHelper extends AppHelper {
 						$data[sprintf("%02s", $m)] = strftime("%m", mktime(1, 1, 1, $m, 1, 1999));
 					}
 				}
-			break;
+				break;
 			case 'year':
 				$current = intval(date('Y'));
 
@@ -2799,7 +2794,7 @@ class FormHelper extends AppHelper {
 				if ($options['order'] !== 'asc') {
 					$data = array_reverse($data, true);
 				}
-			break;
+				break;
 		}
 		$this->_options[$name] = $data;
 		return $this->_options[$name];

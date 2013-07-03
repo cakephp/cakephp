@@ -65,7 +65,7 @@ class ShellDispatcher {
  */
 	public static function run($argv) {
 		$dispatcher = new ShellDispatcher($argv);
-		$dispatcher->_stop($dispatcher->dispatch() === false ? 1 : 0);
+		return $dispatcher->_stop($dispatcher->dispatch() === false ? 1 : 0);
 	}
 
 /**

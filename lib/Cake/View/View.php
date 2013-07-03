@@ -564,9 +564,8 @@ class View extends Object {
 				//@codingStandardsIgnoreEnd
 				unset($out);
 				return false;
-			} else {
-				return substr($out, strlen($match[0]));
 			}
+			return substr($out, strlen($match[0]));
 		}
 	}
 

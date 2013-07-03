@@ -535,6 +535,9 @@ class App {
 		if (!isset(self::$_classMap[$className])) {
 			return false;
 		}
+		if (strpos($className, '..') !== false) {
+			return false;
+		}
 
 		$parts = explode('.', self::$_classMap[$className], 2);
 		list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));

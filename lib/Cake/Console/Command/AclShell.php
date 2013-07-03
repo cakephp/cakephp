@@ -82,7 +82,7 @@ class AclShell extends AppShell {
 			$out .= __d('cake_console', 'Current ACL Classname: %s', $class) . "\n";
 			$out .= "--------------------------------------------------\n";
 			$this->err($out);
-			$this->_stop();
+			return $this->_stop();
 		}
 
 		if ($this->command) {

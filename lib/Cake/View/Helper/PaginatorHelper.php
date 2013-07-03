@@ -507,22 +507,21 @@ class PaginatorHelper extends AppHelper {
 			}
 			$link = $this->link($title, $url, compact('escape', 'model') + $options);
 			return $this->Html->tag($tag, $link, compact('class'));
-		} else {
-			unset($options['rel']);
-			if (!$tag) {
-				if ($disabledTag) {
-					$tag = $disabledTag;
-					$disabledTag = null;
-				} else {
-					$tag = $_defaults['tag'];
-				}
-			}
-			if ($disabledTag) {
-				$title = $this->Html->tag($disabledTag, $title, compact('escape') + $options);
-				return $this->Html->tag($tag, $title, compact('class'));
-			}
-			return $this->Html->tag($tag, $title, compact('escape', 'class') + $options);
 		}
+		unset($options['rel']);
+		if (!$tag) {
+			if ($disabledTag) {
+				$tag = $disabledTag;
+				$disabledTag = null;
+			} else {
+				$tag = $_defaults['tag'];
+			}
+		}
+		if ($disabledTag) {
+			$title = $this->Html->tag($disabledTag, $title, compact('escape') + $options);
+			return $this->Html->tag($tag, $title, compact('class'));
+		}
+		return $this->Html->tag($tag, $title, compact('escape', 'class') + $options);
 	}
 
 /**
@@ -644,10 +643,10 @@ class PaginatorHelper extends AppHelper {
 				}
 				$out = $start . $options['separator'][0] . $end . $options['separator'][1];
 				$out .= $paging['count'];
-			break;
+				break;
 			case 'pages':
 				$out = $paging['page'] . $options['separator'] . $paging['pageCount'];
-			break;
+				break;
 			default:
 				$map = array(
 					'%page%' => $paging['page'],
@@ -664,7 +663,6 @@ class PaginatorHelper extends AppHelper {
 					'{:page}', '{:pages}', '{:current}', '{:count}', '{:start}', '{:end}', '{:model}'
 				);
 				$out = str_replace($newKeys, array_values($map), $out);
-			break;
 		}
 		return $out;
 	}

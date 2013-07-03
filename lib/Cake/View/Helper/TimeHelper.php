@@ -75,10 +75,9 @@ class TimeHelper extends AppHelper {
 		switch ($name) {
 			case 'niceFormat':
 				$this->_engine->{$name} = $value;
-			break;
+				break;
 			default:
 				$this->{$name} = $value;
-			break;
 		}
 	}
 

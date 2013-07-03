@@ -207,7 +207,7 @@ class ExtractTask extends AppShell {
 				$response = $this->in($message, null, rtrim($this->_paths[0], DS) . DS . 'Locale');
 				if (strtoupper($response) === 'Q') {
 					$this->out(__d('cake_console', 'Extract Aborted'));
-					$this->_stop();
+					return $this->_stop();
 				} elseif ($this->_isPathUsable($response)) {
 					$this->_output = $response . DS;
 					break;

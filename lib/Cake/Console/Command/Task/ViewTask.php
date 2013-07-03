@@ -267,7 +267,7 @@ class ViewTask extends BakeTask {
 		if (!class_exists($controllerClassName)) {
 			$file = $controllerClassName . '.php';
 			$this->err(__d('cake_console', "The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", $file));
-			$this->_stop();
+			return $this->_stop();
 		}
 		$controllerObj = new $controllerClassName();
 		$controllerObj->plugin = $this->plugin;
@@ -334,10 +334,9 @@ class ViewTask extends BakeTask {
 		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n'), 'y');
 		if (strtolower($looksGood) === 'y') {
 			$this->bake($action, ' ');
-			$this->_stop();
-		} else {
-			$this->out(__d('cake_console', 'Bake Aborted.'));
+			return $this->_stop();
 		}
+		$this->out(__d('cake_console', 'Bake Aborted.'));
 	}
 
 /**

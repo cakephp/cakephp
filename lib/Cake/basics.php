@@ -404,13 +404,13 @@ if (!function_exists('cache')) {
 		switch (strtolower($target)) {
 			case 'cache':
 				$filename = CACHE . $path;
-			break;
+				break;
 			case 'public':
 				$filename = WWW_ROOT . $path;
-			break;
+				break;
 			case 'tmp':
 				$filename = TMP . $path;
-			break;
+				break;
 		}
 		$timediff = $expires - $now;
 		$filetime = false;
@@ -480,30 +480,30 @@ if (!function_exists('clearCache')) {
 					}
 				}
 				return true;
-			} else {
-				$cache = array(
-					CACHE . $type . DS . '*' . $params . $ext,
-					CACHE . $type . DS . '*' . $params . '_*' . $ext
-				);
-				$files = array();
-				while ($search = array_shift($cache)) {
-					$results = glob($search);
-					if ($results !== false) {
-						$files = array_merge($files, $results);
-					}
-				}
-				if (empty($files)) {
-					return false;
-				}
-				foreach ($files as $file) {
-					if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
-						//@codingStandardsIgnoreStart
-						@unlink($file);
-						//@codingStandardsIgnoreEnd
-					}
-				}
-				return true;
 			}
+			$cache = array(
+				CACHE . $type . DS . '*' . $params . $ext,
+				CACHE . $type . DS . '*' . $params . '_*' . $ext
+			);
+			$files = array();
+			while ($search = array_shift($cache)) {
+				$results = glob($search);
+				if ($results !== false) {
+					$files = array_merge($files, $results);
+				}
+			}
+			if (empty($files)) {
+				return false;
+			}
+			foreach ($files as $file) {
+				if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
+					//@codingStandardsIgnoreStart
+					@unlink($file);
+					//@codingStandardsIgnoreEnd
+				}
+			}
+			return true;
+
 		} elseif (is_array($params)) {
 			foreach ($params as $file) {
 				clearCache($file, $type, $ext);
