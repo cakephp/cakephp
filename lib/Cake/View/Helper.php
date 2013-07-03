@@ -30,6 +30,23 @@ use Cake\Utility\ObjectCollection;
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
+ *
+ * ## Callback methods
+ *
+ * Helpers support a number of callback methods. These callbacks allow you to hook into
+ * the various view lifecycle events and either modify existing view content or perform
+ * other application specific logic. The events are not implemented by this base class, as
+ * implementing a callback method subscribes a helper to the related event. The callback methods
+ * are as follows:
+ *
+ * - `beforeRender(Event $event, $viewFile)` - beforeRender is called before the view file is rendered.
+ * - `afterRender(Event $event, $viewFile)` - afterRender is called after the view file is rendered
+ *   but before the layout has been rendered.
+ * - beforeLayout(Event $event, $layoutFile)` - beforeLayout is called before the layout is rendered.
+ * - `afterLayout(Event $event, $layoutFile)` - afterLayout is called after the layout has rendered.
+ * - `beforeRenderFile(Event $event, $viewFile)` - Called before any view fragment is rendered.
+ * - `afterRenderFile(Event $event, $viewFile, $content)` - Called after any view fragment is rendered.
+ *
  * @package       Cake.View
  */
 class Helper extends Object implements EventListener {
@@ -792,76 +809,6 @@ class Helper extends Object implements EventListener {
  */
 	public function output($str) {
 		return $str;
-	}
-
-/**
- * Before render callback. beforeRender is called before the view file is rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $viewFile The view file that is going to be rendered
- * @return void
- */
-	public function beforeRender($viewFile) {
-	}
-
-/**
- * After render callback. afterRender is called after the view file is rendered
- * but before the layout has been rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $viewFile The view file that was rendered.
- * @return void
- */
-	public function afterRender($viewFile) {
-	}
-
-/**
- * Before layout callback. beforeLayout is called before the layout is rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $layoutFile The layout about to be rendered.
- * @return void
- */
-	public function beforeLayout($layoutFile) {
-	}
-
-/**
- * After layout callback. afterLayout is called after the layout has rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $layoutFile The layout file that was rendered.
- * @return void
- */
-	public function afterLayout($layoutFile) {
-	}
-
-/**
- * Before render file callback.
- * Called before any view fragment is rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $viewFile The file about to be rendered.
- * @return void
- */
-	public function beforeRenderFile($viewfile) {
-	}
-
-/**
- * After render file callback.
- * Called after any view fragment is rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $viewFile The file just be rendered.
- * @param string $content The content that was rendered.
- * @return void
- */
-	public function afterRenderFile($viewfile, $content) {
 	}
 
 /**

@@ -823,7 +823,7 @@ class View extends Object {
  * @return void
  */
 	public function loadHelpers() {
-		$helpers = HelperCollection::normalizeObjectArray($this->helpers);
+		$helpers = ObjectCollection::normalizeObjectArray($this->helpers);
 		foreach ($helpers as $properties) {
 			list(, $class) = pluginSplit($properties['class']);
 			$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
