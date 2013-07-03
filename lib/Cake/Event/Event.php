@@ -45,7 +45,7 @@ class Event {
  *
  * @var mixed $data
  */
-	protected $_data = null;
+	public $data = null;
 
 /**
  * Property used to retain the result value of the event listeners
@@ -77,7 +77,7 @@ class Event {
  */
 	public function __construct($name, $subject = null, $data = null) {
 		$this->_name = $name;
-		$this->_data = $data;
+		$this->data = $data;
 		$this->_subject = $subject;
 	}
 
@@ -88,7 +88,7 @@ class Event {
  * @return mixed
  */
 	public function __get($attribute) {
-		if ($attribute === 'data' || $attribute === 'name' || $attribute === 'subject') {
+		if ($attribute === 'name' || $attribute === 'subject') {
 			return $this->{$attribute}();
 		}
 	}
@@ -135,7 +135,7 @@ class Event {
  * @return array
  */
 	public function data() {
-		return (array)$this->_data;
+		return (array)$this->data;
 	}
 
 }
