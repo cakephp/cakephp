@@ -731,9 +731,8 @@ class FormHelper extends AppHelper {
 			$tag = is_string($options['wrap']) ? $options['wrap'] : 'div';
 			unset($options['wrap']);
 			return $this->Html->tag($tag, $error, $options);
-		} else {
-			return $error;
 		}
+		return $error;
 	}
 
 /**

@@ -289,9 +289,8 @@ class HtmlHelper extends AppHelper {
 
 		if (empty($options['block'])) {
 			return $out;
-		} else {
-			$this->_View->append($options['block'], $out);
 		}
+		$this->_View->append($options['block'], $out);
 	}
 
 /**
@@ -451,9 +450,8 @@ class HtmlHelper extends AppHelper {
 
 		if (empty($options['block'])) {
 			return $out;
-		} else {
-			$this->_View->append($options['block'], $out);
 		}
+		$this->_View->append($options['block'], $out);
 	}
 
 /**
@@ -674,9 +672,8 @@ class HtmlHelper extends AppHelper {
 				}
 			}
 			return implode($separator, $out);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 /**
