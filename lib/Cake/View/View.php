@@ -363,6 +363,18 @@ class View extends Object {
 	}
 
 /**
+ * Set the Eventmanager used by View.
+ *
+ * Primarily useful for testing.
+ *
+ * @param Cake\Event\EventManager $eventManager.
+ * @return void
+ */
+	public function setEventManager(EventManager $eventManager) {
+		$this->_eventManager = $eventManager;
+	}
+
+/**
  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
  *
  * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
@@ -854,9 +866,10 @@ class View extends Object {
 		$content = $this->_evaluate($viewFile, $data);
 
 		$afterEvent = new Event('View.afterRenderFile', $this, array($viewFile, $content));
-		$afterEvent->modParams = 1;
 		$eventManager->dispatch($afterEvent);
-		$content = $afterEvent->data[1];
+		if (isset($afterEvent->result)) {
+			$content = $afterEvent->result;
+		}
 
 		if (isset($this->_parents[$viewFile])) {
 			$this->_stack[] = $this->fetch('content');

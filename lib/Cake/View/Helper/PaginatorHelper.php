@@ -64,15 +64,15 @@ class PaginatorHelper extends Helper {
 /**
  * Before render callback. Overridden to merge passed args with url options.
  *
+ * @param Cake\Event\Event $event The event instance.
  * @param string $viewFile
  * @return void
  */
-	public function beforeRender($viewFile) {
+	public function beforeRender($event, $viewFile) {
 		$this->options['url'] = array_merge($this->request->params['pass']);
 		if (!empty($this->request->query)) {
 			$this->options['url']['?'] = $this->request->query;
 		}
-		parent::beforeRender($viewFile);
 	}
 
 /**

@@ -46,6 +46,7 @@ use Cake\Utility\ObjectCollection;
  * - `afterLayout(Event $event, $layoutFile)` - afterLayout is called after the layout has rendered.
  * - `beforeRenderFile(Event $event, $viewFile)` - Called before any view fragment is rendered.
  * - `afterRenderFile(Event $event, $viewFile, $content)` - Called after any view fragment is rendered.
+ *   If a listener returns a non-null value, the output of the rendered file will be set to that.
  *
  * @package       Cake.View
  */
