@@ -357,7 +357,7 @@ class DataSource extends Object {
 							}
 						}
 						$type = $model->getColumnType($model->primaryKey);
-					break;
+						break;
 					case '{$__cakeForeignKey__$}':
 						foreach ($model->associations() as $name) {
 							foreach ($model->$name as $assocName => $assoc) {
@@ -389,7 +389,7 @@ class DataSource extends Object {
 								}
 							}
 						}
-					break;
+						break;
 				}
 				if (empty($val) && $val !== '0') {
 					return false;

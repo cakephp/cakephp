@@ -1617,9 +1617,8 @@ class CakeEmail {
 		$charset = strtoupper($this->charset);
 		if (array_key_exists($charset, $this->_contentTypeCharset)) {
 			return strtoupper($this->_contentTypeCharset[$charset]);
-		} else {
-			return strtoupper($this->charset);
 		}
+		return strtoupper($this->charset);
 	}
 
 }

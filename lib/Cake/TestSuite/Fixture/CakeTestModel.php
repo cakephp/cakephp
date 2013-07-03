@@ -47,10 +47,9 @@ class CakeTestModel extends Model {
 			case
 				(is_string($queryData['fields']) && !($queryData['fields'] == $pk || $queryData['fields'] == $aliasedPk)) ||
 				(is_array($queryData['fields']) && !(array_key_exists($pk, $queryData['fields']) || array_key_exists($aliasedPk, $queryData['fields']))):
-			break;
+				break;
 			default:
 				$queryData['order'] = array($this->alias . '.' . $this->primaryKey => 'ASC');
-			break;
 		}
 		return $queryData;
 	}

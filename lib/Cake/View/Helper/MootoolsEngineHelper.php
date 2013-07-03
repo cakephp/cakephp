@@ -205,10 +205,10 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		switch ($name) {
 			case 'hide':
 				$effect = 'setStyle("display", "none")';
-			break;
+				break;
 			case 'show':
 				$effect = 'setStyle("display", "")';
-			break;
+				break;
 			case 'fadeIn':
 			case 'fadeOut':
 			case 'slideIn':
@@ -219,7 +219,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 					$effect .= "set(\"$effectName\", {duration:$speed}).";
 				}
 				$effect .= "$effectName(\"$direction\")";
-			break;
+				break;
 		}
 		return $this->selection . '.' . $effect . ';';
 	}

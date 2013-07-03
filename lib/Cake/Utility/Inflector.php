@@ -308,7 +308,7 @@ class Inflector {
 				} else {
 					self::$_transliteration = $rules + self::$_transliteration;
 				}
-			break;
+				break;
 
 			default:
 				foreach ($rules as $rule => $pattern) {
@@ -334,7 +334,6 @@ class Inflector {
 					}
 				}
 				self::${$var}['rules'] = $rules + self::${$var}['rules'];
-			break;
 		}
 	}
 

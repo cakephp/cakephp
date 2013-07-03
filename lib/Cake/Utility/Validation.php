@@ -255,7 +255,6 @@ class Validation {
 				break;
 			default:
 				self::$errors[] = __d('cake_dev', 'You must define the $operator parameter for Validation::comparison()');
-				break;
 		}
 		return false;
 	}
@@ -817,9 +816,8 @@ class Validation {
 	protected static function _check($check, $regex) {
 		if (is_string($regex) && preg_match($regex, $check)) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 /**

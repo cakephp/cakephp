@@ -212,17 +212,17 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			case 'hide':
 			case 'show':
 				$effect = $this->selection . '.' . $name . '();';
-			break;
+				break;
 			case 'slideIn':
 			case 'slideOut':
 				$name = ($name === 'slideIn') ? 'slideDown' : 'slideUp';
 				$effect = 'Effect.' . $name . '(' . $this->selection . $optionString . ');';
-			break;
+				break;
 			case 'fadeIn':
 			case 'fadeOut':
 				$name = ($name === 'fadeIn') ? 'appear' : 'fade';
 				$effect = $this->selection . '.' . $name . '(' . substr($optionString, 2) . ');';
-			break;
+				break;
 		}
 		return $effect;
 	}

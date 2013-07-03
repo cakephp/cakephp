@@ -208,7 +208,7 @@ class RssHelper extends AppHelper {
 			switch ($key) {
 				case 'pubDate' :
 					$val = $this->time($val);
-				break;
+					break;
 				case 'category' :
 					if (is_array($val) && !empty($val[0])) {
 						foreach ($val as $category) {
@@ -224,7 +224,7 @@ class RssHelper extends AppHelper {
 					} elseif (is_array($val) && isset($val['domain'])) {
 						$attrib['domain'] = $val['domain'];
 					}
-				break;
+					break;
 				case 'link':
 				case 'guid':
 				case 'comments':
@@ -234,7 +234,7 @@ class RssHelper extends AppHelper {
 						$val = $val['url'];
 					}
 					$val = $this->url($val, true);
-				break;
+					break;
 				case 'source':
 					if (is_array($val) && isset($val['url'])) {
 						$attrib['url'] = $this->url($val['url'], true);
@@ -243,7 +243,7 @@ class RssHelper extends AppHelper {
 						$attrib['url'] = $this->url($val[0], true);
 						$val = $val[1];
 					}
-				break;
+					break;
 				case 'enclosure':
 					if (is_string($val['url']) && is_file(WWW_ROOT . $val['url']) && file_exists(WWW_ROOT . $val['url'])) {
 						if (!isset($val['length']) && strpos($val['url'], '://') === false) {
@@ -256,7 +256,7 @@ class RssHelper extends AppHelper {
 					$val['url'] = $this->url($val['url'], true);
 					$attrib = $val;
 					$val = null;
-				break;
+					break;
 				default:
 					$attrib = $att;
 			}

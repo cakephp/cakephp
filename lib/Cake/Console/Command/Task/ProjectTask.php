@@ -368,12 +368,9 @@ class ProjectTask extends AppShell {
 			if ($File->write($result)) {
 				Configure::write('Routing.prefixes', array($name));
 				return true;
-			} else {
-				return false;
 			}
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 /**
