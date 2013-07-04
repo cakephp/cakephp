@@ -210,11 +210,11 @@ class ModelIntegrationTest extends BaseModelTest {
 	public function testDynamicBehaviorAttachment() {
 		$this->loadFixtures('Apple', 'Sample', 'Author');
 		$TestModel = new Apple();
-		$this->assertEquals(array(), $TestModel->Behaviors->loaded());
+		$this->assertEquals(array('CounterCache'), $TestModel->Behaviors->loaded());
 
 		$TestModel->Behaviors->attach('Tree', array('left' => 'left_field', 'right' => 'right_field'));
 		$this->assertTrue(is_object($TestModel->Behaviors->Tree));
-		$this->assertEquals(array('Tree'), $TestModel->Behaviors->loaded());
+		$this->assertEquals(array('CounterCache', 'Tree'), $TestModel->Behaviors->loaded());
 
 		$expected = array(
 			'parent' => 'parent_id',
@@ -229,10 +229,10 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$TestModel->Behaviors->attach('Tree', array('enabled' => false));
 		$this->assertEquals($expected, $TestModel->Behaviors->Tree->settings['Apple']);
-		$this->assertEquals(array('Tree'), $TestModel->Behaviors->loaded());
+		$this->assertEquals(array('CounterCache', 'Tree'), $TestModel->Behaviors->loaded());
 
 		$TestModel->Behaviors->detach('Tree');
-		$this->assertEquals(array(), $TestModel->Behaviors->loaded());
+		$this->assertEquals(array('CounterCache'), $TestModel->Behaviors->loaded());
 		$this->assertFalse(isset($TestModel->Behaviors->Tree));
 	}
 
@@ -1502,11 +1502,11 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = array(
 			'User' => array(
 				'className' => 'User', 'foreignKey' => 'user_id',
-				'conditions' => '', 'fields' => '', 'order' => '', 'counterCache' => ''
+				'conditions' => '', 'fields' => '', 'order' => ''
 			),
 			'Category' => array(
 				'className' => 'Category', 'foreignKey' => 'category_id',
-				'conditions' => '', 'fields' => '', 'order' => '', 'counterCache' => ''
+				'conditions' => '', 'fields' => '', 'order' => ''
 			)
 		);
 		$this->assertSame($TestModel->belongsTo, $expected);
@@ -1605,12 +1605,13 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->loadFixtures('Post');
 
 		$TestModel = ClassRegistry::init('MergeVarPluginPost');
-		$this->assertEquals(array('Containable' => null, 'Tree' => null), $TestModel->actsAs);
+		$this->assertEquals(array('Containable' => null, 'Tree' => null, 'CounterCache' => null), $TestModel->actsAs);
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 		$this->assertTrue(isset($TestModel->Behaviors->Tree));
+		$this->assertTrue(isset($TestModel->Behaviors->CounterCache));
 
 		$TestModel = ClassRegistry::init('MergeVarPluginComment');
-		$expected = array('Containable' => array('some_settings'));
+		$expected = array('Containable' => array('some_settings'), 'CounterCache' => null);
 		$this->assertEquals($expected, $TestModel->actsAs);
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 	}

@@ -1685,6 +1685,7 @@ class ModelValidationTest extends BaseModelTest {
 	public function testGetMethods() {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
+		$TestModel->Behaviors->unload('CounterCache');
 		$Validator = $TestModel->validator();
 
 		$result = $Validator->getMethods();
@@ -1701,6 +1702,7 @@ class ModelValidationTest extends BaseModelTest {
 	public function testGetMethodsRefresh() {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel = new Article();
+		$TestModel->Behaviors->unload('CounterCache');
 		$Validator = $TestModel->validator();
 
 		$result = $Validator->getMethods();
