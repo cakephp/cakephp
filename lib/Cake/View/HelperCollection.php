@@ -62,8 +62,7 @@ class HelperCollection {
  */
 	public function __construct(View $view) {
 		$this->_View = $view;
-		$eventManager = $view->getEventManager();
-		$this->_eventManager = $eventManager;
+		$this->_eventManager = $view->getEventManager();
 	}
 
 /**
