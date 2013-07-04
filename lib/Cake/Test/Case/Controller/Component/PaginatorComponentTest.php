@@ -597,7 +597,7 @@ class PaginatorComponentTest extends CakeTestCase {
 			'paramType' => 'named'
 		);
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
-		$expected = array('2007-03-18 10:43:23',  '2007-03-18 10:41:23', '2007-03-18 10:39:23');
+		$expected = array('2007-03-18 10:43:23', '2007-03-18 10:41:23', '2007-03-18 10:39:23');
 		$this->assertEquals($expected, Hash::extract($result, '{n}.PaginatorControllerPost.created'));
 		$this->assertEquals($Controller->PaginatorControllerPost->order, $this->Controller->request['paging']['PaginatorControllerPost']['order']);
 	}
