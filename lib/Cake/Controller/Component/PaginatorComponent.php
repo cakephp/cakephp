@@ -396,7 +396,9 @@ class PaginatorComponent extends Component {
 			}
 			$options['order'] = $order;
 		}
-
+		if (empty($options['order']) && !empty($object->order)) {
+			$options['order'] = $object->order;
+		}
 		return $options;
 	}
 
