@@ -16,19 +16,19 @@
  */
 namespace Cake\TestSuite\Fixture;
 
-use \Cake\TestSuite\TestCase;
-use \Cake\TestSuite\Fixture\FixtureManager;
 use \Exception;
 use \PHPUnit_Framework_AssertionFailedError;
 use \PHPUnit_Framework_Test;
 use \PHPUnit_Framework_TestSuite;
 use \PHPUnit_Framework_TestListener;
+use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Fixture\FixtureManager;
 
 /**
  * Test listener used to inject a fixture manager in all tests that
  * are composed inside a Test Suite
  */
-class FixtureInjector implements \PHPUnit_Framework_TestListener {
+class FixtureInjector implements PHPUnit_Framework_TestListener {
 
 /**
  * The instance of the fixture manager to use

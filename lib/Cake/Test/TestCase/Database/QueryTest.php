@@ -1088,7 +1088,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$result = $query->having(function($e) {
-			return $e->add('count(author_id) = 1 + 1'); 
+			return $e->add('count(author_id) = 1 + 1');
 		}, [], true)
 			->execute();
 		$expected = [['total' => 2, 'author_id' => 1]];
@@ -1824,7 +1824,9 @@ class QueryTest extends TestCase {
  */
 	public function testSQLFunctions() {
 		$query = new Query($this->connection);
-		$result = $query->select(function($q) { return ['total' => $q->count('*')]; })
+		$result = $query->select(function($q) {
+				return ['total' => $q->count('*')];
+			})
 			->from('articles')
 			->execute();
 		$expected = [['total' => 3]];

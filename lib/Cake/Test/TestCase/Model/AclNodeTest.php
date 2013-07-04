@@ -19,8 +19,8 @@
  */
 namespace Cake\Test\TestCase\Model;
 
-use Cake\Core\App;
 use Cake\Controller\Component\Acl\DbAcl;
+use Cake\Core\App;
 use Cake\Model\AclNode;
 use Cake\TestSuite\TestCase;
 

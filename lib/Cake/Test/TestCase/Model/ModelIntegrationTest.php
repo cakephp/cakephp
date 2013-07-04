@@ -22,8 +22,8 @@ namespace Cake\Test\TestCase\Model;
 use Cake\Model\ConnectionManager;
 use Cake\Model\Model;
 use Cake\Model\ModelBehavior;
-use Cake\Test\TestCase\Model\ModelTestBase;
 use Cake\TestSuite\TestCase;
+use Cake\Test\TestCase\Model\ModelTestBase;
 use Cake\Utility\Hash;
 
 /**
