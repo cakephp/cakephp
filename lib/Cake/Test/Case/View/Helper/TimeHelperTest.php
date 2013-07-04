@@ -173,4 +173,22 @@ class TimeHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test date and format params reversibility in format
+ *
+ * @return void
+ */
+	public function testFormat() {
+		$Time = new TimeHelper($this->View);
+		$timestamp = strtotime('2013-07-04 10:00:00');
+
+		$result = $Time->format('F jS, Y', $timestamp);
+		$expected = 'July 4th, 2013';
+		$this->assertTags($result, $expected);
+		
+		$result = $Time->format($timestamp, 'F jS, Y');
+		$expected = 'July 4th, 2013';
+		$this->assertTags($result, $expected);
+	}
+
 }
