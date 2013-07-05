@@ -649,14 +649,14 @@ class FormHelper extends AppHelper {
  *
  * ### Options:
  *
- * - `escape`  bool  Whether or not to html escape the contents of the error.
- * - `wrap`  mixed  Whether or not the error message should be wrapped in a div. If a
+ * - `escape` bool - Whether or not to html escape the contents of the error.
+ * - `wrap` mixed - Whether or not the error message should be wrapped in a div. If a
  *   string, will be used as the HTML tag to use.
- * - `class` string  The classname for the error message
+ * - `class` string - The classname for the error message
  *
  * @param string $field A field name, like "Modelname.fieldname"
  * @param string|array $text Error message as string or array of messages.
- * If array contains `attributes` key it will be used as options for error container
+ *   If array contains `attributes` key it will be used as options for error container
  * @param array $options Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::error

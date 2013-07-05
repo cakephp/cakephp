@@ -778,9 +778,9 @@ class CakeResponse {
  * This method controls the `public` or `private` directive in the Cache-Control
  * header
  *
- * @param boolean $public  if set to true, the Cache-Control header will be set as public
- * if set to false, the response will be set to private
- * if no value is provided, it will return whether the response is sharable or not
+ * @param boolean $public If set to true, the Cache-Control header will be set as public
+ *   if set to false, the response will be set to private
+ *   if no value is provided, it will return whether the response is sharable or not
  * @param integer $time time in seconds after which the response should no longer be considered fresh
  * @return boolean
  */
@@ -858,7 +858,7 @@ class CakeResponse {
  * If called with no parameters, this function will return whether must-revalidate is present.
  *
  * @param integer $seconds if null, the method will return the current
- * must-revalidate value
+ *   must-revalidate value
  * @return boolean
  */
 	public function mustRevalidate($enable = null) {
@@ -968,7 +968,7 @@ class CakeResponse {
  * value is returned
  *
  * @param string|array $cacheVariances a single Vary string or a array
- * containing the list for variances.
+ *   containing the list for variances.
  * @return array
  */
 	public function vary($cacheVariances = null) {
@@ -1000,7 +1000,7 @@ class CakeResponse {
  *
  * @param string $hash the unique has that identifies this response
  * @param boolean $weak whether the response is semantically the same as
- * other with the same hash or not
+ *   other with the same hash or not
  * @return string
  */
 	public function etag($tag = null, $weak = false) {

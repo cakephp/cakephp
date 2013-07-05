@@ -738,7 +738,7 @@ class PostgresTest extends CakeTestCase {
 	}
 
 /**
- * Test the alterSchema  RENAME statements
+ * Test the alterSchema RENAME statements
  *
  * @return void
  */
