@@ -233,7 +233,7 @@ if (!function_exists('pr')) {
  * Print_r convenience function, which prints out <PRE> tags around
  * the output of given array. Similar to debug().
  *
- * @see	debug()
+ * @see debug()
  * @param array $var Variable to print out
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pr
  */
@@ -281,7 +281,7 @@ if (!function_exists('env')) {
  * IIS, or SCRIPT_NAME in CGI mode). Also exposes some additional custom
  * environment information.
  *
- * @param  string $key Environment variable name.
+ * @param string $key Environment variable name.
  * @return string Environment variable setting.
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#env
  */
@@ -382,11 +382,11 @@ if (!function_exists('cache')) {
 /**
  * Reads/writes temporary data to cache files or session.
  *
- * @param  string $path	File path within /tmp to save the file.
- * @param  mixed  $data	The data to save to the temporary file.
- * @param  mixed  $expires A valid strtotime string when the data expires.
- * @param  string $target  The target of the cached data; either 'cache' or 'public'.
- * @return mixed  The contents of the temporary file.
+ * @param string $path File path within /tmp to save the file.
+ * @param mixed $data The data to save to the temporary file.
+ * @param mixed $expires A valid strtotime string when the data expires.
+ * @param string $target The target of the cached data; either 'cache' or 'public'.
+ * @return mixed The contents of the temporary file.
  * @deprecated Please use Cache::write() instead
  */
 	function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {

@@ -112,7 +112,7 @@ class Object {
  *
  * @param string $method  Name of the method to call
  * @param array $params  Parameter list to use when calling $method
- * @return mixed  Returns the result of the method call
+ * @return mixed Returns the result of the method call
  */
 	public function dispatchMethod($method, $params = array()) {
 		switch (count($params)) {
