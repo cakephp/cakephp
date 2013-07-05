@@ -94,9 +94,9 @@ class XmlView extends View {
 	}
 
 /**
- * Serialize view vars
+ * Serialize view vars.
  *
- * @param array $serialize The viewVars that need to be serialized
+ * @param array $serialize The viewVars that need to be serialized.
  * @return string The serialized data
  */
 	protected function _serialize($serialize) {

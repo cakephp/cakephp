@@ -309,7 +309,7 @@ class HelperTest extends CakeTestCase {
 /**
  * test setEntity with setting a scope.
  *
- * @return
+ * @return void
  */
 	public function testSetEntityScoped() {
 		$this->Helper->setEntity('HelperTestPost', true);

@@ -265,7 +265,7 @@ class SecurityTest extends CakeTestCase {
 /**
  * Test that rijndael() can still decrypt values with a fixed iv.
  *
- * @return
+ * @return void
  */
 	public function testRijndaelBackwardCompatibility() {
 		$this->skipIf(!function_exists('mcrypt_encrypt'));
