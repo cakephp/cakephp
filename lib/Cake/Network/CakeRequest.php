@@ -673,7 +673,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
  *   While `example.co.uk` contains 2.
- * @return array of subdomains.
+ * @return array An array of subdomains.
  */
 	public function subdomains($tldLength = 1) {
 		$segments = explode('.', $this->host());
