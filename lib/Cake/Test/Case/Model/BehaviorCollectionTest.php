@@ -184,7 +184,7 @@ class TestBehavior extends ModelBehavior {
  * afterValidate method
  *
  * @param Model $model
- * @param bool $cascade
+ * @param boolean $cascade
  * @return void
  */
 	public function afterValidate(Model $model) {
@@ -205,7 +205,7 @@ class TestBehavior extends ModelBehavior {
  * beforeDelete method
  *
  * @param Model $model
- * @param bool $cascade
+ * @param boolean $cascade
  * @return void
  */
 	public function beforeDelete(Model $model, $cascade = true) {
@@ -277,7 +277,7 @@ class TestBehavior extends ModelBehavior {
  * testMethod method
  *
  * @param Model $model
- * @param bool $param
+ * @param boolean $param
  * @return void
  */
 	public function testMethod(Model $model, $param = true) {
