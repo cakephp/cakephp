@@ -24,7 +24,7 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * password using `DigestAuthenticate::password()`. If you wish to use digest authentication alongside other
  * authentication methods, its recommended that you store the digest authentication separately.
  *
- * Clients using Digest Authentication  must support cookies. Since AuthComponent identifies users based
+ * Clients using Digest Authentication must support cookies. Since AuthComponent identifies users based
  * on Session contents, clients without support for cookies will not function properly.
  *
  * ### Using Digest auth

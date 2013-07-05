@@ -583,7 +583,7 @@ class View extends Object {
  *
  * @param string $var The view var you want the contents of.
  * @return mixed The content of the named var if its set, otherwise null.
- * @deprecated Will be removed in 3.0  Use View::get() instead.
+ * @deprecated Will be removed in 3.0. Use View::get() instead.
  */
 	public function getVar($var) {
 		return $this->get($var);

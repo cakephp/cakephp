@@ -127,7 +127,7 @@ if (!function_exists('sortByKey')) {
  *
  * @param array $array Array to sort
  * @param string $sortby Sort by this key
- * @param string $order  Sort order asc/desc (ascending or descending).
+ * @param string $order Sort order asc/desc (ascending or descending).
  * @param integer $type Type of sorting to perform
  * @return mixed Sorted array
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#sortByKey

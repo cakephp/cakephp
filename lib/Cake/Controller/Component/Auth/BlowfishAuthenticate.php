@@ -28,7 +28,7 @@ App::uses('FormAuthenticate', 'Controller/Component/Auth');
  * 	)
  * }}}
  *
- * When  configuring BlowfishAuthenticate you can pass in settings to which fields, model and additional conditions
+ * When configuring BlowfishAuthenticate you can pass in settings to which fields, model and additional conditions
  * are used. See FormAuthenticate::$settings for more information.
  *
  * For initial password hashing/creation see Security::hash(). Other than how the password is initially hashed,

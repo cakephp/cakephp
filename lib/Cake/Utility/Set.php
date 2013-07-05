@@ -457,7 +457,7 @@ class Set {
  * This function can be used to see if a single item or a given xpath match certain conditions.
  *
  * @param string|array $conditions An array of condition strings or an XPath expression
- * @param array $data  An array of data to execute the match on
+ * @param array $data An array of data to execute the match on
  * @param integer $i Optional: The 'nth'-number of the item being matched.
  * @param integer $length
  * @return boolean
