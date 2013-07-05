@@ -247,6 +247,7 @@ class ExtractTask extends AppShell {
  * @param string $domain
  * @param string $msgid
  * @param array $details
+ * @return void
  */
 	protected function _addTranslation($domain, $msgid, $details = array()) {
 		if (empty($this->_translations[$domain][$msgid])) {

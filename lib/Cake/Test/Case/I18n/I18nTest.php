@@ -194,7 +194,7 @@ class I18nTest extends CakeTestCase {
 /**
  * Assertions for rules zero.
  *
- * @return
+ * @return void
  */
 	public function assertRulesZero() {
 		$singular = $this->__singular();

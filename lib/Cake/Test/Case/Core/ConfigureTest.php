@@ -447,7 +447,7 @@ class ConfigureTest extends CakeTestCase {
 /**
  * Test dumping only some of the data.
  *
- * @return
+ * @return void
  */
 	public function testDumpPartial() {
 		Configure::config('test_reader', new PhpReader(TMP));
