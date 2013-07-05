@@ -547,7 +547,7 @@ class CacheHelperTest extends TestCase {
 			->with('posts/index', 'content')
 			->will($this->returnValue(''));
 
-		$event = $this->getMock('Cake\Event\Event');
+		$event = $this->getMock('Cake\Event\Event', [], ['View.afterRenderFile']);
 		$Cache->afterRenderFile($event, 'posts/index', 'content');
 	}
 
@@ -568,7 +568,7 @@ class CacheHelperTest extends TestCase {
 			->with('posts/index', $View->fetch('content'))
 			->will($this->returnValue(''));
 
-		$event = $this->getMock('Cake\Event\Event');
+		$event = $this->getMock('Cake\Event\Event', [], ['View.afterLayout']);
 		$Cache->afterLayout($event, 'posts/index');
 
 		Configure::write('Cache.check', false);
