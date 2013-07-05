@@ -478,7 +478,7 @@ class CakeRequest implements ArrayAccess {
  * on routing parameters.
  *
  * @param string $name The property being accessed.
- * @return bool Existence
+ * @return boolean Existence
  */
 	public function __isset($name) {
 		return isset($this->params[$name]);
