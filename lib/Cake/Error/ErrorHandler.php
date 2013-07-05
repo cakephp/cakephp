@@ -32,7 +32,7 @@ App::uses('Router', 'Routing');
  *
  * ### Uncaught exceptions
  *
- * When debug < 1 a CakeException will render 404 or  500 errors. If an uncaught exception is thrown
+ * When debug < 1 a CakeException will render 404 or 500 errors. If an uncaught exception is thrown
  * and it is a type that ErrorHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception handling

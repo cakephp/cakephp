@@ -813,7 +813,7 @@ class AppTest extends CakeTestCase {
 	}
 
 /**
- * Tests that  App::location() returns the defined path for a class
+ * Tests that App::location() returns the defined path for a class
  *
  * @return void
  */

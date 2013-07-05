@@ -578,7 +578,7 @@ class PaginatorComponentTest extends CakeTestCase {
 	}
 
 /**
- * test paginate() and  model default order
+ * test paginate() and model default order
  *
  * @return void
  */

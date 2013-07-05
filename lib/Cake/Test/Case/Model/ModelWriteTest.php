@@ -4573,7 +4573,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $model->saveAll(array(
 			'Article' => array(
 				'title' => 'Post with Author',
-				'body' => 'This post will be saved  author'
+				'body' => 'This post will be saved author'
 			),
 			'Comment' => array(
 				array('comment' => 'First new comment'),
@@ -5977,7 +5977,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $model->saveAssociated(array(
 			'Article' => array(
 				'title' => 'Post with Author',
-				'body' => 'This post will be saved  author'
+				'body' => 'This post will be saved author'
 			),
 			'Comment' => array(
 				array('comment' => 'First new comment'),

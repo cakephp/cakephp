@@ -2031,7 +2031,7 @@ class DboSource extends DataSource {
  * primary key, where applicable.
  *
  * @param Model|string $table A string or model class representing the table to be truncated
- * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
+ * @return boolean SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table) {
 		return $this->execute('TRUNCATE TABLE ' . $this->fullTableName($table));

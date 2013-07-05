@@ -559,7 +559,7 @@ class CakeRequest implements ArrayAccess {
  * e.g `addDetector('post', array('param' => 'requested', 'value' => 1)`
  *
  * @param string $name The name of the detector.
- * @param array $options  The options for the detector definition. See above.
+ * @param array $options The options for the detector definition. See above.
  * @return void
  */
 	public function addDetector($name, $options) {

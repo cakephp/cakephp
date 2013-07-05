@@ -173,7 +173,7 @@ class DataSource extends Object {
 /**
  * Converts column types to basic types
  *
- * @param string $real Real  column type (i.e. "varchar(255)")
+ * @param string $real Real column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
  */
 	public function column($real) {
