@@ -235,13 +235,7 @@ class EventManager {
 			if ($event->isStopped()) {
 				break;
 			}
-			$data = $event->data();
-			if ($data !== null) {
-				array_unshift($data, $event);
-				$result = call_user_func_array($listener['callable'], $data);
-			} else {
-				$result = call_user_func($listener['callable'], $event);
-			}
+			$result = $this->_callListener($listener['callable'], $event);
 			if ($result === false) {
 				$event->stopPropagation();
 			}
@@ -249,6 +243,37 @@ class EventManager {
 				$event->result = $result;
 			}
 			continue;
+		}
+	}
+
+/**
+ * Calls a listener.
+ *
+ * Direct callback invocation is up to 30% faster than using call_user_func_array.
+ * Optimize the common cases to provide improved performance.
+ *
+ * @param callable $listener The listener to trigger.
+ * @param Event $event
+ * @return mixed The result of the $listener function.
+ */
+	protected function _callListener(callable $listener, Event $event) {
+		$data = $event->data();
+		$length = count($data);
+		if ($length) {
+			$data = array_values($data);
+		}
+		switch ($length) {
+			case 0:
+				return $listener($event);
+			case 1:
+				return $listener($event, $data[0]);
+			case 2:
+				return $listener($event, $data[0], $data[1]);
+			case 3:
+				return $listener($event, $data[0], $data[1], $data[2]);
+			default:
+				array_unshift($data, $event);
+				return call_user_func_array($listener, $data);
 		}
 	}
 
