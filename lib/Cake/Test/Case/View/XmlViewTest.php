@@ -104,6 +104,35 @@ class XmlViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test render with an array in _serialize and alias
+ *
+ * @return void
+ */
+	public function testRenderWithoutViewMultipleAndAlias() {
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
+		$data = array('original_name' => 'my epic name', 'user' => 'fake', 'list' => array('item1', 'item2'));
+		$Controller->set($data);
+		$Controller->set('_serialize', array('new_name' => 'original_name', 'user'));
+		$View = new XmlView($Controller);
+		$this->assertSame('application/xml', $Response->type());
+		$output = $View->render(false);
+		$expected = array(
+			'response' => array('new_name' => $data['original_name'], 'user' => $data['user'])
+		);
+		$this->assertSame(Xml::build($expected)->asXML(), $output);
+
+		$Controller->set('_rootNode', 'custom_name');
+		$View = new XmlView($Controller);
+		$output = $View->render(false);
+		$expected = array(
+			'custom_name' => array('new_name' => $data['original_name'], 'user' => $data['user'])
+		);
+		$this->assertSame(Xml::build($expected)->asXML(), $output);
+	}
+
+/**
  * testRenderWithView method
  *
  * @return void
