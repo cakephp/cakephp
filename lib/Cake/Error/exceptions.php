@@ -41,7 +41,7 @@ class CakeBaseException extends RuntimeException {
  *	- an array of string headers is also accepted
  * @param string $value. The header value.
  * @return array
- * @see CakeResponse::header() See also
+ * @see CakeResponse::header()
  */
 	public function responseHeader($header = null, $value = null) {
 		if ($header) {
