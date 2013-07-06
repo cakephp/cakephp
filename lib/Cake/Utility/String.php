@@ -191,9 +191,9 @@ class String {
  * - clean: A boolean or array with instructions for String::cleanInsert
  *
  * @param string $str A string containing variable placeholders
- * @param string $data A key => val array where each key stands for a placeholder variable name
+ * @param array $data A key => val array where each key stands for a placeholder variable name
  *     to be replaced with val
- * @param string $options An array of options, see description above
+ * @param array $options An array of options, see description above
  * @return string
  */
 	public static function insert($str, $data, $options = array()) {
@@ -256,7 +256,7 @@ class String {
  * by String::insert().
  *
  * @param string $str
- * @param string $options
+ * @param array $options
  * @return string
  * @see String::insert()
  */
