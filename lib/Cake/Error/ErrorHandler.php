@@ -230,6 +230,12 @@ class ErrorHandler {
 			}
 			return Log::write($log, $message);
 		}
+		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
+		if (!empty($errorConfig['trace'])) {
+			$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
+			$message .= "\nTrace:\n" . $trace . "\n";
+		}
+		return Log::write($log, $message);
 	}
 
 /**
@@ -278,28 +284,28 @@ class ErrorHandler {
 			case E_USER_ERROR:
 				$error = 'Fatal Error';
 				$log = LOG_ERR;
-			break;
+				break;
 			case E_WARNING:
 			case E_USER_WARNING:
 			case E_COMPILE_WARNING:
 			case E_RECOVERABLE_ERROR:
 				$error = 'Warning';
 				$log = LOG_WARNING;
-			break;
+				break;
 			case E_NOTICE:
 			case E_USER_NOTICE:
 				$error = 'Notice';
 				$log = LOG_NOTICE;
-			break;
+				break;
 			case E_STRICT:
 				$error = 'Strict';
 				$log = LOG_NOTICE;
-			break;
+				break;
 			case E_DEPRECATED:
 			case E_USER_DEPRECATED:
 				$error = 'Deprecated';
 				$log = LOG_NOTICE;
-			break;
+				break;
 		}
 		return array($error, $log);
 	}

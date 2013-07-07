@@ -309,7 +309,7 @@ class Inflector {
 				} else {
 					static::$_transliteration = $rules + static::$_transliteration;
 				}
-			break;
+				break;
 
 			default:
 				foreach ($rules as $rule => $pattern) {
@@ -335,7 +335,6 @@ class Inflector {
 					}
 				}
 				static::${$var}['rules'] = $rules + static::${$var}['rules'];
-			break;
 		}
 	}
 

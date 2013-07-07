@@ -19,7 +19,7 @@
 use Cake\Utility\Inflector;
 ?>
 <div class="<?php echo $pluralVar; ?> view">
-<h2><?php echo "<?php  echo __('{$singularHumanName}'); ?>"; ?></h2>
+<h2><?php echo "<?php echo __('{$singularHumanName}'); ?>"; ?></h2>
 	<dl>
 <?php
 foreach ($fields as $field) {

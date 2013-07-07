@@ -302,7 +302,15 @@ class Request implements \ArrayAccess {
 			list($uri) = explode('?', $uri, 2);
 		}
 		if (empty($uri) || $uri === '/' || $uri === '//' || $uri === '/index.php') {
-			return '/';
+			$uri = '/';
+		}
+		$endsWithIndex = '/webroot/index.php';
+		$endsWithLength = strlen($endsWithIndex);
+		if (
+			strlen($uri) >= $endsWithLength &&
+			substr($uri, -$endsWithLength) === $endsWithIndex
+		) {
+			$uri = '/';
 		}
 		return $uri;
 	}
@@ -310,7 +318,12 @@ class Request implements \ArrayAccess {
 /**
  * Returns a base URL and sets the proper webroot
  *
+ * If CakePHP is called with index.php in the URL even though
+ * URL Rewriting is activated (and thus not needed) it swallows
+ * the unnecessary part from $base to prevent issue #3318.
+ *
  * @return array Base URL, webroot dir ending in /
+ * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/3318
  */
 	protected static function _base() {
 		$base = $dir = $webroot = null;
@@ -324,6 +337,10 @@ class Request implements \ArrayAccess {
 		if (!$baseUrl) {
 			$base = dirname(env('PHP_SELF'));
 
+			$indexPos = strpos($base, '/webroot/index.php');
+			if ($indexPos !== false) {
+				$base = substr($base, 0, $indexPos) . '/webroot';
+			}
 			if ($webroot === 'webroot' && $webroot === basename($base)) {
 				$base = dirname($base);
 			}
@@ -494,7 +511,7 @@ class Request implements \ArrayAccess {
  * on routing parameters.
  *
  * @param string $name The property being accessed.
- * @return bool Existence
+ * @return boolean Existence
  */
 	public function __isset($name) {
 		return isset($this->params[$name]);
@@ -598,7 +615,7 @@ class Request implements \ArrayAccess {
  * e.g `addDetector('post', array('param' => 'requested', 'value' => 1)`
  *
  * @param string $name The name of the detector.
- * @param array $options  The options for the detector definition. See above.
+ * @param array $options The options for the detector definition. See above.
  * @return void
  */
 	public function addDetector($name, $options) {
@@ -738,7 +755,7 @@ class Request implements \ArrayAccess {
  *
  * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
  *   While `example.co.uk` contains 2.
- * @return array of subdomains.
+ * @return array An array of subdomains.
  */
 	public function subdomains($tldLength = 1) {
 		$segments = explode('.', $this->host());

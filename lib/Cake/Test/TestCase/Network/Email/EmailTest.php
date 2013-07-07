@@ -63,6 +63,14 @@ class TestEmail extends Email {
 		return $this->_encode($text);
 	}
 
+/**
+ * Render to protected method
+ *
+ */
+	public function render($content) {
+		return $this->_render($content);
+	}
+
 }
 
 /*
@@ -260,6 +268,69 @@ class EmailTest extends TestCase {
  */
 	public function testInvalidEmailAdd($value) {
 		$this->CakeEmail->addTo($value);
+	}
+
+/**
+ * test emailPattern method
+ *
+ * @return void
+ */
+	public function testEmailPattern() {
+		$regex = '/.+@.+\..+/i';
+		$this->assertNull($this->CakeEmail->emailPattern());
+		$this->assertSame($regex, $this->CakeEmail->emailPattern($regex)->emailPattern());
+	}
+
+/**
+ * Tests that it is possible to set email regex configuration to a CakeEmail object
+ *
+ * @return void
+ */
+	public function testConfigEmailPattern() {
+		$regex = '/.+@.+\..+/i';
+		$email = new Email(array('emailPattern' => $regex));
+		$this->assertSame($regex, $email->emailPattern());
+	}
+
+/**
+ * Tests that it is possible set custom email validation
+ */
+	public function testCustomEmailValidation() {
+		$regex = '/^[\.a-z0-9!#$%&\'*+\/=?^_`{|}~-]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]{2,6}$/i';
+
+		$this->CakeEmail->emailPattern($regex)->to('pass.@example.com');
+		$this->assertSame(array(
+			'pass.@example.com' => 'pass.@example.com',
+		), $this->CakeEmail->to());
+
+		$this->CakeEmail->addTo('pass..old.docomo@example.com');
+		$this->assertSame(array(
+			'pass.@example.com' => 'pass.@example.com',
+			'pass..old.docomo@example.com' => 'pass..old.docomo@example.com',
+		), $this->CakeEmail->to());
+
+		$this->CakeEmail->reset();
+		$emails = array(
+			'pass.@example.com',
+			'pass..old.docomo@example.com'
+		);
+		$additionalEmails = array(
+			'.extend.@example.com',
+			'.docomo@example.com'
+		);
+		$this->CakeEmail->emailPattern($regex)->to($emails);
+		$this->assertSame(array(
+			'pass.@example.com' => 'pass.@example.com',
+			'pass..old.docomo@example.com' => 'pass..old.docomo@example.com',
+		), $this->CakeEmail->to());
+
+		$this->CakeEmail->addTo($additionalEmails);
+		$this->assertSame(array(
+			'pass.@example.com' => 'pass.@example.com',
+			'pass..old.docomo@example.com' => 'pass..old.docomo@example.com',
+			'.extend.@example.com' => '.extend.@example.com',
+			'.docomo@example.com' => '.docomo@example.com',
+		), $this->CakeEmail->to());
 	}
 
 /**
@@ -1038,7 +1109,7 @@ class EmailTest extends TestCase {
  */
 	public function testSendWithLogAndScope() {
 		Configure::write('Log.email', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'path' => TMP,
 			'file' => 'cake_test_emails',
 			'scopes' => array('email')
@@ -1447,11 +1518,13 @@ class EmailTest extends TestCase {
 	public function testReset() {
 		$this->CakeEmail->to('cake@cakephp.org');
 		$this->CakeEmail->theme('TestTheme');
+		$this->CakeEmail->emailPattern('/.+@.+\..+/i');
 		$this->assertSame($this->CakeEmail->to(), array('cake@cakephp.org' => 'cake@cakephp.org'));
 
 		$this->CakeEmail->reset();
 		$this->assertSame($this->CakeEmail->to(), array());
 		$this->assertSame(null, $this->CakeEmail->theme());
+		$this->assertSame(null, $this->CakeEmail->emailPattern());
 	}
 
 /**
@@ -1531,6 +1604,22 @@ class EmailTest extends TestCase {
 			''
 		);
 		$this->assertSame($expected, $result);
+	}
+
+/**
+ * testRender method
+ *
+ * @return void
+ */
+	public function testRenderWithLayoutAndAttachment() {
+		$this->CakeEmail->emailFormat('html');
+		$this->CakeEmail->template('html', 'default');
+		$this->CakeEmail->attachments(array(CAKE . 'basics.php'));
+		$result = $this->CakeEmail->render(array());
+		$this->assertNotEmpty($result);
+
+		$result = $this->CakeEmail->getBoundary();
+		$this->assertNotEmpty($result);
 	}
 
 /**

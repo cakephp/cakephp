@@ -394,12 +394,9 @@ class ProjectTask extends Shell {
 			if ($File->write($result)) {
 				Configure::write('Routing.prefixes', array($name));
 				return true;
-			} else {
-				return false;
 			}
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 /**
@@ -443,7 +440,7 @@ class ProjectTask extends Shell {
 				$this->out(__d('cake_console', 'You need to enable %s in %s to use prefix routing.',
 					'Configure::write(\'Routing.prefixes\', array(\'admin\'))',
 					'/app/Config/core.php'));
-				$this->_stop();
+				return $this->_stop();
 			}
 			return $admin . '_';
 		}

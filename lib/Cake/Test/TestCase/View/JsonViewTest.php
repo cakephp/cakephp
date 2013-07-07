@@ -66,6 +66,25 @@ class JsonViewTest extends TestCase {
 	}
 
 /**
+ * Test render with an array in _serialize and alias
+ *
+ * @return void
+ */
+	public function testRenderWithoutViewMultipleAndAlias() {
+		$Request = new Request();
+		$Response = new Response();
+		$Controller = new Controller($Request, $Response);
+		$data = array('original_name' => 'my epic name', 'user' => 'fake', 'list' => array('item1', 'item2'));
+		$Controller->set($data);
+		$Controller->set('_serialize', array('new_name' => 'original_name', 'user'));
+		$View = new JsonView($Controller);
+		$output = $View->render(false);
+
+		$this->assertSame(json_encode(array('new_name' => $data['original_name'], 'user' => $data['user'])), $output);
+		$this->assertSame('application/json', $Response->type());
+	}
+
+/**
  * testJsonpResponse method
  *
  * @return void

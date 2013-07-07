@@ -122,6 +122,7 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
 			} else {
 				exit(\PHPUnit_TextUI_TestRunner::FAILURE_EXIT);
 			}
+			exit(PHPUnit_TextUI_TestRunner::FAILURE_EXIT);
 		}
 	}
 

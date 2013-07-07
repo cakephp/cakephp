@@ -683,7 +683,7 @@ class ModelTask extends BakeTask {
 					$prompt = "{$model->name} {$type} {$assoc['alias']}?";
 					$response = $this->in($prompt, array('y', 'n'), 'y');
 
-					if ('n' == strtolower($response)) {
+					if (strtolower($response) === 'n') {
 						unset($associations[$type][$i]);
 					} elseif ($type === 'hasMany') {
 						unset($associations['hasOne'][$i]);
@@ -940,7 +940,7 @@ class ModelTask extends BakeTask {
 		}
 		if (empty($tables)) {
 			$this->err(__d('cake_console', 'Your database does not have any tables.'));
-			$this->_stop();
+			return $this->_stop();
 		}
 		return $tables;
 	}
@@ -962,7 +962,7 @@ class ModelTask extends BakeTask {
 
 			if ($enteredModel === 'q') {
 				$this->out(__d('cake_console', 'Exit'));
-				$this->_stop();
+				return $this->_stop();
 			}
 
 			if (!$enteredModel || intval($enteredModel) > count($this->_modelNames)) {

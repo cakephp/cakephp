@@ -233,6 +233,7 @@ class ExtractTaskTest extends TestCase {
  * @return void
  */
 	public function testExtractExcludePlugins() {
+		Configure::write('App.namespace', 'TestApp');
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
@@ -261,6 +262,7 @@ class ExtractTaskTest extends TestCase {
  * @return void
  */
 	public function testExtractPlugin() {
+		Configure::write('App.namespace', 'TestApp');
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
@@ -268,7 +270,7 @@ class ExtractTaskTest extends TestCase {
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
-			array('_isExtractingApp', '_extractValidationMessages', 'in', 'out', 'err', 'clear', '_stop'),
+			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
 
@@ -280,6 +282,7 @@ class ExtractTaskTest extends TestCase {
 		$this->assertNotRegExp('#Pages#', $result);
 		$this->assertContains('translate.ctp:1', $result);
 		$this->assertContains('This is a translatable string', $result);
+		$this->assertContains('I can haz plugin model validation message', $result);
 	}
 
 /**
@@ -339,6 +342,7 @@ class ExtractTaskTest extends TestCase {
  * @return void
  */
 	public function testExtractModelValidationInPlugin() {
+		Configure::write('App.namespace', 'TestApp');
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
@@ -346,7 +350,7 @@ class ExtractTaskTest extends TestCase {
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
-			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
+			array('_isExtractingApp', '_extractValidationMessages', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
 

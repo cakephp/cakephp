@@ -4595,7 +4595,7 @@ class ModelWriteTest extends ModelTestBase {
 		$result = $model->saveAll(array(
 			'Article' => array(
 				'title' => 'Post with Author',
-				'body' => 'This post will be saved  author'
+				'body' => 'This post will be saved author'
 			),
 			'Comment' => array(
 				array('comment' => 'First new comment'),
@@ -4824,7 +4824,7 @@ class ModelWriteTest extends ModelTestBase {
 /**
  * test that saveAll behaves like plain save() when supplied empty data
  *
- * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
+ * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
  * @return void
  */
 	public function testSaveAllEmptyData() {
@@ -5999,7 +5999,7 @@ class ModelWriteTest extends ModelTestBase {
 		$result = $model->saveAssociated(array(
 			'Article' => array(
 				'title' => 'Post with Author',
-				'body' => 'This post will be saved  author'
+				'body' => 'This post will be saved author'
 			),
 			'Comment' => array(
 				array('comment' => 'First new comment'),
@@ -6212,7 +6212,7 @@ class ModelWriteTest extends ModelTestBase {
 /**
  * test that saveMany behaves like plain save() when suplied empty data
  *
- * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
+ * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
  * @return void
  */
 	public function testSaveManyEmptyData() {
@@ -6231,7 +6231,7 @@ class ModelWriteTest extends ModelTestBase {
 /**
  * test that saveAssociated behaves like plain save() when supplied empty data
  *
- * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
+ * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
  * @return void
  */
 	public function testSaveAssociatedEmptyData() {

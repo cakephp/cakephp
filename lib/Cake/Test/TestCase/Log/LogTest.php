@@ -52,10 +52,10 @@ class LogTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		Configure::write('Log.libtest', array(
-			'engine' => 'TestAppLog'
+			'engine' => 'TestApp'
 		));
 		Configure::write('Log.plugintest', array(
-			'engine' => 'TestPlugin.TestPluginLog'
+			'engine' => 'TestPlugin.TestPlugin'
 		));
 
 		$result = Log::engine('libtest');
@@ -90,7 +90,7 @@ class LogTest extends TestCase {
  * @return void
  */
 	public function testValidKeyName() {
-		Configure::write('Log.valid', array('engine' => 'FileLog'));
+		Configure::write('Log.valid', array('engine' => 'File'));
 		$stream = Log::engine('valid');
 		$this->assertInstanceOf('Cake\Log\Engine\FileLog', $stream);
 	}
@@ -113,7 +113,7 @@ class LogTest extends TestCase {
  **/
 	public function testDrop() {
 		Configure::write('Log.file', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'path' => LOGS
 		));
 		$result = Log::configured();
@@ -184,12 +184,12 @@ class LogTest extends TestCase {
 			unlink(LOGS . 'eggs.log');
 		}
 		Configure::write('Log.spam', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => 'debug',
 			'file' => 'spam',
 		));
 		Configure::write('Log.eggs', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('eggs', 'debug', 'error', 'warning'),
 			'file' => 'eggs',
 		));
@@ -223,7 +223,7 @@ class LogTest extends TestCase {
  */
 	public function testStreamEnable() {
 		Configure::write('Log.spam', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'file' => 'spam',
 		));
 		$this->assertTrue(Log::enabled('spam'));
@@ -238,7 +238,7 @@ class LogTest extends TestCase {
  */
 	public function testStreamDisable() {
 		Configure::write('Log.spam', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'file' => 'spam',
 		));
 		$this->assertTrue(Log::enabled('spam'));
@@ -268,12 +268,12 @@ class LogTest extends TestCase {
 
 	protected function _resetLogConfig() {
 		Configure::write('Log.debug', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('notice', 'info', 'debug'),
 			'file' => 'debug',
 		));
 		Configure::write('Log.error', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 			'file' => 'error',
 		));
@@ -309,7 +309,7 @@ class LogTest extends TestCase {
 		$this->_deleteLogs();
 		$this->_resetLogConfig();
 		Configure::write('Log.shops', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('info', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops',
@@ -355,7 +355,7 @@ class LogTest extends TestCase {
 
 		$this->_resetLogConfig();
 		Configure::write('Log.shops', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('info', 'debug', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops',
@@ -394,13 +394,13 @@ class LogTest extends TestCase {
 		$this->_deleteLogs();
 
 		Configure::write('Log.shops', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('info', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops.log',
 		));
 		Configure::write('Log.eggs', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('info', 'notice', 'warning'),
 			'scopes' => array('eggs'),
 			'file' => 'eggs.log',
@@ -424,12 +424,12 @@ class LogTest extends TestCase {
 		$this->_deleteLogs();
 
 		Configure::write('Log.debug', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('notice', 'info', 'debug'),
 			'file' => 'debug',
 		));
 		Configure::write('Log.error', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('emergency', 'alert', 'critical', 'error', 'warning'),
 			'file' => 'error',
 		));

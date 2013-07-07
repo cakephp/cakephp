@@ -3770,7 +3770,7 @@ class ModelReadTest extends ModelTestBase {
 /**
  * Test find(neighbors) with missing fields so no neighbors are found.
  *
- * @return
+ * @return void
  */
 	public function testFindNeighborsNoPrev() {
 		$this->loadFixtures('User', 'Article', 'Comment', 'Tag', 'ArticlesTag', 'Attachment');
@@ -3791,6 +3791,7 @@ class ModelReadTest extends ModelTestBase {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * testFindCombinedRelations method
  *

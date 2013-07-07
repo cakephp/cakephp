@@ -202,7 +202,7 @@ class I18nTest extends TestCase {
 /**
  * Assertions for rules zero.
  *
- * @return
+ * @return void
  */
 	public function assertRulesZero() {
 		$singular = $this->__singular();

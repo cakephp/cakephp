@@ -99,13 +99,12 @@ class Time {
  *
  * @param string $name Variable name
  * @param mixes $value Variable value
+ * @return void
  */
 	public function __set($name, $value) {
 		switch ($name) {
 			case 'niceFormat':
 				static::${$name} = $value;
-				break;
-			default:
 				break;
 		}
 	}

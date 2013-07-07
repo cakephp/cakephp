@@ -356,7 +356,7 @@ class Number {
 /**
  * Getter/setter for default currency
  *
- * @param string $currency Default currency string  used by currency() if $currency argument is not provided
+ * @param string $currency Default currency string used by currency() if $currency argument is not provided
  * @return string Currency
  */
 	public static function defaultCurrency($currency = null) {

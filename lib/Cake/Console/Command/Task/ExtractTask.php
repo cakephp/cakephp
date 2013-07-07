@@ -211,7 +211,7 @@ class ExtractTask extends Shell {
 				$response = $this->in($message, null, rtrim($this->_paths[0], DS) . DS . 'Locale');
 				if (strtoupper($response) === 'Q') {
 					$this->out(__d('cake_console', 'Extract Aborted'));
-					$this->_stop();
+					return $this->_stop();
 				} elseif ($this->_isPathUsable($response)) {
 					$this->_output = $response . DS;
 					break;
@@ -251,6 +251,7 @@ class ExtractTask extends Shell {
  * @param string $domain
  * @param string $msgid
  * @param array $details
+ * @return void
  */
 	protected function _addTranslation($domain, $msgid, $details = array()) {
 		if (empty($this->_translations[$domain][$msgid])) {
@@ -444,9 +445,27 @@ class ExtractTask extends Shell {
 			return;
 		}
 
-		$plugin = null;
-		if (!empty($this->params['plugin'])) {
-			$plugin = $this->params['plugin'] . '.';
+		$plugins = array(null);
+		if (empty($this->params['exclude-plugins'])) {
+			$plugins = array_merge($plugins, App::objects('plugins'));
+		}
+		foreach ($plugins as $plugin) {
+			$this->_extractPluginValidationMessages($plugin);
+		}
+	}
+
+/**
+ * Extract validation messages from application or plugin models
+ *
+ * @param string $plugin Plugin name or `null` to process application models
+ * @return void
+ */
+	protected function _extractPluginValidationMessages($plugin = null) {
+		if (!empty($plugin)) {
+			if (!Plugin::loaded($plugin)) {
+				return;
+			}
+			$plugin = $plugin . '.';
 		}
 		$models = App::objects($plugin . 'Model', null, false);
 

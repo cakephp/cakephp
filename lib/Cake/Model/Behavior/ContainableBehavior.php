@@ -91,7 +91,7 @@ class ContainableBehavior extends ModelBehavior {
  * )));
  * }}}
  *
- * @param Model $Model	Model using the behavior
+ * @param Model $Model Model using the behavior
  * @param array $query Query parameters as set by cake
  * @return array
  */

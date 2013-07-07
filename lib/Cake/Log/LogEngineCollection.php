@@ -69,7 +69,7 @@ class LogEngineCollection extends ObjectCollection {
 	protected static function _getLogger($options) {
 		$name = isset($options['engine']) ? $options['engine'] : null;
 		unset($options['engine']);
-		$class = App::classname($name, 'Log/Engine');
+		$class = App::classname($name, 'Log/Engine', 'Log');
 		if (!$class) {
 			throw new Error\Exception(__d('cake_dev', 'Could not load class %s', $name));
 		}

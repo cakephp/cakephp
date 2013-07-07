@@ -2078,7 +2078,31 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
- * test Last method
+ * test params() method
+ *
+ * @return void
+ */
+	public function testParams() {
+		$result = $this->Paginator->params();
+		$this->assertArrayHasKey('page', $result);
+		$this->assertArrayHasKey('pageCount', $result);
+	}
+
+/**
+ * test param() method
+ *
+ * @return void
+ */
+	public function testParam() {
+		$result = $this->Paginator->param('count');
+		$this->assertIdentical(62, $result);
+
+		$result = $this->Paginator->param('imaginary');
+		$this->assertNull($result);
+	}
+
+/**
+ * test last() method
  *
  * @return void
  */

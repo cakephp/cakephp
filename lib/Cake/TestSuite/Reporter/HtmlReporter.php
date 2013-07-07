@@ -374,7 +374,8 @@ class HtmlReporter extends BaseReporter {
 /**
  * A test suite started.
  *
- * @param  PHPUnit_Framework_TestSuite $suite
+ * @param PHPUnit_Framework_TestSuite $suite
+ * @return void
  */
 	public function startTestSuite(\PHPUnit_Framework_TestSuite $suite) {
 		if (!$this->_headerSent) {

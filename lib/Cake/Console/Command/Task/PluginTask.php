@@ -68,9 +68,8 @@ class PluginTask extends Shell {
 				$this->out(__d('cake_console', 'Plugin: %s already exists, no action taken', $plugin));
 				$this->out(__d('cake_console', 'Path: %s', $pluginPath));
 				return false;
-			} else {
-				$this->_interactive($plugin);
 			}
+			$this->_interactive($plugin);
 		} else {
 			return $this->_interactive();
 		}

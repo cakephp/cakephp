@@ -178,7 +178,10 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
- * Test that ext is not set with multiple accepted content types.
+ * Test that ext is set to the first listed extension with multiple accepted
+ * content types.
+ * Having multiple types accepted with same weight, means the client lets the
+ * server choose the returned content type.
  *
  * @return void
  */
@@ -188,7 +191,27 @@ class RequestHandlerComponentTest extends TestCase {
 		Router::parseExtensions('xml', 'json');
 
 		$this->RequestHandler->initialize($this->Controller);
+		$this->assertEquals('xml', $this->RequestHandler->ext);
+
+		$this->RequestHandler->ext = null;
+		Router::setExtensions(array('json', 'xml'), false);
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->assertEquals('json', $this->RequestHandler->ext);
+	}
+
+/**
+ * Test that ext is set to type with highest weight
+ *
+ * @return void
+ */
+	public function testInitializeContentTypeWithMultipleAcceptedTypes() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/csv;q=1.0, application/json;q=0.8, application/xml;q=0.7';
 		$this->assertNull($this->RequestHandler->ext);
+		Router::parseExtensions('xml', 'json');
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->assertEquals('json', $this->RequestHandler->ext);
 	}
 
 /**
@@ -780,7 +803,7 @@ class RequestHandlerComponentTest extends TestCase {
  * array URLs into their correct string ones, and adds base => false so
  * the correct URLs are generated.
  *
- * @link http://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
+ * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
  * @return void
  */
 	public function testBeforeRedirectCallbackWithArrayUrl() {

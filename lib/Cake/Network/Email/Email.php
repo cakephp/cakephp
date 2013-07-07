@@ -319,6 +319,14 @@ class Email {
 	);
 
 /**
+ * Regex for email validation
+ * If null, it will use built in regex
+ *
+ * @var string
+ */
+	protected $_emailPattern = null;
+
+/**
  * Constructor
  *
  * @param array|string $config Array of configs, or string to load configs from email.php
@@ -522,6 +530,20 @@ class Email {
 	}
 
 /**
+ * EmailPattern setter/getter
+ *
+ * @param string $regex for email address validation
+ * @return string|CakeEmail
+ */
+	public function emailPattern($regex = null) {
+		if ($regex === null) {
+			return $this->_emailPattern;
+		}
+		$this->_emailPattern = $regex;
+		return $this;
+	}
+
+/**
  * Set email
  *
  * @param string $varName
@@ -532,7 +554,7 @@ class Email {
  */
 	protected function _setEmail($varName, $email, $name) {
 		if (!is_array($email)) {
-			if (!Validation::email($email)) {
+			if (!Validation::email($email, false, $this->_emailPattern)) {
 				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
 			}
 			if ($name === null) {
@@ -546,7 +568,7 @@ class Email {
 			if (is_int($key)) {
 				$key = $value;
 			}
-			if (!Validation::email($key)) {
+			if (!Validation::email($key, false, $this->_emailPattern)) {
 				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $key));
 			}
 			$list[$key] = $value;
@@ -586,7 +608,7 @@ class Email {
  */
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
-			if (!Validation::email($email)) {
+			if (!Validation::email($email, false, $this->_emailPattern)) {
 				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
 			}
 			if ($name === null) {
@@ -600,7 +622,7 @@ class Email {
 			if (is_int($key)) {
 				$key = $value;
 			}
-			if (!Validation::email($key)) {
+			if (!Validation::email($key, false, $this->_emailPattern)) {
 				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $key));
 			}
 			$list[$key] = $value;
@@ -1062,8 +1084,6 @@ class Email {
 			$content = implode("\n", $content) . "\n";
 		}
 
-		$this->_textMessage = $this->_htmlMessage = '';
-		$this->_createBoundary();
 		$this->_message = $this->_render($this->_wrap($content));
 
 		$contents = $this->transportClass()->send($this);
@@ -1150,7 +1170,7 @@ class Email {
 		$simpleMethods = array(
 			'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
 			'messageId', 'domain', 'subject', 'viewRender', 'viewVars', 'attachments',
-			'transport', 'emailFormat', 'theme', 'helpers'
+			'transport', 'emailFormat', 'theme', 'helpers', 'emailPattern'
 		);
 		foreach ($simpleMethods as $method) {
 			if (isset($config[$method])) {
@@ -1207,6 +1227,7 @@ class Email {
 		$this->headerCharset = null;
 		$this->_attachments = array();
 		$this->_config = array();
+		$this->_emailPattern = null;
 		return $this;
 	}
 
@@ -1441,9 +1462,12 @@ class Email {
  * @return array Email body ready to be sent
  */
 	protected function _render($content) {
+		$this->_textMessage = $this->_htmlMessage = '';
+
 		$content = implode("\n", $content);
 		$rendered = $this->_renderTemplates($content);
 
+		$this->_createBoundary();
 		$msg = array();
 
 		$contentIds = array_filter((array)Hash::extract($this->_attachments, '{s}.contentId'));
@@ -1614,9 +1638,8 @@ class Email {
 		$charset = strtoupper($this->charset);
 		if (array_key_exists($charset, $this->_contentTypeCharset)) {
 			return strtoupper($this->_contentTypeCharset[$charset]);
-		} else {
-			return strtoupper($this->charset);
 		}
+		return strtoupper($this->charset);
 	}
 
 }

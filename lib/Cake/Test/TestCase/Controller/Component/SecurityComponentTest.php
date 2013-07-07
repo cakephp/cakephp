@@ -1089,7 +1089,7 @@ class SecurityComponentTest extends TestCase {
  * the params.
  *
  * @return void
- * @see http://cakephp.lighthouseapp.com/projects/42648/tickets/68
+ * @see https://cakephp.lighthouseapp.com/projects/42648/tickets/68
  */
 	public function testSettingTokenForRequestAction() {
 		$this->Controller->Security->startup($this->Controller);
@@ -1106,7 +1106,7 @@ class SecurityComponentTest extends TestCase {
  * test that blackhole doesn't delete the _Token session key so repeat data submissions
  * stay blackholed.
  *
- * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/214
+ * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/214
  * @return void
  */
 	public function testBlackHoleNotDeletingSessionInformation() {

@@ -44,7 +44,7 @@ class SyslogLog extends BaseLog {
  *
  * {{{
  *	CakeLog::config('error', array(
- *		'engine' => 'SyslogLog',
+ *		'engine' => 'Syslog',
  *		'types' => array('emergency', 'alert', 'critical', 'error'),
  *		'format' => "%s: My-App - %s",
  *		'prefix' => 'Web Server 01'

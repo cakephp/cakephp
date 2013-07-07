@@ -486,6 +486,9 @@ class App {
 		if (empty(static::$_map)) {
 			static::$_map = (array)Cache::read('file_map', '_cake_core_');
 		}
+		if (strpos($className, '..') !== false) {
+			return false;
+		}
 
 		$parts = explode('.', static::$_classMap[$className], 2);
 		list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));

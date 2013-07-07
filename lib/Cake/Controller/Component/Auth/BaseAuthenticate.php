@@ -89,6 +89,9 @@ abstract class BaseAuthenticate {
  * conditions for Model::find('first'). If the $password param is not provided
  * the password field will be present in returned array.
  *
+ * Input passwords will be hashed even when a user doesn't exist. This
+ * helps mitigate timing attacks that are attempting to find valid usernames.
+ *
  * @param string|array $username The username/identifier, or an array of find conditions.
  * @param string $password The password, only used if $username param is string.
  * @return boolean|array Either false on failure, or an array of user data.
@@ -101,9 +104,6 @@ abstract class BaseAuthenticate {
 		if (is_array($username)) {
 			$conditions = $username;
 		} else {
-			if (!$password) {
-				return false;
-			}
 			$conditions = array(
 				$model . '.' . $fields['username'] => $username
 			);
@@ -119,6 +119,7 @@ abstract class BaseAuthenticate {
 			'contain' => $this->settings['contain'],
 		));
 		if (empty($result[$model])) {
+			$this->passwordHasher()->hash($password);
 			return false;
 		}
 

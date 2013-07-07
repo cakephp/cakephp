@@ -255,7 +255,7 @@ class Helper extends Object {
  *    an array of url parameters. Using an array for URLs will allow you to leverage
  *    the reverse routing features of CakePHP.
  * @param boolean $full If true, the full base URL will be prepended to the result
- * @return string  Full translated URL with base path.
+ * @return string Full translated URL with base path.
  * @link http://book.cakephp.org/2.0/en/views/helpers.html
  */
 	public function url($url = null, $full = false) {
@@ -349,7 +349,7 @@ class Helper extends Object {
  */
 	protected function _encodeUrl($url) {
 		$path = parse_url($url, PHP_URL_PATH);
-		$parts = array_map('urldecode', explode('/', $path));
+		$parts = array_map('rawurldecode', explode('/', $path));
 		$parts = array_map('rawurlencode', $parts);
 		$encoded = implode('/', $parts);
 		return h(str_replace($path, $encoded, $url));
@@ -670,7 +670,7 @@ class Helper extends Object {
 		switch ($field) {
 			case '_method':
 				$name = $field;
-			break;
+				break;
 			default:
 				$entity = $this->entity();
 				$first = array_shift($entity);
@@ -681,9 +681,8 @@ class Helper extends Object {
 		if (is_array($options)) {
 			$options[$key] = $name;
 			return $options;
-		} else {
-			return $name;
 		}
+		return $name;
 	}
 
 /**
@@ -739,9 +738,8 @@ class Helper extends Object {
 		if (is_array($options)) {
 			$options[$key] = $result;
 			return $options;
-		} else {
-			return $result;
 		}
+		return $result;
 	}
 
 /**
@@ -925,7 +923,7 @@ class Helper extends Object {
 		do {
 			$oldstring = $this->_cleaned;
 			$this->_cleaned = preg_replace('#</*(applet|meta|xml|blink|link|style|script|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base)[^>]*>#i', "", $this->_cleaned);
-		} while ($oldstring != $this->_cleaned);
+		} while ($oldstring !== $this->_cleaned);
 		$this->_cleaned = str_replace(array("&amp;", "&lt;", "&gt;"), array("&amp;amp;", "&amp;lt;", "&amp;gt;"), $this->_cleaned);
 	}
 

@@ -30,7 +30,7 @@ use Cake\Utility\Inflector;
  *
  * @package       Cake.View
  */
-class ScaffoldView extends ThemeView {
+class ScaffoldView extends View {
 
 /**
  * Override _getViewFileName Appends special scaffolding views in.

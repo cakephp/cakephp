@@ -291,7 +291,7 @@ class ControllerTask extends BakeTask {
 		$classname = App::classname($plugin . $modelImport, 'Model');
 		if (!class_exists($modelImport)) {
 			$this->err(__d('cake_console', 'You must have a model for this class to build basic methods. Please try again.'));
-			$this->_stop();
+			return $this->_stop();
 		}
 
 		$modelObj = ClassRegistry::init($currentModelName);
