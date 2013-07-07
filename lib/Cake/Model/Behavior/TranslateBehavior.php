@@ -628,6 +628,7 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $Model Model instance
  * @param string $field The field to update.
+ * @return void
  */
 	protected function _removeField(Model $Model, $field) {
 		if (array_key_exists($field, $this->settings[$Model->alias])) {

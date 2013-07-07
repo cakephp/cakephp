@@ -247,6 +247,7 @@ class ExtractTask extends AppShell {
  * @param string $domain
  * @param string $msgid
  * @param array $details
+ * @return void
  */
 	protected function _addTranslation($domain, $msgid, $details = array()) {
 		if (empty($this->_translations[$domain][$msgid])) {
@@ -440,11 +441,29 @@ class ExtractTask extends AppShell {
 			return;
 		}
 
+		$plugins = array(null);
+		if (empty($this->params['exclude-plugins'])) {
+			$plugins = array_merge($plugins, App::objects('plugins'));
+		}
+		foreach ($plugins as $plugin) {
+			$this->_extractPluginValidationMessages($plugin);
+		}
+	}
+
+/**
+ * Extract validation messages from application or plugin models
+ *
+ * @param string $plugin Plugin name or `null` to process application models
+ * @return void
+ */
+	protected function _extractPluginValidationMessages($plugin = null) {
 		App::uses('AppModel', 'Model');
-		$plugin = null;
-		if (!empty($this->params['plugin'])) {
-			App::uses($this->params['plugin'] . 'AppModel', $this->params['plugin'] . '.Model');
-			$plugin = $this->params['plugin'] . '.';
+		if (!empty($plugin)) {
+			if (!CakePlugin::loaded($plugin)) {
+				return;
+			}
+			App::uses($plugin . 'AppModel', $plugin . '.Model');
+			$plugin = $plugin . '.';
 		}
 		$models = App::objects($plugin . 'Model', null, false);
 

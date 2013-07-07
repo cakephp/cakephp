@@ -475,7 +475,7 @@ class CakeRequest implements ArrayAccess {
  * on routing parameters.
  *
  * @param string $name The property being accessed.
- * @return bool Existence
+ * @return boolean Existence
  */
 	public function __isset($name) {
 		return isset($this->params[$name]);
@@ -579,7 +579,7 @@ class CakeRequest implements ArrayAccess {
  * e.g `addDetector('post', array('param' => 'requested', 'value' => 1)`
  *
  * @param string $name The name of the detector.
- * @param array $options  The options for the detector definition. See above.
+ * @param array $options The options for the detector definition. See above.
  * @return void
  */
 	public function addDetector($name, $options) {
@@ -693,7 +693,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
  *   While `example.co.uk` contains 2.
- * @return array of subdomains.
+ * @return array An array of subdomains.
  */
 	public function subdomains($tldLength = 1) {
 		$segments = explode('.', $this->host());

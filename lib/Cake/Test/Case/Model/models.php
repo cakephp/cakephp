@@ -2547,7 +2547,7 @@ class NumberTree extends CakeTestModel {
  * @param mixed $currentLevel
  * @param mixed $parent_id
  * @param string $prefix
- * @param bool $hierarchal
+ * @param boolean $hierarchal
  * @return void
  */
 	public function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parentId = null, $prefix = '1', $hierarchal = true) {

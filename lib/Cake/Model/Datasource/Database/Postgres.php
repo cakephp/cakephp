@@ -333,7 +333,7 @@ class Postgres extends DboSource {
  * @param string|Model $table A string or model class representing the table to be truncated
  * @param boolean $reset true for resetting the sequence, false to leave it as is.
  *    and if 1, sequences are not modified
- * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
+ * @return boolean SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table, $reset = false) {
 		$table = $this->fullTableName($table, false, false);

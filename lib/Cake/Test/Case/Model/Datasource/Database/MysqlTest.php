@@ -2508,7 +2508,7 @@ class MysqlTest extends CakeTestCase {
 /**
  * Test that array conditions with only one element work.
  *
- * @return
+ * @return void
  */
 	public function testArrayConditionsOneElement() {
 		$conditions = array('id' => array(1));

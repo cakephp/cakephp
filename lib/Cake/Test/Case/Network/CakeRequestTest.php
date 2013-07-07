@@ -33,7 +33,8 @@ class TestCakeRequest extends CakeRequest {
  * reConstruct method
  *
  * @param string $url
- * @param bool $parseEnvironment
+ * @param boolean $parseEnvironment
+ * @return void
  */
 	public function reConstruct($url = 'some/path', $parseEnvironment = true) {
 		$this->_base();
@@ -2159,6 +2160,7 @@ XML;
 /**
  * Test onlyAllow throwing exception
  *
+ * @return void
  */
 	public function testOnlyAllowException() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';

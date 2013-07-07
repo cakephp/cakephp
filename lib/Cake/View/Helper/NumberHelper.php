@@ -76,7 +76,7 @@ class NumberHelper extends AppHelper {
 /**
  * @see CakeNumber::precision()
  *
- * @param float $number	A floating point number.
+ * @param float $number A floating point number.
  * @param integer $precision The precision of the returned number.
  * @return float Formatted float.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision

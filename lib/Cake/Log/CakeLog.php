@@ -255,8 +255,8 @@ class CakeLog {
  * }}}
  *
  * @param array $levels array
- * @param bool $append true to append, false to replace
- * @return array active log levels
+ * @param boolean $append true to append, false to replace
+ * @return array Active log levels
  */
 	public static function levels($levels = array(), $append = true) {
 		if (empty(self::$_Collection)) {
@@ -278,7 +278,7 @@ class CakeLog {
 /**
  * Reset log levels to the original value
  *
- * @return array default log levels
+ * @return array Default log levels
  */
 	public static function defaultLevels() {
 		self::$_levelMap = self::$_defaultLevels;
@@ -304,7 +304,7 @@ class CakeLog {
  * Checks whether $streamName is enabled
  *
  * @param string $streamName to check
- * @return bool
+ * @return boolean
  * @throws CakeLogException
  */
 	public static function enabled($streamName) {

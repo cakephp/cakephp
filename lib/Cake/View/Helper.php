@@ -247,7 +247,7 @@ class Helper extends Object {
  *    an array of url parameters. Using an array for URLs will allow you to leverage
  *    the reverse routing features of CakePHP.
  * @param boolean $full If true, the full base URL will be prepended to the result
- * @return string  Full translated URL with base path.
+ * @return string Full translated URL with base path.
  * @link http://book.cakephp.org/2.0/en/views/helpers.html
  */
 	public function url($url = null, $full = false) {

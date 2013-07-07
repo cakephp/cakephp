@@ -73,7 +73,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * If no TestResult object is passed a new one will be created.
  * This method is run for each test method in this class
  *
- * @param  PHPUnit_Framework_TestResult $result
+ * @param PHPUnit_Framework_TestResult $result
  * @return PHPUnit_Framework_TestResult
  * @throws InvalidArgumentException
  */

@@ -599,9 +599,9 @@ class FormHelper extends AppHelper {
  *
  * @param boolean $lock Whether this field should be part of the validation
  *     or excluded as part of the unlockedFields.
- * @param string|array $field Reference to field to be secured. Should be dot separated to indicate nesting.
+ * @param string $field Reference to field to be secured. Should be dot separated to indicate nesting.
  * @param mixed $value Field value, if value should not be tampered with.
- * @return void
+ * @return mixed|null Not used yet
  */
 	protected function _secure($lock, $field = null, $value = null) {
 		if (!$field) {
@@ -649,14 +649,14 @@ class FormHelper extends AppHelper {
  *
  * ### Options:
  *
- * - `escape`  bool  Whether or not to html escape the contents of the error.
- * - `wrap`  mixed  Whether or not the error message should be wrapped in a div. If a
+ * - `escape` bool - Whether or not to html escape the contents of the error.
+ * - `wrap` mixed - Whether or not the error message should be wrapped in a div. If a
  *   string, will be used as the HTML tag to use.
- * - `class` string  The classname for the error message
+ * - `class` string - The classname for the error message
  *
  * @param string $field A field name, like "Modelname.fieldname"
  * @param string|array $text Error message as string or array of messages.
- * If array contains `attributes` key it will be used as options for error container
+ *   If array contains `attributes` key it will be used as options for error container
  * @param array $options Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::error
@@ -1029,8 +1029,8 @@ class FormHelper extends AppHelper {
 /**
  * Generates an input element
  *
- * @param type $args
- * @return type
+ * @param array $args The options for the input element
+ * @return string The generated input element
  */
 	protected function _getInput($args) {
 		extract($args);
@@ -1069,7 +1069,7 @@ class FormHelper extends AppHelper {
 /**
  * Generates input options array
  *
- * @param type $options
+ * @param array $options
  * @return array Options
  */
 	protected function _parseOptions($options) {
@@ -1100,7 +1100,7 @@ class FormHelper extends AppHelper {
 /**
  * Generates list of options for multiple select
  *
- * @param type $options
+ * @param array $options
  * @return array
  */
 	protected function _optionsOptions($options) {
@@ -1110,7 +1110,7 @@ class FormHelper extends AppHelper {
 		$varName = Inflector::variable(
 			Inflector::pluralize(preg_replace('/_id$/', '', $this->field()))
 		);
-		$varOptions = $this->_View->getVar($varName);
+		$varOptions = $this->_View->get($varName);
 		if (!is_array($varOptions)) {
 			return $options;
 		}
@@ -1124,7 +1124,7 @@ class FormHelper extends AppHelper {
 /**
  * Magically set option type and corresponding options
  *
- * @param type $options
+ * @param array $options
  * @return array
  */
 	protected function _magicOptions($options) {
@@ -1192,7 +1192,7 @@ class FormHelper extends AppHelper {
 /**
  * Generate format options
  *
- * @param type $options
+ * @param array $options
  * @return array
  */
 	protected function _getFormat($options) {
@@ -1211,8 +1211,8 @@ class FormHelper extends AppHelper {
 /**
  * Generate label for input
  *
- * @param type $fieldName
- * @param type $options
+ * @param string $fieldName
+ * @param array $options
  * @return boolean|string false or Generated label element
  */
 	protected function _getLabel($fieldName, $options) {
@@ -1234,7 +1234,7 @@ class FormHelper extends AppHelper {
 /**
  * Calculates maxlength option
  *
- * @param type $options
+ * @param array $options
  * @return array
  */
 	protected function _maxLength($options) {
@@ -1310,9 +1310,8 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName
  * @param string $label
- * @param array $options Options for the label element.
+ * @param array $options Options for the label element. 'NONE' option is deprecated and will be removed in 3.0
  * @return string Generated label element
- * @deprecated 'NONE' option is deprecated and will be removed in 3.0
  */
 	protected function _inputLabel($fieldName, $label, $options) {
 		$labelAttributes = $this->domId(array(), 'for');
@@ -1739,7 +1738,7 @@ class FormHelper extends AppHelper {
  * @param string $title The content to be wrapped by <a> tags.
  * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param array $options Array of HTML attributes.
- * @param string $confirmMessage JavaScript confirmation message.
+ * @param bool|string $confirmMessage JavaScript confirmation message.
  * @return string An `<a />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
@@ -2242,7 +2241,7 @@ class FormHelper extends AppHelper {
  * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param string $attributes Array of Attributes
+ * @param array $attributes Array of Attributes
  * @return string Completed minute select input.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::minute
  */
@@ -2302,7 +2301,7 @@ class FormHelper extends AppHelper {
  * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param string $attributes Array of Attributes
+ * @param array|string $attributes Array of Attributes
  * @return string Completed meridian select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::meridian
  */
@@ -2352,7 +2351,7 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $dateFormat DMY, MDY, YMD, or null to not generate date inputs.
  * @param string $timeFormat 12, 24, or null to not generate time inputs.
- * @param string $attributes array of Attributes
+ * @param array|string $attributes array of Attributes
  * @return string Generated set of select boxes for the date and time formats chosen.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::dateTime
  */

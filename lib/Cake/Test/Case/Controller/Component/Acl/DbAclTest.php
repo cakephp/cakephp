@@ -498,7 +498,7 @@ class DbAclTest extends CakeTestCase {
  * Generates a list of the current aro and aco structures and a grid dump of the permissions that are defined
  * Only designed to work with the db based ACL
  *
- * @param bool $treesToo
+ * @param boolean $treesToo
  * @return void
  */
 	protected function _debug($printTreesToo = false) {
