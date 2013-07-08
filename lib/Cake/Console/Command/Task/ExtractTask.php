@@ -443,7 +443,7 @@ class ExtractTask extends AppShell {
 
 		$plugins = array(null);
 		if (empty($this->params['exclude-plugins'])) {
-			$plugins = array_merge($plugins, App::objects('plugins'));
+			$plugins = array_merge($plugins, App::objects('plugin', null, false));
 		}
 		foreach ($plugins as $plugin) {
 			$this->_extractPluginValidationMessages($plugin);
