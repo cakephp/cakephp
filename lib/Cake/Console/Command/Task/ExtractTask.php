@@ -447,7 +447,7 @@ class ExtractTask extends Shell {
 
 		$plugins = array(null);
 		if (empty($this->params['exclude-plugins'])) {
-			$plugins = array_merge($plugins, App::objects('plugins'));
+			$plugins = array_merge($plugins, App::objects('Plugin', null, false));
 		}
 		foreach ($plugins as $plugin) {
 			$this->_extractPluginValidationMessages($plugin);
