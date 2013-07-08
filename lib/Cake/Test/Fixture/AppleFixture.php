@@ -26,13 +26,6 @@
 class AppleFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Apple'
- */
-	public $name = 'Apple';
-
-/**
  * fields property
  *
  * @var array

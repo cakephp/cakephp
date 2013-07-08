@@ -26,13 +26,6 @@
 class BinaryTestFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'BinaryTest'
- */
-	public $name = 'BinaryTest';
-
-/**
  * fields property
  *
  * @var array

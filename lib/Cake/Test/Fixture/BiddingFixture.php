@@ -26,13 +26,6 @@
 class BiddingFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Bidding'
- */
-	public $name = 'Bidding';
-
-/**
  * fields property
  *
  * @var array

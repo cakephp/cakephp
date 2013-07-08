@@ -26,13 +26,6 @@
 class ArmorFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Armor'
- */
-	public $name = 'Armor';
-
-/**
  * Datasource
  *
  * Used for Multi database fixture test

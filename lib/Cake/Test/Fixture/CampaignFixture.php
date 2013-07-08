@@ -27,13 +27,6 @@
 class CampaignFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Campaign'
- */
-	public $name = 'Campaign';
-
-/**
  * fields property
  *
  * @var array

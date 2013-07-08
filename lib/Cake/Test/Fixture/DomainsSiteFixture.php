@@ -25,18 +25,9 @@
 class DomainsSiteFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Domain'
- * @access public
- */
-	public $name = 'DomainsSite';
-
-/**
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -51,7 +42,6 @@ class DomainsSiteFixture extends CakeTestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('site_id' => 1, 'domain_id' => 1, 'active' => true, 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),

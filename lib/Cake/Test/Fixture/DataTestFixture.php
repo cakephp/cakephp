@@ -26,13 +26,6 @@
 class DataTestFixture extends CakeTestFixture {
 
 /**
- * Name property
- *
- * @var string 'DataTest'
- */
-	public $name = 'DataTest';
-
-/**
  * Fields property
  *
  * @var array

@@ -26,13 +26,6 @@
 class AcoActionFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'AcoAction'
- */
-	public $name = 'AcoAction';
-
-/**
  * fields property
  *
  * @var array

@@ -26,13 +26,6 @@
 class InnoFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Article'
- */
-	public $name = 'Inno';
-
-/**
  * fields property
  *
  * @var array

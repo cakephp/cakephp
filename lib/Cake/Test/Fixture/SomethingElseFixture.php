@@ -26,13 +26,6 @@
 class SomethingElseFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'SomethingElse'
- */
-	public $name = 'SomethingElse';
-
-/**
  * fields property
  *
  * @var array

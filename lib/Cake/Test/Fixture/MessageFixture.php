@@ -26,13 +26,6 @@
 class MessageFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Message'
- */
-	public $name = 'Message';
-
-/**
  * fields property
  *
  * @var array

@@ -26,13 +26,6 @@
 class AdvertisementFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Advertisement'
- */
-	public $name = 'Advertisement';
-
-/**
  * fields property
  *
  * @var array

@@ -27,13 +27,6 @@
 class AfterTreeFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'AfterTree'
- */
-	public $name = 'AfterTree';
-
-/**
  * fields property
  *
  * @var array

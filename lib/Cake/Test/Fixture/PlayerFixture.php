@@ -26,13 +26,6 @@
 class PlayerFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Player'
- */
-	public $name = 'Player';
-
-/**
  * fields property
  *
  * @var array

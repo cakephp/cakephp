@@ -30,13 +30,6 @@
 class TranslateWithPrefixFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Translate'
- */
-	public $name = 'TranslateWithPrefix';
-
-/**
  * table property
  *
  * @var string 'i18n'
