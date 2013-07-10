@@ -91,11 +91,11 @@ class Inflector {
 			'testis' => 'testes',
 			'trilby' => 'trilbys',
 			'turf' => 'turfs',
-                        'potato' => 'potatoes',
-                        'hero' => 'heroes',
-                        'tooth' => 'teeth',
-                        'goose' => 'geese',
-                        'foot' => 'feet'
+			'potato' => 'potatoes',
+			'hero' => 'heroes',
+			'tooth' => 'teeth',
+			'goose' => 'geese',
+			'foot' => 'feet'
 		)
 	);
 
