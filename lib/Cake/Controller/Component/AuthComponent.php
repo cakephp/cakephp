@@ -409,8 +409,8 @@ class AuthComponent extends Component {
 		$this->flash($this->authError);
 		if ($this->unauthorizedRedirect === true) {
 			$default = '/';
-			if (!empty($this->loginRedirect)) {
-				$default = $this->loginRedirect;
+			if (!empty($this->loginAction)) {
+				$default = $this->loginAction;
 			}
 			$url = $controller->referer($default, true);
 		} else {
