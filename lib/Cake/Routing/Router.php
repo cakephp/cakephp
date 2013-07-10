@@ -692,7 +692,7 @@ class Router {
 			list($full, $options) = array($options, array());
 		}
 		$urlType = gettype($url);
-		$hasColonSlash = $hasLeadingSlash = $plainString = false;
+		$hasLeadingSlash = $plainString = false;
 
 		if ($urlType === 'string') {
 			$plainString = (
@@ -700,10 +700,12 @@ class Router {
 				strpos($url, 'mailto:') === 0 ||
 				strpos($url, 'tel:') === 0 ||
 				strpos($url, 'sms:') === 0 ||
-				strpos($url, '#') === 0
+				strpos($url, '#') === 0 ||
+				strpos($url, '?') === 0 ||
+				strpos($url, '//') === 0 ||
+				strpos($url, '://') !== false
 			);
 
-			$hasColonSlash = strpos($url, '://') !== false;
 			$hasLeadingSlash = isset($url[0]) ? $url[0] === '/' : false;
 		}
 
@@ -777,7 +779,6 @@ class Router {
 		} elseif (
 			$urlType === 'string' &&
 			!$hasLeadingSlash &&
-			!$hasColonSlash &&
 			!$plainString
 		) {
 			// named route.
@@ -796,7 +797,7 @@ class Router {
 			$output = static::$_routes->match($url);
 		} else {
 			// String urls.
-			if ($hasColonSlash || $plainString) {
+			if ($plainString) {
 				return $url;
 			}
 			$output = $url;
