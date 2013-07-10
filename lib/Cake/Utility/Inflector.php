@@ -40,7 +40,7 @@ class Inflector {
 			'/(x|ch|ss|sh)$/i' => '\1es',
 			'/([^aeiouy]|qu)y$/i' => '\1ies',
 			'/(hive)$/i' => '\1s',
-			'/(?:([^f])fe|([lr])f)$/i' => '\1\2ves',
+			'/(?:([^f])fe|([lre])f)$/i' => '\1\2ves',
 			'/sis$/i' => 'ses',
 			'/([ti])um$/i' => '\1a',
 			'/(p)erson$/i' => '\1eople',
@@ -90,7 +90,12 @@ class Inflector {
 			'soliloquy' => 'soliloquies',
 			'testis' => 'testes',
 			'trilby' => 'trilbys',
-			'turf' => 'turfs'
+			'turf' => 'turfs',
+			'potato' => 'potatoes',
+			'hero' => 'heroes',
+			'tooth' => 'teeth',
+			'goose' => 'geese',
+			'foot' => 'feet'
 		)
 	);
 
@@ -120,11 +125,11 @@ class Inflector {
 			'/(m)ovies$/i' => '\1\2ovie',
 			'/(s)eries$/i' => '\1\2eries',
 			'/([^aeiouy]|qu)ies$/i' => '\1y',
-			'/([lr])ves$/i' => '\1f',
+			'/([lre])ves$/i' => '\1f',
+			'/([^fo])ves$/i' => '\1fe',
 			'/(tive)s$/i' => '\1',
 			'/(hive)s$/i' => '\1',
 			'/(drive)s$/i' => '\1',
-			'/([^fo])ves$/i' => '\1fe',
 			'/(^analy)ses$/i' => '\1sis',
 			'/(analy|diagno|^ba|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' => '\1\2sis',
 			'/([ti])a$/i' => '\1um',
