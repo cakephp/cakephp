@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
+use Cake\Event\EventListener;
 use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
@@ -29,9 +30,27 @@ use Cake\Utility\ObjectCollection;
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
+ *
+ * ## Callback methods
+ *
+ * Helpers support a number of callback methods. These callbacks allow you to hook into
+ * the various view lifecycle events and either modify existing view content or perform
+ * other application specific logic. The events are not implemented by this base class, as
+ * implementing a callback method subscribes a helper to the related event. The callback methods
+ * are as follows:
+ *
+ * - `beforeRender(Event $event, $viewFile)` - beforeRender is called before the view file is rendered.
+ * - `afterRender(Event $event, $viewFile)` - afterRender is called after the view file is rendered
+ *   but before the layout has been rendered.
+ * - beforeLayout(Event $event, $layoutFile)` - beforeLayout is called before the layout is rendered.
+ * - `afterLayout(Event $event, $layoutFile)` - afterLayout is called after the layout has rendered.
+ * - `beforeRenderFile(Event $event, $viewFile)` - Called before any view fragment is rendered.
+ * - `afterRenderFile(Event $event, $viewFile, $content)` - Called after any view fragment is rendered.
+ *   If a listener returns a non-null value, the output of the rendered file will be set to that.
+ *
  * @package       Cake.View
  */
-class Helper extends Object {
+class Helper extends Object implements EventListener {
 
 /**
  * Settings for this helper.
@@ -792,73 +811,32 @@ class Helper extends Object {
 	}
 
 /**
- * Before render callback. beforeRender is called before the view file is rendered.
+ * Get the View callbacks this helper is interested in.
  *
- * Overridden in subclasses.
+ * By defining one of the callback methods a helper is assumed
+ * to be interested in the related event.
  *
- * @param string $viewFile The view file that is going to be rendered
- * @return void
+ * Override this method if you need to add non-conventional event listeners.
+ * Or if you want helpers to listen to non-standard events.
+ *
+ * @return array
  */
-	public function beforeRender($viewFile) {
-	}
-
-/**
- * After render callback. afterRender is called after the view file is rendered
- * but before the layout has been rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $viewFile The view file that was rendered.
- * @return void
- */
-	public function afterRender($viewFile) {
-	}
-
-/**
- * Before layout callback. beforeLayout is called before the layout is rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $layoutFile The layout about to be rendered.
- * @return void
- */
-	public function beforeLayout($layoutFile) {
-	}
-
-/**
- * After layout callback. afterLayout is called after the layout has rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $layoutFile The layout file that was rendered.
- * @return void
- */
-	public function afterLayout($layoutFile) {
-	}
-
-/**
- * Before render file callback.
- * Called before any view fragment is rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $viewFile The file about to be rendered.
- * @return void
- */
-	public function beforeRenderFile($viewfile) {
-	}
-
-/**
- * After render file callback.
- * Called after any view fragment is rendered.
- *
- * Overridden in subclasses.
- *
- * @param string $viewFile The file just be rendered.
- * @param string $content The content that was rendered.
- * @return void
- */
-	public function afterRenderFile($viewfile, $content) {
+	public function implementedEvents() {
+		$eventMap = [
+			'View.beforeRenderFile' => 'beforeRenderFile',
+			'View.afterRenderFile' => 'afterRenderFile',
+			'View.beforeRender' => 'beforeRender',
+			'View.afterRender' => 'afterRender',
+			'View.beforeLayout' => 'beforeLayout',
+			'View.afterLayout' => 'afterLayout'
+		];
+		$events = [];
+		foreach ($eventMap as $event => $method) {
+			if (method_exists($this, $method)) {
+				$events[$event] = $method;
+			}
+		}
+		return $events;
 	}
 
 /**

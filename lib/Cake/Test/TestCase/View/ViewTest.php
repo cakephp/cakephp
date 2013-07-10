@@ -699,13 +699,16 @@ class ViewTest extends TestCase {
  *
  */
 	public function testElementCallbacks() {
-		$mock = $this->getMock('Cake\View\Helper', [], [$this->View]);
-		$mock->expects($this->at(0))->method('beforeRender');
-		$mock->expects($this->at(1))->method('afterRender');
-		$this->View->Helpers->set('Test', $mock);
-		$this->View->Helpers->enable('Test');
+		$count = 0;
+		$callback = function ($event, $file) use (&$count) {
+			$count++;
+		};
+		$events = $this->View->getEventManager();
+		$events->attach($callback, 'View.beforeRender');
+		$events->attach($callback, 'View.afterRender');
 
 		$this->View->element('test_element', array(), array('callbacks' => true));
+		$this->assertEquals(2, $count);
 	}
 
 /**
@@ -854,10 +857,11 @@ class ViewTest extends TestCase {
  */
 	public function testHelperCallbackTriggering() {
 		$View = new View($this->PostsController);
-		$View->helpers = array();
-		$View->Helpers = $this->getMock('Cake\View\HelperCollection', array('trigger'), array($View));
 
-		$View->Helpers->expects($this->at(0))->method('trigger')
+		$manager = $this->getMock('Cake\Event\EventManager');
+		$View->setEventManager($manager);
+
+		$manager->expects($this->at(0))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
@@ -865,7 +869,8 @@ class ViewTest extends TestCase {
 					$this->attributeEqualTo('_subject', $View)
 				)
 			);
-		$View->Helpers->expects($this->at(1))->method('trigger')
+
+		$manager->expects($this->at(1))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
@@ -874,7 +879,7 @@ class ViewTest extends TestCase {
 				)
 			);
 
-		$View->Helpers->expects($this->at(2))->method('trigger')
+		$manager->expects($this->at(2))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
@@ -882,7 +887,8 @@ class ViewTest extends TestCase {
 					$this->attributeEqualTo('_subject', $View)
 				)
 			);
-		$View->Helpers->expects($this->at(3))->method('trigger')
+
+		$manager->expects($this->at(3))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
@@ -891,7 +897,7 @@ class ViewTest extends TestCase {
 				)
 			);
 
-		$View->Helpers->expects($this->at(4))->method('trigger')
+		$manager->expects($this->at(4))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
@@ -900,7 +906,7 @@ class ViewTest extends TestCase {
 				)
 			);
 
-		$View->Helpers->expects($this->at(5))->method('trigger')
+		$manager->expects($this->at(5))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
@@ -909,7 +915,7 @@ class ViewTest extends TestCase {
 				)
 			);
 
-		$View->Helpers->expects($this->at(6))->method('trigger')
+		$manager->expects($this->at(6))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
@@ -918,7 +924,7 @@ class ViewTest extends TestCase {
 				)
 			);
 
-		$View->Helpers->expects($this->at(7))->method('trigger')
+		$manager->expects($this->at(7))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),

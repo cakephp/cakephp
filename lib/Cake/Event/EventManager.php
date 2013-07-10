@@ -1,8 +1,5 @@
 <?php
 /**
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -10,11 +7,10 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	  Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link		  http://cakephp.org CakePHP(tm) Project
- * @package		  Cake.Event
- * @since		  CakePHP(tm) v 2.1
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link http://cakephp.org CakePHP(tm) Project
+ * @since CakePHP(tm) v 2.1
+ * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Event;
 
@@ -25,8 +21,6 @@ use Cake\Error;
  * data to them, and firing them in the correct order, when associated events are triggered. You
  * can create multiple instances of this object to manage local events or keep a single instance
  * and pass it around to manage all events in your app.
- *
- * @package Cake.Event
  */
 class EventManager {
 
@@ -82,7 +76,7 @@ class EventManager {
 	}
 
 /**
- * Adds a new listener to an event. Listeners
+ * Adds a new listener to an event.
  *
  * @param callback|Cake\Event\EventListener $callable PHP valid callback type or instance of Cake\Event\EventListener to be called
  * when the event named with $eventKey is triggered. If a Cake\Event\EventListener instance is passed, then the `implementedEvents`
@@ -92,10 +86,9 @@ class EventManager {
  * @param string $eventKey The event unique identifier name with which the callback will be associated. If $callable
  * is an instance of Cake\Event\EventListener this argument will be ignored
  *
- * @param array $options used to set the `priority` and `passParams` flags to the listener.
+ * @param array $options used to set the `priority` flag to the listener. In the future more options may be added.
  * Priorities are handled like queues, and multiple attachments added to the same priority queue will be treated in
- * the order of insertion. `passParams` means that the event data property will be converted to function arguments
- * when the listener is called. If $called is an instance of Cake\Event\EventListener, this parameter will be ignored
+ * the order of insertion. 
  *
  * @return void
  * @throws InvalidArgumentException When event key is missing or callable is not an
@@ -109,10 +102,9 @@ class EventManager {
 			$this->_attachSubscriber($callable);
 			return;
 		}
-		$options = $options + array('priority' => static::$defaultPriority, 'passParams' => false);
+		$options = $options + array('priority' => static::$defaultPriority);
 		$this->_listeners[$eventKey][$options['priority']][] = array(
 			'callable' => $callable,
-			'passParams' => $options['passParams'],
 		);
 	}
 
@@ -243,11 +235,7 @@ class EventManager {
 			if ($event->isStopped()) {
 				break;
 			}
-			if ($listener['passParams'] === true) {
-				$result = call_user_func_array($listener['callable'], $event->data);
-			} else {
-				$result = call_user_func($listener['callable'], $event);
-			}
+			$result = $this->_callListener($listener['callable'], $event);
 			if ($result === false) {
 				$event->stopPropagation();
 			}
@@ -255,6 +243,37 @@ class EventManager {
 				$event->result = $result;
 			}
 			continue;
+		}
+	}
+
+/**
+ * Calls a listener.
+ *
+ * Direct callback invocation is up to 30% faster than using call_user_func_array.
+ * Optimize the common cases to provide improved performance.
+ *
+ * @param callable $listener The listener to trigger.
+ * @param Event $event
+ * @return mixed The result of the $listener function.
+ */
+	protected function _callListener(callable $listener, Event $event) {
+		$data = $event->data();
+		$length = count($data);
+		if ($length) {
+			$data = array_values($data);
+		}
+		switch ($length) {
+			case 0:
+				return $listener($event);
+			case 1:
+				return $listener($event, $data[0]);
+			case 2:
+				return $listener($event, $data[0], $data[1]);
+			case 3:
+				return $listener($event, $data[0], $data[1], $data[2]);
+			default:
+				array_unshift($data, $event);
+				return call_user_func_array($listener, $data);
 		}
 	}
 

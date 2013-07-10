@@ -1,8 +1,5 @@
 <?php
 /**
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -10,11 +7,10 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	  Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link		  http://cakephp.org CakePHP(tm) Project
- * @package		  Cake.Observer
- * @since		  CakePHP(tm) v 2.1
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link http://cakephp.org CakePHP(tm) Project
+ * @since CakePHP(tm) v 2.1
+ * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Event;
 
@@ -65,10 +61,6 @@ class Event {
 /**
  * Constructor
  *
- * @param string $name Name of the event
- * @param object $subject the object that this event applies to (usually the object that is generating the event)
- * @param mixed $data any value you wish to be transported with this event to it can be read by listeners
- *
  * ## Examples of usage:
  *
  * {{{
@@ -76,6 +68,9 @@ class Event {
  *	$event = new Event('User.afterRegister', $UserModel);
  * }}}
  *
+ * @param string $name Name of the event
+ * @param object $subject the object that this event applies to (usually the object that is generating the event)
+ * @param array $data any value you wish to be transported with this event to it can be read by listeners
  */
 	public function __construct($name, $subject = null, $data = null) {
 		$this->_name = $name;
@@ -129,6 +124,15 @@ class Event {
  */
 	public function isStopped() {
 		return $this->_stopped;
+	}
+
+/**
+ * Access the event data/payload.
+ *
+ * @return array
+ */
+	public function data() {
+		return (array)$this->data;
 	}
 
 }

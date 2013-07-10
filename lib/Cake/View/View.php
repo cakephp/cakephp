@@ -305,13 +305,6 @@ class View extends Object {
 	protected $_eventManager = null;
 
 /**
- * Whether the event manager was already configured for this object
- *
- * @var boolean
- */
-	protected $_eventManagerConfigured = false;
-
-/**
  * Constant for view file type 'view'
  */
 	const TYPE_VIEW = 'view';
@@ -366,11 +359,19 @@ class View extends Object {
 		if (empty($this->_eventManager)) {
 			$this->_eventManager = new EventManager();
 		}
-		if (!$this->_eventManagerConfigured) {
-			$this->_eventManager->attach($this->Helpers);
-			$this->_eventManagerConfigured = true;
-		}
 		return $this->_eventManager;
+	}
+
+/**
+ * Set the Eventmanager used by View.
+ *
+ * Primarily useful for testing.
+ *
+ * @param Cake\Event\EventManager $eventManager.
+ * @return void
+ */
+	public function setEventManager(EventManager $eventManager) {
+		$this->_eventManager = $eventManager;
 	}
 
 /**
@@ -833,7 +834,7 @@ class View extends Object {
  * @return void
  */
 	public function loadHelpers() {
-		$helpers = HelperCollection::normalizeObjectArray($this->helpers);
+		$helpers = ObjectCollection::normalizeObjectArray($this->helpers);
 		foreach ($helpers as $properties) {
 			list(, $class) = pluginSplit($properties['class']);
 			$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
@@ -864,9 +865,10 @@ class View extends Object {
 		$content = $this->_evaluate($viewFile, $data);
 
 		$afterEvent = new Event('View.afterRenderFile', $this, array($viewFile, $content));
-		$afterEvent->modParams = 1;
 		$eventManager->dispatch($afterEvent);
-		$content = $afterEvent->data[1];
+		if (isset($afterEvent->result)) {
+			$content = $afterEvent->result;
+		}
 
 		if (isset($this->_parents[$viewFile])) {
 			$this->_stack[] = $this->fetch('content');

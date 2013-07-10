@@ -1,5 +1,4 @@
 <?php
-use Cake\Cache\Cache;
 use Cake\Model\ConnectionManager;
 use Cake\Core\Configure;
 ?>
@@ -16,36 +15,6 @@ use Cake\Core\Configure;
 		?>
 	</span>
 	<!--/nocache-->
-</p>
-<p>
-	<span class="notice">
-		<?php
-			echo __d('cake', 'Your cache is ');
-			if (Cache::engine('default')):
-				echo __d('cake', 'set up and initialized properly.');
-				$settings = Cache::settings();
-				echo '<p>' . $settings['engine'];
-				echo __d('cake', ' is being used to cache, to change this edit App/Config/cache.php ');
-				echo '</p>';
-
-				echo 'Settings: <ul>';
-				foreach ($settings as $name => $value):
-					if (is_array($value)):
-						$value = join(',', $value);
-					endif;
-					echo '<li>' . $name . ': ' . $value . '</li>';
-				endforeach;
-				echo '</ul>';
-
-			else:
-				echo __d('cake', 'NOT working.');
-				echo '<br />';
-				if (is_writable(TMP)):
-					echo __d('cake', 'Edit: App/Config/cache.php to insure you have the newset version of this file and the variable $cakeCache set properly');
-				endif;
-			endif;
-		?>
-	</span>
 </p>
 <p>
 	<span class="notice">
