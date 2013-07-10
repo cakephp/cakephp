@@ -988,12 +988,14 @@ class HelperTest extends TestCase {
 		), App::RESET);
 		Plugin::loadAll();
 
+		$events = $this->getMock('\Cake\Event\EventManager');
+		$this->View->setEventManager($events);
+
+		$events->expects($this->never())
+			->method('attach');
+
 		$Helper = new TestHelper($this->View);
 		$Helper->OtherHelper;
-
-		$result = $this->View->Helpers->enabled();
-		$expected = array();
-		$this->assertEquals($expected, $result, 'Helper helpers were attached to the collection.');
 	}
 
 /**

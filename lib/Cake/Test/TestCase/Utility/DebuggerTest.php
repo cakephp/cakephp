@@ -365,7 +365,6 @@ object(Cake\View\View) {
 	[protected] _currentType => ''
 	[protected] _stack => array()
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
-	[protected] _eventManagerConfigured => false
 }
 TEXT;
 

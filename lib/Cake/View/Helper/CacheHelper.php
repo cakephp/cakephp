@@ -64,10 +64,11 @@ class CacheHelper extends Helper {
 /**
  * Parses the view file and stores content for cache file building.
  *
+ * @param Cake\Event\Event $event The event instance.
  * @param string $viewFile
  * @return void
  */
-	public function afterRenderFile($viewFile, $output) {
+	public function afterRenderFile($event, $viewFile, $output) {
 		if ($this->_enabled()) {
 			return $this->_parseContent($viewFile, $output);
 		}
@@ -76,10 +77,11 @@ class CacheHelper extends Helper {
 /**
  * Parses the layout file and stores content for cache file building.
  *
+ * @param Cake\Event\Event $event The event instance.
  * @param string $layoutFile
  * @return void
  */
-	public function afterLayout($layoutFile) {
+	public function afterLayout($event, $layoutFile) {
 		if ($this->_enabled()) {
 			$this->_View->assign(
 				'content',
