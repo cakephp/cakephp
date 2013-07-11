@@ -353,6 +353,9 @@ class Mysql extends DboSource {
 		if (isset($conditions['joins'])) {
 			$query['joins'] = $conditions['joins'];
 			unset($conditions['joins']);
+			if (!$conditions) {
+				$conditions = true;
+			}
 		}
 		
 		if (!$this->_useAlias) {
