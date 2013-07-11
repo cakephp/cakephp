@@ -17,7 +17,7 @@ use Cake\Utility\Inflector;
 
 echo "<?php\n";
 ?>
-namespace <?php echo $baseNamespace; ?>\TestCase\<?php echo $subNamespace ?>;
+namespace <?php echo $baseNamespace; ?>\Test\TestCase\<?php echo $subNamespace ?>;
 
 <?php foreach ($uses as $dependency): ?>
 use <?php echo $dependency; ?>;
