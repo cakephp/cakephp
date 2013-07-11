@@ -162,7 +162,7 @@ class ExceptionRenderer {
 			$controller = new ErrorController($request, $response);
 			$controller->startupProcess();
 		} catch (\Exception $e) {
-			if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
+			if (!empty($controller) && isset($controller->RequestHandler)) {
 				$controller->RequestHandler->startup($controller);
 			}
 		}

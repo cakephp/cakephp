@@ -20,6 +20,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Error\ExceptionRenderer;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\Fixture\TestModel;
@@ -59,7 +60,7 @@ class BlueberryComponent extends Component {
  *
  * @return void
  */
-	public function initialize(Controller $controller) {
+	public function initialize(Event $event, Controller $controller) {
 		$this->testName = 'BlueberryComponent';
 	}
 
@@ -91,7 +92,7 @@ class TestErrorController extends Controller {
  *
  * @return void
  */
-	public function beforeRender() {
+	public function beforeRender(Event $event) {
 		echo $this->Blueberry->testName;
 	}
 

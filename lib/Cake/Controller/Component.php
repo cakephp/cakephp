@@ -15,7 +15,9 @@
 namespace Cake\Controller;
 
 use Cake\Core\Object;
+use Cake\Event\Event;
 use Cake\Event\EventListener;
+use Cake\Utility\ObjectCollection;
 
 /**
  * Base class for an individual Component. Components provide reusable bits of
@@ -30,9 +32,17 @@ use Cake\Event\EventListener;
  * - `initialize()` - Fired before the controller's beforeFilter method.
  * - `startup()` - Fired after the controller's beforeFilter method.
  * - `beforeRender()` - Fired before the view + layout are rendered.
- * - `shutdown()` - Fired after the action is complete and the view has been rendered
+ * - `shutdown()` - Fired after the action is complete and the view has been rendered.
  *    but before Controller::afterFilter().
  * - `beforeRedirect()` - Fired before a redirect() is done.
+ *
+ * Each callback has a slightly different signature:
+ *
+ * - `intitalize(Event $event, Controller $controller)`
+ * - `startup(Event $event, Controller $controller)`
+ * - `beforeRender(Event $event, Controller $controller)`
+ * - `beforeRedirect(Event $event, Controller $controller, $url, $status, $exit)`
+ * - `shutdown(Event $event, Controller $controller)`
  *
  * @package       Cake.Controller
  * @link          http://book.cakephp.org/2.0/en/controllers/components.html
@@ -79,7 +89,7 @@ class Component extends Object implements EventListener {
 		$this->settings = $settings;
 		$this->_set($settings);
 		if (!empty($this->components)) {
-			$this->_componentMap = ComponentCollection::normalizeObjectArray($this->components);
+			$this->_componentMap = ObjectCollection::normalizeObjectArray($this->components);
 		}
 	}
 
@@ -102,42 +112,46 @@ class Component extends Object implements EventListener {
 /**
  * Called before the Controller::beforeFilter().
  *
+ * @param Event $event An Event instance
  * @param Controller $controller Controller with components to initialize
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::initialize
  */
-	public function initialize(Controller $controller) {
+	public function initialize(Event $event, Controller $controller) {
 	}
 
 /**
  * Called after the Controller::beforeFilter() and before the controller action
  *
+ * @param Event $event An Event instance
  * @param Controller $controller Controller with components to startup
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::startup
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event, Controller $controller) {
 	}
 
 /**
  * Called before the Controller::beforeRender(), and before
  * the view class is loaded, and before Controller::render()
  *
+ * @param Event $event An Event instance
  * @param Controller $controller Controller with components to beforeRender
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::beforeRender
  */
-	public function beforeRender(Controller $controller) {
+	public function beforeRender(Event $event, Controller $controller) {
 	}
 
 /**
  * Called after Controller::render() and before the output is printed to the browser.
  *
+ * @param Event $event An Event instance
  * @param Controller $controller Controller with components to shutdown
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::shutdown
  */
-	public function shutdown(Controller $controller) {
+	public function shutdown(Event $event, Controller $controller) {
 	}
 
 /**
@@ -152,6 +166,7 @@ class Component extends Object implements EventListener {
  * If your response is a string or an array that does not contain a 'url' key it will
  * be used as the new URL to redirect to.
  *
+ * @param Event $event An Event instance
  * @param Controller $controller Controller with components to beforeRedirect
  * @param string|array $url Either the string or URL array that is being redirected to.
  * @param integer $status The status code of the redirect
@@ -159,7 +174,7 @@ class Component extends Object implements EventListener {
  * @return array|void Either an array or null.
  * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::beforeRedirect
  */
-	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
+	public function beforeRedirect(Event $event, Controller $controller, $url, $status = null, $exit = true) {
 	}
 
 /**
@@ -190,4 +205,5 @@ class Component extends Object implements EventListener {
 		}
 		return $events;
 	}
+
 }

@@ -141,7 +141,7 @@ class SecurityComponentTest extends TestCase {
 		$request = new Request('posts/index');
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
 		$this->Controller = new SecurityTestController($request);
-		$this->Controller->Components->init($this->Controller);
+		$this->Controller->constructClasses();
 		$this->Controller->Security = $this->Controller->TestSecurity;
 		$this->Controller->Security->blackHoleCallback = 'fail';
 		$this->Security = $this->Controller->Security;

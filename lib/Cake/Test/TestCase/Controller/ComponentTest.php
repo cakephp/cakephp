@@ -118,9 +118,7 @@ class ComponentTest extends TestCase {
 		$Controller->components = array('SomethingWithCookie');
 		$Controller->uses = false;
 		$Controller->constructClasses();
-		$Controller->Components->trigger('initialize', array(&$Controller));
-		$Controller->beforeFilter();
-		$Controller->Components->trigger('startup', array(&$Controller));
+		$Controller->startupProcess();
 
 		$this->assertInstanceOf('TestApp\Controller\Component\SomethingWithCookieComponent', $Controller->SomethingWithCookie);
 		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $Controller->SomethingWithCookie->Cookie);

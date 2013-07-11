@@ -23,6 +23,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
@@ -204,10 +205,11 @@ class CookieComponent extends Component {
 /**
  * Start CookieComponent for use in the controller
  *
+ * @param Event $event An Event instance
  * @param Controller $controller
  * @return void
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event, Controller $controller) {
 		$this->_expire($this->time);
 
 		$this->_values[$this->name] = array();

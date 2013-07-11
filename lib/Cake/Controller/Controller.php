@@ -17,7 +17,6 @@ namespace Cake\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
-use Cake\Core\ObjectCollection;
 use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Event\Event;
@@ -29,6 +28,7 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
+use Cake\Utility\ObjectCollection;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\ViewVarsTrait;
 use Cake\View\View;
@@ -565,8 +565,8 @@ class Controller extends Object implements EventListener {
 		return array(
 			'Controller.initialize' => 'beforeFilter',
 			'Controller.beforeRender' => 'beforeRender',
-			'Controller.beforeRedirect' => array('callable' => 'beforeRedirect', 'passParams' => true),
-			'Controller.shutdown' => 'afterFilter'
+			'Controller.beforeRedirect' => 'beforeRedirect',
+			'Controller.shutdown' => 'afterFilter',
 		);
 	}
 
@@ -979,20 +979,22 @@ class Controller extends Object implements EventListener {
  * Called before the controller action. You can use this method to configure and customize components
  * or perform logic that needs to happen before each controller action.
  *
+ * @param Event $event An Event instance
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
-	public function beforeFilter() {
+	public function beforeFilter(Event $event) {
 	}
 
 /**
  * Called after the controller action is run, but before the view is rendered. You can use this method
  * to perform logic or set view variables that are required on every request.
  *
+ * @param Event $event An Event instance
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
-	public function beforeRender() {
+	public function beforeRender(Event $event) {
 	}
 
 /**
@@ -1004,6 +1006,7 @@ class Controller extends Object implements EventListener {
  * return a string which will be interpreted as the url to redirect to or return associative array with
  * key 'url' and optionally 'status' and 'exit'.
  *
+ * @param Event $event An Event instance
  * @param string|array $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
@@ -1014,16 +1017,17 @@ class Controller extends Object implements EventListener {
  *   array with the keys url, status and exit to be used by the redirect method.
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
-	public function beforeRedirect($url, $status = null, $exit = true) {
+	public function beforeRedirect(Event $event, $url, $status = null, $exit = true) {
 	}
 
 /**
  * Called after the controller action is run and rendered.
  *
+ * @param Event $event An Event instance
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
-	public function afterFilter() {
+	public function afterFilter(Event $event) {
 	}
 
 /**

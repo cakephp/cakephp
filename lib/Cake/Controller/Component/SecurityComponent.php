@@ -19,6 +19,7 @@ use Cake\Controller\ComponentCollection;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -216,10 +217,11 @@ class SecurityComponent extends Component {
 /**
  * Component startup. All security checking happens here.
  *
+ * @param Event $event An Event instance
  * @param Controller $controller Instantiating controller
  * @return void
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event, Controller $controller) {
 		$this->request = $controller->request;
 		$this->_action = $this->request->params['action'];
 		$this->_methodsRequired($controller);
