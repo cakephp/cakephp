@@ -15,6 +15,7 @@
 namespace Cake\Controller;
 
 use Cake\Core\Object;
+use Cake\Event\EventListener;
 
 /**
  * Base class for an individual Component. Components provide reusable bits of
@@ -37,7 +38,7 @@ use Cake\Core\Object;
  * @link          http://book.cakephp.org/2.0/en/controllers/components.html
  * @see Controller::$components
  */
-class Component extends Object {
+class Component extends Object implements EventListener {
 
 /**
  * Component collection class used to lazy load components.
@@ -161,4 +162,32 @@ class Component extends Object {
 	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
 	}
 
+/**
+ * Get the Controller callbacks this Component is interested in.
+ *
+ * Uses Conventions to map controller events to standard component
+ * callback method names. By defining one of the callback methods a 
+ * component is assumed to be interested in the related event.
+ *
+ * Override this method if you need to add non-conventional event listeners.
+ * Or if you want components to listen to non-standard events.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		$eventMap = [
+			'Controller.initialize' => 'initialize',
+			'Controller.startup' => 'startup',
+			'Controller.beforeRender' => 'beforeRender',
+			'Controller.beforeRedirect' => 'beforeRedirect',
+			'Controller.shutdown' => 'shutdown',
+		];
+		$events = [];
+		foreach ($eventMap as $event => $method) {
+			if (method_exists($this, $method)) {
+				$events[$event] = $method;
+			}
+		}
+		return $events;
+	}
 }

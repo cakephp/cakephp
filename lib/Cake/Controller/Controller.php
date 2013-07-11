@@ -17,6 +17,7 @@ namespace Cake\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
+use Cake\Core\ObjectCollection;
 use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Event\Event;
@@ -181,7 +182,7 @@ class Controller extends Object implements EventListener {
 	public $autoLayout = true;
 
 /**
- * Instance of ComponentCollection used to handle callbacks.
+ * Instance of ComponentCollection used to create Components
  *
  * @var ComponentCollection
  */
@@ -329,7 +330,6 @@ class Controller extends Object implements EventListener {
 
 		$this->modelClass = Inflector::singularize($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
-		$this->Components = new ComponentCollection();
 
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Cake\Controller\Controller');
@@ -342,7 +342,7 @@ class Controller extends Object implements EventListener {
 		if ($response instanceof Response) {
 			$this->response = $response;
 		}
-		parent::__construct();
+		$this->Components = new ComponentCollection($this);
 	}
 
 /**
@@ -571,9 +571,13 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Loads Model classes based on the uses property
- * see Controller::loadModel(); for more info.
- * Loads Components and prepares them for initialization.
+ * Loads Model and Component classes.
+ *
+ * Using the $uses and $components properties, classes are loaded
+ * and components have their callbacks attached to the EventManager.
+ * It is also at this time that Controller callbacks are bound.
+ *
+ * See Controller::loadModel(); for more information on how models are loaded.
  *
  * @return mixed true if models found and instance created.
  * @see Controller::loadModel()
@@ -586,12 +590,31 @@ class Controller extends Object implements EventListener {
 			$this->uses = (array)$this->uses;
 			list(, $this->modelClass) = pluginSplit(reset($this->uses));
 		}
-		$this->Components->init($this);
+
+		$this->_loadComponents();
+		$this->getEventManager()->attach($this);
 		return true;
 	}
 
 /**
- * Returns the Cake\Event\EventManager manager instance that is handling any callbacks.
+ * Loads the defined components using the Component factory.
+ *
+ * @return void
+ */
+	protected function _loadComponents() {
+		if (empty($this->components)) {
+			return;
+		}
+		$components = ObjectCollection::normalizeObjectArray($this->components);
+		foreach ($components as $properties) {
+			list(, $class) = pluginSplit($properties['class']);
+			$this->{$class} = $this->Components->load($properties['class'], $properties['settings']);
+		}
+	}
+
+/**
+ * Returns the Cake\Event\EventManager manager instance for this controller.
+ *
  * You can use this instance to register any new listeners or callbacks to the
  * controller events, or create your own events and trigger them at will.
  *
@@ -600,10 +623,20 @@ class Controller extends Object implements EventListener {
 	public function getEventManager() {
 		if (empty($this->_eventManager)) {
 			$this->_eventManager = new EventManager();
-			$this->_eventManager->attach($this->Components);
-			$this->_eventManager->attach($this);
 		}
 		return $this->_eventManager;
+	}
+
+/**
+ * Overwrite the existing EventManager
+ *
+ * Useful for testing
+ *
+ * @param Cake\Event\EventManager $eventManager
+ * @return void
+ */
+	public function setEventManager($eventManager) {
+		$this->_eventManager = $eventManager;
 	}
 
 /**

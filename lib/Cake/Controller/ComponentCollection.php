@@ -1,8 +1,5 @@
 <?php
 /**
- * Components collection is used as a registry for loaded components and handles loading
- * and constructing component class objects.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -21,15 +17,20 @@ namespace Cake\Controller;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\EventListener;
-use Cake\Utility\ObjectCollection;
 
 /**
- * Components collection is used as a registry for loaded components and handles loading
- * and constructing component class objects.
+ * Components collection is used as a registry for loaded components
  *
- * @package       Cake.Controller
+ * Handles loading, constructing and binding events for component class objects.
  */
-class ComponentCollection extends ObjectCollection implements EventListener {
+class ComponentCollection {
+
+/**
+ * Loaded objects
+ *
+ * @var array
+ */
+	protected $_loaded = [];
 
 /**
  * The controller that this collection was initialized with.
@@ -39,21 +40,20 @@ class ComponentCollection extends ObjectCollection implements EventListener {
 	protected $_Controller = null;
 
 /**
- * Initializes all the Components for a controller.
- * Attaches a reference of each component to the Controller.
+ * The event manager to bind components to.
  *
- * @param Controller $Controller Controller to initialize components for.
- * @return void
+ * @var Cake\Event\EventManager
  */
-	public function init(Controller $Controller) {
-		if (empty($Controller->components)) {
-			return;
-		}
+	protected $_eventManager = null;
+
+/**
+ * Constructor.
+ *
+ * @param Cake\Controller\Controller $Controller
+ */
+	public function __construct(Controller $Controller) {
 		$this->_Controller = $Controller;
-		$components = static::normalizeObjectArray($Controller->components);
-		foreach ($components as $name => $properties) {
-			$Controller->{$name} = $this->load($properties['class'], $properties['settings']);
-		}
+		$this->_eventManager = $Controller->getEventManager();
 	}
 
 /**
@@ -104,28 +104,49 @@ class ComponentCollection extends ObjectCollection implements EventListener {
 				'plugin' => substr($plugin, 0, -1)
 			));
 		}
-		$this->_loaded[$alias] = new $componentClass($this, $settings);
+		$component = new $componentClass($this, $settings);
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable) {
-			$this->enable($alias);
+			$this->_eventManager->attach($component);
 		}
+		$this->_loaded[$alias] = $component;
 		return $this->_loaded[$alias];
 	}
 
 /**
- * Returns the implemented events that will get routed to the trigger function
- * in order to dispatch them separately on each component
+ * Get the loaded components list, or get the component instance at a given name.
  *
- * @return array
+ * @param null|string $name The component name to get or null.
+ * @return array|Helper Either a list of components names, or a loaded component.
  */
-	public function implementedEvents() {
-		return array(
-			'Controller.initialize' => array('callable' => 'trigger'),
-			'Controller.startup' => array('callable' => 'trigger'),
-			'Controller.beforeRender' => array('callable' => 'trigger'),
-			'Controller.beforeRedirect' => array('callable' => 'trigger'),
-			'Controller.shutdown' => array('callable' => 'trigger'),
-		);
+	public function loaded($name = null) {
+		if (!empty($name)) {
+			return isset($this->_loaded[$name]);
+		}
+		return array_keys($this->_loaded);
+	}
+
+/**
+ * Provide public read access to the loaded objects
+ *
+ * @param string $name Name of property to read
+ * @return mixed
+ */
+	public function __get($name) {
+		if (isset($this->_loaded[$name])) {
+			return $this->_loaded[$name];
+		}
+		return null;
+	}
+
+/**
+ * Provide isset access to _loaded
+ *
+ * @param string $name Name of object being checked.
+ * @return boolean
+ */
+	public function __isset($name) {
+		return isset($this->_loaded[$name]);
 	}
 
 }
