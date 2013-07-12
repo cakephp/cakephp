@@ -26,13 +26,6 @@
 class GuildFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Guild'
- */
-	public $name = 'Guild';
-
-/**
  * fields property
  *
  * @var array

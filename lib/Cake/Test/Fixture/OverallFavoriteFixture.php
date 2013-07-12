@@ -26,13 +26,6 @@
 class OverallFavoriteFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'OverallFavorite'
- */
-	public $name = 'OverallFavorite';
-
-/**
  * fields property
  *
  * @var array

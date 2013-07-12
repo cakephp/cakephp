@@ -26,13 +26,6 @@
 class TestPluginArticleFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Article'
- */
-	public $name = 'TestPluginArticle';
-
-/**
  * fields property
  *
  * @var array

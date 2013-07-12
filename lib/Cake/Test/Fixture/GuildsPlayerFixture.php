@@ -25,13 +25,6 @@
  */
 class GuildsPlayerFixture extends CakeTestFixture {
 
-/**
- * name property
- *
- * @var string 'GuildsPlayer'
- */
-	public $name = 'GuildsPlayer';
-
 	public $useDbConfig = 'test2';
 
 /**

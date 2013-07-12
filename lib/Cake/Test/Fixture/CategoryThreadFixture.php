@@ -26,13 +26,6 @@
 class CategoryThreadFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'CategoryThread'
- */
-	public $name = 'CategoryThread';
-
-/**
  * fields property
  *
  * @var array

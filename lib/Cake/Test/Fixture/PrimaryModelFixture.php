@@ -26,13 +26,6 @@
 class PrimaryModelFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'PrimaryModel'
- */
-	public $name = 'PrimaryModel';
-
-/**
  * fields property
  *
  * @var array

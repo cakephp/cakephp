@@ -26,13 +26,6 @@
 class UuidFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Uuid'
- */
-	public $name = 'Uuid';
-
-/**
  * fields property
  *
  * @var array

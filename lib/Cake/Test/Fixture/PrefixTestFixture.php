@@ -24,8 +24,6 @@
  */
 class PrefixTestFixture extends CakeTestFixture {
 
-	public $name = 'PrefixTest';
-
 	public $table = 'prefix_prefix_tests';
 
 	public $fields = array(

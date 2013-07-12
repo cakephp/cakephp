@@ -26,13 +26,6 @@
 class SampleFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Sample'
- */
-	public $name = 'Sample';
-
-/**
  * fields property
  *
  * @var array

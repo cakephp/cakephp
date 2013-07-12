@@ -26,13 +26,6 @@
 class HomeFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Home'
- */
-	public $name = 'Home';
-
-/**
  * fields property
  *
  * @var array

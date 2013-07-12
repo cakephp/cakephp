@@ -26,13 +26,6 @@
 class TestPluginCommentFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Comment'
- */
-	public $name = 'TestPluginComment';
-
-/**
  * fields property
  *
  * @var array

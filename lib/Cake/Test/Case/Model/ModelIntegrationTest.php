@@ -239,7 +239,6 @@ class ModelIntegrationTest extends BaseModelTest {
 /**
  * testFindWithJoinsOption method
  *
- * @access public
  * @return void
  */
 	public function testFindWithJoinsOption() {

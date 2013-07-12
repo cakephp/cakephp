@@ -26,13 +26,6 @@
 class ArticleFeaturedFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'ArticleFeatured'
- */
-	public $name = 'ArticleFeatured';
-
-/**
  * fields property
  *
  * @var array

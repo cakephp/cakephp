@@ -26,13 +26,6 @@
 class SyfileFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Syfile'
- */
-	public $name = 'Syfile';
-
-/**
  * fields property
  *
  * @var array

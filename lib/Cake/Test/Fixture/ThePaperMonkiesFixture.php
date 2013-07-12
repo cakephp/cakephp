@@ -26,13 +26,6 @@
 class ThePaperMonkiesFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'ThePaperMonkies'
- */
-	public $name = 'ThePaperMonkies';
-
-/**
  * fields property
  *
  * @var array

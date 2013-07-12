@@ -26,13 +26,6 @@
 class PersonFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Person'
- */
-	public $name = 'Person';
-
-/**
  * fields property
  *
  * @var array

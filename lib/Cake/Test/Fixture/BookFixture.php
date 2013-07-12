@@ -26,13 +26,6 @@
 class BookFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Book'
- */
-	public $name = 'Book';
-
-/**
  * fields property
  *
  * @var array

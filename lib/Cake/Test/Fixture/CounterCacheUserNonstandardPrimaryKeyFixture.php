@@ -25,8 +25,6 @@
  */
 class CounterCacheUserNonstandardPrimaryKeyFixture extends CakeTestFixture {
 
-	public $name = 'CounterCacheUserNonstandardPrimaryKey';
-
 	public $fields = array(
 		'uid' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'length' => 255, 'null' => false),

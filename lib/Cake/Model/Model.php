@@ -95,7 +95,6 @@ class Model extends Object implements CakeEventListener {
  * Holds physical schema/database name for this model. Automatically set during Model creation.
  *
  * @var string
- * @access public
  */
 	public $schemaName = null;
 

@@ -26,13 +26,6 @@
 class ItemFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Item'
- */
-	public $name = 'Item';
-
-/**
  * fields property
  *
  * @var array

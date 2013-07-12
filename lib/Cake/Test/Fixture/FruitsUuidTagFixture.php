@@ -26,13 +26,6 @@
 class FruitsUuidTagFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'FruitsUuidTag'
- */
-	public $name = 'FruitsUuidTag';
-
-/**
  * fields property
  *
  * @var array
