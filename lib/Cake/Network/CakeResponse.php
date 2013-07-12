@@ -1206,13 +1206,18 @@ class CakeResponse {
 	}
 
 /**
- * Setup for display or download the given file
+ * Setup for display or download the given file.
+ *
+ * If $_SERVER['HTTP_RANGE'] is set a slice of the file will be
+ * returned instead of the entire file.
+ *
+ * ### Options keys
+ *
+ * - name: Alternate download name
+ * - download: If `true` sets download header and forces file to be downloaded rather than displayed in browser
  *
  * @param string $path Path to file
- * @param array $options Options
- *	### Options keys
- *	- name: Alternate download name
- *	- download: If `true` sets download header and forces file to be downloaded rather than displayed in browser
+ * @param array $options Options See above.
  * @return void
  * @throws NotFoundException
  */
@@ -1283,7 +1288,6 @@ class CakeResponse {
 			$this->header('Content-Length', $fileSize);
 		}
 		$this->_clearBuffer();
-
 		$this->_file = $file;
 	}
 
