@@ -26,13 +26,6 @@
 class UuiditemFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Uuiditem'
- */
-	public $name = 'Uuiditem';
-
-/**
  * fields property
  *
  * @var array

@@ -26,13 +26,6 @@
 class ImageFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Image'
- */
-	public $name = 'Image';
-
-/**
  * fields property
  *
  * @var array

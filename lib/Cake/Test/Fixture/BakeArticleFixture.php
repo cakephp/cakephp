@@ -26,13 +26,6 @@
 class BakeArticleFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string
- */
-	public $name = 'BakeArticle';
-
-/**
  * fields property
  *
  * @var array

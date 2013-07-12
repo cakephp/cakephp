@@ -26,13 +26,6 @@
 class MyProductFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'MyProduct'
- */
-	public $name = 'MyProduct';
-
-/**
  * fields property
  *
  * @var array

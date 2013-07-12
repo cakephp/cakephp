@@ -26,13 +26,6 @@
 class CategoryFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Category'
- */
-	public $name = 'Category';
-
-/**
  * fields property
  *
  * @var array

@@ -26,13 +26,6 @@
 class JoinCFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'JoinC'
- */
-	public $name = 'JoinC';
-
-/**
  * fields property
  *
  * @var array

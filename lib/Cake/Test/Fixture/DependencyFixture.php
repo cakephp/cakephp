@@ -27,13 +27,6 @@
 class DependencyFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Dependency'
- */
-	public $name = 'Dependency';
-
-/**
  * fields property
  *
  * @var array

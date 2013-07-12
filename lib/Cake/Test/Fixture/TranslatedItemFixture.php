@@ -26,13 +26,6 @@
 class TranslatedItemFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'TranslatedItem'
- */
-	public $name = 'TranslatedItem';
-
-/**
  * fields property
  *
  * @var array

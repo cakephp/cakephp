@@ -26,13 +26,6 @@
 class PostFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Post'
- */
-	public $name = 'Post';
-
-/**
  * fields property
  *
  * @var array

@@ -26,13 +26,6 @@
 class NumericArticleFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'NumericArticle'
- */
-	public $name = 'NumericArticle';
-
-/**
  * fields property
  *
  * @var array

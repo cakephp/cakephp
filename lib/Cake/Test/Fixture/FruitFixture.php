@@ -26,13 +26,6 @@
 class FruitFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Fruit'
- */
-	public $name = 'Fruit';
-
-/**
  * fields property
  *
  * @var array

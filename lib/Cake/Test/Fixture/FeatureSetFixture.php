@@ -26,13 +26,6 @@
 class FeatureSetFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'FeatureSet'
- */
-	public $name = 'FeatureSet';
-
-/**
  * fields property
  *
  * @var array

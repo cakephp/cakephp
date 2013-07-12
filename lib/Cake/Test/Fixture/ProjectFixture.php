@@ -26,13 +26,6 @@
 class ProjectFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Project'
- */
-	public $name = 'Project';
-
-/**
  * fields property
  *
  * @var array

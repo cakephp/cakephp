@@ -26,13 +26,6 @@
 class AttachmentFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Attachment'
- */
-	public $name = 'Attachment';
-
-/**
  * fields property
  *
  * @var array

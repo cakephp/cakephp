@@ -25,8 +25,6 @@
  */
 class GroupUpdateAllFixture extends CakeTestFixture {
 
-	public $name = 'GroupUpdateAll';
-
 	public $table = 'group_update_all';
 
 	public $fields = array(

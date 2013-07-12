@@ -30,13 +30,6 @@
 class NumberTreeFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'NumberTree'
- */
-	public $name = 'NumberTree';
-
-/**
  * fields property
  *
  * @var array

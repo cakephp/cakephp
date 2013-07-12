@@ -26,13 +26,6 @@
 class BasketFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Basket'
- */
-	public $name = 'Basket';
-
-/**
  * fields property
  *
  * @var array

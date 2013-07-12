@@ -39,7 +39,6 @@ if (!class_exists('AppController', false)) {
 	 * helpers property
 	 *
 	 * @var array
-	 * @access public
 	 */
 		public $helpers = array('Html');
 
@@ -47,7 +46,6 @@ if (!class_exists('AppController', false)) {
 	 * uses property
 	 *
 	 * @var array
-	 * @access public
 	 */
 		public $uses = array('ControllerPost');
 
@@ -55,7 +53,6 @@ if (!class_exists('AppController', false)) {
 	 * components property
 	 *
 	 * @var array
-	 * @access public
 	 */
 		public $components = array('Cookie');
 

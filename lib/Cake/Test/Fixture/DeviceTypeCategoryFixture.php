@@ -26,13 +26,6 @@
 class DeviceTypeCategoryFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'DeviceTypeCategory'
- */
-	public $name = 'DeviceTypeCategory';
-
-/**
  * fields property
  *
  * @var array

@@ -26,13 +26,6 @@
 class StoryFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Story'
- */
-	public $name = 'Story';
-
-/**
  * fields property
  *
  * @var array

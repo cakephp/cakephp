@@ -26,13 +26,6 @@
 class AroTwoFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'AroTwo'
- */
-	public $name = 'AroTwo';
-
-/**
  * fields property
  *
  * @var array
