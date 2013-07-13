@@ -262,18 +262,16 @@ class EventManager {
 		if ($length) {
 			$data = array_values($data);
 		}
-		$subject = $event->subject();
 		switch ($length) {
 			case 0:
-				return $listener($event, $subject());
+				return $listener($event);
 			case 1:
-				return $listener($event, $subject(), $data[0]);
+				return $listener($event, $data[0]);
 			case 2:
-				return $listener($event, $subject, $data[0], $data[1]);
+				return $listener($event, $data[0], $data[1]);
 			case 3:
-				return $listener($event, $subject, $data[0], $data[1], $data[2]);
+				return $listener($event, $data[0], $data[1], $data[2]);
 			default:
-				array_unshift($data, $subject);
 				array_unshift($data, $event);
 				return call_user_func_array($listener, $data);
 		}
