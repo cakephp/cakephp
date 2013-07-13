@@ -311,7 +311,8 @@ class AuthComponent extends Component {
 		if ($loginAction == $url) {
 			if (empty($request->data)) {
 				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
-					$this->Session->write('Auth.redirect', $controller->referer(null, true));
+					$referer = $request->referer(true);
+					$this->Session->write('Auth.redirect', $referer);
 				}
 			}
 			return true;
@@ -666,7 +667,6 @@ class AuthComponent extends Component {
 			$this->Session->write('Auth.redirect', $redir);
 		} elseif ($this->Session->check('Auth.redirect')) {
 			$redir = $this->Session->read('Auth.redirect');
-			$redir = is_string($redir) ? ltrim($redir, '/') : $redir;
 			$this->Session->delete('Auth.redirect');
 
 			if (Router::normalize($redir) == Router::normalize($this->loginAction)) {
@@ -677,7 +677,7 @@ class AuthComponent extends Component {
 		} else {
 			$redir = '/';
 		}
-		return Router::normalize($redir);
+		return Router::normalize($redir, false);
 	}
 
 /**
