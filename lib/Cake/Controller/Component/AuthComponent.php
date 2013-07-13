@@ -307,7 +307,6 @@ class AuthComponent extends Component {
 		if ($loginAction != $url && in_array($action, array_map('strtolower', $this->allowedActions))) {
 			return true;
 		}
-
 		if ($loginAction == $url) {
 			if (empty($request->data)) {
 				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
@@ -321,7 +320,7 @@ class AuthComponent extends Component {
 		if (!$this->_getUser()) {
 			if (!$request->is('ajax')) {
 				$this->flash($this->authError);
-				$this->Session->write('Auth.redirect', $request->here());
+				$this->Session->write('Auth.redirect', $request->here(false));
 				$controller->redirect($loginAction);
 				return false;
 			}
@@ -677,7 +676,10 @@ class AuthComponent extends Component {
 		} else {
 			$redir = '/';
 		}
-		return Router::normalize($redir, false);
+		if (is_array($redir)) {
+			return Router::url($redir);
+		}
+		return $redir;
 	}
 
 /**
