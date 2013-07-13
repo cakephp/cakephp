@@ -17,6 +17,7 @@ namespace Cake\Controller;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\EventListener;
+use Cake\Event\EventManager;
 
 /**
  * Components collection is used as a registry for loaded components
@@ -51,9 +52,13 @@ class ComponentCollection {
  *
  * @param Cake\Controller\Controller $Controller
  */
-	public function __construct(Controller $Controller) {
-		$this->_Controller = $Controller;
-		$this->_eventManager = $Controller->getEventManager();
+	public function __construct(Controller $Controller = null) {
+		if ($Controller) {
+			$this->_Controller = $Controller;
+			$this->_eventManager = $Controller->getEventManager();
+		} else {
+			$this->_eventManager = new EventManager();
+		}
 	}
 
 /**
