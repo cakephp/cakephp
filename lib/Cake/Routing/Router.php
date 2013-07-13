@@ -1053,7 +1053,7 @@ class Router {
  * @param array|string $url URL to normalize Either an array or a string URL.
  * @return string Normalized URL
  */
-	public static function normalize($url = '/', $strip = true) {
+	public static function normalize($url = '/') {
 		if (is_array($url)) {
 			$url = Router::url($url);
 		}
@@ -1062,7 +1062,7 @@ class Router {
 		}
 		$request = Router::getRequest();
 
-		if ($strip && !empty($request->base) && stristr($url, $request->base)) {
+		if (!empty($request->base) && stristr($url, $request->base)) {
 			$url = preg_replace('/^' . preg_quote($request->base, '/') . '/', '', $url, 1);
 		}
 		$url = '/' . $url;
