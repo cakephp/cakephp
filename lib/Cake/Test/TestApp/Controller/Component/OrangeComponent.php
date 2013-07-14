@@ -16,6 +16,7 @@ namespace TestApp\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
+use Cake\Event\Event;
 
 /**
  * OrangeComponent class
@@ -33,10 +34,11 @@ class OrangeComponent extends Component {
 /**
  * initialize method
  *
- * @param mixed $controller
+ * @param Event $event
+ * @param Controller $controller
  * @return void
  */
-	public function initialize(Controller $controller) {
+	public function initialize(Event $event, Controller $controller) {
 		$this->Controller = $controller;
 		$this->Banana->testField = 'OrangeField';
 	}
@@ -44,10 +46,11 @@ class OrangeComponent extends Component {
 /**
  * startup method
  *
+ * @param Event $event
  * @param Controller $controller
  * @return string
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event, Controller $controller) {
 		$controller->foo = 'pass';
 	}
 }

@@ -20,6 +20,7 @@ namespace TestApp\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
+use Cake\Event\Event;
 
 /**
  * BananaComponent class
@@ -38,10 +39,11 @@ class BananaComponent extends Component {
 /**
  * startup method
  *
+ * @param Event $event
  * @param Controller $controller
  * @return string
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event, Controller $controller) {
 		$controller->bar = 'fail';
 	}
 }
