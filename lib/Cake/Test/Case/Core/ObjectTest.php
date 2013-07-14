@@ -49,14 +49,12 @@ class RequestActionController extends Controller {
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = array('RequestActionPost');
 
 /**
  * test_request_action method
  *
- * @access public
  * @return void
  */
 	public function test_request_action() {
@@ -68,7 +66,6 @@ class RequestActionController extends Controller {
  *
  * @param mixed $id
  * @param mixed $other
- * @access public
  * @return void
  */
 	public function another_ra_test($id, $other) {

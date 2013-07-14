@@ -26,13 +26,6 @@
 class CallbackFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Callback'
- */
-	public $name = 'Callback';
-
-/**
  * fields property
  *
  * @var array

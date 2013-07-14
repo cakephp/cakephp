@@ -26,13 +26,6 @@
 class AuthUserCustomFieldFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'AuthUser'
- */
-	public $name = 'AuthUserCustomField';
-
-/**
  * fields property
  *
  * @var array

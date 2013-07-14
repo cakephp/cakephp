@@ -29,13 +29,6 @@
 class UnconventionalTreeFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'FlagTree'
- */
-	public $name = 'UnconventionalTree';
-
-/**
  * fields property
  *
  * @var array

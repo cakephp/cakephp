@@ -26,13 +26,6 @@
 class UuiditemsUuidportfolioNumericidFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'UuiditemsUuidportfolioNumericid'
- */
-	public $name = 'UuiditemsUuidportfolioNumericid';
-
-/**
  * fields property
  *
  * @var array

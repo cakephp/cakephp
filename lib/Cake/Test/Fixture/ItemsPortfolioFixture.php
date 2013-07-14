@@ -26,13 +26,6 @@
 class ItemsPortfolioFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'ItemsPortfolio'
- */
-	public $name = 'ItemsPortfolio';
-
-/**
  * fields property
  *
  * @var array

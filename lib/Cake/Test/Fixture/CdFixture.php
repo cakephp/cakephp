@@ -26,13 +26,6 @@
 class CdFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Cd'
- */
-	public $name = 'Cd';
-
-/**
  * fields property
  *
  * @var array

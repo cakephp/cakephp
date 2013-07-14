@@ -25,13 +25,6 @@
  */
 class ContentAccountFixture extends CakeTestFixture {
 
-/**
- * name property
- *
- * @var string 'Aco'
- */
-	public $name = 'ContentAccount';
-
 	public $table = 'ContentAccounts';
 
 /**

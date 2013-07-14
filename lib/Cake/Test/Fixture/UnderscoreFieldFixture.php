@@ -26,13 +26,6 @@
 class UnderscoreFieldFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'UnderscoreField'
- */
-	public $name = 'UnderscoreField';
-
-/**
  * fields property
  *
  * @var array

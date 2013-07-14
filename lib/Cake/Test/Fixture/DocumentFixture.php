@@ -26,13 +26,6 @@
 class DocumentFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Document'
- */
-	public $name = 'Document';
-
-/**
  * fields property
  *
  * @var array

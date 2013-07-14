@@ -25,8 +25,6 @@
  */
 class ProductUpdateAllFixture extends CakeTestFixture {
 
-	public $name = 'ProductUpdateAll';
-
 	public $table = 'product_update_all';
 
 	public $fields = array(

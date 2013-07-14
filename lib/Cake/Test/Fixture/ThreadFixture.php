@@ -26,13 +26,6 @@
 class ThreadFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Thread'
- */
-	public $name = 'Thread';
-
-/**
  * fields property
  *
  * @var array

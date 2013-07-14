@@ -26,13 +26,6 @@
 class FilmFileFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'FilmFile'
- */
-	public $name = 'FilmFile';
-
-/**
  * fields property
  *
  * @var array

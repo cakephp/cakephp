@@ -346,6 +346,13 @@ class CakeResponse {
 	protected $_file = null;
 
 /**
+ * File range. Used for requesting ranges of files.
+ *
+ * @var array
+ */
+	protected $_fileRange = null;
+
+/**
  * The charset the response body is encoded with
  *
  * @var string
@@ -413,8 +420,8 @@ class CakeResponse {
 			$this->_sendHeader($header, $value);
 		}
 		if ($this->_file) {
-			$this->_sendFile($this->_file);
-			$this->_file = null;
+			$this->_sendFile($this->_file, $this->_fileRange);
+			$this->_file = $this->_fileRange = null;
 		} else {
 			$this->_sendContent($this->_body);
 		}
@@ -1204,13 +1211,18 @@ class CakeResponse {
 	}
 
 /**
- * Setup for display or download the given file
+ * Setup for display or download the given file.
+ *
+ * If $_SERVER['HTTP_RANGE'] is set a slice of the file will be
+ * returned instead of the entire file.
+ *
+ * ### Options keys
+ *
+ * - name: Alternate download name
+ * - download: If `true` sets download header and forces file to be downloaded rather than displayed in browser
  *
  * @param string $path Path to file
- * @param array $options Options
- *	### Options keys
- *	- name: Alternate download name
- *	- download: If `true` sets download header and forces file to be downloaded rather than displayed in browser
+ * @param array $options Options See above.
  * @return void
  * @throws NotFoundException
  */
@@ -1261,19 +1273,7 @@ class CakeResponse {
 
 			$httpRange = env('HTTP_RANGE');
 			if (isset($httpRange)) {
-				list(, $range) = explode('=', $httpRange);
-
-				$size = $fileSize - 1;
-				$length = $fileSize - $range;
-
-				$this->header(array(
-					'Content-Length' => $length,
-					'Content-Range' => 'bytes ' . $range . $size . '/' . $fileSize
-				));
-
-				$this->statusCode(206);
-				$file->open('rb', true);
-				$file->offset($range);
+				$this->_fileRange($file, $httpRange);
 			} else {
 				$this->header('Content-Length', $fileSize);
 			}
@@ -1281,26 +1281,76 @@ class CakeResponse {
 			$this->header('Content-Length', $fileSize);
 		}
 		$this->_clearBuffer();
-
 		$this->_file = $file;
+	}
+
+/**
+ * Apply a file range to a file and set the end offset.
+ *
+ * If an invalid range is requested a 416 Status code will be used
+ * in the response.
+ *
+ * @param File $file The file to set a range on.
+ * @param string $httpRange The range to use.
+ * @return void
+ */
+	protected function _fileRange($file, $httpRange) {
+		list(, $range) = explode('=', $httpRange);
+		list($start, $end) = explode('-', $range);
+
+		$fileSize = $file->size();
+		$lastByte = $fileSize - 1;
+		if ($start > $end || $end > $lastByte || $start > $lastByte) {
+			$this->statusCode(416);
+			$this->header(array(
+				'Content-Range' => 'bytes 0-' . $lastByte . '/' . $fileSize
+			));
+			return;
+		}
+
+		$this->header(array(
+			'Content-Length' => $end - $start + 1,
+			'Content-Range' => 'bytes ' . $start . '-' . $end . '/' . $fileSize
+		));
+
+		$this->statusCode(206);
+		$this->_fileRange = array($start, $end);
 	}
 
 /**
  * Reads out a file, and echos the content to the client.
  *
  * @param File $file File object
+ * @param array $range The range to read out of the file.
  * @return boolean True is whole file is echoed successfully or false if client connection is lost in between
  */
-	protected function _sendFile($file) {
+	protected function _sendFile($file, $range) {
 		$compress = $this->outputCompressed();
 		$file->open('rb');
+
+		$end = $start = false;
+		if ($range) {
+			list($start, $end) = $range;
+		}
+		if ($start !== false) {
+			$file->offset($start);
+		}
+
+		$bufferSize = 8192;
+		set_time_limit(0);
 		while (!feof($file->handle)) {
 			if (!$this->_isActive()) {
 				$file->close();
 				return false;
 			}
-			set_time_limit(0);
-			echo fread($file->handle, 8192);
+			$offset = $file->offset();
+			if ($end && $offset >= $end) {
+				break;
+			}
+			if ($end && $offset + $bufferSize >= $end) {
+				$bufferSize = $end - $offset;
+			}
+			echo fread($file->handle, $bufferSize);
 			if (!$compress) {
 				$this->_flushBuffer();
 			}

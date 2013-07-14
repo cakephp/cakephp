@@ -26,13 +26,6 @@
 class AuthorFixture extends CakeTestFixture {
 
 /**
- * name property
- *
- * @var string 'Author'
- */
-	public $name = 'Author';
-
-/**
  * fields property
  *
  * @var array
