@@ -1,9 +1,5 @@
 <?php
 /**
- * SecurityComponentTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -22,6 +17,7 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\Component\SecurityComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -29,7 +25,6 @@ use Cake\Utility\Security;
 /**
  * TestSecurityComponent
  *
- * @package       Cake.Test.Case.Controller.Component
  */
 class TestSecurityComponent extends SecurityComponent {
 
@@ -48,7 +43,6 @@ class TestSecurityComponent extends SecurityComponent {
 /**
  * SecurityTestController
  *
- * @package       Cake.Test.Case.Controller.Component
  */
 class SecurityTestController extends Controller {
 
@@ -112,7 +106,6 @@ class SecurityTestController extends Controller {
 /**
  * SecurityComponentTest class
  *
- * @package       Cake.Test.Case.Controller.Component
  */
 class SecurityComponentTest extends TestCase {
 
@@ -179,9 +172,10 @@ class SecurityComponentTest extends TestCase {
 			'action' => 'index'
 		]);
 		$Controller = new \TestApp\Controller\SomePagesController($request);
+		$event = new Event('Controller.startup');
 		$Security = new SecurityComponent($Controller->Components);
 		$Security->blackHoleCallback = '_fail';
-		$Security->startup($Controller);
+		$Security->startup($event, $Controller);
 		$Security->blackHole($Controller, 'csrf');
 	}
 
@@ -196,8 +190,9 @@ class SecurityComponentTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'fail'
 		));
+		$event = new Event('Controller.startup');
 		$this->assertFalse($this->Controller->failed);
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed, 'Request was blackholed.');
 	}
 
@@ -213,8 +208,9 @@ class SecurityComponentTest extends TestCase {
 			'requireGet' => array('index'),
 			'validatePost' => false,
 		);
+		$event = new Event('Controller.initialize');
 		$Security = new SecurityComponent($this->Controller->Components, $settings);
-		$this->Controller->Security->initialize($this->Controller, $settings);
+		$this->Controller->Security->initialize($event, $this->Controller, $settings);
 		$this->assertEquals($Security->requirePost, $settings['requirePost']);
 		$this->assertEquals($Security->requireSecure, $settings['requireSecure']);
 		$this->assertEquals($Security->requireGet, $settings['requireGet']);
@@ -227,7 +223,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testStartup() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$result = $this->Controller->request->params['_Token']['key'];
 		$this->assertNotNull($result);
 		$this->assertTrue($this->Controller->Session->check('_Token'));
@@ -240,9 +237,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequirePostFail() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePost(array('posted'));
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
 
@@ -253,9 +251,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequirePostSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePost('posted');
-		$this->Security->startup($this->Controller);
+		$this->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -267,9 +266,10 @@ class SecurityComponentTest extends TestCase {
 	public function testRequireSecureFail() {
 		$_SERVER['HTTPS'] = 'off';
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireSecure(array('posted'));
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
 
@@ -282,8 +282,9 @@ class SecurityComponentTest extends TestCase {
 		$_SERVER['REQUEST_METHOD'] = 'Secure';
 		$this->Controller->request['action'] = 'posted';
 		$_SERVER['HTTPS'] = 'on';
+		$event = new Event('Controller.startup');
 		$this->Controller->Security->requireSecure('posted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -293,18 +294,19 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testRequireAuthFail() {
+		$event = new Event('Controller.startup');
 		$_SERVER['REQUEST_METHOD'] = 'AUTH';
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->Security->requireAuth(array('posted'));
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
 		$this->Controller->Session->write('_Token', array('allowedControllers' => array()));
 		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
 		$this->Controller->Session->write('_Token', array(
@@ -313,7 +315,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
 
@@ -324,9 +326,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequireAuthSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'AUTH';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 
 		$this->Controller->Security->Session->write('_Token', array(
@@ -340,7 +343,7 @@ class SecurityComponentTest extends TestCase {
 		);
 		$this->Controller->action = 'posted';
 		$this->Controller->Security->requireAuth('posted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -351,9 +354,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequirePostSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'getted';
 		$this->Controller->Security->requirePost('posted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -364,9 +368,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequireGetFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'getted';
 		$this->Controller->Security->requireGet(array('getted'));
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
 
@@ -377,9 +382,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequireGetSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'getted';
 		$this->Controller->Security->requireGet('getted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -390,9 +396,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequireGetSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'posted';
 		$this->Security->requireGet('getted');
-		$this->Security->startup($this->Controller);
+		$this->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -403,9 +410,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequirePutFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'putted';
 		$this->Controller->Security->requirePut(array('putted'));
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
 
@@ -416,9 +424,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequirePutSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'putted';
 		$this->Controller->Security->requirePut('putted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -429,9 +438,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequirePutSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePut('putted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -442,9 +452,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequireDeleteFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'deleted';
 		$this->Controller->Security->requireDelete(array('deleted', 'other_method'));
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
 
@@ -455,9 +466,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequireDeleteSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'deleted';
 		$this->Controller->Security->requireDelete('deleted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -468,9 +480,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testRequireDeleteSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$event = new Event('Controller.startup');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireDelete('deleted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -480,7 +493,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePost() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
@@ -499,7 +513,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostNoSession() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->Controller->Session->delete('_Token');
 
 		$key = $this->Controller->request->params['_Token']['key'];
@@ -518,7 +533,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostFormHacking() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$unlocked = '';
 
@@ -537,7 +553,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostObjectDeserialize() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877';
 		$unlocked = '';
@@ -560,7 +577,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostArray() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'f7d573650a295b94e0938d32b323fde775e5f32b%3A';
@@ -579,7 +597,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostNoModel() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '540ac9c60d323c22bafe997b72c0790f39a8bdef%3A';
@@ -600,7 +619,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostSimple() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '69f493434187b867ea14b901fdf58b55d27c935d%3A';
@@ -621,7 +641,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostComplex() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'c9118120e680a7201b543f562e5301006ccfcbe2%3AAddresses.0.id%7CAddresses.1.id';
@@ -650,7 +671,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostMultipleSelect() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '422cde416475abc171568be690a98cad20e66079%3A';
@@ -696,7 +718,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostCheckbox() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 		$unlocked = '';
@@ -720,7 +743,7 @@ class SecurityComponentTest extends TestCase {
 		$this->assertTrue($result);
 
 		$this->Controller->request->data = array();
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 
 		$this->Controller->request->data = array(
@@ -738,7 +761,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostHidden() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '51ccd8cb0997c7b3d4523ecde5a109318405ef8c%3AModel.hidden%7CModel.other_hidden';
 		$unlocked = '';
@@ -760,8 +784,9 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostWithDisabledFields() {
+		$event = new Event('Controller.startup');
 		$this->Controller->Security->disabledFields = array('Model.username', 'Model.password');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'ef1082968c449397bcd849f963636864383278b1%3AModel.hidden';
 		$unlocked = '';
@@ -783,7 +808,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostDisabledFieldsInData() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$unlocked = 'Model.username';
 		$fields = array('Model.hidden', 'Model.password');
@@ -808,7 +834,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidatePostFailNoDisabled() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = array('Model.hidden', 'Model.password', 'Model.username');
 		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
@@ -832,7 +859,8 @@ class SecurityComponentTest extends TestCase {
  * @return
  */
 	public function testValidatePostFailDisabledFieldTampering() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$unlocked = 'Model.username';
 		$fields = array('Model.hidden', 'Model.password');
@@ -860,7 +888,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateHiddenMultipleModel() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'a2d01072dc4660eea9d15007025f35a7a5b58e18%3AModel.valid%7CModel2.valid%7CModel3.valid';
 		$unlocked = '';
@@ -881,7 +910,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateHasManyModel() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
 		$fields .= '%7CModel.1.hidden%7CModel.1.valid';
@@ -911,7 +941,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateHasManyRecordsPass() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '7a203edb3d345bbf38fe0dccae960da8842e11d7%3AAddress.0.id%7CAddress.0.primary%7C';
 		$fields .= 'Address.1.id%7CAddress.1.primary';
@@ -953,7 +984,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateNestedNumericSets() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$unlocked = '';
 		$hashFields = array('TaxonomyData');
@@ -978,7 +1010,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateHasManyRecordsFail() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '7a203edb3d345bbf38fe0dccae960da8842e11d7%3AAddress.0.id%7CAddress.0.primary%7C';
 		$fields .= 'Address.1.id%7CAddress.1.primary';
@@ -1020,7 +1053,9 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testFormDisabledFields() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '11842060341b9d0fc3808b90ba29fdea7054d6ad%3An%3A0%3A%7B%7D';
 		$unlocked = '';
@@ -1032,7 +1067,7 @@ class SecurityComponentTest extends TestCase {
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertFalse($result);
 
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->Controller->Security->disabledFields = array('MyModel.name');
 		$key = $this->Controller->request->params['_Token']['key'];
 
@@ -1051,7 +1086,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testRadio() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '575ef54ca4fc8cab468d6d898e9acd3a9671c17e%3An%3A0%3A%7B%7D';
 		$unlocked = '';
@@ -1092,13 +1128,14 @@ class SecurityComponentTest extends TestCase {
  * @see https://cakephp.lighthouseapp.com/projects/42648/tickets/68
  */
 	public function testSettingTokenForRequestAction() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 
 		$this->Controller->request->params['requested'] = 1;
 		unset($this->Controller->request->params['_Token']);
 
-		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($event, $this->Controller);
 		$this->assertEquals($this->Controller->request->params['_Token']['key'], $key);
 	}
 
@@ -1110,7 +1147,8 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testBlackHoleNotDeletingSessionInformation() {
-		$this->Controller->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+		$this->Controller->Security->startup($event, $this->Controller);
 
 		$this->Controller->Security->blackHole($this->Controller, 'auth');
 		$this->assertTrue($this->Controller->Security->Session->check('_Token'), '_Token was deleted by blackHole %s');
@@ -1123,12 +1161,13 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testCsrfSkipRequestAction() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$event = new Event('Controller.startup');
 
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
 		$this->Controller->request->params['requested'] = 1;
-		$this->Security->startup($this->Controller);
+		$this->Security->startup($event, $this->Controller);
 
 		$this->assertFalse($this->Controller->failed, 'fail() was called.');
 	}
@@ -1142,7 +1181,9 @@ class SecurityComponentTest extends TestCase {
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
-		$this->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+
+		$this->Security->startup($event, $this->Controller);
 
 		$token = $this->Security->Session->read('_Token');
 		$this->assertEquals(1, count($token['csrfTokens']), 'Missing the csrf token.');
@@ -1160,8 +1201,10 @@ class SecurityComponentTest extends TestCase {
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
 		$csrfExpires = strtotime('+10 minutes');
-		$this->Security->startup($this->Controller);
-		$this->Security->startup($this->Controller);
+		$event = new Event('Controller.startup');
+
+		$this->Security->startup($event, $this->Controller);
+		$this->Security->startup($event, $this->Controller);
 
 		$token = $this->Security->Session->read('_Token');
 		$this->assertEquals(2, count($token['csrfTokens']), 'Missing the csrf token.');
@@ -1180,6 +1223,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
+		$event = new Event('Controller.startup');
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
 
@@ -1197,7 +1241,7 @@ class SecurityComponentTest extends TestCase {
 				'title' => 'Woot'
 			)
 		);
-		$this->Security->startup($this->Controller);
+		$this->Security->startup($event, $this->Controller);
 		$token = $this->Security->Session->read('_Token');
 		$this->assertFalse(isset($token['csrfTokens']['nonce1']), 'Token was not consumed');
 	}
@@ -1211,13 +1255,14 @@ class SecurityComponentTest extends TestCase {
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
+		$event = new Event('Controller.startup');
 
 		$this->Security->Session->write('_Token.csrfTokens', array(
 			'valid' => strtotime('+30 minutes'),
 			'poof' => strtotime('-11 minutes'),
 			'dust' => strtotime('-20 minutes')
 		));
-		$this->Security->startup($this->Controller);
+		$this->Security->startup($event, $this->Controller);
 		$tokens = $this->Security->Session->read('_Token.csrfTokens');
 		$this->assertEquals(2, count($tokens), 'Too many tokens left behind');
 		$this->assertNotEmpty('valid', $tokens, 'Valid token was removed.');
@@ -1232,6 +1277,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
+		$event = new Event('Controller.startup');
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
 
@@ -1249,7 +1295,7 @@ class SecurityComponentTest extends TestCase {
 				'title' => 'Woot'
 			)
 		);
-		$this->Security->startup($this->Controller);
+		$this->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed, 'fail() was not called.');
 	}
 
@@ -1262,6 +1308,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
+		$event = new Event('Controller.startup');
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('-5 minutes')));
 
@@ -1279,7 +1326,7 @@ class SecurityComponentTest extends TestCase {
 				'title' => 'Woot'
 			)
 		);
-		$this->Security->startup($this->Controller);
+		$this->Security->startup($event, $this->Controller);
 		$this->assertTrue($this->Controller->failed, 'fail() was not called.');
 	}
 
@@ -1293,13 +1340,14 @@ class SecurityComponentTest extends TestCase {
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfUseOnce = false;
 		$this->Security->csrfExpires = '+10 minutes';
+		$event = new Event('Controller.startup');
 
 		// Generate one token
-		$this->Security->startup($this->Controller);
+		$this->Security->startup($event, $this->Controller);
 		$token = $this->Security->Session->read('_Token.csrfTokens');
 		$this->assertEquals(1, count($token), 'Should only be one token.');
 
-		$this->Security->startup($this->Controller);
+		$this->Security->startup($event, $this->Controller);
 		$tokenTwo = $this->Security->Session->read('_Token.csrfTokens');
 		$this->assertEquals(1, count($tokenTwo), 'Should only be one token.');
 		$this->assertEquals($token, $tokenTwo, 'Tokens should not be different.');
@@ -1318,6 +1366,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfUseOnce = false;
 		$this->Security->csrfExpires = '+10 minutes';
+		$event = new Event('Controller.startup');
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
 
@@ -1335,7 +1384,7 @@ class SecurityComponentTest extends TestCase {
 				'title' => 'Woot'
 			)
 		);
-		$this->Security->startup($this->Controller);
+		$this->Security->startup($event, $this->Controller);
 		$token = $this->Security->Session->read('_Token');
 		$this->assertTrue(isset($token['csrfTokens']['nonce1']), 'Token was consumed');
 	}
@@ -1387,10 +1436,11 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testUnlockedActions() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$event = new Event('Controller.startup');
 		$this->Controller->request->data = array('data');
 		$this->Controller->Security->unlockedActions = 'index';
 		$this->Controller->Security->blackHoleCallback = null;
-		$result = $this->Controller->Security->startup($this->Controller);
+		$result = $this->Controller->Security->startup($event, $this->Controller);
 		$this->assertNull($result);
 	}
 }

@@ -34,7 +34,6 @@ use Cake\Utility\Security;
  * - Requiring that SSL be used.
  * - Limiting cross controller communication.
  *
- * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html
  */
 class SecurityComponent extends Component {
