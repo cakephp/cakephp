@@ -14,6 +14,7 @@
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Event\Event;
 
 /**
  * SomePostsController class
@@ -48,7 +49,7 @@ class SomePostsController extends Controller {
  *
  * @return void
  */
-	public function beforeFilter() {
+	public function beforeFilter(Event $event) {
 		if ($this->request->params['action'] == 'index') {
 			$this->request->params['action'] = 'view';
 		} else {
