@@ -1824,9 +1824,11 @@ class QueryTest extends TestCase {
  */
 	public function testSQLFunctions() {
 		$query = new Query($this->connection);
-		$result = $query->select(function($q) {
-				return ['total' => $q->count('*')];
-			})
+		$result = $query->select(
+				function($q) {
+					return ['total' => $q->count('*')];
+				}
+			)
 			->from('articles')
 			->execute();
 		$expected = [['total' => 3]];

@@ -45,7 +45,6 @@ class HelperCollection {
  */
 	protected $_View;
 
-
 /**
  * EventManager instance.
  *

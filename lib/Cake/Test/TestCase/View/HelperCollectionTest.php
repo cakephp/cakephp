@@ -33,6 +33,7 @@ class HtmlAliasHelper extends HtmlHelper {
 
 	public function afterRender($viewFile) {
 	}
+
 }
 
 /**

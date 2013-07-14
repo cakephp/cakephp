@@ -24,7 +24,6 @@ namespace Cake\Test\TestCase\Model\Behavior;
 use Cake\Model\Model;
 use Cake\TestSuite\TestCase;
 
-
 require_once dirname(__DIR__) . DS . 'models.php';
 
 /**

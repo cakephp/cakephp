@@ -88,6 +88,7 @@ class CustomTestEventListerner extends EventTestListener implements EventListene
  *
  */
 class EventManagerTest extends TestCase {
+
 /**
  * Tests the attach() method for a single event key in multiple queues
  *
