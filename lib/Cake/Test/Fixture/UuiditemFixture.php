@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class UuiditemFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Uuiditem'
- */
-	public $name = 'Uuiditem';
-
-/**
  * fields property
  *
  * @var array

@@ -28,18 +28,9 @@ use Cake\TestSuite\Fixture\TestFixture;
 class DomainFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Domain'
- * @access public
- */
-	public $name = 'Domain';
-
-/**
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => ['type' => 'integer'],
@@ -53,7 +44,6 @@ class DomainFixture extends TestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('domain' => 'cakephp.org', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),

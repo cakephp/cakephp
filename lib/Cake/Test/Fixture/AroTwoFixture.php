@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class AroTwoFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'AroTwo'
- */
-	public $name = 'AroTwo';
-
-/**
  * fields property
  *
  * @var array

@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ItemsPortfolioFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'ItemsPortfolio'
- */
-	public $name = 'ItemsPortfolio';
-
-/**
  * fields property
  *
  * @var array

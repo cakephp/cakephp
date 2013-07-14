@@ -44,7 +44,6 @@ class AppController extends Controller {
  * helpers property
  *
  * @var array
- * @access public
  */
 	public $helpers = array('Html');
 
@@ -52,7 +51,6 @@ class AppController extends Controller {
  * uses property
  *
  * @var array
- * @access public
  */
 	public $uses = array('ControllerPost');
 
@@ -60,7 +58,6 @@ class AppController extends Controller {
  * components property
  *
  * @var array
- * @access public
  */
 	public $components = array('Cookie');
 }

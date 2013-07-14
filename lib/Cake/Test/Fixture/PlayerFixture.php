@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class PlayerFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Player'
- */
-	public $name = 'Player';
-
-/**
  * fields property
  *
  * @var array

@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class CdFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Cd'
- */
-	public $name = 'Cd';
-
-/**
  * fields property
  *
  * @var array

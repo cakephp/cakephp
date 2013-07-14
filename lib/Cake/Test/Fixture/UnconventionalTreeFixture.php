@@ -32,13 +32,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class UnconventionalTreeFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'FlagTree'
- */
-	public $name = 'UnconventionalTree';
-
-/**
  * fields property
  *
  * @var array

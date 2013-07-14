@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class FeatureSetFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'FeatureSet'
- */
-	public $name = 'FeatureSet';
-
-/**
  * fields property
  *
  * @var array

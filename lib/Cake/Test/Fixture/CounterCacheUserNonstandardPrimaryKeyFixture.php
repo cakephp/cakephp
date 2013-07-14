@@ -28,8 +28,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class CounterCacheUserNonstandardPrimaryKeyFixture extends TestFixture {
 
-	public $name = 'CounterCacheUserNonstandardPrimaryKey';
-
 	public $fields = array(
 		'uid' => ['type' => 'integer'],
 		'name' => ['type' => 'string', 'length' => 255, 'null' => false],

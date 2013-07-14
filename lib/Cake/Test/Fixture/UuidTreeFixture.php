@@ -30,13 +30,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class UuidTreeFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'UuidTree'
- */
-	public $name = 'UuidTree';
-
-/**
  * fields property
  *
  * @var array

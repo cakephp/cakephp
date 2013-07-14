@@ -791,7 +791,6 @@ class FormHelperTest extends TestCase {
 /**
  * Tests correct generation of number fields for integer fields
  *
- * @access public
  * @return void
  */
 	public function testTextFieldTypeNumberGenerationForIntegers() {
@@ -1537,7 +1536,6 @@ class FormHelperTest extends TestCase {
 /**
  * Test validation errors, when validation message is an empty string.
  *
- * @access public
  * @return void
  */
 	public function testEmptyErrorValidation() {
@@ -1578,7 +1576,6 @@ class FormHelperTest extends TestCase {
 /**
  * Test validation errors, when calling input() overriding validation message by an empty string.
  *
- * @access public
  * @return void
  */
 	public function testEmptyInputErrorValidation() {

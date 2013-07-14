@@ -33,13 +33,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class NumberTreeFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'NumberTree'
- */
-	public $name = 'NumberTree';
-
-/**
  * fields property
  *
  * @var array

@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class InnoFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Article'
- */
-	public $name = 'Inno';
-
-/**
  * fields property
  *
  * @var array

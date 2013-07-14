@@ -493,7 +493,8 @@ class App {
 		$parts = explode('.', static::$_classMap[$className], 2);
 		list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
 
-		if ($file = static::_mapped($className, $plugin)) {
+		$file = static::_mapped($className, $plugin);
+		if ($file) {
 			return include $file;
 		}
 		$paths = static::path($package, $plugin);

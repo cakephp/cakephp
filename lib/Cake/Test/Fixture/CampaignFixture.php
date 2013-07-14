@@ -28,13 +28,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class CampaignFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Campaign'
- */
-	public $name = 'Campaign';
-
-/**
  * fields property
  *
  * @var array

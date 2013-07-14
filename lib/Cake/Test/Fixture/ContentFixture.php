@@ -28,13 +28,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class ContentFixture extends TestFixture {
 
-/**
- * name property
- *
- * @var string 'Aco'
- */
-	public $name = 'Content';
-
 	public $table = 'Content';
 
 /**

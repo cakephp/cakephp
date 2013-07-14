@@ -128,7 +128,7 @@ class ServerShell extends Shell {
 			$this->_host,
 			$this->_port,
 			$this->_documentRoot,
-			WWW_ROOT . '/index.php'
+			$this->_documentRoot . '/index.php'
 		);
 
 		$port = ($this->_port == static::DEFAULT_PORT) ? '' : ':' . $this->_port;

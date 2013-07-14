@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class BinaryTestFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'BinaryTest'
- */
-	public $name = 'BinaryTest';
-
-/**
  * fields property
  *
  * @var array

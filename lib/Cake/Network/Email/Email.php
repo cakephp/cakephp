@@ -974,6 +974,15 @@ class Email {
  * ));
  * }}}
  *
+ * Attach a file from string and specify additional properties:
+ *
+ * {{{
+ * $email->attachments(array('custom_name.png' => array(
+ *		'data' => file_get_contents('path/to/file'),
+ *		'mimetype' => 'image/png'
+ * ));
+ * }}}
+ *
  * The `contentId` key allows you to specify an inline attachment. In your email text, you
  * can use `<img src="cid:abc123" />` to display the image inline.
  *
@@ -994,14 +1003,21 @@ class Email {
 				$fileInfo = array('file' => $fileInfo);
 			}
 			if (!isset($fileInfo['file'])) {
-				throw new Error\SocketException(__d('cake_dev', 'File not specified.'));
-			}
-			$fileInfo['file'] = realpath($fileInfo['file']);
-			if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
-				throw new Error\SocketException(__d('cake_dev', 'File not found: "%s"', $fileInfo['file']));
-			}
-			if (is_int($name)) {
-				$name = basename($fileInfo['file']);
+				if (!isset($fileInfo['data'])) {
+					throw new Error\SocketException(__d('cake_dev', 'No file or data specified.'));
+				}
+				if (is_int($name)) {
+					throw new Error\SocketException(__d('cake_dev', 'No filename specified.'));
+				}
+				$fileInfo['data'] = chunk_split(base64_encode($fileInfo['data']), 76, "\r\n");
+			} else {
+				$fileInfo['file'] = realpath($fileInfo['file']);
+				if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
+					throw new Error\SocketException(__d('cake_dev', 'File not found: "%s"', $fileInfo['file']));
+				}
+				if (is_int($name)) {
+					$name = basename($fileInfo['file']);
+				}
 			}
 			if (!isset($fileInfo['mimetype'])) {
 				$fileInfo['mimetype'] = 'application/octet-stream';
@@ -1393,7 +1409,7 @@ class Email {
 			if (!empty($fileInfo['contentId'])) {
 				continue;
 			}
-			$data = $this->_readFile($fileInfo['file']);
+			$data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
 			$hasDisposition = (
 				!isset($fileInfo['contentDisposition']) ||
 				$fileInfo['contentDisposition']
@@ -1441,7 +1457,7 @@ class Email {
 			if (empty($fileInfo['contentId'])) {
 				continue;
 			}
-			$data = $this->_readFile($fileInfo['file']);
+			$data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
 
 			$msg[] = '--' . $boundary;
 			$part = new Part(false, $data, 'inline');

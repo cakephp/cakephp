@@ -63,7 +63,6 @@ class ModelWriteTest extends ModelTestBase {
 /**
  * testInsertAnotherHabtmRecordWithSameForeignKey method
  *
- * @access public
  * @return void
  */
 	public function testInsertAnotherHabtmRecordWithSameForeignKey() {
@@ -511,7 +510,6 @@ class ModelWriteTest extends ModelTestBase {
 /**
  * Tests having multiple counter caches for an associated model
  *
- * @access public
  * @return void
  */
 	public function testCounterCacheMultipleCaches() {

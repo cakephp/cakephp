@@ -28,18 +28,9 @@ use Cake\TestSuite\Fixture\TestFixture;
 class SiteFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Site'
- * @access public
- */
-	public $name = 'Site';
-
-/**
  * fields property
  *
  * @var array
- * @access public
  */
 	public $fields = array(
 		'id' => ['type' => 'integer'],
@@ -53,7 +44,6 @@ class SiteFixture extends TestFixture {
  * records property
  *
  * @var array
- * @access public
  */
 	public $records = array(
 		array('name' => 'cakephp', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),

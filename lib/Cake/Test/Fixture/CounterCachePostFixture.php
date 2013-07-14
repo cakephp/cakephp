@@ -28,8 +28,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class CounterCachePostFixture extends TestFixture {
 
-	public $name = 'CounterCachePost';
-
 	public $fields = array(
 		'id' => ['type' => 'integer'],
 		'title' => ['type' => 'string', 'length' => 255],

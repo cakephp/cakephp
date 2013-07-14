@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class AttachmentFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Attachment'
- */
-	public $name = 'Attachment';
-
-/**
  * fields property
  *
  * @var array

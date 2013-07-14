@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class UnderscoreFieldFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'UnderscoreField'
- */
-	public $name = 'UnderscoreField';
-
-/**
  * fields property
  *
  * @var array

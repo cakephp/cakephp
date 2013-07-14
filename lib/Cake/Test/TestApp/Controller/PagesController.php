@@ -21,6 +21,8 @@
  */
 namespace TestApp\Controller;
 
+use Cake\Core\Configure;
+use Cake\Error;
 use Cake\Utility\Inflector;
 
 /**
@@ -52,6 +54,8 @@ class PagesController extends AppController {
  *
  * @param mixed What page to display
  * @return void
+ * @throws Cake\Error\NotFoundException When the view file could not be found
+ *	or Cake\Error\MissingViewException in debug mode.
  */
 	public function display() {
 		$path = func_get_args();
@@ -76,7 +80,15 @@ class PagesController extends AppController {
 			'subpage' => $subpage,
 			'title_for_layout' => $titleForLayout
 		));
-		$this->render(implode('/', $path));
+
+		try {
+			$this->render(implode('/', $path));
+		} catch (Error\MissingViewException $e) {
+			if (Configure::read('debug')) {
+				throw $e;
+			}
+			throw new Error\NotFoundException();
+		}
 	}
 
 }

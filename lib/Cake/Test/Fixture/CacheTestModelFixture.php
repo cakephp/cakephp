@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class CacheTestModelFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'CacheTestModel'
- */
-	public $name = 'CacheTestModel';
-
-/**
  * fields property
  *
  * @var array

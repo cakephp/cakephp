@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ImageFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Image'
- */
-	public $name = 'Image';
-
-/**
  * fields property
  *
  * @var array
