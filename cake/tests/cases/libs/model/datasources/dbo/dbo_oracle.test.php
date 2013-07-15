@@ -17,11 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
-require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo_source.php';
-require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo' . DS . 'dbo_oracle.php';
+
+App::import('Core', array('DataSource', 'DboSource', 'DboOracle'));
+Mock::generatePartial('DboOracle', 'QueryMockDboOracle', array('query', 'execute'));
 
 /**
  * DboOracleTest class
@@ -37,25 +35,87 @@ class DboOracleTest extends CakeTestCase {
 	var $fixtures = array('core.oracle_user');
 
 /**
+ * Actual DB connection used in testing
+ *
+ * @var DboSource
+ * @access public
+ */
+	var $db = null;
+
+/**
+ * Set up test suite database connection
+ *
+ * @access public
+ */
+	function startTest() {
+		$this->_initDb();
+	}
+	
+/**
  * setup method
  *
  * @access public
  * @return void
  */
 	function setUp() {
-		$this->_initDb();
+		Configure::write('Cache.disable', true);
+		$this->startTest();
+		$this->db =& ConnectionManager::getDataSource('test_suite');
 	}
 
+/**
+ * Tears down the Dbo class instance
+ *
+ * @access public
+ */
+	function tearDown() {
+		Configure::write('Cache.disable', false);
+		unset($this->db);
+		ClassRegistry::flush();
+	}
+	
 /**
  * skip method
  *
  * @access public
  * @return void
  */
-    function skip() {
-    	$this->_initDb();
-    	$this->skipUnless($this->db->config['driver'] == 'oracle', '%s Oracle connection not available');
-    }
+	function skip() {
+		$this->_initDb();
+		$this->skipUnless($this->db->config['driver'] == 'oracle', '%s Oracle connection not available');
+	}
+
+/**
+ * testConnect method
+ * 
+ * @access public
+ * @return void
+ */
+	function testConnect() {
+		$result = $this->db->connect();
+		$this->assertTrue($result);
+
+		$mockDbo =& new QueryMockDboOracle($this);
+		$mockDbo->config = $this->db->config;
+
+		// Test NLS_SORT setting
+		$mockDbo->config['nls_sort'] = 'BINARY';
+		$mockDbo->setReturnValue('execute', true);
+		$mockDbo->expectAt(0, 'execute', array("ALTER SESSION SET NLS_SORT=BINARY"));
+		
+		// The NLS_DATE_FORMAT will always be set, so test that in the same connect() run
+		$mockDbo->expectAt(1, 'execute', array("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'"));
+
+		$mockDbo->connect();
+
+		unset($mockDbo->config['nls_sort']);
+
+		// Test NLS_COMP setting
+		$mockDbo->config['nls_comp'] = 'BINARY';
+		$mockDbo->expectAt(2, 'execute', array("ALTER SESSION SET NLS_COMP=BINARY"));
+
+		$mockDbo->connect();
+	}
 
 /**
  * testLastErrorStatement method
@@ -105,7 +165,6 @@ class DboOracleTest extends CakeTestCase {
  */
 	function testName() {
 		$Db = $this->db;
-		#$Db =& new DboOracle($config = null, $autoConnect = false);
 
 		$r = $Db->name($Db->name($Db->name('foo.last_update_date')));
 		$e = 'foo.last_update_date';
