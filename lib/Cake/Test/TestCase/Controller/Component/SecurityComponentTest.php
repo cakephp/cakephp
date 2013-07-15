@@ -208,9 +208,7 @@ class SecurityComponentTest extends TestCase {
 			'requireGet' => array('index'),
 			'validatePost' => false,
 		);
-		$event = new Event('Controller.initialize');
 		$Security = new SecurityComponent($this->Controller->Components, $settings);
-		$this->Controller->Security->initialize($event, $this->Controller, $settings);
 		$this->assertEquals($Security->requirePost, $settings['requirePost']);
 		$this->assertEquals($Security->requireSecure, $settings['requireSecure']);
 		$this->assertEquals($Security->requireGet, $settings['requireGet']);
