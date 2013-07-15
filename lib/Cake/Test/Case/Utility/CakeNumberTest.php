@@ -650,6 +650,30 @@ class CakeNumberTest extends CakeTestCase {
 		$result = $this->Number->toPercentage(0, 4);
 		$expected = '0.0000%';
 		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(45, 0, array('multiply' => false));
+		$expected = '45%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(45, 2, array('multiply' => false));
+		$expected = '45.00%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0, 0, array('multiply' => false));
+		$expected = '0%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0, 4, array('multiply' => false));
+		$expected = '0.0000%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0.456, 0, array('multiply' => true));
+		$expected = '46%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0.456, 2, array('multiply' => true));
+		$expected = '45.60%';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
