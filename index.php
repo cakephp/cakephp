@@ -37,7 +37,11 @@ define('WWW_ROOT', ROOT . DS . APP_DIR . DS . WEBROOT_DIR . DS);
  * Full path to the directory containing "cake". Do not add trailing directory separator
  */
 if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-	define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
+	if (function_exists('ini_set')) {
+		ini_set('include_path', ROOT . DS . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
+	} else {
+		define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
+	}
 }
 
 require APP_DIR . DS . WEBROOT_DIR . DS . 'index.php';
