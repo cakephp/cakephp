@@ -117,14 +117,17 @@ class Sqlserver extends DboSource {
 	public function connect() {
 		$config = $this->config;
 		$this->connected = false;
+
+		$flags = array(
+			PDO::ATTR_PERSISTENT => $config['persistent'],
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+		);
+
+		if (!empty($config['encoding'])) {
+			$flags[PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
+		}
+
 		try {
-			$flags = array(
-				PDO::ATTR_PERSISTENT => $config['persistent'],
-				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-			);
-			if (!empty($config['encoding'])) {
-				$flags[PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
-			}
 			$this->_connection = new PDO(
 				"sqlsrv:server={$config['host']};Database={$config['database']}",
 				$config['login'],
