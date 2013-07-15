@@ -49,7 +49,7 @@ class PostgresSchema extends BaseSchema {
  * @return array An array of (sql, params) to execute.
  */
 	public function listTablesSql($config) {
-		$sql = "SELECT table_name as name FROM INFORMATION_SCHEMA.tables WHERE table_schema = ? ORDER BY name";
+		$sql = "SELECT table_name as name FROM information_schema.tables WHERE table_schema = ? ORDER BY name";
 		$schema = empty($config['schema']) ? 'public' : $config['schema'];
 		return [$sql, [$schema]];
 	}
@@ -64,17 +64,20 @@ class PostgresSchema extends BaseSchema {
 	public function describeTableSql($table, $config) {
 		$sql =
 		"SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type,
-			is_nullable AS null, column_default AS default, ordinal_position AS position,
-			character_maximum_length AS char_length, character_octet_length AS oct_length,
-			d.description as comment, i.indisprimary = 't' as pk
+			is_nullable AS null, column_default AS default,
+			character_maximum_length AS char_length,
+			d.description as comment,
+			ordinal_position
 		FROM information_schema.columns c
 		INNER JOIN pg_catalog.pg_namespace ns ON (ns.nspname = table_schema)
 		INNER JOIN pg_catalog.pg_class cl ON (cl.relnamespace = ns.oid AND cl.relname = table_name)
 		LEFT JOIN pg_catalog.pg_index i ON (i.indrelid = cl.oid AND i.indkey[0] = c.ordinal_position)
 		LEFT JOIN pg_catalog.pg_description d on (cl.oid = d.objoid AND d.objsubid = c.ordinal_position)
-		WHERE table_name = ? AND table_schema = ?  ORDER BY position";
+		WHERE table_name = ? AND table_schema = ? AND table_catalog = ?
+		ORDER BY ordinal_position";
+
 		$schema = empty($config['schema']) ? 'public' : $config['schema'];
-		return [$sql, [$table, $schema]];
+		return [$sql, [$table, $schema, $config['database']]];
 	}
 
 /**
