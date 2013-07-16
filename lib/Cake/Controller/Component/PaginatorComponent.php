@@ -377,11 +377,8 @@ class PaginatorComponent extends Component {
 			$inWhitelist = in_array($field, $whitelist, true);
 			if (!$inWhitelist) {
 				$options['order'] = null;
-				return $options;
 			}
-			if ($inWhitelist) {
-				return $options;
-			}
+			return $options;
 		}
 
 		if (!empty($options['order']) && is_array($options['order'])) {
