@@ -650,8 +650,8 @@ class Controller extends Object implements EventListener {
  * @return void
  */
 	public function startupProcess() {
-		$this->getEventManager()->dispatch(new Event('Controller.initialize', $this, [$this]));
-		$this->getEventManager()->dispatch(new Event('Controller.startup', $this, [$this]));
+		$this->getEventManager()->dispatch(new Event('Controller.initialize', $this));
+		$this->getEventManager()->dispatch(new Event('Controller.startup', $this));
 	}
 
 /**
@@ -664,7 +664,7 @@ class Controller extends Object implements EventListener {
  * @return void
  */
 	public function shutdownProcess() {
-		$this->getEventManager()->dispatch(new Event('Controller.shutdown', $this, [$this]));
+		$this->getEventManager()->dispatch(new Event('Controller.shutdown', $this));
 	}
 
 /**
@@ -738,7 +738,7 @@ class Controller extends Object implements EventListener {
 		if (is_array($status)) {
 			extract($status, EXTR_OVERWRITE);
 		}
-		$event = new Event('Controller.beforeRedirect', $this, array($this, $url, $status, $exit));
+		$event = new Event('Controller.beforeRedirect', $this, array($url, $status, $exit));
 		$this->getEventManager()->dispatch($event);
 
 		if ($event->isStopped()) {
@@ -876,7 +876,7 @@ class Controller extends Object implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {
-		$event = new Event('Controller.beforeRender', $this, [$this]);
+		$event = new Event('Controller.beforeRender', $this);
 		$this->getEventManager()->dispatch($event);
 		if ($event->isStopped()) {
 			$this->autoRender = false;
