@@ -1350,7 +1350,7 @@ class CakeResponse {
 				break;
 			}
 			if ($end && $offset + $bufferSize >= $end) {
-				$bufferSize = $end - $offset;
+				$bufferSize = $end - $offset + 1;
 			}
 			echo fread($file->handle, $bufferSize);
 			if (!$compress) {

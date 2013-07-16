@@ -1437,7 +1437,7 @@ class CakeResponseTest extends CakeTestCase {
 		$result = $response->send();
 		$output = ob_get_clean();
 		$this->assertEquals(206, $response->statusCode());
-		$this->assertEquals("is the test asset", $output);
+		$this->assertEquals("is the test asset ", $output);
 		$this->assertTrue($result !== false);
 	}
 
