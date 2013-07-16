@@ -392,7 +392,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->RequestHandler->initialize($event);
 		$this->RequestHandler->startup($event);
-		$this->assertNull($this->RequestHandler->beforeRedirect($event, '/'));
+		$this->assertNull($this->RequestHandler->beforeRedirect($event, '/', $this->Controller->response));
 	}
 
 /**
@@ -410,7 +410,7 @@ class RequestHandlerComponentTest extends TestCase {
 
 		$this->RequestHandler->initialize($event);
 		$this->RequestHandler->startup($event);
-		$this->assertNull($this->RequestHandler->beforeRedirect($event, null));
+		$this->assertNull($this->RequestHandler->beforeRedirect($event, null, $this->Controller->response));
 	}
 
 /**
@@ -771,7 +771,8 @@ class RequestHandlerComponentTest extends TestCase {
 		ob_start();
 		$this->Controller->RequestHandler->beforeRedirect(
 			$event,
-			array('controller' => 'request_handler_test', 'action' => 'destination')
+			array('controller' => 'request_handler_test', 'action' => 'destination'),
+			$this->Controller->response
 		);
 		$result = ob_get_clean();
 		$this->assertRegExp('/posts index/', $result, 'RequestAction redirect failed.');
@@ -808,7 +809,8 @@ class RequestHandlerComponentTest extends TestCase {
 		ob_start();
 		$this->Controller->RequestHandler->beforeRedirect(
 			$event,
-			array('controller' => 'request_handler_test', 'action' => 'ajax2_layout')
+			array('controller' => 'request_handler_test', 'action' => 'ajax2_layout'),
+			$this->Controller->response
 		);
 		$result = ob_get_clean();
 		$this->assertRegExp('/posts index/', $result, 'RequestAction redirect failed.');
@@ -846,7 +848,8 @@ class RequestHandlerComponentTest extends TestCase {
 		ob_start();
 		$RequestHandler->beforeRedirect(
 			$event,
-			array('controller' => 'request_handler_test', 'action' => 'param_method', 'first', 'second')
+			array('controller' => 'request_handler_test', 'action' => 'param_method', 'first', 'second'),
+			$this->Controller->response
 		);
 		$result = ob_get_clean();
 		$this->assertEquals('one: first two: second', $result);
@@ -872,7 +875,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$RequestHandler->response->expects($this->once())->method('statusCode')->with(403);
 
 		ob_start();
-		$RequestHandler->beforeRedirect($event, 'request_handler_test/param_method/first/second', 403);
+		$RequestHandler->beforeRedirect($event, 'request_handler_test/param_method/first/second', $controller->response);
 		ob_get_clean();
 	}
 
@@ -896,7 +899,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$RequestHandler->response = $this->getMock('Cake\Network\Response', array('notModified'));
 		$RequestHandler->response->etag('something');
 		$RequestHandler->response->expects($this->once())->method('notModified');
-		$this->assertFalse($RequestHandler->beforeRender($event, $this->Controller));
+		$this->assertFalse($RequestHandler->beforeRender($event));
 	}
 
 /**
@@ -906,12 +909,12 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testCheckNotModifiedByEtagExact() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-		$event = new Event('Controller.beforeRender', $this->Controller);
+		$event = new Event('Controller.beforeRender');
 		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
 		$RequestHandler->response = $this->getMock('Cake\Network\Response', array('notModified'));
 		$RequestHandler->response->etag('something', true);
 		$RequestHandler->response->expects($this->once())->method('notModified');
-		$this->assertFalse($RequestHandler->beforeRender($event, $this->Controller));
+		$this->assertFalse($RequestHandler->beforeRender($event));
 	}
 
 /**
@@ -928,7 +931,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$RequestHandler->response->etag('something', true);
 		$RequestHandler->response->modified('2012-01-01 00:00:00');
 		$RequestHandler->response->expects($this->once())->method('notModified');
-		$this->assertFalse($RequestHandler->beforeRender($event, $this->Controller));
+		$this->assertFalse($RequestHandler->beforeRender($event));
 	}
 
 /**
@@ -941,6 +944,6 @@ class RequestHandlerComponentTest extends TestCase {
 		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
 		$RequestHandler->response = $this->getMock('Cake\Network\Response', array('notModified'));
 		$RequestHandler->response->expects($this->never())->method('notModified');
-		$this->assertNull($RequestHandler->beforeRender($event, $this->Controller));
+		$this->assertNull($RequestHandler->beforeRender($event));
 	}
 }

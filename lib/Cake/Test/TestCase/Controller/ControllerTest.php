@@ -568,16 +568,11 @@ class ControllerTest extends TestCase {
  */
 	public function testRedirectByCode($code, $msg) {
 		$Controller = new Controller(null);
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header', 'statusCode'));
-
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
-
-		$Controller->response->expects($this->once())->method('statusCode')
-			->with($code);
-		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://cakephp.org');
+		$Controller->response = new Response();
 
 		$Controller->redirect('http://cakephp.org', (int)$code, false);
+		$this->assertEquals($code, $Controller->response->statusCode());
+		$this->assertEquals('http://cakephp.org', $Controller->response->header()['Location']);
 		$this->assertFalse($Controller->autoRender);
 	}
 
@@ -589,40 +584,31 @@ class ControllerTest extends TestCase {
  */
 	public function testRedirectByMessage($code, $msg) {
 		$Controller = new Controller(null);
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header', 'statusCode'));
-
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
-
-		$Controller->response->expects($this->once())->method('statusCode')
-			->with($code);
-
-		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://cakephp.org');
+		$Controller->response = new Response();
 
 		$Controller->redirect('http://cakephp.org', $msg, false);
+		$this->assertEquals($code, $Controller->response->statusCode());
+		$this->assertEquals('http://cakephp.org', $Controller->response->header()['Location']);
+		$this->assertFalse($Controller->autoRender);
 		$this->assertFalse($Controller->autoRender);
 	}
 
 /**
- * test that redirect triggers methods on the components.
+ * test that beforeRedirect callbacks can set the URL that is being redirected to.
  *
  * @return void
  */
-	public function testRedirectTriggeringComponentsReturnNull() {
+	public function testRedirectBeforeRedirectModifyingUrl() {
 		$Controller = new Controller(null);
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header', 'statusCode'));
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
+		$Controller->response = new Response();
 
-		$Controller->Components->expects($this->once())->method('trigger')
-			->will($this->returnValue(null));
-
-		$Controller->response->expects($this->once())->method('statusCode')
-			->with(301);
-
-		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://cakephp.org');
+		$Controller->getEventManager()->attach(function ($event, $response, $url) {
+			$response->header('Location', 'http://book.cakephp.org');
+		}, 'Controller.beforeRedirect');
 
 		$Controller->redirect('http://cakephp.org', 301, false);
+		$this->assertEquals('http://book.cakephp.org', $Controller->response->header()['Location']);
+		$this->assertEquals(301, $Controller->response->statusCode());
 	}
 
 /**
@@ -630,54 +616,18 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testRedirectBeforeRedirectModifyingParams() {
-		$Controller = new Controller(null);
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header', 'statusCode'));
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
-
-		$Controller->Components->expects($this->once())->method('trigger')
-			->will($this->returnValue(array('http://book.cakephp.org')));
-
-		$Controller->response->expects($this->once())->method('statusCode')
-			->with(301);
-
-		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://book.cakephp.org');
-
-		$Controller->redirect('http://cakephp.org', 301, false);
-	}
-
-/**
- * test that beforeRedirect callback returning null doesn't affect things.
- *
- * @return void
- */
-	public function testRedirectBeforeRedirectModifyingParamsArrayReturn() {
+	public function testRedirectBeforeRedirectModifyingStatusCode() {
 		$Controller = $this->getMock('Cake\Controller\Controller', array('header', '_stop'));
-		$Controller->response = $this->getMock('Cake\Network\Response');
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
+		$Controller->response = new Response();
 
-		$return = array(
-			array(
-				'url' => 'http://example.com/test/1',
-				'exit' => false,
-				'status' => 302
-			),
-			array(
-				'url' => 'http://example.com/test/2',
-			),
-		);
-		$Controller->Components->expects($this->once())->method('trigger')
-			->will($this->returnValue($return));
+		$Controller->getEventManager()->attach(function ($event, $response, $url) {
+			$response->statusCode(302);
+		}, 'Controller.beforeRedirect');
 
-		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://example.com/test/2');
+		$Controller->redirect('http://cakephp.org', 301, false);
 
-		$Controller->response->expects($this->at(1))->method('statusCode')
-			->with(302);
-
-		$Controller->expects($this->never())->method('_stop');
-		$Controller->redirect('http://cakephp.org', 301);
+		$this->assertEquals('http://cakephp.org', $Controller->response->header()['Location']);
+		$this->assertEquals(302, $Controller->response->statusCode());
 	}
 
 /**
@@ -685,43 +635,20 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testRedirectBeforeRedirectInController() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('_stop', 'beforeRedirect'));
+	public function testRedirectBeforeRedirectListenerReturnFalse() {
+		$Controller = $this->getMock('Cake\Controller\Controller', array('_stop'));
 		$Controller->response = $this->getMock('Cake\Network\Response', array('header'));
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
 
-		$Controller->expects($this->once())->method('beforeRedirect')
-			->with('http://cakephp.org')
-			->will($this->returnValue(false));
-		$Controller->response->expects($this->never())->method('header');
+		$Controller->getEventManager()->attach(function ($event, $response, $url, $status) {
+			return false;
+		}, 'Controller.beforeRedirect');
+
+		$Controller->response->expects($this->never())
+			->method('header');
+		$Controller->response->expects($this->never())
+			->method('statusCode');
+
 		$Controller->expects($this->never())->method('_stop');
-		$Controller->redirect('http://cakephp.org');
-	}
-
-/**
- * Test that beforeRedirect works with returning an array from the controller method.
- *
- * @return void
- */
-	public function testRedirectBeforeRedirectInControllerWithArray() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('_stop', 'beforeRedirect'));
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header'));
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
-
-		$Controller->expects($this->once())
-			->method('beforeRedirect')
-			->with('http://cakephp.org', null, true)
-			->will($this->returnValue(array(
-				'url' => 'http://example.org',
-				'status' => 302,
-				'exit' => true
-			)));
-
-		$Controller->response->expects($this->at(0))
-			->method('header')
-			->with('Location', 'http://example.org');
-
-		$Controller->expects($this->once())->method('_stop');
 		$Controller->redirect('http://cakephp.org');
 	}
 

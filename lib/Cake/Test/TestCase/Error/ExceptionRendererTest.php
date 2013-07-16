@@ -60,7 +60,7 @@ class BlueberryComponent extends Component {
  *
  * @return void
  */
-	public function initialize(Event $event, Controller $controller) {
+	public function initialize(Event $event) {
 		$this->testName = 'BlueberryComponent';
 	}
 

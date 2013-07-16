@@ -738,32 +738,31 @@ class Controller extends Object implements EventListener {
 		if (is_array($status)) {
 			extract($status, EXTR_OVERWRITE);
 		}
-		$event = new Event('Controller.beforeRedirect', $this, array($url, $status, $exit));
+		$response = $this->response;
+		$event = new Event('Controller.beforeRedirect', $this, [$response, $url, $status]);
 		$this->getEventManager()->dispatch($event);
-
 		if ($event->isStopped()) {
 			return;
 		}
-		$response = $event->result;
-		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
 
-		if ($url !== null) {
-			$this->response->header('Location', Router::url($url, true));
+		$headers = $response->header();
+		if ($url !== null && empty($headers['Location'])) {
+			$response->header('Location', Router::url($url, true));
 		}
 
 		if (is_string($status)) {
-			$codes = array_flip($this->response->httpCodes());
+			$codes = array_flip($response->httpCodes());
 			if (isset($codes[$status])) {
 				$status = $codes[$status];
 			}
 		}
 
-		if ($status) {
-			$this->response->statusCode($status);
+		if ($status && $response->statusCode() === 200) {
+			$response->statusCode($status);
 		}
 
 		if ($exit) {
-			$this->response->send();
+			$response->send();
 			$this->_stop();
 		}
 	}

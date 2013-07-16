@@ -21,6 +21,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Event\Event;
+use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\Xml;
@@ -246,11 +247,10 @@ class RequestHandlerComponent extends Component {
  *
  * @param Event $event The Controller.beforeRedirect event.
  * @param string|array $url A string or array containing the redirect location
- * @param integer|array $status HTTP Status for redirect
- * @param boolean $exit
+ * @param Cake\Network\Response $response The response object.
  * @return void
  */
-	public function beforeRedirect(Event $event, $url, $status = null, $exit = true) {
+	public function beforeRedirect(Event $event, $url, $response) {
 		if (!$this->request->is('ajax')) {
 			return;
 		}
@@ -265,13 +265,13 @@ class RequestHandlerComponent extends Component {
 			$url = Router::url($url + array('base' => false));
 		}
 		if (!empty($status)) {
-			$statusCode = $this->response->httpCodes($status);
+			$statusCode = $response->httpCodes($status);
 			$code = key($statusCode);
-			$this->response->statusCode($code);
+			$response->statusCode($code);
 		}
 		$controller = $event->subject();
-		$this->response->body($controller->requestAction($url, array('return', 'bare' => false)));
-		$this->response->send();
+		$response->body($controller->requestAction($url, array('return', 'bare' => false)));
+		$response->send();
 		$this->_stop();
 	}
 
@@ -310,7 +310,7 @@ class RequestHandlerComponent extends Component {
 	public function isFlash() {
 		return $this->request->is('flash');
 	}
-
+;
 /**
  * Returns true if the current request is over HTTPS, false otherwise.
  *
