@@ -692,7 +692,7 @@ class CakeTime {
 	}
 
 /**
- * Returns either a relative or an absolute formatted date depending
+ * Returns either a relative or a formatted absolute date depending
  * on the difference between the current time and given datetime.
  * $datetime should be in a *strtotime* - parsable format, like MySQL's datetime datatype.
  *
