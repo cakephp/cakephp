@@ -41,7 +41,7 @@ class AssetDispatcher extends DispatcherFilter {
  * @return CakeResponse if the client is requesting a recognized asset, null otherwise
  */
 	public function beforeDispatch($event) {
-		$url = $event->data['request']->url;
+		$url = urldecode($event->data['request']->url);
 		$response = $event->data['response'];
 
 		if (strpos($url, '..') !== false || strpos($url, '.') === false) {
@@ -61,7 +61,7 @@ class AssetDispatcher extends DispatcherFilter {
 		if ($parts[0] === 'theme') {
 			$themeName = $parts[1];
 			unset($parts[0], $parts[1]);
-			$fileFragment = urldecode(implode(DS, $parts));
+			$fileFragment = implode(DS, $parts);
 			$path = App::themePath($themeName) . 'webroot' . DS;
 			if (file_exists($path . $fileFragment)) {
 				$assetFile = $path . $fileFragment;
@@ -70,7 +70,7 @@ class AssetDispatcher extends DispatcherFilter {
 			$plugin = Inflector::camelize($parts[0]);
 			if (CakePlugin::loaded($plugin)) {
 				unset($parts[0]);
-				$fileFragment = urldecode(implode(DS, $parts));
+				$fileFragment = implode(DS, $parts);
 				$pluginWebroot = CakePlugin::path($plugin) . 'webroot' . DS;
 				if (file_exists($pluginWebroot . $fileFragment)) {
 					$assetFile = $pluginWebroot . $fileFragment;
