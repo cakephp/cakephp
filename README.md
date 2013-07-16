@@ -30,7 +30,7 @@ Get Support!
 
 [#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
 
-[Q & A](http://ask.cakephp.org/) - Ask questions here, all questions welcome
+[Q & A](http://area51.stackexchange.com/proposals/57704/cakephp) - Ask questions here, all questions welcome
 
 [Lighthouse](https://cakephp.lighthouseapp.com/) - Got issues? Please tell us!
 
