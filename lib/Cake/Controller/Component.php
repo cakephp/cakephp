@@ -50,14 +50,16 @@ use Cake\Utility\ObjectCollection;
  *
  * Each callback has a slightly different signature:
  *
- * - `intitalize(Event $event, Controller $controller)`
- * - `startup(Event $event, Controller $controller)`
- * - `beforeRender(Event $event, Controller $controller)`
- * - `beforeRedirect(Event $event, Controller $controller, $url, $status, $exit)`
- * - `shutdown(Event $event, Controller $controller)`
+ * - `intitalize(Event $event)`
+ * - `startup(Event $event)`
+ * - `beforeRender(Event $event)`
+ * - `beforeRedirect(Event $event $url, $status, $exit)`
+ * - `shutdown(Event $event)`
  *
- * @package       Cake.Controller
- * @link          http://book.cakephp.org/2.0/en/controllers/components.html
+ * While the controller is not an explicit argument it is the subject of each event
+ * and can be fetched using Event::subject().
+ *
+ * @link http://book.cakephp.org/2.0/en/controllers/components.html
  * @see Controller::$components
  */
 class Component extends Object implements EventListener {

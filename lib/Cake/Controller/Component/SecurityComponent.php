@@ -217,10 +217,10 @@ class SecurityComponent extends Component {
  * Component startup. All security checking happens here.
  *
  * @param Event $event An Event instance
- * @param Controller $controller Instantiating controller
  * @return void
  */
-	public function startup(Event $event, Controller $controller) {
+	public function startup(Event $event) {
+		$controller = $event->subject();
 		$this->request = $controller->request;
 		$this->_action = $this->request->params['action'];
 		$this->_methodsRequired($controller);

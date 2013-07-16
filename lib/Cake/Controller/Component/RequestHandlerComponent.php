@@ -123,11 +123,10 @@ class RequestHandlerComponent extends Component {
  * and the requested mime-types, RequestHandler::$ext is set to that value.
  *
  * @param Event $event The initialize event that was fired.
- * @param Controller $controller A reference to the controller
  * @return void
  * @see Router::parseExtensions()
  */
-	public function initialize(Event $event, Controller $controller) {
+	public function initialize(Event $event) {
 		if (isset($this->request->params['_ext'])) {
 			$this->ext = $this->request->params['_ext'];
 		}
@@ -198,7 +197,8 @@ class RequestHandlerComponent extends Component {
  * @param Controller $controller A reference to the controller
  * @return void
  */
-	public function startup(Event $event, Controller $controller) {
+	public function startup(Event $event) {
+		$controller = $event->subject();
 		$controller->request->params['isAjax'] = $this->request->is('ajax');
 		$isRecognized = (
 			!in_array($this->ext, array('html', 'htm')) &&
@@ -245,13 +245,12 @@ class RequestHandlerComponent extends Component {
  * Modifies the $_POST and $_SERVER['REQUEST_METHOD'] to simulate a new GET request.
  *
  * @param Event $event The Controller.beforeRedirect event.
- * @param Controller $controller A reference to the controller
  * @param string|array $url A string or array containing the redirect location
  * @param integer|array $status HTTP Status for redirect
  * @param boolean $exit
  * @return void
  */
-	public function beforeRedirect(Event $event, Controller $controller, $url, $status = null, $exit = true) {
+	public function beforeRedirect(Event $event, $url, $status = null, $exit = true) {
 		if (!$this->request->is('ajax')) {
 			return;
 		}
@@ -270,6 +269,7 @@ class RequestHandlerComponent extends Component {
 			$code = key($statusCode);
 			$this->response->statusCode($code);
 		}
+		$controller = $event->subject();
 		$this->response->body($controller->requestAction($url, array('return', 'bare' => false)));
 		$this->response->send();
 		$this->_stop();
@@ -285,7 +285,7 @@ class RequestHandlerComponent extends Component {
  * @param Controller $controller
  * @return boolean false if the render process should be aborted
  */
-	public function beforeRender(Event $event, Controller $controller) {
+	public function beforeRender(Event $event) {
 		if ($this->settings['checkHttpCache'] && $this->response->checkNotModified($this->request)) {
 			return false;
 		}

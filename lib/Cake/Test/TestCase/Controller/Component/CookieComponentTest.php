@@ -52,8 +52,8 @@ class CookieComponentTest extends TestCase {
 		$this->Cookie->secure = false;
 		$this->Cookie->key = 'somerandomhaskey';
 
-		$event = new Event('Controller.startup');
-		$this->Cookie->startup($event, $this->Controller);
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->Cookie->startup($event);
 	}
 
 /**

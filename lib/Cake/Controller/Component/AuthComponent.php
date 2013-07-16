@@ -20,6 +20,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Event\Event;
 use Cake\Model\Datasource\Session;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -257,10 +258,11 @@ class AuthComponent extends Component {
 /**
  * Initializes AuthComponent for use in the controller
  *
- * @param Controller $controller A reference to the instantiating controller object
+ * @param Event $event The initialize event.
  * @return void
  */
-	public function initialize(Controller $controller) {
+	public function initialize(Event $event) {
+		$controller = $event->subject();
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
@@ -274,10 +276,11 @@ class AuthComponent extends Component {
  * Main execution method. Handles redirecting of invalid users, and processing
  * of login form data.
  *
- * @param Controller $controller A reference to the instantiating controller object
+ * @param Event $event The startup event.
  * @return boolean
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event) {
+		$controller = $event->subject();
 		$methods = array_flip(array_map('strtolower', $controller->methods));
 		$action = strtolower($controller->request->params['action']);
 
