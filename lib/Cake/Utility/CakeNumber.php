@@ -279,7 +279,7 @@ class CakeNumber {
 			$after = substr($value, $foundDecimal);
 			$value = substr($value, 0, $foundDecimal);
 		}
-  while (($foundThousand = preg_replace('/(\d+)(\d\d\d)/', '\1 \2', $value)) !== $value) {
+		while (($foundThousand = preg_replace('/(\d+)(\d\d\d)/', '\1 \2', $value)) !== $value) {
 			$value = $foundThousand;
 		}
 		$value .= $after;
