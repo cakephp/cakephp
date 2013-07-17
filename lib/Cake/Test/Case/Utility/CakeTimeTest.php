@@ -203,7 +203,7 @@ class CakeTimeTest extends CakeTestCase {
 			strtotime('+4 months +2 weeks +3 days'),
 			array('absoluteString' => 'exactly on %s', 'accuracy' => array('year' => 'year'), 'end' => '+2 months')
 		);
-		$expected = 'exactly on 3/12/13';
+		$expected = 'exactly on ' . date('j/n/y', strtotime('+4 months +2 weeks +3 days'));
 		$this->assertEquals($expected, $result);
 	}
 
