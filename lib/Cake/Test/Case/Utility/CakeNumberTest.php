@@ -36,6 +36,9 @@ class CakeNumberTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Number = new CakeNumber();
+
+		Configure::delete('L10n.decimals');
+		Configure::delete('L10n.thousands');
 	}
 
 /**
