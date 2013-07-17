@@ -1160,6 +1160,9 @@ class FormHelper extends AppHelper {
 			if ($fieldKey == $primaryKey) {
 				$options['type'] = 'hidden';
 			}
+			if ($options['type'] === 'text' && !empty($fieldDef['length']) && $fieldDef['length'] > 255) {
+				$options['type'] = 'textarea';
+			}
 			if (
 				$options['type'] === 'number' &&
 				$type === 'float' &&

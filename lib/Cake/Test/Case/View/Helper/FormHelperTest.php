@@ -260,6 +260,7 @@ class UserForm extends CakeTestModel {
 		'other' => array('type' => 'text', 'null' => true, 'default' => null, 'length' => null),
 		'stuff' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 10),
 		'something' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 255),
+		'something_long' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 300),
 		'active' => array('type' => 'boolean', 'null' => false, 'default' => false),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
@@ -8220,6 +8221,21 @@ class FormHelperTest extends CakeTestCase {
 				'type' => 'text', 'name' => 'data[UserForm][stuff]',
 				'id' => 'UserFormStuff', 'maxlength' => 10
 			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('UserForm.something_long');
+		$expected = array(
+			'div' => array('class' => 'input textarea'),
+			'label' => array('for' => 'UserFormSomethingLong'),
+			'Something Long',
+			'/label',
+			'textarea' => array(
+				'name' => 'data[UserForm][something_long]', 'cols' => 30, 'rows' => 6,
+				'id' => 'UserFormSomethingLong'
+			),
+			'/textarea',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
