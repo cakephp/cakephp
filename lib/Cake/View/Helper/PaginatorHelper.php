@@ -19,6 +19,7 @@
  */
 
 App::uses('AppHelper', 'View/Helper');
+App::uses('CakeNumber', 'Utility');
 
 /**
  * Pagination Helper class for easy generation of pagination links.
@@ -639,6 +640,26 @@ class PaginatorHelper extends AppHelper {
 		$end = $start + $paging['limit'] - 1;
 		if ($paging['count'] < $end) {
 			$end = $paging['count'];
+		}
+
+		$formatOptions = array('before' => null, 'places' => 0);
+		if ($paging['page'] > 1000) {
+			$paging['page'] = CakeNumber::format($paging['page'], $formatOptions);
+		}
+		if ($paging['pageCount'] > 1000) {
+			$paging['pageCount'] = CakeNumber::format($paging['pageCount'], $formatOptions);
+		}
+		if ($paging['current'] > 1000) {
+			$paging['current'] = CakeNumber::format($paging['current'], $formatOptions);
+		}
+		if ($paging['count'] > 1000) {
+			$paging['count'] = CakeNumber::format($paging['count'], $formatOptions);
+		}
+		if ($start > 1000) {
+			$start = CakeNumber::format($start, $formatOptions);
+		}
+		if ($end > 1000) {
+			$end = CakeNumber::format($end, $formatOptions);
 		}
 
 		switch ($options['format']) {

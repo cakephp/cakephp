@@ -90,6 +90,29 @@ class CakeNumberTest extends CakeTestCase {
 	}
 
 /**
+ * testFormatLocalized method
+ *
+ * @return void
+ */
+	public function testFormatLocalized() {
+		// German format
+		Configure::write('L10n.decimals', ',');
+		Configure::write('L10n.thousands', '.');
+
+		$value = 1234.56;
+		$options = array('before' => '', 'places' => 2);
+		$result = $this->Number->format($value, $options);
+		$expected = '1.234,56';
+		$this->assertEquals($expected, $result);
+
+		$value = -1.23;
+		$options = array('before' => '', 'places' => 1);
+		$result = $this->Number->format($value, $options);
+		$expected = '-1,2';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testFormatDelta method
  *
  * @return void
@@ -673,6 +696,25 @@ class CakeNumberTest extends CakeTestCase {
 
 		$result = $this->Number->toPercentage(0.456, 2, array('multiply' => true));
 		$expected = '45.60%';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testToPercentageLocalized method
+ *
+ * @return void
+ */
+	public function testToPercentageLocalized() {
+		// German format
+		Configure::write('L10n.decimals', ',');
+		Configure::write('L10n.thousands', '.');
+
+		$result = $this->Number->toPercentage(45, 2);
+		$expected = '45,00%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0.456, 1, array('multiply' => true));
+		$expected = '45,6%';
 		$this->assertEquals($expected, $result);
 	}
 

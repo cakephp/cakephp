@@ -175,11 +175,14 @@ class CakeNumber {
 		if ($options['multiply']) {
 			$value *= 100;
 		}
-		return self::precision($value, $precision) . '%';
+		return self::format(self::precision($value, $precision), $precision) . '%';
 	}
 
 /**
  * Formats a number into a currency format.
+ *
+ * Uses Configure::read('L10n.thousands') and Configure::read('L10n.decimals') to
+ * localize the output. Defaults to ',' and '.'.
  *
  * @param float $value A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
@@ -199,18 +202,24 @@ class CakeNumber {
 		if (is_string($options) && !in_array($options, $separators)) {
 			$before = $options;
 		}
-		$thousands = ',';
+		$thousands = Configure::read('L10n.thousands');
+		if ($thousands === null) {
+			 $thousands = ',';
+		}
 		if (!is_array($options) && in_array($options, $separators)) {
 			$thousands = $options;
 		}
-		$decimals = '.';
+		$decimals = Configure::read('L10n.decimals');
+		if ($decimals === null) {
+			 $decimals = '.';
+		}
 		if (!is_array($options) && in_array($options, $separators)) {
 			$decimals = $options;
 		}
 
 		$escape = true;
 		if (is_array($options)) {
-			$defaults = array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.');
+			$defaults = compact('thousands', 'decimals') + array('before' => '$', 'places' => 2);
 			$options += $defaults;
 			extract($options);
 		}
@@ -270,7 +279,7 @@ class CakeNumber {
 			$after = substr($value, $foundDecimal);
 			$value = substr($value, 0, $foundDecimal);
 		}
-		while (($foundThousand = preg_replace('/(\d+)(\d\d\d)/', '\1 \2', $value)) !== $value) {
+  while (($foundThousand = preg_replace('/(\d+)(\d\d\d)/', '\1 \2', $value)) !== $value) {
 			$value = $foundThousand;
 		}
 		$value .= $after;
