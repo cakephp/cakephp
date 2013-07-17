@@ -1488,9 +1488,9 @@ class CakeResponseTest extends CakeTestCase {
  */
 	public function testLocation() {
 		$response = new CakeResponse();
-		$this->assertNull($response->location());
-		$this->assertNull($response->location('http://example.org'));
-		$this->assertEquals('http://example.org', $response->location());
+		$this->assertNull($response->location(), 'No header should be set.');
+		$this->assertNull($response->location('http://example.org'), 'Setting a location should return null');
+		$this->assertEquals('http://example.org', $response->location(), 'Reading a location should return the value.');
 	}
 
 }
