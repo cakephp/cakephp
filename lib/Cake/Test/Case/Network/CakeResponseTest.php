@@ -1481,4 +1481,16 @@ class CakeResponseTest extends CakeTestCase {
 		$result = $response->send();
 	}
 
+/**
+ * Test the location method.
+ *
+ * @return void
+ */
+	public function testLocation() {
+		$response = new CakeResponse();
+		$this->assertNull($response->location());
+		$this->assertNull($response->location('http://example.org'));
+		$this->assertEquals('http://example.org', $response->location());
+	}
+
 }
