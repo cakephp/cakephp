@@ -427,7 +427,12 @@ class PaginatorHelper extends AppHelper {
 			$url = array_merge($url, compact('sort', 'direction'));
 		}
 		$url = $this->_convertUrlKeys($url, $paging['paramType']);
-
+		if (!empty($url['page']) && $url['page'] == 1) {
+			unset($url['page']);
+		}
+		if (!empty($url['?']['page']) && $url['?']['page'] == 1) {
+			unset($url['?']['page']);
+		}
 		if ($asArray) {
 			return $url;
 		}
