@@ -230,7 +230,6 @@ class PaginatorComponent extends Component {
 			'options' => Hash::diff($options, $defaults),
 			'paramType' => $options['paramType']
 		);
-
 		if (!isset($this->Controller->request['paging'])) {
 			$this->Controller->request['paging'] = array();
 		}
@@ -310,6 +309,7 @@ class PaginatorComponent extends Component {
  * @return array Array of merged options.
  */
 	public function mergeOptions($alias) {
+		$defaults = $this->getDefaults($alias);
 		$request = $this->Controller->request;
 		if(!empty($request->params['requested'])) {
 			$request = Router::getRequest();
