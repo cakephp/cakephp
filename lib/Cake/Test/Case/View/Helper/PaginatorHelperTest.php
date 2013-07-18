@@ -2027,6 +2027,78 @@ class PaginatorHelperTest extends CakeTestCase {
 			array('span' => array()), array('a' => array('href' => '/index/page:4897')), '4897', '/a', '/span',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Paginator->request->params['paging'] = array(
+			'Client' => array(
+				'page' => 2,
+				'current' => 2,
+				'count' => 30,
+				'prevPage' => false,
+				'nextPage' => 3,
+				'pageCount' => 3,
+				'options' => array(
+					'page' => 1,
+				),
+				'paramType' => 'named'
+			)
+		);
+
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'controller' => 'clients', 'action' => 'index', 'plugin' => null, 'page' => 2
+		));
+		$request->base = '';
+		$request->here = '/clients/index/page:2';
+		$request->webroot = '/';
+
+		Router::setRequestInfo($request);
+
+		$result = $this->Paginator->numbers();
+		$expected = array(
+			array('span' => array()), array('a' => array('href' => '/clients')), '1', '/a', '/span',
+			' | ',
+			array('span' => array('class' => 'current')), '2', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/clients/index/page:3')), '3', '/a', '/span',
+
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Paginator->request->params['paging'] = array(
+			'Client' => array(
+				'page' => 2,
+				'current' => 2,
+				'count' => 30,
+				'prevPage' => false,
+				'nextPage' => 3,
+				'pageCount' => 3,
+				'options' => array(
+					'page' => 1,
+				),
+				'paramType' => 'querystring'
+			)
+		);
+
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'controller' => 'clients', 'action' => 'index', 'plugin' => null
+		));
+		$request->base = '';
+		$request->here = '/clients?page=2';
+		$request->webroot = '/';
+
+		Router::setRequestInfo($request);
+
+		$result = $this->Paginator->numbers();
+		$expected = array(
+			array('span' => array()), array('a' => array('href' => '/clients')), '1', '/a', '/span',
+			' | ',
+			array('span' => array('class' => 'current')), '2', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/clients?page=3')), '3', '/a', '/span',
+
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

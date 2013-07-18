@@ -428,7 +428,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		$url = $this->_convertUrlKeys($url, $paging['paramType']);
 		if (!empty($url['page']) && $url['page'] == 1) {
-			unset($url['page']);
+			$url['page'] = null;
 		}
 		if (!empty($url['?']['page']) && $url['?']['page'] == 1) {
 			unset($url['?']['page']);
