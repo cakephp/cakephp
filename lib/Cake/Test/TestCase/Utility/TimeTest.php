@@ -192,6 +192,27 @@ class TimeTest extends TestCase {
 	}
 
 /**
+ * test the custom string options for timeAgoInWords
+ *
+ * @return void
+ */
+	public function testTimeAgoInWordsCustomStrings() {
+		$result = $this->Time->timeAgoInWords(
+			strtotime('-8 years -4 months -2 weeks -3 days'),
+			array('relativeString' => 'at least %s ago', 'accuracy' => array('year' => 'year'), 'end' => '+10 years')
+		);
+		$expected = 'at least 8 years ago';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Time->timeAgoInWords(
+			strtotime('+4 months +2 weeks +3 days'),
+			array('absoluteString' => 'exactly on %s', 'accuracy' => array('year' => 'year'), 'end' => '+2 months')
+		);
+		$expected = 'exactly on ' . date('j/n/y', strtotime('+4 months +2 weeks +3 days'));
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test the accuracy option for timeAgoInWords()
  *
  * @return void

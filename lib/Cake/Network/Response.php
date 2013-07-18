@@ -588,6 +588,22 @@ class Response {
 	}
 
 /**
+ * Acccessor for the location header.
+ *
+ * Get/Set the Location header value.
+ * @param null|string $url Either null to get the current location, or a string to set one.
+ * @return string|null When setting the location null will be returned. When reading the location
+ *    a string of the current location header value (if any) will be returned.
+ */
+	public function location($url = null) {
+		if ($url === null) {
+			$headers = $this->header();
+			return isset($headers['Location']) ? $headers['Location'] : null;
+		}
+		$this->header('Location', $url);
+	}
+
+/**
  * Buffers the response message to be sent
  * if $content is null the current buffer is returned
  *
@@ -1351,7 +1367,7 @@ class Response {
 				break;
 			}
 			if ($end && $offset + $bufferSize >= $end) {
-				$bufferSize = $end - $offset;
+				$bufferSize = $end - $offset + 1;
 			}
 			echo fread($file->handle, $bufferSize);
 			if (!$compress) {

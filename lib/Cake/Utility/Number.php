@@ -163,12 +163,21 @@ class Number {
 /**
  * Formats a number into a percentage string.
  *
+ * Options:
+ *
+ * - `multiply`: Multiply the input value by 100 for decimal percentages.
+ *
  * @param float $value A floating point number
  * @param integer $precision The precision of the returned number
+ * @param array $options Options
  * @return string Percentage string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
  */
-	public static function toPercentage($value, $precision = 2) {
+	public static function toPercentage($value, $precision = 2, $options = array()) {
+		$options += array('multiply' => false);
+		if ($options['multiply']) {
+			$value *= 100;
+		}
 		return static::precision($value, $precision) . '%';
 	}
 

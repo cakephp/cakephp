@@ -116,6 +116,7 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::singularize('teeth'), 'tooth');
 		$this->assertEquals(Inflector::singularize('geese'), 'goose');
 		$this->assertEquals(Inflector::singularize('feet'), 'foot');
+		$this->assertEquals(Inflector::singularize('objectives'), 'objective');
 
 		$this->assertEquals(Inflector::singularize(''), '');
 	}
@@ -176,6 +177,7 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::pluralize('tooth'), 'teeth');
 		$this->assertEquals(Inflector::pluralize('goose'), 'geese');
 		$this->assertEquals(Inflector::pluralize('foot'), 'feet');
+		$this->assertEquals(Inflector::pluralize('objective'), 'objectives');
 		$this->assertEquals(Inflector::pluralize(''), '');
 	}
 

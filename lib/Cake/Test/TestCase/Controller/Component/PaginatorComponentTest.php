@@ -672,6 +672,23 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * test that fields in the whitelist are not validated
+ *
+ * @return void
+ */
+	public function testValidateSortWhitelistTrusted() {
+		$model = $this->getMock('Model');
+		$model->alias = 'model';
+		$model->expects($this->never())->method('hasField');
+
+		$options = array('sort' => 'body', 'direction' => 'asc');
+		$result = $this->Paginator->validateSort($model, $options, array('body'));
+
+		$expected = array('body' => 'asc');
+		$this->assertEquals($expected, $result['order']);
+	}
+
+/**
  * test that virtual fields work.
  *
  * @return void
