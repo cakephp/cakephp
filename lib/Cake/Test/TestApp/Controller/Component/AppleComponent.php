@@ -50,7 +50,7 @@ class AppleComponent extends Component {
  * @param mixed $controller
  * @return void
  */
-	public function startup(Event $event, Controller $controller) {
+	public function startup(Event $event) {
 		$this->testName = $controller->name;
 	}
 }

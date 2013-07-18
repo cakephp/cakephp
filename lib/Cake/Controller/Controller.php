@@ -54,6 +54,18 @@ use Cake\View\View;
  * use conventional names. For example `/posts/index` maps to `PostsController::index()`. You can re-map URLs
  * using Router::connect().
  *
+ * ### Life cycle callbacks
+ *
+ * CakePHP fires a number of life cycle callbacks during each request. By implementing a method
+ * you can receive the related events. The available callbacks are:
+ *
+ * - `beforeFilter(Event $event)` - Called before the before each action. This is a good place to
+ *   do general logic that applies to all actions.
+ * - `beforeRender(Event $event)` - Called before the view is rendered.
+ * - `beforeRedirect(Cake\Event\Event $event $url, Cake\Network\Response $response)` - Called before
+ *   a redirect is done.
+ * - `afterFilter(Event $event)` - Called after each action is complete and after the view is rendered.
+ *
  * @package       Cake.Controller
  * @property      AclComponent $Acl
  * @property      AuthComponent $Auth

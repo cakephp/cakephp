@@ -53,7 +53,7 @@ use Cake\Utility\ObjectCollection;
  * - `intitalize(Event $event)`
  * - `startup(Event $event)`
  * - `beforeRender(Event $event)`
- * - `beforeRedirect(Event $event $url, $status, $exit)`
+ * - `beforeRedirect(Cake\Event\Event $event $url, Cake\Network\Response $response)`
  * - `shutdown(Event $event)`
  *
  * While the controller is not an explicit argument it is the subject of each event

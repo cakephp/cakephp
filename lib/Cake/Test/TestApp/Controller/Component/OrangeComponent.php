@@ -38,8 +38,8 @@ class OrangeComponent extends Component {
  * @param Controller $controller
  * @return void
  */
-	public function initialize(Event $event, Controller $controller) {
-		$this->Controller = $controller;
+	public function initialize(Event $event) {
+		$this->Controller = $event->subject();
 		$this->Banana->testField = 'OrangeField';
 	}
 
@@ -50,7 +50,7 @@ class OrangeComponent extends Component {
  * @param Controller $controller
  * @return string
  */
-	public function startup(Event $event, Controller $controller) {
+	public function startup(Event $event) {
 		$controller->foo = 'pass';
 	}
 }

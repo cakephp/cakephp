@@ -164,8 +164,8 @@ class ExceptionRenderer {
 			$controller->startupProcess();
 		} catch (\Exception $e) {
 			if (!empty($controller) && isset($controller->RequestHandler)) {
-				$event = new Event('Controller.startup', $controller, [$controller]);
-				$controller->RequestHandler->startup($event, $controller);
+				$event = new Event('Controller.startup', $controller);
+				$controller->RequestHandler->startup($event);
 			}
 		}
 		if (empty($controller)) {
@@ -281,7 +281,7 @@ class ExceptionRenderer {
 	protected function _outputMessage($template) {
 		try {
 			$this->controller->render($template);
-			$event = new Event('Controller.shutdown', $this->controller, [$this->controller]);
+			$event = new Event('Controller.shutdown', $this->controller);
 			$this->controller->afterFilter($event);
 			$this->controller->response->send();
 		} catch (Error\MissingViewException $e) {

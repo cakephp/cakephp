@@ -43,7 +43,7 @@ class BananaComponent extends Component {
  * @param Controller $controller
  * @return string
  */
-	public function startup(Event $event, Controller $controller) {
+	public function startup(Event $event) {
 		$controller->bar = 'fail';
 	}
 }
