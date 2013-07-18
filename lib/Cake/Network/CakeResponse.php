@@ -1302,6 +1302,15 @@ class CakeResponse {
 
 		$fileSize = $file->size();
 		$lastByte = $fileSize - 1;
+
+		if ($start === '') {
+			$start = $fileSize - $end;
+			$end = $lastByte;
+		}
+		if ($end === '') {
+			$end = $lastByte;
+		}
+
 		if ($start > $end || $end > $lastByte || $start > $lastByte) {
 			$this->statusCode(416);
 			$this->header(array(
