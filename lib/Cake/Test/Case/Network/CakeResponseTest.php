@@ -30,6 +30,7 @@ class CakeResponseTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		ob_start();
 	}
 
@@ -39,6 +40,7 @@ class CakeResponseTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		ob_end_clean();
 	}
 
