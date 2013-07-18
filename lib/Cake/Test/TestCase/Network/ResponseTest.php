@@ -20,7 +20,7 @@ use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class CakeResponseTest
+ * Class ResponseTest
  *
  * @package       Cake.Test.Case.Network
  */
@@ -1489,7 +1489,7 @@ class ResponseTest extends TestCase {
  * @return void
  */
 	public function testLocation() {
-		$response = new CakeResponse();
+		$response = new Response();
 		$this->assertNull($response->location(), 'No header should be set.');
 		$this->assertNull($response->location('http://example.org'), 'Setting a location should return null');
 		$this->assertEquals('http://example.org', $response->location(), 'Reading a location should return the value.');
