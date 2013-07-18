@@ -183,21 +183,6 @@ class TestComponent extends Component {
 
 }
 
-class Test2Component extends TestComponent {
-
-	public $model;
-
-	public function __construct(ComponentCollection $collection, $settings) {
-		$this->controller = $collection->getController();
-		$this->model = $this->controller->modelClass;
-	}
-
-	public function beforeRender(Event $event) {
-		return false;
-	}
-
-}
-
 /**
  * AnotherTestController class
  *
@@ -361,10 +346,10 @@ class ControllerTest extends TestCase {
 
 		$Controller = new TestPluginController(new Request(), new Response());
 		$Controller->uses = [];
-		$Controller->components[] = 'Test2';
+		$Controller->components[] = 'TestPlugin.Other';
 
 		$Controller->constructClasses();
-		$this->assertInstanceOf(__NAMESPACE__ . '\\Test2Component', $Controller->Test2);
+		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $Controller->Other);
 	}
 
 /**
@@ -603,7 +588,7 @@ class ControllerTest extends TestCase {
 		$Controller->response = new Response();
 
 		$Controller->getEventManager()->attach(function ($event, $response, $url) {
-			$response->header('Location', 'http://book.cakephp.org');
+			$response->location('http://book.cakephp.org');
 		}, 'Controller.beforeRedirect');
 
 		$Controller->redirect('http://cakephp.org', 301, false);

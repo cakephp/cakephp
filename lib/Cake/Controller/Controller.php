@@ -745,9 +745,8 @@ class Controller extends Object implements EventListener {
 			return;
 		}
 
-		$headers = $response->header();
-		if ($url !== null && empty($headers['Location'])) {
-			$response->header('Location', Router::url($url, true));
+		if ($url !== null && !$response->location()) {
+			$response->location(Router::url($url, true));
 		}
 
 		if (is_string($status)) {
