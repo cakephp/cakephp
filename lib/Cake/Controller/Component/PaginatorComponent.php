@@ -310,6 +310,7 @@ class PaginatorComponent extends Component {
  * @return array Array of merged options.
  */
 	public function mergeOptions($alias) {
+		$defaults = $this->getDefaults($alias);
 		$request = $this->Controller->request;
 		if(!empty($request->params['requested'])) {
 			$request = Router::getRequest();
