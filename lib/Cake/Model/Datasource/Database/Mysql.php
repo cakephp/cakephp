@@ -136,20 +136,24 @@ class Mysql extends DboSource {
 	public function connect() {
 		$config = $this->config;
 		$this->connected = false;
+
+		$flags = array(
+			PDO::ATTR_PERSISTENT => $config['persistent'],
+			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+		);
+
+		if (!empty($config['encoding'])) {
+			$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
+		}
+
+		if (empty($config['unix_socket'])) {
+			$dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
+		} else {
+			$dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
+		}
+
 		try {
-			$flags = array(
-				PDO::ATTR_PERSISTENT => $config['persistent'],
-				PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-			);
-			if (!empty($config['encoding'])) {
-				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
-			}
-			if (empty($config['unix_socket'])) {
-				$dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
-			} else {
-				$dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
-			}
 			$this->_connection = new PDO(
 				$dsn,
 				$config['login'],
