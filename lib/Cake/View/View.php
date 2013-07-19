@@ -617,10 +617,14 @@ class View extends Object {
  * Start capturing output for a 'block'
  *
  * @param string $name The name of the block to capture for.
+ * @param bool $reset Whether to reset the content, defaults to false
  * @return void
  * @see ViewBlock::start()
  */
-	public function start($name) {
+	public function start($name, $reset = false) {
+		if ($reset === true) {
+			$this->Blocks->set($name, '');
+		}
 		return $this->Blocks->start($name);
 	}
 
