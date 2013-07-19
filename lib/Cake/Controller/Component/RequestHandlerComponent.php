@@ -310,7 +310,7 @@ class RequestHandlerComponent extends Component {
 	public function isFlash() {
 		return $this->request->is('flash');
 	}
-;
+
 /**
  * Returns true if the current request is over HTTPS, false otherwise.
  *

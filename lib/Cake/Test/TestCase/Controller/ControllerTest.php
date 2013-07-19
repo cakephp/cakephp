@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Controller;
 
-use Cake\Controller\Controller;
 use Cake\Controller\Component;
+use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;

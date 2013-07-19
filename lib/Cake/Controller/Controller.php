@@ -28,8 +28,8 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
-use Cake\Utility\ObjectCollection;
 use Cake\Utility\MergeVariablesTrait;
+use Cake\Utility\ObjectCollection;
 use Cake\Utility\ViewVarsTrait;
 use Cake\View\View;
 
