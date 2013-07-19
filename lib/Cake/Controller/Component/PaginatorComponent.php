@@ -237,7 +237,7 @@ class PaginatorComponent extends Component {
 			(array)$this->Controller->request['paging'],
 			array($object->alias => $paging)
 		);
-		if(!empty($this->Controller->request->params['requested'])) {
+		if (!empty($this->Controller->request->params['requested'])) {
 			Router::getRequest()->params['paging'] = $this->Controller->request['paging'];
 		}
 		if (
@@ -311,7 +311,7 @@ class PaginatorComponent extends Component {
 	public function mergeOptions($alias) {
 		$defaults = $this->getDefaults($alias);
 		$request = $this->Controller->request;
-		if(!empty($request->params['requested'])) {
+		if (!empty($request->params['requested'])) {
 			$request = Router::getRequest();
 		}
 		switch ($defaults['paramType']) {
