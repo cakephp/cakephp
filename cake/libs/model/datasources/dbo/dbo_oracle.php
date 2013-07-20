@@ -243,6 +243,15 @@ class DboOracle extends DboSource {
 	}
 
 /**
+ * Check whether the OCI8 extension is installed/loaded
+ *
+ * @return boolean
+ */
+	function enabled() {
+		return extension_loaded('oci8');
+	}
+
+/**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false
