@@ -328,6 +328,11 @@ class ControllerTask extends BakeTask {
 			'plugin' => $this->plugin,
 			'pluginPath' => empty($this->plugin) ? '' : $this->plugin . '.'
 		));
+
+		if (!in_array('Paginator', (array)$components)) {
+			$components[] = 'Paginator';
+		}
+
 		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'isScaffold'));
 		$contents = $this->Template->generate('classes', 'controller');
 

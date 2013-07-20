@@ -286,8 +286,9 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains(' * @property Article $Article', $result);
 		$this->assertContains(' * @property AclComponent $Acl', $result);
 		$this->assertContains(' * @property AuthComponent $Auth', $result);
+		$this->assertContains(' * @property PaginatorComponent $Paginator', $result);
 		$this->assertContains('class ArticlesController extends AppController', $result);
-		$this->assertContains("public \$components = array('Acl', 'Auth')", $result);
+		$this->assertContains("public \$components = array('Acl', 'Auth', 'Paginator')", $result);
 		$this->assertContains("public \$helpers = array('Js', 'Time')", $result);
 		$this->assertContains("--actions--", $result);
 
@@ -300,8 +301,8 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Articles', '--actions--', array(), array());
 		$this->assertContains('class ArticlesController extends AppController', $result);
-		$this->assertSame(substr_count($result, '@property'), 1);
-		$this->assertNotContains('components', $result);
+		$this->assertSame(substr_count($result, '@property'), 2);
+		$this->assertContains("public \$components = array('Paginator')", $result);
 		$this->assertNotContains('helpers', $result);
 		$this->assertContains('--actions--', $result);
 	}
