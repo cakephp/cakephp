@@ -856,30 +856,6 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
- * assure that beforeRedirect with a status code will correctly set the status header
- *
- * @return void
- */
-	public function testBeforeRedirectCallingHeader() {
-		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
-
-		$event = new Event('Controller.beforeRender', $this->Controller);
-		$controller = $this->getMock('Cake\Controller\Controller', array('header'));
-		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
-		$RequestHandler->response = $this->getMock('Cake\Network\Response', array('_sendHeader','statusCode'));
-		$RequestHandler->request = $this->getMock('Cake\Network\Request');
-		$RequestHandler->request->expects($this->once())->method('is')
-			->with('ajax')
-			->will($this->returnValue(true));
-
-		$RequestHandler->response->expects($this->once())->method('statusCode')->with(403);
-
-		ob_start();
-		$RequestHandler->beforeRedirect($event, 'request_handler_test/param_method/first/second', $controller->response);
-		ob_get_clean();
-	}
-
-/**
  * @expectedException Cake\Error\Exception
  * @return void
  */
@@ -944,6 +920,6 @@ class RequestHandlerComponentTest extends TestCase {
 		$RequestHandler = $this->getMock('Cake\Controller\Component\RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
 		$RequestHandler->response = $this->getMock('Cake\Network\Response', array('notModified'));
 		$RequestHandler->response->expects($this->never())->method('notModified');
-		$this->assertNull($RequestHandler->beforeRender($event));
+		$this->assertNull($RequestHandler->beforeRender($event, '', $RequestHandler->response));
 	}
 }

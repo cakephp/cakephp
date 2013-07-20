@@ -264,11 +264,6 @@ class RequestHandlerComponent extends Component {
 		if (is_array($url)) {
 			$url = Router::url($url + array('base' => false));
 		}
-		if (!empty($status)) {
-			$statusCode = $response->httpCodes($status);
-			$code = key($statusCode);
-			$response->statusCode($code);
-		}
 		$controller = $event->subject();
 		$response->body($controller->requestAction($url, array('return', 'bare' => false)));
 		$response->send();

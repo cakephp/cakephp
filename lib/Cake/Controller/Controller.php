@@ -28,8 +28,8 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
-use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\ObjectCollection;
+use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\ViewVarsTrait;
 use Cake\View\View;
 
@@ -747,10 +747,11 @@ class Controller extends Object implements EventListener {
 	public function redirect($url, $status = null, $exit = true) {
 		$this->autoRender = false;
 
-		if (is_array($status)) {
-			extract($status, EXTR_OVERWRITE);
-		}
 		$response = $this->response;
+		if ($status && $response->statusCode() === 200) {
+			$response->statusCode($status);
+		}
+
 		$event = new Event('Controller.beforeRedirect', $this, [$response, $url, $status]);
 		$this->getEventManager()->dispatch($event);
 		if ($event->isStopped()) {
@@ -759,17 +760,6 @@ class Controller extends Object implements EventListener {
 
 		if ($url !== null && !$response->location()) {
 			$response->location(Router::url($url, true));
-		}
-
-		if (is_string($status)) {
-			$codes = array_flip($response->httpCodes());
-			if (isset($codes[$status])) {
-				$status = $codes[$status];
-			}
-		}
-
-		if ($status && $response->statusCode() === 200) {
-			$response->statusCode($status);
 		}
 
 		if ($exit) {

@@ -562,23 +562,6 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * test redirecting by message
- *
- * @dataProvider statusCodeProvider
- * @return void
- */
-	public function testRedirectByMessage($code, $msg) {
-		$Controller = new Controller(null);
-		$Controller->response = new Response();
-
-		$Controller->redirect('http://cakephp.org', $msg, false);
-		$this->assertEquals($code, $Controller->response->statusCode());
-		$this->assertEquals('http://cakephp.org', $Controller->response->header()['Location']);
-		$this->assertFalse($Controller->autoRender);
-		$this->assertFalse($Controller->autoRender);
-	}
-
-/**
  * test that beforeRedirect callbacks can set the URL that is being redirected to.
  *
  * @return void
