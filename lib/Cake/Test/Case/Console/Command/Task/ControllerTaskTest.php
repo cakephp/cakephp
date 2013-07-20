@@ -224,7 +224,7 @@ class ControllerTaskTest extends CakeTestCase {
 	public function testDoComponentsNo() {
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
 		$result = $this->Task->doComponents();
-		$this->assertSame(array(), $result);
+		$this->assertSame(array('Paginator'), $result);
 	}
 
 /**
@@ -237,7 +237,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security  '));
 
 		$result = $this->Task->doComponents();
-		$expected = array('RequestHandler', 'Security');
+		$expected = array('Paginator', 'RequestHandler', 'Security');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -251,7 +251,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security, , '));
 
 		$result = $this->Task->doComponents();
-		$expected = array('RequestHandler', 'Security');
+		$expected = array('Paginator', 'RequestHandler', 'Security');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -350,7 +350,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->assertContains('function index() {', $result);
 		$this->assertContains('$this->BakeArticle->recursive = 0;', $result);
-		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
+		$this->assertContains("\$this->set('bakeArticles', \$this->Paginator->paginate());", $result);
 
 		$this->assertContains('function view($id = null)', $result);
 		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
@@ -388,7 +388,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->assertContains('function index() {', $result);
 		$this->assertContains('$this->BakeArticle->recursive = 0;', $result);
-		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
+		$this->assertContains("\$this->set('bakeArticles', \$this->Paginator->paginate());", $result);
 
 		$this->assertContains('function view($id = null)', $result);
 		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
