@@ -130,6 +130,15 @@ class Mysql extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
+ * MySQL supports a few additional options that other drivers do not:
+ *
+ * - `unix_socket` Set to the path of the MySQL sock file. Can be used in place
+ *   of host + port.
+ * - `ssl_key` SSL key file for connecting via SSL. Must be combined with `ssl_cert`.
+ * - `ssl_cert` The SSL certificate to use when connecting via SSL. Must be
+ *   combined with `ssl_key`.
+ * - `ssl_ca` The certificate authority for SSL connections.
+ *
  * @return boolean True if the database could be connected, else false
  * @throws MissingConnectionException
  */
