@@ -1730,8 +1730,13 @@ class DboSource extends DataSource {
  * @return string
  */
 	public function renderJoinStatement($data) {
-		extract($data);
-		return trim("{$type} JOIN {$table} {$alias} ON ({$conditions})");
+		$data = array_merge(array(
+			'alias' => null,
+			'conditions' => null,
+			'table' => null,
+			'type' => null,
+		), $data);
+		return trim(String::insert(':type JOIN :table :alias ON (:conditions)', $data));
 	}
 
 /**
@@ -1742,36 +1747,47 @@ class DboSource extends DataSource {
  * @return string Rendered SQL expression to be run.
  */
 	public function renderStatement($type, $data) {
-		extract($data);
-		$aliases = null;
+		$data = array_merge(array(
+			'alias' => null,
+			'columns' => null,
+			'conditions' => null,
+			'fields' => null,
+			'group' => null,
+			'indexes' => null,
+			'joins' => null,
+			'order' => null,
+			'table' => null,
+			'tableParameters' => null,
+		), $data);
+		$data['aliases'] = null;
 
 		switch (strtolower($type)) {
 			case 'select':
-				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}";
+				return String::insert('SELECT :fields FROM :table :alias :joins :conditions :group :order :limit', $data);
 			case 'create':
-				return "INSERT INTO {$table} ({$fields}) VALUES ({$values})";
+				return String::insert('INSERT INTO :table (:fields) VALUES (:values)', $data);
 			case 'update':
-				if (!empty($alias)) {
-					$aliases = "{$this->alias}{$alias} {$joins} ";
+				if (!empty($data['alias'])) {
+					$data['aliases'] = String::insert($this->alias . $data['alias'] . ' :joins', $data);
 				}
-				return "UPDATE {$table} {$aliases}SET {$fields} {$conditions}";
+				return String::insert('UPDATE :table :aliases SET :fields :conditions', $data);
 			case 'delete':
-				if (!empty($alias)) {
-					$aliases = "{$this->alias}{$alias} {$joins} ";
+				if (!empty($data['alias'])) {
+					$data['aliases'] = String::insert($this->alias . $data['alias'] . ' :joins', $data);
 				}
-				return "DELETE {$alias} FROM {$table} {$aliases}{$conditions}";
+				return String::insert('DELETE :alias FROM :table :aliases :conditions', $data);
 			case 'schema':
 				foreach (array('columns', 'indexes', 'tableParameters') as $var) {
-					if (is_array(${$var})) {
-						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
+					if (is_array($data[$var])) {
+						$data[$var] = "\t" . implode(",\n\t", array_filter((array)$data[$var]));
 					} else {
-						${$var} = '';
+						$data[$var] = '';
 					}
 				}
-				if (trim($indexes) !== '') {
-					$columns .= ',';
+				if (trim($data['indexes']) !== '') {
+					$data['columns'] .= ',';
 				}
-				return "CREATE TABLE {$table} (\n{$columns}{$indexes}) {$tableParameters};";
+				return String::insert("CREATE TABLE :table (\n:columns :indexes) :tableParameters;", $data);
 			case 'alter':
 				return;
 		}
