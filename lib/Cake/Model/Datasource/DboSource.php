@@ -3076,27 +3076,49 @@ class DboSource extends DataSource {
 
 /**
  * Generate a database-native column schema string
+ * 
+ * This method takes an array structured as follows: 
  *
- * @param array $column An array structured like the following: array('name' => 'value', 'type' => 'value'[, options]),
- *   where options can be 'default', 'length', or 'key'.
+ * ```
+ * array(
+ * 	'name' => 'value', 
+ * 	'type' => 'value'[, options]
+ * )
+ * ```
+ * 
+ * Possible values in the array include:
+ *  - null: boolean, false for NOT NULL, true otherwise
+ *  - name: string, the name of the field
+ *  - type: string, possible values; integer, biginteger, float, timestamp
+ *  - default: mixed, the default value for the field
+ *  - key: string, the key field
+ *  - length: integer, the length of the field
+ *  - limit: integer, Used as the length if no length is specified
+ *
+ * If either name or type is empty an error will be triggered.
+ *
+ * @param array $column the structured array
  * @return string
  */
 	public function buildColumn($column) {
-		$name = $type = null;
-		extract(array_merge(array('null' => true), $column));
+		$column = array_merge(array(
+			'null' => true,
+			'name' => null,
+			'type' => null,
+		), $column);
 
-		if (empty($name) || empty($type)) {
+		if (empty($column['name']) || empty($column['type'])) {
 			trigger_error(__d('cake_dev', 'Column name or type not defined in schema'), E_USER_WARNING);
 			return null;
 		}
 
-		if (!isset($this->columns[$type])) {
-			trigger_error(__d('cake_dev', 'Column type %s does not exist', $type), E_USER_WARNING);
+		if (!isset($this->columns[$column['type']])) {
+			trigger_error(__d('cake_dev', 'Column type %s does not exist', $column['type']), E_USER_WARNING);
 			return null;
 		}
 
-		$real = $this->columns[$type];
-		$out = $this->name($name) . ' ' . $real['name'];
+		$real = $this->columns[$column['type']];
+		$out = $this->name($column['name']) . ' ' . $real['name'];
 
 		if (isset($column['length'])) {
 			$length = $column['length'];
@@ -3116,23 +3138,24 @@ class DboSource extends DataSource {
 		}
 		$out = $this->_buildFieldParameters($out, $column, 'beforeDefault');
 
-		if (isset($column['key']) && $column['key'] === 'primary' && ($type === 'integer' || $type === 'biginteger')) {
+		if (isset($column['key']) && $column['key'] === 'primary' && ($column['type'] === 'integer' || $column['type'] === 'biginteger')) {
 			$out .= ' ' . $this->columns['primary_key']['name'];
 		} elseif (isset($column['key']) && $column['key'] === 'primary') {
 			$out .= ' NOT NULL';
-		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] === false) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
 		} elseif (isset($column['default'])) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
-		} elseif ($type !== 'timestamp' && !empty($column['null'])) {
+			$out .= ' DEFAULT ' . $this->value($column['default'], $column['type']);
+			if (isset($column['null']) && $column['null'] === false) {
+				$out .= ' NOT NULL';
+			}
+		} elseif ($column['type'] !== 'timestamp' && !empty($column['null'])) {
 			$out .= ' DEFAULT NULL';
-		} elseif ($type === 'timestamp' && !empty($column['null'])) {
+		} elseif ($column['type'] === 'timestamp' && !empty($column['null'])) {
 			$out .= ' NULL';
 		} elseif (isset($column['null']) && $column['null'] === false) {
 			$out .= ' NOT NULL';
 		}
-		if ($type === 'timestamp' && isset($column['default']) && strtolower($column['default']) === 'current_timestamp') {
-			$out = str_replace(array("'CURRENT_TIMESTAMP'", "'current_timestamp'"), 'CURRENT_TIMESTAMP', $out);
+		if ($column['type'] === 'timestamp' && isset($column['default']) && strtolower($column['default']) === 'current_timestamp') {
+			$out = str_ireplace("'current_timestamp'", 'CURRENT_TIMESTAMP', $out);
 		}
 		return $this->_buildFieldParameters($out, $column, 'afterDefault');
 	}
