@@ -411,10 +411,6 @@ class DboSource extends DataSource {
 		if ($this->execute($sql)) {
 			$out = array();
 
-			$first = $this->fetchRow();
-			if ($first != null) {
-				$out[] = $first;
-			}
 			while ($this->hasResult() && $item = $this->fetchResult()) {
 				$this->fetchVirtualField($item);
 				$out[] = $item;
