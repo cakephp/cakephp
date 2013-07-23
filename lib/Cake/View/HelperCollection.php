@@ -1,8 +1,5 @@
 <?php
 /**
- * Helpers collection is used as a registry for loaded helpers and handles loading
- * and constructing helper class objects.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -26,8 +22,6 @@ use Cake\View\View;
 /**
  * Helpers collection is used as a registry for loaded helpers and handles loading
  * and constructing helper class objects.
- *
- * @package       Cake.View
  */
 class HelperCollection {
 
