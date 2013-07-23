@@ -16,7 +16,6 @@ namespace Cake\Console;
 
 use Cake\Core\App;
 use Cake\Error;
-use Cake\Utility\ObjectCollection;
 
 /**
  * Collection object for Tasks. Provides features
@@ -37,13 +36,6 @@ class TaskCollection {
  * @var Shell
  */
 	protected $_Shell;
-
-/**
- * The directory inside each shell path that contains tasks.
- *
- * @var string
- */
-	public $taskPathPrefix = 'tasks/';
 
 /**
  * Constructor
