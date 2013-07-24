@@ -24,7 +24,7 @@ use Cake\View\View;
  * Helpers collection is used as a registry for loaded helpers and handles loading
  * and constructing helper class objects.
  */
-class HelperCollection extends ObjectRegistry {
+class HelperRegistry extends ObjectRegistry {
 
 /**
  * View object to use when making helpers.

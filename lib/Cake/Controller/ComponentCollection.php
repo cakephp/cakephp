@@ -21,11 +21,11 @@ use Cake\Event\EventManager;
 use Cake\Utility\ObjectRegistry;
 
 /**
- * Components collection is used as a registry for loaded components
+ * ComponentRegistry is a registry for loaded components
  *
  * Handles loading, constructing and binding events for component class objects.
  */
-class ComponentCollection extends ObjectRegistry {
+class ComponentRegistry extends ObjectRegistry {
 
 /**
  * The controller that this collection was initialized with.

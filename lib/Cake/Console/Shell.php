@@ -138,7 +138,7 @@ class Shell extends Object {
 /**
  * Task Collection for the command, used to create Tasks.
  *
- * @var TaskCollection
+ * @var TaskRegistry
  */
 	public $Tasks;
 
@@ -183,7 +183,7 @@ class Shell extends Object {
 			list(, $class) = namespaceSplit(get_class($this));
 			$this->name = str_replace(array('Shell', 'Task'), '', $class);
 		}
-		$this->Tasks = new TaskCollection($this);
+		$this->Tasks = new TaskRegistry($this);
 
 		$this->stdout = $stdout ? $stdout : new ConsoleOutput('php://stdout');
 		$this->stderr = $stderr ? $stderr : new ConsoleOutput('php://stderr');

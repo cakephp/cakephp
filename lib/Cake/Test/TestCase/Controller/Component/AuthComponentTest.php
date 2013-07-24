@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Controller;
 use Cake\Core\App;
@@ -79,7 +79,7 @@ class AuthComponentTest extends TestCase {
 
 		$this->Controller = new AuthTestController($request, $this->getMock('Cake\Network\Response'));
 
-		$collection = new ComponentCollection();
+		$collection = new ComponentRegistry();
 		$collection->init($this->Controller);
 		$this->Auth = new TestAuthComponent($collection);
 		$this->Auth->request = $request;

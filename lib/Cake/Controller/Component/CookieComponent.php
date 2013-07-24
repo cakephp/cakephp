@@ -15,7 +15,7 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\Event;
@@ -172,10 +172,10 @@ class CookieComponent extends Component {
 /**
  * Constructor
  *
- * @param ComponentCollection $collection A ComponentCollection for this component
+ * @param ComponentRegistry $collection A ComponentRegistry for this component
  * @param array $settings Array of settings.
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
+	public function __construct(ComponentRegistry $collection, $settings = array()) {
 		$this->key = Configure::read('Security.salt');
 		parent::__construct($collection, $settings);
 		if (isset($this->time)) {

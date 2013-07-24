@@ -19,10 +19,10 @@ use Cake\Error;
 use Cake\Utility\ObjectRegistry;
 
 /**
- * Collection object for Tasks. Provides features
+ * Registry for Tasks. Provides features
  * for lazily loading tasks.
  */
-class TaskCollection extends ObjectRegistry {
+class TaskRegistry extends ObjectRegistry {
 
 /**
  * Shell to use to set params to tasks.

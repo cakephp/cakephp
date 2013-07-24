@@ -194,9 +194,9 @@ class Controller extends Object implements EventListener {
 	public $autoLayout = true;
 
 /**
- * Instance of ComponentCollection used to create Components
+ * Instance of ComponentRegistry used to create Components
  *
- * @var ComponentCollection
+ * @var ComponentRegistry
  */
 	public $Components = null;
 
@@ -354,7 +354,7 @@ class Controller extends Object implements EventListener {
 		if ($response instanceof Response) {
 			$this->response = $response;
 		}
-		$this->Components = new ComponentCollection($this);
+		$this->Components = new ComponentRegistry($this);
 	}
 
 /**

@@ -23,9 +23,9 @@ namespace Cake\Utility;
  * in previous versions of CakePHP.
  *
  * @since CakePHP 3.0
- * @see Cake\Controller\ComponentCollection
- * @see Cake\View\HelperCollection
- * @see Cake\Console\TaskCollection
+ * @see Cake\Controller\ComponentRegistry
+ * @see Cake\View\HelperRegistry
+ * @see Cake\Console\TaskRegistry
  */
 abstract class ObjectRegistry {
 

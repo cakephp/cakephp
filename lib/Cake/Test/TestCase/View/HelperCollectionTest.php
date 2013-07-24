@@ -1,6 +1,6 @@
 <?php
 /**
- * HelperCollectionTest file
+ * HelperRegistryTest file
  *
  * PHP 5
  *
@@ -22,7 +22,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
-use Cake\View\HelperCollection;
+use Cake\View\HelperRegistry;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 
@@ -37,11 +37,11 @@ class HtmlAliasHelper extends HtmlHelper {
 }
 
 /**
- * Class HelperCollectionTest
+ * Class HelperRegistryTest
  *
  * @package       Cake.Test.Case.View
  */
-class HelperCollectionTest extends TestCase {
+class HelperRegistryTest extends TestCase {
 
 /**
  * setUp
@@ -52,7 +52,7 @@ class HelperCollectionTest extends TestCase {
 		parent::setUp();
 		$this->View = new View(null);
 		$this->Events = $this->View->getEventManager();
-		$this->Helpers = new HelperCollection($this->View);
+		$this->Helpers = new HelperRegistry($this->View);
 	}
 
 /**

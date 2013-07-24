@@ -423,6 +423,16 @@ class UpgradeShell extends Shell {
 		foreach ($this->_files as $filePath) {
 			$patterns = [
 				[
+					' Replace $this->_Collection with $this->_registry',
+					'#\$this->_Collection#',
+					'$this->_registry',
+				],
+				[
+					' Replace ComponentCollection arguments',
+					'#ComponentCollection\s+\$collection#',
+					'ComponentRegistry $registry',
+				],
+				[
 					' Rename ComponentCollection',
 					'#ComponentCollection#',
 					"ComponentRegistry",

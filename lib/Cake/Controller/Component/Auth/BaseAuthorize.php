@@ -15,7 +15,7 @@
  */
 namespace Cake\Controller\Component\Auth;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Error;
 use Cake\Network\Request;
@@ -40,11 +40,11 @@ abstract class BaseAuthorize {
 	protected $_Controller = null;
 
 /**
- * Component collection instance for getting more components.
+ * ComponentRegistry instance for getting more components.
  *
- * @var ComponentCollection
+ * @var ComponentRegistry
  */
-	protected $_Collection;
+	protected $_registry;
 
 /**
  * Settings for authorize objects.
@@ -72,12 +72,12 @@ abstract class BaseAuthorize {
 /**
  * Constructor
  *
- * @param ComponentCollection $collection The controller for this request.
+ * @param ComponentRegistry $registry The controller for this request.
  * @param string $settings An array of settings. This class does not use any settings.
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
-		$this->_Collection = $collection;
-		$controller = $collection->getController();
+	public function __construct(ComponentRegistry $registry, $settings = array()) {
+		$this->_registry = $registry;
+		$controller = $registry->getController();
 		$this->controller($controller);
 		$this->settings = Hash::merge($this->settings, $settings);
 	}

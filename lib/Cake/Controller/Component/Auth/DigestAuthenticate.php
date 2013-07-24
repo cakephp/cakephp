@@ -15,7 +15,7 @@
  */
 namespace Cake\Controller\Component\Auth;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\Auth\BasicAuthenticate;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -98,11 +98,11 @@ class DigestAuthenticate extends BasicAuthenticate {
 /**
  * Constructor, completes configuration for digest authentication.
  *
- * @param ComponentCollection $collection The Component collection used on this request.
+ * @param ComponentRegistry $registry The Component registry used on this request.
  * @param array $settings An array of settings.
  */
-	public function __construct(ComponentCollection $collection, $settings) {
-		parent::__construct($collection, $settings);
+	public function __construct(ComponentRegistry $registry, $settings) {
+		parent::__construct($registry, $settings);
 		if (empty($this->settings['nonce'])) {
 			$this->settings['nonce'] = uniqid('');
 		}

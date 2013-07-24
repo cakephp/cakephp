@@ -72,7 +72,7 @@ class View extends Object {
 /**
  * Helpers collection
  *
- * @var HelperCollection
+ * @var HelperRegistry
  */
 	public $Helpers;
 
@@ -343,7 +343,7 @@ class View extends Object {
 		} else {
 			$this->response = new Response();
 		}
-		$this->Helpers = new HelperCollection($this);
+		$this->Helpers = new HelperRegistry($this);
 		$this->Blocks = new ViewBlock();
 		parent::__construct();
 	}
@@ -829,7 +829,7 @@ class View extends Object {
 	}
 
 /**
- * Interact with the HelperCollection to load all the helpers.
+ * Interact with the HelperRegistry to load all the helpers.
  *
  * @return void
  */
@@ -906,12 +906,12 @@ class View extends Object {
 	}
 
 /**
- * Loads a helper. Delegates to the `HelperCollection::load()` to load the helper
+ * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
  *
  * @param string $helperName Name of the helper to load.
  * @param array $settings Settings for the helper
  * @return Helper a constructed helper object.
- * @see HelperCollection::load()
+ * @see HelperRegistry::load()
  */
 	public function loadHelper($helperName, $settings = array()) {
 		return $this->Helpers->load($helperName, $settings);

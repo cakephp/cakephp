@@ -15,7 +15,7 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Error;
 use Cake\Model\Model;
 use Cake\Utility\Hash;
@@ -100,10 +100,10 @@ class PaginatorComponent extends Component {
 /**
  * Constructor
  *
- * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
+ * @param ComponentRegistry $collection A ComponentRegistry this component can use to lazy load its components
  * @param array $settings Array of configuration settings.
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
+	public function __construct(ComponentRegistry $collection, $settings = array()) {
 		$settings = array_merge($this->settings, (array)$settings);
 		$this->Controller = $collection->getController();
 		parent::__construct($collection, $settings);

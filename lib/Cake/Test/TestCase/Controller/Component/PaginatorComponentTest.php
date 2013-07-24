@@ -61,7 +61,7 @@ class PaginatorComponentTest extends TestCase {
 		$this->request = new Request('controller_posts/index');
 		$this->request->params['pass'] = array();
 		$this->Controller = new Controller($this->request);
-		$this->Paginator = new PaginatorComponent($this->getMock('Cake\Controller\ComponentCollection'), array());
+		$this->Paginator = new PaginatorComponent($this->getMock('Cake\Controller\ComponentRegistry'), array());
 		$this->Paginator->Controller = $this->Controller;
 		$this->Controller->Post = $this->getMock('Cake\Model\Model');
 		$this->Controller->Post->alias = 'Post';

@@ -65,11 +65,11 @@ use Cake\Utility\ObjectCollection;
 class Component extends Object implements EventListener {
 
 /**
- * Component collection class used to lazy load components.
+ * Component registry class used to lazy load components.
  *
- * @var ComponentCollection
+ * @var ComponentRegistry
  */
-	protected $_Collection;
+	protected $_registry;
 
 /**
  * Settings for this Component
@@ -95,11 +95,11 @@ class Component extends Object implements EventListener {
 /**
  * Constructor
  *
- * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
+ * @param ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
  * @param array $settings Array of configuration settings.
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
-		$this->_Collection = $collection;
+	public function __construct(ComponentRegistry $registry, $settings = []) {
+		$this->_registry = $registry;
 		$this->settings = $settings;
 		$this->_set($settings);
 		if (!empty($this->components)) {
@@ -116,7 +116,7 @@ class Component extends Object implements EventListener {
 	public function __get($name) {
 		if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
 			$settings = array_merge((array)$this->_componentMap[$name]['settings'], array('enabled' => false));
-			$this->{$name} = $this->_Collection->load($this->_componentMap[$name]['class'], $settings);
+			$this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $settings);
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};

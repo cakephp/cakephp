@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\Component\CookieComponent;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Plugin;
@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
 class CookieAliasComponent extends CookieComponent {
 }
 
-class ComponentCollectionTest extends TestCase {
+class ComponentRegistryTest extends TestCase {
 
 /**
  * setUp
@@ -37,7 +37,7 @@ class ComponentCollectionTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$controller = new Controller();
-		$this->Components = new ComponentCollection($controller);
+		$this->Components = new ComponentRegistry($controller);
 	}
 
 /**

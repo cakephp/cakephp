@@ -14,16 +14,16 @@
  */
 namespace Cake\Test\TestCase\Console;
 
-use Cake\Console\TaskCollection;
+use Cake\Console\TaskRegistry;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class TaskCollectionTest
+ * Class TaskRegistryTest
  *
  */
-class TaskCollectionTest extends TestCase {
+class TaskRegistryTest extends TestCase {
 
 /**
  * setUp
@@ -33,7 +33,7 @@ class TaskCollectionTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$shell = $this->getMock('Cake\Console\Shell', array(), array(), '', false);
-		$this->Tasks = new TaskCollection($shell);
+		$this->Tasks = new TaskRegistry($shell);
 	}
 
 /**
@@ -82,7 +82,7 @@ class TaskCollectionTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
-		$this->Tasks = new TaskCollection($shell, $dispatcher);
+		$this->Tasks = new TaskRegistry($shell, $dispatcher);
 
 		$result = $this->Tasks->load('TestPlugin.OtherTask');
 		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $result, 'Task class is wrong.');
