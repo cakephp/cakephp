@@ -230,7 +230,6 @@ class PaginatorComponent extends Component {
 			'options' => Hash::diff($options, $defaults),
 			'paramType' => $options['paramType']
 		);
-
 		if (!isset($this->Controller->request['paging'])) {
 			$this->Controller->request['paging'] = array();
 		}
@@ -238,7 +237,9 @@ class PaginatorComponent extends Component {
 			(array)$this->Controller->request['paging'],
 			array($object->alias => $paging)
 		);
-
+		if (!empty($this->Controller->request->params['requested'])) {
+			Router::getRequest()->params['paging'] = $this->Controller->request['paging'];
+		}
 		if (
 			!in_array('Paginator', $this->Controller->helpers) &&
 			!array_key_exists('Paginator', $this->Controller->helpers)
@@ -309,12 +310,16 @@ class PaginatorComponent extends Component {
  */
 	public function mergeOptions($alias) {
 		$defaults = $this->getDefaults($alias);
+		$request = $this->Controller->request;
+		if (!empty($request->params['requested'])) {
+			$request = Router::getRequest();
+		}
 		switch ($defaults['paramType']) {
 			case 'named':
-				$request = $this->Controller->request->params['named'];
+				$request = $request->params['named'];
 				break;
 			case 'querystring':
-				$request = $this->Controller->request->query;
+				$request = $request->query;
 				break;
 		}
 		$request = array_intersect_key($request, array_flip($this->whitelist));
