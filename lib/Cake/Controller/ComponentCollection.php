@@ -18,20 +18,14 @@ use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
+use Cake\Utility\ObjectRegistry;
 
 /**
  * Components collection is used as a registry for loaded components
  *
  * Handles loading, constructing and binding events for component class objects.
  */
-class ComponentCollection {
-
-/**
- * Loaded objects
- *
- * @var array
- */
-	protected $_loaded = [];
+class ComponentCollection extends ObjectRegistry {
 
 /**
  * The controller that this collection was initialized with.
@@ -116,42 +110,6 @@ class ComponentCollection {
 		}
 		$this->_loaded[$alias] = $component;
 		return $this->_loaded[$alias];
-	}
-
-/**
- * Get the loaded components list, or get the component instance at a given name.
- *
- * @param null|string $name The component name to get or null.
- * @return array|Helper Either a list of components names, or a loaded component.
- */
-	public function loaded($name = null) {
-		if (!empty($name)) {
-			return isset($this->_loaded[$name]);
-		}
-		return array_keys($this->_loaded);
-	}
-
-/**
- * Provide public read access to the loaded objects
- *
- * @param string $name Name of property to read
- * @return mixed
- */
-	public function __get($name) {
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
-		}
-		return null;
-	}
-
-/**
- * Provide isset access to _loaded
- *
- * @param string $name Name of object being checked.
- * @return boolean
- */
-	public function __isset($name) {
-		return isset($this->_loaded[$name]);
 	}
 
 }

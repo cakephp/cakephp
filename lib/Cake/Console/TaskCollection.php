@@ -16,19 +16,13 @@ namespace Cake\Console;
 
 use Cake\Core\App;
 use Cake\Error;
+use Cake\Utility\ObjectRegistry;
 
 /**
  * Collection object for Tasks. Provides features
  * for lazily loading tasks.
  */
-class TaskCollection {
-
-/**
- * Map of loaded tasks.
- *
- * @var array
- */
-	protected $_loaded = [];
+class TaskCollection extends ObjectRegistry {
 
 /**
  * Shell to use to set params to tasks.
@@ -89,42 +83,6 @@ class TaskCollection {
 			$this->_Shell->stdout, $this->_Shell->stderr, $this->_Shell->stdin
 		);
 		return $this->_loaded[$alias];
-	}
-
-/**
- * Get the loaded helpers list, or get the helper instance at a given name.
- *
- * @param null|string $name The helper name to get or null.
- * @return array|Helper Either a list of helper names, or a loaded helper.
- */
-	public function loaded($name = null) {
-		if (!empty($name)) {
-			return isset($this->_loaded[$name]);
-		}
-		return array_keys($this->_loaded);
-	}
-
-/**
- * Provide public read access to the loaded objects
- *
- * @param string $name Name of property to read
- * @return mixed
- */
-	public function __get($name) {
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
-		}
-		return null;
-	}
-
-/**
- * Provide isset access to _loaded
- *
- * @param string $name Name of object being checked.
- * @return boolean
- */
-	public function __isset($name) {
-		return isset($this->_loaded[$name]);
 	}
 
 }

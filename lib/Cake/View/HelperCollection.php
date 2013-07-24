@@ -17,20 +17,14 @@ namespace Cake\View;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\EventManager;
+use Cake\Utility\ObjectRegistry;
 use Cake\View\View;
 
 /**
  * Helpers collection is used as a registry for loaded helpers and handles loading
  * and constructing helper class objects.
  */
-class HelperCollection {
-
-/**
- * Hash of already loaded helpers.
- *
- * @var array
- */
-	protected $_loaded = [];
+class HelperCollection extends ObjectRegistry {
 
 /**
  * View object to use when making helpers.
@@ -157,19 +151,6 @@ class HelperCollection {
 			$this->_eventManager->attach($helperObject);
 		}
 		return $helperObject;
-	}
-
-/**
- * Get the loaded helpers list, or get the helper instance at a given name.
- *
- * @param null|string $name The helper name to get or null.
- * @return array|Helper Either a list of helper names, or a loaded helper.
- */
-	public function loaded($name = null) {
-		if (!empty($name)) {
-			return isset($this->_loaded[$name]);
-		}
-		return array_keys($this->_loaded);
 	}
 
 }
