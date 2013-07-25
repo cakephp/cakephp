@@ -129,15 +129,31 @@ class ComponentRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoadPluginComponent() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-		));
+		App::build([
+			'Plugin' => [CAKE . 'Test/TestApp/Plugin/'],
+		]);
 		Plugin::load('TestPlugin');
 		$result = $this->Components->load('TestPlugin.Other');
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result, 'Component class is wrong.');
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->Other, 'Class is wrong');
 		App::build();
 		Plugin::unload();
+	}
+
+/**
+ * Test loading components with aliases and plugins.
+ *
+ * @return void
+ */
+	public function testLoadWithAliasAndPlugin() {
+		App::build(['Plugin' => [CAKE . 'Test/TestApp/Plugin/']]);
+		Plugin::load('TestPlugin');
+		$result = $this->Components->load('AliasedOther', ['className' => 'TestPlugin.Other']);
+		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
+		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->AliasedOther);
+
+		$result = $this->Components->loaded();
+		$this->assertEquals(['AliasedOther'], $result, 'loaded() results are wrong.');
 	}
 
 /**
