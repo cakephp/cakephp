@@ -93,7 +93,7 @@ class HelperRegistry extends ObjectRegistry {
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
-		if ($this->__isset($name)) {
+		if (isset($this->$name)) {
 			return $this->_loaded[$name];
 		}
 		return null;
