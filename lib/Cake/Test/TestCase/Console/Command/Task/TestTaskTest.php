@@ -454,8 +454,8 @@ class TestTaskTest extends TestCase {
 		$this->assertContains('class ExampleComponentTest extends TestCase', $result);
 
 		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$Collection = new ComponentRegistry()", $result);
-		$this->assertContains("\$this->Example = new ExampleComponent(\$Collection)", $result);
+		$this->assertContains("\$registry = new ComponentRegistry()", $result);
+		$this->assertContains("\$this->Example = new ExampleComponent(\$registry)", $result);
 
 		$this->assertContains('function tearDown()', $result);
 		$this->assertContains('unset($this->Example)', $result);
