@@ -37,15 +37,74 @@ abstract class ObjectRegistry {
 	protected $_loaded = [];
 
 /**
- * Load instances for this registry.
+ * Loads/constructs a object instance.
  *
- * Overridden in subclasses.
+ * Will return the instance in the registry if it already exists.
+ * You can use `$settings['enabled'] = false` to disable events on an object when loading it.
+ * Not all registry subclasses support events.
+ *
+ * You can alias an object by setting the 'className' key, i.e.,
+ * {{{
+ * public $components = [
+ *   'Email' => [
+ *     'className' => '\App\Controller\Component\AliasedEmailComponent'
+ *   ];
+ * ];
+ * }}}
+ *
+ * All calls to the `Email` component would use `AliasedEmail` instead.
  *
  * @param string $name The name/class of the object to load.
  * @param array $settings Additional settings to use when loading the object.
- * @return mixed.
+ * @return mixed
  */
-	abstract public function load($name, $settings = []);
+	public function load($objectName, $settings = []) {
+		list($plugin, $name) = pluginSplit($objectName);
+		if (isset($this->_loaded[$name])) {
+			return $this->_loaded[$name];
+		}
+		if (is_array($settings) && isset($settings['className'])) {
+			$className = $this->_resolveClassName($settings['className']);
+		}
+		if (!isset($className)) {
+			$className = $this->_resolveClassName($objectName);
+		}
+		if (!$className) {
+			$this->_throwMissingClassError($objectName, substr($plugin, 0, -1));
+		}
+		$instance = $this->_create($className, $settings);
+		$this->_loaded[$name] = $instance;
+		return $instance;
+	}
+
+/**
+ * Should resolve the classname for a given object type.
+ *
+ * @param string $class The class to resolve.
+ * @return string|false The resolved name or false for failure.
+ */
+	abstract protected function _resolveClassName($class);
+
+/**
+ * Throw an exception when the requested object name is missing.
+ *
+ * @param string $class The class that is missing.
+ * @param string $plugin The plugin $class is missing from.
+ * @throw Cake\Exception
+ */
+	abstract protected function _throwMissingClassError($class, $plugin);
+
+/**
+ * Create an instance of a given classname.
+ *
+ * This method should construct and do any other initialization logic
+ * required.
+ *
+ * @param string $class The class to build.
+ * @param array $settings The settings for construction
+ * @return mixed
+ */
+	abstract protected function _create($class, $settings);
 
 /**
  * Get the loaded object list, or get the object instance at a given name.

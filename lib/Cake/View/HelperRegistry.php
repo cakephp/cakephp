@@ -100,57 +100,54 @@ class HelperRegistry extends ObjectRegistry {
 	}
 
 /**
- * Loads/constructs a helper. Will return the instance in the registry if it already exists.
- * By setting `$enable` to false you can disable callbacks for a helper. Alternatively you
- * can set `$settings['enabled'] = false` to disable callbacks. This alias is provided so that when
- * declaring $helpers arrays you can disable callbacks on helpers.
+ * Resolve a helper classname.
  *
- * You can alias your helper as an existing helper by setting the 'className' key, i.e.,
- * {{{
- * public $helpers = array(
- *   'Html' => array(
- *     'className' => '\App\View\Helper\AliasedHtmlHelper'
- *   );
- * );
- * }}}
- * All calls to the `Html` helper would use `AliasedHtml` instead.
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
  *
- * @param string $helper Helper name to load
- * @param array $settings Settings for the helper.
- * @return Helper A helper object, Either the existing loaded helper or a new one.
- * @throws Cake\Error\MissingHelperException when the helper could not be found
+ * @param string $class Partial classname to resolve.
+ * @return string|false Either the correct classname or false.
  */
-	public function load($helper, $settings = array()) {
-		list($plugin, $name) = pluginSplit($helper);
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
-		}
-		if (is_array($settings) && isset($settings['className'])) {
-			$helperClass = App::classname($settings['className'], 'View/Helper', 'Helper');
-		}
-		if (!isset($helperClass)) {
-			$helperClass = App::classname($helper, 'View/Helper', 'Helper');
-		}
-		if (!$helperClass) {
-			throw new Error\MissingHelperException(array(
-				'class' => $helper,
-				'plugin' => substr($plugin, 0, -1)
-			));
-		}
-		$helperObject = new $helperClass($this->_View, $settings);
+	protected function _resolveClassName($class) {
+		return App::classname($class, 'View/Helper', 'Helper');
+	}
 
+/**
+ * Throws an exception when a helper is missing.
+ *
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ *
+ * @param string $class The classname that is missing.
+ * @param string $plugin The plugin the helper is missing in.
+ * @throws Cake\Error\MissingHelperException
+ */
+	protected function _throwMissingClassError($class, $plugin) {
+		throw new Error\MissingHelperException([
+			'class' => $class,
+			'plugin' => $plugin
+		]);
+	}
+
+/**
+ * Create the helper instance.
+ *
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Enabled helpers will be registered with the event manager.
+ *
+ * @param string $class The classname that is missing.
+ * @param array $settings An array of settings to use for the helper.
+ * @return Component The constructed helper class.
+ */
+	protected function _create($class, $settings) {
+		$instance = new $class($this->_View, $settings);
 		$vars = array('request', 'theme', 'plugin');
 		foreach ($vars as $var) {
-			$helperObject->{$var} = $this->_View->{$var};
+			$instance->{$var} = $this->_View->{$var};
 		}
-
-		$this->_loaded[$name] = $helperObject;
-
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable) {
-			$this->_eventManager->attach($helperObject);
+			$this->_eventManager->attach($instance);
 		}
-		return $helperObject;
+		return $instance;
 	}
 
 }

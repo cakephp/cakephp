@@ -65,51 +65,50 @@ class ComponentRegistry extends ObjectRegistry {
 	}
 
 /**
- * Loads/constructs a component. Will return the instance in the registry if it already exists.
- * You can use `$settings['enabled'] = false` to disable callbacks on a component when loading it.
- * Callbacks default to on. Disabled component methods work as normal, only callbacks are disabled.
+ * Resolve a component classname.
  *
- * You can alias your component as an existing component by setting the 'className' key, i.e.,
- * {{{
- * public $components = array(
- *   'Email' => array(
- *     'className' => '\App\Controller\Component\AliasedEmailComponent'
- *   );
- * );
- * }}}
- * All calls to the `Email` component would use `AliasedEmail` instead.
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
  *
- * @param string $component Component name to load
- * @param array $settings Settings for the component.
- * @return Component A component object, Either the existing loaded component or a new one.
- * @throws Cake\Error\MissingComponentException when the component could not be found
+ * @param string $class Partial classname to resolve.
+ * @return string|false Either the correct classname or false.
  */
-	public function load($component, $settings = array()) {
-		if (is_array($settings) && isset($settings['className'])) {
-			$alias = $component;
-			$component = $settings['className'];
-		}
-		list($plugin, $name) = pluginSplit($component, true);
-		if (!isset($alias)) {
-			$alias = $name;
-		}
-		if (isset($this->_loaded[$alias])) {
-			return $this->_loaded[$alias];
-		}
-		$componentClass = App::classname($plugin . $name, 'Controller/Component', 'Component');
-		if (!$componentClass) {
-			throw new Error\MissingComponentException(array(
-				'class' => $component,
-				'plugin' => substr($plugin, 0, -1)
-			));
-		}
-		$component = new $componentClass($this, $settings);
+	protected function _resolveClassName($class) {
+		return App::classname($class, 'Controller/Component', 'Component');
+	}
+
+/**
+ * Throws an exception when a component is missing.
+ *
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ *
+ * @param string $class The classname that is missing.
+ * @param string $plugin The plugin the component is missing in.
+ * @throws Cake\Error\MissingComponentException
+ */
+	protected function _throwMissingClassError($class, $plugin) {
+		throw new Error\MissingComponentException([
+			'class' => $class,
+			'plugin' => $plugin
+		]);
+	}
+
+/**
+ * Create the component instance.
+ *
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Enabled components will be registered with the event manager.
+ *
+ * @param string $class The classname that is missing.
+ * @param array $settings An array of settings to use for the component.
+ * @return Component The constructed component class.
+ */
+	protected function _create($class, $settings) {
+		$instance = new $class($this, $settings);
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable) {
-			$this->_eventManager->attach($component);
+			$this->_eventManager->attach($instance);
 		}
-		$this->_loaded[$alias] = $component;
-		return $this->_loaded[$alias];
+		return $instance;
 	}
 
 }
