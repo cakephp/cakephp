@@ -61,7 +61,7 @@
 <?php
 if (!empty($filePresent)):
 	App::uses('ConnectionManager', 'Model');
- 	$connected = ConnectionManager::getDataSource('default');
+	$connected = ConnectionManager::getDataSource('default');
 ?>
 <p>
 	<span class="notice">
