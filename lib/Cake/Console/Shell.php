@@ -29,7 +29,6 @@ use Cake\Utility\ClassRegistry;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
-use Cake\Utility\ObjectCollection;
 use Cake\Utility\String;
 
 /**
@@ -315,7 +314,7 @@ class Shell extends Object {
 		if ($this->tasks === true || empty($this->tasks) || empty($this->Tasks)) {
 			return true;
 		}
-		$this->_taskMap = ObjectCollection::normalizeObjectArray((array)$this->tasks);
+		$this->_taskMap = $this->Tasks->normalizeArray((array)$this->tasks);
 		$this->taskNames = array_merge($this->taskNames, array_keys($this->_taskMap));
 		return true;
 	}

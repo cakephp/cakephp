@@ -33,7 +33,6 @@ use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
-use Cake\Utility\ObjectCollection;
 use Cake\Utility\ViewVarsTrait;
 
 /**
@@ -834,7 +833,7 @@ class View extends Object {
  * @return void
  */
 	public function loadHelpers() {
-		$helpers = ObjectCollection::normalizeObjectArray($this->helpers);
+		$helpers = $this->Helpers->normalizeArray($this->helpers);
 		foreach ($helpers as $properties) {
 			list(, $class) = pluginSplit($properties['class']);
 			$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);

@@ -17,7 +17,6 @@ namespace Cake\Controller;
 use Cake\Core\Object;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
-use Cake\Utility\ObjectCollection;
 
 /**
  * Base class for an individual Component. Components provide reusable bits of
@@ -103,7 +102,7 @@ class Component extends Object implements EventListener {
 		$this->settings = $settings;
 		$this->_set($settings);
 		if (!empty($this->components)) {
-			$this->_componentMap = ObjectCollection::normalizeObjectArray($this->components);
+			$this->_componentMap = $registry->normalizeArray($this->components);
 		}
 	}
 

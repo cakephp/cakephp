@@ -24,7 +24,6 @@ use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use Cake\Utility\ObjectCollection;
 
 /**
  * Abstract base class for all other Helpers in CakePHP.
@@ -203,7 +202,7 @@ class Helper extends Object implements EventListener {
 			$this->settings = Hash::merge($this->settings, $settings);
 		}
 		if (!empty($this->helpers)) {
-			$this->_helperMap = ObjectCollection::normalizeObjectArray($this->helpers);
+			$this->_helperMap = $View->Helpers->normalizeArray($this->helpers);
 		}
 	}
 

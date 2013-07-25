@@ -90,7 +90,7 @@ abstract class ObjectRegistry {
  * @param array $objects Array of child objects to normalize.
  * @return array Array of normalized objects.
  */
-	public static function normalizeObjectArray($objects) {
+	public function normalizeArray($objects) {
 		$normal = array();
 		foreach ($objects as $i => $objectName) {
 			$options = array();
