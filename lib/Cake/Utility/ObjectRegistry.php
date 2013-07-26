@@ -19,8 +19,9 @@ namespace Cake\Utility;
  * Provides registry & factory functionality for object types. Used
  * as a super class for various composition based re-use features in CakePHP.
  *
- * Each subclass needs to implement its own load() functionality. Replaces ObjectCollection
- * in previous versions of CakePHP.
+ * Each subclass needs to implement the various abstract methods to complete
+ * the template method load(). This class replaces ObjectCollection
+ * from previous versions of CakePHP.
  *
  * @since CakePHP 3.0
  * @see Cake\Controller\ComponentRegistry
@@ -40,10 +41,12 @@ abstract class ObjectRegistry {
  * Loads/constructs a object instance.
  *
  * Will return the instance in the registry if it already exists.
- * You can use `$settings['enabled'] = false` to disable events on an object when loading it.
- * Not all registry subclasses support events.
+ * If a subclass provides event support, you can use `$settings['enabled'] = false`
+ * to exclude constructed objects from being registered for events.
  *
- * You can alias an object by setting the 'className' key, i.e.,
+ * Using Cake\Controller\Controller::$components as an example. You can alias 
+ * an object by setting the 'className' key, i.e.,
+ *
  * {{{
  * public $components = [
  *   'Email' => [
@@ -161,6 +164,15 @@ abstract class ObjectRegistry {
 			$normal[$name] = array('class' => $objectName, 'settings' => $options);
 		}
 		return $normal;
+	}
+
+/**
+ * Clear loaded instances in the registry.
+ *
+ * @return void
+ */
+	public function reset() {
+		$this->_loaded = [];
 	}
 
 }

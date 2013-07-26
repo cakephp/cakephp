@@ -165,4 +165,20 @@ class ComponentRegistryTest extends TestCase {
 		$result = $this->Components->getController();
 		$this->assertInstanceOf('Cake\Controller\Controller', $result);
 	}
+
+/**
+ * Test reset.
+ *
+ * @return void
+ */
+	public function testReset() {
+		$instance = $this->Components->load('Paginator');
+		$this->assertSame(
+			$instance,
+			$this->Components->Paginator,
+			'Instance in registry should be the same as previously loaded'
+		);
+		$this->assertNull($this->Components->reset(), 'No return expected');
+		$this->assertNotSame($instance, $this->Components->load('Paginator'));
+	}
 }
