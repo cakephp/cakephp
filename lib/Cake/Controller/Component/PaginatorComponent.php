@@ -121,7 +121,7 @@ class PaginatorComponent extends Component {
  * @param Model|string $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
  * @param string|array $scope Additional find conditions to use while paginating
  * @param array $whitelist List of allowed fields for ordering. This allows you to prevent ordering
- *   on non-indexed, or undesirable columns. See PaginatorComponent::validateSort() for additional details 
+ *   on non-indexed, or undesirable columns. See PaginatorComponent::validateSort() for additional details
  *   on how the whitelisting and sort field validation works.
  * @return array Model query results
  * @throws MissingModelException
