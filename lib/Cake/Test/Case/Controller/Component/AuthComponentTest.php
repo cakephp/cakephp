@@ -815,6 +815,34 @@ class AuthComponentTest extends CakeTestCase {
 		$expected = Router::normalize('posts/index/29?print=true&refer=menu');
 		$this->assertEquals($expected, $this->Auth->Session->read('Auth.redirect'));
 
+		// Different base urls.
+		$appConfig = Configure::read('App');
+
+		$_GET = array();
+
+		Configure::write('App', array(
+			'dir' => APP_DIR,
+			'webroot' => WEBROOT_DIR,
+			'base' => false,
+			'baseUrl' => '/cake/index.php'
+		));
+
+		$this->Auth->Session->delete('Auth');
+
+		$url = '/posts/add';
+		$this->Auth->request = $this->Controller->request = new CakeRequest($url);
+		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->request->url = Router::normalize($url);
+
+		$this->Auth->initialize($this->Controller);
+		$this->Auth->loginAction = array('controller' => 'users', 'action' => 'login');
+		$this->Auth->startup($this->Controller);
+		$expected = Router::normalize('/posts/add');
+		$this->assertEquals($expected, $this->Auth->Session->read('Auth.redirect'));
+
+		$this->Auth->Session->delete('Auth');
+		Configure::write('App', $appConfig);
+
 		$_GET = $_back;
 
 		// External Authed Action
