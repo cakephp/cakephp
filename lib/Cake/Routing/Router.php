@@ -500,11 +500,14 @@ class Router {
 	public static function mapResources($controller, $options = array()) {
 		$hasPrefix = isset($options['prefix']);
 		$options = array_merge(array(
+			'connectOptions' => array(),
 			'prefix' => '/',
 			'id' => self::ID . '|' . self::UUID
 		), $options);
 
 		$prefix = $options['prefix'];
+		$connectOptions = $options['connectOptions'];
+		unset($options['connectOptions']);
 
 		foreach ((array)$controller as $name) {
 			list($plugin, $name) = pluginSplit($name);
@@ -524,7 +527,10 @@ class Router {
 						'action' => $params['action'],
 						'[method]' => $params['method']
 					),
-					array('id' => $options['id'], 'pass' => array('id'))
+					array_merge(
+						array('id' => $options['id'], 'pass' => array('id')),
+						$connectOptions
+					)
 				);
 			}
 			self::$_resourceMapped[] = $urlName;
