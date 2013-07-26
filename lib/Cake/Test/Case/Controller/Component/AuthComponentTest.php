@@ -1269,6 +1269,41 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that the returned URL doesn't contain the base URL.
+ *
+ * @see https://cakephp.lighthouseapp.com/projects/42648/tickets/3922-authcomponentredirecturl-prepends-appbaseurl
+ *
+ * @return void This test method doesn't return anything.
+ */
+	public function testRedirectUrlWithBaseSet() {
+		$App = Configure::read('App');
+
+		Configure::write('App', array(
+			'dir' => APP_DIR,
+			'webroot' => WEBROOT_DIR,
+			'base' => false,
+			'baseUrl' => '/cake/index.php'
+		));
+
+		$url = '/users/login';
+		$this->Auth->request = $this->Controller->request = new CakeRequest($url);
+		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->request->url = Router::normalize($url);
+
+		Router::setRequestInfo($this->Auth->request);
+
+		$this->Auth->loginAction = array('controller' => 'users', 'action' => 'login');
+		$this->Auth->loginRedirect = array('controller' => 'users', 'action' => 'home');
+
+		$result = $this->Auth->redirectUrl();
+		$this->assertEquals('/users/home', $result);
+		$this->assertFalse($this->Auth->Session->check('Auth.redirect'));
+
+		Configure::write('App', $App);
+		Router::reload();
+	}
+
+/**
  * test password hashing
  *
  * @return void
