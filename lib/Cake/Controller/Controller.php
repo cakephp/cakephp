@@ -347,7 +347,7 @@ class Controller extends Object implements CakeEventListener {
  * Lazy loads models using the loadModel() method if declared in $uses
  *
  * @param string $name
- * @return void
+ * @return bool
  */
 	public function __isset($name) {
 		switch ($name) {
@@ -384,8 +384,8 @@ class Controller extends Object implements CakeEventListener {
  * Provides backwards compatibility access to the request object properties.
  * Also provides the params alias.
  *
- * @param string $name
- * @return void
+ * @param string $name The name of the requested value
+ * @return mixed The requested value
  */
 	public function __get($name) {
 		switch ($name) {
@@ -422,15 +422,20 @@ class Controller extends Object implements CakeEventListener {
 			case 'here':
 			case 'webroot':
 			case 'data':
-				return $this->request->{$name} = $value;
+				$this->request->{$name} = $value;
+				break;
 			case 'action':
-				return $this->request->params['action'] = $value;
+				$this->request->params['action'] = $value;
+				break;
 			case 'params':
-				return $this->request->params = $value;
+				$this->request->params = $value;
+				break;
 			case 'paginate':
-				return $this->Components->load('Paginator')->settings = $value;
+				$this->Components->load('Paginator')->settings = $value;
+				break;
+			default:
+				$this->{$name} = $value;
 		}
-		return $this->{$name} = $value;
 	}
 
 /**
@@ -714,7 +719,7 @@ class Controller extends Object implements CakeEventListener {
  *
  * @param string $modelClass Name of model class to load
  * @param integer|string $id Initial ID the instanced model class should have
- * @return mixed true when single model found and instance created, error returned if model not found.
+ * @return bool True if the model was found
  * @throws MissingModelException if the model class cannot be found.
  */
 	public function loadModel($modelClass = null, $id = null) {

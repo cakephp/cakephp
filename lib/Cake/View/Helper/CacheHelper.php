@@ -67,7 +67,8 @@ class CacheHelper extends AppHelper {
  * Parses the view file and stores content for cache file building.
  *
  * @param string $viewFile
- * @return void
+ * @param string $output The output for the file.
+ * @return string Updated content.
  */
 	public function afterRenderFile($viewFile, $output) {
 		if ($this->_enabled()) {
@@ -94,24 +95,24 @@ class CacheHelper extends AppHelper {
  * writing the cache file.
  *
  * @param string $file The filename to process.
- * @param string $out The output for the file.
+ * @param string $output The output for the file.
  * @return string Updated content.
  */
-	protected function _parseContent($file, $out) {
-		$out = preg_replace_callback('/<!--nocache-->/', array($this, '_replaceSection'), $out);
-		$this->_parseFile($file, $out);
-		return $out;
+	protected function _parseContent($file, $output) {
+		$output = preg_replace_callback('/<!--nocache-->/', array($this, '_replaceSection'), $output);
+		$this->_parseFile($file, $output);
+		return $output;
 	}
 
 /**
  * Main method used to cache a view
  *
  * @param string $file File to cache
- * @param string $out output to cache
+ * @param string $output output to cache
  * @return string view output
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
  */
-	public function cache($file, $out) {
+	public function cache($file, $output) {
 		$cacheTime = 0;
 		$useCallbacks = false;
 		$cacheAction = $this->_View->cacheAction;
@@ -150,7 +151,7 @@ class CacheHelper extends AppHelper {
 		}
 
 		if ($cacheTime && $cacheTime > 0) {
-			$cached = $this->_parseOutput($out);
+			$cached = $this->_parseOutput($output);
 			try {
 				$this->_writeFile($cached, $cacheTime, $useCallbacks);
 			} catch (Exception $e) {
@@ -162,9 +163,9 @@ class CacheHelper extends AppHelper {
 				);
 				$this->log($message, 'error');
 			}
-			$out = $this->_stripTags($out);
+			$output = $this->_stripTags($output);
 		}
-		return $out;
+		return $output;
 	}
 
 /**
@@ -289,7 +290,7 @@ class CacheHelper extends AppHelper {
 		$cache = strtolower(Inflector::slug($path));
 
 		if (empty($cache)) {
-			return;
+			return false;
 		}
 		$cache = $cache . '.php';
 		$file = '<!--cachetime:' . $cacheTime . '--><?php';
