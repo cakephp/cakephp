@@ -256,6 +256,23 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 /**
+ * Test that clear() also removes files with group tags.
+ *
+ * @return void
+ */
+	public function testClearWithGroups() {
+		$engine = new FileEngine();
+		$engine->init(array(
+			'prefix' => 'cake_test_',
+			'duration' => DAY,
+			'groups' => array('short')
+		));
+		$engine->write('test_key', 'it works', DAY);
+		$engine->clear(false);
+		$this->assertFalse($engine->read('test_key'), 'Key should have been removed');
+	}
+
+/**
  * testKeyPath method
  *
  * @return void
