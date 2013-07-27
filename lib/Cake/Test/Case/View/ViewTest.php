@@ -1248,6 +1248,38 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test creating a block with capturing output with and without resetting.
+ *
+ * @return void
+ */
+	public function testBlockCaptureWithAndWithoutReset() {
+		$this->View->start('test', true);
+		echo 'Block content 1';
+		$this->View->end();
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Block content 1', $result);
+
+		$this->View->start('test', false);
+		echo 'Block content 2';
+		$this->View->end();
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Block content 1Block content 2', $result);
+
+		$this->View->start('test', true);
+		echo 'Block content 3';
+		$this->View->end();
+
+		$this->View->start('test', true);
+		echo 'Block content 4';
+		$this->View->end();
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Block content 4', $result);
+	}
+
+/**
  * Test block with startIfEmpty
  *
  * @return void
