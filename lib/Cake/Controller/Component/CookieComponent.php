@@ -1,9 +1,5 @@
 <?php
 /**
- * Cookie Component
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.4213
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -23,6 +18,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentCollection;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
@@ -33,7 +29,6 @@ use Cake\Utility\Security;
  *
  * Cookie handling for the controller.
  *
- * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html
  *
  */
@@ -204,10 +199,10 @@ class CookieComponent extends Component {
 /**
  * Start CookieComponent for use in the controller
  *
- * @param Controller $controller
+ * @param Event $event An Event instance
  * @return void
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event) {
 		$this->_expire($this->time);
 
 		$this->_values[$this->name] = array();

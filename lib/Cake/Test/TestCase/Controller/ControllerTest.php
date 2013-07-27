@@ -9,17 +9,18 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller;
 
+use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
@@ -32,7 +33,6 @@ use TestPlugin\Controller\TestPluginController;
 /**
  * AppController class
  *
- * @package       Cake.Test.Case.Controller
  */
 class ControllerTestAppController extends Controller {
 
@@ -60,8 +60,6 @@ class ControllerTestAppController extends Controller {
 
 /**
  * TestController class
- *
- * @package       Cake.Test.Case.Controller
  */
 class TestController extends ControllerTestAppController {
 
@@ -136,10 +134,8 @@ class TestController extends ControllerTestAppController {
 
 /**
  * TestComponent class
- *
- * @package       Cake.Test.Case.Controller
  */
-class TestComponent extends Object {
+class TestComponent extends Component {
 
 /**
  * beforeRedirect method
@@ -154,7 +150,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function initialize(Controller $controller) {
+	public function initialize(Event $event) {
 	}
 
 /**
@@ -162,7 +158,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event) {
 	}
 
 /**
@@ -170,7 +166,7 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function shutdown(Controller $controller) {
+	public function shutdown(Event $event) {
 	}
 
 /**
@@ -178,7 +174,8 @@ class TestComponent extends Object {
  *
  * @return void
  */
-	public function beforeRender(Controller $controller) {
+	public function beforeRender(Event $event) {
+		$controller = $event->subject();
 		if ($this->viewclass) {
 			$controller->viewClass = $this->viewclass;
 		}
@@ -186,25 +183,9 @@ class TestComponent extends Object {
 
 }
 
-class Test2Component extends TestComponent {
-
-	public $model;
-
-	public function __construct(ComponentCollection $collection, $settings) {
-		$this->controller = $collection->getController();
-		$this->model = $this->controller->modelClass;
-	}
-
-	public function beforeRender(Controller $controller) {
-		return false;
-	}
-
-}
-
 /**
  * AnotherTestController class
  *
- * @package       Cake.Test.Case.Controller
  */
 class AnotherTestController extends ControllerTestAppController {
 }
@@ -212,7 +193,6 @@ class AnotherTestController extends ControllerTestAppController {
 /**
  * ControllerTest class
  *
- * @package       Cake.Test.Case.Controller
  */
 class ControllerTest extends TestCase {
 
@@ -234,7 +214,6 @@ class ControllerTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		App::objects('Plugin', null, false);
 		App::build();
 		Router::reload();
@@ -256,6 +235,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testLoadModel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
@@ -278,6 +258,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testLoadModelUsesTrue() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
@@ -298,6 +279,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testLoadModelInPlugins() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		Configure::write('App.namespace', 'TestApp');
 		App::build([
 			'Plugin' => [CAKE . 'Test/TestApp/Plugin/'],
@@ -327,6 +309,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testConstructClasses() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 
@@ -358,14 +341,15 @@ class ControllerTest extends TestCase {
  */
 	public function testConstructClassesWithComponents() {
 		Configure::write('App.namespace', 'TestApp');
+		App::build(['Plugin' => [CAKE . 'Test/TestApp/Plugin/']]);
+		Plugin::load('TestPlugin');
+
 		$Controller = new TestPluginController(new Request(), new Response());
-		$Controller->uses = ['NameTest'];
-		$Controller->components[] = 'Test2';
+		$Controller->uses = [];
+		$Controller->components[] = 'TestPlugin.Other';
 
 		$Controller->constructClasses();
-		$this->assertEquals('NameTest', $Controller->Test2->model);
-		$this->assertEquals('Name', $Controller->NameTest->name);
-		$this->assertEquals('Name', $Controller->NameTest->alias);
+		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $Controller->Other);
 	}
 
 /**
@@ -374,6 +358,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testAliasName() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$request = new Request('controller_posts/index');
 		$Controller = new Controller($request);
 		$Controller->uses = ['NameTest'];
@@ -489,7 +474,7 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testComponentBeforeRenderChangingViewClass() {
+	public function testBeforeRenderCallbackChangingViewClass() {
 		Configure::write('App.namespace', 'TestApp');
 		App::build([
 			'View' => [
@@ -497,17 +482,11 @@ class ControllerTest extends TestCase {
 			]
 		], true);
 		$Controller = new Controller($this->getMock('Cake\Network\Request'), new Response());
-		$Controller->constructClasses();
-		$Controller->uses = $Controller->components = [];
 
-		$mock = $this->getMock('Cake\Controller\Component', ['beforeRender'], [$Controller->Components]);
-		$mock->expects($this->once())
-			->method('beforeRender')
-			->will($this->returnCallback(function ($controller) {
-				$controller->viewClass = 'Json';
-			}));
-		$Controller->Components->set('Test', $mock);
-		$Controller->Components->enable('Test');
+		$Controller->getEventManager()->attach(function ($event) {
+			$controller = $event->subject();
+			$controller->viewClass = 'Json';
+		}, 'Controller.beforeRender');
 
 		$Controller->set([
 			'test' => 'value',
@@ -522,15 +501,12 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testComponentCancelRender() {
+	public function testBeforeRenderEventCancelsRender() {
 		$Controller = new Controller($this->getMock('Cake\Network\Request'), new Response());
-		$Controller->constructClasses();
-		$mock = $this->getMock('Cake\Controller\Component', ['beforeRender'], [$Controller->Components]);
-		$mock->expects($this->once())
-			->method('beforeRender')
-			->will($this->returnValue(false));
-		$Controller->Components->set('Test', $mock);
-		$Controller->Components->enable('Test');
+
+		$Controller->getEventManager()->attach(function ($event) {
+			return false;
+		}, 'Controller.beforeRender');
 
 		$result = $Controller->render('index');
 		$this->assertInstanceOf('Cake\Network\Response', $result);
@@ -577,61 +553,30 @@ class ControllerTest extends TestCase {
  */
 	public function testRedirectByCode($code, $msg) {
 		$Controller = new Controller(null);
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header', 'statusCode'));
-
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
-
-		$Controller->response->expects($this->once())->method('statusCode')
-			->with($code);
-		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://cakephp.org');
+		$Controller->response = new Response();
 
 		$Controller->redirect('http://cakephp.org', (int)$code, false);
+		$this->assertEquals($code, $Controller->response->statusCode());
+		$this->assertEquals('http://cakephp.org', $Controller->response->header()['Location']);
 		$this->assertFalse($Controller->autoRender);
 	}
 
 /**
- * test redirecting by message
- *
- * @dataProvider statusCodeProvider
- * @return void
- */
-	public function testRedirectByMessage($code, $msg) {
-		$Controller = new Controller(null);
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header', 'statusCode'));
-
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
-
-		$Controller->response->expects($this->once())->method('statusCode')
-			->with($code);
-
-		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://cakephp.org');
-
-		$Controller->redirect('http://cakephp.org', $msg, false);
-		$this->assertFalse($Controller->autoRender);
-	}
-
-/**
- * test that redirect triggers methods on the components.
+ * test that beforeRedirect callbacks can set the URL that is being redirected to.
  *
  * @return void
  */
-	public function testRedirectTriggeringComponentsReturnNull() {
+	public function testRedirectBeforeRedirectModifyingUrl() {
 		$Controller = new Controller(null);
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header', 'statusCode'));
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
+		$Controller->response = new Response();
 
-		$Controller->Components->expects($this->once())->method('trigger')
-			->will($this->returnValue(null));
-
-		$Controller->response->expects($this->once())->method('statusCode')
-			->with(301);
-
-		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://cakephp.org');
+		$Controller->getEventManager()->attach(function ($event, $response, $url) {
+			$response->location('http://book.cakephp.org');
+		}, 'Controller.beforeRedirect');
 
 		$Controller->redirect('http://cakephp.org', 301, false);
+		$this->assertEquals('http://book.cakephp.org', $Controller->response->header()['Location']);
+		$this->assertEquals(301, $Controller->response->statusCode());
 	}
 
 /**
@@ -639,54 +584,18 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testRedirectBeforeRedirectModifyingParams() {
-		$Controller = new Controller(null);
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header', 'statusCode'));
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
-
-		$Controller->Components->expects($this->once())->method('trigger')
-			->will($this->returnValue(array('http://book.cakephp.org')));
-
-		$Controller->response->expects($this->once())->method('statusCode')
-			->with(301);
-
-		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://book.cakephp.org');
-
-		$Controller->redirect('http://cakephp.org', 301, false);
-	}
-
-/**
- * test that beforeRedirect callback returning null doesn't affect things.
- *
- * @return void
- */
-	public function testRedirectBeforeRedirectModifyingParamsArrayReturn() {
+	public function testRedirectBeforeRedirectModifyingStatusCode() {
 		$Controller = $this->getMock('Cake\Controller\Controller', array('header', '_stop'));
-		$Controller->response = $this->getMock('Cake\Network\Response');
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
+		$Controller->response = new Response();
 
-		$return = array(
-			array(
-				'url' => 'http://example.com/test/1',
-				'exit' => false,
-				'status' => 302
-			),
-			array(
-				'url' => 'http://example.com/test/2',
-			),
-		);
-		$Controller->Components->expects($this->once())->method('trigger')
-			->will($this->returnValue($return));
+		$Controller->getEventManager()->attach(function ($event, $response, $url) {
+			$response->statusCode(302);
+		}, 'Controller.beforeRedirect');
 
-		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://example.com/test/2');
+		$Controller->redirect('http://cakephp.org', 301, false);
 
-		$Controller->response->expects($this->at(1))->method('statusCode')
-			->with(302);
-
-		$Controller->expects($this->never())->method('_stop');
-		$Controller->redirect('http://cakephp.org', 301);
+		$this->assertEquals('http://cakephp.org', $Controller->response->header()['Location']);
+		$this->assertEquals(302, $Controller->response->statusCode());
 	}
 
 /**
@@ -694,43 +603,20 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testRedirectBeforeRedirectInController() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('_stop', 'beforeRedirect'));
+	public function testRedirectBeforeRedirectListenerReturnFalse() {
+		$Controller = $this->getMock('Cake\Controller\Controller', array('_stop'));
 		$Controller->response = $this->getMock('Cake\Network\Response', array('header'));
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
 
-		$Controller->expects($this->once())->method('beforeRedirect')
-			->with('http://cakephp.org')
-			->will($this->returnValue(false));
-		$Controller->response->expects($this->never())->method('header');
+		$Controller->getEventManager()->attach(function ($event, $response, $url, $status) {
+			return false;
+		}, 'Controller.beforeRedirect');
+
+		$Controller->response->expects($this->never())
+			->method('header');
+		$Controller->response->expects($this->never())
+			->method('statusCode');
+
 		$Controller->expects($this->never())->method('_stop');
-		$Controller->redirect('http://cakephp.org');
-	}
-
-/**
- * Test that beforeRedirect works with returning an array from the controller method.
- *
- * @return void
- */
-	public function testRedirectBeforeRedirectInControllerWithArray() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('_stop', 'beforeRedirect'));
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header'));
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
-
-		$Controller->expects($this->once())
-			->method('beforeRedirect')
-			->with('http://cakephp.org', null, true)
-			->will($this->returnValue(array(
-				'url' => 'http://example.org',
-				'status' => 302,
-				'exit' => true
-			)));
-
-		$Controller->response->expects($this->at(0))
-			->method('header')
-			->with('Location', 'http://example.org');
-
-		$Controller->expects($this->once())->method('_stop');
 		$Controller->redirect('http://cakephp.org');
 	}
 
@@ -969,23 +855,6 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testStartupProcessIndirect() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('beforeFilter'));
-
-		$Controller->components = array('MockShutdown');
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
-
-		$Controller->expects($this->once())->method('beforeFilter');
-		$Controller->Components->expects($this->exactly(2))->method('trigger')->with($this->isInstanceOf('Cake\Event\Event'));
-
-		$Controller->startupProcess();
-	}
-
-/**
- * Tests that the shutdown process calls the correct functions
- *
- * @return void
- */
 	public function testShutdownProcess() {
 		$Controller = $this->getMock('Cake\Controller\Controller', array('getEventManager'));
 
@@ -1004,28 +873,12 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * Tests that the shutdown process calls the correct functions
- *
- * @return void
- */
-	public function testShutdownProcessIndirect() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('afterFilter'));
-
-		$Controller->components = array('MockShutdown');
-		$Controller->Components = $this->getMock('Cake\Controller\ComponentCollection', array('trigger'));
-
-		$Controller->expects($this->once())->method('afterFilter');
-		$Controller->Components->expects($this->exactly(1))->method('trigger')->with($this->isInstanceOf('Cake\Event\Event'));
-
-		$Controller->shutdownProcess();
-	}
-
-/**
  * test that using Controller::paginate() falls back to PaginatorComponent
  *
  * @return void
  */
 	public function testPaginateBackwardsCompatibility() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$request = new Request('controller_posts/index');
 		$request->params['pass'] = array();
 		$response = $this->getMock('Cake\Network\Response', ['httpCodes']);

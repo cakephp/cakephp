@@ -26,6 +26,7 @@ use Cake\Controller\Controller;
 use Cake\Controller\ErrorController;
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
@@ -162,8 +163,9 @@ class ExceptionRenderer {
 			$controller = new ErrorController($request, $response);
 			$controller->startupProcess();
 		} catch (\Exception $e) {
-			if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
-				$controller->RequestHandler->startup($controller);
+			if (!empty($controller) && isset($controller->RequestHandler)) {
+				$event = new Event('Controller.startup', $controller);
+				$controller->RequestHandler->startup($event);
 			}
 		}
 		if (empty($controller)) {
@@ -279,7 +281,8 @@ class ExceptionRenderer {
 	protected function _outputMessage($template) {
 		try {
 			$this->controller->render($template);
-			$this->controller->afterFilter();
+			$event = new Event('Controller.shutdown', $this->controller);
+			$this->controller->afterFilter($event);
 			$this->controller->response->send();
 		} catch (Error\MissingViewException $e) {
 			$attributes = $e->getAttributes();

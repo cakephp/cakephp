@@ -84,12 +84,18 @@ class ComponentTest extends TestCase {
  * @return void
  */
 	public function testInnerComponentsAreNotEnabled() {
-		$Collection = new ComponentCollection();
+		$mock = $this->getMock('Cake\Event\EventManager');
+		$controller = new Controller();
+		$controller->setEventManager($mock);
+
+		$mock->expects($this->once())
+			->method('attach')
+			->with($this->isInstanceOf('TestApp\Controller\Component\AppleComponent'));
+
+		$Collection = new ComponentCollection($controller);
 		$Apple = $Collection->load('Apple');
 
 		$this->assertInstanceOf('TestApp\Controller\Component\OrangeComponent', $Apple->Orange, 'class is wrong');
-		$result = $Collection->enabled();
-		$this->assertEquals(array('Apple'), $result, 'Too many components enabled.');
 	}
 
 /**
@@ -118,9 +124,7 @@ class ComponentTest extends TestCase {
 		$Controller->components = array('SomethingWithCookie');
 		$Controller->uses = false;
 		$Controller->constructClasses();
-		$Controller->Components->trigger('initialize', array(&$Controller));
-		$Controller->beforeFilter();
-		$Controller->Components->trigger('startup', array(&$Controller));
+		$Controller->startupProcess();
 
 		$this->assertInstanceOf('TestApp\Controller\Component\SomethingWithCookieComponent', $Controller->SomethingWithCookie);
 		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $Controller->SomethingWithCookie->Cookie);
