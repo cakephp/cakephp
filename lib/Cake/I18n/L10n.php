@@ -58,7 +58,8 @@ class L10n {
 /**
  * Default ISO 639-3 language.
  *
- * DEFAULT_LANGUAGE is defined in an application this will be set as a fall back
+ * If Configure::read('Config.language') is defined in an application this will be set
+ * as a fall back, otherwise DEFAULT_LANGUAGE will be used if defined.
  *
  * @var string
  */
@@ -337,6 +338,10 @@ class L10n {
 		if (defined('DEFAULT_LANGUAGE')) {
 			$this->default = DEFAULT_LANGUAGE;
 		}
+		$default = Configure::read('Config.language');
+		if ($default) {
+			$this->default = $default;
+		}
 	}
 
 /**
@@ -344,7 +349,7 @@ class L10n {
  * If $language is null it attempt to get settings from L10n::_autoLanguage(); if this fails
  * the method will get the settings from L10n::_setLanguage();
  *
- * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
+ * @param string $language Language (if null will use default language if defined)
  * @return mixed
  */
 	public function get($language = null) {
@@ -360,9 +365,9 @@ class L10n {
 
 /**
  * Sets the class vars to correct values for $language.
- * If $language is null it will use the DEFAULT_LANGUAGE if defined
+ * If $language is null it will use the default language if defined
  *
- * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
+ * @param string $language Language (if null will use default language if defined)
  * @return mixed
  */
 	protected function _setLanguage($language = null) {
@@ -371,16 +376,14 @@ class L10n {
 			$langKey = $this->_l10nMap[$language];
 		} elseif ($language !== null && isset($this->_l10nCatalog[$language])) {
 			$langKey = $language;
-		} elseif (defined('DEFAULT_LANGUAGE')) {
-			$langKey = $language = DEFAULT_LANGUAGE;
+		} elseif ($this->default) {
+			$langKey = $language = $this->default;
 		}
 
 		if ($langKey !== null && isset($this->_l10nCatalog[$langKey])) {
 			$this->language = $this->_l10nCatalog[$langKey]['language'];
-			$this->languagePath = array(
-				$this->_l10nCatalog[$langKey]['locale'],
-				$this->_l10nCatalog[$langKey]['localeFallback']
-			);
+			$this->languagePath = array($this->_l10nCatalog[$langKey]['locale']);
+			$this->_addLanguagePath($this->_l10nCatalog[$langKey]['localeFallback']);
 			$this->lang = $language;
 			$this->locale = $this->_l10nCatalog[$langKey]['locale'];
 			$this->charset = $this->_l10nCatalog[$langKey]['charset'];
@@ -392,9 +395,9 @@ class L10n {
 
 		if ($this->default) {
 			if (isset($this->_l10nMap[$this->default]) && isset($this->_l10nCatalog[$this->_l10nMap[$this->default]])) {
-				$this->languagePath[] = $this->_l10nCatalog[$this->_l10nMap[$this->default]]['localeFallback'];
+				$this->_addLanguagePath($this->_l10nCatalog[$this->_l10nMap[$this->default]]['localeFallback']);
 			} elseif (isset($this->_l10nCatalog[$this->default])) {
-				$this->languagePath[] = $this->_l10nCatalog[$this->default]['localeFallback'];
+				$this->_addLanguagePath($this->_l10nCatalog[$this->default]['localeFallback']);
 			}
 		}
 		$this->found = true;
@@ -406,6 +409,18 @@ class L10n {
 		if ($language) {
 			return $language;
 		}
+	}
+
+/**
+ * Adds the language to the language path array if not already in there.
+ *
+ * @return void
+ */
+	protected function _addLanguagePath($lang) {
+		if (in_array($lang, $this->languagePath)) {
+			return;
+		}
+		$this->languagePath[] = $lang;
 	}
 
 /**
