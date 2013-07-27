@@ -188,4 +188,23 @@ class HelperRegistryTest extends TestCase {
 		App::build();
 	}
 
+/**
+ * Test reset.
+ *
+ * @return void
+ */
+	public function testReset() {
+		$instance = $this->Helpers->load('Paginator');
+		$this->assertSame(
+			$instance,
+			$this->Helpers->Paginator,
+			'Instance in registry should be the same as previously loaded'
+		);
+		$this->assertCount(1, $this->Events->listeners('View.beforeRender'));
+
+		$this->assertNull($this->Helpers->reset(), 'No return expected');
+		$this->assertCount(0, $this->Events->listeners('View.beforeRender'));
+
+		$this->assertNotSame($instance, $this->Helpers->load('Paginator'));
+	}
 }

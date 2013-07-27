@@ -111,4 +111,18 @@ class ComponentRegistry extends ObjectRegistry {
 		return $instance;
 	}
 
+/**
+ * Destroys all objects in the registry.
+ *
+ * Removes all attached listeners and destroys all stored instances.
+ *
+ * @return void
+ */
+	public function reset() {
+		foreach ($this->_loaded as $component) {
+			$this->_eventManager->detach($component);
+		}
+		parent::reset();
+	}
+
 }

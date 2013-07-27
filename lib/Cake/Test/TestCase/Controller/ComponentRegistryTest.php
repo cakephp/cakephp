@@ -172,13 +172,19 @@ class ComponentRegistryTest extends TestCase {
  * @return void
  */
 	public function testReset() {
-		$instance = $this->Components->load('Paginator');
+		$eventManager = $this->Components->getController()->getEventManager();
+		$instance = $this->Components->load('Auth');
 		$this->assertSame(
 			$instance,
-			$this->Components->Paginator,
+			$this->Components->Auth,
 			'Instance in registry should be the same as previously loaded'
 		);
+		$this->assertCount(1, $eventManager->listeners('Controller.startup'));
+
 		$this->assertNull($this->Components->reset(), 'No return expected');
-		$this->assertNotSame($instance, $this->Components->load('Paginator'));
+		$this->assertCount(0, $eventManager->listeners('Controller.startup'));
+
+		$this->assertNotSame($instance, $this->Components->load('Auth'));
 	}
+
 }
