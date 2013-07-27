@@ -454,7 +454,7 @@ class View extends Object {
  * @param string $view Name of view file to use
  * @param string $layout Layout to use.
  * @return string Rendered Element
- * @throws CakeException if there is an error in the view.
+ * @throws CakeException If there is an error in the view.
  */
 	public function render($view = null, $layout = null) {
 		if ($this->hasRendered) {
@@ -640,9 +640,8 @@ class View extends Object {
  * block will create the block.
  *
  * @param string $name Name of the block
- * @param string $value The content for the block.
+ * @param mixed $value The content for the block.
  * @return void
- * @throws CakeException when you use non-string values.
  * @see ViewBlock::concat()
  */
 	public function append($name, $value = null) {
@@ -654,9 +653,8 @@ class View extends Object {
  * block will create the block.
  *
  * @param string $name Name of the block
- * @param string $value The content for the block.
+ * @param mixed $value The content for the block.
  * @return void
- * @throws CakeException when you use non-string values.
  * @see ViewBlock::concat()
  */
 	public function prepend($name, $value = null) {
@@ -668,9 +666,8 @@ class View extends Object {
  * existing content.
  *
  * @param string $name Name of the block
- * @param string $value The content for the block.
+ * @param mixed $value The content for the block.
  * @return void
- * @throws CakeException when you use non-string values.
  * @see ViewBlock::set()
  */
 	public function assign($name, $value) {
@@ -841,7 +838,7 @@ class View extends Object {
  * Magic accessor for deprecated attributes.
  *
  * @param string $name Name of the attribute to set.
- * @param string $value Value of the attribute to set.
+ * @param mixed $value Value of the attribute to set.
  * @return mixed
  */
 	public function __set($name, $value) {
