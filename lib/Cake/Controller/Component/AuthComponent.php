@@ -1,11 +1,5 @@
 <?php
 /**
- * Authentication component
- *
- * Manages user logins and permissions.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -15,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -27,6 +20,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Event\Event;
 use Cake\Model\Datasource\Session;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -40,7 +34,6 @@ use Cake\Utility\Security;
  *
  * Binds access control with user authentication and session management.
  *
- * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html
  */
 class AuthComponent extends Component {
@@ -265,10 +258,11 @@ class AuthComponent extends Component {
 /**
  * Initializes AuthComponent for use in the controller
  *
- * @param Controller $controller A reference to the instantiating controller object
+ * @param Event $event The initialize event.
  * @return void
  */
-	public function initialize(Controller $controller) {
+	public function initialize(Event $event) {
+		$controller = $event->subject();
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
@@ -282,10 +276,11 @@ class AuthComponent extends Component {
  * Main execution method. Handles redirecting of invalid users, and processing
  * of login form data.
  *
- * @param Controller $controller A reference to the instantiating controller object
+ * @param Event $event The startup event.
  * @return boolean
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event) {
+		$controller = $event->subject();
 		$methods = array_flip(array_map('strtolower', $controller->methods));
 		$action = strtolower($controller->request->params['action']);
 

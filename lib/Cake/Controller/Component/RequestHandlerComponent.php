@@ -1,11 +1,5 @@
 <?php
 /**
- * Request object for handling alternative HTTP requests
- *
- * Alternative HTTP requests can come from wireless units like mobile phones, palmtop computers,
- * and the like. These units have no use for Ajax requests, and this Component can tell how Cake
- * should respond to the different needs of a handheld computer and a desktop machine.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -15,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.4.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -27,6 +20,8 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Event\Event;
+use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\Xml;
@@ -38,9 +33,7 @@ use Cake\Utility\Xml;
  * and the like. These units have no use for Ajax requests, and this Component can tell how Cake
  * should respond to the different needs of a handheld computer and a desktop machine.
  *
- * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html
- *
  */
 class RequestHandlerComponent extends Component {
 
@@ -130,11 +123,11 @@ class RequestHandlerComponent extends Component {
  * If there is only one matching type between the supported content types & extensions,
  * and the requested mime-types, RequestHandler::$ext is set to that value.
  *
- * @param Controller $controller A reference to the controller
+ * @param Event $event The initialize event that was fired.
  * @return void
  * @see Router::parseExtensions()
  */
-	public function initialize(Controller $controller) {
+	public function initialize(Event $event) {
 		if (isset($this->request->params['_ext'])) {
 			$this->ext = $this->request->params['_ext'];
 		}
@@ -201,10 +194,12 @@ class RequestHandlerComponent extends Component {
  * - If the XML data is POSTed, the data is parsed into an XML object, which is assigned
  *   to the $data property of the controller, which can then be saved to a model object.
  *
+ * @param Event $event The startup event that was fired.
  * @param Controller $controller A reference to the controller
  * @return void
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event) {
+		$controller = $event->subject();
 		$controller->request->params['isAjax'] = $this->request->is('ajax');
 		$isRecognized = (
 			!in_array($this->ext, array('html', 'htm')) &&
@@ -250,13 +245,12 @@ class RequestHandlerComponent extends Component {
  * Handles (fakes) redirects for Ajax requests using requestAction()
  * Modifies the $_POST and $_SERVER['REQUEST_METHOD'] to simulate a new GET request.
  *
- * @param Controller $controller A reference to the controller
+ * @param Event $event The Controller.beforeRedirect event.
  * @param string|array $url A string or array containing the redirect location
- * @param integer|array $status HTTP Status for redirect
- * @param boolean $exit
+ * @param Cake\Network\Response $response The response object.
  * @return void
  */
-	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
+	public function beforeRedirect(Event $event, $url, $response) {
 		if (!$this->request->is('ajax')) {
 			return;
 		}
@@ -270,13 +264,9 @@ class RequestHandlerComponent extends Component {
 		if (is_array($url)) {
 			$url = Router::url($url + array('base' => false));
 		}
-		if (!empty($status)) {
-			$statusCode = $this->response->httpCodes($status);
-			$code = key($statusCode);
-			$this->response->statusCode($code);
-		}
-		$this->response->body($controller->requestAction($url, array('return', 'bare' => false)));
-		$this->response->send();
+		$controller = $event->subject();
+		$response->body($controller->requestAction($url, array('return', 'bare' => false)));
+		$response->send();
 		$this->_stop();
 	}
 
@@ -286,10 +276,11 @@ class RequestHandlerComponent extends Component {
  * render process is skipped. And the client will get a blank response with a
  * "304 Not Modified" header.
  *
- * @params Controller $controller
+ * @param Event $event The Controller.beforeRender event.
+ * @param Controller $controller
  * @return boolean false if the render process should be aborted
  */
-	public function beforeRender(Controller $controller) {
+	public function beforeRender(Event $event) {
 		if ($this->settings['checkHttpCache'] && $this->response->checkNotModified($this->request)) {
 			return false;
 		}

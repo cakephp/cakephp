@@ -55,7 +55,7 @@ class ApiShellTest extends TestCase {
 		$this->Shell->expects($this->at(2))
 			->method('out')
 			->with($this->logicalAnd(
-				$this->contains('8. beforeFilter()'),
+				$this->contains('8. beforeFilter($event)'),
 				$this->contains('24. render($view = NULL, $layout = NULL)')
 			));
 

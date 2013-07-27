@@ -20,8 +20,6 @@
 
 /**
  * Class TestPluginController
- *
- * @package       Cake.Test.TestApp.Plugin.TestPlugin.Controller
  */
 namespace TestPlugin\Controller;
 

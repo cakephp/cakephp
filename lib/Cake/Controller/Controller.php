@@ -28,6 +28,7 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
+use Cake\Utility\ObjectCollection;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\ViewVarsTrait;
 use Cake\View\View;
@@ -52,6 +53,18 @@ use Cake\View\View;
  * Controllers are created by Dispatcher based on request parameters and routing. By default controllers and actions
  * use conventional names. For example `/posts/index` maps to `PostsController::index()`. You can re-map URLs
  * using Router::connect().
+ *
+ * ### Life cycle callbacks
+ *
+ * CakePHP fires a number of life cycle callbacks during each request. By implementing a method
+ * you can receive the related events. The available callbacks are:
+ *
+ * - `beforeFilter(Event $event)` - Called before the before each action. This is a good place to
+ *   do general logic that applies to all actions.
+ * - `beforeRender(Event $event)` - Called before the view is rendered.
+ * - `beforeRedirect(Cake\Event\Event $event $url, Cake\Network\Response $response)` - Called before
+ *   a redirect is done.
+ * - `afterFilter(Event $event)` - Called after each action is complete and after the view is rendered.
  *
  * @package       Cake.Controller
  * @property      AclComponent $Acl
@@ -181,7 +194,7 @@ class Controller extends Object implements EventListener {
 	public $autoLayout = true;
 
 /**
- * Instance of ComponentCollection used to handle callbacks.
+ * Instance of ComponentCollection used to create Components
  *
  * @var ComponentCollection
  */
@@ -329,7 +342,6 @@ class Controller extends Object implements EventListener {
 
 		$this->modelClass = Inflector::singularize($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
-		$this->Components = new ComponentCollection();
 
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Cake\Controller\Controller');
@@ -342,7 +354,7 @@ class Controller extends Object implements EventListener {
 		if ($response instanceof Response) {
 			$this->response = $response;
 		}
-		parent::__construct();
+		$this->Components = new ComponentCollection($this);
 	}
 
 /**
@@ -565,15 +577,19 @@ class Controller extends Object implements EventListener {
 		return array(
 			'Controller.initialize' => 'beforeFilter',
 			'Controller.beforeRender' => 'beforeRender',
-			'Controller.beforeRedirect' => array('callable' => 'beforeRedirect', 'passParams' => true),
-			'Controller.shutdown' => 'afterFilter'
+			'Controller.beforeRedirect' => 'beforeRedirect',
+			'Controller.shutdown' => 'afterFilter',
 		);
 	}
 
 /**
- * Loads Model classes based on the uses property
- * see Controller::loadModel(); for more info.
- * Loads Components and prepares them for initialization.
+ * Loads Model and Component classes.
+ *
+ * Using the $uses and $components properties, classes are loaded
+ * and components have their callbacks attached to the EventManager.
+ * It is also at this time that Controller callbacks are bound.
+ *
+ * See Controller::loadModel(); for more information on how models are loaded.
  *
  * @return mixed true if models found and instance created.
  * @see Controller::loadModel()
@@ -586,12 +602,31 @@ class Controller extends Object implements EventListener {
 			$this->uses = (array)$this->uses;
 			list(, $this->modelClass) = pluginSplit(reset($this->uses));
 		}
-		$this->Components->init($this);
+
+		$this->_loadComponents();
+		$this->getEventManager()->attach($this);
 		return true;
 	}
 
 /**
- * Returns the Cake\Event\EventManager manager instance that is handling any callbacks.
+ * Loads the defined components using the Component factory.
+ *
+ * @return void
+ */
+	protected function _loadComponents() {
+		if (empty($this->components)) {
+			return;
+		}
+		$components = ObjectCollection::normalizeObjectArray($this->components);
+		foreach ($components as $properties) {
+			list(, $class) = pluginSplit($properties['class']);
+			$this->{$class} = $this->Components->load($properties['class'], $properties['settings']);
+		}
+	}
+
+/**
+ * Returns the Cake\Event\EventManager manager instance for this controller.
+ *
  * You can use this instance to register any new listeners or callbacks to the
  * controller events, or create your own events and trigger them at will.
  *
@@ -600,10 +635,20 @@ class Controller extends Object implements EventListener {
 	public function getEventManager() {
 		if (empty($this->_eventManager)) {
 			$this->_eventManager = new EventManager();
-			$this->_eventManager->attach($this->Components);
-			$this->_eventManager->attach($this);
 		}
 		return $this->_eventManager;
+	}
+
+/**
+ * Overwrite the existing EventManager
+ *
+ * Useful for testing
+ *
+ * @param Cake\Event\EventManager $eventManager
+ * @return void
+ */
+	public function setEventManager($eventManager) {
+		$this->_eventManager = $eventManager;
 	}
 
 /**
@@ -702,36 +747,23 @@ class Controller extends Object implements EventListener {
 	public function redirect($url, $status = null, $exit = true) {
 		$this->autoRender = false;
 
-		if (is_array($status)) {
-			extract($status, EXTR_OVERWRITE);
+		$response = $this->response;
+		if ($status && $response->statusCode() === 200) {
+			$response->statusCode($status);
 		}
-		$event = new Event('Controller.beforeRedirect', $this, array($url, $status, $exit));
-		list($event->break, $event->breakOn, $event->collectReturn) = array(true, false, true);
-		$this->getEventManager()->dispatch($event);
 
+		$event = new Event('Controller.beforeRedirect', $this, [$response, $url, $status]);
+		$this->getEventManager()->dispatch($event);
 		if ($event->isStopped()) {
 			return;
 		}
-		$response = $event->result;
-		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
 
-		if ($url !== null) {
-			$this->response->header('Location', Router::url($url, true));
-		}
-
-		if (is_string($status)) {
-			$codes = array_flip($this->response->httpCodes());
-			if (isset($codes[$status])) {
-				$status = $codes[$status];
-			}
-		}
-
-		if ($status) {
-			$this->response->statusCode($status);
+		if ($url !== null && !$response->location()) {
+			$response->location(Router::url($url, true));
 		}
 
 		if ($exit) {
-			$this->response->send();
+			$response->send();
 			$this->_stop();
 		}
 	}
@@ -946,20 +978,22 @@ class Controller extends Object implements EventListener {
  * Called before the controller action. You can use this method to configure and customize components
  * or perform logic that needs to happen before each controller action.
  *
+ * @param Event $event An Event instance
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
-	public function beforeFilter() {
+	public function beforeFilter(Event $event) {
 	}
 
 /**
  * Called after the controller action is run, but before the view is rendered. You can use this method
  * to perform logic or set view variables that are required on every request.
  *
+ * @param Event $event An Event instance
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
-	public function beforeRender() {
+	public function beforeRender(Event $event) {
 	}
 
 /**
@@ -971,6 +1005,7 @@ class Controller extends Object implements EventListener {
  * return a string which will be interpreted as the url to redirect to or return associative array with
  * key 'url' and optionally 'status' and 'exit'.
  *
+ * @param Event $event An Event instance
  * @param string|array $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
@@ -981,16 +1016,17 @@ class Controller extends Object implements EventListener {
  *   array with the keys url, status and exit to be used by the redirect method.
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
-	public function beforeRedirect($url, $status = null, $exit = true) {
+	public function beforeRedirect(Event $event, $url, $status = null, $exit = true) {
 	}
 
 /**
  * Called after the controller action is run and rendered.
  *
+ * @param Event $event An Event instance
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
-	public function afterFilter() {
+	public function afterFilter(Event $event) {
 	}
 
 /**

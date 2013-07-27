@@ -1,9 +1,5 @@
 <?php
 /**
- * SessionComponent. Provides access to Sessions from the Controller layer
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.0.1232
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -27,7 +22,6 @@ use Cake\Model\Datasource\Session;
  * page requests. It acts as a wrapper for the `$_SESSION` as well as providing
  * convenience methods for several `$_SESSION` related functions.
  *
- * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html
  * @link http://book.cakephp.org/2.0/en/development/sessions.html
  */
