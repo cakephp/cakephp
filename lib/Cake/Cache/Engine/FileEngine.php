@@ -223,11 +223,28 @@ class FileEngine extends CacheEngine {
 		if (!$this->_init) {
 			return false;
 		}
-		$dir = dir($this->settings['path']);
+		$threshold = $now = false;
 		if ($check) {
 			$now = time();
 			$threshold = $now - $this->settings['duration'];
 		}
+		$this->_clearDirectory($this->settings['path'], $now, $threshold);
+		foreach ($this->settings['groups'] as $group) {
+			$this->_clearDirectory($this->settings['path'] . $group . DS, $now, $threshold);
+		}
+		return true;
+	}
+
+/**
+ * Used to clear a directory of matching files.
+ *
+ * @param string $path The path to search.
+ * @param integer $now The current timestamp
+ * @param integer $threshold Any file not modified after this value will be deleted.
+ * @return void
+ */
+	protected function _clearDirectory($path, $now, $threshold) {
+		$dir = dir($path);
 		$prefixLength = strlen($this->settings['prefix']);
 		while (($entry = $dir->read()) !== false) {
 			if (substr($entry, 0, $prefixLength) !== $this->settings['prefix']) {
@@ -236,7 +253,7 @@ class FileEngine extends CacheEngine {
 			if ($this->_setKey($entry) === false) {
 				continue;
 			}
-			if ($check) {
+			if ($threshold) {
 				$mtime = $this->_File->getMTime();
 
 				if ($mtime > $threshold) {
@@ -256,7 +273,6 @@ class FileEngine extends CacheEngine {
 			}
 		}
 		$dir->close();
-		return true;
 	}
 
 /**

@@ -267,9 +267,10 @@ class FileEngineTest extends CakeTestCase {
 			'duration' => DAY,
 			'groups' => array('short')
 		));
-		$engine->write('test_key', 'it works', DAY);
+		$key = 'cake_test_test_key';
+		$engine->write($key, 'it works', DAY);
 		$engine->clear(false);
-		$this->assertFalse($engine->read('test_key'), 'Key should have been removed');
+		$this->assertFalse($engine->read($key), 'Key should have been removed');
 	}
 
 /**
