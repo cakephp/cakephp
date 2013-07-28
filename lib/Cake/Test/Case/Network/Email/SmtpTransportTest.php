@@ -82,6 +82,7 @@ class SmtpTransportTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		if (!class_exists('MockSocket')) {
 			$this->getMock('CakeSocket', array('read', 'write', 'connect', 'enableCrypto'), array(), 'MockSocket');
 		}
